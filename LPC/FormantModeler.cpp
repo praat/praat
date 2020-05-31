@@ -66,7 +66,7 @@ void structFormantModeler :: v_info () {
 	}
 }
 
-void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrack) {
+static void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrack) {
 	if (*fromTrack == 0 && *toTrack == 0) { // auto
 		*fromTrack = 1;
 		*toTrack = my trackmodelers.size;
@@ -82,7 +82,7 @@ void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer *toTrac
 		U"1 \\=< \"fromTrack\" \\=< \"toTrack\" \\=< ", my trackmodelers.size, U".");
 }
 
-autoINTVEC newINTVECasNumbers (integer size, integer number) {
+static autoINTVEC newINTVECasNumbers (integer size, integer number) {
 	autoINTVEC target = newINTVECraw (size);
 	for (integer i = 1; i <= size; i++)
 		target [i] = number;
@@ -629,7 +629,7 @@ autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer it
 
 autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer itrack) {
 	try {
-		Melder_require (itrack > 0 && itrack<= my trackmodelers.size, 
+		Melder_require (itrack > 0 && itrack <= my trackmodelers.size,
 			U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
 		const DataModeler dm = my trackmodelers.at [itrack];
 		autoCovariance thee = Data_copy (dm -> parameterCovariances.get());
@@ -750,7 +750,7 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromTrack, inte
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	chisq = 0.0;
 	integer numberOfDefined = 0;
-	for (integer itrack= fromTrack; itrack <= toTrack; itrack ++) {
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
 		double p, df;
 		const double chisqi = DataModeler_getChiSquaredQ (ffi, & p, & df);
@@ -1140,7 +1140,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		// extract part +- windowLength because of Gaussian windowing in the formant analysis
 		// +timeStep/2 to have the analysis points maximally spread in the new domain.
 		
-		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2, endTime + windowLength + timeStep / 2, kSound_windowShape::RECTANGULAR, 1, 1);
+		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0,
+				kSound_windowShape::RECTANGULAR, 1, true);
 
 		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
 		
@@ -1149,7 +1150,8 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
 			const double currentCeiling = minFreq + (istep - 1) * df;
-			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0, currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, 1);
+			autoFormant formant = Sound_to_Formant_robust (resampled.get(), timeStep, 5.0,
+					currentCeiling, windowLength, preemphasisFrequency, 50.0, 1.5, 3, 0.0000001, true);
 			autoFormantModeler fm = Formant_to_FormantModeler (formant.get(), startTime, endTime, noPararametersPerTrack.get());
 			// TODO set weighing
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
@@ -1218,4 +1220,4 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 	}
 }
 
-/* End of file DataModeler.cpp */
+/* End of file FormantModeler.cpp */

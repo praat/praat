@@ -25,4 +25,5 @@ enums_begin (kContextCombination, 1)
 	enums_add (kContextCombination, 6, NO_LEFT_AND_NO_RIGHT, U"no left and no right")
 enums_end (kContextCombination, 6, NO_LEFT_AND_NO_RIGHT)
 
+
 /* End of file IntervalTierNavigator_enums.h */
