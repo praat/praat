@@ -61,9 +61,9 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	bool nextSensitive = false;
 	bool previousSensitive = false;
 	if (navigationPossible) {
-		if (IntervalTierNavigator_getPreviousMatchingIntervalNumber (navigator, our startSelection) > 0)
+		if (IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (navigator, our startSelection) > 0)
 			previousSensitive = true;
-		if (IntervalTierNavigator_getNextMatchingIntervalNumber (navigator, our endSelection) > 0)
+		if (IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (navigator, our endSelection) > 0)
 			nextSensitive = true;
 	}
 	GuiThing_setSensitive (our navigateSettingsButton, navigationPossible);
@@ -883,8 +883,12 @@ void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation matching criterion", kMelder_string::DEFAULT)
 		MUTABLE_LABEL (leftContextNote, U"")
 		OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context matching criterion", kMelder_string::DEFAULT)
+		INTEGER (lookBackFrom, U"left Look-back interval range", U"1")
+		INTEGER (lookBackTo, U"right Look-back interval range", U"1")
 		MUTABLE_LABEL (rightContextNote, U"")
 		OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"Right context matching criterion", kMelder_string::DEFAULT)
+		INTEGER (lookForwardFrom, U"left Look-forward interval range", U"1")
+		INTEGER (lookForwardTo, U"right Look-forward interval range", U"1")
 		MUTABLE_LABEL (contextmatchNote, U"")
 		OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
 		BOOLEAN (matchContextOnly, U"Match context only", false)
@@ -915,7 +919,7 @@ void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		navigator -> navigationCriterion = navigationCriterion;
 		navigator -> leftContextCriterion = leftContextCriterion;
 		navigator -> rightContextCriterion = rightContextCriterion;
-		FormantPath_setNavigationContext (formantPath, contextCombination, matchContextOnly);
+		FormantPath_setNavigationContext (formantPath, lookBackFrom, lookBackTo, lookForwardFrom, lookForwardTo, contextCombination, matchContextOnly);
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END

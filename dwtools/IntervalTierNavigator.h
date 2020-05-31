@@ -33,8 +33,6 @@ Thing_define (IntervalTierNavigator, Function) {
 	integer lookForwardFrom, lookForwardTo;
 	autoStrings navigationLabels;
 	kMelder_string navigationCriterion;
-	autoStrings neverMatchLabels;
-	kMelder_string neverMatchCriterion;
 	kContextCombination contextCombination;
 	bool matchContextOnly;
 	void v_info ()
@@ -53,7 +51,7 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me);
 void IntervalTierNavigator_setBeginPosition (IntervalTierNavigator me, double time);
 
 static inline bool IntervalTierNavigator_isNavigationPossible (IntervalTierNavigator me) {
-	return my navigationLabels || my leftContextLabels || my rightContextLabels || my neverMatchLabels;
+	return my navigationLabels || my leftContextLabels || my rightContextLabels;
 }
 
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber);
@@ -72,7 +70,6 @@ bool IntervalTierNavigator_atMatchingEnd (IntervalTierNavigator me, double time)
 bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double time);
 
 void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
-void IntervalTierNavigator_setNavigationNeverMatchLabels (IntervalTierNavigator me, Strings neverMatchLabels, kMelder_string criterion);
 
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
 

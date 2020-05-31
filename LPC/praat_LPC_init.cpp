@@ -35,6 +35,7 @@
 #include "Formant_extensions.h"
 #include "FormantPath.h"
 #include "FormantPathEditor.h"
+#include "IntervalTierNavigator.h"
 #include "LPC.h"
 #include "MFCC.h"
 #include "LFCC.h"
@@ -91,13 +92,61 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 		editor.releaseToUser();
 	END
 }
+
+FORM (INTEGER_FormantPath_getNextIntervalMatchFromTime, U"FormantPath: Get next interval match from time", nullptr) {
+	REAL (time, U"time (s)", U"0.0")
+	OK
+DO
+	NUMBER_ONE (FormantPath)
+		FormantPath_checkNavigationPossible (me);
+		integer result = IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (my intervalTierNavigator.get(), time);
+	NUMBER_ONE_END (U" (interval number)")
+}
+
+FORM (INTEGER_FormantPath_getNextIntervalMatchFromInterval, U"FormantPath: Get next interval match from interval", nullptr) {
+	INTEGER (intervalNumber, U"Interval number", U"0 (=start)")
+	OK
+DO
+	NUMBER_ONE (FormantPath)
+		FormantPath_checkNavigationPossible (me);
+		integer result = IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (my intervalTierNavigator.get(), intervalNumber);
+	NUMBER_ONE_END (U" (interval number)")
+}
+
+FORM (INTEGER_FormantPath_getPreviousIntervalMatchFromTime, U"FormantPath: Get previous interval match from time", nullptr) {
+	REAL (time, U"time (s)", U"0.0")
+	OK
+DO
+	NUMBER_ONE (FormantPath)
+		FormantPath_checkNavigationPossible (me);
+		integer result = IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (my intervalTierNavigator.get(), time);
+	NUMBER_ONE_END (U" (interval number)")
+}
+FORM (INTEGER_FormantPath_getPreviousIntervalMatchFromInterval, U"FormantPath: Get previous interval match from interval", nullptr) {
+	INTEGER (intervalNumber, U"Interval number", U"0 (=start)")
+	OK
+DO
+	NUMBER_ONE (FormantPath)
+		FormantPath_checkNavigationPossible (me);
+		integer result = IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (my intervalTierNavigator.get(), intervalNumber);
+	NUMBER_ONE_END (U" (interval number)")
+}
+
 FORM (MODIFY_FormantPath_setNavigationContext, U"FormantPath: Set navigation context", nullptr) {
+	LABEL (U"For the left context match:")
+	NATURAL (lookBackFrom, U"left Look-back interval range", U"1")
+	NATURAL (lookBackTo, U"right Look-back interval range", U"1")
+	LABEL (U"For the right context match:")
+	NATURAL (lookForwardFrom, U"left Look-forward interval range", U"1")
+	NATURAL (lookForwardTo, U"right Look-forward interval range", U"1")
+	LABEL (U"How do want to combine the left and right contexts?")
 	OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
+	LABEL (U"Do you want to exclude the match at the centre?")
 	BOOLEAN (matchContextOnly, U"Match context only", false)
 	OK
 DO
 	MODIFY_EACH (FormantPath)
-		FormantPath_setNavigationContext (me, contextCombination, matchContextOnly);
+		FormantPath_setNavigationContext (me, lookBackFrom, lookBackTo, lookForwardFrom, lookForwardTo, contextCombination, matchContextOnly);
 	MODIFY_EACH_END
 }
 
@@ -1257,6 +1306,11 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
+	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFormantPath, 0, U"Get next interval match from time...", nullptr, 1, INTEGER_FormantPath_getNextIntervalMatchFromTime);
+	praat_addAction1 (classFormantPath, 0, U"Get next interval match from interval...", nullptr, 1, INTEGER_FormantPath_getNextIntervalMatchFromInterval);
+	praat_addAction1 (classFormantPath, 0, U"Get previous interval match from time...", nullptr, 1, INTEGER_FormantPath_getPreviousIntervalMatchFromTime);
+	praat_addAction1 (classFormantPath, 0, U"Get previous interval match from interval...", nullptr, 1, INTEGER_FormantPath_getPreviousIntervalMatchFromInterval);
 	praat_addAction1 (classFormantPath, 0, U"Set navigation context...", 0, 0, MODIFY_FormantPath_setNavigationContext);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
 	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);

@@ -44,13 +44,18 @@ integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 labe
 
 void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex);
 
+static inline void FormantPath_checkNavigationPossible (FormantPath me) {
+	Melder_require (my intervalTierNavigator && (my intervalTierNavigator -> navigationLabels || my intervalTierNavigator -> leftContextLabels || my intervalTierNavigator -> rightContextLabels),
+		U"No navigation possible. First install navigation labels.");
+}
+
 void FormantPath_setNavigationLabels (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion);
 
 void FormantPath_setLeftContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
 
 void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
 
-void FormantPath_setNavigationContext (FormantPath me,  kContextCombination criterion, bool matchContextOnly);
+void FormantPath_setNavigationContext (FormantPath me, integer leftMatchFrom, integer leftMatchTo, integer rightMatchFrom, integer rightMatchTo, kContextCombination contextCombination, bool matchContextOnly);
 
 integer FormantPath_nextNavigationInterval (FormantPath me, integer preferedTierNumber);
 

@@ -94,17 +94,6 @@ void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, String
 		Melder_throw (me, U": cannot set navigation labels from ", navigationLabels, U".");
 	}
 }
-void IntervalTierNavigator_setNavigationNeverMatchLabels (IntervalTierNavigator me, Strings neverMatchLabels, kMelder_string criterion) {
-	try {
-		my neverMatchLabels = Data_copy (neverMatchLabels);
-		Thing_setName (my neverMatchLabels.get(), neverMatchLabels -> name.get());
-		my neverMatchCriterion = criterion;
-		my contextCombination = kContextCombination::NO_LEFT_AND_NO_RIGHT;
-	} catch (MelderError) {
-		Melder_throw (me, U": cannot set 'no match' navigation labels from ", neverMatchLabels, U".");
-	}
-	
-}
 
 void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion) {
 	try {
@@ -188,12 +177,6 @@ static bool IntervalTierNavigator_isNavigationMatch (IntervalTierNavigator me, i
 	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my navigationCriterion, label) );
 }
 
-
-static bool IntervalTierNavigator_isNavigationNeverMatch (IntervalTierNavigator me, integer intervalNumber) {
-	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return ( my neverMatchLabels && STRVEChasMatch (my neverMatchLabels -> strings.get(), my neverMatchCriterion, label) );
-}
-
 static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, integer intervalNumber) {
 	if (! my leftContextLabels)
 		return false;
@@ -227,8 +210,6 @@ static bool IntervalTierNavigator_isRightContextMatch (IntervalTierNavigator me,
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber) {
 	Melder_require (intervalNumber > 0 && intervalNumber <= my intervalTier -> intervals . size,
 		U"The interval number should be in the range from 1 to ",  my intervalTier -> intervals . size, U".");
-	if (IntervalTierNavigator_isNavigationNeverMatch (me, intervalNumber))
-		return false;
 	const bool isNavigationMatch = ( my matchContextOnly ? true : IntervalTierNavigator_isNavigationMatch (me, intervalNumber) );
 	if (! isNavigationMatch || my contextCombination == kContextCombination::NO_LEFT_AND_NO_RIGHT)
 		return isNavigationMatch;
