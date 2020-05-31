@@ -211,13 +211,21 @@ void FormantPath_reconstructFormant (FormantPath me) {
 	my formant = thee.move();
 }
 
-autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
+autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
+	double timeStep, double maximumNumberOfFormants, double maximumFrequency, double windowLength, double preemphasisFrequency,
+	double ceilingStep, integer numberOfStepsToACeiling,
+	double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel)
+{
 	try {
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
 		double minimumCeiling = maximumFrequency - numberOfStepsToACeiling * ceilingStep;
 		Melder_require (minimumCeiling > 0.0,
-			U"The minimum ceiling should be positive. Decrease the 'ceiling step' or the 'number of steps' or both.");
+			U"Your minimum ceiling is ", minimumCeiling, U" Hz, but it should be positive.\n"
+			"We computed it as your middle ceiling (", maximumFrequency, U" Hz) minus "
+			"your number of steps (", numberOfStepsToACeiling, U" Hz) times "
+			"your ceiling step (", ceilingStep, U" Hz). Decrease the ceiling step or the number of steps or both."
+		);
 		double maximumCeiling = maximumFrequency + numberOfStepsToACeiling * ceilingStep;		
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "

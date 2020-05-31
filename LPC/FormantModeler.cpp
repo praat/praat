@@ -1143,9 +1143,11 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 		autoSound part = Sound_extractPart (me, startTime - windowLength + timeStep / 2.0, endTime + windowLength + timeStep / 2.0,
 				kSound_windowShape::RECTANGULAR, 1, true);
 
-		// Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant
-		
+		/*
+			Resample to 2*maxFreq to reduce resampling load in Sound_to_Formant.
+		*/
 		autoSound resampled = Sound_resample (part.get(), 2.0 * maxFreq, 50);
+
 		OrderedOf<structFormant> formants;
 		Melder_progressOff ();
 		for (integer istep = 1; istep <= numberOfFrequencySteps; istep ++) {
