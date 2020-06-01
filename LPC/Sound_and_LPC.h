@@ -28,9 +28,9 @@
 #include "LPC.h"
 #include "Sound.h"
 
-autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_autocorrelation (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
 
-autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
+autoLPC Sound_to_LPC_covariance (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
 
 autoLPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency);
 

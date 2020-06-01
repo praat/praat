@@ -142,7 +142,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 	start = end + 1; end += m + 1;
 	VEC a = workspace. part (start, end); // autoVEC a = newVECzero (m + 1);
 	start = end + 1; end += m + 1;
-	VEC cc =  workspace. part (start, end); // autoVEC cc = newVECzero (m + 1);
+	VEC cc = workspace. part (start, end); // autoVEC cc = newVECzero (m + 1);
 
 	thy gain = 0.0;
 	integer i;
@@ -581,7 +581,7 @@ static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth
 	return thee;
 }
 
-autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
+autoLPC Sound_to_LPC_autocorrelation (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
 		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: AUTOCORRELATION, 0.0, 0.0);
 		return thee;
@@ -590,7 +590,7 @@ autoLPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, 
 	}
 }
 
-autoLPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
+autoLPC Sound_to_LPC_covariance (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency) {
 	try {
 		autoLPC thee = Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, kLPC_Analysis :: COVARIANCE, 0.0, 0.0);
 		return thee;
