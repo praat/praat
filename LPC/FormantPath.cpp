@@ -243,13 +243,13 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
 			if (lpcType == kLPC_Analysis::BURG)
 				lpc = Sound_to_LPC_burg (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
 			else if (lpcType == kLPC_Analysis::AUTOCORRELATION)
-				lpc = Sound_to_LPC_auto (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
+				lpc = Sound_to_LPC_autocorrelation (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
 			else if (lpcType == kLPC_Analysis::COVARIANCE)
-				lpc = Sound_to_LPC_covar (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
+				lpc = Sound_to_LPC_covariance (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
 			else if (lpcType == kLPC_Analysis::MARPLE)
 				lpc = Sound_to_LPC_marple (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency, marple_tol1, marple_tol2);
 			else if (lpcType == kLPC_Analysis::ROBUST) {
-				autoLPC lpc_in = Sound_to_LPC_auto (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
+				autoLPC lpc_in = Sound_to_LPC_autocorrelation (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);

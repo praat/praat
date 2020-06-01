@@ -225,7 +225,7 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 		else
 			sound = Sound_resample (me, maximumFrequency * 2.0, 50);
 
-		autoLPC lpc = Sound_to_LPC_auto (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
+		autoLPC lpc = Sound_to_LPC_autocorrelation (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
 		autoLPC lpcRobust = LPC_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
 		autoFormant thee = LPC_to_Formant (lpcRobust.get(), safetyMargin);
 		return thee;
