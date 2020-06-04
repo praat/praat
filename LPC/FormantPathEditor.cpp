@@ -890,7 +890,7 @@ void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		INTEGER (lookForwardFrom, U"left Look-forward interval range", U"1")
 		INTEGER (lookForwardTo, U"right Look-forward interval range", U"1")
 		MUTABLE_LABEL (contextmatchNote, U"")
-		OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
+		OPTIONMENU_ENUM (kContextCombination, combinationCriterion, U"Context combination", kContextCombination::DEFAULT)
 		BOOLEAN (matchContextOnly, U"Match context only", false)
 	EDITOR_OK
 		FormantPath formantPath = (FormantPath) my data;
@@ -919,7 +919,7 @@ void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 		navigator -> navigationCriterion = navigationCriterion;
 		navigator -> leftContextCriterion = leftContextCriterion;
 		navigator -> rightContextCriterion = rightContextCriterion;
-		FormantPath_setNavigationContext (formantPath, lookBackFrom, lookBackTo, lookForwardFrom, lookForwardTo, contextCombination, matchContextOnly);
+		FormantPath_setNavigationContext (formantPath, lookBackFrom, lookBackTo, lookForwardFrom, lookForwardTo, combinationCriterion, matchContextOnly);
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END

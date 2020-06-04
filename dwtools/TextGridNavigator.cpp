@@ -86,17 +86,16 @@ autoTextTierNavigationContext TextTierNavigationContext_create (NavigationContex
 	}	
 }
 
-autoTextTierNavigationContext TextTierNavigationContext_create (NavigationContext me, integer tierNumber);
-
-void TierNavigationContext_setItemOrientation (TierNavigationContext me, kNavigatableTier_searchResult searchResultCriterion) {
-	my searchResultCriterion = searchResultCriterion;
+void TierNavigationContext_setItemOrientation (TierNavigationContext me, kNavigatableTier_match matchCriterion) {
+	my matchCriterion = matchCriterion;
 }
 
 Thing_implement (TextGridNavigator, Function, 0);
 
 void structTextGridNavigator :: v_info () {
+	for (integer icontext = 1; icontext <= tierNavigationContext.size; icontext ++) {
 	TierNavigationContext navigationData = tierNavigationContext .at [1];
-	
+	}
 }
 
 autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber) {
@@ -110,7 +109,7 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 			tierNavigationContext = IntervalTierNavigationContext_create (navigationContext, tierNumber);
 		else
 			tierNavigationContext = TextTierNavigationContext_create (navigationContext, tierNumber);
-		tierNavigationContext -> searchResultCriterion = kNavigatableTier_searchResult::TOUCHES_LEFT_AND_RIGHT;
+		tierNavigationContext -> matchCriterion = kNavigatableTier_match::TOUCHES_LEFT_AND_RIGHT;
 		my tierNavigationContext.addItem_move (tierNavigationContext.move());
 		return me;
 	} catch (MelderError) {
@@ -118,7 +117,7 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 	}
 }
 
-void TextGridNavigator_checkNavigatableTierIsNotInUse (TextGridNavigator me, integer tierNumber) {
+static void TextGridNavigator_checkNavigatableTierIsNotInUse (TextGridNavigator me, integer tierNumber) {
 	for (integer idata = 1; idata <= my tierNavigationContext. size; idata ++) {
 		TierNavigationContext data = my tierNavigationContext. at [idata];
 		if (data -> tierNumber == tierNumber) {
@@ -128,7 +127,7 @@ void TextGridNavigator_checkNavigatableTierIsNotInUse (TextGridNavigator me, int
 	}
 }
 
-void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_searchResult searchResultCriterion) {
+void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_match matchCriterion) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
 		TextGridNavigator_checkNavigatableTierIsNotInUse (me, tierNumber);
@@ -137,7 +136,7 @@ void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationCon
 			tierNavigationContext = IntervalTierNavigationContext_create (thee, tierNumber);
 		else
 			tierNavigationContext = TextTierNavigationContext_create (thee, tierNumber);
-		tierNavigationContext -> searchResultCriterion = searchResultCriterion;
+		tierNavigationContext -> matchCriterion = matchCriterion;
 		my tierNavigationContext.addItem_move (tierNavigationContext.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add navigation context ", thee, U".");
@@ -154,16 +153,14 @@ void TextGridNavigator_resetTextGrid (TextGridNavigator me, TextGrid thee) {
 			Melder_require (thy tiers -> at [tierNumber] -> classInfo == my textgrid -> tiers -> at [tierNumber] -> classInfo, U"The TextGrid should have the same tiers layout. ");
 		}
 		my textgrid = Data_copy (thee);
-		/*
-			Set the navigation tier index at zeo
-		*/
+		
 		my tierNavigationContext. at [1] -> current = 0; // offLeft
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot reset with ", thee, U".");
 	}
 }
 
-void TextGridNavigator_setNavigationContextCriterions (TextGridNavigator me, integer tierNumber, kContext_combination combinationCriterion, bool matchContextOnly, kNavigatableTier_searchResult searchResultCriterion) {
+void TextGridNavigator_setNavigationContextCriterions (TextGridNavigator me, integer tierNumber, kContext_combination combinationCriterion, bool matchContextOnly, kNavigatableTier_match matchCriterion) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
 	TierNavigationContext navigationContext = my tierNavigationContext .at [tierNumber];
 	bool hasLeftContext = ( navigationContext -> leftContextLabels && navigationContext ->  leftContextLabels -> strings.size > 0 );
@@ -183,7 +180,7 @@ void TextGridNavigator_setNavigationContextCriterions (TextGridNavigator me, int
 			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
 	navigationContext -> matchContextOnly = matchContextOnly;
 	navigationContext -> combinationCriterion = combinationCriterion;
-	navigationContext -> searchResultCriterion = searchResultCriterion;
+	navigationContext -> matchCriterion = matchCriterion;
 }
 
 void TextGridNavigator_setLeftAndRightContextRange (TextGridNavigator me, integer tierNumber, integer leftContextFrom, integer leftContextTo, integer rightContextFrom, integer rightContextTo) {
@@ -264,11 +261,33 @@ bool Tier_isLabelMatch (Function me, integer index, TierNavigationContext naviga
 	return isMatch;
 }
 
-bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
+integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, integer icontext) {
+	Melder_require (icontext > 0 && icontext <= my tierNavigationContext.size,
+		U"The context number should be between 1 and ", my tierNavigationContext.size, U".");
+	TierNavigationContext tnc = my tierNavigationContext . at [icontext];
+	Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+	integer numberOfMatches = 0;
+	for (integer index = 1; index <= tnc -> v_getSize (anyTier); index ++)
+		if (Tier_isLabelMatch (anyTier, index, tnc))
+			numberOfMatches ++;
+	return numberOfMatches;
+}
+
+integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me) {
+	TierNavigationContext tnc = my tierNavigationContext . at [1];
+	Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+	integer numberOfMatches = 0;
+	for (integer index = 1; index <= tnc -> v_getSize (anyTier); index ++)
+		if (TextGridNavigator_isLabelMatch (me, index))
+			numberOfMatches ++;
+	return numberOfMatches;
+}
+
+bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNavigationTier) {
 	const TierNavigationContext tnc1 = my tierNavigationContext . at [1];
 	const integer tierNumber1 = tnc1 -> tierNumber;
 	const Function navigationTier = my textgrid -> tiers -> at [tierNumber1];
-	if (! Tier_isLabelMatch (navigationTier, index, tnc1))
+	if (! Tier_isLabelMatch (navigationTier, indexInNavigationTier, tnc1))
 			return false;
 	if (my tierNavigationContext.size == 1)
 		return true;
@@ -277,25 +296,28 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 	*/
 	if (my tierNavigationContext.size == 1)
 		return true;
-	const double leftTime = tnc1 -> v_getLeftTime (navigationTier, index);
-	const double rightTime = tnc1 -> v_getRightTime (navigationTier, index);
+	const double leftTime = tnc1 -> v_getLeftTime (navigationTier, indexInNavigationTier);
+	const double rightTime = tnc1 -> v_getRightTime (navigationTier, indexInNavigationTier);
 	const double midTime = 0.5 * (leftTime + rightTime);
 	for (integer icontext = 2; icontext <= my tierNavigationContext . size; icontext ++) {
 		const TierNavigationContext tnc = my tierNavigationContext . at [icontext];
 		const integer tierNumber = tnc -> tierNumber;
 		const Function anyTier = my textgrid -> tiers -> at [tierNumber];
 		const integer myIndex = tnc -> v_getIndexFromTime (anyTier, midTime);
+		const integer mySize = tnc -> v_getSize (anyTier);
 		
 		bool matchFound = false;
-		if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::IS_SOMEWHERE) {
-			for (integer index = 1; index <= tnc -> v_getSize (anyTier); index ++) {
+		const integer startIndex = ( tnc -> maximumLookBack > 0 ? std::max (1_integer, myIndex - tnc -> maximumLookBack) : 1 );
+		const integer endIndex = ( tnc -> maximumLookAhead > 0 ? std::min (myIndex + tnc -> maximumLookAhead, mySize) : mySize );
+		if (tnc -> matchCriterion == kNavigatableTier_match::IS_SOMEWHERE) {
+			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					matchFound = true;
 					break;
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::IS_LEFT) {
-			for (integer index = myIndex; index > 0; index --) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::IS_LEFT) {
+			for (integer index = myIndex; index >= startIndex; index --) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double rightTime_sub = tnc -> v_getRightTime (anyTier, index);
 					if (rightTime_sub < leftTime) {
@@ -304,8 +326,8 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 					}
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::TOUCHES_LEFT) {
-			for (integer index = myIndex; index > 0; index --) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::TOUCHES_LEFT) {
+			for (integer index = myIndex; index >= startIndex; index --) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double rightTime_sub = tnc -> v_getRightTime (anyTier, index);
 					if (rightTime_sub == leftTime) {
@@ -315,8 +337,8 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 						break;
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::OVERLAPS_LEFT) {
-			for (integer index = myIndex; index > 0; index --) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::OVERLAPS_LEFT) {
+			for (integer index = myIndex; index >= startIndex; index --) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double rightTime_sub = tnc -> v_getRightTime (anyTier, index);
 					double leftTime_sub = tnc -> v_getLeftTime (anyTier, index);
@@ -327,15 +349,15 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 						break;
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::IS_INSIDE) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::IS_INSIDE) {
 			if (Tier_isLabelMatch (anyTier, myIndex, tnc)) {
-				double rightTime_sub = tnc -> v_getRightTime (anyTier, index);
-				double leftTime_sub = tnc -> v_getLeftTime (anyTier, index);
+				double rightTime_sub = tnc -> v_getRightTime (anyTier, myIndex);
+				double leftTime_sub = tnc -> v_getLeftTime (anyTier, myIndex);
 				if (leftTime_sub >= leftTime && rightTime_sub <= rightTime)
 					matchFound = true;
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::OVERLAPS_RIGHT) {
-			for (integer index = myIndex; index <= tnc -> v_getSize (anyTier); index ++) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::OVERLAPS_RIGHT) {
+			for (integer index = myIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double rightTime_sub = tnc -> v_getRightTime (anyTier, index);
 					double leftTime_sub = tnc -> v_getLeftTime (anyTier, index);
@@ -346,8 +368,8 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 						break;
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::TOUCHES_RIGHT) {
-			for (integer index = myIndex; index <= tnc -> v_getSize (anyTier); index ++) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::TOUCHES_RIGHT) {
+			for (integer index = myIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double leftTime_sub = tnc -> v_getLeftTime (anyTier, index);
 					if (leftTime_sub == rightTime) {
@@ -357,8 +379,8 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 						break;
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::IS_RIGHT) {
-			for (integer index = myIndex; index <= tnc -> v_getSize (anyTier); index ++) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::IS_RIGHT) {
+			for (integer index = myIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double leftTime_sub = tnc -> v_getLeftTime (anyTier, index);
 					if (leftTime_sub > rightTime) {
@@ -367,22 +389,22 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 					}
 				}
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::OVERLAPS_LEFT_AND_RIGHT) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::OVERLAPS_LEFT_AND_RIGHT) {
 			if (Tier_isLabelMatch (anyTier, myIndex, tnc)) {
 				double rightTime_sub = tnc -> v_getRightTime (anyTier, myIndex);
 				double leftTime_sub = tnc -> v_getLeftTime (anyTier, myIndex);
 				if (leftTime_sub <= leftTime && rightTime_sub >= rightTime)
 					matchFound = true;
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::TOUCHES_LEFT_AND_RIGHT) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::TOUCHES_LEFT_AND_RIGHT) {
 			if (Tier_isLabelMatch (anyTier, myIndex, tnc)) {
 				double rightTime_sub = tnc -> v_getRightTime (anyTier, myIndex);
 				double leftTime_sub = tnc -> v_getLeftTime (anyTier, myIndex);
 				if (leftTime_sub == leftTime && rightTime_sub == rightTime)
 					matchFound = true;
 			}
-		} else if (tnc -> searchResultCriterion == kNavigatableTier_searchResult::IS_OUTSIDE) {
-			for (index = 1; index <= tnc -> v_getSize (anyTier); index ++) {
+		} else if (tnc -> matchCriterion == kNavigatableTier_match::IS_OUTSIDE) {
+			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					double rightTime_sub = tnc -> v_getRightTime (anyTier, myIndex);
 					double leftTime_sub = tnc -> v_getLeftTime (anyTier, myIndex);
@@ -396,21 +418,8 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer index) {
 		if (! matchFound)
 			return false;
 	}
-	return true;
+	return false;
 }
 
-void TextGridNavigator_setCurrentNavigatorIndex (TextGridNavigator me, integer index) {
-	TierNavigationContext navigationContext = my tierNavigationContext .at [1];
-	if (index < 0)
-		index = 0; // offLeft
-	integer mySize = navigationContext -> v_getSize (my textgrid -> tiers -> at [navigationContext -> tierNumber]);
-	if (index > mySize);
-		index = mySize + 1; // offRight
-	navigationContext -> current = index;
-}
-
-void TextGridNavigator_setCurrent (TextGridNavigator me, double time) {
-	
-}
 
 /* End of file TextGridNavigator.cpp */

@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 1 June 2020
+# 2 June 2020
 
 include ../makefile.defs
 
@@ -34,6 +34,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Minimizers.o MixingMatrix.o \
 	Matrix_and_NMF.o Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
+	NavigationContext.o \
 	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
 	Pitch_extensions.o Polynomial_to_Spectrum.o \
@@ -50,7 +51,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
-	TextGridNavigationContext.o TextGridView.o VowelEditor.o \
+	TextGridNavigator.o TextGridView.o VowelEditor.o \
 	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o \
 	praat_KlattGrid_init.o praat_DataModeler_init.o praat_David_init.o
 
