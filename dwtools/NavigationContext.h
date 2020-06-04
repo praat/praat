@@ -26,7 +26,7 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_createEmpty ();
+autoNavigationContext NavigationContext_createDefault ();
 
 void NavigationContext_setNavigationLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
@@ -41,7 +41,7 @@ bool NavigationContext_isLeftContextLabel (NavigationContext me, conststring32 l
 
 bool NavigationContext_isRightContextLabel (NavigationContext me, conststring32 label);
 
-void NavigationContext_setNavigationContextCombination (NavigationContext me, kNavigationContext_combination contextCombination, bool matchContextOnly);
+void NavigationContext_setNavigationContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly);
 
 
 #endif /* _NavigationContext_h_ */

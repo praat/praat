@@ -55,25 +55,25 @@ void structNavigationContext :: v_info () {
 	if (navigationLabels) {
 		MelderInfo_writeLine (U"\tName: ", navigationLabels -> name.get());
 		MelderInfo_writeLine (U"\tNumber of labels: ", navigationLabels -> strings.size);
-		if (leftContextLabels) {
-			MelderInfo_writeLine (U"\tLeft context name: ", leftContextLabels -> name.get());
-			MelderInfo_writeLine (U"\tLeft criterion: ", kMelder_string_getText (leftContextCriterion));
-			MelderInfo_writeLine (U"\tNumber of left context labels: ", leftContextLabels -> strings.size);
-		} else {
-			MelderInfo_writeLine (U"\tNo left context navigation labels defined");
-		}
-		if (rightContextLabels) {
-			MelderInfo_writeLine (U"\tRight context name: ", rightContextLabels -> name.get());
-			MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (rightContextCriterion));
-			MelderInfo_writeLine (U"\tNumber of right context labels: ", rightContextLabels -> strings.size);
-		} else {
-			MelderInfo_writeLine (U"\tNo right context navigation labels defined");
-		}
-		MelderInfo_writeLine (U"\tMatch context: ", kNavigationContext_combination_getText (contextCombination));
-		MelderInfo_writeLine (U"\tMatch context only: ", ( matchContextOnly ? U"yes" : U"no" ));
 	} else {
 		MelderInfo_writeLine (U"\tNo navigation labels defined");
 	}
+	if (leftContextLabels) {
+		MelderInfo_writeLine (U"\tLeft context name: ", leftContextLabels -> name.get());
+		MelderInfo_writeLine (U"\tLeft criterion: ", kMelder_string_getText (leftContextCriterion));
+		MelderInfo_writeLine (U"\tNumber of left context labels: ", leftContextLabels -> strings.size);
+	} else {
+		MelderInfo_writeLine (U"\tNo left context navigation labels defined");
+	}
+	if (rightContextLabels) {
+		MelderInfo_writeLine (U"\tRight context name: ", rightContextLabels -> name.get());
+		MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (rightContextCriterion));
+		MelderInfo_writeLine (U"\tNumber of right context labels: ", rightContextLabels -> strings.size);
+	} else {
+		MelderInfo_writeLine (U"\tNo right context navigation labels defined");
+	}
+	MelderInfo_writeLine (U"\tMatch context: ", kContext_combination_getText (combinationCriterion));
+	MelderInfo_writeLine (U"\tMatch context only: ", ( matchContextOnly ? U"yes" : U"no" ));
 }
 
 void NavigationContext_init (NavigationContext me) {
@@ -82,10 +82,13 @@ void NavigationContext_init (NavigationContext me) {
 	my rightContextLabels = Thing_new (Strings);
 }
 
-autoNavigationContext NavigationContext_createEmpty () {
+autoNavigationContext NavigationContext_createNonEmptyItemNavigation () {
 	try {
 		autoNavigationContext me = Thing_new (NavigationContext);
 		NavigationContext_init (me.get());
+		Strings_insert (my navigationLabels.get(), 0, U"");
+		my navigationCriterion = kMelder_string::NOT_EQUAL_TO;
+		my combinationCriterion = kContext_combination::NO_LEFT_AND_NO_RIGHT;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridNavigationContext not created.");
@@ -99,13 +102,13 @@ void NavigationContext_setNavigationLabels (NavigationContext me, Strings labels
 		my navigationCriterion = criterion;
 		if (my leftContextLabels) {
 			if (my rightContextLabels)
-				my contextCombination = kNavigationContext_combination::LEFT_AND_RIGHT;
+				my combinationCriterion = kContext_combination::LEFT_AND_RIGHT;
 			else
-				my contextCombination = kNavigationContext_combination::LEFT;
+				my combinationCriterion = kContext_combination::LEFT;
 		} else if (my rightContextLabels) {
-			my contextCombination = kNavigationContext_combination::RIGHT;
+			my combinationCriterion = kContext_combination::RIGHT;
 		} else {
-			my contextCombination = kNavigationContext_combination::NO_LEFT_AND_NO_RIGHT;
+			my combinationCriterion = kContext_combination::NO_LEFT_AND_NO_RIGHT;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set navigation labels from ", labels, U".");
@@ -117,11 +120,11 @@ void NavigationContext_setLeftContextLabels (NavigationContext me, Strings label
 		my leftContextLabels = Data_copy (labels);
 		Thing_setName (my leftContextLabels.get(), labels -> name.get());
 		my leftContextCriterion = criterion;
-		my contextCombination = kNavigationContext_combination::LEFT;
+		my combinationCriterion = kContext_combination::LEFT;
 		if (! my navigationLabels)
 			my matchContextOnly = true;
 		if (my rightContextLabels)
-			my contextCombination = kNavigationContext_combination::LEFT_AND_RIGHT;
+			my combinationCriterion = kContext_combination::LEFT_AND_RIGHT;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set left context labels from ", labels, U".");
 	}
@@ -132,35 +135,35 @@ void NavigationContext_setRightContextLabels (NavigationContext me, Strings labe
 		my rightContextLabels = Data_copy (labels);
 		Thing_setName (my rightContextLabels.get(), labels -> name.get());
 		my rightContextCriterion = criterion;
-		my contextCombination = kNavigationContext_combination::LEFT;
+		my combinationCriterion = kContext_combination::LEFT;
 		if (! my navigationLabels)
 			my matchContextOnly = true;
 		if (my leftContextLabels)
-			my contextCombination = kNavigationContext_combination::LEFT_AND_RIGHT;
+			my combinationCriterion = kContext_combination::LEFT_AND_RIGHT;
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set right context labels from ", labels, U".");
 	}
 }
 
-void NavigationContext_setNavigationContext (NavigationContext me, kNavigationContext_combination contextCombination, bool matchContextOnly) {
+void NavigationContext_setNavigationContext (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly) {
 	bool hasLeftContext = ( my leftContextLabels && my leftContextLabels -> strings.size > 0 );
 	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
-	if (contextCombination == kNavigationContext_combination::LEFT)
+	if (combinationCriterion == kContext_combination::LEFT)
 		Melder_require (hasLeftContext,
 			U"For this option you should have left context labels installed.");
-	if (contextCombination == kNavigationContext_combination::RIGHT)
+	if (combinationCriterion == kContext_combination::RIGHT)
 		Melder_require (hasRightContext,
 			U"For this option you should have right context labels installed.");
-	if (contextCombination == kNavigationContext_combination::LEFT_AND_RIGHT || contextCombination == kNavigationContext_combination::LEFT_OR_RIGHT_NOT_BOTH || 
-		contextCombination == kNavigationContext_combination::LEFT_OR_RIGHT_OR_BOTH)
+	if (combinationCriterion == kContext_combination::LEFT_AND_RIGHT || combinationCriterion == kContext_combination::LEFT_OR_RIGHT_NOT_BOTH || 
+		combinationCriterion == kContext_combination::LEFT_OR_RIGHT_OR_BOTH)
 		Melder_require (hasLeftContext && hasRightContext,
 			U"For this option you should have left and right context labels installed.");
 	if (matchContextOnly)
 		Melder_require (hasLeftContext || hasRightContext,
 			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
 	my matchContextOnly = matchContextOnly;
-	my contextCombination = contextCombination;
+	my combinationCriterion = combinationCriterion;
 }
 
 inline bool NavigationContext_isNavigationLabel (NavigationContext me, conststring32 label) {

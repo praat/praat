@@ -16,13 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kNavigationContext_combination, 1)
-	enums_add (kNavigationContext_combination, 1, LEFT, U"left")
-	enums_add (kNavigationContext_combination, 2, RIGHT, U"right")
-	enums_add (kNavigationContext_combination, 3, LEFT_AND_RIGHT, U"left and right")
-	enums_add (kNavigationContext_combination, 4, LEFT_OR_RIGHT_NOT_BOTH, U"left or right, not both")
-	enums_add (kNavigationContext_combination, 5, LEFT_OR_RIGHT_OR_BOTH, U"left or right or both")
-	enums_add (kNavigationContext_combination, 6, NO_LEFT_AND_NO_RIGHT, U"no left and no right")
-enums_end (kNavigationContext_combination, 6, NO_LEFT_AND_NO_RIGHT)
+enums_begin (kContext_combination, 1)
+	enums_add (kContext_combination, 1, LEFT, U"left")
+	enums_add (kContext_combination, 2, RIGHT, U"right")
+	enums_add (kContext_combination, 3, LEFT_AND_RIGHT, U"left and right")
+	enums_add (kContext_combination, 4, LEFT_OR_RIGHT_NOT_BOTH, U"left or right, not both")
+	enums_add (kContext_combination, 5, LEFT_OR_RIGHT_OR_BOTH, U"left or right or both")
+	enums_add (kContext_combination, 6, NO_LEFT_AND_NO_RIGHT, U"no left and no right")
+enums_end (kContext_combination, 6, NO_LEFT_AND_NO_RIGHT)
 
 /* End of file NavigationContext_enums.h */

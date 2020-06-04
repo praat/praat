@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define oo_STRUCT NavigationContext
+#define ooSTRUCT NavigationContext
 oo_DEFINE_CLASS (NavigationContext, Daata)
 
 	oo_OBJECT (Strings, 0, navigationLabels) // because oo_STRING_Vector needs size
@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (NavigationContext, Daata)
 	oo_OBJECT (Strings, 0, rightContextLabels)
 	oo_ENUM (kMelder_string, rightContextCriterion)	
 	
-	oo_ENUM (kNavigationContext_combination, contextCombination)
+	oo_ENUM (kContext_combination, combinationCriterion)
 	bool matchContextOnly;
 	
 	#if oo_DECLARING
