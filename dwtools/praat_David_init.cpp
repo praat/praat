@@ -104,6 +104,7 @@
 #include "LegendreSeries.h"
 #include "Ltas_extensions.h"
 #include "Minimizers.h"
+#include "NavigationContext.h"
 #include "PatternList.h"
 #include "PCA.h"
 #include "PitchTierEditor.h"
@@ -122,6 +123,7 @@
 #include "Table_extensions.h"
 #include "TableOfReal_and_Permutation.h"
 #include "TextGrid_extensions.h"
+#include "TextGridNavigator.h"
 
 #include "Categories_and_Strings.h"
 #include "CCA_and_Correlation.h"
@@ -4258,6 +4260,53 @@ DIRECT (HELP_MSpline_help) {
 	HELP (U"MSpline")
 }
 
+
+FORM (MODIFY_NavigationContext_modifyContextCombination, U"NavigationContext: Modify context combination", nullptr) {
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::DEFAULT)
+	BOOLEAN (contextOnly, U"Use context only", false)
+	OK
+DO
+	MODIFY_EACH (NavigationContext)
+		NavigationContext_modifyContextCombination (me, combinationCriterion, contextOnly);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_NavigationContext_modifyNavigationLabels, U"NavigationContext: Modify navigation labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
+		NavigationContext_modifyNavigationLabels (me, you, navigationCriterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_NavigationContext_modifyLeftContextLabels, U"NavigationContext: Modify left context labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
+		NavigationContext_modifyLeftContextLabels (me, you, leftContextCriterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_NavigationContext_modifyRightContextLabels, U"NavigationContext: modify right context labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"Right context criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
+		NavigationContext_modifyRightContextLabels (me, you, rightContextCriterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (NEW_TextGrid_and_NavigationContext_to_TextGridNavigator, U"TextGrid & NavigationContext: To TextGridNavigator", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	OK
+DO
+	CONVERT_TWO (TextGrid, NavigationContext)
+		autoTextGridNavigator result = TextGridNavigator_create (me, you, tierNumber);
+	CONVERT_TWO_END (U"tgn", tierNumber)
+}
+
 DIRECT (HELP_NMF_help) {
 	HELP (U"NMF")
 }
@@ -6484,6 +6533,26 @@ DO
 	CREATE_ONE_END (U"chars")
 }
 
+FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
+	WORD (name, U"Name: ", U"plosive_vowel_nasal")
+	WORD (navigationName, U"Name of navigation labels", U"vowels")
+	TEXTFIELD (navigation_string, U"Navigation labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"navigation criterion", kMelder_string::DEFAULT)
+	WORD (leftContextName, U"Name of left context labels", U"plosives")
+	TEXTFIELD (leftContext_string, U"Left context labels", U"p b t d k g")
+	OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context criterion", kMelder_string::DEFAULT)
+	WORD (rightContextName, U"Name of right context labels", U"nasals")
+	TEXTFIELD (rightContext_string, U"Right context labels", U"m n")
+	OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"right context criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::LEFT_AND_RIGHT)
+	BOOLEAN (contextOnly, U"Use context only", false)
+	OK
+DO
+	CREATE_ONE
+		autoNavigationContext result = NavigationContext_create (name, navigationName, navigation_string, navigationCriterion, leftContextName, leftContext_string, leftContextCriterion, rightContextName, rightContext_string, rightContextCriterion, combinationCriterion, contextOnly);
+	CREATE_ONE_END (name)
+}
+
 FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
 	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
 	OK
@@ -6552,6 +6621,15 @@ FORM (NEW_Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Perm
 DO
 	CONVERT_EACH (Strings)
 		autoPermutation result = Strings_to_Permutation (me, sort);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_Strings_to_NavigationContext, U"Strings: To NavigationContext", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	CONVERT_EACH (Strings)
+		autoNavigationContext result = Strings_to_NavigationContext (me, navigationCriterion);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -7960,9 +8038,10 @@ void praat_uvafon_David_init () {
 		classFormantFilter,
 		classIndex, classIntervalTierNavigator, classKlattTable, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
-		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
+		classMelFilter, classMelSpectrogram, classMSpline, classNavigationContext,
+		classPatternList, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
-		classSVD, nullptr);
+		classSVD, classTextGridNavigator, nullptr);
 	Thing_recognizeClassByOtherName (classExcitationList, U"Excitations");
 	Thing_recognizeClassByOtherName (classActivationList, U"Activation");
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
@@ -8010,6 +8089,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattTable_createExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings as directory list...", 1, NEW1_Strings_createAsTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
+	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContext);
+	
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
@@ -8504,6 +8585,11 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, HELP_MSpline_help);
 	praat_Spline_init (classMSpline);
+	
+	praat_addAction1 (classNavigationContext, 0, U"Modify context combination...", nullptr, 0, MODIFY_NavigationContext_modifyContextCombination);
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify navigation labels...", nullptr, 0, MODIFY_NavigationContext_modifyNavigationLabels);
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify left context labels...", nullptr, 0, MODIFY_NavigationContext_modifyLeftContextLabels);
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify right context labels...", nullptr, 0, MODIFY_NavigationContext_modifyRightContextLabels);
 
 	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
 	praat_addAction1 (classNMF, 0, U"Paint features...", nullptr, 0, GRAPHICS_NMF_paintFeatures);
@@ -8757,6 +8843,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStrings, 0, U"Change...", U"Replace all...", praat_HIDDEN, NEW_Strings_change);
 	praat_addAction1 (classStrings, 0, U"Extract part...", U"Replace all...", 0, NEW_Strings_extractPart);
 	praat_addAction1 (classStrings, 0, U"To Permutation...", U"To Distributions", 0, NEW_Strings_to_Permutation);
+	praat_addAction1 (classStrings, 0, U"To NavigationContext...", U"To Distributions", 0, NEW_Strings_to_NavigationContext);
 	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, NEW_Strings_to_EditDistanceTable);
 
 	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0, HELP_SVD_help);
