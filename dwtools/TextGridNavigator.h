@@ -40,11 +40,16 @@
 
 Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 	
-	integer v_getSize (IntervalTier me) {
+	void v_info ()
+			override;
+			
+	integer v_getSize (Function anyTier) {
+		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		return my intervals.size;
 	}
 	
-	integer v_getIndexFromTime (IntervalTier me, double time) {
+	integer v_getIndexFromTime (Function anyTier, double time) {
+		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		integer index;
 		if (time < my xmin)
 			index = 0; // offLeft
@@ -55,17 +60,20 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 		return index;
 	}
 	
-	double v_getLeftTime (IntervalTier me, integer index) {
+	double v_getLeftTime (Function anyTier, integer index) {
+		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		TextInterval interval = my intervals . at [index];
 		return interval -> xmin;
 	}
-	
-	double v_getRightTime (IntervalTier me, integer index) {
+		
+	double v_getRightTime (Function anyTier, integer index) {
+		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		TextInterval interval = my intervals . at [index];
 		return interval -> xmax;
 	}
-	
-	conststring32 v_getLabel (IntervalTier me, integer index) {
+		
+	conststring32 v_getLabel (Function anyTier, integer index) {
+		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		TextInterval interval = my intervals . at [index];
 		return interval -> text.get();
 	}
@@ -73,11 +81,16 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 
 Thing_define (TextTierNavigationContext, TierNavigationContext) {
 	
-	integer v_getSize (TextTier me) {
+	void v_info ()
+			override;
+	
+	integer v_getSize (Function anyTier) {
+		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		return my points.size;
 	}
 	
-	integer v_getIndexFromTime (TextTier me, double time) {
+	integer v_getIndexFromTime (Function anyTier, double time) {
+		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		integer index;
 		if (time < my xmin)
 			index = 0; // offLeft
@@ -88,17 +101,20 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 		return index;
 	}
 	
-	double v_getLeftTime (TextTier me, integer index) {
+	double v_getLeftTime (Function anyTier, integer index) {
+		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		TextPoint point = my points . at [index];
 		return point -> number;
 	}
 	
-	double v_getRightTime (TextTier me, integer index) {
+	double v_getRightTime (Function anyTier, integer index) {
+		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		TextPoint point = my points . at [index];
 		return point -> number;;
 	}
 	
-	conststring32 v_getLabel (TextTier me, integer index) {
+	conststring32 v_getLabel (Function anyTier, integer index) {
+		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		TextPoint point = my points . at [index];
 		return point -> mark.get();
 	}

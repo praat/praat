@@ -52,6 +52,36 @@ void structTierNavigationContext :: v_info () {
 	MelderInfo_writeLine (U"Tier number: ", tierNumber);
 }
 
+integer structTierNavigationContext :: v_getSize (Function tier) {
+	return 0;	
+};
+	
+integer structTierNavigationContext :: v_getIndexFromTime (Function anyTier, double time) {
+	return 0;
+}
+	
+double structTierNavigationContext :: v_getLeftTime (Function anyTier, integer index) {
+	return anyTier->xmin;
+}
+		
+double structTierNavigationContext :: v_getRightTime (Function anyTier, integer index) {
+	return anyTier -> xmax;
+}
+		
+conststring32 structTierNavigationContext ::v_getLabel (Function anyTier, integer index) {
+	return U"";
+}
+
+void structIntervalTierNavigationContext :: v_info () {
+	structNavigationContext :: v_info ();
+	MelderInfo_writeLine (U"Tier number: ", tierNumber);
+}
+
+void structTextTierNavigationContext :: v_info () {
+	structNavigationContext :: v_info ();
+	MelderInfo_writeLine (U"Tier number: ", tierNumber);
+}
+
 void TierNavigationContext_init (TierNavigationContext me, NavigationContext thee, integer tierNumber ) {
 	my navigationLabels = Data_copy (thy  navigationLabels.get());
 	my navigationCriterion = thy  navigationCriterion;
