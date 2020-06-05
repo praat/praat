@@ -29,7 +29,7 @@ oo_DEFINE_CLASS (NavigationContext, Daata)
 	oo_ENUM (kMelder_string, rightContextCriterion)	
 	
 	oo_ENUM (kContext_combination, combinationCriterion)
-	bool matchContextOnly;
+	oo_BOOLEAN (matchContextOnly)
 	
 	#if oo_DECLARING
 		void v_info ()

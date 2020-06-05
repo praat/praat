@@ -24,6 +24,27 @@
 #include "NavigationContext_enums.h"
 #include "enums_getValue.h"
 #include "NavigationContext_enums.h"
+#include "Strings_extensions.h"
+
+#include "oo_DESTROY.h"
+#include "NavigationContext_def.h"
+#include "oo_COPY.h"
+#include "NavigationContext_def.h"
+#include "oo_EQUAL.h"
+#include "NavigationContext_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "NavigationContext_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "NavigationContext_def.h"
+#include "oo_READ_TEXT.h"
+#include "NavigationContext_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "NavigationContext_def.h"
+#include "oo_READ_BINARY.h"
+#include "NavigationContext_def.h"
+#include "oo_DESCRIPTION.h"
+#include "NavigationContext_def.h"
+
 
 Thing_implement (NavigationContext, Daata, 0);
 
@@ -95,7 +116,42 @@ autoNavigationContext NavigationContext_createNonEmptyItemNavigation () {
 	}
 }
 
-void NavigationContext_setNavigationLabels (NavigationContext me, Strings labels, kMelder_string criterion) {
+autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string navigationCriterion) {
+	try {
+		autoNavigationContext thee = Thing_new (NavigationContext);
+		NavigationContext_init (thee.get());
+		thy navigationLabels = Data_copy (me);
+		Thing_setName (thy navigationLabels.get(), my name.get());
+		thy navigationCriterion = navigationCriterion;
+		thy combinationCriterion = kContext_combination::NO_LEFT_AND_NO_RIGHT;
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not convert to NavigationContext.");
+	}
+}
+
+autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string navigationCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string leftContextCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string rightContextCriterion, kContext_combination combinationCriterion, bool contextOnly) {
+	try {
+		autoNavigationContext me = Thing_new (NavigationContext);
+		NavigationContext_init (me.get());
+		my navigationLabels = Strings_createAsTokens (navigation_string, U" ");
+		Thing_setName (my navigationLabels.get(), navigationName);
+		my navigationCriterion = navigationCriterion;
+		my leftContextLabels = Strings_createAsTokens (leftContext_string, U" ");
+		Thing_setName (my leftContextLabels.get(), leftContextName);
+		my leftContextCriterion = leftContextCriterion;
+		my rightContextLabels = Strings_createAsTokens (rightContext_string, U" ");
+		Thing_setName (my rightContextLabels.get(), rightContextName);
+		my rightContextCriterion = rightContextCriterion;
+		my combinationCriterion = combinationCriterion;
+		my matchContextOnly = contextOnly;
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"NavigationContext could not be created from vowels string.");
+	}
+}
+
+void NavigationContext_modifyNavigationLabels (NavigationContext me, Strings labels, kMelder_string criterion) {
 	try {
 		my navigationLabels = Data_copy (labels);
 		Thing_setName (my navigationLabels.get(), labels -> name.get());
@@ -115,7 +171,7 @@ void NavigationContext_setNavigationLabels (NavigationContext me, Strings labels
 	}
 }
 
-void NavigationContext_setLeftContextLabels (NavigationContext me, Strings labels, kMelder_string criterion) {
+void NavigationContext_modifyLeftContextLabels (NavigationContext me, Strings labels, kMelder_string criterion) {
 	try {
 		my leftContextLabels = Data_copy (labels);
 		Thing_setName (my leftContextLabels.get(), labels -> name.get());
@@ -130,7 +186,7 @@ void NavigationContext_setLeftContextLabels (NavigationContext me, Strings label
 	}
 }
 
-void NavigationContext_setRightContextLabels (NavigationContext me, Strings labels, kMelder_string criterion) {
+void NavigationContext_modifyRightContextLabels (NavigationContext me, Strings labels, kMelder_string criterion) {
 	try {
 		my rightContextLabels = Data_copy (labels);
 		Thing_setName (my rightContextLabels.get(), labels -> name.get());
@@ -146,7 +202,7 @@ void NavigationContext_setRightContextLabels (NavigationContext me, Strings labe
 	}
 }
 
-void NavigationContext_setNavigationContext (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly) {
+void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly) {
 	bool hasLeftContext = ( my leftContextLabels && my leftContextLabels -> strings.size > 0 );
 	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
 	if (combinationCriterion == kContext_combination::LEFT)
@@ -166,17 +222,16 @@ void NavigationContext_setNavigationContext (NavigationContext me, kContext_comb
 	my combinationCriterion = combinationCriterion;
 }
 
-inline bool NavigationContext_isNavigationLabel (NavigationContext me, conststring32 label) {
+bool NavigationContext_isNavigationLabel (NavigationContext me, conststring32 label) {
 	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my navigationCriterion, label) );
 }
 
-inline bool NavigationContext_isLeftContextLabel (NavigationContext me, conststring32 label) {
+bool NavigationContext_isLeftContextLabel (NavigationContext me, conststring32 label) {
 	return ( my leftContextLabels && STRVEChasMatch (my leftContextLabels -> strings.get(), my leftContextCriterion, label) );
 }
 
-inline bool NavigationContext_isRightContextLabel (NavigationContext me, conststring32 label) {
+bool NavigationContext_isRightContextLabel (NavigationContext me, conststring32 label) {
 	return ( my rightContextLabels && STRVEChasMatch (my rightContextLabels -> strings.get(), my rightContextCriterion, label) );
 }
-
 
 /* End of file NavigationContext.cpp */
