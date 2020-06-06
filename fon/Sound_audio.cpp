@@ -396,18 +396,14 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 				if (err != MMSYSERR_NOERROR)
 					Melder_throw (U"Error ", err, U" while unpreparing header.");
 			#else
-				if (mulaw)
-					read (fd, (char *) & buffer [1], numberOfSamples);
-				else {
-					integer bytesLeft = 2 * numberOfSamples, dbytes, bytesRead = 0;
-					while (bytesLeft) {
-						dbytes = read (fd, (char *) & buffer [2 + bytesRead], std::min (bytesLeft, 4000_integer));
-						if (dbytes <= 0)
-							break;
-						bytesLeft -= dbytes;
-						bytesRead += dbytes;
-					};
-				}
+				integer bytesLeft = 2 * numberOfSamples, dbytes, bytesRead = 0;
+				while (bytesLeft) {
+					dbytes = read (fd, (char *) & buffer [2 + bytesRead], std::min (bytesLeft, 4000_integer));
+					if (dbytes <= 0)
+						break;
+					bytesLeft -= dbytes;
+					bytesRead += dbytes;
+				};
 			#endif
 		}
 
