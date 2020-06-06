@@ -18,6 +18,7 @@
 
 #if defined (macintosh)
 	#include <sys/time.h>
+	#include <CoreAudio/CoreAudio.h>
 #elif defined (_WIN32)
 	#include <windows.h>
 #elif defined (linux)
@@ -995,9 +996,31 @@ void context_state_cb (pa_context *context, void *userdata) {
 }
 #endif
 
+static bool deviceHasChanged = false;
+#if defined (macintosh)
+static int theCoreaudioPropertyListener (unsigned int, unsigned int, const AudioObjectPropertyAddress * _Nonnull, void * _Nullable) {
+	Melder_casual (U"coreaudio_property_listener");
+	deviceHasChanged = true;
+	return 0;
+}
+#endif
+
 void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, integer numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed), void *playClosure)
 {
+	#if defined (macintosh)
+	{// scope
+		static bool inited;
+		if (! inited) {
+			OSStatus err = noErr;
+			AudioObjectPropertyAddress audioDevicesAddress = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+			err = AudioObjectAddPropertyListener ( kAudioObjectSystemObject, & audioDevicesAddress, theCoreaudioPropertyListener, NULL);
+			if (err) Melder_casual (U"error on AudioObjectAddPropertyListener");
+			inited = true;
+		}
+	}
+	#endif
+
 	struct MelderPlay *me = & thePlay;
 	#ifdef _WIN32
 		bool wasPlaying = MelderAudio_isPlaying;
@@ -1042,8 +1065,11 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 	MelderAudio_isPlaying = true;
 	if (my usePortAudio) {
 		PaError err;
-		integer numberOfTries = 0;
-	restart_device:
+		if (deviceHasChanged) {
+			Pa_Terminate ();
+			Pa_Initialize ();
+			deviceHasChanged = false;
+		}
 		if (! MelderAudio_hasBeenInitialized) {
 			err = Pa_Initialize ();
 			if (err)
@@ -1054,6 +1080,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
 		const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
+		//Melder_casual (U"MelderAudio_play16: ", Melder_peek8to32 (deviceInfo -> name));
 		trace (U"the device can handle ", deviceInfo -> maxOutputChannels, U" channels");
 		if (my numberOfChannels > deviceInfo -> maxOutputChannels) {
 			my numberOfChannels = deviceInfo -> maxOutputChannels;
@@ -1091,18 +1118,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 		outputParameters. hostApiSpecificStreamInfo = nullptr;
 		err = Pa_OpenStream (& my stream, nullptr, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 			paDitherOff, thePaStreamCallback, me);
-		if (err) {
-			if (numberOfTries < 1) {
-				/*
-					Restart PortAudio and try again, once.
-				*/
-				numberOfTries += 1;
-				Pa_Terminate ();
-				MelderAudio_hasBeenInitialized = false;
-				goto restart_device;
-			} else
-				Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
-		}
+		if (err)
+			Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		theStartingTime = Melder_clock ();
 		err = Pa_StartStream (my stream);
 		if (err) Melder_throw (U"PortAudio cannot start sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
