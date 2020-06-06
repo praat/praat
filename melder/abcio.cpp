@@ -277,7 +277,8 @@ static int getEnum (MelderReadText me, int (*getValue) (conststring32)) {
 		c = MelderReadText_getChar (me);   // read past first '<'
 		if (c == U'\0')
 			Melder_throw (U"Early end of text detected while reading an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
-		if (Melder_isHorizontalOrVerticalSpace (c))
+		constexpr char32 theOnlySpaceAllowedInAnEnum = U' ';
+		if (Melder_isHorizontalOrVerticalSpace (c) && c != theOnlySpaceAllowedInAnEnum)
 			Melder_throw (U"No matching '>' while reading an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'>')
 			break;   // the expected closing bracket; not added to the buffer
