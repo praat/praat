@@ -7771,6 +7771,25 @@ DO
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
+FORM (NEW_TextGrid_NavigationContext_to_TextGridNavigator, U"TextGrid & NavigationContext: To TextGridNavigator", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	OK
+DO
+	CONVERT_TWO (TextGrid, NavigationContext)
+		autoTextGridNavigator result = TextGridNavigator_create (me, you, tierNumber);
+	CONVERT_TWO_END (my name.get())
+}
+
+FORM (MODIFY_TextGridNavigator_addNavigationContext, U"TextGrid & NavigationContext: Add navigation context", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kNavigatableTier_match, matchCriterion, U"Timing relation with navigation match", kNavigatableTier_match::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
+		TextGridNavigator_addNavigationContext (me, you, tierNumber, matchCriterion);
+	MODIFY_FIRST_OF_TWO_END
+}
+
 FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
 	NATURAL (tierNUmber, U"Tier number:", U"1")
 	SENTENCE (name, U"Name", U"");
@@ -8956,6 +8975,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
+	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_NavigationContext_to_TextGridNavigator);
+	
+	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Add navigation context...", nullptr, 0, MODIFY_TextGridNavigator_addNavigationContext);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

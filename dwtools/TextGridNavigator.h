@@ -142,6 +142,8 @@ integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, in
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me);
 
+integer TextGridNavigator_getNumberOfMatchesWithinSameContext (TextGridNavigator me, integer icontext, kContext_combination combinationCriterion, bool matchContextOnly);
+
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer contextNumber);
 integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber);
 
@@ -155,5 +157,8 @@ integer TextGridNavigator_previous (TextGridNavigator me);
 
 integer TextGridNavigator_previousFromTime (TextGridNavigator me, double time);
 
+integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc);
+integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationContext tnc);
+integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContext tnc);
 
 #endif /* _TextGridNavigator_h_ */

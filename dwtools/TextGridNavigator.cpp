@@ -74,23 +74,21 @@ conststring32 structTierNavigationContext ::v_getLabel (Function anyTier, intege
 
 void structIntervalTierNavigationContext :: v_info () {
 	structNavigationContext :: v_info ();
-	MelderInfo_writeLine (U"Tier number: ", tierNumber);
 }
 
 void structTextTierNavigationContext :: v_info () {
 	structNavigationContext :: v_info ();
-	MelderInfo_writeLine (U"Tier number: ", tierNumber);
 }
 
 void TierNavigationContext_init (TierNavigationContext me, NavigationContext thee, integer tierNumber ) {
-	my navigationLabels = Data_copy (thy  navigationLabels.get());
-	my navigationCriterion = thy  navigationCriterion;
-	my leftContextLabels = Data_copy (thy  leftContextLabels.get());
-	my leftContextCriterion = thy  leftContextCriterion;
-	my rightContextLabels = Data_copy (thy  rightContextLabels.get());
-	my rightContextCriterion = thy  rightContextCriterion;
-	my combinationCriterion = thy  combinationCriterion;
-	my matchContextOnly = thy  matchContextOnly;		
+	my navigationLabels = Data_copy (thy navigationLabels.get());
+	my navigationCriterion = thy navigationCriterion;
+	my leftContextLabels = Data_copy (thy leftContextLabels.get());
+	my leftContextCriterion = thy leftContextCriterion;
+	my rightContextLabels = Data_copy (thy rightContextLabels.get());
+	my rightContextCriterion = thy rightContextCriterion;
+	my combinationCriterion = thy combinationCriterion;
+	my matchContextOnly = thy matchContextOnly;		
 	my tierNumber = tierNumber;
 	my rightContextFrom = my rightContextTo = 1;
 	my leftContextFrom = my leftContextTo = 1;
@@ -123,9 +121,29 @@ void TierNavigationContext_setItemOrientation (TierNavigationContext me, kNaviga
 Thing_implement (TextGridNavigator, Function, 0);
 
 void structTextGridNavigator :: v_info () {
+	const integer navigationTierNumber = TextGridNavigator_getTierNumberFromContextNumber (this, 1);
+	integer navigationTierSize;
 	for (integer icontext = 1; icontext <= tierNavigationContext.size; icontext ++) {
-	
+		const integer tierNumber = TextGridNavigator_getTierNumberFromContextNumber (this, icontext);
+		const TierNavigationContext tnc = our tierNavigationContext.at [icontext];
+		const Function anyTier = our textgrid -> tiers -> at [tierNumber];
+		const integer tierSize = tnc -> v_getSize (anyTier);
+		if (icontext == 1)
+			navigationTierSize = tierSize;
+		MelderInfo_writeLine (U"Tier number: ", tierNumber, ( icontext== 1 ? U" (navigation tier)" : U" (sub search tier)" ));
+		tnc -> v_info ();
+		MelderInfo_writeLine (U"\tNumber of matches on tier ", tierNumber, U":");
+		MelderInfo_writeLine (U"\t\tNavigation labels only: ",
+			Tier_getNumberOfNavigationOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
+		MelderInfo_writeLine (U"\t\tLeft context labels only: ",
+			Tier_getNumberOfLeftContextOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
+		MelderInfo_writeLine (U"\t\tRight context labels only: ",
+			Tier_getNumberOfRightContextOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
+		if (icontext > 1)
+			MelderInfo_writeLine (U"\tMatch criterion to tier number ", navigationTierNumber, U": ", kNavigatableTier_match_getText (tnc -> matchCriterion));
 	}
+	
+	MelderInfo_writeLine (U"Number of complete matches: ", TextGridNavigator_getNumberOfMatches (this),  U" (from ", navigationTierSize, U")");
 }
 
 autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber) {
@@ -289,6 +307,42 @@ static bool Tier_isRightContextMatch (Function me, integer index, TierNavigation
 	return false;
 }
 
+integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationContext tnc) {
+	if (tnc -> rightContextLabels -> numberOfStrings == 0)
+		return 0;
+	integer numberOfMatches = 0;
+	for (integer index = 1; index <= tnc -> v_getSize (me); index ++) {
+		conststring32 label = tnc -> v_getLabel (me, index);
+		if (NavigationContext_isRightContextLabel (tnc, label))
+			numberOfMatches ++;
+	}
+	return numberOfMatches;
+}
+
+integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc) {
+	if (tnc -> leftContextLabels -> numberOfStrings == 0)
+		return 0;
+	integer numberOfMatches = 0;
+	for (integer index = 1; index <= tnc -> v_getSize (me); index ++) {
+		conststring32 label = tnc -> v_getLabel (me, index);
+		if (NavigationContext_isLeftContextLabel (tnc, label))
+			numberOfMatches ++;
+	}
+	return numberOfMatches;
+}
+
+integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContext tnc) {
+	if (tnc -> navigationLabels -> numberOfStrings == 0)
+		return 0;
+	integer numberOfMatches = 0;
+	for (integer index = 1; index <= tnc -> v_getSize (me); index ++) {
+		conststring32 label = tnc -> v_getLabel (me, index);
+		if (NavigationContext_isNavigationLabel (tnc, label))
+			numberOfMatches ++;
+	}
+	return numberOfMatches;
+}
+
 bool Tier_isLabelMatch (Function me, integer index, TierNavigationContext tnc) {
 	if (index < 1 && index > tnc -> v_getSize (me))
 		return false;
@@ -325,7 +379,7 @@ integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, in
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me) {
 	TierNavigationContext tnc = my tierNavigationContext . at [1];
-	Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+	const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	integer numberOfMatches = 0;
 	for (integer index = 1; index <= tnc -> v_getSize (anyTier); index ++)
 		if (TextGridNavigator_isLabelMatch (me, index))
