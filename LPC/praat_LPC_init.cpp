@@ -981,8 +981,7 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound multichannel;
-		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep,  maximumNumberOfFormants, windowLength, maximumFormantFrequency, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations, 
-			( sourcesAsMultichannel ? & multichannel : nullptr ));
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations, ( sourcesAsMultichannel ? & multichannel : nullptr ));
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
 	CONVERT_EACH_END (my name.get())
@@ -1004,7 +1003,6 @@ DO
 		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
 	CONVERT_EACH_END (my name.get())	
 }
-
 
 FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", U"Sound & TextGrid: To FormantPath (burg)...") {
 	REAL (timeStep, U"Time step (s)", U"0.005")

@@ -1716,8 +1716,10 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
             return paInvalidDevice;
 
         /* check that input device can support inputChannelCount */
-        if( inputChannelCount > hostApi->deviceInfos[ inputParameters->device ]->maxInputChannels )
+        if( inputChannelCount > hostApi->deviceInfos[ inputParameters->device ]->maxInputChannels ) {
+        	//fprintf (stderr, "inputChannelCount %d; maxInputChannels %d", (int) inputChannelCount, (int) hostApi->deviceInfos[ inputParameters->device ]->maxInputChannels);
             return paInvalidChannelCount;
+		}
 
         /* Host supports interleaved float32 */
         hostInputSampleFormat = paFloat32;

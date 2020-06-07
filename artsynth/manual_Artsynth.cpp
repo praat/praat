@@ -1,6 +1,6 @@
 /* manual_Artsynth.cpp
  *
- * Copyright (C) 1992-2005,2007,2010,2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2010,2011,2014-2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 void manual_Artsynth_init (ManPages me);
 void manual_Artsynth_init (ManPages me) {
 
-MAN_BEGIN (U"Articulatory synthesis", U"ppgb", 201101028)
+MAN_BEGIN (U"Articulatory synthesis", U"ppgb", 20111028)
 INTRO (U"This is a description of the articulatory synthesis package in Praat. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "

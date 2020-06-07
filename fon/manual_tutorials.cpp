@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200520)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200606)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.16# (6 June 2020)")
+LIST_ITEM (U"• ##Record fixed time...#: more reliable choice of input device.")
+LIST_ITEM (U"• Mac: notice plugging and unplugging of headphones.")
 NORMAL (U"##6.1.15# (20 May 2020)")
 LIST_ITEM (U"• Repaired a bug introduced in 6.0.44 that could cause an incorrect (namely, totally constant) ClassificationTable.")
 NORMAL (U"##6.1.14# (2 May 2020)")
