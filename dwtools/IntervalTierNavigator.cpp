@@ -296,7 +296,7 @@ integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (Interva
 	return IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (me, startInterval);
 }
 
-TextInterval IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavigator me, double time) {
+TextInterval 	IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavigator me, double time) {
 	const integer interval = IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (me, time);
 	if (interval == 0)
 		return nullptr;

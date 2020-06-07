@@ -126,6 +126,24 @@ autoTextTierNavigationContext TextTierNavigationContext_create (NavigationContex
 
 autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber);
 
+
+/*
+	Add navigation context for a tier.
+	The matchCriterion determines how a match in this tier relates to a match on the navigation tier.
+	Suppose we have an interval on the navigation tier that matches. Its domain is [tmin, tmax] 
+	(a TextPoint has tmin == tmax). The potential match in the tier we add has domain [tmin2, tmax2].
+	Constraint:					Relation between matched domains:
+	IS_LEFT						tmax2 <= tmin
+	TOUCHES_LEFT				tmax2 == tmin
+	OVERLAPS_LEFT				tmin2 < tmin && tmax2 <= tmax
+	INSIDE						tmin2 >= tmin && tmax2 <= tmax
+	OVERLAPS_RIGHT				tmin2 >= tmin && tmax2 > tmax
+	TOUCHES_RIGHT				tmin2 == tmax
+	IS_RIGHT					tmin2 >= tmax
+	IS_OUTSIDE					tmax2 <= tmin || tmin2 >= tmax  (IS_LEFT || IS_RIGHT)
+	OVERLAPS_LEFT_AND_RIGHT		tmin2 < tmin && tmax2 > tmax
+	TOUCHES_LEFT_AND_RIGHT		tmin2 == tmin && tmax2 == tmax
+*/
 void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_match matchCriterion);
 
 void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack);
@@ -142,8 +160,6 @@ integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, in
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me);
 
-integer TextGridNavigator_getNumberOfMatchesWithinSameContext (TextGridNavigator me, integer icontext, kContext_combination combinationCriterion, bool matchContextOnly);
-
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer contextNumber);
 integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber);
 
@@ -158,7 +174,11 @@ integer TextGridNavigator_previous (TextGridNavigator me);
 integer TextGridNavigator_previousFromTime (TextGridNavigator me, double time);
 
 integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc);
+
 integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationContext tnc);
+
 integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContext tnc);
+
+integer Tier_getNumberOfMatches (Function me, TierNavigationContext tnc);
 
 #endif /* _TextGridNavigator_h_ */
