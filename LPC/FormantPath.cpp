@@ -199,19 +199,17 @@ integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 labe
 }
 
 void FormantPath_reconstructFormant (FormantPath me) {
-	autoFunction thee = Data_copy (my formants -> at [my defaultFormant]);
-	IntervalTier pathTier = reinterpret_cast<IntervalTier> (my path -> tiers -> at [my pathTierNumber]);
-	for (integer interval = 1; interval <= pathTier -> intervals.size; interval ++) {
-		TextInterval textInterval = pathTier -> intervals . at [interval];
-		conststring32 label = textInterval -> text.get();
-		if (! label || ! label [0])
-			continue;
-		const integer formantIndex = FormantPath_getFormantIndexFromLabel (me, label);
-		Melder_require (formantIndex > 0,
-			U"Interval ", interval, U" has invalid data: \"", label, U"\".");
-		Formant_replaceFrames ((Formant) thee.get(), textInterval -> xmin, textInterval -> xmax, (Formant)my formants -> at [formantIndex]);
+	autoFormant target = Data_copy (my formants -> at [my defaultFormant]).static_cast_move<structFormant>();
+	for (integer iframe = 1; iframe <= my formantIndices.size; iframe ++) {
+		integer index = my formantIndices [iframe];
+		if (index != my defaultFormant) {
+			Formant source = reinterpret_cast <Formant> (my formants -> at [my formantIndices [iframe]]);
+			Formant_Frame targetFrame = & target -> frames [iframe];
+			Formant_Frame sourceFrame = & source -> frames [iframe];
+			sourceFrame -> copy (targetFrame);
+		}
 	}
-	my formant = thee.static_cast_move<structFormant>();
+	my formant = target.move();
 }
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
@@ -232,7 +230,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
 		double maximumCeiling = maximumFrequency + numberOfStepsToACeiling * ceilingStep;		
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
-			"Decrease the 'ceiling step' or the 'number of steps' or both.");		
+			"Decrease the 'ceiling step' or the 'number of steps' or both.");
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax);
 		thy sound = Data_copy (me);
 		thy defaultFormant = numberOfStepsToACeiling + 1;
@@ -265,6 +263,10 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
 		}
 		Melder_assert (thy formants -> size == numberOfCeilings); // maintain invariant
 		thy formant = Data_copy (thy formants -> at [thy defaultFormant]).static_cast_move<structFormant> ();
+		thy numberOfFrames = thy formant -> nx;
+		thy formantIndices = newINTVECraw (thy numberOfFrames);
+		for (integer i = 1; i <= thy formantIndices.size; i++)
+			thy formantIndices [i] = thy defaultFormant;  // TODO <<=
 		if (sourcesMultiChannel) {
 			Sound mid = sources [numberOfStepsToACeiling].get();
 			autoSound multiChannel = Sound_create (numberOfCeilings, mid -> xmin, mid -> xmax, mid -> nx, mid -> dx, mid -> x1);

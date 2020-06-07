@@ -70,7 +70,6 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	GuiThing_setSensitive (our navigateNextButton, nextSensitive);
 	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);
 }
-
 void operator<<= (BOOLVECVU const& target, bool value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;

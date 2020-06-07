@@ -22,9 +22,10 @@ oo_DEFINE_CLASS (FormantPath, Function)
 	oo_OBJECT (FunctionList, 0, formants)
 	oo_INTEGER (defaultFormant)
 	oo_OBJECT (TextGrid, 0, path)
-	oo_INTEGER (pathTierNumber)
+	oo_INTEGER (pathTierNumber) // obsolete
 	oo_OBJECT (Sound, 2, sound)
-
+	oo_INTEGER (numberOfFrames)
+	oo_INTVEC (formantIndices, numberOfFrames)
 	
 	#if oo_READING
 		FormantPath_reconstructFormant (this);
