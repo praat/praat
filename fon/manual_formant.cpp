@@ -513,7 +513,7 @@ NORMAL (U"If you want to remove all formant points in F2 between 0.5 and 0.7 sec
 	"you set ##Formant number# to 2, ##From time# to 0.5 s, and ##To time# to 0.7.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Formant (burg)...", U"ppgb", 20190331)
+MAN_BEGIN (U"Sound: To Formant (burg)...", U"ppgb", 20200608)
 INTRO (U"A command that creates a @Formant object from every selected @Sound object. "
 	"It performs a short-term spectral analysis, approximating the spectrum of each "
 	"analysis frame by a number of formants.")
@@ -526,13 +526,13 @@ DEFINITION (U"the time between the centres of consecutive analysis frames. If th
 	"that is equal to 25 percent of the analysis window length (see below).")
 TAG (U"##Maximum number of formants")
 DEFINITION (U"for most analyses of human speech, you will want to extract 5 formants per frame. "
-	"This, in combination with the ##Maximum formant# setting, is the only way "
+	"This, in combination with the ##Formant ceiling# setting, is the only way "
 	"in which this procedure will give you results compatible with how people "
 	"tend to interpret formants for vowels, i.e. in terms of "
 	"vowel height (F1) and vowel place (F2). Otherwise, the ##Maximum number of formants# can be any multiple of 0.5, "
 	"you can choose 4, 4.5, 5, 5.5, 6, and so on (see below).")
-TAG (U"##Maximum formant (Hz)")
-DEFINITION (U"the ceiling of the formant search range, in hertz. It is crucial that you set this to a value suitable for your speaker. "
+TAG (U"##Formant ceiling (Hz)")
+DEFINITION (U"the maximum frequency of the formant search range, in hertz. It is crucial that you set this to a value suitable for your speaker. "
 	"An average adult female speaker has a vocal tract length that requires an average ceiling of 5500 Hz (which is Praat's standard value), "
 	"an average adult male speaker has a vocal tract length that requires an average ceiling of 5000 Hz, "
 	"and a young child may have a vocal tract length that requires an average ceiling of 8000 Hz. "
@@ -563,7 +563,7 @@ DEFINITION (U"the +3 dB point for an inverted low-pass filter with a slope of +6
 	"See the @@source-filter synthesis@ tutorial for a technical explanation, "
 	"and @@Sound: Pre-emphasize (in-place)...@ for the algorithm.")
 ENTRY (U"Algorithm")
-NORMAL (U"The sound will be resampled to a sampling frequency of twice the value of %%Maximum formant%, "
+NORMAL (U"The sound will be resampled to a sampling frequency of twice the value of %%Formant ceiling%, "
 	"with the algorithm described at @@Sound: Resample...@. "
 	"After this, pre-emphasis is applied with the algorithm described at @@Sound: Pre-emphasize (in-place)...@. "
 	"For each analysis window, Praat applies a Gaussian-like window, "
@@ -571,12 +571,12 @@ NORMAL (U"The sound will be resampled to a sampling frequency of twice the value
 	"and @@Press et al. (1992)@. The number of \"poles\" that this algorithm computes is twice the %%Maximum number of formants%; "
 	"that's why you can set the %%Maximum number of formants% to any multiple of 0.5).")
 NORMAL (U"The algorithm will initially find ##Maximum number of formants# formants in the whole range between 0 Hz "
-	"and ##Maximum formant#. The initially found formants can therefore sometimes have very low frequencies (near 0 Hz) "
-	"or very high frequencies (near ##Maximum formant#). Such low or high \"formants\" tend to be artefacts of the LPC algorithm, "
+	"and ##Formant ceiling#. The initially found formants can therefore sometimes have very low frequencies (near 0 Hz) "
+	"or very high frequencies (near ##Formant ceiling#). Such low or high \"formants\" tend to be artefacts of the LPC algorithm, "
 	"i.e., the algorithm tends to use them to match the spectral slope if that slope differs from the 6 dB/octave assumption. "
 	"Therefore, such low or high \"formants\" cannot usually be associated with the vocal tract resonances that you are looking for. "
 	"In order for you to be able to identify the traditional F1 and F2, "
-	"all formants below 50 Hz and all formants above ##Maximum formant# minus 50 Hz, "
+	"all formants below 50 Hz and all formants above ##Formant ceiling# minus 50 Hz, "
 	"are therefore removed. If you don't want this removal, you may experiment with @@Sound: To Formant (keep all)...@ instead. "
 	"If you prefer an algorithm that always yields the requested number of formants, nicely distributed "
 	"across the frequency domain, you may try the otherwise rather unreliable Split-Levinson procedure @@Sound: To Formant (sl)...@.")
@@ -590,12 +590,12 @@ ENTRY (U"Settings")
 NORMAL (U"The same as with @@Sound: To Formant (burg)...@.")
 ENTRY (U"Algorithm")
 NORMAL (U"The same as with @@Sound: To Formant (burg)...@. In contrast with that command, "
-	"however, all formant values are kept, even those below 50 Hz and those above %%Maximum formant% minus 50 Hz. "
+	"however, all formant values are kept, even those below 50 Hz and those above %%Formant ceiling% minus 50 Hz. "
 	"Although this makes the identification of the traditional F1 and F2 more difficult, "
 	"this might give better results in resynthesis (see @@Sound & Formant: Filter@), but it usually generates funny values instead.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Formant (sl)...", U"ppgb", 20021215)
+MAN_BEGIN (U"Sound: To Formant (sl)...", U"ppgb", 20200608)
 INTRO (U"A command that creates a @Formant object from every selected @Sound object. Not recommended for general use.")
 ENTRY (U"Purpose")
 NORMAL (U"to perform a short-term spectral analysis, approximating the spectrum of each frame by a number of formants.")
@@ -605,7 +605,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The algorithm is based on the implementation of the `Split Levinson' algorithm by @@Willems (1986)@. "
 	"This algorithm will always find the requested number of formants in every frame, even if they do not exist. "
 	"The standard routine (@@Sound: To Formant (burg)...@) yields much more reliable formant values, though it is more sensitive "
-	"to the %%Maximum formant% argument.")
+	"to the %%Formant ceiling% argument.")
 NORMAL (U"Because of the general funny behaviour of the Split-Levinson algorithm, we did not bother to implement an analysis "
 	"of the bandwidths. They are all set arbitrarily to 50 Hz.")
 MAN_END

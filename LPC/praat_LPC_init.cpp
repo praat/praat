@@ -896,7 +896,7 @@ DO
 FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Formant (robust)...") {
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	REAL (formantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	POSITIVE (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
@@ -905,14 +905,14 @@ FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Fo
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
+		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
 	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
@@ -932,7 +932,7 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound multichannel;
-		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
 			( sourcesAsMultichannel ? & multichannel : nullptr ));
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
@@ -942,7 +942,7 @@ DO
 FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	REAL (middleFormantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"The maximum and minimum ceilings are determined as:")
@@ -952,14 +952,14 @@ FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nul
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
 	CONVERT_EACH_END (my name.get())	
 }
 
 FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", U"Sound & TextGrid: To FormantPath (burg)...") {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	REAL (middleFormantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"The maximum and minimum ceilings are determined as:")
@@ -969,7 +969,7 @@ FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To Formant
 	OK
 DO
 	CONVERT_TWO (Sound, TextGrid)
-		autoFormantPath result = Sound_and_TextGrid_to_FormantPath_burg (me, you, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+		autoFormantPath result = Sound_and_TextGrid_to_FormantPath_burg (me, you, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
 	CONVERT_TWO_END (my name.get())
 }
 

@@ -1,6 +1,6 @@
 /* NUMfilter.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014,2015,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2003/07/09 gsl
- * pb 2008/01/19 double
- * pb 2011/03/29 C++
- */
-
 #include "melder.h"
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2) {
-	*a1 = 2 * exp (- NUMpi * bandwidth * dt) * cos (2 * NUMpi * formant * dt);
-	*a2 = exp (- 2 * NUMpi * bandwidth * dt);
+	*a1 = 2.0 * exp (- NUMpi * bandwidth * dt) * cos (2.0 * NUMpi * formant * dt);
+	*a2 = exp (- 2.0 * NUMpi * bandwidth * dt);
 }
 
 void VECfilterSecondOrderSection_a_inplace (VECVU const& x, double a1, double a2) {

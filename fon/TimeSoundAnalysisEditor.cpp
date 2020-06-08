@@ -108,7 +108,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		/* Formant flag: */
 		MelderInfo_writeLine (U"Formant show: ", p_formant_show);
 		/* Formant settings: */
-		MelderInfo_writeLine (U"Formant maximum formant: ", p_formant_maximumFormant, U" Hz");
+		MelderInfo_writeLine (U"Formant ceiling: ", p_formant_ceiling, U" Hz");
 		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * p_formant_numberOfFormants));   // should be a whole number
 		MelderInfo_writeLine (U"Formant window length: ", p_formant_windowLength, U" seconds");
 		MelderInfo_writeLine (U"Formant dynamic range: ", p_formant_dynamicRange, U" dB");
@@ -1045,7 +1045,7 @@ static void menu_cb_showFormants (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 
 static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant settings", U"Intro 5.2. Configuring the formant contours")
-		POSITIVE (maximumFormant, U"Maximum formant (Hz)",  my default_formant_maximumFormant   ())
+		POSITIVE (formantCeiling, U"Formant ceiling (Hz)",  my default_formant_ceiling          ())
 		POSITIVE (numberOfFormants, U"Number of formants",  my default_formant_numberOfFormants ())
 		POSITIVE (windowLength, U"Window length (s)",       my default_formant_windowLength     ())
 		REAL     (dynamicRange, U"Dynamic range (dB)",      my default_formant_dynamicRange     ())
@@ -1053,7 +1053,7 @@ static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FOR
 		MUTABLE_LABEL (note1, U"")
 		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (maximumFormant,    my p_formant_maximumFormant)
+		SET_REAL (formantCeiling,    my p_formant_ceiling)
 		SET_REAL (numberOfFormants,  my p_formant_numberOfFormants)
 		SET_REAL (windowLength,      my p_formant_windowLength)
 		SET_REAL (dynamicRange,      my p_formant_dynamicRange)
@@ -1069,7 +1069,7 @@ static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FOR
 			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		my pref_formant_maximumFormant   () = my p_formant_maximumFormant   = maximumFormant;
+		my pref_formant_ceiling          () = my p_formant_ceiling          = formantCeiling;
 		my pref_formant_numberOfFormants () = my p_formant_numberOfFormants = numberOfFormants;
 		my pref_formant_windowLength     () = my p_formant_windowLength     = windowLength;
 		my pref_formant_dynamicRange     () = my p_formant_dynamicRange     = dynamicRange;
@@ -1659,7 +1659,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 				0.0;   // the default: determined by analysis window length
 			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
-				Melder_iround (my p_formant_numberOfFormants * 2.0), my p_formant_maximumFormant,
+				Melder_iround (my p_formant_numberOfFormants * 2.0), my p_formant_ceiling,
 				my p_formant_windowLength, (int) my p_formant_method, my p_formant_preemphasisFrom, 50.0);
 			my d_formant -> xmin = my startWindow;
 			my d_formant -> xmax = my endWindow;
