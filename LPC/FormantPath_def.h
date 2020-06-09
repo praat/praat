@@ -17,25 +17,25 @@
  */
 
 #define ooSTRUCT FormantPath
-oo_DEFINE_CLASS (FormantPath, Function)
+oo_DEFINE_CLASS (FormantPath, Sampled)
 
-	oo_OBJECT (FunctionList, 0, formants)
-	oo_INTEGER (defaultFormant)
-	oo_OBJECT (TextGrid, 0, path)
-	oo_INTEGER (pathTierNumber) // obsolete
-	oo_OBJECT (Sound, 2, sound)
-	oo_INTEGER (numberOfFrames)
-	oo_INTVEC (formantIndices, numberOfFrames)
+	oo_COLLECTION_OF (OrderedOf, formants, Formant, 0)
+	oo_VEC (ceilings, formants. size)
+	oo_INTVEC (path, nx)
 	
-	#if oo_READING
-		FormantPath_reconstructFormant (this);
-	#endif
 	#if oo_DECLARING
-		oo_OBJECT (Formant, 2, formant)
-		oo_OBJECT (IntervalTierNavigator, 0, intervalTierNavigator)
-		oo_INTEGER (navigationTierNumber);
 		void v_info ()
 			override;
+		int v_domainQuantity ()
+			override { return MelderQuantity_TIME_SECONDS; }
+		conststring32 v_getUnitText (integer level, int unit, uint32 flags)
+			override;
+		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
+			override;
+		conststring32 v_getIndexText () const
+			override { return U"frame number"; }
+		conststring32 v_getNxText () const
+			override { return U"the number of frames"; }
 	#endif
 
 oo_END_CLASS (FormantPath)

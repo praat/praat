@@ -86,68 +86,11 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
 	FIND_ONE_WITH_IOBJECT (FormantPath)
-		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me);
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	END
-}
-
-FORM (INTEGER_FormantPath_getNextIntervalMatchFromTime, U"FormantPath: Get next interval match from time", nullptr) {
-	REAL (time, U"time (s)", U"0.0")
-	OK
-DO
-	NUMBER_ONE (FormantPath)
-		FormantPath_checkNavigationPossible (me);
-		integer result = IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (my intervalTierNavigator.get(), time);
-	NUMBER_ONE_END (U" (interval number)")
-}
-
-FORM (INTEGER_FormantPath_getNextIntervalMatchFromInterval, U"FormantPath: Get next interval match from interval", nullptr) {
-	INTEGER (intervalNumber, U"Interval number", U"0 (=start)")
-	OK
-DO
-	NUMBER_ONE (FormantPath)
-		FormantPath_checkNavigationPossible (me);
-		integer result = IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (my intervalTierNavigator.get(), intervalNumber);
-	NUMBER_ONE_END (U" (interval number)")
-}
-
-FORM (INTEGER_FormantPath_getPreviousIntervalMatchFromTime, U"FormantPath: Get previous interval match from time", nullptr) {
-	REAL (time, U"time (s)", U"0.0")
-	OK
-DO
-	NUMBER_ONE (FormantPath)
-		FormantPath_checkNavigationPossible (me);
-		integer result = IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (my intervalTierNavigator.get(), time);
-	NUMBER_ONE_END (U" (interval number)")
-}
-FORM (INTEGER_FormantPath_getPreviousIntervalMatchFromInterval, U"FormantPath: Get previous interval match from interval", nullptr) {
-	INTEGER (intervalNumber, U"Interval number", U"0 (=start)")
-	OK
-DO
-	NUMBER_ONE (FormantPath)
-		FormantPath_checkNavigationPossible (me);
-		integer result = IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (my intervalTierNavigator.get(), intervalNumber);
-	NUMBER_ONE_END (U" (interval number)")
-}
-
-FORM (MODIFY_FormantPath_setNavigationContext, U"FormantPath: Set navigation context", nullptr) {
-	LABEL (U"For the left context match:")
-	NATURAL (lookBackFrom, U"left Look-back interval range", U"1")
-	NATURAL (lookBackTo, U"right Look-back interval range", U"1")
-	LABEL (U"For the right context match:")
-	NATURAL (lookForwardFrom, U"left Look-forward interval range", U"1")
-	NATURAL (lookForwardTo, U"right Look-forward interval range", U"1")
-	LABEL (U"How do want to combine the left and right contexts?")
-	OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
-	LABEL (U"Do you want to exclude the match at the centre?")
-	BOOLEAN (matchContextOnly, U"Match context only", false)
-	OK
-DO
-	MODIFY_EACH (FormantPath)
-		FormantPath_setNavigationContext (me, lookBackFrom, lookBackTo, lookForwardFrom, lookForwardTo, contextCombination, matchContextOnly);
-	MODIFY_EACH_END
 }
 
 DIRECT (NEW_FormantPath_extractFormant) {
@@ -156,38 +99,15 @@ DIRECT (NEW_FormantPath_extractFormant) {
 	CONVERT_EACH_END (my name.get())
 }
 
-DIRECT (NEW_FormantPath_extractTextGrid) {
-	CONVERT_EACH (FormantPath)
-		autoTextGrid result = FormantPath_extractTextGrid (me);
-	CONVERT_EACH_END (my name.get())
-}
-
-FORM (MODIFY_FormantPath_setNavigationLabels, U"FormantPath: Set navigation labels", nullptr) {
-	NATURAL (intervalTierNumber, U"Interval tier number", U"1")
-	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
-		FormantPath_setNavigationLabels (me, you, intervalTierNumber, criterion);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-FORM (MODIFY_FormantPath_setLeftContextNavigationLabels, U"FormantPath: Set left context navigation labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (FormantPath, Strings)
-		FormantPath_setLeftContextNavigationLabels (me, you, criterion);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-FORM (MODIFY_FormantPath_setRightContextNavigationLabels, U"FormantPath: Set right context navigation labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
-		FormantPath_setRightContextNavigationLabels (me, you, criterion);
-	MODIFY_FIRST_OF_TWO_END
+DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	FIND_THREE_WITH_IOBJECT (FormantPath, Sound, TextGrid)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, him);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
 }
 
 /********************** Cepstrum  ****************************************/
@@ -961,7 +881,7 @@ DO
 FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	REAL (formantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
@@ -981,7 +901,7 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound multichannel;
-		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations, ( sourcesAsMultichannel ? & multichannel : nullptr ));
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations, ( sourcesAsMultichannel ? & multichannel : nullptr ));
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
 	CONVERT_EACH_END (my name.get())
@@ -990,35 +910,18 @@ DO
 FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
+	REAL (formantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
-	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction)^numberOfSteps.")
+	POSITIVE (ceilingStepFraction, U"Ceiling step size fraction", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrequency, ceilingStepFraction, numberOfStepsToACeiling);
 	CONVERT_EACH_END (my name.get())	
-}
-
-FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", U"Sound & TextGrid: To FormantPath (burg)...") {
-	REAL (timeStep, U"Time step (s)", U"0.005")
-	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (maximumFormantFrequency, U"Maximum formant (Hz)", U"5500.0 (= adult female)")
-	POSITIVE (windowLength, U"Window length (s)", U"0.025")
-	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
-	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
-	NATURAL (numberOfStepsToACeiling, U"Number of steps to up / down", U"4")
-	OK
-DO
-	CONVERT_TWO (Sound, TextGrid)
-		autoFormantPath result = Sound_and_TextGrid_to_FormantPath_burg (me, you, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
-	CONVERT_TWO_END (my name.get())
 }
 
 #define Sound_to_LPC_addWarning \
@@ -1306,18 +1209,7 @@ void praat_uvafon_LPC_init () {
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classFormantPath, 0, U"Get next interval match from time...", nullptr, 1, INTEGER_FormantPath_getNextIntervalMatchFromTime);
-	praat_addAction1 (classFormantPath, 0, U"Get next interval match from interval...", nullptr, 1, INTEGER_FormantPath_getNextIntervalMatchFromInterval);
-	praat_addAction1 (classFormantPath, 0, U"Get previous interval match from time...", nullptr, 1, INTEGER_FormantPath_getPreviousIntervalMatchFromTime);
-	praat_addAction1 (classFormantPath, 0, U"Get previous interval match from interval...", nullptr, 1, INTEGER_FormantPath_getPreviousIntervalMatchFromInterval);
-	praat_addAction1 (classFormantPath, 0, U"Set navigation context...", 0, 0, MODIFY_FormantPath_setNavigationContext);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
-	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
-	
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set navigation labels...", 0, 0, MODIFY_FormantPath_setNavigationLabels);
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set left context navigation labels...", 0, 0, MODIFY_FormantPath_setLeftContextNavigationLabels);
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set right context navigation labels...", 0, 0, MODIFY_FormantPath_setRightContextNavigationLabels);
-	
 
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);
@@ -1383,7 +1275,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 2, NEW_Sound_to_LPC_burg);
 	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 2, NEW_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"To FormantPath (burg)...", 0, 0, NEW_Sound_and_TextGrid_to_FormantPath_burg);
+	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, GRAPHICS_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0, REAL_VocalTract_getLength);

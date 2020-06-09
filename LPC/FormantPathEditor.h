@@ -48,9 +48,10 @@
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	autoFormantModelerList formantModelerList;
+	autoTextGrid textgrid;
 	autoTextGridView pathGridView;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, pathTierNumber, selectedModeler;
+	integer selectedTier, pathTierNumber, selectedCandidate;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;
@@ -122,7 +123,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	#include "FormantPathEditor_prefs.h"
 };
 
-autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath);
+autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound sound, TextGrid textgrid);
 
 /* End of file FormantPathEditor.h */
 #endif

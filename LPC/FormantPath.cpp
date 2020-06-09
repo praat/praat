@@ -44,203 +44,75 @@
 
 void structFormantPath :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of Formant objects: ", formants -> size);
-	MelderInfo_writeLine (U"  Identifiers:");
-	for (integer iformant = 1; iformant <= formants -> size; iformant ++)
-		MelderInfo_writeLine (U"  ", iformant, U": ", formants->at [iformant]->name.get(),
-			( iformant == defaultFormant ? U" (default)" : U"" ));
-	if (intervalTierNavigator) {
-		if (navigationTierNumber > 0)
-			MelderInfo_writeLine (U"Navigation on tier number: ", navigationTierNumber);
-		our intervalTierNavigator -> v_info ();
-	}
+	MelderInfo_writeLine (U"Number of Formant objects: ", formants . size);
+	for (integer ic = 1; ic <= ceilings.size; ic ++)
+		MelderInfo_writeLine (U"Ceiling ", ic, U": ", ceilings [ic], U" Hz");
 }
+
+double structFormantPath :: v_getValueAtSample (integer iframe, integer which, int units) {
+	const Formant formant = reinterpret_cast<Formant> (our formants.at [our path [iframe]]);
+	return formant -> v_getValueAtSample (iframe, which, units);
+}
+
+conststring32 structFormantPath :: v_getUnitText (integer level, int unit, uint32 flags) {
+	return U"Frequency (Hz)";
+	
+};
 
 Thing_implement (FormantPath, Function, 0);
 
-autoFormantPath FormantPath_create (double fromTime, double toTime) {
+autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCeilings) {
 	autoFormantPath me = Thing_new (FormantPath);
-	Function_init (me.get(), fromTime, toTime);
-	my formants = FunctionList_create ();
-	my path = TextGrid_create (fromTime, toTime, U"path/formant", U"");
-	my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (my path.get(), 1);
-	my pathTierNumber = 1;
+	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
+	my ceilings = newVECzero (numberOfCeilings);
+	my path = newINTVECzero (nx);
 	return me;
 }
 
-integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee) {
-	autoSTRVEC validLabels (my formants -> size);
-	for (integer ilabel = 1; ilabel <= my formants -> size; ilabel ++)
-		validLabels [ilabel] = Melder_dup (my formants -> at [ilabel] -> name.get());
-	autoINTVEC minimumValidLabelLengths = newINTVECraw (validLabels.size);
-	for (integer ilabel = 1; ilabel <= validLabels.size; ilabel ++)
-		minimumValidLabelLengths [ilabel] = str32len (validLabels [ilabel].get()) + 1; // +1 for the extra ';' at end
-	const integer minimumLabelLength = NUMmin (minimumValidLabelLengths.get());
-	
-	for (integer itier = 1; itier <= thy tiers -> size; itier ++) {
-		const Function anyTier = thy tiers -> at [itier];
-		if (anyTier -> classInfo != classIntervalTier)
-			continue;
-		const IntervalTier maybePathTier = reinterpret_cast<IntervalTier> (anyTier);
-		if (Melder_stringMatchesCriterion (maybePathTier -> name.get(), kMelder_string::DOES_NOT_END_WITH, U"/formant", false))
-			continue;
-		/*
-			We have a potential pathTier, check if all labeled intervals are consistent with our Formant id's.
-		*/
-		bool tierIsPathTier = true;
-		for (integer interval = 1; interval <= maybePathTier -> intervals.size; interval ++) {
-			const TextInterval textInterval = maybePathTier -> intervals.at [interval];
-			conststring32 label = textInterval -> text.get();
-			bool labelMatches = true; // empty interval is ok.
-			if (label && label [0]) {
-				integer validIndex = 0;
-				const integer labelLength = str32len (label);
-				if (labelLength >= minimumLabelLength) {
-					for (integer index = 1; index <= validLabels.size; index ++) {
-						const integer validLabelLength = minimumValidLabelLengths [index];
-						if (labelLength >= validLabelLength && Melder_stringMatchesCriterion
-							(label, kMelder_string::STARTS_WITH, validLabels [index].get(), false) &&
-							label [validLabelLength - 1] == U';') {
-							validIndex = index;
-							break;
-						}
-					}
-				}
-				labelMatches = validIndex != 0;
-			}
-			if (! labelMatches) {
-				tierIsPathTier = false;
-				break;
-			}
-		}
-		if (tierIsPathTier)
-			return itier;
-	}
-	return 0;
-}
-
-integer FormantPath_identifyFormantIndexByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
-	for (integer iformant = 1; iformant <= my formants -> size; iformant ++) {
-		conststring32 name = my formants -> at [iformant]-> name.get();
-		if (Melder_stringMatchesCriterion (name, which, criterion, caseSensitive))
-			return iformant;
-	}
-	return 0;
-}
-
-Formant FormantPath_identifyFormantByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive) {
-	const integer index = FormantPath_identifyFormantIndexByCriterion (me, which, criterion, caseSensitive);
-	return ( index > 0 ? (Formant) my formants -> at [index] : nullptr );
-}
-
-static void Formant_replaceFrames (Formant target, double fromTime, double toTime, Formant source) {
-	integer ifmin, ifmax, ifmin2, ifmax2;
-	const integer numberOfFrames = Sampled_getWindowSamples (target, fromTime, toTime, & ifmin, & ifmax);
-	const integer numberOfFrames2 = Sampled_getWindowSamples (source, fromTime, toTime, & ifmin2, & ifmax2);
-	Melder_require (numberOfFrames == numberOfFrames2 && numberOfFrames > 0,
-		U"The number of frames for the selected intervals should be equal.");
-	for (integer iframe = ifmin ; iframe <= ifmax; iframe ++) {
-		Formant_Frame targetFrame = & target -> frames [iframe];
+autoFormant FormantPath_extractFormant (FormantPath me) {
+	Formant formant = my formants. at [1];
+	autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, formant -> maxnFormants);
+	for (integer iframe = 1; iframe <= my path.size; iframe ++) {
+		Formant source = reinterpret_cast <Formant> (my formants. at [my path [iframe]]);
+		Formant_Frame targetFrame = & thy frames [iframe];
 		Formant_Frame sourceFrame = & source -> frames [iframe];
 		sourceFrame -> copy (targetFrame);
 	}
+	return thee;
 }
 
-void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex) {
-	Melder_assert (formantIndex > 0 && formantIndex <= my formants -> size);
-	Formant_replaceFrames (my formant.get(), fromTime, toTime, (Formant) my formants -> at [formantIndex]);
-
-}
-
-void FormantPath_setNavigationLabels (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion) {
+autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
+	double formantCeiling, double windowLength, double preemphasisFrequency, double ceilingStepFraction, 
+	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
+	integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
 	try {
-		autoIntervalTierNavigator thee = IntervalTierNavigator_createFromTextGrid (my path.get(), navigationTierNumber);
-		IntervalTierNavigator_setNavigationLabels (thee.get(), navigationLabels, criterion);
-		integer numberOfMatches = IntervalTierNavigator_getNumberOfMatches (thee.get());
-		Melder_require (numberOfMatches > 0,
-			U"Not a single navigation label matches with the labels in the selected tier.");
-		my intervalTierNavigator = thee.move();
-		my navigationTierNumber = navigationTierNumber;
-	} catch (MelderError) {
-		Melder_throw (me, U": could not set the  navigation labels.");
-	}
-}
-
-void FormantPath_setLeftContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion) {
-	Melder_require (my intervalTierNavigator && my intervalTierNavigator -> navigationLabels,
-		U"There is no navigation posible. First use the \"Set navigation labels\" to make it happen.");
-	IntervalTierNavigator_setLeftContextNavigationLabels (my intervalTierNavigator.get(), navigationLabels, criterion);
-}
-
-void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion) {
-	Melder_require (my intervalTierNavigator && my intervalTierNavigator -> navigationLabels,
-			U"There is no navigation posible. First use the \"Set navigation labels\" to make it happen.");
-	IntervalTierNavigator_setRightContextNavigationLabels (my intervalTierNavigator.get(), navigationLabels, criterion);
-}
-
-void FormantPath_setNavigationContext (FormantPath me, integer leftMatchFrom, integer leftMatchTo, integer rightMatchFrom, integer rightMatchTo, kContextCombination contextCombination, bool matchContextOnly) {
-	Melder_require (my intervalTierNavigator,
-		U"Navigation is not possible.");
-	IntervalTierNavigator_setNavigationContext (my intervalTierNavigator.get(), leftMatchFrom, leftMatchTo, rightMatchFrom, rightMatchTo,  contextCombination, matchContextOnly);
-}
-
-integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label) {
-	/*
-		Find part before ';'
-	*/
-	autoMelderString formantId;
-	integer formantIndex = 0;
-	MelderString_copy (& formantId, label);
-	char32 *found = str32chr (formantId.string, U';');
-	if (found)
-		*found = U'\0';
-	formantIndex = FormantPath_identifyFormantIndexByCriterion (me, kMelder_string::EQUAL_TO, formantId.string, true);
-	return formantIndex;
-}
-
-void FormantPath_reconstructFormant (FormantPath me) {
-	autoFormant target = Data_copy (my formants -> at [my defaultFormant]).static_cast_move<structFormant>();
-	for (integer iframe = 1; iframe <= my formantIndices.size; iframe ++) {
-		integer index = my formantIndices [iframe];
-		if (index != my defaultFormant) {
-			Formant source = reinterpret_cast <Formant> (my formants -> at [my formantIndices [iframe]]);
-			Formant_Frame targetFrame = & target -> frames [iframe];
-			Formant_Frame sourceFrame = & source -> frames [iframe];
-			sourceFrame -> copy (targetFrame);
-		}
-	}
-	my formant = target.move();
-}
-
-autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
-	double timeStep, double maximumNumberOfFormants, double maximumFrequency, double windowLength, double preemphasisFrequency,
-	double ceilingStep, integer numberOfStepsToACeiling,
-	double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel)
-{
-	try {
+		Melder_require (ceilingStepFraction > 0.0 && ceilingStepFraction < 1.0,
+			U"The ceiling step fraction should be a number between 0.0 and 1.0");
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
-		double minimumCeiling = maximumFrequency - numberOfStepsToACeiling * ceilingStep;
+		const double minimumCeiling = formantCeiling * pow (1.0 - ceilingStepFraction, numberOfStepsToACeiling);
 		Melder_require (minimumCeiling > 0.0,
 			U"Your minimum ceiling is ", minimumCeiling, U" Hz, but it should be positive.\n"
-			"We computed it as your middle ceiling (", maximumFrequency, U" Hz) minus "
-			"your number of steps (", numberOfStepsToACeiling, U" Hz) times "
-			"your ceiling step (", ceilingStep, U" Hz). Decrease the ceiling step or the number of steps or both."
-		);
-		double maximumCeiling = maximumFrequency + numberOfStepsToACeiling * ceilingStep;		
+			"We computed it as your middle ceiling (", formantCeiling, U" Hz) times (1.0 - ", ceilingStepFraction, 
+			U")^", numberOfStepsToACeiling, U" Hz. Decrease the ceiling step or the number of steps or both.");
+		const double maximumCeiling = formantCeiling * pow (1.0 +  ceilingStepFraction, numberOfStepsToACeiling);		
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");
-		autoFormantPath thee = FormantPath_create (my xmin, my xmax);
-		thy sound = Data_copy (me);
-		thy defaultFormant = numberOfStepsToACeiling + 1;
+		integer fake_nx = 1; double fake_x1 = 0.005, fake_dx = 0.001; // we know them after the analyses
+		autoFormantPath thee = FormantPath_create (my xmin, my xmax, fake_nx, fake_dx, fake_x1, numberOfCeilings);
 		autoSound sources [1 + numberOfCeilings];
 		const double formantSafetyMargin = 50.0;
 		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
 		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
 			autoLPC lpc;
-			const double ceiling = minimumCeiling + (ic -1) * ceilingStep;
-			autoSound resampled = Sound_resample (me, 2.0 * ceiling, 50);
+			double factor = 1.0;
+			if (ic <= numberOfStepsToACeiling)
+				factor = pow (1.0 - ceilingStepFraction, numberOfStepsToACeiling + 1 - ic);
+			else if (ic > numberOfStepsToACeiling + 1)
+				factor = pow (1.0 + ceilingStepFraction, ic - numberOfStepsToACeiling - 1);
+			thy ceilings [ic] = formantCeiling * factor;
+			autoSound resampled = Sound_resample (me, 2.0 * thy ceilings [ic], 50);
 			if (lpcType == kLPC_Analysis::BURG)
 				lpc = Sound_to_LPC_burg (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
 			else if (lpcType == kLPC_Analysis::AUTOCORRELATION)
@@ -254,21 +126,25 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
 				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
-			Thing_setName (formant.get(), Melder_fixed (ceiling, 0));
-			thy formants -> addItem_move (formant.move());
+			thy formants . addItem_move (formant.move());
 			if (sourcesMultiChannel) {
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
-				sources [ic] = Sound_resample (source.get(), 2.0 * maximumFrequency, 50).move();
+				sources [ic] = Sound_resample (source.get(), 2.0 * formantCeiling, 50).move();
 			}
 		}
-		Melder_assert (thy formants -> size == numberOfCeilings); // maintain invariant
-		thy formant = Data_copy (thy formants -> at [thy defaultFormant]).static_cast_move<structFormant> ();
-		thy numberOfFrames = thy formant -> nx;
-		thy formantIndices = newINTVECraw (thy numberOfFrames);
-		for (integer i = 1; i <= thy formantIndices.size; i++)
-			thy formantIndices [i] = thy defaultFormant;  // TODO <<=
+		/*
+			Maintain invariants
+		*/
+		Melder_assert (thy formants . size == numberOfCeilings);
+		Formant formant = thy formants . at [numberOfStepsToACeiling + 1];
+		thy nx = formant -> nx;
+		thy dx = formant -> dx;
+		thy x1 = formant -> x1;
+		thy path = newINTVECraw (thy nx);
+		for (integer i = 1; i <= thy path.size; i++)
+			thy path [i] = numberOfStepsToACeiling + 1;
 		if (sourcesMultiChannel) {
-			Sound mid = sources [numberOfStepsToACeiling].get();
+			Sound mid = sources [numberOfStepsToACeiling + 1].get();
 			autoSound multiChannel = Sound_create (numberOfCeilings, mid -> xmin, mid -> xmax, mid -> nx, mid -> dx, mid -> x1);
 			for (integer ic = 1; ic <= numberOfCeilings; ic ++) {
 				Sound him = sources [ic] . get();
@@ -281,39 +157,6 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType,
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantPath not created.");
 	}
-}
-
-void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee, integer navigationTierNumber) {
-	/*
-		Is there already a log/formant tier in the grid.
-	*/
-	autoTextGrid thycopy = Data_copy (thee);
-	integer pathTierNumber = FormantPath_identifyPathTier (me, thycopy.get());
-	if (pathTierNumber == 0) {
-		TextGrid_addTier_copy (thycopy.get(), my path -> tiers -> at [my pathTierNumber]);
-		pathTierNumber = thycopy -> tiers -> size;
-	}
-	my path = thycopy.move();
-	my pathTierNumber = pathTierNumber;
-	if (navigationTierNumber > 0)
-		my intervalTierNavigator = IntervalTierNavigator_createFromTextGrid (thee, navigationTierNumber);
-}
-
-autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
-	/*
-		The domain of the TextGid can differ a little from the domain of the SOund,
-		e.g. TextGrids derived form Timit label files.
-	*/
-	double margin = 0.004;
-	Melder_require (fabs (my xmin - thy xmin) < margin && fabs (my xmax - thy xmax) < margin,
-		U"The domains of the Sound and the TextGrid should be equal within 0.003 s.");
-	
-	autoFormantPath him = Sound_to_FormantPath_any (me, lpcType, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tol, huber_maximumNumberOfIterations, sourcesMultiChannel);
-	/*
-		Merge the TextGrid into path
-	*/
-	FormantPath_mergeTextGrid (him.get(), thee, 0); // no navigation.
-	return him;
 }
 
 /* End of file FormantPath.cpp */

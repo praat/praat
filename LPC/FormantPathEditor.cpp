@@ -29,6 +29,7 @@
 #include "EditorM.h"
 #include "praat.h"
 #include "melder_kar.h"
+#include "Sampled.h"
 #include "SoundEditor.h"
 #include "Sound_and_MixingMatrix.h"
 #include "Sound_and_Spectrogram.h"
@@ -54,7 +55,7 @@ void structFormantPathEditor :: v_info () {
 }
 
 void structFormantPathEditor :: v_updateMenuItems_navigation () {
-	FormantPath formantPath = (FormantPath) our data;
+	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 	bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator) &&
 		our pathGridView && TextGridView_hasTierInView (our pathGridView.get(), formantPath -> navigationTierNumber) );
@@ -68,7 +69,7 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	}
 	GuiThing_setSensitive (our navigateSettingsButton, navigationPossible);
 	GuiThing_setSensitive (our navigateNextButton, nextSensitive);
-	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);
+	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);*/
 }
 void operator<<= (BOOLVECVU const& target, bool value) {
 	for (integer i = 1; i <= target.size; i ++)
@@ -78,45 +79,6 @@ void operator<<= (BOOLVECVU const& target, bool value) {
 void operator<<= (INTVECVU const& target, integer value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
-}
-
-void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNumber_string) {
-	FormantPath formantPath = (FormantPath) my data;
-	bool pathTierNumberFound = false;
-	autoSTRVEC tokens = newSTRVECtokenize (tierNumber_string);
-	autoINTVEC tierNumbers;
-	const integer pathTierNumber =  formantPath -> pathTierNumber;
-	for (integer itoken = 1; itoken <= tokens.size; itoken ++) {
-		integer value;
-		if (Melder_equ_caseInsensitive (tokens [itoken].get(), U"P")) {
-			value = pathTierNumber;
-			pathTierNumberFound = true;
-		} else
-			value = Melder_atoi (tokens [itoken].get());
-		integer *next = tierNumbers.append ();
-		*next = value;
-	}
-	Melder_require (tierNumbers.size > 0,
-		U"There should at least be one tier number present.");
-	/*
-		The pathTier should always be present
-	*/
-	if (! pathTierNumberFound) {
-		for (integer inum = 1; inum <= tierNumbers.size; inum ++)
-			if (tierNumbers [inum] == pathTierNumber) {
-				pathTierNumberFound = true;
-				break;
-			}
-		Melder_require (pathTierNumberFound,
-			U"The path tier number (", pathTierNumber, U") should be present.");
-	}
-	/*
-		Rest of checks is done in the following routine
-	*/
-	const integer selectedTier = TextGridView_getOriginTierNumber (my pathGridView.get(), my selectedTier);
-	TextGridView_modifyView (my pathGridView.get(), tierNumbers);
-	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
-	my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), pathTierNumber);
 }
 
 void FormantPathEditor_selectAll (FormantPathEditor me) {
@@ -201,6 +163,7 @@ static void do_insertIntervalOnPathTier (FormantPathEditor me, int itier) {
 }
 
 bool FormantPathEditor_setPathTierLabel (FormantPathEditor me) {
+	return true;
 	/*
 		We only modify the interval if the shiftKey has been pressed, otherwise it would be too easy to
 		modify an existing label by an accidental click;
@@ -791,201 +754,6 @@ static void menu_cb_InsertInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	do_insertIntervalOnPathTier (me, my pathTierNumber);
 }
 
-static integer FormantPathEditor_identifyModelFromIntervalLabel (FormantPathEditor me, conststring32 label) {
-	/*
-		Find part before ';'
-	*/
-	autoMelderString formantId;
-	integer formantIndex = 0;
-	MelderString_copy (& formantId, label);
-	char32 *found = str32chr (formantId.string, U';');
-	if (found) {
-		*found = U'\0';
-		formantIndex = FormantPath_identifyFormantIndexByCriterion ((FormantPath) my data, kMelder_string::EQUAL_TO, formantId.string, true);
-	}
-	return formantIndex;
-}
-
-static void menu_cb_ResetTextAndFormants (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	FormantPath formantPath = (FormantPath) (my data);
-	if (my selectedTier != my pathTierNumber)
-		return;
-	if (my startSelection < my endSelection) {
-		IntervalTier pathTier = (IntervalTier) my pathGridView -> tiers->at [my selectedTier];
-		const double midtime = 0.5 * (my startSelection + my endSelection);
-		const integer intervalNumber = IntervalTier_timeToIndex (pathTier, midtime);
-		/*
-			Identify which formant "belong" to this interval
-		*/
-		TextInterval textInterval = pathTier -> intervals .at [intervalNumber];
-		Editor_save (me, U"Reset text and formants");
-		TextInterval_removeText (textInterval);
-		FormantPath_replaceFrames (formantPath, my startSelection, my endSelection, formantPath -> defaultFormant);
-		FormantPathEditor_deselect (me);
-		Editor_broadcastDataChanged (me);
-		FunctionEditor_redraw (me);
-	}
-}
-
-void menu_cb_RemoveInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	if (my startSelection == my endSelection || my selectedTier != my pathTierNumber)
-		return;
-	/*
-		We only remove an interval if the text in the left and right intervals are equal.
-		The new interval will be longer than the selected one. 
-	*/
-	IntervalTier pathTier =  reinterpret_cast<IntervalTier> (my pathGridView -> tiers->at [my pathTierNumber]);
-	if (pathTier -> intervals.size == 1)
-		return;
-	integer iinterval = IntervalTier_timeToIndex (pathTier, my startSelection);
-	TextInterval left  = pathTier -> intervals.at [std::max (iinterval - 1, 1_integer)];
-	TextInterval middle = pathTier -> intervals.at [iinterval];
-	TextInterval right = pathTier -> intervals.at [std::min (iinterval + 1, pathTier -> intervals.size)];
-	Editor_save (me, U"Remove interval");
-	if (iinterval > 1 && iinterval < pathTier -> intervals.size) {
-		Melder_require (Melder_equ (left -> text.get(), right -> text.get()),
-			U"We cannot remove this interval because its left and right interval texts are not equal.");		
-		TextInterval_removeText (middle);
-		IntervalTier_removeLeftBoundary (pathTier, iinterval);
-	} else if (iinterval == 1) {
-		Melder_require (Melder_equ (right -> text.get(), middle -> text.get()) || str32len (right -> text.get()) == 0,
-			U"We cannot remove this interval because the right interval text is not empty or differs from the selected interval text.");
-		iinterval = 2;
-	} else if (iinterval == pathTier -> intervals.size) {
-		Melder_require (Melder_equ (left -> text.get(), middle -> text.get()) || str32len (left -> text.get()) == 0,
-			U"We cannot remove this interval because the left interval text is not empty or differ from the selected interval text.");
-	}
-	middle = pathTier -> intervals.at [iinterval];
-	TextInterval_removeText (middle);
-	IntervalTier_removeLeftBoundary (pathTier, iinterval);
-	/*
-		The interval has been removed.
-		The new interval may be empty or not.
-		Empty implies default analysis.
-	*/
-	iinterval = IntervalTier_timeToIndex (pathTier, my startSelection);
-	middle = pathTier -> intervals.at [iinterval];
-	integer formantModel = 0;
-	FormantPath formantPath = (FormantPath) my data;
-	if (middle -> text && middle -> text [0])
-		formantModel = FormantPathEditor_identifyModelFromIntervalLabel (me, middle -> text.get());
-	if (formantModel == 0)
-		formantModel = formantPath -> defaultFormant;
-	FormantPath_replaceFrames (formantPath, middle -> xmin, middle -> xmax, formantModel);
-	FunctionEditor_marksChanged (me, true);
-	Editor_broadcastDataChanged (me);
-}
-
-void menu_cb_NavigationSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Navigation settings", nullptr)
-		MUTABLE_LABEL (navigationNote, U"")
-		OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation matching criterion", kMelder_string::DEFAULT)
-		MUTABLE_LABEL (leftContextNote, U"")
-		OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context matching criterion", kMelder_string::DEFAULT)
-		INTEGER (lookBackFrom, U"left Look-back interval range", U"1")
-		INTEGER (lookBackTo, U"right Look-back interval range", U"1")
-		MUTABLE_LABEL (rightContextNote, U"")
-		OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"Right context matching criterion", kMelder_string::DEFAULT)
-		INTEGER (lookForwardFrom, U"left Look-forward interval range", U"1")
-		INTEGER (lookForwardTo, U"right Look-forward interval range", U"1")
-		MUTABLE_LABEL (contextmatchNote, U"")
-		OPTIONMENU_ENUM (kContextCombination, combinationCriterion, U"Context combination", kContextCombination::DEFAULT)
-		BOOLEAN (matchContextOnly, U"Match context only", false)
-	EDITOR_OK
-		FormantPath formantPath = (FormantPath) my data;
-		IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
-		autoMelderString note;
-		if (navigator -> navigationLabels)
-			MelderString_append (& note, U"You have \'", navigator -> navigationLabels -> name.get(), U"\' labels installed.");
-		else
-			MelderString_append (& note, U"You have NO labels installed.");
-		SET_STRING (navigationNote, note . string)
-		MelderString_empty (& note);
-		if (navigator -> leftContextLabels)
-			MelderString_append (& note, U"You have \'", navigator -> leftContextLabels -> name.get(), U"\' left context labels installed.");
-		else
-			MelderString_append (& note, U"You have NO left context labels installed.");
-		SET_STRING (leftContextNote, note . string)
-		MelderString_empty (& note);
-		if (navigator -> rightContextLabels)
-			MelderString_append (& note, U"You have \'", navigator -> rightContextLabels -> name.get(), U"\' right context labels installed.");
-		else
-			MelderString_append (& note, U"You have NO right context labels installed.");
-		SET_STRING (rightContextNote, note . string)
-	EDITOR_DO
-		FormantPath formantPath = (FormantPath) my data;
-		IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
-		navigator -> navigationCriterion = navigationCriterion;
-		navigator -> leftContextCriterion = leftContextCriterion;
-		navigator -> rightContextCriterion = rightContextCriterion;
-		FormantPath_setNavigationContext (formantPath, lookBackFrom, lookBackTo, lookForwardFrom, lookForwardTo, combinationCriterion, matchContextOnly);
-		FunctionEditor_marksChanged (me, true);
-		Editor_broadcastDataChanged (me);
-	EDITOR_END
-}
-
-void menu_cb_NextGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	FormantPath formantPath = (FormantPath) my data;
-	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
-	if (! navigator || ! navigator -> navigationLabels)
-		return;
-	TextInterval textInterval = IntervalTierNavigator_getNextMatchingInterval (navigator, my endSelection);
-	Melder_require (textInterval,
-		U"No more matching labels on the right.");
-	my startSelection = textInterval -> xmin;
-	my endSelection = textInterval -> xmax;
-	const double selectionDuration = my endSelection - my startSelection;
-	const double windowDuration = my endWindow - my startWindow;
-	if (my startSelection > my startWindow && my endSelection <= my endWindow) {
-		// ok 
-	} else if (windowDuration > selectionDuration) {
-		my startWindow = my startSelection - 0.5 * (windowDuration - selectionDuration);
-		my startWindow = std::max (my tmin, my startWindow);
-		my endWindow = my startWindow + windowDuration;
-		my endWindow = std::min (my tmax, my endWindow);
-	} else {
-		const double newWindowDuration = 2.5 * selectionDuration;
-		my startWindow = my startSelection - 0.5 * (newWindowDuration - selectionDuration);
-		my startWindow = std::max (my tmin, my startWindow);
-		my endWindow = my startWindow + newWindowDuration;
-		my endWindow = std::min (my tmax, my endWindow);
-	}
-	my selectedTier = formantPath -> navigationTierNumber;
-	FunctionEditor_marksChanged (me, true);
-	Editor_broadcastDataChanged (me);
-}
-
-void menu_cb_PreviousGreenInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	FormantPath formantPath = (FormantPath) my data;
-	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
-	if (! navigator || ! navigator -> navigationLabels)
-		return;
-	TextInterval textInterval = IntervalTierNavigator_getPreviousMatchingInterval (navigator, my startSelection);
-	Melder_require (textInterval,
-		U"No more matching labels on the left.");
-	my startSelection = textInterval -> xmin;
-	my endSelection = textInterval -> xmax;
-	const double selectionDuration = my endSelection - my startSelection;
-	const double windowDuration = my endWindow - my startWindow;
-	if (my startSelection > my startWindow && my endSelection <= my endWindow) {
-		// ok 
-	} else if (windowDuration > selectionDuration) {
-		my startWindow = my startSelection - 0.5 * (windowDuration - selectionDuration);
-		my startWindow = std::max (my tmin, my startWindow);
-		my endWindow = my startWindow + windowDuration;
-		my endWindow = std::min (my tmax, my endWindow);
-	} else {
-		const double newWindowDuration = 2.5 * selectionDuration;
-		my startWindow = my startSelection - 0.5 * (newWindowDuration - selectionDuration);
-		my startWindow = std::max (my tmin, my startWindow);
-		my endWindow = my startWindow + newWindowDuration;
-		my endWindow = std::min (my tmax, my endWindow);
-	}
-	my selectedTier = formantPath -> navigationTierNumber;
-	FunctionEditor_marksChanged (me, true);
-	Editor_broadcastDataChanged (me);
-}
-
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantPathEditor me) {
@@ -1096,38 +864,6 @@ static void menu_cb_RemoveBoundariesBetween (FormantPathEditor me, EDITOR_ARGS_F
 	EDITOR_END
 }
 
-static void menu_cb_ViewAllTiers (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	FormantPath formantPath = (FormantPath) my data;
-	const integer selectedTier = TextGridView_getOriginTierNumber (my pathGridView.get(), my selectedTier);
-	TextGridView_viewAllWithSelectedOnTop (my pathGridView.get(), 0);
-	my pathTierNumber = formantPath -> pathTierNumber;
-	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_ViewAllTiersPathOnTop (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const integer selectedTier = TextGridView_getOriginTierNumber (my pathGridView.get(), my selectedTier);
-	TextGridView_viewAllWithSelectedOnTop (my pathGridView.get(), ((FormantPath) my data) -> pathTierNumber);
-	my pathTierNumber = 1;
-	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
-
-static void menu_cb_ViewTierSelection (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"View tier selection", nullptr)
-	LABEL (U"Use original TextGrid tier numbers.")
-	LABEL (U"You can use an 'P' instead of the path tier number.")
-	SENTENCE (newOrder_string, U"Viewing order", U"P 1")
-	EDITOR_OK
-	EDITOR_DO
-	FormantPathEditor_setTierOrder (me, newOrder_string);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-	EDITOR_END
-}
-
 static void menu_cb_PublishTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid =  my pathGridView.get();
 	checkTierSelection (me, U"publish a tier");
@@ -1138,7 +874,7 @@ static void menu_cb_PublishTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastPublication (me, publish.move());
 }
 
-static void menu_cb_modeler_parameterSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_candidates_parameterSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler parameter settings", nullptr)		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
@@ -1154,19 +890,19 @@ static void menu_cb_modeler_parameterSettings (FormantPathEditor me, EDITOR_ARGS
 	EDITOR_END
 }
 
-static void menu_cb_modeler_showBest3 (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_candidates_showBest3 (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = false;
 	FormantModelerList_showBest3 (my formantModelerList.get());
 	my v_drawSelectionViewer ();
 }
 
-static void menu_cb_ShowAllModels (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_ShowAllCandidates (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = true;
 	FormantPathEditor_selectAll (me);
 	my v_drawSelectionViewer ();
 }
 
-static void menu_cb_AdvancedModelerDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
 		BOOLEAN (drawEstimatedTracks, U"Draw estimated tracks", my default_modeler_draw_estimatedTracks ())
 		REAL (xSpaceFraction, U"Column separation (fraction)", my default_modeler_draw_xSpace_fraction ())
@@ -1198,7 +934,7 @@ static void menu_cb_AdvancedModelerDrawingSettings (FormantPathEditor me, EDITOR
 	EDITOR_END
 }
 
-static void menu_cb_DrawVisibleModels (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible modelers", nullptr)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
@@ -1270,9 +1006,9 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		Editor_openPraatPicture (me);
 		FormantPath formantPath = (FormantPath) my data;
-		const Formant formant = formantPath -> formant.get();
+		//const Formant formant = formantPath -> formant.get();
 		//const Formant defaultFormant = formantPath -> formants.at [formantPath -> defaultFormant];
-		Formant_drawSpeckles (formant, my pictureGraphics, my startWindow, my endWindow,
+		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics, my startWindow, my endWindow,
 			my p_spectrogram_viewTo, my p_formant_dynamicRange,
 			my p_formant_picture_garnish);
 		FunctionEditor_garnish (me);
@@ -1402,13 +1138,11 @@ void structFormantPathEditor :: v_createMenus () {
 	menu = Editor_addMenu (this, U"Interval", 0);
 	EditorMenu_addCommand (menu, U"Boundaries to nearest zero crossings", GuiMenu_COMMAND | '0', menu_cb_BoundariesToNearestZeroCrossing);
 	EditorMenu_addCommand (menu, U"Insert interval", GuiMenu_COMMAND | '1', menu_cb_InsertInterval);
-	EditorMenu_addCommand (menu, U"Reset text and formants", 0, menu_cb_ResetTextAndFormants);
-	EditorMenu_addCommand (menu, U"Remove interval", 0, menu_cb_RemoveInterval);
 	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
 	
-	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigation settings...", 0, menu_cb_NavigationSettings);
-	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
-	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
+//	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigation settings...", 0, menu_cb_NavigationSettings);
+//	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
+//	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
 
 	menu = Editor_addMenu (this, U"Tier", 0);
 	EditorMenu_addCommand (menu, U"Rename path tier...", 0, menu_cb_RenameLogTier);
@@ -1418,21 +1152,18 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
-	EditorMenu_addCommand (menu, U"View all tiers", 0, menu_cb_ViewAllTiers);
-	EditorMenu_addCommand (menu, U"View all tiers (path on top)", 0, menu_cb_ViewAllTiersPathOnTop);
-	EditorMenu_addCommand (menu, U"View tier selection...", 0, menu_cb_ViewTierSelection);
 
 	if (our d_sound.data || our d_longSound.data) {
 		if (our v_hasAnalysis ())
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
-	menu = Editor_addMenu (this, U"Modelers", 0);
-	EditorMenu_addCommand (menu, U"Modeler parameter settings...", 0, menu_cb_modeler_parameterSettings);
-	EditorMenu_addCommand (menu, U"Show best three modelers", 0, menu_cb_modeler_showBest3);
-	EditorMenu_addCommand (menu, U"Show all modelers", 0, menu_cb_ShowAllModels);
-	EditorMenu_addCommand (menu, U"Advanced modeler drawing settings...", 0, menu_cb_AdvancedModelerDrawingSettings);
+	menu = Editor_addMenu (this, U"Candidates", 0);
+	EditorMenu_addCommand (menu, U"Candidates parameter settings...", 0, menu_cb_candidates_parameterSettings);
+	EditorMenu_addCommand (menu, U"Show best three candidates", 0, menu_cb_candidates_showBest3);
+	EditorMenu_addCommand (menu, U"Show all candidates", 0, menu_cb_ShowAllCandidates);
+	EditorMenu_addCommand (menu, U"Advanced candidates drawing settings...", 0, menu_cb_AdvancedCandidatesDrawingSettings);
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
-	EditorMenu_addCommand (menu, U"Draw visible modelers...", 0, menu_cb_DrawVisibleModels);
+	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
 }
 
 void structFormantPathEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -1494,14 +1225,15 @@ static void do_drawIntervalTier (FormantPathEditor me, IntervalTier tier, intege
 		Highlight interval: yellow (selected) or green (matching label).
 	*/
 	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 ), ninterval = tier -> intervals.size;
-	IntervalTierNavigator navigator = ((FormantPath) (my data )) -> intervalTierNavigator.get();
-	integer navigationTierNumber = ((FormantPath) (my data )) -> navigationTierNumber;
+//	IntervalTierNavigator navigator = ((FormantPath) (my data )) -> intervalTierNavigator.get();
+	integer navigationTierNumber = 0;
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = tier -> intervals.at [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = ( itier == TextGridView_getViewTierNumber (my pathGridView.get(), navigationTierNumber) && navigator && IntervalTierNavigator_isLabelMatch (navigator, iinterval) );
+			const bool labelDoesMatch = false;
+			//const bool labelDoesMatch = ( itier == TextGridView_getViewTierNumber (my pathGridView.get(), navigationTierNumber) && navigator && IntervalTierNavigator_isLabelMatch (navigator, iinterval) );
 			if (tmin < my startWindow)
 				tmin = my startWindow;
 			if (tmax > my endWindow)
@@ -1852,12 +1584,8 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 			return;
 	double startTime = startWindow, endTime = endWindow;
 	if (startSelection == endSelection) {
-		
-		const IntervalTier pathTier = reinterpret_cast<IntervalTier> (our pathGridView->tiers->at [our pathTierNumber]);
-		const integer selectedInterval = IntervalTier_timeToIndex (pathTier, our startSelection);
-		const TextInterval textInterval = pathTier -> intervals .at [selectedInterval];
-		startTime = textInterval -> xmin;
-		endTime = textInterval -> xmax;
+		startTime = startWindow;
+		endTime = endWindow;
 
 	} else {
 		startTime = startSelection;
@@ -1868,7 +1596,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 			our formantModelerList = FormantPathEditor_to_FormantModelerList (this, startTime, endTime, our p_modeler_numberOfParametersPerTrack);
 		} catch (MelderError) {
 			Melder_clearError ();
-			Graphics_setColour (our graphics.get(), Melder_WHITE);
+			/*Graphics_setColour (our graphics.get(), Melder_WHITE);
 			Graphics_fillRectangle (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);			
 			Graphics_setColour (our graphics.get(), Melder_BLACK);
 			Graphics_setFontSize (our graphics.get(), 10.0);
@@ -1876,7 +1604,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 				U"(Not enough formant points in selected interval)");
 			Graphics_setColour (our graphics.get(), Melder_BLACK);
 			Graphics_setFontSize (our graphics.get(), 9.0);
-			return;
+			return;*/
 		}
 	}
 	FormantModelerList fml = our formantModelerList.get();
@@ -1887,12 +1615,10 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 		Mark RED if label of interval matches one of the modelers. This should only occur if
 		a sound interval is exactly selected and matches a textgrid interval
 	*/
-	const IntervalTier pathTier = reinterpret_cast<IntervalTier> (our pathGridView -> tiers -> at [our pathTierNumber]);
-	const integer selectedInterval = IntervalTier_timeToIndex (pathTier, our startSelection);
-	const TextInterval textInterval = pathTier -> intervals .at [selectedInterval];
-	const integer imodel = FormantPathEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
-	if (FormantPathEditor_parametersChanged (this, imodel, textInterval -> text.get()))
-		FormantPathEditor_markParameterChange (this);
+	//const IntervalTier pathTier = reinterpret_cast<IntervalTier> (our pathGridView -> tiers -> at [our pathTierNumber]);
+	//const integer selectedInterval = IntervalTier_timeToIndex (pathTier, our startSelection);
+	//const TextInterval textInterval = pathTier -> intervals .at [selectedInterval];
+	const integer imodel = our selectedCandidate;//FormantPathEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
 	if (imodel > 0)
 		FormantPathEditor_selectModeler (this, imodel);
 	FormantModelerList_markBest3 (fml);
@@ -1938,28 +1664,47 @@ static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double t
 		}
 	}
 }
+void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
+	FormantPath formantPath = (FormantPath) my data;
+	integer itmin, itmax;
+	if (! Sampled_getWindowSamples (formantPath, tmin, tmax, & itmin, & itmax))
+		return;
+	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+	Graphics_setColour (g, Melder_PURPLE);
+	const double dx2 = 0.5 * formantPath -> dx;
+	double tmid1 = Sampled_indexToX (formantPath, itmin);
+	double ceiling1 = formantPath -> ceilings [formantPath -> path [itmin]];
+	for (integer iframe = itmin + 1; iframe <= itmax; iframe ++) {
+		double ceiling2 = formantPath -> ceilings [formantPath -> path [iframe]];
+		if (ceiling2 == ceiling1)
+			continue;
+		double tmid2 = Sampled_indexToX (formantPath, iframe);
+		Graphics_line (g, tmid1 - dx2, ceiling1, tmid2 - dx2, ceiling1);
+		tmid1 = tmid2;
+		ceiling1 = ceiling2;
+	}
+	double tmid2 = Sampled_indexToX (formantPath, itmax);
+	Graphics_line (g, tmid1 - dx2, ceiling1, tmid2 + dx2, ceiling1);
+}
 
 void structFormantPathEditor :: v_draw_analysis_formants () {
 	FormantPath formantPath = (FormantPath) our data;
-	const Formant formant = formantPath -> formant.get();
-	const Formant defaultFormant = (Formant) formantPath -> formants-> at [formantPath -> defaultFormant];
+	const Formant formant = d_formant.get();
 	if (our p_formant_show) {
-		Graphics_setColour (our graphics.get(), MelderColour_fromColourNameOrNumberStringOrRGBString (our p_formant_default_colour));
+		Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
-		Formant_drawSpeckles_inside (defaultFormant, our graphics.get(), our startWindow, our endWindow,
+		Formant_drawSpeckles_inside (d_formant.get(), our graphics.get(), our startWindow, our endWindow,
 			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
-		Graphics_setColour (our graphics.get(), MelderColour_fromColourNameOrNumberStringOrRGBString (our p_formant_path_colour));
-		Formant_drawSpeckles_inside (formant, our graphics.get(), our startWindow, our endWindow,
-			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
+		Graphics_setColour (our graphics.get(), Melder_PINK);
+		FormantPathEditor_drawCeilings (this, our graphics.get(), our startWindow, our endWindow,
+			our p_spectrogram_viewFrom, our p_spectrogram_viewTo);
 		if (our startSelection < our endSelection) {
 			FormantModelerListDrawingSpecification drawingSpecification = our formantModelerList -> drawingSpecification.get ();
 			/*
-				We also need to test our selectedModeler because the formants are drawn before the modelers are updated
+				We also need to test our selectedCandidate because the formants are drawn before the modelers are updated
 			*/
-			if (drawingSpecification -> selectedModeler > 0 && our selectedModeler > 0) {
+			if (drawingSpecification -> selectedCandidate > 0 && our selectedCandidate > 0) {
 				Graphics_setColour (our graphics.get(), MelderColour_fromColourNameOrNumberStringOrRGBString (our p_formant_selected_colour));
-				Formant selectedFormant = (Formant) formantPath -> formants -> at [drawingSpecification -> selectedModeler];
-				Formant_drawSpeckles_insideOverlap (selectedFormant, our graphics.get(), our startWindow, our endWindow, our startSelection, our endSelection, our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
 			}
 		}
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
@@ -2150,7 +1895,7 @@ bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKe
 		In answer to a click in the sound part,
 		we keep the same tier selected and move the cursor or drag the "yellow" selection.
 	*/
-	our selectedModeler = 0;
+	our selectedCandidate = 0;
 	const double soundY = _FormantPathEditor_computeSoundY (this);
 	if (yWC > soundY) {   // clicked in sound part?
 		if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 * (soundY + 1.0)) {
@@ -2334,6 +2079,25 @@ bool structFormantPathEditor :: v_clickE (double t, double yWC) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
+static void Formant_replaceFrames (Formant target, integer beginFrame, integer endFrame, Formant source) {
+	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx
+	if (beginFrame == endFrame && beginFrame == 0) {
+		beginFrame = 1;
+		endFrame = target->nx;
+	}
+	Melder_require (beginFrame <= endFrame,
+		U"The start frame should not be after the end frame.");
+	Melder_require (beginFrame > 0, 
+		U"The begin frame should be larger than zero.");
+	Melder_require (endFrame <= target->nx,
+		U"The end frame sould not be larger than ", target->nx);
+	for (integer iframe = beginFrame ; iframe <= endFrame; iframe ++) {
+		Formant_Frame targetFrame = & target -> frames [iframe];
+		Formant_Frame sourceFrame = & source -> frames [iframe];
+		sourceFrame -> copy (targetFrame);
+	}
+}
+
 void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	/*
 		On which of the modelers was the click?
@@ -2350,19 +2114,23 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
 	if (index > 0 && index <= numberOfVisible) {
-		our selectedModeler = FormantPathEditor_selectModelerFromIndexInMatrixGrid (this, index);
+		our selectedCandidate = FormantPathEditor_selectModelerFromIndexInMatrixGrid (this, index);
 		/*
 			Toggle selection
 		*/
-		fml -> drawingSpecification -> selectedModeler = ( (fml -> drawingSpecification -> selectedModeler > 0 && fml -> drawingSpecification -> selectedModeler == our selectedModeler) ? 0 : our selectedModeler );
+		fml -> drawingSpecification -> selectedCandidate = ( (fml -> drawingSpecification -> selectedCandidate > 0 && fml -> drawingSpecification -> selectedCandidate == our selectedCandidate) ? 0 : our selectedCandidate );
 		if (our shiftKeyPressed) {
-			fml -> drawingSpecification -> pathModeler = our selectedModeler;
-			fml -> drawingSpecification -> selectedModeler = 0; // path has priority
+			fml -> drawingSpecification -> pathModeler = our selectedCandidate;
+			fml -> drawingSpecification -> selectedCandidate = 0; // path has priority
 			Editor_save (this, U"insert interval by selection viewer");
 			FormantPath formantPath = (FormantPath) our data;
-			if (FormantPathEditor_setPathTierLabel (this))
-				FormantPath_replaceFrames (formantPath, fml -> xmin, fml -> xmax, our selectedModeler);
-			FormantPathEditor_unmarkParameterChange (this);
+			integer itmin, itmax;
+			Sampled_getWindowSamples (formantPath, fml -> xmin, fml -> xmax, & itmin, & itmax);
+			for (integer iframe = itmin; iframe <= itmax; iframe ++)
+				formantPath -> path [iframe] = our selectedCandidate;
+			Formant source = reinterpret_cast<Formant> (formantPath -> formants.at[our selectedCandidate]);
+			Formant_replaceFrames (d_formant.get(), itmin, itmax, source);
+
 		}
 	}
 }
@@ -2481,13 +2249,14 @@ void structFormantPathEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath) {
+autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound sound, TextGrid textgrid) {
 	try {
 		autoFormantPathEditor me = Thing_new (FormantPathEditor);
 		
-		TimeSoundAnalysisEditor_init (me.get(), title, formantPath, formantPath -> sound.get(), false);
-		my pathGridView = TextGridView_create (formantPath -> path.get());
-		my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), formantPath -> pathTierNumber);
+		TimeSoundAnalysisEditor_init (me.get(), title, formantPath, sound, false);
+		my d_formant = FormantPath_extractFormant (formantPath);
+		my textgrid = Data_copy (textgrid);
+		my pathGridView = TextGridView_create (my textgrid.get());
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		if (my p_formant_default_colour == U"")

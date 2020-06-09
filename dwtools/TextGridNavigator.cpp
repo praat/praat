@@ -153,6 +153,8 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 		Function_init (me.get(), textgrid -> xmin, textgrid -> xmax);
 		my textgrid = Data_copy (textgrid);
 		TextGridNavigator_addNavigationContext (me.get(), navigationContext, tierNumber, kNavigatableTier_match::TOUCHES_LEFT_AND_RIGHT);
+		Melder_require (TextGridNavigator_getNumberOfMatches (me.get())> 0,
+			U"There are no matches on tier number (", tierNumber, U"). Maybe you should change the tier number?");
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridNavigator could not be created from ", textgrid, U" and ", navigationContext);
