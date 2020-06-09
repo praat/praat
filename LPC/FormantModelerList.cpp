@@ -71,12 +71,9 @@ autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double
 		thy xmin = startTime;
 		thy xmax = endTime;
 		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
-		Melder_require (numberOfParametersPerTrack.size > 0 ,
+		Melder_require (numberOfParametersPerTrack.size > 0,
 			U"The number of items in the parameter list should be larger than zero.");
-		Formant formant = (Formant) my formants -> at [1];
-		integer maximumNumberOfFormants = formant -> maxnFormants;
-		Melder_require (numberOfParametersPerTrack.size <= maximumNumberOfFormants,
-			U"The number of items cannot exceed the maximum number of formants (", maximumNumberOfFormants, U").");
+		Formant formant = (Formant) my formants . at [1];
 		thy numberOfTracksPerModel = numberOfParametersPerTrack.size;
 		integer numberOfZeros = 0;
 		for (integer ipar = 1; ipar <= numberOfParametersPerTrack.size; ipar ++) {
@@ -88,14 +85,14 @@ autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double
 		}
 		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
 		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
-		thy numberOfModelers = my formants -> size;
+		thy numberOfModelers = my formants . size;
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
-			Formant formanti = (Formant) my formants-> at [imodel];
+			Formant formanti = (Formant) my formants . at [imodel];
 			autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  thy numberOfParametersPerTrack.get());
-			Thing_setName (fm.get(), formanti -> name.get());
+			Thing_setName (fm.get(), Melder_fixed (my ceilings [imodel], 0));
 			thy formantModelers. addItem_move (fm.move());
 		}
-		thy drawingSpecification = FormantModelerList_to_FormantModelerListDrawingSpecification (thee.get(), my defaultFormant);		
+		thy drawingSpecification = FormantModelerList_to_FormantModelerListDrawingSpecification (thee.get(), 0);		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantModelerList not created.");
@@ -201,10 +198,10 @@ integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerL
 	return my numberOfModelersToDraw;
 }
 
-void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedModelerColour_string, conststring32 otherModelerColour_string) {
+void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedCandidateColour_string, conststring32 otherModelerColour_string) {
 	my pathModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (pathModelerColour_string);
 	my defaultModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (defaultModelerColour_string);
-	my selectedModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (selectedModelerColour_string);
+	my selectedCandidateColour = MelderColour_fromColourNameOrNumberStringOrRGBString (selectedCandidateColour_string);
 	my otherModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (otherModelerColour_string);
 }
 
@@ -219,7 +216,7 @@ autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerL
 		thy markOutdated = false;
 		thy pathModelerColour = Melder_RED;
 		thy defaultModelerColour = Melder_BLUE;
-		thy selectedModelerColour = Melder_PINK;
+		thy selectedCandidateColour = Melder_PINK;
 		thy otherModelerColour = Melder_BLACK;
 		thy midTopText_colour = Melder_PURPLE;
 		autoSTRVEC midTopText (my numberOfModelers);
@@ -289,13 +286,13 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 			Graphics_setLineWidth (g, newLineWidth);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		}
-		if (imodel == my drawingSpecification -> selectedModeler) {
-			Graphics_setColour (g, my drawingSpecification -> selectedModelerColour);
+		if (imodel == my drawingSpecification -> selectedCandidate) {
+			Graphics_setColour (g, my drawingSpecification -> selectedCandidateColour);
 			const double lineWidth = my drawingSpecification -> boxLineWidth;
 			Graphics_setLineWidth (g, lineWidth);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		}
-		if (imodel != my drawingSpecification -> pathModeler && imodel != my drawingSpecification -> defaultModeler && imodel != my drawingSpecification -> selectedModeler) {
+		if (imodel != my drawingSpecification -> pathModeler && imodel != my drawingSpecification -> defaultModeler && imodel != my drawingSpecification -> selectedCandidate) {
 			Graphics_setColour (g, my drawingSpecification -> otherModelerColour);
 			Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
 			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);

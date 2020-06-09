@@ -664,10 +664,6 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 		integer ifmin, ifmax, posInCollection = 0;
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		const integer maximumNumberOfParameters = NUMmax (numberOfParametersPerTrack);
-		Melder_require (numberOfDataPoints >= maximumNumberOfParameters,
-			U"There are not enough data points, please reduce the number of parameters or extend the selection.");
-		
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfDataPoints, numberOfParametersPerTrack);
 		Thing_setName (thee.get(), my name.get());
 		for (integer iformant = 1; iformant <= numberOfParametersPerTrack.size; iformant ++) {
@@ -691,13 +687,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			}
 			ffi -> weighData = kDataModelerWeights::ONE_OVER_SIGMA;
 			ffi -> tolerance = 1e-5;
-			if (validData < numberOfParametersPerTrack [iformant]) {   // remove don't throw exception
-				thy trackmodelers. removeItem (posInCollection);
-				posInCollection --;
-			}
 		}
-		Melder_require (posInCollection > 0,
-			U"Not enough data points in all the formants.");
 		FormantModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {

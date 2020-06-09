@@ -559,15 +559,14 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_wc, double horizontalOffset_wc, bool drawDots)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	integer ixmin = 2;
-	while (my data [ixmin] .x < xmin && ixmin < my numberOfDataPoints)
+
+	integer ixmin = 1;
+	while (ixmin <= my numberOfDataPoints && my data [ixmin] .x < xmin)
 		ixmin ++;
-	ixmin --;
-	integer ixmax = my numberOfDataPoints - 1;
-	while (my  data [ixmax] .x > xmax && ixmax > 1)
+	integer ixmax = my numberOfDataPoints;
+	while (ixmax > 0 && my data [ixmax] .x > xmax)
 		ixmax --;
-	ixmax ++;
-	if (ixmin >= ixmax)
+	if (ixmin > ixmax)
 		return; // nothing to draw
 	getAutoNaturalNumberWithinRange (& numberOfParameters, my numberOfParameters);	
 	
@@ -712,8 +711,6 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	
 	Melder_require (numberOfParameters > 0,
 		U"The number of parameters should be greater than zero.");
-	Melder_require (numberOfParameters <= numberOfDataPoints,
-		U"The number of parameters should not exceed the number of data points");
 	
 	my parameters = newvectorzero<structDataModelerParameter> (numberOfParameters);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++)
@@ -768,6 +765,8 @@ void DataModeler_fit (DataModeler me) {
 		if (numberOfFreeParameters == 0)
 			return;
 		const integer numberOfValidDataPoints = DataModeler_getNumberOfValidDataPoints (me);
+		if (numberOfValidDataPoints - numberOfFreeParameters < 0)
+			return;
 		autoVEC yEstimation = newVECzero (numberOfValidDataPoints);
 		autoVEC term = newVECzero (my numberOfParameters);
 		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());

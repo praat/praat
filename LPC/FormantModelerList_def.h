@@ -23,7 +23,7 @@ oo_DEFINE_CLASS (FormantModelerListDrawingSpecification, Daata)
 	oo_INTVEC (drawingOrder, numberOfModelers)
 	oo_INTEGER (pathModeler)
 	oo_INTEGER (defaultModeler)
-	oo_INTEGER (selectedModeler)
+	oo_INTEGER (selectedCandidate)
 	oo_DOUBLE (boxLineWidth) // {3.0};
 	oo_BOOLEAN (markOutdated)
 	oo_INTVEC (showOrder, numberOfModelers)
@@ -32,7 +32,7 @@ oo_DEFINE_CLASS (FormantModelerListDrawingSpecification, Daata)
 	#if oo_DECLARING
 		MelderColour pathModelerColour; // {Melder_RED};
 		MelderColour defaultModelerColour; // {Melder_BLUE};
-		MelderColour selectedModelerColour; // {Melder_PINK}
+		MelderColour selectedCandidateColour; // {Melder_PINK}
 		MelderColour otherModelerColour; // {Melder_BLACK};
 		MelderColour midTopText_colour; // {Melder_BLUE};
 	#endif

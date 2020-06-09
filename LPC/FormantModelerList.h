@@ -51,6 +51,6 @@ integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerL
 
 void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me);
 
-void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedModelerColour_string, conststring32 otherModelerColour_string);
+void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedCandidateColour_string, conststring32 otherModelerColour_string);
 
 #endif /* _FormantModelerList_h_ */
