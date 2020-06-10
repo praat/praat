@@ -1079,9 +1079,10 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (searchDirection == kSoundSearchDirection::LEFT ||
 		searchDirection == kSoundSearchDirection::NEAREST) {
 		for (ileft = leftSample - 1; ileft >= 1; ileft --)
-			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level))
+			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level)) {
+				leftCrossing = interpolate (me, ileft, channel, level);
 				break;
-		leftCrossing = interpolate (me, ileft, channel, level);
+			}
 		if (searchDirection == kSoundSearchDirection::LEFT)
 			return ileft < 1 ? undefined: leftCrossing;
 	}
@@ -1091,9 +1092,10 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (searchDirection == kSoundSearchDirection::RIGHT ||
 		searchDirection == kSoundSearchDirection::NEAREST) {
 		for (iright = rightSample + 1; iright <= my nx; iright ++)
-			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level))
+			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level)) {
+				rightCrossing = interpolate (me, iright - 1, channel, level);
 				break;
-		rightCrossing = interpolate (me, iright - 1, channel, level);
+			}
 		if (searchDirection == kSoundSearchDirection::RIGHT)
 			return iright > my nx ? undefined : rightCrossing;
 	}
