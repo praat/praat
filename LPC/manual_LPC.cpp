@@ -67,8 +67,16 @@ MAN_END
 
 MAN_BEGIN (U"FormantPath", U"djmw", 20200528)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
-NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a TextGrid. For example, consider a collection with nine Formant objects. The formant objects could be the result of @@Sound: To Formant (burg)...@ analyses on the same sound. The only difference in  each analyses was the \"Maximum formant (Hz)\" parameter setting. Suppose it was chosen as 4500, 4750, 5000, 5250, 5500, 6750, 6000, 6250 and 6500 Hz, respectively. In this way, the collection functions as a set of alternative analyses. One of the Formants in this set equals the result of a \"standard\" analysis. One of the tiers in the FormantPath's TextGrid keeps tract of which alternative has been chosen for a particular interval in time.")
-NORMAL (U"Because many different object are combined in a FormantPath some specialized commands facilitate its creation. The two most important ones are: @@Sound & TextGrid: To FormantPath (burg)...@ and @@Sound: To FormantPath (burg)...")
+NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a TextGrid. "
+	"For example, consider a collection with nine Formant objects. "
+	"The formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
+	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
+	"Suppose that the formant ceiling was chosen as 4500, 4750, 5000, 5250, 5500, 6750, 6000, 6250 and 6500 Hz, respectively. "
+	"In this way, the collection functions as a set of alternative analyses. "
+	"One of the Formants in this set equals the result of a \"standard\" analysis. "
+	"One of the tiers in the FormantPath's TextGrid keeps tract of which alternative has been chosen for a particular interval in time.")
+NORMAL (U"Because many different object are combined in a FormantPath some specialized commands facilitate its creation. "
+	"The two most important ones are: @@Sound & TextGrid: To FormantPath (burg)...@ and @@Sound: To FormantPath (burg)...")
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
@@ -76,14 +84,32 @@ MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20200523)
 MAN_END
 
 MAN_BEGIN (U"Sound & TextGrid: To FormantPath (burg)...", U"djmw", 20200528)
-INTRO (U"A command that creates a @@FormantPath@ object from one selected @@Sound@ and one selected @@TextGrid@. It performs a number of short-term spectral analyses with different parameter settings.")
+INTRO (U"A command that creates a @@FormantPath@ object from one selected @@Sound@ and one selected @@TextGrid@. "
+	"It performs a number of short-term spectral analyses with different parameter settings.")
 ENTRY (U"##Settings")
-NORMAL (U"The settings for the first five parameters, i.e. ##Time step (s)#, ##Maximum number of formants#, ##Maximum formant (Hz)#, ##Window length (s)# and ##Pre-emphasis from (Hz)# are exacly like you would use them in the @@Sound: To Formant (burg)...@ method. Therefore you can use the numbers 0.005, 5.0, %%5500.0%, 0.025, 50.0 for a female voice and 0.005, 5.0, %%5000.0%, 0.025, 50.0 for a male voice respectively. These settings for a male and a female speaker only differ in the ceiling of the formant search range. Let us call this frequency, 5500.0 or 5000.0 Hz, the %%default ceiling% for a female and a male speaker, respectively.")
-NORMAL (U"Instead of performing only one analysis with the settings as specified above, we perform a number of analyses, each one with a different value for its ceiling, i.e. its ##Maximum formant (Hz)# parameter. Each analysis result, which is of type @@Formant@, will be  stored in the ##FormantPath# object. Therefore after the analyses are done, the FormantPath object contains a collection of ##Formant# objects.")
+NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Window length (s)# and ##Pre-emphasis from (Hz)# "
+	"are exacly as you would use them in the @@Sound: To Formant (burg)...@ method. "
+	"Therefore you can use 0.005 seconds, 5.0 formants, 0.025 seconds, and 50.0 Hz, respectively.")
+NORMAL (U"For ##Middle formant ceiling (Hz)#, you can use 5500.0 Hz for an average female voice and 5000.0 Hz for an average male voice, "
+	"in the same way as you would do for the ##Formant ceiling (Hz)# setting in @@Sound: To Formant (burg)...@. "
+	"Instead of performing only one analysis, as in @@Sound: To Formant (burg)...@, we perform multiple analyses, "
+	"each one with a different value for its ceiling. "
+	"Each analysis result, which is of type @@Formant@, is stored in the ##FormantPath# object. "
+	"Therefore, after the analyses are done, the FormantPath object contains a collection of ##Formant# objects.")
 TAG (U"##Ceiling step size (Hz)#")
-DEFINITION (U"defines the increase /decrease  in the ceiling frequency betweeen two successive analyses.")
+DEFINITION (U"defines the increase / decrease in the formant ceiling betweeen two successive analyses.")
 TAG (U"##Number of steps up / down")
-DEFINITION (U"determines the number of different ceiling frequencies starting from the %%default ceiling% and each time adding one ceiling step size. Suppose we have a %%default ceiling% of 5500 Hz, your choice for the %%ceiling step size% was 250 Hz and you chose for %%number of steps% the default 4. Then the first analysis will be performed with the %%maximum formant frequency% set at the default ceiling of 5500 Hz. The next analysis wil be performed with a ceiling of 5500 + 250 = 5750 Hz, the next with a ceiling of 5750 + 250 = 6000 Hz. The third one with a ceiling of 6000 + 250 = 6250 Hz and the fourth one with 6250+250 = 6500 Hz as a ceiling. Now we step down from the default ceiling. The first down wil have a ceiling of 5500 - 250 = 5250 Hz, the next one will have 5250 - 250 = 5000, the next one  5000 - 250 = 4750 and the last one will 4750 - 250 = 4500 Hz as a ceiling. We end up with a collection of 2 * 4 + 1 = 9 different Formants. This results in nine times performing the @@Sound: To Formant (burg)...@ command with ##Maximum formant (Hz)# values of 4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250 and 6500 Hz, respectively. The 5500 was the %%default ceiling%, the 4 steps up ended with a %%maximum ceiling% of 6500 Hz while the 4 steps down ended with a %%minimum ceiling% of 4500 Hz. ")
+DEFINITION (U"determines the number of different ceiling frequencies starting from the %%middle formant ceiling% and each time adding one ceiling step size. "
+	"Suppose we have a %%middle formant ceiling% of 5500 Hz, your choice for the %%ceiling step size% was 250 Hz and you chose for %%number of steps% the default 4. "
+	"Then the first analysis will be performed with the %%maximum formant frequency% set at the default ceiling of 5500 Hz. "
+	"The next analysis wil be performed with a ceiling of 5500 + 250 = 5750 Hz, the next with a ceiling of 5750 + 250 = 6000 Hz. "
+	"The third one with a ceiling of 6000 + 250 = 6250 Hz and the fourth one with 6250+250 = 6500 Hz as a ceiling. "
+	"Now we step down from the default ceiling. The first down wil have a ceiling of 5500 - 250 = 5250 Hz, "
+	"the next one will have 5250 - 250 = 5000, the next one  5000 - 250 = 4750 and the last one will 4750 - 250 = 4500 Hz as a ceiling. "
+	"We end up with a collection of 2 * 4 + 1 = 9 different Formants. "
+	"This results in nine times performing the @@Sound: To Formant (burg)...@ command with ##Formant ceiling (Hz)# values of "
+	"4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250 and 6500 Hz, respectively. "
+	"The 5500 was the %%middle formant ceiling%, the 4 steps up ended with a %%maximum ceiling% of 6500 Hz while the 4 steps down ended with a %%minimum ceiling% of 4500 Hz.")
 MAN_END
 
 MAN_BEGIN (U"FormantPathEditor", U"djmw", 20200521)
@@ -801,9 +827,11 @@ ENTRY (U"Settings")
 TAG (U"##From coefficient#, ##To coefficient#")
 DEFINITION (U"the range of coefficients that will be used in the reconstruction.")
 TAG (U"##Include constant term")
-DEFINITION (U"selects whether or not to include the %c__0_ coefficient in the reconstruction. As can be seen from the formula below, the contribution of the %c__0_ term is equal for each filter.")
+DEFINITION (U"selects whether or not to include the %c__0_ coefficient in the reconstruction. "
+	"As can be seen from the formula below, the contribution of the %c__0_ term is equal for each filter.")
 ENTRY (U"Details")
-NORMAL (U"The values %P__%j_ in each frame of the MelSpectrogram will be constructed by applying the inverse Discrete Cosine Transform to the corresponding frame of the MFCC object:")
+NORMAL (U"The values %P__%j_ in each frame of the MelSpectrogram will be constructed by "
+	"applying the inverse Discrete Cosine Transform to the corresponding frame of the MFCC object:")
 FORMULA (U"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
 NORMAL (U"where %N represents the number of filters that were used to get the MFCC object, %j runs from 1 to %N, and coefficients %c__%k_ with %k less than "
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
@@ -813,7 +841,8 @@ MAN_BEGIN (U"Sound: To PowerCepstrogram...", U"djmw", 20200403)
 INTRO (U"A command that creates a @@PowerCepstrogram@ from every selected @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Pitch floor (Hz)")
-DEFINITION (U"determines the effective length of the analysis window as three periods of this pitch, i.e. if the pitch floor is 60 Hz, the analysis window will be 3/60 = 0.05 seconds long.")
+DEFINITION (U"determines the effective length of the analysis window as three periods of this pitch, "
+	"e.g. if the pitch floor is 60 Hz, the analysis window will be 3/60 = 0.05 seconds long.")
 TAG (U"##Time step (s)")
 DEFINITION (U"defines the distance between the centres of subsequent frames. This determines the number of frames in the resulting PowerCepstrogram.")
 TAG (U"##Maximum frequency (Hz)")
@@ -823,14 +852,15 @@ ENTRY (U"Algorithm")
 NORMAL (U"The sound will first be resampled to twice the value of the %%Maximum frequency%, with "
 	"the algorithm described at @@Sound: Resample...@. After this, pre-emphasis is applied with the "
 	"algorithm described at @@Sound: Pre-emphasize (in-place)...@. For each analysis window a Gaussian "
-	"window is applied and the ##Spectrum# is calculated. The Spectrum is then transformed to a ##PowerCepstrum# with the procedure described at @@Spectrum: To PowerCepstrum@. Finally the values from the PowerCepstrum are stored in the vertical slice of the PowerCepstrogram.")
-
+	"window is applied and the ##Spectrum# is calculated. "
+	"The Spectrum is then transformed to a ##PowerCepstrum# with the procedure described at @@Spectrum: To PowerCepstrum@. "
+	"Finally, the values from the PowerCepstrum are stored in the vertical slice of the PowerCepstrogram.")
 MAN_END
 
 MAN_BEGIN (U"Sound: To Formant (robust)...", U"djmw", 20111027)
 INTRO (U"A command that creates a @@Formant@ object from every selected @@Sound@. ")
 ENTRY (U"Settings")
-NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Maximum formant (Hz), "
+NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Formant ceiling (Hz), "
 	"##Window length (s)# and ##Pre emphasis from (Hz)# are as in @@Sound: To Formant (burg)...@. "
 	" The following settings determine aspects of the iterative formant frequency refinement.")
 TAG (U"%%Number of std. dev.%,")
@@ -842,7 +872,10 @@ DEFINITION (U"detemines another stop ctriterion for the refinement step. If the 
 	"between successive iterations is less then this value, iteration stops. Iteration stops whenever "
 	"one of the two defined stop criteria is reached.")
 ENTRY (U"Algorithm")
-NORMAL (U"First the sound is downsampled to twice the maximum formant frequency. Next the LPC coefficients are determined by the autocorrelation method. Finally, in an iterative procedure as described by @@Lee (1988)@ the formant frequencies and bandwidths are refined by selectively weighting of samples values.")
+NORMAL (U"First the sound is downsampled to twice the maximum formant frequency. "
+	"Next, the LPC coefficients are determined by the autocorrelation method. "
+	"Finally, in an iterative procedure as described by @@Lee (1988)@, "
+	"the formant frequencies and bandwidths are refined by selective weighting of samples values.")
 MAN_END
 
 MAN_BEGIN (U"Sound: LPC analysis", U"djmw", 19970126)
