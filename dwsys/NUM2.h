@@ -36,6 +36,7 @@
 */
 #define NUMeps 2.3e-16
 
+autoINTVEC newINTVECfromString (conststring32 s);
 autoVEC newVECfromString (conststring32 s);
 /* return array with the numbers found */
 
