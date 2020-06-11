@@ -86,7 +86,6 @@ void FormantPathEditor_selectAll (FormantPathEditor me) {
 }
 
 void FormantPathEditor_deselect (FormantPathEditor me) {
-	my formantModelerList -> drawingSpecification -> pathModeler = 0;
 }
 
 integer FormantPathEditor_selectModelerFromIndexInMatrixGrid (FormantPathEditor me, integer index) {
@@ -98,7 +97,7 @@ integer FormantPathEditor_selectModelerFromIndexInMatrixGrid (FormantPathEditor 
 
 void FormantPathEditor_selectModeler (FormantPathEditor me, integer modelIndex) {
 	if (modelIndex > 0 && modelIndex <= my formantModelerList -> numberOfModelers)
-		my formantModelerList -> drawingSpecification -> pathModeler = modelIndex;
+		my formantModelerList -> drawingSpecification -> selectedCandidate = modelIndex;
 }
 
 static inline void FormantModelerList_setVarianceExponent (FormantModelerList me, double varianceExponent) {
@@ -112,7 +111,7 @@ inline integer FormantPathEditor_getNumberOfVisible (FormantPathEditor me) {
 autoFormantModelerList FormantPathEditor_to_FormantModelerList (FormantPathEditor me, double startTime, double endTime, conststring32 parameters_string) {
 	FormantPath formantPath = (FormantPath) my data;
 	autoFormantModelerList thee = FormantPath_to_FormantModelerList (formantPath, startTime, endTime, parameters_string);
-	FormantModelerListDrawingSpecification_setModelerColours (thy drawingSpecification.get(), my p_formant_path_colour, my p_formant_default_colour, my p_formant_selected_colour, U"black");
+	FormantModelerListDrawingSpecification_setModelerColours (thy drawingSpecification.get(), my p_formant_path_oddcolour, my p_formant_path_evencolour, my p_formant_selected_colour);
 	return thee;
 }
 
@@ -129,14 +128,6 @@ autoMelderString FormantModelerList_getSelectedModelParameterString (FormantMode
 	} else
 		MelderString_append (& modelParameters, U"");
 	return modelParameters;
-}
-
-void FormantPathEditor_markParameterChange (FormantPathEditor me) {
-	my formantModelerList -> drawingSpecification -> markOutdated = true;
-}
-
-void FormantPathEditor_unmarkParameterChange (FormantPathEditor me) {
-	my formantModelerList -> drawingSpecification -> markOutdated = false;
 }
 
 bool FormantPathEditor_parametersChanged (FormantPathEditor me, integer imodel, conststring32 label) {
@@ -169,7 +160,7 @@ bool FormantPathEditor_setPathTierLabel (FormantPathEditor me) {
 		modify an existing label by an accidental click;
 	*/
 	FormantModelerList fml = my formantModelerList.get();
-	integer imodel = my formantModelerList -> drawingSpecification -> pathModeler;
+	integer imodel = my formantModelerList -> drawingSpecification -> selectedCandidate;
 	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml, imodel);
 	if (modelParameters.string && modelParameters.string [0] && my shiftKeyPressed) {
 		IntervalTier pathTier = (IntervalTier) my pathGridView -> tiers -> at [my pathTierNumber];
@@ -911,7 +902,6 @@ static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDI
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
 		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_showErrorBars ())
 		REAL (errorBarWidth_s, U"Error bar width (s)", my default_modeler_draw_errorBarWidth_s ())
-		REAL (xTrackShift_s, U"Shift even formant tracks by (s)", my default_modeler_draw_xTrackShift_s ())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedTracks, my p_modeler_draw_estimatedTracks)
 		SET_REAL (xSpaceFraction, my p_modeler_draw_xSpace_fraction)
@@ -920,7 +910,6 @@ static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDI
 		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
 		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showErrorBars)
 		SET_REAL (errorBarWidth_s, my p_modeler_draw_errorBarWidth_s)
-		SET_REAL (xTrackShift_s, my p_modeler_draw_xTrackShift_s)
 	EDITOR_DO
 	my pref_modeler_draw_estimatedTracks () = my p_modeler_draw_estimatedTracks = drawEstimatedTracks;
 	my pref_modeler_draw_xSpace_fraction () = my p_modeler_draw_xSpace_fraction = xSpaceFraction;
@@ -929,7 +918,6 @@ static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDI
 	my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
 	my pref_modeler_draw_showErrorBars () = my p_modeler_draw_showErrorBars = drawErrorBars;
 	my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
-	my pref_modeler_draw_xTrackShift_s () = my p_modeler_draw_xTrackShift_s = xTrackShift_s;
 	my v_drawSelectionViewer ();
 	EDITOR_END
 }
@@ -958,7 +946,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, 1,
 		my formantModelerList -> numberOfTracksPerModel, my p_modeler_draw_maximumFrequency,
 		my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, my p_modeler_draw_showErrorBars,
-		my p_modeler_draw_errorBarWidth_s, my p_modeler_draw_xTrackShift_s,
+		my p_modeler_draw_errorBarWidth_s,
 		my p_modeler_draw_estimatedTracks, garnish);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
@@ -967,20 +955,15 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 
 static void menu_cb_FormantColourSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
-		WORD (pathColour_string, U"Dots in the path", my default_formant_path_colour ())
-		WORD (defaultColour_string, U"Dots in default", my default_formant_default_colour ())
-		WORD (selectedColour_string, U"Dots in selected", my default_formant_selected_colour ())
+		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddcolour ())
+		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evencolour ())
 	EDITOR_OK
-		SET_STRING (pathColour_string, my p_formant_path_colour)
-		SET_STRING (defaultColour_string, my p_formant_default_colour)
-		SET_STRING (selectedColour_string, my p_formant_selected_colour)
+		SET_STRING (oddPathColour_string, my p_formant_path_oddcolour)
+		SET_STRING (evenPathColour_string, my p_formant_path_evencolour)
 	EDITOR_DO
-		Melder_require (! (Melder_equ (pathColour_string, defaultColour_string) || Melder_equ (pathColour_string, selectedColour_string) || Melder_equ (defaultColour_string, selectedColour_string)),
-			U"All colours must be different.");
-		pref_str32cpy2 (my pref_formant_path_colour (), my p_formant_path_colour, pathColour_string);
-		pref_str32cpy2 (my pref_formant_default_colour (), my p_formant_default_colour, defaultColour_string);
-		pref_str32cpy2 (my pref_formant_selected_colour (), my p_formant_selected_colour, selectedColour_string);
-		FormantModelerListDrawingSpecification_setModelerColours (my formantModelerList -> drawingSpecification.get(), my p_formant_path_colour, my p_formant_default_colour, my p_formant_selected_colour, U"black");
+		pref_str32cpy2 (my pref_formant_path_oddcolour (), my p_formant_path_oddcolour, oddPathColour_string);
+		pref_str32cpy2 (my pref_formant_path_evencolour (), my p_formant_path_evencolour, evenPathColour_string);
+		FormantModelerListDrawingSpecification_setModelerColours (my formantModelerList -> drawingSpecification.get(), my p_formant_path_oddcolour, my p_formant_path_evencolour, my p_formant_selected_colour);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -1622,12 +1605,16 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	if (imodel > 0)
 		FormantPathEditor_selectModeler (this, imodel);
 	FormantModelerList_markBest3 (fml);
-	FormantModelerList_drawInMatrixGrid (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
+	
+	FormantPath formantPath = (FormantPath) our data;
+	integer nrow = 3, ncol = 3;
+	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
+	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_PINK, true,  parameters.get(), our p_modeler_varianceExponent, true);
+	/*FormantModelerList_drawInMatrixGrid (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
 		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
 		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
-		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our p_modeler_draw_showErrorBars,
-		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_xTrackShift_s,
-		our p_modeler_draw_estimatedTracks, true);
+		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our selectedCandidate,
+		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_estimatedTracks, true);*/
 }
 
 static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double tmin_view, double tmax_view, double tmin_selection, double tmax_selection, double fmin, double fmax,
@@ -1670,7 +1657,7 @@ void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tm
 	if (! Sampled_getWindowSamples (formantPath, tmin, tmax, & itmin, & itmax))
 		return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	Graphics_setColour (g, Melder_PURPLE);
+	Graphics_setColour (g, Melder_RED);
 	const double dx2 = 0.5 * formantPath -> dx;
 	double tmid1 = Sampled_indexToX (formantPath, itmin);
 	double ceiling1 = formantPath -> ceilings [formantPath -> path [itmin]];
@@ -2120,8 +2107,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		*/
 		fml -> drawingSpecification -> selectedCandidate = ( (fml -> drawingSpecification -> selectedCandidate > 0 && fml -> drawingSpecification -> selectedCandidate == our selectedCandidate) ? 0 : our selectedCandidate );
 		if (our shiftKeyPressed) {
-			fml -> drawingSpecification -> pathModeler = our selectedCandidate;
-			fml -> drawingSpecification -> selectedCandidate = 0; // path has priority
+			fml -> drawingSpecification -> selectedCandidate = our selectedCandidate; // path has priority
 			Editor_save (this, U"insert interval by selection viewer");
 			FormantPath formantPath = (FormantPath) our data;
 			integer itmin, itmax;
@@ -2261,8 +2247,10 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		if (my p_formant_default_colour == U"")
 			pref_str32cpy2 (my p_formant_default_colour, my pref_formant_default_colour (), my default_formant_default_colour ());
-		if (my p_formant_path_colour == U"")
-			pref_str32cpy2 (my p_formant_path_colour, my pref_formant_path_colour (), my default_formant_path_colour ());
+		if (my p_formant_path_oddcolour == U"")
+			pref_str32cpy2 (my p_formant_path_oddcolour, my pref_formant_path_oddcolour (), my default_formant_path_oddcolour ());
+		if (my p_formant_path_evencolour == U"")
+			pref_str32cpy2 (my p_formant_path_evencolour, my pref_formant_path_evencolour (), my default_formant_path_evencolour ());
 		if (my p_formant_selected_colour == U"")
 			pref_str32cpy2 (my p_formant_selected_colour, my pref_formant_selected_colour (), my default_formant_selected_colour ());
 		my formantModelerList = FormantPathEditor_to_FormantModelerList (me.get(), my startWindow, my endWindow, my p_modeler_numberOfParametersPerTrack);

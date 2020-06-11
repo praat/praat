@@ -41,7 +41,7 @@ autoINTVEC FormantModelerList_getBest3 (FormantModelerList me);
 
 void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out_numberOfRows, integer *out_numberOfColums);
 
-void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, bool garnish);
+void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, bool drawEstimated, bool garnish);
 
 /* For special drawings, like in the FormantEditor */
 
@@ -51,6 +51,6 @@ integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerL
 
 void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me);
 
-void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedCandidateColour_string, conststring32 otherModelerColour_string);
+void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 oddFormantColour_string, conststring32 evenFormantColour_string, conststring32 selectedCandidateColour_string);
 
 #endif /* _FormantModelerList_h_ */

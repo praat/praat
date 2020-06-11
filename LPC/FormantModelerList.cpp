@@ -47,21 +47,6 @@ void structFormantModelerList :: v_info () {
 	
 };
 
-autoINTVEC newINTVECfromString (conststring32 string) {
-	autoVEC reals = newVECfromString (string);
-	autoINTVEC result = newINTVECraw (reals.size);
-	for (integer i = 1; i <= reals.size; i ++) {
-		result [i]  = reals [i];
-	}
-	integer last = reals.size;
-	while (result [last] == 0 && last > 0)
-		last --;
-	Melder_require (last > 0,
-		U"There must be at least one integer in the list");
-	result.resize (last);
-	return result;
-}
-
 Thing_implement (FormantModelerList, Function, 0);
 Thing_implement (FormantModelerListDrawingSpecification, Daata, 0);
 
@@ -198,26 +183,22 @@ integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerL
 	return my numberOfModelersToDraw;
 }
 
-void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 pathModelerColour_string, conststring32 defaultModelerColour_string, conststring32 selectedCandidateColour_string, conststring32 otherModelerColour_string) {
-	my pathModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (pathModelerColour_string);
-	my defaultModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (defaultModelerColour_string);
+void FormantModelerListDrawingSpecification_setModelerColours (FormantModelerListDrawingSpecification me, conststring32 oddFormantColour_string, conststring32 evenFormantColour_string, conststring32 selectedCandidateColour_string) {
+	my oddFormantColour = MelderColour_fromColourNameOrNumberStringOrRGBString (oddFormantColour_string);
+	my evenFormantColour = MelderColour_fromColourNameOrNumberStringOrRGBString (evenFormantColour_string);
 	my selectedCandidateColour = MelderColour_fromColourNameOrNumberStringOrRGBString (selectedCandidateColour_string);
-	my otherModelerColour = MelderColour_fromColourNameOrNumberStringOrRGBString (otherModelerColour_string);
 }
 
 autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerListDrawingSpecification (FormantModelerList me, integer defaultModeler) {
 	try {
 		autoFormantModelerListDrawingSpecification thee = Thing_new (FormantModelerListDrawingSpecification);
 		thy numberOfModelers = my numberOfModelers;
-		thy defaultModeler = defaultModeler;
 		thy drawingOrder = newINTVEClinear (my numberOfModelers, 1, 1);
 		thy numberOfModelersToDraw = my numberOfModelers;
 		thy boxLineWidth = 4.0;
-		thy markOutdated = false;
-		thy pathModelerColour = Melder_RED;
-		thy defaultModelerColour = Melder_BLUE;
-		thy selectedCandidateColour = Melder_PINK;
-		thy otherModelerColour = Melder_BLACK;
+		thy oddFormantColour = Melder_RED;
+		thy evenFormantColour = Melder_MAROON;
+		thy selectedCandidateColour = Melder_RED;
 		thy midTopText_colour = Melder_PURPLE;
 		autoSTRVEC midTopText (my numberOfModelers);
 		for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++)
@@ -229,7 +210,7 @@ autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerL
 	}
 }
 
-void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, double xTrackOffset_s, bool drawEstimated, bool garnish) {
+void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, integer nrow, integer ncol, kGraphicsMatrixOrigin origin, double spaceBetweenFraction_x, double spaceBetweenFraction_y, integer fromFormant, integer toFormant, double fmax, double yGridLineEvery_Hz, double xCursor, double yCursor, integer numberOfParameters, bool drawErrorBars, double barwidth_s, bool drawEstimated, bool garnish) {
 	if (nrow <= 0 || ncol <= 0)
 		FormantModelerList_getMatrixGridLayout (me, & nrow, & ncol);
 	const double fmin = 0.0;
@@ -272,37 +253,12 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, fm -> xmin, fm -> xmax, 0.0, fmax);
 		FormantModeler_speckle_inside (fm, g, fm -> xmin, fm -> xmax, fmax, fromFormant, toFormant,
-			drawEstimated, 0.0, drawErrorBars, barwidth_s, xTrackOffset_s);
+			drawEstimated, 0.0, drawErrorBars, my drawingSpecification -> oddFormantColour, my drawingSpecification -> evenFormantColour);
 
 		Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
-		if (imodel == my drawingSpecification -> defaultModeler) {
-			Graphics_setColour (g, my drawingSpecification -> defaultModelerColour);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-		}
-		if (imodel == my drawingSpecification -> pathModeler) {
-			Graphics_setColour (g, my drawingSpecification -> pathModelerColour);
-			const double lineWidth = my drawingSpecification -> boxLineWidth;
-			const double newLineWidth = ( imodel == my drawingSpecification -> defaultModeler ? lineWidth - 1.0 : lineWidth );
-			Graphics_setLineWidth (g, newLineWidth);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-		}
-		if (imodel == my drawingSpecification -> selectedCandidate) {
-			Graphics_setColour (g, my drawingSpecification -> selectedCandidateColour);
-			const double lineWidth = my drawingSpecification -> boxLineWidth;
-			Graphics_setLineWidth (g, lineWidth);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-		}
-		if (imodel != my drawingSpecification -> pathModeler && imodel != my drawingSpecification -> defaultModeler && imodel != my drawingSpecification -> selectedCandidate) {
-			Graphics_setColour (g, my drawingSpecification -> otherModelerColour);
-			Graphics_setLineWidth (g, my drawingSpecification -> boxLineWidth);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-		}
-		if (my drawingSpecification -> markOutdated) {
-			Graphics_setLineWidth (g, 1.0);
-			Graphics_setColour (g, Melder_WHITE);
-			Graphics_setLineType (g, Graphics_DASHED);
-			Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
-		}
+		Graphics_setColour (g, (imodel == my drawingSpecification -> selectedCandidate ?
+			my drawingSpecification -> selectedCandidateColour : Melder_BLACK ));
+		Graphics_rectangle (g, fm -> xmin, fm -> xmax, fmin, fmax);
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);

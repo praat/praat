@@ -41,14 +41,14 @@ prefs_begin (FormantPathEditor)
 	prefs_add_bool_with_data   (FormantPathEditor, align_allowSilences,    1, false)	
 //end from TextGridEditor	
 	
-	prefs_add_string_with_data (FormantPathEditor, formant_path_colour,                1, U"red")
+	prefs_add_string_with_data (FormantPathEditor, formant_path_evencolour,            1, U"maroon")
+	prefs_add_string_with_data (FormantPathEditor, formant_path_oddcolour,             1, U"red")
 	prefs_add_string_with_data (FormantPathEditor, formant_default_colour,             1, U"blue")
 	prefs_add_string_with_data (FormantPathEditor, formant_selected_colour,            1, U"pink")	
 	prefs_add_bool_with_data   (FormantPathEditor, formant_draw_showBandWidths,        1, false)
-	prefs_add_double_with_data (FormantPathEditor, formant_draw_trackOffsetX_s,        1, U"0.001")
 	
 	prefs_add_integer_with_data(FormantPathEditor, modeler_numberOfTracks,             1, U"3")
-	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"5 5 5")
+	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"7 7 7")
 	prefs_add_double_with_data (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showAllModels,         1, true)
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_xSpace_fraction,       1, U"0.1")
@@ -56,8 +56,7 @@ prefs_begin (FormantPathEditor)
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"5000.0")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_estimatedTracks,       1, false)
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showErrorBars,         1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_errorBarWidth_s,       1, U"0.001")
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_xTrackShift_s,         1, U"-0.001") // s
+	prefs_add_double_with_data (FormantPathEditor, modeler_draw_errorBarWidth_s,       1, U"0.0")
 	prefs_add_string_with_data (FormantPathEditor, modeler_draw_best3colours,          1, U"green pink blue") //
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
 	

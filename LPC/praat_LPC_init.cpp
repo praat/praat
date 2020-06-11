@@ -93,6 +93,36 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 	END
 }
 
+FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.1")
+	POSITIVE (fmax, U"Maximum frequency", U"6200.0")
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"5")
+	BOOLEAN (showBandwidths, U"Show bandwidths", true)
+	COLOUR (odd, U"Colour of F1, F3, F5", U"red")
+	COLOUR (even, U"Colour of F2, F4", U"purple")
+	NATURAL (numberOfRows, U"Number of rows", U"0")
+	NATURAL (numberOfColumns, U"Number of columns", U"0")
+	POSITIVE (xSpaceFraction, U"X space fraction", U"0.1")
+	POSITIVE (ySpaceFraction, U"Y space fraction", U"0.1")
+	POSITIVE (lineEvery_Hz, U"Horizontal line every (Hz)", U"1000.0")
+	REAL (xCursor, U"X cursor line at (s)", U"-0.1 (=no line)")
+	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
+	INTEGER (special, U"Index of special", U"0 (=no)")
+	COLOUR (specialColour, U"Colour for special", U"pink")
+	BOOLEAN (showSmoothness, U"Show smoothness", true)
+	SENTENCE (parameters_string, U"Parameters", U"7 7 7 7")
+	POSITIVE (powerf, U"Power", U"1.25")
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (FormantPath)
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, showSmoothness, parameters.get(), powerf, garnish);
+	GRAPHICS_EACH_END
+}
+
 DIRECT (NEW_FormantPath_extractFormant) {
 	CONVERT_EACH (FormantPath)
 		autoFormant result = FormantPath_extractFormant (me);
@@ -1210,6 +1240,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
+	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
 
