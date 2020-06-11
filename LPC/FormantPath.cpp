@@ -17,6 +17,8 @@
  */
 
 #include "FormantPath.h"
+#include "FormantModeler.h"
+#include "Graphics_extensions.h"
 #include "LPC_and_Formant.h"
 #include "Sound_to_Formant.h"
 #include "Sound_and_LPC.h"
@@ -159,4 +161,199 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
+autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
+	autoVEC smoothness = newVECraw (my formants.size);
+	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
+		Formant formanti = (Formant) my formants . at [iformant];
+		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
+		smoothness [iformant] = FormantModeler_getSmoothnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+	}
+	return smoothness;
+}
+
+static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour odd, MelderColour even)
+{
+	double maximumIntensity = 0.0, minimumIntensity;
+	Function_unidirectionalAutowindow (me, & tmin, & tmax);
+	integer itmin, itmax;
+	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
+		return;
+	if (fromFormant == toFormant && fromFormant == 0) {
+		fromFormant = 1;
+		toFormant = my maxnFormants;
+	}
+	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
+		const Formant_Frame frame = & my frames [iframe];
+		if (frame -> intensity > maximumIntensity)
+			maximumIntensity = frame -> intensity;
+	}
+	if (maximumIntensity == 0.0 || suppress_dB <= 0.0)
+		minimumIntensity = 0.0;   // ignore
+	else
+		minimumIntensity = maximumIntensity / pow (10.0, suppress_dB / 10.0);
+
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
+		const Formant_Frame frame = & my frames [iframe];
+		const double x = Sampled_indexToX (me, iframe);
+		if (frame -> intensity < minimumIntensity)
+			continue;
+		/*
+			Higher formants in general have larger bandwidths. Draw them first to show lower formants clearer.
+		*/
+		for (integer iformant = std::min (frame -> numberOfFormants, toFormant); iformant >= fromFormant; iformant --) {
+			const double frequency = frame -> formant [iformant]. frequency;
+			Graphics_setColour (g, iformant % 2 == 1 ? odd : even );
+			if (frequency >= fmin && frequency <= fmax) {
+				Graphics_speckle (g, x, frequency);
+				if (drawBandWidths) {
+					const double bandwidth = frame -> formant [iformant]. bandwidth;
+					const double upper = std::min (frequency + 0.5 * bandwidth, fmax);
+					const double lower = std::max (frequency - 0.5 * bandwidth, fmin);
+					Graphics_line (g, x, upper, x, lower);
+				}
+			}
+		}
+	}
+}
+
+static void getMatrixGridLayout (integer numberOfModels, integer *out_numberOfRows, integer *out_numberOfColums) {
+	integer ncol = 1;
+	integer nrow = 3;
+	if (numberOfModels > 3) {
+		nrow = 1 + Melder_ifloor (sqrt (numberOfModels - 0.5));
+		ncol = 1 + Melder_ifloor ((numberOfModels - 1) / nrow);
+	}
+	if (out_numberOfRows)
+		*out_numberOfRows = nrow;
+	if (out_numberOfColums)
+		*out_numberOfColums = ncol;
+}
+
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showSmoothness, constINTVEC const & parameters, double powerf,  bool garnish) {
+	const double fmin = 0.0;
+	double x1NDC, x2NDC, y1NDC, y2NDC;
+	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
+	const double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;
+	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
+	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
+	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
+	autoVEC smoothness;
+	if (showSmoothness)
+		smoothness = FormantPath_getSmootness (me, tmin, tmax, fromFormant, toFormant, parameters, powerf);
+	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
+		const integer irow = 1 + (iformant - 1) / ncol; // left-to-right + top-to-bottom
+		const integer icol = 1 + (iformant - 1) % ncol;
+		double vpi_x1 = x1NDC + (icol - 1) * vpi_width * (1.0 + spaceBetweenFraction_x);
+		double vpi_x2 = vpi_x1 + vpi_width;
+		double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
+		double vpi_y1 = vpi_y2 - vpi_height;
+		Formant formant = my formants.at [iformant];
+		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
+		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, odd, even);
+
+		Graphics_setLineWidth (g, 2.0);
+		Graphics_setColour (g, ( iformant == iselected ? selected : Melder_BLACK ));
+		Graphics_rectangle (g, tmin, tmax, fmin, fmax);
+		Graphics_setLineType (g, Graphics_DRAWN);
+		Graphics_setColour (g, Melder_BLACK);
+		Graphics_setLineWidth (g, 1.0);
+		/*
+			Mark name & smoothness
+		*/
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
+		Graphics_text (g, tmax - 0.05 * (tmax - tmin),
+			fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
+		if (showSmoothness) {
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
+			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (smoothness [iformant], 2));
+		}
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+		conststring32 midTopText = U"";
+		if (midTopText && midTopText [0]) {
+			Graphics_setColour (g, Melder_BLUE);
+			Graphics_text (g, tmin + 0.5 * (tmax - tmin),
+				fmax - 0.05 * fmax, midTopText);
+			Graphics_setColour (g, Melder_BLACK);
+		}
+
+		if (garnish) {
+			auto getXtick = [] (Graphics gg, double fontSize) {
+				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
+				const double wDC = (gg -> d_x2DC - gg -> d_x1DC) / (gg -> d_x2wNDC - gg -> d_x1wNDC) * (gg -> d_x2NDC - gg -> d_x1NDC);
+				double dx = 1.5 * margin / wDC;
+				double xTick = 0.06 * dx;
+				if (dx > 0.4) dx = 0.4;
+				return xTick /= 1.0 - 2.0 * dx;
+			};
+			auto getYtick = [] (Graphics gg, double fontSize) {
+				double margin = 2.8 * fontSize * gg -> resolution / 72.0;
+				double hDC = integer_abs (gg->d_y2DC - gg->d_y1DC) / (gg->d_y2wNDC - gg->d_y1wNDC) * (gg->d_y2NDC - gg-> d_y1NDC);
+				double dy = margin / hDC;
+				double yTick = 0.09 * dy;
+				if (dy > 0.4) dy = 0.4;
+				yTick /= 1.0 - 2.0 * dy;
+				return yTick;
+			};
+			double xTick = (double) getXtick (g, newFontSize) * (tmax - tmin);
+			double yTick = (double) getYtick (g, newFontSize) * (fmax - fmin);
+			if (icol == 1 && irow % 2 == 1) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
+				Graphics_line (g, tmin - xTick, fmax, tmin, fmax);
+				Graphics_text (g, tmin - xTick, fmax, Melder_iround (fmax));
+				Graphics_line (g, tmin - xTick, fmin, tmin, fmin);
+				Graphics_text (g, tmin - xTick, fmin, Melder_fixed (fmin, 0));
+			} else if (icol == ncol && irow % 2 == 0) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
+				Graphics_text (g, tmax, fmax, Melder_iround (fmax));
+				Graphics_text (g, tmax, fmin, Melder_fixed (fmin, 0));
+			}
+			if (irow == 1 && icol % 2 == 0) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
+				Graphics_line (g, tmin, fmax, tmin, fmax + yTick);
+				Graphics_text (g, tmin, fmax + yTick, Melder_fixed (tmin, 3));
+				Graphics_line (g, tmax, fmax, tmax, fmax + yTick);
+				Graphics_text (g, tmax, fmax + yTick, Melder_fixed (tmax, 3));
+			} else if (irow == nrow && icol % 2 == 1) {
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
+				Graphics_line (g, tmin, fmin, tmin, fmin - yTick);
+				Graphics_text (g, tmin, fmin - yTick, Melder_fixed (tmin, 3));
+				Graphics_line (g, tmax, fmin, tmax, fmin - yTick);
+				Graphics_text (g, tmax, fmin - yTick, Melder_fixed (tmax, 3));
+			}
+			double yGridLine_Hz = yGridLineEvery_Hz;
+			Graphics_setLineType (g, Graphics_DOTTED);
+			while (yGridLine_Hz < 0.95 * fmax) {
+				Graphics_line (g, tmin, yGridLine_Hz, tmax, yGridLine_Hz);
+				yGridLine_Hz += yGridLineEvery_Hz;
+			}
+			/*
+				Cursors
+			*/
+			Graphics_setColour (g, Melder_RED);
+			Graphics_setLineType (g, Graphics_DASHED);
+			if (xCursor > tmin && xCursor <= tmax)
+				Graphics_line (g, xCursor, 0.0, xCursor, fmax);
+			if (yCursor > 0.0 && yCursor < fmax)
+				Graphics_line (g, tmin, yCursor, tmax, yCursor);
+			Graphics_setColour (g, Melder_BLACK);
+			Graphics_setLineType (g, Graphics_DRAWN);
+		}
+	}
+	Graphics_setFontSize (g, fontSize_old);
+	Graphics_setViewport (g, x1NDC, x2NDC, y1NDC, y2NDC);
+	
+}
+
+void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
+bool showSmoothness, constINTVEC const & parameters, double powerf, bool garnish) {
+	Graphics_setInner (g);
+	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, showSmoothness, parameters,  powerf, garnish);
+	Graphics_unsetInner (g);
+}	
+	
+	
+	
 /* End of file FormantPath.cpp */
