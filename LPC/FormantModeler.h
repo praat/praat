@@ -55,17 +55,17 @@ void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromTra
 void FormantModeler_setTolerance (FormantModeler me, double tolerance);
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters,
-	bool errorBars, double barWidth_mm, double horizontalOffset_wc, bool garnish);
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars,
+	MelderColour oddTracks, MelderColour evenTracks, bool garnish);
 
 void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc);
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, MelderColour oddTracks, MelderColour evenTracks);
 
-void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc, bool garnish);
-void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc);
+void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks, bool garnish);
 
-void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish);
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks, bool garnish);
+
+void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, double numberOfSigmas, conststring32 mark, double marksFontSize, MelderColour oddTracks, MelderColour evenTracks, bool garnish);
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
 

@@ -368,7 +368,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 }
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish)
+	double numberOfSigmas, conststring32 mark, double marksFontSize, MelderColour oddTracks, MelderColour evenTracks, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
@@ -376,8 +376,8 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	double currectFontSize = Graphics_inqFontSize (g);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
-		const double xOffset_wc = ( itrack % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
-		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize, xOffset_wc);
+		Graphics_setColour (g, itrack %2  == 1 ? oddTracks : evenTracks );
+		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize);
 	}
 	Graphics_setFontSize (g, currectFontSize);
 	Graphics_unsetInner (g);
@@ -398,22 +398,22 @@ void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, intege
 	}
 }
 
-void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc) {
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		DataModeler ffi = my trackmodelers.at [itrack];
-		double xOffset_wc = ( itrack % 2 == 0 ? horizontalOffset_wc : 0.0 );
-		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack, numberOfParameters, xOffset_wc);
+		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks );
+		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack, numberOfParameters);
 	}
 }
 
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc, bool garnish)
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_drawTracks_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, horizontalOffset_wc);
+	FormantModeler_drawTracks_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, oddTracks, evenTracks);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -425,23 +425,23 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 }
 
 void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc) {
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, MelderColour oddTracks, MelderColour evenTracks) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
-		const double xOffset_wc = ( itrack % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
-		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, numberOfParameters, errorBars, barWidth_wc, xOffset_wc);
+		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks);
+		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, numberOfParameters, errorBars, 0.0);
 	}
 }
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters,
-	bool errorBars, double barWidth_wc, double horizontalOffset_wc, bool garnish)
+	bool errorBars, MelderColour oddTracks, MelderColour evenTracks, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, errorBars, barWidth_wc, horizontalOffset_wc);
+	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, errorBars, oddTracks, evenTracks);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
