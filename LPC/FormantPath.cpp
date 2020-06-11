@@ -218,21 +218,10 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 	}
 }
 
-static void getMatrixGridLayout (integer numberOfModels, integer *out_numberOfRows, integer *out_numberOfColums) {
-	integer ncol = 1;
-	integer nrow = 3;
-	if (numberOfModels > 3) {
-		nrow = 1 + Melder_ifloor (sqrt (numberOfModels - 0.5));
-		ncol = 1 + Melder_ifloor ((numberOfModels - 1) / nrow);
-	}
-	if (out_numberOfRows)
-		*out_numberOfRows = nrow;
-	if (out_numberOfColums)
-		*out_numberOfColums = ncol;
-}
-
 void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showSmoothness, constINTVEC const & parameters, double powerf,  bool garnish) {
 	const double fmin = 0.0;
+	if (nrow <= 0 || ncol <= 0)
+		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	const double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;

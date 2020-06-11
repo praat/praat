@@ -36,6 +36,10 @@
 */
 #define NUMeps 2.3e-16
 
+void NUMgetGridDimensions (integer n, integer *out_nrow, integer *out_ncol);
+/* Get dimensions of a grid for n elements where nrow*ncol >= n */
+
+
 autoINTVEC newINTVECfromString (conststring32 s);
 autoVEC newVECfromString (conststring32 s);
 /* return array with the numbers found */

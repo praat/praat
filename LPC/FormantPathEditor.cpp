@@ -88,18 +88,6 @@ void FormantPathEditor_selectAll (FormantPathEditor me) {
 void FormantPathEditor_deselect (FormantPathEditor me) {
 }
 
-integer FormantPathEditor_selectModelerFromIndexInMatrixGrid (FormantPathEditor me, integer index) {
-	FormantModelerListDrawingSpecification drawingSpecification = my formantModelerList -> drawingSpecification.get();
-	Melder_require (index > 0 && index <= drawingSpecification->numberOfModelersToDraw,
-		U"Oops no match for index =", index, U".");
-	return drawingSpecification -> drawingOrder [index];
-}
-
-void FormantPathEditor_selectModeler (FormantPathEditor me, integer modelIndex) {
-	if (modelIndex > 0 && modelIndex <= my formantModelerList -> numberOfModelers)
-		my formantModelerList -> drawingSpecification -> selectedCandidate = modelIndex;
-}
-
 static inline void FormantModelerList_setVarianceExponent (FormantModelerList me, double varianceExponent) {
 	my varianceExponent = varianceExponent;
 }
@@ -865,32 +853,17 @@ static void menu_cb_PublishTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_broadcastPublication (me, publish.move());
 }
 
-static void menu_cb_candidates_parameterSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Formant modeler parameter settings", nullptr)		
+static void menu_cb_candidates_modelingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Candidates modeling parameter settings", nullptr)		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
 		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
 	EDITOR_DO
-	double startTime = my formantModelerList -> xmin, endTime = my formantModelerList -> xmax;
-	my formantModelerList = FormantPathEditor_to_FormantModelerList (me, startTime, endTime, parameters_string);
-	FormantModelerList_setVarianceExponent (my formantModelerList.get(), varianceExponent);
 	pref_str32cpy2 (my pref_modeler_numberOfParametersPerTrack (), my p_modeler_numberOfParametersPerTrack, parameters_string);
 	my pref_modeler_varianceExponent () = my p_modeler_varianceExponent = varianceExponent;
 	my v_drawSelectionViewer ();
 	EDITOR_END
-}
-
-static void menu_cb_candidates_showBest3 (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = false;
-	FormantModelerList_showBest3 (my formantModelerList.get());
-	my v_drawSelectionViewer ();
-}
-
-static void menu_cb_ShowAllCandidates (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	my pref_modeler_draw_showAllModels () = my p_modeler_draw_showAllModels = true;
-	FormantPathEditor_selectAll (me);
-	my v_drawSelectionViewer ();
 }
 
 static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
@@ -1141,9 +1114,7 @@ void structFormantPathEditor :: v_createMenus () {
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
 	menu = Editor_addMenu (this, U"Candidates", 0);
-	EditorMenu_addCommand (menu, U"Candidates parameter settings...", 0, menu_cb_candidates_parameterSettings);
-	EditorMenu_addCommand (menu, U"Show best three candidates", 0, menu_cb_candidates_showBest3);
-	EditorMenu_addCommand (menu, U"Show all candidates", 0, menu_cb_ShowAllCandidates);
+	EditorMenu_addCommand (menu, U"Candidates modeling settings...", 0, menu_cb_candidates_modelingSettings);
 	EditorMenu_addCommand (menu, U"Advanced candidates drawing settings...", 0, menu_cb_AdvancedCandidatesDrawingSettings);
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
@@ -1563,8 +1534,6 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 	Graphics_setFontSize (our graphics.get(), 9.0);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
-	if (! our formantModelerList.get())
-			return;
 	double startTime = startWindow, endTime = endWindow;
 	if (startSelection == endSelection) {
 		startTime = startWindow;
@@ -1574,47 +1543,14 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 		startTime = startSelection;
 		endTime = endSelection;
 	}
-	if (startTime != our formantModelerList -> xmin || endTime != our formantModelerList -> xmax) {
-		try {
-			our formantModelerList = FormantPathEditor_to_FormantModelerList (this, startTime, endTime, our p_modeler_numberOfParametersPerTrack);
-		} catch (MelderError) {
-			Melder_clearError ();
-			/*Graphics_setColour (our graphics.get(), Melder_WHITE);
-			Graphics_fillRectangle (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);			
-			Graphics_setColour (our graphics.get(), Melder_BLACK);
-			Graphics_setFontSize (our graphics.get(), 10.0);
-			Graphics_text (our graphics.get(), 0.5 * (vp_left + vp_right), 0.5 * (vp_top + vp_bottom),
-				U"(Not enough formant points in selected interval)");
-			Graphics_setColour (our graphics.get(), Melder_BLACK);
-			Graphics_setFontSize (our graphics.get(), 9.0);
-			return;*/
-		}
-	}
-	FormantModelerList fml = our formantModelerList.get();
-	FormantModelerList_setVarianceExponent (fml, our p_modeler_varianceExponent);
-	const double xCursor = ( startSelection == endSelection ? startSelection : fml -> xmin - 10.0 );
+	const double xCursor = ( startSelection == endSelection ? startSelection : startTime - 10.0 );
 	const double yCursor = ( our d_spectrogram_cursor > our p_spectrogram_viewFrom && our d_spectrogram_cursor < our p_spectrogram_viewTo ? our d_spectrogram_cursor : -1000.0 );
-	/*
-		Mark RED if label of interval matches one of the modelers. This should only occur if
-		a sound interval is exactly selected and matches a textgrid interval
-	*/
-	//const IntervalTier pathTier = reinterpret_cast<IntervalTier> (our pathGridView -> tiers -> at [our pathTierNumber]);
-	//const integer selectedInterval = IntervalTier_timeToIndex (pathTier, our startSelection);
-	//const TextInterval textInterval = pathTier -> intervals .at [selectedInterval];
-	const integer imodel = our selectedCandidate;//FormantPathEditor_identifyModelFromIntervalLabel (this, textInterval -> text.get());
-	if (imodel > 0)
-		FormantPathEditor_selectModeler (this, imodel);
-	FormantModelerList_markBest3 (fml);
+	const integer imodel = our selectedCandidate;
 	
 	FormantPath formantPath = (FormantPath) our data;
-	integer nrow = 3, ncol = 3;
+	const integer nrow = 0, ncol = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
-	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_PINK, true,  parameters.get(), our p_modeler_varianceExponent, true);
-	/*FormantModelerList_drawInMatrixGrid (fml, our graphics.get(), 0, 0, kGraphicsMatrixOrigin::TOP_LEFT,
-		our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, 1,
-		our formantModelerList -> numberOfTracksPerModel, our p_modeler_draw_maximumFrequency,
-		our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, 0, our selectedCandidate,
-		our p_modeler_draw_errorBarWidth_s, our p_modeler_draw_estimatedTracks, true);*/
+	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, true,  parameters.get(), our p_modeler_varianceExponent, true);
 }
 
 static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double tmin_view, double tmax_view, double tmin_selection, double tmax_selection, double fmin, double fmax,
@@ -2089,9 +2025,10 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	/*
 		On which of the modelers was the click?
 	*/
+	FormantPath formantPath = (FormantPath) our data;
 	FormantModelerList fml = formantModelerList.get();
 	integer numberOfRows, numberOfColums;
-	FormantModelerList_getMatrixGridLayout (fml, & numberOfRows, & numberOfColums);
+	NUMgetGridDimensions (formantPath -> formants.size, & numberOfRows, & numberOfColums);
 	integer numberOfVisible = FormantPathEditor_getNumberOfVisible (this);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
 	if (icol < 1 || icol > numberOfColums)
@@ -2101,23 +2038,19 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
 	if (index > 0 && index <= numberOfVisible) {
-		our selectedCandidate = FormantPathEditor_selectModelerFromIndexInMatrixGrid (this, index);
-		/*
-			Toggle selection
-		*/
-		fml -> drawingSpecification -> selectedCandidate = ( (fml -> drawingSpecification -> selectedCandidate > 0 && fml -> drawingSpecification -> selectedCandidate == our selectedCandidate) ? 0 : our selectedCandidate );
-		if (our shiftKeyPressed) {
-			fml -> drawingSpecification -> selectedCandidate = our selectedCandidate; // path has priority
-			Editor_save (this, U"insert interval by selection viewer");
-			FormantPath formantPath = (FormantPath) our data;
-			integer itmin, itmax;
-			Sampled_getWindowSamples (formantPath, fml -> xmin, fml -> xmax, & itmin, & itmax);
-			for (integer iframe = itmin; iframe <= itmax; iframe ++)
-				formantPath -> path [iframe] = our selectedCandidate;
-			Formant source = reinterpret_cast<Formant> (formantPath -> formants.at[our selectedCandidate]);
-			Formant_replaceFrames (d_formant.get(), itmin, itmax, source);
-
+		double tmin = our startWindow, tmax = our endWindow;
+		if (our startSelection < our endSelection) {
+			tmin = our startSelection;
+			tmax = our endSelection;
 		}
+		our selectedCandidate = index;
+		Editor_save (this, U"insert interval by selection viewer");
+		integer itmin, itmax;
+		Sampled_getWindowSamples (formantPath, tmin, tmax, & itmin, & itmax);
+		for (integer iframe = itmin; iframe <= itmax; iframe ++)
+			formantPath -> path [iframe] = our selectedCandidate;
+		Formant source = reinterpret_cast<Formant> (formantPath -> formants.at[our selectedCandidate]);
+		Formant_replaceFrames (d_formant.get(), itmin, itmax, source);
 	}
 }
 
