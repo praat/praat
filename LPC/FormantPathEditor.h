@@ -47,11 +47,10 @@
 */
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
-	autoFormantModelerList formantModelerList;
 	autoTextGrid textgrid;
 	autoTextGridView pathGridView;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, pathTierNumber, selectedCandidate;
+	integer selectedTier, selectedCandidate;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;

@@ -20,6 +20,7 @@
 #include "FormantModeler.h"
 #include "Graphics_extensions.h"
 #include "LPC_and_Formant.h"
+#include "Matrix.h"
 #include "Sound_to_Formant.h"
 #include "Sound_and_LPC.h"
 #include "Sound.h"
@@ -69,6 +70,95 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	my ceilings = newVECzero (numberOfCeilings);
 	my path = newINTVECzero (nx);
 	return me;
+}
+
+autoINTVEC FormantPath_getPath_smoothness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
+	try {
+		autoMatrix thee = FormantPath_to_Matrix_smoothness (me, windowLength,parameters, powerf);
+		autoINTVEC path = newINTVECraw (my nx);
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			integer index = 1;
+			double minimum = thy z [1][iframe];
+			if (isdefined (minimum)) {
+				for (integer iformant = 2; iformant <= thy ny; iformant ++) {
+					if (thy z [iformant][iframe] < minimum) {
+						minimum = thy z [iformant][iframe];
+						index = iformant;
+					}
+				}
+			} else
+				index = (thy ny + 1) / 2;
+			path [iframe] = index;
+		}
+		return path;
+		
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot get ceilings.");
+	}
+}
+
+INTVEC FormantPath_pathFinder (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf, double wsmootness, constVEC const& wformants, double wfstep, constBOOLVEC const& voiced, constVEC const& intensity) {
+	try {
+		autoMatrix smoothness = FormantPath_to_Matrix_smoothness (me, windowLength, parameters, powerf);
+		/*
+			We have states s[i], where i = 1..  S (= my formants.size)
+			Whithin each state we can have j=1..F formant frequencies f[i][j] and bandwidths b[i][j].
+			Costs of a state could be expressed as:
+			1. sum (j=1..F, b[j]/f[j]), this has the advantage that states with large Q values (sharp peaks) have lower costs.
+			(2). 1/log(min(max(f1-f2, 100),300), keep sufficient distance between f1 and f2
+			Costs between successive states:
+			3. sum(j=1..F, ( log (|f[i][j]-f[i+1][j]|)
+			4. global measure like w ?
+		*/
+		const integer numberOfTracks = wformants.size;
+		autoMAT psi = newMATraw (my nx, my formants.size);
+		autoMAT deltas = newMATraw (my nx, my formants.size);
+		autoINTVEC path = newINTVECzero (my nx);
+		for (integer itime = 1; itime <= my nx; itime ++) {
+			for (integer iformant = 1; iformant <= my formants.size; iformant++) {
+				Formant_Frame frame = & my formants.at [iformant] -> frames [itime];
+				double sum = 0.0;
+				for (integer itrack = 1; itrack <= std::min (numberOfTracks, frame -> numberOfFormants); itrack ++) {
+					sum += frame-> formant [itrack]. bandwidth / frame -> formant [itrack] . frequency;
+				}
+				deltas [itime][iformant] = sum;
+			}
+		}
+		path [1] = NUMminPos (deltas.column(1));
+		for (integer itime = 2; itime <= my nx; itime ++) {
+			for (integer iformant = 1; iformant <= my formants.size; iformant++) {
+				Formant_Frame framei = & my formants.at [iformant] -> frames [itime];
+				double deltamin = 1e100;
+				integer minPos = 0;
+				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
+					Formant_Frame framej = & my formants.at [jformant] -> frames [itime];
+					double transitionCost = 0.0;
+					const integer ntracks = std::min (numberOfTracks, framei -> numberOfFormants);
+					for (integer itrack = 1; itrack <= std::min (ntracks, framej -> numberOfFormants); itrack ++) {
+						const double difLog = log (framei -> formant [itrack] . frequency / framej -> formant [itrack] . frequency);
+						transitionCost += difLog; // sqrt (b1 * bj)/ log ?
+					}
+					const double deltaj = transitionCost * deltas [itime - 1] [jformant];
+					if (deltaj < deltamin) {
+						deltamin = deltaj;
+						minPos = jformant;
+					}
+				}
+				deltas [itime] [iformant] += deltamin;
+				psi [itime] [iformant] = minPos;
+			}
+		}
+		path [my nx] = NUMminPos (deltas.column (my nx));
+		/*
+			Backtrack
+		*/
+		for (integer itime = my nx; itime > 1; itime --) {
+			path [itime - 1] = psi [itime] [path [itime]];
+		}
+		my path = path.move();
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot find path.");
+	}
 }
 
 autoFormant FormantPath_extractFormant (FormantPath me) {
@@ -161,10 +251,45 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
+autoMatrix FormantPath_to_Matrix_smoothness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
+	try {
+		const integer numberOfFormants = my formants.size;
+		Melder_require (parameters.size > 0 && parameters.size <= numberOfFormants,
+			U"The number of parameters should be between 1 and ", numberOfFormants, U".");
+		integer fromFormant = 1;
+		const integer maximum = NUMmax (parameters);
+		const integer numberOfDataPoints = (windowLength + 0.5 * my dx) / my dx;
+		Melder_require ((windowLength + 0.5 * my dx) / my dx >= maximum,
+			U"The window length is too short for the number of coefficients you use in the smoothness determination (",
+			maximum, U"). Either increase your window length or decrease the number of coefficents per track.");
+		while (fromFormant <= parameters.size && parameters [fromFormant] <= 0)
+			fromFormant ++;
+		integer toFormant = std::min (numberOfFormants, parameters.size);
+		while (toFormant > 0 && parameters [toFormant] <= 0)
+			toFormant --;
+		Melder_require (fromFormant <= toFormant,
+			U"Not all the parameter values should equal zero.");
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, numberOfFormants, numberOfFormants, 1.0, 1.0);
+		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
+			const Formant formanti = (Formant) my formants . at [iformant];
+			for (integer iframe = 1; iframe <= my nx; iframe ++) {
+				const double time = my x1 + (iframe - 1) * my dx;
+				const double startTime = time - 0.5 * windowLength;
+				const double endTime = time + 0.5 * windowLength;
+				autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  parameters);
+				thy z [iformant] [iframe] = FormantModeler_getSmoothnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot create smoothness Matrix");
+	}
+}
+
 autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
 	autoVEC smoothness = newVECraw (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
-		Formant formanti = (Formant) my formants . at [iformant];
+		const Formant formanti = (Formant) my formants . at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
 		smoothness [iformant] = FormantModeler_getSmoothnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
@@ -234,27 +359,31 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const integer irow = 1 + (iformant - 1) / ncol; // left-to-right + top-to-bottom
 		const integer icol = 1 + (iformant - 1) % ncol;
-		double vpi_x1 = x1NDC + (icol - 1) * vpi_width * (1.0 + spaceBetweenFraction_x);
-		double vpi_x2 = vpi_x1 + vpi_width;
-		double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
-		double vpi_y1 = vpi_y2 - vpi_height;
-		Formant formant = my formants.at [iformant];
+		const double vpi_x1 = x1NDC + (icol - 1) * vpi_width * (1.0 + spaceBetweenFraction_x);
+		const double vpi_x2 = vpi_x1 + vpi_width;
+		const double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
+		const double vpi_y1 = vpi_y2 - vpi_height;
+		const Formant formant = my formants.at [iformant];
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, odd, even);
 
-		Graphics_setLineWidth (g, 2.0);
-		Graphics_setColour (g, ( iformant == iselected ? selected : Melder_BLACK ));
-		Graphics_rectangle (g, tmin, tmax, fmin, fmax);
+		if (garnish) {
+			Graphics_setLineWidth (g, 2.0);
+			Graphics_setColour (g, ( iformant == iselected ? selected : Melder_BLACK ));
+			Graphics_rectangle (g, tmin, tmax, fmin, fmax);
+		}
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
 			Mark name & smoothness
 		*/
-		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
-		Graphics_text (g, tmax - 0.05 * (tmax - tmin),
-			fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
+		if (garnish) {
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
+			Graphics_text (g, tmax - 0.05 * (tmax - tmin),
+				fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
+		}
 		if (showSmoothness) {
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (smoothness [iformant], 2));
@@ -278,16 +407,16 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 				return xTick /= 1.0 - 2.0 * dx;
 			};
 			auto getYtick = [] (Graphics gg, double fontSize) {
-				double margin = 2.8 * fontSize * gg -> resolution / 72.0;
-				double hDC = integer_abs (gg->d_y2DC - gg->d_y1DC) / (gg->d_y2wNDC - gg->d_y1wNDC) * (gg->d_y2NDC - gg-> d_y1NDC);
+				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
+				const double hDC = integer_abs (gg->d_y2DC - gg->d_y1DC) / (gg->d_y2wNDC - gg->d_y1wNDC) * (gg->d_y2NDC - gg-> d_y1NDC);
 				double dy = margin / hDC;
 				double yTick = 0.09 * dy;
 				if (dy > 0.4) dy = 0.4;
 				yTick /= 1.0 - 2.0 * dy;
 				return yTick;
 			};
-			double xTick = (double) getXtick (g, newFontSize) * (tmax - tmin);
-			double yTick = (double) getYtick (g, newFontSize) * (fmax - fmin);
+			const double xTick = (double) getXtick (g, newFontSize) * (tmax - tmin);
+			const double yTick = (double) getYtick (g, newFontSize) * (fmax - fmin);
 			if (icol == 1 && irow % 2 == 1) {
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 				Graphics_line (g, tmin - xTick, fmax, tmin, fmax);

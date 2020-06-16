@@ -123,6 +123,18 @@ DO
 	GRAPHICS_EACH_END
 }
 
+FORM (NEW_FormantPath_to_Matrix_smoothness, U"FormantPath: To Matrix (smoothness)", nullptr) {
+	POSITIVE (windowLength, U"Window length", U"0.025")
+	SENTENCE (parameters_string, U"Number of parameters per formant track", U"7 7 7 7")
+	POSITIVE (powerf,U"Power", U"1.25")
+	OK
+DO
+	CONVERT_EACH (FormantPath)
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		autoMatrix result = FormantPath_to_Matrix_smoothness (me, windowLength, parameters.get (), powerf);
+	CONVERT_EACH_END (my name.get())
+}
+
 DIRECT (NEW_FormantPath_extractFormant) {
 	CONVERT_EACH (FormantPath)
 		autoFormant result = FormantPath_extractFormant (me);
@@ -1240,9 +1252,10 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
-	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);
+	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
+	praat_addAction1 (classFormantPath, 1, U"To Matrix (smoothness)...", 0, 0, NEW_FormantPath_to_Matrix_smoothness);
 
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);
