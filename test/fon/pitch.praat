@@ -109,7 +109,7 @@ endproc
 
 procedure analyse: precision
 	timeStep = 0.09457464735
-	timeStep = 0.001
+	;timeStep = 0.001
 	;To Pitch... timeStep 75 11025
 	my.Pitch = noprogress To Pitch ('method$'): timeStep, 75, 15, "no", 0.03, 0.45, 0.03, 0.35, 0.14, 11025
 	minPitch = Get minimum... 0 0 Hertz None
