@@ -778,14 +778,22 @@ static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDI
 
 static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find path", nullptr)
-		POSITIVE (windowLength, U"Window length", U"0.025")
-		SENTENCE (parameters_string, U"Number of parameters per formant track", U"7 7 7 7")
-		POSITIVE (powerf,U"Power", U"1.25")
+		LABEL (U"Within frame:")
+		REAL (qWeight, U"F/B weight (0-1)", U"1.0")
+		LABEL (U"Between frames:")
+		REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
+		REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+		REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
+		POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
+		LABEL (U"Global roughness parameters")
+		POSITIVE (windowLength, U"Window length", U"0.035")
+		SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+		POSITIVE (powerf, U"Power", U"1.25")
 	EDITOR_OK
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		formantPath -> path  = FormantPath_getPath_smoothness (formantPath, windowLength, parameters, powerf);
+		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf, nullptr);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);

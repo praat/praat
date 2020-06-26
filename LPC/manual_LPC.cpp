@@ -164,7 +164,7 @@ DEFINITION (U"determines the maximum order of the polynomials that are used in m
 TAG (U"##Use bandwidths to model formant tracks")
 DEFINITION (U"Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty for its formant frequency value. Setting this option %%on%, the default setting, means that you force the modeling function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.")
 TAG (U"##Bandwidths for smoothing test")
-DEFINITION (U"determines whether for the smoothnes determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the smoothness of a track.")
+DEFINITION (U"determines whether for the roughness determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the roughness of a track.")
 MAN_END
 
 #define PowerCepstrum_manual_pitchRange \

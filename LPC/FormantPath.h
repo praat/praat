@@ -38,9 +38,11 @@ void FormantPath_replaceFrames (FormantPath me, integer beginFrame, integer endF
 
 autoFormant FormantPath_extractFormant (FormantPath me);
 
-autoMatrix FormantPath_to_Matrix_smoothness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
+autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
+autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts);
+autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
-autoINTVEC FormantPath_getPath_smoothness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta);
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double formantCeiling, double windowLength, double preemphasisFrequency, double ceilingStepFraction, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
 
@@ -49,8 +51,8 @@ static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeSt
 }
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
-bool showSmoothness, constINTVEC const & parameters, double powerf, bool garnish);
+bool showRoughness, constINTVEC const & parameters, double powerf, bool garnish);
 
-void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showSmoothness, constINTVEC const & parameters, double powerf,  bool garnish);
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showRoughness, constINTVEC const & parameters, double powerf,  bool garnish);
 
 #endif /* _FormantPath_h_ */

@@ -118,7 +118,7 @@ integer FormantModelerList_getBestModelIndex (FormantModelerList me, integer fro
 	integer best = 0;
 	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
 		FormantModeler fm = my formantModelers.at [imodel];
-		double w = FormantModeler_getSmoothnessValue (fm, fromTrack, toTrack, 0, my varianceExponent);
+		double w = FormantModeler_getRoughnessValue (fm, fromTrack, toTrack, 0, my varianceExponent);
 		if (w < wmin) {
 			wmin = w;
 			best = imodel;
@@ -134,23 +134,23 @@ autoINTVEC FormantModelerList_getBest3 (FormantModelerList me) {
 		1 the smoothest F1 & F2 & F3 score
 	*/
 	autoINTVEC best = newINTVECraw (3);
-	double smoothnessF1, smoothnessF1F2, smoothnessF1F2F3;
-	smoothnessF1 = smoothnessF1F2 = smoothnessF1F2F3 = std::numeric_limits<double>::max();
+	double roughnessF1, roughnessF1F2, roughnessF1F2F3;
+	roughnessF1 = roughnessF1F2 = roughnessF1F2F3 = std::numeric_limits<double>::max();
 	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
 		FormantModeler fm = my formantModelers.at [imodel];
-		double smoothness = FormantModeler_getSmoothnessValue (fm, 1, 1, 0, my varianceExponent);
-		if (smoothness < smoothnessF1) {
-			smoothnessF1 = smoothness;
+		double roughness = FormantModeler_getRoughnessValue (fm, 1, 1, 0, my varianceExponent);
+		if (roughness < roughnessF1) {
+			roughnessF1 = roughness;
 			best [3] = imodel;
 		}
-		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 2, 0, my varianceExponent);
-		if (smoothness < smoothnessF1F2) {
-			smoothnessF1F2 = smoothness;
+		roughness = FormantModeler_getRoughnessValue (fm, 1, 2, 0, my varianceExponent);
+		if (roughness < roughnessF1F2) {
+			roughnessF1F2 = roughness;
 			best [2]  = imodel;
 		}
-		smoothness = FormantModeler_getSmoothnessValue (fm, 1, 3, 0, my varianceExponent);
-		if (smoothness < smoothnessF1F2F3) {
-			smoothnessF1F2F3 = smoothness;
+		roughness = FormantModeler_getRoughnessValue (fm, 1, 3, 0, my varianceExponent);
+		if (roughness < roughnessF1F2F3) {
+			roughnessF1F2F3 = roughness;
 			best [1]  = imodel;
 		}
 	}
@@ -263,12 +263,12 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
-			Mark name & smoothness
+			Mark name & roughness
 		*/
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 		Graphics_text (g, fm -> xmax - 0.05 * (fm -> xmax - fm -> xmin),
 			fmax - 0.05 * fmax, fm -> name.get());
-		double w = FormantModeler_getSmoothnessValue (fm, fromFormant, toFormant, 0, my varianceExponent);
+		double w = FormantModeler_getRoughnessValue (fm, fromFormant, toFormant, 0, my varianceExponent);
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 		Graphics_text (g, fm -> xmin + 0.05 * (fm -> xmax - fm -> xmin),
 			fmax - 0.05 * fmax, Melder_fixed (w, 2));

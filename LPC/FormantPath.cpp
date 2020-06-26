@@ -57,7 +57,7 @@ double structFormantPath :: v_getValueAtSample (integer iframe, integer which, i
 	return formant -> v_getValueAtSample (iframe, which, units);
 }
 
-conststring32 structFormantPath :: v_getUnitText (integer level, int unit, uint32 flags) {
+conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*/, uint32 /*flags*/) {
 	return U"Frequency (Hz)";
 	
 };
@@ -72,90 +72,110 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	return me;
 }
 
-autoINTVEC FormantPath_getPath_smoothness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta) {
+	constexpr double qCutoff = 20.0;
+	constexpr double roughnessCutoff = 200.0;
+	constexpr double frequencyChangeCutoff = 100.0;
 	try {
-		autoMatrix thee = FormantPath_to_Matrix_smoothness (me, windowLength,parameters, powerf);
-		autoINTVEC path = newINTVECraw (my nx);
+		autoMatrix roughnesses, qsums;
+		MelderExtremaWithInit intensities;
+		const double ceilingsRange = NUMmax (my ceilings.get()) - NUMmin (my ceilings.get());
+		const integer midformant = (my formants.size + 1) / 2;
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			integer index = 1;
-			double minimum = thy z [1][iframe];
-			if (isdefined (minimum)) {
-				for (integer iformant = 2; iformant <= thy ny; iformant ++) {
-					if (thy z [iformant][iframe] < minimum) {
-						minimum = thy z [iformant][iframe];
-						index = iformant;
-					}
-				}
-			} else
-				index = (thy ny + 1) / 2;
-			path [iframe] = index;
+			const Formant_Frame frame = & my formants.at [midformant] -> frames [iframe];
+			intensities.update (frame -> intensity);
 		}
-		return path;
-		
-	} catch (MelderError) {
-		Melder_throw (me, U": cannot get ceilings.");
-	}
-}
+		const bool hasIntensityDifference = ( intensities.max - intensities.min > 0.0 );
+		const double dbMid = 0.5 * 10.0 * log10 (intensities.max * intensities.min);
+		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		const integer numberOfTracks = std::min (maxnFormants, parameters.size);
+		if (qWeight > 0.0)
+			qsums = FormantPath_to_Matrix_qSums (me, numberOfTracks);
+		if (roughnessWeight > 0.0)
+			roughnesses = FormantPath_to_Matrix_roughness (me, windowLength, parameters, powerf);
 
-INTVEC FormantPath_pathFinder (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf, double wsmootness, constVEC const& wformants, double wfstep, constBOOLVEC const& voiced, constVEC const& intensity) {
-	try {
-		autoMatrix smoothness = FormantPath_to_Matrix_smoothness (me, windowLength, parameters, powerf);
 		/*
 			We have states s[i], where i = 1..  S (= my formants.size)
 			Whithin each state we can have j=1..F formant frequencies f[i][j] and bandwidths b[i][j].
-			Costs of a state could be expressed as:
-			1. sum (j=1..F, b[j]/f[j]), this has the advantage that states with large Q values (sharp peaks) have lower costs.
-			(2). 1/log(min(max(f1-f2, 100),300), keep sufficient distance between f1 and f2
+			Benefits of a state could be expressed as:
+			1. sum (j=1..F, 0.1*f[j]/b[j])/F, this has the advantage that states with large Q values (sharp peaks) have larger benefits
+			(2?). -|log(min(max(f1-f2, 100),300)|, keep sufficient distance between f1 and f2
 			Costs between successive states:
-			3. sum(j=1..F, ( log (|f[i][j]-f[i+1][j]|)
-			4. global measure like w ?
+			3. -sum(j=1..F, ( (2|f[i][j]-f[i+1][j]|/(f[i][j]+f[i+1][j]))
+			Global:
+			4. -global measure like w ?
+			We try to find the path that maximizes the benefits
 		*/
-		const integer numberOfTracks = wformants.size;
-		autoMAT psi = newMATraw (my nx, my formants.size);
-		autoMAT deltas = newMATraw (my nx, my formants.size);
+		autoINTMAT psi = newINTMATzero (my formants.size, my nx);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, my formants.size, my formants.size, 1.0, 1.0);
+		MAT deltas (& thy z [1] [1], thy ny, thy nx);
 		autoINTVEC path = newINTVECzero (my nx);
+		autoVEC intensity = newVECraw (my nx);
 		for (integer itime = 1; itime <= my nx; itime ++) {
-			for (integer iformant = 1; iformant <= my formants.size; iformant++) {
-				Formant_Frame frame = & my formants.at [iformant] -> frames [itime];
-				double sum = 0.0;
-				for (integer itrack = 1; itrack <= std::min (numberOfTracks, frame -> numberOfFormants); itrack ++) {
-					sum += frame-> formant [itrack]. bandwidth / frame -> formant [itrack] . frequency;
+			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
+				const Formant_Frame frame = & my formants.at [iformant] -> frames [itime];
+				double wIntensity = 1.0, delta = 0.0;
+				if (hasIntensityDifference) {
+					if (frame -> intensity > 0.0) {
+						const double dbi = 10.0 * log10 (frame -> intensity / 2e-5);
+						wIntensity = NUMsigmoid ((dbi - dbMid) / intensityModulationStepSize);
+					} else
+						wIntensity = 0.0;
 				}
-				deltas [itime][iformant] = sum;
+				if (qWeight > 0.0)
+					delta += qWeight * std::min (qsums -> z [iformant] [itime] / qCutoff, 1.0);
+				double roughness = 1.0;
+				if (roughnessWeight > 0.0 && isdefined (roughnesses -> z [iformant] [itime]))
+					roughness = std::min (roughnesses -> z [iformant] [itime] / roughnessCutoff, 1.0);
+				delta -= roughnessWeight * roughness;
+
+				deltas [iformant] [itime] += wIntensity * delta;
 			}
 		}
-		path [1] = NUMminPos (deltas.column(1));
 		for (integer itime = 2; itime <= my nx; itime ++) {
 			for (integer iformant = 1; iformant <= my formants.size; iformant++) {
-				Formant_Frame framei = & my formants.at [iformant] -> frames [itime];
-				double deltamin = 1e100;
-				integer minPos = 0;
+				const Formant_Frame ffi = & my formants.at [iformant] -> frames [itime];
+				double deltamax = -1e100;
+				integer maxPos = 0;
 				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
-					Formant_Frame framej = & my formants.at [jformant] -> frames [itime];
-					double transitionCost = 0.0;
-					const integer ntracks = std::min (numberOfTracks, framei -> numberOfFormants);
-					for (integer itrack = 1; itrack <= std::min (ntracks, framej -> numberOfFormants); itrack ++) {
-						const double difLog = log (framei -> formant [itrack] . frequency / framej -> formant [itrack] . frequency);
-						transitionCost += difLog; // sqrt (b1 * bj)/ log ?
+					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
+					double transitionCosts = 0.0;
+					if (frequencyChangeWeight > 0.0) {
+						const integer ntracks = std::min (numberOfTracks, ffi -> numberOfFormants);
+						double frequencyChangeCosts = 0.0;
+						for (integer itrack = 1; itrack <= std::min (ntracks, ffj -> numberOfFormants); itrack ++) {
+							const double dif = fabs (ffi -> formant [itrack] . frequency - ffj -> formant [itrack] . frequency);
+							const double sum = ffi -> formant [itrack] . frequency + ffj -> formant [itrack] . frequency;
+							const double bw = sqrt (ffi -> formant [itrack] . bandwidth * ffj -> formant [itrack] . bandwidth);
+							frequencyChangeCosts += bw * dif / sum;
+						}
+						frequencyChangeCosts = std::min (frequencyChangeCosts / frequencyChangeCutoff, 1.0);
+						transitionCosts += frequencyChangeWeight * frequencyChangeCosts;
 					}
-					const double deltaj = transitionCost * deltas [itime - 1] [jformant];
-					if (deltaj < deltamin) {
-						deltamin = deltaj;
-						minPos = jformant;
+					if (ceilingChangeWeight > 0.0) {
+						const double ceilingChangeCosts = fabs (my ceilings [iformant] - my ceilings [jformant]) / ceilingsRange;
+						transitionCosts += ceilingChangeCosts * ceilingChangeWeight;
+					}
+					const double deltaj = deltas [jformant] [itime - 1] - transitionCosts;
+					if (deltaj > deltamax) {
+						deltamax = deltaj;
+						maxPos = jformant;
 					}
 				}
-				deltas [itime] [iformant] += deltamin;
-				psi [itime] [iformant] = minPos;
+				deltas [iformant] [itime] += deltamax;
+				psi [iformant] [itime] = maxPos;
 			}
 		}
-		path [my nx] = NUMminPos (deltas.column (my nx));
+		path [my nx] = NUMmaxPos (deltas.column (my nx));
 		/*
 			Backtrack
 		*/
 		for (integer itime = my nx; itime > 1; itime --) {
-			path [itime - 1] = psi [itime] [path [itime]];
+			path [itime - 1] = psi [path [itime]] [itime];
 		}
 		my path = path.move();
+		if (out_delta)
+			*out_delta = thee.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find path.");
 	}
@@ -251,7 +271,57 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	}
 }
 
-autoMatrix FormantPath_to_Matrix_smoothness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
+autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) {
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
+		const integer maxnFormants = my formants.at [1] -> maxnFormants;
+		if (numberOfTracks == 0)
+			numberOfTracks = maxnFormants;
+		for (integer itime = 1; itime <= my nx; itime ++) {
+			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
+				const Formant_Frame frame = & my formants.at [iformant] -> frames [itime];
+				double qsum = 0.0;
+				for (integer itrack = 1; itrack <= std::min (numberOfTracks, frame -> numberOfFormants); itrack ++)
+					qsum += frame -> formant [itrack] . frequency / frame-> formant [itrack]. bandwidth;
+				qsum /= frame -> numberOfFormants;
+				thy z [iformant] [itime] = qsum;
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot calculate qsum.");
+	}
+}
+
+autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts) {
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
+		for (integer itime = 2; itime <= my nx; itime ++) {
+			for (integer iformant = 1; iformant <= my formants.size; iformant++) {
+				const Formant_Frame ffi = & my formants.at [iformant] -> frames [itime];
+				MelderExtremaWithInit costs;
+				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
+					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
+					double transitionCosts = 0.0;
+					const integer ntracks = std::min (ffj -> numberOfFormants, ffi -> numberOfFormants);
+					for (integer itrack = 1; itrack <= ntracks; itrack ++) {
+						const double dif = fabs (ffi -> formant [itrack] . frequency - ffj -> formant [itrack] . frequency);
+						const double sum = ffi -> formant [itrack] . frequency + ffj -> formant [itrack] . frequency;
+						const double bw = sqrt (ffi -> formant [itrack] . bandwidth * ffj -> formant [itrack] . bandwidth);
+						transitionCosts += bw * dif / sum;
+					}
+					costs.update (transitionCosts);
+				}
+				thy z [iformant] [itime] = ( maximumCosts ? costs.max : costs.min );
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot calculate transition costs.");
+	}
+}
+
+autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
 	try {
 		const integer numberOfFormants = my formants.size;
 		Melder_require (parameters.size > 0 && parameters.size <= numberOfFormants,
@@ -259,8 +329,8 @@ autoMatrix FormantPath_to_Matrix_smoothness (FormantPath me, double windowLength
 		integer fromFormant = 1;
 		const integer maximum = NUMmax (parameters);
 		const integer numberOfDataPoints = (windowLength + 0.5 * my dx) / my dx;
-		Melder_require ((windowLength + 0.5 * my dx) / my dx >= maximum,
-			U"The window length is too short for the number of coefficients you use in the smoothness determination (",
+		Melder_require (numberOfDataPoints >= maximum,
+			U"The window length is too short for the number of coefficients you use in the roughness determination (",
 			maximum, U"). Either increase your window length or decrease the number of coefficents per track.");
 		while (fromFormant <= parameters.size && parameters [fromFormant] <= 0)
 			fromFormant ++;
@@ -269,7 +339,7 @@ autoMatrix FormantPath_to_Matrix_smoothness (FormantPath me, double windowLength
 			toFormant --;
 		Melder_require (fromFormant <= toFormant,
 			U"Not all the parameter values should equal zero.");
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, numberOfFormants, numberOfFormants, 1.0, 1.0);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, numberOfFormants + 0.5, numberOfFormants, 1.0, 1.0);
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			const Formant formanti = (Formant) my formants . at [iformant];
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
@@ -277,23 +347,23 @@ autoMatrix FormantPath_to_Matrix_smoothness (FormantPath me, double windowLength
 				const double startTime = time - 0.5 * windowLength;
 				const double endTime = time + 0.5 * windowLength;
 				autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  parameters);
-				thy z [iformant] [iframe] = FormantModeler_getSmoothnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+				thy z [iformant] [iframe] = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
 			}
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot create smoothness Matrix");
+		Melder_throw (me, U": cannot create roughness Matrix");
 	}
 }
 
 autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	autoVEC smoothness = newVECraw (my formants.size);
+	autoVEC roughness = newVECraw (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const Formant formanti = (Formant) my formants . at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
-		smoothness [iformant] = FormantModeler_getSmoothnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+		roughness [iformant] = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
-	return smoothness;
+	return roughness;
 }
 
 static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour odd, MelderColour even)
@@ -343,7 +413,7 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 	}
 }
 
-void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showSmoothness, constINTVEC const & parameters, double powerf,  bool garnish) {
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showRoughness, constINTVEC const & parameters, double powerf,  bool garnish) {
 	const double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
@@ -353,9 +423,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	autoVEC smoothness;
-	if (showSmoothness)
-		smoothness = FormantPath_getSmootness (me, tmin, tmax, fromFormant, toFormant, parameters, powerf);
+	autoVEC roughness;
+	if (showRoughness)
+		roughness = FormantPath_getSmootness (me, tmin, tmax, fromFormant, toFormant, parameters, powerf);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const integer irow = 1 + (iformant - 1) / ncol; // left-to-right + top-to-bottom
 		const integer icol = 1 + (iformant - 1) % ncol;
@@ -377,16 +447,16 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
-			Mark name & smoothness
+			Mark name & roughness
 		*/
 		if (garnish) {
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 			Graphics_text (g, tmax - 0.05 * (tmax - tmin),
 				fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
 		}
-		if (showSmoothness) {
+		if (showRoughness) {
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
-			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (smoothness [iformant], 2));
+			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (roughness [iformant], 2));
 		}
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		conststring32 midTopText = U"";
@@ -466,9 +536,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 }
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
-bool showSmoothness, constINTVEC const & parameters, double powerf, bool garnish) {
+bool showRoughness, constINTVEC const & parameters, double powerf, bool garnish) {
 	Graphics_setInner (g);
-	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, showSmoothness, parameters,  powerf, garnish);
+	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, showRoughness, parameters,  powerf, garnish);
 	Graphics_unsetInner (g);
 }	
 	
