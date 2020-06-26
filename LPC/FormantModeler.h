@@ -145,7 +145,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool es
 autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas);
 
 /*
-	Get smoothness criterion value according to Weenink's (2015) measure
+	Get roughness criterion value according to Weenink's (2015) measure
 	W = (var/k)^t * (chi^2/d), where
 	var is the sum of all variances of all parameters of all modelled formants,
 	k is the total number of parameters to mode all tracks, chi^2 is the combined chi-squared of all
@@ -156,7 +156,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 	
 	The routine returns log10 (W).
 */
-double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromTrack, integer toTrack,
+double FormantModeler_getRoughnessValue (FormantModeler me, integer fromTrack, integer toTrack,
 	integer numberOfParametersPerTrack, double power);
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type);
