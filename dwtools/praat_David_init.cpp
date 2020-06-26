@@ -7780,6 +7780,42 @@ DO
 	CONVERT_TWO_END (my name.get())
 }
 
+FORM (INTEGER_TextGridNavigator_getNextMatchAfterTime, U"", nullptr) {
+	REAL (time, U"Time (s)", U"-1.0")
+	OK
+DO
+	INTEGER_ONE (TextGridNavigator)
+		integer result = TextGridNavigator_getNextMatchAfterTime (me, time);
+	INTEGER_ONE_END (U"")
+}
+
+FORM (INTEGER_TextGridNavigator_getPreviousMatchBeforeTime, U"", nullptr) {
+	REAL (time, U"Time (s)", U"10.0")
+	OK
+DO
+	INTEGER_ONE (TextGridNavigator)
+		integer result = TextGridNavigator_getPreviousMatchBeforeTime (me, time);
+	INTEGER_ONE_END (U"")
+}
+
+DIRECT (REAL_TextGridNavigator_getCurrentStartTime) {
+	NUMBER_ONE (TextGridNavigator)
+		double  result = TextGridNavigator_getCurrentStartTime (me);
+	NUMBER_ONE_END (U" s (start time)")
+}
+
+DIRECT (REAL_TextGridNavigator_getCurrentEndTime) {
+	NUMBER_ONE (TextGridNavigator)
+		double  result = TextGridNavigator_getCurrentEndTime (me);
+	NUMBER_ONE_END (U" s (end time)")
+}
+
+DIRECT (INFO_TextGridNavigator_getCurrentLabel) {
+	STRING_ONE (TextGridNavigator)
+		conststring32 result = TextGridNavigator_getCurrentLabel (me);
+	STRING_ONE_END
+}
+
 FORM (MODIFY_TextGridNavigator_addNavigationContext, U"TextGrid & NavigationContext: Add navigation context", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kNavigatableTier_match, matchCriterion, U"Timing relation with navigation match", kNavigatableTier_match::DEFAULT)
@@ -8977,7 +9013,14 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_NavigationContext_to_TextGridNavigator);
 	
+	praat_addAction1 (classTextGridNavigator, 1, U"Get next match after time...", nullptr, 0, INTEGER_TextGridNavigator_getNextMatchAfterTime);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get previous match before time...", nullptr, 0, INTEGER_TextGridNavigator_getPreviousMatchBeforeTime);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get current start time", nullptr, 0, REAL_TextGridNavigator_getCurrentStartTime);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get current end time", nullptr, 0, REAL_TextGridNavigator_getCurrentEndTime);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get current label", nullptr, 0, INFO_TextGridNavigator_getCurrentLabel);
+	
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Add navigation context...", nullptr, 0, MODIFY_TextGridNavigator_addNavigationContext);
+	
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

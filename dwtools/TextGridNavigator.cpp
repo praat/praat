@@ -553,7 +553,7 @@ integer TextGridNavigator_next (TextGridNavigator me) {
 	return 0;
 }
 
-integer TextGridNavigator_nextFromTime (TextGridNavigator me, double time) {
+integer TextGridNavigator_getNextMatchAfterTime (TextGridNavigator me, double time) {
 	TextGridNavigator_setCurrentAtTime (me, time);
 	return TextGridNavigator_next (me);
 }
@@ -570,9 +570,27 @@ integer TextGridNavigator_previous (TextGridNavigator me) {
 	return 0;
 }
 
-integer TextGridNavigator_previousFromTime (TextGridNavigator me, double time) {
+integer TextGridNavigator_getPreviousMatchBeforeTime (TextGridNavigator me, double time) {
 	TextGridNavigator_setCurrentAtTime (me, time);
 	return TextGridNavigator_previous (me);
+}
+
+double TextGridNavigator_getCurrentStartTime (TextGridNavigator me) {
+	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+	return tnc -> v_getLeftTime (navigationTier, tnc -> current);
+}
+
+double TextGridNavigator_getCurrentEndTime (TextGridNavigator me) {
+	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+	return tnc -> v_getRightTime (navigationTier, tnc -> current);
+}
+
+conststring32 TextGridNavigator_getCurrentLabel (TextGridNavigator me) {
+	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+	return tnc -> v_getLabel (navigationTier, tnc -> current);
 }
 
 /* End of file TextGridNavigator.cpp */

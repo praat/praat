@@ -62,18 +62,24 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 	
 	double v_getLeftTime (Function anyTier, integer index) {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+		if (index < 1 || index > my intervals.size)
+			return undefined;
 		TextInterval interval = my intervals . at [index];
 		return interval -> xmin;
 	}
 		
 	double v_getRightTime (Function anyTier, integer index) {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+		if (index < 1 || index > my intervals.size)
+			return undefined;
 		TextInterval interval = my intervals . at [index];
 		return interval -> xmax;
 	}
 		
 	conststring32 v_getLabel (Function anyTier, integer index) {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+		if (index < 1 || index > my intervals.size)
+			return U"-- undefined --";
 		TextInterval interval = my intervals . at [index];
 		return interval -> text.get();
 	}
@@ -103,18 +109,24 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 	
 	double v_getLeftTime (Function anyTier, integer index) {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
+		if (index < 1 || index > my points.size)
+			return undefined;
 		TextPoint point = my points . at [index];
 		return point -> number;
 	}
 	
 	double v_getRightTime (Function anyTier, integer index) {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
+		if (index < 1 || index > my points.size)
+			return undefined;
 		TextPoint point = my points . at [index];
 		return point -> number;;
 	}
 	
 	conststring32 v_getLabel (Function anyTier, integer index) {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
+		if (index < 1 || index > my points.size)
+			return U"-- undefined --";
 		TextPoint point = my points . at [index];
 		return point -> mark.get();
 	}
@@ -167,11 +179,17 @@ integer TextGridNavigator_getCurrentFromTime (TextGridNavigator me, double time)
 
 integer TextGridNavigator_next (TextGridNavigator me);
 
-integer TextGridNavigator_nextFromTime (TextGridNavigator me, double time);
+integer TextGridNavigator_getNextMatchAfterTime (TextGridNavigator me, double time);
 
 integer TextGridNavigator_previous (TextGridNavigator me);
 
-integer TextGridNavigator_previousFromTime (TextGridNavigator me, double time);
+integer TextGridNavigator_getPreviousMatchBeforeTime (TextGridNavigator me, double time);
+
+double TextGridNavigator_getCurrentStartTime (TextGridNavigator me);
+
+double TextGridNavigator_getCurrentEndTime (TextGridNavigator me);
+
+conststring32 TextGridNavigator_getCurrentLabel (TextGridNavigator me);
 
 integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc);
 
