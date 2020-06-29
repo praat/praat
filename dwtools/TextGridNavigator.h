@@ -189,6 +189,14 @@ double TextGridNavigator_getCurrentStartTime (TextGridNavigator me);
 
 double TextGridNavigator_getCurrentEndTime (TextGridNavigator me);
 
+static inline integer TextGridNavigator_getFirstMatch (TextGridNavigator me) {
+	return TextGridNavigator_getNextMatchAfterTime (me, my xmin - 0.1);
+}
+
+static inline integer TextGridNavigator_getLastMatch (TextGridNavigator me) {
+	return TextGridNavigator_getPreviousMatchBeforeTime (me, my xmax + 0.1);
+}
+
 conststring32 TextGridNavigator_getCurrentLabel (TextGridNavigator me);
 
 integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc);
