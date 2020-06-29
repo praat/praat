@@ -151,7 +151,6 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
-
 FORM (NEW_FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nullptr) {
 	LABEL (U"Within frame:")
 	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
@@ -174,8 +173,33 @@ DO
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters, powerf, & result);	
+		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters, powerf, & result);	
 	CONVERT_EACH_END (my name.get())
+}
+
+FORM (MODIFY_FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr) {
+	LABEL (U"Within frame:")
+	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
+	LABEL (U"Between frames:")
+	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
+	REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
+	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
+	LABEL (U"Global roughness parameters")
+	POSITIVE (windowLength, U"Window length", U"0.035")
+	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	OK
+DO
+	MODIFY_EACH (FormantPath)
+		Melder_require (qWeight >= 0 && qWeight <= 1.0 &&
+			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
+			roughnessWeight >= 0 && roughnessWeight <= 1.0 &&
+			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
+			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters, powerf);	
+	MODIFY_EACH_END
 }
 
 DIRECT (NEW_FormantPath_extractFormant) {
@@ -1302,6 +1326,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (qsum)...", 0, 0, NEW_FormantPath_to_Matrix_qsum);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (transition)...", 0, 0, NEW_FormantPath_to_Matrix_transition);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (deltas)...", 0, 0, NEW_FormantPath_to_Matrix_deltas);
+	praat_addAction1 (classFormantPath, 0, U"Path finder...", 0, 0, MODIFY_FormantPath_pathFinder);
 
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);

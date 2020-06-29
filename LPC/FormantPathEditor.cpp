@@ -793,7 +793,7 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf, nullptr);
+		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
