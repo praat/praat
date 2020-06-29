@@ -42,7 +42,9 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts);
 autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
-void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta);
+autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta);
+
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf);
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double formantCeiling, double windowLength, double preemphasisFrequency, double ceilingStepFraction, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
 

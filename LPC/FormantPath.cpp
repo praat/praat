@@ -62,7 +62,7 @@ conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*
 	
 };
 
-Thing_implement (FormantPath, Function, 0);
+Thing_implement (FormantPath, Sampled, 0);
 
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCeilings) {
 	autoFormantPath me = Thing_new (FormantPath);
@@ -72,7 +72,12 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	return me;
 }
 
-void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta) {
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf) {
+	autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength,parameters, powerf, nullptr);
+	my path = path.move();
+}
+
+autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta) {
 	constexpr double qCutoff = 20.0;
 	constexpr double roughnessCutoff = 200.0;
 	constexpr double frequencyChangeCutoff = 100.0;
@@ -173,9 +178,9 @@ void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyCha
 		for (integer itime = my nx; itime > 1; itime --) {
 			path [itime - 1] = psi [path [itime]] [itime];
 		}
-		my path = path.move();
 		if (out_delta)
 			*out_delta = thee.move();
+		return path;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find path.");
 	}
@@ -211,7 +216,9 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");
+		
 		integer fake_nx = 1; double fake_x1 = 0.005, fake_dx = 0.001; // we know them after the analyses
+		
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax, fake_nx, fake_dx, fake_x1, numberOfCeilings);
 		autoSound sources [1 + numberOfCeilings];
 		const double formantSafetyMargin = 50.0;
@@ -537,6 +544,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
 bool showRoughness, constINTVEC const & parameters, double powerf, bool garnish) {
+	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setInner (g);
 	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, showRoughness, parameters,  powerf, garnish);
 	Graphics_unsetInner (g);
