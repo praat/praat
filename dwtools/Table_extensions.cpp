@@ -4423,7 +4423,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 	try {
 		Melder_require (ycolumn >= 1 && ycolumn <= my numberOfColumns,
 			U"The column for the vertical axis should exist.");
-		Melder_require (xcolumn >= 1 && xcolumn <= my numberOfColumns,
+		Melder_require (xcolumn >= 0 && xcolumn <= my numberOfColumns, // 0 == no column given
 			U"The column for the horizontal axis should exist.");
 		
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
