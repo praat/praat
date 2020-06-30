@@ -25,6 +25,7 @@
 #include "ManPagesM.h"
 #include "Sound_extensions.h"
 #include "TableOfReal_extensions.h"
+#include "TableOfReal_and_Discriminant.h"
 #include "Table_extensions.h"
 #include "Configuration.h"
 #include "Discriminant.h"

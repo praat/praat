@@ -49,7 +49,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
 	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
-	TableOfReal_and_Permutation.o \
+	TableOfReal_and_Discriminant.o TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
 	TextGridNavigator.o TextGridView.o VowelEditor.o \
 	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o \

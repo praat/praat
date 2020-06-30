@@ -121,6 +121,7 @@
 #include "Strings_extensions.h"
 #include "SVD.h"
 #include "Table_extensions.h"
+#include "TableOfReal_and_Discriminant.h"
 #include "TableOfReal_and_Permutation.h"
 #include "TextGrid_extensions.h"
 #include "TextGridNavigator.h"
