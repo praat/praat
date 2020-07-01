@@ -196,9 +196,9 @@ DO
 			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
 			roughnessWeight >= 0 && roughnessWeight <= 1.0 &&
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
-			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
+			U"A weight should be greater than or equal to 0.0 and smaller than or equal to 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters, powerf);	
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
 	MODIFY_EACH_END
 }
 
