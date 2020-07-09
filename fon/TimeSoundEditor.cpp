@@ -660,9 +660,9 @@ bool structTimeSoundEditor :: v_clickB (double xbegin, double ybegin) {
 		integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
 		if (numberOfChannels > 1) {
 			integer numberOfVisibleChannels = ( numberOfChannels > 8 ? 8 : numberOfChannels );
-			trace (xbegin, U" ", ybegin, U" ", numberOfChannels, U" ", d_sound.channelOffset);
+			trace (xbegin, U" ", ybegin, U" ", numberOfChannels, U" ", our d_sound.channelOffset);
 			const integer box = Melder_clipped (1_integer, Melder_ifloor (ybegin * numberOfVisibleChannels + 1), numberOfVisibleChannels);
-			const integer channel = numberOfVisibleChannels - box + 1 + d_sound.channelOffset;
+			const integer channel = numberOfVisibleChannels - box + 1 + our d_sound.channelOffset;
 			if (Melder_debug == 24)
 				Melder_casual (U"structTimeSoundEditor :: v_clickB ", ybegin, U" ", channel);
 			our d_sound.muteChannels [channel] = ! our d_sound.muteChannels [channel];

@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1588,17 +1588,17 @@ void praat_picture_open () {
 }
 
 void praat_picture_close () {
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;
+	if (theCurrentPraatPicture != & theForegroundPraatPicture)
+		return;
 	if (! theCurrentPraatApplication -> batch) {
 		Picture_highlight (praat_picture.get());
-		#ifdef macintosh
-			//dialog -> f_drain ();
-		#endif
+		Graphics_updateWs (GRAPHICS);
 	}
 }
 
 Graphics praat_picture_editor_open (bool eraseFirst) {
-	if (eraseFirst) Picture_erase (praat_picture.get());
+	if (eraseFirst)
+		Picture_erase (praat_picture.get());
 	praat_picture_open ();
 	return GRAPHICS;
 }
@@ -1851,7 +1851,8 @@ void praat_picture_init () {
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
 		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarHeight () + margin, 0, 1, 1, 0);
-		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
+		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height,
+				nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
 	}
 

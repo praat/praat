@@ -4291,7 +4291,7 @@ CODE (U"endfor")
 CODE (U"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (U"Demo window", U"ppgb", 20170327)
+MAN_BEGIN (U"Demo window", U"ppgb", 20200707)
 INTRO (U"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -4468,8 +4468,7 @@ NORMAL (U"which returns immediately without waiting and will tell you (via e.g. 
 	"whether a mouse or key event happened during drawing or sleeping.")
 ENTRY (U"Miscellaneous")
 NORMAL (U"To see whether any function keys are pressed (during a mouse click or key press), "
-	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, ##demoOptionKeyPressed ( )#, and "
-	"##demoExtraControlKeyPressed ( )#.")
+	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, and ##demoOptionKeyPressed ( )#.")
 NORMAL (U"To put some text in the title bar of the Demo window, try")
 CODE (U"#demoWindowTitle: \"This is the title of my presentation\"")
 ENTRY (U"Tips and Tricks")

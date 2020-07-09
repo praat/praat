@@ -1,6 +1,6 @@
 /* PitchEditor.cpp
  *
- * Copyright (C) 1992-2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,6 +289,7 @@ void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
 }
 
 bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
+	static double anchorForDragging;
 	const Pitch pitch = (Pitch) our data;
 	const double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
 	const double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
@@ -321,7 +322,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 			std::swap (bestFrame -> candidates [1], bestFrame -> candidates [bestCandidate]);
 			FunctionEditor_redraw (this);
 			Editor_broadcastDataChanged (this);
-			our startSelection = our endSelection = tmid;   // cursor will snap to candidate
+			anchorForDragging = our startSelection = our endSelection = tmid;   // cursor will snap to candidate
 			return FunctionEditor_UPDATE_NEEDED;
 		} else {
 			return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection

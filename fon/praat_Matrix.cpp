@@ -1,6 +1,6 @@
 /* praat_Matrix.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,8 @@ extern "C" Graphics Movie_create (conststring32 title, int width, int height) {
 	static GuiDrawingArea drawingArea;
 	if (! theMovieGraphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
-		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
+		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height,
+			 	gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
 		theMovieGraphics = Graphics_create_xmdrawingarea (drawingArea);
 	}

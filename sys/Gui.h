@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2019 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2020 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,13 @@
 	#define motif 0
 	#define cocoa 0
 #endif
+
+constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
+	#if defined (macintosh)
+		false;
+	#else
+		true;
+	#endif
 
 #include "Collection.h"
 
@@ -368,7 +375,7 @@ Thing_declare (GuiButton);
 
 typedef struct structGuiButtonEvent {
 	GuiButton button;
-	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 } *GuiButtonEvent;
 
 typedef MelderCallback <void, structThing /* boss */, GuiButtonEvent> GuiButton_ActivateCallback;
@@ -456,16 +463,25 @@ typedef struct structGuiDrawingArea_ExposeEvent {
 	GuiDrawingArea widget;
 	int x, y, width, height;
 } *GuiDrawingArea_ExposeEvent;
-typedef struct structGuiDrawingArea_ClickEvent {
+typedef struct structGuiDrawingArea_MouseEvent {
 	GuiDrawingArea widget;
 	int x, y;
-	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
-	int button;
-} *GuiDrawingArea_ClickEvent;
+	enum class Phase { CLICK, DRAG, DROP } phase;
+	bool isClick() const { return our phase == Phase::CLICK; }
+	bool isDrag()  const { return our phase == Phase::DRAG; }
+	bool isDrop()  const { return our phase == Phase::DROP; }
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
+	bool isLeftBottomFunctionKeyPressed () const {
+		return theCommandKeyIsToTheLeftOfTheOptionKey ? our commandKeyPressed : our optionKeyPressed;
+	}
+	bool isRightBottomFunctionKeyPressed () const {
+		return theCommandKeyIsToTheLeftOfTheOptionKey ? our optionKeyPressed : our commandKeyPressed;
+	}
+} *GuiDrawingArea_MouseEvent;
 typedef struct structGuiDrawingArea_KeyEvent {
 	GuiDrawingArea widget;
 	char32 key;
-	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 } *GuiDrawingArea_KeyEvent;
 typedef struct structGuiDrawingArea_ResizeEvent {
 	GuiDrawingArea widget;
@@ -473,7 +489,7 @@ typedef struct structGuiDrawingArea_ResizeEvent {
 } *GuiDrawingArea_ResizeEvent;
 
 typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ExposeEvent> GuiDrawingArea_ExposeCallback;
-typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ClickEvent > GuiDrawingArea_ClickCallback;
+typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_MouseEvent > GuiDrawingArea_MouseCallback;
 typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_KeyEvent   > GuiDrawingArea_KeyCallback;
 typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ResizeEvent> GuiDrawingArea_ResizeCallback;
 
@@ -481,8 +497,8 @@ Thing_define (GuiDrawingArea, GuiControl) {
 	GuiScrollBar d_horizontalScrollBar, d_verticalScrollBar;   // for swiping
 	GuiDrawingArea_ExposeCallback d_exposeCallback;
 	Thing d_exposeBoss;
-	GuiDrawingArea_ClickCallback d_clickCallback;
-	Thing d_clickBoss;
+	GuiDrawingArea_MouseCallback mouseCallback;
+	Thing mouseBoss;
 	GuiDrawingArea_KeyCallback d_keyCallback;
 	Thing d_keyBoss;
 	GuiDrawingArea_ResizeCallback d_resizeCallback;
@@ -493,32 +509,32 @@ Thing_define (GuiDrawingArea, GuiControl) {
 #define GuiDrawingArea_BORDER  1
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags);
 
 void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar);
 void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, GuiDrawingArea_ExposeCallback callback, Thing boss);
-void GuiDrawingArea_setClickCallback  (GuiDrawingArea me, GuiDrawingArea_ClickCallback  callback, Thing boss);
+void GuiDrawingArea_setMouseCallback (GuiDrawingArea me, GuiDrawingArea_MouseCallback callback, Thing boss);
 void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss);
 
 /********** GuiFileSelect **********/
@@ -653,7 +669,7 @@ Thing_declare (GuiMenuItem);
 
 typedef struct structGuiMenuItemEvent {
 	GuiMenuItem menuItem;
-	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 } *GuiMenuItemEvent;
 
 typedef MelderCallback <void, structThing /* boss */, GuiMenuItemEvent> GuiMenuItemCallback;

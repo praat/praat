@@ -878,7 +878,9 @@ void structSoundRecorder :: v_createChildren ()
 	GuiLabel_createShown (our windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
 	y += Gui_LABEL_HEIGHT;
 	our meter = GuiDrawingArea_createShown (our windowForm, 170, -170, y, -150,
-			nullptr, nullptr, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+		nullptr, nullptr,
+		nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER
+	);
 
 	/*
 		Sampling frequency.

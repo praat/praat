@@ -209,7 +209,7 @@ bool FormantPathEditor_setPathTierLabel (FormantPathEditor me) {
 	FormantModelerList fml = my formantModelerList.get();
 	integer imodel = my formantModelerList -> drawingSpecification -> pathModeler;
 	autoMelderString modelParameters = FormantModelerList_getSelectedModelParameterString (fml, imodel);
-	if (modelParameters.string && modelParameters.string [0] && my shiftKeyPressed) {
+	if (modelParameters.string && modelParameters.string [0] && my clickWasModifiedByShiftKey) {
 		IntervalTier pathTier = (IntervalTier) my pathGridView -> tiers -> at [my pathTierNumber];
 		if (my startSelection == my endSelection && my startSelection > fml -> xmin && my startSelection < fml -> xmax) {
 			my startSelection = fml -> xmin;
@@ -2249,13 +2249,13 @@ bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKe
 				This has to be done before the next Update, i.e. also before do_dragBoundary!
 			*/
 			our selectedTier = clickedTierNumber;
-			do_dragBoundary (this, tnear, clickedTierNumber, shiftKeyPressed);
+			do_dragBoundary (this, tnear, clickedTierNumber, clickWasModifiedByShiftKey);
 			return FunctionEditor_NO_UPDATE_NEEDED;
 		} else {
 			/*
 				If the user clicked on an unselected boundary or point, we select it.
 			*/
-			if (shiftKeyPressed) {
+			if (clickWasModifiedByShiftKey) {
 				if (tnear > 0.5 * (our startSelection + our endSelection))
 					our endSelection = tnear;
 				else
@@ -2352,7 +2352,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 			Toggle selection
 		*/
 		fml -> drawingSpecification -> selectedModeler = ( (fml -> drawingSpecification -> selectedModeler > 0 && fml -> drawingSpecification -> selectedModeler == our selectedModeler) ? 0 : our selectedModeler );
-		if (our shiftKeyPressed) {
+		if (our clickWasModifiedByShiftKey) {
 			fml -> drawingSpecification -> pathModeler = our selectedModeler;
 			fml -> drawingSpecification -> selectedModeler = 0; // path has priority
 			Editor_save (this, U"insert interval by selection viewer");

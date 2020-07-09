@@ -158,9 +158,9 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea drawingArea);
 int Graphics_getResolution (Graphics me);
 
 #if defined (macintosh)
-	#define SUPPORT_DIRECT_DRAWING  1
+	#define SUPPORT_DIRECT_DRAWING  0
 #else
-	#define SUPPORT_DIRECT_DRAWING  1
+	#define SUPPORT_DIRECT_DRAWING  0
 #endif
 void Graphics_setWsViewport (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
 void Graphics_resetWsViewport (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);

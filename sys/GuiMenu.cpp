@@ -104,7 +104,7 @@ void structGuiMenu :: v_destroy () noexcept {
 						GuiWindow window = (GuiWindow) shell;
 						if (window -> d_tabCallback) {
 							try {
-								struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+								structGuiMenuItemEvent event { nullptr, false, false, false };
 								window -> d_tabCallback (window -> d_tabBoss, & event);
 							} catch (MelderError) {
 								Melder_flushError (U"Tab key not completely handled.");
@@ -136,7 +136,7 @@ void structGuiMenu :: v_destroy () noexcept {
 							*/
 							if (window -> d_shiftTabCallback) {
 								try {
-									struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+									structGuiMenuItemEvent event { nullptr, false, false, false };
 									window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
 								} catch (MelderError) {
 									Melder_flushError (U"Tab key not completely handled.");
@@ -167,7 +167,7 @@ void structGuiMenu :: v_destroy () noexcept {
 						GuiWindow window = (GuiWindow) shell;
 						if (([nsEvent modifierFlags] & NSAlternateKeyMask) && window -> d_optionBackspaceCallback) {
 							try {
-								struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+								structGuiMenuItemEvent event { nullptr, false, false, false };
 								window -> d_optionBackspaceCallback (window -> d_optionBackspaceBoss, & event);
 							} catch (MelderError) {
 								Melder_flushError (U"Option-Backspace not completely handled.");

@@ -35,7 +35,7 @@ static void drawMarkers (Picture me)
 /*
  * The selection grid has a resolution of 1/2 inch.
  */
-#define SQUARES 24
+#define SQUARES 24_integer
 /*
  * Vertical and horizontal lines every 3 inches.
  */
@@ -120,70 +120,52 @@ static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent ev
 	drawSelection (me, 1);
 }
 
-// TODO: Paul, als praat nu 100dpi zou zijn waarom zie ik hier dan nog 72.0 onder?
-// Stefan, die 72.0 is het aantal font-punten per inch,
-// gewoon een vaste verhouding die niks met pixels te maken heeft.
-// TODO: Paul, deze code is bagger :) En dient door event-model-extremisten te worden veroordeeld.
-// Stefan, zoals gezegd, er zijn goede redenen waarom sommige platforms dit synchroon oplossen;
-// misschien maar splitsen tussen die platforms en platforms die met events kunnen werken.
-
-// (Tom:) On Cocoa this leads to flashing, it definitely needs to be event based.
-
-// (Paul:) No, running this through the normal event loop with mouse-down-drag-up events and generating exposes
-// redrew the entire picture window on every change of the selection during dragging. Much too slow!
-
-static void gui_drawingarea_cb_click (Picture me, GuiDrawingArea_ClickEvent event) {
-	int xstart = event -> x;
-	int ystart = event -> y;
+static void gui_drawingarea_cb_mouse (Picture me, GuiDrawingArea_MouseEvent event) {
+	/*
+		Dragging the mouse selects an integer number of "blocks".
+	*/
+	struct Block {
+		integer ix, iy;
+	};
+	static Block anchorBlock, previousBlock;
 	double xWC, yWC;
-	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
-
-	Graphics_DCtoWC (my selectionGraphics.get(), xstart, ystart, & xWC, & yWC);
-	ix = ixstart = 1 + (int) floor (xWC * SQUARES / SIDE);
-	iy = iystart = SQUARES - (int) floor (yWC * SQUARES / SIDE);
-	if (ixstart < 1 || ixstart > SQUARES || iystart < 1 || iystart > SQUARES) return;
-	if (event -> shiftKeyPressed) {
-		int ix1 = 1 + (int) floor (my selx1 * SQUARES / SIDE);
-		int ix2 = (int) floor (my selx2 * SQUARES / SIDE);
-		int iy1 = SQUARES + 1 - (int) floor (my sely2 * SQUARES / SIDE);
-		int iy2 = SQUARES - (int) floor (my sely1 * SQUARES / SIDE);
-		ixstart = ix < (ix1 + ix2) / 2 ? ix2 : ix1;
-		iystart = iy < (iy1 + iy2) / 2 ? iy2 : iy1;
-	}
-	//while (Graphics_mouseStillDown (my selectionGraphics)) {
-	do {
-		Graphics_getMouseLocation (my selectionGraphics.get(), & xWC, & yWC);
-		ix = 1 + (int) floor (xWC * SQUARES / SIDE);
-		iy = SQUARES - (int) floor (yWC * SQUARES / SIDE);
-		if (ix >= 1 && ix <= SQUARES && iy >= 1 && iy <= SQUARES && (ix != oldix || iy != oldiy)) {
-			int ix1, ix2, iy1, iy2;
-			if (ix < ixstart) { ix1 = ix; ix2 = ixstart; }
-			else              { ix1 = ixstart; ix2 = ix; }
-			if (iy < iystart) { iy1 = iy; iy2 = iystart; }
-			else              { iy1 = iystart; iy2 = iy; }
-			if (my mouseSelectsInnerViewport) {
-				const double fontSize = Graphics_inqFontSize (my graphics.get());
-				double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
-				if (xmargin > ix2 - ix1 + 1) xmargin = ix2 - ix1 + 1;
-				if (ymargin > iy2 - iy1 + 1) ymargin = iy2 - iy1 + 1;
-				Picture_setSelection (me, 0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
-					0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, false);
-			} else {
-				Picture_setSelection (me, 0.5 * (ix1 - 1), 0.5 * ix2,
-					0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), false);
-			}
-			oldix = ix; oldiy = iy;
+	Graphics_DCtoWC (my selectionGraphics.get(), event -> x, event -> y, & xWC, & yWC);
+	const Block currentBlock {
+		Melder_clipped (1_integer, 1 + (integer) floor (xWC * SQUARES / SIDE), SQUARES),
+		Melder_clipped (1_integer, SQUARES - (integer) floor (yWC * SQUARES / SIDE), SQUARES)
+	};
+	if (event -> isClick ()) {
+		constexpr int INVALID_BLOCK_NUMBER = 0;
+		previousBlock = { INVALID_BLOCK_NUMBER, INVALID_BLOCK_NUMBER };
+		if (event -> shiftKeyPressed) {
+			const integer ix1 = Melder_clipped (1_integer, 1 + (integer) floor (my selx1 * SQUARES / SIDE), SQUARES);   // BUG not compatible with mouseSelectsInnerViewport
+			const integer ix2 = Melder_clipped (1_integer, (integer) floor (my selx2 * SQUARES / SIDE), SQUARES);
+			const integer iy1 = Melder_clipped (1_integer, SQUARES + 1 - (integer) floor (my sely2 * SQUARES / SIDE), SQUARES);
+			const integer iy2 = Melder_clipped (1_integer, SQUARES - (integer) floor (my sely1 * SQUARES / SIDE), SQUARES);
+			anchorBlock = { currentBlock. ix < (ix1 + ix2) / 2 ? ix2 : ix1, currentBlock. iy < (iy1 + iy2) / 2 ? iy2 : iy1 };
+		} else {
+			anchorBlock = currentBlock;
 		}
-	} while (Graphics_mouseStillDown (my selectionGraphics.get()));
-	// }
-	#if cocoa
-		Graphics_updateWs (my selectionGraphics.get());   // to change the dark red back into black
-	#endif
-	if (my selectionChangedCallback) {
-		//Melder_casual (U"selectionChangedCallback from gui_drawingarea_cb_click");
-		my selectionChangedCallback (me, my selectionChangedClosure,
-			my selx1, my selx2, my sely1, my sely2);
+	} else if (event -> isDrag() || event -> isDrop ()) {
+		if (currentBlock. ix == previousBlock. ix && currentBlock. iy == previousBlock. iy)
+			return;   // optimization: don't redraw if we stay in the same block
 	}
+	previousBlock = currentBlock;
+	const auto ix12 = std::minmax (currentBlock. ix, anchorBlock. ix);
+	const integer ix1 = ix12. first, ix2 = ix12. second;
+	const auto iy12 = std::minmax (currentBlock. iy, anchorBlock. iy);
+	const integer iy1 = iy12. first, iy2 = iy12. second;
+	double xmargin = 0.0, ymargin = 0.0;
+	if (my mouseSelectsInnerViewport) {
+		const double fontSize = Graphics_inqFontSize (my graphics.get());
+		xmargin = std::min (fontSize * 4.2 / 72.0, double (ix2 - ix1 + 1));
+		ymargin = std::min (fontSize * 2.8 / 72.0, double (iy2 - iy1 + 1));
+	}
+	Picture_setSelection (me, 0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
+			0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, false);
+	Graphics_updateWs (my selectionGraphics.get());
+	if (my selectionChangedCallback)
+		my selectionChangedCallback (me, my selectionChangedClosure, my selx1, my selx2, my sely1, my sely2);
 }
 
 autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
@@ -213,7 +195,7 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		if (my sensitive) {
 			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
 			Graphics_setWindow (my selectionGraphics.get(), 0, 12, 0, 12);
-			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me.get());
+			GuiDrawingArea_setMouseCallback (my drawingArea, gui_drawingarea_cb_mouse, me.get());
 		}
 		Graphics_startRecording (my graphics.get());
 		return me;
@@ -242,11 +224,13 @@ void structPicture :: v_destroy () noexcept {
 Graphics Picture_peekGraphics (Picture me) { return my graphics.get(); }
 
 void Picture_unhighlight (Picture me) {
-	if (my drawingArea) drawSelection (me, 0);   // unselect
+	if (my drawingArea)
+		drawSelection (me, 0);   // unselect
 }
 
 void Picture_highlight (Picture me) {
-	if (my drawingArea) drawSelection (me, 1);   // select
+	if (my drawingArea)
+		drawSelection (me, 1);   // select
 }
 
 void Picture_erase (Picture me) {
@@ -261,7 +245,8 @@ void Picture_erase (Picture me) {
 void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
-		if (fprintf (f, "PraatPictureFile") < 0) Melder_throw (U"Write error.");
+		if (fprintf (f, "PraatPictureFile") < 0)
+			Melder_throw (U"Write error.");
 		Graphics_writeRecordings (my graphics.get(), f);
 		f.close (file);
 	} catch (MelderError) {
@@ -277,7 +262,8 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 		line [n] = '\0';
 		const char *tag = "PraatPictureFile";
 		char *end = strstr (line, tag);
-		if (! end) Melder_throw (U"This is not a Praat picture file.");
+		if (! end)
+			Melder_throw (U"This is not a Praat picture file.");
 		*end = '\0';
 		rewind (f);
 		fread (line, 1, end - line + strlen (tag), f);
@@ -467,15 +453,14 @@ void Picture_setSelection
 {
 	if (my drawingArea) {
 		Melder_assert (my drawingArea -> d_widget);
-		drawSelection (me, 0);   // unselect
+		//drawSelection (me, 0);   // unselect
 	}
 	my selx1 = x1NDC;
 	my selx2 = x2NDC;
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
-	if (my drawingArea) {
+	if (my drawingArea)
 		drawSelection (me, 1);   // select
-	}
 
 	if (notify && my selectionChangedCallback) {
 		//Melder_casual (U"selectionChangedCallback from Picture_setSelection");

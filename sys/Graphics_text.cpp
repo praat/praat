@@ -774,7 +774,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			}
             CGContextSaveGState (my d_macGraphicsContext);
             CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
-            if (my yIsZeroAtTheTop) CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+            if (my yIsZeroAtTheTop)
+            	CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
             CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
 
 			CTLineRef line = CTLineCreateWithAttributedString (string);

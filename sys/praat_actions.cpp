@@ -489,7 +489,7 @@ static bool allowExecutionHook (void *closure) {
 	return false;
 }
 
-static void do_menu (Praat_Command me, bool modified) {
+static void do_menu (Praat_Command me, bool isModified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
@@ -505,7 +505,7 @@ static void do_menu (Praat_Command me, bool modified) {
 		}
 		Ui_setAllowExecutionHook (allowExecutionHook, (void *) my callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), modified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -515,12 +515,13 @@ static void do_menu (Praat_Command me, bool modified) {
 }
 
 static void cb_menu (Praat_Command me, GuiMenuItemEvent event) {
-	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
-	do_menu (me, modified);
+	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	do_menu (me, isModified);
 }
 
 static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
-	do_menu (me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
+	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	do_menu (me, isModified);
 }
 
 void praat_actions_show () {

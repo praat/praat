@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ Thing_define (FunctionEditor, Editor) {
 	int selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
 	int height;   // size of drawing areas in pixels
 	GuiText text;   // optional text at top
-	int shiftKeyPressed;   // information for the 'play' method
+	bool clickWasModifiedByShiftKey;   // information for drag-and-drop and for start of play
 	bool playingCursor, playingSelection;   // information for end of play
 	struct FunctionEditor_picture picture;
 
@@ -98,7 +98,16 @@ Thing_define (FunctionEditor, Editor) {
 		/*
 		 * Message: "the user clicked in one of the rectangles above or below the data window."
 		 */
-	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed);
+	virtual bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC);
+		/*
+			Message: "they clicked in the data part of the window, or in the left or right margin."
+			'event' is the mouse event, with still relevant info on phase and modifier keys;
+			'xWC' is the time;
+			'yWC' is a value between 0.0 (bottom) and 1.0 (top);
+			Behaviour of structFunctionEditor::v_mouseInWideDataView ():
+				moves the cursor to 'xWC', drags to create a selection, or extends the selection.
+		*/
+	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed) { return false; }   // TODO remove
 		/*
 		 * Message: "the user clicked in data window with the left mouse button."
 		 * 'xWC' is the time;
@@ -115,8 +124,8 @@ Thing_define (FunctionEditor, Editor) {
 		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
 		 */
 	virtual void v_clickSelectionViewer (double xWC, double yWC);
-	virtual bool v_clickB (double xWC, double yWC);
-	virtual bool v_clickE (double xWC, double yWC);
+	virtual bool v_clickB (double xWC, double yWC) { return false; }   // TODO remove
+	virtual bool v_clickE (double xWC, double yWC) { return false; }   // TODO remove
 	virtual int v_playCallback (int phase, double tmin, double tmax, double t);
 	virtual void v_updateText () { }
 	virtual void v_prefs_addFields (EditorCommand) { }
@@ -163,7 +172,6 @@ int theFunctionEditor_playCallback (FunctionEditor me, int phase, double tmin, d
 		"user typed a key to the data window."
 		FunctionEditor::key ignores this message.
 */
-
 
 #define FunctionEditor_UPDATE_NEEDED  true
 #define FunctionEditor_NO_UPDATE_NEEDED  false
