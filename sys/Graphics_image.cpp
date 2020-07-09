@@ -862,7 +862,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 				GraphicsQuartz_initDraw (me);
 				CGContextSaveGState (my d_macGraphicsContext);
                 
-                NSCAssert(my d_macGraphicsContext, @"nil context");
+                //NSCAssert(my d_macGraphicsContext, @"nil context");
 
 				CGContextTranslateCTM (my d_macGraphicsContext, 0, y1DC);
 				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);

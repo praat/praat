@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2013,2015-2018 Paul Boersma
+ * Copyright (C) 2006-2013,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +228,7 @@ static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEven
 	my v_draw ();
 }
 
-static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent event) {
+static void gui_drawingarea_cb_mouseDown (TableEditor me, GuiDrawingArea_MouseEvent event) {
 	Table table = static_cast<Table> (my data);
 	if (! my graphics)
 		return;   // could be the case in the very beginning
@@ -263,12 +263,7 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 	const integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
-		#if cocoa || gtk || motif || ! SUPPORT_DIRECT_DRAWING
-			Graphics_updateWs (my graphics.get());   // wait for expose event
-		#else
-			Graphics_clearWs (my graphics.get());
-			my v_draw ();   // do not wait for expose event
-		#endif
+		Graphics_updateWs (my graphics.get());   // wait for expose event
 	}
 }
 
@@ -276,12 +271,7 @@ static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 	const integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
-		#if cocoa || gtk || motif || ! SUPPORT_DIRECT_DRAWING
-			Graphics_updateWs (my graphics.get());   // wait for expose event
-		#else
-			Graphics_clearWs (my graphics.get());
-			my v_draw ();   // do not wait for expose event
-		#endif
+		Graphics_updateWs (my graphics.get());   // wait for expose event
 	}
 }
 
@@ -294,13 +284,15 @@ void structTableEditor :: v_createChildren () {
 	y += Machine_getTextHeight () + 4;
 
 	our drawingArea = GuiDrawingArea_createShown (our windowForm, 0, - scrollWidth, y, - scrollWidth,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouseDown,
+		nullptr, gui_drawingarea_cb_resize, this, 0
+	);
 
 	our verticalScrollBar = GuiScrollBar_createShown (our windowForm, - scrollWidth, 0, y, - scrollWidth,
-		1, table -> rows.size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
+			1, table -> rows.size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
 
 	our horizontalScrollBar = GuiScrollBar_createShown (our windowForm, 0, - scrollWidth, - scrollWidth, 0,
-		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
+			1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
 
 	GuiDrawingArea_setSwipable (our drawingArea, our horizontalScrollBar, our verticalScrollBar);
 }

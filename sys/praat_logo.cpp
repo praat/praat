@@ -1,6 +1,6 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1996-2020 Paul Boersma, 2008 Stefan de Konink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEven
 	#endif
 }
 
-static void gui_drawingarea_cb_click (Thing /* me */, GuiDrawingArea_ClickEvent /* event */) {
+static void gui_drawingarea_cb_mouse (Thing /* me */, GuiDrawingArea_MouseEvent /* event */) {
  	GuiThing_hide (theLogo.form);
 }
 
@@ -106,15 +106,16 @@ void praat_showLogo (bool autoPopDown) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 
 	#elif motif || cocoa
-		if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
+		if (theCurrentPraatApplication -> batch || ! theLogo.draw)
+			return;
 		if (! theLogo.dia) {
 			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (nullptr);
 			int height = theLogo.height_mm / 25.4 * Gui_getResolution (nullptr);
 			theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width, height,
-				U"About", gui_cb_goAway, nullptr, 0);
+					U"About", gui_cb_goAway, nullptr, 0);
 			theLogo.form = theLogo.dia;
 			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
-				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, nullptr, nullptr, 0);
+					gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse, nullptr, nullptr, nullptr, 0);
 		}
 		GuiThing_show (theLogo.form);
 		GuiThing_show (theLogo.dia);

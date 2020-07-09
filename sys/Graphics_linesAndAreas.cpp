@@ -449,7 +449,7 @@ void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, d
 	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
-        NSCAssert (d_macGraphicsContext, @"nil context");
+        //NSCAssert (d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextSaveGState (d_macGraphicsContext);
 		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
@@ -560,7 +560,7 @@ void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1D
 	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
-        NSCAssert (d_macGraphicsContext, @"nil context");
+        //NSCAssert (d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextSaveGState (d_macGraphicsContext);
 		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
@@ -1078,7 +1078,7 @@ void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) 
 	#elif quartz
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
-		NSCAssert (our d_macGraphicsContext, @"nil context");
+		//NSCAssert (our d_macGraphicsContext, @"nil context");
 		CGContextSaveGState (our d_macGraphicsContext);
 		CGContextBeginPath (our d_macGraphicsContext);
 		CGContextTranslateCTM (our d_macGraphicsContext, xDC, yDC);

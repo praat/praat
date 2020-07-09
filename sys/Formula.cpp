@@ -148,7 +148,7 @@ enum { NO_SYMBOL_,
 		CHOOSE_READ_FILESTR_, CHOOSE_WRITE_FILESTR_, CHOOSE_DIRECTORYSTR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
-		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
+		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
 		VEC_ZERO_, MAT_ZERO_,
 		VEC_LINEAR_, MAT_LINEAR_, VEC_TO_, VEC_FROM_TO_, VEC_FROM_TO_BY_, VEC_BETWEEN_BY_,
 		VEC_RANDOM_UNIFORM_, MAT_RANDOM_UNIFORM_,
@@ -274,7 +274,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"chooseReadFile$", U"chooseWriteFile$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
-	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed", U"demoExtraControlKeyPressed",
+	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
 	U"zero#", U"zero##",
 	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#", U"between_by#",
 	U"randomUniform#", U"randomUniform##",
@@ -6306,13 +6306,6 @@ static void do_demoOptionKeyPressed () {
 	bool result = Demo_optionKeyPressed ();
 	pushNumber (result);
 }
-static void do_demoExtraControlKeyPressed () {
-	Stackel n = pop;
-	if (n->number != 0)
-		Melder_throw (U"The function \"demoControlKeyPressed\" requires 0 arguments, not ", n->number, U".");
-	bool result = Demo_extraControlKeyPressed ();
-	pushNumber (result);
-}
 static integer Stackel_getRowNumber (Stackel row, Daata thee) {
 	integer result = 0;
 	if (row->which == Stackel_NUMBER) {
@@ -7158,7 +7151,6 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case DEMO_SHIFT_KEY_PRESSED_: { do_demoShiftKeyPressed ();
 } break; case DEMO_COMMAND_KEY_PRESSED_: { do_demoCommandKeyPressed ();
 } break; case DEMO_OPTION_KEY_PRESSED_: { do_demoOptionKeyPressed ();
-} break; case DEMO_EXTRA_CONTROL_KEY_PRESSED_: { do_demoExtraControlKeyPressed ();
 /********** **********/
 } break; case TRUE_: {
 	pushNumber (1.0);

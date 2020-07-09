@@ -218,7 +218,8 @@ static void * gui_monitor (double progress, conststring32 message) {
 	{
 		if (! dia) {
 			_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
-			drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
+			drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430,
+					gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 			GuiThing_show (dia);
 			graphics = Graphics_create_xmdrawingarea (drawingArea);
 		}

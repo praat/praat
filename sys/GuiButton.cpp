@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2008,2010-2018 Paul Boersma,
+ * Copyright (C) 1993-2008,2010-2020 Paul Boersma,
  *               2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	}
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer userData) {
 		GuiButton me = (GuiButton) userData;
-		struct structGuiButtonEvent event { me, false, false, false, false };
+		structGuiButtonEvent event { me, false, false, false };
 		if (my d_activateCallback) {
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
@@ -59,7 +59,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	void _GuiWinButton_handleClick (GuiObject widget) {
 		iam_button;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event { me, false, false, false, false };
+			structGuiButtonEvent event { me, false, false, false };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
@@ -70,7 +70,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 	bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 		iam_button;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event { me, false, false, false, false };
+			structGuiButtonEvent event { me, false, false, false };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
@@ -101,7 +101,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiButton me = d_userData;
 		if (my d_activateCallback) {
-			struct structGuiButtonEvent event { me, false, false, false, false };
+			structGuiButtonEvent event { me, false, false, false };
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {

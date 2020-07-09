@@ -1113,7 +1113,7 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 
 // shift key always extends what already is.
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
-static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent event) {
+static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent event) {
 	const double t0 = Melder_clock ();
 	integer iskipped = 0;
 	struct structGuiButtonEvent gb_event { 0 };
@@ -1317,7 +1317,9 @@ void structVowelEditor :: v_createChildren ()
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	*/
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,   // TODO: mouse-dragged and mouse-up events
+		nullptr, gui_drawingarea_cb_resize, this, 0
+	);
 	width  = GuiControl_getWidth  (drawingArea);
 	height = GuiControl_getHeight (drawingArea);
 }

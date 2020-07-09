@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2019 Paul Boersma
+ * Copyright (C) 2001-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +283,7 @@ static void do_replay (RunnerMFC me) {
 	Graphics_updateWs (my graphics.get());
 }
 
-static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent event) {
+static void gui_drawingarea_cb_mouseDown (RunnerMFC me, GuiDrawingArea_MouseEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (! my data) return;
@@ -476,7 +476,9 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 
 void structRunnerMFC :: v_createChildren () {
 	our d_drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouseDown,
+		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0
+	);
 }
 
 autoRunnerMFC RunnerMFC_create (conststring32 title, autoExperimentMFCList experiments) {

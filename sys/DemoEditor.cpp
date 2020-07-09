@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2019 Paul Boersma
+ * Copyright (C) 2009-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +41,10 @@ void structDemoEditor :: v_info () {
 }
 
 void structDemoEditor :: v_goAway () {
-	if (waitingForInput) {
+	if (waitingForInput)
 		userWantsToClose = true;
-	} else {
+	else
 		DemoEditor_Parent :: v_goAway ();
-	}
 }
 
 void structDemoEditor :: v_createMenus () {
@@ -53,10 +52,11 @@ void structDemoEditor :: v_createMenus () {
 }
 
 static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	/*
-	 * Erase the background. Don't record this erasure!
-	 */
+		Erase the background. Don't record this erasure!
+	*/
 	Graphics_stopRecording (my graphics.get());   // the only place in Praat (the Picture window has a separate Graphics for erasing)?
 	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -66,8 +66,9 @@ static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent
 	Graphics_play (my graphics.get(), my graphics.get());
 }
 
-static void gui_drawingarea_cb_click (DemoEditor me, GuiDrawingArea_ClickEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+static void gui_drawingarea_cb_mouse (DemoEditor me, GuiDrawingArea_MouseEvent event) {
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	my clicked = true;
 	my keyPressed = false;
 	my x = event -> x;
@@ -76,11 +77,11 @@ static void gui_drawingarea_cb_click (DemoEditor me, GuiDrawingArea_ClickEvent e
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
-	my extraControlKeyPressed = event -> extraControlKeyPressed;
 }
 
 static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	my clicked = false;
 	my keyPressed = true;
 	my x = 0;
@@ -90,11 +91,11 @@ static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
-	my extraControlKeyPressed = event -> extraControlKeyPressed;
 }
 
 static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	trace (event -> width, U" ", event -> height);
 	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
 	Graphics_setWsWindow (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
@@ -104,7 +105,9 @@ static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent
 
 void structDemoEditor :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, 0, 0,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
+		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0
+	);
 }
 
 void DemoEditor_init (DemoEditor me) {
@@ -285,7 +288,6 @@ void Demo_peekInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> shiftKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> commandKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> optionKeyPressed = false;
-	theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
@@ -411,15 +413,6 @@ bool Demo_optionKeyPressed () {
 			U"Please click or type into the Demo window or close it.");
 	}
 	return theReferenceToTheOnlyDemoEditor -> optionKeyPressed;
-}
-
-bool Demo_extraControlKeyPressed () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
-	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
-		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
-			U"Please click or type into the Demo window or close it.");
-	}
-	return theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed;
 }
 
 bool Demo_input (conststring32 keys) {

@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2013,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,14 +83,16 @@ static void gui_radiobutton_cb_toggle (ArtwordEditor me, GuiRadioButtonEvent eve
 }
 
 static void gui_drawingarea_cb_expose (ArtwordEditor me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my graphics) return;
+	if (! my graphics)
+		return;
 	Artword artword = (Artword) my data;
 	Graphics_clearWs (my graphics.get());
 	Artword_draw (artword, my graphics.get(), my muscle, true);
 }
 
-static void gui_drawingarea_cb_click (ArtwordEditor me, GuiDrawingArea_ClickEvent event) {
-	if (! my graphics) return;
+static void gui_drawingarea_cb_mouse (ArtwordEditor me, GuiDrawingArea_MouseEvent event) {
+	if (! my graphics)
+		return;
 	Artword artword = (Artword) my data;
 	Graphics_setWindow (my graphics.get(), 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics.get());
@@ -116,7 +118,9 @@ void structArtwordEditor :: v_createChildren () {
 	GuiButton_createShown (our windowForm, 10, 130, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Remove target", gui_button_cb_removeTarget, this, 0);
 
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 170, 470, dy + 10, dy + 310,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, nullptr, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
+		nullptr, nullptr, this, 0
+	);
 
 	GuiLabel_createShown (our windowForm, 220, 270, dy + 340, dy + 340 + Gui_LABEL_HEIGHT, U"Time:", 0);
 	time = GuiText_createShown (our windowForm, 270, 370, dy + 340, dy + 340 + Gui_TEXTFIELD_HEIGHT, 0);
