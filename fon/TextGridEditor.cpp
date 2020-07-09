@@ -2190,16 +2190,6 @@ void structTextGridEditor :: v_highlightSelection (double left, double right, do
 	}
 }
 
-void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		//Graphics_unhighlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_unhighlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
-	} else {
-		Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
-	}
-}
-
 double structTextGridEditor :: v_getBottomOfSoundArea () {
 	return _TextGridEditor_computeSoundY (this);
 }

@@ -1363,10 +1363,6 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void structFunctionEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
-}
-
 void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
 	my tmin = data -> xmin;   // set before adding children (see group button)
 	my tmax = data -> xmax;
