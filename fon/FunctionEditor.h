@@ -138,7 +138,6 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_createMenuItems_view_timeDomain (EditorMenu);
 	virtual void v_createMenuItems_view_audio (EditorMenu);
 	virtual void v_highlightSelection (double left, double right, double bottom, double top);
-	virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
 	virtual double v_getBottomOfSoundArea () { return 0.0; }
 	virtual double v_getBottomOfSoundAndAnalysisArea () { return 0.0; }
 	virtual void v_form_pictureSelection (EditorCommand);

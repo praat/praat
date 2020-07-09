@@ -103,8 +103,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_highlightSelection (double left, double right, double bottom, double top)
 		override;
-	void v_unhighlightSelection (double left, double right, double bottom, double top)
-		override;
 	double v_getBottomOfSoundArea ()
 		override;
 	double v_getBottomOfSoundAndAnalysisArea ()

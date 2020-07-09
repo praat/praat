@@ -2447,16 +2447,6 @@ void structFormantPathEditor :: v_highlightSelection (double left, double right,
 	}
 }
 
-void structFormantPathEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY2 = _FormantPathEditor_computeSoundY2 (this);
-		//Graphics_unhighlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_unhighlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
-	} else {
-		Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
-	}
-}
-
 double structFormantPathEditor :: v_getBottomOfSoundArea () {
 	return _FormantPathEditor_computeSoundY (this);
 }

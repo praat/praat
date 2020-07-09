@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2016,2017 Paul Boersma
+ * Copyright (C) 2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,13 +99,6 @@ void structMovieWindow :: v_draw () {
 }
 
 void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our p_spectrogram_show)
-		Graphics_highlight (our graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
-	else
-		Graphics_highlight (our graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);
-}
-
-void structMovieWindow :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (our p_spectrogram_show)
 		Graphics_highlight (our graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
 	else
