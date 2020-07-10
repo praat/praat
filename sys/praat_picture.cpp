@@ -1564,7 +1564,6 @@ void praat_picture_open () {
 		#elif cocoa
 			GuiThing_show (dialog);
 		#endif
-		Picture_unhighlight (praat_picture.get());
 	}
 	/* Foregoing drawing routines may have changed some of the output attributes */
 	/* that can be set by the user. */
@@ -1879,7 +1878,6 @@ void praat_picture_prefsChanged () {
 void praat_picture_background () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
 	if (! theCurrentPraatApplication -> batch) {
-		//Picture_unhighlight (praat_picture.get());
 		#if cocoa
 			Picture_background (praat_picture.get());   // prevent Cocoa's very slow highlighting until woken up by Picture_foreground()
 		#endif
@@ -1892,7 +1890,6 @@ void praat_picture_foreground () {
 		#if cocoa
 			Picture_foreground (praat_picture.get());   // wake up from the highlighting sleep caused by Picture_background()
 		#endif
-		//Picture_highlight (praat_picture.get());
 	}
 }
 

@@ -2,7 +2,7 @@
 #define _Picture_h_
 /* Picture.h
  *
- * Copyright (C) 1992-2005,2007-2016,2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2016,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,25 +24,17 @@
 	the user can select the viewport by dragging the mouse across the drawing area.
 	If the viewport is smaller than the entire drawing area, it is highlighted.
 	Usage:
-		You should put highlighting off during drawing.
 		Do not use the workstation Graphics routines,
 		like clearWs, flushWs, closeWs, updateWs, setWsViewport.
 	Example:
-		Picture p = Picture_create (myDrawingArea);
-		Graphics g = Picture_peekGraphics (p);
-		Picture_unhighlight (p);
+		autoPicture p = Picture_create (myDrawingArea);
+		Graphics g = Picture_peekGraphics (p.get());
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (g, 0.5, 0.7, U"Hello");
 		Graphics_text (g, 0.5, 0.6, U"there");
-		Picture_highlight (p);
-		... (event handling)
-		Picture_unhighlight (p);
 		Graphics_text (g, 0.5, 0.3, U"Goodbye");
-		Picture_highlight (p);
-		... (event handling)
-		Picture_writeToEpsFile (p, U"HelloGoodbye.eps", false, false);
-		Picture_print (p, GraphicsPostscript_FINE);
-		Picture_remove (& p);
+		Picture_writeToPngFile_300 (p, U"HelloGoodbye.png");
+		Picture_print (p.get());
 */
 
 #include "Gui.h"
@@ -79,14 +71,6 @@ Graphics Picture_peekGraphics (Picture me);
 	Usage:
 		send the graphics output that you want to be in the picture to this Graphics,
 		bracketed by calls to Picture_startRecording and Picture_stopRecording.
-*/
-
-void Picture_unhighlight (Picture me);
-/*
-	Function:
-		hide the viewport.
-	Usage:
-		call just before sending graphics output.
 */
 
 void Picture_highlight (Picture me);

@@ -183,12 +183,6 @@ void Graphics_highlight (Graphics me, double x1WC, double x2WC, double y1WC, dou
 		{ op (HIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
-void Graphics_unhighlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), 2);
-	if (my recording)
-		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
-}
-
 static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC,
 	integer x1DC_inner, integer x2DC_inner, integer y1DC_inner, integer y2DC_inner, int direction)
 {
