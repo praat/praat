@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2020 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,75 +29,75 @@ Thing_implement (Picture, Thing, 0);
 
 static void drawMarkers (Picture me)
 /*
- * The drawing area is a square measuring 12x12 inches.
- */
+	The drawing area is a square measuring 12x12 inches.
+*/
 #define SIDE 12
 /*
- * The selection grid has a resolution of 1/2 inch.
- */
+	The selection grid has a resolution of 1/2 inch.
+*/
 #define SQUARES 24_integer
 /*
- * Vertical and horizontal lines every 3 inches.
- */
+	Vertical and horizontal lines every 3 inches.
+*/
 #define YELLOW_GRID 3
 {
-	/* Fill the entire canvas with GC's background. */
-
+	/*
+		Fill the entire canvas with GC's background.
+	*/
 	Graphics_setColour (my selectionGraphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my selectionGraphics.get(), 0, SIDE, 0, SIDE);
 
-	/* Draw yellow grid lines for coarse navigation. */
-
+	/*
+		Draw yellow grid lines for coarse navigation.
+	*/
 	Graphics_setColour (my selectionGraphics.get(), Melder_YELLOW);
 	for (int i = YELLOW_GRID; i < SIDE; i += YELLOW_GRID) {
 		Graphics_line (my selectionGraphics.get(), 0, i, SIDE, i);
 		Graphics_line (my selectionGraphics.get(), i, 0, i, SIDE);
 	}
 
-	/* Draw red ticks and numbers for feedback on viewport measurement. */
-
+	/*
+		Draw red ticks and numbers for feedback on viewport measurement.
+	*/
 	Graphics_setColour (my selectionGraphics.get(), Melder_RED);
 	for (int i = 1; i < SIDE; i ++) {
-		double x = i;
+		const double x = i;
 		Graphics_setTextAlignment (my selectionGraphics.get(), Graphics_CENTRE, Graphics_TOP);
 		Graphics_text (my selectionGraphics.get(), x, SIDE, i);
 		Graphics_setTextAlignment (my selectionGraphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (my selectionGraphics.get(), x, 0, i);
 	}
 	for (int i = 1; i < SQUARES ; i ++) {   // vertical ticks
-		double x = 0.5 * i;
+		const double x = 0.5 * i;
 		Graphics_line (my selectionGraphics.get(), x, SIDE - 0.04, x, SIDE);
 		Graphics_line (my selectionGraphics.get(), x, 0, x, 0.04);
 	}
 	for (int i = 1; i < SIDE; i ++) {
-		double y = SIDE - i;
+		const double y = SIDE - i;
 		Graphics_setTextAlignment (my selectionGraphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (my selectionGraphics.get(), 0.04, y, i);
 		Graphics_setTextAlignment (my selectionGraphics.get(), Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (my selectionGraphics.get(), SIDE - 0.03, y, i);
 	}
 	for (int i = 1; i < SQUARES; i ++) {   // horizontal ticks
-		double y = SIDE - 0.5 * i;
+		const double y = SIDE - 0.5 * i;
 		Graphics_line (my selectionGraphics.get(), SIDE - 0.04, y, SIDE, y);
 		Graphics_line (my selectionGraphics.get(), 0, y, 0.04, y);
 	}
-
 	Graphics_setColour (my selectionGraphics.get(), Melder_BLACK);
 }
 
-static void drawSelection (Picture me, int high) {
-	if (my backgrounding) return;
-	double dy = 2.8 * Graphics_inqFontSize (my graphics.get()) / 72.0;
-	double dx = 1.5 * dy;
-	if (dy > 0.4 * (my sely2 - my sely1)) dy = 0.4 * (my sely2 - my sely1);
-	if (dx > 0.4 * (my selx2 - my selx1)) dx = 0.4 * (my selx2 - my selx1);
-	if (high) {
-		Graphics_highlight2 (my selectionGraphics.get(), my selx1, my selx2, my sely1, my sely2,
-			my selx1 + dx, my selx2 - dx, my sely1 + dy, my sely2 - dy);
-	} else {
-		Graphics_unhighlight2 (my selectionGraphics.get(), my selx1, my selx2, my sely1, my sely2,
-			my selx1 + dx, my selx2 - dx, my sely1 + dy, my sely2 - dy);
-	}
+static void drawSelection (Picture me) {
+	if (my backgrounding)
+		return;
+	const double dy = Melder_clippedRight (2.8 * Graphics_inqFontSize (my graphics.get()) / 72.0,
+			0.4 * (my sely2 - my sely1));
+	const double dx = Melder_clippedRight (1.5 * dy,
+			0.4 * (my selx2 - my selx1));
+	Graphics_highlight2 (my selectionGraphics.get(),
+		my selx1, my selx2, my sely1, my sely2,
+		my selx1 + dx, my selx2 - dx, my sely1 + dy, my sely2 - dy
+	);
 }
 
 //static double test = 0.0;
@@ -105,8 +105,8 @@ static void drawSelection (Picture me, int high) {
 static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent event) {
 	#if gtk
 		/*
-		 * The size of the viewable part of the drawing area may have changed.
-		 */
+			The size of the viewable part of the drawing area may have changed.
+		*/
 		Melder_assert (event -> widget);
 		#if ALLOW_GDK_DRAWING
 			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics.get()),          GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
@@ -117,7 +117,7 @@ static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent ev
 	#endif
 	drawMarkers (me);
 	Graphics_play (my graphics.get(), my graphics.get());
-	drawSelection (me, 1);
+	drawSelection (me);
 }
 
 static void gui_drawingarea_cb_mouse (Picture me, GuiDrawingArea_MouseEvent event) {
@@ -161,8 +161,11 @@ static void gui_drawingarea_cb_mouse (Picture me, GuiDrawingArea_MouseEvent even
 		xmargin = std::min (fontSize * 4.2 / 72.0, double (ix2 - ix1 + 1));
 		ymargin = std::min (fontSize * 2.8 / 72.0, double (iy2 - iy1 + 1));
 	}
-	Picture_setSelection (me, 0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
-			0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, false);
+	Picture_setSelection (me,
+		0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
+		0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin,
+		false
+	);
 	Graphics_updateWs (my selectionGraphics.get());
 	if (my selectionChangedCallback)
 		my selectionChangedCallback (me, my selectionChangedClosure, my selx1, my selx2, my sely1, my sely2);
@@ -173,28 +176,28 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		autoPicture me = Thing_new (Picture);
 		my drawingArea = drawingArea;
 		/*
-		 * The initial viewport is a rectangle 6 inches wide and 4 inches high.
-		 */
+			The initial viewport is a rectangle 6 inches wide and 4 inches high.
+		*/
 		my selx1 = 0.0;
 		my selx2 = 6.0;
 		my sely1 = 8.0;
 		my sely2 = 12.0;
 		my sensitive = sensitive && drawingArea;
 		if (drawingArea) {
-			/* The drawing area must have been realized; see manual at XtWindow. */
+			// the drawing area must have been realized; see manual at XtWindow
 			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me.get());
 		} else {
 			/*
-			 * Create a dummy Graphics.
-			 */
+				Create a dummy Graphics.
+			*/
 			my graphics = Graphics_create (600);
 		}
 		Graphics_setWsWindow (my graphics.get(), 0.0, 12.0, 0.0, 12.0);
 		Graphics_setViewport (my graphics.get(), my selx1, my selx2, my sely1, my sely2);
 		if (my sensitive) {
 			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
-			Graphics_setWindow (my selectionGraphics.get(), 0, 12, 0, 12);
+			Graphics_setWindow (my selectionGraphics.get(), 0.0, 12.0, 0.0, 12.0);
 			GuiDrawingArea_setMouseCallback (my drawingArea, gui_drawingarea_cb_mouse, me.get());
 		}
 		Graphics_startRecording (my graphics.get());
@@ -223,14 +226,9 @@ void structPicture :: v_destroy () noexcept {
 
 Graphics Picture_peekGraphics (Picture me) { return my graphics.get(); }
 
-void Picture_unhighlight (Picture me) {
-	if (my drawingArea)
-		drawSelection (me, 0);   // unselect
-}
-
 void Picture_highlight (Picture me) {
 	if (my drawingArea)
-		drawSelection (me, 1);   // select
+		drawSelection (me);
 }
 
 void Picture_erase (Picture me) {
@@ -238,7 +236,7 @@ void Picture_erase (Picture me) {
 	Graphics_clearWs (my graphics.get());
 	if (my drawingArea) {
 		drawMarkers (me);
-		drawSelection (me, 1);
+		drawSelection (me);
 	}
 }
 
@@ -282,14 +280,14 @@ static size_t appendBytes (void *info, const void *buffer, size_t count) {
 }
 void Picture_copyToClipboard (Picture me) {
 	/*
-	 * Find the clipboard and clear it.
-	 */
+		Find the clipboard and clear it.
+	*/
 	PasteboardRef clipboard = nullptr;
 	PasteboardCreate (kPasteboardClipboard, & clipboard);
 	PasteboardClear (clipboard);
 	/*
-	 * Add a PDF flavour to the clipboard.
-	 */
+		Add a PDF flavour to the clipboard.
+	*/
 	static CGDataConsumerCallbacks callbacks = { appendBytes, nullptr };
 	CFDataRef data = CFDataCreateMutable (kCFAllocatorDefault, 0);
 	CGDataConsumerRef consumer = CGDataConsumerCreate ((void *) data, & callbacks);
@@ -304,8 +302,8 @@ void Picture_copyToClipboard (Picture me) {
 	PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
 	CFRelease (data);
 	/*
-	 * Forget the clipboard.
-	 */
+		Forget the clipboard.
+	*/
 	CFRelease (clipboard);
 }
 #endif
@@ -316,18 +314,17 @@ void Picture_copyToClipboard (Picture me) {
 #define WIN_WIDTH  7.5
 #define WIN_HEIGHT  11
 static HENHMETAFILE copyToMetafile (Picture me) {
-	RECT rect;
-	HDC dc;
 	PRINTDLG defaultPrinter;
-	int resolution;
 	memset (& defaultPrinter, 0, sizeof (PRINTDLG));
 	defaultPrinter. lStructSize = sizeof (PRINTDLG);
 	defaultPrinter. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
 	PrintDlg (& defaultPrinter);
+	RECT rect;
 	SetRect (& rect, my selx1 * 2540, (12 - my sely2) * 2540, my selx2 * 2540, (12 - my sely1) * 2540);
-	dc = CreateEnhMetaFile (defaultPrinter. hDC, nullptr, & rect, L"Praat\0");
-	if (! dc) Melder_throw (U"Cannot create Windows metafile.");
-	resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360; Parallels Desktop: 600
+	const HDC dc = CreateEnhMetaFile (defaultPrinter. hDC, nullptr, & rect, L"Praat\0");
+	if (! dc)
+		Melder_throw (U"Cannot create Windows metafile.");
+	const int resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360; Parallels Desktop: 600
 	//Melder_fatal (U"resolution ", resolution);
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
@@ -374,9 +371,9 @@ void Picture_copyToClipboard (Picture me) {
 		SetClipboardData (CF_ENHMETAFILE, metafile);
 		CloseClipboard ();
 		/*
-		 * We should NOT call DeleteEnhMetaFile,
-		 * because the clipboard becomes the owner of this global memory object.
-		 */
+			We should NOT call DeleteEnhMetaFile,
+			because the clipboard becomes the owner of this global memory object.
+		*/
 	} catch (MelderError) {
 		Melder_throw (U"Picture not copied to clipboard.");
 	}
@@ -396,11 +393,11 @@ void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, bool useSilipaPS) {
 	try {
 		MelderFile_delete (file);   // to kill resources as well (fopen only kills data fork)
-		/* BUG: no message if file cannot be deleted (e.g. because still open by Microsoft Word 2001 after reading). */
+		// BUG: no message if file cannot be deleted (e.g. because still open by Microsoft Word 2001 after reading)
 
 		{// scope
 			autoGraphics ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
-				my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
+					my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
 			Graphics_play (my graphics.get(), ps.get());
 		}
 	} catch (MelderError) {
@@ -451,16 +448,14 @@ void Picture_print (Picture me) {
 void Picture_setSelection
 	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, bool notify)
 {
-	if (my drawingArea) {
+	if (my drawingArea)
 		Melder_assert (my drawingArea -> d_widget);
-		//drawSelection (me, 0);   // unselect
-	}
 	my selx1 = x1NDC;
 	my selx2 = x2NDC;
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
 	if (my drawingArea)
-		drawSelection (me, 1);   // select
+		drawSelection (me);
 
 	if (notify && my selectionChangedCallback) {
 		//Melder_casual (U"selectionChangedCallback from Picture_setSelection");

@@ -269,8 +269,8 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_image8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			} break;
 			case UNHIGHLIGHT: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
-				Graphics_unhighlight (thee, x1, x2, y1, y2);
+				(void) mget (4);   // obsolete x1, x2, y1, y2
+				// do nothing (this has become obsolete since the demise of XOR mode drawing)
 			} break;
 #if motif
 			case XOR_ON: {

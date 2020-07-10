@@ -238,7 +238,6 @@ void Graphics_setGrey (Graphics me, double grey);
 void Graphics_xorOn (Graphics me, MelderColour colour);
 void Graphics_xorOff (Graphics me);
 void Graphics_highlight (Graphics me, double x1, double x2, double y1, double y2);
-void Graphics_unhighlight (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_highlight2 (Graphics me, double x1, double x2, double y1, double y2,
 	double innerX1, double innerX2, double innerY1, double innerY2);
 void Graphics_unhighlight2 (Graphics me, double x1, double x2, double y1, double y2,
