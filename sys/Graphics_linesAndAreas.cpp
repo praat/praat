@@ -357,7 +357,8 @@ void structGraphicsPostscript :: v_rectangle (double x1DC, double x2DC, double y
 void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext) return;
+		if (! d_cairoGraphicsContext)
+			return;
 		double width = x2DC - x1DC + 1.0, height = y1DC - y2DC + 1.0;
 		if (width <= 0.0 || height <= 0.0) return;
 		trace (U"x1DC ", x1DC, U", x2DC ", x2DC, U", y1DC ", y1DC, U", y2DC ", y2DC);
@@ -401,7 +402,8 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 				gdk_flush ();
 			#endif
 		} else {
-			if (! d_cairoGraphicsContext) return;
+			if (! d_cairoGraphicsContext)
+				return;
 			cairoPrepareLine (this);
 			cairo_new_path (d_cairoGraphicsContext);
 			cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0.0, 2.0 * M_PI);
@@ -432,7 +434,8 @@ void structGraphicsPostscript :: v_circle (double xDC, double yDC, double rDC) {
 void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext) return;
+		if (! d_cairoGraphicsContext)
+			return;
 		cairoPrepareLine (this);
 		cairo_new_path (d_cairoGraphicsContext);
 		cairo_save (d_cairoGraphicsContext);
@@ -583,7 +586,8 @@ void structGraphicsPostscript :: v_fillEllipse (double x1DC, double x2DC, double
 void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (x2DC <= x1DC || y1DC <= y2DC) return;
+		if (x2DC <= x1DC || y1DC <= y2DC)
+			return;
 		
 		cairo_save (d_cairoGraphicsContext);
 		#if 0
@@ -607,8 +611,13 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		cairo_rectangle (d_cairoGraphicsContext, left, top, width, height);
 		cairo_stroke (d_cairoGraphicsContext);
 		
-		left ++, right --, top ++, bottom --, width -= 2, height -= 2;
-		if (width > 0 && height > 0) {
+		left += 1.0;
+		right -= 1.0;
+		top += 1.0;
+		bottom -= 1.0;
+		width -= 2.0;
+		height -= 2.0;
+		if (width > 0.0 && height > 0.0) {
 			cairo_set_source_rgb (d_cairoGraphicsContext, 0.3, 0.3, 0.3);
 			cairo_move_to (d_cairoGraphicsContext, left + 1, bottom);
 			cairo_line_to (d_cairoGraphicsContext, right, bottom);
@@ -620,8 +629,13 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			cairo_line_to (d_cairoGraphicsContext, left, top);
 			cairo_line_to (d_cairoGraphicsContext, right, top);
 			cairo_stroke (d_cairoGraphicsContext);
-			left += 0.5, right -= 0.5, top += 0.5, bottom -= 0.5, width -= 1, height -= 1;
-			if (width > 0 && height > 0) {
+			left += 0.5;
+			right -= 0.5;
+			top += 0.5;
+			bottom -= 0.5;
+			width -= 1.0;
+			height -= 1.0;
+			if (width > 0.0 && height > 0.0) {
 				cairo_set_source_rgb (d_cairoGraphicsContext, 0.65, 0.65, 0.65);
 				cairo_rectangle (d_cairoGraphicsContext, left, top, width, height);
 				cairo_fill (d_cairoGraphicsContext);
@@ -630,14 +644,15 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		cairo_restore (d_cairoGraphicsContext);
 	#elif quartz
         double width = x2DC - x1DC, height = y1DC - y2DC;
-		if (width <= 0 || height <= 0) return;
+		if (width <= 0.0 || height <= 0.0)
+			return;
 		/*
-		 * This is pixel-precise drawing, and may therefore be different on retina displays than on 100 dpi displays.
-		 */
+			This is pixel-precise drawing, and may therefore be different on retina displays than on 100 dpi displays.
+		*/
 		#if 1
-			bool isRetinaDisplay = [[d_macView window] backingScaleFactor] == 2.0;
+			const bool isRetinaDisplay = [[d_macView window] backingScaleFactor] == 2.0;
 		#else
-			bool isRetinaDisplay = false;
+			const bool isRetinaDisplay = false;
 		#endif
 
 		GraphicsQuartz_initDraw (this);
@@ -646,13 +661,23 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
         CGFloat red = 0.3, green = 0.3, blue = 0.2;
         CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
 		if (! isRetinaDisplay)
-			x1DC --;
-		x1DC += 0.5, x2DC -= 0.5, y1DC -= 0.5, y2DC += 0.5, width = x2DC - x1DC, height = y1DC - y2DC;
+			x1DC -= 1.0;
+		x1DC += 0.5;
+		x2DC -= 0.5;
+		y1DC -= 0.5;
+		y2DC += 0.5;
+		width = x2DC - x1DC;
+		height = y1DC - y2DC;
         CGRect rect = CGRectMake (x1DC, y2DC, width, height);
         CGContextAddRect (d_macGraphicsContext, rect);
         CGContextStrokePath (d_macGraphicsContext);
-		x1DC ++, x2DC --, y1DC --, y2DC ++, width = x2DC - x1DC, height = y1DC - y2DC;
-		if (width > 0 && height > 0) {
+		x1DC += 1.0;
+		x2DC -= 1.0;
+		y1DC -= 1.0;
+		y2DC += 1.0;
+		width = x2DC - x1DC;
+		height = y1DC - y2DC;
+		if (width > 0.0 && height > 0.0) {
 			red = 0.5, green = 0.5, blue = 0.4;
 			CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
 			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC);
@@ -667,8 +692,12 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y2DC);
             CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y2DC);
             CGContextStrokePath (d_macGraphicsContext);
-			if (width > 2 && height > 2) {
-				if (! isRetinaDisplay) x1DC ++, width = x2DC - x1DC, height = y1DC - y2DC;
+			if (width > 2.0 && height > 2.0) {
+				if (! isRetinaDisplay) {
+					x1DC += 1.0;
+					width = x2DC - x1DC;
+					height = y1DC - y2DC;
+				}
 				red = 0.75, green = 0.75, blue = 0.65;
 				CGContextSetRGBFillColor (d_macGraphicsContext, red, green, blue, 1.0);
 				rect = CGRectMake (x1DC, y2DC, width, height);
@@ -691,7 +720,7 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 }
 
 void structGraphics :: v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
-	double dy = yIsZeroAtTheTop ? - r : r;
+	const double dy = ( yIsZeroAtTheTop ? - r : r );
 	double xyDC [4];
 	ORDER_DC
 	xyDC [0] = x1DC + r;
@@ -722,7 +751,8 @@ void structGraphics :: v_roundedRectangle (double x1DC, double x2DC, double y1DC
 
 void structGraphicsScreen :: v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
 	#if gdi
-		double dy = yIsZeroAtTheTop ? - r : r, xyDC [4];
+		const double dy = ( yIsZeroAtTheTop ? - r : r );
+		double xyDC [4];
 		ORDER_DC
 		winPrepareLine (this);
 		RoundRect (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0, r + r, r + r);
@@ -736,7 +766,7 @@ void structGraphicsScreen :: v_roundedRectangle (double x1DC, double x2DC, doubl
 /* Fourth level. */
 
 void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
-	double dy = yIsZeroAtTheTop ? - r : r;
+	const double dy = ( yIsZeroAtTheTop ? - r : r );
 	ORDER_DC
 	v_fillCircle (x2DC - r, y1DC + dy, r);
 	v_fillCircle (x2DC - r, y2DC - dy, r);
@@ -751,14 +781,15 @@ void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double 
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
-	if (numberOfPoints < 2) return;
+void Graphics_polyline (Graphics me, integer numberOfPoints, const double *xWC, const double *yWC) {   // base 0
+	if (numberOfPoints < 2)
+		return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
 	} catch (MelderError) {
 		/*
-		 * Out of memory: silently refuse to draw.
+			Out of memory: silently refuse to draw.
 		 */
 		Melder_clearError ();
 		return;
@@ -777,15 +808,16 @@ void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double
 	}
 }
 
-void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
-	if (numberOfPoints < 1) return;
+void Graphics_polyline_closed (Graphics me, integer numberOfPoints, const double *xWC, const double *yWC) {   // base 0
+	if (numberOfPoints < 1)
+		return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
 	} catch (MelderError) {
 		/*
-		 * Out of memory: silently refuse to draw.
-		 */
+			Out of memory: silently refuse to draw.
+		*/
 		Melder_clearError ();
 		return;
 	}
@@ -815,14 +847,15 @@ void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y
 }
 
 void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *xWC, double const *yWC) {
-	if (numberOfPoints < 3) return;
+	if (numberOfPoints < 3)
+		return;
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
 	} catch (MelderError) {
 		/*
-		 * Out of memory: silently refuse to draw.
-		 */
+			Out of memory: silently refuse to draw.
+		*/
 		Melder_clearError ();
 		return;
 	}

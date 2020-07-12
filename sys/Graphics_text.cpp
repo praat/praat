@@ -766,12 +766,6 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
             CFRelease (color);
 
-			if (my d_macView) {
-				if (SUPPORT_DIRECT_DRAWING) {
-					[my d_macView   lockFocus];
-					my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-				}
-			}
             CGContextSaveGState (my d_macGraphicsContext);
             CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
             if (my yIsZeroAtTheTop)
@@ -796,31 +790,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             CFRelease (string);
 			CFRelease (s);
 			//CFRelease (ctFont);
-			if (my d_macView) {
-				if (SUPPORT_DIRECT_DRAWING)
-					[my d_macView   unlockFocus];
-				if (! my duringXor) {
-					//[my d_macView   setNeedsDisplay: YES];   // otherwise, CoreText text may not be drawn
-				}
-			}
 			return;
 		#endif
-	}
-}
-
-static void initText (void *void_me) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
-		(void) me;
-	}
-}
-
-static void exitText (void *void_me) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
-		(void) me;
 	}
 }
 
@@ -1441,12 +1412,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 }
 
 double Graphics_textWidth (Graphics me, conststring32 txt) {
-	if (! initBuffer (txt)) return 0.0;
-	initText (me);
+	if (! initBuffer (txt))
+		return 0.0;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, false);
 	double width = textWidth (theWidechar);
-	exitText (me);
 	return width / my scaleX;
 }
 
@@ -1457,16 +1427,19 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	integer y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
 	int availableHeight = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC, availableWidth = x2DC - x1DC;
 	int linesAvailable = availableHeight / lineHeight, linesNeeded = 1, lines, iline;
-	if (linesAvailable <= 0) linesAvailable = 1;
-	if (availableWidth <= 0) return;
-	if (! initBuffer (txt)) return;
-	initText (me);
+	if (linesAvailable <= 0)
+		linesAvailable = 1;
+	if (availableWidth <= 0)
+		return;
+	if (! initBuffer (txt))
+		return;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, true);
 	for (plc = theWidechar; plc -> kar > U'\t'; plc ++) {
 		width += plc -> width;
 		if (width > availableWidth) {
-			if (++ linesNeeded > linesAvailable) break;
+			if (++ linesNeeded > linesAvailable)
+				break;
 			width = 0.0;
 		}	
 	}
@@ -1479,8 +1452,8 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 			width += plc -> width;
 			if (width > availableWidth) flush = true;
 			/*
-			 * Trick for incorporating end-of-text.
-			 */
+				Trick for incorporating end-of-text.
+			*/
 			if (! flush && plc [1]. kar <= U'\t') {
 				Melder_assert (iline == lines);
 				plc ++;   // brr
@@ -1505,7 +1478,6 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 			}
 		}
 	}
-	exitText (me);
 }
 
 void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
@@ -1513,9 +1485,8 @@ void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 		double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
 		integer numberOfLines = 1;
 		for (const char32 *p = & txt [0]; *p != U'\0'; p ++) {
-			if (*p == U'\n') {
+			if (*p == U'\n')
 				numberOfLines ++;
-			}
 		}
 		yWC +=
 			my verticalTextAlignment == Graphics_TOP ? 0.0 :
@@ -1536,11 +1507,10 @@ void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 		}
 		return;
 	}
-	if (! initBuffer (txt)) return;
-	initText (me);
+	if (! initBuffer (txt))
+		return;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	drawCells (me, xWC, yWC, theWidechar);
-	exitText (me);
 	if (my recording) {
 		conststring8 txt_utf8 = Melder_peek32to8 (txt);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
@@ -1555,8 +1525,8 @@ int Graphics_getLinks (Graphics_Link **plinks) { *plinks = & links [0]; return n
 
 static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 	/*
-	 * The following has to be kept IN SYNC with GraphicsPostscript::charSize.
-	 */
+		The following has to be kept IN SYNC with GraphicsPostscript::charSize.
+	*/
 	double textWidth = 0;
 	for (_Graphics_widechar *character = & string [0]; character -> kar > U'\t'; character ++) {
 		Longchar_Info info = character -> karInfo;

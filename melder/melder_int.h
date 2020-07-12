@@ -77,6 +77,10 @@ inline static integer uinteger_to_integer (uinteger n) {
 	Melder_assert (n <= INTEGER_MAX);
 	return (integer) n;
 }
+inline static int32 integer_to_int32 (integer n) {
+	Melder_assert (n >= INT32_MIN && n <= INT32_MAX);
+	return (int32) n;
+}
 
 inline static integer integer_abs (integer n) {
 	Melder_assert (sizeof (integer) == sizeof (long) || sizeof (integer) == sizeof (long long));

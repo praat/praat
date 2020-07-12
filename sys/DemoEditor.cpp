@@ -148,7 +148,7 @@ void Demo_open () {
 		//GuiObject_show (editor -> windowForm);
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
-		theCurrentPraatPicture -> graphics = editor -> graphics.get();
+		theCurrentPraatPicture -> backgroundGraphics = editor -> graphics.get();
 		theCurrentPraatPicture -> font = (int) kGraphics_font::HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;

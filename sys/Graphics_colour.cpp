@@ -124,15 +124,11 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0)
 				return;
-			#if ALLOW_GDK_DRAWING
-				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
-				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
-				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y2DC, width, height);
-				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
-				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-				gdk_flush ();
-			#endif
+			if (! my d_cairoGraphicsContext)
+				return;
+			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.7, 0.7, 0.5);
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, width, height);
+			cairo_fill (my d_cairoGraphicsContext);
 		#elif gdi
 			static HBRUSH highlightBrush;
 			RECT rect;
@@ -194,25 +190,19 @@ static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0)
 				return;
-			#if ALLOW_GDK_DRAWING
-				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
-				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
-				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
-				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, true, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
-				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
-				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-				gdk_flush ();
-			#endif
+			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.7, 0.7, 0.5);
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+			cairo_rectangle (my d_cairoGraphicsContext, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+			cairo_fill (my d_cairoGraphicsContext);
 		#elif gdi
 			static HBRUSH highlightBrush;
 			if (! highlightBrush)
 				highlightBrush = CreateSolidBrush (RGB (255, 210, 210));
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
 			SelectBrush (my d_gdiGraphicsContext, highlightBrush);
-			SetROP2 (my d_gdiGraphicsContext, R2_NOTXORPEN);
+			SetROP2 (my d_gdiGraphicsContext, R2_MASKPEN);
 			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y2DC_inner + 1);
 			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC_inner, x1DC_inner + 1, y1DC_inner + 1);
 			Rectangle (my d_gdiGraphicsContext, x2DC_inner, y2DC_inner, x2DC + 1, y1DC_inner + 1);
@@ -249,14 +239,6 @@ void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, do
 	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner), 1);
 	if (my recording)
 		{ op (HIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
-}
-
-void Graphics_unhighlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
-	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
-{
-	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner), 2);
-	if (my recording)
-		{ op (UNHIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
 void Graphics_xorOn (Graphics graphics, MelderColour colour) {

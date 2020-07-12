@@ -406,7 +406,7 @@ if (! my printing) {
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 			theCurrentPraatObjects = (PraatObjects) my praatObjects;
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
-			theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> backgroundGraphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
 			theCurrentPraatPicture -> font = (int) font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -503,7 +503,7 @@ if (! my printing) {
 		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 		theCurrentPraatObjects = (PraatObjects) my praatObjects;
 		theCurrentPraatPicture = (PraatPicture) my praatPicture;
-		theCurrentPraatPicture -> graphics = my ps;
+		theCurrentPraatPicture -> backgroundGraphics = my ps;
 		theCurrentPraatPicture -> font = (int) font;
 		theCurrentPraatPicture -> fontSize = size;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
