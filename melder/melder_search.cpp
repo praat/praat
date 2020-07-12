@@ -1,6 +1,6 @@
 /* melder_search.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 stri
 	bool ink, bool caseSensitive, bool startFree, bool endFree) noexcept
 {
 	integer length = str32len (find);
-	if (length == 0) return (char32 *) string;
+	if (length == 0)
+		return (char32 *) string;
 	conststring32 movingString = string;
 	do {
 		conststring32 movingFind = find;
@@ -62,12 +63,10 @@ inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 stri
 }
 
 bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, conststring32 criterion, bool caseSensitive) {
-	if (! value) {
+	if (! value)
 		value = U"";   // regard null strings as empty strings, as is usual in Praat
-	}
-	if (! criterion) {
+	if (! criterion)
 		criterion = U"";   // regard null strings as empty strings, as is usual in Praat
-	}
 	switch (which)
 	{
 		case kMelder_string::UNDEFINED:

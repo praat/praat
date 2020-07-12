@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2005,2007-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,11 +157,6 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea drawingArea);
 
 int Graphics_getResolution (Graphics me);
 
-#if defined (macintosh)
-	#define SUPPORT_DIRECT_DRAWING  0
-#else
-	#define SUPPORT_DIRECT_DRAWING  0
-#endif
 void Graphics_setWsViewport (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
 void Graphics_resetWsViewport (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
 void Graphics_setWsWindow (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC);
@@ -180,8 +175,8 @@ Graphics_Viewport Graphics_insetViewport (Graphics me, double x1rel, double x2re
 void Graphics_resetViewport (Graphics me, Graphics_Viewport viewport);
 void Graphics_setWindow (Graphics me, double x1, double x2, double y1, double y2);
 
-void Graphics_polyline (Graphics me, integer numberOfPoints, double *x, double *y);
-void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *x, double *y);
+void Graphics_polyline (Graphics me, integer numberOfPoints, const double *x, const double *y);
+void Graphics_polyline_closed (Graphics me, integer numberOfPoints, const double *x, const double *y);
 
 void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt);
 template <typename... Args>
@@ -239,8 +234,6 @@ void Graphics_xorOn (Graphics me, MelderColour colour);
 void Graphics_xorOff (Graphics me);
 void Graphics_highlight (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_highlight2 (Graphics me, double x1, double x2, double y1, double y2,
-	double innerX1, double innerX2, double innerY1, double innerY2);
-void Graphics_unhighlight2 (Graphics me, double x1, double x2, double y1, double y2,
 	double innerX1, double innerX2, double innerY1, double innerY2);
 
 #define Graphics_NOCHANGE  -1

@@ -207,7 +207,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
-		Graphics_updateWs (GRAPHICS);
+		Graphics_updateWs (FOREGROUND_GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
@@ -262,7 +262,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
-		Graphics_updateWs (GRAPHICS);   // BUG: needed on Cocoa, but why?
+		Graphics_updateWs (FOREGROUND_GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom)
 			std::swap (top, bottom);
@@ -579,9 +579,10 @@ END }
 DIRECT (GRAPHICS_Undo) {
 	Graphics_undoGroup (GRAPHICS);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		Graphics_play (GRAPHICS, GRAPHICS);
+		Graphics_play (GRAPHICS, GRAPHICS);   // TODO: understand this
 	}
-	Graphics_updateWs (GRAPHICS);
+	if (FOREGROUND_GRAPHICS)
+		Graphics_updateWs (FOREGROUND_GRAPHICS);
 END }
 
 DIRECT (GRAPHICS_Erase_all) {
@@ -590,7 +591,9 @@ DIRECT (GRAPHICS_Erase_all) {
 	} else {
 		Graphics_clearRecording (GRAPHICS);
 		Graphics_clearWs (GRAPHICS);
-		#if 1
+		/*
+			The following whitening may be needed on Graphicses that aren't really screens. TODO: figure this out.
+		*/
 		autoPraatPicture picture;
 		MelderColour colour = GRAPHICS -> colour;
 		Graphics_setColour (GRAPHICS, Melder_WHITE);
@@ -601,7 +604,6 @@ DIRECT (GRAPHICS_Erase_all) {
 		//Melder_casual (x1, U" ", y1, U" ", x2, U" ", y2);
 		Graphics_fillRectangle (GRAPHICS, x1, x2, y1, y2);
 		Graphics_setColour (GRAPHICS, colour);
-		#endif
 	}
 END }
 
@@ -1589,10 +1591,8 @@ void praat_picture_open () {
 void praat_picture_close () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		return;
-	if (! theCurrentPraatApplication -> batch) {
-		Picture_highlight (praat_picture.get());
-		Graphics_updateWs (GRAPHICS);
-	}
+	if (! theCurrentPraatApplication -> batch)
+		Graphics_updateWs (FOREGROUND_GRAPHICS);
 }
 
 Graphics praat_picture_editor_open (bool eraseFirst) {
@@ -1607,7 +1607,8 @@ void praat_picture_editor_close () {
 }
 
 static autoDaata pictureRecognizer (integer nread, const char *header, MelderFile file) {
-	if (nread < 2) return autoDaata ();
+	if (nread < 2)
+		return autoDaata ();
 	if (strnequ (header, "PraatPictureFile", 16)) {
 		Picture_readFromPraatPictureFile (praat_picture.get(), file);
 		return Thing_new (Daata);   // a dummy
@@ -1859,7 +1860,8 @@ void praat_picture_init () {
 	praat_picture = Picture_create (drawingArea, ! theCurrentPraatApplication -> batch);
 	// READ THIS!
 	Picture_setSelectionChangedCallback (praat_picture.get(), cb_selectionChanged, nullptr);
-	theCurrentPraatPicture -> graphics = static_cast<Graphics> (Picture_peekGraphics (praat_picture.get()));
+	theCurrentPraatPicture -> backgroundGraphics = static_cast<Graphics> (Picture_peekBackgroundGraphics (praat_picture.get()));
+	theCurrentPraatPicture -> foregroundGraphics = static_cast<Graphics> (Picture_peekForegroundGraphics (praat_picture.get()));
 
 	updatePenMenu ();
 	updateFontMenu ();
@@ -1871,7 +1873,7 @@ void praat_picture_prefsChanged () {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
+	Graphics_setFontSize (theCurrentPraatPicture -> backgroundGraphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
 	Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport);
 }
 

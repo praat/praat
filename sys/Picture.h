@@ -41,7 +41,7 @@
 
 Thing_define (Picture, Thing) {
 	GuiDrawingArea drawingArea;
-	autoGraphics graphics, selectionGraphics;
+	autoGraphics backgroundGraphics, foregroundGraphics, selectionGraphics;
 	bool sensitive;
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (Picture, void *, double, double, double, double);
@@ -64,21 +64,14 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive);
 		selection is [0, 1] x [0, 1] (NDC), which is invisible;
 */
 
-Graphics Picture_peekGraphics (Picture me);
+Graphics Picture_peekBackgroundGraphics (Picture me);
+Graphics Picture_peekForegroundGraphics (Picture me);
 /*
 	Function:
 		return the Graphics object.
 	Usage:
 		send the graphics output that you want to be in the picture to this Graphics,
 		bracketed by calls to Picture_startRecording and Picture_stopRecording.
-*/
-
-void Picture_highlight (Picture me);
-/*
-	Function:
-		visualize the viewport.
-	Usage:
-		call just after sending graphics output.
 */
 
 void Picture_setSelectionChangedCallback (Picture me,

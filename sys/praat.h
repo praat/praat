@@ -181,7 +181,7 @@ typedef struct {   /* Readonly */
 	integer uniqueId;
 } structPraatObjects, *PraatObjects;
 typedef struct {   // read-only
-	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
+	Graphics backgroundGraphics, foregroundGraphics;
 	int font, lineType;
 	double fontSize;
 	MelderColour colour;
@@ -562,7 +562,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
-#define GRAPHICS  theCurrentPraatPicture -> graphics
+#define GRAPHICS  theCurrentPraatPicture -> backgroundGraphics
+#define FOREGROUND_GRAPHICS  theCurrentPraatPicture -> foregroundGraphics
 #define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name.get())
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
