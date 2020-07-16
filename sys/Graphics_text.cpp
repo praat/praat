@@ -646,18 +646,18 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			return;
 		#elif quartz
 			/*
-			 * Determine the font family.
-			 */
+				Determine the font family.
+			*/
 			int font = lc -> font.integer_;   // the font of the first character
 
 			/*
-			 * Determine the style.
-			 */
+				Determine the style.
+			*/
 			int style = lc -> style;   // the style of the first character
 
 			/*
-			 * Determine the font-style combination.
-			 */
+				Determine the font-style combination.
+			*/
 			CTFontRef ctFont = theScreenFonts [font] [lc -> size] [style];
 			if (! ctFont) {
 				CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
@@ -740,7 +740,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 
 			static CFNumberRef cfKerning;
 			if (! cfKerning) {
-				double kerning = 0.0;
+				const double kerning = 0.0;
 				cfKerning = CFNumberCreate (kCFAllocatorDefault, kCFNumberDoubleType, & kerning);
 			}
             CFAttributedStringSetAttribute (string, textRange, kCTKernAttributeName, cfKerning);
@@ -754,14 +754,16 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			}
             CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
-            RGBColor *macColor = lc -> link ? & theBlueColour : my duringXor ? & theWhiteColour : & my d_macColour;
-            CGColorRef color = CGColorCreateGenericRGB (macColor->red / 65536.0, macColor->green / 65536.0, macColor->blue / 65536.0, 1.0);
+            MelderColour colour = lc -> link ? Melder_BLUE : my colour;
+            CGColorRef color = my duringXor ?
+            	CGColorCreateGenericRGB (1.0 - colour.red, 1.0 - colour.green, 1.0 - colour.blue, 1.0) :
+            	CGColorCreateGenericRGB (colour.red, colour.green, colour.blue, 1.0);
 			Melder_assert (color != nullptr);
             CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
 
             /*
-             * Draw.
-             */
+            	Draw.
+			*/
     
             CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
             CFRelease (color);
@@ -775,10 +777,9 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			CTLineRef line = CTLineCreateWithAttributedString (string);
             if (my duringXor) {
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-                CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
+				Melder_casual (U"Graphics_text: ", Melder_pointer (my d_macGraphicsContext));
 				CTLineDraw (line, my d_macGraphicsContext);
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
-                CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
             } else {
 				CTLineDraw (line, my d_macGraphicsContext);
             }
@@ -828,8 +829,8 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			charSize (me, character);
 	} else {
 	/*
-	 * Measure the size of each character.
-	 */
+		Measure the size of each character.
+	*/
 	_Graphics_widechar *character;
 	#if quartz || cairo
 		#if cairo
@@ -838,23 +839,23 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 		int numberOfDiacritics = 0;
 		for (_Graphics_widechar *lc = string; lc -> kar > U'\t'; lc ++) {
 			/*
-			 * Determine the font family.
-			 */
+				Determine the font family.
+			*/
 			Longchar_Info info = lc -> karInfo;
 			Melder_assert (info);
 			int font = chooseFont (me, lc);
 			lc -> font.string = nullptr;   // this erases font.integer_!
 
 			/*
-			 * Determine the style.
-			 */
+				Determine the style.
+			*/
 			int style = lc -> style;
 			Melder_assert (style >= 0 && style <= Graphics_BOLD_ITALIC);
 
 			#if quartz
 				/*
-				 * Determine and store the font-style combination.
-				 */
+					Determine and store the font-style combination.
+				*/
 				CTFontRef ctFont = theScreenFonts [font] [100] [style];
 				if (! ctFont) {
 					CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );

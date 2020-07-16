@@ -25,6 +25,7 @@
 #include "NoulliGridEditor.h"
 
 #include "praat_TableOfReal.h"
+#include "praat_TimeFunction.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -1756,6 +1757,17 @@ DIRECT (WINDOW_NoulliGrid_viewAndEdit) {
 	END
 }
 
+FORM (NUMVEC_NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average probabilities", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	REAL (fromTime, U"From time (s)", U"0")
+	REAL (toTime, U"To time (s)", U"0 (= all)")
+	OK
+DO
+	NUMVEC_ONE (NoulliGrid)
+		autoVEC result = NoulliGrid_getAverageProbabilities (me, tierNumber, fromTime, toTime);
+	NUMVEC_ONE_END
+}
+
 // MARK: - buttons
 
 void praat_uvafon_gram_init ();
@@ -1947,6 +1959,9 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_Net_PatternList_to_ActivationList);
 
 	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);
+	praat_addAction1 (classNoulliGrid, 0, U"Query -", nullptr, 0, nullptr);
+	praat_TimeFunction_query_init (classNoulliGrid);
+	praat_addAction1 (classNoulliGrid, 1, U"Get average probabilities...", nullptr, 1, NUMVEC_NoulliGrid_getAverageProbabilities);
 	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);
 }
 
