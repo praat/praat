@@ -120,13 +120,7 @@ static void psRevertLine (GraphicsPostscript me) {
 #elif quartz
 	static void quartzPrepareLine (GraphicsScreen me) {
 		CGContextSetLineJoin (my d_macGraphicsContext, kCGLineJoinBevel);   // much faster than kCGLineJoinRound
-		if (my duringXor) {
-			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-			//Melder_casual (U"Graphics_linesAndAreas: ", Melder_pointer (my d_macGraphicsContext), U" ", my colour.red, U" ", my colour.green, U" ", my colour.blue);
-			CGContextSetRGBStrokeColor (my d_macGraphicsContext, 1.0 - my colour.red, 1.0 - my colour.green, 1.0 - my colour.blue, 1.0);
-		} else {
-			CGContextSetRGBStrokeColor (my d_macGraphicsContext, my colour.red, my colour.green, my colour.blue, 1.0);
-		}
+		CGContextSetRGBStrokeColor (my d_macGraphicsContext, my colour.red, my colour.green, my colour.blue, 1.0);
 		double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 		CGContextSetLineWidth (my d_macGraphicsContext, lineWidth_pixels);
 
@@ -147,13 +141,9 @@ static void psRevertLine (GraphicsPostscript me) {
 				my lineType == 0 ? 0 : my lineType == Graphics_DASHED_DOTTED ? 4 : 2);
 	}
 	static void quartzRevertLine (GraphicsScreen me) {
-		if (my duringXor) {
-			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
-		}
 	}
 	static void quartzPrepareFill (GraphicsScreen me) {
 		CGContextSetAlpha (my d_macGraphicsContext, 1.0);
-		CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 		CGContextSetRGBFillColor (my d_macGraphicsContext, my colour.red, my colour.green, my colour.blue, 1.0);
 	}
 #endif
