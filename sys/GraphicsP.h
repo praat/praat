@@ -104,7 +104,6 @@ Thing_define (GraphicsScreen, Graphics) {
 		NSView *d_macView;
 		int d_macFont, d_macStyle;
 		int d_depth;
-		RGBColor d_macColour;
 		uint8 *d_bits;
 		CGContextRef d_macGraphicsContext;
 	#endif

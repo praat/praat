@@ -38,7 +38,7 @@ oo_DEFINE_CLASS (FormantModelerListDrawingSpecification, Daata)
 	#endif
 
 	#if oo_DECLARING
-		void v_info () { };
+		void v_info () override { }
 	#endif
 	
 oo_END_CLASS (FormantModelerListDrawingSpecification)

@@ -41,9 +41,6 @@ void _Graphics_setColour (Graphics graphics, MelderColour colour) {
 			DeleteObject (my d_winBrush);
 			my d_winBrush = CreateSolidBrush (my d_winForegroundColour);
 		#elif quartz
-			my d_macColour. red = colour. red * 65535;
-			my d_macColour. green = colour. green * 65535;
-			my d_macColour. blue = colour. blue * 65535;
 			// postpone till drawing
 		#endif
 	} else if (graphics -> postScript) {
@@ -81,7 +78,6 @@ void _Graphics_setGrey (Graphics graphics, double fgrey) {
 			DeleteObject (my d_winBrush);
 			my d_winBrush = CreateSolidBrush (my d_winForegroundColour);
 		#elif quartz
-			my d_macColour. red = my d_macColour. green = my d_macColour. blue = fgrey * 65535;
 		#endif
 	} else if (graphics -> postScript) {
 		GraphicsPostscript me = static_cast <GraphicsPostscript> (graphics);
@@ -264,6 +260,9 @@ void Graphics_xorOn (Graphics graphics, MelderColour colour) {
 			colour. blue  = ((uint16) (colour. blue  * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif quartz
+			my colour = colour;
+			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
+			Melder_casual (U"Graphics_xorOn: ", Melder_pointer (my d_macGraphicsContext));
 		#endif
 		my duringXor = true;
 		if (graphics -> recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
@@ -288,6 +287,7 @@ void Graphics_xorOff (Graphics graphics) {
 			_Graphics_setColour (me, my colour);
 		#elif quartz
 			//Graphics_flushWs (graphics);   // to undraw the last drawing
+			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 		#endif
 		my duringXor = false;
 		if (graphics -> recording) { op (XOR_OFF, 0); }

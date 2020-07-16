@@ -66,7 +66,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 				#else
 					unsigned char *bitmap = cairo_image_surface_get_data (my d_cairoSurface);   // peeking into the internal bits
 					// copy bitmap to PNG structure created with the PNG library
-					// save the PNG tructure to a file
+					// save the PNG structure to a file
 				#endif
 			}
 			cairo_surface_destroy (d_cairoSurface);
@@ -87,8 +87,8 @@ void structGraphicsScreen :: v_destroy () noexcept {
 		if (d_isPng && d_gdiBitmap) {
 			trace (U"saving the filled bitmap to a PNG file");
 			/*
-			 * Deselect the bitmap from the device context (otherwise GetDIBits won't work).
-			 */
+				Deselect the bitmap from the device context (otherwise GetDIBits won't work).
+			*/
 			//SelectBitmap (d_gdiGraphicsContext, nullptr);
 			//SelectBitmap (d_gdiGraphicsContext, CreateCompatibleBitmap (nullptr, 1, 1));
 
@@ -99,8 +99,8 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			trace (U"width ", width, U", height ", height);
 
 			/*
-			 * Get the bits from the HBITMAP;
-			 */
+				Get the bits from the HBITMAP;
+			*/
 			struct { BITMAPINFOHEADER header; } bitmapInfo;
 			bitmapInfo. header.biSize = sizeof (BITMAPINFOHEADER);
 			bitmapInfo. header.biWidth = width;
@@ -162,9 +162,9 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			DeleteDC (d_gdiGraphicsContext);   // this was a memory leak before 5.3.83
 		}
 		/*
-		 * No ReleaseDC here, because we have not created it ourselves,
-		 * not even with GetDC. Is this a BUG?
-		 */
+			No ReleaseDC here, because we have not created it ourselves,
+			not even with GetDC. Is this a BUG?
+		*/
 		d_gdiGraphicsContext = nullptr;
 	#elif quartz
 		if (! d_macView && ! d_isPng) {
@@ -173,14 +173,14 @@ void structGraphicsScreen :: v_destroy () noexcept {
 		}
 		if (d_isPng && d_macGraphicsContext) {
 			/*
-			 * Turn the offscreen bitmap into an image.
-			 */
+				Turn the offscreen bitmap into an image.
+			*/
 			CGImageRef image = CGBitmapContextCreateImage (d_macGraphicsContext);
 			Melder_assert (image);
 			//CGContextRelease (d_macGraphicsContext);
 			/*
-			 * Create a dictionary with resolution properties.
-			 */
+				Create a dictionary with resolution properties.
+			*/
 			CFTypeRef keys [2], values [2];
 			keys [0] = kCGImagePropertyDPIWidth;
 			keys [1] = kCGImagePropertyDPIHeight;
@@ -190,8 +190,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 				(const void **) keys, (const void **) values, 2,
 				& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
 			Melder_assert (properties);
-			/*
-			 */
+
 			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr,
 				(CFStringRef) Melder_peek32toCfstring (d_file. path), kCFURLPOSIXPathStyle, false);
 			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, nullptr);
@@ -277,28 +276,28 @@ void structGraphicsScreen :: v_clearWs () {
 		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
 		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
 	#elif quartz
-        GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
-        if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
-            NSRect rect;
-            if (our d_x1DC < our d_x2DC) {
-                rect.origin.x = our d_x1DC;
-                rect.size.width = our d_x2DC - our d_x1DC;
-            } else {
-                rect.origin.x = our d_x2DC;
-                rect.size.width = our d_x1DC - our d_x2DC;
-            }
-            if (our d_y1DC < our d_y2DC) {
-                rect.origin.y = our d_y1DC;
-                rect.size.height = our d_y2DC - our d_y1DC;
-            } else {
-                rect.origin.y = our d_y2DC;
-                rect.size.height = our d_y1DC - our d_y2DC;
-            }
-            /*
-            	The rect just created is ignored (for the moment).
+		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
+		if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
+			NSRect rect;
+			if (our d_x1DC < our d_x2DC) {
+				rect.origin.x = our d_x1DC;
+				rect.size.width = our d_x2DC - our d_x1DC;
+			} else {
+				rect.origin.x = our d_x2DC;
+				rect.size.width = our d_x1DC - our d_x2DC;
+			}
+			if (our d_y1DC < our d_y2DC) {
+				rect.origin.y = our d_y1DC;
+				rect.size.height = our d_y2DC - our d_y1DC;
+			} else {
+				rect.origin.y = our d_y2DC;
+				rect.size.height = our d_y1DC - our d_y2DC;
+			}
+			/*
+				The rect just created is ignored (for the moment).
 			*/
 			[cocoaDrawingArea setNeedsDisplay: YES];
-        }
+		}
 	#endif
 }
 
@@ -308,12 +307,13 @@ void Graphics_clearWs (Graphics me) {
 
 void structGraphicsScreen :: v_updateWs () {
 	/*
-	 * A function that invalidates the graphics.
-	 * This function is typically called by the owner of the drawing area
-	 * whenever the data to be displayed in the drawing area has changed;
-	 * the idea is to generate an expose event to which the drawing area will
-	 * respond by redrawing its contents from the (changed) data.
-	 */
+		A function that invalidates the graphics.
+		This function is typically called by the owner of the drawing area
+		whenever the data to be displayed in the drawing area has changed;
+		the idea is to generate an expose event to which the drawing area will
+		respond by redrawing its contents from the (changed) data.
+		(last checked 2020-07-12)
+	*/
 	#if cairo && gtk
 		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
@@ -346,30 +346,28 @@ void structGraphicsScreen :: v_updateWs () {
 		//gdk_window_process_updates (our d_window, true);
 	#elif gdi
 		//clear (this); // lll
-		if (our d_winWindow) InvalidateRect (our d_winWindow, nullptr, true);
+		if (our d_winWindow)
+			InvalidateRect (our d_winWindow, nullptr, true);
 	#elif quartz
-        NSView *view = our d_macView;
+		NSView *view = our d_macView;
 		Melder_assert (!! view);
-        NSRect rect;
-    
-        if (our d_x1DC < our d_x2DC) {
-            rect.origin.x = our d_x1DC;
-            rect.size.width = our d_x2DC - our d_x1DC;
-        } else {
-            rect.origin.x = our d_x2DC;
-            rect.size.width = our d_x1DC - our d_x2DC;
-        }
-        
-        if (our d_y1DC < our d_y2DC) {
-            rect.origin.y = our d_y1DC;
-            rect.size.height = our d_y2DC - our d_y1DC;
-        } else {
-            rect.origin.y = our d_y2DC;
-            rect.size.height = our d_y1DC - our d_y2DC;
-        }
-    
-        //[view setNeedsDisplayInRect: rect];
-        [view setNeedsDisplay: YES];
+		NSRect rect;
+		if (our d_x1DC < our d_x2DC) {
+			rect.origin.x = our d_x1DC;
+			rect.size.width = our d_x2DC - our d_x1DC;
+		} else {
+			rect.origin.x = our d_x2DC;
+			rect.size.width = our d_x1DC - our d_x2DC;
+		}
+		if (our d_y1DC < our d_y2DC) {
+			rect.origin.y = our d_y1DC;
+			rect.size.height = our d_y2DC - our d_y1DC;
+		} else {
+			rect.origin.y = our d_y2DC;
+			rect.size.height = our d_y1DC - our d_y2DC;
+		}
+		//[view setNeedsDisplayInRect: rect];
+		[view setNeedsDisplay: YES];
 	#endif
 }
 
@@ -436,8 +434,8 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		Melder_assert (my d_gdiGraphicsContext);
 		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);   // not the default!
 		/*
-		 * Create pens and brushes.
-		 */
+			Create pens and brushes.
+		*/
 		my d_winPen = CreatePen (PS_SOLID, 0, RGB (0, 0, 0));
 		my d_winBrush = CreateSolidBrush (RGB (0, 0, 0));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
@@ -452,7 +450,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_macView = (NSView *) voidWindow;
 			(void) my d_macGraphicsContext;   // will be retrieved from Core Graphics with every drawing command!
 		}
-		my d_macColour = theBlackColour;
 		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
 		_GraphicsScreen_text_init (me);
 	#endif
@@ -587,8 +584,8 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
 		//cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 		/*
-		 * Fill in the whole area with a white background.
-		 */
+			Fill in the whole area with a white background.
+		*/
 		cairo_set_source_rgb (my d_cairoGraphicsContext, 1.0, 1.0, 1.0);
 		cairo_rectangle (my d_cairoGraphicsContext, 0, 0, my d_x2DC, my d_y2DC);
 		cairo_fill (my d_cairoGraphicsContext);
@@ -611,8 +608,8 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 		my d_winBrush = CreateSolidBrush (RGB (0, 0, 0));
 		SetTextAlign (my d_gdiGraphicsContext, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);
 		/*
-		 * Fill in the whole area with a white background.
-		 */
+			Fill in the whole area with a white background.
+		*/
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (WHITE_BRUSH));
 		Rectangle (my d_gdiGraphicsContext, 0, 0, my d_x2DC + 1, my d_y2DC + 1);   // plus 1, in order to prevent two black edges
@@ -670,7 +667,8 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my d_y2DC = my d_y2DCmax = ( isdefined (y1inches) ? 11.0 : y2inches ) * resolution;
 		Graphics_setWsWindow (me.get(),
 			isdefined (x1inches) ? 0.0 : 0.0, isdefined (x1inches) ?  7.5 : x2inches,
-			isdefined (y1inches) ? 1.0 : 0.0, isdefined (y1inches) ? 12.0 : y2inches);
+			isdefined (y1inches) ? 1.0 : 0.0, isdefined (y1inches) ? 12.0 : y2inches
+		);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);

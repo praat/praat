@@ -1627,6 +1627,7 @@ void structTextGridEditor :: v_draw () {
 		}
 	}
 	if (isdefined (our draggingTime)) {
+		Graphics_xorOn (our graphics.get(), Melder_MAROON);
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			if (our draggingTiers [itier]) {
 				const double ymin = soundY * (1.0 - (double) itier / numberOfTiers);
@@ -1638,6 +1639,7 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setLineWidth (our graphics.get(), 1);
 		Graphics_line (our graphics.get(), our draggingTime, 0.0, our draggingTime, 1.01);
 		Graphics_text (our graphics.get(), our draggingTime, 1.01, Melder_fixed (our draggingTime, 6));
+		Graphics_xorOff (our graphics.get());
 	}
 
 	/*

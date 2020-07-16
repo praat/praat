@@ -2,7 +2,7 @@
 #define _NoulliGrid_h_
 /* NoulliGrid.h
  *
- * Copyright (C) 2018 Paul Boersma
+ * Copyright (C) 2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 integer NoulliPoint_getWinningCategory (NoulliPoint me);
 
 autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tmin, double tmax);
+
+autoVEC NoulliGrid_getAverageProbabilities (NoulliGrid me, integer tierNumber, double tmin, double tmax);
 
 /* End of file NoulliGrid.h */
 #endif
