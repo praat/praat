@@ -47,7 +47,6 @@ extern const char * ipaSerifRegularPS [];
 	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 	#define mac_MAXIMUM_FONT_SIZE  500
 	static CTFontRef theScreenFonts [1 + kGraphics_font_DINGBATS] [1+mac_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
-	static RGBColor theWhiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, theBlueColour = { 0, 0, 0xFFFF };
 #endif
 
 #if gdi
@@ -755,9 +754,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
             MelderColour colour = lc -> link ? Melder_BLUE : my colour;
-            CGColorRef color = my duringXor ?
-            	CGColorCreateGenericRGB (1.0 - colour.red, 1.0 - colour.green, 1.0 - colour.blue, 1.0) :
-            	CGColorCreateGenericRGB (colour.red, colour.green, colour.blue, 1.0);
+            CGColorRef color = CGColorCreateGenericRGB (colour.red, colour.green, colour.blue, 1.0);
 			Melder_assert (color != nullptr);
             CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
 
@@ -775,15 +772,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
 
 			CTLineRef line = CTLineCreateWithAttributedString (string);
-            if (my duringXor) {
-                CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-				Melder_casual (U"Graphics_text: ", Melder_pointer (my d_macGraphicsContext));
-				CTLineDraw (line, my d_macGraphicsContext);
-                CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
-            } else {
-				CTLineDraw (line, my d_macGraphicsContext);
-            }
-			//CGContextFlush (my d_macGraphicsContext);
+			CTLineDraw (line, my d_macGraphicsContext);
 			CFRelease (line);
             CGContextRestoreGState (my d_macGraphicsContext);
 

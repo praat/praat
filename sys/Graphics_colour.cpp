@@ -237,15 +237,15 @@ void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, do
 		{ op (HIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
-void Graphics_xorOn (Graphics graphics, MelderColour colour) {
+void Graphics_xorOn (Graphics graphics, MelderColour colourOnWhiteBackground) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			#if ALLOW_GDK_DRAWING
 				GdkColor colourXorWhite { 0,
-					(uint16) ((uint16) (colour. red   * 65535.0) ^ (uint16) 0xFFFF),
-					(uint16) ((uint16) (colour. green * 65535.0) ^ (uint16) 0xFFFF),
-					(uint16) ((uint16) (colour. blue  * 65535.0) ^ (uint16) 0xFFFF) };
+					(uint16) ((uint16) (colourOnWhiteBackground. red   * 65535.0) ^ (uint16) 0xFFFF),
+					(uint16) ((uint16) (colourOnWhiteBackground. green * 65535.0) ^ (uint16) 0xFFFF),
+					(uint16) ((uint16) (colourOnWhiteBackground. blue  * 65535.0) ^ (uint16) 0xFFFF) };
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
 				gdk_flush ();
@@ -255,17 +255,23 @@ void Graphics_xorOn (Graphics graphics, MelderColour colour) {
 			#endif
 		#elif gdi
 			SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
-			colour. red   = ((uint16) (colour. red   * 65535.0) ^ 0xFFFF) / 65535.0;
-			colour. green = ((uint16) (colour. green * 65535.0) ^ 0xFFFF) / 65535.0;
-			colour. blue  = ((uint16) (colour. blue  * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. red   = ((uint16) (colourOnWhiteBackground. red   * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. green = ((uint16) (colourOnWhiteBackground. green * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. blue  = ((uint16) (colourOnWhiteBackground. blue  * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif quartz
-			my colour = colour;
+			my colour. red   = 1.0 - colourOnWhiteBackground. red;
+			my colour. green = 1.0 - colourOnWhiteBackground. green;
+			my colour. blue  = 1.0 - colourOnWhiteBackground. blue;
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-			Melder_casual (U"Graphics_xorOn: ", Melder_pointer (my d_macGraphicsContext));
 		#endif
 		my duringXor = true;
-		if (graphics -> recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
+		if (graphics -> recording) {
+			op (XOR_ON, 3);
+			put (colourOnWhiteBackground. red);
+			put (colourOnWhiteBackground. green);
+			put (colourOnWhiteBackground. blue);
+		}
 	}
 }
 
@@ -286,7 +292,6 @@ void Graphics_xorOff (Graphics graphics) {
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);
 		#elif quartz
-			//Graphics_flushWs (graphics);   // to undraw the last drawing
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 		#endif
 		my duringXor = false;
