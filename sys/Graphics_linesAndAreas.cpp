@@ -46,17 +46,6 @@ static void psRevertLine (GraphicsPostscript me) {
 }
 
 #if cairo
-	#if ALLOW_GDK_DRAWING
-		static void gdkPrepareLine (GraphicsScreen me) {
-			gdk_gc_set_line_attributes (my d_gdkGraphicsContext, my lineWidth,
-				my lineType >= Graphics_DOTTED ? GDK_LINE_ON_OFF_DASH : GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
-		}
-		static void gdkRevertLine (GraphicsScreen me) {
-			if (my lineType >= Graphics_DOTTED) {
-				gdk_gc_set_line_attributes (my d_gdkGraphicsContext, my lineWidth, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
-			}
-		}
-	#endif
 	static void cairoPrepareLine (GraphicsScreen me) {
 		if (! my d_cairoGraphicsContext) return;
 		double dotted_line [] { 2.0, 2.0 };
@@ -77,10 +66,10 @@ static void psRevertLine (GraphicsPostscript me) {
 		cairo_set_line_width (my d_cairoGraphicsContext, my lineWidth);
 	}
 	static void cairoRevertLine (GraphicsScreen me) {
-		if (! my d_cairoGraphicsContext) return;
-		if (my lineType >= Graphics_DOTTED) {
+		if (! my d_cairoGraphicsContext)
+			return;
+		if (my lineType >= Graphics_DOTTED)
 			cairo_set_dash (my d_cairoGraphicsContext, nullptr, 0, 0);
-		}
 		cairo_restore (my d_cairoGraphicsContext);
 	}
 #elif gdi
@@ -88,8 +77,7 @@ static void psRevertLine (GraphicsPostscript me) {
 	#define DEFAULT  SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	static void winPrepareLine (GraphicsScreen me) {
 		HPEN newPen;
-		int lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me) + 0.5;
-		if (! lineWidth_pixels) lineWidth_pixels = 1;
+		const int lineWidth_pixels = Melder_clippedLeft (1, int (LINE_WIDTH_IN_PIXELS (me) + 0.5));
 		my d_fatNonSolid = my lineType != Graphics_DRAWN && lineWidth_pixels > 1;
 		if (Melder_debug == 10) {
 			LOGBRUSH brush;
@@ -152,28 +140,17 @@ static void psRevertLine (GraphicsPostscript me) {
 
 void structGraphicsScreen :: v_polyline (integer numberOfPoints, double *xyDC, bool close) {
 	#if cairo
-		if (duringXor) {
-			#if ALLOW_GDK_DRAWING
-				gdkPrepareLine (this);
-				for (integer i = 0; i < numberOfPoints - 1; i ++) {
-					gdk_draw_line (our d_window, our d_gdkGraphicsContext,
-						xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
-				}
-				gdkRevertLine (this);
-				gdk_flush ();
-			#endif
-		} else {
-			if (our d_cairoGraphicsContext == nullptr) return;
-			cairoPrepareLine (this);
-			// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
-			cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
-			for (integer i = 1; i < numberOfPoints; i ++) {
-				cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-			}
-			if (close) cairo_close_path (our d_cairoGraphicsContext);
-			cairo_stroke (our d_cairoGraphicsContext);
-			cairoRevertLine (this);
-		}
+		if (our d_cairoGraphicsContext == nullptr)
+			return;
+		cairoPrepareLine (this);
+		// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
+		cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
+		for (integer i = 1; i < numberOfPoints; i ++)
+			cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
+		if (close)
+			cairo_close_path (our d_cairoGraphicsContext);
+		cairo_stroke (our d_cairoGraphicsContext);
+		cairoRevertLine (this);
 	#elif gdi
 		if (our d_useGdiplus && 0) {
 			Gdiplus::Graphics dcplus (our d_gdiGraphicsContext);
@@ -239,9 +216,8 @@ void structGraphicsScreen :: v_polyline (integer numberOfPoints, double *xyDC, b
 		CGContextBeginPath (our d_macGraphicsContext);
 		trace (U"starting point ", xyDC [0], U" ", xyDC [1]);
 		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);   // starts a new subpath
-		for (integer i = 1; i < numberOfPoints; i ++) {
+		for (integer i = 1; i < numberOfPoints; i ++)
 			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-		}
 		if (close)
 			CGContextClosePath (our d_macGraphicsContext);   // closes only the subpath
 		CGContextStrokePath (our d_macGraphicsContext);
@@ -251,11 +227,11 @@ void structGraphicsScreen :: v_polyline (integer numberOfPoints, double *xyDC, b
 }
 
 void structGraphicsPostscript :: v_polyline (integer numberOfPoints, double *xyDC, bool close) {
-	integer nn = 2 * numberOfPoints;
+	const integer nn = 2 * numberOfPoints;
 	psPrepareLine (this);
 	our d_printf (our d_file, "N %.7g %.7g moveto\n", xyDC [0], xyDC [1]);
 	for (integer i = 2; i < nn; i += 2) {
-		double dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
+		const double dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
 		our d_printf (our d_file, "%.7g %.7g L\n", dx, dy);
 	}
 	if (close)
@@ -266,7 +242,8 @@ void structGraphicsPostscript :: v_polyline (integer numberOfPoints, double *xyD
 
 void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 	#if cairo
-		if (our d_cairoGraphicsContext == nullptr) return;
+		if (our d_cairoGraphicsContext == nullptr)
+			return;
 		// cairo_new_path (our d_cairoGraphicsContext); // move_to() automatically creates a new path
 		cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
 		for (integer i = 1; i < numberOfPoints; i ++)
@@ -309,7 +286,8 @@ void structGraphicsPostscript :: v_fillArea (integer numberOfPoints, double *xyD
 void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext) return;
+		if (! d_cairoGraphicsContext)
+			return;
 		double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0.0 || height <= 0.0) return;
 		cairoPrepareLine (this);
@@ -383,22 +361,13 @@ void structGraphicsPostscript :: v_fillRectangle (double x1DC, double x2DC, doub
 
 void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 	#if cairo
-		if (duringXor) {
-			#if ALLOW_GDK_DRAWING
-				gdkPrepareLine (this);
-				gdk_draw_arc (d_window, d_gdkGraphicsContext, false, xDC - rDC, yDC - rDC, rDC + rDC, rDC + rDC, 0, 360 * 64);
-				gdkRevertLine (this);
-				gdk_flush ();
-			#endif
-		} else {
-			if (! d_cairoGraphicsContext)
-				return;
-			cairoPrepareLine (this);
-			cairo_new_path (d_cairoGraphicsContext);
-			cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0.0, 2.0 * M_PI);
-			cairo_stroke (d_cairoGraphicsContext);
-			cairoRevertLine (this);
-		}
+		if (! d_cairoGraphicsContext)
+			return;
+		cairoPrepareLine (this);
+		cairo_new_path (d_cairoGraphicsContext);
+		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0.0, 2.0 * M_PI);
+		cairo_stroke (d_cairoGraphicsContext);
+		cairoRevertLine (this);
 	#elif gdi
 		winPrepareLine (this);
 		Ellipse (d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1.0, yDC + rDC + 1.0);

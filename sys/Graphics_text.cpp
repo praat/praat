@@ -558,25 +558,11 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 	} else if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my duringXor) {
-				#if ALLOW_GDK_DRAWING
-					static GdkFont *font = nullptr;
-					if (! font) {
-						font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
-						if (! font) {
-							font = gdk_font_load ("-*-courier 10 pitch-medium-r-normal--*-120-*-*-*-*-iso8859-1");
-						}
-					}
-					if (font) {
-						gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
-					}
-					gdk_flush ();
-				#endif
+			if (! my d_cairoGraphicsContext)
 				return;
-			}
-			if (! my d_cairoGraphicsContext) return;
 			// TODO!
-			if (lc -> link) _Graphics_setColour (me, Melder_BLUE);
+			if (lc -> link)
+				_Graphics_setColour (me, Melder_BLUE);
 			int font = lc -> font.integer_;
 			cairo_save (my d_cairoGraphicsContext);
 			cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
@@ -593,12 +579,18 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
 			g_object_unref (layout);
 			cairo_restore (my d_cairoGraphicsContext);
-			if (lc -> link) _Graphics_setColour (me, my colour);
+			if (lc -> link)
+				_Graphics_setColour (me, my colour);
 			return;
 		#elif gdi
 			int font = lc -> font.integer_;
 			conststringW codesW = Melder_peek32toW (codes);
 			if (my duringXor) {
+				/*
+					On GDI, SetROP2 does not influence text drawing,
+					so we have to create a bitmap in the background
+					and use BitBlt with SRCINVERT as its ROP.
+				*/
 				int descent = (1.0/216) * my fontSize * my resolution;
 				int ascent = (1.0/72) * my fontSize * my resolution;
 				int maxWidth = 800, maxHeight = 200;
@@ -624,8 +616,12 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 				return;
 			}
-			SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
-			if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
+			SelectPen (my d_gdiGraphicsContext, my d_winPen);
+			SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
+			if (lc -> link)
+				SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255));
+			else
+				SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 			SelectFont (my d_gdiGraphicsContext, fonts [(int) my resolutionNumber] [font] [lc -> size] [lc -> style]);
 			if (my textRotation == 0.0) {
 				TextOutW (my d_gdiGraphicsContext, xDC, yDC, codesW, str16len ((const char16 *) codesW));
@@ -640,7 +636,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				TextOutW (my d_gdiGraphicsContext, 0, 0, codesW, str16len ((const char16 *) codesW));
 				RestoreDC (my d_gdiGraphicsContext, restore);
 			}
-			if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
+			if (lc -> link)
+				SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 			return;
 		#elif quartz
@@ -724,10 +721,10 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				CFStringRef s = CFStringCreateWithBytes (nullptr,
 					(const UInt8 *) codes16, str16len (codes16) * 2,
 					kCFStringEncodingUTF16LE, false);
-				int length = CFStringGetLength (s);
+				integer length = CFStringGetLength (s);
 			#else
 				NSString *s = [[NSString alloc]   initWithBytes: codes16   length: str16len (codes16) * 2   encoding: NSUTF16LittleEndianStringEncoding];
-				int length = [s length];
+				integer length = [s length];
 			#endif
 
 			CGFloat descent = CTFontGetDescent (ctFont);
@@ -813,7 +810,7 @@ static int numberOfLinks = 0;
 static Graphics_Link links [100];    // a maximum of 100 links per string
 
 static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEachCharacterSeparately) {
-	if (my postScript || (cairo && my duringXor) || (cairo && ! my screen)) {   // TODO: use Pango measurements even without Cairo context (if no screen)
+	if (my postScript || (cairo && ! my screen)) {   // TODO: use Pango measurements even without Cairo context (if no screen)
 		for (_Graphics_widechar *character = string; character -> kar > U'\t'; character ++)
 			charSize (me, character);
 	} else {

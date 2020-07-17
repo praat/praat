@@ -47,12 +47,6 @@ Thing_implement (GraphicsScreen, Graphics, 0);
 
 void structGraphicsScreen :: v_destroy () noexcept {
 	#if cairo
-		#if ALLOW_GDK_DRAWING
-			if (d_gdkGraphicsContext) {
-				g_object_unref (d_gdkGraphicsContext);			
-				d_gdkGraphicsContext = nullptr;
-			}
-		#endif
 		if (d_cairoGraphicsContext) {
 			cairo_destroy (d_cairoGraphicsContext);
 			d_cairoGraphicsContext = nullptr;
@@ -415,7 +409,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			trace (U"retrieving window");
 			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
 			trace (U"retrieved window");
-			my d_gdkGraphicsContext = gdk_gc_new (my d_window);
 		#else
 			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
 		#endif

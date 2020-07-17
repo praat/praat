@@ -91,26 +91,6 @@ void Graphics_setGrey (Graphics me, double grey) {
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
-#if quartz
-static GuiDrawingArea_ExposeCallback saveExposeCallback;
-static Thing saveExposeBoss;
-static NSRect theRect;
-static void highlightExposeCallback (Graphics me, GuiDrawingArea_ExposeEvent event) {
-	CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-	Melder_assert (context);
-	CGContextSaveGState (context);
-	//CGContextSetBlendMode (context, kCGBlendModeDifference);
-	CGContextSetBlendMode (context, kCGBlendModeDarken);
-	CGContextSetShouldAntialias (context, false);
-	NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSDeviceRGBColorSpace];
-	double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
-	//CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
-	CGContextSetRGBFillColor (context, red, green, blue, 1.0);
-	CGContextFillRect (context, theRect);
-	CGContextRestoreGState (context);
-}
-#endif
-
 static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC, int direction) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
@@ -154,16 +134,6 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 				CGContextSetRGBFillColor (context, 1.0, 0.83, 0.83, 1.0);
 				CGContextFillRect (context, rect);
 				CGContextRestoreGState (context);
-			} else {
-				theRect = rect;
-				saveExposeCallback = my d_drawingArea -> d_exposeCallback;
-				saveExposeBoss = my d_drawingArea -> d_exposeBoss;
-				//[drawingArea displayRect: rect];
-				GuiDrawingArea_setExposeCallback (my d_drawingArea, highlightExposeCallback, graphics);
-				[drawingArea display];
-				GuiDrawingArea_setExposeCallback (my d_drawingArea, saveExposeCallback, saveExposeBoss);
-				//[drawingArea setNeedsDisplayInRect: rect];
-				Graphics_updateWs (graphics);
 			}
 		#endif
 	}
@@ -240,31 +210,17 @@ void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, do
 void Graphics_xorOn (Graphics graphics, MelderColour colourOnWhiteBackground) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
+		my colour. red   = 1.0 - colourOnWhiteBackground. red;
+		my colour. green = 1.0 - colourOnWhiteBackground. green;
+		my colour. blue  = 1.0 - colourOnWhiteBackground. blue;
 		#if cairo
-			#if ALLOW_GDK_DRAWING
-				GdkColor colourXorWhite { 0,
-					(uint16) ((uint16) (colourOnWhiteBackground. red   * 65535.0) ^ (uint16) 0xFFFF),
-					(uint16) ((uint16) (colourOnWhiteBackground. green * 65535.0) ^ (uint16) 0xFFFF),
-					(uint16) ((uint16) (colourOnWhiteBackground. blue  * 65535.0) ^ (uint16) 0xFFFF) };
-				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
-				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
-				gdk_flush ();
-			#else
-				cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
-				cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_XOR);
-			#endif
+			cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_DIFFERENCE);
 		#elif gdi
 			SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
-			colour. red   = ((uint16) (colourOnWhiteBackground. red   * 65535.0) ^ 0xFFFF) / 65535.0;
-			colour. green = ((uint16) (colourOnWhiteBackground. green * 65535.0) ^ 0xFFFF) / 65535.0;
-			colour. blue  = ((uint16) (colourOnWhiteBackground. blue  * 65535.0) ^ 0xFFFF) / 65535.0;
-			_Graphics_setColour (me, colour);
 		#elif quartz
-			my colour. red   = 1.0 - colourOnWhiteBackground. red;
-			my colour. green = 1.0 - colourOnWhiteBackground. green;
-			my colour. blue  = 1.0 - colourOnWhiteBackground. blue;
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
 		#endif
+		_Graphics_setColour (me, my colour);
 		my duringXor = true;
 		if (graphics -> recording) {
 			op (XOR_ON, 3);
@@ -279,23 +235,17 @@ void Graphics_xorOff (Graphics graphics) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			#if ALLOW_GDK_DRAWING
-				GdkColor black { 0, 0x0000, 0x0000, 0x0000 };
-				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
-				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-				gdk_flush ();   // to undraw the last drawing
-			#else
-				cairo_set_source_rgba (my d_cairoGraphicsContext, 0.0, 0.0, 0.0, 1.0);
-				cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
-			#endif
+			cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
 		#elif gdi
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
-			_Graphics_setColour (me, my colour);
 		#elif quartz
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 		#endif
+		_Graphics_setColour (me, my colour);
 		my duringXor = false;
-		if (graphics -> recording) { op (XOR_OFF, 0); }
+		if (graphics -> recording) {
+			op (XOR_OFF, 0);
+		}
 	}
 }
 
