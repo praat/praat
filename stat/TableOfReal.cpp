@@ -753,10 +753,9 @@ void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, integer rowmi
 	double maxTextHeight = getMaxColumnLabelHeight (me, graphics, 1, my numberOfColumns);
 
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
-	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnLabels && my columnLabels [icol] && my columnLabels [icol] [0])
 			Graphics_text (graphics, icol, 1, my columnLabels [icol].get());
-	}
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		double y = 1.0 - lineSpacing * (irow - rowmin + 0.6);
 		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
@@ -771,7 +770,8 @@ void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, integer rowmi
 	}
 	if (maxTextHeight != 0.0) {
 		double left = 0.5;
-		if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
+		if (maxTextWidth > 0.0)
+			left -= maxTextWidth + 2 * leftMargin;
 		Graphics_line (graphics, left, 1.0, my numberOfColumns + 0.5, 1.0);
 	}
 	Graphics_unsetInner (graphics);
@@ -793,12 +793,11 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, integer ro
 		Matrix_formula (original.get(), conditionFormula, interpreter, conditions.get());
 
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			if (my columnLabels && my columnLabels [icol] && my columnLabels [icol] [0])
 				Graphics_text (graphics, icol, 1, my columnLabels [icol].get());
-		}
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
-			double y = 1.0 - lineSpacing * (irow - rowmin + 0.6);
+			const double y = 1.0 - lineSpacing * (irow - rowmin + 0.6);
 			Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 			if (my rowLabels && my rowLabels [irow] && my rowLabels [irow] [0])
 				Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow].get());
@@ -811,7 +810,8 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, integer ro
 		}
 		if (maxTextHeight != 0.0) {
 			double left = 0.5;
-			if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
+			if (maxTextWidth > 0.0)
+				left -= maxTextWidth + 2 * leftMargin;
 			Graphics_line (graphics, left, 1.0, my numberOfColumns + 0.5, 1.0);
 		}
 		Graphics_unsetInner (graphics);
@@ -897,18 +897,20 @@ void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics graphics, integ
 void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, integer rowmin, integer rowmax,
 	integer colmin, integer colmax, bool garnish)
 {
-	double dx = 1.0, dy = 1.0;
+	const double dx = 1.0, dy = 1.0;
 	MelderColour colour = Graphics_inqColour (graphics);
 	fixRows (me, & rowmin, & rowmax);
 	fixColumns (me, & colmin, & colmax);
-	
+
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, colmin - 0.5, colmax + 0.5, rowmin - 0.5, rowmax + 0.5);
+	//const double datamax = NUMabsoluteExtremum (my data); TODO
 	double datamax = my data [rowmin] [colmin];
 	for (integer irow = 1; irow <= my numberOfRows; irow ++)
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			if (fabs (my data [irow] [icol]) > datamax) datamax = fabs (my data [irow] [icol]);
-	
+			if (fabs (my data [irow] [icol]) > datamax)
+				datamax = fabs (my data [irow] [icol]);
+
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		double y = rowmax + rowmin - irow;
 		for (integer icol = colmin; icol <= colmax; icol ++) {
@@ -917,7 +919,8 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, integer rowmi
 			double d = 0.95 * sqrt (fabs (my data [irow] [icol]) / datamax);
 			double x1WC = x - d * dx / 2.0, x2WC = x + d * dx / 2.0;
 			double y1WC = y - d * dy / 2.0, y2WC = y + d * dy / 2.0;
-			if (my data [irow] [icol] > 0) Graphics_setColour (graphics, Melder_WHITE);
+			if (my data [irow] [icol] > 0.0)
+				Graphics_setColour (graphics, Melder_WHITE);
 			Graphics_fillRectangle (graphics, x1WC, x2WC, y1WC, y2WC);
 			Graphics_setColour (graphics, colour);
 			Graphics_rectangle (graphics, x1WC, x2WC , y1WC, y2WC);
@@ -962,7 +965,8 @@ autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 
 autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 	try {
-		if (my size == 0) Melder_throw (U"Cannot add zero tables.");
+		if (my size == 0)
+			Melder_throw (U"Cannot add zero tables.");
 		TableOfReal thee = my at [1];
 		integer totalNumberOfRows = thy numberOfRows;
 		integer numberOfColumns = thy numberOfColumns;

@@ -83,7 +83,6 @@ Thing_define (GraphicsScreen, Graphics) {
 			GdkDisplay *d_display;
 			#if ALLOW_GDK_DRAWING
 				GdkDrawable *d_window;
-				GdkGC *d_gdkGraphicsContext;
 			#else
 				GdkWindow *d_window;
 			#endif
