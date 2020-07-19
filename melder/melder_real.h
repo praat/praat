@@ -23,6 +23,22 @@
 */
 using longdouble = long double;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 
+static const double undefined = (0.0/0.0);   // NaN
+
+/*
+	isdefined() shall capture not only `undefined`, but all infinities and NaNs.
+	This can be done with a single test for the set bits in 0x7FF0'0000'0000'0000,
+	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
+	The portable version of isdefined() involves both isinf() and isnan(), or perhaps just isfinite(),
+	but that would be slower (as tested in fon/Praat_tests.cpp)
+	and it would also run into problems on some platforms when both <cmath> and <math.h> are included,
+	as in dwsys/NUMcomplex.cpp.
+*/
+//inline bool isdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
+//inline bool isdefined (double x) { return isfinite (x); }   /* portable */
+inline bool isdefined (double x) { return ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) != 0x7FF0'0000'0000'0000; }
+inline bool isundef (double x) { return ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) == 0x7FF0'0000'0000'0000; }
+
 template <typename T>
 constexpr T sqr (T x) {
 	return x * x;
@@ -57,6 +73,27 @@ struct MelderExtremaWithInit {
 
 struct MelderGaussianStats {
 	double mean, stdev;
+};
+
+struct MelderFraction {
+	double numerator = 0.0, denominator = 0.0;
+	double get () const {
+		return our denominator == 0.0 ? undefined : our numerator / our denominator;
+	}
+	bool isValid () const {
+		return our denominator != 0.0;
+	}
+};
+
+struct MelderCountAndFraction {
+	integer count = 0;
+	double numerator = 0.0, denominator = 0.0;
+	double getFraction () const {
+		return our denominator == 0.0 ? undefined : our numerator / our denominator;
+	}
+	bool isValid () const {
+		return our denominator != 0.0;
+	}
 };
 
 /* End of file melder_real.h */

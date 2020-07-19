@@ -521,8 +521,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 		iam (GraphicsPostscript);
 		bool onlyRegular = lc -> font.string [0] == 'S' ||
 			(lc -> font.string [0] == 'T' && lc -> font.string [1] == 'e');   // Symbol & SILDoulos !
-		int slant = (lc -> style & Graphics_ITALIC) && onlyRegular;
-		int thick = (lc -> style & Graphics_BOLD) && onlyRegular;
+		bool slant = (lc -> style & Graphics_ITALIC) && onlyRegular;
+		bool thick = (lc -> style & Graphics_BOLD) && onlyRegular;
 		if (lc -> font.string != my lastFid || lc -> size != my lastSize)
 			my d_printf (my d_file, my languageLevel == 1 ? "/%s %d FONT\n" : "/%s %d selectfont\n",
 				my lastFid = lc -> font.string, my lastSize = lc -> size);
@@ -810,6 +810,15 @@ static int numberOfLinks = 0;
 static Graphics_Link links [100];    // a maximum of 100 links per string
 
 static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEachCharacterSeparately) {
+	/*
+		Ideally, this function should work even in cases where there is no screen.
+		Example: a Praat script wants to draw a text inside a rectangle
+		and determines the witth of the rectangle by means of the "Text width (mm)" command.
+		Ideally, this script should run correctly from the command line.
+		On the Mac, `CTFramesetterSuggestFrameSizeWithConstraints` works correctly from thecommand line,
+		but on Linux, `pango_layout_get_extents` does not work if there is no d_cairoGraphicsContext.
+		(last checked 2020-07-17)
+	*/
 	if (my postScript || (cairo && ! my screen)) {   // TODO: use Pango measurements even without Cairo context (if no screen)
 		for (_Graphics_widechar *character = string; character -> kar > U'\t'; character ++)
 			charSize (me, character);

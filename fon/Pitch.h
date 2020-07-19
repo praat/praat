@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,6 +158,11 @@ integer Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope);
    Invalid variables are always set to 0.0.
    'minimum', 'maximum', 'mean', and 'variance' may be null.
 */
+
+MelderFraction Pitch_getFractionOfLocallyVoicedFrames (Pitch me, double tmin, double tmax,
+	double ceiling, double silenceThreshold, double voicingThreshold);
+MelderFraction Pitch_getFractionOfLocallyUnvoicedFrames (Pitch me, double tmin, double tmax,
+	double ceiling, double silenceThreshold, double voicingThreshold);
 
 autoPitch Pitch_killOctaveJumps (Pitch me);
 /* Add octave jumps so that every pitch step,
