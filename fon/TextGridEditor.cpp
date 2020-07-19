@@ -1702,7 +1702,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	}
 	if (mouseIsInWideSoundOrAnalysisPart) {
 		const bool mouseIsInWideAnalysisPart = ( yWC < 0.5 * (soundY + 1.0) );
-		if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 * (soundY + 1.0)) {
+		if ((our p_spectrogram_show || our p_formant_show) && mouseIsInWideAnalysisPart) {
 			our d_spectrogram_cursor = our p_spectrogram_viewFrom +
 					2.0 * (yWC - soundY) / (1.0 - soundY) * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
 		}
@@ -1766,7 +1766,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		if (nearBoundaryOrPoint) {
 			/*
 				Possibility 1: the user clicked near a boundary or point.
-				Select or drag it.
+				Select and perhaps drag it.
 			*/
 			bool boundaryOrPointIsMovable = true;
 			if (intervalTier) {
@@ -1784,6 +1784,13 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 					our startSelection = anchorTime;
 			} else {
 				our startSelection = our endSelection = anchorTime;   // move cursor so that the boundary or point is selected
+			}
+			if (! boundaryOrPointIsMovable) {
+				our draggingTime = undefined;
+				hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+				anchorTime = undefined;
+				clickedLeftBoundary = 0;
+				return FunctionEditor_UPDATE_NEEDED;
 			}
 			/*
 				Determine the set of selected boundaries and points, and the dragging range.
@@ -1857,20 +1864,19 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		}
 	} else if (event -> isDrop ()) {
 		Melder_casual (U"drop ", xWC);
-		if (our draggingTiers.size == 0 || ! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+		if (our draggingTiers.size == 0) {
 			our draggingTime = undefined;
 			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
 			clickedLeftBoundary = 0;
 			return FunctionEditor_UPDATE_NEEDED;
 		}
-		our draggingTime = undefined;
-		hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		/*
 			If the user dropped near an existing boundary in an unselected tier or near the cursor,
 			we snap to that mark.
 		*/
 		const integer itierDrop = _TextGridEditor_yWCtoTier (this, yWC);
+		bool droppedOnABoundaryOrPointInsideAnUnselectedTier = false;
 		if (yWC > 0.0 && yWC < soundY && ! our draggingTiers [itierDrop]) {   // dropped inside an unselected tier?
 			const Function anyTierDrop = grid -> tiers->at [itierDrop];
 			if (anyTierDrop -> classInfo == classIntervalTier) {
@@ -1878,28 +1884,29 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				for (integer ibound = 1; ibound < tierDrop -> intervals.size; ibound ++) {
 					const TextInterval left = tierDrop -> intervals.at [ibound];
 					const double mouseDistanceToBoundary = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - left -> xmax));
-					if (mouseDistanceToBoundary < droppingVicinityRadius_mm)
+					if (mouseDistanceToBoundary < droppingVicinityRadius_mm) {
 						xWC = left -> xmax;   // snap to boundary
+						droppedOnABoundaryOrPointInsideAnUnselectedTier = true;
+					}
 				}
 			} else {
 				const TextTier tierDrop = (TextTier) anyTierDrop;
 				for (integer ipoint = 1; ipoint <= tierDrop -> points.size; ipoint ++) {
 					const TextPoint point = tierDrop -> points.at [ipoint];
 					const double mouseDistanceToPoint_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - point -> number));
-					if (mouseDistanceToPoint_mm < droppingVicinityRadius_mm)
+					if (mouseDistanceToPoint_mm < droppingVicinityRadius_mm) {
 						xWC = point -> number;   // snap to point
+						droppedOnABoundaryOrPointInsideAnUnselectedTier = true;
+					}
 				}
 			}
-		} else if (anchorTime != our startSelection && fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our startSelection)) < droppingVicinityRadius_mm) {   // near the cursor?
-			/*
-				Snap to cursor.
-			*/
-			xWC = our startSelection;
-		} else if (anchorTime != our endSelection && fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our endSelection)) < droppingVicinityRadius_mm) {   // near the cursor?
-			/*
-				Snap to cursor.
-			*/
-			xWC = our endSelection;
+		}
+		if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce && ! droppedOnABoundaryOrPointInsideAnUnselectedTier) {
+			our draggingTime = undefined;
+			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			anchorTime = undefined;
+			clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
 		}
 
 		/*
@@ -1907,6 +1914,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		*/
 		if (xWC <= leftDraggingBoundary || xWC >= rightDraggingBoundary) {
 			Melder_beep ();
+			our draggingTime = undefined;
+			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
 			clickedLeftBoundary = 0;
 			return FunctionEditor_UPDATE_NEEDED;
@@ -1957,6 +1966,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		if (our endSelection == anchorTime)
 			our endSelection = xWC;
 		Melder_sort (& our startSelection, & our endSelection);
+		our draggingTime = undefined;
+		hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		anchorTime = undefined;
 		clickedLeftBoundary = 0;
 		//FunctionEditor_marksChanged (this, true);
