@@ -93,7 +93,7 @@ inline static integer integer_abs (integer n) {
 struct MelderIntegerRange {
 	integer first, last;
 	bool isEmpty () { return ( last < first ); }
-	integer size () {
+	integer size () const {
 		integer result = last - first + 1;
 		return std::max (result, 0_integer);
 	}
