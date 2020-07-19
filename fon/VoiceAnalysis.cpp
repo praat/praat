@@ -23,12 +23,12 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 2)
 		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 1; i < imax; i ++) {
+	for (integer i = pointNumbers.first + 1; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -45,12 +45,12 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 2)
 		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 1; i < imax; i ++) {
+	for (integer i = pointNumbers.first + 1; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -67,12 +67,12 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 3)
 		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 2; i < imax; i ++) {
+	for (integer i = pointNumbers.first + 2; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
 		const double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
@@ -91,12 +91,12 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
 	if (numberOfPeriods < 5)
 		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 5; i <= imax; i ++) {
+	for (integer i = pointNumbers.first + 5; i <= pointNumbers.last; i ++) {
 		const double
 			p1 = my t [i - 4] - my t [i - 5],
 			p2 = my t [i - 3] - my t [i - 4],
@@ -289,12 +289,12 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 			Pulses statistics.
 		*/
 		const double pmin = 0.8 / ceiling, pmax = 1.25 / floor;   // minimum period, maximum period (abbreviated for space)
-		const integer numberOfPulses = PointProcess_getWindowPoints (pulses, tmin, tmax, nullptr, nullptr);
+		const MelderIntegerRange pulseNumbers = PointProcess_getWindowPoints (pulses, tmin, tmax);
 		const integer numberOfPeriods = PointProcess_getNumberOfPeriods (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		const double meanPeriod = PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		const double stdevPeriod = PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		MelderInfo_writeLine (U"Pulses:");
-		MelderInfo_writeLine (U"   Number of pulses: ", numberOfPulses);
+		MelderInfo_writeLine (U"   Number of pulses: ", pulseNumbers.size());
 		MelderInfo_writeLine (U"   Number of periods: ", numberOfPeriods);
 		MelderInfo_writeLine (U"   Mean period: ", Melder_fixedExponent (meanPeriod, -3, 6), U" seconds");
 		MelderInfo_writeLine (U"   Standard deviation of period: ", Melder_fixedExponent (stdevPeriod, -3, 6), U" seconds");

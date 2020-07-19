@@ -376,14 +376,8 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 	}
 }
 
-integer PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, integer *p_imin, integer *p_imax) {
-	const integer imin = PointProcess_getHighIndex (me, tmin);
-	const integer imax = PointProcess_getLowIndex (me, tmax);
-	if (p_imin)
-		*p_imin = imin;
-	if (p_imax)
-		*p_imax = imax;
-	return imax - imin + 1;
+MelderIntegerRange PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax) {
+	return { PointProcess_getHighIndex (me, tmin), PointProcess_getLowIndex (me, tmax) };
 }
 
 static bool PointProcess_isPeriod (PointProcess me, integer ileft, double minimumPeriod, double maximumPeriod, double maximumPeriodFactor) {
@@ -394,47 +388,36 @@ static bool PointProcess_isPeriod (PointProcess me, integer ileft, double minimu
 	/*
 		Period condition 1: both 'ileft' and 'iright' have to be within the point process.
 	*/
-	if (ileft < 1 || iright > my nt) {
+	if (ileft < 1 || iright > my nt)
 		return false;
-	} else {
-		/*
-			Period condition 2: the interval has to be within the boundaries, if specified.
-		*/
-		if (minimumPeriod == maximumPeriod) {
-			return true;   // all intervals count as periods, irrespective of absolute size and relative size
-		} else {
-			const double interval = my t [iright] - my t [ileft];
-			if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod) {
-				return false;
-			} else if (isundef (maximumPeriodFactor) || maximumPeriodFactor < 1.0) {
-				return true;
-			} else {
-				/*
-					Period condition 3: the interval cannot be too different from both of its neigbours, if any.
-				*/
-				const double previousInterval = ( ileft <= 1 ? undefined : my t [ileft] - my t [ileft - 1] );
-				const double nextInterval = ( iright >= my nt ? undefined : my t [iright + 1] - my t [iright] );
-				double previousIntervalFactor =
-					( isdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : undefined );
-				double nextIntervalFactor =
-					( isdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : undefined );
-				if (isundef (previousIntervalFactor) && isundef (nextIntervalFactor)) {
-					return true;   // no neighbours: this is a period
-				}
-				if (isdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0) {
-					previousIntervalFactor = 1.0 / previousIntervalFactor;
-				}
-				if (isdefined (nextIntervalFactor) && nextIntervalFactor > 0.0 && nextIntervalFactor < 1.0) {
-					nextIntervalFactor = 1.0 / nextIntervalFactor;
-				}
-				if (isdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
-					isdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
-				{
-					return false;
-				}
-			}
-		}
-	}
+	/*
+		Period condition 2: the interval has to be within the boundaries, if specified.
+	*/
+	if (minimumPeriod == maximumPeriod)   // special input setting (typically both zero)
+		return true;   // all intervals count as periods, irrespective of absolute size and relative size
+	const double interval = my t [iright] - my t [ileft];
+	if (interval <= 0.0 || interval < minimumPeriod || interval > maximumPeriod)
+		return false;
+	if (isundef (maximumPeriodFactor) || maximumPeriodFactor < 1.0)
+		return true;
+	/*
+		Period condition 3: the interval cannot be too different from both of its neigbours, if any.
+	*/
+	const double previousInterval = ( ileft <= 1 ? undefined : my t [ileft] - my t [ileft - 1] );
+	const double nextInterval = ( iright >= my nt ? undefined : my t [iright + 1] - my t [iright] );
+	double previousIntervalFactor =
+		( isdefined (previousInterval) && previousInterval > 0.0 ? interval / previousInterval : undefined );
+	double nextIntervalFactor =
+		( isdefined (nextInterval) && nextInterval > 0.0 ? interval / nextInterval : undefined );
+	if (isundef (previousIntervalFactor) && isundef (nextIntervalFactor))
+		return true;   // no neighbours: this is a period
+	if (isdefined (previousIntervalFactor) && previousIntervalFactor > 0.0 && previousIntervalFactor < 1.0)
+		previousIntervalFactor = 1.0 / previousIntervalFactor;
+	if (isdefined (nextIntervalFactor) && nextIntervalFactor > 0.0 && nextIntervalFactor < 1.0)
+		nextIntervalFactor = 1.0 / nextIntervalFactor;
+	if (isdefined (previousIntervalFactor) && previousIntervalFactor > maximumPeriodFactor &&
+			isdefined (nextIntervalFactor) && nextIntervalFactor > maximumPeriodFactor)
+		return false;
 	return true;
 }
 
@@ -442,17 +425,10 @@ integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tm
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 1)
-		return 0;
-	for (integer i = imin; i < imax; i ++) {
-		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			(void) 0;   // this interval counts as a period
-		} else {
-			numberOfPeriods --;   // this interval does not count as a period
-		}
-	}
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = 0;
+	for (integer ipoint = pointNumbers.first; ipoint < pointNumbers.last; ipoint ++)
+		numberOfPeriods += PointProcess_isPeriod (me, ipoint, minimumPeriod, maximumPeriod, maximumPeriodFactor);
 	return numberOfPeriods;
 }
 
@@ -460,16 +436,13 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 1)
-		return undefined;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = 0;
 	longdouble sum = 0.0;
-	for (integer i = imin; i < imax; i ++) {
-		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			sum += my t [i + 1] - my t [i];   // this interval counts as a period
-		} else {
-			numberOfPeriods --;   // this interval does not count as a period
+	for (integer ipoint = pointNumbers.first; ipoint < pointNumbers.last; ipoint ++) {
+		if (PointProcess_isPeriod (me, ipoint, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
+			numberOfPeriods ++;
+			sum += my t [ipoint + 1] - my t [ipoint];
 		}
 	}
 	return numberOfPeriods > 0 ? double (sum / numberOfPeriods) : undefined;
@@ -479,31 +452,29 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 2)
-		return undefined;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = 0;
 	/*
 		Compute mean.
 	*/
 	longdouble sum = 0.0;
-	for (integer i = imin; i < imax; i ++) {
-		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			sum += my t [i + 1] - my t [i];   // this interval counts as a period
-		} else {
-			numberOfPeriods --;   // this interval does not count as a period
+	for (integer ipoint = pointNumbers.first; ipoint < pointNumbers.last; ipoint ++) {
+		if (PointProcess_isPeriod (me, ipoint, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
+			numberOfPeriods ++;
+			sum += my t [ipoint + 1] - my t [ipoint];
 		}
 	}
-	if (numberOfPeriods < 2)
+	constexpr integer minimumNumberOfDatapointsToComputeAStandardDeviation = 2;
+	if (numberOfPeriods < minimumNumberOfDatapointsToComputeAStandardDeviation)
 		return undefined;
 	const double mean = double (sum / numberOfPeriods);
 	/*
-		Compute variance.
+		Compute sum of squares.
 	*/
 	longdouble sum2 = 0.0;
-	for (integer i = imin; i < imax; i ++) {
-		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			const double dperiod = my t [i + 1] - my t [i] - mean;
+	for (integer ipoint = pointNumbers.first; ipoint < pointNumbers.last; ipoint ++) {
+		if (PointProcess_isPeriod (me, ipoint, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
+			const double dperiod = my t [ipoint + 1] - my t [ipoint] - mean;
 			sum2 += dperiod * dperiod;
 		}
 	}
@@ -517,13 +488,12 @@ MelderCountAndFraction PointProcess_getCountAndFractionOfVoiceBreaks (PointProce
 	double tmin, double tmax, double maximumPeriod)
 {
 	MelderCountAndFraction result;
-	integer imin, imax;
-	const integer n = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
-	if (n > 1) {
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	if (pointNumbers.size() > 1) {
 		result.denominator = tmax - tmin;
 		bool previousPeriodVoiced = true;
-		for (integer i = imin + 1; i < imax; i ++) {
-			const double period = my t [i] - my t [i - 1];
+		for (integer ipoint = pointNumbers.first + 1; ipoint < pointNumbers.last; ipoint ++) {
+			const double period = my t [ipoint] - my t [ipoint - 1];
 			if (period > maximumPeriod) {
 				result.numerator += period;
 				if (previousPeriodVoiced) {

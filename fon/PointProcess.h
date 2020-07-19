@@ -29,7 +29,7 @@ void PointProcess_init (PointProcess me, double startingTime, double finishingTi
 integer PointProcess_getLowIndex (PointProcess me, double t);
 integer PointProcess_getHighIndex (PointProcess me, double t);
 integer PointProcess_getNearestIndex (PointProcess me, double t);
-integer PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, integer *p_imin, integer *p_imax);
+MelderIntegerRange PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax);
 void PointProcess_addPoint (PointProcess me, double t);
 void PointProcess_addPoints (PointProcess me, constVECVU const& times);
 integer PointProcess_findPoint (PointProcess me, double t);
