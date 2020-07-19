@@ -401,7 +401,7 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	if (! my graphics)
 		return;   // could be the case in the very beginning
 	Graphics_setWsViewport (my graphics.get(), 0, event -> width, 0, event -> height);
-	int width = event -> width + 21;
+	int width = event -> width + 21;   // the +21 means that the horizontal margin becomes a tiny bit larger when the window grows
 	/*
 		Put the function viewer at the left and the selection viewer at the right.
 	*/
@@ -409,7 +409,7 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	my functionViewerRight = ( my p_showSelectionViewer ? Melder_ifloor (width * (2.0/3.0)) : width );
 	my selectionViewerLeft = my functionViewerRight;
 	my selectionViewerRight = width;
-	my height = event -> height + 111;
+	my height = event -> height + 111;   // the +111 means that the vertical margins become a bit larger when the window grows
 	Graphics_setWsWindow (my graphics.get(), 0.0, width, 0.0, my height);
 	Graphics_setViewport (my graphics.get(), 0.0, width, 0.0, my height);
 	Graphics_updateWs (my graphics.get());
@@ -918,12 +918,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 	if (shifted || zoomed) {
 		my v_updateText ();
 		updateScrollBar (me);
-		#if cocoa
-			Graphics_updateWs (my graphics.get());
-		#else
-			/*Graphics_clearWs (my graphics.get());*/
-			drawNow (me);   // do not wait for expose event
-		#endif
+		Graphics_updateWs (my graphics.get());
 		if (! my group || ! my pref_synchronizedZoomAndScroll ())
 			return;
 		for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
@@ -932,12 +927,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 				theGroupMembers [i] -> endWindow = my endWindow;
 				FunctionEditor_updateText (theGroupMembers [i]);
 				updateScrollBar (theGroupMembers [i]);
-				#if cocoa
-					Graphics_updateWs (theGroupMembers [i] -> graphics.get());
-				#else
-					Graphics_clearWs (theGroupMembers [i] -> graphics.get());
-					drawNow (theGroupMembers [i]);
-				#endif
+				Graphics_updateWs (theGroupMembers [i] -> graphics.get());
 			}
 		}
 	}
@@ -1158,9 +1148,14 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 	Graphics_setWindow (my graphics.get(), my functionViewerLeft, my selectionViewerRight, 0.0, my height);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
-	if (event -> isClick())
+	static bool anchorIsInSelectionViewer = ( xWC > my selectionViewerLeft );
+	static bool anchorIsInWideDataView = ( yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space) );
+	if (event -> isClick()) {
 		my clickWasModifiedByShiftKey = event -> shiftKeyPressed;
-	if (xWC > my selectionViewerLeft) {
+		anchorIsInSelectionViewer = ( xWC > my selectionViewerLeft );
+		anchorIsInWideDataView = ( yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space) );
+	}
+	if (anchorIsInSelectionViewer) {
 		Graphics_setViewport (my graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN,
 				BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -1171,12 +1166,12 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 			Graphics_updateWs (my graphics.get());
 			updateGroup (me);
 		} else;   // no dragging (yet?) in any selection viewer
-	} else if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
+	} else if (anchorIsInWideDataView) {
 		Graphics_setViewport (my graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 				BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
-		Melder_clip (my startWindow, & xWC, my endWindow);
+		//Melder_clip (my startWindow, & xWC, my endWindow);
 		my v_mouseInWideDataView (event, xWC, yWC);
 		Graphics_setViewport (my graphics.get(), my functionViewerLeft, my functionViewerRight, 0.0, my height);   // in case any v_mouseInWideDataView changed it
 		my v_updateText ();
