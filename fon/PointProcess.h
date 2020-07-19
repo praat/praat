@@ -2,7 +2,7 @@
 #define _PointProcess_h_
 /* PointProcess.h
  *
- * Copyright (C) 1992-2005,2007,2011,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);
+MelderCountAndFraction PointProcess_getCountAndFractionOfVoiceBreaks (PointProcess me, double tmin, double tmax,
+	double maximumPeriod);
 
 /* End of file PointProcess.h */
 #endif
