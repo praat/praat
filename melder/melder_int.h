@@ -145,9 +145,9 @@ void Melder_sort (T *p1, T *p2) {
 class kleenean {
 	int _intValue;
 public:
-	static constexpr int UNKNOWN = -1;
-	static constexpr int NO_ = 0;
-	static constexpr int YES_ = 1;
+	constexpr static int UNKNOWN = -1;
+	constexpr static int NO_ = 0;
+	constexpr static int YES_ = 1;
 	explicit constexpr kleenean (int initialValue): _intValue (initialValue) { }
 	bool isTrue () const noexcept {
 		return our _intValue > 0;
