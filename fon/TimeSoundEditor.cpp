@@ -425,7 +425,7 @@ void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 
 void structTimeSoundEditor :: v_updateMenuItems_file () {
 	Sampled sound;
-	if (our d_sound.data)   // cannot do this with "?:", because d_sound.data and d_longSound.data have differemt types
+	if (our d_sound.data)   // cannot do this with "?:", because d_sound.data and d_longSound.data have different types
 		sound = our d_sound.data;
 	else
 		sound = our d_longSound.data;
@@ -631,45 +631,40 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
-bool structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
-	Sound sound = our d_sound.data;
-	LongSound longSound = our d_longSound.data;
-	if (!! sound != !! longSound) {
-		ybegin = (ybegin - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
-		integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
-		if (numberOfChannels > 8) {
-			trace (xbegin, U" ", ybegin, U" ", numberOfChannels, U" ", our d_sound.channelOffset);
-			if (xbegin >= our endWindow && ybegin > 0.875 && ybegin <= 1.000 && our d_sound.channelOffset > 0) {
-				our d_sound.channelOffset -= 8;
-				return FunctionEditor_UPDATE_NEEDED;
-			}
-			if (xbegin >= our endWindow && ybegin > 0.000 && ybegin <= 0.125 && our d_sound.channelOffset < numberOfChannels - 8) {
-				our d_sound.channelOffset += 8;
-				return FunctionEditor_UPDATE_NEEDED;
+bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+	if (event -> isClick()) {
+		Sound sound = our d_sound.data;
+		LongSound longSound = our d_longSound.data;
+		if (!! sound != !! longSound) {
+			y_fraction = (y_fraction - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
+			const integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
+			if (event -> isLeftBottomFunctionKeyPressed()) {
+				if (numberOfChannels > 1) {
+					const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
+					const integer clickedChannel = our d_sound.channelOffset +
+							Melder_clipped (1_integer, Melder_ifloor ((1.0 - y_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
+					const integer firstVisibleChannel = our d_sound.channelOffset + 1;
+					const integer lastVisibleChannel = Melder_clippedRight (our d_sound.channelOffset + numberOfVisibleChannels, numberOfChannels);
+					if (clickedChannel >= firstVisibleChannel && clickedChannel <= lastVisibleChannel) {
+						our d_sound.muteChannels [clickedChannel] = ! our d_sound.muteChannels [clickedChannel];
+						return FunctionEditor_UPDATE_NEEDED;
+					}
+				}
+			} else {
+				if (numberOfChannels > 8) {
+					if (x_world >= our endWindow && y_fraction > 0.875 && y_fraction <= 1.000 && our d_sound.channelOffset > 0) {
+						our d_sound.channelOffset -= 8;
+						return FunctionEditor_UPDATE_NEEDED;
+					}
+					if (x_world >= our endWindow && y_fraction > 0.000 && y_fraction <= 0.125 && our d_sound.channelOffset < numberOfChannels - 8) {
+						our d_sound.channelOffset += 8;
+						return FunctionEditor_UPDATE_NEEDED;
+					}
+				}
 			}
 		}
 	}
-	return TimeSoundEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
-}
-
-bool structTimeSoundEditor :: v_clickB (double xbegin, double ybegin) {
-	Sound sound = our d_sound.data;
-	LongSound longSound = our d_longSound.data;
-	if (!! sound != !! longSound) {
-		ybegin = (ybegin - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
-		integer numberOfChannels = ( sound ? sound -> ny : longSound -> numberOfChannels );
-		if (numberOfChannels > 1) {
-			integer numberOfVisibleChannels = ( numberOfChannels > 8 ? 8 : numberOfChannels );
-			trace (xbegin, U" ", ybegin, U" ", numberOfChannels, U" ", our d_sound.channelOffset);
-			const integer box = Melder_clipped (1_integer, Melder_ifloor (ybegin * numberOfVisibleChannels + 1), numberOfVisibleChannels);
-			const integer channel = numberOfVisibleChannels - box + 1 + our d_sound.channelOffset;
-			if (Melder_debug == 24)
-				Melder_casual (U"structTimeSoundEditor :: v_clickB ", ybegin, U" ", channel);
-			our d_sound.muteChannels [channel] = ! our d_sound.muteChannels [channel];
-			return FunctionEditor_UPDATE_NEEDED;
-		}
-	}
-	return TimeSoundEditor_Parent :: v_clickB (xbegin, ybegin);
+	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
 void TimeSoundEditor_init (TimeSoundEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
