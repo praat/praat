@@ -219,7 +219,7 @@ void structFunctionEditor :: draw () {
 		const double left = our rect [i]. left, right = our rect [i]. right;
 		const double bottom = our rect [i]. bottom, top = our rect [i]. top;
 		if (left < right) {
-			const char *format = our v_format_long ();
+			conststring8 format = our v_format_long ();
 			double value = undefined, inverseValue = 0.0;
 			switch (i) {
 				case 0: {
@@ -1087,20 +1087,21 @@ bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		Melder_sort (& our startSelection, & our endSelection);
 		Melder_assert (isdefined (anchorTime));
 	} else if (event -> isDrag() || event -> isDrop()) {
-		Melder_assert (isdefined (anchorTime));   // sanity check for the fixed order click-drag-drop
-		if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-			const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), mouseTime - anchorTime));
-			constexpr double vicinityRadius_mm = 1.0;
-			if (distanceToAnchor_mm > vicinityRadius_mm)
-				hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
-		}
-		if (hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-			our startSelection = std::min (anchorTime, mouseTime);
-			our endSelection = std::max (anchorTime, mouseTime);
-		}
-		if (event -> isDrop()) {
-			anchorTime = undefined;
-			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+		if (isdefined (anchorTime)) {   // `false` if a descendant preempted the above click handling
+			if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+				const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), mouseTime - anchorTime));
+				constexpr double vicinityRadius_mm = 1.0;
+				if (distanceToAnchor_mm > vicinityRadius_mm)
+					hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
+			}
+			if (hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+				our startSelection = std::min (anchorTime, mouseTime);
+				our endSelection = std::max (anchorTime, mouseTime);
+			}
+			if (event -> isDrop()) {
+				anchorTime = undefined;
+				hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			}
 		}
 	}
 	return true;

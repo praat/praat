@@ -2,7 +2,7 @@
 #define _SpectrumEditor_h_
 /* SpectrumEditor.h
  *
- * Copyright (C) 1992-2005,2007-2013,2015,2016,2018,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2013,2015,2016,2018-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override;
 	void v_draw ()
 		override;
-	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

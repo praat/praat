@@ -100,30 +100,30 @@ struct MelderIntegerRange {
 };
 
 template <typename T>
-void Melder_clipLeft (T minimum, T *var) {
+void Melder_clipLeft (T minimum, T *var) {   // no action if either undefined
 	if (*var < minimum)
 		*var = minimum;
 }
 
 template <typename T>
 T Melder_clippedLeft (T minimum, T var) {
-	return std::max (minimum, var);
+	return var < minimum ? minimum : var;   // if minimum undefined, then var
 }
 
 template <typename T>
-void Melder_clipRight (T *var, T maximum) {
+void Melder_clipRight (T *var, T maximum) {   // no action if either undefined
 	if (*var > maximum)
 		*var = maximum;
 }
 
 template <typename T>
 T Melder_clippedRight (T var, T maximum) {
-	return std::min (var, maximum);
+	return var > maximum ? maximum : var;   // if maximum undefined, then var
 }
 
 template <typename T>
 void Melder_clip (T minimum, T *var, T maximum) {
-	Melder_assert (maximum >= minimum);
+	Melder_assert (! (maximum < minimum));   // NaN-safe
 	if (*var < minimum)
 		*var = minimum;
 	else if (*var > maximum)
@@ -132,8 +132,8 @@ void Melder_clip (T minimum, T *var, T maximum) {
 
 template <typename T>
 T Melder_clipped (T minimum, T var, T maximum) {
-	Melder_assert (maximum >= minimum);
-	return std::max (minimum, std::min (var, maximum));
+	Melder_assert (! (maximum < minimum));   // NaN-safe
+	return var < minimum ? minimum : var > maximum ? maximum : var;   // if minimum and maximum undefined, then var
 }
 
 template <typename T>
