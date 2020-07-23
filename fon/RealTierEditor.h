@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2011,2012,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
 	double ymin, ymax, ycursor;
+	double anchorTime = undefined, anchorY;
+	bool draggingSelection;
+	double dt = 0.0, dy = 0.0;
+	integer firstSelected, lastSelected;
 
 	void v_createMenus ()
 		override;
@@ -30,7 +34,7 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 		override;
 	void v_draw ()
 		override;
-	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

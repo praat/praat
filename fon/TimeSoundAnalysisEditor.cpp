@@ -241,7 +241,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		 * Found a right quote. Get potential variable name.
 		 */
 		for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
-		*s = U'\0';   /* Trailing null byte. */
+		*s = U'\0';   // trailing null byte
 		colon = str32chr (varName, U':');
 		if (colon) {
 			precision = Melder_atoi (colon + 1);
@@ -272,7 +272,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			} else {
 				value = Pitch_getMean (my d_pitch.get(), tmin, tmax, my p_pitch_unit);
 			}
-		} else if (varName [0] == 'f' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
+		} else if (varName [0] == U'f' && varName [1] >= U'1' && varName [1] <= U'5' && varName [2] == U'\0') {
 			if (! my p_formant_show)
 				Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my d_formant) {
@@ -1935,25 +1935,26 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
 	}
 }
 
-bool structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
-	if (our p_pitch_show) {
-		//Melder_warning (xbegin, U" ", ybegin);
-		if (xbegin >= our endWindow && ybegin > 0.48 && ybegin <= 0.50) {
-			our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling * 1.26;
-			our d_pitch. reset();
-			our d_intensity.reset();
-			our d_pulses. reset();
-			return FunctionEditor_UPDATE_NEEDED;
-		}
-		if (xbegin >= our endWindow && ybegin > 0.46 && ybegin <= 0.48) {
-			our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling / 1.26;
-			our d_pitch. reset();
-			our d_intensity. reset();
-			our d_pulses. reset();
-			return FunctionEditor_UPDATE_NEEDED;
+bool structTimeSoundAnalysisEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+	if (event -> isClick()) {
+		if (our p_pitch_show) {
+			if (x_world >= our endWindow && y_fraction > 0.48 && y_fraction <= 0.50) {
+				our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling * 1.26;
+				our d_pitch. reset();
+				our d_intensity.reset();
+				our d_pulses. reset();
+				return FunctionEditor_UPDATE_NEEDED;
+			}
+			if (x_world >= our endWindow && y_fraction > 0.46 && y_fraction <= 0.48) {
+				our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling / 1.26;
+				our d_pitch. reset();
+				our d_intensity. reset();
+				our d_pulses. reset();
+				return FunctionEditor_UPDATE_NEEDED;
+			}
 		}
 	}
-	return TimeSoundAnalysisEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
+	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
