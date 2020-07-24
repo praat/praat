@@ -442,8 +442,7 @@ static void menu_cb_MoveBtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = zero;
-		if (my startSelection > my endSelection)
-			std::swap (my startSelection, my endSelection);
+		Melder_sort (& my startSelection, & my endSelection);
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -460,8 +459,7 @@ static void menu_cb_MoveEtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my endSelection = zero;
-		if (my startSelection > my endSelection)
-			std::swap (my startSelection, my endSelection);
+		Melder_sort (& my startSelection, & my endSelection);
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -1981,8 +1979,7 @@ bool structTextGridEditor :: v_clickB (double t, double yWC) {
 	if (yWC > soundY) {   // clicked in sound part?
 		if (t < our endWindow) {
 			our startSelection = t;
-			if (our startSelection > our endSelection)
-				std::swap (our startSelection, our endSelection);
+			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		} else {
 			return structTimeSoundEditor :: v_clickB (t, yWC);
@@ -1992,8 +1989,7 @@ bool structTextGridEditor :: v_clickB (double t, double yWC) {
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, clickedTierNumber, & tmin, & tmax);
 	our startSelection = ( t - tmin < tmax - t ? tmin : tmax );   // to nearest boundary
-	if (our startSelection > our endSelection)
-		std::swap (our startSelection, our endSelection);
+	Melder_sort (& our startSelection, & our endSelection);
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
@@ -2001,16 +1997,14 @@ bool structTextGridEditor :: v_clickE (double t, double yWC) {
 	const double soundY = _TextGridEditor_computeSoundY (this);
 	if (yWC > soundY) {   // clicked in sound part?
 		our endSelection = t;
-		if (our startSelection > our endSelection)
-			std::swap (our startSelection, our endSelection);
+		Melder_sort (& our startSelection, & our endSelection);
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 	const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, clickedTierNumber, & tmin, & tmax);
 	our endSelection = ( t - tmin < tmax - t ? tmin : tmax );
-	if (our startSelection > our endSelection)
-		std::swap (our startSelection, our endSelection);
+	Melder_sort (& our startSelection, & our endSelection);
 	return FunctionEditor_UPDATE_NEEDED;
 }
 

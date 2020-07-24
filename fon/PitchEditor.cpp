@@ -288,16 +288,16 @@ void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
 	Pitch_hum ((Pitch) our data, a_tmin, a_tmax);
 }
 
-bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
+bool structPitchEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	static double anchorForDragging;
 	const Pitch pitch = (Pitch) our data;
 	const double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
 	const double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
-	const double clickedFrequency = (yWC - dyUnv) / (1.0 - dyIntens - dyUnv) * pitch -> ceiling;
+	const double clickedFrequency = (y_fraction - dyUnv) / (1.0 - dyIntens - dyUnv) * pitch -> ceiling;
 	double minimumDf = 1e30;
 	integer bestCandidate = -1;
 
-	integer ibestFrame = Sampled_xToNearestIndex (pitch, xWC);
+	integer ibestFrame = Sampled_xToNearestIndex (pitch, x_world);
 	Melder_clip (1_integer, & ibestFrame, pitch -> nx);
 	const Pitch_Frame bestFrame = & pitch -> frames [ibestFrame];
 
@@ -313,9 +313,9 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	if (bestCandidate != -1) {
 		const double bestFrequency = bestFrame -> candidates [bestCandidate]. frequency;
 		const double distanceWC = (clickedFrequency - bestFrequency) / pitch -> ceiling * (1.0 - dyIntens - dyUnv);
-		const double dx_mm = Graphics_dxWCtoMM (our graphics.get(), xWC - tmid), dy_mm = Graphics_dyWCtoMM (our graphics.get(), distanceWC);
+		const double dx_mm = Graphics_dxWCtoMM (our graphics.get(), x_world - tmid), dy_mm = Graphics_dyWCtoMM (our graphics.get(), distanceWC);
 		if (bestFrequency < pitch -> ceiling &&   // above ceiling: ignore
-		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && clickedFrequency <= 0.0) ||   // voiceless: click within frame
+		    ((bestFrequency <= 0.0 && fabs (x_world - tmid) <= 0.5 * pitch -> dx && clickedFrequency <= 0.0) ||   // voiceless: click within frame
 		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   // voiced: click within circle
 		{
 			Editor_save (this, U"Change path");
@@ -325,10 +325,10 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 			anchorForDragging = our startSelection = our endSelection = tmid;   // cursor will snap to candidate
 			return FunctionEditor_UPDATE_NEEDED;
 		} else {
-			return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
+			return PitchEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // move cursor or drag selection
 		}
 	}
-	return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
+	return PitchEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);   // move cursor or drag selection
 }
 
 autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch) {
