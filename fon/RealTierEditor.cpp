@@ -152,98 +152,111 @@ void structRealTierEditor :: v_dataChanged () {
 
 /********** DRAWING AREA **********/
 
+static void FunctionEditor_drawRealTier (FunctionEditor me, RealTier tier,
+	double ymin, double ycursor, double ymax, conststring32 rightTickUnits
+) {
+	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, ymin, ymax);
+	Graphics_setColour (my graphics.get(), Melder_RED);
+	Graphics_line (my graphics.get(), my startWindow, ycursor, my endWindow, ycursor);
+	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (my graphics.get(), my startWindow, ycursor,
+			Melder_float (Melder_half (ycursor)));
+	Graphics_setColour (my graphics.get(), Melder_BLUE);
+	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
+	Graphics_text (my graphics.get(), my endWindow, ymax,
+			Melder_float (Melder_half (ymax)), rightTickUnits);
+	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
+	Graphics_text (my graphics.get(), my endWindow, ymin,
+			Melder_float (Melder_half (ymin)), rightTickUnits);
+	const integer ifirstSelected = AnyTier_timeToHighIndex (tier->asAnyTier(), my startSelection);
+	const integer ilastSelected = AnyTier_timeToLowIndex (tier->asAnyTier(), my endSelection);
+	const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), my startWindow);
+	const integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), my endWindow);
+	Graphics_setLineWidth (my graphics.get(), 2.0);
+	if (tier -> points.size == 0) {
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my graphics.get(), 0.5 * (my startWindow + my endWindow), 0.5 * (ymin + ymax),
+				U"(no points)");
+	} else if (imax < imin) {
+		const double yleft = RealTier_getValueAtTime (tier, my startWindow);
+		const double yright = RealTier_getValueAtTime (tier, my endWindow);
+		Graphics_line (my graphics.get(), my startWindow, yleft, my endWindow, yright);
+	} else {
+		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
+			RealPoint point = tier -> points.at [ipoint];
+			double t = point -> number, y = point -> value;
+			if (ipoint >= ifirstSelected && ipoint <= ilastSelected)
+				Graphics_setColour (my graphics.get(), Melder_RED);
+			Graphics_fillCircle_mm (my graphics.get(), t, y, 3.0);
+			Graphics_setColour (my graphics.get(), Melder_BLUE);
+			if (ipoint == 1)
+				Graphics_line (my graphics.get(), my startWindow, y, t, y);
+			else if (ipoint == imin)
+				Graphics_line (my graphics.get(), t, y, my startWindow, RealTier_getValueAtTime (tier, my startWindow));
+			if (ipoint == tier -> points.size)
+				Graphics_line (my graphics.get(), t, y, my endWindow, y);
+			else if (ipoint == imax)
+				Graphics_line (my graphics.get(), t, y, my endWindow, RealTier_getValueAtTime (tier, my endWindow));
+			else {
+				RealPoint pointRight = tier -> points.at [ipoint + 1];
+				Graphics_line (my graphics.get(), t, y, pointRight -> number, pointRight -> value);
+			}
+		}
+	}
+	Graphics_setLineWidth (my graphics.get(), 1.0);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
+}
+
+static void FunctionEditor_drawRealTierWhileDragging (FunctionEditor me, RealTier tier,
+	double ymin, double ymax, double dt, double dy
+) {
+	Graphics_xorOn (my graphics.get(), Melder_MAROON);
+	/*
+		Draw all selected points as empty circles, if inside the window.
+	*/
+	const integer firstSelectedPointNumber = AnyTier_timeToHighIndex (tier->asAnyTier(), my startSelection);
+	const integer lastSelectedPointNumber = AnyTier_timeToLowIndex (tier->asAnyTier(), my endSelection);
+	for (integer ipoint = firstSelectedPointNumber; ipoint <= lastSelectedPointNumber; ipoint ++) {
+		RealPoint point = tier -> points.at [ipoint];
+		double t = point -> number + dt, y = point -> value + dy;
+		if (t >= my startWindow && t <= my endWindow)
+			Graphics_circle_mm (my graphics.get(), t, y, 3);
+	}
+
+	if (lastSelectedPointNumber == firstSelectedPointNumber) {
+		/*
+			Draw a crosshair with time and y.
+		*/
+		RealPoint point = tier -> points.at [firstSelectedPointNumber];
+		double t = point -> number + dt, y = point -> value + dy;
+		Graphics_line (my graphics.get(), t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics.get(), 4.0));
+		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
+		Graphics_text (my graphics.get(), t, ymax, Melder_fixed (t, 6));
+		Graphics_line (my graphics.get(), my startWindow, y, my endWindow, y);
+		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (my graphics.get(), my startWindow, y, Melder_fixed (y, 6));
+	}
+	Graphics_xorOff (my graphics.get());
+}
+
 void structRealTierEditor :: v_draw () {
-	RealTier data = (RealTier) our data;
-	integer n = data -> points.size;
-	trace (U"structRealTierEditor :: v_draw ", n);
+	RealTier tier = (RealTier) our data;
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 		Graphics_resetViewport (our graphics.get(), viewport);
 		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
 	}
-	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our ymin, our ymax);
-	Graphics_setColour (our graphics.get(), Melder_RED);
-	Graphics_line (our graphics.get(), our startWindow, ycursor, our endWindow, our ycursor);
-	Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (our graphics.get(), our startWindow, our ycursor, Melder_float (Melder_half (our ycursor)));
-	Graphics_setColour (our graphics.get(), Melder_BLUE);
-	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
-	Graphics_text (our graphics.get(), our endWindow, our ymax,   Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
-	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-	Graphics_text (our graphics.get(), our endWindow, our ymin,   Melder_float (Melder_half (our ymin)), our v_rightTickUnits ());
-	integer ifirstSelected = AnyTier_timeToHighIndex (data->asAnyTier(), our startSelection);
-	integer ilastSelected = AnyTier_timeToLowIndex (data->asAnyTier(), our endSelection);
-	trace (U"structRealTierEditor :: v_draw: selected from ", our startSelection, U" ",
-		ifirstSelected, U" to ", our endSelection, U" ", ilastSelected);
-	integer imin = AnyTier_timeToHighIndex (data->asAnyTier(), our startWindow);
-	integer imax = AnyTier_timeToLowIndex (data->asAnyTier(), our endWindow);
-	Graphics_setLineWidth (our graphics.get(), 2.0);
-	if (n == 0) {
-		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (our graphics.get(), 0.5 * (our startWindow + our endWindow),
-			0.5 * (our ymin + our ymax), U"(no points)");
-	} else if (imax < imin) {
-		double yleft = RealTier_getValueAtTime (data, our startWindow);
-		double yright = RealTier_getValueAtTime (data, our endWindow);
-		Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
-	} else for (integer i = imin; i <= imax; i ++) {
-		RealPoint point = data -> points.at [i];
-		double t = point -> number, y = point -> value;
-		if (i >= ifirstSelected && i <= ilastSelected)
-			Graphics_setColour (our graphics.get(), Melder_RED);
-		Graphics_fillCircle_mm (our graphics.get(), t, y, 3.0);
-		Graphics_setColour (our graphics.get(), Melder_BLUE);
-		if (i == 1)
-			Graphics_line (our graphics.get(), our startWindow, y, t, y);
-		else if (i == imin)
-			Graphics_line (our graphics.get(), t, y, our startWindow, RealTier_getValueAtTime (data, our startWindow));
-		if (i == n)
-			Graphics_line (our graphics.get(), t, y, our endWindow, y);
-		else if (i == imax)
-			Graphics_line (our graphics.get(), t, y, our endWindow, RealTier_getValueAtTime (data, our endWindow));
-		else {
-			RealPoint pointRight = data -> points.at [i + 1];
-			Graphics_line (our graphics.get(), t, y, pointRight -> number, pointRight -> value);
-		}
-	}
-	Graphics_setLineWidth (our graphics.get(), 1.0);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-
-	if (isdefined (our anchorTime)) {
-		Graphics_xorOn (our graphics.get(), Melder_MAROON);
-		/*
-			Draw all selected points as empty circles, if inside the window.
-		*/
-		for (integer i = our firstSelected; i <= our lastSelected; i ++) {
-			RealPoint point = data -> points.at [i];
-			double t = point -> number + our dt, y = point -> value + our dy;
-			if (t >= our startWindow && t <= our endWindow)
-				Graphics_circle_mm (our graphics.get(), t, y, 3);
-		}
-
-		if (our lastSelected == our firstSelected) {
-			/*
-				Draw a crosshair with time and y.
-			*/
-			RealPoint point = data -> points.at [our firstSelected];
-			double t = point -> number + dt, y = point -> value + dy;
-			Graphics_line (our graphics.get(), t, our ymin, t, our ymax - Graphics_dyMMtoWC (our graphics.get(), 4.0));
-			Graphics_setTextAlignment (our graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
-			Graphics_text (our graphics.get(), t, our ymax, Melder_fixed (t, 6));
-			Graphics_line (our graphics.get(), our startWindow, y, our endWindow, y);
-			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
-			Graphics_text (our graphics.get(), our startWindow, y, Melder_fixed (y, 6));
-		}
-		Graphics_xorOff (our graphics.get());
-	}
+	FunctionEditor_drawRealTier (this, tier, our ymin, our ycursor, our ymax, v_rightTickUnits());
+	if (isdefined (our anchorTime))
+		FunctionEditor_drawRealTierWhileDragging (this, tier, our ymin, our ymax, our dt, our dy);
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
