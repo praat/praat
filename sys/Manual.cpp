@@ -78,9 +78,6 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 
 void structManual :: v_draw () {
 	ManPages manPages = (ManPages) our data;
-	#if motif
-	Graphics_clearWs (our graphics.get());
-	#endif
 	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
 		HyperPage_intro (this, U"The best matches to your query seem to be:");

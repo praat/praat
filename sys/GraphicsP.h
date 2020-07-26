@@ -219,11 +219,6 @@ void _Graphics_colour_init (Graphics me);
 bool _GraphicsMac_tryToInitializeFonts ();
 bool _GraphicsLin_tryToInitializeFonts ();
 
-#if quartz
-	void GraphicsQuartz_initDraw (GraphicsScreen me);
-	void GraphicsQuartz_exitDraw (GraphicsScreen me);
-#endif
-
 extern enum kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
 
 /* End of file GraphicsP.h */

@@ -266,6 +266,7 @@ void structGraphicsScreen :: v_clearWs () {
 	#elif quartz
 		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
 		if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
+			Melder_assert (!! our d_macGraphicsContext);
 			GraphicsQuartz_initDraw (this);
 			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
 			CGContextSetRGBFillColor (our d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
@@ -521,6 +522,8 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		GraphicsScreen_init (me.get(), my d_drawingArea -> d_widget, my d_drawingArea -> d_widget);
 	#endif
 
+	w -> graphics = me.get();   // refer back
+
 	#if cairo && gtk
 		// fb: is really the request meant or rather the actual size, aka allocation?
 		gtk_widget_size_request (GTK_WIDGET (my d_drawingArea -> d_widget), & realsize);
@@ -720,27 +723,19 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 #endif
 
 #if quartz
-	void GraphicsQuartz_initDraw (GraphicsScreen me) {
+	void GraphicsQuartz_initDraw (Graphics me_generic) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (me_generic);
 		if (my d_macView) {
-			//if (! my printer) {
-			if (! my d_macGraphicsContext)
 			my d_macGraphicsContext = Melder_systemVersion < 101400 ?
 					(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
 					[[NSGraphicsContext currentContext] CGContext];
-			//}
-			//Melder_assert (my d_macGraphicsContext);
-			//Melder_casual (U"GraphicsQuartz_initDraw: 1 ", Melder_pointer (my d_macGraphicsContext));
-			//Melder_casual (U"GraphicsQuartz_initDraw: 2 ", Melder_pointer ([[NSGraphicsContext currentContext] graphicsPort]));
-			if (my printer) {
-				//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
-				//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
-			}
+			Melder_assert (!! my d_macGraphicsContext);
 		}
 	}
-	void GraphicsQuartz_exitDraw (GraphicsScreen me) {
-		if (my d_macView) {
-			//CGContextSynchronize (my d_macGraphicsContext);   // BUG: should not be needed
-		}
+	void GraphicsQuartz_exitDraw (Graphics me_generic) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (me_generic);
+		if (my d_macView)
+			my d_macGraphicsContext = nullptr;
 	}
 #endif
 

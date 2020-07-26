@@ -365,5 +365,10 @@ void Graphics_nextSheetOfPaper (Graphics me);
 
 void Graphics_prefs ();
 
+#ifdef macintosh
+	void GraphicsQuartz_initDraw (Graphics me);
+	void GraphicsQuartz_exitDraw (Graphics me);
+#endif
+
 /* End of file Graphics.h */
 #endif

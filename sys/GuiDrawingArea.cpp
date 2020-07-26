@@ -22,6 +22,7 @@
 	#include "gdk/gdkkeysyms.h"
 	#include <locale.h>
 #endif
+#include "Graphics.h"
 
 Thing_implement (GuiDrawingArea, GuiControl, 0);
 
@@ -319,11 +320,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			try {
-				CGContextRef context = Melder_systemVersion < 101400 ?
-						(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
-						[[NSGraphicsContext currentContext] CGContext];
-				(void) context;   // TODO: hand over to the Graphics, so that GraphicsQuartz_initDraw() is no longer necesssary
+				Melder_assert (my graphics);
+				GraphicsQuartz_initDraw (my graphics);
 				my d_exposeCallback (my d_exposeBoss, & event);
+				GraphicsQuartz_exitDraw (my graphics);
 			} catch (MelderError) {
 				Melder_flushError (U"Redrawing not completed");
 			}

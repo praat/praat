@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2019 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +196,6 @@ static void drawTableau (Graphics g) {
 void structOTGrammarEditor :: v_draw () {
 	OTGrammar ot = (OTGrammar) data;
 	static char32 text [1000];
-	Graphics_clearWs (graphics.get());
 	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
 		ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 	{
