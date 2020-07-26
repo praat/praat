@@ -211,7 +211,6 @@ void structGraphicsScreen :: v_polyline (integer numberOfPoints, double *xyDC, b
 			DEFAULT
 		}
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (our d_macGraphicsContext);
 		trace (U"starting point ", xyDC [0], U" ", xyDC [1]);
@@ -222,7 +221,6 @@ void structGraphicsScreen :: v_polyline (integer numberOfPoints, double *xyDC, b
 			CGContextClosePath (our d_macGraphicsContext);   // closes only the subpath
 		CGContextStrokePath (our d_macGraphicsContext);
 		quartzRevertLine (this);
-		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -260,7 +258,6 @@ void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 		FillPath (our d_gdiGraphicsContext);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		CGContextBeginPath (our d_macGraphicsContext);
 		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);
@@ -268,7 +265,6 @@ void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
 		CGContextFillPath (our d_macGraphicsContext);
-		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -299,11 +295,9 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 		Rectangle (our d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
 		quartzRevertLine (this);
-		GraphicsQuartz_exitDraw (this);
 	#else
 		double xyDC [8];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
@@ -338,10 +332,8 @@ void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y
 		Rectangle (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		CGContextFillRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
-		GraphicsQuartz_exitDraw (this);
 	#else
 		double xyDC [10];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
@@ -373,13 +365,11 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 		Ellipse (d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1.0, yDC + rDC + 1.0);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
 		CGContextStrokePath (d_macGraphicsContext);
 		quartzRevertLine (this);
-		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -408,7 +398,6 @@ void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, d
 		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
         //NSCAssert (d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (d_macGraphicsContext);
@@ -420,7 +409,6 @@ void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, d
 		CGContextStrokePath (d_macGraphicsContext);
 		CGContextRestoreGState (d_macGraphicsContext);
 		quartzRevertLine (this);
-		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -456,13 +444,11 @@ void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double f
 		AngleArc (d_gdiGraphicsContext, xDC, yDC, rDC, fromAngle, arcAngle);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, NUM2pi - NUMpi / 180 * toAngle, NUM2pi - NUMpi / 180 * fromAngle, 0);
 		CGContextStrokePath (d_macGraphicsContext);
 		quartzRevertLine (this);
-		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -488,12 +474,10 @@ void structGraphicsScreen :: v_fillCircle (double xDC, double yDC, double rDC) {
 		Ellipse (d_gdiGraphicsContext, xDC - rDC - 1.0, yDC - rDC - 1.0, xDC + rDC + 1.0, yDC + rDC + 1.0);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
 		CGContextFillPath (d_macGraphicsContext);
-		GraphicsQuartz_exitDraw (this);
 	#else
 		v_circle (xDC, yDC, rDC);
 	#endif
@@ -519,7 +503,6 @@ void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1D
 		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
         //NSCAssert (d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (d_macGraphicsContext);
@@ -530,7 +513,6 @@ void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1D
 		CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
 		CGContextFillPath (d_macGraphicsContext);
 		CGContextRestoreGState (d_macGraphicsContext);
-		GraphicsQuartz_exitDraw (this);
 	#else
 		v_ellipse (x1DC, x2DC, y1DC, y2DC);
 	#endif
@@ -613,7 +595,6 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			const bool isRetinaDisplay = false;
 		#endif
 
-		GraphicsQuartz_initDraw (this);
 		CGContextSetLineWidth (d_macGraphicsContext, 1.0);
 		CGContextSetAllowsAntialiasing (d_macGraphicsContext, false);   // because we want to draw by pixel
         CGFloat red = 0.3, green = 0.3, blue = 0.2;
@@ -664,7 +645,6 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
         }
 		CGContextSetAllowsAntialiasing (d_macGraphicsContext, true);
 		CGContextSetLineDash (d_macGraphicsContext, 0, nullptr, 0);
-		GraphicsQuartz_exitDraw (this);
     #elif gdi
         RECT rect;
         rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
@@ -1067,7 +1047,6 @@ void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) 
 		FillPath (our d_gdiGraphicsContext);
 		DEFAULT
 	#elif quartz
-		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
 		//NSCAssert (our d_macGraphicsContext, @"nil context");
 		CGContextSaveGState (our d_macGraphicsContext);
@@ -1081,7 +1060,6 @@ void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) 
 		CGContextAddLineToPoint (our d_macGraphicsContext, 0.0, 0.0);
 		CGContextFillPath (our d_macGraphicsContext);
 		CGContextRestoreGState (our d_macGraphicsContext);
-		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 

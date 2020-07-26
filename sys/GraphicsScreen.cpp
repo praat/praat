@@ -267,11 +267,9 @@ void structGraphicsScreen :: v_clearWs () {
 		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
 		if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
 			Melder_assert (!! our d_macGraphicsContext);
-			GraphicsQuartz_initDraw (this);
 			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
 			CGContextSetRGBFillColor (our d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
 			CGContextFillRect (d_macGraphicsContext, CGRectMake (our d_x1DC, our d_y2DC, our d_x2DC - our d_x1DC, our d_y1DC - our d_y2DC));
-			GraphicsQuartz_exitDraw (this);
 		}
 	#endif
 }
@@ -522,7 +520,8 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		GraphicsScreen_init (me.get(), my d_drawingArea -> d_widget, my d_drawingArea -> d_widget);
 	#endif
 
-	w -> graphics = me.get();   // refer back
+	Melder_assert (w -> numberOfGraphicses < structGuiDrawingArea :: MAXIMUM_NUMBER_OF_GRAPHICSES);
+	w -> graphicses [++ w -> numberOfGraphicses] = me.get();   // refer back
 
 	#if cairo && gtk
 		// fb: is really the request meant or rather the actual size, aka allocation?

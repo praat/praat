@@ -503,7 +503,9 @@ Thing_define (GuiDrawingArea, GuiControl) {
 	Thing d_keyBoss;
 	GuiDrawingArea_ResizeCallback d_resizeCallback;
 	Thing d_resizeBoss;
-	Graphics graphics;
+	integer numberOfGraphicses;
+	constexpr static integer MAXIMUM_NUMBER_OF_GRAPHICSES = 10;
+	Graphics graphicses [1+MAXIMUM_NUMBER_OF_GRAPHICSES];
 };
 
 /* GuiDrawingArea creation flags: */

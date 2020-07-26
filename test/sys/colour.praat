@@ -66,7 +66,8 @@ Paint rectangle: {0.1+0.2}, 50, 100, y-2, y+2
 
 y -= 5
 Olive
-Text: 50, "right", y, "half", "This falls back to black:"
+Text: 50, "right", y, "half", "This is not drawn:"
+asserterror Cannot compute a colour
 Paint rectangle: "{ vxcvxcvbxvbcvb", 50, 100, y-2, y+2
 
 y -= 5
@@ -77,7 +78,7 @@ Paint rectangle: "vxcvxcvbxvbcvb", 50, 100, y-2, y+2
 
 y -= 5
 Olive
-Text: 50, "right", y, "half", "This falls back to black:"
+Text: 50, "right", y, "half", "This is not drawn:"
 asserterror Cannot compute a colour
 Paint rectangle: "0.3", 50, 100, y-2, y+2
 
