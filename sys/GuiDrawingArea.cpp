@@ -319,6 +319,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			try {
+				CGContextRef context = Melder_systemVersion < 101400 ?
+						(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+						[[NSGraphicsContext currentContext] CGContext];
+				(void) context;   // TODO: hand over to the Graphics, so that GraphicsQuartz_initDraw() is no longer necesssary
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Redrawing not completed");

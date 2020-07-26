@@ -250,12 +250,7 @@ void structGraphicsScreen :: v_clearWs () {
 			rect.y = our d_y2DC;
 			rect.height = our d_y1DC - our d_y2DC;
 		}
-		if (! d_cairoGraphicsContext) {
-			trace (U"clear and null");
-			//gdk_window_clear (our window);
-			//gdk_window_invalidate_rect (our window, & rect, true);   // BUG: it seems weird that this is necessary.
-		} else {
-			trace (U"clear and not null");
+		if (d_cairoGraphicsContext) {
 			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
 			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
 			cairo_fill (d_cairoGraphicsContext);
@@ -271,25 +266,11 @@ void structGraphicsScreen :: v_clearWs () {
 	#elif quartz
 		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
 		if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
-			NSRect rect;
-			if (our d_x1DC < our d_x2DC) {
-				rect.origin.x = our d_x1DC;
-				rect.size.width = our d_x2DC - our d_x1DC;
-			} else {
-				rect.origin.x = our d_x2DC;
-				rect.size.width = our d_x1DC - our d_x2DC;
-			}
-			if (our d_y1DC < our d_y2DC) {
-				rect.origin.y = our d_y1DC;
-				rect.size.height = our d_y2DC - our d_y1DC;
-			} else {
-				rect.origin.y = our d_y2DC;
-				rect.size.height = our d_y1DC - our d_y2DC;
-			}
-			/*
-				The rect just created is ignored (for the moment).
-			*/
-			[cocoaDrawingArea setNeedsDisplay: YES];
+			GraphicsQuartz_initDraw (this);
+			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
+			CGContextSetRGBFillColor (our d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+			CGContextFillRect (d_macGraphicsContext, CGRectMake (our d_x1DC, our d_y2DC, our d_x2DC - our d_x1DC, our d_y1DC - our d_y2DC));
+			GraphicsQuartz_exitDraw (this);
 		}
 	#endif
 }
@@ -442,7 +423,16 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_macView = (NSView *) voidWindow;
 			(void) my d_macGraphicsContext;   // will be retrieved from Core Graphics with every drawing command!
 		}
-		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
+		/*
+			The following is what we would like to do.
+			However, if we do this outside of an expose event, d_macGraphicsContext will be null,
+			so we defer this to GraphicsQuartz_initDraw().
+			(last checked 2020-07-26)
+		*/
+		//my d_macGraphicsContext = Melder_systemVersion < 101400 ?
+		//		(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+		//		[[NSGraphicsContext currentContext] CGContext];
+		my d_depth = ( my resolution > 150 ? 1 : 8 );   // BUG: replace by true depth (1=black/white)
 		_GraphicsScreen_text_init (me);
 	#endif
 	return 1;
@@ -542,7 +532,7 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		XtVaGetValues (my d_drawingArea -> d_widget, XmNwidth, & width, XmNheight, & height, nullptr);
 		Graphics_setWsViewport (me.get(), 0.0, width, 0.0, height);
     #elif quartz
-        NSView *view = (NSView *)my d_drawingArea -> d_widget;
+        NSView *view = (NSView *) my d_drawingArea -> d_widget;
         NSRect bounds = [view bounds];
         Graphics_setWsViewport (me.get(), 0.0, bounds.size.width, 0.0, bounds.size.height);
 	#endif
@@ -733,6 +723,7 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 	void GraphicsQuartz_initDraw (GraphicsScreen me) {
 		if (my d_macView) {
 			//if (! my printer) {
+			if (! my d_macGraphicsContext)
 			my d_macGraphicsContext = Melder_systemVersion < 101400 ?
 					(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
 					[[NSGraphicsContext currentContext] CGContext];
