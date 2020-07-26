@@ -185,7 +185,7 @@ public:
 		 *    Return FunctionEditor_NO_UPDATE_NEEDED if you do not want a window update, e.g.,
 		 *    if your 'click' method just 'plays' something or puts a dialog on the screen.
 		 *    In the latter case, the 'ok' callback of the dialog should
-		 *    call FunctionEditor_marksChanged if necessary.
+		 *    call FunctionEditor_marksChanged if the 'ok' callback changes the marks.
 		 * Behaviour of FunctionEditor::click ():
 		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
 		 */
@@ -286,7 +286,7 @@ void FunctionEditor_redraw (FunctionEditor me);
 	Function:
 		update the drawing area of a single editor.
 	Usage:
-		calls this after she changes a view option (font, scaling, hide/show xx)
+		call this after she changes a view option (font, scaling, hide/show xx)
 		or after any of the data have changed. In the latter case, also call Editor_broadcastChange.
 	Behaviour:
 		we just call Graphics_updateWs (my graphics).
@@ -297,7 +297,7 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable);
 	Function:
 		temporarily disable update event to cause 'draw' messages.
 	Usage:
-		If you call from your 'draw' method routines that may trigger expose events,
+		If you call from your 'draw' method functions that may trigger expose events,
 		you should bracket those routines between
 			FunctionEditor_enableUpdates (me, false);
 		and
@@ -310,23 +310,27 @@ void FunctionEditor_ungroup (FunctionEditor me);
 	Function:
 		force me out of the group.
 	Usage:
-		Start cut or paste methods by calling this routine,
+		Start cut or paste methods by calling this function,
 		as the grouped editors will not be synchronized
 		after either of those actions. Worse, the selection
 		may get outside the common interval of the editors.
 */
 
-/* Some routines to enforce common look to all function editors. */
-/* The x axis of the window is supposed to have been set to [my startWindow, my endWindow]. */
-/* Preconditions: default line type, default line width. */
-/* Postconditions: default line type, default line width, undefined colour, undefined text alignment. */
+/*
+	Some functions to enforce a common look to all function editors.
+	The x axis of the window is supposed to have been set to [my startWindow, my endWindow].
+	Preconditions:
+		default line type, default line width.
+	Postconditions:
+		default line type, default line width, undefined colour, undefined text alignment.
+*/
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment);
 void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units);
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, double minimum, double maximum);
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units);
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 
-void FunctionEditor_garnish (FunctionEditor me);   // Optionally selection times and selection hairs.
+void FunctionEditor_garnish (FunctionEditor me);   // optionally selection times and selection hairs
 
 /* End of file FunctionEditor.h */
 #endif
