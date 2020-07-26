@@ -22,7 +22,7 @@
 
 Thing_define (DemoEditor, Editor) {
 	GuiDrawingArea drawingArea;
-	autoGraphics graphics;
+	autoGraphics backgroundGraphics, foregroundGraphics;
 	void *praatPicture;
 	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 	integer x, y;

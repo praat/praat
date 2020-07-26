@@ -187,7 +187,6 @@ void structOTMultiEditor :: v_draw () {
 	static MelderString buffer;
 	const double rowHeight = 0.25;
 	longdouble tableauHeight = 2 * rowHeight;
-	Graphics_clearWs (graphics.get());
 	HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (integer icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		const OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];

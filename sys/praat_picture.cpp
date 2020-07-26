@@ -591,19 +591,6 @@ DIRECT (GRAPHICS_Erase_all) {
 	} else {
 		Graphics_clearRecording (GRAPHICS);
 		Graphics_clearWs (GRAPHICS);
-		/*
-			The following whitening may be needed on Graphicses that aren't really screens. TODO: figure this out.
-		*/
-		autoPraatPicture picture;
-		MelderColour colour = GRAPHICS -> colour;
-		Graphics_setColour (GRAPHICS, Melder_WHITE);
-		double x1, y1, x2, y2;
-		//Melder_casual (GRAPHICS -> d_x1DC, U" ", GRAPHICS -> d_y1DC, U" ", GRAPHICS -> d_x2DC, U" ", GRAPHICS -> d_y2DC);
-		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, & x1, & y1);
-		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC, & x2, & y2);
-		//Melder_casual (x1, U" ", y1, U" ", x2, U" ", y2);
-		Graphics_fillRectangle (GRAPHICS, x1, x2, y1, y2);
-		Graphics_setColour (GRAPHICS, colour);
 	}
 END }
 
