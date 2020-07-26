@@ -1,5 +1,5 @@
 # graphicsText.praat
-# Paul Boersma 2017-09-19
+# Paul Boersma 2020-07-26
 
 Erase all
 Select outer viewport: 0, 6, 0, 9
@@ -8,12 +8,12 @@ Times
 12
 Text: 0, "left", 99, "half", "Getting graphical text right is not a trivial task:"
 Text: 0, "left", 98, "half", "many types of glitches are possible."
-Text: 0, "left", 95, "half", "Code might be misaligned as in: $$< > <> <= = >=$, you see?"
+Text: 0, "left", 96, "half", "Code might be misaligned as in: $$< > <> <= = >=$, you see?"
 Courier
 text$ = "Code might be misaligned as in: $$< > <> <= = >=$, you see?"
-Text: 0, "left", 94, "half", text$
+Text: 0, "left", 95, "half", text$
 width = Text width (world coordinates): text$
-Text: width, "left", 94, "half", "... and here it continues"
+Text: width, "left", 94, "half", "... and here it continues:"
 Text: 0, "left", 93, "half", "a / b, a/b, a / b, a/b, a / b, a/b, a / b, a /b, a/ b"
 Times
 Text: 0, "left", 92, "half", "a / b, a/b, a / b"

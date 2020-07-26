@@ -1043,11 +1043,6 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		case Graphics_BASELINE:  dy = 0; break;
 		default:                 dy = 0; break;
 	}
-	#if quartz
-		if (my screen) {
-			GraphicsQuartz_initDraw ((GraphicsScreen) me);
-		}
-	#endif
 	if (my textRotation != 0.0) {
 		double xbegin = dx, x = xbegin, cosa, sina;
 		if (my textRotation == 90.0f) { cosa = 0.0; sina = 1.0; }
@@ -1163,11 +1158,6 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		my textX = (x - my deltaX) / my scaleX;
 		my textY = (( my yIsZeroAtTheTop ? y + dy : y - dy ) - my deltaY) / my scaleY;
 	}
-	#if quartz
-		if (my screen) {
-			GraphicsQuartz_exitDraw ((GraphicsScreen) me);
-		}
-	#endif
 }
 
 static struct { double width; kGraphics_horizontalAlignment alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },

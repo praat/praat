@@ -320,10 +320,12 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			try {
-				Melder_assert (my graphics);
-				GraphicsQuartz_initDraw (my graphics);
+				Melder_assert (my numberOfGraphicses > 0);
+				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+					GraphicsQuartz_initDraw (my graphicses [igraphics]);
 				my d_exposeCallback (my d_exposeBoss, & event);
-				GraphicsQuartz_exitDraw (my graphics);
+				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+					GraphicsQuartz_exitDraw (my graphicses [igraphics]);
 			} catch (MelderError) {
 				Melder_flushError (U"Redrawing not completed");
 			}
