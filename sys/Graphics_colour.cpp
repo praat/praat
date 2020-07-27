@@ -91,7 +91,7 @@ void Graphics_setGrey (Graphics me, double grey) {
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
-static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC, int direction) {
+static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
@@ -140,13 +140,13 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 }
 
 void Graphics_highlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), 1);
+	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 	if (my recording)
 		{ op (HIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
 static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC,
-	integer x1DC_inner, integer x2DC_inner, integer y1DC_inner, integer y2DC_inner, int direction)
+	integer x1DC_inner, integer x2DC_inner, integer y1DC_inner, integer y2DC_inner)
 {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
@@ -202,7 +202,7 @@ static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y
 void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
-	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner), 1);
+	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
 	if (my recording)
 		{ op (HIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
