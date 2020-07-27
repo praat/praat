@@ -22,7 +22,7 @@
 
 static void logo_defaultDraw (Graphics g) {
 	Graphics_setColour (g, Melder_MAGENTA);
-	Graphics_fillRectangle (g, 0, 1, 0, 1);
+	Graphics_fillRectangle (g, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setGrey (g, 0.5);
 	Graphics_fillRectangle (g, 0.05, 0.95, 0.1, 0.9);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);

@@ -543,8 +543,8 @@ END }
 
 void praat_show () {
 	/*
-	 * (De)sensitivize the fixed buttons as appropriate for the current selection.
-	 */
+		(De)sensitivize the fixed buttons as appropriate for the current selection.
+	*/
 	praat_sensitivizeFixedButtonCommand (U"Remove", theCurrentPraatObjects -> totalSelection != 0);
 	praat_sensitivizeFixedButtonCommand (U"Rename...", theCurrentPraatObjects -> totalSelection == 1);
 	praat_sensitivizeFixedButtonCommand (U"Copy...", theCurrentPraatObjects -> totalSelection == 1);
@@ -624,8 +624,8 @@ void praat_addMenus (GuiWindow window) {
 	Data_recognizeFileType (scriptRecognizer);
 
 	/*
-	 * Create the menu titles in the bar.
-	 */
+		Create the menu titles in the bar.
+	*/
 	if (! theCurrentPraatApplication -> batch) {
 		#ifdef macintosh
 			praatMenu = GuiMenu_createInWindow (nullptr, U"\024", 0);
@@ -645,15 +645,15 @@ void praat_addMenus (GuiWindow window) {
 		helpMenu = GuiMenu_createInWindow (window, U"Help", 0);
 	}
 	
-	MelderString_append (& itemTitle_about, U"About ", praatP.title.get(), U"...");
+	MelderString_append (& itemTitle_about, U"About ", praatP.title.get());
 	praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 	#ifdef macintosh
 		#if cocoa
 			/*
-			 * HACK: give the following command weird names,
-			 * because otherwise they may be called from a script.
-			 * (we add three alt-spaces)
-			 */
+				HACK: give the following commands weird names,
+				because otherwise they may be called from a script.
+				(we add three alt-spaces)
+			*/
 			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE | 'X' | praat_NO_API, PRAAT_cut);
 			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE | 'C' | praat_NO_API, PRAAT_copy);
 			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE | 'V' | praat_NO_API, PRAAT_paste);
