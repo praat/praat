@@ -128,7 +128,7 @@ GuiMenu praat_objects_resolveMenu (conststring32 menu) {
 /********** Callbacks of the Praat menu. **********/
 
 DIRECT (WINDOW_About) {
-	praat_showLogo (false);
+	praat_showLogo ();
 END }
 
 DIRECT (WINDOW_praat_newScript) {
