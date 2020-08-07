@@ -28,7 +28,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me);
 
 autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices); 
 
-autoTableOfReal Discrimimant_TableOfReal_mahalanobisDistances (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices);
+autoTableOfReal Discriminant_TableOfReal_mahalanobis_all (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices);
 
 autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities);
 

@@ -1222,6 +1222,16 @@ DO
 	CONVERT_TWO_END (U"mahalanobis")
 }
 
+FORM (NEW1_Discriminant_TableOfReal_mahalanobis_all, U"Discriminant & TableOfReal: Mahalanobis all", nullptr) {
+	BOOLEAN (poolCovariances, U"Pool covariance matrices", false)
+	OK
+DO
+	CONVERT_TWO (Discriminant, TableOfReal)
+		autoTableOfReal result = Discriminant_TableOfReal_mahalanobis_all (me, you, poolCovariances);
+	CONVERT_TWO_END (U"mahalanobis")
+	
+}
+
 DIRECT (INTEGER_Discriminant_getNumberOfEigenvalues) {
 	INTEGER_ONE (Discriminant)
 		integer result = my eigen -> numberOfEigenvalues;
@@ -8388,6 +8398,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_Configuration);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To ClassificationTable...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_ClassificationTable);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Discriminant_TableOfReal_mahalanobis);
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis, all)...", nullptr, 0, NEW1_Discriminant_TableOfReal_mahalanobis_all);
 
 	praat_addAction1 (classDTW, 0, U"DTW help", nullptr, 0, HELP_DTW_help);
 	praat_addAction1 (classDTW, 0, DRAW_BUTTON, nullptr, 0, 0);

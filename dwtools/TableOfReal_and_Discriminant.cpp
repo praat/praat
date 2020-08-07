@@ -105,17 +105,16 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 	}
 }
 
-autoTableOfReal Discrimimant_TableOfReal_mahalanobisDistances (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices) {
+autoTableOfReal Discriminant_TableOfReal_mahalanobis_all (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices) {
 	autoCovariance covg;
 	if (poolCovarianceMatrices) {
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		covg = SSCP_to_Covariance (pool.get(), my numberOfGroups);
 	}
-	autoTableOfReal him = TableOfReal_create (thy numberOfRows, my numberOfGroups);
+	autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
 	his rowLabels.all() <<= thy rowLabels.all();
 	for (integer igroup = 1 ; igroup <= my numberOfGroups; igroup ++) {
-		conststring32 name = Thing_getName (my groups->at [igroup]);
-		TableOfReal_setColumnLabel (him.get(), igroup, ( ! name ? U"?" : name ));
+		conststring32 label = Thing_getName (my groups->at [igroup]);
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [igroup], 1);
 		autoTableOfReal groupMahalanobis;
 		if (poolCovarianceMatrices) {
@@ -124,7 +123,9 @@ autoTableOfReal Discrimimant_TableOfReal_mahalanobisDistances (Discriminant me, 
 		} else {
 			groupMahalanobis = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
 		}
-		his data.column (igroup) <<= groupMahalanobis-> data . column (1);
+		for (integer idata = 1; idata <= thy numberOfRows; idata ++)
+			if (Melder_equ (label, his rowLabels [idata].get()))
+				his data [idata] [1] = groupMahalanobis-> data [idata] [1];
 	}
 	return him;
 }
