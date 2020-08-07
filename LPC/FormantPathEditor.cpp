@@ -1193,7 +1193,7 @@ static void do_drawTextTier (FormantPathEditor me, TextTier tier, integer itier)
 
 void structFormantPathEditor :: v_draw () {
 	Graphics_Viewport vp1, vp2;
-	const integer ntiers = our pathGridView -> tiers->size;
+	const integer ntiers = ( our pathGridView ? our pathGridView -> tiers->size : 0 );
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
 	const bool showAnalysis = v_hasAnalysis () &&
@@ -1217,92 +1217,93 @@ void structFormantPathEditor :: v_draw () {
 	/*
 		Draw tiers.
 	*/
-	if (d_longSound.data || d_sound.data) vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, soundY);
-	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-	bool isDefaultView = TextGridView_isDefaultView (our pathGridView.get());
-	for (integer itier = 1; itier <= ntiers; itier ++) {
-		const Function anyTier = our pathGridView -> tiers->at [itier];
-		const bool tierIsSelected = ( itier == selectedTier );
-		const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
-		vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
-			1.0 - (double) itier / (double) ntiers,
-			1.0 - (double) (itier - 1) / (double) ntiers);
+	if (our textgrid) {
+		if (d_longSound.data || d_sound.data) 
+			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, soundY);
+		Graphics_setColour (our graphics.get(), Melder_WHITE);
+		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		if (itier != 1)
-			Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
+		Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+		bool isDefaultView = TextGridView_isDefaultView (our pathGridView.get());
+		for (integer itier = 1; itier <= ntiers; itier ++) {
+			const Function anyTier = our pathGridView -> tiers->at [itier];
+			const bool tierIsSelected = ( itier == selectedTier );
+			const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
+			vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
+				1.0 - (double) itier / (double) ntiers,
+				1.0 - (double) (itier - 1) / (double) ntiers);
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
+			if (itier != 1)
+				Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
 
-		/*
-			Show the number and the name of the tier.
-		*/
-		Graphics_setColour (our graphics.get(), tierIsSelected ? Melder_RED : Melder_BLACK);
-		Graphics_setFont (our graphics.get(), oldFont);
-		Graphics_setFontSize (our graphics.get(), 14);
-		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		if (isDefaultView)
-			Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, U"");
-		else
-			Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, 
-				U" → ", our pathGridView -> tierNumbers [itier], U"");
-		Graphics_setFontSize (our graphics.get(), oldFontSize);
-		if (anyTier -> name && anyTier -> name [0]) {
-			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
-				our p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
-			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name.get());
-		}
-		if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
-			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
-			if (our p_showNumberOf == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
-				integer count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
-				integer position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
-				if (position)
-					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", position, U"/", count, U")");
-				else
-					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
-			} else {
-				Melder_assert (our p_showNumberOf == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
-				integer count = 0;
-				if (isIntervalTier) {
-					const IntervalTier tier = (IntervalTier) anyTier;
-					const integer numberOfIntervals = tier -> intervals.size;
-					for (integer iinterval = 1; iinterval <= numberOfIntervals; iinterval ++) {
-						const TextInterval interval = tier -> intervals.at [iinterval];
-						if (interval -> text && interval -> text [0] != U'\0')
-							count ++;
-					}
-				} else {
-					const TextTier tier = (TextTier) anyTier;
-					const integer numberOfPoints = tier -> points.size;
-					for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
-						const TextPoint point = tier -> points.at [ipoint];
-						if (point -> mark && point -> mark [0] != U'\0')
-							count ++;
-					}
-				}
-				Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(##", count, U"#)");
+			/*
+				Show the number and the name of the tier.
+			*/
+			Graphics_setColour (our graphics.get(), tierIsSelected ? Melder_RED : Melder_BLACK);
+			Graphics_setFont (our graphics.get(), oldFont);
+			Graphics_setFontSize (our graphics.get(), 14);
+			Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
+			if (isDefaultView)
+				Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, U"");
+			else
+				Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, 
+					U" → ", our pathGridView -> tierNumbers [itier], U"");
+			Graphics_setFontSize (our graphics.get(), oldFontSize);
+			if (anyTier -> name && anyTier -> name [0]) {
+				Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
+					our p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+				Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name.get());
 			}
+			if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
+				Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
+				if (our p_showNumberOf == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
+					integer count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
+					integer position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
+					if (position)
+						Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", position, U"/", count, U")");
+					else
+						Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
+				} else {
+					Melder_assert (our p_showNumberOf == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
+					integer count = 0;
+					if (isIntervalTier) {
+						const IntervalTier tier = (IntervalTier) anyTier;
+						const integer numberOfIntervals = tier -> intervals.size;
+						for (integer iinterval = 1; iinterval <= numberOfIntervals; iinterval ++) {
+							const TextInterval interval = tier -> intervals.at [iinterval];
+							if (interval -> text && interval -> text [0] != U'\0')
+								count ++;
+						}
+					} else {
+						const TextTier tier = (TextTier) anyTier;
+						const integer numberOfPoints = tier -> points.size;
+						for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
+							const TextPoint point = tier -> points.at [ipoint];
+							if (point -> mark && point -> mark [0] != U'\0')
+								count ++;
+						}
+					}
+					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(##", count, U"#)");
+				}
+			}
+
+			Graphics_setColour (our graphics.get(), Melder_BLACK);
+			Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
+			Graphics_setFontSize (our graphics.get(), p_fontSize);
+			if (isIntervalTier)
+				do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
+			else
+				do_drawTextTier (this, (TextTier) anyTier, itier);
+			Graphics_resetViewport (our graphics.get(), vp2);
 		}
-
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
-		Graphics_setFontSize (our graphics.get(), p_fontSize);
-		if (isIntervalTier)
-			do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
-		else
-			do_drawTextTier (this, (TextTier) anyTier, itier);
-		Graphics_resetViewport (our graphics.get(), vp2);
+		Graphics_setFont (our graphics.get(), oldFont);
+		Graphics_setFontSize (our graphics.get(), oldFontSize);
+		if (d_longSound.data || d_sound.data)
+			Graphics_resetViewport (our graphics.get(), vp1);
 	}
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_setFont (our graphics.get(), oldFont);
-	Graphics_setFontSize (our graphics.get(), oldFontSize);
-	if (d_longSound.data || d_sound.data)
-		Graphics_resetViewport (our graphics.get(), vp1);
-	//Graphics_flushWs (our graphics.get());
-
 	if (showAnalysis) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, soundY2);
 		v_draw_analysis ();
@@ -1988,8 +1989,10 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		
 		TimeSoundAnalysisEditor_init (me.get(), title, formantPath, sound, false);
 		my d_formant = FormantPath_extractFormant (formantPath);
-		my textgrid = Data_copy (textgrid);
-		my pathGridView = TextGridView_create (my textgrid.get());
+		if (textgrid) {
+			my textgrid = Data_copy (textgrid);
+			my pathGridView = TextGridView_create (my textgrid.get());
+		}
 		if (my p_modeler_numberOfParametersPerTrack == U"")
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		if (my p_formant_default_colour == U"")

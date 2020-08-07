@@ -219,6 +219,17 @@ DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
 	END
 }
 
+DIRECT (WINDOW_Sound_FormantPath_createFormantPathEditor) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	FIND_TWO_WITH_IOBJECT (FormantPath, Sound)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, nullptr);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
+}
+
 /********************** Cepstrum  ****************************************/
 
 DIRECT (NEW_Cepstrum_downto_PowerCepstrum) {
@@ -1392,6 +1403,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 2, NEW_Sound_to_LPC_burg);
 	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 2, NEW_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
+	praat_addAction2 (classSound, 1, classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_Sound_FormantPath_createFormantPathEditor);
 	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, GRAPHICS_VocalTract_drawSegments);

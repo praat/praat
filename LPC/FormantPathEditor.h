@@ -100,7 +100,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	void v_prefs_getValues (EditorCommand cmd)
 		override;
 	conststring32 v_selectionViewerName ()
-		override { return U"Formant modelers"; }
+		override { return U"Formant candidates"; }
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
 	void v_highlightSelection (double left, double right, double bottom, double top)
