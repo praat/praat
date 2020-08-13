@@ -137,6 +137,14 @@ T Melder_clipped (T minimum, T var, T maximum) {
 }
 
 template <typename T>
+void Melder_moveCloserToBy (T *x, T to, T by) {
+	if (*x < to)
+		*x = Melder_clippedRight (*x + by, to);
+	else if (*x > to)
+		*x = Melder_clippedLeft (to, *x - by);
+}
+
+template <typename T>
 void Melder_sort (T *p1, T *p2) {
 	if (*p2 < *p1)
 		std::swap (*p1, *p2);

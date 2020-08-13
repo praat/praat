@@ -21,6 +21,9 @@
 #include "TimeSoundEditor.h"
 #include "RealTier.h"
 
+Thing_define (RealTierView, Thing) {
+};
+
 Thing_define (RealTierEditor, TimeSoundEditor) {
 	double ymin, ymax, ycursor;
 	double anchorTime = undefined, anchorY;

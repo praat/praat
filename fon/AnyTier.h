@@ -2,7 +2,7 @@
 #define _AnyTier_h_
 /* AnyTier.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@ integer AnyTier_timeToHighIndex (AnyTier me, double time);
 integer AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, integer *imin, integer *imax);
 
 integer AnyTier_timeToNearestIndex (AnyTier me, double time);
+integer AnyTier_timeToNearestIndexInIndexWindow (AnyTier me, double time, integer imin, integer imax);
+integer AnyTier_timeToNearestIndexInTimeWindow (AnyTier me, double time, double tmin, double tmax);
 
 integer AnyTier_hasPoint (AnyTier me, double t);
 

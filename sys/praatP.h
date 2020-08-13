@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2007,2009-2018 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ void praat_foreground ();
 Editor praat_findEditorFromString (conststring32 string);
 Editor praat_findEditorById (integer id);
 
-void praat_showLogo (bool autoPopDown);
+void praat_showLogo ();
 
 /* Communication with praat_menuCommands.cpp: */
 void praat_menuCommands_init ();

@@ -21,6 +21,8 @@
 
 static void logo (Graphics graphics) {
 	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 0.8);
+	Graphics_setGrey (graphics, 0.95);
+	Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, 0.8);
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFont (graphics, kGraphics_font::TIMES);
 	Graphics_setFontSize (graphics, 45.0);
