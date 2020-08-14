@@ -21,8 +21,6 @@
 
 Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 
-#define SOUND_HEIGHT  0.382
-
 /* MARK: - MENU COMMANDS */
 
 static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
@@ -259,20 +257,19 @@ void structRealTierEditor :: v_draw () {
 
 bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	RealTier tier = (RealTier) our data;
-	static bool anchorIsInSoundPart, anchorIsInFreePart, anchorIsNearPoint;
+	static bool anchorIsInSoundPart, anchorIsInRealTierPart, anchorIsInFreePart, anchorIsNearPoint;
 	if (event -> isClick()) {
-		anchorIsInSoundPart = ( our d_sound.data && y_fraction >= 1.0 - SOUND_HEIGHT );
+		anchorIsInSoundPart = ( our d_sound.data && y_fraction >= 1.0 - our SOUND_HEIGHT );
+		anchorIsInRealTierPart = false;
 		anchorIsInFreePart = false;
 		anchorIsNearPoint = false;
 	}
 	if (anchorIsInSoundPart)
 		return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
-	y_fraction /= 1.0 - SOUND_HEIGHT;
-	const double y_world = (1.0 - y_fraction) * our ymin + y_fraction * our ymax;
-	Graphics_Viewport viewport;
-	if (our d_sound.data)
-		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our ymin, our ymax);
+	anchorIsInRealTierPart = true;
+	const double y_fraction_withinRealTierArea = ( our d_sound.data ? y_fraction / (1.0 - our SOUND_HEIGHT) : y_fraction );
+	const double y_world = (1.0 - y_fraction_withinRealTierArea) * our ymin + y_fraction_withinRealTierArea * our ymax;
+	our viewRealTierAsWorldByWorld ();
 	if (event -> isClick()) {
 		Melder_assert (isundef (our anchorTime));
 		RealPoint clickedPoint = nullptr;
@@ -283,17 +280,16 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				clickedPoint = nearestPoint;
 		}
 		if (! clickedPoint) {
-			if (our d_sound.data)
-				Graphics_resetViewport (our graphics.get(), viewport);
 			anchorIsInFreePart = true;
+			our ycursor = y_world;
+			our viewDataAsWorldByFraction ();
 			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 		}
 		anchorIsNearPoint = true;
 		our draggingSelection = event -> shiftKeyPressed &&
-			clickedPoint -> number > our startSelection && clickedPoint -> number < our endSelection;
+			clickedPoint -> number >= our startSelection && clickedPoint -> number <= our endSelection;
 		if (our draggingSelection) {
-			our firstSelected = AnyTier_timeToHighIndex (tier->asAnyTier(), our startSelection);
-			our lastSelected = AnyTier_timeToLowIndex (tier->asAnyTier(), our endSelection);
+			AnyTier_getWindowPoints (tier->asAnyTier(), our startSelection, our endSelection, & our firstSelected, & our lastSelected);
 			Editor_save (this, U"Drag points");
 		} else {
 			our firstSelected = our lastSelected = inearestPoint;
@@ -305,38 +301,32 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		our dy = 0.0;
 		return FunctionEditor_UPDATE_NEEDED;
 	} else if (event -> isDrag() || event -> isDrop()) {
-		if (anchorIsInSoundPart)
-			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
-		if (anchorIsInFreePart) {
-			if (event -> isDrop ())
-				our ycursor = y_world;
+		if (anchorIsInSoundPart) {
+			our viewDataAsWorldByFraction ();
 			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 		}
+		Melder_assert (anchorIsInRealTierPart);
+		if (anchorIsInFreePart) {
+			our ycursor = y_world;
+			our viewDataAsWorldByFraction ();
+			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+		}
+		Melder_assert (anchorIsNearPoint);
 		our dt = x_world - our anchorTime;
 		our dy = y_world - our anchorY;
 
 		if (event -> isDrop()) {
 			our anchorTime = undefined;
-
-			/*
-				Dragged inside window?
-			*/
-			if (x_world < our startWindow || x_world > our endWindow)
+			const double leftNewTime = tier -> points.at [our firstSelected] -> number + dt;
+			const double rightNewTime = tier -> points.at [our lastSelected] -> number + dt;
+			const bool offLeft = ( leftNewTime < our tmin );
+			const bool offRight = ( rightNewTime > our tmax );
+			const bool draggedPastLeftNeighbour = ( our firstSelected > 1 && leftNewTime <= tier -> points.at [our firstSelected - 1] -> number );
+			const bool draggedPastRightNeighbour = ( our lastSelected < tier -> points.size && rightNewTime >= tier -> points.at [our lastSelected + 1] -> number );
+			if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
+				Melder_beep ();
 				return FunctionEditor_UPDATE_NEEDED;
-
-			/*
-				Points not dragged past neighbours?
-			*/
-			double newTime = tier -> points.at [our firstSelected] -> number + dt;
-			if (newTime < our tmin)
-				return FunctionEditor_UPDATE_NEEDED;   // outside domain
-			if (our firstSelected > 1 && newTime <= tier -> points.at [our firstSelected - 1] -> number)
-				return FunctionEditor_UPDATE_NEEDED;   // past left neighbour
-			newTime = tier -> points.at [our lastSelected] -> number + dt;
-			if (newTime > our tmax)
-				return FunctionEditor_UPDATE_NEEDED;   // outside domain
-			if (our lastSelected < tier -> points.size && newTime >= tier -> points.at [our lastSelected + 1] -> number)
-				return FunctionEditor_UPDATE_NEEDED;   // past right neighbour
+			}
 
 			for (integer i = our firstSelected; i <= our lastSelected; i ++) {
 				RealPoint point = tier -> points.at [i];
@@ -365,7 +355,6 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				/*
 					Move crosshair to mouse location.
 				*/
-				/*our cursor += dt;*/
 				our ycursor += dy;
 				Melder_clipLeft (v_minimumLegalValue (), & our ycursor);   // NaN-safe
 				Melder_clipRight (& our ycursor, v_maximumLegalValue ());   // NaN-safe

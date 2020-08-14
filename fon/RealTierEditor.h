@@ -31,6 +31,14 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	double dt = 0.0, dy = 0.0;
 	integer firstSelected, lastSelected;
 
+	constexpr static double SOUND_HEIGHT = 0.382;
+	void viewRealTierAsWorldByWorld () const {
+		Graphics_setViewport (our graphics.get(), dataLeft_pxlt(), dataRight_pxlt(), dataBottom_pxlt(), dataTop_pxlt());
+		if (our d_sound.data)
+			(void) Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our ymin, our ymax);
+	}
+
 	void v_createMenus ()
 		override;
 	void v_dataChanged ()

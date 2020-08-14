@@ -1065,6 +1065,7 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 
 bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double mouseTime, double /* mouseY_fraction */) {
 	Melder_assert (our startSelection <= our endSelection);
+	Melder_clip (our startWindow, & mouseTime, our endWindow);   // WYSIWYG
 	static double anchorTime = undefined;
 	static bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 	if (event -> isClick()) {
@@ -1137,7 +1138,6 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 		my viewDataAsWorldByFraction ();
 		double x_world, y_fraction;
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_world, & y_fraction);
-		Melder_clip (my startWindow, & x_world, my endWindow);
 		my v_mouseInWideDataView (event, x_world, y_fraction);
 		my v_updateText ();
 		Graphics_updateWs (my graphics.get());

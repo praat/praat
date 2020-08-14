@@ -1203,8 +1203,8 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 
 bool structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	double ypitchmin, ypitchmax, ydurationmin, ydurationmax;
-	int hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
-	int hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);
+	const bool hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
+	const bool hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);
 
 	/*
 	 * Dispatch click to clicked area.

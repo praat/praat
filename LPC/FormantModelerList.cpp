@@ -105,7 +105,7 @@ autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double
 void FormantModelerList_showBest3 (FormantModelerList me) {
 	autoINTVEC best3 = FormantModelerList_getBest3 (me);
 	INTVEC drawingOrder = my drawingSpecification -> drawingOrder.get();
-	drawingOrder.part (1,3) <<= best3.part (1,3);
+	drawingOrder.part (1, 3) <<= best3.all();
 	my drawingSpecification -> numberOfModelersToDraw = 3;
 }
 
