@@ -789,7 +789,7 @@ TAG (U"##undefined")
 DEFINITION (U"a special value, see @undefined")
 MAN_END
 
-MAN_BEGIN (U"Formulas 5. Mathematical functions", U"ppgb", 20200405)
+MAN_BEGIN (U"Formulas 5. Mathematical functions", U"ppgb", 20200801)
 TAG (U"##abs (%x)")
 DEFINITION (U"absolute value")
 TAG (U"##round (%x)")
@@ -870,7 +870,7 @@ DEFINITION (U"a random number drawn from a Gamma distribution with shape paramet
 TAG (U"##random\\_ initializeWithSeedUnsafelyButPredictably (%seed)")
 DEFINITION (U"can be used in a script to create a reproducible sequence of random numbers "
 	"(warning: this exceptional situation will continue to exist throughout Praat until you call the following function)")
-TAG (U"##random\\_ initializeSafelyAndPredictably ()")
+TAG (U"##random\\_ initializeSafelyAndUnpredictably ()")
 DEFINITION (U"undoes the exceptional situation caused by the previous function")
 TAG (U"##lnGamma (%x)")
 DEFINITION (U"logarithm of the \\Ga function")

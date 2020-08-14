@@ -79,6 +79,17 @@ DO
 	CREATE_ONE_END (name);
 }
 
+FORM (NEW1_Matrix_createSimpleFromValues, U"Create simple Matrix from values", U"Create simple Matrix from values...") {
+	WORD (name, U"Name", U"xy")
+	NUMMAT (values, U"Values", U"{ { 10, 20, 30 }, { 60, 70, 80 } }")
+	OK
+DO
+	CREATE_ONE
+		autoMatrix result = Matrix_createSimple (values.nrow, values.ncol);
+		result -> z.all() <<= values;
+	CREATE_ONE_END (name);
+}
+
 // MARK: Open
 
 FORM_READ (READ1_Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
@@ -819,6 +830,7 @@ void praat_Matrix_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Matrix", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Matrix...", nullptr, 1, NEW1_Matrix_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix...", nullptr, 1, NEW1_Matrix_createSimple);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix from values...", nullptr, 1, NEW1_Matrix_createSimpleFromValues);
 		praat_addMenuCommand (U"Objects", U"New", U"-- colour matrix --", nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 1, NEW1_Photo_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 1, NEW1_Photo_createSimple);

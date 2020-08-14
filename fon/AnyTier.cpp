@@ -60,17 +60,20 @@ void structAnyTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 }
 
 integer AnyTier_timeToLowIndex (AnyTier me, double time) {
-	if (my points.size == 0) return 0;   // undefined
+	if (my points.size == 0)
+		return 0;   // undefined
 	integer ileft = 1, iright = my points.size;
 	double tleft = my points.at [ileft] -> number;
-	if (time < tleft) return 0;   // offleft
+	if (time < tleft)
+		return 0;   // offleft
 	double tright = my points.at [iright] -> number;
-	if (time >= tright) return iright;
+	if (time >= tright)
+		return iright;
 	Melder_assert (time >= tleft && time < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
-		integer imid = (ileft + iright) / 2;
-		double tmid = my points.at [imid] -> number;
+		const integer imid = (ileft + iright) / 2;
+		const double tmid = my points.at [imid] -> number;
 		if (time < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -88,17 +91,20 @@ integer AnyTier_timeToLowIndex (AnyTier me, double time) {
 }
 
 integer AnyTier_timeToHighIndex (AnyTier me, double time) {
-	if (my points.size == 0) return 0;   // undefined; is this right?
+	if (my points.size == 0)
+		return 0;   // undefined; is this right?
 	integer ileft = 1, iright = my points.size;
 	double tleft = my points.at [ileft] -> number;
-	if (time <= tleft) return 1;
+	if (time <= tleft)
+		return 1;
 	double tright = my points.at [iright] -> number;
-	if (time > tright) return iright + 1;   // offright
+	if (time > tright)
+		return iright + 1;   // offright
 	Melder_assert (time > tleft && time <= tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
-		integer imid = (ileft + iright) / 2;
-		double tmid = my points.at [imid] -> number;
+		const integer imid = (ileft + iright) / 2;
+		const double tmid = my points.at [imid] -> number;
 		if (time <= tmid) {
 			iright = imid;
 			tright = tmid;
@@ -140,8 +146,8 @@ integer AnyTier_timeToNearestIndexInIndexWindow (AnyTier me, double time, intege
 	Melder_assert (time > tleft && time < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
-		integer imid = (ileft + iright) / 2;
-		double tmid = my points.at [imid] -> number;
+		const integer imid = (ileft + iright) / 2;
+		const double tmid = my points.at [imid] -> number;
 		if (time < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -168,19 +174,24 @@ integer AnyTier_timeToNearestIndexInTimeWindow (AnyTier me, double time, double 
 }
 
 integer AnyTier_hasPoint (AnyTier me, double t) {
-	if (my points.size == 0) return 0;   // point not found
+	if (my points.size == 0)
+		return 0;   // point not found
 	integer ileft = 1, iright = my points.size;
 	double tleft = my points.at [ileft] -> number;
-	if (t < tleft) return 0;   // offleft
+	if (t < tleft)
+		return 0;   // offleft
 	double tright = my points.at [iright] -> number;
-	if (t > tright) return 0;   // offright
-	if (t == tleft) return 1;
-	if (t == tright) return iright;
+	if (t > tright)
+		return 0;   // offright
+	if (t == tleft)
+		return 1;
+	if (t == tright)
+		return iright;
 	Melder_assert (t > tleft && t < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
-		integer imid = (ileft + iright) / 2;
-		double tmid = my points.at [imid] -> number;
+		const integer imid = (ileft + iright) / 2;
+		const double tmid = my points.at [imid] -> number;
 		if (t < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -208,16 +219,19 @@ void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point) {
 }
 
 void AnyTier_removePoint (AnyTier me, integer i) {
-	if (i >= 1 && i <= my points.size) my points. removeItem (i);
+	if (i >= 1 && i <= my points.size)
+		my points. removeItem (i);
 }
 
 void AnyTier_removePointNear (AnyTier me, double time) {
 	integer ipoint = AnyTier_timeToNearestIndex (me, time);
-	if (ipoint) my points.removeItem (ipoint);
+	if (ipoint > 0)
+		my points.removeItem (ipoint);
 }
 
 void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
-	if (my points.size == 0) return;
+	if (my points.size == 0)
+		return;
 	integer ileft = AnyTier_timeToHighIndex (me, tmin);
 	integer iright = AnyTier_timeToLowIndex (me, tmax);
 	for (integer i = iright; i >= ileft; i --)
@@ -226,7 +240,7 @@ void AnyTier_removePointsBetween (AnyTier me, double tmin, double tmax) {
 
 autoPointProcess AnyTier_downto_PointProcess (AnyTier me) {
 	try {
-		integer numberOfPoints = my points.size;
+		const integer numberOfPoints = my points.size;
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++)
 			PointProcess_addPoint (thee.get(), my points.at [i] -> number);
