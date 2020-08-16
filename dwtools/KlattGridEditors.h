@@ -36,7 +36,7 @@ Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 		override;
 };
 
-void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, conststring32 title, KlattGrid klattgrid, RealTier data);
+void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo viewClass, conststring32 title, KlattGrid klattgrid, RealTier data);
 
 
 Thing_define (KlattGrid_OpenPhaseTierView, KlattGrid_RealTierView) {
@@ -278,7 +278,7 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Maximum intensity (dB)"; }
 };
 
-void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, conststring32 title, KlattGrid klattgrid, RealTier tier);
+void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, ClassInfo viewClass, conststring32 title, KlattGrid klattgrid, RealTier tier);
 
 
 Thing_define (KlattGrid_DecibelTierView, KlattGrid_IntensityTierView) {
@@ -308,17 +308,26 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid, RealTier data);
 
 
+Thing_define (KlattGrid_VoicingAmplitudeTierView, KlattGrid_IntensityTierView) {
+};
+
 Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
 
 autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
+Thing_define (KlattGrid_AspirationAmplitudeTierView, KlattGrid_IntensityTierView) {
+};
+
 Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
 
 autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
+
+Thing_define (KlattGrid_BreathinessAmplitudeTierView, KlattGrid_IntensityTierView) {
+};
 
 Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
@@ -359,6 +368,9 @@ Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor
 
 autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
+
+Thing_define (KlattGrid_FricationAmplitudeTierView, KlattGrid_IntensityTierView) {
+};
 
 Thing_define (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
 };
