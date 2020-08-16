@@ -357,14 +357,14 @@ static PaError gatherDeviceInfo(PaMacAUHAL *auhalHostApi)
     //                              &propsize,
     //                              NULL );   // ppgb 20200814: can lead to warning: [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x6000002d67a0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
 	if (true) {// this block ppgb 20200814
-		fprintf(stderr,"gatherDeviceInfo 1 %d\n",propsize);
+		//fprintf(stderr,"gatherDeviceInfo 1 %d\n",propsize);
 		AudioObjectPropertyAddress audioObjectPropertyAddress;
 		audioObjectPropertyAddress. mSelector = kAudioHardwarePropertyDevices;
 		audioObjectPropertyAddress. mScope = kAudioObjectPropertyScopeGlobal;
 		audioObjectPropertyAddress. mElement = 0;
 		AudioObjectGetPropertyDataSize( kAudioObjectSystemObject, & audioObjectPropertyAddress, 0, NULL, & propsize );   // ppgb 20200814
 				// ppgb 20200814: can lead to warning: [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x6000002c6c20>...
-		fprintf(stderr,"gatherDeviceInfo 2 %d\n",propsize);
+		//fprintf(stderr,"gatherDeviceInfo 2 %d\n",propsize);
 	}
     auhalHostApi->devCount = propsize / sizeof( AudioDeviceID );
 
@@ -379,7 +379,7 @@ static PaError gatherDeviceInfo(PaMacAUHAL *auhalHostApi)
     AudioHardwareGetProperty( kAudioHardwarePropertyDevices,
                                   &propsize,
                                   auhalHostApi->devIds );
-#if defined (MAC_CORE_VERBOSE_DEBUG) ||1
+#if defined (MAC_CORE_VERBOSE_DEBUG)
     {
        int i;
        for( i=0; i<auhalHostApi->devCount; ++i )
