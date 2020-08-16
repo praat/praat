@@ -76,6 +76,7 @@ struct SoundRecorder_Fsamp {
 Thing_define (SoundRecorder, Editor) {
 	int numberOfChannels;
 	integer nsamp, nmax;
+	integer firstSample, lastSample;   // for the meter
 	bool synchronous, recording;
 	int lastLeftMaximum, lastRightMaximum;
 	integer numberOfInputDevices;
