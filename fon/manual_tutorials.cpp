@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200606)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200816)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.17alpha# (16 August 2020)")
+LIST_ITEM (U"• Alpha version for macOS Big Sur.")
 NORMAL (U"##6.1.16# (6 June 2020)")
 LIST_ITEM (U"• ##Record fixed time...#: more reliable choice of input device.")
 LIST_ITEM (U"• Mac: notice plugging and unplugging of headphones.")

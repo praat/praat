@@ -103,7 +103,7 @@ static int recordCallback( const void *inputBuffer, void *outputBuffer,
     (void) timeInfo;
     (void) statusFlags;
     (void) userData;
-fprintf (stderr, "samples " PRINTF_S_FORMAT " " PRINTF_S_FORMAT " " PRINTF_S_FORMAT " " PRINTF_S_FORMAT "\n", wptr [0], wptr [1], wptr [2], wptr [3]);
+fprintf (stderr, "samples " PRINTF_S_FORMAT " " PRINTF_S_FORMAT " " PRINTF_S_FORMAT " " PRINTF_S_FORMAT "\n", rptr [0], rptr [1], rptr [2], rptr [3]);
     if( framesLeft < framesPerBuffer )
     {
         framesToCalc = framesLeft;
@@ -224,7 +224,7 @@ int patest_record ()
         fprintf(stderr,"Error: No default input device.\n");
         goto done;
     }
-    inputParameters.channelCount = NUM_CHANNELS;                    /* stereo input; ppgb make variable */
+    inputParameters.channelCount = NUM_CHANNELS;                    /* stereo input; ppgb 20200812 make variable */
     inputParameters.sampleFormat = PA_SAMPLE_TYPE;
     inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
     inputParameters.hostApiSpecificStreamInfo = NULL;
