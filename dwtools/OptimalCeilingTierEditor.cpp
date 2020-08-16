@@ -19,6 +19,8 @@
 #include "OptimalCeilingTierEditor.h"
 #include "EditorM.h"
 
+Thing_implement (OptimalCeilingTierView, RealTierView, 0);
+
 Thing_implement (OptimalCeilingTierEditor, RealTierEditor, 0);
 
 static void menu_cb_OptimalCeilingTierHelp (OptimalCeilingTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"OptimalCeilingTier"); }
@@ -38,7 +40,7 @@ void structOptimalCeilingTierEditor :: v_play (double fromTime, double toTime) {
 autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title, OptimalCeilingTier octier, Sound sound, bool ownSound) {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
-		RealTierEditor_init (me.get(), title, (RealTier) octier, sound, ownSound);
+		RealTierEditor_init (me.get(), classOptimalCeilingTierView, title, (RealTier) octier, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"OptimalCeilingTier window not created.");
