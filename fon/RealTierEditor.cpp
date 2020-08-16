@@ -19,92 +19,41 @@
 #include "RealTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (RealTierEditor, TimeSoundEditor, 0);
+/* MARK: - FUNCTIONVIEW */
 
-/* MARK: - MENU COMMANDS */
+Thing_implement (FunctionView, Thing, 0);
 
-static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	Editor_save (me, U"Remove point(s)");
-	RealTier tier = (RealTier) my data;
-	if (my startSelection == my endSelection)
-		AnyTier_removePointNear (tier->asAnyTier(), my startSelection);
-	else
-		AnyTier_removePointsBetween (tier->asAnyTier(), my startSelection, my endSelection);
-	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
+/* MARK: - REALTIERVIEW */
 
-static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	if (isdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
+Thing_implement (RealTierView, FunctionView, 0);
+
+static void RealTierView_addPointAt (RealTierView me, RealTier tier, double time, double desiredValue) {
+	if (isdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
 		Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
-	if (isdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
+	if (isdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
 		Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
-	Editor_save (me, U"Add point");
-	RealTier_addPoint ((RealTier) my data, 0.5 * (my startSelection + my endSelection), my ycursor);
-	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
+	RealTier_addPoint (tier, time, desiredValue);
 }
 
-static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Add point", nullptr)
-		REAL (time, U"Time (s)", U"0.0")
-		REAL (desiredValue, my v_quantityText (), U"0.0")
-	EDITOR_OK
-		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
-		SET_REAL (desiredValue, my ycursor)
-	EDITOR_DO
-		if (isdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
-			Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
-		if (isdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
-			Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
-		Editor_save (me, U"Add point");
-		RealTier_addPoint ((RealTier) my data, time, desiredValue);
-		RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastDataChanged (me);
-	EDITOR_END
+static void RealTierView_removePoints (RealTierView me, RealTier tier) {
+	if (my startSelection() == my endSelection())
+		AnyTier_removePointNear (tier->asAnyTier(), my startSelection());
+	else
+		AnyTier_removePointsBetween (tier->asAnyTier(), my startSelection(), my endSelection());
 }
 
-static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (my v_setRangeTitle (), nullptr)
-		REAL (ymin, my v_yminText (), my v_defaultYminText ())
-		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
-	EDITOR_OK
-		SET_REAL (ymin, my ymin)
-		SET_REAL (ymax, my ymax)
-	EDITOR_DO
-		my ymin = ymin;
-		my ymax = ymax;
-		if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (me);
-	EDITOR_END
+static void RealTierView_addPointAtCursor (RealTierView me, RealTier tier) {
+	const double cursorTime = 0.5 * (my startSelection() + my endSelection());
+	RealTierView_addPointAt (me, tier, cursorTime, my ycursor);
 }
 
-void structRealTierEditor :: v_createMenuItems_view (EditorMenu menu) {
-	RealTierEditor_Parent :: v_createMenuItems_view (menu);
-	EditorMenu_addCommand (menu, U"-- view/realtier --", 0, 0);
-	EditorMenu_addCommand (menu, v_setRangeTitle (), 0, menu_cb_setRange);
-}
-
-void structRealTierEditor :: v_createMenus () {
-	RealTierEditor_Parent :: v_createMenus ();
-	EditorMenu menu = Editor_addMenu (this, U"Point", 0);
-	EditorMenu_addCommand (menu, U"Add point at cursor", 'T', menu_cb_addPointAtCursor);
-	EditorMenu_addCommand (menu, U"Add point at...", 0, menu_cb_addPointAt);
-	EditorMenu_addCommand (menu, U"-- remove point --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T', menu_cb_removePoints);
-}
-
-void RealTierEditor_updateScaling (RealTierEditor me) {
-	RealTier data = (RealTier) my data;
-	if (data -> points.size == 0) {
+static void RealTierView_updateScaling (RealTierView me, RealTier tier) {
+	if (tier -> points.size == 0) {
 		my ymin = my v_defaultYmin ();
 		my ymax = my v_defaultYmax ();
 	} else {
-		double ymin = RealTier_getMinimumValue (data);
-		double ymax = RealTier_getMaximumValue (data);
+		double ymin = RealTier_getMinimumValue (tier);
+		double ymax = RealTier_getMaximumValue (tier);
 		double range = ymax - ymin;
 		if (range == 0.0) {
 			ymin -= 1.0;
@@ -142,13 +91,6 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 			my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 	}
 }
-
-void structRealTierEditor :: v_dataChanged () {
-	RealTierEditor_updateScaling (this);
-	RealTierEditor_Parent :: v_dataChanged ();
-}
-
-/* MARK: - DRAWING AREA */
 
 static void FunctionEditor_drawRealTier (FunctionEditor me, RealTier tier,
 	double ymin, double ycursor, double ymax, conststring32 rightTickUnits
@@ -204,18 +146,18 @@ static void FunctionEditor_drawRealTier (FunctionEditor me, RealTier tier,
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 }
 
-static void FunctionEditor_drawRealTierWhileDragging (RealTierEditor me, RealTier tier,
+static void RealTierView_drawRealTierWhileDragging (RealTierView me, RealTier tier,
 	double ymin, double ymax, double dt, double dy
 ) {
-	Graphics_xorOn (my graphics.get(), Melder_MAROON);
+	Graphics_xorOn (my graphics(), Melder_MAROON);
 	/*
 		Draw all selected points as empty circles, if inside the window.
 	*/
 	for (integer ipoint = my firstSelected; ipoint <= my lastSelected; ipoint ++) {
 		RealPoint point = tier -> points.at [ipoint];
 		double t = point -> number + dt, y = point -> value + dy;
-		if (t >= my startWindow && t <= my endWindow)
-			Graphics_circle_mm (my graphics.get(), t, y, 3);
+		if (t >= my startWindow() && t <= my endWindow())
+			Graphics_circle_mm (my graphics(), t, y, 3);
 	}
 
 	if (my lastSelected == my firstSelected) {
@@ -224,15 +166,95 @@ static void FunctionEditor_drawRealTierWhileDragging (RealTierEditor me, RealTie
 		*/
 		RealPoint point = tier -> points.at [my firstSelected];
 		double t = point -> number + dt, y = point -> value + dy;
-		Graphics_line (my graphics.get(), t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics.get(), 4.0));
-		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
-		Graphics_text (my graphics.get(), t, ymax, Melder_fixed (t, 6));
-		Graphics_line (my graphics.get(), my startWindow, y, my endWindow, y);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text (my graphics.get(), my startWindow, y, Melder_fixed (y, 6));
+		Graphics_line (my graphics(), t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics(), 4.0));
+		Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
+		Graphics_text (my graphics(), t, ymax, Melder_fixed (t, 6));
+		Graphics_line (my graphics(), my startWindow(), y, my endWindow(), y);
+		Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (my graphics(), my startWindow(), y, Melder_fixed (y, 6));
 	}
-	Graphics_xorOff (my graphics.get());
+	Graphics_xorOff (my graphics());
 }
+
+/* MARK: - REALTIEREDITOR */
+
+Thing_implement (RealTierEditor, TimeSoundEditor, 0);
+
+/* MARK: - MENU COMMANDS */
+
+static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
+	RealTierView_removePoints (my view.get(), static_cast <RealTier> (my data));
+	Editor_save (me, U"Remove point(s)");
+	RealTierEditor_updateScaling (me);
+	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);
+}
+
+static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
+	RealTierView_addPointAtCursor (my view.get(), static_cast <RealTier> (my data));
+	Editor_save (me, U"Add point");
+	RealTierEditor_updateScaling (me);
+	FunctionEditor_redraw (me);
+	Editor_broadcastDataChanged (me);
+}
+
+static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Add point", nullptr)
+		REAL (time, U"Time (s)", U"0.0")
+		REAL (desiredValue, my v_quantityText (), U"0.0")
+	EDITOR_OK
+		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
+		SET_REAL (desiredValue, my view -> ycursor)
+	EDITOR_DO
+		RealTierView_addPointAt (my view.get(), static_cast <RealTier> (my data), time, desiredValue);
+		Editor_save (me, U"Add point");
+		RealTierEditor_updateScaling (me);
+		FunctionEditor_redraw (me);
+		Editor_broadcastDataChanged (me);
+	EDITOR_END
+}
+
+static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (my v_setRangeTitle (), nullptr)
+		REAL (ymin, my v_yminText (), my v_defaultYminText ())
+		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
+	EDITOR_OK
+		SET_REAL (ymin, my view -> ymin)
+		SET_REAL (ymax, my view -> ymax)
+	EDITOR_DO
+		my view -> ymin = ymin;
+		my view -> ymax = ymax;
+		if (my view -> ymax <= my view -> ymin)
+			RealTierEditor_updateScaling (me);
+		FunctionEditor_redraw (me);
+	EDITOR_END
+}
+
+void structRealTierEditor :: v_createMenuItems_view (EditorMenu menu) {
+	RealTierEditor_Parent :: v_createMenuItems_view (menu);
+	EditorMenu_addCommand (menu, U"-- view/realtier --", 0, 0);
+	EditorMenu_addCommand (menu, v_setRangeTitle (), 0, menu_cb_setRange);
+}
+
+void structRealTierEditor :: v_createMenus () {
+	RealTierEditor_Parent :: v_createMenus ();
+	EditorMenu menu = Editor_addMenu (this, U"Point", 0);
+	EditorMenu_addCommand (menu, U"Add point at cursor", 'T', menu_cb_addPointAtCursor);
+	EditorMenu_addCommand (menu, U"Add point at...", 0, menu_cb_addPointAt);
+	EditorMenu_addCommand (menu, U"-- remove point --", 0, nullptr);
+	EditorMenu_addCommand (menu, U"Remove point(s)", GuiMenu_OPTION | 'T', menu_cb_removePoints);
+}
+
+void RealTierEditor_updateScaling (RealTierEditor me) {
+	RealTierView_updateScaling (my view.get(), (RealTier) my data);
+}
+
+void structRealTierEditor :: v_dataChanged () {
+	RealTierEditor_updateScaling (this);
+	RealTierEditor_Parent :: v_dataChanged ();
+}
+
+/* MARK: - DRAWING AREA */
 
 void structRealTierEditor :: v_draw () {
 	RealTier tier = (RealTier) our data;
@@ -248,10 +270,10 @@ void structRealTierEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our ymin, our ymax);
-	FunctionEditor_drawRealTier (this, tier, our ymin, our ycursor, our ymax, v_rightTickUnits());
-	if (isdefined (our anchorTime))
-		FunctionEditor_drawRealTierWhileDragging (this, tier, our ymin, our ymax, our dt, our dy);
+	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our view -> ymin, our view -> ymax);
+	FunctionEditor_drawRealTier (this, tier, our view -> ymin, our view -> ycursor, our view -> ymax, our view -> v_rightTickUnits());
+	if (isdefined (our view -> anchorTime))
+		RealTierView_drawRealTierWhileDragging (our view.get(), tier, our view -> ymin, our view -> ymax, our view -> dt, our view -> dy);
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
@@ -259,7 +281,7 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	RealTier tier = (RealTier) our data;
 	static bool anchorIsInSoundPart, anchorIsInRealTierPart, anchorIsInFreePart, anchorIsNearPoint;
 	if (event -> isClick()) {
-		anchorIsInSoundPart = ( our d_sound.data && y_fraction >= 1.0 - our SOUND_HEIGHT );
+		anchorIsInSoundPart = ( y_fraction >= our view -> ymax_fraction );
 		anchorIsInRealTierPart = false;
 		anchorIsInFreePart = false;
 		anchorIsNearPoint = false;
@@ -267,11 +289,11 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	if (anchorIsInSoundPart)
 		return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 	anchorIsInRealTierPart = true;
-	const double y_fraction_withinRealTierArea = ( our d_sound.data ? y_fraction / (1.0 - our SOUND_HEIGHT) : y_fraction );
-	const double y_world = (1.0 - y_fraction_withinRealTierArea) * our ymin + y_fraction_withinRealTierArea * our ymax;
-	our viewRealTierAsWorldByWorld ();
+	const double y_fraction_withinRealTierArea = y_fraction / our view -> ymax_fraction;
+	const double y_world = (1.0 - y_fraction_withinRealTierArea) * our view -> ymin + y_fraction_withinRealTierArea * our view -> ymax;
+	our view -> viewRealTierAsWorldByWorld ();
 	if (event -> isClick()) {
-		Melder_assert (isundef (our anchorTime));
+		Melder_assert (isundef (our view -> anchorTime));
 		RealPoint clickedPoint = nullptr;
 		integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (tier->asAnyTier(), x_world, our startWindow, our endWindow);
 		if (inearestPoint != 0) {
@@ -281,83 +303,79 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		}
 		if (! clickedPoint) {
 			anchorIsInFreePart = true;
-			our ycursor = y_world;
+			our view -> ycursor = y_world;
 			our viewDataAsWorldByFraction ();
 			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 		}
 		anchorIsNearPoint = true;
-		our draggingSelection = event -> shiftKeyPressed &&
+		our view -> draggingSelection = event -> shiftKeyPressed &&
 			clickedPoint -> number >= our startSelection && clickedPoint -> number <= our endSelection;
-		if (our draggingSelection) {
-			AnyTier_getWindowPoints (tier->asAnyTier(), our startSelection, our endSelection, & our firstSelected, & our lastSelected);
+		if (our view -> draggingSelection) {
+			AnyTier_getWindowPoints (tier->asAnyTier(), our startSelection, our endSelection, & our view -> firstSelected, & our view -> lastSelected);
 			Editor_save (this, U"Drag points");
 		} else {
-			our firstSelected = our lastSelected = inearestPoint;
+			our view -> firstSelected = our view -> lastSelected = inearestPoint;
 			Editor_save (this, U"Drag point");
 		}
-		our anchorTime = x_world;
-		our anchorY = y_world;
-		our dt = 0.0;
-		our dy = 0.0;
+		our view -> anchorTime = x_world;
+		our view -> anchorY = y_world;
+		our view -> dt = 0.0;
+		our view -> dy = 0.0;
 		return FunctionEditor_UPDATE_NEEDED;
 	} else if (event -> isDrag() || event -> isDrop()) {
-		if (anchorIsInSoundPart) {
-			our viewDataAsWorldByFraction ();
-			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
-		}
 		Melder_assert (anchorIsInRealTierPart);
 		if (anchorIsInFreePart) {
-			our ycursor = y_world;
+			our view -> ycursor = y_world;
 			our viewDataAsWorldByFraction ();
 			return our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 		}
 		Melder_assert (anchorIsNearPoint);
-		our dt = x_world - our anchorTime;
-		our dy = y_world - our anchorY;
+		our view -> dt = x_world - our view -> anchorTime;
+		our view -> dy = y_world - our view -> anchorY;
 
 		if (event -> isDrop()) {
-			our anchorTime = undefined;
-			const double leftNewTime = tier -> points.at [our firstSelected] -> number + dt;
-			const double rightNewTime = tier -> points.at [our lastSelected] -> number + dt;
+			our view -> anchorTime = undefined;
+			const double leftNewTime = tier -> points.at [our view -> firstSelected] -> number + our view -> dt;
+			const double rightNewTime = tier -> points.at [our view -> lastSelected] -> number + our view -> dt;
 			const bool offLeft = ( leftNewTime < our tmin );
 			const bool offRight = ( rightNewTime > our tmax );
-			const bool draggedPastLeftNeighbour = ( our firstSelected > 1 && leftNewTime <= tier -> points.at [our firstSelected - 1] -> number );
-			const bool draggedPastRightNeighbour = ( our lastSelected < tier -> points.size && rightNewTime >= tier -> points.at [our lastSelected + 1] -> number );
+			const bool draggedPastLeftNeighbour = ( our view -> firstSelected > 1 && leftNewTime <= tier -> points.at [our view -> firstSelected - 1] -> number );
+			const bool draggedPastRightNeighbour = ( our view -> lastSelected < tier -> points.size && rightNewTime >= tier -> points.at [our view -> lastSelected + 1] -> number );
 			if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
 				Melder_beep ();
 				return FunctionEditor_UPDATE_NEEDED;
 			}
 
-			for (integer i = our firstSelected; i <= our lastSelected; i ++) {
+			for (integer i = our view -> firstSelected; i <= our view -> lastSelected; i ++) {
 				RealPoint point = tier -> points.at [i];
-				point -> number += dt;
-				point -> value += dy;
-				Melder_clipLeft (v_minimumLegalValue (), & point -> value);
-				Melder_clipRight (& point -> value, v_maximumLegalValue ());
+				point -> number += our view -> dt;
+				point -> value += our view -> dy;
+				Melder_clipLeft (our view -> v_minimumLegalValue (), & point -> value);
+				Melder_clipRight (& point -> value, our view -> v_maximumLegalValue ());
 			}
 
 			/*
 				Make sure that the same points are still selected (a problem with Undo...).
 			*/
 
-			if (draggingSelection) {
-				our startSelection += dt;
-				our endSelection += dt;
+			if (our view -> draggingSelection) {
+				our startSelection += our view -> dt;
+				our endSelection += our view -> dt;
 			}
-			if (our firstSelected == our lastSelected) {
+			if (our view -> firstSelected == our view -> lastSelected) {
 				/*
 					Move crosshair to only selected point.
 				*/
-				RealPoint point = tier -> points.at [our firstSelected];
+				RealPoint point = tier -> points.at [our view -> firstSelected];
 				our startSelection = our endSelection = point -> number;
-				our ycursor = point -> value;
+				our view -> ycursor = point -> value;
 			} else {
 				/*
 					Move crosshair to mouse location.
 				*/
-				our ycursor += dy;
-				Melder_clipLeft (v_minimumLegalValue (), & our ycursor);   // NaN-safe
-				Melder_clipRight (& our ycursor, v_maximumLegalValue ());   // NaN-safe
+				our view -> ycursor += our view -> dy;
+				Melder_clipLeft (our view -> v_minimumLegalValue (), & our view -> ycursor);   // NaN-safe
+				Melder_clipRight (& our view -> ycursor, our view -> v_maximumLegalValue ());   // NaN-safe
 			}
 
 			Editor_broadcastDataChanged (this);
@@ -372,13 +390,15 @@ void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
 		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, conststring32 title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, ClassInfo viewClass, conststring32 title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
-	my ymin = -1.0;
+	my view = Thing_newFromClass (viewClass). static_cast_move <structRealTierView>();
+	FunctionView_init (my view.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
+	my view -> ymin = -1.0;
 	RealTierEditor_updateScaling (me);
-	my ycursor = 0.382 * my ymin + 0.618 * my ymax;
+	my view -> ycursor = 0.382 * my view -> ymin + 0.618 * my view -> ymax;
 }
 
 /* End of file RealTierEditor.cpp */

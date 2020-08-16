@@ -1,4 +1,4 @@
-/* KlattGridEditors.c
+/* KlattGridEditors.cpp
  *
  * Copyright (C) 2009-2019 david Weenink
  *
@@ -36,6 +36,8 @@ static void KlattGrid_Editor_defaultPlay (KlattGrid me, double tmin, double tmax
 
 /************************** KlattGrid_RealTierEditor *********************************/
 
+Thing_implement (KlattGrid_RealTierView, RealTierView, 0);
+
 Thing_implement (KlattGrid_RealTierEditor, RealTierEditor, 0);
 
 static void menu_cb_KlattGridHelp (KlattGrid_RealTierEditor, EDITOR_ARGS_DIRECT) {
@@ -53,7 +55,7 @@ void structKlattGrid_RealTierEditor :: v_play (double ltmin, double ltmax) {
 
 void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, conststring32 title, KlattGrid klattgrid, RealTier data) {
 	my klattgrid = klattgrid;
-	RealTierEditor_init (me, title, data, nullptr, false);
+	RealTierEditor_init (me, classKlattGrid_RealTierView, title, data, nullptr, false);
 }
 
 /************************** KlattGrid_PitchTierEditor *********************************/

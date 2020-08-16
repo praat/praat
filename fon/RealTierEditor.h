@@ -21,23 +21,47 @@
 #include "TimeSoundEditor.h"
 #include "RealTier.h"
 
-Thing_define (RealTierView, Thing) {
+Thing_define (FunctionView, Thing) {
+	FunctionEditor editor;
+	double ymin_fraction, ymax_fraction;
+	Graphics graphics() const { return our editor -> graphics.get(); }
+	double startWindow() const { return our editor -> startWindow; }
+	double endWindow() const { return our editor -> endWindow; }
+	double startSelection() const { return our editor -> startSelection; }
+	double endSelection() const { return our editor -> endSelection; }
 };
 
-Thing_define (RealTierEditor, TimeSoundEditor) {
+inline static void FunctionView_init (FunctionView me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	my editor = editor;
+	my ymin_fraction = ymin_fraction;
+	my ymax_fraction = ymax_fraction;
+}
+
+Thing_define (RealTierView, FunctionView) {
+	virtual double v_minimumLegalValue () { return undefined; }
+	virtual double v_maximumLegalValue () { return undefined; }
+	virtual conststring32 v_rightTickUnits () { return U""; }
+	virtual double v_defaultYmin () { return 0.0; }
+	virtual double v_defaultYmax () { return 1.0; }
+
 	double ymin, ymax, ycursor;
 	double anchorTime = undefined, anchorY;
 	bool draggingSelection;
 	double dt = 0.0, dy = 0.0;
 	integer firstSelected, lastSelected;
 
-	constexpr static double SOUND_HEIGHT = 0.382;
 	void viewRealTierAsWorldByWorld () const {
-		Graphics_setViewport (our graphics.get(), dataLeft_pxlt(), dataRight_pxlt(), dataBottom_pxlt(), dataTop_pxlt());
-		if (our d_sound.data)
-			(void) Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
-		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our ymin, our ymax);
+		Graphics_setViewport (our editor -> graphics.get(),
+				our editor -> dataLeft_pxlt(), our editor -> dataRight_pxlt(), our editor -> dataBottom_pxlt(), our editor -> dataTop_pxlt());
+		Graphics_insetViewport (our editor -> graphics.get(), 0.0, 1.0, our ymin_fraction, our ymax_fraction);
+		Graphics_setWindow (our editor -> graphics.get(), our editor -> startWindow, our editor -> endWindow, our ymin, our ymax);
 	}
+};
+
+Thing_define (RealTierEditor, TimeSoundEditor) {
+	autoRealTierView view;
+	RealTier tier() { return static_cast <RealTier> (our data); }
+	constexpr static double SOUND_HEIGHT = 0.382;
 
 	void v_createMenus ()
 		override;
@@ -52,12 +76,7 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
 
-	virtual double v_minimumLegalValue () { return undefined; }
-	virtual double v_maximumLegalValue () { return undefined; }
 	virtual conststring32 v_quantityText () { return U"Y"; }   // normally includes units
-	virtual conststring32 v_rightTickUnits () { return U""; }
-	virtual double v_defaultYmin () { return 0.0; }
-	virtual double v_defaultYmax () { return 1.0; }
 	virtual conststring32 v_setRangeTitle () { return U"Set range..."; }
 	virtual conststring32 v_defaultYminText () { return U"0.0"; }
 	virtual conststring32 v_defaultYmaxText () { return U"1.0"; }
@@ -71,7 +90,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
-void RealTierEditor_init (RealTierEditor me, conststring32 title, RealTier data, Sound sound, bool ownSound);
+void RealTierEditor_init (RealTierEditor me, ClassInfo viewClass, conststring32 title, RealTier data, Sound sound, bool ownSound);
 /*
 	`sound` may be null;
 	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
