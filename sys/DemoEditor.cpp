@@ -54,6 +54,8 @@ void structDemoEditor :: v_createMenus () {
 static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my foregroundGraphics)
 		return;   // could be the case in the very beginning
+static integer count=0;
+Melder_casual(U"gui_drawingarea_cb_expose ", ++count);
 	Graphics_clearWs (my foregroundGraphics.get());
 	Graphics_play (my backgroundGraphics.get(), my foregroundGraphics.get());
 }
@@ -189,6 +191,7 @@ int Demo_show () {
 		return 0;
 	autoDemoOpen demo;
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> windowForm);
+	Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> foregroundGraphics.get());
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> windowForm);
 	return 1;
 }

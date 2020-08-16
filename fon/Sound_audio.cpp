@@ -62,24 +62,22 @@ static integer getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Inf
 }
 
 static int portaudioStreamCallback (
-    const void *input, void *output,
+    const void *input, void * /*output*/,
     unsigned long frameCount,
-    const PaStreamCallbackTimeInfo* timeInfo,
-    PaStreamCallbackFlags statusFlags,
+    const PaStreamCallbackTimeInfo *  /*timeInfo*/,
+    PaStreamCallbackFlags /*statusFlags*/,
     void *void_info)
 {
-	(void) output;
-	(void) timeInfo;
-	(void) statusFlags;
 	struct Sound_recordFixedTime_Info *info = (struct Sound_recordFixedTime_Info *) void_info;
-	unsigned long samplesLeft = info -> numberOfSamples - info -> numberOfSamplesRead;
+	integer samplesLeft = info -> numberOfSamples - info -> numberOfSamplesRead;
 	if (samplesLeft > 0) {
-		unsigned long dsamples = std::min (samplesLeft, frameCount);
-		memcpy (info -> buffer + 1 + info -> numberOfSamplesRead, input, 2 * dsamples);
+		integer dsamples = std::min (samplesLeft, uinteger_to_integer (frameCount));
+		memcpy (info -> buffer + 1 + info -> numberOfSamplesRead, input, integer_to_uinteger (2 * dsamples));
 		info -> numberOfSamplesRead += dsamples;
-		short *input2 = (short*) input;
-		trace (U"read ", dsamples, U" samples: ", input2 [0], U", ", input2 [1], U", ", input2 [3], U"...");
-		if (info -> numberOfSamplesRead >= info -> numberOfSamples) return paComplete;
+		const short *input2 = (const short *) input;
+		Melder_casual (U"read ", dsamples, U" samples: ", input2 [0], U", ", input2 [1], U", ", input2 [3], U"...");
+		if (info -> numberOfSamplesRead >= info -> numberOfSamples)
+			return paComplete;
 	} else /*if (info -> numberOfSamplesRead >= info -> numberOfSamples)*/ {
 		info -> numberOfSamplesRead = info -> numberOfSamples;
 		return paComplete;
@@ -220,6 +218,9 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 				TODO: cycle through all devices, and determine which of them are input devices
 			*/
 			streamParameters. device = Pa_GetDefaultInputDevice ();
+			Melder_casual (U"streamParameters. device: ", (integer) streamParameters. device);
+			const PaDeviceInfo *paDeviceInfo = Pa_GetDeviceInfo (streamParameters. device);
+			Melder_casual (U"Name: ", Melder_peek8to32 (paDeviceInfo -> name));
 		} else {
 			#if defined (macintosh)
 			#elif defined (linux) && ! defined (NO_AUDIO)
@@ -340,13 +341,17 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 				macCoreStreamInfo. hostApiType = paCoreAudio;
 				macCoreStreamInfo. version = 0x01;
 				macCoreStreamInfo. flags = paMacCoreChangeDeviceParameters | paMacCoreFailIfConversionRequired;
+				macCoreStreamInfo. channelMap = nullptr;
+				macCoreStreamInfo. channelMapSize = 0;
 				streamParameters. hostApiSpecificStreamInfo = & macCoreStreamInfo;
 			#endif
 			info. numberOfSamples = numberOfSamples;
 			info. numberOfSamplesRead = 0;
 			info. buffer = buffer.begin();
 			PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, nullptr,
-				sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) & info);
+				sampleRate,
+				0,   // this gives the default of 64 samples per buffer on Paul's 2018 MacBook Pro (checked 20200813)
+				paNoFlag, portaudioStreamCallback, (void *) & info);
 			if (err)
 				Melder_throw (U"open ", Melder_peek8to32 (Pa_GetErrorText (err)));
 			Pa_StartStream (portaudioStream);

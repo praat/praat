@@ -353,9 +353,19 @@ static PaError gatherDeviceInfo(PaMacAUHAL *auhalHostApi)
     auhalHostApi->devIds = NULL;
 
     /* -- figure out how many devices there are -- */
-    AudioHardwareGetPropertyInfo( kAudioHardwarePropertyDevices,
-                                  &propsize,
-                                  NULL );
+    //AudioHardwareGetPropertyInfo( kAudioHardwarePropertyDevices,
+    //                              &propsize,
+    //                              NULL );   // ppgb 20200814: can lead to warning: [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x6000002d67a0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+	if (true) {// this block ppgb 20200814
+		fprintf(stderr,"gatherDeviceInfo 1 %d\n",propsize);
+		AudioObjectPropertyAddress audioObjectPropertyAddress;
+		audioObjectPropertyAddress. mSelector = kAudioHardwarePropertyDevices;
+		audioObjectPropertyAddress. mScope = kAudioObjectPropertyScopeGlobal;
+		audioObjectPropertyAddress. mElement = 0;
+		AudioObjectGetPropertyDataSize( kAudioObjectSystemObject, & audioObjectPropertyAddress, 0, NULL, & propsize );   // ppgb 20200814
+				// ppgb 20200814: can lead to warning: [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x6000002c6c20>...
+		fprintf(stderr,"gatherDeviceInfo 2 %d\n",propsize);
+	}
     auhalHostApi->devCount = propsize / sizeof( AudioDeviceID );
 
     VDBUG( ( "Found %ld device(s).\n", auhalHostApi->devCount ) );
@@ -369,7 +379,7 @@ static PaError gatherDeviceInfo(PaMacAUHAL *auhalHostApi)
     AudioHardwareGetProperty( kAudioHardwarePropertyDevices,
                                   &propsize,
                                   auhalHostApi->devIds );
-#ifdef MAC_CORE_VERBOSE_DEBUG
+#if defined (MAC_CORE_VERBOSE_DEBUG) ||1
     {
        int i;
        for( i=0; i<auhalHostApi->devCount; ++i )
@@ -735,11 +745,12 @@ PaError PaMacCore_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIn
 		CFRunLoopRef theRunLoop = NULL;
 		AudioObjectPropertyAddress theAddress = { kAudioHardwarePropertyRunLoop, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
 		OSStatus osErr = AudioObjectSetPropertyData (kAudioObjectSystemObject, &theAddress, 0, NULL, sizeof(CFRunLoopRef), &theRunLoop);
+				// ppgb 20200814: can lead to warning: [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x600000301780> F8BB1C28-BAE8-11D6-9C31-00039315CD46
 		if (osErr != noErr) {
 			goto error;
 		}
 	}
-	
+
     unixErr = initializeXRunListenerList();
     if( 0 != unixErr ) {
        return UNIX_ERR(unixErr);
@@ -2477,6 +2488,7 @@ static OSStatus AudioIOProc( void *inRefCon,
       OSStatus err = 0;
       int chan = stream->inputAudioBufferList.mBuffers[0].mNumberChannels ;
       /* FIXME: looping here may not actually be necessary, but it was something I tried in testing. */
+//fprintf(stderr,"before AudioUnitRender: %d %d %d %d\n", chan, stream->inputAudioBufferList.mNumberBuffers, stream->inputAudioBufferList.mBuffers[0].mDataByteSize, inNumberFrames);
       do {
          err= AudioUnitRender(stream->inputUnit,
                  ioActionFlags,
@@ -2484,6 +2496,7 @@ static OSStatus AudioIOProc( void *inRefCon,
                  INPUT_ELEMENT,
                  inNumberFrames,
                  &stream->inputAudioBufferList );
+//fprintf(stderr,"after AudioUnitRender: %d %d\n", inNumberFrames, err);
          if( err == -10874 )
             inNumberFrames /= 2;
       } while( err == -10874 && inNumberFrames > 1 );
@@ -2509,9 +2522,11 @@ static OSStatus AudioIOProc( void *inRefCon,
       {
          /* for simplex input w/o SR conversion,
             just pop the data into the buffer processor.*/
+ //fprintf(stderr,"before PaUtil_BeginBufferProcessing\n");
          PaUtil_BeginBufferProcessing( &(stream->bufferProcessor),
                               &timeInfo,
                               stream->xrunFlags );
+ //fprintf(stderr,"after PaUtil_BeginBufferProcessing\n");
          stream->xrunFlags = 0;
 
          PaUtil_SetInputFrameCount( &(stream->bufferProcessor), inNumberFrames);
@@ -2519,9 +2534,11 @@ static OSStatus AudioIOProc( void *inRefCon,
                              0,
                              stream->inputAudioBufferList.mBuffers[0].mData,
                              chan );
+ //fprintf(stderr,"before PaUtil_EndBufferProcessing: %f\n", ((float *) stream->inputAudioBufferList.mBuffers[0].mData) [0]);
          framesProcessed =
               PaUtil_EndBufferProcessing( &(stream->bufferProcessor),
                                           &callbackResult );
+ //fprintf(stderr,"after PaUtil_EndBufferProcessing: %f\n", ((float *) stream->inputAudioBufferList.mBuffers[0].mData) [0]);
       }
       if( !stream->outputUnit && stream->inputSRConverter )
       {

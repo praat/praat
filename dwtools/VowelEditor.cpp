@@ -1060,6 +1060,8 @@ static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
 }
 
 static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
+static integer numberOfExposes = 0;
+Melder_casual(U"expose ", ++numberOfExposes);
 	Melder_assert (me);
 	Melder_assert (my trajectory);
 	const double startF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmin);
@@ -1157,7 +1159,7 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 			continue;
 		}
 		iskipped = 0;
-		Graphics_line (my graphics.get(), xp, yp, x, y);
+		//Graphics_line (my graphics.get(), xp, yp, x, y);
 
 		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
 		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
