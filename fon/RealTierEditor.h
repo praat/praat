@@ -29,6 +29,11 @@ Thing_define (FunctionView, Thing) {
 	double endWindow() const { return our editor -> endWindow; }
 	double startSelection() const { return our editor -> startSelection; }
 	double endSelection() const { return our editor -> endSelection; }
+	void setViewport() const {
+		Graphics_setViewport (our graphics(),
+				our editor -> dataLeft_pxlt(), our editor -> dataRight_pxlt(), our editor -> dataBottom_pxlt(), our editor -> dataTop_pxlt());
+		Graphics_insetViewport (our graphics(), 0.0, 1.0, our ymin_fraction, our ymax_fraction);
+	}
 };
 
 inline static void FunctionView_init (FunctionView me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
@@ -51,10 +56,8 @@ Thing_define (RealTierView, FunctionView) {
 	integer firstSelected, lastSelected;
 
 	void viewRealTierAsWorldByWorld () const {
-		Graphics_setViewport (our editor -> graphics.get(),
-				our editor -> dataLeft_pxlt(), our editor -> dataRight_pxlt(), our editor -> dataBottom_pxlt(), our editor -> dataTop_pxlt());
-		Graphics_insetViewport (our editor -> graphics.get(), 0.0, 1.0, our ymin_fraction, our ymax_fraction);
-		Graphics_setWindow (our editor -> graphics.get(), our editor -> startWindow, our editor -> endWindow, our ymin, our ymax);
+		our setViewport ();
+		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
 };
 

@@ -1071,19 +1071,21 @@ bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	if (event -> isClick()) {
 		Melder_assert (isundef (anchorTime));   // sanity check for the fixed order click-drag-drop
 		Melder_assert (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);   // sanity check for the fixed order click-drag-drop
-		const double middle = 0.5 * (our startSelection + our endSelection);
+		const double selectedMiddleTime = 0.5 * (our startSelection + our endSelection);
 		const bool theyWantToExtendTheCurrentSelectionAtTheLeft =
-				(event -> shiftKeyPressed && mouseTime < middle) || event -> isLeftBottomFunctionKeyPressed();
+				(event -> shiftKeyPressed && mouseTime < selectedMiddleTime) || event -> isLeftBottomFunctionKeyPressed();
 		const bool theyWantToExtendTheCurrentSelectionAtTheRight =
-				(event -> shiftKeyPressed && mouseTime >= middle) || event -> isRightBottomFunctionKeyPressed();
+				(event -> shiftKeyPressed && mouseTime >= selectedMiddleTime) || event -> isRightBottomFunctionKeyPressed();
 		if (theyWantToExtendTheCurrentSelectionAtTheLeft) {
-			anchorTime = our endSelection;
 			our startSelection = mouseTime;
+			anchorTime = our endSelection;
 		} else if (theyWantToExtendTheCurrentSelectionAtTheRight) {
-			anchorTime = our startSelection;
 			our endSelection = mouseTime;
+			anchorTime = our startSelection;
 		} else {
-			our startSelection = our endSelection = anchorTime = mouseTime;
+			our startSelection = mouseTime;
+			our endSelection = mouseTime;
+			anchorTime = mouseTime;
 		}
 		Melder_sort (& our startSelection, & our endSelection);
 		Melder_assert (isdefined (anchorTime));

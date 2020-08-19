@@ -54,7 +54,7 @@ static void RealTierView_updateScaling (RealTierView me, RealTier tier) {
 	} else {
 		double ymin = RealTier_getMinimumValue (tier);
 		double ymax = RealTier_getMaximumValue (tier);
-		double range = ymax - ymin;
+		const double range = ymax - ymin;
 		if (range == 0.0) {
 			ymin -= 1.0;
 			ymax += 1.0;
@@ -62,14 +62,8 @@ static void RealTierView_updateScaling (RealTierView me, RealTier tier) {
 			ymin -= 0.2 * range;
 			ymax += 0.2 * range;
 		}
-		if (isdefined (my v_minimumLegalValue()) && ymin < my v_minimumLegalValue ())
-			ymin = my v_minimumLegalValue ();
-		if (isdefined (my v_maximumLegalValue ()) && ymin > my v_maximumLegalValue ())
-			ymin = my v_maximumLegalValue ();
-		if (isdefined (my v_minimumLegalValue ()) && ymax < my v_minimumLegalValue ())
-			ymax = my v_minimumLegalValue ();
-		if (isdefined (my v_maximumLegalValue ()) && ymax > my v_maximumLegalValue ())
-			ymax = my v_maximumLegalValue ();
+		Melder_clip (my v_minimumLegalValue(), & ymin, my v_maximumLegalValue());
+		Melder_clip (my v_minimumLegalValue(), & ymax, my v_maximumLegalValue());
 		if (ymin >= ymax) {
 			if (isdefined (my v_minimumLegalValue ()) && isdefined (my v_maximumLegalValue ())) {
 				ymin = my v_minimumLegalValue ();
@@ -83,7 +77,7 @@ static void RealTierView_updateScaling (RealTierView me, RealTier tier) {
 				ymin = ymax - 1.0;
 			}
 		}
-		if (ymin < my ymin || my ymin < 0.0)
+		if (ymin < my ymin || my ymin < 0.0)   // what?
 			my ymin = ymin;
 		if (ymax > my ymax)
 			my ymax = ymax;
@@ -92,70 +86,66 @@ static void RealTierView_updateScaling (RealTierView me, RealTier tier) {
 	}
 }
 
-static void FunctionEditor_drawRealTier (FunctionEditor me, RealTier tier,
-	double ymin, double ycursor, double ymax, conststring32 rightTickUnits
-) {
-	Graphics_setColour (my graphics.get(), Melder_RED);
-	Graphics_line (my graphics.get(), my startWindow, ycursor, my endWindow, ycursor);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
-	Graphics_text (my graphics.get(), my startWindow, ycursor,
-			Melder_float (Melder_half (ycursor)));
-	Graphics_setColour (my graphics.get(), Melder_BLUE);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
-	Graphics_text (my graphics.get(), my endWindow, ymax,
-			Melder_float (Melder_half (ymax)), rightTickUnits);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
-	Graphics_text (my graphics.get(), my endWindow, ymin,
-			Melder_float (Melder_half (ymin)), rightTickUnits);
-	const integer ifirstSelected = AnyTier_timeToHighIndex (tier->asAnyTier(), my startSelection);
-	const integer ilastSelected = AnyTier_timeToLowIndex (tier->asAnyTier(), my endSelection);
-	const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), my startWindow);
-	const integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), my endWindow);
-	Graphics_setLineWidth (my graphics.get(), 2.0);
+static void RealTierView_draw (RealTierView me, RealTier tier) {
+	Graphics_setColour (my graphics(), Melder_RED);
+	Graphics_line (my graphics(), my startWindow(), my ycursor, my endWindow(), my ycursor);
+	Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
+	Graphics_text (my graphics(), my startWindow(), my ycursor,
+			Melder_float (Melder_half (my ycursor)));
+	Graphics_setColour (my graphics(), Melder_BLUE);
+	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_TOP);
+	Graphics_text (my graphics(), my endWindow(), my ymax,
+			Melder_float (Melder_half (my ymax)), my v_rightTickUnits());
+	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
+	Graphics_text (my graphics(), my endWindow(), my ymin,
+			Melder_float (Melder_half (my ymin)), my v_rightTickUnits());
+	const integer ifirstSelected = AnyTier_timeToHighIndex (tier->asAnyTier(), my startSelection());
+	const integer ilastSelected = AnyTier_timeToLowIndex (tier->asAnyTier(), my endSelection());
+	const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), my startWindow());
+	const integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), my endWindow());
+	Graphics_setLineWidth (my graphics(), 2.0);
 	if (tier -> points.size == 0) {
-		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics.get(), 0.5 * (my startWindow + my endWindow), 0.5 * (ymin + ymax),
+		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my graphics(), 0.5 * (my startWindow() + my endWindow()), 0.5 * (my ymin + my ymax),
 				U"(no points)");
 	} else if (imax < imin) {
-		const double yleft = RealTier_getValueAtTime (tier, my startWindow);
-		const double yright = RealTier_getValueAtTime (tier, my endWindow);
-		Graphics_line (my graphics.get(), my startWindow, yleft, my endWindow, yright);
+		const double yleft = RealTier_getValueAtTime (tier, my startWindow());
+		const double yright = RealTier_getValueAtTime (tier, my endWindow());
+		Graphics_line (my graphics(), my startWindow(), yleft, my endWindow(), yright);
 	} else {
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
 			RealPoint point = tier -> points.at [ipoint];
 			double t = point -> number, y = point -> value;
 			if (ipoint >= ifirstSelected && ipoint <= ilastSelected)
-				Graphics_setColour (my graphics.get(), Melder_RED);
-			Graphics_fillCircle_mm (my graphics.get(), t, y, 3.0);
-			Graphics_setColour (my graphics.get(), Melder_BLUE);
+				Graphics_setColour (my graphics(), Melder_RED);
+			Graphics_fillCircle_mm (my graphics(), t, y, 3.0);
+			Graphics_setColour (my graphics(), Melder_BLUE);
 			if (ipoint == 1)
-				Graphics_line (my graphics.get(), my startWindow, y, t, y);
+				Graphics_line (my graphics(), my startWindow(), y, t, y);
 			else if (ipoint == imin)
-				Graphics_line (my graphics.get(), t, y, my startWindow, RealTier_getValueAtTime (tier, my startWindow));
+				Graphics_line (my graphics(), t, y, my startWindow(), RealTier_getValueAtTime (tier, my startWindow()));
 			if (ipoint == tier -> points.size)
-				Graphics_line (my graphics.get(), t, y, my endWindow, y);
+				Graphics_line (my graphics(), t, y, my endWindow(), y);
 			else if (ipoint == imax)
-				Graphics_line (my graphics.get(), t, y, my endWindow, RealTier_getValueAtTime (tier, my endWindow));
+				Graphics_line (my graphics(), t, y, my endWindow(), RealTier_getValueAtTime (tier, my endWindow()));
 			else {
 				RealPoint pointRight = tier -> points.at [ipoint + 1];
-				Graphics_line (my graphics.get(), t, y, pointRight -> number, pointRight -> value);
+				Graphics_line (my graphics(), t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 	}
-	Graphics_setLineWidth (my graphics.get(), 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
+	Graphics_setLineWidth (my graphics(), 1.0);
+	Graphics_setColour (my graphics(), Melder_BLACK);
 }
 
-static void RealTierView_drawRealTierWhileDragging (RealTierView me, RealTier tier,
-	double ymin, double ymax, double dt, double dy
-) {
+static void RealTierView_drawWhileDragging (RealTierView me, RealTier tier) {
 	Graphics_xorOn (my graphics(), Melder_MAROON);
 	/*
 		Draw all selected points as empty circles, if inside the window.
 	*/
 	for (integer ipoint = my firstSelected; ipoint <= my lastSelected; ipoint ++) {
-		RealPoint point = tier -> points.at [ipoint];
-		double t = point -> number + dt, y = point -> value + dy;
+		const RealPoint point = tier -> points.at [ipoint];
+		const double t = point -> number + my dt, y = point -> value + my dy;
 		if (t >= my startWindow() && t <= my endWindow())
 			Graphics_circle_mm (my graphics(), t, y, 3);
 	}
@@ -164,11 +154,11 @@ static void RealTierView_drawRealTierWhileDragging (RealTierView me, RealTier ti
 		/*
 			Draw a crosshair with time and y.
 		*/
-		RealPoint point = tier -> points.at [my firstSelected];
-		double t = point -> number + dt, y = point -> value + dy;
-		Graphics_line (my graphics(), t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics(), 4.0));
+		const RealPoint point = tier -> points.at [my firstSelected];
+		const double t = point -> number + my dt, y = point -> value + my dy;
+		Graphics_line (my graphics(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics(), 4.0));
 		Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
-		Graphics_text (my graphics(), t, ymax, Melder_fixed (t, 6));
+		Graphics_text (my graphics(), t, my ymax, Melder_fixed (t, 6));
 		Graphics_line (my graphics(), my startWindow(), y, my endWindow(), y);
 		Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_BOTTOM);
 		Graphics_text (my graphics(), my startWindow(), y, Melder_fixed (y, 6));
@@ -271,9 +261,9 @@ void structRealTierEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our view -> ymin, our view -> ymax);
-	FunctionEditor_drawRealTier (this, tier, our view -> ymin, our view -> ycursor, our view -> ymax, our view -> v_rightTickUnits());
+	RealTierView_draw (our view.get(), tier);
 	if (isdefined (our view -> anchorTime))
-		RealTierView_drawRealTierWhileDragging (our view.get(), tier, our view -> ymin, our view -> ymax, our view -> dt, our view -> dy);
+		RealTierView_drawWhileDragging (our view.get(), tier);
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
@@ -396,7 +386,7 @@ void RealTierEditor_init (RealTierEditor me, ClassInfo viewClass, conststring32 
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
 	my view = Thing_newFromClass (viewClass). static_cast_move <structRealTierView>();
 	FunctionView_init (my view.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
-	my view -> ymin = -1.0;
+	my view -> ymin = -1.0;   // what?
 	RealTierEditor_updateScaling (me);
 	my view -> ycursor = 0.382 * my view -> ymin + 0.618 * my view -> ymax;
 }
