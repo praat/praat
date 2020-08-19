@@ -1,5 +1,5 @@
 # Makefile of the library "external/portaudio"
-# Paul Boersma, 21 October 2018
+# Paul Boersma, 19 August 2020
 
 include ../../makefile.defs
 
@@ -8,7 +8,7 @@ OBJECTS = \
 	pa_win_hostapis.o pa_win_util.o pa_win_wmme.o pa_win_waveformat.o \
 	pa_front.o pa_debugprint.o pa_cpuload.o \
 	pa_allocation.o pa_process.o pa_converters.o pa_dither.o \
-	pa_stream.o
+	pa_stream.o patest_record.o
 
 .PHONY: all clean
 

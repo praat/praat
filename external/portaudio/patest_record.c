@@ -187,8 +187,8 @@ static int playCallback( const void *inputBuffer, void *outputBuffer,
 }
 
 /*******************************************************************/
-int patest_record ();
-int patest_record ()
+int patest_record (void);
+int patest_record (void)
 {
     PaStreamParameters  inputParameters,
                         outputParameters;

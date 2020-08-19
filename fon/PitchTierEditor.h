@@ -33,6 +33,14 @@ Thing_define (PitchTierView, RealTierView) {
 		override { return 600.0; }
 };
 
+Thing_declare (PitchTierEditor);
+
+inline static autoPitchTierView PitchTierView_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
+	autoPitchTierView me = Thing_new (PitchTierView);
+	FunctionView_init (me.get(), editor, bottom_fraction, top_fraction);
+	return me;
+}
+
 Thing_define (PitchTierEditor, RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
