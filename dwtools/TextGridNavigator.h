@@ -26,16 +26,20 @@
 #include "TextGridNavigator_def.h"
 
 /*
-	Navigates on one particular tier of a TextGrid (the navigation tier), depending on context.
-	Suppose the navigation tier has intervals labeled with phonemes (e.g. a,i, \ct, o, f, p ...).
-	Navigation then means that we want to visit only the interval where the phonemes belong to a subset
-	of all the possible phonemes. 
-	Context is either context on the same tier (i.e. left and/or right context), or,
-	a relation between the navigation tier and subordinate tiers.
+	The purpose of a TextGridNavigator is to find successive elements that match a criterion on one selected tier, the navigation tier.
+	The criterion depends on "navigation contexts".
+	Each navigation context handles only one particular tier. By combining different navigation contexts we 
+	can construct searches that extend over multiple tears. The simplest navigation context consists of only a single label that
+	has to be matched.
+	A somewhat more involved context has, instead of a single label, a set of labels where one of the set has to be matched. 
+	The most extensive navigation context involves right and a left context sets of labels, that have to be matched too.
 	
-
-
-
+	As an example consider a TextGris with a tier whose intervals have been labeled with IPA symbols /a, i, \ct, o, f, p etc/.
+	A very simple navigation context that consists of the navigiation set with IPA vowel symbols (u, i, a), a left context 
+	set with /b, p/ and a right context set with /f, s/ would find all vowels /u, e, a/ that are preceded by a /b/ or a /p/ and 
+	followed by a /f/ or and /s/ (if the match condition EQUALS were used).
+	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context on for this tier and 
+	combine it with the previous context to search for items that also match the syntactic context.
 */
 
 Thing_define (IntervalTierNavigationContext, TierNavigationContext) {

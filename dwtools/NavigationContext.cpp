@@ -196,7 +196,6 @@ void NavigationContext_modifyRightContextLabels (NavigationContext me, Strings l
 			my matchContextOnly = true;
 		if (my leftContextLabels)
 			my combinationCriterion = kContext_combination::LEFT_AND_RIGHT;
-		
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot set right context labels from ", labels, U".");
 	}
@@ -207,17 +206,17 @@ void NavigationContext_modifyContextCombination (NavigationContext me, kContext_
 	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
 	if (combinationCriterion == kContext_combination::LEFT)
 		Melder_require (hasLeftContext,
-			U"For this option you should have left context labels installed.");
+			U"For this option the NavigationContext should have left context labels.");
 	if (combinationCriterion == kContext_combination::RIGHT)
 		Melder_require (hasRightContext,
-			U"For this option you should have right context labels installed.");
+			U"For this option the NavigationContext should have right context labels.");
 	if (combinationCriterion == kContext_combination::LEFT_AND_RIGHT || combinationCriterion == kContext_combination::LEFT_OR_RIGHT_NOT_BOTH || 
 		combinationCriterion == kContext_combination::LEFT_OR_RIGHT_OR_BOTH)
 		Melder_require (hasLeftContext && hasRightContext,
-			U"For this option you should have left and right context labels installed.");
+			U"For this option the NavigationContext should have left and right context labels.");
 	if (matchContextOnly)
 		Melder_require (hasLeftContext || hasRightContext,
-			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
+			U"For this option the NavigationContext should have left or right context labels.");
 	my matchContextOnly = matchContextOnly;
 	my combinationCriterion = combinationCriterion;
 }
