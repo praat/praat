@@ -22,7 +22,7 @@
 #include "IntensityTier.h"
 #include "Sound.h"
 
-Thing_define (IntensityTierView, RealTierView) {
+Thing_define (IntensityTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
 	double v_defaultYmin ()
@@ -31,9 +31,9 @@ Thing_define (IntensityTierView, RealTierView) {
 		override { return 100.0; }
 };
 
-inline static autoIntensityTierView IntensityTierView_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	autoIntensityTierView me = Thing_new (IntensityTierView);
-	FunctionView_init (me.get(), editor, ymin_fraction, ymax_fraction);
+inline static autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoIntensityTierArea me = Thing_new (IntensityTierArea);
+	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 

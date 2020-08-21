@@ -2984,6 +2984,7 @@ void praat_uvafon_init () {
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
 	Data_recognizeFileType (IDXFormattedMatrixFileRecognizer);
 	
+	structPitchTierArea      :: f_preferences ();
 	structManipulationEditor :: f_preferences ();
 	structSpectrumEditor     :: f_preferences ();
 	structFormantGridEditor  :: f_preferences ();

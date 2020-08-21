@@ -1236,7 +1236,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		FunctionEditor_init (me.get(), title, ana);
 		my pitchTierArea = PitchTierArea_create (me.get(), ( ana -> duration ? 0.15 : 0.0 ), 0.65);
 		if (ana -> duration)
-			my durationTierArea = DurationTierView_create (me.get(), 0.0, 0.15);
+			my durationTierArea = DurationTierArea_create (me.get(), 0.0, 0.15);
 
 		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch.get());
 		if (my pitchTierArea -> p_pitch_units == kPitchTierArea_units::HERTZ) {

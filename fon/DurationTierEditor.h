@@ -22,7 +22,7 @@
 #include "DurationTier.h"
 #include "Sound.h"
 
-Thing_define (DurationTierView, RealTierView) {
+Thing_define (DurationTierArea, RealTierArea) {
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
@@ -33,9 +33,9 @@ Thing_define (DurationTierView, RealTierView) {
 		override { return 3.0; }
 };
 
-inline static autoDurationTierView DurationTierView_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	autoDurationTierView me = Thing_new (DurationTierView);
-	FunctionView_init (me.get(), editor, ymin_fraction, ymax_fraction);
+inline static autoDurationTierArea DurationTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoDurationTierArea me = Thing_new (DurationTierArea);
+	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 

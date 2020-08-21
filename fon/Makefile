@@ -22,7 +22,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \
    SoundRecorder.o Sound_enhance.o VoiceAnalysis.o \
-   FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
+   FunctionArea.o FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
    PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
    RealTierArea.o RealTierEditor.o PitchTierArea.o PitchTierEditor.o IntensityTierEditor.o \
    DurationTierEditor.o AmplitudeTierEditor.o \

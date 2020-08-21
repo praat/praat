@@ -19,7 +19,7 @@
 #include "IntensityTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (IntensityTierView, RealTierView, 0);
+Thing_implement (IntensityTierArea, RealTierArea, 0);
 
 Thing_implement (IntensityTierEditor, RealTierEditor, 0);
 
@@ -41,7 +41,7 @@ void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
 autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensity, Sound sound, bool ownSound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
-		RealTierEditor_init (me.get(), classIntensityTierView, title, (RealTier) intensity, sound, ownSound);
+		RealTierEditor_init (me.get(), classIntensityTierArea, title, intensity, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier window not created.");

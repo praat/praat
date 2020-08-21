@@ -18,31 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "FunctionArea.h"
 #include "RealTier.h"
-#include "FunctionEditor.h"
 
-Thing_define (FunctionView, Thing) {
-	FunctionEditor editor;
-	double ymin_fraction, ymax_fraction;
-	Graphics graphics() const { return our editor -> graphics.get(); }
-	double startWindow() const { return our editor -> startWindow; }
-	double endWindow() const { return our editor -> endWindow; }
-	double startSelection() const { return our editor -> startSelection; }
-	double endSelection() const { return our editor -> endSelection; }
-	void setViewport() const {
-		Graphics_setViewport (our graphics(),
-				our editor -> dataLeft_pxlt(), our editor -> dataRight_pxlt(), our editor -> dataBottom_pxlt(), our editor -> dataTop_pxlt());
-		Graphics_insetViewport (our graphics(), 0.0, 1.0, our ymin_fraction, our ymax_fraction);
-	}
-};
-
-inline static void FunctionView_init (FunctionView me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	my editor = editor;
-	my ymin_fraction = ymin_fraction;
-	my ymax_fraction = ymax_fraction;
-}
-
-Thing_define (RealTierView, FunctionView) {
+Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U""; }
@@ -63,17 +42,17 @@ Thing_define (RealTierView, FunctionView) {
 	}
 };
 
-void RealTierArea_addPointAt (RealTierView me, RealTier tier, double time, double desiredY);
+void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY);
 
-void RealTierArea_removePoints (RealTierView me, RealTier tier);
+void RealTierArea_removePoints (RealTierArea me, RealTier tier);
 
-void RealTierArea_addPointAtCursor (RealTierView me, RealTier tier);
+void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier);
 
-void RealTierArea_updateScaling (RealTierView me, RealTier tier);
+void RealTierArea_updateScaling (RealTierArea me, RealTier tier);
 
-void RealTierArea_draw (RealTierView me, RealTier tier);
+void RealTierArea_draw (RealTierArea me, RealTier tier);
 
-void RealTierArea_drawWhileDragging (RealTierView me, RealTier tier);
+void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier);
 
 /* End of file RealTierArea.h */
 #endif
