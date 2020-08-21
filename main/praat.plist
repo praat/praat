@@ -533,9 +533,11 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma &amp; David Weenink</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Praat needs access to your microphone to record speech.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSRequiresAquaSystemAppearance</key>
-	<true/>
+	<false/>
 </dict>
 </plist>

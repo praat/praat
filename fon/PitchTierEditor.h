@@ -22,21 +22,32 @@
 #include "PitchTier.h"
 #include "Sound.h"
 
-Thing_define (PitchTierEditor, RealTierEditor) {
-	void v_createHelpMenuItems (EditorMenu menu)
-		override;
-	void v_play (double tmin, double tmax)
-		override;
+Thing_define (PitchTierView, RealTierView) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
-	conststring32 v_quantityText ()
-		override { return U"Frequency (Hz)"; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
 	double v_defaultYmin ()
 		override { return 50.0; }
 	double v_defaultYmax ()
 		override { return 600.0; }
+};
+
+Thing_declare (PitchTierEditor);
+
+inline static autoPitchTierView PitchTierView_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
+	autoPitchTierView me = Thing_new (PitchTierView);
+	FunctionView_init (me.get(), editor, bottom_fraction, top_fraction);
+	return me;
+}
+
+Thing_define (PitchTierEditor, RealTierEditor) {
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_play (double tmin, double tmax)
+		override;
+	conststring32 v_quantityText ()
+		override { return U"Frequency (Hz)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set frequency range..."; }
 	conststring32 v_defaultYminText ()

@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,7 @@ autoPointProcess TextGrid_getPoints_followed (TextGrid me, integer tierNumber,
 Function TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, integer tierNumber);
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, integer tierNumber);
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, integer tierNumber);
+void AnyTextGridTier_identifyClass (Function anyTextGridTier, IntervalTier *intervalTier, TextTier *textTier);
 
 void TextGrid_addTier_copy (TextGrid me, Function tier);
 autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids);

@@ -36,7 +36,9 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 	#elif gdi
 		return motif_win_mouseStillDown ();
 	#elif quartz
-		[[d_macView window]   flushWindow];
+		Melder_casual (U"v_mouseStillDown: display");
+		[[d_macView window]   display];
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		NSEvent *nsEvent = [[d_macView window]
 			nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSKeyDownMask
 			untilDate: [NSDate distantFuture]
@@ -45,6 +47,7 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 			];
 		NSUInteger nsEventType = [nsEvent type];
 		if (nsEventType == NSKeyDown) NSBeep ();
+		[pool release];
 		return nsEventType != NSLeftMouseUp;
 	#else
 		return false;

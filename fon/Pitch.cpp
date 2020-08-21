@@ -315,6 +315,35 @@ integer Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
 	return Pitch_getMeanAbsoluteSlope (me, nullptr, nullptr, nullptr, nullptr, slope);
 }
 
+MelderFraction Pitch_getFractionOfLocallyVoicedFrames (
+	Pitch me, double tmin, double tmax, double ceiling, double silenceThreshold, double voicingThreshold)
+{
+	MelderFraction result;
+	integer imin, imax;
+	result.denominator = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	for (integer i = imin; i <= imax; i ++) {
+		const Pitch_Frame frame = & my frames [i];
+		if (frame -> intensity >= silenceThreshold) {
+			for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
+				const Pitch_Candidate cand = & frame -> candidates [icand];
+				if (cand -> frequency > 0.0 && cand -> frequency < ceiling && cand -> strength >= voicingThreshold) {
+					result.numerator += 1.0;
+					break;   // next frame
+				}
+			}
+		}
+	}
+	return result;
+}
+
+MelderFraction Pitch_getFractionOfLocallyUnvoicedFrames (
+	Pitch me, double tmin, double tmax, double ceiling, double silenceThreshold, double voicingThreshold)
+{
+	MelderFraction fraction = Pitch_getFractionOfLocallyVoicedFrames (me, tmin, tmax, ceiling, silenceThreshold, voicingThreshold);
+	fraction.numerator = fraction.denominator - fraction.numerator;
+	return fraction;
+}
+
 void structPitch :: v_info () {
 	autoVEC frequencies = Sampled_getSortedValues (this, 0.0, 0.0, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
 	structDaata :: v_info ();

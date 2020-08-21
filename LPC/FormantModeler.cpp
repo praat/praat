@@ -814,7 +814,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 		for (integer itrack = 1; itrack <= numberOfFormants; itrack ++) {
 			const DataModeler ffi = my trackmodelers.at [itrack];
 			autoVEC zscores = DataModeler_getZScores (ffi);
-			z.row (itrack) <<= zscores.get ();
+			z.row (itrack) <<= zscores.get();
 		}
 		// 2. Do the manipulation in a copy
 		autoFormantModeler thee = Data_copy (me);

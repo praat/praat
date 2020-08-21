@@ -2508,9 +2508,25 @@ static void on_lbuttonDown (HWND window, BOOL doubleClick, int x, int y, UINT fl
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me) {
 		if (MEMBER (me, DrawingArea)) {
-			_GuiWinDrawingArea_handleClick (me, x, y);
+			_GuiWinDrawingArea_handleMouse (me, structGuiDrawingArea_MouseEvent::Phase::CLICK, x, y);
 		} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
 	} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
+}
+static void on_mouseMove (HWND window, int x, int y, UINT flags) {
+	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
+	if (me) {
+		if (MEMBER (me, DrawingArea) && (flags & MK_LBUTTON)) {
+			_GuiWinDrawingArea_handleMouse (me, structGuiDrawingArea_MouseEvent::Phase::DRAG, x, y);
+		} else FORWARD_WM_MOUSEMOVE (window, x, y, flags, DefWindowProc);
+	} else FORWARD_WM_MOUSEMOVE (window, x, y, flags, DefWindowProc);
+}
+static void on_lbuttonUp (HWND window, int x, int y, UINT flags) {
+	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
+	if (me) {
+		if (MEMBER (me, DrawingArea)) {
+			_GuiWinDrawingArea_handleMouse (me, structGuiDrawingArea_MouseEvent::Phase::DROP, x, y);
+		} else FORWARD_WM_LBUTTONUP (window, x, y, flags, DefWindowProc);
+	} else FORWARD_WM_LBUTTONUP (window, x, y, flags, DefWindowProc);
 }
 static void on_paint (HWND window) {
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
@@ -2640,6 +2656,8 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 		HANDLE_MSG (window, WM_COMMAND, on_command);
 		HANDLE_MSG (window, WM_DESTROY, on_destroy);
 		HANDLE_MSG (window, WM_LBUTTONDOWN, on_lbuttonDown);
+		HANDLE_MSG (window, WM_LBUTTONUP, on_lbuttonUp);
+		HANDLE_MSG (window, WM_MOUSEMOVE, on_mouseMove);
 		HANDLE_MSG (window, WM_PAINT, on_paint);
 		HANDLE_MSG (window, WM_HSCROLL, on_hscroll);
 		HANDLE_MSG (window, WM_VSCROLL, on_vscroll);

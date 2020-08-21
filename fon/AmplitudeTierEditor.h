@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2011,2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2003-2005,2007,2009-2012,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,15 @@
 #include "AmplitudeTier.h"
 #include "Sound.h"
 
+Thing_define (AmplitudeTierView, RealTierView) {
+	conststring32 v_rightTickUnits ()
+		override { return U" Pa"; }
+	double v_defaultYmin ()
+		override { return -1.0; }
+	double v_defaultYmax ()
+		override { return +1.0; }
+};
+
 Thing_define (AmplitudeTierEditor, RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
@@ -29,12 +38,6 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override;
 	conststring32 v_quantityText ()
 		override { return U"Sound pressure (Pa)"; }
-	conststring32 v_rightTickUnits ()
-		override { return U" Pa"; }
-	double v_defaultYmin ()
-		override { return -1.0; }
-	double v_defaultYmax ()
-		override { return +1.0; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set amplitude range..."; }
 	conststring32 v_defaultYminText ()

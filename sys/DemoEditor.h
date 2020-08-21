@@ -2,7 +2,7 @@
 #define _DemoEditor_h_
 /* DemoEditor.h
  *
- * Copyright (C) 2009-2011,2012,2015,2017 Paul Boersma
+ * Copyright (C) 2009-2011,2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 
 Thing_define (DemoEditor, Editor) {
 	GuiDrawingArea drawingArea;
-	autoGraphics graphics;
+	autoGraphics backgroundGraphics, foregroundGraphics;
 	void *praatPicture;
-	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 	integer x, y;
 	char32 key;
 	bool waitingForInput, userWantsToClose, fullScreen;
@@ -69,7 +69,6 @@ char32 Demo_key ();
 bool Demo_shiftKeyPressed ();
 bool Demo_commandKeyPressed ();
 bool Demo_optionKeyPressed ();
-bool Demo_extraControlKeyPressed ();
 /* Shortcuts: */
 bool Demo_input (conststring32 keys);
 bool Demo_clickedIn (double left, double right, double bottom, double top);

@@ -103,12 +103,14 @@ autoSound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 
 autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound you) {
 	try {
-		integer imin, imax, numberOfPeaks = PointProcess_getWindowPoints (me, my xmin, my xmax, & imin, & imax);
-		if (numberOfPeaks < 3) return autoAmplitudeTier();
+		const MelderIntegerRange peaks = PointProcess_getWindowPoints (me, my xmin, my xmax);
+		if (peaks.size() < 3)
+			return autoAmplitudeTier();
 		autoAmplitudeTier him = AmplitudeTier_create (my xmin, my xmax);
-		for (integer i = imin; i <= imax; i ++) {
-			double value = Vector_getValueAtX (you, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
-			if (isdefined (value)) RealTier_addPoint (him.get(), my t [i], value);
+		for (integer i = peaks.first; i <= peaks.last; i ++) {
+			const double value = Vector_getValueAtX (you, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
+			if (isdefined (value))
+				RealTier_addPoint (him.get(), my t [i], value);
 		}
 		return him;
 	} catch (MelderError) {
@@ -137,7 +139,8 @@ static double Sound_getPeak (Sound me, double tmin, double tmax, integer channel
 */
 static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft, double widthRight) {
 	integer imin, imax;
-	if (Sampled_getWindowSamples (me, tmid - widthLeft, tmid + widthRight, & imin, & imax) < 3) return undefined;
+	if (Sampled_getWindowSamples (me, tmid - widthLeft, tmid + widthRight, & imin, & imax) < 3)
+		return undefined;
 	longdouble sumOfSquares = 0.0, windowSumOfSquares = 0.0;
 	for (integer i = imin; i <= imax; i ++) {
 		double t = my x1 + (i - 1) * my dx;
@@ -155,11 +158,11 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, S
 {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
-		integer imin, imax;
-		integer numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
-		if (numberOfPeaks < 3) Melder_throw (U"Too few pulses between ", tmin, U" and ", tmax, U" seconds.");
+		const MelderIntegerRange peaks = PointProcess_getWindowPoints (me, tmin, tmax);
+		if (peaks.size() < 3)
+			Melder_throw (U"Too few pulses between ", tmin, U" and ", tmax, U" seconds.");
 		autoAmplitudeTier him = AmplitudeTier_create (tmin, tmax);
-		for (integer i = imin + 1; i < imax; i ++) {
+		for (integer i = peaks.first + 1; i < peaks.last; i ++) {
 			double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 			double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 			if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {

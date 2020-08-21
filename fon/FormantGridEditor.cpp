@@ -224,21 +224,23 @@ void structFormantGridEditor :: v_draw () {
 			double yleft = RealTier_getValueAtTime (tier, our startWindow);
 			double yright = RealTier_getValueAtTime (tier, our endWindow);
 			Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
-		} else for (integer i = imin; i <= imax; i ++) {
-			RealPoint point = tier -> points.at [i];
-			double t = point -> number, y = point -> value;
-			Graphics_fillCircle_mm (our graphics.get(), t, y, 2.0);
-			if (i == 1)
-				Graphics_line (our graphics.get(), our startWindow, y, t, y);
-			else if (i == imin)
-				Graphics_line (our graphics.get(), t, y, our startWindow, RealTier_getValueAtTime (tier, our startWindow));
-			if (i == n)
-				Graphics_line (our graphics.get(), t, y, our endWindow, y);
-			else if (i == imax)
-				Graphics_line (our graphics.get(), t, y, our endWindow, RealTier_getValueAtTime (tier, our endWindow));
-			else {
-				RealPoint pointRight = tier -> points.at [i + 1];
-				Graphics_line (our graphics.get(), t, y, pointRight -> number, pointRight -> value);
+		} else {
+			for (integer i = imin; i <= imax; i ++) {
+				RealPoint point = tier -> points.at [i];
+				double t = point -> number, y = point -> value;
+				Graphics_fillCircle_mm (our graphics.get(), t, y, 2.0);
+				if (i == 1)
+					Graphics_line (our graphics.get(), our startWindow, y, t, y);
+				else if (i == imin)
+					Graphics_line (our graphics.get(), t, y, our startWindow, RealTier_getValueAtTime (tier, our startWindow));
+				if (i == n)
+					Graphics_line (our graphics.get(), t, y, our endWindow, y);
+				else if (i == imax)
+					Graphics_line (our graphics.get(), t, y, our endWindow, RealTier_getValueAtTime (tier, our endWindow));
+				else {
+					RealPoint pointRight = tier -> points.at [i + 1];
+					Graphics_line (our graphics.get(), t, y, pointRight -> number, pointRight -> value);
+				}
 			}
 		}
 	}
@@ -251,8 +253,8 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (our graphics.get(), 0.5 * (our startWindow + our endWindow),
-			0.5 * (ymin + ymax), U"(no points in selected formant tier)");
+		Graphics_text (our graphics.get(), 0.5 * (our startWindow + our endWindow), 0.5 * (ymin + ymax),
+				U"(no points in selected formant tier)");
 	} else if (imax < imin) {
 		double yleft = RealTier_getValueAtTime (selectedTier, our startWindow);
 		double yright = RealTier_getValueAtTime (selectedTier, our endWindow);

@@ -206,9 +206,9 @@ OSStatus xrunCallback(
     void* inClientData ) ;
 
 /** returns zero on success or a unix style error code. */
-int initializeXRunListenerList();
+int initializeXRunListenerList( void );   // ppgb 20200814
 /** returns zero on success or a unix style error code. */
-int destroyXRunListenerList();
+int destroyXRunListenerList( void );   // ppgb 20200814
 
 /**Returns the list, so that it can be passed to CorAudio.*/
 void *addToXRunListenerList( void *stream );

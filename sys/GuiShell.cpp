@@ -117,12 +117,15 @@ void GuiShell_drain (GuiShell me) {
 	#elif cocoa
 		Melder_assert (my d_cocoaShell);
         [my d_cocoaShell   display];   // not just flushWindow
-		[NSApp
-			nextEventMatchingMask: NSAnyEventMask
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		NSEvent *nsEvent = [NSApp
+			nextEventMatchingMask: NSAppKitDefinedMask // NSAnyEventMask
 			untilDate: [NSDate distantPast]
 			inMode: NSDefaultRunLoopMode
-			dequeue: NO
+			dequeue: YES
 			];
+		[NSApp  sendEvent: nsEvent];
+		[pool release];
 	#endif
 }
 

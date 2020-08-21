@@ -44,7 +44,8 @@ double * _Graphics_check (Graphics me, integer number) {
 		my nrecord = nrecord;
 	}
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
-		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
+		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number)
+			nrecord *= 2;
 		try {
 			record = (double *) Melder_realloc (record, (1 + nrecord) * (integer) sizeof (double));
 		} catch (MelderError) {
@@ -88,9 +89,11 @@ void Graphics_clearRecording (Graphics me) {
 }
 
 void Graphics_play (Graphics me, Graphics thee) {
-	double *p = my record, *endp = p + my irecord;
+	const double *p = my record;
+	const double * const endp = p + my irecord;
 	bool wasRecording = my recording;
-	if (! p) return;
+	if (! p)
+		return;
 	my recording = false;   // temporarily, in case me == thee
 	while (p < endp) {
 		#define get  (* ++ p)
@@ -101,7 +104,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 		(void) (integer) get;   // ignore number of arguments
 		switch (opcode) {
 			case SET_VIEWPORT: {
-				double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+				const double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
 				Graphics_setViewport (thee, x1NDC, x2NDC, y1NDC, y2NDC);
 			} break;
 			case SET_INNER: {
@@ -111,75 +114,75 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_unsetInner (thee);
 			} break;
 			case SET_WINDOW: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_setWindow (thee, x1, x2, y1, y2);
 			} break;
 			case TEXT: {
-				double x = get, y = get;
-				integer length = iget;
-				char *text_utf8 = sget (length);
+				const double x = get, y = get;
+				const integer length = iget;
+				const conststring8 text_utf8 = sget (length);
 				Graphics_text (thee, x, y, Melder_peek8to32 (text_utf8));
 			} break;
 			case POLYLINE: {
-				integer n = iget;
-				double *x = mget (n), *y = mget (n);
+				const integer n = iget;
+				const double *x = mget (n), *y = mget (n);
 				Graphics_polyline (thee, n, & x [1], & y [1]);
 			} break;
 			case LINE: {
-				double x1 = get, y1 = get, x2 = get, y2 = get;
+				const double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_line (thee, x1, y1, x2, y2);
 			} break;
 			case ARROW: {
-				double x1 = get, y1 = get, x2 = get, y2 = get;
+				const double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_arrow (thee, x1, y1, x2, y2);
 			} break;
 			case FILL_AREA: {
-				integer n = iget;
-				double *x = mget (n), *y = mget (n);
+				const integer n = iget;
+				const double * const x = mget (n), * const y = mget (n);
 				Graphics_fillArea (thee, n, & x [1], & y [1]);
 			} break;
 			case FUNCTION: {
 				integer n = iget;
-				double x1 = get, x2 = get, *y = mget (n);
+				const double x1 = get, x2 = get, *y = mget (n);
 				Graphics_function (thee, y, 1, n, x1, x2);
 			} break;
 			case RECTANGLE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_rectangle (thee, x1, x2, y1, y2);
 			} break;
 			case FILL_RECTANGLE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_fillRectangle (thee, x1, x2, y1, y2);
 			} break;
 			case CIRCLE: {
-				double x = get, y = get, r = get;
+				const double x = get, y = get, r = get;
 				Graphics_circle (thee, x, y, r);
 			} break;
 			case FILL_CIRCLE: {
-				double x = get, y = get, r = get;
+				const double x = get, y = get, r = get;
 				Graphics_fillCircle (thee, x, y, r);
 			} break;
 			case ARC: {
-				double x = get, y = get, r = get, fromAngle = get, toAngle = get;
+				const double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				Graphics_arc (thee, x, y, r, fromAngle, toAngle);
 			} break;
 			case ARC_ARROW: {
-				double x = get, y = get, r = get, fromAngle = get, toAngle = get;
-				int arrowAtStart = (int) iget, arrowAtEnd = (int) iget;
+				const double x = get, y = get, r = get, fromAngle = get, toAngle = get;
+				const int arrowAtStart = (int) iget, arrowAtEnd = (int) iget;
 				Graphics_arcArrow (thee, x, y, r, fromAngle, toAngle, arrowAtStart, arrowAtEnd);
 			} break;
 			case HIGHLIGHT: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_highlight (thee, x1, x2, y1, y2);
 			} break;
 			case CELL_ARRAY: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = iget, ncol = iget;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				const integer nrow = iget, ncol = iget;
 				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double, just as Graphics_cellArray expects.
-				 */
+					We don't copy all the data into a new matrix.
+					Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
+					This works because the data is a packed array of double, just as Graphics_cellArray expects.
+				*/
 				#if 0
 				autoMAT z = newMATraw (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
@@ -202,7 +205,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 			case SET_TEXT_ALIGNMENT: {
 				kGraphics_horizontalAlignment hor = (kGraphics_horizontalAlignment) iget;
-				int vert = (int) iget;
+				const int vert = (int) iget;
 				Graphics_setTextAlignment (thee, hor, vert);
 			}  break;
 			case SET_TEXT_ROTATION: {
@@ -215,7 +218,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setLineWidth (thee, get);
 			} break;
 			case SET_STANDARD_COLOUR: {   // only used in old Praat picture files
-				int standardColour = (int) get;
+				const int standardColour = (int) get;
 				MelderColour colour =
 					standardColour == 0 ? Melder_BLACK :
 					standardColour == 1 ? Melder_WHITE :
@@ -243,25 +246,25 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_markGroup (thee);
 			} break;
 			case ELLIPSE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_ellipse (thee, x1, x2, y1, y2);
 			} break;
 			case FILL_ELLIPSE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_fillEllipse (thee, x1, x2, y1, y2);
 			} break;
 			case CIRCLE_MM: {
-				double x = get, y = get, d = get;
+				const double x = get, y = get, d = get;
 				Graphics_circle_mm (thee, x, y, d);
 			} break;
 			case FILL_CIRCLE_MM: {
-				double x = get, y = get, d = get;
+				const double x = get, y = get, d = get;
 				Graphics_fillCircle_mm (thee, x, y, d);
 			} break;
 			case IMAGE8: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
-				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
-				integer nrow = iget, ncol = iget;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
+				const uint8 minimum = (uint8) iget, maximum = (uint8) iget;
+				const integer nrow = iget, ncol = iget;
 				automatrix <uint8> z = newmatrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
@@ -269,8 +272,8 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_image8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			} break;
 			case UNHIGHLIGHT: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
-				Graphics_unhighlight (thee, x1, x2, y1, y2);
+				(void) mget (4);   // obsolete x1, x2, y1, y2
+				// do nothing (this has become obsolete since the demise of XOR mode drawing)
 			} break;
 #if motif
 			case XOR_ON: {
@@ -282,15 +285,15 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 #endif
 			case RECTANGLE_MM: {
-				double x = get, y = get, horSide = get, vertSide = get;
+				const double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_rectangle_mm (thee, x, y, horSide, vertSide);
 			} break;
 			case FILL_RECTANGLE_MM: {
-				double x = get, y = get, horSide = get, vertSide = get;
+				const double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_fillRectangle_mm (thee, x, y, horSide, vertSide);
 			} break;
 			case SET_WS_WINDOW: {
-				double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+				const double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
 				Graphics_setWsWindow (thee, x1NDC, x2NDC, y1NDC, y2NDC);
 			} break;
 			case SET_WRAP_WIDTH: {
@@ -318,29 +321,29 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setAtSignIsLink (thee, (bool) get);
 			} break;
 			case BUTTON: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_button (thee, x1, x2, y1, y2);
 			} break;
 			case ROUNDED_RECTANGLE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
 				Graphics_roundedRectangle (thee, x1, x2, y1, y2, r);
 			} break;
 			case FILL_ROUNDED_RECTANGLE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
 				Graphics_fillRoundedRectangle (thee, x1, x2, y1, y2, r);
 			} break;
 			case FILL_ARC: {
-				double x = get, y = get, r = get, fromAngle = get, toAngle = get;
+				const double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				Graphics_fillArc (thee, x, y, r, fromAngle, toAngle);
 			} break;
 			case INNER_RECTANGLE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_innerRectangle (thee, x1, x2, y1, y2);
 			} break;
 			case CELL_ARRAY8: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
-				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
-				integer nrow = iget, ncol = iget;
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
+				const uint8 minimum = (uint8) iget, maximum = (uint8) iget;
+				const integer nrow = iget, ncol = iget;
 				automatrix <uint8> z = newmatrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
@@ -348,8 +351,8 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_cellArray8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case IMAGE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = iget, ncol = iget;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				const integer nrow = iget, ncol = iget;
 				autoMAT z = newMATraw (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
@@ -357,18 +360,18 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_image (thee, z.all(), x1, x2, y1, y2, minimum, maximum);   // or with constMATVU construction
 			}  break;
 			case HIGHLIGHT2: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
 				Graphics_highlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
 			}  break;
 			case UNHIGHLIGHT2: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
-				Graphics_unhighlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
+				(void) mget (8);   // obsolete x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2
+				// do nothing (this has become obsolete since the demise of XOR mode drawing)
 			}  break;
 			case SET_ARROW_SIZE: {
 				Graphics_setArrowSize (thee, get);
 			} break;
 			case DOUBLE_ARROW: {
-				double x1 = get, y1 = get, x2 = get, y2 = get;
+				const double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
 			case SET_RGB_COLOUR: {
@@ -377,19 +380,19 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setColour (thee, colour);
 			} break;
 			case IMAGE_FROM_FILE: {
-				double x1 = get, x2 = get, y1 = get, y2 = get;
-				integer length = iget;
-				char *text_utf8 = sget (length);
+				const double x1 = get, x2 = get, y1 = get, y2 = get;
+				const integer length = iget;
+				const conststring8 text_utf8 = sget (length);
 				Graphics_imageFromFile (thee, Melder_peek8to32 (text_utf8), x1, x2, y1, y2);
 			}  break;
 			case POLYLINE_CLOSED: {
-				integer n = iget;
-				double *x = mget (n), *y = mget (n);
+				const integer n = iget;
+				const double *x = mget (n), *y = mget (n);
 				Graphics_polyline_closed (thee, n, & x [1], & y [1]);
 			} break;
 			case CELL_ARRAY_COLOUR: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = iget, ncol = iget;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				const integer nrow = iget, ncol = iget;
 				automatrix <MelderColour> z = newmatrixzero <MelderColour> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++) {
@@ -401,8 +404,8 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_cellArray_colour (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case IMAGE_COLOUR: {
-				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = iget, ncol = iget;
+				const double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				const integer nrow = iget, ncol = iget;
 				automatrix <MelderColour> z = newmatrixzero <MelderColour> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++) {
@@ -420,7 +423,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_setSpeckleSize (thee, get);
 			} break;
 			case SPECKLE: {
-				double x = get, y = get;
+				const double x = get, y = get;
 				Graphics_speckle (thee, x, y);
 			}  break;
 			default:
@@ -433,18 +436,20 @@ void Graphics_play (Graphics me, Graphics thee) {
 }
 
 void Graphics_writeRecordings (Graphics me, FILE *f) {
-	double *p = my record, *endp = p + my irecord;
-	if (! p) return;
-	binputi32 (my irecord, f);
+	const double * p = my record;
+	const double * const endp = p + my irecord;
+	if (! p)
+		return;
+	binputi32 (integer_to_int32 (my irecord), f);
 	while (p < endp) {
 		#define get  (* ++ p)
-		int opcode = (int) get;
+		const int opcode = (int) get;
 		binputr32 ((float) opcode, f);
 		integer numberOfArguments = (integer) get;
 		const integer largestIntegerRepresentableAs32BitFloat = 0x00FFFFFF;
 		if (numberOfArguments > largestIntegerRepresentableAs32BitFloat) {
 			binputr32 (-1.0, f);
-			binputi32 (numberOfArguments, f);
+			binputi32 (integer_to_int32 (numberOfArguments), f);
 			//Melder_warning ("This picture is very large!");
 		} else {
 			binputr32 ((float) numberOfArguments, f);
@@ -454,7 +459,7 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr32 (get, f);   // y
 			binputr32 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
-			if ((integer) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+			if (uinteger_to_integer (fwrite (++ p, 8, integer_to_uinteger (numberOfArguments - 3), f)) < numberOfArguments - 3)   // text
 				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 4;
 		} else if (opcode == IMAGE_FROM_FILE) {
@@ -464,11 +469,12 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr32 (get, f);   // y2
 			binputr32 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
-			if ((integer) fwrite (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
+			if (uinteger_to_integer (fwrite (++ p, 8, integer_to_uinteger (numberOfArguments - 5), f)) < numberOfArguments - 5)   // text
 				Melder_throw (U"Error writing graphics recordings.");
 			p += numberOfArguments - 6;
 		} else {
-			for (integer i = numberOfArguments; i > 0; i --) binputr32 (get, f);
+			for (integer i = numberOfArguments; i > 0; i --)
+				binputr32 (get, f);
 		}
 	}
 }
@@ -479,11 +485,12 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 	double* p = nullptr;
 	double* endp = nullptr;
 	integer numberOfArguments = 0;
-	int opcode = 0;
+	int opcode = 0;   // large scope on behalf of message
 	try {
 		added_irecord = bingeti32 (f);
 		p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
-		if (! p) return;
+		if (! p)
+			return;
 		Melder_assert (my irecord == old_irecord + added_irecord);
 		endp = p + added_irecord;
 		while (p < endp) {
@@ -497,7 +504,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr32 (f));   // x
 				put (bingetr32 (f));   // y
 				put (bingetr32 (f));   // length
-				if (fread (++ p, 8, (size_t) numberOfArguments - 3, f) < (size_t) numberOfArguments - 3)   // text
+				if (uinteger_to_integer (fread (++ p, 8, integer_to_uinteger (numberOfArguments - 3), f)) < numberOfArguments - 3)   // text
 					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 4;
 			} else if (opcode == IMAGE_FROM_FILE) {
@@ -506,7 +513,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr32 (f));   // y1
 				put (bingetr32 (f));   // y2
 				put (bingetr32 (f));   // length
-				if (fread (++ p, 8, (size_t) numberOfArguments - 5, f) < (size_t) numberOfArguments - 5)   // text
+				if (uinteger_to_integer (fread (++ p, 8, integer_to_uinteger (numberOfArguments - 5), f)) < numberOfArguments - 5)   // text
 					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 6;
 			} else {
@@ -529,12 +536,14 @@ void Graphics_undoGroup (Graphics me) {
 	integer lastMark = 0;   // not yet found
 	integer jrecord = 0;
 	while (jrecord < my irecord) {   // keep looking for marks until the end
-		int opcode = (int) my record [++ jrecord];
+		const int opcode = (int) my record [++ jrecord];
 		integer number = (integer) my record [++ jrecord];
-		if (opcode == MARK_GROUP) lastMark = jrecord - 1;   // found a mark
+		if (opcode == MARK_GROUP)
+			lastMark = jrecord - 1;   // found a mark
 		jrecord += number;
 	}
-	if (jrecord != my irecord) Melder_flushError (U"jrecord != my irecord: ", jrecord, U", ", my irecord);
+	if (jrecord != my irecord)
+		Melder_flushError (U"jrecord != my irecord: ", jrecord, U", ", my irecord);
 	if (lastMark > 0)   // found?
 		my irecord = lastMark - 1;   // forget all graphics from and including the last mark
 }

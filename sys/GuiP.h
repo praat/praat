@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2013,2015-2017 Paul Boersma
+ * Copyright (C) 1993-2013,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ class GuiControlBlockValueChangedCallbacks {
 	/********** GuiDrawingArea.cpp **********/
 	void _GuiWinDrawingArea_destroy (GuiObject widget);
 	void _GuiWinDrawingArea_update (GuiObject widget);
-	void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y);
+	void _GuiWinDrawingArea_handleMouse (GuiObject widget, structGuiDrawingArea_MouseEvent::Phase phase, int x, int y);
 	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar);
 	void _GuiWinDrawingArea_shellResize (GuiObject widget);
 

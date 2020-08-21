@@ -2,7 +2,7 @@
 #define _TextGridEditor_h_
 /* TextGridEditor.h
  *
- * Copyright (C) 1992-2005,2007-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
+	double draggingTime;
+	autoBOOLVEC draggingTiers;
 
 	void v_info ()
 		override;
@@ -56,7 +58,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 	bool v_hasText ()
 		override { return true; }
-	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
 		override;
 	bool v_clickB (double xWC, double yWC)
 		override;
@@ -79,8 +81,6 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
 	void v_highlightSelection (double left, double right, double bottom, double top)
-		override;
-	void v_unhighlightSelection (double left, double right, double bottom, double top)
 		override;
 	double v_getBottomOfSoundArea ()
 		override;

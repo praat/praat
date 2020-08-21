@@ -2,7 +2,7 @@
 #define _DurationTierEditor_h_
 /* DurationTierEditor.h
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,30 @@
 #include "DurationTier.h"
 #include "Sound.h"
 
-Thing_define (DurationTierEditor, RealTierEditor) {
-	void v_createHelpMenuItems (EditorMenu menu)
-		override;
-	void v_play (double fromTime, double toTime)
-		override;
+Thing_define (DurationTierView, RealTierView) {
 	double v_minimumLegalValue ()
 		override { return 0.0; }
-	conststring32 v_quantityText ()
-		override { return U"Relative duration"; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
 	double v_defaultYmin ()
 		override { return 0.25; }
 	double v_defaultYmax ()
 		override { return 3.0; }
+};
+
+inline static autoDurationTierView DurationTierView_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoDurationTierView me = Thing_new (DurationTierView);
+	FunctionView_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	return me;
+}
+
+Thing_define (DurationTierEditor, RealTierEditor) {
+	void v_createHelpMenuItems (EditorMenu menu)
+		override;
+	void v_play (double fromTime, double toTime)
+		override;
+	conststring32 v_quantityText ()
+		override { return U"Relative duration"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set duration range..."; }
 	conststring32 v_defaultYminText ()

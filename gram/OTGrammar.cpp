@@ -982,7 +982,6 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, conststring
 				if (my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
 					my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
 				{
-					//value = value > 1e-308 ? 1000 : value < -1e308 ? -1000 : - log (- value);
 					Graphics_text (g, x, y + descent, Melder_float (Melder_half (value)));
 				} else {
 					Graphics_text (g, x, y + descent, Melder_fixed (value, 3));

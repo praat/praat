@@ -27,10 +27,10 @@
 	demo Font size: 24
 	demo Colour: "Black"
 	demo Text: 50, "Centre", 50, "Bottom", "Recording stopped: Now you should see a red and a blue disk"
-	demo Text: 50, "Centre", 45, "Bottom", "(Click anywhere in the window or hit any key to exit)"
+	demo Text: 50, "Centre", 45, "Bottom", "(Click anywhere in the window or hit any key to erase and exit)"
 
 	# Wait and exit
 	demoWaitForInput()
 	demo Erase all
-	
+	demoShow()
 	exit

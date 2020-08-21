@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018,2020 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 		iam (GuiMenuItem);
 		if (my d_callbackBlocked) return;
 		if (G_OBJECT_TYPE (widget) == GTK_TYPE_RADIO_MENU_ITEM && ! gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (widget))) return;
-		struct structGuiMenuItemEvent event { me, false, false, false, false };
+		structGuiMenuItemEvent event { me, false, false, false };
 		if (my d_callback) {
 			try {
 				my d_callback (my d_boss, & event);
@@ -98,7 +98,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 	static void _guiMotifMenuItem_activateCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		iam (GuiMenuItem);
 		if (my d_callback) {
-			struct structGuiMenuItemEvent event { me, false, false, false, false };
+			structGuiMenuItemEvent event { me, false, false, false };
 			try {
 				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
@@ -127,7 +127,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
 		GuiMenuItem me = d_userData;
 		if (my d_callback) {
-			struct structGuiMenuItemEvent event { me, false, false, false, false };
+			structGuiMenuItemEvent event { me, false, false, false };
 			try {
 				my d_callback (my d_boss, & event);
 			} catch (MelderError) {

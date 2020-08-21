@@ -91,8 +91,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_play (double tmin, double tmax)
 		override;
-	void v_updateText ()
-		override {};
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
 	void v_prefs_setValues (EditorCommand cmd)
@@ -104,8 +102,6 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
 	void v_highlightSelection (double left, double right, double bottom, double top)
-		override;
-	void v_unhighlightSelection (double left, double right, double bottom, double top)
 		override;
 	double v_getBottomOfSoundArea ()
 		override;

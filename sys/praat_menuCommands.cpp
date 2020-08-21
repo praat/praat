@@ -91,12 +91,13 @@ static void do_menu (Praat_Command me, uint32 modified) {
 }
 
 static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
-	do_menu (me, event -> shiftKeyPressed | event -> commandKeyPressed | event -> optionKeyPressed | event -> extraControlKeyPressed);
+	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	do_menu (me, isModified);
 }
 
 static void gui_cb_menu (Praat_Command me, GuiMenuItemEvent event) {
-	bool modified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed || event -> extraControlKeyPressed;
-	do_menu (me, modified);
+	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	do_menu (me, isModified);
 }
 
 static GuiMenu windowMenuToWidget (conststring32 window, conststring32 menu) {

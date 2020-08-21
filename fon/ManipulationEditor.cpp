@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1168,7 +1168,7 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 		double newTime = duration -> points.at [ifirstSelected] -> number + dt;
 		if (newTime < my tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= duration -> points.at [ifirstSelected - 1] -> number)
-			return 1;   /* Past left neighbour. */
+			return 1;   // past left neighbour
 		newTime = duration -> points.at [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
 		if (ilastSelected < duration -> points.size && newTime >= duration -> points.at [ilastSelected + 1] -> number)
@@ -1203,8 +1203,8 @@ static bool clickDuration (ManipulationEditor me, double xWC, double yWC, int sh
 
 bool structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	double ypitchmin, ypitchmax, ydurationmin, ydurationmax;
-	int hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
-	int hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);
+	const bool hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
+	const bool hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);
 
 	/*
 	 * Dispatch click to clicked area.
@@ -1224,7 +1224,7 @@ bool structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyP
 
 void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
 	Manipulation ana = (Manipulation) our data;
-	if (our shiftKeyPressed) {
+	if (our clickWasModifiedByShiftKey) {
 		if (ana -> sound)
 			Sound_playPart (ana -> sound.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
@@ -1236,6 +1236,7 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.get(), title, ana);
+		//my pitchTierArea = PitchTierView_create(me.get(), <#double bottom_fraction#>, <#double top_fraction#>)
 
 		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch.get());
 		if (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ) {

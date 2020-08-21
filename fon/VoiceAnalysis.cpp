@@ -1,6 +1,6 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,12 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 2) return undefined;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
+	if (numberOfPeriods < 2)
+		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 1; i < imax; i ++) {
+	for (integer i = pointNumbers.first + 1; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -44,11 +45,12 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 2) return undefined;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
+	if (numberOfPeriods < 2)
+		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 1; i < imax; i ++) {
+	for (integer i = pointNumbers.first + 1; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		const double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -65,11 +67,12 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 3) return undefined;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
+	if (numberOfPeriods < 3)
+		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 2; i < imax; i ++) {
+	for (integer i = pointNumbers.first + 2; i < pointNumbers.last; i ++) {
 		const double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
 		const double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
@@ -88,11 +91,12 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	integer imin, imax;
-	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
-	if (numberOfPeriods < 5) return undefined;
+	const MelderIntegerRange pointNumbers = PointProcess_getWindowPoints (me, tmin, tmax);
+	integer numberOfPeriods = pointNumbers.size() - 1;
+	if (numberOfPeriods < 5)
+		return undefined;
 	longdouble sum = 0.0;
-	for (integer i = imin + 5; i <= imax; i ++) {
+	for (integer i = pointNumbers.first + 5; i <= pointNumbers.last; i ++) {
 		const double
 			p1 = my t [i - 4] - my t [i - 5],
 			p2 = my t [i - 3] - my t [i - 4],
@@ -264,81 +268,73 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		/*
 			Time domain. Should be preceded by something like "Time range of SELECTION:" or so.
 		*/
-		MelderInfo_write (U"   From ", Melder_fixed (tmin, 6), U" to ", Melder_fixed (tmax, 6), U" seconds");
-		MelderInfo_writeLine (U" (duration: ", Melder_fixed (tmax - tmin, 6), U" seconds)");
+		MelderInfo_writeLine (U"   From ", Melder_fixed (tmin, 6), U" to ", Melder_fixed (tmax, 6), U" seconds",
+			U" (duration: ", Melder_fixed (tmax - tmin, 6), U" seconds)"
+		);
 		/*
 			Pitch statistics.
 		*/
+		const double medianPitch = Pitch_getQuantile (pitch, tmin, tmax, 0.50, kPitch_unit::HERTZ);
+		const double meanPitch = Pitch_getMean (pitch, tmin, tmax, kPitch_unit::HERTZ);
+		const double stdevPitch = Pitch_getStandardDeviation (pitch, tmin, tmax, kPitch_unit::HERTZ);
+		const double minimumPitch = Pitch_getMinimum (pitch, tmin, tmax, kPitch_unit::HERTZ, 1);
+		const double maximumPitch = Pitch_getMaximum (pitch, tmin, tmax, kPitch_unit::HERTZ, 1);
 		MelderInfo_writeLine (U"Pitch:");
-		MelderInfo_writeLine (U"   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, kPitch_unit::HERTZ), 3), U" Hz");
-		MelderInfo_writeLine (U"   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, kPitch_unit::HERTZ), 3), U" Hz");
-		MelderInfo_writeLine (U"   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, kPitch_unit::HERTZ), 3), U" Hz");
-		MelderInfo_writeLine (U"   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, kPitch_unit::HERTZ, 1), 3), U" Hz");
-		MelderInfo_writeLine (U"   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, kPitch_unit::HERTZ, 1), 3), U" Hz");
+		MelderInfo_writeLine (U"   Median pitch: ", Melder_fixed (medianPitch, 3), U" Hz");
+		MelderInfo_writeLine (U"   Mean pitch: ", Melder_fixed (meanPitch, 3), U" Hz");
+		MelderInfo_writeLine (U"   Standard deviation: ", Melder_fixed (stdevPitch, 3), U" Hz");
+		MelderInfo_writeLine (U"   Minimum pitch: ", Melder_fixed (minimumPitch, 3), U" Hz");
+		MelderInfo_writeLine (U"   Maximum pitch: ", Melder_fixed (maximumPitch, 3), U" Hz");
 		/*
 			Pulses statistics.
 		*/
-		double pmin = 0.8 / ceiling, pmax = 1.25 / floor;
+		const double pmin = 0.8 / ceiling, pmax = 1.25 / floor;   // minimum period, maximum period (abbreviated for space)
+		const MelderIntegerRange pulseNumbers = PointProcess_getWindowPoints (pulses, tmin, tmax);
+		const integer numberOfPeriods = PointProcess_getNumberOfPeriods (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double meanPeriod = PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double stdevPeriod = PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		MelderInfo_writeLine (U"Pulses:");
-		MelderInfo_writeLine (U"   Number of pulses: ", PointProcess_getWindowPoints (pulses, tmin, tmax, nullptr, nullptr));
-		MelderInfo_writeLine (U"   Number of periods: ", PointProcess_getNumberOfPeriods (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor));
-		MelderInfo_writeLine (U"   Mean period: ", Melder_fixedExponent (PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), U" seconds");
-		MelderInfo_writeLine (U"   Standard deviation of period: ", Melder_fixedExponent (PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), U" seconds");
+		MelderInfo_writeLine (U"   Number of pulses: ", pulseNumbers.size());
+		MelderInfo_writeLine (U"   Number of periods: ", numberOfPeriods);
+		MelderInfo_writeLine (U"   Mean period: ", Melder_fixedExponent (meanPeriod, -3, 6), U" seconds");
+		MelderInfo_writeLine (U"   Standard deviation of period: ", Melder_fixedExponent (stdevPeriod, -3, 6), U" seconds");
 		/*
 			Voicing.
 		*/
-		integer imin, imax, n = Sampled_getWindowSamples (pitch, tmin, tmax, & imin, & imax), nunvoiced = n;
-		for (integer i = imin; i <= imax; i ++) {
-			const Pitch_Frame frame = & pitch -> frames [i];
-			if (frame -> intensity >= silenceThreshold) {
-				for (integer icand = 1; icand <= frame -> nCandidates; icand ++) {
-					const Pitch_Candidate cand = & frame -> candidates [icand];
-					if (cand -> frequency > 0.0 && cand -> frequency < ceiling && cand -> strength >= voicingThreshold) {
-						nunvoiced --;
-						break;   // next frame
-					}
-				}
-			}
-		}
+		const MelderFraction unvoicedFraction =
+				Pitch_getFractionOfLocallyUnvoicedFrames (pitch, tmin, tmax, ceiling, silenceThreshold, voicingThreshold);
+		const MelderCountAndFraction breaks =
+				PointProcess_getCountAndFractionOfVoiceBreaks (pulses, tmin, tmax, pmax);
 		MelderInfo_writeLine (U"Voicing:");
-		MelderInfo_write (U"   Fraction of locally unvoiced frames: ", Melder_percent (n <= 0 ? undefined : (double) nunvoiced / n, 3));
-		MelderInfo_writeLine (U"   (", nunvoiced, U" / ", n, U")");
-		n = PointProcess_getWindowPoints (pulses, tmin, tmax, & imin, & imax);
-		integer numberOfVoiceBreaks = 0;
-		double durationOfVoiceBreaks = 0.0;
-		if (n > 1) {
-			bool previousPeriodVoiced = true;
-			for (integer i = imin + 1; i < imax; i ++) {
-				double period = pulses -> t [i] - pulses -> t [i - 1];
-				if (period > pmax) {
-					durationOfVoiceBreaks += period;
-					if (previousPeriodVoiced) {
-						numberOfVoiceBreaks ++;
-						previousPeriodVoiced = false;
-					}
-				} else {
-					previousPeriodVoiced = true;
-				}
-			}
-		}
-		MelderInfo_writeLine (U"   Number of voice breaks: ", numberOfVoiceBreaks);
-		MelderInfo_write (U"   Degree of voice breaks: ", Melder_percent (durationOfVoiceBreaks / (tmax - tmin), 3));
-		MelderInfo_writeLine (U"   (", Melder_fixed (durationOfVoiceBreaks, 6), U" seconds / ", Melder_fixed (tmax - tmin, 6), U" seconds)");
+		MelderInfo_writeLine (U"   Fraction of locally unvoiced frames: ", Melder_percent (unvoicedFraction.get(), 3),
+			U"   (", unvoicedFraction.numerator, U" / ", unvoicedFraction.denominator, U")"
+		);
+		MelderInfo_writeLine (U"   Number of voice breaks: ", breaks.count);
+		MelderInfo_writeLine (U"   Degree of voice breaks: ", Melder_percent (breaks.getFraction (), 3),
+			U"   (", Melder_fixed (breaks.numerator, 6), U" seconds / ", Melder_fixed (breaks.denominator, 6), U" seconds)"
+		);
 		/*
 			Jitter.
 		*/
-		double shimmerLocal, shimmerLocal_dB, apq3, apq5, apq11, dda;
+		const double jitterLocal = PointProcess_getJitter_local (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double jitterLocal_s = PointProcess_getJitter_local_absolute (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double rap = PointProcess_getJitter_rap (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double ppq5 = PointProcess_getJitter_ppq5 (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+		const double ddp = PointProcess_getJitter_ddp (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		MelderInfo_writeLine (U"Jitter:");
-		MelderInfo_writeLine (U"   Jitter (local): ", Melder_percent (PointProcess_getJitter_local (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
-		MelderInfo_writeLine (U"   Jitter (local, absolute): ", Melder_fixedExponent (PointProcess_getJitter_local_absolute (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -6, 3), U" seconds");
-		MelderInfo_writeLine (U"   Jitter (rap): ", Melder_percent (PointProcess_getJitter_rap (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
-		MelderInfo_writeLine (U"   Jitter (ppq5): ", Melder_percent (PointProcess_getJitter_ppq5 (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
-		MelderInfo_writeLine (U"   Jitter (ddp): ", Melder_percent (PointProcess_getJitter_ddp (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
+		MelderInfo_writeLine (U"   Jitter (local): ", Melder_percent (jitterLocal, 3));
+		MelderInfo_writeLine (U"   Jitter (local, absolute): ", Melder_fixedExponent (jitterLocal_s, -6, 3), U" seconds");
+		MelderInfo_writeLine (U"   Jitter (rap): ", Melder_percent (rap, 3));
+		MelderInfo_writeLine (U"   Jitter (ppq5): ", Melder_percent (ppq5, 3));
+		MelderInfo_writeLine (U"   Jitter (ddp): ", Melder_percent (ddp, 3));
 		/*
 			Shimmer.
 		*/
-		PointProcess_Sound_getShimmer_multi (pulses, sound, tmin, tmax, pmin, pmax, maximumPeriodFactor, maximumAmplitudeFactor,
-			& shimmerLocal, & shimmerLocal_dB, & apq3, & apq5, & apq11, & dda);
+		double shimmerLocal, shimmerLocal_dB, apq3, apq5, apq11, dda;
+		PointProcess_Sound_getShimmer_multi (pulses, sound, tmin, tmax, pmin, pmax,
+			maximumPeriodFactor, maximumAmplitudeFactor,
+			& shimmerLocal, & shimmerLocal_dB, & apq3, & apq5, & apq11, & dda
+		);
 		MelderInfo_writeLine (U"Shimmer:");
 		MelderInfo_writeLine (U"   Shimmer (local): ", Melder_percent (shimmerLocal, 3));
 		MelderInfo_writeLine (U"   Shimmer (local, dB): ", Melder_fixed (shimmerLocal_dB, 3), U" dB");
@@ -349,10 +345,13 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		/*
 			Harmonicity.
 		*/
+		const double meanAutocorrelation = Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION);
+		const double meanNHR = Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO);
+		const double meanHNR_dB = Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB);
 		MelderInfo_writeLine (U"Harmonicity of the voiced parts only:");
-		MelderInfo_writeLine (U"   Mean autocorrelation: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION), 6));
-		MelderInfo_writeLine (U"   Mean noise-to-harmonics ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO), 6));
-		MelderInfo_writeLine (U"   Mean harmonics-to-noise ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB), 3), U" dB");
+		MelderInfo_writeLine (U"   Mean autocorrelation: ", Melder_fixed (meanAutocorrelation, 6));
+		MelderInfo_writeLine (U"   Mean noise-to-harmonics ratio: ", Melder_fixed (meanNHR, 6));
+		MelderInfo_writeLine (U"   Mean harmonics-to-noise ratio: ", Melder_fixed (meanHNR_dB, 3), U" dB");
 	} catch (MelderError) {
 		Melder_throw (sound, U" & ", pitch, U" & ", pulses, U": voice report not computed.");
 	}

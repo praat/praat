@@ -1,6 +1,6 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2012,2013,2015,2016,2017 Paul Boersma,
+ * Copyright (C) 1993-2018,2020 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 	#include "gdk/gdkkeysyms.h"
 	#include <locale.h>
 #endif
+#include "Graphics.h"
 
 Thing_implement (GuiDrawingArea, GuiControl, 0);
 
@@ -49,7 +50,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		// first place?? Additionally this causes even more flickering
 		//gdk_window_clear_area ((GTK_WIDGET (widget)) -> window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
 		if (my d_exposeCallback) {
-			struct structGuiDrawingArea_ExposeEvent event { me, 0 };
+			structGuiDrawingArea_ExposeEvent event { me, 0 };
 			event. x = expose -> area. x;
 			event. y = expose -> area. y;
 			event. width = expose -> area. width;
@@ -74,21 +75,63 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		trace (U"GTK will handle redrawing");
 		return false;
 	}
-	static gboolean _GuiGtkDrawingArea_clickCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_mouseDownCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
-		if (e -> type != GDK_BUTTON_PRESS) return false;
-		if (my d_clickCallback) {
-			struct structGuiDrawingArea_ClickEvent event { me, 0 };
-			event. button = ((GdkEventButton *) e) -> button;
+		//if (e -> type != GDK_BUTTON_PRESS) return false;
+		if (my mouseCallback) {
+			structGuiDrawingArea_MouseEvent event { me, 0 };
+			//event. button = ((GdkEventButton *) e) -> button;
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
+			event. phase = structGuiDrawingArea_MouseEvent::Phase::CLICK;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
 			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
 			try {
-				my d_clickCallback (my d_clickBoss, & event);
+				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Mouse click not completely handled.");
+			}
+			return true;
+		}
+		return false;
+	}
+	static gboolean _GuiGtkDrawingArea_mouseDraggedCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
+		iam (GuiDrawingArea);
+		//if (e -> type != GDK_BUTTON_PRESS) return false;
+		if (my mouseCallback) {
+			structGuiDrawingArea_MouseEvent event { me, 0 };
+			//event. button = ((GdkEventButton *) e) -> button;
+			event. x = ((GdkEventButton *) e) -> x;
+			event. y = ((GdkEventButton *) e) -> y;
+			event. phase = structGuiDrawingArea_MouseEvent::Phase::DRAG;
+			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
+			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
+			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
+			try {
+				my mouseCallback (my mouseBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Mouse drag not completely handled.");
+			}
+			return true;
+		}
+		return false;
+	}
+	static gboolean _GuiGtkDrawingArea_mouseUpCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
+		iam (GuiDrawingArea);
+		//if (e -> type != GDK_BUTTON_PRESS) return false;
+		if (my mouseCallback) {
+			structGuiDrawingArea_MouseEvent event { me, 0 };
+			event. x = ((GdkEventButton *) e) -> x;
+			event. y = ((GdkEventButton *) e) -> y;
+			event. phase = structGuiDrawingArea_MouseEvent::Phase::DROP;
+			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
+			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
+			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
+			try {
+				my mouseCallback (my mouseBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Mouse drop not completely handled.");
 			}
 			return true;
 		}
@@ -98,7 +141,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		trace (U"begin");
 		if (my d_keyCallback && gevent -> type == GDK_KEY_PRESS) {
-			struct structGuiDrawingArea_KeyEvent event { me, 0 };
+			structGuiDrawingArea_KeyEvent event { me, 0 };
 			GdkEventKey *gkeyEvent = (GdkEventKey *) gevent;
 			event. key = gkeyEvent -> keyval;
 			/*
@@ -112,7 +155,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. shiftKeyPressed = (gkeyEvent -> state & GDK_SHIFT_MASK) != 0;
 			event. commandKeyPressed = (gkeyEvent -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (gkeyEvent -> state & GDK_MOD1_MASK) != 0;
-			event. extraControlKeyPressed = false;
 			try {
 				my d_keyCallback (my d_keyBoss, & event);
 			} catch (MelderError) {
@@ -128,7 +170,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	static gboolean _GuiGtkDrawingArea_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my d_resizeCallback) {
-			struct structGuiDrawingArea_ResizeEvent event { me, 0 };
+			structGuiDrawingArea_ResizeEvent event { me, 0 };
 			trace (U"drawingArea resized to ", allocation -> width, U" x ", allocation -> height, U".");
 			event. width = allocation -> width;
 			event. height = allocation -> height;
@@ -153,7 +195,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		PAINTSTRUCT paintStruct;
 		BeginPaint (widget -> window, & paintStruct);
 		if (my d_exposeCallback) {
-			struct structGuiDrawingArea_ExposeEvent event { me };
+			structGuiDrawingArea_ExposeEvent event { me };
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
@@ -162,26 +204,35 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 		EndPaint (widget -> window, & paintStruct);
 	}
-	void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
+	void _GuiWinDrawingArea_handleMouse (GuiObject widget, structGuiDrawingArea_MouseEvent::Phase phase, int x, int y) {
 		iam_drawingarea;
-		if (my d_clickCallback) {
-			struct structGuiDrawingArea_ClickEvent event { me, 0 };
+		if (my mouseCallback) {
+			structGuiDrawingArea_MouseEvent event { me, 0 };
 			event. x = x;
 			event. y = y;
+			event. phase = phase;
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
 			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
 			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
 			try {
-				my d_clickCallback (my d_clickBoss, & event);
+				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Mouse click not completely handled.");
+				switch (phase) {
+					case structGuiDrawingArea_MouseEvent::Phase::CLICK:
+						Melder_flushError (U"Mouse click not completely handled.");
+					break; case structGuiDrawingArea_MouseEvent::Phase::DRAG:
+						Melder_flushError (U"Mouse drag not completely handled.");
+					break; case structGuiDrawingArea_MouseEvent::Phase::DROP:
+						Melder_flushError (U"Mouse drop not completely handled.");
+					break;
+				}
 			}
 		}
 	}
 	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
 		iam_drawingarea;
 		if (my d_keyCallback) {
-			struct structGuiDrawingArea_KeyEvent event { me, 0 };
+			structGuiDrawingArea_KeyEvent event { me, 0 };
 			event. key = kar;
 			if (event. key == VK_RETURN) event. key = 10;
 			if (event. key == VK_LEFT)  event. key = 0x2190;
@@ -201,7 +252,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	void _GuiWinDrawingArea_shellResize (GuiObject widget) {
 		iam_drawingarea;
 		if (my d_resizeCallback) {
-			struct structGuiDrawingArea_ResizeEvent event { me };
+			structGuiDrawingArea_ResizeEvent event { me };
 			event. width = widget -> width;
 			event. height = widget -> height;
 			try {
@@ -248,7 +299,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) resizeCallback: (NSRect) rect {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (me && my d_resizeCallback) {
-			struct structGuiDrawingArea_ResizeEvent event = { me, 0, 0 };
+			structGuiDrawingArea_ResizeEvent event = { me, 0, 0 };
 			event. width = rect. size. width;
 			event. height = rect. size. height;
 			try {
@@ -267,9 +318,14 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			_inited = YES;
 		}
 		if (my d_exposeCallback) {
-			struct structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
+			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			try {
+				Melder_assert (my numberOfGraphicses > 0);
+				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+					GraphicsQuartz_initDraw (my graphicses [igraphics]);
 				my d_exposeCallback (my d_exposeBoss, & event);
+				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+					GraphicsQuartz_exitDraw (my graphicses [igraphics]);
 			} catch (MelderError) {
 				Melder_flushError (U"Redrawing not completed");
 			}
@@ -298,29 +354,36 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		(void) nsEvent;
 		[[NSCursor crosshairCursor] push];
 	}
-	- (void) mouseExited: (NSEvent *) nsEvent{
+	- (void) mouseExited: (NSEvent *) nsEvent {
 		(void) nsEvent;
 		[[NSCursor currentCursor] pop];
 	}
-	- (void) mouseDown: (NSEvent *) nsEvent {
-	 //   [self becomeFirstResponder];
+	- (void) mouse: (NSEvent *) nsEvent inPhase: (structGuiDrawingArea_MouseEvent::Phase) phase {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		if (my d_clickCallback) {
-			struct structGuiDrawingArea_ClickEvent event = { me, 0, 0, false, false, false, false, 0 };
+		if (my mouseCallback) {
+			structGuiDrawingArea_MouseEvent event = { me, 0, 0, phase, false, false, false };
 			NSPoint local_point = [self   convertPoint: [nsEvent locationInWindow]   fromView: nil];
 			event. x = local_point. x;
-			//event. y = [self frame]. size. height - local_point. y;
 			event. y = local_point. y;
 			NSUInteger modifiers = [nsEvent modifierFlags];
 			event. shiftKeyPressed = modifiers & NSShiftKeyMask;
 			event. optionKeyPressed = modifiers & NSAlternateKeyMask;
 			event. commandKeyPressed = modifiers & NSCommandKeyMask;
 			try {
-				my d_clickCallback (my d_clickBoss, & event);
+				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Mouse click not completely handled.");
 			}
 		}
+	}
+	- (void) mouseDown: (NSEvent *) nsEvent {
+	 	[self   mouse: nsEvent   inPhase: structGuiDrawingArea_MouseEvent::Phase::CLICK];
+	}
+	- (void) mouseDragged: (NSEvent *) nsEvent {
+	 	[self   mouse: nsEvent   inPhase: structGuiDrawingArea_MouseEvent::Phase::DRAG];
+	}
+	- (void) mouseUp: (NSEvent *) nsEvent {
+	 	[self   mouse: nsEvent   inPhase: structGuiDrawingArea_MouseEvent::Phase::DROP];
 	}
 	- (void) scrollWheel: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
@@ -358,7 +421,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) keyDown: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (my d_keyCallback) {
-			struct structGuiDrawingArea_KeyEvent event = { me, U'\0', false, false, false, false };
+			structGuiDrawingArea_KeyEvent event = { me, U'\0', false, false, false };
 			event. key = [[nsEvent charactersIgnoringModifiers]   characterAtIndex: 0];
 			if (event. key == NSLeftArrowFunctionKey)  event. key = 0x2190;
 			if (event. key == NSRightArrowFunctionKey) event. key = 0x2192;
@@ -416,7 +479,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 /* flags */)
@@ -426,8 +489,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	my d_parent = parent;
 	my d_exposeCallback = exposeCallback;
 	my d_exposeBoss = boss;
-	my d_clickCallback = clickCallback;
-	my d_clickBoss = boss;
+	my mouseCallback = mouseCallback;
+	my mouseBoss = boss;
 	my d_keyCallback = keyCallback;
 	my d_keyBoss = boss;
 	my d_resizeCallback = resizeCallback;
@@ -440,11 +503,12 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),  me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
+		//g_signal_connect (G_OBJECT (my d_widget), "drag-motion-event",    G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_mouseDraggedCallback), me.get());
 		if (parent) {
 			Melder_assert (parent -> d_widget);
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
@@ -477,19 +541,22 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags)
 {
-	GuiDrawingArea me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
+	GuiDrawingArea me = GuiDrawingArea_create (parent, left, right, top, bottom,
+		exposeCallback, mouseCallback,
+		keyCallback, resizeCallback, boss, flags
+	);
 	GuiThing_show (me);
 	return me;
 }
 
 GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 /* flags */)
@@ -499,8 +566,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 	my d_parent = parent;
 	my d_exposeCallback = exposeCallback;
 	my d_exposeBoss = boss;
-	my d_clickCallback = clickCallback;
-	my d_clickBoss = boss;
+	my mouseCallback = mouseCallback;
+	my mouseBoss = boss;
 	my d_keyCallback = keyCallback;
 	my d_keyBoss = boss;
 	my d_resizeCallback = resizeCallback;
@@ -513,11 +580,11 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),  me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_clickCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_mouseDraggedCallback), me.get());
 		if (parent) {
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
 				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me.get());
@@ -545,12 +612,15 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 
 GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
 	GuiDrawingArea_ExposeCallback exposeCallback,
-	GuiDrawingArea_ClickCallback clickCallback,
+	GuiDrawingArea_MouseCallback mouseCallback,
 	GuiDrawingArea_KeyCallback keyCallback,
 	GuiDrawingArea_ResizeCallback resizeCallback, Thing boss,
 	uint32 flags)
 {
-	GuiDrawingArea me = GuiDrawingArea_create (parent, width, height, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
+	GuiDrawingArea me = GuiDrawingArea_create (parent, width, height,
+		exposeCallback, mouseCallback,
+		keyCallback, resizeCallback, boss, flags
+	);
 	GuiThing_show (me);
 	return me;
 }
@@ -568,9 +638,9 @@ void GuiDrawingArea_setExposeCallback (GuiDrawingArea me, GuiDrawingArea_ExposeC
 	my d_exposeBoss = boss;
 }
 
-void GuiDrawingArea_setClickCallback (GuiDrawingArea me, GuiDrawingArea_ClickCallback callback, Thing boss) {
-	my d_clickCallback = callback;
-	my d_clickBoss = boss;
+void GuiDrawingArea_setMouseCallback (GuiDrawingArea me, GuiDrawingArea_MouseCallback callback, Thing boss) {
+	my mouseCallback = callback;
+	my mouseBoss = boss;
 }
 
 void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss) {

@@ -232,9 +232,6 @@ static void stopRecording (SoundRecorder me) {
 	} catch (MelderError) {
 		Melder_flushError (U"Cannot stop recording.");
 	}
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 }
 
 void structSoundRecorder :: v_destroy () noexcept {
@@ -364,7 +361,6 @@ static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) 
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_fillCircle_mm (my graphics.get(), centreOfGravity, intensity, 3.0);
 	}
-	Graphics_flushWs (my graphics.get());
 }
 
 static bool tooManySamplesInBufferToReturnToGui (SoundRecorder me) {
@@ -467,7 +463,7 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 
 				if (my recording)
 					memcpy (& my recordBuffer [1 + my nsamp * my numberOfChannels], buffertje, stepje * (sizeof (short) * my numberOfChannels));
-				showMeter (me, buffertje, stepje);
+				//showMeter (me, buffertje, stepje);
 				if (my recording) {
 					my nsamp += stepje;
 					if (my nsamp > my nmax - step)
@@ -478,36 +474,33 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 		} else {
 			if (my recording) {
 				/*
-				 * We have to know how far the buffer has been filled.
-				 * However, the buffer may be filled at interrupt time,
-				 * so that the buffer may be being filled during this workproc.
-				 * So we ask for the buffer filling just once, namely here at the beginning.
-				 */
-				integer lastSample = 0;
+					We have to know how far the buffer has been filled.
+					However, the buffer may be filled at interrupt time,
+					so that the buffer may be being filled during this workproc.
+					So we ask for the buffer filling just once, namely here at the beginning.
+				*/
+				my lastSample = 0;
 				if (my inputUsesPortAudio) {
-					 /*
-					  * The buffer filling is contained in my nsamp,
-					  * which has been set during interrupt time and may again be updated behind our backs during this workproc.
-					  * So we do it in such a way that the compiler cannot ask for my nsamp twice.
-					  */
-					lastSample = getMyNsamp (me);
+					/*
+						The buffer filling is contained in my nsamp,
+						which has been set during interrupt time and may again be updated behind our backs during this workproc.
+						So we do it in such a way that the compiler cannot ask for my nsamp twice.
+					*/
+					my lastSample = getMyNsamp (me);
 					Pa_Sleep (10);
 				} else {
 					#if defined (_WIN32)
 						MMTIME mmtime;
 						mmtime. wType = TIME_BYTES;
 						if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
-							lastSample = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
+							my lastSample = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
 					#elif defined (macintosh)
 					#endif
 				}
-				integer firstSample = lastSample - 3000;
-				if (firstSample < 0)
-					firstSample = 0;
-				showMeter (me, & my recordBuffer [1 + firstSample * my numberOfChannels], lastSample - firstSample);
-				GuiScale_setValue (my progressScale, 1000.0 * ((double) lastSample / (double) my nmax));
-			} else {
-				showMeter (me, nullptr, 0);
+				my firstSample = my lastSample - 3000;
+				Melder_clipLeft (0_integer, & my firstSample);
+				GuiScale_setValue (my progressScale, 1000.0 * ((double) my lastSample / (double) my nmax));
+				Graphics_updateWs (my graphics.get());
 			}
 		}
 	} catch (MelderError) {
@@ -612,20 +605,17 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 				#endif
 			}
 		}
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Melder_WHITE);
-		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+		Graphics_updateWs (my graphics.get());
 	} catch (MelderError) {
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Melder_WHITE);
-		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		my recording = false;
+		Graphics_updateWs (my graphics.get());
 		Melder_flushError (U"The recording was not started.");
 	}
 }
 
 static void gui_button_cb_stop (SoundRecorder me, GuiButtonEvent /* event */) {
 	stopRecording (me);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
@@ -824,6 +814,15 @@ static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent even
 	}
 }
 
+static void gui_drawingarea_cb_expose (SoundRecorder me, GuiDrawingArea_ExposeEvent event) {
+	if (! my graphics)
+		return;   // could be the case in the very beginning
+	if (my recording)
+		showMeter (me, & my recordBuffer [1 + my firstSample * my numberOfChannels], my lastSample - my firstSample);
+	else
+		showMeter (me, nullptr, 0);
+}
+
 static void gui_drawingarea_cb_resize (SoundRecorder me, GuiDrawingArea_ResizeEvent event) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
@@ -878,7 +877,9 @@ void structSoundRecorder :: v_createChildren ()
 	GuiLabel_createShown (our windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
 	y += Gui_LABEL_HEIGHT;
 	our meter = GuiDrawingArea_createShown (our windowForm, 170, -170, y, -150,
-			nullptr, nullptr, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+		gui_drawingarea_cb_expose, nullptr,
+		nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER
+	);
 
 	/*
 		Sampling frequency.
@@ -1187,9 +1188,6 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		Editor_init (me.get(), 100, 100, 600, 500, U"SoundRecorder", nullptr);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (my graphics.get(), Melder_WHITE);
-		Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
 struct structGuiDrawingArea_ResizeEvent event { my meter, 0 };
 event. width  = GuiControl_getWidth  (my meter);

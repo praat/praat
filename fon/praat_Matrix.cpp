@@ -1,6 +1,6 @@
 /* praat_Matrix.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,17 @@ DO
 	CREATE_ONE_END (name);
 }
 
+FORM (NEW1_Matrix_createSimpleFromValues, U"Create simple Matrix from values", U"Create simple Matrix from values...") {
+	WORD (name, U"Name", U"xy")
+	NUMMAT (values, U"Values", U"{ { 10, 20, 30 }, { 60, 70, 80 } }")
+	OK
+DO
+	CREATE_ONE
+		autoMatrix result = Matrix_createSimple (values.nrow, values.ncol);
+		result -> z.all() <<= values;
+	CREATE_ONE_END (name);
+}
+
 // MARK: Open
 
 FORM_READ (READ1_Matrix_readFromRawTextFile, U"Read Matrix from raw text file", nullptr, true) {
@@ -127,7 +138,8 @@ extern "C" Graphics Movie_create (conststring32 title, int width, int height) {
 	static GuiDrawingArea drawingArea;
 	if (! theMovieGraphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, nullptr, nullptr, 0);
-		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
+		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height,
+			 	gui_drawingarea_cb_expose, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);
 		theMovieGraphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
@@ -818,6 +830,7 @@ void praat_Matrix_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Matrix", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Matrix...", nullptr, 1, NEW1_Matrix_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix...", nullptr, 1, NEW1_Matrix_createSimple);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix from values...", nullptr, 1, NEW1_Matrix_createSimpleFromValues);
 		praat_addMenuCommand (U"Objects", U"New", U"-- colour matrix --", nullptr, 1, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 1, NEW1_Photo_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 1, NEW1_Photo_createSimple);

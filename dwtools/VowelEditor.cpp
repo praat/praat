@@ -1060,6 +1060,8 @@ static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
 }
 
 static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
+static integer numberOfExposes = 0;
+Melder_casual(U"expose ", ++numberOfExposes);
 	Melder_assert (me);
 	Melder_assert (my trajectory);
 	const double startF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmin);
@@ -1113,7 +1115,7 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 
 // shift key always extends what already is.
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
-static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent event) {
+static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent event) {
 	const double t0 = Melder_clock ();
 	integer iskipped = 0;
 	struct structGuiButtonEvent gb_event { 0 };
@@ -1157,7 +1159,7 @@ static void gui_drawingarea_cb_click (VowelEditor me, GuiDrawingArea_ClickEvent 
 			continue;
 		}
 		iskipped = 0;
-		Graphics_line (my graphics.get(), xp, yp, x, y);
+		//Graphics_line (my graphics.get(), xp, yp, x, y);
 
 		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
 		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
@@ -1317,7 +1319,9 @@ void structVowelEditor :: v_createChildren ()
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	*/
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,   // TODO: mouse-dragged and mouse-up events
+		nullptr, gui_drawingarea_cb_resize, this, 0
+	);
 	width  = GuiControl_getWidth  (drawingArea);
 	height = GuiControl_getHeight (drawingArea);
 }

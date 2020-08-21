@@ -1335,40 +1335,9 @@ void structFormantPathEditor :: v_draw () {
 	v_updateMenuItems_navigation ();
 }
 
-void FormantPathEditor_setSelectionViewerViewportAndWindow (FormantPathEditor me) {
-	/*
-		BOTTOM_MARGIN = 2; TOP_MARGIN = 3; MARGIN = 107; space = 30
-		The FunctionEditor defines the selectionViewer viewport as
-		Graphics_setViewport (my graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-		my v_drawSelectionViewer ();
-		We need somewhat more space; idealy we could override the values above, for now they are hard-coded
-	*/
-	double space = 30.0, margin = 107.0;
-	double vp_left = my selectionViewerLeft + 0.5 * margin ;
-	double vp_right = my selectionViewerRight - 0.75 * margin;
-	double vp_bottom = space;
-	double vp_top = my height - space;
-	Graphics_setViewport (my graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
-	Graphics_setWindow (my graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
-}
-
 void structFormantPathEditor :: v_drawSelectionViewer () {
-	/*
-		BOTTOM_MARGIN = 2; TOP_MARGIN = 3; MARGIN = 107; space = 30
-		The FunctionEditor defines the selectionViewer viewport as
-		Graphics_setViewport (my graphics.get(), my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-		my v_drawSelectionViewer ();
-		We need somewhat more space; idealy we could override the values above, for now they are hard-coded
-	*/
-	double space = 30.0, margin = 107.0;
-	double vp_left = selectionViewerLeft + 0.5 * margin ;
-	double vp_right = selectionViewerRight - 0.75 * margin;
-	double vp_bottom = space;
-	double vp_top = height - space;
-	Graphics_setViewport (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
-	Graphics_setWindow (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
-	Graphics_fillRectangle (our graphics.get(), vp_left, vp_right, vp_bottom, vp_top);
+	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
 	Graphics_setFontSize (our graphics.get(), 9.0);
@@ -1737,13 +1706,13 @@ bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKe
 				This has to be done before the next Update, i.e. also before do_dragBoundary!
 			*/
 			our selectedTier = clickedTierNumber;
-			do_dragBoundary (this, tnear, clickedTierNumber, shiftKeyPressed);
+			do_dragBoundary (this, tnear, clickedTierNumber, clickWasModifiedByShiftKey);
 			return FunctionEditor_NO_UPDATE_NEEDED;
 		} else {
 			/*
 				If the user clicked on an unselected boundary or point, we select it.
 			*/
-			if (shiftKeyPressed) {
+			if (clickWasModifiedByShiftKey) {
 				if (tnear > 0.5 * (our startSelection + our endSelection))
 					our endSelection = tnear;
 				else
@@ -1949,16 +1918,6 @@ void structFormantPathEditor :: v_highlightSelection (double left, double right,
 		Graphics_highlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
-	}
-}
-
-void structFormantPathEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY2 = _FormantPathEditor_computeSoundY2 (this);
-		//Graphics_unhighlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_unhighlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
-	} else {
-		Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
 	}
 }
 

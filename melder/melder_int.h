@@ -2,7 +2,7 @@
 #define _melder_int_h_
 /* melder_int.h
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,10 @@ inline static integer uinteger_to_integer (uinteger n) {
 	Melder_assert (n <= INTEGER_MAX);
 	return (integer) n;
 }
+inline static int32 integer_to_int32 (integer n) {
+	Melder_assert (n >= INT32_MIN && n <= INT32_MAX);
+	return (int32) n;
+}
 
 inline static integer integer_abs (integer n) {
 	Melder_assert (sizeof (integer) == sizeof (long) || sizeof (integer) == sizeof (long long));
@@ -89,37 +93,37 @@ inline static integer integer_abs (integer n) {
 struct MelderIntegerRange {
 	integer first, last;
 	bool isEmpty () { return ( last < first ); }
-	integer size () {
+	integer size () const {
 		integer result = last - first + 1;
 		return std::max (result, 0_integer);
 	}
 };
 
 template <typename T>
-void Melder_clipLeft (T minimum, T *var) {
+void Melder_clipLeft (T minimum, T *var) {   // no action if either undefined
 	if (*var < minimum)
 		*var = minimum;
 }
 
 template <typename T>
 T Melder_clippedLeft (T minimum, T var) {
-	return std::max (minimum, var);
+	return var < minimum ? minimum : var;   // if minimum undefined, then var
 }
 
 template <typename T>
-void Melder_clipRight (T *var, T maximum) {
+void Melder_clipRight (T *var, T maximum) {   // no action if either undefined
 	if (*var > maximum)
 		*var = maximum;
 }
 
 template <typename T>
 T Melder_clippedRight (T var, T maximum) {
-	return std::min (var, maximum);
+	return var > maximum ? maximum : var;   // if maximum undefined, then var
 }
 
 template <typename T>
 void Melder_clip (T minimum, T *var, T maximum) {
-	Melder_assert (maximum >= minimum);
+	Melder_assert (! (maximum < minimum));   // NaN-safe
 	if (*var < minimum)
 		*var = minimum;
 	else if (*var > maximum)
@@ -128,16 +132,30 @@ void Melder_clip (T minimum, T *var, T maximum) {
 
 template <typename T>
 T Melder_clipped (T minimum, T var, T maximum) {
-	Melder_assert (maximum >= minimum);
-	return std::max (minimum, std::min (var, maximum));
+	Melder_assert (! (maximum < minimum));   // NaN-safe
+	return var < minimum ? minimum : var > maximum ? maximum : var;   // if minimum and maximum undefined, then var
+}
+
+template <typename T>
+void Melder_moveCloserToBy (T *x, T to, T by) {
+	if (*x < to)
+		*x = Melder_clippedRight (*x + by, to);
+	else if (*x > to)
+		*x = Melder_clippedLeft (to, *x - by);
+}
+
+template <typename T>
+void Melder_sort (T *p1, T *p2) {
+	if (*p2 < *p1)
+		std::swap (*p1, *p2);
 }
 
 class kleenean {
 	int _intValue;
 public:
-	static constexpr int UNKNOWN = -1;
-	static constexpr int NO_ = 0;
-	static constexpr int YES_ = 1;
+	constexpr static int UNKNOWN = -1;
+	constexpr static int NO_ = 0;
+	constexpr static int YES_ = 1;
 	explicit constexpr kleenean (int initialValue): _intValue (initialValue) { }
 	bool isTrue () const noexcept {
 		return our _intValue > 0;

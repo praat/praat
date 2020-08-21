@@ -1,6 +1,6 @@
 /* SpectrogramEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ void structSpectrogramEditor :: v_draw () {
 	Sampled_getWindowSamples (spectrogram, our startWindow, our endWindow, & itmin, & itmax);
 
 	/*
-	 * Autoscale frequency axis.
-	 */
+		Autoscale frequency axis.
+	*/
 	our maximum = spectrogram -> ymax;
 
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, our maximum);
@@ -42,8 +42,8 @@ void structSpectrogramEditor :: v_draw () {
 		 60, 6.0, 0);
 
 	/*
-	 * Horizontal scaling lines.
-	 */
+		Horizontal scaling lines.
+	*/
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, our maximum);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_setColour (our graphics.get(), Melder_RED);
@@ -54,8 +54,8 @@ void structSpectrogramEditor :: v_draw () {
 	}
 
 	/*
-	 * Vertical cursor lines.
-	 */
+		Vertical cursor lines.
+	*/
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, our maximum);
 	if (our startSelection > our startWindow && our startSelection < our endWindow)
 		Graphics_line (our graphics.get(), our startSelection, 0, our startSelection, our maximum);
@@ -64,16 +64,14 @@ void structSpectrogramEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 }
 
-bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
-	Spectrogram spectrogram = (Spectrogram) our data;
-	/*double frequency = yWC * our maximum;*/
-	integer bestFrame;
-	bestFrame = Sampled_xToNearestIndex (spectrogram, xWC);
-	if (bestFrame < 1)
-		bestFrame = 1;
-	else if (bestFrame > spectrogram -> nx)
-		bestFrame = spectrogram -> nx;
-	return our SpectrogramEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
+bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+	if (event -> isClick()) {
+		Spectrogram spectrogram = (Spectrogram) our data;
+		double clickedFrequency = y_fraction * our maximum;
+		const integer clickedFrame = Melder_clipped (1_integer, Sampled_xToNearestIndex (spectrogram, x_world), spectrogram -> nx);
+		// TODO
+	}
+	return our SpectrogramEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
 autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram data) {

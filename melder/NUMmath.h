@@ -115,21 +115,5 @@ constexpr double NUM_goldenSection = 0.6180339887498948482045868343656381177203;
 // Instead we use the 40 digits computed by Johann von Soldner in 1809.
 constexpr double NUM_euler = 0.5772156649015328606065120900824024310422;
 
-const double undefined = (0.0/0.0);   // NaN
-
-/*
-	isdefined() shall capture not only `undefined`, but all infinities and NaNs.
-	This can be done with a single test for the set bits in 0x7FF0'0000'0000'0000,
-	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
-	The portable version of isdefined() involves both isinf() and isnan(), or perhaps just isfinite(),
-	but that would be slower (as tested in fon/Praat_tests.cpp)
-	and it would also run into problems on some platforms when both <cmath> and <math.h> are included,
-	as in dwsys/NUMcomplex.cpp.
-*/
-//inline bool isdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
-//inline bool isdefined (double x) { return isfinite (x); }   /* portable */
-inline bool isdefined (double x) { return ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) != 0x7FF0'0000'0000'0000; }
-inline bool isundef (double x) { return ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) == 0x7FF0'0000'0000'0000; }
-
 /* End of file NUMmath.h */
 #endif

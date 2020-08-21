@@ -80,7 +80,6 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 					for (int igrey = 0; igrey <= 255; igrey ++)
 						greyBrush [igrey] = CreateSolidBrush (RGB (igrey, igrey, igrey));   // once
 			#elif quartz
-				GraphicsQuartz_initDraw (me);
 				CGContextSetAlpha (my d_macGraphicsContext, 1.0);
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 			#endif
@@ -145,7 +144,6 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 					cairo_pattern_destroy (grey [igrey]);
 			#elif quartz
 				CGContextSetRGBFillColor (my d_macGraphicsContext, 0.0, 0.0, 0.0, 1.0);
-				GraphicsQuartz_exitDraw (me);
 			#endif
 		} catch (MelderError) { }
 	} else {
@@ -439,9 +437,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 				// release bitmap?
 			}
 			Melder_assert (image != nullptr);
-			GraphicsQuartz_initDraw (me);
 			CGContextDrawImage (my d_macGraphicsContext, CGRectMake (clipx1, clipy2, clipx2 - clipx1, clipy1 - clipy2), image);
-			GraphicsQuartz_exitDraw (me);
 			//CGColorSpaceRelease (colourSpace);
 			CGImageRelease (image);
 		#endif
@@ -859,16 +855,14 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 					height = width * (double) CGImageGetHeight (image) / (double) CGImageGetWidth (image);
 					y2DC -= height / 2, y1DC = y2DC + height;
 				}
-				GraphicsQuartz_initDraw (me);
 				CGContextSaveGState (my d_macGraphicsContext);
                 
-                NSCAssert(my d_macGraphicsContext, @"nil context");
+                //NSCAssert(my d_macGraphicsContext, @"nil context");
 
 				CGContextTranslateCTM (my d_macGraphicsContext, 0, y1DC);
 				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 				CGContextDrawImage (my d_macGraphicsContext, CGRectMake (x1DC, 0, width, height), image);
 				CGContextRestoreGState (my d_macGraphicsContext);
-				GraphicsQuartz_exitDraw (me);
 				CGImageRelease (image);
 			}
 		}

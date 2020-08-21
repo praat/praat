@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2005,2007-2019 Paul Boersma,
+ * Copyright (C) 1992-2005,2007-2020 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -104,7 +104,7 @@ void structGuiMenu :: v_destroy () noexcept {
 						GuiWindow window = (GuiWindow) shell;
 						if (window -> d_tabCallback) {
 							try {
-								struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+								structGuiMenuItemEvent event { nullptr, false, false, false };
 								window -> d_tabCallback (window -> d_tabBoss, & event);
 							} catch (MelderError) {
 								Melder_flushError (U"Tab key not completely handled.");
@@ -136,7 +136,7 @@ void structGuiMenu :: v_destroy () noexcept {
 							*/
 							if (window -> d_shiftTabCallback) {
 								try {
-									struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+									structGuiMenuItemEvent event { nullptr, false, false, false };
 									window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
 								} catch (MelderError) {
 									Melder_flushError (U"Tab key not completely handled.");
@@ -167,7 +167,7 @@ void structGuiMenu :: v_destroy () noexcept {
 						GuiWindow window = (GuiWindow) shell;
 						if (([nsEvent modifierFlags] & NSAlternateKeyMask) && window -> d_optionBackspaceCallback) {
 							try {
-								struct structGuiMenuItemEvent event { nullptr, false, false, false, false };
+								structGuiMenuItemEvent event { nullptr, false, false, false };
 								window -> d_optionBackspaceCallback (window -> d_optionBackspaceBoss, & event);
 							} catch (MelderError) {
 								Melder_flushError (U"Option-Backspace not completely handled.");
@@ -357,10 +357,10 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 fl
 		[my d_cocoaMenu   setAutoenablesItems: NO];
 		if (! window) {
 			/*
-			 * Install the menu in the main OS X menu bar along the top of the screen.
-			 * This is done by creating a menu item for the main menu bar,
-			 * and during applicationWillFinishLaunching installing that item.
-			 */
+				Install the menu in the main OS X menu bar along the top of the screen.
+				This is done by creating a menu item for the main menu bar,
+				and during applicationWillFinishLaunching installing that item.
+			*/
             NSString *itemTitle = (NSString *) Melder_peek32toCfstring (title);
 			my d_cocoaMenuItem = [[GuiCocoaMenuItem alloc]
 				initWithTitle: itemTitle  action: nullptr   keyEquivalent: @""];
@@ -370,15 +370,15 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 fl
 			theMenuBarItems [++ theNumberOfMenuBarItems] = my d_cocoaMenuItem;
 		} else if ([(NSView *) window -> d_widget   isKindOfClass: [NSView class]]) {
 			/*
-			 * Install the menu at the top of a window.
-			 * Menu title positioning information is maintained in that GuiWindow.
-			 */
+				Install the menu at the top of a window.
+				Menu title positioning information is maintained in that GuiWindow.
+			*/
 			NSRect parentRect = [(NSView *) window -> d_widget   frame];   // this is the window's top form
-			int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
+			integer parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
 			if (window -> d_menuBarWidth == 0)
 				window -> d_menuBarWidth = -1;
-			int width = 18 + 7 * str32len (title), height = 35 /*25*/;
-			int x = window -> d_menuBarWidth, y = parentHeight + 1 - height;
+			integer width = 18 + 7 * str32len (title), height = 35 /*25*/;
+			integer x = window -> d_menuBarWidth, y = parentHeight + 1 - height;
             NSUInteger resizingMask = NSViewMinYMargin;
 			if (Melder_equ (title, U"Help")) {
 				x = parentWidth + 1 - width;
@@ -400,24 +400,23 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 fl
 			[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
 			[[my d_cocoaMenuButton cell]   setPreferredEdge: NSMaxYEdge];
 			/*
-			 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
-			 */
+				Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
+			*/
 			GuiCocoaMenuItem *item = [[GuiCocoaMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: nullptr keyEquivalent: @""];
 			[my d_cocoaMenu   addItem: item];   // the menu will retain the item...
 			[item release];   // ... so we can release the item already
 			/*
-			 * Install the menu button in the form.
-			 */
+				Install the menu button in the form.
+			*/
 			[(NSView *) window -> d_widget   addSubview: my d_cocoaMenuButton];   // parent will retain the button...
 
 			[my d_cocoaMenuButton   release];   // ... so we can release the button already
 			/*
-			 * Attach the menu to the button.
-			 */
+				Attach the menu to the button.
+			*/
 			[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
 			[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
 			[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (title)];
-
 		}
 	#endif
 
@@ -571,14 +570,14 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
         my d_widget = my d_cocoaMenu = [[GuiCocoaMenu alloc] initWithTitle:menuTitle];
 		[my d_cocoaMenu   setAutoenablesItems: NO];
 		/*
-		 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
-		 */
+			Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
+		*/
 		NSMenuItem *item = [[NSMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: nullptr keyEquivalent: @""];
 		[my d_cocoaMenu   addItem: item];   // the menu will retain the item...
 		[item release];   // ... so we can release the item already
 		/*
-		 * Attach the menu to the button.
-		 */
+			Attach the menu to the button.
+		*/
 		[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
 		[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
 		[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peek32toCfstring (title)];

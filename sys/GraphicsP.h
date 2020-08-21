@@ -83,7 +83,6 @@ Thing_define (GraphicsScreen, Graphics) {
 			GdkDisplay *d_display;
 			#if ALLOW_GDK_DRAWING
 				GdkDrawable *d_window;
-				GdkGC *d_gdkGraphicsContext;
 			#else
 				GdkWindow *d_window;
 			#endif
@@ -104,7 +103,6 @@ Thing_define (GraphicsScreen, Graphics) {
 		NSView *d_macView;
 		int d_macFont, d_macStyle;
 		int d_depth;
-		RGBColor d_macColour;
 		uint8 *d_bits;
 		CGContextRef d_macGraphicsContext;
 	#endif
@@ -220,11 +218,6 @@ void _Graphics_setGrey (Graphics me, double grey);
 void _Graphics_colour_init (Graphics me);
 bool _GraphicsMac_tryToInitializeFonts ();
 bool _GraphicsLin_tryToInitializeFonts ();
-
-#if quartz
-	void GraphicsQuartz_initDraw (GraphicsScreen me);
-	void GraphicsQuartz_exitDraw (GraphicsScreen me);
-#endif
 
 extern enum kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
 

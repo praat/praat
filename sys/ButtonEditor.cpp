@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2019 Paul Boersma
+ * Copyright (C) 1996-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,6 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 }
 
 void structButtonEditor :: v_draw () {
-	Graphics_clearWs (our graphics.get());
 	switch (show) {
 		case 1:
 			for (integer i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {

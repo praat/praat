@@ -2,7 +2,7 @@
 #define _ManipulationEditor_h_
 /* ManipulationEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013,2015 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2013,2015,2016,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
  */
 
 #include "FunctionEditor.h"
+#include "PitchTierEditor.h"
+#include "DurationTierEditor.h"
 #include "Manipulation.h"
 
 #include "ManipulationEditor_enums.h"
@@ -35,6 +37,9 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	GuiMenuItem synthPulsesPitchButton, synthPulsesPitchHumButton;
 	GuiMenuItem synthOverlapAddNodurButton, synthOverlapAddButton;
 	GuiMenuItem synthPitchLpcButton;
+	autoPitchTierView pitchTierArea;
+	autoDurationTierView durationTierArea;
+
 	struct { double minPeriodic, cursor; } pitchTier;
 	struct { double cursor;  } duration;
 	Graphics_Viewport inset;

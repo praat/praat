@@ -47,7 +47,6 @@ extern const char * ipaSerifRegularPS [];
 	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 	#define mac_MAXIMUM_FONT_SIZE  500
 	static CTFontRef theScreenFonts [1 + kGraphics_font_DINGBATS] [1+mac_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
-	static RGBColor theWhiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, theBlueColour = { 0, 0, 0xFFFF };
 #endif
 
 #if gdi
@@ -522,8 +521,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 		iam (GraphicsPostscript);
 		bool onlyRegular = lc -> font.string [0] == 'S' ||
 			(lc -> font.string [0] == 'T' && lc -> font.string [1] == 'e');   // Symbol & SILDoulos !
-		int slant = (lc -> style & Graphics_ITALIC) && onlyRegular;
-		int thick = (lc -> style & Graphics_BOLD) && onlyRegular;
+		bool slant = (lc -> style & Graphics_ITALIC) && onlyRegular;
+		bool thick = (lc -> style & Graphics_BOLD) && onlyRegular;
 		if (lc -> font.string != my lastFid || lc -> size != my lastSize)
 			my d_printf (my d_file, my languageLevel == 1 ? "/%s %d FONT\n" : "/%s %d selectfont\n",
 				my lastFid = lc -> font.string, my lastSize = lc -> size);
@@ -559,25 +558,11 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 	} else if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my duringXor) {
-				#if ALLOW_GDK_DRAWING
-					static GdkFont *font = nullptr;
-					if (! font) {
-						font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
-						if (! font) {
-							font = gdk_font_load ("-*-courier 10 pitch-medium-r-normal--*-120-*-*-*-*-iso8859-1");
-						}
-					}
-					if (font) {
-						gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
-					}
-					gdk_flush ();
-				#endif
+			if (! my d_cairoGraphicsContext)
 				return;
-			}
-			if (! my d_cairoGraphicsContext) return;
 			// TODO!
-			if (lc -> link) _Graphics_setColour (me, Melder_BLUE);
+			if (lc -> link)
+				_Graphics_setColour (me, Melder_BLUE);
 			int font = lc -> font.integer_;
 			cairo_save (my d_cairoGraphicsContext);
 			cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
@@ -594,12 +579,18 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			pango_cairo_show_layout_line (my d_cairoGraphicsContext, pango_layout_get_line_readonly (layout, 0));
 			g_object_unref (layout);
 			cairo_restore (my d_cairoGraphicsContext);
-			if (lc -> link) _Graphics_setColour (me, my colour);
+			if (lc -> link)
+				_Graphics_setColour (me, my colour);
 			return;
 		#elif gdi
 			int font = lc -> font.integer_;
 			conststringW codesW = Melder_peek32toW (codes);
 			if (my duringXor) {
+				/*
+					On GDI, SetROP2 does not influence text drawing,
+					so we have to create a bitmap in the background
+					and use BitBlt with SRCINVERT as its ROP.
+				*/
 				int descent = (1.0/216) * my fontSize * my resolution;
 				int ascent = (1.0/72) * my fontSize * my resolution;
 				int maxWidth = 800, maxHeight = 200;
@@ -625,8 +616,12 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 				return;
 			}
-			SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
-			if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
+			SelectPen (my d_gdiGraphicsContext, my d_winPen);
+			SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
+			if (lc -> link)
+				SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255));
+			else
+				SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 			SelectFont (my d_gdiGraphicsContext, fonts [(int) my resolutionNumber] [font] [lc -> size] [lc -> style]);
 			if (my textRotation == 0.0) {
 				TextOutW (my d_gdiGraphicsContext, xDC, yDC, codesW, str16len ((const char16 *) codesW));
@@ -641,23 +636,24 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				TextOutW (my d_gdiGraphicsContext, 0, 0, codesW, str16len ((const char16 *) codesW));
 				RestoreDC (my d_gdiGraphicsContext, restore);
 			}
-			if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
+			if (lc -> link)
+				SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 			return;
 		#elif quartz
 			/*
-			 * Determine the font family.
-			 */
+				Determine the font family.
+			*/
 			int font = lc -> font.integer_;   // the font of the first character
 
 			/*
-			 * Determine the style.
-			 */
+				Determine the style.
+			*/
 			int style = lc -> style;   // the style of the first character
 
 			/*
-			 * Determine the font-style combination.
-			 */
+				Determine the font-style combination.
+			*/
 			CTFontRef ctFont = theScreenFonts [font] [lc -> size] [style];
 			if (! ctFont) {
 				CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
@@ -725,10 +721,10 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				CFStringRef s = CFStringCreateWithBytes (nullptr,
 					(const UInt8 *) codes16, str16len (codes16) * 2,
 					kCFStringEncodingUTF16LE, false);
-				int length = CFStringGetLength (s);
+				integer length = CFStringGetLength (s);
 			#else
 				NSString *s = [[NSString alloc]   initWithBytes: codes16   length: str16len (codes16) * 2   encoding: NSUTF16LittleEndianStringEncoding];
-				int length = [s length];
+				integer length = [s length];
 			#endif
 
 			CGFloat descent = CTFontGetDescent (ctFont);
@@ -740,7 +736,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 
 			static CFNumberRef cfKerning;
 			if (! cfKerning) {
-				double kerning = 0.0;
+				const double kerning = 0.0;
 				cfKerning = CFNumberCreate (kCFAllocatorDefault, kCFNumberDoubleType, & kerning);
 			}
             CFAttributedStringSetAttribute (string, textRange, kCTKernAttributeName, cfKerning);
@@ -754,40 +750,26 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			}
             CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
-            RGBColor *macColor = lc -> link ? & theBlueColour : my duringXor ? & theWhiteColour : & my d_macColour;
-            CGColorRef color = CGColorCreateGenericRGB (macColor->red / 65536.0, macColor->green / 65536.0, macColor->blue / 65536.0, 1.0);
+            MelderColour colour = lc -> link ? Melder_BLUE : my colour;
+            CGColorRef color = CGColorCreateGenericRGB (colour.red, colour.green, colour.blue, 1.0);
 			Melder_assert (color != nullptr);
             CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
 
             /*
-             * Draw.
-             */
+            	Draw.
+			*/
     
             CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
             CFRelease (color);
 
-			if (my d_macView) {
-				if (SUPPORT_DIRECT_DRAWING) {
-					[my d_macView   lockFocus];
-					my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-				}
-			}
             CGContextSaveGState (my d_macGraphicsContext);
             CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
-            if (my yIsZeroAtTheTop) CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+            if (my yIsZeroAtTheTop)
+            	CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
             CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
 
 			CTLineRef line = CTLineCreateWithAttributedString (string);
-            if (my duringXor) {
-                CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-                CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
-				CTLineDraw (line, my d_macGraphicsContext);
-                CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
-                CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
-            } else {
-				CTLineDraw (line, my d_macGraphicsContext);
-            }
-			//CGContextFlush (my d_macGraphicsContext);
+			CTLineDraw (line, my d_macGraphicsContext);
 			CFRelease (line);
             CGContextRestoreGState (my d_macGraphicsContext);
 
@@ -795,31 +777,8 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
             CFRelease (string);
 			CFRelease (s);
 			//CFRelease (ctFont);
-			if (my d_macView) {
-				if (SUPPORT_DIRECT_DRAWING)
-					[my d_macView   unlockFocus];
-				if (! my duringXor) {
-					//[my d_macView   setNeedsDisplay: YES];   // otherwise, CoreText text may not be drawn
-				}
-			}
 			return;
 		#endif
-	}
-}
-
-static void initText (void *void_me) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
-		(void) me;
-	}
-}
-
-static void exitText (void *void_me) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
-		(void) me;
 	}
 }
 
@@ -851,13 +810,22 @@ static int numberOfLinks = 0;
 static Graphics_Link links [100];    // a maximum of 100 links per string
 
 static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEachCharacterSeparately) {
-	if (my postScript || (cairo && my duringXor) || (cairo && ! my screen)) {   // TODO: use Pango measurements even without Cairo context (if no screen)
+	/*
+		Ideally, this function should work even in cases where there is no screen.
+		Example: a Praat script wants to draw a text inside a rectangle
+		and determines the witth of the rectangle by means of the "Text width (mm)" command.
+		Ideally, this script should run correctly from the command line.
+		On the Mac, `CTFramesetterSuggestFrameSizeWithConstraints` works correctly from thecommand line,
+		but on Linux, `pango_layout_get_extents` does not work if there is no d_cairoGraphicsContext.
+		(last checked 2020-07-17)
+	*/
+	if (my postScript || (cairo && ! my screen)) {   // TODO: use Pango measurements even without Cairo context (if no screen)
 		for (_Graphics_widechar *character = string; character -> kar > U'\t'; character ++)
 			charSize (me, character);
 	} else {
 	/*
-	 * Measure the size of each character.
-	 */
+		Measure the size of each character.
+	*/
 	_Graphics_widechar *character;
 	#if quartz || cairo
 		#if cairo
@@ -866,23 +834,23 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 		int numberOfDiacritics = 0;
 		for (_Graphics_widechar *lc = string; lc -> kar > U'\t'; lc ++) {
 			/*
-			 * Determine the font family.
-			 */
+				Determine the font family.
+			*/
 			Longchar_Info info = lc -> karInfo;
 			Melder_assert (info);
 			int font = chooseFont (me, lc);
 			lc -> font.string = nullptr;   // this erases font.integer_!
 
 			/*
-			 * Determine the style.
-			 */
+				Determine the style.
+			*/
 			int style = lc -> style;
 			Melder_assert (style >= 0 && style <= Graphics_BOLD_ITALIC);
 
 			#if quartz
 				/*
-				 * Determine and store the font-style combination.
-				 */
+					Determine and store the font-style combination.
+				*/
 				CTFontRef ctFont = theScreenFonts [font] [100] [style];
 				if (! ctFont) {
 					CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
@@ -1075,11 +1043,6 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		case Graphics_BASELINE:  dy = 0; break;
 		default:                 dy = 0; break;
 	}
-	#if quartz
-		if (my screen) {
-			GraphicsQuartz_initDraw ((GraphicsScreen) me);
-		}
-	#endif
 	if (my textRotation != 0.0) {
 		double xbegin = dx, x = xbegin, cosa, sina;
 		if (my textRotation == 90.0f) { cosa = 0.0; sina = 1.0; }
@@ -1195,11 +1158,6 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		my textX = (x - my deltaX) / my scaleX;
 		my textY = (( my yIsZeroAtTheTop ? y + dy : y - dy ) - my deltaY) / my scaleY;
 	}
-	#if quartz
-		if (my screen) {
-			GraphicsQuartz_exitDraw ((GraphicsScreen) me);
-		}
-	#endif
 }
 
 static struct { double width; kGraphics_horizontalAlignment alignment; } tabs [1 + 20] = { { 0, Graphics_CENTRE },
@@ -1440,12 +1398,11 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 }
 
 double Graphics_textWidth (Graphics me, conststring32 txt) {
-	if (! initBuffer (txt)) return 0.0;
-	initText (me);
+	if (! initBuffer (txt))
+		return 0.0;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, false);
 	double width = textWidth (theWidechar);
-	exitText (me);
 	return width / my scaleX;
 }
 
@@ -1456,16 +1413,19 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	integer y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
 	int availableHeight = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC, availableWidth = x2DC - x1DC;
 	int linesAvailable = availableHeight / lineHeight, linesNeeded = 1, lines, iline;
-	if (linesAvailable <= 0) linesAvailable = 1;
-	if (availableWidth <= 0) return;
-	if (! initBuffer (txt)) return;
-	initText (me);
+	if (linesAvailable <= 0)
+		linesAvailable = 1;
+	if (availableWidth <= 0)
+		return;
+	if (! initBuffer (txt))
+		return;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, true);
 	for (plc = theWidechar; plc -> kar > U'\t'; plc ++) {
 		width += plc -> width;
 		if (width > availableWidth) {
-			if (++ linesNeeded > linesAvailable) break;
+			if (++ linesNeeded > linesAvailable)
+				break;
 			width = 0.0;
 		}	
 	}
@@ -1478,8 +1438,8 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 			width += plc -> width;
 			if (width > availableWidth) flush = true;
 			/*
-			 * Trick for incorporating end-of-text.
-			 */
+				Trick for incorporating end-of-text.
+			*/
 			if (! flush && plc [1]. kar <= U'\t') {
 				Melder_assert (iline == lines);
 				plc ++;   // brr
@@ -1504,7 +1464,6 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 			}
 		}
 	}
-	exitText (me);
 }
 
 void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
@@ -1512,9 +1471,8 @@ void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 		double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
 		integer numberOfLines = 1;
 		for (const char32 *p = & txt [0]; *p != U'\0'; p ++) {
-			if (*p == U'\n') {
+			if (*p == U'\n')
 				numberOfLines ++;
-			}
 		}
 		yWC +=
 			my verticalTextAlignment == Graphics_TOP ? 0.0 :
@@ -1535,11 +1493,10 @@ void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 		}
 		return;
 	}
-	if (! initBuffer (txt)) return;
-	initText (me);
+	if (! initBuffer (txt))
+		return;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	drawCells (me, xWC, yWC, theWidechar);
-	exitText (me);
 	if (my recording) {
 		conststring8 txt_utf8 = Melder_peek32to8 (txt);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
@@ -1554,8 +1511,8 @@ int Graphics_getLinks (Graphics_Link **plinks) { *plinks = & links [0]; return n
 
 static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 	/*
-	 * The following has to be kept IN SYNC with GraphicsPostscript::charSize.
-	 */
+		The following has to be kept IN SYNC with GraphicsPostscript::charSize.
+	*/
 	double textWidth = 0;
 	for (_Graphics_widechar *character = & string [0]; character -> kar > U'\t'; character ++) {
 		Longchar_Info info = character -> karInfo;

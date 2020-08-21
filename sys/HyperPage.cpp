@@ -406,7 +406,7 @@ if (! my printing) {
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 			theCurrentPraatObjects = (PraatObjects) my praatObjects;
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
-			theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> backgroundGraphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
 			theCurrentPraatPicture -> font = (int) font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -503,7 +503,7 @@ if (! my printing) {
 		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 		theCurrentPraatObjects = (PraatObjects) my praatObjects;
 		theCurrentPraatPicture = (PraatPicture) my praatPicture;
-		theCurrentPraatPicture -> graphics = my ps;
+		theCurrentPraatPicture -> backgroundGraphics = my ps;
 		theCurrentPraatPicture -> font = (int) font;
 		theCurrentPraatPicture -> fontSize = size;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -591,7 +591,8 @@ void structHyperPage :: v_destroy () noexcept {
 }
 
 static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	Graphics_clearWs (my graphics.get());
 	initScreen (me);
 	trace (U"going to draw");
@@ -599,7 +600,8 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 	if (my entryHint && my entryPosition != 0.0) {
 		my entryHint. reset();
 		my top = (int) floor (5.0 * (PAGE_HEIGHT - my entryPosition));
-		if (my top < 0) my top = 0;
+		if (my top < 0)
+			my top = 0;
 		Graphics_clearWs (my graphics.get());
 		initScreen (me);
 		my v_draw ();
@@ -607,8 +609,9 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 	}
 }
 
-static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+static void gui_drawingarea_cb_mouse (HyperPage me, GuiDrawingArea_MouseEvent event) {
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	for (integer ilink = 1; ilink <= my links.size; ilink ++) {
 		HyperLink link = my links.at [ilink];
 		if (! link)
@@ -746,7 +749,8 @@ static void createVerticalScrollBar (HyperPage me, GuiForm parent) {
 		- Machine_getScrollBarWidth (), 0,
 		Machine_getMenuBarHeight () + (my d_hasExtraRowOfTools ? 2 * height + 19 : height + 12), - Machine_getScrollBarWidth (),
 		0, PAGE_HEIGHT * 5, 0, 25, 1, 24,
-		gui_cb_verticalScroll, me, 0);
+		gui_cb_verticalScroll, me, 0
+	);
 }
 
 static void updateVerticalScrollBar (HyperPage me)
@@ -759,9 +763,10 @@ static void updateVerticalScrollBar (HyperPage me)
 }
 
 static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
-	if (! my verticalScrollBar) return;
+	if (! my verticalScrollBar)
+		return;
 	int value = GuiScrollBar_getValue (my verticalScrollBar) - 24;
-	if (value < 0) value = 0;
+	Melder_clipLeft (0, & value);
 	if (value != my top) {
 		my top = value;
 		Graphics_clearWs (my graphics.get());
@@ -772,9 +777,10 @@ static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
-	if (! my verticalScrollBar) return;
+	if (! my verticalScrollBar)
+		return;
 	int value = GuiScrollBar_getValue (my verticalScrollBar) + 24;
-	if (value > (int) (PAGE_HEIGHT * 5) - 25) value = (int) (PAGE_HEIGHT * 5) - 25;
+	Melder_clipRight (& value, (int) (PAGE_HEIGHT * 5) - 25);
 	if (value != my top) {
 		my top = value;
 		Graphics_clearWs (my graphics.get());
@@ -806,7 +812,8 @@ static void gui_button_cb_back (HyperPage me, GuiButtonEvent /* event */) {
 }
 
 static void do_forth (HyperPage me) {
-	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return;
+	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page)
+		return;
 	autostring32 page = Melder_dup_f (my history [++ my historyPointer]. page.get());
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
@@ -858,17 +865,18 @@ void structHyperPage :: v_createMenus () {
 /********** **********/
 
 static void gui_drawingarea_cb_resize (HyperPage me, GuiDrawingArea_ResizeEvent event) {
-	if (! my graphics) return;
+	if (! my graphics)
+		return;
 	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
 	Graphics_setWsWindow (my graphics.get(), 0.0, my rightMargin = event -> width / resolution,
-		PAGE_HEIGHT - event -> height / resolution, PAGE_HEIGHT);
+			PAGE_HEIGHT - event -> height / resolution, PAGE_HEIGHT);
 	Graphics_updateWs (my graphics.get());
 	updateVerticalScrollBar (me);
 }
 
 static void gui_button_cb_previousPage (HyperPage me, GuiButtonEvent /* event */) {
 	HyperPage_goToPage_number (me, my v_getCurrentPageNumber () > 1 ?
-		my v_getCurrentPageNumber () - 1 : my v_getNumberOfPages ());
+			my v_getCurrentPageNumber () - 1 : my v_getNumberOfPages ());
 }
 
 static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
@@ -884,15 +892,15 @@ void structHyperPage :: v_createChildren () {
 
 	if (our v_hasHistory ()) {
 		GuiButton_createShown (our windowForm, 4, 48, y, y + height,
-			U"<", gui_button_cb_back, this, 0);
+				U"<", gui_button_cb_back, this, 0);
 		GuiButton_createShown (our windowForm, 54, 98, y, y + height,
-			U">", gui_button_cb_forth, this, 0);
+				U">", gui_button_cb_forth, this, 0);
 	}
 	if (our v_isOrdered ()) {
 		GuiButton_createShown (our windowForm, 174, 218, y, y + height,
-			U"< 1", gui_button_cb_previousPage, this, 0);
+				U"< 1", gui_button_cb_previousPage, this, 0);
 		GuiButton_createShown (our windowForm, 224, 268, y, y + height,
-			U"1 >", gui_button_cb_nextPage, this, 0);
+				U"1 >", gui_button_cb_nextPage, this, 0);
 	}
 
 	/***** Create scroll bar. *****/
@@ -904,7 +912,9 @@ void structHyperPage :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (our windowForm,
 		0, - Machine_getScrollBarWidth (),
 		y + ( our d_hasExtraRowOfTools ? 2 * height + 16 : height + 9 ), - Machine_getScrollBarWidth (),
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
+		nullptr, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER
+	);
 	GuiDrawingArea_setSwipable (drawingArea, nullptr, our verticalScrollBar);
 }
 

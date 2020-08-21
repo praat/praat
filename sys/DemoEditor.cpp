@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2019 Paul Boersma
+ * Copyright (C) 2009-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +41,10 @@ void structDemoEditor :: v_info () {
 }
 
 void structDemoEditor :: v_goAway () {
-	if (waitingForInput) {
+	if (waitingForInput)
 		userWantsToClose = true;
-	} else {
+	else
 		DemoEditor_Parent :: v_goAway ();
-	}
 }
 
 void structDemoEditor :: v_createMenus () {
@@ -53,21 +52,19 @@ void structDemoEditor :: v_createMenus () {
 }
 
 static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my graphics) return;   // could be the case in the very beginning
-	/*
-	 * Erase the background. Don't record this erasure!
-	 */
-	Graphics_stopRecording (my graphics.get());   // the only place in Praat (the Picture window has a separate Graphics for erasing)?
-	Graphics_setColour (my graphics.get(), Melder_WHITE);
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	Graphics_startRecording (my graphics.get());
-	Graphics_play (my graphics.get(), my graphics.get());
+	if (! my foregroundGraphics)
+		return;   // could be the case in the very beginning
+static integer count=0;
+Melder_casual(U"gui_drawingarea_cb_expose ", ++count);
+	Graphics_clearWs (my foregroundGraphics.get());
+	Graphics_play (my backgroundGraphics.get(), my foregroundGraphics.get());
 }
 
-static void gui_drawingarea_cb_click (DemoEditor me, GuiDrawingArea_ClickEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+static void gui_drawingarea_cb_mouse (DemoEditor me, GuiDrawingArea_MouseEvent event) {
+	if (! my foregroundGraphics)
+		return;   // could be the case in the very beginning
+	if (! event -> isClick())
+		return;
 	my clicked = true;
 	my keyPressed = false;
 	my x = event -> x;
@@ -76,11 +73,11 @@ static void gui_drawingarea_cb_click (DemoEditor me, GuiDrawingArea_ClickEvent e
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
-	my extraControlKeyPressed = event -> extraControlKeyPressed;
 }
 
 static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my foregroundGraphics)
+		return;   // could be the case in the very beginning
 	my clicked = false;
 	my keyPressed = true;
 	my x = 0;
@@ -90,36 +87,49 @@ static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
-	my extraControlKeyPressed = event -> extraControlKeyPressed;
 }
 
 static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my foregroundGraphics)
+		return;   // could be the case in the very beginning
 	trace (event -> width, U" ", event -> height);
-	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
-	Graphics_setWsWindow (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_setWsViewport (my backgroundGraphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_setWsWindow (my backgroundGraphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_setWsViewport (my foregroundGraphics.get(), 0.0, event -> width, 0.0, event -> height);
+	Graphics_setWsWindow (my foregroundGraphics.get(), 0.0, 100.0, 0.0, 100.0);
 	//Graphics_setViewport (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
-	Graphics_updateWs (my graphics.get());
+	Graphics_updateWs (my foregroundGraphics.get());
 }
 
 void structDemoEditor :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, 0, 0,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
+		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0
+	);
 }
 
 void DemoEditor_init (DemoEditor me) {
 	Editor_init (me, 0, 0, 1344, 756, U"", nullptr);   // 70 percent of the standard 1920x1080 screen
-	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setColour (my graphics.get(), Melder_WHITE);
-	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	Graphics_startRecording (my graphics.get());
-	Graphics_setWsViewport (my graphics.get(), 0.0, GuiControl_getWidth  (my drawingArea),
-	                                           0.0, GuiControl_getHeight (my drawingArea));
-	Graphics_setWsWindow (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
-	Graphics_setViewport (my graphics.get(), 0.0, 100.0, 0.0, 100.0);
-	Graphics_updateWs (my graphics.get());
+
+	my foregroundGraphics = Graphics_create_xmdrawingarea (my drawingArea);
+	Graphics_setWsWindow (my foregroundGraphics.get(), 0.0, 100.0, 0.0, 100.0);
+
+	my backgroundGraphics = Graphics_create (Graphics_getResolution (my foregroundGraphics.get()));
+	my backgroundGraphics -> yIsZeroAtTheTop = true;   // TODO: incorporate, and compare to Picture (2020-07-26)
+	Graphics_setWsViewport (my backgroundGraphics.get(),
+		0.0, GuiControl_getWidth (my drawingArea),
+		0.0, GuiControl_getHeight (my drawingArea)
+	);
+	Graphics_setWsWindow (my backgroundGraphics.get(), 0.0, 100.0, 0.0, 100.0);
+
+	Graphics_startRecording (my backgroundGraphics.get());
+	Graphics_setViewport (my backgroundGraphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_setColour (my backgroundGraphics.get(), Melder_WHITE);
+	Graphics_setWindow (my backgroundGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_fillRectangle (my backgroundGraphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my backgroundGraphics.get(), Melder_BLACK);
+
+	Graphics_updateWs (my foregroundGraphics.get());
 }
 
 autoDemoEditor DemoEditor_create () {
@@ -135,8 +145,8 @@ autoDemoEditor DemoEditor_create () {
 void Demo_open () {
 	if (Melder_batch) {
 		/*
-		 * Batch scripts have to be able to run demos.
-		 */
+			Batch scripts have to be able to run demos.
+		*/
 		//Melder_batch = false;
 	}
 	if (! theReferenceToTheOnlyDemoEditor) {
@@ -145,7 +155,7 @@ void Demo_open () {
 		//GuiObject_show (editor -> windowForm);
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
-		theCurrentPraatPicture -> graphics = editor -> graphics.get();
+		theCurrentPraatPicture -> backgroundGraphics = editor -> backgroundGraphics.get();
 		theCurrentPraatPicture -> font = (int) kGraphics_font::HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -177,9 +187,11 @@ int Demo_windowTitle (conststring32 title) {
 }
 
 int Demo_show () {
-	if (! theReferenceToTheOnlyDemoEditor) return 0;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return 0;
 	autoDemoOpen demo;
 	GuiThing_show (theReferenceToTheOnlyDemoEditor -> windowForm);
+	Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> foregroundGraphics.get());
 	GuiShell_drain (theReferenceToTheOnlyDemoEditor -> windowForm);
 	return 1;
 }
@@ -222,7 +234,8 @@ void Demo_waitForInput (Interpreter interpreter) {
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
 		bool wasBackgrounding = Melder_backgrounding;
-		if (wasBackgrounding) praat_foreground ();
+		if (wasBackgrounding)
+			praat_foreground ();
 		try {
 			#if gtk
 				do {
@@ -234,7 +247,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 				do {
 					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 					[theReferenceToTheOnlyDemoEditor -> windowForm -> d_cocoaShell   flushWindow];
-					Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
+					Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> foregroundGraphics.get());   // make sure that even texts will be drawn
 					NSEvent *nsEvent = [NSApp
 						nextEventMatchingMask: NSAnyEventMask
 						untilDate: [NSDate distantFuture]   // wait
@@ -260,7 +273,8 @@ void Demo_waitForInput (Interpreter interpreter) {
 		} catch (MelderError) {
 			Melder_flushError (U"An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
 		}
-		if (wasBackgrounding) praat_background ();
+		if (wasBackgrounding)
+			praat_background ();
 	}
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = false;
 	if (theReferenceToTheOnlyDemoEditor -> userWantsToClose) {
@@ -285,7 +299,6 @@ void Demo_peekInput (Interpreter interpreter) {
 	theReferenceToTheOnlyDemoEditor -> shiftKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> commandKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> optionKeyPressed = false;
-	theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed = false;
 	theReferenceToTheOnlyDemoEditor -> waitingForInput = true;
 	{// scope
 		autoMelderSaveDefaultDir saveDir;
@@ -299,7 +312,7 @@ void Demo_peekInput (Interpreter interpreter) {
 			#elif cocoa
 				NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 				[theReferenceToTheOnlyDemoEditor -> windowForm -> d_cocoaShell   flushWindow];
-				Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());   // make sure that even texts will be drawn
+				Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> foregroundGraphics.get());   // make sure that even texts will be drawn
 				while (NSEvent *nsEvent = [NSApp
 					nextEventMatchingMask: NSAnyEventMask
 					untilDate: [NSDate distantPast]   // don't wait
@@ -330,7 +343,8 @@ void Demo_peekInput (Interpreter interpreter) {
 }
 
 bool Demo_clicked () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -339,37 +353,40 @@ bool Demo_clicked () {
 }
 
 double Demo_x () {
-	if (! theReferenceToTheOnlyDemoEditor) return undefined;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return undefined;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	trace (U"NDC before: ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x2NDC);
-	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
-	trace (U"NDC after: ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> graphics -> d_x2NDC);
+	trace (U"NDC before: ", theReferenceToTheOnlyDemoEditor -> backgroundGraphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> backgroundGraphics -> d_x2NDC);
+	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> backgroundGraphics.get());
+	trace (U"NDC after: ", theReferenceToTheOnlyDemoEditor -> backgroundGraphics -> d_x1NDC, U" ", theReferenceToTheOnlyDemoEditor -> backgroundGraphics -> d_x2NDC);
 	double xWC, yWC;
 	trace (U"DC: x ", theReferenceToTheOnlyDemoEditor -> x, U", y ", theReferenceToTheOnlyDemoEditor -> y);
-	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics.get(), theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
+	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> backgroundGraphics.get(), theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
 	trace (U"WC: x ", xWC, U", y ", yWC);
-	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
+	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> backgroundGraphics.get());
 	return xWC;
 }
 
 double Demo_y () {
-	if (! theReferenceToTheOnlyDemoEditor) return undefined;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return undefined;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
+	Graphics_setInner (theReferenceToTheOnlyDemoEditor -> backgroundGraphics.get());
 	double xWC, yWC;
-	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> graphics.get(), theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
-	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> graphics.get());
+	Graphics_DCtoWC (theReferenceToTheOnlyDemoEditor -> backgroundGraphics.get(), theReferenceToTheOnlyDemoEditor -> x, theReferenceToTheOnlyDemoEditor -> y, & xWC, & yWC);
+	Graphics_unsetInner (theReferenceToTheOnlyDemoEditor -> backgroundGraphics.get());
 	return yWC;
 }
 
 bool Demo_keyPressed () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -378,7 +395,8 @@ bool Demo_keyPressed () {
 }
 
 char32 Demo_key () {
-	if (! theReferenceToTheOnlyDemoEditor) return U'\0';
+	if (! theReferenceToTheOnlyDemoEditor)
+		return U'\0';
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -387,7 +405,8 @@ char32 Demo_key () {
 }
 
 bool Demo_shiftKeyPressed () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -396,7 +415,8 @@ bool Demo_shiftKeyPressed () {
 }
 
 bool Demo_commandKeyPressed () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -405,7 +425,8 @@ bool Demo_commandKeyPressed () {
 }
 
 bool Demo_optionKeyPressed () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -413,17 +434,9 @@ bool Demo_optionKeyPressed () {
 	return theReferenceToTheOnlyDemoEditor -> optionKeyPressed;
 }
 
-bool Demo_extraControlKeyPressed () {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
-	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
-		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
-			U"Please click or type into the Demo window or close it.");
-	}
-	return theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed;
-}
-
 bool Demo_input (conststring32 keys) {
-	if (! theReferenceToTheOnlyDemoEditor) return false;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -432,12 +445,14 @@ bool Demo_input (conststring32 keys) {
 }
 
 bool Demo_clickedIn (double left, double right, double bottom, double top) {
-	if (! theReferenceToTheOnlyDemoEditor || ! theReferenceToTheOnlyDemoEditor -> clicked) return false;
+	if (! theReferenceToTheOnlyDemoEditor || ! theReferenceToTheOnlyDemoEditor -> clicked)
+		return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
 	}
-	if (! theReferenceToTheOnlyDemoEditor -> clicked) return false;
+	if (! theReferenceToTheOnlyDemoEditor -> clicked)
+		return false;
 	double xWC = Demo_x (), yWC = Demo_y ();
 	return xWC >= left && xWC < right && yWC >= bottom && yWC < top;
 }

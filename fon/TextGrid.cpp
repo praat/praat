@@ -412,6 +412,16 @@ TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, integer tierNumber
 	return static_cast <TextTier> (tier);
 }
 
+void AnyTextGridTier_identifyClass (Function anyTextGridTier, IntervalTier *intervalTier, TextTier *textTier) {
+	if (anyTextGridTier -> classInfo == classIntervalTier) {
+		*intervalTier = static_cast <IntervalTier> (anyTextGridTier);
+		*textTier = nullptr;
+	} else {
+		*intervalTier = nullptr;
+		*textTier = static_cast <TextTier> (anyTextGridTier);
+	}
+}
+
 integer TextGrid_countLabels (TextGrid me, integer tierNumber, conststring32 text) {
 	try {
 		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
