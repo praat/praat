@@ -19,7 +19,7 @@
 #include "AmplitudeTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (AmplitudeTierView, RealTierView, 0);
+Thing_implement (AmplitudeTierArea, RealTierArea, 0);
 
 Thing_implement (AmplitudeTierEditor, RealTierEditor, 0);
 
@@ -43,7 +43,7 @@ void structAmplitudeTierEditor :: v_play (double fromTime, double toTime) {
 autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
-		RealTierEditor_init (me.get(), classAmplitudeTierView, title, (RealTier) amplitude, sound, ownSound);
+		RealTierEditor_init (me.get(), classAmplitudeTierArea, title, (RealTier) amplitude, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"AmplitudeTier window not created.");

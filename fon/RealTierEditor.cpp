@@ -235,8 +235,8 @@ void RealTierEditor_init (RealTierEditor me, ClassInfo viewClass, conststring32 
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
-	my view = Thing_newFromClass (viewClass). static_cast_move <structRealTierView>();
-	FunctionView_init (my view.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
+	my view = Thing_newFromClass (viewClass). static_cast_move <structRealTierArea>();
+	FunctionArea_init (my view.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
 	my view -> ymin = -1.0;   // what?
 	RealTierEditor_updateScaling (me);
 	my view -> ycursor = 0.382 * my view -> ymin + 0.618 * my view -> ymax;

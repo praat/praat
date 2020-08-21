@@ -17,17 +17,10 @@
  */
 
 #include "RealTierArea.h"
-#include "EditorM.h"
 
-/* MARK: - FUNCTIONVIEW */
+Thing_implement (RealTierArea, FunctionArea, 0);
 
-Thing_implement (FunctionView, Thing, 0);
-
-/* MARK: - REALTIERVIEW */
-
-Thing_implement (RealTierView, FunctionView, 0);
-
-void RealTierArea_addPointAt (RealTierView me, RealTier tier, double time, double desiredY) {
+void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY) {
 	if (isdefined (my v_minimumLegalY ()) && desiredY < my v_minimumLegalY ())
 		Melder_throw (U"Cannot add a point below ", my v_minimumLegalY (), my v_rightTickUnits (), U".");
 	if (isdefined (my v_maximumLegalY ()) && desiredY > my v_maximumLegalY ())
@@ -35,19 +28,19 @@ void RealTierArea_addPointAt (RealTierView me, RealTier tier, double time, doubl
 	RealTier_addPoint (tier, time, my v_yToValue (desiredY));
 }
 
-void RealTierArea_removePoints (RealTierView me, RealTier tier) {
+void RealTierArea_removePoints (RealTierArea me, RealTier tier) {
 	if (my startSelection() == my endSelection())
 		AnyTier_removePointNear (tier->asAnyTier(), my startSelection());
 	else
 		AnyTier_removePointsBetween (tier->asAnyTier(), my startSelection(), my endSelection());
 }
 
-void RealTierArea_addPointAtCursor (RealTierView me, RealTier tier) {
+void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier) {
 	const double cursorTime = 0.5 * (my startSelection() + my endSelection());
 	RealTierArea_addPointAt (me, tier, cursorTime, my v_yToValue (my ycursor));
 }
 
-void RealTierArea_updateScaling (RealTierView me, RealTier tier) {
+void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
 	if (tier -> points.size == 0) {
 		my ymin = my v_defaultYmin ();
 		my ymax = my v_defaultYmax ();
@@ -86,7 +79,7 @@ void RealTierArea_updateScaling (RealTierView me, RealTier tier) {
 	}
 }
 
-void RealTierArea_draw (RealTierView me, RealTier tier) {
+void RealTierArea_draw (RealTierArea me, RealTier tier) {
 	Graphics_setColour (my graphics(), Melder_RED);
 	Graphics_line (my graphics(), my startWindow(), my ycursor, my endWindow(), my ycursor);
 	Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
@@ -138,7 +131,7 @@ void RealTierArea_draw (RealTierView me, RealTier tier) {
 	Graphics_setColour (my graphics(), Melder_BLACK);
 }
 
-void RealTierArea_drawWhileDragging (RealTierView me, RealTier tier) {
+void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier) {
 	Graphics_xorOn (my graphics(), Melder_MAROON);
 	/*
 		Draw all selected points as empty circles, if inside the window.

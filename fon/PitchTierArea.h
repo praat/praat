@@ -23,7 +23,7 @@
 
 #include "PitchTierArea_enums.h"
 
-Thing_define (PitchTierArea, RealTierView) {
+Thing_define (PitchTierArea, RealTierArea) {
 	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
@@ -47,7 +47,7 @@ Thing_declare (PitchTierEditor);
 
 inline static autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
 	autoPitchTierArea me = Thing_new (PitchTierArea);
-	FunctionView_init (me.get(), editor, bottom_fraction, top_fraction);
+	FunctionArea_init (me.get(), editor, bottom_fraction, top_fraction);
 	return me;
 }
 
