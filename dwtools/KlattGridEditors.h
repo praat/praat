@@ -40,9 +40,9 @@ void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo viewC
 
 
 Thing_define (KlattGrid_OpenPhaseTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -71,9 +71,9 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 
 
 Thing_define (KlattGrid_CollisionPhaseTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -102,7 +102,7 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 
 
 Thing_define (KlattGrid_Power1TierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -131,7 +131,7 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 
 
 Thing_define (KlattGrid_Power2TierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -160,9 +160,9 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 
 
 Thing_define (KlattGrid_DoublePulsingTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -191,7 +191,7 @@ autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (
 
 
 Thing_define (KlattGrid_PitchTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
@@ -222,9 +222,9 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 ti
 
 
 Thing_define (KlattGrid_FlutterTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }

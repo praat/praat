@@ -51,10 +51,6 @@ static const conststring32 units_strings [] = { 0, U"Hz", U"st" };
 
 static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 
-/* BUG: 25 should be fmin */
-#define YLIN(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ ? ((freq) < 25 ? 25 : (freq)) : NUMhertzToSemitones ((freq) < 25 ? 25 : (freq)))
-#define YLININV(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ ? (freq) : NUMsemitonesToHertz (freq))
-
 static void updateMenus (ManipulationEditor me) {
 	Melder_assert (my synthPulsesButton);
 	GuiMenuItem_check (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES);
@@ -198,7 +194,8 @@ static void menu_cb_addPulseAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_removePitchPoints (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
-	if (! ana -> pitch) return;
+	if (! ana -> pitch)
+		return;
 	Editor_save (me, U"Remove pitch point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (ana -> pitch.get()->asAnyTier(), my startSelection);
@@ -210,9 +207,10 @@ static void menu_cb_removePitchPoints (ManipulationEditor me, EDITOR_ARGS_DIRECT
 
 static void menu_cb_addPitchPointAtCursor (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
 	Manipulation ana = (Manipulation) my data;
-	if (! ana -> pitch) return;
+	if (! ana -> pitch)
+		return;
 	Editor_save (me, U"Add pitch point");
-	RealTier_addPoint (ana -> pitch.get(), 0.5 * (my startSelection + my endSelection), YLININV (my pitchTier.cursor));
+	RealTier_addPoint (ana -> pitch.get(), 0.5 * (my startSelection + my endSelection), my pitchTierArea -> v_yToValue (my pitchTier.cursor));
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -226,18 +224,18 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 		return;
 	integer ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
 	constVEC t = pulses -> t.get();
-	double f = my pitchTier.cursor;   // default
+	double desiredY = my pitchTier.cursor;   // default
 	Editor_save (me, U"Add pitch point");
 	if (nt <= 1) {
 		/* Ignore. */
 	} else if (ileft <= 0) {
 		double tright = t [2] - t [1];
 		if (tright > 0.0 && tright <= 0.02)
-			f = YLIN (1.0 / tright);
+			desiredY = my pitchTierArea -> v_valueToY (1.0 / tright);
 	} else if (iright > nt) {
 		double tleft = t [nt] - t [nt - 1];
 		if (tleft > 0.0 && tleft <= 0.02)
-			f = YLIN (1.0 / tleft);
+			desiredY = my pitchTierArea -> v_valueToY (1.0 / tleft);
 	} else {   /* Three-period median. */
 		double tmid = t [iright] - t [ileft], tleft = 0.0, tright = 0.0;
 		if (ileft > 1)
@@ -258,13 +256,13 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 		if (tright < tmid)
 			std::swap (tright, tmid);
 		if (tleft != 0.0)
-			f = YLIN (1 / tmid);   // median of 3
+			desiredY = my pitchTierArea -> v_valueToY (1 / tmid);   // median of 3
 		else if (tmid != 0.0)
-			f = YLIN (2 / (tmid + tright));   // median of 2
+			desiredY = my pitchTierArea -> v_valueToY (2 / (tmid + tright));   // median of 2
 		else if (tright != 0.0)
-			f = YLIN (1 / tright);   // median of 1
+			desiredY = my pitchTierArea -> v_valueToY (1 / tright);   // median of 1
 	}
-	RealTier_addPoint (ana -> pitch.get(), 0.5 * (my startSelection + my endSelection), YLININV (f));
+	RealTierArea_addPointAt (my pitchTierArea.get(), ana -> pitch.get(), 0.5 * (my startSelection + my endSelection), desiredY);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }	
@@ -280,7 +278,7 @@ static void menu_cb_addPitchPointAt (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, U"Add pitch point");
-		RealTier_addPoint (ana -> pitch.get(), time, YLININV (frequency));
+		RealTierArea_addPointAt (my pitchTierArea.get(), ana -> pitch.get(), time, frequency);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -327,7 +325,7 @@ static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS
 		Editor_save (me, U"Interpolate quadratically");
 		RealTier_interpolateQuadratically (ana -> pitch.get(),
 			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = numberOfPointsPerParabola,
-			my p_pitch_units == kManipulationEditor_pitchUnits::SEMITONES);
+			my pitchTierArea -> p_pitch_units == kPitchTierArea_units::SEMITONES);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -337,7 +335,7 @@ static void menu_cb_interpolateQuadratically_4pts (ManipulationEditor me, EDITOR
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, U"Interpolate quadratically");
-	RealTier_interpolateQuadratically (ana -> pitch.get(), 4, my p_pitch_units == kManipulationEditor_pitchUnits::SEMITONES);
+	RealTier_interpolateQuadratically (ana -> pitch.get(), 4, my pitchTierArea -> p_pitch_units == kPitchTierArea_units::SEMITONES);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
 }
@@ -399,7 +397,7 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		if (maximum <= my pitchTier.minPeriodic)
 			Melder_throw (U"Maximum pitch must be greater than ",
-				Melder_half (my pitchTier.minPeriodic), U" ", units_strings [(int) my p_pitch_units], U".");
+				Melder_half (my pitchTier.minPeriodic), U" ", units_strings [(int) my pitchTierArea -> p_pitch_units], U".");
 		my pref_pitch_maximum () = my p_pitch_maximum = maximum;
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -407,15 +405,15 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch units", nullptr)
-		RADIO_ENUM (kManipulationEditor_pitchUnits, pitchUnits,
-				U"Pitch units", my default_pitch_units ())
+		RADIO_ENUM (kPitchTierArea_units, pitchUnits,
+				U"Pitch units", my pitchTierArea -> default_pitch_units ())
 	EDITOR_OK
-		SET_ENUM (pitchUnits, kManipulationEditor_pitchUnits, my p_pitch_units)
+		SET_ENUM (pitchUnits, kPitchTierArea_units, my pitchTierArea -> p_pitch_units)
 	EDITOR_DO
-		enum kManipulationEditor_pitchUnits oldPitchUnits = my p_pitch_units;
-		my pref_pitch_units () = my p_pitch_units = pitchUnits;
-		if (my p_pitch_units == oldPitchUnits) return;
-		if (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ) {
+		enum kPitchTierArea_units oldPitchUnits = my pitchTierArea -> p_pitch_units;
+		my pitchTierArea -> pref_pitch_units () = my pitchTierArea -> p_pitch_units = pitchUnits;
+		if (my pitchTierArea -> p_pitch_units == oldPitchUnits) return;
+		if (my pitchTierArea -> p_pitch_units == kPitchTierArea_units::HERTZ) {
 			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;
 			my pref_pitch_maximum () = my p_pitch_maximum = NUMsemitonesToHertz (my p_pitch_maximum);
@@ -684,7 +682,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	PitchTier pitch = ana -> pitch.get();
 	integer ifirstSelected, ilastSelected, n = pitch ? pitch -> points.size : 0, imin, imax, i;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
-	double minimumFrequency = YLIN (50);
+	double minimumFrequency = my pitchTierArea -> v_valueToY (50.0);
 	int rangePrecisions [] = { 0, 1, 2 };
 	static const conststring32 rangeUnits [] = { U"", U" Hz", U" st" };
 
@@ -715,7 +713,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 		double tleft = pulses -> t [i], tright = pulses -> t [i + 1], t = 0.5 * (tleft + tright);
 		if (t >= my startWindow && t <= my endWindow) {
 			if (tleft != tright) {
-				double f = YLIN (1 / (tright - tleft));
+				double f = my pitchTierArea -> v_valueToY (1 / (tright - tleft));
 				if (f >= my pitchTier.minPeriodic && f <= my p_pitch_maximum) {
 					Graphics_fillCircle_mm (my graphics.get(), t, f, 1);
 				}
@@ -726,16 +724,16 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
 	FunctionEditor_drawRangeMark (me, my p_pitch_maximum,
-		Melder_fixed (my p_pitch_maximum, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units], Graphics_TOP);
+		Melder_fixed (my p_pitch_maximum, rangePrecisions [(int) my pitchTierArea -> p_pitch_units]), rangeUnits [(int) my pitchTierArea -> p_pitch_units], Graphics_TOP);
 	FunctionEditor_drawRangeMark (me, my p_pitch_minimum,
-		Melder_fixed (my p_pitch_minimum, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units], Graphics_BOTTOM);
+		Melder_fixed (my p_pitch_minimum, rangePrecisions [(int) my pitchTierArea -> p_pitch_units]), rangeUnits [(int) my pitchTierArea -> p_pitch_units], Graphics_BOTTOM);
 	if (my startSelection == my endSelection && my pitchTier.cursor >= my p_pitch_minimum && my pitchTier.cursor <= my p_pitch_maximum)
 		FunctionEditor_drawHorizontalHair (me, my pitchTier.cursor,
-			Melder_fixed (my pitchTier.cursor, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units]);
+			Melder_fixed (my pitchTier.cursor, rangePrecisions [(int) my pitchTierArea -> p_pitch_units]), rangeUnits [(int) my pitchTierArea -> p_pitch_units]);
 	if (cursorVisible && n > 0) {
-		double y = YLIN (RealTier_getValueAtTime (pitch, my startSelection));
+		double y = my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (pitch, my startSelection));
 		FunctionEditor_insertCursorFunctionValue (me, y,
-			Melder_fixed (y, rangePrecisions [(int) my p_pitch_units]), rangeUnits [(int) my p_pitch_units],
+			Melder_fixed (y, rangePrecisions [(int) my pitchTierArea -> p_pitch_units]), rangeUnits [(int) my pitchTierArea -> p_pitch_units],
 			my p_pitch_minimum, my p_pitch_maximum);
 	}
 	if (pitch) {
@@ -750,31 +748,31 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_text (my graphics.get(), 0.5 * (my startWindow + my endWindow), 0.5 * (my p_pitch_minimum + my p_pitch_maximum), U"(no pitch points)");
 	} else if (imax < imin) {
-		double fleft = YLIN (RealTier_getValueAtTime (pitch, my startWindow));
-		double fright = YLIN (RealTier_getValueAtTime (pitch, my endWindow));
+		double fleft = my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (pitch, my startWindow));
+		double fright = my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (pitch, my endWindow));
 		Graphics_setColour (my graphics.get(), Melder_GREEN);
 		Graphics_line (my graphics.get(), my startWindow, fleft, my endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = pitch -> points.at [i];
-			double t = point -> number, f = YLIN (point -> value);
+			double t = point -> number, f = my pitchTierArea -> v_valueToY (point -> value);
 			Graphics_setColour (my graphics.get(), Melder_GREEN);
 			if (i == 1)
 				Graphics_line (my graphics.get(), my startWindow, f, t, f);
 			else if (i == imin)
-				Graphics_line (my graphics.get(), t, f, my startWindow, YLIN (RealTier_getValueAtTime (pitch, my startWindow)));
+				Graphics_line (my graphics.get(), t, f, my startWindow, my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (pitch, my startWindow)));
 			if (i == n)
 				Graphics_line (my graphics.get(), t, f, my endWindow, f);
 			else if (i == imax)
-				Graphics_line (my graphics.get(), t, f, my endWindow, YLIN (RealTier_getValueAtTime (pitch, my endWindow)));
+				Graphics_line (my graphics.get(), t, f, my endWindow, my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (pitch, my endWindow)));
 			else {
 				RealPoint pointRight = pitch -> points.at [i + 1];
-				Graphics_line (my graphics.get(), t, f, pointRight -> number, YLIN (pointRight -> value));
+				Graphics_line (my graphics.get(), t, f, pointRight -> number, my pitchTierArea -> v_valueToY (pointRight -> value));
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = pitch -> points.at [i];
-			double t = point -> number, f = YLIN (point -> value);
+			double t = point -> number, f = my pitchTierArea -> v_valueToY (point -> value);
 			if (i >= ifirstSelected && i <= ilastSelected)
 				Graphics_setColour (my graphics.get(), Melder_RED);
 			else
@@ -912,7 +910,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, in
 	 */
 	for (integer i = first; i <= last; i ++) {
 		RealPoint point = pitch -> points.at [i];
-		double t = point -> number + dt, f = YLIN (point -> value) + df;
+		double t = point -> number + dt, f = my pitchTierArea -> v_valueToY (point -> value) + df;
 		if (t >= my startWindow && t <= my endWindow)
 			Graphics_circle_mm (my graphics.get(), t,
 				f < my pitchTier.minPeriodic ? my pitchTier.minPeriodic : f > my p_pitch_maximum ? my p_pitch_maximum : f, 3.0);
@@ -923,7 +921,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, in
 		 * Draw a crosshair with time and frequency.
 		 */
 		RealPoint point = pitch -> points.at [first];
-		double t = point -> number + dt, fWC = YLIN (point -> value) + df;
+		double t = point -> number + dt, fWC = my pitchTierArea -> v_valueToY (point -> value) + df;
 		Graphics_line (my graphics.get(), t, my p_pitch_minimum, t, my p_pitch_maximum - Graphics_dyMMtoWC (my graphics.get(), 4.0));
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_TOP);
 		Graphics_text (my graphics.get(), t, my p_pitch_maximum, Melder_fixed (t, 6));
@@ -958,7 +956,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = pitch -> points.at [inearestPoint];
-	if (Graphics_distanceWCtoMM (my graphics.get(), xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
+	if (Graphics_distanceWCtoMM (my graphics.get(), xWC, yWC, nearestPoint -> number, my pitchTierArea -> v_valueToY (nearestPoint -> value)) > 1.5) {
 		Graphics_resetViewport (my graphics.get(), my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
@@ -1019,7 +1017,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 		double newTime = pitch -> points.at [ifirstSelected] -> number + dt;
 		if (newTime < my tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= pitch -> points.at [ifirstSelected - 1] -> number)
-			return 1;   /* Past left neighbour. */
+			return 1;   // past left neighbour
 		newTime = pitch -> points.at [ilastSelected] -> number + dt;
 		if (newTime > my tmax) return 1;   // outside domain
 		if (ilastSelected < pitch -> points.size && newTime >= pitch -> points.at [ilastSelected + 1] -> number)
@@ -1032,16 +1030,16 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	for (i = ifirstSelected; i <= ilastSelected; i ++) {
 		RealPoint point = pitch -> points.at [i];
 		point -> number += dt;
-		point -> value = YLININV (YLIN (point -> value) + df);
+		point -> value = my pitchTierArea -> v_yToValue (my pitchTierArea -> v_valueToY (point -> value) + df);
 		if (point -> value < 50.0)
 			point -> value = 50.0;
-		if (point -> value > YLININV (my p_pitch_maximum))
-			point -> value = YLININV (my p_pitch_maximum);
+		if (point -> value > my pitchTierArea -> v_yToValue (my p_pitch_maximum))
+			point -> value = my pitchTierArea -> v_yToValue (my p_pitch_maximum);
 	}
 
 	/*
-	 * Make sure that the same pitch points are still selected (a problem with Undo...).
-	 */
+		Make sure that the same pitch points are still selected (a problem with Undo...).
+	*/
 
 	if (draggingSelection) {
 		my startSelection += dt;
@@ -1050,7 +1048,7 @@ static bool clickPitch (ManipulationEditor me, double xWC, double yWC, bool shif
 	if (my startSelection == my endSelection) {
 		RealPoint point = pitch -> points.at [ifirstSelected];
 		my startSelection = my endSelection = point -> number;
-		my pitchTier.cursor = YLIN (point -> value);
+		my pitchTier.cursor = my pitchTierArea -> v_valueToY (point -> value);
 	}
 
 	Editor_broadcastDataChanged (me);
@@ -1236,10 +1234,12 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.get(), title, ana);
-		//my pitchTierArea = PitchTierView_create(me.get(), <#double bottom_fraction#>, <#double top_fraction#>)
+		my pitchTierArea = PitchTierArea_create (me.get(), ( ana -> duration ? 0.15 : 0.0 ), 0.65);
+		if (ana -> duration)
+			my durationTierArea = DurationTierView_create (me.get(), 0.0, 0.15);
 
 		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch.get());
-		if (my p_pitch_units == kManipulationEditor_pitchUnits::HERTZ) {
+		if (my pitchTierArea -> p_pitch_units == kPitchTierArea_units::HERTZ) {
 			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;
 			my p_pitch_maximum = maximumPitchValue;
@@ -1276,7 +1276,10 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		my synthesisMethod = prefs_synthesisMethod;
 		if (ana -> sound)
 			Matrix_getWindowExtrema (ana -> sound.get(), 0, 0, 0, 0, & my soundmin, & my soundmax);
-		if (my soundmin == my soundmax) my soundmin = -1.0, my soundmax = +1.0;
+		if (my soundmin == my soundmax) {
+			my soundmin = -1.0;
+			my soundmax = +1.0;
+		}
 		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {

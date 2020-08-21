@@ -23,7 +23,7 @@
 #include "Sound.h"
 
 Thing_define (DurationTierView, RealTierView) {
-	double v_minimumLegalValue ()
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
