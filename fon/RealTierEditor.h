@@ -19,47 +19,7 @@
  */
 
 #include "TimeSoundEditor.h"
-#include "RealTier.h"
-
-Thing_define (FunctionView, Thing) {
-	FunctionEditor editor;
-	double ymin_fraction, ymax_fraction;
-	Graphics graphics() const { return our editor -> graphics.get(); }
-	double startWindow() const { return our editor -> startWindow; }
-	double endWindow() const { return our editor -> endWindow; }
-	double startSelection() const { return our editor -> startSelection; }
-	double endSelection() const { return our editor -> endSelection; }
-	void setViewport() const {
-		Graphics_setViewport (our graphics(),
-				our editor -> dataLeft_pxlt(), our editor -> dataRight_pxlt(), our editor -> dataBottom_pxlt(), our editor -> dataTop_pxlt());
-		Graphics_insetViewport (our graphics(), 0.0, 1.0, our ymin_fraction, our ymax_fraction);
-	}
-};
-
-inline static void FunctionView_init (FunctionView me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	my editor = editor;
-	my ymin_fraction = ymin_fraction;
-	my ymax_fraction = ymax_fraction;
-}
-
-Thing_define (RealTierView, FunctionView) {
-	virtual double v_minimumLegalValue () { return undefined; }
-	virtual double v_maximumLegalValue () { return undefined; }
-	virtual conststring32 v_rightTickUnits () { return U""; }
-	virtual double v_defaultYmin () { return 0.0; }
-	virtual double v_defaultYmax () { return 1.0; }
-
-	double ymin, ymax, ycursor;
-	double anchorTime = undefined, anchorY;
-	bool draggingSelection;
-	double dt = 0.0, dy = 0.0;
-	integer firstSelected, lastSelected;
-
-	void viewRealTierAsWorldByWorld () const {
-		our setViewport ();
-		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
-	}
-};
+#include "RealTierArea.h"
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
 	autoRealTierView view;

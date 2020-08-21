@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 28 February 2019
+# Paul Boersma, 21 August 2020
 
 include ../makefile.defs
 
@@ -24,7 +24,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    SoundRecorder.o Sound_enhance.o VoiceAnalysis.o \
    FunctionEditor.o TimeSoundEditor.o TimeSoundAnalysisEditor.o \
    PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
-   RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
+   RealTierArea.o RealTierEditor.o PitchTierArea.o PitchTierEditor.o IntensityTierEditor.o \
    DurationTierEditor.o AmplitudeTierEditor.o \
    ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
    WordList.o SpellingChecker.o \

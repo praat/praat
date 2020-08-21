@@ -20,8 +20,6 @@
 #include "PitchTier_to_Sound.h"
 #include "EditorM.h"
 
-Thing_implement (PitchTierView, RealTierView, 0);
-
 Thing_implement (PitchTierEditor, RealTierEditor, 0);
 
 static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchTierEditor"); }
@@ -44,9 +42,10 @@ void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		//autoPitchTierView view = PitchTierView_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
+		//autoPitchTierArea view = PitchTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
 		//RealTierEditor_init (me.get(), view.move(), title, pitch, sound, ownSound);
-		RealTierEditor_init (me.get(), classPitchTierView, title, pitch, sound, ownSound);
+		RealTierEditor_init (me.get(), classPitchTierArea, title, pitch, sound, ownSound);
+		((PitchTierArea) my view.get()) -> p_pitch_units = kPitchTierArea_units::HERTZ;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");
