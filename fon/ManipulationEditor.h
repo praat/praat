@@ -54,7 +54,7 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		override;
 	void v_draw ()
 		override;
-	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
 		override;
 	void v_play (double tmin, double tmax)
 		override;

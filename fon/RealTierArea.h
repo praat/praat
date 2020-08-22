@@ -54,5 +54,7 @@ void RealTierArea_draw (RealTierArea me, RealTier tier);
 
 void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier);
 
+bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
+
 /* End of file RealTierArea.h */
 #endif
