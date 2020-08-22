@@ -33,6 +33,9 @@ Thing_define (FunctionArea, Thing) {
 				our editor -> dataLeft_pxlt(), our editor -> dataRight_pxlt(), our editor -> dataBottom_pxlt(), our editor -> dataTop_pxlt());
 		Graphics_insetViewport (our graphics(), 0.0, 1.0, our ymin_fraction, our ymax_fraction);
 	}
+	double y_fraction_globalToLocal (double globalY_fraction) const {
+		return (globalY_fraction - our ymin_fraction) / (our ymax_fraction - our ymin_fraction);
+	}
 };
 
 inline static void FunctionArea_init (FunctionArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {

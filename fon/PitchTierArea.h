@@ -48,6 +48,7 @@ Thing_declare (PitchTierEditor);
 inline static autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
 	autoPitchTierArea me = Thing_new (PitchTierArea);
 	FunctionArea_init (me.get(), editor, bottom_fraction, top_fraction);
+	my p_pitch_units = my pref_pitch_units();
 	return me;
 }
 
