@@ -862,7 +862,7 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 		if (! my p_formant_show)
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		Editor_openPraatPicture (me);
-		FormantPath formantPath = (FormantPath) my data;
+		//FormantPath formantPath = (FormantPath) my data;
 		//const Formant formant = formantPath -> formant.get();
 		//const Formant defaultFormant = formantPath -> formants.at [formantPath -> defaultFormant];
 		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics, my startWindow, my endWindow,
