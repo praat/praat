@@ -22,7 +22,7 @@
 #include "OptimalCeilingTier.h"
 #include "Sound.h"
 
-Thing_define (OptimalCeilingTierView, RealTierView) {
+Thing_define (OptimalCeilingTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
 	double v_defaultYmin ()

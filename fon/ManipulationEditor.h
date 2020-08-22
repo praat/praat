@@ -37,8 +37,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	GuiMenuItem synthPulsesPitchButton, synthPulsesPitchHumButton;
 	GuiMenuItem synthOverlapAddNodurButton, synthOverlapAddButton;
 	GuiMenuItem synthPitchLpcButton;
-	autoPitchTierView pitchTierArea;
-	autoDurationTierView durationTierArea;
+	autoPitchTierArea pitchTierArea;
+	autoDurationTierArea durationTierArea;
 
 	struct { double minPeriodic, cursor; } pitchTier;
 	struct { double cursor;  } duration;

@@ -1,6 +1,6 @@
 /* ManipulationEditor_prefs.h
  *
- * Copyright (C) 2013,2015,2017 Paul Boersma
+ * Copyright (C) 2013,2015-2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ prefs_begin (ManipulationEditor)
 
 	prefs_add_double_with_data  (ManipulationEditor, pitch_minimum,                                            1, U"50.0")   // Hz
 	prefs_add_double_with_data  (ManipulationEditor, pitch_maximum,                                            1, U"300.0")   // Hz
-	prefs_add_enum_with_data    (ManipulationEditor, pitch_units,            1, kManipulationEditor_pitchUnits,       DEFAULT)
 	prefs_add_enum_with_data    (ManipulationEditor, pitch_draggingStrategy, 1, kManipulationEditor_draggingStrategy, DEFAULT)
 	prefs_add_double_with_data  (ManipulationEditor, pitch_stylize_frequencyResolution,                        1, U"2.0")
 	prefs_add_bool_with_data    (ManipulationEditor, pitch_stylize_useSemitones,                               1, true)

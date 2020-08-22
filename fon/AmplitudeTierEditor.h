@@ -22,7 +22,7 @@
 #include "AmplitudeTier.h"
 #include "Sound.h"
 
-Thing_define (AmplitudeTierView, RealTierView) {
+Thing_define (AmplitudeTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Pa"; }
 	double v_defaultYmin ()

@@ -24,7 +24,7 @@
 #include "RealTierEditor.h"
 #include "FormantGridEditor.h"
 
-Thing_define (KlattGrid_RealTierView, RealTierView) {
+Thing_define (KlattGrid_RealTierArea, RealTierArea) {
 };
 
 Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
@@ -36,13 +36,13 @@ Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 		override;
 };
 
-void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo viewClass, conststring32 title, KlattGrid klattgrid, RealTier data);
+void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo areaClass, conststring32 title, KlattGrid klattgrid, RealTier data);
 
 
-Thing_define (KlattGrid_OpenPhaseTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_OpenPhaseTierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -70,10 +70,10 @@ Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_CollisionPhaseTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_CollisionPhaseTierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -101,8 +101,8 @@ Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_Power1TierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_Power1TierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -130,8 +130,8 @@ Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_Power2TierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_Power2TierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -159,10 +159,10 @@ Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_DoublePulsingTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_DoublePulsingTierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -190,8 +190,8 @@ Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_DoublePulsingTierEditor KlattGrid_DoublePulsingTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_PitchTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_PitchTierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
@@ -221,10 +221,10 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_FlutterTierView, KlattGrid_RealTierView) {
-	double v_minimumLegalValue ()
+Thing_define (KlattGrid_FlutterTierArea, KlattGrid_RealTierArea) {
+	double v_minimumLegalY ()
 		override { return 0.0; }
-	double v_maximumLegalValue ()
+	double v_maximumLegalY ()
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
@@ -252,7 +252,7 @@ Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
 autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_IntensityTierView, KlattGrid_RealTierView) {
+Thing_define (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
 	double v_defaultYmin ()
@@ -281,7 +281,7 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, ClassInfo viewClass, conststring32 title, KlattGrid klattgrid, RealTier tier);
 
 
-Thing_define (KlattGrid_DecibelTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
 	double v_defaultYmin ()
@@ -308,7 +308,7 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring32 title, KlattGrid klattgrid, RealTier data);
 
 
-Thing_define (KlattGrid_VoicingAmplitudeTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_VoicingAmplitudeTierArea, KlattGrid_IntensityTierArea) {
 };
 
 Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
@@ -317,7 +317,7 @@ Thing_define (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEdito
 autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_AspirationAmplitudeTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_AspirationAmplitudeTierArea, KlattGrid_IntensityTierArea) {
 };
 
 Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
@@ -326,7 +326,7 @@ Thing_define (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEd
 autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_BreathinessAmplitudeTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_BreathinessAmplitudeTierArea, KlattGrid_IntensityTierArea) {
 };
 
 Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
@@ -335,7 +335,7 @@ Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierE
 autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_SpectralTiltTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_SpectralTiltTierArea, KlattGrid_IntensityTierArea) {
 	double v_defaultYmin ()
 		override { return -50.0; }
 	double v_defaultYmax ()
@@ -352,7 +352,7 @@ Thing_define (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor) {
 autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_FricationBypassTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_FricationBypassTierArea, KlattGrid_IntensityTierArea) {
 	double v_defaultYmin ()
 		override { return -50.0; }
 	double v_defaultYmax ()
@@ -369,7 +369,7 @@ Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor
 autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 
-Thing_define (KlattGrid_FricationAmplitudeTierView, KlattGrid_IntensityTierView) {
+Thing_define (KlattGrid_FricationAmplitudeTierArea, KlattGrid_IntensityTierArea) {
 };
 
 Thing_define (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor) {
