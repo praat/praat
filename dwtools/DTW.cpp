@@ -993,7 +993,7 @@ static void DTW_checkSlopeConstraints (DTW me, double band, int slope) {
             dtw_slope = 1.0 / dtw_slope;
 
         Melder_require (dtw_slope <= slopes [slope],
-			U"There is a conflict between the chosen slope constraint and the relative duration.\n"
+			U"There is a conflict between the chosen slope constraint and the relative duration. "
 			U"The duration ratio of the longest and the shortest object is ", dtw_slope,
 			U". This implies that the largest slope in the constraint must have a value greater than or equal to this ratio."
 		);
