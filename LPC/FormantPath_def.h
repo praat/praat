@@ -19,7 +19,7 @@
 #define ooSTRUCT FormantPath
 oo_DEFINE_CLASS (FormantPath, Sampled)
 
-	oo_COLLECTION_OF (OrderedOf, formants, Formant, 0)
+	oo_COLLECTION_OF (OrderedOf, formants, Formant, 2)
 	oo_VEC (ceilings, formants. size)
 	oo_INTVEC (path, nx)
 	
