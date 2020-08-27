@@ -1078,6 +1078,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
+			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--open")) {
 			foundTheOpenOption = true;
 			praatP.argumentNumber += 1;
