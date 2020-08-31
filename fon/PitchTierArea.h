@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "RealTierEditor.h"
+#include "RealTierArea.h"
 #include "PitchTier.h"
 
 #include "PitchTierArea_enums.h"
@@ -34,10 +34,22 @@ Thing_define (PitchTierArea, RealTierArea) {
 		override { return 600.0; }
 	double v_valueToY (double value) override {
 		const double clippedValue = Melder_clippedLeft (25.0, value);
-		return our p_pitch_units == kPitchTierArea_units::HERTZ ? clippedValue : NUMhertzToSemitones (clippedValue);
+		if (our p_units == kPitchTierArea_units::HERTZ)
+			return clippedValue;
+		else if (our p_units == kPitchTierArea_units::SEMITONES)
+			return NUMhertzToSemitones (clippedValue);
+		else
+			Melder_fatal (U"PitchTierArea::v_valueToY: Unknown pitch units: ", (int) our p_units);
+		return undefined;
 	}
 	double v_yToValue (double y) override {
-		return our p_pitch_units == kPitchTierArea_units::HERTZ ? y : NUMsemitonesToHertz (y);
+		if (our p_units == kPitchTierArea_units::HERTZ)
+			return y;
+		else if (our p_units == kPitchTierArea_units::SEMITONES)
+			return NUMsemitonesToHertz (y);
+		else
+			Melder_fatal (U"PitchTierArea::v_yToValue: Unknown pitch units: ", (int) our p_units);
+		return undefined;
 	}
 
 	#include "PitchTierArea_prefs.h"
@@ -48,7 +60,7 @@ Thing_declare (PitchTierEditor);
 inline static autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
 	autoPitchTierArea me = Thing_new (PitchTierArea);
 	FunctionArea_init (me.get(), editor, bottom_fraction, top_fraction);
-	my p_pitch_units = my pref_pitch_units();
+	my p_units = my pref_units();
 	return me;
 }
 
