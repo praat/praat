@@ -1,6 +1,6 @@
-/* PitchTierArea_prefs.h
+/* DurationTierArea.cpp
  *
- * Copyright (C) 2013,2015-2017,2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2016,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (PitchTierArea)
+#include "DurationTierArea.h"
 
-	prefs_add_enum_with_data (PitchTierArea, units, 1, kPitchTierArea_units, DEFAULT)
-	prefs_add_double_with_data  (PitchTierArea, minimum, 1, U"50.0")   // Hz
-	prefs_add_double_with_data  (PitchTierArea, maximum, 1, U"300.0")   // Hz
+Thing_implement (DurationTierArea, RealTierArea, 0);
 
-prefs_end (PitchTierArea)
+#include "prefs_define.h"
+#include "DurationTierArea_prefs.h"
+#include "prefs_install.h"
+#include "DurationTierArea_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "DurationTierArea_prefs.h"
 
-/* End of file PitchTierArea_prefs.h */
+/* End of file DurationTierArea.cpp */

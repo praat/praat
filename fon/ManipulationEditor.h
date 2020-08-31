@@ -40,8 +40,7 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	autoPitchTierArea pitchTierArea;
 	autoDurationTierArea durationTierArea;
 
-	struct { double minPeriodic, cursor; } pitchTier;
-	struct { double cursor;  } duration;
+	struct { double minPeriodic; } pitchTier;
 	Graphics_Viewport inset;
 
 	void v_createMenus ()
