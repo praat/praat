@@ -26,8 +26,14 @@
 Thing_define (PitchTierArea, RealTierArea) {
 	double v_minimumLegalY ()
 		override { return 0.0; }
-	conststring32 v_rightTickUnits ()
-		override { return U" Hz"; }
+	conststring32 v_rightTickUnits () override {
+		if (our p_units == kPitchTierArea_units::HERTZ)
+			return U" Hz";
+		else if (our p_units == kPitchTierArea_units::SEMITONES)
+			return U" st";
+		else
+			Melder_fatal (U"PitchTierArea::v_rightTickUnits: Unknown pitch units: ", (int) our p_units);
+	}
 	double v_defaultYmin ()
 		override { return 50.0; }
 	double v_defaultYmax ()
