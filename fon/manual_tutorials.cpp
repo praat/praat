@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200816)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200901)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.18alpha# (1 September 2020)")
+LIST_ITEM (U"• Second alpha version for macOS Big Sur.")
 NORMAL (U"##6.1.17alpha# (16 August 2020)")
 LIST_ITEM (U"• Alpha version for macOS Big Sur.")
 NORMAL (U"##6.1.16# (6 June 2020)")
@@ -3125,15 +3127,15 @@ LIST_ITEM (U"@@Intro 8.2. Manipulation of duration")
 LIST_ITEM (U"@@Intro 8.3. Manipulation of intensity")
 MAN_END
 
-MAN_BEGIN (U"Intro 8.1. Manipulation of pitch", U"ppgb", 20110128)
+MAN_BEGIN (U"Intro 8.1. Manipulation of pitch", U"ppgb", 20200901)
 INTRO (U"To modify the pitch contour of an existing @Sound object, "
 	"you select this @Sound and click ##To Manipulation#. "
 	"A @Manipulation object will then appear in the list. "
 	"You can then click @@View & Edit@ to raise a @ManipulationEditor, "
-	"which will show the pitch contour (@PitchTier) as a series of thick dots. "
+	"which will show the pitch contour (@PitchTier) as a series of thick blue dots. "
 	"To reduce the number of dots, choose ##Stylize pitch (2 st)# "
 	"from the #Pitch menu; it will then be easy to drag the dots "
-	"about the time-pitch area.")
+	"around the time–pitch area.")
 NORMAL (U"If you click any of the rectangles "
 	"(or choose any of the #Play commands from the #View menu), "
 	"you will hear the modified sound. By shift-clicking, you will hear "
@@ -3158,15 +3160,15 @@ NORMAL (U"For instance, suppose you want to have a pitch that falls from 350 to 
 	"You can put this PitchTier into a Manipulation object in the way described above.")
 MAN_END
 
-MAN_BEGIN (U"Intro 8.2. Manipulation of duration", U"ppgb", 20140421)
+MAN_BEGIN (U"Intro 8.2. Manipulation of duration", U"ppgb", 20200901)
 INTRO (U"You can use Praat to modify the relative durations in an existing sound.")
 NORMAL (U"First, you select a @Sound object and click \"To Manipulation\". "
 	"A @Manipulation object will then appear in the list. "
 	"You can then click @@View & Edit@ to raise a @ManipulationEditor, "
 	"which will show an empty @DurationTier. "
 	"You can add targets to this tier by choosing \"Add duration point at cursor\" "
-	"from the \"Dur\" menu. The targets will show up as green dots, which you can easily drag "
-	"about the duration area.")
+	"from the \"Dur\" menu. The targets will show up as blue dots, which you can easily drag "
+	"around the duration area.")
 NORMAL (U"If you click any of the rectangles "
 	"(or choose any of the @Play commands from the @View menu), "
 	"you will hear the modified sound. By shift-clicking, you will hear "
@@ -3184,7 +3186,7 @@ NORMAL (U"In your first 85 ms, your relative duration should be 70/85, "
 	"The DurationTier does linear interpolation, so it can only be approximate these precise times, "
 	"but fortunately to any precision you like:")
 CODE (U"Create DurationTier: \"shorten\", 0, 0.085 + 0.270")
-CODE (U"Add point: 0.000 70/85")
+CODE (U"Add point: 0.000, 70/85")
 CODE (U"Add point: 0.084999, 70/85")
 CODE (U"Add point: 0.085001, 200/270")
 CODE (U"Add point: 0.355, 200/270")

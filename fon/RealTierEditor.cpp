@@ -100,14 +100,13 @@ void structRealTierEditor :: v_dataChanged () {
 void structRealTierEditor :: v_draw () {
 	RealTier tier = (RealTier) our data;
 	if (our d_sound.data) {
-		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
+		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
-		Graphics_resetViewport (our graphics.get(), viewport);
-		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 1.0 - SOUND_HEIGHT);
 	}
+	our view -> setViewport();
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -118,17 +117,17 @@ void structRealTierEditor :: v_draw () {
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
-bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
+bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
 	RealTier tier = (RealTier) our data;
 	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
-		clickedInWideRealTierArea = ( y_fraction < our view -> ymax_fraction );
+		clickedInWideRealTierArea = our view -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (clickedInWideRealTierArea) {
 		our view -> setViewport ();
-		result = RealTierArea_mouse (our view.get(), tier, event, x_world, y_fraction);
+		result = RealTierArea_mouse (our view.get(), tier, event, x_world, globalY_fraction);
 	} else {
-		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
 	if (event -> isDrop())
 		clickedInWideRealTierArea = false;
