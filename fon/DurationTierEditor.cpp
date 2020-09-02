@@ -19,8 +19,6 @@
 #include "DurationTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (DurationTierArea, RealTierArea, 0);
-
 Thing_implement (DurationTierEditor, RealTierEditor, 0);
 
 static void menu_cb_DurationTierHelp (DurationTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"DurationTier"); }

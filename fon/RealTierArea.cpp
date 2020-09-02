@@ -78,7 +78,6 @@ void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
 		if (my ycursor <= my ymin || my ycursor >= my ymax)
 			my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 	}
-Melder_casual (U"RealTierArea_updateScaling ", my ymin, U" ", my ymax);
 }
 
 void RealTierArea_draw (RealTierArea me, RealTier tier) {
@@ -86,9 +85,9 @@ void RealTierArea_draw (RealTierArea me, RealTier tier) {
 	Graphics_line (my graphics(), my startWindow(), my ycursor, my endWindow(), my ycursor);
 	Graphics_setTextAlignment (my graphics(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (my graphics(), my startWindow(), my ycursor,
-			Melder_float (Melder_half (my ycursor)));
+			Melder_float (Melder_half (my ycursor)), my v_rightTickUnits());
 	Graphics_setColour (my graphics(), Melder_BLUE);
-	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_TOP);
+	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (my graphics(), my endWindow(), my ymax,
 			Melder_float (Melder_half (my ymax)), my v_rightTickUnits());
 	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
@@ -103,7 +102,6 @@ void RealTierArea_draw (RealTierArea me, RealTier tier) {
 		Graphics_setTextAlignment (my graphics(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics(), 0.5 * (my startWindow() + my endWindow()), 0.5 * (my ymin + my ymax),
 				U"(no points)");
-Melder_casual (U"RealTierArea_draw ", my ymin, U" ", my ymax);
 	} else if (imax < imin) {
 		const double yleft = my v_valueToY (RealTier_getValueAtTime (tier, my startWindow()));
 		const double yright = my v_valueToY (RealTier_getValueAtTime (tier, my endWindow()));
@@ -184,7 +182,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 			anchorIsInFreePart = true;
 			my ycursor = y_world;
 			my editor -> viewDataAsWorldByFraction ();
-			return ((RealTierEditor) my editor) -> RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
 		}
 		anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
@@ -205,7 +203,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 		if (anchorIsInFreePart) {
 			my ycursor = y_world;
 			my editor -> viewDataAsWorldByFraction ();
-			return ((RealTierEditor) my editor) -> RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
 		}
 		Melder_assert (anchorIsNearPoint);
 		my dt = x_world - my anchorTime;
@@ -257,7 +255,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 			}
 
 			Editor_broadcastDataChanged (my editor);
-			RealTierEditor_updateScaling ((RealTierEditor) my editor);
+			RealTierArea_updateScaling (me, tier);
 		}
 	}
 	return FunctionEditor_UPDATE_NEEDED;

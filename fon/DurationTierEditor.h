@@ -19,25 +19,8 @@
  */
 
 #include "RealTierEditor.h"
-#include "DurationTier.h"
+#include "DurationTierArea.h"
 #include "Sound.h"
-
-Thing_define (DurationTierArea, RealTierArea) {
-	double v_minimumLegalY ()
-		override { return 0.0; }
-	conststring32 v_rightTickUnits ()
-		override { return U""; }
-	double v_defaultYmin ()
-		override { return 0.25; }
-	double v_defaultYmax ()
-		override { return 3.0; }
-};
-
-inline static autoDurationTierArea DurationTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	autoDurationTierArea me = Thing_new (DurationTierArea);
-	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
-	return me;
-}
 
 Thing_define (DurationTierEditor, RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)

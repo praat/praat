@@ -184,24 +184,12 @@ void structFunctionEditor :: draw () {
 	}
 
 	/*
-		Be responsive: update the markers now.
+		Window background.
 	*/
 	our viewAllAsPixelettes ();
 	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
-	Graphics_fillRectangle (our graphics.get(), our functionViewerLeft + MARGIN, our selectionViewerRight - MARGIN, our height_pxlt - (TOP_MARGIN + space), our height_pxlt);
-	Graphics_fillRectangle (our graphics.get(), our functionViewerLeft, our functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), our height_pxlt);
-	Graphics_fillRectangle (our graphics.get(), our functionViewerRight - MARGIN, our functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), our height_pxlt);
-	if (our p_showSelectionViewer) {
-		our viewSelectionViewerAsPixelettes ();
-		Graphics_fillRectangle (our graphics.get(), our selectionViewerLeft, our selectionViewerLeft + MARGIN, BOTTOM_MARGIN, our height_pxlt);
-		Graphics_fillRectangle (our graphics.get(), our selectionViewerRight - MARGIN, our selectionViewerRight, BOTTOM_MARGIN, our height_pxlt);
-		Graphics_fillRectangle (our graphics.get(), our selectionViewerLeft + MARGIN, our selectionViewerRight - MARGIN, 0.0, BOTTOM_MARGIN + space * 3);
-	}
-	Graphics_setGrey (our graphics.get(), 0.0);
-	#if defined (macintosh)
-		Graphics_line (our graphics.get(), our functionViewerLeft, 2.0, our selectionViewerRight, 2.0);
-		Graphics_line (our graphics.get(), our functionViewerLeft, our height_pxlt - 2.0, our selectionViewerRight, our height_pxlt - 2.0);
-	#endif
+	Graphics_fillRectangle (our graphics.get(), our functionViewerLeft, our selectionViewerRight, BOTTOM_MARGIN, our height_pxlt);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
 
 	our viewFunctionViewerAsPixelettes ();
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -287,7 +275,7 @@ void structFunctionEditor :: draw () {
 		Graphics_fillRectangle (our graphics.get(), our startWindow, our endWindow, BOTTOM_MARGIN + space * 3, our height_pxlt - (TOP_MARGIN + space));
 	}
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_rectangle (our graphics.get(), our startWindow, our endWindow, BOTTOM_MARGIN + space * 3, our height_pxlt - (TOP_MARGIN + space));
+	//Graphics_rectangle (our graphics.get(), our startWindow, our endWindow, BOTTOM_MARGIN + space * 3, our height_pxlt - (TOP_MARGIN + space));
 
 	/*
 		Red marker text.
@@ -1399,15 +1387,18 @@ void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, cons
 
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, double minimum, double maximum) {
 	double textX = my endWindow, textY = yWC;
-	int tooHigh = Graphics_dyWCtoMM (my graphics.get(), maximum - textY) < 5.0;
-	int tooLow = Graphics_dyWCtoMM (my graphics.get(), textY - minimum) < 5.0;
-	if (yWC < minimum || yWC > maximum) return;
+	const bool tooHigh = ( Graphics_dyWCtoMM (my graphics.get(), maximum - textY) < 5.0 );
+	const bool tooLow = ( Graphics_dyWCtoMM (my graphics.get(), textY - minimum) < 5.0 );
+	if (yWC < minimum || yWC > maximum)
+		return;
 	Graphics_setColour (my graphics.get(), Melder_CYAN);
 	Graphics_line (my graphics.get(), 0.99 * my endWindow + 0.01 * my startWindow, yWC, my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics.get(), 0.5 * (my startSelection + my endSelection), yWC, 1.5);
 	if (tooHigh) {
-		if (tooLow) textY = 0.5 * (minimum + maximum);
-		else textY = maximum - Graphics_dyMMtoWC (my graphics.get(), 5.0);
+		if (tooLow)
+			textY = 0.5 * (minimum + maximum);
+		else
+			textY = maximum - Graphics_dyMMtoWC (my graphics.get(), 5.0);
 	} else if (tooLow) {
 		textY = minimum + Graphics_dyMMtoWC (my graphics.get(), 5.0);
 	}
