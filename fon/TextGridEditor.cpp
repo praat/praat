@@ -1713,6 +1713,22 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 
 	our draggingTime = undefined;   // information to next expose event
 	if (event -> isClick()) {
+		if (event -> isLeftBottomFunctionKeyPressed()) {
+			const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
+			double tmin, tmax;
+			_TextGridEditor_timeToInterval (this, xWC, clickedTierNumber, & tmin, & tmax);
+			our startSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );   // to nearest boundary
+			Melder_sort (& our startSelection, & our endSelection);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		if (event -> isRightBottomFunctionKeyPressed()) {
+			const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
+			double tmin, tmax;
+			_TextGridEditor_timeToInterval (this, xWC, clickedTierNumber, & tmin, & tmax);
+			our endSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );
+			Melder_sort (& our startSelection, & our endSelection);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
 		Melder_casual (U"click ", xWC);
 		Melder_assert (isundef (anchorTime));   // sanity check for the fixed order click-drag-drop
 		Melder_assert (clickedLeftBoundary == 0);
@@ -1972,40 +1988,6 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		//FunctionEditor_marksChanged (this, true);
 		Editor_broadcastDataChanged (this);
 	}
-	return FunctionEditor_UPDATE_NEEDED;
-}
-
-bool structTextGridEditor :: v_clickB (double t, double yWC) {
-	const double soundY = _TextGridEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		if (t < our endWindow) {
-			our startSelection = t;
-			Melder_sort (& our startSelection, & our endSelection);
-			return FunctionEditor_UPDATE_NEEDED;
-		} else {
-			return structTimeSoundEditor :: v_clickB (t, yWC);
-		}
-	}
-	const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
-	double tmin, tmax;
-	_TextGridEditor_timeToInterval (this, t, clickedTierNumber, & tmin, & tmax);
-	our startSelection = ( t - tmin < tmax - t ? tmin : tmax );   // to nearest boundary
-	Melder_sort (& our startSelection, & our endSelection);
-	return FunctionEditor_UPDATE_NEEDED;
-}
-
-bool structTextGridEditor :: v_clickE (double t, double yWC) {
-	const double soundY = _TextGridEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		our endSelection = t;
-		Melder_sort (& our startSelection, & our endSelection);
-		return FunctionEditor_UPDATE_NEEDED;
-	}
-	const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
-	double tmin, tmax;
-	_TextGridEditor_timeToInterval (this, t, clickedTierNumber, & tmin, & tmax);
-	our endSelection = ( t - tmin < tmax - t ? tmin : tmax );
-	Melder_sort (& our startSelection, & our endSelection);
 	return FunctionEditor_UPDATE_NEEDED;
 }
 

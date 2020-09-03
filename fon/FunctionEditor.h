@@ -28,15 +28,23 @@ struct FunctionEditor_picture {
 };
 
 Thing_define (FunctionEditor, Editor) {
-	/* Subclass may change the following attributes, */
-	/* but has to respect the invariants, */
-	/* and has to call FunctionEditor_marksChanged () */
-	/* immediately after making the changes. */
+	/*
+		Inherited attributes:
+			data: must be a Function.
+	*/
+	Function & function() { return * reinterpret_cast <Function *> (& our data); }
+
+	/*
+		Subclasses may change the following attributes,
+		but have to respect the invariants,
+		and have to call FunctionEditor_marksChanged ()
+		immediately after making those changes.
+		Invariants:
+			tmin <= startWindow < endWindow <= tmax;
+			tmin <= startSelection <= endSelection <= tmax;
+	*/
 	double tmin, tmax, startWindow, endWindow;
 	double startSelection, endSelection;   // markers
-		/* These attributes are all expressed in seconds. Invariants: */
-		/*    tmin <= startWindow < endWindow <= tmax; */
-		/*    tmin <= (startSelection, endSelection) <= tmax; */
 
 	autoGraphics graphics;   // used in the 'draw' method
 	void draw ();
@@ -160,10 +168,10 @@ public:
 	virtual const char *v_format_selection () { return u8"%f (%.3f / s)"; }
 	virtual int v_fixedPrecision_long () { return 6; }
 	virtual bool v_hasText () { return false; }
-	virtual void v_play (double /* timeFrom */, double /* timeTo */) { }
+	virtual void v_play (double /* startTime */, double /* endTime */) { }
 		/*
-		 * Message: "the user clicked in one of the rectangles above or below the data window."
-		 */
+			Message: "the user clicked in one of the rectangles above or below the data window."
+		*/
 	virtual bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 		/*
 			Message: "they clicked in the data part of the window, or in the left or right margin."
@@ -190,8 +198,6 @@ public:
 		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
 		 */
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
-	virtual bool v_clickB (double xWC, double yWC) { return false; }   // TODO remove
-	virtual bool v_clickE (double xWC, double yWC) { return false; }   // TODO remove
 	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
 	virtual void v_updateText () { }
 	virtual void v_prefs_addFields (EditorCommand) { }
@@ -214,29 +220,6 @@ public:
 };
 
 int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTime, double endTime, double currentTime);
-
-/*
-	Attributes:
-		data: must be a Function.
-
-	int clickB (double xWC, double yWC);
-		"user clicked in data window with the middle mouse button (Mac: control- or option-click)."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		For the return value, see the 'click' method.
-		FunctionEditor::clickB simply moves the start of the selection (B) to 'xWC',
-			with the sole statement 'my startSelection = xWC'.
-
-	int clickE (double xWC, double yWC);
-		"user clicked in data window with the right mouse button (Mac: command-click)."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		For the return value, see the 'click' method.
-		FunctionEditor::clickB simply moves the end of the selection (E) to 'xWC',
-			with the sole statement 'my endSelection = xWC'.
-
-	void key (unsigned char key);
-		"user typed a key to the data window."
-		FunctionEditor::key ignores this message.
-*/
 
 #define FunctionEditor_UPDATE_NEEDED  true
 #define FunctionEditor_NO_UPDATE_NEEDED  false
