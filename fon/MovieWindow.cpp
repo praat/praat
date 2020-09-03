@@ -109,9 +109,9 @@ bool structMovieWindow :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event
 	return our MovieWindow_Parent :: v_mouseInWideDataView(event, x_world, y_fraction);
 }
 
-void structMovieWindow :: v_play (double tmin, double tmax) {
+void structMovieWindow :: v_play (double startTime, double endTime) {
 	Movie movie = (Movie) data;
-	Movie_play (movie, our graphics.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+	Movie_play (movie, our graphics.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
 void MovieWindow_init (MovieWindow me, conststring32 title, Movie movie) {

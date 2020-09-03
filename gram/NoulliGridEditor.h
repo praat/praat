@@ -36,7 +36,7 @@ Thing_define (NoulliGridEditor, TimeSoundEditor) {
 		override;
 	void v_drawSelectionViewer ()
 		override;
-	void v_drawRealTimeSelectionViewer (int phase, double time)
+	void v_drawRealTimeSelectionViewer (double time)
 		override;
 
 	#include "NoulliGridEditor_prefs.h"

@@ -34,7 +34,7 @@ Thing_define (OptimalCeilingTierArea, RealTierArea) {
 Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_play (double fromTime, double toTime)
+	void v_play (double startTime, double endTime)
 		override;
 	conststring32 v_quantityText ()
 		override { return U"Frequency (Hz)"; }

@@ -134,9 +134,9 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	return result;
 }
 
-void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
+void structRealTierEditor :: v_play (double startTime, double endTime) {
 	if (our d_sound.data)
-		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
 void RealTierEditor_init (RealTierEditor me, ClassInfo viewClass, conststring32 title, RealTier data, Sound sound, bool ownSound) {

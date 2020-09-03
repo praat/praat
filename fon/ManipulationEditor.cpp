@@ -779,27 +779,12 @@ void structManipulationEditor :: v_draw () {
 	Manipulation manip = (Manipulation) our data;
 	double ysoundmin, ysoundmax;
 	(void) getSoundArea (this, & ysoundmin, & ysoundmax);
-
 	if (manip -> sound)
 		drawSoundArea (this, ysoundmin, ysoundmax);
 	if (manip -> pitch)
 		drawPitchArea (this);
 	if (manip -> duration)
 		drawDurationArea (this);
-
-	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
-	Graphics_fillRectangle (our graphics.get(), -0.001, 1.001, our pitchTierArea -> ymax_fraction, ysoundmin);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_line (our graphics.get(), 0.0, ysoundmin, 1.0, ysoundmin);
-	Graphics_line (our graphics.get(), 0.0, our pitchTierArea -> ymin_fraction, 1.0, our pitchTierArea -> ymin_fraction);
-	if (manip -> duration) {
-		Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
-		Graphics_fillRectangle (our graphics.get(), -0.001, 1.001, our durationTierArea -> ymax_fraction, our pitchTierArea -> ymin_fraction);
-		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		Graphics_line (our graphics.get(), 0, our pitchTierArea -> ymin_fraction, 1, our pitchTierArea -> ymin_fraction);
-		Graphics_line (our graphics.get(), 0, our durationTierArea -> ymax_fraction, 1, our durationTierArea -> ymax_fraction);
-	}
 	updateMenus (this);
 }
 
@@ -832,13 +817,13 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	return result;
 }
 
-void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
+void structManipulationEditor :: v_play (double startTime, double endTime) {
 	Manipulation ana = (Manipulation) our data;
 	if (our clickWasModifiedByShiftKey) {
 		if (ana -> sound)
-			Sound_playPart (ana -> sound.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (ana -> sound.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (ana, a_tmin, a_tmax, our synthesisMethod);
+		Manipulation_playPart (ana, startTime, endTime, our synthesisMethod);
 	}
 }
 

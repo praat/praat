@@ -89,7 +89,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_draw_analysis_formants ()
 		override;
-	void v_play (double tmin, double tmax)
+	void v_play (double startTime, double endTime)
 		override;
 	void v_prefs_addFields (EditorCommand cmd)
 		override;

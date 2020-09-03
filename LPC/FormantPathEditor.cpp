@@ -190,8 +190,8 @@ bool FormantPathEditor_parametersChanged (FormantPathEditor me, integer imodel, 
 static void do_insertIntervalOnPathTier (FormantPathEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-				my playingCursor || my playingSelection ? my playCursor : my startSelection,
-				my playingCursor || my playingSelection ? my playCursor : my endSelection,
+				my duringPlay ? my playCursor : my startSelection,
+				my duringPlay ? my playCursor : my endSelection,
 				true);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
@@ -2330,7 +2330,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	}
 }
 
-void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
+void structFormantPathEditor :: v_play (double startTime, double endTime) {
 	if (! d_sound.data && ! d_longSound.data)
 		return;
 	integer numberOfChannels = ( d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny );
@@ -2344,20 +2344,20 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our d_longSound.data, tmin_, tmax_, true);
+			autoSound part = LongSound_extractPart (our d_longSound.data, startTime, endTime, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			LongSound_playPart (our d_longSound.data, tmin_, tmax_, theFunctionEditor_playCallback, this);
+			LongSound_playPart (our d_longSound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), tmin_, tmax_, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			Sound_playPart (our d_sound.data, tmin_, tmax_, theFunctionEditor_playCallback, this);
+			Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	}
 }
