@@ -1254,8 +1254,10 @@ void structFunctionEditor :: v_dataChanged () {
 
 int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, double endTime, double currentTime) {
 	our playCursor = currentTime;
-	if (phase == 1)
+	if (phase == 1) {
 		our duringPlay = true;
+		return 1;
+	}
 	if (phase == 3) {
 		our duringPlay = false;
 		if (currentTime < endTime && MelderAudio_stopWasExplicit ()) {
@@ -1267,9 +1269,9 @@ int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, d
 			updateGroup (this);
 		}
 	}
-	Graphics_updateWs (our graphics.get());
 	if (Melder_debug == 53)
 		Melder_casual (U"draining");
+	Graphics_updateWs (our graphics.get());
 	GuiShell_drain (our windowForm);
 	return 1;
 }

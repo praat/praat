@@ -2259,44 +2259,6 @@ bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKe
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-bool structFormantPathEditor :: v_clickB (double t, double yWC) {
-	const double soundY = _FormantPathEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		if (t < our endWindow) {
-			our startSelection = t;
-			if (our startSelection > our endSelection)
-				std::swap (our startSelection, our endSelection);
-			return FunctionEditor_UPDATE_NEEDED;
-		} else {
-			return structTimeSoundEditor :: v_clickB (t, yWC);
-		}
-	}
-	const integer clickedTierNumber = _FormantPathEditor_yWCtoTier (this, yWC);
-	double tmin_, tmax_;
-	_FormantPathEditor_timeToInterval (this, t, clickedTierNumber, & tmin_, & tmax_);
-	our startSelection = ( t - tmin_ < tmax_ - t ? tmin_ : tmax_ );   // to nearest boundary
-	if (our startSelection > our endSelection)
-		std::swap (our startSelection, our endSelection);
-	return FunctionEditor_UPDATE_NEEDED;
-}
-
-bool structFormantPathEditor :: v_clickE (double t, double yWC) {
-	const double soundY = _FormantPathEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		our endSelection = t;
-		if (our startSelection > our endSelection)
-			std::swap (our startSelection, our endSelection);
-		return FunctionEditor_UPDATE_NEEDED;
-	}
-	const integer clickedTierNumber = _FormantPathEditor_yWCtoTier (this, yWC);
-	double tmin_, tmax_;
-	_FormantPathEditor_timeToInterval (this, t, clickedTierNumber, & tmin_, & tmax_);
-	our endSelection = ( t - tmin_ < tmax_ - t ? tmin_ : tmax_ );
-	if (our startSelection > our endSelection)
-		std::swap (our startSelection, our endSelection);
-	return FunctionEditor_UPDATE_NEEDED;
-}
-
 void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	/*
 		On which of the modelers was the click?

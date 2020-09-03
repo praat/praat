@@ -190,8 +190,6 @@ public:
 		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
 		 */
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
-	virtual bool v_clickB (double xWC, double yWC) { return false; }   // TODO remove
-	virtual bool v_clickE (double xWC, double yWC) { return false; }   // TODO remove
 	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
 	virtual void v_updateText () { }
 	virtual void v_prefs_addFields (EditorCommand) { }
@@ -218,20 +216,6 @@ int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTi
 /*
 	Attributes:
 		data: must be a Function.
-
-	int clickB (double xWC, double yWC);
-		"user clicked in data window with the middle mouse button (Mac: control- or option-click)."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		For the return value, see the 'click' method.
-		FunctionEditor::clickB simply moves the start of the selection (B) to 'xWC',
-			with the sole statement 'my startSelection = xWC'.
-
-	int clickE (double xWC, double yWC);
-		"user clicked in data window with the right mouse button (Mac: command-click)."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		For the return value, see the 'click' method.
-		FunctionEditor::clickB simply moves the end of the selection (E) to 'xWC',
-			with the sole statement 'my endSelection = xWC'.
 
 	void key (unsigned char key);
 		"user typed a key to the data window."
