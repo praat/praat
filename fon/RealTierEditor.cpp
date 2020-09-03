@@ -24,7 +24,7 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 /* MARK: - MENU COMMANDS */
 
 static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_removePoints (my view.get(), static_cast <RealTier> (my data));
+	RealTierArea_removePoints (my realTierArea.get(), static_cast <RealTier> (my data));
 	Editor_save (me, U"Remove point(s)");
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -32,7 +32,7 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_addPointAtCursor (my view.get(), static_cast <RealTier> (my data));
+	RealTierArea_addPointAtCursor (my realTierArea.get(), static_cast <RealTier> (my data));
 	Editor_save (me, U"Add point");
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -45,9 +45,9 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 		REAL (desiredY, my v_quantityText (), U"0.0")
 	EDITOR_OK
 		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
-		SET_REAL (desiredY, my view -> ycursor)
+		SET_REAL (desiredY, my realTierArea -> ycursor)
 	EDITOR_DO
-		RealTierArea_addPointAt (my view.get(), static_cast <RealTier> (my data), time, desiredY);
+		RealTierArea_addPointAt (my realTierArea.get(), static_cast <RealTier> (my data), time, desiredY);
 		Editor_save (me, U"Add point");
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
@@ -60,12 +60,12 @@ static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 		REAL (ymin, my v_yminText (), my v_defaultYminText ())
 		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
 	EDITOR_OK
-		SET_REAL (ymin, my view -> ymin)
-		SET_REAL (ymax, my view -> ymax)
+		SET_REAL (ymin, my realTierArea -> ymin)
+		SET_REAL (ymax, my realTierArea -> ymax)
 	EDITOR_DO
-		my view -> ymin = ymin;
-		my view -> ymax = ymax;
-		if (my view -> ymax <= my view -> ymin)
+		my realTierArea -> ymin = ymin;
+		my realTierArea -> ymax = ymax;
+		if (my realTierArea -> ymax <= my realTierArea -> ymin)
 			RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -87,7 +87,7 @@ void structRealTierEditor :: v_createMenus () {
 }
 
 void RealTierEditor_updateScaling (RealTierEditor me) {
-	RealTierArea_updateScaling (my view.get(), my tier());
+	RealTierArea_updateScaling (my realTierArea.get(), my realTier());
 }
 
 void structRealTierEditor :: v_dataChanged () {
@@ -105,25 +105,25 @@ void structRealTierEditor :: v_draw () {
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 	}
-	our view -> setViewport();
+	our realTierArea -> setViewport();
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our view -> ymin, our view -> ymax);
-	RealTierArea_draw (our view.get(), our tier());
-	if (isdefined (our view -> anchorTime))
-		RealTierArea_drawWhileDragging (our view.get(), our tier());
+	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our realTierArea -> ymin, our realTierArea -> ymax);
+	RealTierArea_draw (our realTierArea.get(), our realTier());
+	if (isdefined (our realTierArea -> anchorTime))
+		RealTierArea_drawWhileDragging (our realTierArea.get(), our realTier());
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
 bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
 	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
-		clickedInWideRealTierArea = our view -> y_fraction_globalIsInside (globalY_fraction);
+		clickedInWideRealTierArea = our realTierArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (clickedInWideRealTierArea) {
-		our view -> setViewport ();
-		result = RealTierArea_mouse (our view.get(), our tier(), event, x_world, globalY_fraction);
+		our realTierArea -> setViewport ();
+		result = RealTierArea_mouse (our realTierArea.get(), our realTier(), event, x_world, globalY_fraction);
 	} else {
 		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
@@ -137,14 +137,14 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, ClassInfo viewClass, conststring32 title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, conststring32 title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
-	my view = Thing_newFromClass (viewClass). static_cast_move <structRealTierArea>();
-	FunctionArea_init (my view.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
+	my realTierArea = Thing_newFromClass (realTierAreaClass). static_cast_move <structRealTierArea>();
+	FunctionArea_init (my realTierArea.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
 	RealTierEditor_updateScaling (me);
-	my view -> ycursor = 0.382 * my view -> ymin + 0.618 * my view -> ymax;
+	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
 }
 
 /* End of file RealTierEditor.cpp */

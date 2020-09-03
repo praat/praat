@@ -27,7 +27,7 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 		Access inherited attributes by their derived type.
 	*/
 	PitchTier & pitchTier() { return * reinterpret_cast <PitchTier *> (& our data); }
-	autoPitchTierArea & pitchTierArea() { return * reinterpret_cast <autoPitchTierArea *> (& our view); }
+	autoPitchTierArea & pitchTierArea() { return * reinterpret_cast <autoPitchTierArea *> (& our realTierArea); }
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;

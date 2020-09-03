@@ -25,9 +25,9 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 	/*
 		Access inherited attributes by their derived type.
 	*/
-	RealTier & tier() { return * reinterpret_cast <RealTier *> (& our data); }
+	RealTier & realTier() { return * reinterpret_cast <RealTier *> (& our data); }
 
-	autoRealTierArea view;
+	autoRealTierArea realTierArea;
 	constexpr static double SOUND_HEIGHT = 0.382;
 
 	void v_createMenus ()
@@ -57,7 +57,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
-void RealTierEditor_init (RealTierEditor me, ClassInfo areaClass, conststring32 title, RealTier data, Sound sound, bool ownSound);
+void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, conststring32 title, RealTier data, Sound sound, bool ownSound);
 /*
 	`sound` may be null;
 	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
