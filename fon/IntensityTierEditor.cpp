@@ -30,11 +30,11 @@ void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
 
-void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
+void structIntensityTierEditor :: v_play (double startTime, double endTime) {
 	if (our d_sound.data) {
-		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		//IntensityTier_playPart (our data, a_tmin, a_tmax, false);
+		//IntensityTier_playPart (our data, startTime, endTime, false);
 	}
 }
 

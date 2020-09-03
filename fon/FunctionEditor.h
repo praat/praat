@@ -110,7 +110,7 @@ public:
 
 	GuiText text;   // optional text at top
 	bool clickWasModifiedByShiftKey;   // information for drag-and-drop and for start of play
-	bool playingCursor, playingSelection;   // information for end of play
+	bool duringPlay;
 	struct FunctionEditor_picture picture;
 
 	/* Private: */
@@ -146,7 +146,7 @@ public:
 		 * Message: "draw your part of the data between startWindow and endWindow."
 		 */
 	virtual void v_drawSelectionViewer () { }
-	virtual void v_drawRealTimeSelectionViewer (int /* phase */, double /* time */) { }
+	virtual void v_drawRealTimeSelectionViewer (double /* time */) { }
 	virtual void v_prepareDraw () { }   // for less flashing
 	virtual conststring32 v_domainName () { return U"time"; }
 	virtual conststring32 v_selectionViewerName () { return U"selection viewer"; }
@@ -192,7 +192,7 @@ public:
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
 	virtual bool v_clickB (double xWC, double yWC) { return false; }   // TODO remove
 	virtual bool v_clickE (double xWC, double yWC) { return false; }   // TODO remove
-	virtual int v_playCallback (int phase, double tmin, double tmax, double t);
+	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
 	virtual void v_updateText () { }
 	virtual void v_prefs_addFields (EditorCommand) { }
 	virtual void v_prefs_setValues (EditorCommand) { }
@@ -213,7 +213,7 @@ public:
     #include "FunctionEditor_prefs.h"
 };
 
-int theFunctionEditor_playCallback (FunctionEditor me, int phase, double tmin, double tmax, double t);
+int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTime, double endTime, double currentTime);
 
 /*
 	Attributes:

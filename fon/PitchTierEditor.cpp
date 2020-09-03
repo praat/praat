@@ -31,11 +31,11 @@ void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
-void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
+void structPitchTierEditor :: v_play (double startTime, double endTime) {
 	if (d_sound.data) {
-		Sound_playPart (d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart (d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		PitchTier_playPart ((PitchTier) data, a_tmin, a_tmax, false);
+		PitchTier_playPart ((PitchTier) data, startTime, endTime, false);
 	}
 }
 

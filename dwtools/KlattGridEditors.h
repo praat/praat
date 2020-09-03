@@ -32,7 +32,7 @@ Thing_define (KlattGrid_RealTierEditor, RealTierEditor) {
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	void v_play (double tmin, double tmax)
+	void v_play (double startTime, double endTime)
 		override;
 };
 
@@ -381,7 +381,7 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 Thing_define (KlattGrid_FormantGridEditor, FormantGridEditor) {
 	KlattGrid klattgrid;
 
-	void v_play (double tmin, double tmax)
+	void v_play (double startTime, double endTime)
 		override;
 	bool v_hasSourceMenu ()
 		override { return false; }

@@ -817,13 +817,13 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	return result;
 }
 
-void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
+void structManipulationEditor :: v_play (double startTime, double endTime) {
 	Manipulation ana = (Manipulation) our data;
 	if (our clickWasModifiedByShiftKey) {
 		if (ana -> sound)
-			Sound_playPart (ana -> sound.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (ana -> sound.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (ana, a_tmin, a_tmax, our synthesisMethod);
+		Manipulation_playPart (ana, startTime, endTime, our synthesisMethod);
 	}
 }
 

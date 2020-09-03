@@ -427,8 +427,8 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-void structFormantGridEditor :: v_play (double tmin, double tmax) {
-	FormantGrid_playPart ((FormantGrid) our data, tmin, tmax, our p_play_samplingFrequency,
+void structFormantGridEditor :: v_play (double startTime, double endTime) {
+	FormantGrid_playPart ((FormantGrid) our data, startTime, endTime, our p_play_samplingFrequency,
 		our p_source_pitch_tStart, our p_source_pitch_f0Start,
 		our p_source_pitch_tMid,   our p_source_pitch_f0Mid,
 		our p_source_pitch_tEnd,   our p_source_pitch_f0End,

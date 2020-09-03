@@ -627,9 +627,10 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-				my playingCursor || my playingSelection ? my playCursor : my startSelection,
-				my playingCursor || my playingSelection ? my playCursor : my endSelection,
-				true);
+			my duringPlay ? my playCursor : my startSelection,
+			my duringPlay ? my playCursor : my endSelection,
+			true
+		);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
@@ -782,8 +783,8 @@ static void menu_cb_MoveToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void do_insertOnTier (TextGridEditor me, integer itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-			my playingCursor || my playingSelection ? my playCursor : my startSelection,
-			my playingCursor || my playingSelection ? my playCursor : my endSelection,
+			my duringPlay ? my playCursor : my startSelection,
+			my duringPlay ? my playCursor : my endSelection,
 			false
 		);
 		my selectedTier = itier;
@@ -2067,7 +2068,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	}
 }
 
-void structTextGridEditor :: v_play (double tmin, double tmax) {
+void structTextGridEditor :: v_play (double startTime, double endTime) {
 	if (! d_sound.data && ! d_longSound.data)
 		return;
 	integer numberOfChannels = ( d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny );
@@ -2081,20 +2082,20 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our d_longSound.data, tmin, tmax, true);
+			autoSound part = LongSound_extractPart (our d_longSound.data, startTime, endTime, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			LongSound_playPart (our d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+			LongSound_playPart (our d_longSound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	}
 }

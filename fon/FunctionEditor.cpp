@@ -335,11 +335,28 @@ void structFunctionEditor :: draw () {
 	}
 
 	/*
+		Draw the running cursor.
+	*/
+	if (our duringPlay) {
+		if (Melder_debug == 53)
+			Melder_casual (U"playing cursor");
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
+		Graphics_setLineWidth (our graphics.get(), 3.0);
+		Graphics_xorOn (our graphics.get(), Melder_BLACK);
+		Graphics_line (our graphics.get(), our playCursor, 0.0, our playCursor, 1.0);
+		Graphics_xorOff (our graphics.get());
+		Graphics_setLineWidth (our graphics.get(), 1.0);
+	}
+
+	/*
 		Draw the selection part.
 	*/
 	if (our p_showSelectionViewer) {
 		our viewInnerSelectionViewerAsFractionByFraction ();
-		our v_drawSelectionViewer ();
+		if (our duringPlay)
+			our v_drawRealTimeSelectionViewer (our playCursor);
+		else
+			our v_drawSelectionViewer ();
 	}
 }
 
@@ -589,10 +606,8 @@ static void menu_cb_playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	if (MelderAudio_isPlaying) {
 		MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
 	} else if (my startSelection < my endSelection) {
-		my playingSelection = true;
 		my v_play (my startSelection, my endSelection);
 	} else {
-		my playingCursor = true;
 		if (my startSelection == my endSelection && my startSelection > my startWindow && my startSelection < my endWindow)
 			my v_play (my startSelection, my endWindow);
 		else
@@ -602,7 +617,6 @@ static void menu_cb_playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_playWindow (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	my playingCursor = true;
 	my v_play (my startWindow, my endWindow);
 }
 
@@ -1238,70 +1252,30 @@ void structFunctionEditor :: v_dataChanged () {
 	FunctionEditor_marksChanged (this, false);
 }
 
-int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, double a_tmax, double t) {
-	/*
-	 * This callback will often be called by the Melder workproc during playback.
-	 * However, it will sometimes be called by Melder_stopPlaying with phase=3.
-	 * This will occur at unpredictable times, perhaps when the LongSound is updated.
-	 * So we had better make no assumptions about the current viewport.
-	 */
-	double x1NDC, x2NDC, y1NDC, y2NDC;
-	Graphics_inqViewport (our graphics.get(), & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	our viewDataAsWorldByFraction ();
-	Graphics_xorOn (our graphics.get(), Melder_MAROON);
-	/*
-	 * Undraw the play cursor at its old location.
-	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.
-	 */
-	if (phase != 1 && playCursor >= our startWindow && playCursor <= our endWindow) {
-		Graphics_setLineWidth (our graphics.get(), 3.0);
-		Graphics_line (our graphics.get(), playCursor, 0.0, playCursor, 1.0);
-		Graphics_setLineWidth (our graphics.get(), 1.0);
-	}
-	/*
-	 * Draw the play cursor at its new location.
-	 */
-	if (phase != 3 && t >= our startWindow && t <= our endWindow) {
-		Graphics_setLineWidth (our graphics.get(), 3.0);
-		Graphics_line (our graphics.get(), t, 0.0, t, 1.0);
-		Graphics_setLineWidth (our graphics.get(), 1.0);
-	}
-	Graphics_xorOff (our graphics.get());
-	if (our p_showSelectionViewer) {
-		our viewInnerSelectionViewerAsFractionByFraction ();
-		our v_drawRealTimeSelectionViewer (phase, t);
-	}
-	/*
-	 * Usually, there will be an event test after each invocation of this callback,
-	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
-	 * However, if the asynchronicity is just kMelder_asynchronicityLevel_CALLING_BACK,
-	 * there is no event test. Which means: no server round trip.
-	 * Which means: no automatic flushing of graphics output.
-	 * So: we force the flushing ourselves, lest we see too few moving cursors.
-	 *
-	 * At the moment, Cocoa seems to require this flushing even if the asynchronicity is kMelder_asynchronicityLevel_ASYNCHRONOUS.
-	 */
-	Graphics_flushWs (our graphics.get());
-	Graphics_setViewport (our graphics.get(), x1NDC, x2NDC, y1NDC, y2NDC);
-	playCursor = t;
+int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, double endTime, double currentTime) {
+	our playCursor = currentTime;
+	if (phase == 1)
+		our duringPlay = true;
 	if (phase == 3) {
-		if (t < a_tmax && MelderAudio_stopWasExplicit ()) {
-			if (t > our startSelection && t < our endSelection)
-				our startSelection = t;
+		our duringPlay = false;
+		if (currentTime < endTime && MelderAudio_stopWasExplicit ()) {
+			if (currentTime > our startSelection && currentTime < our endSelection)
+				our startSelection = currentTime;
 			else
-				our startSelection = our endSelection = t;
+				our startSelection = our endSelection = currentTime;
 			v_updateText ();
-			/*Graphics_updateWs (our graphics);*/ our draw ();
 			updateGroup (this);
 		}
-		playingCursor = false;
-		playingSelection = false;
 	}
+	Graphics_updateWs (our graphics.get());
+	if (Melder_debug == 53)
+		Melder_casual (U"draining");
+	GuiShell_drain (our windowForm);
 	return 1;
 }
 
-int theFunctionEditor_playCallback (FunctionEditor me, int phase, double a_tmin, double a_tmax, double t) {
-	return my v_playCallback (phase, a_tmin, a_tmax, t);
+int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTime, double endTime, double currentTime) {
+	return my v_playCallback (phase, startTime, endTime, currentTime);
 }
 
 void structFunctionEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
