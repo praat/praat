@@ -1235,10 +1235,9 @@ void structFunctionEditor :: v_createChildren () {
 }
 
 void structFunctionEditor :: v_dataChanged () {
-	const Function function = (Function) our data;
-	Melder_assert (Thing_isa (function, classFunction));
-	our tmin = function -> xmin;
- 	our tmax = function -> xmax;
+	Melder_assert (Thing_isa (our function(), classFunction));
+	our tmin = our function() -> xmin;
+ 	our tmax = our function() -> xmax;
  	if (our startWindow < our tmin || our startWindow > our tmax)
  		our startWindow = our tmin;
  	if (our endWindow < our tmin || our endWindow > our tmax)
@@ -1284,10 +1283,10 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
-	my tmin = data -> xmin;   // set before adding children (see group button)
-	my tmax = data -> xmax;
-	Editor_init (me, 0, 0, my pref_shellWidth (), my pref_shellHeight (), title, data);
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function function) {
+	my tmin = function -> xmin;   // set before adding children (see group button)
+	my tmax = function -> xmax;
+	Editor_init (me, 0, 0, my pref_shellWidth (), my pref_shellHeight (), title, function);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;

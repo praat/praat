@@ -87,7 +87,7 @@ void structRealTierEditor :: v_createMenus () {
 }
 
 void RealTierEditor_updateScaling (RealTierEditor me) {
-	RealTierArea_updateScaling (my view.get(), (RealTier) my data);
+	RealTierArea_updateScaling (my view.get(), my tier());
 }
 
 void structRealTierEditor :: v_dataChanged () {
@@ -98,7 +98,6 @@ void structRealTierEditor :: v_dataChanged () {
 /* MARK: - DRAWING AREA */
 
 void structRealTierEditor :: v_draw () {
-	RealTier tier = (RealTier) our data;
 	if (our d_sound.data) {
 		Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -111,21 +110,20 @@ void structRealTierEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our view -> ymin, our view -> ymax);
-	RealTierArea_draw (our view.get(), tier);
+	RealTierArea_draw (our view.get(), our tier());
 	if (isdefined (our view -> anchorTime))
-		RealTierArea_drawWhileDragging (our view.get(), tier);
+		RealTierArea_drawWhileDragging (our view.get(), our tier());
 	our v_updateMenuItems_file ();   // TODO: this is not about drawing; improve logic? 2020-07-23
 }
 
 bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
-	RealTier tier = (RealTier) our data;
 	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
 		clickedInWideRealTierArea = our view -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (clickedInWideRealTierArea) {
 		our view -> setViewport ();
-		result = RealTierArea_mouse (our view.get(), tier, event, x_world, globalY_fraction);
+		result = RealTierArea_mouse (our view.get(), our tier(), event, x_world, globalY_fraction);
 	} else {
 		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}

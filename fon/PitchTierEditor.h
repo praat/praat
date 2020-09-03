@@ -23,6 +23,12 @@
 #include "Sound.h"
 
 Thing_define (PitchTierEditor, RealTierEditor) {
+	/*
+		Access inherited attributes by their derived type.
+	*/
+	PitchTier pitchTier() const { return static_cast <PitchTier> (our data); }
+	PitchTierArea pitchTierArea() const { return static_cast <PitchTierArea> (our view.get()); }
+
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
 	void v_play (double tmin, double tmax)
