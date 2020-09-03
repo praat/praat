@@ -26,8 +26,8 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 	/*
 		Access inherited attributes by their derived type.
 	*/
-	PitchTier pitchTier() const { return static_cast <PitchTier> (our data); }
-	PitchTierArea pitchTierArea() const { return static_cast <PitchTierArea> (our view.get()); }
+	PitchTier & pitchTier() { return * reinterpret_cast <PitchTier *> (& our data); }
+	autoPitchTierArea & pitchTierArea() { return * reinterpret_cast <autoPitchTierArea *> (& our view); }
 
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;

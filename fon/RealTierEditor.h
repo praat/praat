@@ -22,8 +22,12 @@
 #include "RealTierArea.h"
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
+	/*
+		Access inherited attributes by their derived type.
+	*/
+	RealTier & tier() { return * reinterpret_cast <RealTier *> (& our data); }
+
 	autoRealTierArea view;
-	RealTier tier() { return static_cast <RealTier> (our data); }
 	constexpr static double SOUND_HEIGHT = 0.382;
 
 	void v_createMenus ()
