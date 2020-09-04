@@ -150,9 +150,6 @@ public:
 		override;
 
 	virtual void v_draw () { }
-		/*
-		 * Message: "draw your part of the data between startWindow and endWindow."
-		 */
 	virtual void v_drawSelectionViewer () { }
 	virtual void v_drawRealTimeSelectionViewer (double /* time */) { }
 	virtual void v_prepareDraw () { }   // for less flashing
@@ -169,9 +166,6 @@ public:
 	virtual int v_fixedPrecision_long () { return 6; }
 	virtual bool v_hasText () { return false; }
 	virtual void v_play (double /* startTime */, double /* endTime */) { }
-		/*
-			Message: "the user clicked in one of the rectangles above or below the data window."
-		*/
 	virtual bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 		/*
 			Message: "they clicked in the data part of the window, or in the left or right margin."

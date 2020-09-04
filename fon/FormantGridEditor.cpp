@@ -287,8 +287,8 @@ static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /*
 	FormantGrid grid = (FormantGrid) my data;
 	OrderedOf<structRealTier>* tiers = my editingBandwidths ? & grid -> bandwidths : & grid -> formants;
 	RealTier tier = tiers->at [my selectedFormant];
-	double ymin = my editingBandwidths ? my p_bandwidthFloor   : my p_formantFloor;
-	double ymax = my editingBandwidths ? my p_bandwidthCeiling : my p_formantCeiling;
+	const double ymin = ( my editingBandwidths ? my p_bandwidthFloor   : my p_formantFloor );
+	const double ymax = ( my editingBandwidths ? my p_bandwidthCeiling : my p_formantCeiling );
 
 	/*
 	 * Draw all selected points as magenta empty circles, if inside the window.

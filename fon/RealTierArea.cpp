@@ -93,6 +93,7 @@ void RealTierArea_draw (RealTierArea me, RealTier tier) {
 	Graphics_setTextAlignment (my graphics(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (my graphics(), my endWindow(), my ymin,
 			Melder_float (Melder_half (my ymin)), my v_rightTickUnits());
+
 	const integer ifirstSelected = AnyTier_timeToHighIndex (tier->asAnyTier(), my startSelection());
 	const integer ilastSelected = AnyTier_timeToLowIndex (tier->asAnyTier(), my endSelection());
 	const integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), my startWindow());
@@ -107,13 +108,10 @@ void RealTierArea_draw (RealTierArea me, RealTier tier) {
 		const double yright = my v_valueToY (RealTier_getValueAtTime (tier, my endWindow()));
 		Graphics_line (my graphics(), my startWindow(), yleft, my endWindow(), yright);
 	} else {
+		Graphics_setColour (my graphics(), Melder_BLUE);
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
 			RealPoint point = tier -> points.at [ipoint];
-			double t = point -> number, y = my v_valueToY (point -> value);
-			if (ipoint >= ifirstSelected && ipoint <= ilastSelected)
-				Graphics_setColour (my graphics(), Melder_RED);
-			Graphics_fillCircle_mm (my graphics(), t, y, 3.0);
-			Graphics_setColour (my graphics(), Melder_BLUE);
+			const double t = point -> number, y = my v_valueToY (point -> value);
 			if (ipoint == 1)
 				Graphics_line (my graphics(), my startWindow(), y, t, y);
 			else if (ipoint == imin)
@@ -126,6 +124,13 @@ void RealTierArea_draw (RealTierArea me, RealTier tier) {
 				RealPoint pointRight = tier -> points.at [ipoint + 1];
 				Graphics_line (my graphics(), t, y, pointRight -> number, my v_valueToY (pointRight -> value));
 			}
+		}
+		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
+			RealPoint point = tier -> points.at [ipoint];
+			const double t = point -> number, y = my v_valueToY (point -> value);
+			const bool pointIsSelected = ( ipoint >= ifirstSelected && ipoint <= ilastSelected );
+			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
+			Graphics_fillCircle_mm (my graphics(), t, y, 3.0);
 		}
 	}
 	Graphics_setLineWidth (my graphics(), 1.0);

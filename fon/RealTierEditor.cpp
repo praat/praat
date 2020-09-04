@@ -24,7 +24,7 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 /* MARK: - MENU COMMANDS */
 
 static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_removePoints (my realTierArea.get(), static_cast <RealTier> (my data));
+	RealTierArea_removePoints (my realTierArea.get(), my realTier());
 	Editor_save (me, U"Remove point(s)");
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -32,7 +32,7 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_addPointAtCursor (my realTierArea.get(), static_cast <RealTier> (my data));
+	RealTierArea_addPointAtCursor (my realTierArea.get(), my realTier());
 	Editor_save (me, U"Add point");
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
@@ -47,7 +47,7 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
 		SET_REAL (desiredY, my realTierArea -> ycursor)
 	EDITOR_DO
-		RealTierArea_addPointAt (my realTierArea.get(), static_cast <RealTier> (my data), time, desiredY);
+		RealTierArea_addPointAt (my realTierArea.get(), my realTier(), time, desiredY);
 		Editor_save (me, U"Add point");
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
