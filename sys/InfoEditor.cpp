@@ -109,6 +109,7 @@ static void gui_information (conststring32 message) {
 		//Melder_casual (U"cocoaTextView retain count after: ", [editor -> textWidget -> d_cocoaTextView  retainCount]);
 		[pool release];
 	#elif defined (macintosh)
+		// TODO: call [view invalidate] here?
 		GuiShell_drain (editor -> windowForm);
 	#endif
 }

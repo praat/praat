@@ -1683,7 +1683,6 @@ void structFormantPathEditor :: v_draw () {
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
-		//Graphics_flushWs (our graphics.get());
 		Graphics_resetViewport (our graphics.get(), vp1);
 	}
 
@@ -1774,19 +1773,16 @@ void structFormantPathEditor :: v_draw () {
 	Graphics_setFontSize (our graphics.get(), oldFontSize);
 	if (d_longSound.data || d_sound.data)
 		Graphics_resetViewport (our graphics.get(), vp1);
-	//Graphics_flushWs (our graphics.get());
 
 	if (showAnalysis) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, soundY2);
 		v_draw_analysis ();
-		//Graphics_flushWs (our graphics.get());
 		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
 		if (p_pulses_show) {
 			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
-			//Graphics_flushWs (our graphics.get());
 			Graphics_resetViewport (our graphics.get(), vp1);
 		}
 	}

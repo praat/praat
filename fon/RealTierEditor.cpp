@@ -106,9 +106,13 @@ void structRealTierEditor :: v_draw () {
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 	}
 	our realTierArea -> setViewport();
+
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (our graphics.get(), Melder_BLACK);
+	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, our realTierArea -> ymin, our realTierArea -> ymax);
 	RealTierArea_draw (our realTierArea.get(), our realTier());
 	if (isdefined (our realTierArea -> anchorTime))

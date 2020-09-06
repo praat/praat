@@ -337,7 +337,6 @@ void structSoundEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);
-	//Graphics_flushWs (our graphics.get());
 	if (showAnalysis)
 		Graphics_resetViewport (our graphics.get(), viewport);
 
@@ -347,7 +346,6 @@ void structSoundEditor :: v_draw () {
 	if (showAnalysis) {
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);
 		v_draw_analysis ();
-		//Graphics_flushWs (our graphics.get());
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 
@@ -359,7 +357,6 @@ void structSoundEditor :: v_draw () {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.5, 1.0);
 		v_draw_analysis_pulses ();
 		TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);   // second time, partially across the pulses
-		//Graphics_flushWs (our graphics.get());
 		if (showAnalysis)
 			Graphics_resetViewport (our graphics.get(), viewport);
 	}

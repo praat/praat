@@ -20,18 +20,23 @@
 
 #include "FunctionEditor.h"
 #include "FormantGrid.h"
+#include "RealTierArea.h"
+
+Thing_define (FormantGridArea, RealTierArea) {
+};
 
 Thing_define (FormantGridEditor, FunctionEditor) {
+	autoFormantGridArea formantGridArea;
+
 	bool editingBandwidths;
 	GuiMenuItem d_bandwidthsToggle;
 	integer selectedFormant;
-	double ycursor;
 
 	void v_createMenus ()
 		override;
 	void v_draw ()
 		override;
-	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction)
 		override;
 	void v_play (double startTime, double endTime)
 		override;
