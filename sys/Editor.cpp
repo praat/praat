@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2020 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,8 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	try {
 		my commandCallback (my d_editor, me, nullptr, 0, nullptr, nullptr, nullptr);
 	} catch (MelderError) {
-		if (! Melder_hasError (U"Script exited.")) {
+		if (! Melder_hasError (U"Script exited."))
 			Melder_appendError (U"Menu command \"", my itemTitle.get(), U"\" not completed.");
-		}
 		Melder_flushError ();
 	}
 }
@@ -69,9 +68,9 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cat
 	thy menu = me;
 	thy itemTitle = Melder_dup (itemTitle);
 	thy itemWidget =
-		! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
-		flags & Editor_HIDDEN ? nullptr :
-		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.get());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
+			! commandCallback ? GuiMenu_addSeparator (my menuWidget) :
+			flags & Editor_HIDDEN ? nullptr :
+			GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.get());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
 	thy commandCallback = commandCallback;
 	GuiMenuItem result = thy itemWidget;
 	my commands. addItem_move (thee.move());
@@ -141,7 +140,8 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 		U"Menu \"", menuTitle, U"\" does not exist.\n"
 		U"Command \"", itemTitle, U"\" not inserted in menu \"", menuTitle, U".\n"
 		U"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
-		U"You may want to install the script in a different menu.");
+		U"You may want to install the script in a different menu."
+	);
 	return nullptr;
 }
 
@@ -194,9 +194,9 @@ void structEditor :: v_destroy () noexcept {
 	trace (U"enter");
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
-	 * The following command must be performed before the shell is destroyed.
-	 * Otherwise, we would be forgetting dangling command dialogs here.
-	 */
+		The following command must be performed before the shell is destroyed.
+		Otherwise, we would be forgetting dangling command dialogs here.
+	*/
 	our menus.removeAllItems();
 
 	Editor_broadcastDestruction (this);
@@ -240,7 +240,8 @@ void structEditor :: v_nameChanged () {
 }
 
 void structEditor :: v_saveData () {
-	if (! our data) return;
+	if (! our data)
+		return;
 	our previousData = Data_copy (our data);
 }
 
@@ -278,12 +279,12 @@ static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
 	#endif
 	/*
-	 * Send a message to myself (e.g., I will redraw myself).
-	 */
+		Send a message to myself (e.g., I will redraw myself).
+	*/
 	my v_dataChanged ();
 	/*
-	 * Send a message to my boss (e.g., she will notify the others that depend on me).
-	 */
+		Send a message to my boss (e.g., she will notify the others that depend on me).
+	*/
 	Editor_broadcastDataChanged (me);
 }
 
@@ -325,9 +326,8 @@ void structEditor :: v_createMenuItems_query (EditorMenu menu) {
 void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Editor info", 0, menu_cb_settingsReport);
 	EditorMenu_addCommand (menu, U"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
-	if (data) {
+	if (data)
 		EditorMenu_addCommand (menu, Melder_cat (Thing_className (data), U" info"), 0, menu_cb_info);
-	}
 }
 
 void structEditor :: v_createMenus () {
@@ -379,61 +379,63 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	double xmin, ymin, widthmax, heightmax;
 	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
 	/*
-	 * Negative widths are relative to the whole screen.
-	 */
-	if (width < 0) width += (int) widthmax;
-	if (height < 0) height += (int) heightmax;
+		Negative widths are relative to the whole screen.
+	*/
+	if (width < 0)
+		width += (int) widthmax;
+	if (height < 0)
+		height += (int) heightmax;
 	/*
-	 * Don't start with a maximized window, because then the user doesn't know what a click on the maximize button means.
-	 */
-	if (width > (int) widthmax - 100) width = (int) widthmax - 100;
-	if (height > (int) heightmax - 100) height = (int) heightmax - 100;
+		Don't start with a maximized window, because then the user doesn't know what a click on the maximize button means.
+	*/
+	Melder_clipRight (& width, (int) widthmax - 100);
+	Melder_clipRight (& height, (int) heightmax - 100);
 	/*
-	 * Make sure that the window has at least a sane size.
-	 * Just in case the user made the previous window very small (Praat's FunctionEditor saves the last size),
-	 * or the user edited the preferences file (which might save a window size).
-	 */
-	if (width < 200) width = 200;
-	if (height < 150) height = 150;
+		Make sure that the window has at least a sane size,
+		just in case the user made the previous window very small (Praat's FunctionEditor saves the last size),
+		or the user edited the preferences file (which might save a window size).
+	*/
+	Melder_clipLeft (200, & width);
+	Melder_clipLeft (150, & height);
 	/*
-	 * Now that the size is right, establish the position.
-	 */
+		Now that the size is right, establish the position.
+	*/
 	int left, right, top, bottom;
 	if (x > 0) {
 		/*
-		 * Positive x: relative to the left edge of the screen.
-		 */
+			Positive x: relative to the left edge of the screen.
+		*/
 		left = (int) xmin + x;
 		right = left + width;
 	} else if (x < 0) {
 		/*
-		 * Negative x: relative to the right edge of the screen.
-		 */
+			Negative x: relative to the right edge of the screen.
+		*/
 		right = (int) xmin + (int) widthmax + x;
 		left = right - width;
 	} else {
 		/*
-		 * Zero x: randomize between the left and right edge of the screen.
-		 */
+			Zero x: randomize between the left and right edge of the screen.
+		*/
 		left = (int) NUMrandomInteger ((int) xmin + 4, (int) xmin + (int) widthmax - width - 4);
 		right = left + width;
 	}
 	if (y > 0) {
 		/*
-		 * Positive y: relative to the top of the screen.
-		 */
+			Positive y: relative to the top of the screen.
+		*/
 		top = (int) ymin + y;
 		bottom = top + height;
 	} else if (y < 0) {
 		/*
-		 * Negative y: relative to the bottom of the screen.
-		 */
+			Negative y: relative to the bottom of the screen.
+		*/
 		bottom = (int) ymin + (int) heightmax + y;
 		top = bottom - height;
 	} else {
 		/*
-		 * Zero y: randomize between the top and bottom of the screen.
-		 */
+			Zero y: randomize between the top and bottom of the screen.
+		*/
 		top = (int) NUMrandomInteger ((int) ymin + 4, (int) ymin + (int) heightmax - height - 4);
 		//Melder_casual (ymin, U" ", heightmax, U" ", height, U" ", top);
 		bottom = top + height;
@@ -447,11 +449,12 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	my data = data;
 	my v_copyPreferencesToInstance ();
 
-	/* Create menus. */
+	/*
+		Create menus.
+	*/
 
-	if (my v_hasMenuBar ()) {
+	if (my v_hasMenuBar ())
 		GuiWindow_addMenuBar (my windowForm);
-	}
 
 	my v_createChildren ();
 
@@ -467,8 +470,8 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 			Editor_addCommand (me, U"File", U"-- after script --", 0, 0);
 		}
 		/*
-		 * Add the scripted commands.
-		 */
+			Add the scripted commands.
+		*/
 		praat_addCommandsToEditor (me);
 		if (my callbackSocket)
 			Editor_addCommand (me, U"File", U"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
@@ -479,7 +482,8 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 
 void Editor_save (Editor me, conststring32 text) {
 	my v_saveData ();
-	if (! my undoButton) return;
+	if (! my undoButton)
+		return;
 	GuiThing_setSensitive (my undoButton, true);
 	Melder_sprint (my undoText,100, U"Undo ", text);
 	#if gtk
@@ -503,7 +507,8 @@ void Editor_closePraatPicture (Editor me) {
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
 			my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop::FAR_,
-			my data -> name.get());
+			my data -> name.get()
+		);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);

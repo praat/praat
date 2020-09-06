@@ -659,11 +659,13 @@ static void drawPitchArea (ManipulationEditor me) {
 	static const conststring32 rangeUnits [] = { U"", U" Hz", U" st" };
 
 	my pitchTierArea -> setViewport();
+
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+
 	Graphics_setColour (my graphics.get(), Melder_BLUE);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
@@ -691,14 +693,6 @@ static void drawPitchArea (ManipulationEditor me) {
 	Graphics_setGrey (my graphics.get(), 0.0);
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
-	//FunctionEditor_drawRangeMark (me, my pitchTierArea -> p_maximum,
-	//	Melder_fixed (my pitchTierArea -> p_maximum, rangePrecisions [(int) my pitchTierArea -> p_units]), rangeUnits [(int) my pitchTierArea -> p_units], Graphics_TOP);
-	//FunctionEditor_drawRangeMark (me, my pitchTierArea -> p_minimum,
-	//	Melder_fixed (my pitchTierArea -> p_minimum, rangePrecisions [(int) my pitchTierArea -> p_units]), rangeUnits [(int) my pitchTierArea -> p_units], Graphics_BOTTOM);
-	//if (my startSelection == my endSelection && my pitchTierArea -> ycursor >= my pitchTierArea -> p_minimum &&
-	//		my pitchTierArea -> ycursor <= my pitchTierArea -> p_maximum)
-	//	FunctionEditor_drawHorizontalHair (me, my pitchTierArea -> ycursor,
-	//		Melder_fixed (my pitchTierArea -> ycursor, rangePrecisions [(int) my pitchTierArea -> p_units]), rangeUnits [(int) my pitchTierArea -> p_units]);
 	if (cursorVisible && n > 0) {
 		const double y = my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (my pitch().get(), my startSelection));
 		FunctionEditor_insertCursorFunctionValue (me, y,
@@ -717,11 +711,13 @@ static void drawDurationArea (ManipulationEditor me) {
 	const bool cursorVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 
 	my durationTierArea -> setViewport();
+
 	Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+
 	Graphics_setColour (my graphics.get(), Melder_BLUE);
 	Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
