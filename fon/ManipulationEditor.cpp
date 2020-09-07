@@ -817,25 +817,32 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 			my pitchTierArea -> ymax = my pitchTierArea -> p_maximum *= 3.0;
 		} else
 			Melder_fatal (U"ManipulationEditor_create: Unknown pitch units: ", (int) my pitchTierArea -> p_units);
-		if (isundef (my pitchTierArea -> p_maximum) || my pitchTierArea -> p_maximum < my pitchTierArea -> pref_maximum ())
-			my pitchTierArea -> ymax = my pitchTierArea -> p_maximum = my pitchTierArea -> pref_maximum ();
+		if (isundef (my pitchTierArea -> p_maximum) || my pitchTierArea -> p_maximum < my pitchTierArea -> pref_maximum())
+			my pitchTierArea -> ymax = my pitchTierArea -> p_maximum = my pitchTierArea -> pref_maximum();
 
+		/*
+			If needed, fix preferences to sane values.
+		*/
+		if (my durationTierArea -> pref_minimum() > 1.0)
+			my durationTierArea -> pref_minimum() = Melder_atof (my durationTierArea -> default_minimum());   // sanity
+		if (my durationTierArea -> pref_maximum() < 1.0)
+			my durationTierArea -> pref_maximum() = Melder_atof (my durationTierArea -> default_maximum());
+		Melder_assert (my durationTierArea -> pref_minimum() < my durationTierArea -> pref_maximum());
+		/*
+			Honour preferences.
+		*/
+		my durationTierArea -> ymin = my durationTierArea -> p_minimum = my durationTierArea -> pref_minimum();
+		my durationTierArea -> ymax = my durationTierArea -> p_maximum = my durationTierArea -> pref_maximum();
+		/*
+			If needed, widen on the basis of the data.
+		*/
 		const double minimumDurationValue = ( manipulation -> duration ? RealTier_getMinimumValue (manipulation -> duration.get()) : undefined );
-		my durationTierArea -> ymin = my durationTierArea -> p_minimum = ( isdefined (minimumDurationValue) ? minimumDurationValue : 1.0 );
-		if (my durationTierArea -> pref_minimum () > 1.0)
-			my durationTierArea -> pref_minimum () = Melder_atof (my durationTierArea -> default_minimum ());
-		if (my durationTierArea -> p_minimum > my durationTierArea -> pref_minimum ())
-			my durationTierArea -> ymin = my durationTierArea -> p_minimum = my durationTierArea -> pref_minimum ();
 		const double maximumDurationValue = ( manipulation -> duration ? RealTier_getMaximumValue (manipulation -> duration.get()) : undefined );
-		my durationTierArea -> ymax = my durationTierArea -> p_maximum = ( isdefined (maximumDurationValue) ? maximumDurationValue : 1.0 );
-		if (my durationTierArea -> pref_maximum () < 1.0)
-			my durationTierArea -> pref_maximum () = Melder_atof (my durationTierArea -> default_maximum ());
-		if (my durationTierArea -> pref_maximum () <= my durationTierArea -> pref_minimum ()) {
-			my durationTierArea -> pref_minimum () = Melder_atof (my durationTierArea -> default_minimum ());
-			my durationTierArea -> pref_maximum () = Melder_atof (my durationTierArea -> default_maximum ());
-		}
-		if (my durationTierArea -> p_maximum < my durationTierArea -> pref_maximum ())
-			my durationTierArea -> ymax = my durationTierArea -> p_maximum = my durationTierArea -> pref_maximum ();
+		if (minimumDurationValue < my durationTierArea -> p_minimum)   // NaN-safe
+			my durationTierArea -> ymin = my durationTierArea -> p_minimum = minimumDurationValue / 1.25;
+		if (maximumDurationValue > my durationTierArea -> p_maximum)   // NaN-safe
+			my durationTierArea -> ymax = my durationTierArea -> p_maximum = minimumDurationValue * 1.25;
+
 		my durationTierArea -> ycursor = 1.0;
 
 		my synthesisMethod = prefs_synthesisMethod;
@@ -846,8 +853,11 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 			my soundmax = +1.0;
 		}
 		RealTierArea_updateScaling (my pitchTierArea.get(), manipulation -> pitch.get());
-		if (manipulation -> duration)
+		if (manipulation -> duration) {
 			RealTierArea_updateScaling (my durationTierArea.get(), manipulation -> duration.get());
+			my durationTierArea -> p_minimum = my durationTierArea -> ymin;
+			my durationTierArea -> p_maximum = my durationTierArea -> ymax;
+		}
 		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {
