@@ -337,7 +337,6 @@ void structSoundEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);
-	//Graphics_flushWs (our graphics.get());
 	if (showAnalysis)
 		Graphics_resetViewport (our graphics.get(), viewport);
 
@@ -347,7 +346,6 @@ void structSoundEditor :: v_draw () {
 	if (showAnalysis) {
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);
 		v_draw_analysis ();
-		//Graphics_flushWs (our graphics.get());
 		Graphics_resetViewport (our graphics.get(), viewport);
 	}
 
@@ -359,7 +357,6 @@ void structSoundEditor :: v_draw () {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.5, 1.0);
 		v_draw_analysis_pulses ();
 		TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);   // second time, partially across the pulses
-		//Graphics_flushWs (our graphics.get());
 		if (showAnalysis)
 			Graphics_resetViewport (our graphics.get(), viewport);
 	}
@@ -378,7 +375,7 @@ void structSoundEditor :: v_draw () {
 	}
 }
 
-void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
+void structSoundEditor :: v_play (double startTime, double endTime) {
 	integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
 	integer numberOfMuteChannels = 0;
 	Melder_assert (our d_sound.muteChannels.size == numberOfChannels);
@@ -390,20 +387,20 @@ void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our d_longSound.data, a_tmin, a_tmax, 1);
+			autoSound part = LongSound_extractPart (our d_longSound.data, startTime, endTime, 1);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (part.get(), thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			LongSound_playPart (our d_longSound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			LongSound_playPart (our d_longSound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	}
 }

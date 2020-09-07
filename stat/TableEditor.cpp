@@ -112,14 +112,12 @@ void structTableEditor :: v_draw () {
 	double spacing = 2.0;   // millimetres at both edges
 	double columnWidth, cellWidth;
 	/*
-	 * We fit 200 rows in 40 inches, which is 14.4 points per row.
-	 */
+		We fit 200 rows in 40 inches, which is 14.4 points per row.
+	*/
 	integer rowmin = topRow, rowmax = rowmin + 197;
 	integer colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows.size)
-		rowmax = table -> rows.size;
-	if (colmax > table -> numberOfColumns)
-		colmax = table -> numberOfColumns;
+	Melder_clipRight (& rowmax, table -> rows.size);
+	Melder_clipRight (& colmax, table -> numberOfColumns);
 	Graphics_clearWs (graphics.get());
 	Graphics_setTextAlignment (graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	Graphics_setWindow (graphics.get(), 0.0, 1.0, rowmin + 197.5, rowmin - 2.5);
@@ -129,8 +127,8 @@ void structTableEditor :: v_draw () {
 	Graphics_line (graphics.get(), 0.0, rowmin - 0.5, 1.0, rowmin - 0.5);
 	Graphics_setWindow (graphics.get(), 0.0, Graphics_dxWCtoMM (graphics.get(), 1.0), rowmin + 197.5, rowmin - 2.5);
 	/*
-	 * Determine the width of the column with the row numbers.
-	 */
+		Determine the width of the column with the row numbers.
+	*/
 	columnWidth = Graphics_textWidth (graphics.get(), U"row");
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		cellWidth = Graphics_textWidth (graphics.get(), Melder_integer (irow));
@@ -143,8 +141,8 @@ void structTableEditor :: v_draw () {
 	Graphics_setColour (graphics.get(), Melder_BLACK);
 	Graphics_line (graphics.get(), columnLeft [0], rowmin - 0.5, columnLeft [0], rowmin + 197.5);
 	/*
-	 * Determine the width of the columns.
-	 */
+		Determine the widths of the columns.
+	*/
 	for (integer icol = colmin; icol <= colmax; icol ++) {
 		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
 		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
@@ -174,14 +172,14 @@ void structTableEditor :: v_draw () {
 	Graphics_setCircumflexIsSuperscript (our graphics.get(), our p_useTextStyles);
 	Graphics_setUnderscoreIsSubscript (our graphics.get(), our p_useTextStyles);
 	/*
-	 * Show the row numbers.
-	 */
+		Show the row numbers.
+	*/
 	Graphics_text (graphics.get(), columnLeft [0] / 2, rowmin - 1, U"row");
 	for (integer irow = rowmin; irow <= rowmax; irow ++)
 		Graphics_text (graphics.get(), columnLeft [0] / 2, irow, irow);
 	/*
-	 * Show the column labels.
-	 */
+		Show the column labels.
+	*/
 	for (integer icol = colmin; icol <= colmax; icol ++) {
 		const double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
@@ -191,8 +189,8 @@ void structTableEditor :: v_draw () {
 		Graphics_text (graphics.get(), mid, rowmin - 1, columnLabel);
 	}
 	/*
-	 * Show the cell contents.
-	 */
+		Show the cell contents.
+	*/
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		for (integer icol = colmin; icol <= colmax; icol ++) {
 			if (irow == selectedRow && icol == selectedColumn) {
@@ -224,20 +222,21 @@ static void gui_text_cb_changed (TableEditor me, GuiTextEvent /* event */) {
 }
 
 static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! my graphics) return;
+	if (! my graphics)
+		return;
 	my v_draw ();
 }
 
-static void gui_drawingarea_cb_mouseDown (TableEditor me, GuiDrawingArea_MouseEvent event) {
+static void gui_drawingarea_cb_mouse (TableEditor me, GuiDrawingArea_MouseEvent event) {
 	Table table = static_cast<Table> (my data);
 	if (! my graphics)
 		return;   // could be the case in the very beginning
+	if (! event -> isClick())
+		return;
 	integer rowmin = my topRow, rowmax = rowmin + 197;
 	integer colmin = my leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows.size)
-		rowmax = table -> rows.size;
-	if (colmax > table -> numberOfColumns)
-		colmax = table -> numberOfColumns;
+	Melder_clipRight (& rowmax, table -> rows.size);
+	Melder_clipRight (& colmax, table -> numberOfColumns);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
 	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
@@ -284,7 +283,7 @@ void structTableEditor :: v_createChildren () {
 	y += Machine_getTextHeight () + 4;
 
 	our drawingArea = GuiDrawingArea_createShown (our windowForm, 0, - scrollWidth, y, - scrollWidth,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouseDown,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
 		nullptr, gui_drawingarea_cb_resize, this, 0
 	);
 

@@ -627,9 +627,10 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-				my playingCursor || my playingSelection ? my playCursor : my startSelection,
-				my playingCursor || my playingSelection ? my playCursor : my endSelection,
-				true);
+			my duringPlay ? my playCursor : my startSelection,
+			my duringPlay ? my playCursor : my endSelection,
+			true
+		);
 		my selectedTier = itier;
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
@@ -782,8 +783,8 @@ static void menu_cb_MoveToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void do_insertOnTier (TextGridEditor me, integer itier) {
 	try {
 		insertBoundaryOrPoint (me, itier,
-			my playingCursor || my playingSelection ? my playCursor : my startSelection,
-			my playingCursor || my playingSelection ? my playCursor : my endSelection,
+			my duringPlay ? my playCursor : my startSelection,
+			my duringPlay ? my playCursor : my endSelection,
 			false
 		);
 		my selectedTier = itier;
@@ -1512,7 +1513,6 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		TimeSoundEditor_drawSound (this, -1.0, 1.0);
-		//Graphics_flushWs (our graphics.get());
 		Graphics_resetViewport (our graphics.get(), vp1);
 	}
 
@@ -1599,19 +1599,16 @@ void structTextGridEditor :: v_draw () {
 	Graphics_setFontSize (our graphics.get(), oldFontSize);
 	if (d_longSound.data || d_sound.data)
 		Graphics_resetViewport (our graphics.get(), vp1);
-	//Graphics_flushWs (our graphics.get());
 
 	if (showAnalysis) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, soundY2);
 		v_draw_analysis ();
-		//Graphics_flushWs (our graphics.get());
 		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
 		if (p_pulses_show) {
 			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
-			//Graphics_flushWs (our graphics.get());
 			Graphics_resetViewport (our graphics.get(), vp1);
 		}
 	}
@@ -1712,6 +1709,22 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 
 	our draggingTime = undefined;   // information to next expose event
 	if (event -> isClick()) {
+		if (event -> isLeftBottomFunctionKeyPressed()) {
+			const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
+			double tmin, tmax;
+			_TextGridEditor_timeToInterval (this, xWC, clickedTierNumber, & tmin, & tmax);
+			our startSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );   // to nearest boundary
+			Melder_sort (& our startSelection, & our endSelection);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		if (event -> isRightBottomFunctionKeyPressed()) {
+			const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
+			double tmin, tmax;
+			_TextGridEditor_timeToInterval (this, xWC, clickedTierNumber, & tmin, & tmax);
+			our endSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );
+			Melder_sort (& our startSelection, & our endSelection);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
 		Melder_casual (U"click ", xWC);
 		Melder_assert (isundef (anchorTime));   // sanity check for the fixed order click-drag-drop
 		Melder_assert (clickedLeftBoundary == 0);
@@ -1974,40 +1987,6 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-bool structTextGridEditor :: v_clickB (double t, double yWC) {
-	const double soundY = _TextGridEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		if (t < our endWindow) {
-			our startSelection = t;
-			Melder_sort (& our startSelection, & our endSelection);
-			return FunctionEditor_UPDATE_NEEDED;
-		} else {
-			return structTimeSoundEditor :: v_clickB (t, yWC);
-		}
-	}
-	const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
-	double tmin, tmax;
-	_TextGridEditor_timeToInterval (this, t, clickedTierNumber, & tmin, & tmax);
-	our startSelection = ( t - tmin < tmax - t ? tmin : tmax );   // to nearest boundary
-	Melder_sort (& our startSelection, & our endSelection);
-	return FunctionEditor_UPDATE_NEEDED;
-}
-
-bool structTextGridEditor :: v_clickE (double t, double yWC) {
-	const double soundY = _TextGridEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		our endSelection = t;
-		Melder_sort (& our startSelection, & our endSelection);
-		return FunctionEditor_UPDATE_NEEDED;
-	}
-	const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
-	double tmin, tmax;
-	_TextGridEditor_timeToInterval (this, t, clickedTierNumber, & tmin, & tmax);
-	our endSelection = ( t - tmin < tmax - t ? tmin : tmax );
-	Melder_sort (& our startSelection, & our endSelection);
-	return FunctionEditor_UPDATE_NEEDED;
-}
-
 void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	const TextGrid grid = (TextGrid) our data;
 	int rowNumber = 1 + (int) ((1.0-yWC) * 12.0);
@@ -2067,7 +2046,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	}
 }
 
-void structTextGridEditor :: v_play (double tmin, double tmax) {
+void structTextGridEditor :: v_play (double startTime, double endTime) {
 	if (! d_sound.data && ! d_longSound.data)
 		return;
 	integer numberOfChannels = ( d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny );
@@ -2081,20 +2060,20 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (our d_longSound.data, tmin, tmax, true);
+			autoSound part = LongSound_extractPart (our d_longSound.data, startTime, endTime, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (part.get(), thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			LongSound_playPart (our d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+			LongSound_playPart (our d_longSound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), our d_sound.muteChannels.get());
-			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), startTime, endTime, theFunctionEditor_playCallback, this);
 		} else {
-			Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 		}
 	}
 }

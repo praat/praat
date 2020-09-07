@@ -208,14 +208,47 @@ void structGraphicsScreen :: v_flushWs () {
 		// Ik weet niet of dit is wat het zou moeten zijn ;)
 		//gdk_window_process_updates (d_window, true);   // this "works" but is incorrect because it's not the expose events that have to be carried out
 		//gdk_window_flush (d_window);
-		gdk_flush ();
+		//gdk_flush ();
 		// TODO: een aanroep die de eventuele grafische buffer ledigt,
 		// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
+		if (our d_drawingArea && our d_drawingArea -> d_exposeCallback) {
+			GdkRectangle rect;
+			if (our d_x1DC < our d_x2DC) {
+				rect.x = our d_x1DC;
+				rect.width = our d_x2DC - our d_x1DC;
+			} else {
+				rect.x = our d_x2DC;
+				rect.width = our d_x1DC - our d_x2DC;
+			}
+			if (our d_y1DC < our d_y2DC) {
+				rect.y = our d_y1DC;
+				rect.height = our d_y2DC - our d_y1DC;
+			} else {
+				rect.y = our d_y2DC;
+				rect.height = our d_y1DC - our d_y2DC;
+			}
+			structGuiDrawingArea_ExposeEvent event { our d_drawingArea, 0 };
+			event. x = rect. x;
+			event. y = rect. y;
+			event. width = rect. width;
+			event. height = rect. height;
+			try {
+				Melder_casual (U"_GuiGtkDrawingArea_exposeCallback: ", event. x, U" ", event. y, U" ", event. width, U" ", event. height);
+				trace (U"send the expose callback");
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+				our d_drawingArea -> d_exposeCallback (our d_drawingArea -> d_exposeBoss, & event);
+				trace (U"the expose callback finished");
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			} catch (MelderError) {
+				Melder_flushError (U"Redrawing not completed");
+			}
+			trace (U"the expose callback handled drawing");
+		}
 	#elif gdi
 		/*GdiFlush ();*/
 	#elif quartz
-		if (d_drawingArea) {
-			GuiShell shell = d_drawingArea -> d_shell;
+		if (our d_drawingArea) {
+			GuiShell shell = our d_drawingArea -> d_shell;
 			Melder_assert (shell);
 			Melder_assert (shell -> d_cocoaShell);
 			[shell -> d_cocoaShell   flushWindow];
@@ -313,9 +346,11 @@ void structGraphicsScreen :: v_updateWs () {
 			cairo_clip (our d_cairoGraphicsContext);
 		}
 		#if ALLOW_GDK_DRAWING
-			gdk_window_clear (our d_window);
+			//gdk_window_clear (our d_window);
 		#endif
-		gdk_window_invalidate_rect (our d_window, & rect, true);
+		//gdk_window_invalidate_rect (our d_window, & rect, true);
+		gtk_widget_queue_draw_area (GTK_WIDGET (our d_drawingArea -> d_widget), rect.x, rect.y, rect.width, rect.height);
+		//gdk_window_invalidate_rect (our d_window, nullptr, true);
 		//gdk_window_process_updates (our d_window, true);
 	#elif gdi
 		//clear (this); // lll

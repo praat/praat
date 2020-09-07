@@ -2,7 +2,7 @@
 #define _NoulliGridEditor_h_
 /* NoulliGridEditor.h
  *
- * Copyright (C) 2018 Paul Boersma
+ * Copyright (C) 2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 Thing_define (NoulliGridEditor, TimeSoundEditor) {
 	void v_draw ()
 		override;
-	void v_play (double tmin, double tmax)
+	void v_play (double startTime, double endTime)
 		override;
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
@@ -36,7 +36,7 @@ Thing_define (NoulliGridEditor, TimeSoundEditor) {
 		override;
 	void v_drawSelectionViewer ()
 		override;
-	void v_drawRealTimeSelectionViewer (int phase, double time)
+	void v_drawRealTimeSelectionViewer (double time)
 		override;
 
 	#include "NoulliGridEditor_prefs.h"

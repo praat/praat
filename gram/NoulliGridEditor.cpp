@@ -1,6 +1,6 @@
 /* NoulliGridEditor.cpp
  *
- * Copyright (C) 2018 Paul Boersma
+ * Copyright (C) 2018-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,9 +99,9 @@ void structNoulliGridEditor :: v_draw () {
 	our v_updateMenuItems_file ();
 }
 
-void structNoulliGridEditor :: v_play (double a_tmin, double a_tmax) {
+void structNoulliGridEditor :: v_play (double startTime, double endTime) {
 	if (our d_sound.data)
-		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
 static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, conststring32 header) {
@@ -218,7 +218,7 @@ void structNoulliGridEditor :: v_drawSelectionViewer () {
 	//drawSelectionOrWindow (this, 0.5, 1.0, our startWindow, our endWindow, U"Window");
 }
 
-void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (int /* phase */, double time) {
+void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (double time) {
 	Graphics_setWindow (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
 	drawSelectionOrWindow (this, 0.0, 1.0, time - 1.0, time + 1.0, U"");
 }

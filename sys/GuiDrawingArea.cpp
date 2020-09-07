@@ -56,11 +56,14 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. width = expose -> area. width;
 			event. height = expose -> area. height;
 			try {
-				//GdkRectangle rect = { event. x, event. y, event. width, event. height };
+				GdkRectangle rect = { event. x, event. y, event. width, event. height };
+				//Melder_casual (U"_GuiGtkDrawingArea_exposeCallback: ", event. x, U" ", event. y, U" ", event. width, U" ", event. height);
 				//gdk_window_begin_paint_rect ((GTK_WIDGET (widget)) -> window, & rect);
 				trace (U"send the expose callback");
 				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 				my d_exposeCallback (my d_exposeBoss, & event);
+				//GdkGC *gc = gdk_gc_new ((GTK_WIDGET (widget)) -> window);
+				//gdk_draw_line ((GTK_WIDGET (widget)) -> window, gc, event. x, event. y, event. x + event. width, event. y + event. height);
 				trace (U"the expose callback finished");
 				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 				//gdk_window_end_paint ((GTK_WIDGET (widget)) -> window);

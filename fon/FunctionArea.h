@@ -29,30 +29,31 @@ Thing_define (FunctionArea, Thing) {
 	double startSelection() const { return our editor -> startSelection; }
 	double endSelection() const { return our editor -> endSelection; }
 	bool y_fraction_globalIsInside (double globalY_fraction) const {
-		const double y_pxlt = our editor -> dataBottom_pxlt() + globalY_fraction * our editorHeight_pxlt();
+		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
 		return y_pxlt >= our bottom_pxlt() && y_pxlt <= our top_pxlt();
 	}
 	void setViewport() const {
 		Graphics_setViewport (our graphics(), our left_pxlt(), our right_pxlt(), our bottom_pxlt(), our top_pxlt());
 	}
 	double y_fraction_globalToLocal (double globalY_fraction) const {
-		const double y_pxlt = our editor -> dataBottom_pxlt() + globalY_fraction * our editorHeight_pxlt();
-		return (y_pxlt - our bottom_pxlt()) / our height_pxlt();
+		const double y_pxlt = globalY_fraction_to_pxlt (globalY_fraction);
+		return (y_pxlt - our bottom_pxlt()) / (our top_pxlt() - our bottom_pxlt());
 	}
 private:
-	double editorWidth_pxlt() const { return our editor -> dataRight_pxlt() - our editor -> dataLeft_pxlt(); }
-	double editorHeight_pxlt() const { return our editor -> dataTop_pxlt() - our editor -> dataBottom_pxlt(); }
+	double globalY_fraction_to_pxlt (double globalY_fraction) const {
+		return our editor -> dataBottom_pxlt() +
+				globalY_fraction * (our editor -> dataTop_pxlt() - our editor -> dataBottom_pxlt());
+	}
 	double left_pxlt() const { return our editor -> dataLeft_pxlt(); }
 	double right_pxlt() const { return our editor -> dataRight_pxlt(); }
-	double verticalSpacing_pxlt() const { return 10; }
+	double verticalSpacing_pxlt() const { return 11; }
 	double bottom_pxlt() const {
-		return our editor -> dataBottom_pxlt() + our ymin_fraction * our editorHeight_pxlt() + our verticalSpacing_pxlt();
+		const double bottomSpacing_pxlt = ( our ymin_fraction == 0.0 ? 0.0 : our verticalSpacing_pxlt() );
+		return globalY_fraction_to_pxlt (our ymin_fraction) + bottomSpacing_pxlt;
 	}
 	double top_pxlt() const {
-		return our editor -> dataBottom_pxlt() + our ymax_fraction * our editorHeight_pxlt() - our verticalSpacing_pxlt();
+		return globalY_fraction_to_pxlt (our ymax_fraction) - our verticalSpacing_pxlt();
 	}
-	double width_pxlt() const { return our right_pxlt() - our left_pxlt(); }
-	double height_pxlt() const { return our top_pxlt() - our bottom_pxlt(); }
 };
 
 inline static void FunctionArea_init (FunctionArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {

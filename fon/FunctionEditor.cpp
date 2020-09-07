@@ -69,7 +69,7 @@ static void updateGroup (FunctionEditor me) {
 	for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
 		if (theGroupMembers [i] && theGroupMembers [i] != me) {
 			FunctionEditor thee = theGroupMembers [i];
-			if (my pref_synchronizedZoomAndScroll ()) {
+			if (my pref_synchronizedZoomAndScroll()) {
 				thy startWindow = my startWindow;
 				thy endWindow = my endWindow;
 			}
@@ -249,18 +249,18 @@ void structFunctionEditor :: draw () {
 			autostring32 text = Melder_8to32 (text8);
 			if (Graphics_textWidth (our graphics.get(), text.get()) < right - left) {
 				Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
-			} else if (format == our v_format_long ()) {
-				snprintf (text8, 100, our v_format_short (), value);
+			} else if (format == our v_format_long()) {
+				snprintf (text8, 100, our v_format_short(), value);
 				text = Melder_8to32 (text8);
 				if (Graphics_textWidth (our graphics.get(), text.get()) < right - left)
 					Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 			} else {
-				snprintf (text8, 100, our v_format_long (), value);
+				snprintf (text8, 100, our v_format_long(), value);
 				text = Melder_8to32 (text8);
 				if (Graphics_textWidth (our graphics.get(), text.get()) < right - left) {
 					Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 				} else {
-					snprintf (text8, 100, our v_format_short (), our endSelection - our startSelection);
+					snprintf (text8, 100, our v_format_short(), our endSelection - our startSelection);
 					text = Melder_8to32 (text8);
 					if (Graphics_textWidth (our graphics.get(), text.get()) < right - left)
 						Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
@@ -270,12 +270,6 @@ void structFunctionEditor :: draw () {
 	}
 
 	our viewTallDataAsWorldByFraction ();
-	if ((false)) {   // semantically, the following two lines belong here, but we optimize them away to reduce flashing
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_fillRectangle (our graphics.get(), our startWindow, our endWindow, BOTTOM_MARGIN + space * 3, our height_pxlt - (TOP_MARGIN + space));
-	}
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	//Graphics_rectangle (our graphics.get(), our startWindow, our endWindow, BOTTOM_MARGIN + space * 3, our height_pxlt - (TOP_MARGIN + space));
 
 	/*
 		Red marker text.
@@ -284,17 +278,17 @@ void structFunctionEditor :: draw () {
 	if (cursorIsVisible) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (our graphics.get(), our startSelection, our height_pxlt - (TOP_MARGIN + space*0.9) - verticalCorrection * 7,
-			Melder_fixed (our startSelection, our v_fixedPrecision_long ()));
+				Melder_fixed (our startSelection, our v_fixedPrecision_long()));
 	}
 	if (startIsVisible && selectionIsNonempty) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our startSelection, our height_pxlt - (TOP_MARGIN + space/2) - verticalCorrection,
-			Melder_fixed (our startSelection, our v_fixedPrecision_long ()));
+				Melder_fixed (our startSelection, our v_fixedPrecision_long()));
 	}
 	if (endIsVisible && selectionIsNonempty) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endSelection, our height_pxlt - (TOP_MARGIN + space/2) - verticalCorrection,
-			Melder_fixed (our endSelection, our v_fixedPrecision_long ()));
+				Melder_fixed (our endSelection, our v_fixedPrecision_long()));
 	}
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 
@@ -335,11 +329,28 @@ void structFunctionEditor :: draw () {
 	}
 
 	/*
+		Draw the running cursor.
+	*/
+	if (our duringPlay) {
+		if (Melder_debug == 53)
+			Melder_casual (U"playing cursor");
+		Graphics_setColour (our graphics.get(), Melder_BLACK);
+		Graphics_setLineWidth (our graphics.get(), 3.0);
+		Graphics_xorOn (our graphics.get(), Melder_BLACK);
+		Graphics_line (our graphics.get(), our playCursor, 0.0, our playCursor, 1.0);
+		Graphics_xorOff (our graphics.get());
+		Graphics_setLineWidth (our graphics.get(), 1.0);
+	}
+
+	/*
 		Draw the selection part.
 	*/
 	if (our p_showSelectionViewer) {
 		our viewInnerSelectionViewerAsFractionByFraction ();
-		our v_drawSelectionViewer ();
+		if (our duringPlay)
+			our v_drawRealTimeSelectionViewer (our playCursor);
+		else
+			our v_drawSelectionViewer ();
 	}
 }
 
@@ -361,13 +372,13 @@ void structFunctionEditor :: v_destroy () noexcept {
 
 void structFunctionEditor :: v_info () {
 	FunctionEditor_Parent :: v_info ();
-	MelderInfo_writeLine (U"Editor start: ", our tmin, U" ", v_format_units_long ());
-	MelderInfo_writeLine (U"Editor end: ", our tmax, U" ", v_format_units_long ());
-	MelderInfo_writeLine (U"Window start: ", our startWindow, U" ", v_format_units_long ());
-	MelderInfo_writeLine (U"Window end: ", our endWindow, U" ", v_format_units_long ());
-	MelderInfo_writeLine (U"Selection start: ", our startSelection, U" ", v_format_units_long ());
-	MelderInfo_writeLine (U"Selection end: ", our endSelection, U" ", v_format_units_long ());
-	MelderInfo_writeLine (U"Arrow scroll step: ", our p_arrowScrollStep, U" ", v_format_units_long ());
+	MelderInfo_writeLine (U"Editor start: ", our tmin, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Editor end: ", our tmax, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Window start: ", our startWindow, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Window end: ", our endWindow, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Selection start: ", our startSelection, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Selection end: ", our endSelection, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Arrow scroll step: ", our p_arrowScrollStep, U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Group: ", group ? U"yes" : U"no");
 }
 
@@ -381,30 +392,30 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	/*
 		Save the current shell size as the user's preference for a new FunctionEditor.
 	*/
-	my pref_shellWidth  () = GuiShell_getShellWidth  (my windowForm);
-	my pref_shellHeight () = GuiShell_getShellHeight (my windowForm);
+	my pref_shellWidth()  = GuiShell_getShellWidth  (my windowForm);
+	my pref_shellHeight() = GuiShell_getShellHeight (my windowForm);
 }
 
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr)
-		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll ())
-		BOOLEAN (showSelectionViewer, Melder_cat (U"Show ", my v_selectionViewerName ()), my default_showSelectionViewer ())
-		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short (), U")"), my default_arrowScrollStep ())
+		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll())
+		BOOLEAN (showSelectionViewer, Melder_cat (U"Show ", my v_selectionViewerName()), my default_showSelectionViewer())
+		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short(), U")"), my default_arrowScrollStep())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
-		SET_BOOLEAN (synchronizeZoomAndScroll, my pref_synchronizedZoomAndScroll ())
+		SET_BOOLEAN (synchronizeZoomAndScroll, my pref_synchronizedZoomAndScroll())
 		SET_BOOLEAN (showSelectionViewer, my pref_showSelectionViewer ())
 		SET_REAL (arrowScrollStep, my p_arrowScrollStep)
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
-		bool oldSynchronizedZoomAndScroll = my pref_synchronizedZoomAndScroll ();
-		bool oldShowSelectionViewer = my p_showSelectionViewer;
-		my pref_synchronizedZoomAndScroll () = synchronizeZoomAndScroll;
-		my pref_showSelectionViewer () = my p_showSelectionViewer = showSelectionViewer;
-		my pref_arrowScrollStep () = my p_arrowScrollStep = arrowScrollStep;
+		const bool oldSynchronizedZoomAndScroll = my pref_synchronizedZoomAndScroll();
+		const bool oldShowSelectionViewer = my p_showSelectionViewer;
+		my pref_synchronizedZoomAndScroll() = synchronizeZoomAndScroll;
+		my pref_showSelectionViewer() = my p_showSelectionViewer = showSelectionViewer;
+		my pref_arrowScrollStep() = my p_arrowScrollStep = arrowScrollStep;
 		if (my p_showSelectionViewer != oldShowSelectionViewer)
 			my updateGeometry (GuiControl_getWidth  (my drawingArea), GuiControl_getHeight (my drawingArea));
-		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll ())
+		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 		my v_prefs_getValues (cmd);
 	EDITOR_END
@@ -418,28 +429,28 @@ void structFunctionEditor :: v_form_pictureSelection (EditorCommand cmd) {
 }
 void structFunctionEditor :: v_ok_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	SET_BOOLEAN (v_form_pictureSelection_drawSelectionTimes, my pref_picture_drawSelectionTimes ())
-	SET_BOOLEAN (v_form_pictureSelection_drawSelectionHairs, my pref_picture_drawSelectionHairs ())
+	SET_BOOLEAN (v_form_pictureSelection_drawSelectionTimes, my pref_picture_drawSelectionTimes())
+	SET_BOOLEAN (v_form_pictureSelection_drawSelectionHairs, my pref_picture_drawSelectionHairs())
 }
 void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	my pref_picture_drawSelectionTimes () = v_form_pictureSelection_drawSelectionTimes;
-	my pref_picture_drawSelectionHairs () = v_form_pictureSelection_drawSelectionHairs;
+	my pref_picture_drawSelectionTimes() = v_form_pictureSelection_drawSelectionTimes;
+	my pref_picture_drawSelectionHairs() = v_form_pictureSelection_drawSelectionHairs;
 }
 
 /********** QUERY MENU **********/
 
 static void menu_cb_getB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (my startSelection, my v_format_units_long ());
+	Melder_informationReal (my startSelection, my v_format_units_long());
 }
 static void menu_cb_getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (0.5 * (my startSelection + my endSelection), my v_format_units_long ());
+	Melder_informationReal (0.5 * (my startSelection + my endSelection), my v_format_units_long());
 }
 static void menu_cb_getE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (my endSelection, my v_format_units_long ());
+	Melder_informationReal (my endSelection, my v_format_units_long());
 }
 static void menu_cb_getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (my endSelection - my startSelection, my v_format_units_long ());
+	Melder_informationReal (my endSelection - my startSelection, my v_format_units_long());
 }
 
 /********** VIEW MENU **********/
@@ -475,7 +486,7 @@ static void do_showAll (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	Graphics_updateWs (my graphics.get());
-	if (my pref_synchronizedZoomAndScroll ())
+	if (my pref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
 
@@ -490,7 +501,7 @@ static void do_zoomIn (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	Graphics_updateWs (my graphics.get());
-	if (my pref_synchronizedZoomAndScroll ())
+	if (my pref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
 
@@ -510,7 +521,7 @@ static void do_zoomOut (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	Graphics_updateWs (my graphics.get());
-	if (my pref_synchronizedZoomAndScroll ())
+	if (my pref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
 
@@ -527,7 +538,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 		my v_updateText ();
 		updateScrollBar (me);
 		Graphics_updateWs (my graphics.get());
-		if (my pref_synchronizedZoomAndScroll ())
+		if (my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 	}
 }
@@ -543,7 +554,7 @@ static void do_zoomBack (FunctionEditor me) {
 		my v_updateText ();
 		updateScrollBar (me);
 		Graphics_updateWs (my graphics.get());
-		if (my pref_synchronizedZoomAndScroll ())
+		if (my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 	}
 }
@@ -589,10 +600,8 @@ static void menu_cb_playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	if (MelderAudio_isPlaying) {
 		MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
 	} else if (my startSelection < my endSelection) {
-		my playingSelection = true;
 		my v_play (my startSelection, my endSelection);
 	} else {
-		my playingCursor = true;
 		if (my startSelection == my endSelection && my startSelection > my startWindow && my startSelection < my endWindow)
 			my v_play (my startSelection, my endWindow);
 		else
@@ -602,7 +611,6 @@ static void menu_cb_playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_playWindow (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	my playingCursor = true;
 	my v_play (my startWindow, my endWindow);
 }
 
@@ -875,7 +883,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 		my v_updateText ();
 		updateScrollBar (me);
 		Graphics_updateWs (my graphics.get());
-		if (! my group || ! my pref_synchronizedZoomAndScroll ())
+		if (! my group || ! my pref_synchronizedZoomAndScroll())
 			return;
 		for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
 			if (theGroupMembers [i] && theGroupMembers [i] != me) {
@@ -921,17 +929,15 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		}
 		const integer otherGroupMember = findOtherGroupMember (me);
 		const FunctionEditor thee = theGroupMembers [otherGroupMember];
-		if (my pref_synchronizedZoomAndScroll ()) {
+		if (my pref_synchronizedZoomAndScroll()) {
 			my startWindow = thy startWindow;
 			my endWindow = thy endWindow;
 		}
 		my startSelection = thy startSelection;
 		my endSelection = thy endSelection;
 		if (my tmin > thy tmin || my tmax < thy tmax) {
-			if (my tmin > thy tmin)
-				my tmin = thy tmin;
-			if (my tmax < thy tmax)
-				my tmax = thy tmax;
+			Melder_clipRight (& my tmin, thy tmin);
+			Melder_clipLeft (thy tmax, & my tmax);
 			my v_updateText ();
 			updateScrollBar (me);
 			Graphics_updateWs (my graphics.get());
@@ -1221,10 +1227,9 @@ void structFunctionEditor :: v_createChildren () {
 }
 
 void structFunctionEditor :: v_dataChanged () {
-	const Function function = (Function) our data;
-	Melder_assert (Thing_isa (function, classFunction));
-	our tmin = function -> xmin;
- 	our tmax = function -> xmax;
+	Melder_assert (Thing_isa (our function(), classFunction));
+	our tmin = our function() -> xmin;
+ 	our tmax = our function() -> xmax;
  	if (our startWindow < our tmin || our startWindow > our tmax)
  		our startWindow = our tmin;
  	if (our endWindow < our tmin || our endWindow > our tmax)
@@ -1238,80 +1243,42 @@ void structFunctionEditor :: v_dataChanged () {
 	FunctionEditor_marksChanged (this, false);
 }
 
-int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, double a_tmax, double t) {
-	/*
-	 * This callback will often be called by the Melder workproc during playback.
-	 * However, it will sometimes be called by Melder_stopPlaying with phase=3.
-	 * This will occur at unpredictable times, perhaps when the LongSound is updated.
-	 * So we had better make no assumptions about the current viewport.
-	 */
-	double x1NDC, x2NDC, y1NDC, y2NDC;
-	Graphics_inqViewport (our graphics.get(), & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	our viewDataAsWorldByFraction ();
-	Graphics_xorOn (our graphics.get(), Melder_MAROON);
-	/*
-	 * Undraw the play cursor at its old location.
-	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.
-	 */
-	if (phase != 1 && playCursor >= our startWindow && playCursor <= our endWindow) {
-		Graphics_setLineWidth (our graphics.get(), 3.0);
-		Graphics_line (our graphics.get(), playCursor, 0.0, playCursor, 1.0);
-		Graphics_setLineWidth (our graphics.get(), 1.0);
+int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, double endTime, double currentTime) {
+	our playCursor = currentTime;
+	if (phase == 1) {
+		our duringPlay = true;
+		return 1;
 	}
-	/*
-	 * Draw the play cursor at its new location.
-	 */
-	if (phase != 3 && t >= our startWindow && t <= our endWindow) {
-		Graphics_setLineWidth (our graphics.get(), 3.0);
-		Graphics_line (our graphics.get(), t, 0.0, t, 1.0);
-		Graphics_setLineWidth (our graphics.get(), 1.0);
-	}
-	Graphics_xorOff (our graphics.get());
-	if (our p_showSelectionViewer) {
-		our viewInnerSelectionViewerAsFractionByFraction ();
-		our v_drawRealTimeSelectionViewer (phase, t);
-	}
-	/*
-	 * Usually, there will be an event test after each invocation of this callback,
-	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
-	 * However, if the asynchronicity is just kMelder_asynchronicityLevel_CALLING_BACK,
-	 * there is no event test. Which means: no server round trip.
-	 * Which means: no automatic flushing of graphics output.
-	 * So: we force the flushing ourselves, lest we see too few moving cursors.
-	 *
-	 * At the moment, Cocoa seems to require this flushing even if the asynchronicity is kMelder_asynchronicityLevel_ASYNCHRONOUS.
-	 */
-	Graphics_flushWs (our graphics.get());
-	Graphics_setViewport (our graphics.get(), x1NDC, x2NDC, y1NDC, y2NDC);
-	playCursor = t;
 	if (phase == 3) {
-		if (t < a_tmax && MelderAudio_stopWasExplicit ()) {
-			if (t > our startSelection && t < our endSelection)
-				our startSelection = t;
+		our duringPlay = false;
+		if (currentTime < endTime && MelderAudio_stopWasExplicit ()) {
+			if (currentTime > our startSelection && currentTime < our endSelection)
+				our startSelection = currentTime;
 			else
-				our startSelection = our endSelection = t;
+				our startSelection = our endSelection = currentTime;
 			v_updateText ();
-			/*Graphics_updateWs (our graphics);*/ our draw ();
 			updateGroup (this);
 		}
-		playingCursor = false;
-		playingSelection = false;
 	}
+	if (Melder_debug == 53)
+		Melder_casual (U"draining");
+	Graphics_updateWs (our graphics.get());
+	GuiShell_drain (our windowForm);
 	return 1;
 }
 
-int theFunctionEditor_playCallback (FunctionEditor me, int phase, double a_tmin, double a_tmax, double t) {
-	return my v_playCallback (phase, a_tmin, a_tmax, t);
+int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTime, double endTime, double currentTime) {
+	return my v_playCallback (phase, startTime, endTime, currentTime);
 }
 
 void structFunctionEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	Graphics_highlight (our graphics.get(), left, right, bottom, top);
 }
 
-void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
-	my tmin = data -> xmin;   // set before adding children (see group button)
-	my tmax = data -> xmax;
-	Editor_init (me, 0, 0, my pref_shellWidth (), my pref_shellHeight (), title, data);
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function function) {
+	my tmin = function -> xmin;   // set before adding children (see group button)
+	my tmax = function -> xmax;
+	Editor_init (me, 0, 0, my pref_shellWidth (), my pref_shellHeight (), title, function);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;

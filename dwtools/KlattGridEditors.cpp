@@ -49,8 +49,8 @@ void structKlattGrid_RealTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"KlattGrid help", 0, menu_cb_KlattGridHelp);
 }
 
-void structKlattGrid_RealTierEditor :: v_play (double ltmin, double ltmax) {
-	KlattGrid_Editor_defaultPlay (klattgrid, ltmin, ltmax);
+void structKlattGrid_RealTierEditor :: v_play (double startTime, double endTime) {
+	KlattGrid_Editor_defaultPlay (klattgrid, startTime, endTime);
 }
 
 void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo viewClass, conststring32 title, KlattGrid klattgrid, RealTier data) {
@@ -336,8 +336,8 @@ static bool FormantGrid_isEmpty (FormantGrid me) {
 	return my formants.size == 0 || my bandwidths.size == 0;
 }
 
-void structKlattGrid_FormantGridEditor :: v_play (double ltmin, double ltmax) {
-	KlattGrid_Editor_defaultPlay (klattgrid, ltmin, ltmax);
+void structKlattGrid_FormantGridEditor :: v_play (double startTime, double endTime) {
+	KlattGrid_Editor_defaultPlay (klattgrid, startTime, endTime);
 }
 
 autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (conststring32 title, KlattGrid data, kKlattGridFormantType formantType) {

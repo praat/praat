@@ -60,10 +60,6 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override { return true; }
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
 		override;
-	bool v_clickB (double xWC, double yWC)
-		override;
-	bool v_clickE (double xWC, double yWC)
-		override;
 	void v_clickSelectionViewer (double xWC, double yWC)
 		override;
 	void v_play (double tmin, double tmax)

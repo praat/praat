@@ -31,11 +31,11 @@ void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
-void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
-	if (d_sound.data) {
-		Sound_playPart (d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+void structPitchTierEditor :: v_play (double startTime, double endTime) {
+	if (our d_sound.data) {
+		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 	} else {
-		PitchTier_playPart ((PitchTier) data, a_tmin, a_tmax, false);
+		PitchTier_playPart (our pitchTier(), startTime, endTime, false);
 	}
 }
 
@@ -45,7 +45,7 @@ autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch
 		//autoPitchTierArea view = PitchTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
 		//RealTierEditor_init (me.get(), view.move(), title, pitch, sound, ownSound);
 		RealTierEditor_init (me.get(), classPitchTierArea, title, pitch, sound, ownSound);
-		((PitchTierArea) my view.get()) -> p_units = kPitchTierArea_units::HERTZ;   // override preferences
+		my pitchTierArea() -> p_units = kPitchTierArea_units::HERTZ;   // override preferences
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");
