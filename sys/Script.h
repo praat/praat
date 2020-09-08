@@ -2,7 +2,7 @@
 #define _Script_h_
 /* Script.h
  *
- * Copyright (C) 1997-2011,2015 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2011,2015,2016,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

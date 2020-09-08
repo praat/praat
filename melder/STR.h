@@ -17,6 +17,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+autostring8 newSTRhex8 (conststring8 str, uint64 key = 0);
+autostring32 newSTRhex (conststring32 str, uint64 key = 0);
+
 autostring32 newSTRleft (conststring32 str, integer newLength = 1);
 
 autostring32 newSTRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
@@ -41,5 +44,8 @@ autostring32 newSTRreplace_regex (conststring32 string, regexp *search_compiled,
 	integer *out_numberOfReplacements = nullptr);
 
 autostring32 newSTRright (conststring32 str, integer newLength = 1);
+
+autostring8 newSTRunhex8 (conststring8 str, uint64 key = 0);
+autostring32 newSTRunhex (conststring32 str, uint64 key = 0);
 
 /* End of file STR.h */
