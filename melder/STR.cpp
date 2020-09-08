@@ -76,9 +76,15 @@ autostring32 newSTRreplace (conststring32 string,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
-	if (string == 0 || search == 0 || replace == 0)
-		return autostring32();
-
+	/*
+		Sanitize input.
+	*/
+	if (! string)
+		string = U"";
+	if (! search)
+		search = U"";
+	if (! replace)
+		replace = U"";
 	integer len_string = str32len (string);
 	if (len_string == 0)
 		maximumNumberOfReplaces = 1;
@@ -156,6 +162,16 @@ autostring32 newSTRreplace_regex (conststring32 string,
 	regexp *compiledSearchRE, conststring32 replaceRE, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
+	/*
+		Sanitize input.
+	*/
+	if (! string)
+		string = U"";
+	if (! compiledSearchRE)
+		return autostring32();
+	if (! replaceRE)
+		replaceRE = U"";
+
 	integer buf_nchar = 0;   // number of characters in 'buf'
 	integer gap_copied = 0;
 	integer nchar;
@@ -168,8 +184,6 @@ autostring32 newSTRreplace_regex (conststring32 string,
 
 	if (out_numberOfMatches)
 		*out_numberOfMatches = 0;
-	if (string == 0 || compiledSearchRE == 0 || replaceRE == 0)
-		return 0;
 
 	integer string_length = str32len (string);
 	//int replace_length = str32len (replaceRE);

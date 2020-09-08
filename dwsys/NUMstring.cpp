@@ -49,15 +49,19 @@ static autoSTRVEC string32vector_searchAndReplace_literal (constSTRVEC me,
 	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *out_numberOfMatches, integer *out_numberOfStringMatches)
 {
-	if (! search || ! replace)
-		return autoSTRVEC();
+	/*
+		Sanitize input.
+	*/
+	if (! search)
+		search = U"";
+	if (! replace)
+		replace = U"";
+
 	autoSTRVEC result (me.size);
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
-		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
-
-		result [i] = newSTRreplace (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = newSTRreplace (me [i], search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
@@ -74,8 +78,13 @@ static autoSTRVEC string32vector_searchAndReplace_regexp (constSTRVEC me,
 	conststring32 searchRE, conststring32 replaceRE, int maximumNumberOfReplaces,
 	integer *out_numberOfMatches, integer *out_numberOfStringMatches)
 {
-	if (! searchRE || ! replaceRE)
-		return autoSTRVEC();
+	/*
+		Sanitize input.
+	*/
+	if (! searchRE)
+		searchRE = U"";
+	if (! replaceRE)
+		replaceRE = U"";
 
 	integer nmatches_sub = 0;
 
@@ -85,8 +94,7 @@ static autoSTRVEC string32vector_searchAndReplace_regexp (constSTRVEC me,
 
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
-		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
-		result [i] = newSTRreplace_regex (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = newSTRreplace_regex (me [i], compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
