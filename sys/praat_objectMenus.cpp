@@ -572,10 +572,12 @@ static MelderString itemTitle_about;
 
 static autoDaata scriptRecognizer (integer nread, const char *header, MelderFile file) {
 	conststring32 name = MelderFile_name (file);
-	if (nread < 2) return autoDaata ();
-	if ((header [0] == '#' && header [1] == '!') || str32str (name, U".praat") == name + str32len (name) - 6
-	    || str32str (name, U".html") == name + str32len (name) - 5)
-	{
+	if (nread < 2)
+		return autoDaata ();
+	if ((header [0] == '#' && header [1] == '!')
+		|| Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".praat", false)
+	    || Melder_stringMatchesCriterion (name, kMelder_string::ENDS_WITH, U".html", false)
+	) {
 		return Script_createFromFile (file);
 	}
 	return autoDaata ();
