@@ -1746,7 +1746,7 @@ bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKe
 		Graphics_waitMouseUp (our graphics.get());
 	return FunctionEditor_UPDATE_NEEDED;
 }
-
+/*
 bool structFormantPathEditor :: v_clickB (double t, double yWC) {
 	const double soundY = _FormantPathEditor_computeSoundY (this);
 	if (yWC > soundY) {   // clicked in sound part?
@@ -1784,7 +1784,7 @@ bool structFormantPathEditor :: v_clickE (double t, double yWC) {
 		std::swap (our startSelection, our endSelection);
 	return FunctionEditor_UPDATE_NEEDED;
 }
-
+*/
 static void Formant_replaceFrames (Formant target, integer beginFrame, integer endFrame, Formant source) {
 	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx
 	if (beginFrame == endFrame && beginFrame == 0) {
