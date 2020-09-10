@@ -290,8 +290,15 @@ autostring8 newSTRunhex8 (conststring8 str, uint64 key) {
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
 	autostring8 result (uinteger_to_integer (strlen (str)) / 2);
 	char *to = & result [0];
-	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
-		char8 code1 = *from ++, code2 = *from;
+	for (const char8 *from = (char8 *) & str [0];;) {
+		char8 code1 = *from ++;
+		while (Melder_isHorizontalOrVerticalSpace (code1))
+			code1 = *from ++;
+		if (code1 == '\0')
+			break;
+		char8 code2 = *from ++;
+		while (Melder_isHorizontalOrVerticalSpace (code2))
+			code2 = *from ++;
 		if (code2 == '\0')
 			Melder_throw (U"(unhex$:) incomplete hexadecimal string.");
 		const char *index1 = strchr (hexSymbols, code1), *index2 = strchr (hexSymbols, code2);

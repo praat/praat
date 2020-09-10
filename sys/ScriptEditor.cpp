@@ -101,6 +101,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 }
 
 static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
+	bool isObscured = false;
 	if (my interpreter -> running)
 		Melder_throw (U"The script is already running (paused). Please close or continue the pause or demo window.");
 	autostring32 text = GuiText_getString (my textWidget);
@@ -112,23 +113,35 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	}
 	const conststring32 obscuredLabel = U"#!praatObscured\n";
 	if (Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, obscuredLabel, true)) {
+		isObscured = true;
 		double key_real = Melder_atof (MelderFile_name (& file));
 		uint64 key = ( isdefined (key_real) ? uint64 (key_real) : 0 );
-		text = newSTRunhex (& text [str32len (obscuredLabel)], key);
+		static uint64 hexSecret = UINT64_C (529857089);
+		text = newSTRunhex (& text [str32len (obscuredLabel)], key + hexSecret);
 	}
 	Melder_includeIncludeFiles (& text);
 	integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
-	if (npar) {
-		/*
-		 * Pop up a dialog box for querying the arguments.
-		 */
-		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok, me, false);
-		UiForm_do (my argsDialog.get(), false);
-	} else {
-		autoPraatBackground background;
-		if (my name [0]) MelderFile_setDefaultDir (& file);
-		trace (U"Running the following script (2):\n", text.get());
-		Interpreter_run (my interpreter.get(), text.get());
+	try {
+		if (npar) {
+			/*
+				Pop up a dialog box for querying the arguments.
+			*/
+			my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok, me, false);
+			UiForm_do (my argsDialog.get(), false);
+		} else {
+			autoPraatBackground background;
+			if (my name [0])
+				MelderFile_setDefaultDir (& file);
+			trace (U"Running the following script (2):\n", text.get());
+			Interpreter_run (my interpreter.get(), text.get());
+		}
+	} catch (MelderError) {
+		if (isObscured) {
+			Melder_clearError ();
+			Melder_throw (U"Undisclosed error in obscured Praat script.");
+		} else {
+			throw;
+		}
 	}
 }
 
