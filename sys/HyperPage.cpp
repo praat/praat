@@ -610,6 +610,8 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 }
 
 static void gui_drawingarea_cb_mouse (HyperPage me, GuiDrawingArea_MouseEvent event) {
+	if (! event -> isClick())
+		return;
 	if (! my graphics)
 		return;   // could be the case in the very beginning
 	for (integer ilink = 1; ilink <= my links.size; ilink ++) {

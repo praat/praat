@@ -18,6 +18,30 @@
 
 #include "melder.h"
 
+static char hexSymbols [] = "0123456789ABCDEF";
+
+autostring8 newSTRhex8 (conststring8 str, uint64 key) {
+	autostring8 result (uinteger_to_integer (strlen (str)) * 2);
+	char *to = & result [0];
+	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
+		int value = *from;
+		Melder_assert (value > 0 && value < 256);
+		if (key != 0) {
+			// value = randomize (value, key);
+		}
+		*to ++ = hexSymbols [value / 16];
+		*to ++ = hexSymbols [value % 16];
+	}
+	*to = '\0';
+	return result;
+}
+
+autostring32 newSTRhex (conststring32 str, uint64 key) {
+	autostring8 str8 = Melder_32to8 (str);
+	str8 = newSTRhex8 (str8.get(), key);
+	return Melder_8to32 (str8.get());
+}
+
 autostring32 newSTRleft (conststring32 str, integer newLength) {
 	integer length = str32len (str);
 	if (newLength < 0)
@@ -236,6 +260,32 @@ autostring32 newSTRright (conststring32 str, integer newLength) {
 	if (newLength > length)
 		newLength = length;
 	return Melder_dup (str + length - newLength);
+}
+
+autostring8 newSTRunhex8 (conststring8 str, uint64 key) {
+	autostring8 result (uinteger_to_integer (strlen (str)) / 2);
+	char *to = & result [0];
+	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
+		char8 code1 = *from ++, code2 = *from;
+		if (code2 == '\0')
+			Melder_throw (U"(unhex$:) incomplete hexadecimal string.");
+		const char *index1 = strchr (hexSymbols, code1), *index2 = strchr (hexSymbols, code2);
+		if (! index1 || ! index2)
+			Melder_throw (U"(unhex$:) not a hexadecimal string: ", Melder_peek8to32 (str));
+		integer value = (index1 - hexSymbols) * 16 + (index2 - hexSymbols);
+		if (key != 0) {
+			// value = randomize (value, key);
+		}
+		*to ++ = char (value);
+	}
+	*to = '\0';
+	return result;
+}
+
+autostring32 newSTRunhex (conststring32 str, uint64 key) {
+	autostring8 str8 = Melder_32to8 (str);
+	str8 = newSTRunhex8 (str8.get(), key);
+	return Melder_8to32 (str8.get());
 }
 
 /* End of file STR.cpp */

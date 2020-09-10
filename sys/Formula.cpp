@@ -159,8 +159,8 @@ enum { NO_SYMBOL_,
 		MAT_PEAKS_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
-		HASH_,
-	#define HIGH_FUNCTION_N  HASH_
+		HASH_, HEXSTR_, UNHEXSTR_,
+	#define HIGH_FUNCTION_N  UNHEXSTR_
 
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
@@ -284,7 +284,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"peaks##",
 	U"size", U"numberOfRows", U"numberOfColumns", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
-	U"hash",
+	U"hash", U"hex$", U"unhex$",
 
 	U"length", U"number", U"fileReadable",	U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -4562,6 +4562,54 @@ static void do_hash () {
 	}
 }
 
+static void do_hexStr () {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	if (n->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			autostring32 result = newSTRhex (s->getString());
+			pushString (result.move());
+		} else {
+			Melder_throw (U"The function \"hex$\" requires a string, not ", s->whichText(), U".");
+		}
+	} else if (n->number == 2) {
+		Stackel k = pop, s = pop;
+		if (s->which == Stackel_STRING && k->which == Stackel_NUMBER) {
+			autostring32 result = newSTRhex (s->getString(), uint64 (round (k->number)));
+			pushString (result.move());
+		} else {
+			Melder_throw (U"The function \"hex$\" requires a string and a number, not ", s->whichText(), U".");
+		}
+	} else {
+		Melder_throw (U"The function \"hex$\" requires 1 or 2 arguments, not ", n->number, U".");
+	}
+}
+
+static void do_unhexStr () {
+	Stackel n = pop;
+	Melder_assert (n->which == Stackel_NUMBER);
+	if (n->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			autostring32 result = newSTRunhex (s->getString());
+			pushString (result.move());
+		} else {
+			Melder_throw (U"The function \"unhex$\" requires a string, not ", s->whichText(), U".");
+		}
+	} else if (n->number == 2) {
+		Stackel k = pop, s = pop;
+		if (s->which == Stackel_STRING && k->which == Stackel_NUMBER) {
+			autostring32 result = newSTRunhex (s->getString(), uint64 (round (k->number)));
+			pushString (result.move());
+		} else {
+			Melder_throw (U"The function \"unhex$\" requires a string and a number, not ", s->whichText(), U".");
+		}
+	} else {
+		Melder_throw (U"The function \"unhex$\" requires 1 or 2 arguments, not ", n->number, U".");
+	}
+}
+
 static void do_numericVectorElement () {
 	InterpreterVariable vector = parse [programPointer]. content.variable;
 	integer element = 1;   // default
@@ -7048,6 +7096,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_: { do_random_initializeWithSeedUnsafelyButPredictably ();
 } break; case RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_: { do_random_initializeSafelyAndUnpredictably ();
 } break; case HASH_: { do_hash ();
+} break; case HEXSTR_: { do_hexStr ();
+} break; case UNHEXSTR_: { do_unhexStr ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();

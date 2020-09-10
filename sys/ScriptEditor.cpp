@@ -110,6 +110,12 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
+	const conststring32 obscuredLabel = U"#!praatObscured\n";
+	if (Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, obscuredLabel, true)) {
+		double key_real = Melder_atof (MelderFile_name (& file));
+		uint64 key = ( isdefined (key_real) ? uint64 (key_real) : 0 );
+		text = newSTRunhex (& text [str32len (obscuredLabel)], key);
+	}
 	Melder_includeIncludeFiles (& text);
 	integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
 	if (npar) {
