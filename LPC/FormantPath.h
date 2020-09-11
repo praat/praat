@@ -23,8 +23,6 @@
 #include "Function.h"
 #include "LPC.h"
 #include "Sound.h"
-#include "TextGrid.h"
-#include "IntervalTierNavigator.h"
 
 #include "FormantPath_def.h"
 
@@ -34,50 +32,29 @@
 	All Formant have the same sampling.
 */
 
-autoFormantPath FormantPath_create (double fromTime, double toTime, integer numberOfFormantObjects);
+autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCeilings);
 
-integer FormantPath_identifyFormantIndexByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive);
+void FormantPath_replaceFrames (FormantPath me, integer beginFrame, integer endFrame, integer formantIndex);
 
-Formant FormantPath_identifyFormantByCriterion (FormantPath me, kMelder_string which, conststring32 criterion, bool caseSensitive);
+autoFormant FormantPath_extractFormant (FormantPath me);
 
-integer FormantPath_getFormantIndexFromLabel (FormantPath me, conststring32 label);
+autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
+autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts);
+autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
-void FormantPath_replaceFrames (FormantPath me, double fromTime, double toTime, integer formantIndex);
+autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta);
 
-void FormantPath_setNavigationLabels (FormantPath me, Strings navigationLabels, integer navigationTierNumber, kMelder_string criterion);
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf);
 
-void FormantPath_setLeftContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
+autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double formantCeiling, double windowLength, double preemphasisFrequency, double ceilingStepFraction, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
 
-void FormantPath_setRightContextNavigationLabels (FormantPath me, Strings navigationLabels, kMelder_string criterion);
-
-void FormantPath_setNavigationContext (FormantPath me,  kContextCombination criterion, bool matchContextOnly);
-
-integer FormantPath_nextNavigationInterval (FormantPath me, integer preferedTierNumber);
-
-integer FormantPath_identifyPathTier (FormantPath me, TextGrid thee);
-
-void FormantPath_mergeTextGrid (FormantPath me, TextGrid thee, integer navigationTierNumber);
-
-static inline autoFormant FormantPath_extractFormant (FormantPath me) {
-	return Data_copy (my formant.get());
+static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeStep, double maximumNumberOfFormants, double formantCeiling, double windowLength, double preemphasisFrequency, double ceilingStepFraction, integer numberOfStepsToACeiling) {
+	return Sound_to_FormantPath_any (me, kLPC_Analysis::BURG, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, preemphasisFrequency, ceilingStepFraction, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
-static inline autoTextGrid FormantPath_extractTextGrid (FormantPath me) {
-	return Data_copy (my path.get());
-}
+void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
+bool showRoughness, constINTVEC const & parameters, double powerf, bool garnish);
 
-void FormantPath_reconstructFormant (FormantPath me);
-
-autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
-
-static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling) {
-	return Sound_to_FormantPath_any (me, kLPC_Analysis::BURG, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
-}
-
-autoFormantPath Sound_and_TextGrid_to_FormantPath_any (Sound me, TextGrid thee, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
-
-static inline autoFormantPath Sound_and_TextGrid_to_FormantPath_burg (Sound me, TextGrid thee, double timeStep, double maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preemphasisFrequency, double ceilingStep, integer numberOfStepsToACeiling) {
-	return Sound_and_TextGrid_to_FormantPath_any (me, thee, kLPC_Analysis::BURG, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preemphasisFrequency, ceilingStep, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
-}
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y,  double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, bool showRoughness, constINTVEC const & parameters, double powerf,  bool garnish);
 
 #endif /* _FormantPath_h_ */

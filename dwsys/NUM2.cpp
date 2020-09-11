@@ -88,6 +88,20 @@ struct pdf2_struct {
 	double df2;
 };
 
+void NUMgetGridDimensions (integer n, integer *out_nrow, integer *out_ncol) {
+	integer ncol = 1;
+	integer nrow = n;
+	if (n > 3) {
+		nrow = 1 + Melder_ifloor (sqrt (n - 0.5));
+		ncol = 1 + Melder_ifloor ((n - 1) / nrow);
+	}
+	if (out_nrow)
+		*out_nrow = nrow;
+	if (out_ncol)
+		*out_ncol = ncol;
+	
+}
+
 void MATprintMatlabForm (constMATVU const& m, conststring32 name) {
 	constexpr integer npc = 5;
 	const ldiv_t n = ldiv (m.ncol, npc);

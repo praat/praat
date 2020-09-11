@@ -368,7 +368,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 }
 
 void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish)
+	double numberOfSigmas, conststring32 mark, double marksFontSize, MelderColour oddTracks, MelderColour evenTracks, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
@@ -376,8 +376,8 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	double currectFontSize = Graphics_inqFontSize (g);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
-		const double xOffset_wc = ( itrack % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
-		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize, xOffset_wc);
+		Graphics_setColour (g, itrack %2  == 1 ? oddTracks : evenTracks );
+		DataModeler_drawOutliersMarked_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfSigmas, mark, marksFontSize);
 	}
 	Graphics_setFontSize (g, currectFontSize);
 	Graphics_unsetInner (g);
@@ -398,22 +398,22 @@ void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, intege
 	}
 }
 
-void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc) {
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		DataModeler ffi = my trackmodelers.at [itrack];
-		double xOffset_wc = ( itrack % 2 == 0 ? horizontalOffset_wc : 0.0 );
-		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack, numberOfParameters, xOffset_wc);
+		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks );
+		DataModeler_drawTrack_inside (ffi, g, xmin, xmax, 0.0, fmax, useEstimatedTrack, numberOfParameters);
 	}
 }
 
 void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc, bool garnish)
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_drawTracks_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, horizontalOffset_wc);
+	FormantModeler_drawTracks_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, oddTracks, evenTracks);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -425,23 +425,23 @@ void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, doub
 }
 
 void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc) {
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, MelderColour oddTracks, MelderColour evenTracks) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
-		const double xOffset_wc = ( itrack % 2 == 1 ? horizontalOffset_wc : -horizontalOffset_wc );
-		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, numberOfParameters, errorBars, barWidth_wc, xOffset_wc);
+		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks);
+		DataModeler_speckle_inside (ffi, g, xmin, xmax, 0, fmax, useEstimatedTrack, numberOfParameters, errorBars, 0.0);
 	}
 }
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters,
-	bool errorBars, double barWidth_wc, double horizontalOffset_wc, bool garnish)
+	bool errorBars, MelderColour oddTracks, MelderColour evenTracks, bool garnish)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	Graphics_setInner (g);
-	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, errorBars, barWidth_wc, horizontalOffset_wc);
+	FormantModeler_speckle_inside (me, g, tmin, tmax, fmax, fromTrack, toTrack, useEstimatedTrack, numberOfParameters, errorBars, oddTracks, evenTracks);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -664,10 +664,6 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 		integer ifmin, ifmax, posInCollection = 0;
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		const integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		const integer maximumNumberOfParameters = NUMmax (numberOfParametersPerTrack);
-		Melder_require (numberOfDataPoints >= maximumNumberOfParameters,
-			U"There are not enough data points, please reduce the number of parameters or extend the selection.");
-		
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfDataPoints, numberOfParametersPerTrack);
 		Thing_setName (thee.get(), my name.get());
 		for (integer iformant = 1; iformant <= numberOfParametersPerTrack.size; iformant ++) {
@@ -691,13 +687,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			}
 			ffi -> weighData = kDataModelerWeights::ONE_OVER_SIGMA;
 			ffi -> tolerance = 1e-5;
-			if (validData < numberOfParametersPerTrack [iformant]) {   // remove don't throw exception
-				thy trackmodelers. removeItem (posInCollection);
-				posInCollection --;
-			}
 		}
-		Melder_require (posInCollection > 0,
-			U"Not enough data points in all the formants.");
 		FormantModeler_fit (thee.get());
 		return thee;
 	} catch (MelderError) {
@@ -851,7 +841,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 }
 
 
-double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
+double FormantModeler_getRoughnessValue_old (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	integer numberOfFreeParameters;
 	const double var = FormantModeler_getVarianceOfParameters (me, fromTrack, toTrack, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
@@ -859,6 +849,17 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromTrack, 
 	const double chisq = FormantModeler_getChiSquaredQ (me, fromTrack, toTrack, nullptr, & degreesOfFreedom);
 	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
 		power * log10 ((var / numberOfFreeParameters) * (chisq / degreesOfFreedom)) :
+		undefined );
+}
+
+double FormantModeler_getRoughnessValue (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	integer numberOfFreeParameters;
+	const double var = FormantModeler_getVarianceOfParameters (me, fromTrack, toTrack, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
+	double degreesOfFreedom;
+	const double chisq = FormantModeler_getChiSquaredQ (me, fromTrack, toTrack, nullptr, & degreesOfFreedom);
+	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
+		( sqrt (pow (var / numberOfFreeParameters, power) * (chisq / degreesOfFreedom))) :
 		undefined );
 }
 
@@ -984,7 +985,7 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 				autoFormantModeler fs = Formant_to_FormantModeler (fi, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack);
 				FormantModeler_setParameterValuesToZero (fs.get(), 1, numberOfFormantTracks, numberOfSigmas);
 				const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fs.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-				const double chiVar = FormantModeler_getSmoothnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+				const double chiVar = FormantModeler_getRoughnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 				if (isdefined (chiVar) && cf * chiVar < minChiVar) {
 					minChiVar = cf * chiVar;
 					index = iobject;
@@ -1093,7 +1094,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
 			const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-			const double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+			const double chiVar = FormantModeler_getRoughnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			const double criterium = chiVar * cf;
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
@@ -1159,7 +1160,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
 			const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-			const double chiVar = FormantModeler_getSmoothnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+			const double chiVar = FormantModeler_getRoughnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			const double criterium = chiVar * cf;
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;

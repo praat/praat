@@ -47,10 +47,10 @@
 */
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
-	autoFormantModelerList formantModelerList;
+	autoTextGrid textgrid;
 	autoTextGridView pathGridView;
 	Graphics_Viewport selectionViewer_viewport;
-	integer selectedTier, pathTierNumber, selectedModeler;
+	integer selectedTier, selectedCandidate;
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem navigateSettingsButton, navigateNextButton, navigatePreviousButton;
@@ -87,6 +87,8 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_play (double startTime, double endTime)
 		override;
+	void v_updateText ()
+		override {};
 	void v_prefs_addFields (EditorCommand cmd)
 		override;
 	void v_prefs_setValues (EditorCommand cmd)
@@ -94,11 +96,13 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	void v_prefs_getValues (EditorCommand cmd)
 		override;
 	conststring32 v_selectionViewerName ()
-		override { return U"Formant modelers"; }
+		override { return U"Formant candidates"; }
 	void v_createMenuItems_view_timeDomain (EditorMenu menu)
 		override;
 	void v_highlightSelection (double left, double right, double bottom, double top)
 		override;
+	void v_unhighlightSelection (double left, double right, double bottom, double top)
+		/*override*/;
 	double v_getBottomOfSoundArea ()
 		override;
 	double v_getBottomOfSoundAndAnalysisArea ()
@@ -114,7 +118,7 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	#include "FormantPathEditor_prefs.h"
 };
 
-autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath);
+autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath formantPath, Sound sound, TextGrid textgrid);
 
 /* End of file FormantPathEditor.h */
 #endif

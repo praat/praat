@@ -48,6 +48,19 @@ rc = & work [m+1+m+1+1]; // rc [1..m]
 for (i=1; i<= m+1+m+1+m;i ++) work [i] = 0;
 */
 
+static void Sampled_shortTermAnalysis2 (Sampled me, double windowDuration, double timeStep, integer *numberOfFrames, double *firstTime) {
+	Melder_assert (windowDuration > 0.0);
+	Melder_assert (timeStep > 0.0);
+	volatile double myDuration = my xmax - my xmin; // for FormantPath we need exactly the same sampling, independent of nx
+	if (windowDuration > myDuration)
+		Melder_throw (me, U": shorter than window length.");
+	*numberOfFrames = Melder_ifloor ((myDuration - windowDuration) / timeStep) + 1;
+	Melder_assert (*numberOfFrames >= 1);
+	const double ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
+	const double thyDuration = *numberOfFrames * timeStep;
+	*firstTime = ourMidTime - 0.5 * thyDuration + 0.5 * timeStep;
+}
+
 #define LPC_METHOD_AUTO_WINDOW_CORRECTION 1
 
 static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
@@ -506,7 +519,7 @@ static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth
 	}
 	double t1;
 	integer numberOfFrames;
-	Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
+	Sampled_shortTermAnalysis2 (me, windowDuration, dt, & numberOfFrames, & t1);
 	autoSound sound = Data_copy (me);
 	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);

@@ -32,7 +32,7 @@ void TextGridView_setDefaultView (TextGridView me) {
 	my tierNumbers.resize (my origin -> tiers -> size);
 	my tiers -> size = 0;
 	for (integer itier = 1; itier <= my origin -> tiers -> size; itier ++) {
-		Function anyTier = my origin -> tiers -> at [itier];
+		const Function anyTier = my origin -> tiers -> at [itier];
 		my tiers -> _insertItem_ref (anyTier, itier);
 		my tierNumbers [itier] = itier;
 	}
@@ -96,7 +96,7 @@ void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers
 	my tiers -> size = 0;
 	for (integer itier = 1; itier <= newTierNumbers.size; itier ++) {
 		const integer originNumber = newTierNumbers [itier];
-		Function anyTier = my origin -> tiers -> at [originNumber];
+		const Function anyTier = my origin -> tiers -> at [originNumber];
 		my tiers -> _insertItem_ref (anyTier, itier);
 		my tierNumbers [itier] = originNumber;
 	}

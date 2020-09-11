@@ -55,17 +55,17 @@ void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromTra
 void FormantModeler_setTolerance (FormantModeler me, double tolerance);
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters,
-	bool errorBars, double barWidth_mm, double horizontalOffset_wc, bool garnish);
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars,
+	MelderColour oddTracks, MelderColour evenTracks, bool garnish);
 
 void FormantModeler_speckle_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax,
-	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, double barWidth_wc, double horizontalOffset_wc);
+	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars, MelderColour oddTracks, MelderColour evenTracks);
 
-void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc, bool garnish);
-void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, double horizontalOffset_wc);
+void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks, bool garnish);
 
-void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack,
-	double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc, bool garnish);
+void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks, bool garnish);
+
+void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, double numberOfSigmas, conststring32 mark, double marksFontSize, MelderColour oddTracks, MelderColour evenTracks, bool garnish);
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish);
 
@@ -145,7 +145,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool estimate, bool es
 autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas);
 
 /*
-	Get smoothness criterion value according to Weenink's (2015) measure
+	Get roughness criterion value according to Weenink's (2015) measure
 	W = (var/k)^t * (chi^2/d), where
 	var is the sum of all variances of all parameters of all modelled formants,
 	k is the total number of parameters to mode all tracks, chi^2 is the combined chi-squared of all
@@ -156,7 +156,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 	
 	The routine returns log10 (W).
 */
-double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromTrack, integer toTrack,
+double FormantModeler_getRoughnessValue (FormantModeler me, integer fromTrack, integer toTrack,
 	integer numberOfParametersPerTrack, double power);
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type);

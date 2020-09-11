@@ -153,7 +153,7 @@ void SVD_compute (SVD me) {
 void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m) {
 	Melder_assert (m.nrow == m.ncol && m.ncol == my numberOfColumns);
 	for (integer i = 1; i <= my numberOfColumns; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer j = i; j <= my numberOfColumns; j ++) {
 			longdouble val = 0.0;
 			for (integer k = 1; k <= my numberOfColumns; k ++) {
 				if (my d [k] > 0.0) {
@@ -162,7 +162,7 @@ void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m) {
 					val += my v [i] [k] * my v [j] [k] * factor;
 				}
 			}
-			m [i] [j] = double (val);
+			m [i] [j] = m [j] [i] = double (val);
 		}
 	}
 }
