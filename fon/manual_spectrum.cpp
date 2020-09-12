@@ -144,7 +144,7 @@ NORMAL (U"where %f__1_ is the frequency associated with the centre of the first 
 	"and Δ%f is the bin width.")
 MAN_END
 
-MAN_BEGIN (U"Ltas: Get frequency of maximum...", U"ppgb", 20110701)
+MAN_BEGIN (U"Ltas: Get frequency of maximum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the frequency (in hertz) associated with the maximum energy density.")
@@ -155,13 +155,13 @@ DEFINITION (U"the selected frequency domain. Values outside this domain are igno
 	"If ##To frequency# is not greater than ##From frequency#, "
 	"the entire frequency domain of the Ltas object is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
-	"The standard is #None because of the usual large binning. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is #none because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
-	"a #Parabolic or #Cubic interpolation would be more appropriate.")
+	"a #parabolic or #cubic interpolation would be more appropriate.")
 MAN_END
 
-MAN_BEGIN (U"Ltas: Get frequency of minimum...", U"ppgb", 20030916)
+MAN_BEGIN (U"Ltas: Get frequency of minimum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the frequency (in hertz) associated with the minimum energy density.")
@@ -170,10 +170,10 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire frequency domain of the Ltas is considered.")
 TAG (U"%%Interpolation")
-DEFINITION (U"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is None because of the usual large binning. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc) of the @@vector peak interpolation@. "
+	"The standard is #none because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
-	"a Parabolic or Cubic interpolation would be more appropriate.")
+	"a #parabolic or #cubic interpolation would be more appropriate.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get highest frequency", U"ppgb", 20041122)
@@ -188,7 +188,7 @@ ENTRY (U"Return value")
 NORMAL (U"the lowest frequency, expressed in Hertz. It is usually 0 Hz.")
 MAN_END
 
-MAN_BEGIN (U"Ltas: Get maximum...", U"ppgb", 20101228)
+MAN_BEGIN (U"Ltas: Get maximum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value (in dB) within a specified frequency range.")
@@ -199,10 +199,10 @@ DEFINITION (U"the selected frequency domain. Values outside this domain are igno
 	"If %%To frequency% is not greater than %%From frequency%, "
 	"the entire frequency domain of the Ltas object is considered.")
 TAG (U"%%Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
-	"The standard is #None because of the usual large binning. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is #none because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
-	"a Parabolic or Cubic interpolation would be more appropriate.")
+	"a #parabolic or #cubic interpolation would be more appropriate.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get mean...", U"ppgb", 20041122)
@@ -223,7 +223,7 @@ FORMULA (U"1/%n ∑__%i=%m..%m+%n-1_ %x__%i_")
 NORMAL (U"where %n is the number of band centres between %f__1_ and %f__2_.")
 MAN_END
 
-MAN_BEGIN (U"Ltas: Get minimum...", U"ppgb", 20030916)
+MAN_BEGIN (U"Ltas: Get minimum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Ltas object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value (in dB) within a specified frequency range.")
@@ -234,10 +234,10 @@ DEFINITION (U"the selected frequency domain. Values outside this domain are igno
 	"If ##To frequency# is not greater than ##From frequency#, "
 	"the entire frequency domain of the Ltas object is considered.")
 TAG (U"%%Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
-	"The standard is #None because of the usual large binning. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is #none because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
-	"a #Parabolic or #Cubic interpolation would be more appropriate.")
+	"a #parabolic or #cubic interpolation would be more appropriate.")
 MAN_END
 
 MAN_BEGIN (U"Ltas: Get number of bins", U"ppgb", 20041122)

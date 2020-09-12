@@ -1019,19 +1019,19 @@ DO
 
 DIRECT (REAL_Ltas_getLowestFrequency) {
 	NUMBER_ONE (Ltas)
-		double result = my xmin;
+		const double result = my xmin;
 	NUMBER_ONE_END (U" hertz")
 }
 
 DIRECT (REAL_Ltas_getHighestFrequency) {
 	NUMBER_ONE (Ltas)
-		double result = my xmax;
+		const double result = my xmax;
 	NUMBER_ONE_END (U" hertz")
 }
 
 DIRECT (REAL_Ltas_getBinWidth) {
 	NUMBER_ONE (Ltas)
-		double result = my dx;
+		const double result = my dx;
 	NUMBER_ONE_END (U" hertz")
 }
 
@@ -1040,7 +1040,7 @@ FORM (REAL_Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Sampled_indexToX (me, binNumber);
+		const double result = Sampled_indexToX (me, binNumber);
 	NUMBER_ONE_END (U" hertz")
 }
 
@@ -1049,7 +1049,7 @@ FORM (REAL_Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"L
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Sampled_xToIndex (me, frequency);
+		const double result = Sampled_xToIndex (me, frequency);
 	NUMBER_ONE_END (U"")
 }
 
@@ -1057,15 +1057,15 @@ FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, interpolation);
 	NUMBER_ONE_END (U" hertz");
 }
 
@@ -1073,15 +1073,15 @@ FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, interpolation);
 	NUMBER_ONE_END (U" hertz");
 }
 
@@ -1111,15 +1111,15 @@ FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Vector_getMaximum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getMaximum (me, fromFrequency, toFrequency, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1133,8 +1133,8 @@ FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Sampled_getMean_standardUnit (me, fromFrequency, toFrequency,
-			0, averagingMethod, false);
+		const double result = Sampled_getMean_standardUnit (me, fromFrequency, toFrequency,
+				0, averagingMethod, false);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1142,21 +1142,21 @@ FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Vector_getMinimum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getMinimum (me, fromFrequency, toFrequency, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
 DIRECT (INTEGER_Ltas_getNumberOfBins) {
 	NUMBER_ONE (Ltas)
-		integer result = my nx;
+		const integer result = my nx;
 	NUMBER_ONE_END (U" bins")
 }
 
@@ -1172,7 +1172,7 @@ FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Ltas_getSlope (me, lowBandFrom, lowBandTo, highBandFrom, highBandTo, averagingMethod);
+		const double result = Ltas_getSlope (me, lowBandFrom, lowBandTo, highBandFrom, highBandTo, averagingMethod);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1186,27 +1186,29 @@ FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: G
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Sampled_getStandardDeviation_standardUnit (me, fromFrequency, toFrequency,
+		const double result = Sampled_getStandardDeviation_standardUnit (me, fromFrequency, toFrequency,
 			0,   // level (irrelevant)
 			averagingMethod,
-			false);   // interpolate (don't)
+			false   // interpolate (don't)
+		);
 	NUMBER_ONE_END (U" dB")
 }
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
 	REAL (frequency, U"Frequency (Hz)", U"1500.0")
 	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"nearest")
+		RADIOBUTTON (U"linear")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = Vector_getValueAtX (me, frequency,
+		const double result = Vector_getValueAtX (me, frequency,
 			1,   // level
-			interpolation);
+			interpolation
+		);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1215,7 +1217,7 @@ FORM (REAL_Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin..."
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = binNumber < 1 || binNumber > my nx ? undefined : my z [1] [binNumber];
+		const double result = binNumber < 1 || binNumber > my nx ? undefined : my z [1] [binNumber];
 	NUMBER_ONE_END (U" dB")
 }
 

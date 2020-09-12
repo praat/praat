@@ -731,7 +731,7 @@ NORMAL (U"For the intensity in Watt/m^2, see @@Sound: Get power in air@. For an 
 	"see @@Excitation: Get loudness@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get maximum...", U"ppgb", 20041123)
+MAN_BEGIN (U"Sound: Get maximum...", U"ppgb", 20200912)
 INTRO (U"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the maximum amplitude (sound pressure in Pascal) within a specified time window.")
 ENTRY (U"Settings")
@@ -739,8 +739,8 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
-	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is “sinc70” because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
@@ -757,7 +757,7 @@ FORMULA (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %x(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound in Pa.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get minimum...", U"ppgb", 20041123)
+MAN_BEGIN (U"Sound: Get minimum...", U"ppgb", 20200912)
 INTRO (U"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the minimum amplitude (sound pressure in Pascal) within a specified time window.")
 ENTRY (U"Settings")
@@ -765,8 +765,8 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 TAG (U"%%Interpolation")
-DEFINITION (U"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is Sinc70 because a Sound object is normally a sampled band-limited signal, "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is “sinc70” because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
@@ -843,7 +843,7 @@ FORMULA (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
 NORMAL (U"where %n is the number of sample centres between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get time of maximum...", U"ppgb", 20041123)
+MAN_BEGIN (U"Sound: Get time of maximum...", U"ppgb", 20200912)
 INTRO (U"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the time (in seconds) associated with the maximum pressure in a specified time range.")
 ENTRY (U"Settings")
@@ -851,12 +851,12 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
-	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is “sinc70” because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get time of minimum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Sound: Get time of minimum...", U"ppgb", 20200912)
 INTRO (U"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the time (in seconds) associated with the minimum pressure in a specified time range.")
 ENTRY (U"Settings")
@@ -864,8 +864,8 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
-	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
+	"The standard is “sinc70” because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
@@ -878,7 +878,7 @@ TAG (U"##Sample number")
 DEFINITION (U"the sample number at which the value is to be evaluated.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get value at time...", U"ppgb", 20030916)
+MAN_BEGIN (U"Sound: Get value at time...", U"ppgb", 20200912)
 INTRO (U"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show an estimate of the amplitude (sound pressure in Pascal) at a specified time. "
 	"If that time is outside the samples of the Sound, the result is equal to the value of the nearest sample; "
@@ -888,7 +888,7 @@ TAG (U"##Time (s)")
 DEFINITION (U"the time at which the value is to be evaluated.")
 TAG (U"##Interpolation")
 DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
-	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
+	"The standard is “sinc70” because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
