@@ -1062,13 +1062,11 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (leftSample > my nx)
 		return undefined;
 	const integer rightSample = leftSample + 1;
-	integer ileft, iright;
-	double leftCrossing, rightCrossing;
 	/*
 		Are we already at a level crossing?
 	*/
 	if (leftSample >= 1 && rightSample <= my nx &&
-			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level))
+			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level)) 
 	{
 		const double crossing = interpolate (me, leftSample, channel, level);
 		return searchDirection == kSoundSearchDirection::LEFT ?
@@ -1076,31 +1074,35 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 			( crossing >= position ? crossing : undefined );
 	}
 	
+	double leftCrossing = undefined;
 	if (searchDirection == kSoundSearchDirection::LEFT ||
 		searchDirection == kSoundSearchDirection::NEAREST) {
-		for (ileft = leftSample - 1; ileft >= 1; ileft --)
-			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level))
+		for (integer ileft = leftSample - 1; ileft >= 1; ileft --)
+			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level)) {
+				leftCrossing = interpolate (me, ileft, channel, level);
 				break;
-		leftCrossing = interpolate (me, ileft, channel, level);
+			}
 		if (searchDirection == kSoundSearchDirection::LEFT)
-			return ileft < 1 ? undefined: leftCrossing;
+			return leftCrossing;
 	}
 	
 	if (rightSample < 1)
 		return undefined;
+	double rightCrossing = undefined;
 	if (searchDirection == kSoundSearchDirection::RIGHT ||
 		searchDirection == kSoundSearchDirection::NEAREST) {
-		for (iright = rightSample + 1; iright <= my nx; iright ++)
-			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level))
+		for (integer iright = rightSample + 1; iright <= my nx; iright ++)
+			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level)) {
+				rightCrossing = interpolate (me, iright - 1, channel, level);
 				break;
-		rightCrossing = interpolate (me, iright - 1, channel, level);
+			}
 		if (searchDirection == kSoundSearchDirection::RIGHT)
-			return iright > my nx ? undefined : rightCrossing;
+			return rightCrossing;
 	}
 	
-	if (ileft < 1 && iright > my nx)
+	if (! isdefined (leftCrossing) && ! isdefined (rightCrossing))
 		return undefined;
-	return ileft < 1 ? rightCrossing : ( iright > my nx ? leftCrossing :
+	return ! isdefined (leftCrossing) ? rightCrossing : ( ! isdefined (rightCrossing) ? leftCrossing :
 		( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing ) );
 }
 

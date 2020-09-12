@@ -4418,12 +4418,14 @@ static bool Graphics_getConnectingLine (Graphics g, conststring32 text1, double 
 	return drawLine;
 }
 
-// take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
+/*
+	Take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
+*/
 void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax, conststring32 symbol, double angle, bool garnish, conststring32 formula, Interpreter interpreter) {
 	try {
 		Melder_require (ycolumn >= 1 && ycolumn <= my numberOfColumns,
 			U"The column for the vertical axis should exist.");
-		Melder_require (xcolumn >= 1 && xcolumn <= my numberOfColumns,
+		Melder_require (xcolumn >= 0 && xcolumn <= my numberOfColumns, // 0 == no column given
 			U"The column for the horizontal axis should exist.");
 		
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);

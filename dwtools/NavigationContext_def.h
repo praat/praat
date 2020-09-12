@@ -1,4 +1,4 @@
-/* FormantPath_def.h
+/* NavigationContext_def.h
  *
  * Copyright (C) 2020 David Weenink
  *
@@ -16,29 +16,27 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT FormantPath
-oo_DEFINE_CLASS (FormantPath, Sampled)
+#define ooSTRUCT NavigationContext
+oo_DEFINE_CLASS (NavigationContext, Daata)
 
-	oo_COLLECTION_OF (OrderedOf, formants, Formant, 2)
-	oo_VEC (ceilings, formants. size)
-	oo_INTVEC (path, nx)
+	oo_OBJECT (Strings, 0, navigationLabels) // because oo_STRING_Vector needs size
+	oo_ENUM (kMelder_string, navigationCriterion)
+	
+	oo_OBJECT (Strings, 0, leftContextLabels)
+	oo_ENUM (kMelder_string, leftContextCriterion)
+	
+	oo_OBJECT (Strings, 0, rightContextLabels)
+	oo_ENUM (kMelder_string, rightContextCriterion)	
+	
+	oo_ENUM (kContext_combination, combinationCriterion)
+	oo_BOOLEAN (matchContextOnly)
 	
 	#if oo_DECLARING
 		void v_info ()
 			override;
-		int v_domainQuantity ()
-			override { return MelderQuantity_TIME_SECONDS; }
-		conststring32 v_getUnitText (integer level, int unit, uint32 flags)
-			override;
-		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
-			override;
-		conststring32 v_getIndexText () const
-			override { return U"frame number"; }
-		conststring32 v_getNxText () const
-			override { return U"the number of frames"; }
 	#endif
-
-oo_END_CLASS (FormantPath)
+	
+oo_END_CLASS (NavigationContext)
 #undef ooSTRUCT
 
-/* End of FormantPath_def.h */
+ /* End of file NavigationContext_def.h */

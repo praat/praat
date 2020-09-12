@@ -534,7 +534,7 @@ integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *x
 	return *ixmax - *ixmin + 1;
 }
 
-void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, conststring32 mark, double marksFontSize, double horizontalOffset_wc)
+void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, conststring32 mark, double marksFontSize)
 {
 	integer ixmin, ixmax;
 	if (DataModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) < 1)
@@ -550,24 +550,23 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 			const double x = my data [ipoint] .x, y = my data [ipoint] .y;
 			if (x >= xmin && x <= xmax && y >= ymin && y <= ymax)
 				if (fabs (zscores [ipoint]) > numberOfSigmas)
-					Graphics_text (g, x + horizontalOffset_wc, y, mark);
+					Graphics_text (g, x, y, mark);
 		}
 	}
 	Graphics_setFontSize (g, currentFontSize);
 }
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_wc, double horizontalOffset_wc, bool drawDots)
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_wc, bool drawDots)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	integer ixmin = 2;
-	while (my data [ixmin] .x < xmin && ixmin < my numberOfDataPoints)
+
+	integer ixmin = 1;
+	while (ixmin <= my numberOfDataPoints && my data [ixmin] .x < xmin)
 		ixmin ++;
-	ixmin --;
-	integer ixmax = my numberOfDataPoints - 1;
-	while (my  data [ixmax] .x > xmax && ixmax > 1)
+	integer ixmax = my numberOfDataPoints;
+	while (ixmax > 0 && my data [ixmax] .x > xmax)
 		ixmax --;
-	ixmax ++;
-	if (ixmin >= ixmax)
+	if (ixmin > ixmax)
 		return; // nothing to draw
 	getAutoNaturalNumberWithinRange (& numberOfParameters, my numberOfParameters);	
 	
@@ -588,12 +587,12 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 			}
 			if (x1defined && drawDots) {
 				if (y >= ymin && y <= ymax)
-					Graphics_speckle (g, x + horizontalOffset_wc, y);
+					Graphics_speckle (g, x, y);
 			}
 			if (x2defined) { // if (x1defined && x2defined)
 				if (connectPoints) {
 					double xo1, yo1, xo2, yo2;
-					if (NUMclipLineWithinRectangle (x1 + horizontalOffset_wc, y1, x2 + horizontalOffset_wc, y2,
+					if (NUMclipLineWithinRectangle (x1, y1, x2, y2,
 						xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
 						Graphics_line (g, xo1, yo1, xo2, yo2);
 					}
@@ -612,9 +611,9 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 				bool topOutside = yt > ymax, bottomOutside = yb < ymin;
 				yt = ( topOutside ? ymax : yt );
 				yb = ( bottomOutside ? ymin : yb );
-				Graphics_line (g, x1 + horizontalOffset_wc, yb, x1 + horizontalOffset_wc, yt);
+				Graphics_line (g, x1, yb, x1, yt);
 				if (barWidth_wc > 0.0 && ! estimated) {
-					double xl = x1 - 0.5 * barWidth_wc + horizontalOffset_wc;
+					double xl = x1 - 0.5 * barWidth_wc;
 					double xr = xl + barWidth_wc;
 					if (! topOutside)
 						Graphics_line (g, xl, yt, xr, yt);
@@ -626,19 +625,19 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	}
 }
 
-void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, double horizontalOffset_wc)
+void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters)
 {
 	const bool errorbars = false, connectPoints = true;
 	const double barWidth_mm = 0;
-	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_mm, horizontalOffset_wc, 0);
+	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_mm, 0);
 }
 
 void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, double horizontalOffset_wc, bool garnish) {
+	bool estimated, integer numberOfParameters, bool garnish) {
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
-	DataModeler_drawTrack_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, horizontalOffset_wc);
+	DataModeler_drawTrack_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -647,19 +646,19 @@ void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax
 	}
 }
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_wc, double horizontalOffset_wc) {
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, double barWidth_wc) {
 	bool connectPoints = false;
-	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_wc, horizontalOffset_wc, 1);
+	DataModeler_draw_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, connectPoints, barWidth_wc, 1);
 }
 
 void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, double horizontalOffset_wc, bool garnish)
+	bool estimated, integer numberOfParameters, bool errorbars, double barWidth_mm, bool garnish)
 {
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
 	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax,
-		estimated, numberOfParameters, errorbars, barWidth_mm, horizontalOffset_wc);
+		estimated, numberOfParameters, errorbars, barWidth_mm);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -712,8 +711,6 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	
 	Melder_require (numberOfParameters > 0,
 		U"The number of parameters should be greater than zero.");
-	Melder_require (numberOfParameters <= numberOfDataPoints,
-		U"The number of parameters should not exceed the number of data points");
 	
 	my parameters = newvectorzero<structDataModelerParameter> (numberOfParameters);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++)
@@ -768,6 +765,8 @@ void DataModeler_fit (DataModeler me) {
 		if (numberOfFreeParameters == 0)
 			return;
 		const integer numberOfValidDataPoints = DataModeler_getNumberOfValidDataPoints (me);
+		if (numberOfValidDataPoints - numberOfFreeParameters < 0)
+			return;
 		autoVEC yEstimation = newVECzero (numberOfValidDataPoints);
 		autoVEC term = newVECzero (my numberOfParameters);
 		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());

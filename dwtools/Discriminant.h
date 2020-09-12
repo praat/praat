@@ -18,10 +18,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Graphics.h"
-#include "Configuration.h"
-#include "ClassificationTable.h"
 #include "Eigen.h"
+#include "Graphics.h"
 #include "SSCP.h"
 
 #include "Discriminant_def.h"
@@ -74,20 +72,5 @@ autoSSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me);
 autoStrings Discriminant_extractGroupLabels (Discriminant me);
 
 void Discriminant_setGroupLabels (Discriminant me, Strings thee);
-
-autoConfiguration Discriminant_TableOfReal_to_Configuration	(Discriminant me, TableOfReal thee, integer numberOfDimensions);
-
-autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable
-	(Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities);
-
-autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw
-	(Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements);
-
-autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices);
-/* Mahalanobis distance with respect to group mean */
-
-autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me);
-
-autoConfiguration TableOfReal_to_Configuration_lda (TableOfReal me, integer numberOfDimensions);
 
 #endif /* _Discriminant_h_ */

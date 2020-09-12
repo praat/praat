@@ -35,6 +35,7 @@
 #include "Formant_extensions.h"
 #include "FormantPath.h"
 #include "FormantPathEditor.h"
+#include "IntervalTierNavigator.h"
 #include "LPC.h"
 #include "MFCC.h"
 #include "LFCC.h"
@@ -85,19 +86,119 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
 	FIND_ONE_WITH_IOBJECT (FormantPath)
-		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me);
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	END
 }
-FORM (MODIFY_FormantPath_setNavigationContext, U"FormantPath: Set navigation context", nullptr) {
-	OPTIONMENU_ENUM (kContextCombination, contextCombination, U"Context combination", kContextCombination::DEFAULT)
-	BOOLEAN (matchContextOnly, U"Match context only", false)
+
+FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.1")
+	POSITIVE (fmax, U"Maximum frequency", U"6200.0")
+	NATURAL (fromFormant, U"left Formant range", U"1")
+	NATURAL (toFormant, U"right Formant range", U"5")
+	BOOLEAN (showBandwidths, U"Show bandwidths", true)
+	COLOUR (odd, U"Colour of F1, F3, F5", U"red")
+	COLOUR (even, U"Colour of F2, F4", U"purple")
+	INTEGER (numberOfRows, U"Number of rows", U"0")
+	INTEGER (numberOfColumns, U"Number of columns", U"0")
+	POSITIVE (xSpaceFraction, U"X space fraction", U"0.1")
+	POSITIVE (ySpaceFraction, U"Y space fraction", U"0.1")
+	POSITIVE (lineEvery_Hz, U"Horizontal line every (Hz)", U"1000.0")
+	REAL (xCursor, U"X cursor line at (s)", U"-0.1 (=no line)")
+	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
+	INTEGER (special, U"Index of special", U"0 (=no)")
+	COLOUR (specialColour, U"Colour for special", U"pink")
+	BOOLEAN (showRoughness, U"Show roughness", true)
+	SENTENCE (parameters_string, U"Parameters", U"7 7 7 7")
+	POSITIVE (powerf, U"Power", U"1.25")
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (FormantPath)
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, showRoughness, parameters.get(), powerf, garnish);
+	GRAPHICS_EACH_END
+}
+
+FORM (NEW_FormantPath_to_Matrix_roughness, U"FormantPath: To Matrix (roughness)", nullptr) {
+	POSITIVE (windowLength, U"Window length", U"0.025")
+	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	POSITIVE (roughnessCutoff, U"Roughness cutoff", U"200.0")
+	OK
+DO
+	CONVERT_EACH (FormantPath)
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		autoMatrix result = FormantPath_to_Matrix_roughness (me, windowLength, parameters.get (), powerf);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_FormantPath_to_Matrix_qsum) {
+	CONVERT_EACH (FormantPath)
+		autoMatrix result = FormantPath_to_Matrix_qSums (me, 0.0);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_FormantPath_to_Matrix_transition,  U"FormantPath: To Matrix (transition)", nullptr) {
+	BOOLEAN (maximumCosts, U"Maximum costs", false)
+	OK
+DO
+	CONVERT_EACH (FormantPath)
+		autoMatrix result = FormantPath_to_Matrix_transition (me, maximumCosts);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nullptr) {
+	LABEL (U"Within frame:")
+	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
+	LABEL (U"Between frames:")
+	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
+	REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
+	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
+	LABEL (U"Global roughness parameters")
+	POSITIVE (windowLength, U"Window length", U"0.035")
+	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	OK
+DO
+	CONVERT_EACH (FormantPath)
+		autoMatrix result;
+		Melder_require (qWeight >= 0 && qWeight <= 1.0 &&
+			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
+			roughnessWeight >= 0 && roughnessWeight <= 1.0 &&
+			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
+			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters, powerf, & result);	
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (MODIFY_FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr) {
+	LABEL (U"Within frame:")
+	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
+	LABEL (U"Between frames:")
+	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
+	REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
+	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
+	LABEL (U"Global roughness parameters")
+	POSITIVE (windowLength, U"Window length", U"0.035")
+	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
 	MODIFY_EACH (FormantPath)
-		FormantPath_setNavigationContext (me, contextCombination, matchContextOnly);
+		Melder_require (qWeight >= 0 && qWeight <= 1.0 &&
+			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
+			roughnessWeight >= 0 && roughnessWeight <= 1.0 &&
+			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
+			U"A weight should be greater than or equal to 0.0 and smaller than or equal to 1.0.");
+		autoINTVEC parameters = newINTVECfromString (parameters_string);
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
 	MODIFY_EACH_END
 }
 
@@ -107,38 +208,26 @@ DIRECT (NEW_FormantPath_extractFormant) {
 	CONVERT_EACH_END (my name.get())
 }
 
-DIRECT (NEW_FormantPath_extractTextGrid) {
-	CONVERT_EACH (FormantPath)
-		autoTextGrid result = FormantPath_extractTextGrid (me);
-	CONVERT_EACH_END (my name.get())
+DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	FIND_THREE_WITH_IOBJECT (FormantPath, Sound, TextGrid)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, him);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
 }
 
-FORM (MODIFY_FormantPath_setNavigationLabels, U"FormantPath: Set navigation labels", nullptr) {
-	NATURAL (intervalTierNumber, U"Interval tier number", U"1")
-	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
-		FormantPath_setNavigationLabels (me, you, intervalTierNumber, criterion);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-FORM (MODIFY_FormantPath_setLeftContextNavigationLabels, U"FormantPath: Set left context navigation labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (FormantPath, Strings)
-		FormantPath_setLeftContextNavigationLabels (me, you, criterion);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-FORM (MODIFY_FormantPath_setRightContextNavigationLabels, U"FormantPath: Set right context navigation labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, criterion, U"Matching criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (FormantPath, Strings)	
-		FormantPath_setRightContextNavigationLabels (me, you, criterion);
-	MODIFY_FIRST_OF_TWO_END
+DIRECT (WINDOW_Sound_FormantPath_createFormantPathEditor) {
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Formant from batch.");
+	FIND_TWO_WITH_IOBJECT (FormantPath, Sound)
+		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, nullptr);
+		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
 }
 
 /********************** Cepstrum  ****************************************/
@@ -912,13 +1001,14 @@ DO
 FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
+	REAL (formantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
-	LABEL (U"The minimum and maximum ceilings are determined as:")
-	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
-	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	LABEL (U"The maximum and minimum ceilings are determined as:")
+	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction)^numberOfSteps.")
+	POSITIVE (ceilingStepFraction, U"Ceiling step size fraction", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	LABEL (U"For Marple analysis:")
 	POSITIVE (marple_tol1, U"Tolerance 1", U"1e-6")
@@ -932,7 +1022,7 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound multichannel;
-		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepFraction, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
 			( sourcesAsMultichannel ? & multichannel : nullptr ));
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
@@ -942,35 +1032,18 @@ DO
 FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (middleFormantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
+	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
-	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
+	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction)^numberOfSteps.")
+	POSITIVE (ceilingStepFraction, U"Ceiling step size fraction", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepFraction, numberOfStepsToACeiling);
 	CONVERT_EACH_END (my name.get())	
-}
-
-FORM (NEW_Sound_and_TextGrid_to_FormantPath_burg, U"Sound & TextGrid: To FormantPath (Burg method)", U"Sound & TextGrid: To FormantPath (burg)...") {
-	REAL (timeStep, U"Time step (s)", U"0.005")
-	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (middleFormantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
-	POSITIVE (windowLength, U"Window length (s)", U"0.025")
-	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
-	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" maximumFormant +/- numberOfSteps * ceilingStep")
-	POSITIVE (ceilingStep, U"Ceiling step size (Hz)", U"250.0")
-	NATURAL (numberOfStepsToACeiling, U"Number of steps to up / down", U"4")
-	OK
-DO
-	CONVERT_TWO (Sound, TextGrid)
-		autoFormantPath result = Sound_and_TextGrid_to_FormantPath_burg (me, you, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStep, numberOfStepsToACeiling);
-	CONVERT_TWO_END (my name.get())
 }
 
 #define Sound_to_LPC_addWarning \
@@ -1257,14 +1330,14 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
 	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
-	praat_addAction1 (classFormantPath, 0, U"Set navigation context...", 0, 0, MODIFY_FormantPath_setNavigationContext);
+	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);	
+	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
-	praat_addAction1 (classFormantPath, 0, U"Extract TextGrid", 0, 0, NEW_FormantPath_extractTextGrid);
-	
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set navigation labels...", 0, 0, MODIFY_FormantPath_setNavigationLabels);
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set left context navigation labels...", 0, 0, MODIFY_FormantPath_setLeftContextNavigationLabels);
-	praat_addAction2 (classFormantPath, 1, classStrings, 1, U"Set right context navigation labels...", 0, 0, MODIFY_FormantPath_setRightContextNavigationLabels);
-	
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (roughness)...", 0, 0, NEW_FormantPath_to_Matrix_roughness);
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (qsum)...", 0, 0, NEW_FormantPath_to_Matrix_qsum);
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (transition)...", 0, 0, NEW_FormantPath_to_Matrix_transition);
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (deltas)...", 0, 0, NEW_FormantPath_to_Matrix_deltas);
+	praat_addAction1 (classFormantPath, 0, U"Path finder...", 0, 0, MODIFY_FormantPath_pathFinder);
 
 	praat_addAction1 (classLFCC, 0, U"LFCC help", 0, 0, HELP_LFCC_help);
 	praat_CC_init (classLFCC);
@@ -1330,7 +1403,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classSound, 0, U"To LPC (burg)...", U"To LPC (covariance)...", 2, NEW_Sound_to_LPC_burg);
 	praat_addAction1 (classSound, 0, U"To LPC (marple)...", U"To LPC (burg)...", 2, NEW_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, U"To MFCC...", U"To LPC (marple)...", 1, NEW_Sound_to_MFCC);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"To FormantPath (burg)...", 0, 0, NEW_Sound_and_TextGrid_to_FormantPath_burg);
+	praat_addAction2 (classSound, 1, classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_Sound_FormantPath_createFormantPathEditor);
+	praat_addAction3 (classSound, 1, classTextGrid, 1, classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, GRAPHICS_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0, REAL_VocalTract_getLength);
