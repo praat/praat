@@ -226,8 +226,8 @@ static void do_ok (RunnerMFC me) {
 		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
 			my blanked = true;
-			drawNow (me);
-			Graphics_flushWs (my graphics.get());
+			Graphics_updateWs (my graphics.get());
+			GuiShell_drain (my windowForm);
 		}
 		if (experiment -> stimuliAreSounds) {
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
@@ -255,8 +255,8 @@ static void do_oops (RunnerMFC me) {
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
 		my blanked = true;
-		drawNow (me);
-		Graphics_flushWs (my graphics.get());
+		Graphics_updateWs (my graphics.get());
+		GuiShell_drain (my windowForm);
 	}
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
@@ -275,8 +275,8 @@ static void do_replay (RunnerMFC me) {
 	Editor_broadcastDataChanged (me);
 	if (experiment -> blankWhilePlaying) {
 		my blanked = true;
-		drawNow (me);
-		Graphics_flushWs (my graphics.get());
+		Graphics_updateWs (my graphics.get());
+		GuiShell_drain (my windowForm);
 	}
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
@@ -306,8 +306,8 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 		Editor_broadcastDataChanged (me);
 		if (experiment -> blankWhilePlaying) {
 			my blanked = true;
-			drawNow (me);
-			Graphics_flushWs (my graphics.get());
+			Graphics_updateWs (my graphics.get());
+			GuiShell_drain (my windowForm);
 		}
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
@@ -333,8 +333,8 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 			Editor_broadcastDataChanged (me);
 			if (experiment -> blankWhilePlaying) {
 				my blanked = true;
-				drawNow (me);
-				Graphics_flushWs (my graphics.get());
+				Graphics_updateWs (my graphics.get());
+				GuiShell_drain (my windowForm);
 			}
 			if (experiment -> stimuliAreSounds) {
 				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
