@@ -126,7 +126,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& works
 			goto end;
 	}
 end:
-	i--;
+	i --;
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
 	if (i == numberOfCoefficients)
@@ -220,7 +220,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 			goto end;
 	}
 end:
-	i--;
+	i --;
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
 	if (i == m)
@@ -247,7 +247,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 
 	longdouble xms = p / n;
 	if (xms <= 0.0) {
-		return xms;	// warning empty
+		return double (xms);	// warning empty
 	}
 	// (9)
 
@@ -268,7 +268,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 		if (denum <= 0.0)
 			return 0.0;	// warning ill-conditioned
 
-		a [i] = 2.0 * num / denum;
+		a [i] = 2.0 * double (num / denum);
 
 		// (10)
 
@@ -291,7 +291,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 			}
 		}
 	}
-	return xms;
+	return double (xms);
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee, VEC const& workspace) {
@@ -495,14 +495,14 @@ static autoLPC Sound_to_LPC_noThreads (Sound me, int predictionOrder, double ana
 			frameErrorCount ++;
 	
 		if (iframe % 10 == 1)
-			Melder_progress ( (double) iframe / numberOfFrames, U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
+			Melder_progress (double (iframe) / numberOfFrames, U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
 	}
 	return thee;
 }
 
 static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
-	if (numberOfProcessors <= 1) {
+	if (numberOfProcessors <= 1 ||true) {
 		/*
 			We cannot use multithreading.
 		*/

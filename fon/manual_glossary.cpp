@@ -521,7 +521,7 @@ MAN_BEGIN (U"total duration", U"ppgb", 20040505)
 INTRO (U"- the extent of the @@time domain@ (see there).")
 MAN_END
 
-MAN_BEGIN (U"vector peak interpolation", U"ppgb", 20010410)
+MAN_BEGIN (U"vector peak interpolation", U"ppgb", 20200912)
 INTRO (U"An algorithm for finding a maximum or a minimum in a sampled signal.")
 ENTRY (U"Overview")
 NORMAL (U"The signal is described with the sequence %y__%i_, %i = 1...%n, where %n is the number of samples. "
@@ -536,11 +536,11 @@ LIST_ITEM (U"2. The local maxima, which are at or %near %y__%i_, where %y__%i-1_
 LIST_ITEM (U"3. %y__%n_.")
 NORMAL (U"We will now see what %near means. The precision of the result depends on the %%interpolation method% of this algorithm.")
 ENTRY (U"1. Lowest precision: round to sample")
-NORMAL (U"If the interpolation method is None, the local maxima are %at the samples %m that satisfy %y__%m-1_ < %y__%m_ ≤ %y__%m+1_. "
+NORMAL (U"If the interpolation method is “none”, the local maxima are %at the samples %m that satisfy %y__%m-1_ < %y__%m_ ≤ %y__%m+1_. "
 	"Thus, their %x values are at %x__%m_ = %x__1_ + (%m - 1) %dx, and their %y values are %y__%m_.")
 NORMAL (U"This kind of precision is appropriate for an unordered sequence of values %y__%i_: the result is simply the greatest available value.")
 ENTRY (U"2. Middle precision: parabolic interpolation")
-NORMAL (U"If the interpolation method is Parabolic, the algorithm uses one point on each side of every local maximum %y__%m_ "
+NORMAL (U"If the interpolation method is “parabolic”, the algorithm uses one point on each side of every local maximum %y__%m_ "
 	"to estimate the location and value of the local maximum. Because a Taylor expansion shows that any smooth curve "
 	"can be approximated as a parabola in the vicinity of any local maximum, the location %x__%max_ and value %y__%max_ can be found "
 	"with the following procedure:")
@@ -559,12 +559,12 @@ LIST_ITEM (U"@@Intensity: Get time of minimum...")
 LIST_ITEM (U"@@Intensity: Get maximum...")
 LIST_ITEM (U"@@Intensity: Get time of maximum...")
 ENTRY (U"3. Higher precision: cubic interpolation")
-NORMAL (U"If the interpolation method is Cubic, the interpolation is performed over four points (see @@vector value interpolation@). "
+NORMAL (U"If the interpolation method is “cubic”, the interpolation is performed over four points (see @@vector value interpolation@). "
 	"The results are similar to those of the parabolic interpolation method, but you can use it (or sinc interpolation) if you want the result of a "
 	"command like ##Get maximum...# to be equal to the result of a sequence of commands like "
 	"##Get time of maximum...# and ##Get value at time...#.")
 ENTRY (U"4. Highest precision: sinc interpolation")
-NORMAL (U"If the interpolation method is Sinc70 or Sinc700, the algorithm assumes that the signal "
+NORMAL (U"If the interpolation method is “sinc70” or “sinc700”, the algorithm assumes that the signal "
 	"is a sum of sinc functions, so that a number of points (namely, 70 or 700) on each side of the initial guess %m must be taken into account "
 	"(see @@vector value interpolation@). The algorithm finds the maximum of this continuous function by Brent's method (see @@Press et al. (1992)@).")
 NORMAL (U"This method is appropriate for signals that result from sampling a continuous signal after it has been low-pass filtered "
@@ -576,7 +576,7 @@ LIST_ITEM (U"@@Sound: Get time of maximum...")
 LIST_ITEM (U"@@Sound: Get absolute extremum...")
 MAN_END
 
-MAN_BEGIN (U"vector value interpolation", U"ppgb", 19980104)
+MAN_BEGIN (U"vector value interpolation", U"ppgb", 20200912)
 INTRO (U"An algorithm for estimating the value of a sampled signal at a specified location.")
 ENTRY (U"Overview")
 NORMAL (U"The signal is described with the sequence %y__%i_, %i = 1...%n, where %n is the number of samples. "
@@ -586,7 +586,7 @@ FORMULA (U"%s = (%x - %x__1_) / %dx + 1")
 NORMAL (U"If the resulting %s is an integer number, the %y value must be %y__%s_. Otherwise, the estimated %y value %y(%s) must be interpolated "
 	"from nearby values of %y. The precision of the result depends on the %%interpolation method% of this algorithm.")
 ENTRY (U"1. Lowest precision: round to sample")
-NORMAL (U"If the interpolation method is Nearest, we take the value of the nearest point:")
+NORMAL (U"If the interpolation method is “nearest”, we take the value of the nearest point in either direction:")
 FORMULA (U"%near ≡ round (%s)")
 FORMULA (U"%y(%s) ≈ %y__%near_")
 ENTRY (U"2. Middle precision: linear interpolation")
@@ -600,7 +600,7 @@ ENTRY (U"3. Higher precision: cubic interpolation")
 NORMAL (U"If you know or assume that the function that underlies your points is %smooth, i.e. its derivative is defined for every %x, "
 	"linear interpolation would probably be poor, because the derivative of the interpolated function would abruptly change at every "
 	"sample point.")
-NORMAL (U"The next higher interpolation (Cubic), therefore, is differentiable at sample points. To enforce this, we define the "
+NORMAL (U"The next higher interpolation (“cubic”), therefore, is differentiable at sample points. To enforce this, we define the "
 	"derivatives %y′__%l_ and %y′__%r_ at the left and right sample points on the basis of %their immediate neighbours "
 	"(i.e., the algorithm needs four sample points), perhaps by a parabolic interpolation through these three points. "
 	"A parabolic interpolation has the advantage that the extrema will be computed correctly if "
@@ -635,7 +635,7 @@ LIST_ITEM (U"3. If %y′__%l_ + %y′__%r_ equals 2(%y__%r_ - %y__%l_), the thir
 LIST_ITEM (U"4. At the left and right points, one of the %φ is 0 and the other is 1, so that at these boundary points, "
 	"%y is computed with exact precision.")
 ENTRY (U"4. Highest precision: sinc interpolation")
-NORMAL (U"If the interpolation method is Sinc70 or Sinc700, the algorithm assumes that the signal "
+NORMAL (U"If the interpolation method is “sinc70” or “sinc700”, the algorithm assumes that the signal "
 	"is a sum of sinc functions, so that a number of points (the %%interpolation depth%: 70 or 700) on each side of %s must be taken into account.")
 NORMAL (U"Because the interpolation depth must be finite, the sum of sinc functions is multiplied by a Hanning window:")
 FORMULA (U"%s__%l_ ≡ floor (%s);   %s__%r_ ≡ %s__%l_ + 1")

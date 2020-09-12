@@ -508,7 +508,7 @@ NORMAL (U"An Intensity object represents an intensity contour at linearly spaced
 	"which is the normative auditory threshold for a 1000-Hz sine wave.")
 MAN_END
 
-MAN_BEGIN (U"Intensity: Get maximum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Intensity: Get maximum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value within the specified time domain, expressed in dB.")
@@ -517,7 +517,7 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 TAG (U"%%Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -549,7 +549,7 @@ NORMAL (U"After you do @@Sound: To Intensity...@, the mean intensity of the resu
 	"which can be found with #Info.")
 MAN_END
 
-MAN_BEGIN (U"Intensity: Get minimum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Intensity: Get minimum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value within a specified time domain, expressed in dB.")
@@ -558,7 +558,7 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -580,7 +580,7 @@ FORMULA (U"√ {1/(%n-1) ∑__%i=%m..%m+%n-1_ (%x__%i_ - %μ)^2}")
 NORMAL (U"where %n is the number of frames between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
-MAN_BEGIN (U"Intensity: Get time of maximum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Intensity: Get time of maximum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the maximum intensity within a specified time domain.")
@@ -589,12 +589,12 @@ TAG (U"%%Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 TAG (U"%%Interpolation")
-DEFINITION (U"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
 
-MAN_BEGIN (U"Intensity: Get time of minimum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Intensity: Get time of minimum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Intensity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the minimum intensity within a specified time domain.")
@@ -603,7 +603,7 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -617,7 +617,7 @@ TAG (U"##Time (s)")
 DEFINITION (U"the time at which the value is to be evaluated.")
 TAG (U"##Interpolation")
 DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
-	"The standard is Cubic because of the usual nonlinearity (logarithm) in the computation of intensity; "
+	"The standard is “cubic” because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
 
