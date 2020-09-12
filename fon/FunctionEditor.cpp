@@ -1263,7 +1263,7 @@ int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, d
 	if (Melder_debug == 53)
 		Melder_casual (U"draining");
 	Graphics_updateWs (our graphics.get());
-	GuiShell_drain (our windowForm);
+	//GuiShell_drain (our windowForm);   // this may not be needed on all platforms
 	return 1;
 }
 
