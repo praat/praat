@@ -233,7 +233,7 @@ void structGraphicsScreen :: v_flushWs () {
 			event. width = rect. width;
 			event. height = rect. height;
 			try {
-				Melder_casual (U"_GuiGtkDrawingArea_exposeCallback: ", event. x, U" ", event. y, U" ", event. width, U" ", event. height);
+				//Melder_casual (U"_GuiGtkDrawingArea_exposeCallback: ", event. x, U" ", event. y, U" ", event. width, U" ", event. height);
 				trace (U"send the expose callback");
 				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 				our d_drawingArea -> d_exposeCallback (our d_drawingArea -> d_exposeBoss, & event);
