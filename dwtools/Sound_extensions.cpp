@@ -1100,10 +1100,10 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 			return rightCrossing;
 	}
 	
-	if (! isdefined (leftCrossing) && ! isdefined (rightCrossing))
+	if (isundef (leftCrossing) && isundef (rightCrossing))
 		return undefined;
-	return ! isdefined (leftCrossing) ? rightCrossing : ( ! isdefined (rightCrossing) ? leftCrossing :
-		( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing ) );
+	return isundef (leftCrossing) ? rightCrossing : ( isundef (rightCrossing) ? leftCrossing :
+			( position - leftCrossing < rightCrossing - position ? leftCrossing : rightCrossing ) );
 }
 
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
