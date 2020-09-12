@@ -55,7 +55,7 @@ static void gui_drawingarea_cb_expose (DemoEditor me, GuiDrawingArea_ExposeEvent
 	if (! my foregroundGraphics)
 		return;   // could be the case in the very beginning
 static integer count=0;
-Melder_casual(U"gui_drawingarea_cb_expose ", ++count);
+//Melder_casual(U"gui_drawingarea_cb_expose ", ++count);
 	Graphics_clearWs (my foregroundGraphics.get());
 	Graphics_play (my backgroundGraphics.get(), my foregroundGraphics.get());
 }

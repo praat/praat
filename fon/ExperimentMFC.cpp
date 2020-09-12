@@ -98,7 +98,8 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 			Determine partial file name.
 		*/
 		char32 *comma = str32chr (fileNames, U',');
-		if (comma) *comma = U'\0';
+		if (comma)
+			*comma = U'\0';
 		/*
 			Determine complete (relative) file name.
 		*/
@@ -157,7 +158,8 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 		/*
 			Cycle.
 		*/
-		if (! comma) break;
+		if (! comma)
+			break;
 		fileNames = & comma [1];
 	}
 }

@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200907)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200910)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.20beta# (10 September 2020)")
+LIST_ITEM (U"• Second beta version for macOS Big Sur.")
 NORMAL (U"##6.1.19beta# (7 September 2020)")
 LIST_ITEM (U"• First beta version for macOS Big Sur.")
 NORMAL (U"##6.1.18alpha# (1 September 2020)")
