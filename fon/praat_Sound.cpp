@@ -729,7 +729,7 @@ FORM (NEW_Sound_extractPart, U"Sound: Extract part", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_extractPart (me, fromTime, toTime,
-			windowShape, relativeWidth, preserveTimes);
+				windowShape, relativeWidth, preserveTimes);
 	CONVERT_EACH_END (my name.get(), U"_part")
 }
 
@@ -862,7 +862,7 @@ FORM (REAL_Sound_getAbsoluteExtremum, U"Sound: Get absolute extremum", U"Sound: 
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -872,13 +872,13 @@ FORM (REAL_Sound_getEnergy, U"Sound: Get energy", U"Sound: Get energy...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getEnergy (me, fromTime, toTime);
+		const double result = Sound_getEnergy (me, fromTime, toTime);
 	NUMBER_ONE_END (U" Pa2 sec")
 }
 
 DIRECT (REAL_Sound_getEnergyInAir) {
 	NUMBER_ONE (Sound)
-		double result = Sound_getEnergyInAir (me);
+		const double result = Sound_getEnergyInAir (me);
 	NUMBER_ONE_END (U" Joule/m2")
 }
 
@@ -887,13 +887,13 @@ FORM (REAL_Sound_getIndexFromTime, U"Get sample number from time", U"Get sample 
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sampled_xToIndex (me, time);
+		const double result = Sampled_xToIndex (me, time);
 	NUMBER_ONE_END (U" (index at time ", time, U" seconds)")
 }
 
 DIRECT (REAL_Sound_getIntensity_dB) {
 	NUMBER_ONE (Sound)
-		double result = Sound_getIntensity_dB (me);
+		const double result = Sound_getIntensity_dB (me);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -909,7 +909,7 @@ FORM (REAL_Sound_getMaximum, U"Sound: Get maximum", U"Sound: Get maximum...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -919,7 +919,7 @@ FORM (REAL_old_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getMean (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
+		const double result = Vector_getMean (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -931,7 +931,7 @@ FORM (REAL_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 DO_ALTERNATIVE (REAL_old_Sound_getMean)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Vector_getMean (me, fromTime, toTime, channel);
+		const double result = Vector_getMean (me, fromTime, toTime, channel);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -947,7 +947,7 @@ FORM (REAL_Sound_getMinimum, U"Sound: Get minimum", U"Sound: Get minimum...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -957,7 +957,7 @@ FORM (REAL_old_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing"
 DO
 	NUMBER_ONE (Sound)
 		if (my ny > 1) Melder_throw (U"Cannot determine a zero crossing for a stereo sound.");
-		double result = Sound_getNearestZeroCrossing (me, time, 1);
+		const double result = Sound_getNearestZeroCrossing (me, time, 1);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -968,19 +968,19 @@ FORM (REAL_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing", U"
 DO_ALTERNATIVE (REAL_old_Sound_getNearestZeroCrossing)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Sound_getNearestZeroCrossing (me, time, channel);
+		const double result = Sound_getNearestZeroCrossing (me, time, channel);
 	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfChannels) {
 	NUMBER_ONE (Sound)
-		integer result = my ny;
+		const integer result = my ny;
 	NUMBER_ONE_END (result == 1 ? U" channel (mono)" : result == 2 ? U" channels (stereo)" : U" channels")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfSamples) {
 	NUMBER_ONE (Sound)
-		integer result = my nx;
+		const integer result = my nx;
 	NUMBER_ONE_END (U" samples")
 }
 
@@ -990,13 +990,13 @@ FORM (REAL_Sound_getPower, U"Sound: Get power", U"Sound: Get power...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getPower (me, fromTime, toTime);
+		const double result = Sound_getPower (me, fromTime, toTime);
 	NUMBER_ONE_END (U" Pa2")
 }
 
 DIRECT (REAL_Sound_getPowerInAir) {
 	NUMBER_ONE (Sound)
-		double result = Sound_getPowerInAir (me);
+		const double result = Sound_getPowerInAir (me);
 	NUMBER_ONE_END (U" Watt/m2")
 }
 
@@ -1006,19 +1006,19 @@ FORM (REAL_Sound_getRootMeanSquare, U"Sound: Get root-mean-square", U"Sound: Get
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getRootMeanSquare (me, fromTime, toTime);
+		const double result = Sound_getRootMeanSquare (me, fromTime, toTime);
 	NUMBER_ONE_END (U" Pascal")
 }
 
 DIRECT (REAL_Sound_getSamplePeriod) {
 	NUMBER_ONE (Sound)
-		double result = my dx;
+		const double result = my dx;
 	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (REAL_Sound_getSampleRate) {
 	NUMBER_ONE (Sound)
-		double result = 1.0 / my dx;
+		const double result = 1.0 / my dx;
 	NUMBER_ONE_END (U" Hz")
 }
 
@@ -1028,7 +1028,7 @@ FORM (REAL_old_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"S
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getStandardDeviation (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
+		const double result = Vector_getStandardDeviation (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1040,7 +1040,7 @@ FORM (REAL_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"Sound
 DO_ALTERNATIVE (REAL_old_Sound_getStandardDeviation)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Vector_getStandardDeviation (me, fromTime, toTime, channel);
+		const double result = Vector_getStandardDeviation (me, fromTime, toTime, channel);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1049,7 +1049,7 @@ FORM (REAL_Sound_getTimeFromIndex, U"Get time from sample number", U"Get time fr
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sampled_indexToX (me, sampleNumber);
+		const double result = Sampled_indexToX (me, sampleNumber);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1071,7 +1071,7 @@ FORM (REAL_Sound_getTimeOfMaximum, U"Sound: Get time of maximum", U"Sound: Get t
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1087,7 +1087,7 @@ FORM (REAL_Sound_getTimeOfMinimum, U"Sound: Get time of minimum", U"Sound: Get t
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1096,8 +1096,8 @@ FORM (REAL_old_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"So
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
-			my ny == 1 ? my z [1] [sampleNumber] : 0.5 * (my z [1] [sampleNumber] + my z [2] [sampleNumber]);
+		const double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
+				my ny == 1 ? my z [1] [sampleNumber] : 0.5 * (my z [1] [sampleNumber] + my z [2] [sampleNumber]);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1108,8 +1108,8 @@ FORM (REAL_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound:
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtIndex)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
-			Sampled_getValueAtSample (me, sampleNumber, channel, 0);
+		const double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
+				Sampled_getValueAtSample (me, sampleNumber, channel, 0);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1124,7 +1124,7 @@ FORM (REAL_old_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get v
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, interpolation);
+		const double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1141,7 +1141,7 @@ FORM (REAL_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtTime)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Vector_getValueAtX (me, time, channel, interpolation);
+		const double result = Vector_getValueAtX (me, time, channel, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1276,36 +1276,32 @@ DIRECT (WINDOW_Sound_recordStereo) {
 END }
 
 FORM (RECORD1_Sound_record_fixedTime, U"Record Sound", nullptr) {
+	LABEL (U"This menu command is usually hidden,")
+	LABEL (U"   because its behaviour is platform-dependent.")
+	LABEL (U"The combination of “microphone” and “44100 Hz” is likely")
+	LABEL (U"   to work on all computers.")
+	LABEL (U"The “Gain” and “Balance” settings tend to be obsolete")
+	LABEL (U"   and may not work at all on your computer.")
 	RADIO (inputSource, U"Input source", 1)
-		RADIOBUTTON (U"Microphone")
-		RADIOBUTTON (U"Line")
-	REAL (gain, U"Gain (0-1)", U"0.1")
+		OPTION (U"microphone")
+		OPTION (U"line")
+	REAL (gain, U"Gain (0-1)", U"1.0")
 	REAL (balance, U"Balance (0-1)", U"0.5")
-	RADIOSTR (samplingFrequency, U"Sampling frequency", 1)
-		#ifdef UNIX
-		RADIOBUTTON (U"8000")
-		#endif
-		#ifndef macintosh
-		RADIOBUTTON (U"11025")
-		#endif
-		#ifdef UNIX
-		RADIOBUTTON (U"16000")
-		#endif
-		#ifndef macintosh
-		RADIOBUTTON (U"22050")
-		#endif
-		#ifdef UNIX
-		RADIOBUTTON (U"32000")
-		#endif
-		RADIOBUTTON (U"44100")
-		RADIOBUTTON (U"48000")
-		RADIOBUTTON (U"96000")
+	OPTIONMENUSTR (samplingFrequency, U"Sampling frequency (Hz)", 6)
+		OPTION (U"8000")
+		OPTION (U"11025")
+		OPTION (U"16000")
+		OPTION (U"22050")
+		OPTION (U"32000")
+		OPTION (U"44100")
+		OPTION (U"48000")
+		OPTION (U"96000")
 	POSITIVE (duration, U"Duration (seconds)", U"1.0")
 	OK
 DO
 	CREATE_ONE
 		autoSound result = Sound_record_fixedTime (inputSource,
-			gain, balance, Melder_atof (samplingFrequency), duration);
+				gain, balance, Melder_atof (samplingFrequency), duration);
 	CREATE_ONE_END (U"untitled")
 }
 
