@@ -61,14 +61,17 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 }
 
 static void drawNow (RunnerMFC me) {
-	if (! my graphics) return;   // could be the case in the very beginning
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	integer iresponse;
-	if (! my data) return;
+	if (! my data)
+		return;
 	Graphics_setGrey (my graphics.get(), 0.8);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setGrey (my graphics.get(), 0.0);
-	if (my blanked) return;
+	if (my blanked)
+		return;
 	if (experiment -> trial == 0) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
@@ -95,8 +98,8 @@ static void drawNow (RunnerMFC me) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_TOP);
 		Graphics_setFontSize (my graphics.get(), 24);
 		/*
-		 * The run text.
-		 */
+			The run text.
+		*/
 		if (visibleText_p [0] != U'\0') {
 			char32 *visibleText_q = str32chr (visibleText_p, U'|');
 			if (visibleText_q)
@@ -115,9 +118,11 @@ static void drawNow (RunnerMFC me) {
 			conststring32 textToDraw = response -> label.get();   // can be overridden
 			if (visibleText_p [0] != U'\0') {
 				char32 *visibleText_q = str32chr (visibleText_p, U'|');
-				if (visibleText_q) *visibleText_q = U'\0';
+				if (visibleText_q)
+					*visibleText_q = U'\0';
 				textToDraw = visibleText_p;   // override
-				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
+				if (visibleText_q)
+					visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
 			}
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
 				structMelderFile file { };
@@ -136,14 +141,14 @@ static void drawNow (RunnerMFC me) {
 				Graphics_rectangle (my graphics.get(), response -> left, response -> right, response -> bottom, response -> top);
 				Graphics_setFontSize (my graphics.get(), response -> fontSize ? response -> fontSize : 24);
 				Graphics_text (my graphics.get(), 0.5 * (response -> left + response -> right),
-					0.5 * (response -> bottom + response -> top), textToDraw);
+						0.5 * (response -> bottom + response -> top), textToDraw);
 			}
 			Graphics_setFontSize (my graphics.get(), 24);
 		}
 		for (iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 			const GoodnessMFC goodness = & experiment -> goodness [iresponse];
 			Graphics_setColour (my graphics.get(), experiment -> responses [experiment -> trial] == 0 ? Melder_SILVER :
-				experiment -> goodnesses [experiment -> trial] == iresponse ? Melder_RED : Melder_YELLOW);
+					experiment -> goodnesses [experiment -> trial] == iresponse ? Melder_RED : Melder_YELLOW);
 			Graphics_setLineWidth (my graphics.get(), 3.0);
 			Graphics_fillRectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
 			Graphics_setColour (my graphics.get(), Melder_MAROON);
@@ -283,10 +288,14 @@ static void do_replay (RunnerMFC me) {
 	Graphics_updateWs (my graphics.get());
 }
 
-static void gui_drawingarea_cb_mouseDown (RunnerMFC me, GuiDrawingArea_MouseEvent event) {
-	if (! my graphics) return;   // could be the case in the very beginning
+static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent event) {
+	if (! my graphics)
+		return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
-	if (! my data) return;
+	if (! my data)
+		return;
+	if (! event -> isClick())
+		return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;
 	if (! experiment -> blankWhilePlaying)
 		reactionTime -= experiment -> stimulusInitialSilenceDuration;
@@ -351,9 +360,8 @@ static void gui_drawingarea_cb_mouseDown (RunnerMFC me, GuiDrawingArea_MouseEven
 		} else if (x > experiment -> oops_left && x < experiment -> oops_right &&
 			y > experiment -> oops_bottom && y < experiment -> oops_top)
 		{
-			if (experiment -> trial > 1) {
+			if (experiment -> trial > 1)
 				do_oops (me);
-			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
 			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				const ResponseMFC response = & experiment -> response [iresponse];
@@ -431,9 +439,8 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 		{
 			do_replay (me);
 		} else if (experiment -> oops_key && experiment -> oops_key [0] == event -> key) {
-			if (experiment -> trial > 1) {
+			if (experiment -> trial > 1)
 				do_oops (me);
-			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
 			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				const ResponseMFC response = & experiment -> response [iresponse];
@@ -476,7 +483,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 
 void structRunnerMFC :: v_createChildren () {
 	our d_drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouseDown,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
 		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0
 	);
 }
