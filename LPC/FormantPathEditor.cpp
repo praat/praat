@@ -115,7 +115,7 @@ void FormantPathEditor_setTierOrder (FormantPathEditor me, conststring32 tierNum
 		Rest of checks is done in the following routine
 	*/
 	const integer selectedTier = TextGridView_getOriginTierNumber (my pathGridView.get(), my selectedTier);
-	TextGridView_modifyView (my pathGridView.get(), tierNumbers);
+	TextGridView_modifyView (my pathGridView.get(), tierNumbers.get());
 	my selectedTier = TextGridView_getViewTierNumber (my pathGridView.get(), selectedTier);
 	my pathTierNumber = TextGridView_getViewTierNumber (my pathGridView.get(), pathTierNumber);
 }

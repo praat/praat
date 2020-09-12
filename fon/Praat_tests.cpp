@@ -619,16 +619,19 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				VEC h;
 				autoVEC j;
 				//VEC jh = j;
-				//VEC zero = newVECzero (10);   // should be ruled out
-				//constVEC zero = newVECzero (10);   // should be ruled out
-				//j = h;   // up assignment standardly correctly ruled out
-				//h = j;   // down assignment was explicitly ruled out as well
-				//h = VEC (j);
+				//VEC zero = newVECzero (10);   // should be ruled out: "Call to deleted constructor of 'VEC' (aka 'vector<double>')"
+				//constVEC zero = newVECzero (10);   // ruled out: "Conversion function from 'autoVEC' (aka 'autovector<double>')
+							// to 'constVEC' (aka 'constvector<double>') invokes a deleted function"
+				//j = h;   // up assignment standardly correctly ruled out: "No viable overloaded '='"
+				//h = j;   // down assignment was explicitly ruled out as well: "Overload resolution selected deleted operator '='"
+				//h = VEC (j);   // ruled out: "Functional-style cast from 'autoVEC' (aka 'autovector<double>')
+							// to 'VEC' (aka 'vector<double>') uses deleted function"
 				VEC & jref = j;   // (in)correctly? accepted
 				VEC *ph = & h;
 				autoVEC *pj = & j;
 				ph = pj;   // (in)correctly? accepted
-				//pj = ph;   // correctly ruled out
+				//pj = ph;   // correctly ruled out: "Assigning to 'autoVEC *' (aka 'autovector<double> *')
+							// from incompatible type 'VEC *' (aka 'vector<double> *')
 				#endif
 				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
 				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);
