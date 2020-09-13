@@ -145,7 +145,7 @@ FORM (GRAPHICS_TextGrid_Pitch_draw, U"TextGrid & Pitch: Draw", nullptr) {
 	POSITIVE (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
 	POSITIVE (fontSize, U"Font size (points)", U"18")
 	BOOLEAN (useTextStyles, U"Use text styles", true)
-	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"Left") OPTION (U"Centre") OPTION (U"Right")
+	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"left") OPTION (U"centre") OPTION (U"right")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -162,7 +162,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
 	REAL (toFrequency, U"right Frequency range (ERB)", U"10.0")
 	POSITIVE (fontSize, U"Font size (points)", U"18")
 	BOOLEAN (useTextStyles, U"Use text styles", true)
-	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"Left") OPTION (U"Centre") OPTION (U"Right")
+	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"left") OPTION (U"centre") OPTION (U"right")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -179,7 +179,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarith
 	POSITIVE (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
 	POSITIVE (fontSize, U"Font size (points)", U"18")
 	BOOLEAN (useTextStyles, U"Use text styles", true)
-	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"Left") OPTION (U"Centre") OPTION (U"Right")
+	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"left") OPTION (U"centre") OPTION (U"right")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -196,7 +196,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
 	REAL (toFrequency, U"right Frequency range (mel)", U"500.0")
 	POSITIVE (fontSize, U"Font size (points)", U"18")
 	BOOLEAN (useTextStyles, U"Use text styles", true)
-	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"Left") OPTION (U"Centre") OPTION (U"Right")
+	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"left") OPTION (U"centre") OPTION (U"right")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -214,7 +214,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones"
 	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
 	POSITIVE (fontSize, U"Font size (points)", U"18")
 	BOOLEAN (useTextStyles, U"Use text styles", true)
-	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"Left") OPTION (U"Centre") OPTION (U"Right")
+	OPTIONMENUx (textAlignment, U"Text alignment", 2, 0) OPTION (U"left") OPTION (U"centre") OPTION (U"right")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -461,9 +461,9 @@ DO
 
 FORM (NEW1_Pitch_TextTier_to_PitchTier, U"Pitch & TextTier to PitchTier", U"Pitch & TextTier: To PitchTier...") {
 	RADIOx (unvoicedStrategy, U"Unvoiced strategy", 3, 0)
-		RADIOBUTTON (U"Zero")
-		RADIOBUTTON (U"Error")
-		RADIOBUTTON (U"Interpolate")
+		RADIOBUTTON (U"zero")
+		RADIOBUTTON (U"error")
+		RADIOBUTTON (U"interpolate")
 	OK
 DO
 	CONVERT_TWO (Pitch, TextTier)

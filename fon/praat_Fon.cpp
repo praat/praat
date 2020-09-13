@@ -391,7 +391,7 @@ FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value a
 	REAL (time, U"Time (s)", U"0.5")
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	RADIO (interpolation, U"Interpolation", 1)   // ignored
-		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"linear")
 	OK
 DO
 	NUMBER_ONE (Formant)
@@ -404,7 +404,7 @@ FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get
 	REAL (time, U"Time (s)", U"0.5")
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	RADIO (interpolation, U"Interpolation", 1)   // ignored
-		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"linear")
 	OK
 DO
 	NUMBER_ONE (Formant)
@@ -417,8 +417,8 @@ FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum..
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Formant)
@@ -431,8 +431,8 @@ FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum..
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Formant)
@@ -445,8 +445,8 @@ FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant:
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Formant)
@@ -459,8 +459,8 @@ FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant:
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Formant)
@@ -583,7 +583,8 @@ DO
 	CONVERT_EACH (Formant)
 		autoFormant result = Formant_tracker (me, numberOfTracks,
 			referenceF1, referenceF2, referenceF3, referenceF4, referenceF5,
-			frequencyCost, bandwidthCost, transitionCost);
+			frequencyCost, bandwidthCost, transitionCost
+		);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -660,7 +661,7 @@ FORM (REAL_Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: G
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -669,7 +670,7 @@ FORM (REAL_Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mea
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Harmonicity_getMean (me, fromTime, toTime);
+		const double result = Harmonicity_getMean (me, fromTime, toTime);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -678,7 +679,7 @@ FORM (REAL_Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: G
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -687,7 +688,7 @@ FORM (REAL_Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviati
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Harmonicity_getStandardDeviation (me, fromTime, toTime);
+		const double result = Harmonicity_getStandardDeviation (me, fromTime, toTime);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -696,7 +697,7 @@ FORM (REAL_Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -705,7 +706,7 @@ FORM (REAL_Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -714,7 +715,7 @@ FORM (REAL_Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity:
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = Vector_getValueAtX (me, time, 1, interpolation);
+		const double result = Vector_getValueAtX (me, time, 1, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -723,7 +724,7 @@ FORM (REAL_Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Ge
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
+		const double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -777,7 +778,7 @@ FORM (REAL_Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get v
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Vector_getValueAtX (me, time, 1, interpolation);
+		const double result = Vector_getValueAtX (me, time, 1, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -786,7 +787,7 @@ FORM (REAL_Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get va
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
+		const double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -795,7 +796,7 @@ FORM (REAL_Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get min
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -804,7 +805,7 @@ FORM (REAL_Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Inte
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -813,7 +814,7 @@ FORM (REAL_Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get max
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -822,7 +823,7 @@ FORM (REAL_Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Inte
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -832,7 +833,7 @@ FORM (REAL_Intensity_getQuantile, U"Intensity: Get quantile", 0) {
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Intensity_getQuantile (me, fromTime, toTime, quantile);
+		const double result = Intensity_getQuantile (me, fromTime, toTime, quantile);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -841,7 +842,7 @@ FORM (REAL_old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean.
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, 0, true);
+		const double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, 0, true);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -854,7 +855,7 @@ FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
 	OK
 DO_ALTERNATIVE (REAL_old_Intensity_getMean)
 	NUMBER_ONE (Intensity)
-		double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, averagingMethod, true);
+		const double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, averagingMethod, true);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -863,7 +864,7 @@ FORM (REAL_Intensity_getStandardDeviation, U"Intensity: Get standard deviation",
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = Vector_getStandardDeviation (me, fromTime, toTime, 1);
+		const double result = Vector_getStandardDeviation (me, fromTime, toTime, 1);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -917,9 +918,9 @@ FORM (GRAPHICS_Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
 	REAL (toIntensity, U"To intensity (dB)", U"100.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	RADIO (drawingMethod, U"Drawing method", 1)
-		RADIOBUTTON (U"Speckles")
-		RADIOBUTTON (U"Curve")
-		RADIOBUTTON (U"Speckles and curve")
+		RADIOBUTTON (U"speckles")
+		RADIOBUTTON (U"curve")
+		RADIOBUTTON (U"speckles and curve")
 	OK
 DO
 	GRAPHICS_TWO (Pitch, Intensity)
@@ -995,10 +996,10 @@ FORM (GRAPHICS_Ltas_draw, U"Ltas: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 2)
-		OPTION (U"Curve")
-		OPTION (U"Bars")
-		OPTION (U"Poles")
-		OPTION (U"Speckles")
+		OPTION (U"curve")
+		OPTION (U"bars")
+		OPTION (U"poles")
+		OPTION (U"speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 	GRAPHICS_EACH (Ltas)
@@ -1447,7 +1448,7 @@ DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
+				garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_EACH_END
 }
 
@@ -1460,7 +1461,7 @@ FORM (GRAPHICS_Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::ERB);
+				garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_EACH_END
 }
 
@@ -1474,7 +1475,7 @@ DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
+				garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
 }
 
@@ -1487,7 +1488,7 @@ FORM (GRAPHICS_Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::MEL);
+				garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_EACH_END
 }
 
@@ -1501,7 +1502,7 @@ FORM (GRAPHICS_Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"P
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
+				garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_EACH_END
 }
 
@@ -1515,7 +1516,7 @@ FORM (GRAPHICS_Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"P
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_200);
+				garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_200);
 	GRAPHICS_EACH_END
 }
 
@@ -1529,7 +1530,7 @@ FORM (GRAPHICS_Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"P
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_440);
+				garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_440);
 	GRAPHICS_EACH_END
 }
 
@@ -1580,8 +1581,8 @@ FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
@@ -1594,8 +1595,8 @@ FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
@@ -1618,14 +1619,14 @@ DO
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 	RADIO (unit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Mel")
-		RADIOBUTTON (U"Semitones")
+		RADIOBUTTON (U"mel")
+		RADIOBUTTON (U"semitones")
 		RADIOBUTTON (U"ERB")
 	OK
 DO
 	FIND_ONE (Pitch)
 		double slope;
-		integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
+		const integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 			(me, & slope);
 		if (nVoiced < 2) {
 			Melder_information (U"--undefined--");
@@ -1666,14 +1667,14 @@ FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr
 		OPTION (U"ERB")
 	OK
 DO
-	kPitch_unit unit =
+	const kPitch_unit unit =
 		unit_i == 1 ? kPitch_unit::HERTZ :
 		unit_i == 2 ? kPitch_unit::MEL :
 		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
 		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
 		kPitch_unit::ERB;
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
+		const double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
 		conststring32 unitText =
 			unit == kPitch_unit::HERTZ ? U"Hz" :
 			unit == kPitch_unit::MEL ? U"mel" :
@@ -1687,12 +1688,12 @@ FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
+		const double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1700,12 +1701,12 @@ FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
+		const double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1713,8 +1714,8 @@ FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value
 	REAL (time, U"Time (s)", U"0.5")
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"nearest")
+		RADIOBUTTON (U"linear")
 	OK
 DO
 	NUMBER_ONE (Pitch)
@@ -1760,8 +1761,8 @@ FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: L
 	NUMVEC (times, U"Times (s)", U"{ 0.5, 0.7, 2.0 }")
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
+		RADIOBUTTON (U"nearest")
+		RADIOBUTTON (U"linear")
 	OK
 DO
 	NUMVEC_ONE (Pitch)
@@ -1895,7 +1896,7 @@ FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
 		OPTION (U"ERB")
 	OK
 DO
-	kPitch_unit unit =
+	const kPitch_unit unit =
 		unit_i == 1 ? kPitch_unit::HERTZ :
 		unit_i == 2 ? kPitch_unit::MEL :
 		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
@@ -1977,15 +1978,15 @@ FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"500.0")
 	RADIOx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
-		RADIOBUTTON (U"Normal")
-		RADIOBUTTON (U"Dotted")
-		RADIOBUTTON (U"Blank")
+		RADIOBUTTON (U"normal")
+		RADIOBUTTON (U"dotted")
+		RADIOBUTTON (U"blank")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (PitchTier, Pitch)
 		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			lineTypeForNonperiodicIntervals, garnish, U"lines and speckles");
+				lineTypeForNonperiodicIntervals, garnish, U"lines and speckles");
 	GRAPHICS_TWO_END
 }
 
@@ -1994,9 +1995,9 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"500.0")
 	RADIOx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
-		RADIOBUTTON (U"Normal")
-		RADIOBUTTON (U"Dotted")
-		RADIOBUTTON (U"Blank")
+		RADIOBUTTON (U"normal")
+		RADIOBUTTON (U"dotted")
+		RADIOBUTTON (U"blank")
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
@@ -2007,7 +2008,7 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
 	GRAPHICS_TWO (PitchTier, Pitch)
 		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			lineTypeForNonperiodicIntervals, garnish, drawingMethod);
+				lineTypeForNonperiodicIntervals, garnish, drawingMethod);
 	GRAPHICS_TWO_END
 }
 
@@ -2168,7 +2169,7 @@ DO
 	INFO_THREE (Sound, Pitch, PointProcess)
 		MelderInfo_open ();
 		Sound_Pitch_PointProcess_voiceReport (me, you, him, fromTime, toTime, fromPitch, toPitch,
-			maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
+				maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
 		MelderInfo_close ();
 	INFO_THREE_END
 }
@@ -2200,7 +2201,7 @@ FORM (GRAPHICS_Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...
 DO
 	GRAPHICS_EACH (Spectrogram)
 		Spectrogram_paint (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			maximum, autoscaling, dynamicRange, preEmphasis, dynamicCompression, garnish);
+				maximum, autoscaling, dynamicRange, preEmphasis, dynamicCompression, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -2223,7 +2224,7 @@ FORM (REAL_Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)
 	OK
 DO
 	NUMBER_ONE (Spectrogram)
-		double result = Matrix_getValueAtXY (me, time, frequency);
+		const double result = Matrix_getValueAtXY (me, time, frequency);
 	NUMBER_ONE_END (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)")
 }
 
@@ -2330,7 +2331,7 @@ FORM (NEW_Spectrum_tabulate, U"Spectrum: Tabulate", 0) {
 DO
 	CONVERT_EACH (Spectrum)
 		autoTable result = Spectrum_tabulate (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
-			includeEnergyDensity, includePowerDensity);
+				includeEnergyDensity, includePowerDensity);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -2342,7 +2343,7 @@ FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getBandDensity (me, bandFloor, bandCeiling);
+		const double result = Spectrum_getBandDensity (me, bandFloor, bandCeiling);
 	NUMBER_ONE_END (U" Pa2 / Hz2")
 }
 
@@ -2354,8 +2355,8 @@ FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density diffe
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getBandDensityDifference (me,
-			lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
+		const double result = Spectrum_getBandDensityDifference (me,
+				lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -2365,7 +2366,7 @@ FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getBandEnergy (me, bandFloor, bandCeiling);
+		const double result = Spectrum_getBandEnergy (me, bandFloor, bandCeiling);
 	NUMBER_ONE_END (U" Pa2 sec")
 }
 
@@ -2377,8 +2378,8 @@ FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy differe
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getBandEnergyDifference (me,
-			lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
+		const double result = Spectrum_getBandEnergyDifference (me,
+				lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -2387,13 +2388,13 @@ FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from f
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Sampled_xToIndex (me, frequency);
+		const double result = Sampled_xToIndex (me, frequency);
 	NUMBER_ONE_END (U" (bin number as a real value)")
 }
 
 DIRECT (REAL_Spectrum_getBinWidth) {
 	NUMBER_ONE (Spectrum)
-		double result = my dx;
+		const double result = my dx;
 	NUMBER_ONE_END (U" hertz")
 }
 
@@ -2403,7 +2404,7 @@ FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectru
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getCentralMoment (me, moment, power);
+		const double result = Spectrum_getCentralMoment (me, moment, power);
 	NUMBER_ONE_END (U" hertz to the power ", moment)
 }
 
@@ -2412,7 +2413,7 @@ FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Sp
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getCentreOfGravity (me, power);
+		const double result = Spectrum_getCentreOfGravity (me, power);
 	NUMBER_ONE_END (U" hertz")
 }
 
@@ -2421,19 +2422,19 @@ FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nu
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Sampled_indexToX (me, bandNumber);
+		const double result = Sampled_indexToX (me, bandNumber);
 	NUMBER_ONE_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getLowestFrequency) {
 	NUMBER_ONE (Spectrum)
-		double result = my xmin;
+		const double result = my xmin;
 	NUMBER_ONE_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getHighestFrequency) {
 	NUMBER_ONE (Spectrum)
-		double result = my xmax;
+		const double result = my xmax;
 	NUMBER_ONE_END (U" hertz");
 }
 
@@ -2443,7 +2444,7 @@ FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullp
 DO
 	NUMBER_ONE (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"Bin number should not exceed number of bins.");
-		double result = my z [1] [binNumber];
+		const double result = my z [1] [binNumber];
 	NUMBER_ONE_END (U" (real value in bin ", binNumber, U")")
 }
 
@@ -2453,7 +2454,7 @@ FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in b
 DO
 	NUMBER_ONE (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
-		double result = my z [2] [binNumber];
+		const double result = my z [2] [binNumber];
 	NUMBER_ONE_END (U" (imaginary value in bin ", binNumber, U")")
 }
 
@@ -2462,7 +2463,7 @@ FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurt
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getKurtosis (me, power);
+		const double result = Spectrum_getKurtosis (me, power);
 	NUMBER_ONE_END (U" (kurtosis)")
 }
 
@@ -2472,7 +2473,7 @@ FORM (REAL_Spectrum_getSoundPressureLevelOfNearestMaximum, U"Spectrum: Get sound
 DO
 	NUMBER_ONE (Spectrum)
 		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
-		double result = maximum. y;
+		const double result = maximum. y;
 	NUMBER_ONE_END (U" \"dB/Hz\"")
 }
 
@@ -2482,13 +2483,13 @@ FORM (REAL_Spectrum_getFrequencyOfNearestMaximum, U"Spectrum: Get frequency of n
 DO
 	NUMBER_ONE (Spectrum)
 		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
-		double result = maximum. x;
+		const double result = maximum. x;
 	NUMBER_ONE_END (U" Hz")
 }
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
 	NUMBER_ONE (Spectrum)
-		integer result = my nx;
+		const integer result = my nx;
 	NUMBER_ONE_END (U" bins")
 }
 
@@ -2497,7 +2498,7 @@ FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skew
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getSkewness (me, power);
+		const double result = Spectrum_getSkewness (me, power);
 	NUMBER_ONE_END (U" (skewness)")
 }
 
@@ -2506,7 +2507,7 @@ FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		double result = Spectrum_getStandardDeviation (me, power);
+		const double result = Spectrum_getStandardDeviation (me, power);
 	NUMBER_ONE_END (U" hertz")
 }
 
@@ -2717,13 +2718,13 @@ DIRECT (WINDOW_Strings_viewAndEdit) {
 
 DIRECT (BOOLEAN_Strings_equal) {
 	NUMBER_COUPLE (Strings)
-		integer result = (integer) Data_equal (me, you);   // cast bool to 0 or 1
+		const integer result = (integer) Data_equal (me, you);   // cast bool to 0 or 1
 	NUMBER_COUPLE_END (result ? U" (equal)" : U" (unequal)")
 }
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {
 	NUMBER_ONE (Strings)
-		integer result = my numberOfStrings;
+		const integer result = my numberOfStrings;
 	NUMBER_ONE_END (U" strings")
 }
 
@@ -2805,7 +2806,7 @@ DO
 	CONVERT_EACH (Strings)
 		integer numberOfMatches, numberOfStringMatches;
 		autoStrings result = Strings_change (me, find, replaceWith,
-			replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
+				replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
 	CONVERT_EACH_END (my name.get(), U"_replaced")
 }
 

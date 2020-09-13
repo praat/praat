@@ -275,8 +275,8 @@ DO
 FORM (MODIFY_DataModeler_setDataPointStatus, U"DataModeler: Set data point status", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	OPTIONMENU (dataStatus, U"Status", 1)
-		OPTION (U"Valid")
-		OPTION (U"Invalid")
+		OPTION (U"valid")
+		OPTION (U"invalid")
 	OK
 DO
 	kDataModelerData status = dataStatus == 2 ? kDataModelerData::INVALID : kDataModelerData::VALID;
@@ -750,8 +750,8 @@ FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get
 	NATURAL (track1, U"Track 1", U"2")
 	NATURAL (track2, U"Track 2", U"3")
 	OPTIONMENU (typeOfData, U"Type of data", 1)
-		OPTION (U"Data points")
-		OPTION (U"Modeled")
+		OPTION (U"data points")
+		OPTION (U"modeled")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
