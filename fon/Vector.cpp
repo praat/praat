@@ -18,76 +18,85 @@
 
 #include "Vector.h"
 
-//
-// Vector::getVector () returns a channel or the average of all the channels.
-//
-double structVector :: v_getVector (integer irow, integer icol) {
-	if (icol < 1 || icol > our nx)
+Thing_implement (Vector, Matrix, 2);
+
+/*
+	Vector::v_getVector () returns the value in channel `rowNumber`,
+	or if `rowNumber` == 0, then the average value of all the channels.
+	The value is assumed to be zero in columns outside the domain.
+*/
+double structVector :: v_getVector (integer rowNumber, integer columnNumber) {
+	if (columnNumber < 1 || columnNumber > our nx)
 		return 0.0;
 	if (ny == 1)
-		return our z [1] [icol];   // optimization
-	if (irow == 0) {
+		return our z [1] [columnNumber];   // optimization
+	if (rowNumber == 0) {
 		if (our ny == 2)
-			return 0.5 * (our z [1] [icol] + our z [2] [icol]);   // optimization
+			return 0.5 * (our z [1] [columnNumber] + our z [2] [columnNumber]);   // optimization
 		longdouble sum = 0.0;
 		for (integer channel = 1; channel <= our ny; channel ++)
-			sum += our z [channel] [icol];
+			sum += our z [channel] [columnNumber];
 		return double (sum / our ny);
 	}
-	Melder_assert (irow > 0 && irow <= our ny);
-	return our z [irow] [icol];
+	Melder_assert (rowNumber > 0 && rowNumber <= our ny);
+	return our z [rowNumber] [columnNumber];
 }
 
-//
-// Vector::getFunction1 () returns a channel or the average of all the channels.
-//
-double structVector :: v_getFunction1 (integer irow, double x) {
-	double rcol = (x - our x1) / our dx + 1.0;
-	integer icol = Melder_ifloor (rcol);
-	double dcol = rcol - icol;
-	double z1;
-	if (icol < 1 || icol > our nx) {
-		z1 = 0.0;   // outside the definition region, Formula is expected to return zero
+/*
+	Vector::v_getFunction1 () returns a channel or the average of all the channels.
+	There is linear interpolation between columns.
+	The value is assumed to be zero in columns outside the domain.
+*/
+double structVector :: v_getFunction1 (integer rowNumber, double x) {
+	const double columnNumber_real = (x - our x1) / our dx + 1.0;
+	const integer leftColumnNumber = Melder_ifloor (columnNumber_real);
+	const double columnNumber_phase = columnNumber_real - leftColumnNumber;
+	double leftValue;
+	if (leftColumnNumber < 1 || leftColumnNumber > our nx) {
+		leftValue = 0.0;   // outside the definition region, Formula is expected to return zero
 	} else if (our ny == 1) {
-		z1 = z [1] [icol];   // optimization
-	} else if (irow == 0) {
+		leftValue = z [1] [leftColumnNumber];   // optimization
+	} else if (rowNumber == 0) {
 		if (our ny == 2) {
-			z1 = 0.5 * (our z [1] [icol] + our z [2] [icol]);   // optimization
+			leftValue = 0.5 * (our z [1] [leftColumnNumber] + our z [2] [leftColumnNumber]);   // optimization
 		} else {
 			longdouble sum = 0.0;
 			for (integer channel = 1; channel <= ny; channel ++)
-				sum += our z [channel] [icol];
-			z1 = double (sum / our ny);
+				sum += our z [channel] [leftColumnNumber];
+			leftValue = double (sum / our ny);
 		}
 	} else {
-		Melder_assert (irow > 0 && irow <= our ny);
-		z1 = our z [irow] [icol];
+		Melder_assert (rowNumber > 0 && rowNumber <= our ny);
+		leftValue = our z [rowNumber] [leftColumnNumber];
 	}
-	double z2;
-	if (icol < 0 || icol >= our nx) {
-		z2 = 0.0;   // outside the definition region, Formula is expected to return zero
+	const integer rightColumnNumber = leftColumnNumber + 1;
+	double rightValue;
+	if (rightColumnNumber < 1 || rightColumnNumber > our nx) {
+		rightValue = 0.0;   // outside the definition region, Formula is expected to return zero
 	} else if (our ny == 1) {
-		z2 = z [1] [icol + 1];   // optimization
-	} else if (irow == 0) {
+		rightValue = z [1] [rightColumnNumber];   // optimization
+	} else if (rowNumber == 0) {
 		if (our ny == 2) {
-			z2 = 0.5 * (our z [1] [icol + 1] + our z [2] [icol + 1]);   // optimization
+			rightValue = 0.5 * (our z [1] [rightColumnNumber] + our z [2] [rightColumnNumber]);   // optimization
 		} else {
 			longdouble sum = 0.0;
 			for (integer channel = 1; channel <= our ny; channel ++)
-				sum += our z [channel] [icol + 1];
-			z2 = double (sum / our ny);
+				sum += our z [channel] [rightColumnNumber];
+			rightValue = double (sum / our ny);
 		}
 	} else {
-		Melder_assert (irow > 0 && irow <= our ny);
-		z2 = z [irow] [icol + 1];
+		Melder_assert (rowNumber > 0 && rowNumber <= our ny);
+		rightValue = z [rowNumber] [rightColumnNumber];
 	}
-	return (1.0 - dcol) * z1 + dcol * z2;
+	return (1.0 - columnNumber_phase) * leftValue + columnNumber_phase * rightValue;
 }
 
 double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
-// Preconditions:
-//    1 <= isamp <= my nx
-//    0 <= ilevel <= my ny
+/*
+	Preconditions:
+		1 <= isamp <= my nx
+		0 <= ilevel <= my ny
+*/
 	double value;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		value = our z [ilevel] [isamp];
@@ -104,13 +113,12 @@ double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int un
 	return isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
 }
 
-Thing_implement (Vector, Matrix, 2);
-
 /***** Get content. *****/
 
-//
-// Vector_getValueAtX () returns the average of all the interpolated channels.
-//
+/*
+	Vector_getValueAtX () returns the interpolated value in channel `ilevel`,
+	or if `ilevel` == 0, then the average of all the interpolated channels.
+*/
 double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolation) {
 	double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 	if (x <  leftEdge || x > rightEdge)
@@ -154,7 +162,7 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 		double yright = Vector_getValueAtX (me, xmax, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
 		minimum = yleft < yright ? yleft : yright;
-		x = yleft == yright ? (xmin + xmax) / 2 : yleft < yright ? xmin : xmax;
+		x = ( yleft == yright ? (xmin + xmax) / 2.0 : yleft < yright ? xmin : xmax );
 	} else {
 		minimum = y [imin];
 		x = imin;
@@ -243,7 +251,7 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 		double yright = Vector_getValueAtX (me, xmax, channelNumber,
 			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
 		maximum = yleft > yright ? yleft : yright;
-		x = yleft == yright ? (xmin + xmax) / 2 : yleft > yright ? xmin : xmax;
+		x = ( yleft == yright ? (xmin + xmax) / 2.0 : yleft > yright ? xmin : xmax );
 	} else {
 		maximum = y [imin];
 		x = imin;
