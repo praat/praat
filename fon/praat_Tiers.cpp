@@ -760,7 +760,7 @@ DIRECT (NEW_PitchTier_downto_PointProcess) {
 FORM (NEW_PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", nullptr) {
 	RADIOx (unit, U"Unit", 1, 0)
 		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Semitones")
+		RADIOBUTTON (U"semitones")
 	OK
 DO
 	CONVERT_EACH (PitchTier)
@@ -895,7 +895,7 @@ FORM (MODIFY_PitchTier_interpolateQuadratically, U"PitchTier: Interpolate quadra
 	NATURAL (numberOfPointsPerParabola, U"Number of points per parabola", U"4")
 	RADIOx (unit, U"Unit", 2, 0)
 		RADIOBUTTON (U"Hz")
-		RADIOBUTTON (U"Semitones")
+		RADIOBUTTON (U"semitones")
 	OK
 DO
 	MODIFY_EACH (PitchTier)
@@ -953,7 +953,7 @@ FORM (MODIFY_PitchTier_stylize, U"PitchTier: Stylize", U"PitchTier: Stylize...")
 	REAL (frequencyResolution, U"Frequency resolution", U"4.0")
 	RADIOx (unit, U"Unit", 2, 0)
 		RADIOBUTTON (U"Hz")
-		RADIOBUTTON (U"Semitones")
+		RADIOBUTTON (U"semitones")
 	OK
 DO
 	MODIFY_EACH (PitchTier)

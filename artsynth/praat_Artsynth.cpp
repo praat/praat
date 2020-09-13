@@ -217,9 +217,9 @@ DIRECT (MOVIE_Artword_Speaker_Sound_playMovie) {
 FORM (NEW1_Speaker_create, U"Create a Speaker", U"Create Speaker...") {
 	WORD (name, U"Name", U"speaker")
 	OPTIONMENUSTR (kindOfSpeaker, U"Kind of speaker", 1)
-		OPTION (U"Female")
-		OPTION (U"Male")
-		OPTION (U"Child")
+		OPTION (U"female")
+		OPTION (U"male")
+		OPTION (U"child")
 	OPTIONMENUSTR (numberOfTubesInGlottis, U"Number of tubes in glottis", 2)
 		OPTION (U"1")
 		OPTION (U"2")
