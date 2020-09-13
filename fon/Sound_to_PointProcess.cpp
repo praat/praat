@@ -29,8 +29,10 @@ autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channelNumber,
 		integer numberOfMinima = 0;
 		constVEC y = my z.row (channelNumber);
 		for (integer i = 2; i <= my nx - 1; i ++) {
-			if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1]) numberOfMaxima ++;
-			if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1]) numberOfMinima ++;
+			if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1])
+				numberOfMaxima ++;
+			if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1])
+				numberOfMinima ++;
 		}
 		/*
 		 * Create the empty result.

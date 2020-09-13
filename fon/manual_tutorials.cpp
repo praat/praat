@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200910)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200913)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.21beta# (13+ September 2020)")
+LIST_ITEM (U"• Removed a decades-old bug by which an extremum allegedly computed by cubic interpolation "
+	"would actually have been computed by sinc700.")
 NORMAL (U"##6.1.20beta# (10 September 2020)")
 LIST_ITEM (U"• Second beta version for macOS Big Sur.")
 NORMAL (U"##6.1.19beta# (7 September 2020)")
