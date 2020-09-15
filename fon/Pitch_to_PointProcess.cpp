@@ -178,27 +178,28 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		autoPointProcess point = PointProcess_create (sound -> xmin, sound -> xmax, 10);
 		double t = pitch -> xmin;
 		double addedRight = -1e308;
-		double globalPeak = Vector_getAbsoluteExtremum (sound, sound -> xmin, sound -> xmax, 0), peak;
+		const double globalPeak = Vector_getAbsoluteExtremum (sound, sound -> xmin, sound -> xmax, kVector_peakInterpolation :: NONE);
 		
 		/*
-		 * Cycle over all voiced intervals.
-		 */
+			Cycle over all voiced intervals.
+		*/
 		autoMelderProgress progress (U"Sound & Pitch: To PointProcess...");
 		for (;;) {
 			double tleft, tright;
-			if (! Pitch_getVoicedIntervalAfter (pitch, t, & tleft, & tright)) break;
+			if (! Pitch_getVoicedIntervalAfter (pitch, t, & tleft, & tright))
+				break;
 			Melder_assert (tright > t);
 
 			/*
 			 * Go to the middle of the voice stretch.
 			 */
-			double tmiddle = (tleft + tright) / 2;
+			const double tmiddle = (tleft + tright) / 2.0;
 			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), U"Sound & Pitch to PointProcess");
-			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
+			const double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
 
 			/*
-			 * Our first point is near this middle.
-			 */
+				Our first point is near this middle.
+			*/
 			if (isundef (f0middle)) {
 				Melder_fatal (U"Sound_Pitch_to_PointProcess_cc:"
 					U" tleft ", tleft,
@@ -212,14 +213,16 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 
 			double tsave = tmax;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR), correlation;
-				if (isundef (f0)) break;
-				correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax - 1.25 / f0, tmax - 0.8 / f0, & tmax, & peak);
-				if (correlation == -1) /*break*/ tmax -= 1.0 / f0;   // this one period will drop out
+				const double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
+				if (isundef (f0))
+					break;
+				double peak;
+				const double correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax - 1.25 / f0, tmax - 0.8 / f0, & tmax, & peak);
+				if (correlation == -1.0)
+					/*break*/ tmax -= 1.0 / f0;   // this one period will drop out
 				if (tmax < tleft) {
-					if (correlation > 0.7 && peak > 0.023333 * globalPeak && tmax - addedRight > 0.8 / f0) {
+					if (correlation > 0.7 && peak > 0.023333 * globalPeak && tmax - addedRight > 0.8 / f0)
 						PointProcess_addPoint (point.get(), tmax);
-					}
 					break;
 				}
 				if (correlation > 0.3 && (peak == 0.0 || peak > 0.01 * globalPeak)) {
@@ -230,10 +233,13 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			}
 			tmax = tsave;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR), correlation;
-				if (isundef (f0)) break;
-				correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax + 0.8 / f0, tmax + 1.25 / f0, & tmax, & peak);
-				if (correlation == -1) /*break*/ tmax += 1.0 / f0;
+				const double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
+				if (isundef (f0))
+					break;
+				double peak;
+				const double correlation = Sound_findMaximumCorrelation (sound, tmax, 1.0 / f0, tmax + 0.8 / f0, tmax + 1.25 / f0, & tmax, & peak);
+				if (correlation == -1.0)
+					/*break*/ tmax += 1.0 / f0;
 				if (tmax > tright) {
 					if (correlation > 0.7 && peak > 0.023333 * globalPeak) {
 						PointProcess_addPoint (point.get(), tmax);
@@ -253,7 +259,6 @@ autoPointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		Melder_throw (sound, U" & ", pitch, U": not converted to PointProcess (cc).");
 	}
 }
-	
 
 autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima) {
 	try {
@@ -261,23 +266,24 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 		double t = pitch -> xmin;
 		double addedRight = -1e308;
 		/*
-		 * Cycle over all voiced intervals.
-		 */
+			Cycle over all voiced intervals.
+		*/
 
 		autoMelderProgress progress (U"Sound & Pitch: To PointProcess");
 		for (;;) {
 			double tleft, tright;
-			if (! Pitch_getVoicedIntervalAfter (pitch, t, & tleft, & tright)) break;
+			if (! Pitch_getVoicedIntervalAfter (pitch, t, & tleft, & tright))
+				break;
 			/*
-			 * Go to the middle of the voiced interval.
-			 */
-			double tmiddle = (tleft + tright) / 2;
+				Go to the middle of the voiced interval.
+			*/
+			const double tmiddle = (tleft + tright) / 2.0;
 			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), U"Sound & Pitch: To PointProcess");
-			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
+			const double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit::HERTZ, Pitch_LINEAR);
 
 			/*
-			 * Our first point is near this middle.
-			 */
+				Our first point is near this middle.
+			*/
 			Melder_assert (isdefined (f0middle));
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, includeMaxima, includeMinima);
 			Melder_assert (isdefined (tmax));
@@ -285,23 +291,23 @@ autoPointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, in
 
 			double tsave = tmax;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
-				if (isundef (f0)) break;
+				const double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
+				if (isundef (f0))
+					break;
 				tmax = Sound_findExtremum (sound, tmax - 1.25 / f0, tmax - 0.8 / f0, includeMaxima, includeMinima);
 				if (tmax < tleft) {
-					if (tmax - addedRight > 0.8 / f0) {
+					if (tmax - addedRight > 0.8 / f0)
 						PointProcess_addPoint (point.get(), tmax);
-					}
 					break;
 				}
-				if (tmax - addedRight > 0.8 / f0) {   // do not fill in a short originally unvoiced interval twice
+				if (tmax - addedRight > 0.8 / f0)   // do not fill in a short originally unvoiced interval twice
 					PointProcess_addPoint (point.get(), tmax);
-				}
 			}
 			tmax = tsave;
 			for (;;) {
-				double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
-				if (isundef (f0)) break;
+				const double f0 = Pitch_getValueAtTime (pitch, tmax, kPitch_unit::HERTZ, Pitch_LINEAR);
+				if (isundef (f0))
+					break;
 				tmax = Sound_findExtremum (sound, tmax + 0.8 / f0, tmax + 1.25 / f0, includeMaxima, includeMinima);
 				if (tmax > tright) {
 					PointProcess_addPoint (point.get(), tmax);

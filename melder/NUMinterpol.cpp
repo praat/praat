@@ -141,7 +141,7 @@ static double improve_evaluate (double x, void *closure) {
 	return my isMaximum ? - y : y;
 }
 
-double NUMimproveExtremum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real, bool isMaximum) {
+double NUMimproveExtremum (constVEC const& y, integer ixmid, integer interpolationDepth, double *ixmid_real, bool isMaximum) {
 	struct improve_params params;
 	double result;
 	if (ixmid <= 1) {
@@ -152,32 +152,35 @@ double NUMimproveExtremum (constVEC const& y, integer ixmid, int interpolation, 
 		*ixmid_real = double (y.size);
 		return y [y.size];
 	}
-	if (interpolation <= NUM_PEAK_INTERPOLATE_NONE) {
+	if (interpolationDepth <= NUM_PEAK_INTERPOLATE_NONE) {
 		*ixmid_real = double (ixmid);
 		return y [ixmid];
 	}
-	if (interpolation == NUM_PEAK_INTERPOLATE_PARABOLIC) {
-		double dy = 0.5 * (y [ixmid + 1] - y [ixmid - 1]);
-		double d2y = 2 * y [ixmid] - y [ixmid - 1] - y [ixmid + 1];
+	if (interpolationDepth == NUM_PEAK_INTERPOLATE_PARABOLIC) {
+		const double dy = 0.5 * (y [ixmid + 1] - y [ixmid - 1]);
+		const double d2y = 2 * y [ixmid] - y [ixmid - 1] - y [ixmid + 1];
 		*ixmid_real = ixmid + dy / d2y;
 		return y [ixmid] + 0.5 * dy * dy / d2y;
 	}
 	/*
-		Sinc interpolation.
+		Cubic or sinc interpolation.
 	*/
-	params. depth = ( interpolation == NUM_PEAK_INTERPOLATE_CUBIC ? NUM_VALUE_INTERPOLATE_CUBIC :
-			interpolation == NUM_PEAK_INTERPOLATE_SINC70 ? 70 : 700 );
+	params. depth = (
+		interpolationDepth == NUM_PEAK_INTERPOLATE_CUBIC ? NUM_VALUE_INTERPOLATE_CUBIC :
+		interpolationDepth == NUM_PEAK_INTERPOLATE_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
+		NUM_VALUE_INTERPOLATE_SINC700
+	);
 	params. y = y;
 	params. isMaximum = isMaximum;
 	*ixmid_real = NUMminimize_brent (improve_evaluate, ixmid - 1, ixmid + 1, & params, 1e-10, & result);
 	return isMaximum ? - result : result;
 }
 
-double NUMimproveMinimum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real) {
-	return NUMimproveExtremum (y, ixmid, interpolation, ixmid_real, false);
+double NUMimproveMinimum (constVEC const& y, integer ixmid, integer interpolationDepth, double *ixmid_real) {
+	return NUMimproveExtremum (y, ixmid, interpolationDepth, ixmid_real, false);
 }
-double NUMimproveMaximum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real) {
-	return NUMimproveExtremum (y, ixmid, interpolation, ixmid_real, true);
+double NUMimproveMaximum (constVEC const& y, integer ixmid, integer interpolationDepth, double *ixmid_real) {
+	return NUMimproveExtremum (y, ixmid, interpolationDepth, ixmid_real, true);
 }
 
 /********** Viterbi **********/
@@ -203,9 +206,12 @@ void NUM_viterbi (
 			double maximum = -1e308;
 			integer place = 0;
 			for (integer icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
-				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
+				const double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
 						- getTransitionCost (iframe, icand1, icand2, closure);
-				if (value > maximum) { maximum = value; place = icand1; }
+				if (value > maximum) {
+					maximum = value;
+					place = icand1;
+				}
 			}
 			if (place == 0)
 				Melder_throw (U"Viterbi algorithm cannot compute a track because of weird values.");
@@ -280,7 +286,7 @@ void NUM_viterbi_multi (
 
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
-	integer ncomb = Melder_iround (NUMcombinations (ncand, ntrack));
+	const integer ncomb = Melder_iround (NUMcombinations (ncand, ntrack));
 	if (ncomb > 10'000'000) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Unrealistically high number of combinations (", ncomb, U").");
 	parm. ntrack = ntrack;

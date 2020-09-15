@@ -297,7 +297,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 				Melder_throw (theMessage_Cannot_compute_intensity);
 			}
 			if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-				value = Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
+				value = Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR);
 			} else {
 				value = Intensity_getAverage (my d_intensity.get(), tmin, tmax, (int) my p_intensity_averagingMethod);
 			}
@@ -967,7 +967,7 @@ static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDI
 
 static void menu_cb_intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	double tmin, tmax;
-	int part = makeQueriable (me, true, & tmin, & tmax);
+	const int part = makeQueriable (me, true, & tmin, & tmax);
 	if (! my p_intensity_show)
 		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my d_intensity) {
@@ -977,15 +977,15 @@ static void menu_cb_intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DI
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Time_s   Intensity_dB");
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-		double intensity = Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
+		const double intensity = Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR);
 		MelderInfo_writeLine (Melder_fixed (tmin, 6), U"   ", Melder_fixed (intensity, 6));
 	} else {
 		integer i, i1, i2;
 		Sampled_getWindowSamples (my d_intensity.get(), tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
-			double t = Sampled_indexToX (my d_intensity.get(), i);
-			double intensity = Vector_getValueAtX (my d_intensity.get(), t, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_NEAREST);
-			MelderInfo_writeLine (Melder_fixed (t, 6), U"   ", Melder_fixed (intensity, 6));
+			const double time = Sampled_indexToX (my d_intensity.get(), i);
+			const double intensity = Vector_getValueAtX (my d_intensity.get(), time, Vector_CHANNEL_1, kVector_valueInterpolation :: NEAREST);
+			MelderInfo_writeLine (Melder_fixed (time, 6), U"   ", Melder_fixed (intensity, 6));
 		}
 	}
 	MelderInfo_close ();
@@ -993,7 +993,7 @@ static void menu_cb_intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DI
 
 static void menu_cb_getIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	double tmin, tmax;
-	int part = makeQueriable (me, true, & tmin, & tmax);
+	const int part = makeQueriable (me, true, & tmin, & tmax);
 	if (! my p_intensity_show)
 		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my d_intensity) {
@@ -1001,7 +1001,7 @@ static void menu_cb_getIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 		if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-		Melder_information (Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR), U" dB (intensity at CURSOR)");
+		Melder_information (Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR), U" dB (intensity at CURSOR)");
 	} else {
 		static const conststring32 methodString [] = { U"median", U"mean-energy", U"mean-sones", U"mean-dB" };
 		Melder_information (Intensity_getAverage (my d_intensity.get(), tmin, tmax, (int) my p_intensity_averagingMethod),
@@ -1011,27 +1011,27 @@ static void menu_cb_getIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 
 static void menu_cb_getMinimumIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	double tmin, tmax;
-	int part = makeQueriable (me, false, & tmin, & tmax);
+	const int part = makeQueriable (me, false, & tmin, & tmax);
 	if (! my p_intensity_show)
 		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my d_intensity) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
 		if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
-	double intensity = Vector_getMinimum (my d_intensity.get(), tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
+	const double intensity = Vector_getMinimum (my d_intensity.get(), tmin, tmax, kVector_peakInterpolation :: PARABOLIC);
 	Melder_information (intensity, U" dB (minimum intensity ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 }
 
 static void menu_cb_getMaximumIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	double tmin, tmax;
-	int part = makeQueriable (me, false, & tmin, & tmax);
+	const int part = makeQueriable (me, false, & tmin, & tmax);
 	if (! my p_intensity_show)
 		Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my d_intensity) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
 		if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
-	double intensity = Vector_getMaximum (my d_intensity.get(), tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
+	const double intensity = Vector_getMaximum (my d_intensity.get(), tmin, tmax, kVector_peakInterpolation :: PARABOLIC);
 	Melder_information (intensity, U" dB (maximum intensity ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 }
 
@@ -1835,7 +1835,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
 			if (my d_intensity) {
 				if (my startSelection == my endSelection) {
-					intensityCursor = Vector_getValueAtX (my d_intensity.get(), my startSelection, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
+					intensityCursor = Vector_getValueAtX (my d_intensity.get(), my startSelection, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR);
 				} else {
 					intensityCursor = Intensity_getAverage (my d_intensity.get(), my startSelection, my endSelection, (int) my p_intensity_averagingMethod);
 				}

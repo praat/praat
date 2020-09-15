@@ -35,9 +35,9 @@ double NUM_interpolate_sinc (constVEC const& y, double x, integer interpolationD
 #define NUM_PEAK_INTERPOLATE_SINC70  3
 #define NUM_PEAK_INTERPOLATE_SINC700  4
 
-double NUMimproveExtremum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real, bool isMaximum);
-double NUMimproveMaximum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real);
-double NUMimproveMinimum (constVEC const& y, integer ixmid, int interpolation, double *ixmid_real);
+double NUMimproveExtremum (constVEC const& y, integer ixmid, integer interpolationDepth, double *ixmid_real, bool isMaximum);
+double NUMimproveMaximum (constVEC const& y, integer ixmid, integer interpolationDepth, double *ixmid_real);
+double NUMimproveMinimum (constVEC const& y, integer ixmid, integer interpolationDepth, double *ixmid_real);
 
 void NUM_viterbi (
 	integer numberOfFrames, integer maxnCandidates,

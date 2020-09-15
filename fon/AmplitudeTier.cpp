@@ -108,7 +108,7 @@ autoAmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, So
 			return autoAmplitudeTier();
 		autoAmplitudeTier him = AmplitudeTier_create (my xmin, my xmax);
 		for (integer i = peaks.first; i <= peaks.last; i ++) {
-			const double value = Vector_getValueAtX (you, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
+			const double value = Vector_getValueAtX (you, my t [i], Vector_CHANNEL_AVERAGE, kVector_valueInterpolation :: SINC700);
 			if (isdefined (value))
 				RealTier_addPoint (him.get(), my t [i], value);
 		}

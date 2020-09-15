@@ -2,7 +2,7 @@
 #define _praat_TimeVector_h_
 /* praat_TimeVector.h
  *
- * Copyright (C) 2016,2017 Paul Boersma
+ * Copyright (C) 2016,2017,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,23 +29,15 @@
 	Prompting for interpolated values at a time or within a time range.
 */
 
-#define praat_TimeVector_INTERPOLATED_VALUE(time,interpolation) \
+#define praat_TimeVector_INTERPOLATED_VALUE(time,valueInterpolationType) \
 	REAL (time, U"Time (s)", U"0.5") \
-	RADIOx (interpolation, U"Interpolation", 3, 0) \
-		RADIOBUTTON (U"nearest") \
-		RADIOBUTTON (U"linear") \
-		RADIOBUTTON (U"cubic") \
-		RADIOBUTTON (U"sinc70") \
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType, \
+		U"Interpolation", kVector_valueInterpolation::CUBIC)
 
-#define praat_TimeVector_INTERPOLATED_EXTREMUM(fromTime,toTime,interpolation) \
+#define praat_TimeVector_INTERPOLATED_EXTREMUM(fromTime,toTime,peakInterpolationType) \
 	praat_TimeFunction_RANGE (fromTime, toTime) \
-	RADIOx (interpolation, U"Interpolation", 2, 0) \
-		RADIOBUTTON (U"none") \
-		RADIOBUTTON (U"parabolic") \
-		RADIOBUTTON (U"cubic") \
-		RADIOBUTTON (U"sinc70") \
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType, \
+		U"Interpolation", kVector_peakInterpolation::PARABOLIC)
 
 /* End of file praat_TimeVector.h */
 #endif

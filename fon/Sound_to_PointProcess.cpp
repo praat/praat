@@ -1,6 +1,6 @@
 /* Sound_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2008,2011,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "Sound_to_Pitch.h"
 #include "Pitch_to_PointProcess.h"
 
-autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channelNumber, int interpolation, bool includeMaxima, bool includeMinima) {
+autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channelNumber, kVector_peakInterpolation peakInterpolationType, bool includeMaxima, bool includeMinima) {
 	try {
 		/*
 		 * Pass 1: count the extrema. There may be a maximum and minimum in the same interval!
@@ -41,15 +41,16 @@ autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channelNumber,
 		/*
 		 * Pass 2: compute and register the extrema.
 		 */
+		const integer interpolationDepth = kVector_peakInterpolation_to_interpolationDepth (peakInterpolationType);
 		for (integer i = 2; i <= my nx - 1; i ++) {
 			double time, i_real;
 			if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-				(void) NUMimproveMaximum (y, i, interpolation, & i_real);
+				(void) NUMimproveMaximum (y, i, interpolationDepth, & i_real);
 				time = my x1 + (i_real - 1.0) * my dx;
 				PointProcess_addPoint (thee.get(), time);
 			}
 			if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1]) {
-				(void) NUMimproveMinimum (y, i, interpolation, & i_real);
+				(void) NUMimproveMinimum (y, i, interpolationDepth, & i_real);
 				time = my x1 + (i_real - 1.0) * my dx;
 				PointProcess_addPoint (thee.get(), time);
 			}
@@ -60,12 +61,15 @@ autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channelNumber,
 	}
 }
 
-autoPointProcess Sound_to_PointProcess_maxima (Sound me, integer channel, int interpolation)
-	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, true, false); }
-autoPointProcess Sound_to_PointProcess_minima (Sound me, integer channel, int interpolation)
-	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, false, true); }
-autoPointProcess Sound_to_PointProcess_allExtrema (Sound me, integer channel, int interpolation)
-	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, true, true); }
+autoPointProcess Sound_to_PointProcess_maxima (Sound me, integer channel, kVector_peakInterpolation peakInterpolationType) {
+	return Sound_to_PointProcess_extrema (me, channel, peakInterpolationType, true, false);
+}
+autoPointProcess Sound_to_PointProcess_minima (Sound me, integer channel, kVector_peakInterpolation peakInterpolationType) {
+	return Sound_to_PointProcess_extrema (me, channel, peakInterpolationType, false, true);
+}
+autoPointProcess Sound_to_PointProcess_allExtrema (Sound me, integer channel, kVector_peakInterpolation peakInterpolationType) {
+	return Sound_to_PointProcess_extrema (me, channel, peakInterpolationType, true, true);
+}
 
 autoPointProcess Sound_to_PointProcess_zeroes (Sound me, integer channel, bool includeRaisers, bool includeFallers) {
 	try {

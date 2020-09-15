@@ -231,7 +231,7 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 		his x [k] = tmin;
 		his y [k ++] = CLIP_Y (level, ymin, ymax);
 		his x [k] = tmin;
-		double y = Vector_getValueAtX (me, tmin, channel, Vector_VALUE_INTERPOLATION_LINEAR);
+		double y = Vector_getValueAtX (me, tmin, channel, kVector_valueInterpolation :: LINEAR);
 		his y [k ++] = CLIP_Y (y, ymin, ymax);
 		for (integer i = i1; i <= i2; i ++) {
 			y = my z [channel] [i];
@@ -239,7 +239,7 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 			his y [k ++] = CLIP_Y (y, ymin, ymax);
 		}
 		his x [k] = tmax;
-		y = Vector_getValueAtX (me, tmax, channel, Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (me, tmax, channel, kVector_valueInterpolation :: LINEAR);
 		his y [k ++] = CLIP_Y (y, ymin, ymax);
 		his x [k] = tmax;
 		his y [k ++] = CLIP_Y (level, ymin, ymax);
@@ -288,7 +288,7 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, integer channel, d
 		/*
 			my starting point at tmin
 		*/
-		double y = Vector_getValueAtX (me, tmin, ( my ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
+		double y = Vector_getValueAtX (me, tmin, ( my ny == 1 ? 1 : channel ), kVector_valueInterpolation :: LINEAR);
 		integer k = 1;
 		his x [k] = tmin;
 		his y [k ++] = CLIP_Y (y, ymin, ymax);
@@ -304,13 +304,13 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, integer channel, d
 
 		// my end point at tmax
 
-		y = Vector_getValueAtX (me, tmax, ( my ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (me, tmax, ( my ny == 1 ? 1 : channel ), kVector_valueInterpolation :: LINEAR);
 		his x [k] = tmax;
 		his y [k ++] = y;
 
 		// thy starting point at tmax
 
-		y = Vector_getValueAtX (thee, tmax, ( thy ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (thee, tmax, ( thy ny == 1 ? 1 : channel ), kVector_valueInterpolation :: LINEAR);
 		his x [k] = tmax;
 		his y [k ++] = y;
 
@@ -325,7 +325,7 @@ autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, integer channel, d
 
 		// thy end point at tmin
 
-		y = Vector_getValueAtX (thee, tmin, ( thy ny == 1 ? 1 : channel ), Vector_VALUE_INTERPOLATION_LINEAR);
+		y = Vector_getValueAtX (thee, tmin, ( thy ny == 1 ? 1 : channel ), kVector_valueInterpolation :: LINEAR);
 		his x [k] = tmin;
 		his y [k] = y;
 

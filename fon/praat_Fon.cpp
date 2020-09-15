@@ -1057,32 +1057,24 @@ DO
 FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		const double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, peakInterpolationType);
 	NUMBER_ONE_END (U" hertz");
 }
 
 FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		const double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, peakInterpolationType);
 	NUMBER_ONE_END (U" hertz");
 }
 
@@ -1111,16 +1103,12 @@ DO
 FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		const double result = Vector_getMaximum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getMaximum (me, fromFrequency, toFrequency, peakInterpolationType);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1142,16 +1130,12 @@ DO
 FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
 	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		const double result = Vector_getMinimum (me, fromFrequency, toFrequency, interpolation);
+		const double result = Vector_getMinimum (me, fromFrequency, toFrequency, peakInterpolationType);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1197,18 +1181,14 @@ DO
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
 	REAL (frequency, U"Frequency (Hz)", U"1500.0")
-	RADIOx (interpolation, U"Interpolation", 1, 0)
-		RADIOBUTTON (U"nearest")
-		RADIOBUTTON (U"linear")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType,
+			U"Interpolation", kVector_valueInterpolation :: NEAREST)
 	OK
 DO
 	NUMBER_ONE (Ltas)
 		const double result = Vector_getValueAtX (me, frequency,
 			1,   // level
-			interpolation
+			valueInterpolationType
 		);
 	NUMBER_ONE_END (U" dB")
 }

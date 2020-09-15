@@ -448,7 +448,7 @@ autoRealTier Vector_to_RealTier_peaks (Vector me, integer channel, ClassInfo kla
 			if (left <= centre && right < centre) {
 				double x, maximum;
 				Vector_getMaximumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
-						channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & maximum, & x);
+						channel, kVector_peakInterpolation :: PARABOLIC, & maximum, & x);
 				RealTier_addPoint (thee.get(), x, maximum);
 			}
 		}
@@ -466,7 +466,7 @@ autoRealTier Vector_to_RealTier_valleys (Vector me, integer channel, ClassInfo k
 			if (left >= centre && right > centre) {
 				double x, minimum;
 				Vector_getMinimumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
-						channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & minimum, & x);
+						channel, kVector_peakInterpolation :: PARABOLIC, & minimum, & x);
 				RealTier_addPoint (thee.get(), x, minimum);
 			}
 		}
