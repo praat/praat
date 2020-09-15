@@ -250,14 +250,14 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 	return thee;
 }
 
-void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *out_peakdB, double *out_quefrency) {
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *out_peakdB, double *out_quefrency) {
 	autoPowerCepstrum thee = Data_copy (me);
 	double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
 	for (integer i = 1; i <= my nx; i ++) {
 		thy z [1] [i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
 	}
 	double peakdB, quefrency;
-	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, & peakdB, & quefrency);   // FIXME cast
+	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, peakInterpolationType, & peakdB, & quefrency);   // FIXME cast
 	if (out_peakdB)
 		*out_peakdB = peakdB;
 	if (out_quefrency)
@@ -267,7 +267,7 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
 	double rnr = undefined;
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
-	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, & peakdB, & qpeak);
+	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, kVector_peakInterpolation :: CUBIC, & peakdB, & qpeak);
 	integer imin, imax;
 	if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 		return rnr;
@@ -308,16 +308,16 @@ double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pit
 	PowerCepstrum_fitTrendLine (me, 0.001, 0, & slope, & intercept, kCepstrumTrendType::LINEAR, kCepstrumTrendFit::LEAST_SQUARES);
 	autoPowerCepstrum thee = Data_copy (me);
 	PowerCepstrum_subtractTrendLine_inplace (thee.get(), slope, intercept, kCepstrumTrendType::LINEAR);
-	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);
+	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, kVector_peakInterpolation :: NONE, & peakdB, & quefrency);
 	if (out_qpeak)
 		*out_qpeak = quefrency;
 	return peakdB;
 }
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType  lineType, kCepstrumTrendFit fitMethod, double *out_qpeak) {
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType  lineType, kCepstrumTrendFit fitMethod, double *out_qpeak) {
 	double slope, intercept, qpeak, peakdB;
 	PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
-	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, & peakdB, & qpeak);
+	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, peakInterpolationType, & peakdB, & qpeak);
 	double xq = lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;

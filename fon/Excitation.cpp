@@ -64,7 +64,8 @@ void structExcitation :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Loudness: ", Melder_half (Excitation_getLoudness (this)), U" sones");
 	for (integer i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-		if (++ numberOfMaxima > 15) break;
+		if (++ numberOfMaxima > 15)
+			break;
 		double i_real;
 		double strength = NUMimproveMaximum (y, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		double formant_bark = x1 + (i_real - 1.0) * dx;

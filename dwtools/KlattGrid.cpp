@@ -1134,7 +1134,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 
 		// Scale voiced part and add breathiness during open phase
 		if (p -> flowDerivative) {
-			const double extremum = Vector_getAbsoluteExtremum (him.get(), 0.0, 0.0, Vector_VALUE_INTERPOLATION_CUBIC);
+			const double extremum = Vector_getAbsoluteExtremum (him.get(), 0.0, 0.0, kVector_peakInterpolation :: CUBIC);
 			if (isundef (lastVal))
 				lastVal = 0.0;
 			for (integer i = 1; i <= his nx; i ++) {
