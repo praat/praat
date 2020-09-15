@@ -109,8 +109,8 @@ void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 void GuiShell_drain (GuiShell me) {
 	#if gtk
 		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
-		gdk_flush ();
-		//gdk_window_process_all_updates ();
+		//gdk_flush ();
+		gdk_window_process_all_updates ();
 	#elif motif
 		/*
 			On Windows Motif, there is no graphics buffering.

@@ -1,6 +1,6 @@
 /* STR.cpp
  *
- * Copyright (C) 2012-2017 David Weenink, 2008,2018,2020s Paul Boersma
+ * Copyright (C) 2012-2017 David Weenink, 2008,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,24 @@
 
 static char hexSymbols [] = "0123456789ABCDEF";
 
+static uint64 hexSecret = UINT64_C (5'847'171'831'059'823'557);
+
 autostring8 newSTRhex8 (conststring8 str, uint64 key) {
+	if (key != 0)
+		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
 	autostring8 result (uinteger_to_integer (strlen (str)) * 2);
 	char *to = & result [0];
 	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
-		int value = *from;
+		integer value = *from;
 		Melder_assert (value > 0 && value < 256);
-		if (key != 0) {
-			// value = randomize (value, key);
-		}
+		if (key != 0)
+			value = (value + NUMrandomInteger (0, 255)) % 256;
 		*to ++ = hexSymbols [value / 16];
 		*to ++ = hexSymbols [value % 16];
 	}
 	*to = '\0';
+	if (key != 0)
+		NUMrandom_initializeSafelyAndUnpredictably ();
 	return result;
 }
 
@@ -71,9 +76,15 @@ autostring32 newSTRreplace (conststring32 string,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
-	if (string == 0 || search == 0 || replace == 0)
-		return autostring32();
-
+	/*
+		Sanitize input.
+	*/
+	if (! string)
+		string = U"";
+	if (! search)
+		search = U"";
+	if (! replace)
+		replace = U"";
 	integer len_string = str32len (string);
 	if (len_string == 0)
 		maximumNumberOfReplaces = 1;
@@ -151,6 +162,16 @@ autostring32 newSTRreplace_regex (conststring32 string,
 	regexp *compiledSearchRE, conststring32 replaceRE, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
+	/*
+		Sanitize input.
+	*/
+	if (! string)
+		string = U"";
+	if (! compiledSearchRE)
+		return autostring32();
+	if (! replaceRE)
+		replaceRE = U"";
+
 	integer buf_nchar = 0;   // number of characters in 'buf'
 	integer gap_copied = 0;
 	integer nchar;
@@ -163,8 +184,6 @@ autostring32 newSTRreplace_regex (conststring32 string,
 
 	if (out_numberOfMatches)
 		*out_numberOfMatches = 0;
-	if (string == 0 || compiledSearchRE == 0 || replaceRE == 0)
-		return 0;
 
 	integer string_length = str32len (string);
 	//int replace_length = str32len (replaceRE);
@@ -209,7 +228,7 @@ autostring32 newSTRreplace_regex (conststring32 string,
 		gap_copied = 1;
 
 		/*
-			Do the substitution. We can only check afterwards for buffer overflow.
+			Do the substitution. We can check for buffer overflow only afterwards.
 			SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
 		if (! SubstituteRE (compiledSearchRE, replaceRE, buf.get() + buf_nchar, bufferLength + 1 - buf_nchar, & errorType)) {
@@ -223,13 +242,15 @@ autostring32 newSTRreplace_regex (conststring32 string,
 			Melder_throw (U"Error during substitution.");
 		}
 
-		// Buffer is not full, get number of characters added;
-
+		/*
+			Buffer is not full; get number of characters added.
+		*/
 		nchar = str32len (buf.get() + buf_nchar);
 		buf_nchar += nchar;
 
-		// Update next start position in search string.
-
+		/*
+			Update next start position in search string.
+		*/
 		posp = pos;
 		pos = (char32 *) compiledSearchRE -> endp [0];
 		if (pos != posp)
@@ -244,12 +265,14 @@ autostring32 newSTRreplace_regex (conststring32 string,
 			break;
 	}
 
-	// Copy last part of string to destination string
-
+	/*
+		Copy last part of string to destination string
+	*/
 	nchar = (string + string_length) - pos;
 	bufferLength = buf_nchar + nchar;
 	buf. resize (bufferLength);
 	str32ncpy (buf.get() + buf_nchar, pos, nchar);
+
 	return buf;
 }
 
@@ -263,22 +286,32 @@ autostring32 newSTRright (conststring32 str, integer newLength) {
 }
 
 autostring8 newSTRunhex8 (conststring8 str, uint64 key) {
+	if (key != 0)
+		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
 	autostring8 result (uinteger_to_integer (strlen (str)) / 2);
 	char *to = & result [0];
-	for (const char8 *from = (char8 *) & str [0]; *from != '\0'; from ++) {
-		char8 code1 = *from ++, code2 = *from;
+	for (const char8 *from = (char8 *) & str [0];;) {
+		char8 code1 = *from ++;
+		while (Melder_isHorizontalOrVerticalSpace (code1))
+			code1 = *from ++;
+		if (code1 == '\0')
+			break;
+		char8 code2 = *from ++;
+		while (Melder_isHorizontalOrVerticalSpace (code2))
+			code2 = *from ++;
 		if (code2 == '\0')
 			Melder_throw (U"(unhex$:) incomplete hexadecimal string.");
 		const char *index1 = strchr (hexSymbols, code1), *index2 = strchr (hexSymbols, code2);
 		if (! index1 || ! index2)
 			Melder_throw (U"(unhex$:) not a hexadecimal string: ", Melder_peek8to32 (str));
 		integer value = (index1 - hexSymbols) * 16 + (index2 - hexSymbols);
-		if (key != 0) {
-			// value = randomize (value, key);
-		}
+		if (key != 0)
+			value = (value + 256 - NUMrandomInteger (0, 255)) % 256;
 		*to ++ = char (value);
 	}
 	*to = '\0';
+	if (key != 0)
+		NUMrandom_initializeSafelyAndUnpredictably ();
 	return result;
 }
 

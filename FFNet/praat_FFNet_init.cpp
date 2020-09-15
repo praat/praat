@@ -341,8 +341,8 @@ END }
 
 FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
 	RADIO (categorizationgMethod, U"Categorization method", 1)
-		RADIOBUTTON (U"Winner-takes-all")
-		RADIOBUTTON (U"Stochastic")
+		RADIOBUTTON (U"winner-takes-all")
+		RADIOBUTTON (U"stochastic")
 	OK
 DO
 	CONVERT_TWO (FFNet, ActivationList)
@@ -398,8 +398,8 @@ DO
 
 FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
 	RADIO (categorizationgMethod, U"Categorization method", 1)
-		RADIOBUTTON (U"Winner-takes-all")
-		RADIOBUTTON (U"Stochastic")
+		RADIOBUTTON (U"winner-takes-all")
+		RADIOBUTTON (U"stochastic")
 	OK
 DO
 	GRAPHICS_TWO (FFNet, PatternList)
@@ -420,8 +420,8 @@ DO
 
 FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	NUMBER_THREE (FFNet, PatternList, ActivationList)
@@ -431,8 +431,8 @@ DO
 
 FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	NUMBER_THREE (FFNet, PatternList, ActivationList)
@@ -445,8 +445,8 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & Act
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
@@ -463,8 +463,8 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList &
 	POSITIVE (learningRate, U"Learning rate", U"0.1")
 	REAL (momentum, U"Momentum", U"0.9")
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
@@ -476,8 +476,8 @@ DO
 
 FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	NUMBER_THREE (FFNet, PatternList, Categories)
@@ -487,8 +487,8 @@ DO
 
 FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	NUMBER_THREE (FFNet, PatternList, Categories)
@@ -500,8 +500,8 @@ FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categor
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
@@ -516,8 +516,8 @@ FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Cat
 	POSITIVE (learningRate, U"Learning rate", U"0.1")
 	REAL (momentum, U"Momentum", U"0.9")
 	RADIO (costFunctionType, U"Cost function", 1)
-		RADIOBUTTON (U"Minimum-squared-error")
-		RADIOBUTTON (U"Minimum-cross-entropy")
+		RADIOBUTTON (U"minimum-squared-error")
+		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
 	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)

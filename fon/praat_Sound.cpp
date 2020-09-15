@@ -45,8 +45,10 @@
 
 DIRECT (INFO_LongSound_concatenate) {
 	INFO_NONE
-		Melder_information (U"To concatenate LongSound objects, select them in the list\nand choose \"Save as WAV file...\" or a similar command.\n"
-			"The result will be a sound file that contains\nthe concatenation of the selected sounds.");
+		Melder_information (U"To concatenate LongSound objects, "
+			"select them in the list\nand choose \"Save as WAV file...\" or a similar command.\n"
+			"The result will be a sound file that contains\nthe concatenation of the selected sounds."
+		);
 	INFO_NONE_END
 }
 
@@ -66,19 +68,19 @@ FORM (REAL_LongSound_getIndexFromTime, U"LongSound: Get sample index from time",
 	OK
 DO
 	NUMBER_ONE (LongSound)
-		double result = Sampled_xToIndex (me, time);
+		const double result = Sampled_xToIndex (me, time);
 	NUMBER_ONE_END (U" (index at ", time, U" seconds)")
 }
 
 DIRECT (REAL_LongSound_getSamplePeriod) {
 	NUMBER_ONE (LongSound)
-		double result = my dx;
+		const double result = my dx;
 	NUMBER_ONE_END (U" seconds");
 }
 
 DIRECT (REAL_LongSound_getSampleRate) {
 	NUMBER_ONE (LongSound)
-		double result = 1.0 / my dx;
+		const double result = 1.0 / my dx;
 	NUMBER_ONE_END (U" Hz")
 }
 
@@ -87,13 +89,13 @@ FORM (REAL_LongSound_getTimeFromIndex, U"LongSound: Get time from sample index",
 	OK
 DO
 	NUMBER_ONE (LongSound)
-		double result = Sampled_indexToX (me, sampleIndex);
+		const double result = Sampled_indexToX (me, sampleIndex);
 	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (INTEGER_LongSound_getNumberOfSamples) {
 	NUMBER_ONE (LongSound)
-		integer result = my nx;
+		const integer result = my nx;
 	NUMBER_ONE_END (U" samples")
 }
 
@@ -352,7 +354,7 @@ DO
 DIRECT (NEW1_Sounds_combineToStereo) {
 	CONVERT_LIST (Sound)
 		autoSound result = Sounds_combineToStereo (& list);
-		integer numberOfChannels = result -> ny;   // dereference before transferring
+		const integer numberOfChannels = result -> ny;   // dereference before transferring
 	CONVERT_LIST_END (U"combined_", numberOfChannels)
 }
 
@@ -401,7 +403,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 			dx = my dx;
 		} else if (my dx != dx) {
 			Melder_throw (U"To concatenate sounds, their sampling frequencies should be equal.\n"
-				"You could resample one or more of the sounds before concatenating.");
+					"You could resample one or more of the sounds before concatenating.");
 		}
 		nx += my nx;
 	}
@@ -410,7 +412,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	nx = 0;
 	LOOP {
 		iam (Sound);
-		double tmax = tmin + my nx * dx;
+		const double tmax = tmin + my nx * dx;
 		thy z.verticalBand (nx + 1, nx + my nx) <<= my z.all();
 		iinterval ++;
 		if (iinterval > 1)
@@ -458,7 +460,7 @@ DO
 static void common_Sound_create (conststring32 name, integer numberOfChannels, double startTime, double endTime,
 	double samplingFrequency, conststring32 formula, Interpreter interpreter)
 {
-	double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
+	const double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
 	if (endTime <= startTime) {
 		if (endTime == startTime)
 			Melder_appendError (U"A Sound cannot have a duration of zero.");
@@ -484,17 +486,17 @@ static void common_Sound_create (conststring32 name, integer numberOfChannels, d
 	}
 	if (numberOfSamples_real > INT54_MAX) {
 		Melder_appendError (U"A Sound cannot have ", numberOfSamples_real, U" samples; the maximum is ",
-			Melder_bigInteger (INT54_MAX), U" samples (or less, depending on your computer's memory).");
+				Melder_bigInteger (INT54_MAX), U" samples (or less, depending on your computer's memory).");
 		if (startTime == 0.0)
 			Melder_throw (U"Please lower the end time or the sampling frequency.");
 		else
 			Melder_throw (U"Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
-	int64 numberOfSamples = (int64) numberOfSamples_real;
+	const integer numberOfSamples = (int64) numberOfSamples_real;
 	autoSound sound;
 	try {
 		sound = Sound_create (numberOfChannels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
-			startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
+				startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	} catch (MelderError) {
 		if (str32str (Melder_getError (), U"memory")) {
 			Melder_clearError ();
@@ -549,7 +551,7 @@ FORM (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound 
 DO
 	CREATE_ONE
 		autoSound result = Sound_createAsPureTone (numberOfChannels, startTime, endTime,
-			samplingFrequency, toneFrequency, amplitude, fadeInDuration, fadeOutDuration);
+				samplingFrequency, toneFrequency, amplitude, fadeInDuration, fadeOutDuration);
 	CREATE_ONE_END (name)
 }
 
@@ -569,7 +571,7 @@ FORM (NEW1_Sound_createAsToneComplex, U"Create Sound as tone complex", U"Create 
 DO
 	CREATE_ONE
 		autoSound result = Sound_createAsToneComplex (startTime, endTime,
-			samplingFrequency, phase, frequencyStep, firstFrequency, ceiling, numberOfComponents);
+				samplingFrequency, phase, frequencyStep, firstFrequency, ceiling, numberOfComponents);
 	CREATE_ONE_END (name)
 }
 
@@ -617,7 +619,7 @@ FORM (NEW_Sound_deepenBandModulation, U"Deepen band modulation", U"Sound: Deepen
 DO
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_deepenBandModulation (me, enhancement, fromFrequency, toFrequency,
-			slowModulation, fastModulation, bandSmoothing);
+				slowModulation, fastModulation, bandSmoothing);
 	CONVERT_EACH_END (my name.get(), U"_", Melder_roundTowardsZero (enhancement))
 }
 
@@ -631,7 +633,7 @@ FORM (GRAPHICS_old_Sound_draw, U"Sound: Draw", nullptr) {
 DO
 	GRAPHICS_EACH (Sound)
 		Sound_draw (me, GRAPHICS, fromTime, toTime,
-			fromAmplitude, toAmplitude, garnish, U"curve");
+				fromAmplitude, toAmplitude, garnish, U"curve");
 	GRAPHICS_EACH_END
 }
 
@@ -643,15 +645,15 @@ FORM (GRAPHICS_Sound_draw, U"Sound: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
-		OPTION (U"Curve")
-		OPTION (U"Bars")
-		OPTION (U"Poles")
-		OPTION (U"Speckles")
+		OPTION (U"curve")
+		OPTION (U"bars")
+		OPTION (U"poles")
+		OPTION (U"speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_Sound_draw)
 	GRAPHICS_EACH (Sound)
 		Sound_draw (me, GRAPHICS, fromTime, toTime,
-			fromAmplitude, toAmplitude, garnish, drawingMethod);
+				fromAmplitude, toAmplitude, garnish, drawingMethod);
 	GRAPHICS_EACH_END
 }
 
@@ -660,7 +662,7 @@ static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) 
 	 * Keep the gate for error handling.
 	 */
 	try {
-		bool isaSpectrum = Thing_isa (publication.get(), classSpectrum);
+		const bool isaSpectrum = Thing_isa (publication.get(), classSpectrum);
 		praat_new (publication.move(), U"");
 		praat_updateSelection ();
 		if (isaSpectrum) {
@@ -729,7 +731,7 @@ FORM (NEW_Sound_extractPart, U"Sound: Extract part", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_extractPart (me, fromTime, toTime,
-			windowShape, relativeWidth, preserveTimes);
+				windowShape, relativeWidth, preserveTimes);
 	CONVERT_EACH_END (my name.get(), U"_part")
 }
 
@@ -844,9 +846,8 @@ FORM (MODIFY_Sound_formula_part, U"Sound: Formula (part)", U"Sound: Formula...")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)
-		Matrix_formula_part (me, fromTime, toTime,
-			fromChannel - 0.5, toChannel + 0.5,
-			formula, interpreter, nullptr);
+		Matrix_formula_part (me, fromTime, toTime, fromChannel - 0.5, toChannel + 0.5,
+				formula, interpreter, nullptr);
 	MODIFY_EACH_WEAK_END
 }
 
@@ -854,15 +855,15 @@ FORM (REAL_Sound_getAbsoluteExtremum, U"Sound: Get absolute extremum", U"Sound: 
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -872,13 +873,13 @@ FORM (REAL_Sound_getEnergy, U"Sound: Get energy", U"Sound: Get energy...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getEnergy (me, fromTime, toTime);
+		const double result = Sound_getEnergy (me, fromTime, toTime);
 	NUMBER_ONE_END (U" Pa2 sec")
 }
 
 DIRECT (REAL_Sound_getEnergyInAir) {
 	NUMBER_ONE (Sound)
-		double result = Sound_getEnergyInAir (me);
+		const double result = Sound_getEnergyInAir (me);
 	NUMBER_ONE_END (U" Joule/m2")
 }
 
@@ -887,13 +888,13 @@ FORM (REAL_Sound_getIndexFromTime, U"Get sample number from time", U"Get sample 
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sampled_xToIndex (me, time);
+		const double result = Sampled_xToIndex (me, time);
 	NUMBER_ONE_END (U" (index at time ", time, U" seconds)")
 }
 
 DIRECT (REAL_Sound_getIntensity_dB) {
 	NUMBER_ONE (Sound)
-		double result = Sound_getIntensity_dB (me);
+		const double result = Sound_getIntensity_dB (me);
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -901,15 +902,15 @@ FORM (REAL_Sound_getMaximum, U"Sound: Get maximum", U"Sound: Get maximum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -919,7 +920,7 @@ FORM (REAL_old_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getMean (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
+		const double result = Vector_getMean (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -931,7 +932,7 @@ FORM (REAL_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 DO_ALTERNATIVE (REAL_old_Sound_getMean)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Vector_getMean (me, fromTime, toTime, channel);
+		const double result = Vector_getMean (me, fromTime, toTime, channel);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -939,15 +940,15 @@ FORM (REAL_Sound_getMinimum, U"Sound: Get minimum", U"Sound: Get minimum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -957,7 +958,7 @@ FORM (REAL_old_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing"
 DO
 	NUMBER_ONE (Sound)
 		if (my ny > 1) Melder_throw (U"Cannot determine a zero crossing for a stereo sound.");
-		double result = Sound_getNearestZeroCrossing (me, time, 1);
+		const double result = Sound_getNearestZeroCrossing (me, time, 1);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -968,19 +969,19 @@ FORM (REAL_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing", U"
 DO_ALTERNATIVE (REAL_old_Sound_getNearestZeroCrossing)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Sound_getNearestZeroCrossing (me, time, channel);
+		const double result = Sound_getNearestZeroCrossing (me, time, channel);
 	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfChannels) {
 	NUMBER_ONE (Sound)
-		integer result = my ny;
+		const integer result = my ny;
 	NUMBER_ONE_END (result == 1 ? U" channel (mono)" : result == 2 ? U" channels (stereo)" : U" channels")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfSamples) {
 	NUMBER_ONE (Sound)
-		integer result = my nx;
+		const integer result = my nx;
 	NUMBER_ONE_END (U" samples")
 }
 
@@ -990,13 +991,13 @@ FORM (REAL_Sound_getPower, U"Sound: Get power", U"Sound: Get power...") {
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getPower (me, fromTime, toTime);
+		const double result = Sound_getPower (me, fromTime, toTime);
 	NUMBER_ONE_END (U" Pa2")
 }
 
 DIRECT (REAL_Sound_getPowerInAir) {
 	NUMBER_ONE (Sound)
-		double result = Sound_getPowerInAir (me);
+		const double result = Sound_getPowerInAir (me);
 	NUMBER_ONE_END (U" Watt/m2")
 }
 
@@ -1006,19 +1007,19 @@ FORM (REAL_Sound_getRootMeanSquare, U"Sound: Get root-mean-square", U"Sound: Get
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sound_getRootMeanSquare (me, fromTime, toTime);
+		const double result = Sound_getRootMeanSquare (me, fromTime, toTime);
 	NUMBER_ONE_END (U" Pascal")
 }
 
 DIRECT (REAL_Sound_getSamplePeriod) {
 	NUMBER_ONE (Sound)
-		double result = my dx;
+		const double result = my dx;
 	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (REAL_Sound_getSampleRate) {
 	NUMBER_ONE (Sound)
-		double result = 1.0 / my dx;
+		const double result = 1.0 / my dx;
 	NUMBER_ONE_END (U" Hz")
 }
 
@@ -1028,7 +1029,7 @@ FORM (REAL_old_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"S
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getStandardDeviation (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
+		const double result = Vector_getStandardDeviation (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1040,7 +1041,7 @@ FORM (REAL_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"Sound
 DO_ALTERNATIVE (REAL_old_Sound_getStandardDeviation)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Vector_getStandardDeviation (me, fromTime, toTime, channel);
+		const double result = Vector_getStandardDeviation (me, fromTime, toTime, channel);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1049,7 +1050,7 @@ FORM (REAL_Sound_getTimeFromIndex, U"Get time from sample number", U"Get time fr
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Sampled_indexToX (me, sampleNumber);
+		const double result = Sampled_indexToX (me, sampleNumber);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1063,15 +1064,15 @@ FORM (REAL_Sound_getTimeOfMaximum, U"Sound: Get time of maximum", U"Sound: Get t
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1079,15 +1080,15 @@ FORM (REAL_Sound_getTimeOfMinimum, U"Sound: Get time of minimum", U"Sound: Get t
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1096,8 +1097,8 @@ FORM (REAL_old_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"So
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
-			my ny == 1 ? my z [1] [sampleNumber] : 0.5 * (my z [1] [sampleNumber] + my z [2] [sampleNumber]);
+		const double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
+				my ny == 1 ? my z [1] [sampleNumber] : 0.5 * (my z [1] [sampleNumber] + my z [2] [sampleNumber]);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1108,23 +1109,23 @@ FORM (REAL_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound:
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtIndex)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
-			Sampled_getValueAtSample (me, sampleNumber, channel, 0);
+		const double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
+				Sampled_getValueAtSample (me, sampleNumber, channel, 0);
 	NUMBER_ONE_END (U" Pascal")
 }
 
 FORM (REAL_old_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"nearest")
+		RADIOBUTTON (U"linear")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	NUMBER_ONE (Sound)
-		double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, interpolation);
+		const double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1132,16 +1133,16 @@ FORM (REAL_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value
 	CHANNEL (channel, U"Channel", U"0 (= average)")
 	REAL (time, U"Time (s)", U"0.5")
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"Nearest")
-		RADIOBUTTON (U"Linear")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"nearest")
+		RADIOBUTTON (U"linear")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtTime)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		double result = Vector_getValueAtX (me, time, channel, interpolation);
+		const double result = Vector_getValueAtX (me, time, channel, interpolation);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1276,36 +1277,32 @@ DIRECT (WINDOW_Sound_recordStereo) {
 END }
 
 FORM (RECORD1_Sound_record_fixedTime, U"Record Sound", nullptr) {
+	LABEL (U"This menu command is usually hidden,")
+	LABEL (U"   because its behaviour is platform-dependent.")
+	LABEL (U"The combination of “microphone” and “44100 Hz” is likely")
+	LABEL (U"   to work on all computers.")
+	LABEL (U"The “Gain” and “Balance” settings tend to be obsolete")
+	LABEL (U"   and may not work at all on your computer.")
 	RADIO (inputSource, U"Input source", 1)
-		RADIOBUTTON (U"Microphone")
-		RADIOBUTTON (U"Line")
-	REAL (gain, U"Gain (0-1)", U"0.1")
+		OPTION (U"microphone")
+		OPTION (U"line")
+	REAL (gain, U"Gain (0-1)", U"1.0")
 	REAL (balance, U"Balance (0-1)", U"0.5")
-	RADIOSTR (samplingFrequency, U"Sampling frequency", 1)
-		#ifdef UNIX
-		RADIOBUTTON (U"8000")
-		#endif
-		#ifndef macintosh
-		RADIOBUTTON (U"11025")
-		#endif
-		#ifdef UNIX
-		RADIOBUTTON (U"16000")
-		#endif
-		#ifndef macintosh
-		RADIOBUTTON (U"22050")
-		#endif
-		#ifdef UNIX
-		RADIOBUTTON (U"32000")
-		#endif
-		RADIOBUTTON (U"44100")
-		RADIOBUTTON (U"48000")
-		RADIOBUTTON (U"96000")
+	OPTIONMENUSTR (samplingFrequency, U"Sampling frequency (Hz)", 6)
+		OPTION (U"8000")
+		OPTION (U"11025")
+		OPTION (U"16000")
+		OPTION (U"22050")
+		OPTION (U"32000")
+		OPTION (U"44100")
+		OPTION (U"48000")
+		OPTION (U"96000")
 	POSITIVE (duration, U"Duration (seconds)", U"1.0")
 	OK
 DO
 	CREATE_ONE
 		autoSound result = Sound_record_fixedTime (inputSource,
-			gain, balance, Melder_atof (samplingFrequency), duration);
+				gain, balance, Melder_atof (samplingFrequency), duration);
 	CREATE_ONE_END (U"untitled")
 }
 
@@ -1415,9 +1412,8 @@ DO_ALTERNATIVE (MODIFY_old_Sound_setValueAtIndex)
 		if (channel > 0) {
 			my z [channel] [sampleNumber] = newValue;
 		} else {
-			for (channel = 1; channel <= my ny; channel ++) {
+			for (channel = 1; channel <= my ny; channel ++)
 				my z [channel] [sampleNumber] = newValue;
-			}
 		}
 	MODIFY_EACH_END
 }
@@ -1447,7 +1443,8 @@ FORM (NEW_Sound_to_Manipulation, U"Sound: To Manipulation", U"Manipulation") {
 	POSITIVE (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
 	OK
 DO
-	if (maximumPitch <= minimumPitch) Melder_throw (U"The maximum pitch should be greater than the minimum pitch.");
+	if (maximumPitch <= minimumPitch)
+		Melder_throw (U"The maximum pitch should be greater than the minimum pitch.");
 	CONVERT_EACH (Sound)
 		autoManipulation result = Sound_to_Manipulation (me, timeStep, minimumPitch, maximumPitch);
 	CONVERT_EACH_END (my name.get())
@@ -1479,7 +1476,7 @@ FORM (NEW_Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & H
 DO
 	CONVERT_EACH (Sound)
 		autoCochleagram result = Sound_to_Cochleagram_edb (me, timeStep, frequencyResolution, hasSynapse,
-			replenishmentRate, lossRate, returnRate, reprocessingRate);
+				replenishmentRate, lossRate, returnRate, reprocessingRate);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1493,7 +1490,7 @@ FORM (NEW_Sound_to_Formant_burg, U"Sound: To Formant (Burg method)", U"Sound: To
 DO
 	CONVERT_EACH (Sound)
 		autoFormant result = Sound_to_Formant_burg (me, timeStep,
-			maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
+				maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1507,7 +1504,7 @@ FORM (NEW_Sound_to_Formant_keepAll, U"Sound: To Formant (keep all)", U"Sound: To
 DO
 	CONVERT_EACH (Sound)
 		autoFormant result = Sound_to_Formant_keepAll (me, timeStep,
-			maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
+				maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1521,7 +1518,7 @@ FORM (NEW_Sound_to_Formant_willems, U"Sound: To Formant (split Levinson (Willems
 DO
 	CONVERT_EACH (Sound)
 		autoFormant result = Sound_to_Formant_willems (me, timeStep,
-			numberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
+				numberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1535,7 +1532,7 @@ DO
 	if (periodsPerWindow < 3.0) Melder_throw (U"Number of periods per window must be at least 3.0.");
 	CONVERT_EACH (Sound)
 		autoHarmonicity result = Sound_to_Harmonicity_ac (me, timeStep,
-			minimumPitch, silenceThreshold, periodsPerWindow);
+				minimumPitch, silenceThreshold, periodsPerWindow);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1548,7 +1545,7 @@ FORM (NEW_Sound_to_Harmonicity_cc, U"Sound: To Harmonicity (cc)", U"Sound: To Ha
 DO
 	CONVERT_EACH (Sound)
 		autoHarmonicity result = Sound_to_Harmonicity_cc (me, timeStep,
-			minimumPitch, silenceThreshold, periodsPerWindow);
+				minimumPitch, silenceThreshold, periodsPerWindow);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1561,7 +1558,7 @@ FORM (NEW_Sound_to_Harmonicity_gne, U"Sound: To Harmonicity (gne)", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoMatrix result = Sound_to_Harmonicity_GNE (me, minimumFrequency,
-			maximumFrequency, bandwidth, step);
+				maximumFrequency, bandwidth, step);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1572,7 +1569,7 @@ FORM (NEW_old_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity.
 DO
 	CONVERT_EACH (Sound)
 		autoIntensity result = Sound_to_Intensity (me,
-			minimumPitch, timeStep, false);
+				minimumPitch, timeStep, false);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1584,7 +1581,7 @@ FORM (NEW_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...")
 DO_ALTERNATIVE (NEW_old_Sound_to_Intensity)
 	CONVERT_EACH (Sound)
 		autoIntensity result = Sound_to_Intensity (me,
-			minimumPitch, timeStep, subtractMean);
+				minimumPitch, timeStep, subtractMean);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1596,7 +1593,7 @@ FORM (NEW_Sound_to_IntensityTier, U"Sound: To IntensityTier", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoIntensityTier result = Sound_to_IntensityTier (me,
-			minimumPitch, timeStep, subtractMean);
+				minimumPitch, timeStep, subtractMean);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1628,7 +1625,7 @@ DO
 	if (maximumPitch <= minimumPitch) Melder_throw (U"Your maximum pitch should be greater than your minimum pitch.");
 	CONVERT_EACH (Sound)
 		autoLtas result = Sound_to_Ltas_pitchCorrected (me, minimumPitch, maximumPitch,
-			maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
+				maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1679,7 +1676,8 @@ DO
 	CONVERT_EACH (Sound)
 		autoPitch result = Sound_to_Pitch_ac (me, timeStep,
 			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
-			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling
+		);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1702,7 +1700,8 @@ DO
 	CONVERT_EACH (Sound)
 		autoPitch result = Sound_to_Pitch_cc (me, timeStep,
 			pitchFloor, 1.0, maximumNumberOfCandidates, veryAccurate,
-			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling);
+			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling
+		);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1711,16 +1710,16 @@ FORM (NEW_Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", nu
 	BOOLEAN (includeMaxima, U"Include maxima", true)
 	BOOLEAN (includeMinima, U"Include minima", false)
 	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
+		RADIOBUTTON (U"sinc700")
 	OK
 DO
 	CONVERT_EACH (Sound)
 		autoPointProcess result = Sound_to_PointProcess_extrema (me, channel > my ny ? 1 : channel,
-			interpolation, includeMaxima, includeMinima);
+				interpolation, includeMaxima, includeMinima);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1747,7 +1746,7 @@ DO
 		Melder_throw (U"Your maximum pitch should be greater than your minimum pitch.");
 	CONVERT_EACH (Sound)
 		autoPointProcess result = Sound_to_PointProcess_periodic_peaks (me,
-			minimumPitch, maximumPitch, includeMaxima, includeMinima);
+				minimumPitch, maximumPitch, includeMaxima, includeMinima);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1759,7 +1758,7 @@ FORM (NEW_Sound_to_PointProcess_zeroes, U"Get zeroes", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoPointProcess result = Sound_to_PointProcess_zeroes (me, channel > my ny ? 1 : channel,
-			includeRaisers, includeFallers);
+				includeRaisers, includeFallers);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1774,7 +1773,7 @@ FORM (NEW_Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sound: To Spectrogra
 DO
 	CONVERT_EACH (Sound)
 		autoSpectrogram result = Sound_to_Spectrogram (me, windowLength,
-			maximumFrequency, timeStep, frequencyStep, windowShape, 8.0, 8.0);
+				maximumFrequency, timeStep, frequencyStep, windowShape, 8.0, 8.0);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1823,7 +1822,8 @@ OK
 	SET_INTEGER (bufferSize, SoundRecorder_getBufferSizePref_MB ())
 	SET_ENUM (inputSoundSystem, kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
-	if (bufferSize > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
+	if (bufferSize > 1000)
+		Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
 	MelderAudio_setInputSoundSystem (inputSoundSystem);
 END }
@@ -2032,7 +2032,7 @@ DO
 	FIND_TWO (SoundSet, Table)
 		autoPatternList inputs, outputs;
 		SoundSet_Table_getRandomizedPatterns (me, you, columnName, numberOfPatterns, inputSize, outputSize,
-			& inputs, & outputs);
+				& inputs, & outputs);
 		praat_new (inputs.move(), U"inputs");
 		praat_new (outputs.move(), U"outputs");
 	END

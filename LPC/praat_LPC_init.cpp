@@ -173,7 +173,7 @@ DO
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters, powerf, & result);	
+		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters.get(), powerf, & result);	
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -198,7 +198,7 @@ DO
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should be greater than or equal to 0.0 and smaller than or equal to 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
 	MODIFY_EACH_END
 }
 
@@ -297,10 +297,10 @@ FORM (REAL_PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: G
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIO (interpolationMethod, U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
@@ -313,10 +313,10 @@ FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of p
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIO (interpolationMethod, U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
 	OK
 DO
 	NUMBER_ONE (PowerCepstrum)
@@ -378,10 +378,10 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIO (interpolationMethod, U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
@@ -567,10 +567,10 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
 	RADIO (interpolationMethod, U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
 	LABEL (U"Trend line:")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
@@ -610,10 +610,10 @@ FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prom
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
 	RADIO (interpolationMethod, U"Interpolation", 2)
-		RADIOBUTTON (U"None")
-		RADIOBUTTON (U"Parabolic")
-		RADIOBUTTON (U"Cubic")
-		RADIOBUTTON (U"Sinc70")
+		RADIOBUTTON (U"none")
+		RADIOBUTTON (U"parabolic")
+		RADIOBUTTON (U"cubic")
+		RADIOBUTTON (U"sinc70")
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)

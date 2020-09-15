@@ -32,20 +32,20 @@
 #define praat_TimeVector_INTERPOLATED_VALUE(time,interpolation) \
 	REAL (time, U"Time (s)", U"0.5") \
 	RADIOx (interpolation, U"Interpolation", 3, 0) \
-		RADIOBUTTON (U"Nearest") \
-		RADIOBUTTON (U"Linear") \
-		RADIOBUTTON (U"Cubic") \
-		RADIOBUTTON (U"Sinc70") \
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"nearest") \
+		RADIOBUTTON (U"linear") \
+		RADIOBUTTON (U"cubic") \
+		RADIOBUTTON (U"sinc70") \
+		RADIOBUTTON (U"sinc700")
 
 #define praat_TimeVector_INTERPOLATED_EXTREMUM(fromTime,toTime,interpolation) \
 	praat_TimeFunction_RANGE (fromTime, toTime) \
 	RADIOx (interpolation, U"Interpolation", 2, 0) \
-		RADIOBUTTON (U"None") \
-		RADIOBUTTON (U"Parabolic") \
-		RADIOBUTTON (U"Cubic") \
-		RADIOBUTTON (U"Sinc70") \
-		RADIOBUTTON (U"Sinc700")
+		RADIOBUTTON (U"none") \
+		RADIOBUTTON (U"parabolic") \
+		RADIOBUTTON (U"cubic") \
+		RADIOBUTTON (U"sinc70") \
+		RADIOBUTTON (U"sinc700")
 
 /* End of file praat_TimeVector.h */
 #endif

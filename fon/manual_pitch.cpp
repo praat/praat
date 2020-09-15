@@ -56,7 +56,7 @@ INTRO (U"A command for changing the data in all selected @Harmonicity objects.")
 NORMAL (U"See the @Formulas tutorial for examples and explanations.")
 MAN_END
 
-MAN_BEGIN (U"Harmonicity: Get maximum...", U"ppgb", 20030916)
+MAN_BEGIN (U"Harmonicity: Get maximum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the maximum value, expressed in dB.")
@@ -66,7 +66,7 @@ TAG (U"##To time (s)")
 DEFINITION (U"the selected time domain. Values outside this domain are ignored. "
 	"If ##To time# is not greater than ##From time#, the entire time domain of the Harmonicity object is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -87,7 +87,7 @@ NORMAL (U"where %x(%t) is the harmonicity (in dB) as a function of time. "
 	"are ignored. If all the frames are silent, the returned value is @undefined.")
 MAN_END
 
-MAN_BEGIN (U"Harmonicity: Get minimum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Harmonicity: Get minimum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the minimum value, expressed in dB.")
@@ -96,7 +96,7 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -118,7 +118,7 @@ FORMULA (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
 NORMAL (U"where %n is the number of frame centres between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
-MAN_BEGIN (U"Harmonicity: Get time of maximum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Harmonicity: Get time of maximum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Harmonicity object for the time associated with its maximum value.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the maximum HNR value.")
@@ -127,12 +127,12 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
 
-MAN_BEGIN (U"Harmonicity: Get time of minimum...", U"ppgb", 20041107)
+MAN_BEGIN (U"Harmonicity: Get time of minimum...", U"ppgb", 20200912)
 INTRO (U"A @query to the selected @Harmonicity object.")
 ENTRY (U"Return value")
 NORMAL (U"the time (in seconds) associated with the minimum HNR value.")
@@ -141,7 +141,7 @@ TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 TAG (U"##Interpolation")
-DEFINITION (U"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+DEFINITION (U"the interpolation method (#none, #parabolic, #cubic, #sinc70, #sinc700) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -156,7 +156,7 @@ TAG (U"##Time (s)")
 DEFINITION (U"the time at which the value is to be evaluated.")
 TAG (U"##Interpolation")
 DEFINITION (U"the interpolation method, see @@vector value interpolation@. "
-	"The standard is Cubic because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
+	"The standard is “cubic” because of the usual nonlinearity (logarithm) in the computation of harmonicity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
 

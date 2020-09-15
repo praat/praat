@@ -126,7 +126,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& works
 			goto end;
 	}
 end:
-	i--;
+	i --;
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
 	if (i == numberOfCoefficients)
@@ -220,7 +220,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 			goto end;
 	}
 end:
-	i--;
+	i --;
 	for (integer j = 1; j <= i; j ++)
 		thy a [j] = a [j + 1];
 	if (i == m)
@@ -247,7 +247,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 
 	longdouble xms = p / n;
 	if (xms <= 0.0) {
-		return xms;	// warning empty
+		return double (xms);	// warning empty
 	}
 	// (9)
 
@@ -268,7 +268,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 		if (denum <= 0.0)
 			return 0.0;	// warning ill-conditioned
 
-		a [i] = 2.0 * num / denum;
+		a [i] = 2.0 * double (num / denum);
 
 		// (10)
 
@@ -291,7 +291,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 			}
 		}
 	}
-	return xms;
+	return double (xms);
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee, VEC const& workspace) {
@@ -441,9 +441,9 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 		}
 	}
 end:
-	thy gain *= 0.5; // because e0 is twice the energy
+	thy gain *= 0.5;   // because e0 is twice the energy
 	thy a.resize (m);
-	thy nCoefficients = thy a.size; // maintain invariant
+	thy nCoefficients = thy a.size;   // maintain invariant
 	return status == 1 || status == 4 || status == 5;
 }
 
@@ -452,9 +452,13 @@ static autoLPC Sound_to_LPC_noThreads (Sound me, int predictionOrder, double ana
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
 		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
-		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
+		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1),
+		U"Please increase the analysis window duration or lower the prediction order."
+	);
 	
-	// Convenience: analyse the whole sound into one LPC_frame
+	/*
+		Convenience: analyse the whole sound into one LPC_frame.
+	*/
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
 	}
@@ -495,14 +499,14 @@ static autoLPC Sound_to_LPC_noThreads (Sound me, int predictionOrder, double ana
 			frameErrorCount ++;
 	
 		if (iframe % 10 == 1)
-			Melder_progress ( (double) iframe / numberOfFrames, U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
+			Melder_progress (double (iframe) / numberOfFrames, U"LPC analysis of frame ", iframe, U" out of ", numberOfFrames, U".");
 	}
 	return thee;
 }
 
 static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
-	if (numberOfProcessors <= 1) {
+	if (numberOfProcessors <= 1 ||true) {
 		/*
 			We cannot use multithreading.
 		*/
@@ -512,7 +516,9 @@ static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth
 	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
 		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
-		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
+		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1),
+		U"Please increase the analysis window duration or lower the prediction order."
+	);
 	
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
@@ -661,7 +667,7 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 }
 
 /*
-	gain used as a constant amplitude multiplier within a frame of duration my dx.
+	Gain used as a constant amplitude multiplier within a frame of duration my dx.
 	future alternative: convolve gain with a smoother.
 */
 autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
@@ -678,7 +684,7 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 		autoSound source;
 		if (my samplingPeriod != thy dx) {
 			source = Sound_resample (thee, 1.0 / my samplingPeriod, 50);
-			thee = source.get();   // Reference copy; remove at end
+			thee = source.get();   // reference copy; remove at end
 		}
 
 		autoSound him = Data_copy (thee);

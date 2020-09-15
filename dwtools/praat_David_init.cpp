@@ -628,7 +628,7 @@ DO
 	CONVERT_TWO_END (your name.get(), U"_", my name.get())
 }
 
-FORM (NEW_CCA_extractEigen, U"CCA: Exxtract Eigen", nullptr) {
+FORM (NEW_CCA_extractEigen, U"CCA: Extract Eigen", nullptr) {
 	OPTIONMENU (choice, U"variablesType", 1)
 		OPTION (U"Dependent")
 		OPTION (U"Independent")
@@ -790,7 +790,7 @@ FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
 	SENTENCE (replace_string, U"Replace", U"high")
 	INTEGER (replaceLimit, U"Replace limit", U"0 (= unlimited)")
 	RADIOx (matchType, U"Search and replace are", 2, 0)
-		RADIOBUTTON (U"Literals")
+		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
 DO
@@ -1840,7 +1840,7 @@ FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive ste
 	OPTIONMENU (direction, U"Direction", 1)
 		OPTION (U"X")
 		OPTION (U"Y")
-		OPTION (U"Diagonaal")
+		OPTION (U"Diagonal")
 	OK
 DO
 	int direction_code [] = { DTW_START, DTW_X, DTW_Y, DTW_XANDY };
@@ -2124,10 +2124,10 @@ DO
 
 FORM (REAL_EditCostsTable_getCosts_others, U"EditCostsTable: Get cost (others)", nullptr) {
 	RADIO (costTypes, U"Others cost type", 1)
-		RADIOBUTTON (U"Insertion")
-		RADIOBUTTON (U"Deletion")
-		RADIOBUTTON (U"Equality")
-		RADIOBUTTON (U"Inequality")
+		RADIOBUTTON (U"insertion")
+		RADIOBUTTON (U"deletion")
+		RADIOBUTTON (U"equality")
+		RADIOBUTTON (U"inequality")
 	OK
 DO
 	NUMBER_ONE (EditCostsTable)
@@ -3293,23 +3293,23 @@ DIRECT (NEW1_KlattTable_createExample) {
 FORM (NEW_KlattTable_to_Sound, U"KlattTable: To Sound", U"KlattTable: To Sound...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"16000")
 	RADIO (synthesisModel, U"Synthesis model", 1)
-		RADIOBUTTON (U"Cascade")
-		RADIOBUTTON (U"Parallel")
+		RADIOBUTTON (U"cascade")
+		RADIOBUTTON (U"parallel")
 	NATURAL (numberOfFormants, U"Number of formants", U"5")
 	POSITIVE (frameDuration, U"Frame duration (s)", U"0.005")
 	REAL (flutter_percentage, U"Flutter percentage (%)", U"0.0")   // ppgb: foutgevoelig
 	OPTIONMENU (voicingSource, U"Voicing source", 1)
-		OPTION (U"Impulsive")
-		OPTION (U"Natural")
+		OPTION (U"impulsive")
+		OPTION (U"natural")
 	OPTIONMENU (soundOutputType, U"Output type", 1)
-		OPTION (U"Sound")
-		OPTION (U"Voicing")
-		OPTION (U"Aspiration")
-		OPTION (U"Frication")
-		OPTION (U"Cascade-glottal-output")
-		OPTION (U"Parallel-glottal-output")
-		OPTION (U"Bypass-output")
-		OPTION (U"All-excitations")
+		OPTION (U"sound")
+		OPTION (U"voicing")
+		OPTION (U"aspiration")
+		OPTION (U"frication")
+		OPTION (U"cascade-glottal-output")
+		OPTION (U"parallel-glottal-output")
+		OPTION (U"bypass-output")
+		OPTION (U"all-excitations")
 	OK
 DO
 	if (flutter_percentage < 0.0 || flutter_percentage > 100.0) {
@@ -3661,9 +3661,9 @@ DIRECT (COMPVEC_Matrix_listEigenvalues) {
 FORM (MODIFY_Matrix_scale, U"Matrix: Scale", nullptr) {
 	LABEL (U"self[row, col] := self[row, col] / `Scale factor'")
 	RADIO (scaleMethod, U"Scale factor", 1)
-		RADIOBUTTON (U"Extremum in matrix")
-		RADIOBUTTON (U"Extremum in each row")
-		RADIOBUTTON (U"Extremum in each column")
+		RADIOBUTTON (U"extremum in matrix")
+		RADIOBUTTON (U"extremum in each row")
+		RADIOBUTTON (U"extremum in each column")
 	OK
 DO
 	MODIFY_EACH (Matrix)
@@ -4036,7 +4036,7 @@ FORM (GRAPHICS_MelFilter_drawFilterFunctions, U"MelFilter: Draw filter functions
 	RADIO (frequencyScale, U"Frequency scale", 1)
 	RADIOBUTTON (U"Hertz")
 	RADIOBUTTON (U"Bark")
-	RADIOBUTTON (U"Mel")
+	RADIOBUTTON (U"mel")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
 	BOOLEAN (dBScale, U"Amplitude scale in dB", false)
@@ -4054,7 +4054,7 @@ FORM (GRAPHICS_MelSpectrogram_drawTriangularFilterFunctions, U"MelSpectrogram: D
 	INTEGER (fromFilter, U"left Filter range", U"0")
 	INTEGER (toFilter, U"right Filter range", U"0")
 	RADIO (frequencyScale, U"Frequency scale", 1)
-	RADIOBUTTON (U"Mel")
+	RADIOBUTTON (U"mel")
 	RADIOBUTTON (U"Hertz")
 	REAL (fromFrequency, U"left Frequency range", U"0.0")
 	REAL (toFrequency, U"right Frequency range", U"0.0")
@@ -4150,11 +4150,11 @@ FORM (INFO_Ltas_reportSpectralTrend, U"Ltas: Report spectral trend", nullptr) {
 	POSITIVE (fromFrequency, U"left Frequency range (Hz)", U"100.0")
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"5000.0")
 	OPTIONMENU (frequencyScale, U"Frequency scale", 1)
-		OPTION (U"Linear")
-		OPTION (U"Logarithmic")
+		OPTION (U"linear")
+		OPTION (U"logarithmic")
 	OPTIONMENU (fitMethod, U"Fit method", 2)
-		OPTION (U"Least squares")
-		OPTION (U"Robust")
+		OPTION (U"least squares")
+		OPTION (U"robust")
 	OK
 DO
 	bool logScale = frequencyScale == 2;
@@ -5546,10 +5546,10 @@ FORM (GRAPHICS_Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
 	BOOLEAN (garnish, U"Garnish", true)
 	LABEL (U"")
 	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
-		OPTION (U"Curve")
-		OPTION (U"Bars")
-		OPTION (U"Poles")
-		OPTION (U"Speckles")
+		OPTION (U"curve")
+		OPTION (U"bars")
+		OPTION (U"poles")
+		OPTION (U"speckles")
 	TEXTFIELD (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
@@ -6096,8 +6096,8 @@ FORM (NEW_Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domai
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	INTEGER (interpolationDepth, U"Interpolation depth", U"50")
 	RADIO (scale, U"Interpolation scale", 1)
-		RADIOBUTTON (U"Linear")
-		RADIOBUTTON (U"Logarithmic")
+		RADIOBUTTON (U"linear")
+		RADIOBUTTON (U"logarithmic")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -6131,8 +6131,8 @@ DIRECT (HELP_SpeechSynthesizer_help) {
 
 FORM (NEW1_ExtractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
 	OPTIONMENU (which, U"Data", 1)
-		OPTION (U"Language properties")
-		OPTION (U"Voices properties")
+		OPTION (U"language properties")
+		OPTION (U"voices properties")
 	OK
 DO
 	CREATE_ONE
@@ -6237,9 +6237,9 @@ DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
 
 FORM (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
 	OPTIONMENU (inputTextFormat, U"Input text format is", 1)
-		OPTION (U"Text only")
-		OPTION (U"Phoneme codes only")
-		OPTION (U"Mixed with tags")
+		OPTION (U"text only")
+		OPTION (U"phoneme codes only")
+		OPTION (U"mixed with tags")
 	OPTIONMENU (inputPhonemeCoding, U"Input phoneme codes are", 1)
 		OPTION (U"Kirshenbaum_espeak")
 	OK
@@ -6600,7 +6600,7 @@ FORM (NEW_Strings_change, U"Strings: Change", U"Strings: Change") {
 	SENTENCE (replace_string, U"Replace", U"a")
 	INTEGER (replaceLimit, U"Replace limit", U"0 (= unlimited)")
 	RADIO (stringType, U"Search and replace are:", 1)
-	RADIOBUTTON (U"Literals")
+	RADIOBUTTON (U"literals")
 	RADIOBUTTON (U"Regular Expressions")
 	OK
 DO
@@ -7296,9 +7296,9 @@ DO
 
 FORM (NEW_TableOfReal_create_weenink1983, U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Weenink 1985)...") {
 	RADIO (speakerGroup, U"Speakers group", 1)
-		RADIOBUTTON (U"Men")
-		RADIOBUTTON (U"Women")
-		RADIOBUTTON (U"Children")
+		RADIOBUTTON (U"men")
+		RADIOBUTTON (U"women")
+		RADIOBUTTON (U"children")
 	OK
 DO
 	CREATE_ONE
@@ -7392,9 +7392,9 @@ FORM (GRAPHICS_TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Draw vec
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	RADIO (vectorType, U"Vector type", 1)
-		RADIOBUTTON (U"Arrow")
-		RADIOBUTTON (U"Double arrow")
-		RADIOBUTTON (U"Line")
+		RADIOBUTTON (U"arrow")
+		RADIOBUTTON (U"double arrow")
+		RADIOBUTTON (U"line")
 	INTEGER (labelSize, U"Label size", U"10")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
@@ -7579,8 +7579,8 @@ DIRECT (NEW1_TablesOfReal_to_Eigen_gsvd) {
 
 FORM (NEW1_TableOfReal_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", nullptr) {
 	OPTIONMENU (between, U"Correlations between", 1)
-		OPTION (U"Rows")
-		OPTION (U"Columns")
+		OPTION (U"rows")
+		OPTION (U"columns")
 	BOOLEAN (center, U"Center", false)
 	BOOLEAN (normalize, U"Normalize", false)
 	OK
@@ -7697,8 +7697,8 @@ DO
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
 	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
 	RADIO (position, U"At", 1)
-		RADIOBUTTON (U"End")
-		RADIOBUTTON (U"Start")
+		RADIOBUTTON (U"end")
+		RADIOBUTTON (U"start")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -7713,7 +7713,7 @@ FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts",
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
-		RADIOBUTTON (U"Literals")
+		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
 DO
@@ -7730,7 +7730,7 @@ FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"Tex
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"b")
 	RADIO (searchType, U"Search and replace strings are:", 1)
-		RADIOBUTTON (U"Literals")
+		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
 DO

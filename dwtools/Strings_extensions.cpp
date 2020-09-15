@@ -130,7 +130,7 @@ autoStrings Strings_change (Strings me, conststring32 search, conststring32 repl
 	try {
 		autoStrings thee = Thing_new (Strings);
 		autoSTRVEC strings = string32vector_searchAndReplace (my strings.get(),
-			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		thy numberOfStrings = my numberOfStrings;
 		thy strings = std::move (strings);
 		return thee;

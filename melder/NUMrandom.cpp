@@ -170,7 +170,7 @@ void NUMrandom_initializeSafelyAndUnpredictably () {
 	const uint64 ticksSince1969 = getTicksSince1969 ();   // possibly microseconds
 	const uint64 ticksSinceBoot = getTicksSinceBoot ();   // possibly nanoseconds
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
-		constexpr integer numberOfKeys = 6;
+		constexpr integer numberOfKeys = 7;
 		uint64 keys [numberOfKeys];
 		keys [0] = ticksSince1969;   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + uint64 (threadNumber);   // unique between threads in the same process
@@ -196,6 +196,8 @@ void NUMrandom_initializeSafelyAndUnpredictably () {
 		}
 		keys [4] = (uint64) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
 		keys [5] = ticksSinceBoot;   // some extra randomness
+		static uint64 callInstance = 0;
+		keys [6] = UINT64_C (3642334578453) + (++ callInstance);
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
 	theInited = true;

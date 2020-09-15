@@ -184,6 +184,15 @@ public:
 		: constvector (other.cells, other.size) { }
 	//constvector (constvector const& other) = default;
 	//constvector& operator= (constvector const& other) = default;
+	/*
+		Letting an autovector convert to a constvector would lead to errors such as in
+			constVEC vec = newVECzero (10);
+		where newVECzero produces a temporary that is deleted immediately
+		after the initialization of vec.
+		So we rule out this initialization.
+	*/
+	constvector (autovector<T> const& other)
+		= delete;
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our cells [i - 1];
 	}

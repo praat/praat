@@ -342,10 +342,10 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 			U"Both row and column labels should be present.");
 		
 		autoSTRVEC rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
-			search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
 		autoSTRVEC columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
-			search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
+				search, replace, maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
 		autoStrings srow = Thing_new (Strings);
 		srow -> numberOfStrings = my numberOfRows;
@@ -370,11 +370,9 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 		autoINTVEC rowIndex = create_index (srow -> strings.get(), drow -> rowLabels.get());
 		autoINTVEC columnIndex = create_index (scol -> strings.get(), dcol -> rowLabels.get());
 
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++)
+			for (integer j = 1; j <= my numberOfColumns; j ++)
 				thy data [rowIndex [i]] [columnIndex [j]] += my data [i] [j];
-			}
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not condensed.");

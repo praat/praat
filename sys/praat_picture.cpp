@@ -284,13 +284,13 @@ END }
 
 FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
 	RADIOx (horizontalAlignment, U"Horizontal alignment", 2, 0)
-		RADIOBUTTON (U"Left")
-		RADIOBUTTON (U"Centre")
-		RADIOBUTTON (U"Right")
+		RADIOBUTTON (U"left")
+		RADIOBUTTON (U"centre")
+		RADIOBUTTON (U"right")
 	RADIOx (verticalAlignment, U"Vertical alignment", 2, 0)
-		RADIOBUTTON (U"Bottom")
-		RADIOBUTTON (U"Half")
-		RADIOBUTTON (U"Top")
+		RADIOBUTTON (U"bottom")
+		RADIOBUTTON (U"half")
+		RADIOBUTTON (U"top")
 	REAL (rotation, U"Rotation (degrees)", U"0")
 	TEXTFIELD (text, U"Text:", U"")
 OK
@@ -602,9 +602,9 @@ FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 			U"Horizontal alignment", kGraphics_horizontalAlignment::LEFT)
 	REAL (verticalPosition, U"Vertical position", U"0.0")
 	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
-		OPTION (U"Bottom")
-		OPTION (U"Half")
-		OPTION (U"Top")
+		OPTION (U"bottom")
+		OPTION (U"half")
+		OPTION (U"top")
 	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
@@ -618,15 +618,13 @@ DO
 
 FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
 	REAL (horizontalPosition, U"Horizontal position", U"0.0")
-	OPTIONMENUx (horizontalAlignment, U"Horizontal alignment", 2, 0)
-		OPTION (U"Left")
-		OPTION (U"Centre")
-		OPTION (U"Right")
+	OPTIONMENU_ENUM (kGraphics_horizontalAlignment, horizontalAlignment,
+			U"Horizontal alignment", kGraphics_horizontalAlignment::LEFT)
 	REAL (verticalPosition, U"Vertical position", U"0.0")
 	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
-		OPTION (U"Bottom")
-		OPTION (U"Half")
-		OPTION (U"Top")
+		OPTION (U"bottom")
+		OPTION (U"half")
+		OPTION (U"top")
 	OPTIONMENU_ENUM (kGraphics_font, font, U"Font", kGraphics_font::DEFAULT)
 	POSITIVE (fontSize, U"Font size", U"10")
 	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
@@ -636,7 +634,7 @@ DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
 	const double currentSize = Graphics_inqFontSize (GRAPHICS);
 	GRAPHICS_NONE
-		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
+		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
 		Graphics_setFont (GRAPHICS, (kGraphics_font) font);
 		Graphics_setFontSize (GRAPHICS, fontSize);
