@@ -18,6 +18,11 @@
 
 #include "Vector.h"
 
+#include "enums_getText.h"
+#include "Vector_enums.h"
+#include "enums_getValue.h"
+#include "Vector_enums.h"
+
 Thing_implement (Vector, Matrix, 2);
 
 /*
@@ -28,7 +33,7 @@ Thing_implement (Vector, Matrix, 2);
 double structVector :: v_getVector (integer rowNumber, integer columnNumber) {
 	if (columnNumber < 1 || columnNumber > our nx)
 		return 0.0;
-	if (ny == 1)
+	if (our ny == 1)
 		return our z [1] [columnNumber];   // optimization
 	if (rowNumber == 0) {
 		if (our ny == 2)
@@ -115,36 +120,67 @@ double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int un
 
 /***** Get content. *****/
 
+integer kVector_valueInterpolation_to_interpolationDepth (kVector_valueInterpolation valueInterpolationType) {
+	switch (valueInterpolationType) {
+		case kVector_valueInterpolation :: UNDEFINED:
+			return NUM_VALUE_INTERPOLATE_LINEAR;
+		case kVector_valueInterpolation :: NEAREST:
+			return NUM_VALUE_INTERPOLATE_NEAREST;
+		case kVector_valueInterpolation :: LINEAR:
+			return NUM_VALUE_INTERPOLATE_LINEAR;
+		case kVector_valueInterpolation :: CUBIC:
+			return NUM_VALUE_INTERPOLATE_CUBIC;
+		case kVector_valueInterpolation :: SINC70:
+			return NUM_VALUE_INTERPOLATE_SINC70;
+		case kVector_valueInterpolation :: SINC700:
+			return NUM_VALUE_INTERPOLATE_SINC700;
+	}
+	return 0;   // never reached
+}
+
+integer kVector_peakInterpolation_to_interpolationDepth (kVector_peakInterpolation peakInterpolationType) {
+	switch (peakInterpolationType) {
+		case kVector_peakInterpolation :: UNDEFINED:
+			return NUM_PEAK_INTERPOLATE_PARABOLIC;
+		case kVector_peakInterpolation :: NONE:
+			return NUM_PEAK_INTERPOLATE_NONE;
+		case kVector_peakInterpolation :: PARABOLIC:
+			return NUM_PEAK_INTERPOLATE_PARABOLIC;
+		case kVector_peakInterpolation :: CUBIC:
+			return NUM_PEAK_INTERPOLATE_CUBIC;
+		case kVector_peakInterpolation :: SINC70:
+			return NUM_PEAK_INTERPOLATE_SINC70;
+		case kVector_peakInterpolation :: SINC700:
+			return NUM_PEAK_INTERPOLATE_SINC700;
+	}
+	return 0;   // never reached
+}
+
 /*
 	Vector_getValueAtX () returns the interpolated value in channel `ilevel`,
 	or if `ilevel` == 0, then the average of all the interpolated channels.
 */
-double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolation) {
-	double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
+double Vector_getValueAtX (Vector me, double x, integer ilevel, kVector_valueInterpolation valueInterpolationType) {
+	const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 	if (x <  leftEdge || x > rightEdge)
 		return undefined;
+	const integer interpolationDepth = kVector_valueInterpolation_to_interpolationDepth (valueInterpolationType);
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		double index_real = (x - my x1) / my dx + 1.0;
-		return NUM_interpolate_sinc (my z.row (ilevel), index_real,
-			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
-			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
-			interpolation);
+		const double index_real = (x - my x1) / my dx + 1.0;
+		return NUM_interpolate_sinc (my z.row (ilevel), index_real, interpolationDepth);
 	}
 	longdouble sum = 0.0;
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
-		double index_real = (x - my x1) / my dx + 1.0;
-		sum += NUM_interpolate_sinc (my z.row (ichan), index_real,
-			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
-			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
-			interpolation);
+		const double index_real = (x - my x1) / my dx + 1.0;
+		sum += NUM_interpolate_sinc (my z.row (ichan), index_real, interpolationDepth);
 	}
 	return double (sum / my ny);
 }
 
 /***** Get shape. *****/
 
-void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channelNumber, int interpolation,
+void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channelNumber, kVector_peakInterpolation peakInterpolationType,
 	double *out_minimum, double *out_xOfMinimum)
 {
 	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
@@ -157,11 +193,11 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 			No samples between xmin and xmax.
 			Try to return the lesser of the values at these two points.
 		*/
-		double yleft = Vector_getValueAtX (me, xmin, channelNumber,
-			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		double yright = Vector_getValueAtX (me, xmax, channelNumber,
-			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		minimum = yleft < yright ? yleft : yright;
+		kVector_valueInterpolation valueInterpolationType = ( peakInterpolationType > kVector_peakInterpolation :: NONE ?
+				kVector_valueInterpolation :: LINEAR : kVector_valueInterpolation :: NEAREST );
+		const double yleft = Vector_getValueAtX (me, xmin, channelNumber, valueInterpolationType);
+		const double yright = Vector_getValueAtX (me, xmax, channelNumber, valueInterpolationType);
+		minimum = std::min (yleft, yright);
 		x = ( yleft == yright ? (xmin + xmax) / 2.0 : yleft < yright ? xmin : xmax );
 	} else {
 		minimum = y [imin];
@@ -176,7 +212,8 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 			imax --;
 		for (integer i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
-				double i_real, localMinimum = NUMimproveMinimum (y, i, interpolation, & i_real);
+				double i_real;
+				const double localMinimum = NUMimproveMinimum (y, i, kVector_peakInterpolation_to_interpolationDepth (peakInterpolationType), & i_real);
 				if (localMinimum < minimum) {
 					minimum = localMinimum;
 					x = i_real;
@@ -192,15 +229,15 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 		*out_xOfMinimum = x;
 }
 
-void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
+void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
 	double *out_minimum, double *out_xOfMinimum, integer *out_channelOfMinimum)
 {
 	double minimum, xOfMinimum;
 	integer channelOfMinimum = 1;
-	Vector_getMinimumAndX (me, xmin, xmax, 1, interpolation, & minimum, & xOfMinimum);
+	Vector_getMinimumAndX (me, xmin, xmax, 1, peakInterpolationType, & minimum, & xOfMinimum);
 	for (integer channel = 2; channel <= my ny; channel ++) {
 		double minimumOfChannel, xOfMinimumOfChannel;
-		Vector_getMinimumAndX (me, xmin, xmax, channel, interpolation, & minimumOfChannel, & xOfMinimumOfChannel);
+		Vector_getMinimumAndX (me, xmin, xmax, channel, peakInterpolationType, & minimumOfChannel, & xOfMinimumOfChannel);
 		if (minimumOfChannel < minimum) {
 			minimum = minimumOfChannel;
 			xOfMinimum = xOfMinimumOfChannel;
@@ -215,25 +252,25 @@ void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int i
 		*out_channelOfMinimum = channelOfMinimum;
 }
 
-double Vector_getMinimum (Vector me, double xmin, double xmax, int interpolation) {
+double Vector_getMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double minimum;
-	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, & minimum, nullptr, nullptr);
+	Vector_getMinimumAndXAndChannel (me, xmin, xmax, peakInterpolationType, & minimum, nullptr, nullptr);
 	return minimum;
 }
 
-double Vector_getXOfMinimum (Vector me, double xmin, double xmax, int interpolation) {
+double Vector_getXOfMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double xOfMinimum;
-	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, & xOfMinimum, nullptr);
+	Vector_getMinimumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, & xOfMinimum, nullptr);
 	return xOfMinimum;
 }
 
-integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int interpolation) {
+integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	integer channelOfMinimum;
-	Vector_getMinimumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, nullptr, & channelOfMinimum);
+	Vector_getMinimumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, nullptr, & channelOfMinimum);
 	return channelOfMinimum;
 }
 
-void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channelNumber, int interpolation,
+void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channelNumber, kVector_peakInterpolation peakInterpolationType,
 	double *out_maximum, double *out_xOfMaximum)
 {
 	Melder_assert (channelNumber >= 1 && channelNumber <= my ny);
@@ -246,11 +283,11 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 			No samples between xmin and xmax.
 			Try to return the greater of the values at these two points.
 		*/
-		double yleft = Vector_getValueAtX (me, xmin, channelNumber,
-			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		double yright = Vector_getValueAtX (me, xmax, channelNumber,
-			interpolation > Vector_VALUE_INTERPOLATION_NEAREST ? Vector_VALUE_INTERPOLATION_LINEAR : Vector_VALUE_INTERPOLATION_NEAREST);
-		maximum = yleft > yright ? yleft : yright;
+		kVector_valueInterpolation valueInterpolationType = ( peakInterpolationType > kVector_peakInterpolation :: NONE ?
+				kVector_valueInterpolation :: LINEAR : kVector_valueInterpolation :: NEAREST );
+		const double yleft = Vector_getValueAtX (me, xmin, channelNumber, valueInterpolationType);
+		const double yright = Vector_getValueAtX (me, xmax, channelNumber, valueInterpolationType);
+		maximum = std::max (yleft, yright);
 		x = ( yleft == yright ? (xmin + xmax) / 2.0 : yleft > yright ? xmin : xmax );
 	} else {
 		maximum = y [imin];
@@ -259,11 +296,14 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 			maximum = y [imax];
 			x = imax;
 		}
-		if (imin == 1) imin ++;
-		if (imax == my nx) imax --;
+		if (imin == 1)
+			imin ++;
+		if (imax == my nx)
+			imax --;
 		for (i = imin; i <= imax; i ++) {
 			if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
-				double i_real, localMaximum = NUMimproveMaximum (y, i, interpolation, & i_real);
+				double i_real;
+				const double localMaximum = NUMimproveMaximum (y, i, kVector_peakInterpolation_to_interpolationDepth (peakInterpolationType), & i_real);
 				if (localMaximum > maximum) {
 					maximum = localMaximum;
 					x = i_real;
@@ -279,15 +319,15 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 		*out_xOfMaximum = x;
 }
 
-void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
+void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType,
 	double *out_maximum, double *out_xOfMaximum, integer *out_channelOfMaximum)
 {
 	double maximum, xOfMaximum;
 	integer channelOfMaximum = 1;
-	Vector_getMaximumAndX (me, xmin, xmax, 1, interpolation, & maximum, & xOfMaximum);
+	Vector_getMaximumAndX (me, xmin, xmax, 1, peakInterpolationType, & maximum, & xOfMaximum);
 	for (integer channel = 2; channel <= my ny; channel ++) {
 		double maximumOfChannel, xOfMaximumOfChannel;
-		Vector_getMaximumAndX (me, xmin, xmax, channel, interpolation, & maximumOfChannel, & xOfMaximumOfChannel);
+		Vector_getMaximumAndX (me, xmin, xmax, channel, peakInterpolationType, & maximumOfChannel, & xOfMaximumOfChannel);
 		if (maximumOfChannel > maximum) {
 			maximum = maximumOfChannel;
 			xOfMaximum = xOfMaximumOfChannel;
@@ -302,27 +342,27 @@ void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int i
 		*out_channelOfMaximum = channelOfMaximum;
 }
 
-double Vector_getMaximum (Vector me, double xmin, double xmax, int interpolation) {
+double Vector_getMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double maximum;
-	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, & maximum, nullptr, nullptr);
+	Vector_getMaximumAndXAndChannel (me, xmin, xmax, peakInterpolationType, & maximum, nullptr, nullptr);
 	return maximum;
 }
 
-double Vector_getXOfMaximum (Vector me, double xmin, double xmax, int interpolation) {
+double Vector_getXOfMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	double xOfMaximum;
-	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, & xOfMaximum, nullptr);
+	Vector_getMaximumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, & xOfMaximum, nullptr);
 	return xOfMaximum;
 }
 
-integer Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, int interpolation) {
+integer Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
 	integer channelOfMaximum;
-	Vector_getMaximumAndXAndChannel (me, xmin, xmax, interpolation, nullptr, nullptr, & channelOfMaximum);
+	Vector_getMaximumAndXAndChannel (me, xmin, xmax, peakInterpolationType, nullptr, nullptr, & channelOfMaximum);
 	return channelOfMaximum;
 }
 
-double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, int interpolation) {
-	double minimum = Vector_getMinimum (me, xmin, xmax, interpolation);
-	double maximum = Vector_getMaximum (me, xmin, xmax, interpolation);
+double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, kVector_peakInterpolation peakInterpolationType) {
+	const double minimum = Vector_getMinimum (me, xmin, xmax, peakInterpolationType);
+	const double maximum = Vector_getMaximum (me, xmin, xmax, peakInterpolationType);
 	return std::max (fabs (minimum), fabs (maximum));
 }
 
@@ -340,9 +380,9 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 	if (ilevel == Vector_CHANNEL_AVERAGE) {
 		longdouble sum2 = 0.0;
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			double mean = Vector_getMean (me, xmin, xmax, channel);
+			const double mean = Vector_getMean (me, xmin, xmax, channel);
 			for (integer i = imin; i <= imax; i ++) {
-				double diff = my z [channel] [i] - mean;
+				const double diff = my z [channel] [i] - mean;
 				sum2 += diff * diff;
 			}
 		}
@@ -350,10 +390,10 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 				// because from every channel its own mean was subtracted.
 				// Corollary: a two-channel mono sound will have the same stdev as the corresponding one-channel sound.
 	}
-	double mean = Vector_getMean (me, xmin, xmax, ilevel);
+	const double mean = Vector_getMean (me, xmin, xmax, ilevel);
 	longdouble sum2 = 0.0;
 	for (integer i = imin; i <= imax; i ++) {
-		double diff = my z [ilevel] [i] - mean;
+		const double diff = my z [ilevel] [i] - mean;
 		sum2 += diff * diff;
 	}
 	return sqrt (double (sum2 / (n - 1)));
@@ -384,10 +424,10 @@ void Vector_scale (Vector me, double scale) {
 
 /***** Graphics. *****/
 
-void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
+void Vector_draw (Vector me, Graphics graphics, double *pxmin, double *pxmax, double *pymin, double *pymax,
 	double defaultDy, conststring32 method)
 {
-	bool xreversed = *pxmin > *pxmax, yreversed = *pymin > *pymax;
+	const bool xreversed = ( *pxmin > *pxmax ), yreversed = ( *pymin > *pymax );
 	if (xreversed)
 		std::swap (*pxmin, *pxmax);
 	if (yreversed)
@@ -397,7 +437,7 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		Domain expressed in sample numbers.
 	*/
 	integer ixmin, ixmax;
-	integer n = Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
+	const integer n = Matrix_getWindowSamplesX (me, *pxmin, *pxmax, & ixmin, & ixmax);
 	if (n < 1)
 		return;
 	/*
@@ -413,40 +453,41 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 	/*
 		Set coordinates for drawing.
 	*/
-	Graphics_setInner (g);
-	Graphics_setWindow (g, xreversed ? *pxmax : *pxmin, xreversed ? *pxmin : *pxmax, yreversed ? *pymax : *pymin, yreversed ? *pymin : *pymax);
+	Graphics_setInner (graphics);
+	Graphics_setWindow (graphics, ( xreversed ? *pxmax : *pxmin ), ( xreversed ? *pxmin : *pxmax ),
+			( yreversed ? *pymax : *pymin ), ( yreversed ? *pymin : *pymax ));
 	if (str32str (method, U"bars") || str32str (method, U"Bars")) {
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix);
+			const double x = Sampled_indexToX (me, ix);
 			double y = my z [1] [ix];
 			double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
 			Melder_clipRight (& y, *pymax);
 			Melder_clipLeft (*pxmin, & left);
 			Melder_clipRight (& right, *pxmax);
 			if (y > *pymin) {
-				Graphics_line (g, left, y, right, y);
-				Graphics_line (g, left, y, left, *pymin);
-				Graphics_line (g, right, y, right, *pymin);
+				Graphics_line (graphics, left, y, right, y);
+				Graphics_line (graphics, left, y, left, *pymin);
+				Graphics_line (graphics, right, y, right, *pymin);
 			}
 		}
 	} else if (str32str (method, U"poles") || str32str (method, U"Poles")) {
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix);
-			Graphics_line (g, x, 0.0, x, my z [1] [ix]);
+			const double x = Sampled_indexToX (me, ix);
+			Graphics_line (graphics, x, 0.0, x, my z [1] [ix]);
 		}
 	} else if (str32str (method, U"speckles") || str32str (method, U"Speckles")) {
 		for (integer ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix);
-			Graphics_speckle (g, x, my z [1] [ix]);
+			const double x = Sampled_indexToX (me, ix);
+			Graphics_speckle (graphics, x, my z [1] [ix]);
 		}
 	} else {
 		/*
 			The default: draw as a curve.
 		*/
-		Graphics_function (g, & my z [1] [0], ixmin, ixmax,
+		Graphics_function (graphics, & my z [1] [0], ixmin, ixmax,
 				Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
-	Graphics_unsetInner (g);
+	Graphics_unsetInner (graphics);
 }
 	
 /* End of file Vector.cpp */

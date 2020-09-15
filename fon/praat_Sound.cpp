@@ -854,16 +854,12 @@ DO
 FORM (REAL_Sound_getAbsoluteExtremum, U"Sound: Get absolute extremum", U"Sound: Get absolute extremum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (Sound)
-		const double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, peakInterpolationType);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -901,16 +897,12 @@ DIRECT (REAL_Sound_getIntensity_dB) {
 FORM (REAL_Sound_getMaximum, U"Sound: Get maximum", U"Sound: Get maximum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (Sound)
-		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMaximum (me, fromTime, toTime, peakInterpolationType);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -939,16 +931,12 @@ DO_ALTERNATIVE (REAL_old_Sound_getMean)
 FORM (REAL_Sound_getMinimum, U"Sound: Get minimum", U"Sound: Get minimum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (Sound)
-		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getMinimum (me, fromTime, toTime, peakInterpolationType);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1063,32 +1051,24 @@ DIRECT (NUMVEC_Sound_listAllSampleTimes) {
 FORM (REAL_Sound_getTimeOfMaximum, U"Sound: Get time of maximum", U"Sound: Get time of maximum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (Sound)
-		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMaximum (me, fromTime, toTime, peakInterpolationType);
 	NUMBER_ONE_END (U" seconds")
 }
 
 FORM (REAL_Sound_getTimeOfMinimum, U"Sound: Get time of minimum", U"Sound: Get time of minimum...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (Sound)
-		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
+		const double result = Vector_getXOfMinimum (me, fromTime, toTime, peakInterpolationType);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -1116,33 +1096,25 @@ DO_ALTERNATIVE (REAL_old_Sound_getValueAtIndex)
 
 FORM (REAL_old_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
 	REAL (time, U"Time (s)", U"0.5")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"nearest")
-		RADIOBUTTON (U"linear")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType,
+			U"Interpolation", kVector_valueInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (Sound)
-		const double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, interpolation);
+		const double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, valueInterpolationType);
 	NUMBER_ONE_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
 	CHANNEL (channel, U"Channel", U"0 (= average)")
 	REAL (time, U"Time (s)", U"0.5")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"nearest")
-		RADIOBUTTON (U"linear")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_valueInterpolation, valueInterpolationType,
+			U"Interpolation", kVector_valueInterpolation::SINC70)
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtTime)
 	NUMBER_ONE (Sound)
 		if (channel > my ny) channel = 1;
-		const double result = Vector_getValueAtX (me, time, channel, interpolation);
+		const double result = Vector_getValueAtX (me, time, channel, valueInterpolationType);
 	NUMBER_ONE_END (U" Pascal")
 }
 
@@ -1709,17 +1681,13 @@ FORM (NEW_Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", nu
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	BOOLEAN (includeMaxima, U"Include maxima", true)
 	BOOLEAN (includeMinima, U"Include minima", false)
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+		U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	CONVERT_EACH (Sound)
 		autoPointProcess result = Sound_to_PointProcess_extrema (me, channel > my ny ? 1 : channel,
-				interpolation, includeMaxima, includeMinima);
+				peakInterpolationType, includeMaxima, includeMinima);
 	CONVERT_EACH_END (my name.get())
 }
 

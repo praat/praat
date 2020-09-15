@@ -63,8 +63,8 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me,
 			return thee;
 
 		double intensity_max_db, intensity_min_db, xOfMaximum, xOfMinimum;
-		Vector_getMaximumAndX (me, 0.0, 0.0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, & intensity_max_db, & xOfMaximum);
-		Vector_getMinimumAndX (me, 0.0, 0.0, 1, NUM_PEAK_INTERPOLATE_PARABOLIC, & intensity_min_db, & xOfMinimum);
+		Vector_getMaximumAndX (me, 0.0, 0.0, 1, kVector_peakInterpolation :: PARABOLIC, & intensity_max_db, & xOfMaximum);
+		Vector_getMinimumAndX (me, 0.0, 0.0, 1, kVector_peakInterpolation :: PARABOLIC, & intensity_min_db, & xOfMinimum);
 		double intensity_dbRange = intensity_max_db - intensity_min_db;
 
 		if (intensity_dbRange < 10.0)

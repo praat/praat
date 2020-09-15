@@ -475,19 +475,15 @@ FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
-		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, interpolation, & result, nullptr);
+		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, & result, nullptr);
 	NUMBER_ONE_END (U" Volt")
 }
 
@@ -495,19 +491,15 @@ FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time 
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
-		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, interpolation, nullptr, & result);
+		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, nullptr, & result);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -515,19 +507,15 @@ FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
-		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, interpolation, & result, nullptr);
+		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, & result, nullptr);
 	NUMBER_ONE_END (U" Volt")
 }
 
@@ -535,19 +523,15 @@ FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time 
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
-	RADIOx (interpolation, U"Interpolation", 4, 0)
-		RADIOBUTTON (U"none")
-		RADIOBUTTON (U"parabolic")
-		RADIOBUTTON (U"cubic")
-		RADIOBUTTON (U"sinc70")
-		RADIOBUTTON (U"sinc700")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
 	NUMBER_ONE (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
-		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, interpolation, nullptr, & result);
+		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, nullptr, & result);
 	NUMBER_ONE_END (U" seconds")
 }
 

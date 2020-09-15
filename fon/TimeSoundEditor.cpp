@@ -508,7 +508,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	}
 	for (integer ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
 		const double cursorFunctionValue = ( longSound ? 0.0 :
-				Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70) );
+				Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, kVector_valueInterpolation :: SINC70) );
 		const double ymin = (double) (numberOfVisibleChannels - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
 		const double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my d_sound.channelOffset) / numberOfVisibleChannels;
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), 0.0, 1.0, ymin, ymax);

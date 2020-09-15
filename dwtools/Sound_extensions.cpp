@@ -1888,7 +1888,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 		xmid = 0.5 * (xleft + xright); // the bisection
 
 		for (integer channel = 1; channel <= my ny; channel ++)
-			thy z [channel] [2] = Vector_getValueAtX (me, xmid, channel, Vector_VALUE_INTERPOLATION_LINEAR);
+			thy z [channel] [2] = Vector_getValueAtX (me, xmid, channel, kVector_valueInterpolation :: LINEAR);
 		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
 		Formula_run (ichannel, 2, & result);
@@ -2199,7 +2199,7 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 		*noiseStart = undefined;
 		*noiseEnd = undefined;
 		autoIntensity const intensity = Sound_to_Intensity (me, 20.0, 0.005, true);
-		double tmin = Vector_getXOfMinimum (intensity.get(), intensity -> xmin, intensity ->  xmax, 1) - minimumNoiseDuration / 2.0;
+		double tmin = Vector_getXOfMinimum (intensity.get(), intensity -> xmin, intensity ->  xmax, kVector_peakInterpolation :: PARABOLIC) - minimumNoiseDuration / 2.0;
 		double tmax = tmin + minimumNoiseDuration;
 		if (tmin < my xmin) {
 			tmin = my xmin;

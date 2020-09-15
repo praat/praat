@@ -19,6 +19,7 @@
  */
 
 #include "Cepstrum.h"
+#include "Vector.h"
 
 /*
 	The PowerCepstrum is a sequence of real numbers.
@@ -66,14 +67,14 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 		[minimum, maximum]: amplitude; y range of drawing.
 */
 
-void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *maximum, double *quefrency);
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *maximum, double *quefrency);
 
 // The standard of Hillenbrand with fitting options
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *qpeak);
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth);
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod, double *qpeak);
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod, double *qpeak);
 
 void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_slope, double *out_intercept, kCepstrumTrendType lineType, kCepstrumTrendFit method);
 
