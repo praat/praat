@@ -127,7 +127,7 @@ void Sound_scale_dB (Sound me, double level_dB);
 	where extremum is the maximum of the absolute values the signal values.
 */
 
-void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal);
+void Sound_fade (Sound me, int channel, double t, double fadeTime, bool fadeOut, bool fadeGlobal);
 /* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2
 	channel = 0 (all), 1 (left), 2 (right).
 */
