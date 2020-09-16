@@ -243,6 +243,7 @@ SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"parabolic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"cubic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc70", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc700", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Trend line quefrency range (s)", U"0.001", U"0.05")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Trend type", U"Exponential decay")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Fit method", U"Robust")
@@ -328,6 +329,7 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc70", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc700", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Trend line quefrency range (s)", U"0.001", U"0.0 (= end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Fit method", U"Robust")
 )
@@ -349,23 +351,23 @@ CODE (U"Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 1
 CODE (U"To Sound")
 CODE (U"To PowerCepstrogram: 60, 0.002, 5000, 50")
 CODE (U"To PowerCepstrum (slice): 0.1")
-CODE (U"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"")
+CODE (U"prominence = Get peak prominence: 60, 333.3, \"parabolic\", 0.001, 0.05, \"straight\", \"robust slow\"")
 CODE (U"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"")
 CODE (U"Draw: 0, 0, 0, 110, \"yes\"")
-CODE (U"Colour: \"Blue\"")
-CODE (U"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Straight\", \"Robust slow\"")
-CODE (U"Colour: \"Black\"")
+CODE (U"Colour: \"blue\"")
+CODE (U"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"straight\", \"robust slow\"")
+CODE (U"Colour: \"black\"")
 CODE (U"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"")
 SCRIPT (5, 3, U""
 	"kg = Create KlattGrid from vowel: \"a\", 0.3, 125, 800, 80, 1200, 80, 2300, 100, 2800, 0.1, 1000\n"
 	"vowel = To Sound\n"
 	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
 	"cepstrum = To PowerCepstrum (slice): 0.1\n"
-	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"prominence = Get peak prominence: 60, 333.3, \"parabolic\", 0.001, 0.05, \"straight\", \"robust slow\"\n"
 	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
 	"Draw: 0, 0, 0, 110, \"yes\"\n"
 	"Colour: \"Blue\"\n"
-	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Straight\", \"Robust slow\"\n"
+	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"straight\", \"robust slow\"\n"
 	"Colour: \"Black\"\n"
 	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
 	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
@@ -376,11 +378,11 @@ SCRIPT (5, 3, U""
 	"vowel = To Sound\n"
 	"cepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50\n"
 	"cepstrum = To PowerCepstrum (slice): 0.1\n"
-	"prominence = Get peak prominence: 60, 333.3, \"Parabolic\", 0.001, 0.05, \"Exponential decay\", \"Robust slow\"\n"
+	"prominence = Get peak prominence: 60, 333.3, \"parabolic\", 0.001, 0.05, \"exponential decay\", \"robust slow\"\n"
 	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
 	"Draw: 0, 0, 0, 110, \"yes\"\n"
 	"Colour: \"Blue\"\n"
-	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"Exponential decay\", \"Robust slow\"\n"
+	"Draw trend line: 0, 0, 0, 110, 0.001, 0.05, \"exponential decay\", \"robust slow\"\n"
 	"Colour: \"Black\"\n"
 	"Text top: \"no\", \"Peak prominence = \" + fixed$ (prominence, 2) + \" dB\"\n"
 	"removeObject: kg, vowel, cepstrogram, cepstrum\n")
@@ -549,7 +551,7 @@ NORMAL (U"The intensities at the frequencies of the selected formant are copied 
 MAN_END
 
 MAN_BEGIN (U"LFCC", U"djmw", 20040421)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type LFCC represents cepstral "
 	"coefficients on a linear frequency scale as a function of time. "
 	"The coefficients are represented in frames with constant sampling "

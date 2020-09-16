@@ -28,103 +28,98 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 
-#define NUM_interpolate_simple_cases \
-	if (y.size < 1) \
-		return undefined; \
-	if (x > y.size) \
-		return y [y.size]; \
-	if (x < 1) \
-		return y [1]; \
-	if (x == midleft) \
-		return y [midleft]; \
-	/* 1 < x < y.size && x not integer: interpolate. */ \
-	Melder_clipRight (& maxDepth, midright - 1); \
-	Melder_clipRight (& maxDepth, y.size - midleft); \
-	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) \
-		return y [(integer) floor (x + 0.5)]; \
-	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR) \
-		return y [midleft] + (x - midleft) * (y [midright] - y [midleft]); \
-	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) { \
-		const double yl = y [midleft], yr = y [midright]; \
-		const double dyl = 0.5 * (yr - y [midleft - 1]), dyr = 0.5 * (y [midright + 1] - yl); \
-		const double fil = x - midleft, fir = midright - x; \
-		return yl * fir + yr * fil - fil * fir * (0.5 * (dyr - dyl) + (fil - 0.5) * (dyl + dyr - 2 * (yr - yl))); \
-	}
-
-#if defined (__POWERPC__)
-double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
-	const integer midleft = (integer) floor (x), midright = midleft + 1;
-	double result = 0.0;
-	NUM_interpolate_simple_cases
-	const integer left = midright - maxDepth, right = midleft + maxDepth;
-	double a = NUMpi * (x - midleft);
-	double halfsina = 0.5 * sin (a);
-	double aa = a / (x - left + 1.0);
-	double cosaa = cos (aa);
-	double sinaa = sin (aa);
-	double daa = NUMpi / (x - left + 1.0);
-	double cosdaa = cos (daa);
-	double sindaa = sin (daa);
-	for (integer ix = midleft; ix >= left; ix --) {
-		const double d = halfsina / a * (1.0 + cosaa);
-		result += y [ix] * d;
-		a += NUMpi;
-		const double help = cosaa * cosdaa - sinaa * sindaa;
-		sinaa = cosaa * sindaa + sinaa * cosdaa;
-		cosaa = help;
-		halfsina = - halfsina;
-	}
-	a = NUMpi * (midright - x);
-	halfsina = 0.5 * sin (a);
-	aa = a / (right - x + 1.0);
-	cosaa = cos (aa);
-	sinaa = sin (aa);
-	daa = NUMpi / (right - x + 1.0);
-	cosdaa = cos (daa);
-	sindaa = sin (daa);
-	for (integer ix = midright; ix <= right; ix ++) {
-		const double d = halfsina / a * (1.0 + cosaa);
-		result += y [ix] * d;
-		a += NUMpi;
-		const double help = cosaa * cosdaa - sinaa * sindaa;
-		sinaa = cosaa * sindaa + sinaa * cosdaa;
-		cosaa = help;
-		halfsina = - halfsina;
-	}
-	return result;
-}
+#if defined (__POWERPC__)||1
+	#define RECOMPUTE_SINES  0
 #else
+	#define RECOMPUTE_SINES  1
+#endif
 double NUM_interpolate_sinc (constVEC const& y, double x, integer maxDepth) {
 	const integer midleft = (integer) floor (x), midright = midleft + 1;
 	double result = 0.0;
-	NUM_interpolate_simple_cases
+	if (y.size < 1)
+		return undefined;   // there exists no best guess
+	if (x < 1)
+		return y [1];   // offleft: constant extrapolation
+	if (x > y.size)
+		return y [y.size];   // offright: constant extrapolation
+	if (x == midleft)
+		return y [midleft];   // the interpolated curve goes through the points
+	/*
+		1 < x < y.size && x not integer: interpolate.
+	*/
+	Melder_clipRight (& maxDepth, midright - 1);
+	Melder_clipRight (& maxDepth, y.size - midleft);
+	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST)
+		return y [(integer) floor (x + 0.5)];
+	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR)
+		return y [midleft] + (x - midleft) * (y [midright] - y [midleft]);
+	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) {
+		const double yl = y [midleft], yr = y [midright];
+		const double dyl = 0.5 * (yr - y [midleft - 1]), dyr = 0.5 * (y [midright + 1] - yl);
+		const double fil = x - midleft, fir = midright - x;
+		return yl * fir + yr * fil - fil * fir * (0.5 * (dyr - dyl) + (fil - 0.5) * (dyl + dyr - 2 * (yr - yl)));
+	}
+	/*
+		maxDepth >= 3: sinc interpolation
+	*/
 	const integer left = midright - maxDepth;
 	const integer right = midleft + maxDepth;
 	double a = NUMpi * (x - midleft);
 	double halfsina = 0.5 * sin (a);
 	double aa = a / (x - left + 1.0);
 	double daa = NUMpi / (x - left + 1.0);
+	#if ! RECOMPUTE_SINES
+		double cosaa = cos (aa);
+		double sinaa = sin (aa);
+		double cosdaa = cos (daa);
+		double sindaa = sin (daa);
+	#endif
 	for (integer ix = midleft; ix >= left; ix --) {
-		const double d = halfsina / a * (1.0 + cos (aa));
+		#if RECOMPUTE_SINES
+			const double d = halfsina / a * (1.0 + cos (aa));
+		#else
+			const double d = halfsina / a * (1.0 + cosaa);
+		#endif
 		result += y [ix] * d;
 		a += NUMpi;
-		aa += daa;
+		#if RECOMPUTE_SINES
+			aa += daa;
+		#else
+			const double help = cosaa * cosdaa - sinaa * sindaa;
+			sinaa = cosaa * sindaa + sinaa * cosdaa;
+			cosaa = help;
+		#endif
 		halfsina = - halfsina;
 	}
 	a = NUMpi * (midright - x);
 	halfsina = 0.5 * sin (a);
 	aa = a / (right - x + 1.0);
-	daa = NUMpi / (right - x + 1.0); \
+	daa = NUMpi / (right - x + 1.0);
+	#if ! RECOMPUTE_SINES
+		cosaa = cos (aa);
+		sinaa = sin (aa);
+		cosdaa = cos (daa);
+		sindaa = sin (daa);
+	#endif
 	for (integer ix = midright; ix <= right; ix ++) {
-		const double d = halfsina / a * (1.0 + cos (aa));
+		#if RECOMPUTE_SINES
+			const double d = halfsina / a * (1.0 + cos (aa));
+		#else
+			const double d = halfsina / a * (1.0 + cosaa);
+		#endif
 		result += y [ix] * d;
 		a += NUMpi;
-		aa += daa;
+		#if RECOMPUTE_SINES
+			aa += daa;
+		#else
+			const double help = cosaa * cosdaa - sinaa * sindaa;
+			sinaa = cosaa * sindaa + sinaa * cosdaa;
+			cosaa = help;
+		#endif
 		halfsina = - halfsina;
 	}
 	return result;
 }
-#endif
 
 /********** Improving extrema **********/
 #pragma mark Improving extrema
