@@ -42,7 +42,7 @@ Thing_define (Trajectory, Function) {
 
 Thing_define (VowelEditor, Editor) {
 	autoGraphics graphics;   // the drawing
-	short width, height;  // size of drawing area in pixels
+	int width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour
 	autoTrajectory trajectory;
 	autoVEC extraFrequencyBandwidthPairs;

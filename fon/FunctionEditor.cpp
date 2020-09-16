@@ -1278,7 +1278,7 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 void FunctionEditor_init (FunctionEditor me, conststring32 title, Function function) {
 	my tmin = function -> xmin;   // set before adding children (see group button)
 	my tmax = function -> xmax;
-	Editor_init (me, 0, 0, my pref_shellWidth (), my pref_shellHeight (), title, function);
+	Editor_init (me, 0, 0, my pref_shellWidth(), my pref_shellHeight(), title, function);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;
