@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2020 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 2008-2020 David Weenink, 2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ trajectory --> path ????
  In this drawing area a cursor can be moved around by a mouse.
  The position of the cursor is related to the F1 and F2 frequencies.
  On_mouse_down the position of the cursor is sampled (Not at fixed intervals!).
- This results in a series of (x,y) values that will be transformed to (F1,F2) values in Hertz
- The corresponding sound wil be made audible after the mouse is released.
+ This results in a series of (x,y) values that will be transformed to (F1,F2) values in Hertz.
+ The corresponding sound is made audible after the mouse is released.
 
  The user graphics area is the F1-F2 plane: here the origin is at the top-right with log(F2) on the 
  horizontal axis and log(F1) on the vertical axis (i.e. log (F1) top-down, log(F2) right-to-left)
@@ -81,8 +81,6 @@ Thing_implement (VowelEditor, Editor, 0);
 #define MARGIN_LEFT 50
 #define MARGIN_TOP 50
 #define MARGIN_BOTTOM (60+STATUS_INFO)
-
-#define MICROSECPRECISION(x) (round((x)*1000000)/1000000)
 
 #pragma mark - class TrajectoryPointTier
 
@@ -263,11 +261,6 @@ static void clipF1F2 (VowelEditor me, double *f1, double *f2) {
 	Melder_clip (my p_window_f2min, f2, my p_window_f2max);
 }
 
-static void	clipXY (double *x, double *y) {
-	Melder_clip (0.0, x, 1.0);
-	Melder_clip (0.0, y, 1.0);
-}
-
 static void VowelEditor_updateFromF0StartAndSlopeTextWidgets (VowelEditor me) {
 	double f0 = getRealFromTextWidget (my f0TextField);
 	Melder_clip (my p_f0_minimum, & f0, my p_f0_maximum);
@@ -293,7 +286,7 @@ static double VowelEditor_updateFromDurationTextWidget (VowelEditor me) {
 	if (isundef (duration) || duration < my p_trajectory_minimumDuration)
 		duration = my p_trajectory_minimumDuration;
 	my pref_trajectory_duration () = my p_trajectory_duration = duration;
-	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
+	GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
 	Trajectory_newDuration (my trajectory.get(), duration);
 	return duration;
 }
@@ -397,7 +390,7 @@ static autoPitchTier VowelEditor_to_PitchTier (VowelEditor me) {
 }
 static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 	try {
-		VowelEditor_updateTrajectorySpecification (me); // update pitch and duration
+		VowelEditor_updateTrajectorySpecification (me);   // update pitch and duration
 		autoFormantGrid formantGrid = VowelEditor_to_FormantGrid (me);
 		autoPitchTier pitchTier = VowelEditor_to_PitchTier (me);
 		autoSound thee = PitchTier_to_Sound_pulseTrain (pitchTier.get(), my p_synthesis_samplingFrequency, 0.7, 0.05, 30, false);
@@ -413,7 +406,8 @@ static autoSound VowelEditor_createTargetSound (VowelEditor me) {
 
 /* Precondition: trajectory points are all different */
 static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
-	Melder_assert (my trajectory -> points.size >= 2);
+	if (my trajectory -> points.size < 2)
+		return;
 
 	const integer glt = Graphics_inqLineType (g);
 	const double glw = Graphics_inqLineWidth (g);
@@ -955,7 +949,7 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		Trajectory_addPoint (my trajectory.get(), 0.0, startF1, startF2, colour);
 		clipF1F2 (me, & endF1, & endF2);
 		Trajectory_addPoint (my trajectory.get(), newDuration, endF1, endF2, colour);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
+		GuiText_setString (my durationTextField, Melder_fixed (newDuration, 6));
 		my pref_trajectory_newDuration () = my p_trajectory_newDuration = newDuration;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
@@ -979,8 +973,8 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		const double endTime = startTime + extendDuration;
 		clipF1F2 (me, & toF1, & toF2);
 		Trajectory_addPoint (my trajectory.get(), endTime, toF1, toF2, colour);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (endTime)));
-		GuiText_setString (my extendTextField, Melder_double (MICROSECPRECISION (extendDuration)));
+		GuiText_setString (my durationTextField, Melder_fixed (endTime, 6));
+		GuiText_setString (my extendTextField, Melder_fixed (extendDuration, 6));
 		my pref_trajectory_extendDuration () = my p_trajectory_extendDuration = extendDuration;
 		my pref_trajectory_duration () = my p_trajectory_duration = endTime;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
@@ -998,7 +992,7 @@ static void menu_cb_modifyTrajectoryDuration (VowelEditor me, EDITOR_ARGS_FORM) 
 			U"The duration should be larger than ", my p_trajectory_minimumDuration, U" s.");
 		my pref_trajectory_duration () = my p_trajectory_duration = newDuration;
 		Trajectory_newDuration (my trajectory.get(), newDuration);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
+		GuiText_setString (my durationTextField, Melder_fixed (newDuration, 6));
 	EDITOR_END
 }
 
@@ -1060,8 +1054,6 @@ static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
 }
 
 static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
-static integer numberOfExposes = 0;
-Melder_casual(U"expose ", ++numberOfExposes);
 	Melder_assert (me);
 	Melder_assert (my trajectory);
 	const double startF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmin);
@@ -1116,82 +1108,64 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 // shift key always extends what already is.
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
 static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent event) {
-	const double t0 = Melder_clock ();
-	integer iskipped = 0;
-	struct structGuiButtonEvent gb_event { 0 };
+	static double anchorTime;
+	static double previousX;
+	static double previousY;
+	static double dt;
 	Graphics_setInner (my graphics.get());
-
-	double x, y, t, f1, f2, dt = 0.0;
-	Graphics_getMouseLocation (my graphics.get(), & x, & y);
-	clipXY (& x, & y);
+	double mouseX, mouseY;
+	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & mouseX, & mouseY);
+	Melder_clip (0.0, & mouseX, 1.0);
+	Melder_clip (0.0, & mouseY, 1.0);
+	double f1, f2;
+	VowelEditor_getF1F2FromXY (me, mouseX, mouseY, & f1, & f2);
 	MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
-	if (event -> shiftKeyPressed) {
-		VowelEditor_updateFromExtendDurationTextWidget (me);
-		(my shiftKeyPressed) ++;
-		t = dt = my trajectory -> xmax + my p_trajectory_extendDuration;
-		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
-		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
-		GuiText_setString (my durationTextField, Melder_double (t));
-		goto end;
-	} else {
-		t = 0.0;
-		my shiftKeyPressed = 0;
-		my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
-		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
-		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
-		GuiText_setString (my durationTextField, Melder_double (t));
-		if (! my p_soundFollowsMouse) {
-			Trajectory_addPoint (my trajectory.get(), my p_trajectory_minimumDuration, f1, f2, colour);
-			goto end;
+	if (event -> isClick()) {
+		anchorTime = Melder_clock ();
+		if (event -> shiftKeyPressed) {
+			VowelEditor_updateFromExtendDurationTextWidget (me);
+			(my shiftKeyPressed) ++;
+			const double duration = dt = my trajectory -> xmax + my p_trajectory_extendDuration;
+			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
+			GuiText_setString (my durationTextField, Melder_double (duration));
+		} else {
+			const double duration = dt = 0.0;
+			my shiftKeyPressed = 0;
+			my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
+			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
+			GuiText_setString (my durationTextField, Melder_double (duration));
+			if (! my p_soundFollowsMouse)
+				Trajectory_addPoint (my trajectory.get(), my p_trajectory_minimumDuration, f1, f2, colour);
 		}
-	}
-	Graphics_xorOn (my graphics.get(), colour);
-	while (Graphics_mouseStillDown (my graphics.get())) {
-		double xp = x, yp = y;
-		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock
-		Graphics_getMouseLocation (my graphics.get(), & x, & y);
-		clipXY (& x, & y);
+		previousX = mouseX;
+		previousY = mouseY;
+	} else if (event -> isDrag()) {
+		if (mouseX != previousX || mouseY != previousY) {
+			const double duration = Melder_clock () - anchorTime + dt;
+			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
+			GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
+			previousX = mouseX;
+			previousY = mouseY;
+		}
+	} else if (event -> isDrop()) {
+		double duration = Melder_clock () - anchorTime + dt;
 		/*
-			If the new point equals the previous one: no tier update
+			If there is only one point in the trajectory this could have two causes:
+			1. only one click, too short for mouse-down to catch
+			2. a mouse-down with no movement.
+			Add a point with a slightly modified second formant because successive points should not have equal f1 and f2 values.
 		*/
-		if (xp == x && y == y) {
-			iskipped ++;
-			continue;
+		if (my trajectory -> points.size == 1) {
+			Melder_clipLeft (my p_trajectory_minimumDuration, & duration);
+			GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
+			Trajectory_addPoint (my trajectory.get(), duration, f1, 1.00001 * f2, colour);   // points have to be different
 		}
-		iskipped = 0;
-		//Graphics_line (my graphics.get(), xp, yp, x, y);
-
-		VowelEditor_getF1F2FromXY (me, x, y, & f1, & f2);
-		Trajectory_addPoint (my trajectory.get(), t, f1, f2, colour);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
+		autoSound sound = VowelEditor_createTargetSound (me);
+		Sound_play (sound.get(), nullptr, nullptr);
 	}
-	t = Melder_clock () - t0;
-	/*
-		If there is only one point in the trajectory this could have two causes:
-		1. only one click, too short for mouse-down to catch
-		2. a mouse-down with no movement.
-		Add a point with a slightly modified second formant because successive points should not have equal f1 and f2 values.
-	*/
-	if (my trajectory -> points.size == 1) {
-		Melder_clipLeft (my p_trajectory_minimumDuration, & t);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
-		Trajectory_addPoint (my trajectory.get(), t, f1, 1.00001 * f2, colour); // points have to be different
-	}
-	Graphics_xorOff (my graphics.get());
-
-end:
 	Graphics_unsetInner (my graphics.get());
-
-	//if (! my shiftKeyPressed)
-	//	my vowel = athee.move();
-	//Melder_assert (! athee);
-	gui_button_cb_play (me, & gb_event);
+	Graphics_updateWs (my graphics.get());
 }
-
-#if 0
-static void gui_drawingarea_cb_key (VowelEditor /* me */, GuiDrawingArea_KeyEvent /* event */) {
-}
-#endif
 
 static void updateWidgets (void *void_me) {
 	iam (VowelEditor);
