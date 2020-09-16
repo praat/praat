@@ -41,7 +41,6 @@ Thing_define (Trajectory, Function) {
 #include "VowelEditor_enums.h"
 
 Thing_define (VowelEditor, Editor) {
-	int shiftKeyPressed;
 	autoGraphics graphics;   // the drawing
 	short width, height;  // size of drawing area in pixels
 	autoTable marks;   // Vowel, F1, F2, Colour

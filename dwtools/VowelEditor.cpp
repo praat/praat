@@ -1124,13 +1124,11 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 		anchorTime = Melder_clock ();
 		if (event -> shiftKeyPressed) {
 			VowelEditor_updateFromExtendDurationTextWidget (me);
-			(my shiftKeyPressed) ++;
 			const double duration = dt = my trajectory -> xmax + my p_trajectory_extendDuration;
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_double (duration));
 		} else {
 			const double duration = dt = 0.0;
-			my shiftKeyPressed = 0;
 			my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_double (duration));
@@ -1139,29 +1137,26 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 		}
 		previousX = mouseX;
 		previousY = mouseY;
-	} else if (event -> isDrag()) {
+	} else {
+		double duration = Melder_clock () - anchorTime + dt;
 		if (mouseX != previousX || mouseY != previousY) {
-			const double duration = Melder_clock () - anchorTime + dt;
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
 			previousX = mouseX;
 			previousY = mouseY;
 		}
-	} else if (event -> isDrop()) {
-		double duration = Melder_clock () - anchorTime + dt;
-		/*
-			If there is only one point in the trajectory this could have two causes:
-			1. only one click, too short for mouse-down to catch
-			2. a mouse-down with no movement.
-			Add a point with a slightly modified second formant because successive points should not have equal f1 and f2 values.
-		*/
-		if (my trajectory -> points.size == 1) {
-			Melder_clipLeft (my p_trajectory_minimumDuration, & duration);
-			GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
-			Trajectory_addPoint (my trajectory.get(), duration, f1, 1.00001 * f2, colour);   // points have to be different
+		if (event -> isDrop()) {
+			if (my trajectory -> points.size == 1) {
+				/*
+					Add a point with a slightly modified second formant because successive points should not have equal f1 and f2 values.
+				*/
+				Melder_clipLeft (my p_trajectory_minimumDuration, & duration);
+				GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
+				Trajectory_addPoint (my trajectory.get(), duration, f1, 1.00001 * f2, colour);   // points have to be different
+			}
+			autoSound sound = VowelEditor_createTargetSound (me);
+			Sound_play (sound.get(), nullptr, nullptr);
 		}
-		autoSound sound = VowelEditor_createTargetSound (me);
-		Sound_play (sound.get(), nullptr, nullptr);
 	}
 	Graphics_unsetInner (my graphics.get());
 	Graphics_updateWs (my graphics.get());
