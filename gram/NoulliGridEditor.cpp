@@ -107,9 +107,6 @@ void structNoulliGridEditor :: v_play (double startTime, double endTime) {
 static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, conststring32 header) {
 	NoulliGrid grid = (NoulliGrid) my data;
 	for (integer itier = 1; itier <= grid -> tiers.size; itier ++) {
-		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), xmin, xmax,
-			(grid -> tiers.size - itier + 0.0) / grid -> tiers.size * (1.0 - SOUND_HEIGHT),
-			(grid -> tiers.size - itier + 1.0) / grid -> tiers.size * (1.0 - SOUND_HEIGHT));
 		if (itier == 1) {
 			Graphics_setColour (my graphics.get(), Melder_BLACK);
 			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
@@ -119,7 +116,7 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 		integer winningCategory = NoulliPoint_getWinningCategory (average.get());
 		conststring32 winningCategoryName = grid -> categoryNames [winningCategory].get();
 		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
-			bool shouldDrawPicture =
+			const bool shouldDrawPicture =
 				(my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
 				 my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
 				&&
@@ -203,7 +200,6 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 			Graphics_text (my graphics.get(), 0.0, 0.0, U"?");
 		}
-		Graphics_resetViewport (my graphics.get(), vp);
 	}
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 }
