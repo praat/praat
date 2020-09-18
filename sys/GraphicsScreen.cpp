@@ -406,12 +406,8 @@ void Graphics_endMovieFrame (Graphics any, double frameDuration) {
 	if (any -> classInfo == classGraphicsScreen) {
 		GraphicsScreen me = (GraphicsScreen) any;
 		Graphics_stopRecording (me);
-		#if cairo || gdi
-			my v_flushWs ();
-		#elif quartz
-			my v_updateWs ();
-			GuiShell_drain (my d_drawingArea -> d_shell);
-		#endif
+		my v_updateWs ();
+		GuiShell_drain (my d_drawingArea -> d_shell);
 		Melder_sleep (frameDuration);
 	}
 }
