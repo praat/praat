@@ -102,7 +102,7 @@ static void gui_drawingarea_cb_resize (DemoEditor me, GuiDrawingArea_ResizeEvent
 }
 
 void structDemoEditor :: v_createChildren () {
-	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, 0, 0,
+	our drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, 0, 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
 		gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0
 	);
