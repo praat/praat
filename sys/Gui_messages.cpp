@@ -201,7 +201,8 @@ static void gui_progress (double progress, conststring32 message) {
 static autoGraphics graphics;
 
 static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEvent /* event */) {
-	if (! graphics) return;
+	if (! graphics)
+		return;
 	Graphics_play (graphics.get(), graphics.get());
 }
 
@@ -223,8 +224,13 @@ static void * gui_monitor (double progress, conststring32 message) {
 			GuiThing_show (dia);
 			graphics = Graphics_create_xmdrawingarea (drawingArea);
 		}
-		if (graphics)
-			Graphics_flushWs (graphics.get());
+		if (progress <= 0.0 && graphics) {
+			Graphics_clearRecording (graphics.get());
+			Graphics_startRecording (graphics.get());
+			Graphics_clearWs (graphics.get());
+		}
+		//if (graphics)
+		//	Graphics_flushWs (graphics.get());
 		if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 			Melder_throw (U"Interrupted!");
 		lastTime = now;
