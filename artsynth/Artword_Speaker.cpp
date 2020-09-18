@@ -1,6 +1,6 @@
 /* Artword_Speaker.cpp
  *
- * Copyright (C) 1992-2005,2011,2015-2017,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2015-2017,2019,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "Artword_Speaker.h"
 
 void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics g, int numberOfSteps) {
-	double oldLineWidth = Graphics_inqLineWidth (g);
+	const double oldLineWidth = Graphics_inqLineWidth (g);
 	autoArt art = Art_create ();
 	for (int i = 0; i <= numberOfSteps; i ++) {
 		Artword_intoArt (artword, art.get(), i * artword -> totalTime / numberOfSteps);

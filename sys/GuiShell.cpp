@@ -106,15 +106,31 @@ void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 	#endif
 }
 
+GuiDrawingArea GuiShell_drawingArea;   // TODO: unquickfix
 void GuiShell_drain (GuiShell me) {
 	#if gtk
 		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
 		//gdk_flush ();
 		gdk_window_process_all_updates ();
 	#elif motif
-		/*
-			On Windows Motif, there is no graphics buffering.
-		*/
+		if (GuiShell_drawingArea && GuiShell_drawingArea -> d_exposeCallback) {
+			structGuiDrawingArea_ExposeEvent event { GuiShell_drawingArea, 0 };
+			event. x = 0;
+			event. y = 0;
+			event. width = 0;
+			event. height = 0;
+			try {
+				trace (U"send the expose callback");
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+				GuiShell_drawingArea -> d_exposeCallback (GuiShell_drawingArea -> d_exposeBoss, & event);
+				trace (U"the expose callback finished");
+				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			} catch (MelderError) {
+				Melder_flushError (U"Redrawing not completed");
+			}
+			trace (U"the expose callback handled drawing");
+		}
+
 	#elif cocoa
 		Melder_assert (my d_cocoaShell);
         [my d_cocoaShell   display];   // not just flushWindow

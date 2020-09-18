@@ -931,8 +931,6 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 	try {
 		double plasticity = initialPlasticity;
 		autoMelderMonitor monitor (U"Learning from partial pairs...");
-		if (monitor.graphics())
-			Graphics_clearWs (monitor.graphics());
 		autoTable history;
 		if (storeHistoryEvery)
 			history = OTMulti_createHistory (me, storeHistoryEvery, numberOfData);

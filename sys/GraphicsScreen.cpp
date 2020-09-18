@@ -357,8 +357,11 @@ void structGraphicsScreen :: v_updateWs () {
 		//gdk_window_process_updates (our d_window, true);
 	#elif gdi
 		//clear (this); // lll
-		if (our d_winWindow)
+		if (our d_winWindow) {
+			extern GuiDrawingArea GuiShell_drawingArea;
 			InvalidateRect (our d_winWindow, nullptr, true);
+			GuiShell_drawingArea = our d_drawingArea;
+		}
 	#elif quartz
 		NSView *view = our d_macView;
 		Melder_assert (!! view);
