@@ -489,6 +489,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 {
 	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
 	my d_shell = parent -> d_shell;
+	my d_shell -> drawingArea = me.get();
 	my d_parent = parent;
 	my d_exposeCallback = exposeCallback;
 	my d_exposeBoss = boss;
@@ -566,6 +567,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 {
 	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
 	my d_shell = parent -> d_shell;
+	my d_shell -> drawingArea = me.get();
 	my d_parent = parent;
 	my d_exposeCallback = exposeCallback;
 	my d_exposeBoss = boss;

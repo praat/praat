@@ -106,23 +106,18 @@ void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 	#endif
 }
 
-GuiDrawingArea GuiShell_drawingArea;   // TODO: unquickfix
 void GuiShell_drain (GuiShell me) {
 	#if gtk
 		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
 		//gdk_flush ();
 		gdk_window_process_all_updates ();
 	#elif motif
-		if (GuiShell_drawingArea && GuiShell_drawingArea -> d_exposeCallback) {
-			structGuiDrawingArea_ExposeEvent event { GuiShell_drawingArea, 0 };
-			event. x = 0;
-			event. y = 0;
-			event. width = 0;
-			event. height = 0;
+		if (my drawingArea && my drawingArea -> d_exposeCallback) {
+			structGuiDrawingArea_ExposeEvent event { my drawingArea, 0 };
 			try {
 				trace (U"send the expose callback");
 				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-				GuiShell_drawingArea -> d_exposeCallback (GuiShell_drawingArea -> d_exposeBoss, & event);
+				my drawingArea -> d_exposeCallback (my drawingArea -> d_exposeBoss, & event);
 				trace (U"the expose callback finished");
 				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			} catch (MelderError) {

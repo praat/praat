@@ -305,6 +305,7 @@ constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
 int Gui_getResolution (GuiObject widget);
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height);
 
+Thing_declare (GuiDrawingArea);
 Thing_declare (GuiForm);
 Thing_declare (GuiMenu);
 Thing_declare (GuiScrolledWindow);
@@ -359,6 +360,7 @@ Thing_define (GuiShell, GuiForm) {
 	#endif
 	GuiShell_GoAwayCallback d_goAwayCallback;
 	Thing d_goAwayBoss;
+	GuiDrawingArea drawingArea;
 
 	void v_destroy () noexcept
 		override;
