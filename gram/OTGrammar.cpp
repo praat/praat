@@ -1789,8 +1789,6 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	try {
 		double plasticity = initialPlasticity;
 		autoMelderMonitor monitor (U"Learning with full knowledge...");
-		if (monitor.graphics())
-			Graphics_clearWs (monitor.graphics());
 		for (integer iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (integer ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 				conststring32 input, output;
@@ -1802,18 +1800,21 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 					for (integer icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 						Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 						Graphics_line (monitor.graphics(),
-								idatum, my constraints [icons]. ranking,
-								idatum, my constraints [icons]. ranking + 1);
+							idatum, my constraints [icons]. ranking,
+							idatum, my constraints [icons]. ranking + 1.0
+						);
 					}
 					Graphics_endMovieFrame (monitor.graphics(), 0.0);
 				}
 				Melder_monitor ((double) idatum / numberOfData,
 					U"Processing input-output pair ", idatum,
-					U" out of ", numberOfData, U": ", input, U" -> ", output);
+					U" out of ", numberOfData, U": ", input, U" -> ", output
+				);
 				for (integer ichew = 1; ichew <= numberOfChews; ichew ++) {
 					OTGrammar_learnOne (me, input, output,
-							evaluationNoise, updateRule, honourLocalRankings,
-							plasticity, relativePlasticityNoise, true, true, nullptr);
+						evaluationNoise, updateRule, honourLocalRankings,
+						plasticity, relativePlasticityNoise, true, true, nullptr
+					);
 				}
 			}
 			plasticity *= plasticityDecrement;
@@ -2274,8 +2275,11 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 		autoOTHistory history;
 		OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
 		autoMelderMonitor monitor (U"Learning with limited knowledge...");
-		if (monitor.graphics())
-			Graphics_clearWs (monitor.graphics());
+		if (monitor.graphics()) {
+			Graphics_clearRecording (monitor.graphics());
+			Graphics_startRecording (monitor.graphics());
+			//Graphics_clearWs (monitor.graphics());
+		}
 		if (storeHistoryEvery)
 			history = OTGrammar_createHistory (me, storeHistoryEvery, numberOfData);
 		try {
@@ -2288,23 +2292,31 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					++ idatum;
 					if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
 						Graphics_beginMovieFrame (monitor.graphics(), nullptr);
-						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
+			//Graphics_clearWs (monitor.graphics());
+						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50.0, 150.0);
+			Graphics_setColour (monitor.graphics(), Melder_BLACK);
+			Graphics_line (monitor.graphics(), 0, 60.0, numberOfData, 140.0);
 						for (integer icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 							Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 							Graphics_line (monitor.graphics(),
-									idatum, my constraints [icons]. ranking,
-									idatum, my constraints [icons]. ranking + 1);
+								idatum, my constraints [icons]. ranking,
+								idatum, my constraints [icons]. ranking + 10.0
+							);
 						}
+			Graphics_setColour (monitor.graphics(), Melder_BLUE);
+			Graphics_line (monitor.graphics(), 0, 60.0, numberOfData, 140.0);
 						Graphics_endMovieFrame (monitor.graphics(), 0.0);
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						U"Processing partial output ", idatum, U" out of ", numberOfData, U": ",
-						thy rowLabels [ipartialOutput].get());
+						thy rowLabels [ipartialOutput].get()
+					);
 					try {
 						OTGrammar_learnOneFromPartialOutput_opt (me, partialOutput, ipartialOutput,
 							evaluationNoise, updateRule, honourLocalRankings,
 							plasticity, relativePlasticityNoise, numberOfChews, false,
-							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
+							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm
+						);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
 						if (history)
 							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput].get());

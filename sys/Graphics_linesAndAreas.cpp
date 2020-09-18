@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2005,2007-2019 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2005,2007-2020 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,9 +261,8 @@ void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 		quartzPrepareFill (this);
 		CGContextBeginPath (our d_macGraphicsContext);
 		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);
-		for (integer i = 1; i < numberOfPoints; i ++) {
+		for (integer i = 1; i < numberOfPoints; i ++)
 			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-		}
 		CGContextFillPath (our d_macGraphicsContext);
 	#endif
 }
@@ -271,9 +270,8 @@ void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 void structGraphicsPostscript :: v_fillArea (integer numberOfPoints, double *xyDC) {
 	integer nn = numberOfPoints + numberOfPoints;
 	d_printf (d_file, "N %.7g %.7g M\n", xyDC [0], xyDC [1]);
-	for (integer i = 2; i < nn; i += 2) {
+	for (integer i = 2; i < nn; i += 2)
 		d_printf (d_file, "%.7g %.7g L\n", xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
-	}
 	d_printf (d_file, "closepath fill\n");
 }
 
@@ -284,8 +282,9 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 	#if cairo
 		if (! d_cairoGraphicsContext)
 			return;
-		double width = x2DC - x1DC, height = y1DC - y2DC;
-		if (width <= 0.0 || height <= 0.0) return;
+		const double width = x2DC - x1DC, height = y1DC - y2DC;
+		if (width <= 0.0 || height <= 0.0)
+			return;
 		cairoPrepareLine (this);
 		cairo_rectangle (d_cairoGraphicsContext, x1DC, y2DC, width, height);
 		cairo_stroke (d_cairoGraphicsContext);
@@ -311,7 +310,7 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 void structGraphicsPostscript :: v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	psPrepareLine (this);
 	d_printf (d_file, "N %.7g %.7g M %.7g %.7g lineto %.7g %.7g lineto %.7g %.7g lineto closepath stroke\n",
-		x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
+			x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 	psRevertLine (this);
 }
 
@@ -320,8 +319,9 @@ void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y
 	#if cairo
 		if (! d_cairoGraphicsContext)
 			return;
-		double width = x2DC - x1DC + 1.0, height = y1DC - y2DC + 1.0;
-		if (width <= 0.0 || height <= 0.0) return;
+		const double width = x2DC - x1DC + 1.0, height = y1DC - y2DC + 1.0;
+		if (width <= 0.0 || height <= 0.0)
+			return;
 		trace (U"x1DC ", x1DC, U", x2DC ", x2DC, U", y1DC ", y1DC, U", y2DC ", y2DC);
 		cairo_rectangle (d_cairoGraphicsContext, round (x1DC), round (y2DC), round (width), round (height));
 		cairo_fill (d_cairoGraphicsContext);
@@ -422,14 +422,16 @@ void structGraphicsPostscript :: v_ellipse (double x1DC, double x2DC, double y1D
 		d_printf (d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 0 360 arc\n"
 			" %.7g %.7g scale stroke grestore\n",
 			0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC), 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC),
-			2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
+			2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC)
+		);
 		psRevertLine (this);
 	}
 }
 
 void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) {
 	#if cairo
-		if (! d_cairoGraphicsContext) return;
+		if (! d_cairoGraphicsContext)
+			return;
 		cairoPrepareLine (this);
 		cairo_new_path (d_cairoGraphicsContext);
 		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, -toAngle * (M_PI / 180.0), -fromAngle * (M_PI / 180.0));
@@ -438,7 +440,8 @@ void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double f
 	#elif gdi
 		int arcAngle = (int) toAngle - (int) fromAngle;
 		POINT pt;
-		if (arcAngle < 0.0) arcAngle += 360;
+		if (arcAngle < 0.0)
+			arcAngle += 360;
 		winPrepareLine (this);
 		MoveToEx (d_gdiGraphicsContext, xDC + rDC * cos (NUMpi / 180 * fromAngle), yDC - rDC * sin (NUMpi / 180 * fromAngle), & pt);
 		AngleArc (d_gdiGraphicsContext, xDC, yDC, rDC, fromAngle, arcAngle);
@@ -462,7 +465,8 @@ void structGraphicsPostscript :: v_arc (double xDC, double yDC, double rDC, doub
 
 void structGraphicsScreen :: v_fillCircle (double xDC, double yDC, double rDC) {
 	#if cairo
-		if (! d_cairoGraphicsContext) return;
+		if (! d_cairoGraphicsContext)
+			return;
 		cairo_new_path (d_cairoGraphicsContext);
 		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0, 2 * M_PI);
 		cairo_fill (d_cairoGraphicsContext);
@@ -490,7 +494,8 @@ void structGraphicsPostscript :: v_fillCircle (double xDC, double yDC, double rD
 void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext) return;
+		if (! d_cairoGraphicsContext)
+			return;
 		cairo_new_path (d_cairoGraphicsContext);
 		cairo_save (d_cairoGraphicsContext);
 		cairo_translate (d_cairoGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
@@ -520,7 +525,7 @@ void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1D
 
 void structGraphicsPostscript :: v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	d_printf (d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 FC grestore\n",
-		(x2DC + x1DC) / 2.0, (y2DC + y1DC) / 2.0, (x2DC - x1DC) / 2.0, (y2DC - y1DC) / 2.0);
+			(x2DC + x1DC) / 2.0, (y2DC + y1DC) / 2.0, (x2DC - x1DC) / 2.0, (y2DC - y1DC) / 2.0);
 }
 
 void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, double y2DC) {
@@ -528,7 +533,6 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 	#if cairo
 		if (x2DC <= x1DC || y1DC <= y2DC)
 			return;
-		
 		cairo_save (d_cairoGraphicsContext);
 		#if 0
 			if (d_drawingArea) {
@@ -720,104 +724,109 @@ void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double 
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
 void Graphics_polyline (Graphics me, integer numberOfPoints, const double *xWC, const double *yWC) {   // base 0
-	if (numberOfPoints < 2)
-		return;
-	double *xyDC;
-	try {
-		xyDC = Melder_malloc (double, 2 * numberOfPoints);
-	} catch (MelderError) {
-		/*
-			Out of memory: silently refuse to draw.
-		 */
-		Melder_clearError ();
-		return;
-	}
-	for (integer i = 0; i < numberOfPoints; i ++) {
-		xyDC [i + i] = wdx (xWC [i]);
-		xyDC [i + i + 1] = wdy (yWC [i]);
-	}
-	my v_polyline (numberOfPoints, xyDC, false);
-	Melder_free (xyDC);
 	if (my recording) {
 		op (POLYLINE, 1 + 2 * numberOfPoints);
 		put (numberOfPoints);
 		mput (numberOfPoints, & xWC [0])
 		mput (numberOfPoints, & yWC [0])
+	} else {
+		if (numberOfPoints < 2)
+			return;
+		double *xyDC;
+		try {
+			xyDC = Melder_malloc (double, 2 * numberOfPoints);
+		} catch (MelderError) {
+			/*
+				Out of memory: silently refuse to draw.
+			 */
+			Melder_clearError ();
+			return;
+		}
+		for (integer i = 0; i < numberOfPoints; i ++) {
+			xyDC [i + i] = wdx (xWC [i]);
+			xyDC [i + i + 1] = wdy (yWC [i]);
+		}
+		my v_polyline (numberOfPoints, xyDC, false);
+		Melder_free (xyDC);
 	}
 }
 
 void Graphics_polyline_closed (Graphics me, integer numberOfPoints, const double *xWC, const double *yWC) {   // base 0
-	if (numberOfPoints < 1)
-		return;
-	double *xyDC;
-	try {
-		xyDC = Melder_malloc (double, 2 * numberOfPoints);
-	} catch (MelderError) {
-		/*
-			Out of memory: silently refuse to draw.
-		*/
-		Melder_clearError ();
-		return;
-	}
-	for (integer i = 0; i < numberOfPoints; i ++) {
-		xyDC [i + i] = wdx (xWC [i]);
-		xyDC [i + i + 1] = wdy (yWC [i]);
-	}
-	my v_polyline (numberOfPoints, xyDC, true);
-	Melder_free (xyDC);
 	if (my recording) {
 		op (POLYLINE_CLOSED, 1 + 2 * numberOfPoints);
 		put (numberOfPoints);
 		mput (numberOfPoints, & xWC [0])
 		mput (numberOfPoints, & yWC [0])
+	} else {
+		if (numberOfPoints < 1)
+			return;
+		double *xyDC;
+		try {
+			xyDC = Melder_malloc (double, 2 * numberOfPoints);
+		} catch (MelderError) {
+			/*
+				Out of memory: silently refuse to draw.
+			*/
+			Melder_clearError ();
+			return;
+		}
+		for (integer i = 0; i < numberOfPoints; i ++) {
+			xyDC [i + i] = wdx (xWC [i]);
+			xyDC [i + i + 1] = wdy (yWC [i]);
+		}
+		my v_polyline (numberOfPoints, xyDC, true);
+		Melder_free (xyDC);
 	}
 }
 
 void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
-	double xyDC [4];
-	trace (x1WC, U" ", y1WC, U" ", x2WC, U" ", y2WC);
-	xyDC [0] = wdx (x1WC);
-	xyDC [1] = wdy (y1WC);
-	xyDC [2] = wdx (x2WC);
-	xyDC [3] = wdy (y2WC);
-	my v_polyline (2, xyDC, false);
-	if (my recording) { op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
+	if (my recording) {
+		op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC);
+	} else {
+		double xyDC [4];
+		trace (x1WC, U" ", y1WC, U" ", x2WC, U" ", y2WC);
+		xyDC [0] = wdx (x1WC);
+		xyDC [1] = wdy (y1WC);
+		xyDC [2] = wdx (x2WC);
+		xyDC [3] = wdy (y2WC);
+		my v_polyline (2, xyDC, false);
+	}
 }
 
 void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *xWC, double const *yWC) {
-	if (numberOfPoints < 3)
-		return;
-	double *xyDC;
-	try {
-		xyDC = Melder_malloc (double, 2 * numberOfPoints);
-	} catch (MelderError) {
-		/*
-			Out of memory: silently refuse to draw.
-		*/
-		Melder_clearError ();
-		return;
-	}
-	for (integer i = 0; i < numberOfPoints; i ++) {
-		xyDC [i + i] = wdx (xWC [i]);
-		xyDC [i + i + 1] = wdy (yWC [i]);
-	}
-	my v_fillArea (numberOfPoints, xyDC);
-	Melder_free (xyDC);
 	if (my recording) {
 		op (FILL_AREA, 1 + 2 * numberOfPoints);
 		put (numberOfPoints);
 		mput (numberOfPoints, & xWC [0])
 		mput (numberOfPoints, & yWC [0])
+	} else {
+		if (numberOfPoints < 3)
+			return;
+		double *xyDC;
+		try {
+			xyDC = Melder_malloc (double, 2 * numberOfPoints);
+		} catch (MelderError) {
+			/*
+				Out of memory: silently refuse to draw.
+			*/
+			Melder_clearError ();
+			return;
+		}
+		for (integer i = 0; i < numberOfPoints; i ++) {
+			xyDC [i + i] = wdx (xWC [i]);
+			xyDC [i + i + 1] = wdy (yWC [i]);
+		}
+		my v_fillArea (numberOfPoints, xyDC);
+		Melder_free (xyDC);
 	}
 }
 
 template <typename TYPE>
-integer Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, integer ix1, integer ix2, double x1WC, double x2WC) {
+void Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, integer ix1, integer ix2, double x1WC, double x2WC) {
 	const integer clipy1 = wdy (my d_y1WC), clipy2 = wdy (my d_y2WC);
 	const integer n = ix2 - ix1 + 1;
-
-	if (n <= 1 || my scaleX == 0.0) return n;
-
+	if (n <= 1 || my scaleX == 0.0)
+		return;
 	const double dx = (x2WC - x1WC) / (n - 1);
 	const double offsetX = x1WC - ix1 * dx;
 	/* xDC = wdx (offsetX + i * dx) */
@@ -830,7 +839,8 @@ integer Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, inte
 		integer k = 0;
 		const integer numberOfPointsActuallyDrawn = numberOfPixels * 2;
 		TYPE lastMini;
-		if (numberOfPointsActuallyDrawn < 1) return n;
+		if (numberOfPointsActuallyDrawn < 1)
+			return;
 		double *xyDC = Melder_malloc_f (double, 2 * numberOfPointsActuallyDrawn);
 		for (integer i = 0; i < numberOfPixels; i ++) {
 			integer jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale;
@@ -886,7 +896,8 @@ integer Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, inte
 			}
 			lastMini = mini;
 		}
-		if (k > 1) my v_polyline (k / 2, xyDC, false);
+		if (k > 1)
+			my v_polyline (k / 2, xyDC, false);
 		Melder_free (xyDC);
 	} else {   // normal
 		double *xyDC = Melder_malloc_f (double, 2 * n);
@@ -906,116 +917,164 @@ integer Graphics_function_ (Graphics me, const TYPE yWC [], integer stride, inte
 		my v_polyline (n, xyDC, false);
 		Melder_free (xyDC);
 	}
-	return n;
 }
 
 void Graphics_function (Graphics me, const double yWC [], integer ix1, integer ix2, double x1WC, double x2WC) {
-	integer n = Graphics_function_ <double> (me, yWC, 1, ix1, ix2, x1WC, x2WC);
-	if (my recording && n >= 2) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
+	if (my recording) {
+		const integer n = ix2 - ix1 + 1;
+		if (n >= 2) {
+			op (FUNCTION, 3 + n);
+			put (n);
+			put (x1WC);
+			put (x2WC);
+			mput (n, & yWC [ix1])
+		}
+	} else
+		Graphics_function_ <double> (me, yWC, 1, ix1, ix2, x1WC, x2WC);
 }
 
 void Graphics_function16 (Graphics me, const int16 yWC [], integer stride, integer ix1, integer ix2, double x1WC, double x2WC) {
-	(void) Graphics_function_ <int16> (me, yWC, stride, ix1, ix2, x1WC, x2WC);
+	if (my recording) {
+		Melder_fatal (U"Graphics_function16: cannot be used during graphics recording.");
+	} else
+		Graphics_function_ <int16> (me, yWC, stride, ix1, ix2, x1WC, x2WC);
 }
 
 void Graphics_rectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	my v_rectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
-	if (my recording) { op (RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
+	if (my recording) {
+		op (RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+	} else
+		my v_rectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 }
 
 void Graphics_fillRectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	my v_fillRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
-	if (my recording) { op (FILL_RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
+	if (my recording) {
+		op (FILL_RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+	} else
+		my v_fillRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 }
 
 void Graphics_roundedRectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC, double r_mm) {
-	my v_roundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), Melder_iceiling (r_mm * my resolution / 25.4));
-	if (my recording) { op (ROUNDED_RECTANGLE, 5); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (r_mm); }
+	if (my recording) {
+		op (ROUNDED_RECTANGLE, 5); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (r_mm);
+	} else
+		my v_roundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), r_mm * my resolution / 25.4);
 }
 
 void Graphics_fillRoundedRectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC, double r_mm) {
-	my v_fillRoundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), Melder_iceiling (r_mm * my resolution / 25.4));
-	if (my recording) { op (FILL_ROUNDED_RECTANGLE, 5); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (r_mm); }
+	if (my recording) {
+		op (FILL_ROUNDED_RECTANGLE, 5); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (r_mm);
+	} else
+		my v_fillRoundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), r_mm * my resolution / 25.4);
 }
 
 void Graphics_button (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	my v_button (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
-	if (my recording) { op (BUTTON, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
+	if (my recording) {
+		op (BUTTON, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+	} else
+		my v_button (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 }
 
 void Graphics_innerRectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	int dy = my yIsZeroAtTheTop ? -1 : 1;
-	my v_rectangle (wdx (x1WC) + 1, wdx (x2WC) - 1, wdy (y1WC) + dy, wdy (y2WC) - dy);
-	if (my recording) { op (INNER_RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
+	if (my recording) {
+		op (INNER_RECTANGLE, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+	} else {
+		const double dy = ( my yIsZeroAtTheTop ? -1.0 : 1.0 );
+		my v_rectangle (wdx (x1WC) + 1.0, wdx (x2WC) - 1.0, wdy (y1WC) + dy, wdy (y2WC) - dy);
+	}
 }
 
 void Graphics_circle (Graphics me, double xWC, double yWC, double rWC) {
-	my v_circle (wdx (xWC), wdy (yWC), my scaleX * rWC);
-	if (my recording) { op (CIRCLE, 3); put (xWC); put (yWC); put (rWC); }
+	if (my recording) {
+		op (CIRCLE, 3); put (xWC); put (yWC); put (rWC);
+	} else
+		my v_circle (wdx (xWC), wdy (yWC), my scaleX * rWC);
 }
 
 void Graphics_circle_mm (Graphics me, double xWC, double yWC, double diameter) {
-	my v_circle (wdx (xWC), wdy (yWC), 0.5 * diameter * my resolution / 25.4);
-	if (my recording) { op (CIRCLE_MM, 3); put (xWC); put (yWC); put (diameter); }
+	if (my recording) {
+		op (CIRCLE_MM, 3); put (xWC); put (yWC); put (diameter);
+	} else
+		my v_circle (wdx (xWC), wdy (yWC), 0.5 * diameter * my resolution / 25.4);
 }
 
 void Graphics_fillCircle (Graphics me, double xWC, double yWC, double rWC) {
-	my v_fillCircle (wdx (xWC), wdy (yWC), Melder_iceiling (my scaleX * rWC));
-	if (my recording) { op (FILL_CIRCLE, 3); put (xWC); put (yWC); put (rWC); }
+	if (my recording) {
+		op (FILL_CIRCLE, 3); put (xWC); put (yWC); put (rWC);
+	} else
+		my v_fillCircle (wdx (xWC), wdy (yWC), my scaleX * rWC);
 }
 
 void Graphics_fillCircle_mm (Graphics me, double xWC, double yWC, double diameter) {
-	my v_fillCircle (wdx (xWC), wdy (yWC), Melder_iceiling (0.5 * diameter * my resolution / 25.4));
-	if (my recording) { op (FILL_CIRCLE_MM, 3); put (xWC); put (yWC); put (diameter); }
+	if (my recording) {
+		op (FILL_CIRCLE_MM, 3); put (xWC); put (yWC); put (diameter);
+	} else
+		my v_fillCircle (wdx (xWC), wdy (yWC), 0.5 * diameter * my resolution / 25.4);
 }
 
 void Graphics_speckle (Graphics me, double xWC, double yWC) {
-	my v_fillCircle (wdx (xWC), wdy (yWC), Melder_iceiling (0.5 * my speckleSize * my resolution / 25.4));
-	if (my recording) { op (SPECKLE, 2); put (xWC); put (yWC); }
+	if (my recording) {
+		op (SPECKLE, 2); put (xWC); put (yWC);
+	} else
+		my v_fillCircle (wdx (xWC), wdy (yWC), 0.5 * my speckleSize * my resolution / 25.4);
 }
 
 void Graphics_rectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
-	integer xDC = wdx (xWC), yDC = wdy (yWC);
-	integer halfHorSide = Melder_iceiling (0.5 * horSide * my resolution / 25.4);
-	integer halfVertSide = Melder_iceiling (0.5 * vertSide * my resolution / 25.4);
-	if (my yIsZeroAtTheTop) {
-		my v_rectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
+	if (my recording) {
+		op (RECTANGLE_MM, 4); put (xWC); put (yWC); put (horSide); put (vertSide);
 	} else {
-		my v_rectangle (xDC - halfHorSide, xDC + halfHorSide, yDC - halfVertSide, yDC + halfVertSide);
+		const double xDC = wdx (xWC), yDC = wdy (yWC);
+		const double halfHorSide = 0.5 * horSide * my resolution / 25.4;
+		const double halfVertSide = 0.5 * vertSide * my resolution / 25.4;
+		if (my yIsZeroAtTheTop) {
+			my v_rectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
+		} else {
+			my v_rectangle (xDC - halfHorSide, xDC + halfHorSide, yDC - halfVertSide, yDC + halfVertSide);
+		}
 	}
-	if (my recording) { op (RECTANGLE_MM, 4); put (xWC); put (yWC); put (horSide); put (vertSide); }
 }
 
 void Graphics_fillRectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
-	integer xDC = wdx (xWC), yDC = wdy (yWC);
-	integer halfHorSide = Melder_iceiling (0.5 * horSide * my resolution / 25.4);
-	integer halfVertSide = Melder_iceiling (0.5 * vertSide * my resolution / 25.4);
-	if (my yIsZeroAtTheTop) {
-		my v_fillRectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
+	if (my recording) {
+		op (FILL_RECTANGLE_MM, 4); put (xWC); put (yWC); put (horSide); put (vertSide);
 	} else {
-		my v_fillRectangle (xDC - halfHorSide, xDC + halfHorSide, yDC - halfVertSide, yDC + halfVertSide);
+		const double xDC = wdx (xWC), yDC = wdy (yWC);
+		const double halfHorSide = 0.5 * horSide * my resolution / 25.4;
+		const double halfVertSide = 0.5 * vertSide * my resolution / 25.4;
+		if (my yIsZeroAtTheTop) {
+			my v_fillRectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
+		} else {
+			my v_fillRectangle (xDC - halfHorSide, xDC + halfHorSide, yDC - halfVertSide, yDC + halfVertSide);
+		}
 	}
-	if (my recording) { op (FILL_RECTANGLE_MM, 4); put (xWC); put (yWC); put (horSide); put (vertSide); }
 }
 
 void Graphics_ellipse (Graphics me, double x1, double x2, double y1, double y2) {
-	my v_ellipse (wdx (x1), wdx (x2), wdy (y1), wdy (y2));
-	if (my recording) { op (ELLIPSE, 4); put (x1); put (x2); put (y1); put (y2); }
+	if (my recording) {
+		op (ELLIPSE, 4); put (x1); put (x2); put (y1); put (y2);
+	} else
+		my v_ellipse (wdx (x1), wdx (x2), wdy (y1), wdy (y2));
 }
 
 void Graphics_fillEllipse (Graphics me, double x1, double x2, double y1, double y2) {
-	my v_fillEllipse (wdx (x1), wdx (x2), wdy (y1), wdy (y2));
-	if (my recording) { op (FILL_ELLIPSE, 4); put (x1); put (x2); put (y1); put (y2); }
+	if (my recording) {
+		op (FILL_ELLIPSE, 4); put (x1); put (x2); put (y1); put (y2);
+	} else
+		my v_fillEllipse (wdx (x1), wdx (x2), wdy (y1), wdy (y2));
 }
 
 void Graphics_arc (Graphics me, double xWC, double yWC, double rWC, double fromAngle, double toAngle) {
-	my v_arc (wdx (xWC), wdy (yWC), my scaleX * rWC, fromAngle, toAngle);
-	if (my recording) { op (ARC, 5); put (xWC); put (yWC); put (rWC); put (fromAngle); put (toAngle); }
+	if (my recording) {
+		op (ARC, 5); put (xWC); put (yWC); put (rWC); put (fromAngle); put (toAngle);
+	} else
+		my v_arc (wdx (xWC), wdy (yWC), my scaleX * rWC, fromAngle, toAngle);
 }
 
 void Graphics_fillArc (Graphics me, double xWC, double yWC, double rWC, double fromAngle, double toAngle) {
-	my v_arc (wdx (xWC), wdy (yWC), my scaleX * rWC, fromAngle, toAngle);   // NYI v_fillArc
-	if (my recording) { op (FILL_ARC, 5); put (xWC); put (yWC); put (rWC); put (fromAngle); put (toAngle); }
+	if (my recording) {
+		op (FILL_ARC, 5); put (xWC); put (yWC); put (rWC); put (fromAngle); put (toAngle);
+	} else
+		my v_arc (wdx (xWC), wdy (yWC), my scaleX * rWC, fromAngle, toAngle);   // NYI v_fillArc
 }
 
 /* Arrows. */
@@ -1070,46 +1129,58 @@ void structGraphicsPostscript :: v_arrowHead (double xDC, double yDC, double ang
 }
 
 void Graphics_arrow (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
-	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1.0 : 1.0), wdx (x2WC) - wdx (x1WC));
-	double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10;
-	double xyDC [4];
-	xyDC [0] = wdx (x1WC);
-	xyDC [1] = wdy (y1WC);
-	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180.0) * NUMpi / 180.0) * size;
-	xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180.0) * NUMpi / 180.0) * size;
-	my v_polyline (2, xyDC, false);
-	my v_arrowHead (wdx (x2WC), wdy (y2WC), angle);
-	if (my recording) { op (ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
+	if (my recording) {
+		op (ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC);
+	} else {
+		const double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1.0 : 1.0), wdx (x2WC) - wdx (x1WC));
+		const double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10;
+		double xyDC [4];
+		xyDC [0] = wdx (x1WC);
+		xyDC [1] = wdy (y1WC);
+		xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180.0) * NUMpi / 180.0) * size;
+		xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180.0) * NUMpi / 180.0) * size;
+		my v_polyline (2, xyDC, false);
+		my v_arrowHead (wdx (x2WC), wdy (y2WC), angle);
+	}
 }
 
 void Graphics_doubleArrow (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
-	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1.0 : 1.0), wdx (x2WC) - wdx (x1WC));
-	double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10.0;
-	double xyDC [4];
-	xyDC [0] = wdx (x1WC) + (my screen ? 0.7 : 0.6) * cos (angle * NUMpi / 180.0) * size;
-	xyDC [1] = wdy (y1WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin (angle * NUMpi / 180.0) * size;
-	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180.0) * size;
-	xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180.0) * NUMpi / 180.0) * size;
-	my v_polyline (2, xyDC, false);
-	my v_arrowHead (wdx (x1WC), wdy (y1WC), angle + 180.0);
-	//my v_polyline (2, xyDC);
-	my v_arrowHead (wdx (x2WC), wdy (y2WC), angle);
-	if (my recording) { op (DOUBLE_ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
+	if (my recording) {
+		op (DOUBLE_ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC);
+	} else {
+		const double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1.0 : 1.0), wdx (x2WC) - wdx (x1WC));
+		const double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10.0;
+		double xyDC [4];
+		xyDC [0] = wdx (x1WC) + (my screen ? 0.7 : 0.6) * cos (angle * NUMpi / 180.0) * size;
+		xyDC [1] = wdy (y1WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin (angle * NUMpi / 180.0) * size;
+		xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180.0) * size;
+		xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180.0) * NUMpi / 180.0) * size;
+		my v_polyline (2, xyDC, false);
+		my v_arrowHead (wdx (x1WC), wdy (y1WC), angle + 180.0);
+		//my v_polyline (2, xyDC);
+		my v_arrowHead (wdx (x2WC), wdy (y2WC), angle);
+	}
 }
 
 void Graphics_arcArrow (Graphics me, double xWC, double yWC, double rWC,
 	double fromAngle, double toAngle, int arrowAtStart, int arrowAtEnd)
 {
-	my v_arc (wdx (xWC), wdy (yWC), my scaleX * rWC, fromAngle, toAngle);
-	if (arrowAtStart) my v_arrowHead (
-		wdx (xWC + rWC * cos (fromAngle * (NUMpi / 180.0))),
-		wdy (yWC + rWC * sin (fromAngle * (NUMpi / 180.0))), fromAngle - 90.0);
-	if (arrowAtEnd) my v_arrowHead (
-		wdx (xWC + rWC * cos (toAngle * (NUMpi / 180.0))),
-		wdy (yWC + rWC * sin (toAngle * (NUMpi / 180.0))), toAngle + 90.0);
-	if (my recording)
-		{ op (ARC_ARROW, 7); put (xWC); put (yWC); put (rWC);
-		  put (fromAngle); put (toAngle); put (arrowAtStart); put (arrowAtEnd); }
+	if (my recording) {
+		op (ARC_ARROW, 7); put (xWC); put (yWC); put (rWC);
+		put (fromAngle); put (toAngle); put (arrowAtStart); put (arrowAtEnd);
+	} else {
+		my v_arc (wdx (xWC), wdy (yWC), my scaleX * rWC, fromAngle, toAngle);
+		if (arrowAtStart)
+			my v_arrowHead (
+				wdx (xWC + rWC * cos (fromAngle * (NUMpi / 180.0))),
+				wdy (yWC + rWC * sin (fromAngle * (NUMpi / 180.0))), fromAngle - 90.0
+			);
+		if (arrowAtEnd)
+			my v_arrowHead (
+				wdx (xWC + rWC * cos (toAngle * (NUMpi / 180.0))),
+				wdy (yWC + rWC * sin (toAngle * (NUMpi / 180.0))), toAngle + 90.0
+			);
+	}
 }
 
 /* Output attributes. */

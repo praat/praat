@@ -69,13 +69,13 @@ double * _Graphics_check (Graphics me, integer number) {
 /***** RECORD AND PLAY *****/
 
 bool Graphics_startRecording (Graphics me) {
-	bool wasRecording = my recording;
+	const bool wasRecording = my recording;
 	my recording = true;
 	return wasRecording;
 }
 
 bool Graphics_stopRecording (Graphics me) {
-	bool wasRecording = my recording;
+	const bool wasRecording = my recording;
 	my recording = false;
 	return wasRecording;
 }
@@ -91,7 +91,7 @@ void Graphics_clearRecording (Graphics me) {
 void Graphics_play (Graphics me, Graphics thee) {
 	const double *p = my record;
 	const double * const endp = p + my irecord;
-	bool wasRecording = my recording;
+	const bool wasRecording = my recording;
 	if (! p)
 		return;
 	my recording = false;   // temporarily, in case me == thee
@@ -426,6 +426,9 @@ void Graphics_play (Graphics me, Graphics thee) {
 				const double x = get, y = get;
 				Graphics_speckle (thee, x, y);
 			}  break;
+			case CLEAR_WS: {
+				Graphics_clearWs (thee);
+			} break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError (U"Graphics_play: unknown opcode (", opcode, U").\n", p [-1], U" ", p [1]);

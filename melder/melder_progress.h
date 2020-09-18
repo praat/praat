@@ -2,7 +2,7 @@
 #define _melder_progress_h_
 /* melder_progress.h
  *
- * Copyright (C) 1992-2018,2020s Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ class autoMelderMonitor {
 	Graphics _graphics;
 public:
 	autoMelderMonitor (conststring32 message) {
-		_graphics = (Graphics) Melder_monitor (0.0, message);
+		our _graphics = (Graphics) Melder_monitor (0.0, message);
 	}
 	~autoMelderMonitor () {
 		Melder_monitor (1.0);
