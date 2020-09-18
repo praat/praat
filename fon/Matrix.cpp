@@ -438,7 +438,7 @@ void Matrix_playMovie (Matrix me, Graphics g) {
 		maximum += 0.5;
 	}
 	for (integer icol = 1; icol <= my nx; icol ++) {
-		column.all() <<= my z.column (icol);
+		column.all()  <<=  my z.column (icol);
 		Graphics_beginMovieFrame (g, & Melder_WHITE);
 		Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
 		Graphics_function (g, column.asArgumentToFunctionThatExpectsOneBasedArray(), 1, my ny, my ymin, my ymax);
