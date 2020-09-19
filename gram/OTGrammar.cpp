@@ -1714,8 +1714,10 @@ void OTGrammar_learnOne (OTGrammar me, conststring32 input, conststring32 adultO
 	double plasticity, double relativePlasticityNoise, bool newDisharmonies, bool warnIfStalled, bool *out_grammarHasChanged)
 {
 	try {
-		if (newDisharmonies) OTGrammar_newDisharmonies (me, evaluationNoise);
-		if (out_grammarHasChanged) *out_grammarHasChanged = false;
+		if (newDisharmonies)
+			OTGrammar_newDisharmonies (me, evaluationNoise);
+		if (out_grammarHasChanged)
+			*out_grammarHasChanged = false;
 
 		/*
 			Evaluate the input in the learner's hypothesis.
@@ -1763,17 +1765,18 @@ void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, integer numberOfChews)
 {
-	if (! inputs) inputs = outputs;
+	if (! inputs)
+		inputs = outputs;
 	try {
-		integer n = inputs -> numberOfStrings;
-		if (outputs -> numberOfStrings != n)
-			Melder_throw (U"Numbers of strings in input and output are not equal.");
+		const integer n = inputs -> numberOfStrings;
+		Melder_require (outputs -> numberOfStrings == n,
+			U"Numbers of strings in input and output should be equal.");
 		for (integer i = 1; i <= n; i ++) {
-			for (integer ichew = 1; ichew <= numberOfChews; ichew ++) {
+			for (integer ichew = 1; ichew <= numberOfChews; ichew ++)
 				OTGrammar_learnOne (me, inputs -> strings [i].get(), outputs -> strings [i].get(),
 					evaluationNoise, updateRule, honourLocalRankings,
-					plasticity, relativePlasticityNoise, true, true, nullptr);
-			}
+					plasticity, relativePlasticityNoise, true, true, nullptr
+				);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not learned from ", inputs, U" (inputs) and ", outputs, U" (outputs).");
@@ -1789,8 +1792,6 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	try {
 		double plasticity = initialPlasticity;
 		autoMelderMonitor monitor (U"Learning with full knowledge...");
-		if (monitor.graphics())
-			Graphics_clearWs (monitor.graphics());
 		for (integer iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (integer ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 				conststring32 input, output;
@@ -1802,19 +1803,21 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 					for (integer icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 						Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 						Graphics_line (monitor.graphics(),
-								idatum, my constraints [icons]. ranking,
-								idatum, my constraints [icons]. ranking + 1);
+							idatum, my constraints [icons]. ranking,
+							idatum, my constraints [icons]. ranking + 1.0
+						);
 					}
 					Graphics_endMovieFrame (monitor.graphics(), 0.0);
 				}
 				Melder_monitor ((double) idatum / numberOfData,
 					U"Processing input-output pair ", idatum,
-					U" out of ", numberOfData, U": ", input, U" -> ", output);
-				for (integer ichew = 1; ichew <= numberOfChews; ichew ++) {
+					U" out of ", numberOfData, U": ", input, U" -> ", output
+				);
+				for (integer ichew = 1; ichew <= numberOfChews; ichew ++)
 					OTGrammar_learnOne (me, input, output,
-							evaluationNoise, updateRule, honourLocalRankings,
-							plasticity, relativePlasticityNoise, true, true, nullptr);
-				}
+						evaluationNoise, updateRule, honourLocalRankings,
+						plasticity, relativePlasticityNoise, true, true, nullptr
+					);
 			}
 			plasticity *= plasticityDecrement;
 		}
@@ -2274,8 +2277,6 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 		autoOTHistory history;
 		OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
 		autoMelderMonitor monitor (U"Learning with limited knowledge...");
-		if (monitor.graphics())
-			Graphics_clearWs (monitor.graphics());
 		if (storeHistoryEvery)
 			history = OTGrammar_createHistory (me, storeHistoryEvery, numberOfData);
 		try {
@@ -2288,23 +2289,26 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					++ idatum;
 					if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
 						Graphics_beginMovieFrame (monitor.graphics(), nullptr);
-						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
+						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50.0, 150.0);
 						for (integer icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 							Graphics_setGrey (monitor.graphics(), (double) icons / 14);
 							Graphics_line (monitor.graphics(),
-									idatum, my constraints [icons]. ranking,
-									idatum, my constraints [icons]. ranking + 1);
+								idatum, my constraints [icons]. ranking,
+								idatum, my constraints [icons]. ranking + 10.0
+							);
 						}
 						Graphics_endMovieFrame (monitor.graphics(), 0.0);
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						U"Processing partial output ", idatum, U" out of ", numberOfData, U": ",
-						thy rowLabels [ipartialOutput].get());
+						thy rowLabels [ipartialOutput].get()
+					);
 					try {
 						OTGrammar_learnOneFromPartialOutput_opt (me, partialOutput, ipartialOutput,
 							evaluationNoise, updateRule, honourLocalRankings,
 							plasticity, relativePlasticityNoise, numberOfChews, false,
-							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
+							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm
+						);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
 						if (history)
 							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput].get());

@@ -2,7 +2,7 @@
 #define _melder_progress_h_
 /* melder_progress.h
  *
- * Copyright (C) 1992-2018,2020s Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,9 +73,10 @@
 				  Graphics graphics = Melder_monitor (0.0, U"Starting work...");
 			- at every turn of your loop, draw something in the Graphics:
 				  if (graphics) {   // always check; might be batch
-					  Graphics_clearWs (graphics);   // only if you redraw all every time
+					  Graphics_beginMovieFrame (graphics, & Melder_WHITE);   // the colour only if you erase all every time
 					  Graphics_polyline (graphics, ...);
 					  Graphics_text (graphics, ...);
+					  Graphics_endMovieFrame (graphics, 0.0);
 				  }
 			- immediately after this in your loop, call with 'progress' between 0.0 and 1.0:
 				  Melder_monitor (i / (n + 1.0), U"Working on part ", i, U" out of ", n, U"...");
@@ -91,9 +92,10 @@
 			- showing and hiding can be automated by autoMelderMonitor:
 				  autoMelderMonitor monitor ("Starting work...");
 				  if (monitor.graphics()) {   // always check; might be batch
-					  Graphics_clearWs (monitor.graphics());   // only if you redraw all every time
+					  Graphics_beginMovieFrame (graphics, & Melder_WHITE);   // the colour only if you erase all every time
 					  Graphics_polyline (monitor.graphics(), ...);
 					  Graphics_text (monitor.graphics(), ...);
+					  Graphics_endMovieFrame (graphics, 0.0);
 				  }
 */
 
@@ -143,7 +145,7 @@ class autoMelderMonitor {
 	Graphics _graphics;
 public:
 	autoMelderMonitor (conststring32 message) {
-		_graphics = (Graphics) Melder_monitor (0.0, message);
+		our _graphics = (Graphics) Melder_monitor (0.0, message);
 	}
 	~autoMelderMonitor () {
 		Melder_monitor (1.0);

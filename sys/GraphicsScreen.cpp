@@ -308,7 +308,10 @@ void structGraphicsScreen :: v_clearWs () {
 }
 
 void Graphics_clearWs (Graphics me) {
-	my v_clearWs ();
+	if (my recording) {
+		op (CLEAR_WS, 0);
+	} else
+		my v_clearWs ();
 }
 
 void structGraphicsScreen :: v_updateWs () {
@@ -387,9 +390,9 @@ void Graphics_updateWs (Graphics me) {
 void Graphics_beginMovieFrame (Graphics any, MelderColour *p_colour) {
 	if (any -> classInfo == classGraphicsScreen) {
 		GraphicsScreen me = (GraphicsScreen) any;
-		Graphics_clearRecording (me);
 		Graphics_startRecording (me);
 		if (p_colour) {
+			Graphics_clearRecording (me);
 			Graphics_setViewport (me, 0.0, 1.0, 0.0, 1.0);
 			Graphics_setColour (me, *p_colour);
 			Graphics_setWindow (me, 0.0, 1.0, 0.0, 1.0);
@@ -403,12 +406,8 @@ void Graphics_endMovieFrame (Graphics any, double frameDuration) {
 	if (any -> classInfo == classGraphicsScreen) {
 		GraphicsScreen me = (GraphicsScreen) any;
 		Graphics_stopRecording (me);
-		#if cairo || gdi
-			my v_flushWs ();
-		#elif quartz
-			my v_updateWs ();
-			GuiShell_drain (my d_drawingArea -> d_shell);
-		#endif
+		my v_updateWs ();
+		GuiShell_drain (my d_drawingArea -> d_shell);
 		Melder_sleep (frameDuration);
 	}
 }

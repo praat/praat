@@ -1,6 +1,6 @@
 /* Speaker.cpp
  *
- * Copyright (C) 1992-2005,2007,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,14 +48,14 @@ autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCord
 	/* That was a male speaker, so we need scaling for other speakers:		*/
 
 	double scaling;
-	if (str32equ (kindOfSpeaker, U"Male")) my relativeSize = 1.1;
-	else if (str32equ (kindOfSpeaker, U"Child")) my relativeSize = 0.7;
+	if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"male")) my relativeSize = 1.1;
+	else if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"child")) my relativeSize = 0.7;
 	else my relativeSize = 1.0;
 	scaling = my relativeSize;
 
 	/* Laryngeal system. Data for male speaker from Ishizaka and Flanagan.	*/
 
-	if (str32equ (kindOfSpeaker, U"Female")) {
+	if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"female")) {
 		my lowerCord.thickness = 1.4e-3;   // dx, in metres
 		my upperCord.thickness = 0.7e-3;
 		my cord.length = 10e-3;
@@ -63,7 +63,7 @@ autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCord
 		my upperCord.mass = 0.01e-3;
 		my lowerCord.k1 = 10;   // Newtons per metre
 		my upperCord.k1 = 4;
-	} else if (str32equ (kindOfSpeaker, U"Male")) {
+	} else if (Melder_equ_firstCharacterCaseInsensitive (kindOfSpeaker, U"male")) {
 		my lowerCord.thickness = 2.0e-3;   // dx, in metres
 		my upperCord.thickness = 1.0e-3;
 		my cord.length = 18e-3;
@@ -71,7 +71,7 @@ autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCord
 		my upperCord.mass = 0.05e-3;
 		my lowerCord.k1 = 12;   // Newtons per metre
 		my upperCord.k1 = 4;
-	} else /* "Child" */ {
+	} else /* "child" */ {
 		my lowerCord.thickness = 0.7e-3;   // dx, in metres
 		my upperCord.thickness = 0.3e-3;
 		my cord.length = 6e-3;

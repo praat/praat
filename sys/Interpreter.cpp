@@ -2656,33 +2656,33 @@ void Interpreter_voidExpression (Interpreter me, conststring32 expression) {
 	Formula_run (0, 0, & result);
 }
 
-void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *p_value) {
-	Melder_assert (p_value);
+void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *out_value) {
+	Melder_assert (out_value);
 	if (str32str (expression, U"(=")) {
-		*p_value = Melder_atof (expression);
+		*out_value = Melder_atof (expression);
 	} else {
 		Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
 		Formula_Result result;
 		Formula_run (0, 0, & result);
-		*p_value = result. numericResult;
+		*out_value = result. numericResult;
 	}
 }
 
-void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *p_value, bool *p_owned) {
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *out_value, bool *out_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
-	*p_value = result. numericVectorResult;
-	*p_owned = result. owned;
+	*out_value = result. numericVectorResult;
+	*out_owned = result. owned;
 	result. owned = false;
 }
 
-void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *p_value, bool *p_owned) {
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *out_value, bool *out_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
-	*p_value = result. numericMatrixResult;
-	*p_owned = result. owned;
+	*out_value = result. numericMatrixResult;
+	*out_owned = result. owned;
 	result. owned = false;
 }
 
@@ -2693,9 +2693,9 @@ autostring32 Interpreter_stringExpression (Interpreter me, conststring32 express
 	return result. stringResult.move();
 }
 
-void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result) {
+void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *out_result) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, false);
-	Formula_run (0, 0, p_result);
+	Formula_run (0, 0, out_result);
 }
 
 /* End of file Interpreter.cpp */
