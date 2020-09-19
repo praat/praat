@@ -44,19 +44,19 @@ static void IntervalTier_checkRange (IntervalTier me, integer startInterval, int
 		U"The specified interval range end number (", endinterval, U") exceeds the number of intervals (", my intervals.size, U") in this tier.");
 }
 
-autoSound SpeechSynthesizer_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
+autoSound SpeechSynthesizer_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *out_textgrid)
 {
 	try {
-		Melder_require (thy text && thy text[0] != U'\0',
+		Melder_require (thy text && thy text [0] != U'\0',
 			U"TextInterval should not be empty.");
-		autoSound him = SpeechSynthesizer_to_Sound (me, thy text.get(), p_tg, nullptr);
+		autoSound him = SpeechSynthesizer_to_Sound (me, thy text.get(), out_textgrid, nullptr);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from TextInterval.");
 	}
 }
 
-autoSound SpeechSynthesizer_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, integer tierNumber, integer iinterval, autoTextGrid *p_tg) {
+autoSound SpeechSynthesizer_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, integer tierNumber, integer iinterval, autoTextGrid *out_textgrid) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		const IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
@@ -64,7 +64,7 @@ autoSound SpeechSynthesizer_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid th
 			U"Tier ", tierNumber, U" is not an interval tier.");
 		Melder_require (iinterval > 0 && iinterval <= intervalTier -> intervals.size, 
 			U"Interval ", iinterval, U" does not exist on tier ", tierNumber, U".");
-		return SpeechSynthesizer_TextInterval_to_Sound (me, intervalTier -> intervals.at [iinterval], p_tg);
+		return SpeechSynthesizer_TextInterval_to_Sound (me, intervalTier -> intervals.at [iinterval], out_textgrid);
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from textGrid.");
 	}

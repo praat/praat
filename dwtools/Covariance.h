@@ -76,7 +76,7 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage 
 */
 
 /* Precondition ||vector|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, constVECVU const& vector, double *p_mu, double *p_stdev);
+void Covariance_getMarginalDensityParameters (Covariance me, constVECVU const& vector, double *out_mean, double *out_stdev);
 
 double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVECVU const& vector, double x);
 
