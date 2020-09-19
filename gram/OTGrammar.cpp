@@ -1714,8 +1714,10 @@ void OTGrammar_learnOne (OTGrammar me, conststring32 input, conststring32 adultO
 	double plasticity, double relativePlasticityNoise, bool newDisharmonies, bool warnIfStalled, bool *out_grammarHasChanged)
 {
 	try {
-		if (newDisharmonies) OTGrammar_newDisharmonies (me, evaluationNoise);
-		if (out_grammarHasChanged) *out_grammarHasChanged = false;
+		if (newDisharmonies)
+			OTGrammar_newDisharmonies (me, evaluationNoise);
+		if (out_grammarHasChanged)
+			*out_grammarHasChanged = false;
 
 		/*
 			Evaluate the input in the learner's hypothesis.
@@ -1763,17 +1765,18 @@ void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, integer numberOfChews)
 {
-	if (! inputs) inputs = outputs;
+	if (! inputs)
+		inputs = outputs;
 	try {
-		integer n = inputs -> numberOfStrings;
-		if (outputs -> numberOfStrings != n)
-			Melder_throw (U"Numbers of strings in input and output are not equal.");
+		const integer n = inputs -> numberOfStrings;
+		Melder_require (outputs -> numberOfStrings == n,
+			U"Numbers of strings in input and output should be equal.");
 		for (integer i = 1; i <= n; i ++) {
-			for (integer ichew = 1; ichew <= numberOfChews; ichew ++) {
+			for (integer ichew = 1; ichew <= numberOfChews; ichew ++)
 				OTGrammar_learnOne (me, inputs -> strings [i].get(), outputs -> strings [i].get(),
 					evaluationNoise, updateRule, honourLocalRankings,
-					plasticity, relativePlasticityNoise, true, true, nullptr);
-			}
+					plasticity, relativePlasticityNoise, true, true, nullptr
+				);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not learned from ", inputs, U" (inputs) and ", outputs, U" (outputs).");
@@ -1810,12 +1813,11 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 					U"Processing input-output pair ", idatum,
 					U" out of ", numberOfData, U": ", input, U" -> ", output
 				);
-				for (integer ichew = 1; ichew <= numberOfChews; ichew ++) {
+				for (integer ichew = 1; ichew <= numberOfChews; ichew ++)
 					OTGrammar_learnOne (me, input, output,
 						evaluationNoise, updateRule, honourLocalRankings,
 						plasticity, relativePlasticityNoise, true, true, nullptr
 					);
-				}
 			}
 			plasticity *= plasticityDecrement;
 		}

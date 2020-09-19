@@ -345,10 +345,10 @@ double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVECVU co
 }
 
 /* Precondition ||v|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, constVECVU const& v, double *out_mu, double *out_stdev) {
+void Covariance_getMarginalDensityParameters (Covariance me, constVECVU const& v, double *out_mean, double *out_stdev) {
 	Melder_assert (v.size == my numberOfColumns);
-	if (out_mu)
-		*out_mu = NUMinner (v, my centroid.get());
+	if (out_mean)
+		*out_mean = NUMinner (v, my centroid.get());
 	if (out_stdev) {
 		longdouble stdev = 0.0;
 		if (my numberOfRows == 1) // 1xn diagonal matrix
@@ -375,7 +375,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		U"The number of observations should be larger than the number of variables.");
 	double dif = 0.0;
 	for (integer i = 1; i <= p; i ++) {
-		double dist = my centroid [i] - thy centroid [i];
+		const double dist = my centroid [i] - thy centroid [i];
 		dif += dist * dist;
 	}
 	dif = sqrt (dif);
