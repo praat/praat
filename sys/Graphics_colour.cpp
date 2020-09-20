@@ -140,9 +140,10 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 }
 
 void Graphics_highlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
-	if (my recording)
-		{ op (HIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
+	if (my recording) {
+		op (HIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+	} else
+		highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 }
 
 static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y1DC, integer y2DC,
@@ -202,31 +203,35 @@ static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y
 void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
-	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
-	if (my recording)
-		{ op (HIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
+	if (my recording) {
+		op (HIGHLIGHT2, 8);
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner);
+	} else
+		highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
 }
 
 void Graphics_xorOn (Graphics graphics, MelderColour colourOnWhiteBackground) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
-		my colour. red   = 1.0 - colourOnWhiteBackground. red;
-		my colour. green = 1.0 - colourOnWhiteBackground. green;
-		my colour. blue  = 1.0 - colourOnWhiteBackground. blue;
-		#if cairo
-			cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_DIFFERENCE);
-		#elif gdi
-			SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
-		#elif quartz
-			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
-		#endif
-		_Graphics_setColour (me, my colour);
-		my duringXor = true;
 		if (graphics -> recording) {
 			op (XOR_ON, 3);
 			put (colourOnWhiteBackground. red);
 			put (colourOnWhiteBackground. green);
 			put (colourOnWhiteBackground. blue);
+		} else {
+			my colour. red   = 1.0 - colourOnWhiteBackground. red;
+			my colour. green = 1.0 - colourOnWhiteBackground. green;
+			my colour. blue  = 1.0 - colourOnWhiteBackground. blue;
+			#if cairo
+				cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_DIFFERENCE);
+			#elif gdi
+				SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
+			#elif quartz
+				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
+			#endif
+			_Graphics_setColour (me, my colour);
+			my duringXor = true;
 		}
 	}
 }
@@ -234,17 +239,18 @@ void Graphics_xorOn (Graphics graphics, MelderColour colourOnWhiteBackground) {
 void Graphics_xorOff (Graphics graphics) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
-		#if cairo
-			cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
-		#elif gdi
-			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
-		#elif quartz
-			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
-		#endif
-		_Graphics_setColour (me, my colour);
-		my duringXor = false;
 		if (graphics -> recording) {
 			op (XOR_OFF, 0);
+		} else {
+			#if cairo
+				cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
+			#elif gdi
+				SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
+			#elif quartz
+				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
+			#endif
+			_Graphics_setColour (me, my colour);
+			my duringXor = false;
 		}
 	}
 }
