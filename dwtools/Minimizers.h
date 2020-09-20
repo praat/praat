@@ -32,7 +32,7 @@ Thing_define (Minimizer, Thing) {
 	Daata object;       /* reference to the object that uses this Minimizer */
 	integer numberOfFunctionCalls;  /* the number of times 'func' has been called */
 	bool success;       /* indicates whether I'm done */
-	integer start;      /* start iteration series */
+	//integer start;      /* start iteration series */
 	integer maximumNumberOfIterations;   /* the current maximum number of iterations */
 	integer iteration;       /* the current number of iterations */
 	void (*afterHook) (Minimizer me, Thing boss);   /* to be called after each iteration */
