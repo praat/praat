@@ -27,15 +27,9 @@ static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
 	if (my success || ! my gmonitor)
 		return;
 	Graphics_beginMovieFrame (my gmonitor, nullptr);
-	if (my start == 1) {
-		Graphics_clearWs (my gmonitor);
-		Minimizer_drawHistory (me, my gmonitor, 0, my maximumNumberOfIterations, 0.0, 1.1 * my history [1], 1);
-		Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my numberOfParameters));
-		//my start = 0;
-	}
-	Graphics_setInner (my gmonitor);
-	Graphics_line (my gmonitor, my iteration, my history [my iteration], my iteration, my history [my iteration]);
-	Graphics_unsetInner (my gmonitor);
+	Graphics_clearWs (my gmonitor);
+	Minimizer_drawHistory (me, my gmonitor, 0, my maximumNumberOfIterations, 0.0, 1.1 * my history [1], 1);
+	Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my numberOfParameters));
 	Graphics_endMovieFrame (my gmonitor, 0.0);
 	Melder_monitor ((double) (my iteration) / my maximumNumberOfIterations, U"Iterations: ", my iteration, 
 		U", Function calls: ", my numberOfFunctionCalls, U", Cost: ", my minimum);
@@ -71,8 +65,6 @@ void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double
 		}
 		if (monitor)
 			my gmonitor = (Graphics) Melder_monitor (0.0, U"Starting...");
-
-		my start = 1;   // for my after()
 		my v_minimize ();
 		if (monitor)
 			monitor_off (me);
