@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2005,2007-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,7 +275,6 @@ void Graphics_play (Graphics me, Graphics thee) {
 				(void) mget (4);   // obsolete x1, x2, y1, y2
 				// do nothing (this has become obsolete since the demise of XOR mode drawing)
 			} break;
-#if motif
 			case XOR_ON: {
 				MelderColour colour; colour. red = get, colour. green = get, colour. blue = get;
 				Graphics_xorOn (thee, colour);
@@ -283,7 +282,6 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case XOR_OFF: {
 				Graphics_xorOff (thee);
 			} break;
-#endif
 			case RECTANGLE_MM: {
 				const double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_rectangle_mm (thee, x, y, horSide, vertSide);

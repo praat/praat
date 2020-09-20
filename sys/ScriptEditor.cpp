@@ -113,16 +113,32 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	const conststring32 obscuredLabel = U"#!praatObscured\n";
+	const conststring32 obscuredLabel = U"#!praatObscured";
 	if (Melder_stringMatchesCriterion (text.get(), kMelder_string::STARTS_WITH, obscuredLabel, true)) {
+		const integer obscuredLabelLength = str32len (obscuredLabel);
+		const double fileKey_real = Melder_atof (MelderFile_name (& file));
+		const uint64 fileKey = ( isdefined (fileKey_real) ? uint64 (fileKey_real) : 0 );
+		char32 *restOfText = & text [obscuredLabelLength];
+		uint64 passwordHash = 0;
+		if (*restOfText == U'\n') {
+			restOfText += 1;   // skip newline
+		} else if (*restOfText == U' ') {
+			restOfText ++;
+			char32 *endOfFirstLine = str32chr (restOfText, U'\n');
+			if (! endOfFirstLine)
+				Melder_throw (U"Incomplete script.");
+			*endOfFirstLine = U'\0';
+			passwordHash = NUMhashString (restOfText);
+			restOfText = endOfFirstLine + 1;
+		} else {
+			Melder_throw (U"Unexpected nonspace after #!praatObscured.");
+		}
+		static uint64 nonsecret = UINT64_C (529857089);
+		text = newSTRunhex (restOfText, fileKey + nonsecret + passwordHash);
 		isObscured = true;
-		double key_real = Melder_atof (MelderFile_name (& file));
-		uint64 key = ( isdefined (key_real) ? uint64 (key_real) : 0 );
-		static uint64 hexSecret = UINT64_C (529857089);
-		text = newSTRunhex (& text [str32len (obscuredLabel)], key + hexSecret);
 	}
 	Melder_includeIncludeFiles (& text);
-	integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
+	const integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
 	try {
 		if (npar) {
 			/*
