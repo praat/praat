@@ -46,11 +46,8 @@ void Minimizer_init (Minimizer me, integer numberOfParameters, Daata object) {
 }
 
 static void monitor_off (Minimizer me) {
-	Melder_monitor (1.1);
-	if (my gmonitor) {
-		//Graphics_clearWs (my gmonitor);   // DON'T forget (my gmonitor)
-		my gmonitor = nullptr;
-	}
+	Melder_monitor (1.0);
+	my gmonitor = nullptr;
 }
 
 void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double tolerance, int monitor) {
@@ -58,7 +55,6 @@ void Minimizer_minimize (Minimizer me, integer maximumNumberOfIterations, double
 		my tolerance = tolerance;
 		if (maximumNumberOfIterations <= 0)
 			return;
-
 		if (my iteration + maximumNumberOfIterations > my maximumNumberOfIterations) {
 			my maximumNumberOfIterations += maximumNumberOfIterations;
 			my history. resize (my maximumNumberOfIterations);
@@ -130,19 +126,15 @@ void Minimizer_reset (Minimizer me, constVEC const& guess) {
 void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo, double hmin, double hmax, bool garnish) {
 	if (my history.size == 0)
 		return;
-
 	if (iTo <= iFrom) {
 		iFrom = 1;
 		iTo = my iteration;
 	}
 	integer itmin = iFrom, itmax = iTo;
-	if (itmin < 1)
-		itmin = 1;
-	if (itmax > my iteration)
-		itmax = my iteration;
+	Melder_clipLeft (1_integer, & itmin);
+	Melder_clipRight (& itmax, my iteration);
 	if (hmax <= hmin)
 		NUMextrema (my history.part (itmin, itmax), & hmin, & hmax);
-
 	if (hmax <= hmin) {
 		hmin -= 0.5 * fabs (hmin);
 		hmax += 0.5 * fabs (hmax);
