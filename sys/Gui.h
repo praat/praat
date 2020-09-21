@@ -369,7 +369,7 @@ Thing_define (GuiShell, GuiForm) {
 int GuiShell_getShellWidth  (GuiShell me);   // needed because GuiControl_getWidth yields the width of the inner form
 int GuiShell_getShellHeight (GuiShell me);
 void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */);
-void GuiShell_drain (GuiShell me);   // drain the double graphics buffer
+void GuiShell_drain (GuiShell me);   // force display of update regions (forces the handling of an expose event)
 
 /********** GuiButton **********/
 

@@ -108,24 +108,9 @@ void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 
 void GuiShell_drain (GuiShell me) {
 	#if gtk
-		//gdk_window_flush (gtk_widget_get_window (my d_gtkWindow));
-		//gdk_flush ();
 		gdk_window_process_all_updates ();
 	#elif motif
-		if (my drawingArea && my drawingArea -> d_exposeCallback) {
-			structGuiDrawingArea_ExposeEvent event { my drawingArea, 0 };
-			try {
-				trace (U"send the expose callback");
-				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-				my drawingArea -> d_exposeCallback (my drawingArea -> d_exposeBoss, & event);
-				trace (U"the expose callback finished");
-				trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-			} catch (MelderError) {
-				Melder_flushError (U"Redrawing not completed");
-			}
-			trace (U"the expose callback handled drawing");
-		}
-
+		UpdateWindow (my d_xmShell -> window);
 	#elif cocoa
 		Melder_assert (my d_cocoaShell);
         [my d_cocoaShell   display];   // not just flushWindow
