@@ -22,9 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200913)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200920)
 INTRO (U"Latest changes in Praat.")
-NORMAL (U"##6.1.21beta# (13+ September 2020)")
+NORMAL (U"##6.1.21# (20 September 2020)")
+LIST_ITEM (U"• First fully functional version for BigSur.")
 LIST_ITEM (U"• Removed a decades-old bug by which an extremum allegedly computed by cubic interpolation "
 	"would actually have been computed by sinc700.")
 NORMAL (U"##6.1.20beta# (10 September 2020)")
