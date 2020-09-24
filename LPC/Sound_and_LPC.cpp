@@ -597,9 +597,8 @@ static autoLPC Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth
 		U"Please increase the analysis window duration or lower the prediction order."
 	);
 	
-	if (windowDuration > my dx * my nx) {
+	if (windowDuration > my dx * my nx)
 		windowDuration = my dx * my nx;
-	}
 	double t1;
 	integer numberOfFrames;
 	Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);

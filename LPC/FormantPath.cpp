@@ -199,10 +199,12 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 }
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
-	double formantCeiling, double windowLength, double preemphasisFrequency, double ceilingStepFraction, 
+	double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepFraction, 
 	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
 	integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
 	try {
+		Melder_require (timeStep > 0,
+			U"The timeStep needs to greater than zero seconds.");
 		Melder_require (ceilingStepFraction > 0.0 && ceilingStepFraction < 1.0,
 			U"The ceiling step fraction should be a number between 0.0 and 1.0");
 		const double nyquistFrequency = 0.5 / my dx;
@@ -212,66 +214,66 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			U"Your minimum ceiling is ", minimumCeiling, U" Hz, but it should be positive.\n"
 			"We computed it as your middle ceiling (", formantCeiling, U" Hz) times (1.0 - ", ceilingStepFraction, 
 			U")^", numberOfStepsToACeiling, U" Hz. Decrease the ceiling step or the number of steps or both.");
-		const double maximumCeiling = formantCeiling * pow (1.0 +  ceilingStepFraction, numberOfStepsToACeiling);		
+		const double maximumCeiling = formantCeiling * pow (1.0 + ceilingStepFraction, numberOfStepsToACeiling);		
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");
-		
-		integer fake_nx = 1; double fake_x1 = 0.005, fake_dx = 0.001; // we know them after the analyses
-		
-		autoFormantPath thee = FormantPath_create (my xmin, my xmax, fake_nx, fake_dx, fake_x1, numberOfCeilings);
-		autoSound sources [1 + numberOfCeilings];
-		const double formantSafetyMargin = 50.0;
+		volatile double windowDuration = 2.0 * analysisWidth;
+		if (windowDuration > my dx * my nx)
+			windowDuration = my dx * my nx;
+		/*
+			Get the data for the LPC from the resampled sound with 'formantCeiling' as maximum frequency
+			to make the sampling exactly equal as if performed with a standard LPC analysis.
+		*/
+		integer numberOfFrames;
+		double t1;
+		autoSound midCeiling = Sound_resample (me, 2.0 * formantCeiling, 50);
+		Sampled_shortTermAnalysis (midCeiling.get(), windowDuration, timeStep, & numberOfFrames, & t1); // Gaussian window
 		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
+		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfFrames, timeStep, t1, numberOfCeilings);
+		autoSound multiChannelSound;
+		if (sourcesMultiChannel)
+			multiChannelSound = Sound_create (numberOfCeilings, midCeiling -> xmin, midCeiling -> xmax, midCeiling -> nx, midCeiling -> dx, midCeiling -> x1);
+		const double formantSafetyMargin = 50.0;
 		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
-			autoLPC lpc;
+			autoFormant formant;
 			double factor = 1.0;
 			if (ic <= numberOfStepsToACeiling)
 				factor = pow (1.0 - ceilingStepFraction, numberOfStepsToACeiling + 1 - ic);
 			else if (ic > numberOfStepsToACeiling + 1)
 				factor = pow (1.0 + ceilingStepFraction, ic - numberOfStepsToACeiling - 1);
 			thy ceilings [ic] = formantCeiling * factor;
-			autoSound resampled = Sound_resample (me, 2.0 * thy ceilings [ic], 50);
-			if (lpcType == kLPC_Analysis::BURG)
-				lpc = Sound_to_LPC_burg (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
-			else if (lpcType == kLPC_Analysis::AUTOCORRELATION)
-				lpc = Sound_to_LPC_autocorrelation (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
-			else if (lpcType == kLPC_Analysis::COVARIANCE)
-				lpc = Sound_to_LPC_covariance (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
-			else if (lpcType == kLPC_Analysis::MARPLE)
-				lpc = Sound_to_LPC_marple (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency, marple_tol1, marple_tol2);
-			else if (lpcType == kLPC_Analysis::ROBUST) {
-				autoLPC lpc_in = Sound_to_LPC_autocorrelation (resampled.get(), predictionOrder, windowLength, timeStep, preemphasisFrequency);
-				lpc = LPC_Sound_to_LPC_robust (lpc_in.get(), resampled.get(), windowLength, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
+			autoSound resampled;
+			if (ic != numberOfStepsToACeiling + 1)
+				resampled = Sound_resample (me, 2.0 * thy ceilings [ic], 50);
+			else 
+				resampled = midCeiling.move();
+			autoLPC lpc = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, t1, predictionOrder, resampled -> dx);
+			if (lpcType != kLPC_Analysis::ROBUST) {
+				Sound_into_LPC (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, lpcType, marple_tol1, marple_tol2);
+			} else {
+				Sound_into_LPC (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, kLPC_Analysis::AUTOCORRELATION, marple_tol1, marple_tol2);
+				autoLPC lpc_robust = LPC_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
+				lpc = lpc_robust.move();
 			}
-			autoFormant formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
+			formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			thy formants . addItem_move (formant.move());
 			if (sourcesMultiChannel) {
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
-				sources [ic] = Sound_resample (source.get(), 2.0 * formantCeiling, 50).move();
+				autoSound source_resampled = Sound_resample (source.get(), 2.0 * formantCeiling, 50);
+				const integer numberOfSamples = std::min (midCeiling -> nx, source_resampled -> nx);
+				multiChannelSound -> z.row (ic).part (1, numberOfSamples) <<= source_resampled -> z.row (1).part (1, numberOfSamples);
 			}
 		}
 		/*
 			Maintain invariants
 		*/
 		Melder_assert (thy formants . size == numberOfCeilings);
-		Formant formant = thy formants . at [numberOfStepsToACeiling + 1];
-		thy nx = formant -> nx;
-		thy dx = formant -> dx;
-		thy x1 = formant -> x1;
 		thy path = newINTVECraw (thy nx);
 		for (integer i = 1; i <= thy path.size; i++)
 			thy path [i] = numberOfStepsToACeiling + 1;
-		if (sourcesMultiChannel) {
-			Sound mid = sources [numberOfStepsToACeiling + 1].get();
-			autoSound multiChannel = Sound_create (numberOfCeilings, mid -> xmin, mid -> xmax, mid -> nx, mid -> dx, mid -> x1);
-			for (integer ic = 1; ic <= numberOfCeilings; ic ++) {
-				Sound him = sources [ic] . get();
-				const integer numberOfSamples = std::min (mid -> nx, his nx);
-				multiChannel -> z.row (ic).part (1, numberOfSamples) <<= his z.row (1).part (1, numberOfSamples);
-			}
-			*sourcesMultiChannel = multiChannel.move();
-		}
+		if (sourcesMultiChannel)
+			*sourcesMultiChannel = multiChannelSound.move();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantPath not created.");
