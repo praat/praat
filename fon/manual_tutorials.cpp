@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200920)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200924)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.22# (24 September 2020)")
+LIST_ITEM (U"• Windows: made the running cursor visible again.")
+LIST_ITEM (U"• corrected a bug introduced in 6.1.17alpha that could cause incorrect line spacing in the Picture window, "
+	"such as in ##TableOfReal: Draw as numbers#.")
 NORMAL (U"##6.1.21# (20 September 2020)")
 LIST_ITEM (U"• First fully functional version for BigSur.")
 LIST_ITEM (U"• Removed a decades-old bug by which an extremum allegedly computed by cubic interpolation "

@@ -41,7 +41,7 @@
 
 Thing_define (Picture, Thing) {
 	GuiDrawingArea drawingArea;
-	autoGraphics backgroundGraphics, foregroundGraphics, selectionGraphics;
+	autoGraphics graphics, selectionGraphics;
 	bool sensitive;
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (Picture, void *, double, double, double, double);
@@ -64,8 +64,7 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive);
 		selection is [0, 1] x [0, 1] (NDC), which is invisible;
 */
 
-Graphics Picture_peekBackgroundGraphics (Picture me);
-Graphics Picture_peekForegroundGraphics (Picture me);
+Graphics Picture_peekGraphics (Picture me);
 /*
 	Function:
 		return the Graphics object.

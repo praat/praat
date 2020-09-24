@@ -387,7 +387,7 @@ NORMAL (U"Besides the TextGrid text file format described above, TextGrid object
 	"and save the resulting TextGrid object as a text file with @@Save as text file...@.")
 MAN_END
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20151028)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20200924)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -399,11 +399,11 @@ NORMAL (U"Before trying the task of learning how to write Praat extensions in C 
 	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (U"2. Getting the existing source code")
 NORMAL (U"You obtain the Praat source code from GitHub (https://github.com/praat), in a file with a name like "
-	"##praat5423_sources.zip# or ##praat5423_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
+	"##praat6121_sources.zip# or ##praat6121_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
 	"The result will be a set of directories "
-	"called #kar, #num, #external (with #GSL, #glpk, #FLAC, #mp3, #portaudio and #espeak in it), "
-	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #contrib, #main, #makefiles, #test, and #dwtest, "
-	"plus a makefile and an Xcode project for MacOS X.")
+	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio and #espeak in it), "
+	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #main, #makefiles, #test, #dwtest, and #generate,"
+	"plus a makefile and Xcode project for MacOS X and a README.md file.")
 ENTRY (U"3. Building Praat")
 NORMAL (U"Consult the README file on GitHub for directions to compile and link Praat for your platform.")
 ENTRY (U"4. Extending Praat")
@@ -412,9 +412,9 @@ NORMAL (U"To start extending Praat’s functionality, you can edit ##main/main_P
 	"of the Praat program, and a single bit more (namely an additional command in the New menu):")
 CODE (U"\\# include \"praat.h\"")
 CODE (U"")
-CODE (U"DIRECT (HelloFromJane)")
+CODE (U"DIRECT (HelloFromJane) {")
 	CODE1 (U"Melder_information (U\"Hello, I am Jane.\");")
-CODE (U"END")
+CODE (U"}")
 CODE (U"")
 CODE (U"int main (int argc, char **argv) {")
 	CODE1 (U"praat_init (U\"Praat_Jane\", argc, argv);")
@@ -430,8 +430,8 @@ NORMAL (U"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/D
 	"in the fixed and dynamic menus, take a look at the large interface description file "
 	"##fon/praat_Fon.cpp#.")
 ENTRY (U"6. Using the Praat shell only")
-NORMAL (U"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the eight directories "
-	"#kar, #GSL, #num, ##external/{FLAC,MP3,portaudio}#, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
+NORMAL (U"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the nine directories "
+	"#kar, #melder, ##external/{clapack,gsl,flac,mp3,portaudio}#, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
 	"You will be able to build a Praat shell, i.e. an Objects and a Picture window, "
 	"which has no knowledge of the world, i.e., which does not know any objects "
 	"that can be included in the list of objects. You could use this Praat shell "

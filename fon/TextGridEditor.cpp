@@ -1725,7 +1725,6 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		}
-		Melder_casual (U"click ", xWC);
 		Melder_assert (isundef (anchorTime));   // sanity check for the fixed order click-drag-drop
 		Melder_assert (clickedLeftBoundary == 0);
 		Melder_assert (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);   // sanity check for the fixed order click-drag-drop
@@ -1864,7 +1863,6 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			}
 		}
 	} else if (event -> isDrag ()) {
-		Melder_casual (U"drag ", xWC);
 		if (isdefined (anchorTime) && our draggingTiers.size > 0) {
 			our draggingTime = xWC;
 			if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
@@ -1874,7 +1872,6 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			}
 		}
 	} else if (event -> isDrop ()) {
-		Melder_casual (U"drop ", xWC);
 		if (our draggingTiers.size == 0) {
 			our draggingTime = undefined;
 			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;

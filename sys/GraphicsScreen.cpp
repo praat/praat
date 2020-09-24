@@ -343,10 +343,15 @@ void structGraphicsScreen :: v_updateWs () {
 			rect.height = our d_y1DC - our d_y2DC;
 		}
 
-		if (our d_cairoGraphicsContext && our d_drawingArea) {  // update clipping rectangle to new graphics size
-			cairo_reset_clip (our d_cairoGraphicsContext);
-			cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
-			cairo_clip (our d_cairoGraphicsContext);
+		if (Melder_debug == 54) {
+			// ignore gdk_cairo_reset_clip
+		} else {
+			if (our d_cairoGraphicsContext && our d_drawingArea) {  // update clipping rectangle to new graphics size
+				cairo_reset_clip (our d_cairoGraphicsContext);
+				cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+
+				 (our d_cairoGraphicsContext);
+			}
 		}
 		#if ALLOW_GDK_DRAWING
 			//gdk_window_clear (our d_window);
