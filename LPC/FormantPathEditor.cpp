@@ -359,139 +359,6 @@ static void menu_cb_GetLabelOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT
 	}
 }
 
-/***** VIEW MENU *****/
-
-static void do_selectAdjacentTier (FormantPathEditor me, bool previous) {
-	const integer n = my pathGridView -> tiers -> size;
-	if (n >= 2) {
-		my selectedTier = ( previous ?
-				my selectedTier > 1 ? my selectedTier - 1 : n :
-				my selectedTier < n ? my selectedTier + 1 : 1 );
-		_FormantPathEditor_timeToInterval (me, my startSelection, my selectedTier, & my startSelection, & my endSelection);
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_SelectPreviousTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentTier (me, true);
-}
-
-static void menu_cb_SelectNextTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentTier (me, false);
-}
-
-static void do_selectAdjacentInterval (FormantPathEditor me, bool previous, bool shift) {
-	const TextGrid grid = my pathGridView.get();
-	IntervalTier intervalTier;
-	TextTier textTier;
-	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
-		return;
-	_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
-	if (intervalTier) {
-		const integer n = intervalTier -> intervals.size;
-		if (n >= 2) {
-			integer iinterval = IntervalTier_timeToIndex (intervalTier, my startSelection);
-			if (shift) {
-				const integer binterval = IntervalTier_timeToIndex (intervalTier, my startSelection);
-				integer einterval = IntervalTier_timeToIndex (intervalTier, my endSelection);
-				if (my endSelection == intervalTier -> xmax)
-					einterval ++;
-				if (binterval < iinterval && einterval > iinterval + 1) {
-					const TextInterval interval = intervalTier -> intervals.at [iinterval];
-					my startSelection = interval -> xmin;
-					my endSelection = interval -> xmax;
-				} else if (previous) {
-					if (einterval > iinterval + 1) {
-						if (einterval <= n + 1) {
-							const TextInterval interval = intervalTier -> intervals.at [einterval - 1];
-							my endSelection = interval -> xmin;
-						}
-					} else if (binterval > 1) {
-						const TextInterval interval = intervalTier -> intervals.at [binterval - 1];
-						my startSelection = interval -> xmin;
-					}
-				} else {
-					if (binterval < iinterval) {
-						if (binterval > 0) {
-							const TextInterval interval = intervalTier -> intervals.at [binterval];
-							my startSelection = interval -> xmax;
-						}
-					} else if (einterval <= n) {
-						const TextInterval interval = intervalTier -> intervals.at [einterval];
-						my endSelection = interval -> xmax;
-					}
-				}
-			} else {
-				iinterval = ( previous ?
-						iinterval > 1 ? iinterval - 1 : n :
-						iinterval < n ? iinterval + 1 : 1 );
-				const TextInterval interval = intervalTier -> intervals.at [iinterval];
-				my startSelection = interval -> xmin;
-				my endSelection = interval -> xmax;
-			}
-			scrollToView (me, iinterval == n ? my startSelection : iinterval == 1 ? my endSelection : (my startSelection + my endSelection) / 2);
-		}
-	} else {
-		const integer n = textTier -> points.size;
-		if (n >= 2) {
-			integer ipoint = AnyTier_timeToHighIndex (textTier->asAnyTier(), my startSelection);
-			ipoint = ( previous ?
-					ipoint > 1 ? ipoint - 1 : n :
-					ipoint < n ? ipoint + 1 : 1 );
-			const TextPoint point = textTier -> points.at [ipoint];
-			my startSelection = my endSelection = point -> number;
-			scrollToView (me, my startSelection);
-		}
-	}
-}
-
-static void menu_cb_SelectPreviousInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, true, false);
-}
-
-static void menu_cb_SelectNextInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, false, false);
-}
-
-static void menu_cb_ExtendSelectPreviousInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, true, true);
-}
-
-static void menu_cb_ExtendSelectNextInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	do_selectAdjacentInterval (me, false, true);
-}
-
-static void menu_cb_MoveBtoZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		Editor_save (me, U"Move start of selection to nearest zero crossing");
-		my startSelection = zero;
-		if (my startSelection > my endSelection)
-			std::swap (my startSelection, my endSelection);
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_MoveCursorToZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		Editor_save (me, U"Move cursor to nearest zero crossing");
-		my startSelection = my endSelection = zero;
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
-static void menu_cb_MoveEtoZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
-	if (isdefined (zero)) {
-		Editor_save (me, U"Move end of selection to nearest zero crossing");
-		my endSelection = zero;
-		if (my startSelection > my endSelection)
-			std::swap (my startSelection, my endSelection);
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
 /***** PITCH MENU *****/
 
 static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM) {
@@ -539,112 +406,6 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
-}
-
-/***** INTERVAL MENU *****/
-
-static void do_removeBoundariesBetween (IntervalTier me, double fromTime, double toTime) {
-	if (fromTime == toTime)
-		return;
-	Melder_assert (fromTime < toTime);
-	integer fromIntervalNumber = IntervalTier_timeToLowIndex (me, fromTime);
-	integer toIntervalNumber = IntervalTier_timeToHighIndex (me, toTime);
-	if (fromIntervalNumber == toIntervalNumber)
-		return;
-	integer numberOfBoundariesToRemove = toIntervalNumber - fromIntervalNumber;
-	for (integer iint = 1; iint <= numberOfBoundariesToRemove; iint ++) {
-		IntervalTier_removeLeftBoundary (me, toIntervalNumber --);
-	}
-	TextInterval_setText (my intervals.at [fromIntervalNumber], U"");
-}
-
-static void insertBoundaryOrPoint (FormantPathEditor me, integer itier, double t1, double t2, bool insertSecond) {
-	const TextGrid grid = my pathGridView.get();
-	const integer numberOfTiers = my pathGridView -> tiers -> size;
-	IntervalTier intervalTier = (IntervalTier) grid -> tiers->at [itier];
-	Melder_assert (t1 <= t2);
-	if (t1 == t2)
-		return; // only intervals
-	/*
-		Policy:
-		Insertion of an interval should always occur if the boundaries are within the window.
-		"Old" intervals within the new boundaries have to be removed.
-		No messages are necesary if new times are on existing boundaries.
-	*/
-	const bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1);
-	const bool t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
-	do_removeBoundariesBetween (intervalTier, t1, t2);
-	if ((t1 == t2 && t1IsABoundary) || (t1IsABoundary && t2IsABoundary))
-		return; // no need to do anything more
-		
-	autoTextInterval rightNewInterval, midNewInterval;
-	const integer iinterval = IntervalTier_timeToIndex (intervalTier, t1);
-	const integer iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
-	Melder_require (iinterval != 0 && iinterval2 != 0,
-		U"The selection is outside the time domain of the intervals.");
-	const TextInterval interval = intervalTier -> intervals.at [iinterval];
-
-	if (itier == my selectedTier) {
-		/*
-			Divide up the label text into left, mid and right, depending on where the text selection is.
-		*/
-		autostring32 text = Melder_dup (interval -> text.get());
-		rightNewInterval = TextInterval_create (t2, interval -> xmax, text.get());
-		midNewInterval = TextInterval_create (t1, t2, text.get());
-		TextInterval_setText (interval, U"");
-	} else {
-		/*
-			Move the text to the left of the boundary.
-		*/
-		rightNewInterval = TextInterval_create (t2, interval -> xmax, U"");
-		midNewInterval = TextInterval_create (t1, t2, U"");
-	}
-	if (t1IsABoundary) {
-		/*
-			Merge mid with left interval.
-		*/
-		if (interval -> xmin != t1)
-			Melder_fatal (U"Boundary unequal: ", interval -> xmin, U" versus ", t1, U".");
-		interval -> xmax = t2;
-		TextInterval_setText (interval, Melder_cat (interval -> text.get(), midNewInterval -> text.get()));
-	} else if (t2IsABoundary) {
-		/*
-			Merge mid and right interval.
-		*/
-		if (interval -> xmax != t2)
-			Melder_fatal (U"Boundary unequal: ", interval -> xmax, U" versus ", t2, U".");
-		interval -> xmax = t1;
-		Melder_assert (rightNewInterval -> xmin == t2);
-		Melder_assert (rightNewInterval -> xmax == t2);
-		rightNewInterval -> xmin = t1;
-		TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text.get(), rightNewInterval -> text.get()));
-	} else {
-		interval -> xmax = t1;
-		if (t1 != t2)
-			intervalTier -> intervals.addItem_move (midNewInterval.move());
-	}
-	intervalTier -> intervals.addItem_move (rightNewInterval.move());
-	if (insertSecond && numberOfTiers >= 2 && t1 == t2) {
-		/*
-			Find the last time before t on another tier.
-		*/
-		double tlast = interval -> xmin;
-		for (integer jtier = 1; jtier <= numberOfTiers; jtier ++) {
-			if (jtier != itier) {
-				double tmin, tmax;
-				_FormantPathEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
-				if (tmin > tlast)
-					tlast = tmin;
-			}
-		}
-		if (tlast > interval -> xmin && tlast < t1) {
-			autoTextInterval newInterval = TextInterval_create (tlast, t1, U"");
-			interval -> xmax = tlast;
-			intervalTier -> intervals.addItem_move (newInterval.move());
-		}
-	}
-	
-	my startSelection = my endSelection = t1;
 }
 
 /***** SEARCH MENU *****/
@@ -724,15 +485,6 @@ static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 
 /***** TIER MENU *****/
 
-static void menu_cb_PublishTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my pathGridView.get();
-	checkTierSelection (me, U"publish a tier");
-	const Function tier = grid -> tiers->at [my selectedTier];
-	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier_copy (publish.get(), tier);
-	Thing_setName (publish.get(), tier -> name.get());
-	Editor_broadcastPublication (me, publish.move());
-}
 
 static void menu_cb_candidates_modelingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Candidates modeling parameter settings", nullptr)		
@@ -873,24 +625,6 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 	EDITOR_END
 }
 
-static void menu_cb_RemoveAllTextFromTier (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid =  my pathGridView.get();
-	checkTierSelection (me, U"remove all text from a tier");
-		
-	IntervalTier intervalTier;
-	TextTier textTier;
-	_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
-
-	Editor_save (me, U"Remove text from tier");
-	if (intervalTier)
-		IntervalTier_removeText (intervalTier);
-	else
-		TextTier_removeText (textTier);
-
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
-}
 
 static void menu_cb_showFormants (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	my pref_formant_show () = my p_formant_show = ! my p_formant_show;
@@ -919,14 +653,6 @@ void structFormantPathEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
 
-	if (our d_sound.data) {
-		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
-		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (this, U"Select", U"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (this, U"Select", U"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
-	}
-
 	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
 	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
 	Editor_addCommand (this, U"Query", U"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
@@ -941,10 +667,7 @@ void structFormantPathEditor :: v_createMenus () {
 
 	menu = Editor_addMenu (this, U"Tier", 0);
 	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
-	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
 
 	if (our d_sound.data || our d_longSound.data) {
 		if (our v_hasAnalysis ())
@@ -999,198 +722,6 @@ void structFormantPathEditor :: v_prepareDraw () {
 	}
 }
 
-static void do_drawIntervalTier (FormantPathEditor me, IntervalTier tier, integer itier) {
-	#if gtk || defined (macintosh)
-		constexpr bool platformUsesAntiAliasing = true;
-	#else
-		constexpr bool platformUsesAntiAliasing = false;
-	#endif
-	integer x1DC, x2DC, yDC;
-	Graphics_WCtoDC (my graphics.get(), my startWindow, 0.0, & x1DC, & yDC);
-	Graphics_WCtoDC (my graphics.get(), my endWindow, 0.0, & x2DC, & yDC);
-	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
-	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my graphics.get(), my p_useTextStyles);
-
-	/*
-		Highlight interval: yellow (selected) or green (matching label).
-	*/
-	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 ), ninterval = tier -> intervals.size;
-//	IntervalTierNavigator navigator = ((FormantPath) (my data )) -> intervalTierNavigator.get();
-	integer navigationTierNumber = 0;
-	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
-		TextInterval interval = tier -> intervals.at [iinterval];
-		double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
-			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = false;
-			//const bool labelDoesMatch = ( itier == TextGridView_getViewTierNumber (my pathGridView.get(), navigationTierNumber) && navigator && IntervalTierNavigator_isLabelMatch (navigator, iinterval) );
-			if (tmin < my startWindow)
-				tmin = my startWindow;
-			if (tmax > my endWindow)
-				tmax = my endWindow;
-			if (labelDoesMatch) {
-				Graphics_setColour (my graphics.get(), Melder_LIME);
-				Graphics_fillRectangle (my graphics.get(), tmin, tmax, 0.0, 1.0);
-			}
-			if (intervalIsSelected) {
-				if (labelDoesMatch) {
-					tmin = 0.85 * tmin + 0.15 * tmax;
-					tmax = 0.15 * tmin + 0.85 * tmax;
-				}
-				Graphics_setColour (my graphics.get(), Melder_YELLOW);
-				Graphics_fillRectangle (my graphics.get(), tmin, tmax,
-						labelDoesMatch ? 0.15 : 0.0, labelDoesMatch? 0.85: 1.0);
-			}
-		}
-	}
-	Graphics_setColour (my graphics.get(), Melder_BLACK);
-	Graphics_line (my graphics.get(), my endWindow, 0.0, my endWindow, 1.0);
-
-	/*
-	 * Draw a grey bar and a selection button at the cursor position.
-	 */
-	if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
-		bool cursorAtBoundary = false;
-		for (integer iinterval = 2; iinterval <= ninterval; iinterval ++) {
-			const TextInterval interval = tier -> intervals.at [iinterval];
-			if (interval -> xmin == my startSelection)
-				cursorAtBoundary = true;
-		}
-		if (! cursorAtBoundary) {
-			const double dy = Graphics_dyMMtoWC (my graphics.get(), 1.5);
-			Graphics_setGrey (my graphics.get(), 0.8);
-			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
-			Graphics_setLineWidth (my graphics.get(), 1.0);
-			Graphics_setColour (my graphics.get(), Melder_BLUE);
-			Graphics_circle_mm (my graphics.get(), my startSelection, 1.0 - dy, 3.0);
-		}
-	}
-
-	Graphics_setTextAlignment (my graphics.get(), my p_alignment, Graphics_HALF);
-	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
-		const TextInterval interval = tier -> intervals.at [iinterval];
-		double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmin < my tmin)
-			tmin = my tmin;
-		if (tmax > my tmax)
-			tmax = my tmax;
-		if (tmin >= tmax)
-			continue;
-		const bool intervalIsSelected = ( selectedInterval == iinterval );
-
-		/*
-			Draw left boundary.
-		*/
-		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
-			const bool boundaryIsSelected = ( my selectedTier == itier && tmin == my startSelection );
-			Graphics_setColour (my graphics.get(), boundaryIsSelected ? Melder_RED : Melder_BLUE);
-			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
-
-			/*
-				Show alignment with cursor.
-			*/
-			if (tmin == my startSelection) {
-				Graphics_setColour (my graphics.get(), Melder_YELLOW);
-				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
-				Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
-			}
-		}
-		Graphics_setLineWidth (my graphics.get(), 1.0);
-
-		/*
-			Draw label text.
-		*/
-		if (interval -> text && tmax >= my startWindow && tmin <= my endWindow) {
-			const double t1 = std::max (my startWindow, tmin);
-			const double t2 = std::min (my endWindow, tmax);
-			Graphics_setColour (my graphics.get(), intervalIsSelected ? Melder_RED : Melder_BLACK);
-			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, interval -> text.get());
-			Graphics_setColour (my graphics.get(), Melder_BLACK);
-		}
-
-	}
-	Graphics_setPercentSignIsItalic (my graphics.get(), true);
-	Graphics_setNumberSignIsBold (my graphics.get(), true);
-	Graphics_setCircumflexIsSuperscript (my graphics.get(), true);
-	Graphics_setUnderscoreIsSubscript (my graphics.get(), true);
-}
-
-static void do_drawTextTier (FormantPathEditor me, TextTier tier, integer itier) {
-	#if gtk || defined (macintosh)
-		constexpr bool platformUsesAntiAliasing = true;
-	#else
-		constexpr bool platformUsesAntiAliasing = false;
-	#endif
-	const integer npoint = tier -> points.size;
-	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
-	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my graphics.get(), my p_useTextStyles);
-
-	/*
-	 * Draw a grey bar and a selection button at the cursor position.
-	 */
-	if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
-		bool cursorAtPoint = false;
-		for (integer ipoint = 1; ipoint <= npoint; ipoint ++) {
-			const TextPoint point = tier -> points.at [ipoint];
-			if (point -> number == my startSelection)
-				cursorAtPoint = true;
-		}
-		if (! cursorAtPoint) {
-			const double dy = Graphics_dyMMtoWC (my graphics.get(), 1.5);
-			Graphics_setGrey (my graphics.get(), 0.8);
-			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
-			Graphics_setLineWidth (my graphics.get(), 1.0);
-			Graphics_setColour (my graphics.get(), Melder_BLUE);
-			Graphics_circle_mm (my graphics.get(), my startSelection, 1.0 - dy, 3.0);
-		}
-	}
-
-	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-	for (integer ipoint = 1; ipoint <= npoint; ipoint ++) {
-		const TextPoint point = tier -> points.at [ipoint];
-		const double t = point -> number;
-		if (t >= my startWindow && t <= my endWindow) {
-			const bool pointIsSelected = ( itier == my selectedTier && t == my startSelection );
-			Graphics_setColour (my graphics.get(), pointIsSelected ? Melder_RED : Melder_BLUE);
-			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my graphics.get(), t, 0.0, t, 0.2);
-			Graphics_line (my graphics.get(), t, 0.8, t, 1);
-			Graphics_setLineWidth (my graphics.get(), 1.0);
-
-			/*
-				Wipe out the cursor where the text is going to be.
-			*/
-			Graphics_setColour (my graphics.get(), Melder_WHITE);
-			Graphics_line (my graphics.get(), t, 0.2, t, 0.8);
-
-			/*
-				Show alignment with cursor.
-			*/
-			if (my startSelection == my endSelection && t == my startSelection) {
-				Graphics_setColour (my graphics.get(), Melder_YELLOW);
-				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
-				Graphics_line (my graphics.get(), t, 0.0, t, 0.2);
-				Graphics_line (my graphics.get(), t, 0.8, t, 1.0);
-				Graphics_setLineWidth (my graphics.get(), 1.0);
-			}
-			Graphics_setColour (my graphics.get(), pointIsSelected ? Melder_RED : Melder_BLUE);
-			if (point -> mark)
-				Graphics_text (my graphics.get(), t, 0.5, point -> mark.get());
-		}
-	}
-	Graphics_setPercentSignIsItalic (my graphics.get(), true);
-	Graphics_setNumberSignIsBold (my graphics.get(), true);
-	Graphics_setCircumflexIsSuperscript (my graphics.get(), true);
-	Graphics_setUnderscoreIsSubscript (my graphics.get(), true);
-}
-
 void structFormantPathEditor :: v_draw () {
 	Graphics_Viewport vp1, vp2;
 	const integer ntiers = ( our pathGridView ? our pathGridView -> tiers->size : 0 );
@@ -1216,93 +747,7 @@ void structFormantPathEditor :: v_draw () {
 	/*
 		Draw tiers.
 	*/
-	if (our textgrid) {
-		if (d_longSound.data || d_sound.data) 
-			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, soundY);
-		Graphics_setColour (our graphics.get(), Melder_WHITE);
-		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
-		bool isDefaultView = TextGridView_isDefaultView (our pathGridView.get());
-		for (integer itier = 1; itier <= ntiers; itier ++) {
-			const Function anyTier = our pathGridView -> tiers->at [itier];
-			const bool tierIsSelected = ( itier == selectedTier );
-			const bool isIntervalTier = ( anyTier -> classInfo == classIntervalTier );
-			vp2 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0,
-				1.0 - (double) itier / (double) ntiers,
-				1.0 - (double) (itier - 1) / (double) ntiers);
-			Graphics_setColour (our graphics.get(), Melder_BLACK);
-			if (itier != 1)
-				Graphics_line (our graphics.get(), our startWindow, 1.0, our endWindow, 1.0);
-
-			/*
-				Show the number and the name of the tier.
-			*/
-			Graphics_setColour (our graphics.get(), tierIsSelected ? Melder_RED : Melder_BLACK);
-			Graphics_setFont (our graphics.get(), oldFont);
-			Graphics_setFontSize (our graphics.get(), 14);
-			Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-			if (isDefaultView)
-				Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, U"");
-			else
-				Graphics_text (our graphics.get(), our startWindow, 0.5, tierIsSelected ? U"☞ " : U"", itier, 
-					U" → ", our pathGridView -> tierNumbers [itier], U"");
-			Graphics_setFontSize (our graphics.get(), oldFontSize);
-			if (anyTier -> name && anyTier -> name [0]) {
-				Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
-					our p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
-				Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name.get());
-			}
-			if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
-				Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
-				if (our p_showNumberOf == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
-					integer count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
-					integer position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
-					if (position)
-						Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", position, U"/", count, U")");
-					else
-						Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
-				} else {
-					Melder_assert (our p_showNumberOf == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
-					integer count = 0;
-					if (isIntervalTier) {
-						const IntervalTier tier = (IntervalTier) anyTier;
-						const integer numberOfIntervals = tier -> intervals.size;
-						for (integer iinterval = 1; iinterval <= numberOfIntervals; iinterval ++) {
-							const TextInterval interval = tier -> intervals.at [iinterval];
-							if (interval -> text && interval -> text [0] != U'\0')
-								count ++;
-						}
-					} else {
-						const TextTier tier = (TextTier) anyTier;
-						const integer numberOfPoints = tier -> points.size;
-						for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
-							const TextPoint point = tier -> points.at [ipoint];
-							if (point -> mark && point -> mark [0] != U'\0')
-								count ++;
-						}
-					}
-					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(##", count, U"#)");
-				}
-			}
-
-			Graphics_setColour (our graphics.get(), Melder_BLACK);
-			Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
-			Graphics_setFontSize (our graphics.get(), p_fontSize);
-			if (isIntervalTier)
-				do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
-			else
-				do_drawTextTier (this, (TextTier) anyTier, itier);
-			Graphics_resetViewport (our graphics.get(), vp2);
-		}
-		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		Graphics_setFont (our graphics.get(), oldFont);
-		Graphics_setFontSize (our graphics.get(), oldFontSize);
-		if (d_longSound.data || d_sound.data)
-			Graphics_resetViewport (our graphics.get(), vp1);
-	}
+	if (our textgrid) {}
 	if (showAnalysis) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, soundY2);
 		v_draw_analysis ();
@@ -1594,9 +1039,9 @@ static void do_dragBoundary (FormantPathEditor me, double xbegin, integer iClick
 	Editor_broadcastDataChanged (me);
 }
 
+	
+#if 0
 bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed_) {
-	const TextGrid grid = our pathGridView.get();
-
 	/*
 		In answer to a click in the sound part,
 		we keep the same tier selected and move the cursor or drag the "yellow" selection.
@@ -1746,6 +1191,7 @@ bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKe
 		Graphics_waitMouseUp (our graphics.get());
 	return FunctionEditor_UPDATE_NEEDED;
 }
+#endif
 
 static void Formant_replaceFrames (Formant target, integer beginFrame, integer endFrame, Formant source) {
 	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx

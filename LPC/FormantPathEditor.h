@@ -79,8 +79,8 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	bool v_hasText ()
 		override { return false; }
-	bool v_click (double xWC, double yWC, bool shiftKeyPressed)
-		override;
+	//bool v_click (double xWC, double yWC, bool shiftKeyPressed)
+	//	override;
 	void v_clickSelectionViewer (double xWC, double yWC)
 		override;
 	void v_draw_analysis_formants ()
