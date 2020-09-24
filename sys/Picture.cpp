@@ -90,7 +90,7 @@ static void drawMarkers (Picture me)
 static void drawSelection (Picture me) {
 	if (my backgrounding)
 		return;
-	const double dy = Melder_clippedRight (2.8 * Graphics_inqFontSize (my backgroundGraphics.get()) / 72.0,
+	const double dy = Melder_clippedRight (2.8 * Graphics_inqFontSize (my graphics.get()) / 72.0,
 			0.4 * (my sely2 - my sely1));
 	const double dx = Melder_clippedRight (1.5 * dy,
 			0.4 * (my selx2 - my selx1));
@@ -107,14 +107,18 @@ static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent ev
 		*/
 		Melder_assert (event -> widget);
 		#if ALLOW_GDK_DRAWING
-			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my foregroundGraphics.get()), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
-			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics.get()), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+			if (Melder_debug == 54) {
+				// ignore gdk_cairo_reset_clip
+			} else {
+				gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics.get()), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+				gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics.get()), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+			}
 		#endif
 	#else
 		(void) event;
 	#endif
 	drawMarkers (me);
-	Graphics_play (my backgroundGraphics.get(), my foregroundGraphics.get());
+	Graphics_play (my graphics.get(), my graphics.get());
 	drawSelection (me);
 }
 
@@ -155,7 +159,7 @@ static void gui_drawingarea_cb_mouse (Picture me, GuiDrawingArea_MouseEvent even
 	const integer iy1 = iy12. first, iy2 = iy12. second;
 	double xmargin = 0.0, ymargin = 0.0;
 	if (my mouseSelectsInnerViewport) {
-		const double fontSize = Graphics_inqFontSize (my backgroundGraphics.get());
+		const double fontSize = Graphics_inqFontSize (my graphics.get());
 		xmargin = std::min (fontSize * 4.2 / 72.0, double (ix2 - ix1 + 1));
 		ymargin = std::min (fontSize * 2.8 / 72.0, double (iy2 - iy1 + 1));
 	}
@@ -184,22 +188,24 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		/*
 			Create a Graphics to directly draw in.
 		*/
-		my backgroundGraphics = Graphics_create (600);
-		Graphics_setWsWindow (my backgroundGraphics.get(), 0.0, 12.0, 0.0, 12.0);
-		Graphics_setViewport (my backgroundGraphics.get(), my selx1, my selx2, my sely1, my sely2);
 		if (drawingArea) {
 			// the drawing area must have been realized; see manual at XtWindow
-			my foregroundGraphics = Graphics_create_xmdrawingarea (my drawingArea);
+			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me.get());
-			Graphics_setWsWindow (my foregroundGraphics.get(), 0.0, 12.0, 0.0, 12.0);
-			Graphics_setViewport (my foregroundGraphics.get(), my selx1, my selx2, my sely1, my sely2);
+		} else {
+			/*
+				Create a dummy Graphics.
+			*/
+			my graphics = Graphics_create (600);
 		}
+		Graphics_setWsWindow (my graphics.get(), 0.0, 12.0, 0.0, 12.0);
+		Graphics_setViewport (my graphics.get(), my selx1, my selx2, my sely1, my sely2);
 		if (my sensitive) {
 			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
 			Graphics_setWindow (my selectionGraphics.get(), 0.0, 12.0, 0.0, 12.0);
 			GuiDrawingArea_setMouseCallback (my drawingArea, gui_drawingarea_cb_mouse, me.get());
 		}
-		Graphics_startRecording (my backgroundGraphics.get());
+		Graphics_startRecording (my graphics.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Picture not created.");
@@ -223,12 +229,11 @@ void structPicture :: v_destroy () noexcept {
 	Picture_Parent :: v_destroy ();
 }
 
-Graphics Picture_peekBackgroundGraphics (Picture me) { return my backgroundGraphics.get(); }
-Graphics Picture_peekForegroundGraphics (Picture me) { return my foregroundGraphics.get(); }
+Graphics Picture_peekGraphics (Picture me) { return my graphics.get(); }
 
 void Picture_erase (Picture me) {
-	Graphics_clearRecording (my backgroundGraphics.get());
-	Graphics_updateWs (my foregroundGraphics.get());
+	Graphics_clearRecording (my graphics.get());
+	Graphics_updateWs (my graphics.get());
 }
 
 void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
@@ -236,7 +241,7 @@ void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 		autofile f = Melder_fopen (file, "wb");
 		if (fprintf (f, "PraatPictureFile") < 0)
 			Melder_throw (U"Write error.");
-		Graphics_writeRecordings (my backgroundGraphics.get(), f);
+		Graphics_writeRecordings (my graphics.get(), f);
 		f.close (file);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot write Praat picture file ", file, U".");
@@ -256,8 +261,8 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 		*end = '\0';
 		rewind (f);
 		fread (line, 1, integer_to_uinteger (end - line + uinteger_to_integer (strlen (tag))), f);
-		Graphics_readRecordings (my backgroundGraphics.get(), f);
-		Graphics_updateWs (my foregroundGraphics.get());
+		Graphics_readRecordings (my graphics.get(), f);
+		Graphics_updateWs (my graphics.get());
 		f.close (file);
 	} catch (MelderError) {
 		Melder_throw (U"Praat picture not read from file ", file);
@@ -288,7 +293,7 @@ void Picture_copyToClipboard (Picture me) {
 	//my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES)
 	{// scope
 		autoGraphics pdfGraphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my backgroundGraphics.get(), pdfGraphics.get());
+		Graphics_play (my graphics.get(), pdfGraphics.get());
 	}
 	PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
 	CFRelease (data);
@@ -350,14 +355,14 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, nullptr, resolution);
 	Graphics_setWsViewport (pictGraphics.get(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
 	Graphics_setWsWindow (pictGraphics.get(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
-	Graphics_play (my backgroundGraphics.get(), pictGraphics.get());
+	Graphics_play (my graphics.get(), pictGraphics.get());
 	HENHMETAFILE metafile = CloseEnhMetaFile (dc);
 	return metafile;
 }
 void Picture_copyToClipboard (Picture me) {
 	try {
 		HENHMETAFILE metafile = copyToMetafile (me);
-		OpenClipboard (((GraphicsScreen) my foregroundGraphics.get()) -> d_winWindow);
+		OpenClipboard (((GraphicsScreen) my graphics.get()) -> d_winWindow);
 		EmptyClipboard ();
 		SetClipboardData (CF_ENHMETAFILE, metafile);
 		CloseClipboard ();
@@ -389,7 +394,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 		{// scope
 			autoGraphics postscriptGraphics = Graphics_create_epsfile (file, 600, thePrinter. spots,
 					my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
-			Graphics_play (my backgroundGraphics.get(), postscriptGraphics.get());
+			Graphics_play (my graphics.get(), postscriptGraphics.get());
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to EPS file ", file);
@@ -399,7 +404,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, bool includeFonts, boo
 void Picture_writeToPdfFile (Picture me, MelderFile file) {
 	try {
 		autoGraphics pdfGraphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my backgroundGraphics.get(), pdfGraphics.get());
+		Graphics_play (my graphics.get(), pdfGraphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PDF file ", file, U".");
 	}
@@ -408,7 +413,7 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 	try {
 		autoGraphics pngGraphics = Graphics_create_pngfile (file, 300, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my backgroundGraphics.get(), pngGraphics.get());
+		Graphics_play (my graphics.get(), pngGraphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
@@ -417,7 +422,7 @@ void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
 void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 	try {
 		autoGraphics pngGraphics = Graphics_create_pngfile (file, 600, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my backgroundGraphics.get(), pngGraphics.get());
+		Graphics_play (my graphics.get(), pngGraphics.get());
 	} catch (MelderError) {
 		Melder_throw (U"Picture not written to PNG file ", file, U".");
 	}
@@ -425,7 +430,7 @@ void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 
 static void print (void *void_me, Graphics printer) {
 	iam (Picture);
-	Graphics_play (my backgroundGraphics.get(), printer);
+	Graphics_play (my graphics.get(), printer);
 }
 
 void Picture_print (Picture me) {

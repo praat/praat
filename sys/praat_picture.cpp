@@ -207,7 +207,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
-		Graphics_updateWs (FOREGROUND_GRAPHICS);
+		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
@@ -262,7 +262,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
-		Graphics_updateWs (FOREGROUND_GRAPHICS);
+		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom)
 			std::swap (top, bottom);
@@ -578,11 +578,9 @@ END }
 
 DIRECT (GRAPHICS_Undo) {
 	Graphics_undoGroup (GRAPHICS);
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
+	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Graphics_play (GRAPHICS, GRAPHICS);   // TODO: understand this
-	}
-	if (FOREGROUND_GRAPHICS)
-		Graphics_updateWs (FOREGROUND_GRAPHICS);
+	Graphics_updateWs (GRAPHICS);
 END }
 
 DIRECT (GRAPHICS_Erase_all) {
@@ -1577,7 +1575,7 @@ void praat_picture_close () {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		return;
 	if (! theCurrentPraatApplication -> batch)
-		Graphics_updateWs (FOREGROUND_GRAPHICS);
+		Graphics_updateWs (GRAPHICS);
 }
 
 Graphics praat_picture_editor_open (bool eraseFirst) {
@@ -1845,8 +1843,7 @@ void praat_picture_init () {
 	praat_picture = Picture_create (drawingArea, ! theCurrentPraatApplication -> batch);
 	// READ THIS!
 	Picture_setSelectionChangedCallback (praat_picture.get(), cb_selectionChanged, nullptr);
-	theCurrentPraatPicture -> backgroundGraphics = static_cast<Graphics> (Picture_peekBackgroundGraphics (praat_picture.get()));
-	theCurrentPraatPicture -> foregroundGraphics = static_cast<Graphics> (Picture_peekForegroundGraphics (praat_picture.get()));
+	theCurrentPraatPicture -> graphics = static_cast<Graphics> (Picture_peekGraphics (praat_picture.get()));
 
 	updatePenMenu ();
 	updateFontMenu ();
@@ -1858,7 +1855,7 @@ void praat_picture_prefsChanged () {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	Graphics_setFontSize (theCurrentPraatPicture -> backgroundGraphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
+	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
 	Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport);
 }
 

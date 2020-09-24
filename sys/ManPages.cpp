@@ -495,7 +495,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 				theCurrentPraatObjects = (PraatObjects) & praatObjects;
 				theCurrentPraatPicture = (PraatPicture) & praatPicture;
-				theCurrentPraatPicture -> backgroundGraphics = graphics.get();   // FIXME: should be move()?
+				theCurrentPraatPicture -> graphics = graphics.get();   // FIXME: should be move()?
 				theCurrentPraatPicture -> font = (int) kGraphics_font::TIMES;
 				theCurrentPraatPicture -> fontSize = 12.0;
 				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
