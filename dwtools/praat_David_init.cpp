@@ -5799,7 +5799,7 @@ FORM (MODIFY_Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...") {
 	OK
 DO
 	MODIFY_EACH (Sound)
-		Sound_fade (me, channel, time, fadeTime, -1.0, silentFromStart);
+		Sound_fade (me, channel, time, fadeTime, false, silentFromStart);
 	MODIFY_EACH_END
 }
 
@@ -5811,7 +5811,7 @@ FORM (MODIFY_Sound_fadeOut, U"Sound: Fade out", U"Sound: Fade out...") {
 	OK
 DO
 	MODIFY_EACH (Sound)
-		Sound_fade (me, channel, time, fadeTime, 1, silentToEnd);
+		Sound_fade (me, channel, time, fadeTime, true, silentToEnd);
 	MODIFY_EACH_END
 }
 
