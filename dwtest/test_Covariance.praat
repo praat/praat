@@ -30,6 +30,7 @@ procedure test_Morrison_example_4_3
 	assert .dof1 == 4
 	.dof2 = 	extractNumber (.report$, "Degrees of freedom 2:")
 	assert .dof2 = 44
+	removeObject: .covariance1, .covariance2
 endproc
 
 procedure test_Morrison_example_7_3
