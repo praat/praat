@@ -1,6 +1,6 @@
 #
 # test/num/interpolation.praat
-# Paul Boersma 2020-09-13
+# Paul Boersma 2020-09-24
 #
 
 writeInfoLine: "Interpolation, especially cubic..."
@@ -43,7 +43,7 @@ procedure drawValues: interpolation$
 		interpolatedValue = Get value at time: 1, timeOfMaximum, interpolation$
 		appendInfoLine: interpolation$, ": peak at ", timeOfMaximum,
 		... " s; peak height ", maximum, "; interpolated value ", interpolatedValue
-	assert interpolatedValue = maximum
+		assert interpolatedValue = maximum
 	endif
 	top += 1.8
 endproc
