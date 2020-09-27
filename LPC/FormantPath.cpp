@@ -203,7 +203,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
 	integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
 	try {
-		Melder_require (timeStep > 0,
+		Melder_require (timeStep > 0.0,
 			U"The timeStep needs to greater than zero seconds.");
 		Melder_require (ceilingStepFraction > 0.0 && ceilingStepFraction < 1.0,
 			U"The ceiling step fraction should be a number between 0.0 and 1.0");
