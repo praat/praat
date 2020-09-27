@@ -22,7 +22,7 @@
 	#include "gdk/gdkkeysyms.h"
 	#include <locale.h>
 #endif
-#include "Graphics.h"
+#include "GraphicsP.h"
 
 Thing_implement (GuiDrawingArea, GuiControl, 0);
 
@@ -195,8 +195,21 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	void _GuiWinDrawingArea_update (GuiObject widget) {
 		iam_drawingarea;
-		PAINTSTRUCT paintStruct;
-		BeginPaint (widget -> window, & paintStruct);
+		GraphicsScreen graphics = (GraphicsScreen) my graphicses [1];
+		Melder_assert (Thing_isa (graphics, classGraphicsScreen));
+		HDC memoryDC = CreateCompatibleDC (graphics -> d_gdiGraphicsContext);
+		HBITMAP memoryBitmap = CreateCompatibleBitmap (graphics -> d_gdiGraphicsContext, widget -> width, widget -> height);
+		SelectObject (memoryDC, memoryBitmap);
+		SetBkMode (memoryDC, TRANSPARENT);   // not the default!
+		SelectPen (memoryDC, GetStockPen (BLACK_PEN));
+		SelectBrush (memoryDC, GetStockBrush (BLACK_BRUSH));
+		SetTextAlign (memoryDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
+		HDC saveContext = graphics -> d_gdiGraphicsContext;
+		for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++) {
+			HDC & context = ((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext;
+			Melder_assert (context == saveContext);
+			context = memoryDC;
+		}
 		if (my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event { me };
 			try {
@@ -205,7 +218,12 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				Melder_flushError (U"Redrawing not completed");
 			}
 		}
-		EndPaint (widget -> window, & paintStruct);
+		for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+			((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext = saveContext;
+		BitBlt (graphics -> d_gdiGraphicsContext, 0, 0, widget -> width, widget -> height, memoryDC, 0, 0, SRCCOPY);
+		DeleteObject (memoryBitmap);
+		DeleteDC (memoryDC);
+		ValidateRect (widget -> window, nullptr);
 	}
 	void _GuiWinDrawingArea_handleMouse (GuiObject widget, structGuiDrawingArea_MouseEvent::Phase phase, int x, int y) {
 		iam_drawingarea;
