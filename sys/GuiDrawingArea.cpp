@@ -22,7 +22,7 @@
 	#include "gdk/gdkkeysyms.h"
 	#include <locale.h>
 #endif
-#include "Graphics.h"
+#include "GraphicsP.h"
 
 Thing_implement (GuiDrawingArea, GuiControl, 0);
 
@@ -195,17 +195,43 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	void _GuiWinDrawingArea_update (GuiObject widget) {
 		iam_drawingarea;
-		PAINTSTRUCT paintStruct;
-		BeginPaint (widget -> window, & paintStruct);
-		if (my d_exposeCallback) {
-			structGuiDrawingArea_ExposeEvent event { me };
-			try {
-				my d_exposeCallback (my d_exposeBoss, & event);
-			} catch (MelderError) {
-				Melder_flushError (U"Redrawing not completed");
+		if (my numberOfGraphicses == 1) {
+			GraphicsScreen graphics = (GraphicsScreen) my graphicses [1];
+			Melder_assert (Thing_isa (graphics, classGraphicsScreen));
+			HDC memoryDC = CreateCompatibleDC (graphics -> d_gdiGraphicsContext);
+    		HBITMAP memoryBitmap = CreateCompatibleBitmap (graphics -> d_gdiGraphicsContext, widget -> width, widget -> height);
+    		SelectObject (memoryDC, memoryBitmap);
+    		std::swap (graphics -> d_gdiGraphicsContext, memoryDC);
+			SetBkMode (graphics -> d_gdiGraphicsContext, TRANSPARENT);   // not the default!
+			SelectPen (graphics -> d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+			SelectBrush (graphics -> d_gdiGraphicsContext, GetStockBrush (BLACK_BRUSH));
+			SetTextAlign (graphics -> d_gdiGraphicsContext, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
+			if (my d_exposeCallback) {
+				structGuiDrawingArea_ExposeEvent event { me };
+				try {
+					my d_exposeCallback (my d_exposeBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError (U"Redrawing not completed");
+				}
 			}
+    		std::swap (graphics -> d_gdiGraphicsContext, memoryDC);
+			BitBlt (graphics -> d_gdiGraphicsContext, 0, 0, widget -> width, widget -> height, memoryDC, 0, 0, SRCCOPY);
+			DeleteObject (memoryBitmap);
+			DeleteDC (memoryDC);
+			ValidateRect (widget -> window, nullptr);
+		} else {
+			PAINTSTRUCT paintStruct;
+			BeginPaint (widget -> window, & paintStruct);
+			if (my d_exposeCallback) {
+				structGuiDrawingArea_ExposeEvent event { me };
+				try {
+					my d_exposeCallback (my d_exposeBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError (U"Redrawing not completed");
+				}
+			}
+			EndPaint (widget -> window, & paintStruct);
 		}
-		EndPaint (widget -> window, & paintStruct);
 	}
 	void _GuiWinDrawingArea_handleMouse (GuiObject widget, structGuiDrawingArea_MouseEvent::Phase phase, int x, int y) {
 		iam_drawingarea;
