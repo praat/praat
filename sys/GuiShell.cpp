@@ -1,6 +1,6 @@
 /* GuiShell.cpp
  *
- * Copyright (C) 1993-2012,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ void structGuiShell :: v_destroy () noexcept {
 	#if cocoa
 		if (our d_cocoaShell) {
 			[our d_cocoaShell setUserData: nullptr];   // undangle reference to this
-			Melder_fatal (U"ordering out?");
+			Melder_fatal (U"ordering out?");   // TODO: how can this never be reached?
 			[our d_cocoaShell orderOut: nil];
 			[our d_cocoaShell close];
 			[our d_cocoaShell release];
@@ -75,14 +75,13 @@ void structGuiShell :: v_destroy () noexcept {
 int GuiShell_getShellWidth (GuiShell me) {
 	int width = 0;
 	#if gtk
-		//width = GTK_WIDGET (my d_gtkWindow) -> allocation.width;
 		GtkAllocation allocation;
 		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);
 		width = allocation.width;
 	#elif motif
 		width = my d_xmShell -> width;
 	#elif cocoa
-        return [my d_cocoaShell   frame].size.width;
+        width = [my d_cocoaShell   frame].size.width;
 	#endif
 	return width;
 }
@@ -90,14 +89,13 @@ int GuiShell_getShellWidth (GuiShell me) {
 int GuiShell_getShellHeight (GuiShell me) {
 	int height = 0;
 	#if gtk
-		//height = GTK_WIDGET (my d_gtkWindow) -> allocation.height;
 		GtkAllocation allocation;
 		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);
 		height = allocation.height;
 	#elif motif
 		height = my d_xmShell -> height;
 	#elif cocoa
-        return [my d_cocoaShell   frame].size.height;
+        height = [my d_cocoaShell   frame].size.height;
 	#endif
 	return height;
 }
