@@ -143,7 +143,10 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 
 int GuiControl_getX (GuiControl me) {
 	#if gtk
-		return GTK_WIDGET (my d_widget) -> allocation.x;
+		//return GTK_WIDGET (my d_widget) -> allocation.x;
+		GtkAllocation allocation;
+		gtk_widget_get_allocation (GTK_WIDGET (my d_widget), & allocation);
+		return allocation.x;
 	#elif motif
 		return my d_widget -> x;
 	#elif cocoa
@@ -155,7 +158,10 @@ int GuiControl_getX (GuiControl me) {
 
 int GuiControl_getY (GuiControl me) {
 	#if gtk
-		return GTK_WIDGET (my d_widget) -> allocation.y;
+		//return GTK_WIDGET (my d_widget) -> allocation.y;
+		GtkAllocation allocation;
+		gtk_widget_get_allocation (GTK_WIDGET (my d_widget), & allocation);
+		return allocation.y;
 	#elif motif
 		return my d_widget -> y;
 	#elif cocoa
@@ -167,7 +173,10 @@ int GuiControl_getY (GuiControl me) {
 
 int GuiControl_getWidth (GuiControl me) {
 	#if gtk
-		return GTK_WIDGET (my d_widget) -> allocation.width;
+		//return GTK_WIDGET (my d_widget) -> allocation.width;
+		GtkAllocation allocation;
+		gtk_widget_get_allocation (GTK_WIDGET (my d_widget), & allocation);
+		return allocation.width;
 	#elif motif
 		return my d_widget -> width;
 	#elif cocoa
@@ -179,7 +188,10 @@ int GuiControl_getWidth (GuiControl me) {
 
 int GuiControl_getHeight (GuiControl me) {
 	#if gtk
-		return GTK_WIDGET (my d_widget) -> allocation.height;
+		//return GTK_WIDGET (my d_widget) -> allocation.height;
+		GtkAllocation allocation;
+		gtk_widget_get_allocation (GTK_WIDGET (my d_widget), & allocation);
+		return allocation.height;
 	#elif motif
 		return my d_widget -> height;
 	#elif cocoa

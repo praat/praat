@@ -85,7 +85,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 			try {
 				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Your choice of menu item \"", Melder_peek8to32 (GTK_WIDGET (widget) -> name), U"\" was not completely handled.");
+				Melder_flushError (U"Your choice of menu item \"", Melder_peek8to32 (gtk_widget_get_name (GTK_WIDGET (widget))), U"\" was not completely handled.");
 			}
 		}
 	}

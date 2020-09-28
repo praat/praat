@@ -72,7 +72,8 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 		my d_widget = gtk_hscrollbar_new (nullptr);
 		gtk_range_set_range (GTK_RANGE (my d_widget), 0, 1000);
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my d_widget));
-		adj -> page_size = 150;
+		//adj -> page_size = 150;
+		gtk_adjustment_set_page_size (adj, 150.0);
 		gtk_adjustment_changed (adj);
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);

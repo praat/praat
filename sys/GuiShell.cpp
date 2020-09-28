@@ -75,7 +75,10 @@ void structGuiShell :: v_destroy () noexcept {
 int GuiShell_getShellWidth (GuiShell me) {
 	int width = 0;
 	#if gtk
-		width = GTK_WIDGET (my d_gtkWindow) -> allocation.width;
+		//width = GTK_WIDGET (my d_gtkWindow) -> allocation.width;
+		GtkAllocation allocation;
+		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);
+		width = allocation.width;
 	#elif motif
 		width = my d_xmShell -> width;
 	#elif cocoa
@@ -87,7 +90,10 @@ int GuiShell_getShellWidth (GuiShell me) {
 int GuiShell_getShellHeight (GuiShell me) {
 	int height = 0;
 	#if gtk
-		height = GTK_WIDGET (my d_gtkWindow) -> allocation.height;
+		//height = GTK_WIDGET (my d_gtkWindow) -> allocation.height;
+		GtkAllocation allocation;
+		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);
+		height = allocation.height;
 	#elif motif
 		height = my d_xmShell -> height;
 	#elif cocoa

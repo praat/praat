@@ -42,7 +42,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Your click on button \"", Melder_peek8to32 (GTK_WIDGET (widget) -> name), U"\" was not completely handled.");
+				Melder_flushError (U"Your click on button \"", Melder_peek8to32 (gtk_widget_get_name (GTK_WIDGET (widget))), U"\" was not completely handled.");
 			}
 		}
 	}
