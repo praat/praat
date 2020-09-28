@@ -349,8 +349,7 @@ void structGraphicsScreen :: v_updateWs () {
 			if (our d_cairoGraphicsContext && our d_drawingArea) {  // update clipping rectangle to new graphics size
 				cairo_reset_clip (our d_cairoGraphicsContext);
 				cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
-
-				 (our d_cairoGraphicsContext);
+				cairo_clip (our d_cairoGraphicsContext);
 			}
 		}
 		#if ALLOW_GDK_DRAWING
