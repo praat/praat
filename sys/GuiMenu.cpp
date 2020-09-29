@@ -496,11 +496,13 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 fla
 		GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
 		GtkAllocation button_allocation;
 		gtk_widget_get_allocation (GTK_WIDGET (button), & button_allocation);
-
-		if (GTK_WIDGET (menu) -> requisition. width < button_allocation.width)
+		GtkRequisition menu_requisition;
+		gtk_widget_get_child_requisition (GTK_WIDGET (menu), & menu_requisition);
+		//if (GTK_WIDGET (menu) -> requisition. width < button_allocation.width)
+		if (menu_requisition. width < button_allocation.width)
 			gtk_widget_set_size_request (GTK_WIDGET (menu), button_allocation.width, -1);
 
-		gdk_window_get_origin (button->window, px, py);
+		gdk_window_get_origin (gtk_widget_get_window (button), px, py);
 		*px += button_allocation.x;
 		*py += button_allocation.y + button_allocation.height; /* Dit is vreemd */
 

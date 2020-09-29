@@ -208,8 +208,14 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 	my d_valueChangedCallback = valueChangedCallback;
 	my d_valueChangedBoss = valueChangedBoss;
 	#if gtk
-		GtkObject *adj = gtk_adjustment_new (value, minimum, maximum, increment, pageIncrement, sliderSize);
-		my d_widget = flags & GuiScrollBar_HORIZONTAL ? gtk_hscrollbar_new (GTK_ADJUSTMENT (adj)) : gtk_vscrollbar_new (GTK_ADJUSTMENT (adj));
+		#if ALLOW_GDK_DRAWING
+			GtkObject *adj = gtk_adjustment_new (value, minimum, maximum, increment, pageIncrement, sliderSize);
+			my d_widget = flags & GuiScrollBar_HORIZONTAL ? gtk_hscrollbar_new (GTK_ADJUSTMENT (adj)) : gtk_vscrollbar_new (GTK_ADJUSTMENT (adj));
+		#else
+			GtkAdjustment *adjustment = gtk_adjustment_new (value, minimum, maximum, increment, pageIncrement, sliderSize);
+			GtkOrientation orientation = ( flags & GuiScrollBar_HORIZONTAL ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL );
+			my d_widget = gtk_scrollbar_new (orientation, adjustment);
+		#endif
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "value-changed", G_CALLBACK (_GuiGtkScrollBar_valueChangedCallback), me.get());
