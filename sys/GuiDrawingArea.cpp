@@ -57,7 +57,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. height = expose -> area. height;
 			try {
 				GdkRectangle rect = { event. x, event. y, event. width, event. height };
-				cairo_t *cairoGraphicsContext = gdk_cairo_create ((GTK_WIDGET (widget)) -> window);
+				cairo_t *cairoGraphicsContext = gdk_cairo_create (gtk_widget_get_window (GTK_WIDGET (widget)));
 				for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
 					((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = cairoGraphicsContext;
 				my d_exposeCallback (my d_exposeBoss, & event);
