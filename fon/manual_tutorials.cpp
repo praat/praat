@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200928)
+MAN_BEGIN (U"What's new?", U"ppgb", 20200929)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.24# (29 September 2020)")
+LIST_ITEM (U"• Linux: got rid of flashing during a running cursor or "
+	"when making a selection in the Sound window or the Picture window.")
 NORMAL (U"##6.1.23# (28 September 2020)")
 LIST_ITEM (U"• Windows: got rid of flashing during a running cursor or "
 	"when making a selection in the Sound window or the Picture window.")
