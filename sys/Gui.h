@@ -393,7 +393,7 @@ Thing_define (GuiButton, GuiControl) {
 #define GuiButton_CANCEL  2
 #define GuiButton_INSENSITIVE  4
 #define GuiButton_ATTRACTIVE  8
-GuiButton GuiButton_create      (GuiForm parent,
+GuiButton GuiButton_create (GuiForm parent,
 	int left, int right, int top, int bottom,
 	conststring32 text,
 	GuiButton_ActivateCallback activateCallback, Thing boss,
@@ -426,7 +426,7 @@ Thing_define (GuiCheckButton, GuiControl) {
 /* GuiCheckButton creation flags: */
 #define GuiCheckButton_SET  1
 #define GuiCheckButton_INSENSITIVE  2
-GuiCheckButton GuiCheckButton_create      (GuiForm parent,
+GuiCheckButton GuiCheckButton_create (GuiForm parent,
 	int left, int right, int top, int bottom,
 	conststring32 text,
 	GuiCheckButton_ValueChangedCallback valueChangedCallback, Thing boss,
@@ -465,6 +465,7 @@ typedef struct structGuiDrawingArea_ExposeEvent {
 	GuiDrawingArea widget;
 	int x, y, width, height;
 } *GuiDrawingArea_ExposeEvent;
+
 typedef struct structGuiDrawingArea_MouseEvent {
 	GuiDrawingArea widget;
 	int x, y;
@@ -480,11 +481,13 @@ typedef struct structGuiDrawingArea_MouseEvent {
 		return theCommandKeyIsToTheLeftOfTheOptionKey ? our optionKeyPressed : our commandKeyPressed;
 	}
 } *GuiDrawingArea_MouseEvent;
+
 typedef struct structGuiDrawingArea_KeyEvent {
 	GuiDrawingArea widget;
 	char32 key;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 } *GuiDrawingArea_KeyEvent;
+
 typedef struct structGuiDrawingArea_ResizeEvent {
 	GuiDrawingArea widget;
 	int width, height;

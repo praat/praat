@@ -430,7 +430,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		#else
 			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
 		#endif
-		my d_cairoGraphicsContext = gdk_cairo_create (my d_window);
+		my d_cairoGraphicsContext = nullptr;   // will be created and destroyed at expose time
 	#elif gdi
 		if (my printer) {
 			my d_gdiGraphicsContext = (HDC) voidWindow;
@@ -442,7 +442,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_gdiGraphicsContext = GetDC (my d_winWindow);   // window must have a constant display context; see XtInitialize ()
 		}
 		Melder_assert (my d_gdiGraphicsContext);
-		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);   // not the default!
+		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);   // not the default! text should not be drawn against a white background
 		/*
 			Create pens and brushes.
 		*/
@@ -458,7 +458,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			//my d_macGraphicsContext = (CGContextRef) voidWindow;   // in case we do context-based printing
 		} else {
 			my d_macView = (NSView *) voidWindow;
-			(void) my d_macGraphicsContext;   // will be retrieved from Core Graphics with every drawing command!
+			my d_macGraphicsContext = nullptr;   // will be retrieved and nullified at expose time
 		}
 		/*
 			The following is what we would like to do.

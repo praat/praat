@@ -45,10 +45,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		trace (U"begin");
 		iam (GuiDrawingArea);
 		Melder_assert (me);
-		// TODO: that helps against the damaged regions outside the rect where the
-		// Graphics drawing is done, but where does that margin come from in the
-		// first place?? Additionally this causes even more flickering
-		//gdk_window_clear_area ((GTK_WIDGET (widget)) -> window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
 		if (my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event { me, 0 };
 			event. x = expose -> area. x;
@@ -75,10 +71,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	static gboolean _GuiGtkDrawingArea_mouseDownCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
-		//if (e -> type != GDK_BUTTON_PRESS) return false;
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
-			//event. button = ((GdkEventButton *) e) -> button;
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
 			event. phase = structGuiDrawingArea_MouseEvent::Phase::CLICK;
@@ -96,10 +90,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	static gboolean _GuiGtkDrawingArea_mouseDraggedCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
-		//if (e -> type != GDK_BUTTON_PRESS) return false;
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
-			//event. button = ((GdkEventButton *) e) -> button;
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
 			event. phase = structGuiDrawingArea_MouseEvent::Phase::DRAG;
@@ -117,7 +109,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	static gboolean _GuiGtkDrawingArea_mouseUpCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
-		//if (e -> type != GDK_BUTTON_PRESS) return false;
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
 			event. x = ((GdkEventButton *) e) -> x;
@@ -200,11 +191,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		SelectBrush (memoryDC, GetStockBrush (BLACK_BRUSH));
 		SetTextAlign (memoryDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
 		HDC saveContext = graphics -> d_gdiGraphicsContext;
-		for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++) {
-			HDC & context = ((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext;
-			Melder_assert (context == saveContext);
-			context = memoryDC;
-		}
+		for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+			((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext = memoryDC;
 		if (my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event { me };
 			try {
