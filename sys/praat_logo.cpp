@@ -75,10 +75,13 @@ void praat_showLogo () {
 		theLogo.form = theLogo.dia;
 		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse, nullptr, nullptr, nullptr, 0);
+		GuiThing_show (theLogo.form);
+		GuiThing_show (theLogo.dia);
+		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
+	} else {
+		GuiThing_show (theLogo.form);
+		GuiThing_show (theLogo.dia);
 	}
-	GuiThing_show (theLogo.form);
-	GuiThing_show (theLogo.dia);
-	theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 }
 
 /* End of file praat_logo.cpp */
