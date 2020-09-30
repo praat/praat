@@ -1337,7 +1337,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classConfiguration, 2, U"To Procrustes...", nullptr, 1, NEW1_Configurations_to_Procrustes);
 	praat_addAction1 (classConfiguration, 2, U"To AffineTransform (congruence)...", nullptr, 1, NEW1_Configurations_to_AffineTransform_congruence);
 
-	praat_addAction1 (classConfusion, 0, U"To ContingencyTable", U"To Matrix", 0, NEW_Confusion_to_ContingencyTable);
+	praat_addAction1 (classConfusion, 0, U"To ContingencyTable", U"To Matrix", 1, NEW_Confusion_to_ContingencyTable);
 	praat_addAction1 (classConfusion, 0, U"To Proximity -", U"Analyse", 0, nullptr);
 	praat_addAction1 (classConfusion, 0, U"To Dissimilarity (pdf)...", U"To Proximity -", 1, NEW_Confusion_to_Dissimilarity_pdf);
 	praat_addAction1 (classConfusion, 0, U"To Similarity...", U"To Proximity -", 1, NEW_Confusion_to_Similarity);
@@ -1419,8 +1419,8 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To Salience", nullptr, 1, NEW_TableOfReal_to_Salience);
 	praat_addAction1 (classTableOfReal, 0, U"To Weight", nullptr, 1, NEW_TableOfReal_to_Weight);
 	praat_addAction1 (classTableOfReal, 0, U"To ScalarProduct", nullptr, 1, NEW_TableOfReal_to_ScalarProduct);
-	praat_addAction1 (classTableOfReal, 0, U"To Configuration", nullptr, 1, NEW_TableOfReal_to_Configuration);
 	praat_addAction1 (classTableOfReal, 0, U"To ContingencyTable", nullptr, 1, NEW_TableOfReal_to_ContingencyTable);
+	praat_addAction1 (classTableOfReal, 0, U"To Configuration", nullptr, 1, NEW_TableOfReal_to_Configuration);
 
 	praat_TableOfReal_init2 (classWeight);
 
