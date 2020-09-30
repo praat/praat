@@ -1700,15 +1700,15 @@ void Graphics_setFontStyle (Graphics me, int style) {
 }
 
 void Graphics_setItalic (Graphics me, bool onoff) {
-	if (onoff) my fontStyle |= Graphics_ITALIC; else my fontStyle &= ~ Graphics_ITALIC;
+	Graphics_setFontStyle (me, ( onoff ? my fontStyle | Graphics_ITALIC : my fontStyle & ~ Graphics_ITALIC ));
 }
 
 void Graphics_setBold (Graphics me, bool onoff) {
-	if (onoff) my fontStyle |= Graphics_BOLD; else my fontStyle &= ~ Graphics_BOLD;
+	Graphics_setFontStyle (me, ( onoff ? my fontStyle | Graphics_BOLD : my fontStyle & ~ Graphics_BOLD ));
 }
 
 void Graphics_setCode (Graphics me, bool onoff) {
-	if (onoff) my fontStyle |= Graphics_CODE; else my fontStyle &= ~ Graphics_CODE;
+	Graphics_setFontStyle (me, ( onoff ? my fontStyle | Graphics_CODE : my fontStyle & ~ Graphics_CODE ));
 }
 
 void Graphics_setTextRotation (Graphics me, double angle) {
