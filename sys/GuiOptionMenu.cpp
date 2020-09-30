@@ -75,7 +75,11 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), right - left, bottom - top + 8);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (my d_widget), left, top - 6);
 		gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (my d_widget), false);
-		GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
+		#if ALLOW_GDK_DRAWING
+			GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
+		#else
+			gtk_widget_set_can_default (GTK_WIDGET (my d_widget), FALSE);
+		#endif
 	#elif motif
 		my d_xmMenuBar = XmCreateMenuBar (parent -> d_widget, "UiOptionMenu", nullptr, 0);
 		XtVaSetValues (my d_xmMenuBar, XmNx, left - 4, XmNy, top - 4,
