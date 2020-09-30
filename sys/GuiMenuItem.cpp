@@ -223,9 +223,15 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 		
 		#if gtk
 			static const guint acceleratorKeys [] = { 0,
+			#if ALLOW_GDK_DRAWING
 				GDK_Left, GDK_Right, GDK_Up, GDK_Down, GDK_Pause, GDK_Delete, GDK_Insert, GDK_BackSpace,
 				GDK_Tab, GDK_Return, GDK_Home, GDK_End, GDK_Return, GDK_Page_Up, GDK_Page_Down, GDK_Escape,
 				GDK_F1, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, GDK_F7, GDK_F8, GDK_F9, GDK_F10, GDK_F11, GDK_F12,
+			#else
+				GDK_KEY_Left, GDK_KEY_Right, GDK_KEY_Up, GDK_KEY_Down, GDK_KEY_Pause, GDK_KEY_Delete, GDK_KEY_Insert, GDK_KEY_BackSpace,
+				GDK_KEY_Tab, GDK_KEY_Return, GDK_KEY_Home, GDK_KEY_End, GDK_KEY_Return, GDK_KEY_Page_Up, GDK_KEY_Page_Down, GDK_KEY_Escape,
+				GDK_KEY_F1, GDK_KEY_F2, GDK_KEY_F3, GDK_KEY_F4, GDK_KEY_F5, GDK_KEY_F6, GDK_KEY_F7, GDK_KEY_F8, GDK_KEY_F9, GDK_KEY_F10, GDK_KEY_F11, GDK_KEY_F12,
+ 			#endif
 				0, 0, 0 };
 			GdkModifierType modifiers = (GdkModifierType) 0;
 			if (flags & GuiMenu_COMMAND) modifiers = (GdkModifierType) (modifiers | GDK_CONTROL_MASK);
