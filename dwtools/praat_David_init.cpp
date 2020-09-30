@@ -6573,6 +6573,17 @@ DO
 	CREATE_ONE_END (U"tokens")
 }
 
+FORM (NEW1_Strings_createFromTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
+	WORD (name, U"Name", U"tokens")
+	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
+	SENTENCE (separators, U"Separators", U" ,")
+	OK
+DO
+	CREATE_ONE
+		autoStrings result = Strings_createAsTokens (text, separators);
+	CREATE_ONE_END (name)
+}
+
 FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
 	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
 	SENTENCE (separators, U"Separators", U" ,")
@@ -8134,7 +8145,6 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN, REAL_Praat_getInvTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get incomplete gamma...", 0, praat_HIDDEN, COMPLEX_Praat_getIncompleteGamma);
 //	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as espeak voices", U"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsEspeakVoices);
-	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"Create TableOfReal...", 1, NEW1_CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, NEW_Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 1, NEW1_Polynomial_create);
@@ -8150,23 +8160,26 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsShepardTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1 | praat_NO_API, WINDOW_VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1, NEW1_SpeechSynthesizer_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Special Tables (literature) -", U"Create Table without column names...", 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Special Tables (literature) -", 2, NEW1_Table_create_polsVanNierop1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Create formant table (Pols & Van Nierop 1973)", 2, NEW1_Table_create_petersonBarney1952);
-	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Peterson & Barney 1952)", 2, NEW1_Table_create_weenink1983);
+	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2, NEW1_Table_create_petersonBarney1952);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Pols & Van Nierop 1973)", U"Create formant table (Peterson & Barney 1952)", 2, NEW1_Table_create_polsVanNierop1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Weenink 1985)", U"Create formant table (Pols & Van Nierop 1973)", 2, NEW1_Table_create_weenink1983);
 	praat_addMenuCommand (U"Objects", U"New", U"Create H1H2 table (Esposito 2006)", U"Create formant table (Weenink 1985)", 2, NEW_Table_create_esposito2006);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", 2, NEW_Table_create_ganong1980);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Special Tables (literature) -", 1, NEW1_TableOfReal_create_pols1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 1, NEW_TableOfReal_create_vanNierop1973);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, NEW_TableOfReal_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Sandwell 1987)", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+ praat_HIDDEN, NEW_Table_create_sandwell1987);
+	praat_addMenuCommand (U"Objects", U"New", U"-- TableOfReals --", U"Create Table (Ganong 1980)", 2, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"-- TableOfReals --" , 2, NEW1_CreateIrisDataset);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create iris data set", 2, NEW1_TableOfReal_create_pols1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 2, NEW_TableOfReal_create_vanNierop1973);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 2, NEW_TableOfReal_create_weenink1983);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Sandwell 1987)", U"Create TableOfReal (Weenink 1985)...", 2, NEW_Table_create_sandwell1987);
 		praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, NEW1_Confusion_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1, NEW1_Covariance_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Correlation...", U"Create simple Covariance...", 1, NEW1_Correlation_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, NEW_EditCostsTable_createEmpty);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattTable_createExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings as directory list...", 1, NEW1_Strings_createAsTokens);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from tokens...", U"Create Strings as directory list...", 1, NEW1_Strings_createFromTokens);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
 	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContext);
 	
