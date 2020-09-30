@@ -8180,7 +8180,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, NEW1_KlattTable_createExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from tokens...", U"Create Strings as directory list...", 1, NEW1_Strings_createFromTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsTokens);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
 	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContext);
 	
 
