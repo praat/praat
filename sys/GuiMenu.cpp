@@ -542,7 +542,12 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), false);
 
 		g_signal_connect_object (G_OBJECT (my d_cascadeButton -> d_widget), "event",
-			GTK_SIGNAL_FUNC (button_press), G_OBJECT (my d_widget), G_CONNECT_SWAPPED);
+			#if ALLOW_GDK_DRAWING
+				GTK_SIGNAL_FUNC (button_press),
+			#else
+				G_CALLBACK (button_press),
+			#endif
+			G_OBJECT (my d_widget), G_CONNECT_SWAPPED);
 		g_object_set_data (G_OBJECT (my d_widget), "button", my d_cascadeButton -> d_widget);
 		gtk_menu_attach_to_widget (GTK_MENU (my d_widget), GTK_WIDGET (my d_cascadeButton -> d_widget), nullptr);
 		gtk_button_set_alignment (GTK_BUTTON (my d_cascadeButton -> d_widget), 0.0f, 0.5f);
