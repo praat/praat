@@ -142,7 +142,11 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 
 void GuiOptionMenu_addOption (GuiOptionMenu me, conststring32 text) {
 	#if gtk
-		gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peek32to8 (text));
+		#if ALLOW_GDK_DRAWING
+			gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peek32to8 (text));
+		#else
+			gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (my d_widget), Melder_peek32to8 (text));
+		#endif
 	#elif motif
 		autoGuiMenuItem menuItem = Thing_new (GuiMenuItem);
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);
