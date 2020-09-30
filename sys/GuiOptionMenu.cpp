@@ -67,7 +67,11 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		my d_widget = gtk_combo_box_new_text ();
+		#if ALLOW_GDK_DRAWING
+			my d_widget = gtk_combo_box_new_text ();
+		#else
+			my d_widget = gtk_combo_box_text_new ();
+		#endif
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), right - left, bottom - top + 8);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (my d_widget), left, top - 6);
 		gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (my d_widget), false);
