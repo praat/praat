@@ -175,22 +175,6 @@ public:
 			Behaviour of structFunctionEditor::v_mouseInWideDataView ():
 				moves the cursor to 'x_world', drags to create a selection, or extends the selection.
 		*/
-	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed) { return false; }   // TODO remove
-		/*
-		 * Message: "the user clicked in data window with the left mouse button."
-		 * 'xWC' is the time;
-		 * 'yWC' is a value between 0.0 (bottom) and 1.0 (top);
-		 * 'shiftKeyPressed' flags if the Shift key was held down during the click.
-		 * Constraints:
-		 *    Return FunctionEditor_UPDATE_NEEDED if you want a window update, i.e.,
-		 *    if your 'click' moves the cursor or otherwise changes the appearance of the data.
-		 *    Return FunctionEditor_NO_UPDATE_NEEDED if you do not want a window update, e.g.,
-		 *    if your 'click' method just 'plays' something or puts a dialog on the screen.
-		 *    In the latter case, the 'ok' callback of the dialog should
-		 *    call FunctionEditor_marksChanged if the 'ok' callback changes the marks.
-		 * Behaviour of FunctionEditor::click ():
-		 *    moves the cursor to 'xWC', drags to create a selection, or extends the selection.
-		 */
 	virtual void v_clickSelectionViewer (double x_fraction, double y_fraction);
 	virtual int v_playCallback (int phase, double startTime, double endTime, double currentTime);
 	virtual void v_updateText () { }
