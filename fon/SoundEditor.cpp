@@ -197,6 +197,8 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	*/
 	my tmin = sound -> xmin;
 	my tmax = sound -> xmax;
+	Melder_clipLeft (my tmin, & my startWindow);
+	Melder_clipRight (& my endWindow, my tmax);
 	my startSelection = leftSample * sound -> dx;
 	my endSelection = (leftSample + Sound_clipboard -> nx) * sound -> dx;
 
@@ -232,7 +234,7 @@ static void menu_cb_ReverseSelection (SoundEditor me, EDITOR_ARGS_DIRECT) {
 /***** SELECT MENU *****/
 
 static void menu_cb_MoveCursorToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	double zero = Sound_getNearestZeroCrossing ((Sound) my data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
+	const double zero = Sound_getNearestZeroCrossing ((Sound) my data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me, true);
@@ -240,7 +242,7 @@ static void menu_cb_MoveCursorToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_MoveBtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	double zero = Sound_getNearestZeroCrossing ((Sound) my data, my startSelection, 1);   // STEREO BUG
+	const double zero = Sound_getNearestZeroCrossing ((Sound) my data, my startSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = zero;
 		Melder_sort (& my startSelection, & my endSelection);
