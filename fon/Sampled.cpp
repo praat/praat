@@ -729,7 +729,9 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer ixmin, ixmax;
-	Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+	integer numberOfSamples = Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+	if (numberOfSamples <= 0)
+		return;
 	if (Function_isUnitLogarithmic (me, levelNumber, unit)) {
 		ymin = Function_convertStandardToSpecialUnit (me, ymin, levelNumber, unit);
 		ymax = Function_convertStandardToSpecialUnit (me, ymax, levelNumber, unit);
@@ -757,7 +759,9 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		}
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
 		integer ixmin, ixmax, startOfDefinedStretch = -1;
-		Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+		integer numberOfSamples = Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+		if (numberOfSamples <= 0)
+			return;
 		if (Function_isUnitLogarithmic (me, levelNumber, unit)) {
 			ymin = Function_convertStandardToSpecialUnit (me, ymin, levelNumber, unit);
 			ymax = Function_convertStandardToSpecialUnit (me, ymax, levelNumber, unit);
