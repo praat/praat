@@ -22,8 +22,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20200929)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201004)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.25# (4 October 2020)")
+LIST_ITEM (U"• Windows: implemented vertical scrolling with the mouse wheel in the manual and in the Picture window.")
+LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when double-clicking in the Sound window.")
+LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when raising the About window twice.")
+LIST_ITEM (U"• Removed a bug that caused Praat to crash when zooming in "
+	"to a region in the Sound window without samples, when a pitch curve was visible.")
+LIST_ITEM (U"• Removed a bug that caused Praat to crash when pasting in "
+	"a region in the Sound window without samples.")
 NORMAL (U"##6.1.24# (29 September 2020)")
 LIST_ITEM (U"• Linux: got rid of flashing during a running cursor or "
 	"when making a selection in the Sound window or the Picture window.")

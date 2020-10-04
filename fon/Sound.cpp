@@ -272,7 +272,8 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-	if (*n < 1) return undefined;
+	if (*n <= 0)
+		return undefined;
 	longdouble sumOfSquares = 0.0;
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
 		constVECVU const& channel = my z.row (ichan);
