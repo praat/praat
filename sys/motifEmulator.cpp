@@ -505,17 +505,19 @@ static void NativeMenuItem_setText (GuiObject me) {
 /*
  * We now create the native objects associated with this widget,
  * but do not show them on the screen yet (ideally).
- * A reference must be made from widget to native object and back.
- * On Mac, we normally use the RefCon fields of the windows and controls.
- * On Win, we use SetWindowLongPtr (window, GWLP_USERDATA, (LONG_PTR) widget).
+ * A reference must be made from widget to native object and back,
+ * with SetWindowLongPtr (window, GWLP_USERDATA, (LONG_PTR) widget).
  */
 
 static void _GuiNativizeWidget (GuiObject me) {
-	if (my nativized) return;
+	if (my nativized)
+		return;
 	if (my inMenu) {
 		if (MEMBER (me, PulldownMenu)) {
 			int id;
-			for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
+			for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++)
+				if (! theMenus [id])
+					break;
 			my nat.menu.id = id;
 			theMenus [my nat.menu.id] = me;   // instead of UserData fields
 			/*
@@ -536,7 +538,9 @@ static void _GuiNativizeWidget (GuiObject me) {
 				 * In our implementation, item IDs are application-unique.
 				 */
 				int id;
-				for (id = MINIMUM_MENU_ITEM_ID; id <= MAXIMUM_MENU_ITEM_ID; id ++) if (! theMenuItems [id]) break;
+				for (id = MINIMUM_MENU_ITEM_ID; id <= MAXIMUM_MENU_ITEM_ID; id ++)
+					if (! theMenuItems [id])
+						break;
 				my nat.entry.id = id;   // install unique ID
 				theMenuItems [id] = true;
 			}
@@ -2563,6 +2567,10 @@ static void on_verticalWheel (HWND window, int xPos, int yPos, int zDelta, int f
 		if (my widgetClass == xmDrawingAreaWidgetClass) {
 			if (my parent -> widgetClass == xmScrolledWindowWidgetClass)
 				on_scroll (my parent -> motiff.scrolledWindow.verticalBar, zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0);
+			else
+				for (GuiObject child = my parent -> firstChild; child; child = child -> nextSibling)
+					if (child -> widgetClass == xmScrollBarWidgetClass && child -> orientation == XmVERTICAL)
+						on_scroll (child, zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0);
 		} else FORWARD_WM_MOUSEWHEEL (window, xPos, yPos, zDelta, fwKeys, DefWindowProc);
 	} else FORWARD_WM_MOUSEWHEEL (window, xPos, yPos, zDelta, fwKeys, DefWindowProc);
 }
