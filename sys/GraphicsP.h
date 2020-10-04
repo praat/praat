@@ -133,10 +133,6 @@ Thing_define (GraphicsScreen, Graphics) {
 		override;
 	void v_arrowHead (double xDC, double yDC, double angle)
 		override;
-	bool v_mouseStillDown ()
-		override;
-	void v_getMouseLocation (double *xWC, double *yWC)
-		override;
 	void v_flushWs ()
 		override;
 	void v_clearWs ()

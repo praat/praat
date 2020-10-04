@@ -132,8 +132,6 @@ Thing_define (Graphics, Thing) {
 	virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
 	virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
 	virtual void v_arrowHead (double xDC, double yDC, double angle);
-	virtual bool v_mouseStillDown () { return false; }
-	virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = undefined; }
 	virtual void v_flushWs () { }
 	virtual void v_clearWs () { }
 	virtual void v_updateWs () { }
@@ -356,10 +354,6 @@ double Graphics_dyMMtoWC (Graphics me, double dy_mm);
 double Graphics_distanceWCtoMM (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC);
 double Graphics_dxWCtoMM (Graphics me, double dxWC);
 double Graphics_dyWCtoMM (Graphics me, double dyWC);
-
-bool Graphics_mouseStillDown (Graphics me);
-void Graphics_waitMouseUp (Graphics me);
-void Graphics_getMouseLocation (Graphics me, double *xWC, double *yWC);
 
 void Graphics_nextSheetOfPaper (Graphics me);
 
