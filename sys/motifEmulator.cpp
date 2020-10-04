@@ -2671,7 +2671,6 @@ static void on_activate (HWND window, UINT state, HWND hActive, BOOL minimized) 
 	} else FORWARD_WM_ACTIVATE (window, state, hActive, minimized, DefWindowProc);
 }
 static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
-Melder_casual(U"windowProc ", message);
 	switch (message) {
 		HANDLE_MSG (window, WM_CLOSE, on_close);
 		HANDLE_MSG (window, WM_COMMAND, on_command);
