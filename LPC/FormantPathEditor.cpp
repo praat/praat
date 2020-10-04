@@ -697,20 +697,21 @@ void structFormantPathEditor :: v_draw () {
 }
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
+	double original_fontSize = Graphics_inqFontSize (our graphics.get());
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
-	Graphics_setFontSize (our graphics.get(), 9.0);
+	Graphics_setFontSize (our graphics.get(), 10.0);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	double startTime, endTime = endWindow, xCursor, yCursor;
 	FormantPathEditor_getDrawingData (this, & startTime, & endTime, & xCursor, & yCursor);
-	Graphics_setInner ( our graphics.get());
+	Graphics_setInner (our graphics.get());
 	FormantPath formantPath = (FormantPath) our data;
 	const integer nrow = 0, ncol = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, true,  parameters.get(), our p_modeler_varianceExponent, true);
 	Graphics_unsetInner (our graphics.get());
+	Graphics_setFontSize (our graphics.get(), original_fontSize);
 }
 
 #if 0
