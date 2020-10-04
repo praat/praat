@@ -69,17 +69,31 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		trace (U"GTK will handle redrawing");
 		return false;
 	}
+	static structGuiDrawingArea_MouseEvent::Phase previousPhase = structGuiDrawingArea_MouseEvent::Phase::DROP;
 	static gboolean _GuiGtkDrawingArea_mouseDownCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
-			event. phase = structGuiDrawingArea_MouseEvent::Phase::CLICK;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
 			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
+			if (previousPhase == structGuiDrawingArea_MouseEvent::Phase::CLICK) {
+				/*
+					Apparently a double-click.
+					On other platforms, a mouse-up event is always generated, even within a double-click.
+					On Linux, we generate it ourselves.
+				*/
+				try {
+					previousPhase = event. phase = structGuiDrawingArea_MouseEvent::Phase::DROP;
+					my mouseCallback (my mouseBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError (U"Mouse drop not completely handled.");
+				}
+			}
 			try {
+				previousPhase = event. phase = structGuiDrawingArea_MouseEvent::Phase::CLICK;
 				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Mouse click not completely handled.");
@@ -94,11 +108,11 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			structGuiDrawingArea_MouseEvent event { me, 0 };
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
-			event. phase = structGuiDrawingArea_MouseEvent::Phase::DRAG;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
 			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
 			try {
+				previousPhase = event. phase = structGuiDrawingArea_MouseEvent::Phase::DRAG;
 				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Mouse drag not completely handled.");
@@ -113,11 +127,11 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			structGuiDrawingArea_MouseEvent event { me, 0 };
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
-			event. phase = structGuiDrawingArea_MouseEvent::Phase::DROP;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
 			event. commandKeyPressed = (((GdkEventButton *) e) -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (((GdkEventButton *) e) -> state & GDK_MOD1_MASK) != 0;
 			try {
+				previousPhase = event. phase = structGuiDrawingArea_MouseEvent::Phase::DROP;
 				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
 				Melder_flushError (U"Mouse drop not completely handled.");
@@ -376,7 +390,15 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Mouse click not completely handled.");
+				switch (phase) {
+					case structGuiDrawingArea_MouseEvent::Phase::CLICK:
+						Melder_flushError (U"Mouse click not completely handled.");
+					break; case structGuiDrawingArea_MouseEvent::Phase::DRAG:
+						Melder_flushError (U"Mouse drag not completely handled.");
+					break; case structGuiDrawingArea_MouseEvent::Phase::DROP:
+						Melder_flushError (U"Mouse drop not completely handled.");
+					break;
+				}
 			}
 		}
 	}

@@ -86,7 +86,7 @@ and under Cygwin install the Devel packages x86_64-w64-mingw32 (for 64-bit targe
 and/or i686-w64-mingw32 (for 32-bit targets).
 Move the Praat sources directory somewhere in your `/home/yourname` tree,
 e.g. as `/home/yourname/praats` and/or `/home/yourname/praats32`;
-the folders `fon` and `sys` shoudl be visible within these folders.
+the folders `fon` and `sys` should be visible within these folders.
 If you want to build Praat's 64-bit edition, type
 
     cd ~/praats
@@ -123,7 +123,7 @@ try the target `praat_mac64_a` (static) or `praat_mac64_so` (dynamic).
 
 **Notarization.** If you want others to be able to use your Mac app,
 you will probably have to not only *sign* the executable, but also *notarize* it. To this end,
-do Xcode (11.2) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
+do Xcode (version 12) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
 Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ...wait...
 (“Ready to distribute”) -> Export Notarized App). If your Praat.app was built into
 `~/builds/mac_products/Configuration64`, then you can save the notarized
@@ -145,10 +145,13 @@ To set up the required system libraries, install some graphics and sound package
     sudo apt-get install libjack-dev
 
 To set up your source tree for Linux, go to Praat's sources directory (where the folders `fon` and `sys` are)
-and type one of the three following commands:
+and type one of the four following commands:
 
     # on Ubuntu command line
     cp makefiles/makefile.defs.linux.pulse ./makefile.defs
+
+    # on Ubuntu command line
+    cp makefiles/makefile.defs.linux.pulse_static ./makefile.defs
 
     # on Chromebook command line
     cp makefiles/makefile.defs.chrome64 ./makefile.defs
@@ -156,7 +159,7 @@ and type one of the three following commands:
     # on Raspberry Pi command line
     cp makefiles/makefile.defs.linux.rpi ./makefile.defs
 
-To build the Praat executable, type `make`.
+To build the Praat executable, type `make` or `make -j12`.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile
 (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0,
 cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound, jack).
@@ -166,7 +169,7 @@ If you do have `libgtk2.0-dev` (and its dependencies), do
 
     cp makefiles/makefile.defs.linux.silent ./makefile.defs
 
-Then type `make` to build the program. If your Unix isn’t Linux,
+Then type `make` or `make -j12` to build the program. If your Unix isn’t Linux,
 you may have to edit the library names in the makefile (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0,
 pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0,
 gmodule-2.0, gthread-2.0, rt, glib-2.0).
@@ -180,8 +183,8 @@ which creates the executable `praat_nogui`. If you don't need graphics (e.g. PNG
 
     cp makefiles/makefile.defs.linux.barren ./makefile.defs
 
-which creates the executable `praat_barren`. Then type `make` to build the program. If your Unix isn’t Linux,
-you may have to edit the library names in the makefile.
+which creates the executable `praat_barren`. Then type `make` or `make -j12` to build the program.
+If your Unix isn’t Linux, you may have to edit the library names in the makefile.
 
 ## 4. Compiling the source code on all platforms simultaneously
 
@@ -280,6 +283,12 @@ assuming that it uses the `bash` shell):
         make -j12 )"
     alias praat="~/praats/praat"
     alias praat-run="praat-build && praat"
+    alias praatt-build="( cd ~/praatst &&\
+        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
+        cp makefiles/makefile.defs.linux.pulse_static makefile.defs &&\
+        make -j12 )"
+    alias praatt="~/praatst/praatt"
+    alias praatt-run="praatt-build && praatt"
 
 Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
 
@@ -490,14 +499,16 @@ On Ubuntu you can define
 
     # in Ubuntu:~/.bash_aliases
     alias praat-dist="praat-build && rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
+    alias praatt-dist="praatt-build && rsync -t ~/praatst/praat_static /media/psf/Home/builds/linux64"
     alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
     alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
     alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
 
-so that you can “upload” the four executables to the Mac with
+so that you can “upload” the five executables to the Mac with
 
     # on Ubuntu command line
     praat-dist
+    praatt-dist
     praatb-dist
     praatn-dist
     praatc-dist
@@ -518,6 +529,10 @@ you can issue the following commands to create the packages and install them in 
       tar cvf praat$(PRAAT_VERSION)_linux64.tar praat &&\
       gzip praat$(PRAAT_VERSION)_linux64.tar &&\
       mv praat$(PRAAT_VERSION)_linux64.tar.gz $PRAAT_WWW )
+    ( cd ~/builds/linux64 &&\
+      tar cvf praat$(PRAAT_VERSION)_linux64static.tar praat_static &&\
+      gzip praat$(PRAAT_VERSION)_linux64static.tar &&\
+      mv praat$(PRAAT_VERSION)_linux64static.tar.gz $PRAAT_WWW )
     ( cd ~/builds/linux64 &&\
       tar cvf praat$(PRAAT_VERSION)_linux64barren.tar praat_barren &&\
       gzip praat$(PRAAT_VERSION)_linux64barren.tar &&\
