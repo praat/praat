@@ -118,17 +118,15 @@ void CC_paint (CC me, Graphics g, double xmin, double xmax, integer cmin, intege
 	}
 }
 
-void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
-	(void) garnish;
-
+void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool /* garnish */) {
 	if (xmin >= xmax) {
 		xmin = my xmin;
 		xmax = my xmax;
 	}
-
 	integer bframe, eframe;
-	(void) Sampled_getWindowSamples (me, xmin, xmax, & bframe, & eframe);
-	integer numberOfSelected = eframe - bframe + 1;
+	integer numberOfSelected = Sampled_getWindowSamples (me, xmin, xmax, & bframe, & eframe);
+	if (numberOfSelected <= 0)
+		return;
 	autoVEC c = newVECraw (numberOfSelected);
 	for (integer i = 1; i <= numberOfSelected; i ++) {
 		const CC_Frame cf = & my frame [bframe + i - 1];

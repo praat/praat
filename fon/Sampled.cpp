@@ -195,7 +195,7 @@ static void Sampled_getSumAndDefinitionRange
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
 			integer imin, imax;
-			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
+			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax) > 0) {
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (integer isamp = imin; isamp <= imax; isamp ++) {
 					const double value = my v_getValueAtSample (isamp, levelNumber, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
@@ -356,7 +356,7 @@ static void Sampled_getSum2AndDefinitionRange
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
 			integer imin, imax;
-			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
+			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax) > 0) {
 				const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 				for (integer isamp = imin; isamp <= imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, levelNumber, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
@@ -729,7 +729,9 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer ixmin, ixmax;
-	Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+	integer numberOfSamples = Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+	if (numberOfSamples <= 0)
+		return;
 	if (Function_isUnitLogarithmic (me, levelNumber, unit)) {
 		ymin = Function_convertStandardToSpecialUnit (me, ymin, levelNumber, unit);
 		ymax = Function_convertStandardToSpecialUnit (me, ymax, levelNumber, unit);
@@ -757,7 +759,9 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		}
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
 		integer ixmin, ixmax, startOfDefinedStretch = -1;
-		Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+		integer numberOfSamples = Sampled_getWindowSamples (me, xmin, xmax, & ixmin, & ixmax);
+		if (numberOfSamples <= 0)
+			return;
 		if (Function_isUnitLogarithmic (me, levelNumber, unit)) {
 			ymin = Function_convertStandardToSpecialUnit (me, ymin, levelNumber, unit);
 			ymax = Function_convertStandardToSpecialUnit (me, ymax, levelNumber, unit);
