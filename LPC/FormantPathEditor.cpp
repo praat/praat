@@ -45,11 +45,6 @@ Thing_implement (FormantPathEditor, TimeSoundAnalysisEditor, 0);
 #include "prefs_copyToInstance.h"
 #include "FormantPathEditor_prefs.h"
 
-// forward definitions
-static void insertBoundaryOrPoint (FormantPathEditor me, integer itier, double t1, double t2, bool insertSecond);
-// end forward
-
-
 void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
 }
@@ -99,65 +94,6 @@ static double _FormantPathEditor_computeSoundY2 (FormantPathEditor me) {
 	return 5.0 / 8.0;
 }
 
-static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier, TextTier *textTier) {
-	if (anyTier -> classInfo == classIntervalTier) {
-		*intervalTier = (IntervalTier) anyTier;
-		*textTier = nullptr;
-	} else {
-		*intervalTier = nullptr;
-		*textTier = (TextTier) anyTier;
-	}
-}
-
-static integer _FormantPathEditor_yWCtoTier (FormantPathEditor me, double yWC) {
-	const integer numberOfTiers =  my pathGridView -> tiers -> size;
-	const double soundY = _FormantPathEditor_computeSoundY (me);
-	integer tierNumber = numberOfTiers - Melder_ifloor (yWC / soundY * (double) numberOfTiers);
-	if (tierNumber < 1)
-		tierNumber = 1;
-	if (tierNumber > numberOfTiers)
-		tierNumber = numberOfTiers;
-	return tierNumber;
-}
-
-static void _FormantPathEditor_timeToInterval (FormantPathEditor me, double t, integer tierNumber,
-	double *tmin, double *tmax)
-{
-	const Function tier = my pathGridView -> tiers->at [tierNumber];
-	IntervalTier intervalTier;
-	TextTier textTier;
-	_AnyTier_identifyClass (tier, & intervalTier, & textTier);
-	if (intervalTier) {
-		integer iinterval = IntervalTier_timeToIndex (intervalTier, t);
-		if (iinterval == 0) {
-			if (t < my tmin) {
-				iinterval = 1;
-			} else {
-				iinterval = intervalTier -> intervals.size;
-			}
-		}
-		Melder_assert (iinterval >= 1);
-		Melder_assert (iinterval <= intervalTier -> intervals.size);
-		const TextInterval interval = intervalTier -> intervals.at [iinterval];
-		*tmin = interval -> xmin;
-		*tmax = interval -> xmax;
-	} else {
-		const integer n = textTier -> points.size;
-		if (n == 0) {
-			*tmin = my tmin;
-			*tmax = my tmax;
-		} else {
-			integer ipointleft = AnyTier_timeToLowIndex (textTier->asAnyTier(), t);
-			*tmin = ipointleft == 0 ? my tmin : textTier -> points.at [ipointleft] -> number;
-			*tmax = ipointleft == n ? my tmax : textTier -> points.at [ipointleft + 1] -> number;
-		}
-	}
-	if (*tmin < my tmin)
-		*tmin = my tmin;   // clip by FunctionEditor's time domain
-	if (*tmax > my tmax)
-		*tmax = my tmax;
-}
-
 static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *startTime, double *endTime, double *xCursor, double *yCursor) {
 	*startTime = my startWindow;
 	*endTime = my endWindow;
@@ -177,20 +113,6 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *star
 static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) {
 	if (my selectedTier < 1 || my selectedTier > my pathGridView -> tiers -> size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
-}
-
-static integer getSelectedInterval (FormantPathEditor me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my pathGridView -> tiers -> size);
-	const IntervalTier tier = (IntervalTier) my pathGridView -> tiers->at [my selectedTier];
-	Melder_assert (tier -> classInfo == classIntervalTier);
-	return IntervalTier_timeToIndex (tier, my startSelection);
-}
-
-static integer getSelectedPoint (FormantPathEditor me) {
-	Melder_assert (my selectedTier >= 1 || my selectedTier <= my pathGridView -> tiers -> size);
-	const TextTier tier = (TextTier) my pathGridView -> tiers->at [my selectedTier];
-	Melder_assert (tier -> classInfo == classTextTier);
-	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection);
 }
 
 static void scrollToView (FormantPathEditor me, double t) {
@@ -723,10 +645,7 @@ void structFormantPathEditor :: v_prepareDraw () {
 }
 
 void structFormantPathEditor :: v_draw () {
-	Graphics_Viewport vp1, vp2;
-	const integer ntiers = ( our pathGridView ? our pathGridView -> tiers->size : 0 );
-	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
-	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
+	Graphics_Viewport vp1;
 	const bool showAnalysis = v_hasAnalysis () &&
 			(p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) &&
 			(d_longSound.data || d_sound.data);
@@ -786,12 +705,15 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	double startTime, endTime = endWindow, xCursor, yCursor;
 	FormantPathEditor_getDrawingData (this, & startTime, & endTime, & xCursor, & yCursor);
+	Graphics_setInner ( our graphics.get());
 	FormantPath formantPath = (FormantPath) our data;
 	const integer nrow = 0, ncol = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, true,  parameters.get(), our p_modeler_varianceExponent, true);
+	Graphics_unsetInner (our graphics.get());
 }
 
+#if 0
 static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double tmin_view, double tmax_view, double tmin_selection, double tmax_selection, double fmin, double fmax,
 	double suppress_dB)
 {
@@ -826,6 +748,8 @@ static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double t
 		}
 	}
 }
+#endif
+
 void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
 	FormantPath formantPath = (FormantPath) my data;
 	integer itmin, itmax;
@@ -850,8 +774,6 @@ void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tm
 }
 
 void structFormantPathEditor :: v_draw_analysis_formants () {
-	FormantPath formantPath = (FormantPath) our data;
-	const Formant formant = d_formant.get();
 	if (our p_formant_show) {
 		Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
@@ -863,335 +785,6 @@ void structFormantPathEditor :: v_draw_analysis_formants () {
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 	}
 }
-
-static void do_drawWhileDragging (FormantPathEditor me, double numberOfTiers, bool selectedTier [], double x, double soundY) {
-	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-		if (selectedTier [itier]) {
-			const double ymin = soundY * (1.0 - (double) itier / numberOfTiers);
-			const double ymax = soundY * (1.0 - (double) (itier - 1) / numberOfTiers);
-			Graphics_setLineWidth (my graphics.get(), 7.0);
-			Graphics_line (my graphics.get(), x, ymin, x, ymax);
-		}
-	}
-	Graphics_setLineWidth (my graphics.get(), 1);
-	Graphics_line (my graphics.get(), x, 0.0, x, 1.01);
-	Graphics_text (my graphics.get(), x, 1.01, Melder_fixed (x, 6));
-}
-
-static void do_dragBoundary (FormantPathEditor me, double xbegin, integer iClickedTier, int shiftKeyPressed) {
-	const TextGrid grid =  my pathGridView.get();
-	const integer numberOfTiers = grid -> tiers->size;
-	double xWC = xbegin, yWC;
-	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
-	bool selectedTier [1000];
-	const double soundY = _FormantPathEditor_computeSoundY (me);
-
-	/*
-		Determine the set of selected boundaries and points, and the dragging range.
-	*/
-	for (int itier = 1; itier <= numberOfTiers; itier ++) {
-		selectedTier [itier] = false;   // the default
-		/*
-			If the user has pressed the shift key, let her drag all the boundaries and points at this time.
-			Otherwise, let her only drag the boundary or point on the clicked tier.
-		*/
-		if (itier == iClickedTier || shiftKeyPressed == my p_shiftDragMultiple) {
-			IntervalTier intervalTier;
-			TextTier textTier;
-			_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
-			if (intervalTier) {
-				integer ibound = IntervalTier_hasBoundary (intervalTier, xbegin);
-				if (ibound) {
-					TextInterval leftInterval = intervalTier -> intervals.at [ibound - 1];
-					TextInterval rightInterval = intervalTier -> intervals.at [ibound];
-					selectedTier [itier] = true;
-					/*
-						Prevent the user from dragging the boundary past its left or right neighbours on the same tier.
-					*/
-					if (leftInterval -> xmin > leftDraggingBoundary)
-						leftDraggingBoundary = leftInterval -> xmin;
-					if (rightInterval -> xmax < rightDraggingBoundary)
-						rightDraggingBoundary = rightInterval -> xmax;
-				}
-			}
-		}
-	}
-
-	Graphics_xorOn (my graphics.get(), Melder_MAROON);
-	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
-	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // draw at old position
-	while (Graphics_mouseStillDown (my graphics.get())) {
-		double xWC_new;
-		Graphics_getMouseLocation (my graphics.get(), & xWC_new, & yWC);
-		if (xWC_new != xWC) {
-			do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // undraw at old position
-			xWC = xWC_new;
-			do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // draw at new position
-		}
-	}
-	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // undraw at new position
-	Graphics_xorOff (my graphics.get());
-
-	/*
-		The simplest way to cancel the dragging operation, is to drag outside the window.
-	*/
-	if (xWC <= my startWindow || xWC >= my endWindow)
-		return;
-
-	/*
-		If the user dropped near an existing boundary in an unselected tier or near the cursor,
-		we snap to that mark.
-	*/
-	const integer itierDrop = _FormantPathEditor_yWCtoTier (me, yWC);
-	if (yWC > 0.0 && yWC < soundY && ! selectedTier [itierDrop]) {   // dropped inside an unselected tier?
-		const Function anyTierDrop = grid -> tiers->at [itierDrop];
-		if (anyTierDrop -> classInfo == classIntervalTier) {
-			const IntervalTier tierDrop = (IntervalTier) anyTierDrop;
-			for (integer ibound = 1; ibound < tierDrop -> intervals.size; ibound ++) {
-				const TextInterval left = tierDrop -> intervals.at [ibound];
-				if (fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - left -> xmax)) < 1.5) {   // near a boundary?
-					/*
-						Snap to boundary.
-					*/
-					xWC = left -> xmax;
-				}
-			}
-		} else {
-			const TextTier tierDrop = (TextTier) anyTierDrop;
-			for (integer ipoint = 1; ipoint <= tierDrop -> points.size; ipoint ++) {
-				TextPoint point = tierDrop -> points.at [ipoint];
-				if (fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - point -> number)) < 1.5) {   // near a point?
-					/*
-						Snap to point.
-					*/
-					xWC = point -> number;
-				}
-			}
-		}
-	} else if (xbegin != my startSelection && fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - my startSelection)) < 1.5) {   // near the cursor?
-		/*
-			Snap to cursor.
-		*/
-		xWC = my startSelection;
-	} else if (xbegin != my endSelection && fabs (Graphics_dxWCtoMM (my graphics.get(), xWC - my endSelection)) < 1.5) {   // near the cursor?
-		/*
-			Snap to cursor.
-		*/
-		xWC = my endSelection;
-	}
-
-	/*
-		We cannot move a boundary out of the dragging range.
-	*/
-	if (xWC <= leftDraggingBoundary || xWC >= rightDraggingBoundary) {
-		Melder_beep ();
-		return;
-	}
-
-	Editor_save (me, U"Drag");
-
-	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-		if (selectedTier [itier]) {
-			IntervalTier intervalTier;
-			TextTier textTier;
-			_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
-			if (intervalTier) {
-				const integer numberOfIntervals = intervalTier -> intervals.size;
-				for (integer ibound = 2; ibound <= numberOfIntervals; ibound ++) {
-					TextInterval left = intervalTier -> intervals.at [ibound - 1], right = intervalTier -> intervals.at [ibound];
-					if (left -> xmax == xbegin) {   // boundary dragged?
-						left -> xmax = right -> xmin = xWC;   // move boundary to drop site
-						break;
-					}
-				}
-			} else {
-				const integer iDraggedPoint = AnyTier_hasPoint (textTier->asAnyTier(), xbegin);
-				if (iDraggedPoint) {
-					integer dropSiteHasPoint = AnyTier_hasPoint (textTier->asAnyTier(), xWC);
-					if (dropSiteHasPoint != 0) {
-						Melder_warning (U"Cannot drop point on an existing point.");
-					} else {
-						const TextPoint point = textTier -> points.at [iDraggedPoint];
-						/*
-							Move point to drop site. May have passed another point.
-						*/
-						autoTextPoint newPoint = Data_copy (point);
-						newPoint -> number = xWC;   // move point to drop site
-						textTier -> points. removeItem (iDraggedPoint);
-						textTier -> points. addItem_move (newPoint.move());
-					}
-				}
-			}
-		}
-	}
-
-	/*
-		Select the drop site.
-	*/
-	if (my startSelection == xbegin)
-		my startSelection = xWC;
-	if (my endSelection == xbegin)
-		my endSelection = xWC;
-	if (my startSelection > my endSelection)
-		std::swap (my startSelection, my endSelection);
-
-	FunctionEditor_marksChanged (me, true);
-	Editor_broadcastDataChanged (me);
-}
-
-	
-#if 0
-bool structFormantPathEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed_) {
-	/*
-		In answer to a click in the sound part,
-		we keep the same tier selected and move the cursor or drag the "yellow" selection.
-	*/
-	our selectedCandidate = 0;
-	const double soundY = _FormantPathEditor_computeSoundY (this);
-	if (yWC > soundY) {   // clicked in sound part?
-		if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 * (soundY + 1.0)) {
-			our d_spectrogram_cursor = our p_spectrogram_viewFrom +
-					2.0 * (yWC - soundY) / (1.0 - soundY) * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
-		}
-		our FormantPathEditor_Parent :: v_click (xclick, yWC, shiftKeyPressed_);
-		return FunctionEditor_UPDATE_NEEDED;
-	}
-
-	/*
-		The user clicked in the grid part.
-		We select the tier in which she clicked.
-	*/
-	const integer clickedTierNumber = _FormantPathEditor_yWCtoTier (this, yWC);
-
-	if (xclick <= our startWindow || xclick >= our endWindow) {
-		our selectedTier = clickedTierNumber;
-		return FunctionEditor_UPDATE_NEEDED;
-	}
-
-	double tmin_, tmax_;
-	_FormantPathEditor_timeToInterval (this, xclick, clickedTierNumber, & tmin_, & tmax_);
-	IntervalTier intervalTier;
-	TextTier textTier;
-	_AnyTier_identifyClass (grid -> tiers->at [clickedTierNumber], & intervalTier, & textTier);
-
-	/*
-		Get the time of the nearest boundary or point.
-	*/
-	double tnear = undefined;
-	integer clickedLeftBoundary = 0;
-	if (intervalTier) {
-		const integer clickedIntervalNumber = IntervalTier_timeToIndex (intervalTier, xclick);
-		if (clickedIntervalNumber != 0) {
-			const TextInterval interval = intervalTier -> intervals.at [clickedIntervalNumber];
-			if (xclick > 0.5 * (interval -> xmin + interval -> xmax)) {
-				tnear = interval -> xmax;
-				clickedLeftBoundary = clickedIntervalNumber + 1;
-			} else {
-				tnear = interval -> xmin;
-				clickedLeftBoundary = clickedIntervalNumber;
-			}
-		} else {
-			/*
-				The user clicked outside the time domain of the intervals.
-				This can occur when we are grouped with a longer time function.
-			*/
-			our selectedTier = clickedTierNumber;
-			return FunctionEditor_UPDATE_NEEDED;
-		}
-	} else {
-		const integer clickedPointNumber = AnyTier_timeToNearestIndex (textTier->asAnyTier(), xclick);
-		if (clickedPointNumber != 0) {
-			const TextPoint point = textTier -> points.at [clickedPointNumber];
-			tnear = point -> number;
-		}
-	}
-	Melder_assert (! (intervalTier && clickedLeftBoundary == 0));
-
-	/*
-		Where did the user click?
-	*/
-	const bool nearBoundaryOrPoint = ( isdefined (tnear) && fabs (Graphics_dxWCtoMM (our graphics.get(), xclick - tnear)) < 1.5 );
-	const integer numberOfTiers = grid -> tiers->size;
-	const bool nearCursorCircle = ( our startSelection == our endSelection && Graphics_distanceWCtoMM (our graphics.get(), xclick, yWC,
-		our startSelection, (numberOfTiers + 1 - clickedTierNumber) * soundY / numberOfTiers - Graphics_dyMMtoWC (our graphics.get(), 1.5)) < 1.5 );
-
-	/*
-		Find out whether this is a click or a drag.
-	*/
-	bool drag = false;
-	while (Graphics_mouseStillDown (our graphics.get())) {
-		double x, y;
-		Graphics_getMouseLocation (our graphics.get(), & x, & y);
-		if (x < our startWindow)
-			x = our startWindow;
-		if (x > our endWindow)
-			x = our endWindow;
-		if (fabs (Graphics_dxWCtoMM (our graphics.get(), x - xclick)) > 1.5) {
-			drag = true;
-			break;
-		}
-	}
-
-	if (nearBoundaryOrPoint) {
-		/*
-			Possibility 1: the user clicked near a boundary or point.
-			Select or drag it.
-		*/
-		if (intervalTier && (clickedLeftBoundary < 2 || clickedLeftBoundary > intervalTier -> intervals.size)) {
-			/*
-				Ignore click on left edge of first interval or right edge of last interval.
-			*/
-			our selectedTier = clickedTierNumber;
-		} else if (drag) {
-			/*
-				The tier that has been clicked becomes the new selected tier.
-				This has to be done before the next Update, i.e. also before do_dragBoundary!
-			*/
-			our selectedTier = clickedTierNumber;
-			do_dragBoundary (this, tnear, clickedTierNumber, clickWasModifiedByShiftKey);
-			return FunctionEditor_NO_UPDATE_NEEDED;
-		} else {
-			/*
-				If the user clicked on an unselected boundary or point, we select it.
-			*/
-			if (clickWasModifiedByShiftKey) {
-				if (tnear > 0.5 * (our startSelection + our endSelection))
-					our endSelection = tnear;
-				else
-					our startSelection = tnear;
-			} else {
-				our startSelection = our endSelection = tnear;   // move cursor so that the boundary or point is selected
-			}
-			our selectedTier = clickedTierNumber;
-		}
-	} else if (nearCursorCircle) {
-		/*
-			Possibility 2: the user clicked near the cursor circle.
-			Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
-			because we are not 'nearBoundaryOrPoint'.
-		*/
-		insertBoundaryOrPoint (this, clickedTierNumber, our startSelection, our startSelection, false);
-		our selectedTier = clickedTierNumber;
-		FunctionEditor_marksChanged (this, true);
-		Editor_broadcastDataChanged (this);
-		if (drag)
-			Graphics_waitMouseUp (our graphics.get());
-		return FunctionEditor_NO_UPDATE_NEEDED;
-	} else {
-		/*
-			Possibility 3: the user clicked in empty space.
-		*/
-		if (intervalTier) {
-			our startSelection = tmin_;
-			our endSelection = tmax_;
-		}
-		selectedTier = clickedTierNumber;
-	}
-	if (drag)
-		Graphics_waitMouseUp (our graphics.get());
-	return FunctionEditor_UPDATE_NEEDED;
-}
-#endif
 
 static void Formant_replaceFrames (Formant target, integer beginFrame, integer endFrame, Formant source) {
 	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx
@@ -1227,15 +820,15 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		return;
 	integer index = (irow - 1) * numberOfColums + icol; // left-to-right, top-to-bottom
 	if (index > 0 && index <= formantPath -> formants.size) {
-		double tmin = our startWindow, tmax = our endWindow;
+		double tmin_ = our startWindow, tmax_ = our endWindow;
 		if (our startSelection < our endSelection) {
-			tmin = our startSelection;
-			tmax = our endSelection;
+			tmin_ = our startSelection;
+			tmax_ = our endSelection;
 		}
 		our selectedCandidate = index;
 		Editor_save (this, U"insert interval by selection viewer");
 		integer itmin, itmax;
-		Sampled_getWindowSamples (formantPath, tmin, tmax, & itmin, & itmax);
+		Sampled_getWindowSamples (formantPath, tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
 			formantPath -> path [iframe] = our selectedCandidate;
 		Formant source = reinterpret_cast<Formant> (formantPath -> formants.at[our selectedCandidate]);
@@ -1350,15 +943,15 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 			my textgrid = Data_copy (textgrid);
 			my pathGridView = TextGridView_create (my textgrid.get());
 		}
-		if (my p_modeler_numberOfParametersPerTrack == U"")
+		if (my p_modeler_numberOfParametersPerTrack [0] == U'\0')
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
-		if (my p_formant_default_colour == U"")
+		if (my p_formant_default_colour [0] == U'\0')
 			pref_str32cpy2 (my p_formant_default_colour, my pref_formant_default_colour (), my default_formant_default_colour ());
-		if (my p_formant_path_oddcolour == U"")
+		if (my p_formant_path_oddcolour [0] == U'\0')
 			pref_str32cpy2 (my p_formant_path_oddcolour, my pref_formant_path_oddcolour (), my default_formant_path_oddcolour ());
-		if (my p_formant_path_evencolour == U"")
+		if (my p_formant_path_evencolour [0] == U'\0')
 			pref_str32cpy2 (my p_formant_path_evencolour, my pref_formant_path_evencolour (), my default_formant_path_evencolour ());
-		if (my p_formant_selected_colour == U"")
+		if (my p_formant_selected_colour [0] == U'\0')
 			pref_str32cpy2 (my p_formant_selected_colour, my pref_formant_selected_colour (), my default_formant_selected_colour ());
 		my selectedTier = 1;
 		if (my endWindow - my startWindow > 5.0) {
