@@ -25,6 +25,7 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (U"What's new?", U"ppgb", 20201004)
 INTRO (U"Latest changes in Praat.")
 NORMAL (U"##6.1.25# (4 October 2020)")
+LIST_ITEM (U"• @FormantPath and @FormantPathEditor.")
 LIST_ITEM (U"• Windows: implemented vertical scrolling with the mouse wheel in the manual and in the Picture window.")
 LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when double-clicking in the Sound window.")
 LIST_ITEM (U"• Linux: removed a bug that caused Praat to crash when raising the About window twice.")
