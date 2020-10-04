@@ -65,8 +65,9 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20200528)
-INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
+MAN_BEGIN (U"FormantPath", U"djmw", 20201004)
+INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
+	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
 NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a TextGrid. "
 	"For example, consider a collection with nine Formant objects. "
 	"The formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
@@ -75,8 +76,7 @@ NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a 
 	"In this way, the collection functions as a set of alternative analyses. "
 	"One of the Formants in this set equals the result of a \"standard\" analysis. "
 	"One of the tiers in the FormantPath's TextGrid keeps tract of which alternative has been chosen for a particular interval in time.")
-NORMAL (U"Because many different object are combined in a FormantPath some specialized commands facilitate its creation. "
-	"The two most important ones are: @@Sound & TextGrid: To FormantPath (burg)...@ and @@Sound: To FormantPath (burg)...")
+NORMAL (U"You can create a FormantPath with @@Sound: To FormantPath (burg)...@ or with @@Sound & TextGrid: To FormantPath (burg)...@.")
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
@@ -112,36 +112,33 @@ DEFINITION (U"determines the number of different ceiling frequencies starting fr
 	"The 5500 was the %%middle formant ceiling%, the 4 steps up ended with a %%maximum ceiling% of 6500 Hz while the 4 steps down ended with a %%minimum ceiling% of 4500 Hz.")
 MAN_END
 
-MAN_BEGIN (U"FormantPathEditor", U"djmw", 20200521)
+MAN_BEGIN (U"FormantPathEditor", U"djmw", 20201004)
 INTRO (U"One of the @@Editors@ in Praat, for editing a @@FormantPath@ object.")
 NORMAL (U"To create a ##FormantPathEditor# you first need to select a @@FormantPath@, then you choose ##View & Edit# and the editor will appear.")
-NORMAL (U"%%With the FormantPathEditor you can, for each interval that you select, replace its formant frequencies and bandwidths by the corresponding data from one of the alternative Formant objects in the FormantPath's collection.")
-
+NORMAL (U"With the FormantPathEditor you can, for each interval that you select, "
+	"replace its formant frequencies and bandwidths by the corresponding data "
+	"from one of the alternative Formant objects in the FormantPath's collection.")
 ENTRY (U"Editor layout")
-NORMAL (U"The left part of the editor is very familiar to the layout of the @@TextGridEditor@. The main difference is in the spectrogram window where the formants might be displayed with three different colours. The use of these colours and their meaning will be explained below.")
-NORMAL (U"The right part, called the %%selection viewer%, is the special part of the FormantPathEditor. Here you see alternative formant frequency analyses of a sound %%interval% layed out in a grid. This interval corresponds either to a visible selection in the Sound, or to an interval in the TextGrid part that also implies an interval.")
-NORMAL (U"In the selection viewer not only a formant's frequency is shown but also its bandwidth as a vertical line. Well defined formants have small bandwidths and therefore show very short lines. In the left part only the formant frequencies are shown and therefore no indication of the formant's \"presence\" can be made.")
-NORMAL (U"In the selection viewer, the alternative formant analyses are drawn in boxes that can have different colours. The meanings of the colours in the default setting are:")
-TAG (U"##Blue colour#")
-DEFINITION (U" means that the formant frequency analysis corresponds to the default analysis. I.e. the values you would get with a default analysis of the sound.")
-TAG (U"##Red colour#")
-DEFINITION (U"means that you have selected the formants in this box to be part of the path. Its frequencies will be shown permanently with the same colour in the left part of the editor.")
-TAG (U"##Pink colour#")
-DEFINITION (U"means that you have clicked this box and its formants will be temporarily shown in the same colour in the left part until you click on another box.")
-TAG (U"##Black colour#")
-DEFINITION (U"means nothing special.")
-TAG (U"##Dotted white inside#")
-DEFINITION (U"indicates that the current parameter settings do not correspond to the parameter settings that existed at the time when this analysis was inserted in the path.")
-
+NORMAL (U"The left part of the editor is similar to the layout of the @@SoundEditor@.")
+NORMAL (U"The right part is called the %%selection viewer%. "
+	"Here you see alternative formant frequency analyses of a sound %%interval% laid out in a grid. "
+	"This interval corresponds to a visible selection in the Sound, or to the whole visible sound window if there is no selection.")
+NORMAL (U"The selection viewer shows not only a formant's frequency but also its bandwidth, as a vertical line. "
+	"Well defined formants have small bandwidths and therefore show short vertical lines.")
 ENTRY (U"How to operate")
 NORMAL (U"When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default analysis. This guarantees that there always is a path at the start. The formant frequencies of the path are displayed in red and the formant frequencies of the default are drawn in blue. At the start you will only see the red dots of the path because the blue dots are drawn first and then the red dots. If they overlap perfectly no blue dots will be seen.")
-NORMAL (U"Start by selecting an interval. This can be done either by dragging the cursor in the sound part or by clicking any interval in the text grid. In the selection viewer on the right you see the alternative formant analysis results. Now if you click on one of these alternatives you see two things happening at different positions in the editor window: on the right, the box turns pink and on the left, pink dots appear in the spectrogram display only in the \"selected\" interval. Depending on the chosen box the pink and the red dots completerly or partilaly overlap. If you click in another box the positions of the pink dots change. This makes it very easy to see how any alternative analysis differs with the formants of the path. You deselect a box by either clicking a new box or by clicking it again. If you want to make a selection permanent, i.e. if you want to include its formants in the path, you can use a SHIFT-click in the box of your choice. You will notice several changes. 1. The rectangle turned to a red colour. 2. A new interval with some text appeared on the %%path tier%. 3. Possibly some blue formant dots appeared in the formant display part in the left part of the editor window (of course, only if the alternative's formant frequencies differ enough from the \"default\" ones).")
-
+NORMAL (U"Start by selecting an interval. This can be done by dragging the cursor in the sound part on the left. "
+	"In the selection viewer on the right you see the alternative formant analysis results. "
+	"When you click on one of these alternatives, you see two things happening at different positions in the editor window: "
+	"on the right, the box is marked as selected, and on the left, the formant values in the selectiopn (or window) change.")
 ENTRY (U"Details")
-NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selection viewer are explained in my paper @@Weenink (2015)@. Basically this number is a combined roughness score of the individual formant tracks within the rectangle. Each track's roughness score quantifies how bad a track has been modeled. The lower this number is, the better the track is modeled by a smooth curve, a polynomial of a certain order. The higher the order, the more flexible the curve is and the better it can adapt to the data. The higher the order of the polynomial, the more parameters are needed in the model. Of course, you can change the number of paramaters to model the tracks. You might notice that the rectangle boxes change if the current parameter settings do not correspond to the parameter settings of the current interval on the log tier. ")
-ENTRY (U"Niceties")
-NORMAL (U"If the TextGrid has too many tiers, you can specify which one(s) of the tiers, beside the %%pathe tier% you want to see. In the minimal context you only see the %%path tier%.")
-NORMAL (U"You can use (context sensitive) navigation by specifyings the naviagtion context. Just select a @@Strings@ object with labels in it and select it together with the FormantPath object and choose the appropriate action. The intervals that match the navigation labels will be painted in green colour. ")
+NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selection viewer "
+	"are explained in @@Weenink (2015)@. Basically this number is a combined roughness score of the individual formant tracks "
+	"within the rectangle. Each track's roughness score quantifies how poorly a track has been modeled. "
+	"The lower this number is, the better the track is modeled by a smooth curve, a polynomial of a certain order. "
+	"The higher the order, the more flexible the curve is and the better it can adapt to the data. "
+	"The higher the order of the polynomial, the more parameters are needed in the model. "
+	"You can change the number of paramaters that model the tracks.")
 MAN_END
 
 MAN_BEGIN (U"Formants: Extract smoothest part...", U"djmw", 20140313)
