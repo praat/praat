@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, 11 August 2018
+# Paul Boersma, 4 October 2020
 
 include ../makefile.defs
 
@@ -8,7 +8,7 @@ CPPFLAGS = -I ../melder -I ../sys
 
 OBJECTS = Thing.o Data.o Simple.o Collection.o Strings.o \
    Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o \
-   Graphics_image.o Graphics_mouse.o Graphics_record.o \
+   Graphics_image.o Graphics_record.o \
    Graphics_utils.o Graphics_grey.o Graphics_altitude.o \
    GraphicsPostscript.o Graphics_surface.o \
    ManPage.o ManPages.o Script.o machine.o \
