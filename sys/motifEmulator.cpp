@@ -2105,7 +2105,8 @@ static GuiObject _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool
 }
 
 static void on_scroll (GuiObject me, UINT part, int pos) {
-	if (my maximum == my minimum) return;
+	if (my maximum == my minimum)
+		return;
 	switch (part) {
 		case SB_LINEUP: my value -= my increment; break;
 		case SB_LINEDOWN: my value += my increment; break;
@@ -2119,8 +2120,7 @@ static void on_scroll (GuiObject me, UINT part, int pos) {
 		#endif
 		default: break;
 	}
-	if (my value < my minimum) my value = my minimum;
-	if (my value > my maximum - my sliderSize) my value = my maximum - my sliderSize;
+	Melder_clip (my minimum, & my value, my maximum - my sliderSize);
 	NativeScrollBar_set (me);
 	if (part == SB_THUMBTRACK || part == SB_THUMBPOSITION)
 		_Gui_callCallbacks (me, & my motiff.scrollBar.dragCallbacks, (XtPointer) (ULONG_PTR) part);
@@ -2133,14 +2133,12 @@ void XtNextEvent (XEvent *xevent) {
 }
 
 static void processWorkProcsAndTimeOuts () {
-	if (theNumberOfWorkProcs) {
-		for (integer i = 9; i >= 1; i --) {
-			if (theWorkProcs [i]) {
-				if (theWorkProcs [i] (theWorkProcClosures [i])) XtRemoveWorkProc (i);
-			}
-		}
-	}
-	if (theNumberOfTimeOuts) {
+	if (theNumberOfWorkProcs != 0)
+		for (integer i = 9; i >= 1; i --)
+			if (theWorkProcs [i])
+				if (theWorkProcs [i] (theWorkProcClosures [i]))
+					XtRemoveWorkProc (i);
+	if (theNumberOfTimeOuts != 0) {
 		clock_t now = clock ();
 		for (integer i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
 			static volatile clock_t timeElapsed;   // careful: use 32-bit integers circularly; prevent optimization
@@ -2554,6 +2552,20 @@ static void on_vscroll (HWND window, HWND controlWindow, UINT code, int pos) {
 		} else FORWARD_WM_VSCROLL (window, controlWindow, code, pos, DefWindowProc);
 	} else FORWARD_WM_VSCROLL (window, controlWindow, code, pos, DefWindowProc);
 }
+#undef FORWARD_WM_MOUSEWHEEL   // bug in our windowsx.h
+#define FORWARD_WM_MOUSEWHEEL(hwnd,xPos,yPos,zDelta,fwKeys,fn) \
+	(void)(fn)((hwnd),WM_MOUSEWHEEL,MAKEWPARAM((fwKeys),(zDelta)),MAKELPARAM((xPos),(yPos)))
+//#define HANDLE_WM_MOUSEWHEEL(hwnd,wParam,lParam,fn) \
+	((fn)((hwnd),(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),(int)(short)HIWORD(wParam),(UINT)(short)LOWORD(wParam)),(LRESULT)0)
+static void on_verticalWheel (HWND window, int xPos, int yPos, int zDelta, int fwKeys) {
+	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
+	if (me) {
+		if (my widgetClass == xmDrawingAreaWidgetClass) {
+			if (my parent -> widgetClass == xmScrolledWindowWidgetClass)
+				on_scroll (my parent -> motiff.scrolledWindow.verticalBar, zDelta < 0 ? SB_LINEDOWN : SB_LINEUP, 0);
+		} else FORWARD_WM_MOUSEWHEEL (window, xPos, yPos, zDelta, fwKeys, DefWindowProc);
+	} else FORWARD_WM_MOUSEWHEEL (window, xPos, yPos, zDelta, fwKeys, DefWindowProc);
+}
 static void on_size (HWND window, UINT state, int cx, int cy) {
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me && MEMBER (me, Shell) && (state == SIZE_RESTORED || state == SIZE_MAXIMIZED)) {
@@ -2651,6 +2663,7 @@ static void on_activate (HWND window, UINT state, HWND hActive, BOOL minimized) 
 	} else FORWARD_WM_ACTIVATE (window, state, hActive, minimized, DefWindowProc);
 }
 static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+Melder_casual(U"windowProc ", message);
 	switch (message) {
 		HANDLE_MSG (window, WM_CLOSE, on_close);
 		HANDLE_MSG (window, WM_COMMAND, on_command);
@@ -2661,6 +2674,8 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 		HANDLE_MSG (window, WM_PAINT, on_paint);
 		HANDLE_MSG (window, WM_HSCROLL, on_hscroll);
 		HANDLE_MSG (window, WM_VSCROLL, on_vscroll);
+		HANDLE_MSG (window, WM_MOUSEWHEEL, on_verticalWheel);
+		//HANDLE_MSG (window, WM_MOUSEHWHEEL, on_horizontalWheel);
 		HANDLE_MSG (window, WM_SIZE, on_size);
 		HANDLE_MSG (window, WM_KEYDOWN, on_key);
 		HANDLE_MSG (window, WM_CHAR, on_char);

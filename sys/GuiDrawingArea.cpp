@@ -390,7 +390,15 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			try {
 				my mouseCallback (my mouseBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Mouse click not completely handled.");
+				switch (phase) {
+					case structGuiDrawingArea_MouseEvent::Phase::CLICK:
+						Melder_flushError (U"Mouse click not completely handled.");
+					break; case structGuiDrawingArea_MouseEvent::Phase::DRAG:
+						Melder_flushError (U"Mouse drag not completely handled.");
+					break; case structGuiDrawingArea_MouseEvent::Phase::DROP:
+						Melder_flushError (U"Mouse drop not completely handled.");
+					break;
+				}
 			}
 		}
 	}
