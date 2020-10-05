@@ -2510,6 +2510,7 @@ static void on_lbuttonDown (HWND window, BOOL doubleClick, int x, int y, UINT fl
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me) {
 		if (MEMBER (me, DrawingArea)) {
+			SetCapture (window);
 			_GuiWinDrawingArea_handleMouse (me, structGuiDrawingArea_MouseEvent::Phase::CLICK, x, y);
 		} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
 	} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
@@ -2526,6 +2527,7 @@ static void on_lbuttonUp (HWND window, int x, int y, UINT flags) {
 	GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 	if (me) {
 		if (MEMBER (me, DrawingArea)) {
+			ReleaseCapture ();
 			_GuiWinDrawingArea_handleMouse (me, structGuiDrawingArea_MouseEvent::Phase::DROP, x, y);
 		} else FORWARD_WM_LBUTTONUP (window, x, y, flags, DefWindowProc);
 	} else FORWARD_WM_LBUTTONUP (window, x, y, flags, DefWindowProc);
