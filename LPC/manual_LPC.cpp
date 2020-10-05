@@ -65,18 +65,18 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20201004)
+MAN_BEGIN (U"FormantPath", U"djmw", 20201005)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
-NORMAL (U"A FormantPath combines a collection of @@Formant@s with a Sound and a TextGrid. "
+NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred at each moment in its time domain. "
 	"For example, consider a collection with nine Formant objects. "
-	"The formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
+	"These formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
 	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
-	"Suppose that the formant ceiling was chosen as 4500, 4750, 5000, 5250, 5500, 6750, 6000, 6250 and 6500 Hz, respectively. "
+	"Suppose that the formant ceilings were chosen as 4072.5, 4286.9, 4512.5, 4750.0, 5000.0, 5250.0, 5512.5, 5788.1, and 6077.5 Hz, respectively. "
 	"In this way, the collection functions as a set of alternative analyses. "
-	"One of the Formants in this set equals the result of a \"standard\" analysis. "
-	"One of the tiers in the FormantPath's TextGrid keeps tract of which alternative has been chosen for a particular interval in time.")
-NORMAL (U"You can create a FormantPath with @@Sound: To FormantPath (burg)...@ or with @@Sound & TextGrid: To FormantPath (burg)...@.")
+	"The middle one in this set with a ceiling of 5000 Hz corresponds to the result of a \"standard\" analysis for a male voice. ")
+NORMAL (U"You can create a FormantPath with @@Sound: To FormantPath (burg)...@. The FormantPath example above could have been created from a Sound by:")
+CODE (U"To FormantPath (burg): 0.005, 5.0, 5000.0, 0.025, 50.0, 0.05, 4")
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
