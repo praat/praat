@@ -228,6 +228,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			/*
 			 * Notify main window.
 			 */
+#if ALLOW_GDK_DRAWING
 			GdkEventClient gevent;
 #if !GLIB_CHECK_VERSION(2,35,0)
 			g_type_init ();
@@ -253,6 +254,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 				return errorMessage;
 			}
 			if (! displaySupplied) gdk_display_close (display);
+#endif
 		}
 		/*
 		 * Wait for the running program to notify us of completion,
