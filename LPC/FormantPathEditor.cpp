@@ -235,7 +235,7 @@ void structFormantPathEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 }
 
 /***** QUERY MENU *****/
-
+#if 0
 static void menu_cb_GetStartingPointOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	const TextGrid grid = my pathGridView.get();
 	checkTierSelection (me, U"query the starting point of an interval");
@@ -280,7 +280,7 @@ static void menu_cb_GetLabelOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT
 		Melder_throw (U"The selected tier is not an interval tier.");
 	}
 }
-
+#endif
 /***** PITCH MENU *****/
 
 static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM) {
@@ -408,7 +408,7 @@ static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 /***** TIER MENU *****/
 
 
-static void menu_cb_candidates_modelingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_candidate_modelingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Candidates modeling parameter settings", nullptr)		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
@@ -421,32 +421,26 @@ static void menu_cb_candidates_modelingSettings (FormantPathEditor me, EDITOR_AR
 	EDITOR_END
 }
 
-static void menu_cb_AdvancedCandidatesDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
 		BOOLEAN (drawEstimatedTracks, U"Draw estimated tracks", my default_modeler_draw_estimatedTracks ())
-		REAL (xSpaceFraction, U"Column separation (fraction)", my default_modeler_draw_xSpace_fraction ())
-		REAL (ySpaceFraction, U"Row separation (fraction)", my default_modeler_draw_ySpace_fraction ())
 		POSITIVE (yGridLineEvery_Hz, U"Horizontal grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
 		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_showErrorBars ())
 		REAL (errorBarWidth_s, U"Error bar width (s)", my default_modeler_draw_errorBarWidth_s ())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedTracks, my p_modeler_draw_estimatedTracks)
-		SET_REAL (xSpaceFraction, my p_modeler_draw_xSpace_fraction)
-		SET_REAL (ySpaceFraction, my p_modeler_draw_ySpace_fraction)
 		SET_REAL (yGridLineEvery_Hz, my p_modeler_draw_yGridLineEvery_Hz)
 		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
 		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showErrorBars)
 		SET_REAL (errorBarWidth_s, my p_modeler_draw_errorBarWidth_s)
 	EDITOR_DO
 		my pref_modeler_draw_estimatedTracks () = my p_modeler_draw_estimatedTracks = drawEstimatedTracks;
-		my pref_modeler_draw_xSpace_fraction () = my p_modeler_draw_xSpace_fraction = xSpaceFraction;
-		my pref_modeler_draw_ySpace_fraction () = my p_modeler_draw_ySpace_fraction = ySpaceFraction;
 		my pref_modeler_draw_maximumFrequency () = my p_modeler_draw_maximumFrequency = maximumFrequency;
 		my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
 		my pref_modeler_draw_showErrorBars () = my p_modeler_draw_showErrorBars = drawErrorBars;
 		my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
-		my v_drawSelectionViewer ();
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
@@ -496,7 +490,8 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 
 		
 		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, 0, 0, my p_modeler_draw_xSpace_fraction, my p_modeler_draw_ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, my selectedCandidate, Melder_RED, true,  parameters.get(), my p_modeler_varianceExponent, true);
+		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, my selectedCandidate, Melder_RED, true,  parameters.get(), my p_modeler_varianceExponent, true);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
 	EDITOR_END
@@ -575,29 +570,29 @@ void structFormantPathEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, U"Edit", U"Find again", 'G', menu_cb_FindAgain);
 
-	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
-	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
-	Editor_addCommand (this, U"Query", U"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
-	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
+//	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
+//	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
+//	Editor_addCommand (this, U"Query", U"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
+//	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
-	menu = Editor_addMenu (this, U"Interval", 0);
-	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
+//	menu = Editor_addMenu (this, U"Interval", 0);
+//	EditorMenu_addCommand (menu, U"-- green stuff --", 0, nullptr);
 	
 //	our navigateSettingsButton = EditorMenu_addCommand (menu, U"Navigation settings...", 0, menu_cb_NavigationSettings);
 //	our navigateNextButton  = EditorMenu_addCommand (menu, U"Next green interval", 0, menu_cb_NextGreenInterval);
 //	our navigatePreviousButton = EditorMenu_addCommand (menu, U"Previous green interval", 0, menu_cb_PreviousGreenInterval);
 
-	menu = Editor_addMenu (this, U"Tier", 0);
-	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
+//	menu = Editor_addMenu (this, U"Tier", 0);
+//	EditorMenu_addCommand (menu, U"-- remove tier --", 0, nullptr);
+//	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 
 	if (our d_sound.data || our d_longSound.data) {
 		if (our v_hasAnalysis ())
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
 	menu = Editor_addMenu (this, U"Candidates", 0);
-	EditorMenu_addCommand (menu, U"Candidates modeling settings...", 0, menu_cb_candidates_modelingSettings);
-	EditorMenu_addCommand (menu, U"Advanced candidates drawing settings...", 0, menu_cb_AdvancedCandidatesDrawingSettings);
+	EditorMenu_addCommand (menu, U"Candidate modeling settings...", 0, menu_cb_candidate_modelingSettings);
+	EditorMenu_addCommand (menu, U"Advanced candidate drawing settings...", 0, menu_cb_AdvancedCandidateDrawingSettings);
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
 	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
@@ -698,6 +693,7 @@ void structFormantPathEditor :: v_draw () {
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
 	double original_fontSize = Graphics_inqFontSize (our graphics.get());
+	constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
@@ -709,7 +705,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	FormantPath formantPath = (FormantPath) our data;
 	const integer nrow = 0, ncol = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
-	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, our p_modeler_draw_xSpace_fraction, our p_modeler_draw_ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, true,  parameters.get(), our p_modeler_varianceExponent, true);
+	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, true, Melder_RED, Melder_PURPLE, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, true,  parameters.get(), our p_modeler_varianceExponent, true);
 	Graphics_unsetInner (our graphics.get());
 	Graphics_setFontSize (our graphics.get(), original_fontSize);
 }
