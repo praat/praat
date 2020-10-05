@@ -68,7 +68,7 @@ MAN_END
 MAN_BEGIN (U"FormantPath", U"djmw", 20201005)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
-NORMAL (U"A FormantPath combines a collection of @@Formant@s with a path through these formants. "
+NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred at each moment in its time domain. "
 	"For example, consider a collection with nine Formant objects. "
 	"These formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
 	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
