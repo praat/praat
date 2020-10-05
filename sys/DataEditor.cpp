@@ -100,18 +100,19 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 	int irow = 1;
 	for (; irow <= kDataSubEditor_MAXNUM_ROWS; irow ++) {
 		#if motif
-			bool visible = XtIsManaged (my d_fieldData [irow]. text -> d_widget);
+			const bool visible = XtIsManaged (my d_fieldData [irow]. text -> d_widget);
 		#elif gtk
 			gboolean visible;
-			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, nullptr);
+			g_object_get (G_OBJECT (my d_fieldData [irow]. text -> d_widget), "visible", & visible, nullptr);
 		#elif defined (macintosh)
-			bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
+			const bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
 		#else
-			bool visible = false;
+			const bool visible = false;
 		#endif
 		if (visible) {
 			int type = my d_fieldData [irow]. description -> type;
-			if (type > maxsingletypewa) continue;
+			if (type > maxsingletypewa)
+				continue;
 			autostring32 text = GuiText_getString (my d_fieldData [irow]. text);
 			switch (type) {
 				case bytewa: {

@@ -2700,18 +2700,6 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 		default: return DefWindowProc (window, message, wParam, lParam);
 	}
 }
-bool motif_win_mouseStillDown () {
-	XEvent event;
-	if (! GetCapture ()) SetCapture (theApplicationShell -> window);
-	if (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
-		if (event. message == WM_LBUTTONUP) {
-			DispatchMessage (& event);
-			ReleaseCapture ();
-			return false;
-		}
-	}
-	return true;
-}
 void motif_win_setUserMessageCallback (int (*userMessageCallback) (void)) {
 	theUserMessageCallback = userMessageCallback;
 }

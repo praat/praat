@@ -296,7 +296,6 @@ constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
 	void XmToggleButtonGadgetSetState (GuiObject widget, Boolean value, Boolean notify);
 	#define XmToggleButtonSetState XmToggleButtonGadgetSetState
 
-	bool motif_win_mouseStillDown ();
 	void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 #else
 	typedef void *GuiObject;
