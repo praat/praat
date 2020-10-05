@@ -561,7 +561,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			g_signal_connect (G_OBJECT (my d_widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me.get());
 			g_signal_connect (G_OBJECT (my d_widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me.get());
 			g_signal_connect (GTK_EDITABLE (my d_widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me.get());
-			//GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
+			//GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT); gtk_widget_set_can_default (my d_widget, FALSE);
 			_GuiObject_setUserData (my d_widget, me.get());
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			gtk_entry_set_activates_default (GTK_ENTRY (my d_widget), true);

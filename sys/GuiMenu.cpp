@@ -492,7 +492,7 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 fla
 #if gtk
 	static void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
 	{
-		gint w, h;
+		//gint w, h;
 		GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
 		GtkAllocation button_allocation;
 		gtk_widget_get_allocation (GTK_WIDGET (button), & button_allocation);
@@ -509,10 +509,9 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 fla
 	}
 	static gint button_press (GtkWidget *widget, GdkEvent *event)
 	{
+	/*	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (widget), "button");
 		gint w, h;
-		GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (widget), "button");
-
-	/*	gdk_window_get_size (button->window, &w, &h);
+		gdk_window_get_size (button->window, &w, &h);
 		gtk_widget_set_usize (widget, w, 0);*/
 		
 		if (event->type == GDK_BUTTON_PRESS) {
@@ -542,10 +541,17 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), false);
 
 		g_signal_connect_object (G_OBJECT (my d_cascadeButton -> d_widget), "event",
+		#if ALLOW_GDK_DRAWING
 			GTK_SIGNAL_FUNC (button_press), G_OBJECT (my d_widget), G_CONNECT_SWAPPED);
+		#else
+			G_CALLBACK (button_press), G_OBJECT (my d_widget), G_CONNECT_SWAPPED);
+		#endif
 		g_object_set_data (G_OBJECT (my d_widget), "button", my d_cascadeButton -> d_widget);
 		gtk_menu_attach_to_widget (GTK_MENU (my d_widget), GTK_WIDGET (my d_cascadeButton -> d_widget), nullptr);
-		gtk_button_set_alignment (GTK_BUTTON (my d_cascadeButton -> d_widget), 0.0f, 0.5f);
+		#if ALLOW_GDK_DRAWING
+			gtk_button_set_alignment (GTK_BUTTON (my d_cascadeButton -> d_widget), 0.0f, 0.5f);
+		#else
+		#endif
 		_GuiObject_setUserData (my d_widget, me.get());
 		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me.get());
 	#elif motif
