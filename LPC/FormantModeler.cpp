@@ -1215,11 +1215,11 @@ autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me,
 		}
 		integer numberOfFrames;
 		double firstTime;
-		const double modelingTimeStep = timeStep;
+		const double modellingTimeStep = timeStep;
 		autoOptimalCeilingTier octier = OptimalCeilingTier_create (my xmin, my xmax);
-		Sampled_shortTermAnalysis (me, smoothingWindow, modelingTimeStep, & numberOfFrames, & firstTime);
+		Sampled_shortTermAnalysis (me, smoothingWindow, modellingTimeStep, & numberOfFrames, & firstTime);
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			const double time = firstTime + (iframe - 1) * modelingTimeStep;
+			const double time = firstTime + (iframe - 1) * modellingTimeStep;
 			const double tmin = time - smoothingWindow / 2.0;
 			const double tmax = tmin + smoothingWindow;
 			const integer index = Formants_getSmoothestInInterval (& formants, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack,	weighFormants,

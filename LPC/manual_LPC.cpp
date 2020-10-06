@@ -28,6 +28,20 @@
 void manual_LPC (ManPages me);
 void manual_LPC (ManPages me)
 {
+MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20201007)
+INTRO (U"A command in the #Candidates menu of the @FormantPathEditor window.")
+TAG (U"##Number of parameters per track#,")
+DEFINITION (U"determines how many parameters will be used in the modelling. "
+	"The first number determines the number of parameters that will be used in modeling formant 1 with a polynomial function. The second number determines the number of parameters in the modelling of formant 2, and so on. " 
+	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 parameters which means that a third order polynomial can be modelled. Formant 2 and formant 3 are modelled with 3 parameter polynomials (parabolas).")
+TAG (U"##Variance exponent#,")
+DEFINITION (U"determines the power of the first term in the overall roughness criterion #W.")
+NORMAL (U"The roughness criterion #W is defined in  @@Weenink (2015)@ as")
+FORMULA (U"%W = (%s^2 / %k)^^%varianceExponent^ (%\\ci^^2^ / %d),")
+NORMAL (U"where %s^^2^ is the sum of the variances of all parameters of the modelled formant tracks within one Formant object, "
+	"%k is the number of parameters of theses tracks, \\ci^^^2^ is the combined chi squared of the model for each track, %d is the combined number of degrees of freedom of these models. "
+	"Because the variance %s is proportional to bandwidth and \\ci^^2^ is inversely proportional to bandwidth, the expression for %W grows approximately as 2\\.c%varianceExponent-2 with bandwidth. Setting the %%varianceExponent% somewhat larger than one guarantees that for two tracks that only differ in their bandwidths, the track with the larger bandwidths obtains a larger value for the roughness value %W. The best model is therefore the one with the lowest value for %W.")
+MAN_END
 
 MAN_BEGIN (U"CC: Paint...", U"djmw", 20040407)
 INTRO (U"A command to paint the cepstral coefficients in shades of grey.")
@@ -157,9 +171,9 @@ DEFINITION (U"determines the position of the intervals that have to be compared.
 TAG (U"##Fitter formant range")
 DEFINITION (U"determines which formant tracks will be modelled with a polynomial function. The goodness of fit of these models will be used in the comparison.")
 TAG (U"##Order of polynomials")
-DEFINITION (U"determines the maximum order of the polynomials that are used in modeling each formant track. Order 0 means a model which is a constant function; this model needs only one parameter. Order 1 means a model that is a straight line function; this order needs two parameters. Order 2 means that an additional parabolic function is used in the modeling; order 2 needs therefore 3 parameters. In general an order %p model needs %p+1 parameters.")
+DEFINITION (U"determines the maximum order of the polynomials that are used in modelling each formant track. Order 0 means a model which is a constant function; this model needs only one parameter. Order 1 means a model that is a straight line function; this order needs two parameters. Order 2 means that an additional parabolic function is used in the modelling; order 2 needs therefore 3 parameters. In general an order %p model needs %p+1 parameters.")
 TAG (U"##Use bandwidths to model formant tracks")
-DEFINITION (U"Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty for its formant frequency value. Setting this option %%on%, the default setting, means that you force the modeling function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.")
+DEFINITION (U"Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty for its formant frequency value. Setting this option %%on%, the default setting, means that you force the modelling function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.")
 TAG (U"##Bandwidths for smoothing test")
 DEFINITION (U"determines whether for the roughness determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the roughness of a track.")
 MAN_END

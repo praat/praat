@@ -408,8 +408,8 @@ static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 /***** TIER MENU *****/
 
 
-static void menu_cb_candidate_modelingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Candidates modeling parameter settings", nullptr)		
+static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (U"Candidate modelling settings", U"Candidate modelling settings...")		
 		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
@@ -591,7 +591,7 @@ void structFormantPathEditor :: v_createMenus () {
 			our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 	}
 	menu = Editor_addMenu (this, U"Candidates", 0);
-	EditorMenu_addCommand (menu, U"Candidate modeling settings...", 0, menu_cb_candidate_modelingSettings);
+	EditorMenu_addCommand (menu, U"Candidate modelling settings...", 0, menu_cb_candidate_modellingSettings);
 	EditorMenu_addCommand (menu, U"Advanced candidate drawing settings...", 0, menu_cb_AdvancedCandidateDrawingSettings);
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
 	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
