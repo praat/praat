@@ -148,8 +148,8 @@ NORMAL (U"Start by selecting an interval. This can be done by dragging the curso
 ENTRY (U"Details")
 NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selection viewer "
 	"are explained in @@Weenink (2015)@. Basically this number is a combined roughness score of the individual formant tracks "
-	"within the rectangle. Each track's roughness score quantifies how poorly a track has been modeled. "
-	"The lower this number is, the better the track is modeled by a smooth curve, a polynomial of a certain order. "
+	"within the rectangle. Each track's roughness score quantifies how poorly a track has been modelled. "
+	"The lower this number is, the better the track is modelled by a smooth curve, a polynomial of a certain order. "
 	"The higher the order, the more flexible the curve is and the better it can adapt to the data. "
 	"The higher the order of the polynomial, the more parameters are needed in the model. "
 	"You can change the number of paramaters that model the tracks.")

@@ -751,7 +751,7 @@ FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get
 	NATURAL (track2, U"Track 2", U"3")
 	OPTIONMENU (typeOfData, U"Type of data", 1)
 		OPTION (U"data points")
-		OPTION (U"modeled")
+		OPTION (U"modelled")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)

@@ -4055,7 +4055,7 @@ DEFINITION (U"denoising takes place in (overlapping) windows of this length.")
 TAG (U"##Filter frequency range (Hz)")
 DEFINITION (U"before denoising the sound will be @@Sound: Filter (pass Hann band)...|band-pass filtered@. ")
 TAG (U"##Noise reduction method")
-DEFINITION (U"The method of %%spectral subtraction% was defined in @@Boll (1979)@. The variant implemented is modeled "
+DEFINITION (U"The method of %%spectral subtraction% was defined in @@Boll (1979)@. The variant implemented is modelled "
 	"after a script by Ton Wempe.")
 MAN_END
 
