@@ -54,6 +54,9 @@ void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromTra
 
 void FormantModeler_setTolerance (FormantModeler me, double tolerance);
 
+void FormantModeler_drawModel_inside (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
+	integer fromTrack, integer toTrack, MelderColour oddTracks, MelderColour evenTracks, integer numberOfPoints);
+
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, bool errorBars,
 	MelderColour oddTracks, MelderColour evenTracks, bool garnish);

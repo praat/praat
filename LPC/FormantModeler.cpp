@@ -398,6 +398,16 @@ void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, intege
 	}
 }
 
+void FormantModeler_drawModel_inside (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
+	integer fromTrack, integer toTrack, MelderColour oddTracks, MelderColour evenTracks, integer numberOfPoints) {
+	checkTrackAutoRange (me, & fromTrack, & toTrack);
+	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
+		DataModeler ffi = my trackmodelers.at [itrack];
+		Graphics_setColour (g, itrack % 2 == 1 ? oddTracks : evenTracks );
+		DataModeler_drawModel_inside (ffi, g, tmin, tmax, 0.0, fmax, numberOfPoints);
+	}
+}
+
 void FormantModeler_drawTracks_inside (FormantModeler me, Graphics g, double xmin, double xmax, double fmax, integer fromTrack, integer toTrack, bool useEstimatedTrack, integer numberOfParameters, MelderColour oddTracks, MelderColour evenTracks) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {

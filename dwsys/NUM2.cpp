@@ -599,22 +599,6 @@ struct nr2_struct {
 	VEC x, c;
 };
 
-static double nr2_func (double b, double *df, void *data) {
-	const struct nr2_struct *me = (struct nr2_struct *) data;
-
-	longdouble f = my delta - 0.5 * b / my alpha;
-	longdouble derivative = - 0.5 / my alpha;
-	for (integer i = 1; i <= my numberOfTerms; i ++) {
-		const longdouble c1 = (my c [i] - b);
-		const longdouble c2 = my x [i] / c1;
-		const longdouble c2sq = c2 * c2;
-		f -= c2sq;
-		derivative -= 2.0 * c2sq / c1;
-	}
-	*df = (double) derivative;
-	return (double)f;
-}
-
 static double bolzanoFunction (double b, void *data) {
 	const struct nr2_struct *me = (struct nr2_struct *) data;
 	longdouble f = my delta - 0.5 * b / my alpha;
@@ -733,7 +717,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 		xCx += x [j] * x [j] / c [j];
 
 	const double bmin = ( delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx) );
-	const double eps = (c [a.ncol] - bmin) * tol;
+	//const double eps = (c [a.ncol] - bmin) * tol;
 	/*
 		Find the root of d(psi(b)/db in interval (bmin, c [m])
 	*/
@@ -1703,150 +1687,151 @@ integer NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, doubl
 	return ni;
 }
 
-bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *out_xo1, double *out_yo1, double *out_xo2, double *out_yo2) {
-	integer ncrossings = 0;
+bool NUMclipLineWithinRectangle (double line_x1, double line_y1, double line_x2, double line_y2, double rect_x1, double rect_y1, double rect_x2, double rect_y2, double *out_line_x1, double *out_line_y1, double *out_line_x2, double *out_line_y2) {
+	integer numberOfRectangleCrossings = 0;
 	double x, y, a, b;
-	double xc [5], yc [5], xmin, xmax, ymin, ymax;
-	double xo1 = xl1, yo1 = yl1, xo2 = xl2, yo2 = yl2;
-
-	// This test first because we expect the majority of the tested segments to be within the rectangle
-	
-	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 &&
-			xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2)
+	double crossing_x [5], crossing_y [5], xmin, xmax, ymin, ymax;
+	double segment_x1 = line_x1, segment_y1 = line_y1, segment_x2 = line_x2, segment_y2 = line_y2;
+	/*
+		This test first because we expect the majority of the tested segments to be within the rectangle
+	*/
+	if (line_x1 >= rect_x1 && line_x1 <= rect_x2 && line_y1 >= rect_y1 && line_y1 <= rect_y2 &&
+			line_x2 >= rect_x1 && line_x2 <= rect_x2 && line_y2 >= rect_y1 && line_y2 <= rect_y2)
 		goto end;
-
-	// All lines that are completely outside the rectangle
-	
-	if ( (xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
-			(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2))
+	/*
+		All lines that are completely outside the rectangle
+	*/
+	if ( (line_x1 <= rect_x1 && line_x2 <= rect_x1) || (line_x1 >= rect_x2 && line_x2 >= rect_x2) ||
+			(line_y1 <= rect_y1 && line_y2 <= rect_y1) || (line_y1 >= rect_y2 && line_y2 >= rect_y2))
 		return false;
-
-
-	// At least line spans (part of) the rectangle.
-	// Get extremes in x and y of the line for easy testing further on.
+	/*
+		At least line spans (part of) the rectangle.
+		Get extremes in x and y of the line for easy testing further on.
+	*/
 	bool xswap, yswap;
-	if (xl1 < xl2) {
-		xmin = xl1;
-		xmax = xl2;
+	if (line_x1 < line_x2) {
+		xmin = line_x1;
+		xmax = line_x2;
 		xswap = false;
 	} else {
-		xmin = xl2;
-		xmax = xl1;
+		xmin = line_x2;
+		xmax = line_x1;
 		xswap = true;
 	}
-	if (yl1 < yl2) {
-		ymin = yl1;
-		ymax = yl2;
+	if (line_y1 < line_y2) {
+		ymin = line_y1;
+		ymax = line_y2;
 		yswap = false;
 	} else {
-		ymin = yl2;
-		ymax = yl1;
+		ymin = line_y2;
+		ymax = line_y1;
 		yswap = true;
 	}
 	
-	if (yl1 == yl2) {
-		if (xmin < xr1)
-			xo1 = xr1;
-		if (xmax > xr2)
-			xo2 = xr2;
+	if (line_y1 == line_y2) {
+		if (xmin < rect_x1)
+			segment_x1 = rect_x1;
+		if (xmax > rect_x2)
+			segment_x2 = rect_x2;
 		if (xswap)
-			std::swap (xo1, xo2);
+			std::swap (segment_x1, segment_x2);
 		goto end;
 	}
-	if (xl1 == xl2) {
-		if (ymin < yr1)
-			yo1 = yr1;
-		if (ymax > yr2)
-			yo2 = yr2;
+	if (line_x1 == line_x2) {
+		if (ymin < rect_y1)
+			segment_y1 = rect_y1;
+		if (ymax > rect_y2)
+			segment_y2 = rect_y2;
 		if (yswap)
-			std::swap (yo1, yo2);
+			std::swap (segment_y1, segment_y2);
 		goto end;
 	}
-
-	// Now we know that the line from (x1,y1) to (x2,y2) is neither horizontal nor vertical.
-	// Parametrize it as y = ax + b
-
-	a = (yl1 - yl2) / (xl1 - xl2);
-	b = yl1 - a * xl1;
-
-
-	//	To determine the crossings we have to avoid counting the crossings in a corner twice.
-	//	Therefore we test the corners inclusive (..<=..<=..) on the vertical borders of the rectangle
-	//	and exclusive (..<..<) at the horizontal borders.
-
-
-	y = a * xr1 + b; // Crossing at y with left border: x = xr1
-
-	if (y >= yr1 && y <= yr2 && xmin < xr1) { // Within vertical range?
-		xc [++ ncrossings] = xr1;
-		yc [ncrossings] = y;
-		xc [2] = xmax;
-		yc [2] = xl1 > xl2 ? yl1 : yl2;
+	/*
+		Now we know that the line from (line_x1,line_y1) to (line_x2,line_y2) is neither horizontal nor vertical.
+		We can parametrize it as y = ax + b
+	*/
+	a = (line_y1 - line_y2) / (line_x1 - line_x2);
+	b = line_y1 - a * line_x1;
+	
+	/*
+		To determine the crossings we have to avoid counting the crossings in a corner twice.
+		Therefore we test the corners inclusive (..<=..<=..) on the vertical borders of the rectangle
+		and exclusive (..<..<) at the horizontal borders.
+	*/
+	
+	y = a * rect_x1 + b; // Crossing at y with left border: x = rect_x1
+	
+	if (y >= rect_y1 && y <= rect_y2 && xmin < rect_x1) { // Within vertical range?
+		crossing_x [++ numberOfRectangleCrossings] = rect_x1;
+		crossing_y [numberOfRectangleCrossings] = y;
+		crossing_x [2] = xmax;
+		crossing_y [2] = line_x1 > line_x2 ? line_y1 : line_y2;
 	}
 
-	x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
-
-	if (x > xr1 && x < xr2 && ymax > yr2) { // Within horizontal range?
-		xc [++ ncrossings] = x;
-		yc [ncrossings] = yr2;
-		if (ncrossings == 1) {
-			yc [2] = ymin;
-			xc [2] = yl1 < yl2 ? xl1 : xl2;
+	x = (rect_y2 - b) / a; // Crossing at x with top border: y = rect_y2
+	
+	if (x > rect_x1 && x < rect_x2 && ymax > rect_y2) { // Within horizontal range?
+		crossing_x [++ numberOfRectangleCrossings] = x;
+		crossing_y [numberOfRectangleCrossings] = rect_y2;
+		if (numberOfRectangleCrossings == 1) {
+			crossing_y [2] = ymin;
+			crossing_x [2] = line_y1 < line_y2 ? line_x1 : line_x2;
 		}
 	}
 
-	y = a * xr2 + b; // Crossing at y with right border: x = xr2
+	y = a * rect_x2 + b; // Crossing at y with right border: x = rect_x2
 
-	if (y >= yr1 && y <= yr2 && xmax > xr2) { // Within vertical range?
-		xc [++ ncrossings] = xr2;
-		yc [ncrossings] = y;
-		if (ncrossings == 1) {
-			xc [2] = xmin;
-			yc [2] = xl1 < xl2 ? yl1 : yl2;
+	if (y >= rect_y1 && y <= rect_y2 && xmax > rect_x2) { // Within vertical range?
+		crossing_x [++ numberOfRectangleCrossings] = rect_x2;
+		crossing_y [numberOfRectangleCrossings] = y;
+		if (numberOfRectangleCrossings == 1) {
+			crossing_x [2] = xmin;
+			crossing_y [2] = line_x1 < line_x2 ? line_y1 : line_y2;
 		}
 	}
 
-	x = (yr1 - b) / a; // Crossing at x with bottom border: y = yr1
+	x = (rect_y1 - b) / a; // Crossing at x with bottom border: y = rect_y1
 
-	if (x > xr1 && x < xr2 && ymin < yr1) {
-		xc [++ ncrossings] = x;
-		yc [ncrossings] = yr1;
-		if (ncrossings == 1) {
-			yc [2] = ymax;
-			xc [2] = yl1 > yl2 ? xl1 : xl2;
+	if (x > rect_x1 && x < rect_x2 && ymin < rect_y1) {
+		crossing_x [++ numberOfRectangleCrossings] = x;
+		crossing_y [numberOfRectangleCrossings] = rect_y1;
+		if (numberOfRectangleCrossings == 1) {
+			crossing_y [2] = ymax;
+			crossing_x [2] = line_y1 > line_y2 ? line_x1 : line_x2;
 		}
 	}
-	if (ncrossings == 0)
+	if (numberOfRectangleCrossings == 0)
 		return false;
-	Melder_require (ncrossings <= 2,
+	Melder_require (numberOfRectangleCrossings <= 2,
 		U"Too many crossings found.");
 
 	/*
-		if start and endpoint of line are outside rectangle and ncrossings == 1, than the line only touches.
+		If start and endpoint of line are outside rectangle and numberOfRectangleCrossings == 1, than the line only touches.
 	*/
-	if (ncrossings == 1 && (xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
-		(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2))
+	
+	if (numberOfRectangleCrossings == 1 && (line_x1 < rect_x1 || line_x1 > rect_x2 || line_y1 < rect_y1 || line_y1 > rect_y2) &&
+		(line_x2 < rect_x1 || line_x2 > rect_x2 || line_y2 < rect_y1 || line_y2 > rect_y2))
 		goto end;
 
-	if ((xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
-		std::swap (xc [1], xc [2]);
-		std::swap (yc [1], yc [2]);
+	if ((crossing_x [1] > crossing_x [2] && ! xswap) || (crossing_x [1] < crossing_x [2] && xswap)) {
+		std::swap (crossing_x [1], crossing_x [2]);
+		std::swap (crossing_y [1], crossing_y [2]);
 	}
-	xo1 = xc [1];
-	yo1 = yc [1];
-	xo2 = xc [2];
-	yo2 = yc [2];
+	segment_x1 = crossing_x [1];
+	segment_y1 = crossing_y [1];
+	segment_x2 = crossing_x [2];
+	segment_y2 = crossing_y [2];
 	
 end:
 	
-	if (out_xo1)
-		*out_xo1 = xo1;
-	if (out_yo1)
-		*out_yo1 = yo1;
-	if (out_xo2)
-		*out_xo2 = xo2;
-	if (out_yo2)
-		*out_yo2 = yo2;
+	if (out_line_x1)
+		*out_line_x1 = segment_x1;
+	if (out_line_y1)
+		*out_line_y1 = segment_y1;
+	if (out_line_x2)
+		*out_line_x2 = segment_x2;
+	if (out_line_y2)
+		*out_line_y2 = segment_y2;
 	return true;
 }
 
