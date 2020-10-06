@@ -111,15 +111,16 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
 	INTEGER (special, U"Index of special", U"0 (=no)")
 	COLOUR (specialColour, U"Colour for special", U"pink")
-	BOOLEAN (showRoughness, U"Show roughness", true)
 	SENTENCE (parameters_string, U"Parameters", U"7 7 7 7")
+	BOOLEAN (showRoughness, U"Show roughness", true)
 	POSITIVE (powerf, U"Power", U"1.25")
+	BOOLEAN (showEstimatedModels, U"Show estimated models", true)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (FormantPath)
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, showRoughness, parameters.get(), powerf, garnish);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, parameters.get(), showRoughness, powerf, showEstimatedModels, garnish);
 	GRAPHICS_EACH_END
 }
 
