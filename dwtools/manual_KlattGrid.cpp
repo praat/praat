@@ -76,7 +76,7 @@ DEFINITION (U"model resonances in the nasal tract. Because the form of the nasal
 TAG (U"##Nasal antiformants")
 DEFINITION (U"model dips in the spectrum caused by leakage to the nasal tract.")
 ENTRY (U"Interaction between source and filter")
-NORMAL (U"The interaction between source and filter is modeled by two formant grids.")
+NORMAL (U"The interaction between source and filter is modelled by two formant grids.")
 TAG (U"##Tracheal formants")
 DEFINITION (U"model one aspect of the coupling of the trachea with the vocal tract transfer function, namely, by the "
 	"introduction of extra formants (and antiformants) that sometimes distort vowel spectra to a varying degrees. "
@@ -89,7 +89,7 @@ DEFINITION (U"The values in this grid model the number of hertz that the oral fo
 	"source waveform, a non-linear interaction between the first formant and the fundamental frequency, a truncation of "
 	"the first formant and tracheal formants and antiformants. ")
 ENTRY (U"The frication section")
-NORMAL (U"The frication section is modeled with a frication formant grid, with formant frequencies, bandwidths and (separate) "
+NORMAL (U"The frication section is modelled with a frication formant grid, with formant frequencies, bandwidths and (separate) "
 	"amplitudes (dB), a frication by-pass tier (dB) and an amplitude tier (dB SPL) that governs the frication noise source.")
 ENTRY (U"A minimal synthesizer")
 NORMAL (U"The following script produces a minimal voiced sound. The first line creates the standard KlattGrid."

@@ -95,7 +95,7 @@ static double diagonalityMeasure (MAT v) {
 }
 
 /*
-	This routine is modeled after qdiag.m from Andreas Ziehe, Pavel Laskov, Guido Nolte, Klaus-Robert Müller,
+	This routine is modelled after qdiag.m from Andreas Ziehe, Pavel Laskov, Guido Nolte, Klaus-Robert Müller,
 	A Fast Algorithm for Joint Diagonalization with Non-orthogonal Transformations and its Application to
 	Blind Source Separation, Journal of Machine Learning Research 5 (2004), 777–800.
 */
@@ -182,7 +182,7 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 }
 
 /*
-	The folowing two routines are modeled after qdiag.m from
+	The folowing two routines are modelled after qdiag.m from
 	R. Vollgraf and K. Obermayer, Quadratic Optimization for Simultaneous
 	Matrix Diagonalization, IEEE Transaction on Signal Processing, 2006,
 */

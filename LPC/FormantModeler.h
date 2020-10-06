@@ -152,7 +152,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 	W = (var/k)^t * (chi^2/d), where
 	var is the sum of all variances of all parameters of all modelled formants,
 	k is the total number of parameters to mode all tracks, chi^2 is the combined chi-squared of all
-	the modeled tracks, d is the combined degrees of freedom, and t is a number that if chosen
+	the modelled tracks, d is the combined degrees of freedom, and t is a number that if chosen
 	larger than 1 guarantees that for tracks that only differ in bandwidth the one with the largest
 	bandwidth obtains a higher value for W.
 	A lower value for W means a smoother track.
