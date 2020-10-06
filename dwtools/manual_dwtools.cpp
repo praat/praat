@@ -1347,7 +1347,7 @@ DEFINITION (U"the initial phase of the cosine wave.")
 TAG (U"##Addition factor# (standard value: 0)")
 DEFINITION (U"determines the degree of asymmetry in the spectrum of the gammatone. "
 	"The zero default value gives a gammatone. A value unequal to zero results in a "
-	"so called %gammachirp. A negative value is used in auditory filter modeling to "
+	"so called %gammachirp. A negative value is used in auditory filter modelling to "
 	"guarantee the usual direction of filter asymmetry, which corresponds to an upward "
 	"glide in instantaneous frequency.")
 TAG (U"##Scale amplitudes")
@@ -2534,7 +2534,7 @@ NORMAL (U"The gammatone function has a monotone carrier (the tone) with an "
 	"envelope that is a gamma distribution function. The amplitude spectrum is essentially "
 	"symmetric on a linear frequency scale. This function is used in some time-domain "
 	"auditory models to simulate the spectral analysis performed by the basilar membrane. "
-	"It was popularized in auditory modeling by @@Johannesma (1972)@. @@Flanagan (1960)@ "
+	"It was popularized in auditory modelling by @@Johannesma (1972)@. @@Flanagan (1960)@ "
 	"already used it to model basilar membrane motion.")
 MAN_END
 
