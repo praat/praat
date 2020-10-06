@@ -625,6 +625,27 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	}
 }
 
+void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints) {
+	Function_bidirectionalAutowindow (me, & xmin, & xmax);
+	autoVEC x = newVECraw (numberOfPoints), y = newVECraw (numberOfPoints);
+	const double dx = (xmax - xmin) / numberOfPoints;
+	for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
+		x [ipoint] = xmin + (ipoint - 1) * dx;
+		y [ipoint] = my f_evaluate (me, x [ipoint], my parameters.get());
+	}
+	if (ymin == 0.0 && ymax == 0.0) {
+		ymin = NUMmin (y.get());
+		ymax = NUMmax (y.get());
+	}
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	for (integer ipoint = 2; ipoint <= numberOfPoints; ipoint ++) {
+		double segment_x1, segment_y1, segment_x2, segment_y2;
+		if (NUMclipLineWithinRectangle (x [ipoint - 1], y [ipoint - 1], x [ipoint], y [ipoint],
+			xmin, ymin, xmax, ymax, & segment_x1, & segment_y1, & segment_x2, & segment_y2))
+				Graphics_line (g, segment_x1, segment_y1, segment_x2, segment_y2);
+	}
+}
+
 void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters)
 {
 	const bool errorbars = false, connectPoints = true;
