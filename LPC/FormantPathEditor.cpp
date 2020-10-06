@@ -692,6 +692,7 @@ void structFormantPathEditor :: v_draw () {
 }
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
+	static double previousStartTime, previousEndTime;
 	double original_fontSize = Graphics_inqFontSize (our graphics.get());
 	constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
@@ -704,10 +705,15 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	Graphics_setInner (our graphics.get());
 	FormantPath formantPath = (FormantPath) our data;
 	const integer nrow = 0, ncol = 0;
+	if (startTime != previousStartTime || endTime != previousEndTime)
+		our selectedCandidate = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
-	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
+		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
 	Graphics_setFontSize (our graphics.get(), original_fontSize);
+	previousStartTime = startTime;
+	previousEndTime = endTime;
 }
 
 #if 0
@@ -828,7 +834,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 		Sampled_getWindowSamples (formantPath, tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
 			formantPath -> path [iframe] = our selectedCandidate;
-		Formant source = reinterpret_cast<Formant> (formantPath -> formants.at[our selectedCandidate]);
+		Formant source = reinterpret_cast<Formant> (formantPath -> formants.at [our selectedCandidate]);
 		Formant_replaceFrames (d_formant.get(), itmin, itmax, source);
 	}
 }
