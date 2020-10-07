@@ -79,14 +79,14 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20201005)
+MAN_BEGIN (U"FormantPath", U"djmw", 20201007)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
 NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred at each moment in its time domain. "
 	"For example, consider a collection with nine Formant objects. "
 	"These formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
 	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
-	"Suppose that the formant ceilings were chosen as 4072.5, 4286.9, 4512.5, 4750.0, 5000.0, 5250.0, 5512.5, 5788.1, and 6077.5 Hz, respectively. "
+	"Suppose that the formant ceilings were chosen as 4000.0, 4229.5, 4471.1, 4728.7, 5000.0, 5233.2, 5477.2, 5732.7, and 6000.0 Hz, respectively. "
 	"In this way, the collection functions as a set of alternative analyses. "
 	"The middle one in this set with a ceiling of 5000 Hz corresponds to the result of a \"standard\" analysis for a male voice. ")
 NORMAL (U"You can create a FormantPath with @@Sound: To FormantPath (burg)...@. The FormantPath example above could have been created from a Sound by:")

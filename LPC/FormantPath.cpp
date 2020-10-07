@@ -209,12 +209,14 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			U"The ceiling step fraction should be a number between 0.0 and 1.0");
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
-		const double minimumCeiling = formantCeiling * pow (1.0 - ceilingStepFraction, numberOfStepsToACeiling);
+		const double minimumCeiling = formantCeiling * (1.0 - ceilingStepFraction * numberOfStepsToACeiling);		
 		Melder_require (minimumCeiling > 0.0,
 			U"Your minimum ceiling is ", minimumCeiling, U" Hz, but it should be positive.\n"
 			"We computed it as your middle ceiling (", formantCeiling, U" Hz) times (1.0 - ", ceilingStepFraction, 
 			U")^", numberOfStepsToACeiling, U" Hz. Decrease the ceiling step or the number of steps or both.");
-		const double maximumCeiling = formantCeiling * pow (1.0 + ceilingStepFraction, numberOfStepsToACeiling);		
+		const double maximumCeiling = formantCeiling * (1.0 + ceilingStepFraction * numberOfStepsToACeiling);
+		const double logStepUp = (log (maximumCeiling) - log (formantCeiling)) / numberOfStepsToACeiling;
+		const double logStepDown = (log (formantCeiling) - log (minimumCeiling)) / numberOfStepsToACeiling;
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");
@@ -235,14 +237,17 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		if (sourcesMultiChannel)
 			multiChannelSound = Sound_create (numberOfCeilings, midCeiling -> xmin, midCeiling -> xmax, midCeiling -> nx, midCeiling -> dx, midCeiling -> x1);
 		const double formantSafetyMargin = 50.0;
+		thy ceilings [1] = minimumCeiling;
+		thy ceilings [numberOfStepsToACeiling + 1] = formantCeiling;
+		thy ceilings [numberOfCeilings] = maximumCeiling;
 		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
 			autoFormant formant;
-			double factor = 1.0;
-			if (ic <= numberOfStepsToACeiling)
-				factor = pow (1.0 - ceilingStepFraction, numberOfStepsToACeiling + 1 - ic);
-			else if (ic > numberOfStepsToACeiling + 1)
-				factor = pow (1.0 + ceilingStepFraction, ic - numberOfStepsToACeiling - 1);
-			thy ceilings [ic] = formantCeiling * factor;
+			if (ic > 1 && ic < numberOfCeilings) {
+				if (ic <= numberOfStepsToACeiling)
+					thy ceilings [ic] = exp (log (minimumCeiling) + (ic - 1) * logStepDown);
+				else if (ic > numberOfStepsToACeiling + 1)
+					thy ceilings [ic] = exp (log (maximumCeiling) - (numberOfCeilings - ic) * logStepUp);
+			}
 			autoSound resampled;
 			if (ic != numberOfStepsToACeiling + 1)
 				resampled = Sound_resample (me, 2.0 * thy ceilings [ic], 50);
