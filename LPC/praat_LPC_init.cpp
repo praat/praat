@@ -993,7 +993,7 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
 	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction)^numberOfSteps.")
+	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction * numberOfSteps).")
 	POSITIVE (ceilingStepFraction, U"Ceiling step size fraction", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	LABEL (U"For Marple analysis:")
