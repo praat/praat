@@ -1030,7 +1030,7 @@ FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nul
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction)^numberOfSteps.")
+	LABEL (U" formantCeiling * (1.0 +/- ceilingStepFraction * numberOfSteps).")
 	POSITIVE (ceilingStepFraction, U"Ceiling step size fraction", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	OK
