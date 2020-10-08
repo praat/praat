@@ -427,7 +427,7 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 	}
 }
 
-void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish) {
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters, bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish) {
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
@@ -437,6 +437,20 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
+	double markedBorderThickness = 1.0;
+	integer itmin, itmax;
+	INTVECVU path; 
+	if (markWithinPath && Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
+		/*
+			If the path in the interval (tmin, tmax) is constant, then we have only one of
+			the candidates chosen in the whole interval and the box around this one will be
+			drawn thicker.
+		*/
+		path = my path.part(itmin, itmax); 
+		const integer minimum = NUMmin (path);
+		const integer maximum = NUMmax (path);
+		markedBorderThickness = ( minimum == maximum ? 3.0 : 1.0 );
+	}
 	
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const integer irow = 1 + (iformant - 1) / ncol; // left-to-right + top-to-bottom
@@ -453,8 +467,26 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		if (showEstimatedModels)
 			FormantModeler_drawModel_inside (fm.get(), g, tmin, tmax, fmax, fromFormant, toFormant, odd, even, 1000_integer);
 		if (garnish) {
-			Graphics_setLineWidth (g, 2.0);
-			Graphics_setColour (g, ( iformant == iselected ? selected : Melder_BLACK ));
+			double lineWidth = 2.0;
+			MelderColour colour = Melder_BLACK;
+			if (iformant == iselected) {
+				colour = selected;
+				lineWidth = 3.0;
+			} else if (markWithinPath) {
+				/*
+					If the path in the interval (tmin, tmax) contains this formant, then mark
+					the box with a special colour. The line width depends on whether this formant
+					is the only one in the interval or not.
+				*/
+				for (integer i = itmin; i <= itmax; i ++)
+					if (my path [i] == iformant) {
+						lineWidth = markedBorderThickness;
+						colour = selected;
+						break;
+					}
+			}
+			Graphics_setLineWidth (g, lineWidth);
+			Graphics_setColour (g, colour);
 			Graphics_rectangle (g, tmin, tmax, fmin, fmax);
 		}
 		Graphics_setLineType (g, Graphics_DRAWN);
@@ -551,10 +583,10 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 }
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
-constINTVEC const & parameters, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish) {
+constINTVEC const & parameters, bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish) {
 	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setInner (g);
-	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, parameters, showRoughness, powerf, showEstimatedModels, garnish);
+	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, parameters, markWithinPath, showRoughness, powerf, showEstimatedModels, garnish);
 	Graphics_unsetInner (g);
 }	
 	

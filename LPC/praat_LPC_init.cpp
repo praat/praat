@@ -82,7 +82,7 @@ static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata pub
 	}
 }
 
-DIRECT (WINDOW_FormantPath_viewAndEdit) {
+DIRECT (WINDOW_FormantPath_viewAndEditAlone) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
 	FIND_ONE_WITH_IOBJECT (FormantPath)
@@ -91,6 +91,13 @@ DIRECT (WINDOW_FormantPath_viewAndEdit) {
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
 	END
+}
+
+DIRECT (HINT_FormantPath_Sound_viewAndEdit) {
+	INFO_NONE
+		Melder_information (U"To include a Sound in your FormantPath window:\n"
+			"select a FormantPath and a Sound, and click \"View & Edit\".");
+	INFO_NONE_END
 }
 
 FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
@@ -112,6 +119,7 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 	INTEGER (special, U"Index of special", U"0 (=no)")
 	COLOUR (specialColour, U"Colour for special", U"pink")
 	SENTENCE (parameters_string, U"Parameters", U"7 7 7 7")
+	BOOLEAN (markWithinPath, U"Mark within path", false)
 	BOOLEAN (showRoughness, U"Show roughness", true)
 	POSITIVE (powerf, U"Power", U"1.25")
 	BOOLEAN (showEstimatedModels, U"Show estimated models", true)
@@ -120,7 +128,7 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 DO
 	GRAPHICS_EACH (FormantPath)
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, parameters.get(), showRoughness, powerf, showEstimatedModels, garnish);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, parameters.get(), markWithinPath, showRoughness, powerf, showEstimatedModels, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -1315,7 +1323,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
-	praat_addAction1 (classFormantPath, 1, U"View & Edit", 0, 0, WINDOW_FormantPath_viewAndEdit);
+	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", 0, 0, WINDOW_FormantPath_viewAndEditAlone);
+	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", 0, 0, HINT_FormantPath_Sound_viewAndEdit);
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
