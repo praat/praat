@@ -491,7 +491,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		
 		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, my selectedCandidate, Melder_RED, parameters.get(), true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, my selectedCandidate, Melder_RED, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
 	EDITOR_END
@@ -709,7 +709,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 		our selectedCandidate = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
 	Graphics_setFontSize (our graphics.get(), original_fontSize);
 	previousStartTime = startTime;
@@ -760,6 +760,7 @@ void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tm
 		return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	Graphics_setColour (g, Melder_RED);
+	Graphics_setLineWidth (g, 3.0);
 	const double dx2 = 0.5 * formantPath -> dx;
 	double tmid1 = Sampled_indexToX (formantPath, itmin);
 	double ceiling1 = formantPath -> ceilings [formantPath -> path [itmin]];
@@ -774,6 +775,7 @@ void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tm
 	}
 	double tmid2 = Sampled_indexToX (formantPath, itmax);
 	Graphics_line (g, tmid1 - dx2, ceiling1, tmid2 + dx2, ceiling1);
+	Graphics_setLineWidth (g, 1.0);
 }
 
 void structFormantPathEditor :: v_draw_analysis_formants () {
