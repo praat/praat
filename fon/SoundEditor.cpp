@@ -331,36 +331,21 @@ void structSoundEditor :: v_draw () {
 	}
 
 	/*
-		Draw sound.
+		Draw data.
 	*/
 	if (showAnalysis)
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.5, 1.0);
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
+	if (p_pulses_show)
+		v_draw_analysis_pulses ();
 	TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);
-	if (showAnalysis)
-		Graphics_resetViewport (our graphics.get(), viewport);
-
-	/*
-		Draw analyses (spectrogram, pitch, formants).
-	*/
 	if (showAnalysis) {
+		Graphics_resetViewport (our graphics.get(), viewport);
 		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.0, 0.5);
 		v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), viewport);
-	}
-
-	/*
-		Draw pulses.
-	*/
-	if (p_pulses_show) {
-		if (showAnalysis)
-			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 0.5, 1.0);
-		v_draw_analysis_pulses ();
-		TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);   // second time, partially across the pulses
-		if (showAnalysis)
-			Graphics_resetViewport (our graphics.get(), viewport);
 	}
 
 	/*
