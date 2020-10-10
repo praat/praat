@@ -199,24 +199,24 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 }
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
-	double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepFraction, 
+	double middleCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction, 
 	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
-	integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel) {
+	integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel) {
 	try {
 		Melder_require (timeStep > 0.0,
 			U"The timeStep needs to greater than zero seconds.");
-		Melder_require (ceilingStepFraction > 0.0 && ceilingStepFraction < 1.0,
-			U"The ceiling step fraction should be a number between 0.0 and 1.0");
+		Melder_require (ceilingExtensionFraction > 0.0 && ceilingExtensionFraction < 1.0,
+			U"The ceiling extension fraction should be a number between 0.0 and 1.0");
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
-		const double minimumCeiling = formantCeiling * (1.0 - ceilingStepFraction * numberOfStepsToACeiling);		
+		const double minimumCeiling = middleCeiling * (1.0 - ceilingExtensionFraction);		
 		Melder_require (minimumCeiling > 0.0,
 			U"Your minimum ceiling is ", minimumCeiling, U" Hz, but it should be positive.\n"
-			"We computed it as your middle ceiling (", formantCeiling, U" Hz) times (1.0 - ", ceilingStepFraction, 
-			U")^", numberOfStepsToACeiling, U" Hz. Decrease the ceiling step or the number of steps or both.");
-		const double maximumCeiling = formantCeiling * (1.0 + ceilingStepFraction * numberOfStepsToACeiling);
-		const double logStepUp = (log (maximumCeiling) - log (formantCeiling)) / numberOfStepsToACeiling;
-		const double logStepDown = (log (formantCeiling) - log (minimumCeiling)) / numberOfStepsToACeiling;
+			"We computed it as your middle ceiling (", middleCeiling, U" Hz) times (1.0 - ", ceilingExtensionFraction, 
+			U") Hz. Decrease the ceiling extension fraction.");
+		const double maximumCeiling = middleCeiling * (1.0 + ceilingExtensionFraction);
+		const double logStepUp = (log (maximumCeiling) - log (middleCeiling)) / numberOfStepsToACeiling;
+		const double logStepDown = (log (middleCeiling) - log (minimumCeiling)) / numberOfStepsToACeiling;
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
 			"Decrease the 'ceiling step' or the 'number of steps' or both.");
@@ -224,21 +224,21 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		if (windowDuration > my dx * my nx)
 			windowDuration = my dx * my nx;
 		/*
-			Get the data for the LPC from the resampled sound with 'formantCeiling' as maximum frequency
+			Get the data for the LPC from the resampled sound with 'middleCeiling' as maximum frequency
 			to make the sampling exactly equal as if performed with a standard LPC analysis.
 		*/
 		integer numberOfFrames;
 		double t1;
-		autoSound midCeiling = Sound_resample (me, 2.0 * formantCeiling, 50);
+		autoSound midCeiling = Sound_resample (me, 2.0 * middleCeiling, 50);
 		Sampled_shortTermAnalysis (midCeiling.get(), windowDuration, timeStep, & numberOfFrames, & t1); // Gaussian window
 		const integer predictionOrder = Melder_iround (2.0 * maximumNumberOfFormants);
 		autoFormantPath thee = FormantPath_create (my xmin, my xmax, numberOfFrames, timeStep, t1, numberOfCeilings);
 		autoSound multiChannelSound;
-		if (sourcesMultiChannel)
+		if (out_sourcesMultiChannel)
 			multiChannelSound = Sound_create (numberOfCeilings, midCeiling -> xmin, midCeiling -> xmax, midCeiling -> nx, midCeiling -> dx, midCeiling -> x1);
 		const double formantSafetyMargin = 50.0;
 		thy ceilings [1] = minimumCeiling;
-		thy ceilings [numberOfStepsToACeiling + 1] = formantCeiling;
+		thy ceilings [numberOfStepsToACeiling + 1] = middleCeiling;
 		thy ceilings [numberOfCeilings] = maximumCeiling;
 		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
 			autoFormant formant;
@@ -258,14 +258,13 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 				Sound_into_LPC (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, lpcType, marple_tol1, marple_tol2);
 			} else {
 				Sound_into_LPC (resampled.get(), lpc.get(), analysisWidth, preemphasisFrequency, kLPC_Analysis::AUTOCORRELATION, marple_tol1, marple_tol2);
-				autoLPC lpc_robust = LPC_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
-				lpc = lpc_robust.move();
+				lpc = LPC_Sound_to_LPC_robust (lpc.get(), resampled.get(), analysisWidth, preemphasisFrequency, huber_numberOfStdDev, huber_maximumNumberOfIterations, huber_tol, true);
 			}
 			formant = LPC_to_Formant (lpc.get(), formantSafetyMargin);
 			thy formants . addItem_move (formant.move());
-			if (sourcesMultiChannel) {
+			if (out_sourcesMultiChannel) {
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
-				autoSound source_resampled = Sound_resample (source.get(), 2.0 * formantCeiling, 50);
+				autoSound source_resampled = Sound_resample (source.get(), 2.0 * middleCeiling, 50);
 				const integer numberOfSamples = std::min (midCeiling -> nx, source_resampled -> nx);
 				multiChannelSound -> z.row (ic).part (1, numberOfSamples) <<= source_resampled -> z.row (1).part (1, numberOfSamples);
 			}
@@ -277,8 +276,8 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		thy path = newINTVECraw (thy nx);
 		for (integer i = 1; i <= thy path.size; i++)
 			thy path [i] = numberOfStepsToACeiling + 1;
-		if (sourcesMultiChannel)
-			*sourcesMultiChannel = multiChannelSound.move();
+		if (out_sourcesMultiChannel)
+			*out_sourcesMultiChannel = multiChannelSound.move();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": FormantPath not created.");
@@ -316,7 +315,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts) 
 				MelderExtremaWithInit costs;
 				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
 					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
-					double transitionCosts = 0.0;
+					long double transitionCosts = 0.0;
 					const integer ntracks = std::min (ffj -> numberOfFormants, ffi -> numberOfFormants);
 					for (integer itrack = 1; itrack <= ntracks; itrack ++) {
 						const double dif = fabs (ffi -> formant [itrack] . frequency - ffj -> formant [itrack] . frequency);
@@ -324,7 +323,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts) 
 						const double bw = sqrt (ffi -> formant [itrack] . bandwidth * ffj -> formant [itrack] . bandwidth);
 						transitionCosts += bw * dif / sum;
 					}
-					costs.update (transitionCosts);
+					costs.update ((double) transitionCosts);
 				}
 				thy z [iformant] [itime] = ( maximumCosts ? costs.max : costs.min );
 			}
@@ -387,7 +386,7 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
 		return;
-	if (fromFormant == toFormant && fromFormant == 0) {
+	if (fromFormant == 0 && toFormant == 0) {
 		fromFormant = 1;
 		toFormant = my maxnFormants;
 	}
@@ -427,7 +426,12 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 	}
 }
 
-void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters, bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish) {
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax,
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
+	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
+	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
+	bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish)
+{
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
@@ -582,8 +586,12 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	
 }
 
-void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
-constINTVEC const & parameters, bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish) {
+void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, 
+	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
+	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
+	bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish)
+{
 	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setInner (g);
 	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, parameters, markWithinPath, showRoughness, powerf, showEstimatedModels, garnish);
