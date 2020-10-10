@@ -70,6 +70,8 @@ void Formant_sort (Formant me);
 
 void Formant_drawTracks (Formant me, Graphics graphics, double tmin, double tmax, double fmax, bool garnish);
 void Formant_drawSpeckles_inside (Formant me, Graphics graphics, double tmin, double tmax, double fmin, double fmax,
+	double suppress_dB, MelderColour oddColour, MelderColour evenColour, bool drawWithContrast);
+void Formant_drawSpeckles_inside (Formant me, Graphics graphics, double tmin, double tmax, double fmin, double fmax,
 	double suppress_dB);
 void Formant_drawSpeckles (Formant me, Graphics graphics, double tmin, double tmax, double fmax,
 	double suppress_dB, bool garnish);

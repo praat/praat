@@ -136,7 +136,7 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 }
 
 void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	double suppress_dB)
+	double suppress_dB, MelderColour oddColour, MelderColour evenColour, bool drawWithContrast)
 {
 	double maximumIntensity = 0.0, minimumIntensity;
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
@@ -162,10 +162,29 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 			continue;
 		for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++) {
 			const double frequency = frame -> formant [iformant]. frequency;
-			if (frequency >= fmin && frequency <= fmax)
-				Graphics_speckle (g, x, frequency);
+			if (frequency >= fmin && frequency <= fmax) {
+				if (drawWithContrast) {
+					const double original_speckleSize = Graphics_inqSpeckleSize (g);
+					Graphics_setSpeckleSize (g, 1.111 * original_speckleSize);
+					Graphics_setColour (g, iformant % 2 == 1 ? evenColour : oddColour);
+					Graphics_speckle (g, x, frequency);
+					Graphics_setSpeckleSize (g, 0.900 * original_speckleSize);
+					Graphics_setColour (g, iformant % 2 == 1 ? oddColour : evenColour);
+					Graphics_speckle (g, x, frequency);
+					Graphics_setSpeckleSize (g, original_speckleSize);
+				} else {
+					Graphics_setColour (g, iformant % 2 == 1 ? oddColour : evenColour);
+					Graphics_speckle (g, x, frequency);
+				}
+			}
 		}
 	}
+}
+
+void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax,
+	double suppress_dB)
+{
+	Formant_drawSpeckles_inside (me, g, tmin, tmax, fmin, fmax, suppress_dB, Graphics_inqColour (g), Graphics_inqColour (g), false);
 }
 
 void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, double fmax, double suppress_dB,
