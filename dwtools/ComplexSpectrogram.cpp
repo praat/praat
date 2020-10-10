@@ -146,7 +146,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		autoSound synthesisWindow = Sound_createSimple (1, synthesisWindowDuration, samplingFrequency);
 		const double newDuration = (my xmax - my xmin) * stretchFactor;
 		autoSound thee = Sound_createSimple (1, newDuration, samplingFrequency); //TODO
-		double thyStartTime;
+		//double thyStartTime;
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			// "original" sound :
 			const double tmid = Sampled_indexToX (me, iframe);
@@ -155,23 +155,21 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 			const integer startSample = rightSample - halfnsamp_window;
 			const integer endSample = std::min (startSample + nsamp_window - 1, thy nx);
 			
-			const double startTime = Sampled_indexToX (thee.get(), startSample);
-			if (iframe == 1)
-				thyStartTime = Sampled_indexToX (thee.get(), startSample);
+			//const double startTime = Sampled_indexToX (thee.get(), startSample);
+			//if (iframe == 1)
+			//	thyStartTime = Sampled_indexToX (thee.get(), startSample);
 			//integer endSample = leftSample + halfnsamp_window;
 			// New Sound with stretch
-			const integer thyStartSample = Sampled_xToLowIndex (thee.get(), thyStartTime);
-			const double thyEndTime = thyStartTime + my dx * stretchFactor;
-			const integer thyEndSample = Sampled_xToLowIndex (thee.get(), thyEndTime);
-			const integer stretchedStepSizeSamples = thyEndSample - thyStartSample + 1;
+			//const integer thyStartSample = Sampled_xToLowIndex (thee.get(), thyStartTime);
+			//const double thyEndTime = thyStartTime + my dx * stretchFactor;
+			//const integer thyEndSample = Sampled_xToLowIndex (thee.get(), thyEndTime);
 			//double extraTime = (thyStartSample - startSample + 1) * thy dx;
-			const double extraTime = thyStartTime - startTime;
+			//const double extraTime = thyStartTime - startTime;
 			spectrum -> z [1] [1] = sqrt (my z [1] [iframe]);
 			for (integer ifreq = 2; ifreq <= my ny; ifreq ++) {
-				const double f = my y1 + (ifreq - 1) * my dy;
+				//const double f = my y1 + (ifreq - 1) * my dy;
 				const double a = sqrt (my z [ifreq] [iframe]);
-				double dummy;
-				const double extraPhase = 2.0 * NUMpi * modf (extraTime * f, & dummy); // fractional part
+				//double dummy;
 				const double phi = my phase [ifreq] [iframe]; // + extraPhase;
 				spectrum -> z [1] [ifreq] = a * cos (phi);
 				spectrum -> z [2] [ifreq] = a * sin (phi);

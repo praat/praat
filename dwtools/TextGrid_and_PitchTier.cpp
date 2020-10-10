@@ -271,6 +271,7 @@ autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier th
 	}
 }
 
+#if 0
 static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber,
 	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, conststring32 criterion) {
 	try {
@@ -280,6 +281,7 @@ static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier the
 		Melder_throw (me, U": cannot create PitchTier.");
 	}
 }
+#endif
 
 /* 
 	We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.

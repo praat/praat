@@ -58,7 +58,6 @@ autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double
 		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
 		Melder_require (numberOfParametersPerTrack.size > 0,
 			U"The number of items in the parameter list should be larger than zero.");
-		Formant formant = (Formant) my formants . at [1];
 		thy numberOfTracksPerModel = numberOfParametersPerTrack.size;
 		integer numberOfZeros = 0;
 		for (integer ipar = 1; ipar <= numberOfParametersPerTrack.size; ipar ++) {

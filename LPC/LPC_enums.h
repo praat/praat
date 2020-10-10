@@ -25,6 +25,6 @@ enums_begin (kLPC_Analysis, 1)
 	enums_add (kLPC_Analysis, 3, BURG, U"Burg")
 	enums_add (kLPC_Analysis, 4, MARPLE, U"Marple")
 	enums_add (kLPC_Analysis, 5, ROBUST, U"Robust")
-enums_end (kLPC_Analysis, 5, ROBUST)
+enums_end (kLPC_Analysis, 5, BURG)
 
 #endif /* _LPC_enums_h_ */

@@ -42,19 +42,28 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts);
 autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
+autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf);
+
 autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta);
 
 void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf);
 
-autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepFraction, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *sourcesMultiChannel);
+autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants, double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction, integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol, integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel);
 
-static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeStep, double maximumNumberOfFormants, double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepFraction, integer numberOfStepsToACeiling) {
-	return Sound_to_FormantPath_any (me, kLPC_Analysis::BURG, timeStep, maximumNumberOfFormants, formantCeiling, analysisWidth, preemphasisFrequency, ceilingStepFraction, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
+static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeStep, double maximumNumberOfFormants, double formantCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction, integer numberOfStepsToACeiling) {
+	return Sound_to_FormantPath_any (me, kLPC_Analysis::BURG, timeStep, maximumNumberOfFormants, formantCeiling, analysisWidth, preemphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, 1e-6, 1e-6, 1.5, 1e-6, 5, nullptr);
 }
 
-void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, 
-constINTVEC const & parameters, bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish);
+void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
+	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
+	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
+	bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish);
 
-void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax, integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz, double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters, bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish);
+void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax,
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
+	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
+	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
+	bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish);
 
 #endif /* _FormantPath_h_ */
