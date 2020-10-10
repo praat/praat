@@ -573,6 +573,7 @@ void BandFilterSpectrogram_equalizeIntensities (BandFilterSpectrogram me, double
 	}
 }
 
+#if 0
 static void BandFilterSpectrogram_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, integer component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
 	Melder_require (component > 0 && component <= thy numberOfEigenvalues,
 		U"Component too large.");
@@ -587,6 +588,7 @@ static void BandFilterSpectrogram_PCA_drawComponent (BandFilterSpectrogram me, P
 		his z [component] [j] = frequencyOffset + scale * his z [component] [j];
 	Matrix_drawRows (him.get(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
 }
+#endif
 
 /*
  * MelSpectrograms_to_DTW (MelSpectrogram me, MelSpectrogram thee, dtw-params);

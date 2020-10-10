@@ -601,8 +601,8 @@ static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin
 	}
 }
 
-static void espeakdata_SetVoiceByName (conststring32 languageName, conststring32 voiceName)
-{
+#if 0
+static void espeakdata_SetVoiceByName (conststring32 languageName, conststring32 voiceName) {
 	espeak_VOICE voice_selector;
 
 	memset (& voice_selector, 0, sizeof voice_selector);
@@ -614,6 +614,7 @@ static void espeakdata_SetVoiceByName (conststring32 languageName, conststring32
 		SetVoiceStack (& voice_selector, Melder_peek32to8 (voiceName));
 	}
 }
+#endif
 
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, autoTextGrid *tg, autoTable *events) {
 	try {

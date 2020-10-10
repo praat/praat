@@ -69,7 +69,6 @@ Thing_implement (HMMStateSequence, Strings, 0);
 */
 
 // helpers
-static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *out_x1, double *out_y1, double *out_x2, double *out_y2);
 autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, kHMMstorage storage);
 
 integer HMM_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber);
@@ -93,7 +92,6 @@ autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence 
 
 
 autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes);
-static autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
 
 // evaluate the numbers given to probabilities
 static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
@@ -113,6 +111,7 @@ static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
 	return numbers;
 }
 
+#if 0
 static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *out_x1, double *out_y1, double *out_x2, double *out_y2) {
 	const double ca = a * a + 1.0, bmyc = (b - yc);
 	const double cb = 2.0 * (a * bmyc - xc);
@@ -139,6 +138,7 @@ static integer NUMget_line_intersection_with_circle (double xc, double yc, doubl
 		*out_y2 = y2;
 	return nroots;
 }
+#endif
 
 // D(l_1,l_2)=1/n( log p(O_2|l_1) - log p(O_2|l_2)
 static double HMM_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observationLength) {
@@ -866,7 +866,7 @@ static autoINTVEC HMM_HMMObservationSequenceBag_getStateSequences (HMM me, HMMOb
 	Melder_assert (numberOfElements == numberOfElements2);
 	return stateSequenceNumbers;
 }
-
+#if 0
 static void HMM_smoothInitialStateProbs_naive (HMM me, double minProb) {
 	for (integer is = 1; is <= my numberOfStates; is ++)
 			my initialStateProbs [is] = std::max (my initialStateProbs [is], minProb );
@@ -894,7 +894,7 @@ static void HMM_smoothEmissionProbs_naive (HMM me, double minProb) {
 	for (integer irow = 1; irow <= my numberOfStates; irow ++)
 		VECnormalize_inplace (my emissionProbs.row (irow).part (1, my numberOfStates), 1.0, 1.0);
 }
-
+#endif
 /*
 	For a not hidden markov model there is an analytical solution for the state transition probabilities
 */
