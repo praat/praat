@@ -28,18 +28,18 @@
 void manual_LPC (ManPages me);
 void manual_LPC (ManPages me)
 {
-MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20201007)
+MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20201010)
 INTRO (U"A command in the #Candidates menu of the @FormantPathEditor window.")
-TAG (U"##Number of parameters per track#,")
-DEFINITION (U"determines how many parameters will be used in the modelling. "
-	"The first number determines the number of parameters that will be used in modeling formant 1 with a polynomial function. The second number determines the number of parameters in the modelling of formant 2, and so on. " 
-	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 parameters which means that a third order polynomial can be modelled. Formant 2 and formant 3 are modelled with 3 parameter polynomials (parabolas).")
+TAG (U"##Number of coefficients per track#,")
+DEFINITION (U"determines how many coefficients will be used in the modelling of a formant track. "
+	"The first number determines the number of coefficients that will be used in modeling formant 1 with a polynomial function. The second number determines the number of coefficients in the modelling of formant 2, and so on. " 
+	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 coefficients which means that a third order polynomial is modelled. Formant 2 and formant 3 are modelled with 3 coefficients polynomials (parabolas).")
 TAG (U"##Variance exponent#,")
 DEFINITION (U"determines the power of the first term in the overall roughness criterion #W.")
 NORMAL (U"The roughness criterion #W is defined in  @@Weenink (2015)@ as")
 FORMULA (U"%W = (%s^2 / %k)^^%varianceExponent^ (%\\ci^^2^ / %d),")
-NORMAL (U"where %s^^2^ is the sum of the variances of all parameters of the modelled formant tracks within one Formant object, "
-	"%k is the number of parameters of theses tracks, \\ci^^^2^ is the combined chi squared of the model for each track, %d is the combined number of degrees of freedom of these models. "
+NORMAL (U"where %s^^2^ is the sum of the variances of all the coefficients of the modelled formant tracks within one Formant object, "
+	"%k is the total number of coefficients of theses tracks, \\ci^^^2^ is the combined chi squared of the model for each track, %d is the combined number of degrees of freedom of these models. "
 	"Because the variance %s is proportional to bandwidth and \\ci^^2^ is inversely proportional to bandwidth, the expression for %W grows approximately as 2\\.c%varianceExponent-2 with bandwidth. Setting the %%varianceExponent% somewhat larger than one guarantees that for two tracks that only differ in their bandwidths, the track with the larger bandwidths obtains a larger value for the roughness value %W. The best model is therefore the one with the lowest value for %W.")
 MAN_END
 
