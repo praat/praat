@@ -404,7 +404,7 @@ static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Candidate modelling settings", U"Candidate modelling settings...")		
-		SENTENCE (parameters_string, U"Number of parameters per track", my default_modeler_numberOfParametersPerTrack ())
+		SENTENCE (parameters_string, U"Coefficients per track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
 		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
@@ -418,22 +418,19 @@ static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_AR
 static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
 		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels ())
-		POSITIVE (yGridLineEvery_Hz, U"Horizontal grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
+		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
 		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_showErrorBars ())
-		REAL (errorBarWidth_s, U"Error bar width (s)", my default_modeler_draw_errorBarWidth_s ())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedModels, my p_modeler_draw_estimatedModels)
 		SET_REAL (yGridLineEvery_Hz, my p_modeler_draw_yGridLineEvery_Hz)
 		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
 		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showErrorBars)
-		SET_REAL (errorBarWidth_s, my p_modeler_draw_errorBarWidth_s)
 	EDITOR_DO
 		my pref_modeler_draw_estimatedModels () = my p_modeler_draw_estimatedModels = drawEstimatedModels;
 		my pref_modeler_draw_maximumFrequency () = my p_modeler_draw_maximumFrequency = maximumFrequency;
 		my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
 		my pref_modeler_draw_showErrorBars () = my p_modeler_draw_showErrorBars = drawErrorBars;
-		my pref_modeler_draw_errorBarWidth_s () = my p_modeler_draw_errorBarWidth_s = errorBarWidth_s;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -444,18 +441,18 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		REAL (qWeight, U"F/B weight (0-1)", U"1.0")
 		LABEL (U"Between frames:")
 		REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
-		REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+		REAL (stressWeight, U"Stress weight (0-1)", U"1.0")
 		REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
 		POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
-		LABEL (U"Global roughness parameters")
+		LABEL (U"Global stress parameters:")
 		POSITIVE (windowLength, U"Window length", U"0.035")
-		SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+		SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
 		POSITIVE (powerf, U"Power", U"1.25")
 	EDITOR_OK
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
+		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);

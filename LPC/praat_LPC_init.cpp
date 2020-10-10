@@ -118,9 +118,9 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
 	INTEGER (special, U"Index of special", U"0 (=no)")
 	COLOUR (specialColour, U"Colour for special", U"pink")
-	SENTENCE (parameters_string, U"Parameters", U"7 7 7 7")
+	SENTENCE (parameters_string, U"Coefficients per track", U"7 7 7 7")
 	BOOLEAN (markWithinPath, U"Mark within path", false)
-	BOOLEAN (showRoughness, U"Show roughness", true)
+	BOOLEAN (showStress, U"Show stress", true)
 	POSITIVE (powerf, U"Power", U"1.25")
 	BOOLEAN (showEstimatedModels, U"Show estimated models", true)
 	BOOLEAN (garnish, U"Garnish", true)
@@ -128,20 +128,19 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 DO
 	GRAPHICS_EACH (FormantPath)
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, parameters.get(), markWithinPath, showRoughness, powerf, showEstimatedModels, garnish);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, parameters.get(), markWithinPath, showStress, powerf, showEstimatedModels, garnish);
 	GRAPHICS_EACH_END
 }
 
-FORM (NEW_FormantPath_to_Matrix_roughness, U"FormantPath: To Matrix (roughness)", nullptr) {
+FORM (NEW_FormantPath_to_Matrix_stress, U"FormantPath: To Matrix (stress)", nullptr) {
 	POSITIVE (windowLength, U"Window length", U"0.025")
-	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
-	POSITIVE (roughnessCutoff, U"Roughness cutoff", U"200.0")
 	OK
 DO
 	CONVERT_EACH (FormantPath)
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		autoMatrix result = FormantPath_to_Matrix_roughness (me, windowLength, parameters.get (), powerf);
+		autoMatrix result = FormantPath_to_Matrix_stress (me, windowLength, parameters.get (), powerf);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -165,12 +164,12 @@ FORM (NEW_FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nul
 	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
 	LABEL (U"Between frames:")
 	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
-	REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+	REAL (stressWeight, U"Stress weight (0-1)", U"1.0")
 	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
-	LABEL (U"Global roughness parameters")
+	LABEL (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
-	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
@@ -178,11 +177,11 @@ DO
 		autoMatrix result;
 		Melder_require (qWeight >= 0 && qWeight <= 1.0 &&
 			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
-			roughnessWeight >= 0 && roughnessWeight <= 1.0 &&
+			stressWeight >= 0 && stressWeight <= 1.0 &&
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters.get(), powerf, & result);	
+		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters.get(), powerf, & result);	
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -191,23 +190,23 @@ FORM (MODIFY_FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr) {
 	REAL (qWeight, U"F/B weight (0-1)", U"1.0")
 	LABEL (U"Between frames:")
 	REAL (frequencyChangeWeight, U"Frequency change weight (0-1)", U"1.0")
-	REAL (roughnessWeight, U"Roughness weight (0-1)", U"1.0")
+	REAL (stressWeight, U"Stress weight (0-1)", U"1.0")
 	REAL (ceilingChangeWeight, U"Ceiling change weight (0-1)", U"1.0")
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
-	LABEL (U"Global roughness parameters")
+	LABEL (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
-	SENTENCE (parameters_string, U"Number of parameters per formant track", U"3 3 3 3")
+	SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
 	MODIFY_EACH (FormantPath)
 		Melder_require (qWeight >= 0 && qWeight <= 1.0 &&
 			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
-			roughnessWeight >= 0 && roughnessWeight <= 1.0 &&
+			stressWeight >= 0 && stressWeight <= 1.0 &&
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should be greater than or equal to 0.0 and smaller than or equal to 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
 	MODIFY_EACH_END
 }
 
@@ -1328,7 +1327,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, NEW_FormantPath_extractFormant);
-	praat_addAction1 (classFormantPath, 0, U"To Matrix (roughness)...", 0, 0, NEW_FormantPath_to_Matrix_roughness);
+	praat_addAction1 (classFormantPath, 0, U"To Matrix (stress)...", 0, 0, NEW_FormantPath_to_Matrix_stress);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (qsum)...", 0, 0, NEW_FormantPath_to_Matrix_qsum);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (transition)...", 0, 0, NEW_FormantPath_to_Matrix_transition);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (deltas)...", 0, 0, NEW_FormantPath_to_Matrix_deltas);

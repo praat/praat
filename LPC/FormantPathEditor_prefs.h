@@ -54,7 +54,6 @@ prefs_begin (FormantPathEditor)
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"5000.0")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_estimatedModels,       1, false)
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showErrorBars,         1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_errorBarWidth_s,       1, U"0.0")
 	prefs_add_string_with_data (FormantPathEditor, modeler_draw_best3colours,          1, U"green pink blue") //
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
 	

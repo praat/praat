@@ -72,17 +72,17 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	return me;
 }
 
-void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf) {
-	autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, roughnessWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength,parameters, powerf, nullptr);
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf) {
+	autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength,parameters, powerf, nullptr);
 	my path = path.move();
 }
 
-autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double roughnessWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta) {
+autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta) {
 	constexpr double qCutoff = 20.0;
-	constexpr double roughnessCutoff = 200.0;
+	constexpr double stressCutoff = 200.0;
 	constexpr double frequencyChangeCutoff = 100.0;
 	try {
-		autoMatrix roughnesses, qsums;
+		autoMatrix stresses, qsums;
 		MelderExtremaWithInit intensities;
 		const double ceilingsRange = NUMmax (my ceilings.get()) - NUMmin (my ceilings.get());
 		const integer midformant = (my formants.size + 1) / 2;
@@ -96,8 +96,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		const integer numberOfTracks = std::min (maxnFormants, parameters.size);
 		if (qWeight > 0.0)
 			qsums = FormantPath_to_Matrix_qSums (me, numberOfTracks);
-		if (roughnessWeight > 0.0)
-			roughnesses = FormantPath_to_Matrix_roughness (me, windowLength, parameters, powerf);
+		if (stressWeight > 0.0)
+			stresses = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 
 		/*
 			We have states s[i], where i = 1..  S (= my formants.size)
@@ -129,10 +129,10 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 				}
 				if (qWeight > 0.0)
 					delta += qWeight * std::min (qsums -> z [iformant] [itime] / qCutoff, 1.0);
-				double roughness = 1.0;
-				if (roughnessWeight > 0.0 && isdefined (roughnesses -> z [iformant] [itime]))
-					roughness = std::min (roughnesses -> z [iformant] [itime] / roughnessCutoff, 1.0);
-				delta -= roughnessWeight * roughness;
+				double stress = 1.0;
+				if (stressWeight > 0.0 && isdefined (stresses -> z [iformant] [itime]))
+					stress = std::min (stresses -> z [iformant] [itime] / stressCutoff, 1.0);
+				delta -= stressWeight * stress;
 
 				deltas [iformant] [itime] += wIntensity * delta;
 			}
@@ -334,7 +334,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts) 
 	}
 }
 
-autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
+autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf) {
 	try {
 		const integer numberOfFormants = my formants.size;
 		Melder_require (parameters.size > 0 && parameters.size <= numberOfFormants,
@@ -343,7 +343,7 @@ autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength,
 		const integer maximum = NUMmax (parameters);
 		const integer numberOfDataPoints = (windowLength + 0.5 * my dx) / my dx;
 		Melder_require (numberOfDataPoints >= maximum,
-			U"The window length is too short for the number of coefficients you use in the roughness determination (",
+			U"The window length is too short for the number of coefficients you use in the stress determination (",
 			maximum, U"). Either increase your window length or decrease the number of coefficents per track.");
 		while (fromFormant <= parameters.size && parameters [fromFormant] <= 0)
 			fromFormant ++;
@@ -365,18 +365,18 @@ autoMatrix FormantPath_to_Matrix_roughness (FormantPath me, double windowLength,
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot create roughness Matrix");
+		Melder_throw (me, U": cannot create stress Matrix");
 	}
 }
 
 autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	autoVEC roughness = newVECraw (my formants.size);
+	autoVEC stress = newVECraw (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const Formant formanti = (Formant) my formants . at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
-		roughness [iformant] = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+		stress [iformant] = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
-	return roughness;
+	return stress;
 }
 
 static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour odd, MelderColour even)
@@ -430,7 +430,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
 	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
-	bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish)
+	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
@@ -497,17 +497,17 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setColour (g, Melder_BLACK);
 		Graphics_setLineWidth (g, 1.0);
 		/*
-			Mark name & roughness
+			Mark name & stress
 		*/
 		if (garnish) {
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 			Graphics_text (g, tmax - 0.05 * (tmax - tmin),
 				fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
 		}
-		if (showRoughness) {
-			const double roughness = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+		if (showStress) {
+			const double stress = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
-			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (roughness, 2));
+			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (stress, 2));
 		}
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		conststring32 midTopText = U"";
@@ -590,11 +590,11 @@ void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tma
 	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, 
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
 	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
-	bool markWithinPath, bool showRoughness, double powerf, bool showEstimatedModels, bool garnish)
+	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setInner (g);
-	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, parameters, markWithinPath, showRoughness, powerf, showEstimatedModels, garnish);
+	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, parameters, markWithinPath, showStress, powerf, showEstimatedModels, garnish);
 	Graphics_unsetInner (g);
 }	
 	
