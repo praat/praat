@@ -118,7 +118,7 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
 	INTEGER (special, U"Index of special", U"0 (=no)")
 	COLOUR (specialColour, U"Colour for special", U"pink")
-	SENTENCE (parameters_string, U"Coefficients per track", U"7 7 7 7")
+	SENTENCE (parameters_string, U"Coefficients by track", U"7 7 7 7")
 	BOOLEAN (markWithinPath, U"Mark within path", false)
 	BOOLEAN (showStress, U"Show stress", true)
 	POSITIVE (powerf, U"Power", U"1.25")
@@ -134,7 +134,7 @@ DO
 
 FORM (NEW_FormantPath_to_Matrix_stress, U"FormantPath: To Matrix (stress)", nullptr) {
 	POSITIVE (windowLength, U"Window length", U"0.025")
-	SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
+	SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
@@ -169,7 +169,7 @@ FORM (NEW_FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nul
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 	LABEL (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
-	SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
+	SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
@@ -195,7 +195,7 @@ FORM (MODIFY_FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr) {
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 	LABEL (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
-	SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
+	SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO

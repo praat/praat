@@ -28,19 +28,28 @@
 void manual_LPC (ManPages me);
 void manual_LPC (ManPages me)
 {
-MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20201010)
+MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20201011)
 INTRO (U"A command in the #Candidates menu of the @FormantPathEditor window.")
-TAG (U"##Coefficients per track#,")
+TAG (U"##Coefficients by track#")
 DEFINITION (U"determines how many coefficients will be used in the modelling of a formant track. "
-	"The first number determines the number of coefficients that will be used in modeling formant 1 with a polynomial function. The second number determines the number of coefficients in the modelling of formant 2, and so on. " 
-	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 coefficients which means that a third order polynomial is modelled. Formant 2 and formant 3 are modelled with 3 coefficients polynomials (parabolas).")
-TAG (U"##Variance exponent#,")
-DEFINITION (U"determines the power of the first term in the overall stress criterion #S. The best model is the one with the lowest value for the stress %S.")
+	"The first number determines the number of coefficients that will be used in modeling formant 1 with a polynomial function."
+	"The second number determines the number of coefficients in the modelling of formant 2, and so on. " 
+	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 "
+	"coefficients which means that a third order polynomial is modelled. Formant 2 and formant 3 are modelled with "
+	"3 coefficients polynomials (parabolas).")
+TAG (U"##Variance exponent#")
+DEFINITION (U"determines the power of the first term in the overall stress criterion #S. "
+	"The best model is the one with the lowest value for the stress %S.")
 NORMAL (U"The stress criterion #S is defined in @@Weenink (2015)@ as")
 FORMULA (U"%S = (%s^2 / %k)^^%varianceExponent^ (%\\ci^^2^ / %d),")
-NORMAL (U"where %s^^2^ is the sum of the squares of the standard errors of all the coefficients of the modelled formant tracks within one Formant object, "
-	"%k is the total number of coefficients of theses tracks, \\ci^^2^ is the combined chi squared of the model for each track, %d is the combined number of degrees of freedom of these models. "
-	"Because the variance %s is proportional to bandwidth and \\ci^^2^ is inversely proportional to bandwidth, the expression for %S grows approximately as 2\\.c%varianceExponent-2 with bandwidth. Setting the %%varianceExponent% somewhat larger than one guarantees that for two tracks that only differ in their bandwidths, the track with the larger bandwidths obtains a larger value for the stress value %S.")
+NORMAL (U"where %s^^2^ is the sum of the squares of the standard errors of all the coefficients of the modelled formant "
+	"tracks within one Formant object, %k is the total number of coefficients of these tracks, in the example given above "
+	"%k is 10 (= 4 + 3 + 3), \\ci^^2^ is the sum of the chi squares of each track, %d is the sum of the "
+	"degrees of freedom of each track. "
+	"Because the standard error %s is proportional to bandwidth and \\ci^^2^ is inversely proportional to bandwidth, "
+	"the expression for %S grows approximately as 2\\.c%varianceExponent-2 with bandwidth. Setting the %varianceExponent "
+	"somewhat larger than one guarantees that for two tracks that only differ in their bandwidths, the track with the "
+	"larger bandwidths obtains a larger value for the stress value %S.")
 MAN_END
 
 MAN_BEGIN (U"CC: Paint...", U"djmw", 20040407)
@@ -82,7 +91,8 @@ MAN_END
 MAN_BEGIN (U"FormantPath", U"djmw", 20201007)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
-NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred at each moment in its time domain. "
+NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred "
+	"at each moment in its time domain. "
 	"For example, consider a collection with nine Formant objects. "
 	"These formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
 	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
@@ -113,8 +123,9 @@ NORMAL (U"For ##Middle formant ceiling (Hz)#, you can use 5500.0 Hz for an avera
 TAG (U"##Ceiling step size (Hz)#")
 DEFINITION (U"defines the increase / decrease in the formant ceiling betweeen two successive analyses.")
 TAG (U"##Number of steps up / down")
-DEFINITION (U"determines the number of different ceiling frequencies starting from the %%middle formant ceiling% and each time adding one ceiling step size. "
-	"Suppose we have a %%middle formant ceiling% of 5500 Hz, your choice for the %%ceiling step size% was 250 Hz and you chose for %%number of steps% the default 4. "
+DEFINITION (U"determines the number of different ceiling frequencies starting from the %%middle formant ceiling% "
+	"and each time adding one ceiling step size. Suppose we have a %%middle formant ceiling% of 5500 Hz, your choice for "
+	"the %%ceiling step size% was 250 Hz and you chose for %%number of steps% the default 4. "
 	"Then the first analysis will be performed with the %%maximum formant frequency% set at the default ceiling of 5500 Hz. "
 	"The next analysis wil be performed with a ceiling of 5500 + 250 = 5750 Hz, the next with a ceiling of 5750 + 250 = 6000 Hz. "
 	"The third one with a ceiling of 6000 + 250 = 6250 Hz and the fourth one with 6250+250 = 6500 Hz as a ceiling. "
@@ -123,12 +134,14 @@ DEFINITION (U"determines the number of different ceiling frequencies starting fr
 	"We end up with a collection of 2 * 4 + 1 = 9 different Formants. "
 	"This results in nine times performing the @@Sound: To Formant (burg)...@ command with ##Formant ceiling (Hz)# values of "
 	"4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250 and 6500 Hz, respectively. "
-	"The 5500 was the %%middle formant ceiling%, the 4 steps up ended with a %%maximum ceiling% of 6500 Hz while the 4 steps down ended with a %%minimum ceiling% of 4500 Hz.")
+	"The 5500 was the %%middle formant ceiling%, the 4 steps up ended with a %%maximum ceiling% of 6500 Hz while the 4 steps "
+	"down ended with a %%minimum ceiling% of 4500 Hz.")
 MAN_END
 
 MAN_BEGIN (U"FormantPathEditor", U"djmw", 20201004)
 INTRO (U"One of the @@Editors@ in Praat, for editing a @@FormantPath@ object.")
-NORMAL (U"To create a ##FormantPathEditor# you first need to select a @@FormantPath@, then you choose ##View & Edit# and the editor will appear.")
+NORMAL (U"To create a ##FormantPathEditor# you first need to select a @@FormantPath@, then you choose ##View & Edit# and "
+	"the editor will appear.")
 NORMAL (U"With the FormantPathEditor you can, for each interval that you select, "
 	"replace its formant frequencies and bandwidths by the corresponding data "
 	"from one of the alternative Formant objects in the FormantPath's collection.")
@@ -140,7 +153,10 @@ NORMAL (U"The right part is called the %%selection viewer%. "
 NORMAL (U"The selection viewer shows not only a formant's frequency but also its bandwidth, as a vertical line. "
 	"Well defined formants have small bandwidths and therefore show short vertical lines.")
 ENTRY (U"How to operate")
-NORMAL (U"When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default analysis. This guarantees that there always is a path at the start. The formant frequencies of the path are displayed in red and the formant frequencies of the default are drawn in blue. At the start you will only see the red dots of the path because the blue dots are drawn first and then the red dots. If they overlap perfectly no blue dots will be seen.")
+NORMAL (U"When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default "
+	"analysis. This guarantees that there always is a path at the start. The formant frequencies of the path are displayed "
+	"in red and the formant frequencies of the default are drawn in blue. At the start you will only see the red dots of the "
+	"path because the blue dots are drawn first and then the red dots. If they overlap perfectly no blue dots will be seen.")
 NORMAL (U"Start by selecting an interval. This can be done by dragging the cursor in the sound part on the left. "
 	"In the selection viewer on the right you see the alternative formant analysis results. "
 	"When you click on one of these alternatives, you see two things happening at different positions in the editor window: "
@@ -164,24 +180,34 @@ SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Fitter formant range", U"1", U"3")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Order of polynomials", U"3")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN (U"Use bandwidths to model formant tracks", 1)
-	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN (U"Bandwidths for smoothing test", 0)
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN (U"Bandwidths for stress test", 0)
 )
 TAG (U"##Time range (s)#")
 DEFINITION (U"determines the position of the intervals that have to be compared.")
 TAG (U"##Fitter formant range")
-DEFINITION (U"determines which formant tracks will be modelled with a polynomial function. The goodness of fit of these models will be used in the comparison.")
+DEFINITION (U"determines which formant tracks will be modelled with a polynomial function. The goodness of fit of these models "
+	"will be used in the comparison.")
 TAG (U"##Order of polynomials")
-DEFINITION (U"determines the maximum order of the polynomials that are used in modelling each formant track. Order 0 means a model which is a constant function; this model needs only one parameter. Order 1 means a model that is a straight line function; this order needs two parameters. Order 2 means that an additional parabolic function is used in the modelling; order 2 needs therefore 3 parameters. In general an order %p model needs %p+1 parameters.")
+DEFINITION (U"determines the maximum order of the polynomials that are used in modelling each formant track. Order 0 means a "
+	"model which is a constant function; this model needs only one parameter. Order 1 means a model that is a straight line "
+	"function; this order needs two parameters. Order 2 means that an additional parabolic function is used in the modelling; "
+	"order 2 needs therefore 3 parameters. In general an order %p model needs %p+1 parameters.")
 TAG (U"##Use bandwidths to model formant tracks")
-DEFINITION (U"Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty for its formant frequency value. Setting this option %%on%, the default setting, means that you force the modelling function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.")
-TAG (U"##Bandwidths for smoothing test")
-DEFINITION (U"determines whether for the roughness determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the roughness of a track.")
+DEFINITION (U"Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, "
+	"vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty "
+	"for its formant frequency value. Setting this option %%on%, the default setting, means that you force the modelling "
+	"function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of "
+	"broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.")
+TAG (U"##Bandwidths for stress test")
+DEFINITION (U"determines whether for the stress determination the formant frequencies are still needed. Not using them anymore "
+	"probably gives a better indication of the stress of a track.")
 MAN_END
 
 #define PowerCepstrum_manual_pitchRange \
 	U"determine the limits of the quefrency range where a peak is searched for. The lower quefrency is determined as " \
 	"1 / %%pitchCeiling% and this value is in general more critical than " \
-	"the value of the upper quefrency which equals 1 / %%pitchFloor%. A %%pitchCeiling% of 300 Hz will correspond to a lower quefrency of 1/300\\~~0.0033 seconds."
+	"the value of the upper quefrency which equals 1 / %%pitchFloor%. A %%pitchCeiling% of 300 Hz will correspond to a " \
+	"lower quefrency of 1/300\\~~0.0033 seconds."
 	
 #define PowerCepstrum_manual_trendRange \
 	U"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. " \
@@ -198,7 +224,8 @@ MAN_END
 
 #define PowerCepstrum_manual_fitMethod \
 	U"defines how the line that models the cepstrum backgroud is calculated. The default method is " \
-	"@@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares line fit can also be chosen."
+	"@@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares " \
+	"line fit can also be chosen."
 
 #define PowerCepstrum_manual_quefrencyAveragingWindow \
 	U"determines how many quefrency bins will be used for the averaging across quefrency step. The number of " \
@@ -219,7 +246,8 @@ MAN_END
 	"The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. "
 	
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
+INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. "
+	"Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
@@ -307,8 +335,8 @@ DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)")
 DEFINITION (PowerCepstrum_manual_quefrencyAveragingWindow)
 ENTRY (U"Note")
-NORMAL (U"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
-	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
+NORMAL (U"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, "
+	"where they use a 20 ms (10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
 CODE (U"selectObject (\"Sound xxx\")")
 CODE (U"To PowerCepstrogram: 60.0, 0.041, 0.002, 5000.0")
 CODE (U"Smooth: 0.02, 0.001")
@@ -324,7 +352,8 @@ MAN_BEGIN (U"PowerCepstrum", U"djmw", 20200403)
 INTRO (U"One of the @@types of objects@ in Praat.")
 ENTRY (U"Description")
 NORMAL (U"A PowerCepstrum is the power spectrum of the log power spectrum. When drawn the vertical scale "
-	"will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds. It is calculated from the ##Spectrum# by a method described at @@Spectrum: To PowerCepstrum@.")
+	"will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds. "
+	"It is calculated from the ##Spectrum# by a method described at @@Spectrum: To PowerCepstrum@.")
 MAN_END
 
 MAN_BEGIN (U"PowerCepstrum: Get peak prominence...", U"djmw", 20190912)
@@ -846,7 +875,8 @@ ENTRY (U"Details")
 NORMAL (U"The values %P__%j_ in each frame of the MelSpectrogram will be constructed by "
 	"applying the inverse Discrete Cosine Transform to the corresponding frame of the MFCC object:")
 FORMULA (U"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
-NORMAL (U"where %N represents the number of filters that were used to get the MFCC object, %j runs from 1 to %N, and coefficients %c__%k_ with %k less than "
+NORMAL (U"where %N represents the number of filters that were used to get the MFCC object, %j runs from 1 to %N, "
+	"and coefficients %c__%k_ with %k less than "
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
 
@@ -857,7 +887,8 @@ TAG (U"##Pitch floor (Hz)")
 DEFINITION (U"determines the effective length of the analysis window as three periods of this pitch, "
 	"e.g. if the pitch floor is 60 Hz, the analysis window will be 3/60 = 0.05 seconds long.")
 TAG (U"##Time step (s)")
-DEFINITION (U"defines the distance between the centres of subsequent frames. This determines the number of frames in the resulting PowerCepstrogram.")
+DEFINITION (U"defines the distance between the centres of subsequent frames. This determines the number of frames "
+	"in the resulting PowerCepstrogram.")
 TAG (U"##Maximum frequency (Hz)")
 DEFINITION (U"the maximum frequency subject to analysis.")
 TAG (U"##Pre-emphasis from (Hz)")
@@ -987,22 +1018,26 @@ NORMAL (U"The new spectrum %X\\'p(%f) is then transformed to a Sound %x(%t) by m
 MAN_END
 
 MAN_BEGIN (U"VocalTractTier", U"djmw", 20120423)
-INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%%time%, %%VocalTract%) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
+INTRO (U"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%%time%, %%VocalTract%) "
+	"points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
 MAN_BEGIN (U"theil regression", U"djmw", 20190909)
 NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. The slope of the regression line is estimated as "
 	"the median of all pairwise slopes between each pair of points in the data set. Because this number of pairs increases quadratically "
-	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, in two equal sets "
-	"of size %N/2 and then calculate %N/2 slopes as ")
+	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% "
+	"theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, "
+	"in two equal sets of size %N/2 and then calculate %N/2 slopes as ")
 FORMULA (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
 NORMAL (U"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (U"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
-NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3\\%  of the input data-points without degradation of its accuracy")
+NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to "
+	"29.3\\%  of the input data-points without degradation of its accuracy")
 MAN_END
 
 MAN_BEGIN (U"Ammar et al. (2001)", U"djmw", 20200416)
-NORMAL (U"G.S. Ammar, D. Calvetti, W.B. Gragg, L. Reichel (2001): \"Polynomial zero finders based on Szegö polynomials\", %%Journal of Computational and Applied Mathematics% #127: 1\\-–16.")
+NORMAL (U"G.S. Ammar, D. Calvetti, W.B. Gragg, L. Reichel (2001): \"Polynomial zero finders based on Szegö polynomials\", "
+	"%%Journal of Computational and Applied Mathematics% #127: 1\\-–16.")
 MAN_END
 
 MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)
@@ -1012,7 +1047,8 @@ NORMAL (U"N. Anderson (1978): \"On the calculation of filter coefficients for "
 MAN_END
 
 MAN_BEGIN (U"Fleisher et al. (2015)", U"djmw", 20191008)
-NORMAL (U"M. Fleisher, S. Pinkert, W. Mattheus, A. Mainka & D. Mürbe (2015): \"Formant frequencies and bandwidths of the vocal transfer function are affected by the mechanical impedance of the vocal tract wall.\", %%Biomech Model Mechanobiol% #14: 719\\--733.")
+NORMAL (U"M. Fleisher, S. Pinkert, W. Mattheus, A. Mainka & D. Mürbe (2015): \"Formant frequencies and bandwidths of the vocal "
+	"transfer function are affected by the mechanical impedance of the vocal tract wall.\", %%Biomech Model Mechanobiol% #14: 719\\--733.")
 MAN_END
 
 MAN_BEGIN (U"Hawks & Miller (1995)", U"djmw", 20191008)
@@ -1021,11 +1057,13 @@ NORMAL (U"J. Hawks &  J. Miller (1995): \"A formant bandwidth estimation procedu
 MAN_END
 
 MAN_BEGIN (U"Hillenbrand et al. (1994)", U"djmw", 20121017)
-NORMAL (U"J. Hillenbrand, R.A. Cleveland & R.L. Erickson (1994): \"Acoustic correlates of breathy vocal quality\", %%Journal of speech and hearing research% #37: 769\\--778.")
+NORMAL (U"J. Hillenbrand, R.A. Cleveland & R.L. Erickson (1994): \"Acoustic correlates of breathy vocal quality\", "
+	"%%Journal of speech and hearing research% #37: 769\\--778.")
 MAN_END
 
 MAN_BEGIN (U"Hillenbrand & Houde (1996)", U"djmw", 20121203)
-NORMAL (U"J. Hillenbrand & R.A. Houde (1996): \"Acoustic correlates of breathy vocal quality: Dysphonic voices and continuous speech\", %%Journal of speech and hearing research% #39: 311\\--321.")
+NORMAL (U"J. Hillenbrand & R.A. Houde (1996): \"Acoustic correlates of breathy vocal quality: Dysphonic voices and continuous "
+	"speech\", %%Journal of speech and hearing research% #39: 311\\--321.")
 
 MAN_END
 
@@ -1060,7 +1098,8 @@ NORMAL (U"H. Wakita (1977): \"Normalization of vowels by vocal-tract "
 MAN_END
 
 MAN_BEGIN (U"Weenink (2015)", U"djmw", 20200514)
-NORMAL (U"D. Weenink (2015): \"Improved formant frequency measurements of short segments\", %%Proceedings of the 18th International Congress of Phonetic Sciences%, Brighton. ")
+NORMAL (U"D. Weenink (2015): \"Improved formant frequency measurements of short segments\", "
+	"%%Proceedings of the 18th International Congress of Phonetic Sciences%, Brighton. ")
 MAN_END
 
 }
