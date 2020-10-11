@@ -404,7 +404,7 @@ static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Candidate modelling settings", U"Candidate modelling settings...")		
-		SENTENCE (parameters_string, U"Coefficients per track", my default_modeler_numberOfParametersPerTrack ())
+		SENTENCE (parameters_string, U"Coefficients by track", my default_modeler_numberOfParametersPerTrack ())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
 		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
@@ -446,7 +446,7 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 		LABEL (U"Global stress parameters:")
 		POSITIVE (windowLength, U"Window length", U"0.035")
-		SENTENCE (parameters_string, U"Coefficients per track", U"3 3 3 3")
+		SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
 		POSITIVE (powerf, U"Power", U"1.25")
 	EDITOR_OK
 	EDITOR_DO
