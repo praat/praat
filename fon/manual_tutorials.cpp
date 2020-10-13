@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201005)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201013)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.27# (13 October 2020)")
+LIST_ITEM (U"• Demo window: make sure that the contents of the window become visible "
+	"more often without calling demoShow() or demoWaitForInput().")
 NORMAL (U"##6.1.26# (5 October 2020)")
 LIST_ITEM (U"• Windows: removed a bug that caused Praat to crash if you clicked in the Sound window, "
 	"then dragged the mouse out of that window, then released the mouse button, and then clicked in the Sound window again.")
