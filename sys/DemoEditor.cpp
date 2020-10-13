@@ -215,7 +215,8 @@ void Demo_timer (double duration) {
 }
 
 void Demo_waitForInput (Interpreter interpreter) {
-	if (! theReferenceToTheOnlyDemoEditor) return;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
