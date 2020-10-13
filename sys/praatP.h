@@ -111,9 +111,6 @@ void praat_picture_prefsChanged ();
    Picture window will update the font menu.
 */
 GuiMenu praat_picture_resolveMenu (conststring32 menu);
-void praat_picture_background ();
-void praat_picture_foreground ();
-
 
 /* The following routines are a bit private (used by praat_script.cpp). */
 /* If you must call them, follow them by praat_show (). */
