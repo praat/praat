@@ -117,7 +117,7 @@ integer FormantModelerList_getBestModelIndex (FormantModelerList me, integer fro
 	integer best = 0;
 	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
 		FormantModeler fm = my formantModelers.at [imodel];
-		double w = FormantModeler_getRoughnessValue (fm, fromTrack, toTrack, 0, my varianceExponent);
+		double w = FormantModeler_getStress (fm, fromTrack, toTrack, 0, my varianceExponent);
 		if (w < wmin) {
 			wmin = w;
 			best = imodel;
@@ -128,28 +128,28 @@ integer FormantModelerList_getBestModelIndex (FormantModelerList me, integer fro
 
 autoINTVEC FormantModelerList_getBest3 (FormantModelerList me) {
 	/*
-		3 The smoothest F1 score
-		2 The smoothest F1 & F2 score
-		1 the smoothest F1 & F2 & F3 score
+		3 The least stress F1 score
+		2 The least (summed) stress F1 & F2 score
+		1 the least (summed) stress F1 & F2 & F3 score
 	*/
 	autoINTVEC best = newINTVECraw (3);
-	double roughnessF1, roughnessF1F2, roughnessF1F2F3;
-	roughnessF1 = roughnessF1F2 = roughnessF1F2F3 = std::numeric_limits<double>::max();
+	double stressF1, stressF1F2, stressF1F2F3;
+	stressF1 = stressF1F2 = stressF1F2F3 = std::numeric_limits<double>::max();
 	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {
 		FormantModeler fm = my formantModelers.at [imodel];
-		double roughness = FormantModeler_getRoughnessValue (fm, 1, 1, 0, my varianceExponent);
-		if (roughness < roughnessF1) {
-			roughnessF1 = roughness;
+		double stress = FormantModeler_getStress (fm, 1, 1, 0, my varianceExponent);
+		if (stress < stressF1) {
+			stressF1 = stress;
 			best [3] = imodel;
 		}
-		roughness = FormantModeler_getRoughnessValue (fm, 1, 2, 0, my varianceExponent);
-		if (roughness < roughnessF1F2) {
-			roughnessF1F2 = roughness;
+		stress = FormantModeler_getStress (fm, 1, 2, 0, my varianceExponent);
+		if (stress < stressF1F2) {
+			stressF1F2 = stress;
 			best [2]  = imodel;
 		}
-		roughness = FormantModeler_getRoughnessValue (fm, 1, 3, 0, my varianceExponent);
-		if (roughness < roughnessF1F2F3) {
-			roughnessF1F2F3 = roughness;
+		stress = FormantModeler_getStress (fm, 1, 3, 0, my varianceExponent);
+		if (stress < stressF1F2F3) {
+			stressF1F2F3 = stress;
 			best [1]  = imodel;
 		}
 	}
@@ -267,7 +267,7 @@ void FormantModelerList_drawInMatrixGrid (FormantModelerList me, Graphics g, int
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 		Graphics_text (g, fm -> xmax - 0.05 * (fm -> xmax - fm -> xmin),
 			fmax - 0.05 * fmax, fm -> name.get());
-		double w = FormantModeler_getRoughnessValue (fm, fromFormant, toFormant, 0, my varianceExponent);
+		double w = FormantModeler_getStress (fm, fromFormant, toFormant, 0, my varianceExponent);
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 		Graphics_text (g, fm -> xmin + 0.05 * (fm -> xmax - fm -> xmin),
 			fmax - 0.05 * fmax, Melder_fixed (w, 2));

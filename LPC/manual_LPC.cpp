@@ -88,7 +88,7 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20201007)
+MAN_BEGIN (U"FormantPath", U"djmw", 20201013)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
 NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred "
@@ -96,7 +96,7 @@ NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that 
 	"For example, consider a collection with nine Formant objects. "
 	"These formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
 	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
-	"Suppose that the formant ceilings were chosen as 4000.0, 4229.5, 4471.1, 4728.7, 5000.0, 5233.2, 5477.2, 5732.7, and 6000.0 Hz, respectively. "
+	"Suppose that the formant ceilings were chosen as 4093.7, 4303.5, 4524.2, 4756.1, 5000.0, 5256.4, 5525.9, 5809.2, and 6107.0 Hz, respectively. "
 	"In this way, the collection functions as a set of alternative analyses. "
 	"The middle one in this set with a ceiling of 5000 Hz corresponds to the result of a \"standard\" analysis for a male voice. ")
 NORMAL (U"You can create a FormantPath with @@Sound: To FormantPath (burg)...@. The FormantPath example above could have been created from a Sound by:")
@@ -104,67 +104,51 @@ CODE (U"To FormantPath (burg): 0.005, 5.0, 5000.0, 0.025, 50.0, 0.05, 4")
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20200523)
-MAN_END
-
-MAN_BEGIN (U"Sound & TextGrid: To FormantPath (burg)...", U"djmw", 20200528)
-INTRO (U"A command that creates a @@FormantPath@ object from one selected @@Sound@ and one selected @@TextGrid@. "
-	"It performs a number of short-term spectral analyses with different parameter settings.")
+MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20201013)
+INTRO (U"A command that creates a @@FormantPath@ object from each selected @@Sound@ . ")
 ENTRY (U"##Settings")
 NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Window length (s)# and ##Pre-emphasis from (Hz)# "
-	"are exacly as you would use them in the @@Sound: To Formant (burg)...@ method. "
+	"are exacly as you would set them in the @@Sound: To Formant (burg)...@ method. "
 	"Therefore you can use 0.005 seconds, 5.0 formants, 0.025 seconds, and 50.0 Hz, respectively.")
-NORMAL (U"For ##Middle formant ceiling (Hz)#, you can use 5500.0 Hz for an average female voice and 5000.0 Hz for an average male voice, "
-	"in the same way as you would do for the ##Formant ceiling (Hz)# setting in @@Sound: To Formant (burg)...@. "
-	"Instead of performing only one analysis, as in @@Sound: To Formant (burg)...@, we perform multiple analyses, "
+NORMAL (U"For ##Middle formant ceiling (Hz)#, you should use 5500.0 Hz for the average female voice and 5000.0 Hz for the average "
+	"male voice, in the same way as you would do for the ##Formant ceiling (Hz)# setting in ##To Formant (burg)...#. "
+	"Instead of performing only one analysis, as in ##To Formant (burg)...#, we perform multiple analyses, "
 	"each one with a different value for its ceiling. "
 	"Each analysis result, which is of type @@Formant@, is stored in the ##FormantPath# object. "
 	"Therefore, after the analyses are done, the FormantPath object contains a collection of ##Formant# objects.")
-TAG (U"##Ceiling step size (Hz)#")
-DEFINITION (U"defines the increase / decrease in the formant ceiling betweeen two successive analyses.")
+TAG (U"##Ceiling step size#")
+DEFINITION (U"defines the increase / decrease in the formant ceiling betweeen two successive analyses as exp(\\+-%ceilingStepSize).")
 TAG (U"##Number of steps up / down")
-DEFINITION (U"determines the number of different ceiling frequencies starting from the %%middle formant ceiling% "
-	"and each time adding one ceiling step size. Suppose we have a %%middle formant ceiling% of 5500 Hz, your choice for "
-	"the %%ceiling step size% was 250 Hz and you chose for %%number of steps% the default 4. "
-	"Then the first analysis will be performed with the %%maximum formant frequency% set at the default ceiling of 5500 Hz. "
-	"The next analysis wil be performed with a ceiling of 5500 + 250 = 5750 Hz, the next with a ceiling of 5750 + 250 = 6000 Hz. "
-	"The third one with a ceiling of 6000 + 250 = 6250 Hz and the fourth one with 6250+250 = 6500 Hz as a ceiling. "
-	"Now we step down from the default ceiling. The first down wil have a ceiling of 5500 - 250 = 5250 Hz, "
-	"the next one will have 5250 - 250 = 5000, the next one  5000 - 250 = 4750 and the last one will 4750 - 250 = 4500 Hz as a ceiling. "
-	"We end up with a collection of 2 * 4 + 1 = 9 different Formants. "
-	"This results in nine times performing the @@Sound: To Formant (burg)...@ command with ##Formant ceiling (Hz)# values of "
-	"4500, 4750, 5000, 5250, 5500, 5750, 6000, 6250 and 6500 Hz, respectively. "
-	"The 5500 was the %%middle formant ceiling%, the 4 steps up ended with a %%maximum ceiling% of 6500 Hz while the 4 steps "
-	"down ended with a %%minimum ceiling% of 4500 Hz.")
+DEFINITION (U"determines the number steps we go up or down with respect to the %%middle formant ceiling%."
+	"The ceiling frequency for the %ith step down is %middleCeiling\\.cexp (-%i\\.c%ceilingStepSize) and for the i-th step up "
+	"is %middleCeiling\\.cexp (-%i\\.c%ceilingStepSize).")
 MAN_END
 
 MAN_BEGIN (U"FormantPathEditor", U"djmw", 20201004)
 INTRO (U"One of the @@Editors@ in Praat, for editing a @@FormantPath@ object.")
-NORMAL (U"To create a ##FormantPathEditor# you first need to select a @@FormantPath@, then you choose ##View & Edit# and "
-	"the editor will appear.")
+NORMAL (U"You can optionally include a @Sound and a @TextGrid in this editor, by selecting both the Sound and the FormantPath together, or the Sound and the TextGrid and the FormantPath together before clicking ##View & Edit#.")
 NORMAL (U"With the FormantPathEditor you can, for each interval that you select, "
-	"replace its formant frequencies and bandwidths by the corresponding data "
+	"replace its formant frequencies and bandwidths by the corresponding values "
 	"from one of the alternative Formant objects in the FormantPath's collection.")
 ENTRY (U"Editor layout")
 NORMAL (U"The left part of the editor is similar to the layout of the @@SoundEditor@.")
 NORMAL (U"The right part is called the %%selection viewer%. "
-	"Here you see alternative formant frequency analyses of a sound %%interval% laid out in a grid. "
-	"This interval corresponds to a visible selection in the Sound, or to the whole visible sound window if there is no selection.")
-NORMAL (U"The selection viewer shows not only a formant's frequency but also its bandwidth, as a vertical line. "
-	"Well defined formants have small bandwidths and therefore show short vertical lines.")
+	"Here you see alternative formant frequency analyses of the selected part of the sound laid out in a grid "
+	"(or of the whole visible sound window if there is no selection).")
+NORMAL (U"The selection viewer shows not only a formant's frequency but also its bandwidth as a vertical line. "
+	"This will give you a better impression of the analysis results because well defined formants have small bandwidths "
+	"and, therefore, show short vertical lines.")
 ENTRY (U"How to operate")
 NORMAL (U"When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default "
-	"analysis. This guarantees that there always is a path at the start. The formant frequencies of the path are displayed "
-	"in red and the formant frequencies of the default are drawn in blue. At the start you will only see the red dots of the "
-	"path because the blue dots are drawn first and then the red dots. If they overlap perfectly no blue dots will be seen.")
-NORMAL (U"Start by selecting an interval. This can be done by dragging the cursor in the sound part on the left. "
-	"In the selection viewer on the right you see the alternative formant analysis results. "
-	"When you click on one of these alternatives, you see two things happening at different positions in the editor window: "
-	"on the right, the box is marked as selected, and on the left, the formant values in the selectiopn (or window) change.")
+	"analysis. This guarantees that there always is a path at the start. The path is indicated by the fat read line in the "
+	"upper part of the spectrogram. "
+	"If you click in one of the rectangles in the selection viewer the values of the formant frequencies (and bandwidths) "
+	"in the selected part on the left are replaced by the values present in the rectangle and the fat red line will indicate "
+	"the new ceiling. The colour of the clicked rectangle on the right will also change.")
 ENTRY (U"Details")
 NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selection viewer "
-	"are explained in @@Weenink (2015)@. Basically this number is a combined roughness score of the individual formant tracks "
-	"within the rectangle. Each track's roughness score quantifies how poorly a track has been modelled. "
+	"are explained in @@Weenink (2015)@. Basically this number is a combined stress score of the individual formant tracks "
+	"within the rectangle. Each track's stress score quantifies how well a track has been modelled. "
 	"The lower this number is, the better the track is modelled by a smooth curve, a polynomial of a certain order. "
 	"The higher the order, the more flexible the curve is and the better it can adapt to the data. "
 	"The higher the order of the polynomial, the more parameters are needed in the model. "

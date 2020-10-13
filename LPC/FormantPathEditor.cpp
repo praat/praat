@@ -490,14 +490,14 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 
 static void menu_cb_FormantColourSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
-		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddcolour ())
-		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evencolour ())
+		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddColour ())
+		WORD (evenPathColour_string, U"Dots in F2, F4", my default_formant_path_evenColour ())
 	EDITOR_OK
-		SET_STRING (oddPathColour_string, my p_formant_path_oddcolour)
-		SET_STRING (evenPathColour_string, my p_formant_path_evencolour)
+		SET_STRING (oddPathColour_string, my p_formant_path_oddColour)
+		SET_STRING (evenPathColour_string, my p_formant_path_evenColour)
 	EDITOR_DO
-		pref_str32cpy2 (my pref_formant_path_oddcolour (), my p_formant_path_oddcolour, oddPathColour_string);
-		pref_str32cpy2 (my pref_formant_path_evencolour (), my p_formant_path_evencolour, evenPathColour_string);
+		pref_str32cpy2 (my pref_formant_path_oddColour (), my p_formant_path_oddColour, oddPathColour_string);
+		pref_str32cpy2 (my pref_formant_path_evenColour (), my p_formant_path_evenColour, evenPathColour_string);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -699,50 +699,15 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	if (startTime != previousStartTime || endTime != previousEndTime)
 		our selectedCandidate = 0;
 	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
+	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
+	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
 	Graphics_setFontSize (our graphics.get(), original_fontSize);
 	previousStartTime = startTime;
 	previousEndTime = endTime;
 }
-
-#if 0
-static void Formant_drawSpeckles_insideOverlap (Formant me, Graphics g, double tmin_view, double tmax_view, double tmin_selection, double tmax_selection, double fmin, double fmax,
-	double suppress_dB)
-{
-	double maximumIntensity = 0.0, minimumIntensity;
-	Function_unidirectionalAutowindow (me, & tmin_view, & tmax_view);
-	double tmin = std::max (tmin_view, tmin_selection);
-	double tmax = std::min (tmax_view, tmax_selection);
-	integer itmin, itmax;
-	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax))
-		return;
-	Graphics_setWindow (g, tmin_view, tmax_view, fmin, fmax);
-
-	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
-		const Formant_Frame frame = & my frames [iframe];
-		if (frame -> intensity > maximumIntensity)
-			maximumIntensity = frame -> intensity;
-	}
-	if (maximumIntensity == 0.0 || suppress_dB <= 0.0)
-		minimumIntensity = 0.0;   // ignore
-	else
-		minimumIntensity = maximumIntensity / pow (10.0, suppress_dB / 10.0);
-
-	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
-		const Formant_Frame frame = & my frames [iframe];
-		const double x = Sampled_indexToX (me, iframe);
-		if (frame -> intensity < minimumIntensity)
-			continue;
-		for (integer iformant = 1; iformant <= frame -> numberOfFormants; iformant ++) {
-			const double frequency = frame -> formant [iformant]. frequency;
-			if (frequency >= fmin && frequency <= fmax)
-				Graphics_speckle (g, x, frequency);
-		}
-	}
-}
-#endif
 
 void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
 	FormantPath formantPath = (FormantPath) my data;
@@ -773,8 +738,10 @@ void structFormantPathEditor :: v_draw_analysis_formants () {
 	if (our p_formant_show) {
 		Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
-		Formant_drawSpeckles_inside (d_formant.get(), our graphics.get(), our startWindow, our endWindow,
-			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange);
+		MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
+		MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
+	
+		Formant_drawSpeckles_inside (d_formant.get(), our graphics.get(), our startWindow, our endWindow, our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange, oddColour, evenColour, true);
 		Graphics_setColour (our graphics.get(), Melder_PINK);
 		FormantPathEditor_drawCeilings (this, our graphics.get(), our startWindow, our endWindow,
 			our p_spectrogram_viewFrom, our p_spectrogram_viewTo);
@@ -943,10 +910,10 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
 		if (my p_formant_default_colour [0] == U'\0')
 			pref_str32cpy2 (my p_formant_default_colour, my pref_formant_default_colour (), my default_formant_default_colour ());
-		if (my p_formant_path_oddcolour [0] == U'\0')
-			pref_str32cpy2 (my p_formant_path_oddcolour, my pref_formant_path_oddcolour (), my default_formant_path_oddcolour ());
-		if (my p_formant_path_evencolour [0] == U'\0')
-			pref_str32cpy2 (my p_formant_path_evencolour, my pref_formant_path_evencolour (), my default_formant_path_evencolour ());
+		if (my p_formant_path_oddColour [0] == U'\0')
+			pref_str32cpy2 (my p_formant_path_oddColour, my pref_formant_path_oddColour (), my default_formant_path_oddColour ());
+		if (my p_formant_path_evenColour [0] == U'\0')
+			pref_str32cpy2 (my p_formant_path_evenColour, my pref_formant_path_evenColour (), my default_formant_path_evenColour ());
 		if (my p_formant_selected_colour [0] == U'\0')
 			pref_str32cpy2 (my p_formant_selected_colour, my pref_formant_selected_colour (), my default_formant_selected_colour ());
 		my selectedTier = 1;

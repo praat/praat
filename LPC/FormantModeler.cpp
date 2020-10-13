@@ -850,19 +850,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 	}
 }
 
-
-double FormantModeler_getRoughnessValue_old (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
-	checkTrackAutoRange (me, & fromTrack, & toTrack);
-	integer numberOfFreeParameters;
-	const double var = FormantModeler_getVarianceOfParameters (me, fromTrack, toTrack, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
-	double degreesOfFreedom;
-	const double chisq = FormantModeler_getChiSquaredQ (me, fromTrack, toTrack, nullptr, & degreesOfFreedom);
-	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
-		power * log10 ((var / numberOfFreeParameters) * (chisq / degreesOfFreedom)) :
-		undefined );
-}
-
-double FormantModeler_getRoughnessValue (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
+double FormantModeler_getStress (FormantModeler me, integer fromTrack, integer toTrack, integer numberOfParametersPerTrack, double power) {
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
 	integer numberOfFreeParameters;
 	const double var = FormantModeler_getVarianceOfParameters (me, fromTrack, toTrack, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
@@ -995,7 +983,7 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 				autoFormantModeler fs = Formant_to_FormantModeler (fi, tmin, tmax, numberOfFormantTracks, numberOfParametersPerTrack);
 				FormantModeler_setParameterValuesToZero (fs.get(), 1, numberOfFormantTracks, numberOfSigmas);
 				const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fs.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-				const double chiVar = FormantModeler_getRoughnessValue (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+				const double chiVar = FormantModeler_getStress (fs.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 				if (isdefined (chiVar) && cf * chiVar < minChiVar) {
 					minChiVar = cf * chiVar;
 					index = iobject;
@@ -1104,7 +1092,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
 			const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-			const double chiVar = FormantModeler_getRoughnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+			const double chiVar = FormantModeler_getStress (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			const double criterium = chiVar * cf;
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
@@ -1170,7 +1158,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			FormantModeler_setParameterValuesToZero (fm.get(), 1, numberOfFormantTracks, numberOfSigmas);
 			formants. addItem_move (formant.move());
 			const double cf = ( useConstraints ? FormantModeler_getFormantsConstraintsFactor (fm.get(), minF1, maxF1, minF2, maxF2, minF3) : 1.0 );
-			const double chiVar = FormantModeler_getRoughnessValue (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
+			const double chiVar = FormantModeler_getStress (fm.get(), 1, numberOfFormantTracks, numberOfParametersPerTrack, power);
 			const double criterium = chiVar * cf;
 			if (isdefined (chiVar) && criterium < mincriterium) {
 				mincriterium = criterium;
