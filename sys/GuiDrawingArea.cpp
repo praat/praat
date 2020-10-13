@@ -530,7 +530,11 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		#if ALLOW_GDK_DRAWING
+			g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		#else
+			g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		#endif
 		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
@@ -607,7 +611,11 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		#if ALLOW_GDK_DRAWING
+			g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		#else
+			g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
+		#endif
 		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
