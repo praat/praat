@@ -104,8 +104,8 @@ Thing_define (Graphics, Thing) {
 	kGraphics_font font;
 	double fontSize;
 	int fontStyle;
-	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
-	int dollarSignIsCode, atSignIsLink;
+	bool percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
+	bool dollarSignIsCode, atSignIsLink;
 	bool recording, duringXor;
 	integer irecord, nrecord;
 	double *record;
