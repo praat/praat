@@ -734,7 +734,7 @@ DO
 	NUMBER_ONE_END (U" (= degrees of freedom of F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getRoughnessValue, U"FormantModeler: Get roughness value", nullptr) {
+FORM (REAL_FormantModeler_getStress, U"FormantModeler: Get stress", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
 	INTEGER (toFormant, U"right Formant range", U"0")
 	INTEGER (order, U"Order of polynomials", U"3")
@@ -742,7 +742,7 @@ FORM (REAL_FormantModeler_getRoughnessValue, U"FormantModeler: Get roughness val
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getRoughnessValue (me, fromFormant, toFormant, order, power);
+		double result = FormantModeler_getStress (me, fromFormant, toFormant, order, power);
 	NUMBER_ONE_END (U" (= roughness)")
 }
 
@@ -1167,7 +1167,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classFormantModeler, 0, U"Get coefficient of determination...", 0, 1, REAL_FormantModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classFormantModeler, 0, U"Report chi squared", 0, 1, INFO_FormantModeler_reportChiSquared);
 		praat_addAction1 (classFormantModeler, 0, U"Get degrees of freedom...", 0, 1, REAL_FormantModeler_getDegreesOfFreedom);
-		praat_addAction1 (classFormantModeler, 0, U"Get roughness value...", 0, 1, REAL_FormantModeler_getRoughnessValue);
+		praat_addAction1 (classFormantModeler, 0, U"Get stress...", 0, 1, REAL_FormantModeler_getStress);
 		praat_addAction1 (classFormantModeler, 0, U"Get average distance between tracks...", 0, 1, REAL_FormantModeler_getAverageDistanceBetweenTracks);
 		praat_addAction1 (classFormantModeler, 0, U"Get formants constraints factor...", 0, 1, REAL_FormantModeler_getFormantsConstraintsFactor);
 

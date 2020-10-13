@@ -978,7 +978,7 @@ DO
 FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Formant (robust)...") {
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (formantCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
+	REAL (middleCeiling, U"Formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	POSITIVE (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
@@ -987,21 +987,20 @@ FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Fo
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
+		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, middleCeiling, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
 	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
-	REAL (formantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OPTIONMENU_ENUM (kLPC_Analysis, lpcModel, U"LPC model", kLPC_Analysis::DEFAULT)
 	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" formantCeiling * (1.0 +/- ceilingExtensionFraction).")
-	POSITIVE (ceilingExtensionFraction, U"Ceiling extension fraction", U"0.2")
+	LABEL (U" middleFormantCeiling * exp(+/- ceilingStepSize * numberOfStepsToACeiling).")
+	POSITIVE (ceilingStepSize, U"Ceiling step size", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	LABEL (U"For Marple analysis:")
 	POSITIVE (marple_tol1, U"Tolerance 1", U"1e-6")
@@ -1015,27 +1014,27 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 DO
 	CONVERT_EACH (Sound)
 		autoSound multichannel;
-		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
+		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
 			( sourcesAsMultichannel ? & multichannel : nullptr ));
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", nullptr) {
+FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", U"Sound: To FormantPath (burg)...") {
 	REAL (timeStep, U"Time step (s)", U"0.005")
 	POSITIVE (maximumNumberOfFormants, U"Max. number of formants", U"5.0")
 	REAL (middleFormantCeiling, U"Middle formant ceiling (Hz)", U"5500.0 (= adult female)")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	LABEL (U"The maximum and minimum ceilings are determined as:")
-	LABEL (U" formantCeiling * (1.0 +/- ceilingExtensionFraction).")
-	POSITIVE (ceilingExtensionFraction, U"Ceiling extension fraction", U"0.2")
+	LABEL (U" middleCeiling * exp(+/- ceilingStepSize * numberOfStepsToACeiling).")
+	POSITIVE (ceilingStepSize, U"Ceiling step size", U"0.05")
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingExtensionFraction, numberOfStepsToACeiling);
+		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsToACeiling);
 	CONVERT_EACH_END (my name.get())	
 }
 

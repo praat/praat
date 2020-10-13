@@ -159,7 +159,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 	
 	The routine returns log10 (W).
 */
-double FormantModeler_getRoughnessValue (FormantModeler me, integer fromTrack, integer toTrack,
+double FormantModeler_getStress (FormantModeler me, integer fromTrack, integer toTrack,
 	integer numberOfParametersPerTrack, double power);
 
 double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type);

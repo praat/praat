@@ -199,27 +199,20 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 }
 
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
-	double middleCeiling, double analysisWidth, double preemphasisFrequency, double ceilingExtensionFraction, 
+	double middleCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepSize, 
 	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
 	integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel) {
 	try {
 		Melder_require (timeStep > 0.0,
 			U"The timeStep needs to greater than zero seconds.");
-		Melder_require (ceilingExtensionFraction > 0.0 && ceilingExtensionFraction < 1.0,
-			U"The ceiling extension fraction should be a number between 0.0 and 1.0");
+		Melder_require (ceilingStepSize > 0.0,
+			U"The ceiling step size should larger than 0.0.");
 		const double nyquistFrequency = 0.5 / my dx;
 		const integer numberOfCeilings = 2 * numberOfStepsToACeiling + 1;
-		const double minimumCeiling = middleCeiling * (1.0 - ceilingExtensionFraction);		
-		Melder_require (minimumCeiling > 0.0,
-			U"Your minimum ceiling is ", minimumCeiling, U" Hz, but it should be positive.\n"
-			"We computed it as your middle ceiling (", middleCeiling, U" Hz) times (1.0 - ", ceilingExtensionFraction, 
-			U") Hz. Decrease the ceiling extension fraction.");
-		const double maximumCeiling = middleCeiling * (1.0 + ceilingExtensionFraction);
-		const double logStepUp = (log (maximumCeiling) - log (middleCeiling)) / numberOfStepsToACeiling;
-		const double logStepDown = (log (middleCeiling) - log (minimumCeiling)) / numberOfStepsToACeiling;
+		const double maximumCeiling = middleCeiling *  exp (ceilingStepSize * numberOfStepsToACeiling);
 		Melder_require (maximumCeiling <= nyquistFrequency,
 			U"The maximum ceiling should be smaller than ", nyquistFrequency, U" Hz. "
-			"Decrease the 'ceiling step' or the 'number of steps' or both.");
+			"Decrease the 'ceiling step size' or the 'number of steps' or both.");
 		volatile double windowDuration = 2.0 * analysisWidth;
 		if (windowDuration > my dx * my nx)
 			windowDuration = my dx * my nx;
@@ -237,17 +230,13 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		if (out_sourcesMultiChannel)
 			multiChannelSound = Sound_create (numberOfCeilings, midCeiling -> xmin, midCeiling -> xmax, midCeiling -> nx, midCeiling -> dx, midCeiling -> x1);
 		const double formantSafetyMargin = 50.0;
-		thy ceilings [1] = minimumCeiling;
 		thy ceilings [numberOfStepsToACeiling + 1] = middleCeiling;
-		thy ceilings [numberOfCeilings] = maximumCeiling;
 		for (integer ic  = 1; ic <= numberOfCeilings; ic ++) {
 			autoFormant formant;
-			if (ic > 1 && ic < numberOfCeilings) {
-				if (ic <= numberOfStepsToACeiling)
-					thy ceilings [ic] = exp (log (minimumCeiling) + (ic - 1) * logStepDown);
-				else if (ic > numberOfStepsToACeiling + 1)
-					thy ceilings [ic] = exp (log (maximumCeiling) - (numberOfCeilings - ic) * logStepUp);
-			}
+			if (ic <= numberOfStepsToACeiling)
+				thy ceilings [ic] = middleCeiling * exp (-ceilingStepSize * (numberOfStepsToACeiling - ic + 1));
+			else if (ic > numberOfStepsToACeiling + 1)
+				thy ceilings [ic] = middleCeiling * exp ( ceilingStepSize * (ic - numberOfStepsToACeiling - 1));
 			autoSound resampled;
 			if (ic != numberOfStepsToACeiling + 1)
 				resampled = Sound_resample (me, 2.0 * thy ceilings [ic], 50);
@@ -360,7 +349,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 				const double startTime = time - 0.5 * windowLength;
 				const double endTime = time + 0.5 * windowLength;
 				autoFormantModeler fm = Formant_to_FormantModeler (formanti, startTime, endTime,  parameters);
-				thy z [iformant] [iframe] = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+				thy z [iformant] [iframe] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 			}
 		}
 		return thee;
@@ -374,7 +363,7 @@ autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, inte
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const Formant formanti = (Formant) my formants . at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
-		stress [iformant] = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+		stress [iformant] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
 	return stress;
 }
@@ -505,7 +494,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 				fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
 		}
 		if (showStress) {
-			const double stress = FormantModeler_getRoughnessValue (fm.get(), fromFormant, toFormant, 0, powerf);
+			const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (stress, 2));
 		}
