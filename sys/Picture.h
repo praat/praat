@@ -46,7 +46,7 @@ Thing_define (Picture, Thing) {
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (Picture, void *, double, double, double, double);
 	void *selectionChangedClosure;
-	bool backgrounding, mouseSelectsInnerViewport;
+	bool mouseSelectsInnerViewport;
 
 	void v_destroy () noexcept
 		override;
@@ -107,9 +107,6 @@ void Picture_setSelection
 		0.0 <= x1NDC < x2NDC <= 1.0;
 		0.0 <= y1NDC < y2NDC <= 1.0;
 */
-
-void Picture_background (Picture me);
-void Picture_foreground (Picture me);
 
 /* End of file Picture.h */
 #endif
