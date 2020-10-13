@@ -170,6 +170,7 @@ void Demo_open () {
 
 void Demo_close () {
 	theCurrentPraatPicture = & theForegroundPraatPicture;
+	Graphics_updateWs (theReferenceToTheOnlyDemoEditor -> graphics.get());
 }
 
 int Demo_windowTitle (conststring32 title) {

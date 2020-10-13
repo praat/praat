@@ -1418,7 +1418,7 @@ DIRECT (HELP_AboutTextStyles) { HELP (U"Text styles") }
 DIRECT (HELP_PhoneticSymbols) { HELP (U"Phonetic symbols") }
 DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_open ();
-	const conststring32 units = theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"";
+	const conststring32 units = ( theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"" );
 	MelderInfo_writeLine (U"Outer viewport left: ", theCurrentPraatPicture -> x1NDC, units);
 	MelderInfo_writeLine (U"Outer viewport right: ", theCurrentPraatPicture -> x2NDC, units);
 	MelderInfo_writeLine (U"Outer viewport top: ",
@@ -1430,7 +1430,8 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 			theCurrentPraatPicture -> y2NDC :
 			12 - theCurrentPraatPicture -> y1NDC, units);
 	MelderInfo_writeLine (U"Font size: ", theCurrentPraatPicture -> fontSize, U" points");
-	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0;
+	double ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
 		integer x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
@@ -1857,24 +1858,6 @@ void praat_picture_prefsChanged () {
 	updateViewportMenu ();
 	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   // so that the thickness of the selection rectangle is correct
 	Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport);
-}
-
-void praat_picture_background () {
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
-	if (! theCurrentPraatApplication -> batch) {
-		#if cocoa
-			Picture_background (praat_picture.get());   // prevent Cocoa's very slow highlighting until woken up by Picture_foreground()
-		#endif
-	}
-}
-
-void praat_picture_foreground () {
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;   // Demo window and pictures ignore this
-	if (! theCurrentPraatApplication -> batch) {
-		#if cocoa
-			Picture_foreground (praat_picture.get());   // wake up from the highlighting sleep caused by Picture_background()
-		#endif
-	}
 }
 
 /* End of file praat_picture.cpp */

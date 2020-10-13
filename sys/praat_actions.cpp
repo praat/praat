@@ -729,7 +729,6 @@ void praat_background () {
 	deleteDynamicMenu ();
 	praat_list_background ();
 	Melder_backgrounding = true;
-	if (! praatP.dontUsePictureWindow) praat_picture_background ();
 }
 
 void praat_foreground () {
@@ -738,7 +737,6 @@ void praat_foreground () {
 	Melder_backgrounding = false;
 	praat_list_foreground ();
 	praat_show ();
-	if (! praatP.dontUsePictureWindow) praat_picture_foreground ();
 }
 
 static bool actionIsToBeIncluded (Praat_Command command, bool deprecated, bool includeSaveAPI,

@@ -88,8 +88,6 @@ static void drawMarkers (Picture me)
 }
 
 static void drawSelection (Picture me) {
-	if (my backgrounding)
-		return;
 	const double dy = Melder_clippedRight (2.8 * Graphics_inqFontSize (my graphics.get()) / 72.0,
 			0.4 * (my sely2 - my sely1));
 	const double dx = Melder_clippedRight (1.5 * dy,
@@ -457,8 +455,5 @@ void Picture_setSelection
 			my selx1, my selx2, my sely1, my sely2);
 	}
 }
-
-void Picture_background (Picture me) { my backgrounding = true; }
-void Picture_foreground (Picture me) { my backgrounding = false; }
 
 /* End of file Picture.cpp */

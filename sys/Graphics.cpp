@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2008,2010-2018 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 
 Thing_implement (Graphics, Thing, 0);
 
-enum kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
+kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
 
 void Graphics_prefs () {
 	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, (int) kGraphics_cjkFontStyle::DEFAULT);
@@ -43,18 +43,17 @@ void structGraphics :: v_destroy () noexcept {
 }
 
 static void computeTrafo (Graphics me) {
-	double worldScaleX, worldScaleY, workScaleX, workScaleY;
 	Melder_assert (my d_x2WC != my d_x1WC);
-	worldScaleX = (my d_x2NDC - my d_x1NDC) / (my d_x2WC - my d_x1WC);
+	const double worldScaleX = (my d_x2NDC - my d_x1NDC) / (my d_x2WC - my d_x1WC);
 	Melder_assert (my d_y2WC != my d_y1WC);
-	worldScaleY = (my d_y2NDC - my d_y1NDC) / (my d_y2WC - my d_y1WC);
+	const double worldScaleY = (my d_y2NDC - my d_y1NDC) / (my d_y2WC - my d_y1WC);
 	my deltaX = my d_x1NDC - my d_x1WC * worldScaleX;
 	my deltaY = my d_y1NDC - my d_y1WC * worldScaleY;
 	Melder_assert (my d_x2wNDC != my d_x1wNDC);
-	workScaleX = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC);
+	const double workScaleX = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC);
 	my deltaX = my d_x1DC - (my d_x1wNDC - my deltaX) * workScaleX;
-	my scaleX = worldScaleX * workScaleX;
 	Melder_assert (my d_y2wNDC != my d_y1wNDC);
+	double workScaleY;
 	if (my yIsZeroAtTheTop) {
 		workScaleY = ((int) my d_y1DC - (int) my d_y2DC) / (my d_y2wNDC - my d_y1wNDC);
 		my deltaY = my d_y2DC - (my d_y1wNDC - my deltaY) * workScaleY;
@@ -62,6 +61,7 @@ static void computeTrafo (Graphics me) {
 		workScaleY = ((int) my d_y2DC - (int) my d_y1DC) / (my d_y2wNDC - my d_y1wNDC);
 		my deltaY = my d_y1DC - (my d_y1wNDC - my deltaY) * workScaleY;
 	}
+	my scaleX = worldScaleX * workScaleX;
 	my scaleY = worldScaleY * workScaleY;
 }
 
@@ -98,8 +98,10 @@ void Graphics_init (Graphics me, int resolution) {
 	} else {
 		Melder_fatal (U"Unsupported resolution ", resolution, U" dpi.");
 	}
-	my d_x1DC = my d_x1DCmin = 0;	my d_x2DC = my d_x2DCmax = 32767;
-	my d_y1DC = my d_y1DCmin = 0;	my d_y2DC = my d_y2DCmax = 32767;
+	my d_x1DC = my d_x1DCmin = 0;
+	my d_x2DC = my d_x2DCmax = 32767;
+	my d_y1DC = my d_y1DCmin = 0;
+	my d_y2DC = my d_y2DCmax = 32767;
 	my d_x1WC = my d_x1NDC = my d_x1wNDC = 0.0;
 	my d_x2WC = my d_x2NDC = my d_x2wNDC = 1.0;
 	my d_y1WC = my d_y1NDC = my d_y1wNDC = 0.0;
@@ -113,12 +115,12 @@ void Graphics_init (Graphics me, int resolution) {
 	my fontStyle = Graphics_NORMAL;
 	my record = nullptr;
 	my irecord = my nrecord = 0;
-	my percentSignIsItalic = 1;
-	my numberSignIsBold = 1;
-	my circumflexIsSuperscript = 1;
-	my underscoreIsSubscript = 1;
-	my dollarSignIsCode = 0;
-	my atSignIsLink = 0;
+	my percentSignIsItalic = true;
+	my numberSignIsBold = true;
+	my circumflexIsSuperscript = true;
+	my underscoreIsSubscript = true;
+	my dollarSignIsCode = false;
+	my atSignIsLink = false;
 }
 
 autoGraphics Graphics_create (int resolution) {
@@ -154,12 +156,12 @@ void Graphics_setWsViewport (Graphics me,
 		if (my screen && my printer) {
 			GraphicsScreen mescreen = (GraphicsScreen) me;
 			/*
-			 * Map page coordinates to paper coordinates.
-			 */
-			mescreen -> d_x1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
-			mescreen -> d_x2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
-			mescreen -> d_y1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
-			mescreen -> d_y2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
+				Map page coordinates to paper coordinates.
+			*/
+			mescreen -> d_x1DC -= GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
+			mescreen -> d_x2DC -= GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
+			mescreen -> d_y1DC -= GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
+			mescreen -> d_y2DC -= GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
 		}
 	#endif
 	computeTrafo (me);
@@ -233,23 +235,25 @@ void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC
 }
 
 void Graphics_setInner (Graphics me) {
-	double margin = 2.8 * my fontSize * my resolution / 72.0;
-	double wDC = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC) * (my d_x2NDC - my d_x1NDC);
-	double hDC = integer_abs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
+	const double margin = 2.8 * my fontSize * my resolution / 72.0;
+	const double wDC = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC) * (my d_x2NDC - my d_x1NDC);
+	const double hDC = integer_abs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
 	double dx = 1.5 * margin / wDC;
 	double dy = margin / hDC;
-	my horTick = 0.06 * dx, my vertTick = 0.09 * dy;
+	my horTick = 0.06 * dx;
+	my vertTick = 0.09 * dy;
 	if (dx > 0.4) dx = 0.4;
 	if (dy > 0.4) dy = 0.4;
-	my horTick /= 1 - 2 * dx, my vertTick /= 1 - 2 * dy;
+	my horTick /= 1.0 - 2.0 * dx;
+	my vertTick /= 1.0 - 2.0 * dy;
 	my outerViewport.x1NDC = my d_x1NDC;
 	my outerViewport.x2NDC = my d_x2NDC;
 	my outerViewport.y1NDC = my d_y1NDC;
 	my outerViewport.y2NDC = my d_y2NDC;
-	my d_x1NDC = (1 - dx) * my outerViewport.x1NDC + dx * my outerViewport.x2NDC;
-	my d_x2NDC = (1 - dx) * my outerViewport.x2NDC + dx * my outerViewport.x1NDC;
-	my d_y1NDC = (1 - dy) * my outerViewport.y1NDC + dy * my outerViewport.y2NDC;
-	my d_y2NDC = (1 - dy) * my outerViewport.y2NDC + dy * my outerViewport.y1NDC;
+	my d_x1NDC = (1.0 - dx) * my outerViewport.x1NDC + dx * my outerViewport.x2NDC;
+	my d_x2NDC = (1.0 - dx) * my outerViewport.x2NDC + dx * my outerViewport.x1NDC;
+	my d_y1NDC = (1.0 - dy) * my outerViewport.y1NDC + dy * my outerViewport.y2NDC;
+	my d_y2NDC = (1.0 - dy) * my outerViewport.y2NDC + dy * my outerViewport.y1NDC;
 	trace (U"done ", my d_x1NDC, U" ", my d_x2NDC, U" ", my d_y1NDC, U" ", my d_y2NDC);
 	computeTrafo (me);
 	if (my recording) { op (SET_INNER, 0); }
