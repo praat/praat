@@ -430,19 +430,22 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	double markedBorderThickness = 1.0;
+	integer numberOfCeilingInInterval = 1;
 	integer itmin, itmax;
-	INTVECVU path; 
+	autoBOOLVEC ceilingInInterval = newBOOLVECzero (my formants.size);
 	if (markWithinPath && Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
 		/*
 			If the path in the interval (tmin, tmax) is constant, then we have only one of
-			the candidates chosen in the whole interval and the box around this one will be
-			drawn thicker.
+			the candidates chosen in the whole interval.
 		*/
-		path = my path.part(itmin, itmax); 
-		const integer minimum = NUMmin (path);
-		const integer maximum = NUMmax (path);
-		markedBorderThickness = ( minimum == maximum ? 3.0 : 1.0 );
+		numberOfCeilingInInterval = 0;
+		for (integer iformant = 1; iformant <= my formants.size; iformant ++)
+			for (integer i = itmin; i <= itmax; i ++)
+				if (my path [i] == iformant) {
+					ceilingInInterval [iformant] = true;
+					numberOfCeilingInInterval ++;
+					break;
+				}
 	}
 	
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
@@ -456,30 +459,22 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		autoFormantModeler fm = Formant_to_FormantModeler (formant, tmin, tmax, parameters);
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+		if (garnish && markWithinPath && false) { // until transdarancy works
+			if (ceilingInInterval [iformant]) {
+				MelderColour colour = Graphics_inqColour (g);
+				MelderColour fillColour = Melder_YELLOW;
+				fillColour.transparency = (numberOfCeilingInInterval == 1 ? 0.2 : 0.5 );
+				Graphics_setColour (g, fillColour);
+				Graphics_fillRectangle (g, tmin, tmax, 0.0, fmax);
+				Graphics_setColour (g, colour);
+			}
+		}
 		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, odd, even);
 		if (showEstimatedModels)
 			FormantModeler_drawModel_inside (fm.get(), g, tmin, tmax, fmax, fromFormant, toFormant, odd, even, 1000_integer);
 		if (garnish) {
-			double lineWidth = 2.0;
-			MelderColour colour = Melder_BLACK;
-			if (iformant == iselected) {
-				colour = selected;
-				lineWidth = 3.0;
-			} else if (markWithinPath) {
-				/*
-					If the path in the interval (tmin, tmax) contains this formant, then mark
-					the box with a special colour. The line width depends on whether this formant
-					is the only one in the interval or not.
-				*/
-				for (integer i = itmin; i <= itmax; i ++)
-					if (my path [i] == iformant) {
-						lineWidth = markedBorderThickness;
-						colour = selected;
-						break;
-					}
-			}
-			Graphics_setLineWidth (g, lineWidth);
-			Graphics_setColour (g, colour);
+			Graphics_setLineWidth (g, (markWithinPath && ceilingInInterval [iformant] ? (numberOfCeilingInInterval == 1 ? 3.0 : 1.0) : 1.0));
+			Graphics_setColour (g, (ceilingInInterval [iformant] ? Melder_YELLOW : Melder_BLACK));
 			Graphics_rectangle (g, tmin, tmax, fmin, fmax);
 		}
 		Graphics_setLineType (g, Graphics_DRAWN);

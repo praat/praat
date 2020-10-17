@@ -718,19 +718,28 @@ void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tm
 	Graphics_setColour (g, Melder_RED);
 	Graphics_setLineWidth (g, 3.0);
 	const double dx2 = 0.5 * formantPath -> dx;
-	double tmid1 = Sampled_indexToX (formantPath, itmin);
-	double ceiling1 = formantPath -> ceilings [formantPath -> path [itmin]];
-	for (integer iframe = itmin + 1; iframe <= itmax; iframe ++) {
-		double ceiling2 = formantPath -> ceilings [formantPath -> path [iframe]];
-		if (ceiling2 == ceiling1)
-			continue;
-		double tmid2 = Sampled_indexToX (formantPath, iframe);
-		Graphics_line (g, tmid1 - dx2, ceiling1, tmid2 - dx2, ceiling1);
-		tmid1 = tmid2;
-		ceiling1 = ceiling2;
+	integer iframe = itmin, iframe2 = itmin + 1;
+	double ceiling = formantPath -> ceilings [formantPath -> path [itmin]];
+	while (iframe2 <= itmax) {
+		double ceiling2;
+		while (iframe2 <= itmax) {
+			ceiling2 = formantPath -> ceilings [formantPath -> path [iframe2]];
+			if (ceiling2 != ceiling)
+				break;
+			iframe2 ++;
+		}
+		const double tmid = Sampled_indexToX (formantPath, iframe);
+		const double tmid2 = Sampled_indexToX (formantPath, iframe2 - 1);
+		Graphics_line (g, tmid - dx2, ceiling, tmid2 + dx2, ceiling);
+		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
+		Graphics_text (g, 0.5 * (tmid + tmid2), ceiling + 50.0, ((integer) ceiling));
+		ceiling = ceiling2;
+		iframe = iframe2;
 	}
-	double tmid2 = Sampled_indexToX (formantPath, itmax);
-	Graphics_line (g, tmid1 - dx2, ceiling1, tmid2 + dx2, ceiling1);
+	if (iframe == itmax) {
+		const double tmid = Sampled_indexToX (formantPath, iframe);
+		Graphics_line (g, tmid - dx2, ceiling, tmid + dx2, ceiling);
+	}
 	Graphics_setLineWidth (g, 1.0);
 }
 
