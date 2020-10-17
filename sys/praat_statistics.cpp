@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 	#include <pwd.h>
 #endif
 #include "praatP.h"
+#include "GraphicsP.h"
 
 static struct {
 	integer batchSessions, interactiveSessions;
@@ -201,6 +202,44 @@ void praat_reportGraphicalProperties () {
 	#elif defined (_WIN32)
 		/*for (int i = 0; i <= 88; i ++)
 			MelderInfo_writeLine (U"System metric ", i, U": ", GetSystemMetrics (i));*/
+	#endif
+	MelderInfo_close ();
+}
+
+#if cairo
+static void testFont (PangoFontMap *pangoFontMap, PangoContext *pangoContext, conststring32 fontName) {
+		PangoFontDescription *pangoFontDescription = pango_font_description_from_string (Melder_peek32to8 (fontName));
+		PangoFont *pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, pangoFontDescription);
+		PangoFontDescription *pangoFontDescription2 = pango_font_describe (pangoFont);
+		const char *familyName = pango_font_description_get_family (pangoFontDescription2);
+		MelderInfo_writeLine (U"Asking for font ", fontName, U" gives ", Melder_peek8to32 (familyName), U".");
+}
+#endif
+void praat_reportFontProperties () {
+	MelderInfo_open ();
+	MelderInfo_writeLine (U"Font replacement on this computer:\n");
+	#if cairo
+		PangoFontMap *pangoFontMap = pango_cairo_font_map_get_default ();
+		PangoContext *pangoContext = pango_font_map_create_context (pangoFontMap);
+		conststring32 fontNames [] = { U"Times", U"Roman", U"Serif",
+			U"Helvetica", U"Arial", U"Sans",
+			U"Courier", U"Courier New", U"Mono", U"Monospace",
+			U"Palatino", U"Palladio",
+			U"Doulos", U"Doulos SIL", U"Charis", U"Charis SIL",
+			U"Symbol", U"Dingbats",
+			nullptr
+		};
+		for (conststring32 *fontName = & fontNames [0]; !! *fontName; fontName ++)
+			testFont (pangoFontMap, pangoContext, *fontName);
+		g_object_unref (pangoContext);
+
+		MelderInfo_writeLine (U"\nAll fonts on this computer:\n");
+		PangoFontFamily **families;
+		int numberOfFamilies;
+		pango_font_map_list_families (pangoFontMap, & families, & numberOfFamilies);
+		for (int i = 0; i < numberOfFamilies; i ++)
+			MelderInfo_writeLine (i, U" ", Melder_peek8to32 (pango_font_family_get_name (families [i])));
+		g_free (families);
 	#endif
 	MelderInfo_close ();
 }
