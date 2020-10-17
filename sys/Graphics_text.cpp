@@ -1589,17 +1589,22 @@ double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) 
 #if quartz
 	bool _GraphicsMac_tryToInitializeFonts () {
 		static bool inited = false;
-		if (inited) return true;
+		if (inited)
+			return true;
 		NSArray *fontNames = [[NSFontManager sharedFontManager] availableFontFamilies];
 		hasTimes = [fontNames containsObject: @"Times"];
-		if (! hasTimes) hasTimes = [fontNames containsObject: @"Times New Roman"];
+		if (! hasTimes)
+			hasTimes = [fontNames containsObject: @"Times New Roman"];
 		hasHelvetica = [fontNames containsObject: @"Helvetica"];
-		if (! hasHelvetica) hasHelvetica = [fontNames containsObject: @"Arial"];
+		if (! hasHelvetica)
+			hasHelvetica = [fontNames containsObject: @"Arial"];
 		hasCourier = [fontNames containsObject: @"Courier"];
-		if (! hasCourier) hasCourier = [fontNames containsObject: @"Courier New"];
+		if (! hasCourier)
+			hasCourier = [fontNames containsObject: @"Courier New"];
 		hasSymbol = [fontNames containsObject: @"Symbol"];
 		hasPalatino = [fontNames containsObject: @"Palatino"];
-		if (! hasPalatino) hasPalatino = [fontNames containsObject: @"Book Antiqua"];
+		if (! hasPalatino)
+			hasPalatino = [fontNames containsObject: @"Book Antiqua"];
 		hasDoulos = [fontNames containsObject: @"Doulos SIL"];
 		hasCharis = [fontNames containsObject: @"Charis SIL"];
 		hasIpaSerif = hasDoulos || hasCharis;
@@ -1610,16 +1615,15 @@ double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) 
 
 #if cairo
 	static const char *testFont (const char *fontName) {
-		PangoFontDescription *pangoFontDescription, *pangoFontDescription2;
-		PangoFont *pangoFont;
-		pangoFontDescription = pango_font_description_from_string (fontName);
-		pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, pangoFontDescription);
-		pangoFontDescription2 = pango_font_describe (pangoFont);
+		PangoFontDescription *pangoFontDescription = pango_font_description_from_string (fontName);
+		PangoFont *pangoFont = pango_font_map_load_font (thePangoFontMap, thePangoContext, pangoFontDescription);
+		PangoFontDescription *pangoFontDescription2 = pango_font_describe (pangoFont);
 		return pango_font_description_get_family (pangoFontDescription2);
 	}
 	bool _GraphicsLin_tryToInitializeFonts () {
 		static bool inited = false;
-		if (inited) return true;
+		if (inited)
+			return true;
 		thePangoFontMap = pango_cairo_font_map_get_default ();
 		thePangoContext = pango_font_map_create_context (thePangoFontMap);
 		#if 0   /* For debugging: list all fonts. */

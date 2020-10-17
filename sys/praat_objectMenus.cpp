@@ -23,7 +23,6 @@
 #include "DataEditor.h"
 #include "site.h"
 #include "GraphicsP.h"
-//#include <string>
 
 #undef iam
 #define iam iam_LOOP
@@ -405,6 +404,10 @@ DIRECT (INFO_reportTextProperties) {
 	praat_reportTextProperties ();
 END }
 
+DIRECT (INFO_reportFontProperties) {
+	praat_reportFontProperties ();
+END }
+
 /********** Callbacks of the Open menu. **********/
 
 static void readFromFile (MelderFile file) {
@@ -691,9 +694,10 @@ void praat_addMenus (GuiWindow window) {
 	technicalMenu = menuItem ? menuItem -> d_menu : nullptr;
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", nullptr, 0, INFO_reportMemoryUse);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", nullptr, 0, INFO_reportIntegerProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0, INFO_reportTextProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties", nullptr, 0, INFO_reportSystemProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", nullptr, 0, INFO_reportGraphicalProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0, INFO_reportTextProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report font properties", nullptr, 0, INFO_reportFontProperties);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0, PRAAT_debug);
 	praat_addMenuCommand (U"Objects", U"Technical", U"-- api --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, INFO_listReadableTypesOfObjects);
