@@ -158,6 +158,7 @@ void praat_reportSystemProperties ();
 void praat_reportGraphicalProperties ();
 void praat_reportIntegerProperties ();
 void praat_reportTextProperties ();
+void praat_reportFontProperties ();
 
 /* Communication with praat_objectMenus.cpp: */
 GuiMenu praat_objects_resolveMenu (conststring32 menu);
