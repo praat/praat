@@ -473,20 +473,18 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 	{
 		const integer n = my trajectory -> points.size;
 		const double savedArrowSize = Graphics_inqArrowSize (g), arrowSize = 1.0;
-		const double size = 10.0 * arrowSize * Graphics_getResolution (g) / 75.0 / my width;
-		const double sizeSquared = size * size;
+		double resolution = Graphics_getResolution (g);
 		Graphics_setArrowSize (g, arrowSize);
-		integer it = 1;
+		integer it = 0;
 		const TrajectoryPoint lastPoint = my trajectory -> points.at [n];
 		TrajectoryPoint point;
-		while (it <= n - 1) {
+		while (++ it <= (n - 1)) {
 			point = my trajectory -> points.at [n - it];
-			const double dx = getx (lastPoint -> f2) - getx (point -> f2);
-			const double dy = gety (lastPoint -> f1) - gety (point -> f1);
+			const double dx = resolution * (getx (lastPoint -> f2) - getx (point -> f2));
+			const double dy = resolution * (gety (lastPoint -> f1) - gety (point -> f1));
 			const double d2 = dx * dx + dy * dy;
-			if (d2 > sizeSquared)
+			if (sqrt (d2) > arrowSize)
 				break;
-			it ++;
 		}
 		Graphics_arrow (g, getx (point -> f2), gety (point -> f1), getx (lastPoint -> f2), gety (lastPoint -> f1));
 		Graphics_setArrowSize (g, savedArrowSize);
@@ -1211,7 +1209,7 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structVowelEditor :: v_createChildren ()
 {
-	const int button_width = 90, text_width = 95, status_info_width = 330;
+	const int button_width = 90, text_width = 95, status_info_width = 400;
 	int top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
 	// Three buttons on a row: Play, Reverse, Publish
@@ -1365,10 +1363,10 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 	/*
 		This exdents because it's a hack:
 	*/
-	struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
+	/*struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
 	event. width  = GuiControl_getWidth  (my drawingArea);
 	event. height = GuiControl_getHeight (my drawingArea);
-	gui_drawingarea_cb_resize (me.get(), & event);
+	gui_drawingarea_cb_resize (me.get(), & event);*/
 }
 		updateWidgets (me.get());
 		trace (U"exit");
