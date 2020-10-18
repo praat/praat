@@ -13898,8 +13898,8 @@ L90:
 
 double dlamch_(const char *cmach)
 {
-	/* Table of constant values */
-	static double c_b32 = 0.;
+	/* Table of constant values 
+	static double c_b32 = 0.;*/
 
     /* Initialized data */
     static bool first = true;

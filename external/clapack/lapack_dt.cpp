@@ -2189,7 +2189,7 @@ int dtfttp_(const char *transr, const char *uplo, integer *n, double *arf, doubl
     integer i__1, i__2, i__3;
 
     /* Local variables */
-    integer i__, j, k, n1, n2, ij, jp, js, nt, lda, ijp;
+    integer i__, j, k, n1, n2, ij, jp, js, lda, ijp;
     bool normaltransr, lower, nisodd;
 
 
@@ -2373,7 +2373,7 @@ int dtfttp_(const char *transr, const char *uplo, integer *n, double *arf, doubl
 
 /*     Size of array ARF(0:NT-1) */
 
-    nt = *n * (*n + 1) / 2;
+   // nt = *n * (*n + 1) / 2;
 
 /*     Set N1 and N2 depending on LOWER */
 
@@ -10518,7 +10518,7 @@ int dtpttf_(const char *transr, const char *uplo, integer *n, double *ap, double
     integer i__1, i__2, i__3;
 
     /* Local variables */
-    integer i__, j, k, n1, n2, ij, jp, js, nt, lda, ijp;
+    integer i__, j, k, n1, n2, ij, jp, js, lda, ijp;
     bool normaltransr, lower, nisodd;
 
 
@@ -10703,7 +10703,7 @@ int dtpttf_(const char *transr, const char *uplo, integer *n, double *ap, double
 
 /*     Size of array ARF(0:NT-1) */
 
-    nt = *n * (*n + 1) / 2;
+   // nt = *n * (*n + 1) / 2;
 
 /*     Set N1 and N2 depending on LOWER */
 

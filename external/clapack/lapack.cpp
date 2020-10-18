@@ -21166,10 +21166,10 @@ L10:
     integer nbmin;
     bool sname;
     char subnam[1];
-    integer name_len, opts_len;
+    integer name_len;//, opts_len;
 
     name_len = strlen (name__);
-    opts_len = strlen (opts);
+   // opts_len = strlen (opts);
 
 /*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
