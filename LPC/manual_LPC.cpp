@@ -237,7 +237,7 @@ MAN_END
 MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
 ENTRY (U"Settings")
 TAG (U"##Subtract trend before smoothing#")
-DEFINITION (U"defines whether the smoothing should be performed om the Cepstrogram after all trend of each  PowerCepstrum has been removed. ")
+DEFINITION (U"defines whether the smoothing should be performed on the Cepstrogram after all trend of each PowerCepstrum has been removed. ")
 TAG (U"##Time averaging window (s)#")
 DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)#")

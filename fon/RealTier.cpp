@@ -299,7 +299,7 @@ void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor
 }
 
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	int garnish, conststring32 method, conststring32 quantity)
+	bool garnish, conststring32 method, conststring32 quantity)
 {
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	const bool drawLines = str32str (method, U"lines") || str32str (method, U"Lines");

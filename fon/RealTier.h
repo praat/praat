@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tm
 
 void RealTier_addPoint (RealTier me, double t, double value);
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish, conststring32 method, conststring32 quantity);
+	double ymin, double ymax, bool garnish, conststring32 method, conststring32 quantity);
 autoTableOfReal RealTier_downto_TableOfReal (RealTier me, conststring32 timeLabel, conststring32 valueLabel);
 
 void RealTier_interpolateQuadratically (RealTier me, integer numberOfPointsPerParabola, int logarithmically);

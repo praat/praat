@@ -450,7 +450,7 @@ Excitation Excitation_create (double df, integer nf);
 		result -> z [1] [1..nt] == 0.0;
 double Excitation_getDistance (Excitation me, Excitation thee);
 
-void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
+void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish);
 
 Matrix Excitation_to_Matrix (Excitation me);
 	Function:

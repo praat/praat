@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ autoDurationTier DurationTier_create (double tmin, double tmax) {
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, conststring32 method, int garnish)
+	double ymin, double ymax, conststring32 method, bool garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Relative duration");
 }
@@ -50,9 +50,8 @@ void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 autoDurationTier PointProcess_upto_DurationTier (PointProcess me) {
 	try {
 		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
-		for (integer i = 1; i <= my nt; i ++) {
+		for (integer i = 1; i <= my nt; i ++)
 			RealTier_addPoint (thee.get(), my t [i], 1.0);
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to DurationTier.");
