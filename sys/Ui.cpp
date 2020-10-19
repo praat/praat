@@ -666,11 +666,12 @@ UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName
 	return thee;
 }
 
-UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue, integer numberOfLines) {
 	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
+	thy numberOfLines = Melder_clipped (1_integer, numberOfLines, 33_integer);
 	return thee;
 }
 
@@ -679,6 +680,7 @@ UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableN
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
 	thy variableName = variableName;
+	thy numberOfLines = 1;
 	return thee;
 }
 
@@ -687,6 +689,7 @@ UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableN
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
+	thy numberOfLines = 1;
 	return thee;
 }
 
@@ -755,8 +758,23 @@ static void appendColon () {
 	MelderString_appendCharacter (& theFinishBuffer, U':');
 }
 
+static int multiLineTextHeight (integer numberOfLines) {
+	if (numberOfLines <= 1)
+		return Gui_TEXTFIELD_HEIGHT;
+	#if defined (macintosh)
+		return numberOfLines * (Gui_TEXTFIELD_HEIGHT - 9) + 21;   // 15 is the minimum, but 21 gives some feedback about what is outside (2020-10-19)
+	#elif defined (_WIN32)
+		return numberOfLines * (Gui_TEXTFIELD_HEIGHT - 4) + 21;   // 21 is the mininum (2020-10-19)
+	#elif defined (linux)
+		return numberOfLines * (Gui_TEXTFIELD_HEIGHT - 8) + 15;   // 13 is the minimum, but if there is no horizontal scrollbar, there is a line more (2020-10-19)
+	#else
+		return numberOfLines * Gui_TEXTFIELD_HEIGHT;
+	#endif
+}
+
 void UiForm_finish (UiForm me) {
-	if (! my d_dialogParent && ! my isPauseForm) return;
+	if (! my d_dialogParent && ! my isPauseForm)
+		return;
 
 	int size = my numberOfFields;
 	int dialogHeight = 0, x = Gui_LEFT_DIALOG_SPACING, y;
@@ -765,6 +783,7 @@ void UiForm_finish (UiForm me) {
 	int labelWidth = fieldX - Gui_LABEL_SPACING - x, fieldWidth = labelWidth, halfFieldWidth = fieldWidth / 2 - 6;
 
 	GuiForm form;
+	bool okButtonIsDefault = true;
 
 	/*
 		Compute height. Cannot leave this to the default geometry management system.
@@ -791,7 +810,9 @@ void UiForm_finish (UiForm me) {
 				#else
 					- 10 :
 				#endif
+			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
 			textFieldHeight;
+		okButtonIsDefault &= ( thy numberOfLines <= 1 );   // because otherwise, the Enter key would be ambiguous
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
 	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name.get(), gui_dialog_cb_close, me, 0);
@@ -799,9 +820,9 @@ void UiForm_finish (UiForm me) {
 	form = my d_dialogForm;
 
 	for (integer ifield = 1; ifield <= size; ifield ++) {
-		UiField field = my field [ifield].get();
-		y = field -> y;
-		switch (field -> type)
+		UiField thee = my field [ifield].get();
+		y = thy y;
+		switch (thy type)
 		{
 			case _kUiField_type::REAL_:
 			case _kUiField_type::REAL_OR_UNDEFINED_:
@@ -817,22 +838,22 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 3;
 				#endif
-				if (str32nequ (field -> name.get(), U"left ", 5)) {
-					MelderString_copy (& theFinishBuffer, field -> formLabel.get() + 5);
+				if (str32nequ (thy name.get(), U"left ", 5)) {
+					MelderString_copy (& theFinishBuffer, thy formLabel.get() + 5);
 					appendColon ();
-					field -> label = GuiLabel_createShown (form, 0, x + labelWidth, ylabel, ylabel + textFieldHeight,
+					thy label = GuiLabel_createShown (form, 0, x + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
-					field -> text = GuiText_createShown (form, fieldX, fieldX + halfFieldWidth, y, y + Gui_TEXTFIELD_HEIGHT, 0);
-				} else if (str32nequ (field -> name.get(), U"right ", 6)) {
-					field -> text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
+					thy text = GuiText_createShown (form, fieldX, fieldX + halfFieldWidth, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+				} else if (str32nequ (thy name.get(), U"right ", 6)) {
+					thy text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
 						y, y + Gui_TEXTFIELD_HEIGHT, 0);
 				} else {
-					MelderString_copy (& theFinishBuffer, field -> formLabel.get());
+					MelderString_copy (& theFinishBuffer, thy formLabel.get());
 					appendColon ();
-					field -> label = GuiLabel_createShown (form, 0, x + labelWidth,
+					thy label = GuiLabel_createShown (form, 0, x + labelWidth,
 						ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
-					field -> text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
+					thy text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
 						y, y + Gui_TEXTFIELD_HEIGHT, 0);
 				}
 			}
@@ -841,14 +862,14 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::NUMVEC_:
 			case _kUiField_type::NUMMAT_:
 			{
-				field -> text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					y, y + Gui_TEXTFIELD_HEIGHT, 0);
+				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, y + multiLineTextHeight (thy numberOfLines), thy numberOfLines > 1 ? GuiText_SCROLLED : 0);
 			}
 			break;
 			case _kUiField_type::LABEL_:
 			{
-				MelderString_copy (& theFinishBuffer, field -> stringValue.get());
-				field -> label = GuiLabel_createShown (form,
+				MelderString_copy (& theFinishBuffer, thy stringValue.get());
+				thy label = GuiLabel_createShown (form,
 					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
 			}
@@ -859,13 +880,13 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 1;
 				#endif
-				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
 				appendColon ();
-				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
+				thy label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				GuiRadioGroup_begin ();
-				for (integer ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
-					UiOption button = field -> options.at [ibutton];
+				for (integer ibutton = 1; ibutton <= thy options.size; ibutton ++) {
+					UiOption button = thy options.at [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name.get());
 					button -> radioButton = GuiRadioButton_createShown (form,
 						fieldX, dialogWidth /* allow to extend into the margin */,
@@ -882,24 +903,24 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 2;
 				#endif
-				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
 				appendColon ();
-				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
+				thy label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
-				field -> optionMenu = GuiOptionMenu_createShown (form, fieldX, fieldX + fieldWidth, y, y + Gui_OPTIONMENU_HEIGHT, 0);
-				for (integer ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
-					UiOption button = field -> options.at [ibutton];
+				thy optionMenu = GuiOptionMenu_createShown (form, fieldX, fieldX + fieldWidth, y, y + Gui_OPTIONMENU_HEIGHT, 0);
+				for (integer ibutton = 1; ibutton <= thy options.size; ibutton ++) {
+					UiOption button = thy options.at [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name.get());
-					GuiOptionMenu_addOption (field -> optionMenu, theFinishBuffer.string);
+					GuiOptionMenu_addOption (thy optionMenu, theFinishBuffer.string);
 				}
 			}
 			break;
 			case _kUiField_type::BOOLEAN_:
 			{
-				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
 				/*field -> label = GuiLabel_createShown (form, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT); */
-				field -> checkButton = GuiCheckButton_createShown (form,
+				thy checkButton = GuiCheckButton_createShown (form,
 					fieldX, dialogWidth /* allow to extend into the margin */, y, y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, nullptr, nullptr, 0);
 			}
@@ -907,15 +928,15 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::LIST_:
 			{
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
-				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
 				appendColon ();
-				field -> label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
+				thy label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
-				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
-				for (integer i = 1; i <= field -> strings.size; i ++) {
-					GuiList_insertItem (field -> list, field -> strings [i], 0);
+				thy list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
+				for (integer i = 1; i <= thy strings.size; i ++) {
+					GuiList_insertItem (thy list, thy strings [i], 0);
 				}
-				GuiThing_show (field -> list);
+				GuiThing_show (thy list);
 			}
 			break;
 		}
@@ -958,12 +979,17 @@ void UiForm_finish (UiForm me) {
 		}
 		int room = dialogWidth - Gui_RIGHT_DIALOG_SPACING - x;
 		int roomPerContinueButton = room / my numberOfContinueButtons;
-		int horizontalSpacing = my numberOfContinueButtons > 7 ? Gui_HORIZONTAL_DIALOG_SPACING - 2 * (my numberOfContinueButtons - 7) : Gui_HORIZONTAL_DIALOG_SPACING;
+		int horizontalSpacing = (
+			my numberOfContinueButtons > 7 ?
+				Gui_HORIZONTAL_DIALOG_SPACING - 2 * (my numberOfContinueButtons - 7)
+			:
+				Gui_HORIZONTAL_DIALOG_SPACING
+		);
 		int continueButtonWidth = roomPerContinueButton - horizontalSpacing;
 		for (int i = 1; i <= my numberOfContinueButtons; i ++) {
 			x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - roomPerContinueButton * (my numberOfContinueButtons - i + 1) + horizontalSpacing;
 			my continueButtons [i] = GuiButton_createShown (form, x, x + continueButtonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
-				my continueTexts [i], gui_button_cb_ok, me, i == my defaultContinueButton ? GuiButton_DEFAULT : 0);
+				my continueTexts [i], gui_button_cb_ok, me, i == my defaultContinueButton && okButtonIsDefault ? GuiButton_DEFAULT : 0);
 		}
 	} else {
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
@@ -977,7 +1003,7 @@ void UiForm_finish (UiForm me) {
 		}
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
 		my okButton = GuiButton_createShown (form, x, x + Gui_OK_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
-			my isPauseForm ? U"Continue" : U"OK", gui_button_cb_ok, me, GuiButton_DEFAULT);
+			my isPauseForm ? U"Continue" : U"OK", gui_button_cb_ok, me, okButtonIsDefault ? GuiButton_DEFAULT : 0);
 	}
 	/*GuiObject_show (separator);*/
 }

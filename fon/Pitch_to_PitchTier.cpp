@@ -22,13 +22,12 @@ autoPitchTier Pitch_to_PitchTier (Pitch me) {
 	try {
 		autoPitchTier you = PitchTier_create (my xmin, my xmax);
 		for (integer i = 1; i <= my nx; i ++) {
-			double frequency = my frames [i]. candidates [1]. frequency;
-
+			const double frequency = my frames [i]. candidates [1]. frequency;
 			/*
 				Count only voiced frames.
 			*/
 			if (Pitch_util_frequencyIsVoiced (frequency, my ceiling)) {
-				double time = Sampled_indexToX (me, i);
+				const double time = Sampled_indexToX (me, i);
 				RealTier_addPoint (you.get(), time, frequency);
 			}
 		}
@@ -38,80 +37,80 @@ autoPitchTier Pitch_to_PitchTier (Pitch me) {
 	}
 }
 
-static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double tmax, double fright,
+static void Pitch_line (Pitch me, Graphics graphics, double tmin, double fleft, double tmax, double fright,
 	int nonPeriodicLineType)
 {
 	/*
 		f = fleft + (t - tmin) * (fright - fleft) / (tmax - tmin);
 	*/
-	int lineType = Graphics_inqLineType (g);
-	double lineWidth = Graphics_inqLineWidth (g);
-	double slope = (fright - fleft) / (tmax - tmin);
-	integer imin = Sampled_xToNearestIndex (me, tmin);
-	if (imin < 1) imin = 1;
-	integer imax = Sampled_xToNearestIndex (me, tmax);
-	if (imax > my nx) imax = my nx;
+	const int lineType = Graphics_inqLineType (graphics);
+	const double lineWidth = Graphics_inqLineWidth (graphics);
+	const double slope = (fright - fleft) / (tmax - tmin);
+	const integer imin = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (me, tmin));
+	const integer imax = Melder_clippedRight (Sampled_xToNearestIndex (me, tmax), my nx);
 	for (integer i = imin; i <= imax; i ++) {
-		double tleft, tright;
 		if (! Pitch_isVoiced_i (me, i)) {
-			if (nonPeriodicLineType == 2) continue;
-			Graphics_setLineType (g, Graphics_DOTTED);
-			Graphics_setLineWidth (g, 0.67 * lineWidth);
+			if (nonPeriodicLineType == 2)
+				continue;
+			Graphics_setLineType (graphics, Graphics_DOTTED);
+			Graphics_setLineWidth (graphics, 0.67 * lineWidth);
 		} else if (nonPeriodicLineType != 2) {
-			Graphics_setLineWidth (g, 2 * lineWidth);
+			Graphics_setLineWidth (graphics, 2 * lineWidth);
 		}
-		tleft = Sampled_indexToX (me, i) - 0.5 * my dx, tright = tleft + my dx;
-		if (tleft < tmin) tleft = tmin;
-		if (tright > tmax) tright = tmax;
-		Graphics_line (g, tleft, fleft + (tleft - tmin) * slope,
-			tright, fleft + (tright - tmin) * slope);
-		Graphics_setLineType (g, lineType);
-		Graphics_setLineWidth (g, lineWidth);
+		double tleft = Sampled_indexToX (me, i) - 0.5 * my dx;
+		double tright = tleft + my dx;
+		Melder_clipLeft (tmin, & tleft);   // has to be ordered after the previous line!
+		Melder_clipRight (& tright, tmax);
+		Graphics_line (graphics,
+			tleft, fleft + (tleft - tmin) * slope,
+			tright, fleft + (tright - tmin) * slope
+		);
+		Graphics_setLineType (graphics, lineType);
+		Graphics_setLineWidth (graphics, lineWidth);
 	}
 }
 
-void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
+void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics graphics,
 	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, bool garnish, conststring32 method)
 {
-	integer n = my points.size, imin, imax, i;
 	if (nonPeriodicLineType == 0) {
-		PitchTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method);
+		PitchTier_draw (me, graphics, tmin, tmax, fmin, fmax, garnish, method);
 		return;
 	}
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
-	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	Graphics_setInner (g);
-	imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
-	imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
-	if (n == 0) {
+	Graphics_setWindow (graphics, tmin, tmax, fmin, fmax);
+	Graphics_setInner (graphics);
+	const integer imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	const integer imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
+	if (my points.size == 0) {
 	} else if (imax < imin) {
-		double fleft = RealTier_getValueAtTime (me, tmin);
-		double fright = RealTier_getValueAtTime (me, tmax);
-		Pitch_line (uv, g, tmin, fleft, tmax, fright, nonPeriodicLineType);
-	} else for (i = imin; i <= imax; i ++) {
-		RealPoint point = my points.at [i];
-		double t = point -> number, f = point -> value;
-		Graphics_speckle (g, t, f);
+		const double fleft = RealTier_getValueAtTime (me, tmin);
+		const double fright = RealTier_getValueAtTime (me, tmax);
+		Pitch_line (uv, graphics, tmin, fleft, tmax, fright, nonPeriodicLineType);
+	} else for (integer i = imin; i <= imax; i ++) {
+		const RealPoint point = my points.at [i];
+		const double time = point -> number, frequency = point -> value;
+		Graphics_speckle (graphics, time, frequency);
 		if (i == 1)
-			Pitch_line (uv, g, tmin, f, t, f, nonPeriodicLineType);
+			Pitch_line (uv, graphics, tmin, frequency, time, frequency, nonPeriodicLineType);
 		else if (i == imin)
-			Pitch_line (uv, g, t, f, tmin, RealTier_getValueAtTime (me, tmin), nonPeriodicLineType);
-		if (i == n)
-			Pitch_line (uv, g, t, f, tmax, f, nonPeriodicLineType);
+			Pitch_line (uv, graphics, time, frequency, tmin, RealTier_getValueAtTime (me, tmin), nonPeriodicLineType);
+		if (i == my points.size)
+			Pitch_line (uv, graphics, time, frequency, tmax, frequency, nonPeriodicLineType);
 		else if (i == imax)
-			Pitch_line (uv, g, t, f, tmax, RealTier_getValueAtTime (me, tmax), nonPeriodicLineType);
+			Pitch_line (uv, graphics, time, frequency, tmax, RealTier_getValueAtTime (me, tmax), nonPeriodicLineType);
 		else {
 			RealPoint pointRight = my points.at [i + 1];
-			Pitch_line (uv, g, t, f, pointRight -> number, pointRight -> value, nonPeriodicLineType);
+			Pitch_line (uv, graphics, time, frequency, pointRight -> number, pointRight -> value, nonPeriodicLineType);
 		}
 	}
-	Graphics_unsetInner (g);
+	Graphics_unsetInner (graphics);
 	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, true, U"Time (s)");
-		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_marksLeft (g, 2, true, true, false);
-		Graphics_textLeft (g, true, U"Frequency (Hz)");
+		Graphics_drawInnerBox (graphics);
+		Graphics_textBottom (graphics, true, U"Time (s)");
+		Graphics_marksBottom (graphics, 2, true, true, false);
+		Graphics_marksLeft (graphics, 2, true, true, false);
+		Graphics_textLeft (graphics, true, U"Frequency (Hz)");
 	}
 }
 
@@ -122,10 +121,10 @@ autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 		autoPitch you = Data_copy (me);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Pitch_Frame frame = & your frames [iframe];
-			const Pitch_Candidate cand = & frame -> candidates [1];
-			if (Pitch_util_frequencyIsVoiced (cand -> frequency, my ceiling))
-				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
-			cand -> strength = 0.9;
+			const Pitch_Candidate candidate = & frame -> candidates [1];
+			if (Pitch_util_frequencyIsVoiced (candidate -> frequency, my ceiling))
+				candidate -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
+			candidate -> strength = 0.9;
 			frame -> candidates. resize (frame -> nCandidates = 1);
 		}
 		return you;
