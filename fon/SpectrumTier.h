@@ -2,7 +2,7 @@
 #define _SpectrumTier_h_
 /* SpectrumTier.h
  *
- * Copyright (C) 2007-2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2007,2010-2012,2014-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ autoSpectrumTier SpectrumTier_create (double fmin, double fmax);
 */
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, conststring32 method);
+	double pmin, double pmax, bool garnish, conststring32 method);
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 

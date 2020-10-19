@@ -158,7 +158,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	Graphics_function (g, yWC, ifmin, ifmax, Matrix_columnToX (me, ifmin), Matrix_columnToX (me, ifmax));
 }
 
-void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
+void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish) {
 	Graphics_setInner (g);
 	Spectrum_drawInside (me, g, fmin, fmax, minimum, maximum);
 	Graphics_unsetInner (g);
@@ -171,7 +171,7 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 	}
 }
 
-void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish) {
+void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish) {
 	bool autoscaling = ( minimum >= maximum );
 	if (fmax <= fmin) {
 		fmin = my xmin;

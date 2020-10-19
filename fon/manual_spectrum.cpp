@@ -1,6 +1,6 @@
 /* manual_spectrum.cpp
  *
- * Copyright (C) 1992-2008,2010,2012,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2017,2019,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "Sound.h"
 
-static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, int garnish) {
+static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, bool garnish) {
 	try {
 		double fmin = garnish == 1 ? 300 : 0, fmax = garnish == 1 ? 1300 : 4000, df = garnish == 1 ? 1 : 4;
 		autoSound me = Sound_create (1, fmin, fmax, (long) floor ((fmax - fmin) / df) + 1, df, fmin);
