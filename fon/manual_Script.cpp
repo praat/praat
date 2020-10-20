@@ -3349,7 +3349,7 @@ CODE (U"time = stopwatch")
 CODE (U"writeInfoLine: a, \" \", fixed\\$  (time, 3)")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20190827)
+MAN_BEGIN (U"Scripting 6.6. Controlling the user", U"ppgb", 20201020)
 INTRO (U"You can temporarily halt a Praat script:")
 TAG (U"#pauseScript: %message")
 DEFINITION (U"suspends execution of the script, and allows the user to interrupt it. "
@@ -3372,7 +3372,8 @@ CODE (U"for i to 5")
 		CODE2 (U"#positive: \"Sampling frequency (Hz)\", \"44100.0 (= CD quality)\"")
 		CODE2 (U"#word: \"hi\", \"hhh\"")
 		CODE2 (U"#sentence: \"lo\", \"two words\"")
-		CODE2 (U"#text: \"ko\", \"jkgkjhkj g gdfg dfg\"")
+		CODE2 (U"#text: \"shortText\", \"some one-line text here\"")
+		CODE2 (U"#text: \"longText\", \"some scrollable text here, within a height of 7 lines\", 7")
 		CODE2 (U"#boolean: \"You like it?\", 1")
 		CODE2 (U"if worth < 6")
 			CODE3 (U"#choice: \"Compression\", compression")
@@ -3389,6 +3390,8 @@ CODE (U"for i to 5")
 	CODE1 (U"appendInfoLine: number_of_people, \" \", worth, \" \", sampling_frequency, \" \", clicked")
 	CODE1 (U"appendInfoLine: \"Compression: \", compression, \" (\", compression\\$ , \")\"")
 	CODE1 (U"appendInfoLine: \"Number of channels: \", number_of_channels\\$ ")
+	CODE1 (U"appendInfoLine: \"Short text: \", shortText\\$ ")
+	CODE1 (U"appendInfoLine: \"Long text: \", longText\\$ ")
 CODE (U"endfor")
 NORMAL (U"This example uses several tricks. A useful one is seen with %number_of_channels: "
 	"this is at the same time the value that is passed to #optionMenu (and therefore determines the setting of "
