@@ -141,6 +141,16 @@ void structRealTierEditor :: v_play (double startTime, double endTime) {
 		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
 }
 
+void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, conststring32 title, RealTier data, Sound sound, bool ownSound) {
+	Melder_assert (data);
+	Melder_assert (Thing_isa (data, classRealTier));
+	TimeSoundEditor_init (me, title, data, sound, ownSound);
+	my realTierArea = realTierArea.move();
+	RealTierEditor_updateScaling (me);
+	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
+}
+
+
 void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, conststring32 title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
