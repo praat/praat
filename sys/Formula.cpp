@@ -6040,19 +6040,22 @@ static void do_pauseFormAddText () {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw (U"The function \"text\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->number == 2) {
-		Stackel defaultValue = pop;
-		Melder_require (defaultValue->which == Stackel_STRING,
-			U"The second argument of \"text\" (the default value) should be a string, not ", defaultValue->whichText(), U".");
-		Stackel label = pop;
-		if (label->which == Stackel_STRING) {
-			UiPause_text (label->getString(), defaultValue->getString());
-		} else {
-			Melder_throw (U"The first argument of \"text\" (the label) should be a string, not ", label->whichText(), U".");
-		}
-	} else {
-		Melder_throw (U"The function \"text\" requires 2 arguments (a label and a default value), not ", n->number, U".");
+	Melder_require (n->number >= 2 && n->number <= 3,
+		U"The function \"text\" requires 2 or 3 arguments (a label, a default value, and an optional number of lines), not ", n->number, U".");
+	integer numberOfLines = 1;
+	if (n->number == 3) {
+		Stackel _numberOfLines = pop;
+		Melder_require (_numberOfLines->which == Stackel_NUMBER,
+			U"The third argument of \"text\" (the number of lines) should be a number, not ", _numberOfLines->whichText(), U".");
+		numberOfLines = Melder_iround (_numberOfLines->number);
 	}
+	Stackel defaultValue = pop;
+	Melder_require (defaultValue->which == Stackel_STRING,
+		U"The second argument of \"text\" (the default value) should be a string, not ", defaultValue->whichText(), U".");
+	Stackel label = pop;
+	Melder_require (label->which == Stackel_STRING,
+		U"The first argument of \"text\" (the label) should be a string, not ", label->whichText(), U".");
+	UiPause_text (label->getString(), defaultValue->getString(), numberOfLines);
 	pushNumber (1);
 }
 static void do_pauseFormAddBoolean () {

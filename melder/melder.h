@@ -64,7 +64,7 @@
 /*
  * Operating system version control.
  */
-#define ALLOW_GDK_DRAWING  (gtk && 0)   /* change to (gtk && 0) if you want to try out GTK 3 */
+#define ALLOW_GDK_DRAWING  (gtk && 1)   /* change to (gtk && 0) if you want to try out GTK 3 */
 /* */
 
 #include "melder_tensor.h"   // VEC, autoMAT, Melder_VEC

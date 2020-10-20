@@ -1,6 +1,6 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2019 Paul Boersma
+ * Copyright (C) 2009-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,10 +80,10 @@ void UiPause_sentence (conststring32 label, conststring32 defaultValue) {
 		Melder_throw (U"The function \"sentence\" should be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addSentence (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
 }
-void UiPause_text (conststring32 label, conststring32 defaultValue) {
+void UiPause_text (conststring32 label, conststring32 defaultValue, integer numberOfLines) {
 	if (! thePauseForm)
 		Melder_throw (U"The function \"text\" should be between a \"beginPause\" and an \"endPause\".");
-	UiForm_addText (thePauseForm.get(), nullptr, nullptr, label, defaultValue);
+	UiForm_addText (thePauseForm.get(), nullptr, nullptr, label, defaultValue, numberOfLines);
 }
 void UiPause_boolean (conststring32 label, bool defaultValue) {
 	if (! thePauseForm)
