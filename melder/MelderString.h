@@ -27,16 +27,16 @@
 		- automatically convert numbers, objects, file names, vectors, and matrices to strings
 */
 
-typedef struct {
+struct MelderString16 {
 	int64 length = 0;
 	int64 bufferSize = 0;
 	char16 *string = nullptr;   // a growing buffer, rarely shrunk (can only be freed by MelderString16_free)
-} MelderString16;
-typedef struct {
+};
+struct MelderString {
 	int64 length = 0;
 	int64 bufferSize = 0;
 	char32 *string = nullptr;   // a growing buffer, rarely shrunk (can only be freed by MelderString_free)
-} MelderString;
+};
 
 void MelderString16_free (MelderString16 *me);   // frees the buffer (and sets other attributes to zero)
 void MelderString_free (MelderString *me);   // frees the buffer (and sets other attributes to zero)
