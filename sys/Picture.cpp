@@ -134,7 +134,8 @@ static void gui_drawingarea_cb_mouse (Picture me, GuiDrawingArea_MouseEvent even
 		Melder_clipped (1_integer, 1 + (integer) floor (xWC * SQUARES / SIDE), SQUARES),
 		Melder_clipped (1_integer, SQUARES - (integer) floor (yWC * SQUARES / SIDE), SQUARES)
 	};
-	if (event -> isClick ()) {
+	bool didBlockChange = false;   // optimization: don't redraw if we stay in the same block
+	if (event -> isClick()) {
 		constexpr int INVALID_BLOCK_NUMBER = 0;
 		previousBlock = { INVALID_BLOCK_NUMBER, INVALID_BLOCK_NUMBER };
 		if (event -> shiftKeyPressed) {
@@ -146,29 +147,31 @@ static void gui_drawingarea_cb_mouse (Picture me, GuiDrawingArea_MouseEvent even
 		} else {
 			anchorBlock = currentBlock;
 		}
-	} else if (event -> isDrag() || event -> isDrop ()) {
-		if (currentBlock. ix == previousBlock. ix && currentBlock. iy == previousBlock. iy)
-			return;   // optimization: don't redraw if we stay in the same block
+		didBlockChange = true;
+	} else if (event -> isDrag() || event -> isDrop()) {
+		didBlockChange = ( currentBlock. ix != previousBlock. ix || currentBlock. iy != previousBlock. iy );
 	}
-	previousBlock = currentBlock;
-	const auto ix12 = std::minmax (currentBlock. ix, anchorBlock. ix);
-	const integer ix1 = ix12. first, ix2 = ix12. second;
-	const auto iy12 = std::minmax (currentBlock. iy, anchorBlock. iy);
-	const integer iy1 = iy12. first, iy2 = iy12. second;
-	double xmargin = 0.0, ymargin = 0.0;
-	if (my mouseSelectsInnerViewport) {
-		const double fontSize = Graphics_inqFontSize (my graphics.get());
-		xmargin = std::min (fontSize * 4.2 / 72.0, double (ix2 - ix1 + 1));
-		ymargin = std::min (fontSize * 2.8 / 72.0, double (iy2 - iy1 + 1));
+	if (didBlockChange) {
+		previousBlock = currentBlock;
+		const auto ix12 = std::minmax (currentBlock. ix, anchorBlock. ix);
+		const integer ix1 = ix12. first, ix2 = ix12. second;
+		const auto iy12 = std::minmax (currentBlock. iy, anchorBlock. iy);
+		const integer iy1 = iy12. first, iy2 = iy12. second;
+		double xmargin = 0.0, ymargin = 0.0;
+		if (my mouseSelectsInnerViewport) {
+			const double fontSize = Graphics_inqFontSize (my graphics.get());
+			xmargin = std::min (fontSize * 4.2 / 72.0, double (ix2 - ix1 + 1));
+			ymargin = std::min (fontSize * 2.8 / 72.0, double (iy2 - iy1 + 1));
+		}
+		Picture_setSelection (me,
+			0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
+			0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin
+		);
+		Graphics_updateWs (my selectionGraphics.get());
 	}
-	Picture_setSelection (me,
-		0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
-		0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin,
-		false
-	);
-	Graphics_updateWs (my selectionGraphics.get());
-	if (my selectionChangedCallback)
-		my selectionChangedCallback (me, my selectionChangedClosure, my selx1, my selx2, my sely1, my sely2);
+	if (event -> isDrop() && my selectionChangedCallback)
+		my selectionChangedCallback (me, my selectionChangedClosure,
+			my selx1, my selx2, my sely1, my sely2);
 }
 
 autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
@@ -440,7 +443,7 @@ void Picture_print (Picture me) {
 }
 
 void Picture_setSelection
-	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, bool notify)
+	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC)
 {
 	if (my drawingArea)
 		Melder_assert (my drawingArea -> d_widget);
@@ -448,12 +451,6 @@ void Picture_setSelection
 	my selx2 = x2NDC;
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
-
-	if (notify && my selectionChangedCallback) {
-		//Melder_casual (U"selectionChangedCallback from Picture_setSelection");
-		my selectionChangedCallback (me, my selectionChangedClosure,
-			my selx1, my selx2, my sely1, my sely2);
-	}
 }
 
 /* End of file Picture.cpp */

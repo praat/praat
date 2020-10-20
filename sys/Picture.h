@@ -101,7 +101,7 @@ void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int
 #endif
 
 void Picture_setSelection
-	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, bool notify);
+	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC);
 /*
 	Preconditions:
 		0.0 <= x1NDC < x2NDC <= 1.0;
