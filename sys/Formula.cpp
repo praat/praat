@@ -6171,7 +6171,7 @@ static void do_endPauseForm () {
 	}
 	Stackel co [1+10] = { 0 };
 	for (integer i = numberOfContinueButtons; i >= 1; i --) {
-		co [i] = cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca;
+		co [i] = ( cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca );
 		if (co[i]->which != Stackel_STRING)
 			Melder_throw (U"Each of the first ", numberOfContinueButtons,
 				U" argument(s) of \"endPause\" should be a string (a button text), not ", co[i]->whichText(), U".");

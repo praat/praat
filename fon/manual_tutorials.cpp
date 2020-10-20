@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201013)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201020)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.28# (20 October 2020)")
+LIST_ITEM (U"• Pause forms: text fields can be multi-line.")
+LIST_ITEM (U"• Removed a bug that caused Praat to crash when editing a PitchTier.")
+LIST_ITEM (U"• Script window: got rid of too many history entries after dragging in the Picture window.")
 NORMAL (U"##6.1.27# (13 October 2020)")
 LIST_ITEM (U"• Demo window: make sure that the contents of the window become visible "
 	"more often without calling demoShow() or demoWaitForInput().")
