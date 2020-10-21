@@ -57,6 +57,10 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
+/*
+	Of the following two, the first is better, because the second could do incomplete initialization.
+*/
+void RealTierEditor_init (RealTierEditor me, autoRealTierArea realTierArea, conststring32 title, RealTier data, Sound sound, bool ownSound);
 void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, conststring32 title, RealTier data, Sound sound, bool ownSound);
 /*
 	`sound` may be null;

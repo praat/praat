@@ -960,7 +960,7 @@ void UiForm_finish (UiForm me) {
 		if (my isPauseForm) {
 			my revertButton = GuiButton_createShown (form,
 				HELP_BUTTON_X, HELP_BUTTON_X + REVERT_BUTTON_WIDTH,
-				y, y + Gui_PUSHBUTTON_HEIGHT, U"Revert", gui_button_cb_revert, me, 0);
+				y, y + Gui_PUSHBUTTON_HEIGHT, U"Undo", gui_button_cb_revert, me, 0);
 		} else {
 			my revertButton = GuiButton_createShown (form,
 				HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING,

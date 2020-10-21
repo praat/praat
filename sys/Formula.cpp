@@ -6164,14 +6164,16 @@ static void do_endPauseForm () {
 	if (ca->which == Stackel_NUMBER) {
 		cancelContinueButton = defaultContinueButton;
 		defaultContinueButton = Melder_iround (ca->number);
-		numberOfContinueButtons --;
-		if (cancelContinueButton < 1 || cancelContinueButton > numberOfContinueButtons)
+		numberOfContinueButtons -= 1;
+		if (cancelContinueButton < 0 || cancelContinueButton > numberOfContinueButtons)
 			Melder_throw (U"Your last argument of \"endPause\" is the number of the cancel button; it cannot be ", cancelContinueButton,
-				U" but should lie between 1 and ", numberOfContinueButtons, U".");
+				U" but should be 0 (no cancel or stop button) or lie between 1 and ", numberOfContinueButtons, U".");
+		if (cancelContinueButton == 0)
+			cancelContinueButton = -1;
 	}
 	Stackel co [1+10] = { 0 };
 	for (integer i = numberOfContinueButtons; i >= 1; i --) {
-		co [i] = cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca;
+		co [i] = ( cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca );
 		if (co[i]->which != Stackel_STRING)
 			Melder_throw (U"Each of the first ", numberOfContinueButtons,
 				U" argument(s) of \"endPause\" should be a string (a button text), not ", co[i]->whichText(), U".");

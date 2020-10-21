@@ -123,7 +123,7 @@ END }
 		autoPraatPicture picture;
 		Graphics_setFontSize (GRAPHICS, praat_size = fontSize);
 	}
-	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC, False);
+	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC);
 	updateSizeMenu ();
 }*/
 
@@ -206,7 +206,7 @@ DO
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
-		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
+		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
@@ -261,7 +261,7 @@ DO
 			std::swap (top, bottom);
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
-		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
+		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom)
