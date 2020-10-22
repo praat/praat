@@ -210,29 +210,42 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 		autoVEC x = newVECraw (nsteps + 1);
 		autoVEC y = newVECraw (nsteps + 1);
 		/*
-			Get principal axes and orientation for the ellipse by performing the
-			eigen decomposition of a symmetric 2-by-2 matrix.
-			Principal axes are a and b with eigenvector/orientation (cs, sn).
+			From the eigenvalues and eigenvectors of the symmetrical sscp matrix we
+			can calculate the length and directions of the principal axes of the ellipse.
 		*/
-		double a, b, cs, sn;
-		NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, & sn);
+		double eval1, eval2, cosine, sine;
+		NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & eval1, & eval2, & cosine, & sine);
 		/*
-			1. Take sqrt to get units of 'std_dev'
+			1. Parametrize as standard ellipse with horizontal radius a and vertical radius b and origin at (0,0) as
+				x = a cos(phi)
+				y = b sin(phi)
 		*/
-		const double axisLength_a = scale * sqrt (a) / 2.0;
-		const double axisLength_b = scale * sqrt (b) / 2.0;
-		x [nsteps + 1] = x [1] = my centroid [1] + cs * axisLength_a;
-		y [nsteps + 1] = y [1] = my centroid [2] + sn * axisLength_a; // axisLength_a is no mistake!
+		const double a = scale * sqrt (eval1) / 2.0;
+		const double b = scale * sqrt (eval2) / 2.0;
 		const double angle_inc = NUM2pi / nsteps;
-		double angle = 0.0;
-		for (integer i = 2; i <= nsteps; i ++, angle += angle_inc) {
-			const double xc = axisLength_a * cos (angle);
-			const double yc = axisLength_b * sin (angle);
-			const double xt = xc * cs - yc * sn;
-			y [i] = my centroid [2] + xc * sn + yc * cs;
-			x [i] = my centroid [1] + xt;
+		for (integer i = 1; i <= nsteps + 1; i ++) {
+			const double phi = (i - 1) * angle_inc;
+			x [i] = a * cos (phi);
+			y [i] = b * sin (phi);
 		}
+		/*
+			2. Rotate x axis to the eigenvector 1 (cosine, sine)
+			|x'|   | cosine -sine |   |x|
+			|  | = |              | * | |
+			|y'|   | sine  cosine |   |y|
+		*/
+		for (integer i = 1; i <= nsteps + 1; i ++) {
+			double xp =  cosine * x [i] -   sine * y [i];			
+			y [i]     =    sine * x [i] + cosine * y[i];
+			x [i] = xp;
+		}
+		/*
+			3. Translate to the centroid
+		*/
+		x.get()  +=  my centroid [1];
+		y.get()  +=  my centroid [2];
 		Graphics_polyline (g, nsteps + 1, & x [1], & y [1]);
+		
 		if (label && fontSize > 0.0) {
 			const double oldFontSize = Graphics_inqFontSize (g);
 			Graphics_setFontSize (g, fontSize);

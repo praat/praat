@@ -421,6 +421,8 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
 	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
+	MelderColour singleSelectionColour = MelderColour (0.984,0.984, 0.7);
+	MelderColour multipleSelectionsColour = MelderColour (0.984,0.984, 0.9);
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
@@ -430,19 +432,22 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	double markedBorderThickness = 1.0;
+	integer numberOfCeilingInInterval = 1;
 	integer itmin, itmax;
-	INTVECVU path; 
+	autoBOOLVEC ceilingInInterval = newBOOLVECzero (my formants.size);
 	if (markWithinPath && Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
 		/*
 			If the path in the interval (tmin, tmax) is constant, then we have only one of
-			the candidates chosen in the whole interval and the box around this one will be
-			drawn thicker.
+			the candidates chosen in the whole interval.
 		*/
-		path = my path.part(itmin, itmax); 
-		const integer minimum = NUMmin (path);
-		const integer maximum = NUMmax (path);
-		markedBorderThickness = ( minimum == maximum ? 3.0 : 1.0 );
+		numberOfCeilingInInterval = 0;
+		for (integer iformant = 1; iformant <= my formants.size; iformant ++)
+			for (integer i = itmin; i <= itmax; i ++)
+				if (my path [i] == iformant) {
+					ceilingInInterval [iformant] = true;
+					numberOfCeilingInInterval ++;
+					break;
+				}
 	}
 	
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
@@ -456,57 +461,42 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		autoFormantModeler fm = Formant_to_FormantModeler (formant, tmin, tmax, parameters);
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+		if (garnish && markWithinPath) {
+			if (ceilingInInterval [iformant]) {
+				MelderColour colour = Graphics_inqColour (g);
+				MelderColour fillColour = (numberOfCeilingInInterval == 1 ? singleSelectionColour : multipleSelectionsColour);
+				Graphics_setColour (g, fillColour);
+				Graphics_fillRectangle (g, tmin, tmax, 0.0, fmax);
+				Graphics_setColour (g, colour);
+			}
+		}
 		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, odd, even);
 		if (showEstimatedModels)
-			FormantModeler_drawModel_inside (fm.get(), g, tmin, tmax, fmax, fromFormant, toFormant, odd, even, 1000_integer);
-		if (garnish) {
-			double lineWidth = 2.0;
-			MelderColour colour = Melder_BLACK;
-			if (iformant == iselected) {
-				colour = selected;
-				lineWidth = 3.0;
-			} else if (markWithinPath) {
-				/*
-					If the path in the interval (tmin, tmax) contains this formant, then mark
-					the box with a special colour. The line width depends on whether this formant
-					is the only one in the interval or not.
-				*/
-				for (integer i = itmin; i <= itmax; i ++)
-					if (my path [i] == iformant) {
-						lineWidth = markedBorderThickness;
-						colour = selected;
-						break;
-					}
-			}
-			Graphics_setLineWidth (g, lineWidth);
-			Graphics_setColour (g, colour);
-			Graphics_rectangle (g, tmin, tmax, fmin, fmax);
-		}
-		Graphics_setLineType (g, Graphics_DRAWN);
+			FormantModeler_drawModel_inside (fm.get(), g, tmin, tmax, fmax, fromFormant, toFormant, odd, even, 100_integer);
 		Graphics_setColour (g, Melder_BLACK);
+		if (garnish)
+			Graphics_rectangle (g, tmin, tmax, fmin, fmax);
+		
+		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_setLineWidth (g, 1.0);
 		/*
-			Mark name & stress
+			Mark ceiling & stress
 		*/
+		autoMelderString info;
+		const double tLeftPos = tmin - 0.01 * (tmax - tmin), tRightPos = tmax + 0.01 * (tmax - tmin);
 		if (garnish) {
-			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
-			Graphics_text (g, tmax - 0.05 * (tmax - tmin),
-				fmax - 0.05 * fmax, Melder_fixed (my ceilings [iformant], 0));
-		}
-		if (showStress) {
-			const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
-			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
-			Graphics_text (g, tmin + 0.05 * (tmax - tmin), fmax - 0.05 * fmax, Melder_fixed (stress, 2));
+			if (showStress) {
+				const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
+				MelderString_append (& info, U"Fit=", Melder_fixed (stress, 2));
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
+				Graphics_text (g, tLeftPos, fmax, info.string);
+			}
+			MelderString_empty (& info);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_BOTTOM);
+			MelderString_append (& info, U"Ceiling=", Melder_fixed (my ceilings [iformant], 0), U" Hz");
+			Graphics_text (g, tRightPos, fmax, info.string);
 		}
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
-		conststring32 midTopText = U"";
-		if (midTopText && midTopText [0]) {
-			Graphics_setColour (g, Melder_BLUE);
-			Graphics_text (g, tmin + 0.5 * (tmax - tmin),
-				fmax - 0.05 * fmax, midTopText);
-			Graphics_setColour (g, Melder_BLACK);
-		}
-
 		if (garnish) {
 			auto getXtick = [] (Graphics gg, double fontSize) {
 				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
@@ -527,24 +517,48 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			};
 			const double xTick = (double) getXtick (g, newFontSize) * (tmax - tmin);
 			const double yTick = (double) getYtick (g, newFontSize) * (fmax - fmin);
-			if (icol == 1 && irow % 2 == 1) {
+			if (irow == nrow) {
+				MelderString_empty (& info);
+				MelderString_append (& info, Melder_fixed (tmin, 3), U" s");
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_TOP);
+				Graphics_line (g, tmin, fmin, tmin, fmin - yTick);
+				Graphics_text (g, tmin , fmin - yTick, info.string);
+				MelderString_empty (& info);
+				MelderString_append (& info, Melder_fixed (tmax, 3), U" s");
+				Graphics_line (g, tmax, fmin, tmax, fmin - yTick);
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_TOP);
+				Graphics_text (g, tmax, fmin - yTick, info.string);
+				
+			}
+			if (icol == 1) {
+				MelderString_empty (& info);
+				MelderString_append (& info, Melder_iround (fmin), U" Hz");
+				Graphics_line (g, tmin - xTick, fmin, tmin, fmin);
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
+				Graphics_text (g, tmin - xTick, fmin, info.string);
+				MelderString_empty (& info);
+				MelderString_append (& info, Melder_iround (fmax), U" Hz");
+				Graphics_text (g, tmin - xTick, fmax, info.string);
+				
+			}
+			if (icol == 1 && irow % 2 == 1 &&false) {
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
 				Graphics_line (g, tmin - xTick, fmax, tmin, fmax);
 				Graphics_text (g, tmin - xTick, fmax, Melder_iround (fmax));
 				Graphics_line (g, tmin - xTick, fmin, tmin, fmin);
 				Graphics_text (g, tmin - xTick, fmin, Melder_fixed (fmin, 0));
-			} else if (icol == ncol && irow % 2 == 0) {
+			} else if (icol == ncol && irow % 2 == 0&&false) {
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
 				Graphics_text (g, tmax, fmax, Melder_iround (fmax));
 				Graphics_text (g, tmax, fmin, Melder_fixed (fmin, 0));
 			}
-			if (irow == 1 && icol % 2 == 0) {
+			if (irow == 1 && icol % 2 == 0&&false) {
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
 				Graphics_line (g, tmin, fmax, tmin, fmax + yTick);
 				Graphics_text (g, tmin, fmax + yTick, Melder_fixed (tmin, 3));
 				Graphics_line (g, tmax, fmax, tmax, fmax + yTick);
 				Graphics_text (g, tmax, fmax + yTick, Melder_fixed (tmax, 3));
-			} else if (irow == nrow && icol % 2 == 1) {
+			} else if (irow == nrow && icol % 2 == 1&&false) {
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 				Graphics_line (g, tmin, fmin, tmin, fmin - yTick);
 				Graphics_text (g, tmin, fmin - yTick, Melder_fixed (tmin, 3));
