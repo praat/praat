@@ -71,7 +71,12 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me.get());
-		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+		#if ALLOW_GDK_DRAWING
+			gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+		#else
+			gtk_widget_set_halign (GTK_WIDGET (my d_widget), (flags & GuiLabel_RIGHT ? GTK_ALIGN_END : (flags & GuiLabel_CENTRE ? GTK_ALIGN_CENTER : GTK_ALIGN_START)));
+			gtk_widget_set_valign (GTK_WIDGET (my d_widget), GTK_ALIGN_BASELINE);
+		#endif
 	#elif motif
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me.get());
