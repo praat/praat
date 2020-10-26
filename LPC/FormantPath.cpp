@@ -100,8 +100,9 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			stresses = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 
 		/*
+			Some options for assigning costs/benefits to states and state transitions:
 			We have states s[i], where i = 1..  S (= my formants.size)
-			Whithin each state we can have j=1..F formant frequencies f[i][j] and bandwidths b[i][j].
+			Whithin each state i we can have j=1..F formant frequencies f[i][j] and bandwidths b[i][j].
 			Benefits of a state could be expressed as:
 			1. sum (j=1..F, 0.1*f[j]/b[j])/F, this has the advantage that states with large Q values (sharp peaks) have larger benefits
 			(2?). -|log(min(max(f1-f2, 100),300)|, keep sufficient distance between f1 and f2
@@ -528,7 +529,6 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 				Graphics_line (g, tmax, fmin, tmax, fmin - yTick);
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_TOP);
 				Graphics_text (g, tmax, fmin - yTick, info.string);
-				
 			}
 			if (icol == 1) {
 				MelderString_empty (& info);
@@ -540,30 +540,6 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 				MelderString_append (& info, Melder_iround (fmax), U" Hz");
 				Graphics_text (g, tmin - xTick, fmax, info.string);
 				
-			}
-			if (icol == 1 && irow % 2 == 1 &&false) {
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_HALF);
-				Graphics_line (g, tmin - xTick, fmax, tmin, fmax);
-				Graphics_text (g, tmin - xTick, fmax, Melder_iround (fmax));
-				Graphics_line (g, tmin - xTick, fmin, tmin, fmin);
-				Graphics_text (g, tmin - xTick, fmin, Melder_fixed (fmin, 0));
-			} else if (icol == ncol && irow % 2 == 0&&false) {
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_HALF);
-				Graphics_text (g, tmax, fmax, Melder_iround (fmax));
-				Graphics_text (g, tmax, fmin, Melder_fixed (fmin, 0));
-			}
-			if (irow == 1 && icol % 2 == 0&&false) {
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
-				Graphics_line (g, tmin, fmax, tmin, fmax + yTick);
-				Graphics_text (g, tmin, fmax + yTick, Melder_fixed (tmin, 3));
-				Graphics_line (g, tmax, fmax, tmax, fmax + yTick);
-				Graphics_text (g, tmax, fmax + yTick, Melder_fixed (tmax, 3));
-			} else if (irow == nrow && icol % 2 == 1&&false) {
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
-				Graphics_line (g, tmin, fmin, tmin, fmin - yTick);
-				Graphics_text (g, tmin, fmin - yTick, Melder_fixed (tmin, 3));
-				Graphics_line (g, tmax, fmin, tmax, fmin - yTick);
-				Graphics_text (g, tmax, fmin - yTick, Melder_fixed (tmax, 3));
 			}
 			double yGridLine_Hz = yGridLineEvery_Hz;
 			Graphics_setLineType (g, Graphics_DOTTED);

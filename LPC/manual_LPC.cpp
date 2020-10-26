@@ -104,24 +104,37 @@ CODE (U"To FormantPath (burg): 0.005, 5.0, 5000.0, 0.025, 50.0, 0.05, 4")
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20201013)
+MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20201026)
 INTRO (U"A command that creates a @@FormantPath@ object from each selected @@Sound@ . ")
 ENTRY (U"##Settings")
 NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Window length (s)# and ##Pre-emphasis from (Hz)# "
-	"are exacly as you would set them in the @@Sound: To Formant (burg)...@ method. "
-	"Therefore you can use 0.005 seconds, 5.0 formants, 0.025 seconds, and 50.0 Hz, respectively.")
-NORMAL (U"For ##Middle formant ceiling (Hz)#, you should use 5500.0 Hz for the average female voice and 5000.0 Hz for the average "
-	"male voice, in the same way as you would do for the ##Formant ceiling (Hz)# setting in ##To Formant (burg)...#. "
-	"Instead of performing only one analysis, as in ##To Formant (burg)...#, we perform multiple analyses, "
-	"each one with a different value for its ceiling. "
-	"Each analysis result, which is of type @@Formant@, is stored in the ##FormantPath# object. "
-	"Therefore, after the analyses are done, the FormantPath object contains a collection of ##Formant# objects.")
+	"are as you would set them with the @@Sound: To Formant (burg)...@ method. "
+	"The defaults are 0.005 seconds, 5.0 formants, 0.025 seconds, and 50.0 Hz, respectively.")
+TAG (U"##Middle formant ceiling (Hz)")
+DEFINITION (U"determines the middle formant ceiling frequency in Hz. You normaly would use 5500.0 Hz for an average female voice "
+	"and 5000.0 Hz for an average male voice as you would do for the ##Formant ceiling (Hz)# setting in ##To Formant (burg)...#. "
+	"However, instead of performing only one analysis with a fixed ceiling, we perform in a number of steps "
+	"multiple analyses, each with a different ceiling frequency. The number of analyses with a %lower formant ceiling than the "
+	"%%middle formant ceiling% is equal to the number of analyses with a %higher formant ceiling than the %%middle formant ceiling%. ")
 TAG (U"##Ceiling step size#")
-DEFINITION (U"defines the increase / decrease in the formant ceiling betweeen two successive analyses as exp(\\+-%ceilingStepSize).")
+DEFINITION (U"defines the increase or decrease in the formant ceiling between two successive analyses as exp(%ceilingStepSize) "
+	"when we step up or as exp(-%ceilingStepSize) when we step down.")
 TAG (U"##Number of steps up / down")
-DEFINITION (U"determines the number steps we go up or down with respect to the %%middle formant ceiling%."
-	"The ceiling frequency for the %ith step down is %middleCeiling\\.cexp (-%i\\.c%ceilingStepSize) and for the i-th step up "
-	"is %middleCeiling\\.cexp (-%i\\.c%ceilingStepSize).")
+DEFINITION (U"determines the number steps we go up as well as the number of steps we go down with respect to the %middle formant ceiling%. "
+	"The ceiling frequency for the %i^^th^ step down is %middleFormantCeiling\\.cexp (-%i\\.c%ceilingStepSize) and for the %i^^th^ step up "
+	"is %middleFormantCeiling\\.cexp (+%i\\.c%ceilingStepSize). The total number of analyses is always 2\\.c%numberOfStepsUpOrDown+1.")
+ENTRY (U"Algorithm")
+NORMAL (U"The following algorithm describes what is going on. ")
+CODE (U"ceiling [numberOfStepsUpOrDown + 1] = middleCeiling")
+CODE (U"for istep from 1 to 2 * numberOfStepsUpOrDown + 1")
+CODE (U"    if istep <= numberOfStepsUpOrDown")
+CODE (U"        ceiling [istep] = middleFormantCeiling * exp (-(numberOfStepsUpOrDown - istep + 1) * ceilingStepSize)")
+CODE (U"    elsif istep > numberOfStepsUpOrDown + 1")
+CODE (U"        ceiling [istep] = middleFormantCeiling * exp ((istep - numberOfStepsUpOrDown - 1) * ceilingStepSize)")
+CODE (U"    selectObject: sound")
+CODE (U"    formant [istep] = To Formant (burg): timeStep, maxNumberOfFormants, ceiling [istep], windowLength, preEmphasis")
+CODE (U"endfor")
+NORMAL (U"This description is approximate because in the \"To Formant\" step we have to guarantee that all the Formant objects get the same time sampling.")
 MAN_END
 
 MAN_BEGIN (U"FormantPathEditor", U"djmw", 20201004)
