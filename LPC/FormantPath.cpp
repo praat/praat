@@ -100,8 +100,9 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			stresses = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 
 		/*
+			Some options for assigning costs/benefits to states and state transitions:
 			We have states s[i], where i = 1..  S (= my formants.size)
-			Whithin each state we can have j=1..F formant frequencies f[i][j] and bandwidths b[i][j].
+			Whithin each state i we can have j=1..F formant frequencies f[i][j] and bandwidths b[i][j].
 			Benefits of a state could be expressed as:
 			1. sum (j=1..F, 0.1*f[j]/b[j])/F, this has the advantage that states with large Q values (sharp peaks) have larger benefits
 			(2?). -|log(min(max(f1-f2, 100),300)|, keep sufficient distance between f1 and f2
