@@ -104,7 +104,7 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 		bool originalNumberOfSamplesProbablyOdd = ( im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx );
 		if (my x1 != 0.0)
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
-		integer numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
+		const integer numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		autoSound thee = Sound_createSimple (1, 1.0 / my dx, numberOfSamples * my dx);
 		VEC amp = thy z.row (1);
 		double scaling = my dx;
@@ -115,7 +115,8 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 		}
 		if (originalNumberOfSamplesProbablyOdd) {
 			amp [numberOfSamples] = re [my nx] * scaling;
-			if (numberOfSamples > 1) amp [2] = im [my nx] * scaling;
+			if (numberOfSamples > 1)
+				amp [2] = im [my nx] * scaling;
 		} else {
 			amp [2] = re [my nx] * scaling;
 		}
@@ -128,30 +129,31 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 
 autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphasisFrequency) {
 	try {
-		integer numberOfCoefficients = 2 * numberOfPeaks;
+		const integer numberOfCoefficients = 2 * numberOfPeaks;
 
 		autoSound sound = Spectrum_to_Sound (me);
 		VECpreemphasize_f_inplace (sound -> z.row (1), sound -> dx, preemphasisFrequency);
 		autoVEC a = newVECraw (numberOfCoefficients);
-		double gain = VECburg (a.get(), sound -> z.row(1));
-		for (integer i = 1; i <= numberOfCoefficients; i ++) a [i] = - a [i];
+		const double gain = VECburg (a.get(), sound -> z.row(1));
+		for (integer i = 1; i <= numberOfCoefficients; i ++)
+			a [i] = - a [i];
 		autoSpectrum thee = Data_copy (me);
 
-		integer nfft = 2 * (thy nx - 1);
-		integer ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
-		double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
+		const integer nfft = 2 * (thy nx - 1);
+		const integer ndata = Melder_clippedRight (numberOfCoefficients, nfft - 1);
+		const double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
 		autoVEC data = newVECzero (nfft);
 		data [1] = 1.0;
 		for (integer i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];
 		NUMrealft (data.get(), 1);
-		VEC re = thy z.row (1);
-		VEC im = thy z.row (2);
+		const VEC re = thy z.row (1);
+		const VEC im = thy z.row (2);
 		re [1] = scale / data [1];
 		im [1] = 0.0;
-		integer halfnfft = nfft / 2;
+		const integer halfnfft = nfft / 2;
 		for (integer i = 2; i <= halfnfft; i ++) {
-			double realPart = data [i + i - 1], imaginaryPart = data [i + i];
+			const double realPart = data [i + i - 1], imaginaryPart = data [i + i];
 			re [i] = scale / sqrt (realPart * realPart + imaginaryPart * imaginaryPart) / (1.0 + thy dx * (i - 1) / preemphasisFrequency);
 			im [i] = 0.0;
 		}

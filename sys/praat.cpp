@@ -1574,6 +1574,12 @@ void praat_run () {
 	Melder_assert (Melder_isHorizontalOrVerticalSpace ('\f'));
 	Melder_assert (Melder_isHorizontalOrVerticalSpace ('\v'));
 
+	{
+		double *a = nullptr;
+		double *b = & a [0];
+		Melder_assert (! b);
+	}
+
 	/*
 		According to ISO 30112, a non-breaking space is not a space.
 		We do not agree, as long as spaces are assumed to be word breakers:

@@ -39,9 +39,8 @@ Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
 
 void structNoulliGridEditor :: v_draw () {
 	NoulliGrid data = (NoulliGrid) our data;
-	Graphics_Viewport viewport;
 	if (our d_sound.data) {
-		viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
+		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, 1.0 - SOUND_HEIGHT, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -59,9 +58,10 @@ void structNoulliGridEditor :: v_draw () {
 			NoulliTier tier = data -> tiers.at [itier];
 			for (integer ipoint = 1; ipoint < tier -> points.size; ipoint ++) {
 				NoulliPoint point = tier -> points.at [ipoint], nextPoint = tier -> points.at [ipoint + 1];
-				double time = 0.5 * (point -> xmin + point -> xmax), nextTime = 0.5 * (nextPoint -> xmin + nextPoint -> xmax);
+				const double time = 0.5 * (point -> xmin + point -> xmax);
+				const double nextTime = 0.5 * (nextPoint -> xmin + nextPoint -> xmax);
 				if (time > our startWindow && nextTime < our endWindow) {
-					double prob = point -> probabilities [1], nextProb = nextPoint -> probabilities [1];
+					const double prob = point -> probabilities [1], nextProb = nextPoint -> probabilities [1];
 					Graphics_setColour (our graphics.get(), Melder_cyclingBackgroundColour (itier));
 					Graphics_line (our graphics.get(), time, prob, nextTime, nextProb);
 				}
@@ -72,18 +72,19 @@ void structNoulliGridEditor :: v_draw () {
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, data -> tiers.size);
 		for (integer itier = 1; itier <= data -> tiers.size; itier ++) {
 			NoulliTier tier = data -> tiers.at [itier];
-			double ymin = data -> tiers.size - itier, ymax = ymin + 1;
+			const double ymin = data -> tiers.size - itier, ymax = ymin + 1;
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				NoulliPoint point = tier -> points.at [ipoint];
 				if (point -> xmax > our startWindow && point -> xmin < our endWindow) {
-					double xmin = point -> xmin > our startWindow ? point -> xmin : our startWindow;
-					double xmax = point -> xmax < our endWindow ? point -> xmax : our endWindow;
-					double prob1 = 1.0, prob2;
+					const double xmin = Melder_clippedLeft (our startWindow, point -> xmin);
+					const double xmax = Melder_clippedRight (point -> xmax, our endWindow);
+					double prob1 = 1.0;
 					for (integer icategory = 1; icategory <= point -> numberOfCategories; icategory ++) {
-						prob2 = prob1;
+						const double prob2 = prob1;
 						prob1 -= point -> probabilities [icategory];
 						Graphics_setColour (our graphics.get(), Melder_cyclingBackgroundColour (icategory));
-						Graphics_fillRectangle (our graphics.get(), xmin, xmax, ymin + prob1 * (ymax - ymin), ymin + prob2 * (ymax - ymin));
+						Graphics_fillRectangle (our graphics.get(), xmin, xmax,
+								ymin + prob1 * (ymax - ymin), ymin + prob2 * (ymax - ymin));
 					}
 				}
 			}
