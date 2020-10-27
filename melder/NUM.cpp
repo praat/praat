@@ -23,11 +23,25 @@
 */
 
 static longdouble NUMsum_longdouble (constVECVU const& vec) {
+	/*
+		This function started to crash on October 27, 2020.
+		The cause was that if `vec.firstCell == nullptr`,
+		`& vec [1]` is a "null reference" (see the definition of constvectorview::operator[]).
+		This causes "undefined behaviour", even if `p` is never read from that address
+		(which it isn't, because if `vec.firstCell == nullptr`, then `vec.size` must be 0).
+		What precisely happened was that although `vec.size` was null,
+		the processor would branch-predict into the `if (_n & 1)` branch of PAIRWISE_SUM,
+		thereby pre-fetching `p` from the address `& vec [1]`,
+		which would lead to a Bad Access exception.
+
+		A possible repair is to use a pointer instead of a reference.
+	*/
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			//const double *p = & vec [1],   // valid C++ only if vec is well-defined
+			const double *p = & vec. firstCell [1 - 1],   // null *pointers* are fine
 			longdouble (*p),
 			p += 1
 		)
@@ -36,7 +50,8 @@ static longdouble NUMsum_longdouble (constVECVU const& vec) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			//const double *p = & vec [1],   // valid C++ only if vec is well-defined
+			const double *p = & vec. firstCell [1 - 1],   // null *pointers* are fine
 			longdouble (*p),
 			p += vec.stride
 		)
@@ -69,7 +84,7 @@ static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, 
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (*p - mean) * longdouble (*p - mean),
 			p += 1
 		)
@@ -78,7 +93,7 @@ static longdouble NUMsumOfSquaredDifferences_longdouble (constVECVU const& vec, 
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (*p - mean) * longdouble (*p - mean),
 			p += vec.stride
 		)
@@ -90,7 +105,7 @@ static longdouble NUMsum2_longdouble (constVECVU const& vec) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (*p) * longdouble (*p),
 			p += 1
 		)
@@ -99,7 +114,7 @@ static longdouble NUMsum2_longdouble (constVECVU const& vec) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (*p) * longdouble (*p),
 			p += vec.stride
 		)
@@ -132,7 +147,7 @@ static longdouble NUMsumAbs_longdouble (constVECVU const& vec) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (fabs (*p)),
 			p += 1
 		)
@@ -141,7 +156,7 @@ static longdouble NUMsumAbs_longdouble (constVECVU const& vec) {
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (fabs (*p)),
 			p += vec.stride
 		)
@@ -174,7 +189,7 @@ static longdouble NUMsumPower_longdouble (constVECVU const& vec, longdouble powe
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			powl (longdouble (fabs (*p)), power),
 			p += 1
 		)
@@ -183,7 +198,7 @@ static longdouble NUMsumPower_longdouble (constVECVU const& vec, longdouble powe
 		PAIRWISE_SUM (
 			longdouble, sum,
 			integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			powl (longdouble (fabs (*p)), power),
 			p += vec.stride
 		)
@@ -222,14 +237,14 @@ static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept 
 	double mean = double (result.mean);
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (*p - mean) * longdouble (*p - mean),
 			p += 1
 		)
 		result.sumsq = sumsq;
 	} else {
 		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
-			const double *p = & vec [1],
+			const double *p = vec. firstCell,
 			longdouble (*p - mean) * longdouble (*p - mean),
 			p += vec.stride
 		)
@@ -276,16 +291,16 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 	if (x.stride == 1) {
 		if (y.stride == 1) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.size,
-				const double *px = & x [1];
-				const double *py = & y [1],
+				const double *px = x. firstCell;
+				const double *py = y. firstCell,
 				longdouble (*px) * longdouble (*py),
 				(px += 1, py += 1)
 			)
 			return double (sum);
 		} else {
 			PAIRWISE_SUM (longdouble, sum, integer, x.size,
-				const double *px = & x [1];
-				const double *py = & y [1],
+				const double *px = x. firstCell;
+				const double *py = y. firstCell,
 				longdouble (*px) * longdouble (*py),
 				(px += 1, py += y.stride)
 			)
@@ -293,16 +308,16 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 		}
 	} else if (y.stride == 1) {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1];
-			const double *py = & y [1],
+			const double *px = x. firstCell;
+			const double *py = y. firstCell,
 			longdouble (*px) * longdouble (*py),
 			(px += x.stride, py += 1)
 		)
 		return double (sum);
 	} else {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size,
-			const double *px = & x [1];
-			const double *py = & y [1],
+			const double *px = x. firstCell;
+			const double *py = y. firstCell,
 			longdouble (*px) * longdouble (*py),
 			(px += x.stride, py += y.stride)
 		)
@@ -311,12 +326,14 @@ double NUMinner (constVECVU const& x, constVECVU const& y) noexcept {
 }
 
 double NUMmean (constVECVU const& vec) {
-		//Melder_require (vec.size >= 1,
-		//	U"mean(vector#): the size of the vector should be greater than 0.");
-		longdouble sum = NUMsum_longdouble (vec);
-		return double (sum / vec.size);
+	if (vec.size <= 0)
+		return undefined;
+	longdouble sum = NUMsum_longdouble (vec);
+	return double (sum / vec.size);
 }
 double NUMmean (constMATVU const& mat) noexcept {
+	if (mat.nrow * mat.ncol <= 0)
+		return undefined;
 	longdouble sum = NUMsum_longdouble (mat);
 	return double (sum / (mat.nrow * mat.ncol));
 }

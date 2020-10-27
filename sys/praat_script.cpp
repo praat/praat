@@ -546,7 +546,7 @@ void praat_executeCommandFromStandardInput (conststring32 programName) {
 		try {
 			praat_executeCommand (nullptr, command32.get());
 		} catch (MelderError) {
-			Melder_flushError (programName, U": command \"", Melder_peek8to32 (command8), U"\" not executed.");
+			Melder_flushError (programName, U": Command \"", Melder_peek8to32 (command8), U"\" not executed.");
 		}
 	}
 }
