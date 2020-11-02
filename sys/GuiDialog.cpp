@@ -71,6 +71,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 			goAwayCallback ? G_CALLBACK (_GuiGtkDialog_goAwayCallback) : G_CALLBACK (gtk_widget_hide_on_delete), me.get());
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), flags & GuiDialog_MODAL);
+		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), false);
 		GuiShell_setTitle (me.get(), title);
 		//GuiObject vbox = GTK_DIALOG (my d_gtkWindow) -> vbox;
 		GuiObject vbox = gtk_dialog_get_content_area (GTK_DIALOG (my d_gtkWindow));

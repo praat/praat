@@ -347,6 +347,7 @@ void structGraphicsScreen :: v_updateWs () {
 			// ignore gdk_cairo_reset_clip
 		} else {
 			if (our d_cairoGraphicsContext && our d_drawingArea) {  // update clipping rectangle to new graphics size
+				Melder_casual (U"It is a mistake to ever arrive here.");
 				cairo_reset_clip (our d_cairoGraphicsContext);
 				cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
 				cairo_clip (our d_cairoGraphicsContext);
