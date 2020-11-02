@@ -46,6 +46,7 @@
 	#include <unistd.h>
 	#include <ctype.h>
 	#include <wchar.h>
+	#include <X11/Xlib.h>
 	#if defined (NO_GRAPHICS) || defined (NO_GUI)   /* for use inside Praat */
 		#define gtk 0
 	#else
@@ -247,13 +248,46 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
 			gevent. data_format = 8;
 			if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
-				if (! displaySupplied) gdk_display_close (display);
+				if (! displaySupplied)
+					gdk_display_close (display);
 				sprintf (errorMessage, "Cannot send message to %s (window %ld). "
 					"The program %s may have been started by a different user, "
 					"or may have crashed.", programName, wid, programName);
 				return errorMessage;
 			}
-			if (! displaySupplied) gdk_display_close (display);
+			if (! displaySupplied)
+				gdk_display_close (display);
+#else
+			/*
+			 * Notify main window.
+			 */
+			XEvent event;
+			int displaySupplied = display != NULL;
+			if (! displaySupplied) {
+				display = XOpenDisplay (NULL);
+				if (display == NULL) {
+					sprintf (errorMessage, "Cannot open display %s.", XDisplayName (NULL));
+					return errorMessage;
+				}
+			}
+			event. type = ClientMessage;
+			event. xclient. serial = 0;
+			event. xclient. send_event = True;
+			event. xclient. display = display;
+			event. xclient. window = (Window) wid;
+			event. xclient. message_type = XInternAtom (display, "SENDPRAAT", False);
+			event. xclient. format = 8;   /* No byte swaps. */
+			strcpy (& event. xclient.data.b [0], "SENDPRAAT");
+			if (! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
+				if (! displaySupplied)
+					XCloseDisplay (display);
+				sprintf (errorMessage, "Cannot send message to %s (window %ld). "
+					"The program %s may have been started by a different user, "
+					"or may have crashed.", programName, wid, programName);
+				return errorMessage;
+			}
+			if (! displaySupplied)
+				XCloseDisplay (display);
 #endif
 		}
 		/*

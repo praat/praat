@@ -663,7 +663,7 @@ void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info,
 }
 
 void pulseAudio_serverReport () {
-	// TODO: initiaize context
+	// TODO: initialize context
 	struct MelderPlay *me = & thePlay;
 	if (my pulseAudio.mainloop) {
 		pa_threaded_mainloop_lock (my pulseAudio.mainloop);

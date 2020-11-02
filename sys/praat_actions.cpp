@@ -612,10 +612,6 @@ void praat_actions_show () {
 						me,
 							( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 ));
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
-					#if gtk
-						/* Dit soort onzin zou eigenlijk in GuiButton moeten */
-						gtk_button_set_alignment (GTK_BUTTON (my button -> d_widget), 0.0f, 0.5f);
-					#endif
 				}
 			} else if (i == theActions.size || theActions.at [i + 1] -> depth == 0) {
 				/*
