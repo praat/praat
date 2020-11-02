@@ -76,7 +76,7 @@ int GuiShell_getShellWidth (GuiShell me) {
 	int width = 0;
 	#if gtk
 		GtkAllocation allocation;
-		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);
+		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);   // TODO: replace with gtk_window_get_size()
 		width = allocation.width;
 	#elif motif
 		width = my d_xmShell -> width;
@@ -90,7 +90,7 @@ int GuiShell_getShellHeight (GuiShell me) {
 	int height = 0;
 	#if gtk
 		GtkAllocation allocation;
-		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);
+		gtk_widget_get_allocation (GTK_WIDGET (my d_gtkWindow), & allocation);   // TODO: replace with gtk_window_get_size()
 		height = allocation.height;
 	#elif motif
 		height = my d_xmShell -> height;
