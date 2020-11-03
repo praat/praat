@@ -850,7 +850,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
-#if defined (UNIX)
+#if defined (UNIX) && ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
 	/*
 		sendpraat messages can enter in two ways: via SIGUSR1 and via XSendEvent().
 	*/
@@ -860,27 +860,25 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	*/
 	static void cb_sigusr1 (int signum) {
 		Melder_assert (signum == SIGUSR1);
-		#if ! defined (NO_GRAPHICS)
-			#if ALLOW_GDK_DRAWING
-				GdkEventClient gevent;
-				gevent. type = GDK_CLIENT_EVENT;
-				gevent. window = GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window;
-				gevent. send_event = 1;
-				gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
-				gevent. data_format = 8;
-				// Melder_casual (U"event put");
-				gdk_event_put ((GdkEvent *) & gevent);
-			#else
-				GdkEventProperty gevent;   // or GdkEventSetting, once we can find its signal name
-				gevent. type = GDK_PROPERTY_NOTIFY;   // or GDK_SETTING
-				gevent. window = gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow));
-				gevent. send_event = 1;
-				gevent. atom = gdk_atom_intern_static_string ("SENDPRAAT");
-				gevent. time = 0;
-				gevent. state = GDK_PROPERTY_NEW_VALUE;
-				// Melder_casual (U"event put");
-				gdk_event_put ((GdkEvent *) & gevent);
-			#endif
+		#if ALLOW_GDK_DRAWING
+			GdkEventClient gevent;
+			gevent. type = GDK_CLIENT_EVENT;
+			gevent. window = GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window;
+			gevent. send_event = 1;
+			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
+			gevent. data_format = 8;
+			// Melder_casual (U"event put");
+			gdk_event_put ((GdkEvent *) & gevent);
+		#else
+			GdkEventProperty gevent;   // or GdkEventSetting, once we can find its signal name
+			gevent. type = GDK_PROPERTY_NOTIFY;   // or GDK_SETTING
+			gevent. window = gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow));
+			gevent. send_event = 1;
+			gevent. atom = gdk_atom_intern_static_string ("SENDPRAAT");
+			gevent. time = 0;
+			gevent. state = GDK_PROPERTY_NEW_VALUE;
+			// Melder_casual (U"event put");
+			gdk_event_put ((GdkEvent *) & gevent);   // this is safe only if gdk_event_put is reentrant, which is unlikely because the event queue is global
 		#endif
 	}
 	#if 0
@@ -931,7 +929,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 #endif
 
 #if defined (UNIX)
-	#if ! defined (NO_GRAPHICS)
+	#if ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
 		#if ALLOW_GDK_DRAWING
 			static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventClient * /* event */, gpointer /* userData */) {
 				//Melder_casual (U"client event called");
