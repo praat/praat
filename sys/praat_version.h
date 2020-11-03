@@ -1,5 +1,5 @@
-#define PRAAT_VERSION_STR 6.1.29
-#define PRAAT_VERSION_NUM 6129
+#define PRAAT_VERSION_STR 6.1.30
+#define PRAAT_VERSION_NUM 6130
 #define PRAAT_YEAR 2020
-#define PRAAT_MONTH October
-#define PRAAT_DAY 27
+#define PRAAT_MONTH November
+#define PRAAT_DAY 3

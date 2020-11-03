@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201027)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201103)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.30# (3 November 2020)")
+LIST_ITEM (U"• Windows: prevented a crash that could occur in the Sound window when clicking with the touchpad while dragging with the mouse (or the reverse).")
 NORMAL (U"##6.1.29# (27 October 2020)")
 LIST_ITEM (U"• Mac: corrected a bug revealed by Xcode 12 since 6.1.22 that could cause Praat to crash when using empty vectors, "
 	"such as when querying a Harmonicity for its mean in regions without frames.")

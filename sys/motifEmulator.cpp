@@ -2678,6 +2678,7 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 		HANDLE_MSG (window, WM_COMMAND, on_command);
 		HANDLE_MSG (window, WM_DESTROY, on_destroy);
 		HANDLE_MSG (window, WM_LBUTTONDOWN, on_lbuttonDown);
+		HANDLE_MSG (window, WM_LBUTTONDBLCLK, on_lbuttonDown);   // double-click counts as two clicks
 		HANDLE_MSG (window, WM_LBUTTONUP, on_lbuttonUp);
 		HANDLE_MSG (window, WM_MOUSEMOVE, on_mouseMove);
 		HANDLE_MSG (window, WM_PAINT, on_paint);

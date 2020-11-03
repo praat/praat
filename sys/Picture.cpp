@@ -113,7 +113,7 @@ static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent ev
 			}
 		#else
 			cairo_t *context = (cairo_t *) Graphics_x_getCR (my graphics.get());
-			if (Melder_debug == 54 &&1) {
+			if (Melder_debug == 54 ||1) {
 				// ignore gdk_cairo_reset_clip
 			} else {
 				cairo_reset_clip (context);

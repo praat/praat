@@ -70,8 +70,7 @@ void structSpectrumEditor :: v_draw () {
 
 bool structSpectrumEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
 	our cursorHeight = our minimum + y_fraction * (our maximum - our minimum);
-	(void) our SpectrumEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
-	return FunctionEditor_UPDATE_NEEDED;
+	return our SpectrumEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction) || true;
 }
 
 static autoSpectrum Spectrum_band (Spectrum me, double fmin, double fmax) {

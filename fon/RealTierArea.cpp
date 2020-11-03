@@ -175,7 +175,8 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 	const double y_world = (1.0 - y_fraction_withinRealTierArea) * my ymin + y_fraction_withinRealTierArea * my ymax;
 	my viewRealTierAsWorldByWorld ();
 	if (event -> isClick()) {
-		Melder_assert (isundef (my anchorTime));
+		if (isdefined (my anchorTime))
+			return false;
 		RealPoint clickedPoint = nullptr;
 		integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (tier->asAnyTier(), x_world, my startWindow(), my endWindow());
 		if (inearestPoint != 0) {
@@ -187,7 +188,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 			anchorIsInFreePart = true;
 			my ycursor = y_world;
 			my editor -> viewDataAsWorldByFraction ();
-			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
+			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction) || true;
 		}
 		anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
@@ -208,7 +209,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 		if (anchorIsInFreePart) {
 			my ycursor = y_world;
 			my editor -> viewDataAsWorldByFraction ();
-			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction);
+			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction) || true;
 		}
 		Melder_assert (anchorIsNearPoint);
 		my dt = x_world - my anchorTime;

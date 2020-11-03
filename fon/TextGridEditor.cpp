@@ -1725,9 +1725,10 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		}
-		Melder_assert (isundef (anchorTime));   // sanity check for the fixed order click-drag-drop
+		if (isdefined (anchorTime))   // sanity check for the fixed order click-drag-drop
+			return false;
 		Melder_assert (clickedLeftBoundary == 0);
-		Melder_assert (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);   // sanity check for the fixed order click-drag-drop
+		Melder_assert (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);
 		our draggingTiers.reset();
 		/*
 			The user clicked in the grid part.
