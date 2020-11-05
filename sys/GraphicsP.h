@@ -133,8 +133,6 @@ Thing_define (GraphicsScreen, Graphics) {
 		override;
 	void v_arrowHead (double xDC, double yDC, double angle)
 		override;
-	void v_flushWs ()
-		override;
 	void v_clearWs ()
 		override;
 	void v_updateWs ()
