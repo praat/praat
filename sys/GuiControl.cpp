@@ -31,7 +31,8 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		d_bottom = bottom;
 		/*
 		 */
-		if (! parent) return;
+		if (! parent)
+			return;
 		Melder_assert (parent -> d_widget);
 		Melder_assert (GTK_IS_FIXED (parent -> d_widget));
 		gint parentWidth, parentHeight;
