@@ -42,35 +42,44 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		return true;
 	}
 	static void _GuiWindow_child_resizeCallback (GtkWidget *childWidget, gpointer data) {
-		GtkAllocation *allocation = (GtkAllocation *) data;
+		GtkAllocation *parentAllocation = (GtkAllocation *) data;
 		GtkWidget *parentWidget = gtk_widget_get_parent (childWidget);
 		Thing_cast (GuiThing, child, _GuiObject_getUserData (childWidget));
 		if (child) {
 			GuiControl control = nullptr;
 			if (Thing_isa (child, classGuiControl)) {
 				control = static_cast <GuiControl> (child);
+				//Melder_casual (U"control");
 			} else if (Thing_isa (child, classGuiMenu)) {
 				Thing_cast (GuiMenu, menu, child);
 				control = menu -> d_cascadeButton.get();
+				//Melder_casual (U"menu");
 			}
-			if (control) {
+			if (control /*&& ! Thing_isa (child, classGuiWindow)*/) {
 				/*
 				 * Move and resize.
 				 */
-				trace (U"moving child of class ", Thing_className (control));
+				//Melder_casual (U"moving child of class ", Thing_className (control), U" as ",
+				//		Melder_peek8to32 (gtk_widget_path_to_string (gtk_widget_get_path (childWidget))));
 				int left = control -> d_left, right = control -> d_right, top = control -> d_top, bottom = control -> d_bottom;
-				if (left   <  0) left   += allocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
-				if (right  <= 0) right  += allocation -> width;
-				if (top    <  0) top    += allocation -> height;
-				if (bottom <= 0) bottom += allocation -> height;
-				trace (U"moving child to (", left, U",", top, U")");
+				if (left   <  0) left   += parentAllocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
+				if (right  <= 0) right  += parentAllocation -> width;
+				if (top    <  0) top    += parentAllocation -> height;
+				if (bottom <= 0) bottom += parentAllocation -> height;
+				//Melder_casual (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
 				gtk_fixed_move (GTK_FIXED (parentWidget), GTK_WIDGET (childWidget), left, top);
-				gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
-				trace (U"moved child of class ", Thing_className (control));
+				#if ALLOW_GDK_DRAWING ||1
+					gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left - 10, bottom - top - 10);
+				#else
+					GtkAllocation childAllocation { 0, 0, right - left, bottom - top };
+					gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
+				#endif
+				//Melder_casual (U"moved child of class ", Thing_className (control));
 			}
 		}
 	}
-	static gboolean _GuiWindow_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
+	#if ALLOW_GDK_DRAWING
+	static void _GuiWindow_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		(void) widget;
 		iam (GuiWindow);
 		trace (U"fixed received size allocation: (", allocation -> x, U", ", allocation -> y,
@@ -91,8 +100,34 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			gtk_widget_set_size_request (GTK_WIDGET (widget), allocation -> width, allocation -> height);
 		}
 		trace (U"end");
-		return false;
 	}
+	#else
+	static gboolean _GuiWindow_configureCallback (GuiObject widget, GdkEventConfigure *event, gpointer void_me) {
+		(void) widget;
+		iam (GuiWindow);
+		widget = my d_widget;
+		trace (U"fixed received size allocation: (", event -> x, U", ", event -> y,
+			U"), ", event -> width, U" x ", event -> height, U".");
+		if (event -> width != my d_width || event -> height != my d_height) {
+			trace (U"user changed the size of the window?");
+			/*
+			 * Apparently, GTK sends the size allocation message both to the shell and to its fixed-container child.
+			 * we could capture the message either from the shell or from the fixed; we choose to do it from the fixed.
+			 */
+			Melder_assert (GTK_IS_FIXED (widget));
+			/*
+			 * We move and resize all the children of the fixed.
+			 */
+			GtkAllocation allocation { event -> x, event -> y, event -> width, event -> height };
+			gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, & allocation);
+			my d_width = allocation. width;
+			my d_height = allocation. height;
+			gtk_widget_set_size_request (GTK_WIDGET (widget), allocation. width - 10, allocation. height - 10);
+		}
+		trace (U"end");
+		return true;   // true = handled; false = propagate
+	}
+	#endif
 #elif motif
 	static void _GuiMotifWindow_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -137,7 +172,11 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		gtk_container_add (GTK_CONTAINER (my d_gtkWindow), GTK_WIDGET (my d_widget));
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_widget), & geometry, GDK_HINT_MIN_SIZE);
-		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+		#if ALLOW_GDK_DRAWING
+			g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+		#else
+			g_signal_connect (G_OBJECT (my d_gtkWindow), "configure-event", G_CALLBACK (_GuiWindow_configureCallback), me.get());
+		#endif
 	#elif motif
 		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
