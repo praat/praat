@@ -44,7 +44,12 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
         if (top    <  0) top    += parentHeight;
 		if (bottom <= 0) bottom += parentHeight;
 		trace (U"fixed: parent width ", parentWidth, U" height ", parentHeight);
-		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
+		#if ALLOW_GDK_DRAWING||1
+			gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
+		#else
+			GtkAllocation allocation { 0, 0, right - left, bottom - top };
+			gtk_widget_size_allocate (GTK_WIDGET (widget), & allocation);
+		#endif
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif motif
 		(void) parent;
@@ -124,7 +129,8 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 
 void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width, int height, GuiScrolledWindow parent) {
 	#if gtk
-		if (! parent) return;
+		if (! parent)
+			return;
 		Melder_assert (GTK_IS_SCROLLED_WINDOW (parent -> d_widget));
 		gtk_widget_set_size_request (GTK_WIDGET (widget), width, height);
 		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (parent -> d_widget), GTK_WIDGET (widget));
