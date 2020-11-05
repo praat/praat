@@ -132,7 +132,6 @@ Thing_define (Graphics, Thing) {
 	virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
 	virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
 	virtual void v_arrowHead (double xDC, double yDC, double angle);
-	virtual void v_flushWs () { }
 	virtual void v_clearWs () { }
 	virtual void v_updateWs () { }
 };
@@ -161,7 +160,6 @@ void Graphics_setWsWindow (Graphics me, double x1NDC, double x2NDC, double y1NDC
 void Graphics_inqWsViewport (Graphics me, integer *x1DC, integer *x2DC, integer *y1DC, integer *y2DC);
 void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_clearWs (Graphics me);
-void Graphics_flushWs (Graphics me);
 void Graphics_updateWs (Graphics me);
 void Graphics_beginMovieFrame (Graphics me, MelderColour *colour);
 void Graphics_endMovieFrame (Graphics me, double frameDuration);
