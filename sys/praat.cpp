@@ -116,15 +116,18 @@ static GuiList praatList_objects;
 
 integer praat_idOfSelected (ClassInfo klas, integer inplace) {
 	integer place = inplace, IOBJECT;
-	if (place == 0) place = 1;
+	if (place == 0)
+		place = 1;
 	if (place > 0) {
 		WHERE (SELECTED && (! klas || CLASS == klas)) {
-			if (place == 1) return ID;
+			if (place == 1)
+				return ID;
 			place --;
 		}
 	} else {
 		WHERE_DOWN (SELECTED && (! klas || CLASS == klas)) {
-			if (place == -1) return ID;
+			if (place == -1)
+				return ID;
 			place ++;
 		}
 	}
@@ -147,15 +150,18 @@ autoVEC praat_idsOfAllSelected (ClassInfo klas) {
 
 char32 * praat_nameOfSelected (ClassInfo klas, integer inplace) {
 	integer place = inplace, IOBJECT;
-	if (place == 0) place = 1;
+	if (place == 0)
+		place = 1;
 	if (place > 0) {
 		WHERE (SELECTED && (! klas || CLASS == klas)) {
-			if (place == 1) return klas ? NAME : FULL_NAME;
+			if (place == 1)
+				return klas ? NAME : FULL_NAME;
 			place --;
 		}
 	} else {
 		WHERE_DOWN (SELECTED && (! klas || CLASS == klas)) {
-			if (place == -1) return klas ? NAME : FULL_NAME;
+			if (place == -1)
+				return klas ? NAME : FULL_NAME;
 			place ++;
 		}
 	}
@@ -168,14 +174,17 @@ char32 * praat_nameOfSelected (ClassInfo klas, integer inplace) {
 }
 
 integer praat_numberOfSelected (ClassInfo klas) {
-	if (! klas) return theCurrentPraatObjects -> totalSelection;
+	if (! klas)
+		return theCurrentPraatObjects -> totalSelection;
 	integer readableClassId = klas -> sequentialUniqueIdOfReadableClass;
-	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
+	if (readableClassId == 0)
+		Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
 
 void praat_deselect (int IOBJECT) {
-	if (! SELECTED) return;
+	if (! SELECTED)
+		return;
 	SELECTED = false;
 	theCurrentPraatObjects -> totalSelection -= 1;
 	integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
@@ -191,7 +200,8 @@ void praat_deselect (int IOBJECT) {
 void praat_deselectAll () { int IOBJECT; WHERE (1) praat_deselect (IOBJECT); }
 
 void praat_select (int IOBJECT) {
-	if (SELECTED) return;
+	if (SELECTED)
+		return;
 	SELECTED = true;
 	theCurrentPraatObjects -> totalSelection += 1;
 	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
@@ -204,7 +214,11 @@ void praat_select (int IOBJECT) {
 		GuiList_selectItem (praatList_objects, IOBJECT);
 }
 
-void praat_selectAll () { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
+void praat_selectAll () {
+	int IOBJECT;
+	WHERE (true)
+		praat_select (IOBJECT);
+}
 
 void praat_list_background () {
 	int IOBJECT;
@@ -463,9 +477,11 @@ void praat_list_renameAndSelect (int position, conststring32 name) {
 
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 	int i1 = 1;
-	while (theCurrentPraatObjects -> list [i1]. isSelected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
+	while (theCurrentPraatObjects -> list [i1]. isSelected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1)
+		i1 ++;
 	int i2 = 1;
-	while (theCurrentPraatObjects -> list [i2]. isSelected == 0 || theCurrentPraatObjects -> list [i2]. klas != klas2) i2 ++;
+	while (theCurrentPraatObjects -> list [i2]. isSelected == 0 || theCurrentPraatObjects -> list [i2]. klas != klas2)
+		i2 ++;
 	char32 *name1 = str32chr (theCurrentPraatObjects -> list [i1]. name.get(), U' ') + 1;
 	char32 *name2 = str32chr (theCurrentPraatObjects -> list [i2]. name.get(), U' ') + 1;
 	if (str32equ (name1, name2))
@@ -485,9 +501,8 @@ void praat_removeObject (int i) {
 		theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. editors [ieditor] = nullptr;   // undangle or remove second reference
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. file);   // undangle or remove second reference
 	-- theCurrentPraatObjects -> n;
-	if (! theCurrentPraatApplication -> batch) {
+	if (! theCurrentPraatApplication -> batch)
 		GuiList_deleteItem (praatList_objects, i);
-	}
 }
 
 static void praat_exit (int exit_code) {
@@ -516,9 +531,8 @@ static void praat_exit (int exit_code) {
 					long_not_integer pid;
 					if (fscanf (f, "%ld", & pid) < 1) throw MelderError ();
 					f.close (& pidFile);
-					if (pid == getpid ()) {   // is the pid in the pid file equal to our pid?
+					if (pid == getpid ())   // is the pid in the pid file equal to our pid?
 						MelderFile_delete (& pidFile);   // ...then we own the pid file and can delete it
-					}
 				} catch (MelderError) {
 					Melder_clearError ();   // if the pid file is somehow missing or corrupted, we just ignore that
 				}
@@ -624,20 +638,17 @@ static void cb_Editor_dataChanged (Editor me) {
 		/*
 		 * Am I editing this object?
 		 */
-		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == me) {
+		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == me)
 				editingThisObject = true;
-			}
-		}
 		if (editingThisObject) {
 			/*
 			 * Notify all other editors associated with this object.
 			 */
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor otherEditor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];
-				if (otherEditor && otherEditor != me) {
+				if (otherEditor && otherEditor != me)
 					Editor_dataChanged (otherEditor);
-				}
 			}
 		}
 	}
@@ -850,7 +861,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
-#if defined (UNIX)
+#if defined (UNIX) && ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
 	/*
 		sendpraat messages can enter in two ways: via SIGUSR1 and via XSendEvent().
 	*/
@@ -860,27 +871,25 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	*/
 	static void cb_sigusr1 (int signum) {
 		Melder_assert (signum == SIGUSR1);
-		#if ! defined (NO_GRAPHICS)
-			#if ALLOW_GDK_DRAWING
-				GdkEventClient gevent;
-				gevent. type = GDK_CLIENT_EVENT;
-				gevent. window = GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window;
-				gevent. send_event = 1;
-				gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
-				gevent. data_format = 8;
-				// Melder_casual (U"event put");
-				gdk_event_put ((GdkEvent *) & gevent);
-			#else
-				GdkEventProperty gevent;   // or GdkEventSetting, once we can find its signal name
-				gevent. type = GDK_PROPERTY_NOTIFY;   // or GDK_SETTING
-				gevent. window = gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow));
-				gevent. send_event = 1;
-				gevent. atom = gdk_atom_intern_static_string ("SENDPRAAT");
-				gevent. time = 0;
-				gevent. state = GDK_PROPERTY_NEW_VALUE;
-				// Melder_casual (U"event put");
-				gdk_event_put ((GdkEvent *) & gevent);
-			#endif
+		#if ALLOW_GDK_DRAWING
+			GdkEventClient gevent;
+			gevent. type = GDK_CLIENT_EVENT;
+			gevent. window = GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window;
+			gevent. send_event = 1;
+			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
+			gevent. data_format = 8;
+			// Melder_casual (U"event put");
+			gdk_event_put ((GdkEvent *) & gevent);
+		#else
+			GdkEventProperty gevent;   // or GdkEventSetting, once we can find its signal name
+			gevent. type = GDK_PROPERTY_NOTIFY;   // or GDK_SETTING
+			gevent. window = gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow));
+			gevent. send_event = 1;
+			gevent. atom = gdk_atom_intern_static_string ("SENDPRAAT");
+			gevent. time = 0;
+			gevent. state = GDK_PROPERTY_NEW_VALUE;
+			// Melder_casual (U"event put");
+			gdk_event_put ((GdkEvent *) & gevent);   // this is safe only if gdk_event_put is reentrant, which is unlikely because the event queue is global
 		#endif
 	}
 	#if 0
@@ -931,7 +940,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 #endif
 
 #if defined (UNIX)
-	#if ! defined (NO_GRAPHICS)
+	#if ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
 		#if ALLOW_GDK_DRAWING
 			static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventClient * /* event */, gpointer /* userData */) {
 				//Melder_casual (U"client event called");

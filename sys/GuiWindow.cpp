@@ -136,15 +136,14 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
 		gtk_container_add (GTK_CONTAINER (my d_gtkWindow), GTK_WIDGET (my d_widget));
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
-		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_gtkWindow), & geometry, GDK_HINT_MIN_SIZE);
+		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_widget), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
 	#elif motif
 		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
 		XtVaSetValues (my d_xmShell, XmNx, x, XmNy, y, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, nullptr);
-		if (goAwayCallback) {
+		if (goAwayCallback)
 			XmAddWMProtocolCallback (my d_xmShell, 'delw', _GuiMotifWindow_goAwayCallback, (char *) me.get());
-		}
 		GuiShell_setTitle (me.get(), title);
 		my d_widget = XmCreateForm (my d_xmShell, "dialog", nullptr, 0);
 		_GuiObject_setUserData (my d_widget, me.get());

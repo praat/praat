@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2008,2010-2018 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2008,2010-2018,2020 Paul Boersma, 2007 Stefan de Konink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,12 +71,33 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me.get());
-		#if ALLOW_GDK_DRAWING
-			gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
-		#else
+		/*
+			The following is deprecated in GTK 3:
+		*/
+		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+		/*
+			So, what to do after the above function is removed from GTK?
+			First, it was meant to be this:
+		*/
+		#if 0
 			gtk_widget_set_halign (GTK_WIDGET (my d_widget), (flags & GuiLabel_RIGHT ? GTK_ALIGN_END : (flags & GuiLabel_CENTRE ? GTK_ALIGN_CENTER : GTK_ALIGN_START)));
 			gtk_widget_set_valign (GTK_WIDGET (my d_widget), GTK_ALIGN_BASELINE);
 		#endif
+		/*
+			Unfortunately, those two functions do nothing at all.
+			Second, GTK 3.15 or so introduced the following:
+		*/
+		#if 0
+			gtk_widget_set_xalign (GTK_WIDGET (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0);
+			gtk_widget_set_yalign (GTK_WIDGET (my d_widget), 0.5);
+		#endif
+		/*
+			A perhaps related comment by the authors of GTK 3 (https://bugzilla.gnome.org/show_bug.cgi?id=733981):
+			"
+				Matthias Clasen 2015-08-28 20:14:23 UTC
+				Don't think there is anything for us to fix here.
+			"
+		*/
 	#elif motif
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me.get());
