@@ -390,10 +390,6 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 		short buffertje [step*2];
 		int stepje = 0;
 
-		#if defined (linux)
-			#define min(a,b) a > b ? b : a
-		#endif
-
 		/*
 			Determine global audio parameters (may have been changed by an external control panel):
 			1. input source;
