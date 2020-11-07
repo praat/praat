@@ -881,7 +881,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 	}
 	if (shifted || zoomed) {
 		my v_updateText ();
-		updateScrollBar (me);
+		//updateScrollBar (me);
 		Graphics_updateWs (my graphics.get());
 		if (! my group || ! my pref_synchronizedZoomAndScroll())
 			return;
