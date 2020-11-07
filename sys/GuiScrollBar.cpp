@@ -37,6 +37,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	static void _GuiGtkScrollBar_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiScrollBar);
 		trace (U"enter: blocked ", my d_blockValueChangedCallbacks);
+		trace (U"_GuiGtkScrollBar_valueChangedCallback: ", GuiScrollBar_getValue (me));
 		if (my d_blockValueChangedCallbacks) {
 			my d_blockValueChangedCallbacks = false;
 		} else if (my d_valueChangedCallback) {
