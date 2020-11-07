@@ -229,8 +229,6 @@ static void * gui_monitor (double progress, conststring32 message) {
 			Graphics_startRecording (graphics.get());
 			Graphics_clearWs (graphics.get());
 		}
-		//if (graphics)
-		//	Graphics_flushWs (graphics.get());
 		if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 			Melder_throw (U"Interrupted!");
 		lastTime = now;
