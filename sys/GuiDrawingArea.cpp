@@ -500,6 +500,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 #if gtk
 	static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *event, gpointer void_me) {
 		iam (GuiDrawingArea);
+		trace (U"_guiGtkDrawingArea_swipeCallback ", Melder_pointer (my d_horizontalScrollBar), Melder_pointer (my d_verticalScrollBar));
 		if (my d_horizontalScrollBar) {
 			double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
 			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
@@ -692,6 +693,7 @@ void GuiDrawingArea_setSwipable (GuiDrawingArea me, GuiScrollBar horizontalScrol
 	my d_horizontalScrollBar = horizontalScrollBar;
 	my d_verticalScrollBar = verticalScrollBar;
 	#if gtk
+		gtk_widget_add_events (GTK_WIDGET (my d_widget), GDK_SCROLL_MASK);
 		g_signal_connect (G_OBJECT (my d_widget), "scroll-event", G_CALLBACK (_guiGtkDrawingArea_swipeCallback), me);
 	#endif
 }
