@@ -37,19 +37,16 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		Melder_assert (GTK_IS_FIXED (parent -> d_widget));
 		gint parentWidth, parentHeight;
 		gtk_widget_get_size_request (GTK_WIDGET (parent -> d_widget), & parentWidth, & parentHeight);
-		//parentWidth  = GTK_WIDGET (parent -> d_widget) -> allocation.width;
-		//parentHeight = GTK_WIDGET (parent -> d_widget) -> allocation.height;
+		//parentWidth  = gtk_widget_get_allocated_width (GTK_WIDGET (parent -> d_widget));
+		//parentHeight = gtk_widget_get_allocated_height (GTK_WIDGET (parent -> d_widget));
+		//parentWidth = parent -> d_right;
+		//parentHeight = parent -> d_top;
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
         if (top    <  0) top    += parentHeight;
 		if (bottom <= 0) bottom += parentHeight;
 		trace (U"fixed: parent width ", parentWidth, U" height ", parentHeight);
-		#if ALLOW_GDK_DRAWING||1
-			gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
-		#else
-			GtkAllocation allocation { 0, 0, right - left, bottom - top };
-			gtk_widget_size_allocate (GTK_WIDGET (widget), & allocation);
-		#endif
+		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif motif
 		(void) parent;
