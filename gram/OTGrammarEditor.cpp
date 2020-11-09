@@ -241,7 +241,8 @@ void structOTGrammarEditor :: v_draw () {
 }
 
 int structOTGrammarEditor :: v_goToPage (conststring32 title) {
-	if (! title) return 1;
+	if (! title)
+		return 1;
 	selected = Melder_atoi (title);
 	return 1;
 }

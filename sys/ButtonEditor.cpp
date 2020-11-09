@@ -201,8 +201,10 @@ void structButtonEditor :: v_draw () {
 }
 
 int structButtonEditor :: v_goToPage (conststring32 title) {
-	if (! title || ! title [0]) return 0;
-	if (str32equ (title, U"Buttons")) return 1;
+	if (! title || ! title [0])
+		return 0;
+	if (str32equ (title, U"Buttons"))
+		return 1;
 	switch (title [0]) {
 		case 'a': {   // toggle visibility of action
 			integer i = Melder_atoi (& title [1]);
@@ -216,7 +218,8 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 		case 'm': {   // toggle visibility of menu command
 			integer i = Melder_atoi (& title [1]);
 			Praat_Command menuCommand = praat_getMenuCommand (i);
-			if (! menuCommand) return 0;
+			if (! menuCommand)
+				return 0;
 			if (menuCommand -> hidden)
 				praat_showMenuCommand (menuCommand -> window.get(), menuCommand -> menu.get(), menuCommand -> title.get());
 			else
@@ -225,7 +228,8 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 		case 'e': {   // execute action
 			integer i = Melder_atoi (& title [1]);
 			Praat_Command action = praat_getAction (i);
-			if (! action || ! action -> callback) return 0;
+			if (! action || ! action -> callback)
+				return 0;
 			if (action -> title) {
 				UiHistory_write (U"\n");
 				UiHistory_write_colonize (action -> title.get());
@@ -248,7 +252,8 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 		case 'p': {   // perform menu command
 			integer i = Melder_atoi (& title [1]);
 			Praat_Command menuCommand = praat_getMenuCommand (i);
-			if (! menuCommand || ! menuCommand -> callback) return 0;
+			if (! menuCommand || ! menuCommand -> callback)
+				return 0;
 			if (menuCommand -> title) {
 				UiHistory_write (U"\n");
 				UiHistory_write_colonize (menuCommand -> title.get());
@@ -276,8 +281,9 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 static void which (ButtonEditor me, int show) {
 	my show = show;
 	GuiRadioButton_set (show == 1 ? my button1 : show == 2 ? my button2 : show == 3 ? my button3 :
-			show == 4 ? my buttonAD : show == 5 ? my buttonEH : show == 6 ? my buttonIL :
-			show == 7 ? my buttonMO : show == 8 ? my buttonPS : my buttonTZ);
+		show == 4 ? my buttonAD : show == 5 ? my buttonEH : show == 6 ? my buttonIL :
+		show == 7 ? my buttonMO : show == 8 ? my buttonPS : my buttonTZ
+	);
 	HyperPage_goToPage (me, U"Buttons");
 }
 
