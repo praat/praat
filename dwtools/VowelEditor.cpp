@@ -473,7 +473,8 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 		integer it = 0;
 		const TrajectoryPoint lastPoint = my trajectory -> points.at [n];
 		TrajectoryPoint point;
-		while (++ it <= (n - 1)) {
+		Melder_assert (n >= 2);   // otherwise `point` will stay undefined
+		while (++ it <= n - 1) {
 			point = my trajectory -> points.at [n - it];
 			const double dx = resolution * (getx (lastPoint -> f2) - getx (point -> f2));
 			const double dy = resolution * (gety (lastPoint -> f1) - gety (point -> f1));
@@ -934,8 +935,8 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 2
 
 static void menu_cb_reverseTrajectory (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	Trajectory_reverse (my trajectory.get());
-	Graphics_updateWs (my graphics.get());
 	updateInfoLabels (me);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -959,8 +960,8 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		GuiText_setString (my durationTextField, Melder_fixed (newDuration, 6));
 		my pref_trajectory_newDuration () = my p_trajectory_newDuration = newDuration;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
-		Graphics_updateWs (my graphics.get());
 		updateInfoLabels (me);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -986,8 +987,8 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		my pref_trajectory_extendDuration () = my p_trajectory_extendDuration = extendDuration;
 		my pref_trajectory_duration () = my p_trajectory_duration = endTime;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
-		Graphics_updateWs (my graphics.get());
 		updateInfoLabels (me);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1012,8 +1013,8 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		Trajectory_shift_semitones (my trajectory.get(), f1_st, f2_st);
-		Graphics_updateWs (my graphics.get());
 		updateInfoLabels (me);
+		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -1063,8 +1064,8 @@ static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
 static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
 	Trajectory_reverse (my trajectory.get());
 	playTrajectory (me);
-	Graphics_updateWs (my graphics.get());
 	updateInfoLabels (me);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
@@ -1159,8 +1160,8 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 		}
 	}
 	Graphics_unsetInner (my graphics.get());
-	Graphics_updateWs (my graphics.get());
 	updateInfoLabels (me);
+	Graphics_updateWs (my graphics.get());
 }
 
 static void updateWidgets (void *void_me) {
