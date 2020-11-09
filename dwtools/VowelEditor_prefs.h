@@ -19,7 +19,7 @@
 
 prefs_begin (VowelEditor)
 
-	prefs_add_int_with_data    (VowelEditor, shell_width,                 1, U"800")
+	prefs_add_int_with_data    (VowelEditor, shell_width,                 1, U"900")
 	prefs_add_int_with_data    (VowelEditor, shell_height,                1, U"700")
 	prefs_add_bool_with_data   (VowelEditor, soundFollowsMouse,           1, true)
 	prefs_add_enum_with_data   (VowelEditor, window_frequencyScale,       1, kVowelEditor_frequencyScale, LOGARITHMIC)
