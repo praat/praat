@@ -746,9 +746,9 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 }
 
 double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromTrack, integer toTrack, double *out_probability, double *out_ndf) {
-	double chisq = undefined, ndfTotal = 0.0;
+	double ndfTotal = 0.0;
 	checkTrackAutoRange (me, & fromTrack, & toTrack);
-	chisq = 0.0;
+	double chisq = 0.0;
 	integer numberOfDefined = 0;
 	for (integer itrack = fromTrack; itrack <= toTrack; itrack ++) {
 		const DataModeler ffi = my trackmodelers.at [itrack];
@@ -766,7 +766,8 @@ double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromTrack, inte
 			*out_ndf = ndfTotal;
 		if (out_probability)
 			*out_probability = NUMchiSquareQ (chisq, ndfTotal);
-	}
+	} else
+		chisq = undefined;
 	return chisq;
 }
 
@@ -856,7 +857,7 @@ double FormantModeler_getStress (FormantModeler me, integer fromTrack, integer t
 	const double var = FormantModeler_getVarianceOfParameters (me, fromTrack, toTrack, 1, numberOfParametersPerTrack, & numberOfFreeParameters);
 	double degreesOfFreedom;
 	const double chisq = FormantModeler_getChiSquaredQ (me, fromTrack, toTrack, nullptr, & degreesOfFreedom);
-	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 ? 
+	return ( isdefined (var) && isdefined (chisq) && numberOfFreeParameters > 0 && degreesOfFreedom >= 0.0 ? 
 		( sqrt (pow (var / numberOfFreeParameters, power) * (chisq / degreesOfFreedom))) :
 		undefined );
 }

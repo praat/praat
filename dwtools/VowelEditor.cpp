@@ -27,7 +27,7 @@ trajectory --> path ????
 
  The user graphics area is the F1-F2 plane: here the origin is at the top-right with log(F2) on the 
  horizontal axis and log(F1) on the vertical axis (i.e. log (F1) top-down, log(F2) right-to-left)
- F1, F2 are always evaluated to herts values;
+ F1, F2 are always evaluated to hertz values;
  On the contrary the Graphics_window has it origin at the bottom left (0,0) and the top-right is at (1,1).
  We use a transformation such that log(fmin) -> 1 and  log(fmax)-> 0
  Transformations XY <=> F1F2: VowelEditor_getXYFromF1F2(...) and VowelEditor_getF1F2FromXY(...)
@@ -237,11 +237,6 @@ static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, dou
 static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, double *f1, double *f2) {
 	*f2 = my p_window_f2min * pow (my p_window_f2max / my p_window_f2min, 1.0 - x);
 	*f1 = my p_window_f1min * pow (my p_window_f1max / my p_window_f1min, 1.0 - y);
-}
-
-#define REPRESENTNUMBER(x,i) (isundef (x) ? U" undef" : Melder_pad (6, Melder_fixed (x, 1)))
-static void appendF1F2F0 (MelderString *statusInfo, conststring32 intro, double f1, double f2, double f0, conststring32 ending) {
-	MelderString_append (statusInfo, intro, REPRESENTNUMBER (f1, 1), U", ", REPRESENTNUMBER (f2, 2), U", ", REPRESENTNUMBER (f0, 3), ending);
 }
 
 static double getRealFromTextWidget (GuiText me) {
@@ -674,10 +669,26 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 	Graphics_markLeft (g, 1.0, false, true, false, Melder_double (my p_window_f1min));
 	Graphics_markTop (g, 0.0, false, true, false, Melder_double (my p_window_f2max));
 	Graphics_markTop (g, 1.0, false, true, false, Melder_double (my p_window_f2min));
-
 }
 
 #pragma mark - menu methods
+
+static void updateInfoLabels (VowelEditor me) {
+	const double startF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmin);
+	const double endF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmax);
+	const TrajectoryPoint startPoint = my trajectory -> points.at [1];
+	const TrajectoryPoint endPoint = my trajectory -> points.at [my trajectory -> points.size];
+	MelderString statusInfo;
+	if (! my graphics)
+		return;   // could be the case in the very beginning
+	MelderString_append (& statusInfo, U"Start (F1,F2,f0) = (", Melder_fixed (startPoint -> f1, 1), U", ", 
+		Melder_fixed (startPoint -> f2, 1), U", ", startF0, U")");
+	GuiLabel_setText (my startInfo, statusInfo.string);
+	MelderString_empty (& statusInfo);
+	MelderString_append (& statusInfo, U"End (F1,F2,f0) = (", Melder_fixed (endPoint -> f1, 1), U", ", 
+		Melder_fixed (endPoint -> f2, 1), U", ", endF0, U")");
+	GuiLabel_setText (my endInfo, statusInfo.string);	
+}
 
 static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"VowelEditor");
@@ -748,7 +759,6 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, fbpairs);
 		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
 		my extraFrequencyBandwidthPairs = extraFrequencyBandwidthPairs.move();
-		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -925,6 +935,7 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 2
 static void menu_cb_reverseTrajectory (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	Trajectory_reverse (my trajectory.get());
 	Graphics_updateWs (my graphics.get());
+	updateInfoLabels (me);
 }
 
 static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -949,6 +960,7 @@ static void menu_cb_newTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		my pref_trajectory_newDuration () = my p_trajectory_newDuration = newDuration;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
+		updateInfoLabels (me);
 	EDITOR_END
 }
 
@@ -975,6 +987,7 @@ static void menu_cb_extendTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 		my pref_trajectory_duration () = my p_trajectory_duration = endTime;
 		pref_str32cpy2 (my pref_trajectory_colour (), my p_trajectory_colour, colour_string);
 		Graphics_updateWs (my graphics.get());
+		updateInfoLabels (me);
 	EDITOR_END
 }
 
@@ -1000,6 +1013,7 @@ static void menu_cb_shiftTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		Trajectory_shift_semitones (my trajectory.get(), f1_st, f2_st);
 		Graphics_updateWs (my graphics.get());
+		updateInfoLabels (me);
 	EDITOR_END
 }
 
@@ -1032,10 +1046,13 @@ static void menu_cb_trajectory_colour (VowelEditor me, EDITOR_ARGS_FORM) {
 
 #pragma mark - button methods
 
-static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
+static void playTrajectory (VowelEditor me) {
 	autoSound thee = VowelEditor_createTargetSound (me);
 	Sound_play (thee.get(), nullptr, nullptr);
-	Graphics_updateWs (my graphics.get());
+}
+
+static void gui_button_cb_play (VowelEditor me, GuiButtonEvent /* event */) {
+	playTrajectory (me);
 }
 
 static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
@@ -1045,29 +1062,16 @@ static void gui_button_cb_publish (VowelEditor me, GuiButtonEvent /* event */) {
 
 static void gui_button_cb_reverse (VowelEditor me, GuiButtonEvent /* event */) {
 	Trajectory_reverse (my trajectory.get());
-	structGuiButtonEvent play_event { };
-	gui_button_cb_play (me, & play_event);
+	playTrajectory (me);
+	Graphics_updateWs (my graphics.get());
+	updateInfoLabels (me);
 }
 
 static void gui_drawingarea_cb_expose (VowelEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	Melder_assert (me);
 	Melder_assert (my trajectory);
-	const double startF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmin);
-	const double endF0 = VowelEditor_getF0AtTime (me, my trajectory -> xmax);
-	const TrajectoryPoint startPoint = my trajectory -> points.at [1];
-	const TrajectoryPoint endPoint = my trajectory -> points.at [my trajectory -> points.size];
-	static MelderString statusInfo;
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	Graphics_clearWs (my graphics.get());
-
-	appendF1F2F0 (& statusInfo, U"Start (F1,F2,f0) = (", startPoint -> f1, startPoint -> f2, startF0, U")");
-	GuiLabel_setText (my startInfo, statusInfo.string);
-	MelderString_empty (& statusInfo);
-
-	appendF1F2F0 (& statusInfo, U"End (F1,F2,f0) = (", endPoint -> f1, endPoint -> f2, endF0, U")");
-	GuiLabel_setText (my endInfo, statusInfo.string);
-	MelderString_empty (& statusInfo);
 
 	Graphics_setGrey (my graphics.get(), 0.9);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -1156,6 +1160,7 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 	}
 	Graphics_unsetInner (my graphics.get());
 	Graphics_updateWs (my graphics.get());
+	updateInfoLabels (me);
 }
 
 static void updateWidgets (void *void_me) {
@@ -1209,7 +1214,7 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structVowelEditor :: v_createChildren ()
 {
-	const int button_width = 90, text_width = 95, status_info_width = 400;
+	const int button_width = 90, text_width = 110, status_info_width = 400;
 	int top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
 	// Three buttons on a row: Play, Reverse, Publish
@@ -1269,7 +1274,7 @@ void structVowelEditor :: v_createChildren ()
 	*/
 	bottom = - (STATUS_INFO - Gui_LABEL_HEIGHT) / 2;
 	top = bottom - Gui_LABEL_HEIGHT;
-	left = MARGIN_LEFT;
+	left = 10; //MARGIN_LEFT;
 	right = left + status_info_width;
 	startInfo = GuiLabel_createShown (our windowForm, left, right, top, bottom, U"", 0);
 
@@ -1280,8 +1285,6 @@ void structVowelEditor :: v_createChildren ()
 		Create drawing area.
 		Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 		log distances are equal (log (1000/200) == log (2500/500) ).
-		drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	*/
 	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,   // TODO: mouse-dragged and mouse-up events
@@ -1359,16 +1362,8 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			my p_grid_df1 = Melder_atof (my default_grid_df1 ());
 		if (my p_grid_df2 <= 0)
 			my p_grid_df2 = Melder_atof (my default_grid_df2 ());
-{
-	/*
-		This exdents because it's a hack:
-	*/
-	/*struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
-	event. width  = GuiControl_getWidth  (my drawingArea);
-	event. height = GuiControl_getHeight (my drawingArea);
-	gui_drawingarea_cb_resize (me.get(), & event);*/
-}
 		updateWidgets (me.get());
+		updateInfoLabels (me.get());
 		trace (U"exit");
 		return me;
 	} catch (MelderError) {
