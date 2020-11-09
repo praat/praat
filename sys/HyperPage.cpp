@@ -92,13 +92,6 @@ static void saveHistory (HyperPage me, conststring32 title) {
  *
  */
 
-static void initScreen (HyperPage me) {
-	my d_y = PAGE_HEIGHT + my top / 5.0;
-	my d_x = 0;
-	my previousBottomSpacing = 0.0;
-	my links. removeAllItems ();
-}
-
 void HyperPage_initSheetOfPaper (HyperPage me) {
 	int reflect = my mirror && (my d_printingPageNumber & 1) == 0;
 	conststring32 leftHeader = reflect ? my outsideHeader : my insideHeader;
@@ -147,7 +140,8 @@ static void updateVerticalScrollBar (HyperPage me);
 void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, double size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method)
 {
-	if (my rightMargin == 0) return;   // no infinite heights please
+	if (my rightMargin == 0)
+		return;   // no infinite heights please
 	double heightGuess = size * (1.2/72) * ((integer) size * str32len (text) / (int) (my rightMargin * 150));
 
 if (! my printing) {
@@ -591,22 +585,21 @@ void structHyperPage :: v_destroy () noexcept {
 }
 
 static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent /* event */) {
+	trace (U"HyperPage: gui_drawingarea_cb_expose");
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	Graphics_clearWs (my graphics.get());
-	initScreen (me);
-	trace (U"going to draw");
-	my v_draw ();
 	if (my entryHint && my entryPosition != 0.0) {
 		my entryHint. reset();
 		my top = (int) floor (5.0 * (PAGE_HEIGHT - my entryPosition));
-		if (my top < 0)
-			my top = 0;
-		Graphics_clearWs (my graphics.get());
-		initScreen (me);
-		my v_draw ();
-		updateVerticalScrollBar (me);
+		Melder_clipLeft (0, & my top);
 	}
+	my d_y = PAGE_HEIGHT + my top / 5.0;
+	my d_x = 0;
+	my previousBottomSpacing = 0.0;
+	my links. removeAllItems ();
+	trace (U"going to draw");
+	Graphics_clearWs (my graphics.get());
+	my v_draw ();
 }
 
 static void gui_drawingarea_cb_mouse (HyperPage me, GuiDrawingArea_MouseEvent event) {
@@ -657,7 +650,8 @@ static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
 		INTEGER_FIELD (my d_printingPageNumber, U"First page number", U"0 (= no page numbers)")
 	EDITOR_OK
 		my v_defaultHeaders (cmd);
-		if (my d_printingPageNumber != 0) SET_INTEGER (my d_printingPageNumber, my d_printingPageNumber + 1)
+		if (my d_printingPageNumber != 0)
+			SET_INTEGER (my d_printingPageNumber, my d_printingPageNumber + 1)
 	EDITOR_DO
 		Printer_print (print, me);
 	EDITOR_END
@@ -673,7 +667,8 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
 				my p_font == kGraphics_font::HELVETICA ? 2 : my p_font == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
 		my pref_font () = my p_font = font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA;
-		if (my graphics) Graphics_updateWs (my graphics.get());
+		if (my graphics)
+			Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
 
@@ -686,8 +681,9 @@ static void updateSizeMenu (HyperPage me) {
 }
 static void setFontSize (HyperPage me, double fontSize) {
 	my pref_fontSize () = my p_fontSize = fontSize;
-	if (my graphics) Graphics_updateWs (my graphics.get());
 	updateSizeMenu (me);
+	if (my graphics)
+		Graphics_updateWs (my graphics.get());
 }
 
 static void menu_cb_10 (HyperPage me, EDITOR_ARGS_DIRECT) { setFontSize (me, 10.0); }
@@ -730,18 +726,13 @@ static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
  */
 
 static void gui_cb_verticalScroll (HyperPage me, GuiScrollBarEvent	event) {
+	trace (U"gui_cb_verticalScroll");
 	double value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my top) {
 		trace (U"scroll from ", my top, U" to ", value);
 		my top = (int) floor (value);
-		#if cocoa || gtk || motif
-			Graphics_updateWs (my graphics.get());   // wait for expose event
-		#else
-			initScreen (me);
-			Graphics_clearWs (my graphics.get());
-			my v_draw ();   // do not wait for expose event
-		#endif
 		updateVerticalScrollBar (me);
+		Graphics_updateWs (my graphics.get());
 	}
 }
 
@@ -757,9 +748,10 @@ static void createVerticalScrollBar (HyperPage me, GuiForm parent) {
 
 static void updateVerticalScrollBar (HyperPage me)
 /* We cannot call this immediately after creation. */
-/* This has to be called after changing 'my topParagraph'. */
+/* This has to be called after changing `my top`. */
 {
-	int sliderSize = 25;
+	trace (U"updateVerticalScrollBar");
+	const int sliderSize = 25;
 	GuiScrollBar_set (my verticalScrollBar, undefined, undefined, my top, sliderSize, 1, sliderSize - 1);
 	my history [my historyPointer]. top = 0/*my top*/;
 }
@@ -771,10 +763,8 @@ static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 	Melder_clipLeft (0, & value);
 	if (value != my top) {
 		my top = value;
-		Graphics_clearWs (my graphics.get());
-		initScreen (me);
-		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
+		Graphics_updateWs (my graphics.get());
 	}
 }
 
@@ -785,23 +775,22 @@ static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
 	Melder_clipRight (& value, (int) (PAGE_HEIGHT * 5) - 25);
 	if (value != my top) {
 		my top = value;
-		Graphics_clearWs (my graphics.get());
-		initScreen (me);
-		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
+		Graphics_updateWs (my graphics.get());
 	}
 }
 
 /********** **********/
 
 static void do_back (HyperPage me) {
-	if (my historyPointer <= 0) return;
+	if (my historyPointer <= 0)
+		return;
 	autostring32 page = Melder_dup_f (my history [-- my historyPointer]. page.get());   // temporary, because pointer will be moved
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
 		my top = top;
-		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
+		HyperPage_clear (me);
 	}
 }
 
@@ -820,8 +809,8 @@ static void do_forth (HyperPage me) {
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
 		my top = top;
-		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
+		HyperPage_clear (me);
 	}
 }
 
@@ -867,13 +856,14 @@ void structHyperPage :: v_createMenus () {
 /********** **********/
 
 static void gui_drawingarea_cb_resize (HyperPage me, GuiDrawingArea_ResizeEvent event) {
+	trace (U"HyperPage: gui_drawingarea_cb_resize");
 	if (! my graphics)
 		return;
 	Graphics_setWsViewport (my graphics.get(), 0.0, event -> width, 0.0, event -> height);
 	Graphics_setWsWindow (my graphics.get(), 0.0, my rightMargin = event -> width / resolution,
 			PAGE_HEIGHT - event -> height / resolution, PAGE_HEIGHT);
-	Graphics_updateWs (my graphics.get());
-	updateVerticalScrollBar (me);
+	//updateVerticalScrollBar (me);
+	//Graphics_updateWs (my graphics.get());
 }
 
 static void gui_button_cb_previousPage (HyperPage me, GuiButtonEvent /* event */) {
@@ -943,16 +933,17 @@ gui_drawingarea_cb_resize (me, & event);
 }
 
 void HyperPage_clear (HyperPage me) {
-	Graphics_updateWs (my graphics.get());
 	my links. removeAllItems();
+	Graphics_updateWs (my graphics.get());
 }
 
 void structHyperPage :: v_dataChanged () {
 	bool oldError = Melder_hasError ();   // this method can be called during error time
 	(void) our v_goToPage (our currentPageTitle.get());
-	if (Melder_hasError () && ! oldError) Melder_flushError ();
-	HyperPage_clear (this);
+	if (Melder_hasError () && ! oldError)
+		Melder_flushError ();
 	updateVerticalScrollBar (this);
+	HyperPage_clear (this);
 }
 
 int HyperPage_goToPage (HyperPage me, conststring32 title) {
@@ -963,16 +954,16 @@ int HyperPage_goToPage (HyperPage me, conststring32 title) {
 	saveHistory (me, title);   // last chance: HyperPage_clear will destroy "title" !!!
 	my currentPageTitle = Melder_dup_f (title);
 	my top = 0;
-	HyperPage_clear (me);
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
-	return 1;	
+	HyperPage_clear (me);
+	return 1;
 }
 
 void HyperPage_goToPage_number (HyperPage me, integer i) {
 	my v_goToPage_number (i);   // catch -> HyperPage_clear (me); ?
 	my top = 0;
-	HyperPage_clear (me);
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
+	HyperPage_clear (me);
 }
 
 void HyperPage_setEntryHint (HyperPage me, conststring32 hint) {

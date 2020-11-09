@@ -55,8 +55,8 @@ static void updateHorizontalScrollBar (TableEditor me) {
 
 void structTableEditor :: v_dataChanged () {
 	Table table = static_cast<Table> (our data);
-	if (topRow > table -> rows.size) topRow = table -> rows.size;
-	if (leftColumn > table -> numberOfColumns) leftColumn = table -> numberOfColumns;
+	Melder_clipRight (& our topRow, table -> rows.size);
+	Melder_clipRight (& our leftColumn, table -> numberOfColumns);
 	updateVerticalScrollBar (this);
 	updateHorizontalScrollBar (this);
 	Graphics_updateWs (our graphics.get());
