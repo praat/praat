@@ -1,5 +1,5 @@
 # graphicsText.praat
-# Paul Boersma 2020-07-26
+# Paul Boersma 2020-11-10
 
 Erase all
 Select outer viewport: 0, 6, 0, 9
@@ -25,3 +25,5 @@ Text: 0, "left", 89, "half", "The space might be too small in: Now %%you% try."
 Text: 0, "left", 88, "half", "A lot of normal text might cause ##misalignment# misalignment misalignment of the f in: (%%false%)"
 Text: 0, "left", 87, "half", "(%%false%) now at the beginning of the line"
 
+width = Text width (mm): "Hello world"
+assert width > 18.0 and width < 24.0   ; 'width'
