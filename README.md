@@ -139,7 +139,7 @@ you may then also have to go to App Store Connect, log in, then Agreements, Tax,
 
 To set up the required system libraries, install some graphics and sound packages:
 
-    sudo apt-get install libgtk2.0-dev
+    sudo apt-get install libgtk-3-dev
     sudo apt-get install libasound2-dev
     sudo apt-get install libpulse-dev
     sudo apt-get install libjack-dev
@@ -161,17 +161,17 @@ and type one of the four following commands:
 
 To build the Praat executable, type `make` or `make -j12`.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile
-(you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0,
-cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound, jack).
+(you may need pthread, gtk-3, gdk-3, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0,
+cairo-gobject, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound, jack).
 
 When compiling Praat on an external supercomputer or so, you will not have sound.
-If you do have `libgtk2.0-dev` (and its dependencies), do
+If you do have `libgtk-3-dev` (and its dependencies), do
 
     cp makefiles/makefile.defs.linux.silent ./makefile.defs
 
 Then type `make` or `make -j12` to build the program. If your Unix isn’t Linux,
-you may have to edit the library names in the makefile (you may need pthread, gtk-x11-2.0, gdk-x11-2.0, atk-1.0,
-pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0,
+you may have to edit the library names in the makefile (you may need pthread, gtk-3, gdk-3, atk-1.0,
+pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo-gobject, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0,
 gmodule-2.0, gthread-2.0, rt, glib-2.0).
 
 When compiling Praat for use as a server for commands from your web pages, you may not need sound or a GUI. Do
