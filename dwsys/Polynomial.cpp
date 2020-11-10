@@ -102,6 +102,9 @@ static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 }
 
 
+Thing_implement (Polynomial, FunctionSeries, 1);
+
+
 /*
 	Symbolic evaluation of polynomial coefficients.
 	Recurrence: P [n] = (a [n] * x + b [n]) P [n-1] + c [n] P [n-2],
@@ -112,46 +115,6 @@ static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 		pnm1 : polynomial of degree n - 1
 		pnm2 : polynomial of degree n - 2
 */
-
-/* frozen [1..ma] */
-static void svdcvm (MAT const & cvm, constMAT const & v, integer mfit, constINTVEC const & frozen, constVEC const & w) {
-	autoVEC wti = newVECzero (mfit);
-
-	for (integer i = 1; i <= mfit; i ++) {
-		if (w [i] != 0.0)
-			wti [i] = 1.0 / (w [i] * w [i]);
-		else 
-			;   // TODO: write up an explanation for why it is not necessary to do anything if w [i] is zero
-
-	}
-	for (integer i = 1; i <= mfit; i ++)
-		for (integer j = 1; j <= i; j ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= mfit; k ++)
-				sum += v [i] [k] * v [j] [k] * wti [k];
-			cvm [j] [i] = cvm [i] [j] = (double) sum;
-		}
-
-	for (integer i = mfit + 1; i <= frozen.size; i ++) {
-		for (integer j = 1; j <= i; j ++)
-			cvm [j] [i] = cvm [i] [j] = 0.0;
-	}
-
-	integer k = mfit;
-	for (integer j = frozen.size; j > 0; j --) {
-		//	only change parameters that are not frozen
-		if (frozen.size == 0 || ! frozen [j]) {
-			for (integer i = 1; i <= frozen.size; i ++)
-				std::swap (cvm [i] [k], cvm [i] [j]);
-			for (integer i = 1; i <= frozen.size; i ++)
-				std:: swap (cvm [k] [i], cvm [j] [i]);
-			k --;
-		}
-	}
-}
-
-Thing_implement (Polynomial, FunctionSeries, 1);
-
 double structPolynomial :: v_evaluate (double x) {
 	longdouble p = coefficients [numberOfCoefficients];
 	for (integer i = numberOfCoefficients - 1; i > 0; i --)
