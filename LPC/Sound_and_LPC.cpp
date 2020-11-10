@@ -486,15 +486,6 @@ static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, 
 	}
 }
 
-static autoLPC Sound_to_LPC_noThreads (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
-	double t1;
-	integer numberOfFrames;
-	Sampled_shortTermAnalysis (me, 2.0 * analysisWidth, dt, & numberOfFrames, & t1); // Gaussian window
-	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
-	Sound_into_LPC_noThreads (me, thee.get(), analysisWidth, preEmphasisFrequency, method, tol1, tol2);
-	return thee;
-}
-
 void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
 	if (numberOfProcessors <= 1) {
