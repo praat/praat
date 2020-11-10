@@ -60,15 +60,15 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			}
 			if (control) {
 				/*
-				 * Move and resize.
-				 */
-				Melder_casual (U"moving child of class ", Thing_className (control));
+					Move and resize.
+				*/
+				trace (U"moving child of class ", Thing_className (control));
 				int left = control -> d_left, right = control -> d_right, top = control -> d_top, bottom = control -> d_bottom;
 				if (left   <  0) left   += parentAllocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
 				if (right  <= 0) right  += parentAllocation -> width;
 				if (top    <  0) top    += parentAllocation -> height;
 				if (bottom <= 0) bottom += parentAllocation -> height;
-				Melder_casual (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
+				trace (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
 				#if ALLOW_GDK_DRAWING
 					gtk_fixed_move (GTK_FIXED (parentWidget), GTK_WIDGET (childWidget), left, top);
 					gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
@@ -76,7 +76,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 					GtkAllocation childAllocation { left, top, right - left, bottom - top };
 					gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
 				#endif
-				Melder_casual (U"moved child of class ", Thing_className (control));
+				trace (U"moved child of class ", Thing_className (control));
 			}
 		}
 	}
