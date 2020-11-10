@@ -1030,36 +1030,40 @@ void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCall
 
 void GuiText_setFontSize (GuiText me, double size) {
 	#if gtk
-		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (my d_widget));
-		trace (U"before initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		PangoFontDescription *fontDesc = modStyle -> font_desc != nullptr ? modStyle -> font_desc :
-			#if ALLOW_GDK_DRAWING
-				pango_font_description_copy (GTK_WIDGET (my d_widget) -> style -> font_desc);
-			#else
-				nullptr;
-			#endif
-		trace (U"during initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
-		trace (U"after initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		modStyle -> font_desc = fontDesc;
-		gtk_widget_modify_style (GTK_WIDGET (my d_widget), modStyle);
+		#if ALLOW_GDK_DRAWING
+			GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (my d_widget));
+			trace (U"before initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			PangoFontDescription *fontDesc = modStyle -> font_desc != nullptr ? modStyle -> font_desc :
+					pango_font_description_copy (gtk_widget_get_style (GTK_WIDGET (my d_widget)) -> font_desc);
+			trace (U"during initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
+			trace (U"after initializing Pango: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
+			modStyle -> font_desc = fontDesc;
+			gtk_widget_modify_style (GTK_WIDGET (my d_widget), modStyle);
+		#else
+			GtkStyleContext *styleContext = gtk_widget_get_style_context (GTK_WIDGET (my d_widget));
+			const PangoFontDescription *fontDesc = gtk_style_context_get_font (styleContext, GTK_STATE_FLAG_NORMAL);
+			PangoFontDescription *copy = pango_font_description_copy (fontDesc);
+			pango_font_description_set_absolute_size (copy, size * PANGO_SCALE);
+			gtk_widget_override_font (GTK_WIDGET (my d_widget), copy);
+			pango_font_description_free (copy);
+		#endif
 	#elif motif
 		// a trick to update the window. BUG: why doesn't UpdateWindow seem to suffice?
 		integer first, last;
 		autostring32 text = GuiText_getStringAndSelectionPosition (me, & first, & last);
 		GuiText_setString (me, U"");   // erase all
 		UpdateWindow (my d_widget -> window);
-		if (size <= 10.0) {
+		if (size <= 10.0)
 			SetWindowFont (my d_widget -> window, font10, false);
-		} else if (size <= 12.0) {
+		else if (size <= 12.0)
 			SetWindowFont (my d_widget -> window, font12, false);
-		} else if (size <= 14.0) {
+		else if (size <= 14.0)
 			SetWindowFont (my d_widget -> window, font14, false);
-		} else if (size <= 18.0) {
+		else if (size <= 18.0)
 			SetWindowFont (my d_widget -> window, font18, false);
-		} else {
+		else
 			SetWindowFont (my d_widget -> window, font24, false);
-		}
 		GuiText_setString (me, text.get());
 		GuiText_setSelection (me, first, last);
 		UpdateWindow (my d_widget -> window);

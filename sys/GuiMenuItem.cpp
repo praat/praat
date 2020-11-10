@@ -238,7 +238,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 			if (flags & GuiMenu_SHIFT)   modifiers = (GdkModifierType) (modifiers | GDK_SHIFT_MASK);
 			if (flags & GuiMenu_OPTION)  modifiers = (GdkModifierType) (modifiers | GDK_MOD1_MASK);
 			GtkAccelGroup *ag = gtk_menu_get_accel_group (GTK_MENU (menu -> d_widget));
-			guint key = accelerator < 32 ? acceleratorKeys [accelerator] : accelerator;
+			guint key = ( accelerator < 32 ? acceleratorKeys [accelerator] : accelerator );
 			if (key != 0)
 				gtk_widget_add_accelerator (GTK_WIDGET (my d_widget), toggle ? "YouShouldNotGetHere" : "activate",
 					ag, key, modifiers, GTK_ACCEL_VISIBLE);

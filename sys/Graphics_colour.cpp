@@ -214,7 +214,7 @@ void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, do
 void Graphics_xorOn (Graphics graphics, MelderColour colourOnWhiteBackground) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
-		if (graphics -> recording) {
+		if (my recording) {
 			op (XOR_ON, 3);
 			put (colourOnWhiteBackground. red);
 			put (colourOnWhiteBackground. green);
@@ -239,7 +239,7 @@ void Graphics_xorOn (Graphics graphics, MelderColour colourOnWhiteBackground) {
 void Graphics_xorOff (Graphics graphics) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
-		if (graphics -> recording) {
+		if (my recording) {
 			op (XOR_OFF, 0);
 		} else {
 			#if cairo
