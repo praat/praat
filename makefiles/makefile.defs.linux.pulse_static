@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.pulse_static
 
 # System: Linux
-# David Weenink and Paul Boersma 2020-09-17
+# David Weenink and Paul Boersma 2020-11-10
 
 # statically linked with the standard C and C++ libraries,
 # hence avoiding `gethostbyname` by defining NO_NETWORK
@@ -12,7 +12,7 @@ CXX = g++
 
 PKG_CONFIG ?= "pkg-config"
 
-COMMONFLAGS = -DNO_NETWORK -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cflags gtk+-2.0` -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
+COMMONFLAGS = -DNO_NETWORK -DUNIX -Dlinux -DALSA -DHAVE_PULSEAUDIO -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cflags gtk+-3.0` -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O3 -g1 -pthread
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
@@ -22,7 +22,7 @@ LINK = $(CXX)
 
 EXECUTABLE = praat_static
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-2.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu -lX11
 
 AR = ar
 RANLIB = ls
