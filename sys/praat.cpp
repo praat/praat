@@ -870,26 +870,15 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	static void cb_sigusr1 (int signum) {
 		Melder_assert (signum == SIGUSR1);
 		signal (SIGUSR1, cb_sigusr1);   // keep this handler in the air
-		#if ALLOW_GDK_DRAWING
-			GdkEventClient gevent;
-			gevent. type = GDK_CLIENT_EVENT;
-			gevent. window = GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window;
-			gevent. send_event = 1;
-			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
-			gevent. data_format = 8;
-			// Melder_casual (U"event put");
-			gdk_event_put ((GdkEvent *) & gevent);
-		#else
-			GdkEventProperty gevent;   // or GdkEventSetting, once we can find its signal name
-			gevent. type = GDK_PROPERTY_NOTIFY;   // or GDK_SETTING
-			gevent. window = gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow));
-			gevent. send_event = 1;
-			gevent. atom = gdk_atom_intern_static_string ("SENDPRAAT");
-			gevent. time = 0;
-			gevent. state = GDK_PROPERTY_NEW_VALUE;
-			// Melder_casual (U"event put");
-			gdk_event_put ((GdkEvent *) & gevent);   // this is safe only if gdk_event_put is reentrant, which is unlikely because the event queue is global
-		#endif
+		GdkEventProperty gevent;   // or GdkEventSetting, once we can find its signal name
+		gevent. type = GDK_PROPERTY_NOTIFY;   // or GDK_SETTING
+		gevent. window = gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow));
+		gevent. send_event = 1;
+		gevent. atom = gdk_atom_intern_static_string ("SENDPRAAT");
+		gevent. time = 0;
+		gevent. state = GDK_PROPERTY_NEW_VALUE;
+		// Melder_casual (U"event put");
+		gdk_event_put ((GdkEvent *) & gevent);   // this is safe only if gdk_event_put is reentrant, which is unlikely because the event queue is global
 	}
 	#if 0
 		/*
@@ -942,57 +931,30 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 #if defined (UNIX)
 	#if ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
-		#if ALLOW_GDK_DRAWING
-			static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventClient * /* event */, gpointer /* userData */) {
-				//Melder_casual (U"client event called");
-				autofile f;
-				try {
-					f.reset (Melder_fopen (& messageFile, "r"));
-				} catch (MelderError) {
-					Melder_clearError ();
-					return true;   // OK
-				}
-				long_not_integer pid = 0;
-				int narg = fscanf (f, "#%ld", & pid);
-				f.close (& messageFile);
-				{// scope
-					autoPraatBackground background;
-					try {
-						praat_executeScriptFromFile (& messageFile, nullptr);
-					} catch (MelderError) {
-						Melder_flushError (praatP.title.get(), U": message not completely handled.");
-					}
-				}
-				if (narg != 0 && pid != 0)
-					kill (pid, SIGUSR2);
-				return true;
+		static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventProperty * /* event */, gpointer /* userData */) {
+			Melder_casual (U"client event called");
+			autofile f;
+			try {
+				f.reset (Melder_fopen (& messageFile, "r"));
+			} catch (MelderError) {
+				Melder_clearError ();
+				return true;   // OK
 			}
-		#else
-			static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventProperty * /* event */, gpointer /* userData */) {
-				Melder_casual (U"client event called");
-				autofile f;
+			long_not_integer pid = 0;
+			int narg = fscanf (f, "#%ld", & pid);
+			f.close (& messageFile);
+			{// scope
+				autoPraatBackground background;
 				try {
-					f.reset (Melder_fopen (& messageFile, "r"));
+					praat_executeScriptFromFile (& messageFile, nullptr);
 				} catch (MelderError) {
-					Melder_clearError ();
-					return true;   // OK
+					Melder_flushError (praatP.title.get(), U": message not completely handled.");
 				}
-				long_not_integer pid = 0;
-				int narg = fscanf (f, "#%ld", & pid);
-				f.close (& messageFile);
-				{// scope
-					autoPraatBackground background;
-					try {
-						praat_executeScriptFromFile (& messageFile, nullptr);
-					} catch (MelderError) {
-						Melder_flushError (praatP.title.get(), U": message not completely handled.");
-					}
-				}
-				if (narg != 0 && pid != 0)
-					kill (pid, SIGUSR2);
-				return true;
 			}
-		#endif
+			if (narg != 0 && pid != 0)
+				kill (pid, SIGUSR2);
+			return true;
+		}
 	#endif
 #elif defined (_WIN32)
 	static int cb_userMessage () {
@@ -1961,14 +1923,9 @@ void praat_run () {
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
 			trace (U"install GTK key snooper");
 			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-			#if ALLOW_GDK_DRAWING
-				g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "client-event",
+			//g_signal_newv ("SENDPRAAT", G_TYPE_FROM_CLASS (gobject_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
+			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "property-notify-event",
 					G_CALLBACK (cb_userMessage), nullptr);
-			#else
-				//g_signal_newv ("SENDPRAAT", G_TYPE_FROM_CLASS (gobject_class), G_SIGNAL_RUN_LAST, NULL, NULL, NULL, NULL, G_TYPE_NONE, 0, NULL);
-				g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "property-notify-event",
-					G_CALLBACK (cb_userMessage), nullptr);
-			#endif
 			signal (SIGUSR1, cb_sigusr1);
 			gdk_window_add_filter (NULL, sendpraatEventFilter, NULL);
 			gtk_key_snooper_install (theKeySnooper, 0);

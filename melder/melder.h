@@ -61,12 +61,6 @@
 #include "enums.h"
 #include "melder_enums.h"
 
-/*
- * Operating system version control.
- */
-#define ALLOW_GDK_DRAWING  (gtk && 0)   /* change from (gtk && 1) to (gtk && 0) if you want to try out GTK 3 */
-/* */
-
 #include "melder_tensor.h"   // VEC, autoMAT, Melder_VEC
 #include "melder_colour.h"   // MelderColour (requires VEC)
 #include "melder_ftoa.h"   // Melder_double, Melder_pad (require dcomplex, conststring32, MelderColour)

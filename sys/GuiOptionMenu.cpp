@@ -67,18 +67,10 @@ void GuiOptionMenu_init (GuiOptionMenu me, GuiForm parent, int left, int right, 
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
-		#if ALLOW_GDK_DRAWING
-			my d_widget = gtk_combo_box_new_text ();
-		#else
-			my d_widget = gtk_combo_box_text_new ();
-		#endif
+		my d_widget = gtk_combo_box_text_new ();
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), right - left, bottom - top + 8);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (my d_widget), left, top - 6);
-		#if ALLOW_GDK_DRAWING
-			gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (my d_widget), false);
-		#else
-			gtk_widget_set_focus_on_click (GTK_WIDGET (my d_widget), false);
-		#endif
+		gtk_widget_set_focus_on_click (GTK_WIDGET (my d_widget), false);
 		gtk_widget_set_can_default (GTK_WIDGET (my d_widget), false);
 	#elif motif
 		my d_xmMenuBar = XmCreateMenuBar (parent -> d_widget, "UiOptionMenu", nullptr, 0);
@@ -142,11 +134,7 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 
 void GuiOptionMenu_addOption (GuiOptionMenu me, conststring32 text) {
 	#if gtk
-		#if ALLOW_GDK_DRAWING
-			gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peek32to8 (text));
-		#else
-			gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (my d_widget), Melder_peek32to8 (text));
-		#endif
+		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (my d_widget), Melder_peek32to8 (text));
 	#elif motif
 		autoGuiMenuItem menuItem = Thing_new (GuiMenuItem);
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peek32to8 (text), xmToggleButtonWidgetClass, my d_widget, nullptr);

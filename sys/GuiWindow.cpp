@@ -69,13 +69,8 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				if (top    <  0) top    += parentAllocation -> height;
 				if (bottom <= 0) bottom += parentAllocation -> height;
 				trace (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
-				#if ALLOW_GDK_DRAWING
-					gtk_fixed_move (GTK_FIXED (parentWidget), GTK_WIDGET (childWidget), left, top);
-					gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
-				#else
-					GtkAllocation childAllocation { left, top, right - left, bottom - top };
-					gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
-				#endif
+				GtkAllocation childAllocation { left, top, right - left, bottom - top };
+				gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
 				trace (U"moved child of class ", Thing_className (control));
 			}
 		}
@@ -85,30 +80,17 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		iam (GuiWindow);
 		trace (U"fixed received size allocation: (", allocation -> x, U", ", allocation -> y,
 			U"), ", allocation -> width, U" x ", allocation -> height, U".");
-		if (
-			#if ALLOW_GDK_DRAWING
-				allocation -> width != my d_width || allocation -> height != my d_height
-			#else
-				true
-			#endif
-		)
-		{
-			trace (U"user changed the size of the window?");
-			/*
-			 * Apparently, GTK sends the size allocation message both to the shell and to its fixed-container child.
-			 * we could capture the message either from the shell or from the fixed; we choose to do it from the fixed.
-			 */
-			Melder_assert (GTK_IS_FIXED (widget));
-			/*
-			 * We move and resize all the children of the fixed.
-			 */
-			gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, allocation);
-			my d_width = allocation -> width;
-			my d_height = allocation -> height;
-			#if ALLOW_GDK_DRAWING
-				gtk_widget_set_size_request (GTK_WIDGET (widget), allocation -> width, allocation -> height);
-			#endif
-		}
+		/*
+			Apparently, GTK sends the size allocation message both to the shell and to its fixed-container child.
+			we could capture the message either from the shell or from the fixed; we choose to do it from the fixed.
+		*/
+		Melder_assert (GTK_IS_FIXED (widget));
+		/*
+			We move and resize all the children of the fixed.
+		*/
+		gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, allocation);
+		my d_width = allocation -> width;
+		my d_height = allocation -> height;
 		trace (U"end");
 	}
 #elif motif
@@ -151,11 +133,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 
 		my d_widget = gtk_fixed_new ();
 		_GuiObject_setUserData (my d_widget, me.get());
-		#if ALLOW_GDK_DRAWING
-			gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
-		#else
-			gtk_widget_set_size_request (GTK_WIDGET (my d_widget), minimumWidth, minimumHeight);
-		#endif
+		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), minimumWidth, minimumHeight);
 		gtk_container_add (GTK_CONTAINER (my d_gtkWindow), GTK_WIDGET (my d_widget));
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_widget), & geometry, GDK_HINT_MIN_SIZE);
