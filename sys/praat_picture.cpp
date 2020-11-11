@@ -1312,7 +1312,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_dxMMtoWC (GRAPHICS, distance);
+	const double wc = Graphics_dxMMtoWC (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
@@ -1324,7 +1324,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_dxWCtoMM (GRAPHICS, distance);
+	const double mm = Graphics_dxWCtoMM (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
@@ -1336,7 +1336,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_dyMMtoWC (GRAPHICS, distance);
+	const double wc = Graphics_dyMMtoWC (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
@@ -1348,7 +1348,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_dyWCtoMM (GRAPHICS, distance);
+	const double mm = Graphics_dyWCtoMM (GRAPHICS, distance);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
@@ -1357,14 +1357,13 @@ FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", n
 	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
-	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_textWidth (GRAPHICS, text);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, U"(world coordinates)");
-END }
+	GRAPHICS_NONE
+		Graphics_setInner (GRAPHICS);
+		const double wc = Graphics_textWidth (GRAPHICS, text);
+		Graphics_unsetInner (GRAPHICS);
+		Melder_informationReal (wc, U"(world coordinates)");
+	GRAPHICS_NONE_END
+}
 
 FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
 	TEXTFIELD (text, U"Text:", U"Hello world")
@@ -1374,7 +1373,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, text));
+	const double mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, text));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }
@@ -1390,7 +1389,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double wc = Graphics_textWidth_ps (GRAPHICS, text, phoneticFont);
+	const double wc = Graphics_textWidth_ps (GRAPHICS, text, phoneticFont);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, U"(world coordinates)");
 END }
@@ -1406,7 +1405,7 @@ DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	double mm = Graphics_textWidth_ps_mm (GRAPHICS, text, phoneticFont);
+	const double mm = Graphics_textWidth_ps_mm (GRAPHICS, text, phoneticFont);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, U"mm");
 END }

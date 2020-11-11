@@ -1452,18 +1452,44 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 double Graphics_textWidth (Graphics me, conststring32 txt) {
 	if (! initBuffer (txt))
 		return 0.0;
-	#if cairo && ! defined (NO_GUI)   /* BUG */
+	//Melder_casual (U"Graphics_textWidth: workstation viewport ", my d_x1DC, U" ", my d_x2DC, U" ", my d_y1DC, U" ", my d_y2DC);
+	//Melder_casual (U"Graphics_textWidth: workstation window ", my d_x1wNDC, U" ", my d_x2wNDC, U" ", my d_y1wNDC, U" ", my d_y2wNDC);
+	//Melder_casual (U"Graphics_textWidth: viewport ", my d_x1NDC, U" ", my d_x2NDC, U" ", my d_y1NDC, U" ", my d_y2NDC);
+	//Melder_casual (U"Graphics_textWidth: window ", my d_x1WC, U" ", my d_x2WC, U" ", my d_y1WC, U" ", my d_y2WC);
+	#if cairo
+		Melder_assert (Thing_isa (me, classGraphicsScreen));
 		cairo_t *oldCairoGraphicsContext = ((GraphicsScreen) me) -> d_cairoGraphicsContext;
-		if (! oldCairoGraphicsContext && ((GraphicsScreen) me) -> d_window)
-			((GraphicsScreen) me) -> d_cairoGraphicsContext = gdk_cairo_create (((GraphicsScreen) me) -> d_window);
+		cairo_surface_t *cairoSurface;
+		if (! oldCairoGraphicsContext)
+			#ifndef NO_GUI
+			if (((GraphicsScreen) me) -> d_window) {
+				//Melder_casual (U"Graphics_textWidth: creating a graphics context in an existing widget.");
+				((GraphicsScreen) me) -> d_cairoGraphicsContext = gdk_cairo_create (((GraphicsScreen) me) -> d_window);
+			} else
+			#endif
+			{
+				//Melder_casual (U"Graphics_textWidth: creating a graphics context outside any existing widget.");
+				cairoSurface = cairo_image_surface_create (CAIRO_FORMAT_RGB24, 1/*my d_x2DC - my d_x1DC*/, 1/*my d_y2DC - my d_y1DC*/);
+				((GraphicsScreen) me) -> d_cairoGraphicsContext = cairo_create (cairoSurface);
+			}
 	#endif
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, false);
-	double width = textWidth (theWidechar);
-	#if cairo && ! defined (NO_GUI)   /* BUG */
-		if (! oldCairoGraphicsContext && ((GraphicsScreen) me) -> d_window)
-			cairo_destroy (((GraphicsScreen) me) -> d_cairoGraphicsContext);
-		((GraphicsScreen) me) -> d_cairoGraphicsContext = oldCairoGraphicsContext;
+	const double width = textWidth (theWidechar);
+	//Melder_casual (U"Graphics_textWidth: width ", width, U", scale ", my scaleX);
+	#if cairo
+		if (! oldCairoGraphicsContext) {
+			#ifndef NO_GUI
+			if (((GraphicsScreen) me) -> d_window) {
+				cairo_destroy (((GraphicsScreen) me) -> d_cairoGraphicsContext);
+			} else
+			#endif
+			{
+				cairo_destroy (((GraphicsScreen) me) -> d_cairoGraphicsContext);
+				cairo_surface_destroy (cairoSurface);
+			}
+			((GraphicsScreen) me) -> d_cairoGraphicsContext = nullptr;
+		}
 	#endif
 	return width / my scaleX;
 }
