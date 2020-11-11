@@ -209,13 +209,11 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		} else {
 			/*
 				Create a dummy Graphics.
+				It does have to be a GraphicsScreen, because it has to support Graphics_textWidth().
 			*/
-			#if defined (UNIX) || defined (_WIN32)
-				my graphics = Graphics_create_screen (nullptr, nullptr, 600);
-				Graphics_setWsViewport (my graphics.get(), 0.0, 12.0 * 600.0, 0.0, 12 * 600.0);
-			#else
-				my graphics = Graphics_create (600);
-			#endif
+			const integer dummyResolution = 600;
+			my graphics = Graphics_create_screen (nullptr, nullptr, dummyResolution);
+			Graphics_setWsViewport (my graphics.get(), 0.0, 12 * dummyResolution, 0.0, 12 * dummyResolution);
 		}
 		Graphics_setWsWindow (my graphics.get(), 0.0, 12.0, 0.0, 12.0);
 		Graphics_setViewport (my graphics.get(), my selx1, my selx2, my sely1, my sely2);

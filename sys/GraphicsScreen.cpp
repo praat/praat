@@ -260,9 +260,9 @@ void structGraphicsScreen :: v_updateWs () {
 		respond by redrawing its contents from the (changed) data.
 		(last checked 2020-07-12)
 	*/
+	if (! our d_drawingArea)
+		return;
 	#if cairo && gtk
-		if (! our d_drawingArea)
-			return;
 		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
 
@@ -387,15 +387,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_macView = (NSView *) voidWindow;
 			my d_macGraphicsContext = nullptr;   // will be retrieved and nullified at expose time
 		}
-		/*
-			The following is what we would like to do.
-			However, if we do this outside of an expose event, d_macGraphicsContext will be null,
-			so we defer this to GraphicsQuartz_initDraw().
-			(last checked 2020-07-26)
-		*/
-		//my d_macGraphicsContext = Melder_systemVersion < 101400 ?
-		//		(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
-		//		[[NSGraphicsContext currentContext] CGContext];
 		my d_depth = ( my resolution > 150 ? 1 : 8 );   // BUG: replace by true depth (1=black/white)
 		_GraphicsScreen_text_init (me);
 	#endif
