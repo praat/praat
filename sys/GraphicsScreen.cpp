@@ -261,6 +261,8 @@ void structGraphicsScreen :: v_updateWs () {
 		(last checked 2020-07-12)
 	*/
 	#if cairo && gtk
+		if (! our d_drawingArea)
+			return;
 		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
 
@@ -352,9 +354,10 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
 			trace (U"retrieved window");
 		#else
-			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
+			if (voidDisplay)
+				my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
 		#endif
-		my d_cairoGraphicsContext = nullptr;   // will be created and destroyed at expose time
+		my d_cairoGraphicsContext = nullptr;   // will be created and destroyed at expose time or during Graphics_textWidth(); 2020-11-11
 	#elif gdi
 		if (my printer) {
 			my d_gdiGraphicsContext = (HDC) voidWindow;

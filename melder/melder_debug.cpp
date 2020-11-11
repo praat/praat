@@ -69,7 +69,7 @@ the behaviour of Praat will temporarily change in the following ways:
 37: debug autoThing
 39: debug autostring
 40: debug Thing_new
-41: OTGrammar_getWinner: always first choice rather than random choice 
+41: OTGrammar_getWinner: always first choice rather than random choice
 42: OTGrammar_getWinner: always last choice rather than random choice
 43: trace class table initialization
 44: trace Collection
