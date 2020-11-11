@@ -99,35 +99,7 @@ static void drawSelection (Picture me) {
 }
 
 static void gui_drawingarea_cb_expose (Picture me, GuiDrawingArea_ExposeEvent event) {
-	#if gtk
-		/*
-			The size of the viewable part of the drawing area may have changed.
-		*/
-		Melder_assert (event -> widget);
-		#if ALLOW_GDK_DRAWING
-			if (Melder_debug == 54) {
-				// ignore gdk_cairo_reset_clip
-			} else {
-				//gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics.get()), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
-				//gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics.get()), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
-			}
-		#else
-			cairo_t *context = (cairo_t *) Graphics_x_getCR (my graphics.get());
-			if (Melder_debug == 54 ||1) {
-				// ignore gdk_cairo_reset_clip
-			} else {
-				cairo_reset_clip (context);
-				cairo_matrix_t matrix;
-				cairo_get_matrix (context, & matrix);
-				cairo_identity_matrix (context);
-				cairo_rectangle (context, 0, 0, 2000, 2000);
-				cairo_clip (context);
-				cairo_set_matrix (context, & matrix);
-			}
-		#endif
-	#else
-		(void) event;
-	#endif
+	Melder_assert (event -> widget);
 	drawMarkers (me);
 	Graphics_play (my graphics.get(), my graphics.get());
 	drawSelection (me);

@@ -1497,11 +1497,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#if defined (UNIX) && ! defined (NO_GUI)
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
-				#if ALLOW_GDK_DRAWING
-					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
-				#else
-					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
-				#endif
+				fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1548,45 +1544,44 @@ static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNa
 
 #if gtk
 	#include <gdk/gdkkeysyms.h>
-	#if ALLOW_GDK_DRAWING
-		static gint theKeySnooper (GtkWidget *widget, GdkEventKey *event, gpointer data) {
-			trace (U"keyval ", event -> keyval, U", type ", event -> type);
-			if ((event -> keyval == GDK_Tab || event -> keyval == GDK_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
-				trace (U"tab key pressed in window ", Melder_pointer (widget));
-				constexpr bool theTabKeyShouldWorkEvenIfNumLockIsOn = true;
-				constexpr uint32 theProbableNumLockModifierMask = GDK_MOD2_MASK;
-				constexpr uint32 modifiersToIgnore = ( theTabKeyShouldWorkEvenIfNumLockIsOn ? theProbableNumLockModifierMask : 0 );
-				constexpr uint32 modifiersNotToIgnore = GDK_MODIFIER_MASK & ~ modifiersToIgnore;
-				if ((event -> state & modifiersNotToIgnore) == 0) {
-					if (GTK_IS_WINDOW (widget)) {
-						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
-						trace (U"tab pressed in GTK window ", Melder_pointer (shell));
-						void (*tabCallback) (GuiObject, gpointer) = (void (*) (GuiObject, gpointer)) g_object_get_data (G_OBJECT (widget), "tabCallback");
-						if (tabCallback) {
-							trace (U"a tab callback exists");
-							void *tabClosure = g_object_get_data (G_OBJECT (widget), "tabClosure");
-							tabCallback (widget, tabClosure);
-							return true;
-						}
+	static gint theKeySnooper (GtkWidget *widget, GdkEventKey *event, gpointer data) {
+		trace (U"keyval ", event -> keyval, U", type ", event -> type);
+		if ((event -> keyval == GDK_KEY_Tab || event -> keyval == GDK_KEY_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
+			using TabCallback = void (*) (GuiObject, gpointer);
+			trace (U"tab key pressed in window ", Melder_pointer (widget));
+			constexpr bool theTabKeyShouldWorkEvenIfNumLockIsOn = true;
+			constexpr uint32 theProbableNumLockModifierMask = GDK_MOD2_MASK;
+			constexpr uint32 modifiersToIgnore = ( theTabKeyShouldWorkEvenIfNumLockIsOn ? theProbableNumLockModifierMask : 0 );
+			constexpr uint32 modifiersNotToIgnore = GDK_MODIFIER_MASK & ~ modifiersToIgnore;
+			if ((event -> state & modifiersNotToIgnore) == 0) {
+				if (GTK_IS_WINDOW (widget)) {
+					GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
+					trace (U"tab pressed in GTK window ", Melder_pointer (shell));
+					TabCallback tabCallback = (TabCallback) g_object_get_data (G_OBJECT (widget), "tabCallback");
+					if (tabCallback) {
+						trace (U"a tab callback exists");
+						void *tabClosure = g_object_get_data (G_OBJECT (widget), "tabClosure");
+						tabCallback (widget, tabClosure);
+						return true;
 					}
-				} else if ((event -> state & modifiersNotToIgnore) == GDK_SHIFT_MASK) {
-					if (GTK_IS_WINDOW (widget)) {
-						GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
-						trace (U"shift-tab pressed in GTK window ", Melder_pointer (shell));
-						void (*tabCallback) (GuiObject, gpointer) = (void (*) (GuiObject, gpointer)) g_object_get_data (G_OBJECT (widget), "shiftTabCallback");
-						if (tabCallback) {
-							trace (U"a shift tab callback exists");
-							void *tabClosure = g_object_get_data (G_OBJECT (widget), "shiftTabClosure");
-							tabCallback (widget, tabClosure);
-							return true;
-						}
+				}
+			} else if ((event -> state & modifiersNotToIgnore) == GDK_SHIFT_MASK) {
+				if (GTK_IS_WINDOW (widget)) {
+					GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
+					trace (U"shift-tab pressed in GTK window ", Melder_pointer (shell));
+					TabCallback tabCallback = (TabCallback) g_object_get_data (G_OBJECT (widget), "shiftTabCallback");
+					if (tabCallback) {
+						trace (U"a shift tab callback exists");
+						void *tabClosure = g_object_get_data (G_OBJECT (widget), "shiftTabClosure");
+						tabCallback (widget, tabClosure);
+						return true;
 					}
 				}
 			}
-			trace (U"end");
-			return false;   // pass event on
 		}
-	#endif
+		trace (U"end");
+		return false;   // pass event on
+	}
 #endif
 
 void praat_run () {
@@ -1976,9 +1971,7 @@ void praat_run () {
 			#endif
 			signal (SIGUSR1, cb_sigusr1);
 			gdk_window_add_filter (NULL, sendpraatEventFilter, NULL);
-			#if ALLOW_GDK_DRAWING
-				gtk_key_snooper_install (theKeySnooper, 0);
-			#endif
+			gtk_key_snooper_install (theKeySnooper, 0);
 			trace (U"start the GTK event loop");
 			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			gtk_main ();

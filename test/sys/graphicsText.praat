@@ -33,6 +33,7 @@ Text: 0, "left", 88, "half", "A lot of normal text might cause ##misalignment# m
 Text: 0, "left", 87, "half", "(%%false%) now at the beginning of the line"
 
 Save as 600-dpi PNG file: "kanweg.png"
+Save as EPS file: "kanweg.eps"
 
 width = Text width (mm): "Hello world"
 assert width > 18.0 and width < 24.0   ; 'width'
