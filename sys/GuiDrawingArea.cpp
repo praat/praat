@@ -41,62 +41,31 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		forget (me);
 	}
-	#if ALLOW_GDK_DRAWING
-		static gboolean _GuiGtkDrawingArea_exposeCallback (GuiObject widget, GdkEventExpose *expose, gpointer void_me) {
-			trace (U"begin");
-			iam (GuiDrawingArea);
-			Melder_assert (me);
-			if (my d_exposeCallback) {
-				structGuiDrawingArea_ExposeEvent event { me, 0 };
-				event. x = expose -> area. x;
-				event. y = expose -> area. y;
-				event. width = expose -> area. width;
-				event. height = expose -> area. height;
-				try {
-					GdkRectangle rect = { event. x, event. y, event. width, event. height };
-					cairo_t *cairoGraphicsContext = gdk_cairo_create (gtk_widget_get_window (GTK_WIDGET (widget)));
-					for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
-						((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = cairoGraphicsContext;
-					my d_exposeCallback (my d_exposeBoss, & event);
-					cairo_destroy (cairoGraphicsContext);
-					for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
-						((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = nullptr;
-				} catch (MelderError) {
-					Melder_flushError (U"Redrawing not completed");
-				}
-				trace (U"the expose callback handled drawing");
-				return true;
+	static gboolean _GuiGtkDrawingArea_drawCallback (GuiObject widget, cairo_t *cairoGraphicsContext, gpointer void_me) {
+		trace (U"begin");
+		iam (GuiDrawingArea);
+		Melder_assert (me);
+		if (my d_exposeCallback) {
+			structGuiDrawingArea_ExposeEvent event { me, 0 };
+			event. x = 0;
+			event. y = 0;
+			event. width = gtk_widget_get_allocated_width (GTK_WIDGET (widget));
+			event. height = gtk_widget_get_allocated_height (GTK_WIDGET (widget));
+			try {
+				for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+					((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = cairoGraphicsContext;
+				my d_exposeCallback (my d_exposeBoss, & event);
+				for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+					((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = nullptr;
+			} catch (MelderError) {
+				Melder_flushError (U"Redrawing not completed");
 			}
-			trace (U"GTK will handle redrawing");
-			return false;
+			trace (U"the draw callback handled drawing");
+			return true;
 		}
-	#else
-		static gboolean _GuiGtkDrawingArea_drawCallback (GuiObject widget, cairo_t *cairoGraphicsContext, gpointer void_me) {
-			trace (U"begin");
-			iam (GuiDrawingArea);
-			Melder_assert (me);
-			if (my d_exposeCallback) {
-				structGuiDrawingArea_ExposeEvent event { me, 0 };
-				event. x = 0;
-				event. y = 0;
-				event. width = gtk_widget_get_allocated_width (GTK_WIDGET (widget));
-				event. height = gtk_widget_get_allocated_height (GTK_WIDGET (widget));
-				try {
-					for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
-						((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = cairoGraphicsContext;
-					my d_exposeCallback (my d_exposeBoss, & event);
-					for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
-						((GraphicsScreen) my graphicses [igraphics]) -> d_cairoGraphicsContext = nullptr;
-				} catch (MelderError) {
-					Melder_flushError (U"Redrawing not completed");
-				}
-				trace (U"the draw callback handled drawing");
-				return true;
-			}
-			trace (U"GTK will handle redrawing");
-			return false;
-		}
-	#endif
+		trace (U"GTK will handle redrawing");
+		return false;
+	}
 	static structGuiDrawingArea_MouseEvent::Phase previousPhase = structGuiDrawingArea_MouseEvent::Phase::DROP;
 	static gboolean _GuiGtkDrawingArea_mouseDownCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
@@ -560,11 +529,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		#if ALLOW_GDK_DRAWING
-			g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
-		#else
-			g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_drawCallback),       me.get());
-		#endif
+		g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_drawCallback),       me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
@@ -641,11 +606,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		#if ALLOW_GDK_DRAWING
-			g_signal_connect (G_OBJECT (my d_widget), "expose-event",         G_CALLBACK (_GuiGtkDrawingArea_exposeCallback),       me.get());
-		#else
-			g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_drawCallback),       me.get());
-		#endif
+		g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_drawCallback),       me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
 		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
