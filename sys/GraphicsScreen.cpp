@@ -349,14 +349,8 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 	#if cairo && gtk
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
-		#if ALLOW_GDK_DRAWING
-			trace (U"retrieving window");
-			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
-			trace (U"retrieved window");
-		#else
-			if (voidDisplay)
-				my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
-		#endif
+		if (voidDisplay)
+			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
 		my d_cairoGraphicsContext = nullptr;   // will be created and destroyed at expose time or during Graphics_textWidth(); 2020-11-11
 	#elif gdi
 		if (my printer) {

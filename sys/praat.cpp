@@ -1497,11 +1497,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#if defined (UNIX) && ! defined (NO_GUI)
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
-				#if ALLOW_GDK_DRAWING
-					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
-				#else
-					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
-				#endif
+				fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();

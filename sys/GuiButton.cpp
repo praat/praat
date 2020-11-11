@@ -130,21 +130,13 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-			#if ALLOW_GDK_DRAWING
-				GTK_WIDGET_SET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
-			#else
-				gtk_widget_set_can_default (GTK_WIDGET (my d_widget), TRUE);
-			#endif
+			gtk_widget_set_can_default (GTK_WIDGET (my d_widget), true);
 			GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));
 			Melder_assert (shell);
 			gtk_window_set_default (GTK_WINDOW (shell), GTK_WIDGET (my d_widget));
 		} else if (1) {
 			gtk_button_set_focus_on_click (GTK_BUTTON (my d_widget), false);
-			#if ALLOW_GDK_DRAWING
-				GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
-			#else
-				gtk_widget_set_can_default (GTK_WIDGET (my d_widget), FALSE);
-			#endif
+			gtk_widget_set_can_default (GTK_WIDGET (my d_widget), false);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkButton_destroyCallback), me.get());
 		g_signal_connect (GTK_BUTTON (my d_widget), "clicked", G_CALLBACK (_GuiGtkButton_activateCallback), me.get());
