@@ -423,7 +423,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	MelderColour singleSelectionColour = MelderColour (0.984,0.984, 0.7);
-	MelderColour multipleSelectionsColour = MelderColour (0.984,0.984, 0.9);
+	//MelderColour multipleSelectionsColour = MelderColour (0.984,0.984, 0.9);
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
@@ -433,23 +433,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	integer numberOfCeilingInInterval = 1;
 	integer itmin, itmax;
-	autoBOOLVEC ceilingInInterval = newBOOLVECzero (my formants.size);
-	if (markWithinPath && Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
-		/*
-			If the path in the interval (tmin, tmax) is constant, then we have only one of
-			the candidates chosen in the whole interval.
-		*/
-		numberOfCeilingInInterval = 0;
-		for (integer iformant = 1; iformant <= my formants.size; iformant ++)
-			for (integer i = itmin; i <= itmax; i ++)
-				if (my path [i] == iformant) {
-					ceilingInInterval [iformant] = true;
-					numberOfCeilingInInterval ++;
-					break;
-				}
-	}
+	if (Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax) == 0)
+		return;
 	
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const integer irow = 1 + (iformant - 1) / ncol; // left-to-right + top-to-bottom
@@ -463,13 +449,53 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 		if (garnish && markWithinPath) {
-			if (ceilingInInterval [iformant]) {
-				MelderColour colour = Graphics_inqColour (g);
-				MelderColour fillColour = (numberOfCeilingInInterval == 1 ? singleSelectionColour : multipleSelectionsColour);
-				Graphics_setColour (g, fillColour);
-				Graphics_fillRectangle (g, tmin, tmax, 0.0, fmax);
-				Graphics_setColour (g, colour);
+			MelderColour colourCopy = Graphics_inqColour (g);
+			Graphics_setColour (g, singleSelectionColour);
+			bool startFound = false;
+			double endTime, startTime = std::max (tmin, Sampled_indexToX (me, itmin) - 0.5 * my dx);
+			if (my path [itmin] == iformant) {
+				startFound = true;
+				if (itmin == 1)
+					startTime = std::min (tmin, startTime);
+			} else {
+				if (itmin > 1 && my path [itmin - 1] == iformant && tmin < startTime)
+					Graphics_fillRectangle (g, tmin, startTime, 0, fmax);
 			}
+			for (integer iframe = itmin + 1; iframe <= itmax - 1; iframe ++) {
+				if (my path [iframe] == iformant) {
+					if (! startFound) {
+						startTime = Sampled_indexToX (me, iframe) - 0.5 * my dx;
+						startFound = true;
+					}
+				} else {
+					if (startFound) {
+						endTime = Sampled_indexToX (me, iframe - 1) + 0.5 * my dx;
+						Graphics_fillRectangle (g, startTime, endTime, 0.0, fmax);
+						startFound = false;
+					}
+				}
+			}
+			endTime = Sampled_indexToX (me, itmax) + 0.5 * my dx;
+			if (my path [itmax] == iformant) {
+				if (itmax == my nx || my path [itmax + 1] == iformant)
+					endTime = tmax;
+				if (! startFound) {
+					startTime = Sampled_indexToX (me, itmax) - 0.5 * my dx;
+					Graphics_fillRectangle (g, startTime, endTime, 0.0, fmax);
+				} else {
+					Graphics_fillRectangle (g, startTime, endTime, 0.0, fmax);
+				}
+			} else {
+				if (startFound) {
+					const double t2 = Sampled_indexToX (me, itmax - 1);
+					Graphics_fillRectangle (g, startTime, std::min (t2 + 0.5 * my dx, tmax), 0.0, fmax);
+					startFound = false;
+				}
+				if (itmax < my nx && my path [itmax + 1] == iformant && tmax > endTime) {
+					Graphics_fillRectangle (g, endTime, tmax, 0.0, fmax);
+				}
+			}
+			Graphics_setColour (g, colourCopy);
 		}
 		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, odd, even);
 		if (showEstimatedModels)
