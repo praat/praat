@@ -441,7 +441,8 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 fla
 		my d_menuItem -> d_widget = gtk_menu_item_new_with_label (Melder_peek32to8 (title));
 		my d_widget = gtk_menu_new ();
 		GtkAccelGroup *ag = (GtkAccelGroup *) gtk_menu_get_accel_group (GTK_MENU (supermenu -> d_widget));
-		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
+		if (ag)
+			gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
 		if (flags & GuiMenu_INSENSITIVE)
 			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), false);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_menuItem -> d_widget), GTK_WIDGET (my d_widget));
