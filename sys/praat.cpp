@@ -871,6 +871,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	*/
 	static void cb_sigusr1 (int signum) {
 		Melder_assert (signum == SIGUSR1);
+		signal (SIGUSR1, cb_sigusr1);   // keep this handler in the air
 		#if ALLOW_GDK_DRAWING
 			GdkEventClient gevent;
 			gevent. type = GDK_CLIENT_EVENT;
@@ -924,19 +925,21 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	*/
 	static GdkFilterReturn sendpraatEventFilter (GdkXEvent *xevent, GdkEvent *event, gpointer data)
 	{
+		//Melder_casual (U"sendpraatEventFilter 1");
 		if (((XEvent *) xevent) -> type != ClientMessage)
 			return GDK_FILTER_CONTINUE;
+		//Melder_casual (U"sendpraatEventFilter 2");
 		XClientMessageEvent *evt = (XClientMessageEvent *) xevent;
 		Atom message_type = XInternAtom (evt -> display, "SENDPRAAT", FALSE);   // TODO: make static
+		//Melder_casual (U"sendpraatEventFilter 3");
 		if (evt -> message_type != message_type)
 			return GDK_FILTER_CONTINUE;
 		/*
 			TODO: call script
 		*/
-		Melder_casual (U"sendpraatEventFilter");
+		Melder_casual (U"sendpraatEventFilter 9");
 		return GDK_FILTER_CONTINUE;   // TODO: check when to return something else than GDK_FILTER_CONTINUE
 	}
-	// TODO: gdk_window_add_filter (NULL, event_filter, NULL);
 #endif
 
 #if defined (UNIX)
@@ -1974,6 +1977,7 @@ void praat_run () {
 					G_CALLBACK (cb_userMessage), nullptr);
 			#endif
 			signal (SIGUSR1, cb_sigusr1);
+			gdk_window_add_filter (NULL, sendpraatEventFilter, NULL);
 			#if ALLOW_GDK_DRAWING
 				gtk_key_snooper_install (theKeySnooper, 0);
 			#endif

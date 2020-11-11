@@ -296,7 +296,7 @@ static void charSize (Graphics anyGraphics, _Graphics_widechar *lc) {
 			Longchar_Info info = lc -> karInfo;
 			const int normalSize = win_size2isize (my fontSize);
 			const int smallSize = (3 * normalSize + 2) / 4;
-			const int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
+			int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer_;
 			if ((unsigned int) lc -> kar >= 0x2E80 && (unsigned int) lc -> kar <= 0x9FFF)
@@ -1452,7 +1452,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 double Graphics_textWidth (Graphics me, conststring32 txt) {
 	if (! initBuffer (txt))
 		return 0.0;
-	#if cairo
+	#if cairo && ! defined (NO_GUI)   /* BUG */
 		cairo_t *oldCairoGraphicsContext = ((GraphicsScreen) me) -> d_cairoGraphicsContext;
 		if (! oldCairoGraphicsContext && ((GraphicsScreen) me) -> d_window)
 			((GraphicsScreen) me) -> d_cairoGraphicsContext = gdk_cairo_create (((GraphicsScreen) me) -> d_window);
@@ -1460,7 +1460,7 @@ double Graphics_textWidth (Graphics me, conststring32 txt) {
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	charSizes (me, theWidechar, false);
 	double width = textWidth (theWidechar);
-	#if cairo
+	#if cairo && ! defined (NO_GUI)   /* BUG */
 		if (! oldCairoGraphicsContext && ((GraphicsScreen) me) -> d_window)
 			cairo_destroy (((GraphicsScreen) me) -> d_cairoGraphicsContext);
 		((GraphicsScreen) me) -> d_cairoGraphicsContext = oldCairoGraphicsContext;

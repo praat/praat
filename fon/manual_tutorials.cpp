@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201103)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201110)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.31# (10 November 2020)")
+LIST_ITEM (U"• Linux: first GTK-3 version.")
 NORMAL (U"##6.1.30# (3 November 2020)")
 LIST_ITEM (U"• Windows: prevented a crash that could occur in the Sound window when clicking with the touchpad while dragging with the mouse (or the reverse).")
 NORMAL (U"##6.1.29# (27 October 2020)")
