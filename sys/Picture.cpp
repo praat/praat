@@ -210,7 +210,7 @@ autoPicture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 			/*
 				Create a dummy Graphics.
 			*/
-			#if defined (UNIX)
+			#if defined (UNIX) || defined (_WIN32)
 				my graphics = Graphics_create_screen (nullptr, nullptr, 600);
 				Graphics_setWsViewport (my graphics.get(), 0.0, 12.0 * 600.0, 0.0, 12 * 600.0);
 			#else
