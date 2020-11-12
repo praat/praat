@@ -26,6 +26,7 @@
 	6. ..
 */
 #include "FormantPathEditor.h"
+#include "FormantPath_to_IntervalTier.h"
 #include "EditorM.h"
 #include "praat.h"
 #include "melder_kar.h"
@@ -711,34 +712,22 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 
 void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
 	FormantPath formantPath = (FormantPath) my data;
-	integer itmin, itmax;
-	if (! Sampled_getWindowSamples (formantPath, tmin, tmax, & itmin, & itmax))
-		return;
+	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (formantPath, tmin, tmax);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
 	Graphics_setColour (g, Melder_RED);
 	Graphics_setLineWidth (g, 3.0);
-	const double dx2 = 0.5 * formantPath -> dx;
-	integer iframe = itmin, iframe2 = itmin + 1;
-	double ceiling = formantPath -> ceilings [formantPath -> path [itmin]];
-	while (iframe2 <= itmax) {
-		double ceiling2;
-		while (iframe2 <= itmax) {
-			ceiling2 = formantPath -> ceilings [formantPath -> path [iframe2]];
-			if (ceiling2 != ceiling)
-				break;
-			iframe2 ++;
+	for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
+		TextInterval textInterval = intervalTier -> intervals.at [interval];
+		conststring32 label = textInterval -> text.get();
+		if (label) {
+			const integer index = Melder_atoi (label);
+			if (index > 0 && index < formantPath -> ceilings.size) {
+				const double ceiling = formantPath -> ceilings [index];
+				Graphics_line (g, textInterval -> xmin, ceiling, textInterval -> xmax, ceiling);
+				Graphics_text (g, 0.5 * (textInterval -> xmin + textInterval -> xmax), ceiling + 50.0, ((integer) ceiling));
+			}
 		}
-		const double tmid = Sampled_indexToX (formantPath, iframe);
-		const double tmid2 = Sampled_indexToX (formantPath, iframe2 - 1);
-		Graphics_line (g, tmid - dx2, ceiling, tmid2 + dx2, ceiling);
-		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
-		Graphics_text (g, 0.5 * (tmid + tmid2), ceiling + 50.0, ((integer) ceiling));
-		ceiling = ceiling2;
-		iframe = iframe2;
-	}
-	if (iframe == itmax) {
-		const double tmid = Sampled_indexToX (formantPath, iframe);
-		Graphics_line (g, tmid - dx2, ceiling, tmid + dx2, ceiling);
 	}
 	Graphics_setLineWidth (g, 1.0);
 }
