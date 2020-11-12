@@ -730,7 +730,7 @@ void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tm
 			if (index > 0 && index < formantPath -> ceilings.size) {
 				const double ceiling = formantPath -> ceilings [index];
 				Graphics_line (g, textInterval -> xmin, ceiling, textInterval -> xmax, ceiling);
-				Graphics_text (g, 0.5 * (textInterval -> xmin + textInterval -> xmax), ceiling + 50.0, ((integer) ceiling));
+				Graphics_text (g, 0.5 * (textInterval -> xmin + textInterval -> xmax), ceiling + 50.0, Melder_fixed (ceiling, 0));
 			}
 		}
 	}

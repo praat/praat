@@ -423,8 +423,6 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	double xCursor, double yCursor, MelderColour selectedCeilingsColour, constINTVEC const & parameters,
 	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
-	MelderColour singleSelectionColour = MelderColour (0.984,0.984, 0.7);
-	//MelderColour multipleSelectionsColour = MelderColour (0.984,0.984, 0.9);
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
