@@ -859,7 +859,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
-#if defined (UNIX) && ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
+#if defined (UNIX) && ! defined (NO_GUI)
 	/*
 		sendpraat messages can enter in two ways: via SIGUSR1 and via XSendEvent().
 	*/
@@ -930,7 +930,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 #endif
 
 #if defined (UNIX)
-	#if ! defined (NO_GRAPHICS) && ! defined (NO_GUI)
+	#if ! defined (NO_GUI)
 		static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventProperty * /* event */, gpointer /* userData */) {
 			Melder_casual (U"client event called");
 			autofile f;

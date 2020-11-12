@@ -33,10 +33,12 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_mac7.sit`: StuffIt archive with executable for MacOS 7
 
 ### 1.3. Unix binaries
-- `praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for 32-bit Linux on the Raspberry Pi 4B (GTK)
-- `praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK)
-- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK)
-- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK)
+- `praatXXXX_rpi_armv7.tar.gz`: gzipped tarred executable for 32-bit Linux on the Raspberry Pi 4B (GTK 2 or 3)
+- `praatXXXX_chrome64.tar.gz`: gzipped tarred executable for 64-bit Linux on Chromebooks (GTK 2 or 3)
+- `praatXXXX_linux64barren.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI or graphics
+- `praatXXXX_linux64nogui.tar.gz`: gzipped tarred executable for 64-bit Linux, without GUI but with graphics (Cairo and Pango)
+- `praatXXXX_linux64.tar.gz`: gzipped tarred executable for 64-bit Linux (GTK 2 or 3)
+- `praatXXXX_linux32.tar.gz`: gzipped tarred executable for 32-bit Linux (GTK 2)
 - `praatXXXX_linux_motif64.tar.gz`: gzipped tarred executable for 64-bit Linux (Motif)
 - `praatXXXX_linux_motif32.tar.gz`: gzipped tarred executable for 32-bit Linux (Motif)
 - `praatXXXX_solaris.tar.gz`: gzipped tarred executable for Solaris
