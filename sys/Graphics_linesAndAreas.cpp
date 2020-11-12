@@ -269,10 +269,10 @@ void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 
 void structGraphicsPostscript :: v_fillArea (integer numberOfPoints, double *xyDC) {
 	integer nn = numberOfPoints + numberOfPoints;
-	d_printf (d_file, "N %.7g %.7g M\n", xyDC [0], xyDC [1]);
+	our d_printf (our d_file, "N %.7g %.7g M\n", xyDC [0], xyDC [1]);
 	for (integer i = 2; i < nn; i += 2)
-		d_printf (d_file, "%.7g %.7g L\n", xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
-	d_printf (d_file, "closepath fill\n");
+		our d_printf (our d_file, "%.7g %.7g L\n", xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
+	our d_printf (our d_file, "closepath fill\n");
 }
 
 /* Second level. */
@@ -280,14 +280,14 @@ void structGraphicsPostscript :: v_fillArea (integer numberOfPoints, double *xyD
 void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
 		const double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0.0 || height <= 0.0)
 			return;
 		cairoPrepareLine (this);
-		cairo_rectangle (d_cairoGraphicsContext, x1DC, y2DC, width, height);
-		cairo_stroke (d_cairoGraphicsContext);
+		cairo_rectangle (our d_cairoGraphicsContext, x1DC, y2DC, width, height);
+		cairo_stroke (our d_cairoGraphicsContext);
 		cairoRevertLine (this);
 	#elif gdi
 		winPrepareLine (this);
@@ -295,7 +295,7 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 		DEFAULT
 	#elif quartz
 		quartzPrepareLine (this);
-		CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
+		CGContextStrokeRect (our d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
 		quartzRevertLine (this);
 	#else
 		double xyDC [8];
@@ -303,13 +303,13 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 		xyDC [2] = x2DC;	xyDC [3] = y1DC;
 		xyDC [4] = x2DC;	xyDC [5] = y2DC;
 		xyDC [6] = x1DC;	xyDC [7] = y2DC;
-		v_polyline (5, & xyDC [0], true);
+		our v_polyline (5, & xyDC [0], true);
 	#endif
 }
 
 void structGraphicsPostscript :: v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	psPrepareLine (this);
-	d_printf (d_file, "N %.7g %.7g M %.7g %.7g lineto %.7g %.7g lineto %.7g %.7g lineto closepath stroke\n",
+	our d_printf (our d_file, "N %.7g %.7g M %.7g %.7g lineto %.7g %.7g lineto %.7g %.7g lineto closepath stroke\n",
 			x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 	psRevertLine (this);
 }
@@ -317,23 +317,23 @@ void structGraphicsPostscript :: v_rectangle (double x1DC, double x2DC, double y
 void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
 		const double width = x2DC - x1DC + 1.0, height = y1DC - y2DC + 1.0;
 		if (width <= 0.0 || height <= 0.0)
 			return;
 		trace (U"x1DC ", x1DC, U", x2DC ", x2DC, U", y1DC ", y1DC, U", y2DC ", y2DC);
-		cairo_rectangle (d_cairoGraphicsContext, round (x1DC), round (y2DC), round (width), round (height));
-		cairo_fill (d_cairoGraphicsContext);
+		cairo_rectangle (our d_cairoGraphicsContext, round (x1DC), round (y2DC), round (width), round (height));
+		cairo_fill (our d_cairoGraphicsContext);
 	#elif gdi
 		RECT rect;
 		rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;   /* Superfluous? */
 		MY_BRUSH
-		Rectangle (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
+		Rectangle (our d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
 	#elif quartz
 		quartzPrepareFill (this);
-		CGContextFillRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
+		CGContextFillRect (our d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
 	#else
 		double xyDC [10];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
@@ -341,73 +341,73 @@ void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y
 		xyDC [4] = x2DC;	xyDC [5] = y2DC;
 		xyDC [6] = x1DC;	xyDC [7] = y2DC;
 		xyDC [8] = x1DC;	xyDC [9] = y1DC;
-		v_fillArea (5, & xyDC [0]);
+		our v_fillArea (5, & xyDC [0]);
 	#endif
 }
 
 void structGraphicsPostscript :: v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
-	d_printf (d_file,
+	our d_printf (our d_file,
 		"N %.7g %.7g M %.7g %.7g lineto %.7g %.7g lineto %.7g %.7g lineto closepath fill\n",
 		x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 }
 
 void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
 		cairoPrepareLine (this);
-		cairo_new_path (d_cairoGraphicsContext);
-		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0.0, 2.0 * M_PI);
-		cairo_stroke (d_cairoGraphicsContext);
+		cairo_new_path (our d_cairoGraphicsContext);
+		cairo_arc (our d_cairoGraphicsContext, xDC, yDC, rDC, 0.0, 2.0 * M_PI);
+		cairo_stroke (our d_cairoGraphicsContext);
 		cairoRevertLine (this);
 	#elif gdi
 		winPrepareLine (this);
-		Ellipse (d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1.0, yDC + rDC + 1.0);
+		Ellipse (our d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1.0, yDC + rDC + 1.0);
 		DEFAULT
 	#elif quartz
 		quartzPrepareLine (this);
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
-		CGContextStrokePath (d_macGraphicsContext);
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextAddArc (our d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
+		CGContextStrokePath (our d_macGraphicsContext);
 		quartzRevertLine (this);
 	#endif
 }
 
 void structGraphicsPostscript :: v_circle (double xDC, double yDC, double rDC) {
 	psPrepareLine (this);
-	d_printf (d_file, "N %ld %ld %ld C\n", (long_not_integer) xDC, (long_not_integer) yDC, (long_not_integer) rDC);
+	our d_printf (our d_file, "N %ld %ld %ld C\n", (long_not_integer) xDC, (long_not_integer) yDC, (long_not_integer) rDC);
 	psRevertLine (this);
 }
 
 void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
 		cairoPrepareLine (this);
-		cairo_new_path (d_cairoGraphicsContext);
-		cairo_save (d_cairoGraphicsContext);
-		cairo_translate (d_cairoGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
-		cairo_scale (d_cairoGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
-		cairo_arc (d_cairoGraphicsContext, 0.0, 0.0, 1.0, 0.0, 2 * M_PI);
-		cairo_restore (d_cairoGraphicsContext);
-		cairo_stroke (d_cairoGraphicsContext);
+		cairo_new_path (our d_cairoGraphicsContext);
+		cairo_save (our d_cairoGraphicsContext);
+		cairo_translate (our d_cairoGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+		cairo_scale (our d_cairoGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+		cairo_arc (our d_cairoGraphicsContext, 0.0, 0.0, 1.0, 0.0, 2 * M_PI);
+		cairo_restore (our d_cairoGraphicsContext);
+		cairo_stroke (our d_cairoGraphicsContext);
 		cairoRevertLine (this);
 	#elif gdi
 		winPrepareLine (this);
-		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
+		Ellipse (our d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif quartz
 		quartzPrepareLine (this);
-        //NSCAssert (d_macGraphicsContext, @"nil context");
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextSaveGState (d_macGraphicsContext);
-		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
-		CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
-		CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
-		CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
-		CGContextStrokePath (d_macGraphicsContext);
-		CGContextRestoreGState (d_macGraphicsContext);
+        //NSCAssert (our d_macGraphicsContext, @"nil context");
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextSaveGState (our d_macGraphicsContext);
+		CGContextTranslateCTM (our d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+		CGContextScaleCTM (our d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+		CGContextAddArc (our d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
+		CGContextScaleCTM (our d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
+		CGContextStrokePath (our d_macGraphicsContext);
+		CGContextRestoreGState (our d_macGraphicsContext);
 		quartzRevertLine (this);
 	#endif
 }
@@ -419,7 +419,7 @@ void structGraphicsPostscript :: v_ellipse (double x1DC, double x2DC, double y1D
 		/* However, we have to scale back before the actual 'stroke', */
 		/* because we want the normal line thickness; */
 		/* So we cannot use 'gsave' and 'grestore', which clear the path (Cookbook 3). */
-		d_printf (d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 0 360 arc\n"
+		our d_printf (our d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 0 360 arc\n"
 			" %.7g %.7g scale stroke grestore\n",
 			0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC), 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC),
 			2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC)
@@ -430,12 +430,12 @@ void structGraphicsPostscript :: v_ellipse (double x1DC, double x2DC, double y1D
 
 void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) {
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
 		cairoPrepareLine (this);
-		cairo_new_path (d_cairoGraphicsContext);
-		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, -toAngle * (M_PI / 180.0), -fromAngle * (M_PI / 180.0));
-		cairo_stroke (d_cairoGraphicsContext);
+		cairo_new_path (our d_cairoGraphicsContext);
+		cairo_arc (our d_cairoGraphicsContext, xDC, yDC, rDC, -toAngle * (M_PI / 180.0), -fromAngle * (M_PI / 180.0));
+		cairo_stroke (our d_cairoGraphicsContext);
 		cairoRevertLine (this);
 	#elif gdi
 		int arcAngle = (int) toAngle - (int) fromAngle;
@@ -443,21 +443,21 @@ void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double f
 		if (arcAngle < 0.0)
 			arcAngle += 360;
 		winPrepareLine (this);
-		MoveToEx (d_gdiGraphicsContext, xDC + rDC * cos (NUMpi / 180 * fromAngle), yDC - rDC * sin (NUMpi / 180 * fromAngle), & pt);
-		AngleArc (d_gdiGraphicsContext, xDC, yDC, rDC, fromAngle, arcAngle);
+		MoveToEx (our d_gdiGraphicsContext, xDC + rDC * cos (NUMpi / 180 * fromAngle), yDC - rDC * sin (NUMpi / 180 * fromAngle), & pt);
+		AngleArc (our d_gdiGraphicsContext, xDC, yDC, rDC, fromAngle, arcAngle);
 		DEFAULT
 	#elif quartz
 		quartzPrepareLine (this);
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, NUM2pi - NUMpi / 180 * toAngle, NUM2pi - NUMpi / 180 * fromAngle, 0);
-		CGContextStrokePath (d_macGraphicsContext);
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextAddArc (our d_macGraphicsContext, xDC, yDC, rDC, NUM2pi - NUMpi / 180 * toAngle, NUM2pi - NUMpi / 180 * fromAngle, 0);
+		CGContextStrokePath (our d_macGraphicsContext);
 		quartzRevertLine (this);
 	#endif
 }
 
 void structGraphicsPostscript :: v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) {
 	psPrepareLine (this);
-	d_printf (d_file, "N %.7g %.7g %.7g %.7g %.7g arc stroke\n", xDC, yDC, rDC, fromAngle, toAngle);
+	our d_printf (d_file, "N %.7g %.7g %.7g %.7g %.7g arc stroke\n", xDC, yDC, rDC, fromAngle, toAngle);
 	psRevertLine (this);
 }
 
@@ -465,25 +465,25 @@ void structGraphicsPostscript :: v_arc (double xDC, double yDC, double rDC, doub
 
 void structGraphicsScreen :: v_fillCircle (double xDC, double yDC, double rDC) {
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
-		cairo_new_path (d_cairoGraphicsContext);
-		cairo_arc (d_cairoGraphicsContext, xDC, yDC, rDC, 0, 2 * M_PI);
-		cairo_fill (d_cairoGraphicsContext);
+		cairo_new_path (our d_cairoGraphicsContext);
+		cairo_arc (our d_cairoGraphicsContext, xDC, yDC, rDC, 0, 2 * M_PI);
+		cairo_fill (our d_cairoGraphicsContext);
 	#elif gdi
 		MY_BRUSH
 		/*
 		 * NT cannot fill circles that span less than five pixels...
 		 */
-		Ellipse (d_gdiGraphicsContext, xDC - rDC - 1.0, yDC - rDC - 1.0, xDC + rDC + 1.0, yDC + rDC + 1.0);
+		Ellipse (our d_gdiGraphicsContext, xDC - rDC - 1.0, yDC - rDC - 1.0, xDC + rDC + 1.0, yDC + rDC + 1.0);
 		DEFAULT
 	#elif quartz
 		quartzPrepareFill (this);
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
-		CGContextFillPath (d_macGraphicsContext);
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextAddArc (our d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
+		CGContextFillPath (our d_macGraphicsContext);
 	#else
-		v_circle (xDC, yDC, rDC);
+		our v_circle (xDC, yDC, rDC);
 	#endif
 }
 
@@ -494,37 +494,37 @@ void structGraphicsPostscript :: v_fillCircle (double xDC, double yDC, double rD
 void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
-		if (! d_cairoGraphicsContext)
+		if (! our d_cairoGraphicsContext)
 			return;
-		cairo_new_path (d_cairoGraphicsContext);
-		cairo_save (d_cairoGraphicsContext);
-		cairo_translate (d_cairoGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
-		cairo_scale (d_cairoGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
-		cairo_arc (d_cairoGraphicsContext, 0.0, 0.0, 1.0, 0.0, 2.0 * M_PI);
-		cairo_restore (d_cairoGraphicsContext);
-		cairo_fill (d_cairoGraphicsContext);
+		cairo_new_path (our d_cairoGraphicsContext);
+		cairo_save (our d_cairoGraphicsContext);
+		cairo_translate (our d_cairoGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+		cairo_scale (our d_cairoGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+		cairo_arc (our d_cairoGraphicsContext, 0.0, 0.0, 1.0, 0.0, 2.0 * M_PI);
+		cairo_restore (our d_cairoGraphicsContext);
+		cairo_fill (our d_cairoGraphicsContext);
 	#elif gdi
 		MY_BRUSH
-		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
+		Ellipse (our d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1.0, y1DC + 1.0);
 		DEFAULT
 	#elif quartz
 		quartzPrepareFill (this);
-        //NSCAssert (d_macGraphicsContext, @"nil context");
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextSaveGState (d_macGraphicsContext);
-		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
-		CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
-		CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
-		CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
-		CGContextFillPath (d_macGraphicsContext);
-		CGContextRestoreGState (d_macGraphicsContext);
+        //NSCAssert (our d_macGraphicsContext, @"nil context");
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextSaveGState (our d_macGraphicsContext);
+		CGContextTranslateCTM (our d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+		CGContextScaleCTM (our d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+		CGContextAddArc (our d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
+		CGContextScaleCTM (our d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
+		CGContextFillPath (our d_macGraphicsContext);
+		CGContextRestoreGState (our d_macGraphicsContext);
 	#else
-		v_ellipse (x1DC, x2DC, y1DC, y2DC);
+		our v_ellipse (x1DC, x2DC, y1DC, y2DC);
 	#endif
 }
 
 void structGraphicsPostscript :: v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC) {
-	d_printf (d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 FC grestore\n",
+	our d_printf (our d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 FC grestore\n",
 			(x2DC + x1DC) / 2.0, (y2DC + y1DC) / 2.0, (x2DC - x1DC) / 2.0, (y2DC - y1DC) / 2.0);
 }
 
@@ -533,27 +533,22 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 	#if cairo
 		if (x2DC <= x1DC || y1DC <= y2DC)
 			return;
-		cairo_save (d_cairoGraphicsContext);
+		cairo_save (our d_cairoGraphicsContext);
 		#if 0
-			if (d_drawingArea) {
+			if (our d_drawingArea) {
 				// clip to drawing area
-				int w, h;
-				#if ALLOW_GDK_DRAWING
-					gdk_drawable_get_size (d_window, & w, & h);
-				#else
-					w = gdk_window_get_width (d_window);
-					h = gdk_window_get_height (d_window);
-				#endif
-				cairo_rectangle (d_cairoGraphicsContext, 0, 0, w, h);
-				cairo_clip (d_cairoGraphicsContext);
+				const int w = gdk_window_get_width (our d_window);
+				const int h = gdk_window_get_height (our d_window);
+				cairo_rectangle (our d_cairoGraphicsContext, 0, 0, w, h);
+				cairo_clip (our d_cairoGraphicsContext);
 			}
 		#endif
-		cairo_set_line_width (d_cairoGraphicsContext, 1.0);
+		cairo_set_line_width (our d_cairoGraphicsContext, 1.0);
 		double left = x1DC - 0.5, right = x2DC - 0.5, top = y2DC + 0.5, bottom = y1DC + 0.5;
 		double width = right - left, height = bottom - top;
-		cairo_set_source_rgb (d_cairoGraphicsContext, 0.1, 0.1, 0.1);   // dark grey
-		cairo_rectangle (d_cairoGraphicsContext, left, top, width, height);
-		cairo_stroke (d_cairoGraphicsContext);
+		cairo_set_source_rgb (our d_cairoGraphicsContext, 0.1, 0.1, 0.1);   // dark grey
+		cairo_rectangle (our d_cairoGraphicsContext, left, top, width, height);
+		cairo_stroke (our d_cairoGraphicsContext);
 		
 		left += 1.0;
 		right -= 1.0;
@@ -562,17 +557,17 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		width -= 2.0;
 		height -= 2.0;
 		if (width > 0.0 && height > 0.0) {
-			cairo_set_source_rgb (d_cairoGraphicsContext, 0.3, 0.3, 0.3);
-			cairo_move_to (d_cairoGraphicsContext, left + 1, bottom);
-			cairo_line_to (d_cairoGraphicsContext, right, bottom);
-			cairo_line_to (d_cairoGraphicsContext, right, top + 1);
-			cairo_stroke (d_cairoGraphicsContext);
+			cairo_set_source_rgb (our d_cairoGraphicsContext, 0.3, 0.3, 0.3);
+			cairo_move_to (our d_cairoGraphicsContext, left + 1, bottom);
+			cairo_line_to (our d_cairoGraphicsContext, right, bottom);
+			cairo_line_to (our d_cairoGraphicsContext, right, top + 1);
+			cairo_stroke (our d_cairoGraphicsContext);
 			
-			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
-			cairo_move_to (d_cairoGraphicsContext, left, bottom);
-			cairo_line_to (d_cairoGraphicsContext, left, top);
-			cairo_line_to (d_cairoGraphicsContext, right, top);
-			cairo_stroke (d_cairoGraphicsContext);
+			cairo_set_source_rgb (our d_cairoGraphicsContext, 1.0, 1.0, 1.0);
+			cairo_move_to (our d_cairoGraphicsContext, left, bottom);
+			cairo_line_to (our d_cairoGraphicsContext, left, top);
+			cairo_line_to (our d_cairoGraphicsContext, right, top);
+			cairo_stroke (our d_cairoGraphicsContext);
 			left += 0.5;
 			right -= 0.5;
 			top += 0.5;
@@ -580,12 +575,12 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			width -= 1.0;
 			height -= 1.0;
 			if (width > 0.0 && height > 0.0) {
-				cairo_set_source_rgb (d_cairoGraphicsContext, 0.65, 0.65, 0.65);
-				cairo_rectangle (d_cairoGraphicsContext, left, top, width, height);
-				cairo_fill (d_cairoGraphicsContext);
+				cairo_set_source_rgb (our d_cairoGraphicsContext, 0.65, 0.65, 0.65);
+				cairo_rectangle (our d_cairoGraphicsContext, left, top, width, height);
+				cairo_fill (our d_cairoGraphicsContext);
 			}
 		}
-		cairo_restore (d_cairoGraphicsContext);
+		cairo_restore (our d_cairoGraphicsContext);
 	#elif quartz
         double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0.0 || height <= 0.0)
@@ -594,15 +589,15 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 			This is pixel-precise drawing, and may therefore be different on retina displays than on 100 dpi displays.
 		*/
 		#if 1
-			const bool isRetinaDisplay = [[d_macView window] backingScaleFactor] == 2.0;
+			const bool isRetinaDisplay = [[our d_macView window] backingScaleFactor] == 2.0;
 		#else
 			const bool isRetinaDisplay = false;
 		#endif
 
-		CGContextSetLineWidth (d_macGraphicsContext, 1.0);
-		CGContextSetAllowsAntialiasing (d_macGraphicsContext, false);   // because we want to draw by pixel
+		CGContextSetLineWidth (our d_macGraphicsContext, 1.0);
+		CGContextSetAllowsAntialiasing (our d_macGraphicsContext, false);   // because we want to draw by pixel
         CGFloat red = 0.3, green = 0.3, blue = 0.2;
-        CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
+        CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
 		if (! isRetinaDisplay)
 			x1DC -= 1.0;
 		x1DC += 0.5;
@@ -612,8 +607,8 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		width = x2DC - x1DC;
 		height = y1DC - y2DC;
         CGRect rect = CGRectMake (x1DC, y2DC, width, height);
-        CGContextAddRect (d_macGraphicsContext, rect);
-        CGContextStrokePath (d_macGraphicsContext);
+        CGContextAddRect (our d_macGraphicsContext, rect);
+        CGContextStrokePath (our d_macGraphicsContext);
 		x1DC += 1.0;
 		x2DC -= 1.0;
 		y1DC -= 1.0;
@@ -622,19 +617,19 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 		height = y1DC - y2DC;
 		if (width > 0.0 && height > 0.0) {
 			red = 0.5, green = 0.5, blue = 0.4;
-			CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
-			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC);
-			CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y1DC);
-			CGContextMoveToPoint (d_macGraphicsContext, x2DC, y1DC);
-			CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y2DC);
-			CGContextStrokePath (d_macGraphicsContext);
+			CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
+			CGContextMoveToPoint (our d_macGraphicsContext, x1DC, y1DC);
+			CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y1DC);
+			CGContextMoveToPoint (our d_macGraphicsContext, x2DC, y1DC);
+			CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y2DC);
+			CGContextStrokePath (our d_macGraphicsContext);
 			red = 1.0, green = 1.0, blue = 0.9;
-			CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
-			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC);
-			CGContextAddLineToPoint (d_macGraphicsContext, x1DC, y2DC);
-			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y2DC);
-            CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y2DC);
-            CGContextStrokePath (d_macGraphicsContext);
+			CGContextSetRGBStrokeColor (our d_macGraphicsContext, red, green, blue, 1.0);
+			CGContextMoveToPoint (our d_macGraphicsContext, x1DC, y1DC);
+			CGContextAddLineToPoint (our d_macGraphicsContext, x1DC, y2DC);
+			CGContextMoveToPoint (our d_macGraphicsContext, x1DC, y2DC);
+            CGContextAddLineToPoint (our d_macGraphicsContext, x2DC, y2DC);
+            CGContextStrokePath (our d_macGraphicsContext);
 			if (width > 2.0 && height > 2.0) {
 				if (! isRetinaDisplay) {
 					x1DC += 1.0;
@@ -642,22 +637,22 @@ void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, do
 					height = y1DC - y2DC;
 				}
 				red = 0.75, green = 0.75, blue = 0.65;
-				CGContextSetRGBFillColor (d_macGraphicsContext, red, green, blue, 1.0);
+				CGContextSetRGBFillColor (our d_macGraphicsContext, red, green, blue, 1.0);
 				rect = CGRectMake (x1DC, y2DC, width, height);
-				CGContextFillRect (d_macGraphicsContext, rect);
+				CGContextFillRect (our d_macGraphicsContext, rect);
             }
         }
-		CGContextSetAllowsAntialiasing (d_macGraphicsContext, true);
-		CGContextSetLineDash (d_macGraphicsContext, 0, nullptr, 0);
+		CGContextSetAllowsAntialiasing (our d_macGraphicsContext, true);
+		CGContextSetLineDash (our d_macGraphicsContext, 0, nullptr, 0);
     #elif gdi
         RECT rect;
         rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
-        DrawEdge (d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
-        SelectPen (d_gdiGraphicsContext, GetStockPen (NULL_PEN));
-        SelectBrush (d_gdiGraphicsContext, GetStockBrush (LTGRAY_BRUSH));
-        Rectangle (d_gdiGraphicsContext, x1DC + 1, y2DC + 1, x2DC - 1, y1DC - 1);
-        SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
-        SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+        DrawEdge (our d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
+        SelectPen (our d_gdiGraphicsContext, GetStockPen (NULL_PEN));
+        SelectBrush (our d_gdiGraphicsContext, GetStockBrush (LTGRAY_BRUSH));
+        Rectangle (our d_gdiGraphicsContext, x1DC + 1, y2DC + 1, x2DC - 1, y1DC - 1);
+        SelectPen (our d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+        SelectBrush (our d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	#endif
 }
 
@@ -669,26 +664,26 @@ void structGraphics :: v_roundedRectangle (double x1DC, double x2DC, double y1DC
 	xyDC [1] = y1DC;
 	xyDC [2] = x2DC - r;
 	xyDC [3] = y1DC;
-	v_polyline (2, xyDC, false);
-	v_arc (x2DC - r, y1DC + dy, r, -90.0, 0.0);
+	our v_polyline (2, xyDC, false);
+	our v_arc (x2DC - r, y1DC + dy, r, -90.0, 0.0);
 	xyDC [0] = x2DC;
 	xyDC [1] = y1DC + dy;
 	xyDC [2] = x2DC;
 	xyDC [3] = y2DC - dy;
-	v_polyline (2, xyDC, false);
-	v_arc (x2DC - r, y2DC - dy, r, 0.0, 90.0);
+	our v_polyline (2, xyDC, false);
+	our v_arc (x2DC - r, y2DC - dy, r, 0.0, 90.0);
 	xyDC [0] = x2DC - r;
 	xyDC [1] = y2DC;
 	xyDC [2] = x1DC + r;
 	xyDC [3] = y2DC;
-	v_polyline (2, xyDC, false);
-	v_arc (x1DC + r, y2DC - dy, r, 90.0, 180.0);
+	our v_polyline (2, xyDC, false);
+	our v_arc (x1DC + r, y2DC - dy, r, 90.0, 180.0);
 	xyDC [0] = x1DC;
 	xyDC [1] = y2DC - dy;
 	xyDC [2] = x1DC;
 	xyDC [3] = y1DC + dy;
-	v_polyline (2, xyDC, false);
-	v_arc (x1DC + r, y1DC + dy, r, 180.0, 270.0);
+	our v_polyline (2, xyDC, false);
+	our v_arc (x1DC + r, y1DC + dy, r, 180.0, 270.0);
 }
 
 void structGraphicsScreen :: v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
@@ -710,12 +705,12 @@ void structGraphicsScreen :: v_roundedRectangle (double x1DC, double x2DC, doubl
 void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
 	const double dy = ( yIsZeroAtTheTop ? - r : r );
 	ORDER_DC
-	v_fillCircle (x2DC - r, y1DC + dy, r);
-	v_fillCircle (x2DC - r, y2DC - dy, r);
-	v_fillCircle (x1DC + r, y2DC - dy, r);
-	v_fillCircle (x1DC + r, y1DC + dy, r);
-	v_fillRectangle (x1DC, x2DC, y1DC + dy, y2DC - dy);
-	v_fillRectangle (x1DC + r, x2DC - r, y1DC, y2DC);
+	our v_fillCircle (x2DC - r, y1DC + dy, r);
+	our v_fillCircle (x2DC - r, y2DC - dy, r);
+	our v_fillCircle (x1DC + r, y2DC - dy, r);
+	our v_fillCircle (x1DC + r, y1DC + dy, r);
+	our v_fillRectangle (x1DC, x2DC, y1DC + dy, y2DC - dy);
+	our v_fillRectangle (x1DC + r, x2DC - r, y1DC, y2DC);
 }
 
 /* Fifth level. */

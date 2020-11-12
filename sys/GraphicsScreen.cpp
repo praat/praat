@@ -260,6 +260,8 @@ void structGraphicsScreen :: v_updateWs () {
 		respond by redrawing its contents from the (changed) data.
 		(last checked 2020-07-12)
 	*/
+	if (! our d_drawingArea)
+		return;
 	#if cairo && gtk
 		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
@@ -347,14 +349,9 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 	#if cairo && gtk
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
-		#if ALLOW_GDK_DRAWING
-			trace (U"retrieving window");
-			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
-			trace (U"retrieved window");
-		#else
+		if (voidDisplay)
 			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
-		#endif
-		my d_cairoGraphicsContext = nullptr;   // will be created and destroyed at expose time
+		my d_cairoGraphicsContext = nullptr;   // will be created and destroyed at expose time or during Graphics_textWidth(); 2020-11-11
 	#elif gdi
 		if (my printer) {
 			my d_gdiGraphicsContext = (HDC) voidWindow;
@@ -384,15 +381,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_macView = (NSView *) voidWindow;
 			my d_macGraphicsContext = nullptr;   // will be retrieved and nullified at expose time
 		}
-		/*
-			The following is what we would like to do.
-			However, if we do this outside of an expose event, d_macGraphicsContext will be null,
-			so we defer this to GraphicsQuartz_initDraw().
-			(last checked 2020-07-26)
-		*/
-		//my d_macGraphicsContext = Melder_systemVersion < 101400 ?
-		//		(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
-		//		[[NSGraphicsContext currentContext] CGContext];
 		my d_depth = ( my resolution > 150 ? 1 : 8 );   // BUG: replace by true depth (1=black/white)
 		_GraphicsScreen_text_init (me);
 	#endif
