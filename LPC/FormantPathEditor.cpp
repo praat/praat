@@ -50,6 +50,13 @@ void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
 }
 
+/*
+	MelderColour markedCandidatesColour = MelderColour (0.984, 0.951, 0.020); // Melder_YELLOW
+	In the selectionViewer, the following light yellow colour combines better with the chosen colours 
+	for the odd	and even numbered formants (Melder_RED and Melder_PURPLE, respectively).
+*/
+MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
+
 void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
@@ -67,6 +74,7 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	GuiThing_setSensitive (our navigateNextButton, nextSensitive);
 	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);*/
 }
+
 void operator<<= (BOOLVECVU const& target, bool value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
@@ -75,9 +83,6 @@ void operator<<= (BOOLVECVU const& target, bool value) {
 void operator<<= (INTVECVU const& target, integer value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
-}
-
-void FormantPathEditor_deselect (FormantPathEditor me) {
 }
 
 /********** UTILITIES **********/
@@ -483,7 +488,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		
 		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, my selectedCandidate, Melder_RED, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
 	EDITOR_END
@@ -703,7 +708,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
 	Graphics_setFontSize (our graphics.get(), original_fontSize);
 	previousStartTime = startTime;

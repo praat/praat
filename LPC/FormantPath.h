@@ -58,15 +58,15 @@ static inline autoFormantPath Sound_to_FormantPath_burg (Sound me, double timeSt
 }
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
-	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
-	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
-	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish);
+	double xCursor, double yCursor, MelderColour selected, constINTVEC const & parameters,
+	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish);
 
 void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
-	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
-	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish);
+	double xCursor, double yCursor, MelderColour selected, constINTVEC const & parameters,
+	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish);
 
 #endif /* _FormantPath_h_ */
