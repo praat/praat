@@ -20,9 +20,19 @@
 
 #include "Sound.h"
 
-static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, bool garnish) {
+/** What kind of decoration to draw in SpectrumHann
+ * 
+ * Fancy does full labeling of the axis, Minimal just adds a simple label.
+ */
+enum class Decoration {
+	None,
+	Fancy,
+	Minimal
+};
+
+static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, Decoration garnish) {
 	try {
-		double fmin = garnish == 1 ? 300 : 0, fmax = garnish == 1 ? 1300 : 4000, df = garnish == 1 ? 1 : 4;
+		double fmin = garnish == Decoration::Fancy ? 300 : 0, fmax = garnish == Decoration::Fancy ? 1300 : 4000, df = garnish == Decoration::Fancy ? 1 : 4;
 		autoSound me = Sound_create (1, fmin, fmax, (long) floor ((fmax - fmin) / df) + 1, df, fmin);
 		double w = 100, f1left = f1 - w, f1right = f1 + w, f2left = f2 - w, f2right = f2 + w, halfpibysmooth = NUMpi / (w + w);
 		Graphics_setWindow (g, fmin, fmax, -0.1, 1.1);
@@ -34,13 +44,13 @@ static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, bool
 		if (stop)
 			for (int i = 1; i <= my nx; i ++)
 				my z [1] [i] = 1.0 - my z [1] [i];
-		if (garnish) {
+		if (garnish != Decoration::None) {
 			Graphics_drawInnerBox (g);
 			Graphics_textLeft (g, true, U"Amplitude filter %H (%f)");
 			Graphics_markLeft (g, 0.0, true, true, false, nullptr);
 			Graphics_markLeft (g, 1.0, true, true, false, nullptr);
 		}
-		if (garnish == 1) {
+		if (garnish == Decoration::Fancy) {
 			Graphics_textBottom (g, true, U"Frequency %f");
 			Graphics_markBottom (g, f1left, false, true, true, U"%f__1_-%w");
 			Graphics_markBottom (g, f1, false, true, true, U"%f__1_");
@@ -52,7 +62,7 @@ static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, bool
 			Graphics_markLeft (g, 0.5, true, true, true, nullptr);
 			Graphics_markRight (g, 0.5, false, true, false, U"-6 dB");
 		}
-		if (garnish == 2) {
+		if (garnish == Decoration::Minimal) {
 			Graphics_textBottom (g, true, U"Frequency %f (Hz)");
 			Graphics_markBottom (g, 0.0, true, true, false, nullptr);
 			Graphics_markBottom (g, 500.0, true, true, false, nullptr);
@@ -68,18 +78,18 @@ static void draw_SpectrumHann (Graphics g, double f1, double f2, bool stop, bool
 	}
 }
 static void draw_SpectrumPassHann (Graphics g) {
-	draw_SpectrumHann (g, 500.0, 1000.0, false, 1);
+	draw_SpectrumHann (g, 500.0, 1000.0, false, Decoration::Fancy);
 }
 static void draw_SpectrumPassHann_decompose (Graphics g) {
-	draw_SpectrumHann (g, 0.0, 500.0, false, 2);
-	draw_SpectrumHann (g, 500, 1000, false, 0);
-	draw_SpectrumHann (g, 1000, 2000, false, 0);
-	draw_SpectrumHann (g, 2000, 4000, false, 0);
+	draw_SpectrumHann (g, 0.0, 500.0, false, Decoration::Minimal);
+	draw_SpectrumHann (g, 500, 1000, false, Decoration::None);
+	draw_SpectrumHann (g, 1000, 2000, false, Decoration::None);
+	draw_SpectrumHann (g, 2000, 4000, false, Decoration::None);
 }
-static void draw_SpectrumStopHann (Graphics g) { draw_SpectrumHann (g, 500, 1000, 1, 1); }
+static void draw_SpectrumStopHann (Graphics g) { draw_SpectrumHann (g, 500, 1000, 1, Decoration::Fancy); }
 static void draw_SpectrumStopHann_decompose (Graphics g) {
-	draw_SpectrumHann (g, 500.0, 1000.0, false, 2);
-	draw_SpectrumHann (g, 500.0, 1000.0, true, 0);
+	draw_SpectrumHann (g, 500.0, 1000.0, false, Decoration::Minimal);
+	draw_SpectrumHann (g, 500.0, 1000.0, true, Decoration::None);
 }
 
 void manual_spectrum_init (ManPages me);
