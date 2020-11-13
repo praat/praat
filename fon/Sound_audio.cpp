@@ -56,10 +56,6 @@ struct Sound_recordFixedTime_Info {
 	integer numberOfSamples, numberOfSamplesRead;
 	short *buffer;
 };
-static integer getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Info *info) {
-	volatile integer numberOfSamplesRead = info -> numberOfSamplesRead;
-	return numberOfSamplesRead;
-}
 
 static int portaudioStreamCallback (
     const void *input, void * /*output*/,
