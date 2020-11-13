@@ -120,7 +120,6 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			(void) balance;
 		#elif defined (linux)
 			int dev_mask;
-			int fd_mixer = -1;
 			int val;
 		#endif
 
