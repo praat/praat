@@ -369,7 +369,10 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	double minimum, double maximum, bool interpolate)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	if (ymax <= ymin) {
+		ymin = my ymin;
+		ymax = my ymax;
+	}
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx,
 		& ixmin, & ixmax);
@@ -377,8 +380,12 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 		& iymin, & iymax);
 	if (maximum <= minimum)
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
-	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
-	if (xmin >= xmax || ymin >= ymax) return;
+	if (maximum <= minimum) {
+		minimum -= 1.0;
+		maximum += 1.0;
+	}
+	if (xmin >= xmax || ymin >= ymax)
+		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
