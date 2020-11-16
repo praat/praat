@@ -84,6 +84,7 @@ the behaviour of Praat will temporarily change in the following ways:
 52: debug Discriminant_TableOfReal_to_ClassificationTable
 53: trace running cursor
 54: ignore gdk_cairo_reset_clip
+55: trace Gui init, draw, destroy
 181: read and write native-endian real64
 900: use DG Meta Serif Science instead of Palatino
 1264: Mac: Sound_record_fixedTime uses microphone "FW Solo (1264)"

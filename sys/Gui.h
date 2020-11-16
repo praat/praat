@@ -510,6 +510,9 @@ Thing_define (GuiDrawingArea, GuiControl) {
 	integer numberOfGraphicses;
 	constexpr static integer MAXIMUM_NUMBER_OF_GRAPHICSES = 10;
 	Graphics graphicses [1+MAXIMUM_NUMBER_OF_GRAPHICSES];
+
+	void v_destroy () noexcept
+		override;
 };
 
 /* GuiDrawingArea creation flags: */

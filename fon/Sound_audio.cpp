@@ -124,7 +124,6 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			(void) balance;
 		#elif defined (linux)
 			int dev_mask;
-			int fd_mixer = -1;
 			int val;
 		#endif
 
@@ -375,7 +374,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Started ", buffer [i]);
 			// The callback will do this. Just wait.
 			while (/*getNumberOfSamplesRead (& info)*/ info. numberOfSamplesRead < numberOfSamples) {
 				//Pa_Sleep (1);
-				//Melder_casual ("filled %ld/%ld", getNumberOfSamplesRead (& info), numberOfSamples);
+				trace (U"filled ", getNumberOfSamplesRead (& info), U"/", numberOfSamples);
 			}
 for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 		} else {

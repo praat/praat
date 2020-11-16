@@ -117,6 +117,8 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 	conststring32 title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
 {
 	autoGuiWindow me = Thing_new (GuiWindow);
+	if (Melder_debug == 55)
+		Melder_casual (U"\t", Thing_messageNameAndAddress (me.get()), U" init");
 	my d_parent = nullptr;
 	my d_goAwayCallback = goAwayCallback;
 	my d_goAwayBoss = goAwayBoss;
@@ -157,6 +159,8 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: false];
+		if (Melder_debug == 55)
+			Melder_casual (U"\t\tGuiCocoaShell-", Melder_pointer (my d_cocoaShell), U" init in ", Thing_messageNameAndAddress (me.get()));
 		[my d_cocoaShell setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
         [my d_cocoaShell setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
 		GuiShell_setTitle (me.get(), title);
@@ -197,6 +201,7 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 		XtVaSetValues (my d_xmMenuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, nullptr);
 		XtManageChild (my d_xmMenuBar);
 	#elif cocoa
+		(void) me;   // this is handled elsewhere
 	#endif
 }
 

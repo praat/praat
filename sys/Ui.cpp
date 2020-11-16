@@ -358,14 +358,18 @@ static void gui_button_cb_revert (UiForm me, GuiButtonEvent /* event */) {
 }
 
 static void gui_dialog_cb_close (UiForm me) {
-	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
+	if (my cancelCallback)
+		my cancelCallback (me, my buttonClosure);
 	GuiThing_hide (my d_dialogForm);
-	if (my destroyWhenUnmanaged) forget (me);
+	if (my destroyWhenUnmanaged)
+		forget (me);
 }
 static void gui_button_cb_cancel (UiForm me, GuiButtonEvent /* event */) {
-	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
+	if (my cancelCallback)
+		my cancelCallback (me, my buttonClosure);
 	GuiThing_hide (my d_dialogForm);
-	if (my destroyWhenUnmanaged) forget (me);
+	if (my destroyWhenUnmanaged)
+		forget (me);
 }
 
 static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
