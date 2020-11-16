@@ -26,6 +26,7 @@
 	6. ..
 */
 #include "FormantPathEditor.h"
+#include "FormantPath_to_IntervalTier.h"
 #include "EditorM.h"
 #include "praat.h"
 #include "melder_kar.h"
@@ -49,6 +50,13 @@ void structFormantPathEditor :: v_info () {
 	FormantPathEditor_Parent :: v_info ();
 }
 
+/*
+	MelderColour markedCandidatesColour = MelderColour (0.984, 0.951, 0.020); // Melder_YELLOW
+	In the selectionViewer, the following light yellow colour combines better with the chosen colours 
+	for the odd	and even numbered formants (Melder_RED and Melder_PURPLE, respectively).
+*/
+MelderColour markedCandidatesColour =  MelderColour (0.984,0.984, 0.7);
+
 void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
@@ -66,6 +74,7 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	GuiThing_setSensitive (our navigateNextButton, nextSensitive);
 	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);*/
 }
+
 void operator<<= (BOOLVECVU const& target, bool value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
@@ -74,9 +83,6 @@ void operator<<= (BOOLVECVU const& target, bool value) {
 void operator<<= (INTVECVU const& target, integer value) {
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = value;
-}
-
-void FormantPathEditor_deselect (FormantPathEditor me) {
 }
 
 /********** UTILITIES **********/
@@ -482,7 +488,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		
 		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, my selectedCandidate, Melder_RED, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
 	EDITOR_END
@@ -702,7 +708,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, our selectedCandidate, Melder_RED, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
 	Graphics_setFontSize (our graphics.get(), original_fontSize);
 	previousStartTime = startTime;
@@ -711,34 +717,22 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 
 void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
 	FormantPath formantPath = (FormantPath) my data;
-	integer itmin, itmax;
-	if (! Sampled_getWindowSamples (formantPath, tmin, tmax, & itmin, & itmax))
-		return;
+	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (formantPath, tmin, tmax);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
 	Graphics_setColour (g, Melder_RED);
 	Graphics_setLineWidth (g, 3.0);
-	const double dx2 = 0.5 * formantPath -> dx;
-	integer iframe = itmin, iframe2 = itmin + 1;
-	double ceiling = formantPath -> ceilings [formantPath -> path [itmin]];
-	while (iframe2 <= itmax) {
-		double ceiling2;
-		while (iframe2 <= itmax) {
-			ceiling2 = formantPath -> ceilings [formantPath -> path [iframe2]];
-			if (ceiling2 != ceiling)
-				break;
-			iframe2 ++;
+	for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
+		TextInterval textInterval = intervalTier -> intervals.at [interval];
+		conststring32 label = textInterval -> text.get();
+		if (label) {
+			const integer index = Melder_atoi (label);
+			if (index > 0 && index <= formantPath -> ceilings.size) {
+				const double ceiling = formantPath -> ceilings [index];
+				Graphics_line (g, textInterval -> xmin, ceiling, textInterval -> xmax, ceiling);
+				Graphics_text (g, 0.5 * (textInterval -> xmin + textInterval -> xmax), ceiling + 50.0, Melder_fixed (ceiling, 0));
+			}
 		}
-		const double tmid = Sampled_indexToX (formantPath, iframe);
-		const double tmid2 = Sampled_indexToX (formantPath, iframe2 - 1);
-		Graphics_line (g, tmid - dx2, ceiling, tmid2 + dx2, ceiling);
-		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_BASELINE);
-		Graphics_text (g, 0.5 * (tmid + tmid2), ceiling + 50.0, ((integer) ceiling));
-		ceiling = ceiling2;
-		iframe = iframe2;
-	}
-	if (iframe == itmax) {
-		const double tmid = Sampled_indexToX (formantPath, iframe);
-		Graphics_line (g, tmid - dx2, ceiling, tmid + dx2, ceiling);
 	}
 	Graphics_setLineWidth (g, 1.0);
 }

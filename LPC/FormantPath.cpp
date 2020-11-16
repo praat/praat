@@ -8,7 +8,7 @@
  * your option) any later version.
  *
  * This code is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * WITHOUT ANY WARRANTY; without d the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
@@ -17,6 +17,7 @@
  */
 
 #include "FormantPath.h"
+#include "FormantPath_to_IntervalTier.h"
 #include "FormantModeler.h"
 #include "Graphics_extensions.h"
 #include "LPC_and_Formant.h"
@@ -369,7 +370,7 @@ autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, inte
 	return stress;
 }
 
-static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour odd, MelderColour even)
+static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants)
 {
 	double maximumIntensity = 0.0, minimumIntensity;
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
@@ -402,7 +403,7 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 		*/
 		for (integer iformant = std::min (frame -> numberOfFormants, toFormant); iformant >= fromFormant; iformant --) {
 			const double frequency = frame -> formant [iformant]. frequency;
-			Graphics_setColour (g, iformant % 2 == 1 ? odd : even );
+			Graphics_setColour (g, iformant % 2 == 1 ? oddNumberedFormants : evenNumberedFormants );
 			if (frequency >= fmin && frequency <= fmax) {
 				Graphics_speckle (g, x, frequency);
 				if (drawBandWidths) {
@@ -417,13 +418,11 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 }
 
 void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax,
-	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even,
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
-	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
-	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
+	double xCursor, double yCursor, MelderColour selectedCeilingsColour, constINTVEC const & parameters,
+	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
-	MelderColour singleSelectionColour = MelderColour (0.984,0.984, 0.7);
-	MelderColour multipleSelectionsColour = MelderColour (0.984,0.984, 0.9);
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
 		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
@@ -433,23 +432,9 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 	const double vp_width = x2NDC - x1NDC, vp_height = y2NDC - y1NDC;
 	const double vpi_width = vp_width / (ncol + (ncol - 1) * spaceBetweenFraction_x);
 	const double vpi_height = vp_height / (nrow + (nrow - 1) * spaceBetweenFraction_y);
-	integer numberOfCeilingInInterval = 1;
+	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (me, tmin, tmax);
 	integer itmin, itmax;
-	autoBOOLVEC ceilingInInterval = newBOOLVECzero (my formants.size);
-	if (markWithinPath && Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
-		/*
-			If the path in the interval (tmin, tmax) is constant, then we have only one of
-			the candidates chosen in the whole interval.
-		*/
-		numberOfCeilingInInterval = 0;
-		for (integer iformant = 1; iformant <= my formants.size; iformant ++)
-			for (integer i = itmin; i <= itmax; i ++)
-				if (my path [i] == iformant) {
-					ceilingInInterval [iformant] = true;
-					numberOfCeilingInInterval ++;
-					break;
-				}
-	}
+	const integer numberOfSamples = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 	
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const integer irow = 1 + (iformant - 1) / ncol; // left-to-right + top-to-bottom
@@ -459,21 +444,25 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		const double vpi_y2 = y2NDC - (irow - 1) * vpi_height * (1.0 + spaceBetweenFraction_y);
 		const double vpi_y1 = vpi_y2 - vpi_height;
 		const Formant formant = my formants.at [iformant];
-		autoFormantModeler fm = Formant_to_FormantModeler (formant, tmin, tmax, parameters);
+		autoFormantModeler fm;
+		if (numberOfSamples > 0)
+			fm = Formant_to_FormantModeler (formant, tmin, tmax, parameters);
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-		if (garnish && markWithinPath) {
-			if (ceilingInInterval [iformant]) {
-				MelderColour colour = Graphics_inqColour (g);
-				MelderColour fillColour = (numberOfCeilingInInterval == 1 ? singleSelectionColour : multipleSelectionsColour);
-				Graphics_setColour (g, fillColour);
-				Graphics_fillRectangle (g, tmin, tmax, 0.0, fmax);
-				Graphics_setColour (g, colour);
+		if (garnish && markCandidatesWithinPath) {
+			MelderColour colourCopy = Graphics_inqColour (g);
+			Graphics_setColour (g, selectedCeilingsColour);
+			for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
+				TextInterval textInterval = intervalTier -> intervals.at [interval];
+				const integer candidate = ( textInterval -> text.get() ? Melder_atoi (textInterval -> text.get()) : 0);
+				if (candidate == iformant)
+					Graphics_fillRectangle (g, textInterval -> xmin, textInterval -> xmax, 0, fmax);
 			}
+			Graphics_setColour (g, colourCopy);
 		}
-		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, odd, even);
-		if (showEstimatedModels)
-			FormantModeler_drawModel_inside (fm.get(), g, tmin, tmax, fmax, fromFormant, toFormant, odd, even, 100_integer);
+		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, oddNumberedFormants, evenNumberedFormants);
+		if (showEstimatedModels && numberOfSamples > 0)
+			FormantModeler_drawModel_inside (fm.get(), g, tmin, tmax, fmax, fromFormant, toFormant, oddNumberedFormants, evenNumberedFormants, 100_integer);
 		Graphics_setColour (g, Melder_BLACK);
 		if (garnish)
 			Graphics_rectangle (g, tmin, tmax, fmin, fmax);
@@ -486,7 +475,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		autoMelderString info;
 		const double tLeftPos = tmin - 0.01 * (tmax - tmin), tRightPos = tmax + 0.01 * (tmax - tmin);
 		if (garnish) {
-			if (showStress) {
+			if (showStress && numberOfSamples > 0) {
 				const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 				MelderString_append (& info, U"Fit=", Melder_fixed (stress, 2));
 				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
@@ -566,17 +555,15 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 }
 
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
-	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour odd, MelderColour even, 
+	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants, 
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
-	double xCursor, double yCursor, integer iselected, MelderColour selected, constINTVEC const & parameters,
-	bool markWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
+	double xCursor, double yCursor, MelderColour selected, constINTVEC const & parameters,
+	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setInner (g);
-	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, iselected, selected, parameters, markWithinPath, showStress, powerf, showEstimatedModels, garnish);
+	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, oddNumberedFormants, evenNumberedFormants, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, selected, parameters, markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish);
 	Graphics_unsetInner (g);
 }	
-	
-	
-	
+
 /* End of file FormantPath.cpp */

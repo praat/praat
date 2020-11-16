@@ -116,10 +116,9 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 	POSITIVE (lineEvery_Hz, U"Horizontal line every (Hz)", U"1000.0")
 	REAL (xCursor, U"X cursor line at (s)", U"-0.1 (=no line)")
 	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
-	INTEGER (special, U"Index of special", U"0 (=no)")
-	COLOUR (specialColour, U"Colour for special", U"pink")
 	SENTENCE (parameters_string, U"Coefficients by track", U"7 7 7 7")
-	BOOLEAN (markWithinPath, U"Mark within path", false)
+	BOOLEAN (markCandidatesWithinPath, U"Mark candidates within path", false)
+	COLOUR (markColour, U"Mark colour", U"{0.984,0.984, 0.7}")
 	BOOLEAN (showStress, U"Show stress", true)
 	POSITIVE (powerf, U"Power", U"1.25")
 	BOOLEAN (showEstimatedModels, U"Show estimated models", true)
@@ -128,7 +127,7 @@ FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 DO
 	GRAPHICS_EACH (FormantPath)
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, special, specialColour, parameters.get(), markWithinPath, showStress, powerf, showEstimatedModels, garnish);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, markColour, parameters.get(), markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish);
 	GRAPHICS_EACH_END
 }
 
