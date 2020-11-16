@@ -22,8 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201110)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201116)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.32# (16 November 2020)")
+LIST_ITEM (U"• First version for Macs with Apple Silicon chip.")
+LIST_ITEM (U"• Mac: corrected a bug that could cause Praat to crash when a Sound window was closed from a script.")
+LIST_ITEM (U"• Windows and Linux: made ##Text width...# work correctly from batch.")
+LIST_ITEM (U"• Linux: reinstalled Tab shortcut in Sound window.")
 NORMAL (U"##6.1.31# (10 November 2020)")
 LIST_ITEM (U"• Linux: first GTK-3 version.")
 NORMAL (U"##6.1.30# (3 November 2020)")
