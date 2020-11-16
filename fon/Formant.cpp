@@ -164,14 +164,33 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 			const double frequency = frame -> formant [iformant]. frequency;
 			if (frequency >= fmin && frequency <= fmax) {
 				if (drawWithContrast) {
-					const double original_speckleSize = Graphics_inqSpeckleSize (g);
-					Graphics_setSpeckleSize (g, 1.111 * original_speckleSize);
-					Graphics_setColour (g, iformant % 2 == 1 ? evenColour : oddColour);
-					Graphics_speckle (g, x, frequency);
-					Graphics_setSpeckleSize (g, 0.900 * original_speckleSize);
-					Graphics_setColour (g, iformant % 2 == 1 ? oddColour : evenColour);
-					Graphics_speckle (g, x, frequency);
-					Graphics_setSpeckleSize (g, original_speckleSize);
+					#if macintosh
+						const double original_speckleSize = Graphics_inqSpeckleSize (g);
+						Graphics_setSpeckleSize (g, 1.111 * original_speckleSize);
+						Graphics_setColour (g, iformant % 2 == 1 ? evenColour : oddColour);
+						Graphics_speckle (g, x, frequency);
+						Graphics_setSpeckleSize (g, 0.900 * original_speckleSize);
+						Graphics_setColour (g, iformant % 2 == 1 ? oddColour : evenColour);
+						Graphics_speckle (g, x, frequency);
+						Graphics_setSpeckleSize (g, original_speckleSize);
+					#else
+						const double original_lineWidth = Graphics_inqLineWidth (g);
+						const bool even = ( iformant % 2 == 0 );
+						const double speckleSize = Graphics_inqSpeckleSize (g);
+						Graphics_setLineWidth (g, 1.0);
+						if (even) {
+							Graphics_setColour (g, evenColour);
+							Graphics_fillCircle_mm (g, x, frequency, speckleSize * 1.4);
+							Graphics_setColour (g, oddColour);
+							Graphics_circle_mm (g, x, frequency, speckleSize * 1.4);
+						} else {
+							Graphics_setColour (g, oddColour);
+							Graphics_fillCircle_mm (g, x, frequency, speckleSize * 1.15);
+							Graphics_setColour (g, evenColour);
+							Graphics_circle_mm (g, x, frequency, speckleSize * 1.15);
+						}
+						Graphics_setLineWidth (g, original_lineWidth);
+					#endif
 				} else {
 					Graphics_setColour (g, iformant % 2 == 1 ? oddColour : evenColour);
 					Graphics_speckle (g, x, frequency);

@@ -362,7 +362,7 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 		cairoRevertLine (this);
 	#elif gdi
 		winPrepareLine (this);
-		Ellipse (our d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1.0, yDC + rDC + 1.0);
+		Ellipse (our d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC, yDC + rDC);
 		DEFAULT
 	#elif quartz
 		quartzPrepareLine (this);
@@ -475,7 +475,7 @@ void structGraphicsScreen :: v_fillCircle (double xDC, double yDC, double rDC) {
 		/*
 		 * NT cannot fill circles that span less than five pixels...
 		 */
-		Ellipse (our d_gdiGraphicsContext, xDC - rDC - 1.0, yDC - rDC - 1.0, xDC + rDC + 1.0, yDC + rDC + 1.0);
+		Ellipse (our d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC, yDC + rDC);
 		DEFAULT
 	#elif quartz
 		quartzPrepareFill (this);
