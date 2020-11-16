@@ -463,7 +463,8 @@ void Graphics_grey (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC,
 	int _numberOfBorders, double borders [])
 {
-	if (z.nrow <= 1 || z.ncol <= 1) return;
+	if (z.nrow <= 1 || z.ncol <= 1)
+		return;
 
 	/* Static variables. */
 

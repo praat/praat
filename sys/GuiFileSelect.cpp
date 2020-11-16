@@ -167,7 +167,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 		setlocale (LC_ALL, "C");
 	#elif cocoa
 		(void) parent;
-		NSSavePanel	*savePanel = [NSSavePanel savePanel];
+		NSSavePanel	*savePanel = [NSSavePanel savePanel];   // will be autoreleased (release will crash; 2020-11-12)
 		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
 		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]];
 		if ([savePanel runModal] == NSFileHandlingPanelOKButton) {

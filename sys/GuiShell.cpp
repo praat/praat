@@ -26,6 +26,8 @@ Thing_implement (GuiShell, GuiForm, 0);
 		GuiShell d_userData;
 	}
 	- (void) dealloc {   // override
+		if (Melder_debug == 55)
+			Melder_casual (U"\t\tGuiCocoaShell-", Melder_pointer (self), U" dealloc");
 		GuiShell me = d_userData;
 		my d_cocoaShell = nullptr;   // this is already under destruction, so undangle
 		forget (me);
@@ -60,6 +62,8 @@ Thing_implement (GuiShell, GuiForm, 0);
 
 void structGuiShell :: v_destroy () noexcept {
 	#if cocoa
+		if (Melder_debug == 55)
+			Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v_destroy: cocoaShell ", Melder_pointer (our d_cocoaShell));
 		if (our d_cocoaShell) {
 			[our d_cocoaShell setUserData: nullptr];   // undangle reference to this
 			Melder_fatal (U"ordering out?");   // TODO: how can this never be reached?
