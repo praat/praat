@@ -20,6 +20,7 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
 
 ### 1.2. Mac binaries
+- `praatXXXX_macU64.dmg`: disk image with universal executable for (64-bit) Intel and Apple Silicon Macs
 - `praatXXXX_mac64.dmg`: disk image with executable for 64-bit Intel Macs (Cocoa)
 - `praatXXXX_xcodeproj64.zip`: zipped Xcode project file for the 64-bit edition (Cocoa)
 - `praatXXXX_mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
