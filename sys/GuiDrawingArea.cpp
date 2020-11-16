@@ -301,6 +301,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) dealloc {   // override
 		GuiDrawingArea me = d_userData;
+		if (Melder_debug == 55)
+			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" dealloc for ", Melder_pointer (me));
 		forget (me);
 		[self removeTrackingArea: _trackingArea];
 		trace (U"deleting a drawing area");
@@ -328,13 +330,17 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) drawRect: (NSRect) dirtyRect {
 		trace (U"dirtyRect: ", dirtyRect.origin.x, U", ", dirtyRect.origin.y, U", ", dirtyRect.size.width, U", ", dirtyRect.size.height);
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		if (Melder_debug == 55)
+			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (self), U" draw to ", Melder_pointer (me));
 		if (! _inited) {
 			// Last chance to do this. Is there a better place?
 			[self   resizeCallback: self. frame];
 			_inited = YES;
 		}
-		if (my d_exposeCallback) {
+		if (me && my d_exposeCallback) {
 			structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
+			if (Melder_debug == 55)
+				Melder_casual (U"\t", Thing_messageNameAndAddress (me), U" draw for ", Melder_pointer (my d_exposeBoss));
 			try {
 				Melder_assert (my numberOfGraphicses > 0);
 				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
@@ -376,7 +382,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) mouse: (NSEvent *) nsEvent inPhase: (structGuiDrawingArea_MouseEvent::Phase) phase {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		if (my mouseCallback) {
+		if (me && my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event = { me, 0, 0, phase, false, false, false };
 			NSPoint local_point = [self   convertPoint: [nsEvent locationInWindow]   fromView: nil];
 			event. x = local_point. x;
@@ -411,7 +417,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) scrollWheel: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		if (my d_horizontalScrollBar || my d_verticalScrollBar) {
+		if (me && (my d_horizontalScrollBar || my d_verticalScrollBar)) {
 			if (my d_horizontalScrollBar) {
 				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_horizontalScrollBar -> d_widget;
 				[cocoaScrollBar scrollBy: [nsEvent scrollingDeltaX]];
@@ -426,7 +432,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) magnifyWithEvent: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		if (my d_horizontalScrollBar || my d_verticalScrollBar) {
+		if (me && (my d_horizontalScrollBar || my d_verticalScrollBar)) {
 			if (my d_horizontalScrollBar) {
 				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_horizontalScrollBar -> d_widget;
 				[cocoaScrollBar magnifyBy: [nsEvent magnification]];
@@ -444,7 +450,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	- (void) keyDown: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
-		if (my d_keyCallback) {
+		if (me && my d_keyCallback) {
 			structGuiDrawingArea_KeyEvent event = { me, U'\0', false, false, false };
 			event. key = [[nsEvent charactersIgnoringModifiers]   characterAtIndex: 0];
 			if (event. key == NSLeftArrowFunctionKey)  event. key = 0x2190;
@@ -502,6 +508,17 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 #endif
 
+void structGuiDrawingArea :: v_destroy () noexcept {
+	if (Melder_debug == 55)
+		Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v_destroy");
+	#if cocoa
+		if (our d_widget) {
+			[our d_widget setUserData: nullptr];   // undangle reference to this
+		}
+	#endif
+	GuiDrawingArea_Parent :: v_destroy ();
+}
+
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
 	GuiDrawingArea_ExposeCallback exposeCallback,
 	GuiDrawingArea_MouseCallback mouseCallback,
@@ -510,6 +527,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 	uint32 /* flags */)
 {
 	autoGuiDrawingArea me = Thing_new (GuiDrawingArea);
+	if (Melder_debug == 55)
+		Melder_casual (U"\t", Thing_messageNameAndAddress (me.get()), U" init in ", Thing_messageNameAndAddress (parent -> d_shell));
 	my d_shell = parent -> d_shell;
 	my d_shell -> drawingArea = me.get();
 	my d_parent = parent;
@@ -554,6 +573,8 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif cocoa
 		GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
+		if (Melder_debug == 55)
+			Melder_casual (U"\t\tGuiCocoaDrawingArea-", Melder_pointer (drawingArea), U" init in ", Thing_messageNameAndAddress (me.get()));
 		my d_widget = (GuiObject) drawingArea;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		[drawingArea   setUserData: me.get()];

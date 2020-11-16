@@ -44,7 +44,9 @@ struct structClassInfo theClassInfo_Thing = {
 };
 ClassInfo classThing = & theClassInfo_Thing;
 
-conststring32 Thing_className (Thing me) { return my classInfo -> className; }
+conststring32 Thing_className (Thing me) {
+	return my classInfo -> className;
+}
 
 autoThing Thing_newFromClass (ClassInfo classInfo) {
 	autoThing me { classInfo };
@@ -163,7 +165,8 @@ void _Thing_forget_nozero (Thing me) {
 }
 
 void _Thing_forget (Thing me) {
-	if (! me) return;
+	if (! me)
+		return;
 	if (Melder_debug == 40)
 		Melder_casual (U"destroying ", my classInfo -> className);
 	my v_destroy ();
@@ -190,7 +193,8 @@ void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
 	//Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();
-	if (id != 0) MelderInfo_writeLine (U"Object id: ", id);
+	if (id != 0)
+		MelderInfo_writeLine (U"Object id: ", id);
 	if (! MelderFile_isNull (file))
 		MelderInfo_writeLine (U"Associated file: ", Melder_fileToPath (file));
 	my v_info ();
@@ -201,7 +205,9 @@ void Thing_info (Thing me) {
 	Thing_infoWithIdAndFile (me, 0, nullptr);
 }
 
-conststring32 Thing_getName (Thing me) { return my name.get(); }
+conststring32 Thing_getName (Thing me) {
+	return my name.get();
+}
 
 conststring32 Thing_messageName (Thing me) {
 	static MelderString buffers [19];
@@ -212,6 +218,20 @@ conststring32 Thing_messageName (Thing me) {
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" \"", my name.get(), U"\"");
 	else
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className);
+	return buffers [ibuffer]. string;
+}
+
+conststring32 Thing_messageNameAndAddress (Thing me) {
+	static MelderString buffers [19];
+	static int ibuffer = 0;
+	if (++ ibuffer == 19)
+		ibuffer = 0;
+	if (my name)
+		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U"-",
+			Melder_pointer (me), U"-\"", my name.get(), U"\"");
+	else
+		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U"-",
+			Melder_pointer (me));
 	return buffers [ibuffer]. string;
 }
 

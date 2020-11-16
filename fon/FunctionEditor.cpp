@@ -83,6 +83,8 @@ static void updateGroup (FunctionEditor me) {
 }
 
 void structFunctionEditor :: draw () {
+	if (Melder_debug == 55)
+		Melder_casual (Thing_messageNameAndAddress (this), U" draw");
 	const bool leftFromWindow = ( our startWindow > our tmin );
 	const bool rightFromWindow = ( our endWindow < our tmax );
 	const bool cursorIsVisible = ( our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow );
@@ -367,6 +369,8 @@ void structFunctionEditor :: v_destroy () noexcept {
 		theGroupMembers [i] = nullptr;
 		theGroupSize --;
 	}
+	if (Melder_debug == 55)
+		Melder_casual (Thing_messageNameAndAddress (this), U" v_destroy");
 	FunctionEditor_Parent :: v_destroy ();
 }
 
@@ -1283,6 +1287,8 @@ void structFunctionEditor :: v_highlightSelection (double left, double right, do
 }
 
 void FunctionEditor_init (FunctionEditor me, conststring32 title, Function function) {
+	if (Melder_debug == 55)
+		Melder_casual (Thing_messageNameAndAddress (me), U" init");
 	my tmin = function -> xmin;   // set before adding children (see group button)
 	my tmax = function -> xmax;
 	Editor_init (me, 0, 0, my pref_shellWidth(), my pref_shellHeight(), title, function);

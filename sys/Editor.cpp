@@ -211,10 +211,15 @@ void structEditor :: v_destroy () noexcept {
 				XtDestroyWidget (our windowForm -> d_xmShell);
 			}
 		#elif cocoa
+			if (our windowForm -> drawingArea) {
+				GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) our windowForm -> drawingArea -> d_widget;
+				if (cocoaDrawingArea)
+					[cocoaDrawingArea   setUserData: nullptr];
+			}
 			if (our windowForm -> d_cocoaShell) {
 				NSWindow *cocoaWindow = our windowForm -> d_cocoaShell;
 				//our windowForm -> d_cocoaShell = nullptr;
-				[cocoaWindow close];
+				[cocoaWindow close];   // this should *release* the window as well, because `releasedWhenClosed` is on by default for NSWindows
 			}
 		#endif
 	}
