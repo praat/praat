@@ -29,17 +29,17 @@
 	The purpose of a TextGridNavigator is to find successive elements that match a criterion on one selected tier, the navigation tier.
 	The criterion depends on "navigation contexts".
 	Each navigation context handles only one particular tier. By combining different navigation contexts we 
-	can construct searches that extend over multiple tears. The simplest navigation context consists of only a single label that
+	can construct searches that extend over multiple tiers. The simplest navigation context consists of only a single label that
 	has to be matched.
 	A somewhat more involved context has, instead of a single label, a set of labels where one of the set has to be matched. 
 	The most extensive navigation context involves right and a left context sets of labels, that have to be matched too.
 	
-	As an example consider a TextGris with a tier whose intervals have been labeled with IPA symbols /a, i, \ct, o, f, p etc/.
+	As an example consider a TextGrid with a tier whose intervals have been labeled with IPA symbols like /a, i, \ct, o, f, p etc/.
 	A very simple navigation context that consists of the navigiation set with IPA vowel symbols (u, i, a), a left context 
 	set with /b, p/ and a right context set with /f, s/ would find all vowels /u, e, a/ that are preceded by a /b/ or a /p/ and 
 	followed by a /f/ or and /s/ (if the match condition EQUALS were used).
 	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context on for this tier and 
-	combine it with the previous context to search for items that also match the syntactic context.
+	combine it with the previous context to search for items that also match the syntactic context, etc
 */
 
 Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
@@ -47,12 +47,12 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 	void v_info ()
 			override;
 			
-	integer v_getSize (Function anyTier) {
+	integer v_getSize (Function anyTier) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		return my intervals.size;
 	}
 	
-	integer v_getIndexFromTime (Function anyTier, double time) {
+	integer v_getIndexFromTime (Function anyTier, double time) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		integer index;
 		if (time < my xmin)
@@ -64,7 +64,7 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 		return index;
 	}
 	
-	double v_getLeftTime (Function anyTier, integer index) {
+	double v_getLeftTime (Function anyTier, integer index) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		if (index < 1 || index > my intervals.size)
 			return undefined;
@@ -72,7 +72,7 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 		return interval -> xmin;
 	}
 		
-	double v_getRightTime (Function anyTier, integer index) {
+	double v_getRightTime (Function anyTier, integer index) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		if (index < 1 || index > my intervals.size)
 			return undefined;
@@ -80,7 +80,7 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 		return interval -> xmax;
 	}
 		
-	conststring32 v_getLabel (Function anyTier, integer index) {
+	conststring32 v_getLabel (Function anyTier, integer index) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		if (index < 1 || index > my intervals.size)
 			return U"-- undefined --";
@@ -94,12 +94,12 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 	void v_info ()
 			override;
 	
-	integer v_getSize (Function anyTier) {
+	integer v_getSize (Function anyTier) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		return my points.size;
 	}
 	
-	integer v_getIndexFromTime (Function anyTier, double time) {
+	integer v_getIndexFromTime (Function anyTier, double time) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		integer index;
 		if (time < my xmin)
@@ -111,7 +111,7 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 		return index;
 	}
 	
-	double v_getLeftTime (Function anyTier, integer index) {
+	double v_getLeftTime (Function anyTier, integer index) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		if (index < 1 || index > my points.size)
 			return undefined;
@@ -119,7 +119,7 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 		return point -> number;
 	}
 	
-	double v_getRightTime (Function anyTier, integer index) {
+	double v_getRightTime (Function anyTier, integer index) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		if (index < 1 || index > my points.size)
 			return undefined;
@@ -127,7 +127,7 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 		return point -> number;;
 	}
 	
-	conststring32 v_getLabel (Function anyTier, integer index) {
+	conststring32 v_getLabel (Function anyTier, integer index) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		if (index < 1 || index > my points.size)
 			return U"-- undefined --";
