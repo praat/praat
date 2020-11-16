@@ -20,8 +20,8 @@ The meaning of the names of binary files available on GitHub is as follows:
 - `praatXXXX_win98sit.exe`: self-extracting StuffIt archive with executable for Windows 98
 
 ### 1.2. Mac binaries
-- `praatXXXX_macU64.dmg`: disk image with universal executable for (64-bit) Intel and Apple Silicon Macs
-- `praatXXXX_xcodeprojU64.zip`: zipped Xcode project file for the universal 64-bit edition (Cocoa)
+- `praatXXXX_mac.dmg`: disk image with universal executable for (64-bit) Intel and Apple Silicon Macs (Cocoa)
+- `praatXXXX_xcodeproj.zip`: zipped Xcode project file for the universal (64-bit) edition (Cocoa)
 - `praatXXXX_mac64.dmg`: disk image with executable for 64-bit Intel Macs (Cocoa)
 - `praatXXXX_xcodeproj64.zip`: zipped Xcode project file for the 64-bit edition (Cocoa)
 - `praatXXXX_mac32.dmg`: disk image with executable for 32-bit Intel Macs (Carbon)
@@ -106,15 +106,13 @@ Then type `make` to build `Praat.exe`
 
 ### 3.2. Compiling for Macintosh
 
-Extract the *praatXXXX_xcodeproj64.zip* file from the [latest release](https://github.com/praat/praat/releases)
-into the directory that contains
-`sys`, `fon`, `dwtools` and so on. Then open the project `praat64.xcodeproj` in Xcode
-and choose Build or Run for the target `praat_mac64`.
-Note that on Mojave or Catalina you may have to copy the 10.13 SDK into your Xcode app,
-because Praat will have problems with the Dark Mode if you compile with the 10.15 SDK.
+Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
+into the directory that contains `sys`, `fon`, `dwtools` and so on.
+Then open the project `praat.xcodeproj` in Xcode 12 and choose Build or Run for the target `praat_mac`.
+You can compile with the 11.0 SDK, which will work as far back as macOS 10.7, which is our deployment target.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
-code-signing certificate in your keychain”, then select the target `praat_mac64`, go to Info → Build,
+code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,
 and switch “Code Signing Identity” to “Don’t Code Sign”,
 or sign with your own certificate if you have one as a registered Apple developer.
 
@@ -205,8 +203,9 @@ or `praat-build` into a Windows or Linux terminal (or `praat-run` to build and r
 
 Your source code folders, such as `fon` and `sys`, will reside in a folder like `/Users/yourname/Praats/src`,
 where you also put `praat64.xcodeproj`, as described above in 3.2.
-On Paul’s 2018 MacBook Pro with Xcode 11.2, building Praat with Command-B or Command-R,
-after cleaning the build folder with Shift-Command-K, takes 1 minute and 30 seconds (optimization level O3).
+On Paul’s 2018 MacBook Pro with Xcode 12.2, building Praat with Command-B or Command-R,
+after cleaning the build folder with Shift-Command-K,
+takes 120 seconds for the x86_64 part and 110 seconds for the ARM64 part (optimization level O3).
 
 ### 4.2. Windows development set-up
 
