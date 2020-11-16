@@ -22,9 +22,9 @@ enums_begin (kBoolean, 0)
 enums_end (kBoolean, 1, FALSE_)
 
 enums_begin (kQuestion, 0)
-	enums_add (kQuestion, 0, NO, U"no")
-	enums_add (kQuestion, 1, YES, U"yes")
-enums_end (kQuestion, 1, NO)
+	enums_add (kQuestion, 0, NO_, U"no")
+	enums_add (kQuestion, 1, YES_, U"yes")
+enums_end (kQuestion, 1, NO_)
 
 enums_begin (kExistence, 0)
 	enums_add (kExistence, 0, ABSENT, U"absent")
