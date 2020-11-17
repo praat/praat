@@ -29,17 +29,20 @@ static void IntervalTier_addCandidate (IntervalTier me, double splitTime, intege
 
 autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, double tmax) {
 	autoIntervalTier thee = IntervalTier_create (tmin, tmax);
-	double startTime = tmin;
+	integer itmin, itmax;
+	Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
+	/*
+		If the interval [tmin,tmax] did not overlap any samples and falls 
+		inbetween two successive samples that have index i1 and i1+1, 
+		itmin == i1+1 && itmax == i1;
+	*/
 	integer startIndex = Sampled_xToNearestIndex (me, tmin);
 	Melder_clipLeft (1_integer, & startIndex);
 	integer candidate = my path [startIndex];
-	integer itmin, itmax;
-	Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 	for (integer itime = itmin; itime <= itmax; itime ++) {
 		if (my path [itime] != candidate) {
 			const double endTime = Sampled_indexToX (me, itime) - 0.5 * my dx;
 			IntervalTier_addCandidate (thee.get(), endTime, candidate); 
-			startTime = endTime;
 			candidate = my path [itime];
 		}
 	}
@@ -47,11 +50,6 @@ autoIntervalTier FormantPath_to_IntervalTier (FormantPath me, double tmin, doubl
 	Melder_clipRight (& endIndex, my nx);
 	integer endCandidate = my path [endIndex];
 	if (endCandidate != candidate) {
-		/*
-			Even if the interval [tmin,tmax] does not overlap any samples and falls 
-			inbetween two successive samples that have index i1 and i1+1, 
-			this will be correct because then itmin == i1+1 && itmax == i1;
-		*/
 		const double endTime = Sampled_indexToX (me, itmax) + 0.5 * my dx;
 		IntervalTier_addCandidate (thee.get(), endTime, candidate); 
 		candidate = endCandidate;

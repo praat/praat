@@ -39,10 +39,10 @@ void FormantPath_replaceFrames (FormantPath me, integer beginFrame, integer endF
 autoFormant FormantPath_extractFormant (FormantPath me);
 
 autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
-autoMatrix FormantPath_to_Matrix_transition (FormantPath me, bool maximumCosts);
+autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTracks, bool maximumCosts);
 autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
-autoVEC FormantPath_getSmootness (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf);
+autoVEC FormantPath_getStress (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf);
 
 autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta);
 
