@@ -36,8 +36,6 @@
 #include "Praat_tests_enums.h"
 #include <string>
 
-extern "C" int patest_record (void);
-
 static void testAutoData (autoDaata data) {
 	fprintf (stderr, "testAutoData: %p %p\n", data.get(), data -> name.get());
 }
@@ -492,9 +490,6 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			MelderInfo_writeLine (double (numberOfComputations) / double (numberOfStores), U" computations per store");
 			MelderInfo_writeLine (sum, U" should be ", size1 * size2 * size3 * 30.0);
 			//Melder_require (NUMequal (result.get(), constantHH (size, size, size * 30.0).get()), U"...");
-		} break;
-		case kPraatTests::PATEST_RECORD: {
-			(void) patest_record ();
 		} break;
 		case kPraatTests::THING_AUTO: {
 			integer numberOfThingsBefore = theTotalNumberOfThings;

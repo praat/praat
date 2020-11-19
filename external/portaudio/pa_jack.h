@@ -50,8 +50,6 @@
 extern "C" {
 #endif
 
-PaError PaJack_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );
-
 /** Set the JACK client name.
  *
  * During Pa_Initialize, When PA JACK connects as a client of the JACK server, it requests a certain

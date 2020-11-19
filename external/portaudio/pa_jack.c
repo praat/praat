@@ -1,6 +1,6 @@
 #if defined (UNIX) && defined (JACK)
 /*
- * $Id: pa_jack.c 1912 2013-11-15 12:27:07Z gineera $
+ * $Id$
  * PortAudio Portable Real-Time Audio Library
  * Latest Version at: http://www.portaudio.com
  * JACK Implementation by Joshua Haberman
@@ -71,8 +71,6 @@
 #include "pa_cpuload.h"
 #include "pa_ringbuffer.h"
 #include "pa_debugprint.h"
-
-#include "pa_jack.h"
 
 static pthread_t mainThread_;
 static char *jackErr_ = NULL;

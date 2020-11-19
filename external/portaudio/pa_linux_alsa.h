@@ -2,7 +2,7 @@
 #define PA_LINUX_ALSA_H
 
 /*
- * $Id: pa_linux_alsa.h 1597 2011-02-11 00:15:51Z dmitrykos $
+ * $Id$
  * PortAudio Portable Real-Time Audio Library
  * ALSA-specific extensions
  *
@@ -99,8 +99,6 @@ PaError PaAlsa_SetRetriesBusy( int retries );
  *                 searchable directories (/usr/lib;/usr/local/lib) then.
  */
 void PaAlsa_SetLibraryPathName( const char *pathName );
-
-PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );   // ppgb
 
 #ifdef __cplusplus
 }
