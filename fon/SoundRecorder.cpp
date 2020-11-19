@@ -294,6 +294,7 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 
 static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) {
 	Melder_assert (my graphics);
+	Graphics_clearWs (my graphics.get());
 	if (nsamp < 1) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		#if defined (macintosh)
