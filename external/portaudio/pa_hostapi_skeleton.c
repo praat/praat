@@ -1,5 +1,5 @@
 /*
- * $Id: pa_skeleton.c 1097 2006-08-26 08:27:53Z rossb $
+ * $Id$
  * Portable Audio I/O Library skeleton implementation
  * demonstrates how to use the common functions to implement support
  * for a host API
@@ -43,8 +43,10 @@
 
  @brief Skeleton implementation of support for a host API.
 
- @note This file is provided as a starting point for implementing support for
- a new host API. IMPLEMENT ME comments are used to indicate functionality
+ This file is provided as a starting point for implementing support for
+ a new host API. It provides examples of how the common code can be used.
+
+ @note IMPLEMENT ME comments are used to indicate functionality
  which much be customised for each implementation.
 */
 
@@ -516,9 +518,9 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         values.
     */
     stream->streamRepresentation.streamInfo.inputLatency =
-            PaUtil_GetBufferProcessorInputLatency(&stream->bufferProcessor);
+            (PaTime)PaUtil_GetBufferProcessorInputLatencyFrames(&stream->bufferProcessor) / sampleRate; /* inputLatency is specified in _seconds_ */
     stream->streamRepresentation.streamInfo.outputLatency =
-            PaUtil_GetBufferProcessorOutputLatency(&stream->bufferProcessor);
+            (PaTime)PaUtil_GetBufferProcessorOutputLatencyFrames(&stream->bufferProcessor) / sampleRate; /* outputLatency is specified in _seconds_ */
     stream->streamRepresentation.streamInfo.sampleRate = sampleRate;
 
     

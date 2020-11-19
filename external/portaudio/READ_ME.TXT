@@ -1,6 +1,6 @@
 Praats/external/portaudio/READ_ME.TXT
-Paul Boersma, 13 August 2020
-This file describes the adaptations to the PortAudio v19.06 sources (2016/10)
+Paul Boersma, 19 November 2020
+This file describes the adaptations to the PortAudio sources
 that are needed to make them compatible with Praat.
 
 Deleted many lines in pa_***_hostapis.c.
@@ -39,6 +39,5 @@ in pa_jack.h
 
 Include pa_jack.h in pa_jack.c
 
-Insert
-void
-in declaration and definition of PaUnix_InitializeThreading.
+In pa_mac_core_utilities.h and .c, insert twice `void` to turn two declarations into prototypes.
+(PortAudio pull request 2020-11-19)

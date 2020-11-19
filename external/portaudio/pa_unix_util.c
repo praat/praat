@@ -1,6 +1,5 @@
-#ifdef UNIX
 /*
- * $Id: pa_unix_util.c 1510 2010-06-10 08:05:29Z dmitrykos $
+ * $Id$
  * Portable Audio I/O Library
  * UNIX platform-specific support functions
  *
@@ -237,7 +236,7 @@ pthread_t paUnixMainThread = 0;
 pthread_t paUnixMainThread = 0;
 #endif
 
-PaError PaUnixThreading_Initialize( void )
+PaError PaUnixThreading_Initialize()
 {
     paUnixMainThread = pthread_self();
     return paNoError;
@@ -708,5 +707,4 @@ static void *CanaryFunc( void *userData )
     pthread_exit( NULL );
 }
 */
-#endif
 #endif

@@ -1,6 +1,6 @@
 #if defined (UNIX) && defined (ALSA)
 /*
- * $Id: pa_linux_alsa.c 1911 2013-10-17 12:44:09Z gineera $
+ * $Id$
  * PortAudio Portable Real-Time Audio Library
  * Latest Version at: http://www.portaudio.com
  * ALSA implementation by Joshua Haberman and Arve Knudsen
@@ -324,8 +324,10 @@ int _PA_LOCAL_IMPL(snd_pcm_hw_params_get_buffer_size_max) (const snd_pcm_hw_para
     snd_pcm_uframes_t pmax = 0;
     unsigned int      pcnt = 0;
 
+    dir = 0;
     if(( ret = _PA_LOCAL_IMPL(snd_pcm_hw_params_get_period_size_max)(params, &pmax, &dir) ) < 0 )
         return ret;
+    dir = 0;
     if(( ret = _PA_LOCAL_IMPL(snd_pcm_hw_params_get_periods_max)(params, &pcnt, &dir) ) < 0 )
         return ret;
 
@@ -843,7 +845,6 @@ static PaError GropeDevice( snd_pcm_t* pcm, int isPlug, StreamDirection mode, in
     double * defaultLowLatency, * defaultHighLatency, * defaultSampleRate =
         &devInfo->baseDeviceInfo.defaultSampleRate;
     double defaultSr = *defaultSampleRate;
-    int dir;
 
     assert( pcm );
 
@@ -921,7 +922,7 @@ static PaError GropeDevice( snd_pcm_t* pcm, int isPlug, StreamDirection mode, in
     alsaBufferFrames = 512;
     alsaPeriodFrames = 128;
     ENSURE_( alsa_snd_pcm_hw_params_set_buffer_size_near( pcm, hwParams, &alsaBufferFrames ), paUnanticipatedHostError );
-    ENSURE_( alsa_snd_pcm_hw_params_set_period_size_near( pcm, hwParams, &alsaPeriodFrames, &dir ), paUnanticipatedHostError );
+    ENSURE_( alsa_snd_pcm_hw_params_set_period_size_near( pcm, hwParams, &alsaPeriodFrames, NULL ), paUnanticipatedHostError );
     *defaultLowLatency = (double) (alsaBufferFrames - alsaPeriodFrames) / defaultSr;
 
     /* Base the high latency case on values four times larger */
@@ -931,7 +932,7 @@ static PaError GropeDevice( snd_pcm_t* pcm, int isPlug, StreamDirection mode, in
     ENSURE_( alsa_snd_pcm_hw_params_any( pcm, hwParams ), paUnanticipatedHostError );
     ENSURE_( SetApproximateSampleRate( pcm, hwParams, defaultSr ), paUnanticipatedHostError );
     ENSURE_( alsa_snd_pcm_hw_params_set_buffer_size_near( pcm, hwParams, &alsaBufferFrames ), paUnanticipatedHostError );
-    ENSURE_( alsa_snd_pcm_hw_params_set_period_size_near( pcm, hwParams, &alsaPeriodFrames, &dir ), paUnanticipatedHostError );
+    ENSURE_( alsa_snd_pcm_hw_params_set_period_size_near( pcm, hwParams, &alsaPeriodFrames, NULL ), paUnanticipatedHostError );
     *defaultHighLatency = (double) (alsaBufferFrames - alsaPeriodFrames) / defaultSr;
 
     *minChannels = (int)minChans;
@@ -1067,6 +1068,10 @@ static int IgnorePlugin( const char *pluginId )
     static const char *ignoredPlugins[] = {"hw", "plughw", "plug", "dsnoop", "tee",
         "file", "null", "shm", "cards", "rate_convert", NULL};
     int i = 0;
+
+    if( getenv( "PA_ALSA_IGNORE_ALL_PLUGINS" ) && atoi( getenv( "PA_ALSA_IGNORE_ALL_PLUGINS") ) )
+        return 1;
+
     while( ignoredPlugins[i] )
     {
         if( !strcmp( pluginId, ignoredPlugins[i] ) )
@@ -1328,6 +1333,8 @@ static PaError BuildDeviceList( PaAlsaHostApiRepresentation *alsaApi )
                     paInsufficientMemory );
             snprintf( deviceName, len, "%s: %s (%s)", cardName, infoName, buf );
 
+            PA_DEBUG(( "%s: Found device [%d]: %s\n", __FUNCTION__, numDeviceNames, deviceName ));
+
             ++numDeviceNames;
             if( !hwDevInfos || numDeviceNames > maxDeviceNames )
             {
@@ -1451,7 +1458,7 @@ static PaError BuildDeviceList( PaAlsaHostApiRepresentation *alsaApi )
 
         PA_ENSURE( FillInDevInfo( alsaApi, hwInfo, blocking, devInfo, &devIdx ) );
     }
-    assert( devIdx < numDeviceNames );
+    assert( devIdx <= numDeviceNames );
     /* Now inspect 'dmix' and 'default' plugins */
     for( i = 0; i < numDeviceNames; ++i )
     {
@@ -2325,6 +2332,7 @@ static PaError PaAlsaStreamComponent_DetermineFramesPerBuffer( PaAlsaStreamCompo
         /* It may be that the device only supports 2 periods for instance */
         dir = 0;
         ENSURE_( alsa_snd_pcm_hw_params_get_periods_min( hwParams, &minPeriods, &dir ), paUnanticipatedHostError );
+        dir = 0;
         ENSURE_( alsa_snd_pcm_hw_params_get_periods_max( hwParams, &maxPeriods, &dir ), paUnanticipatedHostError );
         assert( maxPeriods > 1 );
 
@@ -3035,9 +3043,7 @@ static PaError AlsaStop( PaAlsaStream *stream, int abort )
     {
         if( stream->playback.pcm )
         {
-PA_DEBUG(( "%s: Before dropping\n", __FUNCTION__ ));
             ENSURE_( alsa_snd_pcm_drop( stream->playback.pcm ), paUnanticipatedHostError );
-PA_DEBUG(( "%s: After dropping\n", __FUNCTION__ ));
         }
         if( stream->capture.pcm && !stream->pcmsSynced )
         {
@@ -3212,6 +3218,7 @@ error:
         unsigned int _min = 0, _max = 0;
         int _dir = 0;
         ENSURE_( alsa_snd_pcm_hw_params_get_rate_min( hwParams, &_min, &_dir ), paUnanticipatedHostError );
+        _dir = 0;
         ENSURE_( alsa_snd_pcm_hw_params_get_rate_max( hwParams, &_max, &_dir ), paUnanticipatedHostError );
         PA_DEBUG(( "%s: SR min = %u, max = %u, req = %u\n", __FUNCTION__, _min, _max, reqRate ));
     }
@@ -3808,7 +3815,22 @@ static PaError PaAlsaStream_WaitForFrames( PaAlsaStream *self, unsigned long *fr
             totalFds += self->playback.nfds;
         }
 
+#ifdef PTHREAD_CANCELED
+        if( self->callbackMode )
+        {
+            /* To allow 'Abort' to terminate the callback thread, enable cancelability just for poll() (& disable after) */
+            pthread_setcancelstate( PTHREAD_CANCEL_ENABLE, NULL );
+        }
+#endif
+
         pollResults = poll( self->pfds, totalFds, pollTimeout );
+
+#ifdef PTHREAD_CANCELED
+        if( self->callbackMode )
+        {
+            pthread_setcancelstate( PTHREAD_CANCEL_DISABLE, NULL );
+        }
+#endif
 
         if( pollResults < 0 )
         {
@@ -4178,12 +4200,18 @@ static void *CallbackThreadFunc( void *userData )
     int streamStarted = 0;
 
     assert( stream );
+    /* Not implemented */
+    assert( !stream->primeBuffers );
 
     /* Execute OnExit when exiting */
     pthread_cleanup_push( &OnExit, stream );
-
-    /* Not implemented */
-    assert( !stream->primeBuffers );
+#ifdef PTHREAD_CANCELED
+    /* 'Abort' will use thread cancellation to terminate the callback thread, but the Alsa-lib functions
+     * are NOT cancel-safe, (and can end up in an inconsistent state).  So, disable cancelability for
+     * the thread here, and just re-enable it for the poll() in PaAlsaStream_WaitForFrames(). */
+    pthread_testcancel();
+    pthread_setcancelstate( PTHREAD_CANCEL_DISABLE, NULL );
+#endif
 
     /* @concern StreamStart If the output is being primed the output pcm needs to be prepared, otherwise the
      * stream is started immediately. The latter involves signaling the waiting main thread.
@@ -4268,10 +4296,6 @@ static void *CallbackThreadFunc( void *userData )
         {
             xrun = 0;
 
-#ifdef PTHREAD_CANCELED
-           pthread_testcancel();
-#endif
-
             /** @concern Xruns Under/overflows are to be reported to the callback */
             if( stream->underrun > 0.0 )
             {
@@ -4302,11 +4326,12 @@ static void *CallbackThreadFunc( void *userData )
 #if 0
             CallbackUpdate( &stream->threading );
 #endif
+
             CalculateTimeInfo( stream, &timeInfo );
             PaUtil_BeginBufferProcessing( &stream->bufferProcessor, &timeInfo, cbFlags );
             cbFlags = 0;
 
-            /* CPU load measurement should include processing activivity external to the stream callback */
+            /* CPU load measurement should include processing activity external to the stream callback */
             PaUtil_BeginCpuLoadMeasurement( &stream->cpuLoadMeasurer );
 
             framesGot = framesAvail;
@@ -4337,7 +4362,6 @@ static void *CallbackThreadFunc( void *userData )
             {
                 /* Go back to polling for more frames */
                 break;
-
             }
 
             if( paContinue != callbackResult )
