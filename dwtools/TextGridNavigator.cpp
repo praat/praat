@@ -52,23 +52,23 @@ void structTierNavigationContext :: v_info () {
 	MelderInfo_writeLine (U"Tier number: ", tierNumber);
 }
 
-integer structTierNavigationContext :: v_getSize (Function tier) {
+integer structTierNavigationContext :: v_getSize (Function /* tier */) {
 	return 0;	
 };
 	
-integer structTierNavigationContext :: v_getIndexFromTime (Function anyTier, double time) {
+integer structTierNavigationContext :: v_getIndexFromTime (Function /* anyTier */, double /* time */) {
 	return 0;
 }
 	
-double structTierNavigationContext :: v_getLeftTime (Function anyTier, integer index) {
-	return anyTier->xmin;
+double structTierNavigationContext :: v_getLeftTime (Function anyTier, integer /* index */) {
+	return anyTier -> xmin;
 }
 		
-double structTierNavigationContext :: v_getRightTime (Function anyTier, integer index) {
+double structTierNavigationContext :: v_getRightTime (Function anyTier, integer /* index */) {
 	return anyTier -> xmax;
 }
 		
-conststring32 structTierNavigationContext ::v_getLabel (Function anyTier, integer index) {
+conststring32 structTierNavigationContext ::v_getLabel (Function /* anyTier */, integer /* index */) {
 	return U"";
 }
 
@@ -80,7 +80,7 @@ void structTextTierNavigationContext :: v_info () {
 	structNavigationContext :: v_info ();
 }
 
-void TierNavigationContext_init (TierNavigationContext me, NavigationContext thee, integer tierNumber ) {
+static void TierNavigationContext_init (TierNavigationContext me, NavigationContext thee, integer tierNumber) {
 	my navigationLabels = Data_copy (thy navigationLabels.get());
 	my navigationCriterion = thy navigationCriterion;
 	my leftContextLabels = Data_copy (thy leftContextLabels.get());
@@ -114,9 +114,11 @@ autoTextTierNavigationContext TextTierNavigationContext_create (NavigationContex
 	}	
 }
 
-void TierNavigationContext_setItemOrientation (TierNavigationContext me, kNavigatableTier_match matchCriterion) {
+/*
+static void TierNavigationContext_setItemOrientation (TierNavigationContext me, kNavigatableTier_match matchCriterion) {
 	my matchCriterion = matchCriterion;
 }
+*/
 
 Thing_implement (TextGridNavigator, Function, 0);
 
@@ -532,7 +534,7 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 	return true;
 }
 
-integer TextGridNavigator_setCurrentAtTime (TextGridNavigator me, double time) {
+static integer TextGridNavigator_setCurrentAtTime (TextGridNavigator me, double time) {
 	const TierNavigationContext tnc = my tierNavigationContext. at [1];
 	const Function anyTier = my textgrid -> tiers-> at [tnc -> tierNumber];	
 	const integer index = tnc -> v_getIndexFromTime (anyTier, time);
