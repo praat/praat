@@ -60,6 +60,8 @@ typedef struct PaAlsaStreamInfo
 }
 PaAlsaStreamInfo;
 
+PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );    // ppgb 20201119
+
 /** Initialize host API specific structure, call this before setting relevant attributes. */
 void PaAlsa_InitializeStreamInfo( PaAlsaStreamInfo *info );
 

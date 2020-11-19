@@ -1,3 +1,4 @@
+#ifdef UNIX
 /*
  * $Id$
  * Portable Audio I/O Library
@@ -236,7 +237,7 @@ pthread_t paUnixMainThread = 0;
 pthread_t paUnixMainThread = 0;
 #endif
 
-PaError PaUnixThreading_Initialize()
+PaError PaUnixThreading_Initialize( void )
 {
     paUnixMainThread = pthread_self();
     return paNoError;
@@ -707,4 +708,6 @@ static void *CanaryFunc( void *userData )
     pthread_exit( NULL );
 }
 */
+#endif
+
 #endif

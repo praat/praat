@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * PortAudio Portable Real-Time Audio Library
  * Windows WAVEFORMAT* data structure utilities
@@ -160,3 +161,4 @@ PaWinWaveFormatChannelMask PaWin_DefaultChannelMask( int numChannels )
         }
     */
 }
+#endif

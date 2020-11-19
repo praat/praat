@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * $Id$
  * pa_win_wmme.c
@@ -4053,3 +4054,4 @@ HWAVEOUT PaWinMME_GetStreamOutputHandle( PaStream* s, int handleIndex )
     else
         return 0;
 }
+#endif

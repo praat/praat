@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * Portable Audio I/O Library WASAPI implementation
  * Copyright (c) 2006-2010 David Viens
@@ -6530,3 +6531,4 @@ void PaWasapi_FreeMemory(void *ptr)
 {
     free(ptr);
 }
+#endif

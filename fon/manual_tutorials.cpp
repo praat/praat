@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201116)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201119)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.33# (19 November 2020)")
+LIST_ITEM (U"• Mac: got audio to work on Praat versions compiled with the BigSur API (6.1.32 did not have audio on BigSur).")
 NORMAL (U"##6.1.32# (16 November 2020)")
 LIST_ITEM (U"• First version for Macs with Apple Silicon chip.")
 LIST_ITEM (U"• Mac: corrected a bug that could cause Praat to crash when a Sound window was closed from a script.")
