@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * $Id$
  * Portable Audio I/O Library DirectSound implementation
@@ -3269,3 +3270,4 @@ static signed long GetStreamWriteAvailable( PaStream* s )
     return 0;
 }
 
+#endif

@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * $Id$
  * Portable Audio I/O Library for ASIO Drivers
@@ -4249,3 +4250,4 @@ PaError PaAsio_SetStreamSampleRate( PaStream* s, double sampleRate )
     return ValidateAndSetSampleRate( sampleRate );
 }
 
+#endif

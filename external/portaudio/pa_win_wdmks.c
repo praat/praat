@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
 * $Id$
 * PortAudio Windows WDM-KS interface
@@ -6793,3 +6794,4 @@ static PaError PaPinRenderSubmitHandler_WaveRTPolled(PaProcessThreadInfo* pInfo,
     }
     return paNoError;
 }
+#endif
