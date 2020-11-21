@@ -879,13 +879,8 @@ INTRO (U"One of the commands in the #Select menu of the @@Picture window@.")
 ENTRY (U"Purpose")
 NORMAL (U"To determine where your next drawing will occur.")
 ENTRY (U"The viewport")
-#ifdef macintosh
-NORMAL (U"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
-	"You can set the colour of its margins with ##System Preferences \\-> Appearance \\-> Highlight Colour#. ")
-#else
 NORMAL (U"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"Its margins are pink.")
-#endif
 NORMAL (U"The %inner viewport does not include the margins, the %outer viewport does (see @@Select outer viewport...@).")
 NORMAL (U"Normally, you select the viewport by dragging your mouse across the Picture window. "
 	"However, you would use this explicit command:")
@@ -898,13 +893,8 @@ INTRO (U"One of the commands in the #Select menu of the @@Picture window@.")
 ENTRY (U"Purpose")
 NORMAL (U"To determine where your next drawing will occur.")
 ENTRY (U"The viewport")
-#ifdef macintosh
-NORMAL (U"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
-	"You can set the colour of its margins with ##System Preferences \\-> Appearance \\-> Highlight Colour#. ")
-#else
 NORMAL (U"The \"viewport\" is the part of the Picture window where your next drawing will occur. "
 	"Its margins are pink.")
-#endif
 NORMAL (U"The %outer viewport includes the margins, the %inner viewport does not (see @@Select inner viewport...@).")
 NORMAL (U"Normally, you select the viewport by dragging your mouse across the Picture window. "
 	"However, you would use this explicit command:")

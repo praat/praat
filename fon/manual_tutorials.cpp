@@ -2504,36 +2504,14 @@ LIST_ITEM (U"@@Intro 1.2. Reading a sound from disk")
 LIST_ITEM (U"@@Intro 1.3. Creating a sound from a formula")
 MAN_END
 
-MAN_BEGIN (U"Intro 1.1. Recording a sound", U"ppgb", 20110128)
-#ifdef macintosh
-	INTRO (U"To record a speech sound into Praat, you need a computer with a microphone.")
-	NORMAL (U"To record from the microphone, perform the following steps:")
-#else
-	INTRO (U"To record a speech sound into Praat, you need a computer with a microphone. "
-		"If you do not have a microphone, try to record from an audio CD instead.")
-	NORMAL (U"To record from the microphone (or the CD), perform the following steps:")
-#endif
+MAN_BEGIN (U"Intro 1.1. Recording a sound", U"ppgb", 20201120)
+INTRO (U"To record a speech sound into Praat, you need a computer with a microphone.")
+NORMAL (U"To record from the microphone, perform the following steps:")
 LIST_ITEM (U"1. Choose @@Record mono Sound...@ from the @@New menu@ in the @@Object window@. "
 	"A @SoundRecorder window will appear on your screen.")
-#if defined (_WIN32)
-	LIST_ITEM (U"2. Choose the appropriate input device, namely the microphone, by the following steps. "
-		"If there is a small loudspeaker symbol in the Windows Start bar, double click it and you will see the %playing mixer. "
-		"If there is no loudspeaker symbol, go to ##Control Panels#, then ##Sounds and Audio Devices#, then #Volume, then #Advanced, "
-		"and you will finally see the playing mixer. "
-		"Once you see the Windows playing mixer, choose #Properties from the #Option menu, "
-		"then click #Recording, then #OK. You now see the %recording mixer, where you can select the microphone "
-		"(if you do not like this complicated operation, try Praat on Macintosh or Linux instead of Windows).")
-#elif defined (macintosh)
-	LIST_ITEM (U"2. In the SoundRecorder window, choose the appropriate input device, e.g. choose ##Internal microphone#.")
-#else
-	LIST_ITEM (U"2. In the SoundRecorder window, choose the appropriate input device, i.e. choose #Microphone (or #CD, or #Line).")
-#endif
-#ifdef macintosh
-	LIST_ITEM (U"3. Use the #Record and #Stop buttons to record a few seconds of your speech.")
-#else
-	LIST_ITEM (U"3. Use the #Record and #Stop buttons to record a few seconds of your speech "
-		"(or a few seconds of music from your playing CD).")
-#endif
+LIST_ITEM (U"2. On the left in the SoundRecorder window, choose the appropriate input device, e.g. choose ##Internal microphone#. "
+	"(On Windows, instead right-click the loudspeaker symbol in the Start bar; see @SoundRecorder for more details.)")
+LIST_ITEM (U"3. Use the #Record and #Stop buttons to record a few seconds of your speech.")
 LIST_ITEM (U"4. Use the #Play button to hear what you have recorded.")
 LIST_ITEM (U"5. Repeat steps 3 and 4 until you are satisfied with your recording.")
 LIST_ITEM (U"6. Click the ##Save to list# button. Your recording will now appear in the Object window, "
