@@ -202,7 +202,7 @@ or `praat-build` into a Windows or Linux terminal (or `praat-run` to build and r
 ### 4.1. MacOS development set-up
 
 Your source code folders, such as `fon` and `sys`, will reside in a folder like `/Users/yourname/Praats/src`,
-where you also put `praat64.xcodeproj`, as described above in 3.2.
+where you also put `praat.xcodeproj`, as described above in 3.2.
 On Paul’s 2018 MacBook Pro with Xcode 12.2, building Praat with Command-B or Command-R,
 after cleaning the build folder with Shift-Command-K,
 takes 120 seconds for the x86_64 part and 110 seconds for the ARM64 part (optimization level O3).
@@ -469,16 +469,16 @@ you include the executable in a `.dmg` disk image, with the following commands:
     PRAAT_WWW=~/Praats/www
     PRAAT_VERSION=9999
     cd ~/builds/mac_products/Configuration64
-    hdiutil create -fs HFS+ -ov -srcfolder Praat.app -volname Praat64_${PRAAT_VERSION} praat64_${PRAAT_VERSION}.dmg
-    hdiutil convert -ov -format UDZO -o ${PRAAT_WWW}/praat${PRAAT_VERSION}_mac64.dmg praat64_${PRAAT_VERSION}.dmg
-    rm praat64_${PRAAT_VERSION}.dmg
+    hdiutil create -fs HFS+ -ov -srcfolder Praat.app -volname Praat_${PRAAT_VERSION} praat_${PRAAT_VERSION}.dmg
+    hdiutil convert -ov -format UDZO -o ${PRAAT_WWW}/praat${PRAAT_VERSION}_mac.dmg praat_${PRAAT_VERSION}.dmg
+    rm praat_${PRAAT_VERSION}.dmg
 
 You also need to distribute the `.xcodeproj` file, which is actually a folder, so that you have to zip it:
 
     # on Mac command line
     PRAAT_SOURCES="~/Praats/src
     cd $PRAAT_SOURCES
-    zip -r $PRAAT_WWW/praat$(PRAAT_VERSION)_xcodeproj64.zip praat64.xcodeproj
+    zip -r $PRAAT_WWW/praat$(PRAAT_VERSION)_xcodeproj.zip praat.xcodeproj
 
 The Windows executables have to be sent from your Cygwin terminal to your Mac.
 It is easiest to do this without a version number (so that you have to supply the number only once),
