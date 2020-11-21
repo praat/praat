@@ -1,6 +1,6 @@
 /* manual_sound.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,9 +205,8 @@ INTRO (U"A command in the @@Open menu@ of the #Objects window. "
 	"If the file name is hello.wav, Praat will name the channels hello_ch1, hello_ch2, and so on.")
 MAN_END
 
-MAN_BEGIN (U"Record mono Sound...", U"ppgb", 20021212)
-INTRO (U"A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window, "
-	"except on very old Macintoshes with 8-bit audio, where it presents a native Macintosh sound-recorder window.")
+MAN_BEGIN (U"Record mono Sound...", U"ppgb", 20201120)
+INTRO (U"A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window.")
 MAN_END
 
 MAN_BEGIN (U"Record stereo Sound...", U"ppgb", 20021212)
@@ -1028,7 +1027,7 @@ NORMAL (U"To synchronize a SoundEditor window with other windows that show a tim
 	"You cannot Cut from or Paste into a synchronized SoundEditor window.")
 MAN_END
 
-MAN_BEGIN (U"SoundRecorder", U"ppgb", 20110129)
+MAN_BEGIN (U"SoundRecorder", U"ppgb", 20201120)
 INTRO (U"With the Praat SoundRecorder window you can record a mono or stereo sound "
 	"for subsequent viewing and analysis in Praat. "
 	"The SoundRecorder appears on your screen if you choose @@Record mono Sound...@ or @@Record stereo Sound...@ "
@@ -1050,29 +1049,24 @@ NORMAL (U"The size of the recording buffer determines how many seconds of sound 
 	"or 110 seconds in stereo (220 seconds in mono) at a sampling frequency of 44100 Hz. "
 	"You can change the size of the recording buffer "
 	"with ##Sound input prefs...# from the Preferences menu.")
-NORMAL (U"If you recorded a very long sound, it is probable that you cannot copy it to the list of objects. "
-	"In such a case, you can still write the sound to disk with one of the #Save commands in the #File menu. "
-	"You can then open such a long sound file in Praat with @@Open long sound file...@ from the Open menu.")
-#ifdef macintosh
-ENTRY (U"Recording sounds on MacOS X")
-NORMAL (U"You can record from the combined microphone / line input. On some computers, these are separate.")
-NORMAL (U"Note that in MacOS X you cannot record from the internal CD. This is because the system provides you with something better. "
-	"If you open the CD in the Finder, you will see the audio tracks as AIFC files! "
-	"To open these audio tracks in Praat, use @@Read from file...@ or @@Open long sound file...@.")
-#endif
-#ifdef _WIN32
-ENTRY (U"Recording sounds in Windows")
-NORMAL (U"In Windows, you can choose your input device with the help of the recording mixer that is supplied by Windows or comes with "
-	"your sound card. There will usually be a loudspeaker icon in the Start bar; double-click it, and you will see the %playing mixer "
-	"(if there is no loudspeaker icon, go to ##Control Panels#, then ##Sounds and Audio Devices#, then #Volume, then #Advanced; "
-	"do not blame us for how Windows XP works). In the playing mixer, choose #Properties from the #Option menu, then click #Recording, "
-	"then #OK. You are now in the %recording mixer.")
-NORMAL (U"You can watch the input level only while recording.")
-#endif
+ENTRY (U"Recording sounds on the Mac or in Linux")
+NORMAL (U"On the Mac or in Linux, you can record from the list on the left in the SoundRecorder window. "
+	"The list can contain several devices, such as the internal microphone, a line input, or external USB devices. "
+	"Audio tracks on a CD can be opened directly with @@Read from file...@ or @@Open long sound file...@.")
+ENTRY (U"Recording sounds in Windows 10")
+NORMAL (U"In Windows 10, you can choose your input device by right-clicking on the loudspeaker icon in the Start bar; "
+	"then ##Open Sound settings#, then ##Choose your input device#. "
+	"To set some input #Properties, right-click the loudspeaker icon, then #Sounds, then #Recording.")
+ENTRY (U"Watching the input level")
+NORMAL (U"While recording, you can watch the input level as a green rectangle whose size changes. "
+	"Whenever the input is loud, the top of the rectangle becomes yellow; if it turns red, the sound may have been clipped. "
+	"In the Meter menu you cna choose other visualizations, "
+	"such as a moving ball that measures spectral centre of gravity (horizontally) versus intensity (vertically).")
 ENTRY (U"The File menu")
-NORMAL (U"If your computer has little memory, a very long recorded sound can be too big to be copied to the list of objects. "
+NORMAL (U"If your computer has little memory, a very long recorded sound might be too big to be copied to the list of objects. "
 	"Fortunately, the File menu contains commands to save the recording "
-	"to a sound file on disk, so that you will never have to lose your recording.")
+	"to a sound file on disk, so that you will never have to lose your recording. "
+	"You can later open such a long sound file in Praat with @@Open long sound file...@ from the Open menu.")
 ENTRY (U"Sound pressure calibration")
 NORMAL (U"Your computer's sound-recording software returns integer values between -32768 and 32767. "
 	"Praat divides them by 32768 before putting them into a Sound object, "

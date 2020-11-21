@@ -36,12 +36,13 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 #endif
 
 #if gtk
-	static void _GuiGtkDrawingArea_destroyCallback (GuiObject widget, gpointer void_me) {
+#pragma mark - GTK CALLBACKS (WITH CAIRO)
+	static void _guiGtkDrawingArea_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiDrawingArea);
 		forget (me);
 	}
-	static gboolean _GuiGtkDrawingArea_drawCallback (GuiObject widget, cairo_t *cairoGraphicsContext, gpointer void_me) {
+	static gboolean _guiGtkDrawingArea_drawCallback (GuiObject widget, cairo_t *cairoGraphicsContext, gpointer void_me) {
 		trace (U"begin");
 		iam (GuiDrawingArea);
 		Melder_assert (me);
@@ -67,7 +68,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		return false;
 	}
 	static structGuiDrawingArea_MouseEvent::Phase previousPhase = structGuiDrawingArea_MouseEvent::Phase::DROP;
-	static gboolean _GuiGtkDrawingArea_mouseDownCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
+	static gboolean _guiGtkDrawingArea_mouseDownCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
@@ -99,7 +100,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 		return false;
 	}
-	static gboolean _GuiGtkDrawingArea_mouseDraggedCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
+	static gboolean _guiGtkDrawingArea_mouseDraggedCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
@@ -118,7 +119,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 		return false;
 	}
-	static gboolean _GuiGtkDrawingArea_mouseUpCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
+	static gboolean _guiGtkDrawingArea_mouseUpCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my mouseCallback) {
 			structGuiDrawingArea_MouseEvent event { me, 0 };
@@ -137,7 +138,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 		return false;
 	}
-	static gboolean _GuiGtkDrawingArea_keyCallback (GuiObject widget, GdkEvent *gevent, gpointer void_me) {
+	static gboolean _guiGtkDrawingArea_keyCallback (GuiObject widget, GdkEvent *gevent, gpointer void_me) {
 		iam (GuiDrawingArea);
 		trace (U"begin");
 		if (my d_keyCallback && gevent -> type == GDK_KEY_PRESS) {
@@ -167,7 +168,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 		return false;   // if the drawing area has no keyCallback, the system will send the key press to a text field.
 	}
-	static gboolean _GuiGtkDrawingArea_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
+	static gboolean _guiGtkDrawingArea_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my d_resizeCallback) {
 			structGuiDrawingArea_ResizeEvent event { me, 0 };
@@ -184,7 +185,41 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 		return false;
 	}
+	static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *event, gpointer void_me) {
+		iam (GuiDrawingArea);
+		trace (U"_guiGtkDrawingArea_swipeCallback ", Melder_pointer (my d_horizontalScrollBar), Melder_pointer (my d_verticalScrollBar));
+		if (my d_horizontalScrollBar) {
+			double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
+			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
+			gdouble hi;
+			g_object_get (adjustment, "step_increment", & hi, nullptr);
+			switch (event -> direction) {
+				case GDK_SCROLL_LEFT:
+					gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
+					break;
+				case GDK_SCROLL_RIGHT:
+					gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv + hi);
+					break;
+			}
+		}
+		if (my d_verticalScrollBar) {
+			double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
+			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget));
+			gdouble vi;
+			g_object_get (adjustment, "step_increment", & vi, nullptr);
+			switch (event -> direction) {
+				case GDK_SCROLL_UP:
+					gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);
+					break;
+				case GDK_SCROLL_DOWN:
+					gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv + vi);
+					break;
+			}
+		}
+		return true;
+	}
 #elif motif
+#pragma mark - MOTIF CALLBACKS (WITH GDI)
 	void _GuiWinDrawingArea_destroy (GuiObject widget) {
 		iam_drawingarea;
 		DestroyWindow (widget -> window);
@@ -279,6 +314,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		}
 	}
 #elif cocoa
+#pragma mark - COCOA CALLBACKS (WITH QUARTZ)
 	@interface GuiCocoaDrawingArea ()
 	@property (nonatomic, assign) BOOL inited;
 	@property (nonatomic, retain) NSTrackingArea *trackingArea;
@@ -343,11 +379,21 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				Melder_casual (U"\t", Thing_messageNameAndAddress (me), U" draw for ", Melder_pointer (my d_exposeBoss));
 			try {
 				Melder_assert (my numberOfGraphicses > 0);
-				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
-					GraphicsQuartz_initDraw (my graphicses [igraphics]);
+				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++) {
+					GraphicsScreen graphics = static_cast <GraphicsScreen> (my graphicses [igraphics]);
+					if (graphics -> d_macView) {
+						graphics -> d_macGraphicsContext = Melder_systemVersion < 101400 ?
+								(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+								[[NSGraphicsContext currentContext] CGContext];
+						Melder_assert (!! graphics -> d_macGraphicsContext);
+					}
+				}
 				my d_exposeCallback (my d_exposeBoss, & event);
-				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
-					GraphicsQuartz_exitDraw (my graphicses [igraphics]);
+				for (integer igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++) {
+					GraphicsScreen graphics = static_cast <GraphicsScreen> (my graphicses [igraphics]);
+					if (graphics -> d_macView)
+						graphics -> d_macGraphicsContext = nullptr;
+				}
 			} catch (MelderError) {
 				Melder_flushError (U"Redrawing not completed");
 			}
@@ -472,49 +518,12 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	@end
 #endif
 
-#if gtk
-	static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *event, gpointer void_me) {
-		iam (GuiDrawingArea);
-		trace (U"_guiGtkDrawingArea_swipeCallback ", Melder_pointer (my d_horizontalScrollBar), Melder_pointer (my d_verticalScrollBar));
-		if (my d_horizontalScrollBar) {
-			double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
-			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
-			gdouble hi;
-			g_object_get (adjustment, "step_increment", & hi, nullptr);
-			switch (event -> direction) {
-				case GDK_SCROLL_LEFT:
-					gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
-					break;
-				case GDK_SCROLL_RIGHT:
-					gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv + hi);
-					break;
-			}
-		}
-		if (my d_verticalScrollBar) {
-			double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
-			GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget));
-			gdouble vi;
-			g_object_get (adjustment, "step_increment", & vi, nullptr);
-			switch (event -> direction) {
-				case GDK_SCROLL_UP:
-					gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);
-					break;
-				case GDK_SCROLL_DOWN:
-					gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv + vi);
-					break;
-			}
-		}
-		return true;
-	}
-#endif
-
 void structGuiDrawingArea :: v_destroy () noexcept {
 	if (Melder_debug == 55)
 		Melder_casual (U"\t", Thing_messageNameAndAddress (this), U" v_destroy");
 	#if cocoa
-		if (our d_widget) {
+		if (our d_widget)
 			[our d_widget setUserData: nullptr];   // undangle reference to this
-		}
 	#endif
 	GuiDrawingArea_Parent :: v_destroy ();
 }
@@ -548,18 +557,18 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_drawCallback),       me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
-		//g_signal_connect (G_OBJECT (my d_widget), "drag-motion-event",    G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),   me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_mouseDraggedCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_guiGtkDrawingArea_drawCallback),       me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_guiGtkDrawingArea_destroyCallback),      me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_guiGtkDrawingArea_mouseDownCallback),    me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_guiGtkDrawingArea_mouseUpCallback),      me.get());
+		//g_signal_connect (G_OBJECT (my d_widget), "drag-motion-event",    G_CALLBACK (_guiGtkDrawingArea_mouseUpCallback),   me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_guiGtkDrawingArea_mouseDraggedCallback), me.get());
 		if (parent) {
 			Melder_assert (parent -> d_widget);
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
-				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me.get());
+				G_CALLBACK (_guiGtkDrawingArea_keyCallback), me.get());
 		}
-		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_guiGtkDrawingArea_resizeCallback), me.get());
 
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
@@ -627,16 +636,16 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);                    // receive fewer motion notify events (the cb might take time)
 		gtk_widget_set_events (GTK_WIDGET (my d_widget), mask);
-		g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_GuiGtkDrawingArea_drawCallback),       me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_GuiGtkDrawingArea_destroyCallback),      me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_GuiGtkDrawingArea_mouseDownCallback),    me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_GuiGtkDrawingArea_mouseUpCallback),      me.get());
-		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_GuiGtkDrawingArea_mouseDraggedCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "draw",         G_CALLBACK (_guiGtkDrawingArea_drawCallback),       me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "destroy",              G_CALLBACK (_guiGtkDrawingArea_destroyCallback),      me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-press-event",   G_CALLBACK (_guiGtkDrawingArea_mouseDownCallback),    me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "button-release-event", G_CALLBACK (_guiGtkDrawingArea_mouseUpCallback),      me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "motion-notify-event",  G_CALLBACK (_guiGtkDrawingArea_mouseDraggedCallback), me.get());
 		if (parent) {
 			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent -> d_widget))), "key-press-event",
-				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me.get());
+				G_CALLBACK (_guiGtkDrawingArea_keyCallback), me.get());
 		}
-		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me.get());
+		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_guiGtkDrawingArea_resizeCallback), me.get());
 		_GuiObject_setUserData (my d_widget, me.get());
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
     #elif motif

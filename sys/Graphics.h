@@ -334,10 +334,6 @@ void Graphics_marksRightEvery  (Graphics me, double units, double distance, bool
 void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksTopEvery    (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 
-void *Graphics_x_getCR (Graphics me);
-void Graphics_x_setCR (Graphics me, void *cr);
-void *Graphics_x_getGC (Graphics me);
-
 bool Graphics_startRecording (Graphics me);
 bool Graphics_stopRecording (Graphics me);
 void Graphics_clearRecording (Graphics me);
@@ -356,11 +352,6 @@ double Graphics_dyWCtoMM (Graphics me, double dyWC);
 void Graphics_nextSheetOfPaper (Graphics me);
 
 void Graphics_prefs ();
-
-#ifdef macintosh
-	void GraphicsQuartz_initDraw (Graphics me);
-	void GraphicsQuartz_exitDraw (Graphics me);
-#endif
 
 /* End of file Graphics.h */
 #endif

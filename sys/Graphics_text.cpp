@@ -551,6 +551,102 @@ static void charSize (Graphics anyGraphics, _Graphics_widechar *lc) {
 	}
 }
 
+#if quartz
+static conststring32 quartz_getFontName (int font, int style) {
+	if (Melder_systemVersion < 110000)
+		style = 0;   // style extension in the name was not needed on macOS X
+	switch (font) {
+		case (int) kGraphics_font::TIMES:
+			return
+				style == 0 ? U"Times New Roman"
+				: style == Graphics_BOLD ? U"Times New Roman Bold"
+				: style == Graphics_ITALIC ? U"Times New Roman Italic"
+				: U"Times New Roman Bold-Italic";
+		case (int) kGraphics_font::HELVETICA:
+			return
+				style == 0 ? U"Arial"
+				: style == Graphics_BOLD ? U"Arial Bold"
+				: style == Graphics_ITALIC ? U"Arial Italic"
+				: U"Arial Bold-Italic";
+		case (int) kGraphics_font::COURIER:
+			return
+				style == 0 ? U"Courier New"
+				: style == Graphics_BOLD ? U"Courier New Bold"
+				: style == Graphics_ITALIC ? U"Courier New Italic"
+				: U"Courier New Bold-Italic";
+		case (int) kGraphics_font::PALATINO:
+			if (Melder_debug == 900)
+				return U"DG Meta Serif Science";
+			else
+				return style == 0 ? U"Palatino"
+				: style == Graphics_BOLD ? U"Palatino Bold"
+				: style == Graphics_ITALIC ? U"Palatino Italic"
+				: U"Palatino Bold-Italic";
+		case kGraphics_font_SYMBOL:
+			return U"Symbol";
+		case kGraphics_font_IPATIMES:
+			return U"Doulos SIL";
+		case kGraphics_font_IPAPALATINO:
+			return
+				style == 0 ? U"Charis SIL"
+				: style == Graphics_BOLD ? U"Charis SIL Bold"
+				: style == Graphics_ITALIC ? U"Charis SIL Italic"
+				: U"Charis SIL Bold-Italic";
+		case kGraphics_font_DINGBATS:
+			return U"Zapf Dingbats";
+		default:
+			return nullptr;
+	}
+}
+static CTFontRef quartz_getFontRef (int font, int size, int style) {
+	CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
+#if 1
+	CFStringRef key = kCTFontSymbolicTrait;
+	CFNumberRef value = CFNumberCreate (nullptr, kCFNumberIntType, & ctStyle);
+	CFIndex numberOfValues = 1;
+	CFDictionaryRef styleDict = CFDictionaryCreate (nullptr, (const void **) & key, (const void **) & value, numberOfValues,
+		& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
+	CFRelease (value);
+	CFStringRef keys [2];
+	keys [0] = kCTFontTraitsAttribute;
+	keys [1] = kCTFontNameAttribute;
+	conststring32 fontName = quartz_getFontName (font, style);
+	CFStringRef cfFont = (CFStringRef) Melder_peek32toCfstring (fontName);
+	void *values [2] = { (void *) styleDict, (void *) cfFont };
+	CFDictionaryRef attributes = CFDictionaryCreate (nullptr, (const void **) & keys, (const void **) & values, 2,
+		& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
+	CFRelease (styleDict);
+	CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes (attributes);
+	CFRelease (attributes);
+#else
+	NSMutableDictionary *styleDict = [[NSMutableDictionary alloc] initWithCapacity: 1];
+	[styleDict   setObject: [NSNumber numberWithUnsignedInt: ctStyle]   forKey: (id) kCTFontSymbolicTrait];
+	NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
+	[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
+	switch (font) {
+		case (int) kGraphics_font::TIMES:       { [attributes   setObject: @"Times New Roman" forKey: (id) kCTFontNameAttribute]; } break;
+		case (int) kGraphics_font::HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
+		case (int) kGraphics_font::COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
+		case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
+												[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
+										   else
+												[attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
+										 } break;
+		case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"          forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"      forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"      forKey: (id) kCTFontNameAttribute]; } break;
+		case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"   forKey: (id) kCTFontNameAttribute]; } break;
+	}
+	CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
+	[styleDict release];
+	[attributes release];
+#endif
+	CTFontRef ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, size, nullptr);
+	CFRelease (ctFontDescriptor);
+	return ctFont;
+}
+#endif
+
 static void charDraw (Graphics anyGraphics, int xDC, int yDC, _Graphics_widechar *lc,
 	const char32 codes [], int nchars, int width)
 {
@@ -696,66 +792,9 @@ static void charDraw (Graphics anyGraphics, int xDC, int yDC, _Graphics_widechar
 				Determine the font-style combination.
 			*/
 			CTFontRef ctFont = theScreenFonts [font] [lc -> size] [style];
-			if (! ctFont) {
-				CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
-			#if 1
-				CFStringRef key = kCTFontSymbolicTrait;
-				CFNumberRef value = CFNumberCreate (nullptr, kCFNumberIntType, & ctStyle);
-				CFIndex numberOfValues = 1;
-				CFDictionaryRef styleDict = CFDictionaryCreate (nullptr, (const void **) & key, (const void **) & value, numberOfValues,
-					& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
-				CFRelease (value);
-				CFStringRef keys [2];
-				keys [0] = kCTFontTraitsAttribute;
-				keys [1] = kCTFontNameAttribute;
-				CFStringRef cfFont;
-				switch (font) {
-					case (int) kGraphics_font::TIMES:       { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Times New Roman"); } break;
-					case (int) kGraphics_font::HELVETICA:   { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Arial"          ); } break;
-					case (int) kGraphics_font::COURIER:     { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Courier New"    ); } break;
-					case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
-															cfFont = (CFStringRef) Melder_peek32toCfstring (U"DG Meta Serif Science");
-													   else
-														    cfFont = (CFStringRef) Melder_peek32toCfstring (U"Palatino");
-													 } break;
-					case kGraphics_font_SYMBOL:      { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Symbol"         ); } break;
-					case kGraphics_font_IPATIMES:    { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Doulos SIL"     ); } break;
-					case kGraphics_font_IPAPALATINO: { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Charis SIL"     ); } break;
-					case kGraphics_font_DINGBATS:    { cfFont = (CFStringRef) Melder_peek32toCfstring (U"Zapf Dingbats"  ); } break;
-				}
-				void *values [2] = { (void *) styleDict, (void *) cfFont };
-				CFDictionaryRef attributes = CFDictionaryCreate (nullptr, (const void **) & keys, (const void **) & values, 2,
-					& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
-				CFRelease (styleDict);
-				CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes (attributes);
-				CFRelease (attributes);
-			#else   /* Preparing for the time to come when Apple deprecates Core Foundation. */
-				NSMutableDictionary *styleDict = [[NSMutableDictionary alloc] initWithCapacity: 1];
-				[styleDict   setObject: [NSNumber numberWithUnsignedInt: ctStyle]   forKey: (id) kCTFontSymbolicTrait];
-				NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
-				[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
-				switch (font) {
-					case (int) kGraphics_font::TIMES:       { [attributes   setObject: @"Times New Roman"   forKey: (id) kCTFontNameAttribute]; } break;
-					case (int) kGraphics_font::HELVETICA:   { [attributes   setObject: @"Arial"             forKey: (id) kCTFontNameAttribute]; } break;
-					case (int) kGraphics_font::COURIER:     { [attributes   setObject: @"Courier New"       forKey: (id) kCTFontNameAttribute]; } break;
-					case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
-															[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
-													   else
-														    [attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
-													 } break;
-					case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"            forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"        forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"        forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"     forKey: (id) kCTFontNameAttribute]; } break;
-				}
-				CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
-				[styleDict release];
-				[attributes release];
-			#endif
-				ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, lc -> size, nullptr);
-				CFRelease (ctFontDescriptor);
-				theScreenFonts [font] [lc -> size] [style] = ctFont;
-			}
+			if (! ctFont)
+				theScreenFonts [font] [lc -> size] [style] = ctFont =
+					quartz_getFontRef (font, lc -> size, style);
 
 			const char16 *codes16 = Melder_peek32to16 (codes);
 			#if 1
@@ -894,33 +933,9 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					Determine and store the font-style combination.
 				*/
 				CTFontRef ctFont = theScreenFonts [font] [100] [style];
-				if (! ctFont) {
-					CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
-					NSMutableDictionary *styleDict = [[NSMutableDictionary alloc] initWithCapacity: 1];
-					[styleDict   setObject: [NSNumber numberWithUnsignedInt: ctStyle]   forKey: (id) kCTFontSymbolicTrait];
-					NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithCapacity: 2];
-					[attributes   setObject: styleDict   forKey: (id) kCTFontTraitsAttribute];
-					switch (font) {
-						case (int) kGraphics_font::TIMES:       { [attributes   setObject: @"Times"           forKey: (id) kCTFontNameAttribute]; } break;
-						case (int) kGraphics_font::HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
-						case (int) kGraphics_font::COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
-						case (int) kGraphics_font::PALATINO:    { if (Melder_debug == 900)
-																[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
-														   else
-																[attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
-														 } break;
-						case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"          forKey: (id) kCTFontNameAttribute]; } break;
-						case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"      forKey: (id) kCTFontNameAttribute]; } break;
-						case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"      forKey: (id) kCTFontNameAttribute]; } break;
-						case kGraphics_font_DINGBATS:    { [attributes   setObject: @"Zapf Dingbats"   forKey: (id) kCTFontNameAttribute]; } break;
-					}
-					CTFontDescriptorRef ctFontDescriptor = CTFontDescriptorCreateWithAttributes ((CFMutableDictionaryRef) attributes);
-					[styleDict release];
-					[attributes release];
-					ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, 100.0, nullptr);
-					CFRelease (ctFontDescriptor);
-					theScreenFonts [font] [100] [style] = ctFont;
-				}
+				if (! ctFont)
+					theScreenFonts [font] [100] [style] = ctFont =
+						quartz_getFontRef (font, 100, style);
 			#endif
 
 			int normalSize = my fontSize * my resolution / 72.0;
@@ -930,9 +945,8 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			lc -> baseline *= 0.01 * normalSize;
 			lc -> code = lc -> kar;
 			lc -> font.integer_ = font;
-			if (Longchar_Info_isDiacritic (info)) {
+			if (Longchar_Info_isDiacritic (info))
 				numberOfDiacritics ++;
-			}
 		}
 		int nchars = 0;
 		for (_Graphics_widechar *lc = string; lc -> kar > U'\t'; lc ++) {

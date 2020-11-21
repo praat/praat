@@ -671,21 +671,4 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 	}
 #endif
 
-#if quartz
-	void GraphicsQuartz_initDraw (Graphics me_generic) {
-		GraphicsScreen me = static_cast <GraphicsScreen> (me_generic);
-		if (my d_macView) {
-			my d_macGraphicsContext = Melder_systemVersion < 101400 ?
-					(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
-					[[NSGraphicsContext currentContext] CGContext];
-			Melder_assert (!! my d_macGraphicsContext);
-		}
-	}
-	void GraphicsQuartz_exitDraw (Graphics me_generic) {
-		GraphicsScreen me = static_cast <GraphicsScreen> (me_generic);
-		if (my d_macView)
-			my d_macGraphicsContext = nullptr;
-	}
-#endif
-
 /* End of file GraphicsScreen.cpp */
