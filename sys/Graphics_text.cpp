@@ -814,12 +814,9 @@ static void charDraw (Graphics anyGraphics, int xDC, int yDC, _Graphics_widechar
             CFRange textRange = CFRangeMake (0, length);
             CFAttributedStringSetAttribute (string, textRange, kCTFontAttributeName, ctFont);
 
-			static CFNumberRef cfKerning;
-			if (! cfKerning) {
-				const double kerning = 0.0;
-				cfKerning = CFNumberCreate (kCFAllocatorDefault, kCFNumberDoubleType, & kerning);
-			}
-            CFAttributedStringSetAttribute (string, textRange, kCTKernAttributeName, cfKerning);
+			/*
+				We don't set kerning explicitly, so that Praat will use standard kerning.
+			*/
 
 			static CTParagraphStyleRef paragraphStyle;
 			if (! paragraphStyle) {
@@ -928,16 +925,6 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			int style = lc -> style;
 			Melder_assert (style >= 0 && style <= Graphics_BOLD_ITALIC);
 
-			#if quartz
-				/*
-					Determine and store the font-style combination.
-				*/
-				CTFontRef ctFont = theScreenFonts [font] [100] [style];
-				if (! ctFont)
-					theScreenFonts [font] [100] [style] = ctFont =
-						quartz_getFontRef (font, 100, style);
-			#endif
-
 			int normalSize = my fontSize * my resolution / 72.0;
 			int smallSize = (3 * normalSize + 2) / 4;
 			int size = ( lc -> size < 100 ? smallSize : normalSize );
@@ -947,6 +934,16 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			lc -> font.integer_ = font;
 			if (Longchar_Info_isDiacritic (info))
 				numberOfDiacritics ++;
+
+			#if quartz
+				/*
+					Determine and store the font-style combination.
+				*/
+				CTFontRef ctFont = theScreenFonts [font] [size] [style];
+				if (! ctFont)
+					theScreenFonts [font] [size] [style] = ctFont =
+						quartz_getFontRef (font, size, style);
+			#endif
 		}
 		int nchars = 0;
 		for (_Graphics_widechar *lc = string; lc -> kar > U'\t'; lc ++) {
@@ -1002,7 +999,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					CFMutableAttributedStringRef cfstring =
 						CFAttributedStringCreateMutable (kCFAllocatorDefault, (CFIndex) [s length]);
 					CFAttributedStringReplaceString (cfstring, CFRangeMake (0, 0), (CFStringRef) s);
-					CFAttributedStringSetAttribute (cfstring, textRange, kCTFontAttributeName, theScreenFonts [lc -> font.integer_] [100] [lc -> style]);
+					CFAttributedStringSetAttribute (cfstring, textRange, kCTFontAttributeName, theScreenFonts [lc -> font.integer_] [lc -> size] [lc -> style]);
 
 					/*
 					 * Measure.
@@ -1024,7 +1021,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					//Longchar_Info info = lc -> karInfo;
 					//bool isDiacritic = ( info -> ps.times == 0 );
 					//lc -> width = ( isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0 );
-					lc -> width = frameSize.width * lc -> size / 100.0;
+					lc -> width = frameSize.width /* * lc -> size / 100.0 */;
 					if (Melder_systemVersion >= 101100) {
 						/*
 						 * If the text ends in a space, CTFramesetterSuggestFrameSizeWithConstraints() ignores the space.
