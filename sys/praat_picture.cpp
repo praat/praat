@@ -45,8 +45,10 @@ static GuiMenuItem praatButton_fonts [1 + (int) kGraphics_font::MAX];
 
 static void updateFontMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		if (theCurrentPraatPicture -> font < (int) kGraphics_font::MIN) theCurrentPraatPicture -> font = (int) kGraphics_font::MIN;
-		if (theCurrentPraatPicture -> font > (int) kGraphics_font::MAX) theCurrentPraatPicture -> font = (int) kGraphics_font::MAX;
+		if (theCurrentPraatPicture -> font < (int) kGraphics_font::MIN)
+			theCurrentPraatPicture -> font = (int) kGraphics_font::MIN;
+		if (theCurrentPraatPicture -> font > (int) kGraphics_font::MAX)
+			theCurrentPraatPicture -> font = (int) kGraphics_font::MAX;
 		for (int i = (int) kGraphics_font::MIN; i <= (int) kGraphics_font::MAX; i ++) {
 			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
 		}
