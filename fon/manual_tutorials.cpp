@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201119)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201125)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.34# (25 November 2020)")
+LIST_ITEM (U"• Mac: got bold and italic to work on Praat versions compiled with the BigSur API.")
+LIST_ITEM (U"• SoundRecorder always a white background, instead of a different background on each platform.")
 NORMAL (U"##6.1.33# (19 November 2020)")
 LIST_ITEM (U"• Mac: got audio to work on Praat versions compiled with the BigSur API (6.1.32 did not have audio on BigSur).")
 NORMAL (U"##6.1.32# (16 November 2020)")
