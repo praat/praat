@@ -75,16 +75,6 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);*/
 }
 
-void operator<<= (BOOLVECVU const& target, bool value) {
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = value;
-}
-
-void operator<<= (INTVECVU const& target, integer value) {
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = value;
-}
-
 /********** UTILITIES **********/
 
 static double _FormantPathEditor_computeSoundY (FormantPathEditor me) {
@@ -713,7 +703,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	previousEndTime = endTime;
 }
 
-void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
+static void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, double tmin, double tmax, double fmin, double fmax) {
 	FormantPath formantPath = (FormantPath) my data;
 	autoIntervalTier intervalTier = FormantPath_to_IntervalTier (formantPath, tmin, tmax);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
