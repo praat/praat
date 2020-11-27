@@ -194,6 +194,8 @@ void structFunctionEditor :: draw () {
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 
 	our viewFunctionViewerAsPixelettes ();
+	Graphics_setFont (our graphics.get(), kGraphics_font :: HELVETICA);
+	Graphics_setFontSize (our graphics.get(), 12.0);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (integer i = 0; i < 8; i ++) {
 		const double left = our rect [i]. left, right = our rect [i]. right;

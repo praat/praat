@@ -45,13 +45,9 @@ static GuiMenuItem praatButton_fonts [1 + (int) kGraphics_font::MAX];
 
 static void updateFontMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		if (theCurrentPraatPicture -> font < (int) kGraphics_font::MIN)
-			theCurrentPraatPicture -> font = (int) kGraphics_font::MIN;
-		if (theCurrentPraatPicture -> font > (int) kGraphics_font::MAX)
-			theCurrentPraatPicture -> font = (int) kGraphics_font::MAX;
-		for (int i = (int) kGraphics_font::MIN; i <= (int) kGraphics_font::MAX; i ++) {
+		Melder_clip ((int) kGraphics_font::MIN, & theCurrentPraatPicture -> font, (int) kGraphics_font::MAX);
+		for (int i = (int) kGraphics_font::MIN; i <= (int) kGraphics_font::MAX; i ++)
 			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
-		}
 	}
 }
 static void setFont (kGraphics_font font) {
@@ -60,9 +56,8 @@ static void setFont (kGraphics_font font) {
 		Graphics_setFont (GRAPHICS, font);
 	}
 	theCurrentPraatPicture -> font = (int) font;
-	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updateFontMenu ();
-	}
 }
 DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font::TIMES);     END }
 DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font::HELVETICA); END }
@@ -88,9 +83,8 @@ static void setFontSize (double fontSize) {
 		Graphics_setFontSize (GRAPHICS, fontSize);
 	}
 	theCurrentPraatPicture -> fontSize = fontSize;
-	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updateSizeMenu ();
-	}
 }
 
 DIRECT (GRAPHICS_10) { setFontSize (10.0); END }
@@ -170,14 +164,12 @@ FORM (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"S
 	REAL (bottom, U"right Vertical range (inches)", U"6.0")
 OK
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
-	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
-		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
-		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+	Melder_clipRight (& ymargin, 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC));
+	Melder_clipRight (& xmargin, 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC));
 	SET_REAL (left, theCurrentPraatPicture -> x1NDC + xmargin)
 	SET_REAL (right, theCurrentPraatPicture -> x2NDC - xmargin)
-	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC + ymargin)
-	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC - ymargin)
+	SET_REAL (top, 12.0 - theCurrentPraatPicture -> y2NDC + ymargin)
+	SET_REAL (bottom, 12.0 - theCurrentPraatPicture -> y1NDC - ymargin)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
@@ -187,43 +179,42 @@ DO
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
-		double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
-		double hDC = integer_abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
+		const double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
+		const double hDC = integer_abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
 		xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
 		ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
 	}
-	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
-	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
+	Melder_clipRight (& xmargin, 2.0 * (right - left));
+	Melder_clipRight (& ymargin, 2.0 * (bottom - top));
 	trace (U"2: xmargin ", xmargin, U" ymargin ", ymargin);
-	if (left == right) {
+	if (left == right)
 		Melder_throw (U"The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
-	}
-	if (left > right) { double temp; temp = left; left = right; right = temp; }
-	if (top == bottom) {
+	Melder_sort (& left, & right);
+	if (top == bottom)
 		Melder_throw (U"The top and bottom edges of the viewport cannot be equal.\nPlease change the vertical range.");
-	}
 	theCurrentPraatPicture -> x1NDC = left - xmargin;
 	theCurrentPraatPicture -> x2NDC = right + xmargin;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
-		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
-		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
+		Melder_sort (& top, & bottom);
+		theCurrentPraatPicture -> y1NDC = (12.0 - bottom) - ymargin;
+		theCurrentPraatPicture -> y2NDC = (12.0 - top) + ymargin;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
-		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		Melder_sort (& top, & bottom);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
-		double height_NDC = y2wNDC - y1wNDC;
-		theCurrentPraatPicture -> y1NDC = height_NDC-bottom - ymargin;
-		theCurrentPraatPicture -> y2NDC = height_NDC-top + ymargin;
+		const double height_NDC = y2wNDC - y1wNDC;
+		theCurrentPraatPicture -> y1NDC = height_NDC - bottom - ymargin;
+		theCurrentPraatPicture -> y2NDC = height_NDC - top + ymargin;
 	} else {
-		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		Melder_sort (& bottom, & top);
 		theCurrentPraatPicture -> y1NDC = bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = top + ymargin;
 		Graphics_setViewport (GRAPHICS,
 			theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
-			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);   // to ensure that Demo_x() updates
+			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC
+		);   // to ensure that Demo_x() updates
 	}
 	trace (U"3:"
 		U" x1NDC ", theCurrentPraatPicture -> x1NDC,
@@ -245,42 +236,38 @@ FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"S
 OK
 	SET_REAL (left, theCurrentPraatPicture -> x1NDC)
 	SET_REAL (right, theCurrentPraatPicture -> x2NDC)
-	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC)
-	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC)
+	SET_REAL (top, 12.0 - theCurrentPraatPicture -> y2NDC)
+	SET_REAL (bottom, 12.0 - theCurrentPraatPicture -> y1NDC)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
-	if (left == right) {
+	if (left == right)
 		Melder_throw (U"The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
-	}
-	if (left > right) { double temp; temp = left; left = right; right = temp; }
-	if (top == bottom) {
+	Melder_sort (& left, & right);
+	if (top == bottom)
 		Melder_throw (U"The top and bottom edges of the viewport cannot be equal.\nPlease change the vertical range.");
-	}
 	theCurrentPraatPicture -> x1NDC = left;
 	theCurrentPraatPicture -> x2NDC = right;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-		if (top > bottom)
-			std::swap (top, bottom);
-		theCurrentPraatPicture -> y1NDC = 12-bottom;
-		theCurrentPraatPicture -> y2NDC = 12-top;
+		Melder_sort (& top, & bottom);
+		theCurrentPraatPicture -> y1NDC = 12.0 - bottom;
+		theCurrentPraatPicture -> y2NDC = 12.0 - top;
 		Picture_setSelection (praat_picture.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
-		if (top > bottom)
-			std::swap (top, bottom);
+		Melder_sort (& top, & bottom);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
-		double height_NDC = y2wNDC - y1wNDC;
-		theCurrentPraatPicture -> y1NDC = height_NDC-bottom;
-		theCurrentPraatPicture -> y2NDC = height_NDC-top;
+		const double height_NDC = y2wNDC - y1wNDC;
+		theCurrentPraatPicture -> y1NDC = height_NDC - bottom;
+		theCurrentPraatPicture -> y2NDC = height_NDC - top;
 	} else {
-		if (top < bottom)
-			std::swap (top, bottom);
+		Melder_sort (& bottom, & top);
 		theCurrentPraatPicture -> y1NDC = bottom;
 		theCurrentPraatPicture -> y2NDC = top;
 		Graphics_setViewport (GRAPHICS,
 			theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC,
-			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);   // to ensure that Demo_x() updates
+			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC
+		);   // to ensure that Demo_x() updates
 	}
 END }
 
@@ -398,9 +385,8 @@ static void setColour (MelderColour colour) {
 		Graphics_setColour (GRAPHICS, colour);
 	}
 	theCurrentPraatPicture -> colour = colour;
-	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
-	}
 }
 DIRECT (GRAPHICS_Black)   { setColour (Melder_BLACK);   END }
 DIRECT (GRAPHICS_White)   { setColour (Melder_WHITE);   END }
@@ -429,9 +415,8 @@ DO
 		Graphics_setColour (GRAPHICS, colour);
 	}
 	theCurrentPraatPicture -> colour = colour;
-	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
-	}
 END }
 
 /***** "File" MENU *****/
@@ -1046,7 +1031,8 @@ FORM (GRAPHICS_MarksLeft, U"Praat picture: Marks left", U"Marks left/right/top/b
 	OK
 DO
 	GRAPHICS_NONE
-		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		if (numberOfMarks < 2)
+			Melder_throw (U"The number of marks should be at least 2.");
 		Graphics_marksLeft (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
 	GRAPHICS_NONE_END
 }
@@ -1056,7 +1042,8 @@ FORM (GRAPHICS_MarksRight, U"Praat picture: Marks right", U"Marks left/right/top
 	OK
 DO
 	GRAPHICS_NONE
-		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		if (numberOfMarks < 2)
+			Melder_throw (U"The number of marks should be at least 2.");
 		Graphics_marksRight (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
 	GRAPHICS_NONE_END
 }
@@ -1066,7 +1053,8 @@ FORM (GRAPHICS_MarksBottom, U"Praat picture: Marks bottom", U"Marks left/right/t
 	OK
 DO
 	GRAPHICS_NONE
-		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		if (numberOfMarks < 2)
+			Melder_throw (U"The number of marks should be at least 2.");
 		Graphics_marksBottom (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
 	GRAPHICS_NONE_END
 }
@@ -1076,7 +1064,8 @@ FORM (GRAPHICS_MarksTop, U"Praat picture: Marks top", U"Marks left/right/top/bot
 	OK
 DO
 	GRAPHICS_NONE
-		if (numberOfMarks < 2) Melder_throw (U"The number of marks should be at least 2.");
+		if (numberOfMarks < 2)
+			Melder_throw (U"The number of marks should be at least 2.");
 		Graphics_marksTop (GRAPHICS, numberOfMarks, writeNumbers, drawTicks, drawDottedLines);
 	GRAPHICS_NONE_END
 }
@@ -1124,9 +1113,8 @@ DO
 }
 
 static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
-	double temp;
-	if (*x1WC > *x2WC) temp = *x1WC, *x1WC = *x2WC, *x2WC = temp;
-	if (*y1WC > *y2WC) temp = *y1WC, *y1WC = *y2WC, *y2WC = temp;
+	Melder_sort (x1WC, x2WC);
+	Melder_sort (y1WC, y2WC);
 }
 
 FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/right/top/bottom...") {

@@ -690,7 +690,6 @@ void structFormantPathEditor :: v_draw () {
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
 	static double previousStartTime, previousEndTime;
-	double original_fontSize = Graphics_inqFontSize (our graphics.get());
 	constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -710,7 +709,6 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
 		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
-	Graphics_setFontSize (our graphics.get(), original_fontSize);
 	previousStartTime = startTime;
 	previousEndTime = endTime;
 }
