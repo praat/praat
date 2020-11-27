@@ -580,8 +580,6 @@ END }
 
 DIRECT (GRAPHICS_Undo) {
 	Graphics_undoGroup (GRAPHICS);
-	if (theCurrentPraatPicture != & theForegroundPraatPicture)
-		Graphics_play (GRAPHICS, GRAPHICS);   // TODO: understand this
 	Graphics_updateWs (GRAPHICS);
 END }
 
