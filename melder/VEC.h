@@ -289,6 +289,21 @@ inline void VECsin_inplace (VECVU const& vec) noexcept {
 		vec [i] = sin (vec [i]);
 }
 
+extern void VECshuffle_inplace (VECVU const& x) noexcept;
+extern void INTVECshuffle_inplace (INTVECVU const& x) noexcept;
+
+inline autoVEC newVECshuffle (constVECVU const& x) {
+	autoVEC result = newVECcopy (x);
+	VECshuffle_inplace (result.get());
+	return result;
+}
+
+inline autoINTVEC newINTVECshuffle (constINTVECVU const& x) {
+	autoINTVEC result = newINTVECcopy (x);
+	INTVECshuffle_inplace (result.get());
+	return result;
+}
+
 extern void VECsort_inplace (VECVU const& x) noexcept;
 extern void INTVECsort_inplace (INTVECVU const& x) noexcept;
 
