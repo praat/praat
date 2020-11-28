@@ -155,8 +155,12 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		}
 	} catch (MelderError) {
 		if (isObscured) {
-			Melder_clearError ();
-			Melder_throw (U"Undisclosed error in obscured Praat script.");
+			if (Melder_hasError (U"\nScript exited."))
+				throw;
+			else {
+				Melder_clearError ();
+				Melder_throw (U"Undisclosed error in obscured Praat script.");
+			}
 		} else {
 			throw;
 		}
