@@ -335,7 +335,9 @@ inline autoVEC newVECcolumnSums (constMATVU const& x) {
 
 extern autoVEC newVECfrom_to (double from, double to);
 extern autoVEC newVECfrom_to_by (double from, double to, double by);
+extern autoVEC newVECfrom_to_count (double from, double to, integer count);
 extern autoVEC newVECbetween_by (double from, double to, double by);
+extern autoVEC newVECbetween_count (double from, double to, integer count);
 extern autoVEC newVECto (double to);
 
 /* End of file VEC.h */

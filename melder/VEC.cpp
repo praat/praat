@@ -68,6 +68,21 @@ autoVEC newVECbetween_by (double from, double to, double by) {
 	return result;
 }
 
+/*@praat
+	assert between_count# (0, 10, 5) = { 1, 3, 5, 7, 9 }
+@*/
+autoVEC newVECbetween_count (double from, double to, integer count) {
+	Melder_require (count >= 0,
+		U"between_count#: cannot have fewer than zero elements.");
+	if (count < 1)
+		return autoVEC ();
+	const double by = (to - from) / count;
+	autoVEC result = newVECraw (count);
+	for (integer i = 1; i <= count; i ++)
+		result [i] = from + (double) (i - 0.5) * by;
+	return result;
+}
+
 autoVEC newVECfrom_to_by (double from, double to, double by) {
 	Melder_require (by != 0.0,
 		U"from_to_by#: cannot have a step (“by”) of zero.");
@@ -80,6 +95,20 @@ autoVEC newVECfrom_to_by (double from, double to, double by) {
 	autoVEC result = newVECraw (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = from + (double) (i - 1) * by;
+	return result;
+}
+
+/*@praat
+	assert from_to_count# (0, 10, 5) = { 0, 2.5, 5, 7.5, 10 }
+@*/
+autoVEC newVECfrom_to_count (double from, double to, integer count) {
+	Melder_require (count >= 2,
+		U"from_to_count#: cannot have fewer than two elements.");
+	autoVEC result = newVECraw (count);
+	const double by = (to - from) / (count - 1);
+	for (integer i = 1; i < count; i ++)
+		result [i] = from + (double) (i - 1) * by;
+	result [count] = to;
 	return result;
 }
 

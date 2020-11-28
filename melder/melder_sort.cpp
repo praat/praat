@@ -20,17 +20,17 @@
 
 void VECshuffle_inplace (VECVU const& x) noexcept {
 	for (integer i = 1; i < x.size; i ++)
-		std::swap (x [i], x [NUMrandomInteger (i + 1, x.size)]);
+		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
 void INTVECshuffle_inplace (INTVECVU const& x) noexcept {
 	for (integer i = 1; i < x.size; i ++)
-		std::swap (x [i], x [NUMrandomInteger (i + 1, x.size)]);
+		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
 void STRVECshuffle_inplace (STRVEC const& x) noexcept {
 	for (integer i = 1; i < x.size; i ++)
-		std::swap (x [i], x [NUMrandomInteger (i + 1, x.size)]);
+		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
 void VECsort_inplace (VECVU const& x) noexcept {
