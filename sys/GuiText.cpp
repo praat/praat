@@ -887,13 +887,19 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 			may have to be decremented.
 		*/
 		integer differenceFirst = 0;
-		for (integer i = 0; i < *first; i ++)
+		for (integer i = 0; i < *first; i ++) {
 			if (buffer16 [i] == 13 && (buffer16 [i + 1] == L'\n' || buffer16 [i + 1] == 0x0085))
 				differenceFirst ++;
+			if (buffer16 [i] >= 0xDC00 && buffer16 [i] <= 0xDFFF)
+				differenceFirst ++;
+		}
 		integer differenceLast = differenceFirst;
-		for (integer i = *first; i < *last; i ++)
+		for (integer i = *first; i < *last; i ++) {
 			if (buffer16 [i] == 13 && (buffer16 [i + 1] == L'\n' || buffer16 [i + 1] == 0x0085))
 				differenceLast ++;
+			if (buffer16 [i] >= 0xDC00 && buffer16 [i] <= 0xDFFF)
+				differenceLast ++;
+		}
 		*first -= differenceFirst;
 		*last -= differenceLast;
 		autostring32 result = Melder_dup_f (Melder_peek16to32 (buffer16.get()));

@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2019 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2020 Paul Boersma, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,8 @@ static void openDocument (TextEditor me, MelderFile file) {
 static void newDocument (TextEditor me) {
 	GuiText_setString (my textWidget, U"");   // implicitly sets my dirty to `true`
 	my dirty = false;
-	if (my v_fileBased ()) Thing_setName (me, U"");
+	if (my v_fileBased ())
+		Thing_setName (me, U"");
 }
 
 static void saveDocument (TextEditor me, MelderFile file) {
@@ -104,7 +105,8 @@ static void saveDocument (TextEditor me, MelderFile file) {
 	MelderFile_writeText (file, text.get(), Melder_getOutputEncoding ());
 	my dirty = false;
 	MelderFile_copy (file, & my file);
-	if (my v_fileBased ()) Thing_setName (me, Melder_fileToPath (file));
+	if (my v_fileBased ())
+		Thing_setName (me, Melder_fileToPath (file));
 }
 
 static void closeDocument (TextEditor me) {
@@ -372,9 +374,12 @@ void structTextEditor :: v_goAway () {
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				U"Save & Close", gui_button_cb_saveAndClose, this, 0);
 		}
-		if (our dirtyNewDialog) GuiThing_hide (our dirtyNewDialog);
-		if (our dirtyOpenDialog) GuiThing_hide (our dirtyOpenDialog);
-		if (our dirtyReopenDialog) GuiThing_hide (our dirtyReopenDialog);
+		if (our dirtyNewDialog)
+			GuiThing_hide (our dirtyNewDialog);
+		if (our dirtyOpenDialog)
+			GuiThing_hide (our dirtyOpenDialog);
+		if (our dirtyReopenDialog)
+			GuiThing_hide (our dirtyReopenDialog);
 		GuiThing_show (dirtyCloseDialog);
 	} else {
 		closeDocument (this);
@@ -411,30 +416,30 @@ static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLi
 	integer textLength = str32len (text.get());
 	Melder_assert (left >= 0);
 	Melder_assert (left <= right);
-	Melder_assert (right <= textLength);
+	if (right > textLength)
+		Melder_fatal (U"The end of the selection is at position ", right,
+			U", which is beyond the end of the text, which is at position ", textLength, U".");
 	integer i = 0;
 	*firstLine = 1;
 	/*
-	 * Cycle through the text in order to see how many linefeeds we pass.
-	 */
-	for (; i < left; i ++) {
-		if (text [i] == U'\n') {
+		Cycle through the text in order to see how many linefeeds we pass.
+	*/
+	for (; i < left; i ++)
+		if (text [i] == U'\n')
 			(*firstLine) ++;
-		}
-	}
-	if (left == right) return false;
+	if (left == right)
+		return false;
 	*lastLine = *firstLine;
-	for (; i < right; i ++) {
-		if (text [i] == U'\n') {
+	for (; i < right; i ++)
+		if (text [i] == U'\n')
 			(*lastLine) ++;
-		}
-	}
 	return true;
 }
 
 static autostring32 theFindString, theReplaceString;
 static void do_find (TextEditor me) {
-	if (! theFindString) return;   // e.g. when the user does "Find again" before having done any "Find"
+	if (! theFindString)
+		return;   // e.g. when the user does "Find again" before having done any "Find"
 	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString.get());
@@ -446,7 +451,9 @@ static void do_find (TextEditor me) {
 			GuiThing_show (my windowForm);
 		#endif
 	} else {
-		/* Try from the start of the document. */
+		/*
+			Try from the start of the document.
+		*/
 		location = str32str (text.get(), theFindString.get());
 		if (location) {
 			integer index = location - text.get();
