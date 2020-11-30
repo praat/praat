@@ -289,6 +289,21 @@ inline void VECsin_inplace (VECVU const& vec) noexcept {
 		vec [i] = sin (vec [i]);
 }
 
+extern void VECshuffle_inplace (VECVU const& x) noexcept;
+extern void INTVECshuffle_inplace (INTVECVU const& x) noexcept;
+
+inline autoVEC newVECshuffle (constVECVU const& x) {
+	autoVEC result = newVECcopy (x);
+	VECshuffle_inplace (result.get());
+	return result;
+}
+
+inline autoINTVEC newINTVECshuffle (constINTVECVU const& x) {
+	autoINTVEC result = newINTVECcopy (x);
+	INTVECshuffle_inplace (result.get());
+	return result;
+}
+
 extern void VECsort_inplace (VECVU const& x) noexcept;
 extern void INTVECsort_inplace (INTVECVU const& x) noexcept;
 
@@ -320,7 +335,9 @@ inline autoVEC newVECcolumnSums (constMATVU const& x) {
 
 extern autoVEC newVECfrom_to (double from, double to);
 extern autoVEC newVECfrom_to_by (double from, double to, double by);
+extern autoVEC newVECfrom_to_count (double from, double to, integer count);
 extern autoVEC newVECbetween_by (double from, double to, double by);
+extern autoVEC newVECbetween_count (double from, double to, integer count);
 extern autoVEC newVECto (double to);
 
 /* End of file VEC.h */

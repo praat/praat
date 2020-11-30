@@ -37,7 +37,9 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	return constSTRVEC (& strvec [fromIndex], rangeSize);
 }
 
-void STRVECsort_inplace (STRVEC const& a);
+void STRVECshuffle_inplace (STRVEC const& x) noexcept;
+
+void STRVECsort_inplace (STRVEC const& a) noexcept;
 
 /*
 	Regard a string as a sequence of tokens,

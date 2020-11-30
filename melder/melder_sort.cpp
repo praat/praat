@@ -18,6 +18,21 @@
 
 #include "melder.h"
 
+void VECshuffle_inplace (VECVU const& x) noexcept {
+	for (integer i = 1; i < x.size; i ++)
+		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
+}
+
+void INTVECshuffle_inplace (INTVECVU const& x) noexcept {
+	for (integer i = 1; i < x.size; i ++)
+		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
+}
+
+void STRVECshuffle_inplace (STRVEC const& x) noexcept {
+	for (integer i = 1; i < x.size; i ++)
+		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
+}
+
 void VECsort_inplace (VECVU const& x) noexcept {
 	std::sort (x.begin(), x.end(),
 		[] (double first, double last) {
@@ -34,7 +49,7 @@ void INTVECsort_inplace (INTVECVU const& x) noexcept {
 	);
 }
 
-void STRVECsort_inplace (STRVEC const& array) {
+void STRVECsort_inplace (STRVEC const& array) noexcept {
 	std::sort (array.begin(), array.end(),
 		[] (conststring32 first, conststring32 last) {
 			return str32cmp (first, last) < 0;

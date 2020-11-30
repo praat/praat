@@ -150,7 +150,8 @@ enum { NO_SYMBOL_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
 		VEC_ZERO_, MAT_ZERO_,
-		VEC_LINEAR_, MAT_LINEAR_, VEC_TO_, VEC_FROM_TO_, VEC_FROM_TO_BY_, VEC_BETWEEN_BY_,
+		VEC_LINEAR_, MAT_LINEAR_, VEC_TO_, VEC_FROM_TO_, VEC_FROM_TO_BY_, VEC_FROM_TO_COUNT_, VEC_BETWEEN_BY_, VEC_BETWEEN_COUNT_,
+		VEC_SORT_, VEC_SHUFFLE_,
 		VEC_RANDOM_UNIFORM_, MAT_RANDOM_UNIFORM_,
 		VEC_RANDOM_INTEGER_, MAT_RANDOM_INTEGER_,
 		VEC_RANDOM_GAUSS_, MAT_RANDOM_GAUSS_,
@@ -274,7 +275,8 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
 	U"zero#", U"zero##",
-	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#", U"between_by#",
+	U"linear#", U"linear##", U"to#", U"from_to#", U"from_to_by#", U"from_to_count#", U"between_by#", U"between_count#",
+	U"sort#", U"shuffle#",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
@@ -300,7 +302,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"_numericVectorElement", U"_numericMatrixElement", U"_variableReference",
 	U"_numericVectorLiteral",
 	U"_self0", U"_self0$", U"_toObject",
-	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_dnx", U"_object_ny",
+	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_nx", U"_object_ny",
 	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol", U"_object_row$", U"_object_col$",
 	U"_objectcell0", U"_objectcell0$", U"_objectcell1", U"_objectcell1$", U"_objectcell2", U"_objectcell2$",
 	U"_objectlocation0", U"_objectlocation0$", U"_objectlocation1", U"_objectlocation1$", U"_objectlocation2", U"_objectlocation2$",
@@ -4397,8 +4399,24 @@ static void do_VECfrom_to_by () {
 	if (stack_to -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"from_to_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
 	if (stack_by -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_by#\", the third argument should be a number, not ", stack_by->whichText(), U".");
+		Melder_throw (U"In the function \"from_to_by#\", the third argument should be a number (the step), not ", stack_by->whichText(), U".");
 	autoVEC result = newVECfrom_to_by (stack_from -> number, stack_to -> number, stack_by -> number);
+	pushNumericVector (result.move());
+}
+static void do_VECfrom_to_count () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 3)
+		Melder_throw (U"The function \"from_to_count#\" requires three arguments.");
+	Stackel stack_count = pop, stack_to = pop, stack_from = pop;
+	if (stack_from -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to_count#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	if (stack_to -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to_count#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	if (stack_count -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"from_to_count#\", the third argument should be a number (the count), not ", stack_count->whichText(), U".");
+	autoVEC result = newVECfrom_to_count (stack_from -> number, stack_to -> number, Melder_iround (stack_count -> number));
 	pushNumericVector (result.move());
 }
 static void do_VECbetween_by () {
@@ -4413,8 +4431,48 @@ static void do_VECbetween_by () {
 	if (stack_to -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"between_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
 	if (stack_by -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_by#\", the third argument should be a number, not ", stack_by->whichText(), U".");
+		Melder_throw (U"In the function \"between_by#\", the third argument should be a number (the step), not ", stack_by->whichText(), U".");
 	autoVEC result = newVECbetween_by (stack_from -> number, stack_to -> number, stack_by -> number);
+	pushNumericVector (result.move());
+}
+static void do_VECbetween_count () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 3)
+		Melder_throw (U"The function \"between_count#\" requires three arguments.");
+	Stackel stack_count = pop, stack_to = pop, stack_from = pop;
+	if (stack_from -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"between_count#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	if (stack_to -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"between_count#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	if (stack_count -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"between_count#\", the third argument should be a number (the count), not ", stack_count->whichText(), U".");
+	autoVEC result = newVECbetween_count (stack_from -> number, stack_to -> number, Melder_iround (stack_count -> number));
+	pushNumericVector (result.move());
+}
+static void do_VECshuffle () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function \"shuffle#\" requires one argument, namely a vector.");
+	Stackel stack_vector = pop;
+	if (stack_vector -> which != Stackel_NUMERIC_VECTOR)
+		Melder_throw (U"The argument of the function \"shuffle#\" should be a numeric vector, not ", stack_vector->whichText(), U".");
+	autoVEC result = newVECshuffle (stack_vector -> numericVector);
+	pushNumericVector (result.move());
+}
+static void do_VECsort () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function \"sort#\" requires one argument, namely a vector.");
+	Stackel stack_vector = pop;
+	if (stack_vector -> which != Stackel_NUMERIC_VECTOR)
+		Melder_throw (U"The argument of the function \"sort#\" should be a numeric vector, not ", stack_vector->whichText(), U".");
+	autoVEC result = newVECsort (stack_vector -> numericVector);
 	pushNumericVector (result.move());
 }
 static void do_MATpeaks () {
@@ -7080,7 +7138,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case VEC_TO_: { do_VECto ();
 } break; case VEC_FROM_TO_: { do_VECfrom_to ();
 } break; case VEC_FROM_TO_BY_: { do_VECfrom_to_by ();
+} break; case VEC_FROM_TO_COUNT_: { do_VECfrom_to_count ();
 } break; case VEC_BETWEEN_BY_: { do_VECbetween_by ();
+} break; case VEC_BETWEEN_COUNT_: { do_VECbetween_count ();
+} break; case VEC_SORT_: { do_VECsort ();
+} break; case VEC_SHUFFLE_: { do_VECshuffle ();
 } break; case VEC_RANDOM_UNIFORM_: { do_function_VECdd_d (NUMrandomUniform);
 } break; case MAT_RANDOM_UNIFORM_: { do_function_MATdd_d (NUMrandomUniform);
 } break; case VEC_RANDOM_INTEGER_: { do_function_VECll_l (NUMrandomInteger);

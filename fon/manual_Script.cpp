@@ -2878,7 +2878,7 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20190825)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20201128)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
@@ -2926,6 +2926,24 @@ CODE (U"randomUniform\\#  (10000, 0.0, 1.0)")
 NORMAL (U"To create a vector consisting of 10,000 values drawn from a ##uniform distribution of integer numbers# "
 	"with true minimum 1 and true maximum 10, you use")
 CODE (U"randomInteger\\#  (10000, 1, 10)")
+NORMAL (U"To create a vector containing the integer numbers 1 through 64, you use")
+CODE (U"to\\#  (64)")
+NORMAL (U"To create a vector containing the integer numbers 10 through 20, you use")
+CODE (U"from_to\\#  (10, 20)")
+NORMAL (U"To create a vector containing linearly increasing (not necessarily integer) numbers from 10 through 20 in steps of 2, you use")
+CODE (U"from_to_by\\#  (10, 20, 2)")
+NORMAL (U"To create five linearly increasing numbers between 0 and 10 (i.e. { 0, 2.5, 5, 7.5, 10 }), you use")
+CODE (U"from_to_count\\#  (0, 10, 5)")
+NORMAL (U"To divide the range between 0 and 12 symmetrically with step 5 (i.e. { 1, 6, 11 }), you use")
+CODE (U"between_by\\#  (0, 12, 5)")
+NORMAL (U"To divide the range between 0 and 10 into five equal parts and list their centres (i.e. { 1, 3, 5, 7, 9 }), you use")
+CODE (U"between_count\\#  (0, 10, 5)")
+NORMAL (U"To sort the numbers in a vector (e.g. { 7.4, 1.3, 3.6 }), you use")
+CODE (U"sort\\#  ({ 7.4, 1.3, 3.6 })")
+NORMAL (U"which yields { 1.3, 3.6, 7.4 }.")
+NORMAL (U"To randomnly shuffle the numbers in a vector (e.g. { 7.4, 1.3, 3.6 }), you use")
+CODE (U"shuffle\\#  ({ 7.4, 1.3, 3.6 })")
+NORMAL (U"which can yield { 1.3, 7.4, 3.6 } or any of the five other orders of the elements.")
 NORMAL (U"Vectors can also be created by some menu commands. For instance, to get vectors representing "
 	"the times and pitch frequencies of the frames in a Pitch object, you can do")
 CODE (U"selectObject: myPitch")
