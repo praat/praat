@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201125)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201129)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.35# (29 November 2020)")
+LIST_ITEM (U"• Scripting: sort\\# (), shuffle\\# (), to\\# (), from_to\\# (), from_to_by\\# (), from_to_count\\# (), between_by\\# (), between_count\\# ().")
+LIST_ITEM (U"• Mac: repaired a bug existing since 6.1.04 that caused incorrect line counts in text files with high Unicode characters.")
 NORMAL (U"##6.1.34# (25 November 2020)")
 LIST_ITEM (U"• Mac: got bold and italic to work on Praat versions compiled with the BigSur API.")
 LIST_ITEM (U"• SoundRecorder always a white background, instead of a different background on each platform.")
