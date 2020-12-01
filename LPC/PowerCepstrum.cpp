@@ -226,7 +226,7 @@ autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFi
 	}
 }
 
-void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
+static void PowerCepstrum_smooth_inplaceRectangular (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	try {
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
@@ -242,6 +242,36 @@ void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWi
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
 	}
+}
+
+static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
+	try {
+		double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
+		if (numberOfQuefrencyBins > 1.0) {
+			/*
+				Applying  Gaussian after another is associative: G(s2)*(G(s1)*f) = (G(s2)*G(s1))*f.
+				G(s2) * G(s1) = G(s), where s^2=s1^2+s2^2
+			*/
+			const double numberOfSigmasInWindow = (Melder_debug == -5 ? 2.0 : 4.0 );
+			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow; // 3sigma -> 99.7 % of the data (2sigma -> 95.4%)g 
+			const double sigma_n = sqrt (numberOfIterations) * sigma;
+			VECsmooth_gaussian (my z.row (1), my z.row (1), sigma_n);
+			/*
+				Due to imprecise arithmatic some values might turn out to be negative
+				(but very small). Just make them positive.
+			*/
+			VECabs_inplace (my z.row (1));
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": not smoothed.");
+	}
+}
+
+void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
+	if (Melder_debug == -4 || Melder_debug == -5)
+		PowerCepstrum_smooth_inplaceGaussian (me, quefrencyAveragingWindow, numberOfIterations);
+	else
+		PowerCepstrum_smooth_inplaceRectangular (me, quefrencyAveragingWindow, numberOfIterations);
 }
 
 autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {

@@ -156,7 +156,7 @@ autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor,
 	}
 }
 
-autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
 		/*
@@ -181,6 +181,53 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
 	}
+}
+
+static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+	try {
+		autoPowerCepstrogram thee = Data_copy (me);		
+		/*
+			1. average across time
+		*/
+		const double numberOfSigmasInWindow = (Melder_debug == -5 ? 2.0 : 4.0 );
+		const double numberOfFrames = timeAveragingWindow / my dx;
+		if (numberOfFrames > 1.0) {
+			const double sigma = numberOfFrames / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
+			integer nfft = 2;
+			while (nfft < my nx) 
+				nfft *= 2;
+			autoNUMfft_Table fourierTable;
+			NUMfft_Table_init (& fourierTable, nfft);
+			for (integer iq = 1; iq <= my ny; iq ++) {
+				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, & fourierTable);
+				VECabs_inplace (thy z.row (iq));
+			}
+		}
+		/*
+			2. average across quefrencies
+		*/
+		const double numberOfQuefrencyBins = quefrencyAveragingWindow / my dy;
+		if (numberOfQuefrencyBins > 1.0) {
+			integer nfft = 2;
+			while (nfft < my ny)
+				nfft *= 2;
+			autoNUMfft_Table fourierTable;
+			NUMfft_Table_init (& fourierTable, nfft);
+			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
+			for (integer iframe = 1; iframe <= my nx; iframe ++) {
+				VECsmooth_gaussian (thy z.column (iframe), thy z.column (iframe), sigma, & fourierTable);
+				VECabs_inplace (thy z.column (iframe));
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not smoothed.");
+	}
+}
+
+autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+		return ( Melder_debug == -4 || Melder_debug == -5 ? PowerCepstrogram_smoothGaussian (me, timeAveragingWindow, quefrencyAveragingWindow) :
+			PowerCepstrogram_smoothRectangular (me, timeAveragingWindow, quefrencyAveragingWindow) );
 }
 
 autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me) {
