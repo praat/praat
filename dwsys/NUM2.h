@@ -1112,7 +1112,7 @@ void NUMfft_backward (NUMfft_Table table, VEC data);
 		data [2..n-1] even index : real part; odd index: imaginary part of DFT.
 		data [n] contains real valued last component (Nyquist frequency)
 
-		table must have been initialised with NUMfft_Table_init_f/d
+		table must have been initialised with NUMfft_Table_init
 
 	Output parameters
 
@@ -1165,6 +1165,16 @@ void NUMreverseRealFastFourierTransform (VEC data);
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
 void NUMrealft (VEC data, integer direction);
+
+void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma);
+void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma, NUMfft_Table fftTable);
+/*
+	Smooth the vector 'in' by convolving with a Gaussian, i.e. convolve with gaussian by
+	using the Fourier Transform. Normally an FFT is used unless otherwise specified in 'fftTable"
+	If fftTable == nullptr the FFT of size 2^k is used, where 2^(k-1) < n <= 2^k.
+	For a given fftTable we require that fftTable->n >= n.
+	The input and the output vector may be the same vector.
+*/
 
 integer NUMgetIndexFromProbability (constVEC probs, double p); //TODO HMM zero start matrices
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);

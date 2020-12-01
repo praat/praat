@@ -136,6 +136,49 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 	}
 }
 
+void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma, NUMfft_Table fftTable) {
+	Melder_require (in.size <= fftTable -> n,
+		U"The dimension of the table should at least equal the length of the input vector.");
+	Melder_require (out.size == in.size,
+		U"The size of the input and the output vector should be equal.");
+	autoVEC smooth = newVECzero (fftTable -> n);
+	smooth.part (1, in.size)  <<=  in;
+	NUMfft_forward (fftTable, smooth.get());
+	/*
+		Low pass filter with a Gaussian.
+		The Fourier Transform of h(x)= (exp(-a.x^2) is 
+			H(f) = sqrt (pi/a) exp (-pi^2.f^2/a).
+		A Gaussian g(x)=sqrt(a/pi)h(x), where a = 1/(2s^2)
+		The "frequency" region is divided in fftTable -> n steps,
+		where one "frequency" unit f equals 1 / fftTable -> n.
+	*/
+	const double b = 2.0 * NUMpi * sigma * NUMpi * sigma ;
+	for (integer k = 2; k <= (fftTable -> n + 1) / 2; k ++) {
+		const double f = (k - 1) /  (double) fftTable -> n;
+		const double weight = exp (- b * f * f);
+		smooth [k * 2 - 2] *= weight; // re
+		smooth [k * 2 - 1] *= weight; // im
+	}
+	if (fftTable -> n % 2 == 0)
+		smooth [fftTable -> n] *= exp (- b * 1 / 2  * 1 / 2);
+	NUMfft_backward (fftTable, smooth.get());
+	/*
+		backwardFT (forwardFT (data)) = n * data;
+	*/
+	const double scaleFacor = 1.0 / fftTable -> n;
+	smooth.part (1, in.size)  *=  scaleFacor;
+	out  <<=  smooth.part (1, out.size);
+}
+
+void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma) {
+	integer nfft = 1;
+	while (nfft < in.size)
+		nfft *= 2;
+	autoNUMfft_Table fftTable;
+	NUMfft_Table_init (& fftTable, nfft);
+	VECsmooth_gaussian (out, in, sigma, & fftTable);
+}
+
 autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) {
 	Melder_require (ndf >= 0 && x.nrow - ndf > 0,
 		U"Invalid arguments.");
