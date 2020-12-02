@@ -2146,11 +2146,11 @@ void Formula_compile (Interpreter interpreter, Daata data, conststring32 express
 	theExpressionType [theLevel] = expressionType;
 	theOptimize = optimize;
 	if (! lexan) {
-		lexan = Melder_calloc_f (struct structFormulaInstruction, 3000);
-		lexan [3000 - 1]. symbol = END_;   // make sure that cleaning up always terminates
+		lexan = Melder_calloc_f (structFormulaInstruction, Formula_MAXIMUM_STACK_SIZE);
+		lexan [Formula_MAXIMUM_STACK_SIZE - 1]. symbol = END_;   // make sure that cleaning up always terminates
 	}
 	if (! parse)
-		parse = Melder_calloc_f (struct structFormulaInstruction, 3000);
+		parse = Melder_calloc_f (structFormulaInstruction, Formula_MAXIMUM_STACK_SIZE);
 
 	/*
 		Clean up strings from the previous call.
@@ -2204,8 +2204,6 @@ conststring32 structStackel :: whichText () {
 }
 
 static int programPointer;
-
-#define Formula_MAXIMUM_STACK_SIZE  1000
 
 static Stackel theStack;
 static integer w, wmax;   /* w = stack pointer; */
@@ -6976,7 +6974,7 @@ void Formula_run (integer row, integer col, Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
 	if (! theStack) {
-		theStack = Melder_calloc_f (struct structStackel, 1+Formula_MAXIMUM_STACK_SIZE);
+		theStack = Melder_calloc_f (structStackel, 1+Formula_MAXIMUM_STACK_SIZE);
 		if (! theStack)
 			Melder_throw (U"Out of memory during formula computation.");
 	}
