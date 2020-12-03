@@ -669,10 +669,33 @@ bool MelderFile_readable (MelderFile file) {
 	}
 }
 
+bool Melder_tryToWriteFile (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "wb");
+		f.close (file);
+		return true;
+	} catch (MelderError) {
+		Melder_clearError ();
+		return false;
+	}
+}
+
+bool Melder_tryToAppendFile (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "ab");
+		f.close (file);
+		return true;
+	} catch (MelderError) {
+		Melder_clearError ();
+		return false;
+	}
+}
+
 integer MelderFile_length (MelderFile file) {
 	#if defined (UNIX)
 		struct stat statistics;
-		if (stat (Melder_peek32to8_fileSystem (file -> path), & statistics) != 0) return -1;
+		if (stat (Melder_peek32to8_fileSystem (file -> path), & statistics) != 0)
+			return -1;
 		return statistics. st_size;
 	#else
 		try {

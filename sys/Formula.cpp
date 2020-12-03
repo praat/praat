@@ -166,7 +166,7 @@ enum { NO_SYMBOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 	#define LOW_FUNCTION_STR1  LENGTH_
-		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
+		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
 		READ_FILE_, READ_FILESTR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_, BACKSLASH_TRIGRAPHS_TO_UNICODE_, ENVIRONMENTSTR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENTSTR_
 		DATESTR_, INFOSTR_,
@@ -286,7 +286,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
 
-	U"length", U"number", U"fileReadable",	U"deleteFile", U"createDirectory", U"variableExists",
+	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"info$",
 	U"index", U"rindex",
@@ -4783,6 +4783,26 @@ static void do_fileReadable () {
 		Melder_throw (U"The function \"fileReadable\" requires a string, not ", s->whichText(), U".");
 	}
 }
+static void do_tryToWriteFile () {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (s->getString(), & file);
+		pushNumber (Melder_tryToWriteFile (& file));
+	} else {
+		Melder_throw (U"The function \"tryToWriteFile\" requires a string, not ", s->whichText(), U".");
+	}
+}
+static void do_tryToAppendFile () {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (s->getString(), & file);
+		pushNumber (Melder_tryToAppendFile (& file));
+	} else {
+		Melder_throw (U"The function \"tryToAppendFile\" requires a string, not ", s->whichText(), U".");
+	}
+}
 static void do_STRdate () {
 	pushString (STRdate ());
 }
@@ -7165,6 +7185,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
+} break; case TRY_TO_WRITE_FILE_: { do_tryToWriteFile ();
+} break; case TRY_TO_APPEND_FILE_: { do_tryToAppendFile ();
 } break; case DATESTR_: { do_STRdate ();
 } break; case INFOSTR_: { do_infoStr ();
 } break; case LEFTSTR_: { do_STRleft ();
