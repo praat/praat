@@ -2,7 +2,7 @@
 #define _melder_files_h_
 /* melder_files.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,8 @@ void Melder_getTempDir (MelderDir tempDir);
 
 bool MelderFile_exists (MelderFile file);
 bool MelderFile_readable (MelderFile file);
+bool Melder_tryToWriteFile (MelderFile file);
+bool Melder_tryToAppendFile (MelderFile file);
 integer MelderFile_length (MelderFile file);
 void MelderFile_delete (MelderFile file);
 

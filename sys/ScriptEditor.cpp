@@ -139,31 +139,18 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	}
 	Melder_includeIncludeFiles (& text);
 	const integer npar = Interpreter_readParameters (my interpreter.get(), text.get());
-	try {
-		if (npar) {
-			/*
-				Pop up a dialog box for querying the arguments.
-			*/
-			my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok, me, false);
-			UiForm_do (my argsDialog.get(), false);
-		} else {
-			autoPraatBackground background;
-			if (my name [0])
-				MelderFile_setDefaultDir (& file);
-			trace (U"Running the following script (2):\n", text.get());
-			Interpreter_run (my interpreter.get(), text.get());
-		}
-	} catch (MelderError) {
-		if (isObscured) {
-			if (Melder_hasError (U"\nScript exited."))
-				throw;
-			else {
-				Melder_clearError ();
-				Melder_throw (U"Undisclosed error in obscured Praat script.");
-			}
-		} else {
-			throw;
-		}
+	if (npar) {
+		/*
+			Pop up a dialog box for querying the arguments.
+		*/
+		my argsDialog = Interpreter_createForm (my interpreter.get(), my windowForm, nullptr, args_ok, me, false);
+		UiForm_do (my argsDialog.get(), false);
+	} else {
+		autoPraatBackground background;
+		if (my name [0])
+			MelderFile_setDefaultDir (& file);
+		trace (U"Running the following script (2):\n", text.get());
+		Interpreter_run (my interpreter.get(), text.get());
 	}
 }
 
