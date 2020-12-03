@@ -190,17 +190,6 @@ inline void VECabs_inplace (VECVU const& v) {
 		v [i] = fabs (v [i]);
 }
 
-inline void INTVEClinear (INTVEC const& v, integer start, integer step) {
-	for (integer i = 1; i <= v.size; i ++)
-		v [i] = start + (i - 1) * step;
-}
-
-inline autoINTVEC newINTVEClinear (integer size, integer start, integer step) {
-	autoINTVEC result = newINTVECraw (size);
-	INTVEClinear (result, start, step);
-	return result;
-}
-
 inline bool NUMhasZeroElement (constMATVU const m) {
 	for (integer irow = 1; irow <= m.nrow; irow ++)
 		for (integer icol = 1; icol <= m.ncol; icol++)

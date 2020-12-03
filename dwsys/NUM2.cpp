@@ -2891,7 +2891,7 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 static void VECupdateDataAndSupport_inplace (VECVU const& v, BOOLVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
 	autoVEC abs = newVECabs (v);
-	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
+	autoINTVEC index = newINTVECto (v.size);
 	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
 		v [index [i]] = 0.0;

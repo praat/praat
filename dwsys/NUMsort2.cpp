@@ -129,80 +129,75 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 
 
 #define MACRO_NUMindex(TYPE) \
-{\
+{ \
 	Melder_assert (v.size == index.size); \
 	integer l, r, i, j, ii, k, imin; \
 	TYPE min; \
-	INTVEClinear (index, 1, 1); \
-	if (v.size < 2) return;   /* Already sorted. */ \
-	if (v.size == 2) \
-	{ \
-		if (COMPARELT (v [2], v [1])) \
-		{\
-			index [1] = 2; index [2] = 1; \
+	for (i = 1; i <= index.size ; i ++) \
+		index [i] = i; \
+	if (v.size < 2) \
+		return;   /* Already sorted. */ \
+	if (v.size == 2) { \
+		if (COMPARELT (v [2], v [1])) { \
+			index [1] = 2; \
+			index [2] = 1; \
 		} \
 		return; \
 	} \
-	if (v.size <= 12) \
-	{ \
-		for (i = 1; i < v.size; i ++) \
-		{ \
+	if (v.size <= 12) { \
+		for (i = 1; i < v.size; i ++) { \
 			imin = i; \
 			min = v [index [imin]]; \
-			for (j = i + 1; j <= v.size; j ++) \
-			{\
-				if (COMPARELT (v [index [j]], min))\
-				{ \
+			for (j = i + 1; j <= v.size; j ++) { \
+				if (COMPARELT (v [index [j]], min)) { \
 					imin = j; \
 					min = v [index [j]]; \
 				} \
 			} \
-			ii = index [imin]; index [imin] = index [i]; index [i] = ii; \
+			ii = index [imin]; \
+			index [imin] = index [i]; \
+			index [i] = ii; \
 		} \
 		return; \
 	} \
-	/* H1 */\
+	/* H1 */ \
 	l = v.size / 2 + 1; \
 	r = v.size; \
-	for (;;) /* H2 */\
-	{ \
-		if (l > 1) \
-		{ \
+	for (;;) { /* H2 */ \
+		if (l > 1) { \
 			l --; \
-			k = index[l]; \
-		} \
-		else /* l == 1 */ \
-		{ \
+			k = index [l]; \
+		} else { /* l == 1 */ \
 			k = index [r]; \
 			index [r] = index [1]; \
 			r --; \
-			if (r == 1) \
-			{ \
-				index [1] = k; break; \
+			if (r == 1) { \
+				index [1] = k; \
+				break; \
 			} \
 		} \
 		/* H3 */ \
 		j = l; \
-		for (;;) \
-		{ \
+		for (;;) { \
 			/* H4 */ \
 			i = j; \
 			j *= 2; \
-			if (j > r) break; \
-			if (j < r && COMPARELT (v [index [j]], v [index [j + 1]])) j ++; /* H5 */\
-			index [i] = index [j]; /* H7 */\
+			if (j > r) \
+				break; \
+			if (j < r && COMPARELT (v [index [j]], v [index [j + 1]])) \
+				j ++; /* H5 */ \
+			index [i] = index [j]; /* H7 */ \
 		} \
-		for (;;)  /*H8' */\
-		{\
+		for (;;) {  /*H8' */ \
 			j = i; \
 			i = j >> 1; \
 			/* H9' */ \
-			if (j == l || COMPARELT (v[k], v[index[i]])) \
-			{ \
-				index [j] = k; break; \
+			if (j == l || COMPARELT (v [k], v[index [i]])) { \
+				index [j] = k; \
+				break; \
 			} \
 			index [j] = index [i]; \
-		}\
+		} \
 	} \
 }
 
