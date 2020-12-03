@@ -1,6 +1,6 @@
 /* VEC.cpp
  *
- * Copyright (C) 2017,2018 Paul Boersma
+ * Copyright (C) 2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,67 @@ autoVEC newVECfrom_to (double from, double to) {
 		result [i] = from + (double) (i - 1);
 	return result;
 }
+autoINTVEC newINTVECfrom_to (integer from, integer to) {
+	const integer numberOfElements = to - from + 1;
+	if (numberOfElements < 1)
+		return autoINTVEC ();
+	autoINTVEC result = newINTVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = from + (i - 1);
+	return result;
+}
+
+autoVEC newVECfrom_to_by (double from, double to, double by) {
+	Melder_require (by != 0.0,
+		U"from_to_by#: cannot have a step (“by”) of zero.");
+	/*
+		The following algorithm works for both positive and negative `by`.
+	*/
+	const integer numberOfElements = Melder_ifloor ((to - from) / by + 1.0);
+	if (numberOfElements < 1)
+		return autoVEC ();
+	autoVEC result = newVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = from + (double) (i - 1) * by;
+	return result;
+}
+autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by) {
+	Melder_require (by != 0,
+		U"from_to_by#: cannot have a step (“by”) of zero.");
+	/*
+		The following algorithm works for both positive and negative `by`.
+	*/
+	const integer numberOfElements = (to - from) / by + 1;
+	if (numberOfElements < 1)
+		return autoINTVEC ();
+	autoINTVEC result = newINTVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = from + (i - 1) * by;
+	return result;
+}
+/*@praat
+	assert from_to_count# (0, 10, 5) = { 0, 2.5, 5, 7.5, 10 }
+@*/
+autoVEC newVECfrom_to_count (double from, double to, integer count) {
+	Melder_require (count >= 2,
+		U"from_to_count#: cannot have fewer than two elements.");
+	autoVEC result = newVECraw (count);
+	const double by = (to - from) / (count - 1);
+	for (integer i = 1; i < count; i ++)
+		result [i] = from + (double) (i - 1) * by;
+	result [count] = to;
+	return result;
+}
+autoINTVEC newINTVECfrom_to_count (integer from, integer to, integer count) {
+	Melder_require (count >= 2,
+		U"from_to_count#: cannot have fewer than two elements.");
+	autoINTVEC result = newINTVECraw (count);
+	const integer by = (to - from) / (count - 1);
+	for (integer i = 1; i < count; i ++)
+		result [i] = from + (i - 1) * by;
+	result [count] = to;
+	return result;
+}
 
 autoVEC newVECbetween_by (double from, double to, double by) {
 	Melder_require (by != 0.0,
@@ -80,35 +141,6 @@ autoVEC newVECbetween_count (double from, double to, integer count) {
 	autoVEC result = newVECraw (count);
 	for (integer i = 1; i <= count; i ++)
 		result [i] = from + (double) (i - 0.5) * by;
-	return result;
-}
-
-autoVEC newVECfrom_to_by (double from, double to, double by) {
-	Melder_require (by != 0.0,
-		U"from_to_by#: cannot have a step (“by”) of zero.");
-	/*
-		The following algorithm works for both positive and negative `by`.
-	*/
-	const integer numberOfElements = Melder_ifloor ((to - from) / by + 1.0);
-	if (numberOfElements < 1)
-		return autoVEC ();
-	autoVEC result = newVECraw (numberOfElements);
-	for (integer i = 1; i <= numberOfElements; i ++)
-		result [i] = from + (double) (i - 1) * by;
-	return result;
-}
-
-/*@praat
-	assert from_to_count# (0, 10, 5) = { 0, 2.5, 5, 7.5, 10 }
-@*/
-autoVEC newVECfrom_to_count (double from, double to, integer count) {
-	Melder_require (count >= 2,
-		U"from_to_count#: cannot have fewer than two elements.");
-	autoVEC result = newVECraw (count);
-	const double by = (to - from) / (count - 1);
-	for (integer i = 1; i < count; i ++)
-		result [i] = from + (double) (i - 1) * by;
-	result [count] = to;
 	return result;
 }
 
@@ -195,6 +227,13 @@ autoVEC newVECto (double to) {
 	autoVEC result = newVECraw (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = (double) i;
+	return result;
+}
+autoINTVEC newINTVECto (integer to) {
+	const integer numberOfElements = to;
+	autoINTVEC result = newINTVECraw (numberOfElements);
+	for (integer i = 1; i <= numberOfElements; i ++)
+		result [i] = i;
 	return result;
 }
 
