@@ -31,7 +31,17 @@ appendInfoLine: tab$, "Rhamonics-to-noise-ratio: ", rnr
 
 @draw_powercepstrum: powercepstrum
 
-removeObject: powercepstrum, powercepstrogram, toneComplex
+appendInfoLine: tab$, "New smoothing: 6 sigma"
+Debug: "no", -4
+@testSmoothing
+appendInfoLine: tab$, "New smoothing: 4 sigma"
+Debug: "no", -5
+@testSmoothing
+appendInfoLine: tab$, "Old smoothing:"
+Debug: "no", 0
+@testSmoothing
+
+;removeObject: powercepstrum, powercepstrogram, toneComplex
 
 appendInfoLine: "test_PowerCepstrum.praat OK"
 
@@ -45,4 +55,27 @@ procedure draw_powercepstrum: .pc
 	Colour: "Red"
 	Draw trend line: 0, 0, 0, 0, 0.001, 0, "Straight", "Least squares"
 	Colour: "Black"
+endproc 
+
+procedure testSmoothing
+	.kg = Create KlattGrid from vowel: "a", 0.4, 125, 800, 50, 1200, 50, 2300, 100, 2800, 0.05, 1000
+	for .i to 10
+		selectObject: .kg
+		.sounda = To Sound
+		Formula: ~ self + randomGauss (0,0.1)
+		selectObject: .sounda
+		.powercepstrogram = To PowerCepstrogram: 60, 0.002, 5000, 50
+		.powercepstrum = To PowerCepstrum (slice): 0.1
+		.cpps = Get peak prominence: 60, 333.3, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+		.smooth = Smooth: 0.0005, 1
+		.cpps1 = Get peak prominence: 60, 333.3, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+		.smooth11 = Smooth: 0.0005, 1
+		.cpps11 = Get peak prominence: 60, 333.3, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+		selectObject: .powercepstrum
+		.smooth2 = Smooth: 0.0005, 2
+		.cpps2 = Get peak prominence: 60, 333.3, "parabolic", 0.001, 0.05, "Straight", "Robust slow"
+		removeObject: .powercepstrogram, .powercepstrum, .smooth, .sounda, .smooth11, .smooth2
+		appendInfoLine: "cpps 0, 1, 11, 2: ", fixed$(.cpps,2), " ", fixed$(.cpps1,2), " ", fixed$(.cpps11,2), " ", fixed$(.cpps2,2)
+	endfor
+	removeObject: .kg
 endproc

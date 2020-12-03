@@ -77,7 +77,10 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double mi
 		NUMextrema (y.get(), & minimum, & maximum);
 	else
 		VECclip_inplace (y.get(), minimum, maximum);
-
+	if (maximum == minimum) {
+		maximum += 1.0;
+		minimum -= 1.0;
+	}
 	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
 	Graphics_function (g, y.asArgumentToFunctionThatExpectsOneBasedArray(), 1, numberOfSelected, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
 
