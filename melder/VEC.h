@@ -1,7 +1,7 @@
 #pragma once
 /* VEC.h
  *
- * Copyright (C) 2017-2019 Paul Boersma
+ * Copyright (C) 2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,11 +333,16 @@ inline autoVEC newVECcolumnSums (constMATVU const& x) {
 	return result;
 }
 
+extern autoVEC newVECto (double to);
 extern autoVEC newVECfrom_to (double from, double to);
 extern autoVEC newVECfrom_to_by (double from, double to, double by);
 extern autoVEC newVECfrom_to_count (double from, double to, integer count);
 extern autoVEC newVECbetween_by (double from, double to, double by);
 extern autoVEC newVECbetween_count (double from, double to, integer count);
-extern autoVEC newVECto (double to);
+
+extern autoINTVEC newINTVECto (integer to);
+extern autoINTVEC newINTVECfrom_to (integer from, integer to);
+extern autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by);
+extern autoINTVEC newINTVECfrom_to_count (integer from, integer to, integer count);
 
 /* End of file VEC.h */

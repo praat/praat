@@ -106,7 +106,7 @@ void TextGridView_viewAllWithSelectedOnTop (TextGridView me, integer selected) {
 	const integer originSize = my origin -> tiers -> size;
 	Melder_require (selected >= 0 && selected <= originSize,
 		U"The selected tier number should not exceed ", originSize, U".");
-	autoINTVEC tierNumbers = newINTVEClinear (originSize, 1, 1);
+	autoINTVEC tierNumbers = newINTVECto (originSize);
 	if (selected > 0) {
 		integer selectedPosition = 0;
 		for (integer inum = 1; inum <= tierNumbers.size; inum ++)
