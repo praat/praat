@@ -217,7 +217,7 @@ static void menu_cb_SetSelectionToZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	integer first, last;
 	Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
 	Editor_save (me, U"Set to zero");
-	sound -> z.verticalBand	(first, last) <<= 0.0;
+	sound -> z.verticalBand	(first, last)  <<=  0.0;
 	my v_reset_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);

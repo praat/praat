@@ -235,7 +235,7 @@ autoSound Sound_extractChannel (Sound me, integer channelNumber) {
 		Melder_require (channelNumber >= 1 && channelNumber <= my ny,
 			U"There is no channel ", channelNumber, U".");
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		thy z.row (1) <<= my z.row (channelNumber);
+		thy z.row (1)  <<=  my z.row (channelNumber);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": channel ", channelNumber, U" not extracted.");
@@ -259,7 +259,7 @@ autoSound Sound_extractChannels (Sound me, constVECVU const& channelNumbers) {
 				U", but it should not be greater than my number of channels, which is ",
 				my ny, U"."
 			);
-			your z.row (ichan) <<= my z.row (originalChannelNumber);
+			your z.row (ichan)  <<=  my z.row (originalChannelNumber);
 		}
 		return you;
 	} catch (MelderError) {
@@ -324,10 +324,10 @@ double Sound_getPowerInAir (Sound me) {
 autoSound Matrix_to_Sound_mono (Matrix me, integer rowNumber) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		if (rowNumber < 0) rowNumber = my ny + 1 + rowNumber;
-		if (rowNumber < 1) rowNumber = 1;
-		if (rowNumber > my ny) rowNumber = my ny;
-		thy z.row (1) <<= my z.row (rowNumber);
+		if (rowNumber < 0)
+			rowNumber = my ny + 1 + rowNumber;
+		Melder_clip (1_integer, & rowNumber, my ny);
+		thy z.row (1)  <<=  my z.row (rowNumber);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -375,7 +375,7 @@ autoSound Sound_upsample (Sound me) {
 				newDx, my x1 - 0.5 * (my dx - newDx));
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
 			autoVEC data = newVECzero (sampleRateFactor * nfft);   // zeroing is important...
-			data.part (antiTurnAround + 1, antiTurnAround + my nx) <<= my z.row (ichan);   // ...because this fills only part of the sound
+			data.part (antiTurnAround + 1, antiTurnAround + my nx)  <<=  my z.row (ichan);   // ...because this fills only part of the sound
 			NUMrealft (data.part (1, nfft), 1);
 			integer imin = (integer) (nfft * 0.95);
 			for (integer i = imin + 1; i <= nfft; i ++)
@@ -394,8 +394,10 @@ autoSound Sound_upsample (Sound me) {
 
 autoSound Sound_resample (Sound me, double samplingFrequency, integer precision) {
 	double upfactor = samplingFrequency * my dx;
-	if (fabs (upfactor - 2.0) < 1e-6) return Sound_upsample (me);
-	if (fabs (upfactor - 1.0) < 1e-6) return Data_copy (me);
+	if (fabs (upfactor - 2.0) < 1e-6)
+		return Sound_upsample (me);
+	if (fabs (upfactor - 1.0) < 1e-6)
+		return Data_copy (me);
 	try {
 		integer numberOfSamples = Melder_iround ((my xmax - my xmin) * samplingFrequency);
 		if (numberOfSamples < 1)
@@ -412,7 +414,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				for (integer i = 1; i <= nfft; i ++)
 					data [i] = 0.0;
-				data.part (antiTurnAround + 1, antiTurnAround + my nx) <<= my z.row (ichan);
+				data.part (antiTurnAround + 1, antiTurnAround + my nx)  <<=  my z.row (ichan);
 				NUMrealft (data.get(), 1);   // go to the frequency domain
 				for (integer i = Melder_ifloor (upfactor * nfft); i <= nfft; i ++)
 					data [i] = 0.0;   // filter away high frequencies
@@ -459,8 +461,8 @@ autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 		if (my dx != thy dx)
 			Melder_throw (U"The sampling frequencies are not equal.");
 		autoSound him = Sound_create (my ny, 0.0, nx * my dx, nx, my dx, 0.5 * my dx);
-		his z.verticalBand (1, my nx) <<= my z.all();
-		his z.verticalBand (my nx + nx_silence + 1, nx) <<= thy z.all();
+		his z.verticalBand (1, my nx)  <<=  my z.all();
+		his z.verticalBand (my nx + nx_silence + 1, nx)  <<=  thy z.all();
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": not appended.");
@@ -516,7 +518,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 					thy z [channel] [thySample] += sound -> z [channel] [mySample] * smoother [j];   // add
 				}
 				thy z.row (channel).part (sampleOffset + 1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
-						sampleOffset + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound) <<=
+						sampleOffset + sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound)  <<=
 						sound -> z.row (channel).part (1 + numberOfSmoothingSamplesAtTheStartOfThisSound,
 						sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
 				for (integer j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + sampleOffset;
@@ -1109,7 +1111,7 @@ autoSound Sound_extractPart (Sound me, double tmin, double tmax, kSound_windowSh
 			const integer itmin_clipped = std::max (1_integer, itmin);
 			const integer itmax_clipped = std::min (itmax, my nx);
 			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
-					<<= my z.row (ichan). part (itmin_clipped, itmax_clipped);
+					<<=  my z.row (ichan). part (itmin_clipped, itmax_clipped);
 		}
 		/*
 			Multiply by a window that extends throughout the target domain.
@@ -1153,7 +1155,7 @@ autoSound Sound_extractPartForOverlap (Sound me, double tmin, double tmax, doubl
 			const integer itmin_clipped = std::max (1_integer, itmin);
 			const integer itmax_clipped = std::min (itmax, my nx);
 			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
-					<<= my z.row (ichan). part (itmin_clipped, itmax_clipped);
+					<<=  my z.row (ichan). part (itmin_clipped, itmax_clipped);
 		}
 		return thee;
 	} catch (MelderError) {

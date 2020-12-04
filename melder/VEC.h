@@ -53,7 +53,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (constVECVU const& x, double number) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  +  number;
+	result.all()  <<=  x  +  number;
 	return result;
 }
 
@@ -69,7 +69,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (constVECVU const& x, double number) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  -  number;
+	result.all()  <<=  x  -  number;
 	return result;
 }
 
@@ -85,7 +85,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (constVECVU const& x, double factor) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  *  factor;
+	result.all()  <<=  x  *  factor;
 	return result;
 }
 
@@ -101,7 +101,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= number  +  x;
+	result.all()  <<=  number  +  x;
 	return result;
 }
 
@@ -117,7 +117,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= number  -  x;
+	result.all()  <<=  number  -  x;
 	return result;
 }
 
@@ -133,7 +133,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= number  *  x;
+	result.all()  <<=  number  *  x;
 	return result;
 }
 
@@ -151,7 +151,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (constVECVU const& x, constVECVU const& y) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  +  y;
+	result.all()  <<=  x  +  y;
 	return result;
 }
 
@@ -169,7 +169,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (constVECVU const& x, constVECVU const& y) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  -  y;
+	result.all()  <<=  x  -  y;
 	return result;
 }
 
@@ -187,7 +187,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (constVECVU const& x, constVECVU const& y) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  *  y;
+	result.all()  <<=  x  *  y;
 	return result;
 }
 
@@ -214,7 +214,7 @@ inline void VECcentre_inplace (VECVU const& x, double *out_mean = nullptr) noexc
 
 inline autoVEC newVECcolumn (constMATVU const& source, integer columnNumber) {
 	autoVEC target = newVECraw (source.nrow);
-	target.all() <<= source.column (columnNumber);
+	target.all()  <<=  source.column (columnNumber);
 	return target;
 }
 

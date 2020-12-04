@@ -246,7 +246,7 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 			} while (tryAdoption (distance.get(), path.all(), & totalDistance));
 			if (totalDistance < shortestDistance) {   // new shortest path
 				numberOfShortest = 1;
-				shortestPath.all() <<= path.all();
+				shortestPath.all()  <<=  path.all();
 				shortestDistance = totalDistance;
 			}
 			else if (totalDistance == shortestDistance)   // shortest path confirmed
