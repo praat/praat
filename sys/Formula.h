@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2005,2007,2008,2011-2019 Paul Boersma
+ * Copyright (C) 1990-2005,2007,2008,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,13 @@
 #define kFormula_EXPRESSION_TYPE_UNKNOWN  7
 
 Thing_declare (InterpreterVariable);
+
+/*
+	A stack element may be 24 bytes large, so with a stack size of 1'000'000
+	we have 24 MB for the stack. A formula instruction may be 16 bytes large,
+	so we have 16 MB for lexical analysis and 16 MB for the parse.
+*/
+#define Formula_MAXIMUM_STACK_SIZE  1'000'000
 
 typedef struct structStackel {
 	#define Stackel_NUMBER  0

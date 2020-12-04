@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2011,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 			Melder_assert (startSample >= 1);
 			Melder_assert (endSample <= my nx);
 
-			spectrum.all() <<= 0.0;
+			spectrum.all()  <<=  0.0;
 			/*
 				For multichannel sounds, the power spectrogram should represent the
 				average power in the channels,

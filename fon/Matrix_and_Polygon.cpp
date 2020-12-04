@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.cpp
  *
- * Copyright (C) 1992-2005,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,16 +29,16 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 				The first row will be interpreted as x values, the second as y values.
 			*/
 			thee = Polygon_create (my nx);
-			thy x.all() <<= my z.row (1);
-			thy y.all() <<= my z.row (2);
+			thy x.all()  <<=  my z.row (1);
+			thy y.all()  <<=  my z.row (2);
 		} else {
 			/*
 				The matrix has two columns.
 				The first column will be interpreted as x values, the second as y values.
 			*/
 			thee = Polygon_create (my ny);
-			thy x.all() <<= my z.column (1);
-			thy y.all() <<= my z.column (2);
+			thy x.all()  <<=  my z.column (1);
+			thy y.all()  <<=  my z.column (2);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -53,8 +53,8 @@ autoMatrix Polygon_to_Matrix (Polygon me) {
 			the first column will represent x, the second will represent y.
 		*/
 		autoMatrix thee = Matrix_create (1.0, my numberOfPoints, my numberOfPoints, 1.0, 1.0, 1.0, 2.0, 2, 1.0, 1.0);
-		thy z.row (1) <<= my x.get();
-		thy z.row (2) <<= my y.get();
+		thy z.row (1)  <<=  my x.get();
+		thy z.row (2)  <<=  my y.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

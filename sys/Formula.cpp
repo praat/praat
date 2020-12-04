@@ -166,7 +166,7 @@ enum { NO_SYMBOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 	#define LOW_FUNCTION_STR1  LENGTH_
-		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
+		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
 		READ_FILE_, READ_FILESTR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_, BACKSLASH_TRIGRAPHS_TO_UNICODE_, ENVIRONMENTSTR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENTSTR_
 		DATESTR_, INFOSTR_,
@@ -286,7 +286,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
 
-	U"length", U"number", U"fileReadable",	U"deleteFile", U"createDirectory", U"variableExists",
+	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"info$",
 	U"index", U"rindex",
@@ -2146,11 +2146,11 @@ void Formula_compile (Interpreter interpreter, Daata data, conststring32 express
 	theExpressionType [theLevel] = expressionType;
 	theOptimize = optimize;
 	if (! lexan) {
-		lexan = Melder_calloc_f (struct structFormulaInstruction, 3000);
-		lexan [3000 - 1]. symbol = END_;   // make sure that cleaning up always terminates
+		lexan = Melder_calloc_f (structFormulaInstruction, Formula_MAXIMUM_STACK_SIZE);
+		lexan [Formula_MAXIMUM_STACK_SIZE - 1]. symbol = END_;   // make sure that cleaning up always terminates
 	}
 	if (! parse)
-		parse = Melder_calloc_f (struct structFormulaInstruction, 3000);
+		parse = Melder_calloc_f (structFormulaInstruction, Formula_MAXIMUM_STACK_SIZE);
 
 	/*
 		Clean up strings from the previous call.
@@ -2204,8 +2204,6 @@ conststring32 structStackel :: whichText () {
 }
 
 static int programPointer;
-
-#define Formula_MAXIMUM_STACK_SIZE  1000
 
 static Stackel theStack;
 static integer w, wmax;   /* w = stack pointer; */
@@ -2761,7 +2759,7 @@ static void do_sub () {
 				result# = x - y#
 			*/
 			if (y->owned) {
-				y->numericVector <<= x->number  -  y->numericVector;
+				y->numericVector  <<=  x->number  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
 				x->numericVector = newVECsubtract (x->number, y->numericVector). releaseToAmbiguousOwner();
@@ -2798,7 +2796,7 @@ static void do_sub () {
 			if (x -> owned) {
 				x->numericVector  -=  y->numericVector;
 			} else if (y -> owned) {
-				y->numericVector <<= x->numericVector  -  y->numericVector;
+				y->numericVector  <<=  x->numericVector  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
 				// no clean-up of x required, because x is not owned and has the right type
@@ -4785,6 +4783,26 @@ static void do_fileReadable () {
 		Melder_throw (U"The function \"fileReadable\" requires a string, not ", s->whichText(), U".");
 	}
 }
+static void do_tryToWriteFile () {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (s->getString(), & file);
+		pushNumber (Melder_tryToWriteFile (& file));
+	} else {
+		Melder_throw (U"The function \"tryToWriteFile\" requires a string, not ", s->whichText(), U".");
+	}
+}
+static void do_tryToAppendFile () {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		structMelderFile file { };
+		Melder_relativePathToFile (s->getString(), & file);
+		pushNumber (Melder_tryToAppendFile (& file));
+	} else {
+		Melder_throw (U"The function \"tryToAppendFile\" requires a string, not ", s->whichText(), U".");
+	}
+}
 static void do_STRdate () {
 	pushString (STRdate ());
 }
@@ -5528,14 +5546,14 @@ static void do_tensorLiteral () {
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		integer sharedNumberOfColumns = last->numericVector.size;
 		autoMAT result = newMATraw (numberOfElements, sharedNumberOfColumns);
-		result.row (numberOfElements) <<= last->numericVector;
+		result.row (numberOfElements)  <<=  last->numericVector;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
 			Stackel element = pop;
 			Melder_require (element->which == Stackel_NUMERIC_VECTOR,
 				U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a vector.");
 			Melder_require (element->numericVector.size == sharedNumberOfColumns,
 				U"The vectors have to be of the same size, not ", element->numericVector.size, U" and ", sharedNumberOfColumns);
-			result.row (ielement) <<= element->numericVector;
+			result.row (ielement)  <<=  element->numericVector;
 		}
 		pushNumericMatrix (result.move());
 	} else {
@@ -6976,7 +6994,7 @@ void Formula_run (integer row, integer col, Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
 	if (! theStack) {
-		theStack = Melder_calloc_f (struct structStackel, 1+Formula_MAXIMUM_STACK_SIZE);
+		theStack = Melder_calloc_f (structStackel, 1+Formula_MAXIMUM_STACK_SIZE);
 		if (! theStack)
 			Melder_throw (U"Out of memory during formula computation.");
 	}
@@ -7167,6 +7185,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
+} break; case TRY_TO_WRITE_FILE_: { do_tryToWriteFile ();
+} break; case TRY_TO_APPEND_FILE_: { do_tryToAppendFile ();
 } break; case DATESTR_: { do_STRdate ();
 } break; case INFOSTR_: { do_infoStr ();
 } break; case LEFTSTR_: { do_STRleft ();

@@ -210,7 +210,7 @@ void PointProcess_addPoints (PointProcess me, constVECVU const& times) {
 	try {
 		const integer newNumberOfPoints = my nt + times.size;
 		my t. resize (newNumberOfPoints);
-		my t.part (my nt + 1, newNumberOfPoints) <<= times;
+		my t.part (my nt + 1, newNumberOfPoints)  <<=  times;
 		my nt = newNumberOfPoints;   // maintain invariant
 		VECsort_inplace (my t.get());
 	} catch (MelderError) {

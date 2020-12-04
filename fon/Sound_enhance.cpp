@@ -1,6 +1,6 @@
 /* Sound_enhance.cpp
  *
- * Copyright (C) 1992-2011,2015-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1.0);
 				if (fmax > fhigh) fmax = fhigh;
 				Melder_progress (fmin / fhigh, U"Band: ", Melder_fixed (fmin, 0), U" ... ", Melder_fixed (fmax, 0), U" Hz");
-				spec -> z.all() <<= orgspec -> z.all();
+				spec -> z.all()  <<=  orgspec -> z.all();
 				Spectrum_passHannBand (spec.get(), fmin, fmax, bandSmoothing);
 				autoSound band = Spectrum_to_Sound (spec.get());
 				/*

@@ -1,7 +1,7 @@
 #pragma once
 /* VEC.h
  *
- * Copyright (C) 2017-2019 Paul Boersma
+ * Copyright (C) 2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (constVECVU const& x, double number) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  +  number;
+	result.all()  <<=  x  +  number;
 	return result;
 }
 
@@ -69,7 +69,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (constVECVU const& x, double number) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  -  number;
+	result.all()  <<=  x  -  number;
 	return result;
 }
 
@@ -85,7 +85,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (constVECVU const& x, double factor) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  *  factor;
+	result.all()  <<=  x  *  factor;
 	return result;
 }
 
@@ -101,7 +101,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= number  +  x;
+	result.all()  <<=  number  +  x;
 	return result;
 }
 
@@ -117,7 +117,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= number  -  x;
+	result.all()  <<=  number  -  x;
 	return result;
 }
 
@@ -133,7 +133,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (double number, constVECVU const& x) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= number  *  x;
+	result.all()  <<=  number  *  x;
 	return result;
 }
 
@@ -151,7 +151,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (constVECVU const& x, constVECVU const& y) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  +  y;
+	result.all()  <<=  x  +  y;
 	return result;
 }
 
@@ -169,7 +169,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (constVECVU const& x, constVECVU const& y) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  -  y;
+	result.all()  <<=  x  -  y;
 	return result;
 }
 
@@ -187,7 +187,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (constVECVU const& x, constVECVU const& y) {
 	autoVEC result = newVECraw (x.size);
-	result.all() <<= x  *  y;
+	result.all()  <<=  x  *  y;
 	return result;
 }
 
@@ -214,7 +214,7 @@ inline void VECcentre_inplace (VECVU const& x, double *out_mean = nullptr) noexc
 
 inline autoVEC newVECcolumn (constMATVU const& source, integer columnNumber) {
 	autoVEC target = newVECraw (source.nrow);
-	target.all() <<= source.column (columnNumber);
+	target.all()  <<=  source.column (columnNumber);
 	return target;
 }
 
@@ -333,11 +333,16 @@ inline autoVEC newVECcolumnSums (constMATVU const& x) {
 	return result;
 }
 
+extern autoVEC newVECto (double to);
 extern autoVEC newVECfrom_to (double from, double to);
 extern autoVEC newVECfrom_to_by (double from, double to, double by);
 extern autoVEC newVECfrom_to_count (double from, double to, integer count);
 extern autoVEC newVECbetween_by (double from, double to, double by);
 extern autoVEC newVECbetween_count (double from, double to, integer count);
-extern autoVEC newVECto (double to);
+
+extern autoINTVEC newINTVECto (integer to);
+extern autoINTVEC newINTVECfrom_to (integer from, integer to);
+extern autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by);
+extern autoINTVEC newINTVECfrom_to_count (integer from, integer to, integer count);
 
 /* End of file VEC.h */
