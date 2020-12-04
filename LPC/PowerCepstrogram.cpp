@@ -29,6 +29,17 @@
 
 Thing_implement (PowerCepstrogram, Matrix, 2); // derives from Matrix -> also version 2
 
+double structPowerCepstrogram :: v_getValueAtSample (integer sampleNumber, integer row, int unit) {
+	double result = undefined;
+	if (row >= 1 && row <= ny) {
+		if (unit == 0)
+			result = z [row] [sampleNumber];
+		else
+			result = 10.0 * log10 (z [row] [sampleNumber] + 1e-30); // always positive
+	}
+	return result;
+}
+
 autoPowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
 	double qmin, double qmax, integer nq, double dq, double q1) {
 	try {
@@ -156,6 +167,42 @@ autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor,
 	}
 }
 
+static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_new (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+	try {
+		autoPowerCepstrogram thee = Data_copy (me);
+		/*
+			1. average across time
+		*/
+		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
+		if (numberOfFrames > 1) {
+			const double halfWindwow = 0.5 * timeAveragingWindow;
+			autoVEC qout = newVECraw (my nx);
+			for (integer iq = 1; iq <= my ny; iq ++) {
+				for (integer iframe = 1; iframe <= my nx; iframe ++) {
+					const double xmid = Sampled_indexToX (me, iframe);
+					qout [iframe] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, iq, 0, false);
+				}
+				thy z.row (iq)  <<=  qout.all();
+			}
+		}
+		/*
+			2. average across quefrencies
+		*/
+		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
+		if (numberOfQuefrencyBins > 1) {
+			autoPowerCepstrum smooth = PowerCepstrum_create (thy ymax, thy ny);
+			for (integer iframe = 1; iframe <= thy nx; iframe ++) {
+				smooth -> z.row (1)  <<=  thy z.column (iframe);
+				PowerCepstrum_smooth (smooth.get(), quefrencyAveragingWindow, 1);
+				thy z.column (iframe)  <<=  smooth -> z.row (1);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not smoothed.");
+	}
+}
+
 static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
@@ -189,7 +236,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		/*
 			1. average across time
 		*/
-		const double numberOfSigmasInWindow = (Melder_debug == -5 ? 2.0 : 4.0 );
+		const double numberOfSigmasInWindow = 4.0;
 		const double numberOfFrames = timeAveragingWindow / my dx;
 		if (numberOfFrames > 1.0) {
 			const double sigma = numberOfFrames / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
@@ -245,7 +292,7 @@ autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, 
 		integer iframe = Sampled_xToNearestIndex (me, time);
 		iframe = iframe < 1 ? 1 : iframe > my nx ? my nx : iframe;
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
-		thy z.row (1) <<= my z.column (iframe);
+		thy z.row (1)  <<=  my z.column (iframe);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Cepstrum not extracted.");

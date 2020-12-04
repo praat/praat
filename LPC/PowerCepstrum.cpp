@@ -22,14 +22,15 @@
 
 Thing_implement (PowerCepstrum, Cepstrum, 2); // derives from Matrix therefore also version 2
 
-double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer which, int /* units */) {
-	if (which == 0) {
-		return z [1] [isamp];
-	} else {
-		// dB's
-		return 10.0 * log10 (z [1] [isamp] + 1e-30); // always positive
+double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer row, int units) {
+	double result = undefined;
+	if (row == 1) {
+		if (units == 0)
+			result = z [1] [isamp];
+		else
+			result = 10.0 * log10 (z [1] [isamp] + 1e-30); // always positive
 	}
-	return undefined;
+	return result;
 }
 
 autoPowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me ) {
@@ -76,7 +77,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 			return;
 		MelderExtremaWithInit extrema_db;
 		for (integer i = imin; i <= imax; i ++)
-			extrema_db.update (my v_getValueAtSample (i, 1, 0));
+			extrema_db.update (my v_getValueAtSample (i, 1, 1));
 		dBmaximum = extrema_db.max;
 		dBminimum = extrema_db.min;
 	}
@@ -158,7 +159,7 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 			x [i] = my x1 + (isamp - 1) * my dx;
 			if (lineType == kCepstrumTrendType::EXPONENTIAL_DECAY)
 				x [i] = log (x [i]);
-			y [i] = my v_getValueAtSample (isamp, 1, 0);
+			y [i] = my v_getValueAtSample (isamp, 1, 1);
 		}
 		if (method == kCepstrumTrendFit::LEAST_SQUARES)
 			NUMlineFit_LS (x.get(), y.get(), & a, & intercept);
@@ -186,7 +187,7 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 		q = j == 1 ? 0.5 * my dx : q; // approximation
 		double xq = lineType == 2 ? log(q) : q;
 		double db_background = slope * xq + intercept;
-		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
+		double db_cepstrum = my v_getValueAtSample (j, 1, 1);
 		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10) - 1e-30;
 		my z [1] [j] = diff;
 	}
@@ -200,7 +201,7 @@ static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double sl
 		q = j == 1 ? 0.5 * my dx : q; // approximation
 		double xq = lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ? log(q) : q;
 		double db_background = slope * xq + intercept;
-		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
+		double db_cepstrum = my v_getValueAtSample (j, 1, 1);
 		double diff = db_cepstrum - db_background;
 		if (diff < 0) {
 			diff = 0;
@@ -226,6 +227,24 @@ autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFi
 	}
 }
 
+static void PowerCepstrum_smooth_inplaceRectangular_new (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
+	try {
+		double halfWindwow = 0.5 * quefrencyAveragingWindow;
+		double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
+		if (numberOfQuefrencyBins > 1.0) {
+			autoVEC qout = newVECraw (my nx);
+			for (integer k = 1; k <= numberOfIterations; k ++) {
+				for (integer isamp = 1; isamp <= my nx; isamp ++) {
+					const double xmid = Sampled_indexToX (me, isamp);
+					qout [isamp] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, 0, 0, false);
+				}
+				my z.row (1)  <<=  qout.all();
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": not smoothed.");
+	}
+}
 static void PowerCepstrum_smooth_inplaceRectangular (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	try {
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
@@ -252,7 +271,7 @@ static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefr
 				Applying  two Gaussians after another is associative: (G(s2)*(G(s1)*f) = (G(s2)*G(s1))*f.
 				G(s2) * G(s1) = G(s), where s^2=s1^2+s2^2
 			*/
-			const double numberOfSigmasInWindow = (Melder_debug == -5 ? 2.0 : 4.0 );
+			const double numberOfSigmasInWindow = 4.0;
 			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow; // 3sigma -> 99.7 % of the data (2sigma -> 95.4%)g 
 			const double sigma_n = sqrt (numberOfIterations) * sigma;
 			VECsmooth_gaussian_inplace (my z.row (1), sigma_n);
@@ -268,8 +287,10 @@ static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefr
 }
 
 void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
-	if (Melder_debug == -4 || Melder_debug == -5)
+	if (Melder_debug == -4)
 		PowerCepstrum_smooth_inplaceGaussian (me, quefrencyAveragingWindow, numberOfIterations);
+	else if (Melder_debug == -5)
+		PowerCepstrum_smooth_inplaceRectangular_new (me, quefrencyAveragingWindow, numberOfIterations);
 	else
 		PowerCepstrum_smooth_inplaceRectangular (me, quefrencyAveragingWindow, numberOfIterations);
 }
@@ -284,7 +305,7 @@ void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, 
 	autoPowerCepstrum thee = Data_copy (me);
 	double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
 	for (integer i = 1; i <= my nx; i ++) {
-		thy z [1] [i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
+		thy z [1] [i] = my v_getValueAtSample (i, 1, 1); // 10 log val^2
 	}
 	double peakdB, quefrency;
 	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, peakInterpolationType, & peakdB, & quefrency);   // FIXME cast
@@ -313,7 +334,7 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 	
 	double sum = 0.0, sumr = 0.0;
 	for (integer i = imin; i <= imax; i ++) {
-		double val = my v_getValueAtSample (i, 0, 0);
+		double val = my v_getValueAtSample (i, 1, 0);
 		double qx = my x1 + (i - 1) * my dx;
 		sum += val;
 		// is qx within an interval around a multiple of the peak's q ?

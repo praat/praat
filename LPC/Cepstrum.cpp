@@ -34,12 +34,12 @@
 
 Thing_implement (Cepstrum, Matrix, 2);
 
-double structCepstrum :: v_getValueAtSample (integer isamp, integer which, int /* units */) {
-	if (which == 0) {
-		return z [1] [isamp];
-	} else {
-		// dB's
-		return 20.0 * log10 (fabs (z [1] [isamp]) + 1e-30);
+double structCepstrum :: v_getValueAtSample (integer isamp, integer which, int units) {
+	if (which == 1) {
+		if (units == 0)
+			return z [1] [isamp];
+		else
+			return 20.0 * log10 (fabs (z [1] [isamp]) + 1e-30); // dB's
 	}
 	return undefined;
 }
@@ -71,7 +71,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double mi
 	autoVEC y = newVECraw (numberOfSelected);
 
 	for (integer i = 1; i <= numberOfSelected; i ++)
-		y [i] = my v_getValueAtSample (imin + i - 1, (power ? 1 : 0), 0);
+		y [i] = my v_getValueAtSample (imin + i - 1, 1, (power ? 1 : 0));
 
 	if (minimum >= maximum) // autoscaling
 		NUMextrema (y.get(), & minimum, & maximum);

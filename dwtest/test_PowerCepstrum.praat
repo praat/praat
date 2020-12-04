@@ -31,13 +31,13 @@ appendInfoLine: tab$, "Rhamonics-to-noise-ratio: ", rnr
 
 @draw_powercepstrum: powercepstrum
 
-appendInfoLine: tab$, "New smoothing: 6 sigma"
+appendInfoLine: tab$, "Gaussian smoothing: 4 sigma"
 Debug: "no", -4
 @testSmoothing
-appendInfoLine: tab$, "New smoothing: 4 sigma"
+appendInfoLine: tab$, "New smoothing: integration"
 Debug: "no", -5
 @testSmoothing
-appendInfoLine: tab$, "Old smoothing:"
+appendInfoLine: tab$, "Old smoothing: square"
 Debug: "no", 0
 @testSmoothing
 
