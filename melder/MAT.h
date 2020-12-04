@@ -1,7 +1,7 @@
 #pragma once
 /* MAT.h
  *
- * Copyright (C) 2017-2019 Paul Boersma
+ * Copyright (C) 2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constMATVU const& x, double number) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  +  number;
+	result.all()  <<=  x  +  number;
 	return result;
 }
 
@@ -99,7 +99,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constMATVU const& x, double number) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  *  number;
+	result.all()  <<=  x  *  number;
 	return result;
 }
 
@@ -117,7 +117,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constMATVU const& x, double number) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  -  number;
+	result.all()  <<=  x  -  number;
 	return result;
 }
 
@@ -135,7 +135,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (double number, constMATVU const& x) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= number  -  x;
+	result.all()  <<=  number  -  x;
 	return result;
 }
 
@@ -154,7 +154,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constMATVU const& x, constVECVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  +  y;
+	result.all()  <<=  x  +  y;
 	return result;
 }
 
@@ -173,7 +173,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constMATVU const& x, constVECVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  *  y;
+	result.all()  <<=  x  *  y;
 	return result;
 }
 
@@ -192,7 +192,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constMATVU const& x, constVECVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  -  y;
+	result.all()  <<=  x  -  y;
 	return result;
 }
 
@@ -211,7 +211,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constVECVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (y.nrow, y.ncol);
-	result.all() <<= x  +  y;
+	result.all()  <<=  x  +  y;
 	return result;
 }
 
@@ -230,7 +230,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constVECVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (y.nrow, y.ncol);
-	result.all() <<= x  *  y;
+	result.all()  <<=  x  *  y;
 	return result;
 }
 
@@ -249,7 +249,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constVECVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (y.nrow, y.ncol);
-	result.all() <<= x  -  y;
+	result.all()  <<=  x  -  y;
 	return result;
 }
 
@@ -269,7 +269,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  +  y;
+	result.all()  <<=  x  +  y;
 	return result;
 }
 
@@ -289,7 +289,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  *  y;
+	result.all()  <<=  x  *  y;
 	return result;
 }
 
@@ -309,7 +309,7 @@ GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = newMATraw (x.nrow, x.ncol);
-	result.all() <<= x  -  y;
+	result.all()  <<=  x  -  y;
 	return result;
 }
 

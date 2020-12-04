@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,14 +281,14 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 	trace (tmin, U" ", tmax, U" ", tminTarget, U" ", imin, U" ", imax, U" ", iminTarget);
 	const integer imaxTarget = iminTarget + (imax - imin);
 	Melder_assert (imaxTarget <= thy nx);
-	thy z.row (1).part (iminTarget, imaxTarget) <<= my z.row (1).part (imin, imax);
+	thy z.row (1).part (iminTarget, imaxTarget)  <<=  my z.row (1).part (imin, imax);
 }
 
 autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (source -> nt < 2 || target -> nt < 2) {   // almost completely voiceless?
-			thy z.all() <<= my z.all();
+			thy z.all()  <<=  my z.all();
 			return thee;
 		}
 		for (integer i = 1; i <= target -> nt; i ++) {

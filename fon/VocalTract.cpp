@@ -1,6 +1,6 @@
 /* VocalTract.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ void VocalTract_draw (VocalTract me, Graphics g) {
 autoMatrix VocalTract_to_Matrix (VocalTract me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -153,7 +153,7 @@ autoMatrix VocalTract_to_Matrix (VocalTract me) {
 autoVocalTract Matrix_to_VocalTract (Matrix me) {
 	try {
 		autoVocalTract thee = VocalTract_create (my nx, my dx);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to VocalTract.");

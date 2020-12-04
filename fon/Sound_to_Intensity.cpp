@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 			constVEC windowPart = window.part (windowFromSoundOffset + leftSample, windowFromSoundOffset + rightSample);
 			longdouble sumxw = 0.0, sumw = 0.0;
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
-				amplitudePart <<= my z [ichan].part (leftSample, rightSample);
+				amplitudePart  <<=  my z [ichan].part (leftSample, rightSample);
 				if (subtractMeanPressure)
 					VECcentre_inplace (amplitudePart);
 				for (integer isamp = 1; isamp <= amplitudePart.size; isamp ++) {

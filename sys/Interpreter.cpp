@@ -718,7 +718,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			/*
 				Statement like: a# = b#   // with matching sizes
 			*/
-			variable -> numericVectorValue.all() <<= movedVector;
+			variable -> numericVectorValue.all()  <<=  movedVector;
 		}
 	} else {
 		/*
@@ -744,7 +744,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			/*
 				Statement like: a## = b##   // with matching sizes
 			*/
-			variable -> numericMatrixValue.all() <<= movedMatrix;
+			variable -> numericMatrixValue.all()  <<=  movedMatrix;
 		}
 	} else {
 		/*
