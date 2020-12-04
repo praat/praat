@@ -199,8 +199,8 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 			autoNUMfft_Table fourierTable;
 			NUMfft_Table_init (& fourierTable, nfft);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, & fourierTable);
-				VECabs_inplace (thy z.row (iq));
+				VECsmooth_gaussian (thy z .row (iq), my z.row (iq), sigma, fourierTable);
+				VECabs_inplace (thy z .row (iq));
 			}
 		}
 		/*
@@ -214,9 +214,13 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 			autoNUMfft_Table fourierTable;
 			NUMfft_Table_init (& fourierTable, nfft);
 			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
+			autoVEC smooth = newVECzero (nfft);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
-				VECsmooth_gaussian (thy z.column (iframe), thy z.column (iframe), sigma, & fourierTable);
-				VECabs_inplace (thy z.column (iframe));
+				VECVU thycolumn = thy z.column (iframe);
+				smooth .part (1, thycolumn.size)  <<=  thycolumn .part (1, thycolumn.size);
+				VECsmooth_gaussian_inplace (smooth.get(), sigma, & fourierTable);
+				VECabs_inplace (smooth.get());
+				thycolumn .part (1, thycolumn.size)  <<=  smooth .part (1, thycolumn.size);
 			}
 		}
 		return thee;

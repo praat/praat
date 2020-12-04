@@ -136,13 +136,18 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 	}
 }
 
-void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma, NUMfft_Table fftTable) {
-	Melder_require (in.size <= fftTable -> n,
-		U"The dimension of the table should at least equal the length of the input vector.");
+void VECsmooth_gaussian (VECVU const& out, constVECVU const& in, double sigma, NUMfft_Table fftTable) {
 	Melder_require (out.size == in.size,
-		U"The size of the input and the output vector should be equal.");
+		U"The sizes of the input and output vectors should be equal.");
+	out <<= in;
+	VECsmooth_gaussian_inplace (out, sigma, fftTable);
+}
+
+void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMfft_Table fftTable) {
+	Melder_require (in_out.size <= fftTable -> n,
+		U"The dimension of the table should at least equal the length of the input vector.");
 	autoVEC smooth = newVECzero (fftTable -> n);
-	smooth.part (1, in.size)  <<=  in;
+	smooth.part (1, in_out.size)  <<=  in_out;
 	NUMfft_forward (fftTable, smooth.get());
 	/*
 		Low pass filter with a Gaussian.
@@ -166,17 +171,17 @@ void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma, NUMfft
 		backwardFT (forwardFT (data)) = n * data;
 	*/
 	const double scaleFacor = 1.0 / fftTable -> n;
-	smooth.part (1, in.size)  *=  scaleFacor;
-	out  <<=  smooth.part (1, out.size);
+	smooth.part (1, in_out.size)  *=  scaleFacor;
+	in_out  <<=  smooth.part (1, in_out.size);
 }
 
-void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma) {
+void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma) {
 	integer nfft = 1;
-	while (nfft < in.size)
+	while (nfft < in_out.size)
 		nfft *= 2;
 	autoNUMfft_Table fftTable;
 	NUMfft_Table_init (& fftTable, nfft);
-	VECsmooth_gaussian (out, in, sigma, & fftTable);
+	VECsmooth_gaussian_inplace (in_out, sigma, & fftTable);
 }
 
 autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) {
@@ -2891,7 +2896,7 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 static void VECupdateDataAndSupport_inplace (VECVU const& v, BOOLVECVU const& support, integer numberOfNonZeros) {
 	Melder_assert (v.size == support.size);
 	autoVEC abs = newVECabs (v);
-	autoINTVEC index = newINTVEClinear (v.size, 1, 1);
+	autoINTVEC index = newINTVECto (v.size);
 	NUMsortTogether <double, integer> (abs.get(), index.get()); // sort is always increasing
 	for (integer i = 1; i <= v.size - numberOfNonZeros; i ++) {
 		v [index [i]] = 0.0;

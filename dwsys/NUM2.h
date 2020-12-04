@@ -1166,14 +1166,14 @@ void NUMreverseRealFastFourierTransform (VEC data);
 */
 void NUMrealft (VEC data, integer direction);
 
-void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma);
-void VECsmooth_gaussian (VECVU const& out, VECVU const& in, double sigma, NUMfft_Table fftTable);
+void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma);
+void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMfft_Table fftTable);
+void VECsmooth_gaussian (VECVU const& out, constVECVU const& in, double sigma, NUMfft_Table fftTable);
 /*
-	Smooth the vector 'in' by convolving with a Gaussian, i.e. convolve with gaussian by
+	Smooth the vector 'in/in_out' by convolving with a Gaussian, i.e. convolve with gaussian by
 	using the Fourier Transform. Normally an FFT is used unless otherwise specified in 'fftTable"
 	If fftTable == nullptr the FFT of size 2^k is used, where 2^(k-1) < n <= 2^k.
 	For a given fftTable we require that fftTable->n >= n.
-	The input and the output vector may be the same vector.
 */
 
 integer NUMgetIndexFromProbability (constVEC probs, double p); //TODO HMM zero start matrices
