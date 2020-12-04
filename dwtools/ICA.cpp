@@ -791,7 +791,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 		autoSVD svd = SVD_createFromGeneralMatrix (d.get());
 		autoCrossCorrelationTableList me = CrossCorrelationTableList_create ();
 
-		d.get() <<= 0.0;
+		d.all()  <<=  0.0;
 
 		// Start with a diagonal matrix D and calculate V'DV
 

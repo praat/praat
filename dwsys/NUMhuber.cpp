@@ -36,7 +36,7 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 	}
 	
 	VEC work = workSpace.part (1, x.size);
-	work <<= x;
+	work  <<=  x;
 	
 	if (wantlocation) {
 		VECsort_inplace (work);

@@ -28,7 +28,7 @@ autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 	try {
 		autoMAT synthesis = SVD_synthesize (me, from, to);
 		autoTableOfReal thee = TableOfReal_create (synthesis.nrow, synthesis.ncol);
-		thy data.get() <<= synthesis.get();
+		thy data.all() <<=   synthesis.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal synthesized.");

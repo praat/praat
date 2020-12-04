@@ -32,7 +32,7 @@ autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee) {
 			his rowLabels [i] = Melder_dup (category -> string.get());
 		}
 		
-		his data.get() <<= my z.get();
+		his data.all()  <<=  my z.all();
 		
 		return him;
 	} catch (MelderError) {

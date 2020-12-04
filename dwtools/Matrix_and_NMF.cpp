@@ -56,7 +56,7 @@ autoMatrix NMF_to_Matrix (NMF me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
 		autoMAT result = NMF_synthesize (me);
-		thy z.get() <<= result.get();
+		thy z.all()  <<=  result.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Matrix not created.");

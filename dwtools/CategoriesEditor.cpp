@@ -394,7 +394,7 @@ static autoCategoriesEditorRemove CategoriesEditorRemove_create (Thing boss, con
 	try {
 		autoCategoriesEditorRemove me = Thing_new (CategoriesEditorRemove);
 		CategoriesEditorCommand_init (me.get(), U"Remove", boss, CategoriesEditorRemove_execute, CategoriesEditorRemove_undo, posList.size, posList.size);
-		my selection.get() <<= posList;
+		my selection.all()  <<=  posList;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"CategoriesEditorRemove not created.");
@@ -443,7 +443,7 @@ static autoCategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, a
 		autoCategoriesEditorReplace me = Thing_new (CategoriesEditorReplace);
 		CategoriesEditorCommand_init (me.get(), U"Replace", boss, CategoriesEditorReplace_execute,
 			CategoriesEditorReplace_undo, posList.size + 1, posList.size);
-		my selection.get() <<= posList;
+		my selection.all()  <<=  posList;
 		my categories -> addItem_move (str.move());
 		return me;
 	} catch (MelderError) {
@@ -484,7 +484,7 @@ static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, con
 	try {
 		autoCategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
 		CategoriesEditorCommand_init (me.get(), U"Move up", boss, CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posList.size);
-		my selection.get() <<= posList;
+		my selection.all()  <<=  posList;
 		my newPos = newPos;
 		return me;
 	} catch (MelderError) {
@@ -526,7 +526,7 @@ static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss,
 	try {
 		autoCategoriesEditorMoveDown me = Thing_new (CategoriesEditorMoveDown);
 		CategoriesEditorCommand_init (me.get(), U"Move down", boss, CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 0, posList.size);
-		my selection.get() <<= posList;
+		my selection.all()  <<=  posList;
 		my newPos = newPos;
 		return me;
 	} catch (MelderError) {

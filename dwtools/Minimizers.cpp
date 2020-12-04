@@ -111,7 +111,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, integer maxIterationsPerTime, in
 void Minimizer_reset (Minimizer me, constVEC const& guess) {
 	Melder_assert (guess.size == 0 || guess.size >= my numberOfParameters);
 	if (guess.size > 0)
-		my p.get() <<= guess;
+		my p.all()  <<=  guess;
 	else
 		for (integer i = 1; i <= my numberOfParameters; i ++)
 			my p [i] = NUMrandomUniform (-1.0, 1.0);

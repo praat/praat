@@ -249,10 +249,9 @@ static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefr
 		double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
 		if (numberOfQuefrencyBins > 1.0) {
 			/*
-				Applying  Gaussian after another is associative: G(s2)*(G(s1)*f) = (G(s2)*G(s1))*f.
+				Applying  two Gaussians after another is associative: (G(s2)*(G(s1)*f) = (G(s2)*G(s1))*f.
 				G(s2) * G(s1) = G(s), where s^2=s1^2+s2^2
 			*/
-			autoVEC smooth = newVECcopy (my z.row (1));
 			const double numberOfSigmasInWindow = (Melder_debug == -5 ? 2.0 : 4.0 );
 			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow; // 3sigma -> 99.7 % of the data (2sigma -> 95.4%)g 
 			const double sigma_n = sqrt (numberOfIterations) * sigma;
@@ -261,8 +260,7 @@ static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefr
 				Due to imprecise arithmatic some values might turn out to be negative
 				(but very small). Just make them positive.
 			*/
-			VECabs_inplace (smooth.get());
-			my z.row(1) <<= smooth.get();
+			VECabs_inplace (my z.row (1));
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");

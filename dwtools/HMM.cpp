@@ -531,7 +531,7 @@ void HMM_setDefaultMixingProbabilities (HMM me) {
 	const double mp = 1.0 / my numberOfMixtureComponents;
 	for (integer is = 1; is <= my numberOfObservationSymbols; is ++) {
 		HMMObservation hmmo = my observationSymbols->at [is];
-		hmmo -> gm -> mixingProbabilities.get() <<= mp;
+		hmmo -> gm -> mixingProbabilities.all()  <<=  mp;
 	}
 }
 
@@ -819,12 +819,12 @@ void HMMBaumWelch_reInit (HMMBaumWelch me) {
 		The elements of alpha, beta, scale, gamma & xi are always calculated directly and need not be
 		initialised.
 	*/
-	my aij_num_p0.get () <<= 0.0;
-	my aij_num.get () <<= 0.0;
-	my aij_denom_p0.get () <<= 0.0;
-	my aij_denom.get () <<= 0.0;
-	my bik_num.get() <<= 0.0;
-	my bik_denom.get() <<= 0.0;
+	my aij_num_p0.all()  <<=  0.0;
+	my aij_num.all()  <<=  0.0;
+	my aij_denom_p0.all()  <<=  0.0;
+	my aij_denom.all()  <<=  0.0;
+	my bik_num.all()  <<=  0.0;
+	my bik_denom.all()  <<=  0.0;
 }
 
 static integer HMM_getState_notHidden (HMM me, conststring32 stateLabel) {
@@ -904,7 +904,7 @@ static void HMM_HMMObservationSequenceBag_learn_notHidden (HMM me, HMMObservatio
 	autoINTVEC stateSequenceNumbers = HMM_HMMObservationSequenceBag_getStateSequences (me, thee);
 	if (stateSequenceNumbers.size < 2)
 		return;
-	my transitionProbs.get() <<= 0.0;
+	my transitionProbs.all()  <<=  0.0;
 	integer inum = 2;
 	integer stateNumber = stateSequenceNumbers [1];
 	while (inum < stateSequenceNumbers.size) {
@@ -1440,14 +1440,14 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 	autoVEC alpha_t = newVECraw (my numberOfStates);
 	autoVEC alpha_tm1 = newVECzero (my numberOfStates);
 
-	alpha_t. all() <<= my initialStateProbs.get();
+	alpha_t.all() <<= my initialStateProbs.all();
 	scale [1] = NUMsum (alpha_t.all());
 
 	alpha_t. all() /= scale [1];
 	
 	// recursion
 	for (integer it = 2; it <= itime; it ++) {
-		alpha_tm1.get() <<= alpha_t.get();
+		alpha_tm1.all()  <<=  alpha_t.all();
 
 		for (integer js = 1; js <= my numberOfStates; js ++) {
 			longdouble sum = 0.0; // NUMinner (alpha_tm1.get(), my transitionProbs.column (js));
@@ -1490,11 +1490,11 @@ double HMM_getProbabilityOfObservations (HMM me, constINTVEC obs) {
 	Melder_require (scale [1] > 0.0,
 		U"The observation sequence should not start with a symbol whose state has zero starting probability.");
 	
-	alpha_t.get()  /=  scale [1];
+	alpha_t.all()  /=  scale [1];
 
 	// recursion
 	for (integer it = 2; it <= numberOfTimes; it ++) {
-		alpha_tm1.get() <<= alpha_t.get();
+		alpha_tm1.all()  <<=  alpha_t.all();
 
 		for (integer js = 1; js <= my numberOfStates; js ++) {
 			longdouble sum = 0.0;

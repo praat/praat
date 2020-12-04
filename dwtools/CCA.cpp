@@ -239,7 +239,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		// u = V a -> a = V'u
 
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			buf.get() <<= his data.row (i).part (1, ny);
+			buf.all()  <<=  his data.row (i).part (1, ny);
 			for (integer j = 1; j <= ny; j ++) {
 				longdouble t = 0.0;
 				for (integer k = 1; k <= ny; k ++) {

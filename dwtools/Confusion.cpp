@@ -306,7 +306,7 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 
 		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0, 0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
 
-		his z.get() <<= my data.get()  -  thy data.get();
+		his z.all()  <<=  my data.all()  -  thy data.all();
 		
 		return him;
 	} catch (MelderError) {

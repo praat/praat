@@ -92,8 +92,8 @@ autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDe
 */
 static void VECpolynomial_divide (constVEC u, constVEC v, VEC q, VEC r) {
 	Melder_assert (q.size == u.size && r.size == u.size);
-	r <<= u;
-	q <<= 0.0;
+	r  <<=  u;
+	q  <<=  0.0;
 	for (integer k = u.size - v.size + 1; k > 0; k --) { /* D1 */
 		q [k] = r [v.size + k - 1] / v [v.size]; /* D2 with u -> r*/
 		for (integer j = v.size + k - 1; j >= k; j --)
@@ -442,7 +442,7 @@ void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, 
 		while (degree > 1 && rc [degree] == 0.0)
 			degree --;
 		ar = Polynomial_create (my xmin, my xmax, degree);
-		ar -> coefficients.get() <<= rc.part (1, degree + 1);
+		ar -> coefficients.all()  <<=  rc.part (1, degree + 1);
 		*out_r = ar.move();
 	}
 }

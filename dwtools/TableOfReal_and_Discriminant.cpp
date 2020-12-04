@@ -75,8 +75,8 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		*/
 		thy costs = newMATraw (thy numberOfGroups, thy numberOfGroups);
 		
-		thy costs.get() <<= 1.0;
-		thy costs.diagonal() <<= 0.0;
+		thy costs.all()  <<=  1.0;
+		thy costs.diagonal()  <<=  0.0;
 		
 		return thee;
 	} catch (MelderError) {

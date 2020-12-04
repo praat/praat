@@ -50,7 +50,7 @@ dcomplex structFunctionSeries :: v_evaluate_z (dcomplex /* z */) {
 
 void structFunctionSeries :: v_evaluateTerms (double /* x */, VEC terms) {
 	Melder_assert (terms.size == numberOfCoefficients);
-	terms <<= undefined;
+	terms  <<=  undefined;
 }
 
 integer structFunctionSeries :: v_getDegree () {

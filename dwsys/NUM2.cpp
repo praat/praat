@@ -139,7 +139,7 @@ void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& 
 void VECsmooth_gaussian (VECVU const& out, constVECVU const& in, double sigma, NUMfft_Table fftTable) {
 	Melder_require (out.size == in.size,
 		U"The sizes of the input and output vectors should be equal.");
-	out <<= in;
+	out  <<=  in;
 	VECsmooth_gaussian_inplace (out, sigma, fftTable);
 }
 
@@ -202,7 +202,7 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol == result.ncol);
 	Melder_assert (result.nrow == result.ncol);
-	result <<= 0.0;
+	result  <<=  0.0;
 	if (true) {
 		autoMAT outer = newMATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -409,7 +409,7 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 		if (fabs (lambda - lambda0) < tolerance)
 			break;
 	}
-	inout_q <<= z.all();
+	inout_q  <<=  z.all();
 	return lambda;
 }
 
@@ -471,7 +471,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 			Alternating Least Squares: Fixate all except x [icol]
 		*/
 		for (integer icol = 1; icol <= a.ncol; icol ++) {
-			r.get() <<= y;
+			r.all()  <<=  y;
 			for (integer jcol = 1; jcol <= a.ncol; jcol ++)
 				if (jcol != icol)
 					r.get()  -=  x [jcol] * a.column (jcol);
@@ -1508,7 +1508,7 @@ autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, d
 
 void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& filterMemory) {
 	Melder_assert (filterMemory.size >= filter.size);
-	filterMemory <<= 0.0;
+	filterMemory  <<=  0.0;
 	for (integer i = 1; i <= s.size; i ++) {
 		const double y0 = s [i];
 		for (integer j = 1; j <= filter.size; j ++)
@@ -2124,7 +2124,7 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 	Melder_assert (rc.size == lpc.size);
 	autoVEC b = newVECraw (lpc.size);
 	autoVEC a = newVECraw (lpc.size);
-	a.get() <<= lpc;
+	a.all()  <<=  lpc;
 	for (integer m = lpc.size; m > 0; m--) {
 		rc [m] = a [m];
 		Melder_require (fabs (rc [m]) <= 1.0,
@@ -2137,7 +2137,7 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 
 void VEClpc_from_rc (VEC lpc, constVEC rc) {
 	Melder_assert (lpc.size == rc.size);
-	lpc <<= rc;
+	lpc  <<=  rc;
 	for (integer j = 2; j <= lpc.size; j ++) {
 		for (integer k = 1; k <= j / 2; k ++) {
 			double at = lpc [k] + rc [j] * lpc [j - k];
@@ -2185,7 +2185,7 @@ void VECarea_from_lpc (VEC area, constVEC lpc) {
 /*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoVEC b = newVECzero (p);
-	autoVEC a <<= VEC(lpc, p);
+	autoVEC a  <<=  VEC(lpc, p);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
 		Melder_require (fabs (rc [m]) <= 1.0,
@@ -2913,9 +2913,9 @@ static double update (VEC const& x_new, VEC const& y_new, BOOLVECVU const& suppo
 	Melder_assert (dictionary.nrow == yn.size && dictionary.ncol == xn.size);
 	
 	buffer <<=  stepSize * gradient;
-	x_new <<= xn  +  buffer; // x(n) + stepSize * gradient
+	x_new  <<=  xn  +  buffer; // x(n) + stepSize * gradient
 	VECupdateDataAndSupport_inplace (x_new, support_new, numberOfNonZeros);
-	buffer <<= x_new  -  xn; // x(n+1) - x (n)
+	buffer  <<=  x_new  -  xn; // x(n+1) - x (n)
 	const double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
 	
 	VECmul (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
@@ -3027,7 +3027,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			if (infoLevel > 1)
 				MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
 			
-			x <<= x_new.all();
+			x  <<=  x_new.all();
 			support.all() <<= support_new.all();
 			yfromx.all() <<= yfromx_new.all();
 			rms = rms_new;
