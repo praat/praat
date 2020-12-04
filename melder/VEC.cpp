@@ -222,6 +222,11 @@ void VECpower (VECVU const& target, constVECVU const& vec, double power) {
 	}
 }
 
+void INTVECto (INTVECVU const& x) noexcept {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] = i;
+}
+
 autoVEC newVECto (double to) {
 	const integer numberOfElements = Melder_ifloor (to);
 	autoVEC result = newVECraw (numberOfElements);
