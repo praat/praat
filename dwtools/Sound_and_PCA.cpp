@@ -71,7 +71,7 @@ autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer nu
 }
 
 autoSound Sound_PCA_principalComponents (Sound me, PCA thee, integer numberOfComponents) {
-	autoINTVEC channels = INTVECto (my ny);
+	autoINTVEC channels = newINTVECto (my ny);
 	return Sound_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, channels.get());
 }
 
@@ -107,7 +107,7 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
 }
 
 autoSound Sound_PCA_whitenChannels (Sound me, PCA thee, integer numberOfComponents) {
-	autoINTVEC channels = INTVECto (my ny);
+	autoINTVEC channels = newINTVECto (my ny);
 	return Sound_PCA_whitenSelectedChannels (me, thee, numberOfComponents, channels.get());
 }
 

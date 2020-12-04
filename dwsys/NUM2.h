@@ -168,7 +168,7 @@ inline void NUMextrema (constVECVU const& x, double *out_minimum, double *out_ma
 	Clip array values.
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
-inline void VECclip_inplace (VEC x, double min, double max) {
+inline void VECclip_inplace (double min, VECVU const& x, double max) {
 	for (integer i = 1; i <= x.size; i ++)
 		Melder_clip (min, & x [i], max);
 }
@@ -1338,13 +1338,6 @@ inline void MATfromUpperTriangularVector_preallocated (MAT m, constVEC v) {
 		m [irow] [icol] = m [icol] [irow] = v [inum];
 		if (icol == m.ncol) irow ++;
 	}
-}
-
-inline autoINTVEC INTVECto (integer to) {
-	autoINTVEC result = newINTVECraw (to);
-	for (integer i = 1; i <= to; i ++)
-		result [i] = i;
-	return result;
 }
 
 void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1 );
