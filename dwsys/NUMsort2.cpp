@@ -133,8 +133,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 	Melder_assert (v.size == index.size); \
 	integer l, r, i, j, ii, k, imin; \
 	TYPE min; \
-	for (i = 1; i <= index.size ; i ++) \
-		index [i] = i; \
+	INTVECto (index); \
 	if (v.size < 2) \
 		return;   /* Already sorted. */ \
 	if (v.size == 2) { \

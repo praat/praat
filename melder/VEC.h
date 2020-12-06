@@ -340,6 +340,7 @@ extern autoVEC newVECfrom_to_count (double from, double to, integer count);
 extern autoVEC newVECbetween_by (double from, double to, double by);
 extern autoVEC newVECbetween_count (double from, double to, integer count);
 
+extern void INTVECto (INTVECVU const& x) noexcept;
 extern autoINTVEC newINTVECto (integer to);
 extern autoINTVEC newINTVECfrom_to (integer from, integer to);
 extern autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by);

@@ -1340,13 +1340,6 @@ inline void MATfromUpperTriangularVector_preallocated (MAT m, constVEC v) {
 	}
 }
 
-inline autoINTVEC INTVECto (integer to) {
-	autoINTVEC result = newINTVECraw (to);
-	for (integer i = 1; i <= to; i ++)
-		result [i] = i;
-	return result;
-}
-
 void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1 );
 /*
 	This routine is copied from LAPACK.

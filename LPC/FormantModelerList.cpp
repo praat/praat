@@ -175,8 +175,7 @@ void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out
 
 void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me) {
 	my numberOfModelersToDraw = my numberOfModelers;
-	for (integer i = 1; i <= my drawingOrder.size; i ++)
-		my drawingOrder [i] = i;
+	INTVECto (my drawingOrder.get());
 }
 
 integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerListDrawingSpecification me) {
