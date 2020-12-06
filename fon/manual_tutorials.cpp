@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201129)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201206)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.36# (6 December 2020)")
+LIST_ITEM (U"• Scripting: tryToWriteFile (), tryToAppendFile (); formulas can have a size of 1 million.")
+LIST_ITEM (U"• Obscured scripts: error messages always disclosed.")
+LIST_ITEM (U"• IPA chart: sacrifice laminality symbol for breathiness symbol.")
 NORMAL (U"##6.1.35# (29 November 2020)")
 LIST_ITEM (U"• Scripting: sort\\# (), shuffle\\# (), to\\# (), from_to\\# (), from_to_by\\# (), from_to_count\\# (), between_by\\# (), between_count\\# ().")
 LIST_ITEM (U"• Mac: repaired a bug existing since 6.1.04 that caused incorrect line counts in text files with high Unicode characters.")
