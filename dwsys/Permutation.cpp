@@ -114,8 +114,7 @@ autoPermutation Permutation_create (integer numberOfElements) {
 }
 
 void Permutation_sort (Permutation me) {
-	for (integer i = 1; i <= my p.size; i ++)
-		my p [i] = i;
+	INTVECto (my p.get());
 }
 
 void Permutation_swapPositions (Permutation me, integer i1, integer i2) {
