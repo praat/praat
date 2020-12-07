@@ -30,7 +30,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 	integer lwork = -1, info, ncol = m.ncol;
 	double wt;
 	
-	eigenvectors <<= m;
+	eigenvectors  <<=  m;
 	/*
 		0. No need to transpose a because it is a symmetric matrix
 		1. Query for the size of the work array

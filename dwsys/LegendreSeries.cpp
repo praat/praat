@@ -48,7 +48,7 @@ double structLegendreSeries :: v_evaluate (double x) {
 void structLegendreSeries :: v_evaluateTerms (double x, VEC terms) {
 	Melder_assert (terms.size == numberOfCoefficients);
 	if (x < our xmin || x > our xmax) {
-		terms <<= undefined;
+		terms  <<=  undefined;
 		return;
 	}
 

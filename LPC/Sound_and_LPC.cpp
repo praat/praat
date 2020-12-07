@@ -82,7 +82,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& works
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
 	const integer numberOfCoefficients = thy nCoefficients, np1 = numberOfCoefficients + 1;
 
-	//workspace <<= 0.0; not necessary !
+	//workspace  <<=  0.0; not necessary !
 	VEC r = workspace. part (1, np1); // autoVEC r = newVECzero (numberOfCoefficients + 1);
 	VEC a = workspace. part (np1 + 1, 2 * np1); // autoVEC a = newVECzero (numberOfCoefficients + 1);
 	VEC rc = workspace. part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = newVECzero (numberOfCoefficients);
@@ -132,7 +132,7 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 	const integer n = my nx, m = thy nCoefficients;
 	constVEC x = my z.row (1);
 	
-	workspace <<= 0.0;
+	workspace  <<=  0.0;
 	integer start = 1, end = m * (m + 1) / 2;
 	VEC b = workspace. part (start, end); // autoVEC b = newVECzero (m * (m + 1) / 2);
 	start = end + 1; end += m;

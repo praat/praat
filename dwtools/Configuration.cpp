@@ -88,7 +88,7 @@ void Configuration_setMetric (Configuration me, integer metric) {
 }
 
 void Configuration_setDefaultWeights (Configuration me) {
-	my w.get() <<= 1.0;
+	my w.all()  <<=  1.0;
 }
 
 void Configuration_setSqWeights (Configuration me, const double weight[]) {
@@ -165,7 +165,7 @@ static double NUMsquaredVariance (MAT a, bool rawPowers) {
 static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
 	Melder_assert (xm.ncol == ym.ncol && xm.nrow == ym.nrow);
 
-	ym <<= xm;
+	ym  <<=  xm;
 
 	if (xm.ncol == 1)
 		return;
@@ -368,7 +368,7 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, doub
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
-		thy data.get() <<= my data.get();
+		thy data.all()  <<=  my data.get();
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {

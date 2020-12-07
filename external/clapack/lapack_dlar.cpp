@@ -13692,7 +13692,7 @@ L100:
 	    inode[ir] = inode[ncrnt] + ndiml[ir] + 1;
 /* L10: */
 	}
-	llst <<= 1;
+	llst  <<=  1;
 /* L20: */
     }
     *nd = (llst << 1) - 1;

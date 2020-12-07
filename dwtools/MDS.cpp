@@ -548,7 +548,7 @@ autoWeight Weight_create (integer numberOfPoints) {
 	try {
 		autoWeight me = Thing_new (Weight);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfPoints);
-		my data.get() <<= 1.0;
+		my data.all()  <<=  1.0;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Weight not created.");
@@ -1058,7 +1058,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		
 		autoMAT y = MAT_asPrincipalComponents (pmean.get (), numberOfDimensions);
 
-		thy data.get() <<= y.get();
+		thy data.all()  <<=  y.all();
 		
 		/*
 			Calculate the C [i] matrices [1..numberOfDimensions] [1..numberOfDimensions]
@@ -1770,7 +1770,7 @@ static double func (Daata object, VEC const& p) {
 		Prevent overflow when stress is small
 	*/
 	if (stress >= 1e-6) {
-		my dx.get() <<= 0.0;
+		my dx.all()  <<=  0.0;
 		for (integer i = 1; i <= his numberOfProximities; i ++) {
 			const integer ii = my vec -> rowIndex [i], jj = my vec -> columnIndex [i];
 			const double g1 = stress * ((dist -> data [ii] [jj] - fit -> data [ii] [jj]) / s - (dist -> data [ii] [jj] - dbar) / t);

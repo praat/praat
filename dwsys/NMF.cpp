@@ -139,7 +139,7 @@ static void NMF_initializeFactorization_svd (NMF me, constMATVU const& data, kNM
 		autoSVD thee = SVD_createFromGeneralMatrix (data);
 		MATmakeElementsNonNegative (thy u.get(), 1);
 		MATmakeElementsNonNegative (thy v.get(), 1);
-		my features.get() <<= thy u.verticalBand (1, my numberOfFeatures);
+		my features.all()  <<=  thy u.verticalBand (1, my numberOfFeatures);
 		for (integer irow = 1; irow <= my numberOfFeatures; irow ++)
 			my weights.row (irow) <<= thy d [irow]  *  thy v.row (irow);
 		
@@ -252,8 +252,8 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		autoMAT productFtF = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
 		
 		const double traceDtD = NUMtrace2 (data.transpose(), data); // for distance calculation
-		features0.get() <<= my features.get();
-		weights0.get() <<= my weights.get();
+		features0.all()  <<=  my features.all();
+		weights0.all() <<= my weights.all();
 		
 		if (! NUMfpp)
 			NUMmachar ();
@@ -275,8 +275,8 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			*/
 			
 			// 1. Update W matrix
-			features0.get() <<= my features.get();
-			weights0.get() <<= my weights.get();
+			features0.all()  <<=  my features.all();
+			weights0.all()  <<=  my weights.all();
 			MATmul (productFtD.get(), features0.transpose(), data);
 			MATmul (productFtF.get(), features0.transpose(), features0.get());
 			MATmul (productFtFW.get(), productFtF.get(), weights0.get());
@@ -360,17 +360,17 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			MATmul (productFtD.get(), my features.transpose(), data);
 			MATmul (productFtF.get(), my features.transpose(), my features.get());
 
-			svd_FtF -> u.get() <<= productFtF.get();
+			svd_FtF -> u.all()  <<=  productFtF.all();
 			SVD_compute (svd_FtF.get());
 			SVD_solve_preallocated (svd_FtF.get(), productFtD.get(), my weights.get());
 			MATmakeElementsNonNegative (my weights.get(), 0);
 			
 			// 2. Solve equations for new F:  W*W'*F' = W*D'
-			features0.get() <<= my features.get(); // save previous features for convergence test
+			features0.all()  <<=  my features.all(); // save previous features for convergence test
 			MATmul  (productWDt.get(), my weights.get(), data.transpose());
 			MATmul (productWWt.get(), my weights.get(), my weights.transpose());
 
-			svd_WWt -> u.get() <<= productWWt.get();
+			svd_WWt -> u.all()  <<=  productWWt.all();
 			SVD_compute (svd_WWt.get());
 			SVD_solve_preallocated (svd_WWt.get(), productWDt.get(), my features.transpose());
 

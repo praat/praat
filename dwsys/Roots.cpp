@@ -233,7 +233,7 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	*/
 	
 	MAT upperHessenberg = MAT (& workspace [1], n, n);
-	upperHessenberg <<= 0.0;
+	upperHessenberg  <<=  0.0;
 	MATVU uh_CM (upperHessenberg);
 	uh_CM.rowStride = 1; uh_CM.colStride = n;
 	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);

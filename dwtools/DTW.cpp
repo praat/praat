@@ -751,7 +751,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 	if (dmin >= dmax)
 		NUMextrema (d.get(), & dmin, & dmax);
 	else
-		VECclip_inplace (d.get(), dmin, dmax);
+		VECclip_inplace (dmin, d.get(), dmax);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, dmin, dmax);
@@ -950,7 +950,7 @@ void DTW_Matrix_replace (DTW me, Matrix thee) {
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		Melder_require (minimum >= 0.0,
 			U"Distances should not be negative.");
-		my z.get() <<= thy z.get();
+		my z.all()  <<=  thy z.all();
 	} catch (MelderError) {
 		Melder_throw (me, U": distances not replaced.");
 	}

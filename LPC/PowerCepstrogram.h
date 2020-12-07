@@ -29,6 +29,8 @@
 #include "Table.h"
 
 Thing_define (PowerCepstrogram, Matrix) {
+	double v_getValueAtSample (integer sampleNumber, integer level, int unit)
+			override;
 };
 
 /*

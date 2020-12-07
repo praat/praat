@@ -100,7 +100,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
 autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 	try {
 		autoSVD me = SVD_create (m.nrow, m.ncol);
-		my u.get() <<= ( my isTransposed ? m.transpose() : m );
+		my u.all()  <<=  ( my isTransposed ? m.transpose() : m );
 		SVD_compute (me.get());
 		return me;
 	} catch (MelderError) {
@@ -112,7 +112,7 @@ autoSVD SVD_createFromGeneralMatrix (constMATVU const& m) {
 void SVD_update (SVD me, constMATVU const& m) {
 	Melder_assert ((! my isTransposed && my numberOfRows == m.nrow && my numberOfColumns == m.ncol) ||
 		(my isTransposed && my numberOfRows == m.ncol && my numberOfColumns == m.nrow));
-	my u.get() <<= ( my isTransposed ? m.transpose() : m );
+	my u.all()  <<=  ( my isTransposed ? m.transpose() : m );
 	SVD_compute (me);
 }
 
@@ -224,7 +224,7 @@ void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU const& result) {
 	autoVEC bcol = newVECraw (b.nrow);
 	autoVEC resultcol = newVECraw (result.nrow);
 	for (integer icol = 1; icol <= b.ncol; icol ++) {
-		bcol.get() <<= b.column (icol);
+		bcol.all()  <<=  b.column (icol);
 		SVD_solve_preallocated (me, bcol.get(), resultcol.get());
 		result.column (icol) <<= resultcol.get();
 	}

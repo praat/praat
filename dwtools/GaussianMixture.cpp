@@ -170,7 +170,7 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 	/*
 		Update the means: Bishop eq. 9.24
 	*/
-	thy centroid.get() <<= 0.0;
+	thy centroid.all()  <<=  0.0;
 	for (integer irow = 1; irow <= numberOfData; irow ++)
 		thy centroid.get()  +=  responsibilities [irow] [component]  *  data.row (irow);
 	
@@ -179,19 +179,19 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 	/*
 		update covariance with the new mean: Bishop eq. 9.25
 	*/
-	thy data.get() <<= 0.0;
+	thy data.all()  <<=  0.0;
 	autoVEC dif = newVECraw (thy numberOfColumns);
 	if (thy numberOfRows == 1) { // 1xn covariance
 		autoVEC variance = newVECraw (thy numberOfColumns);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
-			dif.get() <<= data.row (irow)  -  thy centroid.get();
-			variance.get() <<= dif.get()  *  dif.get();
+			dif.all()  <<=  data.row (irow)  -  thy centroid.get();
+			variance.all()   <<= dif.all()  *  dif.all();
 			thy data.row (1)  +=  responsibilities [irow] [component]  *  variance.get();
 		}
 	} else { // nxn covariance
 		autoMAT covar = newMATraw (thy numberOfColumns, thy numberOfColumns);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
-			dif.get() <<= data.row (irow)  -  thy centroid.get();
+			dif.all() <<= data.row (irow)  -  thy centroid.get();
 			MATouter (covar.get(), dif.get(), dif.get());
 			thy data.get()  +=  responsibilities [irow] [component]  *  covar.get();
 		}
@@ -346,8 +346,8 @@ autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me
 			Covariance_into_Covariance (cov.get(), thy covariances->at [component]);
 			Thing_setName (thy covariances->at [component], dist -> rowLabels [component].get());
 		}
-		thy mixingProbabilities.get() <<= dist -> data.column (1).part(1, dist -> numberOfRows);
-		thy mixingProbabilities.get()  /=  my numberOfRows;
+		thy mixingProbabilities.all()  <<=  dist -> data.column (1).part(1, dist -> numberOfRows);
+		thy mixingProbabilities.all()  /=  my numberOfRows;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no GaussianMixture created.");

@@ -3470,7 +3470,7 @@ L10:
 /* L20: */
 	}
 	++tlvls;
-	subpbs <<= 1;
+	subpbs  <<=  1;
 	goto L10;
     }
     i__1 = subpbs;

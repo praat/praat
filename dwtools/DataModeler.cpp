@@ -375,7 +375,7 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 			const double stdev = DataModeler_getDataStandardDeviation (me);
 			Melder_require (isdefined (stdev),
 				U"Not enough data points to calculate standard deviation.");
-			weights.get() <<= 1.0 / stdev;
+			weights.all()  <<=  1.0 / stdev;
 	} else {	
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			if (my data [ipoint] .status == kDataModelerData::INVALID)

@@ -36,7 +36,7 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 	}
 	
 	VEC work = workSpace.part (1, x.size);
-	work <<= x;
+	work  <<=  x;
 	
 	if (wantlocation) {
 		VECsort_inplace (work);
@@ -73,7 +73,7 @@ void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
 			const double previousScale = scale;
 
 			work  <<=  x;
-			VECclip_inplace (work, location - k_stdev * scale, location + k_stdev * scale); // winsorize
+			VECclip_inplace (location - k_stdev * scale, work, location + k_stdev * scale); // winsorize
 			
 			if (wantlocation) {
 				location = NUMmean (work);

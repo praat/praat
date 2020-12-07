@@ -57,7 +57,7 @@ double structChebyshevSeries :: v_evaluate (double x) {
 void structChebyshevSeries :: v_evaluateTerms (double x, VEC terms) {
 	Melder_assert (terms.size == numberOfCoefficients);
 	if (x < our xmin || x > our xmax) {
-		terms <<= undefined;
+		terms  <<=  undefined;
 		return;
 	}
 	terms [1] = 1.0;

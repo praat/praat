@@ -329,8 +329,8 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		autoVEC b = newVECraw (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 
-		u.get() <<= my z.part (1, nr, 1, nc);
-		b.get() <<= my z.column (my nx);
+		u.all()  <<=  my z.part (1, nr, 1, nc);
+		b.all()  <<=  my z.column (my nx);
 
 		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
 		thy z.row (1) <<= x.all();
@@ -616,7 +616,7 @@ autoMatrix SVD_to_Matrix (SVD me, integer from, integer to) {
 		autoMAT synthesis = SVD_synthesize (me, from, to);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + synthesis.ncol, synthesis.ncol, 1.0, 1.0,
 										 0.5, 0.5 + synthesis.nrow, synthesis.nrow, 1.0, 1.0);
-		thy z.get() <<= synthesis.get();
+		thy z.all()  <<=  synthesis.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix synthesized.");

@@ -36,7 +36,7 @@ static void regression (VEC r, CC me, integer frameNumber, integer numberOfCoeff
 	if (frameNumber <= numberOfCoefficientsd2 || frameNumber >= my nx - numberOfCoefficientsd2)
 		return;
 	
-	r <<= 0.0;
+	r  <<=  0.0;
 
 	const integer nmin = CC_getMinimumNumberOfCoefficients (me, frameNumber - numberOfCoefficientsd2, frameNumber + numberOfCoefficientsd2);
 

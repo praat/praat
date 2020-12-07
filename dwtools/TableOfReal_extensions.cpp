@@ -586,7 +586,7 @@ void TableOfReal_normalizeRows (TableOfReal me, double norm) {
 
 void TableOfReal_standardizeColumns (TableOfReal me) {
 	if (my numberOfRows <= 1) {
-		my data.get() <<= 0.0;
+		my data.all()  <<=  0.0;
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -598,7 +598,7 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 
 void TableOfReal_standardizeRows (TableOfReal me) {
 	if (my numberOfColumns <= 1) {
-		my data.get() <<= 0.0;
+		my data.all()  <<=  0.0;
 		return;
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
