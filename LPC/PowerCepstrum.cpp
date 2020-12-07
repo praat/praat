@@ -227,7 +227,7 @@ autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFi
 	}
 }
 
-static void PowerCepstrum_smooth_inplaceRectangular_new (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
+static void PowerCepstrum_smooth_inplaceRectangular (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	try {
 		double halfWindwow = 0.5 * quefrencyAveragingWindow;
 		double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
@@ -236,7 +236,7 @@ static void PowerCepstrum_smooth_inplaceRectangular_new (PowerCepstrum me, doubl
 			for (integer k = 1; k <= numberOfIterations; k ++) {
 				for (integer isamp = 1; isamp <= my nx; isamp ++) {
 					const double xmid = Sampled_indexToX (me, isamp);
-					qout [isamp] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, 0, 0, false);
+					qout [isamp] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, 1, 0, true);
 				}
 				my z.row (1)  <<=  qout.all();
 			}
@@ -245,7 +245,7 @@ static void PowerCepstrum_smooth_inplaceRectangular_new (PowerCepstrum me, doubl
 		Melder_throw (me, U": not smoothed.");
 	}
 }
-static void PowerCepstrum_smooth_inplaceRectangular (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
+static void PowerCepstrum_smooth_inplaceRectangular_old (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	try {
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
@@ -288,9 +288,9 @@ static void PowerCepstrum_smooth_inplaceGaussian (PowerCepstrum me, double quefr
 
 void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	if (Melder_debug == -4)
-		PowerCepstrum_smooth_inplaceGaussian (me, quefrencyAveragingWindow, numberOfIterations);
+		PowerCepstrum_smooth_inplaceRectangular_old (me, quefrencyAveragingWindow, numberOfIterations);
 	else if (Melder_debug == -5)
-		PowerCepstrum_smooth_inplaceRectangular_new (me, quefrencyAveragingWindow, numberOfIterations);
+		PowerCepstrum_smooth_inplaceGaussian (me, quefrencyAveragingWindow, numberOfIterations);
 	else
 		PowerCepstrum_smooth_inplaceRectangular (me, quefrencyAveragingWindow, numberOfIterations);
 }

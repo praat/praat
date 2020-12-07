@@ -167,7 +167,7 @@ autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor,
 	}
 }
 
-static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_new (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
 		/*
@@ -180,7 +180,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_new (PowerCepstro
 			for (integer iq = 1; iq <= my ny; iq ++) {
 				for (integer iframe = 1; iframe <= my nx; iframe ++) {
 					const double xmid = Sampled_indexToX (me, iframe);
-					qout [iframe] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, iq, 0, false);
+					qout [iframe] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, iq, 0, true);
 				}
 				thy z.row (iq)  <<=  qout.all();
 			}
@@ -193,7 +193,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_new (PowerCepstro
 			autoPowerCepstrum smooth = PowerCepstrum_create (thy ymax, thy ny);
 			for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 				smooth -> z.row (1)  <<=  thy z.column (iframe);
-				PowerCepstrum_smooth (smooth.get(), quefrencyAveragingWindow, 1);
+				PowerCepstrum_smooth_inplace (smooth.get(), quefrencyAveragingWindow, 1);
 				thy z.column (iframe)  <<=  smooth -> z.row (1);
 			}
 		}
@@ -203,7 +203,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_new (PowerCepstro
 	}
 }
 
-static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_old (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
 		/*
@@ -273,8 +273,12 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 }
 
 autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
-		return ( Melder_debug == -4 || Melder_debug == -5 ? PowerCepstrogram_smoothGaussian (me, timeAveragingWindow, quefrencyAveragingWindow) :
-			PowerCepstrogram_smoothRectangular (me, timeAveragingWindow, quefrencyAveragingWindow) );
+	if (Melder_debug == -4)
+		return PowerCepstrogram_smoothRectangular_old (me, timeAveragingWindow, quefrencyAveragingWindow);
+	else if (Melder_debug == -5)
+		return PowerCepstrogram_smoothGaussian (me, timeAveragingWindow, quefrencyAveragingWindow);
+	else
+		return PowerCepstrogram_smoothRectangular (me, timeAveragingWindow, quefrencyAveragingWindow);
 }
 
 autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me) {
