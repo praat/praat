@@ -4784,6 +4784,8 @@ static void do_fileReadable () {
 	}
 }
 static void do_tryToWriteFile () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw (U"The function \"tryToWriteFile\" is not available inside manuals.");
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -4794,6 +4796,8 @@ static void do_tryToWriteFile () {
 	}
 }
 static void do_tryToAppendFile () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw (U"The function \"tryToAppendFile\" is not available inside manuals.");
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
