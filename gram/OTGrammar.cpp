@@ -2590,7 +2590,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		Save.
 	*/
 	integer savedNumberOfFixedRankings = my numberOfFixedRankings;
-	autovector <structOTGrammarFixedRanking> savedFixedRankings = my fixedRankings.move();
+	autovector <structOTGrammarFixedRanking> savedFixedRankings = my fixedRankings.move();   // BUG: is not restored upon throw
 	OTGrammar_save (me);
 	try {
 		integer ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);

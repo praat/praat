@@ -497,7 +497,8 @@ static void Formula_lexan () {
 					 */
 					int jkar;
 					jkar = ikar + 1;
-					while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
+					while (Melder_isHorizontalSpace (theExpression [jkar]))
+						jkar ++;
 					if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
 						newtok (tok)   // this must be a function name
 					} else if (theExpression [jkar] == U'[' && rank == 0) {
@@ -713,8 +714,9 @@ static void Formula_lexan () {
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
 				int i = theCurrentPraatObjects -> n;
-				*underscore = ' ';
-				if (endsInDollarSign) token.string [-- token.length] = '\0';
+				*underscore = U' ';
+				if (endsInDollarSign)
+					token.string [-- token.length] = U'\0';
 				while (i > 0 && ! str32equ (token.string, theCurrentPraatObjects -> list [i]. name.get()))
 					i --;
 				if (i == 0)
@@ -3949,8 +3951,8 @@ static void shared_do_writeFile (autoMelderString *text, integer numberOfArgumen
 	}
 }
 static void do_writeFile () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"writeFile\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -3967,8 +3969,8 @@ static void do_writeFile () {
 	pushNumber (1);
 }
 static void do_writeFileLine () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"writeFileLine\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -3986,8 +3988,8 @@ static void do_writeFileLine () {
 	pushNumber (1);
 }
 static void do_appendFile () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"appendFile\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -4004,8 +4006,8 @@ static void do_appendFile () {
 	pushNumber (1);
 }
 static void do_appendFileLine () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"appendFileLine\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -4023,8 +4025,8 @@ static void do_appendFileLine () {
 	pushNumber (1);
 }
 static void do_pauseScript () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"pause\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"pause\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -4080,8 +4082,8 @@ static void do_runScript () {
 	pushNumber (1);
 }
 static void do_runSystem () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"runSystem\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"runSystem\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -4103,8 +4105,8 @@ static void do_runSystem () {
 	pushNumber (1);
 }
 static void do_runSystem_nocheck () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"runSystem\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"runSystem\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -4125,8 +4127,8 @@ static void do_runSystem_nocheck () {
 	pushNumber (1);
 }
 static void do_runSubprocess () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"runSubprocess\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"runSubprocess\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	integer numberOfArguments = Melder_iround (narg->number);
@@ -4784,6 +4786,8 @@ static void do_fileReadable () {
 	}
 }
 static void do_tryToWriteFile () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw (U"The function \"tryToWriteFile\" is not available inside manuals.");
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -4794,6 +4798,8 @@ static void do_tryToWriteFile () {
 	}
 }
 static void do_tryToAppendFile () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw (U"The function \"tryToAppendFile\" is not available inside manuals.");
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -5463,8 +5469,8 @@ static void do_hexadecimalStr () {
 	}
 }
 static void do_deleteFile () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"deleteFile\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"deleteFile\" is not available inside manuals.");
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file { };
@@ -5476,8 +5482,8 @@ static void do_deleteFile () {
 	}
 }
 static void do_createDirectory () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"createDirectory\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"createDirectory\" is not available inside manuals.");
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderDir currentDirectory { };
@@ -5957,8 +5963,8 @@ static void do_VECsolveNonnegative () {
 }
 
 static void do_beginPauseForm () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"beginPauseForm\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"beginPauseForm\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel title = pop;
@@ -5973,8 +5979,8 @@ static void do_beginPauseForm () {
 	pushNumber (1);
 }
 static void do_pauseFormAddReal () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"real\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"real\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -5998,8 +6004,8 @@ static void do_pauseFormAddReal () {
 	pushNumber (1);
 }
 static void do_pauseFormAddPositive () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"positive\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"positive\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6023,8 +6029,8 @@ static void do_pauseFormAddPositive () {
 	pushNumber (1);
 }
 static void do_pauseFormAddInteger () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"integer\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"integer\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6048,8 +6054,8 @@ static void do_pauseFormAddInteger () {
 	pushNumber (1);
 }
 static void do_pauseFormAddNatural () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"natural\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"natural\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6073,8 +6079,8 @@ static void do_pauseFormAddNatural () {
 	pushNumber (1);
 }
 static void do_pauseFormAddWord () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"word\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"word\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6092,8 +6098,8 @@ static void do_pauseFormAddWord () {
 	pushNumber (1);
 }
 static void do_pauseFormAddSentence () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"sentence\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"sentence\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6111,8 +6117,8 @@ static void do_pauseFormAddSentence () {
 	pushNumber (1);
 }
 static void do_pauseFormAddText () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"text\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"text\" is not available inside manuals.");
 	Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
 		U"The function \"text\" requires 2 or 3 arguments (a label, a default value, and an optional number of lines), not ", n->number, U".");
@@ -6133,8 +6139,8 @@ static void do_pauseFormAddText () {
 	pushNumber (1);
 }
 static void do_pauseFormAddBoolean () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"boolean\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"boolean\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6152,8 +6158,8 @@ static void do_pauseFormAddBoolean () {
 	pushNumber (1);
 }
 static void do_pauseFormAddChoice () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"choice\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"choice\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6172,8 +6178,8 @@ static void do_pauseFormAddChoice () {
 	pushNumber (1);
 }
 static void do_pauseFormAddOptionMenu () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"optionMenu\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"optionMenu\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
@@ -6192,8 +6198,8 @@ static void do_pauseFormAddOptionMenu () {
 	pushNumber (1);
 }
 static void do_pauseFormAddOption () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"option\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"option\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel text = pop;
@@ -6208,8 +6214,8 @@ static void do_pauseFormAddOption () {
 	pushNumber (1);
 }
 static void do_pauseFormAddComment () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"comment\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"comment\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel text = pop;
@@ -6224,8 +6230,8 @@ static void do_pauseFormAddComment () {
 	pushNumber (1);
 }
 static void do_endPauseForm () {
-	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		Melder_throw (U"The function \"endPause\" is not available inside manuals.");
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"endPause\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number < 2 || n->number > 12)
 		Melder_throw (U"The function \"endPause\" requires 2 to 12 arguments, not ", n->number, U".");
@@ -6263,6 +6269,8 @@ static void do_endPauseForm () {
 	pushNumber (buttonClicked);
 }
 static void do_chooseReadFileStr () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"chooseReadFile$\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel title = pop;
@@ -6282,6 +6290,8 @@ static void do_chooseReadFileStr () {
 	}
 }
 static void do_chooseWriteFileStr () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"chooseWriteFile$\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultName = pop, title = pop;
@@ -6298,6 +6308,8 @@ static void do_chooseWriteFileStr () {
 	}
 }
 static void do_chooseDirectoryStr () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"chooseDirectory$\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel title = pop;
@@ -7011,11 +7023,13 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case COL_: { pushNumber (col);
 } break; case X_: {
 	Daata me = theSource;
-	if (! my v_hasGetX ()) Melder_throw (U"No values for \"x\" for this object.");
+	Melder_require (my v_hasGetX (),
+		U"No values for \"x\" for this object.");
 	pushNumber (my v_getX (col));
 } break; case Y_: {
 	Daata me = theSource;
-	if (! my v_hasGetY ()) Melder_throw (U"No values for \"y\" for this object.");
+	Melder_require (my v_hasGetY (),
+		U"No values for \"y\" for this object.");
 	pushNumber (my v_getY (row));
 } break; case NOT_: { do_not ();
 } break; case EQ_: { do_eq ();

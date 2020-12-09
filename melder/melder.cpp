@@ -29,12 +29,6 @@
 	#include <Carbon/Carbon.h>   // Gestalt
 #endif
 
-/********** Exported variables. **********/
-
-bool Melder_batch;   // don't we have a GUI?- Set once at application start-up
-bool Melder_backgrounding;   // are we running a script?- Set and unset dynamically
-int32 Melder_systemVersion;
-
 void Melder_init () {
 	NUMmachar ();
 	gsl_set_error_handler_off ();

@@ -99,9 +99,8 @@
 
 /*
 	For MacOS, this is set in Melder_init.
-	TODO: change to inline variable once C++17 is implemented completely on all platforms.
 */
-extern int32 Melder_systemVersion;
+inline int32 Melder_systemVersion;
 
 /********** ENFORCE INTERACTIVE BEHAVIOUR **********/
 
@@ -110,15 +109,13 @@ extern int32 Melder_systemVersion;
 /*
 	Set in praat_init.
 	True if run from the batch or from an interactive command-line interface.
-	TODO: change to inline variable once C++17 is implemented completely on all platforms.
 */
-extern bool Melder_batch;
+inline bool Melder_batch;
 
 /*
 	True if running a script.
-	TODO: change to inline variable once C++17 is implemented completely on all platforms.
 */
-extern bool Melder_backgrounding;
+inline bool Melder_backgrounding;
 
 void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 

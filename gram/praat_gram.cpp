@@ -483,8 +483,7 @@ FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
 	OK
 DO
 	STRING_ONE (OTGrammar)
-		if (constraintNumber > my numberOfConstraints)
-			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		my checkConstraintNumber (constraintNumber);
 		const conststring32 result = my constraints [constraintNumber]. name.get();
 	STRING_ONE_END
 }
@@ -494,8 +493,7 @@ FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (constraintNumber > my numberOfConstraints)
-			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		my checkConstraintNumber (constraintNumber);
 		const double result = my constraints [constraintNumber]. ranking;
 	NUMBER_ONE_END (U" (ranking of constraint ", constraintNumber, U")")
 }
@@ -505,8 +503,7 @@ FORM (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (constraintNumber > my numberOfConstraints)
-			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		my checkConstraintNumber (constraintNumber);
 		const double result = my constraints [constraintNumber]. disharmony;
 	NUMBER_ONE_END (U" (disharmony of constraint ", constraintNumber, U")")
 }
@@ -522,8 +519,7 @@ FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {
 	OK
 DO
 	STRING_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
+		my checkTableauNumber (tableauNumber);
 		const conststring32 result = my tableaus [tableauNumber]. input.get();
 	STRING_ONE_END
 }
@@ -533,8 +529,7 @@ FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", null
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
+		my checkTableauNumber (tableauNumber);
 		const integer result = my tableaus [tableauNumber]. numberOfCandidates;
 	NUMBER_ONE_END (U" candidates in tableau ", tableauNumber)
 }
@@ -545,12 +540,8 @@ FORM (STRING_OTGrammar_getCandidate, U"Get candidate", nullptr) {
 	OK
 DO
 	STRING_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		OTGrammarTableau tableau = & my tableaus [tableauNumber];
-		if (candidateNumber > tableau -> numberOfCandidates)
-			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		const conststring32 result = tableau -> candidates [candidateNumber]. output.get();
+		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
+		const conststring32 result = my tableaus [tableauNumber]. candidates [candidateNumber]. output.get();
 	STRING_ONE_END
 }
 
@@ -561,12 +552,8 @@ FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", null
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
-			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		if (constraintNumber > my numberOfConstraints)
-			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
+		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
+		my checkConstraintNumber (constraintNumber);
 		const integer result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
@@ -578,8 +565,7 @@ FORM (INTEGER_OTGrammar_getWinner, U"Get winner", nullptr) {
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
+		my checkTableauNumber (tableauNumber);
 		const integer result = OTGrammar_getWinner (me, tableauNumber);
 	NUMBER_ONE_END (U" (winner in tableau ", tableauNumber, U")")
 }
@@ -592,14 +578,8 @@ FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", nullptr) {
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber1 > my numberOfTableaus)
-			Melder_throw (U"The specified tableau (number 1) should not exceed the number of tableaus.");
-		if (candidateNumber1 > my tableaus [tableauNumber1]. numberOfCandidates)
-			Melder_throw (U"The specified candidate (number 1) should not exceed the number of candidates for this tableau.");
-		if (tableauNumber2 > my numberOfTableaus)
-			Melder_throw (U"The specified tableau (number 2) should not exceed the number of tableaus.");
-		if (candidateNumber2 > my tableaus [tableauNumber2]. numberOfCandidates)
-			Melder_throw (U"The specified candidate (number 2) should not exceed the number of candidates for this tableau.");
+		my checkTableauAndCandidateNumber (tableauNumber1, candidateNumber1);
+		my checkTableauAndCandidateNumber (tableauNumber2, candidateNumber2);
 		const integer result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
 	NUMBER_ONE_END (result == -1 ? U" (candidate 1 is better)" :
 					result == +1 ? U" (candidate 2 is better)" : U" (candidates are equally good)")
@@ -610,8 +590,7 @@ FORM (INTEGER_OTGrammar_getNumberOfOptimalCandidates, U"Get number of optimal ca
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
+		my checkTableauNumber (tableauNumber);
 		const integer result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
 	NUMBER_ONE_END (U" optimal candidates in tableau ", tableauNumber)
 }
@@ -622,10 +601,7 @@ FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", nu
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
-			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
+		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const integer result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
@@ -636,10 +612,7 @@ FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly gram
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		if (tableauNumber > my numberOfTableaus)
-			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
-			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
+		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const integer result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
