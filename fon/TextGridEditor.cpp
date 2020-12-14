@@ -71,8 +71,9 @@ static integer _TextGridEditor_yWCtoTier (TextGridEditor me, double yWC) {
 }
 
 static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, integer tierNumber,
-	double *tmin, double *tmax)
+	double *out_tmin, double *out_tmax)
 {
+	Melder_assert (isdefined (t));
 	const TextGrid grid = (TextGrid) my data;
 	const Function tier = grid -> tiers->at [tierNumber];
 	IntervalTier intervalTier;
@@ -90,23 +91,21 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, integer
 		Melder_assert (iinterval >= 1);
 		Melder_assert (iinterval <= intervalTier -> intervals.size);
 		const TextInterval interval = intervalTier -> intervals.at [iinterval];
-		*tmin = interval -> xmin;
-		*tmax = interval -> xmax;
+		*out_tmin = interval -> xmin;
+		*out_tmax = interval -> xmax;
 	} else {
 		const integer n = textTier -> points.size;
 		if (n == 0) {
-			*tmin = my tmin;
-			*tmax = my tmax;
+			*out_tmin = my tmin;
+			*out_tmax = my tmax;
 		} else {
 			integer ipointleft = AnyTier_timeToLowIndex (textTier->asAnyTier(), t);
-			*tmin = ipointleft == 0 ? my tmin : textTier -> points.at [ipointleft] -> number;
-			*tmax = ipointleft == n ? my tmax : textTier -> points.at [ipointleft + 1] -> number;
+			*out_tmin = ( ipointleft == 0 ? my tmin : textTier -> points.at [ipointleft] -> number );
+			*out_tmax = ( ipointleft == n ? my tmax : textTier -> points.at [ipointleft + 1] -> number );
 		}
 	}
-	if (*tmin < my tmin)
-		*tmin = my tmin;   // clip by FunctionEditor's time domain
-	if (*tmax > my tmax)
-		*tmax = my tmax;
+	Melder_clipLeft (my tmin, out_tmin);
+	Melder_clipRight (out_tmax, my tmax);
 }
 
 static void checkTierSelection (TextGridEditor me, conststring32 verbPhrase) {
@@ -1709,22 +1708,6 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 
 	our draggingTime = undefined;   // information to next expose event
 	if (event -> isClick()) {
-		if (event -> isLeftBottomFunctionKeyPressed()) {
-			const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
-			double tmin, tmax;
-			_TextGridEditor_timeToInterval (this, xWC, clickedTierNumber, & tmin, & tmax);
-			our startSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );   // to nearest boundary
-			Melder_sort (& our startSelection, & our endSelection);
-			return FunctionEditor_UPDATE_NEEDED;
-		}
-		if (event -> isRightBottomFunctionKeyPressed()) {
-			const integer clickedTierNumber = _TextGridEditor_yWCtoTier (this, yWC);
-			double tmin, tmax;
-			_TextGridEditor_timeToInterval (this, xWC, clickedTierNumber, & tmin, & tmax);
-			our endSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );
-			Melder_sort (& our startSelection, & our endSelection);
-			return FunctionEditor_UPDATE_NEEDED;
-		}
 		if (isdefined (anchorTime))   // sanity check for the fixed order click-drag-drop
 			return false;
 		Melder_assert (clickedLeftBoundary == 0);
@@ -1737,9 +1720,21 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		our selectedTier = mouseTier;
 		double tmin, tmax;
 		_TextGridEditor_timeToInterval (this, xWC, our selectedTier, & tmin, & tmax);
-		IntervalTier intervalTier;
-		TextTier textTier;
-		AnyTextGridTier_identifyClass (grid -> tiers->at [our selectedTier], & intervalTier, & textTier);
+
+		if (event -> isLeftBottomFunctionKeyPressed()) {
+			our startSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );   // to nearest boundary
+			Melder_sort (& our startSelection, & our endSelection);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		if (event -> isRightBottomFunctionKeyPressed()) {
+			our endSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );
+			Melder_sort (& our startSelection, & our endSelection);
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+
+		IntervalTier selectedIntervalTier;
+		TextTier selectedTextTier;
+		AnyTextGridTier_identifyClass (grid -> tiers->at [our selectedTier], & selectedIntervalTier, & selectedTextTier);
 
 		if (xWC <= our startWindow || xWC >= our endWindow)
 			return FunctionEditor_UPDATE_NEEDED;
@@ -1747,12 +1742,12 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		/*
 			Get the time of the nearest boundary or point.
 		*/
-		if (intervalTier) {
-			const integer clickedIntervalNumber = IntervalTier_timeToIndex (intervalTier, xWC);
+		if (selectedIntervalTier) {
+			const integer clickedIntervalNumber = IntervalTier_timeToIndex (selectedIntervalTier, xWC);
 			const bool theyClickedOutsidetheTimeDomainOfTheIntervals = ( clickedIntervalNumber == 0 );
 			if (theyClickedOutsidetheTimeDomainOfTheIntervals)
 				return FunctionEditor_UPDATE_NEEDED;
-			const TextInterval interval = intervalTier -> intervals.at [clickedIntervalNumber];
+			const TextInterval interval = selectedIntervalTier -> intervals.at [clickedIntervalNumber];
 			if (xWC > 0.5 * (interval -> xmin + interval -> xmax)) {
 				anchorTime = interval -> xmax;
 				clickedLeftBoundary = clickedIntervalNumber + 1;
@@ -1761,13 +1756,13 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				clickedLeftBoundary = clickedIntervalNumber;
 			}
 		} else {
-			const integer clickedPointNumber = AnyTier_timeToNearestIndex (textTier->asAnyTier(), xWC);
+			const integer clickedPointNumber = AnyTier_timeToNearestIndex (selectedTextTier->asAnyTier(), xWC);
 			if (clickedPointNumber != 0) {
-				const TextPoint point = textTier -> points.at [clickedPointNumber];
+				const TextPoint point = selectedTextTier -> points.at [clickedPointNumber];
 				anchorTime = point -> number;
 			}
 		}
-		Melder_assert (! (intervalTier && clickedLeftBoundary == 0));
+		Melder_assert (! (selectedIntervalTier && clickedLeftBoundary == 0));
 
 		const bool nearBoundaryOrPoint = ( isdefined (anchorTime) && fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - anchorTime)) < 1.5 );
 		const bool nearCursorCircle = ( our startSelection == our endSelection && Graphics_distanceWCtoMM (our graphics.get(), xWC, yWC,
@@ -1780,9 +1775,9 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				Select and perhaps drag it.
 			*/
 			bool boundaryOrPointIsMovable = true;
-			if (intervalTier) {
+			if (selectedIntervalTier) {
 				const bool isLeftEdgeOfFirstInterval = ( clickedLeftBoundary <= 1 );
-				const bool isRightEdgeOfLastInterval = ( clickedLeftBoundary > intervalTier -> intervals.size );
+				const bool isRightEdgeOfLastInterval = ( clickedLeftBoundary > selectedIntervalTier -> intervals.size );
 				boundaryOrPointIsMovable = ! isLeftEdgeOfFirstInterval && ! isRightEdgeOfLastInterval;
 			}
 			/*
@@ -1827,10 +1822,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 							/*
 								Prevent the user from dragging the boundary past its left or right neighbours on the same tier.
 							*/
-							if (leftInterval -> xmin > leftDraggingBoundary)
-								leftDraggingBoundary = leftInterval -> xmin;
-							if (rightInterval -> xmax < rightDraggingBoundary)
-								rightDraggingBoundary = rightInterval -> xmax;
+							Melder_clipLeft (leftInterval -> xmin, & leftDraggingBoundary);
+							Melder_clipRight (& rightDraggingBoundary, rightInterval -> xmax);
 						}
 					} else {
 						if (AnyTier_hasPoint (textTier->asAnyTier(), anchorTime)) {
@@ -1858,7 +1851,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				Possibility 3: the user clicked in empty space.
 				Select the interval, if any.
 			*/
-			if (intervalTier) {
+			if (selectedIntervalTier) {
 				our startSelection = tmin;
 				our endSelection = tmax;
 			}

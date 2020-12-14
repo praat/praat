@@ -2063,7 +2063,7 @@ ENTRY (U"Known bugs in the Windows version")
 	LIST_ITEM (U"• Cannot stand infinitesimal zooming in SpectrogramEditor.")
 */
  
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20161227)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20201212)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2117,9 +2117,9 @@ LIST_ITEM (U"Linguistics & Cognitive Science, Dartmouth College, Hanover NH.")
 LIST_ITEM (U"Cornell Phonetics Lab, Ithaca NY.")
 NORMAL (U"Finally we thank:")
 LIST_ITEM (U"Ton Wempe and Dirk Jan Vet, for technical support and advice.")
-LIST_ITEM (U"Daniel Hirst, for managing the Praat Discussion list.")
+LIST_ITEM (U"Daniel Hirst and Daniel McCloy, for managing the Praat Users List.")
 LIST_ITEM (U"Rafael Laboissière and Andreas Tille, for maintaining the Debian package.")
-LIST_ITEM (U"Jason Bacon, for maintaining the FreeBSD port.")
+LIST_ITEM (U"Jason Bacon and Adriaan de Groot, for maintaining the FreeBSD port.")
 LIST_ITEM (U"José Joaquín Atria and Ingmar Steiner, for setting up the source-code repository on GitHub.")
 LIST_ITEM (U"Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.")
 MAN_END

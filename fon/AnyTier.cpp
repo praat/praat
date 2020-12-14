@@ -187,6 +187,7 @@ integer AnyTier_hasPoint (AnyTier me, double t) {
 		return 1;
 	if (t == tright)
 		return iright;
+	Melder_assert (isdefined (t));
 	Melder_assert (t > tleft && t < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
