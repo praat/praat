@@ -743,10 +743,10 @@ autoPointProcess TextGrid_getPoints_preceded (TextGrid me, integer tierNumber,
 	try {
 		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+		for (integer ipoint = 2; ipoint <= tier -> points.size; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
 			if (Melder_stringMatchesCriterion (point -> mark.get(), which, criterion, true)) {
-				TextPoint preceding = ( ipoint <= 1 ? nullptr : tier -> points.at [ipoint - 1] );
+				TextPoint preceding = tier -> points.at [ipoint - 1];
 				if (Melder_stringMatchesCriterion (preceding -> mark.get(), precededBy, criterion_precededBy, true)) {
 					PointProcess_addPoint (thee.get(), point -> number);
 				}
@@ -765,10 +765,10 @@ autoPointProcess TextGrid_getPoints_followed (TextGrid me, integer tierNumber,
 	try {
 		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+		for (integer ipoint = 1; ipoint < tier -> points.size; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
 			if (Melder_stringMatchesCriterion (point -> mark.get(), which, criterion, true)) {
-				TextPoint following = ( ipoint >= tier -> points.size ? nullptr : tier -> points.at [ipoint + 1] );
+				TextPoint following = tier -> points.at [ipoint + 1];
 				if (Melder_stringMatchesCriterion (following -> mark.get(), followedBy, criterion_followedBy, true)) {
 					PointProcess_addPoint (thee.get(), point -> number);
 				}
