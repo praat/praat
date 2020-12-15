@@ -246,8 +246,8 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 			autoNUMfft_Table fourierTable;
 			NUMfft_Table_init (& fourierTable, nfft);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				VECsmooth_gaussian (thy z .row (iq), my z.row (iq), sigma, & fourierTable);
-				VECabs_inplace (thy z .row (iq));
+				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, & fourierTable);
+				VECabs_inplace (thy z.row (iq));
 			}
 		}
 		/*
