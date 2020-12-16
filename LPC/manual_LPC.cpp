@@ -220,37 +220,31 @@ MAN_END
 	"model in which the background cepstral amplitudes decay in a non-linear fashion.  "
 
 #define PowerCepstrum_manual_fitMethod \
-	U"defines how the line that models the cepstrum backgroud is calculated. The default method is " \
-	"@@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares " \
-	"line fit can also be chosen."
+	U"defines how the line that models the cepstrum background is calculated. The default method, " \
+	"\"Robust slow\", corresponds to @@theil regression|Theil's robust line fit@. The \"Robust\" method corresponds to the incomplete theil regression and is computationally faster but somewhat less precise. To be compatible with the past, a standard least squares " \
+	"line fit can also be chosen but it is much less precise than the other two because a least squares fit is much more influenced by the peak cepstral values than the other two."
 
 #define PowerCepstrum_manual_quefrencyAveragingWindow \
-	U"determines how many quefrency bins will be used for the averaging across quefrency step. The number of " \
-	"bins used in this step is the result of the division of the user-supplied value by the quefrency step value. " \
-	"If the result turns out to be one or less, no averaging across quefrencies is performed. If the resulting " \
-	"value is even, one will be added. If, for example, the result happens to be 3 then the value in quefrency " \
-	"bin %k will be the average value of the values in quefrency bins %k\\--1, %k and %k+1. "
+	U"determines the width of the averaging window in the quefrency domain. " \
+	"By chosing a value smaller than the quefrency distance, you can prevent any smoothing in the quefrency dimension."
 
 #define PowerCepstrogram_manual_timeAveraging \
-	U"determines how many frames will be used in the first step, averaging across time. The user-supplied value " \
-	"will be divided by the Cepstrograms's time step value (its %%dx%). If %%numberOfFramesToAverage%, the result " \
-	"of the division, turns out to be one or less, no averaging across time is performed. " \
-	"If %%numberOfFramesToAverage% is even, one will be added. " \
-	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. " \
-	"For example, if %numberOfFramesToAverage turns out to be 5, then the %j-th new cepstral frame is the result " \
-	"of averaging the 5 frames with indices %j\\--2 , %j\\--1, %j, %j+1 and %j+2 for all frames " \
-	"%j=3..%%numberOfFrames%\\--2, i.e. besides frame %j, the 2 frames on either side are used in the averaging. " \
-	"The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. "
-	
+	U"determines the width of the averaging window in the time domain. The result " \
+	"of the smoothing will be that in the new smoothed PowerCepstrogram each cepstral value is the average of the cepstral values " \
+	"within the averaging window that was positioned symmetrically around the center of this frame in the selected PowerCepstrogram. " \
+	"By chosing a value smaller than the time between two frames, you can prevent any smoothing in the time dimension. "
+		
 MAN_BEGIN (U"PowerCepstrogram", U"djmw", 20190909)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. A cepstrogram represents a time-quefrency representation of a sound. "
 	"Horizontally it shows time, vertically it shows quefrency while the quefrency power density is shown as shades of grey.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20190910)
+MAN_BEGIN (U"PowerCepstrogram: Get CPPS...", U"djmw", 20201216)
+INTRO (U"A command to get the cepstral peak prominence (CPP) of the selected @@PowerCepstrogram@. ")
+NORMAL (U"The returned value is the average of the cepstral peak prominences of the individual frames.")
 ENTRY (U"Settings")
 TAG (U"##Subtract trend before smoothing#")
-DEFINITION (U"defines whether the smoothing should be performed on the Cepstrogram after all trend of each PowerCepstrum has been removed. ")
+DEFINITION (U"determines whether the smoothing should be performed on the Cepstrogram after the trend of each PowerCepstrum frame has been removed. ")
 TAG (U"##Time averaging window (s)#")
 DEFINITION (PowerCepstrogram_manual_timeAveraging)
 TAG (U"##Quefrency averaging window (s)#")
@@ -323,8 +317,9 @@ TAG (U"##Garnish")
 DEFINITION (U"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20201124)
-INTRO (U"Smoothes the selected @PowerCepstrogram by averaging. The smoothed PowerCepstrogram is the result of two separate steps. "
+MAN_BEGIN (U"PowerCepstrogram: Smooth...", U"djmw", 20201216)
+INTRO (U"Smoothes the selected @PowerCepstrogram by averaging with a rectangular window. The smoothed PowerCepstrogram is the "
+	"result of two separate steps. "
 	"In the first step, cepstra are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (U"Settings")
 TAG (U"##Time averaging window (s)")
