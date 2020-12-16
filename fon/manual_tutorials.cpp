@@ -22,8 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201206)
+MAN_BEGIN (U"What's new?", U"ppgb", 20201216)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.37# (16 December 2020)")
+LIST_ITEM (U"• TextGrid window: removed a bug that caused Praat to crash when option-clicking or command-clicking a boundary when another boundary was selected on a point tier.")
+LIST_ITEM (U"• Record Sound (fixed time): removed a bug that caused Praat to crash with certain combinations of duration and sampling frequency on Windows.")
+LIST_ITEM (U"• PowerCepstrogram: more precise intergration, so that the cepstral peak prominence is now a continuous function of time.")
+LIST_ITEM (U"• TextGrid: Get points (preceded): removed a bug that caused Praat to crash under some edge conditions.")
+LIST_ITEM (U"• Scripting: tryToWriteFile () and tryToAppendFile () should not be available in manuals.")
 NORMAL (U"##6.1.36# (6 December 2020)")
 LIST_ITEM (U"• Scripting: tryToWriteFile (), tryToAppendFile (); formulas can have a size of 1 million.")
 LIST_ITEM (U"• Obscured scripts: error messages always disclosed.")
