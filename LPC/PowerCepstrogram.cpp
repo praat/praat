@@ -149,17 +149,17 @@ autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor,
 	try {
 		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0 rnr");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
-		for (integer icol = 1; icol <= my nx; icol ++) {
-			his z.row (1) <<= my z.column (icol);
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			his z.row (1) <<= my z.column (iframe);
 			double qpeak, cpp = PowerCepstrum_getPeakProminence (him.get(), pitchFloor, pitchCeiling, peakInterpolationType,
 				qstartFit, qendFit, lineType, fitMethod, & qpeak);
 			double rnr = PowerCepstrum_getRNR (him.get(), pitchFloor, pitchCeiling, deltaF0);
-			double time = Sampled_indexToX (me, icol);
-			Table_setNumericValue (thee.get(), icol, 1, time);
-			Table_setNumericValue (thee.get(), icol, 2, qpeak);
-			Table_setNumericValue (thee.get(), icol, 3, cpp); // Cepstrogram_getCPPS depends on this index!!
-			Table_setNumericValue (thee.get(), icol, 4, 1.0 / qpeak);
-			Table_setNumericValue (thee.get(), icol, 5, rnr);
+			double time = Sampled_indexToX (me, iframe);
+			Table_setNumericValue (thee.get(), iframe, 1, time);
+			Table_setNumericValue (thee.get(), iframe, 2, qpeak);
+			Table_setNumericValue (thee.get(), iframe, 3, cpp); // Cepstrogram_getCPPS depends on this index!!
+			Table_setNumericValue (thee.get(), iframe, 4, 1.0 / qpeak);
+			Table_setNumericValue (thee.get(), iframe, 5, rnr);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -246,8 +246,8 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 			autoNUMfft_Table fourierTable;
 			NUMfft_Table_init (& fourierTable, nfft);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				VECsmooth_gaussian (thy z.row (iq), my z.row (iq), sigma, & fourierTable);
-				VECabs_inplace (thy z.row (iq));
+				VECsmooth_gaussian (thy z .row (iq), my z.row (iq), sigma, & fourierTable);
+				VECabs_inplace (thy z .row (iq));
 			}
 		}
 		/*
