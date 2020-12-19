@@ -81,11 +81,9 @@ struct CollectionOf : structDaata {
 			but which is not how destruction should be organized.
 		*/
 		if (our at._elements) {
-			if (our _ownItems) {
-				for (integer i = 1; i <= our size; i ++) {
+			if (our _ownItems)
+				for (integer i = 1; i <= our size; i ++)
 					_Thing_forget (our at [i]);
-				}
-			}
 			our at._elements ++;   // convert from base-1 to base-0
 			Melder_free (our at._elements);
 		}
@@ -124,11 +122,9 @@ struct CollectionOf : structDaata {
 	CollectionOf<T>& operator= (CollectionOf<T>&& other) noexcept {
 		if (other. at._elements != our at._elements) {
 			if (our at._elements) {
-				if (our _ownItems) {
-					for (integer i = 1; i <= our size; i ++) {
+				if (our _ownItems)
+					for (integer i = 1; i <= our size; i ++)
 						_Thing_forget (our at [i]);
-					}
-				}
 				our at._elements ++;   // convert from base-1 to base-0
 				Melder_free (our at._elements);
 			}
@@ -146,13 +142,11 @@ struct CollectionOf : structDaata {
 		return *this;
 	}
 	template <class Y> CollectionOf<T>& operator= (CollectionOf<Y>&& other) noexcept {
-		if (other. at_elements != our at_elements) {
+		if (other. at._elements != our at._elements) {
 			if (our at._elements) {
-				if (our _ownItems) {
-					for (integer i = 1; i <= our size; i ++) {
+				if (our _ownItems)
+					for (integer i = 1; i <= our size; i ++)
 						_Thing_forget (our at [i]);
-					}
-				}
 				our at._elements ++;   // convert from base-1 to base-0
 				Melder_free (our at._elements);
 			}
@@ -180,7 +174,8 @@ struct CollectionOf : structDaata {
 		}
 	}
 	void _grow (integer newCapacity) {
-		if (newCapacity <= our _capacity) return;
+		if (newCapacity <= our _capacity)
+			return;
 		T** oldItem_base0 = ( our at._elements ? our at._elements + 1 : nullptr );   // convert from base-1 to base-0
 		T** newItem_base0 = (T**) Melder_realloc (oldItem_base0, newCapacity * (int64) sizeof (T*));
 		our at._elements = newItem_base0 - 1;   // convert from base-0 to base-1

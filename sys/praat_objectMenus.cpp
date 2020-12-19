@@ -271,18 +271,16 @@ DO
 		Interpreter_anyExpression (interpreter, expression, & result);
 	}
 	switch (result. expressionType) {
-		case kFormula_EXPRESSION_TYPE_NUMERIC: {
+		case kFormula_EXPRESSION_TYPE_NUMERIC:
 			Melder_information (result. numericResult);
-		} break;
-		case kFormula_EXPRESSION_TYPE_STRING: {
+		break; case kFormula_EXPRESSION_TYPE_STRING:
 			Melder_information (result. stringResult.get());
-		} break;
-		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
+		break; case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR:
 			Melder_information (constVECVU (result. numericVectorResult));
-		} break;
-		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
+		break; case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX:
 			Melder_information (constMATVU (result. numericMatrixResult));
-		}
+		break; case kFormula_EXPRESSION_TYPE_STRING_ARRAY:
+			Melder_information (result. stringArrayResult);
 	}
 END }
 

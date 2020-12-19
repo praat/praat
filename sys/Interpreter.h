@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2018 Paul Boersma
+ * Copyright (C) 1993-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ Thing_define (InterpreterVariable, SimpleString) {
 	double numericValue;
 	autoVEC numericVectorValue;
 	autoMAT numericMatrixValue;
+	autoSTRVEC stringArrayValue;
 };
 
 #define Interpreter_MAXNUM_PARAMETERS  400
@@ -77,6 +78,7 @@ void Interpreter_numericExpression (Interpreter me, conststring32 expression, do
 void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *p_value, bool *p_owned);
 void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *p_value, bool *p_owned);
 autostring32 Interpreter_stringExpression (Interpreter me, conststring32 expression);
+void Interpreter_stringArrayExpression (Interpreter me, conststring32 expression, STRVEC *out_value, bool *out_owned);
 void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);

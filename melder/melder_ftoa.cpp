@@ -487,6 +487,16 @@ conststring32 Melder_MAT (constMATVU const& value) {
 	}
 	return string -> string;
 }
+conststring32 Melder_STRVEC (constSTRVEC const& value) {
+	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
+		iTensorBuffer = 0;
+	MelderString *string = & theTensorBuffers [iTensorBuffer];
+	MelderString_empty (string);
+	if (! NUMisEmpty (value))
+		for (integer i = 1; i <= value.size; i ++)
+			MelderString_append (string, value [i], U'\n');
+	return string -> string;
+}
 
 /********** STRING TO STRING CONVERSION **********/
 
