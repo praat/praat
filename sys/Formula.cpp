@@ -194,7 +194,7 @@ enum { NO_SYMBOL_,
 	GOTO_, IFTRUE_, IFFALSE_, INCREMENT_GREATER_GOTO_,
 	LABEL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
-	VEC_CELL_, MAT_CELL_, VARIABLE_REFERENCE_,
+	VEC_CELL_, MAT_CELL_, STRVEC_CELL_, VARIABLE_REFERENCE_,
 	TENSOR_LITERAL_,
 	SELF0_, SELFSTR0_, TO_OBJECT_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
@@ -299,7 +299,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"_goto", U"_iftrue", U"_iffalse", U"_incrementGreaterGoto",
 	U"_label",
 	U"_decrementAndAssign", U"_add3Down", U"_pop2",
-	U"_numericVectorElement", U"_numericMatrixElement", U"_variableReference",
+	U"_numericVectorElement", U"_numericMatrixElement", U"_stringVectorElement", U"_variableReference",
 	U"_numericVectorLiteral",
 	U"_self0", U"_self0$", U"_toObject",
 	U"_object_xmin", U"_object_xmax", U"_object_ymin", U"_object_ymax", U"_object_nx", U"_object_ny",
@@ -439,8 +439,12 @@ static void Formula_lexan () {
 			stringtokon;
 			do stringtokchar while (Melder_isWordCharacter (kar) || kar == U'.');
 			if (kar == '$') {
-				stringtokchar
 				isString = true;
+				stringtokchar
+				if (kar == '#') {
+					rank += 1;
+					stringtokchar
+				}
 			}
 			if (kar == '#') {
 				rank += 1;
@@ -461,19 +465,19 @@ static void Formula_lexan () {
 			stringtokoff;
 			oldchar;
 			/*
-			 * 'token' now contains a word, possibly ending in a dollar or number sign;
-			 * it could be a variable name, a function name, both, or a procedure name.
-			 * Try a language or function name first.
-			 */
+				`token` now contains a word, possibly ending in $, #, ## or $#;
+				it could be a variable name, a function name, both, or a procedure name.
+				Try a language or function name first.
+			*/
 			tok = Formula_hasLanguageName (token.string);
 			if (tok) {
 				/*
-				 * We have a language name or function name. It MIGHT be meant to be a variable name, though,
-				 * regarding the large and expanding number of language names.
-				 */
+					We have a language name or a function name. It MIGHT be meant to be a variable name, though,
+					regarding the large and expanding number of language names.
+				*/
 				/*
-				 * First the constants. They are reserved words and can never be variable names.
-				 */
+					First the constants. They are reserved words and can never be variable names.
+				*/
 				if (tok == NUMBER_PI_) {
 					newtok (NUMBER_)
 					toknumber (NUMpi);
@@ -484,17 +488,17 @@ static void Formula_lexan () {
 					newtok (NUMBER_)
 					toknumber (undefined);
 				/*
-				 * One very common language name must be converted to a synonym.
-				 */
+					One very common language name must be converted to a synonym.
+				*/
 				} else if (tok == FI_) {
 					newtok (ENDIF_)
 				/*
-				 * Is it a function name? These may be ambiguous.
-				 */
+					Is it a function name? These may be ambiguous.
+				*/
 				} else if (tok >= LOW_FUNCTION && tok <= HIGH_FUNCTION) {
 					/*
-					 * Look ahead to find out whether the next token is a left parenthesis (or a colon).
-					 */
+						Look ahead to find out whether the next token is a left parenthesis (or a colon).
+					*/
 					int jkar;
 					jkar = ikar + 1;
 					while (Melder_isHorizontalSpace (theExpression [jkar]))
@@ -511,8 +515,8 @@ static void Formula_lexan () {
 						numberOfStringConstants ++;
 					} else {
 						/*
-						 * This could be a variable with the same name as a function.
-						 */
+							This could be a variable with the same name as a function.
+						*/
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (! var) {
 							newtok (VARIABLE_NAME_)
@@ -546,23 +550,23 @@ static void Formula_lexan () {
 						}
 					}
 				/*
-				 * Not a function name.
-				 * Must be a language name (if, then, else, endif, or, and, not, div, mod, x, ncol, stopwatch).
-				 * Some can be used as variable names (x, ncol...).
-				 */
+					Not a function name.
+					Must be a language name (if, then, else, endif, or, and, not, div, mod, x, ncol, stopwatch).
+					Some can be used as variable names (x, ncol...).
+				*/
 				} else if (tok >= LOW_ATTRIBUTE && tok <= HIGH_ATTRIBUTE) {
 					/*
-					 * Look back to find out whether this is an attribute.
-					 */
+						Look back to find out whether this is an attribute.
+					*/
 					if (itok > 0 && lexan [itok]. symbol == PERIOD_) {
 						/*
-						 * This must be an attribute that follows a period.
-						 */
+							This must be an attribute that follows a period.
+						*/
 						newtok (tok)
 					} else if (theSource) {
 						/*
-						 * Look for ambiguity.
-						 */
+							Look for ambiguity.
+						*/
 						if (Interpreter_hasVariable (theInterpreter, token.string))
 							Melder_throw (
 								U"«", token.string,
@@ -578,8 +582,8 @@ static void Formula_lexan () {
 						}
 					} else {
 						/*
-						 * This must be a variable, since there is no "current object" here.
-						 */
+							This must be a variable, since there is no "current object" here.
+						*/
 						int jkar = ikar + 1;
 						while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 						if (theExpression [jkar] == U'[' && rank == 0) {
@@ -625,12 +629,12 @@ static void Formula_lexan () {
 						}
 					}
 				} else {
-					newtok (tok)   /* This must be a language name. */
+					newtok (tok)   // this must be a language name
 				}
 			} else {
 				/*
-				 * token.string is not a language name
-				 */
+					token.string is not a language name
+				*/
 				int jkar = ikar + 1;
 				while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 				if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
@@ -975,6 +979,20 @@ static void parsePowerFactor () {
 		} else {
 			oldread;
 			newparse (NUMERIC_MATRIX_VARIABLE_);
+		}
+		parse [iparse]. content.variable = var;
+		return;
+	}
+
+	if (symbol == STRING_ARRAY_VARIABLE_) {
+		InterpreterVariable var = lexan [ilexan]. content.variable;   // save before incrementing ilexan
+		if (newread == OPENING_BRACKET_) {
+			parseExpression ();
+			fit (CLOSING_BRACKET_);
+			newparse (STRVEC_CELL_);
+		} else {
+			oldread;
+			newparse (STRING_ARRAY_VARIABLE_);
 		}
 		parse [iparse]. content.variable = var;
 		return;
@@ -2289,6 +2307,30 @@ static void pushString (autostring32 x) {
 	stackel -> setString (x.move());
 	//stackel -> owned = true;
 }
+static void pushStringVector (autoSTRVEC x) {
+	Stackel stackel = & theStack [++ w];
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
+	stackel -> which = Stackel_STRING_ARRAY;
+	stackel -> stringArray = x.releaseToAmbiguousOwner();
+	stackel -> owned = true;
+}
+static void pushStringVectorReference (STRVEC x) {
+	Stackel stackel = & theStack [++ w];
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
+	stackel -> which = Stackel_STRING_ARRAY;
+	stackel -> stringArray = x;
+	stackel -> owned = false;
+}
 static void pushObject (Daata object) {
 	Stackel stackel = & theStack [++ w];
 	stackel -> reset();
@@ -2338,6 +2380,8 @@ static void do_eq () {
 		pushNumber (NUMequal (x->numericVector, y->numericVector) ? 1.0 : 0.0);
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix) ? 1.0 : 0.0);
+	} else if (x->which == Stackel_STRING_ARRAY && y->which == Stackel_STRING_ARRAY) {
+		pushNumber (NUMequal (x->stringArray, y->stringArray) ? 1.0 : 0.0);
 	} else {
 		Melder_throw (U"Cannot compare (=) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
@@ -2355,6 +2399,8 @@ static void do_ne () {
 		pushNumber (NUMequal (x->numericVector, y->numericVector) ? 0.0 : 1.0);
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
 		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix) ? 0.0 : 1.0);
+	} else if (x->which == Stackel_STRING_ARRAY && y->which == Stackel_STRING_ARRAY) {
+		pushNumber (NUMequal (x->stringArray, y->stringArray) ? 0.0 : 1.0);
 	} else {
 		Melder_throw (U"Cannot compare (<>) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
@@ -3885,6 +3931,10 @@ static void shared_do_writeInfo (integer numberOfArguments) {
 				}
 				MelderInfo_write (irow == arg->numericMatrix.nrow ? U"" : U"\n");
 			}
+		} else if (arg->which == Stackel_STRING_ARRAY) {
+			for (integer i = 1; i <= arg->stringArray.size; i ++)
+				MelderInfo_write (arg->stringArray [i],
+						i == arg->stringArray.size ? U"" : U" ");
 		}
 	}
 }
@@ -4705,6 +4755,21 @@ static void do_numericMatrixElement () {
 	if (row > matrix -> numericMatrixValue. nrow)
 		Melder_throw (U"Row index out of bounds.");
 	pushNumber (matrix -> numericMatrixValue [row] [column]);
+}
+static void do_stringVectorElement () {
+	InterpreterVariable vector = parse [programPointer]. content.variable;
+	integer element = 1;   // default
+	Stackel r = pop;
+	if (r -> which != Stackel_NUMBER)
+		Melder_throw (U"In vector indexing, the index should be a number, not ", r->whichText(), U".");
+	if (isundef (r -> number))
+		Melder_throw (U"The element index is undefined.");
+	element = Melder_iround (r -> number);
+	if (element <= 0)
+		Melder_throw (U"In vector indexing, the element index should be positive.");
+	if (element > vector -> stringArrayValue.size)
+		Melder_throw (U"Element index out of bounds.");
+	pushString (Melder_dup (vector -> stringArrayValue [element].get()));
 }
 static void do_indexedNumericVariable () {
 	Stackel n = pop;
@@ -5562,6 +5627,16 @@ static void do_tensorLiteral () {
 			result.row (ielement)  <<=  element->numericVector;
 		}
 		pushNumericMatrix (result.move());
+	} else if (last->which == Stackel_STRING) {
+		autoSTRVEC result (numberOfElements);
+		result [numberOfElements] = last->_string.move();
+		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
+			Stackel element = pop;
+			Melder_require (element->which == Stackel_STRING,
+				U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a string.");
+			result [ielement]  =  element->_string.move();
+		}
+		pushStringVector (std::move (result));
 	} else {
 		Melder_throw (U"Cannot (yet?) create a tensor containing ", last->whichText(), U".");
 	}
@@ -7360,6 +7435,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	//Melder_casual (U"total ", theStack[w].number);
 } break; case VEC_CELL_: { do_numericVectorElement ();
 } break; case MAT_CELL_: { do_numericMatrixElement ();
+} break; case STRVEC_CELL_: { do_stringVectorElement ();
 } break; case INDEXED_NUMERIC_VARIABLE_: { do_indexedNumericVariable ();
 } break; case INDEXED_STRING_VARIABLE_: { do_indexedStringVariable ();
 } break; case VARIABLE_REFERENCE_: {
@@ -7411,6 +7487,9 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	InterpreterVariable var = f [programPointer]. content.variable;
 	autostring32 string = Melder_dup (var -> stringValue.get());
 	pushString (string.move());
+} break; case STRING_ARRAY_VARIABLE_: {
+	InterpreterVariable var = f [programPointer]. content.variable;
+	pushStringVectorReference (var -> stringArrayValue.get());
 } break; default: Melder_throw (U"Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], U"\" without action.");
 			} // endswitch
 			programPointer ++;
@@ -7428,6 +7507,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				Melder_throw (U"Found a vector expression instead of a numeric expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
 				Melder_throw (U"Found a matrix expression instead of a numeric expression.");
+			if (theStack [1]. which == Stackel_STRING_ARRAY)
+				Melder_throw (U"Found a string vector expression instead of a numeric expression.");
 			Melder_assert (theStack [1]. which == Stackel_NUMBER);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 			result -> numericResult = theStack [1]. number;
@@ -7438,6 +7519,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				Melder_throw (U"Found a vector expression instead of a string expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
 				Melder_throw (U"Found a matrix expression instead of a string expression.");
+			if (theStack [1]. which == Stackel_STRING_ARRAY)
+				Melder_throw (U"Found a string vector expression instead of a string expression.");
 			Melder_assert (theStack [1]. which == Stackel_STRING);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 			Melder_assert (! result -> stringResult);
@@ -7451,6 +7534,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				Melder_throw (U"Found a string expression instead of a vector expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
 				Melder_throw (U"Found a matrix expression instead of a vector expression.");
+			if (theStack [1]. which == Stackel_STRING_ARRAY)
+				Melder_throw (U"Found a string vector expression instead of a numeric vector expression.");
 			Melder_assert (theStack [1]. which == Stackel_NUMERIC_VECTOR);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
 			result -> numericVectorResult = theStack [1]. numericVector;
@@ -7463,9 +7548,25 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				Melder_throw (U"Found a string expression instead of a matrix expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_VECTOR)
 				Melder_throw (U"Found a vector expression instead of a matrix expression.");
+			if (theStack [1]. which == Stackel_STRING_ARRAY)
+				Melder_throw (U"Found a string vector expression instead of a numeric matrix expression.");
 			Melder_assert (theStack [1]. which == Stackel_NUMERIC_MATRIX);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
 			result -> numericMatrixResult = theStack [1]. numericMatrix;
+			result -> owned = theStack [1]. owned;
+			theStack [1]. owned = false;
+		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_STRING_ARRAY) {
+			if (theStack [1]. which == Stackel_NUMBER)
+				Melder_throw (U"Found a numeric expression instead of a string vector expression.");
+			if (theStack [1]. which == Stackel_STRING)
+				Melder_throw (U"Found a string expression instead of a string vector expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_VECTOR)
+				Melder_throw (U"Found a vector expression instead of a string vector expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
+				Melder_throw (U"Found a matrix expression instead of a string vector expression.");
+			Melder_assert (theStack [1]. which == Stackel_STRING_ARRAY);
+			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING_ARRAY;
+			result -> stringArrayResult = theStack [1]. stringArray;
 			result -> owned = theStack [1]. owned;
 			theStack [1]. owned = false;
 		} else {
@@ -7487,6 +7588,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			} else if (theStack [1]. which == Stackel_NUMERIC_MATRIX) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
 				result -> numericMatrixResult = theStack [1]. numericMatrix;
+				result -> owned = theStack [1]. owned;
+				theStack [1]. owned = false;
+			} else if (theStack [1]. which == Stackel_STRING_ARRAY) {
+				result -> expressionType = kFormula_EXPRESSION_TYPE_STRING_ARRAY;
+				result -> stringArrayResult = theStack [1]. stringArray;
 				result -> owned = theStack [1]. owned;
 				theStack [1]. owned = false;
 			} else {

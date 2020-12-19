@@ -44,8 +44,10 @@ struct MelderArg {
 	*/
 	MelderArg (constVECVU const&         arg) : _arg (Melder_VEC             (arg)) { }
 	MelderArg (constMATVU const&         arg) : _arg (Melder_MAT             (arg)) { }
+	MelderArg (constSTRVEC const&        arg) : _arg (Melder_STRVEC          (arg)) { }
 	MelderArg (VECVU const&              arg) : _arg (Melder_VEC             (arg)) { }
 	MelderArg (MATVU const&              arg) : _arg (Melder_MAT             (arg)) { }
+	MelderArg (STRVEC const&             arg) : _arg (Melder_STRVEC          (arg)) { }
 	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
 	/*

@@ -70,6 +70,7 @@ typedef struct structStackel {
 		Daata object;
 		VEC numericVector;
 		MAT numericMatrix;
+		STRVEC stringArray;
 		InterpreterVariable variable;
 	};
 	structStackel () {
@@ -100,6 +101,14 @@ typedef struct structStackel {
 					removable. adoptFromAmbiguousOwner (our numericMatrix);
 				}
 				our numericMatrix = MAT ();   // undangle
+			}
+		} else if (our which == Stackel_STRING_ARRAY) {
+			if (our owned) {
+				{// scope
+					autoSTRVEC removable;
+					removable. adoptFromAmbiguousOwner (our stringArray);
+				}
+				our stringArray = STRVEC ();   // undangle
 			}
 		}
 	}
@@ -137,6 +146,7 @@ struct Formula_Result {
 	autostring32 stringResult;
 	VEC numericVectorResult;
 	MAT numericMatrixResult;
+	STRVEC stringArrayResult;
 	bool owned;
 	Formula_Result () {
 		our expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
@@ -159,6 +169,11 @@ struct Formula_Result {
 				mat. adoptFromAmbiguousOwner (our numericMatrixResult);
 			}
 			our numericMatrixResult = MAT ();   // undangle
+			{// scope
+				autoSTRVEC removable;
+				removable. adoptFromAmbiguousOwner (our stringArrayResult);
+			}
+			our stringArrayResult = STRVEC ();   // undangle
 		}
 	}
 	~ Formula_Result () {

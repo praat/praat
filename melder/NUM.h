@@ -1,7 +1,7 @@
 #pragma once
 /* NUM.h
  *
- * Copyright (C) 2017-2019 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,10 @@ template <typename T>
 bool NUMisEmpty (constmatrixview<T> const& x) noexcept {
 	const integer numberOfCells = x.nrow * x.ncol;
 	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+
+inline bool NUMisEmpty (constSTRVEC const& x) noexcept {
+	return x.size == 0;
 }
 
 inline MelderRealRange NUMextrema (const constVECVU& vec) {
