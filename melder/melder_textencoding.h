@@ -2,7 +2,7 @@
 #define _melder_textencoding_h_
 /* melder_textencoding.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,12 +74,12 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines);
 extern "C" conststring16 Melder_peek32to16 (conststring32 string);
 
 #ifdef _WIN32
-	inline static conststringW Melder_peek32toW (conststring32 string) { return (conststringW) Melder_peek32to16 (string); }
+	inline conststringW Melder_peek32toW (conststring32 string) { return (conststringW) Melder_peek32to16 (string); }
 	conststringW Melder_peek32toW_fileSystem (conststring32 string);
 	autostringW Melder_32toW (conststring32 string);
 	autostringW Melder_32toW_fileSystem (conststring32 string);
-	inline static conststring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
-	inline static autostring32 Melder_Wto32 (conststringW string) { return Melder_16to32 ((conststring16) string); }
+	inline conststring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
+	inline autostring32 Melder_Wto32 (conststringW string) { return Melder_16to32 ((conststring16) string); }
 #endif
 
 void Melder_32to8_fileSystem_inplace (conststring32 string, mutablestring8 utf8);

@@ -22,7 +22,7 @@
 #include "Thing.h"
 #include <thread>
 
-inline static integer MelderThread_getNumberOfProcessors () {
+inline integer MelderThread_getNumberOfProcessors () {
 	return uinteger_to_integer (std::thread::hardware_concurrency ());
 }
 

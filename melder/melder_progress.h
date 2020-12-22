@@ -113,7 +113,7 @@ namespace MelderProgress {
 void Melder_progressOff ();
 void Melder_progressOn ();
 
-inline static void Melder_progress (double progress) {
+inline void Melder_progress (double progress) {
 	MelderProgress::_doProgress (progress, U"");
 }
 template <typename... Args>
@@ -131,7 +131,7 @@ public:
 	}
 };
 
-inline static void * Melder_monitor (double progress) {
+inline void * Melder_monitor (double progress) {
 	return MelderProgress::_doMonitor (progress, U"");
 }
 template <typename... Args>
