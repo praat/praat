@@ -161,9 +161,9 @@ int ogg_stream_check(ogg_stream_state *os){
 /* _clear does not free os, only the non-flat storage within */
 int ogg_stream_clear(ogg_stream_state *os){
   if(os){
-    if(os->body_data)_ogg_free(os->body_data);
-    if(os->lacing_vals)_ogg_free(os->lacing_vals);
-    if(os->granule_vals)_ogg_free(os->granule_vals);
+    if(os->body_data)Melder_free(os->body_data);
+    if(os->lacing_vals)Melder_free(os->lacing_vals);
+    if(os->granule_vals)Melder_free(os->granule_vals);
 
     memset(os,0,sizeof(*os));
   }
@@ -173,7 +173,7 @@ int ogg_stream_clear(ogg_stream_state *os){
 int ogg_stream_destroy(ogg_stream_state *os){
   if(os){
     ogg_stream_clear(os);
-    _ogg_free(os);
+    Melder_free(os);
   }
   return(0);
 }
@@ -191,13 +191,13 @@ static int _os_body_expand(ogg_stream_state *os,long needed){
     }
     body_storage=os->body_storage+needed;
     if(body_storage<LONG_MAX-1024)body_storage+=1024;
-    ret=_ogg_realloc(os->body_data,body_storage*sizeof(*os->body_data));
+    ret=Melder_realloc(os->body_data,body_storage*sizeof(*os->body_data));
     if(!ret){
       ogg_stream_clear(os);
       return -1;
     }
     os->body_storage=body_storage;
-    os->body_data=ret;
+    os->body_data=(unsigned char *)ret;
   }
   return 0;
 }
@@ -212,19 +212,19 @@ static int _os_lacing_expand(ogg_stream_state *os,long needed){
     }
     lacing_storage=os->lacing_storage+needed;
     if(lacing_storage<LONG_MAX-32)lacing_storage+=32;
-    ret=_ogg_realloc(os->lacing_vals,lacing_storage*sizeof(*os->lacing_vals));
+    ret=Melder_realloc(os->lacing_vals,lacing_storage*sizeof(*os->lacing_vals));
     if(!ret){
       ogg_stream_clear(os);
       return -1;
     }
-    os->lacing_vals=ret;
-    ret=_ogg_realloc(os->granule_vals,lacing_storage*
+    os->lacing_vals=(int *)ret;
+    ret=Melder_realloc(os->granule_vals,lacing_storage*
                      sizeof(*os->granule_vals));
     if(!ret){
       ogg_stream_clear(os);
       return -1;
     }
-    os->granule_vals=ret;
+    os->granule_vals=(ogg_int64_t *)ret;
     os->lacing_storage=lacing_storage;
   }
   return 0;
@@ -565,7 +565,7 @@ int ogg_sync_init(ogg_sync_state *oy){
 /* clear non-flat storage within */
 int ogg_sync_clear(ogg_sync_state *oy){
   if(oy){
-    if(oy->data)_ogg_free(oy->data);
+    if(oy->data)Melder_free(oy->data);
     memset(oy,0,sizeof(*oy));
   }
   return(0);
@@ -574,7 +574,7 @@ int ogg_sync_clear(ogg_sync_state *oy){
 int ogg_sync_destroy(ogg_sync_state *oy){
   if(oy){
     ogg_sync_clear(oy);
-    _ogg_free(oy);
+    Melder_free(oy);
   }
   return(0);
 }
@@ -601,14 +601,14 @@ char *ogg_sync_buffer(ogg_sync_state *oy, long size){
     void *ret;
 
     if(oy->data)
-      ret=_ogg_realloc(oy->data,newsize);
+      ret=Melder_realloc(oy->data,newsize);
     else
-      ret=_ogg_malloc(newsize);
+      ret=_Melder_malloc(newsize);
     if(!ret){
       ogg_sync_clear(oy);
       return NULL;
     }
-    oy->data=ret;
+    oy->data=(unsigned char *)ret;
     oy->storage=newsize;
   }
 
@@ -711,7 +711,7 @@ long ogg_sync_pageseek(ogg_sync_state *oy,ogg_page *og){
   oy->bodybytes=0;
 
   /* search for possible capture */
-  next=memchr(page+1,'O',bytes-1);
+  next=(unsigned char *)memchr(page+1,'O',bytes-1);
   if(!next)
     next=oy->data+oy->fill;
 
@@ -997,7 +997,7 @@ int ogg_stream_packetpeek(ogg_stream_state *os,ogg_packet *op){
 }
 
 void ogg_packet_clear(ogg_packet *op) {
-  _ogg_free(op->packet);
+  Melder_free(op->packet);
   memset(op, 0, sizeof(*op));
 }
 

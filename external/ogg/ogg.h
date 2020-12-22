@@ -16,13 +16,14 @@
 #ifndef _OGG_H
 #define _OGG_H
 
+#include "melder.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stddef.h>
-#include "melder.h"
-#include "os_types.h"
+#include "config_types.h"
 
 typedef struct {
   void *iov_base;
