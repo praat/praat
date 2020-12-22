@@ -139,19 +139,21 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 				case kFormula_EXPRESSION_TYPE_NUMERIC: {
 					args [narg]. which = Stackel_NUMBER;
 					args [narg]. number = result. numericResult;
-				} break;
-				case kFormula_EXPRESSION_TYPE_STRING: {
+				} break; case kFormula_EXPRESSION_TYPE_STRING: {
 					args [narg]. setString (result. stringResult.move());
-				} break;
-				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
+				} break; case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 					args [narg]. which = Stackel_NUMERIC_VECTOR;
 					args [narg]. numericVector = result. numericVectorResult;
 					args [narg]. owned = result. owned;
 					result. owned = false;
-				} break;
-				case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
+				} break; case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 					args [narg]. which = Stackel_NUMERIC_MATRIX;
 					args [narg]. numericMatrix = result. numericMatrixResult;
+					args [narg]. owned = result. owned;
+					result. owned = false;
+				} break; case kFormula_EXPRESSION_TYPE_STRING_ARRAY: {
+					args [narg]. which = Stackel_STRING_ARRAY;
+					args [narg]. stringArray = result. stringArrayResult;
 					args [narg]. owned = result. owned;
 					result. owned = false;
 				} break;
