@@ -100,6 +100,11 @@ public:
 		our elements = nullptr;
 		our size = 0;
 	}
+	explicit _autostringautovector (integer givenSize) {
+		our elements = MelderArray:: _alloc <_autostring <T>> (givenSize, MelderArray::kInitializationType :: ZERO);
+		our size = givenSize;
+		our _capacity = givenSize;
+	}
 	void reset () {
 		if (our elements) {
 			for (integer i = 1; i <= our size; i ++)
@@ -114,15 +119,10 @@ public:
 		our reset ();
 	}
 	_stringvector<T> get () const {
-		return _stringvector<T> ((T**) our elements, our size);
+		return _stringvector<T> (reinterpret_cast <T**> (our elements), our size);
 	}
 	_autostringvectorview<T> all () const {
 		return _autostringvectorview<T> (our elements, our size);
-	}
-	_autostringautovector<T> (integer givenSize) {
-		our elements = MelderArray:: _alloc <_autostring <T>> (givenSize, MelderArray::kInitializationType :: ZERO);
-		our size = givenSize;
-		our _capacity = givenSize;
 	}
 	void adoptFromAmbiguousOwner (_stringvector<T> const& given) {   // buy the payload from a non-autostring
 		our reset();
@@ -178,7 +178,7 @@ public:
 	_autostringautovector&& move () noexcept { return static_cast <_autostringautovector&&> (*this); }   // enable construction and assignment for l-values (variables) via explicit move()
 	void initWithCapacity (integer capacity) {
 		if (capacity > 0)
-			our cells = MelderArray:: _alloc <_autostring <T> *> (capacity, MelderArray::kInitializationType::ZERO);
+			our cells = MelderArray:: _alloc <_autostring <T>> (capacity, MelderArray::kInitializationType::ZERO);
 		our size = 0;
 		our _capacity = capacity;
 	}
@@ -194,7 +194,7 @@ public:
 			/*
 				Create without change.
 			*/
-			T *newElements = MelderArray:: _alloc <T> (newCapacity, MelderArray::kInitializationType::ZERO);
+			_autostring <T> * newElements = MelderArray:: _alloc <_autostring <T>> (newCapacity, MelderArray::kInitializationType::ZERO);
 			/*
 				Change without error.
 			*/
@@ -212,7 +212,7 @@ public:
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = our size; i > position; i --)
 			our elements [i - 1] = std::move (our elements [i - 2]);
-		our elements [position - 1] = value;
+		our elements [position - 1] = Melder_dup (value);
 	}
 	T* append () {
 		resize (our size + 1);

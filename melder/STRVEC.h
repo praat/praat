@@ -37,9 +37,11 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	return constSTRVEC (& strvec [fromIndex], rangeSize);
 }
 
-void STRVECshuffle_inplace (STRVEC const& x) noexcept;
+autoSTRVEC STRVEC_readFile (MelderFile file);
 
-void STRVECsort_inplace (STRVEC const& a) noexcept;
+void STRVEC_shuffle_inout (STRVEC const& x) noexcept;
+
+void STRVEC_sort_inout (STRVEC const& a) noexcept;
 
 /*
 	Regard a string as a sequence of tokens,
