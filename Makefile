@@ -2,6 +2,7 @@
 
 # Makefile for Praat.
 # Paul Boersma, 24 May 2020
+# David Weenink, 21 Decmber 2020
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -25,6 +26,7 @@ all: all-external all-self
 		external/glpk/libglpk.a \
 		external/clapack/libclapack.a \
 		external/gsl/libgsl.a \
+		external/ogg/libogg.a \
 		$(LIBS)
 
 all-external:
@@ -35,6 +37,7 @@ all-external:
 	$(MAKE) -C external/flac
 	$(MAKE) -C external/portaudio
 	$(MAKE) -C external/espeak
+	$(MAKE) -C external/ogg
 
 all-self:
 	$(MAKE) -C kar
@@ -62,6 +65,7 @@ clean-external:
 	$(MAKE) -C external/flac clean
 	$(MAKE) -C external/portaudio clean
 	$(MAKE) -C external/espeak clean
+	$(MAKE) -C external/ogg clean
 
 clean-self:
 	$(MAKE) -C kar clean
