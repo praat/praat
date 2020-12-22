@@ -80,7 +80,7 @@ public:
 	#else
 	_autostring () = default;   // explicit default, so that it can be used in a union
 	#endif
-	_autostring (integer length, bool f = false) {
+	explicit _autostring (integer length, bool f = false) {
 		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
 		our ptr [0] = '\0';
 		our ptr [length] = '\0';

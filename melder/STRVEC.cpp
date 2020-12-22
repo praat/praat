@@ -1,6 +1,6 @@
 /* STRVEC.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2018 Paul Boersma
+ * Copyright (C) 2006,2007,2009,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,19 @@
  */
 
 #include "melder.h"
+
+autoSTRVEC STRVEC_readFile (MelderFile file) {
+	autoMelderReadText text = MelderReadText_createFromFile (file);
+	int64 numberOfLines = MelderReadText_getNumberOfLines (text.get());
+	if (numberOfLines == 0)
+		return autoSTRVEC ();
+	autoSTRVEC result = autoSTRVEC (numberOfLines);
+	for (integer iline = 1; iline <= numberOfLines; iline ++) {
+		const mutablestring32 line = MelderReadText_readLine (text.get());
+		result [iline] = Melder_dup (line);
+	}
+	return result;
+}
 
 autoSTRVEC newSTRVECtokenize (conststring32 string) {
 	if (! string)

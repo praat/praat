@@ -33,8 +33,8 @@
 Thing_declare (InterpreterVariable);
 
 /*
-	A stack element may be 24 bytes large, so with a stack size of 1'000'000
-	we have 24 MB for the stack. A formula instruction may be 16 bytes large,
+	A stack element may be 32 bytes large, so with a stack size of 1'000'000
+	we have 32 MB for the stack. A formula instruction may be 16 bytes large,
 	so we have 16 MB for lexical analysis and 16 MB for the parse.
 */
 #define Formula_MAXIMUM_STACK_SIZE  1'000'000
@@ -50,7 +50,7 @@ typedef struct structStackel {
 	#define Stackel_VARIABLE  -1
 	#define Stackel_OBJECT  -2
 	int which;   // 0 or negative = no clean-up required, positive = requires clean-up
-	bool owned;   // relevant only to numeric vector/matrix/tensor3/tensor4
+	bool owned;   // relevant only to numeric vector/matrix/tensor3/tensor4/strvec/strmat
 	/*
 		The following member of structStackel can either be a struct or a union.
 		The struct option is the easy option: no special care will have to be taken when assigning to its members.
@@ -154,6 +154,7 @@ struct Formula_Result {
 		our stringResult = autostring32();
 		our numericVectorResult = VEC ();
 		our numericMatrixResult = MAT ();
+		our stringArrayResult = STRVEC ();
 		our owned = false;
 	}
 	void reset () {
@@ -165,8 +166,8 @@ struct Formula_Result {
 			}
 			our numericVectorResult = VEC ();   // undangle
 			{// scope
-				autoMAT mat;
-				mat. adoptFromAmbiguousOwner (our numericMatrixResult);
+				autoMAT removable;
+				removable. adoptFromAmbiguousOwner (our numericMatrixResult);
 			}
 			our numericMatrixResult = MAT ();   // undangle
 			{// scope

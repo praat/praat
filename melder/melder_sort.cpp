@@ -1,6 +1,6 @@
-/* NUMsort.cpp
+/* melder_sort.cpp
  *
- * Copyright (C) 1992-2011,2015,2017-2019 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ void INTVECshuffle_inplace (INTVECVU const& x) noexcept {
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
-void STRVECshuffle_inplace (STRVEC const& x) noexcept {
+void STRVEC_shuffle_inout (STRVEC const& x) noexcept {
 	for (integer i = 1; i < x.size; i ++)
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
@@ -49,7 +49,7 @@ void INTVECsort_inplace (INTVECVU const& x) noexcept {
 	);
 }
 
-void STRVECsort_inplace (STRVEC const& array) noexcept {
+void STRVEC_sort_inout (STRVEC const& array) noexcept {
 	std::sort (array.begin(), array.end(),
 		[] (conststring32 first, conststring32 last) {
 			return str32cmp (first, last) < 0;
@@ -79,4 +79,4 @@ double NUMquantile (constVECVU const& a, double factor) noexcept {
 	return a [left] + (place - left) * (a [left + 1] - a [left]);
 }
 
-/* End of file NUMsort.cpp */
+/* End of file melder_sort.cpp */

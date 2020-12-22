@@ -356,6 +356,29 @@ MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept {
 	return result;
 }
 
+double NUMminimumLength (constSTRVEC const& x) {
+	if (NUMisEmpty (x))
+		return undefined;
+	double result = NUMlength (x [1]);
+	for (integer i = 2; i <= x.size; i ++) {
+		const double length = NUMlength (x [i]);
+		if (length < result)
+			result = length;
+	}
+	return result;
+}
+double NUMmaximumLength (constSTRVEC const& x) {
+	if (NUMisEmpty (x))
+		return undefined;
+	double result = NUMlength (x [1]);
+	for (integer i = 2; i <= x.size; i ++) {
+		const double length = NUMlength (x [i]);
+		if (length > result)
+			result = length;
+	}
+	return result;
+}
+
 double NUMnorm (constVECVU const& vec, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
@@ -428,6 +451,13 @@ double NUMsum2 (constMATVU const& mat) {
 
 double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean) {
 	return double (NUMsumOfSquaredDifferences_longdouble (vec, mean));
+}
+
+double NUMtotalLength (constSTRVEC const& x) {
+	double totalLength = 0.0;
+	for (integer i = 1; i <= x.size; i ++)
+		totalLength += NUMlength (x [i]);
+	return double (totalLength);
 }
 
 double NUMvariance (const constVECVU& vec) noexcept {

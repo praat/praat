@@ -1411,21 +1411,8 @@ static void assignToStringArrayElement (Interpreter me, char32 *& p, const char3
 		*/
 		MelderString_empty (& valueString);
 		autoMelderDivertInfo divert (& valueString);
-		MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
 		int status = praat_executeCommand (me, p);
-		if (status == 0) {
-			value = autostring32 ();
-		} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
-			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
-			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
-			if (numberOfSelectedObjects > 1)
-				Melder_throw (U"Multiple objects selected. Cannot assign object ID to vector element.");
-			if (numberOfSelectedObjects == 0)
-				Melder_throw (U"No objects selected. Cannot assign object ID to vector element.");
-			value = theCurrentPraatObjects -> list [selectedObject]. id;
-		} else {
-			value = Melder_dup (valueString.string);
-		}
+		value = ( status == 0 ? autostring32 () : Melder_dup (valueString.string) );
 	} else {
 		/*
 			Get the value of the formula.
