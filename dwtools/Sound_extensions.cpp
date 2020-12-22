@@ -469,6 +469,24 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 	}
 }
 
+autoSound Sound_readFromOggVorbisFile (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "rb");
+		const integer filelength = MelderFile_length (file);
+		
+		Melder_require (filelength > 28,
+			U"File should not be empty.");
+		char data [4];
+		if (fread (data, 1, 4, f) < 4)
+			Melder_throw (U"Read error.");
+		if (! strnequ (data, "OggS", 4)) // Capture pattern 32 bits
+			Melder_throw (U"Not an Ogg Vorbis file.");
+		
+	} catch (MelderError) {
+		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
+	}
+}
+
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
 		return;    // above Nyquist?
