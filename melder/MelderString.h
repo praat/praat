@@ -45,7 +45,7 @@ void MelderString_empty (MelderString *me);   // sets to empty string (buffer sh
 void MelderString_expand (MelderString *me, int64 sizeNeeded);   // increases the buffer size; there's normally no need to call this
 void MelderString_ncopy (MelderString *me, conststring32 source, int64 n);
 
-inline static void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& arg) {
+inline void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& arg) {
 	if (arg._arg) {
 		const char32 *newEndOfStringLocation = stp32cpy (& my string [my length], arg._arg);   // this will append a null character
 		my length = newEndOfStringLocation - & my string [0];

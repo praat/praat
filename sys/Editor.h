@@ -111,7 +111,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 	conststring32 script);
 void Editor_setMenuSensitive (Editor me, conststring32 menu, bool sensitive);
 
-inline static void Editor_raise (Editor me)
+inline void Editor_raise (Editor me)
 	/*
 	 * Message: "move your window to the front", i.e.
 	 *    if you are invisible, then make your window visible at the front;
@@ -121,7 +121,7 @@ inline static void Editor_raise (Editor me)
 	{
 		GuiThing_show (my windowForm);
 	}
-inline static void Editor_dataChanged (Editor me)
+inline void Editor_dataChanged (Editor me)
 	/*
 	 * Message: "your data has changed by an action from *outside* yourself,
 	 *    so you may e.g. like to redraw yourself."
@@ -129,7 +129,7 @@ inline static void Editor_dataChanged (Editor me)
 	{
 		my v_dataChanged ();
 	}
-inline static void Editor_setDataChangedCallback (Editor me, Editor_DataChangedCallback dataChangedCallback)
+inline void Editor_setDataChangedCallback (Editor me, Editor_DataChangedCallback dataChangedCallback)
 	/*
 	 * Message from boss: "notify me by calling this dataChangedCallback every time your data is changed from *inside* yourself."
 	 *
@@ -141,7 +141,7 @@ inline static void Editor_setDataChangedCallback (Editor me, Editor_DataChangedC
 	{
 		my d_dataChangedCallback = dataChangedCallback;
 	}
-inline static void Editor_broadcastDataChanged (Editor me)
+inline void Editor_broadcastDataChanged (Editor me)
 	/*
 	 * Message to boss: "my data has changed by an action from inside myself."
 	 *
@@ -151,7 +151,7 @@ inline static void Editor_broadcastDataChanged (Editor me)
 		if (my d_dataChangedCallback)
 			my d_dataChangedCallback (me);
 	}
-inline static void Editor_setDestructionCallback (Editor me, Editor_DestructionCallback destructionCallback)
+inline void Editor_setDestructionCallback (Editor me, Editor_DestructionCallback destructionCallback)
 	/*
 	 * Message from observer: "notify me by calling this destructionCallback every time you destroy yourself."
 	 *
@@ -162,7 +162,7 @@ inline static void Editor_setDestructionCallback (Editor me, Editor_DestructionC
 	{
 		my d_destructionCallback = destructionCallback;
 	}
-inline static void Editor_broadcastDestruction (Editor me)
+inline void Editor_broadcastDestruction (Editor me)
 	/*
 	 * Message to boss: "I am destroying all my members and will free myself shortly."
 	 *
@@ -172,7 +172,7 @@ inline static void Editor_broadcastDestruction (Editor me)
 		if (my d_destructionCallback)
 			my d_destructionCallback (me);
 	}
-inline static void Editor_setPublicationCallback (Editor me, Editor_PublicationCallback publicationCallback)
+inline void Editor_setPublicationCallback (Editor me, Editor_PublicationCallback publicationCallback)
 	/*
 	 * Message from boss: "notify me by calling this publicationCallback every time you have a piece of data to publish."
 	 *
@@ -184,7 +184,7 @@ inline static void Editor_setPublicationCallback (Editor me, Editor_PublicationC
 	{
 		my d_publicationCallback = publicationCallback;
 	}
-inline static void Editor_broadcastPublication (Editor me, autoDaata publication)
+inline void Editor_broadcastPublication (Editor me, autoDaata publication)
 	/*
 	 * Message to boss: "I have a piece of data for you to publish."
 	 *

@@ -61,7 +61,7 @@ using uint64 = uint64_t;
 	#define INT54_MIN  -9007199254740991LL
 #endif
 
-inline static integer operator"" _integer (unsigned long long value) { return integer (value); }
+inline integer operator"" _integer (unsigned long long value) { return integer (value); }
 
 /*
 	We assume that the types "integer" and "uinteger" are both large enough to contain
@@ -69,20 +69,20 @@ inline static integer operator"" _integer (unsigned long long value) { return in
 	This entails that we assume that these types can be converted to each other without bounds checking.
 	We therefore crash Praat if this second assumption is not met.
 */
-inline static uinteger integer_to_uinteger (integer n) {
+inline uinteger integer_to_uinteger (integer n) {
 	Melder_assert (n >= 0);
 	return (uinteger) n;
 }
-inline static integer uinteger_to_integer (uinteger n) {
+inline integer uinteger_to_integer (uinteger n) {
 	Melder_assert (n <= INTEGER_MAX);
 	return (integer) n;
 }
-inline static int32 integer_to_int32 (integer n) {
+inline int32 integer_to_int32 (integer n) {
 	Melder_assert (n >= INT32_MIN && n <= INT32_MAX);
 	return (int32) n;
 }
 
-inline static integer integer_abs (integer n) {
+inline integer integer_abs (integer n) {
 	Melder_assert (sizeof (integer) == sizeof (long) || sizeof (integer) == sizeof (long long));
 	if (sizeof (integer) == sizeof (long))
 		return labs (n);

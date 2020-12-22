@@ -2,7 +2,7 @@
 #define _melder_file_h_
 /* MelderFile.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ MelderFile MelderFile_create (MelderFile file);
 void MelderFile_write (MelderFile file, conststring32 string);
 void MelderFile_writeCharacter (MelderFile file, char32 kar);
 
-inline static void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& arg) {
+inline void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& arg) {
 	MelderFile_write (file, arg. _arg);
 }
 template <typename... Args>

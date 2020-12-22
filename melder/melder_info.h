@@ -33,7 +33,7 @@ void MelderInfo_open ();   // clear the Info window in the background
 void MelderInfo_close ();   // drain the background info to the Info window, making sure there is a line break
 void MelderInfo_drain ();   // drain the background info to the Info window, without adding any extra line break
 
-inline static void _recursiveTemplate_MelderInfo_write (const MelderArg& arg) {
+inline void _recursiveTemplate_MelderInfo_write (const MelderArg& arg) {
 	MelderConsole::write (arg._arg, false);
 }
 template <typename... Args>
