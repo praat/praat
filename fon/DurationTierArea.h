@@ -34,7 +34,7 @@ Thing_define (DurationTierArea, RealTierArea) {
 	#include "DurationTierArea_prefs.h"
 };
 
-inline static autoDurationTierArea DurationTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	autoDurationTierArea me = Thing_new (DurationTierArea);
 	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;

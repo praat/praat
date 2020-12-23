@@ -2,7 +2,7 @@
 #define _melder_casual_h_
 /* melder_casual.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 		Writes to stderr on Unix, otherwise to a special window.
 */
 
-inline static void _recursiveTemplate_Melder_casual (const MelderArg& arg) {
+inline void _recursiveTemplate_Melder_casual (const MelderArg& arg) {
 	MelderConsole::write (arg._arg, true);
 }
 template <typename... Args>

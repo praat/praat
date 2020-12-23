@@ -226,8 +226,8 @@ inline bool NUMisSymmetric (constMATVU const& x) noexcept {
 	return true;
 }
 
-inline integer NUMlength (conststring32 str) {
-	return str ? str32len (str) : 0;
+inline double NUMlength (conststring32 str) {
+	return str ? double (str32len (str)) : 0.0;
 }
 
 inline double NUMlog2 (double x) {
@@ -267,6 +267,9 @@ inline double NUMmax (constMATVU const& mat) {
 	}
 	return maximum;
 }
+
+extern double NUMminimumLength (constSTRVEC const& x);
+extern double NUMmaximumLength (constSTRVEC const& x);
 
 extern double NUMmean (constVECVU const& vec);
 extern double NUMmean (constMATVU const& mat) noexcept;
@@ -337,6 +340,8 @@ extern double NUMsum2 (constVECVU const& vec);
 extern double NUMsum2 (constMATVU const& mat);
 
 extern double NUMsumOfSquaredDifferences (constVECVU const& vec, double mean);
+
+extern double NUMtotalLength (constSTRVEC const& x);
 
 extern double NUMvariance (constVECVU const& vec) noexcept;
 extern double NUMvariance (constMATVU const& mat) noexcept;

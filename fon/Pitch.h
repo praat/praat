@@ -63,7 +63,7 @@ void Pitch_Frame_init (Pitch_Frame me, integer nCandidates);
 		my intensity == 0.0; // silent
 */
 
-inline static bool Pitch_util_frequencyIsVoiced (double f, double ceiling) {
+inline bool Pitch_util_frequencyIsVoiced (double f, double ceiling) {
 	return f > 0.0 && f < ceiling;   // note: return false is f is NaN
 }
 

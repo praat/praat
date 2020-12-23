@@ -2,7 +2,7 @@
 #define _enums_h_
 /* enums.h
  *
- * Copyright (C) 2007,2013,2015,2017 Paul Boersma
+ * Copyright (C) 2005,2007,2013,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ typedef int (*enum_generic_getValue) (conststring32 text);
 	DEFAULT = default }; \
 	conststring32 kType##_getText (kType value); \
 	kType kType##_getValue (conststring32 text); \
-	inline static kType& operator++ (kType& value) { \
+	inline kType& operator++ (kType& value) { \
 		value = static_cast <kType> (static_cast <int> (value) + 1); \
 		return value; \
 	}

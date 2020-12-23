@@ -37,15 +37,19 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	return constSTRVEC (& strvec [fromIndex], rangeSize);
 }
 
-void STRVECshuffle_inplace (STRVEC const& x) noexcept;
+autoSTRVEC readFile_STRVEC (MelderFile file);
 
-void STRVECsort_inplace (STRVEC const& a) noexcept;
+autoSTRVEC shuffle_STRVEC (STRVEC const& x);
+void shuffle_STRVEC_inout (STRVEC const& x) noexcept;
+
+autoSTRVEC sort_STRVEC (STRVEC const& a);
+void sort_STRVEC_inout (STRVEC const& a) noexcept;
 
 /*
 	Regard a string as a sequence of tokens,
 	separated (and perhaps preceded and followed) by white space.
 	The tokens cannot contain spaces themselves (there are no escapes).
 */
-autoSTRVEC newSTRVECtokenize (conststring32 string);
+autoSTRVEC splitByWhitespace_STRVEC (conststring32 string);
 
 /* End of file STRVEC.h */

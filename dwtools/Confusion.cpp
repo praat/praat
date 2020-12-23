@@ -88,7 +88,7 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 
 autoConfusion Confusion_createSimple (conststring32 labels_string) {
 	try {
-		autoSTRVEC labels = newSTRVECtokenize (labels_string);
+		autoSTRVEC labels = splitByWhitespace_STRVEC (labels_string);
 		Melder_require (labels.size > 0, U"There should be at least one label.");
 		
 		autoConfusion me = Confusion_create (labels.size, labels.size);
@@ -403,7 +403,7 @@ autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32
 
 autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autoSTRVEC labels = newSTRVECtokenize (labels_string);
+		autoSTRVEC labels = splitByWhitespace_STRVEC (labels_string);
 		const integer ncondense = labels.size;
 		autoINTVEC irow = newINTVECraw (my numberOfRows);
 
@@ -457,7 +457,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 
 autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autoSTRVEC labels = newSTRVECtokenize (labels_string);
+		autoSTRVEC labels = splitByWhitespace_STRVEC (labels_string);
 		const integer ncondense = labels.size;
 		autoINTVEC icol = newINTVECraw (my numberOfColumns);
 

@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2008,2011-2019 Paul Boersma
+ * Copyright (C) 1992-2008,2011-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,34 +61,27 @@
 
 Thing_implement (Strings, Daata, 0);
 
-static integer Strings_totalLength (Strings me) {
-	integer totalLength = 0;
-	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		totalLength += str32len (my strings [i].get());
-	}
-	return totalLength;
+static double Strings_minimumLength (Strings me) {
+	return NUMminimumLength (my strings.get());
 }
-
-static integer Strings_maximumLength (Strings me) {
-	integer maximumLength = 0;
-	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		integer length = str32len (my strings [i].get());
-		if (length > maximumLength) {
-			maximumLength = length;
-		}
-	}
-	return maximumLength;
+static double Strings_maximumLength (Strings me) {
+	return NUMmaximumLength (my strings.get());
+}
+static double Strings_totalLength (Strings me) {
+	return NUMtotalLength (my strings.get());
 }
 
 void structStrings :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of strings: ", numberOfStrings);
+	MelderInfo_writeLine (U"Number of strings: ", our numberOfStrings);
 	MelderInfo_writeLine (U"Total length: ", Strings_totalLength (this), U" characters");
+	MelderInfo_writeLine (U"Shortest string: ", Strings_minimumLength (this), U" characters");
 	MelderInfo_writeLine (U"Longest string: ", Strings_maximumLength (this), U" characters");
 }
 
 conststring32 structStrings :: v_getVectorStr (integer icol) {
-	if (icol < 1 || icol > our numberOfStrings) return U"";
+	if (icol < 1 || icol > our numberOfStrings)
+		return U"";
 	char32 *stringValue = strings [icol].get();
 	return stringValue ? stringValue : U"";
 }
@@ -247,28 +240,9 @@ autoStrings Strings_createAsDirectoryList (conststring32 path /* cattable */) {
 
 autoStrings Strings_readFromRawTextFile (MelderFile file) {
 	try {
-		autoMelderReadText text = MelderReadText_createFromFile (file);
-
-		/*
-		 * Count number of strings.
-		 */
-		int64 n = MelderReadText_getNumberOfLines (text.get());
-
-		/*
-		 * Create.
-		 */
 		autoStrings me = Thing_new (Strings);
-		if (n > 0)
-			my strings = autoSTRVEC (n);
-		my numberOfStrings = n;
-
-		/*
-		 * Read strings.
-		 */
-		for (integer i = 1; i <= n; i ++) {
-			const mutablestring32 line = MelderReadText_readLine (text.get());
-			my strings [i] = Melder_dup (line);
-		}
+		my strings = readFile_STRVEC (file);
+		my numberOfStrings = my strings.size;   // maintain invariant
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings not read from raw text file ", file, U".");
@@ -277,9 +251,8 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	autoMelderString buffer;
-	for (integer i = 1; i <= my numberOfStrings; i ++) {
+	for (integer i = 1; i <= my numberOfStrings; i ++)
 		MelderString_append (& buffer, my strings [i].get(), U"\n");
-	}
 	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 }
 
@@ -291,7 +264,7 @@ void Strings_randomize (Strings me) {
 }
 
 void Strings_genericize (Strings me) {
-	autostring32 buffer (Strings_maximumLength (me) * 3);
+	autostring32 buffer (Melder_iround (Strings_maximumLength (me)) * 3);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		const conststring32 string = my strings [i].get();
 		const char32 *p = & string [0];
@@ -307,7 +280,7 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
-	autostring32 buffer = Strings_maximumLength (me);
+	autostring32 buffer (Melder_iround (Strings_maximumLength (me)));
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativize (my strings [i].get(), buffer.get(), false);
 		my strings [i] = Melder_dup (buffer.get());
@@ -315,17 +288,14 @@ void Strings_nativize (Strings me) {
 }
 
 void Strings_sort (Strings me) {
-	STRVECsort_inplace (my strings.get());
+	sort_STRVEC_inout (my strings.get());
 }
 
 void Strings_remove (Strings me, integer position) {
 	if (position < 1 || position > my numberOfStrings)
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
-	for (integer i = position; i < my numberOfStrings; i ++)
-		my strings [i] = my strings [i + 1]. move();
-	my strings [my numberOfStrings]. reset();
-	my strings.size -= 1;
-	my numberOfStrings --;
+	my strings. remove (position);
+	my numberOfStrings -= 1;   // maintain invariant
 }
 
 void Strings_replace (Strings me, integer position, conststring32 text) {
@@ -349,21 +319,8 @@ void Strings_insert (Strings me, integer position, conststring32 text) {
 	} else if (position < 1 || position > my numberOfStrings + 1) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
-	/*
-		Create without change.
-	*/
-	autostring32 newString = Melder_dup (text);
-	autoSTRVEC newStrings (my numberOfStrings + 1);
-	/*
-		Change without error.
-	*/
-	for (integer i = 1; i < position; i ++)
-		newStrings [i] = my strings [i]. move();
-	newStrings [position] = newString. move();
-	my numberOfStrings ++;
-	for (integer i = position + 1; i <= my numberOfStrings; i ++)
-		newStrings [i] = my strings [i - 1]. move();
-	my strings = std::move (newStrings);
+	my strings. insert (position, text);
+	my numberOfStrings += 1;   // maintain invariant
 }
 
 /* End of file Strings.cpp */

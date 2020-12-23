@@ -481,7 +481,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
 			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
-		autoSTRVEC tokens = newSTRVECtokenize (his text.get());
+		autoSTRVEC tokens = splitByWhitespace_STRVEC (his text.get());
 		const integer numberOfTokens = tokens.size;
 		Melder_require (numberOfTokens > 0,
 			U"The interval should contain text.");

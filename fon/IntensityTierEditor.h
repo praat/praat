@@ -2,7 +2,7 @@
 #define _IntensityTierEditor_h_
 /* IntensityTierEditor.h
  *
- * Copyright (C) 1992-2011,2012,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ Thing_define (IntensityTierArea, RealTierArea) {
 		override { return 100.0; }
 };
 
-inline static autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	autoIntensityTierArea me = Thing_new (IntensityTierArea);
 	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;

@@ -2218,7 +2218,7 @@ conststring32 structStackel :: whichText () {
 		our which == Stackel_NUMERIC_VECTOR ? U"a numeric vector" :
 		our which == Stackel_NUMERIC_MATRIX ? U"a numeric matrix" :
 		our which == Stackel_STRING ? U"a string" :
-		our which == Stackel_STRING_ARRAY ? U"a string array" :
+		our which == Stackel_STRING_ARRAY ? U"a string vector" :
 		our which == Stackel_OBJECT ? U"an object" :
 		U"???";
 }
@@ -2237,123 +2237,104 @@ inline static void pushNumber (double x) {
 		Remove
 	 * Mac: 3.76 -> 3.20 seconds
 	 */
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_NUMBER;
-	stackel -> number = isdefined (x) ? x : undefined;
+	stackel -> number = ( isdefined (x) ? x : undefined );
 	//stackel -> number = x;   // this one would be 2 percent faster
-	//stackel -> owned = true;
+	//stackel -> owned = true;   // superfluous, because never checked (2020-12-20)
 }
 static void pushNumericVector (autoVEC x) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushNumericVectorReference (VEC x) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x;
 	stackel -> owned = false;
 }
 static void pushNumericMatrix (autoMAT x) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushNumericMatrixReference (MAT x) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x;
 	stackel -> owned = false;
 }
 static void pushString (autostring32 x) {
-	Stackel stackel = & theStack [++ w];
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	//stackel -> reset();   // incorporated in next statement
 	stackel -> setString (x.move());
-	//stackel -> owned = true;
+	//stackel -> owned = true;   // superfluous, because never checked (2020-12-20)
 }
 static void pushStringVector (autoSTRVEC x) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_STRING_ARRAY;
 	stackel -> stringArray = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushStringVectorReference (STRVEC x) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_STRING_ARRAY;
 	stackel -> stringArray = x;
 	stackel -> owned = false;
 }
 static void pushObject (Daata object) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_OBJECT;
 	stackel -> object = object;
-	//stackel -> owned = false;
+	//stackel -> owned = false;   // superfluous, because never checked (2020-12-20)
 }
 static void pushVariable (InterpreterVariable var) {
-	Stackel stackel = & theStack [++ w];
-	stackel -> reset();
-	if (w > wmax) {
-		wmax ++;
-		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+	if (++ w > wmax)
+		if (++ wmax > Formula_MAXIMUM_STACK_SIZE)
 			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
-	}
+	Stackel stackel = & theStack [w];
+	stackel -> reset();
 	stackel -> which = Stackel_VARIABLE;
 	stackel -> variable = var;
-	//stackel -> owned = false;
+	//stackel -> owned = false;   // superfluous, because never checked (2020-12-20)
 }
 
 static void do_not () {
@@ -4674,7 +4655,7 @@ static void do_hexStr () {
 	if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			autostring32 result = newSTRhex (s->getString());
+			autostring32 result = hex_STR (s->getString());
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"hex$\" requires a string, not ", s->whichText(), U".");
@@ -4682,7 +4663,7 @@ static void do_hexStr () {
 	} else if (n->number == 2) {
 		Stackel k = pop, s = pop;
 		if (s->which == Stackel_STRING && k->which == Stackel_NUMBER) {
-			autostring32 result = newSTRhex (s->getString(), uint64 (round (k->number)));
+			autostring32 result = hex_STR (s->getString(), uint64 (round (k->number)));
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"hex$\" requires a string and a number, not ", s->whichText(), U".");
@@ -4698,7 +4679,7 @@ static void do_unhexStr () {
 	if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			autostring32 result = newSTRunhex (s->getString());
+			autostring32 result = unhex_STR (s->getString());
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"unhex$\" requires a string, not ", s->whichText(), U".");
@@ -4706,7 +4687,7 @@ static void do_unhexStr () {
 	} else if (n->number == 2) {
 		Stackel k = pop, s = pop;
 		if (s->which == Stackel_STRING && k->which == Stackel_NUMBER) {
-			autostring32 result = newSTRunhex (s->getString(), uint64 (round (k->number)));
+			autostring32 result = unhex_STR (s->getString(), uint64 (round (k->number)));
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"unhex$\" requires a string and a number, not ", s->whichText(), U".");
@@ -4887,14 +4868,14 @@ static void do_STRleft () {
 	if (narg->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			pushString (newSTRleft (s->getString()));
+			pushString (left_STR (s->getString()));
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
-			pushString (newSTRleft (s->getString(), Melder_iround (n->number)));
+			pushString (left_STR (s->getString(), Melder_iround (n->number)));
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string and a number (or a string only).");
 		}
@@ -4908,14 +4889,14 @@ static void do_STRright () {
 	if (narg->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			pushString (newSTRright (s->getString()));
+			pushString (right_STR (s->getString()));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
-			pushString (newSTRright (s->getString(), Melder_iround (n->number)));
+			pushString (right_STR (s->getString(), Melder_iround (n->number)));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string and a number (or a string only).");
 		}
@@ -4928,14 +4909,14 @@ static void do_STRmid () {
 	if (narg->number == 2) {
 		Stackel position = pop, str = pop;
 		if (str->which == Stackel_STRING && position->which == Stackel_NUMBER) {
-			pushString (newSTRmid (str->getString(), Melder_iround (position->number)));
+			pushString (mid_STR (str->getString(), Melder_iround (position->number)));
 		} else {
 			Melder_throw (U"The function \"mid$\" requires a string and a number (or two).");
 		}
 	} else if (narg->number == 3) {
 		Stackel numberOfCharacters = pop, startingPosition = pop, str = pop;
 		if (str->which == Stackel_STRING && startingPosition->which == Stackel_NUMBER && numberOfCharacters->which == Stackel_NUMBER) {
-			pushString (newSTRmid (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
+			pushString (mid_STR (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
 		} else {
 			Melder_throw (U"The function \"mid$\" requires a string and two numbers (or one).");
 		}
@@ -5042,7 +5023,7 @@ static void do_index_regex (int backward) {
 static void do_STRreplace () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		autostring32 result = newSTRreplace (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
+		autostring32 result = replace_STR (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
 		pushString (result.move());
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
@@ -5056,7 +5037,7 @@ static void do_STRreplace_regex () {
 		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
-			autostring32 result = newSTRreplace_regex (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
+			autostring32 result = replace_regex_STR (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
 			pushString (result.move());
 		}
 	} else {

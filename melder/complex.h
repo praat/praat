@@ -22,35 +22,35 @@
 #include <complex>
 using dcomplex = std::complex <double>;
 
-inline static dcomplex dcomplex_add (dcomplex a, dcomplex b) {
+inline dcomplex dcomplex_add (dcomplex a, dcomplex b) {
 	dcomplex result;
 	result. real (a.real() + b.real());
 	result. imag (a.imag() + b.imag());
 	return result;
 }
 
-inline static dcomplex dcomplex_sub (dcomplex a, dcomplex b) {
+inline dcomplex dcomplex_sub (dcomplex a, dcomplex b) {
 	dcomplex result;
 	result. real (a.real() - b.real());
 	result. imag (a.imag() - b.imag());
 	return result;
 }
 
-inline static dcomplex dcomplex_mul (dcomplex a, dcomplex b) {
+inline dcomplex dcomplex_mul (dcomplex a, dcomplex b) {
 	dcomplex result;
 	result. real (a.real() * b.real() - a.imag() * b.imag());
 	result. imag (a.imag() * b.real() + a.real() * b.imag());
 	return result;
 }
 
-inline static dcomplex dcomplex_conjugate (dcomplex z) {
+inline dcomplex dcomplex_conjugate (dcomplex z) {
 	dcomplex result;
 	result. real (z.real());
 	result. imag (- z.imag());
 	return result;
 }
 
-inline static dcomplex dcomplex_div (dcomplex a, dcomplex b) {
+inline dcomplex dcomplex_div (dcomplex a, dcomplex b) {
 	dcomplex result;
 	if (fabs (b.real()) >= fabs (b.imag())) {
 		const double r = b.imag() / b.real();
@@ -66,7 +66,7 @@ inline static dcomplex dcomplex_div (dcomplex a, dcomplex b) {
 	return result;
 }
 
-inline static double dcomplex_abs (dcomplex z) {
+inline double dcomplex_abs (dcomplex z) {
 	const double x = fabs (z.real());
 	const double y = fabs (z.imag());
 	if (x == 0.0) return y;
@@ -80,14 +80,14 @@ inline static double dcomplex_abs (dcomplex z) {
 	}
 }
 
-inline static dcomplex dcomplex_rmul (double x, dcomplex a) {
+inline dcomplex dcomplex_rmul (double x, dcomplex a) {
 	dcomplex result;
 	result. real (x * a.real());
 	result. imag (x * a.imag());
 	return result;
 }
 
-inline static dcomplex dcomplex_exp (dcomplex z) {
+inline dcomplex dcomplex_exp (dcomplex z) {
 	dcomplex result;
 	double size = exp (z.real());
 	result. real (size * cos (z.imag()));
