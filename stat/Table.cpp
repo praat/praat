@@ -112,7 +112,7 @@ conststring32 Table_messageColumn (Table me, integer column) {
 }
 
 void Table_initWithColumnNames (Table me, integer numberOfRows, conststring32 columnNames_string) {
-	autoSTRVEC columnNames = newSTRVECtokenize (columnNames_string);
+	autoSTRVEC columnNames = splitByWhitespace_STRVEC (columnNames_string);
 	Table_initWithoutColumnNames (me, numberOfRows, columnNames.size);
 	for (integer icol = 1; icol <= columnNames.size; icol ++)
 		Table_setColumnLabel (me, icol, columnNames [icol].get());
@@ -294,7 +294,7 @@ integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel
 }
 
 autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 columnLabels_string) {
-	autoSTRVEC columnLabels = newSTRVECtokenize (columnLabels_string);
+	autoSTRVEC columnLabels = splitByWhitespace_STRVEC (columnLabels_string);
 	if (columnLabels.size < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
 	autoINTVEC columns = newINTVECraw (columnLabels.size);
@@ -686,28 +686,28 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			Parse the six strings of tokens.
 		*/
-		autoSTRVEC factors = newSTRVECtokenize (factors_string);
+		autoSTRVEC factors = splitByWhitespace_STRVEC (factors_string);
 		if (factors.size < 1)
 			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors.get());
 
-		autoSTRVEC columnsToSum = newSTRVECtokenize (columnsToSum_string);
+		autoSTRVEC columnsToSum = splitByWhitespace_STRVEC (columnsToSum_string);
 		Table_columns_checkExist (me, columnsToSum.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToSum.get());
 
-		autoSTRVEC columnsToAverage = newSTRVECtokenize (columnsToAverage_string);
+		autoSTRVEC columnsToAverage = splitByWhitespace_STRVEC (columnsToAverage_string);
 		Table_columns_checkExist (me, columnsToAverage.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverage.get());
 
-		autoSTRVEC columnsToMedianize = newSTRVECtokenize (columnsToMedianize_string);
+		autoSTRVEC columnsToMedianize = splitByWhitespace_STRVEC (columnsToMedianize_string);
 		Table_columns_checkExist (me, columnsToMedianize.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianize.get());
 
-		autoSTRVEC columnsToAverageLogarithmically = newSTRVECtokenize (columnsToAverageLogarithmically_string);
+		autoSTRVEC columnsToAverageLogarithmically = splitByWhitespace_STRVEC (columnsToAverageLogarithmically_string);
 		Table_columns_checkExist (me, columnsToAverageLogarithmically.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverageLogarithmically.get());
 
-		autoSTRVEC columnsToMedianizeLogarithmically = newSTRVECtokenize (columnsToMedianizeLogarithmically_string);
+		autoSTRVEC columnsToMedianizeLogarithmically = splitByWhitespace_STRVEC (columnsToMedianizeLogarithmically_string);
 		Table_columns_checkExist (me, columnsToMedianizeLogarithmically.get());
 		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianizeLogarithmically.get());
 
@@ -916,12 +916,12 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Parse the two strings of tokens.
 		*/
-		autoSTRVEC factors_names = newSTRVECtokenize (factors_string);
+		autoSTRVEC factors_names = splitByWhitespace_STRVEC (factors_string);
 		const integer numberOfFactors = factors_names.size;
 		if (numberOfFactors < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.get());
-		autoSTRVEC columnsToExpand_names = newSTRVECtokenize (columnsToExpand_string);
+		autoSTRVEC columnsToExpand_names = splitByWhitespace_STRVEC (columnsToExpand_string);
 		const integer numberToExpand = columnsToExpand_names.size;
 		if (numberToExpand < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one dependent variable (to expand).");
@@ -1077,7 +1077,7 @@ void Table_sortRows_Assert (Table me, constINTVEC columns) {
 
 void Table_sortRows_string (Table me, conststring32 columns_string) {
 	try {
-		autoSTRVEC columns_tokens = newSTRVECtokenize (columns_string);
+		autoSTRVEC columns_tokens = splitByWhitespace_STRVEC (columns_string);
 		integer numberOfColumns = columns_tokens.size;
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");

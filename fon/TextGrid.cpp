@@ -311,7 +311,8 @@ autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 
 autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames_string, conststring32 pointTiers_string) {
 	try {
-		autoSTRVEC tierNames = newSTRVECtokenize (tierNames_string), pointTiers = newSTRVECtokenize (pointTiers_string);
+		autoSTRVEC tierNames = splitByWhitespace_STRVEC (tierNames_string);
+		autoSTRVEC pointTiers = splitByWhitespace_STRVEC (pointTiers_string);
 		autoTextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
 
 		/*

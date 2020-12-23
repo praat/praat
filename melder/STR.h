@@ -17,17 +17,17 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-autostring8 newSTRhex8 (conststring8 str, uint64 key = 0);
-autostring32 newSTRhex (conststring32 str, uint64 key = 0);
+autostring8 hex_STR8 (conststring8 str, uint64 key = 0);
+autostring32 hex_STR (conststring32 str, uint64 key = 0);
 
-autostring32 newSTRleft (conststring32 str, integer newLength = 1);
+autostring32 left_STR (conststring32 str, integer newLength = 1);
 
-autostring32 newSTRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
+autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
 
 /**
 	Look for occurrences of `search` in `str`, and replace them with `replace`.
 */
-autostring32 newSTRreplace (conststring32 str, conststring32 search,
+autostring32 replace_STR (conststring32 str, conststring32 search,
 	conststring32 replace, integer maximumNumberOfReplacements,
 	integer *out_numberOfReplacements = nullptr);
 
@@ -39,13 +39,13 @@ autostring32 newSTRreplace (conststring32 str, conststring32 search,
 	is the result of the compileRE-function which should be called before this function.
 	The number of actual replacements performed is returned in `out_numberOfReplacements`.
 */
-autostring32 newSTRreplace_regex (conststring32 string, regexp *search_compiled,
+autostring32 replace_regex_STR (conststring32 string, regexp *search_compiled,
 	conststring32 replace_regex, integer maximumNumberOfReplacements,
 	integer *out_numberOfReplacements = nullptr);
 
-autostring32 newSTRright (conststring32 str, integer newLength = 1);
+autostring32 right_STR (conststring32 str, integer newLength = 1);
 
-autostring8 newSTRunhex8 (conststring8 str, uint64 key = 0);
-autostring32 newSTRunhex (conststring32 str, uint64 key = 0);
+autostring8 unhex_STR8 (conststring8 str, uint64 key = 0);
+autostring32 unhex_STR (conststring32 str, uint64 key = 0);
 
 /* End of file STR.h */

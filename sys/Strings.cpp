@@ -241,7 +241,7 @@ autoStrings Strings_createAsDirectoryList (conststring32 path /* cattable */) {
 autoStrings Strings_readFromRawTextFile (MelderFile file) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my strings = STRVEC_readFile (file);
+		my strings = readFile_STRVEC (file);
 		my numberOfStrings = my strings.size;   // maintain invariant
 		return me;
 	} catch (MelderError) {
@@ -288,7 +288,7 @@ void Strings_nativize (Strings me) {
 }
 
 void Strings_sort (Strings me) {
-	STRVEC_sort_inout (my strings.get());
+	sort_STRVEC_inout (my strings.get());
 }
 
 void Strings_remove (Strings me, integer position) {
