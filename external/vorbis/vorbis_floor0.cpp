@@ -14,9 +14,6 @@
 
  ********************************************************************/
 
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include "ogg.h"
 #include "vorbis_codec.h"
 #include "vorbis_codec_internal.h"
@@ -29,7 +26,6 @@
 #include "vorbis_os.h"
 
 #include "vorbis_misc.h"
-#include <stdio.h>
 
 typedef struct {
   int ln;

@@ -43,18 +43,6 @@ typedef struct {
  * ov_open() to avoid problems with incompatible crt.o version linking
  * issues. */
 
-static int _ov_header_fseek_wrap(FILE *f,ogg_int64_t off,int whence){
-  if(f==NULL)return(-1);
-
-#ifdef __MINGW32__
-  return fseeko64(f,off,whence);
-#elif defined (_WIN32)
-  return _fseeki64(f,off,whence);
-#else
-  return fseek(f,off,whence);
-#endif
-}
-
 /* These structs below (OV_CALLBACKS_DEFAULT etc) are defined here as
  * static data. That means that every file which includes this header
  * will get its own copy of these structs whether it uses them or
@@ -67,14 +55,14 @@ static int _ov_header_fseek_wrap(FILE *f,ogg_int64_t off,int whence){
 
 static ov_callbacks OV_CALLBACKS_DEFAULT = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           _ov_header_fseek_wrap,
+  (int (*)(void *, ogg_int64_t, int))           fseek,
   (int (*)(void *))                             fclose,
   (long (*)(void *))                            ftell
 };
 
 static ov_callbacks OV_CALLBACKS_NOCLOSE = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           _ov_header_fseek_wrap,
+  (int (*)(void *, ogg_int64_t, int))           fseek,
   (int (*)(void *))                             NULL,
   (long (*)(void *))                            ftell
 };

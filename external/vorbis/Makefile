@@ -5,7 +5,7 @@ include ../../makefile.defs
 
 CPPFLAGS = -I ../../melder
 
-OBJECTS = ogg_bitwise.o ogg_framing.o vorbis_info.o vorbis_mdct.o vorbisfile.o vorbis_floor0.o \
+OBJECTS = ogg_bitwise.o ogg_framing.o vorbis_floor0.o vorbis_info.o vorbis_mdct.o vorbisfile.o vorbis_floor0.o \
 	vorbis_registry.o vorbis_window.o
 
 
