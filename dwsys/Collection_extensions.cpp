@@ -161,8 +161,8 @@ void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *repla
 			SimpleString ss = my at [i];
 			integer nmatches_sub;
 			autostring32 r = use_regexp ?
-					newSTRreplace_regex (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) :
-					newSTRreplace (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
+					replace_regex_STR (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) :
+					replace_STR (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
 			/*
 				Change without error.
 			*/

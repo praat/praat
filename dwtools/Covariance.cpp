@@ -313,7 +313,7 @@ static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s
 }
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
-	autoSTRVEC vector = newSTRVECtokenize (vector_string);
+	autoSTRVEC vector = splitByWhitespace_STRVEC (vector_string);
 	autoVEC v = newVECzero (my numberOfColumns);
 	for (integer i = 1; i <= vector.size; i ++) {
 		v [i] = Melder_atof (vector [i].get());

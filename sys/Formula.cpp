@@ -4655,7 +4655,7 @@ static void do_hexStr () {
 	if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			autostring32 result = newSTRhex (s->getString());
+			autostring32 result = hex_STR (s->getString());
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"hex$\" requires a string, not ", s->whichText(), U".");
@@ -4663,7 +4663,7 @@ static void do_hexStr () {
 	} else if (n->number == 2) {
 		Stackel k = pop, s = pop;
 		if (s->which == Stackel_STRING && k->which == Stackel_NUMBER) {
-			autostring32 result = newSTRhex (s->getString(), uint64 (round (k->number)));
+			autostring32 result = hex_STR (s->getString(), uint64 (round (k->number)));
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"hex$\" requires a string and a number, not ", s->whichText(), U".");
@@ -4679,7 +4679,7 @@ static void do_unhexStr () {
 	if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			autostring32 result = newSTRunhex (s->getString());
+			autostring32 result = unhex_STR (s->getString());
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"unhex$\" requires a string, not ", s->whichText(), U".");
@@ -4687,7 +4687,7 @@ static void do_unhexStr () {
 	} else if (n->number == 2) {
 		Stackel k = pop, s = pop;
 		if (s->which == Stackel_STRING && k->which == Stackel_NUMBER) {
-			autostring32 result = newSTRunhex (s->getString(), uint64 (round (k->number)));
+			autostring32 result = unhex_STR (s->getString(), uint64 (round (k->number)));
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"unhex$\" requires a string and a number, not ", s->whichText(), U".");
@@ -4868,14 +4868,14 @@ static void do_STRleft () {
 	if (narg->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			pushString (newSTRleft (s->getString()));
+			pushString (left_STR (s->getString()));
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
-			pushString (newSTRleft (s->getString(), Melder_iround (n->number)));
+			pushString (left_STR (s->getString(), Melder_iround (n->number)));
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string and a number (or a string only).");
 		}
@@ -4889,14 +4889,14 @@ static void do_STRright () {
 	if (narg->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			pushString (newSTRright (s->getString()));
+			pushString (right_STR (s->getString()));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
-			pushString (newSTRright (s->getString(), Melder_iround (n->number)));
+			pushString (right_STR (s->getString(), Melder_iround (n->number)));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string and a number (or a string only).");
 		}
@@ -4909,14 +4909,14 @@ static void do_STRmid () {
 	if (narg->number == 2) {
 		Stackel position = pop, str = pop;
 		if (str->which == Stackel_STRING && position->which == Stackel_NUMBER) {
-			pushString (newSTRmid (str->getString(), Melder_iround (position->number)));
+			pushString (mid_STR (str->getString(), Melder_iround (position->number)));
 		} else {
 			Melder_throw (U"The function \"mid$\" requires a string and a number (or two).");
 		}
 	} else if (narg->number == 3) {
 		Stackel numberOfCharacters = pop, startingPosition = pop, str = pop;
 		if (str->which == Stackel_STRING && startingPosition->which == Stackel_NUMBER && numberOfCharacters->which == Stackel_NUMBER) {
-			pushString (newSTRmid (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
+			pushString (mid_STR (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
 		} else {
 			Melder_throw (U"The function \"mid$\" requires a string and two numbers (or one).");
 		}
@@ -5023,7 +5023,7 @@ static void do_index_regex (int backward) {
 static void do_STRreplace () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		autostring32 result = newSTRreplace (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
+		autostring32 result = replace_STR (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
 		pushString (result.move());
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
@@ -5037,7 +5037,7 @@ static void do_STRreplace_regex () {
 		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
-			autostring32 result = newSTRreplace_regex (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
+			autostring32 result = replace_regex_STR (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
 			pushString (result.move());
 		}
 	} else {

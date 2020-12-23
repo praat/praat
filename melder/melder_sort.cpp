@@ -28,9 +28,14 @@ void INTVECshuffle_inplace (INTVECVU const& x) noexcept {
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
-void STRVEC_shuffle_inout (STRVEC const& x) noexcept {
+void shuffle_STRVEC_inout (STRVEC const& x) noexcept {
 	for (integer i = 1; i < x.size; i ++)
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
+}
+autoSTRVEC shuffle_STRVEC (STRVEC const& x) {
+	autoSTRVEC result = newSTRVECcopy (x);
+	shuffle_STRVEC_inout (result.get());
+	return result;
 }
 
 void VECsort_inplace (VECVU const& x) noexcept {
@@ -49,12 +54,17 @@ void INTVECsort_inplace (INTVECVU const& x) noexcept {
 	);
 }
 
-void STRVEC_sort_inout (STRVEC const& array) noexcept {
+void sort_STRVEC_inout (STRVEC const& array) noexcept {
 	std::sort (array.begin(), array.end(),
 		[] (conststring32 first, conststring32 last) {
 			return str32cmp (first, last) < 0;
 		}
 	);
+}
+autoSTRVEC sort_STRVEC (STRVEC const& x) {
+	autoSTRVEC result = newSTRVECcopy (x);
+	sort_STRVEC_inout (result.get());
+	return result;
 }
 
 double NUMquantile (integer n, double a [], double factor) {

@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-autoSTRVEC STRVEC_readFile (MelderFile file) {
+autoSTRVEC readFile_STRVEC (MelderFile file) {
 	autoMelderReadText text = MelderReadText_createFromFile (file);
 	int64 numberOfLines = MelderReadText_getNumberOfLines (text.get());
 	if (numberOfLines == 0)
@@ -31,7 +31,7 @@ autoSTRVEC STRVEC_readFile (MelderFile file) {
 	return result;
 }
 
-autoSTRVEC newSTRVECtokenize (conststring32 string) {
+autoSTRVEC splitByWhitespace_STRVEC (conststring32 string) {
 	if (! string)
 		return autoSTRVEC();   // accept null pointer input
 	integer n = NUMnumberOfTokens (string);

@@ -22,7 +22,7 @@ static char hexSymbols [] = "0123456789ABCDEF";
 
 static uint64 hexSecret = UINT64_C (5'847'171'831'059'823'557);
 
-autostring8 newSTRhex8 (conststring8 str, uint64 key) {
+autostring8 hex_STR8 (conststring8 str, uint64 key) {
 	if (key != 0)
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
 	autostring8 result (uinteger_to_integer (strlen (str)) * 2);
@@ -41,13 +41,13 @@ autostring8 newSTRhex8 (conststring8 str, uint64 key) {
 	return result;
 }
 
-autostring32 newSTRhex (conststring32 str, uint64 key) {
+autostring32 hex_STR (conststring32 str, uint64 key) {
 	autostring8 str8 = Melder_32to8 (str);
-	str8 = newSTRhex8 (str8.get(), key);
+	str8 = hex_STR8 (str8.get(), key);
 	return Melder_8to32 (str8.get());
 }
 
-autostring32 newSTRleft (conststring32 str, integer newLength) {
+autostring32 left_STR (conststring32 str, integer newLength) {
 	integer length = str32len (str);
 	if (newLength < 0)
 		newLength = 0;
@@ -58,7 +58,7 @@ autostring32 newSTRleft (conststring32 str, integer newLength) {
 	return result;
 }
 
-autostring32 newSTRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
+autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
 	integer length = str32len (str), endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
 	if (startingPosition_1 < 1)
 		startingPosition_1 = 1;
@@ -72,7 +72,7 @@ autostring32 newSTRmid (conststring32 str, integer startingPosition_1, integer n
 	return result;
 }
 
-autostring32 newSTRreplace (conststring32 string,
+autostring32 replace_STR (conststring32 string,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
@@ -158,7 +158,7 @@ autostring32 newSTRreplace (conststring32 string,
 	return result;
 }
 
-autostring32 newSTRreplace_regex (conststring32 string,
+autostring32 replace_regex_STR (conststring32 string,
 	regexp *compiledSearchRE, conststring32 replaceRE, integer maximumNumberOfReplaces,
 	integer *out_numberOfMatches)
 {
@@ -276,7 +276,7 @@ autostring32 newSTRreplace_regex (conststring32 string,
 	return buf;
 }
 
-autostring32 newSTRright (conststring32 str, integer newLength) {
+autostring32 right_STR (conststring32 str, integer newLength) {
 	integer length = str32len (str);
 	if (newLength < 0)
 		newLength = 0;
@@ -285,7 +285,7 @@ autostring32 newSTRright (conststring32 str, integer newLength) {
 	return Melder_dup (str + length - newLength);
 }
 
-autostring8 newSTRunhex8 (conststring8 str, uint64 key) {
+autostring8 unhex_STR8 (conststring8 str, uint64 key) {
 	if (key != 0)
 		NUMrandom_initializeWithSeedUnsafelyButPredictably (key ^ hexSecret);
 	autostring8 result (uinteger_to_integer (strlen (str)) / 2);
@@ -315,9 +315,9 @@ autostring8 newSTRunhex8 (conststring8 str, uint64 key) {
 	return result;
 }
 
-autostring32 newSTRunhex (conststring32 str, uint64 key) {
+autostring32 unhex_STR (conststring32 str, uint64 key) {
 	autostring8 str8 = Melder_32to8 (str);
-	str8 = newSTRunhex8 (str8.get(), key);
+	str8 = unhex_STR8 (str8.get(), key);
 	return Melder_8to32 (str8.get());
 }
 
