@@ -18,11 +18,6 @@
 
 #include "melder.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stddef.h>
 #include "config_types.h"
 
 typedef struct {
@@ -203,9 +198,5 @@ extern int      ogg_page_packets(const ogg_page *og);
 
 extern void     ogg_packet_clear(ogg_packet *op);
 
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif  /* _OGG_H */

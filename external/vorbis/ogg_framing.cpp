@@ -19,13 +19,7 @@
 
  ********************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#include <climits>
 #include "ogg.h"
 
 /* A complete description of Ogg framing exists in docs/framing.html */
@@ -126,7 +120,7 @@ static void _ogg_crc_init(){
 }
 #endif
 
-#include "crctable.h"
+#include "ogg_crctable.h"
 
 /* init the encode/decode logical stream state */
 
