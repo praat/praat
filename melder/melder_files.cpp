@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2019 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2020 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ conststring32 MelderDir_name (MelderDir dir) {
 }
 
 void Melder_pathToDir (conststring32 path, MelderDir dir) {
-	str32cpy (dir -> path, path);
+	Melder_sprint (dir -> path,kMelder_MAXPATH+1, path);
 }
 
 void Melder_pathToFile (conststring32 path, MelderFile file) {
@@ -156,7 +156,7 @@ void Melder_pathToFile (conststring32 path, MelderFile file) {
 	 * Used if we know for sure that we have a complete path name,
 	 * i.e. if the program determined the name (fileselector, printing, prefs).
 	 */
-	str32cpy (file -> path, path);
+	Melder_sprint (file -> path,kMelder_MAXPATH+1, path);
 }
 
 void Melder_relativePathToFile (conststring32 path, MelderFile file) {
@@ -174,7 +174,7 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 		if (path [0] == U'~' && path [1] == U'/') {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, Melder_peek8to32 (getenv ("HOME")), & path [1]);
 		} else if (path [0] == U'/' || str32equ (path, U"<stdout>") || str32str (path, U"://")) {
-			str32cpy (file -> path, path);
+			Melder_sprint (file -> path,kMelder_MAXPATH+1, path);
 		} else {
 			structMelderDir dir { };
 			Melder_getDefaultDir (& dir);   // BUG
@@ -197,7 +197,8 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, & path [1]);
 			for (;;) {
 				char32 *slash = str32chr (file -> path, U'/');
-				if (! slash) break;
+				if (! slash)
+					break;
 				*slash = U'\\';
 			}
 			return;
@@ -303,8 +304,10 @@ void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
 		*/
 		str32cpy (parent -> path, file -> path);
 		char32 *slash = str32rchr (parent -> path, U'/');
-		if (slash) *slash = U'\0';
-		if (parent -> path [0] == U'\0') str32cpy (parent -> path, U"/");
+		if (slash)
+			*slash = U'\0';
+		if (parent -> path [0] == U'\0')
+			str32cpy (parent -> path, U"/");
 	#elif defined (_WIN32)
 		/*
 			The parent of C:\WINDOWS\CTRL.DLL is C:\WINDOWS.
@@ -435,7 +438,7 @@ void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir 
 void Melder_getHomeDir (MelderDir homeDir) {
 	#if defined (UNIX)
 		char *home = getenv ("HOME");
-		str32cpy (homeDir -> path, home ? Melder_peek8to32 (home) : U"/");
+		Melder_sprint (homeDir -> path,kMelder_MAXPATH+1, home ? Melder_peek8to32 (home) : U"/");
 	#elif defined (_WIN32)
 		WCHAR driveW [kMelder_MAXPATH+1], pathW [kMelder_MAXPATH+1];
 		DWORD n = GetEnvironmentVariableW (L"USERPROFILE", pathW, kMelder_MAXPATH+1);
@@ -445,7 +448,8 @@ void Melder_getHomeDir (MelderDir homeDir) {
 			return;
 		}
 		n = GetEnvironmentVariableW (L"HOMEDRIVE", driveW, kMelder_MAXPATH+1);
-		if (n > kMelder_MAXPATH) Melder_throw (U"Home drive name too long.");
+		if (n > kMelder_MAXPATH)
+			Melder_throw (U"Home drive name too long.");
 		if (n > 0) {
 			GetEnvironmentVariable (L"HOMEPATH", pathW, kMelder_MAXPATH+1);
 			Melder_sprint (homeDir -> path,kMelder_MAXPATH+1, Melder_peekWto32 (driveW), Melder_peekWto32 (pathW));
