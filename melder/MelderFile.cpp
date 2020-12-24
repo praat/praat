@@ -1,6 +1,6 @@
 /* MelderFile.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,36 +32,37 @@ MelderFile MelderFile_open (MelderFile me) {
 	return me;
 }
 
-char * MelderFile_readLine (MelderFile me) {
+char * MelderFile_readLine8 (MelderFile me) {
 	if (! my filePointer)
 		return nullptr;
 	if (feof (my filePointer))
 		return nullptr;
 	static char *buffer;
 	static integer capacity;
-	if (! buffer) {
+	if (! buffer)
 		buffer = Melder_malloc (char, capacity = 100);
-	}
 	integer i = 0;
 	for (; true; i ++) {
-		if (i >= capacity) {
+		if (i >= capacity)
 			buffer = (char *) Melder_realloc (buffer, capacity *= 2);
-		}
 		int c = fgetc (my filePointer);
 		if (feof (my filePointer))
 			break;
 		if (c == '\n') {
 			c = fgetc (my filePointer);
-			if (feof (my filePointer)) break;   // ignore last empty line (Unix)
+			if (feof (my filePointer))
+				break;   // ignore last empty line (Unix)
 			ungetc (c, my filePointer);
 			break;   // Unix line separator
 		}
 		if (c == '\r') {
 			c = fgetc (my filePointer);
-			if (feof (my filePointer)) break;   // ignore last empty line (Macintosh)
+			if (feof (my filePointer))
+				break;   // ignore last empty line (Macintosh)
 			if (c == '\n') {
 				c = fgetc (my filePointer);
-				if (feof (my filePointer)) break;   // ignore last empty line (Windows)
+				if (feof (my filePointer))
+					break;   // ignore last empty line (Windows)
 				ungetc (c, my filePointer);
 				break;   // Windows line separator
 			}
@@ -209,11 +210,10 @@ static void _MelderFile_close (MelderFile me, bool mayThrow) {
 			FLAC__stream_encoder_delete (my flacEncoder);
 		}
 	} else if (my filePointer) {
-		if (mayThrow) {
+		if (mayThrow)
 			Melder_fclose (me, my filePointer);
-		} else {
+		else
 			fclose (my filePointer);
-		}
 	}
 	/* Set everything to zero, except paths (they stay around for error messages and the like). */
 	my filePointer = nullptr;

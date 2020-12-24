@@ -208,21 +208,30 @@ public:
 		our size = newSize;
 	}
 	void insert (integer position, conststring32 value) {
-		resize (our size + 1);
+		/*
+			Create without change.
+		*/
+		autostring32 newValue = Melder_dup (value);
+		/*
+			Pivot.
+		*/
+		our resize (our size + 1);
+		/*
+			Change without error.
+		*/
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = our size; i > position; i --)
-			our elements [i - 1] = std::move (our elements [i - 2]);
-		our elements [position - 1] = Melder_dup (value);
+			our elements [i - 1] = our elements [i - 2]. move();
+		our elements [position - 1] = newValue. move();
 	}
-	T* append () {
-		resize (our size + 1);
-		return & our elements [our size - 1];
+	void append (conststring32 value) {
+		our insert (0, value);
 	}
-	void remove (integer position) {
+	void remove (integer position) noexcept {
 		Melder_assert (position >= 1 && position <= our size);
 		for (integer i = position; i < our size; i ++)
 			our elements [i - 1] = std::move (our elements [i]);
-		resize (our size - 1);
+		our resize (our size - 1);   // change without error
 	}
 };
 

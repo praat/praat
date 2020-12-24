@@ -355,18 +355,20 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 		 * Search for a line that starts with '#'.
 		 */
 		for (;;) {
-			line = MelderFile_readLine (file);
+			line = MelderFile_readLine8 (file);
 			if (! line)
 				Melder_throw (U"Missing '#' line.");
-			if (line [0] == '#') break;
+			if (line [0] == '#')
+				break;
 		}
 
 		/*
 		 * Read a mark from every line.
 		 */
 		for (;;) {
-			line = MelderFile_readLine (file);
-			if (! line) break;   // normal end-of-file
+			line = MelderFile_readLine8 (file);
+			if (! line)
+				break;   // normal end-of-file
 			double time;
 			long_not_integer colour;
 			char mark [300];
@@ -380,7 +382,8 @@ autoTextTier TextTier_readFromXwaves (MelderFile file) {
 		 */
 		if (my points.size > 0) {
 			TextPoint point = my points.at [1];
-			if (point -> number < 0.0) my xmin = point -> number - 1.0;
+			if (point -> number < 0.0)
+				my xmin = point -> number - 1.0;
 			point = my points.at [my points.size];
 			my xmax = point -> number + 1.0;
 		}
@@ -891,7 +894,7 @@ autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 		 * Search for a line that starts with '#'.
 		 */
 		for (;;) {
-			line = MelderFile_readLine (file);
+			line = MelderFile_readLine8 (file);
 			if (! line)
 				Melder_throw (U"Missing '#' line.");
 			if (line [0] == '#') break;
@@ -906,7 +909,7 @@ autoIntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 			integer numberOfElements;
 			char mark [300];
 
-			line = MelderFile_readLine (file);
+			line = MelderFile_readLine8 (file);
 			if (! line) break;   // normal end-of-file
 			numberOfElements = sscanf (line, "%lf%ld%199s", & time, & colour, mark);
 			if (numberOfElements == 0) {
@@ -1354,7 +1357,8 @@ static void writeQuotedString (MelderFile file, conststring32 string) {
 		char32 kar;
 		while ((kar = *string ++) != U'\0') {
 			MelderFile_writeCharacter (file, kar);
-			if (kar == '\"') MelderFile_writeCharacter (file, kar);
+			if (kar == '\"')
+				MelderFile_writeCharacter (file, kar);
 		}
 	}   // BUG
 	MelderFile_writeCharacter (file, U'\"');
@@ -1454,13 +1458,13 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		static char phrase [1000];
 		my tiers = FunctionList_create ();
 		autoMelderFile mfile = MelderFile_open (file);
-		char *line = MelderFile_readLine (file);
+		char *line = MelderFile_readLine8 (file);
 		if (! strequ (line, "<?xml version=\"1.0\"?>"))
 			Melder_throw (U"This is not a CGN syntax file.");
-		line = MelderFile_readLine (file);
+		line = MelderFile_readLine8 (file);
 		if (! strequ (line, "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">"))
 			Melder_throw (U"This is not a CGN syntax file.");
-		line = MelderFile_readLine (file);
+		line = MelderFile_readLine8 (file);
 		integer startOfData = MelderFile_tell (file);
 		/*
 		 * Get duration.
@@ -1468,8 +1472,9 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		my xmin = 0.0;
 		char arg1 [41], arg2 [41], arg3 [41], arg4 [41], arg5 [41], arg6 [41], arg7 [201];
 		for (;;) {
-			line = MelderFile_readLine (file);
-			if (! line) break;
+			line = MelderFile_readLine8 (file);
+			if (! line)
+				break;
 			if (strnequ (line, "  <tau ref=\"", 12)) {
 				if (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) < 7)
 					Melder_throw (U"Too few strings in tau line.");
@@ -1482,8 +1487,9 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		 */
 		MelderFile_seek (file, startOfData, SEEK_SET);
 		for (;;) {
-			line = MelderFile_readLine (file);
-			if (! line) break;
+			line = MelderFile_readLine8 (file);
+			if (! line)
+				break;
 			if (strnequ (line, "  <tau ref=\"", 12)) {
 				char *speakerName;
 				integer length, speakerTier = 0;
@@ -1643,9 +1649,8 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 			} else {
 				for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 					TextInterval interval = tier -> intervals.at [iinterval];
-					if (interval -> text && interval -> text [0] != U'\0') {
+					if (interval -> text && interval -> text [0] != U'\0')
 						numberOfRows ++;
-					}
 				}
 			}
 		} else {
@@ -1713,17 +1718,15 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMeld
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
-				if (Melder_stringMatchesCriterion (interval -> text.get(), which, criterion, caseSensitive)) {
+				if (Melder_stringMatchesCriterion (interval -> text.get(), which, criterion, caseSensitive))
 					numberOfRows ++;
-				}
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
-				if (Melder_stringMatchesCriterion (point -> mark.get(), which, criterion, caseSensitive)) {
+				if (Melder_stringMatchesCriterion (point -> mark.get(), which, criterion, caseSensitive))
 					numberOfRows ++;
-				}
 			}
 		}
 	}
