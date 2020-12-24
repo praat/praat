@@ -24,7 +24,7 @@
 #include "NUM2.h"
 
 autoVEC newVECfromString (conststring32 s) {
-	autoSTRVEC tokens = newSTRVECtokenize (s);
+	autoSTRVEC tokens = splitByWhitespace_STRVEC (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
 	autoVEC numbers = newVECraw (tokens.size);
@@ -34,7 +34,7 @@ autoVEC newVECfromString (conststring32 s) {
 }
 
 autoINTVEC newINTVECfromString (conststring32 s) {
-	autoSTRVEC tokens = newSTRVECtokenize (s);
+	autoSTRVEC tokens = splitByWhitespace_STRVEC (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
 	autoINTVEC numbers = newINTVECraw (tokens.size);
@@ -71,7 +71,7 @@ static autoSTRVEC string32vector_searchAndReplace_literal (constSTRVEC me,
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
-		result [i] = newSTRreplace (me [i], search, replace, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = replace_STR (me [i], search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
@@ -104,7 +104,7 @@ static autoSTRVEC string32vector_searchAndReplace_regexp (constSTRVEC me,
 
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
-		result [i] = newSTRreplace_regex (me [i], compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = replace_regex_STR (me [i], compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;

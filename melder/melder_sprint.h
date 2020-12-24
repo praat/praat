@@ -2,7 +2,7 @@
 #define _melder_sprint_h_
 /* melder_sprint.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline static void _recursiveTemplate_Melder_sprint (char32 **inout_pointer, const MelderArg& arg) {
+inline void _recursiveTemplate_Melder_sprint (char32 **inout_pointer, const MelderArg& arg) {
 	if (arg._arg) {
 		char32 *newEndOfStringLocation = stp32cpy (*inout_pointer, arg._arg);
 		*inout_pointer = newEndOfStringLocation;

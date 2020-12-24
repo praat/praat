@@ -2,7 +2,7 @@
 #define _PAIRWISE_SUM_h_
 /* PAIRWISE_SUM.h
  *
- * Copyright (C) 2017-2019 Paul Boersma <paul.boersma@uva.nl>
+ * Copyright (C) 2017-2020 Paul Boersma <paul.boersma@uva.nl>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -32,7 +32,7 @@
 	# PAIRWISE SUMMATION FOR C AND C++
 
 	The pairwise summation algorithm as implemented here is approximately 1.5 times
-	faster than using the usual naive sequential summation loop,
+	faster than the usual naive sequential summation loop,
 	and is also hundreds of times more precise than sequential summation.
 	Using pairwise summation instead of sequential summation will improve all your
 	code for sums, means, inner products, norms, matrix multiplications,
@@ -200,7 +200,7 @@
 	The three additions in section 5 could therefore be performed in two clock cycles.
 	Indeed, both compilers that I am using in 2017 (Clang on the Mac, and GCC on Windows and Linux)
 	take only 0.30 nanoseconds per addition, which is just over two-thirds of the clock period
-	of the 2.3 GHz processor (which is 0.435 nanoseconds) of my 2014 Macbook Pro.
+	of the 2.3 GHz processor (which is 0.435 nanoseconds) of my late 2013 Macbook Pro.
 	On a processor far, far away, which has more than 64 registers, perfect prefetching,
 	and perfectly parallel operations on independent registers, 64 terms may be added
 	within 6 clock cycles: six is the number of times we need to add something to r1,

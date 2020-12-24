@@ -2,7 +2,7 @@
 #define _melder_str32_h_
 /* melder_str32.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,67 +18,67 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline static integer str16len (conststring16 string) noexcept {
+inline integer str16len (conststring16 string) noexcept {
 	const char16 *p = & string [0];
 	while (*p != u'\0') ++ p;
 	return p - string;
 }
-inline static mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept {
+inline mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept {
 	char16 *p = & target [0];
 	while (* source != u'\0') * p ++ = * source ++;
 	*p = u'\0';
 	return target;
 }
 
-inline static integer str32len (conststring32 string) noexcept {
+inline integer str32len (conststring32 string) noexcept {
 	const char32 *p = & string [0];
 	while (*p != U'\0') ++ p;
 	return p - string;
 }
-inline static mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept {
+inline mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
 }
-inline static mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept {
+inline mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];
 	while (*p != U'\0') ++ p;
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
 }
-inline static char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept {
+inline char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return p;
 }
-inline static mutablestring32 str32ncpy (mutablestring32 target, conststring32 source, integer n) noexcept {
+inline mutablestring32 str32ncpy (mutablestring32 target, conststring32 source, integer n) noexcept {
 	char32 *p = & target [0];
 	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
 	for (; n > 0; -- n) * p ++ = U'\0';
 	return target;
 }
 
-inline static int str32cmp (conststring32 string1, conststring32 string2) noexcept {
+inline int str32cmp (conststring32 string1, conststring32 string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept {
+inline int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32cmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, bool caseSensitive) noexcept {
+inline int str32cmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, bool caseSensitive) noexcept {
 	return caseSensitive ? str32cmp (string1, string2) : str32cmp_caseInsensitive (string1, string2);
 }
-inline static int str32ncmp (conststring32 string1, conststring32 string2, integer n) noexcept {
+inline int str32ncmp (conststring32 string1, conststring32 string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
@@ -86,7 +86,7 @@ inline static int str32ncmp (conststring32 string1, conststring32 string2, integ
 	}
 	return 0;
 }
-inline static int str32ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept {
+inline int str32ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);
 		if (diff) return (int) diff;
@@ -94,7 +94,7 @@ inline static int str32ncmp_caseInsensitive (conststring32 string1, conststring3
 	}
 	return 0;
 }
-inline static int str32ncmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, integer n, bool caseSensitive) noexcept {
+inline int str32ncmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, integer n, bool caseSensitive) noexcept {
 	return caseSensitive ? str32ncmp (string1, string2, n) : str32ncmp_caseInsensitive (string1, string2, n);
 }
 
@@ -115,14 +115,14 @@ bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststrin
 #define Melder_nequ  ! Melder_ncmp
 #define Melder_nequ_caseInsensitive  ! Melder_ncmp_caseInsensitive
 
-inline static char32 * str32chr (conststring32 string, char32 kar) noexcept {
+inline char32 * str32chr (conststring32 string, char32 kar) noexcept {
 	for (; *string != kar; ++ string) {
 		if (*string == U'\0')
 			return nullptr;
 	}
 	return (char32 *) string;
 }
-inline static char32 * str32chr_caseInsensitive (conststring32 string, char32 kar) noexcept {
+inline char32 * str32chr_caseInsensitive (conststring32 string, char32 kar) noexcept {
 	kar = Melder_toLowerCase (kar);
 	for (; Melder_toLowerCase (*string) != kar; ++ string) {
 		if (*string == U'\0')
@@ -130,14 +130,14 @@ inline static char32 * str32chr_caseInsensitive (conststring32 string, char32 ka
 	}
 	return (char32 *) string;
 }
-inline static char32 * str32rchr (conststring32 string, char32 kar) noexcept {
+inline char32 * str32rchr (conststring32 string, char32 kar) noexcept {
 	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
 		if (*string == kar) result = (char32 *) string;
 	}
 	return result;
 }
-inline static char32 * str32rchr_caseInsensitive (conststring32 string, char32 kar) noexcept {
+inline char32 * str32rchr_caseInsensitive (conststring32 string, char32 kar) noexcept {
 	kar = Melder_toLowerCase (kar);
 	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
@@ -145,7 +145,7 @@ inline static char32 * str32rchr_caseInsensitive (conststring32 string, char32 k
 	}
 	return result;
 }
-inline static char32 * str32str (conststring32 string, conststring32 find) noexcept {
+inline char32 * str32str (conststring32 string, conststring32 find) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = * find ++;   // optimization
@@ -158,7 +158,7 @@ inline static char32 * str32str (conststring32 string, conststring32 find) noexc
 	} while (str32ncmp (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static char32 * str32str_caseInsensitive (conststring32 string, conststring32 find) noexcept {
+inline char32 * str32str_caseInsensitive (conststring32 string, conststring32 find) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = Melder_toLowerCase (* find ++);   // optimization
@@ -171,10 +171,10 @@ inline static char32 * str32str_caseInsensitive (conststring32 string, conststri
 	} while (str32ncmp_caseInsensitive (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static char32 * str32str_optionallyCaseSensitive (conststring32 string, conststring32 find, bool caseSensitive) noexcept {
+inline char32 * str32str_optionallyCaseSensitive (conststring32 string, conststring32 find, bool caseSensitive) noexcept {
 	return caseSensitive ? str32str (string, find) : str32str_caseInsensitive (string, find);
 }
-inline static integer str32spn (conststring32 string1, conststring32 string2) noexcept {
+inline integer str32spn (conststring32 string1, conststring32 string2) noexcept {
 	const char32 *p = & string1 [0];
 	char32 kar1, kar2;
 cont:

@@ -56,7 +56,7 @@ private:
 	}
 };
 
-inline static void FunctionArea_init (FunctionArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	my editor = editor;
 	my ymin_fraction = ymin_fraction;
 	my ymax_fraction = ymax_fraction;

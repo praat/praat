@@ -41,7 +41,7 @@ namespace MelderTrace {
 	conststring16 _peek32to16 (conststring32 string);
 }
 
-inline static void _recursiveTemplate_Melder_trace (FILE *f, const MelderArg& arg) {
+inline void _recursiveTemplate_Melder_trace (FILE *f, const MelderArg& arg) {
 	if (arg._arg)
 		fprintf (f, "%s", MelderTrace::_peek32to8 (arg. _arg));
 }

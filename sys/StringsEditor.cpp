@@ -1,6 +1,6 @@
 /* StringsEditor.cpp
  *
- * Copyright (C) 2007-2012,2015-2019 Paul Boersma
+ * Copyright (C) 2007-2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) 
 		Find the first selected item.
 	*/
 	autoINTVEC selected = GuiList_getSelectedPositions (my list);
-	integer position = selected.size >= 1 ? selected [1] : strings -> numberOfStrings + 1;
+	integer position = ( selected.size >= 1 ? selected [1] : strings -> numberOfStrings + 1 );
 	autostring32 text = GuiText_getString (my text);
 	/*
 		Change the data.

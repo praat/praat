@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2008,2011,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ Longchar_Info Longchar_getInfoFromNative (char32 kar);
 	even on Macintosh. (Reading this note in Xwindows may feel somewhat funny.)
 */
 
-inline static bool Longchar_Info_isDiacritic (Longchar_Info me) {
+inline bool Longchar_Info_isDiacritic (Longchar_Info me) {
 	return me -> isDiacritic;
 }
 

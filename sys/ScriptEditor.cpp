@@ -134,7 +134,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 			Melder_throw (U"Unexpected nonspace after #!praatObscured.");
 		}
 		static uint64 nonsecret = UINT64_C (529857089);
-		text = newSTRunhex (restOfText, fileKey + nonsecret + passwordHash);
+		text = unhex_STR (restOfText, fileKey + nonsecret + passwordHash);
 		isObscured = true;
 	}
 	Melder_includeIncludeFiles (& text);

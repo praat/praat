@@ -267,13 +267,20 @@ public:
 		: vector<T> (nullptr, 0) { }
 	explicit autovector (integer givenSize, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
-		our cells = ( givenSize == 0 ? nullptr : MelderArray:: _alloc <T> (givenSize, initializationType) );
+		our cells = MelderArray:: _alloc <T> (givenSize, initializationType);
 		our size = givenSize;
 		our _capacity = givenSize;
 	}
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
+		if (our cells) {
+			MelderArray:: _free (our cells, our _capacity);
+			our cells = nullptr;
+		}
+		our size = 0;
+		our _capacity = 0;
+	}
 	~autovector () {   // destroy the payload (if any)
 		our reset ();
-		our _capacity = 0;
 	}
 	vector<T> get () const { return vector<T> (our cells, our size); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	vectorview<T> all () const { return vectorview<T> (our cells, our size, 1); }
@@ -287,19 +294,20 @@ public:
 		T *oldCells = our cells;
 		our cells = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		integer oldSize = our size;
+		our size = 0;
 		our _capacity = 0;
 		return vector<T> (oldCells, oldSize);
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
 	*/
-	autovector (autovector const& other) = delete;   // disable copy constructor
+	autovector (autovector const& other) = delete;   // disable copy construction
 	autovector& operator= (autovector const& other) = delete;   // disable copy assignment
 	/*
 		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
 		This implements buying a payload from another autovector (which involves destroying our current payload).
 	*/
-	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
+	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move construction
 		other.cells = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
 		other._capacity = 0;
@@ -316,15 +324,7 @@ public:
 		}
 		return *this;
 	}
-	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
-		if (our cells) {
-			MelderArray:: _free (our cells, our _capacity);
-			our cells = nullptr;
-			our _capacity = 0;
-		}
-		our size = 0;
-	}
-	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
+	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable construction and assignment for l-values (variables) via explicit move()
 	/*
 		Some of the following functions are capable of keeping a valid `cells` pointer
 		while `size` can at the same time be zero.
@@ -737,8 +737,7 @@ public:
 	explicit automatrix (integer givenNrow, integer givenNcol, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
-		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: MelderArray:: _alloc <T> (givenNrow * givenNcol, initializationType) );
+		our cells = MelderArray:: _alloc <T> (givenNrow * givenNcol, initializationType);
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
@@ -1128,8 +1127,7 @@ public:
 		Melder_assert (givenNdim1 >= 0);
 		Melder_assert (givenNdim2 >= 0);
 		Melder_assert (givenNdim3 >= 0);
-		our cells = ( givenNdim1 == 0 || givenNdim2 == 0 || givenNdim3 == 0 ? nullptr
-				: MelderArray:: _alloc <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType) );
+		our cells = MelderArray:: _alloc <T> (givenNdim3 * givenNdim2 * givenNdim1, initializationType);
 		our ndim1 = givenNdim1;
 		our ndim2 = givenNdim2;
 		our ndim3 = givenNdim3;
