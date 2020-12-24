@@ -20,7 +20,7 @@
 
 /* These will be the future replacements for Melder_fopen, as soon as we rid of text files: */
 MelderFile MelderFile_open (MelderFile file);
-char * MelderFile_readLine (MelderFile file);
+char * MelderFile_readLine8 (MelderFile file);
 
 MelderFile MelderFile_create (MelderFile file);
 void MelderFile_write (MelderFile file, conststring32 string);
