@@ -28,4 +28,11 @@ extern const vorbis_func_floor     *const _floor_P[];
 extern const vorbis_func_residue   *const _residue_P[];
 extern const vorbis_func_mapping   *const _mapping_P[];
 
+extern const vorbis_func_floor     floor0_exportbundle;
+extern const vorbis_func_floor     floor1_exportbundle;
+extern const vorbis_func_residue   residue0_exportbundle;
+extern const vorbis_func_residue   residue1_exportbundle;
+extern const vorbis_func_residue   residue2_exportbundle;
+extern const vorbis_func_mapping   mapping0_exportbundle;
+
 #endif

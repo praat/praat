@@ -21,12 +21,12 @@
 /* seems like major overkill now; the backend numbers will grow into
    the infrastructure soon enough */
 
-extern const vorbis_func_floor     floor0_exportbundle;
-extern const vorbis_func_floor     floor1_exportbundle;
-extern const vorbis_func_residue   residue0_exportbundle;
-extern const vorbis_func_residue   residue1_exportbundle;
-extern const vorbis_func_residue   residue2_exportbundle;
-extern const vorbis_func_mapping   mapping0_exportbundle;
+//extern const vorbis_func_floor     floor0_exportbundle;
+//extern const vorbis_func_floor     floor1_exportbundle;
+//extern const vorbis_func_residue   residue0_exportbundle;
+//extern const vorbis_func_residue   residue1_exportbundle;
+//extern const vorbis_func_residue   residue2_exportbundle;
+//extern const vorbis_func_mapping   mapping0_exportbundle;
 
 const vorbis_func_floor     *const _floor_P[]={
   &floor0_exportbundle,

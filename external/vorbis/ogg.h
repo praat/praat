@@ -13,8 +13,8 @@
  function: toplevel libogg include
 
  ********************************************************************/
-#ifndef _OGG_H
-#define _OGG_H
+#ifndef _ogg_h_
+#define _ogg_h_
 
 #include "melder.h"
 
@@ -199,4 +199,4 @@ extern int      ogg_page_packets(const ogg_page *og);
 extern void     ogg_packet_clear(ogg_packet *op);
 
 
-#endif  /* _OGG_H */
+#endif  /* _ogg_h_ */
