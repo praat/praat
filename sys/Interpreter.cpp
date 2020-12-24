@@ -171,7 +171,8 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				break;
 			}
 			Melder_skipToEndOfLine (& p);
-			if (*p == U'\0') break;
+			if (*p == U'\0')
+				break;
 			p ++;   // skip newline symbol
 		}
 	}
@@ -263,7 +264,8 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					Melder_throw (U"Missing parameter:\n\"", startOfLine, U"\".");
 				}
 				char32 *q = my parameters [++ my numberOfParameters];
-				while (Melder_staysWithinInk (*parameterLocation)) * (q ++) = * (parameterLocation ++);
+				while (Melder_staysWithinInk (*parameterLocation))
+					* (q ++) = * (parameterLocation ++);
 				*q = U'\0';
 				npar ++;
 			} else {
@@ -296,11 +298,15 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 		UiForm_addText (form.get(), nullptr, nullptr, U"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
-		 * Convert underscores to spaces.
-		 */
+			Convert underscores to spaces.
+		*/
 		char32 parameter [100], *p = & parameter [0];
 		str32cpy (parameter, my parameters [ipar]);
-		while (*p) { if (*p == U'_') *p = U' '; p ++; }
+		while (*p) {
+			if (*p == U'_')
+				*p = U' ';
+			p ++;
+		}
 		switch (my types [ipar]) {
 			case Interpreter_WORD:
 				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
@@ -338,14 +344,16 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 		}
 		/*
-		 * Strip parentheses and colon off parameter name.
-		 */
+			Strip parentheses and colon off parameter name.
+		*/
 		if ((p = str32chr (my parameters [ipar], U'(')) != nullptr) {
 			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
+			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
+				p [-1] = U'\0';
 		}
 		p = my parameters [ipar];
-		if (*p != U'\0' && p [str32len (p) - 1] == U':') p [str32len (p) - 1] = U'\0';
+		if (*p != U'\0' && p [str32len (p) - 1] == U':')
+			p [str32len (p) - 1] = U'\0';
 	}
 	UiForm_finish (form.get());
 	return form;
@@ -355,19 +363,26 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		char32 parameter [100], *p;
 		/*
-		 * Strip parentheses and colon off parameter name.
-		 */
+			Strip parentheses and colon off parameter name.
+		*/
 		if ((p = str32chr (my parameters [ipar], U'(')) != nullptr) {
 			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
+			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
+				p [-1] = U'\0';
 		}
 		p = my parameters [ipar];
-		if (*p != U'\0' && p [str32len (p) - 1] == U':') p [str32len (p) - 1] = U'\0';
+		if (*p != U'\0' && p [str32len (p) - 1] == U':')
+			p [str32len (p) - 1] = U'\0';
 		/*
-		 * Convert underscores to spaces.
-		 */
+			Convert underscores to spaces.
+		*/
 		str32cpy (parameter, my parameters [ipar]);
-		p = & parameter [0]; while (*p) { if (*p == U'_') *p = U' '; p ++; }
+		p = & parameter [0];
+		while (*p) {
+			if (*p == U'_')
+				*p = U' ';
+			p ++;
+		}
 		switch (my types [ipar]) {
 			case Interpreter_REAL:
 			case Interpreter_POSITIVE: {

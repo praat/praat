@@ -16,27 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#define USE_STAT  1
-#ifndef USE_STAT
-	#if defined (_WIN32)
-		#define USE_STAT  0
-	#else
-		#define USE_STAT  1
-	#endif
-#endif
-
-#if USE_STAT
-	#include <sys/types.h>
-	//#define __USE_BSD
-	#include <sys/stat.h>
-	#include <dirent.h>
-#endif
-#if defined (_WIN32)
-	#include "winport_on.h"
-	#include <windows.h>
-	#include "winport_off.h"
-#endif
-
 #include "Strings_.h"
 #include "../kar/longchar.h"
 
@@ -86,145 +65,12 @@ conststring32 structStrings :: v_getVectorStr (integer icol) {
 	return stringValue ? stringValue : U"";
 }
 
-#define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
-#define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
-static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* cattable */, int type) {
-	#if USE_STAT
-		DIR *d = nullptr;
-		try {
-			/*
-				Parse the path.
-				This can be either a directory name such as "/Users/paul/sounds"
-				or a wildcarded path such as "/Users/paul/sounds/h*.wav".
-				Example: in "/Users/paul/sounds/h*llo.*av",
-				the search directory is "/Users/paul/sounds",
-				the left environment is "h", the middle environment is "llo.", and the right environment is "av".
-			*/
-			autoMelderString searchDirectory, left, middle, right, filePath;
-			MelderString_copy (& searchDirectory, path);
-			char32 *asterisk1 = str32chr (searchDirectory. string, U'*');
-			char32 *asterisk2 = str32rchr (searchDirectory. string, U'*');
-			if (asterisk1) {
-				/*
-					The path is a wildcarded path.
-				*/
-				*asterisk1 = U'\0';
-				*asterisk2 = U'\0';
-				searchDirectory. length = asterisk1 - searchDirectory. string;   // probably superfluous, but correct
-				char32 *lastSlash = str32rchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
-				if (lastSlash) {
-					*lastSlash = U'\0';   // this fixes searchDirectory
-					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
-					MelderString_copy (& left, lastSlash + 1);
-				} else {
-					MelderString_copy (& left, searchDirectory. string);   // quickly save...
-					MelderString_empty (& searchDirectory);   // ...before destruction
-				}
-				if (asterisk1 != asterisk2) {
-					MelderString_copy (& middle, asterisk1 + 1);
-				}
-				MelderString_copy (& right, asterisk2 + 1);
-			} else {
-				/*
-					We're finished. No asterisk, hence the path is a directory name.
-				*/
-			}
-			char buffer8 [kMelder_MAXPATH+1];
-			Melder_32to8_fileSystem_inplace (searchDirectory. string, buffer8);
-			d = opendir (buffer8 [0] ? buffer8 : ".");
-			if (! d)
-				Melder_throw (U"Cannot open directory ", searchDirectory. string, U".");
-			//Melder_casual (U"opened");
-			autoStrings me = Thing_new (Strings);
-			struct dirent *entry;
-			while (!! (entry = readdir (d))) {
-				MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : U".");
-				MelderString_appendCharacter (& filePath, Melder_DIRECTORY_SEPARATOR);
-				char32 buffer32 [kMelder_MAXPATH+1];
-				Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
-				MelderString_append (& filePath, buffer32);
-				//Melder_casual (U"read ", filePath. string);
-				Melder_32to8_fileSystem_inplace (filePath. string, buffer8);
-				struct stat stats;
-				if (stat (buffer8, & stats) != 0) {
-					//Melder_throw (U"Cannot look at file ", filePath. string, U".");
-					//stats. st_mode = -1L;
-				}
-				//Melder_casual (U"statted ", filePath. string);
-				//Melder_casual (U"file ", filePath. string, U" mode ", stats. st_mode / 4096);
-				if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE && S_ISREG (stats. st_mode)) ||
-					(type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && S_ISDIR (stats. st_mode)))
-				{
-					Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
-					int64 length = str32len (buffer32);
-					integer numberOfMatchedCharacters = 0;
-					bool doesTheLeftMatch = true;
-					if (left. length != 0) {
-						doesTheLeftMatch = str32nequ (buffer32, left. string, left. length);
-						if (doesTheLeftMatch)
-							numberOfMatchedCharacters = left.length;
-					}
-					bool doesTheMiddleMatch = true;
-					if (middle. length != 0) {
-						char32 *position = str32str (buffer32 + numberOfMatchedCharacters, middle. string);
-						doesTheMiddleMatch = !! position;
-						if (doesTheMiddleMatch)
-							numberOfMatchedCharacters = position - buffer32 + middle.length;
-					}
-					bool doesTheRightMatch = true;
-					if (right. length != 0) {
-						int64 startOfRight = length - right. length;
-						doesTheRightMatch = startOfRight >= numberOfMatchedCharacters &&
-							str32equ (buffer32 + startOfRight, right. string);
-					}
-					if (buffer32 [0] != U'.' && doesTheLeftMatch && doesTheMiddleMatch && doesTheRightMatch) {
-						Strings_insert (me.get(), 0, buffer32);
-					}
-				}
-			}
-			closedir (d);
-			Strings_sort (me.get());
-			return me;
-		} catch (MelderError) {
-			if (d)
-				closedir (d);   // "finally"
-			throw;
-		}
-	#elif defined (_WIN32)
-		try {
-			char32 searchPath [kMelder_MAXPATH+1];
-			int len = str32len (path);
-			bool hasAsterisk = !! str32chr (path, U'*');
-			bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
-			autoStrings me = Thing_new (Strings);
-			Melder_sprint (searchPath, kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
-			WIN32_FIND_DATAW findData;
-			HANDLE searchHandle = FindFirstFileW (Melder_peek32toW_fileSystem (searchPath), & findData);
-			if (searchHandle != INVALID_HANDLE_VALUE) {
-				do {
-					if ((type == Strings_createAsFileOrDirectoryList_TYPE_FILE &&
-							(findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-					 || (type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && 
-							(findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0))
-					{
-						if (findData. cFileName [0] != L'.') {
-							Strings_insert (me.get(), 0, Melder_peekWto32 (findData. cFileName));
-						}
-					}
-				} while (FindNextFileW (searchHandle, & findData));
-				FindClose (searchHandle);
-			}
-			Strings_sort (me.get());
-			return me;
-		} catch (MelderError) {
-			throw;
-		}
-	#endif
-}
-
 autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 	try {
-		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_FILE);
+		autoStrings me = Thing_new (Strings);
+		my strings = files_STRVEC (path);
+		my maintainInvariants ();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings object not created as file list.");
 	}
@@ -232,7 +78,10 @@ autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 
 autoStrings Strings_createAsDirectoryList (conststring32 path /* cattable */) {
 	try {
-		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY);
+		autoStrings me = Thing_new (Strings);
+		my strings = directories_STRVEC (path);
+		my maintainInvariants ();
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings object not created as directory list.");
 	}
@@ -242,7 +91,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 	try {
 		autoStrings me = Thing_new (Strings);
 		my strings = readFile_STRVEC (file);
-		my numberOfStrings = my strings.size;   // maintain invariant
+		my maintainInvariants ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings not read from raw text file ", file, U".");
@@ -250,10 +99,15 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 }
 
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
-	autoMelderString buffer;
-	for (integer i = 1; i <= my numberOfStrings; i ++)
-		MelderString_append (& buffer, my strings [i].get(), U"\n");
-	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
+	try {
+		my assertInvariants ();
+		autoMelderString buffer;
+		for (integer i = 1; i <= my numberOfStrings; i ++)
+			MelderString_append (& buffer, my strings [i].get(), U"\n");
+		MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
+	} catch (MelderError) {
+		Melder_throw (U"Strings not written to raw text file ", file, U".");
+	}
 }
 
 void Strings_randomize (Strings me) {
@@ -264,6 +118,8 @@ void Strings_randomize (Strings me) {
 }
 
 void Strings_genericize (Strings me) {
+	if (my numberOfStrings == 0)
+		return;
 	autostring32 buffer (Melder_iround (Strings_maximumLength (me)) * 3);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		const conststring32 string = my strings [i].get();
@@ -280,6 +136,8 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
+	if (my numberOfStrings == 0)
+		return;
 	autostring32 buffer (Melder_iround (Strings_maximumLength (me)));
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativize (my strings [i].get(), buffer.get(), false);
@@ -292,35 +150,46 @@ void Strings_sort (Strings me) {
 }
 
 void Strings_remove (Strings me, integer position) {
-	if (position < 1 || position > my numberOfStrings)
-		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
-	my strings. remove (position);
-	my numberOfStrings -= 1;   // maintain invariant
+	try {
+		my checkStringNumber (position);
+		my strings. remove (position);
+		my maintainInvariants ();
+	} catch (MelderError) {
+		Melder_throw (me, U": string ", position, U" not removed.");
+	}
 }
 
-void Strings_replace (Strings me, integer position, conststring32 text) {
-	if (position < 1 || position > my numberOfStrings)
-		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
-	if (Melder_equ (my strings [position].get(), text))
-		return;   // nothing to change
-	/*
-		Create without change.
-	*/
-	autostring32 newString = Melder_dup (text);
-	/*
-		Change without error.
-	*/
-	my strings [position] = newString. move();
+void Strings_replace (Strings me, integer stringNumber, conststring32 text) {
+	try {
+		my checkStringNumber (stringNumber);
+		if (Melder_equ (my strings [stringNumber].get(), text))
+			return;   // nothing to change
+		/*
+			Create without change.
+		*/
+		autostring32 newString = Melder_dup (text);
+		/*
+			Change without error.
+		*/
+		my strings [stringNumber] = newString. move();
+	} catch (MelderError) {
+		Melder_throw (me, U": string ", stringNumber, U" not replaced.");
+	}
 }
 
 void Strings_insert (Strings me, integer position, conststring32 text) {
-	if (position == 0) {
-		position = my numberOfStrings + 1;
-	} else if (position < 1 || position > my numberOfStrings + 1) {
-		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
+	try {
+		if (position == 0)
+			position = my numberOfStrings + 1;
+		Melder_require (position >= 1,
+			U"The element number should be at least 1, not ", position, U".");
+		Melder_require (position <= my numberOfStrings + 1,
+			U"The element number should be at most the number of elements plus 1 (", my numberOfStrings + 1, U"), not", position, U".");
+		my strings. insert (position, text);   // size changes only on success
+		my maintainInvariants ();
+	} catch (MelderError) {
+		Melder_throw (me, U": no string inserted at position ", position, U".");
 	}
-	my strings. insert (position, text);
-	my numberOfStrings += 1;   // maintain invariant
 }
 
 /* End of file Strings.cpp */
