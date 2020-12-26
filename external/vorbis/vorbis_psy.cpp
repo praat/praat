@@ -232,14 +232,14 @@ static float ***setup_tone_curves(float curveatt_dB[P_BANDS],float binHz,int n,
 
 
       for(j=0;j<EHMER_MAX;j++){
-        int bin=fromOC(j*.125+i*.5-2.)/binHz;
-        if(bin<0){
+        int binn=fromOC(j*.125+i*.5-2.)/binHz;
+        if(binn<0){
           ret[i][m][j+2]=-999.;
         }else{
-          if(bin>=n){
+          if(binn>=n){
             ret[i][m][j+2]=-999.;
           }else{
-            ret[i][m][j+2]=brute_buffer[bin];
+            ret[i][m][j+2]=brute_buffer[binn];
           }
         }
       }
