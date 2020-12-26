@@ -2637,8 +2637,8 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...") {
-	SENTENCE (name, U"Name", U"directoryList")
+FORM (NEW1_Strings_createAsFolderList, U"Create Strings as folder list", U"Create Strings as folder list...") {
+	SENTENCE (name, U"Name", U"folderList")
 	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static conststring32 homeDirectory = Melder_dirToPath (& defaultDir);
@@ -2657,7 +2657,7 @@ FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U
 	OK
 DO
 	CREATE_ONE
-		autoStrings result = Strings_createAsDirectoryList (path);
+		autoStrings result = Strings_createAsFolderList (path);
 	CREATE_ONE_END (name)
 }
 
@@ -2992,7 +2992,8 @@ void praat_uvafon_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, 0, NEW1_Corpus_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 1, NEW1_Strings_createAsFileList);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, 1, NEW1_Strings_createAsDirectoryList);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as folder list...", nullptr, 1, NEW1_Strings_createAsFolderList);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, praat_DEPTH_1 | praat_HIDDEN, NEW1_Strings_createAsFolderList);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);

@@ -32,7 +32,7 @@ static int ibuffer = 0;
 #define CONVERT_BUFFER_TO_CHAR32 \
 	char32 *q = buffers32 [ibuffer]; \
 	while (*p != '\0') \
-		* q ++ = (char32) (char8) * p ++; /* change sign before extending (should be unnecessary, because all characters should be below 128) */ \
+		* q ++ = (char32) (char8) * p ++; /* change signedness before extending (should be unnecessary, because all characters should be below 128) */ \
 	*q = U'\0'; \
 	return buffers32 [ibuffer];
 

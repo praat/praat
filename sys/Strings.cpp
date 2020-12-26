@@ -76,21 +76,21 @@ autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 	}
 }
 
-autoStrings Strings_createAsDirectoryList (conststring32 path /* cattable */) {
+autoStrings Strings_createAsFolderList (conststring32 path /* cattable */) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my strings = directories_STRVEC (path);
+		my strings = folders_STRVEC (path);
 		my maintainInvariants ();
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Strings object not created as directory list.");
+		Melder_throw (U"Strings object not created as folder list.");
 	}
 }
 
 autoStrings Strings_readFromRawTextFile (MelderFile file) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my strings = readFile_STRVEC (file);
+		my strings = readLinesFromFile_STRVEC (file);
 		my maintainInvariants ();
 		return me;
 	} catch (MelderError) {

@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* The README file that accompanied the version 3.03 softare:
+/* The README file that accompanied the version 3.03 software:
 
 Klatt Cascade-Parallel Formant Synthesizer v 3.03 (April 1994)
 --------------------------------------------------------------
@@ -495,7 +495,7 @@ static void KlattGlobal_free (KlattGlobal me) {
 static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 	KlattGlobal me = nullptr;
 	try {
-		me = (KlattGlobal) _Melder_calloc_f (1, sizeof (struct structKlattGlobal));
+		me = Melder_calloc (structKlattGlobal, 1);
 
 		my samrate = Melder_ifloor (samplingFrequency);
 		const double dT = 1.0 / my samrate;
