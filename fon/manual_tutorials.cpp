@@ -2071,7 +2071,7 @@ ENTRY (U"Known bugs in the Windows version")
 	LIST_ITEM (U"• Cannot stand infinitesimal zooming in SpectrogramEditor.")
 */
  
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20201212)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20201226)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2083,7 +2083,7 @@ LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, 
 LIST_ITEM (U"David Weenink: "
 	"@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC, "
 	"@VowelEditor, "
-	"and adaptation of GSL, LAPACK, fftpack, regular expressions, and Espeak.")
+	"and adaptation of GSL, LAPACK, fftpack, regular expressions, Espeak, and Ogg Vorbis.")
 LIST_ITEM (U"Stefan de Konink and Franz Brauße: major help in port to GTK.")
 LIST_ITEM (U"Tom Naughton: major help in port to Cocoa.")
 LIST_ITEM (U"Erez Volk: adaptation of FLAC and MAD.")
@@ -2100,6 +2100,7 @@ LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn
 LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington and Reece Dunn (GPL 3 or later).")
 LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
 LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (BSD 3-clause license).")
+LIST_ITEM (U"Ogg Vorbis: audio compression by Xiph.Org (BSD-style license).")
 LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Christopher Montgomery.")
 LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
