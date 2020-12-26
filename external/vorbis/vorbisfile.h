@@ -53,32 +53,11 @@ typedef struct {
  * we're using (the same one as the main application).
  */
 
-static ov_callbacks OV_CALLBACKS_DEFAULT = {
-  (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           fseek,
-  (int (*)(void *))                             fclose,
-  (long (*)(void *))                            ftell
-};
-
 static ov_callbacks OV_CALLBACKS_NOCLOSE = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
   (int (*)(void *, ogg_int64_t, int))           fseek,
   (int (*)(void *))                             nullptr,
   (long (*)(void *))                            ftell
-};
-
-static ov_callbacks OV_CALLBACKS_STREAMONLY = {
-  (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           nullptr,
-  (int (*)(void *))                             fclose,
-  (long (*)(void *))                            nullptr
-};
-
-static ov_callbacks OV_CALLBACKS_STREAMONLY_NOCLOSE = {
-  (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           nullptr,
-  (int (*)(void *))                             nullptr,
-  (long (*)(void *))                            nullptr
 };
 
 #endif
