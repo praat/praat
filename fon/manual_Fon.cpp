@@ -196,12 +196,12 @@ INTRO (U"A command in the @@New menu@ to create a @Matrix with the specified num
 	"filled with values from a formula (see @@Matrix: Formula...@).")
 MAN_END
 
-MAN_BEGIN (U"Create Strings as directory list...", U"ppgb", 20060919)
+MAN_BEGIN (U"Create Strings as folder list...", U"ppgb", 20201226)
 INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of directories in a given parent directory. "
 	"It works completely analogously to @@Create Strings as file list...@.")
 MAN_END
 
-MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20150713)
+MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20201226)
 INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
@@ -212,45 +212,45 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
 TAG (U"##Name")
 DEFINITION (U"the name of the resulting Strings object.")
 TAG (U"##File path")
-DEFINITION (U"the directory name, with an optional %wildcard (see below) for selecting files.")
+DEFINITION (U"the folder name, with an optional %wildcard (see below) for selecting files.")
 ENTRY (U"Behaviour")
 NORMAL (U"The resulting Strings object will contain an alphabetical list of file names, "
-	"without the preceding path through the directory structures. If there are no files that match the file path, "
+	"without the preceding path through the folder structures. If there are no files that match the file path, "
 	"the Strings object will contain no strings.")
 ENTRY (U"Usage")
 NORMAL (U"There are two ways to specify the file path.")
-NORMAL (U"One way is to specify a directory name only. On Unix, the file path could be "
+NORMAL (U"One way is to specify a folder name only. On Unix, the file path could be "
 	"##/usr/people/miep/sounds# or ##/usr/people/miep/sounds/#, for instance. On Windows, "
 	"##C:\\bsUsers\\bsMiep\\bsSounds# or ##C:\\bsUsers\\bsMiep\\bsSounds\\bs#. "
 	"On Macintosh, ##/Users/miep/Sounds# or ##/Users/miep/Sounds/#. Any of these produce "
-	"a list of all the files in the specified directory.")
+	"a list of all the files in the specified folder.")
 NORMAL (U"The other way is to specify a wildcard (a single asterisk) for the file names. "
 	"To get a list of all the files whose names start with \"hal\" and end in \".wav\", "
 	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsUsers\\bsMiep\\bsSounds\\bshal*.wav#, "
 	"or ##/Users/miep/Sounds/hal*.wav#.")
 ENTRY (U"Script usage")
-NORMAL (U"In a script, you can use this command to cycle through the files in a directory. "
-	"For instance, to read in all the sound files in a specified directory, "
+NORMAL (U"In a script, you can use this command to cycle through the files in a folder. "
+	"For instance, to read in all the sound files in a specified folder, "
 	"you could use the following script:")
-CODE (U"directory\\$  = \"/usr/people/miep/sounds\"")
-CODE (U"strings = Create Strings as file list: \"list\", directory\\$  + \"/*.wav\"")
+CODE (U"folder\\$  = \"/usr/people/miep/sounds\"")
+CODE (U"strings = Create Strings as file list: \"list\", folder\\$  + \"/*.wav\"")
 CODE (U"numberOfFiles = Get number of strings")
 CODE (U"for ifile to numberOfFiles")
 	CODE1 (U"selectObject: strings")
 	CODE1 (U"fileName\\$  = Get string: ifile")
-	CODE1 (U"Read from file: directory\\$  + \"/\" + fileName\\$ ")
+	CODE1 (U"Read from file: folder\\$  + \"/\" + fileName\\$ ")
 CODE (U"endfor")
-NORMAL (U"If the script has been saved to a script file, you can use file paths that are relative to the directory "
+NORMAL (U"If the script has been saved to a script file, you can use file paths that are relative to the folder "
 	"where you saved the script. Thus, with")
 CODE (U"Create Strings as file list: \"list\", \"*.wav\"")
-NORMAL (U"you get a list of all the .wav files that are in the same directory as the script that contains this line. "
-	"And to get a list of all the .wav files in the directory Sounds that resides in the same directory as your script, "
+NORMAL (U"you get a list of all the .wav files that are in the same folder as the script that contains this line. "
+	"And to get a list of all the .wav files in the folder Sounds that resides in the same folder as your script, "
 	"you can do")
 CODE (U"Create Strings as file list: \"list\", \"Sounds/*.wav\"")
 NORMAL (U"As is usual in Praat scripting, the forward slash (\"/\") in this example can be used on all platforms, including Windows. "
 	"This makes your script portable across platforms.")
 ENTRY (U"See also")
-NORMAL (U"To get a list of directories instead of files, use @@Create Strings as directory list...@.")
+NORMAL (U"To get a list of folders instead of files, use @@Create Strings as folder list...@.")
 MAN_END
 
 MAN_BEGIN (U"Distributions", U"ppgb", 20030316)
@@ -2117,7 +2117,7 @@ NORMAL (U"The resulting Sound equals the original sound, multiplied by a linear 
 	"Afterwards, the resulting Sound is scaled so that its maximum absolute amplitude is 0.9.")
 MAN_END
 
-MAN_BEGIN (U"Strings", U"ppgb", 20141001)
+MAN_BEGIN (U"Strings", U"ppgb", 20201226)
 INTRO (U"One of the @@types of objects@ in Praat. Represents an ordered list of strings.")
 ENTRY (U"Creation")
 NORMAL (U"The difficult way is to create a #Strings object from a generic Praat text file "
@@ -2140,7 +2140,7 @@ CODE (U"Goodbye")
 CODE (U"Auf wiedersehen")
 CODE (U"Tschüss")
 CODE (U"Arrivederci")
-NORMAL (U"You can also create a #Strings object from a directory listing or from some other objects:")
+NORMAL (U"You can also create a #Strings object from a folder listing or from some other objects:")
 LIST_ITEM (U"• @@Create Strings as file list...")
 LIST_ITEM (U"• @@Distributions: To Strings...@")
 LIST_ITEM (U"• @@OTGrammar: Generate inputs...@")

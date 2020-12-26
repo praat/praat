@@ -208,6 +208,8 @@ public:
 		our size = newSize;
 	}
 	void insert (integer position, conststring32 value) {
+		if (position == 0)
+			position = our size + 1;
 		/*
 			Create without change.
 		*/

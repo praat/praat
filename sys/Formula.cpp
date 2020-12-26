@@ -161,7 +161,8 @@ enum { NO_SYMBOL_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEXSTR_, UNHEXSTR_,
-	#define HIGH_FUNCTION_N  UNHEXSTR_
+		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILES_STRVEC_, FOLDERS_STRVEC_, SPLIT_BY_WHITESPACE_STRVEC_,
+	#define HIGH_FUNCTION_N  SPLIT_BY_WHITESPACE_STRVEC_
 
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
@@ -285,6 +286,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"size", U"numberOfRows", U"numberOfColumns", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
+	U"empty$#", U"readLinesFromFile$#", U"files$#", U"folders$#", U"splitByWhitespace$#",
 
 	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -4537,6 +4539,8 @@ static void do_size () {
 	Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (array->numericVector.size);
+	} else if (array->which == Stackel_STRING_ARRAY) {
+		pushNumber (array->stringArray.size);
 	} else {
 		Melder_throw (U"The function size requires a vector argument, not ", array->whichText(), U".");
 	}
@@ -4590,7 +4594,6 @@ static void do_editor () {
 	}
 	pushNumber (1);
 }
-
 static void do_random_initializeWithSeedUnsafelyButPredictably () {
 	/*@praat
 		#
@@ -4624,7 +4627,6 @@ static void do_random_initializeWithSeedUnsafelyButPredictably () {
 	}
 	pushNumber (1);
 }
-
 static void do_random_initializeSafelyAndUnpredictably () {
 	Stackel n = pop;
 	if (n->number != 0)
@@ -4632,7 +4634,6 @@ static void do_random_initializeSafelyAndUnpredictably () {
 	NUMrandom_initializeSafelyAndUnpredictably ();
 	pushNumber (1);
 }
-
 static void do_hash () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
@@ -4648,7 +4649,6 @@ static void do_hash () {
 		Melder_throw (U"The function \"hash\" requires 1 argument, not ", n->number, U".");
 	}
 }
-
 static void do_hexStr () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
@@ -4672,7 +4672,6 @@ static void do_hexStr () {
 		Melder_throw (U"The function \"hex$\" requires 1 or 2 arguments, not ", n->number, U".");
 	}
 }
-
 static void do_unhexStr () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
@@ -4696,7 +4695,68 @@ static void do_unhexStr () {
 		Melder_throw (U"The function \"unhex$\" requires 1 or 2 arguments, not ", n->number, U".");
 	}
 }
-
+static void do_empty_STRVEC () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg->which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg->number;
+	if (narg != 1)
+		Melder_throw (U"The function \"empty$#\" requires one argument, namely the number of elements.");
+	Stackel numberOfElements = pop;
+	if (numberOfElements->which != Stackel_NUMBER)
+		Melder_throw (U"The argument of the function \"empty$#\" should be a number (namely the number of elements), not ", numberOfElements->whichText(), U".");
+	autoSTRVEC result { Melder_iround (numberOfElements->number) };
+	pushStringVector (result.move());
+}
+static void do_readLinesFromFile_STRVEC () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function \"readFile$#\" requires one argument, namely the file pattern.");
+	Stackel fileName = pop;
+	if (fileName->which != Stackel_STRING)
+		Melder_throw (U"The argument of the function \"readFile$#\" should be a string (namely the file pattern), not ", fileName->whichText(), U".");
+	structMelderFile file { };
+	Melder_relativePathToFile (fileName->getString(), & file);
+	autoSTRVEC result = readLinesFromFile_STRVEC (& file);
+	pushStringVector (result.move());
+}
+static void do_files_STRVEC () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function \"files$#\" requires one argument, namely the file pattern.");
+	Stackel filePattern = pop;
+	if (filePattern->which != Stackel_STRING)
+		Melder_throw (U"The argument of the function \"files$#\" should be a string (namely the file pattern), not ", filePattern->whichText(), U".");
+	autoSTRVEC result = files_STRVEC (filePattern->getString());
+	pushStringVector (result.move());
+}
+static void do_folders_STRVEC () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function \"directories$#\" requires one argument, namely the file pattern.");
+	Stackel directoryPattern = pop;
+	if (directoryPattern->which != Stackel_STRING)
+		Melder_throw (U"The argument of the function \"directories$#\" should be a string (namely the directory pattern), not ", directoryPattern->whichText(), U".");
+	autoSTRVEC result = folders_STRVEC (directoryPattern->getString());
+	pushStringVector (result.move());
+}
+static void do_splitByWhitespace_STRVEC () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function \"splitByWhitespace$#\" requires one argument, namely the file pattern.");
+	Stackel string = pop;
+	if (string->which != Stackel_STRING)
+		Melder_throw (U"The argument of the function \"splitByWhitespace$#\" should be a string, not ", string->whichText(), U".");
+	autoSTRVEC result = splitByWhitespace_STRVEC (string->getString());
+	pushStringVector (result.move());
+}
 static void do_numericVectorElement () {
 	InterpreterVariable vector = parse [programPointer]. content.variable;
 	integer element = 1;   // default
@@ -7251,6 +7311,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case HASH_: { do_hash ();
 } break; case HEXSTR_: { do_hexStr ();
 } break; case UNHEXSTR_: { do_unhexStr ();
+} break; case EMPTY_STRVEC_: { do_empty_STRVEC ();
+} break; case READ_LINES_FROM_FILE_STRVEC_: { do_readLinesFromFile_STRVEC ();
+} break; case FILES_STRVEC_: { do_files_STRVEC ();
+} break; case FOLDERS_STRVEC_: { do_folders_STRVEC ();
+} break; case SPLIT_BY_WHITESPACE_STRVEC_: { do_splitByWhitespace_STRVEC ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();

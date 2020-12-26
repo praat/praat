@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* The README file that accompanied the version 3.03 softare:
+/* The README file that accompanied the version 3.03 software:
 
 Klatt Cascade-Parallel Formant Synthesizer v 3.03 (April 1994)
 --------------------------------------------------------------

@@ -1594,22 +1594,20 @@ void praat_run () {
 		structMelderFile searchPattern { };
 		MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
 		try {
-			autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
-			if (directoryNames -> numberOfStrings > 0) {
-				for (integer i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-					structMelderDir pluginDir { };
-					structMelderFile plugin { };
-					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i].get(), & pluginDir);
-					MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
-					if (MelderFile_readable (& plugin)) {
-						Melder_backgrounding = true;
-						try {
-							praat_executeScriptFromFile (& plugin, nullptr);
-						} catch (MelderError) {
-							Melder_flushError (praatP.title.get(), U": plugin ", & plugin, U" contains an error.");
-						}
-						Melder_backgrounding = false;
+			autoSTRVEC folderNames = folders_STRVEC (Melder_fileToPath (& searchPattern));
+			for (integer i = 1; i <= folderNames.size; i ++) {
+				structMelderDir pluginDir { };
+				structMelderFile plugin { };
+				MelderDir_getSubdir (& praatDir, folderNames [i].get(), & pluginDir);
+				MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
+				if (MelderFile_readable (& plugin)) {
+					Melder_backgrounding = true;
+					try {
+						praat_executeScriptFromFile (& plugin, nullptr);
+					} catch (MelderError) {
+						Melder_flushError (praatP.title.get(), U": plugin ", & plugin, U" contains an error.");
 					}
+					Melder_backgrounding = false;
 				}
 			}
 		} catch (MelderError) {

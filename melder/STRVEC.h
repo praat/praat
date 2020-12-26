@@ -37,11 +37,11 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	return constSTRVEC (& strvec [fromIndex], rangeSize);
 }
 
-autoSTRVEC directories_STRVEC (conststring32 path /* cattable */);
-
 autoSTRVEC files_STRVEC (conststring32 path /* cattable */);
 
-autoSTRVEC readFile_STRVEC (MelderFile file);
+autoSTRVEC folders_STRVEC (conststring32 path /* cattable */);
+
+autoSTRVEC readLinesFromFile_STRVEC (MelderFile file);
 
 autoSTRVEC shuffle_STRVEC (STRVEC const& x);
 void shuffle_STRVEC_inout (STRVEC const& x) noexcept;

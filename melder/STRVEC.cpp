@@ -28,7 +28,7 @@
 
 #include "melder.h"
 
-static autoSTRVEC filesOrDirectories_STRVEC (conststring32 path /* cattable */, bool wantDirectories) {
+static autoSTRVEC filesOrFolders_STRVEC (conststring32 path /* cattable */, bool wantDirectories) {
 	#if defined (_WIN32)
 		try {
 			char32 searchPath [kMelder_MAXPATH+1];
@@ -156,13 +156,13 @@ static autoSTRVEC filesOrDirectories_STRVEC (conststring32 path /* cattable */, 
 	#endif
 }
 autoSTRVEC files_STRVEC (conststring32 path /* cattable */) {
-	return filesOrDirectories_STRVEC (path, false);
+	return filesOrFolders_STRVEC (path, false);
 }
-autoSTRVEC directories_STRVEC (conststring32 path /* cattable */) {
-	return filesOrDirectories_STRVEC (path, true);
+autoSTRVEC folders_STRVEC (conststring32 path /* cattable */) {
+	return filesOrFolders_STRVEC (path, true);
 }
 
-autoSTRVEC readFile_STRVEC (MelderFile file) {
+autoSTRVEC readLinesFromFile_STRVEC (MelderFile file) {
 	autoMelderReadText text = MelderReadText_createFromFile (file);
 	int64 numberOfLines = MelderReadText_getNumberOfLines (text.get());
 	if (numberOfLines == 0)

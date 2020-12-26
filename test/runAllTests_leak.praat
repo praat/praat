@@ -1,5 +1,5 @@
 # Praat script runAllTests_leak.praat
-# Paul Boersma 2020-04-09
+# Paul Boersma 2020-12-26
 #
 # This script runs all Praat scripts in its subdirectories twice,
 # and reports its suspicions of memory leaks.
@@ -64,52 +64,37 @@ procedure doScript: .path$
 	endif
 endproc
 
-directories = Create Strings as directory list: "directories", "."
-numberOfDirectories = Get number of strings
-for directory to numberOfDirectories
-	selectObject: directories
-	directory$ = Get string: directory
-	if directory$ <> "manually" and directory$ <> "speed"
-		files = Create Strings as file list: "files", directory$ + "/*.praat"
-		numberOfFiles = Get number of strings
-		for file to numberOfFiles
-			selectObject: files
-			file$ = Get string: file
-			path$ = directory$ + "/" + file$
+folders$# = folders$# (".")
+for folder to size (folders$#)
+	folder$ = folders$# [folder]
+	if folder$ <> "manually" and folder$ <> "speed"
+		files$# = files$# (folder$ + "/*.praat")
+		for file to size (files$#)
+			file$ = files$# [file]
+			path$ = folder$ + "/" + file$
 			appendInfoLine: "### executing ", path$, ":"
 			@doScript: path$
 		endfor
-		removeObject: files
 	endif
 endfor
-removeObject: directories
 
-directories1 = Create Strings as directory list: "directories1", "."
-numberOfDirectories1 = Get number of strings
-for directory1 to numberOfDirectories1
-	selectObject: directories1
-	directory1$ = Get string: directory1
-	if directory1$ <> "manually" and directory$ <> "speed"
-		directories2 = Create Strings as directory list: "directories2", directory1$ + "/*"
-		numberOfDirectories2 = Get number of strings
-		for directory2 to numberOfDirectories2
-			selectObject: directories2
-			directory2$ = Get string: directory2
-			files = Create Strings as file list: "files", directory1$ + "/" + directory2$ + "/*.praat"
-			numberOfFiles = Get number of strings
-			for file to numberOfFiles
-				selectObject: files
-				file$ = Get string: file
-				path$ = directory1$ + "/" + directory2$ + "/" + file$
+folder1$# = folder$# (".")
+for folder1 to size (folder1$#)
+	folder1$ = folders1$# [folder1]
+	if folder1$ <> "manually" and folder1$ <> "speed"
+		folder2$# = folders$# (folder1$ + "/*")
+		for folder2 to size (folders2$#)
+			folder2$ = folders2$# [folder2]
+			files$# = files$# (folder1$ + "/" + folder2$ + "/*.praat")
+			for file to size (files$#)
+				file$ = files$# [file]
+				path$ = folder1$ + "/" + folder2$ + "/" + file$
 				appendInfoLine: "### executing ", path$, ":"
 				@doScript: path$
 			endfor
-			removeObject: files
 		endfor
-		removeObject: directories2
 	endif
 endfor
-removeObject: directories1
 
 writeInfoLine: "                 ALL PRAAT TESTS WENT OK"
 appendInfoLine: ""

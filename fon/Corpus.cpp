@@ -1,6 +1,6 @@
 /* Corpus.cpp
  *
- * Copyright (C) 2011,2018 Paul Boersma
+ * Copyright (C) 2011,2026,2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include "Corpus.h"
-#include "Strings_.h"
 
 #include "oo_DESTROY.h"
 #include "Corpus_def.h"
@@ -48,11 +47,11 @@ autoCorpus Corpus_create (conststring32 folderWithSoundFiles, conststring32 soun
 	if (folderWithAnnotationFiles [0] == U'\0')
 		folderWithAnnotationFiles = folderWithSoundFiles;
 	my folderWithAnnotationFiles = Melder_dup (folderWithAnnotationFiles);
-	autoStrings fileList = Strings_createAsFileList (Melder_cat (folderWithSoundFiles, U"/*.", soundFileExtension));
-	Table_initWithColumnNames (me.get(), fileList -> numberOfStrings, U"Sound Annotation");
+	autoSTRVEC fileList = files_STRVEC (Melder_cat (folderWithSoundFiles, U"/*.", soundFileExtension));
+	Table_initWithColumnNames (me.get(), fileList.size, U"Sound Annotation");
 	autoMelderString annotationFileName;
-	for (integer ifile = 1; ifile <= fileList -> numberOfStrings; ifile ++) {
-		conststring32 soundFileName = fileList -> strings [ifile].get();
+	for (integer ifile = 1; ifile <= fileList.size; ifile ++) {
+		conststring32 soundFileName = fileList [ifile].get();
 		Table_setStringValue (me.get(), ifile, 1, soundFileName);
 		const char32 *dotLocation = str32rchr (soundFileName, U'.');
 		Melder_assert (!! dotLocation);
@@ -60,9 +59,8 @@ autoCorpus Corpus_create (conststring32 folderWithSoundFiles, conststring32 soun
 		MelderString_append (& annotationFileName, annotationFileExtension);
 		structMelderFile annotationFile { };
 		Melder_pathToFile (Melder_cat (folderWithAnnotationFiles, U"/", annotationFileName.string), & annotationFile);
-		if (MelderFile_exists (& annotationFile)) {
+		if (MelderFile_exists (& annotationFile))
 			Table_setStringValue (me.get(), ifile, 2, annotationFileName.string);
-		}
 	}
 	return me;
 }
