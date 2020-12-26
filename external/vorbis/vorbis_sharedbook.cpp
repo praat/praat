@@ -93,7 +93,7 @@ ogg_uint32_t *_make_words(char *l,long n,long sparsecount){
       if(length<32 && (entry>>length)){
         /* error condition; the lengths must specify an overpopulated tree */
         Melder_free(r);
-        return(NULL);
+        return(nullptr);
       }
       r[count++]=entry;
 
@@ -136,7 +136,7 @@ ogg_uint32_t *_make_words(char *l,long n,long sparsecount){
     for(i=1;i<33;i++)
       if(marker[i] & (0xffffffffUL>>(32-i))){
         Melder_free(r);
-        return(NULL);
+        return(nullptr);
       }
   }
 
@@ -266,7 +266,7 @@ float *_book_unquantize(const static_codebook *b,int n,int *sparsemap){
 
     return(r);
   }
-  return(NULL);
+  return(nullptr);
 }
 
 void vorbis_staticbook_destroy(static_codebook *b){
@@ -299,7 +299,7 @@ int vorbis_book_init_encode(codebook *c,const static_codebook *s){
   c->used_entries=s->entries;
   c->dim=s->dim;
   c->codelist=_make_words(s->lengthlist,s->entries,0);
-  /* c->valuelist=_book_unquantize(s,s->entries,NULL); */
+  /* c->valuelist=_book_unquantize(s,s->entries,nullptr); */
   c->quantvals=_book_maptype1_quantvals(s);
   c->minval=(int)rint(_float32_unpack(s->q_min));
   c->delta=(int)rint(_float32_unpack(s->q_delta));
@@ -351,7 +351,7 @@ int vorbis_book_init_decode(codebook *c,const static_codebook *s){
     ogg_uint32_t *codes=_make_words(s->lengthlist,s->entries,c->used_entries);
     ogg_uint32_t **codep = (ogg_uint32_t **) alloca(sizeof(*codep)*n);
 
-    if(codes==NULL)goto err_out;
+    if(codes==nullptr)goto err_out;
 
     for(i=0;i<n;i++){
       codes[i]=bitreverse(codes[i]);
@@ -486,18 +486,18 @@ static long partial_quantlist1[]={0,7,2};
 /* no mapping */
 static_codebook test1={
   4,16,
-  NULL,
+  nullptr,
   0,
   0,0,0,0,
-  NULL,
+  nullptr,
   0
 };
-static float *test1_result=NULL;
+static float *test1_result=nullptr;
 
 /* linear, full mapping, nonsequential */
 static_codebook test2={
   4,3,
-  NULL,
+  nullptr,
   2,
   -533200896,1611661312,4,0,
   full_quantlist1,
@@ -508,7 +508,7 @@ static float test2_result[]={-3,-2,-1,0, 1,2,3,4, 5,0,3,-2};
 /* linear, full mapping, sequential */
 static_codebook test3={
   4,3,
-  NULL,
+  nullptr,
   2,
   -533200896,1611661312,4,1,
   full_quantlist1,
@@ -519,7 +519,7 @@ static float test3_result[]={-3,-5,-6,-6, 1,3,6,10, 5,5,8,6};
 /* linear, algorithmic mapping, nonsequential */
 static_codebook test4={
   3,27,
-  NULL,
+  nullptr,
   1,
   -533200896,1611661312,4,0,
   partial_quantlist1,
@@ -538,7 +538,7 @@ static float test4_result[]={-3,-3,-3, 4,-3,-3, -1,-3,-3,
 /* linear, algorithmic mapping, sequential */
 static_codebook test5={
   3,27,
-  NULL,
+  nullptr,
   1,
   -533200896,1611661312,4,1,
   partial_quantlist1,
@@ -555,12 +555,12 @@ static float test5_result[]={-3,-6,-9, 4, 1,-2, -1,-4,-7,
                               -3,-4,-5, 4, 3, 2, -1,-2,-3};
 
 void run_test(static_codebook *b,float *comp){
-  float *out=_book_unquantize(b,b->entries,NULL);
+  float *out=_book_unquantize(b,b->entries,nullptr);
   int i;
 
   if(comp){
     if(!out){
-      fprintf(stderr,"_book_unquantize incorrectly returned NULL\n");
+      fprintf(stderr,"_book_unquantize incorrectly returned nullptr\n");
       exit(1);
     }
 
@@ -574,7 +574,7 @@ void run_test(static_codebook *b,float *comp){
   }else{
     if(out){
       fprintf(stderr,"_book_unquantize returned a value array: \n"
-              " correct result should have been NULL\n");
+              " correct result should have been nullptr\n");
       exit(1);
     }
   }

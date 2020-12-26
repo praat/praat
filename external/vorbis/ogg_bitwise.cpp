@@ -349,7 +349,7 @@ void oggpack_adv(oggpack_buffer *b,int bits){
   return;
 
  overflow:
-  b->ptr=NULL;
+  b->ptr=nullptr;
   b->endbyte=b->storage;
   b->endbit=1;
 }
@@ -408,7 +408,7 @@ long oggpack_read(oggpack_buffer *b,int bits){
 
  overflow:
  err:
-  b->ptr=NULL;
+  b->ptr=nullptr;
   b->endbyte=b->storage;
   b->endbit=1;
   return -1L;
@@ -451,7 +451,7 @@ long oggpackB_read(oggpack_buffer *b,int bits){
 
  overflow:
  err:
-  b->ptr=NULL;
+  b->ptr=nullptr;
   b->endbyte=b->storage;
   b->endbit=1;
   return -1L;
@@ -472,7 +472,7 @@ long oggpack_read1(oggpack_buffer *b){
   return ret;
 
  overflow:
-  b->ptr=NULL;
+  b->ptr=nullptr;
   b->endbyte=b->storage;
   b->endbit=1;
   return -1L;
@@ -493,7 +493,7 @@ long oggpackB_read1(oggpack_buffer *b){
   return ret;
 
  overflow:
-  b->ptr=NULL;
+  b->ptr=nullptr;
   b->endbyte=b->storage;
   b->endbit=1;
   return -1L;

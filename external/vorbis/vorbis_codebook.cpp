@@ -263,7 +263,7 @@ static_codebook *vorbis_staticbook_unpack(oggpack_buffer *opb){
  _errout:
  _eofout:
   vorbis_staticbook_destroy(s);
-  return(NULL);
+  return(nullptr);
 }
 
 /* returns the number of bits ************************************************/

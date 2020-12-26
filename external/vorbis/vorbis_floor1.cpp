@@ -169,7 +169,7 @@ static vorbis_info_floor *floor1_unpack (vorbis_info *vi,oggpack_buffer *opb){
 
  err_out:
   floor1_free_info(info);
-  return(NULL);
+  return(nullptr);
 }
 
 static vorbis_look_floor *floor1_look(vorbis_dsp_state *vd,
@@ -488,10 +488,10 @@ static int fit_line(lsfit_acc *a,int fits,int *y0,int *y1,
     double denom=(bn*x2b-xb*xb);
 
     if(denom>0.){
-      double a=(yb*x2b-xyb*xb)/denom;
+      double aa=(yb*x2b-xyb*xb)/denom;
       double b=(bn*xyb-xb*yb)/denom;
-      *y0=rint(a+b*x0);
-      *y1=rint(a+b*x1);
+      *y0=rint(aa+b*x0);
+      *y1=rint(aa+b*x1);
 
       /* limit to our range! */
       if(*y0>1023)*y0=1023;
@@ -582,7 +582,7 @@ int *floor1_fit(vorbis_block *vb,vorbis_look_floor1 *look,
 
   int loneighbor[VIF_POSIT+2]; /* sorted index of range list position (+2) */
   int hineighbor[VIF_POSIT+2];
-  int *output=NULL;
+  int *output=nullptr;
   int memo[VIF_POSIT+2];
 
   for(i=0;i<posts;i++)fit_valueA[i]=-200; /* mark all unused */
@@ -705,10 +705,10 @@ int *floor1_fit(vorbis_block *vb,vorbis_look_floor1 *look,
       int hn=look->hineighbor[i-2];
       int x0=info->postlist[ln];
       int x1=info->postlist[hn];
-      int y0=output[ln];
-      int y1=output[hn];
+      int yy0=output[ln];
+      int yy1=output[hn];
 
-      int predicted=render_point(x0,x1,y0,y1,info->postlist[i]);
+      int predicted=render_point(x0,x1,yy0,yy1,info->postlist[i]);
       int vx=post_Y(fit_valueA,fit_valueB,i);
 
       if(vx>=0 && predicted!=vx){
@@ -729,7 +729,7 @@ int *floor1_interpolate_fit(vorbis_block *vb,vorbis_look_floor1 *look,
 
   long i;
   long posts=look->posts;
-  int *output=NULL;
+  int *output=nullptr;
 
   if(A && B){
     output = (int *)_vorbis_block_alloc(vb,sizeof(*output)*posts);
@@ -1030,7 +1030,7 @@ static void *floor1_inverse1(vorbis_block *vb,vorbis_look_floor *in){
     return(fit_value);
   }
  eop:
-  return(NULL);
+  return(nullptr);
 }
 
 static int floor1_inverse2(vorbis_block *vb,vorbis_look_floor *in,void *memo,

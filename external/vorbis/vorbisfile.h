@@ -63,22 +63,22 @@ static ov_callbacks OV_CALLBACKS_DEFAULT = {
 static ov_callbacks OV_CALLBACKS_NOCLOSE = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
   (int (*)(void *, ogg_int64_t, int))           fseek,
-  (int (*)(void *))                             NULL,
+  (int (*)(void *))                             nullptr,
   (long (*)(void *))                            ftell
 };
 
 static ov_callbacks OV_CALLBACKS_STREAMONLY = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           NULL,
+  (int (*)(void *, ogg_int64_t, int))           nullptr,
   (int (*)(void *))                             fclose,
-  (long (*)(void *))                            NULL
+  (long (*)(void *))                            nullptr
 };
 
 static ov_callbacks OV_CALLBACKS_STREAMONLY_NOCLOSE = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           NULL,
-  (int (*)(void *))                             NULL,
-  (long (*)(void *))                            NULL
+  (int (*)(void *, ogg_int64_t, int))           nullptr,
+  (int (*)(void *))                             nullptr,
+  (long (*)(void *))                            nullptr
 };
 
 #endif

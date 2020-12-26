@@ -478,18 +478,9 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-		const integer filelength = MelderFile_length (file);
 		
-		Melder_require (filelength > 28,
-			U"File should not be empty.");
-		char data [4];
-		if (fread (data, 1, 4, f) < 4)
-			Melder_throw (U"Read error.");
-		if (! strnequ (data, "OggS", 4)) // Capture pattern 32 bits
-			Melder_throw (U"Not an Ogg Vorbis file.");
-
 		OggVorbis_File vorbisFile;
-		if (ov_open_callbacks (f, & vorbisFile, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0)
+		if (ov_open_callbacks (f, & vorbisFile, nullptr, 0, OV_CALLBACKS_NOCLOSE) < 0)
 			Melder_throw (U"Input does not appear to be an Ogg bitstream");
 		vorbis_info *vorbisInfo = ov_info (& vorbisFile, -1);
 		const integer numberOfChannels = vorbisInfo -> channels;
@@ -502,19 +493,19 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		/*
 			char * ov_comment(& vorbisFile, -1) -> vendor;// encoded by ...
 		*/
-		char pcmout [4096];
+		autovector<int16_t> pcmout = newvectorraw<int16_t> (2048);
 		bool eof = false;
-		int bigendian = 0, word = 2, sgned = 1; // pcm data should be 2 bytes signed
+		int littleendian = 0, word = 2, sgned = 1; // pcm data should be 2 bytes signed
 		integer currentSample = 0;
 		while (! eof) {
 			int current_section;
-			long numberOfValues = ov_read (& vorbisFile, pcmout, 4096, bigendian, word, sgned, & current_section);
-			if (numberOfValues == 0)
+			long numberOfBytes = ov_read (& vorbisFile, (char *) pcmout.asArgumentToFunctionThatExpectsZeroBasedArray (), 4096, littleendian, word, sgned, & current_section);
+			if (numberOfBytes == 0)
 				eof = true;
-			else if (numberOfValues < 0) {
-				if (numberOfValues == OV_EBADLINK)
+			else if (numberOfBytes < 0) {
+				if (numberOfBytes == OV_EBADLINK)
 					Melder_throw (U"Corrupt bitstream in section ", current_section);
-				else if (numberOfValues == OV_HOLE)
+				else if (numberOfBytes == OV_HOLE)
 					Melder_throw (U"There is a hole in the data for section", current_section);
 				else
 					Melder_throw (U"Unspecified errror in section ", current_section);
@@ -530,13 +521,16 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 				((uint16) ((uint16) bytes [1] << 8) |
 						   (uint16) bytes [0]);
 				*/
+				const integer numberOfValues = numberOfBytes / word;
+				Melder_require (currentSample + numberOfValues <= numberOfSamples * numberOfChannels,
+					U"The number of samples read is too large.");
 				for (integer isample = 1; isample <= numberOfValues; isample ++) {
-					const int16 val16 = ((uint16) ((uint16) pcmout [2*isample - 1] << 8) |
-						   (uint16) pcmout [2*isample - 2]);
+					//const int16 val16 = ((uint16) ((uint16) pcmout [2*isample - 1] << 8) |
+					//	   (uint16) pcmout [2*isample - 2]);
 					currentSample ++; 
 					const integer sampleNumber = (currentSample - 1) / numberOfChannels + 1;
 					const integer channelNumber = (currentSample - 1) % numberOfChannels + 1;
-					my z [channelNumber] [sampleNumber] = val16 / 32768.0;
+					my z [channelNumber] [sampleNumber] = pcmout [isample] / 32768.0;
 				}
 			}
 		}

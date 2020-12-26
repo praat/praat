@@ -133,7 +133,7 @@ int vorbis_synthesis_trackonly(vorbis_block *vb,ogg_packet *op){
 
   /* no pcm */
   vb->pcmend=0;
-  vb->pcm=NULL;
+  vb->pcm=nullptr;
 
   return(0);
 }
@@ -143,7 +143,7 @@ long vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op){
   oggpack_buffer       opb;
   int                  mode;
 
-  if(ci==NULL || ci->modes<=0){
+  if(ci==nullptr || ci->modes<=0){
     /* codec setup not properly intialized */
     return(OV_EFAULT);
   }

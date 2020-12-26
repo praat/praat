@@ -1086,7 +1086,7 @@ void _vp_couple_quantize_normalize(int blobno,
           floor[k][j]*=floor[k][j];
         }
 
-        acc[track]=noise_normalize(p,limit,raw[k],quant[k],floor[k],NULL,acc[track],i,jn,iout);
+        acc[track]=noise_normalize(p,limit,raw[k],quant[k],floor[k],nullptr,acc[track],i,jn,iout);
 
       }else{
         for(j=0;j<jn;j++){

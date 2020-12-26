@@ -97,7 +97,7 @@ void res0_free_look(vorbis_look_residue *i){
               look->training_min[k][j],look->training_max[k][j]);*/
 
             _ogg_free(look->training_data[k][j]);
-            look->training_data[k][j]=NULL;
+            look->training_data[k][j]=nullptr;
           }
         /*fprintf(stderr,"\n");*/
       }
@@ -246,7 +246,7 @@ vorbis_info_residue *res0_unpack(vorbis_info *vi,oggpack_buffer *opb){
   return(info);
  errout:
   res0_free_info(info);
-  return(NULL);
+  return(nullptr);
 }
 
 vorbis_look_residue *res0_look(vorbis_dsp_state *vd,
@@ -605,7 +605,7 @@ static int _01forward(oggpack_buffer *opb,
             if(statebook){
               int ret;
 #ifdef TRAIN_RES
-              long *accumulator=NULL;
+              long *accumulator=nullptr;
               accumulator=look->training_data[s][partword[j][i]];
               {
                 int l;
@@ -673,7 +673,7 @@ static int _01inverse(vorbis_block *vb,vorbis_look_residue *vl,
 
             if(temp==-1 || temp>=info->partvals)goto eopbreak;
             partword[j][l]=look->decodemap[temp];
-            if(partword[j][l]==NULL)goto errout;
+            if(partword[j][l]==nullptr)goto errout;
           }
         }
 
@@ -825,7 +825,7 @@ int res2_inverse(vorbis_block *vb,vorbis_look_residue *vl,
           int temp=vorbis_book_decode(look->phrasebook,&vb->opb);
           if(temp==-1 || temp>=info->partvals)goto eopbreak;
           partword[l]=look->decodemap[temp];
-          if(partword[l]==NULL)goto errout;
+          if(partword[l]==nullptr)goto errout;
         }
 
         /* now we decode residual values for the partitions */
@@ -850,13 +850,13 @@ int res2_inverse(vorbis_block *vb,vorbis_look_residue *vl,
 
 
 const vorbis_func_residue residue0_exportbundle={
-  NULL,
+  nullptr,
   &res0_unpack,
   &res0_look,
   &res0_free_info,
   &res0_free_look,
-  NULL,
-  NULL,
+  nullptr,
+  nullptr,
   &res0_inverse
 };
 

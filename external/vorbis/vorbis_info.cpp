@@ -17,8 +17,6 @@
 /* general handling of the header and the vorbis_info structure (and
    substructures) */
 
-#include <stdlib.h>
-#include <string.h>
 #include "ogg.h"
 #include "vorbis_codec.h"
 #include "vorbis_codec_internal.h"
@@ -63,7 +61,7 @@ void vorbis_comment_add(vorbis_comment *vc,const char *comment){
   vc->user_comments[vc->comments]=(char *)_Melder_malloc(vc->comment_lengths[vc->comments]+1);
   strcpy(vc->user_comments[vc->comments], comment);
   vc->comments++;
-  vc->user_comments[vc->comments]=NULL;
+  vc->user_comments[vc->comments]=nullptr;
 }
 
 void vorbis_comment_add_tag(vorbis_comment *vc, const char *tag, const char *contents){
@@ -109,7 +107,7 @@ char *vorbis_comment_query(vorbis_comment *vc, const char *tag, int count){
     }
   }
   Melder_free(fulltag);
-  return NULL; /* didn't find anything */
+  return nullptr; /* didn't find anything */
 }
 
 int vorbis_comment_query_count(vorbis_comment *vc, const char *tag){
@@ -413,7 +411,7 @@ int vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op)
           /* um... we didn't get the initial header */
           return(OV_EBADHEADER);
         }
-        if(vc->vendor!=NULL){
+        if(vc->vendor!=nullptr){
           /* previously initialized comment header */
           return(OV_EBADHEADER);
         }
@@ -421,11 +419,11 @@ int vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op)
         return(_vorbis_unpack_comment(vc,&opb));
 
       case 0x05: /* least significant *bit* is read first */
-        if(vi->rate==0 || vc->vendor==NULL){
+        if(vi->rate==0 || vc->vendor==nullptr){
           /* um... we didn;t get the initial header or comments yet */
           return(OV_EBADHEADER);
         }
-        if(vi->codec_setup==NULL){
+        if(vi->codec_setup==nullptr){
           /* improperly initialized vorbis_info */
           return(OV_EFAULT);
         }
@@ -597,7 +595,7 @@ int vorbis_analysis_headerout(vorbis_dsp_state *v,
   private_state *b = (private_state *) v->backend_state;
 
   if(!b||vi->channels<=0||vi->channels>256){
-    b = NULL;
+    b = nullptr;
     ret=OV_EFAULT;
     goto err_out;
   }
@@ -660,9 +658,9 @@ int vorbis_analysis_headerout(vorbis_dsp_state *v,
     if(b->header)Melder_free(b->header);
     if(b->header1)Melder_free(b->header1);
     if(b->header2)Melder_free(b->header2);
-    b->header=NULL;
-    b->header1=NULL;
-    b->header2=NULL;
+    b->header=nullptr;
+    b->header1=nullptr;
+    b->header2=nullptr;
   }
   return(ret);
 }

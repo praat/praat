@@ -139,7 +139,7 @@ static vorbis_info_mapping *mapping0_unpack(vorbis_info *vi,oggpack_buffer *opb)
 
  err_out:
   mapping0_free_info(info);
-  return(NULL);
+  return(nullptr);
 }
 
 #include "vorbis_os.h"
