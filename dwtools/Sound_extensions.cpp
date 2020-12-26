@@ -66,6 +66,8 @@
 #include "Ltas.h"
 #include "Manipulation.h"
 #include "NUMcomplex.h"
+#include "../external/vorbis/vorbis_codec.h"
+#include "../external/vorbis/vorbisfile.h"
 
 #include "enums_getText.h"
 #include "Sound_extensions_enums.h"
@@ -466,6 +468,76 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Dialogic ADPCM file ", MelderFile_messageName (file), U".");
+	}
+}
+
+
+/* Decodes simple and chained OggVorbis files from beginning
+   to end.  */
+
+autoSound Sound_readFromOggVorbisFile (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "rb");
+		
+		OggVorbis_File vorbisFile;
+		if (ov_open_callbacks (f, & vorbisFile, nullptr, 0, OV_CALLBACKS_NOCLOSE) < 0)
+			Melder_throw (U"Input does not appear to be an Ogg bitstream");
+		vorbis_info *vorbisInfo = ov_info (& vorbisFile, -1);
+		const integer numberOfChannels = vorbisInfo -> channels;
+		const double samplingFrequency = vorbisInfo -> rate;
+		const double samplingTime = 1.0 / samplingFrequency;
+		const integer numberOfSamples = ov_pcm_total (& vorbisFile, -1);
+		double xmin = 0.0; // the start time in the file can be > 0!!!
+		const double xmax = numberOfSamples * samplingTime;
+		autoSound me = Sound_create (numberOfChannels, 0.0, xmax, numberOfSamples, samplingTime, 0.5 * samplingTime);
+		/*
+			char * ov_comment(& vorbisFile, -1) -> vendor;// encoded by ...
+		*/
+		autovector<int16_t> pcmout = newvectorraw<int16_t> (2048);
+		bool eof = false;
+		int littleendian = 0, word = 2, sgned = 1; // pcm data should be 2 bytes signed
+		integer currentSample = 0;
+		while (! eof) {
+			int current_section;
+			long numberOfBytes = ov_read (& vorbisFile, (char *) pcmout.asArgumentToFunctionThatExpectsZeroBasedArray (), 4096, littleendian, word, sgned, & current_section);
+			if (numberOfBytes == 0)
+				eof = true;
+			else if (numberOfBytes < 0) {
+				if (numberOfBytes == OV_EBADLINK)
+					Melder_throw (U"Corrupt bitstream in section ", current_section);
+				else if (numberOfBytes == OV_HOLE)
+					Melder_throw (U"There is a hole in the data for section", current_section);
+				else
+					Melder_throw (U"Unspecified errror in section ", current_section);
+			} else {
+				/* we don't bother dealing with sample rate changes, etc, but
+				you'll have to*/
+				/* 
+					if there are 3 channels the layout of the bytes in pcmout is 112233112233... etc
+					The only thing we assume is that the ret is even number because we require that the
+					data is 16 bit
+				
+				sample  (int16)   // reinterpret sign bit
+				((uint16) ((uint16) bytes [1] << 8) |
+						   (uint16) bytes [0]);
+				*/
+				const integer numberOfValues = numberOfBytes / word;
+				Melder_require (currentSample + numberOfValues <= numberOfSamples * numberOfChannels,
+					U"The number of samples read is too large.");
+				for (integer isample = 1; isample <= numberOfValues; isample ++) {
+					//const int16 val16 = ((uint16) ((uint16) pcmout [2*isample - 1] << 8) |
+					//	   (uint16) pcmout [2*isample - 2]);
+					currentSample ++; 
+					const integer sampleNumber = (currentSample - 1) / numberOfChannels + 1;
+					const integer channelNumber = (currentSample - 1) % numberOfChannels + 1;
+					my z [channelNumber] [sampleNumber] = pcmout [isample] / 32768.0;
+				}
+			}
+		}
+		ov_clear(& vorbisFile);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
 	}
 }
 
