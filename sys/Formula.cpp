@@ -7313,8 +7313,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case UNHEXSTR_: { do_unhexStr ();
 } break; case EMPTY_STRVEC_: { do_empty_STRVEC ();
 } break; case READ_LINES_FROM_FILE_STRVEC_: { do_readLinesFromFile_STRVEC ();
-} break; case FILES_STRVEC_: { do_fileNames_STRVEC ();
-} break; case FOLDERS_STRVEC_: { do_folderNames_STRVEC ();
+} break; case FILE_NAMES_STRVEC_: { do_fileNames_STRVEC ();
+} break; case FOLDER_NAMES_STRVEC_: { do_folderNames_STRVEC ();
 } break; case SPLIT_BY_WHITESPACE_STRVEC_: { do_splitByWhitespace_STRVEC ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();
