@@ -161,7 +161,7 @@ enum { NO_SYMBOL_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEXSTR_, UNHEXSTR_,
-		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILES_STRVEC_, FOLDERS_STRVEC_, SPLIT_BY_WHITESPACE_STRVEC_,
+		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_, SPLIT_BY_WHITESPACE_STRVEC_,
 	#define HIGH_FUNCTION_N  SPLIT_BY_WHITESPACE_STRVEC_
 
 	/* String functions. */
@@ -286,7 +286,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"size", U"numberOfRows", U"numberOfColumns", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
-	U"empty$#", U"readLinesFromFile$#", U"files$#", U"folders$#", U"splitByWhitespace$#",
+	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#",
 
 	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
@@ -4721,28 +4721,28 @@ static void do_readLinesFromFile_STRVEC () {
 	autoSTRVEC result = readLinesFromFile_STRVEC (& file);
 	pushStringVector (result.move());
 }
-static void do_files_STRVEC () {
+static void do_fileNames_STRVEC () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
 	integer narg = (integer) stackel_narg -> number;
 	if (narg != 1)
-		Melder_throw (U"The function \"files$#\" requires one argument, namely the file pattern.");
+		Melder_throw (U"The function \"fileNames$#\" requires one argument, namely the file pattern.");
 	Stackel filePattern = pop;
 	if (filePattern->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function \"files$#\" should be a string (namely the file pattern), not ", filePattern->whichText(), U".");
-	autoSTRVEC result = files_STRVEC (filePattern->getString());
+		Melder_throw (U"The argument of the function \"fileNames$#\" should be a string (namely the file pattern), not ", filePattern->whichText(), U".");
+	autoSTRVEC result = fileNames_STRVEC (filePattern->getString());
 	pushStringVector (result.move());
 }
-static void do_folders_STRVEC () {
+static void do_folderNames_STRVEC () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
 	integer narg = (integer) stackel_narg -> number;
 	if (narg != 1)
-		Melder_throw (U"The function \"directories$#\" requires one argument, namely the file pattern.");
-	Stackel directoryPattern = pop;
-	if (directoryPattern->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function \"directories$#\" should be a string (namely the directory pattern), not ", directoryPattern->whichText(), U".");
-	autoSTRVEC result = folders_STRVEC (directoryPattern->getString());
+		Melder_throw (U"The function \"folderNames$#\" requires one argument, namely the file pattern.");
+	Stackel folderPattern = pop;
+	if (folderPattern->which != Stackel_STRING)
+		Melder_throw (U"The argument of the function \"folderNames$#\" should be a string (namely the directory pattern), not ", folderPattern->whichText(), U".");
+	autoSTRVEC result = folderNames_STRVEC (folderPattern->getString());
 	pushStringVector (result.move());
 }
 static void do_splitByWhitespace_STRVEC () {
@@ -7313,8 +7313,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case UNHEXSTR_: { do_unhexStr ();
 } break; case EMPTY_STRVEC_: { do_empty_STRVEC ();
 } break; case READ_LINES_FROM_FILE_STRVEC_: { do_readLinesFromFile_STRVEC ();
-} break; case FILES_STRVEC_: { do_files_STRVEC ();
-} break; case FOLDERS_STRVEC_: { do_folders_STRVEC ();
+} break; case FILES_STRVEC_: { do_fileNames_STRVEC ();
+} break; case FOLDERS_STRVEC_: { do_folderNames_STRVEC ();
 } break; case SPLIT_BY_WHITESPACE_STRVEC_: { do_splitByWhitespace_STRVEC ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();

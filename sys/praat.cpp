@@ -1594,7 +1594,7 @@ void praat_run () {
 		structMelderFile searchPattern { };
 		MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
 		try {
-			autoSTRVEC folderNames = folders_STRVEC (Melder_fileToPath (& searchPattern));
+			autoSTRVEC folderNames = folderNames_STRVEC (Melder_fileToPath (& searchPattern));
 			for (integer i = 1; i <= folderNames.size; i ++) {
 				structMelderDir pluginDir { };
 				structMelderFile plugin { };

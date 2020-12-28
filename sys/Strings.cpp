@@ -68,7 +68,7 @@ conststring32 structStrings :: v_getVectorStr (integer icol) {
 autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my strings = files_STRVEC (path);
+		my strings = fileNames_STRVEC (path);
 		my maintainInvariants ();
 		return me;
 	} catch (MelderError) {
@@ -79,7 +79,7 @@ autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 autoStrings Strings_createAsFolderList (conststring32 path /* cattable */) {
 	try {
 		autoStrings me = Thing_new (Strings);
-		my strings = folders_STRVEC (path);
+		my strings = folderNames_STRVEC (path);
 		my maintainInvariants ();
 		return me;
 	} catch (MelderError) {

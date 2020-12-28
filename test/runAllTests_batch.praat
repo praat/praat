@@ -1,5 +1,5 @@
 # Praat script runAllTests_batch.praat
-# Paul Boersma 2020-12-26
+# Paul Boersma 2020-12-28
 #
 # This script runs all Praat scripts in its subdirectories.
 # This script is to be called from the command line:
@@ -26,45 +26,34 @@ endif
 
 writeInfoLine: "Running all tests..."
 
-folders$# = folders$# (".")
-for folder to size (folders$#)
-	folder$ = folders$# [folder]
-	if folder$ <> "manually" and folder$ <> "speed"
-		files$# = files$# (folder$ + "/*.praat")
-		for file to size (files$#)
-			file$ = files$# [file]
-			if not index (file$, "_GUI_")
-				path$ = folder$ + "/" + file$
-				appendInfoLine: "### executing ", path$, ":"
-				random_initializeWithSeedUnsafelyButPredictably (5489)
-				runScript: path$
-				random_initializeSafelyAndUnpredictably()
-			endif
+topPath$ = "."
+topFolderNames$# = folderNames$# (topPath$)
+for topFolder to size (topFolderNames$#)
+	topFolderName$ = topFolderNames$# [topFolder]
+	if topFolderName$ <> "manually" and topFolderName$ <> "speed"
+		topFolderPath$ = topPath$ + "/" + topFolderName$
+		@runFilesInFolder: topFolderPath$
+		subfolderNames$# = folderNames$# (topFolderPath$ + "/*")
+		for subfolder to size (subfolderNames$#)
+			subFolderPath$ = topFolderPath$ + "/" + subfolderNames$# [subfolder]
+			@runFilesInFolder: subFolderPath$
 		endfor
 	endif
 endfor
 
-folders1$# = folders$# (".")
-for folder1 to size (folders1$#)
-	folder1$ = folders1$# [folder1]
-	if folder1$ <> "manually" and folder1$ <> "speed"
-		folders2$# = folders$# (folder1$ + "/*")
-		for folder2 to size (folders2$#)
-			folder2$ = folders2$# [folder2]
-			files$# = files$# (folder1$ + "/" + folder2$ + "/*.praat")
-			for file to size (files$#)
-				file$ = files$# [file]
-				if not index (file$, "_GUI_")
-					path$ = folder1$ + "/" + folder2$ + "/" + file$
-					appendInfoLine: "### executing ", path$, ":"
-					random_initializeWithSeedUnsafelyButPredictably (5489)
-					runScript: path$
-					random_initializeSafelyAndUnpredictably()
-				endif
-			endfor
-		endfor
-	endif
-endfor
+procedure runFilesInFolder: .folderPath$
+	.fileNames$# = fileNames$# (.folderPath$ + "/*.praat")
+	for .file to size (.fileNames$#)
+		.fileName$ = .fileNames$# [.file]
+		if not index (.fileName$, "_GUI_")
+			.filePath$ = .folderPath$ + "/" + .fileName$
+			appendInfoLine: "### executing ", .filePath$, ":"
+			random_initializeWithSeedUnsafelyButPredictably (5489)
+			runScript: .filePath$
+			random_initializeSafelyAndUnpredictably()
+		endif
+	endfor
+endproc
 
 writeInfoLine: "                 ALL PRAAT TESTS WENT OK"
 appendInfoLine: ""
