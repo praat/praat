@@ -3260,7 +3260,7 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 				return;
 
 		integer numberOfSelectedRows = 0;
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		if (ymin >= ymax) {
 			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (ymin >= ymax) {
@@ -3331,7 +3331,7 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows ||
 			(yci_min != 0 && yci_min > nrows) || (yci_max != 0 && yci_max > nrows))
 				return;
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		if (xmin >= xmax) {
 			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (xmin >= xmax) {
@@ -4281,7 +4281,7 @@ integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter
 	return numberOfRows;
 }
 
-autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter) {
+autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpreter interpreter) {
 	try {
 		const integer numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
 		Melder_require (numberOfMatches > 0,
@@ -4312,7 +4312,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 		const integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
 		autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		if (ymax <= ymin) {   // autoscaling
 			ymin = 1e308;
 			ymax = - ymin;
@@ -4428,7 +4428,7 @@ void Table_lineGraphWhere (Table me, Graphics g, integer xcolumn, double xmin, d
 		Melder_require (xcolumn >= 0 && xcolumn <= my numberOfColumns, // 0 == no column given
 			U"The column for the horizontal axis should exist.");
 		
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		if (ymax <= ymin)
 			Table_columnExtremaFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 
@@ -4515,7 +4515,7 @@ void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, doub
 	try {
 		if (column < 1 || column > my rows.size)
 			return;
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		if (xmax <= xmin)   // autoscaling
 			Table_columnExtremaFromSelectedRows (me, column, selectedRows.get(), & xmin, & xmax);
 		autoVEC x = newVECraw (selectedRows.size);
@@ -4566,7 +4566,7 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me, conststring32 colum
 	try {
 		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
 		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		autoTableOfReal thee = TableOfReal_create (selectedRows.size, columnIndexes.size);
 		for (integer i = 1; i <= selectedRows.size; i ++) {
 			for (integer icol = 1; icol <= columnIndexes.size; icol ++)
@@ -4612,7 +4612,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
 		autoINTVEC columnIndex = newINTVECraw (numberOfColumns);
 		autoVEC vector = newVECraw (numberOfColumns);
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
 			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present
 		autoTable him = Table_create (0, my numberOfColumns);
@@ -4665,7 +4665,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, double labelSize, bool garnish,
 	conststring32 formula, Interpreter interpreter) {
 	try {
-		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		autoTableOfReal thee = TableOfReal_create (selectedRows.size, 2);
 		for (integer i = 1; i <= selectedRows.size; i ++) {
 			const conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
