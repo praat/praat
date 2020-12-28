@@ -37,9 +37,9 @@ inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer 
 	return constSTRVEC (& strvec [fromIndex], rangeSize);
 }
 
-autoSTRVEC files_STRVEC (conststring32 path /* cattable */);
+autoSTRVEC fileNames_STRVEC (conststring32 path /* cattable */);
 
-autoSTRVEC folders_STRVEC (conststring32 path /* cattable */);
+autoSTRVEC folderNames_STRVEC (conststring32 path /* cattable */);
 
 autoSTRVEC readLinesFromFile_STRVEC (MelderFile file);
 

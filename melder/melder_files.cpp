@@ -872,23 +872,19 @@ autostring32 MelderFile_readText (MelderFile file, autostring8 *string8) {
 			);
 			text8bit [length] = '\0';
 			/*
-			 * Count and repair null bytes.
-			 */
+				Count and repair null bytes.
+			*/
 			if (length > 0) {
 				int64 numberOfNullBytes = 0;
-				for (char *p = & text8bit [length - 1]; (int64) (p - text8bit.get()) >= 0; p --) {
-					if (*p == '\0') {
-						numberOfNullBytes += 1;
-						/*
-						 * Shift.
-						 */
-						for (char *q = p; (int64) (q - text8bit.get()) < length; q ++)
-							*q = q [1];
-					}
-				}
-				if (numberOfNullBytes > 0) {
+				char *q = & text8bit [0];
+				for (integer i = 0; i < length; i ++)
+					if (text8bit [i] != '\0')
+						* (q ++) = text8bit [i];
+					else
+						numberOfNullBytes ++;
+				*q = '\0';
+				if (numberOfNullBytes > 0)
 					Melder_warning (U"Ignored ", numberOfNullBytes, U" null bytes in text file ", file, U".");
-				}
 			}
 			if (string8) {
 				*string8 = text8bit.move();
