@@ -33,7 +33,7 @@
 
 integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
 
-autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter);
+autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpreter interpreter);
 
 autoVEC Table_getColumnVector (Table me, integer columnNumber);
 

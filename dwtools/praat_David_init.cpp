@@ -7226,6 +7226,18 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_columns")
 }
 
+FORM (NUMVEC_Table_listRowNumbersWhere, U"Table: List rows where", U"") {
+	SENTENCE (formula, U"The following condition holds true", U"self [row,\"F1\"] > 800.0")
+	OK
+DO
+	NUMVEC_ONE (Table)
+		autoINTVEC resulti = Table_listRowNumbersWhere (me, formula, interpreter);
+		autoVEC result = newVECraw (resulti.size);
+		for (integer i = 1; i <= resulti.size; i ++)
+			result [i] = resulti [i];
+	NUMVEC_ONE_END
+}
+
 /******************* TableOfReal ****************************/
 
 DIRECT (NEW1_CreateIrisDataset) {
@@ -8996,6 +9008,7 @@ void praat_uvafon_David_init () {
 			praat_addAction1 (classTable, 0, U"Lag plot where...", U"Line graph where...", 2, GRAPHICS_Table_lagPlotWhere);
 			praat_addAction1 (classTable, 0, U"Draw ellipses where...", U"Lag plot where...", 2, GRAPHICS_Table_drawEllipsesWhere);
 
+	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", praat_DEPTH_1,	NUMVEC_Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,	INTEGER_Table_getNumberOfRowsWhere);
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,	INFO_Table_reportOneWayAnova);
 	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, INFO_Table_reportOneWayKruskalWallis);
