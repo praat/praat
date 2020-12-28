@@ -149,15 +149,15 @@ enum { NO_SYMBOL_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
-		VEC_ZERO_, MAT_ZERO_,
-		VEC_LINEAR_, MAT_LINEAR_, VEC_TO_, VEC_FROM_TO_, VEC_FROM_TO_BY_, VEC_FROM_TO_COUNT_, VEC_BETWEEN_BY_, VEC_BETWEEN_COUNT_,
-		VEC_SORT_, VEC_SHUFFLE_,
-		VEC_RANDOM_UNIFORM_, MAT_RANDOM_UNIFORM_,
-		VEC_RANDOM_INTEGER_, MAT_RANDOM_INTEGER_,
-		VEC_RANDOM_GAUSS_, MAT_RANDOM_GAUSS_,
-		VEC_RANDOM_GAMMA_, MAT_RANDOM_GAMMA_,
-		VEC_SOLVE_SPARSE_, VEC_SOLVE_NONNEGATIVE_,
-		MAT_PEAKS_,
+		ZERO_VEC_, ZERO_MAT_,
+		LINEAR_VEC_, LINEAR_MAT_, TO_VEC_, FROM_TO_VEC_, FROM_TO_BY_VEC_, FROM_TO_COUNT_VEC_, BETWEEN_BY_VEC_, BETWEEN_COUNT_VEC_,
+		SORT_VEC_, SHUFFLE_VEC_,
+		RANDOM_UNIFORM_VEC_, RANDOM_UNIFORM_MAT_,
+		RANDOM_INTEGER_VEC_, RANDOM_INTEGER_MAT_,
+		RANDOM_GAUSS_VEC_, RANDOM_GAUSS_MAT_,
+		RANDOM_GAMMA_VEC_, RANDOM_GAMMA_MAT_,
+		SOLVE_SPARSE_VEC_, SOLVE_NONNEGATIVE_VEC_,
+		PEAKS_MAT_,
 		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEXSTR_, UNHEXSTR_,
@@ -3731,12 +3731,16 @@ static void do_objects_are_identical () {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer id1 = Melder_iround (x->number), id2 = Melder_iround (y->number);
 		integer i = theCurrentPraatObjects -> n;
-		while (i > 0 && id1 != theCurrentPraatObjects -> list [i]. id) i --;
-		if (i == 0) Melder_throw (U"Object #", id1, U" does not exist in function objectsAreIdentical.");
+		while (i > 0 && id1 != theCurrentPraatObjects -> list [i]. id)
+			i --;
+		if (i == 0)
+			Melder_throw (U"Object #", id1, U" does not exist in function objectsAreIdentical.");
 		Daata object1 = (Daata) theCurrentPraatObjects -> list [i]. object;
 		i = theCurrentPraatObjects -> n;
-		while (i > 0 && id2 != theCurrentPraatObjects -> list [i]. id) i --;
-		if (i == 0) Melder_throw (U"Object #", id2, U" does not exist in function objectsAreIdentical.");
+		while (i > 0 && id2 != theCurrentPraatObjects -> list [i]. id)
+			i --;
+		if (i == 0)
+			Melder_throw (U"Object #", id2, U" does not exist in function objectsAreIdentical.");
 		Daata object2 = (Daata) theCurrentPraatObjects -> list [i]. object;
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined : Data_equal (object1, object2));
 	} else {
@@ -3908,10 +3912,9 @@ static void shared_do_writeInfo (integer numberOfArguments) {
 						i == arg->numericVector.size ? U"" : U" ");
 		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
 			for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++) {
-				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++) {
+				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++)
 					MelderInfo_write (arg->numericMatrix [irow] [icol],
 							icol == arg->numericMatrix.ncol ? U"" : U" ");
-				}
 				MelderInfo_write (irow == arg->numericMatrix.nrow ? U"" : U"\n");
 			}
 		} else if (arg->which == Stackel_STRING_ARRAY) {
@@ -3974,10 +3977,9 @@ static void shared_do_writeFile (autoMelderString *text, integer numberOfArgumen
 						i == arg->numericVector.size ? U"" : U" ");
 		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
 			for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++) {
-				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++) {
+				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++)
 					MelderString_append (text, arg->numericMatrix [irow] [icol],
 							icol == arg->numericMatrix.ncol ? U"" : U" ");
-				}
 				MelderString_append (text, irow == arg->numericMatrix.nrow ? U"" : U"\n");
 			}
 		}
@@ -3991,9 +3993,8 @@ static void do_writeFile () {
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
-	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" should be a string (a file name), not ", fileName->whichText(), U".");
-	}
+	Melder_require (fileName -> which == Stackel_STRING,
+			U"The first argument of \"writeFile\" should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
@@ -4009,9 +4010,8 @@ static void do_writeFileLine () {
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
-	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
-	}
+	Melder_require (fileName -> which == Stackel_STRING,
+		U"The first argument of \"writeFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	MelderString_appendCharacter (& text, U'\n');
@@ -4028,9 +4028,8 @@ static void do_appendFile () {
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
-	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"appendFile\" should be a string (a file name), not ", fileName->whichText(), U".");
-	}
+	Melder_require (fileName -> which == Stackel_STRING,
+		U"The first argument of \"appendFile\" should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	structMelderFile file { };
@@ -4046,9 +4045,8 @@ static void do_appendFileLine () {
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
-	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"appendFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
-	}
+	Melder_require (fileName -> which == Stackel_STRING,
+		U"The first argument of \"appendFileLine\" should be a string (a file name), not ", fileName->whichText(), U".");
 	autoMelderString text;
 	shared_do_writeFile (& text, numberOfArguments);
 	MelderString_appendCharacter (& text, '\n');
@@ -4102,8 +4100,8 @@ static void do_runScript () {
 		Melder_throw (U"The function \"runScript\" requires at least one argument, namely the file name.");
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
-	if (fileName->which != Stackel_STRING)
-		Melder_throw (U"The first argument to \"runScript\" should be a string (the file name), not ", fileName->whichText());
+	Melder_require (fileName->which == Stackel_STRING,
+		U"The first argument to \"runScript\" should be a string (the file name), not ", fileName->whichText());
 	theLevel += 1;
 	try {
 		praat_executeScriptFromFileName (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
@@ -4167,8 +4165,8 @@ static void do_runSubprocess () {
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel commandFile = & theStack [w + 1];
-	if (commandFile->which != Stackel_STRING)
-		Melder_throw (U"The first argument to \"runSubprocess\" should be a command name.");
+	Melder_require (commandFile->which == Stackel_STRING,
+		U"The first argument to \"runSubprocess\" should be a command name.");
 	autoSTRVEC arguments (numberOfArguments - 1);
 	for (int iarg = 1; iarg < numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + 1 + iarg];
@@ -4188,16 +4186,16 @@ static void do_min () {
 	Stackel n = pop, last;
 	double result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->number < 1)
-		Melder_throw (U"The function \"min\" requires at least one argument.");
+	Melder_require (n->number >= 1,
+		U"The function \"min\" requires at least one argument.");
 	last = pop;
-	if (last->which != Stackel_NUMBER)
-		Melder_throw (U"The function \"min\" can only have numeric arguments, not ", last->whichText(), U".");
+	Melder_require (last->which == Stackel_NUMBER,
+		U"The function \"min\" can only have numeric arguments, not ", last->whichText(), U".");
 	result = last->number;
 	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
-		if (previous->which != Stackel_NUMBER)
-			Melder_throw (U"The function \"min\" can only have numeric arguments, not ", previous->whichText(), U".");
+		Melder_require (previous->which == Stackel_NUMBER,
+			U"The function \"min\" can only have numeric arguments, not ", previous->whichText(), U".");
 		result = isundef (result) || isundef (previous->number) ? undefined :
 			result < previous->number ? result : previous->number;
 	}
@@ -4207,16 +4205,16 @@ static void do_max () {
 	Stackel n = pop, last;
 	double result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->number < 1)
-		Melder_throw (U"The function \"max\" requires at least one argument.");
+	Melder_require (n->number >= 1,
+		U"The function \"max\" requires at least one argument.");
 	last = pop;
-	if (last->which != Stackel_NUMBER)
-		Melder_throw (U"The function \"max\" can only have numeric arguments, not ", last->whichText(), U".");
+	Melder_require (last->which == Stackel_NUMBER,
+		U"The function \"max\" can only have numeric arguments, not ", last->whichText(), U".");
 	result = last->number;
 	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
-		if (previous->which != Stackel_NUMBER)
-			Melder_throw (U"The function \"max\" can only have numeric arguments, not ", previous->whichText(), U".");
+		Melder_require (previous->which == Stackel_NUMBER,
+			U"The function \"max\" can only have numeric arguments, not ", previous->whichText(), U".");
 		result = isundef (result) || isundef (previous->number) ? undefined :
 			result > previous->number ? result : previous->number;
 	}
@@ -4226,17 +4224,17 @@ static void do_imin () {
 	Stackel n = pop, last;
 	double minimum, result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->number < 1)
-		Melder_throw (U"The function \"imin\" requires at least one argument.");
+	Melder_require (n->number >= 1,
+		U"The function \"imin\" requires at least one argument.");
 	last = pop;
-	if (last->which != Stackel_NUMBER)
-		Melder_throw (U"The function \"imin\" can only have numeric arguments, not ", last->whichText(), U".");
+	Melder_require (last->which == Stackel_NUMBER,
+		U"The function \"imin\" can only have numeric arguments, not ", last->whichText(), U".");
 	minimum = last->number;
 	result = n->number;
 	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
-		if (previous->which != Stackel_NUMBER)
-			Melder_throw (U"The function \"imin\" can only have numeric arguments, not ", previous->whichText(), U".");
+		Melder_require (previous->which == Stackel_NUMBER,
+			U"The function \"imin\" can only have numeric arguments, not ", previous->whichText(), U".");
 		if (isundef (minimum) || isundef (previous->number)) {
 			minimum = undefined;
 			result = undefined;
@@ -4250,16 +4248,16 @@ static void do_imin () {
 static void do_imax () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->number < 1)
-		Melder_throw (U"The function \"imax\" requires at least one argument.");
+	Melder_require (n->number >= 1,
+		U"The function \"imax\" requires at least one argument.");
 	Stackel last = pop;
 	if (last->which == Stackel_NUMBER) {
 		double maximum = last->number;
 		double result = n->number;
 		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 			Stackel previous = pop;
-			if (previous->which != Stackel_NUMBER)
-				Melder_throw (U"The function \"imax\" cannot mix a numeric argument with ", previous->whichText(), U".");
+			Melder_require (previous->which == Stackel_NUMBER,
+				U"The function \"imax\" cannot mix a numeric argument with ", previous->whichText(), U".");
 			if (isundef (maximum) || isundef (previous->number)) {
 				maximum = undefined;
 				result = undefined;
@@ -4270,8 +4268,8 @@ static void do_imax () {
 		}
 		pushNumber (result);
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
-		if (n->number != 1)
-			Melder_throw (U"The function \"imax\" requires exactly one vector argument.");
+		Melder_require (n->number == 1,
+			U"The function \"imax\" requires exactly one vector argument.");
 		integer numberOfElements = last->numericVector.size;
 		integer result = 1;
 		double maximum = last->numericVector [1];
@@ -4290,8 +4288,8 @@ static void do_imax () {
 static void do_norm () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->number < 1 || n->number > 2)
-		Melder_throw (U"The function \"norm\" requires one or two arguments.");
+	Melder_require (n->number == 1 || n->number == 2,
+		U"The function \"norm\" requires one or two arguments.");
 	double powerNumber = 2.0;
 	if (n->number == 2) {
 		Stackel power = pop;
@@ -4311,44 +4309,43 @@ static void do_norm () {
 static void do_VECzero () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	integer rank = Melder_iround (n -> number);
-	if (rank < 1)
-		Melder_throw (U"The function \"zero#\" requires an argument.");
-	if (rank > 1) {
-		Melder_throw (U"The function \"zero#\" cannot have more than one argument (consider using zero##).");
-	}
+	const integer rank = Melder_iround (n -> number);
+	Melder_require (rank >= 1,
+		U"The function \"zero#\" requires an argument.");
+	Melder_require (rank <= 1,
+		U"The function \"zero#\" cannot have more than one argument (consider using zero##).");
 	Stackel nelem = pop;
-	if (nelem -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"zero#\", the number of elements should be a number, not ", nelem->whichText(), U".");
-	double numberOfElements = nelem -> number;
-	if (isundef (numberOfElements))
-		Melder_throw (U"In the function \"zero#\", the number of elements is undefined.");
-	if (numberOfElements < 0.0)
-		Melder_throw (U"In the function \"zero#\", the number of elements should not be negative.");
+	Melder_require (nelem -> which == Stackel_NUMBER,
+		U"In the function \"zero#\", the number of elements should be a number, not ", nelem->whichText(), U".");
+	const double numberOfElements = nelem -> number;
+	Melder_require (isdefined (numberOfElements),
+		U"In the function \"zero#\", the number of elements is undefined.");
+	Melder_require (numberOfElements >= 0.0,
+		U"In the function \"zero#\", the number of elements should not be negative.");
 	pushNumericVector (newVECzero (Melder_iround (numberOfElements)));
 }
 static void do_MATzero () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	integer rank = Melder_iround (n -> number);
-	if (rank != 2)
-		Melder_throw (U"The function \"zero##\" requires two arguments.");
+	const integer rank = Melder_iround (n -> number);
+	Melder_require (rank == 2,
+		U"The function \"zero##\" requires two arguments.");
 	Stackel ncol = pop;
-	if (ncol -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"zero##\", the number of columns should be a number, not ", ncol->whichText(), U".");
-	double numberOfColumns = ncol -> number;
+	Melder_require (ncol -> which == Stackel_NUMBER,
+		U"In the function \"zero##\", the number of columns should be a number, not ", ncol->whichText(), U".");
+	const double numberOfColumns = ncol -> number;
 	Stackel nrow = pop;
-	if (nrow -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"zero##\", the number of rows should be a number, not ", nrow->whichText(), U".");
-	double numberOfRows = nrow -> number;
-	if (isundef (numberOfRows))
-		Melder_throw (U"In the function \"zero##\", the number of rows is undefined.");
-	if (isundef (numberOfColumns))
-		Melder_throw (U"In the function \"zero##\", the number of columns is undefined.");
-	if (numberOfRows < 0.0)
-		Melder_throw (U"In the function \"zero##\", the number of rows should not be negative.");
-	if (numberOfColumns < 0.0)
-		Melder_throw (U"In the function \"zero##\", the number of columns should not be negative.");
+	Melder_require (nrow -> which == Stackel_NUMBER,
+		U"In the function \"zero##\", the number of rows should be a number, not ", nrow->whichText(), U".");
+	const double numberOfRows = nrow -> number;
+	Melder_require (isdefined (numberOfRows),
+		U"In the function \"zero##\", the number of rows is undefined.");
+	Melder_require (isdefined (numberOfColumns),
+		U"In the function \"zero##\", the number of columns is undefined.");
+	Melder_require (numberOfRows >= 0.0,
+		U"In the function \"zero##\", the number of rows should not be negative.");
+	Melder_require (numberOfColumns >= 0.0,
+		U"In the function \"zero##\", the number of columns should not be negative.");
 	autoMAT result = newMATzero (Melder_iround (numberOfRows), Melder_iround (numberOfColumns));
 	pushNumericMatrix (result.move());
 }
@@ -4356,8 +4353,8 @@ static void do_VEClinear () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
 	integer narg = Melder_iround (stackel_narg -> number);
-	if (narg < 3 || narg > 4)
-		Melder_throw (U"The function \"linear#\" requires three or four arguments.");
+	Melder_require (narg == 3 || narg == 4,
+		U"The function \"linear#\" requires three or four arguments.");
 	bool excludeEdges = false;   // default
 	if (narg == 4) {
 		Stackel stack_excludeEdges = pop;
@@ -4366,146 +4363,145 @@ static void do_VEClinear () {
 		excludeEdges = Melder_iround (stack_excludeEdges -> number);
 	}
 	Stackel stack_numberOfSteps = pop, stack_maximum = pop, stack_minimum = pop;
-	if (stack_minimum -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"linear#\", the minimum (first argument) should be a number, not ", stack_minimum->whichText(), U".");
-	double minimum = stack_minimum -> number;
-	if (isundef (minimum))
-		Melder_throw (U"Undefined minimum in the function \"linear#\" (first argument).");
-	if (stack_maximum -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"linear#\", the maximum (second argument) should be a number, not ", stack_maximum->whichText(), U".");
-	double maximum = stack_maximum -> number;
-	if (isundef (maximum))
-		Melder_throw (U"Undefined maximum in the function \"linear#\" (second argument).");
-	if (maximum < minimum)
-		Melder_throw (U"Maximum (", maximum, U") smaller than minimum (", minimum, U") in function \"linear#\".");
-	if (stack_numberOfSteps -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) should be a number, not ", stack_numberOfSteps->whichText(), U".");
-	if (isundef (stack_numberOfSteps -> number))
-		Melder_throw (U"Undefined number of steps in the function \"linear#\" (third argument).");
-	integer numberOfSteps = Melder_iround (stack_numberOfSteps -> number);
-	if (numberOfSteps <= 0)
-		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) should be positive, not ", numberOfSteps, U".");
+	Melder_require (stack_minimum -> which == Stackel_NUMBER,
+		U"In the function \"linear#\", the minimum (first argument) should be a number, not ", stack_minimum->whichText(), U".");
+	const double minimum = stack_minimum -> number;
+	Melder_require (isdefined (minimum),
+		U"Undefined minimum in the function \"linear#\" (first argument).");
+	Melder_require (stack_maximum -> which == Stackel_NUMBER,
+		U"In the function \"linear#\", the maximum (second argument) should be a number, not ", stack_maximum->whichText(), U".");
+	const double maximum = stack_maximum -> number;
+	Melder_require (isdefined (maximum),
+		U"Undefined maximum in the function \"linear#\" (second argument).");
+	Melder_require (maximum >= minimum,
+		U"Maximum (", maximum, U") smaller than minimum (", minimum, U") in function \"linear#\".");
+	Melder_require (stack_numberOfSteps -> which == Stackel_NUMBER,
+		U"In the function \"linear#\", the number of steps (third argument) should be a number, not ", stack_numberOfSteps->whichText(), U".");
+	Melder_require (isdefined (stack_numberOfSteps -> number),
+		U"Undefined number of steps in the function \"linear#\" (third argument).");
+	const integer numberOfSteps = Melder_iround (stack_numberOfSteps -> number);
+	Melder_require (numberOfSteps > 0,
+		U"In the function \"linear#\", the number of steps (third argument) should be positive, not ", numberOfSteps, U".");
 	autoVEC result = newVECraw (numberOfSteps);
 	for (integer ielem = 1; ielem <= numberOfSteps; ielem ++) {
 		result [ielem] = excludeEdges ?
 			minimum + (ielem - 0.5) * (maximum - minimum) / numberOfSteps :
 			minimum + (ielem - 1) * (maximum - minimum) / (numberOfSteps - 1);
 	}
-	if (! excludeEdges) result [numberOfSteps] = maximum;   // remove rounding problems
+	if (! excludeEdges)
+		result [numberOfSteps] = maximum;   // remove rounding problems
 	pushNumericVector (result.move());
 }
 static void do_VECto () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 1)
-		Melder_throw (U"The function to#() requires one argument.");
+	const integer narg = (integer) stackel_narg -> number;
+	Melder_require (narg == 1,
+		U"The function to#() requires one argument.");
 	Stackel stack_to = pop;
-	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"to#\", the argument should be a number, not ", stack_to->whichText(), U".");
+	Melder_require (stack_to -> which == Stackel_NUMBER,
+		U"In the function \"to#\", the argument should be a number, not ", stack_to->whichText(), U".");
 	autoVEC result = newVECto (stack_to -> number);
 	pushNumericVector (result.move());
 }
 static void do_VECfrom_to () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 2)
-		Melder_throw (U"The function \"from_to#\" requires two arguments.");
+	const integer narg = (integer) stackel_narg -> number;
+	Melder_require (narg == 2,
+		U"The function \"from_to#\" requires two arguments.");
 	Stackel stack_to = pop, stack_from = pop;
-	if (stack_from -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to#\", the first argument should be a number, not ", stack_from->whichText(), U".");
-	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	Melder_require (stack_from -> which == Stackel_NUMBER,
+		U"In the function \"from_to#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	Melder_require (stack_to -> which == Stackel_NUMBER,
+		U"In the function \"from_to#\", the second argument should be a number, not ", stack_to->whichText(), U".");
 	autoVEC result = newVECfrom_to (stack_from -> number, stack_to -> number);
 	pushNumericVector (result.move());
 }
 static void do_VECfrom_to_by () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 3)
-		Melder_throw (U"The function \"from_to_by#\" requires three arguments.");
+	const integer narg = (integer) stackel_narg -> number;
+	Melder_require (narg == 3,
+		U"The function \"from_to_by#\" requires three arguments.");
 	Stackel stack_by = pop, stack_to = pop, stack_from = pop;
-	if (stack_from -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_by#\", the first argument should be a number, not ", stack_from->whichText(), U".");
-	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
-	if (stack_by -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_by#\", the third argument should be a number (the step), not ", stack_by->whichText(), U".");
+	Melder_require (stack_from -> which == Stackel_NUMBER,
+		U"In the function \"from_to_by#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	Melder_require (stack_to -> which == Stackel_NUMBER,
+		U"In the function \"from_to_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	Melder_require (stack_by -> which == Stackel_NUMBER,
+		U"In the function \"from_to_by#\", the third argument should be a number (the step), not ", stack_by->whichText(), U".");
 	autoVEC result = newVECfrom_to_by (stack_from -> number, stack_to -> number, stack_by -> number);
 	pushNumericVector (result.move());
 }
 static void do_VECfrom_to_count () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 3)
-		Melder_throw (U"The function \"from_to_count#\" requires three arguments.");
+	const integer narg = (integer) stackel_narg -> number;
+	Melder_require (narg == 3,
+		U"The function \"from_to_count#\" requires three arguments.");
 	Stackel stack_count = pop, stack_to = pop, stack_from = pop;
-	if (stack_from -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_count#\", the first argument should be a number, not ", stack_from->whichText(), U".");
-	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_count#\", the second argument should be a number, not ", stack_to->whichText(), U".");
-	if (stack_count -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"from_to_count#\", the third argument should be a number (the count), not ", stack_count->whichText(), U".");
+	Melder_require (stack_from -> which == Stackel_NUMBER,
+		U"In the function \"from_to_count#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	Melder_require (stack_to -> which == Stackel_NUMBER,
+		U"In the function \"from_to_count#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	Melder_require (stack_count -> which == Stackel_NUMBER,
+		U"In the function \"from_to_count#\", the third argument should be a number (the count), not ", stack_count->whichText(), U".");
 	autoVEC result = newVECfrom_to_count (stack_from -> number, stack_to -> number, Melder_iround (stack_count -> number));
 	pushNumericVector (result.move());
 }
 static void do_VECbetween_by () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 3)
-		Melder_throw (U"The function \"between_by#\" requires three arguments.");
+	const integer narg = (integer) stackel_narg -> number;
+	Melder_require (narg == 3,
+		U"The function \"between_by#\" requires three arguments.");
 	Stackel stack_by = pop, stack_to = pop, stack_from = pop;
-	if (stack_from -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_by#\", the first argument should be a number, not ", stack_from->whichText(), U".");
-	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
-	if (stack_by -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_by#\", the third argument should be a number (the step), not ", stack_by->whichText(), U".");
+	Melder_require (stack_from -> which == Stackel_NUMBER,
+		U"In the function \"between_by#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	Melder_require (stack_to -> which == Stackel_NUMBER,
+		U"In the function \"between_by#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	Melder_require (stack_by -> which == Stackel_NUMBER,
+		U"In the function \"between_by#\", the third argument should be a number (the step), not ", stack_by->whichText(), U".");
 	autoVEC result = newVECbetween_by (stack_from -> number, stack_to -> number, stack_by -> number);
 	pushNumericVector (result.move());
 }
 static void do_VECbetween_count () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 3)
-		Melder_throw (U"The function \"between_count#\" requires three arguments.");
+	const integer narg = (integer) stackel_narg -> number;
+	Melder_require (narg == 3,
+		U"The function \"between_count#\" requires three arguments.");
 	Stackel stack_count = pop, stack_to = pop, stack_from = pop;
-	if (stack_from -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_count#\", the first argument should be a number, not ", stack_from->whichText(), U".");
-	if (stack_to -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_count#\", the second argument should be a number, not ", stack_to->whichText(), U".");
-	if (stack_count -> which != Stackel_NUMBER)
-		Melder_throw (U"In the function \"between_count#\", the third argument should be a number (the count), not ", stack_count->whichText(), U".");
+	Melder_require (stack_from -> which == Stackel_NUMBER,
+		U"In the function \"between_count#\", the first argument should be a number, not ", stack_from->whichText(), U".");
+	Melder_require (stack_to -> which == Stackel_NUMBER,
+		U"In the function \"between_count#\", the second argument should be a number, not ", stack_to->whichText(), U".");
+	Melder_require (stack_count -> which == Stackel_NUMBER,
+		U"In the function \"between_count#\", the third argument should be a number (the count), not ", stack_count->whichText(), U".");
 	autoVEC result = newVECbetween_count (stack_from -> number, stack_to -> number, Melder_iround (stack_count -> number));
 	pushNumericVector (result.move());
 }
-static void do_VECshuffle () {
-	Stackel stackel_narg = pop;
-	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 1)
-		Melder_throw (U"The function \"shuffle#\" requires one argument, namely a vector.");
-	Stackel stack_vector = pop;
-	if (stack_vector -> which != Stackel_NUMERIC_VECTOR)
-		Melder_throw (U"The argument of the function \"shuffle#\" should be a numeric vector, not ", stack_vector->whichText(), U".");
-	autoVEC result = newVECshuffle (stack_vector -> numericVector);
+static void do_shuffle_VEC () {
+	Stackel narg = pop;
+	Melder_assert (narg -> which == Stackel_NUMBER);
+	Melder_require (narg -> number == 1,
+		U"The function \"shuffle#\" requires one argument, namely a vector.");
+	Stackel vec = pop;
+	Melder_require (vec -> which == Stackel_NUMERIC_VECTOR,
+		U"The argument of the function \"shuffle#\" should be a numeric vector, not ", vec -> whichText(), U".");
+	autoVEC result = shuffle_VEC (vec -> numericVector);
 	pushNumericVector (result.move());
 }
-static void do_VECsort () {
-	Stackel stackel_narg = pop;
-	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	integer narg = (integer) stackel_narg -> number;
-	if (narg != 1)
-		Melder_throw (U"The function \"sort#\" requires one argument, namely a vector.");
-	Stackel stack_vector = pop;
-	if (stack_vector -> which != Stackel_NUMERIC_VECTOR)
-		Melder_throw (U"The argument of the function \"sort#\" should be a numeric vector, not ", stack_vector->whichText(), U".");
-	autoVEC result = newVECsort (stack_vector -> numericVector);
+static void do_sort_VEC () {
+	Stackel narg = pop;
+	Melder_assert (narg -> which == Stackel_NUMBER);
+	Melder_require (narg -> number == 1,
+		U"The function \"sort#\" requires one argument, namely a vector.");
+	Stackel vec = pop;
+	Melder_require (vec -> which == Stackel_NUMERIC_VECTOR,
+		U"The argument of the function \"sort#\" should be a numeric vector, not ", vec -> whichText(), U".");
+	autoVEC result = sort_VEC (vec -> numericVector);
 	pushNumericVector (result.move());
 }
 static void do_MATpeaks () {
@@ -7280,28 +7276,28 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case IMIN_: { do_imin ();
 } break; case IMAX_: { do_imax ();
 } break; case NORM_: { do_norm ();
-} break; case VEC_ZERO_: { do_VECzero ();
-} break; case MAT_ZERO_: { do_MATzero ();
-} break; case VEC_LINEAR_: { do_VEClinear ();
-} break; case VEC_TO_: { do_VECto ();
-} break; case VEC_FROM_TO_: { do_VECfrom_to ();
-} break; case VEC_FROM_TO_BY_: { do_VECfrom_to_by ();
-} break; case VEC_FROM_TO_COUNT_: { do_VECfrom_to_count ();
-} break; case VEC_BETWEEN_BY_: { do_VECbetween_by ();
-} break; case VEC_BETWEEN_COUNT_: { do_VECbetween_count ();
-} break; case VEC_SORT_: { do_VECsort ();
-} break; case VEC_SHUFFLE_: { do_VECshuffle ();
-} break; case VEC_RANDOM_UNIFORM_: { do_function_VECdd_d (NUMrandomUniform);
-} break; case MAT_RANDOM_UNIFORM_: { do_function_MATdd_d (NUMrandomUniform);
-} break; case VEC_RANDOM_INTEGER_: { do_function_VECll_l (NUMrandomInteger);
-} break; case MAT_RANDOM_INTEGER_: { do_function_MATll_l (NUMrandomInteger);
-} break; case VEC_RANDOM_GAUSS_: { do_function_VECdd_d (NUMrandomGauss);
-} break; case MAT_RANDOM_GAUSS_: { do_function_MATdd_d (NUMrandomGauss);
-} break; case VEC_RANDOM_GAMMA_: { do_function_VECdd_d (NUMrandomGamma);
-} break; case MAT_RANDOM_GAMMA_: { do_function_MATdd_d (NUMrandomGamma);
-} break; case VEC_SOLVE_SPARSE_ : { do_VECsolveSparse ();
-} break; case VEC_SOLVE_NONNEGATIVE_ : { do_VECsolveNonnegative ();
-} break; case MAT_PEAKS_: { do_MATpeaks ();
+} break; case ZERO_VEC_: { do_VECzero ();
+} break; case ZERO_MAT_: { do_MATzero ();
+} break; case LINEAR_VEC_: { do_VEClinear ();
+} break; case TO_VEC_: { do_VECto ();
+} break; case FROM_TO_VEC_: { do_VECfrom_to ();
+} break; case FROM_TO_BY_VEC_: { do_VECfrom_to_by ();
+} break; case FROM_TO_COUNT_VEC_: { do_VECfrom_to_count ();
+} break; case BETWEEN_BY_VEC_: { do_VECbetween_by ();
+} break; case BETWEEN_COUNT_VEC_: { do_VECbetween_count ();
+} break; case SORT_VEC_: { do_sort_VEC ();
+} break; case SHUFFLE_VEC_: { do_shuffle_VEC ();
+} break; case RANDOM_UNIFORM_VEC_: { do_function_VECdd_d (NUMrandomUniform);
+} break; case RANDOM_UNIFORM_MAT_: { do_function_MATdd_d (NUMrandomUniform);
+} break; case RANDOM_INTEGER_VEC_: { do_function_VECll_l (NUMrandomInteger);
+} break; case RANDOM_INTEGER_MAT_: { do_function_MATll_l (NUMrandomInteger);
+} break; case RANDOM_GAUSS_VEC_: { do_function_VECdd_d (NUMrandomGauss);
+} break; case RANDOM_GAUSS_MAT_: { do_function_MATdd_d (NUMrandomGauss);
+} break; case RANDOM_GAMMA_VEC_: { do_function_VECdd_d (NUMrandomGamma);
+} break; case RANDOM_GAMMA_MAT_: { do_function_MATdd_d (NUMrandomGamma);
+} break; case SOLVE_SPARSE_VEC_ : { do_VECsolveSparse ();
+} break; case SOLVE_NONNEGATIVE_VEC_ : { do_VECsolveNonnegative ();
+} break; case PEAKS_MAT_: { do_MATpeaks ();
 } break; case SIZE_: { do_size ();
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();

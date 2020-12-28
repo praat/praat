@@ -292,13 +292,13 @@ inline void VECsin_inplace (VECVU const& vec) noexcept {
 extern void VECshuffle_inplace (VECVU const& x) noexcept;
 extern void INTVECshuffle_inplace (INTVECVU const& x) noexcept;
 
-inline autoVEC newVECshuffle (constVECVU const& x) {
+inline autoVEC shuffle_VEC (constVECVU const& x) {
 	autoVEC result = newVECcopy (x);
 	VECshuffle_inplace (result.get());
 	return result;
 }
 
-inline autoINTVEC newINTVECshuffle (constINTVECVU const& x) {
+inline autoINTVEC shuffle_INTVEC (constINTVECVU const& x) {
 	autoINTVEC result = newINTVECcopy (x);
 	INTVECshuffle_inplace (result.get());
 	return result;
@@ -307,7 +307,7 @@ inline autoINTVEC newINTVECshuffle (constINTVECVU const& x) {
 extern void VECsort_inplace (VECVU const& x) noexcept;
 extern void INTVECsort_inplace (INTVECVU const& x) noexcept;
 
-inline autoVEC newVECsort (constVECVU const& x) {
+inline autoVEC sort_VEC (constVECVU const& x) {
 	autoVEC result = newVECcopy (x);
 	VECsort_inplace (result.get());
 	return result;
