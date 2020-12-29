@@ -1,6 +1,6 @@
 /* OTGrammar_def.h
  *
- * Copyright (C) 1997-2011,2015-2019 Paul Boersma
+ * Copyright (C) 1997-2011,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
 		oo_INTEGER (numberOfPotentialPartialOutputsMatching)
-		oo_BOOLVEC (partialOutputMatches___, numberOfPotentialPartialOutputsMatching)
+		oo_BOOLVEC (partialOutputMatches, numberOfPotentialPartialOutputsMatching)
 	#endif
 
 oo_END_STRUCT (OTGrammarCandidate)

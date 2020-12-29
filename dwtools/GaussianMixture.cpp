@@ -192,7 +192,7 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 		autoMAT covar = raw_MAT (thy numberOfColumns, thy numberOfColumns);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			dif.all() <<= data.row (irow)  -  thy centroid.get();
-			MATouter (covar.get(), dif.get(), dif.get());
+			outer_MAT_out (covar.get(), dif.get(), dif.get());
 			thy data.get()  +=  responsibilities [irow] [component]  *  covar.get();
 		}
 	}
@@ -539,8 +539,8 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	const integer dim1 = integer_abs (d1), dim2 = integer_abs (d2);
 	Melder_require (dim1 >= 1 && dim1 <= my dimension && dim2 >= 1 && dim2 <= my dimension,
 		U"The dimension numbers should be in the range from 1 to ", my dimension, U" (or the negative of this value for a reversed axis).");
-	autoVEC eigenvector1 = newVECcopy (his eigenvectors.row (dim1));
-	autoVEC eigenvector2 = newVECcopy (his eigenvectors.row (dim2));
+	autoVEC eigenvector1 = copy_VEC (his eigenvectors.row (dim1));
+	autoVEC eigenvector2 = copy_VEC (his eigenvectors.row (dim2));
 	if (d1 < 0)
 		eigenvector1.all()  *=  -1.0;
 	if (d2 < 0)
@@ -642,7 +642,7 @@ void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double
 			/*
 				Reconstruct the n-dimensional means from the 2-d pc's and the 2 eigenvectors
 			*/
-			autoMAT means = newMATmul (means2d.get(), pca -> eigenvectors.horizontalBand (1, 2));
+			autoMAT means = mul_MAT (means2d.get(), pca -> eigenvectors.horizontalBand (1, 2));
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				const Covariance covi = my covariances->at [im];
@@ -1240,7 +1240,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 
 		for (integer component = 1; component <= my numberOfComponents; component ++) {
 			const Covariance cov = my covariances->at [component];
-			autoVEC componentResponsibilities = newVECcopy (responsibilities.column (component));
+			autoVEC componentResponsibilities = copy_VEC (responsibilities.column (component));
 			double testStatistic, lnmu, lnvar;
 			bool isSingular;
 			const double probability = Covariance_TableOfReal_normalityTest_BHEP (cov, thee, componentResponsibilities.get(), & h, & testStatistic, & lnmu, & lnvar, & isSingular);

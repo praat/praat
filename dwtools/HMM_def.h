@@ -52,8 +52,8 @@ oo_DEFINE_CLASS (HMM, Daata)
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
 			oo_MAT (transitionProbs, numberOfStates + 1, numberOfStates + 1)
-			our initialStateProbs = newVECcopy (our transitionProbs.row (1).part (1, our numberOfStates));
-			our transitionProbs = newMATcopy (our transitionProbs.horizontalBand (2, our numberOfStates + 1));
+			our initialStateProbs = copy_VEC (our transitionProbs.row (1).part (1, our numberOfStates));
+			our transitionProbs = copy_MAT (our transitionProbs.horizontalBand (2, our numberOfStates + 1));
 		oo_VERSION_ELSE
 			oo_MAT (transitionProbs, numberOfStates, numberOfStates + 1)
 		oo_VERSION_END

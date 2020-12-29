@@ -740,7 +740,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 		/*
 			Statement like: a# = b#   // with non-matching sizes
 		*/
-		variable -> numericVectorValue = newVECcopy (movedVector);
+		variable -> numericVectorValue = copy_VEC (movedVector);
 	}
 }
 
@@ -792,7 +792,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 		/*
 			Statement like: a## = b##   // with non-matching sizes
 		*/
-		variable -> numericMatrixValue = newMATcopy (movedMatrix);
+		variable -> numericMatrixValue = copy_MAT (movedMatrix);
 	}
 }
 

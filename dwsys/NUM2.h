@@ -445,7 +445,7 @@ autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd);
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 
 inline autoMAT newMATlowerCholeskyInverse (constMAT const& a) {
-	autoMAT result = newMATcopy (a);
+	autoMAT result = copy_MAT (a);
 	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
 	return result;
 }

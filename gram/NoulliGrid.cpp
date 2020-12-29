@@ -89,7 +89,7 @@ autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tm
 
 autoVEC NoulliGrid_getAverageProbabilities (NoulliGrid me, integer tierNumber, double tmin, double tmax) {
 	autoNoulliPoint point = NoulliGrid_average (me, tierNumber, tmin, tmax);
-	return newVECcopy (point -> probabilities.get());
+	return copy_VEC (point -> probabilities.get());
 }
 
 /* End of file NoulliGrid.cpp */

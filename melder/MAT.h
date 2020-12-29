@@ -78,7 +78,7 @@ inline TypeMATadd_MAT_NUM operator+ (double number, constMATVU const& x) { retur
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATadd (constMATVU const& x, double number) {
+inline autoMAT add_MAT (constMATVU const& x, double number) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  +  number;
 	return result;
@@ -97,7 +97,7 @@ inline TypeMATmultiply_MAT_NUM operator* (double number, constMATVU const& x) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATmultiply (constMATVU const& x, double number) {
+inline autoMAT multiply_MAT (constMATVU const& x, double number) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  *  number;
 	return result;
@@ -115,7 +115,7 @@ inline TypeMATsubtract_MAT_NUM operator- (constMATVU const& x, double number) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATsubtract (constMATVU const& x, double number) {
+inline autoMAT subtract_MAT (constMATVU const& x, double number) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  -  number;
 	return result;
@@ -133,7 +133,7 @@ inline TypeMATsubtract_NUM_MAT operator- (double number, constMATVU const& x) { 
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATsubtract (double number, constMATVU const& x) {
+inline autoMAT subtract_MAT (double number, constMATVU const& x) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  number  -  x;
 	return result;
@@ -152,7 +152,7 @@ inline TypeMATadd_MAT_VEC operator+ (constMATVU const& x, constVECVU const& y) {
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATadd (constMATVU const& x, constVECVU const& y) {
+inline autoMAT add_MAT (constMATVU const& x, constVECVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  +  y;
 	return result;
@@ -171,7 +171,7 @@ inline TypeMATmultiply_MAT_VEC operator* (constMATVU const& x, constVECVU const&
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATmultiply (constMATVU const& x, constVECVU const& y) {
+inline autoMAT multiply_MAT (constMATVU const& x, constVECVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  *  y;
 	return result;
@@ -190,7 +190,7 @@ inline TypeMATsubtract_MAT_VEC operator- (constMATVU const& x, constVECVU const&
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATsubtract (constMATVU const& x, constVECVU const& y) {
+inline autoMAT subtract_MAT (constMATVU const& x, constVECVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  -  y;
 	return result;
@@ -209,7 +209,7 @@ inline TypeMATadd_VEC_MAT operator+ (constVECVU const& x, constMATVU const& y) {
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATadd (constVECVU const& x, constMATVU const& y) {
+inline autoMAT add_MAT (constVECVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (y.nrow, y.ncol);
 	result.all()  <<=  x  +  y;
 	return result;
@@ -228,7 +228,7 @@ inline TypeMATmultiply_VEC_MAT operator* (constVECVU const& x, constMATVU const&
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATmultiply (constVECVU const& x, constMATVU const& y) {
+inline autoMAT multiply_MAT (constVECVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (y.nrow, y.ncol);
 	result.all()  <<=  x  *  y;
 	return result;
@@ -247,7 +247,7 @@ inline TypeMATsubtract_VEC_MAT operator- (constVECVU const& x, constMATVU const&
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATsubtract (constVECVU const& x, constMATVU const& y) {
+inline autoMAT subtract_MAT (constVECVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (y.nrow, y.ncol);
 	result.all()  <<=  x  -  y;
 	return result;
@@ -267,7 +267,7 @@ inline TypeMATadd_MAT_MAT operator+ (constMATVU const& x, constMATVU const& y) {
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATadd (constMATVU const& x, constMATVU const& y) {
+inline autoMAT add_MAT (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  +  y;
 	return result;
@@ -287,7 +287,7 @@ inline TypeMATmultiply_MAT_MAT operator* (constMATVU const& x, constMATVU const&
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATmultiply (constMATVU const& x, constMATVU const& y) {
+inline autoMAT multiply_MAT (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  *  y;
 	return result;
@@ -307,7 +307,7 @@ inline TypeMATsubtract_MAT_MAT operator- (constMATVU const& x, constMATVU const&
 	}
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
-inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
+inline autoMAT subtract_MAT (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  -  y;
 	return result;
@@ -317,40 +317,40 @@ inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
 	Make the average of each column zero.
 		a[i][j] -= a[.][j]
 */
-extern void MATcentreEachColumn_inplace (MATVU const& x) noexcept;
+extern void centreEachColumn_MAT_inout (MATVU const& x) noexcept;
 
 /*
 	Make the average of each row zero.
 		a[i][j] -= a[i][.]
 */
-extern void MATcentreEachRow_inplace (MATVU const& x) noexcept;
+extern void centreEachRow_MAT_inout (MATVU const& x) noexcept;
 
 /*
 	Make the average of every column and every row zero.
 		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
 */
-extern void MATdoubleCentre_inplace (MATVU const& x) noexcept;
+extern void doubleCentre_MAT_inout (MATVU const& x) noexcept;
 
-extern void MATmtm (MATVU const& target, constMATVU const& x) noexcept;
-inline autoMAT newMATmtm (constMATVU const& x) {
+extern void mtm_MAT_out (MATVU const& target, constMATVU const& x) noexcept;
+inline autoMAT mtm_MAT (constMATVU const& x) {
 	autoMAT result = raw_MAT (x.ncol, x.ncol);
-	MATmtm (result.get(), x);
+	mtm_MAT_out (result.get(), x);
 	return result;
 }
 
 /*
 	Precise matrix multiplication, using pairwise summation.
 */
-extern void MATmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
-inline void MATmul  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+extern void _mul_MAT_out (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
+inline void mul_MAT_out  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATmul_ (target, x, y);
+	_mul_MAT_out (target, x, y);
 }
-inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
+inline autoMAT mul_MAT (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, y.ncol);
-	MATmul (result.all(), x, y);
+	mul_MAT_out (result.all(), x, y);
 	return result;
 }
 /*
@@ -359,130 +359,130 @@ inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
 	(unless they are already 1).
 	Because of the use of malloc, this function may not be thread-safe.
 */
-extern void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
-inline void MATmul_forceAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
+extern void _mul_forceAllocation_MAT_out (MATVU const& target, constMATVU x, constMATVU y);
+inline void mul_forceAllocation_MAT_out  (MATVU const& target, constMATVU x, constMATVU y) {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATmul_forceAllocation_ (target, x, y);
+	_mul_forceAllocation_MAT_out (target, x, y);
 }
 inline autoMAT newMATmul_forceAllocation (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, y.ncol);
-	MATmul_forceAllocation (result.all(), x, y);
+	mul_forceAllocation_MAT_out (result.all(), x, y);
 	return result;
 }
 /*
-	The faster of MATmul_forceAllocation and MATmul.
+	The faster of mul_forceAllocation_MAT_out and mul_MAT_out.
 	Because of the use of malloc, this function may not be thread-safe.
 */
-extern void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y);
-inline void MATmul_allowAllocation  (MATVU const& target, constMATVU x, constMATVU y) {
+extern void _mul_allowAllocation_MAT_out (MATVU const& target, constMATVU x, constMATVU y);
+inline void mul_allowAllocation_MAT_out  (MATVU const& target, constMATVU x, constMATVU y) {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATmul_allowAllocation_ (target, x, y);
+	_mul_allowAllocation_MAT_out (target, x, y);
 }
-inline autoMAT newMATmul_allowAllocation (constMATVU const& x, constMATVU const& y) {
+inline autoMAT mul_allowAllocation_MAT (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, y.ncol);
-	MATmul_allowAllocation (result.all(), x, y);
+	mul_allowAllocation_MAT_out (result.all(), x, y);
 	return result;
 }
 /*
 	Rough matrix multiplication, using an in-cache inner loop if that is faster.
 */
-extern void MATmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
-inline void MATmul_fast  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+extern void _mul_fast_MAT_out (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept;
+inline void mul_fast_MAT_out  (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATmul_fast_ (target, x, y);
+	_mul_fast_MAT_out (target, x, y);
 }
-inline autoMAT newMATmul_fast (constMATVU const& x, constMATVU const& y) {
+inline autoMAT mul_fast_MAT (constMATVU const& x, constMATVU const& y) {
 	autoMAT result = raw_MAT (x.nrow, y.ncol);
-	MATmul_fast (result.all(), x, y);
+	mul_fast_MAT_out (result.all(), x, y);
 	return result;
 }
 void MATmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU const& y);
 
-void MATouter (MATVU const& target, constVECVU const& x, constVECVU const& y);
-extern autoMAT newMATouter (constVECVU const& x, constVECVU const& y);
+void outer_MAT_out (MATVU const& target, constVECVU const& x, constVECVU const& y);
+extern autoMAT outer_MAT (constVECVU const& x, constVECVU const& y);
 
-extern autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight);
+extern autoMAT peaks_MAT (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight);
 
-void MATpower (MATVU const& target, constMATVU const& mat, double power);
-inline autoMAT newMATpower (constMATVU const& mat, double power) {
+void power_MAT_out (MATVU const& target, constMATVU const& mat, double power);
+inline autoMAT power_MAT (constMATVU const& mat, double power) {
 	autoMAT result = raw_MAT (mat.nrow, mat.ncol);
-	MATpower (result.all(), mat, power);
+	power_MAT_out (result.all(), mat, power);
 	return result;
 }
 
-inline void MATrandomGauss (MATVU const& target, double mu, double sigma) noexcept {
+inline void randomGauss_MAT_out (MATVU const& target, double mu, double sigma) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = NUMrandomGauss (mu, sigma);
 }
-inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
+inline autoMAT randomGauss_MAT (integer nrow, integer ncol, double mu, double sigma) {
 	autoMAT result = raw_MAT (nrow, ncol);
-	MATrandomGauss (result.all(), mu, sigma);
+	randomGauss_MAT_out (result.all(), mu, sigma);
 	return result;
 }
-inline autoMAT newMATrandomGauss (constMATVU const& model, double mu, double sigma) {
+inline autoMAT randomGauss_MAT (constMATVU const& model, double mu, double sigma) {
 	autoMAT result = raw_MAT (model.nrow, model.ncol);
-	MATrandomGauss (result.all(), mu, sigma);
+	randomGauss_MAT_out (result.all(), mu, sigma);
 	return result;
 }
 
-inline void MATrandomUniform (MATVU const& target, double lowest, double highest) noexcept {
+inline void randomUniform_MAT_out (MATVU const& target, double lowest, double highest) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = NUMrandomUniform (lowest, highest);
 }
-inline autoMAT newMATrandomUniform (integer nrow, integer ncol, double lowest, double highest) {
+inline autoMAT randomUniform_MAT (integer nrow, integer ncol, double lowest, double highest) {
 	autoMAT result = raw_MAT (nrow, ncol);
-	MATrandomUniform (result.all(), lowest, highest);
+	randomUniform_MAT_out (result.all(), lowest, highest);
 	return result;
 }
-inline autoMAT newMATrandomUniform (constMATVU const& model, double lowest, double highest) {
+inline autoMAT randomUniform_MAT (constMATVU const& model, double lowest, double highest) {
 	autoMAT result = raw_MAT (model.nrow, model.ncol);
-	MATrandomUniform (result.all(), lowest, highest);
+	randomUniform_MAT_out (result.all(), lowest, highest);
 	return result;
 }
 
-inline void MATsin_inplace (MATVU const& mat) noexcept {
+inline void sin_MAT_inout (MATVU const& mat) noexcept {
 	for (integer irow = 1; irow <= mat.nrow; irow ++)
 		for (integer icol = 1; icol <= mat.ncol; icol ++)
 			mat [irow] [icol] = sin (mat [irow] [icol]);
 }
 
-inline void MATsubtractReversed_inplace (MATVU const& x, double number) noexcept {
+inline void subtractReversed_MAT_inout (MATVU const& x, double number) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = number - x [irow] [icol];
 }
-inline void MATsubtractReversed_inplace (MATVU const& x, constMATVU const& y) noexcept {
+inline void subtractReversed_MAT_inout (MATVU const& x, constMATVU const& y) noexcept {
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
 }
 
-inline void MATtranspose_inplace_mustBeSquare (MATVU const& x) noexcept {
+inline void transpose_mustBeSquare_MAT_inout (MATVU const& x) noexcept {
 	Melder_assert (x.nrow == x.ncol);
 	integer n = x.nrow;
 	for (integer i = 1; i < n; i ++)
 		for (integer j = i + 1; j <= n; j ++)
 			std::swap (x [i] [j], x [j] [i]);
 }
-inline void MATtranspose (MATVU const& target, constMATVU const& x) noexcept {
+inline void transpose_MAT_out (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (x.nrow == target.ncol && x.ncol == target.nrow);
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = x [icol] [irow];
 }
-inline autoMAT newMATtranspose (constMATVU const& x) {
+inline autoMAT transpose_MAT (constMATVU const& x) {
 	autoMAT result = raw_MAT (x.ncol, x.nrow);
-	MATtranspose (result.get(), x);
+	transpose_MAT_out (result.get(), x);
 	return result;
 }
 

@@ -114,7 +114,7 @@ autoSound Sound_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 
 		autoMAT minv = newMATpseudoInverse (thy data.get(), 0.0);
 		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
-		MATmul (his z.get(), minv.get(), my z.get());
+		mul_MAT_out (his z.get(), minv.get(), my z.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not unmixed.");

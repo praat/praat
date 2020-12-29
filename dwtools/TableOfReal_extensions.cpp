@@ -341,7 +341,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	autoSVD svd = SVD_create (nr, nc);
 
 	svd -> u.all() <<= my data.all();
-	MATcentreEachColumn_inplace (svd -> u.get());
+	centreEachColumn_MAT_inout (svd -> u.get());
 
 	SVD_compute (svd.get());
 	const integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
@@ -503,7 +503,7 @@ void TableOfReal_setLabelsFromCollectionItemNames (TableOfReal me, Collection th
 }
 
 void TableOfReal_centreColumns (TableOfReal me) {
-	MATcentreEachColumn_inplace (my data.get());
+	centreEachColumn_MAT_inout (my data.get());
 }
 
 void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
@@ -530,12 +530,12 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 	for (integer i = 2; i <= my numberOfRows; i ++) {
 		const conststring32 li = my rowLabels [i].get();
 		if (! Melder_equ (li, label)) {
-			MATcentreEachColumn_inplace (my data.horizontalBand (index, i - 1));
+			centreEachColumn_MAT_inout (my data.horizontalBand (index, i - 1));
 			label = li;
 			index = i;
 		}
 	}
-	MATcentreEachColumn_inplace (my data.horizontalBand (index, my numberOfRows));
+	centreEachColumn_MAT_inout (my data.horizontalBand (index, my numberOfRows));
 }
 
 double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
@@ -569,11 +569,11 @@ double TableOfReal_getGrandSum (TableOfReal me) {
 }
 
 void TableOfReal_centreRows (TableOfReal me) {
-	MATcentreEachRow_inplace (my data.get());
+	centreEachRow_MAT_inout (my data.get());
 }
 
 void TableOfReal_doubleCentre (TableOfReal me) {
-	MATdoubleCentre_inplace (my data.get());
+	doubleCentre_MAT_inout (my data.get());
 }
 
 void TableOfReal_normalizeColumns (TableOfReal me, double norm) {
@@ -809,7 +809,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, integer columnNumber, doub
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns)
 			return undefined;
-		autoVEC values = newVECcolumn (my data.get(), columnNumber);
+		autoVEC values = column_VEC (my data.get(), columnNumber);
 		sort_VEC_inout (values.get());
 		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
@@ -1352,11 +1352,11 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 		Melder_require (my numberOfColumns == thy numberOfColumns,
 			U"Both tables should have the same number of columns.");
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, thy numberOfRows);
-		autoMAT my_data = newMATcopy (my data.get());
-		autoMAT thy_data = newMATcopy (thy data.get());
+		autoMAT my_data = copy_MAT (my data.get());
+		autoMAT thy_data = copy_MAT (thy data.get());
 		if (centre) {
-			MATcentreEachRow_inplace (my_data.get());
-			MATcentreEachRow_inplace (thy_data.get());
+			centreEachRow_MAT_inout (my_data.get());
+			centreEachRow_MAT_inout (thy_data.get());
 		}
 		if (normalize) {
 			MATnormalizeRows_inplace (my_data.get(), 2.0, 1.0);
@@ -1364,7 +1364,7 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 		}
 		his rowLabels.all() <<= my rowLabels.all();
 		his columnLabels.all() <<= thy rowLabels.all();
-		MATmul (his data.get(), my_data.get(), thy_data.transpose());
+		mul_MAT_out (his data.get(), my_data.get(), thy_data.transpose());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with row correlations not created.");
@@ -1376,11 +1376,11 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 		Melder_require (my numberOfRows == thy numberOfRows,
 			U"Both tables should have the same number of rows.");
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
-		autoMAT my_data = newMATcopy (my data.get());
-		autoMAT thy_data = newMATcopy (thy data.get());
+		autoMAT my_data = copy_MAT (my data.get());
+		autoMAT thy_data = copy_MAT (thy data.get());
 		if (center) {
-			MATcentreEachColumn_inplace (my_data.get());
-			MATcentreEachColumn_inplace (thy_data.get());
+			centreEachColumn_MAT_inout (my_data.get());
+			centreEachColumn_MAT_inout (thy_data.get());
 		}
 		if (normalize) {
 			MATnormalizeColumns_inplace (my_data.get(), 2.0, 1.0);
@@ -1388,7 +1388,7 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 		}
 		his rowLabels.all() <<= my columnLabels.all();
 		his columnLabels.all() <<= thy columnLabels.all();
-		MATmul (his data.get(), my_data.transpose(), thy_data.get()); 
+		mul_MAT_out (his data.get(), my_data.transpose(), thy_data.get()); 
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with column correlations not created.");

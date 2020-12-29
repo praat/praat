@@ -106,7 +106,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				amplitudePart  <<=  my z [ichan].part (leftSample, rightSample);
 				if (subtractMeanPressure)
-					VECcentre_inplace (amplitudePart);
+					centre_VEC_inout (amplitudePart);
 				for (integer isamp = 1; isamp <= amplitudePart.size; isamp ++) {
 					sumxw += sqr (amplitudePart [isamp]) * windowPart [isamp];
 					sumw += windowPart [isamp];

@@ -249,7 +249,7 @@ static void PowerCepstrum_smooth_inplaceRectangular_old (PowerCepstrum me, doubl
 	try {
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
-			autoVEC qin = newVECcopy (my z.row (1));
+			autoVEC qin = copy_VEC (my z.row (1));
 			autoVEC qout = raw_VEC (my nx);
 			for (integer k = 1; k <= numberOfIterations; k ++)
 				if (k % 2 == 1) 
