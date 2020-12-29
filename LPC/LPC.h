@@ -55,7 +55,7 @@ static inline autoVEC LPC_listAllGains (LPC me) {
 
 static inline autoVEC LPC_listCoefficientsInFrame (LPC me, integer frameNumber) {
 	my checkIndex (frameNumber);
-	autoVEC result = newVECcopy (my d_frames [frameNumber]. a.get());
+	autoVEC result = copy_VEC (my d_frames [frameNumber]. a.get());
 	return result;
 }
 

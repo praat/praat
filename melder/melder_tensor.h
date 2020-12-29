@@ -1291,7 +1291,7 @@ inline autoVEC raw_VEC (integer size) {
 inline autoVEC zero_VEC (integer size) {
 	return newvectorzero <double> (size);
 }
-inline autoVEC newVECcopy (constVECVU const& source) {
+inline autoVEC copy_VEC (constVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1314,7 +1314,7 @@ inline autoINTVEC raw_INTVEC (integer size) {
 inline autoINTVEC zero_INTVEC (integer size) {
 	return newvectorzero <integer> (size);
 }
-inline autoINTVEC newINTVECcopy (constINTVECVU const& source) {
+inline autoINTVEC copy_INTVEC (constINTVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1323,13 +1323,13 @@ using BOOLVECVU = vectorview <bool>;
 using constBOOLVEC = constvector <bool>;
 using constBOOLVECVU = constvectorview <bool>;
 using autoBOOLVEC = autovector <bool>;
-inline autoBOOLVEC newBOOLVECraw (integer size) {
+inline autoBOOLVEC raw_BOOLVEC (integer size) {
 	return newvectorraw <bool> (size);
 }
-inline autoBOOLVEC newBOOLVECzero (integer size) {
+inline autoBOOLVEC zero_BOOLVEC (integer size) {
 	return newvectorzero <bool> (size);
 }
-inline autoBOOLVEC newBOOLVECcopy (constBOOLVECVU const& source) {
+inline autoBOOLVEC copy_BOOLVEC (constBOOLVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1338,13 +1338,13 @@ using BYTEVECVU = vectorview <byte>;
 using constBYTEVEC = constvector <byte>;
 using constBYTEVECVU = constvectorview <byte>;
 using autoBYTEVEC = autovector <byte>;
-inline autoBYTEVEC newBYTEVECraw (integer size) {
+inline autoBYTEVEC raw_BYTEVEC (integer size) {
 	return newvectorraw <byte> (size);
 }
-inline autoBYTEVEC newBYTEVECzero (integer size) {
+inline autoBYTEVEC zero_BYTEVEC (integer size) {
 	return newvectorzero <byte> (size);
 }
-inline autoBYTEVEC newBYTEVECcopy (constBYTEVECVU const& source) {
+inline autoBYTEVEC copy_BYTEVEC (constBYTEVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1353,13 +1353,13 @@ using COMPVECVU = vectorview <dcomplex>;
 using constCOMPVEC = constvector <dcomplex>;
 using constCOMPVECVU = constvectorview <dcomplex>;
 using autoCOMPVEC = autovector <dcomplex>;
-inline autoCOMPVEC newCOMPVECraw (integer size) {
+inline autoCOMPVEC raw_COMPVEC (integer size) {
 	return newvectorraw <dcomplex> (size);
 }
-inline autoCOMPVEC newCOMPVECzero (integer size) {
+inline autoCOMPVEC zero_COMPVEC (integer size) {
 	return newvectorzero <dcomplex> (size);
 }
-inline autoCOMPVEC newCOMPVECcopy (constCOMPVECVU const& source) {
+inline autoCOMPVEC copy_COMPVEC (constCOMPVECVU const& source) {
 	return newvectorcopy (source);
 }
 
@@ -1374,10 +1374,10 @@ inline autoMAT raw_MAT (integer nrow, integer ncol) {
 inline autoMAT zero_MAT (integer nrow, integer ncol) {
 	return newmatrixzero <double> (nrow, ncol);
 }
-inline autoMAT newMATcopy (constMATVU source) {
+inline autoMAT copy_MAT (constMATVU source) {
 	return newmatrixcopy (source);
 }
-inline autoMAT newMATpart (const constMAT& source,
+inline autoMAT part_MAT (const constMAT& source,
 	integer firstRow, integer lastRow,
 	integer firstColumn, integer lastColumn
 ) {
@@ -1387,16 +1387,16 @@ inline autoMAT newMATpart (const constMAT& source,
 using TEN3 = tensor3 <double>;
 using constTEN3 = consttensor3 <double>;
 using autoTEN3 = autotensor3 <double>;
-inline autoTEN3 newTEN3raw (integer ndim1, integer ndim2, integer ndim3) {
+inline autoTEN3 raw_TEN3 (integer ndim1, integer ndim2, integer ndim3) {
 	return newtensor3raw <double> (ndim1, ndim2, ndim3);
 }
-inline autoTEN3 newTEN3zero (integer ndim1, integer ndim2, integer ndim3) {
+inline autoTEN3 zero_TEN3 (integer ndim1, integer ndim2, integer ndim3) {
 	return newtensor3zero <double> (ndim1, ndim2, ndim3);
 }
-inline autoTEN3 newTEN3copy (constTEN3 source) {
+inline autoTEN3 copy_TEN3 (constTEN3 source) {
 	return newtensor3copy (source);
 }
-inline autoTEN3 newTEN3part (const constTEN3& source,
+inline autoTEN3 part_TEN3 (const constTEN3& source,
 	integer firstDim1, integer lastDim1,
 	integer firstDim2, integer lastDim2,
 	integer firstDim3, integer lastDim3
@@ -1415,7 +1415,7 @@ inline autoINTMAT raw_INTMAT (integer nrow, integer ncol) {
 inline autoINTMAT zero_INTMAT (integer nrow, integer ncol) {
 	return newmatrixzero <integer> (nrow, ncol);
 }
-inline autoINTMAT newINTMATcopy (constINTMATVU source) {
+inline autoINTMAT copy_INTMAT (constINTMATVU source) {
 	return newmatrixcopy (source);
 }
 
@@ -1424,13 +1424,13 @@ using BOOLMATVU = matrixview <bool>;
 using constBOOLMAT = constmatrix <bool>;
 using constBOOLMATVU = constmatrixview <bool>;
 using autoBOOLMAT = automatrix <bool>;
-inline autoBOOLMAT newBOOLMATraw (integer nrow, integer ncol) {
+inline autoBOOLMAT raw_BOOLMAT (integer nrow, integer ncol) {
 	return newmatrixraw <bool> (nrow, ncol);
 }
-inline autoBOOLMAT newBOOLMATzero (integer nrow, integer ncol) {
+inline autoBOOLMAT zero_BOOLMAT (integer nrow, integer ncol) {
 	return newmatrixzero <bool> (nrow, ncol);
 }
-inline autoBOOLMAT newBOOLMATcopy (constBOOLMATVU source) {
+inline autoBOOLMAT copy_BOOLMAT (constBOOLMATVU source) {
 	return newmatrixcopy (source);
 }
 
@@ -1439,13 +1439,13 @@ using BYTEMATVU = matrixview <byte>;
 using constBYTEMAT = constmatrix <byte>;
 using constBYTEMATVU = constmatrixview <byte>;
 using autoBYTEMAT = automatrix <byte>;
-inline autoBYTEMAT newBYTEMATraw (integer nrow, integer ncol) {
+inline autoBYTEMAT raw_BYTEMAT (integer nrow, integer ncol) {
 	return newmatrixraw <byte> (nrow, ncol);
 }
-inline autoBYTEMAT newBYTEMATzero (integer nrow, integer ncol) {
+inline autoBYTEMAT zero_BYTEMAT (integer nrow, integer ncol) {
 	return newmatrixzero <byte> (nrow, ncol);
 }
-inline autoBYTEMAT newBYTEMATcopy (constBYTEMATVU source) {
+inline autoBYTEMAT copy_BYTEMAT (constBYTEMATVU source) {
 	return newmatrixcopy (source);
 }
 

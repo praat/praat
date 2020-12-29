@@ -4405,7 +4405,7 @@ DO
 
 DIRECT (NUMMAT_PatternList_getAllValues) {
 	NUMMAT_ONE (PatternList)
-		autoMAT result = newMATcopy (my z.all());
+		autoMAT result = copy_MAT (my z.all());
 	NUMMAT_ONE_END
 }
 

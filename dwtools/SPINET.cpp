@@ -139,7 +139,7 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	}
 	integer ifmin, ifmax;
 	SampledXY_getWindowSamplesY (me, fromErb, toErb, & ifmin, & ifmax);
-	autoVEC spec = newVECcolumn (enhanced ? my s.get() : my y.get(), icol);
+	autoVEC spec = column_VEC (enhanced ? my s.get() : my y.get(), icol);
 
 	if (maximum <= minimum)
 		NUMextrema (spec.part (ifmin, ifmax), & minimum, & maximum);

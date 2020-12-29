@@ -31,7 +31,7 @@ autoSSCP Eigen_SSCP_project (Eigen me, SSCP thee) {
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);
 		//Eigen_SSCP_into_SSCP_project (me, thee, him.get());
 		MATmul3_XYsXt (his data.get(), my eigenvectors.get(), thy data.get());
-		VECmul (his centroid.get(), my eigenvectors.get(), thy centroid.get());
+		mul_VEC_out (his centroid.get(), my eigenvectors.get(), thy centroid.get());
 		his numberOfObservations = SSCP_getNumberOfObservations (thee);
 		return him;
 	} catch (MelderError) {
@@ -45,7 +45,7 @@ autoCovariance Eigen_Covariance_project (Eigen me, Covariance thee) {
 			U"Dimensions should agree.");
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
 		MATmul3_XYsXt (his data.get(), my eigenvectors.get(), thy data.get());
-		VECmul (his centroid.get(), my eigenvectors.get(), thy centroid.get());
+		mul_VEC_out (his centroid.get(), my eigenvectors.get(), thy centroid.get());
 		his numberOfObservations = SSCP_getNumberOfObservations (thee);
 		return him;
 	} catch (MelderError) {

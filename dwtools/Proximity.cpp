@@ -113,8 +113,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			}
 		}
 
-		MATdoubleCentre_inplace (wdsqrt.get());
-		MATdoubleCentre_inplace (wd.get());
+		doubleCentre_MAT_inout (wdsqrt.get());
+		doubleCentre_MAT_inout (wd.get());
 		/*
 			Calculate the B matrix according to eq. 6
 		*/
@@ -136,7 +136,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			if (eigenvalues [i] .imag() == 0.0) {
 				++ numberOfRealEigenvalues;
 				if (eigenvalues [i] .real() > largestRealEigenvalue)
-					largestRealEigenvalue = eigenvalues [i] .real();
+					largestRealEigenvalue = eigenvalues [i].real();
 			}
 		}
 		

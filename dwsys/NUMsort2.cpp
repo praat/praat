@@ -223,7 +223,7 @@ void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool 
 	Melder_assert (a.size == iv1.size && a.size == iv2.size);
 	if (a.size == 1)
 		return;
-	autoVEC atmp = newVECcopy (a);
+	autoVEC atmp = copy_VEC (a);
 	autoINTVEC index = newINTVECindex (atmp.get());
 	if (descending)
 		for (integer j = 1; j <= a.size / 2; j ++)

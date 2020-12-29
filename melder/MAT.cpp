@@ -26,7 +26,7 @@
 	#include <OpenCL/opencl.h>
 #endif
 
-void MATcentreEachColumn_inplace (MATVU const& x) noexcept {
+void centreEachColumn_MAT_inout (MATVU const& x) noexcept {
 	for (integer icol = 1; icol <= x.ncol; icol ++) {
 		const double columnMean = NUMmean (x.column (icol));
 		for (integer irow = 1; irow <= x.nrow; irow ++)
@@ -34,17 +34,17 @@ void MATcentreEachColumn_inplace (MATVU const& x) noexcept {
 	}
 }
 
-void MATcentreEachRow_inplace (MATVU const& x) noexcept {
+void centreEachRow_MAT_inout (MATVU const& x) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		VECcentre_inplace (x [irow]);
+		centre_VEC_inout (x [irow]);
 }
 
-void MATdoubleCentre_inplace (MATVU const& x) noexcept {
-	MATcentreEachRow_inplace (x);
-	MATcentreEachColumn_inplace (x);
+void doubleCentre_MAT_inout (MATVU const& x) noexcept {
+	centreEachRow_MAT_inout (x);
+	centreEachColumn_MAT_inout (x);
 }
 
-void MATmtm (MATVU const& target, constMATVU const& x) noexcept {
+void mtm_MAT_out (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (target.nrow == x.ncol);
 	Melder_assert (target.ncol == x.ncol);
 	#if 0
@@ -82,7 +82,7 @@ void MATmtm (MATVU const& target, constMATVU const& x) noexcept {
 	#endif
 }
 
-void MATmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+void _mul_MAT_out (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	/*
 		Precise matrix multiplication, using pairwise summation.
 	*/
@@ -163,7 +163,7 @@ void MATmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noe
 	}
 }
 
-void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
+void _mul_forceAllocation_MAT_out (MATVU const& target, constMATVU x, constMATVU y) {
 	/*
 		As seen above, the only multiplication that stays fast for large sizes,
 		if X and Y are packed row-major matrices, is X.Y';
@@ -190,7 +190,7 @@ void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 	*/
 	autoMAT tmpX, tmpY;   // the scope shall extend to the end of the function
 	if (x.colStride != 1) {
-		tmpX = newMATcopy (x);
+		tmpX = copy_MAT (x);
 		x = tmpX.all();
 		Melder_assert (x.colStride == 1);
 	}
@@ -212,9 +212,9 @@ void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 	}
 }
 
-void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
+void _mul_allowAllocation_MAT_out (MATVU const& target, constMATVU x, constMATVU y) {
 	/*
-		The faster of MATmul_ and MATmul_forceAllocation.
+		The faster of _mul_MAT_out and _mul_forceAllocation_MAT_out.
 		Allocation takes place only for larger matrices, e.g. from size 47 on
 		(100,000 flops).
 
@@ -282,7 +282,7 @@ void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 		}
 	} else if (y.rowStride == 1) {
 		if (double (target.nrow) * double (target.ncol) * double (x.ncol) > 1e5) {
-			autoMAT tmpX = newMATcopy (x);
+			autoMAT tmpX = copy_MAT (x);
 			x = tmpX.all();
 			Melder_assert (x.colStride == 1);
 			for (integer irow = 1; irow <= target.nrow; irow ++) {
@@ -311,7 +311,7 @@ void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 		}
 	} else {
 		if (double (target.nrow) * double (target.ncol) * double (x.ncol) > 1e5) {
-			autoMAT tmpX = newMATcopy (x);
+			autoMAT tmpX = copy_MAT (x);
 			x = tmpX.all();
 			Melder_assert (x.colStride == 1);
 			autoMAT tmpY = transpose_MAT (y);
@@ -357,7 +357,7 @@ static inline void MATmul_rough_naiveReferenceImplementation (MATVU const& targe
 		}
 	}
 }
-void MATmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+void _mul_fast_MAT_out (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	if ((false)) {
 		MATmul_rough_naiveReferenceImplementation (target, x, y);
 	} else if (y.colStride == 1) {
@@ -427,7 +427,7 @@ void MATmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y
 					X.Y'
 				The speed is 0.064, 1.18, 1.67, 1.69 Gflop/s for size = 1,10,100,1000.
 			*/
-			MATmul_ (target, x, y);
+			_mul_MAT_out (target, x, y);
 		} else {
 			/*
 				This case will be appropriate for the multiplication of full matrices
@@ -675,7 +675,7 @@ void MATmul_forceMetal_ (MATVU const& target, constMATVU const& x, constMATVU co
 		return;
 	}
 #else
-	MATmul(target, x, y);
+	mul_MAT_out (target, x, y);
 #endif
 }
 
@@ -751,22 +751,22 @@ void MATmul_forceOpenCL_ (MATVU const& target, constMATVU const& x, constMATVU c
     free(C);
     #endif
 #else
-	MATmul(target, x, y);
+	mul_MAT_out (target, x, y);
 #endif
 }
 
-void MATouter (MATVU const& target, constVECVU const& x, constVECVU const& y) {
+void outer_MAT_out (MATVU const& target, constVECVU const& x, constVECVU const& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
 			target [irow] [icol] = x [irow] * y [icol];
 }
-autoMAT newMATouter (constVECVU const& x, constVECVU const& y) {
+autoMAT outer_MAT (constVECVU const& x, constVECVU const& y) {
 	autoMAT result = raw_MAT (x.size, y.size);
-	MATouter (result.get(), x, y);
+	outer_MAT_out (result.get(), x, y);
 	return result;
 }
 
-autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT peaks_MAT (constVECVU const& x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) includeEdges = false;
 	integer numberOfPeaks = 0;
 	for (integer i = 2; i < x.size; i ++)
@@ -821,9 +821,9 @@ autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bo
 	return result;
 }
 
-void MATpower (MATVU const& target, constMATVU const& mat, double power) {
+void power_MAT_out (MATVU const& target, constMATVU const& mat, double power) {
 	for (integer irow = 1; irow <= target.nrow; irow ++)
-		VECpower (target.row (irow), mat.row (irow), power);
+		power_VEC_out (target.row (irow), mat.row (irow), power);
 }
 
 /* End of file MAT.cpp */

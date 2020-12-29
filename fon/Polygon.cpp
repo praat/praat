@@ -233,7 +233,7 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 		for (integer i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
 		path [numberOfCities + 1] = 1;   // close path
-		autoINTVEC shortestPath = newINTVECcopy (path.all());
+		autoINTVEC shortestPath = copy_INTVEC (path.all());
 		for (integer iteration = 1; iteration <= numberOfIterations; iteration ++) {
 			if (iteration > 1)
 				shuffle (path.all());

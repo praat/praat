@@ -439,7 +439,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			NUMfft_forward (& fftTable, fftbuf.get());
 			complexfftoutput_to_power (fftbuf.get(), spectrum.get(), true); // log10(|fft|^2)
 		
-			VECcentre_inplace (spectrum.get()); // subtract average
+			centre_VEC_inout (spectrum.get()); // subtract average
 			/*
 			 * Here we diverge from Hillenbrand as he takes the fft of half of the spectral values.
 			 * H. forgets that the actual spectrum has nfft/2+1 values. Thefore, we take the inverse

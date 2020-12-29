@@ -305,8 +305,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_INNER: {
 			integer size = Melder_atoi (arg2);
-			autoVEC x = newVECrandomGauss (size, 0.0, 1.0);
-			autoVEC y = newVECrandomGauss (size, 0.0, 1.0);
+			autoVEC x = randomGauss_VEC (size, 0.0, 1.0);
+			autoVEC y = randomGauss_VEC (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++)
 				z += NUMinner (x.get(), y.get());
@@ -315,10 +315,10 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_OUTER_NUMMAT: {
 			integer nrow = 100, ncol = 100;
-			autoVEC x = newVECrandomGauss (nrow, 0.0, 1.0);
-			autoVEC y = newVECrandomGauss (ncol, 0.0, 1.0);
+			autoVEC x = randomGauss_VEC (nrow, 0.0, 1.0);
+			autoVEC y = randomGauss_VEC (ncol, 0.0, 1.0);
 			for (int64 i = 1; i <= n; i ++)
-				const autoMAT mat = newMATouter (x.get(), y.get());
+				const autoMAT mat = outer_MAT (x.get(), y.get());
 			t = Melder_stopwatch () / nrow / ncol;   // 6.1 Gops, i.e. less than one clock cycle per cell
 		} break;
 		case kPraatTests::CHECK_INVFISHERQ: {
@@ -348,7 +348,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SUM: {
 			integer size = Melder_atoi (arg2);
-			autoVEC x = newVECrandomGauss (size, 0.0, 1.0);
+			autoVEC x = randomGauss_VEC (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				double sum = NUMsum (x.get());
@@ -359,7 +359,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_MEAN: {
 			integer size = Melder_atoi (arg2);
-			autoVEC x = newVECrandomGauss (size, 0.0, 1.0);
+			autoVEC x = randomGauss_VEC (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				double sum = NUMmean (x.get());
@@ -370,7 +370,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_STDEV: {
 			integer size = 10000;
-			autoVEC x = newVECrandomGauss (size, 0.0, 1.0);
+			autoVEC x = randomGauss_VEC (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				double stdev = NUMstdev (x.get());
@@ -433,7 +433,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_ADD: {
 			integer size = Melder_atoi (arg2);
-			autoMAT result = newMATrandomGauss (size, size, 0.0, 1.0);
+			autoMAT result = randomGauss_MAT (size, size, 0.0, 1.0);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				result.all() <<= 5.0;
@@ -443,22 +443,22 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SIN: {
 			integer size = Melder_atoi (arg2);
-			autoMAT result = newMATrandomGauss (size, size, 0.0, 1.0);
+			autoMAT result = randomGauss_MAT (size, size, 0.0, 1.0);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				MATsin_inplace (result.get());
+				sin_MAT_inout (result.get());
 			t = Melder_stopwatch () / size / size;   // 10^0..4: 18/5.3/5.2 / 5.3/12
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::TIME_VECADD: {
 			integer size = Melder_atoi (arg2);
-			autoVEC x = newVECrandomGauss (size, 0.0, 1.0);
-			autoVEC y = newVECrandomGauss (size, 0.0, 1.0);
+			autoVEC x = randomGauss_VEC (size, 0.0, 1.0);
+			autoVEC y = randomGauss_VEC (size, 0.0, 1.0);
 			autoVEC result = raw_VEC (size);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				//VECadd (result.all(), x.all(), y.all());
+				//add_VEC_out (result.all(), x.all(), y.all());
 				result.all() <<= x.all() + y.all();
 			t = Melder_stopwatch () / size;
 			double sum = NUMsum (result.get());
@@ -469,8 +469,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			integer size2 = Melder_atoi (arg3);
 			integer size3 = Melder_atoi (arg4);
 			if (size2 == 0 || size3 == 0) size3 = size2 = size1;
-			//autoMAT const x = newMATrandomGauss (size1, size2, 0.0, 1.0);
-			//autoMAT const y = newMATrandomGauss (size2, size3, 0.0, 1.0);
+			//autoMAT const x = randomGauss_MAT (size1, size2, 0.0, 1.0);
+			//autoMAT const y = randomGauss_MAT (size2, size3, 0.0, 1.0);
 			autoMAT x = constantHH (size1, size2, 10.0);
 			autoMAT y = constantHH (size2, size3, 3.0);
 			autoMAT const result = raw_MAT (size1, size3);
@@ -482,7 +482,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				//MATmul_forceMetal_ (result_all, x_all, y_all);
-				MATmul_allowAllocation_ (result_all, x_all, y_all);
+				_mul_allowAllocation_MAT_out (result_all, x_all, y_all);
 			const integer numberOfComputations = size1 * size2 * size3 * 2;
 			t = Melder_stopwatch () / numberOfComputations;
 			const double sum = NUMsum (result.get());

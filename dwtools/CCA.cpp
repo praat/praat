@@ -120,8 +120,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		
 		// Centre the data and svd it.
 
-		MATcentreEachColumn_inplace (svdy -> u.get());
-		MATcentreEachColumn_inplace (svdx -> u.get());
+		centreEachColumn_MAT_inout (svdy -> u.get());
+		centreEachColumn_MAT_inout (svdx -> u.get());
 
 		SVD_compute (svdy.get());
 		SVD_compute (svdx.get());
@@ -132,7 +132,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		// Form the matrix C = ux' uy (use svd-object storage)
 
 		autoSVD svdc = SVD_create (numberOfIndependents, numberOfDependents);
-		MATmul_fast (svdc -> u.get(), svdx -> u.transpose(), svdy -> u.get());
+		mul_fast_MAT_out (svdc -> u.get(), svdx -> u.transpose(), svdy -> u.get());
 		SVD_compute (svdc.get());
 		const integer numberOfZeroedc = SVD_zeroSmallSingularValues (svdc.get(), 0.0);
 		const integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;
@@ -198,8 +198,8 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		his rowLabels.all() <<= thy rowLabels.all();
 		
-		MATmul (his data.verticalBand (1, numberOfFactors), thy data.verticalBand (1, nx), my y -> eigenvectors.horizontalBand(1, numberOfFactors).transpose ());
-		MATmul (his data.verticalBand (numberOfFactors + 1, 2 * numberOfFactors), thy data.verticalBand (nx + 1, nx + ny), my x -> eigenvectors.horizontalBand(1, numberOfFactors).transpose());
+		mul_MAT_out (his data.verticalBand (1, numberOfFactors), thy data.verticalBand (1, nx), my y -> eigenvectors.horizontalBand(1, numberOfFactors).transpose ());
+		mul_MAT_out (his data.verticalBand (numberOfFactors + 1, 2 * numberOfFactors), thy data.verticalBand (nx + 1, nx + ny), my x -> eigenvectors.horizontalBand(1, numberOfFactors).transpose());
 		
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);
 		TableOfReal_setSequentialColumnLabels (him.get(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
@@ -231,7 +231,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 			U"The number of columns to analyze should be equal to ", nx, U".");
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, ny);
-		MATmul (his data.get(), thy data.verticalBand (from, thy numberOfColumns), my x -> eigenvectors.transpose());
+		mul_MAT_out (his data.get(), thy data.verticalBand (from, thy numberOfColumns), my x -> eigenvectors.transpose());
 		his rowLabels.all() <<= thy rowLabels.all();
 		
 		autoVEC buf = raw_VEC (ny);
@@ -314,9 +314,9 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		/*
 			Copy Syy and Sxx into upper part of syy and sxx matrices.
 		*/
-		autoMAT syy = newMATpart (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
-		autoMAT sxx = newMATpart (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
-		autoMAT syx = newMATpart (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
+		autoMAT syy = part_MAT (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
+		autoMAT sxx = part_MAT (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
+		autoMAT syx = part_MAT (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
 		/*
 			Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
 			(Pretend as if colum-major storage)
@@ -366,11 +366,11 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		/*
 			Prepare Uxi' * Syx' = (Syx * Uxi)'
 		*/
-		autoMAT a = newMATmul (sxx.transpose(), syx.transpose());
+		autoMAT a = mul_MAT (sxx.transpose(), syx.transpose());
 		Melder_assert (a.nrow == nx && a.ncol == ny);
 
 		autoGSVD gsvd = GSVD_create (a.get(), syy.get());
-		autoMAT ri = newMATcopy (gsvd -> r.get());
+		autoMAT ri = copy_MAT (gsvd -> r.get());
 		
 		autoCCA thee = Thing_new (CCA);
 

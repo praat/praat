@@ -477,8 +477,8 @@ void Graphics_grey (Graphics me, constMATVU const& z,
 	xoff = x1WC - dx;
 	yoff = y1WC - dy;
 	if (NUMisEmpty (right.get())) {
-		right = newBOOLMATzero (MAXGREYSIDE, MAXGREYSIDE);   // BUG memory
-		below = newBOOLMATzero (MAXGREYSIDE, MAXGREYSIDE);
+		right = zero_BOOLMAT (MAXGREYSIDE, MAXGREYSIDE);   // BUG memory
+		below = zero_BOOLMAT (MAXGREYSIDE, MAXGREYSIDE);
 		x = zero_VEC (MAXGREYPATH);
 		y = zero_VEC (MAXGREYPATH);
 		edgeContours = Melder_calloc (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;

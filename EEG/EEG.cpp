@@ -210,7 +210,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		his numberOfChannels = numberOfChannels;
 		autoSound me = Sound_createSimple (numberOfChannels, duration, samplingFrequency);
 		Melder_assert (my nx == numberOfSamplesPerDataRecord * numberOfDataRecords);
-		autoBYTEVEC dataBuffer = newBYTEVECzero (3 * numberOfSamplesPerDataRecord);
+		autoBYTEVEC dataBuffer = zero_BYTEVEC (3 * numberOfSamplesPerDataRecord);
 		for (integer record = 1; record <= numberOfDataRecords; record ++) {
 			for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = ( channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel] );

@@ -246,7 +246,7 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 		my alpha = zero_MAT (nstates, capacity);
 		my beta = zero_MAT (nstates, capacity);
 		my scale = zero_VEC (capacity);
-		my xi = newTEN3zero (capacity, nstates, nstates); // TEN3
+		my xi = zero_TEN3 (capacity, nstates, nstates); // TEN3
 		my aij_num_p0 = zero_VEC (nstates + 1);
 		my aij_num = zero_MAT (nstates, nstates + 1);
 		my aij_denom_p0 = zero_VEC (nstates + 1);

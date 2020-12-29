@@ -408,7 +408,7 @@ void Vector_addScalar (Vector me, double scalar) {
 
 void Vector_subtractMean (Vector me) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++)
-		VECcentre_inplace (my channel (ichan));
+		centre_VEC_inout (my channel (ichan));
 }
 
 void Vector_multiplyByScalar (Vector me, double scalar) {

@@ -106,7 +106,7 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 		
 	if (out_eigenvalues) {
 		numberOfEigenvalues -= istart;
-		autoCOMPVEC eigenvalues = newCOMPVECraw (numberOfEigenvalues); // vec in column
+		autoCOMPVEC eigenvalues = raw_COMPVEC (numberOfEigenvalues); // vec in column
 		for (integer ival = 1; ival <= numberOfEigenvalues; ival ++) {
 			eigenvalues [ival] .real (eigenvalues_re [istart + ival]);
 			eigenvalues [ival] .imag (eigenvalues_im [istart + ival]);
@@ -143,7 +143,7 @@ void MAT_asPrincipalComponents_preallocated (MATVU result, constMATVU const& m, 
 	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
 	Melder_assert (result.nrow == m.nrow && result.ncol == numberOfComponents);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
-	MATmul (result, m, svd -> v.verticalBand (1, result.ncol));
+	mul_MAT_out (result, m, svd -> v.verticalBand (1, result.ncol));
 }
 
 autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents) {

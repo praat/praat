@@ -359,7 +359,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		const integer nrow = my numberOfRows, ncol = my numberOfColumns;
 		const integer dimmin = std::min (nrow, ncol);
 
-		autoMAT h = newMATcopy (my data.get());
+		autoMAT h = copy_MAT (my data.get());
 		autoVEC rowsum = rowSums_VEC (my data.get());
 		autoVEC colsum = columnSums_VEC (my data.get());
 		autoConfiguration thee = Configuration_create (nrow + ncol, numberOfDimensions);
@@ -675,7 +675,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, integer sy
 				for (integer j = i + 1; j <= nxy; j ++)
 					thy data [i] [j] = thy data [j] [i] = (thy data [i] [j] + thy data [j] [i]) / 2;
 		} else if (symmetrizeMethod == 3) {   // method Houtgast
-			autoMAT p = newMATcopy (thy data.get());
+			autoMAT p = copy_MAT (thy data.get());
 			for (integer i = 1; i <= nxy; i ++) {
 				for (integer j = i; j <= nxy; j ++) {
 					longdouble tmp = 0;
@@ -1066,7 +1066,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		*/
 		
 		autoMAT yinv = newMATpseudoInverse (y.get(), 1e-14);
-		autoTEN3 ci = newTEN3raw (numberOfSources, numberOfDimensions, numberOfDimensions);
+		autoTEN3 ci = raw_TEN3 (numberOfSources, numberOfDimensions, numberOfDimensions);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			const ScalarProduct sp = my at [i];
@@ -1109,7 +1109,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		autoMAT K;
 		MAT_getEigenSystemFromSymmetricMatrix (cl.get(), & K, nullptr, false);
 
-		MATmul (thy data.get(), y.get(), K.get()); // Y.K
+		mul_MAT_out (thy data.get(), y.get(), K.get()); // Y.K
 
 		Configuration_normalize (thee.get(), 0, true);
 
@@ -1752,7 +1752,7 @@ static double func (Daata object, VEC const& p) {
 		normalize the configuration
 	*/
 	MATfromVEC_inplace (x, p);
-	MATcentreEachColumn_inplace (x);
+	centreEachColumn_MAT_inout (x);
 	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
 	/*
 		Calculate interpoint distances from the configuration
@@ -1885,7 +1885,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			normalize the solution: centre and x'x = 1
 		*/
 		double mean;
-		VECcentre_inplace (solution.get(), & mean);
+		centre_VEC_inout (solution.get(), & mean);
 		if (mean == 0.0)
 			continue;
 		VECnormalize_inplace (solution.get(), 2.0, 1.0);
@@ -2056,7 +2056,7 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, kMDS_TiesHandling tiesHandling) {
 	try {
-		autoVEC w = newVECcopy (conf -> w.get());
+		autoVEC w = copy_VEC (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
 			conf -> w.all() <<= weights -> data.row (i);
@@ -2251,7 +2251,7 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 }
 
 void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *out_varianceAccountedFor) {
-	autoVEC w = newVECcopy (thy w.get()); // save weights
+	autoVEC w = copy_VEC (thy w.get()); // save weights
 	try {
 		Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns,
 			U"Dimensions should agree.");

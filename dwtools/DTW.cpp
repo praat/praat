@@ -1207,7 +1207,7 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
 		Melder_require (localSlope > 0 && localSlope < 5,
 			U"Local slope parameter ", localSlope, U" not supported.");
 
-		autoMAT delta = newMATcopy (my z.get());
+		autoMAT delta = copy_MAT (my z.get());
 		autoINTMAT psi = zero_INTMAT (my ny, my nx);
 		/*
 			Start by making the outside unreachable.

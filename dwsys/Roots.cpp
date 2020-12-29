@@ -52,7 +52,7 @@ autoRoots Roots_create (integer numberOfRoots) {
 	try {
 		autoRoots me = Thing_new (Roots);
 		my numberOfRoots = numberOfRoots;
-		my roots = newCOMPVECzero (numberOfRoots);
+		my roots = zero_COMPVEC (numberOfRoots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Roots not created.");

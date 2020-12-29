@@ -444,7 +444,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 	const double lineSpacing = getLineSpacing (graphics);   // not earlier!
 	const double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 	double y = 1.0 + 0.1 * lineSpacing;
-	autoBOOLMAT onPath = newBOOLMATzero (my numberOfRows, my numberOfColumns);
+	autoBOOLMAT onPath = zero_BOOLMAT (my numberOfRows, my numberOfColumns);
 	for (integer i = 1; i <= my warpingPath -> pathLength; i ++) {
 		const structPairOfInteger poi = my warpingPath -> path [i];
 		onPath [poi.y] [poi.x] = true;

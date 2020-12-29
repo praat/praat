@@ -126,7 +126,7 @@ double SVD_getTolerance (SVD me) {
 
 void SVD_compute (SVD me) {
 	try {
-		autoMAT a = newMATcopy (my u.get());
+		autoMAT a = copy_MAT (my u.get());
 		integer m = my numberOfColumns; // number of rows of input matrix
 		integer n = my numberOfRows; // number of columns of input matrix
 		double wtmp;
@@ -186,7 +186,7 @@ void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result) {
 			for (integer j = 1; j <= my numberOfColumns; j ++)
 				if (my d [j] > 0.0)
 					t [j] = NUMinner (my u.column (j), b) / my d [j];
-			VECmul (result, my v.get(), t.get());
+			mul_VEC_out (result, my v.get(), t.get());
 		} else {
 			/*
 				Solve (UDV')' x = b or VDU' x = b.
@@ -322,9 +322,9 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			if (my isTransposed)
-				MATouter (outer.get(), my v.column(k), my u.column(k));
+				outer_MAT_out (outer.get(), my v.column(k), my u.column(k));
 			else
-				MATouter (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
+				outer_MAT_out (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
 			result.get()  +=  outer.get()  *  my d [k];
 		}
 		return result;
