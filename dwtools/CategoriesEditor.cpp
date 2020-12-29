@@ -316,7 +316,7 @@ static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststrin
 	my nSelected = nSelected;
 	Command_init (me, name, boss, execute, undo);
 	my categories = Categories_create();
-	my selection = newINTVECzero (nSelected);
+	my selection = zero_INTVEC (nSelected);
 }
 
 #pragma mark Insert

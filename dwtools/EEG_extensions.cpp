@@ -39,7 +39,7 @@ static autoEEG EEG_copyWithoutSound (EEG me) {
 
 static autoINTVEC EEG_channelNames_to_channelNumbers (EEG me, constSTRVEC const& channelNames) {
 	try {
-		autoINTVEC channelNumbers = newINTVECzero (channelNames.size);
+		autoINTVEC channelNumbers = zero_INTVEC (channelNames.size);
 		for (integer i = 1; i <= channelNames.size; i ++) {
 			for (integer j = 1; j <= my numberOfChannels; j ++)
 				if (Melder_equ (channelNames [i], my channelNames [j].get()))

@@ -60,7 +60,7 @@ void Index_init (Index me, integer numberOfItems) {
 		U"The index should not be empty.");
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;
-	my classIndex = newINTVECzero (numberOfItems);
+	my classIndex = zero_INTVEC (numberOfItems);
 }
 
 autoIndex Index_extractPart (Index me, integer from, integer to) {

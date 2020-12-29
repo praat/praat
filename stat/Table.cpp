@@ -722,7 +722,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			Set the column names. Within the dependent variables, the same name may occur more than once.
 		*/
-		autoINTVEC columns = newINTVECzero (thy numberOfColumns);
+		autoINTVEC columns = zero_INTVEC (thy numberOfColumns);
 		{
 			integer icol = 0;
 			for (integer i = 1; i <= factors.size; i ++) {
@@ -932,7 +932,7 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Get the column numbers for the factors.
 		*/
-		autoINTVEC factorColumns = newINTVECzero (numberOfFactors);
+		autoINTVEC factorColumns = zero_INTVEC (numberOfFactors);
 		for (integer ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 			factorColumns [ifactor] = Table_findColumnIndexFromColumnLabel (me, factors_names [ifactor].get());
 			/*
@@ -943,7 +943,7 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Get the column numbers for the expandable variables.
 		*/
-		autoINTVEC columnsToExpand = newINTVECzero (numberToExpand);
+		autoINTVEC columnsToExpand = zero_INTVEC (numberToExpand);
 		for (integer iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 			columnsToExpand [iexpand] = Table_findColumnIndexFromColumnLabel (me, columnsToExpand_names [iexpand].get());
 			Table_numericize_checkDefined (me, columnsToExpand [iexpand]);

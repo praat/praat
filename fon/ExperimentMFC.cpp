@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2009,2011-2013,2015-2019 Paul Boersma
+ * Copyright (C) 2001-2009,2011-2013,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,8 +183,8 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		my playBuffer.reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
-		my stimuli = newINTVECzero (my numberOfTrials);
-		my responses = newINTVECzero (my numberOfTrials);
+		my stimuli = zero_INTVEC (my numberOfTrials);
+		my responses = zero_INTVEC (my numberOfTrials);
 		my goodnesses = zero_VEC (my numberOfTrials);
 		my reactionTimes = zero_VEC (my numberOfTrials);
 		/*

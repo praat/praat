@@ -315,8 +315,8 @@ static void grind (ManPages me) {
 	qsort (& my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
-		page -> linksHither = newINTVECzero (0);   // superfluous if not ground twice
-		page -> linksThither = newINTVECzero (0);   // superfluous if not ground twice
+		page -> linksHither = zero_INTVEC (0);   // superfluous if not ground twice
+		page -> linksThither = zero_INTVEC (0);   // superfluous if not ground twice
 	}
 	integer ndangle = 0;
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {

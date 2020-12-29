@@ -1,6 +1,6 @@
 /* OTMulti_ex_metrics.cpp
  *
- * Copyright (C) 2014-2019 Paul Boersma
+ * Copyright (C) 2014-2020 Paul Boersma
  * Forked from OTGrammar_ex_metrics.cpp, Copyright (C) 2001-2007,2009,2011,2012 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
@@ -219,7 +219,7 @@ static void computeViolationMarks (OTCandidate me) {
 	#define isStress(s)  ((s) == U'1' || (s) == U'2')
 	const char32 * const firstSlash = str32chr (my string.get(), U'/');
 	const char32 * const lastSlash = str32chr (firstSlash + 1, U'/');
-	my marks = newINTVECzero (my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
+	my marks = zero_INTVEC (my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
 	/* Violations of WSP: count all H not followed by 1 or 2. */
 	for (const char32 *p = firstSlash + 1; p != lastSlash; p ++) {
 		if (isHeavy (p [0]) && ! isStress (p [1]))

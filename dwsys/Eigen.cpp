@@ -152,7 +152,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoVEC alpha = newVECraw (n);
 	autoVEC beta = newVECraw (n);
 	autoVEC work = newVECraw (lwork);
-	autoINTVEC iwork = newINTVECzero (n);
+	autoINTVEC iwork = zero_INTVEC (n);
 	autoMAT q = newMATraw (n, n);
 	autoMAT ac = newMATtranspose (a);
 	autoMAT bc = newMATtranspose (b);

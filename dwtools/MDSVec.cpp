@@ -52,8 +52,8 @@ autoMDSVec MDSVec_create (integer numberOfPoints) {
 		my numberOfPoints = numberOfPoints;
 		my numberOfProximities = numberOfPoints * (numberOfPoints - 1) / 2;
 		my proximity = zero_VEC (my numberOfProximities);
-		my rowIndex = newINTVECzero (my numberOfProximities);
-		my columnIndex = newINTVECzero (my numberOfProximities);
+		my rowIndex = zero_INTVEC (my numberOfProximities);
+		my columnIndex = zero_INTVEC (my numberOfProximities);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MDSVec not created.");

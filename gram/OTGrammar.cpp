@@ -284,7 +284,7 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 					U" (input: ", tableau -> input.get(), U") in line ", MelderReadText_getLineNumber (text), U".");
 			}
 			candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
-			candidate -> marks = newINTVECzero (candidate -> numberOfConstraints);
+			candidate -> marks = zero_INTVEC (candidate -> numberOfConstraints);
 			for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
 				try {
 					candidate -> marks [icons] = texgeti16 (text);

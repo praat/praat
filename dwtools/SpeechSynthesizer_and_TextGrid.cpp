@@ -708,8 +708,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 	try {
 		const integer numberOfTargetIntervals = target -> intervals.size;
 		const integer numberOfSourceIntervals = source -> intervals.size;
-		autoINTVEC targetOrigin = newINTVECzero (numberOfTargetIntervals);
-		autoINTVEC sourceOrigin = newINTVECzero (numberOfSourceIntervals);
+		autoINTVEC targetOrigin = zero_INTVEC (numberOfTargetIntervals);
+		autoINTVEC sourceOrigin = zero_INTVEC (numberOfSourceIntervals);
 		autoStrings targets = IntervalTier_to_Strings_withOriginData (target, targetOrigin.get());
 		autoStrings sources = IntervalTier_to_Strings_withOriginData (source, sourceOrigin.get());
 		autoEditDistanceTable edit = EditDistanceTable_create (targets.get(), sources.get());

@@ -69,7 +69,7 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	autoFormantPath me = Thing_new (FormantPath);
 	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
 	my ceilings = zero_VEC (numberOfCeilings);
-	my path = newINTVECzero (nx);
+	my path = zero_INTVEC (nx);
 	return me;
 }
 
@@ -112,7 +112,7 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			delta [i][j] = minimum cost to reach state i at time j
 		*/
 		MAT delta (& thy z[1][1], thy ny, thy nx);
-		autoINTVEC path = newINTVECzero (my nx);
+		autoINTVEC path = zero_INTVEC (my nx);
 		autoVEC intensity = newVECraw (my nx);
 		/*
 			We have a trellis of size S x T, where S is the number of states, i.e. the number of formant objects,

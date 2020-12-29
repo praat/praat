@@ -933,7 +933,7 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 		if (numberOfFormantObjects == 1)
 			return 1;
 		autoINTVEC numberOfFormants = newINTVECraw (numberOfFormantObjects);
-		autoINTVEC invalid = newINTVECzero (numberOfFormantObjects);
+		autoINTVEC invalid = zero_INTVEC (numberOfFormantObjects);
 		double tminf = 0.0, tmaxf = 0.0;
 		for (integer iobject = 1; iobject <= numberOfFormantObjects; iobject ++) {
 			// Check that all Formants have the same domain

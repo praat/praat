@@ -528,7 +528,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			}
 			arg -> rbuffer = zero_VEC (2 * nsamp_window + 1);
 			arg -> r = & arg -> rbuffer [1 + nsamp_window];
-			arg -> imax = newINTVECzero (maxnCandidates);
+			arg -> imax = zero_INTVEC (maxnCandidates);
 			arg -> localMean = zero_VEC (my ny);
 			args [ithread - 1] = std::move (arg);
 			firstFrame = lastFrame + 1;

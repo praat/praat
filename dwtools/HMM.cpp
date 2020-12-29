@@ -276,7 +276,7 @@ autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes) {
 		my numberOfStates = nstates;
 		my viterbi = newMATzero (nstates, ntimes);
 		my bp = newINTMATzero (nstates, ntimes);
-		my path = newINTVECzero (ntimes);
+		my path = zero_INTVEC (ntimes);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMViterbi not created.");

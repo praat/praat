@@ -1311,7 +1311,7 @@ using autoINTVEC = autovector <integer>;
 inline autoINTVEC newINTVECraw (integer size) {
 	return newvectorraw <integer> (size);
 }
-inline autoINTVEC newINTVECzero (integer size) {
+inline autoINTVEC zero_INTVEC (integer size) {
 	return newvectorzero <integer> (size);
 }
 inline autoINTVEC newINTVECcopy (constINTVECVU const& source) {

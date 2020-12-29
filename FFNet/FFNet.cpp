@@ -141,12 +141,12 @@ static void bookkeeping (FFNet me) {
 		my w = zero_VEC (my numberOfWeights);
 
 	my activity = zero_VEC (my numberOfNodes);
-	my isbias = newINTVECzero (my numberOfNodes);
-	my nodeFirst = newINTVECzero (my numberOfNodes);
-	my nodeLast = newINTVECzero (my numberOfNodes);
-	my wFirst = newINTVECzero (my numberOfNodes);
-	my wLast = newINTVECzero (my numberOfNodes);
-	my wSelected = newINTVECzero (my numberOfWeights);
+	my isbias = zero_INTVEC (my numberOfNodes);
+	my nodeFirst = zero_INTVEC (my numberOfNodes);
+	my nodeLast = zero_INTVEC (my numberOfNodes);
+	my wFirst = zero_INTVEC (my numberOfNodes);
+	my wLast = zero_INTVEC (my numberOfNodes);
+	my wSelected = zero_INTVEC (my numberOfWeights);
 	my error = zero_VEC (my numberOfNodes);
 	my deriv = zero_VEC (my numberOfNodes);
 	my dwi = zero_VEC (my numberOfWeights);
@@ -205,7 +205,7 @@ void FFNet_init (FFNet me, integer numberOfInputs, integer nodesInLayer1, intege
 	if (nodesInLayer2 < 1)
 		numberOfLayers --;
 	my numberOfLayers = numberOfLayers;
-	my numberOfUnitsInLayer = newINTVECzero (numberOfLayers);
+	my numberOfUnitsInLayer = zero_INTVEC (numberOfLayers);
 
 	my numberOfUnitsInLayer [numberOfLayers --] = numberOfOutputs;
 	if (nodesInLayer2 > 0)

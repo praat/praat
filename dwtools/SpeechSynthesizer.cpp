@@ -64,19 +64,19 @@ autoEspeakVoice EspeakVoice_create () {
 		autoEspeakVoice me = Thing_new (EspeakVoice);
 		my numberOfFormants = 9; // equals N_PEAKS 
 		my numberOfKlattParameters = 8;
-		my klattv = newINTVECzero (my numberOfKlattParameters);
-		my freq = newINTVECzero (my numberOfFormants);
-		my height = newINTVECzero (my numberOfFormants);	// 100% = 256
-		my width = newINTVECzero (my numberOfFormants);		// 100% = 256
-		my freqadd = newINTVECzero (my numberOfFormants);	// Hz
+		my klattv = zero_INTVEC (my numberOfKlattParameters);
+		my freq = zero_INTVEC (my numberOfFormants);
+		my height = zero_INTVEC (my numberOfFormants);	// 100% = 256
+		my width = zero_INTVEC (my numberOfFormants);		// 100% = 256
+		my freqadd = zero_INTVEC (my numberOfFormants);	// Hz
 
 		// copies without temporary adjustments from embedded commands
-		my freq2 = newINTVECzero (my numberOfFormants);		// 100% = 256
-		my height2 = newINTVECzero (my numberOfFormants);	// 100% = 256
-		my width2 = newINTVECzero (my numberOfFormants);	// 100% = 256
+		my freq2 = zero_INTVEC (my numberOfFormants);		// 100% = 256
+		my height2 = zero_INTVEC (my numberOfFormants);	// 100% = 256
+		my width2 = zero_INTVEC (my numberOfFormants);	// 100% = 256
 
-		my breath = newINTVECzero (my numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
-		my breathw = newINTVECzero (my numberOfFormants);	// width of each breath formant
+		my breath = zero_INTVEC (my numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
+		my breathw = zero_INTVEC (my numberOfFormants);	// width of each breath formant
 		my numberOfToneAdjusts = 1000; // equals N_TONE_ADJUST in voice.h
 		my tone_adjust = newvectorzero<unsigned char> (my numberOfToneAdjusts);
 		EspeakVoice_setDefaults (me.get());
