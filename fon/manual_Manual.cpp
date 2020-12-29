@@ -52,7 +52,7 @@ ENTRY (U"Your own manual pages")
 NORMAL (U"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (U"ManPages", U"ppgb", 20170904)
+MAN_BEGIN (U"ManPages", U"ppgb", 20201229)
 INTRO (U"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -102,8 +102,8 @@ CODE (U"<list_item> \"\\@ \\@ Dorsal fricatives\\@ , equally problematic!\"")
 NORMAL (U"With the symbol `\\@ ', you create a %link to another ManPages text file. "
 	"A link will be drawn in blue on your screen. "
 	"In this example, you have created links to the files ##Vowels.man# "
-	"and ##Dorsal_fricatives.man# in the same directory as the current file "
-	"(all ##.man# files have to be in the same directory; this makes it likely "
+	"and ##Dorsal_fricatives.man# in the same folder as the current file "
+	"(all ##.man# files have to be in the same folder; this makes it likely "
 	"that their names are unique). "
 	"If the link contains spaces or other non-alphanumeric symbols, "
 	"you have to use three `\\@ ' symbols, as shown; "
@@ -162,10 +162,10 @@ NORMAL (U"The format of the sound link \"$$\\@ \\@ \\bsFIo.aifc|o\\@ $\" is to b
 	"tells the manual system that a sound file name follows. The manual system reads "
 	"this file, sees that it contains a sound, and plays that sound.")
 NORMAL (U"You can use relative path names, e.g., \\bsFIsounds/o.aifc refers to the file "
-	"##o.aifc# in the subdirectory #sounds, which must be contained in the same directory "
+	"##o.aifc# in the subfolder #sounds, which must be contained in the same folder "
 	"as the ##.man# files. To make sure that your manual pages run on all platforms "
 	"(Windows, Macintosh, Unix), you will want to use the forward slash (/) to separate "
-	"the directory name(s) from the file name, as in this example "
+	"the folder name(s) from the file name, as in this example "
 	"(i.e. you avoid the backslash (\\bs) that is usual on Windows computers).")
 ENTRY (U"Pictures as embedded scripts")
 NORMAL (U"Your text may contain Praat scripts. They typically draw a picture in your manual page, "

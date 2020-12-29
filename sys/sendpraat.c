@@ -128,7 +128,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 
 	/*
 	 * If the text is going to be sent in a file, create its name.
-	 * The file is going to be written into the preferences directory of the receiving program.
+	 * The file is going to be written into the preferences folder of the receiving program.
 	 * On Unix, the name will be something like /home/jane/.praat-dir/message.
 	 * On Windows, the name will be something like C:\Users\Jane\Praat\Message.txt,
 	 * or C:\Windows\Praat\Message.txt on older systems.
@@ -159,7 +159,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		FILE *messageFile;
 		if ((messageFile = fopen (messageFileName, "w")) == NULL) {
 			sprintf (errorMessage, "Cannot create message file \"%s\" "
-				"(no privilege to write to directory, or disk full, or program is not called %s).\n", messageFileName, programName);
+				"(no privilege to write to folder, or disk full, or program is not called %s).\n", messageFileName, programName);
 			return errorMessage;
 		}
 		#if unix

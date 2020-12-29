@@ -1078,7 +1078,7 @@ NORMAL (U"Underlying forms are relevant only if faithfulness constraints are inv
 NORMAL (U"#%Example. @@Hayes & MacEachern (1998)@ identify 11 output-oriented constraints "
 	"for the forms of quatrains in English folk verse.")
 LIST_ITEM (U"1. Create a folk-verse grammar with equal constraint rankings (all 100). "
-	"You may find it in the file ##folkVerse.OTGrammar# in the #demo directory of your #Praat distribution, "
+	"You may find it in the file ##folkVerse.OTGrammar# in the #demo folder of your #Praat distribution, "
 	"or get it from ##http://www.fon.hum.uva.nl/praat/folkVerse.OTGrammar#.")
 LIST_ITEM (U"2. Generate 1000 input strings. They will all be empty strings.")
 LIST_ITEM (U"3. Read the file that contains the surface distribution of the possible outputs. "
