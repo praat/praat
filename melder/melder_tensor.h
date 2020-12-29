@@ -1371,7 +1371,7 @@ using autoMAT = automatrix <double>;
 inline autoMAT newMATraw (integer nrow, integer ncol) {
 	return newmatrixraw <double> (nrow, ncol);
 }
-inline autoMAT newMATzero (integer nrow, integer ncol) {
+inline autoMAT zero_MAT (integer nrow, integer ncol) {
 	return newmatrixzero <double> (nrow, ncol);
 }
 inline autoMAT newMATcopy (constMATVU source) {
@@ -1409,10 +1409,10 @@ using INTMATVU = matrixview <integer>;
 using constINTMAT = constmatrix <integer>;
 using constINTMATVU = constmatrixview <integer>;
 using autoINTMAT = automatrix <integer>;
-inline autoINTMAT newINTMATraw (integer nrow, integer ncol) {
+inline autoINTMAT raw_INTMAT (integer nrow, integer ncol) {
 	return newmatrixraw <integer> (nrow, ncol);
 }
-inline autoINTMAT newINTMATzero (integer nrow, integer ncol) {
+inline autoINTMAT zero_INTMAT (integer nrow, integer ncol) {
 	return newmatrixzero <integer> (nrow, ncol);
 }
 inline autoINTMAT newINTMATcopy (constINTMATVU source) {

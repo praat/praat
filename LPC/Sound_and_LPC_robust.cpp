@@ -61,7 +61,7 @@ static void huber_struct_init (struct huber_struct *me, integer numberOfSamples,
 	my workSpace = raw_VEC (numberOfSamples);
 	my coefficients = raw_VEC (maximumPredictionOrder);
 	my covariancesw = zero_VEC (maximumPredictionOrder);
-	my covarmatrixw = newMATzero (maximumPredictionOrder, maximumPredictionOrder);
+	my covarmatrixw = zero_MAT (maximumPredictionOrder, maximumPredictionOrder);
 	//my covarmatrixw = matrixview(my covarmatrixstaticAllocation.get(), 1, my predictionOrder, 1, my predictionOrder);
 	my svd = SVD_create (maximumPredictionOrder, maximumPredictionOrder);
 }

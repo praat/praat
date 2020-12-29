@@ -33,7 +33,7 @@ autoMAT SoundSet_getRandomizedPatterns (SoundSet me, integer numberOfPatterns, i
 		integer minimumNumberOfSamples = SoundSet_getMinimumNumberOfSamples (me);
 		Melder_require (patternSize <= minimumNumberOfSamples,
 			U"The pattern size cannot be ", patternSize, U", because there is a Sound that is only ", minimumNumberOfSamples, U" samples long.");
-		autoMAT result = newMATzero (numberOfPatterns, patternSize);
+		autoMAT result = zero_MAT (numberOfPatterns, patternSize);
 		for (integer ipattern = 1; ipattern <= numberOfPatterns; ipattern ++) {
 			integer soundNumber = NUMrandomInteger (1, my size);
 			Sound sound = my at [soundNumber];

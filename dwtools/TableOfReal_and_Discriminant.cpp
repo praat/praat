@@ -43,7 +43,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// Overall centroid and apriori probabilities and costs.
 
 		autoVEC centroid = zero_VEC (dimension);
-		autoMAT between = newMATzero (thy numberOfGroups, dimension);
+		autoMAT between = zero_MAT (thy numberOfGroups, dimension);
 		thy aprioriProbabilities = raw_VEC (thy numberOfGroups);
 
 		longdouble sum = 0.0;

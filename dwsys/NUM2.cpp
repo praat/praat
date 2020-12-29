@@ -543,13 +543,13 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 		Construct G and its eigen-decomposition (eq. (4,5))
 		Sort eigenvalues (& eigenvectors) ascending.
 	*/
-	autoMAT b = newMATzero (n3, n3);
+	autoMAT b = zero_MAT (n3, n3);
 	b [3] [1] = b [1] [3] = -0.5;
 	b [2] [2] = 1.0;
 	/*
 		G = F^-1 B (F')^-1 (eq. 4)
 	*/
-	autoMAT g = newMATzero (n3, n3);
+	autoMAT g = zero_MAT (n3, n3);
 	MATmul3_XYXt (g.get(), lowerCholesky.transpose(), b.get());
 	/*				
 		G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)

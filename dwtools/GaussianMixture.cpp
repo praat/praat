@@ -912,7 +912,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				/*
 					M-step: 2. new mixingProbabilities
 				*/
-				autoVEC totalResponsibilities = newVECcolumnSums (responsibilities.get());
+				autoVEC totalResponsibilities = columnSums_VEC (responsibilities.get());
 				my mixingProbabilities.all() <<= totalResponsibilities.get();
 				my mixingProbabilities.all()  *=  1.0 / responsibilities.nrow;
 				
@@ -979,8 +979,8 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 		const conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		const bool deleteWeakComponents = minimumNumberOfComponents > 0;
 		autoGaussianMixture him = Data_copy (me);
-		autoMAT probabilities = newMATzero (thy numberOfRows, his numberOfComponents);
-		autoMAT responsibilities = newMATzero (thy numberOfRows, his numberOfComponents);
+		autoMAT probabilities = zero_MAT (thy numberOfRows, his numberOfComponents);
+		autoMAT responsibilities = zero_MAT (thy numberOfRows, his numberOfComponents);
 
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
 
@@ -1229,7 +1229,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 		
 		autoMAT responsibilities = newMATraw (thy numberOfRows, my numberOfComponents);
 		GaussianMixture_TableOfReal_getResponsilities (me, thee, responsibilities);
-		autoVEC numberOfData = newVECcolumnSums (responsibilities.get());
+		autoVEC numberOfData = columnSums_VEC (responsibilities.get());
 		
 		autoTable him = Table_createWithColumnNames (my numberOfComponents, U"component probability smoothing statistic lnmu lnvar numberOfData dimension singular");
 

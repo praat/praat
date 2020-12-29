@@ -227,7 +227,7 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 		integer numberOfCities = my numberOfPoints;
 		if (numberOfCities < 1)
 			Melder_throw (U"No points.");
-		autoINTMAT distance = newINTMATzero (numberOfCities, numberOfCities);
+		autoINTMAT distance = zero_INTMAT (numberOfCities, numberOfCities);
 		computeDistanceTable (me, distance.get());
 		autoINTVEC path = zero_INTVEC (numberOfCities + 1);
 		for (integer i = 1; i <= numberOfCities; i ++)

@@ -104,9 +104,9 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 		integer iter = 0, dimension = my numberOfRows;
 
 		autoCrossCorrelationTableList ccts = CrossCorrelationTableList_Diagonalizer_diagonalize (thee, me);
-		autoMAT w = newMATzero (dimension, dimension);
-		autoMAT vnew = newMATzero (dimension, dimension);
-		autoMAT cc = newMATzero (dimension, dimension);
+		autoMAT w = zero_MAT (dimension, dimension);
+		autoMAT vnew = zero_MAT (dimension, dimension);
+		autoMAT cc = zero_MAT (dimension, dimension);
 
 		for (integer i = 1; i <= dimension; i ++)
 			w [i] [i] = 1.0;
@@ -209,10 +209,10 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		autoEigen eigen = Thing_new (Eigen);
 		autoCrossCorrelationTableList ccts = Data_copy (thee);
-		autoMAT d = newMATzero (dimension, dimension);
+		autoMAT d = zero_MAT (dimension, dimension);
 		autoMAT pinv = newMATraw (dimension, dimension);
-		autoMAT p = newMATzero (dimension, dimension);
-		autoMAT m1 = newMATzero (dimension, dimension);
+		autoMAT p = zero_MAT (dimension, dimension);
+		autoMAT m1 = zero_MAT (dimension, dimension);
 		autoVEC wvec = raw_VEC (dimension);
 		autoVEC wnew = raw_VEC (dimension);
 		autoVEC mvec = zero_VEC (dimension);

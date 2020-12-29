@@ -339,7 +339,7 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 
 		my b = raw_VEC (my numberOfParameters);
 		my knot = raw_VEC (numberOfKnots);
-		my m = newMATzero (nData, my numberOfParameters);
+		my m = zero_MAT (nData, my numberOfParameters);
 
 		for (integer i = 1; i <= my numberOfParameters; i ++)
 			my b [i] = NUMrandomUniform (0.0, 1.0);
@@ -360,8 +360,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		const integer dimmin = std::min (nrow, ncol);
 
 		autoMAT h = newMATcopy (my data.get());
-		autoVEC rowsum = newVECrowSums (my data.get());
-		autoVEC colsum = newVECcolumnSums (my data.get());
+		autoVEC rowsum = rowSums_VEC (my data.get());
+		autoVEC colsum = columnSums_VEC (my data.get());
 		autoConfiguration thee = Configuration_create (nrow + ncol, numberOfDimensions);
 
 		if (numberOfDimensions == 0)
@@ -1040,7 +1040,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		/*
 			Determine the average scalar product matrix (Pmean) of dimension [1..nPoints] [1..nPoints].
 		*/		
-		autoMAT pmean = newMATzero (nPoints, nPoints);
+		autoMAT pmean = zero_MAT (nPoints, nPoints);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
@@ -1092,7 +1092,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		
 		MAT_getEigenSystemFromSymmetricMatrix (a.get(), & evec, nullptr, false);
 		
-		autoMAT cl = newMATzero (numberOfDimensions, numberOfDimensions);
+		autoMAT cl = zero_MAT (numberOfDimensions, numberOfDimensions);
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
 				for (integer k = 1; k <= numberOfDimensions; k ++) {

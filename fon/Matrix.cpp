@@ -117,7 +117,7 @@ void Matrix_init
 	my ny = ny;
 	my dy = dy;
 	my y1 = y1;
-	my z = newMATzero (my ny, my nx);
+	my z = zero_MAT (my ny, my nx);
 }
 
 autoMatrix Matrix_create

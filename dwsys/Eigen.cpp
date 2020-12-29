@@ -97,7 +97,7 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
 	my eigenvalues = zero_VEC (numberOfEigenvalues);
-	my eigenvectors = newMATzero (numberOfEigenvalues, dimension);
+	my eigenvectors = zero_MAT (numberOfEigenvalues, dimension);
 }
 
 /*

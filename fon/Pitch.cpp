@@ -545,8 +545,8 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 		voicedUnvoicedCost *= timeStepCorrection;
 
 		my ceiling = ceiling;
-		autoMAT delta = newMATzero (my nx, maxnCandidates);
-		autoINTMAT psi = newINTMATzero (my nx, maxnCandidates);
+		autoMAT delta = zero_MAT (my nx, maxnCandidates);
+		autoINTMAT psi = zero_INTMAT (my nx, maxnCandidates);
 
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Pitch_Frame frame = & my frames [iframe];

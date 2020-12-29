@@ -70,7 +70,7 @@ void AffineTransform_init (AffineTransform me, integer dimension) {
 	Melder_require (dimension > 0, U"Dimensionality should be greater than zero.");
 	
 	my dimension = dimension;
-	my r = newMATzero (dimension, dimension);
+	my r = zero_MAT (dimension, dimension);
 	my t = zero_VEC (dimension);
 }
 

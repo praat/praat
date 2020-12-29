@@ -536,8 +536,8 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_dire
 		 * Going in the vertical direction is a deletion, horizontal is insertion, diagonal is substitution
 		 */
 		const integer numberOfSources = my numberOfColumns - 1, numberOfTargets = my numberOfRows - 1;
-		autoINTMAT psi = newINTMATzero (my numberOfRows, my numberOfColumns);
-		autoMAT delta = newMATzero (my numberOfRows, my numberOfColumns);
+		autoINTMAT psi = zero_INTMAT (my numberOfRows, my numberOfColumns);
+		autoMAT delta = zero_MAT (my numberOfRows, my numberOfColumns);
 
 		for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
 			delta [1] [icol] = delta [1] [icol - 1] + EditCostsTable_getDeletionCost (my editCostsTable.get(), my columnLabels [icol].get());

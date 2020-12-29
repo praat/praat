@@ -243,17 +243,17 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 		my numberOfTimes = my capacity = capacity;
 		my numberOfStates = nstates;
 		my numberOfSymbols = nsymbols;
-		my alpha = newMATzero (nstates, capacity);
-		my beta = newMATzero (nstates, capacity);
+		my alpha = zero_MAT (nstates, capacity);
+		my beta = zero_MAT (nstates, capacity);
 		my scale = zero_VEC (capacity);
 		my xi = newTEN3zero (capacity, nstates, nstates); // TEN3
 		my aij_num_p0 = zero_VEC (nstates + 1);
-		my aij_num = newMATzero (nstates, nstates + 1);
+		my aij_num = zero_MAT (nstates, nstates + 1);
 		my aij_denom_p0 = zero_VEC (nstates + 1);
-		my aij_denom =  newMATzero (nstates, nstates + 1);
-		my bik_num = newMATzero (nstates, nsymbols);
-		my bik_denom = newMATzero (nstates, nsymbols);
-		my gamma = newMATzero (nstates, capacity);
+		my aij_denom =  zero_MAT (nstates, nstates + 1);
+		my bik_num = zero_MAT (nstates, nsymbols);
+		my bik_denom = zero_MAT (nstates, nsymbols);
+		my gamma = zero_MAT (nstates, capacity);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMBaumWelch not created.");
@@ -274,8 +274,8 @@ autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes) {
 		autoHMMViterbi me = Thing_new (HMMViterbi);
 		my numberOfTimes = ntimes;
 		my numberOfStates = nstates;
-		my viterbi = newMATzero (nstates, ntimes);
-		my bp = newINTMATzero (nstates, ntimes);
+		my viterbi = zero_MAT (nstates, ntimes);
+		my bp = zero_INTMAT (nstates, ntimes);
 		my path = zero_INTVEC (ntimes);
 		return me;
 	} catch (MelderError) {
@@ -400,8 +400,8 @@ static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservatio
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
 	my initialStateProbs = zero_VEC (numberOfStates);
-	my transitionProbs = newMATzero (numberOfStates, numberOfStates + 1);
-	my emissionProbs = newMATzero (numberOfStates, numberOfObservationSymbols);
+	my transitionProbs = zero_MAT (numberOfStates, numberOfStates + 1);
+	my emissionProbs = zero_MAT (numberOfStates, numberOfObservationSymbols);
 	HMM_setDefaultInitialStateProbs (me);
 	HMM_setDefaultTransitionProbs (me);
 	HMM_setDefaultEmissionProbs (me);
