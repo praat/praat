@@ -1839,7 +1839,7 @@ static void Sound_fadeIn_general (Sound me, int channel, double time, double fad
 		U"The start time for fade-in should earlier than the end time of the sound.");
 	
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
-	autoVEC fadeWindow = newVECraw (numberOfSamplesFade);
+	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
 	
 	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
 		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*(1.0 + (isamp - 1.0)/ (numberOfSamplesFade - 1))));
@@ -1870,7 +1870,7 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 		U"The end time for fade-out should not be earlier than the start time of the sound."); 
 	
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
-	autoVEC fadeWindow = newVECraw (numberOfSamplesFade);
+	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
 	
 	for (integer isamp = 1; isamp <= numberOfSamplesFade; isamp ++)
 		fadeWindow [isamp] = 0.5 * (1.0 + cos (NUMpi*((isamp - 1.0)/ (numberOfSamplesFade - 1))));
@@ -2381,7 +2381,7 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape::HANNING);
 		const double bandwidth = samplingFrequency / windowSamples;
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
-		autoVEC const noiseAmplitudes = newVECraw (noiseLtas -> nx);
+		autoVEC const noiseAmplitudes = raw_VEC (noiseLtas -> nx);
 		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++) {
 			const double powerDensity = 4e-10 * pow (10.0, noiseLtas -> z [1] [iband] / 10.0);
 			noiseAmplitudes [iband] = sqrt (0.5 * powerDensity);

@@ -712,7 +712,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 		const integer numberOfFrames = ff -> numberOfDataPoints;
 		const double t1 = ff -> data [1] .x, dt = ff -> data [2] .x - t1;
 		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, numberOfFormants);
-		autoVEC sigma = newVECraw (numberOfFormants);
+		autoVEC sigma = raw_VEC (numberOfFormants);
 		if (useEstimates || estimateUndefineds) {
 			for (integer itrack = 1; itrack <= numberOfFormants; itrack ++)
 				sigma [itrack] = FormantModeler_getStandardDeviation (me, itrack);
@@ -814,7 +814,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 			U"We need at least three formants to process outliers.");
 		
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoVEC x = newVECraw (numberOfDataPoints); // also store x-values
+		autoVEC x = raw_VEC (numberOfDataPoints); // also store x-values
 		autoMAT z = newMATraw (numberOfFormants, numberOfDataPoints);
 		// maybe some of the formants had NUMundefind's.
 

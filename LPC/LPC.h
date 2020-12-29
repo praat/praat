@@ -47,7 +47,7 @@ autoMatrix LPC_downto_Matrix_rc (LPC me);
 autoMatrix LPC_downto_Matrix_area (LPC me);
 
 static inline autoVEC LPC_listAllGains (LPC me) {
-	autoVEC result = newVECraw (my nx);
+	autoVEC result = raw_VEC (my nx);
 	for (integer iframe = 1; iframe <= my nx; iframe ++)
 		result [iframe] = my d_frames [iframe]. gain;
 	return result;

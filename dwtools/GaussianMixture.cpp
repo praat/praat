@@ -180,9 +180,9 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 		update covariance with the new mean: Bishop eq. 9.25
 	*/
 	thy data.all()  <<=  0.0;
-	autoVEC dif = newVECraw (thy numberOfColumns);
+	autoVEC dif = raw_VEC (thy numberOfColumns);
 	if (thy numberOfRows == 1) { // 1xn covariance
-		autoVEC variance = newVECraw (thy numberOfColumns);
+		autoVEC variance = raw_VEC (thy numberOfColumns);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			dif.all()  <<=  data.row (irow)  -  thy centroid.get();
 			variance.all()   <<= dif.all()  *  dif.all();
@@ -293,7 +293,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 		autoGaussianMixture me = Thing_new (GaussianMixture);
 		my numberOfComponents = numberOfComponents;
 		my dimension = dimension;
-		my mixingProbabilities = newVECraw (numberOfComponents);
+		my mixingProbabilities = raw_VEC (numberOfComponents);
 		my mixingProbabilities.all() <<= 1.0 / numberOfComponents;
 		my covariances = CovarianceList_create ();
 		kSSCPstorage sscpStorage = storage == kGaussianMixtureStorage::DIAGONALS ? kSSCPstorage::DIAGONAL : kSSCPstorage::COMPLETE;
@@ -466,7 +466,7 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 		GaussianMixture_PCA_getIntervalAlongDirection (me, thee, d, nsigmas, & xmin, & xmax);
 	const double dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
 	const double scalef = ( nbins <= 0 ? 1.0 : 1.0 ); // TODO
-	autoVEC p = newVECraw (npoints);
+	autoVEC p = raw_VEC (npoints);
 	for (integer i = 1; i <= npoints; i ++) {
 		const double x = x1 + (i - 1) * dx;
 		Melder_assert (thy eigenvectors.ncol == thy dimension);
@@ -503,8 +503,8 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 
 	const double dx = (xmax - xmin) / (npoints - 1);
 	const double scalef = 1.0; // TODO
-	autoVEC p = newVECraw (npoints);
-	autoVEC pos = newVECraw (my dimension);
+	autoVEC p = raw_VEC (npoints);
+	autoVEC pos = raw_VEC (my dimension);
 	
 	for (integer k = 1; k <= my dimension; k++)
 		pos [k] = ( k == d ? 1.0 : 0.0 );
@@ -696,7 +696,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 		}
 
 		const double ln2pid = -0.5 * my dimension * log (NUM2pi);
-		autoVEC lnN = newVECraw (my numberOfComponents);
+		autoVEC lnN = raw_VEC (my numberOfComponents);
 		for (integer irow = 1; irow <=  thy numberOfRows; irow ++) {
 			longdouble psum = 0.0;
 			for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
@@ -741,7 +741,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 
 		// Eventually cov1 replaces component, cov2 at end
 
-		autoVEC mixingProbabilities = newVECraw (my numberOfComponents + 1);
+		autoVEC mixingProbabilities = raw_VEC (my numberOfComponents + 1);
 		for (integer i = 1; i <= my numberOfComponents; i ++)
 			mixingProbabilities [i] = my mixingProbabilities [i];
 
@@ -1207,7 +1207,7 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 	try {
 		const Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
-		autoVEC buf = newVECraw (my dimension);
+		autoVEC buf = raw_VEC (my dimension);
 		thy columnLabels.all() <<= cov -> columnLabels.part (1, my dimension);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			autostring32 covname;

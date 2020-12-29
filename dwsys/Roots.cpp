@@ -165,8 +165,8 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 			"Polynomial zero finders based on Szegö polynomials.",
 			Journal of Computational and Applied Mathematics 127: 1-–16.
 		*/
-		autoVEC wr = newVECraw (n);
-		autoVEC wi = newVECraw (n);
+		autoVEC wr = raw_VEC (n);
+		autoVEC wi = raw_VEC (n);
 		autoMAT upperHessenberg = newMATzero (n, n);
 		MATVU uh_CM (upperHessenberg.get());
 		uh_CM.rowStride = 1; uh_CM.colStride = n;
@@ -183,7 +183,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		integer lwork = -1, info;
 		NUMlapack_dhseqr_ ("E", "N", n, 1, n, & upperHessenberg [1] [1], n, & wr [1], & wi [1], nullptr, n, & wtmp, lwork, & info);
 		lwork = Melder_roundUp (wtmp);
-		autoVEC work = newVECraw (lwork);
+		autoVEC work = raw_VEC (lwork);
 		/*
 			Find eigenvalues/roots.
 		*/

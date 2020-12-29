@@ -52,10 +52,10 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 		autoSPINET thee = SPINET_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, minimumFrequencyHz, maximumFrequencyHz, numberOfGammaFilters, excitationErbProportion, inhibitionErbProportion);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoSound frame = Sound_createSimple (1, windowDuration, samplingFrequency);
-		autoVEC f = newVECraw (numberOfGammaFilters);
-		autoVEC bw = newVECraw (numberOfGammaFilters);
-		autoVEC aex = newVECraw (numberOfGammaFilters);
-		autoVEC ain = newVECraw (numberOfGammaFilters);
+		autoVEC f = raw_VEC (numberOfGammaFilters);
+		autoVEC bw = raw_VEC (numberOfGammaFilters);
+		autoVEC aex = raw_VEC (numberOfGammaFilters);
+		autoVEC ain = raw_VEC (numberOfGammaFilters);
 		/*
 			Cochlear filterbank: gammatone.
 		*/

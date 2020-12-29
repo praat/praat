@@ -3153,7 +3153,7 @@ static void do_rdiv () {
 			integer nelem1 = x->numericVector.size, nelem2 = y->numericVector.size;
 			if (nelem1 != nelem2)
 				Melder_throw (U"When dividing vectors, their numbers of elements should be equal, instead of ", nelem1, U" and ", nelem2, U".");
-			autoVEC result = newVECraw (nelem1);
+			autoVEC result = raw_VEC (nelem1);
 			for (integer ielem = 1; ielem <= nelem1; ielem ++)
 				result [ielem] = x->numericVector [ielem] / y->numericVector [ielem];
 			pushNumericVector (result.move());
@@ -3164,7 +3164,7 @@ static void do_rdiv () {
 				result# = x# / y
 			*/
 			integer xn = x->numericVector.size;
-			autoVEC result = newVECraw (xn);
+			autoVEC result = raw_VEC (xn);
 			double yvalue = y->number;
 			if (yvalue == 0.0) {
 				Melder_throw (U"Cannot divide (/) ", x->whichText(), U" by zero.");
@@ -3258,7 +3258,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 			for (integer i = 1; i <= n; i ++)
 				at [i] = f (at [i]);
 		} else {
-			autoVEC result = newVECraw (n);
+			autoVEC result = raw_VEC (n);
 			for (integer i = 1; i <= n; i ++)
 				result [i] = f (at [i]);
 			x->numericVector = result. releaseToAmbiguousOwner();
@@ -3369,7 +3369,7 @@ static void do_rectify_VEC () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
-		autoVEC result = newVECraw (nelm);
+		autoVEC result = raw_VEC (nelm);
 		for (integer i = 1; i <= nelm; i ++) {
 			double xvalue = x->numericVector [i];
 			result [i] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
@@ -3477,7 +3477,7 @@ static void do_VECexp () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
-		autoVEC result = newVECraw (nelm);
+		autoVEC result = raw_VEC (nelm);
 		for (integer i = 1; i <= nelm; i ++)
 			result [i] = exp (x->numericVector [i]);
 		pushNumericVector (result.move());
@@ -3605,7 +3605,7 @@ static void do_function_VECdd_d (double (*f) (double, double)) {
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfElements = ( a->which == Stackel_NUMBER ? Melder_iround (a->number) : a->numericVector.size );
-		autoVEC newData = newVECraw (numberOfElements);
+		autoVEC newData = raw_VEC (numberOfElements);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++)
 			newData [ielem] = f (x->number, y->number);
 		pushNumericVector (newData.move());
@@ -3660,7 +3660,7 @@ static void do_function_VECll_l (integer (*f) (integer, integer)) {
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER) {
 		integer numberOfElements = ( a->which == Stackel_NUMBER ? Melder_iround (a->number) : a->numericVector.size );
-		autoVEC newData = newVECraw (numberOfElements);
+		autoVEC newData = raw_VEC (numberOfElements);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++)
 			newData [ielem] = f (Melder_iround (x->number), Melder_iround (y->number));
 		pushNumericVector (newData.move());
@@ -4379,7 +4379,7 @@ static void do_linear_VEC () {
 	const integer numberOfSteps = Melder_iround (stack_numberOfSteps->number);
 	Melder_require (numberOfSteps > 0,
 		U"In the function \"linear#\", the number of steps (third argument) should be positive, not ", numberOfSteps, U".");
-	autoVEC result = newVECraw (numberOfSteps);
+	autoVEC result = raw_VEC (numberOfSteps);
 	for (integer ielem = 1; ielem <= numberOfSteps; ielem ++) {
 		result [ielem] = excludeEdges ?
 			minimum + (ielem - 0.5) * (maximum - minimum) / numberOfSteps :
@@ -5597,7 +5597,7 @@ static void do_tensorLiteral () {
 	*/
 	Stackel last = pop;
 	if (last->which == Stackel_NUMBER) {
-		autoVEC result = newVECraw (numberOfElements);
+		autoVEC result = raw_VEC (numberOfElements);
 		result [numberOfElements] = last->number;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
 			Stackel element = pop;
@@ -5867,7 +5867,7 @@ static void do_repeat_VEC () {
 	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
 		integer n_old = x->numericVector.size;
 		integer times = Melder_iround (n->number);
-		autoVEC result = newVECraw (n_old * times);
+		autoVEC result = raw_VEC (n_old * times);
 		for (integer i = 1; i <= times; i ++)
 			for (integer j = 1; j <= n_old; j ++)
 				result [(i - 1) * n_old + j] = x->numericVector [j];

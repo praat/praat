@@ -88,14 +88,14 @@ double Sampled_getValueAtSample (Sampled me, integer sampleNumber, integer level
 }
 
 autoVEC Sampled_listValuesOfAllSamples (Sampled me, integer levelNumber, int unit) {
-	autoVEC result = newVECraw (my nx);
+	autoVEC result = raw_VEC (my nx);
 	for (integer isamp = 1; isamp <= my nx; isamp ++)
 		result [isamp] = my v_getValueAtSample (isamp, levelNumber, unit);
 	return result;
 }
 
 autoVEC Sampled_listValuesAtXes (Sampled me, constVECVU const& xes, integer levelNumber, int unit, bool interpolate) {
-	autoVEC result = newVECraw (xes.size);
+	autoVEC result = raw_VEC (xes.size);
 	for (integer ix = 1; ix <= xes.size; ix ++)
 		result [ix] = Sampled_getValueAtX (me, xes [ix], levelNumber, unit, interpolate);
 	return result;
@@ -157,7 +157,7 @@ autoVEC Sampled_getSortedValues (Sampled me, double xmin, double xmax, integer l
 	integer numberOfDefinedSamples = Sampled_countDefinedSamples (me, xmin, xmax, levelNumber, unit);
 	if (numberOfDefinedSamples == 0)
 		return autoVEC();
-	autoVEC definedValues = newVECraw (numberOfDefinedSamples);
+	autoVEC definedValues = raw_VEC (numberOfDefinedSamples);
 	integer imin, imax;
 	autoWindowDomainSamples (me, & xmin, & xmax, & imin, & imax);
 	integer definedSampleNumber = 0;

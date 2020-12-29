@@ -113,7 +113,7 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		*/
 		MAT delta (& thy z[1][1], thy ny, thy nx);
 		autoINTVEC path = zero_INTVEC (my nx);
-		autoVEC intensity = newVECraw (my nx);
+		autoVEC intensity = raw_VEC (my nx);
 		/*
 			We have a trellis of size S x T, where S is the number of states, i.e. the number of formant objects,
 			and T the number of frames (S= formants.size and T=nx).
@@ -390,7 +390,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 }
 
 autoVEC FormantPath_getStress (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	autoVEC stress = newVECraw (my formants.size);
+	autoVEC stress = raw_VEC (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const Formant formanti = (Formant) my formants . at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);

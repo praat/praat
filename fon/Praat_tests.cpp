@@ -87,7 +87,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SORT: {
 			integer size = Melder_atoi (arg2);
-			autoVEC array = newVECraw (size);
+			autoVEC array = raw_VEC (size);
 			Melder_stopwatch ();
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (int64 i = 1; i <= size; i ++)
@@ -382,7 +382,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				autoVEC result = newVECraw (size);
+				autoVEC result = raw_VEC (size);
 				for (integer i = 1; i <= size; i ++)
 					result [i] = 0.0;
 			}
@@ -396,7 +396,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_ZERO: {
 			integer size = Melder_atoi (arg2);
-			autoVEC result = newVECraw (size);
+			autoVEC result = raw_VEC (size);
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (integer i = 1; i <= size; i ++)
@@ -455,7 +455,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			integer size = Melder_atoi (arg2);
 			autoVEC x = newVECrandomGauss (size, 0.0, 1.0);
 			autoVEC y = newVECrandomGauss (size, 0.0, 1.0);
-			autoVEC result = newVECraw (size);
+			autoVEC result = raw_VEC (size);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				//VECadd (result.all(), x.all(), y.all());

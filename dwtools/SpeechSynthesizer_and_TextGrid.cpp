@@ -184,7 +184,7 @@ autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier m
     try {
         Melder_require (my xmin == thy xmin && my xmax != thy xmax,
             U"Domains should be identical.");
-        autoVEC durations = newVECraw (my intervals.size);
+        autoVEC durations = raw_VEC (my intervals.size);
         for (integer i = 1; i <= my intervals.size; i ++) {
             const TextInterval ti = my intervals.at [i];
             durations [i] = ti -> xmax - ti -> xmin;

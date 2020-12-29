@@ -78,7 +78,7 @@ autoDiscriminant Discriminant_create (integer numberOfGroups, integer numberOfEi
 		my numberOfGroups = numberOfGroups;
 		my groups = SSCPList_create ();
 		my total = SSCP_create (dimension);
-		my aprioriProbabilities = newVECraw (numberOfGroups);
+		my aprioriProbabilities = raw_VEC (numberOfGroups);
 		my costs = newMATraw (numberOfGroups, numberOfGroups);
 		return me;
 	} catch (MelderError) {

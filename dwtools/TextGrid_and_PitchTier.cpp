@@ -158,7 +158,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		const integer numberOfPitches = items -> numberOfStrings;
 		Melder_require (times.size == numberOfPitches,
 			U"The number of items in the times and the pitches string have to be equal.");
-		autoVEC pitchesraw = newVECraw (numberOfPitches);
+		autoVEC pitchesraw = raw_VEC (numberOfPitches);
 		for (integer i = 1; i <= numberOfPitches; i ++) {
 			const conststring32 token = items -> strings [i].get();
 			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE)

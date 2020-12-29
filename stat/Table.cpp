@@ -559,7 +559,7 @@ double Table_getQuantile (Table me, integer columnNumber, double quantile) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		autoVEC sortingColumn = newVECraw (my rows.size);
+		autoVEC sortingColumn = raw_VEC (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			const TableRow row = my rows.at [irow];
 			sortingColumn [irow] = row -> cells [columnNumber]. number;

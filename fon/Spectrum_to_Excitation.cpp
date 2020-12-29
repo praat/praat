@@ -22,14 +22,14 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 	try {
 		const integer nbark = Melder_iround (25.6 / dbark);
 		const constVEC re = my z.row (1), im = my z.row (2);
-		const autoVEC auditoryFilter = newVECraw (nbark);
+		const autoVEC auditoryFilter = raw_VEC (nbark);
 		for (integer i = 1; i <= nbark; i ++) {
 			const double bark = dbark * (i - nbark/2) + 0.474;
 			auditoryFilter [i] = pow (10, (1.581 + 0.75 * bark - 1.75 * sqrt (1 + bark * bark)));
 		}
 		/*const double filterArea = NUMsum (auditoryFilter.get());
 			auditoryFilter.all() /= filterArea;*/
-		const autoVEC rFreqs = newVECraw (nbark + 1);
+		const autoVEC rFreqs = raw_VEC (nbark + 1);
 		const autoINTVEC iFreqs = raw_INTVEC (nbark + 1);
 		for (integer i = 1; i <= nbark + 1; i ++) {
 			rFreqs [i] = Excitation_barkToHertz (dbark * (i - 1));

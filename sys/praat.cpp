@@ -139,7 +139,7 @@ integer praat_idOfSelected (ClassInfo klas, integer inplace) {
 }
 
 autoVEC praat_idsOfAllSelected (ClassInfo klas) {
-	autoVEC result = newVECraw (praat_numberOfSelected (klas));
+	autoVEC result = raw_VEC (praat_numberOfSelected (klas));
 	integer selectedObjectNumber = 0, IOBJECT;
 	WHERE (SELECTED && (! klas || CLASS == klas))
 		result [++ selectedObjectNumber] = ID;

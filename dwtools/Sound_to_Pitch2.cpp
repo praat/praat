@@ -115,11 +115,11 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		autoSound hamming = Sound_createHamming (frameDuration, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
 		autoVEC cc = zero_VEC (numberOfFrames);
-		autoVEC specAmp = newVECraw (nfft2);
-		autoVEC fl2 = newVECraw (nfft2);
-		autoVEC yv2 = newVECraw (nfft2);
-		autoVEC arctg = newVECraw (numberOfFrequencyPoints);
-		autoVEC al2 = newVECraw (numberOfFrequencyPoints);
+		autoVEC specAmp = raw_VEC (nfft2);
+		autoVEC fl2 = raw_VEC (nfft2);
+		autoVEC yv2 = raw_VEC (nfft2);
+		autoVEC arctg = raw_VEC (numberOfFrequencyPoints);
+		autoVEC al2 = raw_VEC (numberOfFrequencyPoints);
 
 		Melder_assert (fftframe -> nx >= numberOfSamples);
 		Melder_assert (hamming -> nx == numberOfSamples);

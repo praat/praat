@@ -127,7 +127,7 @@ void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double
 	integer numberOfSelected = Sampled_getWindowSamples (me, xmin, xmax, & bframe, & eframe);
 	if (numberOfSelected <= 0)
 		return;
-	autoVEC c = newVECraw (numberOfSelected);
+	autoVEC c = raw_VEC (numberOfSelected);
 	for (integer i = 1; i <= numberOfSelected; i ++) {
 		const CC_Frame cf = & my frame [bframe + i - 1];
 		c [i] = cf -> c0;

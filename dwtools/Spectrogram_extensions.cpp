@@ -104,8 +104,8 @@ autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double sc
 */
 void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer numberOfCoefficients) {
 	autoMAT cosinesTable = MATcosinesTable (my ny);
-	autoVEC x = newVECraw (my ny);
-	autoVEC y = newVECraw (my ny);
+	autoVEC x = raw_VEC (my ny);
+	autoVEC y = raw_VEC (my ny);
 	numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
 	Melder_assert (numberOfCoefficients > 0);
 	// 20130220 new interpretation of maximumNumberOfCoefficients: necessary for the inverse transform 
@@ -126,8 +126,8 @@ void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer n
 void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, integer first, integer last, bool use_c0) {
 	const integer nf = my maximumNumberOfCoefficients + 1;
 	autoMAT cosinesTable = MATcosinesTable (nf);
-	autoVEC x = newVECraw (nf);
-	autoVEC y = newVECraw (nf);
+	autoVEC x = raw_VEC (nf);
+	autoVEC y = raw_VEC (nf);
 	for (integer frame = 1; frame <= my nx; frame ++) {
 		const CC_Frame ccframe = & my frame [frame];
 		const integer iend = std::min (last, ccframe -> numberOfCoefficients);
@@ -293,7 +293,7 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 		icol = 1;
 	if (icol > my nx)
 		icol = my nx;
-	autoVEC spectrum = newVECraw (my ny);
+	autoVEC spectrum = raw_VEC (my ny);
 	for (integer i = 1; i <= my ny; i ++)
 		spectrum [i] = my v_getValueAtSample (icol, i, 1);   // dB's
 	integer iymin, iymax;
@@ -362,7 +362,7 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		toFilter = my ny;
 	}
 	const integer n = xIsHertz ? 1000 : 500;
-	autoVEC xz = newVECraw (n), xhz = newVECraw (n), y = newVECraw (n);
+	autoVEC xz = raw_VEC (n), xhz = raw_VEC (n), y = raw_VEC (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -457,7 +457,7 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 	}
 	
 	const integer n = ( xIsHertz ? 1000 : 500 );
-	autoVEC xz = newVECraw (n), xhz = newVECraw (n), y = newVECraw (n);
+	autoVEC xz = raw_VEC (n), xhz = raw_VEC (n), y = raw_VEC (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);

@@ -78,7 +78,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, integer maxIterationsPerTime, in
 	double fopt = my minimum;
 	int monitorSingle = numberOfTimes == 1;
 
-	autoVEC popt = newVECraw (my numberOfParameters);
+	autoVEC popt = raw_VEC (my numberOfParameters);
 	popt.get () <<= my p.get();
 
 	if (! monitorSingle)
@@ -160,8 +160,8 @@ double Minimizer_getMinimum (Minimizer me) {
 Thing_implement	(SteepestDescentMinimizer, Minimizer, 0);
 
 void structSteepestDescentMinimizer :: v_minimize () {
-	autoVEC dp = newVECraw (numberOfParameters);
-	autoVEC dpp = newVECraw (numberOfParameters);
+	autoVEC dp = raw_VEC (numberOfParameters);
+	autoVEC dpp = raw_VEC (numberOfParameters);
 	double fret = func (object, p.get());
 	while (iteration < maximumNumberOfIterations) {
 		dfunc (object, p.get(), dp.get());

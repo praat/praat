@@ -29,8 +29,8 @@ void Ltas_fitTrendLine (Ltas me, double fmin, double fmax, bool lnf, int method,
 		const integer numberOfSamples = Sampled_getWindowSamples (me, fmin, fmax, & ifmin, & ifmax);
 		Melder_require (numberOfSamples > 1,
 			U"There should be at least two data points to fit a line.");
-		autoVEC x = newVECraw (numberOfSamples);
-		autoVEC y = newVECraw (numberOfSamples);
+		autoVEC x = raw_VEC (numberOfSamples);
+		autoVEC y = raw_VEC (numberOfSamples);
 		for (integer i = ifmin; i <= ifmax; i ++) {
 			const integer ixy = i - ifmin + 1;
 			x [ixy] = my x1 + (i - 1) * my dx;

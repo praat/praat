@@ -53,8 +53,8 @@ void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	our numberOfPoints = texgeti32 (text);
 	if (our numberOfPoints < 1)
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");
-	our x = newVECraw (our numberOfPoints);
-	our y = newVECraw (our numberOfPoints);
+	our x = raw_VEC (our numberOfPoints);
+	our y = raw_VEC (our numberOfPoints);
 	for (integer i = 1; i <= our numberOfPoints; i ++) {
 		our x [i] = texgetr64 (text);
 		our y [i] = texgetr64 (text);

@@ -1971,8 +1971,8 @@ autoBOOLVEC theSaveTiedToTheLeft, theSaveTiedToTheRight;
 static void OTGrammar_save (OTGrammar me) {
 	if (my numberOfConstraints != theSaveNumberOfConstraints) {
 		theSaveIndex = raw_INTVEC (my numberOfConstraints);
-		theSaveRankings = newVECraw (my numberOfConstraints);
-		theSaveDisharmonies = newVECraw (my numberOfConstraints);
+		theSaveRankings = raw_VEC (my numberOfConstraints);
+		theSaveDisharmonies = raw_VEC (my numberOfConstraints);
 		theSaveTiedToTheLeft = newBOOLVECraw (my numberOfConstraints);
 		theSaveTiedToTheRight = newBOOLVECraw (my numberOfConstraints);
 		theSaveNumberOfConstraints = my numberOfConstraints;

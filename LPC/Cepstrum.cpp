@@ -68,8 +68,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double mi
 	integer numberOfSelected = Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax);
 	if (numberOfSelected == 0)
 		return;
-	autoVEC y = newVECraw (numberOfSelected);
-
+	autoVEC y = raw_VEC (numberOfSelected);
 	for (integer i = 1; i <= numberOfSelected; i ++)
 		y [i] = my v_getValueAtSample (imin + i - 1, 1, (power ? 1 : 0));
 

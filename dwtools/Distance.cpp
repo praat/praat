@@ -51,7 +51,7 @@ autoDistance Configuration_to_Distance (Configuration me) {
 	try {
 		autoDistance thee = Distance_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, -1);
-		autoVEC dist = newVECraw (my numberOfColumns);
+		autoVEC dist = raw_VEC (my numberOfColumns);
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
 				dist.all() <<= my data.row (i)  -  my data.row (j);

@@ -409,7 +409,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 			constexpr integer numberOfPaddingSides = 2;   // namely beginning and end
 			integer nfft = 1;
 			while (nfft < my nx + antiTurnAround * numberOfPaddingSides) nfft *= 2;
-			autoVEC data = newVECraw (nfft);   // will be zeroed in every turn of the loop
+			autoVEC data = raw_VEC (nfft);   // will be zeroed in every turn of the loop
 			filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				for (integer i = 1; i <= nfft; i ++)
@@ -494,7 +494,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 				totalNumberOfSamples, sharedTimeStep, 0.5 * sharedTimeStep);
 		autoVEC smoother;
 		if (numberOfSmoothingSamples > 0) {
-			smoother = newVECraw (numberOfSmoothingSamples);
+			smoother = raw_VEC (numberOfSmoothingSamples);
 			const double factor = NUMpi / numberOfSmoothingSamples;
 			for (integer i = 1; i <= numberOfSmoothingSamples; i ++)
 				smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
@@ -547,8 +547,8 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 		integer n3 = n1 + n2 - 1, nfft = 1;
 		while (nfft < n3)
 			nfft *= 2;
-		autoVEC data1 = newVECraw (nfft);
-		autoVEC data2 = newVECraw (nfft);
+		autoVEC data1 = raw_VEC (nfft);
+		autoVEC data2 = raw_VEC (nfft);
 		integer numberOfChannels = std::max (my ny, thy ny);
 		autoSound him = Sound_create (numberOfChannels, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
@@ -630,8 +630,8 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 		integer n3 = n1 + n2 - 1, nfft = 1;
 		while (nfft < n3)
 			nfft *= 2;
-		autoVEC data1 = newVECraw (nfft);
-		autoVEC data2 = newVECraw (nfft);
+		autoVEC data1 = raw_VEC (nfft);
+		autoVEC data2 = raw_VEC (nfft);
 		double my_xlast = my x1 + (n1 - 1) * my dx;
 		autoSound him = Sound_create (numberOfChannels, thy xmin - my xmax, thy xmax - my xmin, n3, my dx, thy x1 - my_xlast);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
@@ -709,7 +709,7 @@ autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSoun
 		integer numberOfChannels = my ny, n1 = my nx, n2 = n1 + n1 - 1, nfft = 1;
 		while (nfft < n2)
 			nfft *= 2;
-		autoVEC data = newVECraw (nfft);
+		autoVEC data = raw_VEC (nfft);
 		double my_xlast = my x1 + (n1 - 1) * my dx;
 		autoSound thee = Sound_create (numberOfChannels, my xmin - my xmax, my xmax - my xmin, n2, my dx, my x1 - my_xlast);
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {

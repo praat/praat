@@ -210,7 +210,7 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 			result  +=  outer.all()  *  rowWeights [irow];
 		}
 	} else {
-		autoVEC w = newVECraw (rowWeights.size);
+		autoVEC w = raw_VEC (rowWeights.size);
 		autoMAT d = newMATcopy (data);
 		for (integer irow = 1; irow <= w.size; irow ++) 
 			w [irow] = sqrt (rowWeights [irow]);
@@ -399,7 +399,7 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 	double lambda0, lambda = NUMmul (inout_q, m, inout_q); //  q'. M . q
 	Melder_require (lambda > 0.0,
 		U"Zero matrices ??");
-	autoVEC z = newVECraw (m.nrow);
+	autoVEC z = raw_VEC (m.nrow);
 	integer maximunNumberOfIterations = 30;
 	for (integer iter = 1; iter <= maximunNumberOfIterations; iter ++) {
 		lambda0 = lambda;
@@ -461,7 +461,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 	for (integer i = 1; i <= x.size; i ++)
 		if (x [i] < 0.0)
 			x [i] = 0.0;
-	autoVEC r = newVECraw (y.size);
+	autoVEC r = raw_VEC (y.size);
 	const double normSquared_y = NUMsum2 (y);
 	integer iter = 1;
 	bool farFromConvergence = true;
@@ -568,7 +568,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 		The solution (3 cases)
 	*/
 	autoVEC w = zero_VEC (n3);
-	autoVEC chi = newVECraw (n3);
+	autoVEC chi = raw_VEC (n3);
 	autoVEC diag = zero_VEC (n3);
 
 	if (fabs (y [1]) < eps) {
@@ -1316,7 +1316,7 @@ void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT co
 			U"The data and the residuals should have the same dimensions.");
 		Melder_require (covariance.ncol == means.size && data.ncol == means.size,
 			U"The dimensions of the means and the covariance have to conform with the data.");
-		autoVEC dif = newVECraw (data.ncol);
+		autoVEC dif = raw_VEC (data.ncol);
 		autoMAT lowerInverse = newMATcopy (covariance);
 		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
@@ -1499,7 +1499,7 @@ double VECburg (VEC const& a, constVEC const& x) {
 }
 
 autoVEC newVECburg (constVEC const& x, integer numberOfPredictionCoefficients, double *out_xms) {
-	autoVEC a = newVECraw (numberOfPredictionCoefficients);
+	autoVEC a = raw_VEC (numberOfPredictionCoefficients);
 	const double xms = VECburg (a.get(), x);
 	if (out_xms)
 		*out_xms = xms;
@@ -1577,7 +1577,7 @@ void VECinverseCosineTransform_preallocated (VEC const& target, constVEC const& 
 void NUMcubicSplineInterpolation_getSecondDerivatives (VEC const& out_y, constVEC const& x, constVEC const& y, double yp1, double ypn) {
 	Melder_assert (x.size == y.size && out_y.size == y.size);
 	
-	autoVEC u = newVECraw (x.size - 1);
+	autoVEC u = raw_VEC (x.size - 1);
 
 	if (yp1 > 0.99e30)
 		out_y [1] = u [1] = 0.0;
@@ -2122,8 +2122,8 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
 
 void VECrc_from_lpc (VEC rc, constVEC lpc) {
 	Melder_assert (rc.size == lpc.size);
-	autoVEC b = newVECraw (lpc.size);
-	autoVEC a = newVECraw (lpc.size);
+	autoVEC b = raw_VEC (lpc.size);
+	autoVEC a = raw_VEC (lpc.size);
 	a.all()  <<=  lpc;
 	for (integer m = lpc.size; m > 0; m--) {
 		rc [m] = a [m];
@@ -2176,7 +2176,7 @@ void VEClpc_from_area (VEC lpc, constVEC area) {
 
 void VECarea_from_lpc (VEC area, constVEC lpc) {
 	Melder_assert (area.size == lpc.size);
-	autoVEC rc = newVECraw (lpc.size);
+	autoVEC rc = raw_VEC (lpc.size);
 	VECrc_from_lpc (rc.get(), lpc);
 	VECarea_from_rc (area, rc.get());
 }
@@ -2211,7 +2211,7 @@ void NUMlpc_rc_to_area2 (double *rc, integer n, double *area) {
 void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc);
 void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc) {
 	// from area to reflection coefficients
-	autoVEC rc =newVECraw (n);
+	autoVEC rc =raw_VEC (n);
 	// normalisation: area [n+1] = 0.0001
 	for (integer j = n; j > 0; j--) {
 		double ar = area [j+1] / area [j];
@@ -2949,12 +2949,12 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		Melder_assert (dictionary.ncol == x.size); // we calculate D.x
 		Melder_assert (dictionary.nrow == y.size); // y = D.x + e
 		
-		autoVEC gradient = newVECraw (x.size);
-		autoVEC x_new = newVECraw (x.size); // x(n+1), x == x(n)
-		autoVEC yfromx = newVECraw (y.size); // D.x(n)
-		autoVEC yfromx_new = newVECraw (y.size); // D.x(n+1)
-		autoVEC ydif = newVECraw (y.size); // y - D.x(n)
-		autoVEC buffer = newVECraw (x.size);
+		autoVEC gradient = raw_VEC (x.size);
+		autoVEC x_new = raw_VEC (x.size); // x(n+1), x == x(n)
+		autoVEC yfromx = raw_VEC (y.size); // D.x(n)
+		autoVEC yfromx_new = raw_VEC (y.size); // D.x(n+1)
+		autoVEC ydif = raw_VEC (y.size); // y - D.x(n)
+		autoVEC buffer = raw_VEC (x.size);
 		autoBOOLVEC support = newBOOLVECraw (x.size);
 		autoBOOLVEC support_new = newBOOLVECraw (x.size);
 		

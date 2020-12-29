@@ -136,7 +136,7 @@ void SVD_compute (SVD me) {
 			U"NUMlapack_dgesvd_ query returns error ", info, U".");
 		
 		lwork =  Melder_roundUp (wtmp);
-		autoVEC work = newVECraw (lwork);
+		autoVEC work = raw_VEC (lwork);
 		NUMlapack_dgesvd_ ("S", "O", m, n, & my u [1] [1], m, & my d [1], & my v [1] [1], m, nullptr, m, & work [1], lwork, & info);		
 		Melder_require (info == 0,
 			U"NUMlapack_dgesvd_ returns error ", info, U".");
@@ -221,8 +221,8 @@ autoVEC SVD_solve (SVD me, constVECVU const& b) {
 void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU const& result) {
 	Melder_assert (b.nrow == my numberOfRows && b.ncol == result.ncol);
 	Melder_assert (result.nrow == my numberOfColumns);
-	autoVEC bcol = newVECraw (b.nrow);
-	autoVEC resultcol = newVECraw (result.nrow);
+	autoVEC bcol = raw_VEC (b.nrow);
+	autoVEC resultcol = raw_VEC (result.nrow);
 	for (integer icol = 1; icol <= b.ncol; icol ++) {
 		bcol.all()  <<=  b.column (icol);
 		SVD_solve_preallocated (me, bcol.get(), resultcol.get());
@@ -362,10 +362,10 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		autoMAT a = newMATtranspose (m1);
 		autoMAT b = newMATtranspose (m2);
 		autoMAT q = newMATraw (n, n);
-		autoVEC alpha = newVECraw (n);
-		autoVEC beta = newVECraw (n);
+		autoVEC alpha = raw_VEC (n);
+		autoVEC beta = raw_VEC (n);
 		integer lwork = std::max (std::max (3 * n, m), p) + n;		
-		autoVEC work = newVECraw (lwork);
+		autoVEC work = raw_VEC (lwork);
 		autoINTVEC iwork = raw_INTVEC (n);
 
 		integer k, l, info;

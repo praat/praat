@@ -44,7 +44,7 @@ autoVEC from_to_VEC (double from, double to) {
 	const integer numberOfElements = Melder_ifloor (to - from + 1.0);
 	if (numberOfElements < 1)
 		return autoVEC ();
-	autoVEC result = newVECraw (numberOfElements);
+	autoVEC result = raw_VEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = from + (double) (i - 1);
 	return result;
@@ -68,7 +68,7 @@ autoVEC from_to_by_VEC (double from, double to, double by) {
 	const integer numberOfElements = Melder_ifloor ((to - from) / by + 1.0);
 	if (numberOfElements < 1)
 		return autoVEC ();
-	autoVEC result = newVECraw (numberOfElements);
+	autoVEC result = raw_VEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = from + (double) (i - 1) * by;
 	return result;
@@ -93,7 +93,7 @@ autoINTVEC from_to_by_INTVEC (integer from, integer to, integer by) {
 autoVEC from_to_count_VEC (double from, double to, integer count) {
 	Melder_require (count >= 2,
 		U"from_to_count#: cannot have fewer than two elements.");
-	autoVEC result = newVECraw (count);
+	autoVEC result = raw_VEC (count);
 	const double by = (to - from) / (count - 1);
 	for (integer i = 1; i < count; i ++)
 		result [i] = from + (double) (i - 1) * by;
@@ -123,7 +123,7 @@ autoVEC between_by_VEC (double from, double to, double by) {
 	const double spaceNeeded = (numberOfElements - 1) * by;
 	const double spaceOnEdges = (to - from) - spaceNeeded;
 	const double first = from + 0.5 * spaceOnEdges;
-	autoVEC result = newVECraw (numberOfElements);
+	autoVEC result = raw_VEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = first + (double) (i - 1) * by;
 	return result;
@@ -138,7 +138,7 @@ autoVEC between_count_VEC (double from, double to, integer count) {
 	if (count < 1)
 		return autoVEC ();
 	const double by = (to - from) / count;
-	autoVEC result = newVECraw (count);
+	autoVEC result = raw_VEC (count);
 	for (integer i = 1; i <= count; i ++)
 		result [i] = from + (double) (i - 0.5) * by;
 	return result;
@@ -167,7 +167,7 @@ void VECmul (VECVU const& target, constVECVU const& vec, constMATVU const& mat) 
 }
 
 autoVEC newVECmul (constVECVU const& vec, constMATVU const& mat) {
-	autoVEC result = newVECraw (mat.ncol);
+	autoVEC result = raw_VEC (mat.ncol);
 	VECmul (result.get(), vec, mat);
 	return result;
 }
@@ -187,7 +187,7 @@ void VECmul (VECVU const& target, constMATVU const& mat, constVECVU const& vec) 
 }
 
 autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec) {
-	autoVEC result = newVECraw (mat.nrow);
+	autoVEC result = raw_VEC (mat.nrow);
 	VECmul (result.all(), mat, vec);
 	return result;
 }
@@ -229,7 +229,7 @@ void to_INTVEC_out (INTVECVU const& x) noexcept {
 
 autoVEC to_VEC (double to) {
 	const integer numberOfElements = Melder_ifloor (to);
-	autoVEC result = newVECraw (numberOfElements);
+	autoVEC result = raw_VEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = (double) i;
 	return result;

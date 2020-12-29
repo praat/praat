@@ -27,7 +27,7 @@ autoVEC newVECfromString (conststring32 s) {
 	autoSTRVEC tokens = splitByWhitespace_STRVEC (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
-	autoVEC numbers = newVECraw (tokens.size);
+	autoVEC numbers = raw_VEC (tokens.size);
 	for (integer inum = 1; inum <= tokens.size; inum ++)
 		Interpreter_numericExpression (nullptr, tokens [inum].get(), & numbers [inum]);
 	return numbers;

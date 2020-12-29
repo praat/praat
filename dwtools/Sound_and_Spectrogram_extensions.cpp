@@ -87,7 +87,7 @@ static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, in
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 	integer numberOfFrequencies = his nx;
 
-	autoVEC z = newVECraw (numberOfFrequencies);
+	autoVEC z = raw_VEC (numberOfFrequencies);
 	for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 		const double frequency_Hz = his x1 + (ifreq - 1) * his dx;
 		z [ifreq] = thy v_hertzToFrequency (frequency_Hz);

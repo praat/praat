@@ -81,7 +81,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 			numberOfData = Melder_ifloor (my numberOfObservations);
 		autoPCA pca = SSCP_to_PCA (me);
 		autoTableOfReal thee = TableOfReal_create (numberOfData, my numberOfColumns);
-		autoVEC buf = newVECraw (my numberOfColumns);
+		autoVEC buf = raw_VEC (my numberOfColumns);
 		for (integer i = 1; i <= numberOfData; i ++)
 			Covariance_PCA_generateOneVector_inline (me, pca.get(), thy data.row (i), buf.get());
 		thy columnLabels.all() <<= my columnLabels.all();
@@ -165,7 +165,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		}
 		thy centroid.all()  *=  1.0 / thy numberOfObservations;
 		
-		autoVEC mean = newVECraw (thy numberOfColumns);
+		autoVEC mean = raw_VEC (thy numberOfColumns);
 		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
@@ -561,7 +561,7 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 		const double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2; // page 15
 		const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta; // page 15
 		
-		autoVEC buf = newVECraw (data.nrow);
+		autoVEC buf = raw_VEC (data.nrow);
 
 		try { // in case the covariance matrix is singular and its inverse cannot be determined
 			SSCP_expandLowerCholeskyInverse (me);

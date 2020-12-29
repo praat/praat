@@ -254,8 +254,8 @@ static void Graphics_polyline_clipTopBottom (Graphics g, VEC x, VEC y, double ym
 void FunctionSeries_draw (FunctionSeries me, Graphics g, double xmin, double xmax, double ymin, double ymax, int extrapolate, bool garnish) {
 	integer numberOfPoints = 1000;
 
-	autoVEC x = newVECraw (numberOfPoints);
-	autoVEC y = newVECraw (numberOfPoints);
+	autoVEC x = raw_VEC (numberOfPoints);
+	autoVEC y = raw_VEC (numberOfPoints);
 
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	double fxmin = xmin, fxmax = xmax;

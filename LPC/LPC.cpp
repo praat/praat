@@ -98,7 +98,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		return;
 
 	const integer numberOfSelected = itmax - itmin + 1;
-	autoVEC gain = newVECraw (numberOfSelected);
+	autoVEC gain = raw_VEC (numberOfSelected);
 
 	for (integer iframe = itmin; iframe <= itmax; iframe ++)
 		gain [iframe - itmin + 1] = my d_frames [iframe]. gain;
@@ -164,8 +164,8 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 autoMatrix LPC_downto_Matrix_area (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
-		autoVEC rc = newVECraw (my maxnCoefficients);
-		autoVEC area = newVECraw (my maxnCoefficients);
+		autoVEC rc = raw_VEC (my maxnCoefficients);
+		autoVEC area = raw_VEC (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
 			const LPC_Frame lpc = & my d_frames [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
