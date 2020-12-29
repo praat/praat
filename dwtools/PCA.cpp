@@ -155,7 +155,7 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 		if (byColumns) {
 			if (m.ncol < m.nrow)
 				Melder_warning (U"The number of columns in your table is less than the number of rows.");
-			mcopy = newMATtranspose (m);
+			mcopy = transpose_MAT (m);
 		} else {
 			if (m.nrow < m.ncol)
 				Melder_warning (U"The number of rows in your table is less than the number of columns.");

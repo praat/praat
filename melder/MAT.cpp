@@ -195,7 +195,7 @@ void MATmul_forceAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 		Melder_assert (x.colStride == 1);
 	}
 	if (y.rowStride != 1) {
-		tmpY = newMATtranspose (y);
+		tmpY = transpose_MAT (y);
 		y = tmpY.transpose();
 		Melder_assert (y.rowStride == 1);
 	}
@@ -252,7 +252,7 @@ void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 			}
 		} else {
 			if (double (target.nrow) * double (target.ncol) * double (x.ncol) > 1e5) {
-				autoMAT tmpY = newMATtranspose (y);
+				autoMAT tmpY = transpose_MAT (y);
 				y = tmpY.transpose();
 				Melder_assert (y.rowStride == 1);
 				for (integer irow = 1; irow <= target.nrow; irow ++) {
@@ -314,7 +314,7 @@ void MATmul_allowAllocation_ (MATVU const& target, constMATVU x, constMATVU y) {
 			autoMAT tmpX = newMATcopy (x);
 			x = tmpX.all();
 			Melder_assert (x.colStride == 1);
-			autoMAT tmpY = newMATtranspose (y);
+			autoMAT tmpY = transpose_MAT (y);
 			y = tmpY.transpose();
 			Melder_assert (y.rowStride == 1);
 			for (integer irow = 1; irow <= target.nrow; irow ++) {

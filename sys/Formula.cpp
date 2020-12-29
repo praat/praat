@@ -5830,16 +5830,16 @@ static void do_transpose_MAT () {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		if (x->owned) {
-			if (NUMisSymmetric (x->numericMatrix)) {
+			if (NUMisSquare (x->numericMatrix)) {
 				/*@praat
 					assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } }) = { { 1, 4, 7 }, { 2, 5, 8 }, { 3, 6, 9 } }
 				@*/
-				MATtranspose_inplace_mustBeSquare (x->numericMatrix);
+				transpose_mustBeSquare_MAT_inout (x->numericMatrix);
 			} else {
 				/*@praat
 					assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 } }) = { { 1, 4 }, { 2, 5 }, { 3, 6 } }
 				@*/
-				autoMAT newMatrix = newMATtranspose (x->numericMatrix);
+				autoMAT newMatrix = transpose_MAT (x->numericMatrix);
 				x->reset();
 				x->numericMatrix = newMatrix.releaseToAmbiguousOwner();
 			}
@@ -5849,7 +5849,7 @@ static void do_transpose_MAT () {
 				assert transpose## (a##) = { { 1, 4 }, { 2, 5 }, { 3, 6 } }
 				assert transpose## (transpose## (a##)) = a##
 			@*/
-			x->numericMatrix = newMATtranspose (x->numericMatrix). releaseToAmbiguousOwner();
+			x->numericMatrix = transpose_MAT (x->numericMatrix). releaseToAmbiguousOwner();
 			x->owned = true;
 		}
 	} else {

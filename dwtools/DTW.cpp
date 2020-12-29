@@ -325,7 +325,7 @@ autoDTW DTW_swapAxes (DTW me) {
 	try {
 		autoDTW thee = DTW_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		
-		MATtranspose (thy z.get(), my z.get());
+		transpose_MAT_out (thy z.get(), my z.get());
 		
 		thy pathLength = my pathLength;
 		for (integer i = 1; i <= my pathLength; i ++) {

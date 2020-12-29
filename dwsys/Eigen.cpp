@@ -154,8 +154,8 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoVEC work = raw_VEC (lwork);
 	autoINTVEC iwork = zero_INTVEC (n);
 	autoMAT q = raw_MAT (n, n);
-	autoMAT ac = newMATtranspose (a);
-	autoMAT bc = newMATtranspose (b);
+	autoMAT ac = transpose_MAT (a);
+	autoMAT bc = transpose_MAT (b);
 
 	(void) NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & ll,
 		& ac [1][1], m, & bc [1][1], p, & alpha [1], & beta [1], nullptr, m,

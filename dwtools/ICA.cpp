@@ -217,7 +217,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		autoVEC wnew = raw_VEC (dimension);
 		autoVEC mvec = zero_VEC (dimension);
 
-		autoMAT wc = newMATtranspose (my data.get());
+		autoMAT wc = transpose_MAT (my data.get());
 
 		// d = diag(diag(W'*C0*W));
 		// W = W*d^(-1/2);

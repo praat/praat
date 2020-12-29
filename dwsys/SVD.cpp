@@ -143,7 +143,7 @@ void SVD_compute (SVD me) {
 		/*
 			Because we store the eigenvectors row-wise, they must be transposed
 		*/
-		MATtranspose_inplace_mustBeSquare (my v.get());
+		transpose_mustBeSquare_MAT_inout (my v.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
 	}
@@ -359,8 +359,8 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		const integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
 
 		// Store the matrices a and b as column major!
-		autoMAT a = newMATtranspose (m1);
-		autoMAT b = newMATtranspose (m2);
+		autoMAT a = transpose_MAT (m1);
+		autoMAT b = transpose_MAT (m2);
 		autoMAT q = raw_MAT (n, n);
 		autoVEC alpha = raw_VEC (n);
 		autoVEC beta = raw_VEC (n);
@@ -383,7 +383,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 			my d2 [i] = beta [i];
 		}
 
-		MATtranspose (my q.get(), q.get());
+		transpose_MAT_out (my q.get(), q.get());
 		/*
 			Get R from a(1:k+l,n-k-l+1:n)
 		*/

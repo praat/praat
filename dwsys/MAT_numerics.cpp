@@ -78,7 +78,7 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 	if (! (out_eigenvalues || out_eigenvectors))
 		return;
 	Melder_assert (data.nrow == data.ncol);
-	autoMAT a = newMATtranspose (data);   // lapack needs column major layout
+	autoMAT a = transpose_MAT (data);   // lapack needs column major layout
 	autoVEC eigenvalues_re = raw_VEC (a.nrow);
 	autoVEC eigenvalues_im = raw_VEC (a.nrow);
 	autoMAT eigenvectors_right;

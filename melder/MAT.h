@@ -467,22 +467,22 @@ inline void MATsubtractReversed_inplace (MATVU const& x, constMATVU const& y) no
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
 }
 
-inline void MATtranspose_inplace_mustBeSquare (MATVU const& x) noexcept {
+inline void transpose_mustBeSquare_MAT_inout (MATVU const& x) noexcept {
 	Melder_assert (x.nrow == x.ncol);
 	integer n = x.nrow;
 	for (integer i = 1; i < n; i ++)
 		for (integer j = i + 1; j <= n; j ++)
 			std::swap (x [i] [j], x [j] [i]);
 }
-inline void MATtranspose (MATVU const& target, constMATVU const& x) noexcept {
+inline void transpose_MAT_out (MATVU const& target, constMATVU const& x) noexcept {
 	Melder_assert (x.nrow == target.ncol && x.ncol == target.nrow);
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = x [icol] [irow];
 }
-inline autoMAT newMATtranspose (constMATVU const& x) {
+inline autoMAT transpose_MAT (constMATVU const& x) {
 	autoMAT result = raw_MAT (x.ncol, x.nrow);
-	MATtranspose (result.get(), x);
+	transpose_MAT_out (result.get(), x);
 	return result;
 }
 
