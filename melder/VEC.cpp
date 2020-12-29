@@ -40,7 +40,7 @@ void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU
 }
 #endif
 
-autoVEC newVECfrom_to (double from, double to) {
+autoVEC from_to_VEC (double from, double to) {
 	const integer numberOfElements = Melder_ifloor (to - from + 1.0);
 	if (numberOfElements < 1)
 		return autoVEC ();
@@ -49,7 +49,7 @@ autoVEC newVECfrom_to (double from, double to) {
 		result [i] = from + (double) (i - 1);
 	return result;
 }
-autoINTVEC newINTVECfrom_to (integer from, integer to) {
+autoINTVEC from_to_INTVEC (integer from, integer to) {
 	const integer numberOfElements = to - from + 1;
 	if (numberOfElements < 1)
 		return autoINTVEC ();
@@ -59,7 +59,7 @@ autoINTVEC newINTVECfrom_to (integer from, integer to) {
 	return result;
 }
 
-autoVEC newVECfrom_to_by (double from, double to, double by) {
+autoVEC from_to_by_VEC (double from, double to, double by) {
 	Melder_require (by != 0.0,
 		U"from_to_by#: cannot have a step (“by”) of zero.");
 	/*
@@ -73,7 +73,7 @@ autoVEC newVECfrom_to_by (double from, double to, double by) {
 		result [i] = from + (double) (i - 1) * by;
 	return result;
 }
-autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by) {
+autoINTVEC from_to_by_INTVEC (integer from, integer to, integer by) {
 	Melder_require (by != 0,
 		U"from_to_by#: cannot have a step (“by”) of zero.");
 	/*
@@ -90,7 +90,7 @@ autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by) {
 /*@praat
 	assert from_to_count# (0, 10, 5) = { 0, 2.5, 5, 7.5, 10 }
 @*/
-autoVEC newVECfrom_to_count (double from, double to, integer count) {
+autoVEC from_to_count_VEC (double from, double to, integer count) {
 	Melder_require (count >= 2,
 		U"from_to_count#: cannot have fewer than two elements.");
 	autoVEC result = newVECraw (count);
@@ -100,7 +100,7 @@ autoVEC newVECfrom_to_count (double from, double to, integer count) {
 	result [count] = to;
 	return result;
 }
-autoINTVEC newINTVECfrom_to_count (integer from, integer to, integer count) {
+autoINTVEC from_to_count_INTVEC (integer from, integer to, integer count) {
 	Melder_require (count >= 2,
 		U"from_to_count#: cannot have fewer than two elements.");
 	autoINTVEC result = newINTVECraw (count);
@@ -111,7 +111,7 @@ autoINTVEC newINTVECfrom_to_count (integer from, integer to, integer count) {
 	return result;
 }
 
-autoVEC newVECbetween_by (double from, double to, double by) {
+autoVEC between_by_VEC (double from, double to, double by) {
 	Melder_require (by != 0.0,
 		U"between_by#: cannot have a step (“by”) of zero.");
 	/*
@@ -132,7 +132,7 @@ autoVEC newVECbetween_by (double from, double to, double by) {
 /*@praat
 	assert between_count# (0, 10, 5) = { 1, 3, 5, 7, 9 }
 @*/
-autoVEC newVECbetween_count (double from, double to, integer count) {
+autoVEC between_count_VEC (double from, double to, integer count) {
 	Melder_require (count >= 0,
 		U"between_count#: cannot have fewer than zero elements.");
 	if (count < 1)
@@ -222,19 +222,19 @@ void VECpower (VECVU const& target, constVECVU const& vec, double power) {
 	}
 }
 
-void INTVECto (INTVECVU const& x) noexcept {
+void to_INTVEC_out (INTVECVU const& x) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = i;
 }
 
-autoVEC newVECto (double to) {
+autoVEC to_VEC (double to) {
 	const integer numberOfElements = Melder_ifloor (to);
 	autoVEC result = newVECraw (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = (double) i;
 	return result;
 }
-autoINTVEC newINTVECto (integer to) {
+autoINTVEC to_INTVEC (integer to) {
 	const integer numberOfElements = to;
 	autoINTVEC result = newINTVECraw (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)

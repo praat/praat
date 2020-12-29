@@ -81,7 +81,7 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
-	my p = newINTVECto (numberOfElements);
+	my p = to_INTVEC (numberOfElements);
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
@@ -114,7 +114,7 @@ autoPermutation Permutation_create (integer numberOfElements) {
 }
 
 void Permutation_sort (Permutation me) {
-	INTVECto (my p.get());
+	to_INTVEC_out (my p.get());
 }
 
 void Permutation_swapPositions (Permutation me, integer i1, integer i2) {

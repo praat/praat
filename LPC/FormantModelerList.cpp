@@ -175,7 +175,7 @@ void FormantModelerList_getMatrixGridLayout (FormantModelerList me, integer *out
 
 void FormantModelerListDrawingSpecification_showAll (FormantModelerListDrawingSpecification me) {
 	my numberOfModelersToDraw = my numberOfModelers;
-	INTVECto (my drawingOrder.get());
+	to_INTVEC_out (my drawingOrder.get());
 }
 
 integer FormantModelerListDrawingSpecification_getNumberOfShown (FormantModelerListDrawingSpecification me) {
@@ -192,7 +192,7 @@ autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerL
 	try {
 		autoFormantModelerListDrawingSpecification thee = Thing_new (FormantModelerListDrawingSpecification);
 		thy numberOfModelers = my numberOfModelers;
-		thy drawingOrder = newINTVECto (my numberOfModelers);
+		thy drawingOrder = to_INTVEC (my numberOfModelers);
 		thy numberOfModelersToDraw = my numberOfModelers;
 		thy boxLineWidth = 4.0;
 		thy oddFormantColour = Melder_RED;

@@ -333,17 +333,17 @@ inline autoVEC newVECcolumnSums (constMATVU const& x) {
 	return result;
 }
 
-extern autoVEC newVECto (double to);
-extern autoVEC newVECfrom_to (double from, double to);
-extern autoVEC newVECfrom_to_by (double from, double to, double by);
-extern autoVEC newVECfrom_to_count (double from, double to, integer count);
-extern autoVEC newVECbetween_by (double from, double to, double by);
-extern autoVEC newVECbetween_count (double from, double to, integer count);
+extern autoVEC to_VEC (double to);
+extern autoVEC from_to_VEC (double from, double to);
+extern autoVEC from_to_by_VEC (double from, double to, double by);
+extern autoVEC from_to_count_VEC (double from, double to, integer count);
+extern autoVEC between_by_VEC (double from, double to, double by);
+extern autoVEC between_count_VEC (double from, double to, integer count);
 
-extern void INTVECto (INTVECVU const& x) noexcept;
-extern autoINTVEC newINTVECto (integer to);
-extern autoINTVEC newINTVECfrom_to (integer from, integer to);
-extern autoINTVEC newINTVECfrom_to_by (integer from, integer to, integer by);
-extern autoINTVEC newINTVECfrom_to_count (integer from, integer to, integer count);
+extern void to_INTVEC_out (INTVECVU const& x) noexcept;
+extern autoINTVEC to_INTVEC (integer to);
+extern autoINTVEC from_to_INTVEC (integer from, integer to);
+extern autoINTVEC from_to_by_INTVEC (integer from, integer to, integer by);
+extern autoINTVEC from_to_count_INTVEC (integer from, integer to, integer count);
 
 /* End of file VEC.h */
