@@ -127,7 +127,7 @@ double Network_getActivity (Network me, integer nodeNumber) {
 autoVEC Network_getActivities (Network me, integer fromNode, integer toNode) {
 	try {
 		const integer newNumberOfNodes = my checkAndDefaultNodeRange (& fromNode, & toNode);
-		autoVEC result = newVECraw (newNumberOfNodes);
+		autoVEC result = raw_VEC (newNumberOfNodes);
 		for (integer inode = 1; inode <= result.size; inode ++)
 			result [inode] = my nodes [fromNode - 1 + inode]. activity;
 		return result;

@@ -7232,7 +7232,7 @@ FORM (NUMVEC_Table_listRowNumbersWhere, U"Table: List rows where", U"") {
 DO
 	NUMVEC_ONE (Table)
 		autoINTVEC resulti = Table_listRowNumbersWhere (me, formula, interpreter);
-		autoVEC result = newVECraw (resulti.size);
+		autoVEC result = raw_VEC (resulti.size);
 		for (integer i = 1; i <= resulti.size; i ++)
 			result [i] = resulti [i];
 	NUMVEC_ONE_END

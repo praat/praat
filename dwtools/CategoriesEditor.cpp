@@ -316,7 +316,7 @@ static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststrin
 	my nSelected = nSelected;
 	Command_init (me, name, boss, execute, undo);
 	my categories = Categories_create();
-	my selection = newINTVECzero (nSelected);
+	my selection = zero_INTVEC (nSelected);
 }
 
 #pragma mark Insert
@@ -463,7 +463,7 @@ static int CategoriesEditorMoveUp_execute (CategoriesEditorMoveUp me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	Ordered_moveItems ((Ordered) categories, my selection.get(), my newPos);   // FIXME cast
-	autoINTVEC selection = newINTVECraw (my nSelected);
+	autoINTVEC selection = raw_INTVEC (my nSelected);
 	for (integer i = 1; i <= my nSelected; i ++)
 		selection [i] = my newPos + i - 1;
 	update (editor, my newPos, my selection [my nSelected], selection.get(), my nSelected);
@@ -504,7 +504,7 @@ static int CategoriesEditorMoveDown_execute (CategoriesEditorMoveDown me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	Ordered_moveItems ((Ordered) categories, my selection.get(), my newPos);   // FIXME cast
-	autoINTVEC selection =newINTVECraw (my nSelected);
+	autoINTVEC selection = raw_INTVEC (my nSelected);
 	for (integer i = 1; i <= my nSelected; i ++)
 		selection [i] = my newPos - my nSelected + i;
 	update (editor, my selection[1], my newPos, selection.get(), my nSelected);

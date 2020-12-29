@@ -106,7 +106,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 			qstart = 0.1 * dq; // some small offset to avoid log(0)
 			n--; 
 		}
-		autoVEC y = newVECraw (n);
+		autoVEC y = raw_VEC (n);
 		
 		for (integer i = 1; i <= n; i ++) {
 			const double q = q1 + (i - 1) * dq;
@@ -152,8 +152,8 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		Melder_require (numberOfPoints > 1,
 			U"Not enough points for fit.");
 
-		autoVEC y = newVECraw (numberOfPoints);
-		autoVEC x = newVECraw (numberOfPoints);
+		autoVEC y = raw_VEC (numberOfPoints);
+		autoVEC x = raw_VEC (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
@@ -232,7 +232,7 @@ static void PowerCepstrum_smooth_inplaceRectangular (PowerCepstrum me, double qu
 		double halfWindwow = 0.5 * quefrencyAveragingWindow;
 		double numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
 		if (numberOfQuefrencyBins > 1.0) {
-			autoVEC qout = newVECraw (my nx);
+			autoVEC qout = raw_VEC (my nx);
 			for (integer k = 1; k <= numberOfIterations; k ++) {
 				for (integer isamp = 1; isamp <= my nx; isamp ++) {
 					const double xmid = Sampled_indexToX (me, isamp);
@@ -250,7 +250,7 @@ static void PowerCepstrum_smooth_inplaceRectangular_old (PowerCepstrum me, doubl
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
 			autoVEC qin = newVECcopy (my z.row (1));
-			autoVEC qout = newVECraw (my nx);
+			autoVEC qout = raw_VEC (my nx);
 			for (integer k = 1; k <= numberOfIterations; k ++)
 				if (k % 2 == 1) 
 					VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);

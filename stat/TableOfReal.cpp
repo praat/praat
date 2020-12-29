@@ -493,7 +493,7 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	/*
 		Create room for the elements.
 	*/
-	autoINTVEC elements = newINTVECzero (numberOfElements);
+	autoINTVEC elements = zero_INTVEC (numberOfElements);
 	/*
 		Store the elements.
 	*/

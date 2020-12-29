@@ -207,8 +207,8 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2)
 void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, double fontSize) {
 	try {
 		constexpr integer nsteps = 100;
-		autoVEC x = newVECraw (nsteps + 1);
-		autoVEC y = newVECraw (nsteps + 1);
+		autoVEC x = raw_VEC (nsteps + 1);
+		autoVEC y = raw_VEC (nsteps + 1);
 		/*
 			From the eigenvalues and eigenvectors of the symmetrical sscp matrix we
 			can calculate the length and directions of the principal axes of the ellipse.

@@ -83,7 +83,7 @@ static void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer 
 }
 
 static autoINTVEC newINTVECasNumbers (integer size, integer number) {
-	autoINTVEC target = newINTVECraw (size);
+	autoINTVEC target = raw_INTVEC (size);
 	for (integer i = 1; i <= size; i++)
 		target [i] = number;
 	return target;
@@ -712,7 +712,7 @@ autoFormant FormantModeler_to_Formant (FormantModeler me, bool useEstimates, boo
 		const integer numberOfFrames = ff -> numberOfDataPoints;
 		const double t1 = ff -> data [1] .x, dt = ff -> data [2] .x - t1;
 		autoFormant thee = Formant_create (my xmin, my xmax, numberOfFrames, dt, t1, numberOfFormants);
-		autoVEC sigma = newVECraw (numberOfFormants);
+		autoVEC sigma = raw_VEC (numberOfFormants);
 		if (useEstimates || estimateUndefineds) {
 			for (integer itrack = 1; itrack <= numberOfFormants; itrack ++)
 				sigma [itrack] = FormantModeler_getStandardDeviation (me, itrack);
@@ -814,7 +814,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 			U"We need at least three formants to process outliers.");
 		
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoVEC x = newVECraw (numberOfDataPoints); // also store x-values
+		autoVEC x = raw_VEC (numberOfDataPoints); // also store x-values
 		autoMAT z = newMATraw (numberOfFormants, numberOfDataPoints);
 		// maybe some of the formants had NUMundefind's.
 
@@ -932,8 +932,8 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 		integer minNumberOfFormants = 1000000;
 		if (numberOfFormantObjects == 1)
 			return 1;
-		autoINTVEC numberOfFormants = newINTVECraw (numberOfFormantObjects);
-		autoINTVEC invalid = newINTVECzero (numberOfFormantObjects);
+		autoINTVEC numberOfFormants = raw_INTVEC (numberOfFormantObjects);
+		autoINTVEC invalid = zero_INTVEC (numberOfFormantObjects);
 		double tminf = 0.0, tmaxf = 0.0;
 		for (integer iobject = 1; iobject <= numberOfFormantObjects; iobject ++) {
 			// Check that all Formants have the same domain

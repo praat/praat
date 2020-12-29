@@ -41,7 +41,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 		U"dsyev initialization code = ", info, U").");
 	
 	lwork = Melder_iceiling (wt);
-	autoVEC work = newVECraw (lwork);
+	autoVEC work = raw_VEC (lwork);
 	/*
 		2. Calculate the eigenvalues and eigenvectors (row-wise)
 	*/
@@ -63,7 +63,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);	
-	autoVEC eigenvalues = newVECraw (a.nrow);
+	autoVEC eigenvalues = raw_VEC (a.nrow);
 	autoMAT eigenvectors = newMATraw (a.nrow, a.ncol);	
 	
 	MAT_getEigenSystemFromSymmetricMatrix_preallocated (eigenvectors.get(), eigenvalues.get(), a, sortAscending);
@@ -79,8 +79,8 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 		return;
 	Melder_assert (data.nrow == data.ncol);
 	autoMAT a = newMATtranspose (data);   // lapack needs column major layout
-	autoVEC eigenvalues_re = newVECraw (a.nrow);
-	autoVEC eigenvalues_im = newVECraw (a.nrow);
+	autoVEC eigenvalues_re = raw_VEC (a.nrow);
+	autoVEC eigenvalues_im = raw_VEC (a.nrow);
 	autoMAT eigenvectors_right;
 	double *p_evec_right = nullptr;
 	if (out_eigenvectors) {
@@ -97,7 +97,7 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 		U"NUMlapack_dgeev_ query returns error ", info, U".");
 	
 	lwork = Melder_iceiling (wtmp [1]);
-	autoVEC work = newVECraw (lwork);
+	autoVEC work = raw_VEC (lwork);
 	NUMlapack_dgeev_ ("N", jobvr, a.nrow, & a [1] [1], a.nrow, & eigenvalues_re [1], & eigenvalues_im [1],
 		nullptr, a.nrow, p_evec_right, a.nrow, & work [1], lwork, & info);
 	integer numberOfEigenvalues = a.nrow, istart = 0;

@@ -39,8 +39,8 @@ void MATrankColumns (MAT m, integer cb, integer ce) {
 	Melder_assert (cb > 0 && cb <= m.ncol);
 	Melder_assert (ce > 0 && ce <= m.ncol);
 	Melder_assert (cb <= ce);
-	autoVEC v = newVECraw (m.nrow);
-	autoINTVEC index = newINTVECraw (m.nrow);
+	autoVEC v = raw_VEC (m.nrow);
+	autoINTVEC index = raw_INTVEC (m.nrow);
 
 	for (integer j = cb; j <= ce; j ++) {
 		v.all() <<= m.column (j);
@@ -231,7 +231,7 @@ void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool 
 
 	for (integer j = 1; j <= a.size; j ++)
 		a [j] = atmp [index [j]];
-	autoINTVEC itmp = newINTVECraw (a.size);
+	autoINTVEC itmp = raw_INTVEC (a.size);
 	itmp.all() <<= iv1;
 	for (integer j = 1; j <= a.size; j ++)
 		iv1 [j] = itmp [index [j]];

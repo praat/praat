@@ -319,15 +319,15 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 	Sound_preEmphasis (me, preemphasisFrequency);
 
 	/* Gaussian window. */
-	autoVEC window = newVECraw (nsamp_window);
+	autoVEC window = raw_VEC (nsamp_window);
 	for (integer i = 1; i <= nsamp_window; i ++) {
 		const double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
 		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
 	}
 
 	integer maximumFrameLength = nsamp_window;
-	auto frameBuffer = newVECraw (maximumFrameLength);
-	auto coefficients = newVECraw (numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
+	auto frameBuffer = raw_VEC (maximumFrameLength);
+	auto coefficients = raw_VEC (numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
 	for (integer iframe = 1; iframe <= nFrames; iframe ++) {
 		const double t = Sampled_indexToX (thee.get(), iframe);
 		const integer leftSample = Sampled_xToLowIndex (me, t);

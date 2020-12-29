@@ -439,7 +439,7 @@ void Matrix_playMovie (Matrix me, Graphics g) {
 		me, U": cannot play a movie for a Matrix with less than 2 rows.");
 	if (my xmin == my xmax || my ymin == my ymax)
 		return;
-	autoVEC column = newVECraw (my ny);
+	autoVEC column = raw_VEC (my ny);
 	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	if (minimum == maximum) {

@@ -180,7 +180,7 @@ inline void VECabs (VECVU const& result, constVECVU const& v) {
 }
 
 inline autoVEC newVECabs (constVECVU const& v) {
-	autoVEC result = newVECraw (v.size);
+	autoVEC result = raw_VEC (v.size);
 	VECabs (result.get(), v);
 	return result;
 }
@@ -216,7 +216,7 @@ inline double NUMmul (constVECVU const& x, constMATVU const& m, constVECVU const
 }	
 
 inline autoVEC VECnorm_rows (constMATVU const& x, double power) {
-	autoVEC norm = newVECraw (x.nrow);
+	autoVEC norm = raw_VEC (x.nrow);
 	for (integer irow = 1; irow <= norm.size; irow ++)
 		norm [irow] = NUMnorm (x.row (irow), power);
 	return norm;
@@ -404,13 +404,13 @@ void INTVECindex (INTVEC const& target, constVEC const& a);
 void INTVECindex (INTVEC const& target, constSTRVEC const& s);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
-	autoINTVEC result = newINTVECraw (a.size);
+	autoINTVEC result = raw_INTVEC (a.size);
 	INTVECindex (result.get(), a);
 	return result;
 }
 
 inline autoINTVEC newINTVECindex (constSTRVEC const& s) {
-	autoINTVEC result = newINTVECraw (s.size);
+	autoINTVEC result = raw_INTVEC (s.size);
 	INTVECindex (result.get(), s);
 	return result;
 }
@@ -1293,7 +1293,7 @@ inline void VECchainRows_preallocated (VECVU const& v, constMATVU const& m) {
 }
 
 inline autoVEC VECchainRows (constMATVU const& m) {
-	autoVEC result = newVECraw (m.nrow * m.ncol);
+	autoVEC result = raw_VEC (m.nrow * m.ncol);
 	VECchainRows_preallocated (result.get(), m);
 	return result;
 }
@@ -1307,7 +1307,7 @@ inline void VECchainColumns_preallocated (VEC const& v, constMATVU const& m) {
 }
 
 inline autoVEC VECchainColumns (constMATVU const& m) {
-	autoVEC result = newVECraw (m.nrow * m.ncol);
+	autoVEC result = raw_VEC (m.nrow * m.ncol);
 	VECchainColumns_preallocated (result.get(), m);
 	return result;
 }

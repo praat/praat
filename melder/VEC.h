@@ -52,7 +52,7 @@ inline TypeVECadd_VEC_NUM operator+ (constVECVU const& x, double number) { retur
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (constVECVU const& x, double number) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  x  +  number;
 	return result;
 }
@@ -68,7 +68,7 @@ inline TypeVECsubtract_VEC_NUM operator- (constVECVU const& x, double number) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (constVECVU const& x, double number) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  x  -  number;
 	return result;
 }
@@ -84,7 +84,7 @@ inline TypeVECmultiply_VEC_NUM operator* (constVECVU const& x, double number) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (constVECVU const& x, double factor) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  x  *  factor;
 	return result;
 }
@@ -100,7 +100,7 @@ inline TypeVECadd_NUM_VEC operator+ (double number, constVECVU const& x) { retur
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (double number, constVECVU const& x) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  number  +  x;
 	return result;
 }
@@ -116,7 +116,7 @@ inline TypeVECsubtract_NUM_VEC operator- (double number, constVECVU const& x) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (double number, constVECVU const& x) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  number  -  x;
 	return result;
 }
@@ -132,7 +132,7 @@ inline TypeVECmultiply_NUM_VEC operator* (double number, constVECVU const& x) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (double number, constVECVU const& x) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  number  *  x;
 	return result;
 }
@@ -150,7 +150,7 @@ inline TypeVECadd_VEC_VEC operator+ (constVECVU const& x, constVECVU const& y) {
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECadd (constVECVU const& x, constVECVU const& y) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  x  +  y;
 	return result;
 }
@@ -168,7 +168,7 @@ inline TypeVECsubtract_VEC_VEC operator- (constVECVU const& x, constVECVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECsubtract (constVECVU const& x, constVECVU const& y) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  x  -  y;
 	return result;
 }
@@ -186,7 +186,7 @@ inline TypeVECmultiply_VEC_VEC operator* (constVECVU const& x, constVECVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoVEC newVECmultiply (constVECVU const& x, constVECVU const& y) {
-	autoVEC result = newVECraw (x.size);
+	autoVEC result = raw_VEC (x.size);
 	result.all()  <<=  x  *  y;
 	return result;
 }
@@ -213,7 +213,7 @@ inline void VECcentre_inplace (VECVU const& x, double *out_mean = nullptr) noexc
 }
 
 inline autoVEC newVECcolumn (constMATVU const& source, integer columnNumber) {
-	autoVEC target = newVECraw (source.nrow);
+	autoVEC target = raw_VEC (source.nrow);
 	target.all()  <<=  source.column (columnNumber);
 	return target;
 }
@@ -224,7 +224,7 @@ inline void VECcolumnMeans (VECVU const& target, constMATVU const& x) noexcept {
 		target [icol] = NUMmean (x.column (icol));
 }
 inline autoVEC newVECcolumnMeans (constMATVU const& x) {
-	autoVEC result = newVECraw (x.ncol);
+	autoVEC result = raw_VEC (x.ncol);
 	VECcolumnMeans (result.get(), x);
 	return result;
 }
@@ -236,7 +236,7 @@ extern autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec);
 
 extern void VECpower (VECVU const& target, constVECVU const& vec, double power);
 inline autoVEC newVECpower (constVECVU const& vec, double power) {
-	autoVEC result = newVECraw (vec.size);
+	autoVEC result = raw_VEC (vec.size);
 	VECpower (result.all(), vec, power);
 	return result;
 }
@@ -246,12 +246,12 @@ inline void VECrandomGauss (VECVU const& target, double mu, double sigma) noexce
 		target [i] = NUMrandomGauss (mu, sigma);
 }
 inline autoVEC newVECrandomGauss (integer size, double mu, double sigma) {
-	autoVEC result = newVECraw (size);
+	autoVEC result = raw_VEC (size);
 	VECrandomGauss (result.all(), mu, sigma);
 	return result;
 }
 inline autoVEC newVECrandomGauss (constVECVU const& model, double mu, double sigma) {
-	autoVEC result = newVECraw (model.size);
+	autoVEC result = raw_VEC (model.size);
 	VECrandomGauss (result.all(), mu, sigma);
 	return result;
 }
@@ -261,12 +261,12 @@ inline void VECrandomUniform (VECVU const& target, double lowest, double highest
 		target [i] = NUMrandomUniform (lowest, highest);
 }
 inline autoVEC newVECrandomUniform (integer size, double lowest, double highest) {
-	autoVEC result = newVECraw (size);
+	autoVEC result = raw_VEC (size);
 	VECrandomUniform (result.all(), lowest, highest);
 	return result;
 }
 inline autoVEC newVECrandomUniform (constVECVU const& model, double lowest, double highest) {
-	autoVEC result = newVECraw (model.size);
+	autoVEC result = raw_VEC (model.size);
 	VECrandomUniform (result.all(), lowest, highest);
 	return result;
 }
@@ -279,7 +279,7 @@ inline void VECrowInners (VECVU const& target, constMATVU const& x, constMATVU c
 		target [irow] = NUMinner (x.row (irow), y.row (irow));
 }
 inline autoVEC newVECrowInners (constMATVU const& x, constMATVU const& y) {
-	autoVEC result = newVECraw (x.nrow);
+	autoVEC result = raw_VEC (x.nrow);
 	VECrowInners (result.all(), x, y);
 	return result;
 }
@@ -320,14 +320,14 @@ inline autoINTVEC newINTVECsort (constINTVECVU const& x) {
 }
 
 inline autoVEC newVECrowSums (constMATVU const& x) {
-	autoVEC result = newVECraw (x.nrow);
+	autoVEC result = raw_VEC (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		result [irow] = NUMsum (x.row (irow));
 	return result;
 }
 
 inline autoVEC newVECcolumnSums (constMATVU const& x) {
-	autoVEC result = newVECraw (x.ncol);
+	autoVEC result = raw_VEC (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		result [icol] = NUMsum (x.column (icol));
 	return result;

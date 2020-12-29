@@ -41,8 +41,8 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		const double qmax = (my xmax - my xmin) * nfft / my nx;
 		autoCepstrum thee = Cepstrum_create (qmax, nfft);
 
-		autoVEC x = newVECraw (nfft);
-		autoVEC nx = newVECraw (nfft);
+		autoVEC x = raw_VEC (nfft);
+		autoVEC nx = raw_VEC (nfft);
 
 		for (integer i = 1; i <= my nx; i ++) {
 			x [i] = my z [1] [i];

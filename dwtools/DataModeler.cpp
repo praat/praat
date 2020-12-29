@@ -399,7 +399,7 @@ autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights we
 
 autoVEC DataModeler_getZScores (DataModeler me) {
 	try {
-		autoVEC zscores = newVECraw (my numberOfDataPoints);
+		autoVEC zscores = raw_VEC (my numberOfDataPoints);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			double z = undefined;
@@ -417,7 +417,7 @@ autoVEC DataModeler_getZScores (DataModeler me) {
 
 autoVEC DataModeler_getChisqScoresFromZScores (DataModeler me, constVEC zscores, bool substituteAverage) {
 	Melder_assert (zscores.size == my numberOfDataPoints);
-	autoVEC chisq = newVECraw (zscores.size);
+	autoVEC chisq = raw_VEC (zscores.size);
 	integer numberOfDefined = 0;
 	double sumchisq = 0.0;
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
@@ -496,9 +496,9 @@ void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xm
 	integer iterm, bool scale, integer numberOfPoints)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
-	autoVEC x = newVECraw (numberOfPoints);
-	autoVEC y = newVECraw (numberOfPoints);
-	autoVEC term = newVECraw (my numberOfParameters);
+	autoVEC x = raw_VEC (numberOfPoints);
+	autoVEC y = raw_VEC (numberOfPoints);
+	autoVEC term = raw_VEC (my numberOfParameters);
 	for (integer i = 1; i <= numberOfPoints; i ++) {
 		x [i] = xmin + (i - 0.5) * (xmax - xmin) / numberOfPoints;
 		my f_evaluateBasisFunctions (me, x [i], term.get());
@@ -627,7 +627,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 
 void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints) {
 	Function_bidirectionalAutowindow (me, & xmin, & xmax);
-	autoVEC x = newVECraw (numberOfPoints), y = newVECraw (numberOfPoints);
+	autoVEC x = raw_VEC (numberOfPoints), y = raw_VEC (numberOfPoints);
 	const double dx = (xmax - xmin) / numberOfPoints;
 	for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
 		x [ipoint] = xmin + (ipoint - 1) * dx;
@@ -892,9 +892,9 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			Table_checkSpecifiedColumnNumberWithinRange (me, sigmacolumn);
 		const integer numberOfRows = my rows.size;
 		integer numberOfData = 0;
-		autoVEC x = newVECraw (numberOfRows);
-		autoVEC y = newVECraw (numberOfRows);
-		autoVEC sy = newVECraw (numberOfRows);
+		autoVEC x = raw_VEC (numberOfRows);
+		autoVEC y = raw_VEC (numberOfRows);
+		autoVEC sy = raw_VEC (numberOfRows);
 		for (integer i = 1; i <= numberOfRows; i ++) {
 			const double val = Table_getNumericValue_Assert (me, i, xcolumn);
 			if (isdefined (val)) {
@@ -978,7 +978,7 @@ void DataModeler_reportChiSquared (DataModeler me) {
 double DataModeler_getDataStandardDeviation (DataModeler me) {
 	try {
 		integer numberOfDataPoints = 0;
-		autoVEC y = newVECraw (my numberOfDataPoints);
+		autoVEC y = raw_VEC (my numberOfDataPoints);
 		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
 			if (my data [i] .status != kDataModelerData::INVALID)
 				y [++ numberOfDataPoints] = my data [i]. y;

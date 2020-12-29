@@ -131,7 +131,7 @@ void Artword_intoArt (Artword me, Art art, double time) {
 void Artword_draw (Artword me, Graphics g, kArt_muscle muscle, bool garnish) {
 	int16 numberOfTargets = my data [(int) muscle]. numberOfTargets;
 	if (numberOfTargets > 0) {
-		autoVEC x = newVECraw (numberOfTargets), y = newVECraw (numberOfTargets);
+		autoVEC x = raw_VEC (numberOfTargets), y = raw_VEC (numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int16 i = 1; i <= numberOfTargets; i ++) {

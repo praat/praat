@@ -3396,7 +3396,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber) {
 	try {
 		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double mad, location;
-		autoVEC workSpace = newVECraw (data.size);
+		autoVEC workSpace = raw_VEC (data.size);
 		NUMmad (data.get(), & location, true, & mad, workSpace);
 		return mad;
 	} catch (MelderError) {
@@ -3410,7 +3410,7 @@ autoVEC Table_getColumnVector (Table me, integer columnNumber) {
 		Table_numericize_Assert (me, columnNumber);
 		Melder_require (my rows.size > 0,
 			U"The table is empty.");
-		autoVEC result = newVECraw (my rows.size);
+		autoVEC result = raw_VEC (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			const TableRow row = my rows.at [irow];
 			result [irow] = row -> cells [columnNumber].number;
@@ -3427,7 +3427,7 @@ void Table_reportHuberMStatistics (Table me, integer columnNumber, double k_std,
 	try {
 		autoVEC data = Table_getColumnVector (me, columnNumber);
 		double location, scale;
-		autoVEC workSpace = newVECraw (data.size);
+		autoVEC workSpace = raw_VEC (data.size);
 		NUMstatistics_huber (data.get(), & location, true, & scale, true, k_std, tol, maximumNumberOfIterations, workSpace);
 		if (out_location)
 			*out_location = location;
@@ -3447,7 +3447,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 
 		const integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoVEC data = newVECraw (numberOfData);
+		autoVEC data = raw_VEC (numberOfData);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		const integer numberOfLevels = levels -> classes->size;
 		
@@ -3474,9 +3474,9 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		}
 		const double tiesCorrection = 1.0 - (double) c / (numberOfData * (numberOfData * numberOfData - 1.0));
 
-		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
+		autoINTVEC factorLevelSizes = zero_INTVEC (numberOfLevels);
 		autoVEC factorLevelSums = zero_VEC (numberOfLevels);
-		autoINTVEC ties = newINTVECzero (numberOfLevels);
+		autoINTVEC ties = zero_INTVEC (numberOfLevels);
 		for (integer i = 1; i <= numberOfData; i ++) {
 			const integer index = levels -> classIndex [i];
 			factorLevelSizes [index] ++;
@@ -3525,8 +3525,8 @@ static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double 
 		Table_numericize_Assert (me, 2);
 		Table_numericize_Assert (me, 3);
 		const integer numberOfMeans = my rows.size;
-		autoVEC means = newVECraw (numberOfMeans);
-		autoVEC cases = newVECraw (numberOfMeans);
+		autoVEC means = raw_VEC (numberOfMeans);
+		autoVEC cases = raw_VEC (numberOfMeans);
 		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
 		for (integer i = 1; i <= numberOfMeans; i ++) {
 			const TableRow row = my rows.at [i];
@@ -3637,13 +3637,13 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Table_numericize_Assert (me, column);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		// copy data from Table
-		autoVEC data = newVECraw (numberOfData);
+		autoVEC data = raw_VEC (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		const integer numberOfLevels = levels -> classes->size;
 		Melder_require (numberOfLevels > 1,
 			U"There should be at least two levels.");
-		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
+		autoINTVEC factorLevelSizes = zero_INTVEC (numberOfLevels);
 		autoVEC factorLevelMeans = zero_VEC (numberOfLevels);
 
 		const longdouble sumOfSquares = NUMsum2 (data.get());  // step 2
@@ -3732,7 +3732,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		/*
 			Copy data from Table
 		*/
-		autoVEC data = newVECraw (numberOfData);
+		autoVEC data = raw_VEC (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		const integer numberOfLevelsA = levelsA -> classes -> size;
@@ -3959,7 +3959,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 			return;
 		Table_numericize_Assert (me, column);
 		const integer numberOfData = my rows.size;
-		autoVEC data = newVECraw (numberOfData);
+		autoVEC data = raw_VEC (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++)
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 
@@ -4013,8 +4013,8 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 			return;
 		Table_numericize_Assert (me, dataColumn);
 		const integer numberOfData = my rows.size;
-		autoVEC xdata = newVECraw (numberOfData);
-		autoVEC ydata = newVECraw (numberOfData);
+		autoVEC xdata = raw_VEC (numberOfData);
+		autoVEC ydata = raw_VEC (numberOfData);
 		integer xnumberOfData = 0, ynumberOfData = 0;
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			char32 *label = my rows.at [irow] -> cells [factorColumn]. string.get();
@@ -4070,8 +4070,8 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		Table_numericize_Assert (me, xcolumn);
 		Table_numericize_Assert (me, ycolumn);
 		const integer numberOfData = my rows.size;
-		autoVEC xdata = newVECraw (numberOfData);
-		autoVEC ydata = newVECraw (numberOfData);
+		autoVEC xdata = raw_VEC (numberOfData);
+		autoVEC ydata = raw_VEC (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			xdata [irow] = my rows.at [irow] -> cells [xcolumn]. number;
 			ydata [irow] = my rows.at [irow] -> cells [ycolumn]. number;
@@ -4129,7 +4129,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 		}
 		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
 		Graphics_setInner (g);
-		autoVEC data = newVECraw (numberOfData);
+		autoVEC data = raw_VEC (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			integer numberOfDataInLevel = 0;
 			for (integer k = 1; k <= numberOfData; k ++)
@@ -4184,7 +4184,7 @@ void Table_boxPlotsWhere (Table me, Graphics g, conststring32 dataColumns_string
 		const double boxWidth = 4.0, spaceBetweenBoxesInGroup = 1.0, barWidth = boxWidth / 3.0;
 		const double spaceBetweenGroupsdiv2 = 3.0 / 2.0;
 		const double widthUnit = 1.0 / (numberOfSelectedColumns * boxWidth + (numberOfSelectedColumns - 1) * spaceBetweenBoxesInGroup + spaceBetweenGroupsdiv2 + spaceBetweenGroupsdiv2);
-		autoVEC data = newVECraw (numberOfData);
+		autoVEC data = raw_VEC (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			const double xlevel = ilevel;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
@@ -4288,7 +4288,7 @@ autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpret
 			U"No rows selected.");
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
-		autoINTVEC selectedRows = newINTVECzero (numberOfMatches);
+		autoINTVEC selectedRows = zero_INTVEC (numberOfMatches);
 		integer n = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_run (irow, 1, & result);
@@ -4518,7 +4518,7 @@ void Table_lagPlotWhere (Table me, Graphics g, integer column, integer lag, doub
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		if (xmax <= xmin)   // autoscaling
 			Table_columnExtremaFromSelectedRows (me, column, selectedRows.get(), & xmin, & xmax);
-		autoVEC x = newVECraw (selectedRows.size);
+		autoVEC x = raw_VEC (selectedRows.size);
 		for (integer i = 1; i <= selectedRows.size; i ++)
 			x [i] = Table_getNumericValue_Assert (me, selectedRows [i], column);
 		Graphics_setInner (g);
@@ -4610,8 +4610,8 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		const SSCP sscp = thy at [1];
 		const integer numberOfColumns = sscp -> numberOfColumns;
 		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
-		autoINTVEC columnIndex = newINTVECraw (numberOfColumns);
-		autoVEC vector = newVECraw (numberOfColumns);
+		autoINTVEC columnIndex = raw_INTVEC (numberOfColumns);
+		autoVEC vector = raw_VEC (numberOfColumns);
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
 			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present

@@ -337,8 +337,8 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 		my numberOfParameters = numberOfInteriorKnots + order + 1;
 		const integer numberOfKnots = numberOfInteriorKnots + order + order + 2;
 
-		my b = newVECraw (my numberOfParameters);
-		my knot = newVECraw (numberOfKnots);
+		my b = raw_VEC (my numberOfParameters);
+		my knot = raw_VEC (numberOfKnots);
 		my m = newMATzero (nData, my numberOfParameters);
 
 		for (integer i = 1; i <= my numberOfParameters; i ++)
@@ -929,7 +929,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, kMDS_
 		Melder_require (thy numberOfRows == my numberOfPoints,
 			U"Distance and MDSVVec dimensions should agreee.");
 		const integer numberOfProximities = my numberOfProximities;
-		autoVEC distances = newVECraw (numberOfProximities);
+		autoVEC distances = raw_VEC (numberOfProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
 		TableOfReal_copyLabels (thee, him.get(), 1, 1);
 
@@ -1853,7 +1853,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 	const double tolerance = 1e-4; // reasonable for dominant eigenvector estimation.
 	autoMAT wsih = newMATraw (nPoints, nPoints);
-	autoVEC solution = newVECraw (nPoints);
+	autoVEC solution = raw_VEC (nPoints);
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
@@ -2378,7 +2378,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	Graphics_setWindow (g, low, high, ymin, ymax);
 	Graphics_setInner (g);
 	constexpr integer numberOfPoints = 1000;
-	autoVEC y = newVECraw (numberOfPoints);
+	autoVEC y = raw_VEC (numberOfPoints);
 	const double dx = (high - low) / (numberOfPoints - 1);
 	for (integer i = 1; i <= nSplines; i ++) {
 		for (integer j = 1; j <= numberOfPoints; j ++) {

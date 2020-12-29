@@ -70,7 +70,7 @@ autoConfiguration Configuration_create (integer numberOfPoints, integer numberOf
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfDimensions);
-		my w = newVECraw (numberOfDimensions);
+		my w = raw_VEC (numberOfDimensions);
 		TableOfReal_setSequentialRowLabels (me.get(), 0, 0, nullptr, 1, 1);
 		TableOfReal_setSequentialColumnLabels (me.get(), 0, 0, U"dimension ", 1, 1);
 
@@ -172,9 +172,9 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 	if (xm.ncol == 2)
 		maximumNumberOfIterations = 1;
 
-	autoVEC u = newVECraw (xm.nrow);
-	autoVEC v = newVECraw (xm.nrow);
-	autoVEC norm = newVECraw (xm.nrow);
+	autoVEC u = raw_VEC (xm.nrow);
+	autoVEC v = raw_VEC (xm.nrow);
+	autoVEC norm = raw_VEC (xm.nrow);
 
 	/*
 		Normalize sum of squares of each row to one.
@@ -301,8 +301,8 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	int noLabel = 0;
 	if (labelSize == 0)
 		labelSize = fontSize;
-	autoVEC x = newVECraw (nPoints);
-	autoVEC y = newVECraw (nPoints);
+	autoVEC x = raw_VEC (nPoints);
+	autoVEC y = raw_VEC (nPoints);
 	for (integer i = 1; i <= nPoints; i ++) {
 		x [i] = my data [i] [xCoordinate] * my w [xCoordinate];
 		y [i] = ( numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0 );

@@ -76,7 +76,7 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
 
 static autoVEC nummat_vectorize (constMATVU const& m, integer rowmin, integer rowmax, integer colmin, integer colmax) {
 	const integer numberOfElements = (rowmax - rowmin + 1) * (colmax - colmin + 1);
-	autoVEC result = newVECraw (numberOfElements);
+	autoVEC result = raw_VEC (numberOfElements);
 	for (integer irow = rowmin, index = 1; irow <= rowmax; irow ++)
 		for (integer icol = colmin; icol <= colmax; icol ++)
 			result [index ++] = m [irow] [icol];
@@ -305,7 +305,7 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 		max += 0.5;
 	}
 	const integer ysize = iymax - iymin + 1;
-	autoVEC y = newVECraw (ysize);
+	autoVEC y = raw_VEC (ysize);
 
 	Graphics_setWindow (g, ymin, ymax, min, max);
 	Graphics_setInner (g);
@@ -326,7 +326,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
 
 		autoMAT u = newMATraw (nr, nc);
-		autoVEC b = newVECraw (nr);
+		autoVEC b = raw_VEC (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 
 		u.all()  <<=  my z.part (1, nr, 1, nc);

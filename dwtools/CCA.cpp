@@ -234,7 +234,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		MATmul (his data.get(), thy data.verticalBand (from, thy numberOfColumns), my x -> eigenvectors.transpose());
 		his rowLabels.all() <<= thy rowLabels.all();
 		
-		autoVEC buf = newVECraw (ny);
+		autoVEC buf = raw_VEC (ny);
 
 		// u = V a -> a = V'u
 

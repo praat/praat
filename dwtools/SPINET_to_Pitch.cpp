@@ -47,12 +47,12 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			U"The centre frequency of the lowest filter should be smaller than the ceiling.");
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
-		autoVEC power = newVECraw (my nx);
-		autoVEC pitch = newVECraw (numberOfFrequencyPoints);
-		autoVEC sumspec = newVECraw (numberOfFrequencyPoints);
-		autoVEC y = newVECraw (my ny);
-		autoVEC yv2 = newVECraw (my ny);
-		autoVEC fl2 = newVECraw (my ny);
+		autoVEC power = raw_VEC (my nx);
+		autoVEC pitch = raw_VEC (numberOfFrequencyPoints);
+		autoVEC sumspec = raw_VEC (numberOfFrequencyPoints);
+		autoVEC y = raw_VEC (my ny);
+		autoVEC yv2 = raw_VEC (my ny);
+		autoVEC fl2 = raw_VEC (my ny);
 		/*
 			From ERB's to log (f)
 		*/

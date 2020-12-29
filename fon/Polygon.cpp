@@ -53,8 +53,8 @@ void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	our numberOfPoints = texgeti32 (text);
 	if (our numberOfPoints < 1)
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");
-	our x = newVECraw (our numberOfPoints);
-	our y = newVECraw (our numberOfPoints);
+	our x = raw_VEC (our numberOfPoints);
+	our y = raw_VEC (our numberOfPoints);
 	for (integer i = 1; i <= our numberOfPoints; i ++) {
 		our x [i] = texgetr64 (text);
 		our y [i] = texgetr64 (text);
@@ -158,7 +158,7 @@ static bool tryExchange (constINTMATVU const& distance, INTVECVU const& path, in
 
 static bool tryAdoption (constINTMATVU const& distance, INTVECVU const& path, integer *totalDistance)
 {
-	autoINTVEC help = newINTVECzero (path.size);
+	autoINTVEC help = zero_INTVEC (path.size);
 	bool result = false;
 
 	/*
@@ -229,7 +229,7 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 			Melder_throw (U"No points.");
 		autoINTMAT distance = newINTMATzero (numberOfCities, numberOfCities);
 		computeDistanceTable (me, distance.get());
-		autoINTVEC path = newINTVECzero (numberOfCities + 1);
+		autoINTVEC path = zero_INTVEC (numberOfCities + 1);
 		for (integer i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
 		path [numberOfCities + 1] = 1;   // close path

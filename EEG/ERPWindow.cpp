@@ -189,7 +189,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	}
 	integer n = 201;
 	double d = 2.0 / (n - 1);
-	autoVEC mean = newVECraw (numberOfDrawableChannels);
+	autoVEC mean = raw_VEC (numberOfDrawableChannels);
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		mean [ichan] = tmin == tmax ?
 				Sampled_getValueAtX (me, tmin, ichan, 0, true) :
@@ -292,7 +292,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	}
 	integer n = 201;
 	double d = 2.0 / (n - 1);
-	autoVEC means = newVECraw (numberOfDrawableChannels);
+	autoVEC means = raw_VEC (numberOfDrawableChannels);
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		means [ichan] =
 			our startSelection == our endSelection ?

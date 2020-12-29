@@ -709,7 +709,7 @@ DO
 		fromX = x1WC;
 		toX = x2WC;
 	}
-	autoVEC y = newVECraw (numberOfHorizontalSteps);
+	autoVEC y = raw_VEC (numberOfHorizontalSteps);
 	autoPraatPictureFunction function = Thing_new (PraatPictureFunction);
 	function -> xmin = x1WC;
 	function -> xmax = x2WC;

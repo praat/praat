@@ -411,8 +411,8 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		autoMAT vk = newMATraw (data.nrow, data.ncol);
 		autoMAT fw = newMATraw (data.nrow, data.ncol);
 		autoMAT fcol_x_wrow = newMATraw (data.nrow, data.ncol);
-		autoVEC fcolumn_inv = newVECraw (data.nrow); // feature column
-		autoVEC wrow_inv = newVECraw (data.ncol); // weight row
+		autoVEC fcolumn_inv = raw_VEC (data.nrow); // feature column
+		autoVEC wrow_inv = raw_VEC (data.ncol); // weight row
 		MATmul (fw.get(), my features.get(), my weights.get());
 		double divergence = MATgetDivergence_ItakuraSaito (data, fw.get());
 		const double divergence0 = divergence;

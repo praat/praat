@@ -149,10 +149,10 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 	my dimension = a.ncol;
 
-	autoVEC alpha = newVECraw (n);
-	autoVEC beta = newVECraw (n);
-	autoVEC work = newVECraw (lwork);
-	autoINTVEC iwork = newINTVECzero (n);
+	autoVEC alpha = raw_VEC (n);
+	autoVEC beta = raw_VEC (n);
+	autoVEC work = raw_VEC (lwork);
+	autoINTVEC iwork = zero_INTVEC (n);
 	autoMAT q = newMATraw (n, n);
 	autoMAT ac = newMATtranspose (a);
 	autoMAT bc = newMATtranspose (b);
@@ -428,7 +428,7 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 			the columns in the Q's are the eigenvectors.
 		Compute C.
 	*/
-	autoVEC angles_degrees = newVECraw (numberOfVectors);
+	autoVEC angles_degrees = raw_VEC (numberOfVectors);
 
 	autoMAT c = newMATmul (my eigenvectors.horizontalBand (ivec_from, ivec_to),
 			thy eigenvectors. horizontalBand (ivec_from, ivec_to). transpose());

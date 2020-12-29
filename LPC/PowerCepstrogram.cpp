@@ -176,7 +176,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram
 		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
 			const double halfWindwow = 0.5 * timeAveragingWindow;
-			autoVEC qout = newVECraw (my nx);
+			autoVEC qout = raw_VEC (my nx);
 			for (integer iq = 1; iq <= my ny; iq ++) {
 				for (integer iframe = 1; iframe <= my nx; iframe ++) {
 					const double xmid = Sampled_indexToX (me, iframe);
@@ -218,7 +218,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_old (PowerCepstro
 		*/
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
-			autoVEC qin = newVECraw (thy ny);
+			autoVEC qin = raw_VEC (thy ny);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				qin.all() <<= thy z.column (iframe);
 				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), qin.all(), numberOfQuefrencyBins);
@@ -409,7 +409,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		double t1;
 		integer numberOfFrames;
 		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & numberOfFrames, & t1);
-		autoVEC hamming = newVECraw (nosInWindow);
+		autoVEC hamming = raw_VEC (nosInWindow);
 		for (integer i = 1; i <= nosInWindow; i ++)
 			hamming [i] = 0.54 - 0.46 * cos (NUM2pi * (i - 1) / (nosInWindow - 1));
 

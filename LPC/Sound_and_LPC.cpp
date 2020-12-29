@@ -74,7 +74,7 @@ static integer getLPCAnalysisWorkspaceSize (integer numberOfSamples, integer num
 
 static autoVEC getLPCAnalysisWorkspace (integer numberOfSamples, integer numberOfCoefficients, kLPC_Analysis method) {
 	integer size = getLPCAnalysisWorkspaceSize (numberOfSamples, numberOfCoefficients, method);
-	autoVEC result = newVECraw (size);
+	autoVEC result = raw_VEC (size);
 	return result;
 }
 
@@ -768,7 +768,7 @@ void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, intege
 		if (channel > thy ny)
 			channel = 1;
 		LPC_Frame lpc = & my d_frames [frameIndex];
-		autoVEC work = newVECraw (lpc -> nCoefficients);
+		autoVEC work = raw_VEC (lpc -> nCoefficients);
 		if (channel > 0)
 			VECfilterInverse_inplace (thy z.row (channel), lpc -> a.get(), work);
 		else

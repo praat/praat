@@ -231,7 +231,7 @@ static integer Pitch_getMeanAbsoluteSlope (Pitch me,
 	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
 {
 	integer firstVoicedFrame = 0, lastVoicedFrame = 0, numberOfVoicedFrames = 0;
-	autoVEC frequencies = newVECraw (my nx);
+	autoVEC frequencies = raw_VEC (my nx);
 	for (integer i = 1; i <= my nx; i ++) {
 		const double frequency = my frames [i]. candidates [1]. frequency;
 		if (Pitch_util_frequencyIsVoiced (frequency, my ceiling)) {

@@ -112,7 +112,7 @@ autoFormant LPC_to_Formant_noThreads (LPC me, double margin) {
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, maximumNumberOfFormants);
 		autoPolynomial polynomial = Polynomial_create (-1.0, 1.0, my maxnCoefficients);
 		autoRoots roots = Roots_create (my maxnCoefficients);
-		autoVEC workspace = newVECraw (maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
+		autoVEC workspace = raw_VEC (maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
 		autoMelderProgress progress (U"LPC to Formant");
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const LPC_Frame lpcFrame = & my d_frames [iframe];

@@ -353,7 +353,7 @@ autoINTVEC GuiList_getSelectedPositions (GuiList me) {
 		if (n > 0) {
 			GList *list = gtk_tree_selection_get_selected_rows (selection, (GtkTreeModel **) & list_store);
 			integer ipos = 1;
-			selectedPositions = newINTVECzero (n);
+			selectedPositions = zero_INTVEC (n);
 			for (GList *l = g_list_first (list); l != nullptr; l = g_list_next (l)) {
 				gint *index = gtk_tree_path_get_indices ((GtkTreePath *) l -> data);
 				selectedPositions [ipos] = index [0] + 1;
@@ -378,14 +378,14 @@ autoINTVEC GuiList_getSelectedPositions (GuiList me) {
 			indices = Melder_calloc_f (int, n);
 			ListBox_GetSelItems (my d_widget -> window, n, indices);
 		}
-		selectedPositions = newINTVECzero (n);
+		selectedPositions = zero_INTVEC (n);
 		for (integer ipos = 1; ipos <= n; ipos ++)
 			selectedPositions [ipos] = indices [ipos - 1] + 1;   // convert from zero-based list of zero-based indices
 		Melder_free (indices);
 	#elif cocoa
 		GuiCocoaList *list = (GuiCocoaList *) my d_widget;
 		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
-		selectedPositions = newINTVECzero (uinteger_to_integer ([indexSet count]));
+		selectedPositions = zero_INTVEC (uinteger_to_integer ([indexSet count]));
 		NSUInteger currentIndex = [indexSet firstIndex];
 		integer ipos = 0;
 		while (currentIndex != NSNotFound) {

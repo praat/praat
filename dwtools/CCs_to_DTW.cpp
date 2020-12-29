@@ -64,8 +64,8 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 			numberOfCoefficients ++;
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoVEC ri = newVECraw (my maximumNumberOfCoefficients + 1);
-		autoVEC rj = newVECraw (my maximumNumberOfCoefficients + 1);
+		autoVEC ri = raw_VEC (my maximumNumberOfCoefficients + 1);
+		autoVEC rj = raw_VEC (my maximumNumberOfCoefficients + 1);
 
 		/* Calculate distance matrix. */
 

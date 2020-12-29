@@ -638,8 +638,8 @@ autoSpectrogram FormantFilter_to_Spectrogram (FormantFilter me) {
 autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 	try {
 		autoMAT cosinesTable = MATcosinesTable (my ny);
-		autoVEC x = newVECraw (my ny);
-		autoVEC y = newVECraw (my ny);
+		autoVEC x = raw_VEC (my ny);
+		autoVEC y = raw_VEC (my ny);
 		
 		//double fmax_mel = my y1 + (my ny - 1) * my dy;
 		numberOfCoefficients = ( numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients );
@@ -665,8 +665,8 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 	try {
 		const integer nf = my maximumNumberOfCoefficients + 1;
 		autoMAT cosinesTable = MATcosinesTable (nf);
-		autoVEC x = newVECraw (nf);
-		autoVEC y = newVECraw (nf);
+		autoVEC x = raw_VEC (nf);
+		autoVEC y = raw_VEC (nf);
 
 		if (first >= last) {
 			first = 0;
@@ -748,7 +748,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, integer frame
 	autoMatrix pv = Sound_to_spectralpower (me);
 	const integer nf = pv -> nx;
 
-	autoVEC z = newVECraw (nf);
+	autoVEC z = raw_VEC (nf);
 	for (integer j = 1; j <= nf; j ++)
 		z [j] = HZTOBARK (pv -> x1 + (j - 1) * pv -> dx);
 

@@ -83,7 +83,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 				CGContextSetAlpha (my d_macGraphicsContext, 1.0);
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
 			#endif
-			autoINTVEC leftsBuffer = newINTVECzero (ix2 - ix1 + 2);
+			autoINTVEC leftsBuffer = zero_INTVEC (ix2 - ix1 + 2);
 			integer *lefts = & leftsBuffer [1 - ix1];
 			for (ix = ix1; ix <= ix2 + 1; ix ++)
 				lefts [ix] = x1DC + (integer) ((ix - ix1) * dx);
@@ -269,8 +269,8 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 		#endif
 		if (interpolate) {
 			try {
-				autoINTVEC ileftBuffer = newINTVECzero (clipx2 - clipx1 + 1);
-				autoINTVEC irightBuffer = newINTVECzero (clipx2 - clipx1 + 1);
+				autoINTVEC ileftBuffer = zero_INTVEC (clipx2 - clipx1 + 1);
+				autoINTVEC irightBuffer = zero_INTVEC (clipx2 - clipx1 + 1);
 				autoVEC leftWeightBuffer = zero_VEC (clipx2 - clipx1 + 1);
 				autoVEC rightWeightBuffer = zero_VEC (clipx2 - clipx1 + 1);
 				integer *ileft  = & ileftBuffer  [1 - clipx1];
@@ -358,7 +358,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 			} catch (MelderError) { Melder_clearError (); }
 		} else {
 			try {
-				autoINTVEC ixBuffer = newINTVECzero (clipx2 - clipx1 + 1);
+				autoINTVEC ixBuffer = zero_INTVEC (clipx2 - clipx1 + 1);
 				integer *ix = & ixBuffer [1 - clipx1];
 				for (xDC = clipx1; xDC < clipx2; xDC += undersampling)
 					ix [xDC] = Melder_ifloor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));

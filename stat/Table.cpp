@@ -297,7 +297,7 @@ autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 
 	autoSTRVEC columnLabels = splitByWhitespace_STRVEC (columnLabels_string);
 	if (columnLabels.size < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
-	autoINTVEC columns = newINTVECraw (columnLabels.size);
+	autoINTVEC columns = raw_INTVEC (columnLabels.size);
 	for (integer icol = 1; icol <= columnLabels.size; icol ++)
 		columns [icol] = Table_getColumnIndexFromColumnLabel (me, columnLabels [icol].get());
 	return columns;
@@ -559,7 +559,7 @@ double Table_getQuantile (Table me, integer columnNumber, double quantile) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		autoVEC sortingColumn = newVECraw (my rows.size);
+		autoVEC sortingColumn = raw_VEC (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			const TableRow row = my rows.at [irow];
 			sortingColumn [irow] = row -> cells [columnNumber]. number;
@@ -722,7 +722,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			Set the column names. Within the dependent variables, the same name may occur more than once.
 		*/
-		autoINTVEC columns = newINTVECzero (thy numberOfColumns);
+		autoINTVEC columns = zero_INTVEC (thy numberOfColumns);
 		{
 			integer icol = 0;
 			for (integer i = 1; i <= factors.size; i ++) {
@@ -932,7 +932,7 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Get the column numbers for the factors.
 		*/
-		autoINTVEC factorColumns = newINTVECzero (numberOfFactors);
+		autoINTVEC factorColumns = zero_INTVEC (numberOfFactors);
 		for (integer ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 			factorColumns [ifactor] = Table_findColumnIndexFromColumnLabel (me, factors_names [ifactor].get());
 			/*
@@ -943,7 +943,7 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Get the column numbers for the expandable variables.
 		*/
-		autoINTVEC columnsToExpand = newINTVECzero (numberToExpand);
+		autoINTVEC columnsToExpand = zero_INTVEC (numberToExpand);
 		for (integer iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 			columnsToExpand [iexpand] = Table_findColumnIndexFromColumnLabel (me, columnsToExpand_names [iexpand].get());
 			Table_numericize_checkDefined (me, columnsToExpand [iexpand]);
@@ -1081,7 +1081,7 @@ void Table_sortRows_string (Table me, conststring32 columns_string) {
 		integer numberOfColumns = columns_tokens.size;
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");
-		autoINTVEC columns = newINTVECraw (numberOfColumns);
+		autoINTVEC columns = raw_INTVEC (numberOfColumns);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 			columns [icol] = Table_findColumnIndexFromColumnLabel (me, columns_tokens [icol].get());
 			if (columns [icol] == 0)

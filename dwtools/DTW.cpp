@@ -743,7 +743,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 	ixmax = ii;
 
 	const integer numberOfSelected = ixmax - ixmin + 1;
-	autoVEC d = newVECraw (numberOfSelected);
+	autoVEC d = raw_VEC (numberOfSelected);
 
 	for (integer i = ixmin; i <= ixmax; i ++)
 		d [i - ixmin + 1] = my z [my path [i]. y] [i];
@@ -867,7 +867,7 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 			by making the other cell's distances very large.
 		*/
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoVEC pitchx = newVECraw (thy nx);
+		autoVEC pitchx = raw_VEC (thy nx);
 		kPitch_unit unit = kPitch_unit::SEMITONES_100;
 		for (integer j = 1; j <= thy nx; j ++)
 			pitchx [j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, (int) unit);
@@ -905,7 +905,7 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 			U"Time costs weight should not be negative.");
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoVEC pitchx = newVECraw (thy nx);
+		autoVEC pitchx = raw_VEC (thy nx);
 		kPitch_unit unit = kPitch_unit::SEMITONES_100;
 		for (integer j = 1; j <= thy nx; j ++)
 			pitchx [j] = Sampled_getValueAtSample (thee, j, Pitch_LEVEL_FREQUENCY, (int) unit);

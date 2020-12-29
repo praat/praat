@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.cpp
  *
- * Copyright (C) 1997-2005,2007,2009,2011-2013,2015-2019 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009,2011-2013,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ static void countVowelViolations (const INTVEC marks, const int numberOfConstrai
 
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
 	my output = Melder_dup (Melder_cat (vowels [v1], U"t", vowels [v2]));
-	my marks = newINTVECzero (my numberOfConstraints = ncons);
+	my marks = zero_INTVEC (my numberOfConstraints = ncons);
 	/*
 		Count vowel-gesture violations.
 	*/

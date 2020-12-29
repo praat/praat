@@ -114,7 +114,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 			Melder_warning (U"Solution is not unique (more parameters than cases).");
 		}
 		autoMAT u = newMATraw (numberOfCells, numberOfParameters);
-		autoVEC b = newVECraw (numberOfCells);
+		autoVEC b = raw_VEC (numberOfCells);
 		autoLinearRegression thee = LinearRegression_create ();
 		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			const double minimum = Table_getMinimum (me, ivar);

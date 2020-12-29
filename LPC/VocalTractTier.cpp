@@ -135,7 +135,7 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		const double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
 		
 		autoMAT area = newMATzero (numberOfFrames, numberOfSections);
-		autoVEC areavec = newVECraw (numberOfSections);
+		autoVEC areavec = raw_VEC (numberOfSections);
 		autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, timeStep / 2.0, numberOfSections, samplingPeriod);
 		// interpolate each section
 		for (integer isection = 1; isection <= numberOfSections; isection ++) {

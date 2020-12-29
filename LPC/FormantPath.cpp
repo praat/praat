@@ -69,7 +69,7 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	autoFormantPath me = Thing_new (FormantPath);
 	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
 	my ceilings = zero_VEC (numberOfCeilings);
-	my path = newINTVECzero (nx);
+	my path = zero_INTVEC (nx);
 	return me;
 }
 
@@ -112,8 +112,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			delta [i][j] = minimum cost to reach state i at time j
 		*/
 		MAT delta (& thy z[1][1], thy ny, thy nx);
-		autoINTVEC path = newINTVECzero (my nx);
-		autoVEC intensity = newVECraw (my nx);
+		autoINTVEC path = zero_INTVEC (my nx);
+		autoVEC intensity = raw_VEC (my nx);
 		/*
 			We have a trellis of size S x T, where S is the number of states, i.e. the number of formant objects,
 			and T the number of frames (S= formants.size and T=nx).
@@ -283,7 +283,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 			Maintain invariants
 		*/
 		Melder_assert (thy formants . size == numberOfCeilings);
-		thy path = newINTVECraw (thy nx);
+		thy path = raw_INTVEC (thy nx);
 		for (integer i = 1; i <= thy path.size; i++)
 			thy path [i] = numberOfStepsToACeiling + 1;
 		if (out_sourcesMultiChannel)
@@ -390,7 +390,7 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 }
 
 autoVEC FormantPath_getStress (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	autoVEC stress = newVECraw (my formants.size);
+	autoVEC stress = raw_VEC (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const Formant formanti = (Formant) my formants . at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);

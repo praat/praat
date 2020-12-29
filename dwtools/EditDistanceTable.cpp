@@ -255,8 +255,8 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targe
 	try {
 		autoSTRVEC targets = splitByWhitespace_STRVEC (targets_string);
 		autoSTRVEC sources = splitByWhitespace_STRVEC (sources_string);
-		autoINTVEC targetIndex = newINTVECzero (my numberOfRows);   // note: this includes zero padding
-		autoINTVEC sourceIndex = newINTVECzero (my numberOfRows);   // note: this includes zero padding
+		autoINTVEC targetIndex = zero_INTVEC (my numberOfRows);   // note: this includes zero padding
+		autoINTVEC sourceIndex = zero_INTVEC (my numberOfRows);   // note: this includes zero padding
 		integer numberOfTargetSymbols = 0;
 		for (integer itarget = 1; itarget <= targets.size; itarget ++) {
 			const integer index = EditCostsTable_getTargetIndex (me, targets [itarget].get());

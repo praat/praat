@@ -94,8 +94,7 @@ autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 		const integer numberOfSamples = my nx - 1;
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
 		NUMfft_Table_init (& fftTable, my nx);
-		autoVEC amp = newVECraw (my nx);
-		
+		autoVEC amp = raw_VEC (my nx);
 		for (integer i = 1; i <= my nx; i ++)
 			amp [i] = my v_getValueAtSample (i, 0, 2);
 		NUMfft_forward (& fftTable, amp.get());

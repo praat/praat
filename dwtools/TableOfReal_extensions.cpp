@@ -350,8 +350,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	Melder_require (nmin > 1,
 		U"There should be at least two (independent) columns in the table.");
 
-	autoVEC x = newVECraw (nPoints);
-	autoVEC y = newVECraw (nPoints);
+	autoVEC x = raw_VEC (nPoints);
+	autoVEC y = raw_VEC (nPoints);
 
 	const double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	const double lambda2 = pow (svd -> d [2], sv_splitfactor);
@@ -438,7 +438,7 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
 	Graphics_setInner (g);
 
-	autoVEC data = newVECraw (numberOfRows);
+	autoVEC data = raw_VEC (numberOfRows);
 	for (integer j = colmin; j <= colmax; j ++) {
 		const double x = j, r = 0.05, w = 0.2;
 		integer ndata = 0;
@@ -631,8 +631,8 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 	const integer numberOfColumns = cole - colb + 1;
 	if (numberOfColumns == 1)
 		return;
-	autoVEC colmin = newVECraw (numberOfColumns);
-	autoVEC colmax = newVECraw (numberOfColumns);
+	autoVEC colmin = raw_VEC (numberOfColumns);
+	autoVEC colmax = raw_VEC (numberOfColumns);
 
 	for (integer j = 1; j <= numberOfColumns; j ++) {
 		colmin [j] = NUMmin (my data.column (colb + j - 1));
@@ -1122,7 +1122,7 @@ static void NUMaverageBlock_byColumns_inplace (MAT a, integer rb, integer re, in
 	const integer n = re - rb + 1;
 	if (n < 2)
 		return;
-	autoVEC tmp = newVECraw (n);
+	autoVEC tmp = raw_VEC (n);
 	for (integer j = cb; j <= ce; j ++) {
 		integer k = 1;
 		for (integer i = rb; i <= re; i ++, k ++)

@@ -276,7 +276,7 @@ autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes) {
 		my numberOfStates = nstates;
 		my viterbi = newMATzero (nstates, ntimes);
 		my bp = newINTMATzero (nstates, ntimes);
-		my path = newINTVECzero (ntimes);
+		my path = zero_INTVEC (ntimes);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMViterbi not created.");
@@ -659,8 +659,8 @@ void HMM_draw (HMM me, Graphics g, bool garnish) {
 	const double rstate = 0.3 / xwidth, r = xwidth / 3.0;
 	const double xmax = 1.2 * xwidth / 2.0, xmin = -xmax, ymin = xmin, ymax = xmax;
 
-	autoVEC xs = newVECraw (my numberOfStates);
-	autoVEC ys = newVECraw (my numberOfStates);
+	autoVEC xs = raw_VEC (my numberOfStates);
+	autoVEC ys = raw_VEC (my numberOfStates);
 
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	// heuristic: all states on a circle until we have a better graph drawing algorithm.
@@ -739,8 +739,8 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 		autoHMMObservationSequence thee = HMMObservationSequence_create (numberOfItems, my componentDimension);
 		integer istate = ( startState == 0 ? NUMgetIndexFromProbability (my initialStateProbs.get(), NUMrandomUniform (0.0, 1.0)) : startState );
 		if (my componentDimension > 0) {
-			autoVEC obs = newVECraw (my componentDimension);
-			autoVEC buf = newVECraw (my componentDimension);
+			autoVEC obs = raw_VEC (my componentDimension);
+			autoVEC buf = raw_VEC (my componentDimension);
 			for (integer i = 1; i <= numberOfItems; i ++) {
 				// Emit a symbol from istate
 
@@ -850,7 +850,7 @@ static autoINTVEC HMM_HMMObservationSequenceBag_getStateSequences (HMM me, HMMOb
 	/*
 		Get state sequence numbers.
 	*/
-	autoINTVEC stateSequenceNumbers = newINTVECraw (numberOfElements);
+	autoINTVEC stateSequenceNumbers = raw_INTVEC (numberOfElements);
 	integer numberOfElements2 = 0;
 	for (integer iseq = 1; iseq <= thy size; iseq ++) {
 		const HMMObservationSequence hmm_os = thy at [iseq];
@@ -1437,7 +1437,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 		return undefined;
 
 	autoVEC scale = zero_VEC (itime);
-	autoVEC alpha_t = newVECraw (my numberOfStates);
+	autoVEC alpha_t = raw_VEC (my numberOfStates);
 	autoVEC alpha_tm1 = zero_VEC (my numberOfStates);
 
 	alpha_t.all() <<= my initialStateProbs.all();
