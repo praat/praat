@@ -471,6 +471,9 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 	}
 }
 
+/*
+	The code in this Ogg Vorbis file reader was modeled after code in vorbisfile.c and vorbis_decoder.c.
+*/
 autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
@@ -488,7 +491,8 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			Melder_throw (U"Input does not appear to be an Ogg bitstream");
 		vorbis_info *vorbisInfo = ov_info (& vorbisFile, -1);
 		const integer numberOfChannels = vorbisInfo -> channels;
-		const double samplingFrequency = vorbisInfo -> rate;
+		const long samplingFrequency_asLong = vorbisInfo -> rate;
+		const double samplingFrequency = samplingFrequency_asLong;
 		const double samplingTime = 1.0 / samplingFrequency;
 		const integer numberOfSamples = ov_pcm_total (& vorbisFile, -1);
 		double xmin = 0.0; // the start time in the file can be > 0!!!
@@ -499,12 +503,14 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		rewind (f);
 		
 		const long readBufferSize = 4096;
-		integer currentSample = 0;
+		integer numberOfPCMValuesProcessed = 0;
 		
-		ogg_sync_state oy; // sync and verify incoming physical bitstream/ 
-		ogg_sync_init (& oy); // Now we can read pages
-
+		ogg_sync_state oggSyncState; // sync and verify incoming physical bitstream
+		ogg_sync_init (& oggSyncState); // Now we can read pages
+		
+		integer chainNumber = 0;
 		while (true) { // we repeat if the bitstream is chained
+			chainNumber ++;
 			/*
 				Grab some data at the head of the stream. We want the first page
 				(which is guaranteed to be small and only contain the Vorbis
@@ -513,13 +519,13 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 
 				Submit a 4k block to libvorbis' Ogg layer
 			*/
-			char *readBuffer = ogg_sync_buffer (& oy, readBufferSize);
+			char *readBuffer = ogg_sync_buffer (& oggSyncState, readBufferSize);
 			size_t bytesRead = fread (readBuffer, 1, readBufferSize, f);
-			ogg_sync_wrote (& oy, bytesRead);
+			ogg_sync_wrote (& oggSyncState, bytesRead);
 
 			/* Get the first page. */
-			ogg_page og; // one Ogg bitstream page. Vorbis packets are inside
-			if (ogg_sync_pageout (& oy, & og) != 1) {
+			ogg_page oggPage; // one Ogg bitstream page. Vorbis packets are inside
+			if (ogg_sync_pageout (& oggSyncState, & oggPage) != 1) {
 				if (bytesRead < readBufferSize) // have we simply run out of data?  If so, we're done.
 					break;
 				Melder_throw (U"Input does not appear to be an Ogg file.");
@@ -528,8 +534,8 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 				Get the serial number and set up the rest of decode.
 				serialno first; use it to set up a logical stream
 			*/
-			ogg_stream_state os; // take physical pages, weld into a logical stream of packets
-			ogg_stream_init (& os, ogg_page_serialno (& og));
+			ogg_stream_state oggStream; // take physical pages, weld into a logical stream of packets
+			ogg_stream_init (& oggStream, ogg_page_serialno (& oggPage));
 			/* 
 				Eextract the initial header from the first page and verify that the
 				Ogg bitstream is in fact Vorbis data
@@ -539,16 +545,16 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 				header is an easy way to identify a Vorbis bitstream and it's
 				useful to see that functionality seperated out.
 			*/
-			vorbis_info vi; // struct that stores all the static vorbis bitstream settings
-			vorbis_info_init (& vi);
-			vorbis_comment vc; // struct that stores all the bitstream user comments
-			vorbis_comment_init (& vc);			
-			if (ogg_stream_pagein (& os, & og) < 0)
+			vorbis_info vorbisInfo; // struct that stores all the static vorbis bitstream settings
+			vorbis_info_init (& vorbisInfo);
+			vorbis_comment vorbisComment; // struct that stores all the bitstream user comments
+			vorbis_comment_init (& vorbisComment);			
+			if (ogg_stream_pagein (& oggStream, & oggPage) < 0)
 				Melder_throw (U"Error reading first page of Ogg bitstream data.");
-			ogg_packet op; // one raw packet of data for decode
-			if (ogg_stream_packetout (& os, & op) != 1)
+			ogg_packet oggPacket; // one raw packet of data for decode
+			if (ogg_stream_packetout (& oggStream, & oggPacket) != 1)
 				Melder_throw (U"Error reading initial header packet.");
-			if (vorbis_synthesis_headerin (& vi, & vc, &op) < 0)
+			if (vorbis_synthesis_headerin (& vorbisInfo, & vorbisComment, & oggPacket) < 0)
 				Melder_throw (U"This Ogg bitstream does not contain Vorbis audio data."); 
 			/*
 				At this point, we're sure we're Vorbis. We've set up the logical
@@ -565,7 +571,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			bool eos = false;
 			while (i < 2) {
 				while(i <  2) {
-					int result = ogg_sync_pageout (& oy, & og);
+					int result = ogg_sync_pageout (& oggSyncState, & oggPage);
 					if (result == 0)
 						break; // Need more data
 					/*
@@ -573,53 +579,57 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 						We'll catch it at the packet output phase
 					*/
 					if (result == 1) {
-						ogg_stream_pagein (& os, & og);
+						ogg_stream_pagein (& oggStream, & oggPage);
 						// we can ignore any errors here as they'll also become apparent at packetout
 						while (i < 2) {
-							result = ogg_stream_packetout (& os, & op);
+							result = ogg_stream_packetout (& oggStream, & oggPacket);
 							if (result == 0)
 								break;
 							if (result < 0)
 								Melder_throw (U"Corrupt secondary header.");
-							result = vorbis_synthesis_headerin (& vi, & vc, & op);
+							result = vorbis_synthesis_headerin (& vorbisInfo, & vorbisComment, & oggPacket);
 							if (result < 0)
 								Melder_throw (U"Corrupt secondary header.");
 							i ++;
 						}
 					}
 				}
-				readBuffer = ogg_sync_buffer (& oy, readBufferSize);
+				readBuffer = ogg_sync_buffer (& oggSyncState, readBufferSize);
 				bytesRead = fread (readBuffer, 1, readBufferSize, f);
 				if (bytesRead == 0 && i < 2)
 					Melder_throw (U"End of file before finding all Vorbis headers");
-				ogg_sync_wrote (& oy, bytesRead);
+				ogg_sync_wrote (& oggSyncState, bytesRead);
 			}
-			Melder_require (vi.channels == numberOfChannels,
-				U"The number of channels in all chains should be equal.");
+			Melder_require (vorbisInfo.channels == numberOfChannels,
+				U"The number of channels in all chains should be equal. It changed from ", numberOfChannels, U" to ", 
+					vorbisInfo.channels, U" in chain ", chainNumber, U".");
+			Melder_require (samplingFrequency_asLong ==  vorbisInfo.rate,
+				U"The sampling frequency in all chains should be equal. It changed from ", samplingFrequency_asLong, U" to ", 
+					vorbisInfo.rate, U" in chain ", chainNumber, U".");
 			/* 
 				Parsed all three headers. Initialize the Vorbis packet->PCM decoder.
 			*/
-			vorbis_dsp_state vd; // central working state for the packet->PCM decoder
-			vorbis_block     vb; // local working space for packet->PCM decode
-			if (vorbis_synthesis_init (& vd, & vi) == 0) { // central decode state
-				vorbis_block_init (& vd, & vb);          
+			vorbis_dsp_state vorbisDspState; // central working state for the packet->PCM decoder
+			vorbis_block        vorbisBlock; // local working space for packet->PCM decode
+			if (vorbis_synthesis_init (& vorbisDspState, & vorbisInfo) == 0) { // central decode state
+				vorbis_block_init (& vorbisDspState, & vorbisBlock);          
 				/*
 					local state for most of the decode so multiple block decodes can proceed in parallel.
-					We could init multiple vorbis_block structures for vd here
+					We could init multiple vorbis_block structures for vorbisDspState here
 
 					The rest is just a straight decode loop until end of stream
 				*/
 				while (! eos) {
 					while (! eos) {
-						int result = ogg_sync_pageout (& oy, & og);
+						int result = ogg_sync_pageout (& oggSyncState, & oggPage);
 						if (result == 0)
 							break; // need more data
 						if (result < 0)
 							Melder_casual (U"Corrupt or missing data in bitstream; continuing...");
 						else {
-							ogg_stream_pagein (& os, & og); // can safely ignore errors at this point
+							ogg_stream_pagein (& oggStream, & oggPage); // can safely ignore errors at this point
 							while (true) {
-								result = ogg_stream_packetout (& os, & op);
+								result = ogg_stream_packetout (& oggStream, & oggPacket);
 								if (result == 0)
 									break; // need more data
 								if (result < 0){ 
@@ -631,39 +641,40 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 									/* 
 										we have a packet.  Decode it
 									*/
-									if (vorbis_synthesis (& vb, & op) == 0)
-										vorbis_synthesis_blockin (& vd, & vb);
-									/*
-										**pcm is a multichannel float vector.  In stereo, for
-										example, pcm[0] is the left channel, and pcm[1] is the right right.
-										numberOfSamplesDecoded is the size of each channel (-1.0 <= range <= 1.0).
-									*/
+									if (vorbis_synthesis (& vorbisBlock, & oggPacket) == 0)
+										vorbis_synthesis_blockin (& vorbisDspState, & vorbisBlock);
 									float **pcmOutFloats;
-									int numberOfSamplesDecoded;
-									while ((numberOfSamplesDecoded = vorbis_synthesis_pcmout (& vd, & pcmOutFloats)) > 0) {
-										Melder_require (currentSample + numberOfSamplesDecoded <= numberOfSamples,
+									integer numberOfSamplesDecoded;
+									/*
+										The output from vorbis_synthesis_pcmout is a multichannel float vector. In stereo, for
+										example, pcmOutFloats[0] is the left channel, and pcmOutFloats[1] is the right.
+										The numberOfSamplesDecoded is the size of each channel, where all
+										floats are in the interval [-1.0, 1.0].
+									*/
+									while ((numberOfSamplesDecoded = vorbis_synthesis_pcmout (& vorbisDspState, & pcmOutFloats)) > 0) {
+										Melder_require (numberOfPCMValuesProcessed + numberOfSamplesDecoded <= numberOfSamples,
 											U"The number of samples read is too large.");
-										for (integer ichan = 1; ichan <= vi.channels; ichan ++){
+										for (integer ichan = 1; ichan <= vorbisInfo.channels; ichan ++){
 											float  *oneChannelFloats = pcmOutFloats [ichan - 1];
 											for (integer j =  1; j <= numberOfSamplesDecoded; j ++)
-												my z [ichan] [currentSample + j] = oneChannelFloats [j - 1];
+												my z [ichan] [numberOfPCMValuesProcessed + j] = oneChannelFloats [j - 1];
 										}
-										currentSample += numberOfSamplesDecoded;
+										numberOfPCMValuesProcessed += numberOfSamplesDecoded;
 										/*
-											tell libvorbis how many samples we actually consumed
+											Tell libvorbis how many samples we actually consumed
 										*/
-										vorbis_synthesis_read (& vd, numberOfSamplesDecoded);
+										vorbis_synthesis_read (& vorbisDspState, numberOfSamplesDecoded);
 									}
 								}
 							}
-							if (ogg_page_eos (& og))
+							if (ogg_page_eos (& oggPage))
 								eos = true;
 						}
 					}
 					if (! eos) {
-						readBuffer = ogg_sync_buffer (& oy, readBufferSize);
+						readBuffer = ogg_sync_buffer (& oggSyncState, readBufferSize);
 						bytesRead = fread (readBuffer, 1, readBufferSize, f);
-						ogg_sync_wrote (& oy, bytesRead);
+						ogg_sync_wrote (& oggSyncState, bytesRead);
 						if (bytesRead == 0)
 							eos = true;
 					}
@@ -672,8 +683,8 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 					ogg_page and ogg_packet structs always point to storage in
 					libvorbis.  They're never freed or manipulated directly
 				*/
-				vorbis_block_clear (& vb);
-				vorbis_dsp_clear (& vd);
+				vorbis_block_clear (& vorbisBlock);
+				vorbis_dsp_clear (& vorbisDspState);
 			} else {
 				Melder_throw (U"Corrupt header during playback initialization");
 			}
@@ -681,17 +692,93 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 				Clean up this logical bitstream; before exit we see if we're
 				followed by another [chained]
 			*/
-			ogg_stream_clear (& os);
-			vorbis_comment_clear (& vc);
-			vorbis_info_clear (& vi);  // must be called last
+			ogg_stream_clear (& oggStream);
+			vorbis_comment_clear (& vorbisComment);
+			vorbis_info_clear (& vorbisInfo);  // must be called last
 		}
-		ogg_sync_clear (& oy);
+		ogg_sync_clear (& oggSyncState);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
 	}
 }
 
+/* 
+	Decodes simple and chained OggVorbis files from beginning to end. 
+	This routines is structured after the example code in libvorbis-1.3.7/examples/vorbisfile_example.c
+*/
+autoSound Sound_readFromOggVorbisFile2 (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "rb");
+		
+		OggVorbis_File vorbisFile;
+		if (ov_open_callbacks (f, & vorbisFile, nullptr, 0, OV_CALLBACKS_NOCLOSE) < 0)
+			Melder_throw (U"Input does not appear to be an Ogg bitstream");
+		vorbis_info *vorbisInfo = ov_info (& vorbisFile, -1);
+		const integer numberOfChannels = vorbisInfo -> channels;
+		const double samplingFrequency = vorbisInfo -> rate;
+		const double samplingTime = 1.0 / samplingFrequency;
+		const integer numberOfSamples = ov_pcm_total (& vorbisFile, -1);
+		double xmin = 0.0; // the start time in the file can be > 0!!!
+		const double xmax = numberOfSamples * samplingTime;
+		autoSound me = Sound_create (numberOfChannels, xmin, xmax, numberOfSamples, samplingTime, 0.5 * samplingTime);
+		/*
+			char * ov_comment(& vorbisFile, -1) -> vendor;// encoded by ...
+		*/
+		#if __BYTE_ORDER == __BIG_ENDIAN
+			int endianness = 1;
+		#else
+			int endianness = 0;
+		#endif
+		int wordSizeInBytes = 2, signedInt16 = 1; // pcmBufferSize data should be signed int16_t
+		const integer pcmBufferSize = 2048;
+		const integer numberOfBytesToRead = wordSizeInBytes * pcmBufferSize;
+		/*
+			We need the endianness above otherwise we cannot use <int16_t> pcmBuffer
+		*/
+		autovector<int16_t> pcmBuffer = newvectorraw<int16_t> (pcmBufferSize);
+		bool eof = false;
+		integer numberOfPCMValuesProcessed = 0;
+		while (! eof) {
+			int current_section;
+			long numberOfBytesRead = ov_read (& vorbisFile, (char *) pcmBuffer.asArgumentToFunctionThatExpectsZeroBasedArray (),
+				numberOfBytesToRead, endianness, wordSizeInBytes, signedInt16, & current_section);
+			if (numberOfBytesRead == 0)
+				eof = true;
+			else if (numberOfBytesRead < 0) {
+				if (numberOfBytesRead == OV_EBADLINK)
+					Melder_throw (U"Corrupt bitstream in section ", current_section);
+				else if (numberOfBytesRead == OV_HOLE)
+					Melder_throw (U"There is a hole in the data for section", current_section);
+				else
+					Melder_throw (U"Unspecified errror in section ", current_section);
+			} else {
+				Melder_require (numberOfBytesRead % wordSizeInBytes == 0,
+					U"Number of bytes read should be even.");
+				/* we don't bother dealing with sample rate changes, etc, but
+				you'll have to*/
+				/* 
+					if there are 3 channels the layout of the bytes in pcmBuffer is 112233112233... etc
+					The only thing we assume is that the ret is even number because we require that the
+					data is 16 bit
+				*/
+				const integer numberOfPCMValuesRead = numberOfBytesRead / wordSizeInBytes;
+				Melder_require (numberOfPCMValuesProcessed + numberOfPCMValuesRead <= numberOfSamples * numberOfChannels,
+					U"The number of samples read is too large.");
+				for (integer ivalue = 1; ivalue <= numberOfPCMValuesRead; ivalue ++) {
+					numberOfPCMValuesProcessed ++; 
+					const integer isample = (numberOfPCMValuesProcessed - 1) / numberOfChannels + 1;
+					const integer ichannel = (numberOfPCMValuesProcessed - 1) % numberOfChannels + 1;
+					my z [ichannel] [isample] = pcmBuffer [ivalue] / 32768.0;
+				}
+			}
+		}
+		ov_clear(& vorbisFile);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
+	}
+}
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
