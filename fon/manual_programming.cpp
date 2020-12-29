@@ -387,7 +387,7 @@ NORMAL (U"Besides the TextGrid text file format described above, TextGrid object
 	"and save the resulting TextGrid object as a text file with @@Save as text file...@.")
 MAN_END
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20200924)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20201229)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -425,8 +425,8 @@ CODE (U"int main (int argc, char **argv) {")
 CODE (U"}")
 ENTRY (U"5. Learning how to program")
 NORMAL (U"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/Daata.h#, "
-	"##sys/oo.h#, the ##XXX_def.h# files in the #fon directory, and the corresponding "
-	"##XXX.cpp# files in the #fon directory. To see how commands show up on the buttons "
+	"##sys/oo.h#, the ##XXX_def.h# files in the #fon folder, and the corresponding "
+	"##XXX.cpp# files in the #fon folder. To see how commands show up on the buttons "
 	"in the fixed and dynamic menus, take a look at the large interface description file "
 	"##fon/praat_Fon.cpp#.")
 ENTRY (U"6. Using the Praat shell only")

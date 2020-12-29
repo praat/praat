@@ -169,13 +169,13 @@ void praat_reportSystemProperties () {
 	#endif
 	structMelderDir dir {};
 	Melder_getHomeDir (& dir);
-	MelderInfo_writeLine (U"Home directory: ", dir. path);
+	MelderInfo_writeLine (U"Home folder: ", dir. path);
 	#ifdef macintosh
 		MelderInfo_writeLine (U"Full Disk Access: ", Melder_kleenean (hasFullDiskAccess ()));
 		MelderInfo_writeLine (U"Sandboxed: ", Melder_boolean (isSandboxed ()));
 		if (isSandboxed ())
-			MelderInfo_writeLine (U"Sandbox (application home) directory: ", Melder_peek8to32 ([NSHomeDirectory () UTF8String]));
-		MelderInfo_writeLine (U"User home directory: ", Melder_peek8to32 ([ getRealHomeDirectory () UTF8String]));
+			MelderInfo_writeLine (U"Sandbox (application home) folder: ", Melder_peek8to32 ([NSHomeDirectory () UTF8String]));
+		MelderInfo_writeLine (U"User home folder: ", Melder_peek8to32 ([ getRealHomeDirectory () UTF8String]));
 	#endif
 	MelderInfo_close ();
 }

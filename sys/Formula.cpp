@@ -145,7 +145,7 @@ enum { NO_SYMBOL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
-		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_DIRECTORY_STR_,
+		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
@@ -271,7 +271,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionMenu", U"option",
 	U"comment", U"endPause",
-	U"chooseReadFile$", U"chooseWriteFile$", U"chooseDirectory$",
+	U"chooseReadFile$", U"chooseWriteFile$", U"chooseFolder$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
@@ -4713,7 +4713,7 @@ static void do_fileNames_STRVEC () {
 		U"The function \"fileNames$#\" requires one argument, namely the file pattern.");
 	Stackel filePattern = pop;
 	if (filePattern->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function \"fileNames$#\" should be a string (namely the file pattern), not ", filePattern->whichText(), U".");
+		Melder_throw (U"The argument of the function \"fileNames$#\" should be a string (namely the file path and pattern), not ", filePattern->whichText(), U".");
 	autoSTRVEC result = fileNames_STRVEC (filePattern->getString());
 	pushStringVector (result.move());
 }
@@ -4724,7 +4724,7 @@ static void do_folderNames_STRVEC () {
 		U"The function \"folderNames$#\" requires one argument, namely the file pattern.");
 	Stackel folderPattern = pop;
 	Melder_require (folderPattern->which == Stackel_STRING,
-		U"The argument of the function \"folderNames$#\" should be a string (namely the directory pattern), not ", folderPattern->whichText(), U".");
+		U"The argument of the function \"folderNames$#\" should be a string (namely the folder path), not ", folderPattern->whichText(), U".");
 	autoSTRVEC result = folderNames_STRVEC (folderPattern->getString());
 	pushStringVector (result.move());
 }
@@ -6391,14 +6391,32 @@ static void do_chooseWriteFileStr () {
 		Melder_throw (U"The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", n->number, U".");
 	}
 }
-static void do_chooseDirectoryStr () {
+static void do_chooseFolder_STR () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"chooseFolder$\" is not available inside manuals.");
+	Stackel n = pop;
+	if (n->number == 1) {
+		Stackel title = pop;
+		if (title->which == Stackel_STRING) {
+			autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
+			if (! result)
+				result = Melder_dup (U"");
+			pushString (result.move());
+		} else {
+			Melder_throw (U"The argument of \"chooseFolder$\" should be a string (the title).");
+		}
+	} else {
+		Melder_throw (U"The function \"chooseFolder$\" requires 1 argument (a title), not ", n->number, U".");
+	}
+}
+static void do_chooseDirectory_STR () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function \"chooseDirectory$\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->getString());
+			autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
 			if (! result)
 				result = Melder_dup (U"");
 			pushString (result.move());
@@ -7338,7 +7356,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case HEXADECIMAL_STR_: { do_hexadecimal_STR ();
 } break; case DELETE_FILE_: { do_deleteFile ();
 } break; case CREATE_FOLDER_: { do_createFolder ();
-} break; case CREATE_DIRECTORY_: { do_createDirectory ();
+} break; case CREATE_DIRECTORY_: { do_createDirectory ();   // deprecated 2020
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILE_STR_: { do_readFile_STR ();
@@ -7374,7 +7392,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILE_STR_: { do_chooseWriteFileStr ();
-} break; case CHOOSE_DIRECTORY_STR_: { do_chooseDirectoryStr ();
+} break; case CHOOSE_FOLDER_STR_: { do_chooseFolder_STR ();
+} break; case CHOOSE_DIRECTORY_STR_: { do_chooseDirectory_STR ();   // deprecated 2020
 /********** Demo window functions: **********/
 } break; case DEMO_WINDOW_TITLE_: { do_demoWindowTitle ();
 } break; case DEMO_SHOW_: { do_demoShow ();
