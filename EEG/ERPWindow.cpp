@@ -150,13 +150,11 @@ static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
 };
 
 void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kGraphics_colourScale colourScale) {
-	integer n = 201;
-	autoMAT legend = newMATraw (n, 2);
-	for (integer irow = 1; irow <= n; irow ++) {
-		for (integer icol = 1; icol <= 2; icol ++) {
+	const integer n = 201;
+	autoMAT legend = raw_MAT (n, 2);
+	for (integer irow = 1; irow <= n; irow ++)
+		for (integer icol = 1; icol <= 2; icol ++)
 			legend [irow] [icol] = (irow - 1) / (n - 1.0);
-		}
-	}
 	Graphics_setColourScale (graphics, colourScale);
 	Graphics_image (graphics, legend.all(), 0.85, 0.98, -0.8, +0.8, 0.0, 1.0);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
@@ -173,33 +171,30 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	//Graphics_setGrey (graphics, 1.0);
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	//Graphics_setColour (graphics, Melder_BLACK);
-	integer numberOfDrawableChannels =
+	const integer numberOfDrawableChannels =
 			my ny >= 64 && Melder_equ (my channelNames [64].get(), U"O2") ? 64 :
 			my ny >= 32 && Melder_equ (my channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-		double inclination = (double) biosemiLocationData [ichan]. inclination;
-		double azimuth = (double) biosemiLocationData [ichan]. azimuth;
-		bool rightHemisphere = inclination >= 0.0;
-		double r = fabs (inclination / 115.0);
-		double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
+		const double inclination = (double) biosemiLocationData [ichan]. inclination;
+		const double azimuth = (double) biosemiLocationData [ichan]. azimuth;
+		const bool rightHemisphere = ( inclination >= 0.0 );
+		const double r = fabs (inclination / 115.0);
+		const double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
 		biosemiLocationData [ichan]. topX = r * cos (theta);
 		biosemiLocationData [ichan]. topY = r * sin (theta);
 	}
-	integer n = 201;
-	double d = 2.0 / (n - 1);
+	const integer n = 201;
+	const double d = 2.0 / (n - 1);
 	autoVEC mean = raw_VEC (numberOfDrawableChannels);
-	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-		mean [ichan] = tmin == tmax ?
-				Sampled_getValueAtX (me, tmin, ichan, 0, true) :
-				Vector_getMean (me, tmin, tmax, ichan);
-	}
-	autoMAT image = newMATraw (n, n);
+	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++)
+		mean [ichan] = ( tmin == tmax ? Sampled_getValueAtX (me, tmin, ichan, 0, true) : Vector_getMean (me, tmin, tmax, ichan) );
+	autoMAT image = raw_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
+		const double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
+			const double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
 				double value = undefined;
 				longdouble sum = 0.0, weight = 0.0;
@@ -221,34 +216,33 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 			}
 		}
 	}
-	double whiteValue = colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.5 * (vmin + vmax) : vmin;
+	const double whiteValue = ( colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.5 * (vmin + vmax) : vmin );
 	Graphics_setColourScale (graphics, colourScale);
 	for (integer irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
+		const double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
-			if (x * x + y * y > 1.0) {
+			const double x = -1.0 + (icol - 1) * d;
+			if (x * x + y * y > 1.0)
 				image [irow] [icol] = whiteValue;
-			}
 		}
 	}
 	Graphics_image (graphics, image.all(), -1.0-0.5/n, 1.0+0.5/n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (graphics, 2.0);
 	/*
-	 * Nose.
-	 */
+		Nose.
+	*/
 	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
-		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
+		const double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (graphics, 3, x, y);
 	}
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_line (graphics, -0.08, 0.99, 0.0, 1.18);
 	Graphics_line (graphics, 0.08, 0.99, 0.0, 1.18);
 	/*
-	 * Ears.
-	 */
+		Ears.
+	*/
 	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (graphics, -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (graphics, 1.09, 1.00, -0.08, 0.08);
@@ -260,14 +254,13 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	Graphics_line (graphics, 1.09, 0.08, 1.09, -0.08);
 	Graphics_line (graphics, 1.09, -0.08, 0.99, -0.08);
 	/*
-	 * Scalp.
-	 */
+		Scalp.
+	*/
 	Graphics_ellipse (graphics, -1.0, 1.0, -1.0, 1.0);
 	Graphics_setLineWidth (graphics, 1.0);
 	Graphics_unsetInner (graphics);
-	if (garnish) {
+	if (garnish)
 		ERP_drawScalp_garnish (graphics, vmin, vmax, colourScale);
-	}
 }
 
 void structERPWindow :: v_drawSelectionViewer () {
@@ -276,40 +269,39 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	integer numberOfDrawableChannels =
+	const integer numberOfDrawableChannels =
 			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64].get(), U"O2") ? 64 :
 			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-		double inclination = (double) biosemiLocationData [ichan]. inclination;
-		double azimuth = (double) biosemiLocationData [ichan]. azimuth;
-		bool rightHemisphere = inclination >= 0.0;
-		double r = fabs (inclination / 115.0);
-		double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
+		const double inclination = (double) biosemiLocationData [ichan]. inclination;
+		const double azimuth = (double) biosemiLocationData [ichan]. azimuth;
+		const bool rightHemisphere = inclination >= 0.0;
+		const double r = fabs (inclination / 115.0);
+		const double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
 		biosemiLocationData [ichan]. topX = r * cos (theta);
 		biosemiLocationData [ichan]. topY = r * sin (theta);
 	}
-	integer n = 201;
-	double d = 2.0 / (n - 1);
+	const integer n = 201;
+	const double d = 2.0 / (n - 1);
 	autoVEC means = raw_VEC (numberOfDrawableChannels);
-	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
+	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++)
 		means [ichan] =
 			our startSelection == our endSelection ?
 				Sampled_getValueAtX (erp, our startSelection, ichan, 0, true) :
 				Vector_getMean (erp, our startSelection, our endSelection, ichan);
-	}
-	autoMAT image = newMATraw (n, n);
+	autoMAT image = raw_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
+		const double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
+			const double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
 				double value = undefined;
 				longdouble sum = 0.0, weight = 0.0;
 				for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-					double dx = x - biosemiLocationData [ichan]. topX;
-					double dy = y - biosemiLocationData [ichan]. topY;
+					const double dx = x - biosemiLocationData [ichan]. topX;
+					const double dy = y - biosemiLocationData [ichan]. topY;
 					double distance = sqrt (dx * dx + dy * dy);
 					if (distance < 1e-12) {
 						value = means [ichan];
@@ -346,9 +338,9 @@ void structERPWindow :: v_drawSelectionViewer () {
 		maximum = absoluteExtremum;
 	}
 	for (integer irow = 1; irow <= n; irow ++) {
-		double y = -1.0 + (irow - 1) * d;
+		const double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
-			double x = -1.0 + (icol - 1) * d;
+			const double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
 				image [irow] [icol] = minimum +
 					( our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
@@ -361,19 +353,19 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*
-	 * Nose.
-	 */
+		Nose.
+	*/
 	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
-		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
+		const double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (our graphics.get(), 3, x, y);
 	}
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_line (our graphics.get(), -0.08, 0.99, 0.0, 1.18);
 	Graphics_line (our graphics.get(), 0.08, 0.99, 0.0, 1.18);
 	/*
-	 * Ears.
-	 */
+		Ears.
+	*/
 	Graphics_setGrey (our graphics.get(), our p_scalp_colourScale == kGraphics_colourScale::BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (our graphics.get(), -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (our graphics.get(), 1.09, 1.00, -0.08, 0.08);
@@ -385,8 +377,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_line (our graphics.get(), 1.09, 0.08, 1.09, -0.08);
 	Graphics_line (our graphics.get(), 1.09, -0.08, 0.99, -0.08);
 	/*
-	 * Scalp.
-	 */
+		Scalp.
+	*/
 	Graphics_ellipse (our graphics.get(), -1.0, 1.0, -1.0, 1.0);
 	Graphics_setLineWidth (our graphics.get(), 1.0);
 }

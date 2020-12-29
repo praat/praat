@@ -535,7 +535,7 @@ void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasi
 	const integer workspaceSize = getLPCAnalysisWorkspaceSize (sframe [1] -> nx, predictionOrder, method);
 	Melder_require (workspaceSize > 0,
 		U"The workspace size is not properly defined.");
-	autoMAT workspace = newMATraw (numberOfThreads, workspaceSize);
+	autoMAT workspace = raw_MAT (numberOfThreads, workspaceSize);
 
 	std::vector <std::thread> thread (numberOfThreads);
 	std::atomic<integer> frameErrorCount (0);

@@ -319,14 +319,14 @@ inline autoINTVEC sort_INTVEC (constINTVECVU const& x) {
 	return result;
 }
 
-inline autoVEC newVECrowSums (constMATVU const& x) {
+inline autoVEC rowSums_VEC (constMATVU const& x) {
 	autoVEC result = raw_VEC (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		result [irow] = NUMsum (x.row (irow));
 	return result;
 }
 
-inline autoVEC newVECcolumnSums (constMATVU const& x) {
+inline autoVEC columnSums_VEC (constMATVU const& x) {
 	autoVEC result = raw_VEC (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		result [icol] = NUMsum (x.column (icol));

@@ -261,7 +261,7 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights);
 
 inline autoMAT newMATmtm_weighRows (constMATVU const& data, constVECVU const& rowWeights) {
-	autoMAT result = newMATraw (data.ncol, data.ncol);
+	autoMAT result = raw_MAT (data.ncol, data.ncol);
 	MATmtm_weighRows (result.get(), data, rowWeights);
 	return result;
 }

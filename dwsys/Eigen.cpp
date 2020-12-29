@@ -97,7 +97,7 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
 	my eigenvalues = zero_VEC (numberOfEigenvalues);
-	my eigenvectors = newMATzero (numberOfEigenvalues, dimension);
+	my eigenvectors = zero_MAT (numberOfEigenvalues, dimension);
 }
 
 /*
@@ -153,7 +153,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoVEC beta = raw_VEC (n);
 	autoVEC work = raw_VEC (lwork);
 	autoINTVEC iwork = zero_INTVEC (n);
-	autoMAT q = newMATraw (n, n);
+	autoMAT q = raw_MAT (n, n);
 	autoMAT ac = newMATtranspose (a);
 	autoMAT bc = newMATtranspose (b);
 

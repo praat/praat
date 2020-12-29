@@ -60,7 +60,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 		return;
 	}
 	const integer nc = b.ncol;
-	autoMAT u = newMATzero (nc, nc);
+	autoMAT u = zero_MAT (nc, nc);
 	autoVEC evec = zero_VEC (nc);
 	autoSVD svd = SVD_create (nc, nc);
 

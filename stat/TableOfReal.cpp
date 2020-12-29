@@ -77,7 +77,7 @@ void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion
 		our rowLabels = autoSTRVEC (our numberOfRows);
 	}
 	if (our numberOfRows >= 1 && our numberOfColumns >= 1) {
-		our data = newMATzero (our numberOfRows, our numberOfColumns);
+		our data = zero_MAT (our numberOfRows, our numberOfColumns);
 		for (integer i = 1; i <= our numberOfRows; i ++) {
 			our rowLabels [i] = texgetw16 (a_text);
 			for (integer j = 1; j <= our numberOfColumns; j ++)
@@ -120,7 +120,7 @@ void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfCol
 	my rowLabels = autoSTRVEC (numberOfRows);
 	Melder_assert (my rowLabels.size == numberOfRows);   // probably captured by test script
 	my columnLabels = autoSTRVEC (numberOfColumns);
-	my data = newMATzero (my numberOfRows, my numberOfColumns);
+	my data = zero_MAT (my numberOfRows, my numberOfColumns);
 }
 
 autoTableOfReal TableOfReal_create (integer numberOfRows, integer numberOfColumns) {
@@ -178,7 +178,7 @@ void TableOfReal_removeRow (TableOfReal me, integer rowNumber) {
 			me, U" has only one row, and a TableOfReal without rows cannot exist.");
 		Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
 			U"No row ", rowNumber, U".");
-		autoMAT newData = newMATraw (my numberOfRows - 1, my numberOfColumns);
+		autoMAT newData = raw_MAT (my numberOfRows - 1, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			for (integer irow = 1; irow < rowNumber; irow ++)
 				newData [irow] [icol] = my data [irow] [icol];
@@ -206,7 +206,7 @@ void TableOfReal_insertRow (TableOfReal me, integer rowNumber) {
 		/*
 			Create without change.
 		*/
-		autoMAT newData = newMATzero (my numberOfRows + 1, my numberOfColumns);
+		autoMAT newData = zero_MAT (my numberOfRows + 1, my numberOfColumns);
 		autoSTRVEC newRowLabels (my numberOfRows + 1);
 		for (integer irow = 1; irow < rowNumber; irow ++)	{
 			newRowLabels [irow] = my rowLabels [irow]. move();
@@ -238,7 +238,7 @@ void TableOfReal_removeColumn (TableOfReal me, integer columnNumber) {
 		/*
 			Create without change.
 		*/
-		autoMAT newData = newMATraw (my numberOfRows, my numberOfColumns - 1);
+		autoMAT newData = raw_MAT (my numberOfRows, my numberOfColumns - 1);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol < columnNumber; icol ++)
 				newData [irow] [icol] = my data [irow] [icol];
@@ -266,7 +266,7 @@ void TableOfReal_insertColumn (TableOfReal me, integer columnNumber) {
 		/*
 			Create without change.
 		*/
-		autoMAT newData = newMATzero (my numberOfRows, my numberOfColumns + 1);
+		autoMAT newData = zero_MAT (my numberOfRows, my numberOfColumns + 1);
 		autoSTRVEC newColumnLabels (my numberOfColumns + 1);
 		for (integer j = 1; j < columnNumber; j ++) {
 			newColumnLabels [j] = my columnLabels [j]. move();

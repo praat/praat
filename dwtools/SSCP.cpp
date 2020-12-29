@@ -551,7 +551,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		Melder_assert (my data.ncol == my numberOfColumns);
 		autoMAT mat;
 		if (my numberOfRows == 1) {
-			mat = newMATzero (my numberOfColumns, my numberOfColumns);
+			mat = zero_MAT (my numberOfColumns, my numberOfColumns);
 			mat.diagonal() <<= my data.row (1); // 1xn matrix -> nxn
 		} else if (my data.nrow == my numberOfColumns && my data.ncol == my numberOfColumns)
 			mat = newMATcopy (my data.get());
@@ -769,7 +769,7 @@ void SSCP_expand (SSCP me) {
 		return;
 
 	if (NUMisEmpty (my expansion.get()))
-		my expansion = newMATzero (my numberOfColumns, my numberOfColumns);
+		my expansion = zero_MAT (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++)
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 			const integer dij = integer_abs (ir - ic);
@@ -794,7 +794,7 @@ void SSCP_unExpand (SSCP me) {
 
 void SSCP_expandLowerCholeskyInverse (SSCP me) {
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
-		my lowerCholeskyInverse = newMATraw (my numberOfColumns, my numberOfColumns);
+		my lowerCholeskyInverse = raw_MAT (my numberOfColumns, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
 		for (integer j = 1; j <= my numberOfColumns; j ++) {

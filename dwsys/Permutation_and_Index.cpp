@@ -32,7 +32,7 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWith
 		autoPermutation classes = Permutation_create (numberOfClasses);
 		Permutation_permuteRandomly_inplace (classes.get(), 0, 0);
 		autoPermutation classesinv = Permutation_invert (classes.get());
-		autoINTMAT indices = newINTMATzero (numberOfClasses, 4);
+		autoINTMAT indices = zero_INTMAT (numberOfClasses, 4);
 
 		for (integer i = 1; i <= my numberOfItems; i ++)
 			indices [my classIndex [i]] [2] ++;   // column 2: number of elements in class

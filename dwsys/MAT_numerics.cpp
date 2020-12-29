@@ -64,7 +64,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC e
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);	
 	autoVEC eigenvalues = raw_VEC (a.nrow);
-	autoMAT eigenvectors = newMATraw (a.nrow, a.ncol);	
+	autoMAT eigenvectors = raw_MAT (a.nrow, a.ncol);	
 	
 	MAT_getEigenSystemFromSymmetricMatrix_preallocated (eigenvectors.get(), eigenvalues.get(), a, sortAscending);
 	
@@ -84,7 +84,7 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 	autoMAT eigenvectors_right;
 	double *p_evec_right = nullptr;
 	if (out_eigenvectors) {
-		eigenvectors_right = newMATraw (a.nrow, a.nrow);
+		eigenvectors_right = raw_MAT (a.nrow, a.nrow);
 		p_evec_right = & eigenvectors_right [1] [1];
 	}
 
@@ -148,7 +148,7 @@ void MAT_asPrincipalComponents_preallocated (MATVU result, constMATVU const& m, 
 
 autoMAT MAT_asPrincipalComponents (constMATVU m, integer numberOfComponents) {
 	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
-	autoMAT result = newMATraw (m.nrow, numberOfComponents);
+	autoMAT result = raw_MAT (m.nrow, numberOfComponents);
 	MAT_asPrincipalComponents_preallocated (result.get(), m, numberOfComponents);
 	return result;
 }
@@ -172,7 +172,7 @@ void MATpseudoInverse (MATVU const& target, constMATVU const& mat, double tolera
 }
 
 autoMAT newMATpseudoInverse (constMATVU const& mat, double tolerance) {
-	autoMAT result = newMATraw (mat.ncol, mat.nrow);
+	autoMAT result = raw_MAT (mat.ncol, mat.nrow);
 	MATpseudoInverse (result.all(), mat, tolerance);
 	return result;
 }

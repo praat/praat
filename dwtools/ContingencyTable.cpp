@@ -95,8 +95,8 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 
 void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out_df) {
 	
-	autoVEC rowSums = newVECrowSums (my data.get());
-	autoVEC columnSums = newVECcolumnSums (my data.get());
+	autoVEC rowSums = rowSums_VEC (my data.get());
+	autoVEC columnSums = columnSums_VEC (my data.get());
 	const double totalSum = NUMsum (my data.all());
 	
 	integer nrow = my numberOfRows, ncol = my numberOfColumns;

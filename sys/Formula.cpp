@@ -90,14 +90,14 @@ enum { NO_SYMBOL_,
 		ABS_, ROUND_, FLOOR_, CEILING_,
 		RECTIFY_, RECTIFY_VEC_, RECTIFY_MAT_,
 		SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_, SINC_, SINCPI_,
-		EXP_, VEC_EXP_, MAT_EXP_,
-		SINH_, COSH_, TANH_, VEC_TANH_,
+		EXP_, EXP_VEC_, EXP_MAT_,
+		SINH_, COSH_, TANH_, TANH_VEC_,
 		ARCSINH_, ARCCOSH_, ARCTANH_,
 		SIGMOID_, SIGMOID_VEC_, SOFTMAX_VEC_, SOFTMAX_PER_ROW_MAT_,
 		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, RANDOM_BERNOULLI_VEC_,
 		RANDOM_POISSON_, TRANSPOSE_MAT_,
-		SUM_PER_ROW_VEC_, SUM_PER_COLUMN_VEC_,
+		ROW_SUMS_VEC_, COLUMN_SUMS_VEC_,
 		LOG2_, LN_, LOG10_, LN_GAMMA_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
@@ -167,7 +167,7 @@ enum { NO_SYMBOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 	#define LOW_FUNCTION_STR1  LENGTH_
-		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
+		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_FOLDER_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
 		READ_FILE_, READ_FILE_STR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
 		DATE_STR_, INFO_STR_,
@@ -288,7 +288,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"hash", U"hex$", U"unhex$",
 	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#",
 
-	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createDirectory", U"variableExists",
+	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createFolder", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"info$",
 	U"index", U"rindex",
@@ -3393,7 +3393,7 @@ static void do_rectify_MAT () {
 		} else {
 			pop;
 			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-			autoMAT result = newMATraw (nrow, ncol);
+			autoMAT result = raw_MAT (nrow, ncol);
 			for (integer irow = 1; irow <= nrow; irow ++) {
 				for (integer icol = 1; icol <= ncol; icol ++) {
 					double xvalue = x->numericMatrix [irow] [icol];
@@ -3473,7 +3473,7 @@ static void do_exp () {
 		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
 	}
 }
-static void do_VECexp () {
+static void do_exp_VEC () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
@@ -3485,11 +3485,11 @@ static void do_VECexp () {
 		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
 	}
 }
-static void do_MATexp () {
+static void do_exp_MAT () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-		autoMAT result = newMATraw (nrow, ncol);
+		autoMAT result = raw_MAT (nrow, ncol);
 		for (integer irow = 1; irow <= nrow; irow ++)
 			for (integer icol = 1; icol <= ncol; icol ++)
 				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
@@ -3623,7 +3623,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (model->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = model->numericMatrix.nrow;
 			integer numberOfColumns = model->numericMatrix.ncol;
-			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+			autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3638,7 +3638,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (nrow->which == Stackel_NUMBER && ncol->which == Stackel_NUMBER && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = Melder_iround (nrow->number);
 			integer numberOfColumns = Melder_iround (ncol->number);
-			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+			autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3679,7 +3679,7 @@ static void do_function_MATll_l (integer (*f) (integer, integer)) {
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfRows = a->numericMatrix.nrow;
 		integer numberOfColumns = a->numericMatrix.ncol;
-		autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+		autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				newData [irow] [icol] = f (Melder_iround (x->number), Melder_iround (y->number));
@@ -3833,14 +3833,14 @@ static void do_evaluate_nocheck () {
 		}
 	} else Melder_throw (U"The argument of the function \"evaluate_nocheck\" should be a string with a numeric expression, not ", expression->whichText());
 }
-static void do_evaluateStr () {
+static void do_evaluate_STR () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		autostring32 result = Interpreter_stringExpression (theInterpreter, expression->getString());
 		pushString (result.move());
 	} else Melder_throw (U"The argument of the function \"evaluate$\" should be a string with a string expression, not ", expression->whichText());
 }
-static void do_evaluate_nocheckStr () {
+static void do_evaluate_nocheck_STR () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		try {
@@ -3852,7 +3852,7 @@ static void do_evaluate_nocheckStr () {
 		}
 	} else Melder_throw (U"The argument of the function \"evaluate_nocheck$\" should be a string with a string expression, not ", expression->whichText());
 }
-static void do_doStr () {
+static void do_do_STR () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	if (narg->number < 1)
@@ -4343,7 +4343,7 @@ static void do_zero_MAT () {
 		U"In the function \"zero##\", the number of rows should not be negative.");
 	Melder_require (numberOfColumns >= 0.0,
 		U"In the function \"zero##\", the number of columns should not be negative.");
-	autoMAT result = newMATzero (Melder_iround (numberOfRows), Melder_iround (numberOfColumns));
+	autoMAT result = zero_MAT (Melder_iround (numberOfRows), Melder_iround (numberOfColumns));
 	pushNumericMatrix (result.move());
 }
 static void do_linear_VEC () {
@@ -5538,6 +5538,23 @@ static void do_deleteFile () {
 		Melder_throw (U"The function \"deleteFile\" requires a string, not ", f->whichText(), U".");
 	}
 }
+static void do_createFolder () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"createFolder\" is not available inside manuals.");
+	Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderDir currentDirectory { };
+		Melder_getDefaultDir (& currentDirectory);
+		#if defined (UNIX) || defined (macintosh)
+			Melder_createDirectory (& currentDirectory, f->getString(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		#else
+			Melder_createDirectory (& currentDirectory, f->getString(), 0);
+		#endif
+		pushNumber (1);
+	} else {
+		Melder_throw (U"The function \"createFolder\" requires a string, not ", f->whichText(), U".");
+	}
+}
 static void do_createDirectory () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function \"createDirectory\" is not available inside manuals.");
@@ -5608,7 +5625,7 @@ static void do_tensorLiteral () {
 		pushNumericVector (result.move());
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		integer sharedNumberOfColumns = last->numericVector.size;
-		autoMAT result = newMATraw (numberOfElements, sharedNumberOfColumns);
+		autoMAT result = raw_MAT (numberOfElements, sharedNumberOfColumns);
 		result.row (numberOfElements)  <<=  last->numericVector;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
 			Stackel element = pop;
@@ -5701,7 +5718,7 @@ static void do_mul_MAT () {
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
-		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
+		autoMAT result = zero_MAT (x->numericMatrix.nrow, y->numericMatrix.ncol);
 		MATmul_allowAllocation_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
@@ -5722,7 +5739,7 @@ static void do_mul_metal_MAT () {
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
-		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
+		autoMAT result = zero_MAT (x->numericMatrix.nrow, y->numericMatrix.ncol);
 		MATmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
@@ -5842,7 +5859,7 @@ static void do_transpose_MAT () {
 static void do_rowSums_VEC () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		autoVEC result = newVECrowSums (x->numericMatrix);
+		autoVEC result = rowSums_VEC (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"rowSums#\" requires a matrix, not ", x->whichText(), U".");
@@ -5856,7 +5873,7 @@ static void do_columnSums_VEC () {
 			result# = columnSums# (a##)
 			assert result# = { 20, 7, 78 }
 		@*/
-		autoVEC result = newVECcolumnSums (x->numericMatrix);
+		autoVEC result = columnSums_VEC (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"columnSums#\" requires a matrix, not ", x->whichText(), U".");
@@ -7131,12 +7148,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SINC_: { do_function_n_n (NUMsinc);
 } break; case SINCPI_: { do_function_n_n (NUMsincpi);
 } break; case EXP_: { do_exp ();
-} break; case VEC_EXP_: { do_VECexp ();
-} break; case MAT_EXP_: { do_MATexp ();
+} break; case EXP_VEC_: { do_exp_VEC ();
+} break; case EXP_MAT_: { do_exp_MAT ();
 } break; case SINH_: { do_sinh ();
 } break; case COSH_: { do_cosh ();
 } break; case TANH_: { do_tanh ();
-} break; case VEC_TANH_: { do_functionvec_n_n (tanh);
+} break; case TANH_VEC_: { do_functionvec_n_n (tanh);
 } break; case ARCSINH_: { do_function_n_n (NUMarcsinh);
 } break; case ARCCOSH_: { do_function_n_n (NUMarccosh);
 } break; case ARCTANH_: { do_function_n_n (NUMarctanh);
@@ -7154,8 +7171,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_BERNOULLI_VEC_: { do_functionvec_n_n (NUMrandomBernoulli_real);
 } break; case RANDOM_POISSON_: { do_function_n_n (NUMrandomPoisson);
 } break; case TRANSPOSE_MAT_: { do_transpose_MAT ();
-} break; case SUM_PER_ROW_VEC_: { do_rowSums_VEC ();
-} break; case SUM_PER_COLUMN_VEC_: { do_columnSums_VEC ();
+} break; case ROW_SUMS_VEC_: { do_rowSums_VEC ();
+} break; case COLUMN_SUMS_VEC_: { do_columnSums_VEC ();
 } break; case LOG2_: { do_log2 ();
 } break; case LN_: { do_ln ();
 } break; case LOG10_: { do_log10 ();
@@ -7177,8 +7194,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case CENTER_: { do_center ();
 } break; case EVALUATE_: { do_evaluate ();
 } break; case EVALUATE_NOCHECK_: { do_evaluate_nocheck ();
-} break; case EVALUATE_STR_: { do_evaluateStr ();
-} break; case EVALUATE_NOCHECK_STR_: { do_evaluate_nocheckStr ();
+} break; case EVALUATE_STR_: { do_evaluate_STR ();
+} break; case EVALUATE_NOCHECK_STR_: { do_evaluate_nocheck_STR ();
 /********** Functions of 2 numerical variables: **********/
 } break; case ARCTAN2_: { do_function_dd_d (atan2);
 } break; case RANDOM_UNIFORM_: { do_function_dd_d (NUMrandomUniform);
@@ -7211,7 +7228,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case INV_BINOMIAL_Q_: { do_function_ddd_d (NUMinvBinomialQ);
 /********** Functions of a variable number of variables: **********/
 } break; case DO_   : { do_do    ();
-} break; case DOSTR_: { do_doStr ();
+} break; case DOSTR_: { do_do_STR ();
 } break; case WRITE_INFO_      : { do_writeInfo      ();
 } break; case WRITE_INFO_LINE_ : { do_writeInfoLine  ();
 } break; case APPEND_INFO_     : { do_appendInfo     ();
@@ -7320,6 +7337,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PERCENT_STR_: { do_percent_STR ();
 } break; case HEXADECIMAL_STR_: { do_hexadecimal_STR ();
 } break; case DELETE_FILE_: { do_deleteFile ();
+} break; case CREATE_FOLDER_: { do_createFolder ();
 } break; case CREATE_DIRECTORY_: { do_createDirectory ();
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
 } break; case READ_FILE_: { do_readFile ();

@@ -86,12 +86,12 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	/*
 		Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
 	*/
-	autoMAT x = newMATzero (numberOfCells, 1+numberOfFactors);   // column 1 is the intercept
+	autoMAT x = zero_MAT (numberOfCells, 1+numberOfFactors);   // column 1 is the intercept
 	autoVEC y0 = zero_VEC (numberOfCells);
 	autoVEC y1 = zero_VEC (numberOfCells);
 	autoVEC meanX = zero_VEC (numberOfFactors);
 	autoVEC stdevX = zero_VEC (numberOfFactors);
-	autoMAT smallMatrix = newMATzero (1+numberOfFactors, 1+numberOfParameters);
+	autoMAT smallMatrix = zero_MAT (1+numberOfFactors, 1+numberOfParameters);
 	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label.get(), my columnHeaders [dependent2]. label.get());
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
 		double minimum = Table_getMinimum (me, factors [ivar]);

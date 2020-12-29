@@ -1,6 +1,6 @@
 /* MAT.cpp
  *
- * Copyright (C) 2017,2018 Paul Boersma
+ * Copyright (C) 2017-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -761,7 +761,7 @@ void MATouter (MATVU const& target, constVECVU const& x, constVECVU const& y) {
 			target [irow] [icol] = x [irow] * y [icol];
 }
 autoMAT newMATouter (constVECVU const& x, constVECVU const& y) {
-	autoMAT result = newMATraw (x.size, y.size);
+	autoMAT result = raw_MAT (x.size, y.size);
 	MATouter (result.get(), x, y);
 	return result;
 }
@@ -773,10 +773,12 @@ autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpolate, bo
 		if (x [i] > x [i - 1] && x [i] >= x [i + 1])
 			numberOfPeaks ++;
 	if (includeEdges) {
-		if (x [1] > x [2]) numberOfPeaks ++;
-		if (x [x.size] > x [x.size - 1]) numberOfPeaks ++;
+		if (x [1] > x [2])
+			numberOfPeaks ++;
+		if (x [x.size] > x [x.size - 1])
+			numberOfPeaks ++;
 	}
-	autoMAT result = newMATraw (2, numberOfPeaks);
+	autoMAT result = raw_MAT (2, numberOfPeaks);
 	integer peakNumber = 0;
 	if (includeEdges && x [1] > x [2]) {
 		result [1] [++ peakNumber] = 1;

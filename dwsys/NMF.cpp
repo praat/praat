@@ -119,8 +119,8 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 		my numberOfRows = numberOfRows;
 		my numberOfColumns = numberOfColumns;
 		my numberOfFeatures = numberOfFeatures;
-		my features = newMATzero (numberOfRows, numberOfFeatures);
-		my weights = newMATzero (numberOfFeatures, numberOfColumns);
+		my features = zero_MAT (numberOfRows, numberOfFeatures);
+		my weights = zero_MAT (numberOfFeatures, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NMF not created.");
@@ -240,16 +240,16 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		Melder_require (my numberOfRows == data.nrow,
 			U"The number of rows should be equal.");
 		
-		autoMAT productFtD = newMATzero (my numberOfFeatures, my numberOfColumns); // calculations of F'D
-		autoMAT productFtFW = newMATzero (my numberOfFeatures, my numberOfColumns); // calculations of F'F W
-		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
+		autoMAT productFtD = zero_MAT (my numberOfFeatures, my numberOfColumns); // calculations of F'D
+		autoMAT productFtFW = zero_MAT (my numberOfFeatures, my numberOfColumns); // calculations of F'F W
+		autoMAT weights0 = zero_MAT (my numberOfFeatures, my numberOfColumns);
 		
-		autoMAT productDWt = newMATzero (my numberOfRows, my numberOfFeatures); // calculations of DW'
-		autoMAT productFWWt = newMATzero (my numberOfRows, my numberOfFeatures); // calculations of FWW'
-		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT productDWt = zero_MAT (my numberOfRows, my numberOfFeatures); // calculations of DW'
+		autoMAT productFWWt = zero_MAT (my numberOfRows, my numberOfFeatures); // calculations of FWW'
+		autoMAT features0 = zero_MAT (my numberOfRows, my numberOfFeatures);
 		
-		autoMAT productWWt = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
-		autoMAT productFtF = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
+		autoMAT productWWt = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
+		autoMAT productFtF = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
 		
 		const double traceDtD = NUMtrace2 (data.transpose(), data); // for distance calculation
 		features0.all()  <<=  my features.all();
@@ -322,14 +322,14 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		
-		autoMAT productFtD = newMATzero (my numberOfFeatures, my numberOfColumns); // calculations of F'D
-		autoMAT productWDt = newMATzero (my numberOfFeatures, my numberOfRows); // calculations of WD'
+		autoMAT productFtD = zero_MAT (my numberOfFeatures, my numberOfColumns); // calculations of F'D
+		autoMAT productWDt = zero_MAT (my numberOfFeatures, my numberOfRows); // calculations of WD'
 		
-		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
-		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT weights0 = zero_MAT (my numberOfFeatures, my numberOfColumns);
+		autoMAT features0 = zero_MAT (my numberOfRows, my numberOfFeatures);
 
-		autoMAT productFtF = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
-		autoMAT productWWt = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
+		autoMAT productFtF = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
+		autoMAT productWWt = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
 		
 		autoSVD svd_WWt = SVD_create (my numberOfFeatures, my numberOfFeatures); // solving W*W'*F' = W*D'
 		autoSVD svd_FtF = SVD_create (my numberOfFeatures, my numberOfFeatures); // solving F´*F*W = F'*D
@@ -408,9 +408,9 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		Melder_require (NUMhasZeroElement (data) == false,
 			U"The data matrix should not have cells that are zero.");
-		autoMAT vk = newMATraw (data.nrow, data.ncol);
-		autoMAT fw = newMATraw (data.nrow, data.ncol);
-		autoMAT fcol_x_wrow = newMATraw (data.nrow, data.ncol);
+		autoMAT vk = raw_MAT (data.nrow, data.ncol);
+		autoMAT fw = raw_MAT (data.nrow, data.ncol);
+		autoMAT fcol_x_wrow = raw_MAT (data.nrow, data.ncol);
 		autoVEC fcolumn_inv = raw_VEC (data.nrow); // feature column
 		autoVEC wrow_inv = raw_VEC (data.ncol); // weight row
 		MATmul (fw.get(), my features.get(), my weights.get());

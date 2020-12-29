@@ -82,8 +82,8 @@ void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 	if (! NUMfpp)
 		NUMmachar ();
 	my tolerance = NUMfpp -> eps * numberOfRows;
-	my u = newMATzero (numberOfRows,  numberOfColumns);
-	my v = newMATzero (numberOfColumns, numberOfColumns);
+	my u = zero_MAT (numberOfRows,  numberOfColumns);
+	my v = zero_MAT (numberOfColumns, numberOfColumns);
 	my d = zero_VEC (numberOfColumns);
 }
 
@@ -168,7 +168,7 @@ void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m) {
 }
 
 autoMAT SVD_getSquared (SVD me, bool inverse) {
-	autoMAT result = newMATraw (my numberOfColumns, my numberOfColumns);
+	autoMAT result = raw_MAT (my numberOfColumns, my numberOfColumns);
 	SVD_getSquared_preallocated (me, inverse, result.get());
 	return result;
 }
@@ -317,8 +317,8 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 		long ncol = my numberOfColumns;
 		if (my isTransposed)
 			std::swap (nrow, ncol);
-		autoMAT result = newMATzero (nrow, ncol);
-		autoMAT outer = newMATzero (nrow, ncol);
+		autoMAT result = zero_MAT (nrow, ncol);
+		autoMAT outer = zero_MAT (nrow, ncol);
 
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			if (my isTransposed)
@@ -344,8 +344,8 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 		autoGSVD me = Thing_new (GSVD);
 		my numberOfColumns = numberOfColumns;
 
-		my q = newMATzero (numberOfColumns, numberOfColumns);
-		my r = newMATzero (numberOfColumns, numberOfColumns);
+		my q = zero_MAT (numberOfColumns, numberOfColumns);
+		my r = zero_MAT (numberOfColumns, numberOfColumns);
 		my d1 = zero_VEC (numberOfColumns);
 		my d2 = zero_VEC (numberOfColumns);
 		return me;
@@ -361,7 +361,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		// Store the matrices a and b as column major!
 		autoMAT a = newMATtranspose (m1);
 		autoMAT b = newMATtranspose (m2);
-		autoMAT q = newMATraw (n, n);
+		autoMAT q = raw_MAT (n, n);
 		autoVEC alpha = raw_VEC (n);
 		autoVEC beta = raw_VEC (n);
 		integer lwork = std::max (std::max (3 * n, m), p) + n;		

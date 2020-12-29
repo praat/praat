@@ -520,10 +520,10 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			arg -> isMainThread = ( ithread == numberOfThreads );
 			arg -> cancelled = & cancelled;
 			if (method >= FCC_NORMAL) {   // cross-correlation
-				arg -> frame = newMATzero (my ny, nsamp_window);
+				arg -> frame = zero_MAT (my ny, nsamp_window);
 			} else {   // autocorrelation
 				NUMfft_Table_init (& arg -> fftTable, nsampFFT);
-				arg -> frame = newMATzero (my ny, nsampFFT);
+				arg -> frame = zero_MAT (my ny, nsampFFT);
 				arg -> ac = zero_VEC (nsampFFT);
 			}
 			arg -> rbuffer = zero_VEC (2 * nsamp_window + 1);
