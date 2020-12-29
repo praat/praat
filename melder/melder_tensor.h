@@ -1308,7 +1308,7 @@ using INTVECVU = vectorview <integer>;
 using constINTVEC = constvector <integer>;
 using constINTVECVU = constvectorview <integer>;
 using autoINTVEC = autovector <integer>;
-inline autoINTVEC newINTVECraw (integer size) {
+inline autoINTVEC raw_INTVEC (integer size) {
 	return newvectorraw <integer> (size);
 }
 inline autoINTVEC zero_INTVEC (integer size) {

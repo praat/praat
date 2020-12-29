@@ -297,7 +297,7 @@ autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 
 	autoSTRVEC columnLabels = splitByWhitespace_STRVEC (columnLabels_string);
 	if (columnLabels.size < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
-	autoINTVEC columns = newINTVECraw (columnLabels.size);
+	autoINTVEC columns = raw_INTVEC (columnLabels.size);
 	for (integer icol = 1; icol <= columnLabels.size; icol ++)
 		columns [icol] = Table_getColumnIndexFromColumnLabel (me, columnLabels [icol].get());
 	return columns;
@@ -1081,7 +1081,7 @@ void Table_sortRows_string (Table me, conststring32 columns_string) {
 		integer numberOfColumns = columns_tokens.size;
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");
-		autoINTVEC columns = newINTVECraw (numberOfColumns);
+		autoINTVEC columns = raw_INTVEC (numberOfColumns);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 			columns [icol] = Table_findColumnIndexFromColumnLabel (me, columns_tokens [icol].get());
 			if (columns [icol] == 0)

@@ -320,7 +320,7 @@ integer Confusion_getNumberOfEntries (Confusion me) {
 }
 
 static autoINTVEC create_index (constSTRVEC const& s, constSTRVEC const& ref) {
-	autoINTVEC index = newINTVECraw (s.size);
+	autoINTVEC index = raw_INTVEC (s.size);
 	for (integer i = 1; i <= s.size; i ++) {
 		integer indxj = 0;
 		for (integer j = 1; j <= ref.size; j ++) {
@@ -405,10 +405,8 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 	try {
 		autoSTRVEC labels = splitByWhitespace_STRVEC (labels_string);
 		const integer ncondense = labels.size;
-		autoINTVEC irow = newINTVECraw (my numberOfRows);
+		autoINTVEC irow = to_INTVEC (my numberOfRows);
 
-		for (integer i = 1; i <= my numberOfRows; i ++)
-			irow [i] = i;
 		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
 			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfRows; i ++) {
@@ -459,10 +457,8 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_strin
 	try {
 		autoSTRVEC labels = splitByWhitespace_STRVEC (labels_string);
 		const integer ncondense = labels.size;
-		autoINTVEC icol = newINTVECraw (my numberOfColumns);
+		autoINTVEC icol = to_INTVEC (my numberOfColumns);
 
-		for (integer i = 1; i <= my numberOfColumns; i ++)
-			icol [i] = i;
 		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
 			const conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfColumns; i ++) {

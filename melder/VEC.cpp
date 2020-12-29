@@ -53,7 +53,7 @@ autoINTVEC from_to_INTVEC (integer from, integer to) {
 	const integer numberOfElements = to - from + 1;
 	if (numberOfElements < 1)
 		return autoINTVEC ();
-	autoINTVEC result = newINTVECraw (numberOfElements);
+	autoINTVEC result = raw_INTVEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = from + (i - 1);
 	return result;
@@ -82,7 +82,7 @@ autoINTVEC from_to_by_INTVEC (integer from, integer to, integer by) {
 	const integer numberOfElements = (to - from) / by + 1;
 	if (numberOfElements < 1)
 		return autoINTVEC ();
-	autoINTVEC result = newINTVECraw (numberOfElements);
+	autoINTVEC result = raw_INTVEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = from + (i - 1) * by;
 	return result;
@@ -103,7 +103,7 @@ autoVEC from_to_count_VEC (double from, double to, integer count) {
 autoINTVEC from_to_count_INTVEC (integer from, integer to, integer count) {
 	Melder_require (count >= 2,
 		U"from_to_count#: cannot have fewer than two elements.");
-	autoINTVEC result = newINTVECraw (count);
+	autoINTVEC result = raw_INTVEC (count);
 	const integer by = (to - from) / (count - 1);
 	for (integer i = 1; i < count; i ++)
 		result [i] = from + (i - 1) * by;
@@ -236,7 +236,7 @@ autoVEC to_VEC (double to) {
 }
 autoINTVEC to_INTVEC (integer to) {
 	const integer numberOfElements = to;
-	autoINTVEC result = newINTVECraw (numberOfElements);
+	autoINTVEC result = raw_INTVEC (numberOfElements);
 	for (integer i = 1; i <= numberOfElements; i ++)
 		result [i] = i;
 	return result;

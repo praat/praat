@@ -37,7 +37,7 @@ autoINTVEC newINTVECfromString (conststring32 s) {
 	autoSTRVEC tokens = splitByWhitespace_STRVEC (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
-	autoINTVEC numbers = newINTVECraw (tokens.size);
+	autoINTVEC numbers = raw_INTVEC (tokens.size);
 	for (integer inum = 1; inum <= tokens.size; inum ++)
 		numbers [inum] = Melder_atoi (tokens [inum].get());
 	return numbers;
@@ -187,7 +187,7 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	*/
 	Melder_require (numberOfElements > 0,
 		U"No element(s) found");
-	autoINTVEC elements = newINTVECraw (numberOfElements);
+	autoINTVEC elements = raw_INTVEC (numberOfElements);
 	/*
 		Store the elements.
 	*/

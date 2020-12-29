@@ -30,7 +30,7 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 		/*const double filterArea = NUMsum (auditoryFilter.get());
 			auditoryFilter.all() /= filterArea;*/
 		const autoVEC rFreqs = newVECraw (nbark + 1);
-		const autoINTVEC iFreqs = newINTVECraw (nbark + 1);
+		const autoINTVEC iFreqs = raw_INTVEC (nbark + 1);
 		for (integer i = 1; i <= nbark + 1; i ++) {
 			rFreqs [i] = Excitation_barkToHertz (dbark * (i - 1));
 			iFreqs [i] = Sampled_xToNearestIndex (me, rFreqs [i]);

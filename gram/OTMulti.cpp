@@ -94,9 +94,9 @@ void structOTMulti :: v_writeText (MelderFile file) {
 }
 
 void OTMulti_checkIndex (OTMulti me) {
-	if (my index.size != 0) return;
-	my index = newINTVECraw (my numberOfConstraints);
-	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
+	if (my index.size != 0)
+		return;
+	my index = to_INTVEC (my numberOfConstraints);
 	OTMulti_sort (me);
 }
 
@@ -134,13 +134,14 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 			}
 		}
 	}
-	if ((numberOfCandidates = texgeti32 (text)) < 1) Melder_throw (U"No candidates.");
+	if ((numberOfCandidates = texgeti32 (text)) < 1)
+		Melder_throw (U"No candidates.");
 	our candidates = newvectorzero <structOTCandidate> (numberOfCandidates);
 	for (integer icand = 1; icand <= numberOfCandidates; icand ++) {
 		OTCandidate candidate = & our candidates [icand];
 		candidate -> string = texgetw16 (text);
 		candidate -> numberOfConstraints = our numberOfConstraints;   // redundancy, needed for writing binary
-		candidate -> marks = newINTVECraw (candidate -> numberOfConstraints);
+		candidate -> marks = raw_INTVEC (candidate -> numberOfConstraints);
 		for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
 			candidate -> marks [icons] = texgeti16 (text);
 	}
@@ -1459,7 +1460,7 @@ autoDistributions OTMulti_to_Distribution (OTMulti me, conststring32 form1, cons
 			Create the distribution. One row for every output form.
 		*/
 		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1);
-		autoINTVEC index = newINTVECraw (my numberOfCandidates);
+		autoINTVEC index = raw_INTVEC (my numberOfCandidates);
 		/*
 			Set the row labels to the output strings.
 		*/

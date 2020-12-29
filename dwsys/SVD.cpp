@@ -366,7 +366,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		autoVEC beta = newVECraw (n);
 		integer lwork = std::max (std::max (3 * n, m), p) + n;		
 		autoVEC work = newVECraw (lwork);
-		autoINTVEC iwork = newINTVECraw (n);
+		autoINTVEC iwork = raw_INTVEC (n);
 
 		integer k, l, info;
 		NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & l,

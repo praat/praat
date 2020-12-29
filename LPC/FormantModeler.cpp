@@ -83,7 +83,7 @@ static void checkTrackAutoRange (FormantModeler me, integer *fromTrack, integer 
 }
 
 static autoINTVEC newINTVECasNumbers (integer size, integer number) {
-	autoINTVEC target = newINTVECraw (size);
+	autoINTVEC target = raw_INTVEC (size);
 	for (integer i = 1; i <= size; i++)
 		target [i] = number;
 	return target;
@@ -932,7 +932,7 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 		integer minNumberOfFormants = 1000000;
 		if (numberOfFormantObjects == 1)
 			return 1;
-		autoINTVEC numberOfFormants = newINTVECraw (numberOfFormantObjects);
+		autoINTVEC numberOfFormants = raw_INTVEC (numberOfFormantObjects);
 		autoINTVEC invalid = zero_INTVEC (numberOfFormantObjects);
 		double tminf = 0.0, tmaxf = 0.0;
 		for (integer iobject = 1; iobject <= numberOfFormantObjects; iobject ++) {

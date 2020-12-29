@@ -132,7 +132,7 @@ autoINTVEC FormantModelerList_getBest3 (FormantModelerList me) {
 		2 The least (summed) stress F1 & F2 score
 		1 the least (summed) stress F1 & F2 & F3 score
 	*/
-	autoINTVEC best = newINTVECraw (3);
+	autoINTVEC best = raw_INTVEC (3);
 	double stressF1, stressF1F2, stressF1F2F3;
 	stressF1 = stressF1F2 = stressF1F2F3 = std::numeric_limits<double>::max();
 	for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++) {

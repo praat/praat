@@ -168,9 +168,7 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 
 void OTGrammar_checkIndex (OTGrammar me) {
 	if (my index.size != 0) return;
-	my index = newINTVECraw (my numberOfConstraints);
-	for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
-		my index [icons] = icons;
+	my index = to_INTVEC (my numberOfConstraints);
 	OTGrammar_sort (me);
 }
 
@@ -1851,7 +1849,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribut
 		{
 			Melder_throw (U"To find positive weights, the decision strategy should be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
 		}
-		autoINTVEC optimalCandidates = newINTVECraw (my numberOfTableaus);
+		autoINTVEC optimalCandidates = raw_INTVEC (my numberOfTableaus);
 		/*
 			Check that there is exactly one optimal output for each input.
 		*/
@@ -1972,7 +1970,7 @@ autoVEC theSaveRankings, theSaveDisharmonies;
 autoBOOLVEC theSaveTiedToTheLeft, theSaveTiedToTheRight;
 static void OTGrammar_save (OTGrammar me) {
 	if (my numberOfConstraints != theSaveNumberOfConstraints) {
-		theSaveIndex = newINTVECraw (my numberOfConstraints);
+		theSaveIndex = raw_INTVEC (my numberOfConstraints);
 		theSaveRankings = newVECraw (my numberOfConstraints);
 		theSaveDisharmonies = newVECraw (my numberOfConstraints);
 		theSaveTiedToTheLeft = newBOOLVECraw (my numberOfConstraints);

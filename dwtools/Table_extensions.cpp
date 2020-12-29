@@ -4610,7 +4610,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		const SSCP sscp = thy at [1];
 		const integer numberOfColumns = sscp -> numberOfColumns;
 		const integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
-		autoINTVEC columnIndex = newINTVECraw (numberOfColumns);
+		autoINTVEC columnIndex = raw_INTVEC (numberOfColumns);
 		autoVEC vector = newVECraw (numberOfColumns);
 		autoINTVEC selectedRows = Table_listRowNumbersWhere (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)

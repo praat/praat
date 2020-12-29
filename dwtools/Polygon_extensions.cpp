@@ -1171,7 +1171,7 @@ autoPolygon Polygon_convexHull (Polygon me) {
 		if (my numberOfPoints <= 3) return Data_copy (me);
 		
 		autoVEC x = newVECraw (my numberOfPoints), y = newVECraw (my numberOfPoints);
-		autoINTVEC hull = newINTVECraw (my numberOfPoints + 2);
+		autoINTVEC hull = raw_INTVEC (my numberOfPoints + 2);
 		for (integer i = 1; i <= my numberOfPoints; i ++) {
 			x [i] = my x [i];
 			y [i] = my y [i];

@@ -341,9 +341,7 @@ static int languageNameCompare (const void *first, const void *second) {
 static integer Formula_hasLanguageName (conststring32 f) {
 	static autoINTVEC index;
 	if (NUMisEmpty (index)) {
-		index = newINTVECraw (highestInputSymbol);
-		for (int tok = 1; tok <= highestInputSymbol; tok ++)
-			index [tok] = tok;
+		index = to_INTVEC (highestInputSymbol);
 		qsort (& index [1], highestInputSymbol, sizeof (integer), languageNameCompare);
 	}
 	integer dummy = 0, *found;

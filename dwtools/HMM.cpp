@@ -850,7 +850,7 @@ static autoINTVEC HMM_HMMObservationSequenceBag_getStateSequences (HMM me, HMMOb
 	/*
 		Get state sequence numbers.
 	*/
-	autoINTVEC stateSequenceNumbers = newINTVECraw (numberOfElements);
+	autoINTVEC stateSequenceNumbers = raw_INTVEC (numberOfElements);
 	integer numberOfElements2 = 0;
 	for (integer iseq = 1; iseq <= thy size; iseq ++) {
 		const HMMObservationSequence hmm_os = thy at [iseq];

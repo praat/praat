@@ -33,7 +33,7 @@
 static void spec_enhance_SHS (VEC const & a) {
 	Melder_assert (a.size >= 2);
 
-	autoINTVEC posmax = newINTVECraw ((a.size + 1) / 2);
+	autoINTVEC posmax = raw_INTVEC ((a.size + 1) / 2);
 	integer nmax = 0;
 	if (a [1] > a [2])
 		posmax [++ nmax] = 1;

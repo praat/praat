@@ -404,13 +404,13 @@ void INTVECindex (INTVEC const& target, constVEC const& a);
 void INTVECindex (INTVEC const& target, constSTRVEC const& s);
 
 inline autoINTVEC newINTVECindex (constVEC const& a) {
-	autoINTVEC result = newINTVECraw (a.size);
+	autoINTVEC result = raw_INTVEC (a.size);
 	INTVECindex (result.get(), a);
 	return result;
 }
 
 inline autoINTVEC newINTVECindex (constSTRVEC const& s) {
-	autoINTVEC result = newINTVECraw (s.size);
+	autoINTVEC result = raw_INTVEC (s.size);
 	INTVECindex (result.get(), s);
 	return result;
 }
