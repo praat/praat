@@ -375,8 +375,8 @@ static connections connections_create (integer numberOfConnections) {
 	try {
 		me = (connections) Melder_calloc (structconnections, 1);
 		my numberOfConnections = numberOfConnections;
-		my x = newVECzero (numberOfConnections);
-		my y = newVECzero (numberOfConnections);
+		my x = zero_VEC (numberOfConnections);
+		my y = zero_VEC (numberOfConnections);
 		return me;
 	} catch (MelderError) {
 		connections_free (me);

@@ -114,7 +114,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		autoSound analysisframe = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (frameDuration, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
-		autoVEC cc = newVECzero (numberOfFrames);
+		autoVEC cc = zero_VEC (numberOfFrames);
 		autoVEC specAmp = newVECraw (nfft2);
 		autoVEC fl2 = newVECraw (nfft2);
 		autoVEC yv2 = newVECraw (nfft2);
@@ -196,7 +196,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 				The subharmonic summation. Shift spectra in octaves and sum.
 			*/
 			Pitch_Frame_init (pitchFrame, maxnCandidates);
-			autoVEC sumspec = newVECzero (numberOfFrequencyPoints);
+			autoVEC sumspec = zero_VEC (numberOfFrequencyPoints);
 			pitchFrame -> candidates. resize (pitchFrame -> nCandidates = 0);   // !!!!!
 
 			double hm = 1.0;

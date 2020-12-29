@@ -38,8 +38,8 @@ typedef struct {
 static EdgeContour EdgeContour_create (integer numberOfPoints) {
 	EdgeContour result = Melder_calloc (structEdgeContour, 1);
 	result -> numberOfPoints = numberOfPoints;
-	result -> x = newVECzero (numberOfPoints);
-	result -> y = newVECzero (numberOfPoints);
+	result -> x = zero_VEC (numberOfPoints);
+	result -> y = zero_VEC (numberOfPoints);
 	return result;   // LEAK
 }
 static void EdgeContour_delete (EdgeContour e) {
@@ -57,8 +57,8 @@ typedef struct {
 static ClosedContour ClosedContour_create (integer numberOfPoints) {
 	ClosedContour result = Melder_calloc (structClosedContour, 1);
 	result -> numberOfPoints = numberOfPoints;
-	result -> x = newVECzero (numberOfPoints);
-	result -> y = newVECzero (numberOfPoints);
+	result -> x = zero_VEC (numberOfPoints);
+	result -> y = zero_VEC (numberOfPoints);
 	return result;   // LEAK
 }
 static void ClosedContour_delete (ClosedContour c) {
@@ -479,8 +479,8 @@ void Graphics_grey (Graphics me, constMATVU const& z,
 	if (NUMisEmpty (right.get())) {
 		right = newBOOLMATzero (MAXGREYSIDE, MAXGREYSIDE);   // BUG memory
 		below = newBOOLMATzero (MAXGREYSIDE, MAXGREYSIDE);
-		x = newVECzero (MAXGREYPATH);
-		y = newVECzero (MAXGREYPATH);
+		x = zero_VEC (MAXGREYPATH);
+		y = zero_VEC (MAXGREYPATH);
 		edgeContours = Melder_calloc (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;
 		closedContours = Melder_calloc (ClosedContour, MAXGREYCLOSEDCONTOURS * numberOfBorders) - 1;
 		edgePoints = Melder_calloc (structEdgePoint, MAXGREYEDGEPOINTS * numberOfBorders);

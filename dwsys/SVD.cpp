@@ -84,7 +84,7 @@ void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 	my tolerance = NUMfpp -> eps * numberOfRows;
 	my u = newMATzero (numberOfRows,  numberOfColumns);
 	my v = newMATzero (numberOfColumns, numberOfColumns);
-	my d = newVECzero (numberOfColumns);
+	my d = zero_VEC (numberOfColumns);
 }
 
 autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
@@ -179,7 +179,7 @@ void SVD_solve_preallocated (SVD me, constVECVU const& b, VECVU const& result) {
 			Solve UDV' x = b.
 			Solution: x = V D^-1 U' b
 		*/
-		autoVEC t = newVECzero (my numberOfColumns);
+		autoVEC t = zero_VEC (my numberOfColumns);
 		if (! my isTransposed) {
 			Melder_assert (my numberOfRows == b.size);
 			Melder_assert (result.size == my numberOfColumns);
@@ -210,7 +210,7 @@ autoVEC SVD_solve (SVD me, constVECVU const& b) {
 	if (my isTransposed)
 		std::swap (numberOfRows, numberOfColumns);
 	Melder_assert (numberOfRows == b.size);
-	autoVEC result = newVECzero (numberOfColumns);
+	autoVEC result = zero_VEC (numberOfColumns);
 	SVD_solve_preallocated (me, b, result.get());
 	return result;
 }
@@ -346,8 +346,8 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 
 		my q = newMATzero (numberOfColumns, numberOfColumns);
 		my r = newMATzero (numberOfColumns, numberOfColumns);
-		my d1 = newVECzero (numberOfColumns);
-		my d2 = newVECzero (numberOfColumns);
+		my d1 = zero_VEC (numberOfColumns);
+		my d2 = zero_VEC (numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not created.");

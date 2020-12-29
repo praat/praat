@@ -210,7 +210,7 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 	}
 
 	const integer n = 2000;
-	autoVEC a = newVECzero (n);
+	autoVEC a = zero_VEC (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
@@ -281,7 +281,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
 	const integer n = 1000;
-	autoVEC a = newVECzero (n);
+	autoVEC a = zero_VEC (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
@@ -365,7 +365,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
 	const integer n = 1000;
-	autoVEC a = newVECzero (n);
+	autoVEC a = zero_VEC (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
@@ -464,7 +464,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 		Melder_warning (U"Bandwidth should be greater than zero.");
 
 	const integer n = 1000;
-	autoVEC a = newVECzero (n);
+	autoVEC a = zero_VEC (n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);

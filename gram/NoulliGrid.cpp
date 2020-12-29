@@ -1,6 +1,6 @@
 /* NoulliGrid.cpp
  *
- * Copyright (C) 2018 Paul Boersma
+ * Copyright (C) 2018,2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tm
 		NoulliTier tier = my tiers.at [tierNumber];
 		autoNoulliPoint you = Thing_new (NoulliPoint);
 		your numberOfCategories = my numberOfCategories;
-		your probabilities = newVECzero (my numberOfCategories);
+		your probabilities = zero_VEC (my numberOfCategories);
 		double numberOfSeconds = 0.0;
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			NoulliPoint inpoint = tier -> points.at [ipoint];

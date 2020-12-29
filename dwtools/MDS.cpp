@@ -278,7 +278,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	autoDistance thee = Distance_create (dist -> numberOfRows);
 	TableOfReal_copyLabels (dist, thee.get(), 1, -1);
 
-	autoVEC d = newVECzero (numberOfProximities);
+	autoVEC d = zero_VEC (numberOfProximities);
 
 	for (integer i = 1; i <= numberOfProximities; i ++)
 		d [i] = dist -> data [vec -> rowIndex [i]] [vec -> columnIndex [i]];

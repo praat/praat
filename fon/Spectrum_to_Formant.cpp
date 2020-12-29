@@ -21,7 +21,7 @@
 autoFormant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 	try {
 		integer nfreq = my nx;
-		autoVEC power = newVECzero (nfreq);
+		autoVEC power = zero_VEC (nfreq);
 		constexpr double fakeDuration = 1.0;
 		constexpr double fakeTimeStep = 1.0;
 		autoFormant thee = Formant_create (0.0, fakeDuration, 1, fakeTimeStep, 0.5 * fakeDuration, maxnFormants);

@@ -546,7 +546,7 @@ autoVEC newVECsolveSparse_IHT (constMATVU const& d, constVECVU const& y, integer
 void VECsolveNonnegativeLeastSquaresRegression (VECVU const& result, constMATVU const& m, constVECVU const& y, integer itermax, double tol, integer infoLevel);
 
 inline autoVEC newVECsolveNonnegativeLeastSquaresRegression (constMATVU const& a, constVECVU const& y, integer itermax, double tol, integer infoLevel) {
-	autoVEC result = newVECzero (a.ncol);
+	autoVEC result = zero_VEC (a.ncol);
 	VECsolveNonnegativeLeastSquaresRegression (result.get(), a, y, itermax, tol, infoLevel);
 	return result;
 }

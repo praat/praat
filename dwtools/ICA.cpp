@@ -215,7 +215,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		autoMAT m1 = newMATzero (dimension, dimension);
 		autoVEC wvec = newVECraw (dimension);
 		autoVEC wnew = newVECraw (dimension);
-		autoVEC mvec = newVECzero (dimension);
+		autoVEC mvec = zero_VEC (dimension);
 
 		autoMAT wc = newMATtranspose (my data.get());
 

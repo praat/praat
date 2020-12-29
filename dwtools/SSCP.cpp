@@ -295,7 +295,7 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, constVECVU const& v1, constVECVU const& 
 void SSCP_init (SSCP me, integer dimension, kSSCPstorage storage) {
 	const integer numberOfRows = storage == kSSCPstorage::DIAGONAL ? 1 : dimension;
 	TableOfReal_init (me, numberOfRows, dimension);
-	my centroid = newVECzero (dimension);
+	my centroid = zero_VEC (dimension);
 }
 
 autoSSCP SSCP_create (integer dimension) {

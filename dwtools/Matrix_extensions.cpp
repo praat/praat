@@ -237,7 +237,7 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	*/
 	if (nBins < 1)
 		nBins = 10;
-	autoVEC freq = newVECzero (nBins);
+	autoVEC freq = zero_VEC (nBins);
 	const double binWidth = (maximum - minimum) / nBins;
 	integer nxy = 0;
 	for (integer i = iymin; i <= iymax; i ++) {

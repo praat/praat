@@ -73,7 +73,7 @@ autoPCA PCA_create (integer numberOfComponents, integer dimension) {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.get(), numberOfComponents, dimension);
 		my labels = autoSTRVEC (dimension);
-		my centroid = newVECzero (dimension);
+		my centroid = zero_VEC (dimension);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PCA not created");

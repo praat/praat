@@ -49,7 +49,7 @@ struct huber_struct {
 
 static void huber_struct_init (struct huber_struct *me, integer numberOfSamples, integer maximumPredictionOrder, double location, bool wantlocation) {
 	my numberOfSamples = numberOfSamples;
-	my error = newVECzero (numberOfSamples);
+	my error = zero_VEC (numberOfSamples);
 	my k_stdev = my tol = my tol_svd = my scale = 0.0;
 	my iter = my itermax = 1;
 	my wantlocation = wantlocation;
@@ -57,10 +57,10 @@ static void huber_struct_init (struct huber_struct *me, integer numberOfSamples,
 		my location = location;
 	my wantscale = true;
 	my predictionOrder = my maximumPredictionOrder = maximumPredictionOrder;
-	my weights = newVECzero (numberOfSamples);
+	my weights = zero_VEC (numberOfSamples);
 	my workSpace = newVECraw (numberOfSamples);
 	my coefficients = newVECraw (maximumPredictionOrder);
-	my covariancesw = newVECzero (maximumPredictionOrder);
+	my covariancesw = zero_VEC (maximumPredictionOrder);
 	my covarmatrixw = newMATzero (maximumPredictionOrder, maximumPredictionOrder);
 	//my covarmatrixw = matrixview(my covarmatrixstaticAllocation.get(), 1, my predictionOrder, 1, my predictionOrder);
 	my svd = SVD_create (maximumPredictionOrder, maximumPredictionOrder);

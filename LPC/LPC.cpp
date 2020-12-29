@@ -70,7 +70,7 @@ void structLPC :: v_info () {
 
 void LPC_Frame_init (LPC_Frame me, integer nCoefficients) {
 	if (nCoefficients != 0)
-		my a = newVECzero (nCoefficients);
+		my a = zero_VEC (nCoefficients);
 	my nCoefficients = my a.size; // maintain invariant
 }
 
@@ -149,7 +149,7 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 autoMatrix LPC_downto_Matrix_rc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
-		autoVEC rc = newVECzero (my maxnCoefficients);
+		autoVEC rc = zero_VEC (my maxnCoefficients);
 		for (integer j = 1; j <= my nx; j ++) {
 			const LPC_Frame lpc = & my d_frames [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));

@@ -3475,7 +3475,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		const double tiesCorrection = 1.0 - (double) c / (numberOfData * (numberOfData * numberOfData - 1.0));
 
 		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
-		autoVEC factorLevelSums = newVECzero (numberOfLevels);
+		autoVEC factorLevelSums = zero_VEC (numberOfLevels);
 		autoINTVEC ties = newINTVECzero (numberOfLevels);
 		for (integer i = 1; i <= numberOfData; i ++) {
 			const integer index = levels -> classIndex [i];
@@ -3644,7 +3644,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Melder_require (numberOfLevels > 1,
 			U"There should be at least two levels.");
 		autoINTVEC factorLevelSizes = newINTVECzero (numberOfLevels);
-		autoVEC factorLevelMeans = newVECzero (numberOfLevels);
+		autoVEC factorLevelMeans = zero_VEC (numberOfLevels);
 
 		const longdouble sumOfSquares = NUMsum2 (data.get());  // step 2
 		const longdouble sumOfRawScores = NUMsum (data.get()); // step 3

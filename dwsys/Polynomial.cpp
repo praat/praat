@@ -54,7 +54,7 @@ autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDe
 		in derivatives in derivatives [2..numberOfDerivatives+1].
 	*/
 	const integer degree = my numberOfCoefficients - 1;
-	autoVEC derivatives = newVECzero (numberOfDerivatives + 1);
+	autoVEC derivatives = zero_VEC (numberOfDerivatives + 1);
 	numberOfDerivatives = numberOfDerivatives > degree ? degree : numberOfDerivatives;
 	
 	derivatives [1] = my coefficients [my numberOfCoefficients];
@@ -240,9 +240,9 @@ autoPolynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax) {
 		thy coefficients [1] += my coefficients [2] * b;
 		if (my numberOfCoefficients == 2)
 			return thee;
-		autoVEC pn = newVECzero (my numberOfCoefficients);
-		autoVEC pnm1 = newVECzero (my numberOfCoefficients);
-		autoVEC pnm2 = newVECzero (my numberOfCoefficients);
+		autoVEC pn = zero_VEC (my numberOfCoefficients);
+		autoVEC pnm1 = zero_VEC (my numberOfCoefficients);
+		autoVEC pnm2 = zero_VEC (my numberOfCoefficients);
 
 		// Start the recursion: P [2] = a x + b; P [1] = 1;
 
@@ -422,8 +422,8 @@ autoPolynomial Polynomials_multiply (Polynomial me, Polynomial thee) {
 void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, autoPolynomial *out_r) {
 	if (! out_q  && ! out_r)
 		return;
-	autoVEC qc = newVECzero (my numberOfCoefficients);
-	autoVEC rc = newVECzero (my numberOfCoefficients);
+	autoVEC qc = zero_VEC (my numberOfCoefficients);
+	autoVEC rc = zero_VEC (my numberOfCoefficients);
 	autoPolynomial aq, ar;
 	VECpolynomial_divide (my coefficients.get (), thy coefficients.get (), qc.get (), rc.get ());
 	if (out_q) {

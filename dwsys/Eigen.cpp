@@ -96,7 +96,7 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
-	my eigenvalues = newVECzero (numberOfEigenvalues);
+	my eigenvalues = zero_VEC (numberOfEigenvalues);
 	my eigenvectors = newMATzero (numberOfEigenvalues, dimension);
 }
 

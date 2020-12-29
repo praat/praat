@@ -245,11 +245,11 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 		my numberOfSymbols = nsymbols;
 		my alpha = newMATzero (nstates, capacity);
 		my beta = newMATzero (nstates, capacity);
-		my scale = newVECzero (capacity);
+		my scale = zero_VEC (capacity);
 		my xi = newTEN3zero (capacity, nstates, nstates); // TEN3
-		my aij_num_p0 = newVECzero (nstates + 1);
+		my aij_num_p0 = zero_VEC (nstates + 1);
 		my aij_num = newMATzero (nstates, nstates + 1);
-		my aij_denom_p0 = newVECzero (nstates + 1);
+		my aij_denom_p0 = zero_VEC (nstates + 1);
 		my aij_denom =  newMATzero (nstates, nstates + 1);
 		my bik_num = newMATzero (nstates, nsymbols);
 		my bik_denom = newMATzero (nstates, nsymbols);
@@ -399,7 +399,7 @@ static void HMM_init (HMM me, integer numberOfStates, integer numberOfObservatio
 	my leftToRight = leftToRight;
 	my states = HMMStateList_create ();
 	my observationSymbols = HMMObservationList_create ();
-	my initialStateProbs = newVECzero (numberOfStates);
+	my initialStateProbs = zero_VEC (numberOfStates);
 	my transitionProbs = newMATzero (numberOfStates, numberOfStates + 1);
 	my emissionProbs = newMATzero (numberOfStates, numberOfObservationSymbols);
 	HMM_setDefaultInitialStateProbs (me);
@@ -1436,9 +1436,9 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 	if (istate < 1 || istate > my numberOfStates)
 		return undefined;
 
-	autoVEC scale = newVECzero (itime);
+	autoVEC scale = zero_VEC (itime);
 	autoVEC alpha_t = newVECraw (my numberOfStates);
-	autoVEC alpha_tm1 = newVECzero (my numberOfStates);
+	autoVEC alpha_tm1 = zero_VEC (my numberOfStates);
 
 	alpha_t.all() <<= my initialStateProbs.all();
 	scale [1] = NUMsum (alpha_t.all());
@@ -1478,9 +1478,9 @@ double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, integer itime
 double HMM_getProbabilityOfObservations (HMM me, constINTVEC obs) {
 	Melder_assert (obs.size > 0);
 	const integer numberOfTimes = obs.size;
-	autoVEC scale = newVECzero (numberOfTimes);
-	autoVEC alpha_t = newVECzero (my numberOfStates);
-	autoVEC alpha_tm1 = newVECzero (my numberOfStates);
+	autoVEC scale = zero_VEC (numberOfTimes);
+	autoVEC alpha_t = zero_VEC (my numberOfStates);
+	autoVEC alpha_tm1 = zero_VEC (my numberOfStates);
 
 	// initialise
 	for (integer js = 1; js <= my numberOfStates; js ++) {

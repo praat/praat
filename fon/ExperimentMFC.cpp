@@ -185,8 +185,8 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
 		my stimuli = newINTVECzero (my numberOfTrials);
 		my responses = newINTVECzero (my numberOfTrials);
-		my goodnesses = newVECzero (my numberOfTrials);
-		my reactionTimes = newVECzero (my numberOfTrials);
+		my goodnesses = zero_VEC (my numberOfTrials);
+		my reactionTimes = zero_VEC (my numberOfTrials);
 		/*
 			Read all the sounds. They must all have the same sampling frequency and number of channels.
 		*/

@@ -232,7 +232,7 @@ void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samp
 		return;
 	const double nyquistFrequency = 0.5 / samplingPeriod;
 	integer numberOfPoles = 2 * my numberOfFormants;
-	autoVEC lpc = newVECzero (numberOfPoles + 2);   // all odd coefficients have to be initialized to zero
+	autoVEC lpc = zero_VEC (numberOfPoles + 2);   // all odd coefficients have to be initialized to zero
 	lpc [2] = 1.0;
 	integer m = 2;
 	for (integer iformant = 1; iformant <= my numberOfFormants; iformant ++) {

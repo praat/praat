@@ -66,9 +66,9 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	if (nt == 0 || nf == 0)
 		return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	auto preemphasisFactorBuffer = newVECzero (nf);
+	auto preemphasisFactorBuffer = zero_VEC (nf);
 	double *preemphasisFactor = & preemphasisFactorBuffer [1 - ifmin];
-	auto dynamicFactorBuffer = newVECzero (nt);
+	auto dynamicFactorBuffer = zero_VEC (nt);
 	double *dynamicFactor = & dynamicFactorBuffer [1 - itmin];
 	/* Pre-emphasis in place; also compute maximum after pre-emphasis. */
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {

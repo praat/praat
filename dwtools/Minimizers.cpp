@@ -37,7 +37,7 @@ static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
 
 void Minimizer_init (Minimizer me, integer numberOfParameters, Daata object) {
 	my numberOfParameters = numberOfParameters;
-	my p = newVECzero (numberOfParameters);
+	my p = zero_VEC (numberOfParameters);
 	my object = object;
 	my minimum = 1e308;
 	my afterHook = classMinimizer_afterHook;
@@ -387,13 +387,13 @@ autoVDSmagtMinimizer VDSmagtMinimizer_create (integer numberOfParameters, Daata 
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
 		Minimizer_init (me.get(), numberOfParameters, object);
-		my dp = newVECzero (numberOfParameters);
-		my pc = newVECzero (numberOfParameters);
-		my gc = newVECzero (numberOfParameters);
-		my g0 = newVECzero (numberOfParameters);
-		my s = newVECzero (numberOfParameters);
-		my srst = newVECzero (numberOfParameters);
-		my grst = newVECzero (numberOfParameters);
+		my dp = zero_VEC (numberOfParameters);
+		my pc = zero_VEC (numberOfParameters);
+		my gc = zero_VEC (numberOfParameters);
+		my g0 = zero_VEC (numberOfParameters);
+		my s = zero_VEC (numberOfParameters);
+		my srst = zero_VEC (numberOfParameters);
+		my grst = zero_VEC (numberOfParameters);
 		my func = func;
 		my dfunc = dfunc;
 		my lineSearchGradient = 0.9;
@@ -410,8 +410,8 @@ Thing_implement (LineMinimizer, Minimizer, 0);
 
 void LineMinimizer_init (LineMinimizer me, integer numberOfParameters, Daata object, double (*func) (Daata, VEC const& p)) {
 	Minimizer_init (me, numberOfParameters, object);
-	my direction = newVECzero (numberOfParameters);
-	my ptry = newVECzero (numberOfParameters);
+	my direction = zero_VEC (numberOfParameters);
+	my ptry = zero_VEC (numberOfParameters);
 	my func = func;
 	my maxLineStep = 100;
 }

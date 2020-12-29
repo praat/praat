@@ -68,7 +68,7 @@ Thing_implement (FormantPath, Sampled, 0);
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCeilings) {
 	autoFormantPath me = Thing_new (FormantPath);
 	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
-	my ceilings = newVECzero (numberOfCeilings);
+	my ceilings = zero_VEC (numberOfCeilings);
 	my path = newINTVECzero (nx);
 	return me;
 }

@@ -980,8 +980,8 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 			U"Bandwidth should be positive.");
 
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-		autoVEC y = newVECzero (my nx);
-		autoVEC x = newVECzero (my nx);
+		autoVEC y = zero_VEC (my nx);
+		autoVEC x = zero_VEC (my nx);
 
 		const double fs = 1.0 / my dx;
 		for (integer channel = 1; channel <= my ny; channel ++) {

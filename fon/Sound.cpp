@@ -374,7 +374,7 @@ autoSound Sound_upsample (Sound me) {
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * sampleRateFactor,
 				newDx, my x1 - 0.5 * (my dx - newDx));
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			autoVEC data = newVECzero (sampleRateFactor * nfft);   // zeroing is important...
+			autoVEC data = zero_VEC (sampleRateFactor * nfft);   // zeroing is important...
 			data.part (antiTurnAround + 1, antiTurnAround + my nx)  <<=  my z.row (ichan);   // ...because this fills only part of the sound
 			NUMrealft (data.part (1, nfft), 1);
 			integer imin = (integer) (nfft * 0.95);

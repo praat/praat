@@ -771,7 +771,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		auto const lowIndex = ixmin - 1, highIndex = ixmax + 1;
 		auto const nbuffer = highIndex - lowIndex + 1;
-		auto xbuffer = newVECzero (nbuffer), ybuffer = newVECzero (nbuffer);
+		auto xbuffer = zero_VEC (nbuffer), ybuffer = zero_VEC (nbuffer);
 		auto const bufferShift = 1 - lowIndex;
 		double *xarray = & xbuffer [bufferShift];
 		double *yarray = & ybuffer [bufferShift];

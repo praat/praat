@@ -81,7 +81,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 				0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz));
 
-		autoVEC window = newVECzero (nsamp_window);
+		autoVEC window = zero_VEC (nsamp_window);
 		longdouble windowssq = 0.0;
 		for (integer i = 1; i <= nsamp_window; i ++) {
 			const double nSamplesPerWindow_f = physicalAnalysisWidth / my dx;
@@ -118,8 +118,8 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		}
 		const double oneByBinWidth = 1.0 / double (windowssq) / binWidth_samples;
 
-		autoVEC data = newVECzero (nsampFFT);
-		autoVEC spectrum = newVECzero (half_nsampFFT + 1);
+		autoVEC data = zero_VEC (nsampFFT);
+		autoVEC spectrum = zero_VEC (half_nsampFFT + 1);
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (& fftTable, nsampFFT);
 

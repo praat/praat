@@ -47,7 +47,7 @@ void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integ
 
 static inline autoVEC LineSpectralFrequencies_listFrequenciesInFrame (LineSpectralFrequencies me, integer frameNumber) {
 	my checkIndex (frameNumber);
-	autoVEC result = newVECzero (my maximumNumberOfFrequencies);
+	autoVEC result = zero_VEC (my maximumNumberOfFrequencies);
 	result.all() <<= my d_frames [frameNumber]. frequencies.get();
 	return result;
 }

@@ -366,7 +366,7 @@ double DataModeler_getDegreesOfFreedom (DataModeler me) {
 	If equal weighing than get the sigma form the residual sum of squares between model and data.
 */
 autoVEC DataModeler_getDataPointsWeights (DataModeler me, kDataModelerWeights weighData) {
-	autoVEC weights = newVECzero (my numberOfDataPoints);
+	autoVEC weights = zero_VEC (my numberOfDataPoints);
 	if (weighData == kDataModelerWeights::EQUAL_WEIGHTS) {
 			/*
 				We weigh with the inverse of the standard deviation of the data to give
@@ -788,8 +788,8 @@ void DataModeler_fit (DataModeler me) {
 		const integer numberOfValidDataPoints = DataModeler_getNumberOfValidDataPoints (me);
 		if (numberOfValidDataPoints - numberOfFreeParameters < 0)
 			return;
-		autoVEC yEstimation = newVECzero (numberOfValidDataPoints);
-		autoVEC term = newVECzero (my numberOfParameters);
+		autoVEC yEstimation = zero_VEC (numberOfValidDataPoints);
+		autoVEC term = zero_VEC (my numberOfParameters);
 		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());
 		autoMAT designMatrix = newMATzero (numberOfValidDataPoints, numberOfFreeParameters);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);

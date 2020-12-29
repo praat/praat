@@ -123,7 +123,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	const integer nf = Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax);
 	if (nf == 0)
 		return;
-	auto ybuffer = newVECzero (nf);
+	autoVEC ybuffer = zero_VEC (nf);
 	double *yWC = & ybuffer [1 - ifmin];
 
 	/*
@@ -182,7 +182,7 @@ void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, do
 	if (nf == 0)
 		return;
 if(ifmin==1)ifmin=2;  /* BUG */
-	auto xbuffer = newVECzero (nf), ybuffer = newVECzero (nf);
+	auto xbuffer = zero_VEC (nf), ybuffer = zero_VEC (nf);
 	double *xWC = & xbuffer [1 - ifmin], *yWC = & ybuffer [1 - ifmin];
 
 	/*
