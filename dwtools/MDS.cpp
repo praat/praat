@@ -1079,7 +1079,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 			Get the first eigenvector and form matrix cl from a linear combination of the C [i]'s
 		*/
 		
-		autoMAT a = newMATraw (numberOfSources, numberOfSources);
+		autoMAT a = raw_MAT (numberOfSources, numberOfSources);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = i; j <= numberOfSources; j ++) {
@@ -1162,7 +1162,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, constMAT vplus) {
 	const integer nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
 
-	autoMAT b = newMATraw (nPoints, nPoints);
+	autoMAT b = raw_MAT (nPoints, nPoints);
 	autoDistance distZ = Configuration_to_Distance (cz);
 	/*
 		compute B(Z) (eq. 8.25)
@@ -1363,7 +1363,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			aw = Weight_create (nPoints);
 			weight = aw.get();
 		}
-		autoMAT v = newMATraw (nPoints, nPoints);
+		autoMAT v = raw_MAT (nPoints, nPoints);
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
@@ -1608,7 +1608,7 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 		autoKruskal me = Thing_new (Kruskal);
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
 		my proximities = ProximityList_create ();
-		my dx = newMATraw (numberOfPoints, numberOfDimensions);
+		my dx = raw_MAT (numberOfPoints, numberOfDimensions);
 		my tiesHandling = kMDS_TiesHandling::PRIMARY_APPROACH;
 		my stress_formula = kMDS_KruskalStress::KRUSKAL_1;
 		return me;
@@ -1852,7 +1852,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 	const integer nSources = zc -> size;
 
 	const double tolerance = 1e-4; // reasonable for dominant eigenvector estimation.
-	autoMAT wsih = newMATraw (nPoints, nPoints);
+	autoMAT wsih = raw_MAT (nPoints, nPoints);
 	autoVEC solution = raw_VEC (nPoints);
 
 	for (integer h = 1; h <= nDimensions; h ++) {

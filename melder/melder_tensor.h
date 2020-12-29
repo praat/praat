@@ -1368,7 +1368,7 @@ using MATVU = matrixview <double>;
 using constMAT = constmatrix <double>;
 using constMATVU = constmatrixview <double>;
 using autoMAT = automatrix <double>;
-inline autoMAT newMATraw (integer nrow, integer ncol) {
+inline autoMAT raw_MAT (integer nrow, integer ncol) {
 	return newmatrixraw <double> (nrow, ncol);
 }
 inline autoMAT zero_MAT (integer nrow, integer ncol) {

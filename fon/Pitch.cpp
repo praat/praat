@@ -503,7 +503,7 @@ integer Pitch_getMaxnCandidates (Pitch me) {
 
 autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
 	integer numberOfCandidates = my nCandidates;
-	autoMAT candidates = newMATraw (2, numberOfCandidates);
+	autoMAT candidates = raw_MAT (2, numberOfCandidates);
 	for (integer icand = 1; icand <= numberOfCandidates; icand ++) {
 		candidates [1] [icand] = my candidates [icand]. frequency;
 		candidates [2] [icand] = my candidates [icand]. strength;

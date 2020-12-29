@@ -794,7 +794,7 @@ void SSCP_unExpand (SSCP me) {
 
 void SSCP_expandLowerCholeskyInverse (SSCP me) {
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
-		my lowerCholeskyInverse = newMATraw (my numberOfColumns, my numberOfColumns);
+		my lowerCholeskyInverse = raw_MAT (my numberOfColumns, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
 		for (integer j = 1; j <= my numberOfColumns; j ++) {

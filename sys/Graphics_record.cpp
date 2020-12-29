@@ -184,7 +184,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 					This works because the data is a packed array of double, just as Graphics_cellArray expects.
 				*/
 				#if 0
-				autoMAT z = newMATraw (nrow, ncol);
+				autoMAT z = raw_MAT (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
@@ -351,7 +351,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case IMAGE: {
 				const double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				const integer nrow = iget, ncol = iget;
-				autoMAT z = newMATraw (nrow, ncol);
+				autoMAT z = raw_MAT (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;

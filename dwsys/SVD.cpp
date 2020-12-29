@@ -168,7 +168,7 @@ void SVD_getSquared_preallocated (SVD me, bool inverse, MAT const& m) {
 }
 
 autoMAT SVD_getSquared (SVD me, bool inverse) {
-	autoMAT result = newMATraw (my numberOfColumns, my numberOfColumns);
+	autoMAT result = raw_MAT (my numberOfColumns, my numberOfColumns);
 	SVD_getSquared_preallocated (me, inverse, result.get());
 	return result;
 }
@@ -361,7 +361,7 @@ autoGSVD GSVD_create (constMATVU const& m1, constMATVU const& m2) {
 		// Store the matrices a and b as column major!
 		autoMAT a = newMATtranspose (m1);
 		autoMAT b = newMATtranspose (m2);
-		autoMAT q = newMATraw (n, n);
+		autoMAT q = raw_MAT (n, n);
 		autoVEC alpha = raw_VEC (n);
 		autoVEC beta = raw_VEC (n);
 		integer lwork = std::max (std::max (3 * n, m), p) + n;		

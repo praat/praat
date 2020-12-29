@@ -204,7 +204,7 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 	Melder_assert (result.nrow == result.ncol);
 	result  <<=  0.0;
 	if (true) {
-		autoMAT outer = newMATraw (result.ncol, result.ncol);
+		autoMAT outer = raw_MAT (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
 			MATouter (outer.all(), data.row (irow), data.row (irow));
 			result  +=  outer.all()  *  rowWeights [irow];
@@ -357,7 +357,7 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 
 autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT result = newMATraw (m.nrow, m.nrow);
+	autoMAT result = raw_MAT (m.nrow, m.nrow);
 	for (integer irow = 1; irow <= m.nrow; irow ++) {
 		for (integer icol = 1; icol <= irow; icol ++) {
 			longdouble sum = 0.0;
@@ -444,7 +444,7 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	const double tol = ( tolerance > 0.0 ? tolerance : NUMfpp -> eps * a.nrow );
 	
 	autoSVD me = SVD_createFromGeneralMatrix (a);
-	autoMAT x = newMATraw (b.nrow, b.ncol);
+	autoMAT x = raw_MAT (b.nrow, b.ncol);
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
@@ -1549,7 +1549,7 @@ void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor) {
 }
 
 autoMAT MATcosinesTable (integer n) {
-	autoMAT result = newMATraw (n, n);
+	autoMAT result = raw_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++)
 		for (integer icol = 1; icol <= n; icol ++)
 			result [irow] [icol] = cos (NUMpi * (irow - 1) * (icol - 0.5) / n);
@@ -2635,7 +2635,7 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 
 autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
-	autoMAT g = newMATraw (x.size, x.size);
+	autoMAT g = raw_MAT (x.size, x.size);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w

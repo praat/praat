@@ -166,7 +166,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		thy centroid.all()  *=  1.0 / thy numberOfObservations;
 		
 		autoVEC mean = raw_VEC (thy numberOfColumns);
-		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
+		autoMAT outer = raw_MAT (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
 			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
@@ -404,7 +404,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 			the matrices S1 and S2 are the covariance matrices 'my data' and 'thy data' divided by N1 and N2 respectively.
 			S is the pooled covar divided by N.
 		*/
-		autoMAT s1 = newMATraw (p, p), s2 = newMATraw (p, p), s = newMATraw (p, p);
+		autoMAT s1 = raw_MAT (p, p), s2 = raw_MAT (p, p), s = raw_MAT (p, p);
 		for (integer i = 1; i <= p; i ++) {
 			for (integer j = 1; j <= p; j ++) {
 				s1 [i] [j] = my data [i] [j] / my numberOfObservations;

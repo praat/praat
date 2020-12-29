@@ -178,7 +178,7 @@ void TableOfReal_removeRow (TableOfReal me, integer rowNumber) {
 			me, U" has only one row, and a TableOfReal without rows cannot exist.");
 		Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
 			U"No row ", rowNumber, U".");
-		autoMAT newData = newMATraw (my numberOfRows - 1, my numberOfColumns);
+		autoMAT newData = raw_MAT (my numberOfRows - 1, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			for (integer irow = 1; irow < rowNumber; irow ++)
 				newData [irow] [icol] = my data [irow] [icol];
@@ -238,7 +238,7 @@ void TableOfReal_removeColumn (TableOfReal me, integer columnNumber) {
 		/*
 			Create without change.
 		*/
-		autoMAT newData = newMATraw (my numberOfRows, my numberOfColumns - 1);
+		autoMAT newData = raw_MAT (my numberOfRows, my numberOfColumns - 1);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol < columnNumber; icol ++)
 				newData [irow] [icol] = my data [irow] [icol];

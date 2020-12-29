@@ -79,7 +79,7 @@ inline TypeMATadd_MAT_NUM operator+ (double number, constMATVU const& x) { retur
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constMATVU const& x, double number) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  +  number;
 	return result;
 }
@@ -98,7 +98,7 @@ inline TypeMATmultiply_MAT_NUM operator* (double number, constMATVU const& x) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constMATVU const& x, double number) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  *  number;
 	return result;
 }
@@ -116,7 +116,7 @@ inline TypeMATsubtract_MAT_NUM operator- (constMATVU const& x, double number) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constMATVU const& x, double number) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  -  number;
 	return result;
 }
@@ -134,7 +134,7 @@ inline TypeMATsubtract_NUM_MAT operator- (double number, constMATVU const& x) { 
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (double number, constMATVU const& x) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  number  -  x;
 	return result;
 }
@@ -153,7 +153,7 @@ inline TypeMATadd_MAT_VEC operator+ (constMATVU const& x, constVECVU const& y) {
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constMATVU const& x, constVECVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  +  y;
 	return result;
 }
@@ -172,7 +172,7 @@ inline TypeMATmultiply_MAT_VEC operator* (constMATVU const& x, constVECVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constMATVU const& x, constVECVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  *  y;
 	return result;
 }
@@ -191,7 +191,7 @@ inline TypeMATsubtract_MAT_VEC operator- (constMATVU const& x, constVECVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constMATVU const& x, constVECVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  -  y;
 	return result;
 }
@@ -210,7 +210,7 @@ inline TypeMATadd_VEC_MAT operator+ (constVECVU const& x, constMATVU const& y) {
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constVECVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (y.nrow, y.ncol);
+	autoMAT result = raw_MAT (y.nrow, y.ncol);
 	result.all()  <<=  x  +  y;
 	return result;
 }
@@ -229,7 +229,7 @@ inline TypeMATmultiply_VEC_MAT operator* (constVECVU const& x, constMATVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constVECVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (y.nrow, y.ncol);
+	autoMAT result = raw_MAT (y.nrow, y.ncol);
 	result.all()  <<=  x  *  y;
 	return result;
 }
@@ -248,7 +248,7 @@ inline TypeMATsubtract_VEC_MAT operator- (constVECVU const& x, constMATVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constVECVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (y.nrow, y.ncol);
+	autoMAT result = raw_MAT (y.nrow, y.ncol);
 	result.all()  <<=  x  -  y;
 	return result;
 }
@@ -268,7 +268,7 @@ inline TypeMATadd_MAT_MAT operator+ (constMATVU const& x, constMATVU const& y) {
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATadd (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  +  y;
 	return result;
 }
@@ -288,7 +288,7 @@ inline TypeMATmultiply_MAT_MAT operator* (constMATVU const& x, constMATVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATmultiply (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  *  y;
 	return result;
 }
@@ -308,7 +308,7 @@ inline TypeMATsubtract_MAT_MAT operator- (constMATVU const& x, constMATVU const&
 GENERATE_FIVE_TENSOR_FUNCTIONS
 #undef GENERATE_ONE_TENSOR_FUNCTION
 inline autoMAT newMATsubtract (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, x.ncol);
+	autoMAT result = raw_MAT (x.nrow, x.ncol);
 	result.all()  <<=  x  -  y;
 	return result;
 }
@@ -333,7 +333,7 @@ extern void MATdoubleCentre_inplace (MATVU const& x) noexcept;
 
 extern void MATmtm (MATVU const& target, constMATVU const& x) noexcept;
 inline autoMAT newMATmtm (constMATVU const& x) {
-	autoMAT result = newMATraw (x.ncol, x.ncol);
+	autoMAT result = raw_MAT (x.ncol, x.ncol);
 	MATmtm (result.get(), x);
 	return result;
 }
@@ -349,7 +349,7 @@ inline void MATmul  (MATVU const& target, constMATVU const& x, constMATVU const&
 	MATmul_ (target, x, y);
 }
 inline autoMAT newMATmul (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, y.ncol);
+	autoMAT result = raw_MAT (x.nrow, y.ncol);
 	MATmul (result.all(), x, y);
 	return result;
 }
@@ -367,7 +367,7 @@ inline void MATmul_forceAllocation  (MATVU const& target, constMATVU x, constMAT
 	MATmul_forceAllocation_ (target, x, y);
 }
 inline autoMAT newMATmul_forceAllocation (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, y.ncol);
+	autoMAT result = raw_MAT (x.nrow, y.ncol);
 	MATmul_forceAllocation (result.all(), x, y);
 	return result;
 }
@@ -383,7 +383,7 @@ inline void MATmul_allowAllocation  (MATVU const& target, constMATVU x, constMAT
 	MATmul_allowAllocation_ (target, x, y);
 }
 inline autoMAT newMATmul_allowAllocation (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, y.ncol);
+	autoMAT result = raw_MAT (x.nrow, y.ncol);
 	MATmul_allowAllocation (result.all(), x, y);
 	return result;
 }
@@ -398,7 +398,7 @@ inline void MATmul_fast  (MATVU const& target, constMATVU const& x, constMATVU c
 	MATmul_fast_ (target, x, y);
 }
 inline autoMAT newMATmul_fast (constMATVU const& x, constMATVU const& y) {
-	autoMAT result = newMATraw (x.nrow, y.ncol);
+	autoMAT result = raw_MAT (x.nrow, y.ncol);
 	MATmul_fast (result.all(), x, y);
 	return result;
 }
@@ -412,7 +412,7 @@ extern autoMAT newMATpeaks (constVECVU const& x, bool includeEdges, int interpol
 
 void MATpower (MATVU const& target, constMATVU const& mat, double power);
 inline autoMAT newMATpower (constMATVU const& mat, double power) {
-	autoMAT result = newMATraw (mat.nrow, mat.ncol);
+	autoMAT result = raw_MAT (mat.nrow, mat.ncol);
 	MATpower (result.all(), mat, power);
 	return result;
 }
@@ -423,12 +423,12 @@ inline void MATrandomGauss (MATVU const& target, double mu, double sigma) noexce
 			target [irow] [icol] = NUMrandomGauss (mu, sigma);
 }
 inline autoMAT newMATrandomGauss (integer nrow, integer ncol, double mu, double sigma) {
-	autoMAT result = newMATraw (nrow, ncol);
+	autoMAT result = raw_MAT (nrow, ncol);
 	MATrandomGauss (result.all(), mu, sigma);
 	return result;
 }
 inline autoMAT newMATrandomGauss (constMATVU const& model, double mu, double sigma) {
-	autoMAT result = newMATraw (model.nrow, model.ncol);
+	autoMAT result = raw_MAT (model.nrow, model.ncol);
 	MATrandomGauss (result.all(), mu, sigma);
 	return result;
 }
@@ -439,12 +439,12 @@ inline void MATrandomUniform (MATVU const& target, double lowest, double highest
 			target [irow] [icol] = NUMrandomUniform (lowest, highest);
 }
 inline autoMAT newMATrandomUniform (integer nrow, integer ncol, double lowest, double highest) {
-	autoMAT result = newMATraw (nrow, ncol);
+	autoMAT result = raw_MAT (nrow, ncol);
 	MATrandomUniform (result.all(), lowest, highest);
 	return result;
 }
 inline autoMAT newMATrandomUniform (constMATVU const& model, double lowest, double highest) {
-	autoMAT result = newMATraw (model.nrow, model.ncol);
+	autoMAT result = raw_MAT (model.nrow, model.ncol);
 	MATrandomUniform (result.all(), lowest, highest);
 	return result;
 }
@@ -481,7 +481,7 @@ inline void MATtranspose (MATVU const& target, constMATVU const& x) noexcept {
 			target [irow] [icol] = x [icol] [irow];
 }
 inline autoMAT newMATtranspose (constMATVU const& x) {
-	autoMAT result = newMATraw (x.ncol, x.nrow);
+	autoMAT result = raw_MAT (x.ncol, x.nrow);
 	MATtranspose (result.get(), x);
 	return result;
 }

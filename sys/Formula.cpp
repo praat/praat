@@ -3393,7 +3393,7 @@ static void do_rectify_MAT () {
 		} else {
 			pop;
 			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-			autoMAT result = newMATraw (nrow, ncol);
+			autoMAT result = raw_MAT (nrow, ncol);
 			for (integer irow = 1; irow <= nrow; irow ++) {
 				for (integer icol = 1; icol <= ncol; icol ++) {
 					double xvalue = x->numericMatrix [irow] [icol];
@@ -3489,7 +3489,7 @@ static void do_exp_MAT () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-		autoMAT result = newMATraw (nrow, ncol);
+		autoMAT result = raw_MAT (nrow, ncol);
 		for (integer irow = 1; irow <= nrow; irow ++)
 			for (integer icol = 1; icol <= ncol; icol ++)
 				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
@@ -3623,7 +3623,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (model->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = model->numericMatrix.nrow;
 			integer numberOfColumns = model->numericMatrix.ncol;
-			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+			autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3638,7 +3638,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (nrow->which == Stackel_NUMBER && ncol->which == Stackel_NUMBER && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = Melder_iround (nrow->number);
 			integer numberOfColumns = Melder_iround (ncol->number);
-			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+			autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3679,7 +3679,7 @@ static void do_function_MATll_l (integer (*f) (integer, integer)) {
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfRows = a->numericMatrix.nrow;
 		integer numberOfColumns = a->numericMatrix.ncol;
-		autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+		autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				newData [irow] [icol] = f (Melder_iround (x->number), Melder_iround (y->number));
@@ -5625,7 +5625,7 @@ static void do_tensorLiteral () {
 		pushNumericVector (result.move());
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		integer sharedNumberOfColumns = last->numericVector.size;
-		autoMAT result = newMATraw (numberOfElements, sharedNumberOfColumns);
+		autoMAT result = raw_MAT (numberOfElements, sharedNumberOfColumns);
 		result.row (numberOfElements)  <<=  last->numericVector;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
 			Stackel element = pop;

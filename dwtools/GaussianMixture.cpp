@@ -189,7 +189,7 @@ static void GaussianMixture_updateComponent (GaussianMixture me, integer compone
 			thy data.row (1)  +=  responsibilities [irow] [component]  *  variance.get();
 		}
 	} else { // nxn covariance
-		autoMAT covar = newMATraw (thy numberOfColumns, thy numberOfColumns);
+		autoMAT covar = raw_MAT (thy numberOfColumns, thy numberOfColumns);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			dif.all() <<= data.row (irow)  -  thy centroid.get();
 			MATouter (covar.get(), dif.get(), dif.get());
@@ -624,7 +624,7 @@ void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double
 		} else {
 			autoPCA pca = SSCP_to_PCA (cov_t.get());
 			autoSSCP s2d = SSCP_toTwoDimensions (cov_t.get(), pca -> eigenvectors.row (1), pca -> eigenvectors.row (2));
-			autoMAT means2d = newMATraw (my numberOfComponents, 2);
+			autoMAT means2d = raw_MAT (my numberOfComponents, 2);
 
 			double a, b, cs, sn;
 			NUMeigencmp22 (s2d -> data [1] [1], s2d -> data [1] [2], s2d -> data [2] [2], & a, & b, & cs, & sn);
@@ -824,7 +824,7 @@ void GaussianMixture_TableOfReal_getResponsilities (GaussianMixture me, TableOfR
 			U"The number of columns in the TableOfReal and the responsibilities should be equal.");
 		Melder_require (my dimension == thy numberOfColumns,
 			U"The number of columns in the TableOfReal and the dimension of the GaussianMixture should be equal.");
-		autoMAT probabilities = newMATraw (responsibilities.nrow, responsibilities.ncol);
+		autoMAT probabilities = raw_MAT (responsibilities.nrow, responsibilities.ncol);
 		GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities);
 		GaussianMixture_getResponsibilities (me, probabilities.get(), 0, responsibilities);
 }
@@ -881,8 +881,8 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 		// mixture covariances to prevent numerical instabilities.
 
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
-		autoMAT probabilities = newMATraw (thy numberOfRows, my numberOfComponents);
-		autoMAT responsibilities = newMATraw (thy numberOfRows, my numberOfComponents);
+		autoMAT probabilities = raw_MAT (thy numberOfRows, my numberOfComponents);
+		autoMAT responsibilities = raw_MAT (thy numberOfRows, my numberOfComponents);
 		
 		GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities);
 
@@ -939,7 +939,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, kGaussianMixtureCriterion criterion) {
-	autoMAT probabilities = newMATraw (thy numberOfRows, my numberOfComponents);
+	autoMAT probabilities = raw_MAT (thy numberOfRows, my numberOfComponents);
 	GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities.get());
 	return GaussianMixture_getLikelihoodValue (me, probabilities.get(), criterion);
 }
@@ -949,7 +949,7 @@ autoMAT newMATremoveColumn (constMAT const& m, integer columnToRemove) {
 		U"We cannot remove the last column.");
 	Melder_require (columnToRemove > 0 && columnToRemove <= m.ncol,
 		U"The column number should be in the range from 1 to ",m.ncol, U".");
-	autoMAT resized = newMATraw (m.nrow, m.ncol - 1);
+	autoMAT resized = raw_MAT (m.nrow, m.ncol - 1);
 	resized.verticalBand (1, columnToRemove - 1) <<= m.verticalBand (1, columnToRemove - 1);
 	if (columnToRemove < m.ncol)
 		resized.verticalBand (columnToRemove, m.ncol - 1) <<= m.verticalBand (columnToRemove + 1, m.ncol);
@@ -1227,7 +1227,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 		Melder_require (thy numberOfColumns == my dimension,
 			U"Dimensions should agree.");
 		
-		autoMAT responsibilities = newMATraw (thy numberOfRows, my numberOfComponents);
+		autoMAT responsibilities = raw_MAT (thy numberOfRows, my numberOfComponents);
 		GaussianMixture_TableOfReal_getResponsilities (me, thee, responsibilities);
 		autoVEC numberOfData = columnSums_VEC (responsibilities.get());
 		

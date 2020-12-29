@@ -210,7 +210,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		autoEigen eigen = Thing_new (Eigen);
 		autoCrossCorrelationTableList ccts = Data_copy (thee);
 		autoMAT d = zero_MAT (dimension, dimension);
-		autoMAT pinv = newMATraw (dimension, dimension);
+		autoMAT pinv = raw_MAT (dimension, dimension);
 		autoMAT p = zero_MAT (dimension, dimension);
 		autoMAT m1 = zero_MAT (dimension, dimension);
 		autoVEC wvec = raw_VEC (dimension);
@@ -417,14 +417,14 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (nchannels);
 		
 		autoVEC centroid1 = raw_VEC (my ny);
-		autoMAT x1x1 = newMATraw (my ny, my ny);
+		autoMAT x1x1 = raw_MAT (my ny, my ny);
 		NUMcrossCorrelate_rows (my z.get(), i1, i2, lag, x1x1.get(), centroid1.get(), my dx);
 		his centroid.part (1, my ny) <<= centroid1.all();
 		for (integer irow = 1; irow <= my ny; irow ++)
 			his data.row (irow).part (1, my ny) <<= x1x1.row (irow);
 
 		autoVEC centroid2 = raw_VEC (thy ny);
-		autoMAT x2x2 = newMATraw (thy ny, thy ny);
+		autoMAT x2x2 = raw_MAT (thy ny, thy ny);
 		NUMcrossCorrelate_rows (thy z.get(), i1, i2, lag, x2x2.get(), centroid2.get(), my dx);
 		his centroid.part (my ny + 1, nchannels) <<= centroid2.all();
 		for (integer irow = 1; irow <= thy ny; irow ++)
@@ -787,7 +787,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 		*/
 
 		autoMAT d = newMATrandomGauss (dimension, dimension, 0.0, 1.0);
-		autoMAT v = newMATraw (dimension, dimension);
+		autoMAT v = raw_MAT (dimension, dimension);
 		autoSVD svd = SVD_createFromGeneralMatrix (d.get());
 		autoCrossCorrelationTableList me = CrossCorrelationTableList_create ();
 

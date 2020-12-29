@@ -408,9 +408,9 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		Melder_require (NUMhasZeroElement (data) == false,
 			U"The data matrix should not have cells that are zero.");
-		autoMAT vk = newMATraw (data.nrow, data.ncol);
-		autoMAT fw = newMATraw (data.nrow, data.ncol);
-		autoMAT fcol_x_wrow = newMATraw (data.nrow, data.ncol);
+		autoMAT vk = raw_MAT (data.nrow, data.ncol);
+		autoMAT fw = raw_MAT (data.nrow, data.ncol);
+		autoMAT fcol_x_wrow = raw_MAT (data.nrow, data.ncol);
 		autoVEC fcolumn_inv = raw_VEC (data.nrow); // feature column
 		autoVEC wrow_inv = raw_VEC (data.ncol); // weight row
 		MATmul (fw.get(), my features.get(), my weights.get());

@@ -56,7 +56,7 @@ static integer length (conststring32 s) {
 }
 
 static autoMAT constantHH (integer nrow, integer ncol, double value) {
-	autoMAT result = newMATraw (nrow, ncol);
+	autoMAT result = raw_MAT (nrow, ncol);
 	result.all() <<= value;
 	return result;
 }
@@ -473,7 +473,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			//autoMAT const y = newMATrandomGauss (size2, size3, 0.0, 1.0);
 			autoMAT x = constantHH (size1, size2, 10.0);
 			autoMAT y = constantHH (size2, size3, 3.0);
-			autoMAT const result = newMATraw (size1, size3);
+			autoMAT const result = raw_MAT (size1, size3);
 			//MAT resultget = result.get();
 			//constMAT xget = x.get(), yget = y.get();
 			MATVU const result_all = result.all();

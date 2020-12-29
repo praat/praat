@@ -815,7 +815,7 @@ autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double num
 		
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoVEC x = raw_VEC (numberOfDataPoints); // also store x-values
-		autoMAT z = newMATraw (numberOfFormants, numberOfDataPoints);
+		autoMAT z = raw_MAT (numberOfFormants, numberOfDataPoints);
 		// maybe some of the formants had NUMundefind's.
 
 		// 1. calculate z-scores for each formant and sort them in descending order
