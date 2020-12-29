@@ -121,15 +121,15 @@ FORMULA (U"28 + 1 * 3.0 * 8000 * 1 = 24028 bytes")
 NORMAL (U"The first example is typical of CD quality, the second of telephone speech.")
 MAN_END
 
-MAN_BEGIN (U"Sound files 1.6. Compression", U"ppgb", 20040602)
+MAN_BEGIN (U"Sound files 1.6. Compression", U"ppgb", 20201229)
 NORMAL (U"Praat used to be able to read some compressed sound file formats (shortened NIST, Polyphone), "
 	"but because of licensing problems (Praat went open source, Shorten did not), "
 	"you now need to use other (freely available) programs to do the conversion before reading them into Praat. "
-	"Praat can decode (but not create) MP3 files. "
+	"Praat can decode (but not create) MP3 files and Ogg Vorbis files. "
 	"Praat fully supports FLAC compressed files.")
 MAN_END
 
-MAN_BEGIN (U"Sound files 2. File types", U"ppgb", 20070602)
+MAN_BEGIN (U"Sound files 2. File types", U"ppgb", 20201229)
 LIST_ITEM (U"2.1. @@Sound files 2.1. WAV files|WAV files@")
 LIST_ITEM (U"2.2. @@Sound files 2.2. AIFF files|AIFF files@")
 LIST_ITEM (U"2.3. @@Sound files 2.3. AIFC files|AIFC files@")
@@ -137,6 +137,7 @@ LIST_ITEM (U"2.4. @@Sound files 2.4. NeXT/Sun (.au) files|NeXT/Sun (.au) files@"
 LIST_ITEM (U"2.5. @@Sound files 2.5. NIST files|NIST files@")
 LIST_ITEM (U"2.6. @@Sound files 2.6. FLAC files|FLAC files@")
 LIST_ITEM (U"2.7. @@Sound files 2.7. MP3 files|MP3 files@")
+LIST_ITEM (U"2.8. @@Sound files 2.8. Ogg Vorbis files|Ogg Vorbis files@")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.1. WAV files", U"ppgb", 20040223)
@@ -195,6 +196,20 @@ MAN_END
 MAN_BEGIN (U"Sound files 2.6. FLAC files", U"Erez Volk", 20070514)
 NORMAL (U"A lossless compressed audio format (see ##http://flac.sourceforge.net##). "
 	"Praat reads FLAC files in all bitrate/frequency settings "
+	"(see also @@Sound files 1.6. Compression|§1.6@)")
+MAN_END
+
+MAN_BEGIN (U"Sound files 2.7. MP3 files", U"Erez Volk", 20070601)
+NORMAL (U"A ubiquitous lossy audio compression format. "
+	"Praat supports MP3 decoding through the MPEG Audio Decoder library "
+	"##http://www.underbit.com/products/mad/##. "
+	"(see also @@Sound files 1.6. Compression|§1.6@)")
+MAN_END
+
+MAN_BEGIN (U"Sound files 2.8. Ogg Vorbis files", U"djmw", 20201229)
+NORMAL (U"A general purpose patent-free lossy audio compression format. "
+	"Praat supports Ogg Vorbis decoding through open source code made available at "
+	"##https://xiph.org/downloads/##. We used libogg-1.3.4 and libvorbis-1.3.7. "
 	"(see also @@Sound files 1.6. Compression|§1.6@)")
 MAN_END
 
@@ -281,13 +296,6 @@ MAN_END
 MAN_BEGIN (U"Save as FLAC file...", U"ppgb", 20110129)
 INTRO (U"With this command, you save one or more selected @Sound and/or @LongSound objects "
 	"as a single 16-bit FLAC audio file on disk. See the @@Sound files@ tutorial for more information.")
-MAN_END
-
-MAN_BEGIN (U"Sound files 2.7. MP3 files", U"Erez Volk", 20070601)
-NORMAL (U"A ubiquitous lossy audio compression format. "
-	"Praat supports MP3 decoding through the MPEG Audio Decoder library "
-	"##http://www.underbit.com/products/mad/##. "
-	"(see also @@Sound files 1.6. Compression|§1.6@)")
 MAN_END
 
 MAN_BEGIN (U"NIST files", U"Erez Volk", 20110131)
