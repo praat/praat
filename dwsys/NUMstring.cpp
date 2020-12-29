@@ -227,7 +227,7 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 }
 
 static autoINTVEC INTVEC_getUniqueNumbers (constINTVEC const& numbers) {
-	autoINTVEC sorted = newINTVECsort (numbers);
+	autoINTVEC sorted = sort_INTVEC (numbers);
 	integer numberOfUniques = 1;
 	for (integer i = 2; i <= numbers.size; i ++)
 		if (sorted [i] != sorted [i - 1])

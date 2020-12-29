@@ -167,7 +167,7 @@ autoVEC Sampled_getSortedValues (Sampled me, double xmin, double xmax, integer l
 			definedValues [++ definedSampleNumber] = value;
 	}
 	Melder_assert (definedSampleNumber == numberOfDefinedSamples);
-	VECsort_inplace (definedValues.get());
+	sort_VEC_inout (definedValues.get());
 	return definedValues;
 }
 

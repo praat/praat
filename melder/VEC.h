@@ -289,33 +289,33 @@ inline void VECsin_inplace (VECVU const& vec) noexcept {
 		vec [i] = sin (vec [i]);
 }
 
-extern void VECshuffle_inplace (VECVU const& x) noexcept;
-extern void INTVECshuffle_inplace (INTVECVU const& x) noexcept;
+extern void shuffle_VEC_inout (VECVU const& x) noexcept;
+extern void shuffle_INTVEC_inout (INTVECVU const& x) noexcept;
 
 inline autoVEC shuffle_VEC (constVECVU const& x) {
 	autoVEC result = newVECcopy (x);
-	VECshuffle_inplace (result.get());
+	shuffle_VEC_inout (result.get());
 	return result;
 }
 
 inline autoINTVEC shuffle_INTVEC (constINTVECVU const& x) {
 	autoINTVEC result = newINTVECcopy (x);
-	INTVECshuffle_inplace (result.get());
+	shuffle_INTVEC_inout (result.get());
 	return result;
 }
 
-extern void VECsort_inplace (VECVU const& x) noexcept;
-extern void INTVECsort_inplace (INTVECVU const& x) noexcept;
+extern void sort_VEC_inout (VECVU const& x) noexcept;
+extern void sort_INTVEC_inout (INTVECVU const& x) noexcept;
 
 inline autoVEC sort_VEC (constVECVU const& x) {
 	autoVEC result = newVECcopy (x);
-	VECsort_inplace (result.get());
+	sort_VEC_inout (result.get());
 	return result;
 }
 
-inline autoINTVEC newINTVECsort (constINTVECVU const& x) {
+inline autoINTVEC sort_INTVEC (constINTVECVU const& x) {
 	autoINTVEC result = newINTVECcopy (x);
-	INTVECsort_inplace (result.get());
+	sort_INTVEC_inout (result.get());
 	return result;
 }
 

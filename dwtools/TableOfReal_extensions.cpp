@@ -810,7 +810,7 @@ double TableOfReal_getColumnQuantile (TableOfReal me, integer columnNumber, doub
 		if (columnNumber < 1 || columnNumber > my numberOfColumns)
 			return undefined;
 		autoVEC values = newVECcolumn (my data.get(), columnNumber);
-		VECsort_inplace (values.get());
+		sort_VEC_inout (values.get());
 		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
 		return undefined;
@@ -1129,7 +1129,7 @@ static void NUMaverageBlock_byColumns_inplace (MAT a, integer rb, integer re, in
 			tmp [k] = a [i] [j];
 		double average;
 		if (medians) {
-			VECsort_inplace (tmp.get());
+			sort_VEC_inout (tmp.get());
 			average = NUMquantile (tmp.get(), 0.5);
 		} else {
 			average = NUMmean (tmp.get());

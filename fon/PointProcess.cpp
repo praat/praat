@@ -111,7 +111,7 @@ autoPointProcess PointProcess_createPoissonProcess (double startingTime, double 
 		const integer numberOfPoints = (integer) NUMrandomPoisson ((finishingTime - startingTime) * density);
 		my t = newVECrandomUniform (numberOfPoints, startingTime, finishingTime);
 		my nt = numberOfPoints;   // maintain invariant
-		VECsort_inplace (my t.get());
+		sort_VEC_inout (my t.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess (Poisson process) not created.");
@@ -212,7 +212,7 @@ void PointProcess_addPoints (PointProcess me, constVECVU const& times) {
 		my t. resize (newNumberOfPoints);
 		my t.part (my nt + 1, newNumberOfPoints)  <<=  times;
 		my nt = newNumberOfPoints;   // maintain invariant
-		VECsort_inplace (my t.get());
+		sort_VEC_inout (my t.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": points not added.");
 	}
