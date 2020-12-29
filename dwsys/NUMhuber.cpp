@@ -39,13 +39,13 @@ void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_
 	work  <<=  x;
 	
 	if (wantlocation) {
-		VECsort_inplace (work);
+		sort_VEC_inout (work);
 		*inout_location = NUMquantile (work, 0.5);
 	}
 	if (out_mad) {
 		for (integer i = 1; i <= x.size; i ++)
 			work [i] = fabs (work [i] - *inout_location);
-		VECsort_inplace (work);
+		sort_VEC_inout (work);
 		*out_mad = 1.4826 * NUMquantile (work, 0.5);
 	}
 }

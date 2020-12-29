@@ -105,7 +105,7 @@ void structFunctionEditor :: draw () {
 	if (endIsVisible && our endSelection != our startSelection)
 		our marker [++ our numberOfMarkers] = our endSelection;
 	our marker [++ our numberOfMarkers] = our endWindow;
-	VECsort_inplace (VEC (& our marker [1], our numberOfMarkers));
+	sort_VEC_inout (VEC (& our marker [1], our numberOfMarkers));
 
 	/*
 		Update rectangles.

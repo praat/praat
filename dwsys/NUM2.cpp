@@ -2071,11 +2071,11 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);
 			}
-			VECsort_inplace (mbs.part (1, numberOfCombinations));
+			sort_VEC_inout (mbs.part (1, numberOfCombinations));
 			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
 			for (integer i = 1; i <= x.size; i ++)
 				mbs [i] = y [i] - m * x [i];
-			VECsort_inplace (mbs.part (1, x.size));
+			sort_VEC_inout (mbs.part (1, x.size));
 			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
 		}
 		if (out_m)

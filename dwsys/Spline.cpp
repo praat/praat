@@ -153,7 +153,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 	
 	autoVEC interiorKnots = newVECfromString (interiorKnots_string);
 
-	VECsort_inplace (interiorKnots.get());
+	sort_VEC_inout (interiorKnots.get());
 	Melder_require (interiorKnots [1] > my xmin && interiorKnots [interiorKnots.size] <= my xmax,
 		U"Knots should be inside domain.");
 
