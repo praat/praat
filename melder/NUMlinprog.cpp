@@ -1,6 +1,6 @@
 /* NUMlinprog.cpp
  *
- * Copyright (C) 2008,2011,2012,2015-2019 Paul Boersma
+ * Copyright (C) 2008,2011,2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBou
 	try {
 		if (NUMisEmpty (my ind)) {
 			my ind = newvectorzero<int> (my numberOfVariables);
-			my val = newVECzero (my numberOfVariables);
+			my val = zero_VEC (my numberOfVariables);
 		}
 		glp_add_rows (my linearProgram, 1);   // TODO: check
 		glp_set_row_bnds (my linearProgram, (int) ++ my numberOfConstraints,

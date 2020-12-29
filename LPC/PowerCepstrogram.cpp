@@ -417,8 +417,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		while (nfft < nosInWindow)
 			nfft *= 2;
 		const integer nfftdiv2 = nfft / 2;
-		autoVEC fftbuf = newVECzero (nfft); // "complex" array
-		autoVEC spectrum = newVECzero (nfftdiv2 + 1); // +1 needed 
+		autoVEC fftbuf = zero_VEC (nfft); // "complex" array
+		autoVEC spectrum = zero_VEC (nfftdiv2 + 1); // +1 needed 
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (& fftTable, nfft); // sound to spectrum
 		

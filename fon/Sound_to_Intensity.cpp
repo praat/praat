@@ -64,8 +64,8 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		const double halfWindowDuration = 0.5 * physicalWindowDuration;
 		const integer halfWindowSamples = Melder_ifloor (halfWindowDuration / my dx);
 		const integer windowNumberOfSamples = 2 * halfWindowSamples + 1;
-		autoVEC amplitude = newVECzero (windowNumberOfSamples);
-		autoVEC window = newVECzero (windowNumberOfSamples);
+		autoVEC amplitude = zero_VEC (windowNumberOfSamples);
+		autoVEC window = zero_VEC (windowNumberOfSamples);
 		const integer windowCentreSampleNumber = halfWindowSamples + 1;
 
 		for (integer i = 1; i <= windowNumberOfSamples; i ++) {

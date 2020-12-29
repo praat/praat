@@ -1,6 +1,6 @@
 /* Graphics_altitude.cpp
  *
- * Copyright (C) 1992-2005,2008,2011,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,8 +153,8 @@ void Graphics_contour (Graphics me, constMATVU const& z,
 	if (NUMisEmpty (right.get())) {   // static!
 		right = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
 		below = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
-		x = newVECzero (MAXALTPATH);
-		y = newVECzero (MAXALTPATH);
+		x = zero_VEC (MAXALTPATH);
+		y = zero_VEC (MAXALTPATH);
 	}
 	for (row1 = 1; row1 < z.nrow; row1 += MAXALTSIDE - 1) {
 		for (col1 = 1; col1 < z.ncol; col1 += MAXALTSIDE - 1) {
@@ -180,8 +180,8 @@ void Graphics_altitude (Graphics me, constMATVU const& z,
 	if (NUMisEmpty (right.get())) {   // static!
 		right = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
 		below = newBOOLMATzero (MAXALTSIDE, MAXALTSIDE);
-		x = newVECzero (MAXALTPATH);
-		y = newVECzero (MAXALTPATH);
+		x = zero_VEC (MAXALTPATH);
+		y = zero_VEC (MAXALTPATH);
 	}
 	for (row1 = 1; row1 < z.nrow; row1 += MAXALTSIDE - 1) {
 		for (col1 = 1; col1 < z.ncol; col1 += MAXALTSIDE - 1) {

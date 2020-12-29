@@ -85,7 +85,7 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 		FFNet_setCostFunction (me, costFunctionType);
 
 		if (reset) {
-			autoVEC wbuf = newVECzero (my dimension);
+			autoVEC wbuf = zero_VEC (my dimension);
 			integer k = 1;
 			for (integer i = 1; i <= my numberOfWeights; i ++)
 				if (my wSelected [i])

@@ -55,7 +55,7 @@ void structLineSpectralFrequencies :: v_info () {
 }
 
 void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integer numberOfFrequencies) {
-	my frequencies = newVECzero (numberOfFrequencies);
+	my frequencies = zero_VEC (numberOfFrequencies);
 	my numberOfFrequencies = numberOfFrequencies;
 }
 

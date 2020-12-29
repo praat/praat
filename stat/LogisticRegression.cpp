@@ -1,6 +1,6 @@
 /* LogisticRegression.cpp
  *
- * Copyright (C) 2005-2012,2015-2018 Paul Boersma
+ * Copyright (C) 2005-2012,2015-2020 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,10 +87,10 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 		Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
 	*/
 	autoMAT x = newMATzero (numberOfCells, 1+numberOfFactors);   // column 1 is the intercept
-	autoVEC y0 = newVECzero (numberOfCells);
-	autoVEC y1 = newVECzero (numberOfCells);
-	autoVEC meanX = newVECzero (numberOfFactors);
-	autoVEC stdevX = newVECzero (numberOfFactors);
+	autoVEC y0 = zero_VEC (numberOfCells);
+	autoVEC y1 = zero_VEC (numberOfCells);
+	autoVEC meanX = zero_VEC (numberOfFactors);
+	autoVEC stdevX = zero_VEC (numberOfFactors);
 	autoMAT smallMatrix = newMATzero (1+numberOfFactors, 1+numberOfParameters);
 	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label.get(), my columnHeaders [dependent2]. label.get());
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {

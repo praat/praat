@@ -44,7 +44,7 @@ autoSpectrum Sound_to_Spectrum (Sound me, bool fast) {
 		}
 		integer numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
 
-		autoVEC data = newVECzero (numberOfSamples);
+		autoVEC data = zero_VEC (numberOfSamples);
 		if (numberOfChannels == 1) {
 			const double *channel = & my z [1] [0];
 			for (integer i = 1; i <= my nx; i ++) {
@@ -142,7 +142,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 		const integer nfft = 2 * (thy nx - 1);
 		const integer ndata = Melder_clippedRight (numberOfCoefficients, nfft - 1);
 		const double scale = 10.0 * (gain > 0.0 ? sqrt (gain) : 1.0) / numberOfCoefficients;
-		autoVEC data = newVECzero (nfft);
+		autoVEC data = zero_VEC (nfft);
 		data [1] = 1.0;
 		for (integer i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];

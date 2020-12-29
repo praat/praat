@@ -69,7 +69,7 @@ void structCC :: v_info () {
 }
 
 void CC_Frame_init (CC_Frame me, integer numberOfCoefficients) {
-	my c = newVECzero (numberOfCoefficients);
+	my c = zero_VEC (numberOfCoefficients);
 	my numberOfCoefficients = numberOfCoefficients;
 }
 

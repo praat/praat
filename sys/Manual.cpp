@@ -296,7 +296,7 @@ static void search (Manual me, conststring32 query) {
 	}
 	static autoVEC goodnessOfMatch;
 	if (NUMisEmpty (goodnessOfMatch))
-		goodnessOfMatch = newVECzero (numberOfPages);
+		goodnessOfMatch = zero_VEC (numberOfPages);
 	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		char32 *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;

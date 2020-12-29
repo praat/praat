@@ -146,7 +146,7 @@ void VECsmooth_gaussian (VECVU const& out, constVECVU const& in, double sigma, N
 void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMfft_Table fftTable) {
 	Melder_require (in_out.size <= fftTable -> n,
 		U"The dimension of the table should at least equal the length of the input vector.");
-	autoVEC smooth = newVECzero (fftTable -> n);
+	autoVEC smooth = zero_VEC (fftTable -> n);
 	smooth.part (1, in_out.size)  <<=  in_out;
 	NUMfft_forward (fftTable, smooth.get());
 	/*
@@ -567,9 +567,9 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 	/*
 		The solution (3 cases)
 	*/
-	autoVEC w = newVECzero (n3);
+	autoVEC w = zero_VEC (n3);
 	autoVEC chi = newVECraw (n3);
-	autoVEC diag = newVECzero (n3);
+	autoVEC diag = zero_VEC (n3);
 
 	if (fabs (y [1]) < eps) {
 		/*
@@ -693,7 +693,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	Melder_require (delta > 0,
 		U"The solution's vector length should be positive.");
 	
-	autoVEC c = newVECzero (a.ncol);	
+	autoVEC c = zero_VEC (a.ncol);	
 	autoSVD svd = SVD_createFromGeneralMatrix (a);
 
 	if (alpha == 0.0) {
@@ -830,7 +830,7 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 			5. Translation vector tr = (X - sYT)'1 / x.nrow
 		*/
 		if (out_translation) {
-			autoVEC translation = newVECzero (x.ncol);
+			autoVEC translation = zero_VEC (x.ncol);
 			for (integer i = 1; i <= x.ncol; i ++) {
 				longdouble productsum = 0.0;
 				for (integer j = 1; j <= x.nrow; j ++)
@@ -871,7 +871,7 @@ double NUMmspline (constVEC const & knot, integer order, integer i, double x) {
 		Calculate M [i](x|1,t) according to eq.2.
 	*/
 	const integer ito = i + order - 1;
-	autoVEC m = newVECzero (order); 
+	autoVEC m = zero_VEC (order); 
 	for (integer j = i; j <= ito; j ++)
 		if (x >= knot [j] && x < knot [j + 1])
 			m [j - i + 1] = 1 / (knot [j + 1] - knot [j]);
@@ -1441,7 +1441,7 @@ double VECburg (VEC const& a, constVEC const& x) {
 	for (integer j = 1; j <= m; j ++)
 		a [j] = 0.0;
 
-	autoVEC b1 = newVECzero (n), b2 = newVECzero (n), aa = newVECzero (m);
+	autoVEC b1 = zero_VEC (n), b2 = zero_VEC (n), aa = zero_VEC (m);
 
 	// (3)
 
@@ -2058,13 +2058,13 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 			autoVEC mbs;
 			if (! completeMethod) {
 				numberOfCombinations = x.size / 2;
-				mbs = newVECzero (x.size); // allocate for the intercept calculation too
+				mbs = zero_VEC (x.size); // allocate for the intercept calculation too
 				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
 				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
 			} else { // use all combinations
 				numberOfCombinations = (x.size - 1) * x.size / 2;
-				mbs = newVECzero (numberOfCombinations);
+				mbs = zero_VEC (numberOfCombinations);
 				integer index = 0;
 				for (integer i = 1; i < x.size; i ++)
 					for (integer j = i + 1; j <= x.size; j ++)
@@ -2169,7 +2169,7 @@ void VECrc_from_area (VEC rc, constVEC area) {
 
 void VEClpc_from_area (VEC lpc, constVEC area) {
 	Melder_assert (lpc.size == area.size);
-	autoVEC rc = newVECzero (lpc.size);
+	autoVEC rc = zero_VEC (lpc.size);
 	VECrc_from_area (rc.get(), area);
 	VEClpc_from_rc (lpc, rc.get());
 }
@@ -2184,7 +2184,7 @@ void VECarea_from_lpc (VEC area, constVEC lpc) {
 #if 0
 /*********** Begin deprecated LPC routines ***********************************/
 void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
-	autoVEC b = newVECzero (p);
+	autoVEC b = zero_VEC (p);
 	autoVEC a  <<=  VEC(lpc, p);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
@@ -2276,14 +2276,14 @@ void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc) {
 
 void NUMlpc_area_to_lpc (double *area, integer m, double *lpc) {
 	// from area to reflection coefficients
-	autoVEC rc = newVECzero (m);
+	autoVEC rc = zero_VEC (m);
 	// normalisation: area [n+1] = 0.0001
 	NUMlpc_area_to_rc (area, m, rc.peek());
 	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc); // m-1 ???
 }
 
 void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
-	autoVEC rc = newVECzero (m);
+	autoVEC rc = zero_VEC (m);
 	NUMlpc_lpc_to_rc (lpc, m, rc.peek());
 	NUMlpc_rc_to_area (rc.peek(), m, area);
 
@@ -2928,7 +2928,7 @@ autoVEC newVECsolveSparse_IHT (constMATVU const& dictionary, constVECVU const& y
 	try {
 		Melder_assert (dictionary.ncol > dictionary.nrow); // must be underdetermined system
 		Melder_assert (dictionary.nrow == y.size); // y = D.x + e
-		autoVEC result = newVECzero (dictionary.ncol);
+		autoVEC result = zero_VEC (dictionary.ncol);
 		VECsolveSparse_IHT (result.get(), dictionary, y, numberOfNonZeros, maximumNumberOfIterations, tolerance, infoLevel);
 		return result;
 	} catch (MelderError) {

@@ -391,7 +391,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++)
-				autoVEC result = newVECzero (size);
+				autoVEC result = zero_VEC (size);
 			t = Melder_stopwatch () / size;   // 10^0..7: 76/7.7/1.23 / 0.165/0.24/0.25 / 1.30/1.63 ns
 		} break;
 		case kPraatTests::TIME_ZERO: {
@@ -580,7 +580,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				const autoVEC f { e, 10 };
 				#endif
 				{
-					autoVEC g = newVECzero (100);
+					autoVEC g = zero_VEC (100);
 					g [1] = 3.0;
 					VEC gg = g.get();
 					gg [2] = 4.0;
@@ -614,8 +614,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				VEC h;
 				autoVEC j;
 				//VEC jh = j;
-				//VEC zero = newVECzero (10);   // should be ruled out: "Call to deleted constructor of 'VEC' (aka 'vector<double>')"
-				//constVEC zero = newVECzero (10);   // ruled out: "Conversion function from 'autoVEC' (aka 'autovector<double>')
+				//VEC zero = zero_VEC (10);   // should be ruled out: "Call to deleted constructor of 'VEC' (aka 'vector<double>')"
+				//constVEC zero = zero_VEC (10);   // ruled out: "Conversion function from 'autoVEC' (aka 'autovector<double>')
 							// to 'constVEC' (aka 'constvector<double>') invokes a deleted function"
 				//j = h;   // up assignment standardly correctly ruled out: "No viable overloaded '='"
 				//h = j;   // down assignment was explicitly ruled out as well: "Overload resolution selected deleted operator '='"

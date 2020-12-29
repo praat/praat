@@ -4321,7 +4321,7 @@ static void do_zero_VEC () {
 		U"In the function \"zero#\", the number of elements is undefined.");
 	Melder_require (numberOfElements >= 0.0,
 		U"In the function \"zero#\", the number of elements should not be negative.");
-	pushNumericVector (newVECzero (Melder_iround (numberOfElements)));
+	pushNumericVector (zero_VEC (Melder_iround (numberOfElements)));
 }
 static void do_zero_MAT () {
 	Stackel narg = pop;

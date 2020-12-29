@@ -48,13 +48,13 @@ static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberO
 	try {
 		autoRBMLayer me = Thing_new (RBMLayer);
 		my numberOfInputNodes = numberOfInputNodes;
-		my inputBiases = newVECzero (numberOfInputNodes);
-		my inputActivities = newVECzero (numberOfInputNodes);
-		my inputReconstruction = newVECzero (numberOfInputNodes);
+		my inputBiases = zero_VEC (numberOfInputNodes);
+		my inputActivities = zero_VEC (numberOfInputNodes);
+		my inputReconstruction = zero_VEC (numberOfInputNodes);
 		my numberOfOutputNodes = numberOfOutputNodes;
-		my outputBiases = newVECzero (numberOfOutputNodes);
-		my outputActivities = newVECzero (numberOfOutputNodes);
-		my outputReconstruction = newVECzero (numberOfOutputNodes);
+		my outputBiases = zero_VEC (numberOfOutputNodes);
+		my outputActivities = zero_VEC (numberOfOutputNodes);
+		my outputReconstruction = zero_VEC (numberOfOutputNodes);
 		my weights = newMATzero (numberOfInputNodes, numberOfOutputNodes);
 		my inputsAreBinary = inputsAreBinary;
 		return me;

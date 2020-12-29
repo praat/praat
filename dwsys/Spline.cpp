@@ -164,7 +164,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, conststring32
 		U"Number of coefficients should equal ", n, U".");
 
 	my numberOfKnots = interiorKnots.size + 2;
-	my knots = newVECzero (my numberOfKnots);
+	my knots = zero_VEC (my numberOfKnots);
 	my knots.part (2, interiorKnots.size + 1) <<= interiorKnots.all();
 	my knots [1] = my xmin;
 	my knots [my numberOfKnots] = my xmax;
@@ -174,7 +174,7 @@ void Spline_init (Spline me, double xmin, double xmax, integer degree, integer n
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	FunctionSeries_init (me, xmin, xmax, numberOfCoefficients);
-	my knots = newVECzero (numberOfKnots);
+	my knots = zero_VEC (numberOfKnots);
 	my degree = degree;
 	my numberOfKnots = numberOfKnots;
 	my knots [1] = xmin;

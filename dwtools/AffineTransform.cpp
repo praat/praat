@@ -71,7 +71,7 @@ void AffineTransform_init (AffineTransform me, integer dimension) {
 	
 	my dimension = dimension;
 	my r = newMATzero (dimension, dimension);
-	my t = newVECzero (dimension);
+	my t = zero_VEC (dimension);
 }
 
 autoAffineTransform AffineTransform_create (integer dimension) {

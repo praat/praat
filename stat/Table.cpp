@@ -718,7 +718,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 
 		autoVEC sortingColumn;
 		if (columnsToMedianize.size > 0 || columnsToMedianizeLogarithmically.size > 0)
-			sortingColumn = newVECzero (my rows.size);
+			sortingColumn = zero_VEC (my rows.size);
 		/*
 			Set the column names. Within the dependent variables, the same name may occur more than once.
 		*/

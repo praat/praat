@@ -65,8 +65,8 @@ autoPolygon Polygon_create (integer numberOfPoints) {
 	try {
 		autoPolygon me = Thing_new (Polygon);
 		my numberOfPoints = numberOfPoints;
-		my x = newVECzero (numberOfPoints);
-		my y = newVECzero (numberOfPoints);
+		my x = zero_VEC (numberOfPoints);
+		my y = zero_VEC (numberOfPoints);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polygon not created.");

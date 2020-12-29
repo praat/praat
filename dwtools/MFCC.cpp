@@ -49,7 +49,7 @@ autoMFCC MFCC_create (double tmin, double tmax, integer nt, double dt, double t1
 void MFCC_lifter (MFCC me, integer lifter) {
 	try {
 		Melder_assert (lifter > 0);
-		autoVEC c = newVECzero (my maximumNumberOfCoefficients);
+		autoVEC c = zero_VEC (my maximumNumberOfCoefficients);
 		for (integer icoef = 1; icoef <= my maximumNumberOfCoefficients; icoef ++)
 			c [icoef] = (1 + lifter / 2 * sin (NUMpi * icoef / lifter));   // BUG ?
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {

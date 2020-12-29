@@ -28,7 +28,7 @@
 		VEC x3 { a, 100 };   // initializes x to 100 values from a base-1 array
 
 		autoVEC y;                     // initializes y.cells to nullptr and y.size to 0
-		autoVEC y2 = newVECzero (100); // initializes y to 100 zeroes, having ownership
+		autoVEC y2 = zero_VEC (100);   // initializes y to 100 zeroes, having ownership
 		autoVEC y1 = newVECraw (100);  // initializes y to 100 uninitialized values (caution!), having ownership
 		y.adoptFromAmbiguousOwner (x); // initializes y to the content of x, taking ownership (explicit, so not "y = x")
 		VEC z = y.releaseToAmbiguousOwner();   // releases ownership, y.cells becoming nullptr
@@ -85,8 +85,8 @@ public:
 		= default;
 	/*
 		Letting an autovector convert to a vector would lead to errors such as in
-			VEC vec = newVECzero (10);
-		where newVECzero produces a temporary that is deleted immediately
+			VEC vec = zero_VEC (10);
+		where zero_VEC produces a temporary that is deleted immediately
 		after the initialization of vec.
 		So we rule out this initialization.
 	*/
@@ -94,7 +94,7 @@ public:
 		= delete;
 	/*
 		Likewise, an assignment like
-			autoVEC x = newVECzero (10);
+			autoVEC x = zero_VEC (10);
 			VEC y;
 			y = x;
 		should be ruled out. Instead, one should do
@@ -186,8 +186,8 @@ public:
 	//constvector& operator= (constvector const& other) = default;
 	/*
 		Letting an autovector convert to a constvector would lead to errors such as in
-			constVEC vec = newVECzero (10);
-		where newVECzero produces a temporary that is deleted immediately
+			constVEC vec = zero_VEC (10);
+		where zero_VEC produces a temporary that is deleted immediately
 		after the initialization of vec.
 		So we rule out this initialization.
 	*/
@@ -1278,7 +1278,7 @@ autotensor3<T> newtensor3part (tensor3<T> const& x,
 /*
 	instead of vector<double> we say VEC, because we want to have a one-to-one
 	relation between VEC functions and the scripting language.
-	For instance, we have newVECraw and newVECzero because Praat scripting has raw# and zero#.
+	For instance, we have newVECraw and zero_VEC because Praat scripting has raw# and zero#.
 */
 using VEC = vector <double>;
 using VECVU = vectorview <double>;
@@ -1288,7 +1288,7 @@ using autoVEC = autovector <double>;
 inline autoVEC newVECraw (integer size) {
 	return newvectorraw <double> (size);
 }
-inline autoVEC newVECzero (integer size) {
+inline autoVEC zero_VEC (integer size) {
 	return newvectorzero <double> (size);
 }
 inline autoVEC newVECcopy (constVECVU const& source) {

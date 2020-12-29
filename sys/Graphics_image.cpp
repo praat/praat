@@ -271,8 +271,8 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 			try {
 				autoINTVEC ileftBuffer = newINTVECzero (clipx2 - clipx1 + 1);
 				autoINTVEC irightBuffer = newINTVECzero (clipx2 - clipx1 + 1);
-				autoVEC leftWeightBuffer = newVECzero (clipx2 - clipx1 + 1);
-				autoVEC rightWeightBuffer = newVECzero (clipx2 - clipx1 + 1);
+				autoVEC leftWeightBuffer = zero_VEC (clipx2 - clipx1 + 1);
+				autoVEC rightWeightBuffer = zero_VEC (clipx2 - clipx1 + 1);
 				integer *ileft  = & ileftBuffer  [1 - clipx1];
 				integer *iright = & irightBuffer [1 - clipx1];
 				double *leftWeight  = & leftWeightBuffer  [1 - clipx1];

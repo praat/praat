@@ -1132,7 +1132,7 @@ autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, 
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector_string) {
 	autoSTRVEC vector = splitByWhitespace_STRVEC (vector_string);
-	autoVEC pos = newVECzero (my dimension);
+	autoVEC pos = zero_VEC (my dimension);
 	for (integer i = 1; i <= vector.size; i ++) {
 		pos [i] = Melder_atof (vector [i].get());
 		if (i == my dimension)
@@ -1167,7 +1167,7 @@ autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, 
 		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues,
 			U"Direction index too high.");
 		
-		autoVEC v = newVECzero (my dimension);
+		autoVEC v = zero_VEC (my dimension);
 		if (xmax == xmin || ymax == ymin) {
 			double xmind, xmaxd, ymind, ymaxd, nsigmas = 2.0;
 

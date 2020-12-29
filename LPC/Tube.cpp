@@ -60,7 +60,7 @@ void Tube_Frame_init (Tube_Frame me, integer numberOfSegments, double length) {
 	my length = length;
 	Melder_require (numberOfSegments > 0,
 		U"Number of segments should be a natural number.");
-	my c = newVECzero (numberOfSegments);
+	my c = zero_VEC (numberOfSegments);
 }
 
 /* Gray & Markel (1979), LPTRN */

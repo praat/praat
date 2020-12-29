@@ -42,7 +42,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 		// Overall centroid and apriori probabilities and costs.
 
-		autoVEC centroid = newVECzero (dimension);
+		autoVEC centroid = zero_VEC (dimension);
 		autoMAT between = newMATzero (thy numberOfGroups, dimension);
 		thy aprioriProbabilities = newVECraw (thy numberOfGroups);
 
@@ -269,7 +269,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoVEC ln_determinant = newVECraw (g);
 		autoVEC buf = newVECraw (p);
 		autoVEC displacement = newVECraw (p);
-		autoVEC x = newVECzero (p);
+		autoVEC x = zero_VEC (p);
 		autovector <SSCP> sscpvec = newvectorzero <SSCP> (g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);

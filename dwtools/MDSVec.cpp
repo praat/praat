@@ -51,7 +51,7 @@ autoMDSVec MDSVec_create (integer numberOfPoints) {
 		autoMDSVec me = Thing_new (MDSVec);
 		my numberOfPoints = numberOfPoints;
 		my numberOfProximities = numberOfPoints * (numberOfPoints - 1) / 2;
-		my proximity = newVECzero (my numberOfProximities);
+		my proximity = zero_VEC (my numberOfProximities);
 		my rowIndex = newINTVECzero (my numberOfProximities);
 		my columnIndex = newINTVECzero (my numberOfProximities);
 		return me;

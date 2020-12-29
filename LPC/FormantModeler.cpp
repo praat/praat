@@ -279,7 +279,7 @@ static autoVEC FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks 
 			*toTrack = ( *toTrack == numberOfTracks ? numberOfTracks - 1 : *toTrack );
 		}
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoVEC sumOfVariances = newVECzero (numberOfDataPoints);
+		autoVEC sumOfVariances = zero_VEC (numberOfDataPoints);
 		for (integer itrack = *fromTrack; itrack <= *toTrack; itrack ++) {
 			autoVEC vari = FormantModeler_getVariancesBetweenTrackAndEstimatedTrack (me, formantTrack, estimatedTrack);
 			for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++) {
@@ -347,7 +347,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 		Melder_require (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) > 0,
 			U"Not enough data points in drawing range.");
 		const integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
-		autoVEC chisq = newVECzero (numberOfDataPoints);
+		autoVEC chisq = zero_VEC (numberOfDataPoints);
 		FormantModeler_getCumulativeChiScores (me, chisq.get());
 		if (ymax <= ymin)
 			NUMextrema (chisq.part (ixmin, ixmax), & ymin, & ymax);

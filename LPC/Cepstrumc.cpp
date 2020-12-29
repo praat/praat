@@ -59,7 +59,7 @@ void structCepstrumc :: v_info () {
 }
 
 void Cepstrumc_Frame_init (Cepstrumc_Frame me, integer nCoefficients) {
-	my c = newVECzero (nCoefficients);
+	my c = zero_VEC (nCoefficients);
 	my nCoefficients = my c.size; // maintain invariant
 }
 
