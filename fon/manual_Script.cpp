@@ -1276,6 +1276,25 @@ CODE (U"writeInfoLine: \"The sum of the cells along the diagonal is \", sumDiago
 NORMAL (U"The first version, which accesses the contents directly, is not only two lines shorter, but also three times faster.")
 MAN_END
 
+MAN_BEGIN (U"Functions", U"ppgb", 20201230)
+NORMAL (U"A full list of functions that you can use in @formulas and @scripting.")
+LIST_ITEM (U"##abs (%x)# \\-- absolute value")
+LIST_ITEM (U"##arccos (%x)# \\-- inverse cosine")
+LIST_ITEM (U"##arcsin (%x)# \\-- inverse sine")
+LIST_ITEM (U"##arctan (%x)# \\-- inverse tangent")
+LIST_ITEM (U"##cos (%x)# \\-- cosine")
+LIST_ITEM (U"##cosh (%x)# \\-- hyperbolic cosine")
+LIST_ITEM (U"##exp (%x)# \\-- exponentiation")
+LIST_ITEM (U"##mul\\# \\#  (%%a\\# \\# %, %%b\\# \\# %)# \\-- matrix multiplication")
+LIST_ITEM (U"##readFile\\$  (%%filePath\\$ %)# \\-- read a whole text file into a string")
+LIST_ITEM (U"##readLinesFromFile\\$ \\#  (%%filePath\\$ %)# \\-- read all lines from a text file")
+LIST_ITEM (U"##sin (%x)# \\-- sine")
+LIST_ITEM (U"##sinh (%x)# \\-- hyperbolic sine")
+LIST_ITEM (U"##splitByWhitespace\\$ \\#  (%%string\\$ %)# \\-- split a string into inks")
+LIST_ITEM (U"##tan (%x)# \\-- tangent")
+LIST_ITEM (U"##tanh (%x)# \\-- hyperbolic tangent")
+MAN_END
+
 MAN_BEGIN (U"Hidden commands", U"ppgb", 20110129)
 NORMAL (U"Some commands in Praat's fixed and dynamic menus are hidden by default. "
 	"You can still call hidden commands from scripts, run them by clicking on them in a @ButtonEditor, "
