@@ -387,7 +387,7 @@ NORMAL (U"Besides the TextGrid text file format described above, TextGrid object
 	"and save the resulting TextGrid object as a text file with @@Save as text file...@.")
 MAN_END
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20201229)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20201230)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -399,11 +399,11 @@ NORMAL (U"Before trying the task of learning how to write Praat extensions in C 
 	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (U"2. Getting the existing source code")
 NORMAL (U"You obtain the Praat source code from GitHub (https://github.com/praat), in a file with a name like "
-	"##praat6121_sources.zip# or ##praat6121_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
+	"##praat6199_sources.zip# or ##praat6199_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
 	"The result will be a set of directories "
-	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio and #espeak in it), "
-	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #main, #makefiles, #test, #dwtest, and #generate,"
-	"plus a makefile and Xcode project for MacOS X and a README.md file.")
+	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio, #espeak and #vorbis in it), "
+	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #main, #makefiles, #test, #dwtest, and #generate, "
+	"plus a makefile and Xcode project for macOS and a README.md file.")
 ENTRY (U"3. Building Praat")
 NORMAL (U"Consult the README file on GitHub for directions to compile and link Praat for your platform.")
 ENTRY (U"4. Extending Praat")
