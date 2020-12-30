@@ -561,19 +561,19 @@ static conststring32 quartz_getFontName (int font, int style) {
 				style == 0 ? U"Times New Roman"
 				: style == Graphics_BOLD ? U"Times New Roman Bold"
 				: style == Graphics_ITALIC ? U"Times New Roman Italic"
-				: U"Times New Roman Bold-Italic";
+				: U"Times New Roman Bold Italic";
 		case (int) kGraphics_font::HELVETICA:
 			return
 				style == 0 ? U"Arial"
 				: style == Graphics_BOLD ? U"Arial Bold"
 				: style == Graphics_ITALIC ? U"Arial Italic"
-				: U"Arial Bold-Italic";
+				: U"Arial Bold Italic";
 		case (int) kGraphics_font::COURIER:
 			return
 				style == 0 ? U"Courier New"
 				: style == Graphics_BOLD ? U"Courier New Bold"
 				: style == Graphics_ITALIC ? U"Courier New Italic"
-				: U"Courier New Bold-Italic";
+				: U"Courier New Bold Italic";
 		case (int) kGraphics_font::PALATINO:
 			if (Melder_debug == 900)
 				return U"DG Meta Serif Science";
@@ -581,7 +581,7 @@ static conststring32 quartz_getFontName (int font, int style) {
 				return style == 0 ? U"Palatino"
 				: style == Graphics_BOLD ? U"Palatino Bold"
 				: style == Graphics_ITALIC ? U"Palatino Italic"
-				: U"Palatino Bold-Italic";
+				: U"Palatino Bold Italic";
 		case kGraphics_font_SYMBOL:
 			return U"Symbol";
 		case kGraphics_font_IPATIMES:
@@ -591,7 +591,7 @@ static conststring32 quartz_getFontName (int font, int style) {
 				style == 0 ? U"Charis SIL"
 				: style == Graphics_BOLD ? U"Charis SIL Bold"
 				: style == Graphics_ITALIC ? U"Charis SIL Italic"
-				: U"Charis SIL Bold-Italic";
+				: U"Charis SIL Bold Italic";
 		case kGraphics_font_DINGBATS:
 			return U"Zapf Dingbats";
 		default:
