@@ -32,8 +32,8 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		Melder_require (my numberOfColumns == thy numberOfColumns,
 			U"The dimension of the Covariance and the TableOfReal shoiuld be equal.");
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
-		autoVEC centroid = newVECcopy (my centroid.get());
-		autoMAT covari = newMATcopy (my data.get());
+		autoVEC centroid = copy_VEC (my centroid.get());
+		autoMAT covari = copy_MAT (my data.get());
 		/*
 			Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
 				(x-m)'S**-1 (x-m) = (x-m)'L**-1' . L**-1. (x-m) =
@@ -44,7 +44,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		MATlowerCholeskyInverse_inplace (covari.get(), nullptr);
 
 		if (useTableCentroid)
-			VECcolumnMeans (centroid.get(), thy data.get());
+			columnMeans_VEC_out (centroid.get(), thy data.get());
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
 			his data [k] [1] = sqrt (NUMmahalanobisDistanceSquared (covari.get(), thy data.row (k), centroid.get()));
 			if (thy rowLabels [k])
@@ -71,7 +71,7 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VECVU vec
 	/*
 		Rotate back
 	*/	
-	VECmul (vec, buf, thy eigenvectors.get());
+	mul_VEC_out (vec, buf, thy eigenvectors.get());
 	vec  +=  my centroid.get();
 }
 
@@ -166,11 +166,11 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		thy centroid.all()  *=  1.0 / thy numberOfObservations;
 		
 		autoVEC mean = raw_VEC (thy numberOfColumns);
-		autoMAT outer = newMATraw (thy numberOfColumns, thy numberOfColumns);
+		autoMAT outer = raw_MAT (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
 			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
-			MATouter (outer.all(), mean.all(), mean.all());
+			outer_MAT_out (outer.all(), mean.all(), mean.all());
 			if (thy numberOfRows == 1)
 				thy data.row(1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
 			else
@@ -307,7 +307,7 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 
 static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s2) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
-	autoMAT m = newMATmul (s1, s2);
+	autoMAT m = mul_MAT (s1, s2);
 	double trace2 = NUMtrace2 (m.get(), m.get());
 	return trace2;
 }
@@ -386,7 +386,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		*/
 		autoCovariance pool = Covariances_pool (me, thee);
 		Melder_assert (my data.ncol == p);   // ppgb 20180913
-		autoMAT s = newMATcopy (my data.get());
+		autoMAT s = copy_MAT (my data.get());
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 
@@ -404,7 +404,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 			the matrices S1 and S2 are the covariance matrices 'my data' and 'thy data' divided by N1 and N2 respectively.
 			S is the pooled covar divided by N.
 		*/
-		autoMAT s1 = newMATraw (p, p), s2 = newMATraw (p, p), s = newMATraw (p, p);
+		autoMAT s1 = raw_MAT (p, p), s2 = raw_MAT (p, p), s = raw_MAT (p, p);
 		for (integer i = 1; i <= p; i ++) {
 			for (integer j = 1; j <= p; j ++) {
 				s1 [i] [j] = my data [i] [j] / my numberOfObservations;
@@ -510,13 +510,13 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				const Covariance ci = my at [i];
 				const double ni = ci -> numberOfObservations - 1;
-				autoMAT s1 = newMATmul (ci -> data.get(), si.get());
+				autoMAT s1 = mul_MAT (ci -> data.get(), si.get());
 				const double trace_ii = NUMtrace2 (s1.get(), s1.get());
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (integer j = i + 1; j <= numberOfMatrices; j ++) {
 					const Covariance cj = my at [j];
 					const double nj = cj -> numberOfObservations - 1;
-					autoMAT s2 = newMATmul (cj -> data.get(), si.get());
+					autoMAT s2 = mul_MAT (cj -> data.get(), si.get());
 					const double trace_ij = NUMtrace2 (s1.get(), s2.get());
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
@@ -642,7 +642,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	Melder_require (numberOfObservations > 1,
 		U"Number of observations too small.");
 	Melder_assert (thy data.ncol == p);
-	autoMAT linv = newMATcopy (thy data.get());
+	autoMAT linv = copy_MAT (thy data.get());
 	double ln_thee;
 	MATlowerCholeskyInverse_inplace (linv.get(), & ln_thee);
 	const double ln_me = NUMdeterminant_fromSymmetricMatrix (my data.get());

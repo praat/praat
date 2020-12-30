@@ -105,7 +105,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 		*/
 		Melder_sprint (pathName,kMelder_MAXPATH+1, fileNameHead, fileNames, fileNameTail);
 		/*
-			Make sure we are in the correct directory.
+			Make sure we are in the correct folder.
 		*/
 		if (MelderDir_isNull (& my rootDirectory)) {
 			/*
@@ -120,7 +120,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 			if (Melder_debug == 32) {
 				MelderInfo_open ();
 				MelderInfo_writeLine (U"Path name <", pathName, U">");
-				MelderInfo_writeLine (U"Root directory <", my rootDirectory.path, U">");
+				MelderInfo_writeLine (U"Root folder <", my rootDirectory.path, U">");
 				MelderInfo_writeLine (U"Full path name <", file.path, U">");
 				MelderInfo_close ();
 			}

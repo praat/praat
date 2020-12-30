@@ -369,7 +369,7 @@ DIRECT (REAL_Matrix_getSum) {
 
 DIRECT (NUMMAT_Matrix_getAllValues) {
 	NUMMAT_ONE (Matrix)
-		autoMAT result = newMATcopy (my z.all());
+		autoMAT result = copy_MAT (my z.all());
 	NUMMAT_ONE_END
 }
 
@@ -380,7 +380,7 @@ DO
 	NUMVEC_ONE (Matrix)
 		Melder_require (columnNumber <= my nx,
 			U"The column number (", columnNumber, U") should not be greater than the number of columns (", my nx, U").");
-		autoVEC result = newVECcopy (my z.column (columnNumber));
+		autoVEC result = copy_VEC (my z.column (columnNumber));
 	NUMVEC_ONE_END
 }
 
@@ -391,7 +391,7 @@ DO
 	NUMVEC_ONE (Matrix)
 		Melder_require (rowNumber <= my ny,
 			U"The row number (", rowNumber, U") should not be greater than the number of rows (", my ny, U").");
-		autoVEC result = newVECcopy (my z.row (rowNumber));
+		autoVEC result = copy_VEC (my z.row (rowNumber));
 	NUMVEC_ONE_END
 }
 

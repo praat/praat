@@ -688,7 +688,7 @@ void TimeSoundEditor_init (TimeSoundEditor me, conststring32 title, Function dat
 		} else {
 			Melder_fatal (U"Invalid sound class in TimeSoundEditor::init.");
 		}
-		my d_sound.muteChannels = newBOOLVECzero (numberOfChannels);
+		my d_sound.muteChannels = zero_BOOLVEC (numberOfChannels);
 	}
 	FunctionEditor_init (me, title, data);
 }

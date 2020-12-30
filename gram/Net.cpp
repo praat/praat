@@ -55,7 +55,7 @@ static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberO
 		my outputBiases = zero_VEC (numberOfOutputNodes);
 		my outputActivities = zero_VEC (numberOfOutputNodes);
 		my outputReconstruction = zero_VEC (numberOfOutputNodes);
-		my weights = newMATzero (numberOfInputNodes, numberOfOutputNodes);
+		my weights = zero_MAT (numberOfInputNodes, numberOfOutputNodes);
 		my inputsAreBinary = inputsAreBinary;
 		return me;
 	} catch (MelderError) {
@@ -604,7 +604,7 @@ autoMatrix Net_extractWeights (Net me, integer layerNumber) {
 }
 
 autoMAT structRBMLayer :: v_getWeights () {
-	return newMATcopy (our weights.get());
+	return copy_MAT (our weights.get());
 }
 
 autoMAT Net_getWeights (Net me, integer layerNumber) {

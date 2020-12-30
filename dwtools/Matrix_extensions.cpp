@@ -325,7 +325,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		if (nr < nc)
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
 
-		autoMAT u = newMATraw (nr, nc);
+		autoMAT u = raw_MAT (nr, nc);
 		autoVEC b = raw_VEC (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 

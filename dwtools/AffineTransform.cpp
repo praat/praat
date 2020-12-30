@@ -50,8 +50,8 @@
 void structAffineTransform :: v_transform (MATVU const& out, constMATVU const& in) {
 	Melder_assert (in.nrow == out.nrow);
 	Melder_assert (in.ncol == out.ncol);
-	MATmul (out, in, r.get());
-	out  +=  t.all();
+	mul_MAT_out (out, in, our r.get());
+	out  +=  our t.all();
 }
 
 autoAffineTransform structAffineTransform :: v_invert () {
@@ -59,7 +59,7 @@ autoAffineTransform structAffineTransform :: v_invert () {
 	constexpr double tolerance = 0.000001;
 
 	MATpseudoInverse (thy r.get(), our r.get(), tolerance);
-	VECmul (thy t.get(), thy r.get(), our t.get());
+	mul_VEC_out (thy t.get(), thy r.get(), our t.get());
 	thy t.get()  *=  -1.0;
 	return thee;
 }
@@ -70,7 +70,7 @@ void AffineTransform_init (AffineTransform me, integer dimension) {
 	Melder_require (dimension > 0, U"Dimensionality should be greater than zero.");
 	
 	my dimension = dimension;
-	my r = newMATzero (dimension, dimension);
+	my r = zero_MAT (dimension, dimension);
 	my t = zero_VEC (dimension);
 }
 

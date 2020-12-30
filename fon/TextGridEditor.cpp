@@ -1801,7 +1801,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			/*
 				Determine the set of selected boundaries and points, and the dragging range.
 			*/
-			our draggingTiers = newBOOLVECzero (numberOfTiers);
+			our draggingTiers = zero_BOOLVEC (numberOfTiers);
 			leftDraggingBoundary = our tmin;
 			rightDraggingBoundary = our tmax;
 			for (int itier = 1; itier <= numberOfTiers; itier ++) {

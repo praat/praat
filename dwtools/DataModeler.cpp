@@ -791,7 +791,7 @@ void DataModeler_fit (DataModeler me) {
 		autoVEC yEstimation = zero_VEC (numberOfValidDataPoints);
 		autoVEC term = zero_VEC (my numberOfParameters);
 		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());
-		autoMAT designMatrix = newMATzero (numberOfValidDataPoints, numberOfFreeParameters);
+		autoMAT designMatrix = zero_MAT (numberOfValidDataPoints, numberOfFreeParameters);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 		/*
 			For function evaluation with only the FIXED parameters

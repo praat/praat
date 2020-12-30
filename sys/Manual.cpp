@@ -53,13 +53,13 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
+static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
-		TEXTFIELD (directory, U"Directory:", U"")
+		TEXTFIELD (folder, U"Directory:", U"")
 	EDITOR_OK
-		SET_STRING (directory, Melder_dirToPath (& my rootDirectory))
+		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	EDITOR_DO
-		ManPages_writeAllToHtmlDir ((ManPages) my data, directory);
+		ManPages_writeAllToHtmlDir ((ManPages) my data, folder);
 	EDITOR_END
 }
 
@@ -415,7 +415,8 @@ void structManual :: v_createMenus () {
 
 	Editor_addCommand (this, U"File", U"Print manual...", 0, menu_cb_printRange);
 	Editor_addCommand (this, U"File", U"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
-	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
+	Editor_addCommand (this, U"File", U"Save manual to HTML folder...", 0, menu_cb_writeAllToHtmlFolder);
+	Editor_addCommand (this, U"File", U"Save manual to HTML directory...", praat_DEPRECATED_2020, menu_cb_writeAllToHtmlFolder);
 	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 
 	Editor_addCommand (this, U"Go to", U"Search for page (list)...", 0, menu_cb_searchForPageList);

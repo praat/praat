@@ -47,7 +47,7 @@ autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, inte
 	try {
 		autoComplexSpectrogram me = Thing_new (ComplexSpectrogram);
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
-		my phase = newMATzero (my ny, my nx);
+		my phase = zero_MAT (my ny, my nx);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ComplexSpectrogram not created.");

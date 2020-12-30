@@ -476,17 +476,17 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 	}
 END }
 
-FORM (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
-	TEXTFIELD (directory, U"Directory:", U"")
+FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr) {
+	TEXTFIELD (folder, U"Folder:", U"")
 OK
 	LOOP {
 		iam (ManPages);
-		SET_STRING (directory, Melder_dirToPath (& my rootDirectory))
+		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	}
 DO
 	LOOP {
 		iam (ManPages);
-		ManPages_writeAllToHtmlDir (me, directory);
+		ManPages_writeAllToHtmlDir (me, folder);
 	}
 END }
 
@@ -529,14 +529,14 @@ DO
 	manual.releaseToUser();
 END }
 
-FORM (HELP_WriteManualToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
-	TEXTFIELD (directory, U"Directory:", U"")
+FORM (HELP_WriteManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
+	TEXTFIELD (folder, U"Directory:", U"")
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (directory, Melder_dirToPath (& currentDirectory))
+	SET_STRING (folder, Melder_dirToPath (& currentDirectory))
 DO
-	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, directory);
+	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, folder);
 END }
 
 /********** Menu descriptions. **********/
@@ -710,14 +710,16 @@ void praat_addMenus (GuiWindow window) {
 	praat_addAction1 (classDaata, 0, U"Save as binary file...", nullptr, 0, SAVE_Data_writeToBinaryFile);
 	praat_addAction1 (classDaata, 0,   U"Write to binary file...", nullptr, praat_DEPRECATED_2011, SAVE_Data_writeToBinaryFile);
 
-	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", nullptr, 0, PRAAT_ManPages_saveToHtmlDirectory);
+	praat_addAction1 (classManPages, 1, U"Save to HTML folder...", nullptr, 0, PRAAT_ManPages_saveToHtmlFolder);
+	praat_addAction1 (classManPages, 1, U"Save to HTML directory...", nullptr, praat_DEPRECATED_2020, PRAAT_ManPages_saveToHtmlFolder);
 	praat_addAction1 (classManPages, 1, U"View", nullptr, 0, WINDOW_ManPages_view);
 }
 
 void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- manual --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, 0, HELP_GoToManualPage);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML directory...", nullptr, praat_HIDDEN, HELP_WriteManualToHtmlDirectory);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML folder...", nullptr, praat_HIDDEN, HELP_WriteManualToHtmlFolder);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML directory...", nullptr, praat_DEPRECATED_2020, HELP_WriteManualToHtmlFolder);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp",
 		Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
 		nullptr, 'M' | praat_NO_API, HELP_SearchManual);

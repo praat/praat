@@ -106,7 +106,7 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		if (stressWeight > 0.0)
 			stresses = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 		
-		autoINTMAT psi = newINTMATzero (my formants.size, my nx);
+		autoINTMAT psi = zero_INTMAT (my formants.size, my nx);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
 		/*
 			delta [i][j] = minimum cost to reach state i at time j

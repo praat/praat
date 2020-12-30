@@ -60,14 +60,14 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 		return;
 	}
 	const integer nc = b.ncol;
-	autoMAT u = newMATzero (nc, nc);
+	autoMAT u = zero_MAT (nc, nc);
 	autoVEC evec = zero_VEC (nc);
 	autoSVD svd = SVD_create (nc, nc);
 
 	// Steps 1 & 2: C = A'A and W = A'B
 
-	autoMAT c = newMATmtm (a);
-	autoMAT w = newMATmul (a.transpose(), b);
+	autoMAT c = mtm_MAT (a);
+	autoMAT w = mul_MAT (a.transpose(), b);
 	const double checkc = NUMsum (c.all());
 	const double checkw = NUMsum (w.all());
 	
@@ -121,7 +121,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 		SVD_update (svd.get(), u.all());
 
 		// Step 9
-		MATmul (t, svd -> u.all(), svd -> v.transpose());
+		mul_MAT_out (t, svd -> u.all(), svd -> v.transpose());
 		t  *=  -1.0;
 
 		numberOfIterations++;

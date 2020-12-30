@@ -339,7 +339,7 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 
 		my b = raw_VEC (my numberOfParameters);
 		my knot = raw_VEC (numberOfKnots);
-		my m = newMATzero (nData, my numberOfParameters);
+		my m = zero_MAT (nData, my numberOfParameters);
 
 		for (integer i = 1; i <= my numberOfParameters; i ++)
 			my b [i] = NUMrandomUniform (0.0, 1.0);
@@ -359,9 +359,9 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		const integer nrow = my numberOfRows, ncol = my numberOfColumns;
 		const integer dimmin = std::min (nrow, ncol);
 
-		autoMAT h = newMATcopy (my data.get());
-		autoVEC rowsum = newVECrowSums (my data.get());
-		autoVEC colsum = newVECcolumnSums (my data.get());
+		autoMAT h = copy_MAT (my data.get());
+		autoVEC rowsum = rowSums_VEC (my data.get());
+		autoVEC colsum = columnSums_VEC (my data.get());
 		autoConfiguration thee = Configuration_create (nrow + ncol, numberOfDimensions);
 
 		if (numberOfDimensions == 0)
@@ -675,7 +675,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, integer sy
 				for (integer j = i + 1; j <= nxy; j ++)
 					thy data [i] [j] = thy data [j] [i] = (thy data [i] [j] + thy data [j] [i]) / 2;
 		} else if (symmetrizeMethod == 3) {   // method Houtgast
-			autoMAT p = newMATcopy (thy data.get());
+			autoMAT p = copy_MAT (thy data.get());
 			for (integer i = 1; i <= nxy; i ++) {
 				for (integer j = i; j <= nxy; j ++) {
 					longdouble tmp = 0;
@@ -1040,7 +1040,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		/*
 			Determine the average scalar product matrix (Pmean) of dimension [1..nPoints] [1..nPoints].
 		*/		
-		autoMAT pmean = newMATzero (nPoints, nPoints);
+		autoMAT pmean = zero_MAT (nPoints, nPoints);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
@@ -1066,7 +1066,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		*/
 		
 		autoMAT yinv = newMATpseudoInverse (y.get(), 1e-14);
-		autoTEN3 ci = newTEN3raw (numberOfSources, numberOfDimensions, numberOfDimensions);
+		autoTEN3 ci = raw_TEN3 (numberOfSources, numberOfDimensions, numberOfDimensions);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			const ScalarProduct sp = my at [i];
@@ -1079,7 +1079,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 			Get the first eigenvector and form matrix cl from a linear combination of the C [i]'s
 		*/
 		
-		autoMAT a = newMATraw (numberOfSources, numberOfSources);
+		autoMAT a = raw_MAT (numberOfSources, numberOfSources);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = i; j <= numberOfSources; j ++) {
@@ -1092,7 +1092,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		
 		MAT_getEigenSystemFromSymmetricMatrix (a.get(), & evec, nullptr, false);
 		
-		autoMAT cl = newMATzero (numberOfDimensions, numberOfDimensions);
+		autoMAT cl = zero_MAT (numberOfDimensions, numberOfDimensions);
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
 				for (integer k = 1; k <= numberOfDimensions; k ++) {
@@ -1109,7 +1109,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, integer numbe
 		autoMAT K;
 		MAT_getEigenSystemFromSymmetricMatrix (cl.get(), & K, nullptr, false);
 
-		MATmul (thy data.get(), y.get(), K.get()); // Y.K
+		mul_MAT_out (thy data.get(), y.get(), K.get()); // Y.K
 
 		Configuration_normalize (thee.get(), 0, true);
 
@@ -1162,7 +1162,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, constMAT vplus) {
 	const integer nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
 
-	autoMAT b = newMATraw (nPoints, nPoints);
+	autoMAT b = raw_MAT (nPoints, nPoints);
 	autoDistance distZ = Configuration_to_Distance (cz);
 	/*
 		compute B(Z) (eq. 8.25)
@@ -1363,7 +1363,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			aw = Weight_create (nPoints);
 			weight = aw.get();
 		}
-		autoMAT v = newMATraw (nPoints, nPoints);
+		autoMAT v = raw_MAT (nPoints, nPoints);
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
@@ -1608,7 +1608,7 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 		autoKruskal me = Thing_new (Kruskal);
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
 		my proximities = ProximityList_create ();
-		my dx = newMATraw (numberOfPoints, numberOfDimensions);
+		my dx = raw_MAT (numberOfPoints, numberOfDimensions);
 		my tiesHandling = kMDS_TiesHandling::PRIMARY_APPROACH;
 		my stress_formula = kMDS_KruskalStress::KRUSKAL_1;
 		return me;
@@ -1752,7 +1752,7 @@ static double func (Daata object, VEC const& p) {
 		normalize the configuration
 	*/
 	MATfromVEC_inplace (x, p);
-	MATcentreEachColumn_inplace (x);
+	centreEachColumn_MAT_inout (x);
 	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints));
 	/*
 		Calculate interpoint distances from the configuration
@@ -1852,7 +1852,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 	const integer nSources = zc -> size;
 
 	const double tolerance = 1e-4; // reasonable for dominant eigenvector estimation.
-	autoMAT wsih = newMATraw (nPoints, nPoints);
+	autoMAT wsih = raw_MAT (nPoints, nPoints);
 	autoVEC solution = raw_VEC (nPoints);
 
 	for (integer h = 1; h <= nDimensions; h ++) {
@@ -1885,7 +1885,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			normalize the solution: centre and x'x = 1
 		*/
 		double mean;
-		VECcentre_inplace (solution.get(), & mean);
+		centre_VEC_inout (solution.get(), & mean);
 		if (mean == 0.0)
 			continue;
 		VECnormalize_inplace (solution.get(), 2.0, 1.0);
@@ -2056,7 +2056,7 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, kMDS_TiesHandling tiesHandling) {
 	try {
-		autoVEC w = newVECcopy (conf -> w.get());
+		autoVEC w = copy_VEC (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
 			conf -> w.all() <<= weights -> data.row (i);
@@ -2251,7 +2251,7 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 }
 
 void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *out_varianceAccountedFor) {
-	autoVEC w = newVECcopy (thy w.get()); // save weights
+	autoVEC w = copy_VEC (thy w.get()); // save weights
 	try {
 		Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns,
 			U"Dimensions should agree.");

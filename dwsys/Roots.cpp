@@ -52,7 +52,7 @@ autoRoots Roots_create (integer numberOfRoots) {
 	try {
 		autoRoots me = Thing_new (Roots);
 		my numberOfRoots = numberOfRoots;
-		my roots = newCOMPVECzero (numberOfRoots);
+		my roots = zero_COMPVEC (numberOfRoots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Roots not created.");
@@ -167,7 +167,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		*/
 		autoVEC wr = raw_VEC (n);
 		autoVEC wi = raw_VEC (n);
-		autoMAT upperHessenberg = newMATzero (n, n);
+		autoMAT upperHessenberg = zero_MAT (n, n);
 		MATVU uh_CM (upperHessenberg.get());
 		uh_CM.rowStride = 1; uh_CM.colStride = n;
 

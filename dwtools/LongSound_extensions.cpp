@@ -86,7 +86,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		const integer nchannels = 2;
 		autovector <short> buffer = newvectorzero <short> (nchannels * nbuf);
 
-		autoMelderFile f  = MelderFile_create (file);
+		autoMelderFile f = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (integer i = 1; i <= numberOfReads; i ++) {

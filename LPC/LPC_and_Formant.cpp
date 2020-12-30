@@ -181,7 +181,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			polynomials [ithread] = Polynomial_create (-1.0, 1.0, my maxnCoefficients);
 			roots [ithread] = Roots_create (my maxnCoefficients);
 		}
-		autoMAT workspaces = newMATraw (numberOfThreads, maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
+		autoMAT workspaces = raw_MAT (numberOfThreads, maximumNumberOfPolynomialCoefficients * (maximumNumberOfPolynomialCoefficients + 9));
 		std::vector <std::thread> thread (numberOfThreads);
 		std::atomic<integer> numberOfSuspectFrames (0);
 		

@@ -70,8 +70,10 @@ inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	double minimum = vec [1], maximum = minimum;
 	for (integer i = 2; i <= vec.size; i ++) {
 		const double value = vec [i];
-		if (value < minimum) minimum = value;
-		if (value > maximum) maximum = value;
+		if (value < minimum)
+			minimum = value;
+		if (value > maximum)
+			maximum = value;
 	}
 	return { minimum, maximum };
 }
@@ -214,6 +216,10 @@ inline double NUMextremum (constMATVU const& mat) {
 }
 
 extern double NUMinner (constVECVU const& x, constVECVU const& y) noexcept;
+
+inline bool NUMisSquare (constMATVU const& x) noexcept {
+	return x.nrow == x.ncol;
+}
 
 inline bool NUMisSymmetric (constMATVU const& x) noexcept {
 	if (x.nrow != x.ncol)

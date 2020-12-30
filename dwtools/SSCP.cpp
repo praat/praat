@@ -420,17 +420,17 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 			U"All the table's elements should be defined.");
 		fixAndCheckRowRange (& rowb, & rowe, my data.get(), 1);
 		fixAndCheckColumnRange (& colb, & cole, my data.get(), 1);
-		autoMAT part = newMATpart (my data.get(), rowb, rowe, colb, cole);
+		autoMAT part = part_MAT (my data.get(), rowb, rowe, colb, cole);
 		if (part.nrow < part.ncol)
 			Melder_warning (U"The selected number of rows (", part.nrow,
 				U") is less than the selected number of columns (", part.ncol,
 				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
 			);
 		autoSSCP thee = SSCP_create (part.ncol);
-		VECcolumnMeans (thy centroid.get(), part.get());
+		columnMeans_VEC_out (thy centroid.get(), part.get());
 		part.all()  -=  thy centroid.all();
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
-		MATmtm (thy data.get(), part.get());   // sum of squares and cross products = T'T
+		mtm_MAT_out (thy data.get(), part.get());   // sum of squares and cross products = T'T
 		for (integer j = 1; j <= part.ncol; j ++) {
 			const conststring32 label = my columnLabels [colb - 1 + j].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
@@ -451,21 +451,21 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 		if (weightColumnNumber != 0)
 			Melder_require (weightColumnNumber < colb || weightColumnNumber > cole,
 				U"The weight columns must be outside the selected block.");
-		autoMAT part = newMATpart (my data.get(), rowb, rowe, colb, cole);
+		autoMAT part = part_MAT (my data.get(), rowb, rowe, colb, cole);
 		if (part.nrow < part.ncol)
 			Melder_warning (U"The selected number of data points (", part.nrow,
 				U") is less than the selected number of variables (", part.ncol,
 				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
 			);
 		autoSSCP thee = SSCP_create (part.ncol);
-		VECcolumnMeans (thy centroid.get(), part.get());
+		columnMeans_VEC_out (thy centroid.get(), part.get());
 		part.all()  -=  thy centroid.all();
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
 		if (weightColumnNumber != 0) {
-			autoVEC rowWeights = newVECcolumn (my data.horizontalBand (rowb, rowe), weightColumnNumber);
+			autoVEC rowWeights = column_VEC (my data.horizontalBand (rowb, rowe), weightColumnNumber);
 			MATmtm_weighRows (thy data.get(), part.get(), rowWeights.get());
 		} else
-			MATmtm (thy data.get(), part.get());   // sum of squares and cross products = T'T
+			mtm_MAT_out (thy data.get(), part.get());   // sum of squares and cross products = T'T
 		for (integer j = 1; j <= part.ncol; j ++) {
 			const conststring32 label = my columnLabels [colb - 1 + j].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
@@ -551,10 +551,10 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		Melder_assert (my data.ncol == my numberOfColumns);
 		autoMAT mat;
 		if (my numberOfRows == 1) {
-			mat = newMATzero (my numberOfColumns, my numberOfColumns);
+			mat = zero_MAT (my numberOfColumns, my numberOfColumns);
 			mat.diagonal() <<= my data.row (1); // 1xn matrix -> nxn
 		} else if (my data.nrow == my numberOfColumns && my data.ncol == my numberOfColumns)
-			mat = newMATcopy (my data.get());
+			mat = copy_MAT (my data.get());
 		else
 			Melder_throw (me, U": the SSCP has the wrong dimensions.");
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
@@ -769,7 +769,7 @@ void SSCP_expand (SSCP me) {
 		return;
 
 	if (NUMisEmpty (my expansion.get()))
-		my expansion = newMATzero (my numberOfColumns, my numberOfColumns);
+		my expansion = zero_MAT (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++)
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 			const integer dij = integer_abs (ir - ic);
@@ -794,7 +794,7 @@ void SSCP_unExpand (SSCP me) {
 
 void SSCP_expandLowerCholeskyInverse (SSCP me) {
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
-		my lowerCholeskyInverse = newMATraw (my numberOfColumns, my numberOfColumns);
+		my lowerCholeskyInverse = raw_MAT (my numberOfColumns, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
 		for (integer j = 1; j <= my numberOfColumns; j ++) {

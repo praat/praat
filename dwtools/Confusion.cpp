@@ -509,9 +509,9 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
 		thy data.part(1, my numberOfRows, 1, my numberOfColumns) <<= my data.get();
-		autoVEC columnSums = newVECcolumnSums (my data.get());
+		autoVEC columnSums = columnSums_VEC (my data.get());
 		thy data.row (my numberOfRows + 1).part (1, my numberOfColumns) <<= columnSums.get();
-		autoVEC rowSums = newVECrowSums (my data.get());
+		autoVEC rowSums = rowSums_VEC (my data.get());
 		thy data.column (my numberOfColumns + 1).part (1, my numberOfRows) <<= rowSums.get();
 		
 		thy data [my numberOfRows + 1] [my numberOfColumns + 1] = NUMsum (rowSums.get());

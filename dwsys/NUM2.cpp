@@ -187,7 +187,7 @@ void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma) {
 autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf) {
 	Melder_require (ndf >= 0 && x.nrow - ndf > 0,
 		U"Invalid arguments.");
-	autoMAT covar = newMATmtm (x);
+	autoMAT covar = mtm_MAT (x);
 	covar.all()  *=  1.0 / (x.nrow - ndf);
 	return covar;
 }
@@ -204,18 +204,18 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 	Melder_assert (result.nrow == result.ncol);
 	result  <<=  0.0;
 	if (true) {
-		autoMAT outer = newMATraw (result.ncol, result.ncol);
+		autoMAT outer = raw_MAT (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			MATouter (outer.all(), data.row (irow), data.row (irow));
+			outer_MAT_out (outer.all(), data.row (irow), data.row (irow));
 			result  +=  outer.all()  *  rowWeights [irow];
 		}
 	} else {
 		autoVEC w = raw_VEC (rowWeights.size);
-		autoMAT d = newMATcopy (data);
+		autoMAT d = copy_MAT (data);
 		for (integer irow = 1; irow <= w.size; irow ++) 
 			w [irow] = sqrt (rowWeights [irow]);
 		MATweighRows (d.get(), w.get());
-		MATmtm (result, d.get());
+		mtm_MAT_out (result, d.get());
 	}
 }
 
@@ -234,8 +234,8 @@ double NUMmultivariateKurtosis (constMATVU const& m, integer method) {
 	double kurt = undefined;
 	if (m.nrow < 5)
 		return kurt;
-	autoMAT x = newMATcopy (m);
-	autoVEC mean = newVECcolumnMeans (x.get());
+	autoMAT x = copy_MAT (m);
+	autoVEC mean = columnMeans_VEC (x.get());
 	x.all()  -=  mean.all();
 	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
 	
@@ -264,7 +264,7 @@ double NUMmultivariateKurtosis (constMATVU const& m, integer method) {
 	Regression is ascending
 */
 autoVEC newVECmonotoneRegression (constVEC x) {
-	autoVEC fit = newVECcopy (x);
+	autoVEC fit = copy_VEC (x);
 	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
 	for (integer i = 2; i <= x.size; i ++) {
 		if (fit [i] >= fit [i - 1])
@@ -288,7 +288,7 @@ autoVEC newVECmonotoneRegression (constVEC x) {
 
 double NUMdeterminant_fromSymmetricMatrix (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT a = newMATcopy (m);
+	autoMAT a = copy_MAT (m);
 	/*
 		Cholesky decomposition in lower, leave upper intact
 	*/
@@ -305,7 +305,7 @@ double NUMdeterminant_fromSymmetricMatrix (constMAT m) {
 
 autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd) {
 	Melder_assert (a.nrow == a.ncol);
-	autoMAT result = newMATcopy (a);
+	autoMAT result = copy_MAT (a);
 	MATlowerCholesky_inplace (result.get(), out_lnd);
 	for (integer irow = 1; irow <= a.nrow - 1; irow ++)
 		for (integer icol = irow + 1; icol <= a.nrow; icol ++)
@@ -316,7 +316,7 @@ autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd) {
 
 autoMAT newMATlowerCholeslyInverse_fromLowerCholesky (constMAT const& m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT result = newMATcopy (m);
+	autoMAT result = copy_MAT (m);
 	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
 	return result;
 }
@@ -357,7 +357,7 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 
 autoMAT newMATinverse_fromLowerCholeskyInverse (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT result = newMATraw (m.nrow, m.nrow);
+	autoMAT result = raw_MAT (m.nrow, m.nrow);
 	for (integer irow = 1; irow <= m.nrow; irow ++) {
 		for (integer icol = 1; icol <= irow; icol ++) {
 			longdouble sum = 0.0;
@@ -403,7 +403,7 @@ double VECdominantEigenvector_inplace (VEC inout_q, constMAT m, double tolerance
 	integer maximunNumberOfIterations = 30;
 	for (integer iter = 1; iter <= maximunNumberOfIterations; iter ++) {
 		lambda0 = lambda;
-		VECmul (z.get(), m, inout_q);
+		mul_VEC_out (z.get(), m, inout_q);
 		VECnormalize_inplace (z.get(), 2.0, 1.0);
 		lambda = NUMmul (z.get(), m, z.get()); // z'. M . z
 		if (fabs (lambda - lambda0) < tolerance)
@@ -444,7 +444,7 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	const double tol = ( tolerance > 0.0 ? tolerance : NUMfpp -> eps * a.nrow );
 	
 	autoSVD me = SVD_createFromGeneralMatrix (a);
-	autoMAT x = newMATraw (b.nrow, b.ncol);
+	autoMAT x = raw_MAT (b.nrow, b.ncol);
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
@@ -482,7 +482,7 @@ void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const
 		/*
 			Calculate t(x) and compare with previous result.
 		*/
-		VECmul (r.get(), a, x);
+		mul_VEC_out (r.get(), a, x);
 		r.get()  -=  y;
 		difsq = NUMsum2 (r.all());
 		farFromConvergence = ( fabs (difsq - difsq_previous) > std::max (tol * normSquared_y, NUMeps) );
@@ -529,7 +529,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 	/*
 		Construct X'.X which will be 3x3
 	*/
-	autoMAT xtx = newMATmtm (x);
+	autoMAT xtx = mtm_MAT (x);
 	/*
 		Eq (2): get lower Cholesky decomposition from X'.X (3x3)
 		X'X -> lowerCholesky * lowerCholesky.transpose()
@@ -543,13 +543,13 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 		Construct G and its eigen-decomposition (eq. (4,5))
 		Sort eigenvalues (& eigenvectors) ascending.
 	*/
-	autoMAT b = newMATzero (n3, n3);
+	autoMAT b = zero_MAT (n3, n3);
 	b [3] [1] = b [1] [3] = -0.5;
 	b [2] [2] = 1.0;
 	/*
 		G = F^-1 B (F')^-1 (eq. 4)
 	*/
-	autoMAT g = newMATzero (n3, n3);
+	autoMAT g = zero_MAT (n3, n3);
 	MATmul3_XYXt (g.get(), lowerCholesky.transpose(), b.get());
 	/*				
 		G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
@@ -561,9 +561,9 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 		Construct y = P'*F'*O'*d = (F*P)'*(O'*d)	(page 632)
 		We need F*P for later
 	*/
-	autoVEC otd = newVECmul (x.transpose(), d);
-	autoMAT fp = newMATmul (p.transpose(), lowerCholeskyInverse.transpose()); // F*P !!
-	autoVEC y = newVECmul (fp.transpose(), otd.get()); // P'F' * O'd
+	autoVEC otd = mul_VEC (x.transpose(), d);
+	autoMAT fp = mul_MAT (p.transpose(), lowerCholeskyInverse.transpose()); // F*P !!
+	autoVEC y = mul_VEC (fp.transpose(), otd.get()); // P'F' * O'd
 	/*
 		The solution (3 cases)
 	*/
@@ -581,11 +581,11 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 		w [2] = t21 * delta [2];
 		w [3] = t31 * delta [3];
 
-		VECmul (chi.get(), fp.get(), w.get()); // chi = F*P*w
+		mul_VEC_out (chi.get(), fp.get(), w.get()); // chi = F*P*w
 
 		if (fabs (chi [3] / chi [1]) < eps) {
 			w [1] = - w [1];
-			VECmul (chi.get(), fp.get(), w.get());
+			mul_VEC_out (chi.get(), fp.get(), w.get());
 		}
 	} else if (fabs (y [2]) < eps) {
 		/*
@@ -598,10 +598,10 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 		if ( (delta [2] < delta [3] && (t2 = (t12 * t12 * delta [1] + t32 * t32 * delta [3])) <= 0.0)) {
 			w [2] = sqrt (- delta [2] * t2); /* +- */
 			w [3] = t32 * delta [3];
-			VECmul (chi.get(), p.get(), w.get());
+			mul_VEC_out (chi.get(), p.get(), w.get());
 			if (fabs (chi [3] / chi [1]) < eps) {
 				w [2] = -w [2];
-				VECmul (chi.get(), fp.get(), w.get());
+				mul_VEC_out (chi.get(), fp.get(), w.get());
 			}
 		} else if (fabs (delta [2] - delta [3]) < eps && fabs (y [3]) < eps) {
 			/*
@@ -609,7 +609,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 			*/
 			w [2] = w [1];
 			w [3] = sqrt (- t12 * t12 * delta [1] * delta [2] - w [2] * w [2]);
-			VECmul (chi.get(), fp.get(), w.get());
+			mul_VEC_out (chi.get(), fp.get(), w.get());
 		} else {
 			// should not be here
 		}
@@ -625,7 +625,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const
 
 		for (integer i = 1; i <= 3; i++)
 			w [i] = y [i] / (1.0 - lambda / delta [i]);
-		VECmul (chi.get(), fp.get(), w.get());
+		mul_VEC_out (chi.get(), fp.get(), w.get());
 	}
 	if (out_alpha)
 		*out_alpha = chi [1];
@@ -725,8 +725,8 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	/*
 		Step 2: x = U'F'y
 	*/
-	autoVEC ftphi = newVECmul (a.transpose(), y);
-	autoVEC x = newVECmul (u.transpose(), ftphi.get());
+	autoVEC ftphi = mul_VEC (a.transpose(), y);
+	autoVEC x = mul_VEC (u.transpose(), ftphi.get());
 	/*
 		Step 3:
 	*/
@@ -752,7 +752,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 				x [j] /= c [j] - c [a.ncol]; // eq. 10
 			if (q > 1)
 				x.part (r + 2, a.ncol) <<= 0.0;
-			autoVEC result = newVECmul (u, x.all());
+			autoVEC result = mul_VEC (u, x.all());
 			return result;
 		}
 		// else continue with r = m - q
@@ -777,7 +777,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 		x [j] /= c [j] - b0; // eq. 7
 	if (q > 1)
 		x.part (r + 1, a.ncol) <<= 0.0;
-	autoVEC result = newVECmul (u, x.all());
+	autoVEC result = mul_VEC (u, x.all());
 	return result;
 }
 
@@ -793,10 +793,10 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 			else X'Y for othogonal (page 341)
 			JY amounts to centering the columns of Y.
 	*/	
-	autoMAT yc = newMATcopy (y);
+	autoMAT yc = copy_MAT (y);
 	if (! orthogonal)
-		MATcentreEachColumn_inplace (yc.get());
-	autoMAT c = newMATmul (x.transpose(), yc.get()); // X'(JY)
+		centreEachColumn_MAT_inout (yc.get());
+	autoMAT c = mul_MAT (x.transpose(), yc.get()); // X'(JY)
 	/*
 		2. Decompose C by SVD: C = UDV' (our SVD has eigenvectors stored row-wise V!)
 	*/
@@ -807,19 +807,19 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 	/*
 		3. T = VU'
 	*/
-	autoMAT rotation = newMATmul (svd->v.all(), svd->u.transpose());
+	autoMAT rotation = mul_MAT (svd->v.all(), svd->u.transpose());
 	
 	if (! orthogonal) {
 		/*
 			4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 			First we need YT.
 		*/
-		autoMAT yt = newMATmul (y, rotation.get());
+		autoMAT yt = mul_MAT (y, rotation.get());
 		/*
 			X'J = (JX)' centering the columns of X
 		*/
-		autoMAT xc = newMATcopy (x);
-		MATcentreEachColumn_inplace (xc.get());
+		autoMAT xc = copy_MAT (x);
+		centreEachColumn_MAT_inout (xc.get());
 		/*
 			tr X'J YT == tr xc' yt
 		*/
@@ -1317,7 +1317,7 @@ void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT co
 		Melder_require (covariance.ncol == means.size && data.ncol == means.size,
 			U"The dimensions of the means and the covariance have to conform with the data.");
 		autoVEC dif = raw_VEC (data.ncol);
-		autoMAT lowerInverse = newMATcopy (covariance);
+		autoMAT lowerInverse = copy_MAT (covariance);
 		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
 			dif.all() <<= data.row (irow)  -  means;
@@ -1549,7 +1549,7 @@ void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor) {
 }
 
 autoMAT MATcosinesTable (integer n) {
-	autoMAT result = newMATraw (n, n);
+	autoMAT result = raw_MAT (n, n);
 	for (integer irow = 1; irow <= n; irow ++)
 		for (integer icol = 1; icol <= n; icol ++)
 			result [irow] [icol] = cos (NUMpi * (irow - 1) * (icol - 0.5) / n);
@@ -2071,11 +2071,11 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);
 			}
-			VECsort_inplace (mbs.part (1, numberOfCombinations));
+			sort_VEC_inout (mbs.part (1, numberOfCombinations));
 			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
 			for (integer i = 1; i <= x.size; i ++)
 				mbs [i] = y [i] - m * x [i];
-			VECsort_inplace (mbs.part (1, x.size));
+			sort_VEC_inout (mbs.part (1, x.size));
 			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
 		}
 		if (out_m)
@@ -2635,7 +2635,7 @@ void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg)
 
 autoVEC newVECbiharmonic2DSplineInterpolation_getWeights (constVECVU const& x, constVECVU const& y, constVECVU const& z) {
 	Melder_assert (x.size == y.size && x.size == z.size);
-	autoMAT g = newMATraw (x.size, x.size);
+	autoMAT g = raw_MAT (x.size, x.size);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w
@@ -2918,7 +2918,7 @@ static double update (VEC const& x_new, VEC const& y_new, BOOLVECVU const& suppo
 	buffer  <<=  x_new  -  xn; // x(n+1) - x (n)
 	const double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
 	
-	VECmul (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
+	mul_VEC_out (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
 	buffer.part (1, yn.size) <<= y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
 	const double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
 	return xdifsq / ydifsq;
@@ -2955,8 +2955,8 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		autoVEC yfromx_new = raw_VEC (y.size); // D.x(n+1)
 		autoVEC ydif = raw_VEC (y.size); // y - D.x(n)
 		autoVEC buffer = raw_VEC (x.size);
-		autoBOOLVEC support = newBOOLVECraw (x.size);
-		autoBOOLVEC support_new = newBOOLVECraw (x.size);
+		autoBOOLVEC support = raw_BOOLVEC (x.size);
+		autoBOOLVEC support_new = raw_BOOLVEC (x.size);
 		
 		const double xnormSq = NUMsum2 (x);
 		const double rms_y = NUMsum2 (y) / y.size;
@@ -2968,7 +2968,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				Get initial support supp (Hard_K (D'y))
 				Hard_K (v) is a hard thresholder which only keeps the largest K elements from the vector v
 			*/
-			VECmul (buffer.get(), dictionary.transpose(), y);
+			mul_VEC_out (buffer.get(), dictionary.transpose(), y);
 			VECupdateDataAndSupport_inplace (buffer.get(), support.get(), numberOfNonZeros);
 			yfromx.all() <<= 0.0;
 			ydif.all() <<= y; // ydif = y - D.x(1) = y - D.0 = y
@@ -2977,7 +2977,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				We improve a current solution x
 			*/
 			VECupdateDataAndSupport_inplace (x, support.get(), numberOfNonZeros);
-			VECmul (yfromx.get(), dictionary, x); // D.x(n)
+			mul_VEC_out (yfromx.get(), dictionary, x); // D.x(n)
 			ydif.all() <<= y  -  yfromx.all(); // y - D.x(n)
 			rms = NUMsum2 (ydif.get()) / y.size; // ||y - D.x(n)||^2
 		}
@@ -2986,7 +2986,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 		integer iter = 1;
 		while (iter <= maximumNumberOfIterations && not convergence) {			
 			
-			VECmul (gradient.get(), dictionary.transpose(), ydif.get()); // D'.(y - D.x(n))
+			mul_VEC_out (gradient.get(), dictionary.transpose(), ydif.get()); // D'.(y - D.x(n))
 			/*
 				Calculate stepSize mu according to Eq. (13)
 				mu = || g_sparse ||^2 / || D_sparse * g_sparse ||^2

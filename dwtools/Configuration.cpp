@@ -210,8 +210,8 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 				}
 				
 				if (! quartimax && xm.nrow != 1) {
-					VECcentre_inplace (u.get());
-					VECcentre_inplace (v.get());
+					centre_VEC_inout (u.get());
+					centre_VEC_inout (v.get());
 				}
 
 				const double a = 2.0 * NUMinner (u.get(), v.get());

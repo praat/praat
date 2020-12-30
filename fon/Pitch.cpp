@@ -503,7 +503,7 @@ integer Pitch_getMaxnCandidates (Pitch me) {
 
 autoMAT Pitch_Frame_getAllCandidates (Pitch_Frame me) {
 	integer numberOfCandidates = my nCandidates;
-	autoMAT candidates = newMATraw (2, numberOfCandidates);
+	autoMAT candidates = raw_MAT (2, numberOfCandidates);
 	for (integer icand = 1; icand <= numberOfCandidates; icand ++) {
 		candidates [1] [icand] = my candidates [icand]. frequency;
 		candidates [2] [icand] = my candidates [icand]. strength;
@@ -545,8 +545,8 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 		voicedUnvoicedCost *= timeStepCorrection;
 
 		my ceiling = ceiling;
-		autoMAT delta = newMATzero (my nx, maxnCandidates);
-		autoINTMAT psi = newINTMATzero (my nx, maxnCandidates);
+		autoMAT delta = zero_MAT (my nx, maxnCandidates);
+		autoINTMAT psi = zero_INTMAT (my nx, maxnCandidates);
 
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Pitch_Frame frame = & my frames [iframe];

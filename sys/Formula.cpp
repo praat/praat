@@ -90,14 +90,14 @@ enum { NO_SYMBOL_,
 		ABS_, ROUND_, FLOOR_, CEILING_,
 		RECTIFY_, RECTIFY_VEC_, RECTIFY_MAT_,
 		SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_, SINC_, SINCPI_,
-		EXP_, VEC_EXP_, MAT_EXP_,
-		SINH_, COSH_, TANH_, VEC_TANH_,
+		EXP_, EXP_VEC_, EXP_MAT_,
+		SINH_, COSH_, TANH_, TANH_VEC_,
 		ARCSINH_, ARCCOSH_, ARCTANH_,
 		SIGMOID_, SIGMOID_VEC_, SOFTMAX_VEC_, SOFTMAX_PER_ROW_MAT_,
 		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, RANDOM_BERNOULLI_VEC_,
 		RANDOM_POISSON_, TRANSPOSE_MAT_,
-		SUM_PER_ROW_VEC_, SUM_PER_COLUMN_VEC_,
+		ROW_SUMS_VEC_, COLUMN_SUMS_VEC_,
 		LOG2_, LN_, LOG10_, LN_GAMMA_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
@@ -145,7 +145,7 @@ enum { NO_SYMBOL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
-		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_DIRECTORY_STR_,
+		CHOOSE_READ_FILE_STR_, CHOOSE_WRITE_FILE_STR_, CHOOSE_FOLDER_STR_, CHOOSE_DIRECTORY_STR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_PEEK_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_,
@@ -167,7 +167,7 @@ enum { NO_SYMBOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 	#define LOW_FUNCTION_STR1  LENGTH_
-		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
+		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, TRY_TO_WRITE_FILE_, TRY_TO_APPEND_FILE_, DELETE_FILE_, CREATE_FOLDER_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
 		READ_FILE_, READ_FILE_STR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_STR_, BACKSLASH_TRIGRAPHS_TO_UNICODE_STR_, ENVIRONMENT_STR_,
 	#define HIGH_FUNCTION_STR1  ENVIRONMENT_STR_
 		DATE_STR_, INFO_STR_,
@@ -271,7 +271,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionMenu", U"option",
 	U"comment", U"endPause",
-	U"chooseReadFile$", U"chooseWriteFile$", U"chooseDirectory$",
+	U"chooseReadFile$", U"chooseWriteFile$", U"chooseFolder$", U"chooseDirectory$",
 	U"demoWindowTitle", U"demoShow", U"demoWaitForInput", U"demoPeekInput", U"demoInput", U"demoClickedIn",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed",
@@ -288,7 +288,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"hash", U"hex$", U"unhex$",
 	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#",
 
-	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createDirectory", U"variableExists",
+	U"length", U"number", U"fileReadable", U"tryToWriteFile", U"tryToAppendFile", U"deleteFile", U"createFolder", U"createDirectory", U"variableExists",
 	U"readFile", U"readFile$", U"unicodeToBackslashTrigraphs$", U"backslashTrigraphsToUnicode$", U"environment$",
 	U"date$", U"info$",
 	U"index", U"rindex",
@@ -2542,7 +2542,7 @@ static void do_add () {
 					assert result# = { 47, 19, 59 }
 				@*/
 				// x does not have to be cleaned up, because it was a number
-				x->numericVector = newVECadd (y->numericVector, x->number). releaseToAmbiguousOwner();
+				x->numericVector = add_VEC (y->numericVector, x->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_VECTOR;
@@ -2558,7 +2558,7 @@ static void do_add () {
 				moveNumericMatrix (y, x);
 			} else {
 				// x does not have to be cleaned up, because it was a number
-				x->numericMatrix = newMATadd (y->numericMatrix, x->number). releaseToAmbiguousOwner();
+				x->numericMatrix = add_MAT (y->numericMatrix, x->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_MATRIX;
@@ -2620,7 +2620,7 @@ static void do_add () {
 					assert result# = { -19, -16, 15.25 }
 				@*/
 				// x does not have to be cleaned up, because it was not owned
-				x->numericVector = newVECadd (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
+				x->numericVector = add_VEC (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
@@ -2642,7 +2642,7 @@ static void do_add () {
 				/*@praat
 					assert { 1, 2, 3 } + { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 2, 3 }, { 5, 6 }, { 8, 9 } }
 				@*/
-				autoMAT newMatrix = newMATadd (x->numericVector, y->numericMatrix);
+				autoMAT newMatrix = add_MAT (x->numericVector, y->numericMatrix);
 				x->reset();
 				x->numericMatrix = newMatrix. releaseToAmbiguousOwner();
 			} else {
@@ -2651,7 +2651,7 @@ static void do_add () {
 					assert a# + { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 2, 3 }, { 5, 6 }, { 8, 9 } }
 				@*/
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATadd (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
+				x->numericMatrix = add_MAT (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_MATRIX;
@@ -2667,7 +2667,7 @@ static void do_add () {
 				x->numericVector  +=  y->number;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericVector = newVECadd (x->numericVector, y->number). releaseToAmbiguousOwner();
+				x->numericVector = add_VEC (x->numericVector, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
@@ -2695,7 +2695,7 @@ static void do_add () {
 				moveNumericMatrix (y, x);
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATadd (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
+				x->numericMatrix = add_MAT (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;
@@ -2733,7 +2733,7 @@ static void do_add () {
 					assert result## = { { 9, -27, -12.75 }, { -38, 23, -10 } }
 				@*/
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATadd (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
+				x->numericMatrix = add_MAT (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;
@@ -2749,7 +2749,7 @@ static void do_add () {
 				x->numericMatrix  +=  y->number;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATadd (x->numericMatrix, y->number). releaseToAmbiguousOwner();
+				x->numericMatrix = add_MAT (x->numericMatrix, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;   // superfluous
@@ -2791,7 +2791,7 @@ static void do_sub () {
 				y->numericVector  <<=  x->number  -  y->numericVector;
 				moveNumericVector (y, x);
 			} else {
-				x->numericVector = newVECsubtract (x->number, y->numericVector). releaseToAmbiguousOwner();
+				x->numericVector = subtract_VEC (x->number, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_VECTOR;
@@ -2802,10 +2802,10 @@ static void do_sub () {
 				result## = x - y##
 			*/
 			if (y->owned) {
-				MATsubtractReversed_inplace (y->numericMatrix, x->number);
+				subtractReversed_MAT_inout (y->numericMatrix, x->number);
 				moveNumericMatrix (y, x);
 			} else {
-				x->numericMatrix = newMATsubtract (x->number, y->numericMatrix). releaseToAmbiguousOwner();
+				x->numericMatrix = subtract_MAT (x->number, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_MATRIX;
@@ -2829,7 +2829,7 @@ static void do_sub () {
 				moveNumericVector (y, x);
 			} else {
 				// no clean-up of x required, because x is not owned and has the right type
-				x->numericVector = newVECsubtract (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
+				x->numericVector = subtract_VEC (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
@@ -2844,7 +2844,7 @@ static void do_sub () {
 			if (x->owned) {
 				x->numericVector  -=  y->number;
 			} else {
-				x->numericVector = newVECsubtract (x->numericVector, y->number). releaseToAmbiguousOwner();
+				x->numericVector = subtract_VEC (x->numericVector, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
@@ -2862,11 +2862,11 @@ static void do_sub () {
 			if (x->owned) {
 				x->numericMatrix  -=  y->numericMatrix;
 			} else if (y->owned) {
-				MATsubtractReversed_inplace (y->numericMatrix, x->numericMatrix);
+				subtractReversed_MAT_inout (y->numericMatrix, x->numericMatrix);
 				moveNumericMatrix (y, x);
 			} else {
 				// no clean-up of x required, because x is not owned and has the right type
-				x->numericMatrix = newMATsubtract (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
+				x->numericMatrix = subtract_MAT (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;   // superfluous
@@ -2876,7 +2876,7 @@ static void do_sub () {
 			if (x->owned) {
 				x->numericMatrix  -=  y->number;
 			} else {
-				x->numericMatrix = newMATsubtract (x->numericMatrix, y->number). releaseToAmbiguousOwner();
+				x->numericMatrix = subtract_MAT (x->numericMatrix, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;   // superfluous
@@ -2942,7 +2942,7 @@ static void do_mul () {
 					assert result# = { 510, -330, 870 }
 				@*/
 				// x does not have to be cleaned up, because it was a number
-				x->numericVector = newVECmultiply (y->numericVector, x->number). releaseToAmbiguousOwner();
+				x->numericVector = multiply_VEC (y->numericVector, x->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_VECTOR;
@@ -2958,7 +2958,7 @@ static void do_mul () {
 				moveNumericMatrix (y, x);
 			} else {
 				// x does not have to be cleaned up, because it was a number
-				x->numericMatrix = newMATmultiply (y->numericMatrix, x->number). releaseToAmbiguousOwner();
+				x->numericMatrix = multiply_MAT (y->numericMatrix, x->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_MATRIX;
@@ -3020,7 +3020,7 @@ static void do_mul () {
 					assert result# = { -462, -561, 56.25 }
 				@*/
 				// x does not have to be cleaned up, because it was not owned
-				x->numericVector = newVECmultiply (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
+				x->numericVector = multiply_VEC (x->numericVector, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
@@ -3042,7 +3042,7 @@ static void do_mul () {
 				/*@praat
 					assert { 1, 2, 3 } * { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 1, 2 }, { 6, 8 }, { 15, 18 } }
 				@*/
-				autoMAT newMatrix = newMATmultiply (x->numericVector, y->numericMatrix);
+				autoMAT newMatrix = multiply_MAT (x->numericVector, y->numericMatrix);
 				x->reset();
 				x->numericMatrix = newMatrix. releaseToAmbiguousOwner();
 			} else {
@@ -3051,7 +3051,7 @@ static void do_mul () {
 					assert a# * { { 1, 2 }, { 3, 4 }, { 5, 6 } } = { { 1, 2 }, { 6, 8 }, { 15, 18 } }
 				@*/
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATmultiply (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
+				x->numericMatrix = multiply_MAT (x->numericVector, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			x->which = Stackel_NUMERIC_MATRIX;
@@ -3067,7 +3067,7 @@ static void do_mul () {
 				x->numericVector  *=  y->number;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericVector = newVECmultiply (x->numericVector, y->number). releaseToAmbiguousOwner();
+				x->numericVector = multiply_VEC (x->numericVector, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_VECTOR;   // superfluous
@@ -3095,7 +3095,7 @@ static void do_mul () {
 				moveNumericMatrix (y, x);
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATmultiply (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
+				x->numericMatrix = multiply_MAT (x->numericMatrix, y->numericMatrix). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;
@@ -3117,7 +3117,7 @@ static void do_mul () {
 				x->numericMatrix  *=  y->numericVector;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATmultiply (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
+				x->numericMatrix = multiply_MAT (x->numericMatrix, y->numericVector). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;
@@ -3133,7 +3133,7 @@ static void do_mul () {
 				x->numericMatrix  *=  y->number;
 			} else {
 				// x does not have to be cleaned up, because it was not owned
-				x->numericMatrix = newMATmultiply (x->numericMatrix, y->number). releaseToAmbiguousOwner();
+				x->numericMatrix = multiply_MAT (x->numericMatrix, y->number). releaseToAmbiguousOwner();
 				x->owned = true;
 			}
 			//x->which = Stackel_NUMERIC_MATRIX;   // superfluous
@@ -3214,9 +3214,9 @@ static void do_power () {
 			assert { 3, -4 } ^ 3 = { 27, -64 }
 			assert { -4 } ^ 2.3 = { undefined }
 		@*/
-		pushNumericVector (newVECpower (x->numericVector, y->number));
+		pushNumericVector (power_VEC (x->numericVector, y->number));
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMBER) {
-		pushNumericMatrix (newMATpower (x->numericMatrix, y->number));
+		pushNumericMatrix (power_MAT (x->numericMatrix, y->number));
 	} else {
 		Melder_throw (U"Cannot exponentiate (^) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
@@ -3233,9 +3233,9 @@ static void do_sqr () {
 			a# ~ sum ({ col } ^ 2)
 			assert sum (a#) = 385
 		@*/
-		pushNumericVector (newVECpower (x->numericVector, 2.0));
+		pushNumericVector (power_VEC (x->numericVector, 2.0));
 	} else if (x->which == Stackel_NUMERIC_MATRIX) {
-		pushNumericMatrix (newMATpower (x->numericMatrix, 2.0));
+		pushNumericMatrix (power_MAT (x->numericMatrix, 2.0));
 	} else {
 		Melder_throw (U"Cannot take the square (^ 2) of ", x->whichText(), U".");
 	}
@@ -3273,7 +3273,7 @@ static void do_softmax_VEC () {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (! x->owned) {
-			x->numericVector = newVECcopy (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
+			x->numericVector = copy_VEC (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
 			x->owned = true;
 		}
 		integer nelm = x->numericVector.size;
@@ -3300,7 +3300,7 @@ static void do_softmaxPerRow_MAT () {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		if (! x->owned) {
-			x->numericMatrix = newMATcopy (x->numericMatrix). releaseToAmbiguousOwner();   // TODO: no need to copy
+			x->numericMatrix = copy_MAT (x->numericMatrix). releaseToAmbiguousOwner();   // TODO: no need to copy
 			x->owned = true;
 		}
 		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
@@ -3393,7 +3393,7 @@ static void do_rectify_MAT () {
 		} else {
 			pop;
 			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-			autoMAT result = newMATraw (nrow, ncol);
+			autoMAT result = raw_MAT (nrow, ncol);
 			for (integer irow = 1; irow <= nrow; irow ++) {
 				for (integer icol = 1; icol <= ncol; icol ++) {
 					double xvalue = x->numericMatrix [irow] [icol];
@@ -3473,7 +3473,7 @@ static void do_exp () {
 		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
 	}
 }
-static void do_VECexp () {
+static void do_exp_VEC () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
@@ -3485,11 +3485,11 @@ static void do_VECexp () {
 		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
 	}
 }
-static void do_MATexp () {
+static void do_exp_MAT () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-		autoMAT result = newMATraw (nrow, ncol);
+		autoMAT result = raw_MAT (nrow, ncol);
 		for (integer irow = 1; irow <= nrow; irow ++)
 			for (integer icol = 1; icol <= ncol; icol ++)
 				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
@@ -3623,7 +3623,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (model->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = model->numericMatrix.nrow;
 			integer numberOfColumns = model->numericMatrix.ncol;
-			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+			autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3638,7 +3638,7 @@ static void do_function_MATdd_d (double (*f) (double, double)) {
 		if (nrow->which == Stackel_NUMBER && ncol->which == Stackel_NUMBER && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 			integer numberOfRows = Melder_iround (nrow->number);
 			integer numberOfColumns = Melder_iround (ncol->number);
-			autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+			autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 			for (integer irow = 1; irow <= numberOfRows; irow ++)
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					newData [irow] [icol] = f (x->number, y->number);
@@ -3679,7 +3679,7 @@ static void do_function_MATll_l (integer (*f) (integer, integer)) {
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfRows = a->numericMatrix.nrow;
 		integer numberOfColumns = a->numericMatrix.ncol;
-		autoMAT newData = newMATraw (numberOfRows, numberOfColumns);
+		autoMAT newData = raw_MAT (numberOfRows, numberOfColumns);
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				newData [irow] [icol] = f (Melder_iround (x->number), Melder_iround (y->number));
@@ -3833,14 +3833,14 @@ static void do_evaluate_nocheck () {
 		}
 	} else Melder_throw (U"The argument of the function \"evaluate_nocheck\" should be a string with a numeric expression, not ", expression->whichText());
 }
-static void do_evaluateStr () {
+static void do_evaluate_STR () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		autostring32 result = Interpreter_stringExpression (theInterpreter, expression->getString());
 		pushString (result.move());
 	} else Melder_throw (U"The argument of the function \"evaluate$\" should be a string with a string expression, not ", expression->whichText());
 }
-static void do_evaluate_nocheckStr () {
+static void do_evaluate_nocheck_STR () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		try {
@@ -3852,7 +3852,7 @@ static void do_evaluate_nocheckStr () {
 		}
 	} else Melder_throw (U"The argument of the function \"evaluate_nocheck$\" should be a string with a string expression, not ", expression->whichText());
 }
-static void do_doStr () {
+static void do_do_STR () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
 	if (narg->number < 1)
@@ -4343,7 +4343,7 @@ static void do_zero_MAT () {
 		U"In the function \"zero##\", the number of rows should not be negative.");
 	Melder_require (numberOfColumns >= 0.0,
 		U"In the function \"zero##\", the number of columns should not be negative.");
-	autoMAT result = newMATzero (Melder_iround (numberOfRows), Melder_iround (numberOfColumns));
+	autoMAT result = zero_MAT (Melder_iround (numberOfRows), Melder_iround (numberOfColumns));
 	pushNumericMatrix (result.move());
 }
 static void do_linear_VEC () {
@@ -4515,7 +4515,7 @@ static void do_peaks_MAT () {
 	Stackel vec = pop;
 	if (vec->which != Stackel_NUMERIC_VECTOR)
 		Melder_throw (U"The first argument to peaks## should be a numeric vector, not ", vec->whichText(), U".");
-	autoMAT result = newMATpeaks (vec->numericVector, includeEdges, interpolation, sortByHeight);
+	autoMAT result = peaks_MAT (vec->numericVector, includeEdges, interpolation, sortByHeight);
 	pushNumericMatrix (result.move());
 }
 static void do_size () {
@@ -4713,7 +4713,7 @@ static void do_fileNames_STRVEC () {
 		U"The function \"fileNames$#\" requires one argument, namely the file pattern.");
 	Stackel filePattern = pop;
 	if (filePattern->which != Stackel_STRING)
-		Melder_throw (U"The argument of the function \"fileNames$#\" should be a string (namely the file pattern), not ", filePattern->whichText(), U".");
+		Melder_throw (U"The argument of the function \"fileNames$#\" should be a string (namely the file path and pattern), not ", filePattern->whichText(), U".");
 	autoSTRVEC result = fileNames_STRVEC (filePattern->getString());
 	pushStringVector (result.move());
 }
@@ -4724,7 +4724,7 @@ static void do_folderNames_STRVEC () {
 		U"The function \"folderNames$#\" requires one argument, namely the file pattern.");
 	Stackel folderPattern = pop;
 	Melder_require (folderPattern->which == Stackel_STRING,
-		U"The argument of the function \"folderNames$#\" should be a string (namely the directory pattern), not ", folderPattern->whichText(), U".");
+		U"The argument of the function \"folderNames$#\" should be a string (namely the folder path), not ", folderPattern->whichText(), U".");
 	autoSTRVEC result = folderNames_STRVEC (folderPattern->getString());
 	pushStringVector (result.move());
 }
@@ -5538,6 +5538,23 @@ static void do_deleteFile () {
 		Melder_throw (U"The function \"deleteFile\" requires a string, not ", f->whichText(), U".");
 	}
 }
+static void do_createFolder () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"createFolder\" is not available inside manuals.");
+	Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderDir currentDirectory { };
+		Melder_getDefaultDir (& currentDirectory);
+		#if defined (UNIX) || defined (macintosh)
+			Melder_createDirectory (& currentDirectory, f->getString(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		#else
+			Melder_createDirectory (& currentDirectory, f->getString(), 0);
+		#endif
+		pushNumber (1);
+	} else {
+		Melder_throw (U"The function \"createFolder\" requires a string, not ", f->whichText(), U".");
+	}
+}
 static void do_createDirectory () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function \"createDirectory\" is not available inside manuals.");
@@ -5608,7 +5625,7 @@ static void do_tensorLiteral () {
 		pushNumericVector (result.move());
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		integer sharedNumberOfColumns = last->numericVector.size;
-		autoMAT result = newMATraw (numberOfElements, sharedNumberOfColumns);
+		autoMAT result = raw_MAT (numberOfElements, sharedNumberOfColumns);
 		result.row (numberOfElements)  <<=  last->numericVector;
 		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
 			Stackel element = pop;
@@ -5650,7 +5667,7 @@ static void do_outer_MAT () {
 	*/
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		autoMAT result = newMATouter (x->numericVector, y->numericVector);
+		autoMAT result = outer_MAT (x->numericVector, y->numericVector);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"outer##\" requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5670,7 +5687,7 @@ static void do_mul_VEC () {
 			U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
 			U"not ", xSize, U" and ", yNrow
 		);
-		autoVEC result = newVECmul (x->numericVector, y->numericMatrix);
+		autoVEC result = mul_VEC (x->numericVector, y->numericMatrix);
 		pushNumericVector (result.move());
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		/*
@@ -5681,7 +5698,7 @@ static void do_mul_VEC () {
 			U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
 			U"not ", xNcol, U" and ", ySize, U"."
 		);
-		autoVEC result = newVECmul (x->numericMatrix, y->numericVector);
+		autoVEC result = mul_VEC (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5701,8 +5718,8 @@ static void do_mul_MAT () {
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
-		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
-		MATmul_allowAllocation_ (result.get(), x->numericMatrix, y->numericMatrix);
+		autoMAT result = zero_MAT (x->numericMatrix.nrow, y->numericMatrix.ncol);
+		_mul_allowAllocation_MAT_out (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5722,7 +5739,7 @@ static void do_mul_metal_MAT () {
 			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
-		autoMAT result = newMATzero (x->numericMatrix.nrow, y->numericMatrix.ncol);
+		autoMAT result = zero_MAT (x->numericMatrix.nrow, y->numericMatrix.ncol);
 		MATmul_forceMetal_ (result.get(), x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
@@ -5743,7 +5760,7 @@ static void do_mul_fast_MAT () {
 			U"In the function \"mul_fast##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNrow, U"."
 		);
-		autoMAT result = newMATmul_fast (x->numericMatrix, y->numericMatrix);
+		autoMAT result = mul_fast_MAT (x->numericMatrix, y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_fast##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5763,7 +5780,7 @@ static void do_mul_tn_MAT () {
 			U"In the function \"mul_tn##\", the number of rows of the first matrix and the number of rows of the second matrix should be equal, "
 			U"not ", xNrow, U" and ", yNrow, U"."
 		);
-		autoMAT result = newMATmul_allowAllocation (x->numericMatrix.transpose(), y->numericMatrix);
+		autoMAT result = mul_allowAllocation_MAT (x->numericMatrix.transpose(), y->numericMatrix);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_tn##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5783,7 +5800,7 @@ static void do_mul_nt_MAT () {
 			U"In the function \"mul_tn##\", the number of columns of the first matrix and the number of columns of the second matrix should be equal, "
 			U"not ", xNcol, U" and ", yNcol, U"."
 		);
-		autoMAT result = newMATmul_allowAllocation (x->numericMatrix, y->numericMatrix.transpose());
+		autoMAT result = mul_allowAllocation_MAT (x->numericMatrix, y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_nt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5803,7 +5820,7 @@ static void do_mul_tt_MAT () {
 			U"In the function \"mul_tt##\", the number of rows of the first matrix and the number of columns of the second matrix should be equal, "
 			U"not ", xNrow, U" and ", yNcol, U"."
 		);
-		autoMAT result = newMATmul_allowAllocation (x->numericMatrix.transpose(), y->numericMatrix.transpose());
+		autoMAT result = mul_allowAllocation_MAT (x->numericMatrix.transpose(), y->numericMatrix.transpose());
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"mul_tt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5813,16 +5830,16 @@ static void do_transpose_MAT () {
 	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		if (x->owned) {
-			if (NUMisSymmetric (x->numericMatrix)) {
+			if (NUMisSquare (x->numericMatrix)) {
 				/*@praat
 					assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } }) = { { 1, 4, 7 }, { 2, 5, 8 }, { 3, 6, 9 } }
 				@*/
-				MATtranspose_inplace_mustBeSquare (x->numericMatrix);
+				transpose_mustBeSquare_MAT_inout (x->numericMatrix);
 			} else {
 				/*@praat
 					assert transpose## ({ { 1, 2, 3 }, { 4, 5, 6 } }) = { { 1, 4 }, { 2, 5 }, { 3, 6 } }
 				@*/
-				autoMAT newMatrix = newMATtranspose (x->numericMatrix);
+				autoMAT newMatrix = transpose_MAT (x->numericMatrix);
 				x->reset();
 				x->numericMatrix = newMatrix.releaseToAmbiguousOwner();
 			}
@@ -5832,7 +5849,7 @@ static void do_transpose_MAT () {
 				assert transpose## (a##) = { { 1, 4 }, { 2, 5 }, { 3, 6 } }
 				assert transpose## (transpose## (a##)) = a##
 			@*/
-			x->numericMatrix = newMATtranspose (x->numericMatrix). releaseToAmbiguousOwner();
+			x->numericMatrix = transpose_MAT (x->numericMatrix). releaseToAmbiguousOwner();
 			x->owned = true;
 		}
 	} else {
@@ -5842,7 +5859,7 @@ static void do_transpose_MAT () {
 static void do_rowSums_VEC () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		autoVEC result = newVECrowSums (x->numericMatrix);
+		autoVEC result = rowSums_VEC (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"rowSums#\" requires a matrix, not ", x->whichText(), U".");
@@ -5856,7 +5873,7 @@ static void do_columnSums_VEC () {
 			result# = columnSums# (a##)
 			assert result# = { 20, 7, 78 }
 		@*/
-		autoVEC result = newVECcolumnSums (x->numericMatrix);
+		autoVEC result = columnSums_VEC (x->numericMatrix);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"columnSums#\" requires a matrix, not ", x->whichText(), U".");
@@ -5883,7 +5900,7 @@ static void do_rowInners_VEC () {
 			U"In the function rowInners#, the two matrices should have the same shape, not ",
 			x->numericMatrix.nrow, U"x", x->numericMatrix.ncol, U" and ", y->numericMatrix.nrow, U"x", y->numericMatrix.ncol
 		);
-		pushNumericVector (newVECrowInners (x->numericMatrix, y->numericMatrix));
+		pushNumericVector (rowInners_VEC (x->numericMatrix, y->numericMatrix));
 	} else {
 		Melder_throw (U"The function \"rowInners#\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
@@ -5969,7 +5986,7 @@ static void do_solveSparse_VEC () {
 				U"The number of rows in the matrix should equal the size of the vector.");
 			Melder_require (x.size == d.ncol,
 				U"The number of columns in the matrix should equal the size of start vector.");
-			autoVEC xs = newVECcopy (x);
+			autoVEC xs = copy_VEC (x);
 			const integer numberOfNonzeros = Melder_iround (nonzeros->number);
 			const integer maximumNumberOfIterations = Melder_iround (niter ->number);
 			const integer infoLevel = Melder_iround (info->number);
@@ -6000,7 +6017,7 @@ static void do_solveNonnegative_VEC () {
 			const VEC yy = y->numericVector;
 			Melder_require (a.nrow == yy.size,
 				U"The number of rows in the matrix should equal the size of the vector.");
-			autoVEC x = newVECcopy (xstart->numericVector);
+			autoVEC x = copy_VEC (xstart->numericVector);
 			Melder_require (x.size == a.ncol,
 				U"The size of start vector should equal the number of columns in the matrix.");
 			VECsolveNonnegativeLeastSquaresRegression (x.get(), a, yy, maximumNumberOfIterations, tolerance, infoLevel);
@@ -6374,14 +6391,32 @@ static void do_chooseWriteFileStr () {
 		Melder_throw (U"The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", n->number, U".");
 	}
 }
-static void do_chooseDirectoryStr () {
+static void do_chooseFolder_STR () {
+	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
+		U"The function \"chooseFolder$\" is not available inside manuals.");
+	Stackel n = pop;
+	if (n->number == 1) {
+		Stackel title = pop;
+		if (title->which == Stackel_STRING) {
+			autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
+			if (! result)
+				result = Melder_dup (U"");
+			pushString (result.move());
+		} else {
+			Melder_throw (U"The argument of \"chooseFolder$\" should be a string (the title).");
+		}
+	} else {
+		Melder_throw (U"The function \"chooseFolder$\" requires 1 argument (a title), not ", n->number, U".");
+	}
+}
+static void do_chooseDirectory_STR () {
 	Melder_require (theCurrentPraatObjects == & theForegroundPraatObjects,
 		U"The function \"chooseDirectory$\" is not available inside manuals.");
 	Stackel n = pop;
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->getString());
+			autostring32 result = GuiFileSelect_getFolderName (nullptr, title->getString());
 			if (! result)
 				result = Melder_dup (U"");
 			pushString (result.move());
@@ -7131,12 +7166,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SINC_: { do_function_n_n (NUMsinc);
 } break; case SINCPI_: { do_function_n_n (NUMsincpi);
 } break; case EXP_: { do_exp ();
-} break; case VEC_EXP_: { do_VECexp ();
-} break; case MAT_EXP_: { do_MATexp ();
+} break; case EXP_VEC_: { do_exp_VEC ();
+} break; case EXP_MAT_: { do_exp_MAT ();
 } break; case SINH_: { do_sinh ();
 } break; case COSH_: { do_cosh ();
 } break; case TANH_: { do_tanh ();
-} break; case VEC_TANH_: { do_functionvec_n_n (tanh);
+} break; case TANH_VEC_: { do_functionvec_n_n (tanh);
 } break; case ARCSINH_: { do_function_n_n (NUMarcsinh);
 } break; case ARCCOSH_: { do_function_n_n (NUMarccosh);
 } break; case ARCTANH_: { do_function_n_n (NUMarctanh);
@@ -7154,8 +7189,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_BERNOULLI_VEC_: { do_functionvec_n_n (NUMrandomBernoulli_real);
 } break; case RANDOM_POISSON_: { do_function_n_n (NUMrandomPoisson);
 } break; case TRANSPOSE_MAT_: { do_transpose_MAT ();
-} break; case SUM_PER_ROW_VEC_: { do_rowSums_VEC ();
-} break; case SUM_PER_COLUMN_VEC_: { do_columnSums_VEC ();
+} break; case ROW_SUMS_VEC_: { do_rowSums_VEC ();
+} break; case COLUMN_SUMS_VEC_: { do_columnSums_VEC ();
 } break; case LOG2_: { do_log2 ();
 } break; case LN_: { do_ln ();
 } break; case LOG10_: { do_log10 ();
@@ -7177,8 +7212,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case CENTER_: { do_center ();
 } break; case EVALUATE_: { do_evaluate ();
 } break; case EVALUATE_NOCHECK_: { do_evaluate_nocheck ();
-} break; case EVALUATE_STR_: { do_evaluateStr ();
-} break; case EVALUATE_NOCHECK_STR_: { do_evaluate_nocheckStr ();
+} break; case EVALUATE_STR_: { do_evaluate_STR ();
+} break; case EVALUATE_NOCHECK_STR_: { do_evaluate_nocheck_STR ();
 /********** Functions of 2 numerical variables: **********/
 } break; case ARCTAN2_: { do_function_dd_d (atan2);
 } break; case RANDOM_UNIFORM_: { do_function_dd_d (NUMrandomUniform);
@@ -7211,7 +7246,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case INV_BINOMIAL_Q_: { do_function_ddd_d (NUMinvBinomialQ);
 /********** Functions of a variable number of variables: **********/
 } break; case DO_   : { do_do    ();
-} break; case DOSTR_: { do_doStr ();
+} break; case DOSTR_: { do_do_STR ();
 } break; case WRITE_INFO_      : { do_writeInfo      ();
 } break; case WRITE_INFO_LINE_ : { do_writeInfoLine  ();
 } break; case APPEND_INFO_     : { do_appendInfo     ();
@@ -7320,7 +7355,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PERCENT_STR_: { do_percent_STR ();
 } break; case HEXADECIMAL_STR_: { do_hexadecimal_STR ();
 } break; case DELETE_FILE_: { do_deleteFile ();
-} break; case CREATE_DIRECTORY_: { do_createDirectory ();
+} break; case CREATE_FOLDER_: { do_createFolder ();
+} break; case CREATE_DIRECTORY_: { do_createDirectory ();   // deprecated 2020
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILE_STR_: { do_readFile_STR ();
@@ -7356,7 +7392,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
 } break; case CHOOSE_READ_FILE_STR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILE_STR_: { do_chooseWriteFileStr ();
-} break; case CHOOSE_DIRECTORY_STR_: { do_chooseDirectoryStr ();
+} break; case CHOOSE_FOLDER_STR_: { do_chooseFolder_STR ();
+} break; case CHOOSE_DIRECTORY_STR_: { do_chooseDirectory_STR ();   // deprecated 2020
 /********** Demo window functions: **********/
 } break; case DEMO_WINDOW_TITLE_: { do_demoWindowTitle ();
 } break; case DEMO_SHOW_: { do_demoShow ();

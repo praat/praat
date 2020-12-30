@@ -444,7 +444,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 	const double lineSpacing = getLineSpacing (graphics);   // not earlier!
 	const double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 	double y = 1.0 + 0.1 * lineSpacing;
-	autoBOOLMAT onPath = newBOOLMATzero (my numberOfRows, my numberOfColumns);
+	autoBOOLMAT onPath = zero_BOOLMAT (my numberOfRows, my numberOfColumns);
 	for (integer i = 1; i <= my warpingPath -> pathLength; i ++) {
 		const structPairOfInteger poi = my warpingPath -> path [i];
 		onPath [poi.y] [poi.x] = true;
@@ -536,8 +536,8 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_dire
 		 * Going in the vertical direction is a deletion, horizontal is insertion, diagonal is substitution
 		 */
 		const integer numberOfSources = my numberOfColumns - 1, numberOfTargets = my numberOfRows - 1;
-		autoINTMAT psi = newINTMATzero (my numberOfRows, my numberOfColumns);
-		autoMAT delta = newMATzero (my numberOfRows, my numberOfColumns);
+		autoINTMAT psi = zero_INTMAT (my numberOfRows, my numberOfColumns);
+		autoMAT delta = zero_MAT (my numberOfRows, my numberOfColumns);
 
 		for (integer icol = 2; icol <= my numberOfColumns; icol ++) {
 			delta [1] [icol] = delta [1] [icol - 1] + EditCostsTable_getDeletionCost (my editCostsTable.get(), my columnLabels [icol].get());

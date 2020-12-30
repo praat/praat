@@ -60,7 +60,7 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 }
 
 void Permutation_checkInvariant (Permutation me) {
-	autoINTVEC p = newINTVECsort (my p.all());
+	autoINTVEC p = sort_INTVEC (my p.all());
 	for (integer i = 1; i <= my numberOfElements; i ++)
 		Melder_require (p [i] == i,
 			me, U": is not a valid permutation.");
@@ -87,7 +87,7 @@ void Permutation_init (Permutation me, integer numberOfElements) {
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
 	if (jumpSize >= my numberOfElements || first > my numberOfElements)
 		return;
-	autoINTVEC p_copy = newINTVECcopy (my p.get());
+	autoINTVEC p_copy = copy_INTVEC (my p.get());
 
 	integer index = first, column = 1;
 	if (first > 1)
@@ -282,7 +282,7 @@ autoPermutation Permutation_interleave (Permutation me, integer from, integer to
 		autoPermutation thee = Data_copy (me);
 
 		if (nblocks > 1) {
-			autoBOOLVEC occupied = newBOOLVECzero (blockSize);
+			autoBOOLVEC occupied = zero_BOOLVEC (blockSize);
 
 			integer posinblock = 1 - offset;
 			for (integer i = 1; i <= n; i ++) {

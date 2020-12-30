@@ -169,7 +169,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		/*
 			Now we have the real times and we can sort them tohether with the pitches
 		*/
-		autoVEC pitches = newVECcopy (pitchesraw.get());
+		autoVEC pitches = copy_VEC (pitchesraw.get());
 		NUMsortTogether (times.get(), pitches.get());
 		double pitchAnchor, pitch;
 		for (integer i = 1; i <= times.size; i ++) {

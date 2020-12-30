@@ -201,8 +201,8 @@ INTRO (U"A command in the @@New menu@ to create a @Strings object containing a l
 	"It works completely analogously to @@Create Strings as file list...@.")
 MAN_END
 
-MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20201226)
-INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
+MAN_BEGIN (U"Create Strings as file list...", U"ppgb", 20201229)
+INTRO (U"A command in the @@New menu@ to create a @Strings object containing a list of files in a given folder.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Create Strings as file list", 2.6)

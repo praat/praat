@@ -155,15 +155,15 @@ static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 		if (byColumns) {
 			if (m.ncol < m.nrow)
 				Melder_warning (U"The number of columns in your table is less than the number of rows.");
-			mcopy = newMATtranspose (m);
+			mcopy = transpose_MAT (m);
 		} else {
 			if (m.nrow < m.ncol)
 				Melder_warning (U"The number of rows in your table is less than the number of columns.");
-			mcopy = newMATcopy (m);
+			mcopy = copy_MAT (m);
 		}
 		
 		autoPCA thee = Thing_new (PCA);
-		thy centroid = newVECcolumnMeans (mcopy.get());
+		thy centroid = columnMeans_VEC (mcopy.get());
 		mcopy.all()  -=  thy centroid.all();
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autoSTRVEC (mcopy.ncol);
@@ -239,7 +239,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
-		MATmul (his data.get(), thy data.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep).transpose());
+		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep).transpose());
 		his rowLabels.all() <<= thy rowLabels.all();
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
@@ -254,7 +254,7 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
-		MATmul (his data.get(), thy data.get(), my eigenvectors.horizontalBand(1, numberOfDimensionsToKeep).transpose());
+		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand(1, numberOfDimensionsToKeep).transpose());
 		his rowLabels.all() <<= thy rowLabels.all();
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
@@ -273,7 +273,7 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		his columnLabels.all() <<= my labels.all();
 		his rowLabels.all() <<= thy rowLabels.all();
 
-		MATmul (his data.get(), thy data.get (), my eigenvectors.horizontalBand (1, numberOfEigenvectorsToUse));
+		mul_MAT_out (his data.get(), thy data.get (), my eigenvectors.horizontalBand (1, numberOfEigenvectorsToUse));
 
 		return him;
 	} catch (MelderError) {

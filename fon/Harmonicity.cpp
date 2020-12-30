@@ -50,7 +50,7 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 
 double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 	autoVEC soundingValues = Harmonicity_getSoundingValues (me, 0.0, 0.0);
-	VECsort_inplace (soundingValues.get());
+	sort_VEC_inout (soundingValues.get());
 	return NUMquantile (soundingValues.get(), quantile);
 }
 
@@ -67,7 +67,7 @@ void structHarmonicity :: v_info () {
 	MelderInfo_writeLine (U"   First frame centred at: ", our x1, U" seconds");
 	if (soundingValues.size > 0) {
 		MelderInfo_writeLine (U"Periodicity-to-noise ratios of sounding frames:");
-		VECsort_inplace (soundingValues.get());
+		sort_VEC_inout (soundingValues.get());
 		MelderInfo_writeLine (U"   Median ", Melder_single (NUMquantile (soundingValues.get(), 0.50)), U" dB");
 		MelderInfo_writeLine (U"   10 % = ", Melder_single (NUMquantile (soundingValues.get(), 0.10)), U" dB   90 %% = ",
 				Melder_single (NUMquantile (soundingValues.get(), 0.90)), U" dB");

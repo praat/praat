@@ -43,7 +43,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// Overall centroid and apriori probabilities and costs.
 
 		autoVEC centroid = zero_VEC (dimension);
-		autoMAT between = newMATzero (thy numberOfGroups, dimension);
+		autoMAT between = zero_MAT (thy numberOfGroups, dimension);
 		thy aprioriProbabilities = raw_VEC (thy numberOfGroups);
 
 		longdouble sum = 0.0;
@@ -73,7 +73,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		/*
 			Costs.
 		*/
-		thy costs = newMATraw (thy numberOfGroups, thy numberOfGroups);
+		thy costs = raw_MAT (thy numberOfGroups, thy numberOfGroups);
 		
 		thy costs.all()  <<=  1.0;
 		thy costs.diagonal()  <<=  0.0;
@@ -416,7 +416,7 @@ autoConfiguration Discriminant_TableOfReal_to_Configuration (Discriminant me, Ta
 		Melder_require (numberOfDimensions <= my eigen -> numberOfEigenvalues,
 			U"The number of dimensions should not exceed the number of eigenvectors in the Discriminant (", my eigen -> numberOfEigenvalues, U").");
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		MATmul (his data.get(), thy data.get(), my eigen -> eigenvectors.horizontalBand (1, numberOfDimensions).transpose ());
+		mul_MAT_out (his data.get(), thy data.get(), my eigen -> eigenvectors.horizontalBand (1, numberOfDimensions).transpose ());
 		TableOfReal_copyLabels (thee, him.get(), 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"Eigenvector ", 1, 1);
 		return him;

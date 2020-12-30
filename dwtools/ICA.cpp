@@ -104,9 +104,9 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 		integer iter = 0, dimension = my numberOfRows;
 
 		autoCrossCorrelationTableList ccts = CrossCorrelationTableList_Diagonalizer_diagonalize (thee, me);
-		autoMAT w = newMATzero (dimension, dimension);
-		autoMAT vnew = newMATzero (dimension, dimension);
-		autoMAT cc = newMATzero (dimension, dimension);
+		autoMAT w = zero_MAT (dimension, dimension);
+		autoMAT vnew = zero_MAT (dimension, dimension);
+		autoMAT cc = zero_MAT (dimension, dimension);
 
 		for (integer i = 1; i <= dimension; i ++)
 			w [i] [i] = 1.0;
@@ -162,7 +162,7 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 				}
 				// update V
 				vnew.all() <<= my data.all();
-				MATmul (my data.get(), w.get(), vnew.get());
+				mul_MAT_out (my data.get(), w.get(), vnew.get());
 				for (integer k = 1; k <= ccts -> size; k ++) {
 					const CrossCorrelationTable ct = ccts -> at [k];
 					Melder_assert (ct -> data.nrow == dimension && ct -> data.ncol == dimension);   // ppgb 20180913
@@ -192,7 +192,7 @@ static void update_one_column (CrossCorrelationTableList me, MAT d, constVEC wp,
 	for (integer ic = 2; ic <= my size; ic ++) { // exclude C0
 		const SSCP cov = my at [ic];
 		// m1 = C * wvec
-		VECmul (work, cov -> data.get(), wvec);
+		mul_VEC_out (work, cov -> data.get(), wvec);
 		// D = D +/- 2*p(t)*(m1*m1');
 		for (integer i = 1; i <= dimension; i ++) {
 			for (integer j = 1; j <= dimension; j ++) {
@@ -209,15 +209,15 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		autoEigen eigen = Thing_new (Eigen);
 		autoCrossCorrelationTableList ccts = Data_copy (thee);
-		autoMAT d = newMATzero (dimension, dimension);
-		autoMAT pinv = newMATraw (dimension, dimension);
-		autoMAT p = newMATzero (dimension, dimension);
-		autoMAT m1 = newMATzero (dimension, dimension);
+		autoMAT d = zero_MAT (dimension, dimension);
+		autoMAT pinv = raw_MAT (dimension, dimension);
+		autoMAT p = zero_MAT (dimension, dimension);
+		autoMAT m1 = zero_MAT (dimension, dimension);
 		autoVEC wvec = raw_VEC (dimension);
 		autoVEC wnew = raw_VEC (dimension);
 		autoVEC mvec = zero_VEC (dimension);
 
-		autoMAT wc = newMATtranspose (my data.get());
+		autoMAT wc = transpose_MAT (my data.get());
 
 		// d = diag(diag(W'*C0*W));
 		// W = W*d^(-1/2);
@@ -247,14 +247,14 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// W = P'\W == inv(P') * W
 
 		MATpseudoInverse (pinv.get (), p.get(), 0.0);
-		MATmul (my data.get(), pinv.transpose(), wc.get());
+		mul_MAT_out (my data.get(), pinv.transpose(), wc.get());
 
 		// initialisation for order KN^3
 
 		for (integer ic = 2; ic <= thy size; ic ++) {
 			const CrossCorrelationTable cov = ccts -> at [ic];
 			// C * W
-			MATmul (m1.get(), cov -> data.get(), my data.get());
+			mul_MAT_out (m1.get(), cov -> data.get(), my data.get());
 			// D += scalef * M1*M1'
 			multiplyScaleAdd_preallocated (d.get(), m1.get(), 2.0 * cweights [ic]);
 		}
@@ -307,7 +307,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// Revert the sphering W = P'*W;
 		// Take transpose to make W*C [i]W' diagonal instead of W'*C [i]*W => (P'*W)'=W'*P
 		wc.all() <<= my data.all();
-		MATmul (my data.get(), wc.transpose(), p.get()); // W = W'*P: final result
+		mul_MAT_out (my data.get(), wc.transpose(), p.get()); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure
 	//	double dm = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
@@ -417,14 +417,14 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (nchannels);
 		
 		autoVEC centroid1 = raw_VEC (my ny);
-		autoMAT x1x1 = newMATraw (my ny, my ny);
+		autoMAT x1x1 = raw_MAT (my ny, my ny);
 		NUMcrossCorrelate_rows (my z.get(), i1, i2, lag, x1x1.get(), centroid1.get(), my dx);
 		his centroid.part (1, my ny) <<= centroid1.all();
 		for (integer irow = 1; irow <= my ny; irow ++)
 			his data.row (irow).part (1, my ny) <<= x1x1.row (irow);
 
 		autoVEC centroid2 = raw_VEC (thy ny);
-		autoMAT x2x2 = newMATraw (thy ny, thy ny);
+		autoMAT x2x2 = raw_MAT (thy ny, thy ny);
 		NUMcrossCorrelate_rows (thy z.get(), i1, i2, lag, x2x2.get(), centroid2.get(), my dx);
 		his centroid.part (my ny + 1, nchannels) <<= centroid2.all();
 		for (integer irow = 1; irow <= thy ny; irow ++)
@@ -786,8 +786,8 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 			The V matrix will be the common diagonalizer matrix that we use.
 		*/
 
-		autoMAT d = newMATrandomGauss (dimension, dimension, 0.0, 1.0);
-		autoMAT v = newMATraw (dimension, dimension);
+		autoMAT d = randomGauss_MAT (dimension, dimension, 0.0, 1.0);
+		autoMAT v = raw_MAT (dimension, dimension);
 		autoSVD svd = SVD_createFromGeneralMatrix (d.get());
 		autoCrossCorrelationTableList me = CrossCorrelationTableList_create ();
 

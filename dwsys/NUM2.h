@@ -261,7 +261,7 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights);
 
 inline autoMAT newMATmtm_weighRows (constMATVU const& data, constVECVU const& rowWeights) {
-	autoMAT result = newMATraw (data.ncol, data.ncol);
+	autoMAT result = raw_MAT (data.ncol, data.ncol);
 	MATmtm_weighRows (result.get(), data, rowWeights);
 	return result;
 }
@@ -445,7 +445,7 @@ autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd);
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 
 inline autoMAT newMATlowerCholeskyInverse (constMAT const& a) {
-	autoMAT result = newMATcopy (a);
+	autoMAT result = copy_MAT (a);
 	MATlowerCholeskyInverse_inplace (result.get(), nullptr);
 	return result;
 }

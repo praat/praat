@@ -102,8 +102,8 @@ autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, doubl
 		const double maxErb = NUMhertzToErb (maximumFrequency);
 		const double dErb = (maxErb - minErb) / nFilters;
 		SampledXY_init (me.get(), tmin, tmax, nt, dt, t1, minErb - dErb / 2.0, maxErb + dErb / 2.0, nFilters, dErb, minErb);
-		my y = newMATzero (nFilters, nt);
-		my s = newMATzero (nFilters, nt);
+		my y = zero_MAT (nFilters, nt);
+		my s = zero_MAT (nFilters, nt);
 		my gamma = 4;
 		my excitationErbProportion = excitationErbProportion;
 		my inhibitionErbProportion = inhibitionErbProportion;
@@ -139,7 +139,7 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	}
 	integer ifmin, ifmax;
 	SampledXY_getWindowSamplesY (me, fromErb, toErb, & ifmin, & ifmax);
-	autoVEC spec = newVECcolumn (enhanced ? my s.get() : my y.get(), icol);
+	autoVEC spec = column_VEC (enhanced ? my s.get() : my y.get(), icol);
 
 	if (maximum <= minimum)
 		NUMextrema (spec.part (ifmin, ifmax), & minimum, & maximum);

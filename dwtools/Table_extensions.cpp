@@ -3766,11 +3766,11 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 			ystar [..] = sum (i=1..r, sum (j=1..s, ymean [ij.])) / (r * s)
 		 */
 
-		autoMAT factorLevelSizes = newMATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // sum + weighted sum
+		autoMAT factorLevelSizes = zero_MAT (numberOfLevelsA + 1, numberOfLevelsB + 1); // sum + weighted sum
 		/*
 			Extra column for ystar [i.], extra row for ystar [.j]
 		*/
-		autoMAT factorLevelMeans = newMATzero (numberOfLevelsA + 1, numberOfLevelsB + 1); // weighted mean + mean
+		autoMAT factorLevelMeans = zero_MAT (numberOfLevelsA + 1, numberOfLevelsB + 1); // weighted mean + mean
 
 		for (integer k = 1; k <= numberOfData; k ++) {
 			const integer indexA = levelsA -> classIndex [k];
@@ -3971,7 +3971,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 			ymin = stats.mean - numberOfSigmas * stats.stdev;
 			ymax = stats.mean + numberOfSigmas * stats.stdev;
 		}
-		VECsort_inplace (data.get());
+		sort_VEC_inout (data.get());
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
 		TableOfReal_setColumnLabel (thee.get(), 1, U"Normal distribution quantiles");

@@ -26,7 +26,7 @@
 #endif
 
 #if defined (macintosh)
-void VECadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+void _add_macfast_VEC_out (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
 	integer n = target.size;
 	vDSP_vaddD (& x [1], x.stride, & y [1], y.stride, & target [1], target.stride, integer_to_uinteger (n));
 	/*
@@ -144,7 +144,7 @@ autoVEC between_count_VEC (double from, double to, integer count) {
 	return result;
 }
 
-void VECmul (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
+void mul_VEC_out (VECVU const& target, constVECVU const& vec, constMATVU const& mat) noexcept {
 	Melder_assert (mat.nrow == vec.size);
 	Melder_assert (target.size == mat.ncol);
 	if ((true)) {
@@ -166,13 +166,13 @@ void VECmul (VECVU const& target, constVECVU const& vec, constMATVU const& mat) 
 	}
 }
 
-autoVEC newVECmul (constVECVU const& vec, constMATVU const& mat) {
+autoVEC mul_VEC (constVECVU const& vec, constMATVU const& mat) {
 	autoVEC result = raw_VEC (mat.ncol);
-	VECmul (result.get(), vec, mat);
+	mul_VEC_out (result.get(), vec, mat);
 	return result;
 }
 
-void VECmul (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept {
+void mul_VEC_out (VECVU const& target, constMATVU const& mat, constVECVU const& vec) noexcept {
 	Melder_assert (vec.size == mat.ncol);
 	Melder_assert (target.size == mat.nrow);
 	for (integer i = 1; i <= mat.nrow; i ++) {
@@ -186,13 +186,13 @@ void VECmul (VECVU const& target, constMATVU const& mat, constVECVU const& vec) 
 	}
 }
 
-autoVEC newVECmul (constMATVU const& mat, constVECVU const& vec) {
+autoVEC mul_VEC (constMATVU const& mat, constVECVU const& vec) {
 	autoVEC result = raw_VEC (mat.nrow);
-	VECmul (result.all(), mat, vec);
+	mul_VEC_out (result.all(), mat, vec);
 	return result;
 }
 
-void VECpower (VECVU const& target, constVECVU const& vec, double power) {
+void power_VEC_out (VECVU const& target, constVECVU const& vec, double power) {
 	if (power == 2.0) {
 		for (integer i = 1; i <= target.size; i ++)
 			target [i] = vec [i] * vec [i];

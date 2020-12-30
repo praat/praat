@@ -73,7 +73,7 @@ void NMF_paintFeatures (NMF me, Graphics g, integer fromFeature, integer toFeatu
 	fixUnspecifiedColumnRange (& fromFeature, & toFeature, my features.get());
 	fixUnspecifiedRowRange (& fromRow, & toRow, my features.get());
 	
-	autoMAT part = newMATcopy (my features.part (fromRow, toRow, fromFeature, toFeature));
+	autoMAT part = copy_MAT (my features.part (fromRow, toRow, fromFeature, toFeature));
 	
 	if (minimum == 0.0 && maximum == 0.0) {
 		minimum = NUMmin (part.get());
@@ -95,7 +95,7 @@ void NMF_paintWeights (NMF me, Graphics g, integer fromWeight, integer toWeight,
 	fixUnspecifiedColumnRange (& fromWeight, & toWeight, my weights.get());
 	fixUnspecifiedRowRange (& fromRow, & toRow, my weights.get());
 	
-	autoMAT part = newMATcopy (my weights.part (fromRow, toRow, fromWeight, toWeight));
+	autoMAT part = copy_MAT (my weights.part (fromRow, toRow, fromWeight, toWeight));
 	
 	if (minimum == 0.0 && maximum == 0.0) {
 		minimum = NUMmin (part.get());
@@ -119,8 +119,8 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 		my numberOfRows = numberOfRows;
 		my numberOfColumns = numberOfColumns;
 		my numberOfFeatures = numberOfFeatures;
-		my features = newMATzero (numberOfRows, numberOfFeatures);
-		my weights = newMATzero (numberOfFeatures, numberOfColumns);
+		my features = zero_MAT (numberOfRows, numberOfFeatures);
+		my weights = zero_MAT (numberOfFeatures, numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NMF not created.");
@@ -151,8 +151,8 @@ static void NMF_initializeFactorization_svd (NMF me, constMATVU const& data, kNM
 void NMF_initializeFactorization (NMF me, constMATVU const& data, kNMF_Initialization initializationMethod) {
 	if (initializationMethod == kNMF_Initialization::RANDOM_UNIFORM) {
 		const double rmin = 0.0, rmax = 1.0;
-		MATrandomUniform (my features.all(), rmin, rmax);
-		MATrandomUniform (my weights.all(), rmin, rmax);
+		randomUniform_MAT_out (my features.all(), rmin, rmax);
+		randomUniform_MAT_out (my weights.all(), rmin, rmax);
 	} else {
 		NMF_initializeFactorization_svd (me, data, initializationMethod);
 	}
@@ -240,16 +240,16 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		Melder_require (my numberOfRows == data.nrow,
 			U"The number of rows should be equal.");
 		
-		autoMAT productFtD = newMATzero (my numberOfFeatures, my numberOfColumns); // calculations of F'D
-		autoMAT productFtFW = newMATzero (my numberOfFeatures, my numberOfColumns); // calculations of F'F W
-		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
+		autoMAT productFtD = zero_MAT (my numberOfFeatures, my numberOfColumns); // calculations of F'D
+		autoMAT productFtFW = zero_MAT (my numberOfFeatures, my numberOfColumns); // calculations of F'F W
+		autoMAT weights0 = zero_MAT (my numberOfFeatures, my numberOfColumns);
 		
-		autoMAT productDWt = newMATzero (my numberOfRows, my numberOfFeatures); // calculations of DW'
-		autoMAT productFWWt = newMATzero (my numberOfRows, my numberOfFeatures); // calculations of FWW'
-		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT productDWt = zero_MAT (my numberOfRows, my numberOfFeatures); // calculations of DW'
+		autoMAT productFWWt = zero_MAT (my numberOfRows, my numberOfFeatures); // calculations of FWW'
+		autoMAT features0 = zero_MAT (my numberOfRows, my numberOfFeatures);
 		
-		autoMAT productWWt = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
-		autoMAT productFtF = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
+		autoMAT productWWt = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
+		autoMAT productFtF = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
 		
 		const double traceDtD = NUMtrace2 (data.transpose(), data); // for distance calculation
 		features0.all()  <<=  my features.all();
@@ -277,15 +277,15 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 			// 1. Update W matrix
 			features0.all()  <<=  my features.all();
 			weights0.all()  <<=  my weights.all();
-			MATmul (productFtD.get(), features0.transpose(), data);
-			MATmul (productFtF.get(), features0.transpose(), features0.get());
-			MATmul (productFtFW.get(), productFtF.get(), weights0.get());
+			mul_MAT_out (productFtD.get(), features0.transpose(), data);
+			mul_MAT_out (productFtF.get(), features0.transpose(), features0.get());
+			mul_MAT_out (productFtFW.get(), productFtF.get(), weights0.get());
 			update (my weights.get(), weights0.get(), productFtD.get(), productFtFW.get(), eps, maximum);
 
 			// 2. Update F matrix
-			MATmul (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
-			MATmul (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
-			MATmul (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
+			mul_MAT_out (productDWt.get(), data, my weights.transpose()); // productDWt = data*weights'
+			mul_MAT_out (productWWt.get(), my weights.get(), my weights.transpose()); // work1 = weights*weights'
+			mul_MAT_out (productFWWt.get(), features0.get(), productWWt.get()); // productFWWt = features0 * work1
 			update (my features.get(), features0.get(), productDWt.get(), productFWWt.get(), eps, maximum);
 			
 			/* 3. Convergence test:
@@ -322,14 +322,14 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 		Melder_require (my numberOfColumns == data.ncol, U"The number of columns should be equal.");
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		
-		autoMAT productFtD = newMATzero (my numberOfFeatures, my numberOfColumns); // calculations of F'D
-		autoMAT productWDt = newMATzero (my numberOfFeatures, my numberOfRows); // calculations of WD'
+		autoMAT productFtD = zero_MAT (my numberOfFeatures, my numberOfColumns); // calculations of F'D
+		autoMAT productWDt = zero_MAT (my numberOfFeatures, my numberOfRows); // calculations of WD'
 		
-		autoMAT weights0 = newMATzero (my numberOfFeatures, my numberOfColumns);
-		autoMAT features0 = newMATzero (my numberOfRows, my numberOfFeatures);
+		autoMAT weights0 = zero_MAT (my numberOfFeatures, my numberOfColumns);
+		autoMAT features0 = zero_MAT (my numberOfRows, my numberOfFeatures);
 
-		autoMAT productFtF = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
-		autoMAT productWWt = newMATzero (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
+		autoMAT productFtF = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of F'F
+		autoMAT productWWt = zero_MAT (my numberOfFeatures, my numberOfFeatures); // calculations of WW'
 		
 		autoSVD svd_WWt = SVD_create (my numberOfFeatures, my numberOfFeatures); // solving W*W'*F' = W*D'
 		autoSVD svd_FtF = SVD_create (my numberOfFeatures, my numberOfFeatures); // solving F´*F*W = F'*D
@@ -357,8 +357,8 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			
 			// 1. Solve equations for new W:  F´*F*W = F'*D.
 			weights0.get() <<= my weights.get(); // save previous weigts for convergence test
-			MATmul (productFtD.get(), my features.transpose(), data);
-			MATmul (productFtF.get(), my features.transpose(), my features.get());
+			mul_MAT_out (productFtD.get(), my features.transpose(), data);
+			mul_MAT_out (productFtF.get(), my features.transpose(), my features.get());
 
 			svd_FtF -> u.all()  <<=  productFtF.all();
 			SVD_compute (svd_FtF.get());
@@ -367,8 +367,8 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			
 			// 2. Solve equations for new F:  W*W'*F' = W*D'
 			features0.all()  <<=  my features.all(); // save previous features for convergence test
-			MATmul  (productWDt.get(), my weights.get(), data.transpose());
-			MATmul (productWWt.get(), my weights.get(), my weights.transpose());
+			mul_MAT_out  (productWDt.get(), my weights.get(), data.transpose());
+			mul_MAT_out (productWWt.get(), my weights.get(), my weights.transpose());
 
 			svd_WWt -> u.all()  <<=  productWWt.all();
 			SVD_compute (svd_WWt.get());
@@ -408,12 +408,12 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 		Melder_require (my numberOfRows == data.nrow, U"The number of rows should be equal.");
 		Melder_require (NUMhasZeroElement (data) == false,
 			U"The data matrix should not have cells that are zero.");
-		autoMAT vk = newMATraw (data.nrow, data.ncol);
-		autoMAT fw = newMATraw (data.nrow, data.ncol);
-		autoMAT fcol_x_wrow = newMATraw (data.nrow, data.ncol);
+		autoMAT vk = raw_MAT (data.nrow, data.ncol);
+		autoMAT fw = raw_MAT (data.nrow, data.ncol);
+		autoMAT fcol_x_wrow = raw_MAT (data.nrow, data.ncol);
 		autoVEC fcolumn_inv = raw_VEC (data.nrow); // feature column
 		autoVEC wrow_inv = raw_VEC (data.ncol); // weight row
-		MATmul (fw.get(), my features.get(), my weights.get());
+		mul_MAT_out (fw.get(), my features.get(), my weights.get());
 		double divergence = MATgetDivergence_ItakuraSaito (data, fw.get());
 		const double divergence0 = divergence;
 		if (info)
@@ -440,7 +440,7 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 			*/
 			for (integer kf = 1; kf <= my numberOfFeatures; kf ++) {
 				// (1) and (2)
-				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
+				outer_MAT_out (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
 				for (integer irow = 1; irow <= data.nrow; irow ++)
 					for (integer icol = 1; icol <= data.ncol; icol ++) {
 						double gk = fcol_x_wrow [irow] [icol] / fw [irow] [icol];
@@ -448,17 +448,17 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 					}
 				// (3)
 				VECinvertAndScale (fcolumn_inv.get(), my features.column (kf), 1.0 / my numberOfRows);	
-				VECmul (my weights.row (kf), fcolumn_inv.get(), vk.get());
+				mul_VEC_out (my weights.row (kf), fcolumn_inv.get(), vk.get());
 				// (4)
 				VECinvertAndScale (wrow_inv.get(), my weights.row (kf), 1.0 / my numberOfColumns);
-				VECmul (my features.column (kf), vk.get(), wrow_inv.get());
+				mul_VEC_out (my features.column (kf), vk.get(), wrow_inv.get());
 				// (5)
 				double fcolumn_norm = NUMnorm (my features.column (kf), 2.0);
 				my features.column (kf)  /=  fcolumn_norm;
 				my weights.row (kf)  *=  fcolumn_norm;
 				// (6)
 				fw.get()  -=  fcol_x_wrow.get();
-				MATouter (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
+				outer_MAT_out (fcol_x_wrow.get(), my features.column (kf), my weights.row (kf));
 				fw.get()  +=  fcol_x_wrow.get();
 			}
 			const double divergence_update = MATgetDivergence_ItakuraSaito (data, fw.get());
@@ -479,7 +479,7 @@ void NMF_improveFactorization_is (NMF me, constMATVU const& data, integer maximu
 
 autoMAT NMF_synthesize (NMF me) {
 	try {
-		autoMAT result = newMATmul (my features.get(), my weights.get());
+		autoMAT result = mul_MAT (my features.get(), my weights.get());
 		return result;
 	} catch (MelderError) {
 		Melder_throw (me, U": No matrix created.");
