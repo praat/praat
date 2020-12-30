@@ -68,6 +68,7 @@
 #include "NUMcomplex.h"
 #include "../external/vorbis/vorbis_codec.h"
 #include "../external/vorbis/vorbisfile.h"
+#include "../external/opusfile/opusfile.h"
 
 #include "enums_getText.h"
 #include "Sound_extensions_enums.h"
@@ -480,18 +481,16 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		
 		/*
 			We open the file as a vorbis file as was done in the vorbisfile_example.c in libvorbis-1.3.7/examples
-			and get the data necessary to create the sound.
-			Then we close it and use the code from decode_example.c because the code in the vorbisfile_example
+			and get the data necessary to create the Sound object.
+			Then we rewind the file and use code from decode_example.c because the code in the vorbisfile_example
 			does not read the file completely but skips some samples just after the start of the sound.
 		*/
-			
-		
 		OggVorbis_File vorbisFile;
 		if (ov_open_callbacks (f, & vorbisFile, nullptr, 0, OV_CALLBACKS_NOCLOSE) < 0)
-			Melder_throw (U"Input does not appear to be an Ogg bitstream");
-		vorbis_info *vorbisInfo = ov_info (& vorbisFile, -1);
-		const integer numberOfChannels = vorbisInfo -> channels;
-		const long samplingFrequency_asLong = vorbisInfo -> rate;
+			Melder_throw (U"Input does not appear to be an Ogg bitstream.");
+		vorbis_info *vorbInfo = ov_info (& vorbisFile, -1);
+		const integer numberOfChannels = vorbInfo -> channels;
+		const long samplingFrequency_asLong = vorbInfo -> rate;
 		const double samplingFrequency = samplingFrequency_asLong;
 		const double samplingTime = 1.0 / samplingFrequency;
 		const integer numberOfSamples = ov_pcm_total (& vorbisFile, -1);
@@ -508,9 +507,9 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		ogg_sync_state oggSyncState; // sync and verify incoming physical bitstream
 		ogg_sync_init (& oggSyncState); // Now we can read pages
 		
-		integer chainNumber = 0;
+		integer vorbisChainNumber = 0;
 		while (true) { // we repeat if the bitstream is chained
-			chainNumber ++;
+			vorbisChainNumber ++;
 			/*
 				Grab some data at the head of the stream. We want the first page
 				(which is guaranteed to be small and only contain the Vorbis
@@ -602,10 +601,10 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			}
 			Melder_require (vorbisInfo.channels == numberOfChannels,
 				U"The number of channels in all chains should be equal. It changed from ", numberOfChannels, U" to ", 
-					vorbisInfo.channels, U" in chain ", chainNumber, U".");
+					vorbisInfo.channels, U" in chain ", vorbisChainNumber, U".");
 			Melder_require (samplingFrequency_asLong ==  vorbisInfo.rate,
 				U"The sampling frequency in all chains should be equal. It changed from ", samplingFrequency_asLong, U" to ", 
-					vorbisInfo.rate, U" in chain ", chainNumber, U".");
+					vorbisInfo.rate, U" in chain ", vorbisChainNumber, U".");
 			/* 
 				Parsed all three headers. Initialize the Vorbis packet->PCM decoder.
 			*/
@@ -698,6 +697,41 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		}
 		ogg_sync_clear (& oggSyncState);
 		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
+	}
+}
+
+autoSound Sound_readFromOggOpusFile (MelderFile file) {
+	try {
+#ifdef HAVE_OPUS
+		conststring32 path = Melder_fileToPath (file);
+		int error;
+		OpusFileCallbacks *fileCallbacks;
+		OggOpusFile *opusFile = op_open_file (Melder_peek32to8 (path), NULL);
+		if (error != 0) {
+			if (error == OP_EREAD)
+				Melder_throw (U"Reading error.");
+			else if (error == OP_EFAULT)
+				Melder_throw (U"Memory error.");
+			else if (error == OP_EIMPL)
+				Melder_throw (U"Feature is not implemented.");
+			else if (error == OP_EINVAL)
+				Melder_throw (U"Seek function error.");
+			else if (error == OP_ENOTFORMAT)
+				Melder_throw (U"Link doea not have any logical Opus streams.");
+			else if (error == OP_EBADHEADER)
+				Melder_throw (U"Malformed header.");
+			else if (error == OP_EVERSION)
+				Melder_throw (U"Unrecognised version number.");
+			else if (error == OP_EBADLINK)
+				Melder_throw (U"Failed to find data.");
+			else if (error == OP_EBADTIMESTAMP)
+				Melder_throw (U"invalid time stamp.");
+		}
+		const OpusHead *head = op_head (opusFile, 0);
+#else
+#endif		
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
 	}

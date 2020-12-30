@@ -50,6 +50,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 */
 
 autoSound Sound_readFromOggVorbisFile (MelderFile file);
+autoSound Sound_readFromOggOpusFile (MelderFile file);
 
 void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool littleEndian, int nBitsCoding, bool unSigned);
 

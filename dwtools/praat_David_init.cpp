@@ -7904,13 +7904,35 @@ static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, Meld
 	       autoSound () : Sound_readFromCmuAudioFile (file);
 }
 
+static autoDaata oggOpusFileRecognizer (integer nread, const char *header, MelderFile file) {
+	if (nread < 27 ) // each page header is 27 bytes
+		return autoDaata ();
+	if (! strnequ (header, "OggS", 4)) // Capture pattern 32 bits
+		return autoDaata ();
+	unsigned char version = header [4];
+	if (version != 0) // Currently mandated to be zero
+		return autoDaata ();
+	unsigned int headerType = header [5];
+	if (headerType != 0x02) // Beginning of stream
+		return autoDaata ();
+	int64_t *granule = (int64 *) (& header [6]);
+	if (*granule != 0) // endianness is not important here
+		return autoDaata ();
+	if (! strnequ (& header [28], "OpusHead", 8))
+		return autoDaata ();
+	/*
+		Leave rest of checking to libVorbis
+	*/
+	return Sound_readFromOggOpusFile (file);
+}
+
 static autoDaata oggVorbisFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 27 ) // each page header is 27 bytes
 		return autoDaata ();
 	if (! strnequ (header, "OggS", 4)) // Capture pattern 32 bits
 		return autoDaata ();
 	unsigned char version = header [4];
-	if (version != 0) // Curently mandated to be zero
+	if (version != 0) // Currently mandated to be zero
 		return autoDaata ();
 	unsigned int headerType = header [5];
 	if (headerType != 0x02) // Beginning of stream
@@ -8145,6 +8167,7 @@ void praat_uvafon_David_init ();
 void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
+	Data_recognizeFileType (oggOpusFileRecognizer);
 	Data_recognizeFileType (oggVorbisFileRecognizer);
 
 	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
