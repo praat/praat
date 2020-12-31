@@ -7904,7 +7904,7 @@ static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, Meld
 	       autoSound () : Sound_readFromCmuAudioFile (file);
 }
 
-static autoDaata oggOpusFileRecognizer (integer nread, const char *header, MelderFile file) {
+static autoDaata oggFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 27 ) // each page header is 27 bytes
 		return autoDaata ();
 	if (! strnequ (header, "OggS", 4)) // Capture pattern 32 bits
@@ -7915,28 +7915,16 @@ static autoDaata oggOpusFileRecognizer (integer nread, const char *header, Melde
 	unsigned int headerType = header [5];
 	if (headerType != 0x02) // Beginning of stream
 		return autoDaata ();
-	int64_t *granule = (int64 *) (& header [6]);
-	if (*granule != 0) // endianness is not important here
-		return autoDaata ();
-	if (! strnequ (& header [28], "OpusHead", 8))
-		return autoDaata ();
-	/*
-		Leave rest of checking to libVorbis
-	*/
-	return Sound_readFromOggOpusFile (file);
-}
-
-static autoDaata oggVorbisFileRecognizer (integer nread, const char *header, MelderFile file) {
-	if (nread < 27 ) // each page header is 27 bytes
-		return autoDaata ();
-	if (! strnequ (header, "OggS", 4)) // Capture pattern 32 bits
-		return autoDaata ();
-	unsigned char version = header [4];
-	if (version != 0) // Currently mandated to be zero
-		return autoDaata ();
-	unsigned int headerType = header [5];
-	if (headerType != 0x02) // Beginning of stream
-		return autoDaata ();
+	if (header [6] == '\0' && header [7] == '\0' && header [8] == '\0' && header [9] == '\0' &&
+		header [10] == '\0' && header [11] == '\0' && header [12] == '\0' && header [13] == '\0' &&
+		strnequ (& header [28], "OpusHead", 8)) {
+		#ifdef HAVE_OPUS
+			return Sound_readFromOggOpusFile (file);
+		#else
+			Melder_throw (U"For now, Ogg Opus audio files can be read natively only on Linux. You should first convert an Ogg Opus file "
+				"to WAV format. You could try to obtain a converter from https://opus-codec.org/downloads/.");
+		#endif
+	}
 	/*
 		Leave rest of checking to libVorbis
 	*/
@@ -8167,8 +8155,7 @@ void praat_uvafon_David_init ();
 void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
-	Data_recognizeFileType (oggOpusFileRecognizer);
-	Data_recognizeFileType (oggVorbisFileRecognizer);
+	Data_recognizeFileType (oggFileRecognizer);
 
 	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,

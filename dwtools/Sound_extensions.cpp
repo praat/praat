@@ -487,7 +487,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		*/
 		OggVorbis_File vorbisFile;
 		if (ov_open_callbacks (f, & vorbisFile, nullptr, 0, OV_CALLBACKS_NOCLOSE) < 0)
-			Melder_throw (U"Input does not appear to be an Ogg bitstream.");
+			Melder_throw (U"Input does not appear to be an Ogg Vorbis bitstream.");
 		vorbis_info *vorbInfo = ov_info (& vorbisFile, -1);
 		const integer numberOfChannels = vorbInfo -> channels;
 		const long samplingFrequency_asLong = vorbInfo -> rate;
@@ -527,7 +527,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			if (ogg_sync_pageout (& oggSyncState, & oggPage) != 1) {
 				if (bytesRead < readBufferSize) // have we simply run out of data?  If so, we're done.
 					break;
-				Melder_throw (U"Input does not appear to be an Ogg file.");
+				Melder_throw (U"Input does not appear to be an Ogg Vorbis file.");
 			}
 			/*
 				Get the serial number and set up the rest of decode.
@@ -549,7 +549,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			vorbis_comment vorbisComment; // struct that stores all the bitstream user comments
 			vorbis_comment_init (& vorbisComment);			
 			if (ogg_stream_pagein (& oggStream, & oggPage) < 0)
-				Melder_throw (U"Error reading first page of Ogg bitstream data.");
+				Melder_throw (U"Error reading first page of Ogg Vorbis bitstream data.");
 			ogg_packet oggPacket; // one raw packet of data for decode
 			if (ogg_stream_packetout (& oggStream, & oggPacket) != 1)
 				Melder_throw (U"Error reading initial header packet.");
@@ -624,7 +624,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 						if (result == 0)
 							break; // need more data
 						if (result < 0)
-							Melder_casual (U"Corrupt or missing data in bitstream; continuing...");
+							Melder_casual (U"Corrupt or missing data in Vorbis bitstream; continuing...");
 						else {
 							ogg_stream_pagein (& oggStream, & oggPage); // can safely ignore errors at this point
 							while (true) {
@@ -702,13 +702,12 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 	}
 }
 
+#ifdef HAVE_OPUS
 autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	try {
-#ifdef HAVE_OPUS
 		conststring32 path = Melder_fileToPath (file);
 		int error;
-		OpusFileCallbacks *fileCallbacks;
-		OggOpusFile *opusFile = op_open_file (Melder_peek32to8 (path), NULL);
+		OggOpusFile *opusFile = op_open_file (Melder_peek32to8 (path), & error);
 		if (error != 0) {
 			if (error == OP_EREAD)
 				Melder_throw (U"Reading error.");
@@ -730,12 +729,62 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 				Melder_throw (U"invalid time stamp.");
 		}
 		const OpusHead *head = op_head (opusFile, 0);
-#else
-#endif		
+		integer samplingFrequency_asLong = head -> input_sample_rate;
+		if (samplingFrequency_asLong == 0)
+			samplingFrequency_asLong = 44100;
+		const integer numberOfChannels = head -> channel_count;
+		const double samplingTime = 1.0 / 48000.0; // fixed decodoing rate
+		const integer numberOfSamples = op_pcm_total (opusFile, -1);
+		double xmin = 0.0; // the start time in the file can be > 0!!!
+		const double xmax = numberOfSamples * samplingTime;
+		autoSound me = Sound_create (numberOfChannels, xmin, xmax, numberOfSamples, samplingTime, 0.5 * samplingTime);
+		const integer maximumBufferSize = 5760 * numberOfChannels; // 0.12 s at 48 kHz * numberOfChannels
+		autovector<float> multiChannelFloats = autovector<float> (maximumBufferSize, MelderArray::kInitializationType::RAW);
+		integer numberOfPCMValuesProcessed = 0;
+		int previousLinkIndex = -1;
+		integer opusChainNumber = 0;
+		while (true) {
+			int linkIndex;
+			
+			integer numberOfSamplesDecoded = op_read_float (opusFile, multiChannelFloats.asArgumentToFunctionThatExpectsZeroBasedArray(), maximumBufferSize, & linkIndex);
+			if (numberOfSamplesDecoded < 0) {
+				if (numberOfSamplesDecoded == OP_HOLE)
+					Melder_casual (U"Warning: Hole in data.");
+				else
+					Melder_throw (U"Decoding error.");
+			}
+			if (numberOfSamplesDecoded == 0)
+				break; // we're done
+
+			if (linkIndex != previousLinkIndex) {
+				opusChainNumber ++;
+
+				head = op_head (opusFile, linkIndex);
+				Melder_require (head -> channel_count == numberOfChannels,
+					U"The number of channels in all chains should be equal. It changed from ", numberOfChannels, U" to ", 
+					head -> channel_count, U" in chain ", opusChainNumber, U".");
+				Melder_require (samplingFrequency_asLong ==  head -> input_sample_rate,
+				U"The sampling frequency in all chains should be equal. It changed from ", samplingFrequency_asLong, U" to ", 
+					head -> input_sample_rate, U" in chain ", opusChainNumber, U".");
+			}
+			previousLinkIndex = linkIndex;
+			Melder_require (numberOfPCMValuesProcessed + numberOfSamplesDecoded <= numberOfSamples,
+				U"The number of samples read is too large.");
+			integer ifloat = 1;
+			for (integer j =  1; j <= numberOfSamplesDecoded; j ++)
+				for (integer ichan = 1; ichan <= numberOfChannels; ichan ++, ifloat ++){
+					my z [ichan] [numberOfPCMValuesProcessed + j] = multiChannelFloats [ifloat];
+			}
+			numberOfPCMValuesProcessed += numberOfSamplesDecoded;
+		}
+		if (samplingFrequency_asLong != 48000)
+			me = Sound_resample (me.get(), samplingFrequency_asLong, 50);
+		return me;		
 	} catch (MelderError) {
-		Melder_throw (U"Sound not read from Ogg Vorbis file ", MelderFile_messageName (file), U".");
+		Melder_throw (U"Sound not read from Ogg Opus file ", MelderFile_messageName (file), U".");
 	}
 }
+#endif		
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
