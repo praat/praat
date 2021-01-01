@@ -7,6 +7,12 @@ CPPFLAGS = -I ../../melder -I ../vorbis
 
 OPUSFILE_OBJECTS = opusfile.o opusfile_info.o opusfile_internal.o opusfile_stream.o
 
+CELT_OBJECTS = celt/bands.o celt/celt.o celt/celt_encoder.o celt/celt_decoder.o \
+celt/cwrs.o celt/entcode.o celt/entdec.o celt/entenc.o celt/kiss_fft.o \
+celt/laplace.o celt/mathops.o celt/mdct.o celt/modes.o celt/pitch.o \
+celt/celt_lpc.o celt/quant_bands.o celt/rate.o celt/vq.o
+
+
 SILK_OBJECTS = silk/CNG.o silk/code_signs.o silk/init_decoder.o silk/decode_core.o silk/decode_frame.o \
 silk/decode_parameters.o silk/decode_indices.o silk/decode_pulses.o silk/decoder_set_fs.o silk/dec_API.o \
 silk/enc_API.o silk/encode_indices.o silk/encode_pulses.o silk/gain_quant.o silk/interpolate.o \
@@ -24,6 +30,7 @@ silk/resampler.o silk/resampler_down2_3.o silk/resampler_down2.o silk/resampler_
 silk/resampler_private_down_FIR.o silk/resampler_private_IIR_FIR.o silk/resampler_private_up2_HQ.o \
 silk/resampler_rom.o silk/sigm_Q15.o silk/sort.o silk/sum_sqr_shift.o silk/stereo_decode_pred.o \
 silk/stereo_encode_pred.o silk/stereo_find_predictor.o silk/stereo_quant_pred.o silk/LPC_fit.o
+
 
 OBJECTS = $(OPUSFILE_OBJECTS) \
 	$(SILK_OBJECTS)
