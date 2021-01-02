@@ -22,10 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20201228)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210102)
 INTRO (U"Latest changes in Praat.")
-NORMAL (U"##6.1.38# (xx December 2020)")
-LIST_ITEM (U"• Scripting: string vectors, empty\\$ \\#  (), readLinesFromFile\\$ \\#  (), files\\$ \\#  (), folders\\$ \\#  (), splitByWhitespace\\$ \\#  ().")
+NORMAL (U"##6.1.38# (2 January 2021)")
+LIST_ITEM (U"• Scripting: string vectors, empty\\$ \\#  (), readLinesFromFile\\$ \\#  (), fileNames\\$ \\#  (), folderNames\\$ \\#  (), splitByWhitespace\\$ \\#  ().")
 LIST_ITEM (U"• Sound files: open Ogg Vorbis files.")
 NORMAL (U"##6.1.37# (16 December 2020)")
 LIST_ITEM (U"• TextGrid window: removed a bug that caused Praat to crash when option-clicking or command-clicking a boundary when another boundary was selected on a point tier.")

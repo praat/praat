@@ -788,7 +788,7 @@ LIST_ITEM (U"Page-down (in sound windows): Scroll page forward")
 LIST_ITEM (U"Escape: Interrupt playing")
 MAN_END
 
-MAN_BEGIN (U"Log files", U"ppgb", 20140421)
+MAN_BEGIN (U"Log files", U"ppgb", 20201230)
 INTRO (U"With some commands in the @Query menu of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
 	"to the @@Info window@ and to a log file.")
@@ -804,7 +804,7 @@ DEFINITION (U"this determines whether your log line will be written to the log f
 TAG (U"##Log file 1")
 DEFINITION (U"the name of the log file. On Windows, this has to be a complete path name, such as "
 	"$$C:\\bsWINDOWS\\bsDESKTOP\\bsPitch Log.txt$. "
-	"On Unix and MacOS X, it can either be a complete path name, e.g. $$/home/mary/pitch_log$, "
+	"On Unix and macOS, it can either be a complete path name, e.g. $$/home/mary/pitch_log$, "
 	"or a home-relative name such as $$~/Desktop/Pitch log$.")
 TAG (U"##Log 1 format")
 DEFINITION (U"the format of the line that Praat will write. See below.")

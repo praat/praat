@@ -5004,6 +5004,8 @@ static void do_index () {
 		char32 *substring = str32str (s->getString(), t->getString());
 		integer result = substring ? substring - s->getString() + 1 : 0;
 		pushNumber (result);
+	} else if (s->which == Stackel_STRING_ARRAY && t->which == Stackel_STRING) {
+		pushNumber (NUMfindFirst (s->stringArray, t->getString()));
 	} else {
 		Melder_throw (U"The function \"index\" requires two strings, not ",
 			s->whichText(), U" and ", t->whichText(), U".");
