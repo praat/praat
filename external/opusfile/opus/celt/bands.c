@@ -27,9 +27,9 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
 #include <math.h>
 #include "bands.h"
@@ -41,7 +41,7 @@
 #include "mathops.h"
 #include "rate.h"
 #include "quant_bands.h"
-#include "pitch.h"
+#include "pitch_.h"
 
 int hysteresis_decision(opus_val16 val, const opus_val16 *thresholds, const opus_val16 *hysteresis, int N, int prev)
 {

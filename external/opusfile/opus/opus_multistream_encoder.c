@@ -25,9 +25,9 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
 #include "opus_multistream.h"
 #include "opus.h"
@@ -41,7 +41,7 @@
 #include "modes.h"
 #include "bands.h"
 #include "quant_bands.h"
-#include "pitch.h"
+#include "pitch_.h"
 
 typedef struct {
    int nb_streams;

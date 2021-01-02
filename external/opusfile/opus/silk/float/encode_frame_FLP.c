@@ -25,9 +25,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
 #include <stdlib.h>
 #include "main_FLP.h"

@@ -26,9 +26,9 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
 #include "mathops.h"
 #include "cwrs.h"
@@ -37,7 +37,7 @@
 #include "os_support.h"
 #include "bands.h"
 #include "rate.h"
-#include "pitch.h"
+#include "pitch_.h"
 
 #if defined(MIPSr1_ASM)
 #include "mips/vq_mipsr1.h"

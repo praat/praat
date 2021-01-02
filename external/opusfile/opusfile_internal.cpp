@@ -9,9 +9,9 @@
  * by the Xiph.Org Foundation and contributors https://xiph.org/    *
  *                                                                  *
  ********************************************************************/
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
 #include "opusfile_internal.h"
 

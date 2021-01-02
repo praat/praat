@@ -27,9 +27,9 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
 #define CELT_ENCODER_C
 
@@ -38,7 +38,7 @@
 #include "mdct.h"
 #include <math.h>
 #include "celt.h"
-#include "pitch.h"
+#include "pitch_.h"
 #include "bands.h"
 #include "modes.h"
 #include "entcode.h"

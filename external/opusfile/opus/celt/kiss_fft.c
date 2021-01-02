@@ -30,9 +30,9 @@
    heavily modified to better suit Opus */
 
 #ifndef SKIP_CONFIG_H
-#  ifdef HAVE_CONFIG_H
+//#  ifdef HAVE_CONFIG_H
 #    include "config.h"
-#  endif
+//#  endif
 #endif
 
 #include "_kiss_fft_guts.h"

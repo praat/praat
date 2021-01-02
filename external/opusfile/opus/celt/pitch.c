@@ -31,11 +31,11 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+//#endif
 
-#include "pitch.h"
+#include "pitch_.h"
 #include "os_support.h"
 #include "modes.h"
 #include "stack_alloc.h"
