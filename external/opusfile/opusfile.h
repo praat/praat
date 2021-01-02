@@ -108,7 +108,7 @@
 //# include <stdarg.h>
 //# include <stdio.h>
 //# include <ogg/ogg.h>
-# include <opus/opus_multistream.h>
+# include "opus/opus_multistream.h"
 
 /**@cond PRIVATE*/
 

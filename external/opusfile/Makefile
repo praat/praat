@@ -3,37 +3,62 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../melder -I ../vorbis
+CPPFLAGS = -I ../../melder -I ../vorbis -I opus -I opus/celt -I opus/silk -I opus/silk/float
+
+CFLAGS += -DHAVE_CONFIG_H 
 
 OPUSFILE_OBJECTS = opusfile.o opusfile_info.o opusfile_internal.o opusfile_stream.o
 
-CELT_OBJECTS = celt/bands.o celt/celt.o celt/celt_encoder.o celt/celt_decoder.o \
-celt/cwrs.o celt/entcode.o celt/entdec.o celt/entenc.o celt/kiss_fft.o \
-celt/laplace.o celt/mathops.o celt/mdct.o celt/modes.o celt/pitch.o \
-celt/celt_lpc.o celt/quant_bands.o celt/rate.o celt/vq.o
+OPUS_OBJECTS = opus/analysis.c opus/mlp.c opus/opus.c opus/opus_decoder.c opus/opus_multistream.c opus/repacketizer_demo.c \
+opus/mapping_matrix.c opus/mlp_data.c opus/opus_compare.c opus/opus_demo.c opus/opus_multistream_decoder.c \
+opus/opus_projection_decoder.c opus/repacketizer.c
 
 
-SILK_OBJECTS = silk/CNG.o silk/code_signs.o silk/init_decoder.o silk/decode_core.o silk/decode_frame.o \
-silk/decode_parameters.o silk/decode_indices.o silk/decode_pulses.o silk/decoder_set_fs.o silk/dec_API.o \
-silk/enc_API.o silk/encode_indices.o silk/encode_pulses.o silk/gain_quant.o silk/interpolate.o \
-silk/LP_variable_cutoff.o silk/NLSF_decode.o silk/NSQ.o silk/NSQ_del_dec.o silk/PLC.o \
-silk/shell_coder.o silk/tables_gain.o silk/tables_LTP.o silk/tables_NLSF_CB_NB_MB.o silk/tables_NLSF_CB_WB.o \
-silk/tables_other.o silk/tables_pitch_lag.o silk/tables_pulses_per_block.o \
-silk/VAD.o silk/control_audio_bandwidth.o silk/quant_LTP_gains.o silk/VQ_WMat_EC.o \
-silk/HP_variable_cutoff.o silk/NLSF_encode.o silk/NLSF_VQ.o silk/NLSF_unpack.o silk/NLSF_del_dec_quant.o \
-silk/process_NLSFs.o silk/stereo_LR_to_MS.o silk/stereo_MS_to_LR.o silk/check_control_input.o \
-silk/control_SNR.o silk/init_encoder.o silk/control_codec.o silk/A2NLSF.o silk/ana_filt_bank_1.o \
-silk/biquad_alt.o silk/bwexpander_32.o silk/bwexpander.o silk/debug.o silk/decode_pitch.o \
-silk/inner_prod_aligned.o silk/lin2log.o silk/log2lin.o silk/LPC_analysis_filter.o silk/LPC_inv_pred_gain.o \
-silk/table_LSF_cos.o silk/NLSF2A.o silk/NLSF_stabilize.o silk/NLSF_VQ_weights_laroia.o silk/pitch_est_tables.o \
-silk/resampler.o silk/resampler_down2_3.o silk/resampler_down2.o silk/resampler_private_AR2.o \
-silk/resampler_private_down_FIR.o silk/resampler_private_IIR_FIR.o silk/resampler_private_up2_HQ.o \
-silk/resampler_rom.o silk/sigm_Q15.o silk/sort.o silk/sum_sqr_shift.o silk/stereo_decode_pred.o \
-silk/stereo_encode_pred.o silk/stereo_find_predictor.o silk/stereo_quant_pred.o silk/LPC_fit.o
+CELT = opus/celt/
+
+CELT_OBJECTS = $(CELT)bands.o $(CELT)celt.o $(CELT)celt_encoder.o $(CELT)celt_decoder.o \
+$(CELT)cwrs.o $(CELT)entcode.o $(CELT)entdec.o $(CELT)entenc.o $(CELT)kiss_fft.o \
+$(CELT)laplace.o $(CELT)mathops.o $(CELT)mdct.o $(CELT)modes.o $(CELT)pitch.o \
+$(CELT)celt_lpc.o $(CELT)quant_bands.o $(CELT)rate.o $(CELT)vq.o
+
+SILK = opus/silk/
+
+SILK_OBJECTS = $(SILK)CNG.o $(SILK)code_signs.o $(SILK)init_decoder.o $(SILK)decode_core.o $(SILK)decode_frame.o \
+$(SILK)decode_parameters.o $(SILK)decode_indices.o $(SILK)decode_pulses.o $(SILK)decoder_set_fs.o $(SILK)dec_API.o \
+$(SILK)enc_API.o $(SILK)encode_indices.o $(SILK)encode_pulses.o $(SILK)gain_quant.o $(SILK)interpolate.o \
+$(SILK)LP_variable_cutoff.o $(SILK)NLSF_decode.o $(SILK)NSQ.o $(SILK)NSQ_del_dec.o $(SILK)PLC.o \
+$(SILK)shell_coder.o $(SILK)tables_gain.o $(SILK)tables_LTP.o $(SILK)tables_NLSF_CB_NB_MB.o $(SILK)tables_NLSF_CB_WB.o \
+$(SILK)tables_other.o $(SILK)tables_pitch_lag.o $(SILK)tables_pulses_per_block.o \
+$(SILK)VAD.o $(SILK)control_audio_bandwidth.o $(SILK)quant_LTP_gains.o $(SILK)VQ_WMat_EC.o \
+$(SILK)HP_variable_cutoff.o $(SILK)NLSF_encode.o $(SILK)NLSF_VQ.o $(SILK)NLSF_unpack.o $(SILK)NLSF_del_dec_quant.o \
+$(SILK)process_NLSFs.o $(SILK)stereo_LR_to_MS.o $(SILK)stereo_MS_to_LR.o $(SILK)check_control_input.o \
+$(SILK)control_SNR.o $(SILK)init_encoder.o $(SILK)control_codec.o $(SILK)A2NLSF.o $(SILK)ana_filt_bank_1.o \
+$(SILK)biquad_alt.o $(SILK)bwexpander_32.o $(SILK)bwexpander.o $(SILK)debug.o $(SILK)decode_pitch.o \
+$(SILK)inner_prod_aligned.o $(SILK)lin2log.o $(SILK)log2lin.o $(SILK)LPC_analysis_filter.o $(SILK)LPC_inv_pred_gain.o \
+$(SILK)table_LSF_cos.o $(SILK)NLSF2A.o $(SILK)NLSF_stabilize.o $(SILK)NLSF_VQ_weights_laroia.o $(SILK)pitch_est_tables.o \
+$(SILK)resampler.o $(SILK)resampler_down2_3.o $(SILK)resampler_down2.o $(SILK)resampler_private_AR2.o \
+$(SILK)resampler_private_down_FIR.o $(SILK)resampler_private_IIR_FIR.o $(SILK)resampler_private_up2_HQ.o \
+$(SILK)resampler_rom.o $(SILK)sigm_Q15.o $(SILK)sort.o $(SILK)sum_sqr_shift.o $(SILK)stereo_decode_pred.o \
+$(SILK)stereo_encode_pred.o $(SILK)stereo_find_predictor.o $(SILK)stereo_quant_pred.o $(SILK)LPC_fit.o
+
+SILKFLOAT = opus/silk/float/
+
+SILKFLOAT_OBJECTS = $(SILKFLOAT)apply_sine_window_FLP.c $(SILKFLOAT)autocorrelation_FLP.c \
+$(SILKFLOAT)burg_modified_FLP.c $(SILKFLOAT)bwexpander_FLP.c $(SILKFLOAT)corrMatrix_FLP.c \
+$(SILKFLOAT)encode_frame_FLP.c $(SILKFLOAT)energy_FLP.c $(SILKFLOAT)find_LPC_FLP.c $(SILKFLOAT)find_LTP_FLP.c \
+$(SILKFLOAT)find_pitch_lags_FLP.c $(SILKFLOAT)find_pred_coefs_FLP.c $(SILKFLOAT)inner_product_FLP.c $(SILKFLOAT)k2a_FLP.c \
+$(SILKFLOAT)LPC_analysis_filter_FLP.c $(SILKFLOAT)LPC_inv_pred_gain_FLP.c $(SILKFLOAT)LTP_analysis_filter_FLP.c \
+$(SILKFLOAT)LTP_scale_ctrl_FLP.c $(SILKFLOAT)noise_shape_analysis_FLP.c $(SILKFLOAT)pitch_analysis_core_FLP.c \
+$(SILKFLOAT)process_gains_FLP.c $(SILKFLOAT)regularize_correlations_FLP.c $(SILKFLOAT)residual_energy_FLP.c \
+$(SILKFLOAT)scale_copy_vector_FLP.c $(SILKFLOAT)scale_vector_FLP.c $(SILKFLOAT)schur_FLP.c $(SILKFLOAT)sort_FLP.c \
+$(SILKFLOAT)warped_autocorrelation_FLP.c $(SILKFLOAT)wrappers_FLP.c
 
 
 OBJECTS = $(OPUSFILE_OBJECTS) \
-	$(SILK_OBJECTS)
+	$(OPUS_OBJECTS) \
+	$(CELT_OBJECTS) \
+	$(SILK_OBJECTS) \
+	$(SILKFLOAT_OBJECTS)
 
 .PHONY: all clean
 
