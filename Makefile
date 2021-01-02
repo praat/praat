@@ -26,6 +26,7 @@ all: all-external all-self
 		external/glpk/libglpk.a \
 		external/clapack/libclapack.a \
 		external/gsl/libgsl.a \
+		external/opusfile/libopusfile.a \
 		external/vorbis/libvorbis.a \
 		$(LIBS)
 
@@ -38,6 +39,7 @@ all-external:
 	$(MAKE) -C external/portaudio
 	$(MAKE) -C external/espeak
 	$(MAKE) -C external/vorbis
+	$(MAKE) -C external/opusfile
 
 all-self:
 	$(MAKE) -C kar
@@ -66,6 +68,7 @@ clean-external:
 	$(MAKE) -C external/portaudio clean
 	$(MAKE) -C external/espeak clean
 	$(MAKE) -C external/vorbis clean
+	$(MAKE) -C external/opusfile clean
 
 clean-self:
 	$(MAKE) -C kar clean

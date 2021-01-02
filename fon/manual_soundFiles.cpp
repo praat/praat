@@ -138,6 +138,7 @@ LIST_ITEM (U"2.5. @@Sound files 2.5. NIST files|NIST files@")
 LIST_ITEM (U"2.6. @@Sound files 2.6. FLAC files|FLAC files@")
 LIST_ITEM (U"2.7. @@Sound files 2.7. MP3 files|MP3 files@")
 LIST_ITEM (U"2.8. @@Sound files 2.8. Ogg Vorbis files|Ogg Vorbis files@")
+LIST_ITEM (U"2.9. @@Sound files 2.9. Ogg Opus files|Ogg Opus files@")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.1. WAV files", U"ppgb", 20040223)
@@ -206,10 +207,21 @@ NORMAL (U"A ubiquitous lossy audio compression format. "
 	"(see also @@Sound files 1.6. Compression|§1.6@)")
 MAN_END
 
-MAN_BEGIN (U"Sound files 2.8. Ogg Vorbis files", U"djmw", 20201229)
-NORMAL (U"A general purpose patent-free lossy audio compression format. "
+MAN_BEGIN (U"Sound files 2.8. Ogg Vorbis files", U"djmw", 20210102)
+NORMAL (U"Vorbis is a general purpose patent-free lossy audio compression format. "
 	"Praat supports Ogg Vorbis decoding through open source code made available at "
 	"##https://xiph.org/downloads/##. We used libogg-1.3.4 and libvorbis-1.3.7. "
+	"(see also @@Sound files 1.6. Compression|§1.6@)")
+MAN_END
+
+MAN_BEGIN (U"Sound files 2.9. Ogg Opus files", U"djmw", 20210102)
+NORMAL (U"Opus is a general purpose patent-free lossy audio compression format. "
+	"It is a newer and better formant than  @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
+	"It was developed by the Xiph.Org Foundation and standardized by the Internet Engineering Task Force, designed to efficiently "
+	"code speech and general audio in a single format, while remaining low-latency enough for real-time interactive communication "
+	"and low-complexity enough for low-end embedded processors. "
+	"Praat supports Ogg Opus decoding through open source code made available at "
+	"##https://opus-codec.org/downloads/##. We used opus-1.3.1 and opusfile-0.12. "
 	"(see also @@Sound files 1.6. Compression|§1.6@)")
 MAN_END
 
