@@ -1,5 +1,5 @@
 # Praat script createPraatTests.praat
-# Paul Boersma 2020-05-02
+# Paul Boersma 2020-12-30
 
 # This script extracts tests from C++ source code files
 # in which Praat script snippets have been inserted
@@ -15,43 +15,27 @@ writeInfoLine: "Creating tests..."
 numberOfTestFiles = 0
 totalNumberOfTests = 0
 
-@createAllPraatTestsInFolder: "kar"
-@createAllPraatTestsInFolder: "melder"
-@createAllPraatTestsInFolder: "sys"
-@createAllPraatTestsInFolder: "stat"
-@createAllPraatTestsInFolder: "fon"
-@createAllPraatTestsInFolder: "gram"
-@createAllPraatTestsInFolder: "artsynth"
-@createAllPraatTestsInFolder: "EEG"
-@createAllPraatTestsInFolder: "main"
+folder$# = { "kar", "melder", "sys", "stat", "fon", "gram", "artsynth", "EEG", "main" }
 
-procedure createAllPraatTestsInFolder: .folder$
-	.files.Strings = Create Strings as file list: "files", "../" + .folder$ + "/*.cpp"
-	.numberOfFiles = Get number of strings
-	for .ifile to .numberOfFiles
-		selectObject: .files.Strings
-		.fileName$ = Get string: .ifile
-		@createTest: .folder$, .fileName$
+for folder to size (folder$#)
+	folder$ = folder$# [folder]
+	files$# = fileNames$# ("../" + folder$ + "/*.cpp")
+	for ifile to size (files$#)
+		@createTest: folder$, files$# [ifile]
 	endfor
-	removeObject: .files.Strings
-	.files.Strings = Create Strings as file list: "files", "../" + .folder$ + "/*.h"
-	.numberOfFiles = Get number of strings
-	for .ifile to .numberOfFiles
-		selectObject: .files.Strings
-		.fileName$ = Get string: .ifile
-		@createTest: .folder$, .fileName$
+	files$# = fileNames$# ("../" + folder$ + "/*.h")
+	for ifile to size (files$#)
+		@createTest: folder$, files$# [ifile]
 	endfor
-	removeObject: .files.Strings
-endproc
+endfor
 
 procedure createTest: .folder$, .file$
 	.sourceFile$ = "../" + .folder$ + "/" + .file$
-	.lines = Read Strings from raw text file: .sourceFile$
-	.numberOfLines = Get number of strings
+	.lines$# = readLinesFromFile$# (.sourceFile$)
 	.targetFile$ = .folder$ + "/" + .file$ + ".praat"
 	.numberOfTestsInThisFile = 0
-	for .iline to .numberOfLines - 2
-		.line$ = Get string: .iline
+	for .iline to size (.lines$#) - 2
+		.line$ = .lines$# [.iline]
 		if index (.line$, "/*@praat") or index (.line$, "//@praat")
 			if .numberOfTestsInThisFile = 0
 				writeFileLine: .targetFile$, "# File ", .folder$, "/", .file$, ".praat"
@@ -66,7 +50,7 @@ procedure createTest: .folder$, .file$
 				.numberOfLeadingTabs = index (.line$, "/*@praat")
 				label again
 				.iline += 1
-				.line$ = Get string: .iline
+				.line$ = .lines$# [.iline]
 				goto finish index (.line$, "@*/")
 				appendFileLine: .targetFile$, mid$ (.line$, .numberOfLeadingTabs + 1, 1000)
 				goto again
@@ -74,7 +58,6 @@ procedure createTest: .folder$, .file$
 		endif
 		label finish
 	endfor
-	Remove
 	if .numberOfTestsInThisFile > 0
 		appendFileLine: .targetFile$, newline$, "appendInfoLine: """, .targetFile$, """", ", "" OK"""
 		appendInfoLine: "Written ", .numberOfTestsInThisFile, " tests into ", .targetFile$

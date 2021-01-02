@@ -215,6 +215,19 @@ inline double NUMextremum (constMATVU const& mat) {
 	return std::max (fabs (range.min), fabs (range.max));
 }
 
+inline integer NUMfindFirst (constSTRVEC const& strvec, conststring32 str) {
+	for (integer i = 1; i <= strvec.size; i ++)
+		if (Melder_equ (strvec [i], str))
+			return i;
+	return 0;
+}
+inline integer NUMfindLast (constSTRVEC const& strvec, conststring32 str) {
+	for (integer i = strvec.size; i >= 1; i --)
+		if (Melder_equ (strvec [i], str))
+			return i;
+	return 0;
+}
+
 extern double NUMinner (constVECVU const& x, constVECVU const& y) noexcept;
 
 inline bool NUMisSquare (constMATVU const& x) noexcept {
