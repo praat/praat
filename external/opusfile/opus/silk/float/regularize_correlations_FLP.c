@@ -32,6 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "main_FLP.h"
 
 /* Add noise to matrix diagonal */
+void silk_regularize_correlations_FLP(silk_float *XX, silk_float *xx, const silk_float noise, const opus_int D );
 void silk_regularize_correlations_FLP(
     silk_float                      *XX,                                /* I/O  Correlation matrices                        */
     silk_float                      *xx,                                /* I/O  Correlation values                          */

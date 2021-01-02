@@ -9,9 +9,9 @@ CFLAGS += -DHAVE_CONFIG_H
 
 OPUSFILE_OBJECTS = opusfile.o opusfile_info.o opusfile_internal.o opusfile_stream.o
 
-OPUS_OBJECTS = opus/analysis.c opus/mlp.c opus/opus.c opus/opus_decoder.c opus/opus_multistream.c opus/repacketizer_demo.c \
-opus/mapping_matrix.c opus/mlp_data.c opus/opus_compare.c opus/opus_demo.c opus/opus_multistream_decoder.c \
-opus/opus_projection_decoder.c opus/repacketizer.c
+OPUS_OBJECTS = opus/analysis.o opus/mlp.o opus/opus.o opus/opus_decoder.o opus/opus_multistream.o \
+opus/mapping_matrix.o opus/mlp_data.o opus/opus_compare.o opus/opus_multistream_decoder.o \
+opus/opus_projection_decoder.o opus/repacketizer.o
 
 
 CELT = opus/celt/
@@ -43,15 +43,15 @@ $(SILK)stereo_encode_pred.o $(SILK)stereo_find_predictor.o $(SILK)stereo_quant_p
 
 SILKFLOAT = opus/silk/float/
 
-SILKFLOAT_OBJECTS = $(SILKFLOAT)apply_sine_window_FLP.c $(SILKFLOAT)autocorrelation_FLP.c \
-$(SILKFLOAT)burg_modified_FLP.c $(SILKFLOAT)bwexpander_FLP.c $(SILKFLOAT)corrMatrix_FLP.c \
-$(SILKFLOAT)encode_frame_FLP.c $(SILKFLOAT)energy_FLP.c $(SILKFLOAT)find_LPC_FLP.c $(SILKFLOAT)find_LTP_FLP.c \
-$(SILKFLOAT)find_pitch_lags_FLP.c $(SILKFLOAT)find_pred_coefs_FLP.c $(SILKFLOAT)inner_product_FLP.c $(SILKFLOAT)k2a_FLP.c \
-$(SILKFLOAT)LPC_analysis_filter_FLP.c $(SILKFLOAT)LPC_inv_pred_gain_FLP.c $(SILKFLOAT)LTP_analysis_filter_FLP.c \
-$(SILKFLOAT)LTP_scale_ctrl_FLP.c $(SILKFLOAT)noise_shape_analysis_FLP.c $(SILKFLOAT)pitch_analysis_core_FLP.c \
-$(SILKFLOAT)process_gains_FLP.c $(SILKFLOAT)regularize_correlations_FLP.c $(SILKFLOAT)residual_energy_FLP.c \
-$(SILKFLOAT)scale_copy_vector_FLP.c $(SILKFLOAT)scale_vector_FLP.c $(SILKFLOAT)schur_FLP.c $(SILKFLOAT)sort_FLP.c \
-$(SILKFLOAT)warped_autocorrelation_FLP.c $(SILKFLOAT)wrappers_FLP.c
+SILKFLOAT_OBJECTS = $(SILKFLOAT)apply_sine_window_FLP.o $(SILKFLOAT)autocorrelation_FLP.o \
+$(SILKFLOAT)burg_modified_FLP.o $(SILKFLOAT)bwexpander_FLP.o $(SILKFLOAT)corrMatrix_FLP.o \
+$(SILKFLOAT)encode_frame_FLP.o $(SILKFLOAT)energy_FLP.o $(SILKFLOAT)find_LPC_FLP.o $(SILKFLOAT)find_LTP_FLP.o \
+$(SILKFLOAT)find_pitch_lags_FLP.o $(SILKFLOAT)find_pred_coefs_FLP.o $(SILKFLOAT)inner_product_FLP.o $(SILKFLOAT)k2a_FLP.o \
+$(SILKFLOAT)LPC_analysis_filter_FLP.o $(SILKFLOAT)LPC_inv_pred_gain_FLP.o $(SILKFLOAT)LTP_analysis_filter_FLP.o \
+$(SILKFLOAT)LTP_scale_ctrl_FLP.o $(SILKFLOAT)noise_shape_analysis_FLP.o $(SILKFLOAT)pitch_analysis_core_FLP.o \
+$(SILKFLOAT)process_gains_FLP.o $(SILKFLOAT)regularize_correlations_FLP.o $(SILKFLOAT)residual_energy_FLP.o \
+$(SILKFLOAT)scale_copy_vector_FLP.o $(SILKFLOAT)scale_vector_FLP.o $(SILKFLOAT)schur_FLP.o $(SILKFLOAT)sort_FLP.o \
+$(SILKFLOAT)warped_autocorrelation_FLP.o $(SILKFLOAT)wrappers_FLP.o
 
 
 OBJECTS = $(OPUSFILE_OBJECTS) \
