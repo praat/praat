@@ -50,9 +50,8 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 */
 
 autoSound Sound_readFromOggVorbisFile (MelderFile file);
-#ifdef HAVE_OPUS
 autoSound Sound_readFromOggOpusFile (MelderFile file);
-#endif
+
 void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool littleEndian, int nBitsCoding, bool unSigned);
 
 void Sound_into_Sound (Sound me, Sound to, double startTime);

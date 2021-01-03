@@ -702,7 +702,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 	}
 }
 
-#ifdef HAVE_OPUS
+#ifndef _WIN32   // HAVE_OPUS
 autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	try {
 		conststring32 path = Melder_fileToPath (file);
