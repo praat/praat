@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
  *                                                                      */
 
 //#ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "opus__config.h"
 //#endif
 
 #include "SigProc_FIX.h"

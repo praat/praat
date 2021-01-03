@@ -1,7 +1,21 @@
 praat/external/opusfile/READ_ME.TXT
-David Weenink 2 January 2021
-This file describes the adaptations made to libopusfile-0.12 sources, the part of opus that directly interacts with Praat,
-to make them compilable with the c++ compiler and compatible with Praat. We adapted the header files and sources to be able to compile with the g++ compiler. We replaced all memory allocations with the corresponding Melder routines.
+David Weenink and Paul Boersma, 2 January 2021
+This file describes the adaptations made to libopusfile-0.12 sources, the part of Opus that directly interacts with Praat,
+to make them compilable with the C++ compiler and compatible with Praat.
+
+We adapted the header files and sources to be able to compile with our compilers.
+We replaced all memory allocations with the corresponding Melder routines.
 Only files needed for decoding were copied.
 
-In a subdirectory "opus" we copied the opus-1.3.1 sources which also include a "celt" and a "silk" directory. A couple of files that were clearly not meant for decoding were left out. The silk code als needs a subdirectort "float" for proper decoding with floating point arithmatic. The fies in the opus directories and subdirectories were not modified and compile with the C-compiler.
+In a subdirectory "opus" we copied the Opus-1.3.1 sources which also include a "celt" and a "silk" directory.
+A couple of files that were clearly not meant for decoding were left out.
+The silk code also needs a subdirectory "float" for proper decoding with floating-point arithmetic.
+
+All instances of #ifdef HAVE_CONFIG_H were commented out,
+so as no to have to define HAVE_CONFIG_H as a Praat-wide global symbol if we are working in an IDE (Xcode).
+The file config.h had to be renamed opus__config.h, so as not to clash with two other files called config.h
+in Praat (under espeak and vorbis; they also have to be renamed).
+The file opusfile_stream.cpp uses nonportable Windows functions (_filelengthi64 and _get_osfhandle),
+but this code can be left out of the project entirely.
+
+The files opus/opus_compare.c en opus/celt/custom_demo.c contain "main" functions and are not needed.

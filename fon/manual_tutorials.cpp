@@ -26,7 +26,7 @@ MAN_BEGIN (U"What's new?", U"ppgb", 20210102)
 INTRO (U"Latest changes in Praat.")
 NORMAL (U"##6.1.38# (2 January 2021)")
 LIST_ITEM (U"• Scripting: string vectors, empty\\$ \\#  (), readLinesFromFile\\$ \\#  (), fileNames\\$ \\#  (), folderNames\\$ \\#  (), splitByWhitespace\\$ \\#  ().")
-LIST_ITEM (U"• Sound files: open Ogg Vorbis files.")
+LIST_ITEM (U"• Sound files: open Ogg Vorbis files and Opus files.")
 NORMAL (U"##6.1.37# (16 December 2020)")
 LIST_ITEM (U"• TextGrid window: removed a bug that caused Praat to crash when option-clicking or command-clicking a boundary when another boundary was selected on a point tier.")
 LIST_ITEM (U"• Record Sound (fixed time): removed a bug that caused Praat to crash with certain combinations of duration and sampling frequency on Windows.")
@@ -2139,6 +2139,73 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
+MAN_BEGIN (U"Opus BSD 2-clause license", U"ppgb", 20210102)
+NORMAL (U"The Praat source code contains a copy of the Opus software (see @Acknowledgments). "
+	"Here is the Opus license text (the stuff at the top varies:")
+CODE (U"Copyright (c) 2002-2008 Jean-Marc Valin")
+CODE (U"Copyright (c) 2008 Gregory Maxwell")
+CODE (U"Copyright (c) 2001-2011 Timothy B. Terriberry")
+CODE (U"Copyright (c) 2007-2008 CSIRO")
+CODE (U"Copyright (c) 2007-2009 Xiph.Org Foundation")
+CODE (U"Copyright (c) 2017 Google Inc., Written by Andrew Allen")
+CODE (U"")
+CODE (U"Redistribution and use in source and binary forms, with or without "
+	"modification, are permitted provided that the following conditions "
+	"are met:")
+CODE (U"")
+CODE (U"- Redistributions of source code must retain the above copyright "
+	"notice, this list of conditions and the following disclaimer.")
+CODE (U"")
+CODE (U"- Redistributions in binary form must reproduce the above copyright "
+	"notice, this list of conditions and the following disclaimer in the "
+	"documentation and/or other materials provided with the distribution.")
+CODE (U"")
+CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
+	"``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT "
+	"LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR "
+	"A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR "
+	"CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, "
+	"EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, "
+	"PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR "
+	"PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF "
+	"LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING "
+	"NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS "
+	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
+MAN_END
+
+MAN_BEGIN (U"Skype Limited BSD 3-clause license", U"ppgb", 20220102)
+NORMAL (U"The Praat source code contains a copy of the SILK software (see @Acknowledgments). "
+	"Here is the Skype Limited license text:")
+CODE (U"Copyright (c) 2006-2011 Skype Limited. All rights reserved.")
+CODE (U"")
+CODE (U"Redistribution and use in source and binary forms, with or without "
+	"modification, are permitted provided that the following conditions "
+	"are met:")
+CODE (U"")
+CODE (U"- Redistributions of source code must retain the above copyright "
+	"notice, this list of conditions and the following disclaimer.")
+CODE (U"")
+CODE (U"- Redistributions in binary form must reproduce the above copyright "
+	"notice, this list of conditions and the following disclaimer in the "
+	"documentation and/or other materials provided with the distribution.")
+CODE (U"")
+CODE (U"- Neither the name of Internet Society, IETF or IETF Trust, nor the names of specific "
+	"contributors, may be used to endorse or promote products derived from "
+	"this software without specific prior written permission.")
+CODE (U"")
+CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
+	"``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT "
+	"LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR "
+	"A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR "
+	"CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, "
+	"EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, "
+	"PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR "
+	"PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF "
+	"LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING "
+	"NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS "
+	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
+MAN_END
+
 MAN_BEGIN (U"Acknowledgments", U"ppgb", 20201227)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
@@ -2147,11 +2214,11 @@ LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, 
 	"@@Intro 7. Annotation|annotation@, @@Intro 8. Manipulation|speech manipulation@, @@voice|voice report@, "
 	"@@ExperimentMFC|listening experiments@, "
 	"@@articulatory synthesis@, @@OT learning|optimality-theoretic learning@, "
-	"tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, and regular expressions.")
+	"tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, regular expressions, and Opus.")
 LIST_ITEM (U"David Weenink: "
 	"@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC, "
 	"@VowelEditor, "
-	"and adaptation of GSL, LAPACK, fftpack, regular expressions, Espeak, and Ogg Vorbis.")
+	"and adaptation of GSL, LAPACK, fftpack, regular expressions, Espeak, Ogg Vorbis, and Opus.")
 LIST_ITEM (U"Stefan de Konink and Franz Brauße: major help in port to GTK.")
 LIST_ITEM (U"Tom Naughton: major help in port to Cocoa.")
 LIST_ITEM (U"Erez Volk: adaptation of FLAC and MAD.")
@@ -2169,6 +2236,9 @@ LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington and Reece
 LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
 LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (@@FLAC BSD 3-clause license@).")
 LIST_ITEM (U"Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).")
+LIST_ITEM (U"Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry, "
+	"Koen Vos, Andrew Allen and others (@@Opus BSD 2-clause license@).")
+LIST_ITEM (U"SILK: audio compression by Skype Limited (@@Skype Limited BSD 3-clause license@).")
 LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.")
 LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
