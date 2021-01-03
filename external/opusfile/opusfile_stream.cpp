@@ -54,7 +54,7 @@ static int op_fread(void *_stream,unsigned char *_ptr,int _buf_size){
 }
 
 static int op_fseek(void *_stream,opus_int64 _offset,int _whence){
-#if defined(_WIN32)
+#if defined(_WIN32xxx)   // ppgb comment this out because Praat is compiled with x86_64-w64-mingw32, which does have fseeko but no _filelengthi64
   /*_fseeki64() is not exposed until MSVCRT80.
     This is the default starting with MSVC 2005 (_MSC_VER>=1400), but we want
      to allow linking against older MSVCRT versions for compatibility back to
@@ -255,6 +255,7 @@ static const OpusFileCallbacks OP_UNSEEKABLE_FILE_CALLBACKS={
 # define WIN32_LEAN_AND_MEAN
 # define WIN32_EXTRA_LEAN
 # include <windows.h>
+#include <io.h>
 
 static const OpusFileCallbacks *op_get_file_callbacks(FILE *_fp){
   intptr_t h_file;

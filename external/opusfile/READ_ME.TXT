@@ -15,7 +15,8 @@ All instances of #ifdef HAVE_CONFIG_H were commented out,
 so as no to have to define HAVE_CONFIG_H as a Praat-wide global symbol if we are working in an IDE (Xcode).
 The file config.h had to be renamed opus__config.h, so as not to clash with two other files called config.h
 in Praat (under espeak and vorbis; they also have to be renamed).
-The file opusfile_stream.cpp uses nonportable Windows functions (_filelengthi64 and _get_osfhandle),
-but this code can be left out of the project entirely.
+The file opusfile_stream.cpp uses the nonportable Windows function _filelengthi64(),
+so we adapted that to use fseeko() instead, which is available with x86_64-w64-mingw32;
+the same file uses _get_osfhandle(), for which we included <io.h>.
 
 The files opus/opus_compare.c en opus/celt/custom_demo.c contain "main" functions and are not needed.
