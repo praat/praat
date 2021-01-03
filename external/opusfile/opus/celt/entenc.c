@@ -26,7 +26,7 @@
 */
 
 //#if defined(HAVE_CONFIG_H)
-# include "config.h"
+# include "opus__config.h"
 //#endif
 #include "os_support.h"
 #include "arch.h"

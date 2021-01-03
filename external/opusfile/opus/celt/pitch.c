@@ -32,7 +32,7 @@
 */
 
 //#ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "opus__config.h"
 //#endif
 
 #include "pitch_.h"

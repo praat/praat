@@ -13,6 +13,8 @@ The silk code also needs a subdirectory "float" for proper decoding with floatin
 
 All instances of #ifdef HAVE_CONFIG_H were commented out,
 so as no to have to define HAVE_CONFIG_H as a Praat-wide global symbol if we are working in an IDE (Xcode).
+The file config.h had to be renamed opus__config.h, so as not to clash with two other files called config.h
+in Praat (under espeak and vorbis; they also have to be renamed).
 The file opusfile_stream.cpp uses nonportable Windows functions (_filelengthi64 and _get_osfhandle),
 but this code can be left out of the project entirely.
 

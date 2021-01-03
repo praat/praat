@@ -26,7 +26,7 @@ POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
 //#ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "opus__config.h"
 //#endif
 #ifdef FIXED_POINT
 #include "main_FIX.h"

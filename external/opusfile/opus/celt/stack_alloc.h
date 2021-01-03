@@ -32,7 +32,7 @@
 #ifndef STACK_ALLOC_H
 #define STACK_ALLOC_H
 
-#include "config.h"
+#include "opus__config.h"
 #include "opus_types.h"
 #include "opus_defines.h"
 
