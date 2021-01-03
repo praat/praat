@@ -5,9 +5,7 @@ include ../../makefile.defs
 
 CPPFLAGS = -I ../../melder -I ../vorbis -I opus -I opus/celt -I opus/silk -I opus/silk/float
 
-OPUSFILE_OBJECTS = opusfile.o opusfile_info.o opusfile_internal.o
-# opusfile_stream.o
-
+OPUSFILE_OBJECTS = opusfile.o opusfile_info.o opusfile_internal.o opusfile_stream.o
 
 OPUS_OBJECTS = opus/analysis.o opus/mlp.o opus/opus.o opus/opus_decoder.o opus/opus_multistream.o \
 opus/mapping_matrix.o opus/mlp_data.o opus/opus_compare.o opus/opus_multistream_decoder.o \
