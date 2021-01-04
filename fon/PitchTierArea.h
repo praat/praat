@@ -33,6 +33,7 @@ Thing_define (PitchTierArea, RealTierArea) {
 			return U" st";
 		else
 			Melder_fatal (U"PitchTierArea::v_rightTickUnits: Unknown pitch units: ", (int) our p_units);
+		return nullptr;
 	}
 	double v_defaultYmin ()
 		override { return 50.0; }
