@@ -27,8 +27,8 @@ all: all-external all-self
 		external/clapack/libclapack.a \
 		external/gsl/libgsl.a \
 		external/vorbis/libvorbis.a \
-		$(LIBS)
-		#external/opusfile/libopusfile.a \
+		$(LIBS) \
+		external/opusfile/libopusfile.a
 
 all-external:
 	$(MAKE) -C external/clapack
