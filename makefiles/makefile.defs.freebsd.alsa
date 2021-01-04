@@ -24,9 +24,16 @@ AUDIO=-DALSA
 # but clang does not.
 COMMONFLAGS = -DUNIX -Dlinux $(AUDIO) -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-3.0` -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread $(CPPFLAGS)
 
-CFLAGS = -DHAVE_SYS_SOUNDCARD_H -std=gnu99 $(COMMONFLAGS) -Werror=implicit
+CFLAGS = -std=gnu99 $(COMMONFLAGS) \
+	-DHAVE_SYS_SOUNDCARD_H \
+	-Werror=implicit
 
-CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow -DHAVE_SYS_SOUNDCARD_H -Werror=implicit -I$(LOCALBASE)/include -I$(LOCALBASE)/include/unicode
+CXXFLAGS = -std=c++17 $(COMMONFLAGS) \
+	-DHAVE_SYS_SOUNDCARD_H \
+	-Wshadow \
+	-Werror=implicit \
+	-Werror=return-type \
+	-I$(LOCALBASE)/include -I$(LOCALBASE)/include/unicode
 
 EXECUTABLE = praat
 
