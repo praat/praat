@@ -2,6 +2,8 @@
 
 Welcome to Praat! Praat is a speech analysis tool used for doing phonetics by computer.
 Praat can analyse, synthesize, and manipulate speech, and create high-quality pictures for your publications.
+Praat was created by Paul Boersma and David Weenink of the Institute of Phonetics Sciences of the University of Amsterdam.
+
 Some of Praat’s most prominent features are:
 
 #### Speech analysis
@@ -28,19 +30,18 @@ Multi-language text-to-speech facilities allow you to segment the sound into wor
 #### Grammar models
 
 With Praat, you can try out Optimality-Theoretic and Harmonic-Grammar learning,
-as well as .
+as well as seevral kinds of neural-network models.
 
 #### Statistical analysis
 
 Praat allows you to perform several statistical techniques, among which
 multidimensional scaling, principal component analysis, and discriminant analysis.
 
-For more information, consult the website [praat.org](http://praat.org), which has Praat tutorials in several languages.
-Praat was created by Paul Boersma and David Weenink of the Institute of Phonetics Sciences of the University of Amsterdam.
+For more information, consult the website [praat.org](https://praat.org), which has Praat tutorials in several languages.
 
 ## 1. Binary executables
 
-While the [Praat website](http://praat.org) contains the latest executable for all platforms that we support
+While the [Praat website](https://praat.org) contains the latest executable for all platforms that we support
 (or used to support), the [releases on GitHub](https://github.com/praat/praat/releases) contain many older executables as well.
 
 The meaning of the names of binary files available on GitHub is as follows:
@@ -90,7 +91,7 @@ You need the Praat source code only in the following cases:
 e.g. Linux for some non-Intel computers, FreeBSD, HP-UX, SGI, or SPARC Solaris.
 
 Before trying to dive into Praat’s source code, you should be familiar with the working of the Praat program
-and with writing Praat scripts. The Praat program can be downloaded from http://www.praat.org.
+and with writing Praat scripts. The Praat program can be downloaded from https://praat.org.
 
 ### 2.1. License
 
