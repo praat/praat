@@ -1,39 +1,42 @@
 # Praat: doing phonetics by computer
 
-Welcome to Praat! Praat is a speech analysis tool used for doing phonetics by computer. Praat can analyse, synthesize, and manipulate speech, and create high-quality pictures for analysis. Praat allows you to automatically apply filters based on theories of speech production to your speech recordings, so that some of the analytical work is taken off of you. Some of Praat’s most prominent features are:
+Welcome to Praat! Praat is a speech analysis tool used for doing phonetics by computer.
+Praat can analyse, synthesize, and manipulate speech, and create high-quality pictures for your publications.
+Some of Praat’s most prominent features are:
 
-Speech Analysis
+#### Speech analysis
 
-Praat allows you to analyze different aspects of speech including pitch, formant, intensity, and voice differences. You have access to spectrograms (a visual representation of sound changing over time), and cochleagrams (a specific type of spectrogram in which different colors are associated with different sound frequencies produced by the auditory nerve).
+Praat allows you to analyze different aspects of speech including pitch, formant, intensity, and voice quality.
+You have access to spectrograms (a visual representation of sound changing over time)
+and cochleagrams (a specific type of spectrogram more closely resembling how the inner ear receives sound).
 
-Speech Synthesis
+#### Speech synthesis
 
-Praat allows you to generate speech based on written input. In the Praat program, you can create a source signal from scratch, or  from an existing speech signal, and you can create a filter from scratch or extract it from an existing speech signal. You can manipulate (change, adapt) both the source and the filter before doing the actual synthesis, which combines the two. (text taken from https://www.fon.hum.uva.nl/praat/manual/Source-filter_synthesis.html)
-You can also model speech with the articulatory synthesis model, which allows you to manipulate certain articulatory features to suite your purposes. For example, you can model a speaker who uses a pronounced glottal stop.
+Praat allows you to generate speech from a pitch curve and filters that you create (acoustic synthesis),
+or from muscle activities (articulatory synthesis).
 
-Speech Manipulation
+#### Speech manipulation
 
 Praat gives you the ability to modify existing speech utterances. You can alter pitch, intensity, and duration of speech.
 
-Speech Labeling
+#### Speech labelling
 
-Praat allows you to custom label your samples using IPA (International Phonetics Alphabet), and annotate your sound segments based on the particular variables you are seeking to analyze. For example, you can segment the sound into words and phonemes.
+Praat allows you to custom-label your samples using the IPA (International Phonetics Alphabet),
+and annotate your sound segments based on the particular variables you are seeking to analyze.
+Multi-language text-to-speech facilities allow you to segment the sound into words and phonemes.
 
-Applying various speech algorithms
+#### Grammar models
 
-With Praat, you can apply Optimality-Theoretic and Harmonic-Grammar learning theory to model speech, allowing you to have hands-on experience with constructing your own speech composites based on real linguistic theories of grammar.
+With Praat, you can try out Optimality-Theoretic and Harmonic-Grammar learning,
+as well as .
 
-Statistical Analysis
+#### Statistical analysis
 
-Praat allows you to perform MDS (multidimensional scaling analysis), principal component analysis, and discriminant analysis, all of which are statistical models linguistic research finds relevant to analyzing speech similarities and differences.
+Praat allows you to perform several statistical techniques, among which
+multidimensional scaling, principal component analysis, and discriminant analysis.
 
-
-Welcome to Praat! You can find more detailed information and tutorials at our website: https://www.fon.hum.uva.nl/praat/. Praat was created by Paul Boersma and David Weenink of the Institute of Phonetics Sciences of the University of Amsterdam.
-
-If you’d like a hands on tutorial you can visit https://www.fon.hum.uva.nl/praat/manualsByOthers.html which will provide you with a great way to get started with our project in many different languages. We’re glad you’re here!
-
-Most information on how the program works is in its manual and on http://praat.org,
-which is also where you can download the latest binary executables from.
+For more information, consult the website [praat.org](http://praat.org), which has Praat tutorials in several languages.
+Praat was created by Paul Boersma and David Weenink of the Institute of Phonetics Sciences of the University of Amsterdam.
 
 ## 1. Binary executables
 
