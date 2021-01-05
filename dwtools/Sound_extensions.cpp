@@ -733,7 +733,7 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 		if (samplingFrequency_asLong == 0)
 			samplingFrequency_asLong = 44100;
 		const integer numberOfChannels = head -> channel_count;
-		const double samplingTime = 1.0 / 48000.0; // fixed decodoing rate
+		const double samplingTime = 1.0 / 48000.0; // fixed decoding rate
 		const integer numberOfSamples = op_pcm_total (opusFile, -1);
 		double xmin = 0.0; // the start time in the file can be > 0!!!
 		const double xmax = numberOfSamples * samplingTime;
@@ -748,9 +748,10 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 			
 			integer numberOfSamplesDecoded = op_read_float (opusFile, multiChannelFloats.asArgumentToFunctionThatExpectsZeroBasedArray(), maximumBufferSize, & linkIndex);
 			if (numberOfSamplesDecoded < 0) {
-				if (numberOfSamplesDecoded == OP_HOLE)
-					Melder_casual (U"Warning: Hole in data.");
-				else
+				if (numberOfSamplesDecoded == OP_HOLE) {
+					Melder_casual (U"Warning: Hole in data. Some samples may be skipped. "); // should we throw instead?
+					continue;
+				} else
 					Melder_throw (U"Decoding error.");
 			}
 			if (numberOfSamplesDecoded == 0)
