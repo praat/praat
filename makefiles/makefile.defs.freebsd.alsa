@@ -41,6 +41,8 @@ LIBS = `pkg-config --libs gtk+-3.0` -L$(LOCALBASE)/lib -lasound -lm -lpthread -l
 
 AR = ar
 RANLIB = ls
+RM = rm -f
+
 ICON =
 MAIN_ICON =
 
