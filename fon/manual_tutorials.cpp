@@ -2139,15 +2139,13 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
-MAN_BEGIN (U"Opus BSD 2-clause license", U"ppgb", 20210102)
+MAN_BEGIN (U"Opus BSD 3-clause license", U"ppgb", 20210105)
 NORMAL (U"The Praat source code contains a copy of the Opus software (see @Acknowledgments). "
-	"Here is the Opus license text (the stuff at the top varies:")
-CODE (U"Copyright (c) 2002-2008 Jean-Marc Valin")
-CODE (U"Copyright (c) 2008 Gregory Maxwell")
-CODE (U"Copyright (c) 2001-2011 Timothy B. Terriberry")
-CODE (U"Copyright (c) 2007-2008 CSIRO")
-CODE (U"Copyright (c) 2007-2009 Xiph.Org Foundation")
-CODE (U"Copyright (c) 2017 Google Inc., Written by Andrew Allen")
+	"Here is the Opus license text:")
+CODE (U"Copyright (c) 2001-2011 Xiph.Org, Skype Limited, Octasic,")
+CODE (U"                        Jean-Marc Valin, Timothy B. Terriberry,")
+CODE (U"                        CSIRO, Gregory Maxwell, Mark Borgerding,")
+CODE (U"                        Erik de Castro Lopo")
 CODE (U"")
 CODE (U"Redistribution and use in source and binary forms, with or without "
 	"modification, are permitted provided that the following conditions "
@@ -2160,6 +2158,11 @@ CODE (U"- Redistributions in binary form must reproduce the above copyright "
 	"notice, this list of conditions and the following disclaimer in the "
 	"documentation and/or other materials provided with the distribution.")
 CODE (U"")
+CODE (U"- Neither the name of Internet Society, IETF or IETF Trust, nor the "
+	"names of specific contributors may be used to endorse or promote "
+	"products derived from this software without specific prior written "
+	"permission.")
+CODE (U"")
 CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT "
 	"LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR "
@@ -2171,6 +2174,18 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING "
 	"NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
+CODE (U"")
+CODE (U"Opus is subject to the royalty-free patent licenses which are "
+	"specified at:")
+CODE (U"")
+CODE (U"Xiph.Org Foundation:")
+CODE (U"https://datatracker.ietf.org/ipr/1524/")
+CODE (U"")
+CODE (U"Microsoft Corporation:")
+CODE (U"https://datatracker.ietf.org/ipr/1914/")
+CODE (U"")
+CODE (U"Broadcom Corporation:")
+CODE (U"https://datatracker.ietf.org/ipr/1526/")
 MAN_END
 
 MAN_BEGIN (U"Skype Limited BSD 3-clause license", U"ppgb", 20220102)
@@ -2206,7 +2221,7 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20201227)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20210105)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2237,7 +2252,7 @@ LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later)."
 LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (@@FLAC BSD 3-clause license@).")
 LIST_ITEM (U"Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).")
 LIST_ITEM (U"Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry, "
-	"Koen Vos, Andrew Allen and others (@@Opus BSD 2-clause license@).")
+	"Koen Vos, Andrew Allen and others (@@Opus BSD 3-clause license@).")
 LIST_ITEM (U"SILK: audio compression by Skype Limited (@@Skype Limited BSD 3-clause license@).")
 LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber, translated to C by Christopher Montgomery.")
 LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
