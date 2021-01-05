@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,12 +91,12 @@ static void do_menu (Praat_Command me, uint32 modified) {
 }
 
 static void gui_button_cb_menu (Praat_Command me, GuiButtonEvent event) {
-	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	const bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
 	do_menu (me, isModified);
 }
 
 static void gui_cb_menu (Praat_Command me, GuiMenuItemEvent event) {
-	bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
+	const bool isModified = event -> shiftKeyPressed || event -> commandKeyPressed || event -> optionKeyPressed;
 	do_menu (me, isModified);
 }
 
@@ -115,7 +115,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 	int deprecationYear = 0;
 	uint32 guiFlags = 0;
 	if (flags > 7) {
-		depth = ((flags & praat_DEPTH_7) >> 16);
+		depth = (flags & praat_DEPTH_7) >> 16;
 		unhidable = (flags & praat_UNHIDABLE) != 0;
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
@@ -199,7 +199,8 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 					break;
 				}
 			}
-			if (! parentMenu) parentMenu = windowMenuToWidget (window, menu);   // fallback: put the command in the window's top menu
+			if (! parentMenu)
+				parentMenu = windowMenuToWidget (window, menu);   // fallback: put the command in the window's top menu
 		}
 		if (! parentMenu) {
 			trace (U"WARNING: no parent menu for ", window, U"/", menu, U"/", title, U".");
@@ -412,7 +413,8 @@ void praat_sensitivizeFixedButtonCommand (conststring32 title, bool sensitive) {
 			break;
 		}
 	}
-	if (! commandFound) Melder_fatal (U"Unkown fixed button <<", title, U">>");
+	if (! commandFound)
+		Melder_fatal (U"Unkown fixed button <<", title, U">>");
 	commandFound -> executable = sensitive;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding)
 		GuiThing_setSensitive (commandFound -> button, sensitive);

@@ -1,6 +1,6 @@
 /* manual_exampleSound.cpp
  *
- * Copyright (C) 2004,2005,2011,2015-2017 Paul Boersma
+ * Copyright (C) 2004,2005,2011,2015-2017,2021 Paul Boersma, 2021 Adriaan de Groot
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
  * The buffer starts with 24 - symbols, which are skipped in the
  * decoding; after that are 20457 uint16 samples (encoded as 4 characters).
  */
-static const char data[] =
+static const char data [] =
 "------------------------NHOONMOO"
 "OLOO@G@@@G@@OOOOOFOOOAOOOAOOO@OO"
 "O@OOOEOOODOOOIOO@B@@@@@@OCOONKOO"
@@ -2589,19 +2589,19 @@ static const char data[] =
 "GDOOHCOOKIOOMIOOLAOOFKOONEONNBON"
 "EGOOEHOO@JOOAIOOEMOOCLOOMDON";
 
-/* Double-check the encoding: the number of samples is known,
- * and the buffer has 24 padding bytes ('-') at the start,
- * and gets a "gratis" terminating NUL byte because it is
- * a char array.
- */
-static const integer expected_sound_length = 20457;
-static_assert(sizeof(data) == 4 * expected_sound_length + 24 + 1);
+/*
+	Double-check the encoding: the number of samples is known,
+	and the buffer has 24 padding bytes ('-') at the start
+	and a terminating null byte at the end.
+*/
+constexpr integer expected_sound_length = 20457;
+static_assert (sizeof (data) == 4 * expected_sound_length + 24 + 1);
 
 Sound manual_exampleSound () {
 	static autoSound me;
 	if (! me) {
 		integer ichar = 24;
-		me = Sound_create (1, 0.0, (double(expected_sound_length))/44100, expected_sound_length, 1.0/44100, 0.5/44100);
+		me = Sound_create (1, 0.0, (double (expected_sound_length)) / 44100, expected_sound_length, 1.0 / 44100, 0.5 / 44100);
 		for (integer isamp = 1; isamp <= expected_sound_length; isamp ++) {
 			uint16 part1 = data [ichar] - '@';
 			uint16 part2 = data [++ ichar] - '@';
