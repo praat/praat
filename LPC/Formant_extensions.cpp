@@ -19,6 +19,11 @@
 #include "Formant_extensions.h"
 #include "NUM2.h"
 
+#include "enums_getText.h"
+#include "Formant_extensions_enums.h"
+#include "enums_getValue.h"
+#include "Formant_extensions_enums.h"
+
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression) {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
@@ -87,6 +92,28 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered.");
 	}
+}
+
+double Formant_getFormantSlope (Formant me, integer iformant, double tmin, double tmax, kFormantSlopeUnit unit, kFormantSlopeMethod method) {
+	double slope = undefined;
+	integer itmin, itmax;
+	const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
+	if (numberOfFrames < 2)
+		return slope;
+	autoVEC x = raw_VEC (numberOfFrames);
+	autoVEC y = raw_VEC (numberOfFrames);
+	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		const Formant_Frame frame = & my frames [iframe];
+		const integer numberOfFormants = frame -> numberOfFormants;
+		x [iframe] = Sampled_indexToX (me, itmin + iframe - 1);
+		y [iframe] = ( iformant <= numberOfFormants ? frame -> formant [iformant]. frequency : 0.0 );
+	}
+	if (unit == kFormantSlopeUnit::BARK_PER_SECOND) // bark/s
+		for (integer i = 1; i <= numberOfFrames; i++)
+			y [i] = ( y[i] > 0.0 ? NUMhertzToBark (y [i]) : 0.0 );
+
+	NUMlineFit_theil (x.get(), y.get(), & slope, nullptr, true);
+	return slope;
 }
 
 autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {

@@ -675,6 +675,19 @@ DIRECT (NEW_Cepstrumc_to_Matrix) {
 
 /******************** Formant ********************************************/
 
+FORM (REAL_Formant_getFormantSlope, U"Formant: Get formant slope", nullptr) {
+	NATURAL (formantNumber, U"Formant number", U"1")
+	REAL (tmin, U"left Time range (s)", U"0.0")
+	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	RADIO_ENUM (kFormantSlopeUnit, unit, U"Unit", kFormantSlopeUnit::DEFAULT)
+	RADIO_ENUM (kFormantSlopeMethod, method, U"Method", kFormantSlopeMethod::DEFAULT)
+	OK
+DO
+	NUMBER_ONE (Formant)
+		double result = Formant_getFormantSlope (me, formantNumber, tmin, tmax, unit, method);
+	NUMBER_ONE_END (( unit == kFormantSlopeUnit::HERTZ_PER_SECOND ? U" (hertz/s)" : U" (bark/s)" ))
+}
+
 FORM (NEW_Formant_to_LPC, U"Formant: To LPC", nullptr) {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"16000.0")
 	OK
@@ -1319,6 +1332,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classCepstrumc, 0, U"Hack", 0, 0, 0);
 	praat_addAction1 (classCepstrumc, 0, U"To Matrix", 0, 0, NEW_Cepstrumc_to_Matrix);
 
+	praat_addAction1 (classFormant, 0, U"Get formant slope...", U"Get standard deviation...", 1, REAL_Formant_getFormantSlope);
 	praat_addAction1 (classFormant, 0, U"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
