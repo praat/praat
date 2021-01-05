@@ -5,11 +5,12 @@ to make them compilable with the C++ compiler and compatible with Praat.
 
 We adapted the header files and sources to be able to compile with our compilers.
 We replaced all memory allocations with the corresponding Melder routines.
-Only files needed for decoding were copied.
+
 
 In a subdirectory "opus" we copied the Opus-1.3.1 sources which also include a "celt" and a "silk" directory.
-A couple of files that were clearly not meant for decoding were left out.
-The silk code also needs a subdirectory "float" for proper decoding with floating-point arithmetic.
+The file opus_encoder.c that was clearly not meant for decoding was left out.
+The celt and silk directories were left intact even their encoder parts. However, all their platform specific subdirectories were removed.
+The silk code also needs a subdirectory "float" for proper working with floating-point arithmetic.
 
 All instances of #ifdef HAVE_CONFIG_H were commented out,
 so as no to have to define HAVE_CONFIG_H as a Praat-wide global symbol if we are working in an IDE (Xcode).
