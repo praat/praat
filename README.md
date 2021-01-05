@@ -1,11 +1,47 @@
 # Praat: doing phonetics by computer
 
-Most information on how the program works is in its manual and on http://praat.org,
-which is also where you can download the latest binary executables from.
+Welcome to Praat! Praat is a speech analysis tool used for doing phonetics by computer.
+Praat can analyse, synthesize, and manipulate speech, and create high-quality pictures for your publications.
+Praat was created by Paul Boersma and David Weenink of the Institute of Phonetics Sciences of the University of Amsterdam.
+
+Some of Praat’s most prominent features are:
+
+#### Speech analysis
+
+Praat allows you to analyze different aspects of speech including pitch, formant, intensity, and voice quality.
+You have access to spectrograms (a visual representation of sound changing over time)
+and cochleagrams (a specific type of spectrogram more closely resembling how the inner ear receives sound).
+
+#### Speech synthesis
+
+Praat allows you to generate speech from a pitch curve and filters that you create (acoustic synthesis),
+or from muscle activities (articulatory synthesis).
+
+#### Speech manipulation
+
+Praat gives you the ability to modify existing speech utterances. You can alter pitch, intensity, and duration of speech.
+
+#### Speech labelling
+
+Praat allows you to custom-label your samples using the IPA (International Phonetics Alphabet),
+and annotate your sound segments based on the particular variables you are seeking to analyze.
+Multi-language text-to-speech facilities allow you to segment the sound into words and phonemes.
+
+#### Grammar models
+
+With Praat, you can try out Optimality-Theoretic and Harmonic-Grammar learning,
+as well as seevral kinds of neural-network models.
+
+#### Statistical analysis
+
+Praat allows you to perform several statistical techniques, among which
+multidimensional scaling, principal component analysis, and discriminant analysis.
+
+For more information, consult the website [praat.org](https://praat.org), which has Praat tutorials in several languages.
 
 ## 1. Binary executables
 
-While the [Praat website](http://praat.org) contains the latest executable for all platforms that we support
+While the [Praat website](https://praat.org) contains the latest executable for all platforms that we support
 (or used to support), the [releases on GitHub](https://github.com/praat/praat/releases) contain many older executables as well.
 
 The meaning of the names of binary files available on GitHub is as follows:
@@ -55,7 +91,7 @@ You need the Praat source code only in the following cases:
 e.g. Linux for some non-Intel computers, FreeBSD, HP-UX, SGI, or SPARC Solaris.
 
 Before trying to dive into Praat’s source code, you should be familiar with the working of the Praat program
-and with writing Praat scripts. The Praat program can be downloaded from http://www.praat.org.
+and with writing Praat scripts. The Praat program can be downloaded from https://praat.org.
 
 ### 2.1. License
 
@@ -356,7 +392,7 @@ The distributors of Praat do this via an intermediary university computer;
 let’s call this computer-in-the-middle `fon.hum.uva.nl`
 (not coincidentally, that’s the name of the computer that hosts `praat.org`).
 If you have an account on that computer (say it’s called `yourname`),
-then you can access that account with `ssh`, and it is best to do that without 
+then you can access that account with `ssh`, and it is best to do that without
 typing your password each time. To accomplish this, type
 
     # on Ubuntu command line
@@ -486,7 +522,7 @@ so you send them to the intermediate Mac folders `~/builds/win64` and `~/builds/
 On Cygwin you can define:
 
     # in Cygwin:~/.profile
-    alias praat-dist="praat-build && rsync -t ~/praats/Praat.exe /cygdrive/z/builds/win64" 
+    alias praat-dist="praat-build && rsync -t ~/praats/Praat.exe /cygdrive/z/builds/win64"
     alias praat32-dist="praat32-build && rsync -t ~/praats32/Praat.exe /cygdrive/z/builds/win32"
 
 so that you can “upload” the two executables to the Mac with
