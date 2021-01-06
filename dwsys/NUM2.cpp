@@ -2046,6 +2046,32 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 			m = median (m [i])
 			b = median(y [i]-m*x [i])
 		 */
+		autoVEC lineParameters = raw_VEC (6);
+		NUMlineFit_theil_preallocated (lineParameters.get(), x, y, out_intercept, 0.025, completeMethod);
+
+		if (out_m)
+			*out_m = lineParameters [1];
+		if (out_intercept)
+			*out_intercept = lineParameters [4];
+	} catch (MelderError) {
+		Melder_throw (U"No line fit (Theil's method).");
+	}
+}
+
+void NUMlineFit_theil_preallocated (VEC const& out_lineParameters, constVEC const& x, constVEC const& y, bool wantIntercept, double oneTailedUnconfidence, bool completeMethod) {
+	try {
+		Melder_require (x.size == y.size,
+			U"NUMlineFit_theil: the sizes of the two vectors should be equal.");
+		Melder_require (out_lineParameters.size == 6,
+			U"The line parameters vector should have size 6.");
+		/*
+			Theil's incomplete method:
+			Split (x [i],y [i]) as
+			(x [i],y [i]), (x [N+i],y [N+i], i=1..numberOfPoints/2
+			m [i] = (y [N+i]-y [i])/(x [N+i]-x [i])
+			m = median (m [i])
+			b = median(y [i]-m*x [i])
+		 */
 		double m, intercept;
 		if (x.size == 1) {
 			intercept = y [1];
@@ -2071,17 +2097,27 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);
 			}
-			sort_VEC_inout (mbs.part (1, numberOfCombinations));
-			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
-			for (integer i = 1; i <= x.size; i ++)
-				mbs [i] = y [i] - m * x [i];
-			sort_VEC_inout (mbs.part (1, x.size));
-			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
+			/*
+				Get slope as the median of all slopes
+			*/
+			VECVU mbsPart = mbs.part (1, numberOfCombinations);
+			sort_VEC_inout (mbsPart);
+			out_lineParameters [1] = NUMquantile (mbsPart, 0.5);
+			out_lineParameters [2] = NUMquantile (mbsPart, oneTailedUnconfidence);
+			out_lineParameters [3] = NUMquantile (mbsPart, 1.0 - oneTailedUnconfidence);
+			/*
+				Reuse array for intercept
+			*/
+			if (wantIntercept) {
+				for (integer i = 1; i <= x.size; i ++)
+					mbs [i] = y [i] - out_lineParameters [1] * x [i];
+				mbsPart = mbs.part (1, x.size);
+				sort_VEC_inout (mbsPart);
+				out_lineParameters [4] = NUMquantile (mbsPart, 0.5);
+				out_lineParameters [5] = NUMquantile (mbsPart, oneTailedUnconfidence);
+				out_lineParameters [6] = NUMquantile (mbsPart, 1.0 - oneTailedUnconfidence);
+			}
 		}
-		if (out_m)
-			*out_m = m;
-		if (out_intercept)
-			*out_intercept = intercept;
 	} catch (MelderError) {
 		Melder_throw (U"No line fit (Theil's method).");
 	}

@@ -1180,6 +1180,8 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
  * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
+void NUMlineFit_theil_preallocated (VEC const& out_lineParameters, constVEC const& x, constVEC const& y, bool wantIntercept, double oneTailedUnconfidence, bool completeMethod);
+
 void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod);
 /*
  * Preconditions:
