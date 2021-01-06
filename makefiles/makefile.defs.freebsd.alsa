@@ -17,12 +17,13 @@ CXX ?= c++
 LINK ?= $(CXX)
 
 # -DALSA or -DJACK: Use ALSA or Jack audio in pa_unix_hostapis.c
-AUDIO=-DALSA
+AUDIO = -DALSA
 
 # FreeBSD pretends to be Linux for most of the code; add CPPFLAGS
 # explicitly because GNU make / gcc uses those preprocessor flags,
 # but clang does not.
-COMMONFLAGS = -DUNIX -Dlinux $(AUDIO) -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-3.0` -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread $(CPPFLAGS)
+COMMONFLAGS = -DUNIX -Dlinux $(AUDIO) -D_FILE_OFFSET_BITS=64 `pkg-config --cflags gtk+-3.0` \
+	-Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1 -pthread $(CPPFLAGS)
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS) \
 	-DHAVE_SYS_SOUNDCARD_H \
@@ -31,7 +32,6 @@ CFLAGS = -std=gnu99 $(COMMONFLAGS) \
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) \
 	-DHAVE_SYS_SOUNDCARD_H \
 	-Wshadow \
-	-Werror=implicit \
 	-Werror=return-type \
 	-I$(LOCALBASE)/include -I$(LOCALBASE)/include/unicode
 
