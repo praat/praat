@@ -9,7 +9,8 @@ CC = $(PREFIX)gcc
 
 CXX = $(PREFIX)g++
 
-COMMONFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
+COMMONFLAGS = -municode -D_FILE_OFFSET_BITS=64 \
+	-O3
 # Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS)

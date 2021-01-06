@@ -7,7 +7,8 @@ CC = gcc
 
 CXX = g++
 
-COMMONFLAGS = -mwin32 -DUNICODE -D_FILE_OFFSET_BITS=64 -O1
+COMMONFLAGS = -mwin32 -DUNICODE -D_FILE_OFFSET_BITS=64 \
+	-O1
 # Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic
 
 CFLAGS = -std=gnu99 $(COMMONFLAGS)
