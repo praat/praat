@@ -196,11 +196,15 @@ and type one of the four following commands:
 
     # on Raspberry Pi command line
     cp makefiles/makefile.defs.linux.rpi ./makefile.defs
+    
+    # On FreeBSD command line
+    cp makefiles/makefile.defs.freebsd.alsa ./makefile.defs
 
 To build the Praat executable, type `make` or `make -j12`.
 If your Unix isn’t Linux, you may have to edit the library names in the makefile
 (you may need pthread, gtk-3, gdk-3, atk-1.0, pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0,
-cairo-gobject, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0, asound, jack).
+cairo-gobject, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0, gmodule-2.0, 
+gthread-2.0, rt, glib-2.0, asound, jack).
 
 When compiling Praat on an external supercomputer or so, you will not have sound.
 If you do have `libgtk-3-dev` (and its dependencies), do
@@ -209,8 +213,8 @@ If you do have `libgtk-3-dev` (and its dependencies), do
 
 Then type `make` or `make -j12` to build the program. If your Unix isn’t Linux,
 you may have to edit the library names in the makefile (you may need pthread, gtk-3, gdk-3, atk-1.0,
-pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo-gobject, cairo, gio-2.0, pango-1.0, freetype, fontconfig, gobject-2.0,
-gmodule-2.0, gthread-2.0, rt, glib-2.0).
+pangoft2-1.0, gdk_pixbuf-2.0, m, pangocairo-1.0, cairo-gobject, cairo, gio-2.0, pango-1.0, 
+freetype, fontconfig, gobject-2.0, gmodule-2.0, gthread-2.0, rt, glib-2.0).
 
 When compiling Praat for use as a server for commands from your web pages, you may not need sound or a GUI. Do
 

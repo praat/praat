@@ -2,7 +2,7 @@
 #define _praat_h_
 /* praat.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +137,9 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 #define praat_DEPRECATED_2019  (0x1320'0000 | praat_HIDDEN)
 #define praat_DEPRECATED_2020  (0x1420'0000 | praat_HIDDEN)
 #define praat_DEPRECATED_2021  (0x1520'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2022  (0x1620'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2023  (0x1720'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2024  (0x1820'0000 | praat_HIDDEN)
 /*
 	The following three can also be used, but not for deprecated commands.
 */

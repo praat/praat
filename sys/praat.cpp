@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1483,9 +1483,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 
-	if (unknownCommandLineOption) {
+	if (unknownCommandLineOption)
 		Melder_fatal (U"Unrecognized command line option ", unknownCommandLineOption.get());
-	}
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNameHead, conststring32 fileNameTail) {

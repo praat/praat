@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1920,20 +1920,18 @@ void UiForm_setColourAsGreyValue (UiForm me, MelderColour *p_variable, double gr
 }
 
 static UiField findField (UiForm me, conststring32 fieldName) {
-	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		if (str32equ (fieldName, my field [ifield] -> name.get()))
 			return my field [ifield].get();
-	}
 	return nullptr;
 }
 
 static UiField findField_check (UiForm me, conststring32 fieldName) {
 	UiField result = findField (me, fieldName);
-	if (! result) {
+	if (! result)
 		Melder_throw (U"Cannot find field \"", fieldName, U"\" in form.\n"
 			U"The script may have changed while the form was open.\n"
 			U"Please click Cancel in the form and try again.");
-	}
 	return result;
 }
 
@@ -1960,7 +1958,8 @@ double UiForm_getReal_check (UiForm me, conststring32 fieldName) {
 
 integer UiForm_getInteger (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+	if (! field)
+		Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
 	switch (field -> type)
 	{
 		case _kUiField_type::INTEGER_:
@@ -2009,7 +2008,8 @@ integer UiForm_getInteger_check (UiForm me, conststring32 fieldName) {
 
 char32 * UiForm_getString (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
-	if (! field) Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+	if (! field)
+		Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
 	switch (field -> type)
 	{
 		case _kUiField_type::WORD_:

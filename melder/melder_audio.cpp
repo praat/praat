@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma, David Weenink
+ * Copyright (C) 1992-2021 Paul Boersma, David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1159,9 +1159,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 				}
 				Pa_Sleep (10);
 			}
-			if (my samplesPlayed != my numberOfSamples) {
+			if (my samplesPlayed != my numberOfSamples)
 				Melder_fatal (U"Played ", my samplesPlayed, U" instead of ", my numberOfSamples, U" samples.");
-			}
 			#ifndef linux
 				Pa_AbortStream (my stream);
 			#endif
