@@ -30,7 +30,7 @@
 
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression);
 
-double Formant_getFormantSlope (Formant me, integer iformant, double tmin, double tmax, kFormantSlopeUnit unit, kFormantSlopeMethod method);
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, kFormantSlopeUnit unit, double oneTailedUnconfidence);
 
 autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant);
 

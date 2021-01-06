@@ -94,25 +94,46 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	}
 }
 
-double Formant_getFormantSlope (Formant me, integer iformant, double tmin, double tmax, kFormantSlopeUnit unit, kFormantSlopeMethod method) {
-	double slope = undefined;
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, kFormantSlopeUnit unit, double oneTailedUnconfidence) {
 	integer itmin, itmax;
+	autoVEC slope = raw_VEC (7);
+	slope.get()  <<=  undefined;
 	const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 	if (numberOfFrames < 2)
 		return slope;
 	autoVEC x = raw_VEC (numberOfFrames);
 	autoVEC y = raw_VEC (numberOfFrames);
+	integer newSize = 0;
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const Formant_Frame frame = & my frames [iframe];
 		const integer numberOfFormants = frame -> numberOfFormants;
-		x [iframe] = Sampled_indexToX (me, itmin + iframe - 1);
-		y [iframe] = ( iformant <= numberOfFormants ? frame -> formant [iformant]. frequency : 0.0 );
+		const double frequency = frame -> formant [iformant]. frequency;
+		if (iformant > numberOfFormants || ! isdefined (frequency))
+			continue;
+		newSize ++;
+		x [newSize] = Sampled_indexToX (me, itmin + iframe - 1) - tmin; // as if tmin is at time 0.0 s
+		y [newSize] = frequency;
+	}
+	if (newSize != numberOfFrames) {
+		if (newSize < 2)
+			return slope;
+		x.resize (newSize);
+		y.resize (newSize);
 	}
 	if (unit == kFormantSlopeUnit::BARK_PER_SECOND) // bark/s
-		for (integer i = 1; i <= numberOfFrames; i++)
+		for (integer i = 1; i <= x.size; i++)
 			y [i] = ( y[i] > 0.0 ? NUMhertzToBark (y [i]) : 0.0 );
-
-	NUMlineFit_theil (x.get(), y.get(), & slope, nullptr, true);
+	slope.resize (6);
+	NUMlineFit_theil_preallocated (slope.get(), x.get(), y.get(), true, oneTailedUnconfidence, true);
+	/*
+		reorder frm m, m5, m95, i,  i5, i95 
+					m,  i, end, m5, n95, i5, i95
+	*/
+	double endValue = slope [1] * (tmax -tmin) + slope [4];
+	slope.resize (7);
+	slope [7] = slope [6]; slope [6] = slope [5]; 
+	double save = slope [4]; slope [5] = slope [3]; slope [4] = slope [2];
+	slope [2] = save; slope [3] = endValue;
 	return slope;
 }
 
