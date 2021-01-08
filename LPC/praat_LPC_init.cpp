@@ -679,12 +679,11 @@ FORM (VEC_Formant_listFormantSlope, U"Formant: Get formant slope", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
-	RADIO_ENUM (kFormantSlopeUnit, unit, U"Unit", kFormantSlopeUnit::DEFAULT)
 	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidendence", U"0.025")
 	OK
 DO
 	NUMVEC_ONE (Formant)
-		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax, unit, oneTailedUnconfidence);
+		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax, oneTailedUnconfidence);
 	NUMVEC_ONE_END
 }
 

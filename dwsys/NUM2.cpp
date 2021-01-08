@@ -2072,13 +2072,13 @@ void NUMlineFit_theil_preallocated (VEC const& out_lineParameters, constVEC cons
 			m = median (m [i])
 			b = median(y [i]-m*x [i])
 		 */
-		double m, intercept;
+		out_lineParameters  <<=  undefined;
 		if (x.size == 1) {
-			intercept = y [1];
-			m = 0.0;
+			out_lineParameters [1] = 0.0; // m
+			out_lineParameters [4] =  y [1]; // intercept
 		} else if (x.size == 2) {
-			m = (y [2] - y [1]) / (x [2] - x [1]);
-			intercept = y [1] - m * x [1];
+			const double m = out_lineParameters [1] = (y [2] - y [1]) / (x [2] - x [1]);
+			out_lineParameters [4] = y [1] - m * x [1];
 		} else {
 			integer numberOfCombinations;
 			autoVEC mbs;

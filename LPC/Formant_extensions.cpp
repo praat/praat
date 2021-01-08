@@ -19,11 +19,6 @@
 #include "Formant_extensions.h"
 #include "NUM2.h"
 
-#include "enums_getText.h"
-#include "Formant_extensions_enums.h"
-#include "enums_getValue.h"
-#include "Formant_extensions_enums.h"
-
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression) {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
@@ -94,13 +89,13 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	}
 }
 
-autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, kFormantSlopeUnit unit, double oneTailedUnconfidence) {
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, double oneTailedUnconfidence) {
 	integer itmin, itmax;
-	autoVEC slope = raw_VEC (7);
-	slope.get()  <<=  undefined;
+	autoVEC lineFit = raw_VEC (10);
+	lineFit.get()  <<=  undefined;
 	const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 	if (numberOfFrames < 2)
-		return slope;
+		return lineFit;
 	autoVEC x = raw_VEC (numberOfFrames);
 	autoVEC y = raw_VEC (numberOfFrames);
 	integer newSize = 0;
@@ -112,29 +107,40 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 			continue;
 		newSize ++;
 		x [newSize] = Sampled_indexToX (me, itmin + iframe - 1) - tmin; // as if tmin is at time 0.0 s
-		y [newSize] = frequency;
+		y [newSize] = log (frequency); 
 	}
 	if (newSize != numberOfFrames) {
 		if (newSize < 2)
-			return slope;
+			return lineFit;
 		x.resize (newSize);
 		y.resize (newSize);
 	}
-	if (unit == kFormantSlopeUnit::BARK_PER_SECOND) // bark/s
-		for (integer i = 1; i <= x.size; i++)
-			y [i] = ( y[i] > 0.0 ? NUMhertzToBark (y [i]) : 0.0 );
-	slope.resize (6);
-	NUMlineFit_theil_preallocated (slope.get(), x.get(), y.get(), true, oneTailedUnconfidence, true);
+	lineFit.resize (6);
 	/*
-		reorder frm m, m5, m95, i,  i5, i95 
-					m,  i, end, m5, n95, i5, i95
+		Model formant (t) = flocus * exp (a * t)
+		or: log (formant(t)) = b + a * t, where b = log (flocus)
 	*/
-	double endValue = slope [1] * (tmax -tmin) + slope [4];
-	slope.resize (7);
-	slope [7] = slope [6]; slope [6] = slope [5]; 
-	double save = slope [4]; slope [5] = slope [3]; slope [4] = slope [2];
-	slope [2] = save; slope [3] = endValue;
-	return slope;
+	NUMlineFit_theil_preallocated (lineFit.get(), x.get(), y.get(), true, oneTailedUnconfidence, true);
+	/*
+		lineFit: a, alow, ahigh, b, blow, bhigh 
+	*/
+	lineFit.resize (10);
+	const double a = lineFit [1],  b = lineFit [4], a_low = lineFit [2], a_high = lineFit [3];
+	const double flocus = exp (b), flocus_low = exp (lineFit [5]), flocus_high = exp (lineFit [6]);
+	const double ftarget = exp (b + a * (tmax - tmin));
+	const double ftarget_low = exp (b + a_low * (tmax - tmin));
+	const double ftarget_high = exp (b + a_high * (tmax - tmin));
+	lineFit [1] = (ftarget - flocus) / (tmax - tmin); // average slope
+	lineFit [2] = ftarget;
+	lineFit [3] = flocus;
+	lineFit [4] = a;
+	lineFit [5] = a_low;
+	lineFit [6] = a_high;
+	lineFit [7] = flocus_low;
+	lineFit [8] = flocus_high;
+	lineFit [9] = ftarget_low;
+	lineFit [10] = ftarget_high;
+	return lineFit;
 }
 
 autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {
