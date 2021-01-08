@@ -27,11 +27,15 @@
 #include "melder.h"
 #include "MAT_numerics.h"
 
-/* slightly more than machine precision, so minimization algorithms that use something like
+/*
+	A tipical iteration goes like
 	do {
-		get new
-	while (fabs(new - old) > std::max (tol * new, NUMeps);
-	can succed even when new == 0, because the real eps = 2.2...e-16.
+		previous is ...
+		get value of current
+	while (fabs (current - previous) > fabs (NUMeps * current);
+	Because of floating point arithmatic we have a rounding differences which are large or equal to the
+	machine precision eps = 2.2...e-16. To have an escape if fabs (current - previous) e<= eps we choose
+	NUMeps just a little larger than eps. 
 */
 #define NUMeps 2.3e-16
 
