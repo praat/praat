@@ -162,11 +162,11 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 			y [i] = my v_getValueAtSample (isamp, 1, 1);
 		}
 		if (method == kCepstrumTrendFit::LEAST_SQUARES)
-			NUMlineFit_LS (x.get(), y.get(), & a, & intercept);
+			NUMfitLine_LS (x.get(), y.get(), & a, & intercept);
 		else if (method == kCepstrumTrendFit::ROBUST_FAST)
-			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, false);
+			NUMfitLine_theil (x.get(), y.get(), & a, & intercept, false);
 		else if (method == kCepstrumTrendFit::ROBUST_SLOW)
-			NUMlineFit_theil (x.get(), y.get(), & a, & intercept, true);
+			NUMfitLine_theil (x.get(), y.get(), & a, & intercept, true);
 		else {
 			Melder_throw (U"Invalid method.");
 		}

@@ -89,6 +89,50 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	}
 }
 
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax) {
+	integer itmin, itmax;
+	autoVEC lineFit = raw_VEC (7);
+	lineFit.get()  <<=  undefined;
+	const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
+	if (numberOfFrames < 2)
+		return lineFit;
+	autoVEC x = raw_VEC (numberOfFrames);
+	autoVEC y = raw_VEC (numberOfFrames);
+	integer newSize = 0;
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
+		const Formant_Frame frame = & my frames [iframe];
+		const integer numberOfFormants = frame -> numberOfFormants;
+		const double frequency = frame -> formant [iformant]. frequency;
+		if (iformant > numberOfFormants || ! isdefined (frequency))
+			continue;
+		newSize ++;
+		x [newSize] = Sampled_indexToX (me, iframe) - tmin; // as if tmin is at time 0.0 s
+		y [newSize] = frequency; 
+	}
+	if (newSize != numberOfFrames) {
+		if (newSize < 2)
+			return lineFit;
+		x.resize (newSize);
+		y.resize (newSize);
+	}
+	/*
+		Model formant (t) = a + b * exp (c * t)
+	*/
+	double a, b, c, rSquared;
+	NUMfitExponentialPlusConstant (x.get(), y.get(), & a, & b, & c, & rSquared);
+	const double flocus = a + b;
+	const double ftarget = a + b * exp (c * (tmax - tmin));
+	const double averageSlope =  (ftarget - flocus) / (tmax - tmin);
+	lineFit [1] = averageSlope;
+	lineFit [2] = flocus;
+	lineFit [3] = ftarget;
+	lineFit [4] = a;
+	lineFit [5] = b;
+	lineFit [6] = c;
+	lineFit [7] = rSquared;
+	return lineFit;
+}
+
 autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,

@@ -88,6 +88,31 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
+MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210111)
+INTRO (U"List the slope characteristics of the chosen interval of a selected @@Formant@ object as a vector with seven values.")
+ENTRY (U"The result")
+NORMAL (U"The seven vector values are determined from the fit of the formant track with a function %F(%t) = %a+%b\\.cexp(%c\\.c%t), "
+	"where %t runs from 0 to %t__max_ - %t__min_ on the chosen interval [%t__min_, %t__max_].")
+TAG (U"##1. Average slope (Hz / s)#,")
+DEFINITION (U"defined as (%F__locus_ - %F__target_) / (%t__max_ - %t__min_), where %F__locus_ and %F__target_ are the start and "
+	"end values of the interval.")
+TAG (U"##2. %F__locus_#,")
+DEFINITION (U"the value of the function %F(%t) at the start of the interval, i.e. %F(0).")
+TAG (U"##3. %F__target_#,")
+DEFINITION (U"the value of the function %F(%t) at the end of the interval, i.e. %F(%t__max_-%t__min_)")
+TAG (U"##4. %a#")
+DEFINITION (U"the parameter %a of the function %F(%t).")
+TAG (U"##5. %b#")
+DEFINITION (U"the parameter %b of the function %F(%t).")
+TAG (U"##6. %c#")
+DEFINITION (U"the parameter %c of the function %F(%t).")
+TAG (U"##7. %R^2#")
+DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
+NORMAL (U"We note the the parameters ")
+ENTRY (U"Algorithm")
+NORMAL (U"The algorithm to fit the %%non-linear% function %F(%t) = %a+%b\\.cexp(%c\\.c%t) to a series of (time, frequency) values is described in @@Jacquelin (2009)@.")
+MAN_END
+
 MAN_BEGIN (U"FormantPath", U"djmw", 20201013)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
@@ -1056,7 +1081,10 @@ MAN_END
 MAN_BEGIN (U"Hillenbrand & Houde (1996)", U"djmw", 20121203)
 NORMAL (U"J. Hillenbrand & R.A. Houde (1996): \"Acoustic correlates of breathy vocal quality: Dysphonic voices and continuous "
 	"speech\", %%Journal of speech and hearing research% #39: 311\\--321.")
+MAN_END
 
+MAN_BEGIN (U"Jacquelin (2009)", U"djmw", 20210108)
+NORMAL (U"J. Jacquelin (2009): \"Régressions et équations intégrales\", https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales: 1\\--17.")
 MAN_END
 
 MAN_BEGIN (U"Lee (1988)", U"djmw", 20111027)

@@ -2034,10 +2034,10 @@ integer NUMgetIndexFromProbability (constVEC probs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod) {
+void NUMfitLine_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod) {
 	try {
 		Melder_require (x.size == y.size,
-			U"NUMlineFit_theil: the sizes of the two vectors should be equal.");
+			U"NUMfitLine_theil: the sizes of the two vectors should be equal.");
 		/*
 			Theil's incomplete method:
 			Split (x [i],y [i]) as
@@ -2046,13 +2046,39 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 			m = median (m [i])
 			b = median(y [i]-m*x [i])
 		 */
-		double m, intercept;
+		autoVEC lineParameters = raw_VEC (6);
+		NUMfitLine_theil_preallocated (lineParameters.get(), x, y, out_intercept, 0.025, completeMethod);
+
+		if (out_m)
+			*out_m = lineParameters [1];
+		if (out_intercept)
+			*out_intercept = lineParameters [4];
+	} catch (MelderError) {
+		Melder_throw (U"No line fit (Theil's method).");
+	}
+}
+
+void NUMfitLine_theil_preallocated (VEC const& out_lineParameters, constVEC const& x, constVEC const& y, bool wantIntercept, double oneTailedUnconfidence, bool completeMethod) {
+	try {
+		Melder_require (x.size == y.size,
+			U"NUMfitLine_theil: the sizes of the two vectors should be equal.");
+		Melder_require (out_lineParameters.size == 6,
+			U"The line parameters vector should have size 6.");
+		/*
+			Theil's incomplete method:
+			Split (x [i],y [i]) as
+			(x [i],y [i]), (x [N+i],y [N+i], i=1..numberOfPoints/2
+			m [i] = (y [N+i]-y [i])/(x [N+i]-x [i])
+			m = median (m [i])
+			b = median(y [i]-m*x [i])
+		 */
+		out_lineParameters  <<=  undefined;
 		if (x.size == 1) {
-			intercept = y [1];
-			m = 0.0;
+			out_lineParameters [1] = 0.0; // m
+			out_lineParameters [4] =  y [1]; // intercept
 		} else if (x.size == 2) {
-			m = (y [2] - y [1]) / (x [2] - x [1]);
-			intercept = y [1] - m * x [1];
+			const double m = out_lineParameters [1] = (y [2] - y [1]) / (x [2] - x [1]);
+			out_lineParameters [4] = y [1] - m * x [1];
 		} else {
 			integer numberOfCombinations;
 			autoVEC mbs;
@@ -2071,25 +2097,35 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);
 			}
-			sort_VEC_inout (mbs.part (1, numberOfCombinations));
-			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
-			for (integer i = 1; i <= x.size; i ++)
-				mbs [i] = y [i] - m * x [i];
-			sort_VEC_inout (mbs.part (1, x.size));
-			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
+			/*
+				Get slope as the median of all slopes
+			*/
+			VECVU mbsPart = mbs.part (1, numberOfCombinations);
+			sort_VEC_inout (mbsPart);
+			out_lineParameters [1] = NUMquantile (mbsPart, 0.5);
+			out_lineParameters [2] = NUMquantile (mbsPart, oneTailedUnconfidence);
+			out_lineParameters [3] = NUMquantile (mbsPart, 1.0 - oneTailedUnconfidence);
+			/*
+				Reuse array for intercept
+			*/
+			if (wantIntercept) {
+				for (integer i = 1; i <= x.size; i ++)
+					mbs [i] = y [i] - out_lineParameters [1] * x [i];
+				mbsPart = mbs.part (1, x.size);
+				sort_VEC_inout (mbsPart);
+				out_lineParameters [4] = NUMquantile (mbsPart, 0.5);
+				out_lineParameters [5] = NUMquantile (mbsPart, oneTailedUnconfidence);
+				out_lineParameters [6] = NUMquantile (mbsPart, 1.0 - oneTailedUnconfidence);
+			}
 		}
-		if (out_m)
-			*out_m = m;
-		if (out_intercept)
-			*out_intercept = intercept;
 	} catch (MelderError) {
 		Melder_throw (U"No line fit (Theil's method).");
 	}
 }
 
-void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept) {
+void NUMfitLine_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept) {
 	Melder_require (x.size == y.size,
-		U"NUMlineFit_LS: the sizes of the two vectors should be equal.");
+		U"NUMfitLine_LS: the sizes of the two vectors should be equal.");
 	const double sx = NUMsum (x);
 	const double xmean = sx / x.size;
 	longdouble st2 = 0.0, m = 0.0;
@@ -2110,11 +2146,83 @@ void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double 
 
 void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, integer method) {
 	if (method == 1)
-		NUMlineFit_LS (x, y, out_m, out_intercept);
+		NUMfitLine_LS (x, y, out_m, out_intercept);
 	else if (method == 3)
-		NUMlineFit_theil (x, y, out_m, out_intercept, true);
+		NUMfitLine_theil (x, y, out_m, out_intercept, true);
 	else
-		NUMlineFit_theil (x, y, out_m, out_intercept, false);
+		NUMfitLine_theil (x, y, out_m, out_intercept, false);
+}
+
+void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_c, double *out_rSquared) {
+	try {
+		Melder_require (x.size == y.size,
+			U"The dimemsions of the x and y array should be equal.");
+		Melder_require (x.size > 3,
+			U"Not enough data for the three parameter model.");
+		long double s_km1 = 0.0, m11 = 0.0, m12 = 0.0, m22 = 0.0, v1 = 0.0, v2 = 0.0;
+		for (integer k = 2; k <= x.size; k ++) {
+			const long double s_k = s_km1 + 0.5 * (y [k] + y [k - 1]) * (x [k] - x[k - 1]); // Eq. (7)
+			const long double xkmx1 = x [k] - x [1]; // for Eq. (11)
+			const long double ykmy1 = y [k] - y [1];
+			m11 += xkmx1 * xkmx1;
+			m12 += xkmx1 * s_k;
+			m22 += s_k * s_k;
+			v1 += ykmy1 * xkmx1;
+			v2 += ykmy1 * s_k;
+			s_km1 = s_k;
+		}
+		long double m21 = m12;
+		/*
+			Inverse of two by two matrix [a b; c d] matrix is
+			[d -b; -c a] / (a*d-b*c)
+		*/
+		long double determinant = m11 * m22 - m12 * m21;
+		long double mi11 = m22 / determinant;
+		long double mi12 = - m12 / determinant, mi21 = mi12;
+		long double mi22 = m11 / determinant;
+		/*
+			[a1; c] = [mi11 mi12; mi21 mi22] * [v1; v2]
+		*/
+		const long double c = mi21 * v1 + mi22 * v2; // c = B1 of Eq. (11)
+
+		m11 = x.size;
+		m12 = m21 = m22 = v1 = v2 = 0.0;
+		for (integer k = 1; k <= x.size; k ++) {
+			const long double theta_k = exp (c * x [k]);
+			m12 += theta_k;
+			m22 += theta_k * theta_k;
+			v1 += y [k];
+			v2 += y[k] * theta_k;
+		}
+		m21 = m12;
+		determinant = m11 * m22 - m12 * m21;
+		mi11 = m22 / determinant;
+		mi12 = mi21 = - m12 / determinant;
+		mi22 = m11 / determinant;
+		/*
+			[a; b] = [mi11 mi12; mi21 mi22] * [v1; v2]
+		*/
+		const double a = mi11 * v1 + mi12 * v2;
+		const double b = mi21 * v1 + mi22 * v2;
+		if (out_a)
+			*out_a = a;
+		if (out_b)
+			*out_b = b;
+		if (out_c)
+			*out_c = c;
+		if (out_rSquared) {
+			const double variance = NUMvariance (y);
+			double varianceAfterFit = 0.0;
+			for (integer k = 1; k <= y.size; k ++) {
+				const double dif = y [k] - (a + b * exp (c * x [k]));
+				varianceAfterFit += dif * dif;
+			}
+			varianceAfterFit /= y.size - 1;
+			*out_rSquared = 1.0 - varianceAfterFit / variance;
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Exponential with offset could not be fit.");
+	}
 }
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
@@ -2593,9 +2701,16 @@ double NUMrandomBinomial_real (double p, integer n) {
 		return (double) NUMrandomBinomial (p, n);
 }
 
+double NUMrandomWeibull (double scale_lambda, double shape_k) {
+	Melder_require (scale_lambda > 0 && shape_k > 0,
+		U"NUMrandomWeibull: both arguments should be positive.");
+	const double u = NUMrandomUniform (0, 1);
+	return scale_lambda * pow (- log (u), 1.0 / shape_k);	
+}
+
 double NUMrandomGamma (const double alpha, const double beta) {
 	Melder_require (alpha > 0 && beta > 0,
-		U"Both arguments should be positive.");
+		U"NUMrandomGamma: both arguments should be positive.");
 	double result;
 	if (alpha >= 1.0) {
 		double x, v, d = alpha - 1.0 / 3.0;
