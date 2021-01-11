@@ -675,15 +675,14 @@ DIRECT (NEW_Cepstrumc_to_Matrix) {
 
 /******************** Formant ********************************************/
 
-FORM (VEC_Formant_listFormantSlope, U"Formant: Get formant slope", nullptr) {
+FORM (VEC_Formant_listFormantSlope, U"Formant: List formant slope", U"Formant: List formant slope...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
-	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidendence", U"0.025")
 	OK
 DO
 	NUMVEC_ONE (Formant)
-		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax, oneTailedUnconfidence);
+		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax);
 	NUMVEC_ONE_END
 }
 

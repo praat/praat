@@ -89,9 +89,9 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	}
 }
 
-autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, double oneTailedUnconfidence) {
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax) {
 	integer itmin, itmax;
-	autoVEC lineFit = raw_VEC (10);
+	autoVEC lineFit = raw_VEC (7);
 	lineFit.get()  <<=  undefined;
 	const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 	if (numberOfFrames < 2)
@@ -99,15 +99,15 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 	autoVEC x = raw_VEC (numberOfFrames);
 	autoVEC y = raw_VEC (numberOfFrames);
 	integer newSize = 0;
-	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		const Formant_Frame frame = & my frames [iframe];
 		const integer numberOfFormants = frame -> numberOfFormants;
 		const double frequency = frame -> formant [iformant]. frequency;
 		if (iformant > numberOfFormants || ! isdefined (frequency))
 			continue;
 		newSize ++;
-		x [newSize] = Sampled_indexToX (me, itmin + iframe - 1) - tmin; // as if tmin is at time 0.0 s
-		y [newSize] = log (frequency); 
+		x [newSize] = Sampled_indexToX (me, iframe) - tmin; // as if tmin is at time 0.0 s
+		y [newSize] = frequency; 
 	}
 	if (newSize != numberOfFrames) {
 		if (newSize < 2)
@@ -115,31 +115,21 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		x.resize (newSize);
 		y.resize (newSize);
 	}
-	lineFit.resize (6);
 	/*
-		Model formant (t) = flocus * exp (a * t)
-		or: log (formant(t)) = b + a * t, where b = log (flocus)
+		Model formant (t) = a + b * exp (c * t)
 	*/
-	NUMlineFit_theil_preallocated (lineFit.get(), x.get(), y.get(), true, oneTailedUnconfidence, true);
-	/*
-		lineFit: a, alow, ahigh, b, blow, bhigh 
-	*/
-	lineFit.resize (10);
-	const double a = lineFit [1],  b = lineFit [4], a_low = lineFit [2], a_high = lineFit [3];
-	const double flocus = exp (b), flocus_low = exp (lineFit [5]), flocus_high = exp (lineFit [6]);
-	const double ftarget = exp (b + a * (tmax - tmin));
-	const double ftarget_low = exp (b + a_low * (tmax - tmin));
-	const double ftarget_high = exp (b + a_high * (tmax - tmin));
-	lineFit [1] = (ftarget - flocus) / (tmax - tmin); // average slope
-	lineFit [2] = ftarget;
-	lineFit [3] = flocus;
+	double a, b, c, rSquared;
+	NUMfitExponentialPlusConstant (x.get(), y.get(), & a, & b, & c, & rSquared);
+	const double flocus = a + b;
+	const double ftarget = a + b * exp (c * (tmax - tmin));
+	const double averageSlope =  (ftarget - flocus) / (tmax - tmin);
+	lineFit [1] = averageSlope;
+	lineFit [2] = flocus;
+	lineFit [3] = ftarget;
 	lineFit [4] = a;
-	lineFit [5] = a_low;
-	lineFit [6] = a_high;
-	lineFit [7] = flocus_low;
-	lineFit [8] = flocus_high;
-	lineFit [9] = ftarget_low;
-	lineFit [10] = ftarget_high;
+	lineFit [5] = b;
+	lineFit [6] = c;
+	lineFit [7] = rSquared;
 	return lineFit;
 }
 

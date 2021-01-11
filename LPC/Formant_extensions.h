@@ -28,7 +28,7 @@
 
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression);
 
-autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, double oneTailedUnconfidence);
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax);
 
 autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant);
 
