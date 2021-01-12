@@ -1330,7 +1330,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classCepstrumc, 0, U"Hack", 0, 0, 0);
 	praat_addAction1 (classCepstrumc, 0, U"To Matrix", 0, 0, NEW_Cepstrumc_to_Matrix);
 
-	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", 1, VEC_Formant_listFormantSlope);
+	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", praat_DEPTH_1 + praat_HIDDEN, VEC_Formant_listFormantSlope);
 	praat_addAction1 (classFormant, 0, U"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
