@@ -125,7 +125,7 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		s.resize (numberOfDataPoints);
 	}
 	double constant, b, c, flocus, ftarget, residualVariance;
-	if (curveType == kSlopeCurve::EXPONENTIAL) {// exponential
+	if (curveType == kSlopeCurve::EXPONENTIAL) {
 		/*
 			Model formant (t) = constant + b * exp (c * t)
 		*/
@@ -160,7 +160,7 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		double mu, sigma;
 		const double yscaleFactor = 100.0; // to improve balance between x and y value scales
 		y.get()  /=  yscaleFactor;
-		NUMfitLogisticPlusConstant (x.get(), y.get(), & constant, & b, & mu, & sigma, & residualVariance); // y(x) = a 
+		NUMfitLogisticPlusConstant (x.get(), y.get(), & constant, & b, & mu, & sigma, & residualVariance);
 		flocus  = yscaleFactor * (constant + b / (1.0 + exp (- (tmin - mu) / sigma)));
 		ftarget = yscaleFactor * (constant + b / (1.0 + exp (- (tmax - mu) / sigma)));
 		lineFit.resize (8);
