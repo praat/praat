@@ -1777,7 +1777,8 @@ void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycol
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
 		const double x = row -> cells [xcolumn]. number, y = row -> cells [ycolumn]. number;
-		if (x >= xmin && x <= xmax && y >= ymin && y <= ymax)
+		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmax < xmin && x >= xmax && x <= xmin)) &&
+			((ymin < ymax && y >= ymin && y <= ymax) || (ymax < ymin && y >= ymax && y <= xmin)))
 			Graphics_mark (g, x, y, markSize_mm, mark);
 	}
 	Graphics_unsetInner (g);
@@ -1826,7 +1827,8 @@ void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
 		const TableRow row = my rows.at [irow];
 		conststring32 mark = row -> cells [markColumn]. string.get();
 		const double x = row -> cells [xcolumn]. number, y = row -> cells [ycolumn]. number;
-		if (mark && x >= xmin && x <= xmax && y >= ymin && y <= ymax)
+		if (mark && ((xmin < xmax && x >= xmin && x <= xmax) || (xmax < xmin && x >= xmax && x <= xmin)) &&
+			((ymin < ymax && y >= ymin && y <= ymax) || (ymax < ymin && y >= ymax && y <= xmin)))
 			Graphics_text (g, x, y, mark);
 	}
 	Graphics_setFontSize (g, saveFontSize);
