@@ -1180,7 +1180,9 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
  * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
-void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod);
+void NUMfitLine_theil_preallocated (VEC const& out_lineParameters, constVEC const& x, constVEC const& y, bool wantIntercept, double oneTailedUnconfidence, bool completeMethod);
+
+void NUMfitLine_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod);
 /*
  * Preconditions:
  *		all x[i] should be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
@@ -1200,7 +1202,36 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
  */
 
 
-void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept);
+void NUMfitLine_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept);
+
+/*
+	Model: y [i] = a + b * exp (c * x [i]), i=1..n, solve for a, b & c.
+	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 16-17.
+	Precondition: x is always increasing.
+*/
+void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_c, double *out_residualVariance);
+
+/*
+	Model: y(x) = b / (1 + exp (- (x - m) / s))
+	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 16-17.
+	Precondition: x is always increasing.
+*/
+void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *out_mu, double *out_s, double *out_residualVariance);
+
+/*
+	Model: y(x) = a + b / (1 + exp (- (x - m) / s))
+	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 38.
+	Precondition: x is always increasing.
+*/
+void NUMfitLogisticPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_m, double *out_s, double *out_residualVariance);
+
+/*
+	scale_lambda, shape_k > 0
+*/
+double NUMrandomWeibull (double scale_lambda, double shape_k);
 
 /* The binomial distribution has the form,
 
