@@ -16,8 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DataModeler.h"
 #include "Formant_extensions.h"
 #include "NUM2.h"
+
+#include "enums_getText.h"
+#include "Formant_extensions_enums.h"
+#include "enums_getValue.h"
+#include "Formant_extensions_enums.h"
 
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression) {
 	try {
@@ -89,7 +95,7 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	}
 }
 
-autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax) {
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, kSlopeCurve curveType) {
 	integer itmin, itmax;
 	autoVEC lineFit = raw_VEC (7);
 	lineFit.get()  <<=  undefined;
@@ -98,38 +104,78 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		return lineFit;
 	autoVEC x = raw_VEC (numberOfFrames);
 	autoVEC y = raw_VEC (numberOfFrames);
-	integer newSize = 0;
+	autoVEC s = raw_VEC (numberOfFrames);
+	integer numberOfDataPoints = 0;
 	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		const Formant_Frame frame = & my frames [iframe];
 		const integer numberOfFormants = frame -> numberOfFormants;
 		const double frequency = frame -> formant [iformant]. frequency;
 		if (iformant > numberOfFormants || ! isdefined (frequency))
 			continue;
-		newSize ++;
-		x [newSize] = Sampled_indexToX (me, iframe) - tmin; // as if tmin is at time 0.0 s
-		y [newSize] = frequency; 
+		numberOfDataPoints ++;
+		x [numberOfDataPoints] = Sampled_indexToX (me, iframe);
+		y [numberOfDataPoints] = frequency;
+		s [numberOfDataPoints] = frame -> formant [iformant]. bandwidth;
 	}
-	if (newSize != numberOfFrames) {
-		if (newSize < 2)
+	if (numberOfDataPoints != numberOfFrames) {
+		if (numberOfDataPoints < 3)
 			return lineFit;
-		x.resize (newSize);
-		y.resize (newSize);
+		x.resize (numberOfDataPoints);
+		y.resize (numberOfDataPoints);
+		s.resize (numberOfDataPoints);
 	}
-	/*
-		Model formant (t) = a + b * exp (c * t)
-	*/
-	double a, b, c, rSquared;
-	NUMfitExponentialPlusConstant (x.get(), y.get(), & a, & b, & c, & rSquared);
-	const double flocus = a + b;
-	const double ftarget = a + b * exp (c * (tmax - tmin));
+	double constant, b, c, flocus, ftarget, residualVariance;
+	if (curveType == kSlopeCurve::EXPONENTIAL) {// exponential
+		/*
+			Model formant (t) = constant + b * exp (c * t)
+		*/
+		NUMfitExponentialPlusConstant (x.get(), y.get(), & constant, & b, & c, & residualVariance);
+		flocus 	= constant + b * exp (c * tmin);
+		ftarget = constant + b * exp (c * tmax);
+		lineFit [5] = constant;
+		lineFit [6] = b;
+		lineFit [7] = c;
+	} else if (curveType == kSlopeCurve::PARABOLIC) {
+		/*
+			Model: formant (t) = constant + b * x + c * x^2
+		*/
+		autoDataModeler dm = DataModeler_create (tmin, tmax, numberOfDataPoints, 3, kDataModelerFunction::LEGENDRE);
+		for (integer k = 1; k <= numberOfDataPoints; k ++) {
+			dm -> data [k] .x = x [k];
+			dm -> data [k] .y = y [k];
+			dm -> data [k] .sigmaY = s [k];
+			dm -> data [k] .status = kDataModelerData::VALID;
+		}
+		DataModeler_fit (dm.get());
+		flocus =  DataModeler_getModelValueAtX (dm.get(), tmin);
+		ftarget =  DataModeler_getModelValueAtX (dm.get(), tmax);
+		residualVariance = DataModeler_getResidualSumOfSquares (dm.get(), nullptr) / (numberOfDataPoints - 1);
+		lineFit [5] = dm -> parameters [1].value;
+		lineFit [6] = dm -> parameters [2].value;
+		lineFit [7] = dm -> parameters [3].value;
+	} else if (curveType == kSlopeCurve::SIGMOID) {
+		/*
+			Model: formant (t) = constant + b / (1 + exp (- (x - m) / s))
+		*/
+		double mu, sigma;
+		const double yscaleFactor = 100.0; // to improve balance between x and y value scales
+		y.get()  /=  yscaleFactor;
+		NUMfitLogisticPlusConstant (x.get(), y.get(), & constant, & b, & mu, & sigma, & residualVariance); // y(x) = a 
+		flocus  = yscaleFactor * (constant + b / (1.0 + exp (- (tmin - mu) / sigma)));
+		ftarget = yscaleFactor * (constant + b / (1.0 + exp (- (tmax - mu) / sigma)));
+		lineFit.resize (8);
+		lineFit [5] = yscaleFactor * constant;
+		lineFit [6] = yscaleFactor * b;
+		lineFit [7] = mu;
+		lineFit [8] = sigma;
+		residualVariance *= yscaleFactor * yscaleFactor;
+	} else
+		return lineFit;
 	const double averageSlope =  (ftarget - flocus) / (tmax - tmin);
 	lineFit [1] = averageSlope;
-	lineFit [2] = flocus;
-	lineFit [3] = ftarget;
-	lineFit [4] = a;
-	lineFit [5] = b;
-	lineFit [6] = c;
-	lineFit [7] = rSquared;
+	lineFit [2] = 1.0 - residualVariance / NUMvariance (y.get());
+	lineFit [3] = flocus;
+	lineFit [4] = ftarget;
 	return lineFit;
 }
 

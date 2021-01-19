@@ -679,10 +679,11 @@ FORM (VEC_Formant_listFormantSlope, U"Formant: List formant slope", U"Formant: L
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
+	OPTIONMENU_ENUM (kSlopeCurve, slopeCurve, U"Slope curve", kSlopeCurve::DEFAULT)
 	OK
 DO
 	NUMVEC_ONE (Formant)
-		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax);
+		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax, slopeCurve);
 	NUMVEC_ONE_END
 }
 

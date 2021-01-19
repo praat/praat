@@ -105,18 +105,19 @@ DEFINITION (U"the parameter %a (hertz) of the function %F(%t).")
 TAG (U"##5. %b#")
 DEFINITION (U"the parameter %b (hertz) of the function %F(%t).")
 TAG (U"##6. %c#")
-DEFINITION (U"the parameter %c (hertz / s) of the function %F(%t).")
+DEFINITION (U"the parameter %c ( / s) of the function %F(%t).")
 TAG (U"##7. %R^2#")
 DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
-ENTRY (U"Remarks about the interpretion of the fit parameters.")
-NORMAL (U"We note that the parameters %a, %b and %c of the fit function cannot separately be given any meaning. What we know is that "
+ENTRY (U"Remarks about the interpretation of the fit parameters.")
+NORMAL (U"Tthe parameters %a, %b and %c of the fit function cannot separately be given any meaning. What we know is that "
 	"at %t = 0, %F(0) = %a + %b, i.e. the sum of the parameters %a and %b define %F__locus_. At the end of the interval "
-	"we can see that %F($t__max_-%t__min_)=a+b\\.cexp(%c\\.c(%t__max_-%t__min_)). This makes a parametrization of the form "
-	"%F(%t)=%F__target__+ (%F__locus_-%F__target)\\.cexp(%c\\.c%t), as is sometimes seen in the literature, problematic because "
+	"we can see that %F(%t__max_-%t__min_)=a+b\\.cexp(%c\\.c(%t__max_-%t__min_)). This makes a parametrization of the form "
+	"%F(%t)=%F__target_+ (%F__locus_-%F__target_)\\.cexp(%c\\.c%t), as is sometimes seen in the literature, problematic because "
 	"%F__target_ cannot be equal to the value at %F(%t__max_-%t__min_) since exp(%c\\.c(%t__max_-%t__min_)) is definitely not zero. "
 	"The %F__tartget_ has to be chosen somewhat smaller that the value at %t= %t__max_-%t__min_. The question than becomes: how much smaller?")
-NORMAL (U"As we can also see from the form of the function %F(%t) there is always a possibility of a trade-off between the parameters."
-	"For eample suppose we have a falling curve, i.e. %c < 0, then an increase in the value of %b could be compensated by making %c larger negative.")
+NORMAL (U"As we can also see from the form of the function %F(%t) there is always a possibility of a trade-off between the parameters. "
+	"For example, suppose we have a falling curve, i.e. %c < 0, then an increase in the value of %b could be compensated by making %c larger negative.")
+NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__locus_ and the %F__target_ values. In cases where the formant trajectory shows a noisy pattern all values have a large error margin and the determined average slope can also be unreliable.")
 ENTRY (U"Algorithm")
 NORMAL (U"The algorithm to fit the %%non-linear% function %F(%t) = %a+%b\\.cexp(%c\\.c%t) to a series of (time, frequency) values is described in @@Jacquelin (2009)@.")
 MAN_END
