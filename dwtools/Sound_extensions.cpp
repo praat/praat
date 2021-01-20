@@ -702,7 +702,6 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 	}
 }
 
-#ifndef _WIN32   // HAVE_OPUS
 autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	try {
 		conststring32 path = Melder_fileToPath (file);
@@ -785,7 +784,6 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 		Melder_throw (U"Sound not read from Ogg Opus file ", MelderFile_messageName (file), U".");
 	}
 }
-#endif		
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	if (preEmphasisFrequency >= 0.5 / my dx)
