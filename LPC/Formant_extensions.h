@@ -22,13 +22,15 @@
  djmw 20121214 Initial version
 */
 
-
 #include "Formant.h"
 #include "IntensityTier.h"
 #include "Spectrogram.h"
-
+#include "Formant_extensions_enums.h"
 
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression);
+
+autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, double tmax, kSlopeCurve slopeCurve);
+
 autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant);
 
 #endif /* _Formant_extensions_h_ */

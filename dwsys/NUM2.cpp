@@ -2034,10 +2034,10 @@ integer NUMgetIndexFromProbability (constVEC probs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod) {
+void NUMfitLine_theil (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept, bool completeMethod) {
 	try {
 		Melder_require (x.size == y.size,
-			U"NUMlineFit_theil: the sizes of the two vectors should be equal.");
+			U"NUMfitLine_theil: the sizes of the two vectors should be equal.");
 		/*
 			Theil's incomplete method:
 			Split (x [i],y [i]) as
@@ -2046,13 +2046,39 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 			m = median (m [i])
 			b = median(y [i]-m*x [i])
 		 */
-		double m, intercept;
+		autoVEC lineParameters = raw_VEC (6);
+		NUMfitLine_theil_preallocated (lineParameters.get(), x, y, out_intercept, 0.025, completeMethod);
+
+		if (out_m)
+			*out_m = lineParameters [1];
+		if (out_intercept)
+			*out_intercept = lineParameters [4];
+	} catch (MelderError) {
+		Melder_throw (U"No line fit (Theil's method).");
+	}
+}
+
+void NUMfitLine_theil_preallocated (VEC const& out_lineParameters, constVEC const& x, constVEC const& y, bool wantIntercept, double oneTailedUnconfidence, bool completeMethod) {
+	try {
+		Melder_require (x.size == y.size,
+			U"NUMfitLine_theil: the sizes of the two vectors should be equal.");
+		Melder_require (out_lineParameters.size == 6,
+			U"The line parameters vector should have size 6.");
+		/*
+			Theil's incomplete method:
+			Split (x [i],y [i]) as
+			(x [i],y [i]), (x [N+i],y [N+i], i=1..numberOfPoints/2
+			m [i] = (y [N+i]-y [i])/(x [N+i]-x [i])
+			m = median (m [i])
+			b = median(y [i]-m*x [i])
+		 */
+		out_lineParameters  <<=  undefined;
 		if (x.size == 1) {
-			intercept = y [1];
-			m = 0.0;
+			out_lineParameters [1] = 0.0; // m
+			out_lineParameters [4] =  y [1]; // intercept
 		} else if (x.size == 2) {
-			m = (y [2] - y [1]) / (x [2] - x [1]);
-			intercept = y [1] - m * x [1];
+			const double m = out_lineParameters [1] = (y [2] - y [1]) / (x [2] - x [1]);
+			out_lineParameters [4] = y [1] - m * x [1];
 		} else {
 			integer numberOfCombinations;
 			autoVEC mbs;
@@ -2071,25 +2097,35 @@ void NUMlineFit_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 				Melder_assert (index == numberOfCombinations);
 			}
-			sort_VEC_inout (mbs.part (1, numberOfCombinations));
-			m = NUMquantile (mbs.part (1, numberOfCombinations), 0.5);
-			for (integer i = 1; i <= x.size; i ++)
-				mbs [i] = y [i] - m * x [i];
-			sort_VEC_inout (mbs.part (1, x.size));
-			intercept = NUMquantile (mbs.part (1, x.size), 0.5);
+			/*
+				Get slope as the median of all slopes
+			*/
+			VECVU mbsPart = mbs.part (1, numberOfCombinations);
+			sort_VEC_inout (mbsPart);
+			out_lineParameters [1] = NUMquantile (mbsPart, 0.5);
+			out_lineParameters [2] = NUMquantile (mbsPart, oneTailedUnconfidence);
+			out_lineParameters [3] = NUMquantile (mbsPart, 1.0 - oneTailedUnconfidence);
+			/*
+				Reuse array for intercept
+			*/
+			if (wantIntercept) {
+				for (integer i = 1; i <= x.size; i ++)
+					mbs [i] = y [i] - out_lineParameters [1] * x [i];
+				mbsPart = mbs.part (1, x.size);
+				sort_VEC_inout (mbsPart);
+				out_lineParameters [4] = NUMquantile (mbsPart, 0.5);
+				out_lineParameters [5] = NUMquantile (mbsPart, oneTailedUnconfidence);
+				out_lineParameters [6] = NUMquantile (mbsPart, 1.0 - oneTailedUnconfidence);
+			}
 		}
-		if (out_m)
-			*out_m = m;
-		if (out_intercept)
-			*out_intercept = intercept;
 	} catch (MelderError) {
 		Melder_throw (U"No line fit (Theil's method).");
 	}
 }
 
-void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept) {
+void NUMfitLine_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept) {
 	Melder_require (x.size == y.size,
-		U"NUMlineFit_LS: the sizes of the two vectors should be equal.");
+		U"NUMfitLine_LS: the sizes of the two vectors should be equal.");
 	const double sx = NUMsum (x);
 	const double xmean = sx / x.size;
 	longdouble st2 = 0.0, m = 0.0;
@@ -2110,11 +2146,235 @@ void NUMlineFit_LS (constVEC const& x, constVEC const& y, double *out_m, double 
 
 void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, integer method) {
 	if (method == 1)
-		NUMlineFit_LS (x, y, out_m, out_intercept);
+		NUMfitLine_LS (x, y, out_m, out_intercept);
 	else if (method == 3)
-		NUMlineFit_theil (x, y, out_m, out_intercept, true);
+		NUMfitLine_theil (x, y, out_m, out_intercept, true);
 	else
-		NUMlineFit_theil (x, y, out_m, out_intercept, false);
+		NUMfitLine_theil (x, y, out_m, out_intercept, false);
+}
+
+void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_c, double *out_residualVariance) {
+	try {
+		Melder_require (x.size == y.size,
+			U"The dimemsions of the x and y array should be equal.");
+		Melder_require (x.size > 3,
+			U"Not enough data for the three parameter model.");
+		long double s_km1 = 0.0, m11 = 0.0, m12 = 0.0, m22 = 0.0, v1 = 0.0, v2 = 0.0;
+		for (integer k = 2; k <= x.size; k ++) {
+			const long double s_k = s_km1 + 0.5 * (y [k] + y [k - 1]) * (x [k] - x[k - 1]); // Eq. (7)
+			const long double xkmx1 = x [k] - x [1]; // for Eq. (11)
+			const long double ykmy1 = y [k] - y [1];
+			m11 += xkmx1 * xkmx1;
+			m12 += xkmx1 * s_k;
+			m22 += s_k * s_k;
+			v1 += ykmy1 * xkmx1;
+			v2 += ykmy1 * s_k;
+			s_km1 = s_k;
+		}
+		long double m21 = m12;
+		/*
+			Inverse of two by two matrix [a b; c d] matrix is
+			[d -b; -c a] / (a*d-b*c)
+		*/
+		long double determinant = m11 * m22 - m12 * m21;
+		long double mi11 = m22 / determinant;
+		long double mi12 = - m12 / determinant, mi21 = mi12;
+		long double mi22 = m11 / determinant;
+		/*
+			[a1; b1] = [mi11 mi12; mi21 mi22] * [v1; v2]   Eq. (11)
+		*/
+		const long double c = mi21 * v1 + mi22 * v2; // c = B1 of Eq. (11)
+
+		m11 = x.size;
+		m12 = m21 = m22 = v1 = v2 = 0.0;
+		for (integer k = 1; k <= x.size; k ++) {
+			const long double theta_k = exp (c * x [k]); // Eq. (14)
+			m12 += theta_k; // Eq. (15)
+			m22 += theta_k * theta_k;
+			v1 += y [k];
+			v2 += y[k] * theta_k;
+		}
+		m21 = m12;
+		/*
+			Get inverse of 2x2 matrix m
+		*/
+		determinant = m11 * m22 - m12 * m21;
+		mi11 = m22 / determinant;
+		mi12 = mi21 = - m12 / determinant;
+		mi22 = m11 / determinant;
+		/*
+			[a; b] = [mi11 mi12; mi21 mi22] * [v1; v2]
+		*/
+		const double a = mi11 * v1 + mi12 * v2;
+		const double b = mi21 * v1 + mi22 * v2;
+		if (out_a)
+			*out_a = a;
+		if (out_b)
+			*out_b = b;
+		if (out_c)
+			*out_c = c;
+		if (out_residualVariance) {
+			long double residualVariance = 0.0;
+			for (integer k = 1; k <= y.size; k ++) {
+				const long double dif = y [k] - (a + b * exp (c * x [k]));
+				residualVariance += dif * dif;
+			}
+			residualVariance /= y.size - 1;
+			*out_residualVariance = residualVariance;
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Exponential with offset could not be fit.");
+	}
+}
+
+/*
+	Model: y(x) = b / (1 + exp (- (x - m) / s))
+*/
+void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *out_mu, double *out_s, double *out_residualVariance) {
+	try {
+		Melder_require (xx.size == y.size,
+			U"The dimemsions of the x and y array should be equal.");
+		Melder_require (xx.size > 3,
+			U"Not enough data for a three parameter model.");
+		autoVEC x = copy_VEC (xx);
+		x.get()  -=  xx [1];
+		autoMAT m = zero_MAT (3, 3);
+		autoVEC v = zero_VEC (3);
+		long double s_km1 = 0.0;
+		m [1] [2] = y [1] * y [1];
+		v [3] = y [1] * y [1] * log (y [1]);
+		for (integer k = 2; k <= x.size; k ++) {
+			/*
+				Because S[1] and x[1] are both zero, for k = 1 all terms that contain a multiplication with 
+				S[k] and/or x[k] are also zero, which means that only m [1][2] and v[3] needed to be initialised!
+				
+				Correction for formula's on page 38
+				S[k] = S[k-1] + 0.5*(y[k]+y[k-1])*(x[k]-x[k-1])
+				m[3][3] = Sum (k=1,n, y[k]^2)
+			*/
+			const long double s_k = s_km1 + 0.5 * (y [k] + y [k - 1]) * (x [k] - x [k - 1]);
+			const double xkyk = x [k] * y [k];
+			const double ykyk = y [k] * y [k];
+			const double yksk = y [k] * s_k;
+			const double yklnyk = y [k] * log (y [k]);
+			m [1] [1] += yksk * yksk;
+			m [2] [2] += xkyk * xkyk;
+			m [3] [3] += ykyk;
+			m [2] [1] = m [1] [2] += yksk * xkyk;
+			m [3] [1] = m [1] [3] += yksk * y [k];
+			m [3] [2] = m [2] [3] += xkyk * y [k];
+			v [1] += s_k * yklnyk;
+			v [2] += xkyk * yklnyk;
+			v [3] += y [k] * yklnyk;
+			s_km1 = s_k;
+		}
+		MATlowerCholeskyInverse_inplace (m.get(), nullptr); // inverse is lower matrix
+		const double a = m [1] [1] * v [1] + m [2] [1] * v [2] + m [3] [1] * v[3];
+		const double b = m [2] [1] * v [1] + m [2] [2] * v [2] + m [3] [2] * v[3];
+		const double c = m [3] [1] * v [1] + m [3] [2] * v [2] + m [3] [3] * v[3];
+		const double l = - b / a, s = 1.0 / b, mu = x [1] + log (l * exp (-c) - 1.0) / b;
+		if (out_b)
+			*out_b = l;
+		if (out_mu)
+			*out_mu = mu;
+		if (out_s)
+			*out_s = s;
+		if (out_residualVariance) {
+			double residualVariance = 0.0;
+			for (integer k = 1; k <= y.size; k ++) {
+				const long double dif = y [k] - (b / (1.0 + exp (- (x [k] - mu) / s)));
+				residualVariance += dif * dif;
+			}
+			residualVariance /= y.size - 1;
+			*out_residualVariance = residualVariance;
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Logistic could not be fit.");
+	}
+}
+/*
+	Model: y(x) = a + b / (1 + exp (- (x - m) / s))
+*/
+void NUMfitLogisticPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_m, double *out_s, double *out_residualVariance) {
+	try {
+		Melder_require (x.size == y.size,
+			U"The dimemsions of the x and y array should be equal.");
+		Melder_require (x.size > 4,
+			U"Not enough data for a four parameter model.");
+		autoMAT m = zero_MAT (4, 4);
+		autoVEC v = zero_VEC (4);
+		long double s1_km1 = 0.0, s2_km1 = 0.0;
+		v [4] = y [1];
+		for (integer k = 2; k <= x.size; k ++) {
+			const long double s1_k = s1_km1 + 0.5 * (y [k] + y [k - 1]) * (x [k] - x [k - 1]); // page 42
+			const long double s2_k = s2_km1 + 0.5 * (y [k] * y [k] + y [k - 1] * y [k - 1]) * (x [k] - x [k - 1]);
+			const long double xkmx1 = x [k] - x [1]; // page 42
+			const long double ykmy1 = y [k] - y [1];
+			m [1] [1]  += s2_k * s2_k;
+			m [1] [2] = m [2] [1] += s2_k * s1_k;
+			m [1] [3] = m [3] [1] += s2_k * xkmx1;
+			m [1] [4] = m [4] [1] += s2_k;
+			m [2] [2] += s1_k * s1_k;
+			m [2] [3] = m [3] [2] += s1_k * xkmx1;
+			m [2] [4] = m [4] [2] += s1_k;
+			m [3] [3] += xkmx1 * xkmx1;
+			m [3] [4] = m [4] [3] += xkmx1;
+			v [1] += s2_k * y [k];
+			v [2] += s1_k * y [k];
+			v [3] += xkmx1 * y [k];
+			v [4] += y [k];
+			s1_km1 = s1_k;
+			s2_km1 = s2_k;
+		}
+		m [4] [4] = x.size;
+		MATlowerCholeskyInverse_inplace (m.get(), nullptr); // inverse is lower matrix
+		const double a = m [1] [1] * v [1] + m [2] [1] * v [2] + m [3] [1] * v[3] + m [4] [1] * v [4];
+		const double b = m [2] [1] * v [1] + m [2] [2] * v [2] + m [3] [2] * v[3] + m [4] [2] * v [4];
+		const double c = m [3] [1] * v [1] + m [3] [2] * v [2] + m [3] [3] * v[3] + m [4] [3] * v [4];
+		const double d = m [4] [1] * v [1] + m [4] [2] * v [2] + m [4] [3] * v[3] + m [4] [4] * v [4];
+		const double dissq = b * b + 4.0 * a * c;
+		double l = undefined, g = undefined, s = undefined, mu = undefined, residualVariance = undefined;
+		if (dissq >= 0.0) {
+			const double dis = sqrt (dissq);
+			l = - dis / a;
+			g =  (dis - b) / (2.0 * a);
+			s = 1.0 / dis;
+			if ( l / (d - g) <= 1.0) {
+				/*
+					We have a problem.
+					Accept the fit for parameter "g" and try to fit a logistic for y - g
+				*/
+				const double ymin = NUMmin (y);
+				if (ymin > g) {
+					autoVEC yc = copy_VEC (y);
+					yc.get()  -=  g;
+					NUMfitLogistic (x, yc.get(),  & l, & mu, & s, nullptr);
+				}
+				
+			} else
+				mu = x [1] + s * log (l / (d - g) - 1.0);
+			if (out_residualVariance) {
+				residualVariance = 0.0;
+				for (integer k = 1; k <= y.size; k ++) {
+					const long double dif = y [k] - (g + l / (1.0 + exp (- (x [k] - mu) / s)));
+					residualVariance += dif * dif;
+				}
+				residualVariance /= y.size - 1;
+			}
+		}
+		if (out_a)
+			*out_a = g;
+		if (out_b)
+			*out_b = l;
+		if (out_m)
+			*out_m = mu;		
+		if (out_s)
+			*out_s = s;
+		if (out_residualVariance)
+			*out_residualVariance = residualVariance;		
+	} catch (MelderError) {
+		Melder_throw (U"Logistic plus constant could not be fit.");
+	}
 }
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
@@ -2593,9 +2853,16 @@ double NUMrandomBinomial_real (double p, integer n) {
 		return (double) NUMrandomBinomial (p, n);
 }
 
+double NUMrandomWeibull (double scale_lambda, double shape_k) {
+	Melder_require (scale_lambda > 0 && shape_k > 0,
+		U"NUMrandomWeibull: both arguments should be positive.");
+	const double u = NUMrandomUniform (0, 1);
+	return scale_lambda * pow (- log (u), 1.0 / shape_k);	
+}
+
 double NUMrandomGamma (const double alpha, const double beta) {
 	Melder_require (alpha > 0 && beta > 0,
-		U"Both arguments should be positive.");
+		U"NUMrandomGamma: both arguments should be positive.");
 	double result;
 	if (alpha >= 1.0) {
 		double x, v, d = alpha - 1.0 / 3.0;

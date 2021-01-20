@@ -88,6 +88,44 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
+MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210119)
+INTRO (U"List the slope characteristics of the chosen interval of a selected @@Formant@ object as a vector with a number of values.")
+ENTRY (U"The result")
+NORMAL (U"The vector values are determined from the fit of the formant track with a either an exponential function "
+	"%F(%t) = %a+%b\\.cexp(%c\\.c%t), or a parabolic function %F(%t) = %a+%b\\.ct+%c\\.ct^2, or a sigmoid function "
+	"%F(%t) = %a+%b / (1 + exp(- (%t -c) / d))"
+	"on the chosen interval [%t__min_, %t__max_].")
+TAG (U"##1. Average slope (Hz / s)#,")
+DEFINITION (U"defined as (%F__locus_ - %F__target_) / (%t__max_ - %t__min_), where %F__locus_ and %F__target_ are the start and "
+	"end values of the fitted funcion %F(%t) on the interval.")
+TAG (U"##2. %R^2#")
+DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
+TAG (U"##3. %F__locus_#,")
+DEFINITION (U"the frequency in hertz of the function %F(%t) at the start of the interval, i.e. %F(0).")
+TAG (U"##4. %F__target_#,")
+DEFINITION (U"the frequency in hertz of the function %F(%t) at the end of the interval, i.e. %F(%t__max_-%t__min_)")
+TAG (U"##5. %a#")
+DEFINITION (U"the parameter %a (hertz) of the function %F(%t).")
+TAG (U"##6. %b#")
+DEFINITION (U"the parameter %b of the function %F(%t).")
+TAG (U"##7. %c#")
+DEFINITION (U"the parameter %c ( / s) of the function %F(%t).")
+TAG (U"##8. %d#")
+DEFINITION (U"the parameter %d of the function %F(%t), if the sigmoid function was chosen.")
+ENTRY (U"Remarks about the interpretation of the fit parameters.")
+NORMAL (U"For the exponential function, the parameters %a, %b and %c of the fit function cannot separately be given any meaning. What we know is that "
+	"at %t = 0, %F(0) = %a + %b, i.e. the sum of the parameters %a and %b define %F__locus_. At the end of the interval "
+	"we can see that %F(%t__max_-%t__min_)=a+b\\.cexp(%c\\.c(%t__max_-%t__min_)). This makes a parametrization of the form "
+	"%F(%t)=%F__target_+ (%F__locus_-%F__target_)\\.cexp(%c\\.c%t), as is sometimes seen in the literature, problematic because "
+	"%F__target_ cannot be equal to the value at %F(%t__max_-%t__min_) since exp(%c\\.c(%t__max_-%t__min_)) is definitely not zero. "
+	"The %F__tartget_ has to be chosen somewhat smaller that the value at %t= %t__max_-%t__min_. The question than becomes: how much smaller?")
+NORMAL (U"As we can also see from the form of the exponential function %F(%t) there is always a possibility of a trade-off between the parameters. "
+	"For example, suppose we have a falling curve, i.e. %c < 0, then an increase in the value of %b could be compensated by making %c larger negative.")
+NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__locus_ and the %F__target_ values. In cases where the formant trajectory shows a noisy pattern all values have a large error margin and the determined average slope can also be unreliable.")
+ENTRY (U"Algorithm")
+NORMAL (U"The algorithm to fit the %%non-linear% function %F(%t) = %a+%b\\.cexp(%c\\.c%t) to a series of (time, frequency) values is described in @@Jacquelin (2009)@.")
+MAN_END
+
 MAN_BEGIN (U"FormantPath", U"djmw", 20201013)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
@@ -1056,7 +1094,10 @@ MAN_END
 MAN_BEGIN (U"Hillenbrand & Houde (1996)", U"djmw", 20121203)
 NORMAL (U"J. Hillenbrand & R.A. Houde (1996): \"Acoustic correlates of breathy vocal quality: Dysphonic voices and continuous "
 	"speech\", %%Journal of speech and hearing research% #39: 311\\--321.")
+MAN_END
 
+MAN_BEGIN (U"Jacquelin (2009)", U"djmw", 20210108)
+NORMAL (U"J. Jacquelin (2009): \"Régressions et équations intégrales\", https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales: 1\\--17.")
 MAN_END
 
 MAN_BEGIN (U"Lee (1988)", U"djmw", 20111027)
