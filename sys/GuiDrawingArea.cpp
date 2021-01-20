@@ -47,6 +47,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		Melder_assert (me);
 		if (my d_exposeCallback) {
+			Melder_assert (my numberOfGraphicses > 0);
 			structGuiDrawingArea_ExposeEvent event { me, 0 };
 			event. x = 0;
 			event. y = 0;
@@ -227,6 +228,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 	void _GuiWinDrawingArea_update (GuiObject widget) {
 		iam_drawingarea;
+		Melder_assert (my numberOfGraphicses > 0);
 		GraphicsScreen graphics = (GraphicsScreen) my graphicses [1];
 		Melder_assert (Thing_isa (graphics, classGraphicsScreen));
 		HDC memoryDC = CreateCompatibleDC (graphics -> d_gdiGraphicsContext);
