@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2020 David Weenink
+ * Copyright (C) 2014-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ void DataModeler_setDataWeighing (DataModeler me, kDataModelerWeights weighData)
 integer DataModeler_getNumberOfFixedParameters (DataModeler me);
 integer DataModeler_getNumberOfFreeParameters (DataModeler me);
 
-void DataModeler_setParameterValue (DataModeler me, integer index, double value, kDataModelerParameter status);
+void DataModeler_setParameterValue (DataModeler me, integer index, double value, kDataModelerParameterStatus status);
 
 void DataModeler_setParameterValueFixed (DataModeler me, integer index, double value);
 
@@ -108,7 +108,7 @@ void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer t
 
 double DataModeler_getParameterValue (DataModeler me, integer index);
 
-kDataModelerParameter DataModeler_getParameterStatus (DataModeler me, integer index);
+kDataModelerParameterStatus DataModeler_getParameterStatus (DataModeler me, integer index);
 
 double DataModeler_getParameterStandardDeviation (DataModeler me, integer index);
 
@@ -127,6 +127,7 @@ double DataModeler_getModelValueAtIndex (DataModeler me, integer index);
 double DataModeler_getWeightedMean (DataModeler me);
 
 integer DataModeler_getNumberOfInvalidDataPoints (DataModeler me);
+integer DataModeler_getNumberOfValidDataPoints (DataModeler me);
 
 double DataModeler_getDataPointXValue (DataModeler me, integer index);
 double DataModeler_getDataPointYValue (DataModeler me, integer index);

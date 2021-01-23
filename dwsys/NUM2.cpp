@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2020 David Weenink, Paul Boersma 2017,2020
+ * Copyright (C) 1993-2021 David Weenink, Paul Boersma 2017,2020
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2153,7 +2153,7 @@ void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, i
 		NUMfitLine_theil (x, y, out_m, out_intercept, false);
 }
 
-void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_c, double *out_residualVariance) {
+void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_constant, double *out_b, double *out_c, double *out_residualVariance) {
 	try {
 		Melder_require (x.size == y.size,
 			U"The dimemsions of the x and y array should be equal.");
@@ -2207,8 +2207,8 @@ void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out
 		*/
 		const double a = mi11 * v1 + mi12 * v2;
 		const double b = mi21 * v1 + mi22 * v2;
-		if (out_a)
-			*out_a = a;
+		if (out_constant)
+			*out_constant = a;
 		if (out_b)
 			*out_b = b;
 		if (out_c)
@@ -2228,9 +2228,9 @@ void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out
 }
 
 /*
-	Model: y(x) = b / (1 + exp (- (x - m) / s))
+	Model: y(x) = b / (1 + exp (- (x - mu) / sigma))
 */
-void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *out_mu, double *out_s, double *out_residualVariance) {
+void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *out_mu, double *out_sigma, double *out_residualVariance) {
 	try {
 		Melder_require (xx.size == y.size,
 			U"The dimemsions of the x and y array should be equal.");
@@ -2238,11 +2238,9 @@ void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *o
 			U"Not enough data for a three parameter model.");
 		autoVEC x = copy_VEC (xx);
 		x.get()  -=  xx [1];
-		autoMAT m = zero_MAT (3, 3);
-		autoVEC v = zero_VEC (3);
-		long double s_km1 = 0.0;
-		m [1] [2] = y [1] * y [1];
-		v [3] = y [1] * y [1] * log (y [1]);
+		long double s_k = 0.0;
+		long double m11 = 0.0, m12 = 0.0, m13 = 0.0, m22 = 0.0, m23 = 0.0, m33 = y [1] * y [1];
+		long double v1 = 0.0, v2 = 0.0, v3 = y [1] * y [1] * log (y [1]);
 		for (integer k = 2; k <= x.size; k ++) {
 			/*
 				Because S[1] and x[1] are both zero, for k = 1 all terms that contain a multiplication with 
@@ -2252,37 +2250,45 @@ void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *o
 				S[k] = S[k-1] + 0.5*(y[k]+y[k-1])*(x[k]-x[k-1])
 				m[3][3] = Sum (k=1,n, y[k]^2)
 			*/
-			const long double s_k = s_km1 + 0.5 * (y [k] + y [k - 1]) * (x [k] - x [k - 1]);
-			const double xkyk = x [k] * y [k];
-			const double ykyk = y [k] * y [k];
-			const double yksk = y [k] * s_k;
-			const double yklnyk = y [k] * log (y [k]);
-			m [1] [1] += yksk * yksk;
-			m [2] [2] += xkyk * xkyk;
-			m [3] [3] += ykyk;
-			m [2] [1] = m [1] [2] += yksk * xkyk;
-			m [3] [1] = m [1] [3] += yksk * y [k];
-			m [3] [2] = m [2] [3] += xkyk * y [k];
-			v [1] += s_k * yklnyk;
-			v [2] += xkyk * yklnyk;
-			v [3] += y [k] * yklnyk;
-			s_km1 = s_k;
+			const long double xkyk = x [k] * y [k];
+			const long double ykyk = y [k] * y [k];
+			const long double yksk = y [k] * s_k;
+			const long double yklnyk = y [k] * log (y [k]);
+			s_k += 0.5 * (y [k] + y [k - 1]) * (x [k] - x [k - 1]);
+			m11 += yksk * yksk;
+			m22 += xkyk * xkyk;
+			m33 += ykyk;
+			m12 += yksk * xkyk;
+			m13 += yksk * y [k];
+			m23 += xkyk * y [k];
+			v1 += s_k * yklnyk;
+			v2 += xkyk * yklnyk;
+			v3 += y [k] * yklnyk;
 		}
-		MATlowerCholeskyInverse_inplace (m.get(), nullptr); // inverse is lower matrix
-		const double a = m [1] [1] * v [1] + m [2] [1] * v [2] + m [3] [1] * v[3];
-		const double b = m [2] [1] * v [1] + m [2] [2] * v [2] + m [3] [2] * v[3];
-		const double c = m [3] [1] * v [1] + m [3] [2] * v [2] + m [3] [3] * v[3];
-		const double l = - b / a, s = 1.0 / b, mu = x [1] + log (l * exp (-c) - 1.0) / b;
+		autoMAT m = raw_MAT (3, 3);
+		m [2] [1] = m [1] [2] = m12;
+		m [3] [1] = m [1] [3] = m13;
+		m [3] [2] = m [2] [3] = m23;
+		m [1] [1] = m11;
+		m [2] [2] = m22;
+		m [3] [3] = m33;
+		autoVEC v = raw_VEC (3);
+		v [1] = v1; v [2] = v2; v [3] = v3;
+		autoSVD svd = SVD_createFromGeneralMatrix (m.get());
+		autoVEC solution = SVD_solve (svd.get(), v.get());
+		const double lambda = - solution [2] / solution [1]; // -B/A
+		const double sigma = 1.0 / solution [2]; // 1/B
+		const double mu = x [1] + log (lambda * exp (-solution [3]) - 1.0) / solution [2];
 		if (out_b)
-			*out_b = l;
+			*out_b = lambda;
 		if (out_mu)
 			*out_mu = mu;
-		if (out_s)
-			*out_s = s;
+		if (out_sigma)
+			*out_sigma = sigma;
 		if (out_residualVariance) {
 			double residualVariance = 0.0;
 			for (integer k = 1; k <= y.size; k ++) {
-				const long double dif = y [k] - (b / (1.0 + exp (- (x [k] - mu) / s)));
+				const double dif = y [k] - (lambda / (1.0 + exp (- (x [k] - mu) / sigma)));
 				residualVariance += dif * dif;
 			}
 			residualVariance /= y.size - 1;
@@ -2292,84 +2298,92 @@ void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *o
 		Melder_throw (U"Logistic could not be fit.");
 	}
 }
+
 /*
-	Model: y(x) = a + b / (1 + exp (- (x - m) / s))
+	Model: y(x) = constant + range / (1 + exp (- (x - mu) / sigma))
 */
-void NUMfitLogisticPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_m, double *out_s, double *out_residualVariance) {
+void NUMfitLogisticPlusConstant (VECVU const& x, VECVU const & y, double *out_constant, double *out_range, double *out_mu, double *out_sigma, double *out_residualVariance) {
 	try {
 		Melder_require (x.size == y.size,
 			U"The dimemsions of the x and y array should be equal.");
 		Melder_require (x.size > 4,
 			U"Not enough data for a four parameter model.");
-		autoMAT m = zero_MAT (4, 4);
-		autoVEC v = zero_VEC (4);
-		long double s1_km1 = 0.0, s2_km1 = 0.0;
-		v [4] = y [1];
+		long double s1_k = 0.0, s2_k = 0.0;
+		long double v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = y [1];
+		long double m11 = 0.0, m12 = 0.0, m13 = 0.0, m14 = 0.0, m22 = 0.0, m23 = 0.0, m24 = 0.0, m33 = 0.0, m34 = 0.0;
 		for (integer k = 2; k <= x.size; k ++) {
-			const long double s1_k = s1_km1 + 0.5 * (y [k] + y [k - 1]) * (x [k] - x [k - 1]); // page 42
-			const long double s2_k = s2_km1 + 0.5 * (y [k] * y [k] + y [k - 1] * y [k - 1]) * (x [k] - x [k - 1]);
 			const long double xkmx1 = x [k] - x [1]; // page 42
-			const long double ykmy1 = y [k] - y [1];
-			m [1] [1]  += s2_k * s2_k;
-			m [1] [2] = m [2] [1] += s2_k * s1_k;
-			m [1] [3] = m [3] [1] += s2_k * xkmx1;
-			m [1] [4] = m [4] [1] += s2_k;
-			m [2] [2] += s1_k * s1_k;
-			m [2] [3] = m [3] [2] += s1_k * xkmx1;
-			m [2] [4] = m [4] [2] += s1_k;
-			m [3] [3] += xkmx1 * xkmx1;
-			m [3] [4] = m [4] [3] += xkmx1;
-			v [1] += s2_k * y [k];
-			v [2] += s1_k * y [k];
-			v [3] += xkmx1 * y [k];
-			v [4] += y [k];
-			s1_km1 = s1_k;
-			s2_km1 = s2_k;
+			s1_k += 0.5 * (y [k] + y [k - 1]) * (x [k] - x [k - 1]); // page 42
+			s2_k += 0.5 * (y [k] * y [k] + y [k - 1] * y [k - 1]) * (x [k] - x [k - 1]);
+			m11 += s2_k * s2_k;
+			m12 += s2_k * s1_k;
+			m13 += s2_k * xkmx1;
+			m14 += s2_k;
+			m22 += s1_k * s1_k;
+			m23 += s1_k * xkmx1;
+			m24 += s1_k;
+			m33 += xkmx1 * xkmx1;
+			m34 += xkmx1;
+			v1 += s2_k * y [k];
+			v2 += s1_k * y [k];
+			v3 += xkmx1 * y [k];
+			v4 += y [k];
 		}
+		autoMAT m = raw_MAT (4, 4);
+		m [2] [1] = m [1] [2] = m12; 
+		m [3] [1] = m [1] [3] = m13;
+		m [4] [1] = m [1] [4] = m14;
+		m [3] [2] = m [2] [3] = m23;
+		m [4] [2] = m [2] [4] = m24;
+		m [4] [3] = m [3] [4] = m34;
+		m [1] [1] = m11;
+		m [2] [2] = m22;
+		m [3] [3] = m33;
 		m [4] [4] = x.size;
-		MATlowerCholeskyInverse_inplace (m.get(), nullptr); // inverse is lower matrix
-		const double a = m [1] [1] * v [1] + m [2] [1] * v [2] + m [3] [1] * v[3] + m [4] [1] * v [4];
-		const double b = m [2] [1] * v [1] + m [2] [2] * v [2] + m [3] [2] * v[3] + m [4] [2] * v [4];
-		const double c = m [3] [1] * v [1] + m [3] [2] * v [2] + m [3] [3] * v[3] + m [4] [3] * v [4];
-		const double d = m [4] [1] * v [1] + m [4] [2] * v [2] + m [4] [3] * v[3] + m [4] [4] * v [4];
+		autoVEC v = raw_VEC (4);
+		v [1] = v1; v [2] = v2; v [3] = v3; v [4] = v4;
+		autoSVD svd = SVD_createFromGeneralMatrix (m.get());
+		autoVEC solution = SVD_solve (svd.get(), v.get());
+		const double a = solution [1], b = solution [2];
+		const double c = solution [3], d = solution [4];
 		const double dissq = b * b + 4.0 * a * c;
-		double l = undefined, g = undefined, s = undefined, mu = undefined, residualVariance = undefined;
+		double lambda = undefined, gamma = undefined, sigma = undefined, mu = undefined, residualVariance = undefined;
 		if (dissq >= 0.0) {
 			const double dis = sqrt (dissq);
-			l = - dis / a;
-			g =  (dis - b) / (2.0 * a);
-			s = 1.0 / dis;
-			if ( l / (d - g) <= 1.0) {
+			lambda = - dis / a;
+			gamma =  (dis - b) / (2.0 * a);
+			sigma = 1.0 / dis;
+			const double lnarg = lambda / (d - gamma) - 1.0;
+			if (lnarg <= 0.0) {
 				/*
 					We have a problem.
-					Accept the fit for parameter "g" and try to fit a logistic for y - g
+					Accept the fit for parameter "gamma" and try to fit a logistic for y - gamma
+					If the minimum of the data is smaller than gamma we try 0.99 * minimum
 				*/
 				const double ymin = NUMmin (y);
-				if (ymin > g) {
-					autoVEC yc = copy_VEC (y);
-					yc.get()  -=  g;
-					NUMfitLogistic (x, yc.get(),  & l, & mu, & s, nullptr);
-				}
-				
+				gamma = ymin > gamma ? gamma : 0.99 * ymin;
+				autoVEC yc = copy_VEC (y);
+				yc.get()  -=  gamma;
+				NUMfitLogistic (x, yc.get(), & lambda, & mu, & sigma, nullptr);				
 			} else
-				mu = x [1] + s * log (l / (d - g) - 1.0);
+				mu = x [1] + sigma * log (lnarg);
 			if (out_residualVariance) {
 				residualVariance = 0.0;
 				for (integer k = 1; k <= y.size; k ++) {
-					const long double dif = y [k] - (g + l / (1.0 + exp (- (x [k] - mu) / s)));
+					const double dif = y [k] - (gamma + lambda / (1.0 + exp (- (x [k] - mu) / sigma)));
 					residualVariance += dif * dif;
 				}
 				residualVariance /= y.size - 1;
 			}
 		}
-		if (out_a)
-			*out_a = g;
-		if (out_b)
-			*out_b = l;
-		if (out_m)
-			*out_m = mu;		
-		if (out_s)
-			*out_s = s;
+		if (out_constant)
+			*out_constant = gamma;
+		if (out_range)
+			*out_range = lambda;
+		if (out_mu)
+			*out_mu = mu;		
+		if (out_sigma)
+			*out_sigma = sigma;
 		if (out_residualVariance)
 			*out_residualVariance = residualVariance;		
 	} catch (MelderError) {

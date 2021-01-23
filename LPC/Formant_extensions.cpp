@@ -1,6 +1,6 @@
 /* Formant_extensions.cpp
  *
- * Copyright (C) 2012-2019 David Weenink
+ * Copyright (C) 2012-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		if (iformant > numberOfFormants || ! isdefined (frequency))
 			continue;
 		numberOfDataPoints ++;
-		x [numberOfDataPoints] = Sampled_indexToX (me, iframe);
+		x [numberOfDataPoints] = Sampled_indexToX (me, iframe) - tmin;
 		y [numberOfDataPoints] = frequency;
 		s [numberOfDataPoints] = frame -> formant [iformant]. bandwidth;
 	}
@@ -124,14 +124,15 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		y.resize (numberOfDataPoints);
 		s.resize (numberOfDataPoints);
 	}
-	double constant, b, c, flocus, ftarget, residualVariance;
+	const double tminFit = 0.0, tmaxFit = tmax - tmin;
+	double constant = 0.0, b, c, flocus, ftarget, residualVariance;
 	if (curveType == kSlopeCurve::EXPONENTIAL) {
 		/*
-			Model formant (t) = constant + b * exp (c * t)
+			Model: formant (t) = constant + b * exp (c * t)
 		*/
 		NUMfitExponentialPlusConstant (x.get(), y.get(), & constant, & b, & c, & residualVariance);
-		flocus 	= constant + b * exp (c * tmin);
-		ftarget = constant + b * exp (c * tmax);
+		flocus 	= constant + b * exp (c * tminFit);
+		ftarget = constant + b * exp (c * tmaxFit);
 		lineFit [5] = constant;
 		lineFit [6] = b;
 		lineFit [7] = c;
@@ -139,7 +140,7 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 		/*
 			Model: formant (t) = constant + b * x + c * x^2
 		*/
-		autoDataModeler dm = DataModeler_create (tmin, tmax, numberOfDataPoints, 3, kDataModelerFunction::LEGENDRE);
+		autoDataModeler dm = DataModeler_create (tminFit, tmaxFit, numberOfDataPoints, 3, kDataModelerFunction::POLYNOME);
 		for (integer k = 1; k <= numberOfDataPoints; k ++) {
 			dm -> data [k] .x = x [k];
 			dm -> data [k] .y = y [k];
@@ -147,8 +148,8 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 			dm -> data [k] .status = kDataModelerData::VALID;
 		}
 		DataModeler_fit (dm.get());
-		flocus =  DataModeler_getModelValueAtX (dm.get(), tmin);
-		ftarget =  DataModeler_getModelValueAtX (dm.get(), tmax);
+		flocus =  DataModeler_getModelValueAtX (dm.get(), tminFit);
+		ftarget =  DataModeler_getModelValueAtX (dm.get(), tmaxFit);
 		residualVariance = DataModeler_getResidualSumOfSquares (dm.get(), nullptr) / (numberOfDataPoints - 1);
 		lineFit [5] = dm -> parameters [1].value;
 		lineFit [6] = dm -> parameters [2].value;
@@ -158,17 +159,17 @@ autoVEC Formant_listFormantSlope (Formant me, integer iformant, double tmin, dou
 			Model: formant (t) = constant + b / (1 + exp (- (x - m) / s))
 		*/
 		double mu, sigma;
-		const double yscaleFactor = 100.0; // to improve balance between x and y value scales
-		y.get()  /=  yscaleFactor;
-		NUMfitLogisticPlusConstant (x.get(), y.get(), & constant, & b, & mu, & sigma, & residualVariance);
-		flocus  = yscaleFactor * (constant + b / (1.0 + exp (- (tmin - mu) / sigma)));
-		ftarget = yscaleFactor * (constant + b / (1.0 + exp (- (tmax - mu) / sigma)));
+		if (Melder_debug == -6)
+			NUMfitLogistic (x.get(), y.get(), & b, & mu, & sigma, & residualVariance);
+		 else
+			NUMfitLogisticPlusConstant (x.get(), y.get(), & constant, & b, & mu, & sigma, & residualVariance);
+		flocus  = (constant + b / (1.0 + exp (- (tminFit - mu) / sigma)));
+		ftarget = (constant + b / (1.0 + exp (- (tmaxFit - mu) / sigma)));
 		lineFit.resize (8);
-		lineFit [5] = yscaleFactor * constant;
-		lineFit [6] = yscaleFactor * b;
+		lineFit [5] = constant;
+		lineFit [6] =  b;
 		lineFit [7] = mu;
 		lineFit [8] = sigma;
-		residualVariance *= yscaleFactor * yscaleFactor;
 	} else
 		return lineFit;
 	const double averageSlope =  (ftarget - flocus) / (tmax - tmin);
