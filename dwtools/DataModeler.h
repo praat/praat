@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2021 David Weenink
+ * Copyright (C) 2014-2021Fget David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +107,7 @@ void DataModeler_setParameterValueFixed (DataModeler me, integer index, double v
 void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer toIndex);
 
 double DataModeler_getParameterValue (DataModeler me, integer index);
+autoVEC DataModeler_listParameterValues (DataModeler me);
 
 kDataModelerParameterStatus DataModeler_getParameterStatus (DataModeler me, integer index);
 

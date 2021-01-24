@@ -98,6 +98,12 @@ DO
 	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"])")
 }
 
+DIRECT (NUMVEC_DataModeler_listParameterValues) {
+	NUMVEC_ONE (DataModeler)
+		autoVEC result = DataModeler_listParameterValues (me);
+	NUMVEC_ONE_END
+}
+
 FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
@@ -1093,6 +1099,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1, INTEGER_DataModeler_getNumberOfParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get number of fixed parameters", 0, 1, INTEGER_DataModeler_getNumberOfFixedParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter value...", 0, 1, REAL_DataModeler_getParameterValue);
+		praat_addAction1 (classDataModeler, 0, U"List parameter values", 0, 1, NUMVEC_DataModeler_listParameterValues);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, INFO_DataModeler_getParameterStatus);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter standard deviation...", 0, 1, REAL_DataModeler_getParameterStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get variance of parameters...", 0, 1, REAL_DataModeler_getVarianceOfParameters);
