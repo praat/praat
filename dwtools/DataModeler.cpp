@@ -146,11 +146,11 @@ static double sigmoid_plus_constant_evaluate (DataModeler me, double xin, vector
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		No need to translate because xin and p[3] are in the same domain. 
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	double result = p [1].value;
 	if (p [2].value != 0.0)
-		result += p [2].value / (1.0 + exp (- (x - p [3].value) / p [4].value));
+		result += p [2].value / (1.0 + exp (- (xin - p [3].value) / p [4].value));
 	return result;
 }
 
@@ -158,9 +158,9 @@ static double sigmoid_evaluate (DataModeler me, double xin, vector<structDataMod
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		No need to translate because xin and p[3] are in the same domain.
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
-	const double result = p [1].value / (1.0 + exp (- (x - p [2].value) / p [3].value));
+	const double result = p [1].value / (1.0 + exp (- (xin - p [2].value) / p [3].value));
 	return result;
 }
 
@@ -169,7 +169,7 @@ static double exponential_plus_constant_evaluate (DataModeler me, double xin, ve
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
+	const double x = xin - 0.5 * (my xmin + my xmax);
 	return p [1].value + p [2].value * exp (p [3].value * x);
 }
 
@@ -218,10 +218,11 @@ static void exponential_plus_constant_fit (DataModeler me) {
 	design.resize (my numberOfDataPoints, 3);
 	yEstimate.resize (my numberOfDataPoints);	
 	index = 0;
+	const double xtranslate = 0.5 * (my xmin + my xmax);
 	for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 		if (my data [k] .status != kDataModelerData::INVALID) {
 			design [++ index] [1] = 1.0 * weights [k];
-			design [index] [2] = exp (c * my data [k].x) * weights [k];
+			design [index] [2] = exp (c * (my data [k].x - xtranslate)) * weights [k];
 			yEstimate [index] = my data [k].y * weights [k];
 		}
 	}
