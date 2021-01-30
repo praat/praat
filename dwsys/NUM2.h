@@ -1205,30 +1205,6 @@ void NUMfitLine_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 void NUMfitLine_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept);
 
 /*
-	Model: y [i] = constant + b * exp (c * x [i]), i=1..n, solve for constant, b & c.
-	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
-	pages 16-17.
-	Precondition: x is always increasing.
-*/
-void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_constant, double *out_b, double *out_c, double *out_residualVariance);
-
-/*
-	Model: y(x) = b / (1 + exp (- (x - mu) / sigma))
-	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
-	pages 16-17.
-	Precondition: x is always increasing.
-*/
-void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *out_mu, double *out_sigma, double *out_residualVariance);
-
-/*
-	Model: y(x) = constant + range / (1 + exp (- (x - mu) / sigma))
-	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
-	pages 38.
-	Precondition: x is always increasing.
-*/
-void NUMfitLogisticPlusConstant (VECVU const& x, VECVU const & y, double *out_constant, double *out_range, double *out_mu, double *out_sigma, double *out_residualVariance);
-
-/*
 	scale_lambda, shape_k > 0
 */
 double NUMrandomWeibull (double scale_lambda, double shape_k);

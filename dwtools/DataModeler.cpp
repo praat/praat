@@ -144,30 +144,54 @@ static void legendre_evaluateBasisFunctions (DataModeler me, double xin, VEC ter
 
 static double sigmoid_plus_constant_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
-	const double result = p [1].value + p [2].value / (1.0 + exp (- (xin - p [3].value) / p [4].value));
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
+	double result = p [1].value;
+	if (p [2].value != 0.0)
+		result += p [2].value / (1.0 + exp (- (x - p [3].value) / p [4].value));
 	return result;
 }
 
 static double sigmoid_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
-	const double result = p [1].value / (1.0 + exp (- (xin - p [2].value) / p [3].value));
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
+	const double result = p [1].value / (1.0 + exp (- (x - p [2].value) / p [3].value));
 	return result;
 }
 
 static double exponential_plus_constant_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
-	return p [1].value + p [2].value * exp (p [3].value * xin);
+	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
+	return p [1].value + p [2].value * exp (p [3].value * x);
 }
 
 static void dummy_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
 	term  <<=  undefined;
 }
 
+/*
+	Model: y [i] = constant + b * exp (c * x [i]), i=1..n, solve for constant, b & c.
+	Solution according to Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 16-17.
+	Precondition: x [i] must be increasing.
+*/
 static void exponential_plus_constant_fit (DataModeler me) {
 	autoMAT design = zero_MAT (my numberOfDataPoints, 3);
 	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
 	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 	const double x1 = my data [1].x, y1 = my data [1].y;
 	long double xkm1 = x1, ykm1 = y1, skm1 = 0.0;
+	/*
+		First row of design has only zero's, skip it.
+	*/
 	integer index = 0;
 	for (integer k = 2; k <= my numberOfDataPoints; k ++) {
 		if (my data [k] .status != kDataModelerData::INVALID) {
@@ -201,6 +225,9 @@ static void exponential_plus_constant_fit (DataModeler me) {
 			yEstimate [index] = my data [k].y * weights [k];
 		}
 	}
+	design.resize (index, 3);
+	yEstimate.resize (index);
+
 	autoSVD svd2 = SVD_createFromGeneralMatrix (design.get());
 	SVD_zeroSmallSingularValues (svd2.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
 	autoVEC solution2 = SVD_solve (svd2.get(), yEstimate.get());
@@ -214,6 +241,12 @@ static void exponential_plus_constant_fit (DataModeler me) {
 	my parameterCovariances -> data.get()  <<=  undefined;
 }
 
+/*
+	Model: y(x) = b / (1 + exp (- (x - mu) / sigma))
+	Non-iterative solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 16-17.
+	Precondition: x [i] must be increasing.
+*/
 void sigmoid_fit (DataModeler me) {
 	autoMAT design = zero_MAT (my numberOfDataPoints, 3);
 	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
@@ -241,9 +274,22 @@ void sigmoid_fit (DataModeler me) {
 		NUMmachar ();
 	SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
 	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
-	const double sigma = 1.0 / solution [2], lambda = - solution [2] / solution [1];
+	double mu, sigma = 1.0 / solution [2], lambda = - solution [2] / solution [1];
 	my parameters [1].value = lambda;
-	my parameters [2].value = x1 + sigma * log (lambda * exp (-solution [3]) - 1.0);
+	const double lnarg = lambda * exp (-solution [3]) - 1.0;
+	if (lnarg > 0)
+		mu = x1 + sigma * log (lnarg);
+	else {
+		/*
+			We are in the tail of a distribution? Best model is constant model equal to the mean.
+			Set lambda equal to the mean and make exp(-(x-mu)/sigma) very small.
+		*/
+		lambda = DataModeler_getWeightedMean (me);
+		mu = -1e6;
+		sigma = 1e-6;
+	}
+	my parameters [1].value = lambda;
+	my parameters [2].value = mu;
 	my parameters [3].value = sigma;
 	/*
 		error propagation ?
@@ -251,6 +297,22 @@ void sigmoid_fit (DataModeler me) {
 	my parameterCovariances -> data.get()  <<=  undefined;
 }
 
+/*
+	Model: y(x) = gamma + lambda / (1 + exp (- (x - mu) / sigma))
+	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 38 and following.
+	The author makes a mistake in the derivation of the relation between the a,b,c,d and
+	gamma, lambda, mu and sigma of the model.
+	lambda = ± 1/s * sqrt (b^2-4ac) (the artile wrongly shows "sqrt (b^2+4ac)")
+	gamma = (−b ∓ sqrt (b^2 − 4ac))/ (2*a)
+	sigma = ∓ 1 / sqrt (b^2 − 4ac)
+	mu = x[1]+ sigma * ln (lambda/(d-gamma) - 1)
+	Two models are indistinguishable if:
+		gamma' = gamma + lambda
+		sigma' = -sigma
+		lambda' = - lambda
+	Precondition: x[i] are increasing order.
+*/
 void sigmoid_plus_constant_fit (DataModeler me) {
 	autoMAT design = raw_MAT (my numberOfDataPoints, 4);
 	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
@@ -281,22 +343,42 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
 	const double a = solution [1], b = solution [2];
 	const double c = solution [3], d = solution [4];
-	const double dissq = b * b - 4.0 * a * c; // Incorrect "+" sign in the article
-	my parameters [1]. status = my parameters [2]. status = my parameters [3]. status = my parameters [4]. status = kDataModelerParameterStatus::NOT_DEFINED;
-	my parameters [1].value =  my parameters [2].value = my parameters [3].value = my parameters [4].value = undefined;
+	const double dissq = b * b - 4.0 * a * c;
+	bool modelIsUndefined = true;
 	if (dissq > 0.0) {
 		const double dis = sqrt (dissq);
-		const double lambda = - dis / a, gamma =  (dis - b) / (2.0 * a), sigma = 1.0 / dis;
-		my parameters [1].value = gamma;
-		my parameters [1].status = kDataModelerParameterStatus::FREE;
-		my parameters [2].value = lambda;
-		my parameters [2].status = kDataModelerParameterStatus::FREE;
-		const double lnarg = lambda / (d - gamma) - 1.0;
-		if (lnarg > 0.0)
-			my parameters [3].value = x1 + sigma * log (lnarg);
-		my parameters [4].value = sigma;
-		my parameters [4].status = kDataModelerParameterStatus::FREE;
-	}	
+		const double lambda1 = dis / a, gamma1 = (-b - dis) / (2.0 * a), sigma1 = - 1.0 / dis;
+		const double lambda2 = -dis / a, gamma2 = (-b + dis) / (2.0 * a), sigma2 = 1.0 / dis;
+		const double lnarg1 = lambda1 / (d - gamma1) - 1.0, lnarg2 = lambda2 / (d - gamma2) - 1.0;
+		modelIsUndefined = false;
+		if (lnarg1 > 0.0) {
+			my parameters [1].value = gamma1;
+			my parameters [2].value = lambda1;
+			my parameters [3].value = x1 + sigma1 * log (lnarg1);
+			my parameters [4].value = sigma1;
+		} else if (lnarg2 > 0.0) {
+			my parameters [1].value = gamma2;
+			my parameters [2].value = lambda2;
+			my parameters [3].value = x1 + sigma2 * log (lnarg2);
+			my parameters [4].value = sigma2;
+		} else {
+			/*
+				No solution could be found. The best model is the average value
+			*/
+			modelIsUndefined = true;
+		}
+		if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // fit is bad!
+			modelIsUndefined = true;
+	}
+	if (modelIsUndefined) {
+		my parameters [1].value = DataModeler_getWeightedMean (me);
+		my parameters [2].value = 0.0;
+		my parameters [3].value = -1e6;
+		my parameters [4].value =  1e6;
+		
+		// equivalent model: gamma'=0, lambda' = gamma
+	}
+	if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0)
 	/*
 		error propagation ?
 	*/
@@ -1040,6 +1122,20 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"No simple DataModeler created.");
+	}
+}
+
+autoDataModeler DataModeler_createFromDataModeler (DataModeler thee, integer numberOfParameters, kDataModelerFunction type) {
+	try {
+		autoDataModeler me = DataModeler_create (thy xmin, thy xmax, thy numberOfDataPoints, numberOfParameters, type);
+		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+			my data [k].status = my data [k].status;
+			my data [k].x = thy data [k].x;
+			my data [k].y = thy data [k].y;
+		}
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"No DataModeler could be created.");
 	}
 }
 
