@@ -7917,13 +7917,9 @@ static autoDaata oggFileRecognizer (integer nread, const char *header, MelderFil
 		return autoDaata ();
 	if (header [6] == '\0' && header [7] == '\0' && header [8] == '\0' && header [9] == '\0' &&
 		header [10] == '\0' && header [11] == '\0' && header [12] == '\0' && header [13] == '\0' &&
-		strnequ (& header [28], "OpusHead", 8)) {
-		#ifndef _WIN32   // HAVE_OPUS
-			return Sound_readFromOggOpusFile (file);
-		#else
-			Melder_throw (U"For now, Ogg Opus audio files can be read natively only on Mac and Linux. You should first convert an Ogg Opus file "
-				"to WAV format. You could try to obtain a converter from https://opus-codec.org/downloads/.");
-		#endif
+		strnequ (& header [28], "OpusHead", 8))
+	{
+		return Sound_readFromOggOpusFile (file);
 	}
 	/*
 		Leave rest of checking to libVorbis

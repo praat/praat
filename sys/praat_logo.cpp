@@ -52,7 +52,7 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 	theLogo.draw = draw;
 }
 
-static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEvent event) {
+static void gui_drawingarea_cb_expose (Thing /* me */, GuiDrawingArea_ExposeEvent /* event */) {
 	theLogo.draw (theLogo.graphics.get());
 }
 
@@ -75,9 +75,15 @@ void praat_showLogo () {
 		theLogo.form = theLogo.dia;
 		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse, nullptr, nullptr, nullptr, 0);
+		/*
+			Note about ordering the following three statements (2021-01-20).
+			On some platforms (e.g. on macOS 10.10, but not 10.15), showing entails immediate drawing.
+			So the Graphics has to exist before that.
+			(It is possible that the *native* graphics *context* is created later.)
+		*/
+		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 		GuiThing_show (theLogo.form);
 		GuiThing_show (theLogo.dia);
-		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	} else {
 		GuiThing_show (theLogo.form);
 		GuiThing_show (theLogo.dia);
