@@ -242,6 +242,26 @@ static void exponential_plus_constant_fit (DataModeler me) {
 	my parameterCovariances -> data.get()  <<=  undefined;
 }
 
+static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, double *out_sigma) {
+		/* 
+			Set mu at the middle of the interval and make lambda = 2 * ymean.
+			Calculate sigma such that the model goes through (xmin,y(xmin)) and (xmax, y(xmax))
+		 	delatY = y(xmax) - y(xmin) = lambda / (1 + exp (- (xmax - mu) / sigma)) - lambda / (1 + exp (- (xmin - mu) / sigma))
+		 	Then sigma = 0.5 *(xmax - xmin) / Ln ((lambda + deltaY) / (lambda - deltaY)))
+		*/
+		autoDataModeler thee = DataModeler_createFromDataModeler(me, 2, kDataModelerFunction::POLYNOME);
+		DataModeler_fit (thee.get());
+		const double lambda = 2.0 * thy parameters [1].value;
+		const double yAtXmin = DataModeler_getModelValueAtX (thee.get(), thy xmin);
+		const double yAtXmax = DataModeler_getModelValueAtX (thee.get(), thy xmax);
+		const double deltaY = fabs (yAtXmax - yAtXmin), deltaX = my xmax - my xmin;
+		const double sigma = 0.5 * deltaX / log ((lambda + deltaY) / (lambda - deltaY));
+		if (out_lambda)
+			*out_lambda = lambda;
+		if (out_sigma)
+			*out_sigma = ( yAtXmin < yAtXmax ? sigma : - sigma );	
+}
+
 /*
 	Model: y(x) = b / (1 + exp (- (x - mu) / sigma))
 	Non-iterative solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
@@ -281,13 +301,8 @@ void sigmoid_fit (DataModeler me) {
 	if (lnarg > 0)
 		mu = x1 + sigma * log (lnarg);
 	else {
-		/*
-			We are in the tail of a distribution? Best model is constant model equal to the mean.
-			Set lambda equal to the mean and make exp(-(x-mu)/sigma) very small.
-		*/
-		lambda = DataModeler_getWeightedMean (me);
-		mu = -1e6;
-		sigma = 1e-6;
+		modelLinearTrendWithSigmoid (me, & lambda, & sigma);
+		mu = 0.5 * (my xmin + my xmax);
 	}
 	my parameters [1].value = lambda;
 	my parameters [2].value = mu;
@@ -344,6 +359,7 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
 	const double a = solution [1], b = solution [2];
 	const double c = solution [3], d = solution [4];
+	double gamma, lambda, mu, sigma;
 	const double dissq = b * b - 4.0 * a * c;
 	bool modelIsUndefined = true;
 	if (dissq > 0.0) {
@@ -353,33 +369,29 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 		const double lnarg1 = lambda1 / (d - gamma1) - 1.0, lnarg2 = lambda2 / (d - gamma2) - 1.0;
 		modelIsUndefined = false;
 		if (lnarg1 > 0.0) {
-			my parameters [1].value = gamma1;
-			my parameters [2].value = lambda1;
-			my parameters [3].value = x1 + sigma1 * log (lnarg1);
-			my parameters [4].value = sigma1;
+			gamma = gamma1;
+			lambda = lambda1;
+			mu = x1 + sigma1 * log (lnarg1);
+			sigma = sigma1;
 		} else if (lnarg2 > 0.0) {
-			my parameters [1].value = gamma2;
-			my parameters [2].value = lambda2;
-			my parameters [3].value = x1 + sigma2 * log (lnarg2);
-			my parameters [4].value = sigma2;
-		} else {
-			/*
-				No solution could be found. The best model is the average value
-			*/
+			gamma = gamma2;
+			lambda = lambda2;
+			mu = x1 + sigma2 * log (lnarg2);
+			sigma = sigma2;
+		} else
 			modelIsUndefined = true;
-		}
 		if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // fit is bad!
 			modelIsUndefined = true;
 	}
 	if (modelIsUndefined) {
-		my parameters [1].value = DataModeler_getWeightedMean (me);
-		my parameters [2].value = 0.0;
-		my parameters [3].value = -1e6;
-		my parameters [4].value =  1e6;
-		
-		// equivalent model: gamma'=0, lambda' = gamma
+		modelLinearTrendWithSigmoid (me, & lambda, & sigma);
+		gamma = 0.0;
+		mu = 0.5 * (my xmin + my xmax);
 	}
-	if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0)
+	my parameters [1].value = gamma;
+	my parameters [2].value = lambda;
+	my parameters [3].value = mu;
+	my parameters [4].value = sigma;
 	/*
 		error propagation ?
 	*/
