@@ -17,9 +17,9 @@
  */
 
 enums_begin (kSlopeCurve, 1)
-	enums_add (kSlopeCurve, 1, EXPONENTIAL, U"Exponential")
+	enums_add (kSlopeCurve, 1, EXPONENTIAL_PLUS_CONSTANT, U"Exponential plus constant")
 	enums_add (kSlopeCurve, 2, PARABOLIC, U"Parabolic")
-	enums_add (kSlopeCurve, 3, SIGMOID, U"Sigmoid")
+	enums_add (kSlopeCurve, 3, SIGMOID_PLUS_CONSTANT, U"Sigmoid plus constant")
 enums_end (kSlopeCurve, 3, PARABOLIC)
 
 

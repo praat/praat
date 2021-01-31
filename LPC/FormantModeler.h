@@ -108,7 +108,7 @@ double FormantModeler_getParameterStandardDeviation ( FormantModeler me, integer
 */
 double FormantModeler_getVarianceOfParameters (FormantModeler me, integer fromTrack, integer toTrack, integer fromIndex, integer toIndex, integer *numberOfFreeParameters);
 
-kDataModelerParameter FormantModeler_getParameterStatus (FormantModeler me, integer itrack, integer index);
+kDataModelerParameterStatus FormantModeler_getParameterStatus (FormantModeler me, integer itrack, integer index);
 
 integer FormantModeler_getNumberOfDataPoints (FormantModeler me);
 

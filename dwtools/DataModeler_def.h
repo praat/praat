@@ -31,7 +31,7 @@ oo_END_STRUCT (	DataModelerData)
 oo_DEFINE_STRUCT (DataModelerParameter)
 
 	oo_DOUBLE (value)
-	oo_ENUM (kDataModelerParameter, status)
+	oo_ENUM (kDataModelerParameterStatus, status)
 	
 oo_END_STRUCT (DataModelerParameter)
 #undef ooSTRUCT
@@ -52,8 +52,8 @@ oo_DEFINE_CLASS (DataModeler, Function)
 
 	#if oo_DECLARING
 		double (*f_evaluate) (DataModeler me, double x, vector<structDataModelerParameter> p);
-		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term);
-
+		void (*f_evaluateBasisFunctions) (DataModeler me, double x, VEC term) {};
+		void (*fit) (DataModeler me);
 		void v_info ()
 			override;
 	#endif
