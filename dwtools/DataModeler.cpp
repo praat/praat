@@ -246,20 +246,20 @@ static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, dou
 		/* 
 			Set mu at the middle of the interval and make lambda = 2 * ymean.
 			Calculate sigma such that the model goes through (xmin,y(xmin)) and (xmax, y(xmax))
-		 	delatY = y(xmax) - y(xmin) = lambda / (1 + exp (- (xmax - mu) / sigma)) - lambda / (1 + exp (- (xmin - mu) / sigma))
-		 	Then sigma = 0.5 *(xmax - xmin) / Ln ((lambda + deltaY) / (lambda - deltaY)))
+		 	deltaY = y(xmax) - y(xmin) = lambda / (1 + exp (- (xmax - mu) / sigma)) - lambda / (1 + exp (- (xmin - mu) / sigma))
+		 	Then sigma = 0.5 *(xmax - xmin) / ln ((lambda + deltaY) / (lambda - deltaY)))
 		*/
 		autoDataModeler thee = DataModeler_createFromDataModeler(me, 2, kDataModelerFunction::POLYNOME);
 		DataModeler_fit (thee.get());
 		const double lambda = 2.0 * thy parameters [1].value;
 		const double yAtXmin = DataModeler_getModelValueAtX (thee.get(), thy xmin);
 		const double yAtXmax = DataModeler_getModelValueAtX (thee.get(), thy xmax);
-		const double deltaY = fabs (yAtXmax - yAtXmin), deltaX = my xmax - my xmin;
+		const double deltaY = yAtXmax - yAtXmin, deltaX = my xmax - my xmin;
 		const double sigma = 0.5 * deltaX / log ((lambda + deltaY) / (lambda - deltaY));
 		if (out_lambda)
 			*out_lambda = lambda;
 		if (out_sigma)
-			*out_sigma = ( yAtXmin < yAtXmax ? sigma : - sigma );	
+			*out_sigma = sigma;	
 }
 
 /*
