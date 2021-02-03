@@ -2411,7 +2411,7 @@ NORMAL (U"Getting exact timing of the %%glottal closure instants%% (GCI) and %%g
 	"respectively, occur. ")
 MAN_END
 
-MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20190930)
+MAN_BEGIN (U"Electroglottogram: Derivative...", U"djmw", 20210201)
 INTRO (U"Calculates the derivative of the @@Electroglottogram@.")
 ENTRY (U"Settings")
 TAG (U"##Low-pass frequency (Hz)")
@@ -2428,7 +2428,7 @@ NORMAL (U"The derivative of a wave form %%x%(%%t%) is most easily calculated in 
 	" d%%x%(%%t%)/d%%t% = \\in%%X(%%f%)2\\pi%%if% exp(2\\pi%%ift%)d%%t%, where %%X%(%%f%) is the spectrum "
 	"of the %%x%(%%t).")
 NORMAL (U"Therefore, by taking the spectrum of the signal and from this spectrum calculate new real and "
-	"imaginary components and then transform back to the time doain we get the derivative.")
+	"imaginary components and then transform back to the time domain we get the derivative.")
 NORMAL (U"The multiplication of the spectral components with the factor 2\\pi%%if% will result in a new "
 	"%%X%\\'p(%%f%) whose components will be: Re(%%X\\'p%(%%f%)) = -2\\pi%%f% Im (%%X%(%%f%)) and Im(%%X\\'p%(%%f%)) =2\\pi%%f% Re(%%X%(%%f%)).")
 ENTRY (U"About dEGG")
