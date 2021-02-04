@@ -67,7 +67,8 @@ FORM (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated tra
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
-	INTEGER (order, U"Order of polynomials for estimation", U"3")
+	LABEL (U"For polynomial series only:")
+	INTEGER (order, U"Number of coefficients", U"3")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
