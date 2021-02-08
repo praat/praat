@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210102)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210208)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.39# (8 February 2021)")
+LIST_ITEM (U"• Scripting: made string vectors visible in writeFile (), pauseScript () and exitScript ().")
+LIST_ITEM (U"• Mac: corrected a bug that could cause About Praat to crash on macOS 10.10.")
 NORMAL (U"##6.1.38# (2 January 2021)")
 LIST_ITEM (U"• Scripting: string vectors, empty\\$ \\#  (), readLinesFromFile\\$ \\#  (), fileNames\\$ \\#  (), folderNames\\$ \\#  (), splitByWhitespace\\$ \\#  ().")
 LIST_ITEM (U"• Sound files: open Ogg Vorbis files and Opus files.")

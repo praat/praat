@@ -157,7 +157,7 @@ then you may have to switch the Type of some .cpp file from “C++ Source” to 
 (under “Identity and Type” in the righthand sidebar).
 
 If you want to build Praat as a library instead of as an executable,
-try the target `praat_mac64_a` (static) or `praat_mac64_so` (dynamic).
+try the target `praat_mac_a` (static) or `praat_mac_so` (dynamic).
 
 **Notarization.** If you want others to be able to use your Mac app,
 you will probably have to not only *sign* the executable, but also *notarize* it. To this end,
