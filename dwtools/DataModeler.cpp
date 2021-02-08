@@ -707,13 +707,13 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 		const double c = solution [3], d = solution [4];
 		double gamma, lambda, mu, sigma;
 		const double dissq = b * b - 4.0 * a * c;
-		bool modelIsUndefined = true;
+		bool modelFitIsBad = true;
 		if (dissq > 0.0) {
 			const double dis = sqrt (dissq);
 			const double lambda1 = dis / a, gamma1 = (-b - dis) / (2.0 * a), sigma1 = - 1.0 / dis;
 			const double lambda2 = -dis / a, gamma2 = (-b + dis) / (2.0 * a), sigma2 = 1.0 / dis;
 			const double lnarg1 = lambda1 / (d - gamma1) - 1.0, lnarg2 = lambda2 / (d - gamma2) - 1.0;
-			modelIsUndefined = false;
+			modelFitIsBad = false;
 			if (lnarg1 > 0.0) {
 				gamma = gamma1;
 				lambda = lambda1;
@@ -725,14 +725,15 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 				mu = x1 + sigma2 * log (lnarg2);
 				sigma = sigma2;
 			} else
-				modelIsUndefined = true;
-			if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // fit is bad!
-				modelIsUndefined = true;
+				modelFitIsBad = true;
+			if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // model fit is bad!
+				modelFitIsBad = true;
 		}
-		if (modelIsUndefined) {
+		if (modelFitIsBad) {
 			modelLinearTrendWithSigmoid (me, & lambda, & sigma);
 			gamma = 0.0;
 			mu = 0.5 * (my xmin + my xmax);
+			my parameters [3].value = mu;
 		}
 		my parameters [1].value = gamma;
 		my parameters [2].value = lambda;
