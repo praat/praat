@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2020 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2021 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * ainteger with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * TODO:
-	20200325 Draw variances crashed, 
-	info FormantModeler:Datamodeler crashes
-	signmaY = undefined  if not known, 0 if fixed.
- djmw 20140217
-*/
 
 #include "DataModeler.h"
 #include "NUM2.h"
@@ -79,7 +71,8 @@ void structDataModeler :: v_info () {
 	MelderInfo_writeLine (U"      Probability: ", probability);
 	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++) {
-		double sigma = ( parameters [ipar] .status == kDataModelerParameter::FIXED_ ? 0 : sqrt (parameterCovariances -> data [ipar] [ipar]) );
+		double sigma = ( parameters [ipar] .status == kDataModelerParameterStatus::FIXED_ ? 0 : 
+			(isdefined (parameterCovariances -> data [ipar] [ipar]) ? sqrt (parameterCovariances -> data [ipar] [ipar]) : undefined) );
 		MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar] .value, U"; sigma = ", sigma);
 	}
 }
@@ -98,7 +91,7 @@ static double polynomial_evaluate (DataModeler me, double xin, vector<structData
 	return result;
 }
 
-static void polynomial_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
+static void polynome_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
 	Melder_assert (term.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
@@ -146,6 +139,352 @@ static void legendre_evaluateBasisFunctions (DataModeler me, double xin, VEC ter
 			f2 += twox;
 			term [ipar] = (f2 * term [ipar - 1] - f1 * term [ipar - 2]) / d;
 		}
+	}
+}
+
+static double sigmoid_plus_constant_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		No need to translate because xin and p[3] are in the same domain. 
+	*/
+	double result = p [1].value;
+	if (p [2].value != 0.0)
+		result += p [2].value / (1.0 + exp (- (xin - p [3].value) / p [4].value));
+	return result;
+}
+
+static double sigmoid_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+		No need to translate because xin and p[3] are in the same domain.
+	*/
+	const double result = p [1].value / (1.0 + exp (- (xin - p [2].value) / p [3].value));
+	return result;
+}
+
+static double exponential_plus_constant_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+	Melder_assert (p.size == my numberOfParameters);
+	/*
+		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
+	*/
+	const double x = xin - 0.5 * (my xmin + my xmax);
+	return p [1].value + p [2].value * exp (p [3].value * x);
+}
+
+static void dummy_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
+	term  <<=  undefined;
+}
+
+/*
+	Model: y [i] = constant + b * exp (c * x [i]), i=1..n, solve for constant, b & c.
+	Solution according to Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 16-17.
+	Precondition: x [i] must be increasing.
+*/
+static void exponential_plus_constant_fit (DataModeler me) {
+	autoMAT design = zero_MAT (my numberOfDataPoints, 3);
+	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
+	const double x1 = my data [1].x, y1 = my data [1].y;
+	long double xkm1 = x1, ykm1 = y1, skm1 = 0.0;
+	/*
+		First row of design has only zero's, skip it.
+	*/
+	integer index = 0;
+	for (integer k = 2; k <= my numberOfDataPoints; k ++) {
+		if (my data [k] .status != kDataModelerData::INVALID) {
+			const long double xk = my data [k].x;
+			const long double yk = my data [k].y;
+			const long double sk = skm1 + 0.5 * (yk + ykm1) * (xk - xkm1); // Jacquelin, Eq. (7)
+			design [++ index] [1] = (xk - x1) * weights [k]; // Jacquelin, Eq. (9)
+			design [index] [2] = sk * weights [k];
+			yEstimate [index] = (yk - y1) * weights [k];
+			xkm1 = xk;
+			ykm1 = yk;
+			skm1 = sk;
+		}
+	}
+	design.resize (index, 3);
+	yEstimate.resize (index);
+	autoSVD svd = SVD_createFromGeneralMatrix (design.get());
+	if (! NUMfpp)
+		NUMmachar ();
+	SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
+	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+	const double c = solution [2];
+
+	design.resize (my numberOfDataPoints, 3);
+	yEstimate.resize (my numberOfDataPoints);	
+	index = 0;
+	const double xtranslate = 0.5 * (my xmin + my xmax);
+	for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+		if (my data [k] .status != kDataModelerData::INVALID) {
+			design [++ index] [1] = 1.0 * weights [k];
+			design [index] [2] = exp (c * (my data [k].x - xtranslate)) * weights [k];
+			yEstimate [index] = my data [k].y * weights [k];
+		}
+	}
+	design.resize (index, 3);
+	yEstimate.resize (index);
+
+	autoSVD svd2 = SVD_createFromGeneralMatrix (design.get());
+	SVD_zeroSmallSingularValues (svd2.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
+	autoVEC solution2 = SVD_solve (svd2.get(), yEstimate.get());
+	SVD_solve_preallocated (svd2.get(), yEstimate.get(), solution.get());
+	my parameters [1].value = solution [1];
+	my parameters [2].value = solution [2];
+	my parameters [3].value = c;
+	/*
+		error propagation ?
+	*/
+	my parameterCovariances -> data.get()  <<=  undefined;
+}
+
+static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, double *out_sigma) {
+		/* 
+			Set mu at the middle of the interval and make lambda = 2 * ymean.
+			Calculate sigma such that the model goes through (xmin,y(xmin)) and (xmax, y(xmax))
+		 	delatY = y(xmax) - y(xmin) = lambda / (1 + exp (- (xmax - mu) / sigma)) - lambda / (1 + exp (- (xmin - mu) / sigma))
+		 	Then sigma = 0.5 *(xmax - xmin) / Ln ((lambda + deltaY) / (lambda - deltaY)))
+		*/
+		autoDataModeler thee = DataModeler_createFromDataModeler(me, 2, kDataModelerFunction::POLYNOME);
+		DataModeler_fit (thee.get());
+		const double lambda = 2.0 * thy parameters [1].value;
+		const double yAtXmin = DataModeler_getModelValueAtX (thee.get(), thy xmin);
+		const double yAtXmax = DataModeler_getModelValueAtX (thee.get(), thy xmax);
+		const double deltaY = fabs (yAtXmax - yAtXmin), deltaX = my xmax - my xmin;
+		const double sigma = 0.5 * deltaX / log ((lambda + deltaY) / (lambda - deltaY));
+		if (out_lambda)
+			*out_lambda = lambda;
+		if (out_sigma)
+			*out_sigma = ( yAtXmin < yAtXmax ? sigma : - sigma );	
+}
+
+/*
+	Model: y(x) = b / (1 + exp (- (x - mu) / sigma))
+	Non-iterative solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 16-17.
+	Precondition: x [i] must be increasing.
+*/
+void sigmoid_fit (DataModeler me) {
+	autoMAT design = zero_MAT (my numberOfDataPoints, 3);
+	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
+	double sk = 0.0, x1 = my data [1].x;
+	double xkm1 = 0.0, ykm1 = 0.0;
+	integer index = 0;
+	for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+		if (my data [k] .status != kDataModelerData::INVALID) {
+			const double xk = my data [k].x - x1;
+			const double yk = my data [k].y;
+			sk += 0.5 * (yk + ykm1) * (xk - xkm1);
+			design [++ index] [1] = yk * sk * weights [k];
+			design [index] [2] = xk * yk * weights [k];
+			design [index] [3] = yk * weights [k];
+			yEstimate [index] = yk * log (yk) * weights [k];
+			xkm1 = xk;
+			ykm1 = yk;
+		}
+	}
+	design.resize (index, 3);
+	yEstimate.resize (index);
+	autoSVD svd = SVD_createFromGeneralMatrix (design.get());
+	if (! NUMfpp)
+		NUMmachar ();
+	SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
+	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+	double mu, sigma = 1.0 / solution [2], lambda = - solution [2] / solution [1];
+	my parameters [1].value = lambda;
+	const double lnarg = lambda * exp (-solution [3]) - 1.0;
+	if (lnarg > 0)
+		mu = x1 + sigma * log (lnarg);
+	else {
+		modelLinearTrendWithSigmoid (me, & lambda, & sigma);
+		mu = 0.5 * (my xmin + my xmax);
+	}
+	my parameters [1].value = lambda;
+	my parameters [2].value = mu;
+	my parameters [3].value = sigma;
+	/*
+		error propagation ?
+	*/
+	my parameterCovariances -> data.get()  <<=  undefined;
+}
+
+/*
+	Model: y(x) = gamma + lambda / (1 + exp (- (x - mu) / sigma))
+	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
+	pages 38 and following.
+	The author makes a mistake in the derivation of the relation between the a,b,c,d and
+	gamma, lambda, mu and sigma of the model.
+	lambda = ± 1/s * sqrt (b^2-4ac) (the artile wrongly shows "sqrt (b^2+4ac)")
+	gamma = (−b ∓ sqrt (b^2 − 4ac))/ (2*a)
+	sigma = ∓ 1 / sqrt (b^2 − 4ac)
+	mu = x[1]+ sigma * ln (lambda/(d-gamma) - 1)
+	Two models are indistinguishable if:
+		gamma' = gamma + lambda
+		sigma' = -sigma
+		lambda' = - lambda
+	Precondition: x[i] are increasing order.
+*/
+void sigmoid_plus_constant_fit (DataModeler me) {
+	autoMAT design = raw_MAT (my numberOfDataPoints, 4);
+	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
+	long double s1k = 0.0, s2k = 0.0, x1 = my data [1].x, xkm1 = x1, ykm1 = 0.0;
+	integer index = 0;
+	for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+		if (my data [k] .status != kDataModelerData::INVALID) {
+			const long double xk = my data [k].x;
+			const long double yk = my data [k].y;
+			s1k += 0.5 * (yk + ykm1) * (xk - xkm1);
+			s2k += 0.5 * (yk * yk + ykm1 * ykm1) * (xk - xkm1);
+			design [++ index] [1] = s2k * weights [k];
+			design [index] [2] = s1k * weights [k];
+			design [index] [3] = (xk - x1) * weights [k];
+			design [index] [4] = 1.0 * weights [k];
+			yEstimate [index] = yk * weights [k];
+			xkm1 = xk;
+			ykm1 = yk;
+		}
+	}
+	design.resize (index, 4);
+	yEstimate.resize (index);
+	autoSVD svd = SVD_createFromGeneralMatrix (design.get());
+	if (! NUMfpp)
+		NUMmachar ();
+	SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
+	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+	const double a = solution [1], b = solution [2];
+	const double c = solution [3], d = solution [4];
+	double gamma, lambda, mu, sigma;
+	const double dissq = b * b - 4.0 * a * c;
+	bool modelIsUndefined = true;
+	if (dissq > 0.0) {
+		const double dis = sqrt (dissq);
+		const double lambda1 = dis / a, gamma1 = (-b - dis) / (2.0 * a), sigma1 = - 1.0 / dis;
+		const double lambda2 = -dis / a, gamma2 = (-b + dis) / (2.0 * a), sigma2 = 1.0 / dis;
+		const double lnarg1 = lambda1 / (d - gamma1) - 1.0, lnarg2 = lambda2 / (d - gamma2) - 1.0;
+		modelIsUndefined = false;
+		if (lnarg1 > 0.0) {
+			gamma = gamma1;
+			lambda = lambda1;
+			mu = x1 + sigma1 * log (lnarg1);
+			sigma = sigma1;
+		} else if (lnarg2 > 0.0) {
+			gamma = gamma2;
+			lambda = lambda2;
+			mu = x1 + sigma2 * log (lnarg2);
+			sigma = sigma2;
+		} else
+			modelIsUndefined = true;
+		if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // fit is bad!
+			modelIsUndefined = true;
+	}
+	if (modelIsUndefined) {
+		modelLinearTrendWithSigmoid (me, & lambda, & sigma);
+		gamma = 0.0;
+		mu = 0.5 * (my xmin + my xmax);
+	}
+	my parameters [1].value = gamma;
+	my parameters [2].value = lambda;
+	my parameters [3].value = mu;
+	my parameters [4].value = sigma;
+	/*
+		error propagation ?
+	*/
+	my parameterCovariances -> data.get()  <<=  undefined;
+}
+
+void series_fit (DataModeler me) {
+	try {
+		/*
+			Count the number of free parameters to be fitted
+		*/
+		const integer numberOfFreeParameters = DataModeler_getNumberOfFreeParameters (me);
+		if (numberOfFreeParameters == 0)
+			return;
+		const integer numberOfValidDataPoints = DataModeler_getNumberOfValidDataPoints (me);
+		if (numberOfValidDataPoints - numberOfFreeParameters < 0)
+			return;
+		autoVEC yEstimation = zero_VEC (numberOfValidDataPoints);
+		autoVEC term = zero_VEC (my numberOfParameters);
+		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());
+		autoMAT designMatrix = zero_MAT (numberOfValidDataPoints, numberOfFreeParameters);
+		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
+		/*
+			For function evaluation with only the FIXED parameters
+		*/
+		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
+			if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_)
+				fixedParameters [ipar] .value = 0.0;
+
+		/*
+			We solve for the parameters p by minimizing the chi-squared function:
+			chiSquared = sum (i=1...n, (y[i] - sum (k=1..m, p[k]X[k](x[i]))/sigma[i] ),
+			where n is the 'numberOfValidDataPoints', m is the 'numberOfFreeParameters',
+				- x[i] and y[i] are the i-th datapoint x and y values, respectively,
+				- sum (k=1..m, p[k]X[k](x[i]) is the model estimation at x[i],
+				- X[k](x[i]) is the k-th function term evaluated at x[i],
+				- and y[i] has been measured with some uncertainty sigma[i].
+			If we define the design matrix matrix A [i] [j] = X [j] (x [i]) / sigma [i] and
+			the vector b[i] = y [i] / sigma [i], the problem can be stated as 
+			minimize the norm ||A.p - b|| for p.
+			This problem can be solved by SVD.
+		*/
+		integer idata = 1;
+		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
+			if (my data [ipoint] .status != kDataModelerData::INVALID) {
+				const double xi = my data [ipoint] .x, yi = my data [ipoint] .y;
+				const double yFixed = my f_evaluate (me, xi, fixedParameters.get());
+				// individual terms of the function
+				my f_evaluateBasisFunctions (me, xi, term.get());
+				for (integer icol = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++)
+					if (my parameters [ipar] .status == kDataModelerParameterStatus::FREE)
+						designMatrix [idata] [icol ++] = term [ipar] * weights [ipoint];
+				/*
+					Only 'residual variance' must be explained by the model
+				*/
+				yEstimation [idata ++] = (yi - yFixed)  * weights [ipoint];
+			}
+		}
+		autoSVD thee = SVD_createFromGeneralMatrix (designMatrix.get());
+		if (! NUMfpp)
+			NUMmachar ();
+		SVD_zeroSmallSingularValues (thee.get(), ( my tolerance > 0.0 ? my tolerance : numberOfValidDataPoints * NUMfpp -> eps ));
+		autoVEC parameters = SVD_solve (thee.get(), yEstimation.get());
+		/*
+			Put the calculated parameters at the correct position in 'my parameters'
+		*/
+		Covariance cov = my parameterCovariances.get();
+		for (integer kpar = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+			if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_)
+				my parameters [ipar] .value = parameters [kpar ++];
+			cov -> centroid [ipar] = my parameters [ipar] .value;
+		}
+		cov -> numberOfObservations = numberOfValidDataPoints;
+		/*
+			Estimate covariances between parameters
+		*/
+		if (numberOfFreeParameters < my numberOfParameters) {
+			autoMAT covtmp = SVD_getSquared (thee.get(), true);
+			cov -> data.all() <<= 0.0; // Set fixed parameters variances and covariances to zero.
+			for (integer irow = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+				if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_) {
+					for (integer icol = 1, jpar = 1; jpar <= my numberOfParameters; jpar ++) {
+						if (my parameters [jpar] .status != kDataModelerParameterStatus::FIXED_)
+							cov -> data [ipar] [jpar] = covtmp [irow] [icol ++];
+					}
+					irow ++;
+				}
+			}
+		} else {
+			SVD_getSquared_preallocated (thee.get(), true, cov -> data.get());
+		}
+	} catch (MelderError) {
+		Melder_throw (U"DataModeler no fit.");
 	}
 }
 
@@ -255,7 +594,7 @@ void DataModeler_setDataPointValueAndStatus (DataModeler me, integer index, doub
 	}
 }
 
-void DataModeler_setParameterValue (DataModeler me, integer index, double value, kDataModelerParameter status) {
+void DataModeler_setParameterValue (DataModeler me, integer index, double value, kDataModelerParameterStatus status) {
 	if (index > 0 && index <= my numberOfParameters) {
 		my parameters [index] .value = value;
 		my parameters [index] .status = status;
@@ -263,7 +602,9 @@ void DataModeler_setParameterValue (DataModeler me, integer index, double value,
 }
 
 void DataModeler_setParameterValueFixed (DataModeler me, integer index, double value) {
-	DataModeler_setParameterValue (me, index, value, kDataModelerParameter::FIXED_);
+	Melder_require (my type == kDataModelerFunction::POLYNOME || my type == kDataModelerFunction::LEGENDRE,
+		U"This would change the model type, which is not possible yet.");
+	DataModeler_setParameterValue (me, index, value, kDataModelerParameterStatus::FIXED_);
 }
 
 double DataModeler_getParameterValue (DataModeler me, integer index) {
@@ -273,8 +614,15 @@ double DataModeler_getParameterValue (DataModeler me, integer index) {
 	return value;
 }
 
-kDataModelerParameter DataModeler_getParameterStatus (DataModeler me, integer index) {
-	kDataModelerParameter status = kDataModelerParameter::UNDEFINED;
+autoVEC DataModeler_listParameterValues (DataModeler me) {
+	autoVEC result = raw_VEC (my numberOfParameters);
+	for (integer k = 1; k <= my numberOfParameters; k ++)
+		result [k] = my parameters [k] .value;
+	return result;
+}
+
+kDataModelerParameterStatus DataModeler_getParameterStatus (DataModeler me, integer index) {
+	kDataModelerParameterStatus status = kDataModelerParameterStatus::UNDEFINED;
 	if (index > 0 && index <= my numberOfParameters)
 		status = my parameters [index] .status;
 	return status;
@@ -293,7 +641,7 @@ double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, i
 	integer numberOfFreeParameters = 0;	
 	variance = 0;
 	for (integer ipar = fromIndex; ipar <= toIndex; ipar ++) {
-		if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
+		if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_) {
 			variance += my parameterCovariances -> data [ipar] [ipar];
 			numberOfFreeParameters ++;
 		}
@@ -306,13 +654,13 @@ double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, i
 void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer toIndex) {
 	getAutoNaturalNumbersWithinRange (& fromIndex, & toIndex, my numberOfParameters, U"parameter");
 	for (integer ipar = fromIndex; ipar <= toIndex; ipar ++)
-		my parameters [ipar] .status = kDataModelerParameter::FREE;
+		my parameters [ipar] .status = kDataModelerParameterStatus::FREE;
 }
 
 void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas) {
 	integer numberOfChangedParameters = 0;
 	for (integer ipar = my numberOfParameters; ipar > 0; ipar --) {
-		if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
+		if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_) {
 			const double value = my parameters [ipar] .value;
 			double sigmas = numberOfSigmas * DataModeler_getParameterStandardDeviation (me, ipar);
 			if ((value - sigmas) * (value + sigmas) < 0) {
@@ -326,7 +674,7 @@ void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas
 integer DataModeler_getNumberOfFreeParameters (DataModeler me) {
 	integer numberOfFreeParameters = 0;
 	for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-		if (my parameters [ipar] .status == kDataModelerParameter::FREE)
+		if (my parameters [ipar] .status == kDataModelerParameterStatus::FREE)
 			numberOfFreeParameters ++;
 	}
 	return numberOfFreeParameters;
@@ -336,7 +684,7 @@ integer DataModeler_getNumberOfFixedParameters (DataModeler me) {
 	return my numberOfParameters - DataModeler_getNumberOfFreeParameters (me);
 }
 
-static integer DataModeler_getNumberOfValidDataPoints (DataModeler me) {
+integer DataModeler_getNumberOfValidDataPoints (DataModeler me) {
 	integer numberOfValidDataPoints = 0;
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++)
 		if (my data [ipoint] .status != kDataModelerData::INVALID)
@@ -715,9 +1063,23 @@ void DataModeler_setBasisFunctions (DataModeler me, kDataModelerFunction type) {
 	if (type == kDataModelerFunction::LEGENDRE) {
 		my f_evaluate = legendre_evaluate;
 		my f_evaluateBasisFunctions = legendre_evaluateBasisFunctions;
-	} else {
+		my fit = series_fit;
+	} else if (type == kDataModelerFunction::POLYNOME) {
 		my f_evaluate = polynomial_evaluate;
-		my f_evaluateBasisFunctions = polynomial_evaluateBasisFunctions;
+		my f_evaluateBasisFunctions = polynome_evaluateBasisFunctions;
+		my fit = series_fit;
+	} else if (type == kDataModelerFunction::SIGMOID) {
+		my f_evaluate = sigmoid_evaluate;
+		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
+		my fit = sigmoid_fit;
+	} else if (type == kDataModelerFunction::SIGMOID_PLUS_CONSTANT) {
+		my f_evaluate = sigmoid_plus_constant_evaluate;
+		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
+		my fit = sigmoid_plus_constant_fit;
+	} else if (type == kDataModelerFunction::EXPONENTIAL_PLUS_CONSTANT) {
+		my f_evaluate = exponential_plus_constant_evaluate;
+		my f_evaluateBasisFunctions = dummy_evaluateBasisFunctions;
+		my fit = exponential_plus_constant_fit;
 	}
 	my type = type;
 }
@@ -728,16 +1090,15 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	DataModeler_setBasisFunctions (me, type);
 	my numberOfDataPoints = numberOfDataPoints;
 	my data = newvectorzero<structDataModelerData> (numberOfDataPoints);
-	my numberOfParameters = numberOfParameters;
-	
-	Melder_require (numberOfParameters > 0,
+	my numberOfParameters = ( (type == kDataModelerFunction::EXPONENTIAL_PLUS_CONSTANT || type == kDataModelerFunction::SIGMOID) ? 3 :
+		(type == kDataModelerFunction::SIGMOID_PLUS_CONSTANT ? 4 : numberOfParameters) );
+	Melder_require (my numberOfParameters > 0,
 		U"The number of parameters should be greater than zero.");
-	
-	my parameters = newvectorzero<structDataModelerParameter> (numberOfParameters);
-	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++)
-		my parameters [ipar] .status = kDataModelerParameter::FREE;
-	my parameterNames = Strings_createFixedLength (numberOfParameters);
-	my parameterCovariances = Covariance_create (numberOfParameters);
+	my parameters = newvectorzero<structDataModelerParameter> (my numberOfParameters);
+	for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
+		my parameters [ipar] .status = kDataModelerParameterStatus::FREE;
+	my parameterNames = Strings_createFixedLength (my numberOfParameters);
+	my parameterCovariances = Covariance_create (my numberOfParameters);
 	my type = type;
 }
 
@@ -777,91 +1138,23 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 	}
 }
 
+autoDataModeler DataModeler_createFromDataModeler (DataModeler thee, integer numberOfParameters, kDataModelerFunction type) {
+	try {
+		autoDataModeler me = DataModeler_create (thy xmin, thy xmax, thy numberOfDataPoints, numberOfParameters, type);
+		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+			my data [k].status = my data [k].status;
+			my data [k].x = thy data [k].x;
+			my data [k].y = thy data [k].y;
+		}
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"No DataModeler could be created.");
+	}
+}
+
 void DataModeler_fit (DataModeler me) {
 	try {
-		/*
-			Count the number of free parameters to be fitted
-		*/
-		const integer numberOfFreeParameters = DataModeler_getNumberOfFreeParameters (me);
-		if (numberOfFreeParameters == 0)
-			return;
-		const integer numberOfValidDataPoints = DataModeler_getNumberOfValidDataPoints (me);
-		if (numberOfValidDataPoints - numberOfFreeParameters < 0)
-			return;
-		autoVEC yEstimation = zero_VEC (numberOfValidDataPoints);
-		autoVEC term = zero_VEC (my numberOfParameters);
-		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());
-		autoMAT designMatrix = zero_MAT (numberOfValidDataPoints, numberOfFreeParameters);
-		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
-		/*
-			For function evaluation with only the FIXED parameters
-		*/
-		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
-			if (my parameters [ipar] .status != kDataModelerParameter::FIXED_)
-				fixedParameters [ipar] .value = 0.0;
-
-		/*
-			We solve for the parameters p by minimizing the chi-squared function:
-			chiSquared = sum (i=1...n, (y[i] - sum (k=1..m, p[k]X[k](x[i]))/sigma[i] ),
-			where n is the 'numberOfValidDataPoints', m is the 'numberOfFreeParameters',
-				- x[i] and y[i] are the i-th datapoint x and y values, respectively,
-				- sum (k=1..m, p[k]X[k](x[i]) is the model estimation at x[i],
-				- X[k](x[i]) is the k-th function term evaluated at x[i],
-				- and y[i] has been measured with some uncertainty sigma[i].
-			If we define the design matrix matrix A [i] [j] = X [j] (x [i]) / sigma [i] and
-			the vector b[i] = y [i] / sigma [i], the problem can be stated as 
-			minimize the norm ||A.p - b|| for p.
-			This problem can be solved by SVD.
-		*/
-		integer idata = 1;
-		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-			if (my data [ipoint] .status != kDataModelerData::INVALID) {
-				const double xi = my data [ipoint] .x, yi = my data [ipoint] .y;
-				const double yFixed = my f_evaluate (me, xi, fixedParameters.get());
-				// individual terms of the function
-				my f_evaluateBasisFunctions (me, xi, term.get());
-				for (integer icol = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++)
-					if (my parameters [ipar] .status == kDataModelerParameter::FREE)
-						designMatrix [idata] [icol ++] = term [ipar] * weights [ipoint];
-				/*
-					Only 'residual variance' must be explained by the model
-				*/
-				yEstimation [idata ++] = (yi - yFixed)  * weights [ipoint];
-			}
-		}
-		autoSVD thee = SVD_createFromGeneralMatrix (designMatrix.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (thee.get(), ( my tolerance > 0.0 ? my tolerance : numberOfValidDataPoints * NUMfpp -> eps ));
-		autoVEC parameters = SVD_solve (thee.get(), yEstimation.get());
-		/*
-			Put the calculated parameters at the correct position in 'my parameters'
-		*/
-		Covariance cov = my parameterCovariances.get();
-		for (integer kpar = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-			if (my parameters [ipar] .status != kDataModelerParameter::FIXED_)
-				my parameters [ipar] .value = parameters [kpar ++];
-			cov -> centroid [ipar] = my parameters [ipar] .value;
-		}
-		cov -> numberOfObservations = numberOfValidDataPoints;
-		/*
-			Estimate covariances between parameters
-		*/
-		if (numberOfFreeParameters < my numberOfParameters) {
-			autoMAT covtmp = SVD_getSquared (thee.get(), true);
-			cov -> data.all() <<= 0.0; // Set fixed parameters variances and covariances to zero.
-			for (integer irow = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-				if (my parameters [ipar] .status != kDataModelerParameter::FIXED_) {
-					for (integer icol = 1, jpar = 1; jpar <= my numberOfParameters; jpar ++) {
-						if (my parameters [jpar] .status != kDataModelerParameter::FIXED_)
-							cov -> data [ipar] [jpar] = covtmp [irow] [icol ++];
-					}
-					irow ++;
-				}
-			}
-		} else {
-			SVD_getSquared_preallocated (thee.get(), true, cov -> data.get());
-		}
+		my fit (me);
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");
 	}
@@ -920,6 +1213,9 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			if (x [i] >= xmin && x [i] <= xmax)
 				numberOfDataPoints ++;
 		}
+		/*
+			Some models have a fixed number of parameters
+		*/
 		autoDataModeler thee = DataModeler_create (xmin, xmax, numberOfDataPoints, numberOfParameters, type);
 		numberOfDataPoints = 0;
 		for (integer i = 1; i <= numberOfData; i ++) {
@@ -935,7 +1231,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 			}
 		}
 		thy numberOfDataPoints = numberOfDataPoints;
-		Melder_require (validData >= numberOfParameters,
+		Melder_require (validData >= thy numberOfParameters,
 			U"The number of parameters should not exceed the number of data points.");
 		
 		DataModeler_setDataWeighing (thee.get(), ( hasSigmaColumn ? kDataModelerWeights::ONE_OVER_SIGMA : kDataModelerWeights::EQUAL_WEIGHTS));

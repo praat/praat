@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2020 David Weenink
+ * Copyright (C) 1997-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1203,30 +1203,6 @@ void NUMfitLine_theil (constVEC const& x, constVEC const& y, double *out_m, doub
 
 
 void NUMfitLine_LS (constVEC const& x, constVEC const& y, double *out_m, double *out_intercept);
-
-/*
-	Model: y [i] = a + b * exp (c * x [i]), i=1..n, solve for a, b & c.
-	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
-	pages 16-17.
-	Precondition: x is always increasing.
-*/
-void NUMfitExponentialPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_c, double *out_residualVariance);
-
-/*
-	Model: y(x) = b / (1 + exp (- (x - m) / s))
-	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
-	pages 16-17.
-	Precondition: x is always increasing.
-*/
-void NUMfitLogistic (VECVU const& xx, VECVU const & y,  double *out_b, double *out_mu, double *out_s, double *out_residualVariance);
-
-/*
-	Model: y(x) = a + b / (1 + exp (- (x - m) / s))
-	Solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
-	pages 38.
-	Precondition: x is always increasing.
-*/
-void NUMfitLogisticPlusConstant (VECVU const& x, VECVU const & y, double *out_a, double *out_b, double *out_m, double *out_s, double *out_residualVariance);
 
 /*
 	scale_lambda, shape_k > 0

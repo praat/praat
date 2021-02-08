@@ -551,8 +551,8 @@ double FormantModeler_getParameterValue (FormantModeler me, integer itrack, inte
 	return value;
 }
 
-kDataModelerParameter FormantModeler_getParameterStatus (FormantModeler me, integer itrack, integer index) {
-	kDataModelerParameter status = kDataModelerParameter::NOT_DEFINED;
+kDataModelerParameterStatus FormantModeler_getParameterStatus (FormantModeler me, integer itrack, integer index) {
+	kDataModelerParameterStatus status = kDataModelerParameterStatus::NOT_DEFINED;
 	if (itrack > 0 && itrack <= my trackmodelers.size) {
 		const DataModeler ff = my trackmodelers.at [itrack];
 		status = DataModeler_getParameterStatus (ff, index);

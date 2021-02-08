@@ -98,14 +98,20 @@ DO
 	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"])")
 }
 
+DIRECT (NUMVEC_DataModeler_listParameterValues) {
+	NUMVEC_ONE (DataModeler)
+		autoVEC result = DataModeler_listParameterValues (me);
+	NUMVEC_ONE_END
+}
+
 FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
 	STRING_ONE (DataModeler)
-		kDataModelerParameter status = DataModeler_getParameterStatus (me, parameterNumber);
-		conststring32 result = ( status == kDataModelerParameter::FREE ? U"Free" :
-			status == kDataModelerParameter::FIXED_ ? U"Fixed" : U"Undefined" );
+		kDataModelerParameterStatus status = DataModeler_getParameterStatus (me, parameterNumber);
+		conststring32 result = ( status == kDataModelerParameterStatus::FREE ? U"Free" :
+			status == kDataModelerParameterStatus::FIXED_ ? U"Fixed" : U"Undefined" );
 	STRING_ONE_END
 }
 
@@ -245,7 +251,7 @@ DO
 FORM (MODIFY_DataModeler_setParameterValue, U"DataModeler: Set parameter value", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	REAL (value, U"Value", U"0.0")
-	OPTIONMENU_ENUM (kDataModelerParameter, parameterStatus, U"Status", kDataModelerParameter::DEFAULT)
+	OPTIONMENU_ENUM (kDataModelerParameterStatus, parameterStatus, U"Status", kDataModelerParameterStatus::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (DataModeler)
@@ -655,9 +661,9 @@ FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter st
 	OK
 DO
 	STRING_ONE (FormantModeler)
-		kDataModelerParameter status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
+		kDataModelerParameterStatus status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		conststring32 result = Melder_cat (
-			status == kDataModelerParameter::FREE ? U"Free" : status == kDataModelerParameter::FIXED_ ? U"Fixed" : U"Undefined",
+			status == kDataModelerParameterStatus::FREE ? U"Free" : status == kDataModelerParameterStatus::FIXED_ ? U"Fixed" : U"Undefined",
 			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
 		);
 	STRING_ONE_END
@@ -1093,6 +1099,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1, INTEGER_DataModeler_getNumberOfParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get number of fixed parameters", 0, 1, INTEGER_DataModeler_getNumberOfFixedParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter value...", 0, 1, REAL_DataModeler_getParameterValue);
+		praat_addAction1 (classDataModeler, 0, U"List parameter values", 0, 1, NUMVEC_DataModeler_listParameterValues);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, INFO_DataModeler_getParameterStatus);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter standard deviation...", 0, 1, REAL_DataModeler_getParameterStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get variance of parameters...", 0, 1, REAL_DataModeler_getVarianceOfParameters);

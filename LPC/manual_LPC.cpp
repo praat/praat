@@ -1,6 +1,6 @@
 /* manual_LPC.cpp
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1096,8 +1096,8 @@ NORMAL (U"J. Hillenbrand & R.A. Houde (1996): \"Acoustic correlates of breathy v
 	"speech\", %%Journal of speech and hearing research% #39: 311\\--321.")
 MAN_END
 
-MAN_BEGIN (U"Jacquelin (2009)", U"djmw", 20210108)
-NORMAL (U"J. Jacquelin (2009): \"Régressions et équations intégrales\", https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales: 1\\--17.")
+MAN_BEGIN (U"Jacquelin (2009)", U"djmw", 20210126)
+NORMAL (U"J. Jacquelin (2009): \"Régressions et équations intégrales\", https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales: 1\\--84.")
 MAN_END
 
 MAN_BEGIN (U"Lee (1988)", U"djmw", 20111027)
