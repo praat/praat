@@ -3979,6 +3979,10 @@ static void shared_do_writeFile (autoMelderString *text, integer numberOfArgumen
 							icol == arg->numericMatrix.ncol ? U"" : U" ");
 				MelderString_append (text, irow == arg->numericMatrix.nrow ? U"" : U"\n");
 			}
+		} else if (arg->which == Stackel_STRING_ARRAY) {
+			for (integer i = 1; i <= arg->stringArray.size; i ++)
+				MelderString_append (text, arg->stringArray [i],
+						i == arg->stringArray.size ? U"" : U" ");
 		}
 	}
 }
@@ -4063,10 +4067,26 @@ static void do_pauseScript () {
 		autoMelderString buffer;
 		for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
 			Stackel arg = & theStack [w + iarg];
-			if (arg->which == Stackel_NUMBER)
+			if (arg->which == Stackel_NUMBER) {
 				MelderString_append (& buffer, arg->number);
-			else if (arg->which == Stackel_STRING)
+			} else if (arg->which == Stackel_STRING) {
 				MelderString_append (& buffer, arg->getString());
+			} else if (arg->which == Stackel_NUMERIC_VECTOR) {
+				for (integer i = 1; i <= arg->numericVector.size; i ++)
+					MelderString_append (& buffer, arg->numericVector [i],
+							i == arg->numericVector.size ? U"" : U" ");
+			} else if (arg->which == Stackel_NUMERIC_MATRIX) {
+				for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++) {
+					for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++)
+						MelderString_append (& buffer, arg->numericMatrix [irow] [icol],
+								icol == arg->numericMatrix.ncol ? U"" : U" ");
+					MelderString_append (& buffer, irow == arg->numericMatrix.nrow ? U"" : U"\n");
+				}
+			} else if (arg->which == Stackel_STRING_ARRAY) {
+				for (integer i = 1; i <= arg->stringArray.size; i ++)
+					MelderString_append (& buffer, arg->stringArray [i],
+							i == arg->stringArray.size ? U"" : U" ");
+			}
 		}
 		UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
 		UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
@@ -4081,10 +4101,29 @@ static void do_exitScript () {
 	w -= numberOfArguments;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + iarg];
-		if (arg->which == Stackel_NUMBER)
+		if (arg->which == Stackel_NUMBER) {
 			Melder_appendError_noLine (arg->number);
-		else if (arg->which == Stackel_STRING)
+		} else if (arg->which == Stackel_STRING) {
 			Melder_appendError_noLine (arg->getString());
+		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
+			for (integer i = 1; i <= arg->numericVector.size; i ++) {
+				Melder_appendError_noLine (arg->numericVector [i]);
+				Melder_appendError_noLine (i == arg->numericVector.size ? U"" : U" ");
+			}
+		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
+			for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++) {
+				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++) {
+					Melder_appendError_noLine (arg->numericMatrix [irow] [icol]);
+					Melder_appendError_noLine (icol == arg->numericMatrix.ncol ? U"" : U" ");
+				}
+				Melder_appendError_noLine (irow == arg->numericMatrix.nrow ? U"" : U"\n");
+			}
+		} else if (arg->which == Stackel_STRING_ARRAY) {
+			for (integer i = 1; i <= arg->stringArray.size; i ++) {
+				Melder_appendError_noLine (arg->stringArray [i]);
+				Melder_appendError_noLine (i == arg->stringArray.size ? U"" : U" ");
+			}
+		}
 	}
 	Melder_throw (U"\nScript exited.");
 	pushNumber (1);
