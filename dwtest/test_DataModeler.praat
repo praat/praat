@@ -181,7 +181,7 @@ procedure test_exponential_plus_constant
 	Set parameter value: 2, 0.6, "Fixed"
 	Fit model
 	rSquared = Get coefficient of determination
-	assert rSquared > 0.999
+	assert rSquared > 0.99
 	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 2 fixed OK"
 
 	appendInfoLine: tab$, tab$, "Test exponential plus constant, parameter 3 fixed"

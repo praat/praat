@@ -1316,6 +1316,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	}
 }
 
+
 void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints) {
 	Function_bidirectionalAutowindow (me, & xmin, & xmax);
 	autoVEC x = raw_VEC (numberOfPoints), y = raw_VEC (numberOfPoints);
@@ -1334,6 +1335,18 @@ void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, doub
 		if (NUMclipLineWithinRectangle (x [ipoint - 1], y [ipoint - 1], x [ipoint], y [ipoint],
 			xmin, ymin, xmax, ymax, & segment_x1, & segment_y1, & segment_x2, & segment_y2))
 				Graphics_line (g, segment_x1, segment_y1, segment_x2, segment_y2);
+	}
+}
+
+void DataModeler_drawModel (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints, bool garnish) {
+	Function_bidirectionalAutowindow (me, & xmin, & xmax);
+	Graphics_setInner (g);
+	DataModeler_drawModel_inside (me, g, xmin, xmax, ymin, ymax, numberOfPoints);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
 	}
 }
 
