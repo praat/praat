@@ -88,12 +88,20 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210119)
-INTRO (U"List the slope characteristics of the chosen interval of a selected @@Formant@ object as a vector with a number of values.")
-ENTRY (U"The result")
-NORMAL (U"The vector values are determined from the fit of the formant track with a either an exponential function "
-	"%F(%t) = %a+%b\\.cexp(%c\\.c%t), or a parabolic function %F(%t) = %a+%b\\.ct+%c\\.ct^2, or a sigmoid function "
-	"%F(%t) = %a+%b / (1 + exp(- (%t -c) / d))"
+MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210201)
+INTRO (U"A command available in the ##Query# menu if you select a @@Formant@ object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.")
+ENTRY (U"Settings")
+TAG (U"##Formant number#,")
+DEFINITION (U"defines the formant whose characteristics you want.")
+TAG (U"##Time range (s)#,")
+DEFINITION (U"defines the time domain on which the slope should be determined.")
+TAG (U"##Slope curve#")
+DEFINITION (U"defines the kind of curve you want to fit on the formant points to determine the slope characteristics. "
+	"The options available are ##Exponential plus constant#, ##Parabolic# and ##Sigmoid plus constant#.")
+ENTRY (U"The vector result")
+NORMAL (U"The vector values are determined from the fit of the formant track with a an exponential plus constant function "
+	"%F(%t) = %a+%b\\.cexp(%c\\.c%t), or a parabolic function %F(%t) = %a+%b\\.ct+%c\\.ct^2, or a sigmoid plus constant function "
+	"%F(%t) = %a+%b / (1 + exp(- (%t -c) / d)) "
 	"on the chosen interval [%t__min_, %t__max_].")
 TAG (U"##1. Average slope (Hz / s)#,")
 DEFINITION (U"defined as (%F__locus_ - %F__target_) / (%t__max_ - %t__min_), where %F__locus_ and %F__target_ are the start and "
@@ -101,9 +109,9 @@ DEFINITION (U"defined as (%F__locus_ - %F__target_) / (%t__max_ - %t__min_), whe
 TAG (U"##2. %R^2#")
 DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
 TAG (U"##3. %F__locus_#,")
-DEFINITION (U"the frequency in hertz of the function %F(%t) at the start of the interval, i.e. %F(0).")
+DEFINITION (U"the frequency in hertz of the function %F(%t__min_).")
 TAG (U"##4. %F__target_#,")
-DEFINITION (U"the frequency in hertz of the function %F(%t) at the end of the interval, i.e. %F(%t__max_-%t__min_)")
+DEFINITION (U"the frequency in hertz of the function %F(%t__max_).")
 TAG (U"##5. %a#")
 DEFINITION (U"the parameter %a (hertz) of the function %F(%t).")
 TAG (U"##6. %b#")
@@ -111,19 +119,11 @@ DEFINITION (U"the parameter %b of the function %F(%t).")
 TAG (U"##7. %c#")
 DEFINITION (U"the parameter %c ( / s) of the function %F(%t).")
 TAG (U"##8. %d#")
-DEFINITION (U"the parameter %d of the function %F(%t), if the sigmoid function was chosen.")
+DEFINITION (U"the parameter %d of the function %F(%t), if the sigmoid plus constant function was chosen.")
 ENTRY (U"Remarks about the interpretation of the fit parameters.")
-NORMAL (U"For the exponential function, the parameters %a, %b and %c of the fit function cannot separately be given any meaning. What we know is that "
-	"at %t = 0, %F(0) = %a + %b, i.e. the sum of the parameters %a and %b define %F__locus_. At the end of the interval "
-	"we can see that %F(%t__max_-%t__min_)=a+b\\.cexp(%c\\.c(%t__max_-%t__min_)). This makes a parametrization of the form "
-	"%F(%t)=%F__target_+ (%F__locus_-%F__target_)\\.cexp(%c\\.c%t), as is sometimes seen in the literature, problematic because "
-	"%F__target_ cannot be equal to the value at %F(%t__max_-%t__min_) since exp(%c\\.c(%t__max_-%t__min_)) is definitely not zero. "
-	"The %F__tartget_ has to be chosen somewhat smaller that the value at %t= %t__max_-%t__min_. The question than becomes: how much smaller?")
-NORMAL (U"As we can also see from the form of the exponential function %F(%t) there is always a possibility of a trade-off between the parameters. "
-	"For example, suppose we have a falling curve, i.e. %c < 0, then an increase in the value of %b could be compensated by making %c larger negative.")
-NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__locus_ and the %F__target_ values. In cases where the formant trajectory shows a noisy pattern all values have a large error margin and the determined average slope can also be unreliable.")
+NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__locus_ and the %F__target_ values. In cases where the formant trajectory shows a noisy pattern all return values have a large error margin and the determined average slope can also be unreliable.")
 ENTRY (U"Algorithm")
-NORMAL (U"The algorithm to fit the %%non-linear% function %F(%t) = %a+%b\\.cexp(%c\\.c%t) to a series of (time, frequency) values is described in @@Jacquelin (2009)@.")
+NORMAL (U"The algorithm to fit the %%non-linear% exponential plus constant and the sigmoid plus constant functions to a series of (time, frequency) values by a non-iterative algorithm is described in @@Jacquelin (2009)@.")
 MAN_END
 
 MAN_BEGIN (U"FormantPath", U"djmw", 20201013)

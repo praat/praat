@@ -1,6 +1,6 @@
 /* praat_DataModeler_init.cpp
  *
- * Copyright (C) 2014-2020 David Weenink
+ * Copyright (C) 2014-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,13 +61,27 @@ DO
 	GRAPHICS_EACH_END
 }
 
+FORM (GRAPHICS_DataModeler_drawModel, U"DataModeler: Draw model", nullptr) {
+	REAL (xmin, U"left X range", U"0.0")
+	REAL (xmax, U"right X range", U"0.0")
+	REAL (ymin, U"left Y range", U"0.0")
+	REAL (ymax, U"right Y range", U"0.0")
+	NATURAL (numberOfPoints, U"Number of points", U"1000")
+	BOOLEAN (garnish, U"Garnish", true)
+	OK
+DO
+	GRAPHICS_EACH (DataModeler)
+		DataModeler_drawModel (me, GRAPHICS, xmin, xmax, ymin, ymax, numberOfPoints, garnish);
+	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
-	INTEGER (order, U"Order of polynomials for estimation", U"3")
+	LABEL (U"For polynomial series only:")
+	INTEGER (order, U"Number of coefficients", U"3")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -1093,6 +1107,7 @@ void praat_DataModeler_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, NEW1_DataModeler_createSimple);
 
 	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, GRAPHICS_DataModeler_speckle);
+	praat_addAction1 (classDataModeler, 0, U"Draw model...", 0, 0, GRAPHICS_DataModeler_drawModel);
 	praat_addAction1 (classDataModeler, 0, U"Draw estimated track...", 0, 0, GRAPHICS_DataModeler_drawEstimatedTrack);
 
 	praat_addAction1 (classDataModeler, 1, U"Query -", 0, 0, 0);

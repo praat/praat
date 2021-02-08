@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2021Fget David Weenink
+ * Copyright (C) 2014-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ integer DataModeler_drawingSpecifiers_x (DataModeler me, double *xmin, double *x
 void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	integer iterm, bool scale, integer numberOfPoints);
 
+void DataModeler_drawModel (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints, bool garnish);
 void DataModeler_drawModel_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, integer numberOfPoints);
 
 void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool estimated, integer numberOfParameters, bool errorbars, bool connectPoints, double barWidth_mm, bool drawDots);
