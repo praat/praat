@@ -77,8 +77,8 @@ void structDataModeler :: v_info () {
 	}
 }
 
-static double constant_evaluate (DataModeler /* me */, double /* xin */, vector<structDataModelerParameter> /* p */) {
-	return 1.0;
+static double constant_evaluate (DataModeler /* me */, double /* xin */, vector<structDataModelerParameter> p) {
+	return p [1].value;
 }
 
 static void constant_evaluateBasisFunctions (DataModeler me, double xin, VEC terms) {
@@ -202,40 +202,95 @@ static void dummy_evaluateBasisFunctions (DataModeler me, double xin, VEC term) 
 	term  <<=  undefined;
 }
 
+autoVEC DataModeler_solveDesign (DataModeler me, constMAT const& design, constVEC const& y, autoMAT *covariance) {
+	Melder_require (design.nrow == y.size,
+		U"The design matrix and the estimate should have the same number of rows.");
+	autoSVD svd = SVD_createFromGeneralMatrix (design);
+	if (! NUMfpp)
+		NUMmachar ();
+	SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
+	autoVEC solution = SVD_solve (svd.get(), y);
+	if (covariance) {
+		autoMAT covar = SVD_getSquared (svd.get(), true);
+		*covariance = covar.move();
+	}
+	return solution;
+}
 
 /*
-	Model: y [i] = a * exp (b * x [i]), i=1..n, solve for constant, b & c.
+	Model: y [i] = a * exp (b * x [i]), i=1..n, solve for a, b.
 	log(y(x)= log(a) + b * x is linear model
 	Precondition: y[i] > 0 || y[i] < 0
 */
 static void exponential_fit (DataModeler me) {
-
-	autoMAT design = zero_MAT (my numberOfDataPoints, 2);
-	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [2].status == kDataModelerParameterStatus::FIXED_)
+		return;
 	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 	double ymin, ymax;
 	DataModeler_getExtremaY (me, & ymin, & ymax);
 	const double sign = ymin * ymax;
 	Melder_require (sign >= 0.0,
 		U"All data should have the same sign.");
-	integer index = 0;
-	for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-		if (my data [k] .status != kDataModelerData::INVALID) {
-			design [++ index] [1] = 1.0 * weights [k];
-			design [index] [2] = my data[k].x * weights [k];
-			yEstimate [index] = log ( sign >= 0.0 ? my data[k].y : - my data[k].y ) * weights [k];
+	const double xtr = 0.5 * (my xmin + my xmax);
+	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_) {
+		/*
+			Model: z(x) = b * x, where z(x) = log(y) - log (a)
+			A minimization of the squared error in the log domain gives greater weight to small values.
+			To compensate, we weigh with the y value. Weisstein, Eric W. "Least Squares Fitting--Exponential." From MathWorld--A Wolfram Web Resource. https://mathworld.wolfram.com/LeastSquaresFittingExponential.html 
+		*/
+		autoMAT design = zero_MAT (my numberOfDataPoints, 1);
+		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+		integer index = 0;
+		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+			if (my data [k].status != kDataModelerData::INVALID) {
+				design [++ index] [1] = (my data [k].x - xtr) * weights [k] * my data[k].y;
+				yEstimate [index] = (log (my data[k].y) - log (my parameters [1].value)) * weights [k] * my data[k].y;
+			}
 		}
+		design.resize (index, 1);
+		yEstimate.resize (index);
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+		my parameters [2].value = solution [1];
+	} else if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
+		/*
+			Model: y(x) = a * f(x), where f(x) = exp (b * x)
+		*/
+		autoMAT design = zero_MAT (my numberOfDataPoints, 1);
+		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+		integer index = 0;
+		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+			if (my data [k].status != kDataModelerData::INVALID) {
+				design [++ index] [1] = exp (my parameters [2].value * (my data [k].x - xtr)) * weights [k];
+				yEstimate [index] = my data[k].y * weights [k];
+			}
+		}
+		design.resize (index, 1);
+		yEstimate.resize (index);
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+		my parameters [1].value = solution [1];
+	} else {
+		/*
+			Model z(x)= a + b * x, where z(x) = log(y(x))
+			A minimization of the squared error in the log domain gives greater weight to small values.
+			To compensate we weigh with the y value.
+		*/
+		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
+		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+		integer index = 0;
+		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+			if (my data [k].status != kDataModelerData::INVALID) {
+				design [++ index] [1] = 1.0 * my data[k].y * weights [k];
+				design [index] [2] = (my data[k].x - xtr) * my data[k].y * weights [k];
+				yEstimate [index] = log ( sign >= 0.0 ? my data[k].y : - my data[k].y ) * my data[k].y * weights [k];
+			}
+		}
+		design.resize (index, 2);
+		yEstimate.resize (index);
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+		const double a = exp (solution [1]);
+		my parameters [1].value = ( sign >= 0.0 ? a : - a );
+		my parameters [2].value = solution [2];
 	}
-	design.resize (index, 2);
-	yEstimate.resize (index);
-	autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-	if (! NUMfpp)
-		NUMmachar ();
-	SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-	autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
-	const double a = exp (solution [1]);
-	my parameters [1].value = ( sign >= 0.0 ? a : - a );
-	my parameters [2].value = solution [2];
 }
 
 /*
@@ -256,10 +311,10 @@ static void linear_exponent_evaluateBasisFunctions (DataModeler me, double xin, 
 }
 
 static void exponential_plus_constant_fit (DataModeler me) {
-	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [2].status == kDataModelerParameterStatus::FIXED_ &&
-		my parameters [3].status == kDataModelerParameterStatus::FIXED_)
-			return;
 	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_) {
+		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_ &&
+			my parameters [3].status == kDataModelerParameterStatus::FIXED_)
+				return;
 		/*
 			Model: z(x) = b * exp (c * x), where z(x) = y(x) - a.
 		*/
@@ -273,20 +328,42 @@ static void exponential_plus_constant_fit (DataModeler me) {
 		my parameters [2].value = thy parameters [1].value;
 		my parameters [3].value = thy parameters [2].value;
 	} else if (my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
-		/*
-			Model: z(x) = a + b * f(x), where f(x) = exp (c * x).
-			Fit as linear model with the third parameter fixed!
-		*/
-		autoDataModeler thee = DataModeler_createFromDataModeler (me, 2, kDataModelerFunction::LINEAR);
-		thy parameters.resize (thy numberOfParameters + 1);
-		thy parameters [thy numberOfParameters + 1].value = my parameters [3].value;
-		thy parameters [thy numberOfParameters + 1].status = kDataModelerParameterStatus::FIXED_;
-		thy f_evaluate = exponential_plus_constant_evaluate;
-		thy f_evaluateBasisFunctions = linear_exponent_evaluateBasisFunctions;
-		DataModeler_fit (thee.get());
-		my parameters [1].value = thy parameters [1].value;
-		my parameters [2].value = thy parameters [2].value;
+		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
+			/*
+				Model: z(x)= a, where z(x) = y(x) - b * exp(c * x)
+			*/
+			autoDataModeler thee = DataModeler_createFromDataModeler (me, 1, kDataModelerFunction::LINEAR);
+			thy f_evaluate = constant_evaluate;
+			thy f_evaluateBasisFunctions = constant_evaluateBasisFunctions;
+			my parameters [1].value = 0.0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (thy data [k].status != kDataModelerData::INVALID) {
+					thy data [k].y -= my f_evaluate (me, thy data [k].x, my parameters.get());// z(x) = y(x) - b * exp(c * x)
+				}
+			}
+			DataModeler_fit (thee.get());
+			my parameters [1].value = thy parameters [1].value;
+		} else {
+			/*
+				Model: z(x) = a + b * f(x), where f(x) = exp (c * x).
+				Fit as linear model with the third parameter fixed!
+			*/
+			autoDataModeler thee = DataModeler_createFromDataModeler (me, 2, kDataModelerFunction::LINEAR);
+			thy parameters.resize (thy numberOfParameters + 1);
+			thy parameters [thy numberOfParameters + 1].value = my parameters [3].value;
+			thy parameters [thy numberOfParameters + 1].status = kDataModelerParameterStatus::FIXED_EXTRA;
+			thy f_evaluate = exponential_plus_constant_evaluate;
+			thy f_evaluateBasisFunctions = linear_exponent_evaluateBasisFunctions;
+			DataModeler_fit (thee.get());
+			my parameters [1].value = thy parameters [1].value;
+			my parameters [2].value = thy parameters [2].value;
+		}
 	} else {
+		/*
+			First we determine c.
+			Model: z(x) = A * f1(x) + B * f2(x), where z(x) = y(x) - y[1], f1(x) = x - x[1], f2(x) = integral (x1, x, y(x)dx)
+			A = - a * c, B = c
+		*/
 		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
 		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
@@ -309,11 +386,7 @@ static void exponential_plus_constant_fit (DataModeler me) {
 		}
 		design.resize (index, 2);
 		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 		const double c = solution [2];
 		my parameters [3].value = c;
 		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
@@ -377,116 +450,131 @@ static void modelLinearTrendWithSigmoid (DataModeler me, double *out_lambda, dou
 /*
 	Function: y(x) = b / (1 + exp (- (x - mu) / sigma))
 	Model: z(x) = A * f1(x) + b * f2(x) + C * f3(x), where 
-		f1 (x)= integral (0, x, y(x)dx, f2 (x) = x * y(x), f3 = y (x),
+		z (x)= y (x) * ln (y (x)), f1 (x) = integral (0, x, y(x)dx), f2 (x) = x * y (x), f3 = y (x),
 		A = -1 / (lambda * sigma), B = 1 / sigma, C = ln (lambda) - ln (1 + exp ((mu - x1) / sigma))
 	Non-iterative solution according to  Jean Jacquelin (2009), Régressions et équations intégrales, https://fr.scribd.com/doc/14674814/Regressions-et-equations-integrales,
 	pages 16-17.
 	Precondition: x [i] must be increasing.
 */
 void sigmoid_fit (DataModeler me) {
-	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [2].status == kDataModelerParameterStatus::FIXED_ &&
-		my parameters [3].status == kDataModelerParameterStatus::FIXED_)
-			return;
 	autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
 	autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
-	double lambda, mu, sigma;
-	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
-		/*
-			Model: z(x) = C * f3 (x), where z(x)= y(x)*ln(y(x)) + f1 (x) / (lambda * sigma) - f2 (x) / sigma
-		*/
-		autoMAT design = zero_MAT (my numberOfDataPoints, 1);
-		lambda = my parameters [1].value;
-		sigma = my parameters [3].value;
-		double sk = 0.0, x1 = my data [1].x;
-		double xkm1 = 0.0, ykm1 = 0.0;
-		integer index = 0;
-		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			if (my data [k] .status != kDataModelerData::INVALID) {
-				const double xk = my data [k].x - x1, yk = my data [k].y;
-				const double f2x = xk * yk;
-				sk += 0.5 * (yk + ykm1) * (xk - xkm1);
-				const double f1x = yk * sk;
-				design [++ index] [1] = yk * weights [k];
-				yEstimate [index] = (yk * log (yk) + f1x / (lambda * sigma) - f2x / sigma) * weights [k];
-				xkm1 = xk;
-				ykm1 = yk;
+	double lambda = my parameters [1].value;
+	double mu = my parameters [2].value;
+	double sigma = my parameters [3].value;
+	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_) {
+		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
+			if (my parameters [3].status == kDataModelerParameterStatus::FIXED_)
+				return;
+			/*
+				Model: z(X)*ln(z(X) = A * f5 (X) + B * f6 (X), where f5 (X) = z (X) * X - z (X) * integral (x[1], X, z(x)dx)), 
+				f6 (X) = y (X), z(X) = y (X) / lambda and X[k] = x[k] - mu - x1
+				A = 1 / sigma, B = ln (y (x1))
+			*/
+			autoMAT design = zero_MAT (my numberOfDataPoints, 2);
+			long double sk = 0.0, x1 = my data [1].x ; // no need to subtract mu!
+			double xkm1 = 0.0, ykm1 = 0.0;
+			integer index = 0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (my data [k] .status != kDataModelerData::INVALID) {
+					const long double xk = my data [k].x, yk = my data [k].y / lambda;
+					sk += 0.5 * (yk + ykm1) * (xk - xkm1); // invariant under translations in x
+					const double f1x = yk * sk;
+					const double f2x = (xk - mu - x1) * yk; // X[k]
+					design [++ index] [1] = (f2x - f1x) * weights [k];
+					design [index] [2] = yk * weights [k];
+					yEstimate [index] = yk * log (yk) * weights [k];
+					xkm1 = xk;
+					ykm1 = yk;
+				}
 			}
-		}
-		design.resize (index, 1);
-		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
-		const double lnarg = lambda * exp (-solution [1]) - 1.0;
-		if (lnarg > 0)
-			mu = x1 + sigma * log (lnarg);
-		else
-			mu = undefined;
-	} else if (my parameters [2].status == kDataModelerParameterStatus::FIXED_ && my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
-		/*
-			Model: y(x) = E * f4 (x), where f4(x) = 1 /(1 + exp (- (x - mu) / sigma))
-		*/
-		autoMAT design = zero_MAT (my numberOfDataPoints, 1);
-		mu = my parameters [2].value;
-		sigma = my parameters [3].value;
-		integer index = 0;
-		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			if (my data [k] .status != kDataModelerData::INVALID) {
-				const double yk = my data [k].y, xk = my data [k].x;
-				const double f4x = 1.0 / (1.0 + exp (- (xk - mu) / sigma));
-				design [++ index] [1] = f4x * weights [k];
-				yEstimate [index] = yk * weights [k];
+			design.resize (index, 2);
+			yEstimate.resize (index);
+			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+			sigma = 1.0 /solution [1];
+		} else if (my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
+			/*
+				Model: z(X)*ln(z(X) = C * f3 (X), where z(X)= y(X)/lambda + f1 (X) / sigma - f2 (X) / sigma, X [l] = x[k] - x1
+			*/
+			autoMAT design = zero_MAT (my numberOfDataPoints, 1);
+			long double sk = 0.0, x1 = my data [1].x;
+			long double xkm1 = 0.0, ykm1 = 0.0;
+			integer index = 0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (my data [k] .status != kDataModelerData::INVALID) {
+					const long double xk = my data [k].x, yk = my data [k].y / lambda;
+					sk += 0.5 * (yk + ykm1) * (xk - xkm1); // xk - xkm1 ==  X[k]-X[k-1]
+					const double f1x = yk * sk;
+					const double f2x = (xk - x1) * yk;
+					design [++ index] [1] = yk * weights [k];
+					yEstimate [index] = (yk * log (yk) + f1x / sigma - f2x / sigma) * weights [k];
+					xkm1 = xk;
+					ykm1 = yk;
+				}
 			}
-		}
-		design.resize (index, 1);
-		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
-		lambda = solution [1];
-	} else if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
-		/*
-			Model: z(X)= A * f5 (X) + B * f6 (X), where f5 (X) = z (X) * X - z (X) * integral (x[1], X, y(x)dx)), 
-			f6 (X) = y (X), z(X) = y (X) * ln (y (X) and X = x - mu - x[1]
-			A = 1 / sigma, B = ln (y (x1))
-		*/
-		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
-		lambda = my parameters [1].value;
-		mu = my parameters [2].value;
-		double sk = 0.0, x1 = my data [1].x ; // no need to subtract mu!
-		double xkm1 = 0.0, ykm1 = 0.0;
-		integer index = 0;
-		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			if (my data [k] .status != kDataModelerData::INVALID) {
-				const double xk = my data [k].x, yk = my data [k].y;
-				sk += 0.5 * (yk + ykm1) * (xk - xkm1); // invariant under translations in x
-				const double f1x = yk * sk;
-				const double f2x = (xk - mu - x1) * yk; // mu because of 
-				design [++ index] [1] = (f2x - f1x) * weights [k];
-				design [++ index] [2] = yk * weights [k];
-				yEstimate [index] = yk * log (yk) * weights [k];
-				xkm1 = xk;
-				ykm1 = yk;
+			design.resize (index, 1);
+			yEstimate.resize (index);
+			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+			const double lnarg = exp (-solution [1]) - 1.0;
+			if (lnarg > 0)
+				mu = x1 + sigma * log (lnarg);
+			else
+				mu = undefined;
+		} else {
+			/*
+				Model: z*ln(z) = A * f4(X) + B * f3 (X), where z(X) = y(X) / lambda, f4(X)= -f1(X) + f2(X), f3 (X) = z(X), A = 1/sigma, B = - ln (1+exp(-(mu - x1)/sigma)) and X[k] = x [k] - x [1].
+			*/
+			autoMAT design = zero_MAT (my numberOfDataPoints, 2);
+			long double sk = 0.0, x1 = my data [1].x;
+			long double xkm1 = 0.0, ykm1 = 0.0;
+			integer index = 0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (my data [k] .status != kDataModelerData::INVALID) {
+					const long double xk = my data [k].x, yk = my data [k].y / lambda;
+					sk += 0.5 * (yk + ykm1) * (xk - xkm1);
+					const double f1x = yk * sk;
+					const double f2x = (xk - x1) * yk;
+					design [++ index] [1] = (f2x - f1x) * weights [k];
+					design [index] [2] = yk * weights [k]; // f3
+					yEstimate [index] = yk * log (yk) * weights [k];
+					xkm1 = xk;
+					ykm1 = yk;
+				}
 			}
+			design.resize (index, 2);
+			yEstimate.resize (index);
+			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+			sigma = 1.0 / solution [1];
+			const double lnarg = exp (-solution [2]) - 1.0;
+			if (lnarg > 0)
+				mu = x1 + sigma * log (lnarg);
+			else
+				mu = undefined;
 		}
-		design.resize (index, 2);
-		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
-		sigma = 1 /solution [1];
+	} else if (my parameters [2].status == kDataModelerParameterStatus::FIXED_ &&
+		my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
+			/*
+				Model: y(x) = E * f4 (x), where f4(x) = 1 /(1 + exp (- (x - mu) / sigma))
+			*/
+			autoMAT design = zero_MAT (my numberOfDataPoints, 1);
+			integer index = 0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (my data [k] .status != kDataModelerData::INVALID) {
+					const double yk = my data [k].y, xk = my data [k].x;
+					const double f4x = 1.0 / (1.0 + exp (- (xk - mu) / sigma));
+					design [++ index] [1] = f4x * weights [k];
+					yEstimate [index] = yk * weights [k];
+				}
+			}
+			design.resize (index, 1);
+			yEstimate.resize (index);
+			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+			lambda = solution [1];
 	} else if (my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
 		/*
 			Model: z(x) = A * f1 (x) + C * f3(x), where z(x) = y(x)*ln(y(x)) - f2 (x) / sigma
 		*/
 		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
-		sigma = my parameters [3].value;
 		double sk = 0.0, x1 = my data [1].x;
 		double xkm1 = 0.0, ykm1 = 0.0;
 		integer index = 0;
@@ -505,49 +593,9 @@ void sigmoid_fit (DataModeler me) {
 		}
 		design.resize (index, 2);
 		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 		sigma = my parameters [3].value;
 		lambda = -1.0 / (solution [1] * sigma);
-		const double lnarg = lambda * exp (-solution [2]) - 1.0;
-		if (lnarg > 0)
-			mu = x1 + sigma * log (lnarg);
-		else
-			mu = undefined;
-	} else if (my parameters [1].status == kDataModelerParameterStatus::FIXED_) {
-		/*
-			Model: z(x) = D*f4(x) + C * f3 (x), where f4(x)= -f1(x)/lambda + f2(x) and D = 1/lambda, z(x) = y*ln(y)
-		*/
-		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
-		lambda = my parameters [1].value;
-		double sk = 0.0, x1 = my data [1].x;
-		double xkm1 = 0.0, ykm1 = 0.0;
-		integer index = 0;
-		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			if (my data [k] .status != kDataModelerData::INVALID) {
-				const double xk = my data [k].x - x1, yk = my data [k].y;
-				sk += 0.5 * (yk + ykm1) * (xk - xkm1);
-				const double f1x = yk * sk;
-				const double f2x = xk * yk;
-				const double f4x = - f1x / lambda + f2x;
-				design [++ index] [1] = f4x * weights [k];
-				design [index] [3] = yk * weights [k];
-				yEstimate [index] = yk * log (yk) * weights [k];
-				xkm1 = xk;
-				ykm1 = yk;
-			}
-		}
-		design.resize (index, 2);
-		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
-		sigma = -1.0 / solution [1];
 		const double lnarg = lambda * exp (-solution [2]) - 1.0;
 		if (lnarg > 0)
 			mu = x1 + sigma * log (lnarg);
@@ -558,15 +606,15 @@ void sigmoid_fit (DataModeler me) {
 			Model: z(x) =  A * f1 (x) + B * f2(x) + C * f3(x), where z(x) = y(x)*ln(y(x))
 		*/
 		autoMAT design = zero_MAT (my numberOfDataPoints, 3);
-		double sk = 0.0, x1 = my data [1].x;
-		double xkm1 = 0.0, ykm1 = 0.0;
+		long double sk = 0.0, x1 = my data [1].x;
+		long double xkm1 = 0.0, ykm1 = 0.0;
 		integer index = 0;
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k] .status != kDataModelerData::INVALID) {
-				const double xk = my data [k].x - x1, yk = my data [k].y;
+				const long double xk = my data [k].x, yk = my data [k].y;
 				sk += 0.5 * (yk + ykm1) * (xk - xkm1);
 				const double f1x = yk * sk;
-				const double f2x = xk * yk;
+				const double f2x = (xk - x1) * yk;
 				design [++ index] [1] = f1x * weights [k];
 				design [index] [2] = f2x * weights [k];
 				design [index] [3] = yk * weights [k];
@@ -577,20 +625,18 @@ void sigmoid_fit (DataModeler me) {
 		}
 		design.resize (index, 3);
 		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 		sigma = 1.0 / solution [2];
 		lambda = - solution [2] / solution [1];
-		my parameters [1].value = lambda;
-		const double lnarg = lambda * exp (-solution [3]) - 1.0;
-		if (lnarg > 0)
-			mu = x1 + sigma * log (lnarg);
-		else {
-			modelLinearTrendWithSigmoid (me, & lambda, & sigma);
-			mu = 0.5 * (my xmin + my xmax);
+		if (my parameters [2].status != kDataModelerParameterStatus::FIXED_) {
+			my parameters [1].value = lambda;
+			const double lnarg = lambda * exp (-solution [3]) - 1.0;
+			if (lnarg > 0)
+				mu = x1 + sigma * log (lnarg);
+			else {
+				modelLinearTrendWithSigmoid (me, & lambda, & sigma);
+				mu = 0.5 * (my xmin + my xmax);
+			}
 		}
 	}
 	my parameters [1].value = lambda;
@@ -656,11 +702,7 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 		}
 		design.resize (index, 4);
 		yEstimate.resize (index);
-		autoSVD svd = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (svd.get(), ( my tolerance > 0.0 ? my tolerance : my numberOfDataPoints * NUMfpp -> eps ));
-		autoVEC solution = SVD_solve (svd.get(), yEstimate.get());
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 		const double a = solution [1], b = solution [2];
 		const double c = solution [3], d = solution [4];
 		double gamma, lambda, mu, sigma;
@@ -714,10 +756,10 @@ void series_fit (DataModeler me) {
 		const integer numberOfValidDataPoints = DataModeler_getNumberOfValidDataPoints (me);
 		if (numberOfValidDataPoints - numberOfFreeParameters < 0)
 			return;
-		autoVEC yEstimation = zero_VEC (numberOfValidDataPoints);
+		autoVEC yEstimate = zero_VEC (numberOfValidDataPoints);
 		autoVEC term = zero_VEC (my numberOfParameters);
 		autovector<structDataModelerParameter> fixedParameters = newvectorcopy (my parameters.all());
-		autoMAT designMatrix = zero_MAT (numberOfValidDataPoints, numberOfFreeParameters);
+		autoMAT design = zero_MAT (numberOfValidDataPoints, numberOfFreeParameters);
 		autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
 		/*
 			For function evaluation with only the FIXED parameters
@@ -748,25 +790,22 @@ void series_fit (DataModeler me) {
 				my f_evaluateBasisFunctions (me, xi, term.get());
 				for (integer icol = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++)
 					if (my parameters [ipar] .status == kDataModelerParameterStatus::FREE)
-						designMatrix [idata] [icol ++] = term [ipar] * weights [ipoint];
+						design [idata] [icol ++] = term [ipar] * weights [ipoint];
 				/*
 					Only 'residual variance' must be explained by the model
 				*/
-				yEstimation [idata ++] = (yi - yFixed)  * weights [ipoint];
+				yEstimate [idata ++] = (yi - yFixed)  * weights [ipoint];
 			}
 		}
-		autoSVD thee = SVD_createFromGeneralMatrix (designMatrix.get());
-		if (! NUMfpp)
-			NUMmachar ();
-		SVD_zeroSmallSingularValues (thee.get(), ( my tolerance > 0.0 ? my tolerance : numberOfValidDataPoints * NUMfpp -> eps ));
-		autoVEC parameters = SVD_solve (thee.get(), yEstimation.get());
+		autoMAT covar;
+		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), & covar);
 		/*
 			Put the calculated parameters at the correct position in 'my parameters'
 		*/
 		Covariance cov = my parameterCovariances.get();
 		for (integer kpar = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 			if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_)
-				my parameters [ipar] .value = parameters [kpar ++];
+				my parameters [ipar] .value = solution [kpar ++];
 			cov -> centroid [ipar] = my parameters [ipar] .value;
 		}
 		cov -> numberOfObservations = numberOfValidDataPoints;
@@ -774,19 +813,18 @@ void series_fit (DataModeler me) {
 			Estimate covariances between parameters
 		*/
 		if (numberOfFreeParameters < my numberOfParameters) {
-			autoMAT covtmp = SVD_getSquared (thee.get(), true);
 			cov -> data.all() <<= 0.0; // Set fixed parameters variances and covariances to zero.
 			for (integer irow = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 				if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_) {
 					for (integer icol = 1, jpar = 1; jpar <= my numberOfParameters; jpar ++) {
 						if (my parameters [jpar] .status != kDataModelerParameterStatus::FIXED_)
-							cov -> data [ipar] [jpar] = covtmp [irow] [icol ++];
+							cov -> data [ipar] [jpar] = covar [irow] [icol ++];
 					}
 					irow ++;
 				}
 			}
 		} else {
-			SVD_getSquared_preallocated (thee.get(), true, cov -> data.get());
+			my parameterCovariances -> data = covar.move();
 		}
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");

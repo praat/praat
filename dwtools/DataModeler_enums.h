@@ -35,7 +35,7 @@ enums_end (kDataModelerFunction, 7, LEGENDRE)
 enums_begin (kDataModelerParameterStatus, 1)
 	enums_add (kDataModelerParameterStatus, 1, FREE, U"Free")
 	enums_add (kDataModelerParameterStatus, 2, FIXED_, U"Fixed")
-	enums_add (kDataModelerParameterStatus, 3, FIXED_EXTRA, U"Fixed")
+	enums_add (kDataModelerParameterStatus, 3, FIXED_EXTRA, U"Fixed extra")
 	enums_add (kDataModelerParameterStatus, 4, NOT_DEFINED, U"Undefined")
 enums_end (kDataModelerParameterStatus, 4, NOT_DEFINED)
 
