@@ -665,20 +665,67 @@ void sigmoid_fit (DataModeler me) {
 	Precondition: x[i] are increasing order.
 */
 void sigmoid_plus_constant_fit (DataModeler me) {
+	double gamma = my parameters [1].value, lambda = my parameters [2].value;
+	double mu = my parameters [3].value, sigma = my parameters [4].value;
 	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_) {
 		/*
-			Model z(x) = lambda / (1 + exp (- (x - mu) / sigma)) where z(x) = y(x) - a.
+			Model z(x) = lambda / (1 + exp (- (x - mu) / sigma)) where z(x) = y(x) - gamma.
 		*/
 		autoDataModeler thee = DataModeler_createFromDataModeler (me, 3, kDataModelerFunction::SIGMOID);
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k] .status != kDataModelerData::INVALID) {
-				thy data[k].y -= my parameters [1].value;
+				thy data[k].y -= gamma;
 			}
 		}
 		DataModeler_fit (thee.get());
-		my parameters [2].value = thy parameters  [1].value;
-		my parameters [3].value = thy parameters  [2].value;
-		my parameters [4].value = thy parameters  [3].value;
+		lambda = thy parameters [1].value;
+		mu = thy parameters [2].value;
+		sigma = thy parameters [3].value;
+	} else if (my parameters [3].status == kDataModelerParameterStatus::FIXED_ && 
+		my parameters [4].status == kDataModelerParameterStatus::FIXED_) {
+		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
+			/*
+				Model: z(x) = gamma, where z(x) = y(x) - lambda / (1 + exp (- (x - mu)/ sigma))
+			*/
+			autoMAT design = raw_MAT (my numberOfDataPoints, 1);
+			autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+			autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
+			integer index = 0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (my data [k] .status != kDataModelerData::INVALID) {
+					const long double xk = my data [k].x, yk = my data [k].y;
+					const double fx = lambda / (1 + exp (- (xk - mu) / sigma));
+					design [++ index] [1] = 1.0 * weights [k];
+					yEstimate [index] = (yk - fx) * weights [k];
+				}
+			}
+			design.resize (index, 1);
+			yEstimate.resize (index);
+			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+			gamma = solution [1];
+		} else {
+			/*
+				Model: y(x) = gamma  + lambda * f(x), where f(x) = 1 / (1 + exp (-(x -mu)/sigma))
+			*/
+			autoMAT design = raw_MAT (my numberOfDataPoints, 2);
+			autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
+			autoVEC weights = DataModeler_getDataPointsWeights (me, my weighData);
+			integer index = 0;
+			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
+				if (my data [k] .status != kDataModelerData::INVALID) {
+					const long double xk = my data [k].x, yk = my data [k].y;
+					const double fx = 1.0 / (1 + exp (- (xk - mu) / sigma));
+					design [++ index] [1] = 1.0 * weights [k];
+					design [index] [2] = fx * weights [k];
+					yEstimate [index] = yk * weights [k];
+				}
+			}
+			design.resize (index, 2);
+			yEstimate.resize (index);
+			autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
+			gamma = solution [1];
+			lambda = solution [2];
+		}
 	} else {
 		autoMAT design = raw_MAT (my numberOfDataPoints, 4);
 		autoVEC yEstimate = raw_VEC (my numberOfDataPoints);
@@ -687,8 +734,7 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 		integer index = 0;
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k] .status != kDataModelerData::INVALID) {
-				const long double xk = my data [k].x;
-				const long double yk = my data [k].y;
+				const long double xk = my data [k].x, yk = my data [k].y;
 				s1k += 0.5 * (yk + ykm1) * (xk - xkm1);
 				s2k += 0.5 * (yk * yk + ykm1 * ykm1) * (xk - xkm1);
 				design [++ index] [1] = s2k * weights [k];
@@ -705,41 +751,55 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 		autoVEC solution = DataModeler_solveDesign (me, design.get(), yEstimate.get(), nullptr);
 		const double a = solution [1], b = solution [2];
 		const double c = solution [3], d = solution [4];
-		double gamma, lambda, mu, sigma;
-		const double dissq = b * b - 4.0 * a * c;
-		bool modelFitIsBad = true;
-		if (dissq > 0.0) {
-			const double dis = sqrt (dissq);
-			const double lambda1 = dis / a, gamma1 = (-b - dis) / (2.0 * a), sigma1 = - 1.0 / dis;
-			const double lambda2 = -dis / a, gamma2 = (-b + dis) / (2.0 * a), sigma2 = 1.0 / dis;
-			const double lnarg1 = lambda1 / (d - gamma1) - 1.0, lnarg2 = lambda2 / (d - gamma2) - 1.0;
-			modelFitIsBad = false;
-			if (lnarg1 > 0.0) {
-				gamma = gamma1;
-				lambda = lambda1;
-				mu = x1 + sigma1 * log (lnarg1);
-				sigma = sigma1;
-			} else if (lnarg2 > 0.0) {
-				gamma = gamma2;
-				lambda = lambda2;
-				mu = x1 + sigma2 * log (lnarg2);
-				sigma = sigma2;
-			} else
-				modelFitIsBad = true;
-			if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // model fit is bad!
-				modelFitIsBad = true;
+		auto setMu = [&, d, x1] () -> double {
+			mu = undefined;
+			const double lnarg = lambda / (d - gamma) - 1.0;
+			if (lnarg > 0.0)
+				mu = x1 + sigma * log (lnarg);
+			return mu;
+		};
+		if (my parameters [2].status == kDataModelerParameterStatus::FIXED_) {
+			sigma = - 1.0 / (a * lambda);
+			gamma = 0.5 * lambda * (sigma * b - 1.0);
+			if (my parameters [3].status != kDataModelerParameterStatus::FIXED_)
+				setMu ();
+		} if (my parameters [4].status == kDataModelerParameterStatus::FIXED_) {
+			lambda = - 1.0 / (a * sigma);
+			gamma = 0.5 * lambda * (sigma * b - 1.0);
+			setMu ();
+		} else {
+			const double dissq = b * b - 4.0 * a * c;
+			bool modelFitIsBad = true;
+			if (dissq > 0.0) {
+				const double dis = sqrt (dissq);
+				modelFitIsBad = false;
+				lambda = dis / a; 
+				gamma = (-b - dis) / (2.0 * a);
+				sigma = - 1.0 / dis;
+				if (my parameters [3].status != kDataModelerParameterStatus::FIXED_) {
+					if (! isdefined (setMu ())) {
+						lambda = -dis / a;
+						gamma = (-b + dis) / (2.0 * a);
+						sigma = 1.0 / dis;
+						if (! isdefined (setMu ()))
+							modelFitIsBad = true;
+					}
+					if (DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr) < 0.0) // model fit is bad!
+						modelFitIsBad = true;
+				}
+			}
+			if (modelFitIsBad) {
+				modelLinearTrendWithSigmoid (me, & lambda, & sigma);
+				gamma = 0.0;
+				mu = 0.5 * (my xmin + my xmax);
+				my parameters [3].value = mu;
+			}
 		}
-		if (modelFitIsBad) {
-			modelLinearTrendWithSigmoid (me, & lambda, & sigma);
-			gamma = 0.0;
-			mu = 0.5 * (my xmin + my xmax);
-			my parameters [3].value = mu;
-		}
-		my parameters [1].value = gamma;
-		my parameters [2].value = lambda;
-		my parameters [3].value = mu;
-		my parameters [4].value = sigma;
 	}
+	my parameters [1].value = gamma;
+	my parameters [2].value = lambda;
+	my parameters [3].value = mu;
+	my parameters [4].value = sigma;
 	/*
 		error propagation ?
 	*/
