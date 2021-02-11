@@ -1,6 +1,6 @@
 /* TextGridNavigator.cpp
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,9 +125,9 @@ Thing_implement (TextGridNavigator, Function, 0);
 void structTextGridNavigator :: v_info () {
 	const integer navigationTierNumber = TextGridNavigator_getTierNumberFromContextNumber (this, 1);
 	integer navigationTierSize;
-	for (integer icontext = 1; icontext <= tierNavigationContext.size; icontext ++) {
+	for (integer icontext = 1; icontext <= tierNavigationContexts.size; icontext ++) {
 		const integer tierNumber = TextGridNavigator_getTierNumberFromContextNumber (this, icontext);
-		const TierNavigationContext tnc = our tierNavigationContext.at [icontext];
+		const TierNavigationContext tnc = our tierNavigationContexts.at [icontext];
 		const Function anyTier = our textgrid -> tiers -> at [tierNumber];
 		const integer tierSize = tnc -> v_getSize (anyTier);
 		if (icontext == 1)
@@ -164,10 +164,10 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 }
 
 static bool TextGridNavigator_isNavigatableTierInUse (TextGridNavigator me, integer tierNumber) {
-	if (my tierNavigationContext.size == 0)
+	if (my tierNavigationContexts.size == 0)
 		return false;
-	for (integer icontext = 1; icontext <= my tierNavigationContext. size; icontext ++)
-		if (my tierNavigationContext. at [icontext] -> tierNumber == tierNumber)
+	for (integer icontext = 1; icontext <= my tierNavigationContexts. size; icontext ++)
+		if (my tierNavigationContexts. at [icontext] -> tierNumber == tierNumber)
 			return true;
 	return false;
 }
@@ -181,13 +181,13 @@ void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationCon
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
 		TextGridNavigator_checkNavigatableTierIsNotInUse (me, tierNumber);
-		autoTierNavigationContext tierNavigationContext;
+		autoTierNavigationContext tierNavigationContexts;
 		if (my textgrid -> tiers -> at [tierNumber] -> classInfo == classIntervalTier)
-			tierNavigationContext = IntervalTierNavigationContext_create (thee, tierNumber);
+			tierNavigationContexts = IntervalTierNavigationContext_create (thee, tierNumber);
 		else
-			tierNavigationContext = TextTierNavigationContext_create (thee, tierNumber);
-		tierNavigationContext -> matchCriterion = matchCriterion;
-		my tierNavigationContext.addItem_move (tierNavigationContext.move());
+			tierNavigationContexts = TextTierNavigationContext_create (thee, tierNumber);
+		tierNavigationContexts -> matchCriterion = matchCriterion;
+		my tierNavigationContexts.addItem_move (tierNavigationContexts.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add navigation context ", thee, U".");
 	}
@@ -197,30 +197,30 @@ void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee) {
 	try {
 		Melder_require (thy tiers -> size == my textgrid -> tiers -> size,
 			U"The TextGrid should have the same number of tiers as the one you want to replace (", my textgrid -> tiers->size, U").");
-		for (integer icontext = 1; icontext <= my tierNavigationContext. size; icontext ++) {
-			const TierNavigationContext navigationContext = my tierNavigationContext. at [icontext];
+		for (integer icontext = 1; icontext <= my tierNavigationContexts. size; icontext ++) {
+			const TierNavigationContext navigationContext = my tierNavigationContexts. at [icontext];
 			const integer tierNumber = navigationContext -> tierNumber;
 			Melder_require (thy tiers -> at [tierNumber] -> classInfo == my textgrid -> tiers -> at [tierNumber] -> classInfo, 
 				U"The TextGrid should have the same kind of tiers at the same positions as the original you want to replace ");
 		}
 		my textgrid = Data_copy (thee);
 		
-		my tierNavigationContext. at [1] -> current = 0; // offLeft
+		my tierNavigationContexts. at [1] -> current = 0; // offLeft
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot reset with ", thee, U".");
 	}
 }
 
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer contextNumber) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContext . size,
-		U"The context number should be between 1 and ", my tierNavigationContext . size, U".)");
-	return my tierNavigationContext . at [contextNumber] -> tierNumber;
+	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts . size,
+		U"The context number should be between 1 and ", my tierNavigationContexts . size, U".)");
+	return my tierNavigationContexts . at [contextNumber] -> tierNumber;
 }
 
 integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
-	for (integer icontext = 1; icontext <= my tierNavigationContext . size; icontext ++) {
-		const TierNavigationContext tnc = my tierNavigationContext . at [icontext];
+	for (integer icontext = 1; icontext <= my tierNavigationContexts . size; icontext ++) {
+		const TierNavigationContext tnc = my tierNavigationContexts . at [icontext];
 		if (tnc -> tierNumber == tierNumber)
 			return tierNumber;
 	}
@@ -231,7 +231,7 @@ void TextGridNavigator_modifyNavigationContextCriterions (TextGridNavigator me, 
 	const integer contextNumber = TextGridNavigator_getContextNumberFromTierNumber (me, tierNumber);
 	Melder_require (contextNumber > 0,
 		U"The tier number you specified has no navigation. ");
-	const TierNavigationContext tnc = my tierNavigationContext . at [contextNumber];
+	const TierNavigationContext tnc = my tierNavigationContexts . at [contextNumber];
 	const bool hasLeftContext = ( tnc -> leftContextLabels && tnc ->  leftContextLabels -> strings.size > 0 );
 	const bool hasRightContext = ( tnc -> rightContextLabels && tnc -> rightContextLabels -> strings.size > 0 );
 	if (combinationCriterion == kContext_combination::LEFT)
@@ -256,7 +256,7 @@ void TextGridNavigator_modifyLeftAndRightContextRange (TextGridNavigator me, int
 	const integer contextNumber = TextGridNavigator_getContextNumberFromTierNumber (me, tierNumber);
 	Melder_require (contextNumber > 0,
 		U"The tier number you specified has no navigation. ");
-	TierNavigationContext tnc = my tierNavigationContext .at [contextNumber];
+	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
 	Melder_require (leftContextFrom > 0 &&  leftContextTo > 0,
 		U"The left context interval distance should be positive.");
 	Melder_require (rightContextFrom > 0 && rightContextTo > 0,
@@ -271,7 +271,7 @@ void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNu
 	const integer contextNumber = TextGridNavigator_getContextNumberFromTierNumber (me, tierNumber);
 	Melder_require (contextNumber > 0,
 		U"The tier number you specified has no navigation. ");
-	TierNavigationContext tnc = my tierNavigationContext . at [contextNumber];
+	TierNavigationContext tnc = my tierNavigationContexts . at [contextNumber];
 	tnc -> maximumLookAhead = maximumLookAhead;
 	tnc -> maximumLookBack = maximumLookBack;
 }
@@ -380,16 +380,16 @@ integer Tier_getNumberOfMatches(Function me, TierNavigationContext tnc) {
 }
 
 integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, integer icontext) {
-	Melder_require (icontext > 0 && icontext <= my tierNavigationContext.size,
-		U"The context number should be between 1 and ", my tierNavigationContext.size, U".");
-	const TierNavigationContext tnc = my tierNavigationContext . at [icontext];
+	Melder_require (icontext > 0 && icontext <= my tierNavigationContexts.size,
+		U"The context number should be between 1 and ", my tierNavigationContexts.size, U".");
+	const TierNavigationContext tnc = my tierNavigationContexts . at [icontext];
 	const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	const integer numberOfMatches = Tier_getNumberOfMatches (anyTier, tnc);
 	return numberOfMatches;
 }
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me) {
-	const TierNavigationContext tnc = my tierNavigationContext . at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts . at [1];
 	const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	integer numberOfMatches = 0;
 	for (integer index = 1; index <= tnc -> v_getSize (anyTier); index ++)
@@ -399,11 +399,11 @@ integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me) {
 }
 
 bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNavigationTier) {
-	const TierNavigationContext tnc1 = my tierNavigationContext . at [1];
+	const TierNavigationContext tnc1 = my tierNavigationContexts . at [1];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc1 -> tierNumber];
 	if (! Tier_isLabelMatch (navigationTier, indexInNavigationTier, tnc1))
 			return false;
-	if (my tierNavigationContext.size == 1)
+	if (my tierNavigationContexts.size == 1)
 		return true;
 	/*
 		We have a match at the navigation tier, now check the subordinate tiers
@@ -411,8 +411,8 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 	const double leftTime = tnc1 -> v_getLeftTime (navigationTier, indexInNavigationTier);
 	const double rightTime = tnc1 -> v_getRightTime (navigationTier, indexInNavigationTier);
 	const double midTime = 0.5 * (leftTime + rightTime);
-	for (integer icontext = 2; icontext <= my tierNavigationContext . size; icontext ++) {
-		const TierNavigationContext tnc = my tierNavigationContext . at [icontext];
+	for (integer icontext = 2; icontext <= my tierNavigationContexts . size; icontext ++) {
+		const TierNavigationContext tnc = my tierNavigationContexts . at [icontext];
 		const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 		const integer referenceIndex = tnc -> v_getIndexFromTime (anyTier, midTime);
 		const integer tierSize = tnc -> v_getSize (anyTier);
@@ -535,7 +535,7 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 }
 
 static integer TextGridNavigator_setCurrentAtTime (TextGridNavigator me, double time) {
-	const TierNavigationContext tnc = my tierNavigationContext. at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts. at [1];
 	const Function anyTier = my textgrid -> tiers-> at [tnc -> tierNumber];	
 	const integer index = tnc -> v_getIndexFromTime (anyTier, time);
 	tnc -> current = index;
@@ -543,7 +543,7 @@ static integer TextGridNavigator_setCurrentAtTime (TextGridNavigator me, double 
 }
 
 integer TextGridNavigator_next (TextGridNavigator me) {
-	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts.at [1];
 	const Function anyTier = my textgrid -> tiers-> at [tnc -> tierNumber];
 	const integer current = tnc -> current;
 	for (integer index = current + 1; index <= tnc -> v_getSize (anyTier); index ++) {
@@ -561,7 +561,7 @@ integer TextGridNavigator_getNextMatchAfterTime (TextGridNavigator me, double ti
 }
 
 integer TextGridNavigator_previous (TextGridNavigator me) {
-	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts.at [1];
 	const integer current = tnc -> current;
 	for (integer index = current - 1; index > 0; index --) {
 		if (TextGridNavigator_isLabelMatch (me, index)) {
@@ -578,19 +578,19 @@ integer TextGridNavigator_getPreviousMatchBeforeTime (TextGridNavigator me, doub
 }
 
 double TextGridNavigator_getCurrentStartTime (TextGridNavigator me) {
-	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts.at [1];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	return tnc -> v_getLeftTime (navigationTier, tnc -> current);
 }
 
 double TextGridNavigator_getCurrentEndTime (TextGridNavigator me) {
-	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts.at [1];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	return tnc -> v_getRightTime (navigationTier, tnc -> current);
 }
 
 conststring32 TextGridNavigator_getCurrentLabel (TextGridNavigator me) {
-	const TierNavigationContext tnc = my tierNavigationContext.at [1];
+	const TierNavigationContext tnc = my tierNavigationContexts.at [1];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	return tnc -> v_getLabel (navigationTier, tnc -> current);
 }

@@ -1,6 +1,6 @@
 /* TextGridNavigator_def.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ oo_END_CLASS (TierNavigationContext)
 oo_DEFINE_CLASS (TextGridNavigator, Function)
 
 	oo_OBJECT (TextGrid, 0, textgrid)
-	oo_COLLECTION_OF (OrderedOf, tierNavigationContext, TierNavigationContext, 0)
+	oo_COLLECTION_OF (OrderedOf, tierNavigationContexts, TierNavigationContext, 0)
 
 	#if oo_DECLARING
 		void v_info ()
