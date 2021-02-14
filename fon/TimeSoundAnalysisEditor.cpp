@@ -151,7 +151,7 @@ static const conststring32 TimeSoundAnalysisEditor_partString_locative (int part
 static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *tmin, double *tmax) {
 	if (my endWindow - my startWindow > my p_longestAnalysis)
 		Melder_throw (U"Window too long to show analyses. Zoom in to at most ", Melder_half (my p_longestAnalysis), U" seconds "
-			U"or set the \"longest analysis\" to at least ", Melder_half (my endWindow - my startWindow), U" seconds.");
+			U"or set the \"longest analysis\" to at least ", Melder_half (my endWindow - my startWindow), U" seconds (with \"Show analyses\" in the View menu).");
 	if (my startSelection == my endSelection) {
 		if (allowCursor) {
 			*tmin = *tmax = my startSelection;

@@ -92,10 +92,12 @@ void operator<<= (_autostringvectorview <T> const& target, _autostringvectorview
 
 template <typename T>
 class _autostringautovector {
-	integer _capacity = 0;
 public:
-	_autostring <T> * elements;
-	integer size;
+	_autostring <T> * elements;   // Because of DataEditor, this has to be the first field...
+	integer size;   // ... and this the second...
+private:
+	integer _capacity = 0;   // ... and this the third.
+public:
 	_autostringautovector () {
 		our elements = nullptr;
 		our size = 0;
