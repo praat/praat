@@ -64,7 +64,7 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 		return index;
 	}
 	
-	double v_getLeftTime (Function anyTier, integer index) override {
+	double v_getStartTime (Function anyTier, integer index) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		if (index < 1 || index > my intervals.size)
 			return undefined;
@@ -72,7 +72,7 @@ Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 		return interval -> xmin;
 	}
 		
-	double v_getRightTime (Function anyTier, integer index) override {
+	double v_getEndTime (Function anyTier, integer index) override {
 		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
 		if (index < 1 || index > my intervals.size)
 			return undefined;
@@ -111,7 +111,7 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 		return index;
 	}
 	
-	double v_getLeftTime (Function anyTier, integer index) override {
+	double v_getStartTime (Function anyTier, integer index) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		if (index < 1 || index > my points.size)
 			return undefined;
@@ -119,7 +119,7 @@ Thing_define (TextTierNavigationContext, TierNavigationContext) {
 		return point -> number;
 	}
 	
-	double v_getRightTime (Function anyTier, integer index) override {
+	double v_getEndTime (Function anyTier, integer index) override {
 		TextTier me = reinterpret_cast<TextTier> (anyTier);
 		if (index < 1 || index > my points.size)
 			return undefined;
@@ -149,16 +149,16 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 	Suppose we have an interval on the navigation tier that matches. Its domain is [tmin, tmax] 
 	(a TextPoint has tmin == tmax). The potential match in the tier we add has domain [tmin2, tmax2].
 	Constraint:					Relation between matched domains:
-	IS_LEFT						tmax2 <= tmin
-	TOUCHES_LEFT				tmax2 == tmin
-	OVERLAPS_LEFT				tmin2 < tmin && tmax2 <= tmax
+	IS_BEFORE						tmax2 <= tmin
+	TOUCHES_BEFORE				tmax2 == tmin
+	OVERLAPS_BEFORE				tmin2 < tmin && tmax2 <= tmax
 	INSIDE						tmin2 >= tmin && tmax2 <= tmax
-	OVERLAPS_RIGHT				tmin2 >= tmin && tmax2 > tmax
-	TOUCHES_RIGHT				tmin2 == tmax
-	IS_RIGHT					tmin2 >= tmax
-	IS_OUTSIDE					tmax2 <= tmin || tmin2 >= tmax  (IS_LEFT || IS_RIGHT)
-	OVERLAPS_LEFT_AND_RIGHT		tmin2 < tmin && tmax2 > tmax
-	TOUCHES_LEFT_AND_RIGHT		tmin2 == tmin && tmax2 == tmax
+	OVERLAPS_AFTER				tmin2 >= tmin && tmax2 > tmax
+	TOUCHES_AFTER				tmin2 == tmax
+	IS_AFTER					tmin2 >= tmax
+	IS_OUTSIDE					tmax2 <= tmin || tmin2 >= tmax  (IS_BEFORE || IS_AFTER)
+	OVERLAPS_BEFORE_AND_AFTER		tmin2 < tmin && tmax2 > tmax
+	TOUCHES_BEFORE_AND_AFTER		tmin2 == tmin && tmax2 == tmax
 */
 void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_match matchCriterion);
 
@@ -181,27 +181,26 @@ integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, 
 
 integer TextGridNavigator_getCurrentFromTime (TextGridNavigator me, double time);
 
-integer TextGridNavigator_next (TextGridNavigator me);
+integer TextGridNavigator_locateNext (TextGridNavigator me);
 
-integer TextGridNavigator_getNextMatchAfterTime (TextGridNavigator me, double time);
+integer TextGridNavigator_locateNextAfterTime (TextGridNavigator me, double time);
 
-integer TextGridNavigator_previous (TextGridNavigator me);
+integer TextGridNavigator_locatePrevious (TextGridNavigator me);
 
-integer TextGridNavigator_getPreviousMatchBeforeTime (TextGridNavigator me, double time);
+integer TextGridNavigator_locatePreviousBeforeTime (TextGridNavigator me, double time);
 
-double TextGridNavigator_getCurrentStartTime (TextGridNavigator me);
+integer TextGridNavigator_getIndex (TextGridNavigator me, integer contextNumber, kContext_where where);
+double TextGridNavigator_getStartTime (TextGridNavigator me, integer contextNumber, kContext_where where);
+conststring32 TextGridNavigator_getLabel (TextGridNavigator me, integer contextNumber, kContext_where where);
+double TextGridNavigator_getEndTime (TextGridNavigator me, integer contextNumber, kContext_where where);
 
-double TextGridNavigator_getCurrentEndTime (TextGridNavigator me);
-
-static inline integer TextGridNavigator_getFirstMatch (TextGridNavigator me) {
-	return TextGridNavigator_getNextMatchAfterTime (me, my xmin - 0.1);
+static inline integer TextGridNavigator_locateFirst (TextGridNavigator me) {
+	return TextGridNavigator_locateNextAfterTime (me, my xmin - 0.1);
 }
 
-static inline integer TextGridNavigator_getLastMatch (TextGridNavigator me) {
-	return TextGridNavigator_getPreviousMatchBeforeTime (me, my xmax + 0.1);
+static inline integer TextGridNavigator_locateLast (TextGridNavigator me) {
+	return TextGridNavigator_locatePreviousBeforeTime (me, my xmax + 0.1);
 }
-
-conststring32 TextGridNavigator_getCurrentLabel (TextGridNavigator me);
 
 integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc);
 

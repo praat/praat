@@ -26,7 +26,7 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string navigationCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string leftContextCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string rightContextCriterion, kContext_combination combinationCriterion, bool contextOnly);
+autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string topicCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string beforeCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string afterCriterion, kContext_combination combinationCriterion, bool contextOnly);
 
 autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string criterion);
 

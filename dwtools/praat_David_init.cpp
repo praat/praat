@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2020 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2021 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4283,29 +4283,29 @@ DO
 }
 
 FORM (MODIFY_NavigationContext_modifyNavigationLabels, U"NavigationContext: Modify navigation labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
-		NavigationContext_modifyNavigationLabels (me, you, navigationCriterion);
+		NavigationContext_modifyNavigationLabels (me, you, topicCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
 FORM (MODIFY_NavigationContext_modifyLeftContextLabels, U"NavigationContext: Modify left context labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Left context criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
-		NavigationContext_modifyLeftContextLabels (me, you, leftContextCriterion);
+		NavigationContext_modifyLeftContextLabels (me, you, beforeCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
 FORM (MODIFY_NavigationContext_modifyRightContextLabels, U"NavigationContext: modify right context labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"Right context criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"Right context criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
-		NavigationContext_modifyRightContextLabels (me, you, rightContextCriterion);
+		NavigationContext_modifyRightContextLabels (me, you, afterCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -6548,19 +6548,19 @@ FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
 	WORD (name, U"Name: ", U"plosive_vowel_nasal")
 	WORD (navigationName, U"Name of navigation labels", U"vowels")
 	TEXTFIELD (navigation_string, U"Navigation labels", U"i u e o \\as ")
-	OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"navigation criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"navigation criterion", kMelder_string::DEFAULT)
 	WORD (leftContextName, U"Name of left context labels", U"plosives")
 	TEXTFIELD (leftContext_string, U"Left context labels", U"p b t d k g")
-	OPTIONMENU_ENUM (kMelder_string, leftContextCriterion, U"Left context criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Left context criterion", kMelder_string::DEFAULT)
 	WORD (rightContextName, U"Name of right context labels", U"nasals")
 	TEXTFIELD (rightContext_string, U"Right context labels", U"m n")
-	OPTIONMENU_ENUM (kMelder_string, rightContextCriterion, U"right context criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::LEFT_AND_RIGHT)
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"right context criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::BEFORE_AND_AFTER)
 	BOOLEAN (contextOnly, U"Use context only", false)
 	OK
 DO
 	CREATE_ONE
-		autoNavigationContext result = NavigationContext_create (name, navigationName, navigation_string, navigationCriterion, leftContextName, leftContext_string, leftContextCriterion, rightContextName, rightContext_string, rightContextCriterion, combinationCriterion, contextOnly);
+		autoNavigationContext result = NavigationContext_create (name, navigationName, navigation_string, topicCriterion, leftContextName, leftContext_string, beforeCriterion, rightContextName, rightContext_string, afterCriterion, combinationCriterion, contextOnly);
 	CREATE_ONE_END (name)
 }
 
@@ -6647,11 +6647,11 @@ DO
 }
 
 FORM (NEW_Strings_to_NavigationContext, U"Strings: To NavigationContext", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, navigationCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Strings)
-		autoNavigationContext result = Strings_to_NavigationContext (me, navigationCriterion);
+		autoNavigationContext result = Strings_to_NavigationContext (me, topicCriterion);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -7814,57 +7814,91 @@ DO
 	CONVERT_TWO_END (my name.get())
 }
 
-FORM (INTEGER_TextGridNavigator_getNextMatchAfterTime, U"", nullptr) {
+FORM (MODIFY_TextGridNavigator_locateNextAfterTime, U"TextGridNavigator: Locate next after time", nullptr) {
 	REAL (time, U"Time (s)", U"-1.0")
 	OK
 DO
-	INTEGER_ONE (TextGridNavigator)
-		integer result = TextGridNavigator_getNextMatchAfterTime (me, time);
-	INTEGER_ONE_END (U"")
+	MODIFY_EACH (TextGridNavigator)
+		(void) TextGridNavigator_locateNextAfterTime (me, time);
+	MODIFY_EACH_END
 }
 
-FORM (INTEGER_TextGridNavigator_getPreviousMatchBeforeTime, U"", nullptr) {
+FORM (MODIFY_TextGridNavigator_locatePreviousBeforeTime, U"TextGridNavigator: Locate previous before time", nullptr) {
 	REAL (time, U"Time (s)", U"10.0")
 	OK
 DO
-	INTEGER_ONE (TextGridNavigator)
-		integer result = TextGridNavigator_getPreviousMatchBeforeTime (me, time);
-	INTEGER_ONE_END (U"")
+	MODIFY_EACH (TextGridNavigator)
+		(void) TextGridNavigator_locatePreviousBeforeTime (me, time);
+	MODIFY_EACH_END
 }
 
-DIRECT (INTEGER_TextGridNavigator_getFirstMatch) {
-	INTEGER_ONE (TextGridNavigator)
-		double  result = TextGridNavigator_getFirstMatch (me);
-	INTEGER_ONE_END (U"")
+DIRECT (MODIFY_TextGridNavigator_locateFirst) {
+	MODIFY_EACH (TextGridNavigator)
+		(void) TextGridNavigator_locateFirst (me);
+	MODIFY_EACH_END
 }
 
-DIRECT (INTEGER_TextGridNavigator_getLastMatch) {
-	INTEGER_ONE (TextGridNavigator)
-		double  result = TextGridNavigator_getLastMatch (me);
-	INTEGER_ONE_END (U"")
+DIRECT (MODIFY_TextGridNavigator_locateLast) {
+	MODIFY_EACH (TextGridNavigator)
+		(void) TextGridNavigator_locateLast (me);
+	MODIFY_EACH_END
 }
 
-DIRECT (REAL_TextGridNavigator_getCurrentStartTime) {
+DIRECT (MODIFY_TextGridNavigator_locateNext) {
+	MODIFY_EACH (TextGridNavigator)
+		(void) TextGridNavigator_locateNext (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_TextGridNavigator_locatePrevious) {
+	MODIFY_EACH (TextGridNavigator)
+		(void) TextGridNavigator_locatePrevious (me);
+	MODIFY_EACH_END
+}
+
+FORM (REAL_TextGridNavigator_getStartTime, U"TextGridNavigator: Get start time", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
+	OK
+DO
 	NUMBER_ONE (TextGridNavigator)
-		double  result = TextGridNavigator_getCurrentStartTime (me);
+		double  result = TextGridNavigator_getStartTime (me, contextNumber, where);
 	NUMBER_ONE_END (U" s (start time)")
 }
 
-DIRECT (REAL_TextGridNavigator_getCurrentEndTime) {
+FORM (REAL_TextGridNavigator_getEndTime, U"TextGridNavigator: Get end time", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
+	OK
+DO
 	NUMBER_ONE (TextGridNavigator)
-		double  result = TextGridNavigator_getCurrentEndTime (me);
+		double  result = TextGridNavigator_getEndTime (me, contextNumber, where);
 	NUMBER_ONE_END (U" s (end time)")
 }
 
-DIRECT (INFO_TextGridNavigator_getCurrentLabel) {
+FORM (INTEGER_TextGridNavigator_getIndex, U"TextGridNavigator: Get index", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
+	OK
+DO
+	INTEGER_ONE (TextGridNavigator)
+		integer  result = TextGridNavigator_getIndex (me, contextNumber, where);
+	INTEGER_ONE_END (U"")
+}
+
+FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
+	OK
+DO
 	STRING_ONE (TextGridNavigator)
-		conststring32 result = TextGridNavigator_getCurrentLabel (me);
+		conststring32 result = TextGridNavigator_getLabel (me, contextNumber, where);
 	STRING_ONE_END
 }
 
 FORM (MODIFY_TextGridNavigator_addNavigationContext, U"TextGrid & NavigationContext: Add navigation context", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kNavigatableTier_match, matchCriterion, U"Timing relation with navigation match", kNavigatableTier_match::DEFAULT)
+	OPTIONMENU_ENUM (kNavigatableTier_match, matchCriterion, U"Timing relation", kNavigatableTier_match::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
@@ -9088,13 +9122,19 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_NavigationContext_to_TextGridNavigator);
 	
-	praat_addAction1 (classTextGridNavigator, 1, U"Get first match", nullptr, 0, INTEGER_TextGridNavigator_getFirstMatch);
-	praat_addAction1 (classTextGridNavigator, 1, U"Get last match", nullptr, 0, INTEGER_TextGridNavigator_getLastMatch);
-	praat_addAction1 (classTextGridNavigator, 1, U"Get next match after time...", nullptr, 0, INTEGER_TextGridNavigator_getNextMatchAfterTime);
-	praat_addAction1 (classTextGridNavigator, 1, U"Get previous match before time...", nullptr, 0, INTEGER_TextGridNavigator_getPreviousMatchBeforeTime);
-	praat_addAction1 (classTextGridNavigator, 1, U"Get current start time", nullptr, 0, REAL_TextGridNavigator_getCurrentStartTime);
-	praat_addAction1 (classTextGridNavigator, 1, U"Get current end time", nullptr, 0, REAL_TextGridNavigator_getCurrentEndTime);
-	praat_addAction1 (classTextGridNavigator, 1, U"Get current label", nullptr, 0, INFO_TextGridNavigator_getCurrentLabel);
+	praat_addAction1 (classTextGridNavigator, 0, U"Locate first", nullptr, 0, MODIFY_TextGridNavigator_locateFirst);
+	praat_addAction1 (classTextGridNavigator, 0, U"Locate last", nullptr, 0, MODIFY_TextGridNavigator_locateLast);
+	praat_addAction1 (classTextGridNavigator, 0, U"Locate next", nullptr, 0, MODIFY_TextGridNavigator_locateNext);
+	praat_addAction1 (classTextGridNavigator, 0, U"Locate next after time...", nullptr, 0, MODIFY_TextGridNavigator_locateNextAfterTime);
+	praat_addAction1 (classTextGridNavigator, 0, U"Locate previous", nullptr, 0, MODIFY_TextGridNavigator_locatePrevious);
+	praat_addAction1 (classTextGridNavigator, 0, U"Locate previous before time...", nullptr, 0, MODIFY_TextGridNavigator_locatePreviousBeforeTime);
+	
+	praat_addAction1 (classTextGridNavigator, 0, QUERY_BUTTON, nullptr, 0, nullptr);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get start time...", nullptr, 1, REAL_TextGridNavigator_getStartTime);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get label...", nullptr, 1, INFO_TextGridNavigator_getLabel);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get end time...", nullptr, 1, REAL_TextGridNavigator_getEndTime);
+	praat_addAction1 (classTextGridNavigator, 1, U"Get index...", nullptr, 1, INTEGER_TextGridNavigator_getIndex);
+	praat_addAction1 (classTextGridNavigator, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Add navigation context...", nullptr, 0, MODIFY_TextGridNavigator_addNavigationContext);
 	

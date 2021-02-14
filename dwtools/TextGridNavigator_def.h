@@ -37,8 +37,8 @@ oo_DEFINE_CLASS (TierNavigationContext, NavigationContext)
 			override;
 		virtual integer v_getSize (Function tier);
 		virtual integer v_getIndexFromTime (Function tier, double time);
-		virtual double v_getLeftTime (Function tier, integer index);
-		virtual double v_getRightTime (Function tier, integer index);
+		virtual double v_getStartTime (Function tier, integer index);
+		virtual double v_getEndTime (Function tier, integer index);
 		virtual conststring32 v_getLabel (Function tier, integer index);
 	#endif
 

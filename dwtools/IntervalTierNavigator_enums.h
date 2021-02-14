@@ -17,13 +17,13 @@
  */
 
 enums_begin (kContextCombination, 1)
-	enums_add (kContextCombination, 1, LEFT, U"left")
-	enums_add (kContextCombination, 2, RIGHT, U"right")
-	enums_add (kContextCombination, 3, LEFT_AND_RIGHT, U"left and right")
-	enums_add (kContextCombination, 4, LEFT_OR_RIGHT_NOT_BOTH, U"left or right, not both")
-	enums_add (kContextCombination, 5, LEFT_OR_RIGHT_OR_BOTH, U"left or right or both")
-	enums_add (kContextCombination, 6, NO_LEFT_AND_NO_RIGHT, U"no left and no right")
-enums_end (kContextCombination, 6, NO_LEFT_AND_NO_RIGHT)
+	enums_add (kContextCombination, 1, BEFORE, U"left")
+	enums_add (kContextCombination, 2, AFTER, U"right")
+	enums_add (kContextCombination, 3, BEFORE_AND_AFTER, U"left and right")
+	enums_add (kContextCombination, 4, BEFORE_OR_AFTER_NOT_BOTH, U"left or right, not both")
+	enums_add (kContextCombination, 5, BEFORE_OR_AFTER_OR_BOTH, U"left or right or both")
+	enums_add (kContextCombination, 6, NO_BEFORE_AND_NO_AFTER, U"no left and no right")
+enums_end (kContextCombination, 6, NO_BEFORE_AND_NO_AFTER)
 
 
 /* End of file IntervalTierNavigator_enums.h */

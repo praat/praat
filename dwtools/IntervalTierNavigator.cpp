@@ -29,20 +29,20 @@ Thing_implement (IntervalTierNavigator, Function, 0);
 
 void structIntervalTierNavigator :: v_info () {
 	MelderInfo_writeLine (U"Navigation:");
-	if (navigationLabels) {
-		MelderInfo_writeLine (U"\tName: ", navigationLabels -> name.get());
-		MelderInfo_writeLine (U"\tNumber of labels: ", navigationLabels -> strings.size);
-		if (leftContextLabels) {
-			MelderInfo_writeLine (U"\tLeft context name: ", leftContextLabels -> name.get());
-			MelderInfo_writeLine (U"\tLeft criterion: ", kMelder_string_getText (leftContextCriterion));
-			MelderInfo_writeLine (U"\tNumber of left context labels: ", leftContextLabels -> strings.size);
+	if (topicLabels) {
+		MelderInfo_writeLine (U"\tName: ", topicLabels -> name.get());
+		MelderInfo_writeLine (U"\tNumber of labels: ", topicLabels -> strings.size);
+		if (beforeLabels) {
+			MelderInfo_writeLine (U"\tLeft context name: ", beforeLabels -> name.get());
+			MelderInfo_writeLine (U"\tLeft criterion: ", kMelder_string_getText (beforeCriterion));
+			MelderInfo_writeLine (U"\tNumber of left context labels: ", beforeLabels -> strings.size);
 		} else {
 			MelderInfo_writeLine (U"\tNo left context navigation labels defined");
 		}
-		if (rightContextLabels) {
-			MelderInfo_writeLine (U"\tRight context name: ", rightContextLabels -> name.get());
-			MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (rightContextCriterion));
-			MelderInfo_writeLine (U"\tNumber of right context labels: ", rightContextLabels -> strings.size);
+		if (afterLabels) {
+			MelderInfo_writeLine (U"\tRight context name: ", afterLabels -> name.get());
+			MelderInfo_writeLine (U"\tRight criterion: ", kMelder_string_getText (afterCriterion));
+			MelderInfo_writeLine (U"\tNumber of right context labels: ", afterLabels -> strings.size);
 		} else {
 			MelderInfo_writeLine (U"\tNo right context navigation labels defined");
 		}
@@ -84,54 +84,54 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me) {
 }
 
 
-void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion) {
+void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings topicLabels, kMelder_string criterion) {
 	try {
-		my navigationLabels = Data_copy (navigationLabels);
-		Thing_setName (my navigationLabels.get(), navigationLabels -> name.get());
-		my navigationCriterion = criterion;
-		my contextCombination = kContextCombination::NO_LEFT_AND_NO_RIGHT;
+		my topicLabels = Data_copy (topicLabels);
+		Thing_setName (my topicLabels.get(), topicLabels -> name.get());
+		my topicCriterion = criterion;
+		my contextCombination = kContextCombination::NO_BEFORE_AND_NO_AFTER;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot set navigation labels from ", navigationLabels, U".");
+		Melder_throw (me, U": cannot set navigation labels from ", topicLabels, U".");
 	}
 }
 
-void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion) {
+void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings beforeLabels, kMelder_string criterion) {
 	try {
-		my leftContextLabels = Data_copy (leftContextLabels);
-		Thing_setName (my leftContextLabels.get(), leftContextLabels -> name.get());
-		my leftContextCriterion = criterion;
-		my contextCombination = kContextCombination::LEFT;
+		my beforeLabels = Data_copy (beforeLabels);
+		Thing_setName (my beforeLabels.get(), beforeLabels -> name.get());
+		my beforeCriterion = criterion;
+		my contextCombination = kContextCombination::BEFORE;
 		my lookBackFrom = 1;
 		my lookBackTo = 1;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot set left context labels from ", leftContextLabels, U".");
+		Melder_throw (me, U": cannot set left context labels from ", beforeLabels, U".");
 	}
 }
 
-void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion) {
+void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings afterLabels, kMelder_string criterion) {
 	try {
-		my rightContextLabels = Data_copy (rightContextLabels);
-		Thing_setName (my rightContextLabels.get(), rightContextLabels -> name.get());
-		my rightContextCriterion = criterion;
-		my contextCombination = kContextCombination::RIGHT;
+		my afterLabels = Data_copy (afterLabels);
+		Thing_setName (my afterLabels.get(), afterLabels -> name.get());
+		my afterCriterion = criterion;
+		my contextCombination = kContextCombination::AFTER;
 		my lookForwardFrom = 1;
 		my lookForwardTo = 1;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot set right context labels from ", rightContextLabels, U".");
+		Melder_throw (me, U": cannot set right context labels from ", afterLabels, U".");
 	}
 }
 
 void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, integer lookBackFrom, integer lookBackTo, integer lookForwardFrom, integer lookForwardTo, kContextCombination contextCombination, bool matchContextOnly) {
-	bool hasLeftContext = ( my leftContextLabels && my leftContextLabels -> strings.size > 0 );
-	bool hasRightContext = ( my rightContextLabels && my rightContextLabels -> strings.size > 0 );
-	if (contextCombination == kContextCombination::LEFT)
+	bool hasLeftContext = ( my beforeLabels && my beforeLabels -> strings.size > 0 );
+	bool hasRightContext = ( my afterLabels && my afterLabels -> strings.size > 0 );
+	if (contextCombination == kContextCombination::BEFORE)
 		Melder_require (hasLeftContext,
 			U"For this option you should have left context labels installed.");
-	if (contextCombination == kContextCombination::RIGHT)
+	if (contextCombination == kContextCombination::AFTER)
 		Melder_require (hasRightContext,
 			U"For this option you should have right context labels installed.");
-	if (contextCombination == kContextCombination::LEFT_AND_RIGHT || contextCombination == kContextCombination::LEFT_OR_RIGHT_NOT_BOTH || 
-		contextCombination == kContextCombination::LEFT_OR_RIGHT_OR_BOTH)
+	if (contextCombination == kContextCombination::BEFORE_AND_AFTER || contextCombination == kContextCombination::BEFORE_OR_AFTER_NOT_BOTH || 
+		contextCombination == kContextCombination::BEFORE_OR_AFTER_OR_BOTH)
 		Melder_require (hasLeftContext && hasRightContext,
 			U"For this option you should have left and right context labels installed.");
 	if (matchContextOnly)
@@ -174,11 +174,11 @@ bool STRVEChasMatch (constSTRVEC const& labels, kMelder_string criterion, consts
 
 static bool IntervalTierNavigator_isNavigationMatch (IntervalTierNavigator me, integer intervalNumber) {
 	conststring32 label = my intervalTier -> intervals . at [intervalNumber] -> text.get();
-	return ( my navigationLabels && STRVEChasMatch (my navigationLabels -> strings.get(), my navigationCriterion, label) );
+	return ( my topicLabels && STRVEChasMatch (my topicLabels -> strings.get(), my topicCriterion, label) );
 }
 
 static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, integer intervalNumber) {
-	if (! my leftContextLabels)
+	if (! my beforeLabels)
 		return false;
 	if (intervalNumber - my lookBackFrom < 1)
 		return false;
@@ -186,14 +186,14 @@ static bool IntervalTierNavigator_isLeftContextMatch (IntervalTierNavigator me, 
 	integer endInterval = std::max (1_integer, intervalNumber - my lookBackTo);
 	for (integer interval = startInterval; interval >= endInterval; interval --) {
 		conststring32 label = my intervalTier -> intervals . at [interval] -> text.get();
-		if (STRVEChasMatch (my leftContextLabels -> strings.get(), my leftContextCriterion, label))
+		if (STRVEChasMatch (my beforeLabels -> strings.get(), my beforeCriterion, label))
 			return true;
 	}
 	return false;
 }
 
 static bool IntervalTierNavigator_isRightContextMatch (IntervalTierNavigator me, integer intervalNumber) {
-	if (! my rightContextLabels)
+	if (! my afterLabels)
 		return false;
 	if (intervalNumber + my lookForwardFrom > my intervalTier -> intervals.size)
 		return false;
@@ -201,7 +201,7 @@ static bool IntervalTierNavigator_isRightContextMatch (IntervalTierNavigator me,
 	const integer endInterval = std::min (my intervalTier -> intervals.size, intervalNumber + my lookForwardTo);
 	for (integer interval = startInterval; interval <= endInterval; interval ++) {
 		conststring32 label = my intervalTier -> intervals . at [interval] -> text.get();
-		if (STRVEChasMatch (my rightContextLabels -> strings.get(), my rightContextCriterion, label))
+		if (STRVEChasMatch (my afterLabels -> strings.get(), my afterCriterion, label))
 			return true;
 	}
 	return false;
@@ -211,26 +211,26 @@ bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer inter
 	Melder_require (intervalNumber > 0 && intervalNumber <= my intervalTier -> intervals . size,
 		U"The interval number should be in the range from 1 to ",  my intervalTier -> intervals . size, U".");
 	const bool isNavigationMatch = ( my matchContextOnly ? true : IntervalTierNavigator_isNavigationMatch (me, intervalNumber) );
-	if (! isNavigationMatch || my contextCombination == kContextCombination::NO_LEFT_AND_NO_RIGHT)
+	if (! isNavigationMatch || my contextCombination == kContextCombination::NO_BEFORE_AND_NO_AFTER)
 		return isNavigationMatch;
 	
-	if (my contextCombination == kContextCombination::LEFT_AND_RIGHT)
+	if (my contextCombination == kContextCombination::BEFORE_AND_AFTER)
 		return ( IntervalTierNavigator_isLeftContextMatch (me, intervalNumber) &&
 			IntervalTierNavigator_isRightContextMatch (me, intervalNumber) );
-	else if (my contextCombination == kContextCombination::RIGHT)
+	else if (my contextCombination == kContextCombination::AFTER)
 		return IntervalTierNavigator_isRightContextMatch (me, intervalNumber);
-	else if (my contextCombination == kContextCombination::LEFT)
+	else if (my contextCombination == kContextCombination::BEFORE)
 		return IntervalTierNavigator_isLeftContextMatch (me, intervalNumber);
-	else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_OR_BOTH)
+	else if (my contextCombination == kContextCombination::BEFORE_OR_AFTER_OR_BOTH)
 		return ( IntervalTierNavigator_isLeftContextMatch (me, intervalNumber) ||
 			IntervalTierNavigator_isRightContextMatch (me, intervalNumber) );
-	else if (my contextCombination == kContextCombination::LEFT_OR_RIGHT_NOT_BOTH)
+	else if (my contextCombination == kContextCombination::BEFORE_OR_AFTER_NOT_BOTH)
 		return ( IntervalTierNavigator_isLeftContextMatch (me, intervalNumber)  == ! IntervalTierNavigator_isRightContextMatch (me, intervalNumber) );
 	return false;
 }
 
 integer IntervalTierNavigator_getNumberOfMatches (IntervalTierNavigator me) {
-	if (! my navigationLabels)
+	if (! my topicLabels)
 		return 0;
 	integer numberOfMatches = 0;
 	for (integer interval = 1; interval <= my intervalTier -> intervals . size; interval ++)
@@ -255,7 +255,7 @@ integer IntervalTierNavigator_getNavigationStartInterval (IntervalTierNavigator 
 }
 
 integer IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (IntervalTierNavigator me, integer intervalNumber) {
-	if (! my navigationLabels)
+	if (! my topicLabels)
 		return 0;
 	const integer startInterval = std::min (std::max (0_integer, intervalNumber), my intervalTier -> intervals .size + 1);
 	for (integer interval = startInterval + 1; interval <= my intervalTier -> intervals . size; interval ++)
@@ -265,7 +265,7 @@ integer IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (IntervalT
 }
 
 integer IntervalTierNavigator_getNextMatchingIntervalNumberFromTime (IntervalTierNavigator me, double time) {
-	if (! my navigationLabels)
+	if (! my topicLabels)
 		return 0;
 	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
 	return IntervalTierNavigator_getNextMatchingIntervalNumberFromNumber (me, startInterval);
@@ -280,7 +280,7 @@ TextInterval IntervalTierNavigator_getNextMatchingInterval (IntervalTierNavigato
 }
 
 integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (IntervalTierNavigator me, integer intervalNumber) {
-	if (! my navigationLabels)
+	if (! my topicLabels)
 		return 0;
 	const integer startInterval = std::min (std::max (0_integer, intervalNumber), my intervalTier -> intervals .size + 1);
 	for (integer interval = startInterval - 1; interval > 0; interval --)
@@ -290,7 +290,7 @@ integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (Inter
 }
 
 integer IntervalTierNavigator_getPreviousMatchingIntervalNumberFromTime (IntervalTierNavigator me, double time) {
-	if (! my navigationLabels)
+	if (! my topicLabels)
 		return 0;
 	integer startInterval = IntervalTierNavigator_getNavigationStartInterval (me, time);
 	return IntervalTierNavigator_getPreviousMatchingIntervalNumberFromNumber (me, startInterval);

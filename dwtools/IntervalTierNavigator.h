@@ -25,14 +25,14 @@
 
 Thing_define (IntervalTierNavigator, Function) {
 	IntervalTier intervalTier;
-	autoStrings leftContextLabels;
-	kMelder_string leftContextCriterion;
+	autoStrings beforeLabels;
+	kMelder_string beforeCriterion;
 	integer lookBackFrom, lookBackTo;
-	autoStrings rightContextLabels;
-	kMelder_string rightContextCriterion;
+	autoStrings afterLabels;
+	kMelder_string afterCriterion;
 	integer lookForwardFrom, lookForwardTo;
-	autoStrings navigationLabels;
-	kMelder_string navigationCriterion;
+	autoStrings topicLabels;
+	kMelder_string topicCriterion;
 	kContextCombination contextCombination;
 	bool matchContextOnly;
 	void v_info ()
@@ -51,7 +51,7 @@ autoIntervalTierNavigator IntervalTierNavigator_createEmpty (IntervalTier me);
 void IntervalTierNavigator_setBeginPosition (IntervalTierNavigator me, double time);
 
 static inline bool IntervalTierNavigator_isNavigationPossible (IntervalTierNavigator me) {
-	return my navigationLabels || my leftContextLabels || my rightContextLabels;
+	return my topicLabels || my beforeLabels || my afterLabels;
 }
 
 bool IntervalTierNavigator_isLabelMatch (IntervalTierNavigator me, integer intervalNumber);
@@ -69,11 +69,11 @@ TextInterval IntervalTierNavigator_getPreviousMatchingInterval (IntervalTierNavi
 bool IntervalTierNavigator_atMatchingEnd (IntervalTierNavigator me, double time);
 bool IntervalTierNavigator_atMatchingStart (IntervalTierNavigator me, double time);
 
-void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings navigationLabels, kMelder_string criterion);
+void IntervalTierNavigator_setNavigationLabels (IntervalTierNavigator me, Strings topicLabels, kMelder_string criterion);
 
-void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings leftContextLabels, kMelder_string criterion);
+void IntervalTierNavigator_setLeftContextNavigationLabels (IntervalTierNavigator me, Strings beforeLabels, kMelder_string criterion);
 
-void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings rightContextLabels, kMelder_string criterion);
+void IntervalTierNavigator_setRightContextNavigationLabels (IntervalTierNavigator me, Strings afterLabels, kMelder_string criterion);
 
 void IntervalTierNavigator_setNavigationContext (IntervalTierNavigator me, integer lookBackFrom, integer lookBackTo, integer lookForwardFrom, integer lookForwardTo, kContextCombination contextCombination, bool matchContextOnly);
 

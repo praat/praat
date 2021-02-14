@@ -19,14 +19,14 @@
 #define ooSTRUCT NavigationContext
 oo_DEFINE_CLASS (NavigationContext, Daata)
 
-	oo_OBJECT (Strings, 0, navigationLabels) // because oo_STRING_Vector needs size
-	oo_ENUM (kMelder_string, navigationCriterion)
+	oo_OBJECT (Strings, 0, topicLabels) // because oo_STRING_Vector needs size
+	oo_ENUM (kMelder_string, topicCriterion)
 	
-	oo_OBJECT (Strings, 0, leftContextLabels)
-	oo_ENUM (kMelder_string, leftContextCriterion)
+	oo_OBJECT (Strings, 0, beforeLabels)
+	oo_ENUM (kMelder_string, beforeCriterion)
 	
-	oo_OBJECT (Strings, 0, rightContextLabels)
-	oo_ENUM (kMelder_string, rightContextCriterion)	
+	oo_OBJECT (Strings, 0, afterLabels)
+	oo_ENUM (kMelder_string, afterCriterion)	
 	
 	oo_ENUM (kContext_combination, combinationCriterion)
 	oo_BOOLEAN (matchContextOnly)
