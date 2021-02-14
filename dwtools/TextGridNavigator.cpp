@@ -292,7 +292,7 @@ void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNu
 
 static bool Tier_isNavigationMatch (Function me, integer index, TierNavigationContext tnc) {
 	conststring32 label = tnc -> v_getLabel (me, index);
-	return NavigationContext_isNavigationLabel (tnc, label);
+	return NavigationContext_isTopicLabel (tnc, label);
 }
 
 static integer Tier_getBeforeIndex (Function me, integer index, TierNavigationContext tnc) {
@@ -304,7 +304,7 @@ static integer Tier_getBeforeIndex (Function me, integer index, TierNavigationCo
 	const integer endIndex = std::max (1_integer, index - tnc -> leftContextTo);
 	for (integer i = startIndex; i >= endIndex; i --) {
 		conststring32 label = tnc -> v_getLabel (me, i);
-		if (NavigationContext_isLeftContextLabel (tnc, label))
+		if (NavigationContext_isBeforeLabel (tnc, label))
 			return i;
 	}
 	return 0;
@@ -320,7 +320,7 @@ static integer Tier_getAfterIndex (Function me, integer index, TierNavigationCon
 	const integer endInterval = std::min (mySize, index + tnc -> rightContextTo);
 	for (integer i = startInterval; i <= endInterval; i ++) {
 		conststring32 label = tnc -> v_getLabel (me, i);
-		if (NavigationContext_isRightContextLabel (tnc, label))
+		if (NavigationContext_isAfterLabel (tnc, label))
 			return i;
 	}
 	return 0;
@@ -340,7 +340,7 @@ integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationCont
 	integer numberOfMatches = 0;
 	for (integer index = 1; index <= tnc -> v_getSize (me); index ++) {
 		conststring32 label = tnc -> v_getLabel (me, index);
-		if (NavigationContext_isRightContextLabel (tnc, label))
+		if (NavigationContext_isAfterLabel (tnc, label))
 			numberOfMatches ++;
 	}
 	return numberOfMatches;
@@ -352,7 +352,7 @@ integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationConte
 	integer numberOfMatches = 0;
 	for (integer index = 1; index <= tnc -> v_getSize (me); index ++) {
 		conststring32 label = tnc -> v_getLabel (me, index);
-		if (NavigationContext_isLeftContextLabel (tnc, label))
+		if (NavigationContext_isBeforeLabel (tnc, label))
 			numberOfMatches ++;
 	}
 	return numberOfMatches;
@@ -364,7 +364,7 @@ integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContex
 	integer numberOfMatches = 0;
 	for (integer index = 1; index <= tnc -> v_getSize (me); index ++) {
 		conststring32 label = tnc -> v_getLabel (me, index);
-		if (NavigationContext_isNavigationLabel (tnc, label))
+		if (NavigationContext_isTopicLabel (tnc, label))
 			numberOfMatches ++;
 	}
 	return numberOfMatches;

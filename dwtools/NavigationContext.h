@@ -2,7 +2,7 @@
 #define _NavigationContext_h_
 /* NavigationContext.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +30,17 @@ autoNavigationContext NavigationContext_create (conststring32 name, conststring3
 
 autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string criterion);
 
-void NavigationContext_modifyNavigationLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyTopicLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
-void NavigationContext_modifyLeftContextLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyBeforeLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
-void NavigationContext_modifyRightContextLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyAfterLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
-bool NavigationContext_isNavigationLabel (NavigationContext me, conststring32 label);
+bool NavigationContext_isTopicLabel (NavigationContext me, conststring32 label);
 
-bool NavigationContext_isLeftContextLabel (NavigationContext me, conststring32 label);
+bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label);
 
-bool NavigationContext_isRightContextLabel (NavigationContext me, conststring32 label);
+bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
 void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly);
 

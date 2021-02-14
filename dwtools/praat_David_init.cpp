@@ -4271,41 +4271,40 @@ DIRECT (HELP_MSpline_help) {
 	HELP (U"MSpline")
 }
 
-
 FORM (MODIFY_NavigationContext_modifyContextCombination, U"NavigationContext: Modify context combination", nullptr) {
 	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::DEFAULT)
-	BOOLEAN (contextOnly, U"Use context only", false)
+	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyContextCombination (me, combinationCriterion, contextOnly);
+		NavigationContext_modifyContextCombination (me, combinationCriterion, excludeTopic);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_NavigationContext_modifyNavigationLabels, U"NavigationContext: Modify navigation labels", nullptr) {
+FORM (MODIFY_NavigationContext_modifyTopicLabels, U"NavigationContext: Modify navigation labels", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
-		NavigationContext_modifyNavigationLabels (me, you, topicCriterion);
+		NavigationContext_modifyTopicLabels (me, you, topicCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_NavigationContext_modifyLeftContextLabels, U"NavigationContext: Modify left context labels", nullptr) {
+FORM (MODIFY_NavigationContext_modifyBeforeLabels, U"NavigationContext: Modify left context labels", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Left context criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
-		NavigationContext_modifyLeftContextLabels (me, you, beforeCriterion);
+		NavigationContext_modifyBeforeLabels (me, you, beforeCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_NavigationContext_modifyRightContextLabels, U"NavigationContext: modify right context labels", nullptr) {
+FORM (MODIFY_NavigationContext_modifyAfterLabels, U"NavigationContext: modify right context labels", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"Right context criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
-		NavigationContext_modifyRightContextLabels (me, you, afterCriterion);
+		NavigationContext_modifyAfterLabels (me, you, afterCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -6546,21 +6545,21 @@ DO
 
 FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
 	WORD (name, U"Name: ", U"plosive_vowel_nasal")
-	WORD (navigationName, U"Name of navigation labels", U"vowels")
-	TEXTFIELD (navigation_string, U"Navigation labels", U"i u e o \\as ")
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"navigation criterion", kMelder_string::DEFAULT)
-	WORD (leftContextName, U"Name of left context labels", U"plosives")
-	TEXTFIELD (leftContext_string, U"Left context labels", U"p b t d k g")
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Left context criterion", kMelder_string::DEFAULT)
-	WORD (rightContextName, U"Name of right context labels", U"nasals")
-	TEXTFIELD (rightContext_string, U"Right context labels", U"m n")
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"right context criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::BEFORE_AND_AFTER)
-	BOOLEAN (contextOnly, U"Use context only", false)
+	WORD (navigationName, U"Name of topic labels", U"vowels")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	WORD (beforeName, U"Name of before labels", U"plosives")
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	WORD (afterName, U"Name of after labels", U"nasals")
+	TEXTFIELD (after_string, U"After labels", U"m n")
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine before and after", kContext_combination::BEFORE_AND_AFTER)
+	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	CREATE_ONE
-		autoNavigationContext result = NavigationContext_create (name, navigationName, navigation_string, topicCriterion, leftContextName, leftContext_string, beforeCriterion, rightContextName, rightContext_string, afterCriterion, combinationCriterion, contextOnly);
+		autoNavigationContext result = NavigationContext_create (name, navigationName, topic_string, topicCriterion, beforeName, before_string, beforeCriterion, afterName, after_string, afterCriterion, combinationCriterion, excludeTopic);
 	CREATE_ONE_END (name)
 }
 
@@ -8750,9 +8749,9 @@ void praat_uvafon_David_init () {
 	praat_Spline_init (classMSpline);
 	
 	praat_addAction1 (classNavigationContext, 0, U"Modify context combination...", nullptr, 0, MODIFY_NavigationContext_modifyContextCombination);
-	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify navigation labels...", nullptr, 0, MODIFY_NavigationContext_modifyNavigationLabels);
-	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify left context labels...", nullptr, 0, MODIFY_NavigationContext_modifyLeftContextLabels);
-	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify right context labels...", nullptr, 0, MODIFY_NavigationContext_modifyRightContextLabels);
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify navigation labels...", nullptr, 0, MODIFY_NavigationContext_modifyTopicLabels);
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify left context labels...", nullptr, 0, MODIFY_NavigationContext_modifyBeforeLabels);
+	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify right context labels...", nullptr, 0, MODIFY_NavigationContext_modifyAfterLabels);
 
 	praat_addAction1 (classNMF, 0, U"NMF help", nullptr, 0, HELP_NMF_help);
 	praat_addAction1 (classNMF, 0, U"Paint features...", nullptr, 0, GRAPHICS_NMF_paintFeatures);
