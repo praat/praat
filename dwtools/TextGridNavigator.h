@@ -31,17 +31,20 @@
 	Each navigation context handles only one particular tier. By combining different navigation contexts we 
 	can construct searches that extend over multiple tiers. The simplest navigation context consists of only a single label that
 	has to be matched.
-	A somewhat more involved context has, instead of a single label, a set of labels where one of the set has to be matched. 
-	The most extensive navigation context involves right and a left context sets of labels, that have to be matched too.
+	A somewhat more involved context has, instead of a single label, a set of topic labels where one of the set has to be matched. 
+	The most extensive navigation context involves an After and a Before context set of labels, that have to be matched too.
 	
 	As an example consider a TextGrid with a tier whose intervals have been labeled with IPA symbols like /a, i, \ct, o, f, p etc/.
-	A very simple navigation context that consists of the navigiation set with IPA vowel symbols (u, i, a), a left context 
-	set with /b, p/ and a right context set with /f, s/ would find all vowels /u, e, a/ that are preceded by a /b/ or a /p/ and 
-	followed by a /f/ or and /s/ (if the match condition EQUALS were used).
-	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context on for this tier and 
-	combine it with the previous context to search for items that also match the syntactic context, etc
+	A very simple navigation context that consists of the navigiation set with IPA vowel symbols (u, i, a), a Before context 
+	set with /b, p/ and an After context set with /f, s/ would locate all vowels /u, e, a/ that are preceded by a /b/ or a /p/ and 
+	followed by a /f/ or and /s/ (if for all the matches the criterion "is equal to" is used).
+	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context for this tier and 
+	combine it with the previous context to search for items that also match the syntactic context, etc.
 */
 
+/*
+	We define two following classes so we don't need to separate between a TextTier and an IntervalTier anymore.
+*/
 Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
 	
 	void v_info ()
@@ -145,11 +148,11 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 
 /*
 	Add navigation context for a tier.
-	The locationCriterion determines how a matched location in this tier relates to a match on the topic tier.
-	Suppose we have an interval on the topic tier that matches. Its domain is [tmin, tmax] 
-	(a TextPoint has tmin == tmax). The potential match in the tier we add has domain [tmin2, tmax2].
+	The locationCriterion determines how a matched location in this tier relates to the matched location on the topic tier.
+	Suppose the interval on the topic tier that matched has domain [tmin, tmax].
+	(a TextPoint has tmin == tmax). The potential match in the tier in one of the other contexts has domain [tmin2, tmax2].
 	Constraint:					Relation between matched domains:
-	IS_BEFORE						tmax2 <= tmin
+	IS_BEFORE					tmax2 <= tmin
 	TOUCHES_BEFORE				tmax2 == tmin
 	OVERLAPS_BEFORE				tmin2 < tmin && tmax2 <= tmax
 	INSIDE						tmin2 >= tmin && tmax2 <= tmax
@@ -157,8 +160,8 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 	TOUCHES_AFTER				tmin2 == tmax
 	IS_AFTER					tmin2 >= tmax
 	IS_OUTSIDE					tmax2 <= tmin || tmin2 >= tmax  (IS_BEFORE || IS_AFTER)
-	OVERLAPS_BEFORE_AND_AFTER		tmin2 < tmin && tmax2 > tmax
-	TOUCHES_BEFORE_AND_AFTER		tmin2 == tmin && tmax2 == tmax
+	OVERLAPS_BEFORE_AND_AFTER	tmin2 < tmin && tmax2 > tmax
+	TOUCHES_BEFORE_AND_AFTER	tmin2 == tmin && tmax2 == tmax
 */
 void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_location locationCriterion);
 
@@ -182,8 +185,6 @@ integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me);
 
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer contextNumber);
 integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber);
-
-integer TextGridNavigator_getCurrentFromTime (TextGridNavigator me, double time);
 
 integer TextGridNavigator_locateNext (TextGridNavigator me);
 
