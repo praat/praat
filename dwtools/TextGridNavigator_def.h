@@ -20,17 +20,17 @@
 oo_DEFINE_CLASS (TierNavigationContext, NavigationContext)
 
 	oo_INTEGER (tierNumber)
-	oo_INTEGER (leftContextFrom)
-	oo_INTEGER (leftContextTo)
+	oo_INTEGER (beforeRangeFrom)
+	oo_INTEGER (beforeRangeTo)
 
-	oo_INTEGER (rightContextFrom)
-	oo_INTEGER (rightContextTo)
+	oo_INTEGER (afterRangeFrom)
+	oo_INTEGER (afterRangeTo)
 
-	oo_INTEGER (current)  // (offLeft) 0 <= current <= size + 1 : (offRight)
-	oo_INTEGER (maximumLookAhead) // don't go further than this number of steps from current
-	oo_INTEGER (maximumLookBack) // don't go back  more than this number of steps from current
+	oo_INTEGER (currentTopicIndex)  // (offLeft) 0 <= currentTopicIndex <= size + 1 : (offRight)
+	oo_INTEGER (maximumLookAhead) // don't go further than this number of steps from currentTopicIndex
+	oo_INTEGER (maximumLookBack) // don't go back  more than this number of steps from currentTopicIndex
 
-	oo_ENUM (kNavigatableTier_match, matchCriterion) // how does a 'match' in this tier relate to the navigation tier
+	oo_ENUM (kNavigatableTier_location, locationCriterion) // how does a match location in this tier relate to the topic tier
 
 	#if oo_DECLARING
 		void v_info ()

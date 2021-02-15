@@ -4270,18 +4270,18 @@ DIRECT (HELP_MSpline_help) {
 	HELP (U"MSpline")
 }
 
-FORM (MODIFY_NavigationContext_modifyContextCombination, U"NavigationContext: Modify context combination", nullptr) {
-	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine the contexts", kContext_combination::DEFAULT)
+FORM (MODIFY_NavigationContext_modifyUseCriterion, U"NavigationContext: Modify use criterion", nullptr) {
+	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Use criterion", kContext_use::DEFAULT)
 	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyContextCombination (me, combinationCriterion, excludeTopic);
+		NavigationContext_modifyUseCriterion (me, useCriterion, excludeTopic);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_NavigationContext_modifyTopicLabels, U"NavigationContext: Modify navigation labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
+FORM (MODIFY_NavigationContext_modifyTopicLabels, U"NavigationContext: Modify topic labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
@@ -4289,8 +4289,8 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_NavigationContext_modifyBeforeLabels, U"NavigationContext: Modify left context labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Left context criterion", kMelder_string::DEFAULT)
+FORM (MODIFY_NavigationContext_modifyBeforeLabels, U"NavigationContext: Modify before labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
@@ -4298,8 +4298,8 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_NavigationContext_modifyAfterLabels, U"NavigationContext: modify right context labels", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"Right context criterion", kMelder_string::DEFAULT)
+FORM (MODIFY_NavigationContext_modifyAfterLabels, U"NavigationContext: modify after labels", nullptr) {
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
@@ -6553,12 +6553,12 @@ FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
 	WORD (afterName, U"Name of after labels", U"nasals")
 	TEXTFIELD (after_string, U"After labels", U"m n")
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"How to combine before and after", kContext_combination::BEFORE_AND_AFTER)
+	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
 	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	CREATE_ONE
-		autoNavigationContext result = NavigationContext_create (name, navigationName, topic_string, topicCriterion, beforeName, before_string, beforeCriterion, afterName, after_string, afterCriterion, combinationCriterion, excludeTopic);
+		autoNavigationContext result = NavigationContext_create (name, navigationName, topic_string, topicCriterion, beforeName, before_string, beforeCriterion, afterName, after_string, afterCriterion, useCriterion, excludeTopic);
 	CREATE_ONE_END (name)
 }
 
@@ -6645,7 +6645,7 @@ DO
 }
 
 FORM (NEW_Strings_to_NavigationContext, U"Strings: To NavigationContext", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Navigation criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Strings)
@@ -7894,13 +7894,54 @@ DO
 	STRING_ONE_END
 }
 
+FORM (MODIFY_TextGridNavigator_modifyUseCriterion, U"TextGridNavigator: Modify Use criterion", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Use criterion", kContext_use::DEFAULT)
+	BOOLEAN (excludeTopic, U"Exclude topic", false)
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyUseCriterion (me, contextNumber, useCriterion, excludeTopic);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic criterion", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyTopicCriterion (me, contextNumber, topicCriterion);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before criterion", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyBeforeCriterion (me, contextNumber, beforeCriterion);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After criterion", nullptr) {
+	NATURAL (contextNumber, U"Context number", U"1")
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyAfterCriterion (me, contextNumber, afterCriterion);
+	MODIFY_EACH_END
+}
+
 FORM (MODIFY_TextGridNavigator_addNavigationContext, U"TextGrid & NavigationContext: Add navigation context", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kNavigatableTier_match, matchCriterion, U"Timing relation", kNavigatableTier_match::DEFAULT)
+	OPTIONMENU_ENUM (kNavigatableTier_location, locationCriterion, U"Timing relation", kNavigatableTier_location::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
-		TextGridNavigator_addNavigationContext (me, you, tierNumber, matchCriterion);
+		TextGridNavigator_addNavigationContext (me, you, tierNumber, locationCriterion);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -8747,7 +8788,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMSpline, 0, U"MSpline help", nullptr, 0, HELP_MSpline_help);
 	praat_Spline_init (classMSpline);
 	
-	praat_addAction1 (classNavigationContext, 0, U"Modify context combination...", nullptr, 0, MODIFY_NavigationContext_modifyContextCombination);
+	praat_addAction1 (classNavigationContext, 0, U"Modify use criterion...", nullptr, 0, MODIFY_NavigationContext_modifyUseCriterion);
 	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify navigation labels...", nullptr, 0, MODIFY_NavigationContext_modifyTopicLabels);
 	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify left context labels...", nullptr, 0, MODIFY_NavigationContext_modifyBeforeLabels);
 	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Modify right context labels...", nullptr, 0, MODIFY_NavigationContext_modifyAfterLabels);
@@ -9133,6 +9174,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 1, U"Get end time...", nullptr, 1, REAL_TextGridNavigator_getEndTime);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get index...", nullptr, 1, INTEGER_TextGridNavigator_getIndex);
 	praat_addAction1 (classTextGridNavigator, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify Use criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyUseCriterion);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyTopicCriterion);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyBeforeCriterion);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify After criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyAfterCriterion);
 	
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Add navigation context...", nullptr, 0, MODIFY_TextGridNavigator_addNavigationContext);
 	

@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (NavigationContext, Daata)
 	oo_OBJECT (Strings, 0, afterLabels)
 	oo_ENUM (kMelder_string, afterCriterion)	
 	
-	oo_ENUM (kContext_combination, combinationCriterion)
+	oo_ENUM (kContext_use, useCriterion)
 	oo_BOOLEAN (excludeTopicMatch)
 	
 	#if oo_DECLARING

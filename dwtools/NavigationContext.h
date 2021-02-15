@@ -26,7 +26,7 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string topicCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string beforeCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string afterCriterion, kContext_combination combinationCriterion, bool contextOnly);
+autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string topicCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string beforeCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string afterCriterion, kContext_use useCriterion, bool contextOnly);
 
 autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string criterion);
 
@@ -42,7 +42,7 @@ bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label)
 
 bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
-void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool excludeTopicMatch);
+void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch);
 
 
 #endif /* _NavigationContext_h_ */

@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 2 June 2020
+# 15 February 2021
 
 include ../makefile.defs
 

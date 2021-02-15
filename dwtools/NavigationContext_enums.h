@@ -16,14 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kContext_combination, 1)
-	enums_add (kContext_combination, 1, BEFORE, U"before")
-	enums_add (kContext_combination, 2, AFTER, U"after")
-	enums_add (kContext_combination, 3, BEFORE_AND_AFTER, U"before and after")
-	enums_add (kContext_combination, 4, BEFORE_OR_AFTER_NOT_BOTH, U"before or after, not both")
-	enums_add (kContext_combination, 5, BEFORE_OR_AFTER_OR_BOTH, U"before or after or both")
-	enums_add (kContext_combination, 6, NO_BEFORE_AND_NO_AFTER, U"no before and no after")
-enums_end (kContext_combination, 6, NO_BEFORE_AND_NO_AFTER) 
+enums_begin (kContext_use, 1)
+	enums_add (kContext_use, 1, BEFORE, U"before")
+	enums_add (kContext_use, 2, AFTER, U"after")
+	enums_add (kContext_use, 3, BEFORE_AND_AFTER, U"before and after")
+	enums_add (kContext_use, 4, BEFORE_OR_AFTER_NOT_BOTH, U"before or after, not both")
+	enums_add (kContext_use, 5, BEFORE_OR_AFTER_OR_BOTH, U"before or after or both")
+	enums_add (kContext_use, 6, NO_BEFORE_AND_NO_AFTER, U"no before and no after")
+enums_end (kContext_use, 6, NO_BEFORE_AND_NO_AFTER) 
 
 enums_begin (kContext_where, 1)
 	enums_add (kContext_where, 1, TOPIC, U"topic")
