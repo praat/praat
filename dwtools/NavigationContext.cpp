@@ -94,7 +94,7 @@ void structNavigationContext :: v_info () {
 		MelderInfo_writeLine (U"\tNo after labels defined");
 	}
 	MelderInfo_writeLine (U"\tBefore and after use: ", kContext_combination_getText (combinationCriterion));
-	MelderInfo_writeLine (U"\tNo topic, before and after only: ", ( matchContextOnly ? U"yes" : U"no" ));
+	MelderInfo_writeLine (U"\tExclude topic match: ", ( excludeTopicMatch ? U"yes" : U"no" ));
 }
 
 void NavigationContext_init (NavigationContext me) {
@@ -144,7 +144,7 @@ autoNavigationContext NavigationContext_create (conststring32 name, conststring3
 		Thing_setName (my afterLabels.get(), afterName);
 		my afterCriterion = afterCriterion;
 		my combinationCriterion = combinationCriterion;
-		my matchContextOnly = contextOnly;
+		my excludeTopicMatch = contextOnly;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NavigationContext could not be created from vowels string.");
@@ -178,7 +178,7 @@ void NavigationContext_modifyBeforeLabels (NavigationContext me, Strings labels,
 		my beforeCriterion = criterion;
 		my combinationCriterion = kContext_combination::BEFORE;
 		if (! my topicLabels)
-			my matchContextOnly = true;
+			my excludeTopicMatch = true;
 		if (my afterLabels)
 			my combinationCriterion = kContext_combination::BEFORE_AND_AFTER;
 	} catch (MelderError) {
@@ -193,7 +193,7 @@ void NavigationContext_modifyAfterLabels (NavigationContext me, Strings labels, 
 		my afterCriterion = criterion;
 		my combinationCriterion = kContext_combination::BEFORE;
 		if (! my topicLabels)
-			my matchContextOnly = true;
+			my excludeTopicMatch = true;
 		if (my beforeLabels)
 			my combinationCriterion = kContext_combination::BEFORE_AND_AFTER;
 	} catch (MelderError) {
@@ -201,7 +201,7 @@ void NavigationContext_modifyAfterLabels (NavigationContext me, Strings labels, 
 	}
 }
 
-void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly) {
+void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool excludeTopicMatch) {
 	bool hasBefore = ( my beforeLabels && my beforeLabels -> strings.size > 0 );
 	bool hasAfter = ( my afterLabels && my afterLabels -> strings.size > 0 );
 	if (combinationCriterion == kContext_combination::BEFORE)
@@ -214,10 +214,10 @@ void NavigationContext_modifyContextCombination (NavigationContext me, kContext_
 		combinationCriterion == kContext_combination::BEFORE_OR_AFTER_OR_BOTH)
 		Melder_require (hasBefore && hasAfter,
 			U"For this option the NavigationContext should have before and after labels.");
-	if (matchContextOnly)
+	if (excludeTopicMatch)
 		Melder_require (hasBefore || hasAfter,
 			U"For this option the NavigationContext should have before or after labels.");
-	my matchContextOnly = matchContextOnly;
+	my excludeTopicMatch = excludeTopicMatch;
 	my combinationCriterion = combinationCriterion;
 }
 

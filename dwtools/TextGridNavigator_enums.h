@@ -16,6 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+enums_begin (kContextCombination, 1)
+	enums_add (kContextCombination, 1, BEFORE, U"left")
+	enums_add (kContextCombination, 2, AFTER, U"right")
+	enums_add (kContextCombination, 3, BEFORE_AND_AFTER, U"left and right")
+	enums_add (kContextCombination, 4, BEFORE_OR_AFTER_NOT_BOTH, U"left or right, not both")
+	enums_add (kContextCombination, 5, BEFORE_OR_AFTER_OR_BOTH, U"left or right or both")
+	enums_add (kContextCombination, 6, NO_BEFORE_AND_NO_AFTER, U"no left and no right")
+enums_end (kContextCombination, 6, NO_BEFORE_AND_NO_AFTER)
+
 enums_begin (kNavigatableTier_match, 0)
 	enums_add (kNavigatableTier_match, 1, IS_BEFORE, U"is before")
 	enums_add (kNavigatableTier_match, 2, TOUCHES_BEFORE, U"touches before")

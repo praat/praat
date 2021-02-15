@@ -88,7 +88,7 @@ static void TierNavigationContext_init (TierNavigationContext me, NavigationCont
 	my afterLabels = Data_copy (thy afterLabels.get());
 	my afterCriterion = thy afterCriterion;
 	my combinationCriterion = thy combinationCriterion;
-	my matchContextOnly = thy matchContextOnly;		
+	my excludeTopicMatch = thy excludeTopicMatch;		
 	my tierNumber = tierNumber;
 	my rightContextFrom = my rightContextTo = 1;
 	my leftContextFrom = my leftContextTo = 1;
@@ -136,11 +136,11 @@ void structTextGridNavigator :: v_info () {
 		tnc -> v_info ();
 		MelderInfo_writeLine (U"\tNumber of matches on tier ", tierNumber, U":");
 		MelderInfo_writeLine (U"\t\tNavigation labels only: ",
-			Tier_getNumberOfNavigationOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
+			Tier_getNumberOfTopicOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
 		MelderInfo_writeLine (U"\t\tLeft context labels only: ",
-			Tier_getNumberOfLeftContextOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
+			Tier_getNumberOfBeforeOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
 		MelderInfo_writeLine (U"\t\tRight context labels only: ",
-			Tier_getNumberOfRightContextOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
+			Tier_getNumberOfAfterOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
 		MelderInfo_writeLine (U"\t\tCombined contexts: ", Tier_getNumberOfMatches (anyTier, tnc),  U" (from ", tierSize, U")");
 		if (icontext > 1)
 			MelderInfo_writeLine (U"\tMatch criterion to tier number ", navigationTierNumber, U": ", kNavigatableTier_match_getText (tnc -> matchCriterion));
@@ -241,7 +241,7 @@ integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, 
 	return 0;
 }
 
-void TextGridNavigator_modifyNavigationContextCriterions (TextGridNavigator me, integer tierNumber, kContext_combination combinationCriterion, bool matchContextOnly, kNavigatableTier_match matchCriterion) {
+void TextGridNavigator_modifyNavigationContextCriterions (TextGridNavigator me, integer tierNumber, kContext_combination combinationCriterion, bool excludeTopicMatch, kNavigatableTier_match matchCriterion) {
 	const integer contextNumber = TextGridNavigator_getContextNumberFromTierNumber (me, tierNumber);
 	Melder_require (contextNumber > 0,
 		U"The tier number you specified has no navigation. ");
@@ -258,15 +258,15 @@ void TextGridNavigator_modifyNavigationContextCriterions (TextGridNavigator me, 
 		combinationCriterion == kContext_combination::BEFORE_OR_AFTER_OR_BOTH)
 		Melder_require (hasLeftContext && hasRightContext,
 			U"For this option you should have left and right context labels installed.");
-	if (matchContextOnly)
+	if (excludeTopicMatch)
 		Melder_require (hasLeftContext || hasRightContext,
 			U"It is not possible to match only the context because you have neither left nor right context labels installed.");
-	tnc -> matchContextOnly = matchContextOnly;
+	tnc -> excludeTopicMatch = excludeTopicMatch;
 	tnc -> combinationCriterion = combinationCriterion;
 	tnc -> matchCriterion = matchCriterion;
 }
 
-void TextGridNavigator_modifyLeftAndRightContextRange (TextGridNavigator me, integer tierNumber, integer leftContextFrom, integer leftContextTo, integer rightContextFrom, integer rightContextTo) {
+void TextGridNavigator_modifyBeforeAndAfterRange (TextGridNavigator me, integer tierNumber, integer leftContextFrom, integer leftContextTo, integer rightContextFrom, integer rightContextTo) {
 	const integer contextNumber = TextGridNavigator_getContextNumberFromTierNumber (me, tierNumber);
 	Melder_require (contextNumber > 0,
 		U"The tier number you specified has no navigation. ");
@@ -334,7 +334,7 @@ static inline bool Tier_isLeftContextMatch (Function me, integer index, TierNavi
 	return Tier_getBeforeIndex (me, index, tnc) > 0;
 }
 
-integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationContext tnc) {
+integer Tier_getNumberOfAfterOnlyMatches (Function me, TierNavigationContext tnc) {
 	if (tnc -> afterLabels -> numberOfStrings == 0)
 		return 0;
 	integer numberOfMatches = 0;
@@ -346,7 +346,7 @@ integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationCont
 	return numberOfMatches;
 }
 
-integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc) {
+integer Tier_getNumberOfBeforeOnlyMatches (Function me, TierNavigationContext tnc) {
 	if (tnc -> beforeLabels -> numberOfStrings == 0)
 		return 0;
 	integer numberOfMatches = 0;
@@ -358,7 +358,7 @@ integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationConte
 	return numberOfMatches;
 }
 
-integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContext tnc) {
+integer Tier_getNumberOfTopicOnlyMatches (Function me, TierNavigationContext tnc) {
 	if (tnc -> topicLabels -> numberOfStrings == 0)
 		return 0;
 	integer numberOfMatches = 0;
@@ -373,7 +373,7 @@ integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContex
 static bool Tier_isLabelMatch (Function me, integer index, TierNavigationContext tnc) {
 	if (index < 1 && index > tnc -> v_getSize (me))
 		return false;
-	const bool isNavigationMatch = ( tnc -> matchContextOnly ? true : Tier_isNavigationMatch (me, index, tnc) );
+	const bool isNavigationMatch = ( tnc -> excludeTopicMatch ? true : Tier_isNavigationMatch (me, index, tnc) );
 	if (! isNavigationMatch || tnc -> combinationCriterion == kContext_combination::NO_BEFORE_AND_NO_AFTER)
 		return isNavigationMatch;
 	bool isMatch = false;

@@ -42,7 +42,7 @@ bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label)
 
 bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
-void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly);
+void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool excludeTopicMatch);
 
 
 #endif /* _NavigationContext_h_ */

@@ -164,9 +164,9 @@ void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationCon
 
 void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack);
 
-void TextGridNavigator_modifyLeftAndRightContextRange (TextGridNavigator me, integer tierNumber, integer leftContextFrom, integer leftContextTo, integer rightContextFrom, integer rightContextTo);
+void TextGridNavigator_modifyBeforeAndAfterRange (TextGridNavigator me, integer tierNumber, integer leftContextFrom, integer leftContextTo, integer rightContextFrom, integer rightContextTo);
 
-void TextGridNavigator_modifyNavigationContextCriterions (TextGridNavigator me, integer tierNumber, kContext_combination combinationCriterion, bool matchContextOnly, kNavigatableTier_match matchCriterion);
+void TextGridNavigator_modifyNavigationContextCriterions (TextGridNavigator me, integer tierNumber, kContext_combination combinationCriterion, bool excludeTopicMatch, kNavigatableTier_match matchCriterion);
 
 void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee);
 
@@ -202,11 +202,11 @@ static inline integer TextGridNavigator_locateLast (TextGridNavigator me) {
 	return TextGridNavigator_locatePreviousBeforeTime (me, my xmax + 0.1);
 }
 
-integer Tier_getNumberOfLeftContextOnlyMatches (Function me, TierNavigationContext tnc);
+integer Tier_getNumberOfBeforeOnlyMatches (Function me, TierNavigationContext tnc);
 
-integer Tier_getNumberOfRightContextOnlyMatches (Function me, TierNavigationContext tnc);
+integer Tier_getNumberOfAfterOnlyMatches (Function me, TierNavigationContext tnc);
 
-integer Tier_getNumberOfNavigationOnlyMatches (Function me, TierNavigationContext tnc);
+integer Tier_getNumberOfTopicOnlyMatches (Function me, TierNavigationContext tnc);
 
 integer Tier_getNumberOfMatches (Function me, TierNavigationContext tnc);
 
