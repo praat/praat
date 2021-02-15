@@ -1,6 +1,6 @@
 /* NavigationContext_def.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
 #define ooSTRUCT NavigationContext
 oo_DEFINE_CLASS (NavigationContext, Daata)
 
-	oo_OBJECT (Strings, 0, navigationLabels) // because oo_STRING_Vector needs size
-	oo_ENUM (kMelder_string, navigationCriterion)
+	oo_OBJECT (Strings, 0, topicLabels) // because oo_STRING_Vector needs size
+	oo_ENUM (kMelder_string, topicCriterion)
 	
-	oo_OBJECT (Strings, 0, leftContextLabels)
-	oo_ENUM (kMelder_string, leftContextCriterion)
+	oo_OBJECT (Strings, 0, beforeLabels)
+	oo_ENUM (kMelder_string, beforeCriterion)
 	
-	oo_OBJECT (Strings, 0, rightContextLabels)
-	oo_ENUM (kMelder_string, rightContextCriterion)	
+	oo_OBJECT (Strings, 0, afterLabels)
+	oo_ENUM (kMelder_string, afterCriterion)	
 	
-	oo_ENUM (kContext_combination, combinationCriterion)
-	oo_BOOLEAN (matchContextOnly)
+	oo_ENUM (kContext_use, useCriterion)
+	oo_BOOLEAN (excludeTopicMatch)
 	
 	#if oo_DECLARING
 		void v_info ()

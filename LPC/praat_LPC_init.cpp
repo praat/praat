@@ -35,7 +35,6 @@
 #include "Formant_extensions.h"
 #include "FormantPath.h"
 #include "FormantPathEditor.h"
-#include "IntervalTierNavigator.h"
 #include "LPC.h"
 #include "MFCC.h"
 #include "LFCC.h"

@@ -2,7 +2,7 @@
 #define _NavigationContext_h_
 /* NavigationContext.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,23 +26,23 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string navigationCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string leftContextCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string rightContextCriterion, kContext_combination combinationCriterion, bool contextOnly);
+autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string topicCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string beforeCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string afterCriterion, kContext_use useCriterion, bool contextOnly);
 
 autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string criterion);
 
-void NavigationContext_modifyNavigationLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyTopicLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
-void NavigationContext_modifyLeftContextLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyBeforeLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
-void NavigationContext_modifyRightContextLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyAfterLabels (NavigationContext me, Strings labels, kMelder_string criterion);
 
-bool NavigationContext_isNavigationLabel (NavigationContext me, conststring32 label);
+bool NavigationContext_isTopicLabel (NavigationContext me, conststring32 label);
 
-bool NavigationContext_isLeftContextLabel (NavigationContext me, conststring32 label);
+bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label);
 
-bool NavigationContext_isRightContextLabel (NavigationContext me, conststring32 label);
+bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
-void NavigationContext_modifyContextCombination (NavigationContext me, kContext_combination combinationCriterion, bool matchContextOnly);
+void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch);
 
 
 #endif /* _NavigationContext_h_ */
