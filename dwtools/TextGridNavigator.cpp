@@ -44,43 +44,143 @@
 
 
 Thing_implement (TierNavigationContext, Daata, 0);
-Thing_implement (IntervalTierNavigationContext, TierNavigationContext, 0);
-Thing_implement (TextTierNavigationContext, TierNavigationContext, 0);
 
 void structTierNavigationContext :: v_info () {
 	structNavigationContext :: v_info ();
-	MelderInfo_writeLine (U"Tier number: ", tierNumber);
 }
 
-integer structTierNavigationContext :: v_getSize (Function /* tier */) {
-	return 0;	
-};
-	
-integer structTierNavigationContext :: v_getIndexFromTime (Function /* anyTier */, double /* time */) {
+integer structTierNavigationContext :: v_getSize (Function anyTier) {
 	return 0;
 }
+
+integer structTierNavigationContext :: v_getIndexFromTime (Function anyTier, double time) {
+	return 0;
+}
+
+double structTierNavigationContext :: v_getStartTime (Function anyTier, integer index) {
+	return 0.0;
+}
 	
-double structTierNavigationContext :: v_getStartTime (Function anyTier, integer /* index */) {
-	return anyTier -> xmin;
+double structTierNavigationContext :: v_getEndTime (Function anyTier, integer index) {
+	return 0.0;
 }
-		
-double structTierNavigationContext :: v_getEndTime (Function anyTier, integer /* index */) {
-	return anyTier -> xmax;
+	
+conststring32 structTierNavigationContext :: v_getLabel (Function anyTier, integer index) {
+	return  U"";
 }
-		
-conststring32 structTierNavigationContext ::v_getLabel (Function /* anyTier */, integer /* index */) {
-	return U"";
-}
+
+Thing_implement (IntervalTierNavigationContext, TierNavigationContext, 0);
 
 void structIntervalTierNavigationContext :: v_info () {
 	structNavigationContext :: v_info ();
 }
 
+integer structIntervalTierNavigationContext :: v_getSize (Function anyTier) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+	return my intervals.size;
+}
+
+integer structIntervalTierNavigationContext :: v_getIndexFromTime (Function anyTier, double time) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+	integer index;
+	if (time < my xmin)
+		index = 0; // offLeft
+	else if (time > my xmax)
+		index = my intervals .size + 1; // offRight
+	else
+		index = IntervalTier_timeToLowIndex (me, time);
+	return index;
+}
+
+double structIntervalTierNavigationContext :: v_getStartTime (Function anyTier, integer index) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+	if (index < 1 || index > my intervals.size)
+		return undefined;
+	TextInterval interval = my intervals . at [index];
+	return interval -> xmin;
+}
+	
+double structIntervalTierNavigationContext :: v_getEndTime (Function anyTier, integer index) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+	if (index < 1 || index > my intervals.size)
+		return undefined;
+	TextInterval interval = my intervals . at [index];
+	return interval -> xmax;
+}
+	
+conststring32 structIntervalTierNavigationContext :: v_getLabel (Function anyTier, integer index) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+	if (index < 1 || index > my intervals.size)
+		return U"-- undefined --";
+	TextInterval interval = my intervals . at [index];
+	return interval -> text.get();
+}
+
+Thing_implement (TextTierNavigationContext, TierNavigationContext, 0);
+
 void structTextTierNavigationContext :: v_info () {
 	structNavigationContext :: v_info ();
 }
 
-static void TierNavigationContext_init (TierNavigationContext me, NavigationContext thee, integer tierNumber) {
+integer structTextTierNavigationContext :: v_getSize (Function anyTier) {
+	TextTier me = reinterpret_cast<TextTier> (anyTier);
+	return my points.size;
+}
+
+integer structTextTierNavigationContext :: v_getIndexFromTime (Function anyTier, double time) {
+	TextTier me = reinterpret_cast<TextTier> (anyTier);
+	integer index;
+	if (time < my xmin)
+		index = 0; // offLeft
+	else if (time > my xmax)
+		index = my points .size + 1; // offRight
+	else
+		index = AnyTier_timeToNearestIndex (me -> asAnyTier(), time);
+	return index;
+}
+
+double structTextTierNavigationContext :: v_getStartTime (Function anyTier, integer index) {
+	TextTier me = reinterpret_cast<TextTier> (anyTier);
+	if (index < 1 || index > my points.size)
+		return undefined;
+	TextPoint point = my points . at [index];
+	return point -> number;
+}
+
+double structTextTierNavigationContext :: v_getEndTime (Function anyTier, integer index) {
+	TextTier me = reinterpret_cast<TextTier> (anyTier);
+	if (index < 1 || index > my points.size)
+		return undefined;
+	TextPoint point = my points . at [index];
+	return point -> number;;
+}
+
+conststring32 structTextTierNavigationContext :: v_getLabel (Function anyTier, integer index) {
+	TextTier me = reinterpret_cast<TextTier> (anyTier);
+	if (index < 1 || index > my points.size)
+		return U"-- undefined --";
+	TextPoint point = my points . at [index];
+	return point -> mark.get();
+}
+
+static autoNavigationContext TierNavigationContext_to_NavigationContext (TierNavigationContext me) {
+	try {
+		autoNavigationContext thee = Thing_new (NavigationContext);
+		thy topicLabels = Data_copy (my topicLabels.get());
+		thy topicCriterion = my topicCriterion;
+		thy beforeLabels = Data_copy (my beforeLabels.get());
+		thy beforeCriterion = my beforeCriterion;
+		thy afterLabels = Data_copy (my afterLabels.get());
+		thy afterCriterion = my afterCriterion;
+		thy useCriterion = my useCriterion;
+		thy excludeTopicMatch = my excludeTopicMatch;
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create NavigationContext.");
+	}
+}
+
+static void TierNavigationContext_initFromNavigationContext (TierNavigationContext me, NavigationContext thee) {
 	my topicLabels = Data_copy (thy topicLabels.get());
 	my topicCriterion = thy topicCriterion;
 	my beforeLabels = Data_copy (thy beforeLabels.get());
@@ -89,28 +189,34 @@ static void TierNavigationContext_init (TierNavigationContext me, NavigationCont
 	my afterCriterion = thy afterCriterion;
 	my useCriterion = thy useCriterion;
 	my excludeTopicMatch = thy excludeTopicMatch;		
-	my tierNumber = tierNumber;
+}
+
+static void TierNavigationContext_setDefaults (TierNavigationContext me) {
 	my afterRangeFrom = my afterRangeTo = 1;
 	my beforeRangeFrom = my beforeRangeTo = 1;
 }
 
-autoIntervalTierNavigationContext IntervalTierNavigationContext_create (NavigationContext navigationContext, integer tierNumber) {
+autoIntervalTierNavigationContext NavigationContext_to_IntervalTierNavigationContext (NavigationContext me, integer tierNumber) {
 	try {
-		autoIntervalTierNavigationContext me = Thing_new (IntervalTierNavigationContext);
-		TierNavigationContext_init (me.get(), navigationContext, tierNumber);
-		return me;
+		autoIntervalTierNavigationContext thee = Thing_new (IntervalTierNavigationContext);
+		TierNavigationContext_initFromNavigationContext (thee.get(), me);
+		thy tierNumber = tierNumber;
+		TierNavigationContext_setDefaults (thee.get());
+		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"IntervalTierNavigationContext not created from ", navigationContext);
+		Melder_throw (me, U": could not create IntervalTierNavigationContext.");
 	}	
 }
 
-autoTextTierNavigationContext TextTierNavigationContext_create (NavigationContext navigationContext, integer tierNumber) {
+autoTextTierNavigationContext NavigationContext_to_TextTierNavigationContext (NavigationContext me, integer tierNumber ) {
 	try {
-		autoTextTierNavigationContext me = Thing_new (TextTierNavigationContext);
-		TierNavigationContext_init (me.get(), navigationContext, tierNumber);
-		return me;
+		autoTextTierNavigationContext thee = Thing_new (TextTierNavigationContext);
+		TierNavigationContext_initFromNavigationContext (thee.get(), me);
+		thy tierNumber = tierNumber;
+		TierNavigationContext_setDefaults (thee.get());
+		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"TextTierNavigationContext not created from ", navigationContext);
+		Melder_throw (me, U": could not create TextTierNavigationContext.");
 	}	
 }
 
@@ -149,7 +255,7 @@ void structTextGridNavigator :: v_info () {
 	MelderInfo_writeLine (U"Number of complete matches: ", TextGridNavigator_getNumberOfMatches (this),  U" (from ", topicTierSize, U")");
 }
 
-autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber) {
+autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber) {
 	try {
 		autoTextGridNavigator me = Thing_new (TextGridNavigator);
 		Function_init (me.get(), textgrid -> xmin, textgrid -> xmax);
@@ -170,39 +276,43 @@ static bool TextGridNavigator_isNavigatableTierInUse (TextGridNavigator me, inte
 	return false;
 }
 
+static void TextGridNavigator_checkContextNumber (TextGridNavigator me, integer contextNumber) {
+	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts . size,
+		U"The context number should be between 1 and ", my tierNavigationContexts . size, U".)");
+}
+
 static void TextGridNavigator_checkNavigatableTierIsNotInUse (TextGridNavigator me, integer tierNumber) {
 	Melder_require (! TextGridNavigator_isNavigatableTierInUse (me, tierNumber),
 		U": tier number ", tierNumber, U" is already in use.");
 }
 
-static bool TextGridNavigator_hasBefore (TextGridNavigator me, integer contextNumber) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"Your context number (", contextNumber, U") should not be larger than the number of contexts (", my tierNavigationContexts.size, U").");
-	TierNavigationContext tnc = my tierNavigationContexts . at [contextNumber];
-	return tnc -> beforeLabels && tnc ->  beforeLabels -> strings.size > 0;
-}
-
-static bool TextGridNavigator_hasAfter (TextGridNavigator me, integer contextNumber) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"Your context number (", contextNumber, U") should not be larger than the number of contexts (", my tierNavigationContexts.size, U").");
-	TierNavigationContext tnc = my tierNavigationContexts . at [contextNumber];
-	return tnc -> afterLabels && tnc ->  afterLabels -> strings.size > 0;
-}
-
+//TODO position option
 void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_location locationCriterion) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
 		TextGridNavigator_checkNavigatableTierIsNotInUse (me, tierNumber);
 		autoTierNavigationContext tierNavigationContexts;
 		if (my textgrid -> tiers -> at [tierNumber] -> classInfo == classIntervalTier)
-			tierNavigationContexts = IntervalTierNavigationContext_create (thee, tierNumber);
+			tierNavigationContexts = NavigationContext_to_IntervalTierNavigationContext (thee, tierNumber);
 		else
-			tierNavigationContexts = TextTierNavigationContext_create (thee, tierNumber);
+			tierNavigationContexts = NavigationContext_to_TextTierNavigationContext (thee, tierNumber);
 		tierNavigationContexts -> locationCriterion = locationCriterion;
 		my tierNavigationContexts.addItem_move (tierNavigationContexts.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add navigation context ", thee, U".");
 	}
+}
+
+void TextGridNavigator_replaceNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts. at [contextNumber];
+	TierNavigationContext_initFromNavigationContext (tnc, thee);
+}
+
+autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNavigator me, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts. at [contextNumber];
+	return TierNavigationContext_to_NavigationContext (tnc);
 }
 
 void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee) {
@@ -216,7 +326,6 @@ void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee) {
 				U"The TextGrid should have the same kind of tiers at the same positions as the original you want to replace ");
 		}
 		my textgrid = Data_copy (thee);
-		
 		my tierNavigationContexts. at [1] -> currentTopicIndex = 0; // offLeft
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot reset with ", thee, U".");
@@ -224,24 +333,27 @@ void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee) {
 }
 
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer contextNumber) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts . size,
-		U"The context number should be between 1 and ", my tierNavigationContexts . size, U".)");
-	return my tierNavigationContexts . at [contextNumber] -> tierNumber;
+	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
+		U"The context number should not exceed ",  my tierNavigationContexts.size, U".");
+	return my tierNavigationContexts.at [contextNumber] -> tierNumber;
 }
 
-integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber) {
-	TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
+integer TextGridNavigator_checkContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber) {
+	integer contextNumber = 0;
 	for (integer icontext = 1; icontext <= my tierNavigationContexts . size; icontext ++) {
 		const TierNavigationContext tnc = my tierNavigationContexts . at [icontext];
-		if (tnc -> tierNumber == tierNumber)
-			return tierNumber;
+		if (tnc -> tierNumber == tierNumber) {
+			contextNumber = icontext;
+			break;
+		}
 	}
-	return 0;
+	Melder_require (contextNumber > 0,
+		U"Tier number (", tierNumber, U") does not occur in a Navigation context.");
+	return contextNumber;
 }
 
-void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer contextNumber, integer from, integer to) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"The context number should be between 1 and ", my tierNavigationContexts.size, U".");
+void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer tierNumber, integer from, integer to) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
 	Melder_require (from > 0 &&  to > 0,
 		U"Both numbers in the before range should be positive.");
@@ -249,9 +361,8 @@ void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer contextN
 	tnc -> beforeRangeTo = std::max (from, to);
 }
 
-void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer contextNumber, integer from, integer to) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"The context number should be between 1 and ", my tierNavigationContexts.size, U".");
+void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumber, integer from, integer to) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
 	Melder_require (from > 0 &&  to > 0,
 		U"Both numbers in the after range should be positive.");
@@ -259,37 +370,32 @@ void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer contextNu
 	tnc -> afterRangeTo = std::max (from, to);
 }
 
-void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer contextNumber, kMelder_string newCriterion) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"The context number should be between 1 and ", my tierNavigationContexts.size, U".");
+void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
-	tnc -> topicCriterion = newCriterion;
+	NavigationContext_modifyTopicCriterion (tnc, newCriterion);
 }
 
-void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer contextNumber, kMelder_string newCriterion) {
-	Melder_require (TextGridNavigator_hasBefore (me, contextNumber),
-		U"There is no Before in context number ", contextNumber, U".");
-	TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
-	tnc -> beforeCriterion = newCriterion;
+void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
+	NavigationContext_modifyBeforeCriterion (tnc, newCriterion);
 }
 
-void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer contextNumber, kMelder_string newCriterion) {
-	Melder_require (TextGridNavigator_hasAfter (me, contextNumber),
-		U"There is no After in context number ", contextNumber, U".");
+void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
-	tnc -> afterCriterion = newCriterion;
+	NavigationContext_modifyAfterCriterion (tnc, newCriterion);
 }
 
-void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer contextNumber, kContext_use newUse, bool excludeTopicMatch) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"The context number should be between 1 and ", my tierNavigationContexts.size, U".");
+void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	TierNavigationContext tnc = my tierNavigationContexts .at [contextNumber];
-	tnc -> useCriterion = newUse;
-	tnc -> excludeTopicMatch = excludeTopicMatch;
+	NavigationContext_modifyUseCriterion (tnc, newUse, excludeTopicMatch);
 }
 
 void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack) {
-	const integer contextNumber = TextGridNavigator_getContextNumberFromTierNumber (me, tierNumber);
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	Melder_require (contextNumber > 0,
 		U"The tier number you specified has no navigation.");
 	TierNavigationContext tnc = my tierNavigationContexts . at [contextNumber];
@@ -408,10 +514,9 @@ integer Tier_getNumberOfMatches(Function me, TierNavigationContext tnc) {
 	return numberOfMatches;
 }
 
-integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, integer icontext) {
-	Melder_require (icontext > 0 && icontext <= my tierNavigationContexts.size,
-		U"The context number should be between 1 and ", my tierNavigationContexts.size, U".");
-	const TierNavigationContext tnc = my tierNavigationContexts . at [icontext];
+integer TextGridNavigator_getNumberOfMatchesForTier (TextGridNavigator me, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts . at [contextNumber];
 	const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	const integer numberOfMatches = Tier_getNumberOfMatches (anyTier, tnc);
 	return numberOfMatches;
@@ -425,6 +530,27 @@ integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me) {
 		if (TextGridNavigator_isLabelMatch (me, index))
 			numberOfMatches ++;
 	return numberOfMatches;
+}
+
+integer TextGridNavigator_getNumberOfTopicMatches (TextGridNavigator me, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
+	const Function anyTier = my textgrid -> tiers -> at [tierNumber];
+	return Tier_getNumberOfTopicOnlyMatches (anyTier, tnc);
+}
+
+integer TextGridNavigator_getNumberOfBeforeMatches (TextGridNavigator me, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
+	const Function anyTier = my textgrid -> tiers -> at [tierNumber];
+	return Tier_getNumberOfBeforeOnlyMatches (anyTier, tnc);
+}
+
+integer TextGridNavigator_getNumberOfAfterMatches (TextGridNavigator me, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
+	const Function anyTier = my textgrid -> tiers -> at [tierNumber];
+	return Tier_getNumberOfAfterOnlyMatches (anyTier, tnc);
 }
 
 bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNavigationTier) {
@@ -608,17 +734,15 @@ integer TextGridNavigator_locatePreviousBeforeTime (TextGridNavigator me, double
 	return TextGridNavigator_locatePrevious (me);
 }
 
-double TextGridNavigator_getStartTime (TextGridNavigator me, integer contextNumber) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"Your context number (", contextNumber, U") should not be larger than the number of contexts (", my tierNavigationContexts.size, U").");
+double TextGridNavigator_getStartTime (TextGridNavigator me, integer tierNumber) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	return tnc -> v_getStartTime (navigationTier, tnc -> currentTopicIndex);
 }
 
-double TextGridNavigator_getStartTime (TextGridNavigator me, integer contextNumber, kContext_where where) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"Your context number (", contextNumber, U") should not be larger than the number of contexts (", my tierNavigationContexts.size, U").");
+double TextGridNavigator_getStartTime (TextGridNavigator me, integer tierNumber, kContext_where where) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	const integer index = ( where == kContext_where::TOPIC ? tnc -> currentTopicIndex :
@@ -627,23 +751,24 @@ double TextGridNavigator_getStartTime (TextGridNavigator me, integer contextNumb
 	return tnc -> v_getStartTime (navigationTier, index);
 }
 
-conststring32 TextGridNavigator_getLabel (TextGridNavigator me, integer contextNumber, kContext_where where) {
-	const integer index = TextGridNavigator_getIndex (me, contextNumber, where);
+conststring32 TextGridNavigator_getLabel (TextGridNavigator me, integer tierNumber, kContext_where where) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const integer index = TextGridNavigator_getIndex (me, tierNumber, where);
 	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	return tnc -> v_getLabel (navigationTier, index);
 }
 
-double TextGridNavigator_getEndTime (TextGridNavigator me, integer contextNumber, kContext_where where) {
-	const integer index = TextGridNavigator_getIndex (me, contextNumber, where);
+double TextGridNavigator_getEndTime (TextGridNavigator me, integer tierNumber, kContext_where where) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
+	const integer index = TextGridNavigator_getIndex (me, tierNumber, where);
 	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	return tnc -> v_getEndTime (navigationTier, index);
 }
 
-integer TextGridNavigator_getIndex (TextGridNavigator me, integer contextNumber, kContext_where where) {
-	Melder_require (contextNumber > 0 && contextNumber <= my tierNavigationContexts.size,
-		U"Context number (", contextNumber, U") should not be larger than the number of contexts (", my tierNavigationContexts.size, U").");
+integer TextGridNavigator_getIndex (TextGridNavigator me, integer tierNumber, kContext_where where) {
+	const integer contextNumber = TextGridNavigator_checkContextNumberFromTierNumber (me, tierNumber);
 	const TierNavigationContext tnc = my tierNavigationContexts.at [contextNumber];
 	const Function navigationTier = my textgrid -> tiers -> at [tnc -> tierNumber];
 	const integer index = ( where == kContext_where::TOPIC ? tnc -> currentTopicIndex :

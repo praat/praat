@@ -27,7 +27,7 @@
 
 /*
 	The purpose of a TextGridNavigator is to find successive elements that match a criterion on one selected tier, the navigation tier.
-	The criterion depends on "navigation contexts".
+	The criterion may depend on "navigation contexts".
 	Each navigation context handles only one particular tier. By combining different navigation contexts we 
 	can construct searches that extend over multiple tiers. The simplest navigation context consists of only a single label that
 	has to be matched.
@@ -42,109 +42,10 @@
 	combine it with the previous context to search for items that also match the syntactic context, etc.
 */
 
-/*
-	We define two following classes so we don't need to separate between a TextTier and an IntervalTier anymore.
-*/
-Thing_define (IntervalTierNavigationContext, TierNavigationContext) {
-	
-	void v_info ()
-			override;
-			
-	integer v_getSize (Function anyTier) override {
-		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
-		return my intervals.size;
-	}
-	
-	integer v_getIndexFromTime (Function anyTier, double time) override {
-		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
-		integer index;
-		if (time < my xmin)
-			index = 0; // offLeft
-		else if (time > my xmax)
-			index = my intervals .size + 1; // offRight
-		else
-			index = IntervalTier_timeToLowIndex (me, time);
-		return index;
-	}
-	
-	double v_getStartTime (Function anyTier, integer index) override {
-		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
-		if (index < 1 || index > my intervals.size)
-			return undefined;
-		TextInterval interval = my intervals . at [index];
-		return interval -> xmin;
-	}
-		
-	double v_getEndTime (Function anyTier, integer index) override {
-		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
-		if (index < 1 || index > my intervals.size)
-			return undefined;
-		TextInterval interval = my intervals . at [index];
-		return interval -> xmax;
-	}
-		
-	conststring32 v_getLabel (Function anyTier, integer index) override {
-		IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
-		if (index < 1 || index > my intervals.size)
-			return U"-- undefined --";
-		TextInterval interval = my intervals . at [index];
-		return interval -> text.get();
-	}
-};
+autoIntervalTierNavigationContext NavigationContext_to_IntervalTierNavigationContext (NavigationContext me, integer tierNumber);
+autoTextTierNavigationContext NavigationContext_to_TextTierNavigationContext (NavigationContext me, integer tierNumber);
 
-Thing_define (TextTierNavigationContext, TierNavigationContext) {
-	
-	void v_info ()
-			override;
-	
-	integer v_getSize (Function anyTier) override {
-		TextTier me = reinterpret_cast<TextTier> (anyTier);
-		return my points.size;
-	}
-	
-	integer v_getIndexFromTime (Function anyTier, double time) override {
-		TextTier me = reinterpret_cast<TextTier> (anyTier);
-		integer index;
-		if (time < my xmin)
-			index = 0; // offLeft
-		else if (time > my xmax)
-			index = my points .size + 1; // offRight
-		else
-			index = AnyTier_timeToNearestIndex (me -> asAnyTier(), time);
-		return index;
-	}
-	
-	double v_getStartTime (Function anyTier, integer index) override {
-		TextTier me = reinterpret_cast<TextTier> (anyTier);
-		if (index < 1 || index > my points.size)
-			return undefined;
-		TextPoint point = my points . at [index];
-		return point -> number;
-	}
-	
-	double v_getEndTime (Function anyTier, integer index) override {
-		TextTier me = reinterpret_cast<TextTier> (anyTier);
-		if (index < 1 || index > my points.size)
-			return undefined;
-		TextPoint point = my points . at [index];
-		return point -> number;;
-	}
-	
-	conststring32 v_getLabel (Function anyTier, integer index) override {
-		TextTier me = reinterpret_cast<TextTier> (anyTier);
-		if (index < 1 || index > my points.size)
-			return U"-- undefined --";
-		TextPoint point = my points . at [index];
-		return point -> mark.get();
-	}
-};
-
-autoIntervalTierNavigationContext IntervalTierNavigationContext_create (NavigationContext navigationContext, integer tierNumber);
-
-autoTextTierNavigationContext TextTierNavigationContext_create (NavigationContext navigationContext, integer tierNumber);
-
-autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber);
-
+autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber);
 
 /*
 	Add navigation context for a tier.
@@ -164,14 +65,17 @@ autoTextGridNavigator TextGridNavigator_create (TextGrid textgrid, NavigationCon
 	TOUCHES_BEFORE_AND_AFTER	tmin2 == tmin && tmax2 == tmax
 */
 void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_location locationCriterion);
+void TextGridNavigator_replaceNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber);
 
-void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer contextNumber, integer from, integer to);
-void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer contextNumber, integer from, integer to);
+autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNavigator me, integer tierNumber);
 
-void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer contextNumber, kMelder_string newCriterion);
-void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer contextNumber, kMelder_string newCriterion);
-void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer contextNumber, kMelder_string newCriterion);
-void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer contextNumber, kContext_use newUse, bool excludeTopicMatch);
+void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
+void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
+
+void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
+void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
+void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
+void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch);
 
 void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack);
 
@@ -182,9 +86,12 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, integer icontext);
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me);
+integer TextGridNavigator_getNumberOfTopicMatches (TextGridNavigator me, integer tierNumber);
+integer TextGridNavigator_getNumberOfBeforeMatches (TextGridNavigator me, integer tierNumber);
+integer TextGridNavigator_getNumberOfAfterMatches (TextGridNavigator me, integer tierNumber);
 
-integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer contextNumber);
-integer TextGridNavigator_getContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber);
+integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer tierNumber);
+integer TextGridNavigator_checkContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber);
 
 integer TextGridNavigator_locateNext (TextGridNavigator me);
 
@@ -194,10 +101,10 @@ integer TextGridNavigator_locatePrevious (TextGridNavigator me);
 
 integer TextGridNavigator_locatePreviousBeforeTime (TextGridNavigator me, double time);
 
-integer TextGridNavigator_getIndex (TextGridNavigator me, integer contextNumber, kContext_where where);
-double TextGridNavigator_getStartTime (TextGridNavigator me, integer contextNumber, kContext_where where);
-conststring32 TextGridNavigator_getLabel (TextGridNavigator me, integer contextNumber, kContext_where where);
-double TextGridNavigator_getEndTime (TextGridNavigator me, integer contextNumber, kContext_where where);
+integer TextGridNavigator_getIndex (TextGridNavigator me, integer tierNumber, kContext_where where);
+double TextGridNavigator_getStartTime (TextGridNavigator me, integer tierNumber, kContext_where where);
+conststring32 TextGridNavigator_getLabel (TextGridNavigator me, integer tierNumber, kContext_where where);
+double TextGridNavigator_getEndTime (TextGridNavigator me, integer tierNumber, kContext_where where);
 
 static inline integer TextGridNavigator_locateFirst (TextGridNavigator me) {
 	return TextGridNavigator_locateNextAfterTime (me, my xmin - 0.1);
