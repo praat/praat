@@ -33,8 +33,7 @@ oo_DEFINE_CLASS (TierNavigationContext, NavigationContext)
 	oo_ENUM (kNavigatableTier_location, locationCriterion) // how does a match location in this tier relate to the topic tier
 
 	#if oo_DECLARING
-		void v_info ()
-			override;
+		void v_info () override;
 		virtual integer v_getSize (Function tier);
 		virtual integer v_getIndexFromTime (Function tier, double time);
 		virtual double v_getStartTime (Function tier, integer index);
@@ -43,6 +42,33 @@ oo_DEFINE_CLASS (TierNavigationContext, NavigationContext)
 	#endif
 
 oo_END_CLASS (TierNavigationContext)
+#undef ooSTRUCT
+
+#define ooSTRUCT IntervalTierNavigationContext
+oo_DEFINE_CLASS (IntervalTierNavigationContext, TierNavigationContext)
+	#if oo_DECLARING
+		void v_info () override;
+		integer v_getSize (Function tier) override;
+		integer v_getIndexFromTime (Function tier, double time) override;
+		double v_getStartTime (Function tier, integer index) override;
+		double v_getEndTime (Function tier, integer index) override;
+		conststring32 v_getLabel (Function tier, integer index) override;
+	#endif
+oo_END_CLASS (IntervalTierNavigationContext)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT TextTierNavigationContext
+oo_DEFINE_CLASS (TextTierNavigationContext, TierNavigationContext)
+	#if oo_DECLARING
+		void v_info () override;
+		integer v_getSize (Function tier) override;
+		integer v_getIndexFromTime (Function tier, double time) override;
+		double v_getStartTime (Function tier, integer index) override;
+		double v_getEndTime (Function tier, integer index) override;
+		conststring32 v_getLabel (Function tier, integer index) override;
+	#endif
+oo_END_CLASS (TextTierNavigationContext)
 #undef ooSTRUCT
 
 #define ooSTRUCT TextGridNavigator

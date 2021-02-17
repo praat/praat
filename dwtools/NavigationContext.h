@@ -26,20 +26,20 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_create (conststring32 name, conststring32 navigationName, conststring32 navigation_string, kMelder_string topicCriterion, conststring32 leftContextName, conststring32 leftContext_string, kMelder_string beforeCriterion, conststring32 rightContextName, conststring32 rightContext_string, kMelder_string afterCriterion, kContext_use useCriterion, bool contextOnly);
+autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, conststring32 before_string, kMelder_string beforeCriterion, conststring32 after_string, kMelder_string afterCriterion, kContext_use useCriterion, bool contextOnly);
 
 autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string criterion);
 
-void NavigationContext_modifyTopicLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_replaceTopicLabels (NavigationContext me, Strings labels);
+void NavigationContext_replaceBeforeLabels (NavigationContext me, Strings labels);
+void NavigationContext_replaceAfterLabels (NavigationContext me, Strings labels);
 
-void NavigationContext_modifyBeforeLabels (NavigationContext me, Strings labels, kMelder_string criterion);
-
-void NavigationContext_modifyAfterLabels (NavigationContext me, Strings labels, kMelder_string criterion);
+void NavigationContext_modifyTopicCriterion (NavigationContext me, kMelder_string newCriterion);
+void NavigationContext_modifyBeforeCriterion (NavigationContext me, kMelder_string newCriterion);
+void NavigationContext_modifyAfterCriterion (NavigationContext me, kMelder_string newCriterion);
 
 bool NavigationContext_isTopicLabel (NavigationContext me, conststring32 label);
-
 bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label);
-
 bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
 void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch);

@@ -5,51 +5,55 @@ appendInfoLine: "test_TextGridNavigator.praat"
 
 textgrid = Read from file: "TIMIT_train_dr1_fcjf0_sa1_extended.TextGrid"
 
+numberOfTiers = Get number of tiers
+numberOfIntervals# = zero# (numberOfTiers)
+for itier to numberOfTiers
+	numberOfIntervals# [itier] = Get number of intervals: itier
+endfor
+
 # locate vowels from the set "ix eh ih ux ao ah"
-navigationContext1 = Create NavigationContext: "c",  "vowels", "ix eh ih ux ao ah", "is equal to",
-	... "before", "", "is equal to",
-	... "after", "", "is equal to", "no before and no after", "no"
+navigationContext1 = Create NavigationContext: "c",  "ix eh ih ux ao ah", "is equal to",
+	... "", "is equal to", "", "is equal to", "no before and no after", "no"
 
 # locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" before them
-navigationContext2 = Create NavigationContext: "cv",  "vowels", "ix eh ih ux ao ah", "is equal to",
-	... "before", "sh hv jh k s q r w y", "is equal to",
-	... "after", "", "is equal to", "before", "no"
+navigationContext2 = Create NavigationContext: "cv",  "ix eh ih ux ao ah", "is equal to",
+	... "sh hv jh k s q r w y", "is equal to", "", "is equal to", "before", "no"
 
 # locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" 
 # before them and one of "hv q sh" after them
-navigationContext3 = Create NavigationContext: "cv",  "vowels", "ix eh ih ux ao ah", "is equal to",
-	... "before", "sh hv jh k s q r w y", "is equal to",
-	... "after", "hv q sh", "is equal to", "before and after", "no"
+navigationContext3 = Create NavigationContext: "cv",  "ix eh ih ux ao ah", "is equal to",
+	... "sh hv jh k s q r w y", "is equal to", "hv q sh", "is equal to", "before and after", "no"
 
 # locate words from the set "suit wash water year"
-navigationContext4 = Create NavigationContext: "words", "words", "had suit wash water year", "is equal to",
-	... "before", "", "is equal to", "after", "", "is equal to", "no before and no after", "no"
+navigationContext4 = Create NavigationContext: "words", "had suit wash water year", "is equal to",
+	... "", "is equal to", "", "is equal to", "no before and no after", "no"
 
 # locate  "N " (on tier 4)
-navigationContext5 = Create NavigationContext: "nouns", "noun", "N", "is equal to",
-	... "before", "", "is equal to", "after", "", "is equal to", "no before and no after", "no"
+navigationContext5 = Create NavigationContext: "nouns", "N", "is equal to",
+	... "", "is equal to", "", "is equal to", "no before and no after", "no"
 
-@test_onlyVowels
-@test_vowelsAndBefore
-@test_vowelsAndBeforeAndAfter
+@test_topic
+@test_topicAndBefore
+@test_topicAndBeforeAndAfter
 @test_twoNavigationContexts
 @test_threeNavigationContexts
 
-removeObject: textgrid, navigationContext1, navigationContext2, navigationContext3, navigationContext4
+removeObject: textgrid, navigationContext1, navigationContext2, 
+	... navigationContext3, navigationContext4, navigationContext5
 
 appendInfoLine: "test_TextGridNavigator.praat OK"
 
-procedure test_onlyVowels
-	appendInfoLine: tab$, "test only vowels NavigationContext"
+procedure test_topic
+	appendInfoLine: tab$, "test topic"
 
-	.index# = {3, 5, 8, 11, 15, 21, 23, 25, 29, 32, 35 }
-	.numberOfVowels = size (.index#)
-	.startTime# = zero# (.numberOfVowels)
-	.endTime# = zero# (.numberOfVowels)
+	.index1# = {3, 5, 8, 11, 15, 21, 23, 25, 29, 32, 35 }
+	.numberOfVowels = size (.index1#)
+	.startTime1# = zero# (.numberOfVowels)
+	.endTime1# = zero# (.numberOfVowels)
 	selectObject: textgrid
 	for .i to .numberOfVowels
-		.startTime# [.i] = Get start time of interval: 1, .index# [.i]
-		.endTime# [.i] = Get end time of interval: 1, .index# [.i]
+		.startTime1# [.i] = Get start time of interval: 1, .index1# [.i]
+		.endTime1# [.i] = Get end time of interval: 1, .index1# [.i]
 	endfor
 
 	selectObject: textgrid, navigationContext1
@@ -57,66 +61,93 @@ procedure test_onlyVowels
 	Locate first
 	for .i to .numberOfVowels
 		.index = Get index: 1, "topic"
-		assert .index = .index# [.i]
+		assert .index = .index1# [.i]
 		.startTime = Get start time: 1, "topic"
-		assert .startTime = .startTime# [.i]; '.index' '.startTime'
+		assert .startTime = .startTime1# [.i]; '.index' '.startTime'
 		.endTime = Get end time: 1, "topic"
-		assert .endTime = .endTime# [.i]; '.index' '.endTime'
+		assert .endTime = .endTime1# [.i]; '.index' '.endTime'
 		Locate next
 	endfor
-	removeObject: .navigator
-	appendInfoLine: tab$, "test only vowels NavigationContext OK"
+
+	Modify Topic criterion: 1, "is not equal to"
+	.numberOfMatches = Get number of matches
+	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
+	.navigationContext = Extract navigation context: 1
+	Modify Topic criterion: "is not equal to"
+	selectObject: .navigator, .navigationContext
+	Replace navigation context: 1
+	selectObject: .navigator
+	.numberOfMatches = Get number of matches
+	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
+	.textgrid = Extract TextGrid
+	selectObject: .navigator, .textgrid
+	Replace TextGrid
+	selectObject: .navigator
+	.numberOfMatches = Get number of matches
+	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
+	
+	removeObject: .navigator, .navigationContext, .textgrid
+	appendInfoLine: tab$, "test topic OK"
 endproc
 
-procedure test_vowelsAndBefore
-	appendInfoLine: tab$, "test  vowels + before"
+procedure test_topicAndBefore
+	appendInfoLine: tab$, "test  topic + before"
 
 	selectObject: textgrid, navigationContext2
 	.navigator = To TextGridNavigator: 1
-	.index# = {3, 5, 8, 15, 21, 23, 25, 29, 35 }
-	.label$# = {"sh", "hv", "jh", "s", "r" , "s", "w", "w", "y" }
-	.combi$# = {"sh |ix", "hv | eh", "jh | ih", "s | ux", "r | ix", "s | ix", "w | ao", "w | ao", "y | ih" }
+	.index1# = {3, 5, 8, 15, 21, 23, 25, 29, 35 }
+	.label1$# = {"sh", "hv", "jh", "s", "r" , "s", "w", "w", "y" }
+	.combi1$# = {"sh |ix", "hv | eh", "jh | ih", "s | ux", "r | ix", "s | ix", "w | ao", "w | ao", "y | ih" }
 
 	.time = 0.0
-	for .i to size (.index#)
+	for .i to size (.index1#)
 		Locate next after time: .time
 		.index = Get index: 1, "topic"
-		assert .index = .index# [.i]; '.index'
+		assert .index = .index1# [.i]; '.index'
 		.label$ = Get label: 1, "before"
-		assert .label$ = .label$# [.i]; '.index' '.label$'
+		assert .label$ = .label1$# [.i]; '.index' '.label$'
 		.time = Get end time: 1, "before"
 	endfor
 	removeObject: .navigator
-	appendInfoLine: tab$, "test  vowels + before OK"
+	appendInfoLine: tab$, "test  topic + before OK"
 endproc
 
-procedure test_vowelsAndBeforeAndAfter
-	appendInfoLine: tab$, "test  before + vowel + after"
+procedure test_topicAndBeforeAndAfter
+	appendInfoLine: tab$, "test  before + topic + after"
 
 	selectObject: textgrid, navigationContext3
 	.navigator = To TextGridNavigator: 1
-	.index# = {3, 15,  25}
-	.index_before# = {2, 14, 24}
-	.index_after# = {4, 16, 26}
-	.label_before$# = {"sh", "s", "w" }
-	.label_after$# = {"hv", "q", "sh"}
+	.index1# = {3, 15,  25}
+	.index_before1# = {2, 14, 24}
+	.index_after1# = {4, 16, 26}
+	.label_before1$# = {"sh", "s", "w" }
+	.label_after1$# = {"hv", "q", "sh"}
 
 	Locate first
-	for .i to size (.index#)
+	for .i to size (.index1#)
 		.index = Get index: 1, "topic"
-		assert .index = .index# [.i]; '.index'
+		assert .index = .index1# [.i]; '.index'
 		.index_before = Get index: 1, "before"
-		assert .index_before = .index_before# [.i]
+		assert .index_before = .index_before1# [.i]
 		.label$ = Get label: 1, "before"
-		assert .label$ = .label_before$# [.i]; '.index' '.label$'
+		assert .label$ = .label_before1$# [.i]; '.index' '.label$'
 		.index_after = Get index: 1, "after"
-		assert .index_after = .index_after# [.i]
+		assert .index_after = .index_after1# [.i]
 		.label$ = Get label: 1, "after"
-		assert .label$ = .label_after$# [.i]; '.index' '.label$'
+		assert .label$ = .label_after1$# [.i]; '.index' '.label$'
 		Locate next
 	endfor
+	.numberOfMatches = Get number of matches
+	assert .numberOfMatches = size (.index1#)
+	.numberOfTopicMatches = Get number of Topic matches: 1
+	assert .numberOfTopicMatches = 11
+	.numberOfBeforeMatches = Get number of Before matches: 1
+	assert .numberOfBeforeMatches = 12
+	.numberOfAfterMatches = Get number of After matches: 1
+	assert .numberOfAfterMatches = 4
+	
 	removeObject: .navigator
-	appendInfoLine: tab$, "test  before + vowel + after OK"
+	appendInfoLine: tab$, "test  before + topic + after OK"
 endproc
 
 procedure test_twoNavigationContexts
@@ -151,13 +182,13 @@ procedure test_twoNavigationContexts
 		assert .index_before = .index1_before# [.i]
 		.label$ = Get label: 1, "topic"
 		assert .label$ = .label1$# [.i]
-		.indexc2 = Get index: 2, "topic"
+		.indexc2 = Get index: 3, "topic"
 		assert .indexc2 = .index3#[.i]; '.indexc2' '.index3# [.i]'
-		.label2$ = Get label: 2, "topic"
+		.label2$ = Get label: 3, "topic"
 		assert .label2$ = .label3$# [.i]
-		.startTime = Get start time: 2, "topic"
+		.startTime = Get start time: 3, "topic"
 		assert .startTime = .startTime3# [.i]; '.indexc2' '.startTime'
-		.endTime = Get end time: 2, "topic"
+		.endTime = Get end time: 3, "topic"
 		assert .endTime = .endTime3# [.i]; '.indexc2' '.endTime'
 		Locate next
 	endfor
@@ -168,21 +199,21 @@ endproc
 procedure test_threeNavigationContexts
 	appendInfoLine: tab$, "test three navigation contexts"
 
-	.indext1# = {15, 29, 35}
-	.numberOfMatches = size (.indext1#)
-	.indext1_before# = {14, 28, 34}
-	.labelt1$# = { "ux", "ao", "ih"}
-	.indext3# = {6, 11, 13}
+	.index1# = {15, 29, 35}
+	.numberOfMatches = size (.index1#)
+	.index1_before# = {14, 28, 34}
+	.label1$# = { "ux", "ao", "ih"}
+	.index3# = {6, 11, 13}
 	.indext4# = {5, 9, 11}
-	.labelt3$# = {"suit", "water", "year"}
-	.startTimet3# = zero# (.numberOfMatches)
-	.endTimet3# = zero# (.numberOfMatches)
+	.label3$# = {"suit", "water", "year"}
+	.startTime3# = zero# (.numberOfMatches)
+	.endTime3# = zero# (.numberOfMatches)
 	.startTimet4# = zero# (.numberOfMatches)
 	.endTimet4# = zero# (.numberOfMatches)
 	selectObject: textgrid
 	for .i to .numberOfMatches
-		.startTimet3# [.i] = Get start time of interval: 3, .indext3# [.i]
-		.endTimet3# [.i] = Get end time of interval: 3, .indext3# [.i]
+		.startTime3# [.i] = Get start time of interval: 3, .index3# [.i]
+		.endTime3# [.i] = Get end time of interval: 3, .index3# [.i]
 		.startTimet4# [.i] = Get start time of interval: 4, .indext4# [.i]
 		.endTimet4# [.i] = Get end time of interval: 4, .indext4# [.i]
 	endfor
@@ -199,29 +230,29 @@ procedure test_threeNavigationContexts
 	Locate first
 	for .i to .numberOfMatches
 		.index = Get index: 1, "topic"
-		assert .index = .indext1# [.i]; '.index'
+		assert .index = .index1# [.i]; '.index'
 		.index_before = Get index: 1, "before"
-		assert .index_before = .indext1_before# [.i]
+		assert .index_before = .index1_before# [.i]
 		.label$ = Get label: 1, "topic"
-		assert .label$ = .labelt1$# [.i]
-		.indexc2 = Get index: 2, "topic"
-		assert .indexc2 = .indext3#[.i]; '.indexc2' '.index3# [.i]'
-		.label2$ = Get label: 2, "topic"
-		assert .label2$ = .labelt3$# [.i]
-		.startTime = Get start time: 2, "topic"
-		assert .startTime = .startTimet3# [.i]; '.indexc2' '.startTime'
-		.endTime = Get end time: 2, "topic"
-		assert .endTime = .endTimet3# [.i]; '.indexc2' '.endTime'
-		.indexc3 = Get index: 3, "topic"
-		assert .indexc3 = .indext4#[.i]; '.indexc3' '.indext4# [.i]'
+		assert .label$ = .label1$# [.i]
+		.indexc2 = Get index: 3, "topic"
+		assert .indexc2 = .index3#[.i]; '.indexc2' '.index3# [.i]'
+		.label2$ = Get label: 3, "topic"
+		assert .label2$ = .label3$# [.i]
 		.startTime = Get start time: 3, "topic"
-		assert .startTime = .startTimet4# [.i]; '.indexc3' '.startTime'
+		assert .startTime = .startTime3# [.i]; '.indexc2' '.startTime'
 		.endTime = Get end time: 3, "topic"
+		assert .endTime = .endTime3# [.i]; '.indexc2' '.endTime'
+		.indexc3 = Get index: 4, "topic"
+		assert .indexc3 = .indext4#[.i]; '.indexc3' '.indext4# [.i]'
+		.startTime = Get start time: 4, "topic"
+		assert .startTime = .startTimet4# [.i]; '.indexc3' '.startTime'
+		.endTime = Get end time: 4, "topic"
 		assert .endTime = .endTimet4# [.i]; '.indexc3' '.endTime'
 		Locate next
 	endfor
+	removeObject: .navigator
 	appendInfoLine: tab$, "test three navigation contexts OK"
-
 endproc
 
 
