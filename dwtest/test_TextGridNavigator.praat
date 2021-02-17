@@ -73,19 +73,18 @@ procedure test_topic
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
 	.navigationContext = Extract navigation context: 1
-	Modify Topic criterion: "is not equal to"
+	Modify Topic criterion: "is equal to"
 	selectObject: .navigator, .navigationContext
 	Replace navigation context: 1
 	selectObject: .navigator
 	.numberOfMatches = Get number of matches
-	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
+	assert .numberOfMatches = .numberOfVowels
 	.textgrid = Extract TextGrid
 	selectObject: .navigator, .textgrid
 	Replace TextGrid
 	selectObject: .navigator
 	.numberOfMatches = Get number of matches
-	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
-	
+	assert .numberOfMatches = .numberOfVowels
 	removeObject: .navigator, .navigationContext, .textgrid
 	appendInfoLine: tab$, "test topic OK"
 endproc
