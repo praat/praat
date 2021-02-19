@@ -165,11 +165,13 @@ autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, integer first, integer last,
 
 autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, integer numberOfCoefficients) {
 	try {
-		if (numberOfCoefficients <= 0)
+		if (numberOfCoefficients <= 0 || numberOfCoefficients > my ny - 1)
 			numberOfCoefficients = my ny - 1;
-		if (numberOfCoefficients > my ny - 1)
-			numberOfCoefficients = my ny - 1;
-		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
+		/*
+			20130220 new interpretation of maximumNumberOfCoefficients necessary for the inverse transform!
+			In the creation of the MFCC we need to set it at the maximum, ny - 1.
+			In the conversion to CC we fill it with possibly less numbers!
+		*/
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		BandFilterSpectrogram_into_CC (me, thee.get(), numberOfCoefficients);
 		return thee;
