@@ -239,6 +239,8 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 	// (9)
 
 	b1 [1] = x [1];
+	if (n < 2)
+		return (double) xms;
 	b2 [n - 1] = x [n];
 	for (integer j = 2; j <= n - 1; j ++)
 		b1 [j] = b2 [j - 1] = x [j];
