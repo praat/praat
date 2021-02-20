@@ -1440,6 +1440,10 @@ double VECburg (VEC const& a, constVEC const& x) {
 	const integer n = x.size, m = a.size;
 	for (integer j = 1; j <= m; j ++)
 		a [j] = 0.0;
+	if (n <= 2) {
+		a [1] = -1.0;
+		return ( n == 2 ? 0.5 * (x [1] * x[1] + x [2] * x [2]) : x [1] * x[1] );
+	}
 
 	autoVEC b1 = zero_VEC (n), b2 = zero_VEC (n), aa = zero_VEC (m);
 

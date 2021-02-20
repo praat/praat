@@ -221,6 +221,10 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 	const integer n = x.size, m = a.size;
 	for (integer j = 1; j <= m; j ++)
 		a [j] = 0.0;
+	if (n <= 2) {
+		a [1] = -1.0;
+		return ( n == 2 ? 0.5 * (x [1] * x[1] + x [2] * x [2]) : x [1] * x[1] );
+	}
 
 	VEC b1 = workspace. part (1, n); // autoVEC b1 = zero_VEC (n);
 	VEC b2 = workspace. part (n + 1, 2 * n); // autoVEC b2 = zero_VEC (n);
@@ -239,8 +243,6 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 	// (9)
 
 	b1 [1] = x [1];
-	if (n < 2)
-		return (double) xms;
 	b2 [n - 1] = x [n];
 	for (integer j = 2; j <= n - 1; j ++)
 		b1 [j] = b2 [j - 1] = x [j];
@@ -451,6 +453,11 @@ static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, 
 	*/
 	if (windowDuration > my dx * my nx)
 		windowDuration = my dx * my nx;
+	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
+		U"Your sound is too short to analyse.\n For a prediction order of ", predictionOrder,
+		U" its duration should be larger than ", my dx * (predictionOrder + 1),
+		U" s. Please decrease the prediction order.");
+	
 	integer numberOfFrames = thy nx;
 	autoSound sound = Data_copy (me);
 	autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
@@ -490,9 +497,12 @@ static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, 
 
 void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasisFrequency, kLPC_Analysis method, double tol1, double tol2) {
 	const integer numberOfProcessors = std::thread::hardware_concurrency ();
-	if (numberOfProcessors <= 1) {
+	/*
+		If the duration of the sound is smaller than the analysis window duration we don't do multithreading.
+	*/
+	if (numberOfProcessors <= 1 || (my xmax - my xmin) <= analysisWidth) {
 		/*
-			We cannot use multithreading.
+			Don't use multithreading.
 		*/
 		Sound_into_LPC_noThreads (me, thee, analysisWidth, preEmphasisFrequency, method, tol1, tol2);
 	}
