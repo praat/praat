@@ -774,7 +774,7 @@ integer TextGridNavigator_getIndex (TextGridNavigator me, integer tierNumber, kC
 	const integer index = ( where == kContext_where::TOPIC ? tnc -> currentTopicIndex :
 		where == kContext_where::BEFORE ? Tier_getBeforeIndex (navigationTier, tnc -> currentTopicIndex, tnc) : 
 		where == kContext_where::AFTER ? Tier_getAfterIndex (navigationTier, tnc -> currentTopicIndex, tnc): 0);
-	return index;
+	return ( index > tnc -> v_getSize (navigationTier) ? 0 : index );
 }
 
 /* End of file TextGridNavigator.cpp */
