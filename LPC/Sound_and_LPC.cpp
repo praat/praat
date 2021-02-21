@@ -442,26 +442,18 @@ static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, 
 	Melder_require (my xmin == thy xmin && my xmax == thy xmax, 
 		U"The Sound and the LPC should have the same domain.");
 	const double samplingFrequency = 1.0 / my dx;
-	double windowDuration = 2.0 * analysisWidth; // Gaussian window
 	const integer predictionOrder = thy maxnCoefficients;
-	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
+	const double suggestedWindowDuration = 2.0 * analysisWidth;   // Gaussian window
+	const double actualWindowDuration = Melder_clippedRight (suggestedWindowDuration, my dx * my nx);   // convenience: analyse whole sound into 1 frame
+	Melder_require (Melder_roundDown (actualWindowDuration / my dx) > predictionOrder,
 		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
 		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1),
-		U" s. Please increase the analysis window duration.");
-	/*
-		Convenience: analyse the whole sound into one LPC_frame.
-	*/
-	if (windowDuration > my dx * my nx)
-		windowDuration = my dx * my nx;
-	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder,
-		U"Your sound is too short to analyse.\n For a prediction order of ", predictionOrder,
-		U" its duration should be larger than ", my dx * (predictionOrder + 1),
-		U" s. Please decrease the prediction order.");
-	
+		U" s. Please increase the analysis window duration or lower the prediction order.");
+
 	integer numberOfFrames = thy nx;
 	autoSound sound = Data_copy (me);
-	autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
-	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
+	autoSound sframe = Sound_createSimple (1, actualWindowDuration, samplingFrequency);
+	autoSound window = Sound_createGaussian (actualWindowDuration, samplingFrequency);
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const LPC_Frame lpcFrame = & thy d_frames [iframe];
 		LPC_Frame_init (lpcFrame, predictionOrder);
@@ -476,7 +468,7 @@ static void Sound_into_LPC_noThreads (Sound me, LPC thee, double analysisWidth, 
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		const LPC_Frame lpcframe = & thy d_frames [iframe];
 		const double t = Sampled_indexToX (thee, iframe);
-		Sound_into_Sound (sound.get(), sframe.get(), t - 0.5 * windowDuration);
+		Sound_into_Sound (sound.get(), sframe.get(), t - 0.5 * actualWindowDuration);
 		Vector_subtractMean (sframe.get());
 		Sounds_multiply (sframe.get(), window.get());
 		integer status = 1;
