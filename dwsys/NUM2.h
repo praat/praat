@@ -1384,7 +1384,7 @@ void NUMpolynomial_recurrence (VEC const& pn, double a, double b, double c, cons
 
 
 /* 20200405 djmw This functions resides here temporarily until MelderThread.h copes with lambda's */
-static inline void NUMgetThreadingInfo (integer numberOfFrames, integer maximumNumberOfThreads, integer *inout_numberOfFramesPerThread, integer * out_numberOfThreads) {
+static inline void NUMgetThreadingInfo (integer numberOfFrames, integer maximumNumberOfThreads, integer *inout_numberOfFramesPerThread, integer *out_numberOfThreads) {
 	if (*inout_numberOfFramesPerThread <= 0)
 		*inout_numberOfFramesPerThread = 25;
 	integer numberOfThreads = (numberOfFrames - 1) / *inout_numberOfFramesPerThread + 1;
