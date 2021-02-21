@@ -1,7 +1,7 @@
 #pragma once
 /* STRVEC.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
-inline STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toIndex) {
-	integer offsetIndex = fromIndex - 1;
-	Melder_assert (offsetIndex >= 0);
-	Melder_assert (toIndex <= strvec.size);
-	integer rangeSize = toIndex - offsetIndex;
-	if (rangeSize <= 0)
-		return STRVEC();
-	return STRVEC (& strvec [fromIndex], toIndex - offsetIndex);
-}
-
-inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer toIndex) {
-	integer offsetIndex = fromIndex - 1;
-	Melder_assert (offsetIndex >= 0);
-	Melder_assert (toIndex <= strvec.size);
-	integer rangeSize = toIndex - offsetIndex;
-	if (rangeSize <= 0)
-		return constSTRVEC();
-	return constSTRVEC (& strvec [fromIndex], rangeSize);
-}
 
 autoSTRVEC fileNames_STRVEC (conststring32 path /* cattable */);
 
