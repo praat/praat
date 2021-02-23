@@ -4328,10 +4328,11 @@ DIRECT (MODIFY_NavigationContext_replaceAfterLabels) {
 
 FORM (NEW_TextGrid_and_NavigationContext_to_TextGridNavigator, U"TextGrid & NavigationContext: To TextGridNavigator", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
 	CONVERT_TWO (TextGrid, NavigationContext)
-		autoTextGridNavigator result = TextGrid_and_NavigationContext_to_TextGridNavigator (me, you, tierNumber);
+		autoTextGridNavigator result = TextGrid_and_NavigationContext_to_TextGridNavigator (me, you, tierNumber, matchDomain);
 	CONVERT_TWO_END (U"tgn", tierNumber)
 }
 
@@ -6562,15 +6563,18 @@ DO
 }
 
 FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
-	WORD (name, U"Name: ", U"plosive_vowel_nasal")
+	WORD (name, U"Name", U"plosive_vowel_nasal")
 	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	LABEL (U"")
 	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	LABEL (U"")
 	TEXTFIELD (after_string, U"After labels", U"m n")
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	LABEL (U"")
 	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
-	BOOLEAN (excludeTopic, U"Exclude topic", false)
+	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
 	OK
 DO
 	CREATE_ONE
@@ -7992,11 +7996,13 @@ DO
 
 FORM (MODIFY_TextGridNavigator_addNavigationContext, U"TextGrid & NavigationContext: Add navigation context", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kNavigatableTier_location, locationCriterion, U"Timing relation", kNavigatableTier_location::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	LABEL (U"... the match location of the topic tier.")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
-		TextGridNavigator_addNavigationContext (me, you, tierNumber, locationCriterion);
+		TextGridNavigator_addNavigationContext (me, you, tierNumber, matchLocation, matchDomain);
 	MODIFY_FIRST_OF_TWO_END
 }
 

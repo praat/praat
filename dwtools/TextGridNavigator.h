@@ -45,11 +45,11 @@
 autoIntervalTierNavigationContext NavigationContext_to_IntervalTierNavigationContext (NavigationContext me, integer tierNumber);
 autoTextTierNavigationContext NavigationContext_to_TextTierNavigationContext (NavigationContext me, integer tierNumber);
 
-autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber);
+autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain);
 
 /*
 	Add navigation context for a tier.
-	The locationCriterion determines how a matched location in this tier relates to the matched location on the topic tier.
+	The matchLocation determines how a matched location in this tier relates to the matched location on the topic tier.
 	Suppose the interval on the topic tier that matched has domain [tmin, tmax].
 	(a TextPoint has tmin == tmax). The potential match in the tier in one of the other contexts has domain [tmin2, tmax2].
 	Constraint:					Relation between matched domains:
@@ -64,7 +64,7 @@ autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextG
 	OVERLAPS_BEFORE_AND_AFTER	tmin2 < tmin && tmax2 > tmax
 	TOUCHES_BEFORE_AND_AFTER	tmin2 == tmin && tmax2 == tmax
 */
-void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_location locationCriterion);
+void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kMatchLocation matchLocation, kMatchDomain matchDomain);
 void TextGridNavigator_replaceNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber);
 
 autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNavigator me, integer tierNumber);
@@ -76,12 +76,13 @@ void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierN
 void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
 void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
 void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch);
+void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain newDomain);
 
 void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack);
 
 void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee);
 
-bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNavigationTier);
+bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInTopicTier);
 
 integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, integer icontext);
 

@@ -57,7 +57,7 @@ procedure test_topic
 	endfor
 
 	selectObject: textgrid, navigationContext1
-	.navigator = To TextGridNavigator: 1
+	.navigator = To TextGridNavigator: 1, "Match start to Match end"
 	Locate first
 	for .i to .numberOfVowels
 		.index = Get index: 1, "topic"
@@ -93,7 +93,7 @@ procedure test_topicAndBefore
 	appendInfoLine: tab$, "test  topic + before"
 
 	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1
+	.navigator = To TextGridNavigator: 1, "Match start to Match end"
 	.index1# = {3, 5, 8, 15, 21, 23, 25, 29, 35 }
 	.label1$# = {"sh", "hv", "jh", "s", "r" , "s", "w", "w", "y" }
 	.combi1$# = {"sh |ix", "hv | eh", "jh | ih", "s | ux", "r | ix", "s | ix", "w | ao", "w | ao", "y | ih" }
@@ -115,7 +115,7 @@ procedure test_topicAndBeforeAndAfter
 	appendInfoLine: tab$, "test  before + topic + after"
 
 	selectObject: textgrid, navigationContext3
-	.navigator = To TextGridNavigator: 1
+	.navigator = To TextGridNavigator: 1, "Match start to Match end"
 	.index1# = {3, 15,  25}
 	.index_before1# = {2, 14, 24}
 	.index_after1# = {4, 16, 26}
@@ -169,9 +169,9 @@ procedure test_twoNavigationContexts
 
 	# combine  NavigationContext's  on tier 1 and tier 3
 	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1
+	.navigator = To TextGridNavigator: 1, "Match start to Match end"
 	selectObject: .navigator, navigationContext4
-	Add navigation context: 3, "overlaps before and after"
+	Add navigation context: 3, "overlaps before and after",  "Match start to Match end"
 	selectObject: .navigator
 	Locate first
 	for .i to .numberOfMatches
@@ -219,11 +219,11 @@ procedure test_threeNavigationContexts
 
 	# combine  NavigationContext's  on tier 1, tier 3 and tier 4
 	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1
+	.navigator = To TextGridNavigator: 1,  "Match start to Match end"
 	selectObject: .navigator, navigationContext4
-	Add navigation context: 3, "overlaps before and after"
+	Add navigation context: 3, "overlaps before and after",  "Match start to Match end"
 	selectObject: .navigator, navigationContext5
-	Add navigation context: 4, "overlaps before and after"
+	Add navigation context: 4, "overlaps before and after",  "Match start to Match end"
 	selectObject: .navigator
 
 	Locate first

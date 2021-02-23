@@ -30,7 +30,8 @@ oo_DEFINE_CLASS (TierNavigationContext, NavigationContext)
 	oo_INTEGER (maximumLookAhead) // don't go further than this number of steps from currentTopicIndex
 	oo_INTEGER (maximumLookBack) // don't go back  more than this number of steps from currentTopicIndex
 
-	oo_ENUM (kNavigatableTier_location, locationCriterion) // how does a match location in this tier relate to the topic tier
+	oo_ENUM (kMatchLocation, matchLocation) // how does a match location in this tier relate to the topic tier
+	oo_ENUM (kMatchDomain, matchDomain) // what is the domain of the match? 
 
 	#if oo_DECLARING
 		void v_info () override;

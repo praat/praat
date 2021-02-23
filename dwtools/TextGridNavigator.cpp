@@ -221,8 +221,8 @@ autoTextTierNavigationContext NavigationContext_to_TextTierNavigationContext (Na
 }
 
 /*
-static void TierNavigationContext_setItemOrientation (TierNavigationContext me, kNavigatableTier_location locationCriterion) {
-	my locationCriterion = locationCriterion;
+static void TierNavigationContext_setItemOrientation (TierNavigationContext me, kMatchLocation matchLocation) {
+	my matchLocation = matchLocation;
 }
 */
 
@@ -248,19 +248,19 @@ void structTextGridNavigator :: v_info () {
 		MelderInfo_writeLine (U"\t\tAfter labels only: ",
 			Tier_getNumberOfAfterOnlyMatches (anyTier, tnc), U" (from ", tierSize, U")");
 		MelderInfo_writeLine (U"\t\tCombined: ", Tier_getNumberOfMatches (anyTier, tnc),  U" (from ", tierSize, U")");
+		MelderInfo_writeLine (U"\tMatch domain: ", kMatchDomain_getText (tnc -> matchDomain));
 		if (icontext > 1)
-			MelderInfo_writeLine (U"\tMatch criterion to tier number ", topicTierNumber, U": ", kNavigatableTier_location_getText (tnc -> locationCriterion));
-	}
-	
+			MelderInfo_writeLine (U"\tMatch location to tier number ", topicTierNumber, U": ", kMatchLocation_getText (tnc -> matchLocation));
+	}	
 	MelderInfo_writeLine (U"Number of complete matches: ", TextGridNavigator_getNumberOfMatches (this),  U" (from ", topicTierSize, U")");
 }
 
-autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber) {
+autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain) {
 	try {
 		autoTextGridNavigator me = Thing_new (TextGridNavigator);
 		Function_init (me.get(), textgrid -> xmin, textgrid -> xmax);
 		my textgrid = Data_copy (textgrid);
-		TextGridNavigator_addNavigationContext (me.get(), navigationContext, tierNumber, kNavigatableTier_location::IS_SOMEWHERE);
+		TextGridNavigator_addNavigationContext (me.get(), navigationContext, tierNumber, kMatchLocation::IS_SOMEWHERE, matchDomain);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridNavigator could not be created from ", textgrid, U" and ", navigationContext);
@@ -286,18 +286,39 @@ static void TextGridNavigator_checkNavigatableTierIsNotInUse (TextGridNavigator 
 		U": tier number ", tierNumber, U" is already in use.");
 }
 
+static void NavigationContext_checkUseCriterionCompliesWithMatchDomain (NavigationContext me, kMatchDomain matchDomain) {
+	if (matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END)
+		Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion != kContext_use::BEFORE_AND_AFTER,
+			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_TOPIC_END), U"> if you don't always use Before in the matching <", kContext_use_getText (my useCriterion), U">.");
+	else if (matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END)
+		Melder_require (my useCriterion == kContext_use::BEFORE_AND_AFTER,
+			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_AFTER_END), U"> if you don't always use Before and After in the matching <", kContext_use_getText (my useCriterion), U">.");
+	else if (matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END)
+		Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion != kContext_use::BEFORE_AND_AFTER,
+			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::TOPIC_START_TO_AFTER_END), U"> if you don't always use After in the matching <", kContext_use_getText (my useCriterion), U">.");
+	else if (matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END)
+		Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion == kContext_use::BEFORE_AND_AFTER,
+			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_BEFORE_END), U"> if you don't always use Before in the matching <", kContext_use_getText (my useCriterion), U">.");
+	else if (matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END)
+		Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
+			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::AFTER_START_TO_AFTER_END), U"> if you don't always use After in the matching <", kContext_use_getText (my useCriterion), U">.");
+	// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
+}
+
 //TODO position option
-void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kNavigatableTier_location locationCriterion) {
+void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kMatchLocation matchLocation, kMatchDomain matchDomain) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (my textgrid.get(), tierNumber);
 		TextGridNavigator_checkNavigatableTierIsNotInUse (me, tierNumber);
-		autoTierNavigationContext tierNavigationContexts;
+		NavigationContext_checkUseCriterionCompliesWithMatchDomain (thee, matchDomain);
+		autoTierNavigationContext tierNavigationContext;
 		if (my textgrid -> tiers -> at [tierNumber] -> classInfo == classIntervalTier)
-			tierNavigationContexts = NavigationContext_to_IntervalTierNavigationContext (thee, tierNumber);
+			tierNavigationContext = NavigationContext_to_IntervalTierNavigationContext (thee, tierNumber);
 		else
-			tierNavigationContexts = NavigationContext_to_TextTierNavigationContext (thee, tierNumber);
-		tierNavigationContexts -> locationCriterion = locationCriterion;
-		my tierNavigationContexts.addItem_move (tierNavigationContexts.move());
+			tierNavigationContext = NavigationContext_to_TextTierNavigationContext (thee, tierNumber);
+		tierNavigationContext -> matchLocation = matchLocation;
+		tierNavigationContext -> matchDomain = matchDomain;
+		my tierNavigationContexts.addItem_move (tierNavigationContext.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add navigation context ", thee, U".");
 	}
@@ -439,11 +460,11 @@ static integer Tier_getAfterIndex (Function me, integer index, TierNavigationCon
 	return 0;
 }
 
-static inline bool Tier_isRightContextMatch (Function me, integer index, TierNavigationContext tnc) {
+static inline bool Tier_isAfterMatch (Function me, integer index, TierNavigationContext tnc) {
 	return Tier_getAfterIndex (me, index, tnc) > 0;
 }
 
-static inline bool Tier_isLeftContextMatch (Function me, integer index, TierNavigationContext tnc) {
+static inline bool Tier_isBeforeMatch (Function me, integer index, TierNavigationContext tnc) {
 	return Tier_getBeforeIndex (me, index, tnc) > 0;
 }
 
@@ -486,22 +507,22 @@ integer Tier_getNumberOfTopicOnlyMatches (Function me, TierNavigationContext tnc
 static bool Tier_isLabelMatch (Function me, integer index, TierNavigationContext tnc) {
 	if (index < 1 && index > tnc -> v_getSize (me))
 		return false;
-	const bool isNavigationMatch = ( tnc -> excludeTopicMatch ? true : Tier_isTopicMatch (me, index, tnc) );
-	if (! isNavigationMatch || tnc -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER)
-		return isNavigationMatch;
+	const bool isTopicMatch = ( tnc -> excludeTopicMatch ? true : Tier_isTopicMatch (me, index, tnc) );
+	if (! isTopicMatch || tnc -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER)
+		return isTopicMatch;
 	bool isMatch = false;
 	if (tnc -> useCriterion == kContext_use::BEFORE_AND_AFTER)
-		isMatch = Tier_isLeftContextMatch (me, index, tnc) &&
-			Tier_isRightContextMatch (me, index, tnc);
+		isMatch = Tier_isBeforeMatch (me, index, tnc) &&
+			Tier_isAfterMatch (me, index, tnc);
 	else if (tnc ->  useCriterion == kContext_use::AFTER)
-		isMatch = Tier_isRightContextMatch (me, index, tnc);
+		isMatch = Tier_isAfterMatch (me, index, tnc);
 	else if (tnc ->  useCriterion == kContext_use::BEFORE)
-		isMatch = Tier_isLeftContextMatch (me, index, tnc);
+		isMatch = Tier_isBeforeMatch (me, index, tnc);
 	else if (tnc ->  useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH)
-		isMatch = Tier_isLeftContextMatch (me, index, tnc) ||
-			Tier_isRightContextMatch (me, index, tnc);
+		isMatch = Tier_isBeforeMatch (me, index, tnc) ||
+			Tier_isAfterMatch (me, index, tnc);
 	else if (tnc ->  useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH)
-		isMatch = Tier_isLeftContextMatch (me, index, tnc) == ! Tier_isRightContextMatch (me, index, tnc);
+		isMatch = Tier_isBeforeMatch (me, index, tnc) == ! Tier_isAfterMatch (me, index, tnc);
 	return isMatch;
 }
 
@@ -553,18 +574,84 @@ integer TextGridNavigator_getNumberOfAfterMatches (TextGridNavigator me, integer
 	return Tier_getNumberOfAfterOnlyMatches (anyTier, tnc);
 }
 
-bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNavigationTier) {
+static void TextGridNavigator_getMatchDomain (TextGridNavigator me, integer contextNumber, double *out_startTime, double *out_endTime) {
+	TextGridNavigator_checkContextNumber (me, contextNumber);
+	const TierNavigationContext tnc = my tierNavigationContexts.at[contextNumber];
+	kContext_where startWhere, endWhere;
+	if (tnc -> matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
+		if (tnc -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
+			startWhere = kContext_where::TOPIC;
+			endWhere = kContext_where::TOPIC;
+		} else if (tnc -> useCriterion == kContext_use::BEFORE) {
+			startWhere = kContext_where::BEFORE;
+			endWhere = ( tnc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+		} else if (tnc -> useCriterion == kContext_use::AFTER) {
+			startWhere = ( tnc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
+			endWhere = kContext_where::AFTER;
+		} else if (tnc -> useCriterion == kContext_use::BEFORE_AND_AFTER) {
+			startWhere = kContext_where::BEFORE;
+			endWhere = kContext_where::AFTER;
+		} else if (tnc -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH) {
+			const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+			if (Tier_isBeforeMatch (anyTier, tnc -> currentTopicIndex, tnc)) {
+				startWhere = kContext_where::BEFORE;
+				endWhere = ( tnc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			} else {
+				startWhere = ( tnc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
+				endWhere = kContext_where::AFTER;
+			}
+		} else if (tnc -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
+			const Function anyTier = my textgrid -> tiers -> at [tnc -> tierNumber];
+			bool isBeforeMatch = Tier_isBeforeMatch (anyTier, tnc -> currentTopicIndex, tnc);
+			bool isAfterMatch = Tier_isAfterMatch (anyTier, tnc -> currentTopicIndex, tnc);
+			if (isBeforeMatch && isAfterMatch) {
+				startWhere = kContext_where::BEFORE;
+				endWhere = kContext_where::AFTER;
+			} else if (isBeforeMatch) {
+				startWhere = kContext_where::BEFORE;
+				endWhere = ( tnc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			} else {
+				startWhere = ( tnc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
+				endWhere = kContext_where::AFTER;
+			}
+		}
+	} else if (tnc -> matchDomain == kMatchDomain::TOPIC_START_TO_TOPIC_END) {
+		startWhere = kContext_where::TOPIC;
+		endWhere = kContext_where::TOPIC;
+	} else if (tnc -> matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END) {
+		startWhere = kContext_where::BEFORE;
+		endWhere = kContext_where::TOPIC;
+	} else if (tnc -> matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END) {
+		startWhere = kContext_where::TOPIC;
+		endWhere = kContext_where::AFTER;
+	} else if (tnc -> matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END) {
+		startWhere = kContext_where::BEFORE;
+		endWhere = kContext_where::AFTER;
+	} else if (tnc -> matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END) {
+		startWhere = kContext_where::BEFORE;
+		endWhere = kContext_where::BEFORE;
+	} else if (tnc -> matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END) {
+		startWhere = kContext_where::AFTER;
+		endWhere = kContext_where::AFTER;
+	}
+	if (out_startTime)
+		*out_startTime = TextGridNavigator_getStartTime (me, contextNumber, startWhere);
+	if (out_endTime)
+		*out_endTime = TextGridNavigator_getEndTime (me, contextNumber, endWhere);
+}
+
+bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInTopicTier) {
 	const TierNavigationContext tnc1 = my tierNavigationContexts . at [1];
-	const Function navigationTier = my textgrid -> tiers -> at [tnc1 -> tierNumber];
-	if (! Tier_isLabelMatch (navigationTier, indexInNavigationTier, tnc1))
+	const Function topicTier = my textgrid -> tiers -> at [tnc1 -> tierNumber];
+	if (! Tier_isLabelMatch (topicTier, indexInTopicTier, tnc1))
 			return false;
 	if (my tierNavigationContexts.size == 1)
 		return true;
 	/*
-		We have a match at the navigation tier, now check the subordinate tiers
+		We have a match at the topic tier, now check the subordinate tiers
 	*/
-	const double startTime = tnc1 -> v_getStartTime (navigationTier, indexInNavigationTier);
-	const double endTime = tnc1 -> v_getEndTime (navigationTier, indexInNavigationTier);
+	const double startTime = tnc1 -> v_getStartTime (topicTier, indexInTopicTier);
+	const double endTime = tnc1 -> v_getEndTime (topicTier, indexInTopicTier);
 	const double midTime = 0.5 * (startTime + endTime);
 	for (integer icontext = 2; icontext <= my tierNavigationContexts . size; icontext ++) {
 		const TierNavigationContext tnc = my tierNavigationContexts . at [icontext];
@@ -575,14 +662,14 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 		tnc -> currentTopicIndex = 0;
 		const integer startIndex = ( tnc -> maximumLookBack > 0 ? std::max (1_integer, referenceIndex - tnc -> maximumLookBack) : 1 );
 		const integer endIndex = ( tnc -> maximumLookAhead > 0 ? std::min (referenceIndex + tnc -> maximumLookAhead, tierSize) : tierSize );
-		if (tnc -> locationCriterion == kNavigatableTier_location::IS_SOMEWHERE) {
+		if (tnc -> matchLocation == kMatchLocation::IS_SOMEWHERE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					tnc -> currentTopicIndex = index;
 					break;
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::IS_BEFORE) {
+		} else if (tnc -> matchLocation == kMatchLocation::IS_BEFORE) {
 			for (integer index = referenceIndex; index >= startIndex; index --) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					const double endTime_sub = tnc -> v_getEndTime (anyTier, index);
@@ -592,7 +679,7 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 					}
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::TOUCHES_BEFORE) {
+		} else if (tnc -> matchLocation == kMatchLocation::TOUCHES_BEFORE) {
 			for (integer index = referenceIndex; index >= startIndex; index --) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					const double endTime_sub = tnc -> v_getEndTime (anyTier, index);
@@ -603,7 +690,7 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 						break;
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::OVERLAPS_BEFORE) {
+		} else if (tnc -> matchLocation == kMatchLocation::OVERLAPS_BEFORE) {
 			// OVERLAPS_BEFORE	tmin2 < tmin && tmax2 <= tmax
 			for (integer index = referenceIndex; index >= startIndex; index --) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
@@ -616,14 +703,14 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 						break;
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::IS_INSIDE) {
+		} else if (tnc -> matchLocation == kMatchLocation::IS_INSIDE) {
 			if (Tier_isLabelMatch (anyTier, referenceIndex, tnc)) {
 				const double endTime_sub = tnc -> v_getEndTime (anyTier, referenceIndex);
 				const double startTime_sub = tnc -> v_getStartTime (anyTier, referenceIndex);
 				if (startTime_sub >= startTime && endTime_sub <= endTime)
 					tnc -> currentTopicIndex = referenceIndex;
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::OVERLAPS_AFTER) {
+		} else if (tnc -> matchLocation == kMatchLocation::OVERLAPS_AFTER) {
 			// OVERLAPS_AFTER	tmin2 >= tmin && tmax2 > tmax
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
@@ -636,7 +723,7 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 						break;
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::TOUCHES_AFTER) {
+		} else if (tnc -> matchLocation == kMatchLocation::TOUCHES_AFTER) {
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					const double startTime_sub = tnc -> v_getStartTime (anyTier, index);
@@ -647,7 +734,7 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 						break;
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::IS_AFTER) {
+		} else if (tnc -> matchLocation == kMatchLocation::IS_AFTER) {
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					const double startTime_sub = tnc -> v_getStartTime (anyTier, index);
@@ -657,21 +744,21 @@ bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInNaviga
 					}
 				}
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::OVERLAPS_BEFORE_AND_AFTER) {
+		} else if (tnc -> matchLocation == kMatchLocation::OVERLAPS_BEFORE_AND_AFTER) {
 			if (Tier_isLabelMatch (anyTier, referenceIndex, tnc)) {
 				const double endTime_sub = tnc -> v_getEndTime (anyTier, referenceIndex);
 				const double startTime_sub = tnc -> v_getStartTime (anyTier, referenceIndex);
 				if (startTime_sub <= startTime && endTime_sub >= endTime)
 					tnc -> currentTopicIndex = referenceIndex;
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::TOUCHES_BEFORE_AND_AFTER) {
+		} else if (tnc -> matchLocation == kMatchLocation::TOUCHES_BEFORE_AND_AFTER) {
 			if (Tier_isLabelMatch (anyTier, referenceIndex, tnc)) {
 				const double endTime_sub = tnc -> v_getEndTime (anyTier, referenceIndex);
 				const double startTime_sub = tnc -> v_getStartTime (anyTier, referenceIndex);
 				if (startTime_sub == startTime && endTime_sub == endTime)
 					tnc -> currentTopicIndex = referenceIndex;
 			}
-		} else if (tnc -> locationCriterion == kNavigatableTier_location::IS_OUTSIDE) {
+		} else if (tnc -> matchLocation == kMatchLocation::IS_OUTSIDE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (Tier_isLabelMatch (anyTier, index, tnc)) {
 					const double endTime_sub = tnc -> v_getEndTime (anyTier, index);

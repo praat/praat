@@ -117,6 +117,17 @@ autoNavigationContext NavigationContext_create (conststring32 topic_string, kMel
 		my afterLabels = Strings_createAsTokens (after_string, U" ");
 		my afterCriterion = afterCriterion;
 		my useCriterion = useCriterion;
+		if (useCriterion == kContext_use::BEFORE && before_string [0] == U'\0')
+			Strings_insert (my beforeLabels.get(), 1, U"");
+		else if (useCriterion == kContext_use::AFTER && after_string [0] == U'\0')
+			Strings_insert (my afterLabels.get(), 1, U"");
+		else if (useCriterion  == kContext_use::BEFORE_AND_AFTER || useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH ||
+			useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
+			if (before_string [0] == U'\0')
+				Strings_insert (my beforeLabels.get(), 1, U"");
+			if (after_string [0] == U'\0')
+				Strings_insert (my afterLabels.get(), 1, U"");
+		}
 		my excludeTopicMatch = contextOnly;
 		return me;
 	} catch (MelderError) {
