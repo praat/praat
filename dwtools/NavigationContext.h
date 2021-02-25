@@ -44,5 +44,4 @@ bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
 void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch);
 
-
 #endif /* _NavigationContext_h_ */

@@ -26,4 +26,18 @@ enums_begin (kMatchDomain, 1)
 	enums_add (kMatchDomain, 7, AFTER_START_TO_AFTER_END, U"After start to After end")
 enums_end (kMatchDomain, 7, MATCH_START_TO_MATCH_END)
 
+enums_begin (kMatchLocation, 1)
+	enums_add (kMatchLocation, 1, IS_BEFORE, U"is before")
+	enums_add (kMatchLocation, 2, TOUCHES_BEFORE, U"touches before")
+	enums_add (kMatchLocation, 3, OVERLAPS_BEFORE, U"overlaps before")
+	enums_add (kMatchLocation, 4, IS_INSIDE, U"is inside")
+	enums_add (kMatchLocation, 5, OVERLAPS_AFTER, U"overlaps after")
+	enums_add (kMatchLocation, 6, TOUCHES_AFTER, U"touches after")
+	enums_add (kMatchLocation, 7, IS_AFTER, U"is after")
+	enums_add (kMatchLocation, 8, OVERLAPS_BEFORE_AND_AFTER, U"overlaps before and after")
+	enums_add (kMatchLocation, 9, TOUCHES_BEFORE_AND_AFTER, U"touches before and after")
+	enums_add (kMatchLocation,10, IS_OUTSIDE, U"is outside")
+	enums_add (kMatchLocation,11, IS_SOMEWHERE, U"is somewhere")
+enums_end (kMatchLocation, 11, OVERLAPS_BEFORE_AND_AFTER)
+
 /* End of file TextGridTierNavigator_enums.h */

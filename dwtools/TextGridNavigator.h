@@ -18,11 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NavigationContext.h"
-#include "TextGrid.h"
+#include "TextGridTierNavigator.h"
 #include "melder.h"
 
-#include "TextGridNavigator_enums.h"
 #include "TextGridNavigator_def.h"
 
 /*
@@ -41,9 +39,6 @@
 	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context for this tier and 
 	combine it with the previous context to search for items that also match the syntactic context, etc.
 */
-
-autoIntervalTierNavigationContext NavigationContext_to_IntervalTierNavigationContext (NavigationContext me, integer tierNumber);
-autoTextTierNavigationContext NavigationContext_to_TextTierNavigationContext (NavigationContext me, integer tierNumber);
 
 autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain);
 
@@ -64,10 +59,14 @@ autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextG
 	OVERLAPS_BEFORE_AND_AFTER	tmin2 < tmin && tmax2 > tmax
 	TOUCHES_BEFORE_AND_AFTER	tmin2 == tmin && tmax2 == tmax
 */
-void TextGridNavigator_addNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber, kMatchLocation matchLocation, kMatchDomain matchDomain);
+
 void TextGridNavigator_replaceNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber);
 
+void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridTierNavigator thee, kMatchLocation matchLocation);
+
 autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNavigator me, integer tierNumber);
+
+autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNavigator me);
 
 void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
@@ -80,11 +79,9 @@ void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumb
 
 void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack);
 
-void TextGridNavigator_replaceTextGrid (TextGridNavigator me, TextGrid thee);
+void TextGridNavigator_replaceTiers (TextGridNavigator me, TextGrid thee);
 
-bool TextGridNavigator_isLabelMatch (TextGridNavigator me, integer indexInTopicTier);
-
-integer TextGridNavigator_getNumberOfMatchesInAContext (TextGridNavigator me, integer icontext);
+bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier);
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me);
 integer TextGridNavigator_getNumberOfTopicMatches (TextGridNavigator me, integer tierNumber);
@@ -92,7 +89,7 @@ integer TextGridNavigator_getNumberOfBeforeMatches (TextGridNavigator me, intege
 integer TextGridNavigator_getNumberOfAfterMatches (TextGridNavigator me, integer tierNumber);
 
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer tierNumber);
-integer TextGridNavigator_checkContextNumberFromTierNumber (TextGridNavigator me, integer tierNumber);
+integer TextGridNavigator_getTierNumberFromTierNavigator (TextGridNavigator me, integer navigatorNumber);
 
 integer TextGridNavigator_locateNext (TextGridNavigator me);
 
@@ -114,13 +111,5 @@ static inline integer TextGridNavigator_locateFirst (TextGridNavigator me) {
 static inline integer TextGridNavigator_locateLast (TextGridNavigator me) {
 	return TextGridNavigator_locatePreviousBeforeTime (me, my xmax + 0.1);
 }
-
-integer Tier_getNumberOfBeforeOnlyMatches (Function me, TierNavigationContext tnc);
-
-integer Tier_getNumberOfAfterOnlyMatches (Function me, TierNavigationContext tnc);
-
-integer Tier_getNumberOfTopicOnlyMatches (Function me, TierNavigationContext tnc);
-
-integer Tier_getNumberOfMatches (Function me, TierNavigationContext tnc);
 
 #endif /* _TextGridNavigator_h_ */

@@ -14,32 +14,44 @@ endfor
 # locate vowels from the set "ix eh ih ux ao ah"
 navigationContext1 = Create NavigationContext: "c",  "ix eh ih ux ao ah", "is equal to",
 	... "", "is equal to", "", "is equal to", "no before and no after", "no"
+selectObject: textgrid, navigationContext1
+tierNavigator1 = To TextGridTierNavigator: 1, "Match start to Match end"
 
 # locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" before them
 navigationContext2 = Create NavigationContext: "cv",  "ix eh ih ux ao ah", "is equal to",
 	... "sh hv jh k s q r w y", "is equal to", "", "is equal to", "before", "no"
+selectObject: textgrid, navigationContext2
+tierNavigator2 = To TextGridTierNavigator: 1, "Topic start to Topic end"
 
 # locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" 
 # before them and one of "hv q sh" after them
 navigationContext3 = Create NavigationContext: "cv",  "ix eh ih ux ao ah", "is equal to",
 	... "sh hv jh k s q r w y", "is equal to", "hv q sh", "is equal to", "before and after", "no"
+selectObject: textgrid, navigationContext3
+tierNavigator3 = To TextGridTierNavigator: 1, "Topic start to Topic end"
 
 # locate words from the set "suit wash water year"
 navigationContext4 = Create NavigationContext: "words", "had suit wash water year", "is equal to",
 	... "", "is equal to", "", "is equal to", "no before and no after", "no"
+selectObject: textgrid, navigationContext4
+tierNavigator4 = To TextGridTierNavigator: 3, "Topic start to Topic end"
 
 # locate  "N " (on tier 4)
 navigationContext5 = Create NavigationContext: "nouns", "N", "is equal to",
 	... "", "is equal to", "", "is equal to", "no before and no after", "no"
+selectObject: textgrid, navigationContext5
+tierNavigator5 = To TextGridTierNavigator: 4, "Topic start to Topic end"
 
 @test_topic
 @test_topicAndBefore
 @test_topicAndBeforeAndAfter
 @test_twoNavigationContexts
-@test_threeNavigationContexts
+;@test_threeNavigationContexts
 
 removeObject: textgrid, navigationContext1, navigationContext2, 
-	... navigationContext3, navigationContext4, navigationContext5
+	... navigationContext3, navigationContext4, navigationContext5,
+	... tierNavigator1, tierNavigator2, tierNavigator3, tierNavigator4,
+	... tierNavigator5
 
 appendInfoLine: "test_TextGridNavigator.praat OK"
 
@@ -56,8 +68,8 @@ procedure test_topic
 		.endTime1# [.i] = Get end time of interval: 1, .index1# [.i]
 	endfor
 
-	selectObject: textgrid, navigationContext1
-	.navigator = To TextGridNavigator: 1, "Match start to Match end"
+	selectObject: tierNavigator1
+	.navigator = To TextGridNavigator
 	Locate first
 	for .i to .numberOfVowels
 		.index = Get index: 1, "topic"
@@ -79,21 +91,20 @@ procedure test_topic
 	selectObject: .navigator
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = .numberOfVowels
-	.textgrid = Extract TextGrid
-	selectObject: .navigator, .textgrid
-	Replace TextGrid
+	selectObject: .navigator, textgrid
+	Replace TextGrid tiers
 	selectObject: .navigator
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = .numberOfVowels
-	removeObject: .navigator, .navigationContext, .textgrid
+	removeObject: .navigator, .navigationContext
 	appendInfoLine: tab$, "test topic OK"
 endproc
 
 procedure test_topicAndBefore
 	appendInfoLine: tab$, "test  topic + before"
 
-	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1, "Match start to Match end"
+	selectObject: tierNavigator2
+	.navigator = To TextGridNavigator
 	.index1# = {3, 5, 8, 15, 21, 23, 25, 29, 35 }
 	.label1$# = {"sh", "hv", "jh", "s", "r" , "s", "w", "w", "y" }
 	.combi1$# = {"sh |ix", "hv | eh", "jh | ih", "s | ux", "r | ix", "s | ix", "w | ao", "w | ao", "y | ih" }
@@ -114,8 +125,8 @@ endproc
 procedure test_topicAndBeforeAndAfter
 	appendInfoLine: tab$, "test  before + topic + after"
 
-	selectObject: textgrid, navigationContext3
-	.navigator = To TextGridNavigator: 1, "Match start to Match end"
+	selectObject: tierNavigator3
+	.navigator = To TextGridNavigator
 	.index1# = {3, 15,  25}
 	.index_before1# = {2, 14, 24}
 	.index_after1# = {4, 16, 26}
@@ -169,9 +180,9 @@ procedure test_twoNavigationContexts
 
 	# combine  NavigationContext's  on tier 1 and tier 3
 	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1, "Match start to Match end"
-	selectObject: .navigator, navigationContext4
-	Add navigation context: 3, "overlaps before and after",  "Match start to Match end"
+	.navigator = To TextGridNavigator: 1, "Topic start to Topic end"
+	selectObject: .navigator, tierNavigator4
+	Add TextGridTierNavigator: "overlaps before and after"
 	selectObject: .navigator
 	Locate first
 	for .i to .numberOfMatches

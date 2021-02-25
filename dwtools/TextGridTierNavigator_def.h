@@ -31,8 +31,9 @@ oo_END_STRUCT (IntegerRange)
 
 #define ooSTRUCT TextGridTierNavigator
 oo_DEFINE_CLASS (TextGridTierNavigator, Function)
-	
-	oo_OBJECT (Function, 0, anyTier)
+
+	oo_INTEGER (tierNumber) // we need to know where it came from
+	oo_OBJECT (Function, 0, tier)
 	oo_OBJECT (NavigationContext, 0, navigationContext)
 	oo_STRUCT (IntegerRange, beforeRange)
 	oo_STRUCT (IntegerRange, afterRange)
@@ -43,11 +44,14 @@ oo_DEFINE_CLASS (TextGridTierNavigator, Function)
 	oo_INTEGER (maximumLookBack) // don't go back  more than this number of steps from currentTopicIndex
 
 	oo_ENUM (kMatchDomain, matchDomain) // what is to be considered as the domain (startTime, endTime) of the match? 
-
+	oo_ENUM (kMatchLocation, matchLocation) // relation to match in possible other navigators
+	
 	#if oo_DECLARING
 		void v_info () override;
 		virtual integer v_getSize ();
-		virtual integer v_getIndexFromTime (double time);
+		virtual integer v_timeToLowIndex (double time);
+		virtual integer v_timeToIndex (double time);
+		virtual integer v_timeToHighIndex (double time);
 		virtual double v_getStartTime (integer index);
 		virtual double v_getEndTime (integer index);
 		virtual conststring32 v_getLabel (integer index);

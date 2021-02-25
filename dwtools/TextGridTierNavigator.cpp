@@ -42,82 +42,60 @@
 #include "oo_DESCRIPTION.h"
 #include "TextGridTierNavigator_def.h"
 
-static integer IntervalTier_getSize (Function anyTier) {
-	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+Thing_implement (TextGridTierNavigator, Function, 0);
+
+static integer IntervalTier_getSize (Function tier) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	return my intervals.size;
 }
 
-static integer IntervalTier_getIndexFromTime (Function anyTier, double time) {
-	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
-	integer index;
-	if (time < my xmin)
-		index = 0; // offLeft
-	else if (time > my xmax)
-		index = my intervals .size + 1; // offRight
-	else
-		index = IntervalTier_timeToLowIndex (me, time);
-	return index;
-}
-
-static double IntervalTier_getStartTime (Function anyTier, integer index) {
-	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+static double IntervalTier_getStartTime (Function tier, integer index) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	if (index < 1 || index > my intervals.size)
 		return undefined;
 	TextInterval interval = my intervals . at [index];
 	return interval -> xmin;
 }
 	
-static double IntervalTier_getEndTime (Function anyTier, integer index) {
-	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+static double IntervalTier_getEndTime (Function tier, integer index) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	if (index < 1 || index > my intervals.size)
 		return undefined;
 	TextInterval interval = my intervals . at [index];
 	return interval -> xmax;
 }
 	
-static conststring32 IntervalTier_getLabel (Function anyTier, integer index) {
-	IntervalTier me = reinterpret_cast<IntervalTier> (anyTier);
+static conststring32 IntervalTier_getLabel (Function tier, integer index) {
+	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	if (index < 1 || index > my intervals.size)
 		return U"-- undefined --";
 	TextInterval interval = my intervals . at [index];
 	return interval -> text.get();
 }
 
-static integer TextTier_getSize (Function anyTier) {
-	TextTier me = reinterpret_cast<TextTier> (anyTier);
+static integer TextTier_getSize (Function tier) {
+	TextTier me = reinterpret_cast<TextTier> (tier);
 	return my points.size;
 }
 
-static integer TextTier_getIndexFromTime (Function anyTier, double time) {
-	TextTier me = reinterpret_cast<TextTier> (anyTier);
-	integer index;
-	if (time < my xmin)
-		index = 0; // offLeft
-	else if (time > my xmax)
-		index = my points .size + 1; // offRight
-	else
-		index = AnyTier_timeToNearestIndex (me -> asAnyTier(), time);
-	return index;
-}
-
-static double TextTier_getStartTime (Function anyTier, integer index) {
-	TextTier me = reinterpret_cast<TextTier> (anyTier);
+static double TextTier_getStartTime (Function tier, integer index) {
+	TextTier me = reinterpret_cast<TextTier> (tier);
 	if (index < 1 || index > my points.size)
 		return undefined;
 	TextPoint point = my points . at [index];
 	return point -> number;
 }
 
-static double TextTier_getEndTime (Function anyTier, integer index) {
-	TextTier me = reinterpret_cast<TextTier> (anyTier);
+static double TextTier_getEndTime (Function tier, integer index) {
+	TextTier me = reinterpret_cast<TextTier> (tier);
 	if (index < 1 || index > my points.size)
 		return undefined;
 	TextPoint point = my points . at [index];
 	return point -> number;;
 }
 
-static conststring32 TextTier_getLabel (Function anyTier, integer index) {
-	TextTier me = reinterpret_cast<TextTier> (anyTier);
+static conststring32 TextTier_getLabel (Function tier, integer index) {
+	TextTier me = reinterpret_cast<TextTier> (tier);
 	if (index < 1 || index > my points.size)
 		return U"-- undefined --";
 	TextPoint point = my points . at [index];
@@ -125,28 +103,39 @@ static conststring32 TextTier_getLabel (Function anyTier, integer index) {
 }
 
 integer structTextGridTierNavigator :: v_getSize () {
-	return ( anyTier -> classInfo == classIntervalTier ? IntervalTier_getSize (anyTier.get()) : 
-		TextTier_getSize (anyTier.get()) );
+	return ( tier -> classInfo == classIntervalTier ? IntervalTier_getSize (tier.get()) : 
+		TextTier_getSize (tier.get()) );
 }
 
-integer structTextGridTierNavigator :: v_getIndexFromTime (double time) {
-	return ( anyTier -> classInfo == classIntervalTier ? IntervalTier_getIndexFromTime (anyTier.get(), time) : 
-		TextTier_getIndexFromTime (anyTier.get(), time) );
+integer structTextGridTierNavigator :: v_timeToLowIndex (double time) {
+	return ( tier -> classInfo == classIntervalTier ? 
+		IntervalTier_timeToLowIndex ((IntervalTier) tier.get(), time) : 
+		AnyTier_timeToLowIndex ((AnyTier) tier.get(), time) );
+}
+
+integer structTextGridTierNavigator :: v_timeToIndex (double time) {
+	return ( tier -> classInfo == classIntervalTier ? IntervalTier_timeToIndex ((IntervalTier) tier.get(), time) : 
+		AnyTier_timeToNearestIndex ((AnyTier) tier.get(), time) ); // TODO is that ok?
+}
+
+integer structTextGridTierNavigator :: v_timeToHighIndex (double time) {
+	return ( tier -> classInfo == classIntervalTier ? IntervalTier_timeToHighIndex ((IntervalTier) tier.get(), time) : 
+		AnyTier_timeToHighIndex ((AnyTier)tier.get(), time) );
 }
 
 double structTextGridTierNavigator :: v_getStartTime (integer index) {
-	return ( anyTier -> classInfo == classIntervalTier ? IntervalTier_getStartTime (anyTier.get(), index) : 
-		TextTier_getStartTime (anyTier.get(), index) );
+	return ( tier -> classInfo == classIntervalTier ? IntervalTier_getStartTime (tier.get(), index) : 
+		TextTier_getStartTime (tier.get(), index) );
 }
 
 double structTextGridTierNavigator :: v_getEndTime (integer index) {
-	return ( anyTier -> classInfo == classIntervalTier ? IntervalTier_getEndTime (anyTier.get(), index) : 
-		TextTier_getEndTime (anyTier.get(), index) );
+	return ( tier -> classInfo == classIntervalTier ? IntervalTier_getEndTime (tier.get(), index) : 
+		TextTier_getEndTime (tier.get(), index) );
 }
 
 conststring32 structTextGridTierNavigator :: v_getLabel (integer index) {
-	return ( anyTier -> classInfo == classIntervalTier ? IntervalTier_getLabel (anyTier.get(), index) : 
-		TextTier_getLabel (anyTier.get(), index) );
+	return ( tier -> classInfo == classIntervalTier ? IntervalTier_getLabel (tier.get(), index) : 
+		TextTier_getLabel (tier.get(), index) );
 }
 
 
@@ -185,22 +174,25 @@ static void NavigationContext_checkMatchDomain (NavigationContext me, kMatchDoma
 autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationContext thee, kMatchDomain matchDomain) {
 	try {
 		NavigationContext_checkMatchDomain (thee, matchDomain);
-		autoTextGridTierNavigator thee = Thing_new (TextGridTierNavigator);
-		Function_init (thee.get(), my xmin, my xmax);  
-		thy anyTier = Data_copy (me);
-		thy beforeRange.first = thy beforeRange.last = 1;
-		thy afterRange.first = thy afterRange.last = 1;
-		thy matchDomain = matchDomain;
+		autoTextGridTierNavigator him = Thing_new (TextGridTierNavigator);
+		Function_init (him.get(), my xmin, my xmax);  
+		his tier = Data_copy (me);
+		his navigationContext = Data_copy (thee);
+		his beforeRange.first = his beforeRange.last = 1;
+		his afterRange.first = his afterRange.last = 1;
+		his matchDomain = matchDomain;
+		his matchLocation = kMatchLocation::IS_SOMEWHERE;
+		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridTierNavigator not created");
 	}
 }
 
-
 autoTextGridTierNavigator TextGrid_and_NavigationContext_to_TextGridTierNavigator (TextGrid me, NavigationContext thee, integer tierNumber, kMatchDomain matchDomain) {
 	try {
 		Function tier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		autoTextGridTierNavigator him = TextGridTierNavigator_create (tier, thee, matchDomain);
+		his tierNumber = tierNumber;
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create TextGridTierNavigator.");
@@ -240,14 +232,15 @@ autoNavigationContext TextGridTierNavigator_extractNavigationContext (TextGridTi
 	}
 }
 
-void TextGridTierNavigator_replaceTextGrid (TextGridTierNavigator me, Function thee) {
+void TextGridTierNavigator_replaceTier (TextGridTierNavigator me, TextGrid thee, integer tierNumber) {
 	try {
-		Melder_require (my anyTier -> classInfo == thy classInfo,
-			U"The tier should be of the same kind as the one you want to replace.");
-		my anyTier = Data_copy (thee);
+		const Function tier = TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
+		Melder_require (my tier -> classInfo == tier -> classInfo,
+			U"The tier should be of the same type as the one you want to replace.");
+		my tier = Data_copy (tier);
 		my currentTopicIndex = 0; // offLeft
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot reset with ", thee, U".");
+		Melder_throw (me, U": cannot replace the tier.");
 	}
 }
 
@@ -291,7 +284,7 @@ static bool TextGridTierNavigator_isTopicMatch (TextGridTierNavigator me, intege
 	return NavigationContext_isTopicLabel (my navigationContext.get(), label);
 }
 
-static integer TextGridTierNavigator_getBeforeIndex (TextGridTierNavigator me, integer topicIndex) {
+integer TextGridTierNavigator_getBeforeIndex (TextGridTierNavigator me, integer topicIndex) {
 	if (! my navigationContext -> beforeLabels)
 		return 0;
 	if (topicIndex - my beforeRange.first < 1 || topicIndex > my v_getSize ())
@@ -306,10 +299,10 @@ static integer TextGridTierNavigator_getBeforeIndex (TextGridTierNavigator me, i
 	return 0;
 }
 
-static integer TextGridTierNavigator_getAfterIndex (TextGridTierNavigator me, integer topicIndex) {
+integer TextGridTierNavigator_getAfterIndex (TextGridTierNavigator me, integer topicIndex) {
 	if (! my navigationContext -> afterLabels)
 		return 0;
-	integer mySize = my v_getSize ();
+	const integer mySize = my v_getSize ();
 	if (topicIndex + my afterRange.first > mySize || topicIndex < 1)
 		return 0;
 	const integer startInterval = std::min (mySize, topicIndex + my afterRange.last);
@@ -320,14 +313,6 @@ static integer TextGridTierNavigator_getAfterIndex (TextGridTierNavigator me, in
 			return index;
 	}
 	return 0;
-}
-
-static inline bool TextGridTierNavigator_isAfterMatch (TextGridTierNavigator me, integer topicIndex) {
-	return TextGridTierNavigator_getAfterIndex (me, topicIndex) > 0;
-}
-
-static inline bool TextGridTierNavigator_isBeforeMatch (TextGridTierNavigator me, integer topicIndex) {
-	return TextGridTierNavigator_getBeforeIndex (me, topicIndex) > 0;
 }
 
 integer TextGridTierNavigator_getNumberOfAfterMatches (TextGridTierNavigator me) {
@@ -467,7 +452,7 @@ static void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, inte
 }
 
 static integer TextGridTierNavigator_setCurrentAtTime (TextGridTierNavigator me, double time) {
-	const integer index = my v_getIndexFromTime (time);
+	const integer index = my v_timeToIndex (time);
 	my currentTopicIndex = index;
 	return index;
 }
@@ -531,7 +516,7 @@ double TextGridTierNavigator_getEndTime (TextGridTierNavigator me, kContext_wher
 	return my v_getEndTime (index);
 }
 
-integer TextGridTierNavigator_getIndex (TextGridTierNavigator me, integer tierNumber, kContext_where where) {
+integer TextGridTierNavigator_getIndex (TextGridTierNavigator me, kContext_where where) {
 	const integer index = ( where == kContext_where::TOPIC ? my currentTopicIndex :
 		where == kContext_where::BEFORE ? TextGridTierNavigator_getBeforeIndex (me, my currentTopicIndex) : 
 		where == kContext_where::AFTER ? TextGridTierNavigator_getAfterIndex (me, my currentTopicIndex): 0);
