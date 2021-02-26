@@ -53,7 +53,7 @@ static double IntervalTier_getStartTime (Function tier, integer index) {
 	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	if (index < 1 || index > my intervals.size)
 		return undefined;
-	TextInterval interval = my intervals . at [index];
+	TextInterval interval = my intervals.at [index];
 	return interval -> xmin;
 }
 	
@@ -61,7 +61,7 @@ static double IntervalTier_getEndTime (Function tier, integer index) {
 	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	if (index < 1 || index > my intervals.size)
 		return undefined;
-	TextInterval interval = my intervals . at [index];
+	TextInterval interval = my intervals.at [index];
 	return interval -> xmax;
 }
 	
@@ -69,7 +69,7 @@ static conststring32 IntervalTier_getLabel (Function tier, integer index) {
 	IntervalTier me = reinterpret_cast<IntervalTier> (tier);
 	if (index < 1 || index > my intervals.size)
 		return U"-- undefined --";
-	TextInterval interval = my intervals . at [index];
+	TextInterval interval = my intervals.at [index];
 	return interval -> text.get();
 }
 
@@ -82,7 +82,7 @@ static double TextTier_getStartTime (Function tier, integer index) {
 	TextTier me = reinterpret_cast<TextTier> (tier);
 	if (index < 1 || index > my points.size)
 		return undefined;
-	TextPoint point = my points . at [index];
+	TextPoint point = my points.at [index];
 	return point -> number;
 }
 
@@ -90,7 +90,7 @@ static double TextTier_getEndTime (Function tier, integer index) {
 	TextTier me = reinterpret_cast<TextTier> (tier);
 	if (index < 1 || index > my points.size)
 		return undefined;
-	TextPoint point = my points . at [index];
+	TextPoint point = my points.at [index];
 	return point -> number;;
 }
 
@@ -98,7 +98,7 @@ static conststring32 TextTier_getLabel (Function tier, integer index) {
 	TextTier me = reinterpret_cast<TextTier> (tier);
 	if (index < 1 || index > my points.size)
 		return U"-- undefined --";
-	TextPoint point = my points . at [index];
+	TextPoint point = my points.at [index];
 	return point -> mark.get();
 }
 
@@ -181,7 +181,7 @@ autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationC
 		his beforeRange.first = his beforeRange.last = 1;
 		his afterRange.first = his afterRange.last = 1;
 		his matchDomain = matchDomain;
-		his matchLocation = kMatchLocation::IS_SOMEWHERE;
+		his matchLocation = kMatchLocation::IS_ANYWHERE;
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridTierNavigator not created");
@@ -274,17 +274,12 @@ void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContex
 	NavigationContext_modifyUseCriterion (my navigationContext.get(), newUse, excludeTopicMatch);
 }
 
-void TextGridTierNavigator_modifyMatchingRange (TextGridTierNavigator me, integer maximumLookAhead, integer maximumLookBack) {
-	my maximumLookAhead = maximumLookAhead;
-	my maximumLookBack = maximumLookBack;
-}
-
 static bool TextGridTierNavigator_isTopicMatch (TextGridTierNavigator me, integer index) {
 	conststring32 label = my v_getLabel (index);
 	return NavigationContext_isTopicLabel (my navigationContext.get(), label);
 }
 
-integer TextGridTierNavigator_getBeforeIndex (TextGridTierNavigator me, integer topicIndex) {
+integer TextGridTierNavigator_findBeforeIndex (TextGridTierNavigator me, integer topicIndex) {
 	if (! my navigationContext -> beforeLabels)
 		return 0;
 	if (topicIndex - my beforeRange.first < 1 || topicIndex > my v_getSize ())
@@ -299,7 +294,7 @@ integer TextGridTierNavigator_getBeforeIndex (TextGridTierNavigator me, integer 
 	return 0;
 }
 
-integer TextGridTierNavigator_getAfterIndex (TextGridTierNavigator me, integer topicIndex) {
+integer TextGridTierNavigator_findAfterIndex (TextGridTierNavigator me, integer topicIndex) {
 	if (! my navigationContext -> afterLabels)
 		return 0;
 	const integer mySize = my v_getSize ();
@@ -452,12 +447,11 @@ static void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, inte
 }
 
 static integer TextGridTierNavigator_setCurrentAtTime (TextGridTierNavigator me, double time) {
-	const integer index = my v_timeToIndex (time);
-	my currentTopicIndex = index;
-	return index;
+	my currentTopicIndex = my v_timeToIndex (time);
+	return my currentTopicIndex;
 }
 
-integer TextGridTierNavigator_locateNext (TextGridTierNavigator me) {
+integer TextGridTierNavigator_findNext (TextGridTierNavigator me) {
 	const integer currentTopicIndex = my currentTopicIndex, size = my v_getSize ();
 	for (integer index = currentTopicIndex + 1; index <= size; index ++) {
 		if (TextGridTierNavigator_isMatch (me, index)) {
@@ -469,12 +463,12 @@ integer TextGridTierNavigator_locateNext (TextGridTierNavigator me) {
 	return my currentTopicIndex;
 }
 
-integer TextGridTierNavigator_locateNextAfterTime (TextGridTierNavigator me, double time) {
+integer TextGridTierNavigator_findNextAfterTime (TextGridTierNavigator me, double time) {
 	TextGridTierNavigator_setCurrentAtTime (me, time);
-	return TextGridTierNavigator_locateNext (me);
+	return TextGridTierNavigator_findNext (me);
 }
 
-integer TextGridTierNavigator_locatePrevious (TextGridTierNavigator me) {
+integer TextGridTierNavigator_findPrevious (TextGridTierNavigator me) {
 	const integer currentTopicIndex = my currentTopicIndex;
 	for (integer index = currentTopicIndex - 1; index > 0; index --) {
 		if (TextGridTierNavigator_isMatch (me, index)) {
@@ -486,41 +480,33 @@ integer TextGridTierNavigator_locatePrevious (TextGridTierNavigator me) {
 	return 0;
 }
 
-integer TextGridTierNavigator_locatePreviousBeforeTime (TextGridTierNavigator me, double time) {
+integer TextGridTierNavigator_findPreviousBeforeTime (TextGridTierNavigator me, double time) {
 	TextGridTierNavigator_setCurrentAtTime (me, time);
-	return TextGridTierNavigator_locatePrevious (me);
+	return TextGridTierNavigator_findPrevious (me);
 }
 
-//double TextGridTierNavigator_getStartTime (TextGridTierNavigator me, integer index) {
-//	return my v_getStartTime (index);
-//}
+integer TextGridTierNavigator_getIndex (TextGridTierNavigator me, kContext_where where) {
+	if (my currentTopicIndex == 0 || my currentTopicIndex > my v_getSize ())
+		return 0;
+	const integer index = ( where == kContext_where::TOPIC ? my currentTopicIndex :
+		where == kContext_where::BEFORE ? TextGridTierNavigator_findBeforeIndex (me, my currentTopicIndex) : 
+		where == kContext_where::AFTER ? TextGridTierNavigator_findAfterIndex (me, my currentTopicIndex) : 0);
+	return ( index > my v_getSize () ? 0 : index );
+}
 
 double TextGridTierNavigator_getStartTime (TextGridTierNavigator me, kContext_where where) {
-	const integer index = ( where == kContext_where::TOPIC ? my currentTopicIndex :
-		where == kContext_where::BEFORE ? TextGridTierNavigator_getBeforeIndex (me, my currentTopicIndex) : 
-		where == kContext_where::AFTER ? TextGridTierNavigator_getAfterIndex (me, my currentTopicIndex): 0);
+	const integer index = TextGridTierNavigator_getIndex (me, where);
 	return my v_getStartTime (index);
 }
 
 conststring32 TextGridTierNavigator_getLabel (TextGridTierNavigator me, kContext_where where) {
-	const integer index = ( where == kContext_where::TOPIC ? my currentTopicIndex :
-		where == kContext_where::BEFORE ? TextGridTierNavigator_getBeforeIndex (me, my currentTopicIndex) : 
-		where == kContext_where::AFTER ? TextGridTierNavigator_getAfterIndex (me, my currentTopicIndex): 0);
+	const integer index = TextGridTierNavigator_getIndex (me, where);
 	return my v_getLabel (index);
 }
 
 double TextGridTierNavigator_getEndTime (TextGridTierNavigator me, kContext_where where) {
-	const integer index = ( where == kContext_where::TOPIC ? my currentTopicIndex :
-		where == kContext_where::BEFORE ? TextGridTierNavigator_getBeforeIndex (me, my currentTopicIndex) : 
-		where == kContext_where::AFTER ? TextGridTierNavigator_getAfterIndex (me, my currentTopicIndex): 0);
+	const integer index = TextGridTierNavigator_getIndex (me, where);
 	return my v_getEndTime (index);
-}
-
-integer TextGridTierNavigator_getIndex (TextGridTierNavigator me, kContext_where where) {
-	const integer index = ( where == kContext_where::TOPIC ? my currentTopicIndex :
-		where == kContext_where::BEFORE ? TextGridTierNavigator_getBeforeIndex (me, my currentTopicIndex) : 
-		where == kContext_where::AFTER ? TextGridTierNavigator_getAfterIndex (me, my currentTopicIndex): 0);
-	return ( index > my v_getSize () ? 0 : index );
 }
 
 /* End of file TextGridTierNavigator.cpp */

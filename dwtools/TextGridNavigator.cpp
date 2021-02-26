@@ -72,8 +72,9 @@ autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextG
 autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNavigator me) {
 	try {
 		autoTextGridNavigator thee = Thing_new (TextGridNavigator);
+		Function_init (thee.get(), my xmin, my xmax);
 		autoTextGridTierNavigator tn = Data_copy (me);
-		tn -> matchLocation = kMatchLocation::IS_SOMEWHERE;
+		tn -> matchLocation = kMatchLocation::IS_ANYWHERE;
 		thy tierNavigators.addItem_move (tn.move());
 		return thee;
 	} catch (MelderError) {
@@ -248,16 +249,6 @@ void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNum
 	}
 }
 
-void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack) {
-	try {
-		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
-		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
-		TextGridTierNavigator_modifyMatchingRange (tn, maximumLookAhead,maximumLookBack);
-	} catch (MelderError) {
-		Melder_throw (me, U": Matching range not changed.");
-	}
-}
-
 integer TextGridNavigator_getNumberOfMatchesForTier (TextGridNavigator me, integer tierNumber) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
@@ -396,10 +387,10 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 		const integer tierSize = tni -> v_getSize ();
 		
 		tni -> currentTopicIndex = 0;
-		const integer startIndex = ( tni -> maximumLookBack > 0 ? std::max (1_integer, referenceIndex - tni -> maximumLookBack) : 1 );
-		const integer endIndex = ( tni -> maximumLookAhead > 0 ? std::min (referenceIndex + tni -> maximumLookAhead, tierSize) : tierSize );
+		const integer startIndex = 1;
+		const integer endIndex =  tierSize;
 		const kMatchLocation matchLocation = tni -> matchLocation;
-		if (matchLocation == kMatchLocation::IS_SOMEWHERE) {
+		if (matchLocation == kMatchLocation::IS_ANYWHERE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (TextGridTierNavigator_isMatch (tni, index)) {
 					tni -> currentTopicIndex = index;
@@ -507,7 +498,7 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 				}
 			}
 		}
-		if (tn -> currentTopicIndex == 0)
+		if (tni -> currentTopicIndex == 0)
 			return false;
 	}
 	return true;
@@ -528,7 +519,7 @@ static integer TextGridNavigator_timeToHighIndex (TextGridNavigator me, double t
 	return tn -> v_timeToHighIndex (time);
 }
 
-integer TextGridNavigator_locateNext (TextGridNavigator me) {
+integer TextGridNavigator_findNext (TextGridNavigator me) {
 	const TextGridTierNavigator tn = my tierNavigators. at [1];
 	const integer currentTopicIndex = tn -> currentTopicIndex, size = tn -> v_getSize ();
 	for (integer index = currentTopicIndex + 1; index <= size; index ++) {
@@ -541,12 +532,12 @@ integer TextGridNavigator_locateNext (TextGridNavigator me) {
 	return tn -> currentTopicIndex;
 }
 
-integer TextGridNavigator_locateNextAfterTime (TextGridNavigator me, double time) {
+integer TextGridNavigator_findNextAfterTime (TextGridNavigator me, double time) {
 	TextGridNavigator_timeToIndex (me, time);
-	return TextGridNavigator_locateNext (me);
+	return TextGridNavigator_findNext (me);
 }
 
-integer TextGridNavigator_locatePrevious (TextGridNavigator me) {
+integer TextGridNavigator_findPrevious (TextGridNavigator me) {
 	const TextGridTierNavigator tn = my tierNavigators. at [1];
 	const integer currentTopicIndex = tn -> currentTopicIndex;
 	for (integer index = currentTopicIndex - 1; index > 0; index --) {
@@ -559,9 +550,9 @@ integer TextGridNavigator_locatePrevious (TextGridNavigator me) {
 	return tn -> currentTopicIndex;
 }
 
-integer TextGridNavigator_locatePreviousBeforeTime (TextGridNavigator me, double time) {
+integer TextGridNavigator_findPreviousBeforeTime (TextGridNavigator me, double time) {
 	TextGridNavigator_timeToIndex (me, time);;
-	return TextGridNavigator_locatePrevious (me);
+	return TextGridNavigator_findPrevious (me);
 }
 
 double TextGridNavigator_getStartTime (TextGridNavigator me, integer tierNumber) {

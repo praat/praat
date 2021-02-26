@@ -46,7 +46,7 @@ tierNavigator5 = To TextGridTierNavigator: 4, "Topic start to Topic end"
 @test_topicAndBefore
 @test_topicAndBeforeAndAfter
 @test_twoNavigationContexts
-;@test_threeNavigationContexts
+@test_threeNavigationContexts
 
 removeObject: textgrid, navigationContext1, navigationContext2, 
 	... navigationContext3, navigationContext4, navigationContext5,
@@ -70,7 +70,7 @@ procedure test_topic
 
 	selectObject: tierNavigator1
 	.navigator = To TextGridNavigator
-	Locate first
+	Find first
 	for .i to .numberOfVowels
 		.index = Get index: 1, "topic"
 		assert .index = .index1# [.i]
@@ -78,7 +78,7 @@ procedure test_topic
 		assert .startTime = .startTime1# [.i]; '.index' '.startTime'
 		.endTime = Get end time: 1, "topic"
 		assert .endTime = .endTime1# [.i]; '.index' '.endTime'
-		Locate next
+		Find next
 	endfor
 
 	Modify Topic criterion: 1, "is not equal to"
@@ -111,7 +111,7 @@ procedure test_topicAndBefore
 
 	.time = 0.0
 	for .i to size (.index1#)
-		Locate next after time: .time
+		Find next after time: .time
 		.index = Get index: 1, "topic"
 		assert .index = .index1# [.i]; '.index'
 		.label$ = Get label: 1, "before"
@@ -133,7 +133,7 @@ procedure test_topicAndBeforeAndAfter
 	.label_before1$# = {"sh", "s", "w" }
 	.label_after1$# = {"hv", "q", "sh"}
 
-	Locate first
+	Find first
 	for .i to size (.index1#)
 		.index = Get index: 1, "topic"
 		assert .index = .index1# [.i]; '.index'
@@ -145,7 +145,7 @@ procedure test_topicAndBeforeAndAfter
 		assert .index_after = .index_after1# [.i]
 		.label$ = Get label: 1, "after"
 		assert .label$ = .label_after1$# [.i]; '.index' '.label$'
-		Locate next
+		Find next
 	endfor
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = size (.index1#)
@@ -184,7 +184,7 @@ procedure test_twoNavigationContexts
 	selectObject: .navigator, tierNavigator4
 	Add TextGridTierNavigator: "overlaps before and after"
 	selectObject: .navigator
-	Locate first
+	Find first
 	for .i to .numberOfMatches
 		.index = Get index: 1, "topic"
 		assert .index = .index1# [.i]; '.index'
@@ -200,7 +200,7 @@ procedure test_twoNavigationContexts
 		assert .startTime = .startTime3# [.i]; '.indexc2' '.startTime'
 		.endTime = Get end time: 3, "topic"
 		assert .endTime = .endTime3# [.i]; '.indexc2' '.endTime'
-		Locate next
+		Find next
 	endfor
 	removeObject: .navigator
 	appendInfoLine: tab$, "test two navigation contexts OK"
@@ -231,13 +231,13 @@ procedure test_threeNavigationContexts
 	# combine  NavigationContext's  on tier 1, tier 3 and tier 4
 	selectObject: textgrid, navigationContext2
 	.navigator = To TextGridNavigator: 1,  "Match start to Match end"
-	selectObject: .navigator, navigationContext4
-	Add navigation context: 3, "overlaps before and after",  "Match start to Match end"
-	selectObject: .navigator, navigationContext5
-	Add navigation context: 4, "overlaps before and after",  "Match start to Match end"
+	selectObject: .navigator, tierNavigator4
+	Add TextGridTierNavigator: "overlaps before and after"
+	selectObject: .navigator, tierNavigator5
+	Add TextGridTierNavigator: "overlaps before and after"
 	selectObject: .navigator
 
-	Locate first
+	Find first
 	for .i to .numberOfMatches
 		.index = Get index: 1, "topic"
 		assert .index = .index1# [.i]; '.index'
@@ -259,7 +259,7 @@ procedure test_threeNavigationContexts
 		assert .startTime = .startTimet4# [.i]; '.indexc3' '.startTime'
 		.endTime = Get end time: 4, "topic"
 		assert .endTime = .endTimet4# [.i]; '.indexc3' '.endTime'
-		Locate next
+		Find next
 	endfor
 	removeObject: .navigator
 	appendInfoLine: tab$, "test three navigation contexts OK"

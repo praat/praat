@@ -40,9 +40,6 @@ oo_DEFINE_CLASS (TextGridTierNavigator, Function)
 
 	oo_INTEGER (currentTopicIndex)  // maintain state: index of current match, (offLeft) 0 <= currentTopicIndex <= size + 1 : (offRight)
 
-	oo_INTEGER (maximumLookAhead) // don't go further than this number of steps from currentTopicIndex
-	oo_INTEGER (maximumLookBack) // don't go back  more than this number of steps from currentTopicIndex
-
 	oo_ENUM (kMatchDomain, matchDomain) // what is to be considered as the domain (startTime, endTime) of the match? 
 	oo_ENUM (kMatchLocation, matchLocation) // relation to match in possible other navigators
 	

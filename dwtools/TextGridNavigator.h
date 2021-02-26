@@ -34,7 +34,7 @@
 	
 	As an example consider a TextGrid with a tier whose intervals have been labeled with IPA symbols like /a, i, \ct, o, f, p etc/.
 	A very simple navigation context that consists of the navigiation set with IPA vowel symbols (u, i, a), a Before context 
-	set with /b, p/ and an After context set with /f, s/ would locate all vowels /u, e, a/ that are preceded by a /b/ or a /p/ and 
+	set with /b, p/ and an After context set with /f, s/ would find all vowels /u, e, a/ that are preceded by a /b/ or a /p/ and 
 	followed by a /f/ or and /s/ (if for all the matches the criterion "is equal to" is used).
 	If another tier of the TextGrid contains syntactic labels we can construct a new navigation context for this tier and 
 	combine it with the previous context to search for items that also match the syntactic context, etc.
@@ -77,8 +77,6 @@ void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierN
 void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch);
 void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain newDomain);
 
-void TextGridNavigator_modifyMatchingRange (TextGridNavigator me, integer tierNumber, integer maximumLookAhead, integer maximumLookBack);
-
 void TextGridNavigator_replaceTiers (TextGridNavigator me, TextGrid thee);
 
 bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier);
@@ -91,25 +89,25 @@ integer TextGridNavigator_getNumberOfAfterMatches (TextGridNavigator me, integer
 integer TextGridNavigator_getTierNumberFromContextNumber (TextGridNavigator me, integer tierNumber);
 integer TextGridNavigator_getTierNumberFromTierNavigator (TextGridNavigator me, integer navigatorNumber);
 
-integer TextGridNavigator_locateNext (TextGridNavigator me);
+integer TextGridNavigator_findNext (TextGridNavigator me);
 
-integer TextGridNavigator_locateNextAfterTime (TextGridNavigator me, double time);
+integer TextGridNavigator_findNextAfterTime (TextGridNavigator me, double time);
 
-integer TextGridNavigator_locatePrevious (TextGridNavigator me);
+integer TextGridNavigator_findPrevious (TextGridNavigator me);
 
-integer TextGridNavigator_locatePreviousBeforeTime (TextGridNavigator me, double time);
+integer TextGridNavigator_findPreviousBeforeTime (TextGridNavigator me, double time);
 
 integer TextGridNavigator_getIndex (TextGridNavigator me, integer tierNumber, kContext_where where);
 double TextGridNavigator_getStartTime (TextGridNavigator me, integer tierNumber, kContext_where where);
 conststring32 TextGridNavigator_getLabel (TextGridNavigator me, integer tierNumber, kContext_where where);
 double TextGridNavigator_getEndTime (TextGridNavigator me, integer tierNumber, kContext_where where);
 
-static inline integer TextGridNavigator_locateFirst (TextGridNavigator me) {
-	return TextGridNavigator_locateNextAfterTime (me, my xmin - 0.1);
+static inline integer TextGridNavigator_findFirst (TextGridNavigator me) {
+	return TextGridNavigator_findNextAfterTime (me, my xmin - 0.1);
 }
 
-static inline integer TextGridNavigator_locateLast (TextGridNavigator me) {
-	return TextGridNavigator_locatePreviousBeforeTime (me, my xmax + 0.1);
+static inline integer TextGridNavigator_findLast (TextGridNavigator me) {
+	return TextGridNavigator_findPreviousBeforeTime (me, my xmax + 0.1);
 }
 
 #endif /* _TextGridNavigator_h_ */

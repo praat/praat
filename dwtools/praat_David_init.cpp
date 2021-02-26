@@ -7834,45 +7834,45 @@ DO
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
-FORM (MODIFY_TextGridNavigator_locateNextAfterTime, U"TextGridNavigator: Locate next after time", nullptr) {
+FORM (MODIFY_TextGridNavigator_findNextAfterTime, U"TextGridNavigator: Find next after time", nullptr) {
 	REAL (time, U"Time (s)", U"-1.0")
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateNextAfterTime (me, time);
+		(void) TextGridNavigator_findNextAfterTime (me, time);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_locatePreviousBeforeTime, U"TextGridNavigator: Locate previous before time", nullptr) {
+FORM (MODIFY_TextGridNavigator_findPreviousBeforeTime, U"TextGridNavigator: Find previous before time", nullptr) {
 	REAL (time, U"Time (s)", U"10.0")
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locatePreviousBeforeTime (me, time);
+		(void) TextGridNavigator_findPreviousBeforeTime (me, time);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locateFirst) {
+DIRECT (MODIFY_TextGridNavigator_findFirst) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateFirst (me);
+		(void) TextGridNavigator_findFirst (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locateLast) {
+DIRECT (MODIFY_TextGridNavigator_findLast) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateLast (me);
+		(void) TextGridNavigator_findLast (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locateNext) {
+DIRECT (MODIFY_TextGridNavigator_findNext) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateNext (me);
+		(void) TextGridNavigator_findNext (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locatePrevious) {
+DIRECT (MODIFY_TextGridNavigator_findPrevious) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locatePrevious (me);
+		(void) TextGridNavigator_findPrevious (me);
 	MODIFY_EACH_END
 }
 
@@ -9251,12 +9251,12 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridNavigator);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridTierNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridTierNavigator);
 	
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate first", nullptr, 0, MODIFY_TextGridNavigator_locateFirst);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate last", nullptr, 0, MODIFY_TextGridNavigator_locateLast);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate next", nullptr, 0, MODIFY_TextGridNavigator_locateNext);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate next after time...", nullptr, 0, MODIFY_TextGridNavigator_locateNextAfterTime);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate previous", nullptr, 0, MODIFY_TextGridNavigator_locatePrevious);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate previous before time...", nullptr, 0, MODIFY_TextGridNavigator_locatePreviousBeforeTime);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0, MODIFY_TextGridNavigator_findFirst);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find last", nullptr, 0, MODIFY_TextGridNavigator_findLast);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0, MODIFY_TextGridNavigator_findNext);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find next after time...", nullptr, 0, MODIFY_TextGridNavigator_findNextAfterTime);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find previous", nullptr, 0, MODIFY_TextGridNavigator_findPrevious);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find previous before time...", nullptr, 0, MODIFY_TextGridNavigator_findPreviousBeforeTime);
 	
 	praat_addAction1 (classTextGridNavigator, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get start time...", nullptr, 1, REAL_TextGridNavigator_getStartTime);

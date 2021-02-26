@@ -57,37 +57,37 @@ integer TextGridTierNavigator_getNumberOfTopicMatches (TextGridTierNavigator me)
 integer TextGridTierNavigator_getNumberOfBeforeMatches (TextGridTierNavigator me);
 integer TextGridTierNavigator_getNumberOfAfterMatches (TextGridTierNavigator me);
 
-integer TextGridTierNavigator_locateNext (TextGridTierNavigator me);
+integer TextGridTierNavigator_findNext (TextGridTierNavigator me);
 
-integer TextGridTierNavigator_locateNextAfterTime (TextGridTierNavigator me, double time);
+integer TextGridTierNavigator_findNextAfterTime (TextGridTierNavigator me, double time);
 
-integer TextGridTierNavigator_locatePrevious (TextGridTierNavigator me);
+integer TextGridTierNavigator_findPrevious (TextGridTierNavigator me);
 
-integer TextGridTierNavigator_locatePreviousBeforeTime (TextGridTierNavigator me, double time);
+integer TextGridTierNavigator_findPreviousBeforeTime (TextGridTierNavigator me, double time);
 
 integer TextGridTierNavigator_getIndex (TextGridTierNavigator me, kContext_where where);
-integer TextGridTierNavigator_getBeforeIndex (TextGridTierNavigator me, integer topicIndex);
-integer TextGridTierNavigator_getAfterIndex (TextGridTierNavigator me, integer topicIndex);
+integer TextGridTierNavigator_findBeforeIndex (TextGridTierNavigator me, integer topicIndex);
+integer TextGridTierNavigator_findAfterIndex (TextGridTierNavigator me, integer topicIndex);
 
 
 double TextGridTierNavigator_getStartTime (TextGridTierNavigator me, kContext_where where);
 conststring32 TextGridTierNavigator_getLabel (TextGridTierNavigator me,  kContext_where where);
 double TextGridTierNavigator_getEndTime (TextGridTierNavigator me, kContext_where where);
 
-static inline integer TextGridTierNavigator_locateFirst (TextGridTierNavigator me) {
-	return TextGridTierNavigator_locateNextAfterTime (me, my xmin - 0.1);
+static inline integer TextGridTierNavigator_findFirst (TextGridTierNavigator me) {
+	return TextGridTierNavigator_findNextAfterTime (me, my xmin - 0.1);
 }
 
-static inline integer TextGridTierNavigator_locateLast (TextGridTierNavigator me) {
-	return TextGridTierNavigator_locatePreviousBeforeTime (me, my xmax + 0.1);
+static inline integer TextGridTierNavigator_findLast (TextGridTierNavigator me) {
+	return TextGridTierNavigator_findPreviousBeforeTime (me, my xmax + 0.1);
 }
 
 static inline bool TextGridTierNavigator_isAfterMatch (TextGridTierNavigator me, integer topicIndex) {
-	return TextGridTierNavigator_getAfterIndex (me, topicIndex) > 0;
+	return TextGridTierNavigator_findAfterIndex (me, topicIndex) > 0;
 }
 
 static inline bool TextGridTierNavigator_isBeforeMatch (TextGridTierNavigator me, integer topicIndex) {
-	return TextGridTierNavigator_getBeforeIndex (me, topicIndex) > 0;
+	return TextGridTierNavigator_findBeforeIndex (me, topicIndex) > 0;
 }
 
 #endif /* _TextGridTierNavigator_h_ */

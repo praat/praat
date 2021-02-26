@@ -37,7 +37,7 @@ enums_begin (kMatchLocation, 1)
 	enums_add (kMatchLocation, 8, OVERLAPS_BEFORE_AND_AFTER, U"overlaps before and after")
 	enums_add (kMatchLocation, 9, TOUCHES_BEFORE_AND_AFTER, U"touches before and after")
 	enums_add (kMatchLocation,10, IS_OUTSIDE, U"is outside")
-	enums_add (kMatchLocation,11, IS_SOMEWHERE, U"is somewhere")
+	enums_add (kMatchLocation,11, IS_ANYWHERE, U"is anywhere")
 enums_end (kMatchLocation, 11, OVERLAPS_BEFORE_AND_AFTER)
 
 /* End of file TextGridTierNavigator_enums.h */
