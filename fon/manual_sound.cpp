@@ -1010,7 +1010,7 @@ ENTRY (U"Playing")
 NORMAL (U"To play any part of the sound, click on one of the rectangles "
 	"below or above the sound window (there can be 1 to 8 of these rectangles), "
 	"or choose a Play command from the View menu.")
-NORMAL (U"For multi-channel sounds you can mute one or more channels by a Ctrl-click on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions the channel will not be played. Another Ctrl-click on a muted channel icon will activate the channel again. ")
+NORMAL (U"For multi-channel sounds you can mute one or more channels by a Command-click on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions the channel will not be played. Another Command-click on a muted channel icon will activate the channel again. ")
 ENTRY (U"Publishing")
 NORMAL (U"To perform analyses on the selection, or save it to a file, "
 	"create an independent Sound as a copy of the selection, "

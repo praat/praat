@@ -1965,7 +1965,7 @@ bool structTimeSoundAnalysisEditor :: v_mouseInWideDataView (GuiDrawingArea_Mous
 			}
 		}
 	}
-	return TimeSoundEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
+	return TimeSoundAnalysisEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
