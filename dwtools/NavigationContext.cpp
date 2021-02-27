@@ -54,39 +54,40 @@ Thing_implement (NavigationContext, Daata, 0);
 		if so we are done. If not check the second element etc. until we get a match (or not).
 	2. To determine whether an item is not in the set, we need to reverse the test until it fails.
 */
-static bool STRVEChasMatch (constSTRVEC const& labels, kMelder_string criterion, conststring32 label) {
-	if (criterion == kMelder_string :: EQUAL_TO                   || criterion == kMelder_string :: CONTAINS ||
-		criterion == kMelder_string :: STARTS_WITH                || criterion == kMelder_string :: ENDS_WITH ||
-		criterion == kMelder_string :: CONTAINS_WORD              || criterion == kMelder_string :: CONTAINS_WORD_STARTING_WITH || 
-		criterion == kMelder_string :: CONTAINS_WORD_ENDING_WITH  || criterion == kMelder_string :: CONTAINS_INK ||
-		criterion == kMelder_string :: CONTAINS_INK_STARTING_WITH || criterion == kMelder_string :: CONTAINS_INK_ENDING_WITH) {
+static bool STRVEChasMatch (constSTRVEC const& labels, conststring32 label, kMelder_string criterion, kMatchBoolean matchBoolean) {
+	bool match = true;
+	if (matchBoolean == kMatchBoolean::OR_) {
 		for (integer istring = 1; istring <= labels.size; istring ++)
 			if (Melder_stringMatchesCriterion (label, criterion, labels [istring], true))
 				return true;
-	} else {
+		match = false;
+	} else { // matchBoolean == kMatchBoolean::AND_
 		for (integer istring = 1; istring <= labels.size; istring ++)
-			if (! Melder_stringMatchesCriterion (label, criterion, labels [istring], true))
+			if (! (match = match && Melder_stringMatchesCriterion (label, criterion, labels [istring], true)))
 				return false;
-		return true;
+		match = true;
 	}
-	return false;
+	return match;
 }
 
 void structNavigationContext :: v_info () {
 	if (topicLabels && topicLabels -> strings.size > 0) {
 		MelderInfo_writeLine (U"\tTopic criterion: ", kMelder_string_getText (topicCriterion));
+		MelderInfo_writeLine (U"\tTopic match boolean: ", kMatchBoolean_getText (topicMatchBoolean));
 		MelderInfo_writeLine (U"\tNumber of Topic labels: ", topicLabels -> strings.size);
 	} else {
 		MelderInfo_writeLine (U"\tNo Topic labels defined");
 	}
 	if (beforeLabels && beforeLabels -> strings.size > 0) {
 		MelderInfo_writeLine (U"\tBefore criterion: ", kMelder_string_getText (beforeCriterion));
+		MelderInfo_writeLine (U"\tBefore match boolean: ", kMatchBoolean_getText (beforeMatchBoolean));
 		MelderInfo_writeLine (U"\tNumber of Before labels: ", beforeLabels -> strings.size);
 	} else {
 		MelderInfo_writeLine (U"\tNo Before labels defined");
 	}
 	if (afterLabels && afterLabels -> strings.size > 0) {
 		MelderInfo_writeLine (U"\tAfter criterion: ", kMelder_string_getText (afterCriterion));
+		MelderInfo_writeLine (U"\tAfter match boolean: ", kMatchBoolean_getText (afterMatchBoolean));
 		MelderInfo_writeLine (U"\tNumber of After labels: ", afterLabels -> strings.size);
 	} else {
 		MelderInfo_writeLine (U"\tNo After labels defined");
@@ -107,16 +108,48 @@ autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string t
 	}
 }
 
-autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, conststring32 before_string, kMelder_string beforeCriterion, conststring32 after_string, kMelder_string afterCriterion, kContext_use useCriterion, bool contextOnly) {
+autoNavigationContext NavigationContext_createTopicOnly (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean) {
+	try {
+		autoNavigationContext me = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, kContext_use::NO_BEFORE_AND_NO_AFTER, false);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"NavigationContext could not be created for Topic.");
+	}
+}
+
+autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean) {
+	try {
+		autoNavigationContext me = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, kContext_use::BEFORE, false);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"NavigationContext could not be created for Topic.");
+	}
+}
+
+autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool contextOnly) {
 	try {
 		autoNavigationContext me = Thing_new (NavigationContext);
 		my topicLabels = Strings_createAsTokens (topic_string, U" ");
 		my topicCriterion = topicCriterion;
+		my topicMatchBoolean = topicMatchBoolean;
 		my beforeLabels = Strings_createAsTokens (before_string, U" ");
 		my beforeCriterion = beforeCriterion;
+		my beforeMatchBoolean = beforeMatchBoolean;
 		my afterLabels = Strings_createAsTokens (after_string, U" ");
 		my afterCriterion = afterCriterion;
+		my afterMatchBoolean = afterMatchBoolean;
 		my useCriterion = useCriterion;
+		if (useCriterion == kContext_use::BEFORE && before_string [0] == U'\0')
+			Strings_insert (my beforeLabels.get(), 1, U"");
+		else if (useCriterion == kContext_use::AFTER && after_string [0] == U'\0')
+			Strings_insert (my afterLabels.get(), 1, U"");
+		else if (useCriterion  == kContext_use::BEFORE_AND_AFTER || useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH ||
+			useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
+			if (before_string [0] == U'\0')
+				Strings_insert (my beforeLabels.get(), 1, U"");
+			if (after_string [0] == U'\0')
+				Strings_insert (my afterLabels.get(), 1, U"");
+		}
 		my excludeTopicMatch = contextOnly;
 		return me;
 	} catch (MelderError) {
@@ -157,22 +190,25 @@ void NavigationContext_replaceAfterLabels (NavigationContext me, Strings labels)
 	}
 }
 
-void NavigationContext_modifyTopicCriterion (NavigationContext me, kMelder_string criterion) {
+void NavigationContext_modifyTopicCriterion (NavigationContext me, kMelder_string criterion, kMatchBoolean matchBoolean) {
 	Melder_require (my topicLabels && my topicLabels -> numberOfStrings > 0,
 		U"There are no Topic labels.");
 	my topicCriterion = criterion;
+	my topicMatchBoolean = matchBoolean;
 }
 
-void NavigationContext_modifyBeforeCriterion (NavigationContext me, kMelder_string criterion) {
+void NavigationContext_modifyBeforeCriterion (NavigationContext me, kMelder_string criterion, kMatchBoolean matchBoolean) {
 	Melder_require (my beforeLabels && my beforeLabels -> numberOfStrings > 0,
 		U"There are no Before labels.");
 	my beforeCriterion = criterion;
+	my beforeMatchBoolean = matchBoolean;
 }
 
-void NavigationContext_modifyAfterCriterion (NavigationContext me, kMelder_string criterion) {
+void NavigationContext_modifyAfterCriterion (NavigationContext me, kMelder_string criterion, kMatchBoolean matchBoolean) {
 	Melder_require (my afterLabels && my afterLabels -> numberOfStrings > 0,
 		U"There are no After labels.");
 	my afterCriterion = criterion;
+	my afterMatchBoolean = matchBoolean;
 }
 
 void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch) {
@@ -196,15 +232,15 @@ void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use us
 }
 
 bool NavigationContext_isTopicLabel (NavigationContext me, conststring32 label) {
-	return ( my topicLabels && STRVEChasMatch (my topicLabels -> strings.get(), my topicCriterion, label) );
+	return ( my topicLabels && STRVEChasMatch (my topicLabels -> strings.get(), label, my topicCriterion, my topicMatchBoolean) );
 }
 
 bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label) {
-	return ( my beforeLabels && STRVEChasMatch (my beforeLabels -> strings.get(), my beforeCriterion, label) );
+	return ( my beforeLabels && STRVEChasMatch (my beforeLabels -> strings.get(), label, my beforeCriterion, my beforeMatchBoolean) );
 }
 
 bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label) {
-	return ( my afterLabels && STRVEChasMatch (my afterLabels -> strings.get(), my afterCriterion, label) );
+	return ( my afterLabels && STRVEChasMatch (my afterLabels -> strings.get(), label, my afterCriterion, my afterMatchBoolean) );
 }
 
 /* End of file NavigationContext.cpp */

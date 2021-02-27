@@ -21,12 +21,15 @@ oo_DEFINE_CLASS (NavigationContext, Daata)
 
 	oo_OBJECT (Strings, 0, topicLabels) // because oo_STRING_Vector needs size
 	oo_ENUM (kMelder_string, topicCriterion)
+	oo_ENUM (kMatchBoolean, topicMatchBoolean)
 	
 	oo_OBJECT (Strings, 0, beforeLabels)
 	oo_ENUM (kMelder_string, beforeCriterion)
+	oo_ENUM (kMatchBoolean,  beforeMatchBoolean)
 	
 	oo_OBJECT (Strings, 0, afterLabels)
 	oo_ENUM (kMelder_string, afterCriterion)	
+	oo_ENUM (kMatchBoolean, afterMatchBoolean)
 	
 	oo_ENUM (kContext_use, useCriterion)
 	oo_BOOLEAN (excludeTopicMatch)

@@ -123,6 +123,7 @@
 #include "TableOfReal_and_Discriminant.h"
 #include "TableOfReal_and_Permutation.h"
 #include "TextGrid_extensions.h"
+#include "TextGridTierNavigator.h"
 #include "TextGridNavigator.h"
 
 #include "Categories_and_Strings.h"
@@ -4282,28 +4283,31 @@ DO
 
 FORM (MODIFY_NavigationContext_modifyTopicCriterion, U"NavigationContext: Modify Topic criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyTopicCriterion (me, criterion);
+		NavigationContext_modifyTopicCriterion (me, criterion, topicMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_NavigationContext_modifyBeforeCriterion, U"NavigationContext: Modify Before criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyBeforeCriterion (me, criterion);
+		NavigationContext_modifyBeforeCriterion (me, criterion, beforeMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_NavigationContext_modifyAfterCriterion, U"NavigationContext: Modify After criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyAfterCriterion (me, criterion);
+		NavigationContext_modifyAfterCriterion (me, criterion, afterMatchBoolean);
 	MODIFY_EACH_END
 }
 
@@ -4328,11 +4332,22 @@ DIRECT (MODIFY_NavigationContext_replaceAfterLabels) {
 
 FORM (NEW_TextGrid_and_NavigationContext_to_TextGridNavigator, U"TextGrid & NavigationContext: To TextGridNavigator", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
 	CONVERT_TWO (TextGrid, NavigationContext)
-		autoTextGridNavigator result = TextGrid_and_NavigationContext_to_TextGridNavigator (me, you, tierNumber);
-	CONVERT_TWO_END (U"tgn", tierNumber)
+		autoTextGridNavigator result = TextGrid_and_NavigationContext_to_TextGridNavigator (me, you, tierNumber, matchDomain);
+	CONVERT_TWO_END (U"tgn")
+}
+
+FORM (NEW_TextGrid_and_NavigationContext_to_TextGridTierNavigator, U"TextGrid & NavigationContext: To TextGridTierNavigator", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OK
+DO
+	CONVERT_TWO (TextGrid, NavigationContext)
+		autoTextGridTierNavigator result = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, you, tierNumber, matchDomain);
+	CONVERT_TWO_END (U"ttgn_", tierNumber)
 }
 
 DIRECT (HELP_NMF_help) {
@@ -6561,20 +6576,38 @@ DO
 	CREATE_ONE_END (U"chars")
 }
 
-FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
-	WORD (name, U"Name: ", U"plosive_vowel_nasal")
+FORM (NEW1_Create_NavigationContextTopicOnly, U"Create NavigationContext Topic only", nullptr) {
+	WORD (name, U"Name", U"vowels")
 	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
-	TEXTFIELD (after_string, U"After labels", U"m n")
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
-	BOOLEAN (excludeTopic, U"Exclude topic", false)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	CREATE_ONE
-		autoNavigationContext result = NavigationContext_create (topic_string, topicCriterion, before_string, beforeCriterion, after_string, afterCriterion, useCriterion, excludeTopic);
+		autoNavigationContext result = NavigationContext_createTopicOnly (topic_string, topicCriterion, topicMatchBoolean);
+	CREATE_ONE_END (name)
+}
+
+FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
+	WORD (name, U"Name", U"plosive_vowel_nasal")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	TEXTFIELD (after_string, U"After labels", U"m n")
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
+	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
+	OK
+DO
+	CREATE_ONE
+		autoNavigationContext result = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean, useCriterion, excludeTopic);
 	CREATE_ONE_END (name)
 }
 
@@ -7819,45 +7852,45 @@ DO
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
-FORM (MODIFY_TextGridNavigator_locateNextAfterTime, U"TextGridNavigator: Locate next after time", nullptr) {
+FORM (MODIFY_TextGridNavigator_findNextAfterTime, U"TextGridNavigator: Find next after time", nullptr) {
 	REAL (time, U"Time (s)", U"-1.0")
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateNextAfterTime (me, time);
+		(void) TextGridNavigator_findNextAfterTime (me, time);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_locatePreviousBeforeTime, U"TextGridNavigator: Locate previous before time", nullptr) {
+FORM (MODIFY_TextGridNavigator_findPreviousBeforeTime, U"TextGridNavigator: Find previous before time", nullptr) {
 	REAL (time, U"Time (s)", U"10.0")
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locatePreviousBeforeTime (me, time);
+		(void) TextGridNavigator_findPreviousBeforeTime (me, time);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locateFirst) {
+DIRECT (MODIFY_TextGridNavigator_findFirst) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateFirst (me);
+		(void) TextGridNavigator_findFirst (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locateLast) {
+DIRECT (MODIFY_TextGridNavigator_findLast) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateLast (me);
+		(void) TextGridNavigator_findLast (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locateNext) {
+DIRECT (MODIFY_TextGridNavigator_findNext) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locateNext (me);
+		(void) TextGridNavigator_findNext (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_locatePrevious) {
+DIRECT (MODIFY_TextGridNavigator_findPrevious) {
 	MODIFY_EACH (TextGridNavigator)
-		(void) TextGridNavigator_locatePrevious (me);
+		(void) TextGridNavigator_findPrevious (me);
 	MODIFY_EACH_END
 }
 
@@ -7948,37 +7981,34 @@ DO
 FORM (MODIFY_TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyTopicCriterion (me, tierNumber, topicCriterion);
+		TextGridNavigator_modifyTopicCriterion (me, tierNumber, topicCriterion, topicMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyBeforeCriterion (me, tierNumber, beforeCriterion);
+		TextGridNavigator_modifyBeforeCriterion (me, tierNumber, beforeCriterion, beforeMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyAfterCriterion (me, tierNumber, afterCriterion);
+		TextGridNavigator_modifyAfterCriterion (me, tierNumber, afterCriterion, afterMatchBoolean);
 	MODIFY_EACH_END
-}
-
-DIRECT (NEW_TextGridNavigator_extractTextGrid) {
-	CONVERT_EACH (TextGridNavigator)
-		autoTextGrid result = Data_copy (my textgrid.get());
-	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_TextGridNavigator_extractNavigationContext, U"TextGridNavigator: Extract navigation context", nullptr) {
@@ -7990,15 +8020,6 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_tier", tierNumber)
 }
 
-FORM (MODIFY_TextGridNavigator_addNavigationContext, U"TextGrid & NavigationContext: Add navigation context", nullptr) {
-	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kNavigatableTier_location, locationCriterion, U"Timing relation", kNavigatableTier_location::DEFAULT)
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
-		TextGridNavigator_addNavigationContext (me, you, tierNumber, locationCriterion);
-	MODIFY_FIRST_OF_TWO_END
-}
 
 FORM (MODIFY_TextGridNavigator_replaceNavigationContext, U"TextGridNavigator: Replace NavigationContext", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
@@ -8007,14 +8028,28 @@ DO
 	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
 		TextGridNavigator_replaceNavigationContext (me, you, tierNumber);
 	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_TextGridNavigator_addTextGridTierNavigator, U"TextGridNavigator: Add TextGridTierNavigator", nullptr) {
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGridTierNavigator)
+		TextGridNavigator_addTextGridTierNavigator (me, you, matchLocation);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+DIRECT (MODIFY_TextGridNavigator_replaceTiers) {
+	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
+		TextGridNavigator_replaceTiers (me, you);
+	MODIFY_FIRST_OF_TWO_END
 	
 }
 
-DIRECT (MODIFY_TextGridNavigator_replaceTextGrid) {
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
-		TextGridNavigator_replaceTextGrid (me, you);
-	MODIFY_FIRST_OF_TWO_END
-	
+DIRECT (NEW_TextGridTierNavigator_to_TextGridNavigator) {
+	CONVERT_EACH (TextGridTierNavigator)
+		autoTextGridNavigator result = TextGridTierNavigator_to_TextGridNavigator (me);
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
@@ -8311,7 +8346,7 @@ void praat_uvafon_David_init () {
 		classMelFilter, classMelSpectrogram, classMSpline, classNavigationContext,
 		classPatternList, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
-		classSVD, classTextGridNavigator, nullptr);
+		classSVD, classTextGridNavigator, classTextGridTierNavigator, nullptr);
 	Thing_recognizeClassByOtherName (classExcitationList, U"Excitations");
 	Thing_recognizeClassByOtherName (classActivationList, U"Activation");
 	Thing_recognizeClassByOtherName (classPatternList, U"Pattern");
@@ -8363,6 +8398,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
 	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContext);
+	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext (topic only)...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContextTopicOnly);
 	
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
@@ -9235,13 +9271,14 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridNavigator);
+	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridTierNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridTierNavigator);
 	
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate first", nullptr, 0, MODIFY_TextGridNavigator_locateFirst);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate last", nullptr, 0, MODIFY_TextGridNavigator_locateLast);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate next", nullptr, 0, MODIFY_TextGridNavigator_locateNext);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate next after time...", nullptr, 0, MODIFY_TextGridNavigator_locateNextAfterTime);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate previous", nullptr, 0, MODIFY_TextGridNavigator_locatePrevious);
-	praat_addAction1 (classTextGridNavigator, 0, U"Locate previous before time...", nullptr, 0, MODIFY_TextGridNavigator_locatePreviousBeforeTime);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0, MODIFY_TextGridNavigator_findFirst);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find last", nullptr, 0, MODIFY_TextGridNavigator_findLast);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0, MODIFY_TextGridNavigator_findNext);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find next after time...", nullptr, 0, MODIFY_TextGridNavigator_findNextAfterTime);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find previous", nullptr, 0, MODIFY_TextGridNavigator_findPrevious);
+	praat_addAction1 (classTextGridNavigator, 0, U"Find previous before time...", nullptr, 0, MODIFY_TextGridNavigator_findPreviousBeforeTime);
 	
 	praat_addAction1 (classTextGridNavigator, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get start time...", nullptr, 1, REAL_TextGridNavigator_getStartTime);
@@ -9259,14 +9296,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyBeforeCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyAfterCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classTextGridNavigator, 0, U"Extract TextGrid", nullptr, 1, NEW_TextGridNavigator_extractTextGrid);
 	praat_addAction1 (classTextGridNavigator, 0, U"Extract navigation context...", nullptr, 1, NEW_TextGridNavigator_extractNavigationContext);
 	
-	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Add navigation context...", nullptr, 0, MODIFY_TextGridNavigator_addNavigationContext);
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Replace navigation context...", nullptr, 0, MODIFY_TextGridNavigator_replaceNavigationContext);
-	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace TextGrid", nullptr, 0, MODIFY_TextGridNavigator_replaceTextGrid);
+	praat_addAction2 (classTextGridNavigator, 1, classTextGridTierNavigator, 1, U"Add TextGridTierNavigator...", nullptr, 0, MODIFY_TextGridNavigator_addTextGridTierNavigator);
+	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace TextGrid tiers", nullptr, 0, MODIFY_TextGridNavigator_replaceTiers);
 	
-
+	praat_addAction1 (classTextGridTierNavigator, 0, U"To TextGridNavigator", nullptr, 1, NEW_TextGridTierNavigator_to_TextGridNavigator);
+	
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)
 
