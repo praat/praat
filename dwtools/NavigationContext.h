@@ -26,7 +26,11 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, conststring32 before_string, kMelder_string beforeCriterion, conststring32 after_string, kMelder_string afterCriterion, kContext_use useCriterion, bool contextOnly);
+autoNavigationContext NavigationContext_createTopicOnly (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean);
+
+autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean);
+
+autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool contextOnly);
 
 autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string criterion);
 
@@ -34,9 +38,9 @@ void NavigationContext_replaceTopicLabels (NavigationContext me, Strings labels)
 void NavigationContext_replaceBeforeLabels (NavigationContext me, Strings labels);
 void NavigationContext_replaceAfterLabels (NavigationContext me, Strings labels);
 
-void NavigationContext_modifyTopicCriterion (NavigationContext me, kMelder_string newCriterion);
-void NavigationContext_modifyBeforeCriterion (NavigationContext me, kMelder_string newCriterion);
-void NavigationContext_modifyAfterCriterion (NavigationContext me, kMelder_string newCriterion);
+void NavigationContext_modifyTopicCriterion (NavigationContext me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+void NavigationContext_modifyBeforeCriterion (NavigationContext me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+void NavigationContext_modifyAfterCriterion (NavigationContext me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 
 bool NavigationContext_isTopicLabel (NavigationContext me, conststring32 label);
 bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label);

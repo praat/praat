@@ -209,31 +209,31 @@ void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumbe
 	}
 }
 
-void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion) {
+void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
 		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
-		TextGridTierNavigator_modifyTopicCriterion (tn, newCriterion);
+		TextGridTierNavigator_modifyTopicCriterion (tn, newCriterion, matchBoolean);
 	} catch (MelderError) {
 		Melder_throw (me, U": Topic criterion not changed.");
 	}
 }
 
-void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion) {
+void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
 		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
-		TextGridTierNavigator_modifyBeforeCriterion (tn, newCriterion);
+		TextGridTierNavigator_modifyBeforeCriterion (tn, newCriterion, matchBoolean);
 	} catch (MelderError) {
 		Melder_throw (me, U": Before criterion not changed.");
 	}
 }
 
-void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion) {
+void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
 		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
-		TextGridTierNavigator_modifyAfterCriterion (tn, newCriterion);
+		TextGridTierNavigator_modifyAfterCriterion (tn, newCriterion, matchBoolean);
 	} catch (MelderError) {
 		Melder_throw (me, U": After criterion not changed.");
 	}

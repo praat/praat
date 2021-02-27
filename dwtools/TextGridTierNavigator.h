@@ -42,9 +42,9 @@ void TextGridTierNavigator_replaceTier (TextGridTierNavigator me, TextGrid thee,
 void TextGridTierNavigator_modifyBeforeRange (TextGridTierNavigator me, integer from, integer to);
 void TextGridTierNavigator_modifyAfterRange (TextGridTierNavigator me, integer from, integer to);
 
-void TextGridTierNavigator_modifyTopicCriterion (TextGridTierNavigator me, kMelder_string newCriterion);
-void TextGridTierNavigator_modifyBeforeCriterion (TextGridTierNavigator me, kMelder_string newCriterion);
-void TextGridTierNavigator_modifyAfterCriterion (TextGridTierNavigator me, kMelder_string newCriterion);
+void TextGridTierNavigator_modifyTopicCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+void TextGridTierNavigator_modifyBeforeCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+void TextGridTierNavigator_modifyAfterCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContext_use newUse, bool excludeTopicMatch);
 void TextGridTierNavigator_modifyMatchDomain (TextGridTierNavigator me, kMatchDomain newDomain);
 

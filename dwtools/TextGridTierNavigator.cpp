@@ -203,10 +203,13 @@ void TextGridTierNavigator_replaceNavigationContext (TextGridTierNavigator me, N
 	try {
 		my navigationContext -> topicLabels = Data_copy (thy topicLabels.get());
 		my navigationContext -> topicCriterion = thy topicCriterion;
+		my navigationContext -> topicMatchBoolean = thy topicMatchBoolean;
 		my navigationContext -> beforeLabels = Data_copy (thy beforeLabels.get());
 		my navigationContext -> beforeCriterion = thy beforeCriterion;
+		my navigationContext -> beforeMatchBoolean = thy beforeMatchBoolean;
 		my navigationContext -> afterLabels = Data_copy (thy afterLabels.get());
 		my navigationContext -> afterCriterion = thy afterCriterion;
+		my navigationContext -> afterMatchBoolean = thy afterMatchBoolean;
 		my navigationContext -> useCriterion = thy useCriterion;
 		my navigationContext -> excludeTopicMatch = thy excludeTopicMatch;		
 	} catch (MelderError) {
@@ -219,14 +222,16 @@ autoNavigationContext TextGridTierNavigator_extractNavigationContext (TextGridTi
 		autoNavigationContext thee = Thing_new (NavigationContext);
 		thy topicLabels = Data_copy (my navigationContext -> topicLabels.get());
 		thy topicCriterion = my navigationContext -> topicCriterion;
+		thy topicMatchBoolean = my navigationContext -> topicMatchBoolean;
 		thy beforeLabels = Data_copy (my navigationContext -> beforeLabels.get());
 		thy beforeCriterion = my navigationContext -> beforeCriterion;
+		thy beforeMatchBoolean = my navigationContext -> beforeMatchBoolean;
 		thy afterLabels = Data_copy (my navigationContext -> afterLabels.get());
 		thy afterCriterion = my navigationContext -> afterCriterion;
 		thy useCriterion = my navigationContext -> useCriterion;
+		thy afterMatchBoolean = my navigationContext -> afterMatchBoolean;
 		thy excludeTopicMatch = my navigationContext -> excludeTopicMatch;
 		return thee;
-		
 	} catch (MelderError) {
 		Melder_throw (me, U": could not extract navigation context.");
 	}
@@ -258,16 +263,16 @@ void TextGridTierNavigator_modifyAfterRange (TextGridTierNavigator me, integer f
 	my afterRange.last = std::max (from, to);
 }
 
-void TextGridTierNavigator_modifyTopicCriterion (TextGridTierNavigator me, kMelder_string newCriterion) {
-	NavigationContext_modifyTopicCriterion (my navigationContext.get(), newCriterion);
+void TextGridTierNavigator_modifyTopicCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
+	NavigationContext_modifyTopicCriterion (my navigationContext.get(), newCriterion, matchBoolean);
 }
 
-void TextGridTierNavigator_modifyBeforeCriterion (TextGridTierNavigator me, kMelder_string newCriterion) {
-	NavigationContext_modifyBeforeCriterion (my navigationContext.get(), newCriterion);
+void TextGridTierNavigator_modifyBeforeCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
+	NavigationContext_modifyBeforeCriterion (my navigationContext.get(), newCriterion, matchBoolean);
 }
 
-void TextGridTierNavigator_modifyAfterCriterion (TextGridTierNavigator me, kMelder_string newCriterion) {
-	NavigationContext_modifyAfterCriterion (my navigationContext.get(), newCriterion);
+void TextGridTierNavigator_modifyAfterCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
+	NavigationContext_modifyAfterCriterion (my navigationContext.get(), newCriterion, matchBoolean);
 }
 
 void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContext_use newUse, bool excludeTopicMatch) {

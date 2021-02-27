@@ -31,4 +31,9 @@ enums_begin (kContext_where, 1)
 	enums_add (kContext_where, 3, AFTER, U"after")
 enums_end (kContext_where, 3, TOPIC)
 
+enums_begin (kMatchBoolean, 1)
+	enums_add (kMatchBoolean, 1, AND_, U"AND")
+	enums_add (kMatchBoolean, 2, OR_, U"OR")
+enums_end (kMatchBoolean, 2, OR_)
+
 /* End of file NavigationContext_enums.h */

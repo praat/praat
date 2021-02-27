@@ -4283,28 +4283,31 @@ DO
 
 FORM (MODIFY_NavigationContext_modifyTopicCriterion, U"NavigationContext: Modify Topic criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyTopicCriterion (me, criterion);
+		NavigationContext_modifyTopicCriterion (me, criterion, topicMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_NavigationContext_modifyBeforeCriterion, U"NavigationContext: Modify Before criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyBeforeCriterion (me, criterion);
+		NavigationContext_modifyBeforeCriterion (me, criterion, beforeMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_NavigationContext_modifyAfterCriterion, U"NavigationContext: Modify After criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyAfterCriterion (me, criterion);
+		NavigationContext_modifyAfterCriterion (me, criterion, afterMatchBoolean);
 	MODIFY_EACH_END
 }
 
@@ -6573,23 +6576,38 @@ DO
 	CREATE_ONE_END (U"chars")
 }
 
+FORM (NEW1_Create_NavigationContextTopicOnly, U"Create NavigationContext Topic only", nullptr) {
+	WORD (name, U"Name", U"vowels")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OK
+DO
+	CREATE_ONE
+		autoNavigationContext result = NavigationContext_createTopicOnly (topic_string, topicCriterion, topicMatchBoolean);
+	CREATE_ONE_END (name)
+}
+
 FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
 	WORD (name, U"Name", U"plosive_vowel_nasal")
 	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
 	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
 	TEXTFIELD (after_string, U"After labels", U"m n")
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
 	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
 	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
 	OK
 DO
 	CREATE_ONE
-		autoNavigationContext result = NavigationContext_create (topic_string, topicCriterion, before_string, beforeCriterion, after_string, afterCriterion, useCriterion, excludeTopic);
+		autoNavigationContext result = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean, useCriterion, excludeTopic);
 	CREATE_ONE_END (name)
 }
 
@@ -7963,30 +7981,33 @@ DO
 FORM (MODIFY_TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyTopicCriterion (me, tierNumber, topicCriterion);
+		TextGridNavigator_modifyTopicCriterion (me, tierNumber, topicCriterion, topicMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyBeforeCriterion (me, tierNumber, beforeCriterion);
+		TextGridNavigator_modifyBeforeCriterion (me, tierNumber, beforeCriterion, beforeMatchBoolean);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyAfterCriterion (me, tierNumber, afterCriterion);
+		TextGridNavigator_modifyAfterCriterion (me, tierNumber, afterCriterion, afterMatchBoolean);
 	MODIFY_EACH_END
 }
 
@@ -8377,6 +8398,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
 	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContext);
+	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext (topic only)...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContextTopicOnly);
 	
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);

@@ -71,9 +71,9 @@ autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNa
 void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 
-void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
-void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
-void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion);
+void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch);
 void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain newDomain);
 
