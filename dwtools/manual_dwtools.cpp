@@ -395,15 +395,15 @@ INTRO (U"You can choose this command after selecting one #Categories. "
 	"A @CategoriesEditor will appear on the screen, with the selected #Categories in it.")
 MAN_END
 
-MAN_BEGIN (U"CategoriesEditor", U"djmw", 19960918)
+MAN_BEGIN (U"CategoriesEditor", U"djmw", 19960918) // 20210227
 ENTRY (U"An editor for manipulating @Categories.")
 NORMAL (U"To make a selection, use the left mouse button.")
-NORMAL (U"The Ctrl key extends a selection (discontinuously).")
+NORMAL (U"The Command key extends a selection (discontinuously).")
 NORMAL (U"The Shift key extends a selection contiguously.")
 MAN_END
 
 MAN_BEGIN (U"CC", U"djmw", 20010219)
-INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"Any object that represents cepstral coefficients as a function of "
 	"time.")
 MAN_END
