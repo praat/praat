@@ -1772,24 +1772,13 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		if (nearBoundaryOrPoint) {
 			/*
 				Possibility 1: the user clicked near a boundary or point.
-				Select and perhaps drag it.
+				Perhaps drag it.
 			*/
 			bool boundaryOrPointIsMovable = true;
 			if (selectedIntervalTier) {
 				const bool isLeftEdgeOfFirstInterval = ( clickedLeftBoundary <= 1 );
 				const bool isRightEdgeOfLastInterval = ( clickedLeftBoundary > selectedIntervalTier -> intervals.size );
 				boundaryOrPointIsMovable = ! isLeftEdgeOfFirstInterval && ! isRightEdgeOfLastInterval;
-			}
-			/*
-				If the user clicked on an unselected boundary or point, we select it.
-			*/
-			if (event -> shiftKeyPressed) {
-				if (anchorTime > 0.5 * (our startSelection + our endSelection))
-					our endSelection = anchorTime;
-				else
-					our startSelection = anchorTime;
-			} else {
-				our startSelection = our endSelection = anchorTime;   // move cursor so that the boundary or point is selected
 			}
 			if (! boundaryOrPointIsMovable) {
 				our draggingTime = undefined;
@@ -1874,7 +1863,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 		/*
-			If the user dropped near an existing boundary in an unselected tier or near the cursor,
+			If the user dropped near an existing boundary in an unselected tier,
 			we snap to that mark.
 		*/
 		const integer itierDrop = _TextGridEditor_yWCtoTier (this, yWC);
@@ -1903,7 +1892,25 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				}
 			}
 		}
+		/*
+			If the user dropped near the cursor (outside the anchor),
+			we snap to the cursor.
+		*/
+		if (our startSelection == our endSelection && our startSelection != anchorTime) {
+			const double mouseDistanceToCursor = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - our startSelection));
+			if (mouseDistanceToCursor < droppingVicinityRadius_mm) {
+				xWC = our startSelection;
+			}
+		}
+		/*
+			If the user wiggled near the anchor, we snap to the anchor.
+		*/
 		if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce && ! droppedOnABoundaryOrPointInsideAnUnselectedTier) {
+			if (our draggingTiers [itierDrop]) {
+				xWC = anchorTime;
+				our startSelection = xWC;
+				our endSelection = xWC;
+			}
 			our draggingTime = undefined;
 			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
@@ -1963,9 +1970,9 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		/*
 			Select the drop site.
 		*/
-		if (our startSelection == anchorTime)
+		//if (our startSelection == anchorTime)
 			our startSelection = xWC;
-		if (our endSelection == anchorTime)
+		//if (our endSelection == anchorTime)
 			our endSelection = xWC;
 		Melder_sort (& our startSelection, & our endSelection);
 		our draggingTime = undefined;
