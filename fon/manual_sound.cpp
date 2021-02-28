@@ -997,7 +997,7 @@ CODE (U"Set value at sample number: 100, 1/2")
 NORMAL (U"This sets the value of the 100th sample to 0.5.")
 MAN_END
 
-MAN_BEGIN (U"SoundEditor", U"ppgb", 20170909)
+MAN_BEGIN (U"SoundEditor", U"ppgb", 20210228)
 INTRO (U"An @@Editors|Editor@ for viewing and editing a @Sound object. "
 	"Most of the functions of this editor are described in the @Intro.")
 ENTRY (U"The markers")
@@ -1010,7 +1010,10 @@ ENTRY (U"Playing")
 NORMAL (U"To play any part of the sound, click on one of the rectangles "
 	"below or above the sound window (there can be 1 to 8 of these rectangles), "
 	"or choose a Play command from the View menu.")
-NORMAL (U"For multi-channel sounds you can mute one or more channels by a Command-click on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions the channel will not be played. Another Command-click on a muted channel icon will activate the channel again. ")
+NORMAL (U"To mute one or more channels (of a multi-channel sound), @@Command-click@ "
+	"on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. "
+	"The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions, "
+	"the channel will not be played. Another @@Command-click@ on a muted channel icon will activate the channel again. ")
 ENTRY (U"Publishing")
 NORMAL (U"To perform analyses on the selection, or save it to a file, "
 	"create an independent Sound as a copy of the selection, "
@@ -1022,7 +1025,7 @@ LIST_ITEM (U"\\bu Copy selection to Sound clipboard: copy the selection to the c
 LIST_ITEM (U"\\bu Paste after selection: paste the clipboard to the cursor or after the selection.")
 LIST_ITEM (U"\\bu Set selection to zero: set the selected samples to zero.")
 LIST_ITEM (U"\\bu Reverse selection: reverse the selected part of the sound.")
-NORMAL (U"You can undo these commands with Undo (Command-Z).")
+NORMAL (U"You can undo these commands with Undo (@@Keyboard shortcuts|Command-Z@).")
 ENTRY (U"The Group button")
 NORMAL (U"To synchronize a SoundEditor window with other windows that show a time signal, "
 	"push the Group button in all the windows that you want to synchronize. "

@@ -711,15 +711,19 @@ INTRO (U"One of the @editors in the Praat program, for viewing and editing an @I
 	"To create a IntensityTierEditor window, select an IntensityTier and click ##View & Edit#.")
 MAN_END
 
-MAN_BEGIN (U"Keyboard shortcuts", U"ppgb", 20071016)
-INTRO (U"A way to accelerate the control of @Editors in Praat.")
-ENTRY (U"Purpose")
-NORMAL (U"to choose a menu command with the keyboard. All of these commands can also be chosen "
-	"from a menu.")
-ENTRY (U"Command key")
-NORMAL (U"When mentioning the %%Command key%, this manual refers to the key that is marked with an apple on Apple keyboards "
+MAN_BEGIN (U"Command-click", U"ppgb", 20210228)
+INTRO (U"To %%Command-click% means to click while the %%Command key% is pressed. "
+	"The Command key is the key that is marked with an apple or the word \"command\" on Apple keyboards, "
 	"or to the key that is marked \"Ctrl\" if you are on a Windows or Linux computer.")
-ENTRY (U"Option key")
+MAN_END
+
+MAN_BEGIN (U"Keyboard shortcuts", U"ppgb", 20210228)
+INTRO (U"To accelerate menu commands in Praat, you can sometimes choose them with the keyboard, "
+	"sometimes while also pressing the Command key, Option key, or Shift key. "
+	"All of these commands can also be chosen from a menu.")
+NORMAL (U"When mentioning the %%Command key%, this manual refers to the key that is marked with an apple "
+	"or the word \"command\" on Apple keyboards "
+	"or to the key that is marked \"Ctrl\" if you are on a Windows or Linux computer.")
 NORMAL (U"When mentioning the %%Option key%, this manual refers to the key marked \"alt\" or \"option\". "
 	"In Praat, this key is sometimes used together with the Command key "
 	"for destructive actions that are the reverse of the actions invoked by using the Command key only. "
@@ -731,6 +735,10 @@ LIST_ITEM (U"Command-C: Copy (the selected text, or the selected sound, or the s
 LIST_ITEM (U"Command-D (in Manipulation window): Insert duration point at cursor")
 LIST_ITEM (U"Option-Command-D (in Manipulation window): Remove selected duration points")
 LIST_ITEM (U"Command-E (in Picture window): Erase all")
+LIST_ITEM (U"Command-E (in OT windows): Edit ranking")
+LIST_ITEM (U"Command-F: Find")
+LIST_ITEM (U"Command-G: Find again")
+LIST_ITEM (U"Command-H (in script window): Paste history")
 LIST_ITEM (U"Shift-Command-H: Move cursor to maximum pitch")
 LIST_ITEM (U"Command-I: Zoom in")
 LIST_ITEM (U"Command-L (in Objects window): @@Open long sound file...@")
@@ -741,11 +749,14 @@ LIST_ITEM (U"Command-N: Zoom to selection")
 LIST_ITEM (U"Command-O (in Objects window): @@Read from file...@")
 LIST_ITEM (U"Command-O (in sound windows): Zoom out")
 LIST_ITEM (U"Command-P (in Picture window): Print")
+LIST_ITEM (U"Command-P (in tier windows): Add point at cursor")
 LIST_ITEM (U"Command-P (in Manipulation window): Add pulse at cursor")
 LIST_ITEM (U"Option-Command-P (in Manipulation window): Remove selected pulses")
 LIST_ITEM (U"Command-Q: Quit")
+LIST_ITEM (U"Command-R (in Script window): Run")
 LIST_ITEM (U"Command-R: Reverse selection")
 LIST_ITEM (U"Command-S: Save")
+LIST_ITEM (U"Command-T (in script window): Run selection")
 LIST_ITEM (U"Command-T (in Manipulation window): Add pitch point at cursor")
 LIST_ITEM (U"Option-Command-T (in Manipulation window): Remove selected pitch points")
 LIST_ITEM (U"Command-U: @@Calculator...@")
@@ -754,20 +765,21 @@ LIST_ITEM (U"Command-W: Close window")
 LIST_ITEM (U"Command-X: Cut (the selected text or the selected sound)")
 LIST_ITEM (U"Command-Y: Redo")
 LIST_ITEM (U"Command-Z: Undo")
-LIST_ITEM (U"Command-0: Move cursor to nearest zero crossing")
+LIST_ITEM (U"Command-0 (in sound windows): Move cursor to nearest zero crossing")
+LIST_ITEM (U"Command-0 (in OT windows): Evaluate with zero noise")
 LIST_ITEM (U"Command-2 (in Manipulation window): Stylize pitch (2 semitones)")
+LIST_ITEM (U"Command-2 (in OT windows): Evaluate with noise 2.0")
 LIST_ITEM (U"Command-4 (in Manipulation window): Interpolate quadratically (4 points)")
 LIST_ITEM (U"Shift-Command-?: Local help")
 LIST_ITEM (U"Command-,: Move start of selection to nearest zero crossing")
 LIST_ITEM (U"Command-.: Move end of selection to nearest zero crossing")
-LIST_ITEM (U"F5: Get pitch")
-LIST_ITEM (U"Command-F5: Get minimum pitch")
-LIST_ITEM (U"Shift-F5: Get maximum pitch")
 LIST_ITEM (U"F1: Get first formant")
 LIST_ITEM (U"F2: Get second formant")
 LIST_ITEM (U"F3: Get third formant")
 LIST_ITEM (U"F4: Get fourth formant")
 LIST_ITEM (U"F5: Get pitch")
+LIST_ITEM (U"Command-F5: Get minimum pitch")
+LIST_ITEM (U"Shift-F5: Get maximum pitch")
 LIST_ITEM (U"F6: Get cursor")
 LIST_ITEM (U"F7: Get spectral power at cursor cross")
 LIST_ITEM (U"F8: Get intensity")
@@ -794,8 +806,8 @@ INTRO (U"With some commands in the @Query menu of the @SoundEditor and @TextGrid
 	"to the @@Info window@ and to a log file.")
 NORMAL (U"A log file is a text file on disk. It consists of a number of similar lines, "
 	"whose format you determine with the log settings in the Query menu.")
-NORMAL (U"Every time you press F12 (or choose ##Log 1# from the Query menu, "
-	"Praat writes a line to log file 1. If you press Shift-F12, Praat writes a line to log file 2.")
+NORMAL (U"Every time you press @@Keyboard shortcuts|F12@ (or choose ##Log 1# from the Query menu, "
+	"Praat writes a line to log file 1. If you press @@Keyboard shortcuts|Shift-F12@, Praat writes a line to log file 2.")
 NORMAL (U"With the ##log settings# command window, you determine the following:")
 TAG (U"##Log 1 to Info window")
 DEFINITION (U"this determines whether your log line will be written to the Info window or not.")
@@ -817,7 +829,7 @@ NORMAL (U"The logging facility has been implemented in Praat especially for form
 NORMAL (U"If you do want to use the logging facility, you typically start by deleting any old "
 	"log file (by choosing ##Delete log file 1# or ##Delete log file 2#), if you want to re-use "
 	"the file name. Otherwise, you can change the log file name (with ##Log settings...#). "
-	"After this, you will move the cursor to various time locations and press F12 (or Shift-F12) "
+	"After this, you will move the cursor to various time locations and press @@Keyboard shortcuts|F12@ (or @@Keyboard shortcuts|Shift-F12@) "
 	"each time, so that information about the current time will be written to the log file.")
 ENTRY (U"Example 1: pitch logging")
 NORMAL (U"Suppose you want to log the time of the cursor and the pitch value at the cursor. "
@@ -869,11 +881,11 @@ CODE (U"appendInfoLine: fixed\\$  (f1, 0), \" \", fixed\\$  (f21, 0)")
 CODE (U"appendFileLine: \"D:\\bsPraat logs\\bsFormant log.txt\", fixed\\$  (f1, 0), tab\\$ , fixed\\$  (f21, 0)")
 NORMAL (U"With this script, the information would be appended both to the Info window and to the "
 	"file \"Formant log.txt\" on your desktop.")
-NORMAL (U"You can make this script accessible with Option-F12 (or Command-F12) "
+NORMAL (U"You can make this script accessible with @@Keyboard shortcuts|Option-F12@ (or @@Keyboard shortcuts|Command-F12@) "
 	"by saving the script and specifying the name of the script file in the ##Log script 3# (or #4) field "
 	"in the ##Log settings...# window.")
 NORMAL (U"These scripts may take arguments. Suppose, for instance, that you want to specify a vowel symbol "
-	"as you press Option-F12. The following script will take care of that:")
+	"as you press @@Keyboard shortcuts|Option-F12@. The following script will take care of that:")
 CODE (U"form Save vowel and formants")
 CODE1 (U"word Vowel a")
 CODE (U"endform")
@@ -987,18 +999,18 @@ ENTRY (U"Playing")
 	NORMAL (U"To play the %original sound instead, use ##Shift-click#.")
 ENTRY (U"Pulses")
 	TAG (U"To add:")
-	DEFINITION (U"#click at the desired time location, and choose ##Add pulse at cursor# or type ##Command-p#.")
+	DEFINITION (U"#click at the desired time location, and choose ##Add pulse at cursor# or type @@Keyboard shortcuts|Command-P@.")
 	TAG (U"To remove:")
-	DEFINITION (U"make a @@time selection@, and choose ##Remove pulse(s)# or type ##Option-Command-p#. "
+	DEFINITION (U"make a @@time selection@, and choose ##Remove pulse(s)# or type @@Keyboard shortcuts|Option-Command-P@. "
 		"If there is no selection, the pulse nearest to the cursor is removed.")
 ENTRY (U"Pitch points")
 	TAG (U"To add one at a specified %%time and frequency%:")
-	DEFINITION (U"#click at the desired time-frequency location, and choose ##Add pitch point at cursor# or type ##Command-t#.")
+	DEFINITION (U"#click at the desired time-frequency location, and choose ##Add pitch point at cursor# or type @@Keyboard shortcuts|Command-t@.")
 	TAG (U"To add one at a specified %time only:")
 	DEFINITION (U"#click at the desired time, and choose ##Add pitch point at time slice#. ManipulationEditor tries to compute the frequency from the "
 		"intervals between the pulses, basically by a median-of-three method.")
 	TAG (U"To remove:")
-	DEFINITION (U"make a @@time selection@, and choose ##Remove pitch point(s)# or type ##Option-Command-t#. "
+	DEFINITION (U"make a @@time selection@, and choose ##Remove pitch point(s)# or type @@Keyboard shortcuts|Option-Command-t@. "
 		"If there is no selection, the pitch point nearest to the cursor is removed.")
 	TAG (U"To move %some:")
 	DEFINITION (U"make a @@time selection@ (the points become red) and ##Shift-drag# the points across the window. "
@@ -1343,7 +1355,7 @@ NORMAL (U"To play (a part of) the %resynthesized sound (pulse train): "
 	"@click on any of the 8 buttons below and above the drawing area, or choose a Play command from the View menu.")
 NORMAL (U"To play the %original sound instead, use @@Shift-click@.")
 ENTRY (U"Adding a point")
-NORMAL (U"@Click at the desired time location, and choose \"Add point at cursor\" or type ##Command-P#.")
+NORMAL (U"@Click at the desired time location, and choose \"Add point at cursor\" or type @@Keyboard shortcuts|Command-P@.")
 ENTRY (U"Removing points")
 NORMAL (U"To remove one or more points, "
 	"make a @@time selection@ and choose ##Remove point(s)# from the ##Point# menu. "
