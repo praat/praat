@@ -3363,7 +3363,7 @@ ENTRY (U"Cloning a pitch contour")
 NORMAL (U"To use the pitch contour of one Manipulation object as the pitch contour of another Manipulation object, "
 	"you first choose ##Extract pitch tier# for the first Manipulation object, "
 	"then select the resulting PitchTier object together with the other Manipulation object "
-	"(e.g. by a click on the PitchTier and a Command-click on the Manipulation), "
+	"(e.g. by a click on the PitchTier and a @@Command-click@ on the Manipulation), "
 	"and choose ##Replace pitch tier#.")
 ENTRY (U"Precise manipulation of pitch")
 NORMAL (U"If you know exactly what pitch contour you want, "
@@ -3406,7 +3406,7 @@ CODE (U"Add point: 0.084999, 70/85")
 CODE (U"Add point: 0.085001, 200/270")
 CODE (U"Add point: 0.355, 200/270")
 NORMAL (U"To put this DurationTier back into a Manipulation object, you select the two objects together "
-	"(e.g. a click on the DurationTier and a Command-click on the Manipulation), "
+	"(e.g. a click on the DurationTier and a @@Command-click@ on the Manipulation), "
 	"and choose ##Replace duration tier#.")
 MAN_END
 
@@ -3450,7 +3450,7 @@ MAN_BEGIN (U"Labelling", U"ppgb", 20010408)
 INTRO (U"See @@Intro 7. Annotation@.")
 MAN_END
 
-MAN_BEGIN (U"List of Objects", U"ppgb", 19981024)
+MAN_BEGIN (U"List of Objects", U"ppgb", 20210228)
 INTRO (U"A list in the left-hand part of the @@Object window@.")
 ENTRY (U"Purpose")
 NORMAL (U"If you select one or more @objects in this list, "
@@ -3458,9 +3458,8 @@ NORMAL (U"If you select one or more @objects in this list, "
 	"will appear in the @@Dynamic menu@.")
 ENTRY (U"How to select objects")
 NORMAL (U"To select one object (and deselect all the others), click on the object.")
-NORMAL (U"To extend the selection, drag the mouse (Unix, Windows) or use Shift-click (all platforms).")
-NORMAL (U"To change the selection of one object (without changing the others), "
-	"use Control-click (Unix, Windows) or Command-click (Macintosh).")
+NORMAL (U"To extend the selection, drag the mouse or use Shift-click.")
+NORMAL (U"To change the selection of one object (without changing the others), use @@Command-click@.")
 MAN_END
 
 MAN_BEGIN (U"New menu", U"ppgb", 20161013)

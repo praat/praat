@@ -190,7 +190,7 @@ MAN_BEGIN (U"TextGrids: Merge", U"ppgb", 20101230)
 INTRO (U"A command to merge all selected @TextGrid objects into a new @TextGrid.")
 MAN_END
 
-MAN_BEGIN (U"TextGridEditor", U"ppgb", 20110131)
+MAN_BEGIN (U"TextGridEditor", U"ppgb", 20210228)
 INTRO (U"One of the @Editors in Praat, for editing a @TextGrid object.")
 NORMAL (U"You can optionally include a copy of a @Sound or @LongSound in this editor, "
 	"by selecting both the TextGrid and the Sound or LongSound before clicking ##View & Edit#. "
@@ -208,7 +208,7 @@ ENTRY (U"Creating new intervals, boundaries, points, or tiers")
 NORMAL (U"To create a new interval, create a new boundary in an interval tier.")
 NORMAL (U"To create a new boundary or point in a tier, @click inside the cursor circle in that tier, "
 	"or choose one of the commands in the Boundary/Point menu to insert a boundary at the cursor time "
-	"on the selected tier (shortcut: Enter) or on any tier (shortcuts: Command-F1 through Command-F9). The original text "
+	"on the selected tier (shortcut: Enter) or on any tier (shortcuts: @@Keyboard shortcuts|Command-F1@ through @@Keyboard shortcuts|Command-F9@). The original text "
 	"in the interval that is split, is divided up between the two resulting intervals, depending on "
 	"the position of the text cursor in the text window.")
 NORMAL (U"To create a new tier, choose ##Add interval tier# or ##Add point tier# from the #Tier menu.")
@@ -270,14 +270,14 @@ ENTRY (U"Accelerations")
 NORMAL (U"To save the @TextGrid object as a text file without going to the @@Object window@: "
 	"choose ##Save TextGrid as text file...# from the #File menu.")
 ENTRY (U"Searching")
-NORMAL (U"The Search menu contains the command #Find (Command-F), which will allow you to specify "
+NORMAL (U"The Search menu contains the command #Find (@@Keyboard shortcuts|Command-F@), which will allow you to specify "
 	"a text whose first occurrence will then be looked for in the currently selected tier "
 	"(starting from the currently selected text in the currently selected interval). "
-	"The command ##Find again# (Command-G) will search for the next occurrence of the same search text.")
+	"The command ##Find again# (@@Keyboard shortcuts|Command-G@) will search for the next occurrence of the same search text.")
 ENTRY (U"Checking the spelling")
 NORMAL (U"You can check the spelling of the intervals in your tiers by including a @SpellingChecker "
 	"object as you launch the editor: select TextGrid + (Long)Sound + SpellingChecker, "
-	"then click ##View & Edit#. The #Spell menu will contain the commands ##Check spelling in tier# (Command-N), and ##Check spelling in interval# "
+	"then click ##View & Edit#. The #Spell menu will contain the commands ##Check spelling in tier# (@@Keyboard shortcuts|Command-N@), and ##Check spelling in interval# "
 	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
 MAN_END
 

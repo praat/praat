@@ -367,13 +367,13 @@ NORMAL (U"In an Optimality-Theoretic model of grammar, %#evaluation refers to th
 	"of the winning candidate on the basis of the constraint ranking.")
 NORMAL (U"In an ordinal OT model of grammar, repeated evaluations will yield the same winner again and again. "
 	"We can simulate this behaviour with our N\\s{O}C\\s{ODA} example. "
-	"In the editor, you can choose ##Evaluate (zero noise)# or use its keyboard shortcut Command-0 (= Command-zero). "
+	"In the editor, you can choose ##Evaluate (zero noise)# or use its keyboard shortcut @@Keyboard shortcuts|Command-0@ (= Command-zero). "
 	"Repeated evaluations (keep Command-0 pressed) will always yield the following grammar:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.000\t       1.000")
 LIST_ITEM1 (U"\t##P\\s{ARSE}#\t      90.000\t      90.000\t       1.000")
 NORMAL (U"In a stochastic OT model of grammar, repeated evaluations will yield different disharmonies each time. "
-	"To see this, choose ##Evaluate (noise 2.0)# or use its keyboard shortcut Command-2. "
+	"To see this, choose ##Evaluate (noise 2.0)# or use its keyboard shortcut @@Keyboard shortcuts|Command-2@. "
 	"Repeated evaluations will yield grammars like the following:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t##N\\s{O}C\\s{ODA}#\t      100.000\t      100.427\t       1.000")
@@ -420,7 +420,7 @@ NORMAL (U"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lo
 	"To achieve this even with zero noise, "
 	"go to the OTGrammar window and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol ♠︎ will mark the selected constraint), "
-	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut Command-E.")
+	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut @@Keyboard shortcuts|Command-E.")
 NORMAL (U"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
 	"This is what you will then see in the OTGrammar window:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
@@ -428,7 +428,7 @@ LIST_ITEM1 (U"\t♠︎ ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       
 LIST_ITEM1 (U"\t##P\\s{ARSE}#\t      90.000\t      88.083\t       1.000")
 PICTURE (3.0, 1.0, draw_NoCoda_pat)
 NORMAL (U"Nothing has happened to the tableau, because the disharmonies still have their old values. So choose "
-	"##Evaluate (noise 2.0)# (Command-2) or ##Evaluate (zero noise)# (Command-0). The new disharmonies "
+	"##Evaluate (noise 2.0)# (@@Keyboard shortcuts|Command-2@) or ##Evaluate (zero noise)# (@@Keyboard shortcuts|Command-0@). The new disharmonies "
 	"will centre around the new ranking values, and we see that [pat] becomes the new winner:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (U"\t##P\\s{ARSE}#\t      90.000\t      90.743\t       1.000")
@@ -437,11 +437,11 @@ PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 MAN_END
 
 MAN_BEGIN (U"OT learning 2.6. Variable output", U"ppgb", 20070725)
-NORMAL (U"Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the #Edit menu, "
+NORMAL (U"Each time you press (@@Keyboard shortcuts|Command-2@), which invokes the command ##Evaluate (noise 2.0)# from the #Edit menu, "
 	"you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, "
 	"the winning candidates will very probably stay the same.")
 NORMAL (U"So starting from the N\\s{O}C\\s{ODA} example, we edit the rankings of the constraints again, "
-	"setting the ranking value of P\\s{ARSE} to 88 and that of N\\s{O}C\\s{ODA} to 85. If we now press Command-2 "
+	"setting the ranking value of P\\s{ARSE} to 88 and that of N\\s{O}C\\s{ODA} to 85. If we now press @@Keyboard shortcuts|Command-2@ "
 	"repeatedly, we will get [pat] in most of the cases, "
 	"but we will see the finger pointing at [pa] in 14 percent of the cases:")
 LIST_ITEM1 (U"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
@@ -1256,7 +1256,7 @@ INTRO (U"One of the @editors in Praat, for viewing and editing the grammar in an
 NORMAL (U"See the @@OT learning@ tutorial for examples.")
 ENTRY (U"Usage")
 NORMAL (U"The menu command that you will probably use most often if you investigate variation, "
-	"is the ##Evaluate (noise 2.0)# command, which you can invoke from the #Edit menu or by pressing Command-2.")
+	"is the ##Evaluate (noise 2.0)# command, which you can invoke from the #Edit menu or by pressing @@Keyboard shortcuts|Command-2@.")
 NORMAL (U"This command performs a new evaluation with the current ranking values. Some noise is added to the "
 	"ranking values, so that the %#disharmonies of the constraint will change. This may cause a change in the "
 	"ranking order of the constraints, which in its turn may cause a different candidate to win in some tableaus.")

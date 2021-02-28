@@ -582,7 +582,7 @@ NORMAL (U"To play (a part of) the %resynthesized sound: "
 	"@click on any of the 8 buttons below and above the drawing area, or choose a Play command from the View menu.")
 NORMAL (U"To play the %original sound instead, use @@Shift-click@.")
 ENTRY (U"Adding a point")
-NORMAL (U"@Click at the desired time location, and choose ##Add point at cursor# or type ##Command-P#.")
+NORMAL (U"@Click at the desired time location, and choose ##Add point at cursor# or type @@Keyboard shortcuts|Command-P@.")
 ENTRY (U"Removing points")
 NORMAL (U"To remove one or more pitch points, "
 	"make a @@time selection@ and choose ##Remove point(s)# from the ##Point# menu. "

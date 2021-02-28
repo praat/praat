@@ -395,11 +395,11 @@ INTRO (U"You can choose this command after selecting one #Categories. "
 	"A @CategoriesEditor will appear on the screen, with the selected #Categories in it.")
 MAN_END
 
-MAN_BEGIN (U"CategoriesEditor", U"djmw", 19960918) // 20210227
+MAN_BEGIN (U"CategoriesEditor", U"djmw", 20210228)
 ENTRY (U"An editor for manipulating @Categories.")
 NORMAL (U"To make a selection, use the left mouse button.")
-NORMAL (U"The Command key extends a selection (discontinuously).")
-NORMAL (U"The Shift key extends a selection contiguously.")
+NORMAL (U"@@Command-click@ extends a selection (discontinuously).")
+NORMAL (U"Shift-click extends a selection contiguously.")
 MAN_END
 
 MAN_BEGIN (U"CC", U"djmw", 20010219)
