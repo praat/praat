@@ -33,6 +33,8 @@
 
 autoTextGridTierNavigator TextGrid_and_NavigationContext_to_TextGridTierNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain);
 
+autoTextGridTierNavigator TextGridTierNavigator_createFromTextGrid_topicOnly (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain);
+
 autoNavigationContext TextGridTierNavigator_extractNavigationContext (TextGridTierNavigator me);
 
 void TextGridTierNavigator_replaceNavigationContext (TextGridTierNavigator me, NavigationContext thee);

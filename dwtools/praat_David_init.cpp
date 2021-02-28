@@ -7852,6 +7852,11 @@ DO
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
 }
 
+
+DIRECT (HELP_TextGridNavigator_help) {
+	HELP (U"TextGridNavigator")
+}
+
 FORM (MODIFY_TextGridNavigator_findNextAfterTime, U"TextGridNavigator: Find next after time", nullptr) {
 	REAL (time, U"Time (s)", U"-1.0")
 	OK
@@ -9273,6 +9278,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridNavigator);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridTierNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridTierNavigator);
 	
+	praat_addAction1 (classTextGridNavigator, 0, U"TextGridNavigator help", nullptr, 0, HELP_TextGridNavigator_help);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0, MODIFY_TextGridNavigator_findFirst);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find last", nullptr, 0, MODIFY_TextGridNavigator_findLast);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0, MODIFY_TextGridNavigator_findNext);

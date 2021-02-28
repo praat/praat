@@ -270,7 +270,7 @@ MAN_END
 
 
 MAN_BEGIN (U"BarkFilter", U"djmw", 20141023)
-INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by @@BarkSpectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It is replaced by @@BarkSpectrogram@.")
 NORMAL (U"An object of type BarkFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%z, %t), expressed "
 	"in dB's as 10*log10(power/4e-10)). In the now preferred BarkSpectrogram the power is represented instead of its dB value."
@@ -5622,6 +5622,10 @@ LIST_ITEM (U"5. Select the Manipulation object and choose ##Get resynthesis (ove
 LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up with the newly created sound too. You can do so by selecting the "
 	"TextGrid and the DurationTier together and choose ##To TextGrid (scale times)#. You will get a new TextGrid that is nicely "
 	"aligned with the new sound.")
+MAN_END
+
+MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210228)
+INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi tier search machine.")
 MAN_END
 
 MAN_BEGIN (U"TIMIT acoustic-phonetic speech corpus", U"djmw", 19970320)
