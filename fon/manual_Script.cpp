@@ -250,15 +250,15 @@ NORMAL (U"On Linux it is called #buttons5, "
 	"for instance ##/home/miep/.praat-dir/buttons5#.")
 MAN_END
 
-MAN_BEGIN (U"Calculator", U"ppgb", 20021201)
+MAN_BEGIN (U"Calculator", U"ppgb", 20210228)
 INTRO (U"A window that allows you to calculate all kinds of simple or complicated mathematical and string expressions. "
-	"To show the calculator, type Command-U or choose the @@Calculator...@ command. "
-	"The result will be written to the Info window.")
+	"To show the calculator, type @@Keyboard shortcuts|Command-U@ or choose the @@Calculator...@ command. "
+	"The result will appear in the Info window.")
 NORMAL (U"See the @Formulas tutorial for all the things that you can calculate with this command.")
 MAN_END
 
 MAN_BEGIN (U"Calculator...", U"ppgb", 20050822)
-INTRO (U"A command in the @Goodies submenu of the @@Praat menu@ of the @@Object window@. Shortcut: Command-U. "
+INTRO (U"A command in the @Goodies submenu of the @@Praat menu@ of the @@Object window@. Shortcut: @@Keyboard shortcuts|Command-U@. "
 	"Choosing this command brings up Praat's @calculator.")
 MAN_END
 
@@ -324,7 +324,7 @@ MAN_END
 
 MAN_BEGIN (U"Formulas 1.1. Formulas in the calculator", U"ppgb", 20170916)
 INTRO (U"To use the Praat @calculator, go to the @@Praat menu@ "
-	"and choose @@Calculator...@ from the @Goodies submenu. Or simply type Command-U anywhere in Praat.")
+	"and choose @@Calculator...@ from the @Goodies submenu. Or simply type @@Keyboard shortcuts|Command-U@ anywhere in Praat.")
 ENTRY (U"Calculating numbers")
 NORMAL (U"You can do arithmetic computations. Type the formula")
 CODE (U"8*17")
@@ -536,7 +536,7 @@ CODE (U"x2 = x * x")
 CODE (U"writeInfoLine: \"The square of \", x, \" is \", x2, \".\"")
 NORMAL (U"This is an example of a simple @@Praat script@; it assigns the results of the numeric formulas $$99$ and $$x * x$ "
 	"to the numeric variables %x and %x2. Note that the formula $$x * x$ itself refers to the variable %x. "
-	"To run (execute) this script, type Command-R or choose #Run from the #Run menu. "
+	"To run (execute) this script, type @@Keyboard shortcuts|Command-R@ or choose #Run from the #Run menu. "
 	"Praat will then write the following text into the Info window:")
 CODE (U"The square of 99 is 9801.")
 NORMAL (U"For more information on scripts, see the @Scripting tutorial.")
@@ -4111,12 +4111,12 @@ NORMAL (U"First, we create a ScriptEditor by choosing @@New Praat script@ from t
 LIST_ITEM (U"1. Choose ##Create Sound as pure tone...# from the @@New menu@ and click OK.")
 LIST_ITEM (U"2. Click #Play in the dynamic menu.")
 LIST_ITEM (U"3. Click the fixed #Remove button.")
-NORMAL (U"We then choose @@Paste history@ from the #Edit menu in the ScriptEditor (or type Command-H). "
+NORMAL (U"We then choose @@Paste history@ from the #Edit menu in the ScriptEditor (or type @@Keyboard shortcuts|Command-H@). "
 	"The text will now contain at least the following lines (delete any other lines):")
 CODE (U"Create Sound as pure tone: \"tone\", 1, 0, 0.4, 44100, 440, 0.2, 0.01, 0.01")
 CODE (U"Play")
 CODE (U"Remove")
-NORMAL (U"We can run this script again by choosing #Run from the #Run menu (or typing Command-R). "
+NORMAL (U"We can run this script again by choosing #Run from the #Run menu (or typing @@Keyboard shortcuts|Command-R@). "
 	"However, this always plays a sine with a frequency of 440 Hz, so we will add the variable \"Frequency\" "
 	"to the script, which then looks like:")
 CODE (U"#form Play a sine wave")
