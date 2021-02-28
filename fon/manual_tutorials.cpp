@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210208)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210227)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.40# (27 February 2021)")
+LIST_ITEM (U"• Inspect window: corrected a bug that could cause Praat to crash when opening a string vector.")
+LIST_ITEM (U"• Sound window: made channel scrolling work again when there are more than 8 channels.")
+LIST_ITEM (U"• Sound window: made channel muting by clicking on the loudspekaer symbols work again.")
 NORMAL (U"##6.1.39# (8 February 2021)")
 LIST_ITEM (U"• Scripting: made string vectors visible in writeFile (), pauseScript () and exitScript ().")
 LIST_ITEM (U"• Mac: corrected a bug that could cause About Praat to crash on macOS 10.10.")
