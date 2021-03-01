@@ -49,21 +49,6 @@
 
 Thing_implement (NavigationContext, Daata, 0);
 
-autoSTRVEC splitByWhiteSpace_STRVEC (conststring32 string, bool escapeWithDoubleQuotes) {
-	try {
-		if (! string)
-			return autoSTRVEC ();
-		
-	} catch (MelderError) {
-		
-	}
-}
-
-/*
-	1. To determine if an item is in a set, we can simply start to test whether it is equal to the first element
-		if so we are done. If not check the second element etc. until we get a match (or not).
-	2. To determine whether an item is not in the set, we need to reverse the test until it fails.
-*/
 static bool STRVEChasMatch (constSTRVEC const& labels, conststring32 label, kMelder_string criterion, kMatchBoolean matchBoolean) {
 	bool match = true;
 	if (matchBoolean == kMatchBoolean::OR_) {
