@@ -188,7 +188,7 @@ autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationC
 	}
 }
 
-autoTextGridTierNavigator TextGridTierNavigator_createFromTextGrid_topicOnly (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
+autoTextGridTierNavigator TextGrid_to_TextGridTierNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
 	try {
 		autoNavigationContext navigationContext = NavigationContext_createTopicOnly (topic_string, topicCriterion, topicMatchBoolean);
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber,  matchDomain);

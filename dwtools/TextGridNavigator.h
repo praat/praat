@@ -68,6 +68,8 @@ autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNaviga
 
 autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNavigator me);
 
+autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain);
+
 void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 

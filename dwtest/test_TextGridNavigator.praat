@@ -174,7 +174,7 @@ procedure test_twoNavigationContexts
 		.startTime3# [.i] = Get start time of interval: 3, .index3# [.i]
 		.endTime3# [.i] = Get end time of interval: 3, .index3# [.i]
 	endfor
-
+	appendInfoLine: tab$,tab$, "From small to large"
 	# combine  NavigationContext's  on tier 1 and tier 3
 	selectObject: textgrid, navigationContext2
 	.navigator = To TextGridNavigator: 1, "Topic start to Topic end"
@@ -199,7 +199,35 @@ procedure test_twoNavigationContexts
 		assert .endTime = .endTime3# [.i]; '.indexc2' '.endTime'
 		Find next
 	endfor
-	removeObject: .navigator
+	appendInfoLine: tab$,tab$, "From small to large OK"
+	appendInfoLine: tab$,tab$, "From large to small"
+	selectObject: tierNavigator4
+	.navigator2 = To TextGridNavigator
+	Rename: "LARGE_to_small"
+	selectObject: .navigator2, tierNavigator2
+	Add TextGridTierNavigator: "is inside"
+	selectObject: .navigator
+	Find first
+	for .i to .numberOfMatches
+		.index = Get index: 1, "topic"
+		assert .index = .index1# [.i]; '.index'
+		.index_before = Get index: 1, "before"
+		assert .index_before = .index1_before# [.i]
+		.label$ = Get label: 1, "topic"
+		assert .label$ = .label1$# [.i]
+		.indexc2 = Get index: 3, "topic"
+		assert .indexc2 = .index3#[.i]; '.indexc2' '.index3# [.i]'
+		.label2$ = Get label: 3, "topic"
+		assert .label2$ = .label3$# [.i]
+		.startTime = Get start time: 3, "topic"
+		assert .startTime = .startTime3# [.i]; '.indexc2' '.startTime'
+		.endTime = Get end time: 3, "topic"
+		assert .endTime = .endTime3# [.i]; '.indexc2' '.endTime'
+		Find next
+	endfor
+	
+	removeObject: .navigator, .navigator2
+	appendInfoLine: tab$,tab$, "From large to small OK"
 	appendInfoLine: tab$, "test two navigation contexts OK"
 endproc
 
