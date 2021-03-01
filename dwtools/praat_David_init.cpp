@@ -7836,6 +7836,19 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OK
+DO
+	CONVERT_EACH (TextGrid)
+		autoTextGridNavigator result = TextGrid_to_TextGridNavigator_topicSearch (me, tierNumber, topic_string, topicCriterion,  topicMatchBoolean, matchDomain);
+	CONVERT_EACH_END (my name.get())
+}
+
 DIRECT (NEW_TextGrid_DurationTier_to_TextGrid) {
 	CONVERT_TWO (TextGrid, DurationTier)
 		autoTextGrid result = TextGrid_DurationTier_scaleTimes (me, you);
@@ -7850,6 +7863,11 @@ DO
 	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
 		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, him);
 	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
+}
+
+
+DIRECT (HELP_TextGridNavigator_help) {
+	HELP (U"TextGridNavigator")
 }
 
 FORM (MODIFY_TextGridNavigator_findNextAfterTime, U"TextGridNavigator: Find next after time", nullptr) {
@@ -9268,11 +9286,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
+	praat_addAction1 (classTextGrid, 0, U"To TextGridNavigator (topic search)...", U"To DurationTier...", 0, NEW_TextGrid_to_TextGridNavigator_topicSearch);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
+	
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridNavigator);
 	praat_addAction2 (classTextGrid, 1, classNavigationContext, 1, U"To TextGridTierNavigator...", nullptr, 0, NEW_TextGrid_and_NavigationContext_to_TextGridTierNavigator);
 	
+	praat_addAction1 (classTextGridNavigator, 0, U"TextGridNavigator help", nullptr, 0, HELP_TextGridNavigator_help);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0, MODIFY_TextGridNavigator_findFirst);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find last", nullptr, 0, MODIFY_TextGridNavigator_findLast);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0, MODIFY_TextGridNavigator_findNext);

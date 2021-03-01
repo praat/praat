@@ -82,6 +82,16 @@ autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNa
 	}
 }
 
+autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
+	try {
+		autoTextGridTierNavigator tn = TextGrid_to_TextGridTierNavigator_topicSearch (me, tierNumber, topic_string, topicCriterion,  topicMatchBoolean,  matchDomain);
+		autoTextGridNavigator thee = TextGridTierNavigator_to_TextGridNavigator (tn.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create TextGridNavigator from TextGrid.");
+	}
+}
+
 void TextGridNavigator_addNewTierNavigation (TextGridNavigator me, TextGrid thee, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain, kMatchLocation matchLocation) {
 	try {
 		for (integer inum = 1; inum <= my tierNavigators.size; inum ++) {
@@ -506,17 +516,20 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 
 static integer TextGridNavigator_timeToLowIndex (TextGridNavigator me, double time) {
 	const TextGridTierNavigator tn = my tierNavigators. at [1];
-	return tn -> v_timeToLowIndex (time);
+	tn -> currentTopicIndex = tn -> v_timeToLowIndex (time);
+	return tn -> currentTopicIndex;
 }
 
 static integer TextGridNavigator_timeToIndex (TextGridNavigator me, double time) {
 	const TextGridTierNavigator tn = my tierNavigators. at [1];
-	return tn -> v_timeToIndex (time);
+	tn -> currentTopicIndex = tn -> v_timeToIndex (time);
+	return tn -> currentTopicIndex;
 }
 
 static integer TextGridNavigator_timeToHighIndex (TextGridNavigator me, double time) {
 	const TextGridTierNavigator tn = my tierNavigators. at [1];
-	return tn -> v_timeToHighIndex (time);
+	tn -> currentTopicIndex = tn -> v_timeToHighIndex (time);
+	return tn -> currentTopicIndex;
 }
 
 integer TextGridNavigator_findNext (TextGridNavigator me) {

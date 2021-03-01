@@ -270,7 +270,7 @@ MAN_END
 
 
 MAN_BEGIN (U"BarkFilter", U"djmw", 20141023)
-INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by @@BarkSpectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It is replaced by @@BarkSpectrogram@.")
 NORMAL (U"An object of type BarkFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%z, %t), expressed "
 	"in dB's as 10*log10(power/4e-10)). In the now preferred BarkSpectrogram the power is represented instead of its dB value."
@@ -5622,6 +5622,33 @@ LIST_ITEM (U"5. Select the Manipulation object and choose ##Get resynthesis (ove
 LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up with the newly created sound too. You can do so by selecting the "
 	"TextGrid and the DurationTier together and choose ##To TextGrid (scale times)#. You will get a new TextGrid that is nicely "
 	"aligned with the new sound.")
+MAN_END
+
+MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210101)
+INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi tier search machine.")
+ENTRY (U"What is a multi tier search machine?")
+NORMAL (U"A multi tier search machine enables you to find an interval or a point on a tier based on criteria that relate to "
+	"intervals or points on other tiers. The most simple TextGridNavigator searches on one tier only. For example, you have "
+	"instructed the TextGridNavigator that your %Topic symbols belong to the set \"a e i u o\" and are to be found on tier 1 "
+	"of the TextGrid. The command to start the search would then probably be ##Find first#. Because of this command the internal state of the navigator changes. If you next query it with ##Get index: 1, \"topic\"# it will return the number of the interval or point that matched (or 0 if no match could be found). The command ##Find next# will again change the internal state wich can then subsequently "
+	"be queried. And so on.")
+NORMAL (U"A more complex example could query for a vowel from the same %Topic set as above but has before it an unvoiced plosive from the %Before set \"p t k\" and is followed by a nasal from the %After set \"m n\". ")
+NORMAL (U"The two examples above are both one tier searches and these searches all have the scheme that they search for a %%topic symbol% which may be preceeded by a %%before symbol% and/or followed by an %after symbol%. The %topic, %before and %after symbol may belong to different sets.")
+NORMAL (U"For each tier in the TextGrid, we can define a tier search based on tier-specific %%topic symbols%, and/ or "
+	"tier-specific %%before% and %after symbols%. Besides these, maximally three, sets of symbols we also need to specify "
+	"the kind of match that we want. In the first example above we chose the item in the topic tier 1 to have the ##is equal to# "
+	"relation to one of the items in the Topic set. Other criteria for a match are possible to guarantee maximum flexibility and "
+	"ease of use, like ##is not equal to#, ##contains#, ##does not start with# and many more. "
+	"We also need to specify whether the match is for %one or for %all the items in the set. In set theory this translates to whether "
+	"we have an OR or an AND relation between the individual matches. For example, if we want a ##is equal to# match with one of "
+	"the symbols in a set we have an OR relation because we can write our match as (item == set symbol 1) OR (item == set symbol 2) "
+	"OR ... (item == set symbol %n). If on the other hand we do %not want to match any of the symbols in the set we have an AND "
+	"relation because we can write our match as (item != set symbol 1) AND (item != set symbol 2) AND ... (item != set symbol %n). "
+	"For many cases inclusive searches are based on OR and exclusive searches are based on AND.")
+NORMAL (U"A multi tier search can now be defined by combining a number of single tier searches, where each single tier search "
+	"searches a different tier number. To combine the matches on each tier we have to know how to relate them which can only be done on the basis of time. We relate all tier searches to the tier call the topic tier.")
+ENTRY (U"How to create a TextGridNavigator")
+ENTRY (U"How to use multi tier search")
 MAN_END
 
 MAN_BEGIN (U"TIMIT acoustic-phonetic speech corpus", U"djmw", 19970320)

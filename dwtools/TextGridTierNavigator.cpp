@@ -188,6 +188,16 @@ autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationC
 	}
 }
 
+autoTextGridTierNavigator TextGrid_to_TextGridTierNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
+	try {
+		autoNavigationContext navigationContext = NavigationContext_createTopicOnly (topic_string, topicCriterion, topicMatchBoolean);
+		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber,  matchDomain);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create TextGridTierNavigator.");
+	}
+}
+
 autoTextGridTierNavigator TextGrid_and_NavigationContext_to_TextGridTierNavigator (TextGrid me, NavigationContext thee, integer tierNumber, kMatchDomain matchDomain) {
 	try {
 		Function tier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
