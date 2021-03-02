@@ -121,8 +121,10 @@ autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topi
 	}
 }
 
-autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool contextOnly) {
+autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool excludeTopicMatch) {
 	try {
+		Melder_require (excludeTopicMatch && useCriterion != kContext_use::NO_BEFORE_AND_NO_AFTER, 
+			U"You should not exclude Before & After & Topic from matching. One of the three should be included.");
 		autoNavigationContext me = Thing_new (NavigationContext);
 		my topicLabels = Strings_createAsTokens (topic_string, U" ");
 		my topicCriterion = topicCriterion;
@@ -145,7 +147,7 @@ autoNavigationContext NavigationContext_create (conststring32 topic_string, kMel
 			if (after_string [0] == U'\0')
 				Strings_insert (my afterLabels.get(), 1, U"");
 		}
-		my excludeTopicMatch = contextOnly;
+		my excludeTopicMatch = excludeTopicMatch;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NavigationContext could not be created.");

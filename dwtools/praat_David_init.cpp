@@ -9286,7 +9286,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
-	praat_addAction1 (classTextGrid, 0, U"To TextGridNavigator (topic search)...", U"To DurationTier...", 0, NEW_TextGrid_to_TextGridNavigator_topicSearch);
+	praat_addAction1 (classTextGrid, 0, U"To TextGridNavigator (topic)...", U"To DurationTier...", 0, NEW_TextGrid_to_TextGridNavigator_topicSearch);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
 	
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);

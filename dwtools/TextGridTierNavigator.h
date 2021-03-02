@@ -33,7 +33,7 @@
 
 autoTextGridTierNavigator TextGrid_and_NavigationContext_to_TextGridTierNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain);
 
-autoTextGridTierNavigator TextGrid_to_TextGridTierNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain);
+autoTextGridTierNavigator TextGrid_to_TextGridTierNavigator_topic (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain);
 
 autoNavigationContext TextGridTierNavigator_extractNavigationContext (TextGridTierNavigator me);
 
@@ -91,5 +91,7 @@ static inline bool TextGridTierNavigator_isAfterMatch (TextGridTierNavigator me,
 static inline bool TextGridTierNavigator_isBeforeMatch (TextGridTierNavigator me, integer topicIndex) {
 	return TextGridTierNavigator_findBeforeIndex (me, topicIndex) > 0;
 }
+
+void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, double *out_startTime, double *out_endTime);
 
 #endif /* _TextGridTierNavigator_h_ */
