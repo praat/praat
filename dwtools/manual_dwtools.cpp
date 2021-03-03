@@ -270,7 +270,7 @@ MAN_END
 
 
 MAN_BEGIN (U"BarkFilter", U"djmw", 20141023)
-INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It is replaced by @@BarkSpectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It has been replaced by @@BarkSpectrogram@.")
 NORMAL (U"An object of type BarkFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%z, %t), expressed "
 	"in dB's as 10*log10(power/4e-10)). In the now preferred BarkSpectrogram the power is represented instead of its dB value."
@@ -722,7 +722,7 @@ MAN_END
 MAN_BEGIN (U"confidence level", U"djmw", 20011105)
 NORMAL (U"The confidence level is the probability value 1-\\al associated "
 	"with a @@confidence interval@, where \\al is the level of significance. "
-	"It can also be expressed as a percentage 100(1-\\al)\\%  and is than "
+	"It can also be expressed as a percentage 100(1-\\al)\\%  and is then "
 	"sometimes called the %%confidence coefficient%.")
 MAN_END
 
@@ -2512,7 +2512,7 @@ MAN_BEGIN (U"FilterBank: Get frequency in mel...", U"djmw", 20030901)
 MAN_END
 
 MAN_BEGIN (U"FormantFilter", U"djmw", 20141022)
-INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by @@Spectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It has been replaced by @@Spectrogram@.")
 NORMAL (U"An object of type FormantFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), expressed "
 	"in dB as 10*log10(power/4e-10)). In the now preferred Spectrogram the power is represented instead of its dB value. "
@@ -2762,7 +2762,7 @@ INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix b
 MAN_END
 
 MAN_BEGIN (U"MelFilter", U"djmw", 20141022)
-INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by the @@MelSpectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It has been replaced by the @@MelSpectrogram@.")
 NORMAL (U"An object of type MelFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), "
 	"expressed in dB's. "
@@ -4152,7 +4152,7 @@ NORMAL (U"Multiplication with the first half period of a (1+cos(%%x%))/2 functio
 MAN_END
 
 MAN_BEGIN (U"Sound: Filter (gammatone)...", U"djmw", 20170829)
-INTRO (U"A command to filter a Sound by a fourth order gammatone bandpass filter.")
+INTRO (U"A command to filter a Sound by a fourth-order gammatone bandpass filter.")
 ENTRY (U"Settings")
 TAG (U"##Centre frequency (Hz)#, ##Bandwidth (Hz)#")
 DEFINITION (U"determine the passband of the filter.")
@@ -5143,7 +5143,7 @@ MAN_BEGIN (U"Table: Report one-way Kruskal-Wallis...", U"djmw", 20120617)
 INTRO (U"Performs a one-way Kruskal-Wallis analysis on the data in one column of a selected @@Table@ and reports the results in the info window. This test is sometimes refered to as a one-way analysis of variance for %%non-normally distributed% data.")
 ENTRY (U"Settings")
 TAG (U"##Column with data#")
-DEFINITION (U"the label of the column who's data will be analyzed.")
+DEFINITION (U"the label of the column whose data will be analyzed.")
 TAG (U"##Factor#")
 DEFINITION (U"the label of the column with the names of the levels.")
 ENTRY (U"Algorithm")
@@ -5439,7 +5439,7 @@ MAN_END
 MAN_BEGIN (U"TableOfReal: To PatternList and Categories...", U"djmw", 20040429)
 INTRO (U"Extracts a @PatternList and a @Categories from the selected @TableOfReal.")
 NORMAL (U"The selected rows and columns are copied into the PatternList and "
-	"the corresponding row labels are copied into a Categories. ")
+	"the corresponding row labels are copied into a Categories.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To CCA...", U"djmw", 20020424)
@@ -5625,9 +5625,9 @@ LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up 
 MAN_END
 
 MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210101)
-INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi tier search machine.")
-ENTRY (U"What is a multi tier search machine?")
-NORMAL (U"A multi tier search machine enables you to find an interval or a point on a tier based on criteria that relate to "
+INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
+ENTRY (U"What is a multi-tier search machine?")
+NORMAL (U"A multi-tier search machine enables you to find an interval or a point on a tier based on criteria that relate to "
 	"intervals or points on other tiers. The most simple TextGridNavigator searches on one tier only. For example, you have "
 	"instructed the TextGridNavigator that your %Topic symbols belong to the set \"a e i u o\" and are to be found on tier 1 "
 	"of the TextGrid. The command to start the search would then probably be ##Find first#. Because of this command the internal state of the navigator changes. If you next query it with ##Get index: 1, \"topic\"# it will return the number of the interval or point that matched (or 0 if no match could be found). The command ##Find next# will again change the internal state wich can then subsequently "
@@ -5644,11 +5644,11 @@ NORMAL (U"For each tier in the TextGrid, we can define a tier search based on ti
 	"the symbols in a set we have an OR relation because we can write our match as (item == set symbol 1) OR (item == set symbol 2) "
 	"OR ... (item == set symbol %n). If on the other hand we do %not want to match any of the symbols in the set we have an AND "
 	"relation because we can write our match as (item != set symbol 1) AND (item != set symbol 2) AND ... (item != set symbol %n). "
-	"For many cases inclusive searches are based on OR and exclusive searches are based on AND.")
-NORMAL (U"A multi tier search can now be defined by combining a number of single tier searches, where each single tier search "
+	"For many cases, inclusive searches are based on OR and exclusive searches are based on AND.")
+NORMAL (U"A multi-tier search can now be defined by combining a number of single tier searches, where each single tier search "
 	"searches a different tier number. To combine the matches on each tier we have to know how to relate them which can only be done on the basis of time. We relate all tier searches to the tier call the topic tier.")
 ENTRY (U"How to create a TextGridNavigator")
-ENTRY (U"How to use multi tier search")
+ENTRY (U"How to use multi-tier search")
 MAN_END
 
 MAN_BEGIN (U"TIMIT acoustic-phonetic speech corpus", U"djmw", 19970320)
