@@ -313,22 +313,25 @@ integer TextGridNavigator_getNumberOfAfterMatches (TextGridNavigator me, integer
 	}
 }
 
-bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) {
+bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex) {
 	const TextGridTierNavigator tn = my tierNavigators.at [1];
-	if (! TextGridTierNavigator_isMatch (tn, indexInTopicTier))
+	integer beforeIndex, afterIndex;
+	if (! TextGridTierNavigator_isMatch (tn, topicIndex, & beforeIndex, & afterIndex))
 			return false;
 	if (my tierNavigators.size == 1)
 		return true;
 	/*
 		We have a match at the topic tier, now check the subordinate tiers
 	*/
-	const double startTime = tn -> v_getStartTime (indexInTopicTier);
-	const double endTime = tn -> v_getEndTime (indexInTopicTier);
-	const double midTime = 0.5 * (startTime + endTime);
+	double startTime, endTime;
+	TextGridTierNavigator_getMatchDomain (tn, topicIndex, beforeIndex, afterIndex, & startTime, & endTime);
+	const double midTime = 0.5 * (tn -> v_getStartTime (topicIndex) + tn -> v_getEndTime (topicIndex));
 	for (integer inum = 2; inum <= my tierNavigators.size; inum ++) {
 		const TextGridTierNavigator tni = my tierNavigators.at [inum];
 		const integer referenceIndex = tni -> v_timeToIndex (midTime);
 		const integer tierSize = tni -> v_getSize ();
+		integer beforeIndex, afterIndex;
+		double startTime_sub, endTime_sub;
 		
 		tni -> currentTopicIndex = 0;
 		const integer startIndex = 1;
@@ -336,15 +339,15 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 		const kMatchLocation matchLocation = tni -> matchLocation;
 		if (matchLocation == kMatchLocation::IS_ANYWHERE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
 					tni -> currentTopicIndex = index;
 					break;
 				}
 			}
 		} else if (matchLocation == kMatchLocation::IS_BEFORE) {
 			for (integer index = referenceIndex; index >= startIndex; index --) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double endTime_sub = tni -> v_getEndTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+					TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, nullptr, & endTime_sub);
 					if (endTime_sub <= startTime) {
 						tni -> currentTopicIndex = index;
 						break;
@@ -353,8 +356,8 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 			}
 		} else if (matchLocation == kMatchLocation::TOUCHES_BEFORE) {
 			for (integer index = referenceIndex; index >= startIndex; index --) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double endTime_sub = tni -> v_getEndTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+					TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, nullptr, & endTime_sub);
 					if (endTime_sub == startTime) {
 						tni -> currentTopicIndex = index;
 						break;
@@ -365,9 +368,8 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 		} else if (matchLocation == kMatchLocation::OVERLAPS_BEFORE) {
 			// OVERLAPS_BEFORE	tmin2 < tmin && tmax2 <= tmax
 			for (integer index = referenceIndex; index >= startIndex; index --) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double endTime_sub = tni -> v_getEndTime (index);
-					const double startTime_sub = tni -> v_getStartTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+					TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, & startTime_sub, & endTime_sub);
 					if (startTime_sub < startTime && endTime_sub <= endTime ) {
 						tni -> currentTopicIndex = index;
 						break;
@@ -375,19 +377,17 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 						break;
 				}
 			}
-		} else if (matchLocation == kMatchLocation::IS_INSIDE) {
-			if (TextGridTierNavigator_isMatch (tni, referenceIndex)) {
-				const double endTime_sub = tni -> v_getEndTime (referenceIndex);
-				const double startTime_sub = tni -> v_getStartTime (referenceIndex);
+		} else if (matchLocation == kMatchLocation::IS_INSIDE) { // TODO checken of tmid correct is
+			if (TextGridTierNavigator_isMatch (tni, referenceIndex, & beforeIndex, & afterIndex)) {
+				TextGridTierNavigator_getMatchDomain (tni, referenceIndex, beforeIndex, afterIndex, & startTime_sub, & endTime_sub);
 				if (startTime_sub >= startTime && endTime_sub <= endTime)
 					tni -> currentTopicIndex = referenceIndex;
 			}
 		} else if (matchLocation == kMatchLocation::OVERLAPS_AFTER) {
 			// OVERLAPS_AFTER	tmin2 >= tmin && tmax2 > tmax
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double endTime_sub = tni -> v_getEndTime (index);
-					const double startTime_sub = tni -> v_getStartTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+					TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, & startTime_sub, & endTime_sub);
 					if (startTime_sub >= startTime && endTime_sub > endTime) {
 						tni -> currentTopicIndex = index;
 						break;
@@ -397,8 +397,8 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 			}
 		} else if (matchLocation == kMatchLocation::TOUCHES_AFTER) {
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double startTime_sub = tni -> v_getStartTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+					TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, & startTime_sub, nullptr);
 					if (startTime_sub == endTime) {
 						tni -> currentTopicIndex = index;
 						break;
@@ -408,8 +408,8 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 			}
 		} else if (matchLocation == kMatchLocation::IS_AFTER) {
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double startTime_sub = tni -> v_getStartTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+					TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, & startTime_sub, nullptr);
 					if (startTime_sub >= endTime) {
 						tni -> currentTopicIndex = index;
 						break;
@@ -417,24 +417,21 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier) 
 				}
 			}
 		} else if (matchLocation == kMatchLocation::OVERLAPS_BEFORE_AND_AFTER) {
-			if (TextGridTierNavigator_isMatch (tni, referenceIndex)) {
-				const double endTime_sub = tni -> v_getEndTime (referenceIndex);
-				const double startTime_sub = tni -> v_getStartTime (referenceIndex);
+			if (TextGridTierNavigator_isMatch (tni, referenceIndex, & beforeIndex, & afterIndex)) {
+				TextGridTierNavigator_getMatchDomain (tni, referenceIndex, beforeIndex, afterIndex, & startTime_sub, & endTime_sub);
 				if (startTime_sub <= startTime && endTime_sub >= endTime)
 					tni -> currentTopicIndex = referenceIndex;
 			}
 		} else if (matchLocation == kMatchLocation::TOUCHES_BEFORE_AND_AFTER) {
-			if (TextGridTierNavigator_isMatch (tni, referenceIndex)) {
-				const double endTime_sub = tni -> v_getEndTime (referenceIndex);
-				const double startTime_sub = tni -> v_getStartTime (referenceIndex);
+			if (TextGridTierNavigator_isMatch (tni, referenceIndex, & beforeIndex, & afterIndex)) {
+				TextGridTierNavigator_getMatchDomain (tni, referenceIndex, beforeIndex, afterIndex, & startTime_sub, & endTime_sub);
 				if (startTime_sub == startTime && endTime_sub == endTime)
 					tni -> currentTopicIndex = referenceIndex;
 			}
 		} else if (matchLocation == kMatchLocation::IS_OUTSIDE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
-				if (TextGridTierNavigator_isMatch (tni, index)) {
-					const double endTime_sub = tni -> v_getEndTime (index);
-					const double startTime_sub = tni -> v_getStartTime (index);
+				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex, & afterIndex)) {
+				TextGridTierNavigator_getMatchDomain (tni, index, beforeIndex, afterIndex, & startTime_sub, & endTime_sub);
 					if (endTime_sub <= startTime || startTime_sub >= endTime) {
 						tni -> currentTopicIndex = index;
 						break;

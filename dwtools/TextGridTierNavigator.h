@@ -52,7 +52,7 @@ void TextGridTierNavigator_modifyMatchDomain (TextGridTierNavigator me, kMatchDo
 
 void TextGridTierNavigator_modifyMatchingRange (TextGridTierNavigator me, integer maximumLookAhead, integer maximumLookBack);
 
-bool TextGridTierNavigator_isMatch (TextGridTierNavigator me, integer indexInTopicTier);
+bool TextGridTierNavigator_isMatch (TextGridTierNavigator me, integer topicIndex, integer *out_beforeIndex, integer *out_afterIndex);
 
 integer TextGridTierNavigator_getNumberOfMatches (TextGridTierNavigator me);
 integer TextGridTierNavigator_getNumberOfTopicMatches (TextGridTierNavigator me);
@@ -92,6 +92,6 @@ static inline bool TextGridTierNavigator_isBeforeMatch (TextGridTierNavigator me
 	return TextGridTierNavigator_findBeforeIndex (me, topicIndex) > 0;
 }
 
-void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, double *out_startTime, double *out_endTime);
+void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime);
 
 #endif /* _TextGridTierNavigator_h_ */
