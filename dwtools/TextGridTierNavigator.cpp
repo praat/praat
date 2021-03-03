@@ -171,69 +171,6 @@ static void NavigationContext_checkMatchDomain (NavigationContext me, kMatchDoma
 	// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
 }
 
-void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, double *out_startTime, double *out_endTime) {
-	kContext_where startWhere, endWhere;
-	if (my matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
-		const NavigationContext nc = my navigationContext.get();
-		if (nc -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
-			startWhere = kContext_where::TOPIC;
-			endWhere = kContext_where::TOPIC;
-		} else if (nc -> useCriterion == kContext_use::BEFORE) {
-			startWhere = kContext_where::BEFORE;
-			endWhere = ( nc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
-		} else if (nc -> useCriterion == kContext_use::AFTER) {
-			startWhere = ( nc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
-			endWhere = kContext_where::AFTER;
-		} else if (nc -> useCriterion == kContext_use::BEFORE_AND_AFTER) {
-			startWhere = kContext_where::BEFORE;
-			endWhere = kContext_where::AFTER;
-		} else if (nc -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH) {
-			if (TextGridTierNavigator_isBeforeMatch (me, my currentTopicIndex)) {
-				startWhere = kContext_where::BEFORE;
-				endWhere = ( nc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
-			} else {
-				startWhere = ( nc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
-				endWhere = kContext_where::AFTER;
-			}
-		} else if (nc -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
-			bool isBeforeMatch = TextGridTierNavigator_isBeforeMatch (me, my currentTopicIndex);
-			bool isAfterMatch = TextGridTierNavigator_isAfterMatch (me, my currentTopicIndex);
-			if (isBeforeMatch && isAfterMatch) {
-				startWhere = kContext_where::BEFORE;
-				endWhere = kContext_where::AFTER;
-			} else if (isBeforeMatch) {
-				startWhere = kContext_where::BEFORE;
-				endWhere = ( nc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
-			} else {
-				startWhere = ( nc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
-				endWhere = kContext_where::AFTER;
-			}
-		}
-	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_TOPIC_END) {
-		startWhere = kContext_where::TOPIC;
-		endWhere = kContext_where::TOPIC;
-	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END) {
-		startWhere = kContext_where::BEFORE;
-		endWhere = kContext_where::TOPIC;
-	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END) {
-		startWhere = kContext_where::TOPIC;
-		endWhere = kContext_where::AFTER;
-	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END) {
-		startWhere = kContext_where::BEFORE;
-		endWhere = kContext_where::AFTER;
-	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END) {
-		startWhere = kContext_where::BEFORE;
-		endWhere = kContext_where::BEFORE;
-	} else if (my matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END) {
-		startWhere = kContext_where::AFTER;
-		endWhere = kContext_where::AFTER;
-	}
-	if (out_startTime)
-		*out_startTime = TextGridTierNavigator_getStartTime (me, startWhere);
-	if (out_endTime)
-		*out_endTime = TextGridTierNavigator_getEndTime (me, endWhere);
-}
-
 autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationContext thee, kMatchDomain matchDomain) {
 	try {
 		NavigationContext_checkMatchDomain (thee, matchDomain);
@@ -424,32 +361,38 @@ integer TextGridTierNavigator_getNumberOfTopicOnlyMatches (TextGridTierNavigator
 	return numberOfMatches;
 }
 
-bool TextGridTierNavigator_isMatch (TextGridTierNavigator me, integer topicIndex) {
+bool TextGridTierNavigator_isMatch (TextGridTierNavigator me, integer topicIndex, integer *out_beforeIndex, integer *out_afterIndex) {
 	if (topicIndex < 1 && topicIndex > my v_getSize ())
 		return false;
 	const bool isTopicMatch = ( my navigationContext -> excludeTopicMatch ? true : TextGridTierNavigator_isTopicMatch (me, topicIndex) );
 	if (! isTopicMatch || my navigationContext -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER)
 		return isTopicMatch;
 	bool isMatch = false;
+	integer beforeIndex = 0, afterIndex = 0;
 	if (my navigationContext -> useCriterion == kContext_use::BEFORE_AND_AFTER)
-		isMatch = TextGridTierNavigator_isBeforeMatch (me, topicIndex) &&
-			TextGridTierNavigator_isAfterMatch (me, topicIndex);
+		isMatch = ((beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0) &&
+			((afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0);
 	else if (my navigationContext -> useCriterion == kContext_use::AFTER)
-		isMatch = TextGridTierNavigator_isAfterMatch (me, topicIndex);
+		isMatch = (afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0;
 	else if (my navigationContext -> useCriterion == kContext_use::BEFORE)
-		isMatch = TextGridTierNavigator_isBeforeMatch (me, topicIndex);
+		isMatch = (beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0;
 	else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH)
-		isMatch = TextGridTierNavigator_isBeforeMatch (me, topicIndex) ||
-			TextGridTierNavigator_isAfterMatch (me, topicIndex);
+		isMatch = ((beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0) ||
+			((afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0);
 	else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH)
-		isMatch = TextGridTierNavigator_isBeforeMatch (me, topicIndex) != TextGridTierNavigator_isAfterMatch (me, topicIndex);
+		isMatch = ((beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0) !=
+			((afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0);
+	if (out_beforeIndex)
+		*out_beforeIndex = beforeIndex;
+	if (out_afterIndex)
+		*out_afterIndex = afterIndex;
 	return isMatch;
 }
 
 integer TextGridTierNavigator_getNumberOfMatches (TextGridTierNavigator me) {
 	integer numberOfMatches = 0;
 	for (integer index = 1; index <= my v_getSize (); index ++)
-		if (TextGridTierNavigator_isMatch (me, index))
+		if (TextGridTierNavigator_isMatch (me, index, nullptr, nullptr))
 			numberOfMatches ++;
 	return numberOfMatches;
 }
@@ -462,66 +405,64 @@ integer TextGridTierNavigator_getNumberOfTopicMatches (TextGridTierNavigator me)
 	return numberOfMatches;
 }
 
-static void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, integer index, double *out_startTime, double *out_endTime) {
-	kContext_where startWhere, endWhere;
+void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime) {
+	double startTime, endTime;
 	if (my matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
 		if (my navigationContext -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
-			startWhere = kContext_where::TOPIC;
-			endWhere = kContext_where::TOPIC;
+			startTime = my v_getStartTime (topicIndex);
+			endTime =  my v_getEndTime (topicIndex);
 		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE) {
-			startWhere = kContext_where::BEFORE;
-			endWhere = ( my navigationContext -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			startTime = my v_getStartTime (beforeIndex);
+			endTime =  my v_getEndTime (my navigationContext -> excludeTopicMatch ? beforeIndex : topicIndex );
 		} else if (my navigationContext -> useCriterion == kContext_use::AFTER) {
-			startWhere = ( my navigationContext -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
-			endWhere = kContext_where::AFTER;
+			startTime = my v_getStartTime (my navigationContext -> excludeTopicMatch ? afterIndex : topicIndex);
+			endTime =  my v_getEndTime (afterIndex );
 		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE_AND_AFTER) {
-			startWhere = kContext_where::BEFORE;
-			endWhere = kContext_where::AFTER;
+			startTime = my v_getStartTime (beforeIndex);
+			endTime =  my v_getEndTime (afterIndex);
 		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH) {
-			if (TextGridTierNavigator_isBeforeMatch (me, index)) {
-				startWhere = kContext_where::BEFORE;
-				endWhere = ( my navigationContext -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			if (beforeIndex > 0) {
+				startTime = my v_getStartTime (beforeIndex);
+				endTime =  my v_getEndTime (my navigationContext -> excludeTopicMatch ? beforeIndex : topicIndex);
 			} else {
-				startWhere = ( my navigationContext -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
-				endWhere = kContext_where::AFTER;
+				startTime = my v_getStartTime (my navigationContext -> excludeTopicMatch ? afterIndex : topicIndex);
+				endTime = my v_getEndTime (afterIndex);
 			}
 		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
-			bool isBeforeMatch = TextGridTierNavigator_isBeforeMatch (me, index);
-			bool isAfterMatch = TextGridTierNavigator_isAfterMatch (me, index);
-			if (isBeforeMatch && isAfterMatch) {
-				startWhere = kContext_where::BEFORE;
-				endWhere = kContext_where::AFTER;
-			} else if (isBeforeMatch) {
-				startWhere = kContext_where::BEFORE;
-				endWhere = ( my navigationContext -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			if (beforeIndex > 0 && afterIndex > 0) {
+				startTime = my v_getStartTime (beforeIndex);
+				endTime = my v_getEndTime (afterIndex);
+			} else if (beforeIndex > 0) {
+				startTime = my v_getStartTime (beforeIndex);
+				endTime = my v_getEndTime (my navigationContext -> excludeTopicMatch ? beforeIndex : topicIndex);
 			} else {
-				startWhere = ( my navigationContext -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
-				endWhere = kContext_where::AFTER;
+				startTime = my v_getStartTime (my navigationContext -> excludeTopicMatch ? afterIndex : topicIndex);
+				endTime = my v_getEndTime (afterIndex);
 			}
 		}
 	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_TOPIC_END) {
-		startWhere = kContext_where::TOPIC;
-		endWhere = kContext_where::TOPIC;
+		startTime = my v_getStartTime (topicIndex);
+		endTime =  my v_getEndTime (topicIndex);
 	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END) {
-		startWhere = kContext_where::BEFORE;
-		endWhere = kContext_where::TOPIC;
+		startTime = my v_getStartTime (beforeIndex);
+		endTime =  my v_getEndTime (topicIndex);
 	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END) {
-		startWhere = kContext_where::TOPIC;
-		endWhere = kContext_where::AFTER;
+		startTime = my v_getStartTime (topicIndex);
+		endTime = my v_getEndTime (afterIndex);
 	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END) {
-		startWhere = kContext_where::BEFORE;
-		endWhere = kContext_where::AFTER;
+		startTime = my v_getStartTime (beforeIndex);
+		endTime = my v_getEndTime (afterIndex);
 	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END) {
-		startWhere = kContext_where::BEFORE;
-		endWhere = kContext_where::BEFORE;
+		startTime = my v_getStartTime (beforeIndex);
+		endTime = my v_getEndTime (beforeIndex);
 	} else if (my matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END) {
-		startWhere = kContext_where::AFTER;
-		endWhere = kContext_where::AFTER;
+		startTime = my v_getStartTime (afterIndex);
+		endTime = my v_getEndTime (afterIndex);
 	}
 	if (out_startTime)
-		*out_startTime = TextGridTierNavigator_getStartTime (me, startWhere);
+		*out_startTime = startTime;
 	if (out_endTime)
-		*out_endTime = TextGridTierNavigator_getEndTime (me, endWhere);
+		*out_endTime = endTime ;
 }
 
 static integer TextGridTierNavigator_setCurrentAtTime (TextGridTierNavigator me, double time) {
@@ -532,7 +473,7 @@ static integer TextGridTierNavigator_setCurrentAtTime (TextGridTierNavigator me,
 integer TextGridTierNavigator_findNext (TextGridTierNavigator me) {
 	const integer currentTopicIndex = my currentTopicIndex, size = my v_getSize ();
 	for (integer index = currentTopicIndex + 1; index <= size; index ++) {
-		if (TextGridTierNavigator_isMatch (me, index)) {
+		if (TextGridTierNavigator_isMatch (me, index, nullptr, nullptr)) {
 			my currentTopicIndex = index;
 			return index;
 		}
@@ -549,7 +490,7 @@ integer TextGridTierNavigator_findNextAfterTime (TextGridTierNavigator me, doubl
 integer TextGridTierNavigator_findPrevious (TextGridTierNavigator me) {
 	const integer currentTopicIndex = my currentTopicIndex;
 	for (integer index = currentTopicIndex - 1; index > 0; index --) {
-		if (TextGridTierNavigator_isMatch (me, index)) {
+		if (TextGridTierNavigator_isMatch (me, index, nullptr, nullptr)) {
 			my currentTopicIndex = index;
 			return index;
 		}
