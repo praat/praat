@@ -5753,7 +5753,7 @@ NORMAL (U"A multi-tier search can now be defined by combining a number of single
 	"that the end time of the sub-ordinate interval has to lie before the start time of the topic interval, i.e. %tmax2 < %tmin. "
 	"Another location match criterion is ##overlaps before and after# which translates to %tmin2 < %tmin and %tmax2 > %tmax. "
 	"Of course more than these three location match criteria exist.")
-NORMAL (U"This makes the multi tier search complete as it is a combination of single tier searches that are combined on the basis of "
+NORMAL (U"This makes the multi-tier search complete as it is a combination of single-tier searches that are combined on the basis of "
 	"location match criteria.")
 ENTRY (U"How to create a TextGridNavigator")
 ENTRY (U"Example 1, simple search in one tier")
