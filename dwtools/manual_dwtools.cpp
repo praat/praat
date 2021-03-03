@@ -4839,15 +4839,15 @@ ENTRY (U"Settings")
 SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (10), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot where", 10)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column(s)", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Vertical range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= autoscaling)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column with labels", "")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance of first bar from border", "1.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bar groups", "1.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bars within group", "0.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colours (0-1, name, {r,g,b})", "Grey")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
-	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
-	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula:", "row>1 and row < 10")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula:", "row>1 and row < 10")
 )
 TAG (U"##Vertical column(s)")
 DEFINITION (U"you list the table columns that you want to represent in the bar plot. The number of selected columns is the group size.")
@@ -4884,22 +4884,25 @@ NORMAL (U"Given that we have these data in a Table with the three columns labele
 	"respectively, we can first try to reproduce their figure 3 (a bar plot with both Modal and Breathy columns displayed) ")
 NORMAL (U"As you can see the labels in the first column are very long texts and they will surely overlap if "
 	"plotted at the bottom of a plot. We therefore use a value of 15 degrees for the \"Label text angle\" " "parameter. This "
-	"will make the label texts nonoverlapping. We cannot make this angle much larger because then the label texts will run out of "
+	"will make the label texts nonoverlapping. We cannot make this angle much larger, because then the label texts would run out of "
 	"the viewport. ")
 NORMAL (U"Sometimes you need to plot only a part of the Table and for the selection of this part, the \"Formula\" field can be "
-	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. In effect, all the rows will be selected. The following script line will produce the picture below.")
+	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. "
+	"In effect, all the rows will be selected. The following script line will produce the picture below.")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject: h1h2\n")
-NORMAL (U"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. If you want the bars within a group to be placed somewhat more apart say 0.2 (times the bar width) you can set the \"Distance between bars in a group\" to a value of 0.2:")
+NORMAL (U"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. "
+	"If you want the bars within a group to be placed somewhat more apart, say 0.2 times the bar width, "
+	"you can set the \"Distance between bars in a group\" to a value of 0.2:")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject: h1h2\n")
-NORMAL (U"Of course we can also work with colours and we can add vertical marks as the following sriptlet shows")
+NORMAL (U"Of course we can also work with colours and we can add vertical marks as the following scriptlet shows")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"")
 CODE (U"Marks left every: 1, 5, 1, 1, 1")
 CODE (U"Text left: 1, \"H__1_-H__2_ (dB)\"")
@@ -4926,7 +4929,9 @@ SCRIPT (5,3, U"pb = Create formant table (Peterson & Barney 1952)\n"
 MAN_END
 
 MAN_BEGIN (U"Table: Line graph where...", U"djmw", 20200629)
-INTRO (U"Draws a line graph from the data in a column of the selected @Table. In a line plot the horizontal axis can have a nominal scale or a numeric scale. The data point are connected by line segments.")
+INTRO (U"Draws a line graph from the data in a column of the selected @Table. "
+	"In a line plot, the horizontal axis can have a nominal scale or a numeric scale. "
+	"The data points are connected by line segments.")
 ENTRY (U"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (8), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8)
@@ -4944,7 +4949,7 @@ DEFINITION (U"The column whose data points you want to plot.")
 TAG (U"##Vertical range")
 DEFINITION (U"determine the lower and upper limits of the plot.")
 TAG (U"##Horizontal column")
-DEFINITION (U"determines the horizontal scale. If you leave it empty, or, if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
+DEFINITION (U"determines the horizontal scale. If you leave it empty, or if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
 	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at the bottom of the horizontal axis. "
 	"On the other hand, if this column contains only numerical values, the horizontal position of the data points will be determined by the values in this column.")
 TAG (U"##Horizontal range")
@@ -5430,9 +5435,9 @@ MAN_BEGIN (U"TableOfReal: To SSCP...", U"djmw", 19990218)
 INTRO (U"Calculates Sums of Squares and Cross Products (@SSCP) from the selected @TableOfReal.")
 ENTRY (U"Algorithm")
 NORMAL (U"The sums of squares and cross products %s__%ij_ "
-	" between the elements of columns %i and %j are calculated as:")
+	"between the elements of columns %i and %j are calculated as:")
 FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_),")
-NORMAL (U"where %x__%mn_ is the element %m in column %n and %x\\-^__%n_ "
+NORMAL (U"where %x__%mn_ is the element %m in column %n, and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 
@@ -5550,9 +5555,9 @@ ENTRY (U"Settings")
 SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 	Manual_DRAW_SETTINGS_WINDOW ("TextGrid: To DurationTier", 5)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Tier number", "1")
-	Manual_DRAW_SETTINGS_WINDOW_FIELD("Time scale factor", "2.0")
-	Manual_DRAW_SETTINGS_WINDOW_FIELD("Left transition duration", "1e-10")
-	Manual_DRAW_SETTINGS_WINDOW_FIELD("Right transition duration", "1e-10")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Time scale factor", "2.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Left transition duration", "1e-10")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Right transition duration", "1e-10")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Scale intervals whose labels", "starts with")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("...the text", "hi")
 )
@@ -5607,9 +5612,9 @@ NORMAL (U"For each selected interval its duration will be specified by four poin
 	"and the end time of the interval are at %t__1_ and %t__4_, respectively, the times of these four points will be "
 	"%t__1_, %t__2_=%t__1_+%%leftTransitionDuration%, %t__3_=%t__4_-%%rightTransitionDuration% and %t__4_. The associated duration scale factors "
 	"will be 1.0, %%timeScalefactor%, %%timeScalefactor% and 1.0, respectively.")
-NORMAL (U"Normally we would use very small values for the right and the left transition durations and the curve in the figure above "
+NORMAL (U"Normally we would use very small values for the right and the left transition durations, and the curve in the figure above "
 	"would look more like a rectangular block instead of the trapezium above. If, on the contrary, larger values for the durations are taken, such that the sum of "
-	"the left and the right transition durations %%exceeds% the interval's width, then the ordering of the time points at %t__1_ to %t__4_ changes "
+	"the left and the right transition durations %%exceeds% the interval's width, then the ordering of the time points at %t__1_ to %t__4_ changes, "
 	"which will have unexpected results on the duration tier.")
 ENTRY (U"Examples")
 NORMAL (U"Suppose you want to change the durations of some parts in a sound. The way to go is:")
