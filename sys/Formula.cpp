@@ -4139,6 +4139,10 @@ static void do_runScript () {
 	Melder_require (fileName->which == Stackel_STRING,
 		U"The first argument to \"runScript\" should be a string (the file name), not ", fileName->whichText());
 	theLevel += 1;
+	if (theLevel > MAXIMUM_NUMBER_OF_LEVELS) {
+		theLevel -= 1;
+		Melder_throw (U"Cannot call runScript() more than ", MAXIMUM_NUMBER_OF_LEVELS, U" levels deep.");
+	}
 	try {
 		praat_executeScriptFromFileName (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
 		theLevel -= 1;
