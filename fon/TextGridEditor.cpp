@@ -1687,7 +1687,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	static double leftDraggingBoundary = our tmin, rightDraggingBoundary = our tmax;   // initial dragging range
 
 	constexpr double clickingVicinityRadius_mm = 1.0;
-	constexpr double draggingVicinityRadius_mm = clickingVicinityRadius_mm + 1.0;   // muset be greater than `clickingVicinityRadius_mm`
+	constexpr double draggingVicinityRadius_mm = clickingVicinityRadius_mm + 1.0;   // must be greater than `clickingVicinityRadius_mm`
 	constexpr double droppingVicinityRadius_mm = 1.5;
 
 	if (event -> isClick()) {
@@ -1903,14 +1903,11 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			}
 		}
 		/*
-			If the user wiggled near the anchor, we snap to the anchor.
+			If the user wiggled near the anchor, we snap to the anchor and bail out
+			(a boundary has been selected, but nothing has been dragged).
 		*/
 		if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce && ! droppedOnABoundaryOrPointInsideAnUnselectedTier) {
-			if (our draggingTiers [itierDrop]) {
-				xWC = anchorTime;
-				our startSelection = xWC;
-				our endSelection = xWC;
-			}
+			our startSelection = our endSelection = anchorTime;
 			our draggingTime = undefined;
 			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
@@ -1970,10 +1967,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		/*
 			Select the drop site.
 		*/
-		//if (our startSelection == anchorTime)
-			our startSelection = xWC;
-		//if (our endSelection == anchorTime)
-			our endSelection = xWC;
+		our startSelection = our endSelection = xWC;
 		Melder_sort (& our startSelection, & our endSelection);
 		our draggingTime = undefined;
 		hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
@@ -2009,7 +2003,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 			AnyTextGridTier_identifyClass (grid -> tiers->at [our selectedTier], & intervalTier, & textTier);
 			if (intervalTier) {
 				integer selectedInterval = getSelectedInterval (this);
-				if (selectedInterval) {
+				if (selectedInterval != 0) {
 					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
 					TextInterval_setText (interval, newText.string);
 
@@ -2024,7 +2018,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 				}
 			} else {
 				integer selectedPoint = getSelectedPoint (this);
-				if (selectedPoint) {
+				if (selectedPoint != 0) {
 					TextPoint point = textTier -> points.at [selectedPoint];
 					point -> mark. reset();
 					if (Melder_findInk (newText.string))   // any visible characters?
