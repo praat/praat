@@ -270,7 +270,7 @@ MAN_END
 
 
 MAN_BEGIN (U"BarkFilter", U"djmw", 20141023)
-INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It is replaced by @@BarkSpectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It has been replaced by @@BarkSpectrogram@.")
 NORMAL (U"An object of type BarkFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%z, %t), expressed "
 	"in dB's as 10*log10(power/4e-10)). In the now preferred BarkSpectrogram the power is represented instead of its dB value."
@@ -722,7 +722,7 @@ MAN_END
 MAN_BEGIN (U"confidence level", U"djmw", 20011105)
 NORMAL (U"The confidence level is the probability value 1-\\al associated "
 	"with a @@confidence interval@, where \\al is the level of significance. "
-	"It can also be expressed as a percentage 100(1-\\al)\\%  and is than "
+	"It can also be expressed as a percentage 100(1-\\al)\\%  and is then "
 	"sometimes called the %%confidence coefficient%.")
 MAN_END
 
@@ -2512,7 +2512,7 @@ MAN_BEGIN (U"FilterBank: Get frequency in mel...", U"djmw", 20030901)
 MAN_END
 
 MAN_BEGIN (U"FormantFilter", U"djmw", 20141022)
-INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by @@Spectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It has been replaced by @@Spectrogram@.")
 NORMAL (U"An object of type FormantFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), expressed "
 	"in dB as 10*log10(power/4e-10)). In the now preferred Spectrogram the power is represented instead of its dB value. "
@@ -2762,7 +2762,7 @@ INTRO (U"A command to get the @@non-negative matrix factorization@ of a matrix b
 MAN_END
 
 MAN_BEGIN (U"MelFilter", U"djmw", 20141022)
-INTRO (U"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by the @@MelSpectrogram@.")
+INTRO (U"A #deprecated @@types of objects|type of object@ in Praat. It has been replaced by the @@MelSpectrogram@.")
 NORMAL (U"An object of type MelFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), "
 	"expressed in dB's. "
@@ -4152,7 +4152,7 @@ NORMAL (U"Multiplication with the first half period of a (1+cos(%%x%))/2 functio
 MAN_END
 
 MAN_BEGIN (U"Sound: Filter (gammatone)...", U"djmw", 20170829)
-INTRO (U"A command to filter a Sound by a fourth order gammatone bandpass filter.")
+INTRO (U"A command to filter a Sound by a fourth-order gammatone bandpass filter.")
 ENTRY (U"Settings")
 TAG (U"##Centre frequency (Hz)#, ##Bandwidth (Hz)#")
 DEFINITION (U"determine the passband of the filter.")
@@ -4839,15 +4839,15 @@ ENTRY (U"Settings")
 SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (10), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot where", 10)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column(s)", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Vertical range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= autoscaling)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column with labels", "")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance of first bar from border", "1.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bar groups", "1.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bars within group", "0.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colours (0-1, name, {r,g,b})", "Grey")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
-	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
-	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula:", "row>1 and row < 10")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN ("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula:", "row>1 and row < 10")
 )
 TAG (U"##Vertical column(s)")
 DEFINITION (U"you list the table columns that you want to represent in the bar plot. The number of selected columns is the group size.")
@@ -4884,22 +4884,25 @@ NORMAL (U"Given that we have these data in a Table with the three columns labele
 	"respectively, we can first try to reproduce their figure 3 (a bar plot with both Modal and Breathy columns displayed) ")
 NORMAL (U"As you can see the labels in the first column are very long texts and they will surely overlap if "
 	"plotted at the bottom of a plot. We therefore use a value of 15 degrees for the \"Label text angle\" " "parameter. This "
-	"will make the label texts nonoverlapping. We cannot make this angle much larger because then the label texts will run out of "
+	"will make the label texts nonoverlapping. We cannot make this angle much larger, because then the label texts would run out of "
 	"the viewport. ")
 NORMAL (U"Sometimes you need to plot only a part of the Table and for the selection of this part, the \"Formula\" field can be "
-	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. In effect, all the rows will be selected. The following script line will produce the picture below.")
+	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. "
+	"In effect, all the rows will be selected. The following script line will produce the picture below.")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject: h1h2\n")
-NORMAL (U"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. If you want the bars within a group to be placed somewhat more apart say 0.2 (times the bar width) you can set the \"Distance between bars in a group\" to a value of 0.2:")
+NORMAL (U"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. "
+	"If you want the bars within a group to be placed somewhat more apart, say 0.2 times the bar width, "
+	"you can set the \"Distance between bars in a group\" to a value of 0.2:")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
 SCRIPT (5, 3,  U"h1h2 = Create H1H2 table (Esposito 2006)\n"
 	"Font size: 10\n"
 	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject: h1h2\n")
-NORMAL (U"Of course we can also work with colours and we can add vertical marks as the following sriptlet shows")
+NORMAL (U"Of course we can also work with colours and we can add vertical marks as the following scriptlet shows")
 CODE (U"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"")
 CODE (U"Marks left every: 1, 5, 1, 1, 1")
 CODE (U"Text left: 1, \"H__1_-H__2_ (dB)\"")
@@ -4926,7 +4929,9 @@ SCRIPT (5,3, U"pb = Create formant table (Peterson & Barney 1952)\n"
 MAN_END
 
 MAN_BEGIN (U"Table: Line graph where...", U"djmw", 20200629)
-INTRO (U"Draws a line graph from the data in a column of the selected @Table. In a line plot the horizontal axis can have a nominal scale or a numeric scale. The data point are connected by line segments.")
+INTRO (U"Draws a line graph from the data in a column of the selected @Table. "
+	"In a line plot, the horizontal axis can have a nominal scale or a numeric scale. "
+	"The data points are connected by line segments.")
 ENTRY (U"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (8), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8)
@@ -4944,7 +4949,7 @@ DEFINITION (U"The column whose data points you want to plot.")
 TAG (U"##Vertical range")
 DEFINITION (U"determine the lower and upper limits of the plot.")
 TAG (U"##Horizontal column")
-DEFINITION (U"determines the horizontal scale. If you leave it empty, or, if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
+DEFINITION (U"determines the horizontal scale. If you leave it empty, or if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
 	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at the bottom of the horizontal axis. "
 	"On the other hand, if this column contains only numerical values, the horizontal position of the data points will be determined by the values in this column.")
 TAG (U"##Horizontal range")
@@ -5143,7 +5148,7 @@ MAN_BEGIN (U"Table: Report one-way Kruskal-Wallis...", U"djmw", 20120617)
 INTRO (U"Performs a one-way Kruskal-Wallis analysis on the data in one column of a selected @@Table@ and reports the results in the info window. This test is sometimes refered to as a one-way analysis of variance for %%non-normally distributed% data.")
 ENTRY (U"Settings")
 TAG (U"##Column with data#")
-DEFINITION (U"the label of the column who's data will be analyzed.")
+DEFINITION (U"the label of the column whose data will be analyzed.")
 TAG (U"##Factor#")
 DEFINITION (U"the label of the column with the names of the levels.")
 ENTRY (U"Algorithm")
@@ -5430,16 +5435,16 @@ MAN_BEGIN (U"TableOfReal: To SSCP...", U"djmw", 19990218)
 INTRO (U"Calculates Sums of Squares and Cross Products (@SSCP) from the selected @TableOfReal.")
 ENTRY (U"Algorithm")
 NORMAL (U"The sums of squares and cross products %s__%ij_ "
-	" between the elements of columns %i and %j are calculated as:")
+	"between the elements of columns %i and %j are calculated as:")
 FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_),")
-NORMAL (U"where %x__%mn_ is the element %m in column %n and %x\\-^__%n_ "
+NORMAL (U"where %x__%mn_ is the element %m in column %n, and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To PatternList and Categories...", U"djmw", 20040429)
 INTRO (U"Extracts a @PatternList and a @Categories from the selected @TableOfReal.")
 NORMAL (U"The selected rows and columns are copied into the PatternList and "
-	"the corresponding row labels are copied into a Categories. ")
+	"the corresponding row labels are copied into a Categories.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To CCA...", U"djmw", 20020424)
@@ -5550,9 +5555,9 @@ ENTRY (U"Settings")
 SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
 	Manual_DRAW_SETTINGS_WINDOW ("TextGrid: To DurationTier", 5)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Tier number", "1")
-	Manual_DRAW_SETTINGS_WINDOW_FIELD("Time scale factor", "2.0")
-	Manual_DRAW_SETTINGS_WINDOW_FIELD("Left transition duration", "1e-10")
-	Manual_DRAW_SETTINGS_WINDOW_FIELD("Right transition duration", "1e-10")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Time scale factor", "2.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Left transition duration", "1e-10")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Right transition duration", "1e-10")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Scale intervals whose labels", "starts with")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("...the text", "hi")
 )
@@ -5607,9 +5612,9 @@ NORMAL (U"For each selected interval its duration will be specified by four poin
 	"and the end time of the interval are at %t__1_ and %t__4_, respectively, the times of these four points will be "
 	"%t__1_, %t__2_=%t__1_+%%leftTransitionDuration%, %t__3_=%t__4_-%%rightTransitionDuration% and %t__4_. The associated duration scale factors "
 	"will be 1.0, %%timeScalefactor%, %%timeScalefactor% and 1.0, respectively.")
-NORMAL (U"Normally we would use very small values for the right and the left transition durations and the curve in the figure above "
+NORMAL (U"Normally we would use very small values for the right and the left transition durations, and the curve in the figure above "
 	"would look more like a rectangular block instead of the trapezium above. If, on the contrary, larger values for the durations are taken, such that the sum of "
-	"the left and the right transition durations %%exceeds% the interval's width, then the ordering of the time points at %t__1_ to %t__4_ changes "
+	"the left and the right transition durations %%exceeds% the interval's width, then the ordering of the time points at %t__1_ to %t__4_ changes, "
 	"which will have unexpected results on the duration tier.")
 ENTRY (U"Examples")
 NORMAL (U"Suppose you want to change the durations of some parts in a sound. The way to go is:")
@@ -5625,9 +5630,9 @@ LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up 
 MAN_END
 
 MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210302)
-INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi tier search machine.")
-ENTRY (U"What is a multi tier search machine?")
-NORMAL (U"A multi tier search machine enables you to find an interval (or a point) on a tier, based on criteria that can have a "
+INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
+ENTRY (U"What is a multi-tier search machine?")
+NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria that can have a "
 	"specified relation with intervals (or points) on the same or on other tiers of the TextGrid. "
 	"Matches are primarily based on the labels in a tier.")
 NORMAL (U"As a simple example consider a TextGridNavigator that searches for the occurence of one of the symbols in a %topic set "
@@ -5658,8 +5663,8 @@ NORMAL (U"Additionally we also need to specify whether it is enough that at leas
 	"OR ... OR (label == topicSymbol__%n_), where the OR implies that only one of the matches needs to succeed to make the complete "
 	"expression %true. If on the other hand we did %not want to match any of the symbols in the topic set, i.e. if we had chosen "
 	"##is not equal to# as criterion, then we should use an AND match boolean because we can now write our match intention as (label != topicSymbol__1_) AND (label != topicSymbol__2_) AND ... AND (label != topicSymbol__%n_), where the AND implies that all matches have to succeed to make the whole expression %true. "
-	"Most of the time inclusive searches are based on OR and exclusive searches are based on AND.")
-NORMAL (U"A multi tier search can now be defined by combining a number of single tier searches, where each single tier search "
+	"Most of the time, inclusive searches are based on OR and exclusive searches are based on AND.")
+NORMAL (U"A multi-tier search can now be defined by combining a number of single tier searches, where each single tier search "
 	"searches a different tier number. To combine the matches on each tier we have to know how to relate them which can only be done on the basis of time because this is the only thing common between the tiers: they all have the same time base. We take one tier as the basis for comparing, i.e. this is the %comparand or in our terminology the %%topic tier%. The matches on the other tiers, the sub-ordinate tiers, can have a specific relation to the match on the topic tier. Although we can have matches on interval tiers and on point tiers let's for simplicity assume we only use interval tiers. Suppose on the topic tier we have a match on an interval that runs from %tmin to %tmax. The match location criterion for a match of an interval [%tmin2, %tmax2] on a sub-ordinate tier can for example be chosen as ##is before# which means that the end time of the sub-ordinate interval has to lie before the start time of the topic interval, i.e. %tmax2 < %tmin, Another location match criterion is ##overlaps before and after# which translates to %tmin2 < %tmin and %tmax2 > %tmax. Of course more than these three location match criteria exist.")
 NORMAL (U"This makes the multi tier search complete as it is a combination of single tier searches that are combined on the basis of "
 	"location match criteria.")
