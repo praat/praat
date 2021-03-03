@@ -2840,7 +2840,8 @@ CODE (U"while iter < maxinter and not convergence")
 CODE (U"endwhile")
 NORMAL (U"In the multiplicative update (MU) steps above \"*\" means ordinary matrix multiplication while \".*\" and \"./\" mean elementwise matrix operations. The factors 10^^-9^ guard against division by zero.")
 ENTRY (U"Alternating Least Squares")
-NORMAL (U"The optimization of ##D \\~~ F*W# is not convex in both ##F# and ##W# it is convex in either ##F# or ##W#. Therefor given one, the other can be found by a simple least squares (LS) algorithm. This can be done in an alternating fashion.")
+NORMAL (U"The optimization of ##D \\~~ F*W# is not convex in both ##F# and ##W# it is convex in either ##F# or ##W#. Therefor given one, "
+	"the other can be found by a simple least squares (LS) algorithm. This can be done in an alternating fashion.")
 NORMAL (U"The Aternating Least Squares (ALS) algorithm is as follows:")
 CODE (U"initialize F")
 CODE (U"while iter < maxinter and not convergence")
@@ -2854,7 +2855,10 @@ NORMAL (U"")
 MAN_END
 
 MAN_BEGIN (U"pairwise algorithm for computing sample variances", U"djmw", 20170806)
-INTRO (U"An algorithm to compute the mean and the variance of an array of numbers. By pairwise combining array elements, the total number of arithmetic operations is reduced and therefore also the noise due to finite precision arithmetic. The algorithm is described in @@Chan, Golub & LeVeque (1979)@ and a comparison with other algorithms is presented in @@Chan, Golub & LeVeque (1983)@.")
+INTRO (U"An algorithm to compute the mean and the variance of an array of numbers. By pairwise combining array elements, "
+	"the total number of arithmetic operations is reduced and therefore also the noise due to finite precision arithmetic. "
+	"The algorithm is described in @@Chan, Golub & LeVeque (1979)@ and a comparison with other algorithms is presented in "
+	"@@Chan, Golub & LeVeque (1983)@.")
 MAN_END
 
 MAN_BEGIN (U"PatternList", U"djmw", 20160524)
@@ -3066,7 +3070,10 @@ DEFINITION (U"the start and end time of the interval where the changes will be a
 TAG (U"##Relative times")
 DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
 TAG (U"##...are...")
-DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is determined by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and %%t%__max_ are the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according to the options as:")
+DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is determined "
+	"by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and %%t%__max_ are "
+	"the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according "
+	"to the options as:")
 TAG1 (U"%%fractions%")
 DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%percentages%")
@@ -3080,19 +3087,26 @@ DEFINITION (U"determines the interpretation of the \"pitch\" value. Possible cho
 TAG1 (U"%%frequencies%")
 DEFINITION (U"the values are frequencies in hertz.")
 TAG1 (U"%%fractions%")
-DEFINITION (U"the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+DEFINITION (U"the values are fractions of a pitch value that is specified by the next option. Normally fractions are numbers in "
+	"the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%percentages%")
-DEFINITION (U"the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+DEFINITION (U"the values are percentages of a pitch value that is specified by the next option. Normally percentages are numbers "
+	"in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%start and slopes%")
 DEFINITION (U"the values are a start frequency followed by slopes in Herz per second.")
 TAG1 (U"%%slopes and end%")
 DEFINITION (U"the values are slopes in herz per second followed by an end frequency in herz.")
 TAG1 (U"%%music notes%")
-DEFINITION (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, f\\# 0, g0, g\\# 0, a1, a\\# 1, ... a4, ..., or g\\# 9. Here the octave is indicated by the number, 0 being the lowest octave and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.")
+DEFINITION (U"the values are music notes specified on the twelve tone scale as a0, a\\# 0, b0, c0, c\\# 0, d0, d\\# 0, e0, f0, "
+	"f\\# 0, g0, g\\# 0, a1, a\\# 1, ... a4, ..., or g\\# 9. Here the octave is indicated by the number, 0 being the lowest octave "
+	"and 9 the highest. The a4 is choosen to be at 440 Hz. Therefore, a0 is the note with the lowest frequency, four octaves below "
+	"the a4 and corresponds to a frequency of 27.5 Hz. As a scale of reference we give a0 = 27.5 Hz, a1 = 55 Hz, a2 = 110 Hz, "
+	"a3 = 220 Hz, a4 = 440 Hz, a5 = 880 Hz, a6 = 1760 Hz, a7 = 3520 Hz, a8 = 7040 Hz and a9 = 14080 Hz.")
 TAG (U"##...which is the...")
 DEFINITION (U"the anchor point value, if used. The following options may be given for the anchor point frequency value:")
 TAG1 (U"%%not used%")
-DEFINITION (U"no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch frequencies. This means that the \"pitch\" values given cannot be %%fractions% or %%percentages%.")
+DEFINITION (U"no anchor point frequency value is necessary. The previous two options are sufficient to determine the new pitch "
+	"frequencies. This means that the \"pitch\" values given cannot be %%fractions% or %%percentages%.")
 TAG1 (U"%%current%")
 DEFINITION (U"the current pitch frequency at the corresponding time.")
 TAG1 (U"%%start%")
@@ -3116,7 +3130,8 @@ INTRO (U"Modifies a selected interval from the chosen @PitchTier by replacing th
 NORMAL (U"For tone languages the pitch contours of the tones are often expressed as a sequence of tone levels instead of a sequence of real frequency values in hertz because tone levels abstract away from the possibly different pitch ranges of individual speakers.")
 NORMAL (U"The tone levels %T are calculated from a given pitch %%frequency% in hertz as:")
 FORMULA (U"%T = %%numberOfToneLevels% \\.c log (%%frequency% / %F__min_) / log (%F__max_ / %F__min_),")
-NORMAL (U"where %F__min_ and %F__max_ are the minimum and the maximum frequency of a speaker's pitch range and %%numberOfToneLevels% is the number of levels into which the pitch range is divided. "
+NORMAL (U"where %F__min_ and %F__max_ are the minimum and the maximum frequency of a speaker's pitch range and %%numberOfToneLevels% "
+	"is the number of levels into which the pitch range is divided. "
 	"This formula maps any frequency between %F__min_ and %F__max_ to a number between 0 and %%numberOfToneLevels%.")
 NORMAL (U"To get the frequency in hertz from a specified tone level %T we have to use the inverse formula:")
 FORMULA (U"%%frequency% = %F__min_ \\.c 10^^(%T \\.c log (%F__max_ / %F__min_)) / %%numberOfToneLevels%)^.")
@@ -3142,11 +3157,16 @@ TAG (U"##Number of tone levels")
 DEFINITION (U"The number of levels into which the pitch range is divided.")
 TAG (U"##Relative times")
 DEFINITION (U"determine, together with the following option, the times of the new pitch points with respect to the start time of the interval.")
-DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is determined by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and %%t%__max_ are the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are calculated according to the options as:")
+DEFINITION (U"determines how the times %t__%i_ of the new pitch points are calculated. The time of each new pitch point is "
+	"determined by adding to the start time of the interval a time calculated from the relative time value. If %%t%__min_ and "
+	"%%t%__max_ are the start and end time of the interval and %%r%__i_ is the %%i%^^th^ relative time, the times %t__%i_ are "
+	"calculated according to the options as:")
 TAG1 (U"%%fractions%")
-DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
+DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are fractions of the interval "
+	"duration. Normally fractions are numbers in the range 0.0 to 1.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%percentages%")
-DEFINITION (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
+DEFINITION (U"%%t%__%i_ = %t__min_+ 0.01 %r__%i_ (%t__max_ \\-- %t__min_). The relative time values are percentages of the "
+	"interval duration. Normally percentages are numbers in the range 0.0 to 100.0, although smaller and larger numbers are allowed.")
 TAG1 (U"%%independent%")
 DEFINITION (U"%%t%__%i_ = %t__min_ + %r__%i_. The relative time values specify an offset in seconds here. ")
 
@@ -3182,7 +3202,9 @@ MAN_END
 MAN_BEGIN (U"Polygon: Get location of point...", U"djmw", 20120220)
 INTRO (U"Determines whether a given point is on the ##I#nside, the ##O#utside, on an ##E#dge or on a ##V#ertex of the selected Polygon.")
 ENTRY (U"Algorithm")
-NORMAL (U"We determine how often a horizontal line extending from the point crosses the polygon. If the number of crossings is even, the point is on the outside, else on the inside. Special care is taken to be able to detect if a point is on the boundary of the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
+NORMAL (U"We determine how often a horizontal line extending from the point crosses the polygon. If the number of crossings is even, "
+	"the point is on the outside, else on the inside. Special care is taken to be able to detect if a point is on the boundary of "
+	"the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
 MAN_END
 
 MAN_BEGIN (U"Polygon: Simplify", U"djmw", 20140509)
@@ -3198,7 +3220,8 @@ SCRIPT (4, 4,
 	"Paint circles: 0, 0, 0, 0, 1.5\n"
 	"removeObject: p1, p2\n"
 )
-NORMAL (U"Given the Polygon with the seven vertices indicated by the red open circles, the Simplify action results in the Polygon with four vertices indicated by the filled black circles.")
+NORMAL (U"Given the Polygon with the seven vertices indicated by the red open circles, the Simplify action results in the Polygon "
+	"with four vertices indicated by the filled black circles.")
 MAN_END
 
 MAN_BEGIN (U"Polygon: Translate...", U"djmw", 20100418)
@@ -3727,11 +3750,15 @@ MAN_END
 
 MAN_BEGIN (U"solving matrix equations", U"djmw", 20191231)
 INTRO (U"In this manual you will learn how to solve different kinds of equations involving matrices and vectors.")
-NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form ##y#=##A\\.cx#, where #A and #y are given. The task is to find the vector #x. The first two subsections show how to deal with this equation with no constraints on the solution vector #x. Section 4 will show how to deal with the situation when the solution vector #x is constrained.")
-NORMAL (U"In the equation above, the matrix and the vectors have to conform. This means that the number of rows of #A should equal the size of the #y vector and the size of the solution vector #x will always equal the number of colums of #A.")
+NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form ##y#=##A\\.cx#, where #A "
+	"and #y are given. The task is to find the vector #x. The first two subsections show how to deal with this equation with "
+	"no constraints on the solution vector #x. Section 4 will show how to deal with the situation when the solution vector #x is constrained.")
+NORMAL (U"In the equation above, the matrix and the vectors have to conform. This means that the number of rows of #A should "
+	"equal the size of the #y vector and the size of the solution vector #x will always equal the number of colums of #A.")
 NORMAL (U"Note: In Praat scripting we don't distinguish in notation between a vector and its transpose.")
 ENTRY (U"1. Matrix A is square")
-NORMAL (U"In this case an exact solution for #x is possible because if #A is \"well behaved\" we can calculate its inverse and the solution will be #x = ##A^^-1^\\.cy#. The function ##solve\\#  (a\\# \\# , y\\# )# is for this type of problem.")
+NORMAL (U"In this case an exact solution for #x is possible because if #A is \"well behaved\" we can calculate its inverse and "
+	"the solution will be #x = ##A^^-1^\\.cy#. The function ##solve\\#  (a\\# \\# , y\\# )# is for this type of problem.")
 NORMAL (U"The following example shows an exactly solvable system because #A is a square matrix and \"well behaved\":")
 CODE (U"a\\# \\#  = {{0, 2, 0, 1},")
 CODE (U"...    {2, 2, 3, 2},")
@@ -3744,10 +3771,14 @@ NORMAL (U"My info window shows:")
 NORMAL (U"-0.49999999999999967 1.000000000000001 0.3333333333333344 -2.0000000000000027")
 NORMAL (U"As a check we can calculate the norm of the difference between #y and ##A\\.cx# which should be zero for a perfect solution.")
 CODE (U"appendInfoLine: norm (y\\#  - mul\\#  (a\\# \\# , x\\# ))")
-NORMAL (U"My info window shows 1.0777744118960794e-14, which is almost zero (it is not exactly zero due to rounding errors because real numbers cannot be represented exactly in a computer.")
+NORMAL (U"My info window shows 1.0777744118960794e-14, which is almost zero (it is not exactly zero due to rounding errors because "
+	"real numbers cannot be represented exactly in a computer.")
 
 ENTRY (U"2. Matrix A has more rows than columns")
-NORMAL (U"If the matrix has more rows than colums an exact solution is generally not possible and the best thing we can do is to find a solution vector #x that %%minimizes% the squared distance between the vectors #y and ##A\\.cx#. The problem now can be posed as: find the vector #x that minimizes ||#y - ##A\\.cx#||^2. This is a regression problem which can be solved using @@singular value decomposition@.")
+NORMAL (U"If the matrix has more rows than colums an exact solution is generally not possible and the best thing we can do is to "
+	"find a solution vector #x that %%minimizes% the squared distance between the vectors #y and ##A\\.cx#. The problem now can be "
+	"posed as: find the vector #x that minimizes ||#y - ##A\\.cx#||^2. This is a regression problem which can be solved using "
+	"@@singular value decomposition@.")
 NORMAL (U"The following example shows a 5\\xx2 matrix #A. The solution therefore is a vector with two elements.")
 CODE (U"a\\# \\#  = {{-0.84,-0.184},")
 CODE (U"...    { 0.09, 1.26},")
@@ -3766,14 +3797,18 @@ NORMAL (U"2.556992185298919")
 NORMAL (U"This means that no other vector #x can be found that has ||#y - ##A\\.cx#|| < 2.556992185298919!")
 
 ENTRY (U"3. Matrix A has more columns than rows")
-NORMAL (U"If the number of colums is larger than the number of rows the system in general is underdetermined, i.e. we can not determine a complete solution vector.")
+NORMAL (U"If the number of colums is larger than the number of rows the system in general is underdetermined, i.e. we can not "
+	"determine a complete solution vector.")
 ENTRY (U"4. The x# vector is constrained")
 NORMAL (U"If there are additional constraints on the vector #x we can handle three different cases:")
-
 ENTRY (U"4.1 Constraints on the squared norm of the solution #x")
-NORMAL (U"These can be expressed in the following form: %%minimize% ||#y - ##A\\.cx#||^2 + \\al(##x\\'px# - \\de) for some \\al > 0 and \\de \\>_ 0. Here the constraint on the squared norm ##x\\'px# of #x is enforced by adding a penalty function with weighing factor \\al.")
+NORMAL (U"These can be expressed in the following form: %%minimize% ||#y - ##A\\.cx#||^2 + \\al(##x\\'px# - \\de) for some "
+	"\\al > 0 and \\de \\>_ 0. Here the constraint on the squared norm ##x\\'px# of #x is enforced by adding a penalty function "
+	"with weighing factor \\al.")
 NORMAL (U"The function to use is ##solveWeaklyConstrained\\# # (#a\\# \\# , #y\\# , %%#alpha%, %%#delta%)")
-NORMAL (U"The function is called \"weakly constrained\" because the penalty function prohibits a relatively large departure of ##x\\'px# from \\de. If we let \\al go to infinity we have a constrained least squares regression problem of minimizing ||#y - ##A\\.cx#||^^2^ subject to ##x\\'px# = \\de. The algorithm we have implemented is descrobed by @@Ten Berge (1991)@.")
+NORMAL (U"The function is called \"weakly constrained\" because the penalty function prohibits a relatively large departure of "
+	"##x\\'px# from \\de. If we let \\al go to infinity we have a constrained least squares regression problem of minimizing "
+	"||#y - ##A\\.cx#||^^2^ subject to ##x\\'px# = \\de. The algorithm we have implemented is descrobed by @@Ten Berge (1991)@.")
 ENTRY (U"4.1.1 An example from the cited paper with an 6\\xx2 matrix #A")
 CODE (U"a\\# \\#  = {{ 4, 1, 0.5},")
 CODE (U"...    { 4,-1,-0.5},")
@@ -3805,8 +3840,10 @@ NORMAL (U"My info window shows: ")
 NORMAL (U"-0.05633802816901411 -3.341667830688472e-17 0.9984117520251988")
 
 ENTRY (U"4.2. Constraint of nonnegativity of the solution")
-NORMAL (U"Here we constrain the elements of the solution to be nonnegative. The problem is stated as %minimize ||#y - #A\\.c#x||^2 where all %x__%i_ \\>_ 0.")
-NORMAL (U"This problem can be solved by an iterative alternating least squares method as described by @@Borg & Groenen (1997)@. The function to use is ##solveNonnegative\\#  (a\\# \\# , y\\#  [,x\\# ], %maximumNumberOfIterations, %tolerance, %infoLevel)#")
+NORMAL (U"Here we constrain the elements of the solution to be nonnegative. The problem is stated as %minimize ||#y - #A\\.c#x||^2 "
+	"where all %x__%i_ \\>_ 0.")
+NORMAL (U"This problem can be solved by an iterative alternating least squares method as described by @@Borg & Groenen (1997)@. "
+	"The function to use is ##solveNonnegative\\#  (a\\# \\# , y\\#  [,x\\# ], %maximumNumberOfIterations, %tolerance, %infoLevel)#")
 NORMAL (U"The parameters have the following meaning:")
 TAG (U"##a\\# \\# , y\\# #")
 DEFINITION (U"the #A matrix and the #y vector.")
@@ -3815,7 +3852,9 @@ DEFINITION (U"the optional vector to start the iterations. If not given the proc
 TAG (U"##maximumNumberOfIterations")
 DEFINITION (U"the maximum number of iterations that should be run if the tolerance criterion is not met.")
 TAG (U"##tolerance")
-DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, then the iteration stops if either d(n) == 0 or")
+DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error "
+	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
+	"then the iteration stops if either d(n) == 0 or")
 DEFINITION (U"|%d(%n) - %d(%n-1)| / ||#y||^2 < %tolerance.")
 TAG (U"##infoLevel")
 DEFINITION (U"determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.")
@@ -3848,9 +3887,12 @@ NORMAL (U"0.17687074830212887 0 0.8594104308385341")
 NORMAL (U"The final solution has been reached after 6 extra iterations.")
 
 ENTRY (U"4.3 Constraints on the sparseness of the solution")
-NORMAL (U"As we have seen above, if the number of columns is larger than the number of rows then a unique solution does not exist in general because the number of unknowns is larger than the number of equations. However, there is an exception:")
-NORMAL (U"If the matrix #A has some special properties #and the solution vector has to be sparse, i.e. most of its values are zero, then we can find the #x that minimizes ||#y - ##A\\.cx#||^2.")
-NORMAL (U"In general an iterative procedure is needed for the minimization. We have implemented one based on %%iterative hard thresholding% which is described by @@Blumensath & Davies (2010)@. ")
+NORMAL (U"As we have seen above, if the number of columns is larger than the number of rows then a unique solution does not exist "
+	"in general because the number of unknowns is larger than the number of equations. However, there is an exception:")
+NORMAL (U"If the matrix #A has some special properties #and the solution vector has to be sparse, i.e. most of its values are zero, "
+	"then we can find the #x that minimizes ||#y - ##A\\.cx#||^2.")
+NORMAL (U"In general an iterative procedure is needed for the minimization. We have implemented one based on %%iterative hard "
+	"thresholding% which is described by @@Blumensath & Davies (2010)@. ")
 NORMAL (U"##solveSparse\\#  (a\\# \\# , y\\#  [,x\\# ], %%maximumNumberOfNonzeros%, %%maximumNumberOfIterations%, %%tolerance%, %%info%)#")
 NORMAL (U"The parameters have the following meaning:")
 TAG (U"##a\\# \\# , y\\# #")
@@ -3862,11 +3904,15 @@ DEFINITION (U"the maximum number of nonzero elements in the solution vector, i.e
 TAG (U"##maximumNumberOfIterations")
 DEFINITION (U"the maximum number of iterations that should be run if the tolerance criterion is not met.")
 TAG (U"##tolerance")
-DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, then the iteration stops if")
+DEFINITION (U"is a criterion value that is needed to decide when to stop the iterations. If %d(%n) is the squared approximation error "
+	"in the %n-th step of the iteration, i.e. %d(%n) = ||#y - ##A\\.cx#(%n)||^^2^, where #x(%n) is the approximation of #x at step %n, "
+	"then the iteration stops if")
 DEFINITION (U"|%d(%n) - %d(%n-1)|/||#y||^2 < %tolerance.")
 TAG (U"##infoLevel")
 DEFINITION (U"determines the amount of information that is written to the info window during iterations. No info is written if the value is zero.")
-NORMAL (U"In the following example we first construct a sparse vector #x, with random numbers between 0.1 and 10, and a random Gaussian matrix #A. From these two we construct our #y. We then solve the sparse system and compare its solution #xs to the constructed #x.")
+NORMAL (U"In the following example we first construct a sparse vector #x, with random numbers between 0.1 and 10, and a random "
+	"Gaussian matrix #A. From these two we construct our #y. We then solve the sparse system and compare its solution #xs to "
+	"the constructed #x.")
 CODE (U"nrow = 100")
 CODE (U"ncol = 1000")
 CODE (U"x\\#  = zero\\#  (ncol)")
@@ -4117,9 +4163,13 @@ ENTRY (U"Settings")
 TAG (U"##Channel")
 DEFINITION (U"determines whether you want to fade all channels or only a selected channel.")
 TAG (U"##Time (s)")
-DEFINITION (U"determines where the fade-in will take place. If %time is earlier than the start time of the sound, the start time of the sound wil be used.")
+DEFINITION (U"determines where the fade-in will take place. If %time is earlier than the start time of the sound, "
+	"the start time of the sound wil be used.")
 TAG (U"##Fade time (s)")
-DEFINITION (U"determines the start point and the endpoint of the fade-in with respect to the %time argument. Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-in. If %%fadeTime% is positive, fade-in will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, fade-in wil take place between %%time+fadeTime% and %time.")
+DEFINITION (U"determines the start point and the endpoint of the fade-in with respect to the %time argument. "
+	"Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-in. If %%fadeTime% "
+	"is positive, fade-in will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, "
+	"fade-in wil take place between %%time+fadeTime% and %time.")
 TAG (U"##Silent from start")
 DEFINITION (U"when on, makes the sound silent before the fade-in starts. "
 	"When off, the sound before the fade-in starts will not be changed. ")
@@ -4142,9 +4192,13 @@ ENTRY (U"Settings")
 TAG (U"##Channel")
 DEFINITION (U"determines whether you want to fade all channels or only a selected channel.")
 TAG (U"##Time (s)")
-DEFINITION (U"determines where the fade-out will take place. If %time is later than the end time of the sound, the end time of the sound wil be used.")
+DEFINITION (U"determines where the fade-out will take place. If %time is later than the end time of the sound, "
+	"the end time of the sound wil be used.")
 TAG (U"##Fade time (s)")
-DEFINITION (U"determines the start point and the endpoint of the fade-out with respect to the %time argument. Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-out. If %%fadeTime% is positive, fade-out will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, fade-out wil take place between %%time+fadeTime% and %time.")
+DEFINITION (U"determines the start point and the endpoint of the fade-out with respect to the %time argument. "
+	"Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-out. If %%fadeTime% "
+	"is positive, fade-out will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, "
+	"fade-out wil take place between %%time+fadeTime% and %time.")
 TAG (U"##Silent to end")
 DEFINITION (U"Make the sound silent after the fade-out finishes. ")
 ENTRY (U"Algorithm")
@@ -4236,7 +4290,7 @@ TAG (U"##Fill from level")
 DEFINITION (U"defines the level of the horizontal line. ")
 TAG (U"##Formula")
 DEFINITION (U"determines the part of the sound that will be painted. All parts where the formula evaluates to true will be painted. "
-"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
+	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (U"Example 1")
 NORMAL (U"The following script paints the area under a sine curve in red and the area above in green."
 	"For the first paint the horizontal line is at y=-1, for the second paint the line is at y=+1. "
@@ -4949,17 +5003,22 @@ DEFINITION (U"The column whose data points you want to plot.")
 TAG (U"##Vertical range")
 DEFINITION (U"determine the lower and upper limits of the plot.")
 TAG (U"##Horizontal column")
-DEFINITION (U"determines the horizontal scale. If you leave it empty, or if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
-	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at the bottom of the horizontal axis. "
-	"On the other hand, if this column contains only numerical values, the horizontal position of the data points will be determined by the values in this column.")
+DEFINITION (U"determines the horizontal scale. If you leave it empty, or if the (selected part of the) selected column "
+	"contains nominal values, i.e. the values are not numeric but text, the horizontal "
+	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at "
+	"the bottom of the horizontal axis. On the other hand, if this column contains only numerical values, the horizontal "
+	"position of the data points will be determined by the values in this column.")
 TAG (U"##Horizontal range")
 DEFINITION (U"determines the left and right limit of the plot.")
 TAG (U"##Text")
 DEFINITION (U"The text to put at the position of the data point in the plot.")
 TAG (U"##Label text angle (degrees)")
-DEFINITION (U"determines the angle of the labels written %%below% the plot. If you have very long label texts in the \"Horizontal column\", you can prevent the label texts from overlapping. This only has effect for a horizontal column with nominal values.")
+DEFINITION (U"determines the angle of the labels written %%below% the plot. If you have very long label texts in the "
+	"\"Horizontal column\", you can prevent the label texts from overlapping. This only has effect for a horizontal "
+	"column with nominal values.")
 TAG (U"##Formula")
-DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
+DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression "
+	"evaluates to %%true%. A 1 value always evaluates to %%true%.")
 ENTRY (U"Examples")
 NORMAL (U"The following table was estimated from fig. 3 in @@Ganong (1980)@ and represents the fraction /d/ responses as a function of a "
 	"voice onset time (VOT) continuum. The second column shows the responses in a word - nonword continuum, while the third column shows "
@@ -5006,7 +5065,9 @@ SCRIPT (5,3, U"ganong = Create Table (Ganong 1980)\n"
 	"Text left: 1, \"Prop. of voiced responses\"\n"
 	"removeObject: ganong\n"
 )
-NORMAL (U"As an example of what happens if you don't supply an argument for the \"Horizontal column\" we will use the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the horizontal nominal scale makes all points equidistant in the horizontal direction.)")
+NORMAL (U"As an example of what happens if you don't supply an argument for the \"Horizontal column\" we will use "
+	"the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the "
+	"horizontal nominal scale makes all points equidistant in the horizontal direction.)")
 CODE (U"Dotted line\n")
 CODE (U"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, \"yes\", ~ 1")
 CODE (U"One mark bottom: 1, \"no\", \"yes\", \"no\", \"Short VOT\"")
@@ -5057,17 +5118,20 @@ DEFINITION (U"determines the data along the horizontal axis.")
 TAG (U"##Vertical range#")
 DEFINITION (U"determines the lower and upper limits of the plot.")
 TAG (U"##Lower error value column#, ##Upper error value column#")
-DEFINITION (U"determine the size of the vertical lines that will be drawn. These lines are drawn between the points (%x,%y-%low) and (%x, %y+%up), "
-	"where %x and %y are the values from the %%horizontal column% and the %%vertical column%, respectively, and, %low and %up are the corresponding values "
-	"in the %%lower error value column% and the %%upper error value column%, respectively. If either of these column names is not given the corresponding values (%low and/or %up) will taken as zero. This makes it possible to draw one-sided and two-sided error bars. If your "
-	"errors are symmetric around the y-position, your table only needs one column and you can supply the name of this column in both fields.")
+DEFINITION (U"determine the size of the vertical lines that will be drawn. These lines are drawn between the points "
+	"(%x,%y-%low) and (%x, %y+%up), where %x and %y are the values from the %%horizontal column% and the %%vertical "
+	"column%, respectively, and, %low and %up are the corresponding values "
+	"in the %%lower error value column% and the %%upper error value column%, respectively. If either of these column "
+	"names is not given the corresponding values (%low and/or %up) will taken as zero. This makes it possible to draw "
+	"one-sided and two-sided error bars. If your errors are symmetric around the y-position, your table only needs "
+	"one column and you can supply the name of this column in both fields.")
 TAG (U"##Bar size (mm)#")
 DEFINITION (U"determines the width of the horizontal bars or whishers at the lower an postion of the drawn line. ")
 TAG (U"##Garnish#")
 DEFINITION (U"determines whether or not some decoration is drawn.")
 TAG (U"##Formula")
-DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
-
+DEFINITION (U"can be used to supply an expression to select only those rows for plotting where the expression "
+	"evaluates to %%true%. A 1 value always evaluates to %%true%.")
 MAN_END
 
 MAN_BEGIN (U"Table: Get median absolute deviation...", U"djmw", 20120405)
@@ -5093,11 +5157,14 @@ DEFINITION (U"if checked, a Table with the mean values of the levels will be cre
 TAG (U"##Table with differences between means#")
 DEFINITION (U"if checked, a Table with the differences between the mean values of the levels will be created.")
 TAG (U"##Table with Tukey's post-hoc test#")
-DEFINITION (U"if checked, a Table with Tukey's HSD tests will be created. Each value in this Table measures the probability that the corresponding difference between the level means happened by chance. The test compares all possible level means and is based on the studentized range distribution.")
+DEFINITION (U"if checked, a Table with Tukey's HSD tests will be created. Each value in this Table measures "
+	"the probability that the corresponding difference between the level means happened by chance. The test "
+	"compares all possible level means and is based on the studentized range distribution.")
 MAN_END
 
 MAN_BEGIN (U"Table: Report two-way anova...", U"djmw", 20140117)
-INTRO (U"Performs a two-way analysis of variance on the data in one column of a selected %%fully factorial% @@Table@ and reports the fixed-effects anova table in the info window. ")
+INTRO (U"Performs a two-way analysis of variance on the data in one column of a selected %%fully factorial% "
+	"@@Table@ and reports the fixed-effects anova table in the info window. ")
 ENTRY (U"Settings")
 TAG (U"##Column with data#")
 DEFINITION (U"the label of the column who's data will be analyzed.")
@@ -5521,11 +5588,12 @@ ENTRY (U"Example")
 NORMAL (U"The following commands")
 CODE (U"@@Create TableOfReal (Pols 1973)...|Create TableOfReal (Pols 1973)@: \"no\"")
 CODE (U"To TableOfReal (means by row labels): 0")
-NORMAL (U"will result in a new TableOfReal that has 12 rows. Each row will contain the mean F1, F2 and F3 values for a particular vowel. These means "
-	" were obtained from 50 representations of that vowel.")
+NORMAL (U"will result in a new TableOfReal that has 12 rows. Each row will contain the mean F1, F2 and F3 values "
+	"for a particular vowel. These means were obtained from 50 representations of that vowel.")
 NORMAL (U"If we had chosen the %expansion:")
 CODE (U"To TableOfReal (means by row labels): \"yes\"")
-NORMAL (U"the resulting TableOfReal would have had 600 rows. This representation  comes in handy when, for example, you have to calculate deviations from the mean.")
+NORMAL (U"the resulting TableOfReal would have had 600 rows. This representation  comes in handy when, for example, "
+	"you have to calculate deviations from the mean.")
 MAN_END
 
 MAN_BEGIN (U"TextGrid: Extend time...", U"djmw", 20020702)
@@ -5534,8 +5602,7 @@ ENTRY (U"Settings")
 TAG (U"##Extend domain by#")
 DEFINITION (U"defines the amount of time by which the domain will be extended.")
 TAG (U"##At")
-DEFINITION (U"defines whether starting times or finishing times will be "
-	"modified.")
+DEFINITION (U"defines whether starting times or finishing times will be modified.")
 ENTRY (U"Behaviour")
 NORMAL (U"We add an extra (empty) interval into each %%interval tier%. "
 	"This is necessary to keep original intervals intact. According to the "
@@ -5546,7 +5613,6 @@ MAN_END
 
 MAN_BEGIN (U"TextGrid & DurationTier: To TextGrid (scale times)", U"djmw", 20170612)
 INTRO (U"Scales the durations of the selected @@TextGrid@ intervals as specified by the selected @@DurationTier@.")
-
 MAN_END
 
 MAN_BEGIN (U"TextGrid: To DurationTier...", U"djmw", 20170617)
@@ -5566,9 +5632,11 @@ DEFINITION (U"specifies the tier with the intervals.")
 TAG (U"##Time scale factor#")
 DEFINITION (U"specifies the scale factor by which the duration of a selected interval has to be multiplied.")
 TAG (U"##Left transition duration#")
-DEFINITION (U"specifies how long it takes to go from a time scale factor of 1.0 to the specified one. Default a very small duration is used. ")
+DEFINITION (U"specifies how long it takes to go from a time scale factor of 1.0 to the specified one. "
+	"Default a very small duration is used. ")
 TAG (U"##Right transition duration#")
-DEFINITION (U"specifies the time it takes to go from the specified time scale factor to 1.0. Default a very small duration is used.")
+DEFINITION (U"specifies the time it takes to go from the specified time scale factor to 1.0. "
+	"Default a very small duration is used.")
 TAG (U"##Scale intervals whose labels")
 DEFINITION (U"specifies the interval selection criterion.")
 TAG (U"##...the text")
@@ -5632,40 +5700,59 @@ MAN_END
 MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210302)
 INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
 ENTRY (U"What is a multi-tier search machine?")
-NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria that can have a "
-	"specified relation with intervals (or points) on the same or on other tiers of the TextGrid. "
+NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria "
+	"that can have a specified relation with intervals (or points) on the same or on other tiers of the TextGrid. "
 	"Matches are primarily based on the labels in a tier.")
-NORMAL (U"As a simple example consider a TextGridNavigator that searches for the occurence of one of the symbols in a %topic set "
-	"that consists of the symbols \"a e i u o\", and you want tier 1 to be searched. A match should occur if a label in tier 1 equals one of the symbols in this topic set. "
+NORMAL (U"As a simple example consider a TextGridNavigator that searches for the occurence of one of the symbols "
+	"in a %topic set that consists of the symbols \"a e i u o\", and you want tier 1 to be searched. A match should "
+	"occur if a label in tier 1 equals one of the symbols in this topic set. "
 	"The command to start the search would then probably be ##Find first#. Because of this command the navigator will "
-	"search for the first occurence of one of the vowels in the %topic set% in the labels of tier 1, and, if a match has been found, sets an internal pointer to this location. "
-	"If you next perform a query with ##Get index: 1, \"topic\"# it will return the number of the interval (or point) that matched "
-	"(or 0 if no match could be found). The next match can then be found by using the ##Find next# command and its value can be "
-	"queried then. This may go on until the last match has been found. A following ##Find next# will not be able to find a match and "
+	"search for the first occurence of one of the vowels in the %topic set% in the labels of tier 1, and, if a match "
+	"has been found, sets an internal pointer to this location. "
+	"If you next perform a query with ##Get index: 1, \"topic\"# it will return the number of the interval (or point) "
+	"that matched (or 0 if no match could be found). The next match can then be found by using the ##Find next# command "
+	"and its value can be queried then. This may go on until the last match has been found. A following ##Find next# "
+	"will not be able to find a match and "
 	"consequently the query for the index of the match will return a 0. ")
-NORMAL (U"Instead of starting at the beginning of the TextGrid you could also start at the end with ##Find last# and next finding "
-	"previous matches with ##Find previous# or you could start the search at a certain time with ##Find next after time# or ##Find previous before time#.")
-NORMAL (U"A more complex example could query for a vowel from the same %topic set as above but matches only if it is preceeded by an unvoiced plosive from the %Before set \"p t k\" and also is followed by a nasal from the %After set \"m n\". ")
-NORMAL (U"The two examples above were both one tier searches and these searches all follow the same scheme: they search for a "
-	"%%topic symbol% which may be preceeded by a %%before symbol% and/or followed by an %after symbol%. The %topic, %before and "
-	"%after symbol may belong to different sets. With a choice from a number of Boolean use criterions like ##Before or After, "
-	"not both# or ##Before and After# you specify how the corresponding symbol sets are to be used during the matching.")
+NORMAL (U"Instead of starting at the beginning of the TextGrid you could also start at the end with ##Find last# and "
+	"next finding previous matches with ##Find previous# or you could start the search at a certain time with "
+	"##Find next after time# or ##Find previous before time#.")
+NORMAL (U"A more complex example could query for a vowel from the same %topic set as above but matches only if it is "
+	"preceeded by an unvoiced plosive from the %Before set \"p t k\" and also is followed by a nasal from the "
+	"%After set \"m n\". ")
+NORMAL (U"The two examples above were both one tier searches and these searches all follow the same scheme: they "
+	"search for a %%topic symbol% which may be preceeded by a %%before symbol% and/or followed by an %after symbol%. "
+	"The %topic, %before and %after symbol may belong to different sets. With a choice from a number of Boolean "
+	"use criterions like ##Before or After, not both# or ##Before and After# you specify how the corresponding symbol "
+	"sets are to be used during the matching.")
 NORMAL (U"For each tier in the TextGrid, we can define a tier search based on tier-specific %%topic symbols%, and/ or "
 	"tier-specific %%before% and %after symbols%. Besides these, maximally three, sets of symbols we also need to specify "
-	"the kind of match that we want. In the first example above we chose the label of the item in the topic tier 1 to have the ##is equal to# "
-	"relation to one of the symbols in the topic set. Other criteria for a match are possible to guarantee maximum flexibility and "
-	"ease of use, like ##is not equal to#, ##contains#, ##does not start with# and many more. ")
-NORMAL (U"Additionally we also need to specify whether it is enough that at least %one symbol in the set matches or that %all symbols "
-	"in the set should match. In set theory this translates to whether we have an OR or an AND relation between the individual matches. "
-	"For example, in the first example above where we wanted to match one of the given vowels, we choose the ##is equal to# "
-	"match criterion and OR as the match boolean because what we wanted was that for the match to succeed only one of the symbols in "
-	"the topic set needed to match. We can write this match as (label == topicSymbol__1_) OR (label == topicSymbol__2_) "
-	"OR ... OR (label == topicSymbol__%n_), where the OR implies that only one of the matches needs to succeed to make the complete "
-	"expression %true. If on the other hand we did %not want to match any of the symbols in the topic set, i.e. if we had chosen "
-	"##is not equal to# as criterion, then we should use an AND match boolean because we can now write our match intention as (label != topicSymbol__1_) AND (label != topicSymbol__2_) AND ... AND (label != topicSymbol__%n_), where the AND implies that all matches have to succeed to make the whole expression %true. "
+	"the kind of match that we want. In the first example above we chose the label of the item in the topic tier 1 to have "
+	"the ##is equal to# relation to one of the symbols in the topic set. Other criteria for a match are possible to "
+	"guarantee maximum flexibility and ease of use, like ##is not equal to#, ##contains#, ##does not start with# and many more. ")
+NORMAL (U"Additionally we also need to specify whether it is enough that at least %one symbol in the set matches or that "
+	"%all symbols in the set should match. In set theory this translates to whether we have an OR or an AND relation between "
+	"the individual matches. For example, in the first example above where we wanted to match one of the given vowels, "
+	"we choose the ##is equal to# match criterion and OR as the match boolean because what we wanted was that for the match "
+	"to succeed only one of the symbols in the topic set needed to match. We can write this match as (label == topicSymbol__1_) "
+	"OR (label == topicSymbol__2_) OR ... OR (label == topicSymbol__%n_), where the OR implies that only one of the matches "
+	"needs to succeed to make the complete expression %true. "
+	"If on the other hand we did %not want to match any of the symbols in the topic set, i.e. if we had chosen "
+	"##is not equal to# as criterion, then we should use an AND match boolean because we can now write our match intention "
+	"as (label != topicSymbol__1_) AND (label != topicSymbol__2_) AND ... AND (label != topicSymbol__%n_), "
+	"where the AND implies that all matches have to succeed to make the whole expression %true. "
 	"Most of the time, inclusive searches are based on OR and exclusive searches are based on AND.")
 NORMAL (U"A multi-tier search can now be defined by combining a number of single tier searches, where each single tier search "
-	"searches a different tier number. To combine the matches on each tier we have to know how to relate them which can only be done on the basis of time because this is the only thing common between the tiers: they all have the same time base. We take one tier as the basis for comparing, i.e. this is the %comparand or in our terminology the %%topic tier%. The matches on the other tiers, the sub-ordinate tiers, can have a specific relation to the match on the topic tier. Although we can have matches on interval tiers and on point tiers let's for simplicity assume we only use interval tiers. Suppose on the topic tier we have a match on an interval that runs from %tmin to %tmax. The match location criterion for a match of an interval [%tmin2, %tmax2] on a sub-ordinate tier can for example be chosen as ##is before# which means that the end time of the sub-ordinate interval has to lie before the start time of the topic interval, i.e. %tmax2 < %tmin, Another location match criterion is ##overlaps before and after# which translates to %tmin2 < %tmin and %tmax2 > %tmax. Of course more than these three location match criteria exist.")
+	"searches a different tier number. To combine the matches on each tier we have to know how to relate them which can only "
+	"be done on the basis of time because this is the only thing common between the tiers: they all have the same time base. "
+	"We take one tier as the basis for comparing, i.e. this is the %comparand or in our terminology the %%topic tier%. "
+	"The matches on the other tiers, the sub-ordinate tiers, can have a specific relation to the match on the topic tier. "
+	"Although we can have matches on interval tiers and on point tiers let's for simplicity assume we only use interval tiers. "
+	"Suppose on the topic tier we have a match on an interval that runs from %tmin to %tmax. The match location criterion for "
+	"a match of an interval [%tmin2, %tmax2] on a sub-ordinate tier can for example be chosen as ##is before# which means "
+	"that the end time of the sub-ordinate interval has to lie before the start time of the topic interval, i.e. %tmax2 < %tmin. "
+	"Another location match criterion is ##overlaps before and after# which translates to %tmin2 < %tmin and %tmax2 > %tmax. "
+	"Of course more than these three location match criteria exist.")
 NORMAL (U"This makes the multi tier search complete as it is a combination of single tier searches that are combined on the basis of "
 	"location match criteria.")
 ENTRY (U"How to create a TextGridNavigator")
