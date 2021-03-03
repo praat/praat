@@ -171,6 +171,69 @@ static void NavigationContext_checkMatchDomain (NavigationContext me, kMatchDoma
 	// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
 }
 
+void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, double *out_startTime, double *out_endTime) {
+	kContext_where startWhere, endWhere;
+	if (my matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
+		const NavigationContext nc = my navigationContext.get();
+		if (nc -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
+			startWhere = kContext_where::TOPIC;
+			endWhere = kContext_where::TOPIC;
+		} else if (nc -> useCriterion == kContext_use::BEFORE) {
+			startWhere = kContext_where::BEFORE;
+			endWhere = ( nc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+		} else if (nc -> useCriterion == kContext_use::AFTER) {
+			startWhere = ( nc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
+			endWhere = kContext_where::AFTER;
+		} else if (nc -> useCriterion == kContext_use::BEFORE_AND_AFTER) {
+			startWhere = kContext_where::BEFORE;
+			endWhere = kContext_where::AFTER;
+		} else if (nc -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH) {
+			if (TextGridTierNavigator_isBeforeMatch (me, my currentTopicIndex)) {
+				startWhere = kContext_where::BEFORE;
+				endWhere = ( nc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			} else {
+				startWhere = ( nc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
+				endWhere = kContext_where::AFTER;
+			}
+		} else if (nc -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
+			bool isBeforeMatch = TextGridTierNavigator_isBeforeMatch (me, my currentTopicIndex);
+			bool isAfterMatch = TextGridTierNavigator_isAfterMatch (me, my currentTopicIndex);
+			if (isBeforeMatch && isAfterMatch) {
+				startWhere = kContext_where::BEFORE;
+				endWhere = kContext_where::AFTER;
+			} else if (isBeforeMatch) {
+				startWhere = kContext_where::BEFORE;
+				endWhere = ( nc -> excludeTopicMatch ? kContext_where::BEFORE : kContext_where::TOPIC );
+			} else {
+				startWhere = ( nc -> excludeTopicMatch ? kContext_where::AFTER : kContext_where::TOPIC );
+				endWhere = kContext_where::AFTER;
+			}
+		}
+	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_TOPIC_END) {
+		startWhere = kContext_where::TOPIC;
+		endWhere = kContext_where::TOPIC;
+	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END) {
+		startWhere = kContext_where::BEFORE;
+		endWhere = kContext_where::TOPIC;
+	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END) {
+		startWhere = kContext_where::TOPIC;
+		endWhere = kContext_where::AFTER;
+	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END) {
+		startWhere = kContext_where::BEFORE;
+		endWhere = kContext_where::AFTER;
+	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END) {
+		startWhere = kContext_where::BEFORE;
+		endWhere = kContext_where::BEFORE;
+	} else if (my matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END) {
+		startWhere = kContext_where::AFTER;
+		endWhere = kContext_where::AFTER;
+	}
+	if (out_startTime)
+		*out_startTime = TextGridTierNavigator_getStartTime (me, startWhere);
+	if (out_endTime)
+		*out_endTime = TextGridTierNavigator_getEndTime (me, endWhere);
+}
+
 autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationContext thee, kMatchDomain matchDomain) {
 	try {
 		NavigationContext_checkMatchDomain (thee, matchDomain);
@@ -188,7 +251,7 @@ autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationC
 	}
 }
 
-autoTextGridTierNavigator TextGrid_to_TextGridTierNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
+autoTextGridTierNavigator TextGrid_to_TextGridTierNavigator_topic (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
 	try {
 		autoNavigationContext navigationContext = NavigationContext_createTopicOnly (topic_string, topicCriterion, topicMatchBoolean);
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber,  matchDomain);
