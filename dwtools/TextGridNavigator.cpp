@@ -57,6 +57,14 @@ void structTextGridNavigator :: v_info () {
 	MelderInfo_writeLine (U"Number of complete matches: ", TextGridNavigator_getNumberOfMatches (this),  U" (from ", topicTierSize, U")");
 }
 
+static void TextGridNavigator_checkTierNumberNotInUse (TextGridNavigator me, integer tierNumber) {
+	for (integer inum = 1; inum <= my tierNavigators.size; inum ++) {
+		TextGridTierNavigator tn = my tierNavigators.at [inum];
+		Melder_require (tn -> tierNumber != tierNumber,
+			U"The tiernumber you want tor add is already in use.");
+	}
+}
+
 autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain) {
 	try {
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (textgrid, navigationContext, tierNumber, matchDomain);
@@ -92,13 +100,56 @@ autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, in
 	}
 }
 
+autoTextGridNavigator TextGrid_to_TextGridNavigator (TextGrid me, integer tierNumber, 
+	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,  
+	conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain) {
+try {
+		autoNavigationContext navigationContext = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean,
+			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
+			useCriterion, excludeTopic);
+		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber, matchDomain);
+		autoTextGridNavigator him = TextGridTierNavigator_to_TextGridNavigator (thee.get());
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create TextGridTierNavigator from TextGrid.");	
+	}
+}
+
+void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGrid thee, integer tierNumber, 
+	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,  
+	conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation) {
+	try {
+		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
+		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
+		autoNavigationContext navigationContext = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean,
+			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
+			useCriterion, excludeTopic);
+		autoTextGridTierNavigator him = TextGrid_and_NavigationContext_to_TextGridTierNavigator (thee, navigationContext.get(), tierNumber, matchDomain);
+		TextGridNavigator_addTextGridTierNavigator (me, him.get(), matchLocation);
+	} catch (MelderError) {
+		Melder_throw (me, U": could not add search tier from TextGrid.");	
+	}
+}
+
+void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator me, TextGrid thee, integer tierNumber, 
+	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain, kMatchLocation matchLocation) {
+	try {
+		TextGridNavigator_and_TextGrid_addSearchTier (me, thee, tierNumber, topic_string, topicCriterion, topicMatchBoolean,  
+			U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
+			kContext_use::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchLocation);
+	} catch (MelderError) {
+		Melder_throw (me, U": could not add search topic tier from TextGrid.");	
+	}
+}
+	
 void TextGridNavigator_addNewTierNavigation (TextGridNavigator me, TextGrid thee, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain, kMatchLocation matchLocation) {
 	try {
-		for (integer inum = 1; inum <= my tierNavigators.size; inum ++) {
-			TextGridTierNavigator tn = my tierNavigators.at [inum];
-			Melder_require (tn -> tierNumber != tierNumber,
-				U"The tiernumber you want tor add is already in use.");
-		}
+		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
+		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
 		autoTextGridTierNavigator tn = TextGrid_and_NavigationContext_to_TextGridTierNavigator (thee, navigationContext, tierNumber, matchDomain);
 		tn -> matchLocation = matchLocation;
 		my tierNavigators.addItem_move (tn.move());
@@ -132,25 +183,6 @@ static integer TextGridNavigator_checkNavigatorNumberFromTierNumber (TextGridNav
 	Melder_require (navigatorNumber > 0,
 		U"Tier number (", tierNumber, U") not used.");
 	return navigatorNumber;
-}
-
-static void NavigationContext_checkUseCriterionCompliesWithMatchDomain (NavigationContext me, kMatchDomain matchDomain) {
-	if (matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END)
-		Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion != kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_TOPIC_END), U"> if you don't always use Before in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END)
-		Melder_require (my useCriterion == kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_AFTER_END), U"> if you don't always use Before and After in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END)
-		Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion != kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::TOPIC_START_TO_AFTER_END), U"> if you don't always use After in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END)
-		Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_BEFORE_END), U"> if you don't always use Before in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END)
-		Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::AFTER_START_TO_AFTER_END), U"> if you don't always use After in the matching <", kContext_use_getText (my useCriterion), U">.");
-	// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
 }
 
 void TextGridNavigator_replaceNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber) {

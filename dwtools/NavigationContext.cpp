@@ -91,18 +91,6 @@ void structNavigationContext :: v_info () {
 	MelderInfo_writeLine (U"\tExclude topic match: ", ( excludeTopicMatch ? U"yes" : U"no" ));
 }
 
-autoNavigationContext Strings_to_NavigationContext (Strings me, kMelder_string topicCriterion) {
-	try {
-		autoNavigationContext thee = Thing_new (NavigationContext);
-		thy topicLabels = Data_copy (me);
-		thy topicCriterion = topicCriterion;
-		thy useCriterion = kContext_use::NO_BEFORE_AND_NO_AFTER;
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": could not convert to NavigationContext.");
-	}
-}
-
 autoNavigationContext NavigationContext_createTopicOnly (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean) {
 	try {
 		autoNavigationContext me = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, kContext_use::NO_BEFORE_AND_NO_AFTER, false);
@@ -121,18 +109,28 @@ autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topi
 	}
 }
 
+autoStrings Strings_createAsUniqueTokens (conststring32 strings, conststring32 where) {
+	autoStrings me = Strings_createAsTokens (strings, U" ");
+	autoStrings thee = Data_copy (me.get());
+	Strings_sort (thee.get());
+	for (integer istring = 2; istring <= thy numberOfStrings; istring ++)
+		Melder_require (Melder_cmp (thy strings [istring].get(), thy strings [istring - 1].get()) != 0,
+			U"The ", where, U" labels should be unique, however \"", thy strings [istring].get(), U"\" occurs more than once.");
+	return me;
+}
+
 autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool excludeTopicMatch) {
 	try {
 		Melder_require (! (excludeTopicMatch && useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER), 
 			U"You should not exclude Before & After & Topic from matching. One of the three should be included.");
 		autoNavigationContext me = Thing_new (NavigationContext);
-		my topicLabels = Strings_createAsTokens (topic_string, U" ");
+		my topicLabels = Strings_createAsUniqueTokens (topic_string, U"Topic");
 		my topicCriterion = topicCriterion;
 		my topicMatchBoolean = topicMatchBoolean;
-		my beforeLabels = Strings_createAsTokens (before_string, U" ");
+		my beforeLabels = Strings_createAsUniqueTokens (before_string, U"Before");
 		my beforeCriterion = beforeCriterion;
 		my beforeMatchBoolean = beforeMatchBoolean;
-		my afterLabels = Strings_createAsTokens (after_string, U" ");
+		my afterLabels = Strings_createAsUniqueTokens (after_string, U"After");
 		my afterCriterion = afterCriterion;
 		my afterMatchBoolean = afterMatchBoolean;
 		my useCriterion = useCriterion;
