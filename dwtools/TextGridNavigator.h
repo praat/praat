@@ -68,8 +68,6 @@ autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNaviga
 
 autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNavigator me);
 
-autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain);
-
 void TextGridNavigator_modifyBeforeRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumber, integer from, integer to);
 
@@ -111,5 +109,25 @@ static inline integer TextGridNavigator_findFirst (TextGridNavigator me) {
 static inline integer TextGridNavigator_findLast (TextGridNavigator me) {
 	return TextGridNavigator_findPreviousBeforeTime (me, my xmax + 0.1);
 }
+
+/* Split off later */
+
+autoTextGridNavigator TextGrid_to_TextGridNavigator (TextGrid me, integer tierNumber, 
+	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,  
+	conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain);
+
+autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string,
+	kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain);
+
+void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator me, TextGrid thee, integer tierNumber, 
+	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain, kMatchLocation matchLocation);
+
+void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGrid thee, integer tierNumber, 
+	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,  
+	conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation);
 
 #endif /* _TextGridNavigator_h_ */

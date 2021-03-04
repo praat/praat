@@ -11,44 +11,13 @@ for itier to numberOfTiers
 	numberOfIntervals# [itier] = Get number of intervals: itier
 endfor
 
-# locate vowels from the set "ix eh ih ux ao ah"
-navigationContext1 = Create NavigationContext (topic only): "c",  "ix eh ih ux ao ah", "is equal to", "OR"
-selectObject: textgrid, navigationContext1
-tierNavigator1 = To TextGridTierNavigator: 1, "Match start to Match end"
-
-# locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" before them
-navigationContext2 = Create NavigationContext: "cv",  "ix eh ih ux ao ah", "is equal to", "OR",
-	... "sh hv jh k s q r w y", "is equal to", "OR", "", "is equal to", "AND", "before", "no"
-selectObject: textgrid, navigationContext2
-tierNavigator2 = To TextGridTierNavigator: 1, "Topic start to Topic end"
-
-# locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" 
-# before them and one of "hv q sh" after them
-navigationContext3 = Create NavigationContext: "cv",  "ix eh ih ux ao ah", "is equal to", "OR",
-	... "sh hv jh k s q r w y", "is equal to", "OR", "hv q sh", "is equal to", "OR", "before and after", "no"
-selectObject: textgrid, navigationContext3
-tierNavigator3 = To TextGridTierNavigator: 1, "Topic start to Topic end"
-
-# locate words from the set "suit wash water year"
-navigationContext4 = Create NavigationContext (topic only): "words", "had suit wash water year", "is equal to", "OR"
-selectObject: textgrid, navigationContext4
-tierNavigator4 = To TextGridTierNavigator: 3, "Topic start to Topic end"
-
-# locate  "N " (on tier 4)
-navigationContext5 = Create NavigationContext (topic only): "nouns", "N", "is equal to", "OR"
-selectObject: textgrid, navigationContext5
-tierNavigator5 = To TextGridTierNavigator: 4, "Topic start to Topic end"
-
 @test_topic
 @test_topicAndBefore
 @test_topicAndBeforeAndAfter
 @test_twoNavigationContexts
 @test_threeNavigationContexts
 
-removeObject: textgrid, navigationContext1, navigationContext2, 
-	... navigationContext3, navigationContext4, navigationContext5,
-	... tierNavigator1, tierNavigator2, tierNavigator3, tierNavigator4,
-	... tierNavigator5
+removeObject: textgrid
 
 appendInfoLine: "test_TextGridNavigator.praat OK"
 
@@ -65,8 +34,9 @@ procedure test_topic
 		.endTime1# [.i] = Get end time of interval: 1, .index1# [.i]
 	endfor
 
-	selectObject: tierNavigator1
-	.navigator = To TextGridNavigator
+	# locate vowels from the set "ix eh ih ux ao ah"
+	selectObject: textgrid
+	.navigator = To TextGridNavigator (topic only): 1, "ix eh ih ux ao ah", "is equal to", "OR", "Match start to Match end"
 	Find first
 	for .i to .numberOfVowels
 		.index = Get index: 1, "topic"
@@ -81,27 +51,26 @@ procedure test_topic
 	Modify Topic criterion: 1, "is not equal to", "AND"
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
-	.navigationContext = Extract navigation context: 1
-	Modify Topic criterion: "is equal to", "OR"
-	selectObject: .navigator, .navigationContext
-	Replace navigation context: 1
-	selectObject: .navigator
+	Modify Topic criterion: 1, "is equal to", "OR"
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = .numberOfVowels
 	selectObject: .navigator, textgrid
-	Replace TextGrid tiers
+	Replace search tiers
 	selectObject: .navigator
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = .numberOfVowels
-	removeObject: .navigator, .navigationContext
+	removeObject: .navigator
 	appendInfoLine: tab$, "test topic OK"
 endproc
 
 procedure test_topicAndBefore
 	appendInfoLine: tab$, "test  topic + before"
 
-	selectObject: tierNavigator2
-	.navigator = To TextGridNavigator
+	# locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" before them
+	selectObject: textgrid
+	.navigator = To TextGridNavigator: 1, "ix eh ih ux ao ah", "is equal to", "OR",
+	... "sh hv jh k s q r w y", "is equal to", "OR", "", "is equal to", "AND", "before", "no", "Topic start to Topic end"
+
 	.index1# = {3, 5, 8, 15, 21, 23, 25, 29, 35 }
 	.label1$# = {"sh", "hv", "jh", "s", "r" , "s", "w", "w", "y" }
 	.combi1$# = {"sh |ix", "hv | eh", "jh | ih", "s | ux", "r | ix", "s | ix", "w | ao", "w | ao", "y | ih" }
@@ -122,8 +91,11 @@ endproc
 procedure test_topicAndBeforeAndAfter
 	appendInfoLine: tab$, "test  before + topic + after"
 
-	selectObject: tierNavigator3
-	.navigator = To TextGridNavigator
+	# locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" 
+	# before them and one of "hv q sh" after them
+	selectObject: textgrid
+	.navigator = To TextGridNavigator: 1, "ix eh ih ux ao ah", "is equal to", "OR",
+	... "sh hv jh k s q r w y", "is equal to", "OR", "hv q sh", "is equal to", "OR", "before and after", "no", "Topic start to Topic end"
 	.index1# = {3, 15,  25}
 	.index_before1# = {2, 14, 24}
 	.index_after1# = {4, 16, 26}
@@ -175,11 +147,16 @@ procedure test_twoNavigationContexts
 		.endTime3# [.i] = Get end time of interval: 3, .index3# [.i]
 	endfor
 	appendInfoLine: tab$,tab$, "From small to large"
-	# combine  NavigationContext's  on tier 1 and tier 3
-	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1, "Topic start to Topic end"
-	selectObject: .navigator, tierNavigator4
-	Add TextGridTierNavigator: "overlaps before and after"
+
+	# locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" before them
+	selectObject: textgrid
+	.navigator = To TextGridNavigator: 1, "ix eh ih ux ao ah", "is equal to", "OR",
+		... "sh hv jh k s q r w y", "is equal to", "OR", "", "is equal to", "AND", "before", "no", "Topic start to Topic end"
+	Rename: "small_LARGE"
+	# locate words from the set "suit wash water year" on tier 3
+	selectObject: .navigator, textgrid
+	Add search tier (topic only): 3, "had suit wash water year", "is equal to", "OR", "Topic start to Topic end", 
+		... "overlaps before and after"
 	selectObject: .navigator
 	Find first
 	for .i to .numberOfMatches
@@ -201,11 +178,13 @@ procedure test_twoNavigationContexts
 	endfor
 	appendInfoLine: tab$,tab$, "From small to large OK"
 	appendInfoLine: tab$,tab$, "From large to small"
-	selectObject: tierNavigator4
-	.navigator2 = To TextGridNavigator
-	Rename: "LARGE_to_small"
-	selectObject: .navigator2, tierNavigator2
-	Add TextGridTierNavigator: "is inside"
+
+	selectObject: textgrid
+	.navigator2 = To TextGridNavigator (topic only): 3, "had suit wash water year", "is equal to", "OR", "Topic start to Topic end"
+	Rename: "LARGE_small"
+	selectObject: .navigator2, textgrid
+	Add search tier: 1, "ix eh ih ux ao ah", "is equal to", "OR", "sh hv jh k s q r w y", "is equal to", "OR",
+		 ... "", "is equal to", "AND", "before", "no", "Topic start to Topic end", "is inside"
 	selectObject: .navigator
 	Find first
 	for .i to .numberOfMatches
@@ -253,15 +232,15 @@ procedure test_threeNavigationContexts
 		.endTimet4# [.i] = Get end time of interval: 4, .indext4# [.i]
 	endfor
 
-	# combine  NavigationContext's  on tier 1, tier 3 and tier 4
-	selectObject: textgrid, navigationContext2
-	.navigator = To TextGridNavigator: 1,  "Match start to Match end"
-	selectObject: .navigator, tierNavigator4
-	Add TextGridTierNavigator: "overlaps before and after"
-	selectObject: .navigator, tierNavigator5
-	Add TextGridTierNavigator: "overlaps before and after"
+	# locate vowels from the set "ix eh ih ux ao ah" that also have one of "sh hv jh k s q r w y" before them
+	selectObject: textgrid
+	.navigator = To TextGridNavigator: 1, "ix eh ih ux ao ah", "is equal to", "OR",
+	... "sh hv jh k s q r w y", "is equal to", "OR", "", "is equal to", "AND", "before", "no", "Topic start to Topic end"
+	selectObject: .navigator, textgrid
+	Add search tier (topic only): 3, "had suit wash water year", "is equal to", "OR", "Topic start to Topic end", 
+		... "overlaps before and after"
+	Add search tier (topic only): 4, "N", "is equal to", "OR", "Topic start to Topic end", "overlaps before and after"
 	selectObject: .navigator
-
 	Find first
 	for .i to .numberOfMatches
 		.index = Get index: 1, "topic"

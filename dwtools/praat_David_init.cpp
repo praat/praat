@@ -6576,41 +6576,6 @@ DO
 	CREATE_ONE_END (U"chars")
 }
 
-FORM (NEW1_Create_NavigationContextTopicOnly, U"Create NavigationContext Topic only", nullptr) {
-	WORD (name, U"Name", U"vowels")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
-	OK
-DO
-	CREATE_ONE
-		autoNavigationContext result = NavigationContext_createTopicOnly (topic_string, topicCriterion, topicMatchBoolean);
-	CREATE_ONE_END (name)
-}
-
-FORM (NEW1_Create_NavigationContext, U"Create NavigationContext", nullptr) {
-	WORD (name, U"Name", U"plosive_vowel_nasal")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
-	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
-	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n")
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
-	LABEL (U"")
-	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
-	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
-	OK
-DO
-	CREATE_ONE
-		autoNavigationContext result = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean, useCriterion, excludeTopic);
-	CREATE_ONE_END (name)
-}
-
 FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
 	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
 	OK
@@ -6690,15 +6655,6 @@ FORM (NEW_Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Perm
 DO
 	CONVERT_EACH (Strings)
 		autoPermutation result = Strings_to_Permutation (me, sort);
-	CONVERT_EACH_END (my name.get())
-}
-
-FORM (NEW_Strings_to_NavigationContext, U"Strings: To NavigationContext", nullptr) {
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
-	OK
-DO
-	CONVERT_EACH (Strings)
-		autoNavigationContext result = Strings_to_NavigationContext (me, topicCriterion);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -7849,6 +7805,33 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_TextGrid_to_TextGridNavigator, U"", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	TEXTFIELD (after_string, U"After labels", U"m n")
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
+	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
+	LABEL (U"")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OK
+DO
+	CONVERT_EACH (TextGrid)
+		autoTextGridNavigator result = TextGrid_to_TextGridNavigator (me, tierNumber, topic_string, topicCriterion, topicMatchBoolean,  
+			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
+			useCriterion, excludeTopic, matchDomain);
+	CONVERT_EACH_END (my name.get())
+}
+
 DIRECT (NEW_TextGrid_DurationTier_to_TextGrid) {
 	CONVERT_TWO (TextGrid, DurationTier)
 		autoTextGrid result = TextGrid_DurationTier_scaleTimes (me, you);
@@ -8029,16 +8012,6 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW_TextGridNavigator_extractNavigationContext, U"TextGridNavigator: Extract navigation context", nullptr) {
-	NATURAL (tierNumber, U"Tier number", U"1")
-	OK
-DO
-	CONVERT_EACH (TextGridNavigator)
-		autoNavigationContext result = TextGridNavigator_extractNavigationContext (me, tierNumber);
-	CONVERT_EACH_END (my name.get(), U"_tier", tierNumber)
-}
-
-
 FORM (MODIFY_TextGridNavigator_replaceNavigationContext, U"TextGridNavigator: Replace NavigationContext", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
@@ -8057,11 +8030,55 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_replaceTiers) {
+DIRECT (MODIFY_TextGridNavigator_replaceSearchTiers) {
 	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
 		TextGridNavigator_replaceTiers (me, you);
 	MODIFY_FIRST_OF_TWO_END
 	
+}
+
+FORM (MODIFY_TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
+		TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (me, you, tierNumber, 
+			topic_string, topicCriterion, topicMatchBoolean, matchDomain, matchLocation);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	TEXTFIELD (after_string, U"After labels", U"m n")
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	LABEL (U"")
+	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
+	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
+	LABEL (U"")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
+		TextGridNavigator_and_TextGrid_addSearchTier (me, you, tierNumber, 
+			topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, beforeMatchBoolean,
+			after_string, afterCriterion, afterMatchBoolean, useCriterion, excludeTopic, matchDomain, matchLocation);
+	MODIFY_FIRST_OF_TWO_END
 }
 
 DIRECT (NEW_TextGridTierNavigator_to_TextGridNavigator) {
@@ -8415,9 +8432,6 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from tokens...", U"Create Strings as folder list...", 1, NEW1_Strings_createFromTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsTokens);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN, NEW1_Strings_createAsCharacters);
-	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContext);
-	praat_addMenuCommand (U"Objects", U"New", U"Create NavigationContext (topic only)...", U"Create Strings as tokens...",  praat_DEPTH_1 + praat_HIDDEN, NEW1_Create_NavigationContextTopicOnly);
-	
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
@@ -9174,7 +9188,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStrings, 0, U"Change...", U"Replace all...", praat_HIDDEN, NEW_Strings_change);
 	praat_addAction1 (classStrings, 0, U"Extract part...", U"Replace all...", 0, NEW_Strings_extractPart);
 	praat_addAction1 (classStrings, 0, U"To Permutation...", U"To Distributions", 0, NEW_Strings_to_Permutation);
-	praat_addAction1 (classStrings, 0, U"To NavigationContext...", U"To Distributions", 0, NEW_Strings_to_NavigationContext);
 	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, NEW_Strings_to_EditDistanceTable);
 
 	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0, HELP_SVD_help);
@@ -9286,7 +9299,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"*Replace point texts...", praat_DEPTH_2 | praat_DEPRECATED_2018, MODIFY_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignment);
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
-	praat_addAction1 (classTextGrid, 0, U"To TextGridNavigator (topic)...", U"To DurationTier...", 0, NEW_TextGrid_to_TextGridNavigator_topicSearch);
+	praat_addAction1 (classTextGrid, 0, U"To TextGridNavigator (topic only)...", U"To DurationTier...", praat_HIDDEN, NEW_TextGrid_to_TextGridNavigator_topicSearch);
+	praat_addAction1 (classTextGrid, 0, U"To TextGridNavigator...", U"To DurationTier...", praat_HIDDEN, NEW_TextGrid_to_TextGridNavigator);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_DurationTier_to_TextGrid);
 	
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_EditCostsTable_to_Table_textAlignment);
@@ -9316,12 +9330,12 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyTopicCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyBeforeCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyAfterCriterion);
-	praat_addAction1 (classTextGridNavigator, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classTextGridNavigator, 0, U"Extract navigation context...", nullptr, 1, NEW_TextGridNavigator_extractNavigationContext);
 	
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Replace navigation context...", nullptr, 0, MODIFY_TextGridNavigator_replaceNavigationContext);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGridTierNavigator, 1, U"Add TextGridTierNavigator...", nullptr, 0, MODIFY_TextGridNavigator_addTextGridTierNavigator);
-	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace TextGrid tiers", nullptr, 0, MODIFY_TextGridNavigator_replaceTiers);
+	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace search tiers", nullptr, 0, MODIFY_TextGridNavigator_replaceSearchTiers);
+	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Add search tier (topic only)...", nullptr, 0, MODIFY_TextGridNavigator_addSearchTier_topicOnly);
+	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Add search tier...", nullptr, 0, MODIFY_TextGridNavigator_addSearchTier);
 	
 	praat_addAction1 (classTextGridTierNavigator, 0, U"To TextGridNavigator", nullptr, 1, NEW_TextGridTierNavigator_to_TextGridNavigator);
 	
