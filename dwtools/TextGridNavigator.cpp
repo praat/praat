@@ -251,6 +251,26 @@ void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumbe
 	}
 }
 
+void TextGridNavigator_modifyLocationCriterion (TextGridNavigator me, integer tierNumber, kMatchLocation matchLocation) {
+	try {
+		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
+		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
+		tn -> matchLocation = matchLocation;
+	} catch (MelderError) {
+		Melder_throw (me, U": location criterion not changed.");
+	}
+}
+
+void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain matchDomain) {
+	try {
+		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
+		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
+		TextGridTierNavigator_modifyMatchDomain (tn, matchDomain);
+	} catch (MelderError) {
+		Melder_throw (me, U": match domain not changed.");
+	}
+}
+
 void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);

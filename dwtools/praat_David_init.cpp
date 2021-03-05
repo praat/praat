@@ -8012,6 +8012,48 @@ DO
 	MODIFY_EACH_END
 }
 
+FORM (MODIFY_TextGridNavigator_modifyLocationCriterion, U"TextGridNavigator: Modify location criterion", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyLocationCriterion (me, tierNumber, matchLocation);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGridNavigator_modifyMatchDomain, U"TextGridNavigator: Modify match domain", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyMatchDomain (me, tierNumber, matchDomain);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGridNavigator_modifyBeforeRange, U"TextGridNavigator: Modify Before range", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	NATURAL (from, U"From", U"1")
+	NATURAL (to, U"To", U"1")
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyBeforeRange (me, tierNumber, from, to);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGridNavigator_modifyAfterRange, U"TextGridNavigator: Modify After range", nullptr) {
+	NATURAL (tierNumber, U"Tier number", U"1")
+	NATURAL (from, U"From", U"1")
+	NATURAL (to, U"To", U"1")
+	OK
+DO
+	MODIFY_EACH (TextGridNavigator)
+		TextGridNavigator_modifyAfterRange (me, tierNumber, from, to);
+	MODIFY_EACH_END
+}
+
 FORM (MODIFY_TextGridNavigator_replaceNavigationContext, U"TextGridNavigator: Replace NavigationContext", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
@@ -9330,6 +9372,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyTopicCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyBeforeCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyAfterCriterion);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify location criterion...", nullptr, 1, MODIFY_TextGridNavigator_modifyLocationCriterion);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain...", nullptr, 1, MODIFY_TextGridNavigator_modifyMatchDomain);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before range...", nullptr, 1, MODIFY_TextGridNavigator_modifyBeforeRange);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify After range...", nullptr, 1, MODIFY_TextGridNavigator_modifyAfterRange);
 	
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Replace navigation context...", nullptr, 0, MODIFY_TextGridNavigator_replaceNavigationContext);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGridTierNavigator, 1, U"Add TextGridTierNavigator...", nullptr, 0, MODIFY_TextGridNavigator_addTextGridTierNavigator);
