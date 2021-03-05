@@ -74,8 +74,12 @@ void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumbe
 void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
+
 void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch);
+
 void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain newDomain);
+
+void TextGridNavigator_modifyLocationCriterion (TextGridNavigator me, integer tierNumber, kMatchLocation matchLocation);
 
 void TextGridNavigator_replaceTiers (TextGridNavigator me, TextGrid thee);
 

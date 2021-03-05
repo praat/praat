@@ -153,22 +153,35 @@ void structTextGridTierNavigator :: v_info () {
 }
 
 static void NavigationContext_checkMatchDomain (NavigationContext me, kMatchDomain matchDomain) {
-	if (matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END)
-		Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion != kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_TOPIC_END), U"> if you don't always use Before in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END)
-		Melder_require (my useCriterion == kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_AFTER_END), U"> if you don't always use Before and After in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END)
-		Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion != kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::TOPIC_START_TO_AFTER_END), U"> if you don't always use After in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END)
-		Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_BEFORE_END), U"> if you don't always use Before in the matching <", kContext_use_getText (my useCriterion), U">.");
-	else if (matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END)
-		Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-			U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::AFTER_START_TO_AFTER_END), U"> if you don't always use After in the matching <", kContext_use_getText (my useCriterion), U">.");
-	// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
+	try {
+		if (matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END)
+			Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion != kContext_use::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_TOPIC_END), U"> if you don't always use Before in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+		else if (matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END)
+			Melder_require (my useCriterion == kContext_use::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_AFTER_END), U"> if you don't always use Before and After in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+		else if (matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END)
+			Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::TOPIC_START_TO_AFTER_END), U"> if you don't always use After in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+		else if (matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END)
+			Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion == kContext_use::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_BEFORE_END), U"> if you don't always use Before in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+		else if (matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END)
+			Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::AFTER_START_TO_AFTER_END), U"> if you don't always use After in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+		// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
+	} catch (MelderError) {
+		Melder_throw (U"Invalid match domain.");
+	}
+}
+
+void TextGridTierNavigator_modifyMatchDomain (TextGridTierNavigator me, kMatchDomain matchDomain) {
+	try {
+		NavigationContext_checkMatchDomain (my navigationContext.get(), matchDomain);
+		my matchDomain = matchDomain;
+	} catch (MelderError) {
+		Melder_throw (me, U": match domain not changed.");
+	}
 }
 
 autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationContext thee, kMatchDomain matchDomain) {
