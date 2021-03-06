@@ -42,8 +42,8 @@
 	There is no need to permanently store the FormantModelers because they can easily
 	be calculated whenever they are needed from the information in the tiers.
 	
-	Multichannel sounds don't make sense with respect to the analysis part. If both channels are the same sound, one is resundant.
-	If two different sounds?. May be only copy channel 1?
+	Multichannel sounds don't make sense with respect to the analysis part. If both channels are the same sound, one is redundant.
+	If two different sounds? May be only copy channel 1?
 */
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {

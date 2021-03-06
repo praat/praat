@@ -56,10 +56,8 @@ Thing_define (FunctionEditor, Editor) {
 		than for larger drawing areas.
 	*/
 	double width_pxlt, height_pxlt;   // size of drawing area in pixelettes
-private:
-	double functionViewerLeft, functionViewerRight;   // location of function viewer in pixelettes
-	double selectionViewerLeft, selectionViewerRight;   // location of selection viewer in pixelettes
-public:
+	double _functionViewerLeft, _functionViewerRight;   // location of function viewer in pixelettes
+	double _selectionViewerLeft, _selectionViewerRight;   // location of selection viewer in pixelettes
 	void updateGeometry (int width_pixels, int height_pixels) {
 		Graphics_setWsViewport (our graphics.get(), 0.0, width_pixels, 0.0, height_pixels);
 		our width_pxlt = width_pixels + 21;   // the +21 means that the horizontal margin becomes a tiny bit larger when the window grows
@@ -69,54 +67,54 @@ public:
 		/*
 			Put the function viewer at the left and the selection viewer at the right.
 		*/
-		our functionViewerLeft = 0;
-		our functionViewerRight = ( our p_showSelectionViewer ? our width_pxlt * (2.0/3.0) : our width_pxlt );
-		our selectionViewerLeft = our functionViewerRight;
-		our selectionViewerRight = our width_pxlt;
+		our _functionViewerLeft = 0;
+		our _functionViewerRight = ( our p_showSelectionViewer ? our width_pxlt * (2.0/3.0) : our width_pxlt );
+		our _selectionViewerLeft = our _functionViewerRight;
+		our _selectionViewerRight = our width_pxlt;
 	}
 	bool isInSelectionViewer (double x_pxlt) const {
-		return x_pxlt > our selectionViewerLeft;
+		return x_pxlt > our _selectionViewerLeft;
 	}
 	void viewAllAsPixelettes () const {
 		Graphics_setViewport (our graphics.get(), 0.0, our width_pxlt, 0.0, our height_pxlt);
 		Graphics_setWindow (our graphics.get(), 0.0, our width_pxlt, 0.0, our height_pxlt);
 	}
 	void viewFunctionViewerAsPixelettes () const {
-		Graphics_setViewport (our graphics.get(), our functionViewerLeft, our functionViewerRight, 0.0, our height_pxlt);
-		Graphics_setWindow (our graphics.get(), our functionViewerLeft, our functionViewerRight, 0.0, our height_pxlt);
+		Graphics_setViewport (our graphics.get(), our _functionViewerLeft, our _functionViewerRight, 0.0, our height_pxlt);
+		Graphics_setWindow (our graphics.get(), our _functionViewerLeft, our _functionViewerRight, 0.0, our height_pxlt);
 	}
 	void viewSelectionViewerAsPixelettes () const {
-		Graphics_setViewport (our graphics.get(), our selectionViewerLeft, our selectionViewerRight, 0.0, our height_pxlt);
-		Graphics_setWindow (our graphics.get(), our selectionViewerLeft, our selectionViewerRight, 0.0, our height_pxlt);
+		Graphics_setViewport (our graphics.get(), our _selectionViewerLeft, our _selectionViewerRight, 0.0, our height_pxlt);
+		Graphics_setWindow (our graphics.get(), our _selectionViewerLeft, our _selectionViewerRight, 0.0, our height_pxlt);
 	}
 	constexpr static double space = 30.0;
 	constexpr static double MARGIN = 107.0;
 	constexpr static double BOTTOM_MARGIN = 2.0;
 	constexpr static double TOP_MARGIN = 3.0;
-	double dataLeft_pxlt () const { return our functionViewerLeft + our MARGIN; }
-	double dataRight_pxlt () const { return our functionViewerRight - our MARGIN; }
+	double dataLeft_pxlt () const { return our _functionViewerLeft + our MARGIN; }
+	double dataRight_pxlt () const { return our _functionViewerRight - our MARGIN; }
 	double dataBottom_pxlt () const { return our BOTTOM_MARGIN + our space * 3; }
-	double dataTop_pxlt () const { return our height_pxlt - (TOP_MARGIN + space); }
+	double dataTop_pxlt () const { return our height_pxlt - (our TOP_MARGIN + our space); }
 	void viewDataAsWorldByFraction () const {
-		Graphics_setViewport (our graphics.get(), dataLeft_pxlt(), dataRight_pxlt(), dataBottom_pxlt(), dataTop_pxlt());
+		Graphics_setViewport (our graphics.get(), our dataLeft_pxlt(), our dataRight_pxlt(), our dataBottom_pxlt(), our dataTop_pxlt());
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	}
-	void viewTallDataAsWorldByFraction () const {
+	void viewTallDataAsWorldByPixelettes () const {
 		Graphics_setViewport (our graphics.get(), our dataLeft_pxlt(), our dataRight_pxlt(), 0.0, our height_pxlt);
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, our height_pxlt);
 	}
 	constexpr static double SELECTION_VIEWER_MARGIN = 0.0;
 	void viewInnerSelectionViewerAsFractionByFraction () const {
-		Graphics_setViewport (our graphics.get(), our selectionViewerLeft + our MARGIN, our selectionViewerRight - our MARGIN,
+		Graphics_setViewport (our graphics.get(), our _selectionViewerLeft + our MARGIN, our _selectionViewerRight - our MARGIN,
 				our BOTTOM_MARGIN + our space * 3, our height_pxlt - (our TOP_MARGIN + our space));
 		Graphics_setViewport (our graphics.get(),
-			our selectionViewerLeft + our SELECTION_VIEWER_MARGIN, our selectionViewerRight - our SELECTION_VIEWER_MARGIN,
-			our SELECTION_VIEWER_MARGIN, our height_pxlt - SELECTION_VIEWER_MARGIN
+			our _selectionViewerLeft + our SELECTION_VIEWER_MARGIN, our _selectionViewerRight - our SELECTION_VIEWER_MARGIN,
+			our SELECTION_VIEWER_MARGIN, our height_pxlt - our SELECTION_VIEWER_MARGIN
 		);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	}
 
-	GuiText text;   // optional text at top
+	GuiText textArea;   // optional text at top
 	bool clickWasModifiedByShiftKey;   // information for drag-and-drop and for start of play
 	bool duringPlay;
 	struct FunctionEditor_picture picture;
