@@ -187,18 +187,17 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 		if (! clickedPoint) {
 			anchorIsInFreePart = true;
 			my ycursor = y_world;
-			my editor -> viewDataAsWorldByFraction ();
-			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction) || true;
+			return my defaultMouseInWideDataView (event, x_world, y_fraction) || true;
 		}
 		anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
 			clickedPoint -> number >= my startSelection() && clickedPoint -> number <= my endSelection();
 		if (my draggingSelection) {
 			AnyTier_getWindowPoints (tier->asAnyTier(), my startSelection(), my endSelection(), & my firstSelected, & my lastSelected);
-			Editor_save (my editor, U"Drag points");   // TODO: title can be more specific
+			my save (U"Drag points");   // TODO: title can be more specific
 		} else {
 			my firstSelected = my lastSelected = inearestPoint;
-			Editor_save (my editor, U"Drag point");   // TODO: title can be more specific
+			my save (U"Drag point");   // TODO: title can be more specific
 		}
 		my anchorTime = x_world;
 		my anchorY = y_world;
@@ -208,8 +207,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 	} else if (event -> isDrag() || event -> isDrop()) {
 		if (anchorIsInFreePart) {
 			my ycursor = y_world;
-			my editor -> viewDataAsWorldByFraction ();
-			return my editor -> structFunctionEditor :: v_mouseInWideDataView (event, x_world, y_fraction) || true;
+			return my defaultMouseInWideDataView (event, x_world, y_fraction) || true;
 		}
 		Melder_assert (anchorIsNearPoint);
 		my dt = x_world - my anchorTime;
@@ -219,8 +217,8 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 			my anchorTime = undefined;
 			const double leftNewTime = tier -> points.at [my firstSelected] -> number + my dt;
 			const double rightNewTime = tier -> points.at [my lastSelected] -> number + my dt;
-			const bool offLeft = ( leftNewTime < my editor -> tmin );
-			const bool offRight = ( rightNewTime > my editor -> tmax );
+			const bool offLeft = ( leftNewTime < my tmin() );
+			const bool offRight = ( rightNewTime > my tmax() );
 			const bool draggedPastLeftNeighbour = ( my firstSelected > 1 && leftNewTime <= tier -> points.at [my firstSelected - 1] -> number );
 			const bool draggedPastRightNeighbour = ( my lastSelected < tier -> points.size && rightNewTime >= tier -> points.at [my lastSelected + 1] -> number );
 			if (offLeft || offRight || draggedPastLeftNeighbour || draggedPastRightNeighbour) {
@@ -241,16 +239,14 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 				Make sure that the same points are still selected (a problem with Undo...).
 			*/
 
-			if (my draggingSelection) {
-				my editor -> startSelection += my dt;
-				my editor -> endSelection += my dt;
-			}
+			if (my draggingSelection)
+				my setSelection (my startSelection() + my dt, my endSelection() + my dt);
 			if (my firstSelected == my lastSelected) {
 				/*
 					Move crosshair to only selected point.
 				*/
 				RealPoint point = tier -> points.at [my firstSelected];
-				my editor -> startSelection = my editor -> endSelection = point -> number;
+				my setSelection (point -> number, point -> number);
 				my ycursor = point -> value;
 			} else {
 				/*
@@ -260,7 +256,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 				Melder_clip (my v_minimumLegalY (), & my ycursor, my v_maximumLegalY ());   // NaN-safe
 			}
 
-			Editor_broadcastDataChanged (my editor);
+			my broadcastDataChanged ();
 			RealTierArea_updateScaling (me, tier);
 		}
 	}

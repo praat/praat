@@ -338,7 +338,7 @@ static void findInTier (FormantPathEditor me) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
 					scrollToView (me, my startSelection);
-					GuiText_setSelection (my text, position - text, position - text + str32len (my findString.get()));
+					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
 			}
@@ -357,7 +357,7 @@ static void findInTier (FormantPathEditor me) {
 				if (position) {
 					my startSelection = my endSelection = point -> number;
 					scrollToView (me, point -> number);
-					GuiText_setSelection (my text, position - text, position - text + str32len (my findString.get()));
+					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
 			}
@@ -371,10 +371,10 @@ static void findInTier (FormantPathEditor me) {
 static void do_find (FormantPathEditor me) {
 	if (my findString) {
 		integer left, right;
-		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
+		autostring32 label = GuiText_getStringAndSelectionPosition (my textArea, & left, & right);
 		const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
 		if (position) {
-			GuiText_setSelection (my text, position - label.get(), position - label.get() + str32len (my findString.get()));
+			GuiText_setSelection (my textArea, position - label.get(), position - label.get() + str32len (my findString.get()));
 		} else {
 			findInTier (me);
 		}

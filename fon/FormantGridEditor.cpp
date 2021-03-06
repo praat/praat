@@ -249,7 +249,7 @@ void structFormantGridEditor :: v_draw () {
 
 bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double globalY_fraction) {
 	FormantGrid grid = (FormantGrid) our data;
-	OrderedOf<structRealTier>* tiers = our editingBandwidths ? & grid -> bandwidths : & grid -> formants;
+	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & grid -> bandwidths : & grid -> formants );
 	RealTier tier = tiers->at [selectedFormant];
 	our formantGridArea -> ymin = ( our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor );
 	our formantGridArea -> ymax = ( our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling );

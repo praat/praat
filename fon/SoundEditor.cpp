@@ -299,7 +299,7 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /********** UPDATE **********/
 
 void structSoundEditor :: v_prepareDraw () {
-	if (d_longSound.data) {
+	if (our d_longSound.data) {
 		try {
 			LongSound_haveWindow (our d_longSound.data, our startWindow, our endWindow);
 		} catch (MelderError) {
