@@ -5703,11 +5703,11 @@ ENTRY (U"What is a multi-tier search machine?")
 NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria "
 	"that can have a specified relation with intervals (or points) on the same or on other tiers of the TextGrid. "
 	"Matches are primarily based on the labels in a tier.")
-NORMAL (U"As a simple example consider a TextGridNavigator that searches for the occurence of one of the symbols "
+NORMAL (U"As a simple example consider a TextGridNavigator that searches for the occurrence of one of the symbols "
 	"in a %topic set that consists of the symbols \"a e i u o\", and you want tier 1 to be searched. A match should "
 	"occur if a label in tier 1 equals one of the symbols in this topic set. "
 	"The command to start the search would then probably be ##Find first#. Because of this command the navigator will "
-	"search for the first occurence of one of the vowels in the %topic set% in the labels of tier 1, and, if a match "
+	"search for the first occurrence of one of the vowels in the %topic set% in the labels of tier 1, and, if a match "
 	"has been found, sets an internal pointer to this location. "
 	"If you next perform a query with ##Get index: 1, \"topic\"# it will return the number of the interval (or point) "
 	"that matched (or 0 if no match could be found). The next match can then be found by using the ##Find next# command "
@@ -5718,10 +5718,10 @@ NORMAL (U"Instead of starting at the beginning of the TextGrid you could also st
 	"next finding previous matches with ##Find previous# or you could start the search at a certain time with "
 	"##Find next after time# or ##Find previous before time#.")
 NORMAL (U"A more complex example could query for a vowel from the same %topic set as above but matches only if it is "
-	"preceeded by an unvoiced plosive from the %Before set \"p t k\" and also is followed by a nasal from the "
+	"preceded by an unvoiced plosive from the %Before set \"p t k\" and also is followed by a nasal from the "
 	"%After set \"m n\". ")
 NORMAL (U"The two examples above were both one tier searches and these searches all follow the same scheme: they "
-	"search for a %%topic symbol% which may be preceeded by a %%before symbol% and/or followed by an %after symbol%. "
+	"search for a %%topic symbol% which may be preceded by a %%before symbol% and/or followed by an %after symbol%. "
 	"The %topic, %before and %after symbol may belong to different sets. With a choice from a number of Boolean "
 	"use criterions like ##Before or After, not both# or ##Before and After# you specify how the corresponding symbol "
 	"sets are to be used during the matching.")
