@@ -83,7 +83,13 @@ void TextGridNavigator_modifyLocationCriterion (TextGridNavigator me, integer ti
 
 void TextGridNavigator_replaceTiers (TextGridNavigator me, TextGrid thee);
 
-bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier);
+bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier, integer *out_beforeIndex, integer *out_afterIndex);
+
+autoINTVEC TextGridNavigator_listIndices (TextGridNavigator me, kContext_where where);
+autoVEC TextGridNavigator_listStartTimes (TextGridNavigator me, kContext_where where);
+autoVEC TextGridNavigator_listEndTimes (TextGridNavigator me, kContext_where where);
+autoSTRVEC TextGridNavigator_listLabels (TextGridNavigator me, kContext_where where);
+
 
 integer TextGridNavigator_getNumberOfMatches (TextGridNavigator me);
 integer TextGridNavigator_getNumberOfTopicMatches (TextGridNavigator me, integer tierNumber);
