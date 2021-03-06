@@ -28,7 +28,7 @@
 /*
 	The purpose of a TextGridTierNavigator is to find successive elements that match a criterion on one selected tier.
 	The navigation context handles what to match/search on the tier.
-	We search for a topic label which may be preceeded by a Before label and/or an After label.
+	We search for a topic label which may be preceded by a Before label and/or an After label.
 */
 
 autoTextGridTierNavigator TextGrid_and_NavigationContext_to_TextGridTierNavigator (TextGrid textgrid, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain);
