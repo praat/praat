@@ -1252,7 +1252,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	Melder_getHomeDir (& homeDir);
 
 	/*
-	 * Get the program's private directory (if not yet set by the --prefdir option):
+	 * Get the program's private directory (if not yet set by the --pref-dir option):
 	 *    "/home/miep/.praat-dir" (Unix)
 	 *    "/Users/miep/Library/Preferences/Praat Prefs" (MacOS)
 	 *    "C:\Users\Miep\Praat" (Windows)
@@ -1267,7 +1267,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	 *    C:\Users\Miep\Praat\Buttons5.ini
 	 * Also create names for message and tracing files.
 	 */
-	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --prefdir option?
+	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
 		structMelderDir prefParentDir { };   // directory under which to store our preferences directory
 		Melder_getPrefDir (& prefParentDir);
 

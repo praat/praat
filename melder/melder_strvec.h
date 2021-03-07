@@ -2,7 +2,7 @@
 #define _melder_strvec_h_
 /* melder_strvec.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public:
 	_conststringvector () { }
 	_conststringvector (const T* const * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): elements (other.elements), size (other.size) { }
-	_conststringvector (_autostringvectorview<T> other): elements ((T**) other._ptr), size (other.size) { }
+	_conststringvector (_autostringvectorview<T> other): elements (other.elements), size (other.size) { }
 	const T* const & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
@@ -246,7 +246,9 @@ using STRVEC = _stringvector <char32>;
 using constSTRVEC = _conststringvector <char32>;
 using autoSTRVEC = _autostringautovector <char32>;
 
-inline autoSTRVEC newSTRVECcopy (constSTRVEC strvec) {
+using autoSTRVECVU = _autostringvectorview <char32>;
+
+inline autoSTRVEC copy_STRVEC (constSTRVEC strvec) {
 	autoSTRVEC result (strvec.size);
 	for (integer i = 1; i <= result.size; i ++)
 		result [i] = Melder_dup (strvec [i]);

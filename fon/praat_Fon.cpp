@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2717,6 +2717,12 @@ DO
 	STRING_ONE_END
 }
 
+DIRECT (STRVEC_Strings_listAllStrings) {
+	STRVEC_ONE (Strings)
+		autoSTRVEC result = copy_STRVEC (my strings.get());
+	STRVEC_ONE_END
+}
+
 // MARK: Modify
 
 FORM (MODIFY_Strings_insertString, U"Strings: Insert string", nullptr) {
@@ -3380,6 +3386,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 2, U"Equal?", nullptr, 1, BOOLEAN_Strings_equal);
 		praat_addAction1 (classStrings, 1, U"Get number of strings", nullptr, 1, INTEGER_Strings_getNumberOfStrings);
 		praat_addAction1 (classStrings, 1, U"Get string...", nullptr, 1, STRING_Strings_getString);
+		praat_addAction1 (classStrings, 1, U"List all strings", nullptr, 1, STRVEC_Strings_listAllStrings);
 	praat_addAction1 (classStrings, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"Set string...", nullptr, 1, MODIFY_Strings_setString);
 		praat_addAction1 (classStrings, 0, U"Insert string...", nullptr, 1, MODIFY_Strings_insertString);

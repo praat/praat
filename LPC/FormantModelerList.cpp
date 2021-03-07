@@ -1,4 +1,4 @@
-/*FormantModelerList.cpp
+/* FormantModelerList.cpp
  *
  * Copyright (C) 2020 David Weenink
  *
@@ -202,7 +202,7 @@ autoFormantModelerListDrawingSpecification FormantModelerList_to_FormantModelerL
 		autoSTRVEC midTopText (my numberOfModelers);
 		for (integer imodel = 1; imodel <= my numberOfModelers; imodel ++)
 			midTopText [imodel] = Melder_dup (U"");
-		thy midTopText = newSTRVECcopy (midTopText.get());
+		thy midTopText = copy_STRVEC (midTopText.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No FormantModelerListDrawingSpecification created.");

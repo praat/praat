@@ -736,6 +736,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define NUMMAT_ONE(klas)  FIND_ONE (klas)
 #define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (constMATVU (result.all())); END_NO_NEW_DATA
 
+#define STRVEC_ONE(klas)  FIND_ONE (klas)
+#define STRVEC_ONE_END  if (interpreter) theInterpreterStrvec = result.move(); else Melder_information (constSTRVEC (result.get())); END_NO_NEW_DATA
+
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA
 
