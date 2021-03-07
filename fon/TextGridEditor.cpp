@@ -258,16 +258,16 @@ void structTextGridEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 
 #ifndef macintosh
 static void menu_cb_Cut (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	GuiText_cut (my text);
+	GuiText_cut (my textArea);
 }
 static void menu_cb_Copy (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	GuiText_copy (my text);
+	GuiText_copy (my textArea);
 }
 static void menu_cb_Paste (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	GuiText_paste (my text);
+	GuiText_paste (my textArea);
 }
 static void menu_cb_Erase (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	GuiText_remove (my text);
+	GuiText_remove (my textArea);
 }
 #endif
 
