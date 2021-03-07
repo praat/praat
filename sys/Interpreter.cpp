@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2020 Paul Boersma
+ * Copyright (C) 1993-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -761,7 +761,7 @@ inline static void StringArrayVariable_move (InterpreterVariable variable, STRVE
 		/*
 			Statement like: a$# = b$#   // with non-matching sizes
 		*/
-		variable -> stringArrayValue = newSTRVECcopy (movedVector);
+		variable -> stringArrayValue = copy_STRVEC (movedVector);
 	}
 }
 
