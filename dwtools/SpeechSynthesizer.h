@@ -44,14 +44,9 @@ void EspeakVoice_setDefaults (EspeakVoice me);
 
 void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice);
 
-
 void SpeechSynthesizer_initEspeak ();
 
 autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName);
-
-conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me);
-
-conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me);
 
 void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me);
 

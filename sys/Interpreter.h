@@ -84,8 +84,9 @@ void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formul
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
 
-extern autoVEC theInterpreterNumvec;
-extern autoMAT theInterpreterNummat;
+inline autoVEC theInterpreterNumvec;
+inline autoMAT theInterpreterNummat;
+inline autoSTRVEC theInterpreterStrvec;
 
 /* End of file Interpreter.h */
 #endif

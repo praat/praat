@@ -48,8 +48,6 @@
 #include "enums_getValue.h"
 #include "DataModeler_enums.h"
 
-extern machar_Table NUMfpp;
-
 Thing_implement (DataModeler, Function, 1);
 
 void structDataModeler :: v_info () {

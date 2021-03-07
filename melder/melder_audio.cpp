@@ -62,8 +62,6 @@
 	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
 #endif
 
-bool Melder_asynchronous;
-
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;
 	enum kMelder_inputSoundSystem inputSoundSystem;
@@ -136,9 +134,6 @@ integer MelderAudio_getOutputBestSampleRate (integer fsamp) {
 		return 44100;
 	#endif
 }
-
-bool MelderAudio_isPlaying;
-bool MelderAudio_hasBeenInitialized;
 
 static double theStartingTime = 0.0;
 

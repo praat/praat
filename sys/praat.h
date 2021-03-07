@@ -190,12 +190,12 @@ typedef struct {   // read-only
 	MelderColour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;
-extern structPraatApplication theForegroundPraatApplication;
-extern PraatApplication theCurrentPraatApplication;
-extern structPraatObjects theForegroundPraatObjects;
-extern PraatObjects theCurrentPraatObjects;
-extern structPraatPicture theForegroundPraatPicture;
-extern PraatPicture theCurrentPraatPicture;
+inline structPraatApplication theForegroundPraatApplication;
+inline PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
+inline structPraatObjects theForegroundPraatObjects;
+inline PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
+inline structPraatPicture theForegroundPraatPicture;
+inline PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
 char32 *praat_name (int iobject);

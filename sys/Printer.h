@@ -2,7 +2,7 @@
 #define _Printer_h_
 /* Printer.h
  *
- * Copyright (C) 1992-2011,2012,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2017,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,6 @@
 
 #include "Graphics.h"
 
-/* When changing the following structure, update its initialization in Printer.cpp */
-struct Printer {
-	kGraphicsPostscript_spots spots;
-	kGraphicsPostscript_paperSize paperSize;
-	kGraphicsPostscript_orientation orientation;
-	bool postScript, allowDirectPostScript;
-	kGraphicsPostscript_fontChoiceStrategy fontChoiceStrategy;
-	long resolution, paperWidth, paperHeight;
-	double magnification;
-};
-
-extern struct Printer thePrinter;
-
 #if defined (macintosh) || defined (_WIN32)
 	int Printer_postScript_printf (void *stream, const char *format, ... );
 #endif
@@ -45,6 +32,18 @@ int Printer_print (void (*draw) (void *void_me, Graphics g), void *void_me);
 void Printer_nextPage ();
 
 void Printer_prefs ();
+
+struct Printer {
+	kGraphicsPostscript_spots spots;
+	kGraphicsPostscript_paperSize paperSize;
+	kGraphicsPostscript_orientation orientation;
+	bool postScript, allowDirectPostScript;
+	kGraphicsPostscript_fontChoiceStrategy fontChoiceStrategy;
+	long resolution, paperWidth, paperHeight;
+	double magnification;
+};
+
+extern Printer thePrinter;
 
 /* End of file Printer.h */
 #endif
