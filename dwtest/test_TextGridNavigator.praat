@@ -99,8 +99,8 @@ procedure test_topicAndBeforeAndAfter
 	.index1# = {3, 15,  25}
 	.index_before1# = {2, 14, 24}
 	.index_after1# = {4, 16, 26}
-	.label_before1$# = {"sh", "s", "w" }
-	.label_after1$# = {"hv", "q", "sh"}
+	.beforeLabels$# = {"sh", "s", "w" }
+	.afterLabels$# = {"hv", "q", "sh"}
 
 	Find first
 	for .i to size (.index1#)
@@ -109,11 +109,11 @@ procedure test_topicAndBeforeAndAfter
 		.index_before = Get index: 1, "before"
 		assert .index_before = .index_before1# [.i]
 		.label$ = Get label: 1, "before"
-		assert .label$ = .label_before1$# [.i]; '.index' '.label$'
+		assert .label$ = .beforeLabels$# [.i]; '.index' '.label$'
 		.index_after = Get index: 1, "after"
 		assert .index_after = .index_after1# [.i]
 		.label$ = Get label: 1, "after"
-		assert .label$ = .label_after1$# [.i]; '.index' '.label$'
+		assert .label$ = .afterLabels$# [.i]; '.index' '.label$'
 		Find next
 	endfor
 	.numberOfMatches = Get number of matches
@@ -124,7 +124,55 @@ procedure test_topicAndBeforeAndAfter
 	assert .numberOfBeforeMatches = 12
 	.numberOfAfterMatches = Get number of After matches: 1
 	assert .numberOfAfterMatches = 4
-	
+
+	appendInfoLine: tab$, tab$, "Check lists of labels, times, domains"
+
+	.labels$# = List labels: "before"
+	assert size (.labels$#) = size (.index1#)
+	for .i to size (.labels$#)
+		assert .labels$# [.i] = .beforeLabels$# [.i]
+	endfor
+	.labels$# = List labels: "after"
+	assert size (.labels$#) = size (.index1#)
+	for .i to size (.labels$#)
+		assert .labels$# [.i] = .afterLabels$# [.i]
+	endfor
+	topicIndices# = List indices: "topic"
+	beforeIndices# = List indices: "before"
+	afterIndices# = List indices: "after"
+	topicStartTimes# = List start times: "topic"
+	topicEndTimes# = List end times: "topic"
+	beforeStartTimes# = List start times: "before"
+	beforeEndTimes# = List end times: "before"
+	afterStartTimes# = List start times: "after"
+	afterEndTimes# = List end times: "after"
+	domainstt## = List domains: "Topic start to Topic end"
+	assert numberOfRows (domainstt## ) == size (.index1#)
+	domainsmm## = List domains: "Match start to Match end"
+	assert numberOfRows (domainsmm## ) == size (.index1#)
+	for .index to numberOfRows (domainstt## )
+		selectObject: textgrid
+		topicStartTime = Get start time of interval: 1, topicIndices# [.index]
+		topicEndTime = Get end time of interval: 1, topicIndices# [.index]
+		assert topicStartTime = topicStartTimes# [.index]
+		assert topicEndTime = topicEndTimes# [.index]
+
+		beforeStartTime = Get start time of interval: 1, beforeIndices# [.index]
+		beforeEndTime = Get end time of interval: 1, beforeIndices# [.index]
+		assert beforeStartTime = beforeStartTimes# [.index]
+		assert beforeEndTime = beforeEndTimes# [.index]
+
+		afterStartTime = Get start time of interval: 1, afterIndices# [.index]
+		afterEndTime = Get end time of interval: 1, afterIndices# [.index]
+		assert afterStartTime = afterStartTimes# [.index]
+		assert afterEndTime = afterEndTimes# [.index]
+
+		assert topicStartTime = domainstt## [.index, 1]
+		assert topicEndTime = domainstt## [.index, 2]
+		assert beforeStartTime = domainsmm## [.index, 1]
+		assert afterEndTime = domainsmm## [.index, 2]
+	endfor
+	appendInfoLine: tab$, tab$, "Check lists of labels, times, domains OK"
 	removeObject: .navigator
 	appendInfoLine: tab$, "test  before + topic + after OK"
 endproc
