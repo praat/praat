@@ -210,12 +210,6 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 	}
 }
 
-struct structData_Description theCollectionOfDaata_v_description [] = {
-	{ U"size", integerwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (integer), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
-	{ U"items", objectwa, Melder_offsetof (CollectionOf<structThing>*, at), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, nullptr, U"size", nullptr, nullptr },
-	{ }
-};
-
 #define _Collection_implement(klas,genericClass,itemClass,parentClass,version) \
 	static Thing _##klas##_new () { return new genericClass<struct##itemClass>; } \
 	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##parentClass, \

@@ -70,6 +70,7 @@ void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir 
 void Melder_rememberShellDirectory ();
 conststring32 Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderDir homeDir);
+inline structMelderDir Melder_preferencesFolder { };
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);
 

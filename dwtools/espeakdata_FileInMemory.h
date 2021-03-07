@@ -25,12 +25,12 @@
 autoFileInMemorySet create_espeak_ng_FileInMemorySet ();
 
 autoFileInMemoryManager create_espeak_ng_FileInMemoryManager ();
-extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
+inline autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 
-extern autoStrings espeakdata_languages_names;
-extern autoStrings espeakdata_voices_names;
-extern autoTable espeakdata_languages_propertiesTable;
-extern autoTable espeakdata_voices_propertiesTable;
+inline autoStrings espeakdata_languages_names;
+inline autoStrings espeakdata_voices_names;
+inline autoTable espeakdata_languages_propertiesTable;
+inline autoTable espeakdata_voices_propertiesTable;
 
 void espeakdata_praat_init ();
 /*

@@ -26,7 +26,6 @@
 #include "NUMlapack.h"
 
 static struct structmachar_Table machar_table;
-machar_Table NUMfpp = NULL;
 
 /*
 Floating point properties:

@@ -257,9 +257,8 @@ void structEditor :: v_restoreData () {
 
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 	if (my data) {
-		extern structMelderDir praatDir;
 		structMelderFile file { };
-		MelderDir_getFile (& praatDir, U"praat_backToCaller.Data", & file);
+		MelderDir_getFile (& Melder_preferencesFolder, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data, & file);
 		sendsocket (Melder_peek32to8 (my callbackSocket.get()), Melder_peek32to8 (my data -> name.get()));
 	}

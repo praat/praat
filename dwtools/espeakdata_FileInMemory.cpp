@@ -31,12 +31,6 @@
 
 #include "espeakdata_FileInMemory.h"
 
-autoFileInMemoryManager espeak_ng_FileInMemoryManager;
-autoTable espeakdata_languages_propertiesTable;
-autoTable espeakdata_voices_propertiesTable;
-autoStrings espeakdata_voices_names;
-autoStrings espeakdata_languages_names;
-
 #if 0
 static integer Table_getRownumberOfStringInColumn (Table me, conststring32 string, integer icol) {
 	integer row = 0;

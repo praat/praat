@@ -181,7 +181,7 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 void praat_cleanUpName (char32 *name);
 void praat_list_renameAndSelect (int position, conststring32 name);
 
-extern struct PraatP {
+inline struct PraatP {
 	int argc;
 	char **argv;
 	int argumentNumber;

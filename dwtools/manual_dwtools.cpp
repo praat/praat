@@ -5713,13 +5713,13 @@ NORMAL (U"As a simple example consider a TextGridNavigator that searches for the
 	"that matched (or 0 if no match could be found). The next match can then be found by using the ##Find next# command "
 	"and its value can be queried then. This may go on until the last match has been found. A following ##Find next# "
 	"will not be able to find a match and "
-	"consequently the query for the index of the match will return a 0. ")
+	"consequently the query for the index of the match will return 0.")
 NORMAL (U"Instead of starting at the beginning of the TextGrid you could also start at the end with ##Find last# and "
 	"next finding previous matches with ##Find previous# or you could start the search at a certain time with "
 	"##Find next after time# or ##Find previous before time#.")
 NORMAL (U"A more complex example could query for a vowel from the same %topic set as above but matches only if it is "
 	"preceded by an unvoiced plosive from the %Before set \"p t k\" and also is followed by a nasal from the "
-	"%After set \"m n\". ")
+	"%After set \"m n\".")
 NORMAL (U"The two examples above were both one tier searches and these searches all follow the same scheme: they "
 	"search for a %%topic symbol% which may be preceded by a %%before symbol% and/or followed by an %after symbol%. "
 	"The %topic, %before and %after symbol may belong to different sets. With a choice from a number of Boolean "

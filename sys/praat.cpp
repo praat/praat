@@ -56,25 +56,17 @@ Thing_implement (Praat_Command, Thing, 0);
 #define WINDOW_WIDTH 520
 #define WINDOW_HEIGHT 700
 
-structPraatApplication theForegroundPraatApplication;
-PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
-structPraatObjects theForegroundPraatObjects;
-PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
-structPraatPicture theForegroundPraatPicture;
-PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
-struct PraatP praatP;
 static char32 programName [64];
 static structMelderDir homeDir { };
 
 /*
- * praatDir: a folder containing preferences file, buttons file, message files, tracing file, plugins.
+ * Melder_preferencesFolder: a folder containing preferences file, buttons file, message files, tracing file, plugins.
  *    Unix:   /home/miep/.praat-dir   (without slash)
  *    Windows XP/Vista/7/8/10:   \\myserver\myshare\Miep\Praat
  *                         or:   C:\Users\Miep\Praat
  *    MacOS:   /Users/Miep/Library/Preferences/Praat Prefs
  */
-extern structMelderDir praatDir;
-structMelderDir praatDir { };
+// inline structMelderDir Melder_preferencesFolder { };   // already declared in Melder_files.h (checked 2021-03-07)
 
 /*
  * prefsFile: preferences file.
@@ -1151,7 +1143,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			praatP.ignorePlugins = true;
 			praatP.argumentNumber += 1;
 		} else if (strnequ (argv [praatP.argumentNumber], "--pref-dir=", 11)) {
-			Melder_pathToDir (Melder_peek8to32 (argv [praatP.argumentNumber] + 11), & praatDir);
+			Melder_pathToDir (Melder_peek8to32 (argv [praatP.argumentNumber] + 11), & Melder_preferencesFolder);
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--version")) {
 			#define xstr(s) str(s)
@@ -1275,7 +1267,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	 *    C:\Users\Miep\Praat\Buttons5.ini
 	 * Also create names for message and tracing files.
 	 */
-	if (MelderDir_isNull (& praatDir)) {   // not yet set by the --prefdir option?
+	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --prefdir option?
 		structMelderDir prefParentDir { };   // directory under which to store our preferences directory
 		Melder_getPrefDir (& prefParentDir);
 
@@ -1296,7 +1288,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			#else
 				Melder_createDirectory (& prefParentDir, name, 0);
 			#endif
-			MelderDir_getSubdir (& prefParentDir, name, & praatDir);
+			MelderDir_getSubdir (& prefParentDir, name, & Melder_preferencesFolder);
 		} catch (MelderError) {
 			/*
 			 * If we arrive here, the directory could not be created,
@@ -1305,22 +1297,22 @@ void praat_init (conststring32 title, int argc, char **argv)
 			Melder_clearError ();
 		}
 	}
-	if (! MelderDir_isNull (& praatDir)) {
+	if (! MelderDir_isNull (& Melder_preferencesFolder)) {
 		#if defined (UNIX)
-			MelderDir_getFile (& praatDir, U"prefs5", & prefsFile);
-			MelderDir_getFile (& praatDir, U"buttons5", & buttonsFile);
-			MelderDir_getFile (& praatDir, U"pid", & pidFile);
-			MelderDir_getFile (& praatDir, U"message", & messageFile);
-			MelderDir_getFile (& praatDir, U"tracing", & tracingFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"prefs5", & prefsFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"buttons5", & buttonsFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"pid", & pidFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"message", & messageFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"tracing", & tracingFile);
 		#elif defined (_WIN32)
-			MelderDir_getFile (& praatDir, U"Preferences5.ini", & prefsFile);
-			MelderDir_getFile (& praatDir, U"Buttons5.ini", & buttonsFile);
-			MelderDir_getFile (& praatDir, U"Message.txt", & messageFile);
-			MelderDir_getFile (& praatDir, U"Tracing.txt", & tracingFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Preferences5.ini", & prefsFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Buttons5.ini", & buttonsFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Message.txt", & messageFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
 		#elif defined (macintosh)
-			MelderDir_getFile (& praatDir, U"Prefs5", & prefsFile);
-			MelderDir_getFile (& praatDir, U"Buttons5", & buttonsFile);
-			MelderDir_getFile (& praatDir, U"Tracing.txt", & tracingFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Prefs5", & prefsFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Buttons5", & buttonsFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
 		#endif
 		Melder_tracingToFile (& tracingFile);
 	}
@@ -1584,20 +1576,20 @@ void praat_run () {
 		executeStartUpFile (& homeDir, U"", U"-user-startUp");
 	#endif
 
-	if (! MelderDir_isNull (& praatDir) && ! praatP.ignorePlugins) {
+	if (! MelderDir_isNull (& Melder_preferencesFolder) && ! praatP.ignorePlugins) {
 		trace (U"install plug-ins");
 		trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		/* The Praat phase should remain praat_STARTING_UP,
 		 * because any added commands must not be included in the buttons file.
 		 */
 		structMelderFile searchPattern { };
-		MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
+		MelderDir_getFile (& Melder_preferencesFolder, U"plugin_*", & searchPattern);
 		try {
 			autoSTRVEC folderNames = folderNames_STRVEC (Melder_fileToPath (& searchPattern));
 			for (integer i = 1; i <= folderNames.size; i ++) {
 				structMelderDir pluginDir { };
 				structMelderFile plugin { };
-				MelderDir_getSubdir (& praatDir, folderNames [i].get(), & pluginDir);
+				MelderDir_getSubdir (& Melder_preferencesFolder, folderNames [i].get(), & pluginDir);
 				MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
 				if (MelderFile_readable (& plugin)) {
 					Melder_backgrounding = true;

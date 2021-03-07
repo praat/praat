@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2012,2013-2018 Paul Boersma
+ * Copyright (C) 1992-2012,2013-2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,7 +319,7 @@ Behaviour:
 	If not, the recognizers installed with Data_recognizeFileType are tried.
 */
 
-extern structMelderDir Data_directoryBeingRead;
+inline structMelderDir Data_directoryBeingRead { };
 
 int Data_publish (autoDaata me);
 
