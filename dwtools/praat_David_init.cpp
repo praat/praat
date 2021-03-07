@@ -7955,6 +7955,24 @@ DO
 	NUMVEC_ONE_END
 }
 
+FORM (STRVEC_TextGridNavigator_listLabels, U"TextGridNavigator: List labels", nullptr) {
+	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
+	OK
+DO
+	STRVEC_ONE (TextGridNavigator)
+		autoSTRVEC result = TextGridNavigator_listLabels (me, where);
+	STRVEC_ONE_END
+}
+
+FORM (NUMMAT_TextGridNavigator_listDomains, U"", nullptr) {
+	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
+	OK
+DO
+	NUMMAT_ONE (TextGridNavigator)
+		autoMAT result = TextGridNavigator_listDomains (me, matchDomain);
+	NUMMAT_ONE_END
+}
+
 FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
@@ -9395,7 +9413,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 1, U"-- number of matches --", nullptr, 1, nullptr);
 	praat_addAction1 (classTextGridNavigator, 1, U"List indices...", nullptr, 1, NUMVEC_TextGridNavigator_listIndices);
 	praat_addAction1 (classTextGridNavigator, 1, U"List start times...", nullptr, 1, NUMVEC_TextGridNavigator_listStartTimes);
+	praat_addAction1 (classTextGridNavigator, 1, U"List labels...", nullptr, 1, STRVEC_TextGridNavigator_listLabels);
 	praat_addAction1 (classTextGridNavigator, 1, U"List end times...", nullptr, 1, NUMVEC_TextGridNavigator_listEndTimes);
+	praat_addAction1 (classTextGridNavigator, 1, U"List domains...", nullptr, 1, NUMMAT_TextGridNavigator_listDomains);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of matches", nullptr, 1, INTEGER_TextGridNavigator_getNumberOfMatches);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of Topic matches...", nullptr, 1, INTEGER_TextGridNavigator_getNumberOfTopicMatches);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of Before matches...", nullptr, 1, INTEGER_TextGridNavigator_getNumberOfBeforeMatches);

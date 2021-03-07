@@ -88,6 +88,7 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer indexInTopicTier, 
 autoINTVEC TextGridNavigator_listIndices (TextGridNavigator me, kContext_where where);
 autoVEC TextGridNavigator_listStartTimes (TextGridNavigator me, kContext_where where);
 autoVEC TextGridNavigator_listEndTimes (TextGridNavigator me, kContext_where where);
+autoMAT TextGridNavigator_listDomains (TextGridNavigator me, kMatchDomain matchDomain);
 autoSTRVEC TextGridNavigator_listLabels (TextGridNavigator me, kContext_where where);
 
 

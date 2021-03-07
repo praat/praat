@@ -92,6 +92,6 @@ static inline bool TextGridTierNavigator_isBeforeMatch (TextGridTierNavigator me
 	return TextGridTierNavigator_findBeforeIndex (me, topicIndex) > 0;
 }
 
-void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime);
+void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, kMatchDomain matchDomain, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime);
 
 #endif /* _TextGridTierNavigator_h_ */

@@ -419,9 +419,9 @@ integer TextGridTierNavigator_getNumberOfTopicMatches (TextGridTierNavigator me)
 	return numberOfMatches;
 }
 
-void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime) {
+void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, kMatchDomain matchDomain, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime) {
 	double startTime, endTime;
-	if (my matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
+	if (matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
 		if (my navigationContext -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
 			startTime = my v_getStartTime (topicIndex);
 			endTime =  my v_getEndTime (topicIndex);
@@ -454,22 +454,22 @@ void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, integer top
 				endTime = my v_getEndTime (afterIndex);
 			}
 		}
-	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_TOPIC_END) {
+	} else if (matchDomain == kMatchDomain::TOPIC_START_TO_TOPIC_END) {
 		startTime = my v_getStartTime (topicIndex);
 		endTime =  my v_getEndTime (topicIndex);
-	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END) {
+	} else if (matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END) {
 		startTime = my v_getStartTime (beforeIndex);
 		endTime =  my v_getEndTime (topicIndex);
-	} else if (my matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END) {
+	} else if (matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END) {
 		startTime = my v_getStartTime (topicIndex);
 		endTime = my v_getEndTime (afterIndex);
-	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END) {
+	} else if (matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END) {
 		startTime = my v_getStartTime (beforeIndex);
 		endTime = my v_getEndTime (afterIndex);
-	} else if (my matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END) {
+	} else if (matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END) {
 		startTime = my v_getStartTime (beforeIndex);
 		endTime = my v_getEndTime (beforeIndex);
-	} else if (my matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END) {
+	} else if (matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END) {
 		startTime = my v_getStartTime (afterIndex);
 		endTime = my v_getEndTime (afterIndex);
 	}
