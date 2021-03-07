@@ -33,6 +33,7 @@
 #include <memory>   // unique_ptr
 #include <new>   // placement new
 #include <algorithm>   // std::min
+#include <limits>   // std::numeric_limits
 
 /*
 	Law of Demeter for class functions defined outside class definition.
