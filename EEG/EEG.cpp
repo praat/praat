@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2020 Paul Boersma
+ * Copyright (C) 2011-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -639,7 +639,7 @@ autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 			Melder_throw (U"Cannot concatenate zero EEG objects.");
 		EEG first = my at [1];
 		const integer numberOfChannels = first -> numberOfChannels;
-		autoSTRVEC channelNames = newSTRVECcopy (first -> channelNames.get());
+		autoSTRVEC channelNames = copy_STRVEC (first -> channelNames.get());
 		for (integer ieeg = 2; ieeg <= my size; ieeg ++) {
 			EEG other = my at [ieeg];
 			if (other -> numberOfChannels != numberOfChannels)
@@ -674,7 +674,7 @@ autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoEEG thee = Thing_new (EEG);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames = newSTRVECcopy (my channelNames.get());
+		thy channelNames = copy_STRVEC (my channelNames.get());
 		thy sound = Sound_extractPart (my sound.get(), tmin, tmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 		thy textgrid = TextGrid_extractPart (my textgrid.get(), tmin, tmax, preserveTimes);
 		thy xmin = thy textgrid -> xmin;
@@ -726,7 +726,7 @@ autoEEG EEG_MixingMatrix_to_EEG_unmix (EEG me, MixingMatrix you) {
 	his sound = Sound_MixingMatrix_unmix (my sound.get(), you);
 	his textgrid = Data_copy (my textgrid.get());
 	his numberOfChannels = your numberOfColumns;
-	his channelNames = newSTRVECcopy (your columnLabels.get());
+	his channelNames = copy_STRVEC (your columnLabels.get());
 	return him;
 }
 
@@ -744,7 +744,7 @@ autoEEG EEG_MixingMatrix_to_EEG_mix (EEG me, MixingMatrix you) {
 	his sound = Sound_MixingMatrix_mix (my sound.get(), you);
 	his textgrid = Data_copy (my textgrid.get());
 	his numberOfChannels = your numberOfRows;
-	his channelNames = newSTRVECcopy (your rowLabels.get());
+	his channelNames = copy_STRVEC (your rowLabels.get());
 	return him;
 }
 

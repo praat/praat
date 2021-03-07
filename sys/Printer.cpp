@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011,2012,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1998-2017,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,15 @@
 #endif
 
 /*
- * Everything must look the same on every printer, including on PDF,
- * so the margins must be constant with respect to the paper, not to the writable page.
- */
-
-/* exported */ struct Printer thePrinter = {
-	kGraphicsPostscript_spots::DEFAULT, kGraphicsPostscript_paperSize::DEFAULT, kGraphicsPostscript_orientation::DEFAULT, false,
-	true, kGraphicsPostscript_fontChoiceStrategy::DEFAULT,
+	Everything must look the same on every printer, including on PDF,
+	so the margins must be constant with respect to the paper, not to the writable page.
+*/
+Printer thePrinter = {
+	kGraphicsPostscript_spots::DEFAULT,
+	kGraphicsPostscript_paperSize::DEFAULT,
+	kGraphicsPostscript_orientation::DEFAULT,
+	false, true,
+	kGraphicsPostscript_fontChoiceStrategy::DEFAULT,
 	600, 5100, 6600,
 	1.0
 };

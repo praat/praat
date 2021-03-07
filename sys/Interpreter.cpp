@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2020 Paul Boersma
+ * Copyright (C) 1993-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 #include "Interpreter.h"
 #include "praatP.h"
-extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
 #include "praat_version.h"
@@ -41,10 +40,6 @@ extern structMelderDir praatDir;
 #define Interpreter_BUTTON 13
 #define Interpreter_OPTION 14
 #define Interpreter_COMMENT 15
-
-autoVEC theInterpreterNumvec;
-autoMAT theInterpreterNummat;
-autoSTRVEC theInterpreterStrvec;
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -766,7 +761,7 @@ inline static void StringArrayVariable_move (InterpreterVariable variable, STRVE
 		/*
 			Statement like: a$# = b$#   // with non-matching sizes
 		*/
-		variable -> stringArrayValue = newSTRVECcopy (movedVector);
+		variable -> stringArrayValue = copy_STRVEC (movedVector);
 	}
 }
 
@@ -1554,7 +1549,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		Interpreter_addStringVariable (me, U"shellDirectory$", Melder_getShellDirectory ());
 		structMelderDir dir { }; Melder_getDefaultDir (& dir);
 		Interpreter_addStringVariable (me, U"defaultDirectory$", Melder_dirToPath (& dir));
-		Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_dirToPath (& praatDir));
+		Interpreter_addStringVariable (me, U"preferencesDirectory$", Melder_dirToPath (& Melder_preferencesFolder));
 		Melder_getHomeDir (& dir);
 		Interpreter_addStringVariable (me, U"homeDirectory$", Melder_dirToPath (& dir));
 		Melder_getTempDir (& dir);

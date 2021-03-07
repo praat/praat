@@ -47,7 +47,6 @@ extern void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile o
 extern void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion);
 extern void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f);
 extern void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int formatVersion);
-extern struct structData_Description theCollectionOfDaata_v_description [3];
 
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct ArrayOf {
@@ -459,7 +458,12 @@ struct CollectionOf : structDaata {
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
-		return & theCollectionOfDaata_v_description [0];
+		static structData_Description description [3] = {
+			{ U"size", integerwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (integer), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
+			{ U"items", objectwa, Melder_offsetof (CollectionOf<structThing>*, at), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, nullptr, U"size", nullptr, nullptr },
+			{ }
+		};
+		return & description [0];
 	}
 
 	/*
@@ -485,7 +489,6 @@ struct CollectionOf : structDaata {
 	}
 
 _Collection_declare (Collection, CollectionOf, Thing);
-
 
 #pragma mark - class Ordered
 /*

@@ -49,10 +49,7 @@
 #include "enums_getValue.h"
 #include "FormantModeler_enums.h"
 
-extern machar_Table NUMfpp;
-
 Thing_implement (FormantModeler, Function, 0);
-
 
 void structFormantModeler :: v_info () {
 	MelderInfo_writeLine (U"Time domain:");
