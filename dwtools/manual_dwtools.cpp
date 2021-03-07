@@ -5779,7 +5779,7 @@ CODE (U"navigator = To TextGridNavigator (topic search): tierNumber, \"a e i u o
 CODE (U"...\"is equal to\", \"OR\", \"Match start to Match end\"")
 CODE (U"startTimes\\#  = List start times: \"topic\"")
 CODE (U"endTimes\\#  = List end times: \"topic\"")
-CODE (U"for index to size (startTimes\\# ")
+CODE (U"for index to size (startTimes\\# )")
 CODE (U"    duration = endTimes\\#  [index] - startTimes\\#  [index]")
 CODE (U"    ...")
 CODE (U"endfor")
