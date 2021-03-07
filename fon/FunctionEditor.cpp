@@ -29,10 +29,10 @@ Thing_implement (FunctionEditor, Editor, 0);
 #include "FunctionEditor_prefs.h"
 #include "prefs_copyToInstance.h"
 #include "FunctionEditor_prefs.h"
-
+#include "GraphicsP.h"
 
 namespace {
-	constexpr double maximumScrollBarValue = 2000000000;
+	constexpr double maximumScrollBarValue = 2'000'000'000.0;
 	constexpr double RELATIVE_PAGE_INCREMENT = 0.8;
 	constexpr double SCROLL_INCREMENT_FRACTION = 20.0;
 	constexpr int TEXT_HEIGHT = 50;
@@ -82,262 +82,308 @@ static void updateGroup (FunctionEditor me) {
 	}
 }
 
-void structFunctionEditor :: draw () {
+static void _drawBackgroundAndData (FunctionEditor me) {
 	if (Melder_debug == 55)
-		Melder_casual (Thing_messageNameAndAddress (this), U" draw");
-	const bool leftFromWindow = ( our startWindow > our tmin );
-	const bool rightFromWindow = ( our endWindow < our tmax );
-	const bool cursorIsVisible = ( our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow );
-	const bool selectionIsNonempty = ( our endSelection > our startSelection );
+		Melder_casual (Thing_messageNameAndAddress (me), U" draw");
+	const bool leftFromWindow = ( my startWindow > my tmin );
+	const bool rightFromWindow = ( my endWindow < my tmax );
+	const bool cursorIsVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
+	const bool selectionIsNonempty = ( my endSelection > my startSelection );
 
 	/*
 		Update selection.
 	*/
-	const bool startIsVisible = ( our startSelection > our startWindow && our startSelection < our endWindow );
-	const bool endIsVisible = ( our endSelection > our startWindow && our endSelection < our endWindow );
+	const bool startIsVisible = ( my startSelection > my startWindow && my startSelection < my endWindow );
+	const bool endIsVisible = ( my endSelection > my startWindow && my endSelection < my endWindow );
 
 	/*
 		Update markers.
 	*/
-	our numberOfMarkers = 0;
+	my numberOfMarkers = 0;
 	if (startIsVisible)
-		our marker [++ our numberOfMarkers] = our startSelection;
-	if (endIsVisible && our endSelection != our startSelection)
-		our marker [++ our numberOfMarkers] = our endSelection;
-	our marker [++ our numberOfMarkers] = our endWindow;
-	sort_VEC_inout (VEC (& our marker [1], our numberOfMarkers));
+		my marker [++ my numberOfMarkers] = my startSelection;
+	if (endIsVisible && my endSelection != my startSelection)
+		my marker [++ my numberOfMarkers] = my endSelection;
+	my marker [++ my numberOfMarkers] = my endWindow;
+	sort_VEC_inout (VEC (& my marker [1], my numberOfMarkers));
 
 	/*
 		Update rectangles.
 	*/
 
 	for (integer i = 0; i < 8; i++)
-		our rect [i]. left = our rect [i]. right = 0;
+		my rect [i]. left = my rect [i]. right = 0;
 
 	/*
 		0: rectangle for total.
 	*/
-	our rect [0]. left = our functionViewerLeft + ( leftFromWindow ? 0 : MARGIN );
-	our rect [0]. right = our functionViewerRight - ( rightFromWindow ? 0 : MARGIN );
-	our rect [0]. bottom = BOTTOM_MARGIN;
-	our rect [0]. top = BOTTOM_MARGIN + space;
+	my rect [0]. left = my _functionViewerLeft + ( leftFromWindow ? 0 : my MARGIN );
+	my rect [0]. right = my _functionViewerRight - ( rightFromWindow ? 0 : my MARGIN );
+	my rect [0]. bottom = my BOTTOM_MARGIN;
+	my rect [0]. top = my BOTTOM_MARGIN + my space;
 
 	/*
 		1: rectangle for visible part.
 	*/
-	our rect [1]. left = our functionViewerLeft + MARGIN;
-	our rect [1]. right = our functionViewerRight - MARGIN;
-	our rect [1]. bottom = BOTTOM_MARGIN + space;
-	our rect [1]. top = BOTTOM_MARGIN + space * ( our numberOfMarkers > 1 ? 2 : 3 );
+	my rect [1]. left = my _functionViewerLeft + my MARGIN;
+	my rect [1]. right = my _functionViewerRight - my MARGIN;
+	my rect [1]. bottom = my BOTTOM_MARGIN + my space;
+	my rect [1]. top = my BOTTOM_MARGIN + my space * ( my numberOfMarkers > 1 ? 2 : 3 );
 
 	/*
 		2: rectangle for left from visible part.
 	*/
 	if (leftFromWindow) {
-		our rect [2]. left = our functionViewerLeft;
-		our rect [2]. right = our functionViewerLeft + MARGIN;
-		our rect [2]. bottom = BOTTOM_MARGIN + space;
-		our rect [2]. top = BOTTOM_MARGIN + space * 2;
+		my rect [2]. left = my _functionViewerLeft;
+		my rect [2]. right = my _functionViewerLeft + my MARGIN;
+		my rect [2]. bottom = my BOTTOM_MARGIN + my space;
+		my rect [2]. top = my BOTTOM_MARGIN + my space * 2;
 	}
 
 	/*
 		3: rectangle for right from visible part.
 	*/
 	if (rightFromWindow) {
-		our rect [3]. left = our functionViewerRight - MARGIN;
-		our rect [3]. right = our functionViewerRight;
-		our rect [3]. bottom = BOTTOM_MARGIN + space;
-		our rect [3]. top = BOTTOM_MARGIN + space * 2;
+		my rect [3]. left = my _functionViewerRight - my MARGIN;
+		my rect [3]. right = my _functionViewerRight;
+		my rect [3]. bottom = my BOTTOM_MARGIN + my space;
+		my rect [3]. top = my BOTTOM_MARGIN + my space * 2;
 	}
 
 	/*
 		4, 5, 6: rectangles between markers visible in visible part.
 	*/
-	if (our numberOfMarkers > 1) {
-		const double window = our endWindow - our startWindow;
-		for (integer i = 1; i <= our numberOfMarkers; i ++) {
-			our rect [3 + i]. left = i == 1 ? our functionViewerLeft + MARGIN : our functionViewerLeft + MARGIN + (our functionViewerRight - our functionViewerLeft - MARGIN * 2) *
-				(our marker [i - 1] - our startWindow) / window;
-			our rect [3 + i]. right = our functionViewerLeft + MARGIN + (our functionViewerRight - our functionViewerLeft - MARGIN * 2) *
-				(our marker [i] - our startWindow) / window;
-			our rect [3 + i]. bottom = BOTTOM_MARGIN + space * 2;
-			our rect [3 + i]. top = BOTTOM_MARGIN + space * 3;
+	if (my numberOfMarkers > 1) {
+		const double window = my endWindow - my startWindow;
+		for (integer i = 1; i <= my numberOfMarkers; i ++) {
+			my rect [3 + i]. left = i == 1 ? my _functionViewerLeft + my MARGIN : my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) *
+				(my marker [i - 1] - my startWindow) / window;
+			my rect [3 + i]. right = my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) *
+				(my marker [i] - my startWindow) / window;
+			my rect [3 + i]. bottom = my BOTTOM_MARGIN + my space * 2;
+			my rect [3 + i]. top = my BOTTOM_MARGIN + my space * 3;
 		}
 	}
-	
+
 	if (selectionIsNonempty) {
-		const double window = our endWindow - our startWindow;
+		const double window = my endWindow - my startWindow;
 		const double left =
-			our startSelection == our startWindow ? our functionViewerLeft + MARGIN :
-			our startSelection == our tmin ? our functionViewerLeft :
-			our startSelection < our startWindow ? our functionViewerLeft + MARGIN * 0.3 :
-			our startSelection < our endWindow ? our functionViewerLeft + MARGIN + (our functionViewerRight - our functionViewerLeft - MARGIN * 2) * (our startSelection - our startWindow) / window :
-			our startSelection == our endWindow ? our functionViewerRight - MARGIN : our functionViewerRight - MARGIN * 0.7;
+			my startSelection == my startWindow ? my _functionViewerLeft + my MARGIN :
+			my startSelection == my tmin ? my _functionViewerLeft :
+			my startSelection < my startWindow ? my _functionViewerLeft + my MARGIN * 0.3 :
+			my startSelection < my endWindow ? my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) * (my startSelection - my startWindow) / window :
+			my startSelection == my endWindow ? my _functionViewerRight - my MARGIN : my _functionViewerRight - my MARGIN * 0.7;
 		const double right =
-			our endSelection < our startWindow ? our functionViewerLeft + MARGIN * 0.7 :
-			our endSelection == our startWindow ? our functionViewerLeft + MARGIN :
-			our endSelection < our endWindow ? our functionViewerLeft + MARGIN + (our functionViewerRight - our functionViewerLeft - MARGIN * 2) * (our endSelection - our startWindow) / window :
-			our endSelection == our endWindow ? our functionViewerRight - MARGIN :
-			our endSelection < our tmax ? our functionViewerRight - MARGIN * 0.3 : our functionViewerRight;
-		our rect [7]. left = left;
-		our rect [7]. right = right;
-		our rect [7]. bottom = our height_pxlt - space - TOP_MARGIN;
-		our rect [7]. top = our height_pxlt - TOP_MARGIN;
+			my endSelection < my startWindow ? my _functionViewerLeft + my MARGIN * 0.7 :
+			my endSelection == my startWindow ? my _functionViewerLeft + my MARGIN :
+			my endSelection < my endWindow ? my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) * (my endSelection - my startWindow) / window :
+			my endSelection == my endWindow ? my _functionViewerRight - my MARGIN :
+			my endSelection < my tmax ? my _functionViewerRight - my MARGIN * 0.3 : my _functionViewerRight;
+		my rect [7]. left = left;
+		my rect [7]. right = right;
+		my rect [7]. bottom = my height_pxlt - my space - my TOP_MARGIN;
+		my rect [7]. top = my height_pxlt - my TOP_MARGIN;
 	}
 
 	/*
 		Window background.
 	*/
-	our viewAllAsPixelettes ();
-	Graphics_setColour (our graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
-	Graphics_fillRectangle (our graphics.get(), our functionViewerLeft, our selectionViewerRight, BOTTOM_MARGIN, our height_pxlt);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
+	my viewAllAsPixelettes ();
+	Graphics_setColour (my graphics.get(), Melder_WINDOW_BACKGROUND_COLOUR);
+	Graphics_fillRectangle (my graphics.get(), my _functionViewerLeft, my _selectionViewerRight, my BOTTOM_MARGIN, my height_pxlt);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 
-	our viewFunctionViewerAsPixelettes ();
-	Graphics_setFont (our graphics.get(), kGraphics_font :: HELVETICA);
-	Graphics_setFontSize (our graphics.get(), 12.0);
-	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
+	my viewFunctionViewerAsPixelettes ();
+	Graphics_setFont (my graphics.get(), kGraphics_font :: HELVETICA);
+	Graphics_setFontSize (my graphics.get(), 12.0);
+	Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (integer i = 0; i < 8; i ++) {
-		const double left = our rect [i]. left, right = our rect [i]. right;
+		const double left = my rect [i]. left, right = my rect [i]. right;
 		if (left < right)
-			Graphics_button (our graphics.get(), left, right, our rect [i]. bottom, our rect [i]. top);
+			Graphics_button (my graphics.get(), left, right, my rect [i]. bottom, my rect [i]. top);
 	}
-	const double verticalCorrection = our height_pxlt / (our height_pxlt - 111.0 + 11.0)
+	const double verticalCorrection = my height_pxlt / (my height_pxlt - 111.0 + 11.0)
 		#ifdef _WIN32
 			* 1.5
 		#endif
 	;
 	for (integer i = 0; i < 8; i ++) {
-		const double left = our rect [i]. left, right = our rect [i]. right;
-		const double bottom = our rect [i]. bottom, top = our rect [i]. top;
+		const double left = my rect [i]. left, right = my rect [i]. right;
+		const double bottom = my rect [i]. bottom, top = my rect [i]. top;
 		if (left < right) {
-			conststring8 format = our v_format_long ();
+			conststring8 format = my v_format_long ();
 			double value = undefined, inverseValue = 0.0;
 			switch (i) {
 				case 0: {
-					format = our v_format_totalDuration ();
-					value = our tmax - our tmin;
+					format = my v_format_totalDuration ();
+					value = my tmax - my tmin;
 				} break; case 1: {
-					format = our v_format_window ();
-					value = our endWindow - our startWindow;
+					format = my v_format_window ();
+					value = my endWindow - my startWindow;
 					/*
 						Window domain text.
-					*/	
-					Graphics_setColour (our graphics.get(), Melder_BLUE);
-					Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-					Graphics_text (our graphics.get(), left, 0.5 * (bottom + top) - verticalCorrection,
-							Melder_fixed (our startWindow, our v_fixedPrecision_long ()));
-					Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-					Graphics_text (our graphics.get(), right, 0.5 * (bottom + top) - verticalCorrection,
-							Melder_fixed (our endWindow, our v_fixedPrecision_long ()));
-					Graphics_setColour (our graphics.get(), Melder_BLACK);
-					Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
+					*/
+					Graphics_setColour (my graphics.get(), Melder_BLUE);
+					Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
+					Graphics_text (my graphics.get(), left, 0.5 * (bottom + top) - verticalCorrection,
+							Melder_fixed (my startWindow, my v_fixedPrecision_long ()));
+					Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
+					Graphics_text (my graphics.get(), right, 0.5 * (bottom + top) - verticalCorrection,
+							Melder_fixed (my endWindow, my v_fixedPrecision_long ()));
+					Graphics_setColour (my graphics.get(), Melder_BLACK);
+					Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 				} break; case 2: {
-					value = our startWindow - our tmin;
+					value = my startWindow - my tmin;
 				} break; case 3: {
-					value = our tmax - our endWindow;
+					value = my tmax - my endWindow;
 				} break; case 4: {
-					value = our marker [1] - our startWindow;
+					value = my marker [1] - my startWindow;
 				} break; case 5: {
-					value = our marker [2] - our marker [1];
+					value = my marker [2] - my marker [1];
 				} break; case 6: {
-					value = our marker [3] - our marker [2];
+					value = my marker [3] - my marker [2];
 				} break; case 7: {
-					format = our v_format_selection ();
-					value = our endSelection - our startSelection;
+					format = my v_format_selection ();
+					value = my endSelection - my startSelection;
 					inverseValue = 1.0 / value;
 				}
 			}
 			char text8 [100];
 			snprintf (text8, 100, format, value, inverseValue);
 			autostring32 text = Melder_8to32 (text8);
-			if (Graphics_textWidth (our graphics.get(), text.get()) < right - left) {
-				Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
-			} else if (format == our v_format_long()) {
-				snprintf (text8, 100, our v_format_short(), value);
+			if (Graphics_textWidth (my graphics.get(), text.get()) < right - left) {
+				Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
+			} else if (format == my v_format_long()) {
+				snprintf (text8, 100, my v_format_short(), value);
 				text = Melder_8to32 (text8);
-				if (Graphics_textWidth (our graphics.get(), text.get()) < right - left)
-					Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
+				if (Graphics_textWidth (my graphics.get(), text.get()) < right - left)
+					Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 			} else {
-				snprintf (text8, 100, our v_format_long(), value);
+				snprintf (text8, 100, my v_format_long(), value);
 				text = Melder_8to32 (text8);
-				if (Graphics_textWidth (our graphics.get(), text.get()) < right - left) {
-					Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
+				if (Graphics_textWidth (my graphics.get(), text.get()) < right - left) {
+					Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 				} else {
-					snprintf (text8, 100, our v_format_short(), our endSelection - our startSelection);
+					snprintf (text8, 100, my v_format_short(), my endSelection - my startSelection);
 					text = Melder_8to32 (text8);
-					if (Graphics_textWidth (our graphics.get(), text.get()) < right - left)
-						Graphics_text (our graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
+					if (Graphics_textWidth (my graphics.get(), text.get()) < right - left)
+						Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 				}
 			}
 		}
 	}
 
-	our viewTallDataAsWorldByFraction ();
+	my viewTallDataAsWorldByPixelettes ();
 
 	/*
 		Red marker text.
 	*/
-	Graphics_setColour (our graphics.get(), Melder_RED);
+	Graphics_setColour (my graphics.get(), Melder_RED);
 	if (cursorIsVisible) {
-		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (our graphics.get(), our startSelection, our height_pxlt - (TOP_MARGIN + space*0.9) - verticalCorrection * 7,
-				Melder_fixed (our startSelection, our v_fixedPrecision_long()));
+		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (my graphics.get(), my startSelection, my height_pxlt - (my TOP_MARGIN + my space*0.9) - verticalCorrection * 7,
+				Melder_fixed (my startSelection, my v_fixedPrecision_long()));
 	}
 	if (startIsVisible && selectionIsNonempty) {
-		Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (our graphics.get(), our startSelection, our height_pxlt - (TOP_MARGIN + space/2) - verticalCorrection,
-				Melder_fixed (our startSelection, our v_fixedPrecision_long()));
+		Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (my graphics.get(), my startSelection, my height_pxlt - (my TOP_MARGIN + my space/2) - verticalCorrection,
+				Melder_fixed (my startSelection, my v_fixedPrecision_long()));
 	}
 	if (endIsVisible && selectionIsNonempty) {
-		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-		Graphics_text (our graphics.get(), our endSelection, our height_pxlt - (TOP_MARGIN + space/2) - verticalCorrection,
-				Melder_fixed (our endSelection, our v_fixedPrecision_long()));
+		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
+		Graphics_text (my graphics.get(), my endSelection, my height_pxlt - (my TOP_MARGIN + my space/2) - verticalCorrection,
+				Melder_fixed (my endSelection, my v_fixedPrecision_long()));
 	}
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
 
 	/*
 		To reduce flashing, give our descendants the opportunity to prepare their data.
 	*/
-	our v_prepareDraw ();
+	my v_prepareDraw ();
 
 	/*
 		Start of inner drawing.
 	*/
-	our viewDataAsWorldByFraction ();
-	our v_draw ();
+	my viewDataAsWorldByFraction ();
+	my v_draw ();
 
 	/*
 		Red dotted marker lines.
 	*/
-	our viewDataAsWorldByFraction ();
-	Graphics_setColour (our graphics.get(), Melder_RED);
-	Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
-	const double bottom = our v_getBottomOfSoundAndAnalysisArea ();
+	my viewDataAsWorldByFraction ();
+	Graphics_setColour (my graphics.get(), Melder_RED);
+	Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
+	const double bottom = my v_getBottomOfSoundAndAnalysisArea ();
 	if (cursorIsVisible)
-		Graphics_line (our graphics.get(), our startSelection, bottom, our startSelection, 1.0);
+		Graphics_line (my graphics.get(), my startSelection, bottom, my startSelection, 1.0);
 	if (startIsVisible)
-		Graphics_line (our graphics.get(), our startSelection, bottom, our startSelection, 1.0);
+		Graphics_line (my graphics.get(), my startSelection, bottom, my startSelection, 1.0);
 	if (endIsVisible)
-		Graphics_line (our graphics.get(), our endSelection, bottom, our endSelection, 1.0);
-	Graphics_setColour (our graphics.get(), Melder_BLACK);
-	Graphics_setLineType (our graphics.get(), Graphics_DRAWN);
+		Graphics_line (my graphics.get(), my endSelection, bottom, my endSelection, 1.0);
+	Graphics_setColour (my graphics.get(), Melder_BLACK);
+	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 
 	/*
 		Highlight selection.
 	*/
-	if (selectionIsNonempty && our startSelection < our endWindow && our endSelection > our startWindow) {
-		const double left = Melder_clippedLeft (our startWindow, our startSelection);
-		const double right = Melder_clippedRight (our endSelection, our endWindow);
-		our v_highlightSelection (left, right, 0.0, 1.0);
+	if (selectionIsNonempty && my startSelection < my endWindow && my endSelection > my startWindow) {
+		const double left = Melder_clippedLeft (my startWindow, my startSelection);
+		const double right = Melder_clippedRight (my endSelection, my endWindow);
+		my v_highlightSelection (left, right, 0.0, 1.0);
 	}
+}
+
+void structFunctionEditor :: draw () {
+	#ifdef WIN32
+		static bool backgroundIsUpToDate = false;
+		static HDC memoryDC;
+		static HBITMAP memoryBitmap;
+		if (our duringPlay) {
+			if (! backgroundIsUpToDate) {
+				/*
+					Draw into background.
+				*/
+				if (memoryBitmap)
+					DeleteObject (memoryBitmap);
+				if (memoryDC)
+					DeleteDC (memoryDC);
+				memoryDC = CreateCompatibleDC (((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext);
+				memoryBitmap = CreateCompatibleBitmap (((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext, our drawingArea -> d_widget -> width, our drawingArea -> d_widget -> height);
+				SelectObject (memoryDC, memoryBitmap);
+				SetBkMode (memoryDC, TRANSPARENT);   // not the default!
+				SelectPen (memoryDC, GetStockPen (BLACK_PEN));
+				SelectBrush (memoryDC, GetStockBrush (BLACK_BRUSH));
+				SetTextAlign (memoryDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
+				HDC saveContext = ((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext;
+				for (int igraphics = 1; igraphics <= our drawingArea -> numberOfGraphicses; igraphics ++)
+					((GraphicsScreen) our drawingArea -> graphicses [igraphics]) -> d_gdiGraphicsContext = memoryDC;
+				_drawBackgroundAndData (this);
+				for (int igraphics = 1; igraphics <= our drawingArea -> numberOfGraphicses; igraphics ++)
+					((GraphicsScreen) our drawingArea -> graphicses [igraphics]) -> d_gdiGraphicsContext = saveContext;
+				backgroundIsUpToDate = true;
+			}
+			/*
+				Copy to foreground.
+			*/
+			BitBlt (((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext, 0, 0, our drawingArea -> d_widget -> width, our drawingArea -> d_widget -> height, memoryDC, 0, 0, SRCCOPY);
+		} else {
+			backgroundIsUpToDate = false;
+			_drawBackgroundAndData (this);
+		}
+	#else
+		_drawBackgroundAndData (this);
+	#endif
 
 	/*
 		Draw the running cursor.
 	*/
 	if (our duringPlay) {
-		if (Melder_debug == 53)
-			Melder_casual (U"playing cursor");
+		if (Melder_debug == 53) {
+			static integer numberOfRunningCursorsDrawn = 0;
+			numberOfRunningCursorsDrawn += 1;
+			Melder_casual (U"playing cursor ", numberOfRunningCursorsDrawn);
+		}
+		our viewDataAsWorldByFraction ();
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setLineWidth (our graphics.get(), 3.0);
 		Graphics_xorOn (our graphics.get(), Melder_BLACK);
@@ -1210,16 +1256,16 @@ void structFunctionEditor :: v_createChildren () {
 	/***** Create optional text field. *****/
 
 	if (our v_hasText ()) {
-		our text = GuiText_createShown (our windowForm, 0, 0,
+		our textArea = GuiText_createShown (our windowForm, 0, 0,
 			Machine_getMenuBarHeight (),
 			Machine_getMenuBarHeight () + TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
 		#if gtk
-			Melder_assert (our text -> d_widget);
-			gtk_widget_grab_focus (GTK_WIDGET (our text -> d_widget));   // BUG: can hardly be correct (the text should grab the focus of the window, not the global focus)
+			Melder_assert (our textArea -> d_widget);
+			gtk_widget_grab_focus (GTK_WIDGET (our textArea -> d_widget));   // BUG: can hardly be correct (the text should grab the focus of the window, not the global focus)
 		#elif cocoa
-			Melder_assert ([(NSView *) our text -> d_widget window]);
-			//[[(NSView *) our text -> d_widget window] setInitialFirstResponder: (NSView *) our text -> d_widget];
-			[[(NSView *) our text -> d_widget window] makeFirstResponder: (NSView *) our text -> d_widget];
+			Melder_assert ([(NSView *) our textArea -> d_widget window]);
+			//[[(NSView *) our textArea -> d_widget window] setInitialFirstResponder: (NSView *) our textArea -> d_widget];
+			[[(NSView *) our textArea -> d_widget window] makeFirstResponder: (NSView *) our textArea -> d_widget];
 		#endif
 	}
 
