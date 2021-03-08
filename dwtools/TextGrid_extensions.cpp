@@ -225,16 +225,28 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 		char line[200], label[200];
 		while (fgets (line, 199, f)) {
 			long_not_integer it1, it2; // because of %ld in sscanf we need an explicit long
-			linesRead++;
+			linesRead ++;
 			Melder_require (sscanf (line, "%ld%ld%199s", & it1, & it2, label) == 3,
 				U"Incorrect number of items.");
-			if (it1 == it2)
+			if (it1 == it2) {
 				Melder_warning (U"File \"", MelderFile_messageName (file), U"\": Label \"", Melder_peek8to32 (label),
 					U"\" on line ", linesRead, U" was skipped because the start time and the end time were equal.");
-			else 
+				/*
+					For the following .wrd files this occurs once per file:
+					train/dr3/makr0/si1982
+					train/dr3/mhjb0/sa2
+					train/dr5/mmcc0/sx348
+					train/dr6/meal0/sa2
+					train/dr6/mesj0/si2039
+					train/dr7/fmkc0/sx352
+					train/dr7/mrem0/sx61
+					train/dr7/mvrw0/sx315
+					test/dr6/mjfc0/sx138
+				*/
+			} else {
 				Melder_require (it1 >= 0 && it1 < it2,
 					U"Incorrect time at line ", linesRead);
-			
+			}
 			xmax = it2 * dt;
 			double xmin = it1 * dt;
 			integer ni = timit -> intervals.size - 1;
@@ -253,6 +265,9 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 				xmin = interval -> xmax;
 				Melder_warning (U"File \"", MelderFile_messageName (file),
 					U"\": Start time set to previous end time for label at line ", linesRead, U".");
+				/*
+					This warning occurs hundreds of time for the .wrd files
+				*/
 			}
 			/*
 				Standard: new TextInterval
