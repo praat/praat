@@ -228,8 +228,12 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 			linesRead++;
 			Melder_require (sscanf (line, "%ld%ld%199s", & it1, & it2, label) == 3,
 				U"Incorrect number of items.");
-			Melder_require (it1 >= 0 && it1 < it2,
-				U"Incorrect time at line ", linesRead);
+			if (it1 == it2)
+				Melder_warning (U"File \"", MelderFile_messageName (file), U"\": Label \"", Melder_peek8to32 (label),
+					U"\" on line ", linesRead, U" was skipped because the start time and the end time were equal.");
+			else 
+				Melder_require (it1 >= 0 && it1 < it2,
+					U"Incorrect time at line ", linesRead);
 			
 			xmax = it2 * dt;
 			double xmin = it1 * dt;
