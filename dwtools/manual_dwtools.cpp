@@ -5697,7 +5697,7 @@ LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up 
 	"aligned with the new sound.")
 MAN_END
 
-MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210302)
+MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210308)
 INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
 ENTRY (U"What is a multi-tier search machine?")
 NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria "
@@ -5713,7 +5713,7 @@ NORMAL (U"As a simple example consider a TextGridNavigator that searches for the
 	"that matched (or 0 if no match could be found). The next match can then be found by using the ##Find next# command "
 	"and its value can be queried then. This may go on until the last match has been found. A following ##Find next# "
 	"will not be able to find a match and "
-	"consequently the query for the index of the match will return 0.")
+	"consequently the query for the index of the match will return 0. See ##Example 1# below for an example script.")
 NORMAL (U"Instead of starting at the beginning of the TextGrid you could also start at the end with ##Find last# and "
 	"next finding previous matches with ##Find previous# or you could start the search at a certain time with "
 	"##Find next after time# or ##Find previous before time#.")
@@ -5757,8 +5757,8 @@ NORMAL (U"This makes the multi-tier search complete as it is a combination of si
 	"location match criteria.")
 ENTRY (U"How to create a TextGridNavigator")
 ENTRY (U"Example 1, simple search in one tier")
-CODE (U"selectObject: <textgrid>")
 CODE (U"tierNumber = 1")
+CODE (U"selectObject: <textgrid>")
 CODE (U"navigator = To TextGridNavigator (topic search): tierNumber, \"a e i u o\", ")
 CODE (U"...\"is equal to\", \"OR\", \"Match start to Match end\"")
 CODE (U"Find first")
@@ -5772,17 +5772,42 @@ CODE (U"    selectObject: navigator")
 CODE (U"    Find next")
 CODE (U"    index = Get index: tierNumber, \"topic\"")
 CODE (U"endwhile")
-NORMAL (U"Instead of finding the indices once at a time we could also use the alternative and query for a list of the times where the labels match.")
-CODE (U"selectObject: <textgrid>")
+NORMAL (U"Instead of finding the indices one at a time in a %while loop until we are done, we could use alternatives "
+	"and query for a list of all indices or times where the labels match. We then know beforehand how many matches we have "
+	"and therefore we can use a %for loop.")
 CODE (U"tierNumber = 1")
+CODE (U"selectObject: <textgrid>")
 CODE (U"navigator = To TextGridNavigator (topic search): tierNumber, \"a e i u o\", ")
 CODE (U"...\"is equal to\", \"OR\", \"Match start to Match end\"")
 CODE (U"startTimes\\#  = List start times: \"topic\"")
+CODE (U"labels$\\#  = List labels: \"Topic\"")
 CODE (U"endTimes\\#  = List end times: \"topic\"")
 CODE (U"for index to size (startTimes\\# )")
 CODE (U"    duration = endTimes\\#  [index] - startTimes\\#  [index]")
-CODE (U"    ...")
+CODE (U"    <your code>")
 CODE (U"endfor")
+NORMAL (U"We could also combine the start and end times into one query list:")
+CODE (U"domains\\# \\#  = List domains: \"Topic start to Topic end\"")
+CODE (U"numberOfMatches = numberOfRows (domains\\# \\# )")
+NORMAL (U"and use it in a loop as, for example,")
+CODE (U"for index to numberOfMatches")
+CODE (U"    duration = domains\\# \\#  [index, 2] - domains\\# \\#  [index, 1]")
+CODE (U"    <your code>")
+CODE (U"endfor")
+ENTRY (U"Example 2, search in one tier")
+NORMAL (U"Search for one of the vowels \"a e i u o\" immediately preceded by one of the plosives \"p t k\" and immediately followed by one of the nasals \"m n\".")
+CODE (U"tierNumber = 1")
+CODE (U"selectObject: <textgrid>")
+CODE (U"navigator = To TextGridNavigator: tierNumber,")
+CODE (U"    ... \"a e i u o\", \"is equal to\", \"OR\",")
+CODE (U"    ... \"p t k\", \"is equal to\", \"OR\",")
+CODE (U"    ... \"m n\", \"is equal to\", \"OR\",")
+CODE (U"    ... \"before and after\", \"false\", \"Topic start to Topic end\"")
+CODE (U"domains\\# \\#  = List domains: \"Topic start to Topic end\"")
+CODE (U"<your code>")
+NORMAL (U"If, for example, the start time should be equal to the start time of the Before match, i.e. the plosive, "
+	"and the end time should equal the end time of the After match, i.e. the nasal, you could use instead:")
+CODE (U"domains\\# \\#  = List domains: \"Before start to After end\"")
 MAN_END
 
 MAN_BEGIN (U"TIMIT acoustic-phonetic speech corpus", U"djmw", 19970320)
