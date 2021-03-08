@@ -46,8 +46,7 @@ Thing_define (FunctionEditor, Editor) {
 	double tmin, tmax, startWindow, endWindow;
 	double startSelection, endSelection;   // markers
 
-	autoGraphics graphics;   // used in the 'draw' method
-	void draw ();
+	autoGraphics graphics;   // used in the expose callback
 	/*
 		The Normalized Device cordinates are in "pixelettes", which are a bit smaller than pixels.
 		The purpose of this is optimal look and feel.
@@ -116,7 +115,7 @@ Thing_define (FunctionEditor, Editor) {
 
 	GuiText textArea;   // optional text at top
 	bool clickWasModifiedByShiftKey;   // information for drag-and-drop and for start of play
-	bool duringPlay;
+	bool duringPlay, backgroundIsUpToDate;
 	struct FunctionEditor_picture picture;
 
 	/* Private: */

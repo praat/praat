@@ -82,7 +82,7 @@ static void updateGroup (FunctionEditor me) {
 	}
 }
 
-static void _drawBackgroundAndData (FunctionEditor me) {
+static void drawBackgroundAndData (FunctionEditor me) {
 	if (Melder_debug == 55)
 		Melder_casual (Thing_messageNameAndAddress (me), U" draw");
 	const bool leftFromWindow = ( my startWindow > my tmin );
@@ -330,77 +330,6 @@ static void _drawBackgroundAndData (FunctionEditor me) {
 		const double left = Melder_clippedLeft (my startWindow, my startSelection);
 		const double right = Melder_clippedRight (my endSelection, my endWindow);
 		my v_highlightSelection (left, right, 0.0, 1.0);
-	}
-}
-
-void structFunctionEditor :: draw () {
-	#ifdef WIN32
-		static bool backgroundIsUpToDate = false;
-		static HDC memoryDC;
-		static HBITMAP memoryBitmap;
-		if (our duringPlay) {
-			if (! backgroundIsUpToDate) {
-				/*
-					Draw into background.
-				*/
-				if (memoryBitmap)
-					DeleteObject (memoryBitmap);
-				if (memoryDC)
-					DeleteDC (memoryDC);
-				memoryDC = CreateCompatibleDC (((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext);
-				memoryBitmap = CreateCompatibleBitmap (((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext, our drawingArea -> d_widget -> width, our drawingArea -> d_widget -> height);
-				SelectObject (memoryDC, memoryBitmap);
-				SetBkMode (memoryDC, TRANSPARENT);   // not the default!
-				SelectPen (memoryDC, GetStockPen (BLACK_PEN));
-				SelectBrush (memoryDC, GetStockBrush (BLACK_BRUSH));
-				SetTextAlign (memoryDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
-				HDC saveContext = ((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext;
-				for (int igraphics = 1; igraphics <= our drawingArea -> numberOfGraphicses; igraphics ++)
-					((GraphicsScreen) our drawingArea -> graphicses [igraphics]) -> d_gdiGraphicsContext = memoryDC;
-				_drawBackgroundAndData (this);
-				for (int igraphics = 1; igraphics <= our drawingArea -> numberOfGraphicses; igraphics ++)
-					((GraphicsScreen) our drawingArea -> graphicses [igraphics]) -> d_gdiGraphicsContext = saveContext;
-				backgroundIsUpToDate = true;
-			}
-			/*
-				Copy to foreground.
-			*/
-			BitBlt (((GraphicsScreen) our graphics.get()) -> d_gdiGraphicsContext, 0, 0, our drawingArea -> d_widget -> width, our drawingArea -> d_widget -> height, memoryDC, 0, 0, SRCCOPY);
-		} else {
-			backgroundIsUpToDate = false;
-			_drawBackgroundAndData (this);
-		}
-	#else
-		_drawBackgroundAndData (this);
-	#endif
-
-	/*
-		Draw the running cursor.
-	*/
-	if (our duringPlay) {
-		if (Melder_debug == 53) {
-			static integer numberOfRunningCursorsDrawn = 0;
-			numberOfRunningCursorsDrawn += 1;
-			Melder_casual (U"playing cursor ", numberOfRunningCursorsDrawn);
-		}
-		our viewDataAsWorldByFraction ();
-		Graphics_setColour (our graphics.get(), Melder_BLACK);
-		Graphics_setLineWidth (our graphics.get(), 3.0);
-		Graphics_xorOn (our graphics.get(), Melder_BLACK);
-		Graphics_line (our graphics.get(), our playCursor, 0.0, our playCursor, 1.0);
-		Graphics_xorOff (our graphics.get());
-		Graphics_setLineWidth (our graphics.get(), 1.0);
-	}
-
-	/*
-		Draw the selection part.
-	*/
-	if (our p_showSelectionViewer) {
-		our viewInnerSelectionViewerAsFractionByFraction ();
-		if (our duringPlay)
-			our v_drawRealTimeSelectionViewer (our playCursor);
-		else
-			our v_drawSelectionViewer ();
 	}
 }
 
@@ -1105,8 +1034,74 @@ void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
 static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeEvent /* event */) {
 	if (! my graphics)
 		return;   // could be the case in the very beginning
-	if (my enableUpdates)
-		my draw ();
+	if (! my enableUpdates)
+		return;
+	#ifdef WIN32
+		if (my duringPlay) {
+			GraphicsScreen graphics = (GraphicsScreen) my graphics.get();
+			HDC foregroundContext = graphics -> d_gdiGraphicsContext;
+			static HDC backgroundContext;
+			if (! my backgroundIsUpToDate) {
+				/*
+					Draw into background.
+				*/
+				static HBITMAP backgroundBitmap;
+				if (backgroundBitmap)
+					DeleteObject (backgroundBitmap);
+				if (backgroundContext)
+					DeleteDC (backgroundContext);
+				backgroundContext = CreateCompatibleDC (foregroundContext);
+				backgroundBitmap = CreateCompatibleBitmap (foregroundContext, my drawingArea -> d_widget -> width, my drawingArea -> d_widget -> height);
+				SelectObject (backgroundContext, backgroundBitmap);
+				SetBkMode (backgroundContext, TRANSPARENT);   // not the default!
+				SelectPen (backgroundContext, GetStockPen (BLACK_PEN));
+				SelectBrush (backgroundContext, GetStockBrush (BLACK_BRUSH));
+				SetTextAlign (backgroundContext, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
+				graphics -> d_gdiGraphicsContext = backgroundContext;
+				drawBackgroundAndData (me);
+				graphics -> d_gdiGraphicsContext = foregroundContext;
+				my backgroundIsUpToDate = true;
+			}
+			/*
+				Copy to foreground.
+			*/
+			BitBlt (foregroundContext, 0, 0, my drawingArea -> d_widget -> width, my drawingArea -> d_widget -> height, backgroundContext, 0, 0, SRCCOPY);
+		} else {
+			my backgroundIsUpToDate = false;
+			drawBackgroundAndData (me);
+		}
+	#else
+		drawBackgroundAndData (me);
+	#endif
+
+	/*
+		Draw the running cursor.
+	*/
+	if (my duringPlay) {
+		if (Melder_debug == 53) {
+			static integer numberOfRunningCursorsDrawn = 0;
+			numberOfRunningCursorsDrawn += 1;
+			Melder_casual (U"playing cursor ", numberOfRunningCursorsDrawn);
+		}
+		my viewDataAsWorldByFraction ();
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
+		Graphics_setLineWidth (my graphics.get(), 3.0);
+		Graphics_xorOn (my graphics.get(), Melder_BLACK);
+		Graphics_line (my graphics.get(), my playCursor, 0.0, my playCursor, 1.0);
+		Graphics_xorOff (my graphics.get());
+		Graphics_setLineWidth (my graphics.get(), 1.0);
+	}
+
+	/*
+		Draw the selection part.
+	*/
+	if (my p_showSelectionViewer) {
+		my viewInnerSelectionViewerAsFractionByFraction ();
+		if (my duringPlay)
+			my v_drawRealTimeSelectionViewer (my playCursor);
+		else
+			my v_drawSelectionViewer ();
+	}
 }
 
 bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double mouseTime, double /* mouseY_fraction */) {
