@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ static void updateGroup (FunctionEditor me) {
 			thy endSelection = my endSelection;
 			FunctionEditor_updateText (thee);
 			updateScrollBar (thee);
-			Graphics_updateWs (thy graphics.get());
+			FunctionEditor_redraw (thee);
 		}
 	}
 }
@@ -369,7 +369,7 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	if (! my graphics)
 		return;   // could be the case in the very beginning
 	my updateGeometry (event -> width, event -> height);
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	/*
 		Save the current shell size as the user's preference for a new FunctionEditor.
 	*/
@@ -456,7 +456,7 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 		my endWindow = to;
 		my v_updateText ();
 		updateScrollBar (me);
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -466,7 +466,7 @@ static void do_showAll (FunctionEditor me) {
 	my endWindow = my tmax;
 	my v_updateText ();
 	updateScrollBar (me);
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	if (my pref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
@@ -481,7 +481,7 @@ static void do_zoomIn (FunctionEditor me) {
 	my endWindow -= shift;
 	my v_updateText ();
 	updateScrollBar (me);
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	if (my pref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
@@ -501,7 +501,7 @@ static void do_zoomOut (FunctionEditor me) {
 		my endWindow = my tmax;
 	my v_updateText ();
 	updateScrollBar (me);
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	if (my pref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
@@ -518,7 +518,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 		my endWindow = my endSelection;
 		my v_updateText ();
 		updateScrollBar (me);
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		if (my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 	}
@@ -534,7 +534,7 @@ static void do_zoomBack (FunctionEditor me) {
 		my endWindow = my endZoomHistory;
 		my v_updateText ();
 		updateScrollBar (me);
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		if (my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 	}
@@ -618,7 +618,7 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (my startSelection > my endSelection)
 			std::swap (my startSelection, my endSelection);
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -659,7 +659,7 @@ static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM)
 		my startSelection = newStartOfSelection;
 		my endSelection = newEndOfSelection;
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -667,14 +667,14 @@ static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM)
 static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my endSelection = my startSelection;
 	my v_updateText ();
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	updateGroup (me);
 }
 
 static void menu_cb_moveCursorToEndOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	my startSelection = my endSelection;
 	my v_updateText ();
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	updateGroup (me);
 }
 
@@ -690,7 +690,7 @@ static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 			position = my tmax;
 		my startSelection = my endSelection = position;
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -703,7 +703,7 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		const double position = Melder_clipped (my tmin, 0.5 * (my startSelection + my endSelection) + distance, my tmax);
 		my startSelection = my endSelection = position;
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -716,7 +716,7 @@ static void menu_cb_moveStartOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM)
 		my startSelection = Melder_clipped (my tmin, my startSelection + distance, my tmax);
 		Melder_sort (& my startSelection, & my endSelection);
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -729,7 +729,7 @@ static void menu_cb_moveEndOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		my endSelection = Melder_clipped (my tmin, my endSelection + distance, my tmax);
 		Melder_sort (& my startSelection, & my endSelection);
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	EDITOR_END
 }
@@ -863,7 +863,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 	if (shifted || zoomed) {
 		my v_updateText ();
 		//updateScrollBar (me);
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		if (! my group || ! my pref_synchronizedZoomAndScroll())
 			return;
 		for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
@@ -872,7 +872,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 				theGroupMembers [i] -> endWindow = my endWindow;
 				FunctionEditor_updateText (theGroupMembers [i]);
 				updateScrollBar (theGroupMembers [i]);
-				Graphics_updateWs (theGroupMembers [i] -> graphics.get());
+				FunctionEditor_redraw (theGroupMembers [i]);
 			}
 		}
 	}
@@ -905,7 +905,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		const integer emptySpot = findEmptySpotInGroup ();
 		theGroupMembers [emptySpot] = me;
 		if (++ theGroupSize == 1) {
-			Graphics_updateWs (my graphics.get());
+			FunctionEditor_redraw (me);
 			return;
 		}
 		const integer otherGroupMember = findOtherGroupMember (me);
@@ -921,11 +921,11 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 			Melder_clipLeft (thy tmax, & my tmax);
 			my v_updateText ();
 			updateScrollBar (me);
-			Graphics_updateWs (my graphics.get());
+			FunctionEditor_redraw (me);
 		} else {
 			my v_updateText ();
 			updateScrollBar (me);
-			Graphics_updateWs (my graphics.get());
+			FunctionEditor_redraw (me);
 			if (my tmin < thy tmin || my tmax > thy tmax) {
 				for (integer imember = 1; imember <= THE_MAXIMUM_GROUP_SIZE; imember ++) {
 					if (theGroupMembers [imember] && theGroupMembers [imember] != me) {
@@ -935,7 +935,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 							theGroupMembers [imember] -> tmax = my tmax;
 						FunctionEditor_updateText (theGroupMembers [imember]);
 						updateScrollBar (theGroupMembers [imember]);
-						Graphics_updateWs (theGroupMembers [imember] -> graphics.get());
+						FunctionEditor_redraw (theGroupMembers [imember]);
 					}
 				}
 			}
@@ -945,7 +945,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		theGroupMembers [myLocationInGroup] = nullptr;
 		theGroupSize --;
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());   // for setting buttons in draw method
+		FunctionEditor_redraw (me);   // for setting buttons in draw method
 	}
 	if (my group)
 		updateGroup (me);
@@ -1181,7 +1181,7 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 		if (event -> isClick()) {
 			my v_clickSelectionViewer (x_fraction, y_fraction);
 			//my v_updateText ();
-			Graphics_updateWs (my graphics.get());
+			FunctionEditor_redraw (me);
 			updateGroup (me);
 		} else;   // no dragging (yet?) in any selection viewer
 	} else if (anchorIsInWideDataView) {
@@ -1190,7 +1190,7 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_world, & y_fraction);
 		my v_mouseInWideDataView (event, x_world, y_fraction);
 		my v_updateText ();
-		Graphics_updateWs (my graphics.get());
+		FunctionEditor_redraw (me);
 		updateGroup (me);
 	} else {   // clicked outside signal region? Let us hear it
 		try {
@@ -1316,7 +1316,7 @@ int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, d
 	}
 	if (Melder_debug == 53)
 		Melder_casual (U"draining");
-	Graphics_updateWs (our graphics.get());
+	Graphics_updateWs (our graphics.get());   // note: without setting my backgroundIsUpToDate to false
 	GuiShell_drain (our windowForm);   // this may not be needed on all platforms (but on Windows it is, at least on 2020-09-21)
 	return 1;
 }
@@ -1356,7 +1356,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function funct
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {
 	my v_updateText ();
 	updateScrollBar (me);
-	Graphics_updateWs (my graphics.get());
+	FunctionEditor_redraw (me);
 	if (needsUpdateGroup)
 		updateGroup (me);
 }
@@ -1366,6 +1366,7 @@ void FunctionEditor_updateText (FunctionEditor me) {
 }
 
 void FunctionEditor_redraw (FunctionEditor me) {
+	my backgroundIsUpToDate = false;
 	Graphics_updateWs (my graphics.get());
 }
 
@@ -1384,7 +1385,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 	theGroupMembers [i] = nullptr;
 	theGroupSize --;
 	my v_updateText ();
-	Graphics_updateWs (my graphics.get());   // for setting buttons in v_draw() method
+	FunctionEditor_redraw (me);   // for setting buttons in v_draw() method
 }
 
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment) {
