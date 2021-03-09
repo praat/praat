@@ -88,7 +88,7 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210201)
+MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210309)
 INTRO (U"A command available in the ##Query# menu if you select a @@Formant@ object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.")
 ENTRY (U"Settings")
 TAG (U"##Formant number#,")
@@ -104,13 +104,13 @@ NORMAL (U"The vector values are determined from the fit of the formant track wit
 	"%F(%t) = %a+%b / (1 + exp(- (%t -c) / d)) "
 	"on the chosen interval [%t__min_, %t__max_].")
 TAG (U"##1. Average slope (Hz / s)#,")
-DEFINITION (U"defined as (%F__locus_ - %F__target_) / (%t__max_ - %t__min_), where %F__locus_ and %F__target_ are the start and "
+DEFINITION (U"defined as (%F__start_ - %F__end_) / (%t__max_ - %t__min_), where %F__start_ and %F__end_ are the start and "
 	"end values of the fitted funcion %F(%t) on the interval.")
 TAG (U"##2. %R^2#")
 DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
-TAG (U"##3. %F__locus_#,")
+TAG (U"##3. %F__start_#,")
 DEFINITION (U"the frequency in hertz of the function %F(%t__min_).")
-TAG (U"##4. %F__target_#,")
+TAG (U"##4. %F__end_#,")
 DEFINITION (U"the frequency in hertz of the function %F(%t__max_).")
 TAG (U"##5. %a#")
 DEFINITION (U"the parameter %a (hertz) of the function %F(%t).")
@@ -121,7 +121,7 @@ DEFINITION (U"the parameter %c ( / s) of the function %F(%t).")
 TAG (U"##8. %d#")
 DEFINITION (U"the parameter %d of the function %F(%t), if the sigmoid plus constant function was chosen.")
 ENTRY (U"Remarks about the interpretation of the fit parameters.")
-NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__locus_ and the %F__target_ values. In cases where the formant trajectory shows a noisy pattern all return values have a large error margin and the determined average slope can also be unreliable.")
+NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__start_ and the %F__end_ values. In cases where the formant trajectory shows a noisy pattern all return values have a large error margin and the determined average slope can also be unreliable.")
 ENTRY (U"Algorithm")
 NORMAL (U"The algorithm to fit the %%non-linear% exponential plus constant and the sigmoid plus constant functions to a series of (time, frequency) values by a non-iterative algorithm is described in @@Jacquelin (2009)@.")
 MAN_END
