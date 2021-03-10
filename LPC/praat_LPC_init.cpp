@@ -69,6 +69,12 @@ static const conststring32 MODIFY_BUTTON   = U"Modify -";
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
 
+FORM_READ (READ1_Formant_readFromHTKParameterFile, U"Formant: Read from HTK parameter file", nullptr, true) {
+	READ_ONE
+		autoFormant result = Formant_readFromHTKParameterFile (file);
+	READ_ONE_END;
+}
+
 static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
@@ -1267,6 +1273,8 @@ void praat_uvafon_LPC_init () {
 	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantPath, classFormantPathEditor, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
 	
 	structFormantPathEditor  :: f_preferences ();
+	
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Formant from HTK parameter file...", U"Read Strings from raw text file...", 0, READ1_Formant_readFromHTKParameterFile);
 	
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, HELP_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, GRAPHICS_PowerCepstrum_draw);

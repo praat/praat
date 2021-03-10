@@ -126,6 +126,16 @@ ENTRY (U"Algorithm")
 NORMAL (U"The algorithm to fit the %%non-linear% exponential plus constant and the sigmoid plus constant functions to a series of (time, frequency) values by a non-iterative algorithm is described in @@Jacquelin (2009)@.")
 MAN_END
 
+MAN_BEGIN (U"Read Formant from HTK parameter file...", U"djmw", 20210310)
+INTRO (U"Reads a Formant from a HTK parameter file.")
+ENTRY (U"Remarks")
+NORMAL (U"The HTK parameter files do not contain sufficient unique information to identify them as HTK parameter files. "
+	"They also contain no timing information and therefore we can only calculate the domain of the Formant from external "
+	"information. The HTK file format does allow sample period information, however, in the VTR-Formant database of "
+	"@@Deng et al. (2006)@ this information is a factor 10 off. We have calculated the end time of the domain simply "
+	"as %numberOfFrames * 0.01, as 0.01 is the time step according ##Deng et al. (2006)# paper.")
+MAN_END
+
 MAN_BEGIN (U"FormantPath", U"djmw", 20201013)
 INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
 	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
@@ -1074,6 +1084,11 @@ MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)
 NORMAL (U"N. Anderson (1978): \"On the calculation of filter coefficients for "
 	"maximum entropy spectral analysis.\" In Childers: %%Modern Spectrum Analysis%, "
 	"IEEE Press: 252\\--255.")
+MAN_END
+
+MAN_BEGIN (U"Deng et al. (2006)", U"djmw", 20210310)
+NORMAL (U"L. Deng, X. Cui, R. Pruvenok, J. Huang, S. Momen, Y. Chen & A Alwan (2006): \"A database of "
+	"vocal tract resonance trajectories for research in speech processing\", %%Proceedings of the IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP)%, Toulouse, France, May 2006.")
 MAN_END
 
 MAN_BEGIN (U"Fleisher et al. (2015)", U"djmw", 20191008)
