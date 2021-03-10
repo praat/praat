@@ -66,41 +66,6 @@ static const conststring32 DRAW_BUTTON    = U"Draw -";
 static const conststring32 QUERY_BUTTON   = U"Query -";
 static const conststring32 MODIFY_BUTTON   = U"Modify -";
 
-
-static autoDaata HTKParameterFileRecognizer (integer nread, const char *header, MelderFile file) {
-	if (nread < 12 ) // HTK header is 12 bytes
-		return autoDaata ();
-	auto toint32 = [](const char *h0) -> int32 {
-		uint8 b0 = static_cast<uint8> (h0 [0]), b1 = static_cast<uint8> (h0 [1]);
-		uint8 b2 = static_cast<uint8> (h0 [2]), b3 = static_cast<uint8> (h0 [3]);
-		return (int32) ((uint32) ((uint32) b0 << 24) | (uint32) ((uint32) b1 << 16) |
-				 (uint32) ((uint32) b2 << 8) | (uint32) b3);
-	};
-	auto toint16 = [](const char *h0) -> int16 {
-		uint8 b0 = static_cast<uint8> (h0 [0]), b1 = static_cast<uint8> (h0 [1]);
-		return (int16) ((uint16) ((uint16) b0 << 8) | (uint16) b1);
-	};
-	const integer numberOfFrames = toint32 (& (header [0]));
-	const integer samplePeriod100ns = toint32 (& header [4]);
-	const integer sampleSize = toint16 (& header [8]);
-	if (sampleSize % 8 != 0)
-		return autoDaata ();
-	const integer htkType = toint16 (& header [10]);
-	const integer fileSize = MelderFile_length (file);
-	if (fileSize == numberOfFrames * sampleSize + 12) {
-		/*
-			This could be a HTK parameter file
-		*/
-		if (htkType == 9)
-			return Formant_readFromHTKParameterFile (file);
-	}
-	/*
-		Leave rest of checking to libVorbis
-	*/
-	return autoDaata();
-}
-
-
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
 
@@ -1305,7 +1270,6 @@ extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init ();
 void praat_uvafon_LPC_init () {
-	Data_recognizeFileType (HTKParameterFileRecognizer);
 	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantPath, classFormantPathEditor, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
 	
 	structFormantPathEditor  :: f_preferences ();
