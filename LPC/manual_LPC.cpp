@@ -1087,7 +1087,7 @@ NORMAL (U"N. Anderson (1978): \"On the calculation of filter coefficients for "
 MAN_END
 
 MAN_BEGIN (U"Deng et al. (2006)", U"djmw", 20210310)
-NORMAL (U"L. Deng, X. Cui, R. Pruvenok, J. Huang, S. Momen, Y. Chen & A Alwan (2006): \"A database of "
+NORMAL (U"L. Deng, X. Cui, R. Pruvenok, J. Huang, S. Momen, Y. Chen & A. Alwan (2006): \"A database of "
 	"vocal tract resonance trajectories for research in speech processing\", %%Proceedings of the IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP)%, Toulouse, France, May 2006.")
 MAN_END
 
