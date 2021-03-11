@@ -69,12 +69,6 @@ static const conststring32 MODIFY_BUTTON   = U"Modify -";
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
 
-FORM_READ (READ1_Formant_readFromHTKParameterFile, U"Formant: Read from HTK parameter file", nullptr, true) {
-	READ_ONE
-		autoFormant result = Formant_readFromHTKParameterFile (file);
-	READ_ONE_END;
-}
-
 static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
@@ -1268,14 +1262,54 @@ DO
 
 extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
+
+static autoDaata HTKParameterFileRecognizer (integer nread, const char *header, MelderFile file) {
+	if (nread < 12 ) // HTK header is 12 bytes
+		return autoDaata ();
+	auto toint32 = [](const char *h0) -> int32 {
+		return (int32)
+			((uint32) ((uint32) h0 [0] << 24) | (uint32) ((uint32) h0 [1] << 16) |
+			 (uint32) ((uint32) h0 [2] <<  8) | (uint32) h0 [3]);
+	};
+	auto toint16 = [](const char *h0) -> int16 {
+		return (int16) ((uint16) ((uint16) h0 [0] << 8) | (uint16) h0 [1]);
+	};
+	const integer numberOfFrames = toint32 (& header [0]);
+	if (numberOfFrames <= 0)
+		return autoDaata ();
+	const integer samplePeriodTimes100ns = toint32 (& header [4]);
+	if (samplePeriodTimes100ns <= 0)
+		return autoDaata ();
+	const integer frameSize = toint16 (& header [8]);
+	if (frameSize <= 0 || frameSize % 2 != 0) // smallest sample size is 2 bytes
+		return autoDaata ();
+	const integer htkType = toint16 (& header [10]); // end of 12 header (12 bytes)
+	const integer fileSize = MelderFile_length (file);
+	if (fileSize == numberOfFrames * frameSize + 12) {
+		/*
+			This could be a HTK parameter file
+			Some extra checks on the htkType might be necessary but the chances that
+			we have come here by chance alone are very small.
+		*/
+		conststring32 fileName = MelderFile_name (file);
+		if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".fb", false) && 
+			htkType == 9 && frameSize % 8 == 0) // test user type and if it stores (F + B) as r32
+		{
+			return Formant_readFromHTKParameterFile (file);
+		}
+	}
+	return autoDaata ();
+}
+
 void praat_uvafon_LPC_init ();
 void praat_uvafon_LPC_init () {
+	
+	Data_recognizeFileType (HTKParameterFileRecognizer);
+	
 	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classFormantPath, classFormantPathEditor, classPowerCepstrogram, classLPC, classLFCC, classLineSpectralFrequencies, classMFCC, classVocalTractTier, nullptr);
 	
 	structFormantPathEditor  :: f_preferences ();
-	
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Formant from HTK parameter file...", U"Read Strings from raw text file...", 0, READ1_Formant_readFromHTKParameterFile);
-	
+		
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, HELP_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, GRAPHICS_PowerCepstrum_draw);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line...", 0, 0, GRAPHICS_PowerCepstrum_drawTrendLine);
