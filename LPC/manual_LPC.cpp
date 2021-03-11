@@ -126,14 +126,33 @@ ENTRY (U"Algorithm")
 NORMAL (U"The algorithm to fit the %%non-linear% exponential plus constant and the sigmoid plus constant functions to a series of (time, frequency) values by a non-iterative algorithm is described in @@Jacquelin (2009)@.")
 MAN_END
 
-MAN_BEGIN (U"Read Formant from HTK parameter file...", U"djmw", 20210310)
-INTRO (U"Reads a Formant from a HTK parameter file.")
+MAN_BEGIN (U"HTK parameter file format", U"djmw", 20210311)
+INTRO (U"HTK parameter format files consist of a contiguous sequence of frames preceded by a header. "
+	"Each frame is a vector of either 2-byte integers or 4-byte floats. 2-byte integers are used for "
+	"compressed forms and for vector quantised data. All multi-byte numbers are written as Big-endian numbers.")
+NORMAL (U"The HTK file format header is 12 bytes long and contains the following data:")
+TAG (U"numberOfFrames (4-byte integer)")
+DEFINITION (U"The number of analysis frames in a file")
+TAG (U"samplePeriod (4-byte integer)")
+DEFINITION (U"The sample period in units of 100 ns. A sampling frequency of 10 kHz would correspond to a sample period of 0.0001 s and to a value of 1000 in this field.")
+TAG (U"frameSize (2-byte integer)")
+DEFINITION (U"The number of bytes per frame.")
+TAG (U"parameterKind (2-byte integer)")
+DEFINITION (U"A code indication what kind of frames the file contains.")
 ENTRY (U"Remarks")
-NORMAL (U"The HTK parameter files do not contain sufficient unique information to identify them as HTK parameter files. "
-	"They also contain no timing information and therefore we can only calculate the domain of the Formant from external "
-	"information. The HTK file format does allow sample period information, however, in the VTR-Formant database of "
-	"@@Deng et al. (2006)@ this information is a factor 10 off. We have calculated the end time of the domain simply "
-	"as %numberOfFrames * 0.01, as 0.01 is the time step according ##Deng et al. (2006)# paper.")
+NORMAL (U"The HTK parameter files do not contain specific information that identifies them as "
+	"HTK parameter files. However, the file type can be deduced as follows. If we have any file and interpret "
+	"the first 12 bytes as the above format specifies then we know that the first three numbers read have to "
+	"be positive integers, that frameSize has to an even number and that %numberOfFrames * %frameSize + 12 must be equal to the number "
+	"of bytes in the file. The chance that a random data file fulfils these conditions is very small.")
+ENTRY (U"VTRFormants data in HTK parameter format")
+NORMAL (U"The VTRFormants data of @@Deng et al. (2006)@ can serve as reference formant frequency values for "
+	"(part of) the TIMIT acoustic phonetic corpus. These data are stored in HTK parameter files with extension \".fb\". "
+	"They can be download from %%http://www.seas.ucla.edu/spapl/VTRFormants.html%.")
+NORMAL (U"HTK parameter files do not contain timing information and therefore we can only calculate the domain of "
+	"the Formant from external information. From the ##Deng et al. (2006)# paper we assume that the data were taken "
+	"every 10 ms and therefore the best guess for the duration of the Formant equals %numberOfFrames * 0.01."
+	"The value in these files for the samplePeriod is 10000 which is a factor 10 off from the correct value of 1000 in units of 100 ns.")
 MAN_END
 
 MAN_BEGIN (U"FormantPath", U"djmw", 20201013)

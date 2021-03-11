@@ -104,7 +104,7 @@ autoFormant Formant_readFromHTKParameterFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		const integer numberOfFrames = bingetinteger32BE (f);
-		const integer samplePeriod100ns = bingetinteger32BE (f);
+		const integer samplePeriodTimes100ns = bingetinteger32BE (f);
 		/*
 			For the VTR HTK parameter formant files of Deng et al., this
 			number is 10000. According to the HTK file specification this is in units
@@ -112,13 +112,13 @@ autoFormant Formant_readFromHTKParameterFile (MelderFile file) {
 			What does this number mean? Are they a factor 10 off if they used a sampling
 			frequency of 10 kHz? 
 		*/
-		const integer sampleSize = bingetinteger16BE (f);
-		Melder_require (sampleSize % 8 == 0, 
+		const integer frameSize = bingetinteger16BE (f);
+		Melder_require (frameSize % 8 == 0, 
 			U"The vector size in bytes needs to be divisible by 8.");
 		const integer htkType = bingetinteger16BE (f);
 		Melder_require (htkType == 9, // user defined type
 			U"The HTK type ID (", htkType, U") of the file needs to be 9.");
-		const integer numberOfFormants = sampleSize / 8; // r32, formants + bandwidths
+		const integer numberOfFormants = frameSize / 8; // r32, formants + bandwidths
 		const double tmin = 0.0, timeStep = 0.01;
 		const double tmax = numberOfFrames * timeStep; // the best guess we can make
 		autoFormant me = Formant_create (tmin, tmax, numberOfFrames, timeStep, timeStep, numberOfFormants);
