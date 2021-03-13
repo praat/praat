@@ -88,7 +88,7 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210201)
+MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210309)
 INTRO (U"A command available in the ##Query# menu if you select a @@Formant@ object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.")
 ENTRY (U"Settings")
 TAG (U"##Formant number#,")
@@ -104,13 +104,13 @@ NORMAL (U"The vector values are determined from the fit of the formant track wit
 	"%F(%t) = %a+%b / (1 + exp(- (%t -c) / d)) "
 	"on the chosen interval [%t__min_, %t__max_].")
 TAG (U"##1. Average slope (Hz / s)#,")
-DEFINITION (U"defined as (%F__locus_ - %F__target_) / (%t__max_ - %t__min_), where %F__locus_ and %F__target_ are the start and "
+DEFINITION (U"defined as (%F__start_ - %F__end_) / (%t__max_ - %t__min_), where %F__start_ and %F__end_ are the start and "
 	"end values of the fitted funcion %F(%t) on the interval.")
 TAG (U"##2. %R^2#")
 DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
-TAG (U"##3. %F__locus_#,")
+TAG (U"##3. %F__start_#,")
 DEFINITION (U"the frequency in hertz of the function %F(%t__min_).")
-TAG (U"##4. %F__target_#,")
+TAG (U"##4. %F__end_#,")
 DEFINITION (U"the frequency in hertz of the function %F(%t__max_).")
 TAG (U"##5. %a#")
 DEFINITION (U"the parameter %a (hertz) of the function %F(%t).")
@@ -121,9 +121,38 @@ DEFINITION (U"the parameter %c ( / s) of the function %F(%t).")
 TAG (U"##8. %d#")
 DEFINITION (U"the parameter %d of the function %F(%t), if the sigmoid plus constant function was chosen.")
 ENTRY (U"Remarks about the interpretation of the fit parameters.")
-NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__locus_ and the %F__target_ values. In cases where the formant trajectory shows a noisy pattern all return values have a large error margin and the determined average slope can also be unreliable.")
+NORMAL (U"The returned average slope parameter is reliable only if the formant trajectory is clearly not constant and there is a large difference between the %F__start_ and the %F__end_ values. In cases where the formant trajectory shows a noisy pattern all return values have a large error margin and the determined average slope can also be unreliable.")
 ENTRY (U"Algorithm")
 NORMAL (U"The algorithm to fit the %%non-linear% exponential plus constant and the sigmoid plus constant functions to a series of (time, frequency) values by a non-iterative algorithm is described in @@Jacquelin (2009)@.")
+MAN_END
+
+MAN_BEGIN (U"HTK parameter file format", U"djmw", 20210311)
+INTRO (U"HTK parameter format files consist of a contiguous sequence of frames preceded by a header. "
+	"Each frame is a vector of either 2-byte integers or 4-byte floats. 2-byte integers are used for "
+	"compressed forms and for vector quantised data. All multi-byte numbers are written as Big-endian numbers.")
+NORMAL (U"The HTK file format header is 12 bytes long and contains the following data:")
+TAG (U"numberOfFrames (4-byte integer)")
+DEFINITION (U"The number of analysis frames in a file")
+TAG (U"samplePeriod (4-byte integer)")
+DEFINITION (U"The sample period in units of 100 ns. A sampling frequency of 10 kHz would correspond to a sample period of 0.0001 s and to a value of 1000 in this field.")
+TAG (U"frameSize (2-byte integer)")
+DEFINITION (U"The number of bytes per frame.")
+TAG (U"parameterKind (2-byte integer)")
+DEFINITION (U"A code indication what kind of frames the file contains.")
+ENTRY (U"Remarks")
+NORMAL (U"The HTK parameter files do not contain specific information that identifies them as "
+	"HTK parameter files. However, the file type can be deduced as follows. If we have any file and interpret "
+	"the first 12 bytes as the above format specifies then we know that the first three numbers read have to "
+	"be positive integers, that frameSize has to an even number and that %numberOfFrames * %frameSize + 12 must be equal to the number "
+	"of bytes in the file. The chance that a random data file fulfils these conditions is very small.")
+ENTRY (U"VTRFormants data in HTK parameter format")
+NORMAL (U"The VTRFormants data of @@Deng et al. (2006)@ can serve as reference formant frequency values for "
+	"(part of) the TIMIT acoustic phonetic corpus. These data are stored in HTK parameter files with extension \".fb\". "
+	"They can be download from %%http://www.seas.ucla.edu/spapl/VTRFormants.html%.")
+NORMAL (U"HTK parameter files do not contain timing information and therefore we can only calculate the domain of "
+	"the Formant from external information. From the ##Deng et al. (2006)# paper we assume that the data were taken "
+	"every 10 ms and therefore the best guess for the duration of the Formant equals %numberOfFrames * 0.01."
+	"The value in these files for the samplePeriod is 10000 which is a factor 10 off from the correct value of 1000 in units of 100 ns.")
 MAN_END
 
 MAN_BEGIN (U"FormantPath", U"djmw", 20201013)
@@ -1074,6 +1103,11 @@ MAN_BEGIN (U"Anderson (1978)", U"djmw", 20030701)
 NORMAL (U"N. Anderson (1978): \"On the calculation of filter coefficients for "
 	"maximum entropy spectral analysis.\" In Childers: %%Modern Spectrum Analysis%, "
 	"IEEE Press: 252\\--255.")
+MAN_END
+
+MAN_BEGIN (U"Deng et al. (2006)", U"djmw", 20210310)
+NORMAL (U"L. Deng, X. Cui, R. Pruvenok, J. Huang, S. Momen, Y. Chen & A. Alwan (2006): \"A database of "
+	"vocal tract resonance trajectories for research in speech processing\", %%Proceedings of the IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP)%, Toulouse, France, May 2006.")
 MAN_END
 
 MAN_BEGIN (U"Fleisher et al. (2015)", U"djmw", 20191008)

@@ -8454,10 +8454,11 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
 
 void praat_uvafon_David_init ();
 void praat_uvafon_David_init () {
+	
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 	Data_recognizeFileType (oggFileRecognizer);
-
+	
 	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,

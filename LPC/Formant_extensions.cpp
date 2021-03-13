@@ -18,6 +18,7 @@
 
 #include "DataModeler.h"
 #include "Formant_extensions.h"
+#include "LPC_and_Formant.h"
 #include "NUM2.h"
 
 #include "enums_getText.h"
@@ -92,6 +93,48 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered.");
+	}
+}
+
+/*
+	HTK parameter files have (almost) no signature to recognize them except their *.fb file extension. 
+	We can only read them and hope for the best.
+*/
+autoFormant Formant_readFromHTKParameterFile (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "rb");
+		const integer numberOfFrames = bingetinteger32BE (f);
+		const integer samplePeriodTimes100ns = bingetinteger32BE (f);
+		/*
+			For the VTR HTK parameter formant files of Deng et al., this
+			number is 10000. According to the HTK file specification this is in units
+			of 100 ns which result in 10000 /(1000000000 /100) = 1 / 1000 = 1 ms.
+			What does this number mean? Are they a factor 10 off if they used a sampling
+			frequency of 10 kHz? 
+		*/
+		const integer frameSize = bingetinteger16BE (f);
+		Melder_require (frameSize % 8 == 0, 
+			U"The vector size in bytes needs to be divisible by 8.");
+		const integer htkType = bingetinteger16BE (f);
+		Melder_require (htkType == 9, // user defined type
+			U"The HTK type ID (", htkType, U") of the file needs to be 9.");
+		const integer numberOfFormants = frameSize / 8; // r32, formants + bandwidths
+		const double tmin = 0.0, timeStep = 0.01;
+		const double tmax = numberOfFrames * timeStep; // the best guess we can make
+		autoFormant me = Formant_create (tmin, tmax, numberOfFrames, timeStep, timeStep, numberOfFormants);
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
+			const Formant_Frame ffi = & my frames [iframe];
+			ffi -> formant = newvectorzero <structFormant_Formant> (numberOfFormants);
+			ffi -> numberOfFormants = numberOfFormants;
+			for (integer inum = 1; inum <= numberOfFormants; inum ++)
+				ffi -> formant [inum].frequency = bingetr32 (f) * 1000.0;				
+			for (integer inum = 1; inum <= numberOfFormants; inum ++)
+				ffi -> formant [inum].bandwidth = bingetr32 (f) * 1000.0;
+		}
+		f.close (file);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Formant not read from HTK parameter file ", MelderFile_messageName (file), U".");
 	}
 }
 

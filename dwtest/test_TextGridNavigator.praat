@@ -16,6 +16,7 @@ endfor
 @test_topicAndBeforeAndAfter
 @test_twoNavigationContexts
 @test_threeNavigationContexts
+@test_timing
 
 removeObject: textgrid
 
@@ -317,4 +318,30 @@ procedure test_threeNavigationContexts
 	appendInfoLine: tab$, "test three navigation contexts OK"
 endproc
 
+procedure test_timing
+	stopwatch
+	.numberOfCreations = 1000
+	for .i to .numberOfCreations
+		selectObject: textgrid
+		.navigator = To TextGridNavigator: 1, "ix eh ih ux ao ah", "is equal to", "OR",
+		... "sh hv jh k s q r w y", "is equal to", "OR", "", "is equal to", "AND", "before", "no", "Topic start to Topic end"
+		selectObject: .navigator, textgrid
+		Add search tier (topic only): 3, "had suit wash water year", "is equal to", "OR", "Topic start to Topic end", 
+		... "overlaps before and after"
+		Add search tier (topic only): 4, "N", "is equal to", "OR", "Topic start to Topic end", "overlaps before and after"
+		selectObject: .navigator
+		domains## = List domains: "Topic start to Topic end"
+		if .i < .numberOfCreations
+			removeObject: .navigator
+		endif
+	endfor
+	time1 = stopwatch
+	.numberOfMatches = 10000
+	for .i to .numberOfMatches 
+		domains## = List domains: "Topic start to Topic end"
+	endfor
+	time2 = stopwatch
+	appendInfoLine: tab$, .numberOfCreations, " navigator creations + matches (3 tiers) took ", fixed$ (time1, 3), " s."
+	appendInfoLine:  tab$, .numberOfMatches, " navigator matches (3 tiers) took ", fixed$ (time2, 3), " s."
+endproc
 
