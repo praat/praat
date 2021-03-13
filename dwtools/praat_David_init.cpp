@@ -2664,7 +2664,7 @@ DO
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
-	TEXTFIELD (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v", 3)
+	FOLDER (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
 	WORD (fileGlobber, U"Only files that match pattern", U"*")
 	OK
 DO

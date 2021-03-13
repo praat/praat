@@ -78,7 +78,7 @@ FORM (NEW1_Configuration_create, U"Create Configuration", U"Create Configuration
 	WORD (name, U"Name", U"uniform")
 	NATURAL (numberOfPoints, U"Number of points", U"10")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	TEXTFIELD (formula, U"Formula:", U"randomUniform(-1.5, 1.5)", 5)
+	TEXTFIELD (formula, U"Formula:", U"randomUniform (-1.5, 1.5)", 5)
 	OK
 DO
 	CREATE_ONE

@@ -99,6 +99,9 @@ static void UiField_setDefault (UiField me) {
 		case _kUiField_type::COLOUR_:
 		case _kUiField_type::CHANNEL_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		case _kUiField_type::NUMVEC_:
 		case _kUiField_type::NUMMAT_:
 		{
@@ -193,6 +196,9 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		{
 			my stringValue = GuiText_getString (my text);
 			if (my stringVariable)
@@ -444,6 +450,9 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					case _kUiField_type::WORD_:
 					case _kUiField_type::SENTENCE_:
 					case _kUiField_type::TEXT_:
+					case _kUiField_type::INFILE_:
+					case _kUiField_type::OUTFILE_:
+					case _kUiField_type::FOLDER_:
 					{
 						UiHistory_write (next -- ? U", \"" : U" \"");
 						UiHistory_write_expandQuotes (field -> stringValue.get());
@@ -679,6 +688,33 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
+UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, name);
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 3;
+	return thee;
+}
+
+UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, name);
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 3;
+	return thee;
+}
+
+UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, name);
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 3;
+	return thee;
+}
+
 UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMVEC_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -814,7 +850,8 @@ void UiForm_finish (UiForm me) {
 				#else
 					- 10 :
 				#endif
-			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::TEXT_ || thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ ||
+					thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (thy numberOfLines) :
 			textFieldHeight;
 		okButtonIsDefault &= ( thy numberOfLines <= 1 );   // because otherwise, the Enter key would be ambiguous
 	}
@@ -863,6 +900,9 @@ void UiForm_finish (UiForm me) {
 			}
 			break;
 			case _kUiField_type::TEXT_:
+			case _kUiField_type::INFILE_:
+			case _kUiField_type::OUTFILE_:
+			case _kUiField_type::FOLDER_:
 			case _kUiField_type::NUMVEC_:
 			case _kUiField_type::NUMMAT_:
 			{
@@ -1028,7 +1068,8 @@ void UiForm_do (UiForm me, bool modified) {
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
 	if (my type == _kUiField_type::LABEL_) {
 		bool weAreFollowedByAWideField =
-			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
+			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
+			next -> type == _kUiField_type::FOLDER_ || next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
 			Melder_stringMatchesCriterion (my stringValue.get(), kMelder_string::ENDS_WITH, U":", true);
@@ -1064,6 +1105,9 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		case _kUiField_type::COLOUR_:
 		case _kUiField_type::LIST_:
 		{
@@ -1270,6 +1314,9 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
@@ -1474,6 +1521,9 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		{
 			my stringValue = Melder_dup (string);
 			if (my stringVariable)
@@ -1877,6 +1927,9 @@ void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value
 				case _kUiField_type::SENTENCE_:
 				case _kUiField_type::COLOUR_:
 				case _kUiField_type::TEXT_:
+				case _kUiField_type::INFILE_:
+				case _kUiField_type::OUTFILE_:
+				case _kUiField_type::FOLDER_:
 				{
 					GuiText_setString (field -> text, value);
 				}
@@ -2015,6 +2068,9 @@ char32 * UiForm_getString (UiForm me, conststring32 fieldName) {
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		{
 			return field -> stringValue.get();   // BUG dangle
 		}
@@ -2046,6 +2102,9 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::INFILE_:
+		case _kUiField_type::OUTFILE_:
+		case _kUiField_type::FOLDER_:
 		{
 			return field -> stringValue.get();
 		}
@@ -2145,6 +2204,9 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 			case _kUiField_type::WORD_:
 			case _kUiField_type::SENTENCE_:
 			case _kUiField_type::TEXT_:
+			case _kUiField_type::INFILE_:
+			case _kUiField_type::OUTFILE_:
+			case _kUiField_type::FOLDER_:
 			{
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);

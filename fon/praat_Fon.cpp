@@ -160,9 +160,9 @@ DIRECT (NEW_Cochleagram_to_Matrix) {
 
 FORM (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
 	WORD (name, U"Name", U"myCorpus")
-	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"", 3)
+	FOLDER (folderWithSoundFiles, U"Folder with sound files:", U"")
 	WORD (soundFileExtension, U"Sound file extension", U"wav")
-	TEXTFIELD (folderWithAnnotationFiles, U"Folder with annotation files:", U"", 3)
+	FOLDER (folderWithAnnotationFiles, U"Folder with annotation files:", U"")
 	WORD (annotationFileExtension, U"Annotation file extension", U"TextGrid")
 	OK
 DO
@@ -2629,7 +2629,7 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 	#else
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
 	#endif
-	TEXTFIELD (path, U"File path:", defaultPath, 3)
+	FOLDER (path, U"File path:", defaultPath)
 	OK
 DO
 	CREATE_ONE
@@ -2653,7 +2653,7 @@ FORM (NEW1_Strings_createAsFolderList, U"Create Strings as folder list", U"Creat
 	#else
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
 	#endif
-	TEXTFIELD (path, U"Path:", defaultPath, 3)
+	FOLDER (path, U"Path:", defaultPath)
 	OK
 DO
 	CREATE_ONE
