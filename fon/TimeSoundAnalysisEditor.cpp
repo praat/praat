@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,16 +175,16 @@ static void menu_cb_logSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 			OPTION (U"log file only")
 			OPTION (U"Info window only")
 			OPTION (U"log file and Info window")
-		TEXTFIELD (logFile1,   U"Log file 1:",   my default_log1_fileName ())
-		TEXTFIELD (log1format, U"Log 1 format:", my default_log1_format   ())
+		TEXTFIELD (logFile1,   U"Log file 1:",   my default_log1_fileName (), 2)
+		TEXTFIELD (log1format, U"Log 1 format:", my default_log1_format   (), 2)
 		OPTIONMENU (writeLog2To, U"Write log 2 to", 3)
 			OPTION (U"log file only")
 			OPTION (U"Info window only")
 			OPTION (U"log file and Info window")
-		TEXTFIELD (logFile2,   U"Log file 2:",   my default_log2_fileName ())
-		TEXTFIELD (log2format, U"Log 2 format:", my default_log2_format   ())
-		TEXTFIELD (logScript3, U"Log script 3:", my default_logScript3    ())
-		TEXTFIELD (logScript4, U"Log script 4:", my default_logScript4    ())
+		TEXTFIELD (logFile2,   U"Log file 2:",   my default_log2_fileName (), 2)
+		TEXTFIELD (log2format, U"Log 2 format:", my default_log2_format   (), 2)
+		TEXTFIELD (logScript3, U"Log script 3:", my default_logScript3    (), 2)
+		TEXTFIELD (logScript4, U"Log script 4:", my default_logScript4    (), 2)
 	EDITOR_OK
 		SET_OPTION (writeLog1To,   my p_log1_toLogFile + 2 * my p_log1_toInfoWindow)
 		SET_STRING (logFile1,      my p_log1_fileName)

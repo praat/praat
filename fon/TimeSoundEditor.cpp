@@ -1,6 +1,6 @@
 /* TimeSoundEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -397,7 +397,7 @@ static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Mute channels", nullptr)
-		TEXTFIELD (channels_string, U"Channels", U"2")
+		TEXTFIELD (channels_string, U"Channels", U"2", 5)
 	EDITOR_OK
 	EDITOR_DO
 		integer numberOfChannels = ( my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny );

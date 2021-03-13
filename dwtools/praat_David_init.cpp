@@ -189,7 +189,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	LABEL (U"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
-	TEXTFIELD (formula, U"Formula:", U"self")
+	TEXTFIELD (formula, U"Formula:", U"self", 5)
 	OK
 DO
 	MODIFY_EACH (ActivationList)
@@ -1888,7 +1888,7 @@ DIRECT (REAL_DTW_getMaximumDistance) {
 FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self")
+	TEXTFIELD (formula, U"Formula:", U"self", 5)
 	OK
 DO
 	LOOP {
@@ -2518,7 +2518,7 @@ DIRECT (NEW1_Excitations_to_ExcitationList) {
 
 FORM (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	LABEL (U"for all objects in ExcitationList do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
-	TEXTFIELD (formula, U"Formula:", U"self")
+	TEXTFIELD (formula, U"Formula:", U"self", 5)
 	OK
 DO
 	MODIFY_EACH (ExcitationList)
@@ -2664,7 +2664,7 @@ DO
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
-	TEXTFIELD (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
+	TEXTFIELD (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v", 3)
 	WORD (fileGlobber, U"Only files that match pattern", U"*")
 	OK
 DO
@@ -3393,7 +3393,7 @@ static void print_means (Table me) {
 }
 
 FORM (INTEGER_Table_getNumberOfRowsWhere, U"", nullptr) {
-	TEXTFIELD (formula, U"Count only rows where the following condition holds:", U"1; self$[\"gender\"]=\"M\"")
+	TEXTFIELD (formula, U"Count only rows where the following condition holds:", U"1; self$[\"gender\"]=\"M\"", 5)
 	OK
 DO
 	INTEGER_ONE (Table)
@@ -4446,7 +4446,7 @@ FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	LABEL (U"for row from 1 to nrow   ; for all patterns")
 	LABEL (U"   for col from 1 to ncol   ; for all nodes")
 	LABEL (U"      self [row, col] =")
-	TEXTFIELD (formula, nullptr, U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak")
+	TEXTFIELD (formula, nullptr, U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak", 5)
 	LABEL (U"   endfor")
 	LABEL (U"endfor")
 	OK
@@ -5582,7 +5582,7 @@ FORM (GRAPHICS_Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
 		OPTION (U"bars")
 		OPTION (U"poles")
 		OPTION (U"speckles")
-	TEXTFIELD (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half")
+	TEXTFIELD (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half", 5)
 	OK
 DO
 	integer numberOfBisections = 10;
@@ -5666,7 +5666,7 @@ DO
 }
 
 FORM (NEW_Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
-	TEXTFIELD (channels, U"Create a new Sound from the following channels:", U"1:64")
+	TEXTFIELD (channels, U"Create a new Sound from the following channels:", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -6004,7 +6004,7 @@ FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	REAL (level, U"Fill from level", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Paint only those parts where the following condition holds:", U"1; always")
+	TEXTFIELD (formula, U"Paint only those parts where the following condition holds:", U"1; always", 5)
 	OK
 DO
 	integer numberOfBisections = 10;
@@ -6219,7 +6219,7 @@ DO
 }
 
 FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
-	TEXTFIELD (text, U"Text:", U"This is some text.")
+	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
 	OK
 DO
 	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
@@ -6232,7 +6232,7 @@ DO
 END }
 
 FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
-	TEXTFIELD (text, U"Text:", U"This is some text.")
+	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
 	BOOLEAN (wantTextGrid, U"Create TextGrid with annotations", false);
 	OK
 DO
@@ -6577,7 +6577,7 @@ DO
 }
 
 FORM (NEW1_old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
-	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
+	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text", 10)
 	OK
 DO
 	CREATE_ONE
@@ -6587,7 +6587,7 @@ DO
 
 FORM (NEW1_Strings_createFromTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
 	WORD (name, U"Name", U"tokens")
-	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
+	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text", 10)
 	SENTENCE (separators, U"Separators", U" ,")
 	OK
 DO
@@ -6597,7 +6597,7 @@ DO
 }
 
 FORM (NEW1_Strings_createAsTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
-	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text")
+	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text", 10)
 	SENTENCE (separators, U"Separators", U" ,")
 	OK
 DO_ALTERNATIVE (NEW1_old_Strings_createAsTokens)
@@ -6797,7 +6797,7 @@ FORM (GRAPHICS_Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
 	WORD (markColumn_string, U"Column with marks", U"")
 	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6819,7 +6819,7 @@ FORM (GRAPHICS_Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullpt
 	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
-	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6842,7 +6842,7 @@ FORM (GRAPHICS_Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar plot w
 	SENTENCE (colours, U"Colours", U"Grey")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"row >= 1 and row <= 8")
+	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"row >= 1 and row <= 8", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6860,7 +6860,7 @@ FORM (GRAPHICS_Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line g
 	WORD (text, U"Text", U"+")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; (= everything)")
+	TEXTFIELD (formula, U"Use only data from rows where the following condition holds:", U"1; (= everything)", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6890,7 +6890,7 @@ FORM (GRAPHICS_Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plot
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6908,7 +6908,7 @@ FORM (GRAPHICS_Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nul
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6951,7 +6951,7 @@ FORM (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) 
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6985,7 +6985,7 @@ FORM (GRAPHICS_Table_normalProbabilityPlotWhere, U"Table: Normal probability plo
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7062,7 +7062,7 @@ FORM (GRAPHICS_Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7097,7 +7097,7 @@ FORM (GRAPHICS_Table_distributionPlotWhere, U"Table: Distribution plot where", n
 	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7139,7 +7139,7 @@ FORM (GRAPHICS_Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bar
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7184,7 +7184,7 @@ FORM (GRAPHICS_Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars pl
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7197,7 +7197,7 @@ DO
 }
 
 FORM (NEW_Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
-	TEXTFIELD (formula, U"Extract rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Extract rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -7211,7 +7211,7 @@ FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahala
 			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	SENTENCE (factorColumn_string, U"Factor column", U"")
-	TEXTFIELD (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	TEXTFIELD (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"", 5)
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -7220,7 +7220,7 @@ DO
 }
 
 FORM (NEW_Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
-	TEXTFIELD (columnRanges, U"Create a new Table from the following columns:", U"1 2")
+	TEXTFIELD (columnRanges, U"Create a new Table from the following columns:", U"1 2", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -7794,7 +7794,7 @@ DO
 
 FORM (NEW_TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
@@ -7807,15 +7807,15 @@ DO
 
 FORM (NEW_TextGrid_to_TextGridNavigator, U"", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n")
+	TEXTFIELD (after_string, U"After labels", U"m n", 2)
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8129,7 +8129,7 @@ DIRECT (MODIFY_TextGridNavigator_replaceSearchTiers) {
 
 FORM (MODIFY_TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8145,15 +8145,15 @@ DO
 
 FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ")
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g")
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n")
+	TEXTFIELD (after_string, U"After labels", U"m n", 2)
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")

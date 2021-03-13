@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ DO
 END }
 
 FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
-	TEXTFIELD (audioFile, U"Audio file:", U"")
+	TEXTFIELD (audioFile, U"Audio file:", U"", 5)
 	RADIO (type, U"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTON (Melder_audioFileTypeString (i))
@@ -519,7 +519,7 @@ FORM (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") 
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)", 5)
 	OK
 DO
 	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
@@ -531,7 +531,7 @@ FORM (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	TEXTFIELD (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)", 5)
 	OK
 DO
 	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
@@ -763,7 +763,7 @@ DO
 
 FORM (NEW_Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
 	LABEL (U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
-	TEXTFIELD (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
+	TEXTFIELD (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter", 5)
 	OK
 DO
 	CONVERT_EACH (Sound)
@@ -827,7 +827,7 @@ FORM (MODIFY_Sound_formula, U"Sound: Formula", U"Sound: Formula...") {
 	LABEL (U"x = x1   ! time associated with first sample")
 	LABEL (U"for col from 1 to ncol")
 	LABEL (U"   self [col] = ...")
-	TEXTFIELD (formula, nullptr, U"self")
+	TEXTFIELD (formula, nullptr, U"self", 5)
 	LABEL (U"   x = x + dx")
 	LABEL (U"endfor")
 	OK
@@ -842,7 +842,7 @@ FORM (MODIFY_Sound_formula_part, U"Sound: Formula (part)", U"Sound: Formula...")
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"Formula:", U"2 * self")
+	TEXTFIELD (formula, U"Formula:", U"2 * self", 5)
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)

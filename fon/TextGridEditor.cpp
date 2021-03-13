@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -878,7 +878,7 @@ static void do_find (TextGridEditor me) {
 
 static void menu_cb_Find (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find text", nullptr)
-		TEXTFIELD (findString, U"Text:", U"")
+		TEXTFIELD (findString, U"Text:", U"", 3)
 	EDITOR_OK
 	EDITOR_DO
 		my findString = Melder_dup (findString);

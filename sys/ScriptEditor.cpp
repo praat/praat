@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2018,2020 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +188,7 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 		SENTENCE (command, U"Command", U"Do it...")
 		SENTENCE (afterCommand, U"After command", U"")
 		INTEGER (depth, U"Depth", U"0")
-		TEXTFIELD (scriptFile, U"Script file:", U"")
+		TEXTFIELD (scriptFile, U"Script file:", U"", 3)
 	EDITOR_OK
 		if (my editorClass)
 			SET_STRING (window, my editorClass -> className)
@@ -211,7 +211,7 @@ static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 		SENTENCE (command, U"Command", U"Do it...")
 		SENTENCE (afterCommand, U"After command", U"")
 		INTEGER (depth, U"Depth", U"0")
-		TEXTFIELD (scriptFile, U"Script file:", U"")
+		TEXTFIELD (scriptFile, U"Script file:", U"", 3)
 	EDITOR_OK
 		if (my name [0])
 			SET_STRING (scriptFile, my name.get())
@@ -234,7 +234,7 @@ static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 		SENTENCE (command, U"Command", U"Do it...")
 		SENTENCE (afterCommand, U"After command", U"")
 		INTEGER (depth, U"Depth", U"0")
-		TEXTFIELD (scriptFile, U"Script file:", U"")
+		TEXTFIELD (scriptFile, U"Script file:", U"", 3)
 	EDITOR_OK
 		if (my name [0])
 			SET_STRING (scriptFile, my name.get())

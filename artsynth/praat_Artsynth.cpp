@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2019 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +277,7 @@ DIRECT (GRAPHICS_VocalTract_draw) {
 FORM (MODIFY_VocalTract_formula, U"VocalTract Formula", U"Matrix: Formula...") {
 	LABEL (U"`x` is the distance form the glottis in metres, `col` is the section number, `self` is in m\u00B2")
 	LABEL (U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD (formula, U"Formula:", U"0")
+	TEXTFIELD (formula, U"Formula:", U"0", 5)
 	OK
 DO
 	MODIFY_EACH_WEAK (VocalTract)

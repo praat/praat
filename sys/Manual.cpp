@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2020 Paul Boersma
+ * Copyright (C) 1996-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
-		TEXTFIELD (folder, U"Directory:", U"")
+		TEXTFIELD (folder, U"Directory:", U"", 3)
 	EDITOR_OK
 		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	EDITOR_DO
@@ -205,7 +205,7 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		SENTENCE (middleFooter, U"Middle footer", U"")
 		SENTENCE (rightOrOutsideFooter, U"Right or outside footer", U"")
 		BOOLEAN (mirrorEvenOddHeaders, U"Mirror even/odd headers", true)
-		TEXTFIELD (printAllPagesWhoseTitleStartsWith, U"Print all pages whose title starts with:", U"Intro")
+		TEXTFIELD (printAllPagesWhoseTitleStartsWith, U"Print all pages whose title starts with:", U"Intro", 2)
 		INTEGER (firstPageNumber, U"First page number", U"1")
 		BOOLEAN (suppressLinksToThisPage, U"Suppress \"Links to this page\"", false)
 	EDITOR_OK

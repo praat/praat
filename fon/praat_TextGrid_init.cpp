@@ -630,7 +630,7 @@ DO
 }
 
 FORM (STRING_SpellingChecker_nextNotAllowedWord, U"Next not allowed word?", U"SpellingChecker") {
-	TEXTFIELD (sentence, U"Sentence:", U"")
+	TEXTFIELD (sentence, U"Sentence:", U"", 10)
 	INTEGER (startingCharacter, U"Starting character", U"0")
 	OK
 DO
@@ -1256,7 +1256,7 @@ DO
 FORM (MODIFY_TextGrid_setIntervalText, U"TextGrid: Set interval text", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
-	TEXTFIELD (text, U"Text:", U"")
+	TEXTFIELD (text, U"Text:", U"", 10)
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -1267,7 +1267,7 @@ DO
 FORM (MODIFY_TextGrid_insertPoint, U"TextGrid: Insert point", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	REAL (time, U"Time (s)", U"0.5")
-	TEXTFIELD (text, U"Text:", U"")
+	TEXTFIELD (text, U"Text:", U"", 10)
 	OK
 DO
 	MODIFY_EACH (TextGrid)
@@ -1311,7 +1311,7 @@ DO
 FORM (MODIFY_TextGrid_setPointText, U"TextGrid: Set point text", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
-	TEXTFIELD (text, U"Text:", U"")
+	TEXTFIELD (text, U"Text:", U"", 10)
 	OK
 DO
 	MODIFY_EACH (TextGrid)
