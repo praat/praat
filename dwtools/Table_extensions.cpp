@@ -4283,18 +4283,17 @@ integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter
 
 autoINTVEC Table_listRowNumbersWhere (Table me, conststring32 formula, Interpreter interpreter) {
 	try {
-		autoINTVEC selectedRows = zero_INTVEC (0);
 		const integer numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
 		if (numberOfMatches == 0)
-			return selectedRows;
+			return autoINTVEC();
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
-		selectedRows.resize (numberOfMatches);
+		autoINTVEC selectedRows = zero_INTVEC (numberOfMatches);
 		integer n = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_run (irow, 1, & result);
 			if (result. numericResult != 0.0)
-				selectedRows [ ++ n] = irow;
+				selectedRows [++ n] = irow;
 		}
 		Melder_assert (n == numberOfMatches);
 		return selectedRows;
