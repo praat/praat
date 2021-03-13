@@ -555,7 +555,7 @@ FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	LABEL (U"x = x1   ! time associated with first sample")
 	LABEL (U"for col from 1 to ncol")
 	LABEL (U"   self [col] = ...")
-	TEXTFIELD (formula, nullptr, U"self")
+	TEXTFIELD (formula, nullptr, U"self", 5)
 	LABEL (U"   x = x + dx")
 	LABEL (U"endfor")
 	OK
@@ -570,7 +570,7 @@ FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"Formula:", U"2 * self")
+	TEXTFIELD (formula, U"Formula:", U"2 * self", 5)
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)

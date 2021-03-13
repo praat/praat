@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2020 Paul Boersma
+ * Copyright (C) 1996-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -642,7 +642,7 @@ static void menu_cb_print (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Print", nullptr)
 		SENTENCE_FIELD (my insideHeader, U"Left or inside header", U"")
 		SENTENCE_FIELD (my middleHeader, U"Middle header", U"")
-		TEXTFIELD_FIELD (my outsideHeader, U"Right or outside header", U"")
+		TEXTFIELD_FIELD (my outsideHeader, U"Right or outside header", U"", 2)
 		SENTENCE_FIELD (my insideFooter, U"Left or inside footer", U"")
 		SENTENCE_FIELD (my middleFooter, U"Middle footer", U"")
 		SENTENCE_FIELD (my outsideFooter, U"Right or outside footer", U"")
@@ -704,7 +704,7 @@ static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
-		TEXTFIELD (page, U"Page:", U"a")
+		TEXTFIELD (page, U"Page:", U"a", 2)
 	EDITOR_OK
 	EDITOR_DO
 		HyperPage_goToPage (me, page);

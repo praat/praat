@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2013,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,13 +207,13 @@ _form_inited_: \
 #define TEXTFIELD_VARIABLE(stringVariable) \
 	static conststring32 stringVariable;
 
-#define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue) \
+#define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue, numberOfLines) \
 	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue, numberOfLines);
 
-#define TEXTFIELD(stringVariable, labelText, defaultValue) \
+#define TEXTFIELD(stringVariable, labelText, defaultValue, numberOfLines) \
 	TEXTFIELD_VARIABLE (stringVariable) \
-	TEXTFIELD_FIELD (stringVariable, labelText, defaultValue)
+	TEXTFIELD_FIELD (stringVariable, labelText, defaultValue, numberOfLines)
 
 
 #define RADIO_VARIABLE(optionVariable) \

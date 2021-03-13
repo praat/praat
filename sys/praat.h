@@ -226,7 +226,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	BOOLEAN (variable, labelText, defaultBooleanValue)
 		the value is 0 (off) or 1 (on).
 	LABEL (labelText)
-	TEXTFIELD (variable, labelText, defaultStringValue)
+	TEXTFIELD (variable, labelText, defaultStringValue, numberOfLines)
 	NUMVEC (variable, labelText, defaultStringValue)
 	NUMMAT (variable, labelText, defaultStringValue)
 	RADIO (variable, labelText, defaultOptionNumber, base)
@@ -308,11 +308,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static conststring32 stringVariable; \
 		UiForm_addLabel (_dia_.get(), & stringVariable, labelText);
 
-#define TEXTFIELD(stringVariable, labelText, defaultStringValue)  \
+#define TEXTFIELD(stringVariable, labelText, defaultStringValue, numberOfLines)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static conststring32 stringVariable; \
-		UiForm_addText (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
+		UiForm_addText (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue, numberOfLines);
 
 #define NUMVEC(numericVectorVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \

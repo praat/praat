@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2020 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2021 Paul Boersma, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -487,7 +487,7 @@ static void do_replace (TextEditor me) {
 
 static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find", nullptr)
-		TEXTFIELD (findString, U"Find:", U"")
+		TEXTFIELD (findString, U"Find:", U"", 5)
 	EDITOR_OK
 		if (theFindString) SET_STRING (findString, theFindString.get());
 	EDITOR_DO
@@ -521,8 +521,8 @@ static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
 		LABEL (U"the selected text will be replaced by the Replace string;")
 		LABEL (U"otherwise, the next occurrence of the Find string will be selected.")
 		LABEL (U"So you typically need two clicks on Apply to get a text replaced.")
-		TEXTFIELD (findString, U"Find:", U"")
-		TEXTFIELD (replaceString, U"Replace with:", U"")
+		TEXTFIELD (findString, U"Find:", U"", 5)
+		TEXTFIELD (replaceString, U"Replace with:", U"", 5)
 	EDITOR_OK
 		if (theFindString) SET_STRING (findString, theFindString.get());
 		if (theReplaceString) SET_STRING (replaceString, theReplaceString.get());

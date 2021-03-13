@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2020 Paul Boersma
+ * Copyright (C) 1997-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ FORM (MODIFY_Network_formula_activities, U"Network: Formula (activities)", nullp
 	INTEGER (toNode, U"To node", U"0 (= all)")
 	LABEL (U"`col` is the node number, `self` is the current activity")
 	LABEL (U"for col := 1 to ncol do { self [col] := `formula' }")
-	TEXTFIELD (formula, U"Formula:", U"0")
+	TEXTFIELD (formula, U"Formula:", U"0", 5)
 	OK
 DO
 	MODIFY_EACH_WEAK (Network)

@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ DIRECT (PRAAT_Remove) {
 END }
 
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
-	TEXTFIELD (newName, U"New name:", U"")
+	TEXTFIELD (newName, U"New name:", U"", 3)
 OK
 	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
@@ -64,7 +64,7 @@ DO
 END }
 
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
-	TEXTFIELD (newName, U"Name of new object:", U"")
+	TEXTFIELD (newName, U"Name of new object:", U"", 3)
 OK
 	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
@@ -164,7 +164,7 @@ FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	SENTENCE (command, U"Command", U"Hallo...")
 	SENTENCE (afterCommand, U"After command", U"")
 	INTEGER (depth, U"Depth", U"0")
-	TEXTFIELD (script, U"Script file:", U"/u/miep/hallo.praat")
+	TEXTFIELD (script, U"Script file:", U"/u/miep/hallo.praat", 3)
 	OK
 DO
 	praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
@@ -198,7 +198,7 @@ FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	SENTENCE (command, U"Command", U"Play reverse")
 	SENTENCE (afterCommand, U"After command", U"Play")
 	INTEGER (depth, U"Depth", U"0")
-	TEXTFIELD (script, U"Script file:", U"/u/miep/playReverse.praat")
+	TEXTFIELD (script, U"Script file:", U"/u/miep/playReverse.praat", 3)
 	OK
 DO
 	praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, script);
@@ -257,7 +257,7 @@ END }
 
 FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"Type any numeric formula or string formula:")
-	TEXTFIELD (expression, nullptr, U"5*5")
+	TEXTFIELD (expression, nullptr, U"5*5", 5)
 	LABEL (U"Note that you can include many special functions in your formula,")
 	LABEL (U"including statistical functions and acoustics-auditory conversions.")
 	LABEL (U"For details, click Help.")
@@ -477,7 +477,7 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 END }
 
 FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr) {
-	TEXTFIELD (folder, U"Folder:", U"")
+	TEXTFIELD (folder, U"Folder:", U"", 3)
 OK
 	LOOP {
 		iam (ManPages);
@@ -506,7 +506,7 @@ END }
 /********** Callbacks of the Help menu. **********/
 
 FORM (HELP_SearchManual, U"Search manual", U"Manual") {
-	TEXTFIELD (query, U"Search for strings (separate with spaces):", U"")
+	TEXTFIELD (query, U"Search for strings (separate with spaces):", U"", 3)
 	OK
 DO
 	if (theCurrentPraatApplication -> batch)
@@ -530,7 +530,7 @@ DO
 END }
 
 FORM (HELP_WriteManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
-	TEXTFIELD (folder, U"Directory:", U"")
+	TEXTFIELD (folder, U"Directory:", U"", 3)
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);

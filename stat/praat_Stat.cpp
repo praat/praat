@@ -222,7 +222,7 @@ DO
 FORM (NEW1_Table_createWithColumnNames, U"Create Table with column names", nullptr) {
 	WORD (name, U"Name", U"table")
 	INTEGER (numberOfRows, U"Number of rows", U"10")
-	TEXTFIELD (columnNames, U"Column names:", U"speaker dialect age vowel F0 F1 F2")
+	TEXTFIELD (columnNames, U"Column names:", U"speaker dialect age vowel F0 F1 F2", 5)
 	OK
 DO
 	CREATE_ONE
@@ -772,7 +772,7 @@ DIRECT (MODIFY_Table_appendRow) {
 
 FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
 	SENTENCE (columnLabel, U"Column (label)", U"")
-	TEXTFIELD (formula, U"Formula:", U"abs (self)")
+	TEXTFIELD (formula, U"Formula:", U"abs (self)", 5)
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
@@ -784,7 +784,7 @@ DO
 FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Table: Formula...") {
 	SENTENCE (fromColumn, U"From column (label)", U"")
 	SENTENCE (toColumn, U"To column (label)", U"")
-	TEXTFIELD (formula, U"Formula:", U"log10 (self)")
+	TEXTFIELD (formula, U"Formula:", U"log10 (self)", 5)
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
@@ -890,7 +890,7 @@ DIRECT (MODIFY_Table_reflectRows) {
 }
 
 FORM (MODIFY_Table_sortRows, U"Table: Sort rows", nullptr) {
-	TEXTFIELD (columnLabels, U"One or more column labels for sorting:", U"dialect gender name")
+	TEXTFIELD (columnLabels, U"One or more column labels for sorting:", U"dialect gender name", 5)
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -901,12 +901,12 @@ DO
 // MARK: Convert
 
 FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
-	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"speaker dialect age vowel")
-	TEXTFIELD (columnsToSum, U"Columns to sum:", U"number cost")
-	TEXTFIELD (columnsToAverage, U"Columns to average:", U"price")
-	TEXTFIELD (columnsToMedianize, U"Columns to medianize:", U"vot")
-	TEXTFIELD (columnsToAverageLogarithmically, U"Columns to average logarithmically:", U"duration")
-	TEXTFIELD (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", U"F0 F1 F2 F3")
+	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"speaker dialect age vowel", 2)
+	TEXTFIELD (columnsToSum, U"Columns to sum:", U"number cost", 2)
+	TEXTFIELD (columnsToAverage, U"Columns to average:", U"price", 2)
+	TEXTFIELD (columnsToMedianize, U"Columns to medianize:", U"vot", 2)
+	TEXTFIELD (columnsToAverageLogarithmically, U"Columns to average logarithmically:", U"duration", 2)
+	TEXTFIELD (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", U"F0 F1 F2 F3", 2)
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
@@ -954,9 +954,9 @@ DIRECT (NEW_Table_transpose) {
 }
 
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
-	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"dialect gender speaker")
+	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"dialect gender speaker", 3)
 	SENTENCE (columnToTranspose, U"Column to transpose", U"vowel")
-	TEXTFIELD (columnsToExpand, U"Columns to expand:", U"duration F0 F1 F2 F3")
+	TEXTFIELD (columnsToExpand, U"Columns to expand:", U"duration F0 F1 F2 F3", 3)
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
@@ -973,7 +973,7 @@ DIRECT (NEW_Table_to_LinearRegression) {
 }
 
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
-	TEXTFIELD (factors, U"Factors (column names):", U"F0 F1 duration")
+	TEXTFIELD (factors, U"Factors (column names):", U"F0 F1 duration", 3)
 	SENTENCE (dependent1, U"Dependent 1 (column name)", U"e")
 	SENTENCE (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
