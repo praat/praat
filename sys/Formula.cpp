@@ -6251,7 +6251,7 @@ static void do_pauseFormAddText () {
 	Stackel n = pop;
 	Melder_require (n->number >= 2 && n->number <= 3,
 		U"The function \"text\" requires 2 or 3 arguments (a label, a default value, and an optional number of lines), not ", n->number, U".");
-	integer numberOfLines = 1;
+	integer numberOfLines = 1;   // the default
 	if (n->number == 3) {
 		Stackel _numberOfLines = pop;
 		Melder_require (_numberOfLines->which == Stackel_NUMBER,

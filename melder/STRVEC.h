@@ -36,4 +36,28 @@ void sort_STRVEC_inout (STRVEC const& a) noexcept;
 */
 autoSTRVEC splitByWhitespace_STRVEC (conststring32 string);
 
+/*
+	Regard a string as a sequence of tokens,
+	separated by commas (or another separator) according to RFC 1480.
+	Each token is optionally surrounded by double quotes,
+	in which case the token can contain a comma itself,
+	or even a double quote (which should be doubled to escape it),
+	or even a line separator.
+	Well-formed:
+		abc,"def" -> first token is abc, second token is def
+		abc,"""def""" -> first token is abc, second token is "def"
+		abc,"def""ghi" -> first token is abc, second token is def"ghi
+	Ill-formed:
+		abc,"def"ghi -> non-terminated quoted string
+		abc,def"ghi -> a quote in an unquoted string
+		abc,"def"ghi" -> second token def not followed by comma or end
+	Note that in a quoted string in PraatScript,
+		abc,"""def"""
+	would have to be written as
+		"abc,""""""def"""""""
+	in which case it would be much easier (if possible) to use a string vector:
+		{ "abc", """def""" }
+*/
+autoSTRVEC splitCharacterSeparated_STRVEC (conststring32 string, char32 separator);
+
 /* End of file STRVEC.h */
