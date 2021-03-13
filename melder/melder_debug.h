@@ -2,7 +2,7 @@
 #define _melder_debug_h_
 /* melder_debug.h
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	SYNOPSIS
-
-	trace (arg1, arg2, arg3...);
-
-	extern int Melder_debug;
-*/
-
-extern int Melder_debug;
-
+inline integer Melder_debug = 0;
 
 void Melder_tracingToFile (MelderFile file);
 void Melder_setTracing (bool tracing);
-extern bool Melder_isTracing;
+inline bool Melder_isTracing = false;
 
 namespace MelderTrace {
-	extern structMelderFile _file;
+	inline structMelderFile _file { };
 	FILE * _open (conststring8 sourceCodeFileName, int lineNumber, conststring8 functionName);
 	void _close (FILE *f);
 	conststring8  _peek32to8  (conststring32 string);

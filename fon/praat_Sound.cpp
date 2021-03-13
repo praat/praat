@@ -132,7 +132,7 @@ DO
 END }
 
 FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
-	TEXTFIELD (audioFile, U"Audio file:", U"", 5)
+	OUTFILE (audioFile, U"Audio file:", U"")
 	RADIO (type, U"Type", 3)
 	{ int i; for (i = 1; i <= Melder_NUMBER_OF_AUDIO_FILE_TYPES; i ++) {
 		RADIOBUTTON (Melder_audioFileTypeString (i))

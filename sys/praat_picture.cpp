@@ -893,7 +893,7 @@ DO
 }
 
 FORM (GRAPHICS_InsertPictureFromFile, U"Praat picture: Insert picture from file", U"Insert picture from file...") {
-	TEXTFIELD (fileName, U"File name:", U"~/Desktop/paul.jpg", 3)
+	INFILE (fileName, U"File name:", U"~/Desktop/paul.jpg")
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"1.0")
 	REAL (fromY, U"From y", U"0.0")

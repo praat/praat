@@ -1,6 +1,6 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2020 Paul Boersma
+ * Copyright (C) 2000-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 	#include <windows.h>
 #endif
 
-int Melder_debug = 0;
 /*
 Melder_debug will always be set to 0 when Praat starts up.
 If Melder_debug is temporarily set to the following values
@@ -189,9 +188,6 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 #endif
 
 /********** TRACE **********/
-
-bool Melder_isTracing = false;
-structMelderFile MelderTrace::_file { };
 
 void Melder_tracingToFile (MelderFile file) {
 	MelderFile_copy (file, & MelderTrace::_file);

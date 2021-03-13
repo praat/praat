@@ -970,14 +970,13 @@ FORM (NEW_Sound_to_PowerCepstrogram, U"Sound: To PowerCepstrogram", U"Sound: To 
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"60.0")
 	POSITIVE (timeStep,U"Time step (s)", U"0.002")
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
-	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50")
+	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
 		autoPowerCepstrogram result = Sound_to_PowerCepstrogram (me, pitchFloor, timeStep, maximumFrequency, preEmphasisFrequency);
 	CONVERT_EACH_END (my name.get())
 }
-
 
 FORM (NEW_Sound_to_PowerCepstrogram_hillenbrand, U"Sound: To PowerCepstrogram (hillenbrand)", U"Sound: To PowerCepstrogram...") {
 	POSITIVE (pitchFloor, U"Pitch floor (Hz)", U"60.0")

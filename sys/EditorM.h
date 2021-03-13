@@ -31,6 +31,9 @@
 #undef LABEL
 #undef MUTABLE_LABEL
 #undef TEXTFIELD
+#undef INFILE
+#undef OUTFILE
+#undef FOLDER
 #undef RADIO
 #undef RADIOSTR
 #undef RADIOBUTTON
@@ -214,6 +217,42 @@ _form_inited_: \
 #define TEXTFIELD(stringVariable, labelText, defaultValue, numberOfLines) \
 	TEXTFIELD_VARIABLE (stringVariable) \
 	TEXTFIELD_FIELD (stringVariable, labelText, defaultValue, numberOfLines)
+
+
+#define INFILE_VARIABLE(stringVariable) \
+	static conststring32 stringVariable;
+
+#define INFILE_FIELD(stringVariable, labelText, defaultValue) \
+	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
+	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+
+#define INFILE(stringVariable, labelText, defaultValue) \
+	INFILE_VARIABLE (stringVariable) \
+	INFILE_FIELD (stringVariable, labelText, defaultValue)
+
+
+#define OUTFILE_VARIABLE(stringVariable) \
+	static conststring32 stringVariable;
+
+#define OUTFILE_FIELD(stringVariable, labelText, defaultValue) \
+	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
+	UiForm_addOutfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+
+#define OUTFILE(stringVariable, labelText, defaultValue) \
+	OUTFILE_VARIABLE (stringVariable) \
+	OUTFILE_FIELD (stringVariable, labelText, defaultValue)
+
+
+#define FOLDER_VARIABLE(stringVariable) \
+	static conststring32 stringVariable;
+
+#define FOLDER_FIELD(stringVariable, labelText, defaultValue) \
+	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
+	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+
+#define FOLDER(stringVariable, labelText, defaultValue) \
+	FOLDER_VARIABLE (stringVariable) \
+	FOLDER_FIELD (stringVariable, labelText, defaultValue)
 
 
 #define RADIO_VARIABLE(optionVariable) \
