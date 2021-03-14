@@ -254,7 +254,7 @@ FORM (MODIFY_Network_formula_activities, U"Network: Formula (activities)", nullp
 	INTEGER (toNode, U"To node", U"0 (= all)")
 	LABEL (U"`col` is the node number, `self` is the current activity")
 	LABEL (U"for col := 1 to ncol do { self [col] := `formula' }")
-	TEXTFIELD (formula, U"Formula:", U"0", 5)
+	FORMULA (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Network)

@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -772,7 +772,7 @@ DIRECT (MODIFY_Table_appendRow) {
 
 FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
 	SENTENCE (columnLabel, U"Column (label)", U"")
-	TEXTFIELD (formula, U"Formula:", U"abs (self)", 5)
+	FORMULA (formula, U"Formula:", U"abs (self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
@@ -784,7 +784,7 @@ DO
 FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Table: Formula...") {
 	SENTENCE (fromColumn, U"From column (label)", U"")
 	SENTENCE (toColumn, U"To column (label)", U"")
-	TEXTFIELD (formula, U"Formula:", U"log10 (self)", 5)
+	FORMULA (formula, U"Formula:", U"log10 (self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)

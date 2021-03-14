@@ -53,7 +53,7 @@ FORM (NEW1_Matrix_create, U"Create Matrix", U"Create Matrix...") {
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	POSITIVE (dy, U"dy", U"1.0")
 	REAL (y1, U"y1", U"1.0")
-	TEXTFIELD (formula, U"Formula:", U"x*y", 5)
+	FORMULA (formula, U"Formula:", U"x*y")
 	OK
 DO
 	if (xmax < xmin) Melder_throw (U"Your xmax (", Melder_single (xmax), U") should not be less than your xmin (", Melder_single (xmin), U").");
@@ -70,7 +70,7 @@ FORM (NEW1_Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix.
 	WORD (name, U"Name", U"xy")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
-	TEXTFIELD (formula, U"Formula:", U"x*y", 5)
+	FORMULA (formula, U"Formula:", U"x*y")
 	OK
 DO
 	CREATE_ONE
@@ -400,7 +400,7 @@ DO
 FORM (MODIFY_Matrix_formula, U"Matrix Formula", U"Formula...") {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Matrix)
@@ -573,9 +573,9 @@ FORM (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	POSITIVE (dy, U"dy", U"1.0")
 	REAL (y1, U"y1", U"1.0")
-	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100", 5)
-	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000", 5)
-	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100", 5)
+	FORMULA (redFormula, U"Red formula:", U"x*y/100")
+	FORMULA (greenFormula, U"Green formula:", U"x*y/1000")
+	FORMULA (blueFormula, U"Blue formula:", U"x*y/100")
 	OK
 DO
 	if (xmax < xmin)
@@ -596,9 +596,9 @@ FORM (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo..."
 	WORD (name, U"Name", U"xy")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
-	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100", 5)
-	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000", 5)
-	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100", 5)
+	FORMULA (redFormula, U"Red formula:", U"x*y/100")
+	FORMULA (greenFormula, U"Green formula:", U"x*y/1000")
+	FORMULA (blueFormula, U"Blue formula:", U"x*y/100")
 	OK
 DO
 	CREATE_ONE
@@ -636,7 +636,7 @@ DIRECT (NEW_Photo_extractTransparency) {
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -647,7 +647,7 @@ DO
 FORM (MODIFY_Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -658,7 +658,7 @@ DO
 FORM (MODIFY_Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -669,7 +669,7 @@ DO
 FORM (MODIFY_Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)

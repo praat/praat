@@ -1,6 +1,6 @@
 /* praat_TableOfReal.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ FORM (GRAPHICS_TableOfReal_drawAsNumbers_if, U"Draw as numbers if...", nullptr) 
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
 	NATURAL (precision, U"Precision", U"5")
-	TEXTFIELD (condition, U"Condition:", U"self <> 0", 5)
+	FORMULA (condition, U"Condition:", U"self <> 0")
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
@@ -234,7 +234,7 @@ DO
 
 FORM (MODIFY_TableOfReal_formula, U"TableOfReal: Formula", U"Formula...") {
 	LABEL (U"for row from 1 to nrow do for col from 1 to ncol do self [row, col] = ...")
-	TEXTFIELD (formula, U"Formula:", U"if col = 5 then self + self [6] else self fi", 5)
+	FORMULA (formula, U"Formula:", U"if col = 5 then self + self [6] else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (TableOfReal)
@@ -375,7 +375,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
-	TEXTFIELD (condition, U"Extract all columns with at least one cell where:", U"col mod 3 = 0 ; this example extracts every third column", 5)
+	FORMULA (condition, U"Extract all columns with at least one cell where:", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
@@ -422,7 +422,7 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
-	TEXTFIELD (condition, U"Extract all rows with at least one cell where:", U"row mod 3 = 0 ; this example extracts every third row", 5)
+	FORMULA (condition, U"Extract all rows with at least one cell where:", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
 	CONVERT_EACH (TableOfReal)

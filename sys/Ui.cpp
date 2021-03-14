@@ -99,6 +99,7 @@ static void UiField_setDefault (UiField me) {
 		case _kUiField_type::COLOUR_:
 		case _kUiField_type::CHANNEL_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::FORMULA_:
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
@@ -196,6 +197,7 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::FORMULA_:
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
@@ -450,6 +452,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					case _kUiField_type::WORD_:
 					case _kUiField_type::SENTENCE_:
 					case _kUiField_type::TEXT_:
+					case _kUiField_type::FORMULA_:
 					case _kUiField_type::INFILE_:
 					case _kUiField_type::OUTFILE_:
 					case _kUiField_type::FOLDER_:
@@ -688,6 +691,15 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
+UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, name);
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 1;
+	return thee;
+}
+
 UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
@@ -851,6 +863,7 @@ void UiForm_finish (UiForm me) {
 					- 10 :
 				#endif
 			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::FORMULA_ ? multiLineTextHeight (5) :
 			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ?
 				multiLineTextHeight (3) :
 			textFieldHeight;
@@ -906,6 +919,12 @@ void UiForm_finish (UiForm me) {
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, y + multiLineTextHeight (thy numberOfLines), thy numberOfLines > 1 ? GuiText_SCROLLED : 0);
+			}
+			break;
+			case _kUiField_type::FORMULA_:
+			{
+				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, y + multiLineTextHeight (5), GuiText_WORDWRAP | GuiText_MULTILINE);
 			}
 			break;
 			case _kUiField_type::INFILE_:
@@ -1074,15 +1093,16 @@ void UiForm_do (UiForm me, bool modified) {
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
 	if (my type == _kUiField_type::LABEL_) {
 		bool weAreFollowedByAWideField =
-			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
-			next -> type == _kUiField_type::FOLDER_ || next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
+			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::FORMULA_ ||
+			next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
+			next -> type == _kUiField_type::FOLDER_ ||
+			next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
 			Melder_stringMatchesCriterion (my stringValue.get(), kMelder_string::ENDS_WITH, U":", true);
 		bool weAreAComment = ! weLabelTheFollowingField;
-		if (weAreAComment) {
+		if (weAreAComment)
 			MelderInfo_writeLine (U"\t/* ", my stringValue.get(), U" */");
-		}
 		return;
 	}
 
@@ -1111,6 +1131,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::FORMULA_:
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
@@ -1320,6 +1341,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::FORMULA_:
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
@@ -1527,6 +1549,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::FORMULA_:
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
@@ -1933,6 +1956,7 @@ void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value
 				case _kUiField_type::SENTENCE_:
 				case _kUiField_type::COLOUR_:
 				case _kUiField_type::TEXT_:
+				case _kUiField_type::FORMULA_:
 				case _kUiField_type::INFILE_:
 				case _kUiField_type::OUTFILE_:
 				case _kUiField_type::FOLDER_:
@@ -2074,6 +2098,7 @@ char32 * UiForm_getString (UiForm me, conststring32 fieldName) {
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
+		case _kUiField_type::FORMULA_:
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
@@ -2210,6 +2235,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 			case _kUiField_type::WORD_:
 			case _kUiField_type::SENTENCE_:
 			case _kUiField_type::TEXT_:
+			case _kUiField_type::FORMULA_:
 			case _kUiField_type::INFILE_:
 			case _kUiField_type::OUTFILE_:
 			case _kUiField_type::FOLDER_:

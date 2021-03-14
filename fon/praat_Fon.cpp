@@ -127,7 +127,7 @@ FORM (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula
 	LABEL (U"`x` is time in seconds, `y` is place in Bark")
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Cochleagram)
@@ -268,7 +268,7 @@ DIRECT (REAL_Excitation_getLoudness) {
 FORM (MODIFY_Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
 	LABEL (U"`x` is the place in Bark, `col` is the bin number")
 	LABEL (U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Excitation)
@@ -547,7 +547,7 @@ DIRECT (MODIFY_Formant_sort) {
 
 FORM (MODIFY_Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	LABEL (U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi", 5)
+	FORMULA (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -557,7 +557,7 @@ DO
 
 FORM (MODIFY_Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
 	LABEL (U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	TEXTFIELD (formula, U"Formula:", U"self / 2 ; sharpen all peaks", 5)
+	FORMULA (formula, U"Formula:", U"self / 2 ; sharpen all peaks")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -733,7 +733,7 @@ DO
 FORM (MODIFY_Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
 	LABEL (U"`x` is time")
 	LABEL (U"for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
-	TEXTFIELD (formula, U"Formula:", U"self", 5)
+	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Harmonicity)
@@ -873,7 +873,7 @@ DO
 FORM (MODIFY_Intensity_formula, U"Intensity Formula", nullptr) {
 	LABEL (U"`x` is the time in seconds, `col` is the frame number, `self` is in dB")
 	LABEL (U"x := x1;   for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
-	TEXTFIELD (formula, U"Formula:", U"0", 5)
+	FORMULA (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Intensity)
@@ -1010,7 +1010,7 @@ DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 FORM (MODIFY_Ltas_formula, U"Ltas Formula", nullptr) {
 	LABEL (U"`x` is the frequency in hertz, `col` is the bin number")
 	LABEL (U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
-	TEXTFIELD (formula, U"Formula:", U"0", 5)
+	FORMULA (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Ltas)
@@ -1525,7 +1525,7 @@ DIRECT (WINDOW_Pitch_viewAndEdit) {
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
 	LABEL (U"`x` is time; `col` is frame number; `row` = candidate (1 = current path); frequency (time, candidate) :=")
-	TEXTFIELD (formula, U"Formula:", U"self*2 ; example: octave jump up", 5)
+	FORMULA (formula, U"Formula:", U"self*2 ; example: octave jump up")
 	OK
 DO
 	MODIFY_EACH_WEAK (Pitch)
@@ -2190,7 +2190,7 @@ FORM (MODIFY_Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formul
 	LABEL (U"   `x` is the time in seconds")
 	LABEL (U"   `y` is the frequency in hertz")
 	LABEL (U"   `self` is the current value in Pa\u00B2/Hz")
-	TEXTFIELD (formula, U"   Replace all values with:", U"self * exp (- x / 0.1)", 5)
+	FORMULA (formula, U"   Replace all values with:", U"self * exp (- x / 0.1)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Spectrogram)
@@ -2500,7 +2500,7 @@ FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
 		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
 	LABEL (U"y := 2;   row := 2;   "
 		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula` ; x := x + dx }")
-	TEXTFIELD (formula, U"Formula:", U"0", 5)
+	FORMULA (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Spectrum)
