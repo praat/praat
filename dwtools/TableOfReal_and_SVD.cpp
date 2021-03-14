@@ -28,7 +28,7 @@ autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 	try {
 		autoMAT synthesis = SVD_synthesize (me, from, to);
 		autoTableOfReal thee = TableOfReal_create (synthesis.nrow, synthesis.ncol);
-		thy data.all() <<=   synthesis.all();
+		thy data.all()  <<=  synthesis.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal synthesized.");
@@ -47,7 +47,7 @@ autoSVD TableOfReal_to_SVD (TableOfReal me) {
 autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		thy data.all() <<= my u.all();
+		thy data.all()  <<=  my u.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": left singular vector not extracted.");
@@ -57,7 +57,7 @@ autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfColumns);
-		thy data.all() <<= my v.all();
+		thy data.all()  <<=  my v.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": right singular vector not extracted.");
@@ -67,7 +67,7 @@ autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 autoTableOfReal SVD_extractSingularValues (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		thy data.row (1) <<= my d.all();
+		thy data.row (1)  <<=  my d.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": singular values not extracted.");

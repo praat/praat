@@ -65,7 +65,7 @@ autoAffineTransform structProcrustes :: v_invert () {
 		inverse is transpose!
 	*/
 	thy s = ( our s == 0.0 ? 1.0 : 1.0 / our s );
-	thy r.all() <<= our r.transpose();
+	thy r.all()  <<=  our r.transpose();
 	mul_VEC_out (thy t.get(), our r.get(), our t.get());
 	thy t.get()  *=  - thy s;
 	return thee.move();   // explicit move() seems to be needed because of the type difference
@@ -73,9 +73,9 @@ autoAffineTransform structProcrustes :: v_invert () {
 
 static void Procrustes_setDefaults (Procrustes me) {
 	my s = 1.0;
-	my t.all() <<= 0.0;
-	my r.all() <<= 0.0;
-	my r.diagonal() <<= 1.0;
+	my t.all()  <<=  0.0;
+	my r.all()  <<=  0.0;
+	my r.diagonal()  <<=  1.0;
 }
 
 autoProcrustes Procrustes_create (integer dimension) {

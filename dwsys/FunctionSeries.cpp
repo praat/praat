@@ -111,7 +111,7 @@ void FunctionSeries_initFromString (FunctionSeries me, double xmin, double xmax,
 		while (numbers [numberOfCoefficients] == 0.0 && numberOfCoefficients > 1)
 			numberOfCoefficients --;
 	FunctionSeries_init (me, xmin, xmax, numberOfCoefficients);
-	my coefficients.part (1, numberOfCoefficients) <<= numbers.part (1, numberOfCoefficients);
+	my coefficients.part (1, numberOfCoefficients)  <<=  numbers.part (1, numberOfCoefficients);
 }
 
 integer FunctionSeries_getDegree (FunctionSeries me) {
@@ -298,7 +298,7 @@ void FunctionSeries_drawBasisFunction (FunctionSeries me, Graphics g, integer in
 		return;
 	autoFunctionSeries thee = Data_copy (me);
 
-	thy coefficients.get () <<= 0.0;
+	thy coefficients.all()  <<=  0.0;
 	thy coefficients [index] = 1.0;
 	thy numberOfCoefficients = index;
 	FunctionSeries_draw (thee.get(), g, xmin, xmax, ymin, ymax, extrapolate, garnish);

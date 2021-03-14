@@ -59,7 +59,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 			const SSCP m = thy groups->at [k];
 			const double scale = SSCP_getNumberOfObservations (m);
 			thy aprioriProbabilities [k] = scale / my numberOfRows;
-			between.row (k) <<= m -> centroid.all()  -  centroid.all();
+			between.row (k)  <<=  m -> centroid.all()  -  centroid.all();
 			between.row (k)  *=  sqrt (scale);
 		}
 
@@ -94,7 +94,7 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
-			covg -> centroid.all() <<= cov -> centroid.all();
+			covg -> centroid.all()  <<=  cov -> centroid.all();
 			him = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
 			him = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
@@ -112,13 +112,13 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis_all (Discriminant me, Table
 		covg = SSCP_to_Covariance (pool.get(), my numberOfGroups);
 	}
 	autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
-	his rowLabels.all() <<= thy rowLabels.all();
+	his rowLabels.all()  <<=  thy rowLabels.all();
 	for (integer igroup = 1 ; igroup <= my numberOfGroups; igroup ++) {
 		conststring32 label = Thing_getName (my groups->at [igroup]);
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [igroup], 1);
 		autoTableOfReal groupMahalanobis;
 		if (poolCovarianceMatrices) {
-			covg -> centroid.all() <<= cov -> centroid.all();
+			covg -> centroid.all()  <<=  cov -> centroid.all();
 			groupMahalanobis = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
 			groupMahalanobis = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
@@ -146,7 +146,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autovector <SSCP> sscpvec = newvectorzero <SSCP> (numberOfGroups);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, numberOfGroups);
-		his rowLabels.all() <<= thy rowLabels.all();
+		his rowLabels.all()  <<=  thy rowLabels.all();
 
 		/*
 			Scale the sscp to become a covariance matrix.
@@ -273,7 +273,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autovector <SSCP> sscpvec = newvectorzero <SSCP> (g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
-		his rowLabels.all() <<= thy rowLabels.all();
+		his rowLabels.all()  <<=  thy rowLabels.all();
 		autoTableOfReal adisplacements = Data_copy (thee);
 
 		/*

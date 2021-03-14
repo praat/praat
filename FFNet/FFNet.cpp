@@ -341,7 +341,7 @@ void FFNet_propagate (FFNet me, constVEC input, autoVEC *output) {
 	/*
 		Clamp input pattern on the network
 	*/
-	my activity.part (1, my numberOfInputs) <<= input;
+	my activity.part (1, my numberOfInputs)  <<=  input;
 	/*
 		On hidden units use activation function
 	*/

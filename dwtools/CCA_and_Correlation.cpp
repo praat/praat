@@ -33,7 +33,7 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 			U"The number of columns in the Correlation should equal the sum of the dimensions in the CCA object.");
 		
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
-		his columnLabels.all() <<= thy columnLabels.all();
+		his columnLabels.all()  <<=  thy columnLabels.all();
 		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.get(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
 

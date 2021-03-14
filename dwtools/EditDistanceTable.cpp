@@ -315,9 +315,9 @@ double EditCostsTable_getSubstitutionCost (EditCostsTable me, conststring32 symb
 autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		thy columnLabels.all() <<= my columnLabels.all();
-		thy rowLabels.all() <<= my rowLabels.all();
-		thy data.all() <<= my data.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
+		thy rowLabels.all()  <<=  my rowLabels.all();
+		thy data.all()  <<=  my data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
@@ -574,7 +574,7 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_dire
 		WarpingPath_getPath (my warpingPath.get(), psi.get(), iy, ix);
 		WarpingPath_shiftPathByOne (my warpingPath.get());
 
-		my data.all() <<= delta.all();
+		my data.all()  <<=  delta.all();
 
 		if (out_directions) {
 			autoTableOfReal him = EditDistanceTable_to_TableOfReal (me);
@@ -591,9 +591,9 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_dire
 autoTableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		thy columnLabels.all() <<= my columnLabels.all();
-		thy rowLabels.all() <<= my rowLabels.all();
-		thy data.all() <<= my data.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
+		thy rowLabels.all()  <<=  my rowLabels.all();
+		thy data.all()  <<=  my data.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal created.");

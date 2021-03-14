@@ -53,7 +53,7 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 		Copy 1.0, a [1], ... a [p] into fftbuffer
 	*/
 	fftbuffer [1] = 1.0;
-	fftbuffer.part (2, ndata) <<= my a.get();
+	fftbuffer.part (2, ndata)  <<=  my a.get();
 
 	if (deEmphasisFrequency < thy xmax) {
 		/*

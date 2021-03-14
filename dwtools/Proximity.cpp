@@ -119,9 +119,9 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			Calculate the B matrix according to eq. 6
 		*/
 		autoMAT b = zero_MAT (nPoints2, nPoints2);
-		b.part (1, nPoints, nPoints + 1, nPoints2) <<= 2.0  *  wd.get();
-		b.part (nPoints + 1, nPoints2, 1, nPoints).diagonal() <<= - 1.0;
-		b.part (nPoints + 1, nPoints2, nPoints + 1, nPoints2) <<= -4.0  *  wdsqrt.get();
+		b.part (1, nPoints, nPoints + 1, nPoints2)  <<=  2.0  *  wd.get();
+		b.part (nPoints + 1, nPoints2, 1, nPoints).diagonal()  <<=  -1.0;
+		b.part (nPoints + 1, nPoints2, nPoints + 1, nPoints2)  <<=  -4.0  *  wdsqrt.get();
 		/*
 			Get eigenvalues
 		*/

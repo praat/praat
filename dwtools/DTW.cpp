@@ -719,7 +719,7 @@ void DTW_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, 
 autoMatrix DTW_to_Matrix_distances (DTW me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": distances not converted to Matrix.");
@@ -1400,7 +1400,7 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
         if (cumulativeDists) {
             autoMatrix him = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
                 my ymin, my ymax, my ny, my dy, my y1);
-			his z.all() <<= delta.all();
+			his z.all()  <<=  delta.all();
             *cumulativeDists = him.move();
         }
     } catch (MelderError) {

@@ -262,7 +262,7 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 
 void HMMBaumWelch_getGamma (HMMBaumWelch me) {
 	for (integer it = 1; it <= my numberOfTimes; it ++) {
-		my gamma.column (it) <<= my alpha.column (it)  *  my beta.column (it);
+		my gamma.column (it)  <<=  my alpha.column (it)  *  my beta.column (it);
 		my gamma.column (it)  /=  NUMsum (my gamma.column (it));
 	}
 }
@@ -504,27 +504,27 @@ void HMM_setDefaultTransitionProbs (HMM me) {
 	if (my leftToRight) {
 		for (integer irow = 1; irow <= my numberOfStates; irow ++) {
 			const double p = 1.0 / (my numberOfStates - irow + 1.0);
-			my transitionProbs.row (irow).part (irow, my numberOfStates) <<= p;
+			my transitionProbs.row (irow).part (irow, my numberOfStates)  <<=  p;
 		}
 		// leftToRight must have end state!
 		my transitionProbs [my numberOfStates] [my numberOfStates] =
 			my transitionProbs [my numberOfStates] [my numberOfStates + 1] = 0.5;
 	} else {
-		my transitionProbs.part (1, my numberOfStates, 1, my numberOfStates) <<= 1.0 / my numberOfStates;
-		my transitionProbs.column (my numberOfStates + 1) <<= 0.0;
+		my transitionProbs.part (1, my numberOfStates, 1, my numberOfStates)  <<=  1.0 / my numberOfStates;
+		my transitionProbs.column (my numberOfStates + 1)  <<=  0.0;
 	}
 }
 
 void HMM_setDefaultInitialStateProbs (HMM me) {
-	my initialStateProbs.get () <<= 1.0 / my numberOfStates;
+	my initialStateProbs.get ()  <<=  1.0 / my numberOfStates;
 }
 
 void HMM_setDefaultEmissionProbs (HMM me) {
 	if (my notHidden) {
-		my emissionProbs.get () <<= 0.0;
-		my emissionProbs.diagonal () <<= 1.0;
+		my emissionProbs.get ()  <<=  0.0;
+		my emissionProbs.diagonal ()  <<=  1.0;
 	} else 
-		my emissionProbs.part (1, my numberOfStates, 1, my numberOfObservationSymbols) <<= 1.0 / my numberOfObservationSymbols;
+		my emissionProbs.part (1, my numberOfStates, 1, my numberOfObservationSymbols)  <<=  1.0 / my numberOfObservationSymbols;
 }
 
 void HMM_setDefaultMixingProbabilities (HMM me) {
@@ -538,7 +538,7 @@ void HMM_setDefaultMixingProbabilities (HMM me) {
 void HMM_setStartProbabilities (HMM me, conststring32 probs) {
 	try {
 		autoVEC p = NUMwstring_to_probs (probs, my numberOfStates);
-		my initialStateProbs.get () <<= p.get();
+		my initialStateProbs.get ()  <<=  p.get();
 	} catch (MelderError) {
 		Melder_throw (me, U": no start probabilities set.");
 	}
@@ -549,7 +549,7 @@ void HMM_setTransitionProbabilities (HMM me, integer state_number, conststring32
 		Melder_require (state_number <= my states->size,
 			U"State number should not exceed ", my states->size, U".");
 		autoVEC p = NUMwstring_to_probs (state_probs, my numberOfStates);
-		my transitionProbs.row (state_number).part (1, my numberOfStates) <<= p.get ();
+		my transitionProbs.row (state_number).part (1, my numberOfStates)  <<=  p.get ();
 	} catch (MelderError) {
 		Melder_throw (me, U": no transition probabilities set.");
 	}
@@ -562,7 +562,7 @@ void HMM_setEmissionProbabilities (HMM me, integer state_number, conststring32 e
 		Melder_require (! my notHidden,
 			U"The emission probabilities of this model are fixed.");
 		autoVEC p = NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols);
-		my emissionProbs.row (state_number).part (1, my numberOfObservationSymbols) <<= p.get ();
+		my emissionProbs.row (state_number).part (1, my numberOfObservationSymbols)  <<=  p.get ();
 	} catch (MelderError) {
 		Melder_throw (me, U": no emission probabilities set.");
 	}
@@ -584,16 +584,16 @@ void HMM_addState_move (HMM me, autoHMMState thee) {
 autoTableOfReal HMM_extractTransitionProbabilities (HMM me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfStates + 1, my numberOfStates + 1);
-		thy data.row (1).part (1, my numberOfStates) <<= my initialStateProbs.get();
+		thy data.row (1).part (1, my numberOfStates)  <<=  my initialStateProbs.get();
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			const HMMState hmms = my states->at [is];
 			TableOfReal_setRowLabel (thee.get(), is + 1, hmms -> label.get());
 			TableOfReal_setColumnLabel (thee.get(), is, hmms -> label.get());
-			thy data.row (is + 1).part (1, my numberOfStates) <<= my transitionProbs.row (is).part (1, my numberOfStates);
+			thy data.row (is + 1).part (1, my numberOfStates)  <<=  my transitionProbs.row (is).part (1, my numberOfStates);
 		}
 		TableOfReal_setRowLabel (thee.get(), 1, U"START");
 		TableOfReal_setColumnLabel (thee.get(), my numberOfStates + 1, U"END");
-		//thy data.column (my numberOfStates + 1).part (2, my numberOfStates) <<= my transitionProbs.column (my numberOfStates + 1 );
+		//thy data.column (my numberOfStates + 1).part (2, my numberOfStates)  <<=  my transitionProbs.column (my numberOfStates + 1 );
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			thy data [is + 1] [my numberOfStates + 1] = my transitionProbs [is] [my numberOfStates + 1];
 		}
@@ -1440,7 +1440,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 	autoVEC alpha_t = raw_VEC (my numberOfStates);
 	autoVEC alpha_tm1 = zero_VEC (my numberOfStates);
 
-	alpha_t.all() <<= my initialStateProbs.all();
+	alpha_t.all()  <<=  my initialStateProbs.all();
 	scale [1] = NUMsum (alpha_t.all());
 
 	alpha_t. all() /= scale [1];
