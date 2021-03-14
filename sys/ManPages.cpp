@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2020 Paul Boersma
+ * Copyright (C) 1996-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -416,7 +416,7 @@ static const struct stylesInfo {
 /* DEFINITION: */ { U"<dd>", U"" },
 /* CODE: */ { U"<code>", U"<br></code>" },
 /* PROTOTYPE: */ { U"<p>", U"</p>" },
-/* FORMULA: */ { U"<table width=\"100%\"><tr><td align=middle>", U"</table>" },
+/* EQUATION: */ { U"<table width=\"100%\"><tr><td align=middle>", U"</table>" },
 /* PICTURE: */ { U"<p>", U"</p>" },
 /* SCRIPT: */ { U"<p>", U"</p>" },
 /* LIST_ITEM1: */ { U"<dd>&nbsp;&nbsp;&nbsp;", U"" },

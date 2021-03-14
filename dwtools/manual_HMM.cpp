@@ -42,7 +42,7 @@ MAN_END
 MAN_BEGIN (U"GaussianMixture", U"djmw", 20101026)
 INTRO (U"A Gaussian mixture is a probability density function (p.d.f.). It is a combination of several Gaussian densities.")
 NORMAL (U"The GaussianMixture's p.d.f. is defined as the weighted sum of %K multivariate Gaussian p.d.f's:")
-FORMULA (U"pdf(x) = \\Si__%%i%=1_^^%K^ p__%i_ %N(%x;\\mu__%i_,\\Si__%i_),")
+EQUATION (U"pdf(x) = \\Si__%%i%=1_^^%K^ p__%i_ %N(%x;\\mu__%i_,\\Si__%i_),")
 NORMAL (U"where each %N(%x;\\mu__%i_,\\Si__%i_) is a multivariate p.d.f. with mean \\mu__%i_ and covariance matrix \\Si__%i_. The coefficients %p__%i_ sum to 1.")
 NORMAL (U"For an introduction to Gaussian mixtures see for example  @@Bishop (2006)@.")
 MAN_END
@@ -162,23 +162,23 @@ MAN_BEGIN (U"GaussianMixture & TableOfReal: Get likelihood value...", U"djmw", 2
 INTRO (U"Calculates how well the @GaussianMixture model fits the data according to a criterion.")
 ENTRY (U"Settings")
 TAG (U"##Maximum likelihood")
-FORMULA (U"ML = \\Si__%i=1..%n_ log (\\Si__%m=1..%k_ \\al__%k_ %p__%%ik%_)")
+EQUATION (U"ML = \\Si__%i=1..%n_ log (\\Si__%m=1..%k_ \\al__%k_ %p__%%ik%_)")
 TAG (U"##Minimum message length")
-FORMULA (U"DL = ML - 0.5(N\\.c\\Si__%m=1..%k_ log(%n\\al__%m_/12) -%k\\.clog(%n/12) -%k(%N+1))")
+EQUATION (U"DL = ML - 0.5(N\\.c\\Si__%m=1..%k_ log(%n\\al__%m_/12) -%k\\.clog(%n/12) -%k(%N+1))")
 TAG (U"##Bayes information")
-FORMULA (U"BIC = 2\\.cML - k\\.cN\\.clog(n)")
+EQUATION (U"BIC = 2\\.cML - k\\.cN\\.clog(n)")
 TAG (U"##Akaike information")
-FORMULA (U"AIC = 2(ML - k\\.cN) ")
+EQUATION (U"AIC = 2(ML - k\\.cN) ")
 TAG (U"##Akaike corrected")
-FORMULA (U"AICc = 2(ML - k\\.cN\\.cn/(n-k\\.cN-1))")
+EQUATION (U"AICc = 2(ML - k\\.cN\\.cn/(n-k\\.cN-1))")
 TAG (U"##Complete-data ML")
-FORMULA (U"\\Si__%i=1..%n_\\Si__%m=1..%k_ \\ga__%%im%_ log (\\ga__%%im%_)")
+EQUATION (U"\\Si__%i=1..%n_\\Si__%m=1..%k_ \\ga__%%im%_ log (\\ga__%%im%_)")
 NORMAL (U"In these formulas, %n is the number of data points, %k is the number of mixture components, %N is the "
 	"number of parameters in one component (i.e. %d + %d(%d+1)/2 for a full covariance matrix of "
 	"dimension %d with means), \\al__%k_ are the %%mixing probabilities%, "
 	"and %p__%%ik%_ are the %%multinormal probabilities% for the %i-th data vector in the %k-th component. "
 	"The %%responsibilities% \\ga__%%im%_ are defined as ")
-FORMULA (U"\\ga__%%im%_= \\al__%m_\\.c%p__%%im%_ /(\\Si__%j=1..%k_ \\al__%j_\\.c%p__%%ij%_).")
+EQUATION (U"\\ga__%%im%_= \\al__%m_\\.c%p__%%im%_ /(\\Si__%j=1..%k_ \\al__%j_\\.c%p__%%ij%_).")
 MAN_END
 
 MAN_BEGIN (U"GaussianMixture & TableOfReal: Improve likelihood...", U"djmw", 20111130)
@@ -193,7 +193,7 @@ NORMAL (U"We start by calculating the ClassificationTable @@GaussianMixture & Ta
 	"the data and the GaussianMixture@.")
 NORMAL (U"Nex we calculate correlations between the %%columns% of the ClassificationTable: cell [%i,%j] of the "
 	"correlation matrix will then contain the value:")
-FORMULA (U"%p[%i] \\.c %p[%j] / (||%p[%i]||\\.c ||%p[%j]||), ")
+EQUATION (U"%p[%i] \\.c %p[%j] / (||%p[%i]||\\.c ||%p[%j]||), ")
 NORMAL (U"where %p[%i] is the data in the %i-th column of the classification table and ||%p[%i]|| is its Euclidean norm. "
 	"The index %i runs from 1 to the number of components in the mixture.")
 NORMAL (U"Because all the elements in a column are positive numbers, i.e. probabilities, all correlations will be positive numbers too.")
@@ -225,7 +225,7 @@ DEFINITION (U"defines whether the function to be optimized is the log likelihood
 ENTRY (U"Algorithm")
 NORMAL (U"The component-wise optimization algorithm is described in @@Figueiredo & Jain (2002)@ where the function to be optimized "
 	"is the minimum description length defined as:")
-FORMULA (U"%L(\\te,%Y) = %N/2 \\Si__%m=1_^^%k^ ln(%n\\al__%k_/12) + %k/2 ln(%n/12) + %k(%N+1)/2 - ln %p(%Y|\\te),")
+EQUATION (U"%L(\\te,%Y) = %N/2 \\Si__%m=1_^^%k^ ln(%n\\al__%k_/12) + %k/2 ln(%n/12) + %k(%N+1)/2 - ln %p(%Y|\\te),")
 NORMAL (U"where %k is the number of components, %N is the number of parameters of one component "
 	"(i.e. %d+%d(%d+1)/2 for a full covariance matrix of dimension %d with means and %d+%d for a diagonal "
 	"matrix with means), and %n is the number of data vectors. The term ln %p(%Y|\\te) is the log likelihood of the data "
@@ -240,7 +240,7 @@ ENTRY (U"Setting")
 TAG (U"##Beta")
 DEFINITION (U"determines the smoothing parameter of the data. If %beta equals zero the smoothing is determined "
 	"automatically for each component of the mixture separately as: ")
-FORMULA (U"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ %n^^1/(%p+4)^,")
+EQUATION (U"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ %n^^1/(%p+4)^,")
 NORMAL (U"where %n is the effective number of elements in the component, and %p is the dimension of the data.")
 MAN_END
 
@@ -308,16 +308,16 @@ TAG (U"##Symmetric")
 DEFINITION (U"defines whether the symmetric formula is used in the calculation.")
 ENTRY (U"Algorithm")
 NORMAL (U"The cross-entropy is a measure of the distance between two models  \\la__1_ and \\la__2_. It is defined as")
-FORMULA (U"%D(\\la__1_,\\la__2_) = 1/%N (log %p(%O__2_|\\la__1_) - log %p(%O__2_|\\la__2_)),")
+EQUATION (U"%D(\\la__1_,\\la__2_) = 1/%N (log %p(%O__2_|\\la__1_) - log %p(%O__2_|\\la__2_)),")
 NORMAL (U"where %O__2_ is an observation sequence of length  %N generated by model  \\la__2_.")
 NORMAL (U"The symmetrized version is:")
-FORMULA (U"%D__%s_(\\la__1_,\\la__2_) = (%D(\\la__1_,\\la__2_) + %D(\\la__2_,\\la__1_))/2.")
+EQUATION (U"%D__%s_(\\la__1_,\\la__2_) = (%D(\\la__1_,\\la__2_) + %D(\\la__2_,\\la__1_))/2.")
 MAN_END
 
 MAN_BEGIN (U"HMM & HMMObservationSequence: Get cross-entropy", U"djmw", 20101017)
 INTRO (U"Calculates the cross-entropy between the selected @@HMM@ model and the @@HMMObservationSequence@.")
 NORMAL (U"The cross-entropy is a useful upper bound for the entropy of a model. An approximation to the cross-entropy for a model on a observation sequence  %O of length %N is: ")
-FORMULA (U"%H(%O) = -1/%N log %p(%O),")
+EQUATION (U"%H(%O) = -1/%N log %p(%O),")
 NORMAL (U"where %p(%O) is the probability of the observation sequence given the model.")
 MAN_END
 

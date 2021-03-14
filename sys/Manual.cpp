@@ -104,7 +104,7 @@ void structManual :: v_draw () {
 			case  kManPage_type::DEFINITION: HyperPage_definition (this, paragraph -> text); break;
 			case  kManPage_type::CODE: HyperPage_code (this, paragraph -> text); break;
 			case  kManPage_type::PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;
-			case  kManPage_type::FORMULA: HyperPage_formula (this, paragraph -> text); break;
+			case  kManPage_type::EQUATION: HyperPage_formula (this, paragraph -> text); break;
 			case  kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
 				paragraph -> height, paragraph -> draw); break;
 			case  kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width,

@@ -41,7 +41,7 @@ TAG (U"##Variance exponent#")
 DEFINITION (U"determines the power of the first term in the overall stress criterion #S. "
 	"The best model is the one with the lowest value for the stress %S.")
 NORMAL (U"The stress criterion #S is defined in @@Weenink (2015)@ as")
-FORMULA (U"%S = (%s^2 / %k)^^%varianceExponent^ (%\\ci^^2^ / %d),")
+EQUATION (U"%S = (%s^2 / %k)^^%varianceExponent^ (%\\ci^^2^ / %d),")
 NORMAL (U"where %s^^2^ is the sum of the squares of the standard errors of all the coefficients of the modelled formant "
 	"tracks within one Formant object, %k is the total number of coefficients of these tracks, in the example given above "
 	"%k is 10 (= 4 + 3 + 3), \\ci^^2^ is the sum of the chi squares of each track, %d is the sum of the "
@@ -82,7 +82,7 @@ MAN_BEGIN (U"CC: To Matrix", U"djmw", 20011123)
 INTRO (U"Copies the cepstral coefficients of the selected @CC "
 	"object to a newly created @Matrix object.")
 ENTRY (U"Behaviour")
-FORMULA (U"%z__%ji_ = %c__%ij_, with 1 \\<_ %i \\<_ %nx and "
+EQUATION (U"%z__%ji_ = %c__%ij_, with 1 \\<_ %i \\<_ %nx and "
 	"1 \\<_ j \\<_ %numberOfCoefficients__%i_,")
 NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
@@ -726,7 +726,7 @@ MAN_BEGIN (U"LPC: To Matrix", U"djmw", 20011123)
 INTRO (U"Copies the linear prediction coefficients of the selected @LPC "
 	"object to a newly created @Matrix object.")
 ENTRY (U"Behaviour")
-FORMULA (U"%z__%ji_ = %a__%ij_, with 1 \\<_ %i \\<_ %nx and "
+EQUATION (U"%z__%ji_ = %a__%ij_, with 1 \\<_ %i \\<_ %nx and "
 	"1 \\<_ j \\<_ %nCoefficients__%i_,")
 NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%a__%ij_ is the %j-th linear prediction coefficient in frame %i.")
@@ -761,8 +761,8 @@ DEFINITION (U"defines the LPC frame whose coefficents will be selected.")
 ENTRY (U"Behaviour")
 NORMAL (U"The linear prediction coefficients %a__1..%n_ of the selected LPC "
 	"frame will be copied to polynomial coefficients %c__1..%n+1_ as follows:")
-FORMULA (U"%c__%i_ = %a__%n\\--%i+1_, ")
-FORMULA (U"%c__%n+1_ = 1")
+EQUATION (U"%c__%i_ = %a__%n\\--%i+1_, ")
+EQUATION (U"%c__%n+1_ = 1")
 MAN_END
 
 MAN_BEGIN (U"LPC: To Spectrum (slice)...", U"djmw", 20071120)
@@ -785,7 +785,7 @@ TAG (U"##De-emphasis frequency (Hz)")
 DEFINITION (U"Performs de-emphasis when frequency is in the interval (0, @@Nyquist frequency@)")
 ENTRY (U"Algorithm")
 NORMAL (U"The Spectrum at time %t will be calculated from the %nearest LPC_Frame according to:")
-FORMULA (U"Spectrum (%f) = \\Vr(%gain\\.c%T/%df) / (1 + \\su__%k=1..%numberOfCoefficients_ %a__%k_%z^^\\--%k^),")
+EQUATION (U"Spectrum (%f) = \\Vr(%gain\\.c%T/%df) / (1 + \\su__%k=1..%numberOfCoefficients_ %a__%k_%z^^\\--%k^),")
 NORMAL (U"where %T is the sampling period and %z = exp (\\--2 %\\pi %i %f %T) and %df is the distance in Hz "
 	"between two successive components in the Spectrum.")
 LIST_ITEM (U"1. Allocate a large enough buffer[1..%nfft] to perform an FFT analysis.")
@@ -917,7 +917,7 @@ DEFINITION (U"the range of coefficients that will be used in the reconstruction.
 ENTRY (U"Details")
 NORMAL (U"The output of the triangular filters in a mel filter bank will be "
 	"reconstructed by applying the inverse cosine transform:")
-FORMULA (U"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
+EQUATION (U"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
 NORMAL (U"where %N represents the number of filters, %j runs from 1 to %N, and coefficients %c__%k_ with %k less than "
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
@@ -933,7 +933,7 @@ DEFINITION (U"selects whether or not to include the %c__0_ coefficient in the re
 ENTRY (U"Details")
 NORMAL (U"The values %P__%j_ in each frame of the MelSpectrogram will be constructed by "
 	"applying the inverse Discrete Cosine Transform to the corresponding frame of the MFCC object:")
-FORMULA (U"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
+EQUATION (U"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
 NORMAL (U"where %N represents the number of filters that were used to get the MFCC object, %j runs from 1 to %N, "
 	"and coefficients %c__%k_ with %k less than "
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
@@ -986,9 +986,9 @@ INTRO (U"You can perform this analysis by selecting one or more @Sound objects a
 	"choosing the appropriate command to generate an @LPC.")
 NORMAL (U"The acronym LPC stands for Linear Predictive Coding.")
 NORMAL (U"In the LPC analysis one tries to predict %x__%n_ on the basis of the %p previous samples,")
-FORMULA (U"%x\\'p__%n_ = \\su %a__%k_ %x__%%n-k%_")
+EQUATION (U"%x\\'p__%n_ = \\su %a__%k_ %x__%%n-k%_")
 NORMAL (U"then {%a__1_, %a__2_, ..., %a__%p_} can be chosen to minimize the prediction power %%Q__p_% where")
-FORMULA (U"%%Q__p_% = E[ |%x__%n_ - %x\\'p__%n_|^2].")
+EQUATION (U"%%Q__p_% = E[ |%x__%n_ - %x\\'p__%n_|^2].")
 NORMAL (U"Several different algorithms exist for minimizing %%Q__p_%:")
 LIST_ITEM (U"\\bu @@Sound: To LPC (autocorrelation)...|To LPC (autocorrelation)...@")
 LIST_ITEM (U"\\bu @@Sound: To LPC (covariance)...|To LPC (covariance)...@")
@@ -1087,7 +1087,7 @@ NORMAL (U"a robust linear regression method, first proposed by @@Theil (1950)@. 
 	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% "
 	"theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, "
 	"in two equal sets of size %N/2 and then calculate %N/2 slopes as ")
-FORMULA (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
+EQUATION (U"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
 NORMAL (U"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (U"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
 NORMAL (U"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to "

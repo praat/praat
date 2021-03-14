@@ -89,7 +89,7 @@ ENTRY (U"An algorithm to solve the INDSCAL problem.")
 NORMAL (U"In the analysis of the INDSCAL three-way data matrix (%numberOfPoints "
 	"\\xx %numberOfDimensions \\xx %numberOfSources) we seek to minimize the "
 	"function: ")
-FORMULA (U"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
+EQUATION (U"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
 	"\\su__%i=1..%numberOfSources_ | %S__%i_ \\-- %X%W__%i_%X\\'p |^2")
 NORMAL (U"where %S__%i_ is a known symmetric %numberOfPoints \\xx %numberOfPoints "
 	"matrix with scalar products of distances for source %i, %X is the unknown configuration "
@@ -179,7 +179,7 @@ DEFINITION (U"the coordinates of the points.")
 TAG (U"%metric")
 DEFINITION (U"determines the way distances between points are measured. In general "
 	"the distance between points #x__%i_ and #x__%j_ is:")
-FORMULA (U"%d__%ij_ = "
+EQUATION (U"%d__%ij_ = "
 	"(\\su__%k=1..%numberOfDimensions_ %w__%k_ |%x__%ik_ \\-- "
 	"%x__%jk_|^^%metric^)^^1/%metric^")
 DEFINITION (U"For Euclidean distances %metric is 2.")
@@ -305,7 +305,7 @@ INTRO (U"A command that computes a @Distance object for each selected "
 	"@Configuration.")
 ENTRY (U"Algorithm")
 NORMAL (U"The distance %d__%ij_ between objects %i and %j is calculated as:")
-FORMULA (U"%d__%ij_ = %d__%ji_ = (\\su__%k=1..%numberOfDimensions_ |%x__%ik_ "
+EQUATION (U"%d__%ij_ = %d__%ji_ = (\\su__%k=1..%numberOfDimensions_ |%x__%ik_ "
 	"\\-- %x__%jk_|^2)^^1/2^")
 MAN_END
 
@@ -357,7 +357,7 @@ NORMAL (U"Sometimes the criterion used in a @@Procrustes transform@ is too "
 	"algorithm to maximize instead the sum of congruences between "
 	"corresponding dimensions of #AT and #B. "
 	"Specifically he proposed to maximize")
-FORMULA (U"%f(#T) = \\su__%i=1..%numberOfDimensions_ #t\\'p__%i_#A\\'p#b__%i_ /"
+EQUATION (U"%f(#T) = \\su__%i=1..%numberOfDimensions_ #t\\'p__%i_#A\\'p#b__%i_ /"
 	" ((#t\\'p__%i_#A\\'p#A#t__%i_)^^1/2^(#b\\'p__%i_#b__%i_)^^1/2^),")
 NORMAL (U"where #t\\'p__%i_ and #b\\'p__%i_ are the %i^^th^ column of #T and "
 	"#B, respectively. A direct solution for #T is not available, it can only "
@@ -395,7 +395,7 @@ NORMAL (U"We first transform the Confusion to a Similarity. See "
 	"@@Confusion: To Similarity...")
 NORMAL (U"To obtain dissimilarities from similarities we \"reverse\" the "
 	"latter:")
-FORMULA (U"%%dissimilarity__%ij_ = %maximumDissimilarity \\-- %similarity__%ij_")
+EQUATION (U"%%dissimilarity__%ij_ = %maximumDissimilarity \\-- %similarity__%ij_")
 MAN_END
 
 MAN_BEGIN (U"Confusion: To Dissimilarity (pdf)...", U"djmw", 20040407)
@@ -418,7 +418,7 @@ NORMAL (U"Similarity and dissimilarity have an inverse relationship: the "
 	"Both have a monotonic relationship with distance. "
 	"The most simple way to transform the similarities %f__%ij_ into "
 	"dissimilarities is:")
-FORMULA (U"%dissimilarity__%ij_ = %maximumSimilarity \\-- %similarity__%ij_")
+EQUATION (U"%dissimilarity__%ij_ = %maximumSimilarity \\-- %similarity__%ij_")
 NORMAL (U"For ordinal analyses like Kruskal this transformation is fine because "
 	"only order relations are important in this analysis. However, for "
 	"metrical analyses like INDSCAL this is not optimal. "
@@ -436,7 +436,7 @@ NORMAL (U"For the relation between confusion and dissimilarity, the model "
 	"distance between the centres of both pdf's. "
 	"According to formula 26.2.23 in @@Abramowitz & Stegun (1970)@, for each "
 	"fraction %f__%ij_, we have to find an %x that solves:")
-FORMULA (U"%f__%ij_ = 1 / \\Vr(2%\\pi) \\in__%x_^^\\oo^ e^^-%t\\.c%t/2^ %dt")
+EQUATION (U"%f__%ij_ = 1 / \\Vr(2%\\pi) \\in__%x_^^\\oo^ e^^-%t\\.c%t/2^ %dt")
 NORMAL (U"This %x will be used as the dissimilarity between %i and %j. The "
 	"relation between %x and %f__%ij_ is monotonic. This means that the "
 	"results for a Kruskal analysis will not change much. For INDSCAL, in "
@@ -453,7 +453,7 @@ TAG (U"##No symmetrization#, #Average, #Houtgast")
 DEFINITION (U"determine the symmetrization procedure.")
 ENTRY (U"Algorithm")
 NORMAL (U"The %Average procedure averages:")
-FORMULA (U"%similarity__%ij_= %similarity__%ji_ = (%confusion__%ij_ + "
+EQUATION (U"%similarity__%ij_= %similarity__%ji_ = (%confusion__%ij_ + "
 	"%confusion__%ji_) / 2")
 NORMAL (U"The %Houtgast procedure as described in the paper by @@Klein, Plomp "
 	"& Pols (1970)@, expresses similarity between stimuli %i and %j by the "
@@ -461,10 +461,10 @@ NORMAL (U"The %Houtgast procedure as described in the paper by @@Klein, Plomp "
 	"resulted in the same response, summated over all response categories.")
 NORMAL (U"We use the following formula to calculate the %Houtgast "
 	"dissimilarities:")
-FORMULA (U"%similarity__%ij_ = \\su__%k=1..%numberOfColumns_ min "
+EQUATION (U"%similarity__%ij_ = \\su__%k=1..%numberOfColumns_ min "
 	"(%confusion__%ik_, %confusion__%jk_)")
 NORMAL (U"which is equivalent to the formula in the Klein et al. paper:")
-FORMULA (U"%similarity__%ij_ = \\su__%k=1..%numberOfColumns_ (%confusion__%ik_ "
+EQUATION (U"%similarity__%ij_ = \\su__%k=1..%numberOfColumns_ (%confusion__%ik_ "
 	"+ %confusion__%jk_ \\-- |%confusion__%ik_ \\-- %confusion__%jk_|)")
 MAN_END
 
@@ -473,7 +473,7 @@ INTRO (U"The %%congruence coefficient% is a measure of similarity between two "
 	"@@Configuration@s.")
 NORMAL (U"The congruence coefficient %c(#X, #Y) for the configurations #X and "
 	"#Y is defined as:")
-FORMULA (U"%c(%X, %Y) = \\su__%i<%j_ %w__%ij_ %d__%ij_(#X) %d__%ij_(#Y) / "
+EQUATION (U"%c(%X, %Y) = \\su__%i<%j_ %w__%ij_ %d__%ij_(#X) %d__%ij_(#Y) / "
 	"([\\su__%i<%j_ %w__%ij_ %d^2__%ij_(#X)]^^1/2^ [\\su__%i<%j_ %w__%ij_ "
 	"%d^2__%ij_(#Y)]^^1/2^),")
 NORMAL (U"where %d__%ij_(#X) is the distance between the points %i and %j in "
@@ -531,18 +531,18 @@ DEFINITION (U"determines whether row points are in the centre of gravity of "
 ENTRY (U"Algorithm")
 NORMAL (U"1. We start with the following transformation of the entries "
 	"%f__%ij_:")
-FORMULA (U"%h__%ij_ = %f__%ij_ / \\Vr (%f__%i+_%f__+%j_) - \\Vr "
+EQUATION (U"%h__%ij_ = %f__%ij_ / \\Vr (%f__%i+_%f__+%j_) - \\Vr "
 	"(%f__%i+_%f__+%j_) / %N,")
 NORMAL (U"where %h__%ij_ is the entry for a cell in the matrix #H with "
 	"transformed data, %f__%i+_ "
 	"is the total count for row %i, %f__+%j_ is the total count for column %j "
 	"and %N is the grand total. "
 	"This can be written in matrix form as:")
-FORMULA (U"#H = #R^^\\--1/2^#F#C^^\\--1/2^ \\-- #R^^1/2^#uu\\'p#C^^1/2^ / %N,")
+EQUATION (U"#H = #R^^\\--1/2^#F#C^^\\--1/2^ \\-- #R^^1/2^#uu\\'p#C^^1/2^ / %N,")
 NORMAL (U"where #R and #C are diagonal matrices with the row and column totals, "
 	"respectively and #u a column vector with all elements equal to 1. ")
 NORMAL (U"2. Next the singular value decomposition of matrix #H is performed:")
-FORMULA (U"#H = #K #\\La #L\\'p,")
+EQUATION (U"#H = #K #\\La #L\\'p,")
 NORMAL (U"where #K\\'p#K = #I, #L\\'p#L = #I, and #\\La is a diagonal matrix "
 	"with singular values.")
 NORMAL (U"3. Now the row (#X) and column points (#Y) can be determined. "
@@ -596,7 +596,7 @@ PICTURE (4.0, 4.0, drawCarrollWishConfigurationExample)
 NORMAL (U"The eight sources weigh this configuration in the following manner:")
 PICTURE (4.0, 4.0, drawCarrollWishSalienceExample)
 NORMAL (U"For each source, the distances were subjected to the transformation: ")
-FORMULA (U"%dissimilarity__%ij_ = %distance__%ij_ + %noiseRange \\.c #u, ")
+EQUATION (U"%dissimilarity__%ij_ = %distance__%ij_ + %noiseRange \\.c #u, ")
 NORMAL (U"where #u is a uniform random variable between 0 and 1.")
 NORMAL (U"Now you can do the following for example:")
 TAG (U"Select all the Dissimilarity objects and choose @@Dissimilarity: To Distance...|"
@@ -617,7 +617,7 @@ INTRO (U"Creates a @Dissimilarity object that bears the name %R. The "
 PICTURE (4.0, 4.0, drawLetterRConfigurationExample)
 NORMAL (U"All 32 \\.c (32-1)/2 interpoint distances were subjected to the "
 	"transformation: ")
-FORMULA (U"%dissimilarity__%ij_^ = %distance__%ij_^2 + 5 + %noiseRange \\.c #u, ")
+EQUATION (U"%dissimilarity__%ij_^ = %distance__%ij_^2 + 5 + %noiseRange \\.c #u, ")
 NORMAL (U"where #u is a uniform random variable between 0 and 1.")
 NORMAL (U"This example was chosen from @@Green, Carmone & Smith (1989)@.")
 MAN_END
@@ -692,7 +692,7 @@ MAN_END
 MAN_BEGIN (U"Dissimilarity: Get additive constant", U"djmw", 19971201)
 INTRO (U"A command that calculates the \"additive constant\" from the selected @Dissimilarity.")
 NORMAL (U"Distances %d__%ij_ will be obtained from dissimilarities %\\de__%ij_ according to:")
-FORMULA (U" %distance__%ij_ = %dissimilarity__%ij_ + %additiveConstant")
+EQUATION (U" %distance__%ij_ = %dissimilarity__%ij_ + %additiveConstant")
 NORMAL (U"We use a procedure by @@Cailliez (1983)@ to solve the \"additive constant problem\", i.e. "
 	"find the smallest %additiveConstant such that all %distance__%ij_ in the above equation "
 	" have a Euclidean representation.")
@@ -701,19 +701,19 @@ MAN_END
 MAN_BEGIN (U"Dissimilarity: To Configuration (absolute mds)...", U"djmw", 19980105)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity object.")
 NORMAL (U"The @disparities %d\\'p__%ij_ will be obtained from dissimilarities %\\de__%ij_ according to:")
-FORMULA (U"%d\\'p__%ij_ = %\\de__%ij_")
+EQUATION (U"%d\\'p__%ij_ = %\\de__%ij_")
 MAN_END
 
 MAN_BEGIN (U"Dissimilarity: To Configuration (interval mds)...", U"djmw", 19980105)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity object.")
 NORMAL (U"The @disparities %d\\'p__%ij_ will be obtained from dissimilarities %\\de__%ij_ according to:")
-FORMULA (U"%d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_")
+EQUATION (U"%d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_")
 MAN_END
 
 MAN_BEGIN (U"Dissimilarity: To Configuration (i-spline mds)...", U"djmw", 20040407)
 INTRO (U"A command that creates a @Configuration object from a @Dissimilarity object.")
 NORMAL (U"Dissimilarities %\\de__%ij_ and @disparities %d\\'p__%ij_ will be related by a @spline function:")
-FORMULA (U"%d\\'p__%ij_ = \\su__%k=1..(%%numberOfInteriorKnots%+%order)_ spline__%k_ (%knots, %order, %\\de__%ij_),")
+EQUATION (U"%d\\'p__%ij_ = \\su__%k=1..(%%numberOfInteriorKnots%+%order)_ spline__%k_ (%knots, %order, %\\de__%ij_),")
 NORMAL (U"where spline__%k_ (\\.c) is the value of the %k^^th^ I-spline of order %order and knot sequence "
 	"%knot evaluated at %\\de__%ij_.")
 ENTRY (U"Settings")
@@ -765,10 +765,10 @@ DEFINITION (U"determines the handling of ties in the data. In the %%primary appr
 	"equal whenever the dissimilarities are equal.")
 NORMAL (U"For the calculation of stress:")
 TAG (U"##Kruskal's stress-1 (Formula1, the default)")   // ??
-FORMULA (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
+EQUATION (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su %distance__%k_^2)")
 TAG (U"##Kruskal's stress-2 (Formula2)")
-FORMULA (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
+EQUATION (U"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su (%distance__%k_ \\-- %averageDistance)^2)")
 DEFINITION (U"Note that values of stress-2 are generally more than double those "
 	"of stress-1 for the same degree of fit.")
@@ -830,7 +830,7 @@ INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 NORMAL (U"Dissimilarities %\\de__%ij_ and @disparities %d\\'p__%ij_ are "
 	"related by:")
-FORMULA (U"%d\\'p__%ij_ \\<_ %d\\'p__%kl_ if %\\de__%ij_ \\<_ %\\de__%kl_")
+EQUATION (U"%d\\'p__%ij_ \\<_ %d\\'p__%kl_ if %\\de__%ij_ \\<_ %\\de__%kl_")
 ENTRY (U"Settings")
 TAG (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the configuration.")
@@ -856,7 +856,7 @@ INTRO (U"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 NORMAL (U"The @disparities %d\\'p__%ij_ will be obtained from dissimilarities "
 	"%\\de__%ij_ according to:")
-FORMULA (U"%d\\'p__%ij_ = %b \\.c %\\de__%ij_")
+EQUATION (U"%d\\'p__%ij_ = %b \\.c %\\de__%ij_")
 MAN_END
 
 MAN_BEGIN (U"Dissimilarity: To Distance...", U"djmw", 20040407)
@@ -867,7 +867,7 @@ TAG (U"##Scale")
 DEFINITION (U"when on, the @@Dissimilarity: Get additive constant|"
 	"additiveConstant@ is determined, when off the %additiveConstant = 0.")
 NORMAL (U"dissimilarities are transformed to distances according to:")
-FORMULA (U" %distance__%ij_ = %dissimilarity__%ij_ + %additiveConstant.")
+EQUATION (U" %distance__%ij_ = %dissimilarity__%ij_ + %additiveConstant.")
 MAN_END
 
 MAN_BEGIN (U"Dissimilarity: To Weight", U"djmw", 19980108)
@@ -884,7 +884,7 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"selected @Dissimilarity object versus @disparities %d\\'p__%ij_ obtained "
 	"from the \"regression\" of distances %d__%ij_ "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
-FORMULA (U"%d\\'p__%ij_ = %\\de__%ij_")
+EQUATION (U"%d\\'p__%ij_ = %\\de__%ij_")
 ENTRY (U"Settings")
 TAG (U"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (U"minimum and maximum values for the proximities (horizontal axis).")
@@ -902,7 +902,7 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"selected @Dissimilarity versus @disparities %d\\'p__%ij_ obtained "
 	"from the regression of distances %d__%ij_ "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
-FORMULA (U"%d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_,")
+EQUATION (U"%d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_,")
 NORMAL (U"where the values of %a and %b are determined by regression.")
 ENTRY (U"Settings")
 TAG (U"##Minimum proximity#, ##Maximum proximity#")
@@ -961,7 +961,7 @@ INTRO (U"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"selected @Dissimilarity versus @disparities %d\\'p__%ij_ obtained "
 	"from the \"regression\" of distances %d__%ij_ "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
-FORMULA (U"%d\\'p__%ij_ = %b \\.c %\\de__%ij_,")
+EQUATION (U"%d\\'p__%ij_ = %b \\.c %\\de__%ij_,")
 NORMAL (U"where the value of %b is determined by regression.")
 ENTRY (U"Settings")
 TAG (U"##Minimum proximity#, ##Maximum proximity#")
@@ -1171,7 +1171,7 @@ DEFINITION (U"when selected, the elements in the resulting matrix part will be s
 ENTRY (U"Algorithm")
 NORMAL (U"ScalarProduct entries %b__%ij_ are created from distances %d__%ij_ bij double centering "
 	"the matrix with elements \\--1/2 %d__%ij_^2, i.e.,")
-FORMULA (U"%b__%ij_= \\--1/2(%d__%ij_^2 \\-- %d__%\\.cj_^2 \\-- %d__%i\\.c_^2 + %d__%\\.c\\.c_^2),")
+EQUATION (U"%b__%ij_= \\--1/2(%d__%ij_^2 \\-- %d__%\\.cj_^2 \\-- %d__%i\\.c_^2 + %d__%\\.c\\.c_^2),")
 NORMAL (U"where the dot (\\.c) means averaging over that dimension.")
 MAN_END
 
@@ -1244,7 +1244,7 @@ NORMAL (U"where %X is a %numberOfPoints \\xx %numberOfDimensions configuration "
 	"%numberOfDimensions matrix with weights, and %B__%k_ "
 	"the %k^^th^ slab of %\\be__%ijk_.")
 NORMAL (U"This translates to the following INDSCAL loss function:")
-FORMULA (U"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
+EQUATION (U"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
 	"\\su__%k=1..%numberOfSources_ | %B__%k_ \\-- %X%W__%k_%X\\'p |^2")
 NORMAL (U"")
 MAN_END
@@ -1267,7 +1267,7 @@ DEFINITION (U"Perform an INDSCAL analysis on one or more objects of type "
 	"object as the initial Configuration in the iteration process.")
 ENTRY (U"Algorithm")
 NORMAL (U"The function to be minimized in INDSCAL is the following:")
-FORMULA (U"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
+EQUATION (U"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
 	"\\su__%i=1..%numberOfSources_ |%S__%i_ \\-- %XW__%i_%X\\'p|^2")
 NORMAL (U"where %X an unknown %numberOfPoints x %numberOfDimensions "
 	"configuration matrix, the %W__%i_ are %numberOfSources unknown "
@@ -1278,7 +1278,7 @@ NORMAL (U"where %X an unknown %numberOfPoints x %numberOfDimensions "
 NORMAL (U"In the absence of an algorithm that minimizes %f, @@Carroll & "
 	"Chang (1970)@ resorted to the @CANDECOMP algorithm, which instead of the "
 	"function given above minimizes the following function:")
-FORMULA (U"%g(%X, %Y, %W__1_,..., %W__%numberOfSources_) = "
+EQUATION (U"%g(%X, %Y, %W__1_,..., %W__%numberOfSources_) = "
 	"\\su__%i=1..%numberOfSources_ |%S__%i_ \\-- %XW__%i_%Y\\'p|^2.")
 NORMAL (U"Carroll & Chang claimed that for most practical circumstances %X "
 	"and %Y converge to matrices that will be columnwise proportional. "
@@ -1290,24 +1290,24 @@ NORMAL (U"@@Ten Berge, Kiers & Krijnen (1993)@ describe an algorithm that "
 	"also, can guarantee non-negativity of the weights. "
 	"This algorithm proceeds as follows:")
 NORMAL (U"Let #%x__%h_ be the %h-th column of %X. We then write the function %f above as:")
-FORMULA (U"%f(#%x__%h_, %w__1%h_, ..., %w__%numberOfSources %h_) = \\su__%i=1.."
+EQUATION (U"%f(#%x__%h_, %w__1%h_, ..., %w__%numberOfSources %h_) = \\su__%i=1.."
 	"%numberOfSources_ |%S__%ih_ \\-- #%x__%h_%w__%ih_#%x\\'p__%h_|^2,")
 NORMAL (U"with %S__%ih_ defined as:")
-FORMULA (U"%S__%ih_ = (%S__%i_ - \\su__%j\\=/%h, %j=1..%numberOfDimensions_ "
+EQUATION (U"%S__%ih_ = (%S__%i_ - \\su__%j\\=/%h, %j=1..%numberOfDimensions_ "
 	"#%x__%j_%w__%ij_#%x\\'p__%j_).")
 NORMAL (U"Without loss of generality we may require that")
-FORMULA (U"#%x\\'p__%h_#%x__%h_ = 1")
+EQUATION (U"#%x\\'p__%h_#%x__%h_ = 1")
 NORMAL (U"Minimizing %f over #%x__%h_ is equivalent to minimizing")
-FORMULA (U"\\su__%i=1..%numberOfSources_ |%S__%ih_|^2 \\-- 2tr \\su "
+EQUATION (U"\\su__%i=1..%numberOfSources_ |%S__%ih_|^2 \\-- 2tr \\su "
 	"%S__%ih_#%x__%h_%w__%ih_#%x\\'p__%h_ + \\su %w^2__%ih_")
 NORMAL (U"This amounts to maximizing")
-FORMULA (U"%g(#%x__%h_) = #%x\\'p__%h_(\\su %w__%ih_%S__%ih_)#%x__%h_")
+EQUATION (U"%g(#%x__%h_) = #%x\\'p__%h_(\\su %w__%ih_%S__%ih_)#%x__%h_")
 NORMAL (U"subject to #%x\\'p__%h_#%x__%h_ = 1. The solution for #%x__%h_ is "
 	"the dominant eigenvector of (\\su %w__%ih_%S__%ih_), "
 	"which can be determined with the power method (see @@Golub & van Loan "
 	"(1996)@). The optimal value "
 	"for the %w__%ih_, given that all other parameters are fixed:")
-FORMULA (U"%w__%ih_ = #%x\\'p__%h_%S__%ih_#%x__%h_")
+EQUATION (U"%w__%ih_ = #%x\\'p__%h_%S__%ih_#%x__%h_")
 NORMAL (U"In an alternating least squares procedure we may update columns of "
 	"%X and the diagonals of the %W matrices in any sensible order.")
 MAN_END
@@ -1344,7 +1344,7 @@ INTRO (U"Multidimensional scaling (MDS) models are defined by specifying "
 ENTRY (U"Representation functions")
 NORMAL (U"In the application of MDS we try to find a configuration #X such that "
 	"the following relations are satisfied as well as possible:")
-FORMULA (U"%f(%\\de__%ij_) \\~~ %d__%ij_(#X)")
+EQUATION (U"%f(%\\de__%ij_) \\~~ %d__%ij_(#X)")
 NORMAL (U"The numbers that result from applying %f on %\\de__%ij_ are sometimes "
 	"called @disparities %d\\'p__%ij_. In most applications of MDS, besides "
 	"the configuration #X, also the function %f is not "
@@ -1370,7 +1370,7 @@ DEFINITION (U"where %i-spline(\\.c) is a smooth monotonically increasing "
 LIST_ITEM (U"\\bu %monotone mds: %d\\'p__%ij_ = %monotone(\\de__%ij_),")
 DEFINITION (U"where %monotone(\\.c) is restricted to be a monotonic function "
 	"that preserves the order of the dissimilarities:")
-FORMULA (U"if %\\de__%ij_ < %\\de__%kl_, then %d__%ij_(#X) < %d__%kl_(#X)")
+EQUATION (U"if %\\de__%ij_ < %\\de__%kl_, then %d__%ij_(#X) < %d__%kl_(#X)")
 DEFINITION (U"If %\\de__%ij_ = %\\de__%kl_ and no particular constraint is involved for %d__%ij_(#X) "
 	"and %d__%kl_(#X) this is referred to as the %%primary approach% to ties. The %%secondary "
 	"approach% to ties requires that if %\\de__%ij_ = %\\de__%kl_, then also %d__%ij_(#X) = %d__%kl_(#X).")
@@ -1501,7 +1501,7 @@ NORMAL (U"An object of type Procrustes represents the special @@AffineTransform|
 	"combination of a translation, a shape preserving transformation and a scaling (this scaling is often called %dilation). "
 	"Because the transformation has to be shape preserving, only a combination of a rotation and a reflection is allowed. "
 	"A configuration matrix #%X is transformed in the following way to a new configuration matrix #%Y: ")
-FORMULA (U"#%Y = %s #%X #%T+ #1#%t',")
+EQUATION (U"#%Y = %s #%X #%T+ #1#%t',")
 NORMAL (U"where %s is the scaling factor, #%T is the shape preserving transformation matrix, #%t is the translation vector, "
 	"and #1 is the vector with only ones as its elements.")
 NORMAL (U"For more information about the Procrustes transform and its algorithm "
@@ -1548,7 +1548,7 @@ MAN_BEGIN (U"ScalarProduct", U"djmw", 19980125)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type ScalarProduct represents scalar products %b__%ij_ "
 	"between objects %i and %j in a metrical space.")
-FORMULA (U"%b__%ij_ = \\su__%k=1..%numberOfDimensions_ %x__%ik_%x__%jk_,")
+EQUATION (U"%b__%ij_ = \\su__%k=1..%numberOfDimensions_ %x__%ik_%x__%jk_,")
 NORMAL (U"where %x__%ik_ and %x__%jk_ are the coordinates of the %k-th "
 	"dimension of points %i and %j, respectively. From this definition one "
 	"can see that scalar products, in contrast to distances, "
@@ -1594,7 +1594,7 @@ DEFINITION (U"determines the maximum dissimilarity possible. When the default "
 	"is calculated as the maximum element in the Similarity object.")
 ENTRY (U"Algorithm")
 NORMAL (U"To obtain dissimilarities we 'reverse' similarities:")
-FORMULA (U"%%dissimilarity__%ij_ = %maximumDissimilarity \\-- %similarity__%ij_")
+EQUATION (U"%%dissimilarity__%ij_ = %maximumDissimilarity \\-- %similarity__%ij_")
 NORMAL (U"In this way the order of dissimilarities is the reverse of the order "
 	"of the similarities.")
 MAN_END
@@ -1642,14 +1642,14 @@ NORMAL (U"A %%knot sequence% %t = {%t__1_, ..., %t__%n+%k_}, where %n is the "
 	"This is called a %simple knot sequence, because all interior knots are "
 	"simple. The number of free parameters %n for this case obeys a simple "
 	"formula:")
-FORMULA (U"%n = %numberOfInteriorKnots + %order.")
+EQUATION (U"%n = %numberOfInteriorKnots + %order.")
 NORMAL (U"With suitable basis functions, for example, the M-spline family "
 	"%M__%i_(%x|%k, %t), %i=1..%n, we can write any spline %f in the form:")
-FORMULA (U"%f = \\su__%i=1..%n_ %a__%i_%M__%i_,")
+EQUATION (U"%f = \\su__%i=1..%n_ %a__%i_%M__%i_,")
 NORMAL (U"where the %M__%i_ are defined by the following recursive formula's:")
-FORMULA (U"%M__%i_(%x|1,%t) = 1 / (%t__%i+1_ \\-- %t__%i_),           %t__%i_ "
+EQUATION (U"%M__%i_(%x|1,%t) = 1 / (%t__%i+1_ \\-- %t__%i_),           %t__%i_ "
 	"\\<_ %x < %t__%i+1_, 0 otherwise")
-FORMULA (U"%M__%i_(%x|%k,%t) = %k [(%x\\--%t__%i_)%M__%i_(%x|%k\\--1,%t) + "
+EQUATION (U"%M__%i_(%x|%k,%t) = %k [(%x\\--%t__%i_)%M__%i_(%x|%k\\--1,%t) + "
 	"(%t__%i+%k_\\--%x)%M__%i+1_(%x|%k\\--1,%t)] / "
 	"((%k\\--1)(%t__%i+%k_\\--%t__%i_))")
 NORMAL (U"These %M__%i_ are localized because %M__%i_(%x|%k,%t) > 0 only when "
@@ -1661,17 +1661,17 @@ NORMAL (U"The following picture shows an M-spline of order 3 on the interval "
 PICTURE (5.0, 5.0, drawMsplineExample)
 NORMAL (U"Because the M-splines are nonnegative, %monotone splines% can be "
 	"derived from them by %integration:")
-FORMULA (U"%I__%i_(%x|%k,%t) = \\in__%xmin_^%x %M__%i_(%u|%k,%t) %du")
+EQUATION (U"%I__%i_(%x|%k,%t) = \\in__%xmin_^%x %M__%i_(%u|%k,%t) %du")
 NORMAL (U"Because each %M__%i_(%x|%k, %t) is a piecewise polynomial of degree"
 	" %k\\--1, each %I__%i_ will be of degree %k. Now we can write:")
-FORMULA (U"%f = \\su__%i=1..%n_ %b__%i_%I__%i_(%x|%k,%t)")
+EQUATION (U"%f = \\su__%i=1..%n_ %b__%i_%I__%i_(%x|%k,%t)")
 NORMAL (U"We can use an M-spline of order %k+1 with a simple knot sequence %t, "
 	"for which %t__%j_ \\<_ x < %t__%j+1_, to put "
 	"the I-spline of order %k into a more convenient form:")
-FORMULA (U"%I__%i_(%x|%k,%t) = 0,     %i > %j")
-FORMULA (U"%I__%i_(%x|%k,%t) = \\su__%m=%i+1..%j_ (%t__%m+%k+1_\\--"
+EQUATION (U"%I__%i_(%x|%k,%t) = 0,     %i > %j")
+EQUATION (U"%I__%i_(%x|%k,%t) = \\su__%m=%i+1..%j_ (%t__%m+%k+1_\\--"
 	"%t__%m_)%M__%m_(%x|%k+1,%t)/(%k+1),     %j\\--%k \\<_ %i \\<_ %j")
-FORMULA (U"%I__%i_(%x|%k,%t) = 1,     %i < %j\\--%k")
+EQUATION (U"%I__%i_(%x|%k,%t) = 1,     %i < %j\\--%k")
 NORMAL (U"The following figure shows the I-splines that were derived from "
 	"the M-splines above.")
 PICTURE (5.0, 5.0, drawIsplineExample)
@@ -1683,28 +1683,28 @@ MAN_BEGIN (U"stress", U"djmw", 19980108)
 INTRO (U"A badness-of-fit measure for the entire MDS representation.")
 NORMAL (U"Several measures exist.")
 ENTRY (U"Raw stress")
-FORMULA (U"%\\si__%r_ (#d\\'p, #X) = \\su__%i<%j_ %w__%ij_(%d\\'p__%ij_ \\-- "
+EQUATION (U"%\\si__%r_ (#d\\'p, #X) = \\su__%i<%j_ %w__%ij_(%d\\'p__%ij_ \\-- "
 	"%d__%ij_(#X))^2")
-FORMULA (U"= \\su__%i<%j_ %w__%ij_%d\\'p__%ij_^2 + \\su__%i<%j_ "
+EQUATION (U"= \\su__%i<%j_ %w__%ij_%d\\'p__%ij_^2 + \\su__%i<%j_ "
 	"%w__%ij_%d__%ij_^2(#X) \\-- "
 	"2 \\su__%i<%j_ %w__%ij_%d\\'p__%ij_%d__%ij_(#X)")
-FORMULA (U"= %\\et__%d\\'p_^2 + %\\et^2(#X) \\-- 2%\\ro(#d\\'p, #X)")
+EQUATION (U"= %\\et__%d\\'p_^2 + %\\et^2(#X) \\-- 2%\\ro(#d\\'p, #X)")
 NORMAL (U"where the %d\\'p__%ij_ are the @disparities that are the result "
 	"from the transformation of the dissimilarities, i.e., %f(%\\de__%ij_). "
 	"Raw stress can be misleading because it is dependent on the normalization "
 	"of the disparities. The following measure tries to circumvent this "
 	"inconvenience.")
 ENTRY (U"Normalized stress")
-FORMULA (U"%\\si__%n_ = \\si__%r_ / %\\et__%d\\'p_^2")
+EQUATION (U"%\\si__%n_ = \\si__%r_ / %\\et__%d\\'p_^2")
 NORMAL (U"This is the stress function that we minimize by iterative "
 	"majorization. It goes back to @@De Leeuw (1977)@.")
 ENTRY (U"Kruskal's stress-1")
-FORMULA (U"%\\si__1_ = \\Vr (\\su__%i<%j_ %w__%ij_(%d\\'p__%ij_ \\-- "
+EQUATION (U"%\\si__1_ = \\Vr (\\su__%i<%j_ %w__%ij_(%d\\'p__%ij_ \\-- "
 	"%d__%ij_(#X))^2 / \\su__%i<%j_ %w__%ij_%d__%ij_^2(#X))^^1/2^")
 NORMAL (U"In this measure, which is due to @@Kruskal (1964)@, stress is "
 	"expressed in relation to the size of #X.")
 ENTRY (U"Kruskal's stress-2")
-FORMULA (U"%\\si__2_ = \\Vr (\\su__%i<%j_ %w__%ij_(%d\\'p__%ij_ \\-- "
+EQUATION (U"%\\si__2_ = \\Vr (\\su__%i<%j_ %w__%ij_(%d\\'p__%ij_ \\-- "
 	"%d__%ij_(#X))^2 / \\su__%i<%j_ %w__%ij_(%d__%ij_(#X) - "
 	"%averageDistance)^2)^^1/2^.")
 NORMAL (U"In general, this measure results in a stress value that is "
@@ -1718,19 +1718,19 @@ NORMAL (U"When we have calculated %\\si__%n_ for Configuration #X, "
 	"try to calculate  %\\si__1_ (#d\\'p, %b #X). We minimize the resulting "
 	"expression for %b and substitute "
 	"the result back into the formula for stress, i.e.,")
-FORMULA (U"%\\si__1_^2 (#d\\'p, %b #X) = (%\\et__%d\\'p_^2 + %b^2 %\\et^2(#X) "
+EQUATION (U"%\\si__1_^2 (#d\\'p, %b #X) = (%\\et__%d\\'p_^2 + %b^2 %\\et^2(#X) "
 	"\\-- 2 %b %\\ro(#d\\'p, #X)) / %b^2 %\\et^2(#X)")
-FORMULA (U"d%\\si__1_^2 (%b) / d%b == 0, gives")
-FORMULA (U"%b = %\\et__%d\\'p_^2 / %\\ro")
-FORMULA (U"%\\si__1_^2 =  (1 - %\\ro^2 / (%\\et__%d\\'p_^2\\.c%\\et^2(#X)))")
+EQUATION (U"d%\\si__1_^2 (%b) / d%b == 0, gives")
+EQUATION (U"%b = %\\et__%d\\'p_^2 / %\\ro")
+EQUATION (U"%\\si__1_^2 =  (1 - %\\ro^2 / (%\\et__%d\\'p_^2\\.c%\\et^2(#X)))")
 NORMAL (U"This means that %\\si__1_ = \\Vr %\\si__%n_.")
 ENTRY (U"Relation between %\\si__2_ and %\\si__n_")
 NORMAL (U"We can do the same trick as before for %\\si__2_:")
-FORMULA (U"%\\si__2_^2 (#d\\'p, %b #X) = (%\\et__%d\\'p_^2 + %b^2 %\\et^2(#X) "
+EQUATION (U"%\\si__2_^2 (#d\\'p, %b #X) = (%\\et__%d\\'p_^2 + %b^2 %\\et^2(#X) "
 	"\\-- 2 %b %\\ro(#d\\'p, #X)) / "
 	"(%b^2 \\su__%i<%j_ %w__%ij_(%d__%ij_(#X) - %averageDistance)^2)")
 NORMAL (U"From which we derive:")
-FORMULA (U"%\\si__2_ = \\Vr ((%\\et__%d\\'p_^2 \\.c %\\et^2(#X) - "
+EQUATION (U"%\\si__2_ = \\Vr ((%\\et__%d\\'p_^2 \\.c %\\et^2(#X) - "
 	"%\\ro^2(#d\\'p, #X)) / (%\\et__%d\\'p_^2 \\.c \\su__%i<%j_ "
 	"%w__%ij_(%d__%ij_(#X) - %averageDistance)^2))")
 MAN_END
@@ -1740,9 +1740,9 @@ INTRO (U"A command that centres the columns in the selected @TableOfReal "
 	"objects.")
 ENTRY (U"Algorithm")
 NORMAL (U"The new values in the table, %x\\'p__%ij_, will be:")
-FORMULA (U"%x\\'p__%ij_ = %x__%ij_ \\-- %x__\\.c%j_,")
+EQUATION (U"%x\\'p__%ij_ = %x__%ij_ \\-- %x__\\.c%j_,")
 NORMAL (U"where")
-FORMULA (U"%x__\\.c%j_ = \\su__%i=1..%numberOfRows_ %x__%ij_ / %numberOfRows,")
+EQUATION (U"%x__\\.c%j_ = \\su__%i=1..%numberOfRows_ %x__%ij_ / %numberOfRows,")
 NORMAL (U"the average of column %j.")
 MAN_END
 
@@ -1750,9 +1750,9 @@ MAN_BEGIN (U"TableOfReal: Centre rows", U"djmw", 19980422)
 INTRO (U"A command that centres the rows in the selected @TableOfReal objects.")
 ENTRY (U"Algorithm")
 NORMAL (U"The new values in the table, %x\\'p__%ij_, will be:")
-FORMULA (U"%x\\'p__%ij_ = %x__%ij_ \\-- %x__%i\\.c_,")
+EQUATION (U"%x\\'p__%ij_ = %x__%ij_ \\-- %x__%i\\.c_,")
 NORMAL (U"where")
-FORMULA (U"%x__%i\\.c_ = \\su__%j=1..%numberOfColumns_ %x__%ij_ / "
+EQUATION (U"%x__%i\\.c_ = \\su__%j=1..%numberOfColumns_ %x__%ij_ / "
 	"%numberOfColumns,")
 NORMAL (U"the average of row %i.")
 MAN_END

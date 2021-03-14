@@ -29,7 +29,7 @@ void manual_DataModeler (ManPages me)
 MAN_BEGIN (U"FormantModeler: Get residual sum of squares...", U"djmw", 20140421)
 INTRO (U"Get the residual sum of squares for a formant in the selected FormantModeler.")
 NORMAL (U"The residual sum of squares, RSS,  is defined as follows")
-FORMULA (U"RSS = \\su__i=1_^^n^ (%f__%i_ - %F__%i_)^^2^,")
+EQUATION (U"RSS = \\su__i=1_^^n^ (%f__%i_ - %F__%i_)^^2^,")
 NORMAL (U"where %f__%i_ is the frequency value of the %i-ith data point, %F__%i_ is the frequency at the i-data point as estimated by the model and %n is the number of data points.")
 MAN_END
 

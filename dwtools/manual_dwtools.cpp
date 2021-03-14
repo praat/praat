@@ -176,15 +176,15 @@ INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An affine transform is a combination of a linear transformation #%A "
 	"and a translation #%t that transforms a vector #%x to a new vector #%y "
 	"in the following way:")
-FORMULA (U"#%y = #%A x + #%t")
+EQUATION (U"#%y = #%A x + #%t")
 MAN_END
 
 MAN_BEGIN (U"AffineTransform: Invert", U"djmw", 20011008)
 INTRO (U"Get the inverse of the selected @AffineTransform object.")
 NORMAL (U"The inverse from")
-FORMULA (U"#%y = #%A x + #%t")
+EQUATION (U"#%y = #%A x + #%t")
 NORMAL (U"is:")
-FORMULA (U"#%x = #%A^^-1^ - #%A^^-1^#%t.")
+EQUATION (U"#%x = #%A^^-1^ - #%A^^-1^#%t.")
 MAN_END
 
 MAN_BEGIN (U"band filtering in the frequency domain", U"djmw", 20010404)
@@ -228,11 +228,11 @@ NORMAL (U"In general, if we have %k independent significance tests "
 	"individual test. ")
 NORMAL (U"This results in the following relation between the overall and the "
 	"individual significance level:")
-FORMULA (U"(1 - %\\al\\'p)^^%k%^ = 1 - %\\al.")
+EQUATION (U"(1 - %\\al\\'p)^^%k%^ = 1 - %\\al.")
 NORMAL (U"This equation can easily be solved for %\\al\\'p:")
-FORMULA (U"%\\al\\'p = 1 - (1-%\\al)^^1/%k^,")
+EQUATION (U"%\\al\\'p = 1 - (1-%\\al)^^1/%k^,")
 NORMAL (U"which for small %\\al reduces to:")
-FORMULA (U"%\\al\\'p = %\\al / %k")
+EQUATION (U"%\\al\\'p = %\\al / %k")
 NORMAL (U"This is a very simple recipe: If you want an overall significance "
 	"level %\\al and you perform %k individual tests, simply divide %\\al "
 	"by %k to obtain the significance level for the individual tests.")
@@ -288,9 +288,9 @@ NORMAL (U"An object of type BarkSpectrogram represents an acoustic time-frequenc
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
 	"and frequencies %z__%j_ (on a Bark scale).")
 NORMAL (U" The bark to hertz transformation is defined as:")
-FORMULA (U"hertz = 650.0 * sinh (bark / 7.0),")
+EQUATION (U"hertz = 650.0 * sinh (bark / 7.0),")
 NORMAL (U"while its inverse is defined as:")
-FORMULA (U"bark = 7.0 * log (hertz/650 + sqrt (1 + (hertz/650)^^2^).")
+EQUATION (U"bark = 7.0 * log (hertz/650 + sqrt (1 + (hertz/650)^^2^).")
 ENTRY (U"Inside a BarkSpectrogram")
 NORMAL (U"With @Inspect you will see that this type contains the same attributes a @Matrix object.")
 MAN_END
@@ -308,12 +308,12 @@ INTRO (U"A biharmonic spline interpolation is an interpolation of irregularly sp
 	"The interpolating surface is a linear combination of Green functions centered at each data point. The amplitudes of "
 	"the Green functions are found by solving a linear system of equations.")
 NORMAL (U"The surface %s(#%x) is expressed as")
-FORMULA (U"%s(#%x)=\\Si__%j%=1_^^n^ %w__%j_ %g(#%x, #%x__%j_),")
+EQUATION (U"%s(#%x)=\\Si__%j%=1_^^n^ %w__%j_ %g(#%x, #%x__%j_),")
 NORMAL (U"where %n is the number of data points #%x__%j_ = (%x__%j_, %y__%j_), %g(#%x, #%x__%j_) is Green's function and %w__%j_ is the weight of data point %j. The weights %w__%j_ are determined by requiring that the surface %s(#%x) passes exactly through the %n data points, i.e.")
-FORMULA (U"%s(#%x__%i_)=\\Si__%j%=1_^^n^ %w__%j_ %g(#%x__%i_, #%x__%j_), %i = 1, 2, ..., %n.")
+EQUATION (U"%s(#%x__%i_)=\\Si__%j%=1_^^n^ %w__%j_ %g(#%x__%i_, #%x__%j_), %i = 1, 2, ..., %n.")
 NORMAL (U"This yields an %n\\xx%n square linear system of equations which can be solved for the %w__%j_.")
 NORMAL (U"For twodimensional data Green's function is:")
-FORMULA (U"%g(#%x__%i_, #%x__%j_) = |#%x__%i_ - #%x__%j_|^^2^ (ln |#%x__%i_ - #%x__%j_| - 1.0).")
+EQUATION (U"%g(#%x__%i_, #%x__%j_) = |#%x__%i_ - #%x__%j_|^^2^ (ln |#%x__%i_ - #%x__%j_| - 1.0).")
 NORMAL (U"See @@Sandwell (1987)@ and @@Deng & Tang (2011)@ for more information.")
 MAN_END
 
@@ -435,17 +435,17 @@ DEFINITION (U"is the index of the canonical correlation coefficient that "
 ENTRY (U"Algorithm")
 NORMAL (U"Wilks' statistic: the probability that coefficient \\ro__%index_ "
 	"differs from zero is ")
-FORMULA (U" %probability = chiSquareQ (\\ci^2, %ndf),")
+EQUATION (U" %probability = chiSquareQ (\\ci^2, %ndf),")
 NORMAL (U"where the %%number of degrees of freedom% parameter equals")
-FORMULA (U"%ndf = (%n__y_ - %index +1)(%n__x_ - %index +1)")
+EQUATION (U"%ndf = (%n__y_ - %index +1)(%n__x_ - %index +1)")
 NORMAL (U"and the chi-squared parameter is")
-FORMULA (U"\\ci^2 = \\--(%numberOfObservations - (%n__y_ + %n__x_ +3)/2) "
+EQUATION (U"\\ci^2 = \\--(%numberOfObservations - (%n__y_ + %n__x_ +3)/2) "
 	"log (\\La__%index_),")
 NORMAL (U"In the formulas above the variables %n__y_ and %n__x_ are the "
 	"dimensions of the dependent and the independent data sets whose "
 	"canonical correlations have been "
 	"obtained, and Wilks' lambda is:")
-FORMULA (U"\\La__index_ = \\Pi__%i=%index..min(%ny,%nx)_ (1 \\-- \\ro__%i_^^2^)")
+EQUATION (U"\\La__index_ = \\Pi__%i=%index..min(%ny,%nx)_ (1 \\-- \\ro__%i_^^2^)")
 MAN_END
 
 MAN_BEGIN (U"CCA & Correlation: To TableOfReal (loadings)", U"djmw", 20020525)
@@ -471,7 +471,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
 NORMAL (U"For example, the fraction of the variance explained by the %i^^th^ canonical "
 	"variable in the dependent set is:")
-FORMULA (U"%%fractionVariance% = ((#y__i_\\'p #R__yy_\\'p #R__yy_ #y__i_) / (#y__i_\\'p #R__yy_ #y__i_)) / %n__%y_,")
+EQUATION (U"%%fractionVariance% = ((#y__i_\\'p #R__yy_\\'p #R__yy_ #y__i_) / (#y__i_\\'p #R__yy_ #y__i_)) / %n__%y_,")
 NORMAL (U"where #y__%i_ is the eigenvector for dependent canonical variable %i and #R__%%yy%_ is the correlation matrix for the %n__%y_ variables in the dependent set.")
 MAN_END
 
@@ -490,7 +490,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
 NORMAL (U"For example, the redundancy of the dependent set (y) given the independent set (x) for the %i^^%%th%^ canonical "
 	"variate can be expressed as:")
-FORMULA (U"%R__%i_(y) = %%varianceFraction%__%i_(y) * \\ro__%i_^2, ")
+EQUATION (U"%R__%i_(y) = %%varianceFraction%__%i_(y) * \\ro__%i_^2, ")
 NORMAL (U"where %%varianceFraction%__%i_(y) is the @@CCA & Correlation: Get variance fraction...|variance fraction@ explained "
 	"by the %i^^%%th%^ canonical variate of the dependent set, and \\ro__%i_ is the %i^^%%th%^ canonical correlation coefficient.")
 NORMAL (U"The redundancy for the selected canonical variate in the dependent set shows what "
@@ -580,10 +580,10 @@ NORMAL (U"In a canonical correlation analysis of the dataset above, we try "
 	"%v__2_ of the levels that have maximum correlation. These %u__2_ and "
 	"%v__2_ should be uncorrelated with %u__1_ and %v__1_. "
 	"When we express the above with formulas we have:")
-FORMULA (U"%u__1_ = %y__11_%F__1_+%y__12_%F__2_ + %y__13_%F__3_")
-FORMULA (U"%v__1_ = %x__11_%L__1_+%x__12_%L__2_ + %x__13_%L__3_")
-FORMULA (U"\\ro(%u__1_, %v__1_) = maximum, \\ro(%u__2_, %v__2_) = submaximum, ")
-FORMULA (U"\\ro(%u__2_, %u__1_) = \\ro (%u__2_, %v__1_) = \\ro (%v__2_, %v__1_) "
+EQUATION (U"%u__1_ = %y__11_%F__1_+%y__12_%F__2_ + %y__13_%F__3_")
+EQUATION (U"%v__1_ = %x__11_%L__1_+%x__12_%L__2_ + %x__13_%L__3_")
+EQUATION (U"\\ro(%u__1_, %v__1_) = maximum, \\ro(%u__2_, %v__2_) = submaximum, ")
+EQUATION (U"\\ro(%u__2_, %u__1_) = \\ro (%u__2_, %v__1_) = \\ro (%v__2_, %v__1_) "
 	"= \\ro (%v__2_, %u__1_) = 0,")
 NORMAL (U"where the \\ro(%u__i_, %v__i_) are the correlations between the "
 	"@@canonical variate@s %u__i_ and %v__i_ and the %y__%ij_'s and %x__%ij_'s are"
@@ -609,8 +609,8 @@ CODE (U"cc3 = Get correlation: 3")
 CODE (U"writeInfoLine: \"cc1 = \", cc1, \", cc2 = \", cc2, \", cc3 = \", cc3")
 ENTRY (U"4. How to obtain canonical scores")
 NORMAL (U"Canonical #scores, also named @@canonical variate@s, are the linear combinations:")
-FORMULA (U"%u__%i_ = %y__%i1_%F__1_+%y__%i2_%F__2_ + %y__%i3_%F__3_, and,")
-FORMULA (U"%v__%i_ = %x__%i1_%L__1_+%x__%i2_%L__2_ + %x__%i3_%L__3_,")
+EQUATION (U"%u__%i_ = %y__%i1_%F__1_+%y__%i2_%F__2_ + %y__%i3_%F__3_, and,")
+EQUATION (U"%v__%i_ = %x__%i1_%L__1_+%x__%i2_%L__2_ + %x__%i3_%L__3_,")
 NORMAL (U"where the index %i runs from 1 to the number of correlation coefficients.")
 NORMAL (U"You can get the canonical scores by selecting a CCA object together with "
 	"the TableOfReal object and choose "
@@ -644,25 +644,25 @@ MAN_BEGIN (U"Chebyshev polynomials", U"djmw", 19990620)
 INTRO (U"The Chebyshev polynomials %T__%n_(%x) of degree %n are special orthogonal polynomial functions "
 	"defined on the domain [-1, 1].")
 NORMAL (U"Orthogonality:")
-FORMULA (U"__-1_\\in^^1^ %W(%x) %T__%i_(%x) %T__%j_(%x) %dx = \\de__%ij_")
-FORMULA (U"%W(%x) = (1 \\-- %x^^2^)^^\\--1/2^   (-1 < x < 1)")
+EQUATION (U"__-1_\\in^^1^ %W(%x) %T__%i_(%x) %T__%j_(%x) %dx = \\de__%ij_")
+EQUATION (U"%W(%x) = (1 \\-- %x^^2^)^^\\--1/2^   (-1 < x < 1)")
 NORMAL (U"They obey certain recurrence relations:")
-FORMULA (U"%T__%n_(%x) = 2 %x %T__%n-1_(%x) \\-- %T__%n-2_(%x)")
-FORMULA (U"%T__0_(%x) = 1")
-FORMULA (U"%T__1_(%x) = %x")
+EQUATION (U"%T__%n_(%x) = 2 %x %T__%n-1_(%x) \\-- %T__%n-2_(%x)")
+EQUATION (U"%T__0_(%x) = 1")
+EQUATION (U"%T__1_(%x) = %x")
 MAN_END
 
 MAN_BEGIN (U"ChebyshevSeries", U"djmw", 19990620)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type ChebyshevSeries represents a linear combination of @@Chebyshev polynomials@ "
 	"%T__%k_(%x).")
-FORMULA (U"ChebyshevSeries (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %T__%k_(%x)")
+EQUATION (U"ChebyshevSeries (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %T__%k_(%x)")
 MAN_END
 
 MAN_BEGIN (U"ChebyshevSeries: To Polynomial", U"djmw", 19990620)
 INTRO (U"A command to transform the selected @ChebyshevSeries object into a @@Polynomial@ object.")
 NORMAL (U"We find polynomial coefficients %c__%k_ such that")
-FORMULA (U"\\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x^^%k^ = \\Si__%k=1.."
+EQUATION (U"\\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x^^%k^ = \\Si__%k=1.."
 	"%numberOfCoefficients_ %l__%k_ %T__%k_(%x)")
 NORMAL (U"We use the recurrence relation for @@Chebyshev polynomials@ to calculate these coefficients.")
 MAN_END
@@ -688,14 +688,14 @@ INTRO (U"The percentage of bivariate normally distributed data covered by an ell
 	"whose axes have a length of %numberOfSigmas\\.c\\si can be obtained by integration of the p.d.f. "
 	"over an elliptical area. This results in the following equation as can be "
 	"verified from equation 26.3.21 in @@Abramowitz & Stegun (1970)@:")
-FORMULA (U"%percentage = (1 - exp (-%numberOfSigmas^^2^/2))\\.c 100\\% ,")
+EQUATION (U"%percentage = (1 - exp (-%numberOfSigmas^^2^/2))\\.c 100\\% ,")
 NORMAL (U"where the %numberOfSigmas is the radius of the \"ellipse\":")
-FORMULA (U"(%x/%\\si__x_)^2 + (%y/%\\si__y_)^2 = %numberOfSigmas^2.")
+EQUATION (U"(%x/%\\si__x_)^2 + (%y/%\\si__y_)^2 = %numberOfSigmas^2.")
 NORMAL (U"The %numberOfSigmas = 1 ellipse covers 39.3\\% , "
 	"the %numberOfSigmas = 2 ellipse covers 86.5\\%  and "
 	"the %numberOfSigmas = 3 ellipse covers 98.9\\%  of the data.")
 NORMAL (U"From the formula above we can show that if we want to cover %p percent of the data, we have to "		"chose %numberOfSigmas as:")
-FORMULA (U"%numberOfSigmas = \\Vr(-2 ln(1-%p/100)).")
+EQUATION (U"%numberOfSigmas = \\Vr(-2 ln(1-%p/100)).")
 NORMAL (U"For covering 95\\% of the data we calculate %numberOfSigmas = 2.45.")
 MAN_END
 
@@ -707,12 +707,12 @@ ENTRY (U"Examples")
 NORMAL (U"At the \\al level of significance a two sided confidence interval "
 	"for the true mean \\mu for normally distributed data with mean %%mean% and "
 	"known standard deviation %\\si can be constructed as:")
-FORMULA (U"%%mean% - %z__\\al/2_ \\si / \\Vr%N \\<_ \\mu \\<_ "
+EQUATION (U"%%mean% - %z__\\al/2_ \\si / \\Vr%N \\<_ \\mu \\<_ "
 	"%%mean% + %z__\\al/2_ \\si / \\Vr%N,")
 NORMAL (U"where %z__\\al/2_ = invGaussQ (\\al/2) and %N is the number of observations.")
 NORMAL (U"If the standard deviation is %not known, we have to estimate its value (%s) "
 	"from the data and the formula above becomes:")
-FORMULA (U"%%mean% - %t__%%\\al/2;N%_ %s / \\Vr%N \\<_ \\mu \\<_ "
+EQUATION (U"%%mean% - %t__%%\\al/2;N%_ %s / \\Vr%N \\<_ \\mu \\<_ "
 	"%%mean% + %t__%%\\al/2;N%_ %s / \\Vr%N,")
 NORMAL (U"where %t__%%\\al/2;N%_ = invStudentQ (%\\al/2, %N-1).")
 NORMAL (U"For %\\al=0.05 and %N=20 we get %z__0.025_=1.96 and %t__0.025;20_=2.093. "
@@ -975,24 +975,24 @@ NORMAL (U"We obtain intervals by the large-sample conservative multiple tests "
 	"intervals in lower triangular part of the resulting TableOfReal object.")
 NORMAL (U"In %%Fisher's approximation%, for each element %r__%ij_ of the "
 	"correlation matrix the confidence interval is:")
-FORMULA (U"#[ tanh (%z__%ij_ - %z__%\\al\\'p_ / \\Vr(%N - 3)) , "
+EQUATION (U"#[ tanh (%z__%ij_ - %z__%\\al\\'p_ / \\Vr(%N - 3)) , "
 	"tanh (%z__%ij_ + %z__%\\al\\'p_ / \\Vr(%N - 3)) #],")
 NORMAL (U"where %z__%ij_ is the Fisher z-transform of the correlation %r__%ij_:")
-FORMULA (U"%z__%ij_ = 1/2 ln ((1 + %r__%ij_) / (1 - %r__%ij_)), ")
+EQUATION (U"%z__%ij_ = 1/2 ln ((1 + %r__%ij_) / (1 - %r__%ij_)), ")
 NORMAL (U"%z__%\\al\\'p_ the Bonferroni corrected %z-value "
 	"%z__%\\al/(2\\.c%numberOfTests)_, ")
-FORMULA (U"%\\al = 1 - %confidenceLevel,")
+EQUATION (U"%\\al = 1 - %confidenceLevel,")
 NORMAL (U"and %N the number of observations that the correlation matrix is "
 	"based on.")
 NORMAL (U"In %%Ruben's approximation% the confidence interval for element %r__%ij_ "
 	"is:")
-FORMULA (U"#[ %x__1_ / \\Vr(1 - %x__1_^2), %x__2_ / \\Vr(1 - %x__2_^2) #]")
+EQUATION (U"#[ %x__1_ / \\Vr(1 - %x__1_^2), %x__2_ / \\Vr(1 - %x__2_^2) #]")
 NORMAL (U"in which %x__1_ and %x__2_ are the smallest and the largest root from")
-FORMULA (U"%a %x^^2^ + %b %x + %c = 0, with")
-FORMULA (U"%a = 2%N - 3 - %z__%\\al\\'p_^^2^")
-FORMULA (U"%b = - 2 %r\\'p \\Vr((2%N - 3)(2%N - 5))")
-FORMULA (U"%c = (2%N - 5 - %z__%\\al\\'p_^^2^) %r\\'p^^2^ - 2%z__%\\al\\'p_^^2^, and")
-FORMULA (U"%r\\'p = %r__%ij_ / \\Vr(1 - %r__%ij_^2),")
+EQUATION (U"%a %x^^2^ + %b %x + %c = 0, with")
+EQUATION (U"%a = 2%N - 3 - %z__%\\al\\'p_^^2^")
+EQUATION (U"%b = - 2 %r\\'p \\Vr((2%N - 3)(2%N - 5))")
+EQUATION (U"%c = (2%N - 5 - %z__%\\al\\'p_^^2^) %r\\'p^^2^ - 2%z__%\\al\\'p_^^2^, and")
+EQUATION (U"%r\\'p = %r__%ij_ / \\Vr(1 - %r__%ij_^2),")
 MAN_END
 
 MAN_BEGIN (U"Covariance", U"djmw", 19990105)
@@ -1051,9 +1051,9 @@ NORMAL (U"We test the hypothesis that the samples that gave rise to the two "
 	"covariance matrices #%M__1_ and #%M__2_, have equal covariances. "
 	"The test statistic is %L\\'p which is distributed as "
 	"a \\ci^2 variate with %p(%p+1)/2 degrees of freedom.")
-FORMULA (U"%L\\'p = %L \\.c (1 \\-- (2%p + 1 \\-- 2 / (%p + 1)) / (6 \\.c ( %N \\-- 1))),")
+EQUATION (U"%L\\'p = %L \\.c (1 \\-- (2%p + 1 \\-- 2 / (%p + 1)) / (6 \\.c ( %N \\-- 1))),")
 NORMAL (U"where, ")
-FORMULA (U"%L = (%N \\-- 1) \\.c (ln determinant (#%M__1_) \\-- ln determinant "
+EQUATION (U"%L = (%N \\-- 1) \\.c (ln determinant (#%M__1_) \\-- ln determinant "
 	"(#%M__2_)) + trace (#%M__2_ \\.c #%M__1_^^\\--1^) \\-- %p), ")
 NORMAL (U"%p is dimension of covariance matrix and "
 	"%N is the number of observations underlying the covariance matrix. ")
@@ -1072,14 +1072,14 @@ DEFINITION (U"the hypothesized mean %\\mu (see below).")
 ENTRY (U"Behaviour")
 NORMAL (U"This is the standard test on means when the variance is unknown. "
 	"The test statistic is")
-FORMULA (U"%t = (%mean - %\\mu) \\Vr%(N / %s^2),")
+EQUATION (U"%t = (%mean - %\\mu) \\Vr%(N / %s^2),")
 NORMAL (U"which has the Student %t distribution with %ndf = %N-1 degrees of freedom.")
 NORMAL (U"In the formulas above, %mean is the element of the mean vector at "
 	"position %index, %\\mu is the hypothesized mean, "
 	"%N is the number of observations, %s^2 "
 	"is the variance at position [%index][%index] in the covariance matrix.")
 NORMAL (U"The returned probability %p is the %%two-sided% probability")
-FORMULA (U"%p = 2 * studentQ (%t, %ndf)")
+EQUATION (U"%p = 2 * studentQ (%t, %ndf)")
 NORMAL (U"A low probability %p means that the difference is significant.")
 MAN_END
 
@@ -1094,7 +1094,7 @@ ENTRY (U"Details")
 NORMAL (U"The total variance is the sum of the diagonal elements of the covariance "
 	"matrix #C, i.e., its trace. "
 	"The fraction is defined as:")
-FORMULA (U"\\Si__%i=%from..%to_ %%C__ii_% / \\Si__%i=1..%numberOfRows_ %%C__ii_%")
+EQUATION (U"\\Si__%i=%from..%to_ %%C__ii_% / \\Si__%i=1..%numberOfRows_ %%C__ii_%")
 MAN_END
 
 MAN_BEGIN (U"Covariance: Get significance of means difference...", U"djmw", 20160102)
@@ -1115,14 +1115,14 @@ DEFINITION (U"determines whether the distribution of the difference of the means
 ENTRY (U"Behaviour")
 NORMAL (U"This is Student's t-test for the significance of a difference of means. "
 	"The test statistic is:")
-FORMULA (U"%t = (%x\\-^__1_ - %x\\-^__2_ - %\\mu) \\Vr (%N / %s^2) with %ndf "
+EQUATION (U"%t = (%x\\-^__1_ - %x\\-^__2_ - %\\mu) \\Vr (%N / %s^2) with %ndf "
 	"degrees of freedom.")
 NORMAL (U"In the formula above %x\\-^__1_ and %x\\-^__2_ are the elements of the "
 	"means vector, %\\mu is the hypothesized difference and %N is the number of "
 	"observations. The value that we use for the (combined) variance %s^2 is:")
-FORMULA (U"%s^2 = %var__1_ + %var__2_ - 2 * %covar__12_,")
+EQUATION (U"%s^2 = %var__1_ + %var__2_ - 2 * %covar__12_,")
 NORMAL (U"when the samples are %paired, and ")
-FORMULA (U"%s^2 = %var__1_ + %var__2_ ")
+EQUATION (U"%s^2 = %var__1_ + %var__2_ ")
 NORMAL (U"when they are not.")
 NORMAL (U"The %var__1_ and %var__2_ are the variance components for "
 	"%x\\-^__1_ and %x\\-^__2_, respectively, and %covar__12_ is their covariance."
@@ -1133,10 +1133,10 @@ NORMAL (U"The %var__1_ and %var__2_ are the variance components for "
 NORMAL (U"If the two variances are significantly different, the statistic %t "
 	"above is only %approximately distributed as Student's %t with "
 	"degrees of freedom equal to:")
-FORMULA (U"%ndf = (%N-1) \\.c (%var__1_ + %var__2_)^2 / (%var__1_^2 + "
+EQUATION (U"%ndf = (%N-1) \\.c (%var__1_ + %var__2_)^2 / (%var__1_^2 + "
 	"%var__2_^2).")
 NORMAL (U"The returned probability %p will be the %%two-sided% probability")
-FORMULA (U"%p = 2 * studentQ (%t, %ndf)")
+EQUATION (U"%p = 2 * studentQ (%t, %ndf)")
 NORMAL (U"A low probability %p means that the difference is significant.")
 MAN_END
 
@@ -1150,10 +1150,10 @@ TAG (U"##Value")
 DEFINITION (U"the hypothesized variance %\\si^2")
 ENTRY (U"Behaviour")
 NORMAL (U"The test statistic")
-FORMULA (U"%\\ci^2 = (%N-1)%s^2 / %\\si^2,")
+EQUATION (U"%\\ci^2 = (%N-1)%s^2 / %\\si^2,")
 NORMAL (U"is distributed as a chi-squared variate with %ndf = %N-1 degrees of freedom.")
 NORMAL (U"The returned probability %p will be ")
-FORMULA (U"%p = chiSquareQ (%\\ci^2, %ndf)")
+EQUATION (U"%p = chiSquareQ (%\\ci^2, %ndf)")
 MAN_END
 
 MAN_BEGIN (U"Covariance: Get significance of variance ratio...", U"djmw", 20040407)
@@ -1167,12 +1167,12 @@ TAG (U"##Hypothesized ratio")
 DEFINITION (U"the hypothesized ratio %F.")
 ENTRY (U"Behaviour")
 NORMAL (U"The test statistic")
-FORMULA (U"%f = %s__1_^2 / %s__2_^2 / %ratio")
+EQUATION (U"%f = %s__1_^2 / %s__2_^2 / %ratio")
 NORMAL (U"is distributed as Fisher's F distribution with %ndf__1_ = %N-1 and "
 	"%ndf__2_ = %N-1 degrees of freedom for the numerator and denominator terms, "
 	"respectively.")
 NORMAL (U"The returned probability %p will be the %%two-sided% probability")
-FORMULA (U"%p = 2 * fisherQ (%f, %ndf__1_, %ndf__2_)")
+EQUATION (U"%p = 2 * fisherQ (%f, %ndf__1_, %ndf__2_)")
 NORMAL (U"If %s__2_^2 > %s__1_^2 we use 1/%f to determine the probability.")
 MAN_END
 
@@ -1285,7 +1285,7 @@ DEFINITION (U"define the positions in the domain where continuity conditions are
 ENTRY (U"Behaviour")
 NORMAL (U"The number of coefficients and the number of interior knots must satisfy "
 	"the following relation:")
-FORMULA (U"%numberOfCoefficients = %numberOfInteriorKnots + %degree")
+EQUATION (U"%numberOfCoefficients = %numberOfInteriorKnots + %degree")
 NORMAL (U"")
 MAN_END
 
@@ -1303,7 +1303,7 @@ DEFINITION (U"define the positions in the domain where continuity conditions are
 ENTRY (U"Behaviour")
 NORMAL (U"The number of coefficients and the number of interior knots must satisfy "
 	"the following relation:")
-FORMULA (U"%numberOfCoefficients = %numberOfInteriorKnots + %degree + 1")
+EQUATION (U"%numberOfCoefficients = %numberOfInteriorKnots + %degree + 1")
 NORMAL (U"")
 MAN_END
 
@@ -1354,11 +1354,11 @@ TAG (U"##Scale amplitudes")
 DEFINITION (U"determines whether the amplitudes will be scaled to fit in the range (-1, 1).")
 ENTRY (U"Purpose")
 NORMAL (U"to create a Sound according to the following formula:")
-FORMULA (U"%t^^%\\ga\\--1^ e^^\\--2%\\pi\\.c%bandwidth\\.c%t^ "
+EQUATION (U"%t^^%\\ga\\--1^ e^^\\--2%\\pi\\.c%bandwidth\\.c%t^ "
 	"cos (2%%\\pi\\.cfrequency\\.ct% + %additionFactor\\.cln(%t) + %initialPhase),")
 NORMAL (U"The %gammachirp function has a monotonically frequency-modulated carrier (the chirp) with "
 	"instantaneous frequency ")
-FORMULA (U"%instantaneousFrequency(%t) = %frequency + %additionFactor / (2\\.c\\pi\\.c%t)")
+EQUATION (U"%instantaneousFrequency(%t) = %frequency + %additionFactor / (2\\.c\\pi\\.c%t)")
 NORMAL (U"and an envelope that is a gamma distribution function. It is a theoretically optimum "
 	"auditory filter, in the sense that it leads to minimal uncertainty in the joint time and "
 	"scale representation of auditory signal analysis.")
@@ -1366,7 +1366,7 @@ NORMAL (U"For faithful modelling of the inner ear, "
 	"@@Irino & Patterson (1997)@ conclude that a value of approximately 1.5 * ERB (%frequency) "
 	"is appropriate for %bandwidth. "
 	"ERB stands for @@equivalent rectangular bandwidth@. Their formula for ERB is:")
-FORMULA (U"ERB(%f) = 6.23 10^^\\--6^ %f^2 + 93.39 10^^\\--3^ %f + 28.52.")
+EQUATION (U"ERB(%f) = 6.23 10^^\\--6^ %f^2 + 93.39 10^^\\--3^ %f + 28.52.")
 NORMAL (U"To avoid @aliasing in the chirp sound, a sound is only generated during times where the "
 	"instantaneous frequency is greater than zero and smaller than the @@Nyquist frequency@.")
 MAN_END
@@ -1405,14 +1405,14 @@ NORMAL (U"The tone consists of many sinusoidal components whose frequencies "
 	"frequency only, and tapered off gradually to subthreshold levels for the components at the "
 	"highest and lowest extremes of frequency.")
 NORMAL (U"For a rising tone complex, the Sound is generated according to the following specification:")
-FORMULA (U"%s(%t) = \\su__%i=1..%numberOfComponents_ %A__%i_(%t) sin (arg__%i_(%t)), where")
-FORMULA (U"arg__%i_(%t) = \\in 2%\\pi f__%i_(%\\ta) %d\\ta , and")
-FORMULA (U"f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + octaveShiftFraction + %t/(12/%frequencyChange_st)^, with")
-FORMULA (U"%A__%i_(%t) = 10^^((%L__min_ + (%L__max_ \\-- %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2) / 20)^, where,")
-FORMULA (U"%L__max_ = 0, %L__min_ = 10^^\\--%amplitudeRange/20^, and,")
-FORMULA (U"%\\te__%i_(%t) = 2\\pi log2 (%f(%t) / %lowestFrequency) / %numberOfComponents.")
+EQUATION (U"%s(%t) = \\su__%i=1..%numberOfComponents_ %A__%i_(%t) sin (arg__%i_(%t)), where")
+EQUATION (U"arg__%i_(%t) = \\in 2%\\pi f__%i_(%\\ta) %d\\ta , and")
+EQUATION (U"f__%i_(%t) = %lowestFrequency \\.c 2^^(%i \\-- 1 + octaveShiftFraction + %t/(12/%frequencyChange_st)^, with")
+EQUATION (U"%A__%i_(%t) = 10^^((%L__min_ + (%L__max_ \\-- %L__min_) (1 \\-- cos 2%\\pi%\\te__%i_(%t)) / 2) / 20)^, where,")
+EQUATION (U"%L__max_ = 0, %L__min_ = 10^^\\--%amplitudeRange/20^, and,")
+EQUATION (U"%\\te__%i_(%t) = 2\\pi log2 (%f(%t) / %lowestFrequency) / %numberOfComponents.")
 NORMAL (U"The maximum frequency that can be reached during a sweep by any single tone is:")
-FORMULA (U"%maximumFrequency = %lowestFrequency\\.c2^^%numberOfComponents^.")
+EQUATION (U"%maximumFrequency = %lowestFrequency\\.c2^^%numberOfComponents^.")
 NORMAL (U"A component that reaches the maximum frequency falls instantaneously to the lowest frequency and then starts rising again.")
 NORMAL (U"The absolute @@sound pressure level@ of the resulting sound will not be set, it is only guaranteed that the peak value "
 	"is just below 1. You can always scale the intensity with the ##Scale Intensity...# command.")
@@ -1756,9 +1756,9 @@ INTRO (U"A command to test the selected @Discriminant for the significance of "
 	"the first %k eigenvectors.")
 ENTRY (U"Details")
 NORMAL (U"The test statistic is:")
-FORMULA (U"%\\ci^2 = \\--(%degreesOfFreedom\\--(%numberOfGroups+%dimension)/2) ln \\La\\'p, where")
-FORMULA (U"%degreesOfFreedom = (%dimension\\--%k)(%numberOfGroups\\--%k\\--1), and, ")
-FORMULA (U"\\La\\'p = \\Pi__%j=%k+1..%numberOfEigenvalues_ 1 / (1 + %%eigenvalue[j]%)")
+EQUATION (U"%\\ci^2 = \\--(%degreesOfFreedom\\--(%numberOfGroups+%dimension)/2) ln \\La\\'p, where")
+EQUATION (U"%degreesOfFreedom = (%dimension\\--%k)(%numberOfGroups\\--%k\\--1), and, ")
+EQUATION (U"\\La\\'p = \\Pi__%j=%k+1..%numberOfEigenvalues_ 1 / (1 + %%eigenvalue[j]%)")
 MAN_END
 
 MAN_BEGIN (U"Discriminant: Get contribution of component...", U"djmw", 19981106)
@@ -1766,7 +1766,7 @@ INTRO (U"A command to ask the selected @Discriminant for the contribution of the
 	"discriminant function (component) to the total variance.")
 ENTRY (U"Details")
 NORMAL (U"The contribution is defined as:")
-FORMULA (U"%%eigenvalue[j]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
+EQUATION (U"%%eigenvalue[j]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
 MAN_END
 
 MAN_BEGIN (U"Discriminant: Get Wilks' lambda...", U"djmw", 20040407)
@@ -1777,7 +1777,7 @@ TAG (U"##From")
 DEFINITION (U"the first eigenvalue number from which the value for lambda has to be calculated.")
 ENTRY (U"Details")
 NORMAL (U"Wilks' lambda is defined as:")
-FORMULA (U"%\\La = \\Pi__%i=%from..%numberOfEigenvalues_ 1 / (1 + %eigenvalue[%i])")
+EQUATION (U"%\\La = \\Pi__%i=%from..%numberOfEigenvalues_ 1 / (1 + %eigenvalue[%i])")
 NORMAL (U"Because lambda is a kind of %inverse measure, values of lambda which are near zero "
 	"denote high discrimination between groups.")
 MAN_END
@@ -1832,20 +1832,20 @@ DEFINITION (U"when on, all group covariance matrices are pooled and distances wi
 	"on the basis of only this pooled covariance matrix (see below).")
 ENTRY (U"Details")
 NORMAL (U"The posterior probabilities of group membership %p__%j_ for a vector #x are defined as:")
-FORMULA (U"%p__%j_ = %p(%j\\| #%x) = exp (\\--%d__%j_^^2^(#%x) / 2) / "
+EQUATION (U"%p__%j_ = %p(%j\\| #%x) = exp (\\--%d__%j_^^2^(#%x) / 2) / "
 	"\\su__%k=1..%numberOfGroups_ exp (\\--%d__%k_^^2^(#%x) / 2),")
 NORMAL (U"where %d__%i_^^2^ is the generalized squared distance function:")
-FORMULA (U"%d__%i_^^2^(#%x) = ((#%x\\--#%\\mu__%i_)\\'p #\\Si__%i_^^-1^ (#%x\\--#%\\mu__%i_) + "
+EQUATION (U"%d__%i_^^2^(#%x) = ((#%x\\--#%\\mu__%i_)\\'p #\\Si__%i_^^-1^ (#%x\\--#%\\mu__%i_) + "
 	"ln determinant (#\\Si__%i_)) / 2 \\-- ln %aprioriProbability__%i_")
 NORMAL (U"that depends on the individual covariance matrix #\\Si__%i_ and the mean "
 	"#%\\mu__%i_ for group %i.")
 NORMAL (U"When the covariances matrices are %pooled, the squared distance function can be reduced to:")
-FORMULA (U"%d__%i_^^2^(#%x) = ((#%x\\--#%\\mu__%i_)\\'p #\\Si^^-1^ (#%x\\--#%\\mu__%i_) "
+EQUATION (U"%d__%i_^^2^(#%x) = ((#%x\\--#%\\mu__%i_)\\'p #\\Si^^-1^ (#%x\\--#%\\mu__%i_) "
 	"\\-- ln %aprioriProbability__%i_,")
 NORMAL (U"and #\\Si is now the pooled covariance matrix.")
 NORMAL (U"The a priori probabilities normally will have values that are related to the number of "
 	"%training vectors %n__%i_ in each group:")
-FORMULA (U"%aprioriProbability__%i_ = %n__%i_ / \\Si__%k=1..%numberOfGroups_ %n__%k_")
+EQUATION (U"%aprioriProbability__%i_ = %n__%i_ / \\Si__%k=1..%numberOfGroups_ %n__%k_")
 MAN_END
 
 MAN_BEGIN (U"Discriminant & TableOfReal: To Configuration...", U"djmw", 20160119)
@@ -2223,7 +2223,7 @@ INTRO (U"A command to ask the selected @Eigen for the contribution of the %j^^th
 	"eigenvalue to the total sum of eigenvalues.")
 ENTRY (U"Details")
 NORMAL (U"The contribution is defined as:")
-FORMULA (U"%%eigenvalue[j]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
+EQUATION (U"%%eigenvalue[j]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
 MAN_END
 
 MAN_BEGIN (U"Eigen: Get cumulative contribution of components...", U"djmw", 19981109)
@@ -2231,7 +2231,7 @@ INTRO (U"A command to ask the selected @Eigen for the contribution of the sum of
 	"eigenvalues[%from..%to] to the total sum of eigenvalues.")
 ENTRY (U"Details")
 NORMAL (U"The contribution is defined as:")
-FORMULA (U"\\Si__%i=%from..%to_ %%eigenvalue[i]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
+EQUATION (U"\\Si__%i=%from..%to_ %%eigenvalue[i]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
 MAN_END
 
 MAN_BEGIN (U"Eigen: Get eigenvalue...", U"djmw", 20040225)
@@ -2282,7 +2282,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"Project each column of the Matrix on the coordinate "
 	"system given by the eigenvectors of the Eigen object. This can be done "
 	"as follows:")
-FORMULA (U"%y__%ij_ = \\Si__%k=1..%dimension_ %e__ik_ %z__%kj_, where")
+EQUATION (U"%y__%ij_ = \\Si__%k=1..%dimension_ %e__ik_ %z__%kj_, where")
 NORMAL (U"%y__%ij_ is the %j-th element of the %i-th row of the result, "
 	"%e__%ik_ is the %k-th element of the %i-th eigenvector, "
 	"%z__%kj_ is the %k-th element of the %j-th column of the selected "
@@ -2300,7 +2300,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"Project each row of the Matrix on the coordinate "
 	"system given by the eigenvectors of the Eigen object. This can be done "
 	"as follows:")
-FORMULA (U"%y__%ij_ = \\Si__%k=1..%dimension_ %e__jk_ %z__%ik_, where")
+EQUATION (U"%y__%ij_ = \\Si__%k=1..%dimension_ %e__jk_ %z__%ik_, where")
 NORMAL (U"%y__%ij_ is the %j-th element of the %i-th row of the result, "
 	"%e__%jk_ is the %k-th element of the %j-th eigenvector, "
 	"%z__%ik_ is the %k-th element of the %i-th row of the selected "
@@ -2314,7 +2314,7 @@ ENTRY (U"Behaviour")
 NORMAL (U"Transform the SSCP object as if it was calculated in a coordinate "
 	"system given by the eigenvectors of the Eigen object. This can be done "
 	"as follows:")
-FORMULA (U"#%S__%t_ = #%E\\'p #%S #%E, where")
+EQUATION (U"#%S__%t_ = #%E\\'p #%S #%E, where")
 NORMAL (U"where #%E\\'p is the transpose of the matrix with eigenvectors #%E, "
 	"#%S is the square matrix with sums of squares and crossproducts, and "
 	"#%S__%t_ the newly created square matrix. The dimension of #%S__%t_ may "
@@ -2332,7 +2332,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"Project each row of the TableOfReal on the coordinate "
 	"system given by the eigenvectors of the Eigen object. This can be done "
 	"as follows:")
-FORMULA (U"%y__%ij_ = \\Si__%k=1..%numberOfColums_ %e__jk_ %x__%ik_, where")
+EQUATION (U"%y__%ij_ = \\Si__%k=1..%numberOfColums_ %e__jk_ %x__%ik_, where")
 NORMAL (U"%e__%jk_ is the %k-th element of the %j-th eigenvector, %x__%ik_ is "
 	"the %k-th element of the %i-th row and %y__%ij_ is the %j-th element at "
 	"the %i-th row of the matrix part of the resulting object.")
@@ -2527,7 +2527,7 @@ MAN_BEGIN (U"gammatone", U"djmw", 20100517)
 INTRO (U"A gammatone is the product of a rising polynomial, a decaying exponential function, and a "
 	"cosine wave.")
 NORMAL (U"It can be described with the following formula:")
-FORMULA (U"gammaTone (%t) = %a %t^^%\\ga\\--1^ e^^\\--2%\\pi\\.c%bandwidth\\.c%t^ "
+EQUATION (U"gammaTone (%t) = %a %t^^%\\ga\\--1^ e^^\\--2%\\pi\\.c%bandwidth\\.c%t^ "
 	"cos (2%%\\pi\\.cfrequency\\.ct% + %initialPhase),")
 NORMAL (U"where %\\ga determines the order of the gammatone.")
 NORMAL (U"The gammatone function has a monotone carrier (the tone) with an "
@@ -2541,7 +2541,7 @@ MAN_END
 MAN_BEGIN (U"generalized singular value decomposition", U"djmw", 19981007)
 INTRO (U"For %m > %n, the %%generalized singular value decomposition% (gsvd) of an %m \\xx %n matrix #%A and "
 	"a %p \\xx %n matrix #%B is given by the pair of factorizations")
-FORMULA (U"#%A = #%U #%\\Si__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%\\Si__2_ [#%0, #%R] #%Q\\'p")
+EQUATION (U"#%A = #%U #%\\Si__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%\\Si__2_ [#%0, #%R] #%Q\\'p")
 NORMAL (U"The matrices in these factorizations have the following properties:")
 TAG (U"\\bu #%U [%m \\xx %m], #%V [%p \\xx %p] and #%Q [%n \\xx %n]")
 DEFINITION (U" are orthogonal matrices. In the reconstruction formula's above we maximally need "
@@ -2555,9 +2555,9 @@ DEFINITION (U"are real, nonnegative and \"diagonal\".")
 NORMAL (U"In practice, the matrices #%\\Si__1_ and #%\\Si__2_ are never used. Instead a shorter "
 	"representation with numbers %\\al__%i_ and %\\be__%i_ is used. These numbers obey "
 	"0 \\<_ \\al__%i_ \\<_ 1 and \\al__%i_^^2^ + \\be__%i_^^2^ = 1. The following relations exist:")
-FORMULA (U"#%\\Si__1_\\'p #%\\Si__1_ + #%\\Si__2_\\'p #%\\Si__2_ = #%I, ")
-FORMULA (U"#%\\Si__1_\\'p #%\\Si__1_ = #diag (%\\al__1_^^2^, ..., %\\al__%r_^^2^), and, ")
-FORMULA (U"#%\\Si__2_\\'p #%\\Si__2_ = #diag (%\\be__1_^^2^, ..., %\\be__%r_^^2^).")
+EQUATION (U"#%\\Si__1_\\'p #%\\Si__1_ + #%\\Si__2_\\'p #%\\Si__2_ = #%I, ")
+EQUATION (U"#%\\Si__1_\\'p #%\\Si__1_ = #diag (%\\al__1_^^2^, ..., %\\al__%r_^^2^), and, ")
+EQUATION (U"#%\\Si__2_\\'p #%\\Si__2_ = #diag (%\\be__1_^^2^, ..., %\\be__%r_^^2^).")
 NORMAL (U"The ratios \\al__%i_ / \\be__%i_ are called the %%generalized singular values% of the "
 	"pair #%A, #%B. Let %l be the rank of #%B and %k + %l (= %r) the rank of [#%A\\'p, #%B\\'p]\\'p. "
 	"Then the first %k generalized singular values are infinite and the remaining %l are finite. "
@@ -2581,10 +2581,10 @@ MAN_END
 
 MAN_BEGIN (U"incomplete gamma function", U"djmw", 20170531)
 INTRO (U"The incomplete gamma function is defined as:")
-FORMULA (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
+EQUATION (U"\\Ga(\\al, %x) = \\in__%x_^^\\oo^ %t^^\\al\\-m1^e^^-%t^dt, \\Ga(\\al) = \\Ga(\\al, 0),")
 NORMAL (U"where \\al and %x are complex numbers and Re(\\al) > 0.")
 NORMAL (U"The complementary incomplete gamma function is defined as:")
-FORMULA (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)\\-m\\Ga(\\al, %x).")
+EQUATION (U"\\ga(\\al, %x) = \\in__%0_^^%x^ %t^^\\al\\-m1^e^^-%t^dt = \\Ga(\\al)\\-m\\Ga(\\al, %x).")
 
 MAN_END
 
@@ -2633,7 +2633,7 @@ INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. ")
 NORMAL (U"An object of type ISpline represents a linear combination of basis "
 	"i@spline functions. Each basis %ispline is a monotonically increasing "
 	"polynomial function of degree %p.")
-FORMULA (U"ISpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %ispline__%k_(%x)")
+EQUATION (U"ISpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %ispline__%k_(%x)")
 MAN_END
 
 MAN_BEGIN (U"Itakura-Saito divergence", U"djmw", 20190619)
@@ -2668,15 +2668,15 @@ MAN_BEGIN (U"Legendre polynomials", U"djmw", 19990620)
 INTRO (U"The Legendre polynomials %P__%n_(%x) of degree %n are special "
 	"orthogonal polynomial functions defined on the domain [-1, 1].")
 NORMAL (U"Orthogonality:")
-FORMULA (U"__-1_\\in^^1^ %W(%x) %P__%i_(%x) %P__%j_(%x) %dx = \\de__%ij_")
-FORMULA (U"%W(%x) = 1    (-1 < x < 1)")
+EQUATION (U"__-1_\\in^^1^ %W(%x) %P__%i_(%x) %P__%j_(%x) %dx = \\de__%ij_")
+EQUATION (U"%W(%x) = 1    (-1 < x < 1)")
 NORMAL (U"They obey certain recurrence relations:")
-FORMULA (U"%n %P__%n_(%x) = (2%n \\-- 1) %x %P__%n-1_(%x) \\-- (%n \\-- 1) %P__%n-2_(%x)")
-FORMULA (U"%P__0_(%x) = 1")
-FORMULA (U"%P__1_(%x) = %x")
+EQUATION (U"%n %P__%n_(%x) = (2%n \\-- 1) %x %P__%n-1_(%x) \\-- (%n \\-- 1) %P__%n-2_(%x)")
+EQUATION (U"%P__0_(%x) = 1")
+EQUATION (U"%P__1_(%x) = %x")
 NORMAL (U"We may %change the domain of these polynomials to [%xmin, %xmax] by "
 	"using the following transformation:")
-FORMULA (U"%x\\'p = (2%x \\-- (%xmax + %xmin)) / (%xmax - %xmin).")
+EQUATION (U"%x\\'p = (2%x \\-- (%xmax + %xmin)) / (%xmax - %xmin).")
 NORMAL (U"We subsequently use %P__%k_(%x\\'p) instead of %P__%k_(%x).")
 MAN_END
 
@@ -2684,13 +2684,13 @@ MAN_BEGIN (U"LegendreSeries", U"djmw", 19990620)
 INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type LegendreSeries represents a linear combination of @@Legendre polynomials@ "
 	"%P__%k_(%x).")
-FORMULA (U"LegendreSeries (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %P__%k_(%x)")
+EQUATION (U"LegendreSeries (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %P__%k_(%x)")
 MAN_END
 
 MAN_BEGIN (U"LegendreSeries: To Polynomial", U"djmw", 19990620)
 INTRO (U"A command to transform the selected @LegendreSeries object into a @@Polynomial@ object.")
 NORMAL (U"We find polynomial coefficients %c__%k_ such that")
-FORMULA (U"\\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x^^%k^ = "
+EQUATION (U"\\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x^^%k^ = "
 	"\\Si__%k=1..%numberOfCoefficients_ %l__%k_ %P__%k_(%x)")
 NORMAL (U"We use the recurrence relation for @@Legendre polynomials@ to calculate these coefficients.")
 MAN_END
@@ -2721,11 +2721,11 @@ TAG (U"##Minimum frequency#, ##Maximum frequency#")
 DEFINITION (U"determine the limits of the vertical axis.")
 ENTRY (U"Algorithm")
 NORMAL (U"For a particular matrix element %z, the histogram bin number %%i% that will be incremented obeys the following relation:")
-FORMULA (U"%%lowerBinBorder%__%i_ \\<_ %z <  %%lowerBinBorder%__%i_+ %%binWidth%,")
+EQUATION (U"%%lowerBinBorder%__%i_ \\<_ %z <  %%lowerBinBorder%__%i_+ %%binWidth%,")
 NORMAL (U"where")
-FORMULA (U"%%binWidth% = (%%maximumValue% - %%minimumValue%)/%%numberOfBins%,")
+EQUATION (U"%%binWidth% = (%%maximumValue% - %%minimumValue%)/%%numberOfBins%,")
 NORMAL (U"and")
-FORMULA (U"%%lowerBinBorder%__%i_ = %%minimumValue% + (%i - 1)\\.c%%binWidth%.")
+EQUATION (U"%%lowerBinBorder%__%i_ = %%minimumValue% + (%i - 1)\\.c%%binWidth%.")
 NORMAL (U"In this way all bins will be based on exactly the same width, as each binning interval includes its lower border "
 	"and excludes its upper border "
 	"(i.e., each interval is closed to the left and open to the right). ")
@@ -2769,9 +2769,9 @@ NORMAL (U"An object of type MelFilter represents an acoustic time-frequency "
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
 	"and frequencies %f__%j_ (on a Mel frequency scale).")
 NORMAL (U"The frequency in mels is:")
-FORMULA (U"mels = 2595 * log10 (1 + hertz / 700),")
+EQUATION (U"mels = 2595 * log10 (1 + hertz / 700),")
 NORMAL (U"and its inverse is:")
-FORMULA (U"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
+EQUATION (U"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
 MAN_END
 
 MAN_BEGIN (U"MelSpectrogram", U"djmw", 20141209)
@@ -2781,9 +2781,9 @@ NORMAL (U"An object of type MelSpectrogram represents an acoustic time-frequency
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
 	"and frequencies %f__%j_ (on a Mel frequency scale).")
 NORMAL (U"The mel frequency scale is defined as:")
-FORMULA (U"mel = 2595 * log10 (1 + hertz / 700),")
+EQUATION (U"mel = 2595 * log10 (1 + hertz / 700),")
 NORMAL (U"and its inverse is:")
-FORMULA (U"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
+EQUATION (U"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
 ENTRY (U"Inside a MelSpectrogram")
 NORMAL (U"With @Inspect you will see that this type contains the same "
 	"attributes a @Matrix.")
@@ -2799,7 +2799,7 @@ INTRO (U"A command to create a @MFCC object from each selected @MelSpectrogram "
 NORMAL (U"Mel frequency cepstral coefficients %c__%k_ in each frame of the MFCC object result from the output of a Discrete Cosine "
 	"Transform on spectral values %P__%j_ in the corresponding frame of the MelSpectrogram. The following formula "
 	"shows the relation between the values in each frame:")
-FORMULA (U"%c__%k-1_ = \\Si__%j=1_^^%N^ %P__%j_ cos (\\pi(%k-1)(%j-0.5)/%N)),")
+EQUATION (U"%c__%k-1_ = \\Si__%j=1_^^%N^ %P__%j_ cos (\\pi(%k-1)(%j-0.5)/%N)),")
 NORMAL (U"where %N represents the number of spectral values and %P__%j_ the power in dB "
 	"of the %j^^%th^ spectral value (%k runs from 1 to %N).")
 NORMAL (U"This transformation was first used by @@Davis & Mermelstein (1980)@.")
@@ -2816,7 +2816,7 @@ INTRO (U"One of the @@types of objects@ in P\\s{RAAT}. ")
 NORMAL (U"An object of type MSpline represents a linear combination of basis "
 	"m@spline functions. Each basis %mspline is a positive polynomial function "
 	"of degree %p.")
-FORMULA (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
+EQUATION (U"MSpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %mspline__%k_(%x)")
 MAN_END
 
 MAN_BEGIN (U"NMF", U"djmw", 20190312)
@@ -2907,7 +2907,7 @@ DEFINITION (U"defines the range of the principal components. If you choose both 
 	"you get the fraction of the \"variance\" explained by that one component.")
 ENTRY (U"Details")
 NORMAL (U"The contribution is defined as:")
-FORMULA (U"\\Si__%i=%from..%to_ %%eigenvalue[i]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
+EQUATION (U"\\Si__%i=%from..%to_ %%eigenvalue[i]% / \\Si__%i=1..%numberOfEigenvalues_ %%eigenvalue[i]%")
 MAN_END
 
 MAN_BEGIN (U"PCA: Get eigenvalue...", U"djmw", 20040225)
@@ -2936,7 +2936,7 @@ TAG (U"##Conservative test")
 DEFINITION (U"when on, a more conservative estimate for %n is chosen (see below).")
 ENTRY (U"Details")
 NORMAL (U"The test statistic is:")
-FORMULA (U"\\ci^2 = \\--%n \\Si__%j=%from..%to_ ln %eigenvalue[%j] + %n %r "
+EQUATION (U"\\ci^2 = \\--%n \\Si__%j=%from..%to_ ln %eigenvalue[%j] + %n %r "
 	"ln (\\Si__%j=%from..%to_ %eigenvalue[%j] / %r),")
 NORMAL (U"with %r(%r+1)/2 \\--1 degrees of freedom. Here %n = %totalNumberOfCases \\-- 1.")
 NORMAL (U"A special case occurs when the variation in the last %r dimensions is spherical. In a "
@@ -2968,7 +2968,7 @@ INTRO (U"A command to reconstruct a @TableOfReal from the selected @Configuratio
 	" and @PCA.")
 NORMAL (U"The TableOfReal is reconstructed from the eigenvectors of the PCA and "
 	"elements of the Configuration are the weight factors: ")
-FORMULA (U"%#t__%i_ = \\Si__%k_ %c__%ik_ #%e__%k_,")
+EQUATION (U"%#t__%i_ = \\Si__%k_ %c__%ik_ #%e__%k_,")
 NORMAL (U"where %#t__%i_ is the %i-th row in the resulting TableOfReal object, %c__%ik_ is "
 	"the element at row %i and column %k in the Configuration object and #%e__%k_ "
 	"the %k-th eigenvector from the PCA object.")
@@ -2981,14 +2981,14 @@ ENTRY (U"Algorithm")
 NORMAL (U"The algorithm is described in section 12.4.3 of @@Golub & van Loan (1996)@:")
 NORMAL (U"First we form the projection of one set of eigenvectors on the other set. "
 	"This results in a 2\\xx2 matrix #C:")
-FORMULA (U"#C = #E__1_\\'p #E__2_,")
+EQUATION (U"#C = #E__1_\\'p #E__2_,")
 NORMAL (U"where #E__1_ and #E__2_ are 2\\xx%%dimension% and %%dimension%\\xx2 matrices "
 	"that contain the first two eigenvectors of the PCA's, respectively.")
 NORMAL (U"Next, we compute the @@singular value decomposition@ of #C:")
-FORMULA (U"#C = #U #\\Si #V\\'p")
+EQUATION (U"#C = #U #\\Si #V\\'p")
 NORMAL (U"Now the cosine of the angle between the two planes is given by \\si__2_ and "
 	"the angle in degrees is therefore:")
-FORMULA (U"arccos (\\si__2_)\\.c180/\\pi")
+EQUATION (U"arccos (\\si__2_)\\.c180/\\pi")
 MAN_END
 
 MAN_BEGIN (U"PCA & PCA: To Procrustes...", U"djmw", 20041028)
@@ -3021,9 +3021,9 @@ TAG (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the resulting Configuration.")
 ENTRY (U"Algorithm")
 NORMAL (U"The values %d__%ij_ in the new TableOfReal are calculated as")
-FORMULA (U"%d__%ij_ = ##eigenvector#__j_\\.c ##z#__%i_,")
+EQUATION (U"%d__%ij_ = ##eigenvector#__j_\\.c ##z#__%i_,")
 NORMAL (U"which is the inproduct of the %j-th eigenvector and the z-score vector ##z#__%i_ of the %i-th row whose elements %z__%ij_ are defined as")
-FORMULA (U"%z__%ij_ = (%x__%ij_ - x\\-^__%j_) / sqrt (eigenvalue__%j_),")
+EQUATION (U"%z__%ij_ = (%x__%ij_ - x\\-^__%j_) / sqrt (eigenvalue__%j_),")
 NORMAL (U"in which %x__%ij_ is the data value at row %i and column %j of the selected TableOfReal and x\\-^__%j_ is the "
 	"%j-th centroid value of the PCA. The square root of the %j-th eigenvalue is the standard deviation in "
 	" the %j-th principal direction.")
@@ -3129,12 +3129,12 @@ MAN_BEGIN (U"PitchTier: Modify interval (tone levels)...", U"djmw", 20170801)
 INTRO (U"Modifies a selected interval from the chosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
 NORMAL (U"For tone languages the pitch contours of the tones are often expressed as a sequence of tone levels instead of a sequence of real frequency values in hertz because tone levels abstract away from the possibly different pitch ranges of individual speakers.")
 NORMAL (U"The tone levels %T are calculated from a given pitch %%frequency% in hertz as:")
-FORMULA (U"%T = %%numberOfToneLevels% \\.c log (%%frequency% / %F__min_) / log (%F__max_ / %F__min_),")
+EQUATION (U"%T = %%numberOfToneLevels% \\.c log (%%frequency% / %F__min_) / log (%F__max_ / %F__min_),")
 NORMAL (U"where %F__min_ and %F__max_ are the minimum and the maximum frequency of a speaker's pitch range and %%numberOfToneLevels% "
 	"is the number of levels into which the pitch range is divided. "
 	"This formula maps any frequency between %F__min_ and %F__max_ to a number between 0 and %%numberOfToneLevels%.")
 NORMAL (U"To get the frequency in hertz from a specified tone level %T we have to use the inverse formula:")
-FORMULA (U"%%frequency% = %F__min_ \\.c 10^^(%T \\.c log (%F__max_ / %F__min_)) / %%numberOfToneLevels%)^.")
+EQUATION (U"%%frequency% = %F__min_ \\.c 10^^(%T \\.c log (%F__max_ / %F__min_)) / %%numberOfToneLevels%)^.")
 ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9), U""
 	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval (tone levels)", 9)
@@ -3227,8 +3227,8 @@ MAN_END
 MAN_BEGIN (U"Polygon: Translate...", U"djmw", 20100418)
 INTRO (U"Translates the selected @@Polygon@ over the given vector.")
 NORMAL (U"Given the old coordinates (x__i_, y__i_) and the translation (x__t_,y__t_), the new coordinates are:")
-FORMULA (U"x__i_\\'p = x__i_ + x__t_")
-FORMULA (U"y__i_\\'p = y__i_ + y__t_")
+EQUATION (U"x__i_\\'p = x__i_ + x__t_")
+EQUATION (U"y__i_\\'p = y__i_ + y__t_")
 MAN_END
 
 MAN_BEGIN (U"Polynomial", U"djmw", 19990608)
@@ -3236,7 +3236,7 @@ INTRO (U"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (U"An object of type "
 	"Polynomial represents a polynomial function on a domain.")
 NORMAL (U"A polynomial of degree %n is defined as:")
-FORMULA (U"%p(%x) = %c__1_ + %c__2_ %x + %c__3_ %x^^2^ + ... c__%n+1_ %x^^%n^.")
+EQUATION (U"%p(%x) = %c__1_ + %c__2_ %x + %c__3_ %x^^2^ + ... c__%n+1_ %x^^%n^.")
 NORMAL (U"The real numbers %c__%k_ are called the polynomial %coefficients.")
 ENTRY (U"Commands")
 NORMAL (U"Creation")
@@ -3299,7 +3299,7 @@ MAN_END
 MAN_BEGIN (U"Polynomials: Multiply", U"djmw", 19990616)
 INTRO (U"A command to multiply two @@Polynomial|polynomials@ with each other.")
 NORMAL (U"The result of multiplying 1 + 2 %x and 2 \\-- %x^2 will be the polynomial:")
-FORMULA (U"2 + 4 %x \\-- %x^2 \\-- 2 %x^3.")
+EQUATION (U"2 + 4 %x \\-- %x^2 \\-- 2 %x^3.")
 MAN_END
 
 MAN_BEGIN (U"Polynomial: To Polynomial (derivative)", U"djmw", 19990610)
@@ -3318,11 +3318,11 @@ ENTRY (U"Behaviour")
 NORMAL (U"The polynomial is transformed from domain [%x__min_, %x__max_] to "
 	"domain [%Xmin, %Xmax] in such a way that its form stays the same. "
 	"This is accomplished by first calculating:")
-FORMULA (U"%f(%x\\'p) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x\\'p^^%k^, where")
-FORMULA (U"%x\\'p = %a %x + %b,")
+EQUATION (U"%f(%x\\'p) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x\\'p^^%k^, where")
+EQUATION (U"%x\\'p = %a %x + %b,")
 NORMAL (U"and then collecting terms of equal degree. The %a and %b are defined as")
-FORMULA (U"%a = (%x__min_ \\-- %x__max_) / (%Xmin \\-- %Xmax)")
-FORMULA (U"%b = %x__min_ \\-- %a %Xmin")
+EQUATION (U"%a = (%x__min_ \\-- %x__max_) / (%Xmin \\-- %Xmax)")
+EQUATION (U"%b = %x__min_ \\-- %a %Xmin")
 MAN_END
 
 MAN_BEGIN (U"Polynomial: To Roots", U"djmw", 19990608)
@@ -3346,8 +3346,8 @@ NORMAL (U"We calculate the spectrum by evaluating the polynomial at regularly sp
 	"unit circle, where %k\\.c%\\fi is in the interval [0, %\\pi], will be mapped to frequencies "
 	"[0, @@Nyquist frequency@] in the spectrum. ")
 NORMAL (U"The complex values %z__%k_ (%k=1..%numberOfFrequencies) are defined as:")
-FORMULA (U"%z__%k_ = %r e^^%i %k %\\fi^, where,")
-FORMULA (U"%\\fi = \\pi / (%numberOfFrequencies \\-- 1) and %r = 1.")
+EQUATION (U"%z__%k_ = %r e^^%i %k %\\fi^, where,")
+EQUATION (U"%\\fi = \\pi / (%numberOfFrequencies \\-- 1) and %r = 1.")
 MAN_END
 
 MAN_BEGIN (U"Principal component analysis", U"djmw", 20160222)
@@ -3737,7 +3737,7 @@ MAN_BEGIN (U"singular value decomposition", U"djmw", 20171217)
 INTRO (U"The %%singular value decomposition% (SVD) is a matrix factorization algorithm.")
 NORMAL (U"For %m >= %n, the singular value decomposition of a real %m \\xx %n matrix #A is the "
 	"factorization")
-FORMULA (U"#A = #U #\\Si #V\\'p,")
+EQUATION (U"#A = #U #\\Si #V\\'p,")
 NORMAL (U"The matrices in this factorization have the following properties:")
 TAG (U"#U [%m \\xx %n] and #V [%n \\xx %n]")
 DEFINITION (U"are orthogonal matrices. The columns #u__%i_ of #U =[#u__1_, ..., #u__%n_] "
@@ -4028,12 +4028,12 @@ NORMAL (U"The shifting of frequencies is done via manipulation of the sampling f
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 NORMAL (U"The new pitch values are calculated in a two step process. We first multiply all "
 	"the pitches with the factor %%newPitchMedian / oldPitchMedian% according to:")
-FORMULA (U"%newPitch = %pitch * %newPitchMedian  / %oldPitchMedian.")
+EQUATION (U"%newPitch = %pitch * %newPitchMedian  / %oldPitchMedian.")
 NORMAL (U"It follows that if the %newPitchMedian equals the %oldPitchMedian no "
 	"change in pitch values will occur in the first step.")
 NORMAL (U"Subsequently, the pitch range scale factor determines the final pitch values "
 	"in the following linear manner:")
-FORMULA (U"%finalPitch = %newPitchMedian + (%newPitch \\-- %newPitchMedian) * %pitchRangeScaleFactor")
+EQUATION (U"%finalPitch = %newPitchMedian + (%newPitch \\-- %newPitchMedian) * %pitchRangeScaleFactor")
 NORMAL (U"Hence, it follows that no further scaling occurs if %pitchRangeScaleFactor "
 	"equals 1.0.")
 MAN_END
@@ -4239,7 +4239,7 @@ INTRO (U"A command that creates a @BarkSpectrogram object from every selected "
 	"@Sound object by @@band filtering in the frequency domain@ with a "
 	"bank of filters.")
 NORMAL (U"The auditory filter functions used are defined as:")
-FORMULA (U"10 log %#H(%z) = 7 - 7.5 * (%z__%c_ - %z - 0.215) - 17.5 * \\Vr "
+EQUATION (U"10 log %#H(%z) = 7 - 7.5 * (%z__%c_ - %z - 0.215) - 17.5 * \\Vr "
 	"(0.196 + (%z__%c_ - %z - 0.215)^2)")
 NORMAL (U"where %z__%c_ is the central (resonance) frequency of the filter in Bark. "
 	"The bandwidths of these filters are constant and equal 1 Bark. ")
@@ -4467,10 +4467,10 @@ INTRO (U"A command that creates a @Spectrogram object from the selected "
 	"@Sound and @Pitch objects by @@band filtering in the frequency domain@ with a "
 	"bank of filters whose bandwidths depend on the local pitch.")
 NORMAL (U"The filter functions used are:")
-FORMULA (U"%#H(%f, %f__0_) = 1 / (((%f__%c_^^2^ - %f^2) /%f\\.c%B(%f__0_)))^2 + 1),")
+EQUATION (U"%#H(%f, %f__0_) = 1 / (((%f__%c_^^2^ - %f^2) /%f\\.c%B(%f__0_)))^2 + 1),")
 NORMAL (U"where %f__%c_ is the central (resonance) frequency of the filter. "
 	"%B(%f__0_) is the bandwidth in Hz and determined as")
-FORMULA (U"%B(%f__0_) = %relativeBandwidth\\.c%f__0_, ")
+EQUATION (U"%B(%f__0_) = %relativeBandwidth\\.c%f__0_, ")
 NORMAL (U"where %f__0_ is the fundamental frequency as determined from the Pitch "
 	"object. Whenever the value of %f__0_ is undefined, a value of 100 Hz is taken.")
 MAN_END
@@ -4489,9 +4489,9 @@ NORMAL (U"The filter functions used are all triangular in shape on a %mel "
 	"frequency %f__%h_. "
 	"On a %mel scale, the distances %f__%c_-%f__%l_ and %f__%h_-%f__%c_ "
 	"are equal for each filter. The filter function is as follows:" )
-FORMULA (U"%#H(%f) = 0 for %f \\<_ %f__%l_ and %f \\>_ %f__%h_")
-FORMULA (U"%#H(%f) = (%f - %f__%l_) / (%f__%c_ - %f__%l_) for %f__%l_ \\<_ %f \\<_ %f__%c_")
-FORMULA (U"%#H(%f) = (%f__%h_ - %f) / (%f__%h_ - %f__%c_) for %f__%c_ \\<_ %f \\<_ %f__%h_")
+EQUATION (U"%#H(%f) = 0 for %f \\<_ %f__%l_ and %f \\>_ %f__%h_")
+EQUATION (U"%#H(%f) = (%f - %f__%l_) / (%f__%c_ - %f__%l_) for %f__%l_ \\<_ %f \\<_ %f__%c_")
+EQUATION (U"%#H(%f) = (%f__%h_ - %f) / (%f__%h_ - %f__%c_) for %f__%c_ \\<_ %f \\<_ %f__%h_")
 NORMAL (U"In general the number of filter values stored in each frame of the MelSpectrogram is an order of magnitude smaller than the number of sound samples in the corresponding analysis frame.")
 MAN_END
 
@@ -4687,9 +4687,9 @@ LIST_ITEM (U"1. The four array elements in the SSCP-matrix that correspond to th
 LIST_ITEM (U"2. The eigenvalues of #%S are determined, call them %s__1_ and %s__2_.")
 LIST_ITEM (U"3. The lengths %l__1_ and %l__2_ of the two axes of the ellipse can be obtained as "
 	"(see for example @@Johnson (1998)@, page 410): ")
-FORMULA (U"    %l__%i_ = %scaleFactor \\.c \\Vr (%s__%i_ ),")
+EQUATION (U"    %l__%i_ = %scaleFactor \\.c \\Vr (%s__%i_ ),")
 LIST_ITEM (U"     where")
-FORMULA (U"%scaleFactor = \\Vr (%f \\.c %p \\.c (%n \\-- 1) / (%n \\.c (%n \\-- %p))),")
+EQUATION (U"%scaleFactor = \\Vr (%f \\.c %p \\.c (%n \\-- 1) / (%n \\.c (%n \\-- %p))),")
 LIST_ITEM (U"     in which %f = $$@@invFisherQ@$ (1 \\-- %confidenceLevel, %p, %n \\-- %p), "
 	"where %p is the numberOfRows from the SSCP object and %n the %numberOfObservations.")
 LIST_ITEM (U"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.")
@@ -4706,7 +4706,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The test statistic is |#R|^^N/2^, the N/2-th power of the determinant"
 	" of the correlation matrix. @@Bartlett (1954)@ developed the following "
 	"approximation to the limiting distribution:")
-FORMULA (U"\\ci^2 = -(%N - %numberOfConstraints - (2%p + 5) /6) ln |#R|")
+EQUATION (U"\\ci^2 = -(%N - %numberOfConstraints - (2%p + 5) /6) ln |#R|")
 NORMAL (U"In the formula's above, %p is the dimension of the correlation "
 	"matrix, %N-%numberOfConstraints is the number of independent "
 	"observations. Normally %numberOfConstraints would "
@@ -4714,7 +4714,7 @@ NORMAL (U"In the formula's above, %p is the dimension of the correlation "
 	"e.g., from within-group sums of squares and cross-products of %k "
 	"independent groups, %numberOfConstraints would equal %k.")
 NORMAL (U"We return the probability %\\al as ")
-FORMULA (U"%\\al = chiSquareQ (\\ci^2 , %p(%p-1)/2).")
+EQUATION (U"%\\al = chiSquareQ (\\ci^2 , %p(%p-1)/2).")
 NORMAL (U"A very low %\\al indicates that it is very improbable that the "
 	"matrix is diagonal.")
 MAN_END
@@ -4737,8 +4737,8 @@ ENTRY (U"Algorithm")
 NORMAL (U"The partition for the square SSCP-matrix is as follows:")
 PICTURE (2.0, 2.0, drawPartionedMatrix)
 NORMAL (U"The canonical correlation equations we have to solve are:")
-FORMULA (U"(1)    (#S__%yx_ #S__%xx_^^-1^ #S__%yx_\\'p -\\la #S__%yy_)#y = #0")
-FORMULA (U"(2)    (#S__%yx_\\'p #S__%yy_^^-1^ #S__%yx_ -\\la #S__%xx_)#x = #0")
+EQUATION (U"(1)    (#S__%yx_ #S__%xx_^^-1^ #S__%yx_\\'p -\\la #S__%yy_)#y = #0")
+EQUATION (U"(2)    (#S__%yx_\\'p #S__%yy_^^-1^ #S__%yx_ -\\la #S__%xx_)#x = #0")
 NORMAL (U"where #S__%yy_ [%ny \\xx %ny] and #S__%xx_ [%nx \\xx %nx] are "
 	"symmetric, positive definite matrices belonging to the dependent and the "
 	"independent variables, respectively. ")
@@ -4750,27 +4750,27 @@ NORMAL (U"We can solve equation (1) in several ways, however, the numerically "
 	"of #S__xx_ and #S__yy_, followed by a @@generalized singular value "
 	"decomposition@. The algorithm goes as follows:")
 NORMAL (U"The Cholesky decompositions (\"square roots\") of #S__yy_ and #S__xx_ are:")
-FORMULA (U"#S__yy_ = #U\\'p #U and #S__xx_ = #H\\'p #H,")
+EQUATION (U"#S__yy_ = #U\\'p #U and #S__xx_ = #H\\'p #H,")
 NORMAL (U"where #U and H are upper triangular matrices. From these decompositions, "
 	"the inverse for #S__xx_^^-1^ is easily computed. Let #K be the inverse of #H, "
 	"then we can write: ")
-FORMULA (U"#S__xx_^^-1^ = #K #K\\'p.")
+EQUATION (U"#S__xx_^^-1^ = #K #K\\'p.")
 NORMAL (U"We next substitute in equation (1) and rewrite as:")
-FORMULA (U"((#K\\'p#S__yx_\\'p)\\'p (#K\\'p#S__yx_\\'p) - \\la #U\\'p #U)#x = 0")
+EQUATION (U"((#K\\'p#S__yx_\\'p)\\'p (#K\\'p#S__yx_\\'p) - \\la #U\\'p #U)#x = 0")
 NORMAL (U"This equation can be solved for eigenvalues and eigenvectors by the "
 	"generalized singular value decomposition because it is of the form "
 	"#A\\'p#A -\\la #B\\'p#B.")
 NORMAL (U"Now, given the solution for equation (1) we can find the solution "
 	"for equation (2) by first multiplying (1) from the left with "
 	"#S__yx_\\'p#S__yy_^^-1^, resulting in:")
-FORMULA (U"(#S__yx_\\'p#S__yy_^^-1^#S__yx_#S__xx_^^-1^#S__yx_\\'p -\\la #S__yx_\\'p) #y = 0")
+EQUATION (U"(#S__yx_\\'p#S__yy_^^-1^#S__yx_#S__xx_^^-1^#S__yx_\\'p -\\la #S__yx_\\'p) #y = 0")
 NORMAL (U"Now we split of the term #S__xx_^^-1^#S__yx_\\'p and obtain:")
-FORMULA (U"(#S__yx_\\'p#S__yy_^^-1^#S__yx_ - \\la #S__xx_) #S__xx_^^-1^#S__yx_\\'p #y = 0")
+EQUATION (U"(#S__yx_\\'p#S__yy_^^-1^#S__yx_ - \\la #S__xx_) #S__xx_^^-1^#S__yx_\\'p #y = 0")
 NORMAL (U"This equation is like equation (2) and it has therefore the same eigenvalues "
 	"and eigenvectors. (We also proved this fact in the algorithmic section of "
 	"@@TableOfReal: To CCA...@.)")
 NORMAL (U"The eigenvectors #x is now")
-FORMULA (U"#x = #S__xx_^^-1^#S__yx_\\'p #y.")
+EQUATION (U"#x = #S__xx_^^-1^#S__yx_\\'p #y.")
 MAN_END
 
 MAN_BEGIN (U"SSCP: To Covariance...", U"djmw", 20090624)
@@ -4782,7 +4782,7 @@ DEFINITION (U"determines the factor by which each entry in the "
 ENTRY (U"Details")
 NORMAL (U"The relation between the numbers %c__%ij_ in the covariance matrix and the numbers %s__%ij_ in "
 	"the originating SSCP matrix is:")
-FORMULA (U"%c__%ij_ = %s__%ij_ / (%numberOfObservations - %numberOfConstraints)")
+EQUATION (U"%c__%ij_ = %s__%ij_ / (%numberOfObservations - %numberOfConstraints)")
 NORMAL (U"Normally %numberOfConstraints will equal 1. However, when the SSCP was the "
 	"result of summing %g SSCP objects, as is, for example, the case when you obtained the total "
 	"within-groups SSCP from pooling the individual group SSCP's, %numberOfConstraints will equal the number of pooled SSCP's,  %g.")
@@ -5222,7 +5222,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The analysis is done on the ranked data and consists of the following steps:")
 LIST_ITEM (U"1. Rank all the %N data points together, i.e. rank the data from 1 to %N.")
 LIST_ITEM (U"2. The test statistic is:")
-FORMULA (U"%K = (12 / (%N(%N+1)) \\Si__%i=1_^^%g^ %n__%i_ (meanRank__%i_)^^2^ - 3(%N+1),")
+EQUATION (U"%K = (12 / (%N(%N+1)) \\Si__%i=1_^^%g^ %n__%i_ (meanRank__%i_)^^2^ - 3(%N+1),")
 DEFINITION (U"where %g is the number of levels, %n__%i_ the number of data in %i-th level and meanRank__%i_ "
 	"the average rank of the %i-th level.")
 LIST_ITEM (U"3. The %p value is %%approximated by the \\ci^^2^ (%K, %g - 1) distribution.")
@@ -5264,17 +5264,17 @@ ENTRY (U"Behaviour")
 LIST_ITEM (U"1. Get the @@singular value decomposition@ #U #\\Si #V\\'p of the "
 	"table.")
 LIST_ITEM (U"2. Calculate weighing factors %\\la for row and columns")
-FORMULA (U"%\\la__r,1_ = %\\si__1_^^%splitFactor^")
-FORMULA (U"%\\la__c,1_ = %\\si__1_^^1-%splitFactor^")
-FORMULA (U"%\\la__r,2_ = %\\si__2_^^%splitFactor^")
-FORMULA (U"%\\la__c,2_ = %\\si__2_^^1-%splitFactor^")
+EQUATION (U"%\\la__r,1_ = %\\si__1_^^%splitFactor^")
+EQUATION (U"%\\la__c,1_ = %\\si__1_^^1-%splitFactor^")
+EQUATION (U"%\\la__r,2_ = %\\si__2_^^%splitFactor^")
+EQUATION (U"%\\la__c,2_ = %\\si__2_^^1-%splitFactor^")
 DEFINITION (U"where %\\si__1_ and %\\si__2_ are the first and the second singular values")
 LIST_ITEM (U"3. For the rows (%i from 1..%numberOfRows) form:")
-FORMULA (U"%xr__%i_ = %U__%i1_  %\\la__%r,1_")
-FORMULA (U"%yr__%i_ = %U__%i2_  %\\la__%r,2_")
+EQUATION (U"%xr__%i_ = %U__%i1_  %\\la__%r,1_")
+EQUATION (U"%yr__%i_ = %U__%i2_  %\\la__%r,2_")
 LIST_ITEM (U"4. For the columns (%i from 1..%numberOfColumns) form:")
-FORMULA (U"%xc__%i_ = %V__%i1_  %\\la__%c,1_")
-FORMULA (U"%yc__%i_ = %V__%i2_  %\\la__%c,2_")
+EQUATION (U"%xc__%i_ = %V__%i1_  %\\la__%c,1_")
+EQUATION (U"%yc__%i_ = %V__%i2_  %\\la__%c,2_")
 LIST_ITEM (U"5. Plot the points (%xr__%i_, yr__%i_) and (%xc__%i_, yc__%i_) in the "
 	"same figure with the corresponding row and column labels.")
 MAN_END
@@ -5343,16 +5343,16 @@ DEFINITION (U"the grey values of the bars in a group.")
 ENTRY (U"Bar positioning")
 NORMAL (U"If you want to put the labels yourself you will need the following information.")
 NORMAL (U"The width of a bar is determined as follows:")
-FORMULA (U"%width = 1 / (%nc \\.c %nr + 2 \\.c %hoffset + (%nc - 1)\\.c %intergroup +"
+EQUATION (U"%width = 1 / (%nc \\.c %nr + 2 \\.c %hoffset + (%nc - 1)\\.c %intergroup +"
 		"%nc\\.c(%nr -1)\\.c %interbar),")
 NORMAL (U"where %nc is the number of columns (groups) to draw, %nr is the number of "
 	"rows to draw (the number of bars within a group), %hoffset is the horizontal "
 	"offset, %intergroup the distance between each group and %interbar "
 	"the distance between the bars within a group.")
 NORMAL (U"The spacing between the bars drawn from a row:")
-FORMULA (U"%dx = (%intergroup + %nr + (%nr -1) \\.c %interbar) *% width")
+EQUATION (U"%dx = (%intergroup + %nr + (%nr -1) \\.c %interbar) *% width")
 NORMAL (U"The first bar for the %k-th row starts at:")
-FORMULA (U"%x1 = %hoffset \\.c %width + (%k - 1) \\.c (1 + %interbar) \\.c %width")
+EQUATION (U"%x1 = %hoffset \\.c %width + (%k - 1) \\.c (1 + %interbar) \\.c %width")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: Select columns where row...", U"djmw", 20140117)
@@ -5385,7 +5385,7 @@ MAN_END
 MAN_BEGIN (U"TableOfReal: Standardize columns", U"djmw", 19990428)
 INTRO (U"Standardizes each column of the selected @TableOfReal.")
 NORMAL (U"The entries %x__%ij_ in the TableOfReal will change to:")
-FORMULA (U"(%x__%ij_ \\-- %\\mu__%j_) / %\\si__%j_, ")
+EQUATION (U"(%x__%ij_ \\-- %\\mu__%j_) / %\\si__%j_, ")
 NORMAL (U"where %\\mu__%j_ and %\\si__%j_ are the mean and the standard deviation as calculated "
 	"from the %j^^th^ column, respectively. After standardization all column means will equal zero "
 	"and all column standard deviations will equal one.")
@@ -5431,7 +5431,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The linear correlation coefficient %r__%ij_ (also called the %%product"
 	" moment correlation coefficient% or %%Pearson's correlation coefficient%) "
 	" between the elements of columns %i and %j is calculated as:")
-FORMULA (U"%r__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
+EQUATION (U"%r__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
 	"(\\Vr (\\Si__%k_(%x__%ki_ - %x\\-^__%i_)^2) \\Vr (\\Si__%k_(%x__%kj_ -"
 	" %x\\-^__%j_)^2)),")
 NORMAL (U"where %x__%mn_ is the element %m in column %n, and %x\\-^__%n_ "
@@ -5446,7 +5446,7 @@ ENTRY (U"Algorithm")
 NORMAL (U"The Spearman rank-order correlation coefficient %r__%ij_ between "
 	"the elements of columns %i and %j is calculated as the linear correlation"
 	" of the ranks:")
-FORMULA (U"%r__%ij_ = \\Si__%k_ (%R__%ki_ - %R\\-^__%i_) "
+EQUATION (U"%r__%ij_ = \\Si__%k_ (%R__%ki_ - %R\\-^__%i_) "
 	"(%R__%kj_ - %R\\-^__%j_) / (\\Vr (\\Si__%k_(%R__%ki_ - %R\\-^__%i_)^2) "
 	"\\Vr (\\Si__%k_(%R__%kj_ - %R\\-^__%j_)^2)),")
 NORMAL (U"where %R__%mn_ is the rank of element %m in column %n, "
@@ -5460,7 +5460,7 @@ INTRO (U"A command that creates a @Covariance object from every "
 ENTRY (U"Algorithm")
 NORMAL (U"The covariance coefficients %s__%ij_ "
 	" between the elements of columns %i and %j are defined as:")
-FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
+EQUATION (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_)/"
 	"(%numberOfObservations - %numberOfConstraints),")
 NORMAL (U"where %x__%ki_ is the element %k in column %i, %x\\-^__%i_ "
 	"is the mean of column %i, %numberOfObservations equals the number of rows in "
@@ -5478,18 +5478,18 @@ INTRO (U"A command that creates a @Discriminant object from every selected "
 ENTRY (U"Algorithm")
 NORMAL (U"We solve for directions #x that are eigenvectors of the generalized "
 	"eigenvalue equation:")
-FORMULA (U"#%B #x - %\\la #%W #x = 0,")
+EQUATION (U"#%B #x - %\\la #%W #x = 0,")
 NORMAL (U"where #%B and #%W are the between-groups and the within-groups sums of "
 	"squares and cross-products matrices, respectively. Both #%B and #%W are symmetric "
 	"matrices. Standard formula show that both matrices can also "
 	"be written as a matrix product. The formula above then transforms to:")
-FORMULA (U"#%B__1_\\'p#%B__1_ #x - %\\la #%W__1_\\'p#%W__1_ #x = 0")
+EQUATION (U"#%B__1_\\'p#%B__1_ #x - %\\la #%W__1_\\'p#%W__1_ #x = 0")
 NORMAL (U"The equation can be solved with the @@generalized singular value decomposition@. "
 	"This procedure is numerically very stable and can even cope with cases when both "
 	"matrices are singular.")
 NORMAL (U"The a priori probabilities in the Discriminant will be calculated from the number of "
 	"%training vectors %n__%i_ in each group:")
-FORMULA (U"%aprioriProbability__%i_ = %n__%i_ / \\Si__%k=1..%numberOfGroups_ %n__%k_")
+EQUATION (U"%aprioriProbability__%i_ = %n__%i_ / \\Si__%k=1..%numberOfGroups_ %n__%k_")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: To PCA", U"djmw", 20160223)
@@ -5503,7 +5503,7 @@ INTRO (U"Calculates Sums of Squares and Cross Products (@SSCP) from the selected
 ENTRY (U"Algorithm")
 NORMAL (U"The sums of squares and cross products %s__%ij_ "
 	"between the elements of columns %i and %j are calculated as:")
-FORMULA (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_),")
+EQUATION (U"%s__%ij_ = \\Si__%k_ (%x__%ki_ - %x\\-^__%i_)(%x__%kj_ - %x\\-^__%j_),")
 NORMAL (U"where %x__%mn_ is the element %m in column %n, and %x\\-^__%n_ "
 	"is the mean of column %n.")
 MAN_END
@@ -5531,8 +5531,8 @@ NORMAL (U"Calculates canonical correlations between the %dependent and the "
 ENTRY (U"Algorithm")
 NORMAL (U"The canonical correlation equations for two data sets #T__%y_ "
 	"[%n \\xx %p] and #T__%x_ [n \\xx %q] are:")
-FORMULA (U"(1)    (#S__%yx_ #S__%xx_^^-1^ #S__%yx_\\'p -\\la #S__%yy_)#y = #0")
-FORMULA (U"(2)    (#S__%yx_\\'p #S__%yy_^^-1^ #S__%yx_ -\\la #S__%xx_)#x = #0")
+EQUATION (U"(1)    (#S__%yx_ #S__%xx_^^-1^ #S__%yx_\\'p -\\la #S__%yy_)#y = #0")
+EQUATION (U"(2)    (#S__%yx_\\'p #S__%yy_^^-1^ #S__%yx_ -\\la #S__%xx_)#x = #0")
 NORMAL (U"where #S__%yy_ [%p \\xx %p] and #S__%xx_ [%q \\xx %q] are the "
 	"covariance matrices of data sets #T__%y_ and  #T__%x_, respectively, "
 	"#S__%yx_ [%p \\xx %q] is the matrix of covariances between data sets "
@@ -5541,33 +5541,33 @@ NORMAL (U"where #S__%yy_ [%p \\xx %p] and #S__%xx_ [%q \\xx %q] are the "
 	"the independent data, respectively. "
 	"In terms of the (dependent) data set #T__%y_ and the (independent) data set "
 	"#T__%x_, these covariances can be written as:")
-FORMULA (U"#S__%yy_ =  #T__%y_\\'p #T__%y_,  #S__%yx_ = #T__%y_\\'p #T__%x_ and "
+EQUATION (U"#S__%yy_ =  #T__%y_\\'p #T__%y_,  #S__%yx_ = #T__%y_\\'p #T__%x_ and "
 	"#S__%xx_ =  #T__%x_\\'p #T__%x_.")
 NORMAL (U"The following @@singular value decomposition@s ")
-FORMULA (U"#T__%y_ = #U__%y_ #D__%y_ #V__%y_\\'p and #T__%x_ = #U__%x_ #D__%x_ "
+EQUATION (U"#T__%y_ = #U__%y_ #D__%y_ #V__%y_\\'p and #T__%x_ = #U__%x_ #D__%x_ "
 	"#V__%x_\\'p ")
 NORMAL (U"transform equation (1) above into:")
-FORMULA (U"(3)    (#V__%y_ #D__%y_ #U__%y_\\'p#U__%x_ #U__%x_\\'p #U__%y_ #D__%y_ "
+EQUATION (U"(3)    (#V__%y_ #D__%y_ #U__%y_\\'p#U__%x_ #U__%x_\\'p #U__%y_ #D__%y_ "
 	"#V__%y_\\'p - \\la #V__%y_ #D__%y_ #D__%y_ #V__%y_\\'p)#y = 0 ")
 NORMAL (U"where we used the fact that:")
-FORMULA (U"#S__%xx_^^-1^ = #V__%x_ #D__%x_^^-2^ #V__%x_\\'p.")
+EQUATION (U"#S__%xx_^^-1^ = #V__%x_ #D__%x_^^-2^ #V__%x_\\'p.")
 NORMAL (U"Equation (3) can be simplified by multiplication from the left by "
 	"#D__%y_^^-1^ #V__%y_' to:")
-FORMULA (U" (4)   ((#U__%x_\\'p #U__%y_)\\'p (#U__%x_\\'p #U__%y_) - \\la #I)#D__%y_ "
+EQUATION (U" (4)   ((#U__%x_\\'p #U__%y_)\\'p (#U__%x_\\'p #U__%y_) - \\la #I)#D__%y_ "
 	"#V__%y_\\'p #y = #0")
 NORMAL (U"This equation can, finally, be solved by a substitution of the s.v.d "
 	"of  #U__%x_\\'p #U__%y_ = #U #D #V\\'p  into (4). This results in")
-FORMULA (U"(5)  (#D^^2^ - \\la #I) #V\\'p #D__%y_ #V__%y_\\'p #y = #0")
+EQUATION (U"(5)  (#D^^2^ - \\la #I) #V\\'p #D__%y_ #V__%y_\\'p #y = #0")
 NORMAL (U"In an analogous way we can reduce eigenequation (2) to:")
-FORMULA (U"(6)  (#D^^2^ - \\la #I) #U\\'p #D__%x_ #V__%x_\\'p #x = #0")
+EQUATION (U"(6)  (#D^^2^ - \\la #I) #U\\'p #D__%x_ #V__%x_\\'p #x = #0")
 NORMAL (U"From (5) and (6) we deduce that the eigenvalues in both equations "
 	"are equal to the squared singular values of the product matrix "
 	"#U__%x_\\'p#U__%y_. "
 	"These singular values are also called %%canonical "
 	"correlation coefficients%. The eigenvectors #y and #x can be obtained "
 	"from the columns of the following matrices #Y and #X:")
-FORMULA (U"#Y = #V__%y_ #D__%y_^^-1^ #V")
-FORMULA (U"#X = #V__%x_ #D__%x_^^-1^ #U")
+EQUATION (U"#Y = #V__%y_ #D__%y_^^-1^ #V")
+EQUATION (U"#X = #V__%x_ #D__%x_^^-1^ #U")
 NORMAL (U"For example, when the vector #y equals the first column of #Y and "
 	"the vector #x equals "
 	"the first column of #X, then the vectors #u = #T__%y_#y and #v = #T__%x_#x "

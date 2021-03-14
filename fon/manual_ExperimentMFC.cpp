@@ -1,6 +1,6 @@
 /* manual_ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2015,2016 Paul Boersma
+ * Copyright (C) 2001-2011,2013,2015-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,32 +205,32 @@ MAN_BEGIN (U"ExperimentMFC 2.5. Randomization strategies", U"ppgb", 20051205)
 NORMAL (U"The 3 times 4 stimuli will have to be played in a certain order. For the least random order, you say")
 CODE (U"randomize = <CyclicNonRandom>")
 NORMAL (U"In this case, the stimuli will be played in the order in which they were specified in the file, 3 times:")
-FORMULA (U"heed hid hood hud heed hid hood hud heed hid hood hud")
+EQUATION (U"heed hid hood hud heed hid hood hud heed hid hood hud")
 NORMAL (U"The most likely case in which you would want to use this randomization strategy, is if you have, say, 120 "
 	"different stimuli and you want to play them only once (%numberOfReplicationsPerStimulus = 1) in a fixed order.")
 NORMAL (U"The other extreme, the most random order, is")
 CODE (U"randomize = <WithReplacement>")
 NORMAL (U"In this case, a stimulus will be chosen at random 12 times without memory, for instance")
-FORMULA (U"hid hood hood heed hid hood hud hud hid hood heed hid")
+EQUATION (U"hid hood hood heed hid hood hud hud hid hood heed hid")
 NORMAL (U"The order will probably be different for each listener. "
 	"In this example, %hood and %hid occur four times each, %heed and %hud only twice each. "
 	"This strategy is too random for most experiments. Usually, you will want to have the same number "
 	"of replications of each stimulus. The most random way to do this is")
 CODE (U"randomize = <PermuteAll>")
 NORMAL (U"In this case, all stimuli will be played exactly 3 times, for instance")
-FORMULA (U"heed hood hud hud hid heed heed hud hood hid hid hood")
+EQUATION (U"heed hood hud hud hid heed heed hud hood hid hid hood")
 NORMAL (U"Quite often, you will want a less random order, namely one in which the 12 trials are divided into "
 	"3 blocks of 4 stimuli. Within each block, all 4 different stimuli occur in a random order:")
 CODE (U"randomize = <PermuteBalanced>")
 NORMAL (U"In this case, each stimulus occurs exactly once within each block:")
-FORMULA (U"heed hood hud hid hood hud hid heed heed hud hood hid")
+EQUATION (U"heed hood hud hid hood hud hid heed heed hud hood hid")
 NORMAL (U"This strategy ensures a certain spreading of the stimuli over the sequence of 12 trials. "
 	"As we see here, it is still possible that the same stimulus (%heed) occurs twice in a row, "
 	"namely as the last stimulus of the second block and the first stimulus of the third. "
 	"If you want to prevent that situation, you use")
 CODE (U"randomize = <PermuteBalancedNoDoublets>")
 NORMAL (U"This will ensure that the same stimulus is never applied twice in a row:")
-FORMULA (U"heed hood hud hid hood hud hid heed hud heed hood hid")
+EQUATION (U"heed hood hud hid hood hud hid heed hud heed hood hid")
 NORMAL (U"This randomization strategy is used in our example, and advised for most listening experiments "
 	"in which you want to minimize effects of stimulus order.")
 NORMAL (U"The randomization procedure does not interfere in any way with the breaks. The order is determined "

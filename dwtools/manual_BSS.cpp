@@ -160,7 +160,7 @@ DEFINITION (U"determines the lag time.")
 ENTRY (U"Algorithm")
 NORMAL (U"The cross-correlation between channel %i and channel %j for lag time \\ta is defined as the "
 	"discretized #integral")
-FORMULA (U"cross-corr (%c__%i_, %c__%j_) [%\\ta] \\=3 \\su__%t_ %c__%i_[%t] %c__%j_[%t+%\\ta] %%\\Det%,")
+EQUATION (U"cross-corr (%c__%i_, %c__%j_) [%\\ta] \\=3 \\su__%t_ %c__%i_[%t] %c__%j_[%t+%\\ta] %%\\Det%,")
 NORMAL (U"where %t and %t+%\\ta are discrete times and %%\\Det% is the @@sampling period@. ")
 MAN_END
 
@@ -198,7 +198,7 @@ TAG (U"##Diagonalization method")
 DEFINITION (U"defines the method to determine the independent components.")
 ENTRY (U"Algorithm")
 NORMAL (U"This method tries to decompose the sound according to the %%instantaneous% mixing model")
-FORMULA (U"#Y=#A\\.c#X.")
+EQUATION (U"#Y=#A\\.c#X.")
 NORMAL (U"In this model #Y is a matrix with the selected multi-channel sound, #A is a so-called "
 	"%%mixing matrix% and #X is a matrix with the independent components. "
 	"Essentially the model says that each channel in the multi-channel sound is a linear combination of the "
@@ -218,7 +218,7 @@ NORMAL (U"The theory says that statistically independent signals are not correla
 	"for the multi-channel sound #Y this will result in a cross-correlation matrix #C. For the right side we "
 	"obtain #A\\.c#D\\.c#A\\'p, where #D is a diagonal matrix because all the cross-correlations between "
 	"different independent components are zero by definition. This results in the following identity: ")
-FORMULA (U"#C(\\ta)=#A\\.c#D(\\ta)\\.c#A\\'p, for all values of the lag time \\ta.")
+EQUATION (U"#C(\\ta)=#A\\.c#D(\\ta)\\.c#A\\'p, for all values of the lag time \\ta.")
 NORMAL (U"This equation says that, given the model, the cross-correlation matrix can be diagonalized for "
 	"all values of the lag time %%by the same transformation matrix% #A.")
 NORMAL (U"If we calculate the cross-correlation matrices for a number of different lag times, say 20, we "
@@ -345,7 +345,7 @@ DEFINITION (U"where the mixing is instantaneous, corresponds to the model #Y=#A\
 	"However, in general we don't know #A and #X and there are an infinite number of possible decompositions for #Y. The problem is however solvable by making some (mild) assumptions about #A and #X. ")
 TAG (U"%%Convolutive mixtures%")
 DEFINITION (U"are mixtures where the mixing is of convolutive nature, i.e. the model is ")
-FORMULA (U"%%y__i_ (n)% = \\Si__%j_^^%d^\\Si__%\\ta_^^M__%ij_-1^ %%h__ij_(\\ta)x__j_(n-\\ta) + N__i_(n)%, for %i=1..m.")
+EQUATION (U"%%y__i_ (n)% = \\Si__%j_^^%d^\\Si__%\\ta_^^M__%ij_-1^ %%h__ij_(\\ta)x__j_(n-\\ta) + N__i_(n)%, for %i=1..m.")
 DEFINITION (U"Here %%y__i_ (n) is the %n-th sample of the %i-th microphone signal, %m is the number of microphones, %%h__ij_(\\ta)% is the multi-input multi-output linear filter with the source-microphone impulse responses that characterize the propagation of the sound in the room and %%N__i_% is a noise source. This model is typically much harder to solve than the previous one because of the %%h__ij_(\\ta)% filter term that can have thousands of coefficients. For example, the typical @@reverberation time@ of a room is approximately 0.3 s which corresponds to 2400 samples, i.e. filter coefficients, for an 8 kHz sampled sound.")
 ENTRY (U"Solving the blind source separation for instantaneous mixtures")
 NORMAL (U"Various techniques exist for solving the blind source separation problem for %instantaneous mixtures. Very popular ones make make use of second order statistics (SOS) by trying to "

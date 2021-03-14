@@ -1,6 +1,6 @@
 /* manual_formant.cpp
  *
- * Copyright (C) 1992-2008,2010,2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,9 +412,9 @@ NORMAL (U"This command uses a Viterbi algorithm with multiple planes. For instan
 	"between ten candidates (the number of combinations of three out of five) for each frame.")
 NORMAL (U"The formula for the cost of e.g. track 3, with proposed values %F__2%i_ (%i = 1...%N, "
 	"where %N is the number of frames) is:")
-FORMULA (U"∑__%i=1..%N_ %frequencyCost·|%F__3%i_ – %referenceF3|/1000 +")
-FORMULA (U"+ ∑__%i=1..%N_ %bandWidthCost·%B__3%i_/%F__3%i_ +")
-FORMULA (U"+ ∑__%i=1..%N-1_ %transitionCost·|log__2_(%F__3%i_/%F__3,%i+1_)|")
+EQUATION (U"∑__%i=1..%N_ %frequencyCost·|%F__3%i_ – %referenceF3|/1000 +")
+EQUATION (U"+ ∑__%i=1..%N_ %bandWidthCost·%B__3%i_/%F__3%i_ +")
+EQUATION (U"+ ∑__%i=1..%N-1_ %transitionCost·|log__2_(%F__3%i_/%F__3,%i+1_)|")
 NORMAL (U"Analogous formulas compute the cost of track 1 and track 2. "
 	"The procedure will assign those candidates to the three tracks that minimize "
 	"the sum of three track costs.")

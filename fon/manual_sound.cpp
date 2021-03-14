@@ -1,6 +1,6 @@
 /* manual_sound.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -365,10 +365,10 @@ TAG (U"##From frequency (Hz)")
 DEFINITION (U"the frequency %F above which the spectral slope will decrease by 6 dB/octave.")
 ENTRY (U"Algorithm")
 NORMAL (U"The de-emphasis factor %\\al is computed as")
-FORMULA (U"%\\al = exp (-2 %\\pi %F \\De%t)")
+EQUATION (U"%\\al = exp (-2 %\\pi %F \\De%t)")
 NORMAL (U"where \\De%t is the sampling period of the sound. Every sample %x__%i_ of the sound, "
 	"except %x__1_, is then changed, going up from the second sample:")
-FORMULA (U"%x__%i_ = %x__%i_ + %\\al %x__%i-1_")
+EQUATION (U"%x__%i_ = %x__%i_ + %\\al %x__%i-1_")
 MAN_END
 
 MAN_BEGIN (U"Sound: Deepen band modulation...", U"ppgb", 20101026)
@@ -406,20 +406,20 @@ NORMAL (U"Each filtered sound will be manipulated, and the resulting manipulated
 	"we created earlier. If the manipulation is the identity transformation, the resulting sound will be equal to the original sound. "
 	"But, of course, the manipulation does something different. Here are the steps.")
 NORMAL (U"First, we compute the local intensity of the filtered sound %x (%t):")
-FORMULA (U"%intensity (%t) = 10 log__10_ (%x^2 (%t) + 10^^-6^)")
+EQUATION (U"%intensity (%t) = 10 log__10_ (%x^2 (%t) + 10^^-6^)")
 NORMAL (U"This intensity is subjected to a forward Fourier transform. In the frequency domain, we administer a band filter. "
 	"We want to enhance the intensity modulation in the range between 3 and 30 Hz. "
 	"We can achieve this by comparing the very smooth intensity contour, low-pass filtered at %f__%slow_ = 3 Hz, "
 	"with the intensity contour that has enough temporal resolution to see the place-discriminating %F__2_ movements, "
 	"which is low-pass filtered at %f__%fast_ = 30 Hz. In the frequency domain, the filter is")
-FORMULA (U"%H (%f) = exp (- (%\\al%f / %f__%fast_)^2) - exp (- (%\\al%f / %f__%slow_)^2)")
+EQUATION (U"%H (%f) = exp (- (%\\al%f / %f__%fast_)^2) - exp (- (%\\al%f / %f__%slow_)^2)")
 NORMAL (U"where %\\al equals \\Vrln 2 \\~~ 1 / 1.2011224, so that %H (%f) has its -6 dB points at %f__%slow_ and %f__%fast_:")
 PICTURE (5, 3, draw_SoundDeepen_filter)
 NORMAL (U"Now, why do we use such a flat filter? Because a steep filter would show ringing effects in the time domain, "
 	"dividing the sound into 30-ms chunks. If our filter is a sum of exponentials in the frequency domain, it will also "
 	"be a sum of exponentials in the time domain. The backward Fourier transform of the frequency response %H (%f) "
 	"is the impulse response %h (%t). It is given by")
-FORMULA (U"%h (%t) = 2%\\pi\\Vr%\\pi %f__%fast_/%\\al exp (-(%\\pi%t%f__%fast_/%\\al)^2) - "
+EQUATION (U"%h (%t) = 2%\\pi\\Vr%\\pi %f__%fast_/%\\al exp (-(%\\pi%t%f__%fast_/%\\al)^2) - "
 	"2%\\pi\\Vr%\\pi %f__%slow_/%\\al exp (-(%\\pi%t%f__%slow_/%\\al)^2)")
 NORMAL (U"This impulse response behaves well:")
 PICTURE (5, 3, draw_SoundDeepen_impulse)
@@ -427,11 +427,11 @@ NORMAL (U"We see that any short intensity peak will be enhanced, and that this e
 	"around 30 milliseconds from the peak. Non-Gaussian frequency-domain filters would have given several maxima and minima "
 	"in the impulse response, clearly an undesirable phenomenon.")
 NORMAL (U"After the filtered band is subjected to a backward Fourier transform, we convert it into power again:")
-FORMULA (U"%power (%t) = 10^^%filtered / 2^")
+EQUATION (U"%power (%t) = 10^^%filtered / 2^")
 NORMAL (U"The relative enhancement has a maximum that is smoothly related to the basilar place:")
-FORMULA (U"%ceiling = 1 + (10^^%enhancement / 20^ - 1) \\.c (1/2 - 1/2 cos (%\\pi %f__%midbark_ / 13))")
+EQUATION (U"%ceiling = 1 + (10^^%enhancement / 20^ - 1) \\.c (1/2 - 1/2 cos (%\\pi %f__%midbark_ / 13))")
 NORMAL (U"where %f__%midbark_ is the mid frequency of the band. Clipping is implemented as")
-FORMULA (U"%factor (%t) = 1 / (1 / %power (%t) + 1 / %ceiling)")
+EQUATION (U"%factor (%t) = 1 / (1 / %power (%t) + 1 / %ceiling)")
 NORMAL (U"Finally, the original filtered sound %x (%t), multiplied by this factor, is added to the output.")
 /*
 form Consonantversterker
@@ -600,10 +600,10 @@ TAG (U"##From frequency (Hz)")
 DEFINITION (U"the frequency %F above which the spectral slope will decrease by 6 dB/octave.")
 ENTRY (U"Algorithm")
 NORMAL (U"The de-emphasis factor %\\al is computed as")
-FORMULA (U"%\\al = exp (-2 %\\pi %F \\De%t)")
+EQUATION (U"%\\al = exp (-2 %\\pi %F \\De%t)")
 NORMAL (U"where \\De%t is the sampling period of the sound. The new sound %y is then computed recursively as:")
-FORMULA (U"%y__1_ = %x__1_")
-FORMULA (U"%y__%i_ = %x__%i_ + %\\al %y__%i-1_")
+EQUATION (U"%y__1_ = %x__1_")
+EQUATION (U"%y__%i_ = %x__%i_ + %\\al %y__%i-1_")
 MAN_END
 
 MAN_BEGIN (U"Sound: Filter (formula)...", U"ppgb", 20041123)
@@ -624,12 +624,12 @@ MAN_BEGIN (U"Sound: Filter (one formant)...", U"ppgb", 20030309)
 INTRO (U"A command to filter every selected @Sound object, with a single formant of a specified frequency and bandwidth.")
 ENTRY (U"Algorithm")
 NORMAL (U"Two recursive filter coefficients are computed as follows:")
-FORMULA (U"%p = \\--2 exp (\\--%\\pi %bandwidth %dt) cos (2%\\pi %frequency %dt)")
-FORMULA (U"%q = exp (\\--2%\\pi %bandwidth %dt)")
+EQUATION (U"%p = \\--2 exp (\\--%\\pi %bandwidth %dt) cos (2%\\pi %frequency %dt)")
+EQUATION (U"%q = exp (\\--2%\\pi %bandwidth %dt)")
 NORMAL (U"where %dt is the sample period. The new signal %y is then computed from the old signal %x and itself as")
-FORMULA (U"%y__1_ := %x__1_")
-FORMULA (U"%y__2_ := %x__2_ \\-- %p %y__1_")
-FORMULA (U"\\At%n \\>_ 3:   %y__n_ := %x__n_ \\-- %p %y__%n-1_ \\-- %q %y__%n-2_")
+EQUATION (U"%y__1_ := %x__1_")
+EQUATION (U"%y__2_ := %x__2_ \\-- %p %y__1_")
+EQUATION (U"\\At%n \\>_ 3:   %y__n_ := %x__n_ \\-- %p %y__%n-1_ \\-- %q %y__%n-2_")
 NORMAL (U"After filtering, the sound %y is scaled so that its absolute extremum is 0.9.")
 NORMAL (U"For a comparative discussion of various filtering methods, see the @Filtering tutorial.")
 NORMAL (U"This filter has an in-place version: @@Sound: Filter with one formant (in-place)...@.")
@@ -690,9 +690,9 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The energy is defined as")
-FORMULA (U"\\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
+EQUATION (U"\\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound. For stereo sounds, it is")
-FORMULA (U"\\in__%%t%1_^^%%t%2^ (%x__1_^2(%t) + %x__2_^2(%t))/2 %dt")
+EQUATION (U"\\in__%%t%1_^^%%t%2^ (%x__1_^2(%t) + %x__2_^2(%t))/2 %dt")
 NORMAL (U"where %x__1_(%t) and %x__2_(%t) are the two channels; this definition ensures that "
 	"if you convert a mono sound to a stereo sound, the energy will stay the same.")
 ENTRY (U"See also")
@@ -706,7 +706,7 @@ ENTRY (U"Return value")
 NORMAL (U"The energy in air, expressed in Joule/m^2.")
 ENTRY (U"Algorithm")
 NORMAL (U"The energy of a sound in air is defined as")
-FORMULA (U"1 / (%\\roc) \\in %x^2(%t) %dt")
+EQUATION (U"1 / (%\\roc) \\in %x^2(%t) %dt")
 NORMAL (U"where %x(%t) is the sound pressure in units of Pa (Pascal), %\\ro is the air density "
 	"(apx. 1.14 kg/m^3), and %c is the velocity of sound in air (apx. 353 m/s). "
 	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
@@ -721,7 +721,7 @@ ENTRY (U"Return value")
 NORMAL (U"the intensity in air, expressed in dB relative to the auditory threshold.")
 ENTRY (U"Algorithm")
 NORMAL (U"The intensity of a sound in air is defined as")
-FORMULA (U"10 log__10_ { 1 / (%T %P__0_^2) \\in%dt %x^2(%t) }")
+EQUATION (U"10 log__10_ { 1 / (%T %P__0_^2) \\in%dt %x^2(%t) }")
 NORMAL (U"where %x(%t) is the sound pressure in units of Pa (Pascal), %T is the duration of the sound, "
 	"and %P__0_ = 2\\.c10^^-5^ Pa is the auditory threshold pressure. "
 	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
@@ -752,7 +752,7 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The mean amplitude between the times %t__1_ and %t__2_ is defined as")
-FORMULA (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %x(%t) %dt")
+EQUATION (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %x(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound in Pa.")
 MAN_END
 
@@ -789,7 +789,7 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The power is defined as")
-FORMULA (U"1/(%t__2_-%t__1_)  \\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
+EQUATION (U"1/(%t__2_-%t__1_)  \\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound. "
 	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 ENTRY (U"See also")
@@ -802,7 +802,7 @@ INTRO (U"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the power in air, expressed in Watt/m^2.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The power of a sound in air is defined as")
-FORMULA (U"1 / (%\\rocT) \\in %x^2(%t) %dt")
+EQUATION (U"1 / (%\\rocT) \\in %x^2(%t) %dt")
 NORMAL (U"where %x(%t) is the sound pressure in units of Pa (Pascal), %\\ro is the air density "
 	"(apx. 1.14 kg/m^3), %c is the velocity of sound in air (apx. 353 m/s), and %T is the duration of the sound. "
 	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
@@ -820,7 +820,7 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The root-mean-square value is defined as")
-FORMULA (U"\\Vr { 1/(%t__2_-%t__1_)  \\in__%%t%1_^^%%t%2^ %x^2(%t) %dt }")
+EQUATION (U"\\Vr { 1/(%t__2_-%t__1_)  \\in__%%t%1_^^%%t%2^ %x^2(%t) %dt }")
 NORMAL (U"where %x(%t) is the amplitude of the sound. "
 	"For how stereo sounds are handled, see @@Sound: Get energy...@.")
 MAN_END
@@ -835,10 +835,10 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The standard deviation is defined as")
-FORMULA (U"1/(%t__2_-%t__1_)  \\in%__%%t%1_^^%%t%2^ (%x(%t) - %\\mu)^2 %dt")
+EQUATION (U"1/(%t__2_-%t__1_)  \\in%__%%t%1_^^%%t%2^ (%x(%t) - %\\mu)^2 %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound, and %\\mu is its mean. "
 	"For our discrete Sound object, the standard deviation is approximated by")
-FORMULA (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
+EQUATION (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
 NORMAL (U"where %n is the number of sample centres between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
@@ -940,9 +940,9 @@ TAG (U"##From frequency (Hz)")
 DEFINITION (U"the frequency %F above which the spectral slope will increase by 6 dB/octave.")
 ENTRY (U"Algorithm")
 NORMAL (U"The pre-emphasis factor %\\al is computed as")
-FORMULA (U"%\\al = exp (-2 %\\pi %F \\De%t)")
+EQUATION (U"%\\al = exp (-2 %\\pi %F \\De%t)")
 NORMAL (U"where \\De%t is the sampling period of the sound. The new sound %y is then computed as:")
-FORMULA (U"%y__%i_ = %x__%i_ - %\\al %x__%i-1_")
+EQUATION (U"%y__%i_ = %x__%i_ - %\\al %x__%i-1_")
 MAN_END
 
 MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20171114)
@@ -952,10 +952,10 @@ NORMAL (U"This is the in-place version of @@Sound: Filter (pre-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
 ENTRY (U"Algorithm")
 NORMAL (U"The pre-emphasis factor %\\al is computed as")
-FORMULA (U"%\\al = exp (-2 %\\pi %F \\De%t)")
+EQUATION (U"%\\al = exp (-2 %\\pi %F \\De%t)")
 NORMAL (U"where \\De%t is the sampling period of the sound. Every sample %x__%i_ of the sound, "
 	"except %x__1_, is then changed, going down from the last sample:")
-FORMULA (U"%x__%i_ = %x__%i_ - %\\al %x__%i-1_")
+EQUATION (U"%x__%i_ = %x__%i_ - %\\al %x__%i-1_")
 MAN_END
 
 MAN_BEGIN (U"Sound: Resample...", U"ppgb", 20040330)
@@ -1190,10 +1190,10 @@ DEFINITION (U"Here you can choose whether outside their time domains the sounds 
 	"This is explained in 4 below.")
 ENTRY (U"1. Convolution as an integral")
 NORMAL (U"The convolution %f*%g of two continuous time signals %f(%t) and %g(%t) is defined as the #integral")
-FORMULA (U"(%f*%g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
+EQUATION (U"(%f*%g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
 NORMAL (U"If %f and %g are sampled signals (as Sounds are in Praat), with the same @@sampling period@ %%\\Det%, "
 	"the definition is discretized as")
-FORMULA (U"(%f*%g) [%t] \\=3 \\su__%\\ta_ %f[%\\ta] %g[%t-%\\ta] %%\\Det%")
+EQUATION (U"(%f*%g) [%t] \\=3 \\su__%\\ta_ %f[%\\ta] %g[%t-%\\ta] %%\\Det%")
 NORMAL (U"where %\\ta and %t-%\\ta are the discrete times at which %f and %g are defined, respectively.")
 NORMAL (U"Convolution is a commutative operation, i.e. %g*%f equals %f*%g. "
 	"This means that the order in which you put the two Sounds in the object list does not matter: you get the same result either way.")
@@ -1203,7 +1203,7 @@ NORMAL (U"You can see in the formula above that if both input Sounds are express
 	"Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.")
 NORMAL (U"This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. "
 	"For this reason, Praat considers a different definition of convolution as well, namely as the #sum")
-FORMULA (U"(%f*%g) [%t] \\=3 \\su__\\ta_ %f[%\\ta] %g[%t-%\\ta]")
+EQUATION (U"(%f*%g) [%t] \\=3 \\su__\\ta_ %f[%\\ta] %g[%t-%\\ta]")
 NORMAL (U"The sum definition is appropriate if you want to filter a pulse train with a finite-impulse-response filter "
 	"and expect the amplitudes of each resulting period to be equal to the amplitude of the filter. Thus, the pulse train")
 SCRIPT (5, 3,
@@ -1234,7 +1234,7 @@ NORMAL (U"The difference between the integral and sum definitions is that in the
 	"the resulting sound is divided by %%\\Det%.")
 ENTRY (U"3. Normalized convolution")
 NORMAL (U"The %%normalized convolution% is defined as")
-FORMULA (U"(normalized %f*%g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta "
+EQUATION (U"(normalized %f*%g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta "
 	"/ \\Vr (\\in %f^^2^(%\\ta) %%d\\ta% \\in %g^^2^(%\\ta) %%d\\ta%)")
 ENTRY (U"4. Shape scaling")
 NORMAL (U"The boundaries of the integral in 1 are -\\oo and +\\oo. "
@@ -1243,7 +1243,7 @@ NORMAL (U"The boundaries of the integral in 1 are -\\oo and +\\oo. "
 	"%g runs from %t__3_ to %t__4_ and is assumed to be zero outside that domain, "
 	"then the convolution will be zero before %t__1_ + %t__3_ and after %t__2_ + %t__4_, "
 	"while between %t__1_ + %t__3_ and %t__2_ + %t__4_ it is")
-FORMULA (U"(%f*%g) (%t) = \\in__%%t%1_^^%%t%2^ %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
+EQUATION (U"(%f*%g) (%t) = \\in__%%t%1_^^%%t%2^ %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
 NORMAL (U"In this formula, the argument of %f runs from %t__1_ to %t__2_, "
 	"but the argument of %g runs from (%t__1_ + %t__3_) - %t__2_ to (%t__2_ + %t__4_) - %t__1_, "
 	"i.e. from %t__3_ - (%t__2_ - %t__1_) to %t__4_ + (%t__2_ - %t__1_). "
@@ -1334,10 +1334,10 @@ DEFINITION (U"Here you can choose whether outside their time domains the sounds 
 ENTRY (U"1. Cross-correlation as an integral")
 NORMAL (U"The cross-correlation of two continuous time signals %f(%t) and %g(%t) is a function of the lag time %\\ta, "
 	"and defined as the #integral")
-FORMULA (U"cross-corr (%f, %g) (%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt")
+EQUATION (U"cross-corr (%f, %g) (%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt")
 NORMAL (U"If %f and %g are sampled signals (as Sounds are in Praat), with the same @@sampling period@ %%\\Det%, "
 	"the definition is discretized as")
-FORMULA (U"cross-corr (%f, %g) [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta] %%\\Det%")
+EQUATION (U"cross-corr (%f, %g) [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta] %%\\Det%")
 NORMAL (U"where %\\ta and %t+%\\ta are the discrete times at which %f and %g are defined, respectively.")
 NORMAL (U"Cross-correlation is not a commutative operation, i.e. cross-corr (%g, %f) equals the time reversal of cross-corr (%f, %g). "
 	"This means that the order in which you put the two Sounds in the object list does matter: "
@@ -1348,12 +1348,12 @@ NORMAL (U"You can see in the formula above that if both input Sounds are express
 	"Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.")
 NORMAL (U"This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. "
 	"For this reason, Praat considers a different definition of cross-correlation as well, namely as the #sum")
-FORMULA (U"cross-corr (%f, %g) [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta]")
+EQUATION (U"cross-corr (%f, %g) [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta]")
 NORMAL (U"The difference between the integral and sum definitions is that in the sum definition "
 	"the resulting sound is divided by %%\\Det%.")
 ENTRY (U"3. Normalized cross-correlation")
 NORMAL (U"The %%normalized cross-correlation% is defined as")
-FORMULA (U"norm-cross-corr (%f, %g) (%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %d%t "
+EQUATION (U"norm-cross-corr (%f, %g) (%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %d%t "
 	"/ \\Vr (\\in %f^^2^(%t) %%dt% \\in %g^^2^(%t) %%dt%)")
 ENTRY (U"4. Shape scaling")
 NORMAL (U"The boundaries of the integral in 1 are -\\oo and +\\oo. "
@@ -1362,7 +1362,7 @@ NORMAL (U"The boundaries of the integral in 1 are -\\oo and +\\oo. "
 	"%g runs from %t__3_ to %t__4_ and is assumed to be zero outside that domain, "
 	"then the cross-correlation will be zero before %t__3_ - %t__2_ and after %t__4_ - %t__1_, "
 	"while between %t__3_ - %t__2_ and %t__4_ - %t__1_ it is")
-FORMULA (U"cross-corr (%f, %g) (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %g(%t+%\\ta) %d%t")
+EQUATION (U"cross-corr (%f, %g) (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %g(%t+%\\ta) %d%t")
 NORMAL (U"In this formula, the argument of %f runs from %t__1_ to %t__2_, "
 	"but the argument of %g runs from %t__1_ + (%t__3_ - %t__2_) to %t__2_ + (%t__4_ - %t__1_), "
 	"i.e. from %t__3_ - (%t__2_ - %t__1_) to %t__4_ + (%t__2_ - %t__1_). "
@@ -1458,10 +1458,10 @@ DEFINITION (U"Here you can choose whether outside its time domain the sound is c
 ENTRY (U"1. Autocorrelation as an integral")
 NORMAL (U"The autocorrelation of a continuous time signal %f(%t) is a function of the lag time %\\ta, "
 	"and defined as the #integral")
-FORMULA (U"%R__%f_ (%\\ta) \\=3 \\in %f(%t) %f(%t+%\\ta) %dt")
+EQUATION (U"%R__%f_ (%\\ta) \\=3 \\in %f(%t) %f(%t+%\\ta) %dt")
 NORMAL (U"If %f is a sampled signal (as Sounds are in Praat), with @@sampling period@ %%\\Det%, "
 	"the definition is discretized as")
-FORMULA (U"%R__%f_ [%\\ta] \\=3 \\su__%t_ %f[%t] %f[%t+%\\ta] %%\\Det%")
+EQUATION (U"%R__%f_ [%\\ta] \\=3 \\su__%t_ %f[%t] %f[%t+%\\ta] %%\\Det%")
 NORMAL (U"where %\\ta and %t+%\\ta are the discrete times at which %f is defined.")
 NORMAL (U"The autocorrelation is symmetric: %R__%f_ (-%\\ta) = %R__%f_ (%\\ta).")
 ENTRY (U"2. Autocorrelation as a sum")
@@ -1470,19 +1470,19 @@ NORMAL (U"You can see in the formula above that if the input Sound is expressed 
 	"Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.")
 NORMAL (U"This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. "
 	"For this reason, Praat considers a different definition of autocorrelation as well, namely as the #sum")
-FORMULA (U"%R__%f_ [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta]")
+EQUATION (U"%R__%f_ [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta]")
 NORMAL (U"The difference between the integral and sum definitions is that in the sum definition "
 	"the resulting sound is divided by %%\\Det%.")
 ENTRY (U"3. Normalized autocorrelation")
 NORMAL (U"The %%normalized autocorrelation% is defined as")
-FORMULA (U"norm-autocorr (%f) (%\\ta) \\=3 \\in %f(%t) %f(%t+%\\ta) %d%t / \\in %f^^2^(%t) %%dt%")
+EQUATION (U"norm-autocorr (%f) (%\\ta) \\=3 \\in %f(%t) %f(%t+%\\ta) %d%t / \\in %f^^2^(%t) %%dt%")
 ENTRY (U"4. Shape scaling")
 NORMAL (U"The boundaries of the integral in 1 are -\\oo and +\\oo. "
 	"However, %f is a Sound object in Praat and therefore has a finite time domain. "
 	"If %f runs from %t__1_ to %t__2_ and is assumed to be #zero before %t__1_ and after %t__2_, "
 	"then the autocorrelation will be zero before %t__1_ - %t__2_ and after %t__2_ - %t__1_, "
 	"while between %t__1_ - %t__2_ and %t__2_ - %t__1_ it is")
-FORMULA (U"%R__%f_ (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %f(%t+%\\ta) %d%t")
+EQUATION (U"%R__%f_ (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %f(%t+%\\ta) %d%t")
 NORMAL (U"In this formula, the argument of the first %f runs from %t__1_ to %t__2_, "
 	"but the argument of the second %f runs from %t__1_ + (%t__1_ - %t__2_) to %t__2_ + (%t__2_ - %t__1_), "
 	"i.e. from %t__1_ - (%t__2_ - %t__1_) to %t__2_ + (%t__2_ - %t__1_). "
