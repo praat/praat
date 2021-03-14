@@ -408,7 +408,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 		autoINTVEC irow = to_INTVEC (my numberOfRows);
 
 		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
-			conststring32 token = labels [itoken].get();
+			const conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				if (Melder_equ (token, my rowLabels [i].get())) {
 					irow [i] = 0;
@@ -427,10 +427,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 		if (nfound != ncondense)
 			Melder_warning (U"One or more of the given stimulus labels are suspect.");
 		const integer newnstim = my numberOfRows - nfound + 1;
-		if (newpos < 1)
-			newpos = 1;
-		if (newpos > newnstim)
-			newpos = newnstim;
+		Melder_clip (1_integer, & newpos, newnstim);
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
 		thy columnLabels.all() <<= my columnLabels.all();
 		TableOfReal_setRowLabel (thee.get(), newpos, newLabel);
@@ -444,8 +441,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 				inewrow ++;
 				TableOfReal_setRowLabel (thee.get(), rowpos, my rowLabels [i].get());
 			}
-			for (integer j = 1; j <= my numberOfColumns; j ++)
-				thy data [rowpos] [j] += my data [i] [j];
+			thy data.row (rowpos)  +=  my data.row (i);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -479,10 +475,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_strin
 		if (nfound != ncondense)
 			Melder_warning (U"One or more of the given response labels are suspect.");
 		const integer newnresp = my numberOfColumns - nfound + 1;
-		if (newpos < 1)
-			newpos = 1;
-		if (newpos > newnresp)
-			newpos = newnresp;
+		Melder_clip (1_integer, & newpos, newnresp);
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
 		thy rowLabels.all() <<= my rowLabels.all();
 		TableOfReal_setColumnLabel (thee.get(), newpos, newLabel);
