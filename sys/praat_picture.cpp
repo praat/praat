@@ -698,7 +698,7 @@ FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", nullptr) {
 	REAL (fromX, U"From x", U"0.0")
 	REAL (toX, U"To x", U"0.0 (= all)")
 	NATURAL (numberOfHorizontalSteps, U"Number of horizontal steps", U"1000")
-	TEXTFIELD (formula, U"Formula:", U"x^2 - x^4", 5)
+	FORMULA (formula, U"Formula:", U"x^2 - x^4")
 	OK
 DO
 	if (numberOfHorizontalSteps < 2)

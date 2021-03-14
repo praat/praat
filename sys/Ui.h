@@ -92,15 +92,16 @@ enum class _kUiField_type {
 	CHANNEL_ = 9,
 	LABEL_ = 10,
 	TEXT_ = 11,
-	INFILE_ = 12,
-	OUTFILE_ = 13,
-	FOLDER_ = 14,
-	NUMVEC_ = 15,
-	NUMMAT_ = 16,
-	BOOLEAN_ = 17,
-	RADIO_ = 18,
-	OPTIONMENU_ = 19,
-	LIST_ = 20,
+	FORMULA_ = 12,
+	INFILE_ = 13,
+	OUTFILE_ = 14,
+	FOLDER_ = 15,
+	NUMVEC_ = 16,
+	NUMMAT_ = 17,
+	BOOLEAN_ = 18,
+	RADIO_ = 19,
+	OPTIONMENU_ = 20,
+	LIST_ = 21,
 	LABELLED_TEXT_MIN_ = 1,
 	LABELLED_TEXT_MAX_ = 9
 };
@@ -199,6 +200,7 @@ UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 va
 UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label);
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 label, bool defaultValue);
 UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue, integer numberOfLines = 1);
+UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);

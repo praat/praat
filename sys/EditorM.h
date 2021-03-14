@@ -31,6 +31,7 @@
 #undef LABEL
 #undef MUTABLE_LABEL
 #undef TEXTFIELD
+#undef FORMULA
 #undef INFILE
 #undef OUTFILE
 #undef FOLDER
@@ -217,6 +218,18 @@ _form_inited_: \
 #define TEXTFIELD(stringVariable, labelText, defaultValue, numberOfLines) \
 	TEXTFIELD_VARIABLE (stringVariable) \
 	TEXTFIELD_FIELD (stringVariable, labelText, defaultValue, numberOfLines)
+
+
+#define FORMULA_VARIABLE(stringVariable) \
+	static conststring32 stringVariable;
+
+#define FORMULA_FIELD(stringVariable, labelText, defaultValue) \
+	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
+	UiForm_addFormula (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+
+#define FORMULA(stringVariable, labelText, defaultValue) \
+	FORMULA_VARIABLE (stringVariable) \
+	FORMULA_FIELD (stringVariable, labelText, defaultValue)
 
 
 #define INFILE_VARIABLE(stringVariable) \

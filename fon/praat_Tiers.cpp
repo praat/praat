@@ -177,7 +177,7 @@ FORM (MODIFY_AmplitudeTier_formula, U"AmplitudeTier: Formula", U"AmplitudeTier: 
 	LABEL (U"   # self = the value of the colth point, in Pascal")
 	LABEL (U"   self = `formula'")
 	LABEL (U"endfor")
-	TEXTFIELD (formula, U"Formula:", U"- self ; upside down", 5)
+	FORMULA (formula, U"Formula:", U"- self ; upside down")
 	OK
 DO
 	MODIFY_EACH_WEAK (AmplitudeTier)
@@ -326,7 +326,7 @@ FORM (MODIFY_DurationTier_formula, U"DurationTier: Formula", U"DurationTier: For
 	LABEL (U"   # self = the value of the colth point, in relative units")
 	LABEL (U"   self = `formula'")
 	LABEL (U"endfor")
-	TEXTFIELD (formula, U"Formula:", U"self * 1.5 ; slow down", 5)
+	FORMULA (formula, U"Formula:", U"self * 1.5 ; slow down")
 	OK
 DO
 	MODIFY_EACH_WEAK (DurationTier)
@@ -400,7 +400,7 @@ DIRECT (WINDOW_FormantGrid_edit) {
 FORM (MODIFY_FormantGrid_formula_frequencies, U"FormantGrid: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
 	LABEL (U"row is formant number, col is point number:")
 	LABEL (U"   for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi", 5)
+	FORMULA (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (FormantGrid)
@@ -412,7 +412,7 @@ FORM (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)
 	LABEL (U"row is formant number, col is point number:")
 	LABEL (U"   for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
 	LABEL (U"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
-	TEXTFIELD (formula, U"Formula:", U"self / 10 ; one tenth of the formant frequency", 5)
+	FORMULA (formula, U"Formula:", U"self / 10 ; one tenth of the formant frequency")
 	OK
 DO
 	MODIFY_EACH_WEAK (FormantGrid)
@@ -673,7 +673,7 @@ FORM (MODIFY_IntensityTier_formula, U"IntensityTier: Formula", U"IntensityTier: 
 	LABEL (U"   # self = the value of the colth point, in dB")
 	LABEL (U"   self = `formula`")
 	LABEL (U"endfor")
-	TEXTFIELD (formula, U"Formula:", U"self + 3.0", 5)
+	FORMULA (formula, U"Formula:", U"self + 3.0")
 	OK
 DO
 	MODIFY_EACH_WEAK (IntensityTier)
@@ -819,7 +819,7 @@ FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...")
 	LABEL (U"   # self = the value of the colth point, in hertz")
 	LABEL (U"   self = `formula`")
 	LABEL (U"endfor")
-	TEXTFIELD (formula, U"Formula:", U"self * 2 ; one octave up", 5)
+	FORMULA (formula, U"Formula:", U"self * 2 ; one octave up")
 	OK
 DO
 	MODIFY_EACH_WEAK (PitchTier)

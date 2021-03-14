@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2018 Paul Boersma
+ * Copyright (C) 2011-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -555,7 +555,7 @@ FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	LABEL (U"x = x1   ! time associated with first sample")
 	LABEL (U"for col from 1 to ncol")
 	LABEL (U"   self [col] = ...")
-	TEXTFIELD (formula, nullptr, U"self", 5)
+	FORMULA (formula, nullptr, U"self")
 	LABEL (U"   x = x + dx")
 	LABEL (U"endfor")
 	OK
@@ -570,7 +570,7 @@ FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	TEXTFIELD (formula, U"Formula:", U"2 * self", 5)
+	FORMULA (formula, U"Formula:", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)
