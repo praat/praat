@@ -693,7 +693,7 @@ UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 vari
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 3;
+	thy numberOfLines = 1;
 	return thee;
 }
 
@@ -702,7 +702,7 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 3;
+	thy numberOfLines = 1;
 	return thee;
 }
 
@@ -711,7 +711,7 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 3;
+	thy numberOfLines = 1;
 	return thee;
 }
 
@@ -850,8 +850,9 @@ void UiForm_finish (UiForm me) {
 				#else
 					- 10 :
 				#endif
-			thy type == _kUiField_type::TEXT_ || thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ ||
-					thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ?
+				multiLineTextHeight (3) :
 			textFieldHeight;
 		okButtonIsDefault &= ( thy numberOfLines <= 1 );   // because otherwise, the Enter key would be ambiguous
 	}
@@ -900,14 +901,19 @@ void UiForm_finish (UiForm me) {
 			}
 			break;
 			case _kUiField_type::TEXT_:
-			case _kUiField_type::INFILE_:
-			case _kUiField_type::OUTFILE_:
-			case _kUiField_type::FOLDER_:
 			case _kUiField_type::NUMVEC_:
 			case _kUiField_type::NUMMAT_:
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, y + multiLineTextHeight (thy numberOfLines), thy numberOfLines > 1 ? GuiText_SCROLLED : 0);
+			}
+			break;
+			case _kUiField_type::INFILE_:
+			case _kUiField_type::OUTFILE_:
+			case _kUiField_type::FOLDER_:
+			{
+				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, y + multiLineTextHeight (3), GuiText_WORDWRAP | GuiText_MULTILINE);
 			}
 			break;
 			case _kUiField_type::LABEL_:

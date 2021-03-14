@@ -563,19 +563,19 @@ DIRECT (NEW1_Matrix_to_ParamCurve) {
 
 FORM (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
 	WORD (name, U"Name", U"xy")
-	REAL (xmin, U"xmin", U"1.0")
-	REAL (xmax, U"xmax", U"1.0")
+	REAL (xmin, U"left xmin, xmax", U"1.0")
+	REAL (xmax, U"right xmin, xmax", U"1.0")
 	NATURAL (numberOfColumns, U"Number of columns", U"1")
 	POSITIVE (dx, U"dx", U"1.0")
 	REAL (x1, U"x1", U"1.0")
-	REAL (ymin, U"ymin", U"1.0")
-	REAL (ymax, U"ymax", U"1.0")
+	REAL (ymin, U"left ymin, ymax", U"1.0")
+	REAL (ymax, U"right ymin, ymax", U"1.0")
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	POSITIVE (dy, U"dy", U"1.0")
 	REAL (y1, U"y1", U"1.0")
-	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100", 3)
-	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000", 3)
-	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100", 3)
+	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100", 5)
+	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000", 5)
+	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100", 5)
 	OK
 DO
 	if (xmax < xmin)
@@ -596,9 +596,9 @@ FORM (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo..."
 	WORD (name, U"Name", U"xy")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
 	NATURAL (numberOfColumns, U"Number of columns", U"10")
-	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100", 3)
-	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000", 3)
-	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100", 3)
+	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100", 5)
+	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000", 5)
+	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100", 5)
 	OK
 DO
 	CREATE_ONE
