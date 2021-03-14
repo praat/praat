@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2021 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,8 @@
 #include "Sound_extensions.h"
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_extensions.h"
+#include "Sound_and_Spectrogram.h"
+#include "Spectrogram_extensions.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
 #include "Vector.h"
@@ -1573,6 +1575,27 @@ autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax, doubl
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": speaker not changed.");
+	}
+}
+
+autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeStep, double longTermWindow_r, double shorttimeAveragingWindow, 
+	double lsfmThreshold, double minSilenceDuration, double minSoundingDuration, 
+	conststring32 novoiceAcivityLabel, conststring32 voiceAcivityLabel) {
+	try {
+		const double effectiveAnalysisWidth = std::max (0.02, 2.0 * timeStep), fmax = 5000.0;
+		const double minimumFreqStep = 20.0;
+		const double maximumTimeOversampling = 8.0, maximumFreqOversampling = 8.0;
+		autoSpectrogram spectrogram = Sound_to_Spectrogram (me, effectiveAnalysisWidth, fmax, timeStep, minimumFreqStep,
+			kSound_to_Spectrogram_windowShape::HANNING, maximumTimeOversampling, maximumFreqOversampling);
+		autoMatrix lsfm = Spectrogram_getLongtermSpectralFlatnessMeasure (spectrogram.get(), longTermWindow_r, shorttimeAveragingWindow);
+		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"noVoice", U"");
+		const IntervalTier it = (IntervalTier) thy tiers->at [1];
+		TextInterval_setText (it -> intervals.at [1], voiceAcivityLabel);
+		if (minSilenceDuration > my xmax - my xmin)
+			return thee;
+			
+	} catch (MelderError) {
+		Melder_throw (me, U": could not detect voice activity.");
 	}
 }
 
