@@ -141,7 +141,7 @@ static void NMF_initializeFactorization_svd (NMF me, constMATVU const& data, kNM
 		MATmakeElementsNonNegative (thy v.get(), 1);
 		my features.all()  <<=  thy u.verticalBand (1, my numberOfFeatures);
 		for (integer irow = 1; irow <= my numberOfFeatures; irow ++)
-			my weights.row (irow) <<= thy d [irow]  *  thy v.row (irow);
+			my weights.row (irow)  <<=  thy d [irow]  *  thy v.row (irow);
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": cpuld not initialize by svd method.");
@@ -253,7 +253,7 @@ void NMF_improveFactorization_mu (NMF me, constMATVU const& data, integer maximu
 		
 		const double traceDtD = NUMtrace2 (data.transpose(), data); // for distance calculation
 		features0.all()  <<=  my features.all();
-		weights0.all() <<= my weights.all();
+		weights0.all()  <<=  my weights.all();
 		
 		if (! NUMfpp)
 			NUMmachar ();
@@ -355,8 +355,10 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 				endfor
 			*/
 			
-			// 1. Solve equations for new W:  F´*F*W = F'*D.
-			weights0.get() <<= my weights.get(); // save previous weigts for convergence test
+			/*
+				1. Solve equations for new W:  F´*F*W = F'*D
+			*/
+			weights0.all()  <<=  my weights.all();   // save previous weights for convergence test
 			mul_MAT_out (productFtD.get(), my features.transpose(), data);
 			mul_MAT_out (productFtF.get(), my features.transpose(), my features.get());
 
@@ -365,8 +367,10 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			SVD_solve_preallocated (svd_FtF.get(), productFtD.get(), my weights.get());
 			MATmakeElementsNonNegative (my weights.get(), 0);
 			
-			// 2. Solve equations for new F:  W*W'*F' = W*D'
-			features0.all()  <<=  my features.all(); // save previous features for convergence test
+			/*
+				2. Solve equations for new F:  W*W'*F' = W*D'
+			*/
+			features0.all()  <<=  my features.all();   // save previous features for convergence test
 			mul_MAT_out  (productWDt.get(), my weights.get(), data.transpose());
 			mul_MAT_out (productWWt.get(), my weights.get(), my weights.transpose());
 
@@ -374,10 +378,12 @@ void NMF_improveFactorization_als (NMF me, constMATVU const& data, integer maxim
 			SVD_compute (svd_WWt.get());
 			SVD_solve_preallocated (svd_WWt.get(), productWDt.get(), my features.transpose());
 
-			// 3. Convergence test
+			/*
+				3. Convergence test.
+			*/
 			const double traceWtFtD  = NUMtrace2 (my weights.transpose(), productFtD.get());
 			const double traceWtFtFW = NUMtrace2 (productFtF.get(), productWWt.get());
-			const double distance = sqrt (std::max (traceDtD - 2.0 * traceWtFtD + traceWtFtFW, 0.0)); // just in case
+			const double distance = sqrt (std::max (traceDtD - 2.0 * traceWtFtD + traceWtFtFW, 0.0));   // just in case
 			const double dnorm = distance / (my numberOfRows * my numberOfColumns);
 			const double df = getMaximumChange (my features.get(), features0.get(), sqrteps);
 			const double dw = getMaximumChange (my weights.get(), weights0.get(), sqrteps);

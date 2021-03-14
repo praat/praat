@@ -34,7 +34,7 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 		autoMAT rotation;
 		NUMprocrustes (my eigenvectors.horizontalBand (evec_from, evec_to).transpose(),
 			thy eigenvectors.horizontalBand (evec_from, evec_to).transpose(), & rotation, nullptr, nullptr);
-		his r.all() <<= rotation.all();
+		his r.all()  <<=  rotation.all();
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes not created from Eigens.");

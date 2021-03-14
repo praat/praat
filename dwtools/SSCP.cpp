@@ -309,8 +309,8 @@ autoSSCP SSCP_create (integer dimension) {
 }
 
 void SSCP_reset (SSCP me) {
-	my data.all() <<= 0.0;
-	my centroid.all() <<= 0.0;
+	my data.all()  <<=  0.0;
+	my centroid.all()  <<=  0.0;
 	my numberOfObservations = 0;
 }
 
@@ -552,16 +552,16 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		autoMAT mat;
 		if (my numberOfRows == 1) {
 			mat = zero_MAT (my numberOfColumns, my numberOfColumns);
-			mat.diagonal() <<= my data.row (1); // 1xn matrix -> nxn
+			mat.diagonal()  <<=  my data.row (1); // 1xn matrix -> nxn
 		} else if (my data.nrow == my numberOfColumns && my data.ncol == my numberOfColumns)
 			mat = copy_MAT (my data.get());
 		else
 			Melder_throw (me, U": the SSCP has the wrong dimensions.");
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
-		thy centroid.all() <<= my centroid.all();
+		thy centroid.all()  <<=  my centroid.all();
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
-		thy labels.all() <<= my columnLabels.all();
+		thy labels.all()  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
@@ -721,8 +721,8 @@ autoTableOfReal SSCP_to_TableOfReal (SSCP me) {
 autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		thy data.row (1) <<= my centroid.all();
-		thy columnLabels.all() <<= my columnLabels.all();
+		thy data.row (1)  <<=  my centroid.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": centroid not extracted.");
@@ -802,7 +802,7 @@ void SSCP_expandLowerCholeskyInverse (SSCP me) {
 			my lnd += log (my data [1] [j]);   // diagonal elmnt is variance
 		}
 	} else {
-		my lowerCholeskyInverse.all() <<= my data.all();
+		my lowerCholeskyInverse.all()  <<=  my data.all();
 		try {
 			MATlowerCholeskyInverse_inplace (my lowerCholeskyInverse.get(), & (my lnd));
 		} catch (MelderError) {

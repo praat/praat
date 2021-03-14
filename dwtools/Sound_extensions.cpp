@@ -1650,7 +1650,7 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 					ixmin ++;
 				previous_ixmax = ixmax;
 				integer numberOfSamplesToCopy = ixmax - ixmin + 1;
-				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy) <<= my z.part (1, my ny, ixmin, ixmax);
+				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy)  <<=  my z.part (1, my ny, ixmin, ixmax);
                 numberOfSamples += numberOfSamplesToCopy;
             }
         }
@@ -1933,7 +1933,7 @@ static void Sound_fadeIn_general (Sound me, int channel, double time, double fad
 	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
 		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
 		if (fromStart && startSample > 1)
-			my z [channel].part (1, startSample - 1) <<= 0.0;
+			my z [channel].part (1, startSample - 1)  <<=  0.0;
 	}
 }
 
@@ -1966,7 +1966,7 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 	for (integer ichannel = channelFrom; ichannel <= channelTo; ichannel ++) {
 		my z [channel].part (startSample, endSample)  *=  fadeWindow.part (1, endSample - startSample + 1);
 		if (toEnd && endSample < my nx)
-			my z [channel].part (endSample + 1, my nx) <<= 0.0;
+			my z [channel].part (endSample + 1, my nx)  <<=  0.0;
 	}
 }
 
@@ -2045,10 +2045,10 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, bool fadeOut,
 		if (fadeGlobal) {
 			if (fadeIn) {
 				if (istart > 1)
-					my z [ichannel].part (1, istart - 1) <<= 0.0;
+					my z [ichannel].part (1, istart - 1)  <<=  0.0;
 			} else {
 				if (iend < my nx)
-					my z [ichannel].part (iend, my nx) <<= 0.0;
+					my z [ichannel].part (iend, my nx)  <<=  0.0;
 			}
 		}
 	}
@@ -2440,7 +2440,7 @@ autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 		autoINTVEC channels = NUMstring_getElementsOfRanges (ranges, my ny, U"channel", true);
 		autoSound thee = Sound_create (channels.size, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer ichan = 1; ichan <= channels.size; ichan ++)
-			thy z.row (ichan) <<= my z.row (channels [ichan]);
+			thy z.row (ichan)  <<=  my z.row (channels [ichan]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not extract channels.");
@@ -2481,9 +2481,9 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 				break;   // finished
 			const integer nsamples = std::min (my nx - istart + 1, windowSamples);
 			
-			analysisWindow -> z.row (1).part (1, nsamples) <<= my z.row (1).part (istart, istart + nsamples - 1);
+			analysisWindow -> z.row (1).part (1, nsamples)  <<=  my z.row (1).part (istart, istart + nsamples - 1);
 			if (nsamples < windowSamples)
-				analysisWindow -> z.row (1).part (nsamples + 1, windowSamples) <<= 0.0;
+				analysisWindow -> z.row (1).part (nsamples + 1, windowSamples)  <<=  0.0;
 			
 	//		Sound_multiplyByWindow (analysisWindow.get(), kSound_windowShape::HANNING);
 			autoSpectrum const analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), false);
@@ -2556,7 +2556,7 @@ autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			} else {
 				Melder_fatal (U"Unknown method in Sound_reduceNoise.");
 			}
-			denoised -> z.row (ichannel) <<= denoisedi -> z.row (1);
+			denoised -> z.row (ichannel)  <<=  denoisedi -> z.row (1);
 		}
 		return denoised;
 	} catch (MelderError) {

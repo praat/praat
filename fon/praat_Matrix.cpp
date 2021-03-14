@@ -86,7 +86,7 @@ FORM (NEW1_Matrix_createSimpleFromValues, U"Create simple Matrix from values", U
 DO
 	CREATE_ONE
 		autoMatrix result = Matrix_createSimple (values.nrow, values.ncol);
-		result -> z.all() <<= values;
+		result -> z.all()  <<=  values;
 	CREATE_ONE_END (name);
 }
 

@@ -156,9 +156,9 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (integer i = 1; i <= my groups -> size; i ++) {
 			const SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			thy data.row (i) <<= sscp -> centroid.all();
+			thy data.row (i)  <<=  sscp -> centroid.all();
 		}
-		thy columnLabels.all() <<= my groups->at [my groups -> size] -> columnLabels.part (1, my eigen -> dimension);
+		thy columnLabels.all()  <<=  my groups->at [my groups -> size] -> columnLabels.part (1, my eigen -> dimension);
 		// The elements in my groups always have my eigen -> dimension columns
 		return thee;
 	} catch (MelderError) {
@@ -178,7 +178,7 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0.0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
-		thy columnLabels.all() <<= my groups->at [my groups->size] -> columnLabels.part (1, my eigen -> dimension);
+		thy columnLabels.all()  <<=  my groups->at [my groups->size] -> columnLabels.part (1, my eigen -> dimension);
 		// The elements in my groups always have my eigen -> dimension columns
 
 		return thee;
@@ -208,7 +208,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, integer choic
 
 		const SSCP total = my total.get();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
-		thy columnLabels.part (1, nx) <<= my total -> columnLabels.part (1, nx);
+		thy columnLabels.part (1, nx)  <<=  my total -> columnLabels.part (1, nx);
 		// The elements in my groups always have my eigen -> dimension columns
 
 		autoSSCP within;

@@ -77,7 +77,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			const Pitch_Frame pitchFrame = & thy frames [j];
 
 			pitchFrame -> intensity = power [j] / maxPower;
-			y.all() <<= my s.column (j);
+			y.all()  <<=  my s.column (j);
 			
 			NUMcubicSplineInterpolation_getSecondDerivatives (yv2.get(), fl2.get(), y.get(), 1e30, 1e30);
 			for (integer k = 1; k <= numberOfFrequencyPoints; k ++) {

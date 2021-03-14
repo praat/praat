@@ -364,8 +364,8 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 
 		autoConfusion thee = Confusion_create (nstim, nresp);
 
-		thy rowLabels.all() <<= drow -> rowLabels.all();
-		thy columnLabels.all() <<= dcol -> rowLabels.all();
+		thy rowLabels.all()  <<=  drow -> rowLabels.all();
+		thy columnLabels.all()  <<=  dcol -> rowLabels.all();
 
 		autoINTVEC rowIndex = create_index (srow -> strings.get(), drow -> rowLabels.get());
 		autoINTVEC columnIndex = create_index (scol -> strings.get(), dcol -> rowLabels.get());
@@ -429,7 +429,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 		const integer newnstim = my numberOfRows - nfound + 1;
 		Melder_clip (1_integer, & newpos, newnstim);
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
-		thy columnLabels.all() <<= my columnLabels.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
 		TableOfReal_setRowLabel (thee.get(), newpos, newLabel);
 		integer inewrow = 1;
 		for (integer i = 1; i <= my numberOfRows; i ++) {
@@ -477,7 +477,7 @@ autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_strin
 		const integer newnresp = my numberOfColumns - nfound + 1;
 		Melder_clip (1_integer, & newpos, newnresp);
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
-		thy rowLabels.all() <<= my rowLabels.all();
+		thy rowLabels.all()  <<=  my rowLabels.all();
 		TableOfReal_setColumnLabel (thee.get(), newpos, newLabel);
 		integer inewcol = 1;
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
@@ -501,16 +501,16 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 
-		thy data.part(1, my numberOfRows, 1, my numberOfColumns) <<= my data.get();
+		thy data.part(1, my numberOfRows, 1, my numberOfColumns)  <<=  my data.get();
 		autoVEC columnSums = columnSums_VEC (my data.get());
-		thy data.row (my numberOfRows + 1).part (1, my numberOfColumns) <<= columnSums.get();
+		thy data.row (my numberOfRows + 1).part (1, my numberOfColumns)  <<=  columnSums.get();
 		autoVEC rowSums = rowSums_VEC (my data.get());
-		thy data.column (my numberOfColumns + 1).part (1, my numberOfRows) <<= rowSums.get();
+		thy data.column (my numberOfColumns + 1).part (1, my numberOfRows)  <<=  rowSums.get();
 		
 		thy data [my numberOfRows + 1] [my numberOfColumns + 1] = NUMsum (rowSums.get());
 		
-		thy rowLabels.part (1, my numberOfRows) <<= my rowLabels.all();
-		thy columnLabels.part (1, my numberOfColumns) <<= my columnLabels.all();
+		thy rowLabels.part (1, my numberOfRows)  <<=  my rowLabels.all();
+		thy columnLabels.part (1, my numberOfColumns)  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": table with marginals not created.");

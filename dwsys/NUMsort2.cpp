@@ -43,7 +43,7 @@ void MATrankColumns (MAT m, integer cb, integer ce) {
 	autoINTVEC index = raw_INTVEC (m.nrow);
 
 	for (integer j = cb; j <= ce; j ++) {
-		v.all() <<= m.column (j);
+		v.all()  <<=  m.column (j);
 		for (integer i = 1; i <= m.nrow; i ++)
 			index [i] = i;
 		NUMsortTogether (v.get(), index.get());
@@ -232,10 +232,10 @@ void VECsort3_inplace (VEC const& a, INTVEC const& iv1, INTVEC const& iv2, bool 
 	for (integer j = 1; j <= a.size; j ++)
 		a [j] = atmp [index [j]];
 	autoINTVEC itmp = raw_INTVEC (a.size);
-	itmp.all() <<= iv1;
+	itmp.all()  <<=  iv1;
 	for (integer j = 1; j <= a.size; j ++)
 		iv1 [j] = itmp [index [j]];
-	itmp.all() <<= iv2;
+	itmp.all()  <<=  iv2;
 	for (integer j = 1; j <= a.size; j ++)
 		iv2 [j] = itmp [index [j]];
 }

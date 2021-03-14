@@ -124,7 +124,7 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maximumNumberOfFrequencies, my maximumNumberOfFrequencies, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
 			const LineSpectralFrequencies_Frame lsf = & my d_frames [j];
-			thy z . column (j) .part (1, lsf -> numberOfFrequencies) <<= lsf -> frequencies.get();
+			thy z.column (j).part (1, lsf -> numberOfFrequencies)  <<=  lsf -> frequencies.get();
 		}
 		return thee;
 	} catch (MelderError) {

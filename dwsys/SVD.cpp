@@ -226,7 +226,7 @@ void SVD_solve_preallocated (SVD me, constMATVU const& b, MATVU const& result) {
 	for (integer icol = 1; icol <= b.ncol; icol ++) {
 		bcol.all()  <<=  b.column (icol);
 		SVD_solve_preallocated (me, bcol.get(), resultcol.get());
-		result.column (icol) <<= resultcol.get();
+		result.column (icol)  <<=  resultcol.get();
 	}
 }
 

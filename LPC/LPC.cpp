@@ -138,7 +138,7 @@ autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		for (integer j = 1; j <= my nx; j ++) {
 			const LPC_Frame lpcf = & my d_frames [j];
-			thy z.column (j).part (1, lpcf -> nCoefficients) <<= lpcf -> a.get();
+			thy z.column (j).part (1, lpcf -> nCoefficients)  <<=  lpcf -> a.get();
 		}
 		return thee;
 	} catch (MelderError) {
@@ -153,7 +153,7 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 		for (integer j = 1; j <= my nx; j ++) {
 			const LPC_Frame lpc = & my d_frames [j];
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
-			thy z.column (j).part (1, lpc -> nCoefficients) <<= rc.get();
+			thy z.column (j).part (1, lpc -> nCoefficients)  <<=  rc.get();
 		}
 		return thee;
 	} catch (MelderError) {
@@ -171,8 +171,8 @@ autoMatrix LPC_downto_Matrix_area (LPC me) {
 			VECrc_from_lpc (rc.part (1, lpc -> nCoefficients), lpc -> a.part (1, lpc -> nCoefficients));
 			VECarea_from_rc (area.part (1, lpc -> nCoefficients), rc.part (1, lpc -> nCoefficients));
 			if (lpc -> nCoefficients < my maxnCoefficients)
-				area.part (lpc -> nCoefficients + 1, my maxnCoefficients) <<= 0.0;
-			thy z.column (j) <<= area.get();
+				area.part (lpc -> nCoefficients + 1, my maxnCoefficients)  <<=  0.0;
+			thy z.column (j)  <<=  area.get();
 		}
 		return thee;
 	} catch (MelderError) {

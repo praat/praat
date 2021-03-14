@@ -430,8 +430,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		}
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
-		thy rowLabels.part (1, nrow) <<= my rowLabels.all();
-		thy rowLabels.part (nrow + 1, nrow + ncol) <<= my columnLabels.all();
+		thy rowLabels.part (1, nrow)  <<=  my rowLabels.all();
+		thy rowLabels.part (nrow + 1, nrow + ncol)  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");
@@ -587,7 +587,7 @@ integer Salience_correctNegatives (Salience me) {
 }
 
 void Salience_setDefaults (Salience me) {
-	my data.all() <<= 1.0 / sqrt (my numberOfColumns);
+	my data.all()  <<=  1.0 / sqrt (my numberOfColumns);
 	for (integer j = 1; j <= my numberOfColumns; j ++)
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
 }
@@ -662,7 +662,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, integer sy
 
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 
-		thy data.all() <<= my data.all();
+		thy data.all()  <<=  my data.all();
 
 		if (normalize)
 			MAT_divideRowByRowsum_inplace (thy data.get());
@@ -696,7 +696,7 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 		const integer nxy = my numberOfColumns;
 		autoDissimilarity thee = Dissimilarity_create (nxy);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		thy data.all() <<= my data.all();
+		thy data.all()  <<=  my data.all();
 
 		double max = 0.0;
 		for (integer i = 1; i <= nxy; i ++) {
@@ -753,7 +753,7 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		thy data.all() <<= my data.all();
+		thy data.all()  <<=  my data.all();
 		/*
 			Set all zero responses to the minimumConfusionLevel.
 		*/
@@ -952,7 +952,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, kMDS_
 						// all equal
 					} else if (tiesHandling == kMDS_TiesHandling::SECONDARY_APPROACH) {
 						const double mean = NUMmean (distances.part (ib, i - 1));
-						distances.part (ib, i - 1) <<= mean;
+						distances.part (ib, i - 1)  <<=  mean;
 					}
 				}
 				ib = i;
@@ -1413,7 +1413,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			/*
 				Make Z = X
 			*/
-			z -> data.all() <<= conf -> data.all();
+			z -> data.all()  <<=  conf -> data.all();
 
 			stressp = stress;
 			if (showProgress)
@@ -1857,7 +1857,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
-		wsih.all() <<= 0.0;
+		wsih.all()  <<=  0.0;
 		for (integer i = 1; i <= nSources; i ++) {
 			const ScalarProduct sih = sprc -> at [i];
 			/*
@@ -1876,7 +1876,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			wsih.all()  +=  sih -> data.all()  *  weights -> data [i] [h];
 		}
 
-		solution.all() <<= xc -> data.column (h); // initial guess
+		solution.all()  <<=  xc -> data.column (h); // initial guess
 		/*
 			largest eigenvalue of wsih (nonsymmetric matrix!!) is optimal solution for this dimension
 		*/
@@ -2059,7 +2059,7 @@ autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecLis
 		autoVEC w = copy_VEC (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
-			conf -> w.all() <<= weights -> data.row (i);
+			conf -> w.all()  <<=  weights -> data.row (i);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.get(), tiesHandling);
 			distances -> addItem_move (dist.move());
@@ -2276,10 +2276,10 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 
 		if (out_varianceAccountedFor)
 			*out_varianceAccountedFor = ( n > 0.0 ? 1.0 - t / n : 0.0 );
-		thy w.all() <<= w.all(); // restore weights
+		thy w.all()  <<=  w.all(); // restore weights
 		
 	} catch (MelderError) {
-		thy w.all() <<= w.all();
+		thy w.all()  <<=  w.all();
 		Melder_throw (U"No out_varianceAccountedFor calculated.");
 	}
 }

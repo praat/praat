@@ -2,7 +2,7 @@
 #define _melder_tensor_h_
 /* melder_tensor.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ public:
 		An initialization such as
 			VEC vec1 = vec2;
 		should be allowed.
-	 */
+	*/
 	vector (vector const& other)
 		= default;
 	/*
@@ -1453,6 +1453,11 @@ conststring32 Melder_VEC (constVECVU const& value);
 conststring32 Melder_MAT (constMATVU const& value);
 
 inline void operator<<= (INTVECVU const& target, constINTVECVU const& source) {
+	Melder_assert (target.size == source.size);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = source [i];
+}
+inline void operator<<= (BOOLVECVU const& target, constBOOLVECVU const& source) {
 	Melder_assert (target.size == source.size);
 	for (integer i = 1; i <= target.size; i ++)
 		target [i] = source [i];

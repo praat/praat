@@ -107,8 +107,8 @@ static void huber_struct_getWeightedCovars (struct huber_struct *me, constVEC co
 static void huber_struct_solvelpc (struct huber_struct *me) {
 	// we cannot resize the svd-matrices therefore add zero's and svd the full matrix
 	if (my predictionOrder < my maximumPredictionOrder) {
-		my covarmatrixw. part (my predictionOrder + 1, my maximumPredictionOrder, 1, my maximumPredictionOrder) <<= 0.0;
-		my covarmatrixw. part (1, my predictionOrder, my predictionOrder + 1, my maximumPredictionOrder) <<= 0.0;
+		my covarmatrixw. part (my predictionOrder + 1, my maximumPredictionOrder, 1, my maximumPredictionOrder)  <<=  0.0;
+		my covarmatrixw. part (1, my predictionOrder, my predictionOrder + 1, my maximumPredictionOrder)  <<=  0.0;
 		my coefficients.resize (my maximumPredictionOrder);
 	}
 	my svd -> u.all()  <<=  my covarmatrixw.all();

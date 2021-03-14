@@ -154,7 +154,7 @@ autoElectroglottogram Sound_extractElectroglottogram (Sound me, integer channel,
 		Melder_require (channel > 0 && channel <= my ny,
 			U"The channel number should be in the interval from 1 to ", my ny);
 		autoElectroglottogram thee = Electroglottogram_create (my xmin, my xmax, my nx, my dx, my x1);
-		thy z.all() <<= my z.row (channel);
+		thy z.all()  <<=  my z.row (channel);
 		if (invert)
 			thy z.all()  *=  -1.0;
 		return thee;
@@ -298,7 +298,7 @@ autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, do
 		autoSpectrum spec = Sound_to_Spectrum (me, true);
 		Spectrum_passHannBand (spec.get(), fromFrequency, spec -> xmax, smoothing);
 		autoSound him = Spectrum_to_Sound (spec.get());
-		thy z.row (1) <<= his z.row (1).part (1, thy nx);
+		thy z.row (1)  <<=  his z.row (1).part (1, thy nx);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not high-pass filered.");
@@ -308,7 +308,7 @@ autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, do
 autoSound Electroglottogram_to_Sound (Electroglottogram me) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		thy z.row (1) <<= my z.row (1);
+		thy z.row (1)  <<=  my z.row (1);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
