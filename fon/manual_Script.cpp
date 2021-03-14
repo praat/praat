@@ -1,6 +1,6 @@
 /* manual_Script.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,7 +271,7 @@ MAN_BEGIN (U"differenceLimensToPhon", U"ppgb", 20021215)
 INTRO (U"A routine for converting intensity difference limens into sensation level, "
 	"the inverse of @phonToDifferenceLimens.")
 ENTRY (U"Formula")
-FORMULA (U"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)")
+EQUATION (U"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)")
 MAN_END
 
 MAN_BEGIN (U"Fixed menu commands", U"ppgb", 20120915)
@@ -1400,7 +1400,7 @@ MAN_BEGIN (U"phonToDifferenceLimens", U"ppgb", 20021215)
 INTRO (U"A routine for converting sensation level in phons into intensity difference limen level, "
 	"the inverse of @differenceLimensToPhon.")
 ENTRY (U"Formula")
-FORMULA (U"phonToDifferenceLimens (%phon) = 30 \\.c ((61/60)^^ %phon^ \\-- 1)")
+EQUATION (U"phonToDifferenceLimens (%phon) = 30 \\.c ((61/60)^^ %phon^ \\-- 1)")
 ENTRY (U"Derivation")
 NORMAL (U"In first approximation, humans can detect an intensity difference of 1 phon, i.e. "
 	"if two sounds that differ only in intensity are played a short time after each other, "
@@ -1408,18 +1408,18 @@ NORMAL (U"In first approximation, humans can detect an intensity difference of 1
 NORMAL (U"But the sensitivity is somewhat better for louder sounds. "
 	"According to @@Jesteadt, Wier & Green (1977)@, the relative difference limen "
 	"of intensity is given by")
-FORMULA (U"DLI = \\De%I / %I = 0.463 \\.c (%I / %I__0_)^^ \\--0.072^")
+EQUATION (U"DLI = \\De%I / %I = 0.463 \\.c (%I / %I__0_)^^ \\--0.072^")
 NORMAL (U"In this formula, %I is the intensity of the sound in Watt/m^2, %I__0_ is the intensity of "
 	"the auditory threshold (i.e. 10^^\\--12^ Watt/m^2 at 1000 Hz), and \\De%I is the just noticeable difference.")
 NORMAL (U"@@Boersma (1998)|Boersma (1998: 109)@ calculates a difference-limen scale from this. "
 	"Given an intensity %I, the number of difference limens above threshold is ")
-FORMULA (U"\\in__%I0_^%I %dx \\De%I(%x) "
+EQUATION (U"\\in__%I0_^%I %dx \\De%I(%x) "
 	"= (1 / 0.463) \\in__%I0_^%I %dx %I__0_^^\\--0.072^ %x^^0.072\\--1^")
-FORMULA (U"= (1 / (0.463\\.c0.072)) ((%I/%I__0_)^^0.072^ \\-- 1)")
+EQUATION (U"= (1 / (0.463\\.c0.072)) ((%I/%I__0_)^^0.072^ \\-- 1)")
 NORMAL (U"The sensation level in phon is defined as")
-FORMULA (U"SL = 10 log__10_ (%I/%I__0_)")
+EQUATION (U"SL = 10 log__10_ (%I/%I__0_)")
 NORMAL (U"so that the number of difference limens above threshold is")
-FORMULA (U"(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
+EQUATION (U"(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
 	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
@@ -3037,7 +3037,7 @@ CODE (U"#for irow #to size (u\\# )")
 	CODE1 (U"#endfor")
 CODE (U"#endfor")
 NORMAL (U"or in mathematical notation")
-FORMULA (U"%m__%ij_ = %u__%i_ %v__%j_   (%i = 1..%M, %j = 1..%N)")
+EQUATION (U"%m__%ij_ = %u__%i_ %v__%j_   (%i = 1..%M, %j = 1..%N)")
 NORMAL (U"where %M is the number of rows and %N is the number of columns.")
 ENTRY (U"7. Computations with matrices")
 NORMAL (U"You can add matrices:")
@@ -3045,22 +3045,22 @@ CODE (U"c\\# \\#  = a\\# \\#  + b\\# \\# ")
 NORMAL (U"Elementwise multiplication:")
 CODE (U"c\\# \\#  = a\\# \\#  * b\\# \\# ")
 NORMAL (U"which does")
-FORMULA (U"%c__%ij_ = %a__%ij_ %b__%ij_   (%i = 1..%M, %j = 1..%N)")
+EQUATION (U"%c__%ij_ = %a__%ij_ %b__%ij_   (%i = 1..%M, %j = 1..%N)")
 NORMAL (U"Matrix multiplication:")
 CODE (U"c\\# \\#  = mul\\# \\#  (a\\# \\# , b\\# \\# )")
 NORMAL (U"which does")
-FORMULA (U"%m__%ij_ = \\su__%k=1_^K  %a__%ik_ %b__%kj_   (%i = 1..%M, %j = 1..%N)")
+EQUATION (U"%m__%ij_ = \\su__%k=1_^K  %a__%ik_ %b__%kj_   (%i = 1..%M, %j = 1..%N)")
 NORMAL (U"where %M is the number of rows of %a, %N is the number of columns of %b, "
 	"and %K is the number of columns of %a, which has to be equal to the number if rows of %b.")
 NORMAL (U"Matrix-by-vector multiplication:")
 CODE (U"v\\#  = mul\\#  (m\\# \\# , u\\# )")
 NORMAL (U"which does")
-FORMULA (U"%v__%i_ = \\su__%j=1_^N  %m__%ij_ %u__%j_   (%i = 1..%M)")
+EQUATION (U"%v__%i_ = \\su__%j=1_^N  %m__%ij_ %u__%j_   (%i = 1..%M)")
 NORMAL (U"where %M is the number of rows of %m, and %N is the number of columns of %m, "
 	"which has to be equal to the dimension of %u. Also")
 CODE (U"v\\#  = mul\\#  (u\\# , m\\# \\# )")
 NORMAL (U"which does")
-FORMULA (U"%v__%j_ = \\su__%i=1_^M  %u__%i_ %m__%ij_   (%j = 1..%N)")
+EQUATION (U"%v__%j_ = \\su__%i=1_^M  %u__%i_ %m__%ij_   (%j = 1..%N)")
 NORMAL (U"where %M is the number of rows of %m, which has to be equal to the dimension of %u, "
 	"and %N is the number of columns of %m.")
 ENTRY (U"8. String vectors")
@@ -4295,9 +4295,9 @@ NORMAL (U"The absolute amplitude in volts cannot be handled, of course, but line
 CODE (U"Create Sound from formula: \"sweep\", 1, 0, 60, 44100,")
 CODE (U"... ~ 0.05 * (1 + 11 * x/60) * sin (2*pi * (1000 + 11000/2 * x/60) * x)")
 NORMAL (U"Note the \"/2\" in this formula. Here is the derivation of the formula:")
-FORMULA (U"%frequency (%t) = 1000 + 11000 %t / 60")
-FORMULA (U"%phase (%t) = \\in %frequency (%t) %dt = 1000 %t + 11000 (%t^2/2) / 60")
-FORMULA (U"%signal (%t) = sin (%phase (%t))")
+EQUATION (U"%frequency (%t) = 1000 + 11000 %t / 60")
+EQUATION (U"%phase (%t) = \\in %frequency (%t) %dt = 1000 %t + 11000 (%t^2/2) / 60")
+EQUATION (U"%signal (%t) = sin (%phase (%t))")
 MAN_END
 
 MAN_BEGIN (U"Script for onset detection", U"ppgb", 20140112)

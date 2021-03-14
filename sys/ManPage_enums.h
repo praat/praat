@@ -1,6 +1,6 @@
 /* ManPage_enums.h
  *
- * Copyright (C) 1996-2009,2015 Paul Boersma
+ * Copyright (C) 1996-2005,2009,2013,2015,2016,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 6, DEFINITION, U"definition")
 	enums_add (kManPage_type, 7, CODE, U"code")
 	enums_add (kManPage_type, 8, PROTOTYPE, U"prototype")
-	enums_add (kManPage_type, 9, FORMULA, U"formula")
+	enums_add (kManPage_type, 9, EQUATION, U"formula")
 	enums_add (kManPage_type, 10, PICTURE, U"picture")
 	enums_add (kManPage_type, 11, SCRIPT, U"script")
 	enums_add (kManPage_type, 12, LIST_ITEM1, U"list_item1")

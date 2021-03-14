@@ -1,6 +1,6 @@
 /* manual_gram.cpp
  *
- * Copyright (C) 1997-2011,2013-2017,2019 Paul Boersma
+ * Copyright (C) 1997-2011,2013-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -640,7 +640,7 @@ LIST_ITEM1 (U"\t##P\\s{ARSE} (atr)#\t      20.000\t      20.000\t       1.000")
 LIST_ITEM1 (U"\t##*[atr / lo]#\t      10.000\t      10.000\t       1.000")
 NORMAL (U"This simplified Wolof grammar, with five constraints with clearly different rankings, is equivalent "
 	"to the traditional OT ranking")
-FORMULA (U"*[rtr / hi] >> P\\s{ARSE} (rtr) >> *G\\s{ESTURE} (contour) >> P\\s{ARSE} (atr) >> *[atr / lo]")
+EQUATION (U"*[rtr / hi] >> P\\s{ARSE} (rtr) >> *G\\s{ESTURE} (contour) >> P\\s{ARSE} (atr) >> *[atr / lo]")
 NORMAL (U"These constraints are based on a description of Wolof by "
 	"@@Archangeli & Pulleyblank (1994)|Archangeli & Pulleyblank (1994: 225–239)@. "
 	"For the meaning of these constraints, see @@Boersma (1998)|Boersma (1998: 295)@, "
@@ -677,7 +677,7 @@ NORMAL (U"A set of inputs can be generated from an @OTGrammar object by inspecti
 	"will appear in the list. Click Inspect and examine the 100 input strings. "
 	"You will see that they have been randomly chosen from the 36 possible V__1_tV__2_ sequences "
 	"as described at @@Create tongue-root grammar...@:")
-FORMULA (U"ɛta, etɛ, ɛti, itɛ, ɛtɛ, iti, ɛtɪ, itɪ, ɪti, etɛ, ...")
+EQUATION (U"ɛta, etɛ, ɛti, itɛ, ɛtɛ, iti, ɛtɪ, itɪ, ɪti, etɛ, ...")
 NORMAL (U"Thus, when asked to generate a random input, these grammars produce any of the 36 possible V__1_tV__2_ "
 	"sequences, all with equal probability.")
 ENTRY (U"Generating outputs from the grammar")
@@ -686,7 +686,7 @@ NORMAL (U"To compute the outputs for the above set of input forms, select %both 
 	"perhaps specifying zero evaluation noise. "
 	"A new Strings objects called \"Wolof_out\" will appear in the list. "
 	"If you Inspect it, you will see that it contains a string sequence aligned with the original input strings:")
-FORMULA (U"ɛta, ɛtɛ, ɛti, itɛ, ɛtɛ, iti, ɛti, iti, iti, ɛtɛ, ...")
+EQUATION (U"ɛta, ɛtɛ, ɛti, itɛ, ɛtɛ, iti, ɛti, iti, iti, ɛtɛ, ...")
 NORMAL (U"In this way, we have created two Strings objects, which together form a series of input-output pairs "
 	"needed for learning a grammar that contains faithfulness constraints.")
 MAN_END

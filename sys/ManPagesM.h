@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2005,2007,2009,2011,2014-2018 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009,2011,2014-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@
 #define CODE4(text)  { kManPage_type::CODE4, text, 0.0, 0.0, nullptr },
 #define CODE5(text)  { kManPage_type::CODE5, text, 0.0, 0.0, nullptr },
 #define PROTOTYPE(text)  { kManPage_type::PROTOTYPE, text, 0.0, 0.0, nullptr },
-#define FORMULA(text)  { kManPage_type::FORMULA, text, 0.0, 0.0, nullptr },
+#define EQUATION(text)  { kManPage_type::EQUATION, text, 0.0, 0.0, nullptr },
 #define PICTURE(width,height,draw)  { kManPage_type::PICTURE, nullptr, width, height, draw },
 #define SCRIPT(width,height,text)  { kManPage_type::SCRIPT, text, width, height, nullptr },
 #define MAN_END  { } }; ManPages_addPage (me, title, author, date, page); }

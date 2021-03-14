@@ -1,6 +1,6 @@
 /* manual_Sampling.cpp
  *
- * Copyright (C) 1992-2005,2007,2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2014-2017,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ TAG (U"##Sample number")
 DEFINITION (U"the sample number whose time is sought.")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
-FORMULA (U"%t__1_ + (%sample_number - 1) \\.c \\De%t")
+EQUATION (U"%t__1_ + (%sample_number - 1) \\.c \\De%t")
 NORMAL (U"where %t__1_ is the time associated with the first sample, and \\De%t is the sampling period.")
 ENTRY (U"Details for hackers")
 NORMAL (U"If you select a Sound or LongSound and click @Inspect, "
@@ -86,7 +86,7 @@ CODE (U"leftSample = floor (sampleNumber)")
 CODE (U"rightSample = ceiling (sampleNumber)")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
-FORMULA (U"1 + (%time \\-- %t__1_) / \\De%t")
+EQUATION (U"1 + (%time \\-- %t__1_) / \\De%t")
 NORMAL (U"where %t__1_ is the time associated with the first sample, and \\De%t is the sampling period.")
 ENTRY (U"Details for hackers")
 NORMAL (U"If you select a Sound or LongSound and click @Inspect, "
@@ -114,7 +114,7 @@ TAG (U"##Frame number")
 DEFINITION (U"the frame number whose time is sought.")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
-FORMULA (U"%t__1_ + (%frame_number - 1) \\.c \\De%t")
+EQUATION (U"%t__1_ + (%frame_number - 1) \\.c \\De%t")
 NORMAL (U"where %t__1_ is the time associated with the centre of the first frame, and \\De%t is the time step.")
 ENTRY (U"Details for hackers")
 NORMAL (U"If you select one of the above objects and click @Inspect, "
@@ -143,7 +143,7 @@ CODE (U"leftFrame = floor (frame)")
 CODE (U"rightFrame = ceiling (frame)")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
-FORMULA (U"1 + (%time \\-- %t__1_) / \\De%t")
+EQUATION (U"1 + (%time \\-- %t__1_) / \\De%t")
 NORMAL (U"where %t__1_ is the time associated with the centre of the first frame, "
 	"and \\De%t is the time step.")
 ENTRY (U"Details for hackers")

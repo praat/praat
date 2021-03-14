@@ -1,6 +1,6 @@
 /* manual_statistics.cpp
  *
- * Copyright (C) 1992-2011,2014 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2011,2013-2017,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ ENTRY (U"What does it do?")
 )*/
 NORMAL (U"The logistic regression method will find values %α, %%β__F1_% and %%β__dur_% "
 	"that optimize")
-FORMULA (U"%α + %%β__F1_% %F1__%k_ + %%β__dur_% %Dur__%k_ = ln (%p__%k_(/ɛ/)/%p__%k_(/æ/))")
+EQUATION (U"%α + %%β__F1_% %F1__%k_ + %%β__dur_% %Dur__%k_ = ln (%p__%k_(/ɛ/)/%p__%k_(/æ/))")
 NORMAL (U"where %k runs from 1 to 10, and %p__%k_(/æ/) + %p__%k_(/ɛ/) = 1.")
 NORMAL (U"The optimization criterion is %%maximum likelihood%, i.e. those %α, %%β__F1_% and %%β__dur_% "
 	"will be chosen that lead to values for %p__%k_(/æ/) and %p__%k_(/ɛ/) that make the observations in the table "

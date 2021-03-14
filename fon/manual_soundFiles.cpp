@@ -1,6 +1,6 @@
 /* manual_soundFiles.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +62,10 @@ NORMAL (U"Sampling is the discretization of the time domain of the signal: "
 	"each second of the signal is divided up into 11025, 22050, or 44100 "
 	"slices (or any other suitable number), and a %%sample value% is associated with "
 	"each slice. For instance, a continuous 377-Hz sine wave is expressed by")
-FORMULA (U"%x(%t) = sin (2%π 377 %t)")
+EQUATION (U"%x(%t) = sin (2%π 377 %t)")
 NORMAL (U"If the %%sampling frequency% (or %%sample rate%) is 44100 Hz, this sine wave will be sampled at "
 	"points spaced Δ%t = 1/44100 second apart, and the sample values will be")
-FORMULA (U"%x__%i_ = sin (2%π 377 (%t__0_ + %i Δ%t))")
+EQUATION (U"%x__%i_ = sin (2%π 377 (%t__0_ + %i Δ%t))")
 NORMAL (U"where %t__0_ is the time after which sampling begins. "
 	"Δ%t is called the %%sample period%.")
 NORMAL (U"Quantization is handled in the next section (@@Sound files 1.2. Quantization|§1.2@).")
@@ -114,10 +114,10 @@ NORMAL (U"The size of a sound file is equal to the size of the header "
 	"and the number of channels.")
 NORMAL (U"For instance, a stereo sound with a duration of 3 seconds, sampled at 44100 Hz, "
 	"would, when written into a 16-bit NeXT/Sun file, take up a disk space of")
-FORMULA (U"28 + 2 * 3.0 * 44100 * 2 = 529228 bytes")
+EQUATION (U"28 + 2 * 3.0 * 44100 * 2 = 529228 bytes")
 NORMAL (U"whereas the same sound, when averaged to mono, downsampled to 8000 Hz, "
 	"and written into a μ-law NeXT/Sun file, take up only a disk space of")
-FORMULA (U"28 + 1 * 3.0 * 8000 * 1 = 24028 bytes")
+EQUATION (U"28 + 1 * 3.0 * 8000 * 1 = 24028 bytes")
 NORMAL (U"The first example is typical of CD quality, the second of telephone speech.")
 MAN_END
 

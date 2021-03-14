@@ -1,6 +1,6 @@
 /* manual_spectrum.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2017,2019,2020 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ TAG (U"##Bin number")
 DEFINITION (U"the bin number whose frequency is sought.")
 ENTRY (U"Algorithm")
 NORMAL (U"the result is")
-FORMULA (U"%f__1_ + (%binNumber - 1) · Δ%f")
+EQUATION (U"%f__1_ + (%binNumber - 1) · Δ%f")
 NORMAL (U"where %f__1_ is the frequency associated with the centre of the first bin, "
 	"and Δ%f is the bin width.")
 MAN_END
@@ -238,10 +238,10 @@ DEFINITION (U"the frequency range. Values outside this range are ignored. "
 	"If ##To frequency# is not greater than ##From frequency#, the entire frequency domain of the Ltas is considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The mean value between the frequencies %f__1_ and %f__2_ is defined as")
-FORMULA (U"1/(%f__2_ - %f__1_)  ∫__%%f%1_^^%%f%2^ %df %x(%f)")
+EQUATION (U"1/(%f__2_ - %f__1_)  ∫__%%f%1_^^%%f%2^ %df %x(%f)")
 NORMAL (U"where %x(%f) is the LTAS as a function of frequency, expressed in dB. "
 	"For our discrete Ltas object, this mean is approximated by")
-FORMULA (U"1/%n ∑__%i=%m..%m+%n-1_ %x__%i_")
+EQUATION (U"1/%n ∑__%i=%m..%m+%n-1_ %x__%i_")
 NORMAL (U"where %n is the number of band centres between %f__1_ and %f__2_.")
 MAN_END
 
@@ -279,10 +279,10 @@ DEFINITION (U"the frequency window. Values outside this domain are ignored. "
 	"If ##To frequency# is not greater than ##From frequency#, the entire frequency domain of the Ltas is considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The standard deviation between the frequencies %f__1_ and %f__2_ is defined as")
-FORMULA (U"1/(%f__2_ – %f__1_)  ∫__%%f%1_^^%%f%2^ %df (%x(%f) – %μ)^2")
+EQUATION (U"1/(%f__2_ – %f__1_)  ∫__%%f%1_^^%%f%2^ %df (%x(%f) – %μ)^2")
 NORMAL (U"where %x(%f) is the LTAS as a function of frequency, and %μ its mean. "
 	"For our discrete Ltas object, the standard deviation is approximated by")
-FORMULA (U"1/(%n–1) ∑__%i=%m..%m+%n-1_ (%x__%i_ – %μ)^2")
+EQUATION (U"1/(%n–1) ∑__%i=%m..%m+%n-1_ (%x__%i_ – %μ)^2")
 NORMAL (U"where %n is the number of band centres between %f__1_ and %f__2_. Note the \"minus 1\".")
 MAN_END
 
@@ -437,7 +437,7 @@ NORMAL (U"For the Fourier transform, the Praat-defined @@time domain@ of the @So
 	"Thus, the last sample lies at %t=%T–Δ%t.")
 NORMAL (U"For a sound %x(%t), defined for all times %t in the domain (0, %T), "
 	"the complex spectrum %X(%f) for any frequency %f is the forward Fourier transform of %x(%t), with a negative exponent:")
-FORMULA (U"%X(%f) = ∫__0_^^%T^ %x(%t) %e^^-2%%πift%^ %dt")
+EQUATION (U"%X(%f) = ∫__0_^^%T^ %x(%t) %e^^-2%%πift%^ %dt")
 NORMAL (U"If the Sound is expressed in Pascal (Pa), the Spectrum is expressed in Pa·s, or Pa/Hz. "
 	"Since a @Spectrum object can only contain a finite number of frequency samples, "
 	"it is only computed for frequencies that are multiples of Δ%f = 1/%T. "
@@ -462,15 +462,15 @@ NORMAL (U"If %N is even, there will be %N+1 frequency samples. For instance, if 
 ENTRY (U"Storage")
 NORMAL (U"In a @Spectrum object, Praat stores the real and imaginary parts of the complex spectrum separately. "
 	"The real part is equal to the cosine transform:")
-FORMULA (U"re %X(%f) = ∫__0_^^%T^ %x(%t) cos (2%%πft%) %dt")
+EQUATION (U"re %X(%f) = ∫__0_^^%T^ %x(%t) cos (2%%πft%) %dt")
 NORMAL (U"The imaginary part is equal to the reverse of the sine transform:")
-FORMULA (U"im %X(%f) = – ∫__0_^^%T^ %x(%t) sin (2%%πft%) %dt")
+EQUATION (U"im %X(%f) = – ∫__0_^^%T^ %x(%t) sin (2%%πft%) %dt")
 NORMAL (U"The complex spectrum can be reconstructed from the real and imaginary part as follows:")
-FORMULA (U"%X(%f) = re %X(%f) + %i im %X(%f)")
+EQUATION (U"%X(%f) = re %X(%f) + %i im %X(%f)")
 NORMAL (U"Since the cosine is a symmetric function of %t and the sine is an antisymmetric function of %t, "
 	"the complex spectrum for a negative frequency is the complex conjugate of the complex spectrum for the corresponding "
 	"positive frequency:")
-FORMULA (U"%X(-%f) = re %X(-%f) + %i im %X(-%f) = re %X(%f) - %i im %X(%f) = %X^*(%f)")
+EQUATION (U"%X(-%f) = re %X(-%f) + %i im %X(-%f) = re %X(%f) - %i im %X(%f) = %X^*(%f)")
 NORMAL (U"For purposes of storage, therefore, the negative frequencies are superfluous. "
 	"For this reason, the Spectrum object stores re %X(%f) and im %X(%f) only for frequencies %f = 0, Δ%f, 2Δ%f... "
 	"In the case of a sound with 20,457 samples, the Spectrum object contains the real part of %X(0) "
@@ -487,7 +487,7 @@ NORMAL (U"If you perform @@Spectrum: To Sound@ on the resulting Spectrum object,
 	"a Sound is created that is equal to the original Sound (or to the original Sound with appended zeroes).")
 ENTRY (U"Properties")
 NORMAL (U"The frequency integral over the squared Spectrum equals the time integral over the squared Sound:")
-FORMULA (U"∫__-%F_^^+%F^ |%X(%f)|^2 %df = ∫__0_^%T |%x(%t)|^2 %dt")
+EQUATION (U"∫__-%F_^^+%F^ |%X(%f)|^2 %df = ∫__0_^%T |%x(%t)|^2 %dt")
 NORMAL (U"This is called %%Parceval's theorem%.")
 /*
 Copy... square
@@ -665,9 +665,9 @@ MAN_END
 MAN_BEGIN (U"Spectrum: Get central moment...", U"ppgb", 20020323)
 INTRO (U"A command to query the selected @Spectrum object.")
 NORMAL (U"If the complex spectrum is given by %S(%f), the %%n%th central spectral moment is given by")
-FORMULA (U"∫__0_^∞  (%f – %f__%c_)^%n |%S(%f)|^%p %df")
+EQUATION (U"∫__0_^∞  (%f – %f__%c_)^%n |%S(%f)|^%p %df")
 NORMAL (U"divided by the \"energy\"")
-FORMULA (U"∫__0_^∞  |%S(%f)|^%p %df")
+EQUATION (U"∫__0_^∞  |%S(%f)|^%p %df")
 NORMAL (U"In this formula, %f__%c_ is the spectral centre of gravity (see @@Spectrum: Get centre of gravity...@). "
 	"Thus, the %%n%th central moment is the average of (%f – %f__%c_)^%n over the entire frequency domain, "
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
@@ -695,9 +695,9 @@ MAN_BEGIN (U"Spectrum: Get centre of gravity...", U"ppgb", 20070225)
 INTRO (U"A command to query the selected @Spectrum object.")
 NORMAL (U"If the complex spectrum is given by %S(%f), where %f is the frequency, the %%centre of gravity% "
 	"is given by")
-FORMULA (U"∫__0_^∞  %f |%S(%f)|^%p %df")
+EQUATION (U"∫__0_^∞  %f |%S(%f)|^%p %df")
 NORMAL (U"divided by the \"energy\"")
-FORMULA (U"∫__0_^∞  |%S(%f)|^%p %df")
+EQUATION (U"∫__0_^∞  |%S(%f)|^%p %df")
 NORMAL (U"Thus, the centre of gravity is the average of %f over the entire frequency domain, "
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
 	"the weighting is done by the absolute spectrum. A value of %p = 2/3 has been seen as well.")
@@ -782,7 +782,7 @@ MAN_BEGIN (U"Spectrum: To Ltas (1-to-1)", U"ppgb", 20141001)
 INTRO (U"A command for converting each selected @Spectrum object into an @Ltas object without loss of frequency resolution.")
 ENTRY (U"Algorithm")
 NORMAL (U"Each band %b__%i_ in the Ltas is computed from a single frequency sample %s__%i_ in the Spectrum as follows:")
-FORMULA (U"%b__%i_ = 2 ((re (%s__%i_))^2 + (im (%s__%i_))^2) / 4.0·10^^-10^")
+EQUATION (U"%b__%i_ = 2 ((re (%s__%i_))^2 + (im (%s__%i_))^2) / 4.0·10^^-10^")
 NORMAL (U"If the original Spectrum is expressible in Pa / Hz (sound pressure in air), the Ltas values "
 	"are in \"dB/Hz\" relative to the auditory threshold at 1000 Hz (2·10^^-5^ Pa).")
 MAN_END

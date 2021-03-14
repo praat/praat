@@ -1,6 +1,6 @@
 /* manual_pitch.cpp
  *
- * Copyright (C) 1992-2007,2010,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2007,2010,2011,2015-2017,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The mean harmonicity between the times %t__1_ and %t__2_ is defined as")
-FORMULA (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %dt %x(%t)")
+EQUATION (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %dt %x(%t)")
 NORMAL (U"where %x(%t) is the harmonicity (in dB) as a function of time. "
 	"Frames in which the value is undefined (i.e. in silent intervals) "
 	"are ignored. If all the frames are silent, the returned value is @undefined.")
@@ -111,10 +111,10 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Harmonicity is considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The standard deviation between the times %t__1_ and %t__2_ is defined as")
-FORMULA (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %dt (%x(%t) - %\\mu)^2")
+EQUATION (U"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %dt (%x(%t) - %\\mu)^2")
 NORMAL (U"where %x(%t) is the harmonicity (in dB) as a function of time, and %\\mu its mean. "
 	"For our discrete Harmonicity object, the standard deviation is approximated by")
-FORMULA (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
+EQUATION (U"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
 NORMAL (U"where %n is the number of frame centres between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
@@ -484,7 +484,7 @@ DEFINITION (U"the time window, in seconds. Values outside this window are ignore
 ENTRY (U"Algorithm")
 NORMAL (U"The curve consists of a sequence of line segments. The contribution of the line segment from "
 	"(%t__1_, %f__1_) to (%t__2_, %f__2_) to the area under the curve is")
-FORMULA (U"1/2 (%f__1_ + %f__2_) (%t__2_ \\-- %t__1_)")
+EQUATION (U"1/2 (%f__1_ + %f__2_) (%t__2_ \\-- %t__1_)")
 NORMAL (U"The mean is the sum of these values divided by %toTime \\-- %fromTime.")
 NORMAL (U"For a PitchTier that was created from a @Pitch object, this command gives the same result as "
 	"##Get mean....# for the original Pitch object (but remember that the median, "
@@ -518,7 +518,7 @@ DEFINITION (U"the selected time domain. Values outside this domain are ignored. 
 ENTRY (U"Algorithm")
 NORMAL (U"The curve consists of a sequence of line segments. The contribution of the line segment from "
 	"(%t__1_, %f__1_) to (%t__2_, %f__2_) to the variance-multiplied-by-time is")
-FORMULA (U"[ 1/4 (%f__1_ + %f__2_)^2 + 1/12 (%f__1_ \\-- %f__2_)^2 ] (%t__2_ \\-- %t__1_)")
+EQUATION (U"[ 1/4 (%f__1_ + %f__2_)^2 + 1/12 (%f__1_ \\-- %f__2_)^2 ] (%t__2_ \\-- %t__1_)")
 NORMAL (U"The standard deviation is the square root of: the sum of these values divided by %toTime \\-- %fromTime.")
 NORMAL (U"To get the standard deviation in the points only, i.e. not weighted by the durations of the line pieces, "
 	"Use @@PitchTier: Get standard deviation (points)...@ instead.")

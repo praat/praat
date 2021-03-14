@@ -1,6 +1,6 @@
 /* manual_glossary.cpp
  *
- * Copyright (C) 1992-2008,2010,2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,23 +234,23 @@ MAN_BEGIN (U"power spectral density", U"ppgb", 20101026)
 INTRO (U"The average power in a sound during a certain time range and in a certain frequency range, expressed in Pa^2/Hz.")
 ENTRY (U"Mathematical definition")
 NORMAL (U"The %%complex spectrum% of a sound %x(%t) in the time range (%t__1_, %t__2_) is")
-FORMULA (U"%X(%f) ≡ ∫__%%t%1_^^%%t%2^ %x(%t) e^^-2%π%ift^ %dt")
+EQUATION (U"%X(%f) ≡ ∫__%%t%1_^^%%t%2^ %x(%t) e^^-2%π%ift^ %dt")
 NORMAL (U"for any frequency %f in the two-sided frequency domain (-%F, +%F). "
 	"If %x(%t) is expressed in units of Pascal, %X(%f) is expressed in units of Pa/Hz. "
 	"In Praat, this complex spectrum is the quantity stored in a @Spectrum.")
 NORMAL (U"From the complex spectrum we can compute the %%one-sided power spectral density% in Pa^2/Hz as")
-FORMULA (U"PSD(%f) ≡ 2|%X(%f)|^2 / (%t__2_ - %t__1_)")
+EQUATION (U"PSD(%f) ≡ 2|%X(%f)|^2 / (%t__2_ - %t__1_)")
 NORMAL (U"where the factor 2 is due to adding the contributions from positive and negative frequencies. "
 	"In Praat, this power spectral density is the quantity stored in a @Spectrogram.")
 NORMAL (U"The PSD divides up the total power of the sound. "
 	"To see this, we integrate it over its entire one-sided frequency domain (0, %F):")
-FORMULA (U"∫__0_^^%F^ PSD(%f) %df = ∫__0_^^%F^ 2|%X(%f)|^2/(%t__2_-%t__1_) %df =")
-FORMULA (U"= 1/(%t__2_-%t__1_) ∫__-%F_^^+%F^ |%X(%f)|^2 %df = 1/(%t__2_-%t__1_) ∫__%%t%1_^^%%t%2^ |%x(%t)|^2 %dt")
+EQUATION (U"∫__0_^^%F^ PSD(%f) %df = ∫__0_^^%F^ 2|%X(%f)|^2/(%t__2_-%t__1_) %df =")
+EQUATION (U"= 1/(%t__2_-%t__1_) ∫__-%F_^^+%F^ |%X(%f)|^2 %df = 1/(%t__2_-%t__1_) ∫__%%t%1_^^%%t%2^ |%x(%t)|^2 %dt")
 NORMAL (U"where the last step uses %%Parceval's theorem%. "
 	"The result is precisely the average power of the sound in the time range (%t__1_, %t__2_).")
 ENTRY (U"The logarithmic power spectral density")
 NORMAL (U"It is often useful to express the power spectral density in dB relative to %%P__ref_% = 2·10^^-5^ Pa:")
-FORMULA (U"PSD__dB_(%f) = 10 log__10_ { PSD(%f) / %%P__ref_%^2 }")
+EQUATION (U"PSD__dB_(%f) = 10 log__10_ { PSD(%f) / %%P__ref_%^2 }")
 NORMAL (U"Since the argument of the logarithm is in units of Hz^^-1^, this spectral measure can loosely be said "
 	"to be in units of `dB/Hz'. In Praat, this logarithmic power spectral density is the quantity stored in an @Ltas; "
 	"it is also the quantity shown in pictures of a @Spectrum and a @Spectrogram.")
@@ -390,7 +390,7 @@ NORMAL (U"Air pressures are measured in Pascal (Pa), which are Newtons per squar
 NORMAL (U"A normative human ear can detect a root-mean-squared air pressure "
 	"as small as 0.00002 Pa, for a sine wave with a frequency of 1000 Hz. "
 	"The %%sound pressure level% can be expressed in dB relative to this normative threshold:")
-FORMULA (U"SPL = 10 log__10_ { 1/(%t__2_-%t__1_) ∫__t1_^^t2^ %x^2(%t) %dt / (2·10^^-5^ Pa)^2 }")
+EQUATION (U"SPL = 10 log__10_ { 1/(%t__2_-%t__1_) ∫__t1_^^t2^ %x^2(%t) %dt / (2·10^^-5^ Pa)^2 }")
 NORMAL (U"where %x(%t) is the sound pressure in Pa as a function of time, "
 	"and %t__1_ and %t__2_ are the times between which the energy (squared air pressure) is averaged. "
 	"For a calibrated sound, Praat's sound window will show you the SPL as a function of time, "
@@ -544,11 +544,11 @@ NORMAL (U"If the interpolation method is “parabolic”, the algorithm uses one
 	"to estimate the location and value of the local maximum. Because a Taylor expansion shows that any smooth curve "
 	"can be approximated as a parabola in the vicinity of any local maximum, the location %x__%max_ and value %y__%max_ can be found "
 	"with the following procedure:")
-FORMULA (U"%dy ≡ 1/2 (%y__%m+1_ - %y__%m-1_)")
-FORMULA (U"%d^2%y ≡ 2 %y__%m_ - %y__%m-1_ - %y__%m+1_")
-FORMULA (U"%m′ ≡ %m + %dy/%d^2%y")
-FORMULA (U"%x__%max_ = %x__1_ + (%m′ - 1) %dx")
-FORMULA (U"%y__%max_ = %y__%m_ + 1/2 %dy^2 / %d^2%y")
+EQUATION (U"%dy ≡ 1/2 (%y__%m+1_ - %y__%m-1_)")
+EQUATION (U"%d^2%y ≡ 2 %y__%m_ - %y__%m-1_ - %y__%m+1_")
+EQUATION (U"%m′ ≡ %m + %dy/%d^2%y")
+EQUATION (U"%x__%max_ = %x__1_ + (%m′ - 1) %dx")
+EQUATION (U"%y__%max_ = %y__%m_ + 1/2 %dy^2 / %d^2%y")
 NORMAL (U"This kind of precision is appropriate if %y is considered a smooth function of %x, as in:")
 LIST_ITEM (U"@@Formant: Get minimum...")
 LIST_ITEM (U"@@Formant: Get time of minimum...")
@@ -582,19 +582,19 @@ ENTRY (U"Overview")
 NORMAL (U"The signal is described with the sequence %y__%i_, %i = 1...%n, where %n is the number of samples. "
 	"Each sample %i is associated with an %x location (typically, time) given by %x__%i_ = %x__1_ + (%i - 1) %dx, "
 	"where %dx is the sample period, so that the real-valued sample number associated with a given time %x is")
-FORMULA (U"%s = (%x - %x__1_) / %dx + 1")
+EQUATION (U"%s = (%x - %x__1_) / %dx + 1")
 NORMAL (U"If the resulting %s is an integer number, the %y value must be %y__%s_. Otherwise, the estimated %y value %y(%s) must be interpolated "
 	"from nearby values of %y. The precision of the result depends on the %%interpolation method% of this algorithm.")
 ENTRY (U"1. Lowest precision: round to sample")
 NORMAL (U"If the interpolation method is “nearest”, we take the value of the nearest point in either direction:")
-FORMULA (U"%near ≡ round (%s)")
-FORMULA (U"%y(%s) ≈ %y__%near_")
+EQUATION (U"%near ≡ round (%s)")
+EQUATION (U"%y(%s) ≈ %y__%near_")
 ENTRY (U"2. Middle precision: linear interpolation")
 NORMAL (U"If you know or assume that the function that underlies your points is continuous, the \"rounding\" interpolation would be poor, "
 	"because the rounded value would abruptly change at the centres between the sample points.")
 NORMAL (U"For a linear interpolation, therefore, we use the attested values on both sides (%left and %right) of %s:")
-FORMULA (U"%s__%l_ ≡ floor (%s) ;   %s__%r_ ≡ %s__%l_ + 1")
-FORMULA (U"%y(%s) ≈ %y__%l_ + (%s - %s__%l_) · (%y__%r_ - %y__%l_)")
+EQUATION (U"%s__%l_ ≡ floor (%s) ;   %s__%r_ ≡ %s__%l_ + 1")
+EQUATION (U"%y(%s) ≈ %y__%l_ + (%s - %s__%l_) · (%y__%r_ - %y__%l_)")
 NORMAL (U"where #floor (%x) computes the greatest integer not greater than %x. This interpolation is continuous.")
 ENTRY (U"3. Higher precision: cubic interpolation")
 NORMAL (U"If you know or assume that the function that underlies your points is %smooth, i.e. its derivative is defined for every %x, "
@@ -607,24 +607,24 @@ NORMAL (U"The next higher interpolation (“cubic”), therefore, is differentia
 	"the underlying function can be approximated by a parabola near its extremes (see @@vector peak interpolation@).")
 NORMAL (U"Because the derivative of a parabolic function is a linear function of %x, "
 	"the derivatives at the left and right sample points are simply estimated as")
-FORMULA (U"%y′__%l_ ≈ (%y__%r_ - %y__%l-1_) / 2 ;   %y′__%r_ ≈ (%y__%r+1_ - %y__%l_) / 2")
+EQUATION (U"%y′__%l_ ≈ (%y__%r_ - %y__%l-1_) / 2 ;   %y′__%r_ ≈ (%y__%r+1_ - %y__%l_) / 2")
 NORMAL (U"Now that we know %y__%l_, %y__%r_, %y′__%l_, and %y′__%r_, we can fit these values with a "
 	"third-degree (%cubic) polynomial:")
-FORMULA (U"%As__%l_^3 + %Bs__%l_^2 + %Cs__%l_ + %D = %y__%l_")
-FORMULA (U"%As__%r_^3 + %Bs__%r_^2 + %Cs__%r_ + %D = %y__%r_")
-FORMULA (U"3%As__%l_^2 + 2%Bs__%l_ + %C = %y′__%l_")
-FORMULA (U"3%As__%r_^2 + 2%Bs__%r_ + %C = %y′__%r_")
+EQUATION (U"%As__%l_^3 + %Bs__%l_^2 + %Cs__%l_ + %D = %y__%l_")
+EQUATION (U"%As__%r_^3 + %Bs__%r_^2 + %Cs__%r_ + %D = %y__%r_")
+EQUATION (U"3%As__%l_^2 + 2%Bs__%l_ + %C = %y′__%l_")
+EQUATION (U"3%As__%r_^2 + 2%Bs__%r_ + %C = %y′__%r_")
 NORMAL (U"If we shift the %x axis to the left sample point, we can reduce the four equations to")
-FORMULA (U"%D = %y__%l_")
-FORMULA (U"%A + %B + %C + %D = %y__%r_")
-FORMULA (U"%C = %y′__%l_")
-FORMULA (U"3%A + 2%B + %C = %y′__%r_")
+EQUATION (U"%D = %y__%l_")
+EQUATION (U"%A + %B + %C + %D = %y__%r_")
+EQUATION (U"%C = %y′__%l_")
+EQUATION (U"3%A + 2%B + %C = %y′__%r_")
 NORMAL (U"so that the interpolated value %y(%s) at any point %s between %s__%l_ and %s__%r_ is estimated as")
-FORMULA (U"(%y′__%r_ + %y′__%l_ - 2%y__%r_ + 2%y__%l_) %φ__%l_^3 + "
+EQUATION (U"(%y′__%r_ + %y′__%l_ - 2%y__%r_ + 2%y__%l_) %φ__%l_^3 + "
 	"(3%y__%r_ - 3%y__%l_ - 2%y′__%l_ - %y′__%r_) %φ__%l_^2 + %y′__%l_ %φ__%l_ + %y__%l_")
 NORMAL (U"where %φ__%l_ ≡ %s - %s__%l_. Some rearrangement gives")
-FORMULA (U"%y(%s) ≈ %y__%l_ %φ__%r_ + %y__%r_ %φ__%l_ +")
-FORMULA (U"- %φ__%l_ %φ__%r_ [1/2 (%y′__%r_ - %y′__%l_) + (%φ__%l_ - 1/2) "
+EQUATION (U"%y(%s) ≈ %y__%l_ %φ__%r_ + %y__%r_ %φ__%l_ +")
+EQUATION (U"- %φ__%l_ %φ__%r_ [1/2 (%y′__%r_ - %y′__%l_) + (%φ__%l_ - 1/2) "
 	"(%y′__%l_ + %y′__%r_ - 2(%y__%r_ - %y__%l_))]")
 NORMAL (U"where %φ__%r_ ≡ 1 - %φ__%l_. From this formula we see:")
 LIST_ITEM (U"1. The first two terms define the linear interpolation.")
@@ -638,12 +638,12 @@ ENTRY (U"4. Highest precision: sinc interpolation")
 NORMAL (U"If the interpolation method is “sinc70” or “sinc700”, the algorithm assumes that the signal "
 	"is a sum of sinc functions, so that a number of points (the %%interpolation depth%: 70 or 700) on each side of %s must be taken into account.")
 NORMAL (U"Because the interpolation depth must be finite, the sum of sinc functions is multiplied by a Hanning window:")
-FORMULA (U"%s__%l_ ≡ floor (%s);   %s__%r_ ≡ %s__%l_ + 1")
-FORMULA (U"%φ__%l_ ≡ %s - %s__%l_;   %φ__%r_ ≡ 1 - %φ__%l_")
-FORMULA (U"%y(%s) ≈ ∑__%i=1...%N_ %y__%r-%i_ sinc (%π(%φ__%l_+%i-1)) (1/2 + 1/2 cos (%π(%φ__%l_+%i-1)/(%φ__%l_+%N))) +")
-FORMULA (U"+ ∑__%i=1...%N_ %y__%l+%i_ sinc (%π(%φ__%r_+%i-1)) (1/2 + 1/2 cos (%π(%φ__%r_+%i-1)/(%φ__%r_+%N)))")
+EQUATION (U"%s__%l_ ≡ floor (%s);   %s__%r_ ≡ %s__%l_ + 1")
+EQUATION (U"%φ__%l_ ≡ %s - %s__%l_;   %φ__%r_ ≡ 1 - %φ__%l_")
+EQUATION (U"%y(%s) ≈ ∑__%i=1...%N_ %y__%r-%i_ sinc (%π(%φ__%l_+%i-1)) (1/2 + 1/2 cos (%π(%φ__%l_+%i-1)/(%φ__%l_+%N))) +")
+EQUATION (U"+ ∑__%i=1...%N_ %y__%l+%i_ sinc (%π(%φ__%r_+%i-1)) (1/2 + 1/2 cos (%π(%φ__%r_+%i-1)/(%φ__%r_+%N)))")
 NORMAL (U"where the sinc function is defined as")
-FORMULA (U"sinc (0) ≡ 1;   sinc (%x) ≡ sin %x / %x   for %x ≠ 0")
+EQUATION (U"sinc (0) ≡ 1;   sinc (%x) ≡ sin %x / %x   for %x ≠ 0")
 NORMAL (U"If %s is less than the interpolation depth or greater than %n + 1 minus the interpolation depth, "
 	"the depth is reduced accordingly.")
 NORMAL (U"This method is appropriate for signals that result from sampling a continuous signal after it has been low-pass filtered "

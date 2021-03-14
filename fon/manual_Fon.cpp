@@ -1,6 +1,6 @@
 /* manual_Fon.cpp
  *
- * Copyright (C) 1992-2008,2010,2011,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,12 +183,12 @@ TAG (U"##Density (Hz)")
 DEFINITION (U"the average number of points per second.")
 ENTRY (U"Algorithm")
 NORMAL (U"First, the number of points %N in the time domain is determined. Its expectation value is")
-FORMULA (U"%λ = (%t__%max_ – %t__%min_) · %density")
+EQUATION (U"%λ = (%t__%max_ – %t__%min_) · %density")
 NORMAL (U"but its actual value is taken from the Poisson distribution:")
-FORMULA (U"%p(%n) = (%%λ^n% / %n!) %e^^–%λ")
+EQUATION (U"%p(%n) = (%%λ^n% / %n!) %e^^–%λ")
 NORMAL (U"Then, %N points are computed throughout the time domain, according to a uniform distribution:")
-FORMULA (U"%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]")
-FORMULA (U"%p(%t) = 0   outside [%t__%min_, %t__%max_]")
+EQUATION (U"%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]")
+EQUATION (U"%p(%t) = 0   outside [%t__%min_, %t__%max_]")
 MAN_END
 
 MAN_BEGIN (U"Create simple Matrix...", U"ppgb", 20021204)
@@ -406,10 +406,10 @@ ENTRY (U"Return value")
 NORMAL (U"the loudness in sone units.")
 ENTRY (U"Algorithm")
 NORMAL (U"The loudness is defined as")
-FORMULA (U"∫%df 2^^(%e(%f) - 40 phon) / 10^")
+EQUATION (U"∫%df 2^^(%e(%f) - 40 phon) / 10^")
 NORMAL (U"where %f is the frequency in Bark, and %e(%f) the excitation in phon. "
 	"For our discrete Excitation object, the loudness is computed as")
-FORMULA (U"Δ%f ∑ 2^^(%e__%i_ - 40) / 10")
+EQUATION (U"Δ%f ∑ 2^^(%e__%i_ - 40) / 10")
 NORMAL (U"where Δ%f is the distance between the excitation channels (in Bark).")
 MAN_END
 
@@ -498,7 +498,7 @@ DEFINITION (U"the selected time domain. Values outside this domain are ignored. 
 ENTRY (U"Algorithm")
 NORMAL (U"The curve consists of a sequence of line segments. The contribution of the line segment from "
 	"(%t__1_, %f__1_) to (%t__2_, %f__2_) to the area is")
-FORMULA (U"1/2 (%f__1_ + %f__2_) (%t__2_ – %t__1_)")
+EQUATION (U"1/2 (%f__1_ + %f__2_) (%t__2_ – %t__1_)")
 MAN_END
 
 MAN_BEGIN (U"Intensity", U"ppgb", 20030316)
@@ -538,11 +538,11 @@ DEFINITION (U"the units in which the averaging is performed. If the method is #e
 	"and based on averaging properties of the human ear.")
 ENTRY (U"Algorithm")
 NORMAL (U"If the averaging method is #dB, the mean intensity between the times %t__1_ and %t__2_ is defined as")
-FORMULA (U"1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ %x(%t) %dt")
+EQUATION (U"1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ %x(%t) %dt")
 NORMAL (U"where %x(%t) is the intensity as a function of time, in dB. If the method is #energy, the result is")
-FORMULA (U"10 log__10_ { 1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ 10^^%x(%t)/10^ %dt }")
+EQUATION (U"10 log__10_ { 1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ 10^^%x(%t)/10^ %dt }")
 NORMAL (U"If the method is #sones, the result is")
-FORMULA (U"10 log__2_ { 1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ 2^^%x(%t)/10^ %dt }")
+EQUATION (U"10 log__2_ { 1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ 2^^%x(%t)/10^ %dt }")
 ENTRY (U"Behaviour")
 NORMAL (U"After you do @@Sound: To Intensity...@, the mean intensity of the resulting #Intensity, "
 	"if the averaging method is #energy, should be close to the mean SPL of the original #Sound, "
@@ -573,10 +573,10 @@ DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 ENTRY (U"Algorithm")
 NORMAL (U"The standard deviation between the times %t__1_ and %t__2_ is defined as")
-FORMULA (U"√ {1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ %dt (%x(%t) - %μ)^2}")
+EQUATION (U"√ {1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ %dt (%x(%t) - %μ)^2}")
 NORMAL (U"where %x(%t) is the intensity (in dB) as a function of time, and %μ its mean. "
 	"For our discrete Intensity object, the standard deviation is approximated by")
-FORMULA (U"√ {1/(%n-1) ∑__%i=%m..%m+%n-1_ (%x__%i_ - %μ)^2}")
+EQUATION (U"√ {1/(%n-1) ∑__%i=%m..%m+%n-1_ (%x__%i_ - %μ)^2}")
 NORMAL (U"where %n is the number of frames between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
@@ -1331,9 +1331,9 @@ CODE (U"\"at+ma\"  \"apma\"    0")
 CODE (U"\"an+pa\"  \"anpa\"   20")
 CODE (U"\"an+pa\"  \"ampa\"   80")
 NORMAL (U"The resulting Strings object \"input\" may then contain:")
-FORMULA (U"at+ma, an+pa, an+pa, at+ma, at+ma, an+pa, an+pa, an+pa, an+pa, at+ma, ...")
+EQUATION (U"at+ma, an+pa, an+pa, at+ma, at+ma, an+pa, an+pa, an+pa, an+pa, at+ma, ...")
 NORMAL (U"The Strings object \"output\" may then contain:")
-FORMULA (U"atma,  ampa,  ampa,  atma,  atma,  ampa,  anpa,  ampa,  ampa,  atma, ...")
+EQUATION (U"atma,  ampa,  ampa,  atma,  atma,  ampa,  anpa,  ampa,  ampa,  atma, ...")
 MAN_END
 
 MAN_BEGIN (U"ParamCurve", U"ppgb", 20030316)
@@ -1517,14 +1517,14 @@ NORMAL (U"The local jitter is defined as the relative mean absolute "
 	"second-order difference of the point process (= the first-order difference of the interval process), as follows.")
 NORMAL (U"First, we define the absolute (non-relative) local jitter (in seconds) as the mean absolute (non-negative) "
 	"difference of consecutive intervals:")
-FORMULA (U"%jitter(seconds) = ∑__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
+EQUATION (U"%jitter(seconds) = ∑__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - %T__%i-1_| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 2, the result of the command is @undefined).")
 NORMAL (U"Second, we define the mean period as")
-FORMULA (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
+EQUATION (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1533,7 +1533,7 @@ NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the num
 	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
 	"that had taken part in the computation of the absolute local jitter.")
 NORMAL (U"Finally, we compute the (relative) local jitter as")
-FORMULA (U"%jitter = %jitter(seconds) / %meanPeriod(seconds)")
+EQUATION (U"%jitter = %jitter(seconds) / %meanPeriod(seconds)")
 NORMAL (U"The result is a value between 0 and 2, or between 0 and 200 percent.")
 MAN_END
 
@@ -1580,7 +1580,7 @@ NORMAL (U"The absolute local jitter is defined as the absolute (i.e. non-relativ
 	"second-order difference of the point process (= the first-order difference of the interval process), as follows.")
 NORMAL (U"The absolute local jitter (in seconds) is the mean absolute (non-negative) "
 	"difference of consecutive intervals:")
-FORMULA (U"%jitter(seconds) = ∑__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
+EQUATION (U"%jitter(seconds) = ∑__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
@@ -1630,14 +1630,14 @@ NORMAL (U"The RAP can be used as a measure of voice quality; "
 ENTRY (U"3. Algorithm")
 NORMAL (U"Relative Average Perturbation is defined in terms of three consecutive intervals, as follows.")
 NORMAL (U"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds):")
-FORMULA (U"%absAP(seconds) = ∑__%i=2_^^%N-1^ |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| / (%N - 2)")
+EQUATION (U"%absAP(seconds) = ∑__%i=2_^^%N-1^ |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| / (%N - 2)")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 3, the result of the command is @undefined).")
 NORMAL (U"Second, we define the mean period as")
-FORMULA (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
+EQUATION (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1646,7 +1646,7 @@ NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the num
 	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
 	"that had taken part in the computation of the absolute average perturbation.")
 NORMAL (U"Finally, we compute the Relative Average Perturbation as")
-FORMULA (U"%RAP = %absAP(seconds) / %meanPeriod(seconds)")
+EQUATION (U"%RAP = %absAP(seconds) / %meanPeriod(seconds)")
 NORMAL (U"The result is a value between 0 and 2, or between 0 and 200 percent.")
 MAN_END
 
@@ -1691,14 +1691,14 @@ NORMAL (U"The jitter can be used as a measure of voice quality. See @@Voice 2. J
 ENTRY (U"3. Algorithm")
 NORMAL (U"The five-point Period Perturbation Quotient (PPQ5) is defined in terms of five consecutive intervals, as follows.")
 NORMAL (U"First, we define the absolute (i.e. non-relative) PPQ5 (in seconds):")
-FORMULA (U"%absPPQ5(seconds) = ∑__%i=3_^^%N-2^ |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| / (%N - 4)")
+EQUATION (U"%absPPQ5(seconds) = ∑__%i=3_^^%N-2^ |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| / (%N - 4)")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-2_ or %T__%i-1_ or %T__%i_ or %T__%i+1_ or %T__%i+2_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-2_/%T__%i-1_ or %T__%i-1_/%T__%i-2_ or %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ or %T__%i+2_/%T__%i+1_ or %T__%i+1_/%T__%i+2_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 5, the result of the command is @undefined).")
 NORMAL (U"Second, we define the mean period as")
-FORMULA (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
+EQUATION (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1707,7 +1707,7 @@ NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the num
 	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
 	"that had taken part in the computation of the absolute PPQ5.")
 NORMAL (U"Finally, we compute the five-point Period Perturbation Quotient as")
-FORMULA (U"%PPQ5 = %PPQ5(seconds) / %meanPeriod(seconds)")
+EQUATION (U"%PPQ5 = %PPQ5(seconds) / %meanPeriod(seconds)")
 NORMAL (U"The result is a value between 0 and 4, or between 0 and 400 percent.")
 MAN_END
 
@@ -1756,14 +1756,14 @@ NORMAL (U"DDP is defined as the relative mean absolute (i.e. non-negative) "
 	"third-order difference of the point process (= the second-order difference of the interval process), as follows.")
 NORMAL (U"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds) as one third of the mean absolute (non-negative) "
 	"difference of difference of consecutive intervals:")
-FORMULA (U"%absDDP(seconds) = ∑__%i=2_^^%N-1^ |(%T__%i+1_ - %T__%i_) - (%T__%i_ - %T__%i-1_)| / (%N - 2)")
+EQUATION (U"%absDDP(seconds) = ∑__%i=2_^^%N-1^ |(%T__%i+1_ - %T__%i_) - (%T__%i_ - %T__%i-1_)| / (%N - 2)")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ###Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
 	"the term |2%T__%i_ - %T__%i-1_ - %T__%i+1_| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 3, the result of the command is @undefined).")
 NORMAL (U"Second, we define the mean period as")
-FORMULA (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
+EQUATION (U"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1772,7 +1772,7 @@ NORMAL (U"where %T__%i_ is the duration of the %%i%th interval and %N is the num
 	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
 	"that had taken part in the computation of DDP.")
 NORMAL (U"Finally, we compute DDP as")
-FORMULA (U"%DDP = %absDDP(seconds) / %meanPeriod(seconds)")
+EQUATION (U"%DDP = %absDDP(seconds) / %meanPeriod(seconds)")
 NORMAL (U"The result is exactly 3 times the @@PointProcess: Get jitter (rap)...|RAP@ jitter measurement: "
 	"a value between 0 and 6, or between 0 and 600 percent.")
 MAN_END
@@ -1887,7 +1887,7 @@ INTRO (U"A command to convert every selected @PointProcess into a @Sound.")
 ENTRY (U"Algorithm")
 NORMAL (U"A glottal waveform is generated at every point in the point process. "
 	"Its shape depends on the settings %power1 and %power2 according to the formula")
-FORMULA (U"%U(%x) = %x^^%power1^ - %x^^%power2^")
+EQUATION (U"%U(%x) = %x^^%power1^ - %x^^%power2^")
 NORMAL (U"where %x is a normalized time that runs from 0 to 1 and %U(%x) is the normalized glottal flow in arbitrary units (the real unit is m^3/s). "
 	"If %power1 = 2.0 and %power2 = 3.0, the glottal flow shape is that proposed by @@Rosenberg (1971)@, "
 	"upon which for instance the Klatt synthesizer is based (@@Klatt & Klatt (1990)@):")
@@ -1917,7 +1917,7 @@ SCRIPT (4.5, 3,
 NORMAL (U"For the generation of speech sounds, we do not take the glottal flow itself, "
 	"but rather its derivative (this takes into account the influence of radiation at the lips). "
 	"The glottal flow derivative is given by")
-FORMULA (U"%dU(%x)/%dx = %power1 %x^^(%power1-1)^ - %power2 %x^^(%power2-1)^")
+EQUATION (U"%dU(%x)/%dx = %power1 %x^^(%power1-1)^ - %power2 %x^^(%power2-1)^")
 NORMAL (U"The flow derivative clearly shows the influence of the smoothing mentioned above. "
 	"The unsmoothed curve, with %power1 = 2.0 and %power2 = 3.0, looks like:")
 SCRIPT (4.5, 4,
