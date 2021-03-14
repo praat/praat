@@ -104,7 +104,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			Melder_assert (startSample >= 1);
 			Melder_assert (endSample <= my nx);
 			
-			analysisWindow -> z.row (1) <<= my z.row (1).part (startSample, endSample);
+			analysisWindow -> z.row (1)  <<=  my z.row (1).part (startSample, endSample);
 			
 			analysisWindow -> z.row (1)  *=  window.part (1, nsamp_window);
 			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.get(), false);
@@ -231,7 +231,7 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
@@ -241,7 +241,7 @@ autoSpectrogram ComplexSpectrogram_to_Spectrogram (ComplexSpectrogram me) {
 void ComplexSpectrogram_Spectrogram_replaceAmplitudes (ComplexSpectrogram me, Spectrogram thee) {
 	Melder_require (my nx == thy nx && my ny == thy ny,
 		U"The numbers of cells in the ComplexSpectrogram and Spectrogram should be equal.");
-	my z.all() <<= thy z.all();
+	my z.all()  <<=  thy z.all();
 }
 
 autoSpectrum ComplexSpectrogram_to_Spectrum (ComplexSpectrogram me, double time) {

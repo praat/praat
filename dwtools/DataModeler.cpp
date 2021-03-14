@@ -80,7 +80,7 @@ static double constant_evaluate (DataModeler /* me */, double /* xin */, vector<
 }
 
 static void constant_evaluateBasisFunctions (DataModeler me, double xin, VEC terms) {
-	terms  <<= 1.0;
+	terms  <<=  1.0;
 }
 
 static double linear_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
@@ -88,7 +88,7 @@ static double linear_evaluate (DataModeler me, double xin, vector<structDataMode
 }
 
 static void linear_evaluateBasisFunctions (DataModeler me, double xin, VEC terms) {
-	terms  <<= undefined;
+	terms  <<=  undefined;
 }
 
 static double polynomial_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
@@ -872,7 +872,7 @@ void series_fit (DataModeler me) {
 			Estimate covariances between parameters
 		*/
 		if (numberOfFreeParameters < my numberOfParameters) {
-			cov -> data.all() <<= 0.0; // Set fixed parameters variances and covariances to zero.
+			cov -> data.all()  <<=  0.0;   // set fixed parameters variances and covariances to zero
 			for (integer irow = 1, ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 				if (my parameters [ipar] .status != kDataModelerParameterStatus::FIXED_) {
 					for (integer icol = 1, jpar = 1; jpar <= my numberOfParameters; jpar ++) {

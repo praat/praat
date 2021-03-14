@@ -430,7 +430,7 @@ void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *out_q, 
 		const integer degree = std::max (my numberOfCoefficients - thy numberOfCoefficients, 0_integer);
 		aq = Polynomial_create (my xmin, my xmax, degree);
 		if (degree >= 0)
-			aq -> coefficients.get () <<= qc.part (1, degree + 1);
+			aq -> coefficients.get ()  <<=  qc.part (1, degree + 1);
 		*out_q = aq.move();
 	}
 	if (out_r) {

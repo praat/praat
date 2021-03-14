@@ -416,7 +416,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 autoMatrix FilterBank_to_Matrix (FilterBank me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -426,7 +426,7 @@ autoMatrix FilterBank_to_Matrix (FilterBank me) {
 autoBarkFilter Matrix_to_BarkFilter (Matrix me) {
 	try {
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to BarkFilter.");
@@ -436,7 +436,7 @@ autoBarkFilter Matrix_to_BarkFilter (Matrix me) {
 autoMelFilter Matrix_to_MelFilter (Matrix me) {
 	try {
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MelFilter.");
@@ -511,7 +511,7 @@ autoFormantFilter Matrix_to_FormantFilter (Matrix me) {
 	try {
 		autoFormantFilter thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                         my ymin, my ymax, my ny, my dy, my y1);
-		thy z.all() <<= my z.all();
+		thy z.all()  <<=  my z.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FormantFilter.");
@@ -648,7 +648,7 @@ autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const CC_Frame cf = & thy frame [iframe];
-			x.all() <<= my z.column (iframe);
+			x.all()  <<=  my z.column (iframe);
 			VECcosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
 			CC_Frame_init (cf, numberOfCoefficients);
 			for (integer icoef = 1; icoef <= numberOfCoefficients; icoef ++)
@@ -685,7 +685,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 			for (integer icoef = 1; icoef <= my maximumNumberOfCoefficients; icoef ++)
 				x [icoef + 1] = ( icoef < first || icoef > iend ? 0.0 : cf -> c [icoef] );   // zero extrapolation
 			VECinverseCosineTransform_preallocated (y.get(), x.get(), cosinesTable.get());
-			thy z.column (iframe) <<= y.get();
+			thy z.column (iframe)  <<=  y.get();
 		}
 		return thee;
 	} catch (MelderError) {

@@ -171,7 +171,7 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 		autoEEG him = Data_copy (me);
 		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
 		for (integer i = 1; i <= channelNumbers.size; i ++)
-			his sound -> z.row (channelNumbers [i]) <<= white -> z.row (i);
+			his sound -> z.row (channelNumbers [i])  <<=  white -> z.row (i);
 
 		EEG_setChannelNames_selected (him.get(), U"wh", channelNumbers.get());
 		return him;
@@ -191,7 +191,7 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 		autoEEG him = Data_copy (me);
 		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
 		for (integer i = 1; i <= channelNumbers.size; i ++)
-			his sound -> z.row (channelNumbers [i]) <<= pc -> z.row (i);
+			his sound -> z.row (channelNumbers [i])  <<=  pc -> z.row (i);
 		
 		EEG_setChannelNames_selected (him.get(), U"pc", channelNumbers.get());
 		return him;

@@ -205,7 +205,7 @@ void Matrix_scale (Matrix me, int choice) {
 autoMatrix Matrix_transpose (Matrix me) {
 	try {
 		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1, my xmin, my xmax, my nx, my dx, my x1);
-		thy z.all() <<= my z.transpose();
+		thy z.all()  <<=  my z.transpose();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
@@ -333,7 +333,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 		b.all()  <<=  my z.column (my nx);
 
 		autoVEC x = newVECsolve (u.get(), b.get(), tolerance);
-		thy z.row (1) <<= x.all();
+		thy z.row (1)  <<=  x.all();
 		
 		return thee;
 	} catch (MelderError) {

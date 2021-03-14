@@ -161,12 +161,12 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 								w [i] [j] *= scalef;
 				}
 				// update V
-				vnew.all() <<= my data.all();
+				vnew.all()  <<=  my data.all();
 				mul_MAT_out (my data.get(), w.get(), vnew.get());
 				for (integer k = 1; k <= ccts -> size; k ++) {
 					const CrossCorrelationTable ct = ccts -> at [k];
 					Melder_assert (ct -> data.nrow == dimension && ct -> data.ncol == dimension);   // ppgb 20180913
-					cc.all() <<= ct -> data.all();
+					cc.all()  <<=  ct -> data.all();
 					MATmul_VCVt_preallocated (ct -> data.get(), w.get(), cc.get(), true);
 				}
 				dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
@@ -233,7 +233,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 			Melder_require (eigen -> eigenvalues [i] >= 0.0,
 				U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
 			const double scalef = 1.0 / sqrt (eigen -> eigenvalues [i]);
-			p.row (dimension - i + 1) <<= eigen -> eigenvectors.row (i)  *  scalef;
+			p.row (dimension - i + 1)  <<=  eigen -> eigenvectors.row (i)  *  scalef;
 		}
 
 		// P*C [i]*P'
@@ -270,17 +270,17 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 				delta_w = 0.0;
 				for (integer kol = 1; kol <= dimension; kol ++) {
-					wvec.all() <<= my data.column (kol);
+					wvec.all()  <<=  my data.column (kol);
 
 					update_one_column (ccts.get(), d.get(), cweights, wvec.get(), -1.0, mvec.get());
 
 					Eigen_initFromSymmetricMatrix (eigen.get(), d.get());
 
 					// Eigenvalues already sorted; get eigenvector of smallest !
-					wnew.all() <<= eigen -> eigenvectors.row (dimension);
+					wnew.all()  <<=  eigen -> eigenvectors.row (dimension);
 
 					update_one_column (ccts.get(), d.get(), cweights, wnew.get(), 1.0, mvec.get());
-					my data.column (kol) <<= wnew.all();
+					my data.column (kol)  <<=  wnew.all();
 
 					// compare norms of eigenvectors. We have to compare ||wvec +/- w_new|| because eigenvectors
 					//  may change sign.
@@ -306,7 +306,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		// Revert the sphering W = P'*W;
 		// Take transpose to make W*C [i]W' diagonal instead of W'*C [i]*W => (P'*W)'=W'*P
-		wc.all() <<= my data.all();
+		wc.all()  <<=  my data.all();
 		mul_MAT_out (my data.get(), wc.transpose(), p.get()); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure
@@ -419,16 +419,16 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 		autoVEC centroid1 = raw_VEC (my ny);
 		autoMAT x1x1 = raw_MAT (my ny, my ny);
 		NUMcrossCorrelate_rows (my z.get(), i1, i2, lag, x1x1.get(), centroid1.get(), my dx);
-		his centroid.part (1, my ny) <<= centroid1.all();
+		his centroid.part (1, my ny)  <<=  centroid1.all();
 		for (integer irow = 1; irow <= my ny; irow ++)
-			his data.row (irow).part (1, my ny) <<= x1x1.row (irow);
+			his data.row (irow).part (1, my ny)  <<=  x1x1.row (irow);
 
 		autoVEC centroid2 = raw_VEC (thy ny);
 		autoMAT x2x2 = raw_MAT (thy ny, thy ny);
 		NUMcrossCorrelate_rows (thy z.get(), i1, i2, lag, x2x2.get(), centroid2.get(), my dx);
-		his centroid.part (my ny + 1, nchannels) <<= centroid2.all();
+		his centroid.part (my ny + 1, nchannels)  <<=  centroid2.all();
 		for (integer irow = 1; irow <= thy ny; irow ++)
-			his data.row (my ny + irow).part (my ny + 1, nchannels) <<= x2x2.row (irow);
+			his data.row (my ny + irow).part (my ny + 1, nchannels)  <<=  x2x2.row (irow);
 
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			for (integer icol = 1; icol <= thy ny; icol ++) {
@@ -748,7 +748,7 @@ autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTabl
 void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	if (method == 1) {
 		autoVEC cweights = raw_VEC (thy size);
-		cweights.all() <<= 1.0 / thy size;
+		cweights.all()  <<=  1.0 / thy size;
 		Diagonalizer_CrossCorrelationTable_qdiag (me, thee, cweights.get(), maxNumberOfIterations, tol);
 	} else {
 		Diagonalizer_CrossCorrelationTableList_ffdiag (me, thee, maxNumberOfIterations, tol);

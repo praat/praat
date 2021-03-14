@@ -110,8 +110,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 
 		autoSVD svdy = SVD_create (numberOfObservations, numberOfDependents);   // numberOfObservations >= numberOfDependents, hence no transposition
 		autoSVD svdx = SVD_create (numberOfObservations, numberOfIndependents);	 // numberOfObservations >= numberOfIndependents, hence no transposition
-		svdy -> u.all() <<= my data.verticalBand (1, numberOfDependents);
-		svdx -> u.all() <<= my data.verticalBand (numberOfDependents + 1, my numberOfColumns);
+		svdy -> u.all()  <<=  my data.verticalBand (1, numberOfDependents);
+		svdx -> u.all()  <<=  my data.verticalBand (numberOfDependents + 1, my numberOfColumns);
 		const double fnormy = NUMnorm (svdy -> u.get(), 2.0);
 		const double fnormx = NUMnorm (svdx -> u.get(), 2.0);
 		
@@ -196,7 +196,7 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 			U"The number of factors should be in interval [1, ", my numberOfCoefficients, U"].");
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
-		his rowLabels.all() <<= thy rowLabels.all();
+		his rowLabels.all()  <<=  thy rowLabels.all();
 		
 		mul_MAT_out (his data.verticalBand (1, numberOfFactors), thy data.verticalBand (1, nx), my y -> eigenvectors.horizontalBand(1, numberOfFactors).transpose ());
 		mul_MAT_out (his data.verticalBand (numberOfFactors + 1, 2 * numberOfFactors), thy data.verticalBand (nx + 1, nx + ny), my x -> eigenvectors.horizontalBand(1, numberOfFactors).transpose());

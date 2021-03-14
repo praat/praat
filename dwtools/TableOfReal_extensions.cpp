@@ -87,7 +87,7 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 			U"The dimensions do not fit.");
 		
 		thy rowLabels [thyrow] = Melder_dup (my rowLabels [myrow].get());
-		thy data.row (thyrow) <<= my data.row (myrow); 
+		thy data.row (thyrow)  <<=  my data.row (myrow);
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", myrow, U" not copied to ", thee);
 	}
@@ -206,9 +206,9 @@ autoStrings TableOfReal_extractColumnLabels (TableOfReal me) {
 autoTableOfReal TableOfReal_transpose (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfRows);
-		thy data.all() <<= my data.transpose();
-		thy columnLabels.all() <<= my rowLabels.all();
-		thy rowLabels.all() <<= my columnLabels.all();
+		thy data.all()  <<=  my data.transpose();
+		thy columnLabels.all()  <<=  my rowLabels.all();
+		thy rowLabels.all()  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
@@ -340,7 +340,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	autoSVD svd = SVD_create (nr, nc);
 
-	svd -> u.all() <<= my data.all();
+	svd -> u.all()  <<=  my data.all();
 	centreEachColumn_MAT_inout (svd -> u.get());
 
 	SVD_compute (svd.get());
@@ -355,13 +355,13 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	const double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	const double lambda2 = pow (svd -> d [2], sv_splitfactor);
-	x.part (1, nr) <<= svd -> u.column (1)  *  lambda1;
-	y.part (1, nr) <<= svd -> u.column (2)  *  lambda2;
+	x.part (1, nr)  <<=  svd -> u.column (1)  *  lambda1;
+	y.part (1, nr)  <<=  svd -> u.column (2)  *  lambda2;
 	
 	const double lambda3 = svd -> d [1] / lambda1;
 	const double lambda4 = svd -> d [2] / lambda2;
-	x.part (nr + 1, nPoints) <<= svd -> v.column (1)  *  lambda3;
-	y.part (nr + 1, nPoints) <<= svd -> v.column (2)  *  lambda4;
+	x.part (nr + 1, nPoints)  <<=  svd -> v.column (1)  *  lambda3;
+	y.part (nr + 1, nPoints)  <<=  svd -> v.column (2)  *  lambda4;
 	
 	if (xmax <= xmin)
 		NUMextrema (x.get(), & xmin, & xmax);
@@ -464,20 +464,20 @@ void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, in
 	if (rowOrigin == 1) {
 		Melder_require (my numberOfRows == thy numberOfRows,
 			U"Both tables must have the same number of rows.");
-		thy rowLabels.all() <<= my rowLabels.all();
+		thy rowLabels.all()  <<=  my rowLabels.all();
 	} else if (rowOrigin == -1) {
 		Melder_require (my numberOfColumns == thy numberOfRows,
 			U"Both tables must have the same number of columns.");
-		thy rowLabels.all() <<= my columnLabels.all();
+		thy rowLabels.all()  <<=  my columnLabels.all();
 	}
 	if (columnOrigin == 1) {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
 			U"Both tables must have the same number of columns.");
-		thy columnLabels.all() <<= my columnLabels.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
 	} else if (columnOrigin == -1) {
 		Melder_require (my numberOfRows == thy numberOfColumns,
 			U"Both tables must have the same number of rows.");
-		thy columnLabels.all() <<= my rowLabels.all();
+		thy columnLabels.all()  <<=  my rowLabels.all();
 	}
 }
 
@@ -935,7 +935,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 		*/
 		for (integer thyRow = 1; thyRow <= thy numberOfRows; thyRow ++) {
 			const integer myRow = NUMrandomInteger (1, my numberOfRows);
-			thy data.row (thyRow) <<= my data.row (myRow);
+			thy data.row (thyRow)  <<=  my data.row (myRow);
 			TableOfReal_setRowLabel (thee.get(), thyRow, my rowLabels [myRow].get());
 		}
 		return thee;
@@ -1087,9 +1087,9 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 			const integer myindex = reverse ? i : index [i];
 			const integer thyindex = reverse ? index [i] : i;
 			thy rowLabels [thyindex] = Melder_dup (my rowLabels [myindex].get());
-			thy data.row (thyindex) <<= my data.row (myindex);
+			thy data.row (thyindex)  <<=  my data.row (myindex);
 		}
-		thy columnLabels.all() <<= my columnLabels.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row index.");
@@ -1173,7 +1173,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 			thee = TableOfReal_create (indexr, my numberOfColumns);
 			for (integer i = 1; i <= indexr; i ++)
 				TableOfReal_copyOneRowWithLabel (sorted.get(), thee.get(), i, i);
-			thy columnLabels.all() <<= sorted -> columnLabels.all();
+			thy columnLabels.all()  <<=  sorted -> columnLabels.all();
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1220,7 +1220,7 @@ void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer t
 autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		thy data.all() <<= my data.all();
+		thy data.all()  <<=  my data.all();
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {
@@ -1276,11 +1276,11 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 			'empty':  nullptr or \w*
 		*/
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, ncols);
-		his rowLabels.all() <<= my rowLabels.all();
-		his columnLabels.part (1, my numberOfColumns) <<= my columnLabels.all();
-		his columnLabels.part (my numberOfColumns + 1, ncols) <<= thy columnLabels.all();
-		his data.verticalBand (1, my numberOfColumns) <<= my data.all();
-		his data.verticalBand (my numberOfColumns + 1, ncols) <<= thy data.all();
+		his rowLabels.all()  <<=  my rowLabels.all();
+		his columnLabels.part (1, my numberOfColumns)  <<=  my columnLabels.all();
+		his columnLabels.part (my numberOfColumns + 1, ncols)  <<=  thy columnLabels.all();
+		his data.verticalBand (1, my numberOfColumns)  <<=  my data.all();
+		his data.verticalBand (my numberOfColumns + 1, ncols)  <<=  thy data.all();
 
 		integer labeldiffs = 0;
 		for (integer i = 1; i <= my numberOfRows; i ++)
@@ -1309,7 +1309,7 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 		}
 		autoTableOfReal him = TableOfReal_create (nrows, ncols);
 		/* Unsafe: new attributes not initialized. */
-		his rowLabels.all() <<= first -> rowLabels.all();
+		his rowLabels.all()  <<=  first -> rowLabels.all();
 		
 		integer hisColumnIndex = 0;
 		for (integer itab = 1; itab <= my size; itab ++) {
@@ -1317,7 +1317,7 @@ autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me) {
 			for (integer icol = 1; icol <= table -> numberOfColumns; icol ++) {
 				hisColumnIndex ++;
 				TableOfReal_setColumnLabel (him.get(), hisColumnIndex, table -> columnLabels [icol].get());
-				his data.column (hisColumnIndex) <<= table -> data.column (icol);
+				his data.column (hisColumnIndex)  <<=  table -> data.column (icol);
 			}
 		}
 		Melder_assert (hisColumnIndex == his numberOfColumns);
@@ -1362,8 +1362,8 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 			MATnormalizeRows_inplace (my_data.get(), 2.0, 1.0);
 			MATnormalizeRows_inplace (thy_data.get(), 2.0, 1.0);
 		}
-		his rowLabels.all() <<= my rowLabels.all();
-		his columnLabels.all() <<= thy rowLabels.all();
+		his rowLabels.all()  <<=  my rowLabels.all();
+		his columnLabels.all()  <<=  thy rowLabels.all();
 		mul_MAT_out (his data.get(), my_data.get(), thy_data.transpose());
 		return him;
 	} catch (MelderError) {
@@ -1386,8 +1386,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 			MATnormalizeColumns_inplace (my_data.get(), 2.0, 1.0);
 			MATnormalizeColumns_inplace (thy_data.get(), 2.0, 1.0);
 		}
-		his rowLabels.all() <<= my columnLabels.all();
-		his columnLabels.all() <<= thy columnLabels.all();
+		his rowLabels.all()  <<=  my columnLabels.all();
+		his columnLabels.all()  <<=  thy columnLabels.all();
 		mul_MAT_out (his data.get(), my_data.transpose(), thy_data.get()); 
 		return him;
 	} catch (MelderError) {

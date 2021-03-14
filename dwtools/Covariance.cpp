@@ -84,7 +84,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 		autoVEC buf = raw_VEC (my numberOfColumns);
 		for (integer i = 1; i <= numberOfData; i ++)
 			Covariance_PCA_generateOneVector_inline (me, pca.get(), thy data.row (i), buf.get());
-		thy columnLabels.all() <<= my columnLabels.all();
+		thy columnLabels.all()  <<=  my columnLabels.all();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not random sampled.");
@@ -109,7 +109,7 @@ autoTableOfReal Covariance_TableOfReal_extractDistanceQuantileRange (Covariance 
 			U"Not enough data in quantile interval.");
 		
 		autoTableOfReal r = TableOfReal_create (nsel, thy numberOfColumns);
-		r -> columnLabels.all() <<= thy columnLabels.all();
+		r -> columnLabels.all()  <<=  thy columnLabels.all();
 
 		integer k = 0;
 		for (integer i = 1; i <= thy numberOfRows; i ++)
@@ -169,7 +169,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		autoMAT outer = raw_MAT (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
-			mean.all() <<= covi -> centroid.all()  -  thy centroid.all();
+			mean.all()  <<=  covi -> centroid.all()  -  thy centroid.all();
 			outer_MAT_out (outer.all(), mean.all(), mean.all());
 			if (thy numberOfRows == 1)
 				thy data.row(1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
@@ -265,7 +265,7 @@ autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring
 				Melder_require (fabs (my data [irow] [icol] / sqrt (my data [irow] [irow] * my data [icol] [icol])) <= 1.0,
 					U"The covariance in cell [", irow, U",", icol, U"], i.e. input item ",
 				(irow - 1) * centroid.size + icol - (irow - 1) * irow / 2, U" is too large.");
-		my centroid.all() <<= centroid.all();
+		my centroid.all()  <<=  centroid.all();
 		my numberOfObservations = numberOfObservations;
 		return me;
 	} catch (MelderError) {

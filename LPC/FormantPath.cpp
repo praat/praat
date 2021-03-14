@@ -276,7 +276,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 				autoSound source = LPC_Sound_filterInverse (lpc.get(), resampled.get ());
 				autoSound source_resampled = Sound_resample (source.get(), 2.0 * middleCeiling, 50);
 				const integer numberOfSamples = std::min (midCeiling -> nx, source_resampled -> nx);
-				multiChannelSound -> z.row (ic).part (1, numberOfSamples) <<= source_resampled -> z.row (1).part (1, numberOfSamples);
+				multiChannelSound -> z.row (ic).part (1, numberOfSamples)  <<=  source_resampled -> z.row (1).part (1, numberOfSamples);
 			}
 		}
 		/*

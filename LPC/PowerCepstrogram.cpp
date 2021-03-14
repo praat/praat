@@ -105,9 +105,9 @@ void PowerCepstrogram_subtractTrend_inplace (PowerCepstrogram me, double qstartF
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		for (integer icol = 1; icol <= my nx; icol ++) {
-			thy z.row (1) <<= my z.column (icol);
+			thy z.row (1)  <<=  my z.column (icol);
 			PowerCepstrum_subtractTrend_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
-			my z.column (icol) <<= thy z.row (1);
+			my z.column (icol)  <<=  thy z.row (1);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no tilt subtracted (inline).");
@@ -130,7 +130,7 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer icol = 1; icol <= my nx; icol ++) {
-			his z.row (1) <<= my z.column (icol);
+			his z.row (1)  <<=  my z.column (icol);
 			double qpeak;
 			const double cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.get(), pitchFloor, pitchCeiling, & qpeak);
 			const double time = Sampled_indexToX (me, icol);
@@ -150,7 +150,7 @@ autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor,
 		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0 rnr");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			his z.row (1) <<= my z.column (iframe);
+			his z.row (1)  <<=  my z.column (iframe);
 			double qpeak, cpp = PowerCepstrum_getPeakProminence (him.get(), pitchFloor, pitchCeiling, peakInterpolationType,
 				qstartFit, qendFit, lineType, fitMethod, & qpeak);
 			double rnr = PowerCepstrum_getRNR (him.get(), pitchFloor, pitchCeiling, deltaF0);
@@ -220,7 +220,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular_old (PowerCepstro
 		if (numberOfQuefrencyBins > 1) {
 			autoVEC qin = raw_VEC (thy ny);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
-				qin.all() <<= thy z.column (iframe);
+				qin.all()  <<=  thy z.column (iframe);
 				VECsmoothByMovingAverage_preallocated (thy z.column (iframe), qin.all(), numberOfQuefrencyBins);
 			}
 		}
@@ -433,8 +433,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			integer iend = istart + nosInWindow - 1;
 			if (iend > thy nx)
 				iend = thy nx;
-			fftbuf.part (1, nosInWindow) <<= thy z.row (1).part (istart, iend) * hamming.all();
-			fftbuf.part (nosInWindow + 1, nfft) <<= 0.0;
+			fftbuf.part (1, nosInWindow)  <<=  thy z.row (1).part (istart, iend) * hamming.all();
+			fftbuf.part (nosInWindow + 1, nfft)  <<=  0.0;
 			
 			NUMfft_forward (& fftTable, fftbuf.get());
 			complexfftoutput_to_power (fftbuf.get(), spectrum.get(), true); // log10(|fft|^2)

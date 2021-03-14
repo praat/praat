@@ -46,11 +46,11 @@ static void spec_enhance_SHS (VEC const & a) {
 		posmax [++ nmax] = a.size;
 
 	if (nmax == 1) {
-		a.part (1, posmax [1] - 3) <<= 0.0;
-		a.part (posmax [1] + 3, a.size) <<= 0.0;
+		a.part (1, posmax [1] - 3)  <<=  0.0;
+		a.part (posmax [1] + 3, a.size)  <<=  0.0;
 	} else {
 		for (integer i = 2; i <= nmax; i ++)
-			a.part (posmax [i - 1] + 3, posmax [i] - 3) <<= 0.0;
+			a.part (posmax [i - 1] + 3, posmax [i] - 3)  <<=  0.0;
 	}
 }
 
@@ -160,7 +160,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			/*
 				Get the Fourier spectrum.
 			*/
-			fftframe -> z[1].part (1, analysisframe -> nx) <<= analysisframe -> z [1]; // 
+			fftframe -> z [1].part (1, analysisframe -> nx)  <<=  analysisframe -> z [1]; // 
 			autoSpectrum spec = Sound_to_Spectrum (fftframe.get(), true);
 			Melder_assert (spec -> nx == nfft2);
 			/*

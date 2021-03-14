@@ -413,7 +413,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	LOOP {
 		iam (Sound);
 		const double tmax = tmin + my nx * dx;
-		thy z.verticalBand (nx + 1, nx + my nx) <<= my z.all();
+		thy z.verticalBand (nx + 1, nx + my nx)  <<=  my z.all();
 		iinterval ++;
 		if (iinterval > 1)
 			TextGrid_insertBoundary (him.get(), 1, tmin);

@@ -63,7 +63,7 @@ static inline autoMAT LPC_listAllCoefficients (LPC me) {
 	autoMAT result = zero_MAT (my maxnCoefficients, my nx);
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		LPC_Frame f = & my d_frames [iframe];
-		result.column (iframe).part (1, f -> nCoefficients) <<= f -> a.get();
+		result.column (iframe).part (1, f -> nCoefficients)  <<=  f -> a.get();
 	}
 	return result;
 }

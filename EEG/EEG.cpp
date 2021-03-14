@@ -458,7 +458,7 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 			if (doNotch50Hz)
 				Spectrum_stopHannBand (spec.get(), 48.0, 52.0, 1.0);
 			autoSound him = Spectrum_to_Sound (spec.get());
-			my sound -> z.row (ichan) <<= his z.row (1).part (1, my sound -> nx);
+			my sound -> z.row (ichan)  <<=  his z.row (1).part (1, my sound -> nx);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered.");
@@ -519,7 +519,7 @@ void EEG_setChannelToZero (EEG me, integer channelNumber) {
 	try {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw (U"No channel ", channelNumber, U".");
-		my sound -> z.row (channelNumber) <<= 0.0;
+		my sound -> z.row (channelNumber)  <<=  0.0;
 	} catch (MelderError) {
 		Melder_throw (me, U": channel ", channelNumber, U" not set to zero.");
 	}
@@ -600,7 +600,7 @@ static void Sound_removeChannel (Sound me, integer channelNumber) {
 		Melder_require (my ny > 1,
 			U"Cannot remove last remaining channel.");
 		for (integer ichan = channelNumber; ichan < my ny; ichan ++)
-			my z.row (ichan) <<= my z.row (ichan + 1);
+			my z.row (ichan)  <<=  my z.row (ichan + 1);
 		my ymax -= 1.0;
 		my ny -= 1;
 	} catch (MelderError) {

@@ -54,7 +54,7 @@ autoDistance Configuration_to_Distance (Configuration me) {
 		autoVEC dist = raw_VEC (my numberOfColumns);
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
-				dist.all() <<= my data.row (i)  -  my data.row (j);
+				dist.all()  <<=  my data.row (i)  -  my data.row (j);
 				VECabs_inplace (dist.get());
 				const double dmax = NUMmax (dist.get());
 				double d = 0.0;

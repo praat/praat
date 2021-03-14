@@ -91,7 +91,7 @@ autoAffineTransform AffineTransform_invert (AffineTransform me) {
 autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my dimension, my dimension);
-		thy data.all() <<= my r.all();
+		thy data.all()  <<=  my r.all();
 		for (integer i = 1; i <= my dimension; i ++) {
 			char32 label [40];
 			Melder_sprint (label,40, i);
@@ -107,7 +107,7 @@ autoTableOfReal AffineTransform_extractMatrix (AffineTransform me) {
 autoTableOfReal AffineTransform_extractTranslationVector (AffineTransform me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my dimension);
-		thy data.row (1) <<= my t.get();
+		thy data.row (1)  <<=  my t.get();
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": translation vector not extracted.");

@@ -256,7 +256,7 @@ static void PowerCepstrum_smooth_inplaceRectangular_old (PowerCepstrum me, doubl
 					VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
 				else
 					VECsmoothByMovingAverage_preallocated (qin.get(), qout.get(), numberOfQuefrencyBins);
-			my z.row (1) <<= ( numberOfIterations % 2 == 1 ? qout.get() : qin.get() );
+			my z.row (1)  <<=  ( numberOfIterations % 2 == 1 ? qout.get() : qin.get() );
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");
@@ -405,7 +405,7 @@ autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, integer row) {
 		autoPowerCepstrum thee = PowerCepstrum_create (my xmax, my nx);
 		Melder_require (row > 0 && row <= my ny,
 			U"Row number should be between 1 and ", my ny, U" inclusive.");
-		thy z.row (1) <<= my z.row (row);
+		thy z.row (1)  <<=  my z.row (row);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrum created.");
@@ -417,7 +417,7 @@ autoPowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, integer col) {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		Melder_require (col > 0 && col <= my nx,
 			U"Column number should be between 1 and ", my nx, U" inclusive.");
-		thy z.row (1) <<= my z.column (col);
+		thy z.row (1)  <<=  my z.column (col);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrum created.");

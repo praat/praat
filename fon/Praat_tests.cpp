@@ -57,7 +57,7 @@ static integer length (conststring32 s) {
 
 static autoMAT constantHH (integer nrow, integer ncol, double value) {
 	autoMAT result = raw_MAT (nrow, ncol);
-	result.all() <<= value;
+	result.all()  <<=  value;
 	return result;
 }
 
@@ -436,7 +436,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoMAT result = randomGauss_MAT (size, size, 0.0, 1.0);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				result.all() <<= 5.0;
+				result.all()  <<=  5.0;
 			t = Melder_stopwatch () / size / size;   // 10^0..4: 2.7/0.16/0.24 / 0.38/0.98
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
@@ -459,7 +459,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				//add_VEC_out (result.all(), x.all(), y.all());
-				result.all() <<= x.all() + y.all();
+				result.all()  <<=  x.all() + y.all();
 			t = Melder_stopwatch () / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);

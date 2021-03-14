@@ -97,7 +97,7 @@ autoMatrix CC_to_Matrix (CC me) {
 		
 		for (integer i = 1; i <= my nx; i ++) {
 			const CC_Frame cf = & my frame [i];
-			thy z.column (i).part (1, cf -> numberOfCoefficients) <<= cf -> c.get().part (1, cf -> numberOfCoefficients);
+			thy z.column (i).part (1, cf -> numberOfCoefficients)  <<=  cf -> c.get().part (1, cf -> numberOfCoefficients);
 		}
 		return thee;
 	} catch (MelderError) {

@@ -450,7 +450,7 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 
 	for (integer k = 1; k <= b.ncol; k ++) {
 		autoVEC xt = SVD_solve (me.get(), b.column (k));
-		x.column (k) <<= xt.all();
+		x.column (k)  <<=  xt.all();
 	}
 	return x;
 }
@@ -751,7 +751,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 			for (integer j = 1; j <= r; j ++)
 				x [j] /= c [j] - c [a.ncol]; // eq. 10
 			if (q > 1)
-				x.part (r + 2, a.ncol) <<= 0.0;
+				x.part (r + 2, a.ncol)  <<=  0.0;
 			autoVEC result = mul_VEC (u, x.all());
 			return result;
 		}
@@ -776,7 +776,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	for (integer j = 1; j <= r; j ++)
 		x [j] /= c [j] - b0; // eq. 7
 	if (q > 1)
-		x.part (r + 1, a.ncol) <<= 0.0;
+		x.part (r + 1, a.ncol)  <<=  0.0;
 	autoVEC result = mul_VEC (u, x.all());
 	return result;
 }
@@ -1320,10 +1320,10 @@ void MATscaledResiduals (MAT const& residuals, constMAT const& data, constMAT co
 		autoMAT lowerInverse = copy_MAT (covariance);
 		MATlowerCholeskyInverse_inplace (lowerInverse.get(), nullptr);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			dif.all() <<= data.row (irow)  -  means;
-			residuals.row(irow) <<= 0.0;
+			dif.all()  <<=  data.row (irow)  -  means;
+			residuals.row(irow)  <<=  0.0;
 			if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
-				residuals.row(irow) <<= lowerInverse.row(1)  *  dif.get();
+				residuals.row(irow)  <<=  lowerInverse.row(1)  *  dif.get();
 			} else {// square matrix
 				for (integer icol = 1; icol <= data.ncol; icol ++)
 					residuals [irow] [icol] = NUMinner (lowerInverse.row(icol).part (1, icol), dif.part (1, icol));
@@ -2171,7 +2171,7 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 		rc [m] = a [m];
 		Melder_require (fabs (rc [m]) <= 1.0,
 			U"Relection coefficient [", m, U"] larger than 1.");
-		b.part (1, m) <<= a.part (1, m);
+		b.part (1, m)  <<=  a.part (1, m);
 		for (integer i = 1; i < m; i ++)
 			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
 	}
@@ -2276,7 +2276,7 @@ void NUMlpc_area_to_lpc2 (double *area, integer n, double *lpc) {
 
 void NUMlpc_lpc_to_rc2 (double *lpc, integer m, double *rc);
 void NUMlpc_lpc_to_rc2 (double *lpc, integer m, double *rc) { // klopt nog niet
-	rc.part(1,m) <<= lpc.part (1,m)
+	rc.part(1,m)  <<=  lpc.part (1,m)
 	for (integer j = 2; j <= m; j ++) {
 		integer jb = m + 1 - j;
 		integer mh = (jb + 1) / 2;
@@ -2306,7 +2306,7 @@ void NUMlpc_area_to_rc (double *area, integer m, double *rc) {
 
 void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc);
 void NUMlpc_rc_to_lpc (double *rc, integer m, double *lpc) {
-	lpc.part (1,m) <<= rc. part (1.m)
+	lpc.part (1,m)  <<=  rc. part (1.m)
 	for (integer j = 2; j <= m; j ++) {
 		for (integer k = 1; k <= j / 2; k ++) {
 			double at = lpc [k] + rc [j] * lpc [j - k];
@@ -2961,14 +2961,14 @@ static double update (VEC const& x_new, VEC const& y_new, BOOLVECVU const& suppo
 	Melder_assert (y_new.size == yn.size);
 	Melder_assert (dictionary.nrow == yn.size && dictionary.ncol == xn.size);
 	
-	buffer <<=  stepSize * gradient;
+	buffer  <<=  stepSize * gradient;
 	x_new  <<=  xn  +  buffer; // x(n) + stepSize * gradient
 	VECupdateDataAndSupport_inplace (x_new, support_new, numberOfNonZeros);
 	buffer  <<=  x_new  -  xn; // x(n+1) - x (n)
 	const double xdifsq = NUMsum2 (buffer); // ||x(n+1) - x (n)||^2
 	
 	mul_VEC_out (y_new, dictionary, x_new); // y(n+1) = D. x(n+1)
-	buffer.part (1, yn.size) <<= y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
+	buffer.part (1, yn.size)  <<=  y_new  -  yn; // y(n+1) - y(n) = D.(x(n+1) - x(n))
 	const double ydifsq = NUMsum2 (buffer.part (1, yn.size)); // ||y(n+1) - y(n)||^2
 	return xdifsq / ydifsq;
 }
@@ -2983,13 +2983,6 @@ autoVEC newVECsolveSparse_IHT (constMATVU const& dictionary, constVECVU const& y
 	} catch (MelderError) {
 		Melder_throw (U"Solution of sparse problem not found.");
 	}
-}
-
-/* temporarily until present in melder_tensor.h */
-inline void operator<<= (BOOLVECVU const& target, constBOOLVECVU const& source) {
-	Melder_assert (target.size == source.size);
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = source [i];
 }
 
 void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECVU const& y, integer numberOfNonZeros, integer maximumNumberOfIterations, double tolerance, integer infoLevel) {
@@ -3019,15 +3012,15 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 			*/
 			mul_VEC_out (buffer.get(), dictionary.transpose(), y);
 			VECupdateDataAndSupport_inplace (buffer.get(), support.get(), numberOfNonZeros);
-			yfromx.all() <<= 0.0;
-			ydif.all() <<= y; // ydif = y - D.x(1) = y - D.0 = y
+			yfromx.all()  <<=  0.0;
+			ydif.all()  <<=  y; // ydif = y - D.x(1) = y - D.0 = y
 		} else {
 			/*
 				We improve a current solution x
 			*/
 			VECupdateDataAndSupport_inplace (x, support.get(), numberOfNonZeros);
 			mul_VEC_out (yfromx.get(), dictionary, x); // D.x(n)
-			ydif.all() <<= y  -  yfromx.all(); // y - D.x(n)
+			ydif.all()  <<=  y  -  yfromx.all(); // y - D.x(n)
 			rms = NUMsum2 (ydif.get()) / y.size; // ||y - D.x(n)||^2
 		}
 		
@@ -3068,7 +3061,7 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				}
 			}
 
-			ydif.all() <<= y  -  yfromx_new.all();   // y - D.x(n+1)
+			ydif.all()  <<=  y  -  yfromx_new.all();   // y - D.x(n+1)
 
 			const double rms_new = NUMsum2 (ydif.get()) / y.size;
 			const double relativeError = fabs (rms - rms_new) / rms_y;
@@ -3077,8 +3070,8 @@ void VECsolveSparse_IHT (VECVU const& x, constMATVU const& dictionary, constVECV
 				MelderInfo_writeLine (U"Iteration: ", iter, U", error: ", rms_new, U" relative: ", relativeError, U" stepSize: ", stepSize);
 			
 			x  <<=  x_new.all();
-			support.all() <<= support_new.all();
-			yfromx.all() <<= yfromx_new.all();
+			support.all()  <<=  support_new.all();
+			yfromx.all()  <<=  yfromx_new.all();
 			rms = rms_new;
 			iter ++;
 		}

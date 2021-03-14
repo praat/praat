@@ -106,7 +106,7 @@ static void NUMmaximizeCongruence_inplace (MATVU const& t, constMATVU const& b, 
 			// Step 7.c
 
 			if (q == 0.0) {
-				u.column (j) <<= 0.0;
+				u.column (j)  <<=  0.0;
 			} else {
 				const double ww = NUMsum2 (w.column (j));
 				for (integer i = 1; i <= nc; i ++) {
@@ -143,7 +143,7 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 		Melder_assert (p -> dimension == thy data.ncol);
 		NUMmaximizeCongruence_inplace (p -> r.get (), my data.get (), thy data.get (), maximumNumberOfIterations, tolerance);
 		autoAffineTransform at = AffineTransform_create (p -> dimension);
-		at -> r.get () <<= p -> r.get ();
+		at -> r.get ()  <<=  p -> r.get ();
 		return at;
 	} catch (MelderError) {
 		Melder_throw (me, U": no congruence transformation created.");
