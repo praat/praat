@@ -185,7 +185,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	conststring32 silentLabel, conststring32 soundingLabel);
 
-autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeStep, double longTermWindow_r, double shorttimeAveragingWindow, double lsfmThreshold, double minSilenceDuration, 
+autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeStep, double longTermWindow_r, double shorttimeAveragingWindow, double lowFrequencyThreshold, double highFrequencyThreshold, double lsfmThreshold, double silenceThreshold_dB, double minSilenceDuration, 
 	double minSoundingDuration,	conststring32 novoiceAcivityLabel, conststring32 voiceAcivityLabel);
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,

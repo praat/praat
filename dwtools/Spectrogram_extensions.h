@@ -151,6 +151,6 @@ void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, integer f
 	Implementation of Yanna Ma & Akinori Nishihara (2013), Efficient voice activity detection algorithm
 		using long-term spectral flatness measure,  EURASIP Journal on Audio, Speech, and Music Processing.
 */
-autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, double longTermWindow_r, double shorttimeAveragingWindow);
+autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, double longtermWindow, double shorttermWindow, double fmin, double fmax);
 
 #endif /* _Spectrogram_extensions_h_ */

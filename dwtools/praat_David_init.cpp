@@ -5654,14 +5654,34 @@ FORM (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	LABEL (U"Silent intervals detection")
 	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
-	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
-	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval (s)", U"0.1")
+	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval (s)", U"0.1")
 	WORD (silenceLabel, U"Silent interval label", U"silent")
 	WORD (soundingLabel, U"Sounding interval label", U"sounding")
 	OK
 DO
 	CONVERT_EACH (Sound)
 		autoTextGrid result = Sound_to_TextGrid_detectSilences (me, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_Sound_to_TextGrid_voiceActivity, U"Sound_to_TextGrid_voiceActivity", nullptr) {
+	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
+	POSITIVE (longtermWindow, U"Long term window (s)", U"0.3")
+	POSITIVE (shorttermWindow, U"Short term window (s)", U"0.1")
+	POSITIVE (fmin, U"left Frequency range (Hz)", U"70.0")
+	POSITIVE (fmax,  U"right Frequency range (Hz)", U"6000.0")
+	REAL (flatnessThreshold, U"Flatness threshold", U"-10.0")
+	REAL (silenceThreshold_dB, U"Silence threshold (dB)", U"-35.0")
+	POSITIVE (minimumSilenceDuration, U"Minimum silent interval (s)", U"0.1")
+	POSITIVE (minimumSpeechDuration, U"Minimum speech interval (s)", U"0.1")
+	WORD (silenceLabel, U"Silent interval label", U"silent")
+	WORD (speechLabel, U"Sounding interval label", U"sounding")
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoTextGrid result = Sound_to_TextGrid_detectVoiceActivity_lsfm (me, timeStep, longtermWindow, shorttermWindow,
+			fmin, fmax, flatnessThreshold, silenceThreshold_dB, minimumSilenceDuration, minimumSpeechDuration, silenceLabel, speechLabel);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -6054,6 +6074,17 @@ DO
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
 
+FORM (NEW1_Spectrogram_getLongtermSpectralFlatnessMeasure, U"Spectrogram_getLongtermSpectralFlatness", nullptr) {
+	POSITIVE (longtimeWindow, U"Long time window", U"0.2")
+	POSITIVE (shorttimeWindow, U"Short time window", U"0.04")
+	POSITIVE (fmin, U"left Frequency range_(Hz)", U"400.0")
+	POSITIVE (fmax, U"right Frequency range_(Hz)", U"4000.0")
+	OK
+DO
+	CONVERT_EACH (Spectrogram)
+		autoMatrix result = Spectrogram_getLongtermSpectralFlatnessMeasure (me, longtimeWindow, shorttimeWindow, fmin, fmax);
+	CONVERT_EACH_END (my name.get())
+}
 /**************** Spectrum *******************************************/
 
 FORM (GRAPHICS_Spectrum_drawPhases, U"Spectrum: Draw phases", U"Spectrum: Draw phases...") {
@@ -9178,6 +9209,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classRoots, 1, classPolynomial, 1, U"Polish roots", nullptr, 0, MODIFY_Roots_Polynomial_polish);
 
 	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1, NEW_Sound_to_TextGrid_detectSilences);
+	praat_addAction1 (classSound, 0, U"To TextGrid (voice activity)...", U"To IntervalTier", 1, NEW_Sound_to_TextGrid_voiceActivity);
     praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", praat_HIDDEN, PLAY_Sound_playOneChannel);
     praat_addAction1 (classSound, 0, U"Play as frequency shifted...", U"Play", praat_HIDDEN, PLAY_Sound_playAsFrequencyShifted);
 	praat_addAction1 (classSound, 0, U"Draw where...", U"Draw...", 1, GRAPHICS_Sound_drawWhere);
@@ -9226,6 +9258,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classSound, 1, classIntervalTier, 1, U"Cut parts matching label...", nullptr, 0, NEW1_Sound_IntervalTier_cutPartsMatchingLabel);
 
 	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1, NEW1_Spectrograms_to_DTW);
+	praat_addAction1 (classSpectrogram, 0, U"Get longterm spectral flatness...", U"To DTW...", praat_HIDDEN | praat_DEPTH_1, NEW1_Spectrogram_getLongtermSpectralFlatnessMeasure);
 
 	praat_addAction1 (classSpectrum, 0, U"Draw phases...", U"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Spectrum_drawPhases);
 	praat_addAction1 (classSpectrum, 0, U"Set real value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Spectrum_setRealValueInBin);

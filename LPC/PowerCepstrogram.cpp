@@ -175,12 +175,12 @@ static autoPowerCepstrogram PowerCepstrogram_smoothRectangular (PowerCepstrogram
 		*/
 		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
-			const double halfWindwow = 0.5 * timeAveragingWindow;
+			const double halfWindow = 0.5 * timeAveragingWindow;
 			autoVEC qout = raw_VEC (my nx);
 			for (integer iq = 1; iq <= my ny; iq ++) {
 				for (integer iframe = 1; iframe <= my nx; iframe ++) {
 					const double xmid = Sampled_indexToX (me, iframe);
-					qout [iframe] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, iq, 0, true);
+					qout [iframe] = Sampled_getMean (me, xmid - halfWindow, xmid + halfWindow, iq, 0, true);
 				}
 				thy z.row (iq)  <<=  qout.all();
 			}
