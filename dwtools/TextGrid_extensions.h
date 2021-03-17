@@ -84,7 +84,7 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, conststring32 label);
 
-void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, conststring32 label);
+void IntervalTier_combineIntervalsOnLabelMatch (IntervalTier me, conststring32 label);
 
 void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, conststring32 label, double minimumDuration);
 

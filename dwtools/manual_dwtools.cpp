@@ -4405,10 +4405,10 @@ DEFINITION (U"determines the maximum silence intensity value in dB with respect 
 	"intensity. For example, if %imax is the maximum intensity in dB then the maximum silence " \
 	"intensity is calculated as %%imax - silenceThreshold%; intervals with an intensity smaller " \
 	"than this value are considered as silent intervals.") \
-TAG (U"##Minimum silent interval duration (s)") \
+TAG (U"##Minimum silent interval (s)") \
 DEFINITION (U"determines the minimum duration for an interval to be considered as silent. " \
 	"If you don't want the closure for a plosive to count as silent then use a large enough value.") \
-TAG (U"##Minimum sounding interval duration (s)") \
+TAG (U"##Minimum sounding interval (s)") \
 DEFINITION (U"determines the minimum duration for an interval to be ##not# considered as silent. " \
 	"This offers the possibility to filter out small intense bursts of relatively short duration.") \
 TAG (U"##Silent interval label") \
@@ -4425,6 +4425,57 @@ NORMAL (U"First a copy of the sound is @@Sound: Filter (pass Hann band)...|bandp
 	"remove especially the low frequency noise that can have a significant influence on the intensity measurement but does not "
 	"really contribute to the sound. Next the @@Sound: To Intensity...|intensity of the filtered sound@ is determined. "
 	"Finally the silent and sounding intervals are determined @@Intensity: To TextGrid (silences)...|from the intensity curve@.")
+MAN_END
+
+MAN_BEGIN (U"Sound: To TextGrid (voice activity)...", U"djmw", 20210317)
+INTRO (U"A command that creates a @@TextGrid@ for the selected @@Sound@ in which the silent intervals and the "
+	"intervals with voice activity are marked. The discrimination between the two is based on a spectral flatnes measure.")
+NORMAL (U"Voice activity detection (VAD) is a method to discriminate speech segments from input noisy speech. "
+	"According to the article of @@Ma & Nishihara (2013)@, spectral flatness is a measure of the width, uniformity, "
+	"and noisiness of the power spectrum. A high spectral flatness indicates that the spectrum has a similar amount "
+	"of power in all spectral bands, and the graph of the spectrum would appear relatively flat and smooth; "
+	"A low spectral flatness indicates that the spectral power is less uniform, and this would be more typical "
+	"for speech-like sounds. In general speech is a highly non-stationary signal while background noise can be "
+	"considered stationary over relatively longer periods of time.  ")
+NORMAL (U"Because the spectral flatness measure is completely "
+	"independent of the overall intensity of the sound we have added the possibility to also discriminate on "
+	"intensity.")
+ENTRY (U"Settings")
+TAG (U"##Time step (s)#")
+DEFINITION (U"determines the time interval between consecutive measurements of the spectral flatness measure. ")
+TAG (U"##Long term window (s)#")
+DEFINITION (U"determines the window duration for the calculation of the long term spectral flatness measure. "
+	"According to ##Ma & Nishihara (2013)# a value of approximately 0.3 s performed best on average for a "
+	"number of different noise conditions.")
+TAG (U"##Short term window (s)#")
+DEFINITION (U"determines the interval for averaging spectral estimates. "
+	"According to ##Ma & Nishihara (2013)# a value of approximately 0.1 s performed best on average for a "
+	"number of different noise conditions.")
+TAG (U"##Frequency range (Hz)#")
+DEFINITION (U"determines the frequency range used in the calculation of the spectral flatness measure. "
+	"Ma & Nishihara (2013) used a range from 400 to 4000 Hz. Because fricatives tend to have strong components "
+	"above 4000 Hz we increased the default value to 6000 Hz. In this way the fricative's intensity, which is "
+	"calculated from this range, becomes higher and because of this a fricative is less likely to be skipped "
+	"by a selection on the silence threshold. We also decreased the lower value from 400 to 70 Hz. "
+	"In this way we increase chances that sounds at start or end positions with mainly low frequency components, "
+	"like nasals, are detected.")
+TAG (U"##Flatness threshold#")
+DEFINITION (U"determines whether a frame is considered %%sounding% or not based on a spectral flatness measure. Values of the flatness below the threshold are "
+	"considered sounding.")
+TAG (U"##Silence threshold (dB)#")
+DEFINITION (U"also determines whether a frame is considered %%sounding% or not, but based on intensity. "
+	"Intervals with an intensity smaller this value below the sound's maximum intensity value "
+	"are considered as %%silent% intervals. The intensity is calculated from the frequency range defined above. ")
+TAG (U"##Minimum silence interval duration (s)#")
+DEFINITION (U"determines the minimum duration for an interval to be considered as silent. "
+	"If you don't want the closure for a plosive to count as silent then use a large enough value.")
+TAG (U"##Minimum sounding interval (s)") \
+DEFINITION (U"determines the minimum duration for an interval to be ##not# considered as silent. "
+	"This offers the possibility to filter out small intense bursts of relatively short duration.")
+TAG (U"##Silent / Sounding interval label#")
+DEFINITION (U"detemine the labels for the corresponding intervals in the newly created TextGrid.")
+ENTRY (U"Algorithm")
+NORMAL (U"The VAD algorithm is described in @@Ma & Nishihara (2013)@.")
 MAN_END
 
 MAN_BEGIN (U"Intensity: To TextGrid (silences)...", U"djmw", 20061201)
@@ -6111,6 +6162,11 @@ MAN_END
 MAN_BEGIN (U"Lee & Seung (2001)", U"djmw", 20190312)
 NORMAL (U"D.D. Lee & S.H. Seung (2001): \"Algorithms for non-negative matrix factorization.\" "
 	"%%Advances in in neural information processing systems% #13: 556\\--562.")
+MAN_END
+
+MAN_BEGIN (U"Ma & Nishihara (2013)", U"djmw", 20210315)
+NORMAL (U"Y. Ma & A. Nishihara (2013): \"Efficient voice activity detection algorithm using long-term "
+	"spectral flatness measure.\", %%EURASIP Journal on Audio, Speech, and Music Processing%, ##2013#:21")
 MAN_END
 
 MAN_BEGIN (U"Magron & Virtanen (2018)", U"djmw", 20191024)

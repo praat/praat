@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2021 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,8 @@
 #include "Sound_extensions.h"
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_extensions.h"
+#include "Sound_and_Spectrogram.h"
+#include "Spectrogram_extensions.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
 #include "Vector.h"
@@ -1573,6 +1575,193 @@ autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax, doubl
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": speaker not changed.");
+	}
+}
+
+static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, conststring32 leftLabel) {
+	Melder_require (time > my xmin && time <= my xmax,
+		U"Time is outside interval.");
+	/*
+		Find interval to split.
+	*/
+	if (iinterval <= 0)
+		iinterval = IntervalTier_timeToLowIndex (me, time);
+	/*
+		Modify end time of left label.
+	*/
+	const TextInterval ti = my intervals.at [iinterval];
+	ti -> xmax = time;
+	TextInterval_setText (ti, leftLabel);
+	if (time != my xmax) {
+		autoTextInterval ti_new = TextInterval_create (time, my xmax, U"");
+		my intervals. addItem_unsorted_move (ti_new.move());
+	}
+}
+
+static autoIntensity Spectrogram_to_Intensity_silenceDetection (Spectrogram me) {
+	try {
+		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
+		VEC intensityBins = thy z.row (1);
+		/*
+			Add the values in the frequency bins, they are power (~amplitude squared)
+			Don't use frequencies below 80 Hz and above 8000 Hz.
+		*/
+		constexpr double fmin = 80.0, fmax = 8000.0;
+		const integer iFreqFrom = std::max (1_integer, Melder_iroundDown (fmin / my dy));
+		const integer iFreqTo = std::min (Melder_iroundUp (fmax / my dy), my ny);
+		for (integer ifreq = iFreqFrom; ifreq <= iFreqTo; ifreq ++) 			
+			intensityBins  +=  my z.row (ifreq);
+		/*
+			Scale intensity.
+		*/
+		intensityBins  /=  4.0e-10; // threshold of hearing
+		const double halfWindow = 3.2 * 0.01; // as if minimumPitch were 100 Hz
+		autoIntensity him = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			const double xmid = Sampled_indexToX (thee.get(), iframe);
+			const double intensity = Sampled_getMean (thee.get(), xmid - halfWindow, xmid + halfWindow, 1, 0, true);
+			his z [1] [iframe] = (intensity < 1.0e-30 ? -300.0 : 10.0 * log10 (intensity) );
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not determine Intensity.");
+	}
+}
+
+autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeStep, double longTermWindow, double shorttimeWindow, double fmin, double fmax, 
+	double lsfmThreshold, double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration, 
+	conststring32 novoiceActivityLabel, conststring32 voiceActivityLabel) {
+	try {
+		if (timeStep <= 0.0)
+			timeStep = 0.01;
+		Melder_require (fmin < fmax,
+			U"The minimum frequency of the range should be smaller than the maximum frequency.");
+		const double nyquistFrequency = 0.5 / my dx;
+		Melder_clipRight (& fmax, nyquistFrequency);
+		const double effectiveAnalysisWidth = std::max (0.02, 2.0 * timeStep);
+		const double minimumFreqStep = 20.0;
+		const double maximumTimeOversampling = 8.0, maximumFreqOversampling = 8.0;
+		autoSpectrogram spectrogram = Sound_to_Spectrogram (me, effectiveAnalysisWidth, fmax, timeStep, minimumFreqStep,
+			kSound_to_Spectrogram_windowShape::HANNING, maximumTimeOversampling, maximumFreqOversampling);
+		autoMatrix lsfmMatrix = Spectrogram_getLongtermSpectralFlatnessMeasure (spectrogram.get(), longTermWindow, shorttimeWindow, fmin, fmax);
+		autoTextGrid thee = TextGrid_create (my xmin, my xmax, U"VAD", U"");
+		const IntervalTier vadTier = (IntervalTier) thy tiers->at [1];
+		TextInterval_setText (vadTier -> intervals.at [1], voiceActivityLabel);
+		if (minSilenceDuration > my xmax - my xmin)
+			return thee;
+		/*
+			Step 1. Find activity intervals
+		*/
+		VEC lsfm = lsfmMatrix -> z.row (1);
+		conststring32 label;
+		integer iinterval = 1;
+		bool activityInterval = ( lsfm [1] < lsfmThreshold );
+		for (integer index = 2; index <= lsfm.size; index ++) {
+			bool addBoundary = false;
+			if (lsfm [index] < lsfmThreshold) {
+				if (! activityInterval) {   // start of activity
+					addBoundary = true;
+					activityInterval = true;
+					label = novoiceActivityLabel;
+				}
+			} else {
+				if (activityInterval) {   // end of activity
+					addBoundary = true;
+					activityInterval = false;
+					label = voiceActivityLabel;
+				}
+			}
+
+			if (addBoundary) {
+				const double time = Sampled_indexToX (lsfmMatrix.get(), index);
+				IntervalTier_addBoundaryUnsorted (vadTier, iinterval, time, label);
+				iinterval ++;
+			}
+		}
+		/*
+			Set the label of the last interval.
+		*/
+		label = activityInterval ? voiceActivityLabel : novoiceActivityLabel;
+		TextInterval_setText (vadTier -> intervals.at [iinterval], label);
+		vadTier -> intervals.sort ();
+		/*
+			Step 2: remove intervals that are too short.
+			First remove short activity intervals in-between noActivity intervals and
+			then remove the remaining short silence intervals.
+			This works much better than first removing short silence intervals and
+			then short non-silence intervals.
+		*/
+		if (minSoundingDuration > 0.0) {
+			IntervalTier_cutIntervals_minimumDuration (vadTier, voiceActivityLabel, minSoundingDuration);
+			IntervalTier_combineIntervalsOnLabelMatch (vadTier, novoiceActivityLabel);
+		}
+		if (minSilenceDuration > 0.0) {	
+			IntervalTier_cutIntervals_minimumDuration (vadTier, novoiceActivityLabel, minSilenceDuration);
+			IntervalTier_combineIntervalsOnLabelMatch (vadTier, voiceActivityLabel);
+		}
+		/*
+			Step 3: Find silences, because the VAD doesn't
+		*/
+		if (silenceThreshold_dB > -50.0) {
+			/*
+				Step 3: Find silences, because the VAD doesn't
+			*/
+			autoIntensity intensity = Spectrogram_to_Intensity_silenceDetection (spectrogram.get());
+			autoTextGrid silences = Intensity_to_TextGrid_detectSilences (intensity.get(), silenceThreshold_dB, minSilenceDuration, minSoundingDuration, novoiceActivityLabel, voiceActivityLabel);
+			/*
+				Step 4: Union of the two VAD and the silences intervals.
+			*/
+			autoTextGrid unionTextGrid = TextGrid_create (my xmin, my xmax, U"union", U"");
+			integer unionIndex = 1;
+			const double timeMargin = std::max (0.02, std::min (0.02, std::min (minSilenceDuration, minSoundingDuration))); 
+			const IntervalTier silenceTier = (IntervalTier) silences -> tiers -> at [1];
+			const IntervalTier unionTier = (IntervalTier) unionTextGrid -> tiers -> at [1];
+			const integer silenceNumberOfIntervals = silenceTier -> intervals.size;
+			const integer vadNumberOfIntervals = vadTier -> intervals.size;
+			for (integer silenceIndex = 1; silenceIndex <=  silenceNumberOfIntervals; silenceIndex ++) {
+				const TextInterval silenceTextInterval = silenceTier -> intervals.at [silenceIndex];
+				const double silenceStartTime = silenceTextInterval -> xmin;
+				const conststring32 silenceLabel = silenceTextInterval -> text.get();
+				const double silenceEndTime = silenceTextInterval -> xmax;
+				if (Melder_stringMatchesCriterion (silenceLabel, kMelder_string::EQUAL_TO, novoiceActivityLabel, false)) {
+					/*
+						Silent interval. Simply add it.
+					*/
+					IntervalTier_addBoundaryUnsorted (unionTier, unionIndex, silenceEndTime, novoiceActivityLabel);
+					unionIndex ++;
+				} else {
+					/*
+						Non silent interval. Do we have to split it into VAD intervals?
+					*/
+					integer vadIndex = IntervalTier_timeToIndex (vadTier, silenceStartTime);
+					bool unionContinues = true;
+					while (unionContinues && vadIndex <= vadNumberOfIntervals) {
+						const TextInterval vadTextInterval = vadTier -> intervals.at [vadIndex];
+						const double vadStartTime = vadTextInterval -> xmin;
+						const conststring32 vadLabel = vadTextInterval -> text.get();
+						const double vadEndTime = vadTextInterval -> xmax;
+						if (vadEndTime > silenceEndTime - timeMargin) {
+							// extends beyound the end 
+							IntervalTier_addBoundaryUnsorted (unionTier, unionIndex, silenceEndTime, vadLabel);
+							unionIndex ++;
+							unionContinues = false;
+						} else {
+							IntervalTier_addBoundaryUnsorted (unionTier, unionIndex, vadEndTime, vadLabel);
+							unionIndex ++;
+						}
+						vadIndex ++;
+					}
+				}
+			}
+			unionTier -> intervals.sort ();
+			IntervalTier_combineIntervalsOnLabelMatch (unionTier, novoiceActivityLabel);
+			TextGrid_addTier_copy (unionTextGrid.get(), silenceTier);
+			TextGrid_addTier_copy (unionTextGrid.get(), vadTier);
+			return unionTextGrid;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not detect voice activity.");
 	}
 }
 

@@ -593,7 +593,7 @@ void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, conststring32 l
 	}
 }
 
-void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, conststring32 label) {
+void IntervalTier_combineIntervalsOnLabelMatch (IntervalTier me, conststring32 label) {
 	integer iinterval = 1;
 	while (iinterval < my intervals.size) {
 		const TextInterval thisInterval = my intervals.at [iinterval];
