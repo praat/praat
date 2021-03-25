@@ -97,6 +97,7 @@
 #include "IntensityTierEditor.h"
 #include "Matrix_Categories.h"
 #include "Matrix_extensions.h"
+#include "LogFrequencySpectrogram.h"
 #include "LongSound_extensions.h"
 #include "KlattGridEditors.h"
 #include "KlattTable.h"
@@ -3518,6 +3519,22 @@ DIRECT (NEW_LegendreSeries_to_Polynomial) {
 	CONVERT_EACH_END (my name.get())
 }
 
+/********************* LogFrequencySpectrogram **************************************/
+
+FORM (GRAPHICS_LogFrequencySpectrogram_paint, U"LogFrequencySpectrogram: Paint", nullptr) {
+	REAL (xmin, U"left Time range (s)", U"0.0")
+	REAL (xmax, U"right Time range (s)", U"0.0 ;(=all)")
+	REAL (ymin, U"left Frequency range (Hz)", U"0.0")
+	REAL (ymax, U"right Frequency range (Hz)", U"0.0 ;(=auto)")
+	REAL (minimum, U"left Amplitude range", U"0.0")
+	REAL (maximum, U"right Amplitude range", U"0.0 ;(=auto)")
+	BOOLEAN (garnish, U"Garnish", true);
+	OK
+DO
+	GRAPHICS_EACH (LogFrequencySpectrogram)
+		LogFrequencySpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, minimum, maximum, garnish);
+	GRAPHICS_EACH_END
+}
 
 /********************* LongSound **************************************/
 
@@ -5821,6 +5838,18 @@ FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr)
 DO
 	CONVERT_EACH (Sound)
 		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, maximumFrequency);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_Sound_to_Spectrogram_constantQ, U"", nullptr) {
+	REAL (timeStep, U"Time step (s)", U"0.01")
+	POSITIVE (f1, U"Low frequency (Hz)", U"110.0 (=A-2)")
+	NATURAL (numberOfStepsPerOctave, U"Number of steps / octave", U"24")
+	POSITIVE (numberOfSteps, U"Number of steps", U"5*24")
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoLogFrequencySpectrogram result = Sound_to_LogFrequencySpectrogram_constantQ (me, timeStep, f1, numberOfStepsPerOctave, numberOfSteps);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -8498,7 +8527,7 @@ void praat_uvafon_David_init () {
 		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
 		classFormantFilter,
-		classIndex, classKlattTable, classNMF,
+		classIndex, classKlattTable, classLogFrequencySpectrogram, classNMF,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classNavigationContext,
 		classPatternList, classPCA, classPolynomial, classRoots,
@@ -8967,6 +8996,8 @@ void praat_uvafon_David_init () {
 	praat_FunctionSeries_init (classLegendreSeries);
 	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_LegendreSeries_to_Polynomial);
 
+	praat_addAction1 (classLogFrequencySpectrogram, 0, U"Paint...", nullptr, 0, GRAPHICS_LogFrequencySpectrogram_paint);
+	
 	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
@@ -9234,6 +9265,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"To MelFilter...", U"To BarkFilter...", praat_DEPRECATED_2014 | praat_DEPTH_1, NEW_Sound_to_MelFilter);
 	praat_addAction1 (classSound, 0, U"To MelSpectrogram...", U"To BarkSpectrogram...", praat_DEPTH_1, NEW_Sound_to_MelSpectrogram);
 	praat_addAction1 (classSound, 0, U"To ComplexSpectrogram...", U"To MelSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, NEW_Sound_to_ComplexSpectrogram);
+	praat_addAction1 (classSound, 0, U"To Spectrogram (constant Q)...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN, NEW_Sound_to_Spectrogram_constantQ);
     praat_addAction1 (classSound, 0, U"Extract Electroglottogram...", U"Extract part for overlap...", 1, NEW_Sound_extractElectroglottogram);
 
 	praat_addAction1 (classSound, 0, U"To Polygon...", U"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, NEW_Sound_to_Polygon);
