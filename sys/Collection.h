@@ -56,6 +56,14 @@ struct ArrayOf {
 	}
 };
 
+/*
+	The following has to be global, not a static field,
+	because not all static fields in the same template have the same address,
+	and equality of address is needed by the recursive showMembers function in DataEditor.
+	We cannot even declare this inline, because of ordering problems.
+*/
+extern structData_Description theCollectionOfDaata_v_description [];
+
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structThing)*/>
 struct CollectionOf : structDaata {
 	ArrayOf <T> at;
@@ -458,12 +466,7 @@ struct CollectionOf : structDaata {
 		_CollectionOfDaata_v_readBinary (reinterpret_cast<_CollectionOfDaata*> (this), f, formatVersion);
 	}
 	Data_Description v_description () override {
-		static structData_Description description [3] = {
-			{ U"size", integerwa, Melder_offsetof (CollectionOf<structThing>*, size), sizeof (integer), nullptr, nullptr, 0, nullptr, nullptr, nullptr, nullptr },
-			{ U"items", objectwa, Melder_offsetof (CollectionOf<structThing>*, at), sizeof (Daata), U"Daata", & theClassInfo_Daata, 1, nullptr, U"size", nullptr, nullptr },
-			{ }
-		};
-		return & description [0];
+		return & theCollectionOfDaata_v_description [0];
 	}
 
 	/*
