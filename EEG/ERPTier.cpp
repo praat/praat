@@ -70,7 +70,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 		Function_init (thee.get(), fromTime, toTime);
 		thy numberOfChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 		Melder_assert (thy numberOfChannels > 0);
-		thy channelNames = copy_STRVEC (my channelNames.get());
+		thy channelNames = copy_STRVEC (my channelNames.part (1, thy numberOfChannels));
 		integer numberOfEvents = events -> nt;
 		double soundDuration = toTime - fromTime;
 		double samplingPeriod = my sound -> dx;
