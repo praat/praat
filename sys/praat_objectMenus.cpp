@@ -601,13 +601,13 @@ static void cb_finishedOpeningDocuments () {
 
 #if cocoa
 DIRECT (PRAAT_cut) {
-	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] cut: nil];
+	[[[NSApp keyWindow] firstResponder] cut: nil];
 END }
 DIRECT (PRAAT_copy) {
-	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] copy: nil];
+	[[[NSApp keyWindow] firstResponder] copy: nil];
 END }
 DIRECT (PRAAT_paste) {
-	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] pasteAsPlainText: nil];
+	[[[NSApp keyWindow] firstResponder] pasteAsPlainText: nil];
 END }
 DIRECT (PRAAT_minimize) {
 	[[NSApp keyWindow] performMiniaturize: nil];

@@ -867,7 +867,6 @@ void UiForm_finish (UiForm me) {
 			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ?
 				multiLineTextHeight (3) :
 			textFieldHeight;
-		okButtonIsDefault &= ( thy numberOfLines <= 1 );   // because otherwise, the Enter key would be ambiguous
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
 	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name.get(), gui_dialog_cb_close, me, 0);
@@ -915,16 +914,22 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::TEXT_:
 			case _kUiField_type::NUMVEC_:
+			{
+				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+			}
+			break;
 			case _kUiField_type::NUMMAT_:
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					y, y + multiLineTextHeight (thy numberOfLines), thy numberOfLines > 1 ? GuiText_SCROLLED : 0);
+					y, y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
+				okButtonIsDefault = false;   // because otherwise, the Enter key would be ambiguous
 			}
 			break;
 			case _kUiField_type::FORMULA_:
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					y, y + multiLineTextHeight (5), GuiText_WORDWRAP | GuiText_MULTILINE);
+					y, y + multiLineTextHeight (5), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::INFILE_:
@@ -932,7 +937,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::FOLDER_:
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					y, y + multiLineTextHeight (3), GuiText_WORDWRAP | GuiText_MULTILINE);
+					y, y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::LABEL_:
