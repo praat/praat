@@ -920,8 +920,9 @@ Thing_define (GuiText, GuiControl) {
 
 /* GuiText creation flags: */
 #define GuiText_SCROLLED  1
-#define GuiText_MULTILINE  2
-#define GuiText_WORDWRAP  4
+#define GuiText_CHARWRAP  2
+#define GuiText_INKWRAP  4
+#define GuiText_ANYWRAP  (GuiText_CHARWRAP | GuiText_INKWRAP)
 #define GuiText_NONEDITABLE  8
 GuiText GuiText_create      (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
 GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
