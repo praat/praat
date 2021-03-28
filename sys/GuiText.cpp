@@ -543,7 +543,9 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my d_widget));
 			gtk_widget_show (GTK_WIDGET (scrolled));
 			gtk_text_view_set_editable (GTK_TEXT_VIEW (my d_widget), (flags & GuiText_NONEDITABLE) == 0);
-			if ((flags & GuiText_INKWRAP) != 0)
+			if (flags & GuiText_CHARWRAP)
+				ww = GTK_WRAP_CHAR;
+			else if (flags & GuiText_INKWRAP)
 				ww = GTK_WRAP_WORD_CHAR;
 			else
 				ww = GTK_WRAP_NONE;
@@ -578,9 +580,9 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		_GuiObject_setUserData (my d_widget, me.get());
 		my d_editable = (flags & GuiText_NONEDITABLE) == 0;
 		my d_widget -> window = CreateWindow (L"edit", nullptr, WS_CHILD | WS_BORDER
-			| ( flags & GuiText_INKWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
+			| ( flags & GuiText_ANYWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
 			| ES_MULTILINE | WS_CLIPSIBLINGS
-			| ( flags & GuiText_SCROLLED ? WS_HSCROLL | WS_VSCROLL : 0 ),
+			| ( flags & GuiText_SCROLLED ? WS_VSCROLL | ( flags & GuiText_ANYWRAP ? 0 : WS_HSCROLL ) : 0 ),
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
 			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
@@ -595,11 +597,10 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		Edit_LimitText (my d_widget -> window, 0);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		/*
-		 * The first created text widget shall attract the input focus.
-		 */
-		if (! my d_widget -> shell -> textFocus) {
+			The first created text widget shall attract the input focus.
+		*/
+		if (! my d_widget -> shell -> textFocus)
 			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
-		}
 	#elif cocoa
 		if (flags & GuiText_SCROLLED) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
