@@ -956,6 +956,8 @@ Thing_define (GuiWindow, GuiShell) {
 		Thing d_tabBoss;
 		GuiMenuItemCallback d_shiftTabCallback;
 		Thing d_shiftTabBoss;
+		GuiMenuItemCallback d_enterCallback;
+		Thing d_enterBoss;
 		GuiMenuItemCallback d_optionBackspaceCallback;
 		Thing d_optionBackspaceBoss;
 	#elif motif

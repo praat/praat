@@ -536,20 +536,15 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	#if gtk
 		trace (U"before creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		if (flags & GuiText_SCROLLED) {
-			GtkWrapMode ww;
 			GuiObject scrolled = gtk_scrolled_window_new (nullptr, nullptr);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			my d_widget = gtk_text_view_new ();
 			gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my d_widget));
 			gtk_widget_show (GTK_WIDGET (scrolled));
-			gtk_text_view_set_editable (GTK_TEXT_VIEW (my d_widget), (flags & GuiText_NONEDITABLE) == 0);
-			if (flags & GuiText_CHARWRAP)
-				ww = GTK_WRAP_CHAR;
-			else if (flags & GuiText_INKWRAP)
-				ww = GTK_WRAP_WORD_CHAR;
-			else
-				ww = GTK_WRAP_NONE;
-			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my d_widget), ww);
+			gtk_text_view_set_editable (GTK_TEXT_VIEW (my d_widget), ! (flags & GuiText_NONEDITABLE));
+			const GtkWrapMode gtkWrapMode =
+				( flags & GuiText_CHARWRAP ? GTK_WRAP_CHAR : flags & GuiText_INKWRAP ? GTK_WRAP_WORD_CHAR : GTK_WRAP_NONE );
+			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my d_widget), gtkWrapMode);
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
 			g_signal_connect (G_OBJECT (buffer), "delete-range", G_CALLBACK (_GuiGtkTextBuf_history_delete_cb), me.get());
 			g_signal_connect (G_OBJECT (buffer), "insert-text", G_CALLBACK (_GuiGtkTextBuf_history_insert_cb), me.get());
@@ -559,7 +554,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my v_positionInForm (scrolled, left, right, top, bottom, parent);
 		} else {
 			my d_widget = gtk_entry_new ();
-			gtk_editable_set_editable (GTK_EDITABLE (my d_widget), (flags & GuiText_NONEDITABLE) == 0);
+			gtk_editable_set_editable (GTK_EDITABLE (my d_widget), ! (flags & GuiText_NONEDITABLE));
 			g_signal_connect (G_OBJECT (my d_widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me.get());
 			g_signal_connect (G_OBJECT (my d_widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me.get());
 			g_signal_connect (GTK_EDITABLE (my d_widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me.get());
