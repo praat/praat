@@ -543,6 +543,10 @@ static void gui_button_cb_ok (UiForm me, GuiButtonEvent event) {
 	UiForm_okOrApply (me, event -> button, true);
 }
 
+static void gui_dialog_cb_default (UiForm me) {
+	UiForm_okOrApply (me, nullptr, true);
+}
+
 static void gui_button_cb_apply (UiForm me, GuiButtonEvent event) {
 	UiForm_okOrApply (me, event -> button, false);
 }
@@ -870,6 +874,7 @@ void UiForm_finish (UiForm me) {
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
 	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name.get(), gui_dialog_cb_close, me, 0);
+	GuiDialog_setDefaultCallback (my d_dialogForm, gui_dialog_cb_default, me);
 
 	form = my d_dialogForm;
 

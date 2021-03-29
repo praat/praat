@@ -148,7 +148,7 @@ void structGuiMenu :: v_destroy () noexcept {
 									structGuiMenuItemEvent event { nullptr, false, false, false };
 									window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
 								} catch (MelderError) {
-									Melder_flushError (U"Tab key not completely handled.");
+									Melder_flushError (U"Shift-Tab not completely handled.");
 								}
 								return;
 							}
@@ -173,8 +173,11 @@ void structGuiMenu :: v_destroy () noexcept {
 				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
 					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
 					if (shell -> classInfo == classGuiWindow) {
+						/*
+							Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
+						*/
 						GuiWindow window = (GuiWindow) shell;
-						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask)) && window -> d_enterCallback) {
+						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
 							try {
 								structGuiMenuItemEvent event { nullptr, false, false, false };
 								window -> d_enterCallback (window -> d_enterBoss, & event);
@@ -183,10 +186,19 @@ void structGuiMenu :: v_destroy () noexcept {
 							}
 							return;
 						}
-					} else {
+					} else if (shell -> classInfo == classGuiDialog) {
 						/*
-							We're in a dialog. Do nothing. Send on.
+							Reroute Enter key presses from any multiline text view to the default button.
 						*/
+						GuiDialog dialog = (GuiDialog) shell;
+						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
+							try {
+								dialog -> d_defaultCallback (dialog -> d_defaultBoss);
+							} catch (MelderError) {
+								Melder_flushError (U"Default button not completely handled.");
+							}
+							return;
+						}
 					}
 				}
 			} else if (character == NSDeleteCharacter) {

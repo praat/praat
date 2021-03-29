@@ -114,4 +114,9 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 	return me.releaseToAmbiguousOwner();
 }
 
+void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss) {
+	my d_defaultCallback = callback;
+	my d_defaultBoss = boss;
+}
+
 /* End of file GuiDialog.cpp */
