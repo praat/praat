@@ -168,6 +168,27 @@ void structGuiMenu :: v_destroy () noexcept {
 						*/
 					}
 				}
+			} else if (character == NSEnterCharacter || character == NSNewlineCharacter || character == NSCarriageReturnCharacter) {
+				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+					if (shell -> classInfo == classGuiWindow) {
+						GuiWindow window = (GuiWindow) shell;
+						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask)) && window -> d_enterCallback) {
+							try {
+								structGuiMenuItemEvent event { nullptr, false, false, false };
+								window -> d_enterCallback (window -> d_enterBoss, & event);
+							} catch (MelderError) {
+								Melder_flushError (U"Enter key not completely handled.");
+							}
+							return;
+						}
+					} else {
+						/*
+							We're in a dialog. Do nothing. Send on.
+						*/
+					}
+				}
 			} else if (character == NSDeleteCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {

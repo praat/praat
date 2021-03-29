@@ -280,6 +280,13 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 						window -> d_tabCallback = commandCallback;
 						window -> d_tabBoss = boss;
 					}
+				} else if (accelerator == GuiMenu_ENTER) {
+					GuiWindow window = (GuiWindow) my d_shell;
+					Melder_assert (window -> classInfo == classGuiWindow);   // fairly safe, because dialogs have no menus
+					if (! (flags & (GuiMenu_OPTION | GuiMenu_SHIFT | GuiMenu_COMMAND))) {
+						window -> d_enterCallback = commandCallback;
+						window -> d_enterBoss = boss;
+					}
 				} else if (accelerator == GuiMenu_BACKSPACE) {
 					GuiWindow window = (GuiWindow) my d_shell;
 					Melder_assert (window -> classInfo == classGuiWindow);   // fairly safe, because dialogs have no menus
