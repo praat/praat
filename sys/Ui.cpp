@@ -105,6 +105,7 @@ static void UiField_setDefault (UiField me) {
 		case _kUiField_type::FOLDER_:
 		case _kUiField_type::NUMVEC_:
 		case _kUiField_type::NUMMAT_:
+		case _kUiField_type::TEXTVEC_:
 		{
 			GuiText_setString (my text, my stringDefaultValue.get());
 		}
@@ -235,6 +236,21 @@ static void UiField_widgetToValue (UiField me) {
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
+		}
+		break;
+		case _kUiField_type::TEXTVEC_:
+		{
+			my stringValue = GuiText_getString (my text);
+			STRVEC result;
+			bool owned;
+			Interpreter_stringArrayExpression (nullptr, my stringValue.get(), & result, & owned);
+			if (owned) {
+				my stringArrayValue. adoptFromAmbiguousOwner (result);
+			} else {
+				my stringArrayValue = copy_STRVEC (result);
+			}
+			if (my stringArrayVariable)
+				*my stringArrayVariable = my stringArrayValue.get();
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
@@ -749,6 +765,15 @@ UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableN
 	return thee;
 }
 
+UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, name);
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy stringArrayVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 1;
+	return thee;
+}
+
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
 	UiField thee = UiForm_addField (me, _kUiField_type::RADIO_, label);
 	thy integerDefaultValue = defaultValue;
@@ -868,8 +893,9 @@ void UiForm_finish (UiForm me) {
 				#endif
 			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
 			thy type == _kUiField_type::FORMULA_ ? multiLineTextHeight (5) :
-			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ?
-				multiLineTextHeight (3) :
+			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (3) :
+			thy type == _kUiField_type::NUMVEC_ || thy type == _kUiField_type::TEXTVEC_ ? multiLineTextHeight (7) :
+			thy type == _kUiField_type::NUMMAT_ ? multiLineTextHeight (10) :
 			textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
@@ -918,17 +944,28 @@ void UiForm_finish (UiForm me) {
 			}
 			break;
 			case _kUiField_type::TEXT_:
-			case _kUiField_type::NUMVEC_:
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
+			case _kUiField_type::NUMVEC_:
+			{
+				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, y + multiLineTextHeight (7), GuiText_INKWRAP | GuiText_SCROLLED);
+			}
+			break;
 			case _kUiField_type::NUMMAT_:
 			{
 				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
-					y, y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
+					y, y + multiLineTextHeight (10), GuiText_SCROLLED);
 				okButtonIsDefault = false;   // because otherwise, the Enter key would be ambiguous
+			}
+			break;
+			case _kUiField_type::TEXTVEC_:
+			{
+				thy text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
+					y, y + multiLineTextHeight (7), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::FORMULA_:
@@ -1106,7 +1143,8 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::FORMULA_ ||
 			next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
 			next -> type == _kUiField_type::FOLDER_ ||
-			next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
+			next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_ ||
+			next -> type == _kUiField_type::TEXTVEC_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
 			Melder_stringMatchesCriterion (my stringValue.get(), kMelder_string::ENDS_WITH, U":", true);
@@ -1389,6 +1427,22 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
+		}
+		break;
+		case _kUiField_type::TEXTVEC_:
+		{
+			if (arg -> which != Stackel_STRING_ARRAY && arg -> which != Stackel_STRING)
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string array, not ", arg -> whichText(), U".");
+			if (arg -> which == Stackel_STRING) {
+				my stringArrayValue = splitByWhitespace_STRVEC (arg -> getString());
+			} else if (arg -> owned) {
+				my stringArrayValue. adoptFromAmbiguousOwner (arg -> stringArray);
+				arg -> owned = false;
+			} else {
+				my stringArrayValue = copy_STRVEC (arg -> stringArray);
+			}
+			if (my stringArrayVariable)
+				*my stringArrayVariable = my stringArrayValue.get();
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:

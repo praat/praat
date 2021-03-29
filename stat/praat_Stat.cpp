@@ -222,7 +222,8 @@ DO
 FORM (NEW1_Table_createWithColumnNames, U"Create Table with column names", nullptr) {
 	WORD (name, U"Name", U"table")
 	INTEGER (numberOfRows, U"Number of rows", U"10")
-	TEXTFIELD (columnNames, U"Column names:", U"speaker dialect age vowel F0 F1 F2", 5)
+	TEXTVEC (columnNames, U"Column names:", U"{ \"speaker\", \"dialect\", \"age_yr\", \"vowel\", \"F0_Hz\", \"F1_Hz\", \"F2_Hz\" }")
+	//TEXTVEC (columnNames, U"Column names:", U"speaker dialect age_yr vowel F0_Hz F1_Hz F2_Hz")
 	OK
 DO
 	CREATE_ONE

@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2005,2007-2020 Paul Boersma,
+ * Copyright (C) 1992-2005,2007-2021 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify

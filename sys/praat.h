@@ -350,6 +350,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static constMAT numericMatrixVariable; \
 		UiForm_addNummat (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultStringValue);
 
+#define TEXTVEC(stringArrayVariable, labelText, defaultStringValue)  \
+		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
+			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+		static constSTRVEC stringArrayVariable; \
+		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", defaultStringValue);
+
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
 		_radio_ = UiForm_addRadio (_dia_.get(), & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, 1);
