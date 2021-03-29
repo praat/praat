@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2011,2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2002-2012,2014-2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@ Thing_declare (Interpreter);
 
 #include "Table_def.h"
 
+void Table_initWithColumnNames (Table me, integer numberOfRows, constSTRVEC columnNames);
 void Table_initWithColumnNames (Table me, integer numberOfRows, conststring32 columnNames);
+autoTable Table_createWithColumnNames (integer numberOfRows, constSTRVEC columnNames);
 autoTable Table_createWithColumnNames (integer numberOfRows, conststring32 columnNames);
 void Table_initWithoutColumnNames (Table me, integer numberOfRows, integer numberOfColumns);
 autoTable Table_createWithoutColumnNames (integer numberOfRows, integer numberOfColumns);

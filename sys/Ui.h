@@ -98,10 +98,11 @@ enum class _kUiField_type {
 	FOLDER_ = 15,
 	NUMVEC_ = 16,
 	NUMMAT_ = 17,
-	BOOLEAN_ = 18,
-	RADIO_ = 19,
-	OPTIONMENU_ = 20,
-	LIST_ = 21,
+	TEXTVEC_ = 18,
+	BOOLEAN_ = 19,
+	RADIO_ = 20,
+	OPTIONMENU_ = 21,
+	LIST_ = 22,
 	LABELLED_TEXT_MIN_ = 1,
 	LABELLED_TEXT_MAX_ = 9
 };
@@ -114,6 +115,7 @@ Thing_define (UiField, Thing) {
 	autostring32 stringValue, stringDefaultValue;
 	autoVEC numericVectorValue;
 	autoMAT numericMatrixValue;
+	autoSTRVEC stringArrayValue;
 	MelderColour colourValue;
 	OrderedOf<structUiOption> options;
 	constSTRVEC strings;
@@ -134,6 +136,7 @@ Thing_define (UiField, Thing) {
 	MelderColour *colourVariable;
 	constVEC *numericVectorVariable;
 	constMAT *numericMatrixVariable;
+	constSTRVEC *stringArrayVariable;
 
 	int subtract;
 	integer numberOfLines;
@@ -206,6 +209,7 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
