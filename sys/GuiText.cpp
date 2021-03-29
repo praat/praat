@@ -536,18 +536,15 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	#if gtk
 		trace (U"before creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		if (flags & GuiText_SCROLLED) {
-			GtkWrapMode ww;
 			GuiObject scrolled = gtk_scrolled_window_new (nullptr, nullptr);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			my d_widget = gtk_text_view_new ();
 			gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my d_widget));
 			gtk_widget_show (GTK_WIDGET (scrolled));
-			gtk_text_view_set_editable (GTK_TEXT_VIEW (my d_widget), (flags & GuiText_NONEDITABLE) == 0);
-			if ((flags & GuiText_WORDWRAP) != 0) 
-				ww = GTK_WRAP_WORD_CHAR;
-			else
-				ww = GTK_WRAP_NONE;
-			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my d_widget), ww);
+			gtk_text_view_set_editable (GTK_TEXT_VIEW (my d_widget), ! (flags & GuiText_NONEDITABLE));
+			const GtkWrapMode gtkWrapMode =
+				( flags & GuiText_CHARWRAP ? GTK_WRAP_CHAR : flags & GuiText_INKWRAP ? GTK_WRAP_WORD_CHAR : GTK_WRAP_NONE );
+			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my d_widget), gtkWrapMode);
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
 			g_signal_connect (G_OBJECT (buffer), "delete-range", G_CALLBACK (_GuiGtkTextBuf_history_delete_cb), me.get());
 			g_signal_connect (G_OBJECT (buffer), "insert-text", G_CALLBACK (_GuiGtkTextBuf_history_insert_cb), me.get());
@@ -557,7 +554,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my v_positionInForm (scrolled, left, right, top, bottom, parent);
 		} else {
 			my d_widget = gtk_entry_new ();
-			gtk_editable_set_editable (GTK_EDITABLE (my d_widget), (flags & GuiText_NONEDITABLE) == 0);
+			gtk_editable_set_editable (GTK_EDITABLE (my d_widget), ! (flags & GuiText_NONEDITABLE));
 			g_signal_connect (G_OBJECT (my d_widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me.get());
 			g_signal_connect (G_OBJECT (my d_widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me.get());
 			g_signal_connect (GTK_EDITABLE (my d_widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me.get());
@@ -578,9 +575,9 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		_GuiObject_setUserData (my d_widget, me.get());
 		my d_editable = (flags & GuiText_NONEDITABLE) == 0;
 		my d_widget -> window = CreateWindow (L"edit", nullptr, WS_CHILD | WS_BORDER
-			| ( flags & GuiText_WORDWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
+			| ( flags & GuiText_ANYWRAP ? ES_AUTOVSCROLL : ES_AUTOHSCROLL )
 			| ES_MULTILINE | WS_CLIPSIBLINGS
-			| ( flags & GuiText_SCROLLED ? WS_HSCROLL | WS_VSCROLL : 0 ),
+			| ( flags & GuiText_SCROLLED ? WS_VSCROLL | ( flags & GuiText_ANYWRAP ? 0 : WS_HSCROLL ) : 0 ),
 			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
 			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
@@ -595,11 +592,10 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		Edit_LimitText (my d_widget -> window, 0);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		/*
-		 * The first created text widget shall attract the input focus.
-		 */
-		if (! my d_widget -> shell -> textFocus) {
+			The first created text widget shall attract the input focus.
+		*/
+		if (! my d_widget -> shell -> textFocus)
 			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
-		}
 	#elif cocoa
 		if (flags & GuiText_SCROLLED) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
@@ -607,8 +603,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my d_widget = my d_cocoaScrollView;
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			[my d_cocoaScrollView setBorderType: NSNoBorder];
-			[my d_cocoaScrollView setHasHorizontalScroller: YES];
-			[my d_cocoaScrollView setHasVerticalScroller:   YES];
+			[my d_cocoaScrollView setHasHorizontalScroller: ! (flags & GuiText_ANYWRAP)];
+			[my d_cocoaScrollView setHasVerticalScroller: YES];
 			[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			NSSize contentSize = [my d_cocoaScrollView contentSize];
 			my d_cocoaTextView = [[GuiCocoaTextView alloc] initWithFrame: NSMakeRect (0, 0, contentSize. width, contentSize. height)];
@@ -635,6 +631,10 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 				NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 				[paragraphStyle setParagraphStyle: [my d_cocoaTextView defaultParagraphStyle]];   // should be superfluous
 				[paragraphStyle setDefaultTabInterval: 28.0];
+				if (!! (flags & GuiText_CHARWRAP))
+					[paragraphStyle setLineBreakMode: NSLineBreakByCharWrapping];
+				else if (!! (flags & GuiText_INKWRAP))
+					[paragraphStyle setLineBreakMode: NSLineBreakByWordWrapping];
 				[my d_cocoaTextView setDefaultParagraphStyle: paragraphStyle];
 				[paragraphStyle release];
 				/*
@@ -663,17 +663,23 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setVerticallyResizable: YES];
 			[my d_cocoaTextView setHorizontallyResizable: YES];
 			[my d_cocoaTextView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-			[[my d_cocoaTextView textContainer] setContainerSize: NSMakeSize (FLT_MAX, FLT_MAX)];
+			if (! (flags & GuiText_ANYWRAP))
+				[[my d_cocoaTextView textContainer] setContainerSize: NSMakeSize (FLT_MAX, FLT_MAX)];
 			[[my d_cocoaTextView textContainer] setWidthTracksTextView: NO];
 			[my d_cocoaScrollView setDocumentView: my d_cocoaTextView];   // the scroll view will own the text view?
 			[my d_cocoaTextView release];   // so we release the text view itself
 			[[my d_cocoaScrollView window] makeFirstResponder: my d_cocoaTextView];
-			static NSFont *theTextFont;
-			if (! theTextFont) {
-				theTextFont = [[NSFont systemFontOfSize: 13.0] retain];
-				theTextFont = [[NSFont fontWithName: @"Menlo"   size: 12.0] retain];
+			if (flags & GuiText_ANYWRAP) {
+				static NSFont *theSystemTextFont;
+				if (! theSystemTextFont)
+					theSystemTextFont = [[NSFont systemFontOfSize: 13.0] retain];
+				[my d_cocoaTextView setFont: theSystemTextFont];
+			} else {
+				static NSFont *theFixedWidthTextFont;
+				if (! theFixedWidthTextFont)
+					theFixedWidthTextFont = [[NSFont fontWithName: @"Menlo"   size: 12.0] retain];
+				[my d_cocoaTextView setFont: theFixedWidthTextFont];
 			}
-			[my d_cocoaTextView setFont: theTextFont];
 			[my d_cocoaTextView setAllowsUndo: YES];
 			[my d_cocoaTextView turnOffLigatures: nil];
 			[my d_cocoaTextView setSmartInsertDeleteEnabled: NO];
@@ -687,16 +693,14 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			*/
 			[my d_cocoaTextView   setString: @" "];
 			[my d_cocoaTextView   setString: @""];
-
 		} else {
 			my d_widget = [[GuiCocoaTextField alloc] init];
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			[(GuiCocoaTextField *) my d_widget   setUserData: me.get()];
 			[(NSTextField *) my d_widget   setEditable: YES];
 			static NSFont *theTextFont;
-			if (! theTextFont) {
+			if (! theTextFont)
 				theTextFont = [[NSFont systemFontOfSize: 13.0] retain];
-			}
 			[(NSTextField *) my d_widget   setFont: theTextFont];
 		}
 	#endif
@@ -876,7 +880,7 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 		autostring16 buffer16 = Melder_32to16 (Melder_peek8to32 ([nsString UTF8String]));
 		NSText *nsText = ( my d_cocoaTextView ?
 				my d_cocoaTextView :
-				[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] );
+				[[(NSTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] );
 		NSRange nsRange = [nsText   selectedRange];
 		*first = uinteger_to_integer (nsRange. location);
 		*last = *first + uinteger_to_integer (nsRange. length);
@@ -920,14 +924,15 @@ void GuiText_paste (GuiText me) {
 			gtk_text_buffer_paste_clipboard (buffer, cb, nullptr, gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif motif
-		if (! my d_editable) return;
+		if (! my d_editable)
+			return;
 		SendMessage (my d_widget -> window, WM_PASTE, 0, 0);   // this will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   pasteAsPlainText: nil];
 		} else {
-			[[[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] pasteAsPlainText: nil];
+			[(NSTextView *) [[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] pasteAsPlainText: nil];
 		}
 	#endif
 }

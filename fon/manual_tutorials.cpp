@@ -22,8 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210228)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210325)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.41# (25 March 2021)")
+LIST_ITEM (U"• TextGrid window: unselected boundaries can again be drawn to the cursor.")
+LIST_ITEM (U"• Windows: faster running cursor.")
+LIST_ITEM (U"• Multi-line formula fields.")
+LIST_ITEM (U"• Scripting: guard against too deep recursive calls to runScript (depth 20).")
+LIST_ITEM (U"• EEG: repaired a bug that could cause Praat to crash when computing an ERPTier.")
 NORMAL (U"##6.1.40# (27 February 2021)")
 LIST_ITEM (U"• Inspect window: corrected a bug that could cause Praat to crash when opening a string vector.")
 LIST_ITEM (U"• Sound window: made channel scrolling work again when there are more than 8 channels.")

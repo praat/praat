@@ -346,7 +346,7 @@ void GuiControl_setSize (GuiControl me, int width, int height);
 Thing_define (GuiForm, GuiControl) {
 };
 
-typedef MelderCallback <void, structThing /* boss */> GuiShell_GoAwayCallback;
+using GuiShell_GoAwayCallback = MelderCallback <void, structThing /* boss */>;
 
 Thing_define (GuiShell, GuiForm) {
 	int d_width, d_height;
@@ -379,7 +379,7 @@ typedef struct structGuiButtonEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 } *GuiButtonEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiButtonEvent> GuiButton_ActivateCallback;
+using GuiButton_ActivateCallback = MelderCallback <void, structThing /* boss */, GuiButtonEvent>;
 
 Thing_define (GuiButton, GuiControl) {
 	GuiButton_ActivateCallback d_activateCallback;
@@ -415,7 +415,7 @@ typedef struct structGuiCheckButtonEvent {
 	GuiCheckButton toggle;
 } *GuiCheckButtonEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiCheckButtonEvent> GuiCheckButton_ValueChangedCallback;
+using GuiCheckButton_ValueChangedCallback = MelderCallback <void, structThing /* boss */, GuiCheckButtonEvent>;
 
 Thing_define (GuiCheckButton, GuiControl) {
 	GuiCheckButton_ValueChangedCallback d_valueChangedCallback;
@@ -443,7 +443,11 @@ void GuiCheckButton_setValue (GuiCheckButton me, bool value);
 
 /********** GuiDialog **********/
 
+using GuiDialog_DefaultCallback = MelderCallback <void, structThing /* boss */>;
+
 Thing_define (GuiDialog, GuiShell) {
+	GuiDialog_DefaultCallback d_defaultCallback;
+	Thing d_defaultBoss;
 };
 
 /* GuiDialog creation flags: */
@@ -454,6 +458,8 @@ GuiDialog GuiDialog_create (GuiWindow parent,
 	GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss,
 	uint32 flags
 );
+
+void GuiDialog_setDefaultCallback (GuiDialog me, GuiDialog_DefaultCallback callback, Thing boss);
 
 /********** GuiDrawingArea **********/
 
@@ -492,10 +498,10 @@ typedef struct structGuiDrawingArea_ResizeEvent {
 	int width, height;
 } *GuiDrawingArea_ResizeEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ExposeEvent> GuiDrawingArea_ExposeCallback;
-typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_MouseEvent > GuiDrawingArea_MouseCallback;
-typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_KeyEvent   > GuiDrawingArea_KeyCallback;
-typedef MelderCallback <void, structThing /* boss */, GuiDrawingArea_ResizeEvent> GuiDrawingArea_ResizeCallback;
+using GuiDrawingArea_ExposeCallback = MelderCallback <void, structThing /* boss */, GuiDrawingArea_ExposeEvent>;
+using GuiDrawingArea_MouseCallback  = MelderCallback <void, structThing /* boss */, GuiDrawingArea_MouseEvent >;
+using GuiDrawingArea_KeyCallback    = MelderCallback <void, structThing /* boss */, GuiDrawingArea_KeyEvent   >;
+using GuiDrawingArea_ResizeCallback = MelderCallback <void, structThing /* boss */, GuiDrawingArea_ResizeEvent>;
 
 Thing_define (GuiDrawingArea, GuiControl) {
 	GuiScrollBar d_horizontalScrollBar, d_verticalScrollBar;   // for swiping
@@ -582,17 +588,17 @@ Thing_declare (GuiScrolledWindow);
 typedef struct structGuiList_SelectionChangedEvent {
 	GuiList list;
 } *GuiList_SelectionChangedEvent;
-typedef MelderCallback <void, structThing /* boss */, GuiList_SelectionChangedEvent> GuiList_SelectionChangedCallback;
+using GuiList_SelectionChangedCallback = MelderCallback <void, structThing /* boss */, GuiList_SelectionChangedEvent>;
 
 typedef struct structGuiList_DoubleClickEvent {
 	GuiList list;
 } *GuiList_DoubleClickEvent;
-typedef MelderCallback <void, structThing /* boss */, GuiList_DoubleClickEvent> GuiList_DoubleClickCallback;
+using GuiList_DoubleClickCallback = MelderCallback <void, structThing /* boss */, GuiList_DoubleClickEvent>;
 
 typedef struct structGuiList_ScrollEvent {
 	GuiList list;
 } *GuiList_ScrollEvent;
-typedef MelderCallback <void, structThing /* boss */, GuiList_ScrollEvent> GuiList_ScrollCallback;
+using GuiList_ScrollCallback = MelderCallback <void, structThing /* boss */, GuiList_ScrollEvent>;
 
 Thing_define (GuiList, GuiControl) {
 	bool d_allowMultipleSelection;
@@ -682,7 +688,7 @@ typedef struct structGuiMenuItemEvent {
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed;
 } *GuiMenuItemEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiMenuItemEvent> GuiMenuItemCallback;
+using GuiMenuItemCallback = MelderCallback <void, structThing /* boss */, GuiMenuItemEvent>;
 
 Thing_define (GuiMenuItem, GuiThing) {
 	GuiMenu d_menu;
@@ -791,7 +797,7 @@ typedef struct structGuiRadioButtonEvent {
 	int position;
 } *GuiRadioButtonEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiRadioButtonEvent> GuiRadioButtonCallback;
+using GuiRadioButtonCallback = MelderCallback <void, structThing /* boss */, GuiRadioButtonEvent>;
 
 Thing_define (GuiRadioButton, GuiControl) {
 	GuiRadioButton d_previous, d_next;   // there's a linked list of grouped radio buttons
@@ -842,7 +848,7 @@ typedef struct structGuiScrollBarEvent {
 	GuiScrollBar scrollBar;
 } *GuiScrollBarEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiScrollBarEvent> GuiScrollBarCallback;
+using GuiScrollBarCallback = MelderCallback <void, structThing /* boss */, GuiScrollBarEvent>;
 
 Thing_define (GuiScrollBar, GuiControl) {
 	GuiScrollBarCallback d_valueChangedCallback;
@@ -883,7 +889,7 @@ typedef struct structGuiTextEvent {
 	GuiText text;
 } *GuiTextEvent;
 
-typedef MelderCallback <void, structThing /* boss */, GuiTextEvent> GuiText_ChangedCallback;
+using GuiText_ChangedCallback = MelderCallback <void, structThing /* boss */, GuiTextEvent>;
 
 #if gtk
 	typedef gchar * history_data;
@@ -920,8 +926,9 @@ Thing_define (GuiText, GuiControl) {
 
 /* GuiText creation flags: */
 #define GuiText_SCROLLED  1
-#define GuiText_MULTILINE  2
-#define GuiText_WORDWRAP  4
+#define GuiText_CHARWRAP  2
+#define GuiText_INKWRAP  4
+#define GuiText_ANYWRAP  (GuiText_CHARWRAP | GuiText_INKWRAP)
 #define GuiText_NONEDITABLE  8
 GuiText GuiText_create      (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
 GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, uint32 flags);
@@ -955,6 +962,8 @@ Thing_define (GuiWindow, GuiShell) {
 		Thing d_tabBoss;
 		GuiMenuItemCallback d_shiftTabCallback;
 		Thing d_shiftTabBoss;
+		GuiMenuItemCallback d_enterCallback;
+		Thing d_enterBoss;
 		GuiMenuItemCallback d_optionBackspaceCallback;
 		Thing d_optionBackspaceBoss;
 	#elif motif
