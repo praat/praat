@@ -192,11 +192,46 @@ autoSTRVEC splitByWhitespace_STRVEC (conststring32 string) {
 		const char32 *beginOfInk = p;
 		p ++;   // step over first nonspace
 		p = Melder_findEndOfInk (p);
-		integer numberOfCharacters = p - beginOfInk;
+		const integer numberOfCharacters = p - beginOfInk;
 		autostring32 token (numberOfCharacters);
 		str32ncpy (token.get(), beginOfInk, numberOfCharacters);
 		result [++ itoken] = token.move();
 	}
+	return result;
+}
+
+autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separator) {
+	if (! string)
+		return autoSTRVEC();   // accept null pointer input
+	const integer separatorLength = str32len (separator);
+	const char32 *p = & string [0];
+	const char32 *locationOfSeparator = str32str (p, separator);
+	if (! locationOfSeparator) {
+		autoSTRVEC result (1);
+		result [1] = Melder_dup (string);
+		return result;
+	}
+	integer n = 1;
+	do {
+		n += 1;
+		p = locationOfSeparator + separatorLength;
+		locationOfSeparator = str32str (p, separator);
+	} while (locationOfSeparator);
+	autoSTRVEC result (n);
+	integer itoken = 0;
+	p = & string [0];
+	do {
+		locationOfSeparator = str32str (p, separator);
+		if (locationOfSeparator) {
+			const integer numberOfCharacters = locationOfSeparator - p;
+			autostring32 token (numberOfCharacters);
+			str32ncpy (token.get(), p, numberOfCharacters);
+			result [++ itoken] = token.move();
+			p = locationOfSeparator + separatorLength;
+		} else {
+			result [++ itoken] = Melder_dup (p);
+		}
+	} while (locationOfSeparator);
 	return result;
 }
 

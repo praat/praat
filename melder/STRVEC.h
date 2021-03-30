@@ -36,6 +36,8 @@ void sort_STRVEC_inout (STRVEC const& a) noexcept;
 */
 autoSTRVEC splitByWhitespace_STRVEC (conststring32 string);
 
+autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separator);
+
 /*
 	Regard a string as a sequence of tokens,
 	separated by commas (or another separator) according to RFC 1480.

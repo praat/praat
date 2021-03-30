@@ -125,6 +125,7 @@ Thing_define (UiField, Thing) {
 	GuiRadioButton radioButton;
 	GuiList list;
 	GuiOptionMenu optionMenu;
+	GuiButton pushButton;   // like "Browse..." for INFILE_, OUTFILE_, FOLDER_ (2021-03-30)
 	int y;
 
 	conststring32 variableName;   // a reference to a name known at compile time, for use by the Praat library
