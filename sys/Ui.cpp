@@ -212,9 +212,9 @@ static void UiField_widgetToValue (UiField me) {
 		{
 			my stringValue = GuiText_getString (my text);
 			VEC result;
-			bool owned;
-			Interpreter_numericVectorExpression (nullptr, my stringValue.get(), & result, & owned);
-			if (owned) {
+			bool ownedByInterpreter;
+			Interpreter_numericVectorExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
+			if (ownedByInterpreter) {
 				my numericVectorValue. adoptFromAmbiguousOwner (result);
 			} else {
 				my numericVectorValue = copy_VEC (result);
@@ -227,9 +227,9 @@ static void UiField_widgetToValue (UiField me) {
 		{
 			my stringValue = GuiText_getString (my text);
 			MAT result;
-			bool owned;
-			Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), & result, & owned);
-			if (owned) {
+			bool ownedByInterpreter;
+			Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
+			if (ownedByInterpreter) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (result);
 			} else {
 				my numericMatrixValue = copy_MAT (result);
@@ -241,13 +241,20 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::TEXTVEC_:
 		{
 			my stringValue = GuiText_getString (my text);
-			STRVEC result;
-			bool owned;
-			Interpreter_stringArrayExpression (nullptr, my stringValue.get(), & result, & owned);
-			if (owned) {
-				my stringArrayValue. adoptFromAmbiguousOwner (result);
-			} else {
-				my stringArrayValue = copy_STRVEC (result);
+			int formattingOption = GuiOptionMenu_getValue (my optionMenu);
+			if (formattingOption == 1) {
+				my stringArrayValue = splitByWhitespace_STRVEC (my stringValue.get());
+			} else if (formattingOption == 2) {
+				my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U",");
+			} else if (formattingOption == 3) {
+				STRVEC result;
+				bool ownedByInterpreter;
+				Interpreter_stringArrayExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
+				if (ownedByInterpreter) {
+					my stringArrayValue. adoptFromAmbiguousOwner (result);
+				} else {
+					my stringArrayValue = copy_STRVEC (result);
+				}
 			}
 			if (my stringArrayVariable)
 				*my stringArrayVariable = my stringArrayValue.get();
@@ -985,6 +992,12 @@ void UiForm_finish (UiForm me) {
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (7), GuiText_INKWRAP | GuiText_SCROLLED);
+				thy optionMenu = GuiOptionMenu_createShown (form,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+				GuiOptionMenu_addOption (thy optionMenu, U"(separate by whitespace)");
+				GuiOptionMenu_addOption (thy optionMenu, U"(separate by commas)");
+				GuiOptionMenu_addOption (thy optionMenu, U"(formula)");
 			}
 			break;
 			case _kUiField_type::FORMULA_:
@@ -998,7 +1011,7 @@ void UiForm_finish (UiForm me) {
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
-					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseInfile, thee, 0
 				);
 			}
@@ -1008,7 +1021,7 @@ void UiForm_finish (UiForm me) {
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
-					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseOutfile, thee, 0
 				);
 			}
@@ -1018,7 +1031,7 @@ void UiForm_finish (UiForm me) {
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
-					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseFolder, thee, 0
 				);
 			}
