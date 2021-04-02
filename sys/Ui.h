@@ -113,6 +113,7 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
+	autoSTRVEC strvecDefaultValue;
 	autoVEC numericVectorValue;
 	autoMAT numericMatrixValue;
 	autoSTRVEC stringArrayValue;
@@ -210,7 +211,7 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
