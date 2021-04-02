@@ -105,9 +105,13 @@ static void UiField_setDefault (UiField me) {
 		case _kUiField_type::FOLDER_:
 		case _kUiField_type::NUMVEC_:
 		case _kUiField_type::NUMMAT_:
-		case _kUiField_type::TEXTVEC_:
 		{
 			GuiText_setString (my text, my stringDefaultValue.get());
+		}
+		break;
+		case _kUiField_type::TEXTVEC_:
+		{
+			GuiText_setString (my text, Melder_STRVEC (my strvecDefaultValue.get()));
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
@@ -485,6 +489,48 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 						UiHistory_write (U"\"");
 					}
 					break;
+					case _kUiField_type:: NUMVEC_:
+					{
+						if (NUMisEmpty (field -> numericVectorValue)) {
+							UiHistory_write (next -- ? U", zero# (0)" : U" zero# (0)");
+						} else {
+							UiHistory_write (next -- ? U", { " : U" { ");
+							for (integer i = 1; i <= field -> numericVectorValue.size; i ++) {
+								UiHistory_write (Melder_double (field -> numericVectorValue [i]));
+								UiHistory_write (i <= field -> numericVectorValue.size ? U" }" : U", ");
+							}
+						}
+					} break;
+					case _kUiField_type:: NUMMAT_:
+					{
+						if (NUMisEmpty (field -> numericMatrixValue)) {
+							UiHistory_write (next -- ? U", zero## (0, 0)" : U" zero## (0, 0)");
+						} else {
+							UiHistory_write (next -- ? U", { " : U" { ");
+							for (integer irow = 1; irow <= field -> numericMatrixValue.nrow; irow ++) {
+								UiHistory_write (U"{ ");
+								for (integer icol = 1; icol <= field -> numericMatrixValue.ncol; icol ++) {
+									UiHistory_write (Melder_double (field -> numericMatrixValue [irow] [icol]));
+									UiHistory_write (icol == field -> numericMatrixValue.ncol ? U" }" : U", ");
+								}
+								UiHistory_write (irow == field -> numericMatrixValue.nrow ? U" }" : U", ");
+							}
+						}
+					} break;
+					case _kUiField_type:: TEXTVEC_:
+					{
+						if (NUMisEmpty (field -> stringArrayValue.get())) {
+							UiHistory_write_expandQuotes (next -- ? U", empty$# (0)" : U" empty$# (0)");
+						} else {
+							UiHistory_write (next -- ? U", { " : U" { ");
+							for (integer i = 1; i <= field -> stringArrayValue.size; i ++) {
+								UiHistory_write (U"\"");
+								UiHistory_write_expandQuotes (field -> stringArrayValue [i].get());
+								UiHistory_write (U"\"");
+								UiHistory_write (i == field -> stringArrayValue.size ? U" }" : U", ");
+							}
+						}
+					} break;
 					case _kUiField_type::BOOLEAN_:
 					{
 						UiHistory_write (field -> integerValue ? (next -- ? U", \"yes\"" : U" \"yes\"") : (next -- ? U", \"no\"" : U" \"no\""));
@@ -792,9 +838,9 @@ UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableN
 	return thee;
 }
 
-UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, name);
-	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy strvecDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 1;
