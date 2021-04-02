@@ -206,11 +206,8 @@ autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separato
 	const integer separatorLength = str32len (separator);
 	const char32 *p = & string [0];
 	const char32 *locationOfSeparator = str32str (p, separator);
-	if (! locationOfSeparator) {
-		autoSTRVEC result (1);
-		result [1] = Melder_dup (string);
-		return result;
-	}
+	if (! locationOfSeparator)
+		return copy_STRVEC ({ string });
 	integer n = 1;
 	do {
 		n += 1;
