@@ -543,7 +543,7 @@ void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasi
 	
 	try {
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-			Sound soundFrame = sframe [ithread]. get(), fullsound = sound.get(), windowFrame = window.get();
+			Sound soundFrame = sframe [ithread].get(), fullsound = sound.get(), windowFrame = window.get();
 			VEC threadWorkspace = workspace.row (ithread);
 			const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 			const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
