@@ -159,7 +159,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 	(void) NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & ll,
 		& ac [1][1], m, & bc [1][1], p, & alpha [1], & beta [1], nullptr, m,
-		nullptr, p, & q [1][1], n, work.begin(), iwork.begin(), & info);
+		nullptr, p, & q [1][1], n, work.asArgumentToFunctionThatExpectsZeroBasedArray(), iwork.asArgumentToFunctionThatExpectsZeroBasedArray(), & info);
 	Melder_require (info == 0,
 		U"dggsvd fails with code ", info, U".");
 	/*
@@ -202,7 +202,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMATVU const& a) {
 	Melder_assert (a.ncol == a.nrow);
-	if (NUMisEmpty (my eigenvectors))   // ppgb: BUG dubious logic
+	if (NUMisEmpty (my eigenvectors.get()))   // ppgb: BUG dubious logic
 		Eigen_init (me, a.ncol, a.ncol);
 	else
 		Melder_assert (my eigenvectors.nrow == my eigenvectors.ncol && a.ncol == my eigenvectors.ncol);
@@ -431,7 +431,7 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 	autoVEC angles_degrees = raw_VEC (numberOfVectors);
 
 	autoMAT c = mul_MAT (my eigenvectors.horizontalBand (ivec_from, ivec_to),
-			thy eigenvectors. horizontalBand (ivec_from, ivec_to). transpose());
+			thy eigenvectors.horizontalBand (ivec_from, ivec_to).transpose());
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= numberOfVectors; i ++)
 		angles_degrees [i] = acos (svd -> d [i]) * (180.0 / NUMpi);

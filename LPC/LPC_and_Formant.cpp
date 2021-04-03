@@ -187,11 +187,11 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 		
 		try {
 			for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
-				Polynomial p = polynomials [ithread]. get ();
-				Roots r = roots [ithread]. get ();
-				Formant formant = thee. get ();
+				Polynomial p = polynomials [ithread].get();
+				Roots r = roots [ithread].get();
+				Formant formant = thee.get();
 				LPC lpc = me;
-				VEC workspace = workspaces. row (ithread);
+				VEC workspace = workspaces.row (ithread);
 				const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 				const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 
@@ -218,7 +218,7 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 			thread [ithread - 1]. join ();
 	
 				
-		Formant_sort (thee. get ());
+		Formant_sort (thee.get());
 		if (numberOfSuspectFrames > 0)
 			Melder_warning ((integer) numberOfSuspectFrames, U" formant frames out of ", numberOfFrames, U" are suspect.");
 		return thee;

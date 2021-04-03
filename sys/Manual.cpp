@@ -295,7 +295,7 @@ static void search (Manual me, conststring32 query) {
 		*p = Melder_toLowerCase (*p);
 	}
 	static autoVEC goodnessOfMatch;
-	if (NUMisEmpty (goodnessOfMatch))
+	if (NUMisEmpty (goodnessOfMatch.get()))
 		goodnessOfMatch = zero_VEC (numberOfPages);
 	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		char32 *token = searchText.string;

@@ -825,7 +825,7 @@ void GaussianMixture_TableOfReal_getResponsilities (GaussianMixture me, TableOfR
 		Melder_require (my dimension == thy numberOfColumns,
 			U"The number of columns in the TableOfReal and the dimension of the GaussianMixture should be equal.");
 		autoMAT probabilities = raw_MAT (responsibilities.nrow, responsibilities.ncol);
-		GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities);
+		GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities.get());
 		GaussianMixture_getResponsibilities (me, probabilities.get(), 0, responsibilities);
 }
 
@@ -884,7 +884,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 		autoMAT probabilities = raw_MAT (thy numberOfRows, my numberOfComponents);
 		autoMAT responsibilities = raw_MAT (thy numberOfRows, my numberOfComponents);
 		
-		GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities);
+		GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities.get());
 
 		double lnp = GaussianMixture_getLikelihoodValue (me, probabilities.get(), criterion);
 		integer iter = 0;
@@ -916,7 +916,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				my mixingProbabilities.all()  <<=  totalResponsibilities.get();
 				my mixingProbabilities.all()  *=  1.0 / responsibilities.nrow;
 				
-				GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities);
+				GaussianMixture_TableOfReal_getComponentProbabilities (me, thee, 0, probabilities.get());
 				
 				lnp = GaussianMixture_getLikelihoodValue (me, probabilities.get(), criterion);
 				Melder_progress ((double) iter / (double) maxNumberOfIterations, criterionText, U": ", lnp / thy numberOfRows, U", L0: ", lnp_start);
@@ -1228,7 +1228,7 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 			U"Dimensions should agree.");
 		
 		autoMAT responsibilities = raw_MAT (thy numberOfRows, my numberOfComponents);
-		GaussianMixture_TableOfReal_getResponsilities (me, thee, responsibilities);
+		GaussianMixture_TableOfReal_getResponsilities (me, thee, responsibilities.get());
 		autoVEC numberOfData = columnSums_VEC (responsibilities.get());
 		
 		autoTable him = Table_createWithColumnNames (my numberOfComponents, U"component probability smoothing statistic lnmu lnvar numberOfData dimension singular");

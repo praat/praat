@@ -107,8 +107,8 @@ static void huber_struct_getWeightedCovars (struct huber_struct *me, constVEC co
 static void huber_struct_solvelpc (struct huber_struct *me) {
 	// we cannot resize the svd-matrices therefore add zero's and svd the full matrix
 	if (my predictionOrder < my maximumPredictionOrder) {
-		my covarmatrixw. part (my predictionOrder + 1, my maximumPredictionOrder, 1, my maximumPredictionOrder)  <<=  0.0;
-		my covarmatrixw. part (1, my predictionOrder, my predictionOrder + 1, my maximumPredictionOrder)  <<=  0.0;
+		my covarmatrixw.part (my predictionOrder + 1, my maximumPredictionOrder, 1, my maximumPredictionOrder)  <<=  0.0;
+		my covarmatrixw.part (1, my predictionOrder, my predictionOrder + 1, my maximumPredictionOrder)  <<=  0.0;
 		my coefficients.resize (my maximumPredictionOrder);
 	}
 	my svd -> u.all()  <<=  my covarmatrixw.all();
@@ -118,7 +118,7 @@ static void huber_struct_solvelpc (struct huber_struct *me) {
 	my coefficients.resize (my predictionOrder); // maintain invariant
 }
 
-void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, constVEC const& lpcFrom, VEC const& lpcTo) {
+static void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, constVEC const& lpcFrom, VEC const& lpcTo) {
 	Melder_assert (lpcFrom.size == lpcTo.size);
 	Melder_assert (lpcFrom.size <= my predictionOrder);
 	Melder_assert (sound.size == my numberOfSamples);
@@ -129,8 +129,8 @@ void huber_struct_minimize (struct huber_struct *me, constVEC const& sound, cons
 	do {
 		const double previousScale = my scale;
 		my error.all()  <<=  sound;
-		VECfilterInverse_inplace (my error.get(), lpcTo, my workSpace); // lpcTo has alreay a copy of lpcFrom
-		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tol, my huber_iterations, my workSpace);
+		VECfilterInverse_inplace (my error.get(), lpcTo, my workSpace.get()); // lpcTo has alreay a copy of lpcFrom
+		NUMstatistics_huber (my error.get(), & my location, my wantlocation, & my scale, my wantscale, my k_stdev, my tol, my huber_iterations, my workSpace.get());
 
 		huber_struct_getWeights (me, my error.get());
 		huber_struct_getWeightedCovars (me, sound);
