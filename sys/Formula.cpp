@@ -340,7 +340,7 @@ static int languageNameCompare (const void *first, const void *second) {
 
 static integer Formula_hasLanguageName (conststring32 f) {
 	static autoINTVEC index;
-	if (NUMisEmpty (index)) {
+	if (NUMisEmpty (index.get())) {
 		index = to_INTVEC (highestInputSymbol);
 		qsort (& index [1], highestInputSymbol, sizeof (integer), languageNameCompare);
 	}

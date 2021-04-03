@@ -767,12 +767,12 @@ void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, intege
 		if (channel > thy ny)
 			channel = 1;
 		LPC_Frame lpc = & my d_frames [frameIndex];
-		autoVEC work = raw_VEC (lpc -> nCoefficients);
+		autoVEC workspace = raw_VEC (lpc -> nCoefficients);
 		if (channel > 0)
-			VECfilterInverse_inplace (thy z.row (channel), lpc -> a.get(), work);
+			VECfilterInverse_inplace (thy z.row (channel), lpc -> a.get(), workspace.get());
 		else
 			for (integer ichan = 1; ichan <= thy ny; ichan ++)
-				VECfilterInverse_inplace (thy z.row (ichan), lpc -> a.get(), work);
+				VECfilterInverse_inplace (thy z.row (ichan), lpc -> a.get(), workspace.get());
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");
 	}

@@ -602,31 +602,28 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					double a = c_vx [1];
 					const double b = c_vx [2];
 					const double y = 0.0, *py = & y;
-					//VEC vy { py, 0 };   // should be refused by the compiler
+					//VEC vy { py, 0 };   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
 					constVEC cvy { py, 2 };
-					//const VEC c_vy = VEC (py, 2);
+					//const VEC c_vy = VEC (py, 2);   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
 					const VEC c_vy = (const VEC) VEC (const_cast<double *> (py), 2);
 					double c = c_vy [1];
 					const double d = c_vy [2];
-					//VEC c_vy2 = VEC (py, 2);
+					//VEC c_vy2 = VEC (py, 2);   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
 				}
 
 				VEC h;
 				autoVEC j;
-				//VEC jh = j;
-				//VEC zero = zero_VEC (10);   // should be ruled out: "Call to deleted constructor of 'VEC' (aka 'vector<double>')"
-				//constVEC zero = zero_VEC (10);   // ruled out: "Conversion function from 'autoVEC' (aka 'autovector<double>')
-							// to 'constVEC' (aka 'constvector<double>') invokes a deleted function"
-				//j = h;   // up assignment standardly correctly ruled out: "No viable overloaded '='"
-				//h = j;   // down assignment was explicitly ruled out as well: "Overload resolution selected deleted operator '='"
-				//h = VEC (j);   // ruled out: "Functional-style cast from 'autoVEC' (aka 'autovector<double>')
-							// to 'VEC' (aka 'vector<double>') uses deleted function"
-				VEC & jref = j;   // (in)correctly? accepted
+				//VEC jh = j;   // ruled out: "No viable conversion from autoVEC to VEC" (2021-04-03)
+				//VEC zero = zero_VEC (10);   // ruled out: "No viable conversion from autoVEC to VEC" (2021-04-03)
+				//constVEC zero = zero_VEC (10);   // ruled out: "No viable conversion from autoVEC to constVEC" (2021-04-03)
+				//j = h;   // ruled out: "No viable overloaded '='" (2021-04-03)
+				//h = j;   // ruled out: "No viable overloaded '='" (2021-04-03)
+				//h = VEC (j);   // ruled out: "No matching conversion for functional-style cast from autoVEC to VEC" (2021-04-03)
+				//VEC & jref = j;   // ruled out: "Non-const lvalue reference to type VEC cannot bind to a value of unrelated type autoVEC" (2021-04-03)
 				VEC *ph = & h;
 				autoVEC *pj = & j;
-				ph = pj;   // (in)correctly? accepted
-				//pj = ph;   // correctly ruled out: "Assigning to 'autoVEC *' (aka 'autovector<double> *')
-							// from incompatible type 'VEC *' (aka 'vector<double> *')
+				//ph = pj;   // correctly ruled out: Assigning to 'VEC' from incompatible type 'autoVEC' (2021-04-03)
+				//pj = ph;   // correctly ruled out: "Assigning to 'autoVEC *' from incompatible type 'VEC *' (2021-04-03)
 				#endif
 				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
 				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);

@@ -491,7 +491,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					break;
 					case _kUiField_type:: NUMVEC_:
 					{
-						if (NUMisEmpty (field -> numericVectorValue)) {
+						if (NUMisEmpty (field -> numericVectorValue.get())) {
 							UiHistory_write (next -- ? U", zero# (0)" : U" zero# (0)");
 						} else {
 							UiHistory_write (next -- ? U", { " : U" { ");

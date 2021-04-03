@@ -83,26 +83,6 @@ public:
 	*/
 	vector& operator= (vector const& other)
 		= default;
-	/*
-		Letting an autovector convert to a vector would lead to errors such as in
-			VEC vec = zero_VEC (10);
-		where zero_VEC produces a temporary that is deleted immediately
-		after the initialization of vec.
-		So we rule out this initialization.
-	*/
-	vector (autovector<T> const& other)
-		= delete;
-	/*
-		Likewise, an assignment like
-			autoVEC x = zero_VEC (10);
-			VEC y;
-			y = x;
-		should be ruled out. Instead, one should do
-			y = x.get();
-		explicitly.
-	*/
-	vector& operator= (const autovector<T>&)
-		= delete;
 	T& operator[] (integer i) const {
 		return our cells [i - 1];
 	}
@@ -141,10 +121,8 @@ public:
 	integer stride = 1;
 	vectorview ()
 		= default;
-	vectorview (const vector<T>& other)
+	vectorview (vector<T> const& other)
 		: firstCell (other.cells), size (other.size), stride (1) { }
-	vectorview (const autovector<T>& other)
-		= delete;
 	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_)
 		: firstCell (firstCell_), size (size_), stride (stride_) { }
 	T& operator[] (integer i) const {
@@ -164,8 +142,8 @@ public:
 	}
 	T *begin () const { return & our operator[] (1); }
 	T *end () const { return & our operator[] (our size + 1); }
-	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our operator[] [1]; }
-	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our operator[] [0]; }
+	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our operator[] (1); }
+	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our operator[] (0); }
 };
 
 template <typename T>
@@ -184,15 +162,6 @@ public:
 		: constvector (other.cells, other.size) { }
 	//constvector (constvector const& other) = default;
 	//constvector& operator= (constvector const& other) = default;
-	/*
-		Letting an autovector convert to a constvector would lead to errors such as in
-			constVEC vec = zero_VEC (10);
-		where zero_VEC produces a temporary that is deleted immediately
-		after the initialization of vec.
-		So we rule out this initialization.
-	*/
-	constvector (autovector<T> const& other)
-		= delete;
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our cells [i - 1];
 	}
@@ -229,8 +198,6 @@ public:
 		: constvectorview (other.cells, other.size, 1) { }
 	constvectorview (vector<T> const& other)
 		: constvectorview (other.cells, other.size, 1) { }
-	constvectorview (autovector<T> const& other)   // TODO: should be superfluous
-		= delete;
 	T const& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
@@ -248,8 +215,8 @@ public:
 	}
 	const T *begin () const { return & our operator[] (1); }
 	const T *end () const { return & our operator[] (our size + 1); }
-	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our operator[] [1]; }
-	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our operator[] [0]; }
+	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our operator[] (1); }
+	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our operator[] (0); }
 };
 
 /*
@@ -260,11 +227,13 @@ public:
 	would continue to use some of the computer's resources (namely, memory).
 */
 template <typename T>
-class autovector : public vector<T> {
+class autovector {
+public:
+	T *cells = nullptr;
+	integer size = 0;
 	integer _capacity = 0;
 public:
-	autovector ()   // come into existence without a payload
-		: vector<T> (nullptr, 0) { }
+	autovector () { }   // come into existence without a payload
 	explicit autovector (integer givenSize, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
 		our cells = MelderArray:: _alloc <T> (givenSize, initializationType);
@@ -282,6 +251,9 @@ public:
 	~autovector () {   // destroy the payload (if any)
 		our reset ();
 	}
+	T& operator[] (integer i) const {
+		return our cells [i - 1];
+	}
 	vector<T> get () const { return vector<T> (our cells, our size); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	vectorview<T> all () const { return vectorview<T> (our cells, our size, 1); }
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
@@ -298,6 +270,19 @@ public:
 		our _capacity = 0;
 		return vector<T> (oldCells, oldSize);
 	}
+	vector<T> part (integer first, integer last) const {
+		const integer newSize = last - (first - 1);
+		/*
+			for-loops don't crash if the number of elements is zero.
+		*/
+		if (newSize <= 0)
+			return vector<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
+		return vector<T> (& our cells [first - 1], newSize);
+	}
+	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
+	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return our cells - 1; }
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
 	*/
@@ -307,7 +292,7 @@ public:
 		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
 		This implements buying a payload from another autovector (which involves destroying our current payload).
 	*/
-	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move construction
+	autovector (autovector&& other) noexcept : cells (other.cells), size (other.size), _capacity (other._capacity) {   // enable move construction
 		other.cells = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
 		other._capacity = 0;

@@ -759,10 +759,10 @@ void SSCP_expand (SSCP me) {
 	/* A reduced matrix has my numberOfRows < my numberOfColumns.
 		After expansion:
 		my numberOfRows == my numberOfColumns
-		my storageNumberOfRows = my numberOfRows (before)
-		 my data (after) = my expansion;
-		my expansion = my data (before)
-		 No expansion for a standard matrix or if already expanded and data has not changed!
+		my storageNumberOfRows == my numberOfRows (before)
+		my data (after) == my expansion;
+		my expansion == my data (before)
+		No expansion for a standard matrix or if already expanded and data has not changed!
 	*/
 	if ((my expansionNumberOfRows == 0 && my numberOfRows == my numberOfColumns) ||
 	        (my expansionNumberOfRows > 0 && ! my dataChanged))
@@ -804,7 +804,7 @@ void SSCP_expandLowerCholeskyInverse (SSCP me) {
 	} else {
 		my lowerCholeskyInverse.all()  <<=  my data.all();
 		try {
-			MATlowerCholeskyInverse_inplace (my lowerCholeskyInverse.get(), & (my lnd));
+			MATlowerCholeskyInverse_inplace (my lowerCholeskyInverse.get(), & my lnd);
 		} catch (MelderError) {
 			// singular matrix: arrange a diagonal only inverse.
 			my lnd = 0.0;
