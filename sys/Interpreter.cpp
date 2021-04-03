@@ -643,7 +643,7 @@ static void Interpreter_addStringVariable (Interpreter me, conststring32 key, co
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key) {
 	Melder_assert (key);
 	auto it = my variablesMap. find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	if (it != my variablesMap. end()) {
+	if (it != my variablesMap.end()) {
 		return it -> second.get();
 	} else {
 		return nullptr;
@@ -655,7 +655,7 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 ke
 	conststring32 variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
 	auto it = my variablesMap. find (variableNameIncludingProcedureName);
-	if (it != my variablesMap. end()) {
+	if (it != my variablesMap.end()) {
 		return it -> second.get();
 	}
 	/*

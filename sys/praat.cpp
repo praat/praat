@@ -1812,6 +1812,12 @@ void praat_run () {
 		//autoVEC s { & q [1], 10 };
 		//autoVEC b { x };   // explicit construction not OK
 		//autoVEC c = x;   // implicit construction not OK
+		VEC xx;               // initializes x.cells to nullptr and x.size to 0
+		double aa [] = { 3.14, 2.718 };
+		VEC x3 (aa, 2);   // initializes x3 to 2 values from a base-0 array
+		Melder_assert (x3 [2] == 2.718);
+		constVEC x4 = { 3.14, 2.718 };
+		Melder_assert (x4 [2] == 2.718);
 	}
 	static_assert (sizeof (float) == 4,
 		"sizeof(float) should be 4");

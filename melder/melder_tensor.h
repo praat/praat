@@ -24,8 +24,11 @@
 
 	Initialization (tested in praat.cpp):
 		VEC x;               // initializes x.cells to nullptr and x.size to 0
-		double a [] = { undefined, 3.14, 2.718, ... };
-		VEC x3 { a, 100 };   // initializes x to 100 values from a base-1 array
+		double a [] = { 3.14, 2.718 };
+		VEC x3 (a, 2);   // initializes x3 to 100 values from a base-0 array
+		Melder_assert (x3 [2] == 2.718);
+		constVEC x4 = { 3.14, 2.718 };
+		Melder_assert (x4 [2] == 2.718);
 
 		autoVEC y;                     // initializes y.cells to nullptr and y.size to 0
 		autoVEC y2 = zero_VEC (100);   // initializes y to 100 zeroes, having ownership
@@ -160,6 +163,7 @@ public:
 		: constvector (mat.cells, mat.nrow * mat.ncol) { }
 	constvector (vector<T> const& other)
 		: constvector (other.cells, other.size) { }
+	constvector (std::initializer_list <const T> list): cells (list.begin()), size (uinteger_to_integer (list.size())) { }
 	//constvector (constvector const& other) = default;
 	//constvector& operator= (constvector const& other) = default;
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address

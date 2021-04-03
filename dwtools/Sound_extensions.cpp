@@ -1360,7 +1360,7 @@ double Sound_localMean (Sound me, double fromTime, double toTime) {
 		if (n2 > my nx)
 			n2 = my nx;
 		Melder_assert (n1 <= n2);
-		mean = NUMmean (my z [1]. part (n1, n2));
+		mean = NUMmean (my z [1].part (n1, n2));
 	}
 	return mean;
 }

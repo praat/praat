@@ -1108,8 +1108,8 @@ autoSound Sound_extractPart (Sound me, double tmin, double tmax, kSound_windowSh
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
 			const integer itmin_clipped = std::max (1_integer, itmin);
 			const integer itmax_clipped = std::min (itmax, my nx);
-			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
-					<<=  my z.row (ichan). part (itmin_clipped, itmax_clipped);
+			thy z.row (ichan).part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
+					<<=  my z.row (ichan).part (itmin_clipped, itmax_clipped);
 		}
 		/*
 			Multiply by a window that extends throughout the target domain.
@@ -1152,8 +1152,8 @@ autoSound Sound_extractPartForOverlap (Sound me, double tmin, double tmax, doubl
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
 			const integer itmin_clipped = std::max (1_integer, itmin);
 			const integer itmax_clipped = std::min (itmax, my nx);
-			thy z.row (ichan). part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
-					<<=  my z.row (ichan). part (itmin_clipped, itmax_clipped);
+			thy z.row (ichan).part (1 - itmin + itmin_clipped, 1 - itmin + itmax_clipped)
+					<<=  my z.row (ichan).part (itmin_clipped, itmax_clipped);
 		}
 		return thee;
 	} catch (MelderError) {

@@ -246,11 +246,11 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 		of NUMlapack_dhseqr (20200313) its size equals maximally 6*n.
 	*/
 	integer endIndex = n * n;
-	VEC wr = workspace. part (endIndex + 1, endIndex + n);
+	VEC wr = workspace.part (endIndex + 1, endIndex + n);
 	endIndex += n;
-	VEC wi = workspace. part (endIndex + 1, endIndex + n);
+	VEC wi = workspace.part (endIndex + 1, endIndex + n);
 	endIndex += n;
-	VEC work = workspace. part (endIndex + 1, workspace.size);
+	VEC work = workspace.part (endIndex + 1, workspace.size);
 	Melder_assert (work.size >= 6 * n);
 	integer lwork = work.size, info;
 	NUMlapack_dhseqr_ ("E", "N", n, 1, n, & uh_CM [1] [1], n, & wr [1], & wi [1], nullptr, n, & work [1], lwork, & info);
