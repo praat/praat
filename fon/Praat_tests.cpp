@@ -596,13 +596,13 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				{
 					double x [3], *px = & x [0];
 					const double *cpx = px;
-					VEC vx { px, 2 };
-					constVEC cvx { px, 2 };
-					const VEC c_vx { px, 2 };
+					VEC vx (px, 2);
+					constVEC cvx (px, 2);
+					const VEC c_vx (px, 2);
 					double a = c_vx [1];
 					const double b = c_vx [2];
 					const double y = 0.0, *py = & y;
-					//VEC vy { py, 0 };   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
+					//VEC vy (py, 0);   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
 					constVEC cvy { py, 2 };
 					//const VEC c_vy = VEC (py, 2);   // ruled out: "No matching constructor for initialization of VEC" (2021-04-03)
 					const VEC c_vy = (const VEC) VEC (const_cast<double *> (py), 2);

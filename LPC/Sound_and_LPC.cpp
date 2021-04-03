@@ -83,9 +83,9 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee, VEC const& works
 	const integer numberOfCoefficients = thy nCoefficients, np1 = numberOfCoefficients + 1;
 
 	//workspace  <<=  0.0; not necessary !
-	VEC r = workspace. part (1, np1); // autoVEC r = zero_VEC (numberOfCoefficients + 1);
-	VEC a = workspace. part (np1 + 1, 2 * np1); // autoVEC a = zero_VEC (numberOfCoefficients + 1);
-	VEC rc = workspace. part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = zero_VEC (numberOfCoefficients);
+	VEC r = workspace.part (1, np1); // autoVEC r = zero_VEC (numberOfCoefficients + 1);
+	VEC a = workspace.part (np1 + 1, 2 * np1); // autoVEC a = zero_VEC (numberOfCoefficients + 1);
+	VEC rc = workspace.part (2 * np1 + 1, 2 * np1 + numberOfCoefficients); // autoVEC rc = zero_VEC (numberOfCoefficients);
 	const VECVU x = my z.row (1);
 	integer i = 1; // For error condition at end
 	for (i = 1; i <= numberOfCoefficients + 1; i ++)
@@ -134,15 +134,15 @@ static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee, VEC const& work
 	
 	workspace  <<=  0.0;
 	integer start = 1, end = m * (m + 1) / 2;
-	VEC b = workspace. part (start, end); // autoVEC b = zero_VEC (m * (m + 1) / 2);
+	VEC b = workspace.part (start, end); // autoVEC b = zero_VEC (m * (m + 1) / 2);
 	start = end + 1; end += m;
-	VEC grc = workspace. part (start, end); //autoVEC grc = zero_VEC (m);
+	VEC grc = workspace.part (start, end); //autoVEC grc = zero_VEC (m);
 	start = end + 1; end += m;
-	VEC beta = workspace. part (start, end); // autoVEC beta = zero_VEC (m);
+	VEC beta = workspace.part (start, end); // autoVEC beta = zero_VEC (m);
 	start = end + 1; end += m + 1;
-	VEC a = workspace. part (start, end); // autoVEC a = zero_VEC (m + 1);
+	VEC a = workspace.part (start, end); // autoVEC a = zero_VEC (m + 1);
 	start = end + 1; end += m + 1;
-	VEC cc = workspace. part (start, end); // autoVEC cc = zero_VEC (m + 1);
+	VEC cc = workspace.part (start, end); // autoVEC cc = zero_VEC (m + 1);
 
 	thy gain = 0.0;
 	integer i;
@@ -226,9 +226,9 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 		return ( n == 2 ? 0.5 * (x [1] * x[1] + x [2] * x [2]) : x [1] * x[1] );
 	}
 
-	VEC b1 = workspace. part (1, n); // autoVEC b1 = zero_VEC (n);
-	VEC b2 = workspace. part (n + 1, 2 * n); // autoVEC b2 = zero_VEC (n);
-	VEC aa = workspace. part (2 * n + 1, 2 * n + m); // autoVEC aa = zero_VEC (m);
+	VEC b1 = workspace.part (1, n); // autoVEC b1 = zero_VEC (n);
+	VEC b2 = workspace.part (n + 1, 2 * n); // autoVEC b2 = zero_VEC (n);
+	VEC aa = workspace.part (2 * n + 1, 2 * n + m); // autoVEC aa = zero_VEC (m);
 
 	// (3)
 
@@ -304,9 +304,9 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	int status = 1;
 	// workspace.all () << 0.0 not necessary
 	constVEC x = my z.row (1);
-	VEC c = workspace .part (1, mmaxp1); // autoVEC c = zero_VEC (mmax + 1);
-	VEC d = workspace .part (mmaxp1 + 1, 2 * mmaxp1); // autoVEC d = zero_VEC (mmax + 1);
-	VEC r = workspace .part (2 * mmaxp1 + 1, 3 * mmaxp1); // autoVEC r = zero_VEC (mmax + 1);
+	VEC c = workspace.part (1, mmaxp1); // autoVEC c = zero_VEC (mmax + 1);
+	VEC d = workspace.part (mmaxp1 + 1, 2 * mmaxp1); // autoVEC d = zero_VEC (mmax + 1);
+	VEC r = workspace.part (2 * mmaxp1 + 1, 3 * mmaxp1); // autoVEC r = zero_VEC (mmax + 1);
 	double e0 = 2.0 * NUMsum2 (x);
 	integer m = 1;
 	if (e0 == 0.0) {
@@ -544,7 +544,7 @@ void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasi
 	try {
 		for (integer ithread = 1; ithread <= numberOfThreads; ithread ++) {
 			Sound soundFrame = sframe [ithread]. get(), fullsound = sound.get(), windowFrame = window.get();
-			VEC threadWorkspace = workspace. row (ithread);
+			VEC threadWorkspace = workspace.row (ithread);
 			const integer firstFrame = 1 + (ithread - 1) * numberOfFramesPerThread;
 			const integer lastFrame = ( ithread == numberOfThreads ? numberOfFrames : firstFrame + numberOfFramesPerThread - 1 );
 			
