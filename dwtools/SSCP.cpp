@@ -776,11 +776,11 @@ void SSCP_expand (SSCP me) {
 			my expansion [ir] [ic] = ( my expansion [ic] [ir] = dij < my numberOfRows ? my data [dij + 1] [ic] : 0.0 );
 		}
 
-	// Now make 'my data' point to 'my expansion'
+	// Now make 'my data' point to 'my expansion' and vice versa
 	std::swap (my data, my expansion);
 	my expansionNumberOfRows = my numberOfRows;
 	my numberOfRows = my numberOfColumns;
-	my dataChanged = 0;
+	my dataChanged = false;
 }
 
 void SSCP_unExpand (SSCP me) {
@@ -789,7 +789,7 @@ void SSCP_unExpand (SSCP me) {
 	my data = my expansion.move();
 	my numberOfRows = my expansionNumberOfRows;
 	my expansionNumberOfRows = 0;
-	my dataChanged = 0;
+	my dataChanged = false;
 }
 
 void SSCP_expandLowerCholeskyInverse (SSCP me) {
@@ -824,8 +824,6 @@ void SSCP_unExpandLowerCholesky (SSCP me) {
 }
 
 void SSCP_expandPCA (SSCP me) {
-	if (my pca)
-		my pca.reset();
 	my pca = SSCP_to_PCA (me);
 }
 
