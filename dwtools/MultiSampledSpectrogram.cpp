@@ -58,7 +58,7 @@ void structMultiSampledSpectrogram :: v_info () {
 void FunctionXSampledY_init ( FunctionXSampledY me, double xmin, double xmax, double ymin, double ymax, integer ny, double dy, double y1) {
 	Function_init (me, xmin, xmax);
 	my ymin = ymin;
-	my ymax = my ymax;
+	my ymax = ymax;
 	my ny = ny;
 	my dy = dy;
 	my y1 = y1;
@@ -90,8 +90,83 @@ void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, doub
 	MultiSampledSpectrogram_paint_inside (me, g, tmin, tmax, fmin, fmax, garnish);
 }
 
+void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double log2_fmin, double log2_fmax, double minimum, double maximum) {
+	integer ixmin, ixmax, ifmin, ifmax;
+	if (my v_getWindowSamplesY (log2_fmin, log2_fmax, & ifmin, & ifmax) == 0)
+		return;
+	Graphics_setWindow (g, tmin, tmax, log2_fmin, log2_fmax);
+	integer numberOfFrames = Sampled_getWindowSamples (my frequencyBins . at [ifmax], tmin, tmax, & ixmin, & ixmax);
+	autoMAT p = raw_MAT (1, numberOfFrames);
+	
+	if (minimum >= maximum) {
+		/*
+			(autoscaling)
+			Find maximum power. No need for logarithm in the test
+		*/
+		double power_max = 0.0;
+		for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+			FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
+			if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin, tmax, & ixmin, & ixmax)) == 0)
+				continue;
+			for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
+				double power = sqr (frequencyBin -> z [1] [iframe]) + sqr (frequencyBin -> z [2] [iframe]);
+				if (power > power_max)
+					power_max = power;
+			}
+		}
+		if (power_max == 0.0)
+			return; // empty
+		maximum = 10.0 * log10 (power_max / 4e-10);
+		minimum = maximum - 50.0; // 50 dB dynamic range
+	}
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
+		double xmin1, xmax1 ;
+		const double dx = frequencyBin -> dx;
+		const double log2_freq = my v_getY (ifreq);
+		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & ixmin, & ixmax)) == 0)
+			continue;
+		p.resize (1, numberOfFrames);
+		MAT z = frequencyBin -> z.get();
+		integer index = 0;
+		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
+			double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
+			p [1] [ ++ index] = 10.0 * log10 (power / 4e-10);
+		}
+		double xmin = Sampled_indexToX (frequencyBin, ixmin) - 0.5 * dx;
+		double xmax = Sampled_indexToX (frequencyBin, ixmax) + 0.5 * dx;
+		double ymin = log2_freq - 0.5 * my dy; 
+		double ymax = log2_freq + 0.5 * my dy;
+		if (ifreq > 1) {
+			Melder_clipRight (& xmin, xmin1);
+			Melder_clipLeft (xmax1, & xmax);
+		}
+		Graphics_image (g, p.get(), xmin, xmax, ymin, ymax, minimum, maximum);
+		xmin1 = xmin;
+		xmax1 = xmax;
+	}
+}
+
 void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double minimum, double maximum, bool garnish) {
-	double fmin_log2 = log2 (2);
+	Function_bidirectionalAutowindow (me, & tmin, & tmax);
+	if (fmin >= fmax) {
+		fmin = my ymin;
+		fmax = my ymax;
+	} else {
+		fmin = fmin > 0.0 ? log2 (fmin) : my y1 - 0.5 * my dy;
+		fmax = log2 (fmax);
+	}
+	Graphics_setInner (g);
+	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, minimum, maximum);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_marksLeft (g, 2, true, true, false);
+		Graphics_textLeft (g, true, U"Frequency (log2Hz)");
+	}
+	
 }
 
 autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, integer numberOfStepsPerOctave, integer numberOfSteps) {
@@ -110,17 +185,16 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, doubl
 	}
 }
 
-autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor, double frequencyOversamplingFactor) {
+autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
 	try {
+		
 		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (my xmin, my xmax, lowestFrequency, numberOfStepsPerOctave, numberOfSteps);
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
-		const double q = 1.0 / (pow (2.0, 1.0 / numberOfStepsPerOctave) - 1.0);
 		Melder_require (thy ymax <= nyquistFrequency,
 			U"The number of steps you want result in a maximum frequency which is above the Nyquist frequency of the sound. "
 			"The maximum number of steps should not exceed ", Melder_iroundDown (numberOfStepsPerOctave * log2 (nyquistFrequency / lowestFrequency)), U".");
 		if (timeOversamplingFactor < 1.0)
 			timeOversamplingFactor = 4.0; // default oversampling
-		const double alpha = 25.0/46.0, oneMinusAlpha = 1.0 - alpha;
 		const integer maximumNumberOfAnalysisSamples = samplingFrequency * q / lowestFrequency;
 		autoMAT windowedExp = raw_MAT (2, maximumNumberOfAnalysisSamples + 1);
 		VEC windowedCos = windowedExp.row(1), windowedSin = windowedExp.row(2);
@@ -159,8 +233,10 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 				const integer actualNumberOfSamples = rightSample - leftSample + 1;
 				const integer windowFromSoundOffset = windowCentreSampleNumber - soundCentreSampleNumber;
 				VEC amplitudePart = my z.row(1).part (leftSample, rightSample);
-				frequencyBin -> z [1] [iframe] = NUMinner (amplitudePart, windowedCos.part (windowFromSoundOffset + leftSample, windowFromSoundOffset + rightSample)) / actualNumberOfSamples;
-				frequencyBin -> z [2] [iframe] = NUMinner (amplitudePart, windowedSin.part (windowFromSoundOffset + leftSample, windowFromSoundOffset + rightSample)) / actualNumberOfSamples;
+				frequencyBin -> z [1] [iframe] = NUMinner (amplitudePart, windowedCos.part (windowFromSoundOffset + leftSample,
+					windowFromSoundOffset + rightSample)) / actualNumberOfSamples;
+				frequencyBin -> z [2] [iframe] = NUMinner (amplitudePart, windowedSin.part (windowFromSoundOffset + leftSample, 
+					windowFromSoundOffset + rightSample)) / actualNumberOfSamples;
 			}
 			thy frequencyBins.addItem_move (frequencyBin.move());
 		}

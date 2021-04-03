@@ -3523,11 +3523,11 @@ DIRECT (NEW_LegendreSeries_to_Polynomial) {
 
 FORM (GRAPHICS_ConstantQLogFSpectrogram_paint, U"ConstantQLogFSpectrogram: Paint", nullptr) {
 	REAL (xmin, U"left Time range (s)", U"0.0")
-	REAL (xmax, U"right Time range (s)", U"0.0 ;(=all)")
+	REAL (xmax, U"right Time range (s)", U"0.0 (=all)")
 	REAL (ymin, U"left Frequency range (Hz)", U"0.0")
-	REAL (ymax, U"right Frequency range (Hz)", U"0.0 ;(=auto)")
-	REAL (minimum, U"left Amplitude range", U"0.0")
-	REAL (maximum, U"right Amplitude range", U"0.0 ;(=auto)")
+	REAL (ymax, U"right Frequency range (Hz)", U"0.0 (=auto)")
+	REAL (minimum, U"left Power range (dB)", U"0.0")
+	REAL (maximum, U"right Power range (dB)", U"0.0 (=auto)")
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
@@ -5844,13 +5844,13 @@ DO
 FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogram", nullptr) {
 	POSITIVE (f1, U"Lowest frequency (Hz)", U"110.0 (=440*2^(-2))")
 	NATURAL (numberOfStepsPerOctave, U"Number of steps / octave", U"24")
+	POSITIVE (q, U"Q", U"34.13 (=1/(2^(1/24)-1))")
 	POSITIVE (numberOfSteps, U"Number of steps", U"5*24")
-	REAL (timeOversamplingFactor, U"Time oversampling factor", U"0.0 (=auto)")
-	REAL (frequencyOversamplingFactor, U"Frequency oversampling factor", U"0.0 (=auto)")
+	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"4.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, numberOfStepsPerOctave, numberOfSteps, timeOversamplingFactor, frequencyOversamplingFactor);
+		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, q, numberOfStepsPerOctave, numberOfSteps, timeOversamplingFactor);
 	CONVERT_EACH_END (my name.get())
 }
 

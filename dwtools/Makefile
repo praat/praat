@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 20 March 2021
+# 1 April 2021
 
 include ../makefile.defs
 
@@ -27,7 +27,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	ICA.o Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \
-	Ltas_extensions.o LogFrequencySpectrogram.o \
+	Ltas_extensions.o \
 	MDSVec.o MFCC.o \
 	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
 	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
