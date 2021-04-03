@@ -1160,7 +1160,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 
 			KlattGlobal_getFrame (thee, frame);
 
-			KlattGlobal_synthesizeFrame (thee, iwave);
+			KlattGlobal_synthesizeFrame (thee, iwave.get());
 
 			for (integer isam = 1; isam <= thy nspfr; isam ++)
 				his z [1] [numberOfSamples ++] = iwave [isam] / 32768.0;

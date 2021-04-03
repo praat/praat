@@ -62,7 +62,7 @@ void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound
 
 void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound) {
 	try {
-		if (NUMisEmpty (my ind)) {
+		if (NUMisEmpty (my ind.get())) {
 			my ind = newvectorzero<int> (my numberOfVariables);
 			my val = zero_VEC (my numberOfVariables);
 		}

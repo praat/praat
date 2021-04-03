@@ -159,7 +159,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 	(void) NUMlapack_dggsvd_ ("N", "N", "Q", m, n, p, & k, & ll,
 		& ac [1][1], m, & bc [1][1], p, & alpha [1], & beta [1], nullptr, m,
-		nullptr, p, & q [1][1], n, work.begin(), iwork.begin(), & info);
+		nullptr, p, & q [1][1], n, work.asArgumentToFunctionThatExpectsZeroBasedArray(), iwork.asArgumentToFunctionThatExpectsZeroBasedArray(), & info);
 	Melder_require (info == 0,
 		U"dggsvd fails with code ", info, U".");
 	/*
