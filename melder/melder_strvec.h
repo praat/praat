@@ -54,6 +54,7 @@ public:
 	_conststringvector (const T* const * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): elements (other.elements), size (other.size) { }
 	_conststringvector (_autostringvectorview<T> other): elements (reinterpret_cast <const T* const *> (other.elements)), size (other.size) { }
+	_conststringvector (std::initializer_list <const T*> strings): elements (strings.begin()), size (strings.size()) { }
 	const T* const & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
