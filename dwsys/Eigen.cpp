@@ -202,7 +202,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMATVU const& a) {
 	Melder_assert (a.ncol == a.nrow);
-	if (NUMisEmpty (my eigenvectors))   // ppgb: BUG dubious logic
+	if (NUMisEmpty (my eigenvectors.get()))   // ppgb: BUG dubious logic
 		Eigen_init (me, a.ncol, a.ncol);
 	else
 		Melder_assert (my eigenvectors.nrow == my eigenvectors.ncol && a.ncol == my eigenvectors.ncol);

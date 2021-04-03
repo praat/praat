@@ -503,7 +503,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					} break;
 					case _kUiField_type:: NUMMAT_:
 					{
-						if (NUMisEmpty (field -> numericMatrixValue)) {
+						if (NUMisEmpty (field -> numericMatrixValue.get())) {
 							UiHistory_write (next -- ? U", zero## (0, 0)" : U" zero## (0, 0)");
 						} else {
 							UiHistory_write (next -- ? U", { " : U" { ");
