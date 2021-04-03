@@ -413,10 +413,6 @@ public:
 		= default;
 	matrix& operator= (matrix const& other)
 		= default;
-	matrix (automatrix<T> const& other)
-		= delete;
-	matrix& operator= (automatrix<T> const& other)
-		= delete;
 	explicit matrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
 		: matrix (vec.cells, givenNrow, givenNcol)
 	{
@@ -513,16 +509,6 @@ public:
 	*/
 	matrixview (matrix<T> const& other)
 		: matrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
-	/*
-		You cannot assign an automatrix to a matrixview:
-			auto mat = automatrix<double> (10, 100);
-			void myFunction (matrixview<double> const&);
-			myFunction (mat);   // WRONG
-		Instead, you will have to do
-			myFunction (mat.all());   // OK
-	*/
-	matrixview (automatrix<T> const& other)
-		= delete;
 	explicit matrixview (vectorview<T> const& vec, integer givenNrow, integer givenNcol) :
 			matrixview (vec.cells, givenNrow, givenNcol, givenNcol * vec.stride, vec.stride)
 	{
@@ -654,8 +640,6 @@ public:
 		: constmatrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
 	constmatrixview (const matrix<T>& other)   // shortcut the otherwise double conversion
 		: constmatrixview (other.cells, other.nrow, other.ncol, other.ncol, 1_integer) { }
-	constmatrixview (const automatrix<T>& other)
-		= delete;
 	constmatrixview (matrixview<T> const& other)
 		: constmatrixview (other.firstCell, other.nrow, other.ncol, other.rowStride, other.colStride) { }
 	explicit constmatrixview (constvectorview<T> const& vec, integer givenNrow, integer givenNcol) :
@@ -715,10 +699,12 @@ public:
 	would continue to use some of the computer's resources (namely, memory).
 */
 template <typename T>
-class automatrix : public matrix<T> {
+class automatrix {
 public:
-	automatrix ()   // come into existence without a payload
-		: matrix<T> (nullptr, 0, 0) { }
+	T *cells = nullptr;
+	integer nrow = 0, ncol = 0;
+public:
+	automatrix () { }   // come into existence without a payload
 	explicit automatrix (integer givenNrow, integer givenNcol, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
@@ -730,9 +716,7 @@ public:
 		if (our cells)
 			MelderArray:: _free (our cells, our nrow * our ncol);
 	}
-	//matrix<T> get () { return { our cells, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the cell pointer, nrow or ncol)
-	const matrix<T>& get () const   // let the public use the payload (they may change the values in the cells but not the cell pointer, nrow or ncol)
-		{ return *this; }
+	matrix<T> get() const { return matrix<T> (our cells, our nrow, our ncol); }   // let the public use the payload (they may change the values in the cells but not the cell pointer, nrow or ncol)
 	matrixview<T> all () const {
 		return matrixview<T> (our cells, our nrow, our ncol, our ncol, 1);
 	}
@@ -758,8 +742,7 @@ public:
 		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
 		This implements buying a payload from another automatrix (which involves destroying our current payload).
 	*/
-	automatrix (automatrix&& other) noexcept   // enable move constructor
-			: matrix<T> (other.get())
+	automatrix (automatrix&& other) noexcept : cells (other.cells), nrow (other.nrow), ncol (other.ncol)   // enable move constructor
 	{
 		other.cells = nullptr;   // disown source
 		other.nrow = 0;   // to keep the source in a valid state
@@ -777,6 +760,53 @@ public:
 			other.ncol = 0;   // to keep the source in a valid state
 		}
 		return *this;
+	}
+	vector<T> operator[] (integer rowNumber) const {
+		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
+	}
+	vector<T> row (integer rowNumber) const {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		Melder_assert (our cells);
+		return vector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
+	}
+	vectorview<T> column (integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
+		return vectorview<T> (our cells + (columnNumber - 1), our nrow, our ncol);
+	}
+	vectorview<T> diagonal () const {
+		return vectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
+	}
+	matrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
+		const integer newNrow = lastRow - (firstRow - 1);
+		if (newNrow <= 0)
+			return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		return matrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
+	}
+	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
+		const integer newNcol = lastColumn - (firstColumn - 1);
+		if (newNcol <= 0)
+			return matrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
+		return matrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
+	}
+	matrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNrow <= 0 || newNcol <= 0)
+			return matrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
+		return matrixview<T> (
+			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
+			newNrow, newNcol, our ncol, 1
+		);
+	}
+	matrixview<T> transpose () const {
+		return matrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
 	}
 	void resize (integer newNrow, integer newNcol, MelderArray::kInitializationType initializationType = MelderArray::kInitializationType::ZERO) {
 		if (newNrow > our nrow || newNcol > our ncol) {
