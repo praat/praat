@@ -78,7 +78,7 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me);
 
 autoPCA SSCP_to_PCA (SSCP me);
 
-void SSCP_expandPCA (SSCP me);
+void SSCP_expandWithPCA (SSCP me);
 
 void SSCP_unExpandPCA (SSCP me);
 
@@ -110,19 +110,12 @@ void SSCP_expand (SSCP me);
 /*
 	Expand a reduced storage SSCP. For efficiency reasons, the unexpanded matrix is also kept in memory.
 	Successive calls to SSCP_expand don't change anything unless dataChanged is true.
-	Before using one of the Covariance functions defined here on a reduced matrix we
-	first have to expand it to normal size.
-
-	Covariance me = Covariance_create_reduceStorage (dimension, kSSCPstorage::Diagonal); // diagonal only
-	...
-	SSCP_expand (me);
-	PCA thee = SSCP_to_PCA (me);
 */
 
 void SSCP_unExpand (SSCP me);
 /* Use only if the memory is really needed! */
 
-void SSCP_expandLowerCholeskyInverse (SSCP me); // create lower square root of covariance matrix
+void SSCP_expandWithLowerCholeskyInverse (SSCP me); // create lower square root of covariance matrix
 
 void SSCP_unExpandLowerCholesky (SSCP me);
 

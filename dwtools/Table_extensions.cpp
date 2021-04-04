@@ -4621,7 +4621,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		OrderedOf<structCovariance> covs;
 		for (integer igroup = 1; igroup <= numberOfGroups; igroup ++) {
 			autoCovariance cov = SSCP_to_Covariance (thy at [igroup], 1);
-			SSCP_expandLowerCholeskyInverse (cov.get());
+			SSCP_expandWithLowerCholeskyInverse (cov.get());
 			covs. addItem_move (cov.move());
 		}
 		for (integer i = 1; i <= selectedRows.size; i ++) {

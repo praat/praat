@@ -328,7 +328,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 	Melder_require (x.size == my numberOfColumns,
 		U"The dimensions of the Covariance and the vector should agree.");
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
-		SSCP_expandLowerCholeskyInverse (me);
+		SSCP_expandWithLowerCholeskyInverse (me);
 	const double ln2pid = my numberOfColumns * log (NUM2pi);
 	const double dsq = NUMmahalanobisDistanceSquared (my lowerCholeskyInverse.get(), x, my centroid.get());
 	const double lnN = - 0.5 * (ln2pid + my lnd + dsq);
@@ -564,7 +564,7 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 		autoVEC buf = raw_VEC (data.nrow);
 
 		try { // in case the covariance matrix is singular and its inverse cannot be determined
-			SSCP_expandLowerCholeskyInverse (me);
+			SSCP_expandWithLowerCholeskyInverse (me);
 			const MAT lowerInverse = my lowerCholeskyInverse.get();
 			/*
 				Heinze & Wagner (1997), on page 3 in the formula for W(n,beta) the residuals 
