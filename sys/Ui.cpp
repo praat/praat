@@ -1141,6 +1141,7 @@ void UiForm_finish (UiForm me) {
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
 				for (int format = (int) kUi_stringArrayFormat::MIN; format <= (int) kUi_stringArrayFormat::MAX; format ++)
 					GuiOptionMenu_addOption (thy optionMenu, kUi_stringArrayFormat_getText ((kUi_stringArrayFormat) format));
+				GuiOptionMenu_setValue (thy optionMenu, (int) theStringArrayFormat);
 			}
 			break;
 			case _kUiField_type::FORMULA_:
@@ -1820,6 +1821,11 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
+		break;
+		case _kUiField_type::TEXTVEC_:
+			my stringArrayValue = splitByWhitespace_STRVEC (string);
+			if (my stringArrayVariable)
+				*my stringArrayVariable = my stringArrayValue.get();
 		break;
 		case _kUiField_type::BOOLEAN_:
 		{
