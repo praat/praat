@@ -24,6 +24,92 @@
 #include "Editor.h"
 #include "Graphics.h"   // colours
 
+#include "enums_getText.h"
+#include "Ui_enums.h"
+#include "enums_getValue.h"
+#include "Ui_enums.h"
+
+kUi_stringArrayFormat theStringArrayFormat;
+
+void Ui_prefs () {
+	Preferences_addEnum (U"Ui.stringArrayFormat", & theStringArrayFormat, kUi_stringArrayFormat, (int) kUi_stringArrayFormat::DEFAULT);
+}
+
+static void MelderString_appendQuoted (MelderString *buffer, conststring32 string) {
+	MelderString_appendCharacter (buffer, U'\"');
+	for (const char32 *p = & string [0]; *p != U'\0'; p ++)
+		if (*p == U'\"')
+			MelderString_append (buffer, U"\"\"");
+		else
+			MelderString_appendCharacter (buffer, *p);
+	MelderString_appendCharacter (buffer, U'\"');
+}
+
+static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayFormat format) {
+	static MelderString buffer;
+	MelderString_empty (& buffer);
+	switch (format) {
+		case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE: {
+			for (integer i = 1; i <= strings.size; i ++) {
+				if (str32chr (strings [i], U'\"') || Melder_findHorizontalOrVerticalSpace (strings [i]))
+					MelderString_appendQuoted (& buffer, strings [i]);
+				else
+					MelderString_append (& buffer, strings [i]);
+				if (i < strings.size)
+					MelderString_appendCharacter (& buffer, U' ');
+			}
+		} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS: {
+			for (integer i = 1; i <= strings.size; i ++) {
+				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U','))
+					MelderString_appendQuoted (& buffer, strings [i]);
+				else
+					MelderString_append (& buffer, strings [i]);
+				if (i < strings.size)
+					MelderString_appendCharacter (& buffer, U',');
+			}
+		} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS: {
+			for (integer i = 1; i <= strings.size; i ++) {
+				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U';'))
+					MelderString_appendQuoted (& buffer, strings [i]);
+				else
+					MelderString_append (& buffer, strings [i]);
+				if (i < strings.size)
+					MelderString_appendCharacter (& buffer, U';');
+			}
+		} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES: {
+			for (integer i = 1; i <= strings.size; i ++) {
+				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U'|'))
+					MelderString_appendQuoted (& buffer, strings [i]);
+				else
+					MelderString_append (& buffer, strings [i]);
+				if (i < strings.size)
+					MelderString_appendCharacter (& buffer, U'|');
+			}
+		} break; case kUi_stringArrayFormat::ONE_PER_LINE: {
+			for (integer i = 1; i <= strings.size; i ++) {
+				MelderString_append (& buffer, strings [i]);
+				if (i < strings.size)
+					MelderString_appendCharacter (& buffer, U'\n');
+			}
+		} break; case kUi_stringArrayFormat::FORMULA: {
+			if (NUMisEmpty (strings)) {
+				MelderString_append (& buffer, U"empty$# (0)");
+			} else {
+				MelderString_append (& buffer, U"{ ");
+				for (integer i = 1; i <= strings.size; i ++) {
+					MelderString_appendQuoted (& buffer, strings [i]);
+					if (i < strings.size)
+						MelderString_append (& buffer, U", ");
+				}
+				MelderString_append (& buffer, U" }");
+			}
+		} break; case kUi_stringArrayFormat::UNDEFINED: {
+			Melder_fatal (U"Unknown string array format.");
+		}
+	}
+	return buffer.string;
+}
+
 /***** class UiField: the things that have values in an UiForm dialog *****/
 
 Thing_implement (UiField, Thing, 0);
@@ -111,7 +197,8 @@ static void UiField_setDefault (UiField me) {
 		break;
 		case _kUiField_type::TEXTVEC_:
 		{
-			GuiText_setString (my text, Melder_STRVEC (my strvecDefaultValue.get()));
+			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
+			GuiText_setString (my text, formatStringArray (my stringArrayDefaultValue.get(), theStringArrayFormat));
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
@@ -245,19 +332,29 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::TEXTVEC_:
 		{
 			my stringValue = GuiText_getString (my text);
-			int formattingOption = GuiOptionMenu_getValue (my optionMenu);
-			if (formattingOption == 1) {
-				my stringArrayValue = splitByWhitespace_STRVEC (my stringValue.get());
-			} else if (formattingOption == 2) {
-				my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U",");
-			} else if (formattingOption == 3) {
-				STRVEC result;
-				bool ownedByInterpreter;
-				Interpreter_stringArrayExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
-				if (ownedByInterpreter) {
-					my stringArrayValue. adoptFromAmbiguousOwner (result);
-				} else {
-					my stringArrayValue = copy_STRVEC (result);
+			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
+			switch (theStringArrayFormat) {
+				case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE: {
+					my stringArrayValue = splitByWhitespace_STRVEC (my stringValue.get());
+				} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS: {
+					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U",");
+				} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS: {
+					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U";");
+				} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES: {
+					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U"|");
+				} break; case kUi_stringArrayFormat::ONE_PER_LINE: {
+					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U"\n");
+				} break; case kUi_stringArrayFormat::FORMULA: {
+					STRVEC result;
+					bool ownedByInterpreter;
+					Interpreter_stringArrayExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
+					if (ownedByInterpreter) {
+						my stringArrayValue. adoptFromAmbiguousOwner (result);
+					} else {
+						my stringArrayValue = copy_STRVEC (result);
+					}
+				} break; case kUi_stringArrayFormat::UNDEFINED: {
+					Melder_fatal (U"Unknown string array format.");
 				}
 			}
 			if (my stringArrayVariable)
@@ -840,7 +937,8 @@ UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableN
 
 UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, name);
-	thy strvecDefaultValue = copy_STRVEC (defaultValue);
+	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
+	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 1;
@@ -1041,9 +1139,8 @@ void UiForm_finish (UiForm me) {
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
-				GuiOptionMenu_addOption (thy optionMenu, U"(separate by whitespace)");
-				GuiOptionMenu_addOption (thy optionMenu, U"(separate by commas)");
-				GuiOptionMenu_addOption (thy optionMenu, U"(formula)");
+				for (int format = (int) kUi_stringArrayFormat::MIN; format <= (int) kUi_stringArrayFormat::MAX; format ++)
+					GuiOptionMenu_addOption (thy optionMenu, kUi_stringArrayFormat_getText ((kUi_stringArrayFormat) format));
 			}
 			break;
 			case _kUiField_type::FORMULA_:

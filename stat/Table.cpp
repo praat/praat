@@ -1067,13 +1067,13 @@ autoTable Table_transpose (Table me) {
 	}
 }
 
-static constINTVEC *cellCompare_columns;
+static constINTVEC *cellCompare_columnNumbers;
 
 static int cellCompare (const void *first, const void *second) {
 	const TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	const integer ncol = cellCompare_columns->size;
+	const integer ncol = cellCompare_columnNumbers->size;
 	for (integer icol = 1; icol <= ncol; icol ++) {
-		const integer cellNumber = (*cellCompare_columns) [icol];
+		const integer cellNumber = (*cellCompare_columnNumbers) [icol];
 		if (my cells [cellNumber]. number < thy cells [cellNumber]. number)
 			return -1;
 		if (my cells [cellNumber]. number > thy cells [cellNumber]. number)
@@ -1082,24 +1082,23 @@ static int cellCompare (const void *first, const void *second) {
 	return 0;
 }
 
-void Table_sortRows_Assert (Table me, constINTVEC columns) {
-	for (integer icol = 1; icol <= columns.size; icol ++)
-		Table_numericize_Assert (me, columns [icol]);
-	cellCompare_columns = & columns;
+void Table_sortRows_Assert (Table me, constINTVEC columnNumbers) {
+	for (integer icol = 1; icol <= columnNumbers.size; icol ++)
+		Table_numericize_Assert (me, columnNumbers [icol]);
+	cellCompare_columnNumbers = & columnNumbers;
 	qsort (& my rows.at [1], (unsigned long) my rows.size, sizeof (TableRow), cellCompare);
 }
 
-void Table_sortRows_string (Table me, conststring32 columns_string) {
+void Table_sortRows (Table me, constSTRVEC columnNames) {
 	try {
-		autoSTRVEC columns_tokens = splitByWhitespace_STRVEC (columns_string);
-		integer numberOfColumns = columns_tokens.size;
+		integer numberOfColumns = columnNames.size;
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");
 		autoINTVEC columns = raw_INTVEC (numberOfColumns);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-			columns [icol] = Table_findColumnIndexFromColumnLabel (me, columns_tokens [icol].get());
+			columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnNames [icol]);
 			if (columns [icol] == 0)
-				Melder_throw (U"Column \"", columns_tokens [icol].get(), U"\" does not exist.");
+				Melder_throw (U"Column \"", columnNames [icol], U"\" does not exist.");
 		}
 		Table_sortRows_Assert (me, columns.get());
 	} catch (MelderError) {

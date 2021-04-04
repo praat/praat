@@ -95,7 +95,7 @@ void Table_formula (Table me, integer column, conststring32 formula, Interpreter
 void Table_formula_columnRange (Table me, integer column1, integer column2, conststring32 expression, Interpreter interpreter);
 
 void Table_sortRows_Assert (Table me, constINTVEC columns);
-void Table_sortRows_string (Table me, conststring32 columns_string);
+void Table_sortRows (Table me, constSTRVEC columns);
 void Table_randomizeRows (Table me) noexcept;
 void Table_reflectRows (Table me) noexcept;
 
