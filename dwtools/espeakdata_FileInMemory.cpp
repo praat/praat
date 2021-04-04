@@ -173,7 +173,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
-		Table_sortRows_string (thee.get(), U"name");
+		Table_sortRows (thee.get(), { U"name" });
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng voice properties not created.");
@@ -198,7 +198,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
-		Table_sortRows_string (thee.get(), U"name");
+		Table_sortRows (thee.get(), { U"name" });
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng languages not created.");
