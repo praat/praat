@@ -23,6 +23,8 @@
 #include "Interpreter.h"
 Thing_declare (EditorCommand);
 
+#include "Ui_enums.h"
+
 /* Forms for getting arguments from the user. */
 
 /* Example of usage:
@@ -113,10 +115,10 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
-	autoSTRVEC strvecDefaultValue;
-	autoVEC numericVectorValue;
-	autoMAT numericMatrixValue;
-	autoSTRVEC stringArrayValue;
+	autoVEC numericVectorValue, numericVectorDefaultValue;   // for NUMVEC_
+	autoMAT numericMatrixValue, numericmatrixDefaultValue;   // for NUMMAT_
+	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for TEXTVEC_
+	kUi_stringArrayFormat stringArrayFormat;   // for TEXTVEC_
 	MelderColour colourValue;
 	OrderedOf<structUiOption> options;
 	constSTRVEC strings;
@@ -334,6 +336,8 @@ void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void 
 
 void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter);
 int UiForm_getClickedContinueButton (UiForm me);
+
+void Ui_prefs ();
 
 /* End of file Ui.h */
 #endif

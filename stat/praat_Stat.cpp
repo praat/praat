@@ -890,11 +890,11 @@ DIRECT (MODIFY_Table_reflectRows) {
 }
 
 FORM (MODIFY_Table_sortRows, U"Table: Sort rows", nullptr) {
-	TEXTFIELD (columnLabels, U"One or more column labels for sorting:", U"dialect gender name", 5)
+	TEXTVEC (columnNames, U"One or more column names for sorting:", constSTRVEC ({ U"dialect", U"gender", U"name" }))
 	OK
 DO
 	MODIFY_EACH (Table)
-		Table_sortRows_string (me, columnLabels);
+		Table_sortRows (me, columnNames);
 	MODIFY_EACH_END
 }
 
