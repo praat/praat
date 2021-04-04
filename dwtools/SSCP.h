@@ -108,8 +108,8 @@ void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool
 
 void SSCP_expand (SSCP me);
 /*
-	Expand a reduced storage SSCP. For efficiency reasons, the expanded matrix is kept in memory.
-	Successive calls to SSCP_expand don't change anything unless
+	Expand a reduced storage SSCP. For efficiency reasons, the unexpanded matrix is also kept in memory.
+	Successive calls to SSCP_expand don't change anything unless dataChanged is true.
 	Before using one of the Covariance functions defined here on a reduced matrix we
 	first have to expand it to normal size.
 
