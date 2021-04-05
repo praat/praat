@@ -28,11 +28,9 @@
 Thing_define (ConstantQLogFSpectrogram, MultiSampledSpectrogram) {
 };
 
-void FunctionXSampledY_init (double xmin, double xmax, double ymin, double ymax, integer ny, double dy, double y1);
-
 void FrequencyBin_init (FrequencyBin me, double xmin, double xmax, integer nx, double dx, double x1);
 
-void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
+void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, bool garnish);
 

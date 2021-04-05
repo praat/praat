@@ -39,29 +39,14 @@
 #include "MultiSampledSpectrogram_def.h"
 
 
-
-Thing_implement (FunctionXSampledY, Function, 0);
-
-//void structFunctionXSampledY :: v_info () {
-//}
-
 Thing_implement (FrequencyBin, Sampled, 0);
 
-Thing_implement (MultiSampledSpectrogram, FunctionXSampledY, 0);
+Thing_implement (MultiSampledSpectrogram, Sampled, 0);
 
 Thing_implement (ConstantQLogFSpectrogram, MultiSampledSpectrogram, 0);
 
 void structMultiSampledSpectrogram :: v_info () {
 	
-}
-
-void FunctionXSampledY_init ( FunctionXSampledY me, double xmin, double xmax, double ymin, double ymax, integer ny, double dy, double y1) {
-	Function_init (me, xmin, xmax);
-	my ymin = ymin;
-	my ymax = ymax;
-	my ny = ny;
-	my dy = dy;
-	my y1 = y1;
 }
 
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1) {
@@ -75,8 +60,8 @@ autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, doub
 	}
 }
 
-void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, integer numberOfFrequencies, double df, double f1) {
-	FunctionXSampledY_init (me, tmin, tmax, fmin, fmax, numberOfFrequencies, df, f1);
+void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1) {
+	Sampled_init (me, fmin, fmax, numberOfFrequencies, df, f1);
 }
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {
@@ -92,10 +77,10 @@ void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, doub
 
 void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double log2_fmin, double log2_fmax, double minimum, double maximum) {
 	integer ixmin, ixmax, ifmin, ifmax;
-	if (my v_getWindowSamplesY (log2_fmin, log2_fmax, & ifmin, & ifmax) == 0)
+	if (Sampled_getWindowSamples (me, log2_fmin, log2_fmax, & ifmin, & ifmax) == 0)
 		return;
 	Graphics_setWindow (g, tmin, tmax, log2_fmin, log2_fmax);
-	integer numberOfFrames = Sampled_getWindowSamples (my frequencyBins . at [ifmax], tmin, tmax, & ixmin, & ixmax);
+	integer numberOfFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & ixmin, & ixmax);
 	autoMAT p = raw_MAT (1, numberOfFrames);
 	
 	if (minimum >= maximum) {
@@ -123,7 +108,7 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
 		double xmin1, xmax1 ;
 		const double dx = frequencyBin -> dx;
-		const double log2_freq = my v_getY (ifreq);
+		const double log2_freq = Sampled_indexToX (me, ifreq);
 		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & ixmin, & ixmax)) == 0)
 			continue;
 		p.resize (1, numberOfFrames);
@@ -135,8 +120,8 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 		}
 		double xmin = Sampled_indexToX (frequencyBin, ixmin) - 0.5 * dx;
 		double xmax = Sampled_indexToX (frequencyBin, ixmax) + 0.5 * dx;
-		double ymin = log2_freq - 0.5 * my dy; 
-		double ymax = log2_freq + 0.5 * my dy;
+		double ymin = log2_freq - 0.5 * my dx; 
+		double ymax = log2_freq + 0.5 * my dx;
 		if (ifreq > 1) {
 			Melder_clipRight (& xmin, xmin1);
 			Melder_clipLeft (xmax1, & xmax);
@@ -148,14 +133,12 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 }
 
 void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double minimum, double maximum, bool garnish) {
-	Function_bidirectionalAutowindow (me, & tmin, & tmax);
-	if (fmin >= fmax) {
-		fmin = my ymin;
-		fmax = my ymax;
-	} else {
-		fmin = fmin > 0.0 ? log2 (fmin) : my y1 - 0.5 * my dy;
-		fmax = log2 (fmax);
-	}
+	Function_bidirectionalAutowindow (me, & fmin, & fmax);
+	FrequencyBin frequencyBin = my frequencyBins.at [1];
+	if (tmin >= tmax) {
+		tmin = frequencyBin -> xmin;
+		tmax = frequencyBin -> xmax;
+	} 
 	Graphics_setInner (g);
 	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, minimum, maximum);
 	Graphics_unsetInner (g);
@@ -178,7 +161,7 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, doubl
 		const double log2_fmax = log2 (fmax), log2_f1 = log2 (f1); // * NUMlog10_2 = 0.3010299 ??  log10
 		const double dy = (log2_fmax - log2_f1) / (numberOfSteps - 1);
 		const double ymin = log2_f1 - 0.5 * dy, ymax = log2_fmax + 0.5 * dy;
-		MultiSampledSpectrogram_init (me.get(), tmin, tmax, ymin, ymax, numberOfSteps, dy, log2_f1);
+		MultiSampledSpectrogram_init (me.get(), ymin, ymax, numberOfSteps, dy, log2_f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create ConstantQLogFSpectrogram.");
@@ -190,7 +173,7 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 		
 		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (my xmin, my xmax, lowestFrequency, numberOfStepsPerOctave, numberOfSteps);
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
-		Melder_require (thy ymax <= nyquistFrequency,
+		Melder_require (thy xmax <= nyquistFrequency,
 			U"The number of steps you want result in a maximum frequency which is above the Nyquist frequency of the sound. "
 			"The maximum number of steps should not exceed ", Melder_iroundDown (numberOfStepsPerOctave * log2 (nyquistFrequency / lowestFrequency)), U".");
 		if (timeOversamplingFactor < 1.0)
@@ -199,7 +182,7 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 		autoMAT windowedExp = raw_MAT (2, maximumNumberOfAnalysisSamples + 1);
 		VEC windowedCos = windowedExp.row(1), windowedSin = windowedExp.row(2);
 		for (integer ifreq = 1; ifreq <= numberOfSteps; ifreq ++) {
-			const double frequency =  exp2 (thy v_getY (ifreq));
+			const double frequency =  exp2 (Sampled_indexToX (thee.get(), ifreq));
 			const integer halfNumberOfWindowSamples = Melder_iroundDown (0.5 * samplingFrequency * q / frequency);
 			const integer numberOfWindowSamples = 2 * halfNumberOfWindowSamples + 1;
 			double windowLength = numberOfWindowSamples * my dx;
