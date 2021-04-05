@@ -651,6 +651,30 @@ public:
 	{
 		Melder_assert (givenNrow * givenNcol <= vec. size);
 	}
+	constmatrixview (std::initializer_list <std::initializer_list <T>> list) {
+		our nrow = uinteger_to_integer (list.size());
+		Melder_assert (our nrow > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (0, 10) or so
+		our ncol = uinteger_to_integer (list.begin()->size());
+		Melder_assert (our ncol > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (10, 0) or so
+		our firstCell = list.begin()->begin();
+		if (our nrow > 0) {
+			integer irow = 1;
+			for (auto row : list) {
+				const integer numberOfColumnsInThisRow = uinteger_to_integer (row.size());
+				Melder_assert (numberOfColumnsInThisRow == our ncol);   // unfortunately, no support for static_assert here in C++17
+				integer icol = 1;
+				for (auto& cell : row) {
+					if (icol == 1) {
+						if (irow == 2)
+							our rowStride = & cell - our firstCell;
+						Melder_assert (& cell - our firstCell == our rowStride * (irow - 1));
+					}
+					icol ++;
+				}
+				irow ++;
+			}
+		}
+	}
 	constvectorview<T> operator[] (integer i) const {
 		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
 	}
@@ -751,6 +775,23 @@ public:
 		other.cells = nullptr;   // disown source
 		other.nrow = 0;   // to keep the source in a valid state
 		other.ncol = 0;   // to keep the source in a valid state
+	}
+	automatrix (std::initializer_list <std::initializer_list <T>> list) {
+		our nrow = uinteger_to_integer (list.size());
+		Melder_assert (our nrow > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (0, 10) or so
+		our ncol = uinteger_to_integer (list.begin()->size());
+		Melder_assert (our ncol > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (10, 0) or so
+		our cells = MelderArray:: _alloc <T> (our nrow * our ncol, MelderArray::kInitializationType::RAW);
+		double *p = our cells;
+		for (auto row : list) {
+			const integer numberOfColumnsInThisRow = uinteger_to_integer (row.size());
+			Melder_assert (numberOfColumnsInThisRow == our ncol);   // unfortunately, no support for static_assert here in C++17
+			for (auto& cell : row) {
+				fprintf (stderr, "automatrix %ld", & cell);
+				* (p ++) = cell;
+			}
+		}
+		//fprintf (stderr, "automatrix %ld %ld", list.begin()->begin(), list.end()->begin());
 	}
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.cells != our cells) {

@@ -16,6 +16,16 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+enums_begin (kUi_numericVectorFormat, 1)
+	enums_add (kUi_numericVectorFormat, 1, ENUMERATE, U"(enumerate)")
+	enums_add (kUi_numericVectorFormat, 2, FORMULA, U"(formula)")
+enums_end (kUi_numericVectorFormat, 2, ENUMERATE)
+
+enums_begin (kUi_numericMatrixFormat, 1)
+	enums_add (kUi_numericMatrixFormat, 1, ONE_ROW_PER_LINE, U"(one row per line)")
+	enums_add (kUi_numericMatrixFormat, 2, FORMULA, U"(formula)")
+enums_end (kUi_numericMatrixFormat, 2, ONE_ROW_PER_LINE)
+
 enums_begin (kUi_stringArrayFormat, 1)
 	enums_add (kUi_stringArrayFormat, 1, SPLIT_BY_WHITESPACE, U"(split by whitespace)")
 	enums_add (kUi_stringArrayFormat, 2, SPLIT_BY_COMMAS, U"(split by commas)")

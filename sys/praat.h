@@ -344,11 +344,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static constVEC numericVectorVariable; \
 		UiForm_addNumvec (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, U"", defaultStringValue);
 
-#define NUMMAT(numericMatrixVariable, labelText, defaultStringValue)  \
+#define NUMMAT(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static constMAT numericMatrixVariable; \
-		UiForm_addNummat (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultStringValue);
+		UiForm_addNummat (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultNumericMatrixValue);
 
 #define TEXTVEC(stringArrayVariable, labelText, defaultStringArrayValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
