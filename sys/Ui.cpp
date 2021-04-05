@@ -427,13 +427,17 @@ static void UiField_widgetToValue (UiField me) {
 				} break; case kUi_stringArrayFormat::ONE_PER_LINE: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"\n");
 				} break; case kUi_stringArrayFormat::FORMULA: {
-					STRVEC result;
-					bool ownedByInterpreter;
-					Interpreter_stringArrayExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
-					if (ownedByInterpreter) {
-						my stringArrayValue. adoptFromAmbiguousOwner (result);
+					if (stringValue [0] == U'\0') {
+						my stringArrayValue = autoSTRVEC();   // interpret the empty string as zero elements, as for all other formats
 					} else {
-						my stringArrayValue = copy_STRVEC (result);
+						STRVEC result;
+						bool ownedByInterpreter;
+						Interpreter_stringArrayExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
+						if (ownedByInterpreter) {
+							my stringArrayValue. adoptFromAmbiguousOwner (result);
+						} else {
+							my stringArrayValue = copy_STRVEC (result);
+						}
 					}
 				} break; case kUi_stringArrayFormat::UNDEFINED: {
 					Melder_fatal (U"Unknown string array format.");

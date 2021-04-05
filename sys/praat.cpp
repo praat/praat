@@ -1783,7 +1783,7 @@ void praat_run () {
 	Melder_assert (str32equ (Melder_colour (notExplicitlyIniitialized), U"{0,0,0}"));
 	Melder_assert (str32equ (Melder_colour (MelderColour (0.25, 0.50, 0.875)), U"{0.25,0.5,0.875}"));
 	{
-		VEC xn;   // uninitialized
+		VEC xn;   // "uninitialized", but initializes x.cells to nullptr and x.size to 0
 		Melder_assert (! xn.cells);
 		Melder_assert (xn.size == 0);
 		VEC x { };
@@ -1803,22 +1803,29 @@ void praat_run () {
 		Melder_assert (! y.cells);
 		Melder_assert (y.nrow == 0);
 		Melder_assert (y.ncol == 0);
-		//autoMAT z {y.at,y.nrow,y.ncol};   // explicit construction not OK
+		//autoMAT z {y.cells,y.nrow,y.ncol};   // "No matching constructor for initialization of autoMAT" (2021-04-05)
 		autoMAT a = autoMAT { };
 		Melder_assert (! a.cells);
 		Melder_assert (a.nrow == 0);
 		Melder_assert (a.ncol == 0);
 		//a = z.move();
 		//double q [11];
-		//autoVEC s { & q [1], 10 };
-		//autoVEC b { x };   // explicit construction not OK
-		//autoVEC c = x;   // implicit construction not OK
-		VEC xx;               // initializes x.cells to nullptr and x.size to 0
+		//autoVEC s { & q [1], 10 };   // "No matching constructor for initialization of autoVEC" (2021-04-05)
+		//autoVEC b { x };   // "No matching constructor for initialization of autoVEC" (2021-04-05)
+		//autoVEC c = x;   // "No viable conversion from VEC to autoVEC" (2021-04-05)
 		double aa [] = { 3.14, 2.718 };
 		VEC x3 (aa, 2);   // initializes x3 to 2 values from a base-0 array
 		Melder_assert (x3 [2] == 2.718);
-		constVEC x4 = { 3.14, 2.718 };
+		autoVEC x4 = { 3.14, 2.718 };
 		Melder_assert (x4 [2] == 2.718);
+	}
+	{
+		autoMAT mat = { { 10, 20, 30, 40 }, { 60, 70, 80, 90 }, { 170, 180, 190, -300 } };
+		Melder_assert (mat [1] [1] == 10.0);
+		Melder_assert (mat [1] [4] == 40.0);
+		Melder_assert (mat [2] [3] == 80.0);
+		Melder_assert (mat [3] [1] == 170.0);
+		Melder_assert (mat [3] [4] == -300.0);
 	}
 	static_assert (sizeof (float) == 4,
 		"sizeof(float) should be 4");

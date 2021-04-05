@@ -901,12 +901,12 @@ DO
 // MARK: Convert
 
 FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
-	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"speaker dialect age vowel", 2)
-	TEXTFIELD (columnsToSum, U"Columns to sum:", U"number cost", 2)
-	TEXTFIELD (columnsToAverage, U"Columns to average:", U"price", 2)
-	TEXTFIELD (columnsToMedianize, U"Columns to medianize:", U"vot", 2)
-	TEXTFIELD (columnsToAverageLogarithmically, U"Columns to average logarithmically:", U"duration", 2)
-	TEXTFIELD (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", U"F0 F1 F2 F3", 2)
+	TEXTVEC (factors, U"Columns with factors (independent variables):", constSTRVEC ({ U"speaker", U"dialect", U"age", U"vowel" }))
+	TEXTVEC (columnsToSum, U"Columns to sum:", constSTRVEC ({ U"number", U"cost" }))
+	TEXTVEC (columnsToAverage, U"Columns to average:", constSTRVEC ({ U"price" }))
+	TEXTVEC (columnsToMedianize, U"Columns to medianize:", constSTRVEC ({ U"vot" }))
+	TEXTVEC (columnsToAverageLogarithmically, U"Columns to average logarithmically:", constSTRVEC ({ U"duration" }))
+	TEXTVEC (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", constSTRVEC ({ U"F0", U"F1", U"F2", U"F3" }))
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
