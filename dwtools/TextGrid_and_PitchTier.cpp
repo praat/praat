@@ -167,7 +167,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 				Interpreter_numericExpression (0, token, & pitchesraw [i]);
 		}
 		/*
-			Now we have the real times and we can sort them tohether with the pitches
+			Now we have the real times and we can sort them together with the pitches
 		*/
 		autoVEC pitches = copy_VEC (pitchesraw.get());
 		NUMsortTogether (times.get(), pitches.get());
