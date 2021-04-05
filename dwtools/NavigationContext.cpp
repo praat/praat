@@ -109,7 +109,7 @@ autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topi
 	}
 }
 
-autoStrings Strings_createAsUniqueTokens (conststring32 strings, conststring32 where) {
+static autoStrings Strings_createAsUniqueTokens (conststring32 strings, conststring32 where) {
 	autoStrings me = Strings_createAsTokens (strings, U" ");
 	autoStrings thee = Data_copy (me.get());
 	Strings_sort (thee.get());

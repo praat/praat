@@ -163,7 +163,6 @@ public:
 		: constvector (mat.cells, mat.nrow * mat.ncol) { }
 	constvector (vector<T> const& other)
 		: constvector (other.cells, other.size) { }
-	constvector (std::initializer_list <const T> list): cells (list.begin()), size (uinteger_to_integer (list.size())) { }
 	//constvector (constvector const& other) = default;
 	//constvector& operator= (constvector const& other) = default;
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
@@ -243,6 +242,13 @@ public:
 		our cells = MelderArray:: _alloc <T> (givenSize, initializationType);
 		our size = givenSize;
 		our _capacity = givenSize;
+	}
+	autovector (std::initializer_list <const T> list) {
+		our size = uinteger_to_integer (list.size());
+		our cells = MelderArray:: _alloc <T> (our size, MelderArray::kInitializationType::RAW);
+		T *p = our cells;
+		for (auto cell : list)
+			* (p ++) = cell;
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
 		if (our cells) {
@@ -715,6 +721,20 @@ public:
 		our cells = MelderArray:: _alloc <T> (givenNrow * givenNcol, initializationType);
 		our nrow = givenNrow;
 		our ncol = givenNcol;
+	}
+	automatrix (std::initializer_list <std::initializer_list <T>> list) {
+		our nrow = uinteger_to_integer (list.size());
+		Melder_assert (our nrow > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (0, 10) or so
+		our ncol = uinteger_to_integer (list.begin()->size());
+		Melder_assert (our ncol > 0);   // empty matrices should be created with automatrix<T>() or automatrix<T> (10, 0) or so
+		our cells = MelderArray:: _alloc <T> (our nrow * our ncol, MelderArray::kInitializationType::RAW);
+		double *p = our cells;
+		for (auto row : list) {
+			const integer numberOfColumnsInThisRow = uinteger_to_integer (row.size());
+			Melder_assert (numberOfColumnsInThisRow == our ncol);   // unfortunately, no support for static_assert here in C++17
+			for (auto cell : row)
+				* (p ++) = cell;
+		}
 	}
 	~automatrix () {   // destroy the payload (if any)
 		if (our cells)

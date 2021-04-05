@@ -29,10 +29,82 @@
 #include "enums_getValue.h"
 #include "Ui_enums.h"
 
+kUi_numericVectorFormat theNumericVectorFormat;
+kUi_numericMatrixFormat theNumericMatrixFormat;
 kUi_stringArrayFormat theStringArrayFormat;
 
 void Ui_prefs () {
+	Preferences_addEnum (U"Ui.numericVectorFormat", & theNumericVectorFormat, kUi_numericVectorFormat, (int) kUi_numericVectorFormat::DEFAULT);
+	Preferences_addEnum (U"Ui.numericMatrixFormat", & theNumericMatrixFormat, kUi_numericMatrixFormat, (int) kUi_numericMatrixFormat::DEFAULT);
 	Preferences_addEnum (U"Ui.stringArrayFormat", & theStringArrayFormat, kUi_stringArrayFormat, (int) kUi_stringArrayFormat::DEFAULT);
+}
+
+static conststring32 formatNumericVector (constVEC elements, kUi_numericVectorFormat format) {
+	static MelderString buffer;
+	MelderString_empty (& buffer);
+	switch (format) {
+		case kUi_numericVectorFormat::ENUMERATE: {
+			for (integer i = 1; i <= elements.size; i ++) {
+				MelderString_append (& buffer, elements [i]);
+				if (i < elements.size)
+					MelderString_appendCharacter (& buffer, U' ');
+			}
+		} break; case kUi_numericVectorFormat::FORMULA: {
+			if (NUMisEmpty (elements)) {
+				MelderString_append (& buffer, U"zero# (0)");
+			} else {
+				MelderString_append (& buffer, U"{ ");
+				for (integer i = 1; i <= elements.size; i ++) {
+					MelderString_append (& buffer, elements [i]);
+					if (i < elements.size)
+						MelderString_append (& buffer, U", ");
+				}
+				MelderString_append (& buffer, U" }");
+			}
+		} break; case kUi_numericVectorFormat::UNDEFINED: {
+			Melder_fatal (U"Unknown numeric vector format.");
+		}
+	}
+	return buffer.string;
+}
+
+static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixFormat format) {
+	static MelderString buffer;
+	MelderString_empty (& buffer);
+	switch (format) {
+		case kUi_numericMatrixFormat::ONE_ROW_PER_LINE: {
+			for (integer irow = 1; irow <= cells.nrow; irow ++) {
+				for (integer icol = 1; icol <= cells.ncol; icol ++) {
+					MelderString_append (& buffer, cells [irow] [icol]);
+					if (icol < cells.ncol)
+						MelderString_appendCharacter (& buffer, U' ');
+				}
+				if (irow < cells.nrow)
+					MelderString_appendCharacter (& buffer, U'\n');
+			}
+		} break; case kUi_numericMatrixFormat::FORMULA: {
+			if (NUMisEmpty (cells)) {
+				MelderString_append (& buffer, U"zero## (0, 0)");
+			} else {
+				MelderString_append (& buffer, U"{ ");
+				for (integer irow = 1; irow <= cells.nrow; irow ++) {
+					MelderString_append (& buffer, U"{ ");
+					for (integer icol = 1; icol <= cells.ncol; icol ++) {
+						MelderString_append (& buffer, cells [irow] [icol]);
+						if (icol < cells.ncol)
+							MelderString_append (& buffer, U", ");
+					}
+					MelderString_append (& buffer, U" }");
+					if (irow < cells.nrow)
+						MelderString_append (& buffer, U", ");
+				}
+				MelderString_append (& buffer, U" }");
+			}
+		} break; case kUi_numericMatrixFormat::UNDEFINED: {
+			Melder_fatal (U"Unknown numeric matrix format.");
+		}
+	}
+	return buffer.string;
 }
 
 static void MelderString_appendQuoted (MelderString *buffer, conststring32 string) {
@@ -189,10 +261,20 @@ static void UiField_setDefault (UiField me) {
 		case _kUiField_type::INFILE_:
 		case _kUiField_type::OUTFILE_:
 		case _kUiField_type::FOLDER_:
-		case _kUiField_type::NUMVEC_:
-		case _kUiField_type::NUMMAT_:
 		{
 			GuiText_setString (my text, my stringDefaultValue.get());
+		}
+		break;
+		case _kUiField_type::NUMVEC_:
+		{
+			theNumericVectorFormat = (kUi_numericVectorFormat) GuiOptionMenu_getValue (my optionMenu);
+			GuiText_setString (my text, formatNumericVector (my numericVectorDefaultValue.get(), theNumericVectorFormat));
+		}
+		break;
+		case _kUiField_type::NUMMAT_:
+		{
+			theNumericMatrixFormat = (kUi_numericMatrixFormat) GuiOptionMenu_getValue (my optionMenu);
+			GuiText_setString (my text, formatNumericMatrix (my numericMatrixDefaultValue.get(), theNumericMatrixFormat));
 		}
 		break;
 		case _kUiField_type::TEXTVEC_:
@@ -301,10 +383,10 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::NUMVEC_:
 		{
-			my stringValue = GuiText_getString (my text);
+			autostring32 stringValue = GuiText_getString (my text);
 			VEC result;
 			bool ownedByInterpreter;
-			Interpreter_numericVectorExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
+			Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
 			if (ownedByInterpreter) {
 				my numericVectorValue. adoptFromAmbiguousOwner (result);
 			} else {
@@ -316,10 +398,10 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::NUMMAT_:
 		{
-			my stringValue = GuiText_getString (my text);
+			autostring32 stringValue = GuiText_getString (my text);
 			MAT result;
 			bool ownedByInterpreter;
-			Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
+			Interpreter_numericMatrixExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
 			if (ownedByInterpreter) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (result);
 			} else {
@@ -331,27 +413,31 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::TEXTVEC_:
 		{
-			my stringValue = GuiText_getString (my text);
+			autostring32 stringValue = GuiText_getString (my text);
 			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
 			switch (theStringArrayFormat) {
 				case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE: {
-					my stringArrayValue = splitByWhitespace_STRVEC (my stringValue.get());
+					my stringArrayValue = splitByWhitespace_STRVEC (stringValue.get());
 				} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS: {
-					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U",");
+					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U",");
 				} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS: {
-					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U";");
+					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U";");
 				} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES: {
-					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U"|");
+					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"|");
 				} break; case kUi_stringArrayFormat::ONE_PER_LINE: {
-					my stringArrayValue = splitBySeparator_STRVEC (my stringValue.get(), U"\n");
+					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"\n");
 				} break; case kUi_stringArrayFormat::FORMULA: {
-					STRVEC result;
-					bool ownedByInterpreter;
-					Interpreter_stringArrayExpression (nullptr, my stringValue.get(), & result, & ownedByInterpreter);
-					if (ownedByInterpreter) {
-						my stringArrayValue. adoptFromAmbiguousOwner (result);
+					if (stringValue [0] == U'\0') {
+						my stringArrayValue = autoSTRVEC();   // interpret the empty string as zero elements, as for all other formats
 					} else {
-						my stringArrayValue = copy_STRVEC (result);
+						STRVEC result;
+						bool ownedByInterpreter;
+						Interpreter_stringArrayExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
+						if (ownedByInterpreter) {
+							my stringArrayValue. adoptFromAmbiguousOwner (result);
+						} else {
+							my stringArrayValue = copy_STRVEC (result);
+						}
 					}
 				} break; case kUi_stringArrayFormat::UNDEFINED: {
 					Melder_fatal (U"Unknown string array format.");
@@ -723,22 +809,18 @@ static void gui_button_cb_help (UiForm me, GuiButtonEvent /* event */) {
 
 static void gui_button_cb_browseInfile (UiField me, GuiButtonEvent /* event */) {
 	autoStringSet chosenFilePath = GuiFileSelect_getInfileNames (nullptr, U"Open file", false);
-	if (chosenFilePath) {
-		my stringValue = chosenFilePath -> at [1] -> string.move();
-		GuiText_setString (my text, my stringValue.get());
-	}
-}static void gui_button_cb_browseOutfile (UiField me, GuiButtonEvent /* event */) {
+	if (chosenFilePath)
+		GuiText_setString (my text, chosenFilePath -> at [1] -> string.get());
+}
+static void gui_button_cb_browseOutfile (UiField me, GuiButtonEvent /* event */) {
 	autostring32 chosenFilePath = GuiFileSelect_getOutfileName (nullptr, U"Save file", U"");
-	if (chosenFilePath) {
-		my stringValue = chosenFilePath.move();
-		GuiText_setString (my text, my stringValue.get());
-	}
-}static void gui_button_cb_browseFolder (UiField me, GuiButtonEvent /* event */) {
+	if (chosenFilePath)
+		GuiText_setString (my text, chosenFilePath.get());
+}
+static void gui_button_cb_browseFolder (UiField me, GuiButtonEvent /* event */) {
 	autostring32 chosenFolderPath = GuiFileSelect_getFolderName (nullptr, U"Choose folder");
-	if (chosenFolderPath) {
-		my stringValue = chosenFolderPath.move();
-		GuiText_setString (my text, my stringValue.get());
-	}
+	if (chosenFolderPath)
+		GuiText_setString (my text, chosenFolderPath.get());
 }
 
 autoUiForm UiForm_create (GuiWindow parent, conststring32 title,
@@ -926,9 +1008,9 @@ UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableN
 	return thee;
 }
 
-UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMMAT_, name);
-	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 1;
@@ -1123,12 +1205,24 @@ void UiForm_finish (UiForm me) {
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (7), GuiText_INKWRAP | GuiText_SCROLLED);
+				thy optionMenu = GuiOptionMenu_createShown (form,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+				for (int format = (int) kUi_numericVectorFormat::MIN; format <= (int) kUi_numericVectorFormat::MAX; format ++)
+					GuiOptionMenu_addOption (thy optionMenu, kUi_numericVectorFormat_getText ((kUi_numericVectorFormat) format));
+				GuiOptionMenu_setValue (thy optionMenu, (int) theNumericVectorFormat);
 			}
 			break;
 			case _kUiField_type::NUMMAT_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (10), GuiText_SCROLLED);
+				thy optionMenu = GuiOptionMenu_createShown (form,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+				for (int format = (int) kUi_numericMatrixFormat::MIN; format <= (int) kUi_numericMatrixFormat::MAX; format ++)
+					GuiOptionMenu_addOption (thy optionMenu, kUi_numericMatrixFormat_getText ((kUi_numericMatrixFormat) format));
+				GuiOptionMenu_setValue (thy optionMenu, (int) theNumericMatrixFormat);
 				okButtonIsDefault = false;   // because otherwise, the Enter key would be ambiguous
 			}
 			break;

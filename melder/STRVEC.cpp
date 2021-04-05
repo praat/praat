@@ -206,8 +206,17 @@ autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separato
 	const integer separatorLength = str32len (separator);
 	const char32 *p = & string [0];
 	const char32 *locationOfSeparator = str32str (p, separator);
-	if (! locationOfSeparator)
+	if (! locationOfSeparator) {
+		if (string [0] == U'\0') {
+			/*
+				This is ambiguous: either a single empty string, or no strings at all.
+				We decide that, as with space separation, empty strings are somewhat hard to find.
+				So we decide that this is a single empty string.
+			*/
+			return autoSTRVEC();
+		}
 		return copy_STRVEC ({ string });
+	}
 	integer n = 1;
 	do {
 		n += 1;

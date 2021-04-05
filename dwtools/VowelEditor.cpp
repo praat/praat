@@ -557,7 +557,7 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		VowelEditor_getVowelMarksFromFile (me);
 		return;
 	}
-	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(), U"IPA", U"", U"F1 F2", U"", U"", U"");
+	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(), { U"IPA" }, {}, { U"F1", U"F2" }, {}, {}, {});
 	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 

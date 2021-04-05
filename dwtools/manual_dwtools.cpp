@@ -3061,7 +3061,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (12), U""
 	"Text... 50 left y half ...to be added to the anchor value (if used)...\n" \
 	"y += 40\n" \
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...which is the...",U"not used")
-	"Text... 50 left y half ...frequency value in the interval...\n" \
+	"Text... 50 left y half ...frequency value in the interval.\n" \
 	"y += 40\n" \
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Pitch frequency unit",U"Hertz")
 )

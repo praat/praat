@@ -689,41 +689,30 @@ static void Table_columns_checkCrossSectionEmpty (constSTRVEC factors, constSTRV
 				Melder_throw (U"Factor \"", factors [ifactor], U"\" is also used as dependent variable.");
 }
 
-autoTable Table_collapseRows (Table me, conststring32 factors_string, conststring32 columnsToSum_string,
-	conststring32 columnsToAverage_string, conststring32 columnsToMedianize_string,
-	conststring32 columnsToAverageLogarithmically_string, conststring32 columnsToMedianizeLogarithmically_string)
+autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columnsToSum,
+	constSTRVEC columnsToAverage, constSTRVEC columnsToMedianize,
+	constSTRVEC columnsToAverageLogarithmically, constSTRVEC columnsToMedianizeLogarithmically)
 {
 	bool originalChanged = false;
 	try {
-		Melder_assert (factors_string);
-
-		/*
-			Parse the six strings of tokens.
-		*/
-		autoSTRVEC factors = splitByWhitespace_STRVEC (factors_string);
 		if (factors.size < 1)
 			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
-		Table_columns_checkExist (me, factors.get());
+		Table_columns_checkExist (me, factors);
 
-		autoSTRVEC columnsToSum = splitByWhitespace_STRVEC (columnsToSum_string);
-		Table_columns_checkExist (me, columnsToSum.get());
-		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToSum.get());
+		Table_columns_checkExist (me, columnsToSum);
+		Table_columns_checkCrossSectionEmpty (factors, columnsToSum);
 
-		autoSTRVEC columnsToAverage = splitByWhitespace_STRVEC (columnsToAverage_string);
-		Table_columns_checkExist (me, columnsToAverage.get());
-		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverage.get());
+		Table_columns_checkExist (me, columnsToAverage);
+		Table_columns_checkCrossSectionEmpty (factors, columnsToAverage);
 
-		autoSTRVEC columnsToMedianize = splitByWhitespace_STRVEC (columnsToMedianize_string);
-		Table_columns_checkExist (me, columnsToMedianize.get());
-		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianize.get());
+		Table_columns_checkExist (me, columnsToMedianize);
+		Table_columns_checkCrossSectionEmpty (factors, columnsToMedianize);
 
-		autoSTRVEC columnsToAverageLogarithmically = splitByWhitespace_STRVEC (columnsToAverageLogarithmically_string);
-		Table_columns_checkExist (me, columnsToAverageLogarithmically.get());
-		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverageLogarithmically.get());
+		Table_columns_checkExist (me, columnsToAverageLogarithmically);
+		Table_columns_checkCrossSectionEmpty (factors, columnsToAverageLogarithmically);
 
-		autoSTRVEC columnsToMedianizeLogarithmically = splitByWhitespace_STRVEC (columnsToMedianizeLogarithmically_string);
-		Table_columns_checkExist (me, columnsToMedianizeLogarithmically.get());
-		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianizeLogarithmically.get());
+		Table_columns_checkExist (me, columnsToMedianizeLogarithmically);
+		Table_columns_checkCrossSectionEmpty (factors, columnsToMedianizeLogarithmically);
 
 		autoTable thee = Table_createWithoutColumnNames (0,
 				factors.size + columnsToSum.size + columnsToAverage.size + columnsToMedianize.size +
@@ -740,28 +729,28 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		{
 			integer icol = 0;
 			for (integer i = 1; i <= factors.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, factors [i].get());
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, factors [i].get());
+				Table_setColumnLabel (thee.get(), ++ icol, factors [i]);
+				columns [icol] = Table_findColumnIndexFromColumnLabel (me, factors [i]);
 			}
 			for (integer i = 1; i <= columnsToSum.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToSum [i].get());
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToSum [i].get());
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToSum [i]);
+				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToSum [i]);
 			}
 			for (integer i = 1; i <= columnsToAverage.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverage [i].get());
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverage [i].get());
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverage [i]);
+				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverage [i]);
 			}
 			for (integer i = 1; i <= columnsToMedianize.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianize [i].get());
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianize [i].get());
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianize [i]);
+				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianize [i]);
 			}
 			for (integer i = 1; i <= columnsToAverageLogarithmically.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverageLogarithmically [i].get());
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverageLogarithmically [i].get());
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToAverageLogarithmically [i]);
+				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverageLogarithmically [i]);
 			}
 			for (integer i = 1; i <= columnsToMedianizeLogarithmically.size; i ++) {
-				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianizeLogarithmically [i].get());
-				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianizeLogarithmically [i].get());
+				Table_setColumnLabel (thee.get(), ++ icol, columnsToMedianizeLogarithmically [i]);
+				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianizeLogarithmically [i]);
 			}
 			Melder_assert (icol == thy numberOfColumns);
 		}
@@ -847,7 +836,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 						const double value = my rows.at [jrow] -> cells [columns [icol]]. number;
 						if (value <= 0.0) {
 							Melder_throw (
-								U"The cell in column \"", columnsToAverageLogarithmically [i].get(),
+								U"The cell in column \"", columnsToAverageLogarithmically [i],
 								U"\" of row ", jrow, U" of ", me,
 								U" is not positive.\nCannot average logarithmically."
 							);
@@ -862,7 +851,7 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 						const double value = my rows.at [jrow] -> cells [columns [icol]]. number;
 						if (value <= 0.0) {
 							Melder_throw (
-								U"The cell in column \"", columnsToMedianizeLogarithmically [i].get(),
+								U"The cell in column \"", columnsToMedianizeLogarithmically [i],
 								U"\" of row ", jrow, U" of ", me,
 								U" is not positive.\nCannot medianize logarithmically."
 							);

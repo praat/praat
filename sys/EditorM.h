@@ -261,7 +261,7 @@ _form_inited_: \
 
 #define FOLDER_FIELD(stringVariable, labelText, defaultValue) \
 	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addFolder (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
 
 #define FOLDER(stringVariable, labelText, defaultValue) \
 	FOLDER_VARIABLE (stringVariable) \
