@@ -318,7 +318,7 @@ void GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC const& c,
 				c [i] = NUMrandomGauss (thy centroid [i], sqrt (thy data [1] [i]));
 		} else { // nxn
 			if (! thy pca)
-				SSCP_expandPCA (thee);    // on demand expanding
+				SSCP_expandWithPCA (thee);    // on demand expanding
 			Covariance_PCA_generateOneVector_inline (thee, thy pca.get(), c, buf);
 		}
 		if (out_covname) {
@@ -691,7 +691,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, my numberOfComponents);
 		for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
 			const Covariance cov = my covariances->at [ic];
-			SSCP_expandLowerCholeskyInverse (cov);
+			SSCP_expandWithLowerCholeskyInverse (cov);
 			TableOfReal_setColumnLabel (him.get(), ic, Thing_getName (cov));
 		}
 
@@ -733,7 +733,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 		
 		Covariance thee = my covariances->at [component];
 		// Always new PCA because we cannot be sure of data unchanged.
-		SSCP_expandPCA (thee);
+		SSCP_expandWithPCA (thee);
 		autoCovariance cov1 = Data_copy (thee);
 		autoCovariance cov2 = Data_copy (thee);
 		SSCP_unExpandPCA (cov1.get());
@@ -805,7 +805,7 @@ void GaussianMixture_TableOfReal_getComponentProbabilities (GaussianMixture me, 
 		
 		for (integer component = fromComponent; component <= toComponent; component ++) {
 			const Covariance covi = my covariances->at [component];
-			SSCP_expandLowerCholeskyInverse (covi);
+			SSCP_expandWithLowerCholeskyInverse (covi);
 
 			for (integer irow = 1; irow <= thy numberOfRows; irow++) {
 				const double dsq = NUMmahalanobisDistanceSquared (covi -> lowerCholeskyInverse.get(), thy data.row (irow), covi -> centroid.get());

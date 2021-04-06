@@ -16,39 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20001109 Sound_scale->Vector_scale
- djmw 20020516 GPL header
- djmw 20020523 Removed Sound_read/writeWAVAudioFile
- djmw 20030926 Sound_changeGender
- djmw 20040405 Renamed: Sound_overrideSamplingFrequency
- djmw 20041124 Changed call to Sound_to_Spectrum & Spectrum_to_Sound.
- djmw 20050620 Changed Pitch_HERTZ to Pitch_UNIT_HERTZ
- djmw 20050628 New and extended Sound_createShepardToneComplex that corrects incorrect amplitudes of tones in complex.
- 		(amplitudes were on linear instead of log scale)
- djmw 20060921 Added Sound_to_IntervalTier_detectSilence
- djmw 20061010 Removed crashing bug in Sound_to_IntervalTier_detectSilence.
- djmw 20061201 Interface change: removed minimumPitch parameter from Sound_Pitch_changeGender.
- djmw 20061214 Sound_Pitch_changeSpeaker removed warning.
- djmw 20070103 Sound interface changes
- djmw 20070129 Warning added in changeGender_old.
- djmw 20071022 Possible (bug?) correction in Sound_createShepardToneComplex
- djmw 20071030 Sound_preEmphasis: no pre-emphasis above the Nyquist frequency.
- djmw 20071202 Melder_warning<n>
- djmw 20080122 float -> double
- djmw 20080320 +Sound_fade.
- djmw 20080530 +Sound_localAverage
- pb 20090926 Correction in Sound_Pitch_changeGender_old
- djmw 20091023 Added Sound_drawIntervals
- djmw 20091028 Sound_drawIntervals -> Sound_drawParts + Graphics_function
- djmw 20091126 Sound_drawParts -> Sound_drawWheres
- djmw 20091211 Sound_fade: removed erroneous warning
- djmw 20100318 Cross-correlation, convolution and autocorrelation
- djmw 20100325 -Cross-correlation, convolution and autocorrelation
- djmw 20111227 Sound_trimSilencesAtStartAndEnd and Sound_getStartAndEndTimesOfSounding
- djmw 20120616 Change 0.8 to 1.25 in Sound_Point_Pitch_Duration_to_Sound
-*/
-
 #include "Formula.h"
 #include "Intensity_extensions.h"
 #include "Sound_extensions.h"
@@ -1164,8 +1131,8 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 
 		const double a = frequencyChange_st / 12.0;
-		for (integer i = 1; i <= numberOfComponents; i ++) {
-			double freqi = lowestFrequency * pow (2.0, i - 1 + octaveShiftFraction);
+		for (integer ifreq = 1; ifreq <= numberOfComponents; ifreq ++) {
+			double freqi = lowestFrequency * pow (2.0, ifreq - 1 + octaveShiftFraction);
 			double b1, b2, tswitch;
 			double phase1 = 0, phasejm1 = 0;
 			/*
@@ -1185,24 +1152,24 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 				endif
 			*/
 			if (frequencyChange_st >= 0) {
-				b1 = i - 1 + octaveShiftFraction;
+				b1 = ifreq - 1 + octaveShiftFraction;
 				b2 = 0.0;
 				tswitch = (numberOfComponents - b1) * octaveTime;
 			} else {
-				freqi *= 2;
-				b1 = i - octaveShiftFraction;
+				freqi *= 2.0;
+				b1 = ifreq - octaveShiftFraction;
 				b2 = numberOfComponents;
 				tswitch = b1 * octaveTime;
 			}
 			for (integer j = 1; j <= my nx; j ++) {
 				const double t = Sampled_indexToX (me.get(), j);
-				double tmod = fmod (t, sweeptime);
+				const double tmod = fmod (t, sweeptime);
 				const double tone = tmod <= tswitch ? b1 + a * tmod : b2 + a * (tmod - tswitch);
 				const double f = lowestFrequency * pow (2, tone);
 				/* double theta = 2 * NUMpi * log2 (f / lowestFrequency) / numberOfComponents; */
 				const double theta = 2 * NUMpi * tone / numberOfComponents;
-				const double level = pow (10, (lmin_db + (lmax_db - lmin_db) * (1 - cos (theta)) / 2) / 20);
-				const double phasej = phasejm1 + 2 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
+				const double level = pow (10.0, (lmin_db + (lmax_db - lmin_db) * (1.0 - cos (theta)) / 2.0) / 20.0);
+				const double phasej = phasejm1 + 2.0 * NUMpi * f * my dx; /* Integrate 2*pi*f(t) */
 
 				if (j == 1)
 					phase1 = phasej;

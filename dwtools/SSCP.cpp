@@ -773,7 +773,7 @@ void SSCP_expand (SSCP me) {
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++)
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 			const integer dij = integer_abs (ir - ic);
-			my expansion [ir] [ic] = ( my expansion [ic] [ir] = dij < my numberOfRows ? my data [dij + 1] [ic] : 0.0 );
+			my expansion [ir] [ic] = my expansion [ic] [ir] = ( dij < my numberOfRows ? my data [dij + 1] [ic] : 0.0 );
 		}
 
 	// Now make 'my data' point to 'my expansion' and vice versa
@@ -792,7 +792,7 @@ void SSCP_unExpand (SSCP me) {
 	my dataChanged = false;
 }
 
-void SSCP_expandLowerCholeskyInverse (SSCP me) {
+void SSCP_expandWithLowerCholeskyInverse (SSCP me) {
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
 		my lowerCholeskyInverse = raw_MAT (my numberOfColumns, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
@@ -823,7 +823,7 @@ void SSCP_unExpandLowerCholesky (SSCP me) {
 	my lnd = 0.0;
 }
 
-void SSCP_expandPCA (SSCP me) {
+void SSCP_expandWithPCA (SSCP me) {
 	my pca = SSCP_to_PCA (me);
 }
 

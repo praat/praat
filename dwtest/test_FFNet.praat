@@ -22,7 +22,7 @@ removeObject: tab
 ntries = 10
 selectObject: ffnet, pattern, cat
 error1 = Get total costs... Minimum-squared-error
-tab = Create Table with column names... results ntries costsb  costsa fc 
+tab = Create Table with column names... results ntries costsb  costsa fc
 
 for i to ntries
 	select ffnet
