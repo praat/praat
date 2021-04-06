@@ -20,6 +20,11 @@
 oo_DEFINE_CLASS (FrequencyBin, Sampled)
 
 	oo_MAT (z, 2, nx) // re & im 
+	
+	#if oo_DECLARING
+		double v_getValueAtSample (integer /* iframe */, integer /* which */, int /* unit */)
+			override;
+	#endif
 
 oo_END_CLASS (FrequencyBin)
 #undef ooSTRUCT
@@ -32,6 +37,9 @@ oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 	#if oo_DECLARING
 		void v_info ()
 			override;
+		double v_getValueAtSample (integer /* ifreq */, integer /* iframe */, int /* unit */)
+			override;
+		virtual double v_getFrequencyHz (double /* x */);
 	#endif
 
 oo_END_CLASS (MultiSampledSpectrogram)

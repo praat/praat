@@ -36,6 +36,8 @@ void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, double tmin, doub
 
 void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, bool garnish);
 
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, integer numberOfStepsPerOctave, integer numberOfSteps);
+
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double f1, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor);
 
 void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish);

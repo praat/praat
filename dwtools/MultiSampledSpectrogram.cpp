@@ -38,15 +38,121 @@
 #include "oo_DESCRIPTION.h"
 #include "MultiSampledSpectrogram_def.h"
 
+void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape windowShape) {
+	const integer n = target.size;
+	const double imid = 0.5 * (double) (n + 1);
+	switch (windowShape) {
+		case kSound_windowShape::RECTANGULAR: {
+			target  <<=  1.0; 
+		} break; case kSound_windowShape::TRIANGULAR: {  // "Bartlett"
+			for (integer i = 1; i <= n; i ++) {
+				const double phase = (double) i / n;   // 0..1  TODO No window is not symmetric
+				target [i] = 1.0 - fabs ((2.0 * phase - 1.0));
+			} 
+		} break; case kSound_windowShape::PARABOLIC: {  // "Welch"
+			for (integer i = 1; i <= n; i ++) { 
+				const double phase = (double) i / n;
+				target [i] = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
+			}
+		} break; case kSound_windowShape::HANNING: {
+			for (integer i = 1; i <= n; i ++) {
+				const double phase = (double) i / n;
+				target [i] = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
+			}
+		} break; case kSound_windowShape::HAMMING: {
+			for (integer i = 1; i <= n; i ++) { 
+				const double phase = (double) i / n;
+				target [i] = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
+			}
+		} break; case kSound_windowShape::GAUSSIAN_1: {
+			const double edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
+			for (integer i = 1; i <= n; i ++) {
+				const double phase = ((double) i - imid) / n;
+				target [i] = (exp (-12.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::GAUSSIAN_2: {
+			const double edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= n; i ++) {
+				const double phase = ((double) i - imid) / n;
+				target [i] = (exp (-48.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::GAUSSIAN_3: {
+			const double edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= n; i ++) {
+				const double phase = ((double) i - imid) / n;
+				target [i] = (exp (-108.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::GAUSSIAN_4: {
+			const double edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= n; i ++) { 
+				const double phase = ((double) i - imid) / n;
+				target [i] = (exp (-192.0 * phase * phase) - edge) * onebyedge1; 
+			}
+		} break; case kSound_windowShape::GAUSSIAN_5: {
+			const double edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
+			for (integer i = 1; i <= n; i ++) { 
+				const double phase = ((double) i - imid) / n;
+				target [i] = (exp (-300.0 * phase * phase) - edge) * onebyedge1;
+			}
+		} break; case kSound_windowShape::KAISER_1: {
+			const double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi);
+			for (integer i = 1; i <= n; i ++) { 
+				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
+				const double root = 1.0 - phase * phase;
+				target [i] = root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root));
+			}
+		} break; case kSound_windowShape::KAISER_2: {
+			const double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
+			for (integer i = 1; i <= n; i ++) { 
+				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
+				const double root = 1.0 - phase * phase;
+				target [i] = root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root)); 
+			}
+		} break; default: {
+			target  <<=  1.0;
+		}
+	}
+}
+
+autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
+	autoVEC result = raw_VEC (n);
+	windowShape_VEC_preallocated (result.get(), windowShape);
+	return result;
+}
 
 Thing_implement (FrequencyBin, Sampled, 0);
+
+double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which , int unit) {
+	if (unit == 0) {
+		return ( which == 1 ? z [1] [iframe] : which == 2 ? z [2] [iframe] : undefined );
+	}
+	double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
+	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 (power / 4e-10) : undefined );
+}
 
 Thing_implement (MultiSampledSpectrogram, Sampled, 0);
 
 Thing_implement (ConstantQLogFSpectrogram, MultiSampledSpectrogram, 0);
 
 void structMultiSampledSpectrogram :: v_info () {
-	
+	structDaata :: v_info ();
+	MelderInfo_writeLine (U"Minimum frequency (Hz): ", exp2 (xmin), U" Hz");
+	MelderInfo_writeLine (U"Maximum frequency (Hz): ", exp2 (xmax), U" Hz");
+	MelderInfo_writeLine (U"First frequency (Hz): ", exp2 (x1), U" Hz");
+	const integer numberOfFrequencies = frequencyBins.size;
+	MelderInfo_writeLine (U"Number of frequencies: ", numberOfFrequencies);
+	MelderInfo_writeLine (U"Number of frames in frequency bin 1: ", frequencyBins.at [1] -> nx);
+	MelderInfo_writeLine (U"Number of frames in frequency bin ", numberOfFrequencies, U": ", frequencyBins.at [numberOfFrequencies] -> nx);
+}
+
+double structMultiSampledSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
+	FrequencyBin bin = frequencyBins.at [ifreq];
+	const double value = bin -> v_getValueAtSample (iframe, 1, unit);
+	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
+}
+
+double structMultiSampledSpectrogram :: v_getFrequencyHz (double log2_f) {
+	return exp2 (log2_f);
 }
 
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1) {
@@ -133,12 +239,18 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 }
 
 void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double minimum, double maximum, bool garnish) {
-	Function_bidirectionalAutowindow (me, & fmin, & fmax);
+	if (fmin >= fmax) {
+		fmin = my xmin;
+		fmax = my xmax;
+	} else {
+		fmin = ( fmin > 0 ? log2 (fmin) : 0.0 );
+		fmax = ( fmax > my v_getFrequencyHz (my xmax) ? my xmax : log2 (fmax) );
+	}
 	FrequencyBin frequencyBin = my frequencyBins.at [1];
 	if (tmin >= tmax) {
 		tmin = frequencyBin -> xmin;
 		tmax = frequencyBin -> xmax;
-	} 
+	}
 	Graphics_setInner (g);
 	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, minimum, maximum);
 	Graphics_unsetInner (g);
@@ -146,13 +258,20 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_marksLeft (g, 2, true, true, false);
-		Graphics_textLeft (g, true, U"Frequency (log2Hz)");
+		double f = my x1;
+		while (f <= my xmax ) {
+			if (f >= fmin) {
+				const double f_hz = my v_getFrequencyHz (f);
+				conststring32 f_string = Melder_fixed (f_hz, 1);
+				Graphics_markLeft (g, f, false, true, false, f_string);
+			}
+			f += 1.0;
+		}
+		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
 	}
-	
 }
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, integer numberOfStepsPerOctave, integer numberOfSteps) {
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, integer numberOfStepsPerOctave, integer numberOfSteps) {
 	try {
 		Melder_require (numberOfSteps > 1,
 			U"The number of steps should be larger than 1.");
@@ -171,15 +290,16 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, doubl
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
 	try {
 		
-		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (my xmin, my xmax, lowestFrequency, numberOfStepsPerOctave, numberOfSteps);
+		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, numberOfStepsPerOctave, numberOfSteps);
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
-		Melder_require (thy xmax <= nyquistFrequency,
+		Melder_require (thy v_getFrequencyHz (thy xmax) <= nyquistFrequency,
 			U"The number of steps you want result in a maximum frequency which is above the Nyquist frequency of the sound. "
 			"The maximum number of steps should not exceed ", Melder_iroundDown (numberOfStepsPerOctave * log2 (nyquistFrequency / lowestFrequency)), U".");
 		if (timeOversamplingFactor < 1.0)
 			timeOversamplingFactor = 4.0; // default oversampling
-		const integer maximumNumberOfAnalysisSamples = samplingFrequency * q / lowestFrequency;
-		autoMAT windowedExp = raw_MAT (2, maximumNumberOfAnalysisSamples + 1);
+		const integer maximumNumberOfAnalysisSamples = samplingFrequency * q / lowestFrequency + 1;
+		autoVEC window = raw_VEC (maximumNumberOfAnalysisSamples);
+		autoMAT windowedExp = raw_MAT (2, maximumNumberOfAnalysisSamples);
 		VEC windowedCos = windowedExp.row(1), windowedSin = windowedExp.row(2);
 		for (integer ifreq = 1; ifreq <= numberOfSteps; ifreq ++) {
 			const double frequency =  exp2 (Sampled_indexToX (thee.get(), ifreq));
@@ -196,9 +316,12 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 			for (integer i = 1; i <= numberOfWindowSamples; i ++) {
 				const double x = (i - windowCentreSampleNumber) * my dx / (0.5 * windowLength);
 				const double root = sqrt (Melder_clippedLeft (0.0, 1.0 - sqr (x)));   // clipping should be rare
-				const double window = NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * root);
-				windowedCos [i] =   window * cos (NUM2pi * q * (i - 1) / numberOfWindowSamples);
-				windowedSin [i] = - window * sin (NUM2pi * q * (i - 1) / numberOfWindowSamples);
+				window [i] = NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * root);
+			}
+			window.resize (numberOfWindowSamples);
+			for (integer i = 1; i <= numberOfWindowSamples; i ++) {
+				windowedCos [i] =   window [i] * cos (NUM2pi * q * (i - 1) / numberOfWindowSamples);
+				windowedSin [i] = - window [i] * sin (NUM2pi * q * (i - 1) / numberOfWindowSamples);
 			}
 			for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 				const double midTime = Sampled_indexToX (frequencyBin.get(), iframe);
@@ -215,11 +338,13 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 					U"Unexpected edge case: right sample (", rightSample, U") less than left sample (", leftSample, U").");
 				const integer actualNumberOfSamples = rightSample - leftSample + 1;
 				const integer windowFromSoundOffset = windowCentreSampleNumber - soundCentreSampleNumber;
+				const double windowSq = NUMsum2 (window.part (windowFromSoundOffset + leftSample, windowFromSoundOffset + rightSample));
+				const double scaleFactor = 1.0 / (actualNumberOfSamples * sqrt (windowSq)) ;
 				VEC amplitudePart = my z.row(1).part (leftSample, rightSample);
 				frequencyBin -> z [1] [iframe] = NUMinner (amplitudePart, windowedCos.part (windowFromSoundOffset + leftSample,
-					windowFromSoundOffset + rightSample)) / actualNumberOfSamples;
+					windowFromSoundOffset + rightSample)) * scaleFactor;
 				frequencyBin -> z [2] [iframe] = NUMinner (amplitudePart, windowedSin.part (windowFromSoundOffset + leftSample, 
-					windowFromSoundOffset + rightSample)) / actualNumberOfSamples;
+					windowFromSoundOffset + rightSample)) * scaleFactor;
 			}
 			thy frequencyBins.addItem_move (frequencyBin.move());
 		}
