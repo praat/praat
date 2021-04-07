@@ -510,10 +510,19 @@ void _GuiText_exit () {
 		d_userData = static_cast <GuiText> (userData);
 	}
 	/*
-	 * The NSTextViewDelegate protocol.
-	 * While NSTextDelegate simply has textDidChange:, that method doesn't seem to respond when the text is changed programmatically.
-	 */
-//	- (void) textDidChange: (NSNotification *) notification {
+		The NSTextViewDelegate protocol.
+		While NSTextDelegate simply has textDidChange:, that method doesn't seem to always respond when the text is changed programmatically.
+		Hence the addition of textView:shouldChangeTextInRange.
+		It's not unthinkable that some changes could appear twice.
+	*/
+	- (void) textDidChange: (NSNotification *) notification {   // method doesn't seem to respond when the text is changed programmatically
+		(void) notification;
+		GuiText me = d_userData;
+		if (me && my d_changedCallback) {
+			struct structGuiTextEvent event { me };
+			my d_changedCallback (my d_changedBoss, & event);
+		}
+	}
 	- (BOOL) textView: (NSTextView *) aTextView   shouldChangeTextInRange: (NSRange) affectedCharRange   replacementString: (NSString *) replacementString {
 		(void) aTextView;
 		(void) affectedCharRange;
