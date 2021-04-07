@@ -696,6 +696,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setAutomaticTextReplacementEnabled: NO];
 			[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
 			[my d_cocoaTextView setDelegate: my d_cocoaTextView];
+			if (flags & GuiText_ANYWRAP)
+				[my d_cocoaTextView setFieldEditor: YES];
 			/*
 				Regrettably, we have to implement the following HACK
 				to prevent tab-based line breaks even when editing manually.
