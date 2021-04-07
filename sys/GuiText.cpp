@@ -472,13 +472,13 @@ void _GuiText_exit () {
 		GuiText d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiText me = d_userData;
+		GuiText me = self -> d_userData;
 		forget (me);
 		trace (U"deleting a text field");
 		[super dealloc];
 	}
 	- (GuiThing) getUserData {
-		return d_userData;
+		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiText));
@@ -486,7 +486,7 @@ void _GuiText_exit () {
 	}
 	- (void) textDidChange: (NSNotification *) notification {
 		(void) notification;
-		GuiText me = d_userData;
+		GuiText me = self -> d_userData;
 		if (me && my d_changedCallback) {
 			struct structGuiTextEvent event { me };
 			my d_changedCallback (my d_changedBoss, & event);
@@ -497,29 +497,38 @@ void _GuiText_exit () {
 		GuiText d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiText me = d_userData;
+		GuiText me = self -> d_userData;
 		forget (me);
 		trace (U"deleting a text view");
 		[super dealloc];
 	}
 	- (GuiThing) getUserData {
-		return d_userData;
+		return self -> d_userData;
 	}
 	- (void) setUserData: (GuiThing) userData {
 		Melder_assert (userData == nullptr || Thing_isa (userData, classGuiText));
-		d_userData = static_cast <GuiText> (userData);
+		self -> d_userData = static_cast <GuiText> (userData);
 	}
 	/*
-	 * The NSTextViewDelegate protocol.
-	 * While NSTextDelegate simply has textDidChange:, that method doesn't seem to respond when the text is changed programmatically.
-	 */
-//	- (void) textDidChange: (NSNotification *) notification {
+		The NSTextViewDelegate protocol.
+		While NSTextDelegate simply has textDidChange:, that method doesn't seem to always respond when the text is changed programmatically.
+		Hence the addition of textView:shouldChangeTextInRange.
+		It's not unthinkable that some changes could appear twice.
+	*/
+	- (void) textDidChange: (NSNotification *) notification {   // method doesn't seem to respond when the text is changed programmatically
+		(void) notification;
+		GuiText me = self -> d_userData;
+		if (me && my d_changedCallback) {
+			struct structGuiTextEvent event { me };
+			my d_changedCallback (my d_changedBoss, & event);
+		}
+	}
 	- (BOOL) textView: (NSTextView *) aTextView   shouldChangeTextInRange: (NSRange) affectedCharRange   replacementString: (NSString *) replacementString {
 		(void) aTextView;
 		(void) affectedCharRange;
 		(void) replacementString;
 		trace (U"changing text to: ", Melder_peek8to32 ([replacementString UTF8String]));
-		GuiText me = d_userData;
+		GuiText me = self -> d_userData;
 		if (me && my d_changedCallback) {
 			struct structGuiTextEvent event { me };
 			my d_changedCallback (my d_changedBoss, & event);
@@ -602,7 +611,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaScrollView setUserData: nullptr];   // because those user data can only be GuiScrolledWindow
 			my d_widget = my d_cocoaScrollView;
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-			[my d_cocoaScrollView setBorderType: NSNoBorder];
+			[my d_cocoaScrollView setBorderType: NSBezelBorder];
 			[my d_cocoaScrollView setHasHorizontalScroller: ! (flags & GuiText_ANYWRAP)];
 			[my d_cocoaScrollView setHasVerticalScroller: YES];
 			[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -668,13 +677,16 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[[my d_cocoaTextView textContainer] setWidthTracksTextView: NO];
 			[my d_cocoaScrollView setDocumentView: my d_cocoaTextView];   // the scroll view will own the text view?
 			[my d_cocoaTextView release];   // so we release the text view itself
-			[[my d_cocoaScrollView window] makeFirstResponder: my d_cocoaTextView];
+			if (! (flags & GuiText_ANYWRAP))
+				[[my d_cocoaScrollView window] makeFirstResponder: my d_cocoaTextView];   // in dialog
 			if (flags & GuiText_ANYWRAP) {
+				my d_macFontSize = 13.0;
 				static NSFont *theSystemTextFont;
 				if (! theSystemTextFont)
 					theSystemTextFont = [[NSFont systemFontOfSize: 13.0] retain];
 				[my d_cocoaTextView setFont: theSystemTextFont];
 			} else {
+				my d_macFontSize = 12.0;
 				static NSFont *theFixedWidthTextFont;
 				if (! theFixedWidthTextFont)
 					theFixedWidthTextFont = [[NSFont fontWithName: @"Menlo"   size: 12.0] retain];
@@ -687,6 +699,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setAutomaticTextReplacementEnabled: NO];
 			[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
 			[my d_cocoaTextView setDelegate: my d_cocoaTextView];
+			if (flags & GuiText_ANYWRAP)
+				[my d_cocoaTextView setFieldEditor: YES];   // so that it takes part in tab navigation
 			/*
 				Regrettably, we have to implement the following HACK
 				to prevent tab-based line breaks even when editing manually.
@@ -1013,7 +1027,9 @@ void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring3
 			NSRange nsRange = NSMakeRange (integer_to_uinteger (from_pos), integer_to_uinteger (to_pos - from_pos));
 			NSString *nsString = (NSString *) Melder_peek32toCfstring (text);
 			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // ignore the returned BOOL: only interested in the side effect of having undo support
-			[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
+			[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];   // this messes up the widget...
+			[my d_cocoaTextView   setFont: [NSFont fontWithName: @"Menlo"   size: my d_macFontSize]];   // ... so we reapply the font size (HACK 2021-05-07)
+			[my d_cocoaTextView   setTextColor: [NSColor textColor]];   // ... and the foreground colour as well (HACK 2021-05-07)
 		}
 	#endif
 }
@@ -1067,9 +1083,9 @@ void GuiText_setFontSize (GuiText me, double size) {
 		GuiText_setSelection (me, first, last);
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
-		if (my d_cocoaTextView) {
+		my d_macFontSize = size;
+		if (my d_cocoaTextView)
 			[my d_cocoaTextView   setFont: [NSFont fontWithName: @"Menlo"   size: size]];
-		}
 	#endif
 }
 

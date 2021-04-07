@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -911,6 +911,7 @@ Thing_define (GuiText, GuiControl) {
 	#if cocoa
 		GuiCocoaScrolledWindow *d_cocoaScrollView;
 		GuiCocoaTextView *d_cocoaTextView;
+		double d_macFontSize;
 	#elif defined (macintosh)
 		TXNObject d_macMlteObject;
 		TXNFrameID d_macMlteFrameId;

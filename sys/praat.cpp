@@ -1786,6 +1786,8 @@ void praat_run () {
 		VEC xn;   // "uninitialized", but initializes x.cells to nullptr and x.size to 0
 		Melder_assert (! xn.cells);
 		Melder_assert (xn.size == 0);
+		VEC xn2 = xn;   // copy construction
+		xn2 = xn;   // copy assignment
 		VEC x { };
 		Melder_assert (! x.cells);
 		Melder_assert (x.size == 0);

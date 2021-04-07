@@ -61,31 +61,15 @@ template <typename T> class constmatrixview;
 template <typename T> class automatrix;
 
 template <typename T>
-class vector {
-public:
+struct vector {
 	T *cells = nullptr;
 	integer size = 0;
-public:
-	vector () = default;
+	vector ()
+		= default;
 	explicit vector (T *givenCells, integer givenSize)
 		: cells (givenCells), size (givenSize) { }
 	explicit vector (matrix<T> const& mat)
 		: vector (mat.cells, mat.nrow * mat.ncol) { }
-	/*
-		An initialization such as
-			VEC vec1 = vec2;
-		should be allowed.
-	*/
-	vector (vector const& other)
-		= default;
-	/*
-		Likewise, an assignment like
-			VEC vec1, vec2;
-			vec1 = vec2;
-		should be allowed.
-	*/
-	vector& operator= (vector const& other)
-		= default;
 	T& operator[] (integer i) const {
 		return our cells [i - 1];
 	}
@@ -117,17 +101,50 @@ public:
 };
 
 template <typename T>
-class vectorview {
-public:
+struct constvector {
+	const T *cells = nullptr;
+	integer size = 0;
+	constvector ()
+		= default;
+	explicit constvector (const T *givenCells, integer givenSize)
+		: cells (givenCells), size (givenSize) { }
+	constvector (std::initializer_list <T> list): cells (list.begin()), size (uinteger_to_integer (list.size())) { }
+	explicit constvector (constmatrix<T> const& mat)
+		: constvector (mat.cells, mat.nrow * mat.ncol) { }
+	constvector (vector<T> const& other)
+		: constvector (other.cells, other.size) { }
+	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
+		return our cells [i - 1];
+	}
+	constvector<T> part (integer first, integer last) const {
+		const integer newSize = last - (first - 1);
+		if (newSize <= 0)
+			return constvector<T> ();
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 1 && last <= our size);
+		return constvector<T> (& our cells [first - 1], newSize);
+	}
+	constmatrix<T> asmatrix (integer nrow, integer ncol) {
+		Melder_assert (nrow * ncol <= our size);
+		return constmatrix (our cells, nrow, ncol);
+	}
+	const T *begin () const { return our cells; }
+	const T *end () const { return our cells + our size; }
+	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
+	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return our cells - 1; }
+};
+
+template <typename T>
+struct vectorview {
 	T * firstCell = nullptr;
 	integer size = 0;
 	integer stride = 1;
 	vectorview ()
 		= default;
-	vectorview (vector<T> const& other)
-		: firstCell (other.cells), size (other.size), stride (1) { }
 	explicit vectorview (T * const firstCell_, integer const size_, integer const stride_)
 		: firstCell (firstCell_), size (size_), stride (stride_) { }
+	vectorview (vector<T> const& other)
+		: firstCell (other.cells), size (other.size), stride (1) { }
 	T& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
 	}
@@ -150,55 +167,17 @@ public:
 };
 
 template <typename T>
-class constvector {
-public:
-	const T *cells = nullptr;
-	integer size = 0;
-public:
-	constvector ()
-		= default;
-	explicit constvector (const T *givenCells, integer givenSize)
-		: cells (givenCells), size (givenSize) { }
-	explicit constvector (constmatrix<T> const& mat)
-		: constvector (mat.cells, mat.nrow * mat.ncol) { }
-	constvector (vector<T> const& other)
-		: constvector (other.cells, other.size) { }
-	//constvector (constvector const& other) = default;
-	//constvector& operator= (constvector const& other) = default;
-	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
-		return our cells [i - 1];
-	}
-	constvector<T> part (integer first, integer last) const {
-		const integer newSize = last - (first - 1);
-		if (newSize <= 0)
-			return constvector<T> (nullptr, 0);
-		Melder_assert (first >= 1 && first <= our size);
-		Melder_assert (last >= 1 && last <= our size);
-		return constvector<T> (& our cells [first - 1], newSize);
-	}
-	constmatrix<T> asmatrix (integer nrow, integer ncol) {
-		Melder_assert (nrow * ncol <= our size);
-		return constmatrix (our cells, nrow, ncol);
-	}
-	const T *begin () const { return our cells; }
-	const T *end () const { return our cells + our size; }
-	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
-	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return our cells - 1; }
-};
-
-template <typename T>
-class constvectorview {
-public:
+struct constvectorview {
 	const T * firstCell = nullptr;
 	integer size = 0;
 	integer stride = 1;
 	constvectorview () = default;
 	explicit constvectorview (const T * const firstCell_, integer const size_, integer const stride_)
 		: firstCell (firstCell_), size (size_), stride (stride_) { }
-	constvectorview (vectorview<T> const& other)
-		: constvectorview (other.firstCell, other.size, other.stride) { }
 	constvectorview (constvector<T> const& other)
 		: constvectorview (other.cells, other.size, 1) { }
+	constvectorview (vectorview<T> const& other)
+		: constvectorview (other.firstCell, other.size, other.stride) { }
 	constvectorview (vector<T> const& other)
 		: constvectorview (other.cells, other.size, 1) { }
 	T const& operator[] (integer i) const {
@@ -230,13 +209,12 @@ public:
 	would continue to use some of the computer's resources (namely, memory).
 */
 template <typename T>
-class autovector {
-public:
+struct autovector {
 	T *cells = nullptr;
 	integer size = 0;
 	integer _capacity = 0;
-public:
-	autovector () { }   // come into existence without a payload
+	autovector ()   // come into existence without a payload
+		= default;
 	explicit autovector (integer givenSize, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
 		our cells = MelderArray:: _alloc <T> (givenSize, initializationType);
@@ -410,19 +388,17 @@ autovector<T> newvectorcopy (vectorview<T> source) {
 }
 
 template <typename T>
-class matrix {
-public:
+struct matrix {
 	T *cells = nullptr;
 	integer nrow = 0, ncol = 0;
-public:
 	matrix ()
 		= default;
 	explicit matrix (T *givenCells, integer givenNrow, integer givenNcol)
 		: cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	matrix (matrix const& other)
-		= default;
-	matrix& operator= (matrix const& other)
-		= default;
+	//matrix (matrix const& other)
+	//	= default;
+	//matrix& operator= (matrix const& other)
+	//	= default;
 	explicit matrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
 		: matrix (vec.cells, givenNrow, givenNcol)
 	{
@@ -485,8 +461,78 @@ public:
 };
 
 template <typename T>
-class matrixview {
-public:
+struct constmatrix {
+	const T *cells = nullptr;
+	integer nrow = 0, ncol = 0;
+	constmatrix ()
+		= default;
+	explicit constmatrix (const T *givenCells, integer givenNrow, integer givenNcol)
+		: cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	constmatrix (matrix<T> const& other)
+		: constmatrix (other.cells, other.nrow, other.ncol) { }
+	explicit constmatrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
+		: constmatrix (vec.cells, givenNrow, givenNcol)
+	{
+		Melder_assert (givenNrow * givenNcol <= vec. size);
+	}
+	constvector<T> operator[] (integer rowNumber) const {
+		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
+	}
+	constvector<T> row (integer rowNumber) const {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		Melder_assert (our cells);
+		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
+	}
+	constvectorview<T> column (integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
+		return constvectorview<T> (our cells + (columnNumber - 1), our nrow, our ncol);
+	}
+	constvectorview<T> diagonal () const {
+		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
+	}
+	constmatrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
+		const integer newNrow = lastRow - (firstRow - 1);
+		if (newNrow <= 0)
+			return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		return constmatrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
+	}
+	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
+		const integer newNcol = lastColumn - (firstColumn - 1);
+		if (newNcol <= 0)
+			return constmatrixview<T> ();
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
+		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
+	}
+	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
+		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
+		if (newNrow <= 0 || newNcol <= 0)
+			return constmatrixview<T> ();
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
+		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
+		return constmatrixview<T> (
+			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
+			newNrow, newNcol, our ncol, 1
+		);
+	}
+	constmatrixview<T> transpose () const {
+		return constmatrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
+	}
+	constvector<T> asvector () const {
+		return constvector<T> (our cells, our nrow * our ncol);
+	}
+	constvector<T> asvector (integer size) const {
+		Melder_assert (size <= our nrow * our ncol);
+		return constvector<T> (our cells, size);
+	}
+};
+
+template <typename T>
+struct matrixview {
 	T * firstCell = nullptr;
 	integer nrow = 0, ncol = 0;
 	/*mutable*/ integer rowStride = 0, colStride = 1;   // mutable perhaps once an automatrix has strides
@@ -566,79 +612,7 @@ public:
 };
 
 template <typename T>
-class constmatrix {
-public:
-	const T *cells = nullptr;
-	integer nrow = 0, ncol = 0;
-	constmatrix () = default;
-	explicit constmatrix (const T *givenCells, integer givenNrow, integer givenNcol)
-		: cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	constmatrix (matrix<T> const& other)
-		: constmatrix (other.cells, other.nrow, other.ncol) { }
-	explicit constmatrix (vector<T> const& vec, integer givenNrow, integer givenNcol)
-		: constmatrix (vec.cells, givenNrow, givenNcol)
-	{
-		Melder_assert (givenNrow * givenNcol <= vec. size);
-	}
-	constvector<T> operator[] (integer rowNumber) const {
-		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
-	}
-	constvector<T> row (integer rowNumber) const {
-		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
-		Melder_assert (our cells);
-		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
-	}
-	constvectorview<T> column (integer columnNumber) const {
-		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
-		return constvectorview<T> (our cells + (columnNumber - 1), our nrow, our ncol);
-	}
-	constvectorview<T> diagonal () const {
-		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
-	}
-	constmatrixview<T> horizontalBand (integer firstRow, integer lastRow) const {
-		const integer newNrow = lastRow - (firstRow - 1);
-		if (newNrow <= 0)
-			return constmatrixview<T> ();
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
-		return constmatrixview<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol, our ncol, 1);
-	}
-	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
-		const integer newNcol = lastColumn - (firstColumn - 1);
-		if (newNcol <= 0)
-			return constmatrixview<T> ();
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
-		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
-	}
-	constmatrixview<T> part (integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) const {
-		const integer newNrow = lastRow - (firstRow - 1), newNcol = lastColumn - (firstColumn - 1);
-		if (newNrow <= 0 || newNcol <= 0)
-			return constmatrixview<T> ();
-		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
-		Melder_assert (lastRow >= 1 && lastRow <= our nrow);
-		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
-		Melder_assert (lastColumn >= 1 && lastColumn <= our ncol);
-		return constmatrixview<T> (
-			our cells + (firstRow - 1) * our ncol + (firstColumn - 1),
-			newNrow, newNcol, our ncol, 1
-		);
-	}
-	constmatrixview<T> transpose () const {
-		return constmatrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
-	}
-	constvector<T> asvector () const {
-		return constvector<T> (our cells, our nrow * our ncol);
-	}
-	constvector<T> asvector (integer size) const {
-		Melder_assert (size <= our nrow * our ncol);
-		return constvector<T> (our cells, size);
-	}
-};
-
-template <typename T>
-class constmatrixview {
-public:
+struct constmatrixview {
 	const T * firstCell = nullptr;
 	integer nrow = 0, ncol = 0;
 	integer rowStride = 0, colStride = 1;
@@ -709,12 +683,11 @@ public:
 	would continue to use some of the computer's resources (namely, memory).
 */
 template <typename T>
-class automatrix {
-public:
+struct automatrix {
 	T *cells = nullptr;
 	integer nrow = 0, ncol = 0;
-public:
-	automatrix () { }   // come into existence without a payload
+	automatrix ()   // come into existence without a payload
+		= default;
 	explicit automatrix (integer givenNrow, integer givenNcol, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
@@ -935,11 +908,10 @@ automatrix<T> newmatrixpart (matrix<T> const& x, integer firstRow, integer lastR
 }
 
 template <typename T>
-class autotensor3;
+struct autotensor3;
 
 template <typename T>
-class tensor3 {
-public:
+struct tensor3 {
 	T * cells = nullptr;
 	integer ndim1 = 0, ndim2 = 0, ndim3 = 0;
 	integer stride1 = 0, stride2 = 0, stride3 = 1;
@@ -1046,8 +1018,7 @@ public:
 };
 
 template <typename T>
-class consttensor3 {
-public:
+struct consttensor3 {
 	const T * cells = nullptr;
 	integer ndim1 = 0, ndim2 = 0, ndim3 = 0;
 	integer stride1 = 0, stride2 = 0, stride3 = 1;
@@ -1159,8 +1130,7 @@ public:
 };
 
 template <typename T>
-class autotensor3 : public tensor3<T> {
-public:
+struct autotensor3 : public tensor3<T> {
 	autotensor3 () = default;   // come into existence without a payload
 	explicit autotensor3 (integer givenNdim1, integer givenNdim2, integer givenNdim3, MelderArray::kInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNdim1 >= 0);

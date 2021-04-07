@@ -37,7 +37,7 @@ static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, integer i) {
 	bool isAdded = cmd -> uniqueID != 0 || !! cmd -> script;
 	bool isHidden = cmd -> hidden;
 	bool isToggled = cmd -> toggled;
-	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
+	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? (cmd -> uniqueID ? U"REMOVED" : U"HIDDEN") : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	MelderString_empty (& text);
 	if (cmd -> unhidable) {
@@ -72,7 +72,7 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 	static MelderString text;
 	bool isAdded = cmd -> uniqueID != 0 || !! cmd -> script;
 	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
-	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
+	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? (cmd -> uniqueID ? U"REMOVED" : U"HIDDEN") : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	integer n1 = cmd -> n1;
 	MelderString_empty (& text);
