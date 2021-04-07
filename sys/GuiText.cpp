@@ -1029,7 +1029,7 @@ void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring3
 			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // ignore the returned BOOL: only interested in the side effect of having undo support
 			[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];   // this messes up the widget...
 			[my d_cocoaTextView   setFont: [NSFont fontWithName: @"Menlo"   size: my d_macFontSize]];   // ... so we reapply the font size (HACK 2021-05-07)
-			//[my d_cocoaTextView   setTextColor: nil];   // ... and perhaps the background colour as well
+			[my d_cocoaTextView   setTextColor: [NSColor textColor]];   // ... and the foreground colour as well (HACK 2021-05-07)
 		}
 	#endif
 }
