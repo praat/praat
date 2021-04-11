@@ -1,6 +1,6 @@
 /* SampledXY.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2017 Paul Boersma
+ * Copyright (C) 1992-2017,2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,8 +66,8 @@ void SampledXY_init (SampledXY me,
 }
 
 integer SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, integer *iymin, integer *iymax) {
-	double riymin = 1.0 + Melder_roundUp   ((fromY - my y1) / my dy);
-	double riymax = 1.0 + Melder_roundDown ((toY - my y1) / my dy);   // could be above 32-bit LONG_MAX
+	const double riymin = 1.0 + Melder_roundUp   ((fromY - my y1) / my dy);
+	const double riymax = 1.0 + Melder_roundDown ((toY - my y1) / my dy);   // could be above 32-bit LONG_MAX
 	*iymin = ( riymin < 1.0 ? 1 : (integer) riymin );
 	*iymax = ( riymax > double (my ny) ? my ny : (integer) riymax );
 	if (*iymin > *iymax)
