@@ -614,7 +614,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaScrollView setBorderType: NSBezelBorder];
 			[my d_cocoaScrollView setHasHorizontalScroller: ! (flags & GuiText_ANYWRAP)];
 			[my d_cocoaScrollView setHasVerticalScroller: YES];
-			[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+			//[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			NSSize contentSize = [my d_cocoaScrollView contentSize];
 			my d_cocoaTextView = [[GuiCocoaTextView alloc] initWithFrame: NSMakeRect (0, 0, contentSize. width, contentSize. height)];
 			[my d_cocoaTextView setUserData: me.get()];
@@ -671,7 +671,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			}
 			[my d_cocoaTextView setVerticallyResizable: YES];
 			[my d_cocoaTextView setHorizontallyResizable: YES];
-			[my d_cocoaTextView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+			//[my d_cocoaTextView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			if (! (flags & GuiText_ANYWRAP))
 				[[my d_cocoaTextView textContainer] setContainerSize: NSMakeSize (FLT_MAX, FLT_MAX)];
 			[[my d_cocoaTextView textContainer] setWidthTracksTextView: NO];

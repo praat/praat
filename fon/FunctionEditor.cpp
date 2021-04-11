@@ -1253,7 +1253,9 @@ void structFunctionEditor :: v_createChildren () {
 	if (our v_hasText ()) {
 		our textArea = GuiText_createShown (our windowForm, 0, 0,
 			Machine_getMenuBarHeight (),
-			Machine_getMenuBarHeight () + TEXT_HEIGHT, GuiText_INKWRAP | GuiText_SCROLLED);
+			Machine_getMenuBarHeight () + TEXT_HEIGHT,
+			GuiText_INKWRAP | GuiText_SCROLLED
+		);
 		#if gtk
 			Melder_assert (our textArea -> d_widget);
 			gtk_widget_grab_focus (GTK_WIDGET (our textArea -> d_widget));   // BUG: can hardly be correct (the text should grab the focus of the window, not the global focus)

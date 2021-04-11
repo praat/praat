@@ -183,7 +183,7 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 }
 
 static void Sampled_getSumAndDefinitionRange
-	(Sampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate, double *return_sum, double *return_definitionRange)
+	(Sampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate, double *out_sum, double *out_definitionRange)
 {
 	/*
 		This function computes the area under the linearly interpolated curve between xmin and xmax.
@@ -317,8 +317,10 @@ static void Sampled_getSumAndDefinitionRange
 			}
 		}
 	}
-	if (return_sum) *return_sum = (double) sum;
-	if (return_definitionRange) *return_definitionRange = (double) definitionRange;
+	if (out_sum)
+		*out_sum = double (sum);
+	if (out_definitionRange)
+		*out_definitionRange = double (definitionRange);
 }
 
 double Sampled_getMean (Sampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
@@ -344,7 +346,7 @@ double Sampled_getIntegral_standardUnit (Sampled me, double xmin, double xmax, i
 }
 
 static void Sampled_getSum2AndDefinitionRange
-	(Sampled me, double xmin, double xmax, integer levelNumber, int unit, double mean, bool interpolate, double *return_sum2, double *return_definitionRange)
+	(Sampled me, double xmin, double xmax, integer levelNumber, int unit, double mean, bool interpolate, double *out_sum2, double *out_definitionRange)
 {
 	/*
 		This function computes the area under the linearly interpolated squared difference curve between xmin and xmax.
@@ -506,8 +508,10 @@ static void Sampled_getSum2AndDefinitionRange
 			}
 		}
 	}
-	if (return_sum2) *return_sum2 = (double) sum2;
-	if (return_definitionRange) *return_definitionRange = (double) definitionRange;
+	if (out_sum2)
+		*out_sum2 = double (sum2);
+	if (out_definitionRange)
+		*out_definitionRange = double (definitionRange);
 }
 
 double Sampled_getStandardDeviation (Sampled me, double xmin, double xmax, integer levelNumber, int unit, bool interpolate) {
@@ -769,10 +773,10 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		if (ymax <= ymin)
 			return;
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-		auto const lowIndex = ixmin - 1, highIndex = ixmax + 1;
-		auto const nbuffer = highIndex - lowIndex + 1;
-		auto xbuffer = zero_VEC (nbuffer), ybuffer = zero_VEC (nbuffer);
-		auto const bufferShift = 1 - lowIndex;
+		const integer lowIndex = ixmin - 1, highIndex = ixmax + 1;
+		const integer nbuffer = highIndex - lowIndex + 1;
+		autoVEC xbuffer = zero_VEC (nbuffer), ybuffer = zero_VEC (nbuffer);
+		const integer bufferShift = 1 - lowIndex;
 		double *xarray = & xbuffer [bufferShift];
 		double *yarray = & ybuffer [bufferShift];
 		double previousValue = Sampled_getValueAtSample (me, lowIndex, levelNumber, unit);
@@ -801,7 +805,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 					xarray [ix] = x - 0.5 * my dx;
 					yarray [ix] = previousValue;
 					if (xarray [startOfDefinedStretch] < xmin) {
-						double phase = (xmin - xarray [startOfDefinedStretch]) / my dx;
+						const double phase = (xmin - xarray [startOfDefinedStretch]) / my dx;
 						xarray [startOfDefinedStretch] = xmin;
 						yarray [startOfDefinedStretch] = phase * yarray [startOfDefinedStretch + 1] + (1.0 - phase) * yarray [startOfDefinedStretch];
 					}

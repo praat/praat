@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,8 +137,8 @@ autoMatrix Matrix_createSimple (integer numberOfRows, integer numberOfColumns) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
 		Matrix_init (me.get(),
-				0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
-				0.5, numberOfRows    + 0.5, numberOfRows   , 1, 1);
+				0.5, numberOfColumns + 0.5, numberOfColumns, 1.0, 1.0,
+				0.5, numberOfRows    + 0.5, numberOfRows   , 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Matrix object not created.");
@@ -192,13 +192,13 @@ integer Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, integer *
 integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, integer iymin, integer iymax,
 	double *minimum, double *maximum)
 {
-	if (ixmin == 0)
+	if (ixmin == 0)   // default = all
 		ixmin = 1;
-	if (ixmax == 0)
+	if (ixmax == 0)   // default = all
 		ixmax = my nx;
-	if (iymin == 0)
+	if (iymin == 0)   // default = all
 		iymin = 1;
-	if (iymax == 0)
+	if (iymax == 0)   // default = all
 		iymax = my ny;
 	if (ixmin > ixmax || iymin > iymax)
 		return 0;

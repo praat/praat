@@ -45,14 +45,14 @@ constexpr T sqr (T x) {
 }
 
 struct MelderPoint {
-	double x, y;
+	double x = undefined, y = undefined;
 };
 
 struct MelderRealRange {
-	double min, max;
+	double min = undefined, max = undefined;
 	//bool isEmpty () { return ! (max > min); }   // note edge case: will return true if min or max is NaN
 	//double size () {
-	//	double result = max - min;
+	//	const double result = max - min;
 	//	return std::max (result, 0.0);
 	//}
 };
@@ -72,7 +72,7 @@ struct MelderExtremaWithInit {
 };
 
 struct MelderGaussianStats {
-	double mean, stdev;
+	double mean = undefined, stdev = undefined;
 };
 
 struct MelderFraction {
