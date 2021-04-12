@@ -464,8 +464,11 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 	try {
 		fits = ( sound ? true : LongSound_haveWindow (longSound, my startWindow, my endWindow) );
 	} catch (MelderError) {
-		bool outOfMemory = !! str32str (Melder_getError (), U"memory");
-		if (Melder_debug == 9) Melder_flushError (); else Melder_clearError ();
+		const bool outOfMemory = !! str32str (Melder_getError (), U"memory");
+		if (Melder_debug == 9)
+			Melder_flushError ();
+		else
+			Melder_clearError ();
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my graphics.get(), 0.5, 0.5, outOfMemory ? U"(out of memory)" : U"(cannot read sound file)");

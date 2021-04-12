@@ -1286,8 +1286,7 @@ void structTextGridEditor :: v_dataChanged () {
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
 		Do a simple guess.
 	*/
-	if (our selectedTier > grid -> tiers->size)
-		our selectedTier = grid -> tiers->size;
+	Melder_clipRight (& our selectedTier, grid -> tiers->size);
 	TextGridEditor_Parent :: v_dataChanged ();   // does all the updating
 }
 
@@ -1322,15 +1321,13 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 	*/
 	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 ), ninterval = tier -> intervals.size;
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
-		TextInterval interval = tier -> intervals.at [iinterval];
-		double tmin = interval -> xmin, tmax = interval -> xmax;
+		const TextInterval interval = tier -> intervals.at [iinterval];
+		/* mutable clip */ double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
 			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(), my p_greenMethod, my p_greenString, true);
-			if (tmin < my startWindow)
-				tmin = my startWindow;
-			if (tmax > my endWindow)
-				tmax = my endWindow;
+			Melder_clipLeft (my startWindow, & tmin);
+			Melder_clipRight (& tmax, my endWindow);
 			if (labelDoesMatch) {
 				Graphics_setColour (my graphics.get(), Melder_LIME);
 				Graphics_fillRectangle (my graphics.get(), tmin, tmax, 0.0, 1.0);
@@ -1353,7 +1350,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		Draw a grey bar and a selection button at the cursor position.
 	*/
 	if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
-		bool cursorAtBoundary = false;
+		/* mutable search */ bool cursorAtBoundary = false;
 		for (integer iinterval = 2; iinterval <= ninterval; iinterval ++) {
 			const TextInterval interval = tier -> intervals.at [iinterval];
 			if (interval -> xmin == my startSelection)
@@ -1373,11 +1370,9 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 	Graphics_setTextAlignment (my graphics.get(), my p_alignment, Graphics_HALF);
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		const TextInterval interval = tier -> intervals.at [iinterval];
-		double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmin < my tmin)
-			tmin = my tmin;
-		if (tmax > my tmax)
-			tmax = my tmax;
+		/* mutable clip */ double tmin = interval -> xmin, tmax = interval -> xmax;
+		Melder_clipLeft (my tmin, & tmin);
+		Melder_clipRight (& tmax, my tmax);
 		if (tmin >= tmax)
 			continue;
 		const bool intervalIsSelected = ( selectedInterval == iinterval );

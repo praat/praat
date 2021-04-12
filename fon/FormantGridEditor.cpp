@@ -259,7 +259,6 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 		clickedInWideRealTierArea = our formantGridArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (clickedInWideRealTierArea) {
-		our formantGridArea -> setViewport ();
 		result = RealTierArea_mouse (our formantGridArea.get(), tier, event, x_world, globalY_fraction);
 	} else {
 		result = our FormantGridEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
