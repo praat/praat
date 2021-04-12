@@ -27,28 +27,32 @@ void praat_menuCommands_exit_optimizeByLeaking () { theCommands. _ownItems = fal
 void praat_menuCommands_init () {
 }
 
-static int compareMenuCommands (const void *void_me, const void *void_thee) {
-	Praat_Command me = * (Praat_Command *) void_me, thee = * (Praat_Command *) void_thee;
-	if (my window) {
-		if (! thy window) return 1;
-		int compare = str32cmp (my window.get(), thy window.get());
-		if (compare) return compare;
-	} else if (thy window) return -1;
-	if (my menu) {
-		if (! thy menu) return 1;
-		int compare = str32cmp (my menu.get(), thy menu.get());
-		if (compare) return compare;
-	} else if (thy menu) return -1;
-	if (my sortingTail < thy sortingTail) return -1;
-	return 1;
-}
-
 void praat_sortMenuCommands () {
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		command -> sortingTail = i;
 	}
-	qsort (& theCommands.at [1], theCommands.size, sizeof (Praat_Command), compareMenuCommands);
+	std::sort (& theCommands.at [1], & theCommands.at [theCommands.size + 1],
+		[] (Praat_Command me, Praat_Command thee) {
+			if (my window) {
+				if (! thy window)
+					return false;
+				int compare = str32cmp (my window.get(), thy window.get());
+				if (compare != 0)
+					return compare < 0;
+			} else if (thy window)
+				return true;
+			if (my menu) {
+				if (! thy menu)
+					return false;
+				int compare = str32cmp (my menu.get(), thy menu.get());
+				if (compare != 0)
+					return compare < 0;
+			} else if (thy menu)
+				return true;
+			return my sortingTail < thy sortingTail;
+		}
+	);
 }
 
 static integer lookUpMatchingMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {

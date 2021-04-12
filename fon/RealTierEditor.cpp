@@ -126,7 +126,6 @@ bool structRealTierEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		clickedInWideRealTierArea = our realTierArea -> y_fraction_globalIsInside (globalY_fraction);
 	bool result = false;
 	if (clickedInWideRealTierArea) {
-		our realTierArea -> setViewport ();
 		result = RealTierArea_mouse (our realTierArea.get(), our realTier(), event, x_world, globalY_fraction);
 	} else {
 		result = our RealTierEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);

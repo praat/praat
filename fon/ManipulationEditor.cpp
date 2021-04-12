@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -765,12 +765,10 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	}
 	bool result = false;
 	if (clickedInWidePitchArea) {
-		our pitchTierArea -> setViewport ();
 		result = RealTierArea_mouse (our pitchTierArea.get(), our manipulation() -> pitch.get(), event, x_world, globalY_fraction);
 		our pitchTierArea -> p_minimum = our pitchTierArea -> ymin;
 		our pitchTierArea -> p_maximum = our pitchTierArea -> ymax;
 	} else if (clickedInWideDurationArea) {
-		our durationTierArea -> setViewport ();
 		result = RealTierArea_mouse (our durationTierArea.get(), our manipulation() -> duration.get(), event, x_world, globalY_fraction);
 		our durationTierArea -> p_minimum = our durationTierArea -> ymin;
 		our durationTierArea -> p_maximum = our durationTierArea -> ymax;
