@@ -418,31 +418,35 @@ void praat_showAction_classNames (conststring32 className1, conststring32 classN
 	}
 }
 
-static int compareActions (const void *void_me, const void *void_thee) {
-	Praat_Command me = * (Praat_Command *) void_me, thee = * (Praat_Command *) void_thee;
-	int compare;
-	compare = str32cmp (my class1 -> className, thy class1 -> className);
-	if (compare) return my class1 == classDaata ? -1 : thy class1 == classDaata ? 1 : compare;
-	if (my class2) {
-		if (! thy class2) return 1;
-		compare = str32cmp (my class2 -> className, thy class2 -> className);
-		if (compare) return compare;
-	} else if (thy class2) return -1;
-	if (my class3) {
-		if (! thy class3) return 1;
-		compare = str32cmp (my class3 -> className, thy class3 -> className);
-		if (compare) return compare;
-	} else if (thy class3) return -1;
-	if (my sortingTail < thy sortingTail) return -1;
-	return 1;
-}
-
 void praat_sortActions () {
 	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		action -> sortingTail = i;
 	}
-	qsort (& theActions.at [1], theActions.size, sizeof (Praat_Command), compareActions);
+	std::sort (& theActions.at [1], & theActions.at [theActions.size + 1],
+		[] (Praat_Command me, Praat_Command thee) {
+			int compare = str32cmp (my class1 -> className, thy class1 -> className);
+			if (compare != 0)
+				return my class1 == classDaata ? true : thy class1 == classDaata ? false : ( compare < 0 );
+			if (my class2) {
+				if (! thy class2)
+					return false;
+				compare = str32cmp (my class2 -> className, thy class2 -> className);
+				if (compare != 0)
+					return compare < 0;
+			} else if (thy class2)
+				return true;
+			if (my class3) {
+				if (! thy class3)
+					return false;
+				compare = str32cmp (my class3 -> className, thy class3 -> className);
+				if (compare != 0)
+					return compare < 0;
+			} else if (thy class3)
+				return true;
+			return my sortingTail < thy sortingTail;
+		}
+	);
 }
 
 static conststring32 numberString (int number) {
