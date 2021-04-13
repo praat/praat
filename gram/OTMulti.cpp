@@ -158,7 +158,7 @@ integer OTMulti_getConstraintIndexFromName (OTMulti me, conststring32 name) {
 }
 
 void OTMulti_sort (OTMulti me) {
-	std::sort (& my index [1], & my index [my numberOfConstraints + 1],
+	std::sort (my index.begin(), my index.end(),
 		[me] (integer icons, integer jcons) {
 			OTConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
 			/*

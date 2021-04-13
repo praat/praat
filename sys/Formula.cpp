@@ -334,15 +334,21 @@ static conststring32 languageNameCompare_searchString;
 
 static int languageNameCompare (const void *first, const void *second) {
 	integer i = * (integer *) first, j = * (integer *) second;
-	return str32cmp (i == 0 ? languageNameCompare_searchString : Formula_instructionNames [i],
-		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]);
+	return str32cmp (
+		i == 0 ? languageNameCompare_searchString : Formula_instructionNames [i],
+		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]
+	);
 }
 
 static integer Formula_hasLanguageName (conststring32 f) {
 	static autoINTVEC index;
 	if (NUMisEmpty (index.get())) {
 		index = to_INTVEC (highestInputSymbol);
-		qsort (& index [1], highestInputSymbol, sizeof (integer), languageNameCompare);
+		std::sort (& index [1], & index [highestInputSymbol + 1],
+			[] (integer i, integer j) {
+				return str32cmp (Formula_instructionNames [i], Formula_instructionNames [j]) < 0;
+			}
+		);
 	}
 	integer dummy = 0, *found;
 	languageNameCompare_searchString = f;

@@ -307,7 +307,7 @@ Thing_implement (OTGrammar, Daata, 2);
 Thing_implement (OTHistory, TableOfReal, 0);
 
 void OTGrammar_sort (OTGrammar me) {
-	std::sort (& my index [1], & my index [my numberOfConstraints + 1],
+	std::sort (my index.begin(), my index.end(),
 		[me] (integer icons, integer jcons) {
 			OTGrammarConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
 			/*
