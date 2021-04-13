@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2020 Paul Boersma
+ * Copyright (C) 2002-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,32 +399,23 @@ bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber) {
 	return true;
 }
 
-static integer stringCompare_column;
-
-static int stringCompare_NoError (const void *first, const void *second) {
-	const TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	const conststring32 firstString = my cells [stringCompare_column]. string.get();
-	const conststring32 secondString = thy cells [stringCompare_column]. string.get();
-	return str32cmp (firstString ? firstString : U"", secondString ? secondString : U"");
-}
-
 static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
-	stringCompare_column = columnNumber;
-	qsort (& my rows.at [1], (unsigned long) my rows.size, sizeof (TableRow), stringCompare_NoError);
-}
-
-static int indexCompare_NoError (const void *first, const void *second) {
-	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	if (my sortingIndex < thy sortingIndex)
-		return -1;
-	if (my sortingIndex > thy sortingIndex)
-		return +1;
-	return 0;
+	std::sort (& my rows.at [1], & my rows.at [my rows.size + 1],
+		[columnNumber] (TableRow me, TableRow thee) {
+			const conststring32 firstString = my cells [columnNumber]. string.get();
+			const conststring32 secondString = thy cells [columnNumber]. string.get();
+			return str32cmp (firstString ? firstString : U"", secondString ? secondString : U"") < 0;
+		}
+	);
 }
 
 static void sortRowsByIndex_NoError (Table me) {
-	qsort (& my rows.at [1], (unsigned long) my rows.size, sizeof (TableRow), indexCompare_NoError);
+	std::sort (& my rows.at [1], & my rows.at [my rows.size + 1],
+		[] (TableRow me, TableRow thee) {
+			return my sortingIndex < thy sortingIndex;
+		}
+	);
 }
 
 void Table_numericize_Assert (Table me, integer columnNumber) {
