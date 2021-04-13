@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2020 Paul Boersma
+ * Copyright (C) 1997-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,28 +306,23 @@ Thing_implement (OTGrammar, Daata, 2);
 
 Thing_implement (OTHistory, TableOfReal, 0);
 
-static OTGrammar constraintCompare_grammar;
-
-static int constraintCompare (const void *first, const void *second) {
-	OTGrammar me = constraintCompare_grammar;
-	integer icons = * (integer *) first, jcons = * (integer *) second;
-	OTGrammarConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
-	/*
-		Sort primarily by disharmony.
-	*/
-	if (ci -> disharmony > cj -> disharmony)
-		return -1;
-	if (ci -> disharmony < cj -> disharmony)
-		return +1;
-	/*
-		Tied constraints are sorted alphabetically.
-	*/
-	return str32cmp (my constraints [icons]. name.get(), my constraints [jcons]. name.get());
-}
-
 void OTGrammar_sort (OTGrammar me) {
-	constraintCompare_grammar = me;
-	qsort (& my index [1], my numberOfConstraints, sizeof (integer), constraintCompare);
+	std::sort (my index.begin(), my index.end(),
+		[me] (integer icons, integer jcons) {
+			OTGrammarConstraint ci = & my constraints [icons], cj = & my constraints [jcons];
+			/*
+				Sort primarily by disharmony.
+			*/
+			if (ci -> disharmony > cj -> disharmony)
+				return true;
+			if (ci -> disharmony < cj -> disharmony)
+				return false;
+			/*
+				Tied constraints are sorted alphabetically.
+			*/
+			return str32cmp (my constraints [icons]. name.get(), my constraints [jcons]. name.get()) < 0;
+		}
+	);
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
 		constraint -> tiedToTheLeft = ( icons > 1 &&

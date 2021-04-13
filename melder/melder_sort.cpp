@@ -38,7 +38,7 @@ autoSTRVEC shuffle_STRVEC (STRVEC const& x) {
 	return result;
 }
 
-void sort_VEC_inout (VECVU const& x) noexcept {
+void sort_VEC_inout (VEC const& x) noexcept {
 	std::sort (x.begin(), x.end(),
 		[] (double first, double last) {
 			return first < last;
@@ -46,7 +46,7 @@ void sort_VEC_inout (VECVU const& x) noexcept {
 	);
 }
 
-void sort_INTVEC_inout (INTVECVU const& x) noexcept {
+void sort_INTVEC_inout (INTVEC const& x) noexcept {
 	std::sort (x.begin(), x.end(),
 		[] (integer first, integer last) {
 			return first < last;

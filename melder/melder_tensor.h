@@ -160,8 +160,6 @@ struct vectorview {
 		Melder_assert (nrow * ncol <= our size);
 		return matrixview (our cells, nrow, ncol, ncol * our stride, our stride);
 	}
-	T *begin () const { return & our operator[] (1); }
-	T *end () const { return & our operator[] (our size + 1); }
 	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our operator[] (1); }
 	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our operator[] (0); }
 };
@@ -195,8 +193,6 @@ struct constvectorview {
 		Melder_assert (nrow * ncol <= our size);
 		return constmatrixview (our cells, nrow, ncol, ncol * our stride, our stride);
 	}
-	const T *begin () const { return & our operator[] (1); }
-	const T *end () const { return & our operator[] (our size + 1); }
 	const T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return & our operator[] (1); }
 	const T *asArgumentToFunctionThatExpectsOneBasedArray () const { return & our operator[] (0); }
 };
@@ -269,6 +265,8 @@ struct autovector {
 		Melder_assert (last >= 1 && last <= our size);
 		return vector<T> (& our cells [first - 1], newSize);
 	}
+	T *begin () const { return our cells; }
+	T *end () const { return our cells + our size; }
 	T *asArgumentToFunctionThatExpectsZeroBasedArray () const { return our cells; }
 	T *asArgumentToFunctionThatExpectsOneBasedArray () const { return our cells - 1; }
 	/*

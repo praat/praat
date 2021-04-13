@@ -304,16 +304,16 @@ inline autoINTVEC shuffle_INTVEC (constINTVECVU const& x) {
 	return result;
 }
 
-extern void sort_VEC_inout (VECVU const& x) noexcept;
-extern void sort_INTVEC_inout (INTVECVU const& x) noexcept;
+extern void sort_VEC_inout (VEC const& x) noexcept;
+extern void sort_INTVEC_inout (INTVEC const& x) noexcept;
 
-inline autoVEC sort_VEC (constVECVU const& x) {
+inline autoVEC sort_VEC (constVEC const& x) {
 	autoVEC result = copy_VEC (x);
 	sort_VEC_inout (result.get());
 	return result;
 }
 
-inline autoINTVEC sort_INTVEC (constINTVECVU const& x) {
+inline autoINTVEC sort_INTVEC (constINTVEC const& x) {
 	autoINTVEC result = copy_INTVEC (x);
 	sort_INTVEC_inout (result.get());
 	return result;

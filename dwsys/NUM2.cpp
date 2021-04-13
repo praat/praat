@@ -2106,7 +2106,7 @@ void NUMfitLine_theil_preallocated (VEC const& out_lineParameters, constVEC cons
 			/*
 				Get slope as the median of all slopes
 			*/
-			VECVU mbsPart = mbs.part (1, numberOfCombinations);
+			VEC mbsPart = mbs.part (1, numberOfCombinations);
 			sort_VEC_inout (mbsPart);
 			out_lineParameters [1] = NUMquantile (mbsPart, 0.5);
 			out_lineParameters [2] = NUMquantile (mbsPart, oneTailedUnconfidence);
