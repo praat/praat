@@ -1047,26 +1047,21 @@ autoTable Table_transpose (Table me) {
 	}
 }
 
-static constINTVEC *cellCompare_columnNumbers;
-
-static int cellCompare (const void *first, const void *second) {
-	const TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	const integer ncol = cellCompare_columnNumbers->size;
-	for (integer icol = 1; icol <= ncol; icol ++) {
-		const integer cellNumber = (*cellCompare_columnNumbers) [icol];
-		if (my cells [cellNumber]. number < thy cells [cellNumber]. number)
-			return -1;
-		if (my cells [cellNumber]. number > thy cells [cellNumber]. number)
-			return +1;
-	}
-	return 0;
-}
-
 void Table_sortRows_Assert (Table me, constINTVEC columnNumbers) {
 	for (integer icol = 1; icol <= columnNumbers.size; icol ++)
 		Table_numericize_Assert (me, columnNumbers [icol]);
-	cellCompare_columnNumbers = & columnNumbers;
-	qsort (& my rows.at [1], (unsigned long) my rows.size, sizeof (TableRow), cellCompare);
+	std::sort (& my rows.at [1], & my rows.at [my rows.size + 1],
+		[columnNumbers] (TableRow me, TableRow thee) -> bool {
+			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
+				const integer cellNumber = columnNumbers [icol];
+				if (my cells [cellNumber]. number < thy cells [cellNumber]. number)
+					return true;
+				if (my cells [cellNumber]. number > thy cells [cellNumber]. number)
+					return false;
+			}
+			return false;
+		}
+	);
 }
 
 void Table_sortRows (Table me, constSTRVEC columnNames) {
