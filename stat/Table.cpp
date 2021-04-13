@@ -401,7 +401,7 @@ bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber) {
 
 static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
-	std::sort (& my rows.at [1], & my rows.at [my rows.size + 1],
+	std::sort (my rows.begin(), my rows.end(),
 		[columnNumber] (TableRow me, TableRow thee) {
 			const conststring32 firstString = my cells [columnNumber]. string.get();
 			const conststring32 secondString = thy cells [columnNumber]. string.get();
@@ -411,7 +411,7 @@ static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
 }
 
 static void sortRowsByIndex_NoError (Table me) {
-	std::sort (& my rows.at [1], & my rows.at [my rows.size + 1],
+	std::sort (my rows.begin(), my rows.end(),
 		[] (TableRow me, TableRow thee) {
 			return my sortingIndex < thy sortingIndex;
 		}
@@ -1050,7 +1050,7 @@ autoTable Table_transpose (Table me) {
 void Table_sortRows_Assert (Table me, constINTVEC columnNumbers) {
 	for (integer icol = 1; icol <= columnNumbers.size; icol ++)
 		Table_numericize_Assert (me, columnNumbers [icol]);
-	std::sort (& my rows.at [1], & my rows.at [my rows.size + 1],
+	std::sort (my rows.begin(), my rows.end(),
 		[columnNumbers] (TableRow me, TableRow thee) -> bool {
 			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
 				const integer cellNumber = columnNumbers [icol];

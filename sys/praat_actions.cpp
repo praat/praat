@@ -423,7 +423,7 @@ void praat_sortActions () {
 		Praat_Command action = theActions.at [i];
 		action -> sortingTail = i;
 	}
-	std::sort (& theActions.at [1], & theActions.at [theActions.size + 1],
+	std::sort (theActions.begin(), theActions.end(),
 		[] (Praat_Command me, Praat_Command thee) {
 			int compare = str32cmp (my class1 -> className, thy class1 -> className);
 			if (compare != 0)

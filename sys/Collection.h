@@ -475,6 +475,8 @@ struct CollectionOf : structDaata {
 	virtual integer _v_position (T* /* data */) {
 		return our size + 1;   // at end
 	};
+	T **begin () const { return & our at [1]; }
+	T **end () const { return & our at [our size + 1]; }
 };
 
 

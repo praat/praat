@@ -344,7 +344,7 @@ static integer Formula_hasLanguageName (conststring32 f) {
 	static autoINTVEC index;
 	if (NUMisEmpty (index.get())) {
 		index = to_INTVEC (highestInputSymbol);
-		std::sort (& index [1], & index [highestInputSymbol + 1],
+		std::sort (index.begin(), index.end(),
 			[] (integer i, integer j) {
 				return str32cmp (Formula_instructionNames [i], Formula_instructionNames [j]) < 0;
 			}
