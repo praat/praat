@@ -30,7 +30,7 @@ bool Melder_numberMatchesCriterion (double value, kMelder_number which, double c
 		(which == kMelder_number::GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-inline char32 * str32str_word_optionallyCaseSensitive (conststring32 string, conststring32 find,
+inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 string, conststring32 find,
 	bool ink, bool caseSensitive, bool startFree, bool endFree) noexcept
 {
 	integer length = str32len (find);

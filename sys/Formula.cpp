@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,24 +440,24 @@ static void Formula_lexan () {
 			int rank = 0;
 			stringtokon;
 			do stringtokchar while (Melder_isWordCharacter (kar) || kar == U'.');
-			if (kar == '$') {
+			if (kar == U'$') {
 				isString = true;
 				stringtokchar
-				if (kar == '#') {
+				if (kar == U'#') {
 					rank += 1;
 					stringtokchar
 				}
 			}
-			if (kar == '#') {
+			if (kar == U'#') {
 				rank += 1;
 				stringtokchar
-				if (kar == '#') {
+				if (kar == U'#') {
 					rank += 1;
 					stringtokchar
-					if (kar == '#') {
+					if (kar == U'#') {
 						rank += 1;
 						stringtokchar
-						if (kar == '#') {
+						if (kar == U'#') {
 							rank += 1;
 							stringtokchar
 						}
