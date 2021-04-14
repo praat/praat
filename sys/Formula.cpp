@@ -340,12 +340,12 @@ static integer Formula_hasLanguageName (conststring32 f) {
 			}
 		);
 	}
-	constexpr integer dummy = 0;
-	const integer *found = std::lower_bound (index.begin(), index.end(), dummy,
+	constexpr integer sentinel = 0;   // has to be different from the numbers 1 .. index.size
+	const integer *found = std::lower_bound (index.begin(), index.end(), sentinel,
 		[f] (integer i, integer j) {
 			return str32cmp (
-				i == dummy ? f : Formula_instructionNames [i],
-				j == dummy ? f : Formula_instructionNames [j]
+				i == sentinel ? f : Formula_instructionNames [i],
+				j == sentinel ? f : Formula_instructionNames [j]
 			) < 0;
 		}
 	);

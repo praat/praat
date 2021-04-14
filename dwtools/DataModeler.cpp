@@ -1453,7 +1453,7 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 
 autoTable DataModeler_to_Table_zscores (DataModeler me) {
 	try {
-		autoTable ztable = Table_createWithColumnNames (my numberOfDataPoints, U"x z");
+		autoTable ztable = Table_createWithColumnNames (my numberOfDataPoints, { U"x", U"z" });
 		autoVEC zscores = DataModeler_getZScores (me);
 		for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
 			Table_setNumericValue (ztable.get(), ipoint, 1, my  data [ipoint] .x);

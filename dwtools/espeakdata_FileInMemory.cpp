@@ -145,7 +145,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		constexpr conststring32 criterion = U"/voices/!v/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index gender age variant");
+		autoTable thee = Table_createWithColumnNames (numberOfMatches, { U"id", U"name", U"index", U"gender", U"age", U"variant" });
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];
@@ -185,7 +185,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		constexpr conststring32 criterion = U"/lang/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index"); // old: Default English
+		autoTable thee = Table_createWithColumnNames (numberOfMatches, { U"id", U"name", U"index" }); // old: Default English
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];

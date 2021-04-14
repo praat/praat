@@ -970,7 +970,7 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 }
 
 static autoTable Pitch_Frame_tabulateCandidates (Pitch_Frame me) {
-	autoTable you = Table_createWithColumnNames (my nCandidates, U"frequency strength");
+	autoTable you = Table_createWithColumnNames (my nCandidates, { U"frequency", U"strength" });
 	for (integer icand = 1; icand <= my nCandidates; icand ++) {
 		const Pitch_Candidate candidate = & my candidates [icand];
 		Table_setNumericValue (you.get(), icand, 1, candidate -> frequency);
@@ -991,7 +991,7 @@ autoTable Pitch_tabulateCandidates (Pitch me) {
 		const Pitch_Frame frame = & my frames [iframe];
 		totalNumberOfCandidates += frame -> nCandidates;
 	}
-	autoTable result = Table_createWithColumnNames (totalNumberOfCandidates, U"frame frequency strength");
+	autoTable result = Table_createWithColumnNames (totalNumberOfCandidates, { U"frame", U"frequency", U"strength" });
 	integer rowNumber = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		const Pitch_Frame frame = & my frames [iframe];

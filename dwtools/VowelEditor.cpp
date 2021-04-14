@@ -813,7 +813,7 @@ static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	VowelEditor_updateTrajectorySpecification (me);
-	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, U"Time F1 F2 Colour");
+	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, { U"Time", U"F1", U"F2", U"Colour" });
 	for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 		TrajectoryPoint point = my trajectory -> points.at [ipoint];
 		Table_setNumericValue (publish.get(), ipoint, 1, point -> number);
@@ -854,7 +854,7 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 		Melder_require (f2 >= my p_window_f2min && f2 <= my p_window_f1max,
 			U"The second formant should be in the range from ", my p_window_f2min, U" to ", my p_window_f2max, U" Hz.");
 		if (! my marks)
-			my marks = Table_createWithColumnNames (1, U"IPA F1 F2 Size Colour");
+			my marks = Table_createWithColumnNames (1, { U"IPA", U"F1", U"F2", U"Size", U"Colour" });
 		else
 			Table_appendRow (my marks.get());
 		integer irow = my marks -> rows.size;

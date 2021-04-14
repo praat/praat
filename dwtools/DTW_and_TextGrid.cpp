@@ -144,7 +144,7 @@ autoTextGrid DTW_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) 
 autoTable DTW_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
 	try {
 		const integer numberOfIntervals = thy intervals.size;
-		autoTable him = Table_createWithColumnNames (numberOfIntervals, U"tmin tmax label dist");
+		autoTable him = Table_createWithColumnNames (numberOfIntervals, { U"tmin", U"tmax", U"label", U"dist" });
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			integer pathIndex = 1;
 			for (integer i = 1; i <= numberOfIntervals; i ++) {

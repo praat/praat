@@ -25,9 +25,7 @@ Thing_declare (Interpreter);
 #include "Table_def.h"
 
 void Table_initWithColumnNames (Table me, integer numberOfRows, constSTRVEC columnNames);
-void Table_initWithColumnNames (Table me, integer numberOfRows, conststring32 columnNames);
 autoTable Table_createWithColumnNames (integer numberOfRows, constSTRVEC columnNames);
-autoTable Table_createWithColumnNames (integer numberOfRows, conststring32 columnNames);
 void Table_initWithoutColumnNames (Table me, integer numberOfRows, integer numberOfColumns);
 autoTable Table_createWithoutColumnNames (integer numberOfRows, integer numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
