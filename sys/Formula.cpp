@@ -330,16 +330,6 @@ static void formulaError (conststring32 message, int position) {
 	Melder_throw (message, U":\n« ", truncatedExpression.string);
 }
 
-static conststring32 languageNameCompare_searchString;
-
-static int languageNameCompare (const void *first, const void *second) {
-	integer i = * (integer *) first, j = * (integer *) second;
-	return str32cmp (
-		i == 0 ? languageNameCompare_searchString : Formula_instructionNames [i],
-		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]
-	);
-}
-
 static integer Formula_hasLanguageName (conststring32 f) {
 	static autoINTVEC index;
 	if (NUMisEmpty (index.get())) {
@@ -350,10 +340,16 @@ static integer Formula_hasLanguageName (conststring32 f) {
 			}
 		);
 	}
-	integer dummy = 0, *found;
-	languageNameCompare_searchString = f;
-	found = (integer *) bsearch (& dummy, & index [1], highestInputSymbol, sizeof (integer), languageNameCompare);
-	if (found)
+	constexpr integer dummy = 0;
+	const integer *found = std::lower_bound (index.begin(), index.end(), dummy,
+		[f] (integer i, integer j) {
+			return str32cmp (
+				i == dummy ? f : Formula_instructionNames [i],
+				j == dummy ? f : Formula_instructionNames [j]
+			) < 0;
+		}
+	);
+	if (found != index.end() && Melder_equ (Formula_instructionNames [*found], f))
 		return *found;
 	return 0;
 }

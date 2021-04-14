@@ -263,7 +263,7 @@ static bool pageCompare (ManPage me, ManPage thee) {
 		q ++;
 	}
 	return false;   // should not occur
-};
+}
 
 static integer lookUp_unsorted (ManPages me, conststring32 title) {
 	/*
