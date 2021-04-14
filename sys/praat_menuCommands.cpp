@@ -32,7 +32,7 @@ void praat_sortMenuCommands () {
 		Praat_Command command = theCommands.at [i];
 		command -> sortingTail = i;
 	}
-	std::sort (& theCommands.at [1], & theCommands.at [theCommands.size + 1],
+	std::sort (theCommands.begin(), theCommands.end(),
 		[] (Praat_Command me, Praat_Command thee) {
 			if (my window) {
 				if (! thy window)
