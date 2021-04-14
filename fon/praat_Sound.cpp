@@ -2051,10 +2051,6 @@ static autoDaata soundFileRecognizer (integer nread, const char *header, MelderF
 
 static autoDaata movieFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	conststring32 fileName = MelderFile_name (file);
-	/*Melder_casual ("%d %d %d %d %d %d %d %d %d %d", header [0],
-		header [1], header [2], header [3],
-		header [4], header [5], header [6],
-		header [7], header [8], header [9]);*/
 	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".mov", false) &&
 	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi", false)))
 		return autoDaata ();

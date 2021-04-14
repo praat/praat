@@ -3047,8 +3047,8 @@ MAN_END
 MAN_BEGIN (U"PitchTier: Modify interval...", U"djmw", 20170801)
 INTRO (U"Modifies a selected interval from the chosen @PitchTier by replacing the contents of the interval by newly defined pitch points.")
 ENTRY (U"Settings")
-SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (12), U""
-	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval", 12)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (11), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval", 11)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Time range (s)", U"0.0", U"0.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Relative times", U"0.0 0.5 1.0")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"...are...", U"fractions")
@@ -3136,8 +3136,8 @@ NORMAL (U"where %F__min_ and %F__max_ are the minimum and the maximum frequency 
 NORMAL (U"To get the frequency in hertz from a specified tone level %T we have to use the inverse formula:")
 EQUATION (U"%%frequency% = %F__min_ \\.c 10^^(%T \\.c log (%F__max_ / %F__min_)) / %%numberOfToneLevels%)^.")
 ENTRY (U"Settings")
-SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9), U""
-	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval (tone levels)", 9)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PitchTier: Modify interval (tone levels)", 8)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Time range (s)", U"0.0", U"0.0")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Pitch range (Hz)", U"80.0", U"200.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD (U"Number of tone levels", U"5")
@@ -4108,8 +4108,8 @@ MAN_END
 MAN_BEGIN (U"Sound: Draw where...", U"djmw", 20170829)
 INTRO (U"A command to draw only those parts of a @Sound where a condition holds.")
 ENTRY (U"Settings")
-SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Sound: Draw where...", 5)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5.6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Sound: Draw where...", 5.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
@@ -4270,8 +4270,8 @@ MAN_BEGIN (U"Sound: Paint where...", U"djmw", 20170829)
 INTRO (U"A command to paint only those parts of a @Sound where a condition holds. The painted area is the area "
 	"between the Sound and a horizontal line at a certain level.")
 ENTRY (U"Settings")
-SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Sound: Paint where...", 6)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Sound: Paint where...", 6.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colour (0-1, name, {r,g,b})", "0.5")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= all)")
@@ -4341,7 +4341,7 @@ ENTRY (U"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), U""
 	Manual_DRAW_SETTINGS_WINDOW ("Sounds: Paint enclosed", 4)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colour (0-1, name, {r,g,b})", "0.5")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", "0.0", "0.0 (= all)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= all)")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
 )
@@ -4941,10 +4941,10 @@ MAN_END
 MAN_BEGIN (U"Table: Bar plot where...", U"djmw", 20140509)
 INTRO (U"Draws a bar plot from data in one or more columns of the selected @Table. In a bar plot the horizontal axis has nominal values (labels). ")
 ENTRY (U"Settings")
-SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (10), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot where", 10)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (10.6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot where", 10.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column(s)", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column with labels", "")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance of first bar from border", "1.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bar groups", "1.0")
@@ -5038,12 +5038,12 @@ INTRO (U"Draws a line graph from the data in a column of the selected @Table. "
 	"In a line plot, the horizontal axis can have a nominal scale or a numeric scale. "
 	"The data points are connected by line segments.")
 ENTRY (U"Settings")
-SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (8), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (8.6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Text", "+")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
 	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
@@ -5148,12 +5148,12 @@ MAN_END
 MAN_BEGIN (U"Table: Vertical error bars plot where...", U"djmw", 20131223)
 INTRO (U"Draws vertical lines that represent the error intervals of a data column from the selected @@Table@.")
 ENTRY (U"Settings")
-SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (9), U""
-	Manual_DRAW_SETTINGS_WINDOW ("Table: Vertical confidence intervals plot where", 9)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (9.6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Vertical confidence intervals plot where", 9.6)   // 0.6 extra for the text
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
-	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (= auto)")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Lower error value column", "")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Upper error value column", "")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Bar size (mm)", "1.0")
@@ -5667,10 +5667,10 @@ INTRO (U"Scales the durations of the selected @@TextGrid@ intervals as specified
 MAN_END
 
 MAN_BEGIN (U"TextGrid: To DurationTier...", U"djmw", 20170617)
-INTRO (U"Returns a @@DurationTier@ that could scale the durations of the specified intervals of the selected @@TextGrid@ with a specified factor.")
+INTRO (U"Creates a @@DurationTier@ that could scale the durations of the specified intervals of the selected @@TextGrid@ with a specified factor.")
 ENTRY (U"Settings")
-SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (5), U""
-	Manual_DRAW_SETTINGS_WINDOW ("TextGrid: To DurationTier", 5)
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6), U""
+	Manual_DRAW_SETTINGS_WINDOW ("TextGrid: To DurationTier", 6)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Tier number", "1")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Time scale factor", "2.0")
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Left transition duration", "1e-10")
@@ -5738,12 +5738,13 @@ NORMAL (U"Normally we would use very small values for the right and the left tra
 ENTRY (U"Examples")
 NORMAL (U"Suppose you want to change the durations of some parts in a sound. The way to go is:")
 LIST_ITEM (U"1. Create a TextGrid with at least one interval tier with the segments of interest labeled.")
-LIST_ITEM (U"2. Select the TextGrid and choose the ##To DurationTier...# option.")
-LIST_ITEM (U"3. Use the selected sound to create a @@Manipulation@ object from it. Check and eventually correct the pitch measurements in this object (##View & Edit#) as the quality of the resynthesis depends critically on the quality of the pitch measurements.")
-LIST_ITEM (U"4. Select the Manipulation object and the newly created DurationTier object together and choose ##Replace duration tier#.")
-LIST_ITEM (U"5. Select the Manipulation object and choose ##Get resynthesis (overlap-add)#. The newly created sound object will have the "
+LIST_ITEM (U"2. Select the TextGrid and choose ##To DurationTier...#.")
+LIST_ITEM (U"3. Select the Sound and create a @@Manipulation@ object from it. Check and potentially correct the pitch measurements in this Manipulation "
+	"(##View & Edit#), as the quality of the resynthesis depends critically on the quality of the pitch measurements.")
+LIST_ITEM (U"4. Select the Manipulation and the DurationTier together and choose ##Replace duration tier#.")
+LIST_ITEM (U"5. Select the Manipulation object and choose ##Get resynthesis (overlap-add)#. The resulting Sound will have the "
 	"durations of its selected intervals changed.")
-LIST_ITEM (U"6. Optionally you might also want to scale the TextGrid to line up with the newly created sound too. You can do so by selecting the "
+LIST_ITEM (U"6. Optionally you may also want to scale the TextGrid to line up with the newly created Sound. To do so, select the "
 	"TextGrid and the DurationTier together and choose ##To TextGrid (scale times)#. You will get a new TextGrid that is nicely "
 	"aligned with the new sound.")
 MAN_END

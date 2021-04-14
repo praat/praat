@@ -157,7 +157,7 @@ void Permutation_swapBlocks (Permutation me, integer from, integer to, integer b
 		Melder_require (blockSize > 0 && blockSize <= my numberOfElements / 2,
 			U"The block size should be in the [1, ", my numberOfElements / 2, U"] range.");
 		Melder_require (from > 0 && to > 0 && from + blockSize <= my numberOfElements && to + blockSize <= my numberOfElements,
-			U"Start and finish positions of the two blocks should be in [1,", my numberOfElements, U"] range.");
+			U"Start and finish positions of the two blocks should be in the [1,", my numberOfElements, U"] range.");
 
 		if (from == to)
 			return;
