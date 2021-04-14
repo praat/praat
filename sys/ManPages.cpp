@@ -249,22 +249,21 @@ void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, i
 	my pages. addItem_move (page.move());
 }
 
-static int pageCompare (const void *first, const void *second) {
-	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
+static bool pageCompare (ManPage me, ManPage thee) {
 	const char32 *p = & my title [0], *q = & thy title [0];
 	for (;;) {
 		const char32 plower = Melder_toLowerCase (*p), qlower = Melder_toLowerCase (*q);
 		if (plower < qlower)
-			return -1;
+			return true;
 		if (plower > qlower)
-			return 1;
+			return false;
 		if (plower == U'\0')
-			return str32cmp (my title.get(), thy title.get());
+			return str32cmp (my title.get(), thy title.get()) < 0;
 		p ++;
 		q ++;
 	}
-	return 0;   // should not occur
-}
+	return false;   // should not occur
+};
 
 static integer lookUp_unsorted (ManPages me, conststring32 title) {
 	/*
@@ -296,23 +295,23 @@ static integer lookUp_sorted (ManPages me, conststring32 title) {
 	if (! dummy)
 		dummy = Thing_new (ManPage);
 	dummy -> title = Melder_dup (title);
-	ManPage *page = (ManPage *) bsearch (& dummy, & my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);   // noexcept
-	if (page)
-		return (page - & my pages.at [1]) + 1;
+	ManPage *page = std::lower_bound (my pages.begin(), my pages.end(), dummy.get(), pageCompare);   // noexcept
+	if (page != my pages.end() && Melder_equ ((*page) -> title.get(), dummy -> title.get()))
+		return (page - my pages.begin()) + 1;
 	if (Melder_isLowerCaseLetter (title [0]) || Melder_isUpperCaseLetter (title [0])) {
 		char32 caseSwitchedTitle [300];
 		Melder_sprint (caseSwitchedTitle,300, title);
 		caseSwitchedTitle [0] = Melder_isLowerCaseLetter (title [0]) ? Melder_toUpperCase (caseSwitchedTitle [0]) : Melder_toLowerCase (caseSwitchedTitle [0]);
 		dummy -> title = Melder_dup (caseSwitchedTitle);
-		page = (ManPage *) bsearch (& dummy, & my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);   // noexcept
-		if (page)
-			return (page - & my pages.at [1]) + 1;
+		page = std::lower_bound (my pages.begin(), my pages.end(), dummy.get(), pageCompare);   // noexcept
+		if (page != my pages.end() && Melder_equ ((*page) -> title.get(), dummy -> title.get()))
+			return (page - my pages.begin()) + 1;
 	}
 	return 0;
 }
 
 static void grind (ManPages me) {
-	qsort (& my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);
+	std::sort (my pages.begin(), my pages.end(), pageCompare);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		page -> linksHither = zero_INTVEC (0);   // superfluous if not ground twice
