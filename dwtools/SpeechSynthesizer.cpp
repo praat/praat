@@ -656,7 +656,8 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 			}
 		}
 
-		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
+		my d_events = Table_createWithColumnNames (0,
+			{ U"time", U"type", U"type-t", U"t-pos", U"length", U"a-pos", U"sample", U"id", U"uniq" });
 
 		#ifdef _WIN32
 			conststringW textW = Melder_peek32toW (text);

@@ -392,8 +392,9 @@ typedef struct structKlattFrame {
 	integer Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
 } *KlattFrame;
 
-static const conststring32 columnNames = U"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
-static const conststring32 columnNamesA [KlattTable_NPAR + 1] = {U"", U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6", U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew", U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain"};
+static const constSTRVEC theColumnNames = { U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6",
+	U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew",
+	U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain" };
 
 static double DBtoLIN (integer dB) {
 	static const double amptable [88] = {
@@ -462,7 +463,7 @@ autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 			U"A KlattTable needs ",  KlattTable_NPAR, U" columns.");
 
 		autoKlattTable me = Thing_new (KlattTable);
-		Table_initWithColumnNames (me.get(), thy ny, columnNames);
+		Table_initWithColumnNames (me.get(), thy ny, theColumnNames);
 		for (integer irow = 1; irow <= thy ny; irow ++) {
 			for (integer jcol = 1; jcol <= KlattTable_NPAR; jcol ++) {
 				double val = thy z [irow] [jcol];
@@ -556,7 +557,7 @@ autoKlattTable KlattTable_create (double frameDuration, double totalDuration) {
 	try {
 		autoKlattTable me = Thing_new (KlattTable);
 		const integer nrows = Melder_ifloor (totalDuration / frameDuration) + 1;
-		Table_initWithColumnNames (me.get(), nrows, columnNames);
+		Table_initWithColumnNames (me.get(), nrows, theColumnNames);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"KlattTable not created.");
@@ -1078,12 +1079,12 @@ static int KlattTable_checkLimits (KlattTable me) {
 		for (integer j = 1; j <= KlattTable_NPAR; j ++) {
 			if (nviolations_lower [j] > 0) {
 				if (nviolations_upper [j] > 0)
-					MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_lower [j], U" frame(s) < min = ",
+					MelderInfo_writeLine (theColumnNames [j], U": ", nviolations_lower [j], U" frame(s) < min = ",
 						nviolations_lower [j], U"; ", nviolations_upper [j], U" frame(s) > max = ", upper [j]);
 				else
-					MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_lower [j], U" frame(s) < min = ", lower [j]);
+					MelderInfo_writeLine (theColumnNames [j], U": ", nviolations_lower [j], U" frame(s) < min = ", lower [j]);
 			} else if (nviolations_upper [j] > 0) {
-				MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_upper [j], U" frame(s) > max = ", upper [j]);
+				MelderInfo_writeLine (theColumnNames [j], U": ", nviolations_upper [j], U" frame(s) > max = ", upper [j]);
 			}
 		}
 		MelderInfo_close ();
@@ -2560,7 +2561,8 @@ autoKlattTable KlattTable_createExample () {
 	};
 	try {
 		autoKlattTable me = Thing_new (KlattTable);
-		Table_initWithColumnNames (me.get(), nrows, columnNames);
+		Table_initWithColumnNames (me.get(), nrows, theColumnNames);
+		Melder_assert (theColumnNames.size == KlattTable_NPAR);
 		for (integer irow = 1; irow <= nrows; irow ++) {
 			for (integer jcol = 1; jcol <= KlattTable_NPAR; jcol ++) {
 				double val = klatt_data [irow - 1].p [jcol - 1];

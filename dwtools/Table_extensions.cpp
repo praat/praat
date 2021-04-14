@@ -3142,7 +3142,7 @@ autoTable Table_create_weenink1983 () {
 */
 autoTable Table_create_esposito2006 () {
 	try {
-		autoTable me = Table_createWithColumnNames (10, U"Language Modal Breathy");
+		autoTable me = Table_createWithColumnNames (10, { U"Language", U"Modal", U"Breathy" });
 		Table_setStringValue (me.get(), 1, 1, U"Chong");
 		Table_setNumericValue (me.get(), 1, 2, -1.5);
 		Table_setNumericValue (me.get(), 1, 3, 5);
@@ -3185,7 +3185,7 @@ autoTable Table_create_esposito2006 () {
 */
 autoTable Table_create_ganong1980 () {
 	try {
-		autoTable me = Table_createWithColumnNames (6, U"VOT dash-tash dask-task");
+		autoTable me = Table_createWithColumnNames (6, { U"VOT", U"dash-tash", U"dask-task" });
 		Table_setNumericValue (me.get(), 1, 1, -17.5);
 		Table_setNumericValue (me.get(), 1, 2, 0.98);
 		Table_setNumericValue (me.get(), 1, 3, 0.92);
@@ -3213,7 +3213,7 @@ autoTable Table_create_ganong1980 () {
 autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly) {
 	try {
 		const integer numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
-		autoTable thee = Table_createWithColumnNames (numberOfRows, U"path id size position");
+		autoTable thee = Table_createWithColumnNames (numberOfRows, { U"path", U"id", U"size", U"position" });
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			const FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
 			Table_setStringValue (thee.get(), irow, 1, fim -> d_path.get());
@@ -3504,7 +3504,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		if (out_prob)
 			*out_prob = NUMchiSquareQ ((double) kruskalWallis, df);
 
-		autoTable him = Table_createWithColumnNames (numberOfLevels, U"Group(R) Sums(R) Cases");
+		autoTable him = Table_createWithColumnNames (numberOfLevels, { U"Group(R)", U"Sums(R)", U"Cases" });
 		for (integer irow = 1; irow <= numberOfLevels; irow ++) {
 			const SimpleString ss = (SimpleString) levels -> classes->at [irow];
 			Table_setStringValue  (him.get(), irow, 1, ss -> string.get());
@@ -3670,7 +3670,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		const double degreesOfFreedom_within = numberOfData - numberOfLevels;
 		const double degreesOfFreedom_between = numberOfLevels - 1;
 
-		autoTable anova = Table_createWithColumnNames (3, U"Source SS Df MS F P");
+		autoTable anova = Table_createWithColumnNames (3, { U"Source", U"SS", U"Df", U"MS", U"F", U"P" });
 		const integer col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
 		const integer row_b = 1, row_w = 2, row_t = 3;
 		Table_setStringValue (anova.get(), row_b, col_s, U"Between");
@@ -3695,7 +3695,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		Table_setNumericValue (anova.get(), row_t, col_ss, sumOfSquares_total);
 		Table_setNumericValue (anova.get(), row_t, col_df, degreesOfFreedom_within + degreesOfFreedom_between);
 
-		autoTable ameans = Table_createWithColumnNames (numberOfLevels, U"Group Mean Cases");
+		autoTable ameans = Table_createWithColumnNames (numberOfLevels, { U"Group", U"Mean", U"Cases" });
 		for (integer irow = 1; irow <= numberOfLevels; irow ++) {
 			const SimpleString name = (SimpleString) levels -> classes->at [irow];
 			Table_setStringValue (ameans.get(), irow, 1, name -> string.get());
@@ -3886,7 +3886,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 			*out_levelSizes = asizes.move();
 		}
 
-		autoTable anova = Table_createWithColumnNames (replications ? 5 : 4, U"Source SS Df MS F P");
+		autoTable anova = Table_createWithColumnNames (replications ? 5 : 4, { U"Source", U"SS", U"Df", U"MS", U"F", U"P" });
 		const integer col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
 		const integer row_A = 1, row_B = 2, row_AB = 3, row_E = replications ? 4 : 3, row_t = replications ? 5 : 4;
 		Table_setStringValue (anova.get(), row_A, col_s, label_A);

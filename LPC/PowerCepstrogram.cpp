@@ -127,7 +127,7 @@ autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double
 
 autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pitchFloor, double pitchCeiling) {
 	try {
-		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0");
+		autoTable thee = Table_createWithColumnNames (my nx, { U"time", U"quefrency", U"cpp", U"f0" });
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer icol = 1; icol <= my nx; icol ++) {
 			his z.row (1)  <<=  my z.column (icol);
@@ -147,7 +147,7 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 
 autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
 	try {
-		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0 rnr");
+		autoTable thee = Table_createWithColumnNames (my nx, { U"time", U"quefrency", U"cpp", U"f0", U"rnr" });
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			his z.row (1)  <<=  my z.column (iframe);

@@ -1736,7 +1736,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMeld
 			}
 		}
 	}
-	autoTable thee = Table_createWithColumnNames (numberOfRows, U"time tier text");
+	autoTable thee = Table_createWithColumnNames (numberOfRows, { U"time", U"tier", U"text" });
 	constexpr integer time_columnNumber = 1;
 	constexpr integer tier_columnNumber = 2;
 	constexpr integer text_columnNumber = 3;

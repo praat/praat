@@ -1231,7 +1231,8 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 		GaussianMixture_TableOfReal_getResponsilities (me, thee, responsibilities.get());
 		autoVEC numberOfData = columnSums_VEC (responsibilities.get());
 		
-		autoTable him = Table_createWithColumnNames (my numberOfComponents, U"component probability smoothing statistic lnmu lnvar numberOfData dimension singular");
+		autoTable him = Table_createWithColumnNames (my numberOfComponents,
+			{ U"component", U"probability", U"smoothing", U"statistic", U"lnmu", U"lnvar", U"numberOfData", U"dimension", U"singular" });
 
 		for (integer component = 1; component <= my numberOfComponents; component ++) {
 			const Covariance cov = my covariances->at [component];
@@ -1243,7 +1244,8 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 			autoVEC componentResponsibilities = copy_VEC (responsibilities.column (component));
 			double testStatistic, lnmu, lnvar;
 			bool isSingular;
-			const double probability = Covariance_TableOfReal_normalityTest_BHEP (cov, thee, componentResponsibilities.get(), & h, & testStatistic, & lnmu, & lnvar, & isSingular);
+			const double probability = Covariance_TableOfReal_normalityTest_BHEP (cov, thee,
+				componentResponsibilities.get(), & h, & testStatistic, & lnmu, & lnvar, & isSingular);
 		
 			Table_setNumericValue (him.get(), component, 2, probability);
 			Table_setNumericValue (him.get(), component, 3, h);

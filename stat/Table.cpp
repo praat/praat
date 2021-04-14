@@ -116,23 +116,8 @@ void Table_initWithColumnNames (Table me, integer numberOfRows, constSTRVEC colu
 	for (integer icol = 1; icol <= columnNames.size; icol ++)
 		Table_setColumnLabel (me, icol, columnNames [icol]);
 }
-void Table_initWithColumnNames (Table me, integer numberOfRows, conststring32 columnNames_string) {
-	autoSTRVEC columnNames = splitByWhitespace_STRVEC (columnNames_string);
-	Table_initWithoutColumnNames (me, numberOfRows, columnNames.size);
-	for (integer icol = 1; icol <= columnNames.size; icol ++)
-		Table_setColumnLabel (me, icol, columnNames [icol].get());
-}
 
 autoTable Table_createWithColumnNames (integer numberOfRows, constSTRVEC columnNames) {
-	try {
-		autoTable me = Thing_new (Table);
-		Table_initWithColumnNames (me.get(), numberOfRows, columnNames);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Table not created.");
-	}
-}
-autoTable Table_createWithColumnNames (integer numberOfRows, conststring32 columnNames) {
 	try {
 		autoTable me = Thing_new (Table);
 		Table_initWithColumnNames (me.get(), numberOfRows, columnNames);
