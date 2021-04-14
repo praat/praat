@@ -1650,7 +1650,7 @@ autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeSt
 		*/
 		label = activityInterval ? voiceActivityLabel : novoiceActivityLabel;
 		TextInterval_setText (vadTier -> intervals.at [iinterval], label);
-		vadTier -> intervals.sort ();
+		vadTier -> intervals. sort ();
 		/*
 			Step 2: remove intervals that are too short.
 			First remove short activity intervals in-between noActivity intervals and
@@ -1720,7 +1720,7 @@ autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeSt
 					}
 				}
 			}
-			unionTier -> intervals.sort ();
+			unionTier -> intervals. sort ();
 			IntervalTier_combineIntervalsOnLabelMatch (unionTier, novoiceActivityLabel);
 			TextGrid_addTier_copy (unionTextGrid.get(), silenceTier);
 			TextGrid_addTier_copy (unionTextGrid.get(), vadTier);
