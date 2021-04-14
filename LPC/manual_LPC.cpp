@@ -333,17 +333,21 @@ MAN_END
 MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20191008)
 INTRO (U"A command to create a table with @@PowerCepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (U"Settings")
-SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
-	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (peak prominence)", 7)
+SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7.8), U""
+	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (peak prominence)", 7.8)   // 9 - 4 * 0.3 (four is the number of additional radio buttons)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search pitch range (Hz)", U"60.0", U"300.0")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"Interpolation", U"None", 0)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"parabolic", 1)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"cubic", 0)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc70", 0)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc700", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Trend line quefrency range (s)", U"0.001", U"0.05")
-	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Trend type", U"Exponential decay")
-	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(U"Fit method", U"Robust")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Trend line quefrency range (s)", U"0.001", U"0.05")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Trend type", U"Exponential decay")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Fit method", U"Robust")
 )
 NORMAL (U"The meaning of these settings is explained @@PowerCepstrum: Get peak prominence...|here@.")
 MAN_END
@@ -421,13 +425,17 @@ NORMAL (U"The CPP measure is the difference in amplitude between the cepstral pe
 	"line that is directly below the peak (i.e., the predicted magnitude for the quefrency at the cepstral peak). "
 	"The CPP measure represents how far the cepstral peak emerges from the cepstrum background. ")
 ENTRY (U"Settings")
-SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), U""
-	Manual_DRAW_SETTINGS_WINDOW (U"PowerCepstrum: Get peak prominence", 7)
+SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (6.8), U""
+	Manual_DRAW_SETTINGS_WINDOW (U"PowerCepstrum: Get peak prominence", 6.8)   // 8 - 4 * 0.3 (four is the number of additional radio buttons)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Search peak in pitch range (s)", U"60.0", U"333.3")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"Interpolation", U"None", 0)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"parabolic", 0)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"cubic", 1)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc70", 0)
+	"y -= 12\n"
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"", U"sinc700", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (U"Trend line quefrency range (s)", U"0.001", U"0.0 (= end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (U"Fit method", U"Robust")
