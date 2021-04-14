@@ -968,7 +968,7 @@ UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 var
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = 5;
 	return thee;
 }
 
@@ -977,7 +977,7 @@ UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 vari
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = 3;
 	return thee;
 }
 
@@ -986,7 +986,7 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = 3;
 	return thee;
 }
 
@@ -995,7 +995,7 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = 3;
 	return thee;
 }
 
@@ -1004,7 +1004,7 @@ UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableN
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = 7;
 	return thee;
 }
 
@@ -1013,17 +1013,17 @@ UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableN
 	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = 10;
 	return thee;
 }
 
-UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue) {
+UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines) {
 	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, name);
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
 	thy variableName = variableName;
-	thy numberOfLines = 1;
+	thy numberOfLines = numberOfLines;
 	return thee;
 }
 
@@ -1145,10 +1145,10 @@ void UiForm_finish (UiForm me) {
 					- 10 :
 				#endif
 			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::FORMULA_ ? multiLineTextHeight (5) :
-			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (3) :
-			thy type == _kUiField_type::NUMVEC_ || thy type == _kUiField_type::TEXTVEC_ ? multiLineTextHeight (7) :
-			thy type == _kUiField_type::NUMMAT_ ? multiLineTextHeight (10) :
+			thy type == _kUiField_type::FORMULA_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::NUMVEC_ || thy type == _kUiField_type::TEXTVEC_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::NUMMAT_ ? multiLineTextHeight (thy numberOfLines) :
 			textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
@@ -1204,7 +1204,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::NUMVEC_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (7), GuiText_INKWRAP | GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
@@ -1216,7 +1216,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::NUMMAT_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (10), GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
@@ -1229,7 +1229,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::TEXTVEC_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (7), GuiText_INKWRAP | GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
@@ -1241,13 +1241,13 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::FORMULA_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (5), GuiText_INKWRAP | GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::INFILE_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseInfile, thee, 0
@@ -1257,7 +1257,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::OUTFILE_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseOutfile, thee, 0
@@ -1267,7 +1267,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::FOLDER_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (3), GuiText_CHARWRAP | GuiText_SCROLLED);
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 100, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - 3 - Gui_PUSHBUTTON_HEIGHT, thy y - 3, U"Browse...", gui_button_cb_browseFolder, thee, 0
