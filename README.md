@@ -144,8 +144,8 @@ Then type `make` to build `Praat.exe`
 
 Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
-Then open the project `praat.xcodeproj` in Xcode 12 and choose Build or Run for the target `praat_mac`.
-You can compile with the 11.0 SDK, which will work as far back as macOS 10.7, which is our deployment target.
+Then open the project `praat.xcodeproj` in Xcode 12.4 and choose Build or Run for the target `praat_mac`.
+You can compile with the 11.1 SDK, which will work as far back as macOS 10.9, which is our deployment target.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,

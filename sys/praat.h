@@ -190,12 +190,19 @@ typedef struct {   // read-only
 	MelderColour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;
-inline structPraatApplication theForegroundPraatApplication;
-inline PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
-inline structPraatObjects theForegroundPraatObjects;
-inline PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
-inline structPraatPicture theForegroundPraatPicture;
-inline PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
+/*
+	The following six cannot be "inline",
+	because that would cost 42 MB (per architecture)
+	on the Mac or on Windows (though nothing on Linux),
+	i.e. a full copy of all three structures.
+	(ppgb 2021-04-15)
+*/
+extern structPraatApplication theForegroundPraatApplication;
+extern PraatApplication theCurrentPraatApplication;
+extern structPraatObjects theForegroundPraatObjects;
+extern PraatObjects theCurrentPraatObjects;
+extern structPraatPicture theForegroundPraatPicture;
+extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
 char32 *praat_name (int iobject);
