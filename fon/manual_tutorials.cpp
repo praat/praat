@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210325)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210415)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.42# (15 April 2021)")
+LIST_ITEM (U"• Settings windows: taller text fields for formulas and vectors.")
+LIST_ITEM (U"• Mac TextGrid window: cursor moves to end of text after selecting an interval (as on Windows and Linux).")
 NORMAL (U"##6.1.41# (25 March 2021)")
 LIST_ITEM (U"• TextGrid window: unselected boundaries can again be drawn to the cursor.")
 LIST_ITEM (U"• Windows: faster running cursor.")
