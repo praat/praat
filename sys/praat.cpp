@@ -56,6 +56,16 @@ Thing_implement (Praat_Command, Thing, 0);
 #define WINDOW_WIDTH 520
 #define WINDOW_HEIGHT 700
 
+/*
+	Six globals, not `inline` (see praat.h 2021-04-15).
+*/
+structPraatApplication theForegroundPraatApplication;
+PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
+structPraatObjects theForegroundPraatObjects;
+PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
+structPraatPicture theForegroundPraatPicture;
+PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
+
 static char32 programName [64];
 static structMelderDir homeDir { };
 
