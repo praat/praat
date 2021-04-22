@@ -30,6 +30,8 @@ Thing_define (ConstantQLogFSpectrogram, MultiSampledSpectrogram) {
 
 void FrequencyBin_init (FrequencyBin me, double xmin, double xmax, integer nx, double dx, double x1);
 
+void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter interpreter);
+
 void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, bool garnish);
@@ -38,8 +40,12 @@ void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, double tmin, dou
 
 autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, integer numberOfStepsPerOctave, integer numberOfSteps);
 
+void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter);
+
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double f1, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor);
 
-void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish);
+void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dBRange, bool garnish);
+
+autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me, double sampleFrequency);
 
 #endif /* MultiSampledSpectrogram_h_ */

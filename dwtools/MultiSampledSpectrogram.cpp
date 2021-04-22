@@ -17,7 +17,9 @@
  */
 
 #include "Collection.h"
+#include "Formula.h"
 #include "MultiSampledSpectrogram.h"
+#include "Sound_and_Spectrum.h"
 
 #include "oo_DESTROY.h"
 #include "MultiSampledSpectrogram_def.h"
@@ -46,22 +48,22 @@ void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape windowS
 			target  <<=  1.0; 
 		} break; case kSound_windowShape::TRIANGULAR: {  // "Bartlett"
 			for (integer i = 1; i <= n; i ++) {
-				const double phase = (double) i / n;   // 0..1  TODO No window is not symmetric
+				const double phase = (double) (i - 0.5) / n;
 				target [i] = 1.0 - fabs ((2.0 * phase - 1.0));
 			} 
 		} break; case kSound_windowShape::PARABOLIC: {  // "Welch"
 			for (integer i = 1; i <= n; i ++) { 
-				const double phase = (double) i / n;
+				const double phase = (double) (i - 0.5) / n;
 				target [i] = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
 			}
 		} break; case kSound_windowShape::HANNING: {
 			for (integer i = 1; i <= n; i ++) {
-				const double phase = (double) i / n;
+				const double phase = (double) (i - 0.5) / n;
 				target [i] = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
 			}
 		} break; case kSound_windowShape::HAMMING: {
 			for (integer i = 1; i <= n; i ++) { 
-				const double phase = (double) i / n;
+				const double phase = (double) (i - 0.5) / n;
 				target [i] = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
 			}
 		} break; case kSound_windowShape::GAUSSIAN_1: {
@@ -170,6 +172,20 @@ void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, doub
 	Sampled_init (me, fmin, fmax, numberOfFrequencies, df, f1);
 }
 
+void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter interpreter) {
+	try {
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
+		for (integer irow = 1; irow <= 2; irow ++)
+			for (integer ibin = 1; ibin <= my nx; ibin ++) {
+				Formula_run (irow, ibin, & result);
+				my z [irow] [ibin] = result. numericResult;
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": formula not completed.");
+	}
+}
+
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {
 	
 }
@@ -181,7 +197,7 @@ void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, doub
 	MultiSampledSpectrogram_paint_inside (me, g, tmin, tmax, fmin, fmax, garnish);
 }
 
-void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double log2_fmin, double log2_fmax, double minimum, double maximum) {
+void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double log2_fmin, double log2_fmax, double dBRange) {
 	integer ixmin, ixmax, ifmin, ifmax;
 	if (Sampled_getWindowSamples (me, log2_fmin, log2_fmax, & ifmin, & ifmax) == 0)
 		return;
@@ -189,27 +205,24 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 	integer numberOfFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & ixmin, & ixmax);
 	autoMAT p = raw_MAT (1, numberOfFrames);
 	
-	if (minimum >= maximum) {
-		/*
-			(autoscaling)
-			Find maximum power. No need for logarithm in the test
-		*/
-		double power_max = 0.0;
-		for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
-			FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
-			if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin, tmax, & ixmin, & ixmax)) == 0)
-				continue;
-			for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
-				double power = sqr (frequencyBin -> z [1] [iframe]) + sqr (frequencyBin -> z [2] [iframe]);
-				if (power > power_max)
-					power_max = power;
-			}
+	/*
+		Find maximum power. No need for logarithm in the test
+	*/
+	MelderExtremaWithInit powerExtrema;
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+		FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
+		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin, tmax, & ixmin, & ixmax)) == 0)
+			continue;
+		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
+			double power = sqr (frequencyBin -> z [1] [iframe]) + sqr (frequencyBin -> z [2] [iframe]);
+			powerExtrema.update (power);
 		}
-		if (power_max == 0.0)
-			return; // empty
-		maximum = 10.0 * log10 (power_max / 4e-10);
-		minimum = maximum - 50.0; // 50 dB dynamic range
 	}
+	if (powerExtrema.max == 0.0)
+		return; // empty
+	const double maximum = 10.0 * log10 (powerExtrema.max / 4e-10);
+	const double minimum = std::max (maximum - dBRange, 10.0 * log10 ((powerExtrema.min + 1e-30) / 4e-10));
+
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
 		double xmin1, xmax1 ;
@@ -238,7 +251,7 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 	}
 }
 
-void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double minimum, double maximum, bool garnish) {
+void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
 	if (fmin >= fmax) {
 		fmin = my xmin;
 		fmax = my xmax;
@@ -252,7 +265,7 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 		tmax = frequencyBin -> xmax;
 	}
 	Graphics_setInner (g);
-	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, minimum, maximum);
+	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -287,7 +300,98 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, integer
 	}
 }
 
+static void Spectrum_reuse (Spectrum me, double fmax, double nx) {
+	my xmin = 0.0;
+	my xmax = fmax;
+	my nx = nx;
+	my dx = fmax / (nx - 1);
+}
+
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
+	try {
+		
+		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, numberOfStepsPerOctave, numberOfSteps);
+		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
+		Melder_require (thy v_getFrequencyHz (thy xmax) <= nyquistFrequency,
+			U"The number of steps you want result in a maximum frequency which is above the Nyquist frequency of the sound. "
+			"The maximum number of steps should not exceed ", Melder_iroundDown (numberOfStepsPerOctave * log2 (nyquistFrequency / lowestFrequency)), U".");
+		if (timeOversamplingFactor < 1.0)
+			timeOversamplingFactor = 4.0; // default oversampling
+		autoSpectrum him = Sound_to_Spectrum (me, true);
+		autoSpectrum filter = Spectrum_create (nyquistFrequency, his nx / 2);	
+		const integer maximumNumberOfFilterSamples = filter -> nx;
+		autoVEC window = raw_VEC (maximumNumberOfFilterSamples);
+		for (integer ifreq = 1; ifreq <= numberOfSteps; ifreq ++) {
+			const double frequency =  exp2 (Sampled_indexToX (thee.get(), ifreq)), bandwidth = frequency / q;
+			double flow = frequency - bandwidth;
+			double fhigh = frequency + bandwidth;
+			Melder_clipLeft (0.0, & flow);
+			Melder_clipRight (& fhigh, nyquistFrequency);
+			integer iflow, ifhigh;
+			const integer numberOfFilterSamples = Sampled_getWindowSamples (him.get(), flow, fhigh, & iflow, & ifhigh);
+			Melder_require (numberOfFilterSamples > 1,
+				U"The number of spectral filter values should be larger than 1.");
+			Spectrum_reuse (filter.get(), fhigh - flow, numberOfFilterSamples);
+			filter -> z.part (1, 2, 1, numberOfFilterSamples)  <<=  his z.part (1, 2, iflow, ifhigh);
+			window.resize (numberOfFilterSamples);
+			windowShape_VEC_preallocated (window.get(), kSound_windowShape :: HANNING);
+			filter -> z.part (1, 2, 1, numberOfFilterSamples)  *=  window.get();
+			autoSound filtered = Spectrum_to_Sound (filter.get());
+			autoFrequencyBin frequencyBin = FrequencyBin_create (my xmin, my xmax, filtered -> nx, filtered -> dx,  filtered -> x1);
+			frequencyBin -> z.row (1)  <<=  filtered -> z.row (1);
+			thy frequencyBins.addItem_move (frequencyBin.move());
+		}
+		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot create ConstantQLogFSpectrogram.");
+	}
+}
+
+void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter) {
+	try {
+		
+		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
+			FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
+			FrequencyBin_formula (frequencyBin, formula, interpreter);
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": formula not completed.");
+	}
+}
+
+autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me, double samplingFrequency) {
+	try {
+		FrequencyBin frequencyBin = my frequencyBins.at [1];
+		const double duration = frequencyBin -> xmax - frequencyBin -> xmin;
+		const integer numberOfSamples = duration * samplingFrequency;
+		integer numberOfFFTSamples = 2;
+		while (numberOfFFTSamples < numberOfSamples)
+			numberOfFFTSamples *= 2;
+		autoSpectrum spectrum = Spectrum_create (0.5 * samplingFrequency, numberOfFFTSamples / 2 + 1);
+		autoSound reusable = Sound_createSimple (1, duration, samplingFrequency);
+		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
+			frequencyBin = my frequencyBins.at [ifreq];
+			reusable -> z.row (1).part (1, frequencyBin -> nx)   <<=  frequencyBin -> z.row (1);
+			reusable -> dx = frequencyBin -> dx;
+			reusable -> x1 = frequencyBin -> x1;
+			reusable -> nx = frequencyBin -> nx;
+			autoSpectrum filter = Sound_to_Spectrum (reusable.get(), false);
+			const double frequency = exp2 (Sampled_indexToX (me, ifreq));
+			const integer indexInSpectrum = Sampled_xToNearestIndex (spectrum.get(), frequency);
+			integer iflow = indexInSpectrum - filter -> nx / 2, ifhigh = iflow + filter -> nx - 1;
+			Melder_clipLeft (1_integer, & iflow);
+			Melder_clipRight (& ifhigh, spectrum -> nx);
+			spectrum -> z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1, ifhigh - iflow + 1);
+		}
+		autoSound thee = Spectrum_to_Sound (spectrum.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create Sound.");
+	}
+}
+
+autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram_old (Sound me, double lowestFrequency, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
 	try {
 		
 		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, numberOfStepsPerOctave, numberOfSteps);
