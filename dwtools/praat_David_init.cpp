@@ -3521,18 +3521,26 @@ DIRECT (NEW_LegendreSeries_to_Polynomial) {
 
 /********************* LogFrequencySpectrogram **************************************/
 
+FORM (MODIFY_ConstantQLogFSpectrogram_formula, U"ConstantQLogFSpectrogram: Formula", U"ConstantQLogFSpectrogram: Formula...") {
+	FORMULA (formula, U"Formula:", U"2 * self")
+	OK
+DO
+	MODIFY_EACH_WEAK (ConstantQLogFSpectrogram)
+		ConstantQLogFSpectrogram_formula (me, formula, interpreter);
+	MODIFY_EACH_WEAK_END
+}
+
 FORM (GRAPHICS_ConstantQLogFSpectrogram_paint, U"ConstantQLogFSpectrogram: Paint", nullptr) {
 	REAL (xmin, U"left Time range (s)", U"0.0")
 	REAL (xmax, U"right Time range (s)", U"0.0 (=all)")
 	REAL (ymin, U"left Frequency range (Hz)", U"0.0")
 	REAL (ymax, U"right Frequency range (Hz)", U"0.0 (=auto)")
-	REAL (minimum, U"left Power range (dB)", U"0.0")
-	REAL (maximum, U"right Power range (dB)", U"0.0 (=auto)")
+	POSITIVE (dBRange, U"Dynamic range (dB)", U"50.0")
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
 	GRAPHICS_EACH (ConstantQLogFSpectrogram)
-		ConstantQLogFSpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, minimum, maximum, garnish);
+		ConstantQLogFSpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, dBRange, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -5851,6 +5859,15 @@ FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogra
 DO
 	CONVERT_EACH (Sound)
 		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, q, numberOfStepsPerOctave, numberOfSteps, timeOversamplingFactor);
+	CONVERT_EACH_END (my name.get())
+}
+
+FORM (NEW_ConstantQLogFSpectrogram_to_Sound, U"ConstantQLogFSpectrogram: To Sound", nullptr) {
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	OK
+DO
+	CONVERT_EACH (ConstantQLogFSpectrogram)
+		autoSound result = ConstantQLogFSpectrogram_to_Sound (me, samplingFrequency);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -8999,6 +9016,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_LegendreSeries_to_Polynomial);
 
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Paint...", nullptr, 0, GRAPHICS_ConstantQLogFSpectrogram_paint);
+	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"To Sound...", nullptr, 0, NEW_ConstantQLogFSpectrogram_to_Sound);
 	
 	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);

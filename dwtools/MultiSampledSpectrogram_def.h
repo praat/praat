@@ -45,4 +45,17 @@ oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 oo_END_CLASS (MultiSampledSpectrogram)
 #undef ooSTRUCT
 
+#define ooSTRUCT ConstantQLogFSpectrogram
+oo_DEFINE_CLASS (ConstantQLogFSpectrogram, MultiSampledSpectrogram)
+
+	oo_DOUBLE (q) // invariant frequencyBins.size == my nx
+	
+	#if oo_DECLARING
+		void v_info ()
+			override;
+	#endif
+
+oo_END_CLASS (ConstantQLogFSpectrogram)
+#undef ooSTRUCT
+
 /* End of file MultiSampledSpectrogram_def.h */
