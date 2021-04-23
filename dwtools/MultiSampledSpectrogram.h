@@ -25,9 +25,6 @@
 #include "melder.h"
 #include "MultiSampledSpectrogram_def.h"
 
-Thing_define (ConstantQLogFSpectrogram, MultiSampledSpectrogram) {
-};
-
 void FrequencyBin_init (FrequencyBin me, double xmin, double xmax, integer nx, double dx, double x1);
 
 void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter interpreter);
@@ -38,7 +35,7 @@ void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, double tmin, doub
 
 void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, bool garnish);
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, integer numberOfStepsPerOctave, integer numberOfSteps);
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, integer numberOfStepsPerOctave, integer numberOfSteps, double q);
 
 void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter);
 

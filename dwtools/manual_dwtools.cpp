@@ -6252,6 +6252,11 @@ NORMAL (U"D.J.P.J. Van Nierop, L.C.W. Pols & R. Plomp (1973): \"Frequency "
 	"analysis of Dutch vowels from 25 female speakers.\" %%Acustica% #29: 110\\--118")
 MAN_END
 
+MAN_BEGIN (U"Velasco et al. (2011)", U"djmw", 20210422)
+NORMAL (U"G.A. Velasco, N. Holighaus, M. Dörfler & T. Grill (2011):\"Constructing an invertable constant-Q transform with "
+	"nonstationary Gabor frames.\" %%Proc. of the 14^^th^ Int. Conference on Digital Audio Effects%, Paris, France, September 2011.")
+MAN_END
+
 MAN_BEGIN (U"Weenink (1985)", U"djmw", 20111010)
 NORMAL (U"D.J.M. Weenink (1985), \"Formant analysis of Dutch vowels from 10 children\", "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
