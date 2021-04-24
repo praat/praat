@@ -37,35 +37,6 @@ void Ui_prefs () {
 	Preferences_addEnum (U"Ui.stringArrayFormat", & theStringArrayFormat, kUi_stringArrayFormat, (int) kUi_stringArrayFormat::DEFAULT);
 }
 
-static conststring32 formatNumericVector (constVEC elements, kUi_numericVectorFormat format) {
-	static MelderString buffer;
-	MelderString_empty (& buffer);
-	switch (format) {
-		case kUi_numericVectorFormat::ENUMERATE_: {
-			for (integer i = 1; i <= elements.size; i ++) {
-				MelderString_append (& buffer, elements [i]);
-				if (i < elements.size)
-					MelderString_appendCharacter (& buffer, U' ');
-			}
-		} break; case kUi_numericVectorFormat::FORMULA_: {
-			if (NUMisEmpty (elements)) {
-				MelderString_append (& buffer, U"zero# (0)");
-			} else {
-				MelderString_append (& buffer, U"{ ");
-				for (integer i = 1; i <= elements.size; i ++) {
-					MelderString_append (& buffer, elements [i]);
-					if (i < elements.size)
-						MelderString_append (& buffer, U", ");
-				}
-				MelderString_append (& buffer, U" }");
-			}
-		} break; case kUi_numericVectorFormat::UNDEFINED: {
-			Melder_fatal (U"Unknown numeric vector format.");
-		}
-	}
-	return buffer.string;
-}
-
 static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixFormat format) {
 	static MelderString buffer;
 	MelderString_empty (& buffer);
@@ -2633,6 +2604,13 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> stringValue = Melder_dup (field -> stringValue.get());
+			}
+			break;
+			case _kUiField_type::NUMVEC_:
+			{
+				MelderString_appendCharacter (& lowerCaseFieldName, U'#');
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
+				var -> numericVectorValue = copy_VEC (field -> numericVectorValue.get());   // TODO: can we move this instead of copying it?
 			}
 			break;
 			case _kUiField_type::COLOUR_:
