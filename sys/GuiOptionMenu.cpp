@@ -1,6 +1,6 @@
 /* GuiOptionMenu.cpp
  *
- * Copyright (C) 1993-2018 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020,2021 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,17 +114,15 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 }
 
 #if motif
-	static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
+	static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer /* call */) {
 		iam (GuiOptionMenu);
-		(void) call;
 		for (int i = 1; i <= my d_options.size; i ++) {
 			GuiMenuItem item = my d_options.at [i];
 			if (item -> d_widget == w) {
 				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (item -> d_widget -> name.get()), nullptr);
 				XmToggleButtonSetState (item -> d_widget, true, false);
-				if (Melder_debug == 11) {
+				if (Melder_debug == 11)
 					Melder_warning (i, U" \"", item -> d_widget -> name.get(), U"\"");
-				}
 			} else {
 				XmToggleButtonSetState (item -> d_widget, false, false);
 			}
@@ -171,9 +169,8 @@ void GuiOptionMenu_setValue (GuiOptionMenu me, int value) {
 		for (int i = 1; i <= my d_options.size; i ++) {
 			GuiMenuItem menuItem = my d_options.at [i];
 			XmToggleButtonSetState (menuItem -> d_widget, i == value, False);
-			if (i == value) {
+			if (i == value)
 				XtVaSetValues (my d_xmCascadeButton, XmNlabelString, Melder_peek32to8 (menuItem -> d_widget -> name.get()), nullptr);
-			}
 		}
 	#elif cocoa
         GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) my d_widget;

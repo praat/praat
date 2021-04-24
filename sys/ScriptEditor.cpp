@@ -98,7 +98,8 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 	Interpreter_getArgumentsFromDialog (my interpreter.get(), sendingForm);
 
 	autoPraatBackground background;
-	if (my name [0]) MelderFile_setDefaultDir (& file);
+	if (my name [0])
+		MelderFile_setDefaultDir (& file);
 	Interpreter_run (my interpreter.get(), text.get());
 }
 

@@ -1276,7 +1276,7 @@ CODE (U"writeInfoLine: \"The sum of the cells along the diagonal is \", sumDiago
 NORMAL (U"The first version, which accesses the contents directly, is not only two lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN (U"Functions", U"ppgb", 20210102)
+MAN_BEGIN (U"Functions", U"ppgb", 20210421)
 NORMAL (U"A growing list of functions that you can use in @formulas and @scripting...")
 LIST_ITEM (U"##abs (%x)# \\-- absolute value")
 LIST_ITEM (U"##arccos (%x)# \\-- inverse cosine")
@@ -1285,8 +1285,8 @@ LIST_ITEM (U"##arctan (%x)# \\-- inverse tangent")
 LIST_ITEM (U"##cos (%x)# \\-- cosine")
 LIST_ITEM (U"##cosh (%x)# \\-- hyperbolic cosine")
 LIST_ITEM (U"##exp (%x)# \\-- exponentiation")
-LIST_ITEM (U"##index (%%string$%, %%part$%)# \\-- look up a substring, or 0 if not found")
-LIST_ITEM (U"##index (%%strings$#%, %%s$%)# \\-- look up whether %%s$% occurs in %%strings$#%")
+LIST_ITEM (U"##index (%%string\\$ %, %%part\\$ %)# \\-- look up a substring, or 0 if not found")
+LIST_ITEM (U"##index (%%strings\\$ \\# %, %%s\\$ %)# \\-- look up whether %%s\\$ % occurs in %%strings\\$ \\# %")
 LIST_ITEM (U"##mul\\# \\#  (%%a\\# \\# %, %%b\\# \\# %)# \\-- matrix multiplication")
 LIST_ITEM (U"##readFile\\$  (%%filePath\\$ %)# \\-- read a whole text file into a string")
 LIST_ITEM (U"##readLinesFromFile\\$ \\#  (%%filePath\\$ %)# \\-- read all lines from a text file")
@@ -3457,7 +3457,7 @@ NORMAL (U"This example uses several tricks. A useful one is seen with %number_of
 	"this is at the same time the value that is passed to #optionMenu (and therefore determines the setting of "
 	"the \"Number of channels\" menu when the window appears) and the name of the variable in which the user's "
 	"chosen value of \"Number of channels\" is stored (because \"number_of_channels\" is what you get "
-	"by replacing the spaces in \"Number of channels\" with underscores and turning its first letter to lower case.")
+	"by replacing the spaces in \"Number of channels\" with underscores and turning its first letter to lower case).")
 NORMAL (U"Your own pause windows are not likely to be as rich as the above example. "
 	"For instance, the example has three continuation buttons (the second of these is the default button, "
 	"i.e. the button that you can \"click\" by pressing the Enter or Return key). "

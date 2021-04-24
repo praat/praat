@@ -1738,7 +1738,7 @@ DIRECT (NEW_Pitch_killOctaveJumps) {
 }
 
 FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: List values at times...") {
-	NUMVEC (times, U"Times (s)", U"{ 0.5, 0.7, 2.0 }")
+	NUMVEC (times, U"Times (s)", ENUMERATE_, U"0.5 0.7 2.0")
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"nearest")
