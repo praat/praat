@@ -1051,7 +1051,7 @@ DO
 }
 
 FORM (MODIFY_PointProcess_addPoints, U"PointProcess: Add points", U"PointProcess: Add point...") {
-	NUMVEC (times, U"Times:", U"{ 0.1, 0.2, 0.5 }")
+	NUMVEC (times, U"Times:", ENUMERATE_, U"0.1 0.2 0.5")
 	OK
 DO
 	MODIFY_EACH (PointProcess)

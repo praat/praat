@@ -321,8 +321,8 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_TEXT:
 				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			//case Interpreter_VECTOR:
-			//	UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+			case Interpreter_VECTOR:
+				UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, kUi_numericVectorFormat::ENUMERATE_, my arguments [ipar].get()); break;
 			//case Interpreter_MATRIX:
 			//	UiForm_addNummat (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_CHOICE:
@@ -402,6 +402,20 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				my arguments [ipar] = autostring32 (40, true);
 				Melder_sprint (my arguments [ipar].get(),40+1, integerValue);
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
+				break;
+			}
+			case Interpreter_VECTOR: {
+				Melder_casual (U"Interpreter_getArgumentsFromDialog: vector");
+				VEC numvecValue = UiForm_getNumvec (dialog, parameter);
+				autoMelderString buffer;
+				MelderString_appendCharacter (& buffer, U'{');
+				for (integer i = 1; i <= numvecValue.size; i ++) {
+					MelderString_append (& buffer, numvecValue [i]);
+					if (i < numvecValue.size)
+						MelderString_appendCharacter (& buffer, U',');
+				}
+				MelderString_appendCharacter (& buffer, U'}');
+				my arguments [ipar] = Melder_dup (buffer.string);
 				break;
 			}
 			case Interpreter_BUTTON:
@@ -2024,6 +2038,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						break;
 					case U'l':
 						if (str32nequ (command2.string, U"label ", 6)) {
+							if (command2.string [6] == U'=')
+								Melder_throw (U"\"label\" cannot be used as a variable name.");
 							;   // ignore labels
 						} else
 							fail = true;

@@ -345,11 +345,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static conststring32 stringVariable; \
 		UiForm_addFolder (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
-#define NUMVEC(numericVectorVariable, labelText, defaultStringValue)  \
+#define NUMVEC(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static constVEC numericVectorVariable; \
-		UiForm_addNumvec (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, U"", defaultStringValue);
+		UiForm_addNumvec (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, U"", kUi_numericVectorFormat::defaultFormat, defaultStringValue);
 
 #define NUMMAT(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \

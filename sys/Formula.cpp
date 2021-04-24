@@ -115,6 +115,7 @@ enum { NO_SYMBOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
+		ROW_VEC_, COL_VEC_,
 		INNER_, OUTER_MAT_, MUL_VEC_, MUL_MAT_, MUL_FAST_MAT_, MUL_METAL_MAT_,
 		MUL_TN_MAT_, MUL_NT_MAT_, MUL_TT_MAT_, REPEAT_VEC_,
 		ROW_INNERS_VEC_, SOLVE_VEC_, SOLVE_MAT_,
@@ -158,7 +159,7 @@ enum { NO_SYMBOL_,
 		RANDOM_GAMMA_VEC_, RANDOM_GAMMA_MAT_,
 		SOLVE_SPARSE_VEC_, SOLVE_NONNEGATIVE_VEC_,
 		PEAKS_MAT_,
-		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, EDITOR_,
+		SIZE_, NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_, COMBINE_VEC_, EDITOR_,
 		RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_, RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_,
 		HASH_, HEX_STR_, UNHEX_STR_,
 		EMPTY_STRVEC_, READ_LINES_FROM_FILE_STRVEC_, FILE_NAMES_STRVEC_, FOLDER_NAMES_STRVEC_, SPLIT_BY_WHITESPACE_STRVEC_,
@@ -253,6 +254,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
+	U"row#", U"col#",
 	U"inner", U"outer##", U"mul#", U"mul##", U"mul_fast##", U"mul_metal##",
 	U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
 	U"rowInners#", U"solve#", U"solve##",
@@ -283,7 +285,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"randomGauss#", U"randomGauss##",
 	U"randomGamma#", U"randomGamma##", U"solveSparse#", U"solveNonnegative#",
 	U"peaks##",
-	U"size", U"numberOfRows", U"numberOfColumns", U"editor",
+	U"size", U"numberOfRows", U"numberOfColumns", U"combine#", U"editor",
 	U"random_initializeWithSeedUnsafelyButPredictably", U"random_initializeSafelyAndUnpredictably",
 	U"hash", U"hex$", U"unhex$",
 	U"empty$#", U"readLinesFromFile$#", U"fileNames$#", U"folderNames$#", U"splitByWhitespace$#",
@@ -4603,6 +4605,44 @@ static void do_numberOfColumns () {
 			U" requires a matrix argument, not ", array->whichText(), U".");
 	}
 }
+static void do_combine_VEC () {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	const integer numberOfArguments = Melder_iround (narg->number);
+	w -= numberOfArguments;
+	integer elementCounter = 0;
+	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER) {
+			elementCounter += 1;
+		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
+			elementCounter += arg->numericVector.size;
+		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
+			elementCounter += arg->numericMatrix.nrow * arg->numericMatrix.ncol;
+		} else {
+			Melder_throw (U"The function \"combine#\" only takes numbers, vectors and matrices,"
+				" not ", arg->whichText(), U".");
+		}
+	}
+	autoVEC result = raw_VEC (elementCounter);
+	integer elementIterator = 0;
+	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER) {
+			result [++ elementIterator] = arg->number;
+		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
+			for (integer i = 1; i <= arg->numericVector.size; i ++)
+				result [++ elementIterator] = arg->numericVector [i];
+		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
+			for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++)
+				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++)
+					result [++ elementIterator] = arg->numericMatrix [irow] [icol];
+		} else {
+			Melder_fatal (U"do_combine_VEC should never arrive here.");
+		}
+	}
+	pushNumericVector (result.move());
+}
 static void do_editor () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -5695,6 +5735,38 @@ static void do_tensorLiteral () {
 		pushStringVector (std::move (result));
 	} else {
 		Melder_throw (U"Cannot (yet?) create a tensor containing ", last->whichText(), U".");
+	}
+}
+static void do_row_VEC () {
+	/*
+		result# = row# (mat##, rowNumber)
+	*/
+	Stackel rowNumber_ = pop, mat_ = pop;
+	if (mat_->which == Stackel_NUMERIC_MATRIX && rowNumber_->which == Stackel_NUMBER) {
+		constMAT mat = mat_->numericMatrix;
+		integer rowNumber = Melder_iround (rowNumber_->number);
+		Melder_require (rowNumber >= 1 && rowNumber <= mat.nrow,
+			U"In the function \"row#\", the row number should be between 1 and ", mat.nrow, U".");
+		autoVEC result = copy_VEC (mat.row (rowNumber));
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"row#\" requires a matrix and a row number, not ", mat_->whichText(), U" and ", rowNumber_->whichText(), U".");
+	}
+}
+static void do_col_VEC () {
+	/*
+		result# = col# (mat##, colNumber)
+	*/
+	Stackel colNumber_ = pop, mat_ = pop;
+	if (mat_->which == Stackel_NUMERIC_MATRIX && colNumber_->which == Stackel_NUMBER) {
+		constMAT mat = mat_->numericMatrix;
+		integer colNumber = Melder_iround (colNumber_->number);
+		Melder_require (colNumber >= 1 && colNumber <= mat.ncol,
+			U"In the function \"col#\", the column number should be between 1 and ", mat.ncol, U".");
+		autoVEC result = copy_VEC (mat.column (colNumber));
+		pushNumericVector (result.move());
+	} else {
+		Melder_throw (U"The function \"col#\" requires a matrix and a column number, not ", mat_->whichText(), U" and ", colNumber_->whichText(), U".");
 	}
 }
 static void do_inner () {
@@ -7338,6 +7410,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SIZE_: { do_size ();
 } break; case NUMBER_OF_ROWS_: { do_numberOfRows ();
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();
+} break; case COMBINE_VEC_: { do_combine_VEC ();
 } break; case EDITOR_: { do_editor ();
 } break; case RANDOM__INITIALIZE_WITH_SEED_UNSAFELY_BUT_PREDICTABLY_: { do_random_initializeWithSeedUnsafelyButPredictably ();
 } break; case RANDOM__INITIALIZE_SAFELY_AND_UNPREDICTABLY_: { do_random_initializeSafelyAndUnpredictably ();
@@ -7408,6 +7481,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case READ_FILE_: { do_readFile ();
 } break; case READ_FILE_STR_: { do_readFile_STR ();
 /********** Matrix functions: **********/
+} break; case ROW_VEC_: { do_row_VEC ();
+} break; case COL_VEC_: { do_col_VEC ();
 } break; case INNER_: { do_inner ();
 } break; case OUTER_MAT_: { do_outer_MAT ();
 } break; case MUL_VEC_: { do_mul_VEC ();

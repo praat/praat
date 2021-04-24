@@ -17,23 +17,23 @@
  */
 
 enums_begin (kUi_numericVectorFormat, 1)
-	enums_add (kUi_numericVectorFormat, 1, ENUMERATE, U"(enumerate)")
-	enums_add (kUi_numericVectorFormat, 2, FORMULA, U"(formula)")
-enums_end (kUi_numericVectorFormat, 2, ENUMERATE)
+	enums_add (kUi_numericVectorFormat, 1, ENUMERATE_, U"(enumerate)")
+	enums_add (kUi_numericVectorFormat, 2, FORMULA_, U"(formula)")
+enums_end (kUi_numericVectorFormat, 2, ENUMERATE_)
 
 enums_begin (kUi_numericMatrixFormat, 1)
-	enums_add (kUi_numericMatrixFormat, 1, ONE_ROW_PER_LINE, U"(one row per line)")
-	enums_add (kUi_numericMatrixFormat, 2, FORMULA, U"(formula)")
-enums_end (kUi_numericMatrixFormat, 2, ONE_ROW_PER_LINE)
+	enums_add (kUi_numericMatrixFormat, 1, ONE_ROW_PER_LINE_, U"(one row per line)")
+	enums_add (kUi_numericMatrixFormat, 2, FORMULA_, U"(formula)")
+enums_end (kUi_numericMatrixFormat, 2, ONE_ROW_PER_LINE_)
 
 enums_begin (kUi_stringArrayFormat, 1)
-	enums_add (kUi_stringArrayFormat, 1, SPLIT_BY_WHITESPACE, U"(split by whitespace)")
-	enums_add (kUi_stringArrayFormat, 2, SPLIT_BY_COMMAS, U"(split by commas)")
-	enums_add (kUi_stringArrayFormat, 3, SPLIT_BY_SEMICOLONS, U"(split by semicolons)")
-	enums_add (kUi_stringArrayFormat, 4, SPLIT_BY_PIPES, U"(split by pipes)")
-	enums_add (kUi_stringArrayFormat, 5, ONE_PER_LINE, U"(one per line)")
-	enums_add (kUi_stringArrayFormat, 6, FORMULA, U"(formula)")
-enums_end (kUi_stringArrayFormat, 6, SPLIT_BY_WHITESPACE)
+	enums_add (kUi_stringArrayFormat, 1, SPLIT_BY_WHITESPACE_, U"(split by whitespace)")
+	enums_add (kUi_stringArrayFormat, 2, SPLIT_BY_COMMAS_, U"(split by commas)")
+	enums_add (kUi_stringArrayFormat, 3, SPLIT_BY_SEMICOLONS_, U"(split by semicolons)")
+	enums_add (kUi_stringArrayFormat, 4, SPLIT_BY_PIPES_, U"(split by pipes)")
+	enums_add (kUi_stringArrayFormat, 5, ONE_PER_LINE_, U"(one per line)")
+	enums_add (kUi_stringArrayFormat, 6, FORMULA_, U"(formula)")
+enums_end (kUi_stringArrayFormat, 6, SPLIT_BY_WHITESPACE_)
 
 /* End of file Ui_enums.h */
 
