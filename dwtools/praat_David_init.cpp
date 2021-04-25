@@ -75,6 +75,7 @@
 #include "Collection_extensions.h"
 #include "ComplexSpectrogram.h"
 #include "Confusion.h"
+#include "ConstantQLogFSpectrogram.h"
 #include "Covariance.h"
 #include "DataModeler.h"
 #include "Discriminant.h"
@@ -112,6 +113,7 @@
 #include "Polynomial_to_Spectrum.h"
 #include "Roots_to_Spectrum.h"
 #include "Sound_extensions.h"
+#include "Sound_and_ConstantQLogFSpectrogram.h"
 #include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"
 #include "Spectrogram.h"
@@ -3530,6 +3532,19 @@ DO
 	MODIFY_EACH_WEAK_END
 }
 
+FORM (MODIFY_ConstantQLogFSpectrogram_formula_part, U"ConstantQLogFSpectrogram: Formula (part)", U"ConstantQLogFSpectrogram: Formula...") {
+	REAL (fromTime, U"From time", U"0.0")
+	REAL (toTime, U"To time", U"0.0 (= all)")
+	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
+	REAL (toFrequency, U"To Frequncy (Hz)", U"200.0")
+	FORMULA (formula, U"Formula:", U"2 * self")
+	OK
+DO
+	MODIFY_EACH_WEAK (ConstantQLogFSpectrogram)
+		ConstantQLogFSpectrogram_formula_part (me, fromTime, toTime, fromFrequency, toFrequency, formula, interpreter);
+	MODIFY_EACH_WEAK_END
+}
+
 FORM (GRAPHICS_ConstantQLogFSpectrogram_paint, U"ConstantQLogFSpectrogram: Paint", nullptr) {
 	REAL (xmin, U"left Time range (s)", U"0.0")
 	REAL (xmax, U"right Time range (s)", U"0.0 (=all)")
@@ -5851,23 +5866,20 @@ DO
 
 FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogram", nullptr) {
 	POSITIVE (f1, U"Lowest frequency (Hz)", U"110.0 (=440*2^(-2))")
+	REAL (fmax, U"Maximum frequency (Hz)", U"0.0 (=nyquist)")
 	NATURAL (numberOfStepsPerOctave, U"Number of steps / octave", U"24")
 	POSITIVE (q, U"Q", U"34.13 (=1/(2^(1/24)-1))")
-	POSITIVE (numberOfSteps, U"Number of steps", U"5*24")
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"4.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, q, numberOfStepsPerOctave, numberOfSteps, timeOversamplingFactor);
+		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, fmax, q, numberOfStepsPerOctave, timeOversamplingFactor);
 	CONVERT_EACH_END (my name.get())
 }
 
-FORM (NEW_ConstantQLogFSpectrogram_to_Sound, U"ConstantQLogFSpectrogram: To Sound", nullptr) {
-	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	OK
-DO
+DIRECT (NEW_ConstantQLogFSpectrogram_to_Sound) {
 	CONVERT_EACH (ConstantQLogFSpectrogram)
-		autoSound result = ConstantQLogFSpectrogram_to_Sound (me, samplingFrequency);
+		autoSound result = ConstantQLogFSpectrogram_to_Sound (me);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -9016,7 +9028,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classLegendreSeries, 0, U"To Polynomial", U"Analyse", 0, NEW_LegendreSeries_to_Polynomial);
 
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Paint...", nullptr, 0, GRAPHICS_ConstantQLogFSpectrogram_paint);
-	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"To Sound...", nullptr, 0, NEW_ConstantQLogFSpectrogram_to_Sound);
+	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Formula...", nullptr, 0, MODIFY_ConstantQLogFSpectrogram_formula);
+	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Formula (part)...", nullptr, 0, MODIFY_ConstantQLogFSpectrogram_formula_part);
+	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"To Sound", nullptr, 0, NEW_ConstantQLogFSpectrogram_to_Sound);
 	
 	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
