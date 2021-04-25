@@ -666,7 +666,6 @@ static void Interpreter_addStringVariable (Interpreter me, conststring32 key, co
 
 static void Interpreter_addNumericVectorVariable (Interpreter me, conststring32 key, conststring32 value) {
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
-Melder_casual (U"Interpreter_addNumericVectorVariable ", key, U" ", value);
 	variable -> numericVectorValue = splitByWhitespace_VEC (value);
 	my variablesMap [key] = variable.move();
 	variable.releaseToAmbiguousOwner();
@@ -675,11 +674,10 @@ Melder_casual (U"Interpreter_addNumericVectorVariable ", key, U" ", value);
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key) {
 	Melder_assert (key);
 	auto it = my variablesMap. find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	if (it != my variablesMap.end()) {
+	if (it != my variablesMap.end())
 		return it -> second.get();
-	} else {
+	else
 		return nullptr;
-	}
 }
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key) {
@@ -687,12 +685,11 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 ke
 	conststring32 variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
 	auto it = my variablesMap. find (variableNameIncludingProcedureName);
-	if (it != my variablesMap.end()) {
+	if (it != my variablesMap.end())
 		return it -> second.get();
-	}
 	/*
-	 * The variable doesn't yet exist: create a new one.
-	 */
+		The variable doesn't yet exist: create a new one.
+	*/
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
 	InterpreterVariable variable_ref = variable.get();
 	my variablesMap [variableNameIncludingProcedureName] = variable.move();
@@ -709,22 +706,26 @@ static integer lookupLabel (Interpreter me, conststring32 labelName) {
 static bool isCommand (conststring32 string) {
 	const char32 *p = & string [0];
 	/*
-	 * Things that start with "nowarn", "noprogress", or "nocheck" are commands.
-	 */
+		Things that start with "nowarn", "noprogress", or "nocheck" are commands.
+	*/
 	if (p [0] == U'n' && p [1] == U'o' &&
-		(str32nequ (p + 2, U"warn ", 5) || str32nequ (p + 2, U"progress ", 9) || str32nequ (p + 2, U"check ", 6))) return true;
-	if (str32nequ (p, U"demo ", 5)) return true;
+			(str32nequ (p + 2, U"warn ", 5) || str32nequ (p + 2, U"progress ", 9) || str32nequ (p + 2, U"check ", 6)))
+		return true;
+	if (str32nequ (p, U"demo ", 5))
+		return true;
 	/*
-	 * Otherwise, things that start with nonupper case are formulas.
-	 */
-	if (! Melder_isUpperCaseLetter (*p)) return false;
+		Otherwise, things that start with nonupper case are formulas.
+	*/
+	if (! Melder_isUpperCaseLetter (*p))
+		return false;
 	/*
-	 * The remaining possibility is things that start with upper case.
-	 * If they contain an underscore, they are object names, hence we must have a formula.
-	 * Otherwise, we have a command.
-	 */
-	while (Melder_isAlphanumeric (*p)) p ++;
-	return *p != '_';
+		The remaining possibility is things that start with upper case.
+		If they contain an underscore, they are object names, hence we must have a formula.
+		Otherwise, we have a command.
+	*/
+	while (Melder_isAlphanumeric (*p))
+		p ++;
+	return *p != U'_';
 }
 
 static void parameterToVariable (Interpreter me, int type, conststring32 in_parameter, int ipar) {
@@ -738,7 +739,7 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
-		/* Do not add a variable. */
+		;   // do not add a variable
 	} else if (type == Interpreter_VECTOR) {
 		str32cat (parameter, U"#");
 		Interpreter_addNumericVectorVariable (me, parameter, my arguments [ipar].get());
