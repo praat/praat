@@ -115,6 +115,7 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
+	kUi_numericVectorFormat numericVectorDefaultFormat;
 	autoVEC numericVectorValue, numericVectorDefaultValue;   // for NUMVEC_
 	autoMAT numericMatrixValue, numericMatrixDefaultValue;   // for NUMMAT_
 	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for TEXTVEC_
@@ -211,7 +212,7 @@ UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 var
 UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_numericVectorFormat defaultFormat, conststring32 defaultValue);
 UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue);
 UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
@@ -290,8 +291,9 @@ void UiForm_info (UiForm me, integer narg);
 	These functions work from the GUI as well as from a script.
 */
 integer UiForm_getInteger (UiForm me, conststring32 fieldName);   // Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (UiForm me, conststring32 fieldName);   // Word, Sentence, Text, Numvec, Nummat, Radio, List
+char32 * UiForm_getString (UiForm me, conststring32 fieldName);   // Word, Sentence, Text, Nummat, Radio, List
 MelderFile UiForm_getFile (UiForm me, conststring32 fieldName);   // FileIn, FileOut
+VEC UiForm_getNumvec (UiForm me, conststring32 fieldName);   // Numvec
 
 double UiForm_getReal_check (UiForm me, conststring32 fieldName);
 integer UiForm_getInteger_check (UiForm me, conststring32 fieldName);

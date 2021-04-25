@@ -321,8 +321,9 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_TEXT:
 				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			//case Interpreter_VECTOR:
-			//	UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+			case Interpreter_VECTOR:
+				UiForm_addLabel (form.get(), nullptr, parameter);
+				UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, kUi_numericVectorFormat::ENUMERATE_, my arguments [ipar].get()); break;
 			//case Interpreter_MATRIX:
 			//	UiForm_addNummat (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_CHOICE:
@@ -404,6 +405,17 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
 				break;
 			}
+			case Interpreter_VECTOR: {
+				VEC numvecValue = UiForm_getNumvec (dialog, parameter);
+				autoMelderString buffer;
+				for (integer i = 1; i <= numvecValue.size; i ++) {
+					MelderString_append (& buffer, numvecValue [i]);
+					if (i < numvecValue.size)
+						MelderString_appendCharacter (& buffer, U' ');
+				}
+				my arguments [ipar] = Melder_dup (buffer.string);
+				break;
+			}
 			case Interpreter_BUTTON:
 			case Interpreter_OPTION:
 			case Interpreter_COMMENT:
@@ -425,24 +437,27 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		char32 *p = my parameters [ipar];
 		/*
-		 * Ignore buttons and comments again.
-		 */
-		if (! *p) continue;
+			Ignore buttons and comments again.
+		*/
+		if (! *p)
+			continue;
 		/*
-		 * Strip parentheses and colon off parameter name.
-		 */
+			Strip parentheses and colon off parameter name.
+		*/
 		if ((p = str32chr (p, U'(')) != nullptr) {
 			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
+			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
+				p [-1] = U'\0';
 		}
 		p = my parameters [ipar];
-		if (*p != U'\0' && p [str32len (p) - 1] == U':') p [str32len (p) - 1] = U'\0';
+		if (*p != U'\0' && p [str32len (p) - 1] == U':')
+			p [str32len (p) - 1] = U'\0';
 	}
 	for (int ipar = 1; ipar < size; ipar ++) {
 		int ichar = 0;
 		/*
-		 * Ignore buttons and comments again. The buttons will keep their labels as "arguments".
-		 */
+			Ignore buttons and comments again. The buttons will keep their labels as "arguments".
+		*/
 		if (my parameters [ipar] [0] == U'\0') continue;
 		/*
 			Erase the current values, probably the default values,
@@ -451,8 +466,9 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 		my arguments [ipar] = autostring32 (length);
 		/*
 			Skip spaces until next argument.
-		 */
-		while (Melder_isHorizontalSpace (*arguments)) arguments ++;
+		*/
+		while (Melder_isHorizontalSpace (*arguments))
+			arguments ++;
 		/*
 			The argument is everything up to the next space, or, if it starts with a double quote,
 			everything between this quote and the matching double quote;
@@ -467,7 +483,8 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 			for (;;) {
 				if (*arguments == U'\0')
 					Melder_throw (U"Missing matching quote.");
-				if (*arguments == U'\"' && * ++ arguments != U'\"') break;   // remember second quote
+				if (*arguments == U'\"' && * ++ arguments != U'\"')
+					break;   // remember second quote
 				my arguments [ipar] [ichar ++] = *arguments ++;
 			}
 		} else {
@@ -481,7 +498,8 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 		Leading spaces are skipped, but trailing spaces are included.
 	*/
 	if (size > 0) {
-		while (Melder_isHorizontalSpace (*arguments)) arguments ++;
+		while (Melder_isHorizontalSpace (*arguments))
+			arguments ++;
 		my arguments [size] = Melder_dup_f (arguments);
 	}
 	/*
@@ -541,25 +559,29 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		mutablestring32 p = my parameters [ipar];
 		/*
-		 * Ignore buttons and comments again.
-		 */
-		if (! *p) continue;
+			Ignore buttons and comments again.
+		*/
+		if (! *p)
+			continue;
 		/*
-		 * Strip parentheses and colon off parameter name.
-		 */
+			Strip parentheses and colon off parameter name.
+		*/
 		if ((p = str32chr (p, U'(')) != nullptr) {
 			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_') p [-1] = U'\0';
+			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
+				p [-1] = U'\0';
 		}
 		p = my parameters [ipar];
-		if (*p != U'\0' && p [str32len (p) - 1] == U':') p [str32len (p) - 1] = U'\0';
+		if (*p != U'\0' && p [str32len (p) - 1] == U':')
+			p [str32len (p) - 1] = U'\0';
 	}
 	int iarg = 0;
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		/*
-		 * Ignore buttons and comments again. The buttons will keep their labels as "arguments".
-		 */
-		if (my parameters [ipar] [0] == U'\0') continue;
+			Ignore buttons and comments again. The buttons will keep their labels as "arguments".
+		*/
+		if (my parameters [ipar] [0] == U'\0')
+			continue;
 		/*
 			Erase the current values, probably the default values...
 		*/
@@ -578,8 +600,8 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	if (iarg < narg)
 		Melder_throw (U"Found ", narg, U" arguments but expected only ", iarg, U".");
 	/*
-	 * Convert booleans and choices to numbers.
-	 */
+		Convert booleans and choices to numbers.
+	*/
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		if (my types [ipar] == Interpreter_BOOLEAN) {
 			mutablestring32 arg = & my arguments [ipar] [0];
@@ -636,6 +658,14 @@ static void Interpreter_addNumericVariable (Interpreter me, conststring32 key, d
 static void Interpreter_addStringVariable (Interpreter me, conststring32 key, conststring32 value) {
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
+	my variablesMap [key] = variable.move();
+	variable.releaseToAmbiguousOwner();
+}
+
+static void Interpreter_addNumericVectorVariable (Interpreter me, conststring32 key, conststring32 value) {
+	autoInterpreterVariable variable = InterpreterVariable_create (key);
+Melder_casual (U"Interpreter_addNumericVectorVariable ", key, U" ", value);
+	variable -> numericVectorValue = splitByWhitespace_VEC (value);
 	my variablesMap [key] = variable.move();
 	variable.releaseToAmbiguousOwner();
 }
@@ -707,6 +737,9 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
 		/* Do not add a variable. */
+	} else if (type == Interpreter_VECTOR) {
+		str32cat (parameter, U"#");
+		Interpreter_addNumericVectorVariable (me, parameter, my arguments [ipar].get());
 	} else {
 		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my arguments [ipar].get());
@@ -2024,6 +2057,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						break;
 					case U'l':
 						if (str32nequ (command2.string, U"label ", 6)) {
+							if (command2.string [6] == U'=')
+								Melder_throw (U"\"label\" cannot be used as a variable name.");
 							;   // ignore labels
 						} else
 							fail = true;

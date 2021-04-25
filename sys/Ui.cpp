@@ -29,50 +29,19 @@
 #include "enums_getValue.h"
 #include "Ui_enums.h"
 
-kUi_numericVectorFormat theNumericVectorFormat;
 kUi_numericMatrixFormat theNumericMatrixFormat;
 kUi_stringArrayFormat theStringArrayFormat;
 
 void Ui_prefs () {
-	Preferences_addEnum (U"Ui.numericVectorFormat", & theNumericVectorFormat, kUi_numericVectorFormat, (int) kUi_numericVectorFormat::DEFAULT);
 	Preferences_addEnum (U"Ui.numericMatrixFormat", & theNumericMatrixFormat, kUi_numericMatrixFormat, (int) kUi_numericMatrixFormat::DEFAULT);
 	Preferences_addEnum (U"Ui.stringArrayFormat", & theStringArrayFormat, kUi_stringArrayFormat, (int) kUi_stringArrayFormat::DEFAULT);
-}
-
-static conststring32 formatNumericVector (constVEC elements, kUi_numericVectorFormat format) {
-	static MelderString buffer;
-	MelderString_empty (& buffer);
-	switch (format) {
-		case kUi_numericVectorFormat::ENUMERATE: {
-			for (integer i = 1; i <= elements.size; i ++) {
-				MelderString_append (& buffer, elements [i]);
-				if (i < elements.size)
-					MelderString_appendCharacter (& buffer, U' ');
-			}
-		} break; case kUi_numericVectorFormat::FORMULA: {
-			if (NUMisEmpty (elements)) {
-				MelderString_append (& buffer, U"zero# (0)");
-			} else {
-				MelderString_append (& buffer, U"{ ");
-				for (integer i = 1; i <= elements.size; i ++) {
-					MelderString_append (& buffer, elements [i]);
-					if (i < elements.size)
-						MelderString_append (& buffer, U", ");
-				}
-				MelderString_append (& buffer, U" }");
-			}
-		} break; case kUi_numericVectorFormat::UNDEFINED: {
-			Melder_fatal (U"Unknown numeric vector format.");
-		}
-	}
-	return buffer.string;
 }
 
 static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixFormat format) {
 	static MelderString buffer;
 	MelderString_empty (& buffer);
 	switch (format) {
-		case kUi_numericMatrixFormat::ONE_ROW_PER_LINE: {
+		case kUi_numericMatrixFormat::ONE_ROW_PER_LINE_: {
 			for (integer irow = 1; irow <= cells.nrow; irow ++) {
 				for (integer icol = 1; icol <= cells.ncol; icol ++) {
 					MelderString_append (& buffer, cells [irow] [icol]);
@@ -82,7 +51,7 @@ static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixForma
 				if (irow < cells.nrow)
 					MelderString_appendCharacter (& buffer, U'\n');
 			}
-		} break; case kUi_numericMatrixFormat::FORMULA: {
+		} break; case kUi_numericMatrixFormat::FORMULA_: {
 			if (NUMisEmpty (cells)) {
 				MelderString_append (& buffer, U"zero## (0, 0)");
 			} else {
@@ -121,7 +90,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 	static MelderString buffer;
 	MelderString_empty (& buffer);
 	switch (format) {
-		case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE: {
+		case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || Melder_findHorizontalOrVerticalSpace (strings [i]))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -130,7 +99,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U' ');
 			}
-		} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS: {
+		} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U','))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -139,7 +108,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U',');
 			}
-		} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS: {
+		} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U';'))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -148,7 +117,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U';');
 			}
-		} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES: {
+		} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U'|'))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -157,13 +126,13 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U'|');
 			}
-		} break; case kUi_stringArrayFormat::ONE_PER_LINE: {
+		} break; case kUi_stringArrayFormat::ONE_PER_LINE_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				MelderString_append (& buffer, strings [i]);
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U'\n');
 			}
-		} break; case kUi_stringArrayFormat::FORMULA: {
+		} break; case kUi_stringArrayFormat::FORMULA_: {
 			if (NUMisEmpty (strings)) {
 				MelderString_append (& buffer, U"empty$# (0)");
 			} else {
@@ -267,8 +236,8 @@ static void UiField_setDefault (UiField me) {
 		break;
 		case _kUiField_type::NUMVEC_:
 		{
-			theNumericVectorFormat = (kUi_numericVectorFormat) GuiOptionMenu_getValue (my optionMenu);
-			GuiText_setString (my text, formatNumericVector (my numericVectorDefaultValue.get(), theNumericVectorFormat));
+			GuiOptionMenu_setValue (my optionMenu, (int) my numericVectorDefaultFormat);
+			GuiText_setString (my text, my stringDefaultValue.get());
 		}
 		break;
 		case _kUiField_type::NUMMAT_:
@@ -384,13 +353,22 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::NUMVEC_:
 		{
 			autostring32 stringValue = GuiText_getString (my text);
-			VEC result;
-			bool ownedByInterpreter;
-			Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
-			if (ownedByInterpreter) {
-				my numericVectorValue. adoptFromAmbiguousOwner (result);
-			} else {
-				my numericVectorValue = copy_VEC (result);
+			kUi_numericVectorFormat format = (kUi_numericVectorFormat) GuiOptionMenu_getValue (my optionMenu);
+			switch (format) {
+				case kUi_numericVectorFormat::ENUMERATE_: {
+					my numericVectorValue = splitByWhitespace_VEC (stringValue.get());
+				} break; case kUi_numericVectorFormat::FORMULA_: {
+					VEC result;
+					bool ownedByInterpreter;
+					Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
+					if (ownedByInterpreter) {
+						my numericVectorValue. adoptFromAmbiguousOwner (result);
+					} else {
+						my numericVectorValue = copy_VEC (result);
+					}
+				} break; case kUi_numericVectorFormat::UNDEFINED: {
+					Melder_fatal (U"Unknown vector format.");
+				}
 			}
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
@@ -416,17 +394,17 @@ static void UiField_widgetToValue (UiField me) {
 			autostring32 stringValue = GuiText_getString (my text);
 			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
 			switch (theStringArrayFormat) {
-				case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE: {
+				case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE_: {
 					my stringArrayValue = splitByWhitespace_STRVEC (stringValue.get());
-				} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS: {
+				} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U",");
-				} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS: {
+				} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U";");
-				} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES: {
+				} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"|");
-				} break; case kUi_stringArrayFormat::ONE_PER_LINE: {
+				} break; case kUi_stringArrayFormat::ONE_PER_LINE_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"\n");
-				} break; case kUi_stringArrayFormat::FORMULA: {
+				} break; case kUi_stringArrayFormat::FORMULA_: {
 					if (stringValue [0] == U'\0') {
 						my stringArrayValue = autoSTRVEC();   // interpret the empty string as zero elements, as for all other formats
 					} else {
@@ -680,7 +658,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 							UiHistory_write (next -- ? U", { " : U" { ");
 							for (integer i = 1; i <= field -> numericVectorValue.size; i ++) {
 								UiHistory_write (Melder_double (field -> numericVectorValue [i]));
-								UiHistory_write (i <= field -> numericVectorValue.size ? U" }" : U", ");
+								UiHistory_write (i == field -> numericVectorValue.size ? U" }" : U", ");
 							}
 						}
 					} break;
@@ -999,8 +977,9 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 	return thee;
 }
 
-UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_numericVectorFormat defaultFormat, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMVEC_, name);
+	thy numericVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
 	thy variableName = variableName;
@@ -1210,7 +1189,7 @@ void UiForm_finish (UiForm me) {
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
 				for (int format = (int) kUi_numericVectorFormat::MIN; format <= (int) kUi_numericVectorFormat::MAX; format ++)
 					GuiOptionMenu_addOption (thy optionMenu, kUi_numericVectorFormat_getText ((kUi_numericVectorFormat) format));
-				GuiOptionMenu_setValue (thy optionMenu, (int) theNumericVectorFormat);
+				GuiOptionMenu_setValue (thy optionMenu, (int) kUi_numericVectorFormat::FORMULA_);
 			}
 			break;
 			case _kUiField_type::NUMMAT_:
@@ -1696,9 +1675,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		break;
 		case _kUiField_type::NUMVEC_:
 		{
-			if (arg -> which != Stackel_NUMERIC_VECTOR)
+			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
-			if (arg -> owned) {
+			if (arg -> which == Stackel_STRING) {
+				my numericVectorValue = splitByWhitespace_VEC (arg -> getString());
+			} else if (arg -> owned) {
 				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
 				arg -> owned = false;
 			} else {
@@ -2524,6 +2505,24 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 	return nullptr;
 }
 
+VEC UiForm_getNumvec (UiForm me, conststring32 fieldName) {
+	UiField field = findField (me, fieldName);
+	if (! field)
+		Melder_fatal (U"(UiForm_getNumvec:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+	switch (field -> type)
+	{
+		case _kUiField_type::NUMVEC_: {
+			return field -> numericVectorValue.get();
+		}
+		break;
+		default:
+		{
+			fatalField (me);
+		}
+	}
+	return VEC();
+}
+
 MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type)
@@ -2605,6 +2604,13 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> stringValue = Melder_dup (field -> stringValue.get());
+			}
+			break;
+			case _kUiField_type::NUMVEC_:
+			{
+				MelderString_appendCharacter (& lowerCaseFieldName, U'#');
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
+				var -> numericVectorValue = copy_VEC (field -> numericVectorValue.get());   // TODO: can we move this instead of copying it?
 			}
 			break;
 			case _kUiField_type::COLOUR_:

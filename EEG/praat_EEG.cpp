@@ -209,7 +209,7 @@ DO
 }
 
 FORM (NEW_EEG_extractChannels, U"EEG: Extract channels", nullptr) {
-	NUMVEC (channels, U"Channel numbers:", U"to# (64)")
+	NUMVEC (channels, U"Channel numbers:", FORMULA_, U"to# (64)")
 	OK
 DO
 	CONVERT_EACH (EEG)

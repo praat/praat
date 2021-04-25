@@ -222,6 +222,29 @@ void power_VEC_out (VECVU const& target, constVECVU const& vec, double power) {
 	}
 }
 
+autoVEC splitByWhitespace_VEC (conststring32 string) {
+	if (! string)
+		return autoVEC();   // accept null pointer input
+	integer n = NUMnumberOfTokens (string);
+	if (n == 0)
+		return autoVEC();
+	autoVEC result (n, MelderArray::kInitializationType::ZERO);
+
+	integer itoken = 0;
+	const char32 *p = & string [0];
+	for (;;) {
+		Melder_skipHorizontalOrVerticalSpace (& p);
+		if (*p == U'\0')
+			break;
+		const char32 *beginOfInk = p;
+		p ++;   // step over first nonspace
+		p = Melder_findEndOfInk (p);
+		result [++ itoken] = Melder_atof (beginOfInk);
+	}
+	return result;
+}
+
+
 void to_INTVEC_out (INTVECVU const& x) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = i;
