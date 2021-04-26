@@ -109,7 +109,7 @@ static void Spectrum_reuse (Spectrum me, double fmax, double nx) {
 	my dx = fmax / (nx - 1);
 }
 
-autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double fmax,integer numberOfStepsPerOctave, double frequencyResolutionBins, double timeOversamplingFactor) {
+autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double fmax,integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor) {
 	try {
 		double nyquistFrequency = 0.5 / my dx;
 		if (fmax <= 0.0)
@@ -126,16 +126,26 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 		}
 		Melder_require (lowestFrequency < nyquistFrequency,
 			U"The lowest frequency should be smaller than the maximum frequency.");
-		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, nyquistFrequency, numberOfStepsPerOctave, frequencyResolutionBins);
+		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, nyquistFrequency, numberOfBinsPerOctave, frequencyResolutionInBins);
 		if (timeOversamplingFactor < 1.0)
-			timeOversamplingFactor = 4.0; // default oversampling
-		autoSpectrum filter = Spectrum_create (nyquistFrequency, spectrum -> nx / 2);	
-		const integer maximumNumberOfFilterSamples = filter -> nx;
-		autoVEC window = raw_VEC (maximumNumberOfFilterSamples);
+			timeOversamplingFactor = 1.0; // default oversampling TODO
+		/*
+			Allocate space for the filter in the frequency domain only once. 
+			Each octave has twice the number of frequencies of the previous one which means that the 
+			last octave contains appproximately half of all frequencies (spectrum -> nx / 2).
+			The filter width is 2 * frequencyResolutionBins.
+			We need an extra factor of 2 because of the intermediate FFT that might need zero padding.
+			the maximum number of frequencies is therefore:
+				2 * 0.5 * spectrum -> nx * 2 * frequencyResolutionBins / numberOfBinsPerOctave
+		*/
+		const double maximumFilterSize = Melder_iround_tieUp (timeOversamplingFactor * 2 * spectrum -> nx * frequencyResolutionInBins / numberOfBinsPerOctave) ;
+		autoSpectrum filter = Spectrum_create (nyquistFrequency, maximumFilterSize);	
+		autoVEC window = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
-			const double frequency =  thy v_myFrequencyToHertz (Sampled_indexToX (thee.get(), ifreq));
-			const double bandwidth = frequency / thy qualityFactor;
-			double flow = frequency - bandwidth, fhigh = frequency + bandwidth;
+			const double log2_f = Sampled_indexToX (thee.get(), ifreq);
+			const double frequency =  thy v_myFrequencyToHertz (log2_f);
+			double flow = thy v_myFrequencyToHertz (log2_f - frequencyResolutionInBins * thy dx);
+			double fhigh = thy v_myFrequencyToHertz (log2_f + frequencyResolutionInBins * thy dx);
 			Melder_clipLeft (0.0, & flow);
 			Melder_clipRight (& fhigh, nyquistFrequency);
 			integer iflow, ifhigh;
@@ -178,9 +188,10 @@ autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
 			reusable -> x1 = frequencyBin -> x1;
 			reusable -> nx = frequencyBin -> nx;
 			autoSpectrum filter = Sound_to_Spectrum (reusable.get(), false);
-			const double frequency = exp2 (Sampled_indexToX (me, ifreq)), bandwidth = frequency / my qualityFactor;
-			double flow = frequency - bandwidth;
-			double fhigh = frequency + bandwidth;
+			const double log2_f = Sampled_indexToX (me, ifreq);
+			const double frequency =  my v_myFrequencyToHertz (log2_f);
+			double flow = my v_myFrequencyToHertz (log2_f - my frequencyResolutionInBins * my dx);
+			double fhigh = my v_myFrequencyToHertz (log2_f + my frequencyResolutionInBins * my dx);
 			Melder_clipLeft (0.0, & flow);
 			Melder_clipRight (& fhigh, nyquistFrequency);
 			integer iflow, ifhigh;
@@ -205,20 +216,21 @@ autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
 		} else {
 			Melder_throw (U"The synthesized number of samples is too low!");
 		}
+		thy z.get()  /=  my frequencyResolutionInBins;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create Sound.");
 	}
 }
 
-static autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram_old (Sound me, double lowestFrequency, double q, integer numberOfStepsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
+static autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram_brown (Sound me, double lowestFrequency, double q, integer numberOfBinsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
 	try {
 		
-		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, numberOfStepsPerOctave, numberOfSteps, q);
+		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, numberOfBinsPerOctave, numberOfSteps, q);
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
 		Melder_require (thy v_myFrequencyToHertz (thy xmax) <= nyquistFrequency,
 			U"The number of steps you want result in a maximum frequency which is above the Nyquist frequency of the sound. "
-			"The maximum number of steps should not exceed ", Melder_iroundDown (numberOfStepsPerOctave * log2 (nyquistFrequency / lowestFrequency)), U".");
+			"The maximum number of steps should not exceed ", Melder_iroundDown (numberOfBinsPerOctave * log2 (nyquistFrequency / lowestFrequency)), U".");
 		if (timeOversamplingFactor < 1.0)
 			timeOversamplingFactor = 4.0; // default oversampling
 		const integer maximumNumberOfAnalysisSamples = samplingFrequency * q / lowestFrequency + 1;

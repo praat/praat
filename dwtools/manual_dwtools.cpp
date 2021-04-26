@@ -4522,15 +4522,18 @@ DEFINITION (U"defines the lowest frequency about which information will be obtai
 TAG (U"##Maximum frequency (Hz)")
 DEFINITION (U"The maximum frequency you are interested in. The default will be the Nyquist frequency of the sound. ")
 TAG (U"##Number of frequecy bins / octave")
-DEFINITION (U"The number of frequency intervals (bins) that will be used.")
+DEFINITION (U"The number of frequency bins that will be used for each octave. For the analysis of music generally a multiple "
+	"of 12 will be used.")
 TAG (U"##Frequency resolution (bins)")
-DEFINITION (U"defines the quality factor used for the analysis as: ")
-EQUATION (U"%%qualityFactor% = 1 / (exp2 (%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%) - 1). ")
-DEFINITION (U"For a frequency resolution of 1 bin and 24 frequency bins per octave we get a quality factor of 34.13. ")
+DEFINITION (U"defines the quality factor used for the analysis. The width of the filter (see below) applied in the frequency domain will then be twice this number. Taking the bandwidth of the filter to equal the width of the filter this definition of bandwidth gives the corresponding quality factor as:")
+EQUATION (U"%%qualityFactor% = 1 / (exp2 (%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%) - exp2 (\\--%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)). ")
+DEFINITION (U"For a frequency resolution of 1 bin and 24 frequency bins per octave we then get a quality factor of 14.26. "
+	"Strictly speaking, the bandwidth is defined as the width of the filter at and intensity -3 dB below its top. The actual "
+	"bandwidth would then depend on the form of the filter function.")
 TAG (U"##Time oversampling factor")
 DEFINITION (U"")
 ENTRY (U"Algorithm")
-NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@.")
+NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@ and @@Holighaus et al. (2013)@.")
 MAN_END
 
 MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)
@@ -6133,6 +6136,11 @@ MAN_END
 
 MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190826)
 NORMAL (U"C. Herbst (2019): \"Electroglottography - An update.\", %%Journal of Voice%: In press.")
+MAN_END
+
+MAN_BEGIN (U"Holighaus et al. (2013)", U"djmw", 20210426)
+NORMAL (U"N. Holighaus, M. Dörfler, G. A. Velasco & T. Grill (2013): \"A framework for invertible, real-time constant-Q transforms.\" "
+	"%%IEEE Transactions on Audio, Speech, and Language Processing% ##21#: 775\\--785.")
 MAN_END
 
 MAN_BEGIN (U"Hormann & Agathos (2001)", U"djmw", 20110617)

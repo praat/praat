@@ -25,7 +25,9 @@
 
 #include "ConstantQLogFSpectrogram_def.h"
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionBins);
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins);
+
+double ConstantQLogFSpectrogram_getQualityFactor (ConstantQLogFSpectrogram me);
 
 void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter);
 

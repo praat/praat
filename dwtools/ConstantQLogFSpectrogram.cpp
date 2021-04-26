@@ -43,7 +43,8 @@ Thing_implement (ConstantQLogFSpectrogram, MultiSampledSpectrogram, 0);
 
 void structConstantQLogFSpectrogram :: v_info () {
 	structMultiSampledSpectrogram :: v_info ();
-	MelderInfo_writeLine (U"Quality factor Q: ", qualityFactor);
+	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
+	MelderInfo_writeLine (U"Quality factor Q: ", ConstantQLogFSpectrogram_getQualityFactor (this));
 }
 
 double structConstantQLogFSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
@@ -63,6 +64,11 @@ double structConstantQLogFSpectrogram :: v_hertzToMyFrequency (double f_hz) {
 void ConstantQLogFSpectrogram_getExtrema (ConstantQLogFSpectrogram me, double tmin, double tmax, double fmin, double lfmax,
 	double *out_minimum, double *out_maximum) {
 	
+}
+
+double ConstantQLogFSpectrogram_getQualityFactor (ConstantQLogFSpectrogram me) {
+	const double a = exp2 (my frequencyResolutionInBins * my dx);
+	return 1.0 / (a - 1.0 / a);
 }
 
 void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double log2_fmin, double log2_fmax, double dBRange) {
@@ -152,7 +158,7 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 	}
 }
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionBins) {
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
 	try {
 		const double ymin = 0.0, ymax = log2 (fmax);
 		const double dy = 1.0 / numberOfBinsPerOctave;
@@ -160,7 +166,7 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double 
 		Melder_require (numberOfBins > 1,
 			U"The number of bins should be larger than 1.");
 		autoConstantQLogFSpectrogram me = Thing_new (ConstantQLogFSpectrogram);
-		my qualityFactor = 1.0 / (exp2 (frequencyResolutionBins / numberOfBinsPerOctave) - 1.0);
+		my frequencyResolutionInBins = frequencyResolutionInBins;
 		MultiSampledSpectrogram_init (me.get(), ymin, ymax, numberOfBins, dy, log2 (f1));
 		return me;
 	} catch (MelderError) {

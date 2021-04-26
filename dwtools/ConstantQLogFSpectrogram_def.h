@@ -20,7 +20,7 @@
 #define ooSTRUCT ConstantQLogFSpectrogram
 oo_DEFINE_CLASS (ConstantQLogFSpectrogram, MultiSampledSpectrogram)
 
-	oo_DOUBLE (qualityFactor) // invariant frequencyBins.size == my nx
+	oo_DOUBLE (frequencyResolutionInBins) // invariant frequencyBins.size == my nx
 	
 	#if oo_DECLARING
 		void v_info ()

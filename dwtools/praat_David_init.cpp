@@ -5868,12 +5868,12 @@ FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogra
 	POSITIVE (f1, U"Lowest frequency (Hz)", U"110.0 (=440*2^(-2))")
 	REAL (fmax, U"Maximum frequency (Hz)", U"0.0 (=nyquist)")
 	NATURAL (numberOfFrequencyBinsPerOctave, U"Number of frequency bins / octave", U"24")
-	POSITIVE (frequencyResolutionBins, U"Freqency resolution (bins)", U"1.0")
+	POSITIVE (frequencyResolutionInBins, U"Freqency resolution (bins)", U"1.0")
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"4.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, fmax, numberOfFrequencyBinsPerOctave, frequencyResolutionBins, timeOversamplingFactor);
+		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, fmax, numberOfFrequencyBinsPerOctave, frequencyResolutionInBins, timeOversamplingFactor);
 	CONVERT_EACH_END (my name.get())
 }
 
