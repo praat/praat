@@ -26,20 +26,37 @@
 #include "../fon/Vector.h"
 
 #define Interpreter_WORD 1
+
 #define Interpreter_REAL 2
 #define Interpreter_POSITIVE 3
 #define Interpreter_INTEGER 4
 #define Interpreter_NATURAL 5
 #define Interpreter_BOOLEAN 6
+#define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VARIABLE  Interpreter_REAL
+#define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VARIABLE  Interpreter_BOOLEAN
+
 #define Interpreter_SENTENCE 7
 #define Interpreter_TEXT 8
-#define Interpreter_VECTOR 9
-#define Interpreter_MATRIX 10
-#define Interpreter_CHOICE 11
-#define Interpreter_OPTIONMENU 12
-#define Interpreter_BUTTON 13
-#define Interpreter_OPTION 14
-#define Interpreter_COMMENT 15
+
+#define Interpreter_REALVECTOR_WHITESPACE_SEPARATED 9
+#define Interpreter_REALVECTOR_FORMULA 10
+#define Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED 11
+#define Interpreter_POSITIVEVECTOR_FORMULA 12
+#define Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED 13
+#define Interpreter_INTEGERVECTOR_RANGES 14
+#define Interpreter_INTEGERVECTOR_FORMULA 15
+#define Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED 16
+#define Interpreter_NATURALVECTOR_RANGES 17
+#define Interpreter_NATURALVECTOR_FORMULA 18
+#define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_REALVECTOR_WHITESPACE_SEPARATED
+#define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_NATURALVECTOR_FORMULA
+
+#define Interpreter_REALMATRIX 19
+#define Interpreter_CHOICE 20
+#define Interpreter_OPTIONMENU 21
+#define Interpreter_BUTTON 22
+#define Interpreter_OPTION 23
+#define Interpreter_COMMENT 24
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -213,10 +230,28 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
 			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
-			else if (str32nequ (startOfLine, U"vector", 6) && Melder_isEndOfInk (startOfLine [6]))
-				{ type = Interpreter_VECTOR; parameterLocation = startOfLine + 6; }
-			else if (str32nequ (startOfLine, U"matrix", 6) && Melder_isEndOfInk (startOfLine [6]))
-				{ type = Interpreter_MATRIX; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"realvector_WhitespaceSeparated", 30) && Melder_isEndOfInk (startOfLine [30]))
+				{ type = Interpreter_REALVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 30; }
+			else if (str32nequ (startOfLine, U"realvector_Formula", 18) && Melder_isEndOfInk (startOfLine [18]))
+				{ type = Interpreter_REALVECTOR_FORMULA; parameterLocation = startOfLine + 18; }
+			else if (str32nequ (startOfLine, U"positivevector_WhitespaceSeparated", 34) && Melder_isEndOfInk (startOfLine [34]))
+				{ type = Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 34; }
+			else if (str32nequ (startOfLine, U"positivevector_Formula", 21) && Melder_isEndOfInk (startOfLine [21]))
+				{ type = Interpreter_POSITIVEVECTOR_FORMULA; parameterLocation = startOfLine + 21; }
+			else if (str32nequ (startOfLine, U"integervector_WhitespaceSeparated", 33) && Melder_isEndOfInk (startOfLine [33]))
+				{ type = Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 33; }
+			else if (str32nequ (startOfLine, U"integervector_Ranges", 20) && Melder_isEndOfInk (startOfLine [20]))
+				{ type = Interpreter_INTEGERVECTOR_RANGES; parameterLocation = startOfLine + 20; }
+			else if (str32nequ (startOfLine, U"integervector_Formula", 21) && Melder_isEndOfInk (startOfLine [21]))
+				{ type = Interpreter_INTEGERVECTOR_FORMULA; parameterLocation = startOfLine + 21; }
+			else if (str32nequ (startOfLine, U"naturalvector_WhitespaceSeparated", 33) && Melder_isEndOfInk (startOfLine [33]))
+				{ type = Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 33; }
+			else if (str32nequ (startOfLine, U"naturalvector_Ranges", 20) && Melder_isEndOfInk (startOfLine [20]))
+				{ type = Interpreter_NATURALVECTOR_RANGES; parameterLocation = startOfLine + 20; }
+			else if (str32nequ (startOfLine, U"naturalvector_Formula", 21) && Melder_isEndOfInk (startOfLine [21]))
+				{ type = Interpreter_NATURALVECTOR_FORMULA; parameterLocation = startOfLine + 21; }
+			else if (str32nequ (startOfLine, U"realmatrix", 10) && Melder_isEndOfInk (startOfLine [10]))
+				{ type = Interpreter_REALMATRIX; parameterLocation = startOfLine + 10; }
 			else if (str32nequ (startOfLine, U"choice", 6) && Melder_isEndOfInk (startOfLine [6]))
 				{ type = Interpreter_CHOICE; parameterLocation = startOfLine + 6; }
 			else if (str32nequ (startOfLine, U"optionmenu", 10) && Melder_isEndOfInk (startOfLine [10]))
@@ -321,9 +356,26 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_TEXT:
 				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_VECTOR:
-				UiForm_addLabel (form.get(), nullptr, parameter);
-				UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, kUi_numericVectorFormat::ENUMERATE_, my arguments [ipar].get()); break;
+			case Interpreter_REALVECTOR_WHITESPACE_SEPARATED:
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
+			case Interpreter_REALVECTOR_FORMULA:
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::FORMULA_, my arguments [ipar].get()); break;
+			case Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED:
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
+			case Interpreter_POSITIVEVECTOR_FORMULA:
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::FORMULA_, my arguments [ipar].get()); break;
+			case Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED:
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
+			case Interpreter_INTEGERVECTOR_RANGES:
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::RANGES_, my arguments [ipar].get()); break;
+			case Interpreter_INTEGERVECTOR_FORMULA:
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::FORMULA_, my arguments [ipar].get()); break;
+			case Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED:
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
+			case Interpreter_NATURALVECTOR_RANGES:
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::RANGES_, my arguments [ipar].get()); break;
+			case Interpreter_NATURALVECTOR_FORMULA:
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::FORMULA_, my arguments [ipar].get()); break;
 			//case Interpreter_MATRIX:
 			//	UiForm_addNummat (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
 			case Interpreter_CHOICE:
@@ -405,7 +457,17 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
 				break;
 			}
-			case Interpreter_VECTOR: {
+			case Interpreter_REALVECTOR_WHITESPACE_SEPARATED:
+			case Interpreter_REALVECTOR_FORMULA:
+			case Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED:
+			case Interpreter_POSITIVEVECTOR_FORMULA:
+			case Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED:
+			case Interpreter_INTEGERVECTOR_RANGES:
+			case Interpreter_INTEGERVECTOR_FORMULA:
+			case Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED:
+			case Interpreter_NATURALVECTOR_RANGES:
+			case Interpreter_NATURALVECTOR_FORMULA:
+			{
 				VEC numvecValue = UiForm_getNumvec (dialog, parameter);
 				autoMelderString buffer;
 				for (integer i = 1; i <= numvecValue.size; i ++) {
@@ -732,7 +794,7 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 	char32 parameter [200];
 	Melder_assert (type != 0);
 	str32cpy (parameter, in_parameter);
-	if (type >= Interpreter_REAL && type <= Interpreter_BOOLEAN) {
+	if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VARIABLE) {
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
 	} else if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU) {
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
@@ -740,7 +802,7 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
 		;   // do not add a variable
-	} else if (type == Interpreter_VECTOR) {
+	} else if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
 		str32cat (parameter, U"#");
 		Interpreter_addNumericVectorVariable (me, parameter, my arguments [ipar].get());
 	} else {
