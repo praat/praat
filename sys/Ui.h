@@ -98,13 +98,16 @@ enum class _kUiField_type {
 	INFILE_ = 13,
 	OUTFILE_ = 14,
 	FOLDER_ = 15,
-	NUMVEC_ = 16,
-	NUMMAT_ = 17,
-	TEXTVEC_ = 18,
-	BOOLEAN_ = 19,
-	RADIO_ = 20,
-	OPTIONMENU_ = 21,
-	LIST_ = 22,
+	REALVECTOR_ = 16,
+	POSITIVEVECTOR_ = 17,
+	INTEGERVECTOR_ = 18,
+	NATURALVECTOR_ = 19,
+	REALMATRIX_ = 20,
+	TEXTVEC_ = 21,
+	BOOLEAN_ = 22,
+	RADIO_ = 23,
+	OPTIONMENU_ = 24,
+	LIST_ = 25,
 	LABELLED_TEXT_MIN_ = 1,
 	LABELLED_TEXT_MAX_ = 9
 };
@@ -115,11 +118,12 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
-	kUi_numericVectorFormat numericVectorDefaultFormat;
-	autoVEC numericVectorValue, numericVectorDefaultValue;   // for NUMVEC_
-	autoMAT numericMatrixValue, numericMatrixDefaultValue;   // for NUMMAT_
-	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for TEXTVEC_
+	kUi_realVectorFormat realVectorDefaultFormat;
+	kUi_integerVectorFormat integerVectorDefaultFormat;
+	autoVEC numericVectorValue, numericVectorDefaultValue;   // for REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_
+	autoMAT numericMatrixValue, numericMatrixDefaultValue;   // for REALMATRIX_
 	kUi_stringArrayFormat stringArrayFormat;   // for TEXTVEC_
+	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for TEXTVEC_
 	MelderColour colourValue;
 	OrderedOf<structUiOption> options;
 	constSTRVEC strings;
@@ -212,8 +216,11 @@ UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 var
 UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_numericVectorFormat defaultFormat, conststring32 defaultValue);
-UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue);
+UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue);
+UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue);
+UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
+UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
+UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue);
 UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);

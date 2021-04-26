@@ -7884,7 +7884,7 @@ DO
 
 FORM (NEW_TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
+	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
@@ -7897,15 +7897,15 @@ DO
 
 FORM (NEW_TextGrid_to_TextGridNavigator, U"", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
+	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
+	TEXTFIELD (before_string, U"Before labels:", U"p b t d k g", 2)
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n", 2)
+	TEXTFIELD (after_string, U"After labels:", U"m n", 2)
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8219,7 +8219,7 @@ DIRECT (MODIFY_TextGridNavigator_replaceSearchTiers) {
 
 FORM (MODIFY_TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
+	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8235,15 +8235,15 @@ DO
 
 FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
+	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
+	TEXTFIELD (before_string, U"Before labels:", U"p b t d k g", 2)
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n", 2)
+	TEXTFIELD (after_string, U"After labels:", U"m n", 2)
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")

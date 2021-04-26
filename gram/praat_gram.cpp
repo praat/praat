@@ -1534,7 +1534,7 @@ DO
 
 FORM (NEW1_CreateNetAsDeepBeliefNetwork, U"Create Net as DeepBeliefNetwork", nullptr) {
 	WORD (name, U"Name", U"network")
-	NUMVEC (numbersOfNodes, U"Numbers of nodes", ENUMERATE_, U"30 50 20")
+	NATURALVECTOR (numbersOfNodes, U"Numbers of nodes", WHITESPACE_SEPARATED_, U"30 50 20")
 	BOOLEAN (inputsAreBinary, U"Inputs are binary", false)
 	OK
 DO

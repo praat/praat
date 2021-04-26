@@ -837,7 +837,7 @@ DO
 }
 
 FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullptr) {
-	NUMVEC (searchTiers, U"Search tiers:", ENUMERATE_, U"1 2")
+	REALVECTOR (searchTiers, U"Search tiers", WHITESPACE_SEPARATED_, U"1 2")
 	OPTIONMENU_ENUM (kMelder_string, listEveryLabelThat___,
 			U"List every label that...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hello")

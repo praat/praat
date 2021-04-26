@@ -16,24 +16,30 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kUi_numericVectorFormat, 1)
-	enums_add (kUi_numericVectorFormat, 1, ENUMERATE_, U"(enumerate)")
-	enums_add (kUi_numericVectorFormat, 2, FORMULA_, U"(formula)")
-enums_end (kUi_numericVectorFormat, 2, ENUMERATE_)
+enums_begin (kUi_realVectorFormat, 1)
+	enums_add (kUi_realVectorFormat, 1, WHITESPACE_SEPARATED_, U"(whitespace-separated)")
+	enums_add (kUi_realVectorFormat, 2, FORMULA_, U"(formula)")
+enums_end (kUi_realVectorFormat, 2, WHITESPACE_SEPARATED_)
 
-enums_begin (kUi_numericMatrixFormat, 1)
-	enums_add (kUi_numericMatrixFormat, 1, ONE_ROW_PER_LINE_, U"(one row per line)")
-	enums_add (kUi_numericMatrixFormat, 2, FORMULA_, U"(formula)")
-enums_end (kUi_numericMatrixFormat, 2, ONE_ROW_PER_LINE_)
+enums_begin (kUi_integerVectorFormat, 1)
+	enums_add (kUi_integerVectorFormat, 1, WHITESPACE_SEPARATED_, U"(whitespace-separated)")
+	enums_add (kUi_integerVectorFormat, 2, RANGES_, U"(ranges)")
+	enums_add (kUi_integerVectorFormat, 3, FORMULA_, U"(formula)")
+enums_end (kUi_integerVectorFormat, 3, RANGES_)
+
+enums_begin (kUi_realMatrixFormat, 1)
+	enums_add (kUi_realMatrixFormat, 1, ONE_ROW_PER_LINE_, U"(one row per line)")
+	enums_add (kUi_realMatrixFormat, 2, FORMULA_, U"(formula)")
+enums_end (kUi_realMatrixFormat, 2, ONE_ROW_PER_LINE_)
 
 enums_begin (kUi_stringArrayFormat, 1)
-	enums_add (kUi_stringArrayFormat, 1, SPLIT_BY_WHITESPACE_, U"(split by whitespace)")
-	enums_add (kUi_stringArrayFormat, 2, SPLIT_BY_COMMAS_, U"(split by commas)")
-	enums_add (kUi_stringArrayFormat, 3, SPLIT_BY_SEMICOLONS_, U"(split by semicolons)")
-	enums_add (kUi_stringArrayFormat, 4, SPLIT_BY_PIPES_, U"(split by pipes)")
+	enums_add (kUi_stringArrayFormat, 1, WHITESPACE_SEPARATED_, U"(whitespace-separated)")
+	enums_add (kUi_stringArrayFormat, 2, COMMA_SEPARATED_, U"(comma-separated)")
+	enums_add (kUi_stringArrayFormat, 3, SEMICOLON_SEPARATED_, U"(semicolon-separated)")
+	enums_add (kUi_stringArrayFormat, 4, PIPE_SEPARATED_, U"(pipe-separated)")
 	enums_add (kUi_stringArrayFormat, 5, ONE_PER_LINE_, U"(one per line)")
 	enums_add (kUi_stringArrayFormat, 6, FORMULA_, U"(formula)")
-enums_end (kUi_stringArrayFormat, 6, SPLIT_BY_WHITESPACE_)
+enums_end (kUi_stringArrayFormat, 6, WHITESPACE_SEPARATED_)
 
 /* End of file Ui_enums.h */
 

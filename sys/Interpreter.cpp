@@ -26,20 +26,31 @@
 #include "../fon/Vector.h"
 
 #define Interpreter_WORD 1
+
 #define Interpreter_REAL 2
 #define Interpreter_POSITIVE 3
 #define Interpreter_INTEGER 4
 #define Interpreter_NATURAL 5
 #define Interpreter_BOOLEAN 6
+#define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VARIABLE  Interpreter_REAL
+#define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VARIABLE  Interpreter_BOOLEAN
+
 #define Interpreter_SENTENCE 7
 #define Interpreter_TEXT 8
-#define Interpreter_VECTOR 9
-#define Interpreter_MATRIX 10
-#define Interpreter_CHOICE 11
-#define Interpreter_OPTIONMENU 12
-#define Interpreter_BUTTON 13
-#define Interpreter_OPTION 14
-#define Interpreter_COMMENT 15
+
+#define Interpreter_REALVECTOR 9
+#define Interpreter_POSITIVEVECTOR 10
+#define Interpreter_INTEGERVECTOR 11
+#define Interpreter_NATURALVECTOR 12
+#define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_REALVECTOR
+#define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_NATURALVECTOR
+
+#define Interpreter_REALMATRIX 19
+#define Interpreter_CHOICE 20
+#define Interpreter_OPTIONMENU 21
+#define Interpreter_BUTTON 22
+#define Interpreter_OPTION 23
+#define Interpreter_COMMENT 24
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -75,7 +86,8 @@ autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo edi
 }
 
 autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
-	if (! editor) return Interpreter_create (nullptr, nullptr);
+	if (! editor)
+		return Interpreter_create (nullptr, nullptr);
 	return Interpreter_create (editor -> name.get(), editor -> classInfo);
 }
 
@@ -195,7 +207,8 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					Melder_throw (U"Unfinished form (missing \"endform\").");
 				startOfLine = Melder_findEndOfHorizontalSpace (endOfLine + 1);
 			}
-			if (str32nequ (startOfLine, U"endform", 7) && Melder_isEndOfInk (startOfLine [7])) break;
+			if (str32nequ (startOfLine, U"endform", 7) && Melder_isEndOfInk (startOfLine [7]))
+				break;
 			char32 *parameterLocation;
 			if (str32nequ (startOfLine, U"word", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_WORD; parameterLocation = startOfLine + 4; }
@@ -213,10 +226,16 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
 			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
-			else if (str32nequ (startOfLine, U"vector", 6) && Melder_isEndOfInk (startOfLine [6]))
-				{ type = Interpreter_VECTOR; parameterLocation = startOfLine + 6; }
-			else if (str32nequ (startOfLine, U"matrix", 6) && Melder_isEndOfInk (startOfLine [6]))
-				{ type = Interpreter_MATRIX; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"realvector", 10) && Melder_isEndOfInk (startOfLine [10]))
+				{ type = Interpreter_REALVECTOR; parameterLocation = startOfLine + 10; }
+			else if (str32nequ (startOfLine, U"positivevector", 14) && Melder_isEndOfInk (startOfLine [14]))
+				{ type = Interpreter_POSITIVEVECTOR; parameterLocation = startOfLine + 14; }
+			else if (str32nequ (startOfLine, U"integervector", 13) && Melder_isEndOfInk (startOfLine [13]))
+				{ type = Interpreter_INTEGERVECTOR; parameterLocation = startOfLine + 13; }
+			else if (str32nequ (startOfLine, U"naturalvector", 13) && Melder_isEndOfInk (startOfLine [13]))
+				{ type = Interpreter_NATURALVECTOR; parameterLocation = startOfLine + 13; }
+			else if (str32nequ (startOfLine, U"realmatrix", 10) && Melder_isEndOfInk (startOfLine [10]))
+				{ type = Interpreter_REALMATRIX; parameterLocation = startOfLine + 10; }
 			else if (str32nequ (startOfLine, U"choice", 6) && Melder_isEndOfInk (startOfLine [6]))
 				{ type = Interpreter_CHOICE; parameterLocation = startOfLine + 6; }
 			else if (str32nequ (startOfLine, U"optionmenu", 10) && Melder_isEndOfInk (startOfLine [10]))
@@ -266,7 +285,31 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			} else {
 				my parameters [++ my numberOfParameters] [0] = U'\0';
 			}
-			char32 *argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+			char32 *argumentLocation;
+			if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
+				char32 *formatLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+				if (Melder_isEndOfLine (*formatLocation)) {
+					*formatLocation = U'\0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing format:\n\"", startOfLine, U"\".");
+				}
+				char32 *q = my formats [my numberOfParameters];
+				if (*formatLocation != U'(') {
+					*formatLocation = U'0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing format (should start with \"(\"):\n\"", startOfLine, U"\".");
+				}
+				while (*formatLocation != U')') {
+					if (Melder_isEndOfLine (*formatLocation)) {
+						*formatLocation = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Incomplete format (should end in \")\"):\n\"", startOfLine, U"\".");
+					}
+					* (q ++) = * (formatLocation ++);
+				}
+				* (q ++) = * (formatLocation ++);   // copy the closing parenthesis
+				*q = U'\0';
+				argumentLocation = Melder_findEndOfHorizontalSpace (formatLocation);
+			} else {
+				argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+			}
 			endOfLine = Melder_findEndOfLine (argumentLocation);
 			if (Melder_isEndOfText (*endOfLine))
 				Melder_throw (U"Unfinished form (missing \"endform\").");
@@ -303,41 +346,61 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 			p ++;
 		}
 		switch (my types [ipar]) {
-			case Interpreter_WORD:
-				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_REAL:
-				UiForm_addReal (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;   // TODO: an address of a real variable
-			case Interpreter_POSITIVE:
-				UiForm_addPositive (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_INTEGER:
-				UiForm_addInteger (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_NATURAL:
-				UiForm_addNatural (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_BOOLEAN:
+			case Interpreter_WORD: {
+				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_REAL: {
+				UiForm_addReal (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());   // TODO: an address of a real variable
+			} break; case Interpreter_POSITIVE: {
+				UiForm_addPositive (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_INTEGER: {
+				UiForm_addInteger (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_NATURAL: {
+				UiForm_addNatural (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_BOOLEAN: {
 				UiForm_addBoolean (form.get(), nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
 					my arguments [ipar] [0] == U'y' || my arguments [ipar] [0] == U'Y' ||
-					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n')); break;
-			case Interpreter_SENTENCE:
-				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_TEXT:
-				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_VECTOR:
-				UiForm_addLabel (form.get(), nullptr, parameter);
-				UiForm_addNumvec (form.get(), nullptr, nullptr, parameter, kUi_numericVectorFormat::ENUMERATE_, my arguments [ipar].get()); break;
-			//case Interpreter_MATRIX:
-			//	UiForm_addNummat (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_CHOICE:
-				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
-			case Interpreter_OPTIONMENU:
-				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
-			case Interpreter_BUTTON:
-				if (radio) UiRadio_addButton (radio, my arguments [ipar].get()); break;
-			case Interpreter_OPTION:
-				if (radio) UiOptionMenu_addButton (radio, my arguments [ipar].get()); break;
-			case Interpreter_COMMENT:
-				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get()); break;
-			default:
-				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n'));
+			} break; case Interpreter_SENTENCE: {
+				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_TEXT: {
+				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_REALVECTOR: {
+				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_realVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined real vector format \"", my formats [ipar], U"\".");
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+			} break; case Interpreter_POSITIVEVECTOR: {
+				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_realVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined positive vector format \"", my formats [ipar], U"\".");
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+			} break; case Interpreter_INTEGERVECTOR: {
+				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_integerVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined integer vector format \"", my formats [ipar], U"\".");
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+			} break; case Interpreter_NATURALVECTOR: {
+				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_integerVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined natural vector format \"", my formats [ipar], U"\".");
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get());
+			// } break; case Interpreter_REALMATRIX: {
+			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_CHOICE: {
+				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1);
+			} break; case Interpreter_OPTIONMENU: {
+				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1);
+			} break; case Interpreter_BUTTON: {
+				if (radio)
+					UiRadio_addButton (radio, my arguments [ipar].get());
+			} break; case Interpreter_OPTION: {
+				if (radio)
+					UiOptionMenu_addButton (radio, my arguments [ipar].get());
+			} break; case Interpreter_COMMENT: {
+				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get());
+			} break; default: {
+				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			}
 		}
 		/*
 			Strip parentheses and colon off parameter name.
@@ -405,7 +468,11 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
 				break;
 			}
-			case Interpreter_VECTOR: {
+			case Interpreter_REALVECTOR:
+			case Interpreter_POSITIVEVECTOR:
+			case Interpreter_INTEGERVECTOR:
+			case Interpreter_NATURALVECTOR:
+			{
 				VEC numvecValue = UiForm_getNumvec (dialog, parameter);
 				autoMelderString buffer;
 				for (integer i = 1; i <= numvecValue.size; i ++) {
@@ -594,7 +661,9 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		*/
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
-			arg -> which == Stackel_STRING ? Melder_dup (arg -> getString()) : autostring32();
+			arg -> which == Stackel_STRING ? Melder_dup (arg -> getString()) :
+			arg -> which == Stackel_NUMERIC_VECTOR ? Melder_dup (Melder_VEC (arg -> numericVector)) :
+			autostring32();
 		Melder_assert (my arguments [ipar]);
 	}
 	if (iarg < narg)
@@ -664,7 +733,6 @@ static void Interpreter_addStringVariable (Interpreter me, conststring32 key, co
 
 static void Interpreter_addNumericVectorVariable (Interpreter me, conststring32 key, conststring32 value) {
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
-Melder_casual (U"Interpreter_addNumericVectorVariable ", key, U" ", value);
 	variable -> numericVectorValue = splitByWhitespace_VEC (value);
 	my variablesMap [key] = variable.move();
 	variable.releaseToAmbiguousOwner();
@@ -673,11 +741,10 @@ Melder_casual (U"Interpreter_addNumericVectorVariable ", key, U" ", value);
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key) {
 	Melder_assert (key);
 	auto it = my variablesMap. find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
-	if (it != my variablesMap.end()) {
+	if (it != my variablesMap.end())
 		return it -> second.get();
-	} else {
+	else
 		return nullptr;
-	}
 }
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key) {
@@ -685,12 +752,11 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 ke
 	conststring32 variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
 	auto it = my variablesMap. find (variableNameIncludingProcedureName);
-	if (it != my variablesMap.end()) {
+	if (it != my variablesMap.end())
 		return it -> second.get();
-	}
 	/*
-	 * The variable doesn't yet exist: create a new one.
-	 */
+		The variable doesn't yet exist: create a new one.
+	*/
 	autoInterpreterVariable variable = InterpreterVariable_create (variableNameIncludingProcedureName);
 	InterpreterVariable variable_ref = variable.get();
 	my variablesMap [variableNameIncludingProcedureName] = variable.move();
@@ -707,37 +773,41 @@ static integer lookupLabel (Interpreter me, conststring32 labelName) {
 static bool isCommand (conststring32 string) {
 	const char32 *p = & string [0];
 	/*
-	 * Things that start with "nowarn", "noprogress", or "nocheck" are commands.
-	 */
+		Things that start with "nowarn", "noprogress", or "nocheck" are commands.
+	*/
 	if (p [0] == U'n' && p [1] == U'o' &&
-		(str32nequ (p + 2, U"warn ", 5) || str32nequ (p + 2, U"progress ", 9) || str32nequ (p + 2, U"check ", 6))) return true;
-	if (str32nequ (p, U"demo ", 5)) return true;
+			(str32nequ (p + 2, U"warn ", 5) || str32nequ (p + 2, U"progress ", 9) || str32nequ (p + 2, U"check ", 6)))
+		return true;
+	if (str32nequ (p, U"demo ", 5))
+		return true;
 	/*
-	 * Otherwise, things that start with nonupper case are formulas.
-	 */
-	if (! Melder_isUpperCaseLetter (*p)) return false;
+		Otherwise, things that start with nonupper case are formulas.
+	*/
+	if (! Melder_isUpperCaseLetter (*p))
+		return false;
 	/*
-	 * The remaining possibility is things that start with upper case.
-	 * If they contain an underscore, they are object names, hence we must have a formula.
-	 * Otherwise, we have a command.
-	 */
-	while (Melder_isAlphanumeric (*p)) p ++;
-	return *p != '_';
+		The remaining possibility is things that start with upper case.
+		If they contain an underscore, they are object names, hence we must have a formula.
+		Otherwise, we have a command.
+	*/
+	while (Melder_isAlphanumeric (*p))
+		p ++;
+	return *p != U'_';
 }
 
 static void parameterToVariable (Interpreter me, int type, conststring32 in_parameter, int ipar) {
 	char32 parameter [200];
 	Melder_assert (type != 0);
 	str32cpy (parameter, in_parameter);
-	if (type >= Interpreter_REAL && type <= Interpreter_BOOLEAN) {
+	if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VARIABLE) {
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
 	} else if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU) {
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
 		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
-		/* Do not add a variable. */
-	} else if (type == Interpreter_VECTOR) {
+		;   // do not add a variable
+	} else if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
 		str32cat (parameter, U"#");
 		Interpreter_addNumericVectorVariable (me, parameter, my arguments [ipar].get());
 	} else {
