@@ -23,25 +23,26 @@
 #include "UiP.h"
 #include "Editor.h"
 #include "Graphics.h"   // colours
+#include "NUM2.h"   // get elements of ranges
 
 #include "enums_getText.h"
 #include "Ui_enums.h"
 #include "enums_getValue.h"
 #include "Ui_enums.h"
 
-kUi_numericMatrixFormat theNumericMatrixFormat;
+kUi_realMatrixFormat theRealMatrixFormat;
 kUi_stringArrayFormat theStringArrayFormat;
 
 void Ui_prefs () {
-	Preferences_addEnum (U"Ui.numericMatrixFormat", & theNumericMatrixFormat, kUi_numericMatrixFormat, (int) kUi_numericMatrixFormat::DEFAULT);
+	Preferences_addEnum (U"Ui.realMatrixFormat", & theRealMatrixFormat, kUi_realMatrixFormat, (int) kUi_realMatrixFormat::DEFAULT);
 	Preferences_addEnum (U"Ui.stringArrayFormat", & theStringArrayFormat, kUi_stringArrayFormat, (int) kUi_stringArrayFormat::DEFAULT);
 }
 
-static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixFormat format) {
+static conststring32 formatNumericMatrix (constMAT cells, kUi_realMatrixFormat format) {
 	static MelderString buffer;
 	MelderString_empty (& buffer);
 	switch (format) {
-		case kUi_numericMatrixFormat::ONE_ROW_PER_LINE_: {
+		case kUi_realMatrixFormat::ONE_ROW_PER_LINE_: {
 			for (integer irow = 1; irow <= cells.nrow; irow ++) {
 				for (integer icol = 1; icol <= cells.ncol; icol ++) {
 					MelderString_append (& buffer, cells [irow] [icol]);
@@ -51,7 +52,7 @@ static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixForma
 				if (irow < cells.nrow)
 					MelderString_appendCharacter (& buffer, U'\n');
 			}
-		} break; case kUi_numericMatrixFormat::FORMULA_: {
+		} break; case kUi_realMatrixFormat::FORMULA_: {
 			if (NUMisEmpty (cells)) {
 				MelderString_append (& buffer, U"zero## (0, 0)");
 			} else {
@@ -69,7 +70,7 @@ static conststring32 formatNumericMatrix (constMAT cells, kUi_numericMatrixForma
 				}
 				MelderString_append (& buffer, U" }");
 			}
-		} break; case kUi_numericMatrixFormat::UNDEFINED: {
+		} break; case kUi_realMatrixFormat::UNDEFINED: {
 			Melder_fatal (U"Unknown numeric matrix format.");
 		}
 	}
@@ -90,7 +91,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 	static MelderString buffer;
 	MelderString_empty (& buffer);
 	switch (format) {
-		case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE_: {
+		case kUi_stringArrayFormat::WHITESPACE_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || Melder_findHorizontalOrVerticalSpace (strings [i]))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -99,7 +100,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U' ');
 			}
-		} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS_: {
+		} break; case kUi_stringArrayFormat::COMMA_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U','))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -108,7 +109,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U',');
 			}
-		} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS_: {
+		} break; case kUi_stringArrayFormat::SEMICOLON_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U';'))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -117,7 +118,7 @@ static conststring32 formatStringArray (constSTRVEC strings, kUi_stringArrayForm
 				if (i < strings.size)
 					MelderString_appendCharacter (& buffer, U';');
 			}
-		} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES_: {
+		} break; case kUi_stringArrayFormat::PIPE_SEPARATED_: {
 			for (integer i = 1; i <= strings.size; i ++) {
 				if (str32chr (strings [i], U'\"') || str32chr (strings [i], U'|'))
 					MelderString_appendQuoted (& buffer, strings [i]);
@@ -234,16 +235,24 @@ static void UiField_setDefault (UiField me) {
 			GuiText_setString (my text, my stringDefaultValue.get());
 		}
 		break;
-		case _kUiField_type::NUMVEC_:
+		case _kUiField_type::REALVECTOR_:
+		case _kUiField_type::POSITIVEVECTOR_:
 		{
-			GuiOptionMenu_setValue (my optionMenu, (int) my numericVectorDefaultFormat);
+			GuiOptionMenu_setValue (my optionMenu, (int) my realVectorDefaultFormat);
 			GuiText_setString (my text, my stringDefaultValue.get());
 		}
 		break;
-		case _kUiField_type::NUMMAT_:
+		case _kUiField_type::INTEGERVECTOR_:
+		case _kUiField_type::NATURALVECTOR_:
 		{
-			theNumericMatrixFormat = (kUi_numericMatrixFormat) GuiOptionMenu_getValue (my optionMenu);
-			GuiText_setString (my text, formatNumericMatrix (my numericMatrixDefaultValue.get(), theNumericMatrixFormat));
+			GuiOptionMenu_setValue (my optionMenu, (int) my integerVectorDefaultFormat);
+			GuiText_setString (my text, my stringDefaultValue.get());
+		}
+		break;
+		case _kUiField_type::REALMATRIX_:
+		{
+			theRealMatrixFormat = (kUi_realMatrixFormat) GuiOptionMenu_getValue (my optionMenu);
+			GuiText_setString (my text, formatNumericMatrix (my numericMatrixDefaultValue.get(), theRealMatrixFormat));
 		}
 		break;
 		case _kUiField_type::TEXTVEC_:
@@ -350,14 +359,15 @@ static void UiField_widgetToValue (UiField me) {
 				*my stringVariable = my stringValue.get();
 		}
 		break;
-		case _kUiField_type::NUMVEC_:
+		case _kUiField_type::REALVECTOR_:
+		case _kUiField_type::POSITIVEVECTOR_:
 		{
 			autostring32 stringValue = GuiText_getString (my text);
-			kUi_numericVectorFormat format = (kUi_numericVectorFormat) GuiOptionMenu_getValue (my optionMenu);
+			kUi_realVectorFormat format = (kUi_realVectorFormat) GuiOptionMenu_getValue (my optionMenu);
 			switch (format) {
-				case kUi_numericVectorFormat::ENUMERATE_: {
+				case kUi_realVectorFormat::WHITESPACE_SEPARATED_: {
 					my numericVectorValue = splitByWhitespace_VEC (stringValue.get());
-				} break; case kUi_numericVectorFormat::FORMULA_: {
+				} break; case kUi_realVectorFormat::FORMULA_: {
 					VEC result;
 					bool ownedByInterpreter;
 					Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
@@ -366,15 +376,55 @@ static void UiField_widgetToValue (UiField me) {
 					} else {
 						my numericVectorValue = copy_VEC (result);
 					}
-				} break; case kUi_numericVectorFormat::UNDEFINED: {
-					Melder_fatal (U"Unknown vector format.");
+				} break; case kUi_realVectorFormat::UNDEFINED: {
+					Melder_fatal (U"Unknown real vector format.");
 				}
 			}
+			if (my type == _kUiField_type::POSITIVEVECTOR_)
+				for (integer i = 1; i <= my numericVectorValue.size; i ++)
+					if (my numericVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.0.");
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
 		}
 		break;
-		case _kUiField_type::NUMMAT_:
+		case _kUiField_type::INTEGERVECTOR_:
+		case _kUiField_type::NATURALVECTOR_:
+		{
+			autostring32 stringValue = GuiText_getString (my text);
+			kUi_integerVectorFormat format = (kUi_integerVectorFormat) GuiOptionMenu_getValue (my optionMenu);
+			switch (format) {
+				case kUi_integerVectorFormat::WHITESPACE_SEPARATED_: {
+					my numericVectorValue = splitByWhitespace_VEC (stringValue.get());
+				} break; case kUi_integerVectorFormat::RANGES_: {
+					autoINTVEC intvec = NUMstring_getElementsOfRanges (stringValue.get(), INTEGER_MAX, U"element", false);   // TODO: make correct (no two ":"; uniquing)
+					my numericVectorValue = autoVEC (intvec.size, MelderArray::kInitializationType::RAW);
+					for (integer i = 1; i <= my numericVectorValue.size; i++)
+						my numericVectorValue [i] = intvec [i];
+				} break; case kUi_integerVectorFormat::FORMULA_: {
+					VEC result;
+					bool ownedByInterpreter;
+					Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
+					if (ownedByInterpreter) {
+						my numericVectorValue. adoptFromAmbiguousOwner (result);
+					} else {
+						my numericVectorValue = copy_VEC (result);
+					}
+				} break; case kUi_integerVectorFormat::UNDEFINED: {
+					Melder_fatal (U"Unknown integer vector format.");
+				}
+			}
+			for (integer i = 1; i <= my numericVectorValue.size; i ++)
+				my numericVectorValue [i] = Melder_iround (my numericVectorValue [i]);
+			if (my type == _kUiField_type::NATURALVECTOR_)
+				for (integer i = 1; i <= my numericVectorValue.size; i ++)
+					if (my numericVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.");
+			if (my numericVectorVariable)
+				*my numericVectorVariable = my numericVectorValue.get();
+		}
+		break;
+		case _kUiField_type::REALMATRIX_:
 		{
 			autostring32 stringValue = GuiText_getString (my text);
 			MAT result;
@@ -394,13 +444,13 @@ static void UiField_widgetToValue (UiField me) {
 			autostring32 stringValue = GuiText_getString (my text);
 			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
 			switch (theStringArrayFormat) {
-				case kUi_stringArrayFormat::SPLIT_BY_WHITESPACE_: {
+				case kUi_stringArrayFormat::WHITESPACE_SEPARATED_: {
 					my stringArrayValue = splitByWhitespace_STRVEC (stringValue.get());
-				} break; case kUi_stringArrayFormat::SPLIT_BY_COMMAS_: {
+				} break; case kUi_stringArrayFormat::COMMA_SEPARATED_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U",");
-				} break; case kUi_stringArrayFormat::SPLIT_BY_SEMICOLONS_: {
+				} break; case kUi_stringArrayFormat::SEMICOLON_SEPARATED_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U";");
-				} break; case kUi_stringArrayFormat::SPLIT_BY_PIPES_: {
+				} break; case kUi_stringArrayFormat::PIPE_SEPARATED_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"|");
 				} break; case kUi_stringArrayFormat::ONE_PER_LINE_: {
 					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"\n");
@@ -650,7 +700,10 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 						UiHistory_write (U"\"");
 					}
 					break;
-					case _kUiField_type:: NUMVEC_:
+					case _kUiField_type:: REALVECTOR_:
+					case _kUiField_type:: POSITIVEVECTOR_:
+					case _kUiField_type:: INTEGERVECTOR_:
+					case _kUiField_type:: NATURALVECTOR_:
 					{
 						if (NUMisEmpty (field -> numericVectorValue.get())) {
 							UiHistory_write (next -- ? U", zero# (0)" : U" zero# (0)");
@@ -662,7 +715,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 							}
 						}
 					} break;
-					case _kUiField_type:: NUMMAT_:
+					case _kUiField_type:: REALMATRIX_:
 					{
 						if (NUMisEmpty (field -> numericMatrixValue.get())) {
 							UiHistory_write (next -- ? U", zero## (0, 0)" : U" zero## (0, 0)");
@@ -977,9 +1030,9 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 	return thee;
 }
 
-UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_numericVectorFormat defaultFormat, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::NUMVEC_, name);
-	thy numericVectorDefaultFormat = defaultFormat;
+UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, name);
+	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
 	thy variableName = variableName;
@@ -987,8 +1040,38 @@ UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableN
 	return thee;
 }
 
-UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::NUMMAT_, name);
+UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, name);
+	thy realVectorDefaultFormat = defaultFormat;
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy numericVectorVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 7;
+	return thee;
+}
+
+UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, name);
+	thy integerVectorDefaultFormat = defaultFormat;
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy numericVectorVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 7;
+	return thee;
+}
+
+UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, name);
+	thy integerVectorDefaultFormat = defaultFormat;
+	thy stringDefaultValue = Melder_dup (defaultValue);
+	thy numericVectorVariable = variable;
+	thy variableName = variableName;
+	thy numberOfLines = 7;
+	return thee;
+}
+
+UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, name);
 	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
@@ -1065,9 +1148,11 @@ static MelderString theFinishBuffer;
 
 static void appendColon () {
 	integer length = theFinishBuffer.length;
-	if (length < 1) return;
+	if (length < 1)
+		return;
 	char32 lastCharacter = theFinishBuffer.string [length - 1];
-	if (lastCharacter == U':' || lastCharacter == U'?' || lastCharacter == U'.') return;
+	if (lastCharacter == U':' || lastCharacter == U'?' || lastCharacter == U'.')
+		return;
 	MelderString_appendCharacter (& theFinishBuffer, U':');
 }
 
@@ -1091,7 +1176,13 @@ void UiForm_finish (UiForm me) {
 
 	int size = my numberOfFields;
 	int dialogHeight = 0;
-	int textFieldHeight = Gui_TEXTFIELD_HEIGHT;
+	const int textFieldHeight = Gui_TEXTFIELD_HEIGHT;
+	const int headerLabelHeight = textFieldHeight
+		#ifdef _WIN32
+			- 6;
+		#else
+			- 10;
+		#endif
 	int dialogWidth = 520, dialogCentre = dialogWidth / 2, fieldX = dialogCentre + Gui_LABEL_SPACING / 2;
 	int labelWidth = fieldX - Gui_LABEL_SPACING - Gui_LEFT_DIALOG_SPACING, fieldWidth = labelWidth, halfFieldWidth = fieldWidth / 2 - 6;
 
@@ -1109,6 +1200,9 @@ void UiForm_finish (UiForm me) {
 			thy type >= _kUiField_type::LABELLED_TEXT_MIN_ && thy type <= _kUiField_type::LABELLED_TEXT_MAX_ && str32nequ (thy name.get(), U"right ", 6) &&
 			previous -> type >= _kUiField_type::LABELLED_TEXT_MIN_ && previous -> type <= _kUiField_type::LABELLED_TEXT_MAX_ &&
 			str32nequ (previous -> name.get(), U"left ", 5) ? - textFieldHeight : Gui_VERTICAL_DIALOG_SPACING_SAME;
+		if (thy type == _kUiField_type::REALVECTOR_ || thy type == _kUiField_type::POSITIVEVECTOR_ ||
+				thy type == _kUiField_type::INTEGERVECTOR_ || thy type == _kUiField_type::NATURALVECTOR_ )
+			dialogHeight += headerLabelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME;
 		thy y = dialogHeight;
 		dialogHeight +=
 			thy type == _kUiField_type::BOOLEAN_ ? Gui_CHECKBUTTON_HEIGHT :
@@ -1117,17 +1211,14 @@ void UiForm_finish (UiForm me) {
 			thy type == _kUiField_type::OPTIONMENU_ ? Gui_OPTIONMENU_HEIGHT :
 			thy type == _kUiField_type::LIST_ ? LIST_HEIGHT :
 			thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue.get()) - 1] != U'.' &&
-				ifield != my numberOfFields ? textFieldHeight
-				#ifdef _WIN32
-					- 6 :
-				#else
-					- 10 :
-				#endif
+				ifield != my numberOfFields ? headerLabelHeight :
 			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
 			thy type == _kUiField_type::FORMULA_ ? multiLineTextHeight (thy numberOfLines) :
 			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::NUMVEC_ || thy type == _kUiField_type::TEXTVEC_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::NUMMAT_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::REALVECTOR_ || thy type == _kUiField_type::POSITIVEVECTOR_ ||
+				thy type == _kUiField_type::INTEGERVECTOR_ || thy type == _kUiField_type::NATURALVECTOR_ ||
+				thy type == _kUiField_type::TEXTVEC_ ? multiLineTextHeight (thy numberOfLines) :
+			thy type == _kUiField_type::REALMATRIX_ ? multiLineTextHeight (thy numberOfLines) :
 			textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
@@ -1180,28 +1271,58 @@ void UiForm_finish (UiForm me) {
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
-			case _kUiField_type::NUMVEC_:
+			case _kUiField_type::REALVECTOR_:
+			case _kUiField_type::POSITIVEVECTOR_:
 			{
-				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
-					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
-				for (int format = (int) kUi_numericVectorFormat::MIN; format <= (int) kUi_numericVectorFormat::MAX; format ++)
-					GuiOptionMenu_addOption (thy optionMenu, kUi_numericVectorFormat_getText ((kUi_numericVectorFormat) format));
-				GuiOptionMenu_setValue (thy optionMenu, (int) kUi_numericVectorFormat::FORMULA_);
+				for (int format = (int) kUi_realVectorFormat::MIN; format <= (int) kUi_realVectorFormat::MAX; format ++)
+					GuiOptionMenu_addOption (thy optionMenu, kUi_realVectorFormat_getText ((kUi_realVectorFormat) format));
+				//GuiOptionMenu_setValue (thy optionMenu, (int) thy realVectorDefaultFormat);   // SUPERFLUOUS
+				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
-			case _kUiField_type::NUMMAT_:
+			case _kUiField_type::INTEGERVECTOR_:
+			case _kUiField_type::NATURALVECTOR_:
+			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
+				thy optionMenu = GuiOptionMenu_createShown (form,
+					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
+					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
+				for (int format = (int) kUi_integerVectorFormat::MIN; format <= (int) kUi_integerVectorFormat::MAX; format ++)
+					GuiOptionMenu_addOption (thy optionMenu, kUi_integerVectorFormat_getText ((kUi_integerVectorFormat) format));
+				//GuiOptionMenu_setValue (thy optionMenu, (int) thy integerVectorDefaultFormat);   // SUPERFLUOUS
+				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
+					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
+			}
+			break;
+			case _kUiField_type::REALMATRIX_:
 			{
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
 					dialogWidth - Gui_LEFT_DIALOG_SPACING - 200, dialogWidth - Gui_LEFT_DIALOG_SPACING,
 					thy y - Gui_OPTIONMENU_HEIGHT, thy y, 0);
-				for (int format = (int) kUi_numericMatrixFormat::MIN; format <= (int) kUi_numericMatrixFormat::MAX; format ++)
-					GuiOptionMenu_addOption (thy optionMenu, kUi_numericMatrixFormat_getText ((kUi_numericMatrixFormat) format));
-				GuiOptionMenu_setValue (thy optionMenu, (int) theNumericMatrixFormat);
+				for (int format = (int) kUi_realMatrixFormat::MIN; format <= (int) kUi_realMatrixFormat::MAX; format ++)
+					GuiOptionMenu_addOption (thy optionMenu, kUi_realMatrixFormat_getText ((kUi_realMatrixFormat) format));
+				GuiOptionMenu_setValue (thy optionMenu, (int) theRealMatrixFormat);
 				okButtonIsDefault = false;   // because otherwise, the Enter key would be ambiguous
 			}
 			break;
@@ -1415,7 +1536,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::FORMULA_ ||
 			next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
 			next -> type == _kUiField_type::FOLDER_ ||
-			next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_ ||
+			next -> type == _kUiField_type::REALMATRIX_ ||
 			next -> type == _kUiField_type::TEXTVEC_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
@@ -1673,7 +1794,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
-		case _kUiField_type::NUMVEC_:
+		case _kUiField_type::REALVECTOR_:
+		case _kUiField_type::POSITIVEVECTOR_:
 		{
 			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
@@ -1685,11 +1807,38 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else {
 				my numericVectorValue = copy_VEC (arg -> numericVector);
 			}
+			if (my type == _kUiField_type::POSITIVEVECTOR_)
+				for (integer i = 1; i <= my numericVectorValue.size; i ++)
+					if (my numericVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.0.");
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
 		}
 		break;
-		case _kUiField_type::NUMMAT_:
+		case _kUiField_type::INTEGERVECTOR_:
+		case _kUiField_type::NATURALVECTOR_:
+		{
+			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
+			if (arg -> which == Stackel_STRING) {
+				my numericVectorValue = splitByWhitespace_VEC (arg -> getString());
+			} else if (arg -> owned) {
+				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
+				arg -> owned = false;
+			} else {
+				my numericVectorValue = copy_VEC (arg -> numericVector);
+			}
+			for (integer i = 1; i <= my numericVectorValue.size; i ++)
+				my numericVectorValue [i] = Melder_iround (my numericVectorValue [i]);
+			if (my type == _kUiField_type::NATURALVECTOR_)
+				for (integer i = 1; i <= my numericVectorValue.size; i ++)
+					if (my numericVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.0.");
+			if (my numericVectorVariable)
+				*my numericVectorVariable = my numericVectorValue.get();
+		}
+		break;
+		case _kUiField_type::REALMATRIX_:
 		{
 			if (arg -> which != Stackel_NUMERIC_MATRIX)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric matrix, not ", arg -> whichText(), U".");
@@ -2511,7 +2660,11 @@ VEC UiForm_getNumvec (UiForm me, conststring32 fieldName) {
 		Melder_fatal (U"(UiForm_getNumvec:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
 	switch (field -> type)
 	{
-		case _kUiField_type::NUMVEC_: {
+		case _kUiField_type::REALVECTOR_:
+		case _kUiField_type::POSITIVEVECTOR_:
+		case _kUiField_type::INTEGERVECTOR_:
+		case _kUiField_type::NATURALVECTOR_:
+		{
 			return field -> numericVectorValue.get();
 		}
 		break;
@@ -2606,7 +2759,10 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				var -> stringValue = Melder_dup (field -> stringValue.get());
 			}
 			break;
-			case _kUiField_type::NUMVEC_:
+			case _kUiField_type::REALVECTOR_:
+			case _kUiField_type::POSITIVEVECTOR_:
+			case _kUiField_type::INTEGERVECTOR_:
+			case _kUiField_type::NATURALVECTOR_:
 			{
 				MelderString_appendCharacter (& lowerCaseFieldName, U'#');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);

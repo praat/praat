@@ -81,7 +81,7 @@ DO
 
 FORM (NEW1_Matrix_createSimpleFromValues, U"Create simple Matrix from values", U"Create simple Matrix from values...") {
 	WORD (name, U"Name", U"xy")
-	NUMMAT (values, U"Values", autoMAT ({ { 10, 20, 30, 40 }, { 60, 70, 80, 90 }, { 170, 180, 190, -300 } }))
+	REALMATRIX (values, U"Values", autoMAT ({ { 10, 20, 30, 40 }, { 60, 70, 80, 90 }, { 170, 180, 190, -300 } }))
 	OK
 DO
 	CREATE_ONE
