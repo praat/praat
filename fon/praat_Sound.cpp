@@ -707,7 +707,7 @@ DO
 }
 
 FORM (NEW_Sound_extractChannels, U"Sound: Extract channels", nullptr) {
-	NATURALVECTOR_FORMULA (channels, U"Channel numbers", U"1:64")
+	NATURALVECTOR (channels, U"Channel numbers", RANGES_, U"1:64")
 	OK
 DO
 	CONVERT_EACH (Sound)
