@@ -345,45 +345,21 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static conststring32 stringVariable; \
 		UiForm_addFolder (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
-#define REALVECTOR_WHITESPACE_SEPARATED(numericVectorVariable, labelText, defaultStringValue)  \
+#define REALVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC numericVectorVariable; \
-		UiForm_addRealVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::WHITESPACE_SEPARATED_, defaultStringValue);
+		UiForm_addRealVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
 
-#define REALVECTOR_FORMULA(numericVectorVariable, labelText, defaultStringValue)  \
+#define POSITIVEVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC numericVectorVariable; \
-		UiForm_addRealVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::FORMULA_, defaultStringValue);
+		UiForm_addPositiveVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
 
-#define POSITIVEVECTOR_WHITESPACE_SEPARATED(numericVectorVariable, labelText, defaultStringValue)  \
+#define INTEGERVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC numericVectorVariable; \
-		UiForm_addPositiveVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::WHITESPACE_SEPARATED_, defaultStringValue);
+		UiForm_addIntegerVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
-#define POSITIVEVECTOR_FORMULA(numericVectorVariable, labelText, defaultStringValue)  \
+#define NATURALVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC numericVectorVariable; \
-		UiForm_addPositiveVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::FORMULA_, defaultStringValue);
-
-#define INTEGERVECTOR_WHITESPACE_SEPARATED(numericVectorVariable, labelText, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addIntegerVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::WHITESPACE_SEPARATED_, defaultStringValue);
-
-#define INTEGERVECTOR_RANGES(numericVectorVariable, labelText, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addIntegerVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::RANGES_, defaultStringValue);
-
-#define INTEGERVECTOR_FORMULA(numericVectorVariable, labelText, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addIntegerVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::FORMULA_, defaultStringValue);
-
-#define NATURALVECTOR_WHITESPACE_SEPARATED(numericVectorVariable, labelText, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addNaturalVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::WHITESPACE_SEPARATED_, defaultStringValue);
-
-#define NATURALVECTOR_RANGES(numericVectorVariable, labelText, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addNaturalVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::RANGES_, defaultStringValue);
-
-#define NATURALVECTOR_FORMULA(numericVectorVariable, labelText, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addNaturalVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::FORMULA_, defaultStringValue);
+		UiForm_addNaturalVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
 #define REALMATRIX(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \

@@ -38,18 +38,12 @@
 #define Interpreter_SENTENCE 7
 #define Interpreter_TEXT 8
 
-#define Interpreter_REALVECTOR_WHITESPACE_SEPARATED 9
-#define Interpreter_REALVECTOR_FORMULA 10
-#define Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED 11
-#define Interpreter_POSITIVEVECTOR_FORMULA 12
-#define Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED 13
-#define Interpreter_INTEGERVECTOR_RANGES 14
-#define Interpreter_INTEGERVECTOR_FORMULA 15
-#define Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED 16
-#define Interpreter_NATURALVECTOR_RANGES 17
-#define Interpreter_NATURALVECTOR_FORMULA 18
-#define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_REALVECTOR_WHITESPACE_SEPARATED
-#define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_NATURALVECTOR_FORMULA
+#define Interpreter_REALVECTOR 9
+#define Interpreter_POSITIVEVECTOR 10
+#define Interpreter_INTEGERVECTOR 11
+#define Interpreter_NATURALVECTOR 12
+#define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_REALVECTOR
+#define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_NATURALVECTOR
 
 #define Interpreter_REALMATRIX 19
 #define Interpreter_CHOICE 20
@@ -92,7 +86,8 @@ autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo edi
 }
 
 autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
-	if (! editor) return Interpreter_create (nullptr, nullptr);
+	if (! editor)
+		return Interpreter_create (nullptr, nullptr);
 	return Interpreter_create (editor -> name.get(), editor -> classInfo);
 }
 
@@ -212,7 +207,8 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 					Melder_throw (U"Unfinished form (missing \"endform\").");
 				startOfLine = Melder_findEndOfHorizontalSpace (endOfLine + 1);
 			}
-			if (str32nequ (startOfLine, U"endform", 7) && Melder_isEndOfInk (startOfLine [7])) break;
+			if (str32nequ (startOfLine, U"endform", 7) && Melder_isEndOfInk (startOfLine [7]))
+				break;
 			char32 *parameterLocation;
 			if (str32nequ (startOfLine, U"word", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_WORD; parameterLocation = startOfLine + 4; }
@@ -230,26 +226,14 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
 			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
-			else if (str32nequ (startOfLine, U"realvector_WhitespaceSeparated", 30) && Melder_isEndOfInk (startOfLine [30]))
-				{ type = Interpreter_REALVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 30; }
-			else if (str32nequ (startOfLine, U"realvector_Formula", 18) && Melder_isEndOfInk (startOfLine [18]))
-				{ type = Interpreter_REALVECTOR_FORMULA; parameterLocation = startOfLine + 18; }
-			else if (str32nequ (startOfLine, U"positivevector_WhitespaceSeparated", 34) && Melder_isEndOfInk (startOfLine [34]))
-				{ type = Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 34; }
-			else if (str32nequ (startOfLine, U"positivevector_Formula", 21) && Melder_isEndOfInk (startOfLine [21]))
-				{ type = Interpreter_POSITIVEVECTOR_FORMULA; parameterLocation = startOfLine + 21; }
-			else if (str32nequ (startOfLine, U"integervector_WhitespaceSeparated", 33) && Melder_isEndOfInk (startOfLine [33]))
-				{ type = Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 33; }
-			else if (str32nequ (startOfLine, U"integervector_Ranges", 20) && Melder_isEndOfInk (startOfLine [20]))
-				{ type = Interpreter_INTEGERVECTOR_RANGES; parameterLocation = startOfLine + 20; }
-			else if (str32nequ (startOfLine, U"integervector_Formula", 21) && Melder_isEndOfInk (startOfLine [21]))
-				{ type = Interpreter_INTEGERVECTOR_FORMULA; parameterLocation = startOfLine + 21; }
-			else if (str32nequ (startOfLine, U"naturalvector_WhitespaceSeparated", 33) && Melder_isEndOfInk (startOfLine [33]))
-				{ type = Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED; parameterLocation = startOfLine + 33; }
-			else if (str32nequ (startOfLine, U"naturalvector_Ranges", 20) && Melder_isEndOfInk (startOfLine [20]))
-				{ type = Interpreter_NATURALVECTOR_RANGES; parameterLocation = startOfLine + 20; }
-			else if (str32nequ (startOfLine, U"naturalvector_Formula", 21) && Melder_isEndOfInk (startOfLine [21]))
-				{ type = Interpreter_NATURALVECTOR_FORMULA; parameterLocation = startOfLine + 21; }
+			else if (str32nequ (startOfLine, U"realvector", 10) && Melder_isEndOfInk (startOfLine [10]))
+				{ type = Interpreter_REALVECTOR; parameterLocation = startOfLine + 10; }
+			else if (str32nequ (startOfLine, U"positivevector", 14) && Melder_isEndOfInk (startOfLine [14]))
+				{ type = Interpreter_POSITIVEVECTOR; parameterLocation = startOfLine + 14; }
+			else if (str32nequ (startOfLine, U"integervector", 13) && Melder_isEndOfInk (startOfLine [13]))
+				{ type = Interpreter_INTEGERVECTOR; parameterLocation = startOfLine + 13; }
+			else if (str32nequ (startOfLine, U"naturalvector", 13) && Melder_isEndOfInk (startOfLine [13]))
+				{ type = Interpreter_NATURALVECTOR; parameterLocation = startOfLine + 13; }
 			else if (str32nequ (startOfLine, U"realmatrix", 10) && Melder_isEndOfInk (startOfLine [10]))
 				{ type = Interpreter_REALMATRIX; parameterLocation = startOfLine + 10; }
 			else if (str32nequ (startOfLine, U"choice", 6) && Melder_isEndOfInk (startOfLine [6]))
@@ -301,7 +285,31 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			} else {
 				my parameters [++ my numberOfParameters] [0] = U'\0';
 			}
-			char32 *argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+			char32 *argumentLocation;
+			if (type >= Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE && type <= Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE) {
+				char32 *formatLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+				if (Melder_isEndOfLine (*formatLocation)) {
+					*formatLocation = U'\0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing format:\n\"", startOfLine, U"\".");
+				}
+				char32 *q = my formats [my numberOfParameters];
+				if (*formatLocation != U'(') {
+					*formatLocation = U'0';   // destroy input in order to limit printing of line
+					Melder_throw (U"Missing format (should start with \"(\"):\n\"", startOfLine, U"\".");
+				}
+				while (*formatLocation != U')') {
+					if (Melder_isEndOfLine (*formatLocation)) {
+						*formatLocation = U'\0';   // destroy input in order to limit printing of line
+						Melder_throw (U"Incomplete format (should end in \")\"):\n\"", startOfLine, U"\".");
+					}
+					* (q ++) = * (formatLocation ++);
+				}
+				* (q ++) = * (formatLocation ++);   // copy the closing parenthesis
+				*q = U'\0';
+				argumentLocation = Melder_findEndOfHorizontalSpace (formatLocation);
+			} else {
+				argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+			}
 			endOfLine = Melder_findEndOfLine (argumentLocation);
 			if (Melder_isEndOfText (*endOfLine))
 				Melder_throw (U"Unfinished form (missing \"endform\").");
@@ -338,58 +346,61 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 			p ++;
 		}
 		switch (my types [ipar]) {
-			case Interpreter_WORD:
-				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_REAL:
-				UiForm_addReal (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;   // TODO: an address of a real variable
-			case Interpreter_POSITIVE:
-				UiForm_addPositive (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_INTEGER:
-				UiForm_addInteger (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_NATURAL:
-				UiForm_addNatural (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_BOOLEAN:
+			case Interpreter_WORD: {
+				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_REAL: {
+				UiForm_addReal (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());   // TODO: an address of a real variable
+			} break; case Interpreter_POSITIVE: {
+				UiForm_addPositive (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_INTEGER: {
+				UiForm_addInteger (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_NATURAL: {
+				UiForm_addNatural (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_BOOLEAN: {
 				UiForm_addBoolean (form.get(), nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
 					my arguments [ipar] [0] == U'y' || my arguments [ipar] [0] == U'Y' ||
-					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n')); break;
-			case Interpreter_SENTENCE:
-				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_TEXT:
-				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_REALVECTOR_WHITESPACE_SEPARATED:
-				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
-			case Interpreter_REALVECTOR_FORMULA:
-				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::FORMULA_, my arguments [ipar].get()); break;
-			case Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED:
-				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
-			case Interpreter_POSITIVEVECTOR_FORMULA:
-				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, kUi_realVectorFormat::FORMULA_, my arguments [ipar].get()); break;
-			case Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED:
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
-			case Interpreter_INTEGERVECTOR_RANGES:
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::RANGES_, my arguments [ipar].get()); break;
-			case Interpreter_INTEGERVECTOR_FORMULA:
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::FORMULA_, my arguments [ipar].get()); break;
-			case Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED:
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::WHITESPACE_SEPARATED_, my arguments [ipar].get()); break;
-			case Interpreter_NATURALVECTOR_RANGES:
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::RANGES_, my arguments [ipar].get()); break;
-			case Interpreter_NATURALVECTOR_FORMULA:
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat::FORMULA_, my arguments [ipar].get()); break;
-			//case Interpreter_MATRIX:
-			//	UiForm_addNummat (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
-			case Interpreter_CHOICE:
-				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
-			case Interpreter_OPTIONMENU:
-				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1); break;
-			case Interpreter_BUTTON:
-				if (radio) UiRadio_addButton (radio, my arguments [ipar].get()); break;
-			case Interpreter_OPTION:
-				if (radio) UiOptionMenu_addButton (radio, my arguments [ipar].get()); break;
-			case Interpreter_COMMENT:
-				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get()); break;
-			default:
-				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get()); break;
+					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n'));
+			} break; case Interpreter_SENTENCE: {
+				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_TEXT: {
+				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_REALVECTOR: {
+				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_realVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined real vector format \"", my formats [ipar], U"\".");
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+			} break; case Interpreter_POSITIVEVECTOR: {
+				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_realVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined positive vector format \"", my formats [ipar], U"\".");
+				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+			} break; case Interpreter_INTEGERVECTOR: {
+				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_integerVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined integer vector format \"", my formats [ipar], U"\".");
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+			} break; case Interpreter_NATURALVECTOR: {
+				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
+				if (format == kUi_integerVectorFormat::UNDEFINED)
+					Melder_throw (U"Undefined natural vector format \"", my formats [ipar], U"\".");
+				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get());
+			// } break; case Interpreter_REALMATRIX: {
+			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_CHOICE: {
+				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1);
+			} break; case Interpreter_OPTIONMENU: {
+				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1);
+			} break; case Interpreter_BUTTON: {
+				if (radio)
+					UiRadio_addButton (radio, my arguments [ipar].get());
+			} break; case Interpreter_OPTION: {
+				if (radio)
+					UiOptionMenu_addButton (radio, my arguments [ipar].get());
+			} break; case Interpreter_COMMENT: {
+				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get());
+			} break; default: {
+				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			}
 		}
 		/*
 			Strip parentheses and colon off parameter name.
@@ -457,16 +468,10 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
 				break;
 			}
-			case Interpreter_REALVECTOR_WHITESPACE_SEPARATED:
-			case Interpreter_REALVECTOR_FORMULA:
-			case Interpreter_POSITIVEVECTOR_WHITESPACE_SEPARATED:
-			case Interpreter_POSITIVEVECTOR_FORMULA:
-			case Interpreter_INTEGERVECTOR_WHITESPACE_SEPARATED:
-			case Interpreter_INTEGERVECTOR_RANGES:
-			case Interpreter_INTEGERVECTOR_FORMULA:
-			case Interpreter_NATURALVECTOR_WHITESPACE_SEPARATED:
-			case Interpreter_NATURALVECTOR_RANGES:
-			case Interpreter_NATURALVECTOR_FORMULA:
+			case Interpreter_REALVECTOR:
+			case Interpreter_POSITIVEVECTOR:
+			case Interpreter_INTEGERVECTOR:
+			case Interpreter_NATURALVECTOR:
 			{
 				VEC numvecValue = UiForm_getNumvec (dialog, parameter);
 				autoMelderString buffer;
