@@ -1,4 +1,4 @@
-/* MultiSampledSpectrogram_def.h
+/* ConstantQLogFSpectrogram_def.h
  * 
  * Copyright (C) 2021 David Weenink
  * 
@@ -16,33 +16,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT FrequencyBin
-oo_DEFINE_CLASS (FrequencyBin, Matrix)
 
-	#if oo_DECLARING
-		double v_getValueAtSample (integer /* iframe */, integer /* which */, int /* unit */)
-			override;
-	#endif
+#define ooSTRUCT ConstantQLogFSpectrogram
+oo_DEFINE_CLASS (ConstantQLogFSpectrogram, MultiSampledSpectrogram)
 
-oo_END_CLASS (FrequencyBin)
-#undef ooSTRUCT
-
-
-#define ooSTRUCT  MultiSampledSpectrogram
-oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
-
-	oo_COLLECTION_OF (OrderedOf, frequencyBins, FrequencyBin, 0) // invariant frequencyBins.size == my nx
+	oo_DOUBLE (frequencyResolutionInBins) // invariant frequencyBins.size == my nx
 	
 	#if oo_DECLARING
 		void v_info ()
 			override;
-		double v_getValueAtSample (integer /* ifreq */, integer /* iframe */, int /* unit */)
+		double v_getValueAtSample (integer /* ifreq */, integer /* iframe */ , int /* unit */)
 			override;
-		virtual double v_myFrequencyToHertz (double /* x */);
-		virtual double v_hertzToMyFrequency (double /* f_hz */);
+		double v_myFrequencyToHertz (double /* log2_f */)
+			override;
+		double v_hertzToMyFrequency (double /* f_hz */)
+			override;
 	#endif
 
-oo_END_CLASS (MultiSampledSpectrogram)
+oo_END_CLASS (ConstantQLogFSpectrogram)
 #undef ooSTRUCT
 
-/* End of file MultiSampledSpectrogram_def.h */
+/* End of file ConstantQLogFSpectrogram_def.h */

@@ -4498,6 +4498,44 @@ NORMAL (U"The effectiveness of the %%Minimum silent interval duration% and %%Min
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
 
+MAN_BEGIN (U"ConstantQLogFSpectrogram", U"djmw", 20210425)
+INTRO (U"A ##ConstantQLogFSpectrogram# is a time-frequency representatioon of a sound where the distances between successive "
+	"frequencies are equal on a logarithmic scale. This is not the only difference with a traditional spectrogram because the "
+	"frequency analysis was performed with a different window length for each frequency bin. Low frequencies were analysed "
+	"with long analysis windows and high frequencies were analysed with short windows. As a result the sampling of each "
+	"frequency bin is different, hence it is %%multi-sampled% in the time domain.")
+NORMAL (U"One of the characteristics of a ##ConstantQLogFSpectrogram#'s representation is that the number of "
+	"frequency bins in an octave is constant. If, for example, the number of frequency bins per octave is 24 this means that the number "
+	"of frequency bins in the interval from 100 to 200 Hz equals 24 and that the number of frequency bins in the intervals "
+	"from 200\\--400 Hz, 400\\--800 Hz, 800\\--1600 Hz, 1600\\--3200 Hz, etc. also equal 24. This behaviour mimics the "
+	"layout of the frequency sensitivity of the human basilar membrane much better than a traditional @@Spectrogram@.")
+NORMAL (U"Another advantage of the representation that we use is its invertability: we can create the original sound back from it. ")
+MAN_END
+
+MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20210425)
+INTRO (U"A command that creates a @@ConstantQLogFSpectrogram@ from a selected @@Sound@.")
+ENTRY (U"Settings")
+TAG (U"##Lowest frequency (Hz)")
+DEFINITION (U"defines the lowest frequency about which information will be obtained. This frequency has to be chosen well above "
+	"zero hertz (because of the logarithmic scale there are an infinite number of octaves between any lowest frequency "
+	"and zero hertz). ")
+TAG (U"##Maximum frequency (Hz)")
+DEFINITION (U"The maximum frequency you are interested in. The default will be the Nyquist frequency of the sound. ")
+TAG (U"##Number of frequecy bins / octave")
+DEFINITION (U"The number of frequency bins that will be used for each octave. For the analysis of music generally a multiple "
+	"of 12 will be used.")
+TAG (U"##Frequency resolution (bins)")
+DEFINITION (U"defines the quality factor used for the analysis. The width of the filter (see below) applied in the frequency domain will then be twice this number. Taking the bandwidth of the filter to equal the width of the filter this definition of bandwidth gives the corresponding quality factor as:")
+EQUATION (U"%%qualityFactor% = 1 / (exp2 (%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%) - exp2 (\\--%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)). ")
+DEFINITION (U"For a frequency resolution of 1 bin and 24 frequency bins per octave we then get a quality factor of 14.26. "
+	"Strictly speaking, the bandwidth is defined as the width of the filter at and intensity -3 dB below its top. The actual "
+	"bandwidth would then depend on the form of the filter function.")
+TAG (U"##Time oversampling factor")
+DEFINITION (U"")
+ENTRY (U"Algorithm")
+NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@ and @@Holighaus et al. (2013)@.")
+MAN_END
+
 MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)
 INTRO (U"A command that creates from the selected @Sound a new sound with silence durations not longer than a specified value.")
 ENTRY (U"Settings")
@@ -6098,6 +6136,11 @@ MAN_END
 
 MAN_BEGIN (U"Herbst (2019)", U"djmw", 20190826)
 NORMAL (U"C. Herbst (2019): \"Electroglottography - An update.\", %%Journal of Voice%: In press.")
+MAN_END
+
+MAN_BEGIN (U"Holighaus et al. (2013)", U"djmw", 20210426)
+NORMAL (U"N. Holighaus, M. Dörfler, G. A. Velasco & T. Grill (2013): \"A framework for invertible, real-time constant-Q transforms.\" "
+	"%%IEEE Transactions on Audio, Speech, and Language Processing% ##21#: 775\\--785.")
 MAN_END
 
 MAN_BEGIN (U"Hormann & Agathos (2001)", U"djmw", 20110617)
