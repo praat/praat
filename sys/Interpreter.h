@@ -26,11 +26,11 @@
 #include <unordered_map>
 
 Thing_define (InterpreterVariable, SimpleString) {
-	autostring32 stringValue;
-	double numericValue;
-	autoVEC numericVectorValue;
-	autoMAT numericMatrixValue;
-	autoSTRVEC stringArrayValue;
+	double numericValue;   // a variable whose name has no suffix: a real, an integer, or a boolean
+	autostring32 stringValue;   // a variable whose name has the suffix "$"
+	autoVEC numericVectorValue;   // a variable whose name has the suffix "#"
+	autoMAT numericMatrixValue;   // a variable whose name has the suffix "##"
+	autoSTRVEC stringArrayValue;   // a variable whose name has the suffix "$#"
 };
 
 #define Interpreter_MAXNUM_PARAMETERS  400
@@ -42,6 +42,33 @@ Thing_define (InterpreterVariable, SimpleString) {
 
 Thing_declare (UiForm);
 Thing_declare (Editor);
+
+enum class kInterpreter_ReturnType {
+	VOID_ = 0,   // don't change; this is how it is automatically zero-initialized in structInterpreter
+	OBJECT_,
+
+	/*
+		The following three are not distinguished in PraatScript,
+		but they may need to be distinguished in PraatLib (for C, Python, R).
+	*/
+	REAL_,
+	INTEGER_,
+	BOOLEAN_,
+
+	STRING_,
+
+	/*
+		The following two are not distinguished in PraatScript,
+		but they may need to be distinguished in PraatLib (for C, Python, R).
+	*/
+	REALVECTOR_,
+	INTEGERVECTOR_,
+
+	REALMATRIX_,
+	STRINGARRAY_
+};
+
+conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command);
 
 Thing_define (Interpreter, Thing) {
 	autostring32 environmentName;
@@ -57,6 +84,16 @@ Thing_define (Interpreter, Thing) {
 	char32 dialogTitle [1+Interpreter_MAX_DIALOG_TITLE_LENGTH], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
 	std::unordered_map <std::u32string, autoInterpreterVariable> variablesMap;
 	bool running, stopped;
+
+	kInterpreter_ReturnType returnType;   // automatically initialized as kInterpreter_ReturnType::VOID_
+	double returnedReal;
+	integer returnedInteger;
+	bool returnedBoolean;
+	autostring32 returnedString;
+	autoVEC returnedRealVector;
+	autoINTVEC returnedIntegerVector;
+	autoMAT returnedRealMatrix;
+	autoSTRVEC returnedStringArray;
 };
 
 autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass);
@@ -84,10 +121,6 @@ void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formul
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
-
-inline autoVEC theInterpreterNumvec;
-inline autoMAT theInterpreterNummat;
-inline autoSTRVEC theInterpreterStrvec;
 
 /* End of file Interpreter.h */
 #endif

@@ -474,7 +474,7 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
 	INTEGER_ONE (OTGrammar)
-		integer result = my numberOfConstraints;
+		const integer result = my numberOfConstraints;
 	INTEGER_ONE_END (U" constraints")
 }
 
