@@ -631,18 +631,18 @@ autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, doubl
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				const integer frameFrom = iframe - numberOfLongtermFrames + 1;
 				const integer iframeFrom = std::max (1_integer, frameFrom);
-				double geometricMean = 1.0, arithmeticMean = 0.0;
+				long double log10_geometricMean = 1.0, arithmeticMean = 0.0;
 				integer count = 0;
 				for (integer i = iframeFrom; i <= iframe; i ++) {
 					if (frequencyBins [i] > 0.0) {
-						geometricMean *= frequencyBins [i];
+						log10_geometricMean += log10 (frequencyBins [i]); 
 						arithmeticMean += frequencyBins [i];
 						count ++;
 					}
 				}
+				log10_geometricMean /= count;
 				arithmeticMean /= count;
-				geometricMean = pow (geometricMean, 1.0 / count);
-				const double log_gm_div_am = ( arithmeticMean <= 0.0 ? 0.0 : log10 (geometricMean / arithmeticMean) );
+				const double log_gm_div_am = ( arithmeticMean <= 0.0 ? 0.0 : log10_geometricMean - log10 (arithmeticMean) );
 				longtermSpectralFlatness [iframe] += log_gm_div_am; // Eq. (1)
 			}
 		}
