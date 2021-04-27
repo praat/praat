@@ -234,8 +234,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		the value is 0 (off) or 1 (on).
 	LABEL (labelText)
 	TEXTFIELD (variable, labelText, defaultStringValue, numberOfLines)
-	REALVECTOR_WHITESPACE_SEPARATED (variable, labelText, defaultStringValue)
-	REALMATRIX (variable, labelText, defaultStringValue)
+	REALVECTOR (variable, labelText, WHITESPACE_SEPARATED_, defaultStringValue)
+	REALMATRIX (variable, labelText, ONE_ROW_PER_LINE_, defaultStringValue)
 	RADIO (variable, labelText, defaultOptionNumber, base)
 		this should be followed by two or more RADIOBUTTONs;
 		the initial value is between base and the number of radio buttons plus base-1.
@@ -784,13 +784,25 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
 
 #define NUMVEC_ONE(klas)  FIND_ONE (klas)
-#define NUMVEC_ONE_END  if (interpreter) theInterpreterNumvec = result.move(); else Melder_information (constVECVU (result.all())); END_NO_NEW_DATA
+#define NUMVEC_ONE_END \
+	if (interpreter) { \
+		interpreter -> returnType = kInterpreter_ReturnType::REALVECTOR_; \
+		interpreter -> returnedRealVector = result.move(); \
+	} else Melder_information (constVECVU (result.all())); END_NO_NEW_DATA
 
 #define NUMMAT_ONE(klas)  FIND_ONE (klas)
-#define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (constMATVU (result.all())); END_NO_NEW_DATA
+#define NUMMAT_ONE_END \
+	if (interpreter) { \
+		interpreter -> returnType = kInterpreter_ReturnType::REALMATRIX_; \
+		interpreter -> returnedRealMatrix = result.move(); \
+	} else Melder_information (constMATVU (result.all())); END_NO_NEW_DATA
 
 #define STRVEC_ONE(klas)  FIND_ONE (klas)
-#define STRVEC_ONE_END  if (interpreter) theInterpreterStrvec = result.move(); else Melder_information (constSTRVEC (result.get())); END_NO_NEW_DATA
+#define STRVEC_ONE_END \
+	if (interpreter) { \
+		interpreter -> returnType = kInterpreter_ReturnType::STRINGARRAY_; \
+		interpreter -> returnedStringArray = result.move(); \
+	} else Melder_information (constSTRVEC (result.get())); END_NO_NEW_DATA
 
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA

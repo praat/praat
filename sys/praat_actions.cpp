@@ -712,8 +712,10 @@ int praat_doAction (conststring32 command, conststring32 arguments, Interpreter 
 
 int praat_doAction (conststring32 command, integer narg, Stackel args, Interpreter interpreter) {
 	integer i = 1;
-	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command))) i ++;
-	if (i > theActions.size) return 0;   // not found
+	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command)))
+		i ++;
+	if (i > theActions.size)
+		return 0;   // not found
 	theActions.at [i] -> callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
 }
@@ -724,16 +726,20 @@ Praat_Command praat_getAction (integer i)
 	{ return i < 0 || i > theActions.size ? nullptr : theActions.at [i]; }
 
 void praat_background () {
-	if (Melder_batch) return;
-	if (Melder_backgrounding) return;
+	if (Melder_batch)
+		return;
+	if (Melder_backgrounding)
+		return;
 	deleteDynamicMenu ();
 	praat_list_background ();
 	Melder_backgrounding = true;
 }
 
 void praat_foreground () {
-	if (Melder_batch) return;
-	if (! Melder_backgrounding) return;
+	if (Melder_batch)
+		return;
+	if (! Melder_backgrounding)
+		return;
 	Melder_backgrounding = false;
 	praat_list_foreground ();
 	praat_show ();

@@ -181,6 +181,9 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 }
 
 int praat_executeCommand (Interpreter interpreter, char32 *command) {
+	if (interpreter)
+		interpreter -> returnType = kInterpreter_ReturnType::VOID_;   // clear return type to its default
+
 	static struct structStackel args [1 + MAXIMUM_NUMBER_OF_FIELDS];
 	//trace (U"praat_executeCommand: ", Melder_pointer (interpreter), U": ", command);
 	if (command [0] == U'\0' || command [0] == U'#' || command [0] == U'!' || command [0] == U';')

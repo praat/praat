@@ -71,6 +71,15 @@ static autoInterpreterVariable InterpreterVariable_create (conststring32 key) {
 	}
 }
 
+conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType returnType, conststring32 command) {
+	switch (returnType) {
+		case kInterpreter_ReturnType::VOID_:
+			return Melder_cat (U"The command \"", command, U"\" does not return anything");
+		default:
+			return Melder_cat (U"The command \"", command, U"\" has an unknown return type");
+	}
+}
+
 Thing_implement (Interpreter, Thing, 0);
 
 autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass) {
@@ -2284,42 +2293,44 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					if (*p == U'$') {
 						if (p [1] == U'#') {
 							/*
-								Assign to a string vector variable or a string vector element.
+								Assign to a string array variable or a string array element.
 							*/
-							static MelderString vectorName;
+							static MelderString arrayName;
 							p ++;
 							*p = U'\0';   // erase the number sign temporarily
-							MelderString_copy (& vectorName, command2.string, U"#");
+							MelderString_copy (& arrayName, command2.string, U"#");
 							*p = U'#';   // put the number sign back
 							p ++;   // step over number sign
 							while (Melder_isHorizontalSpace (*p))
 								p ++;   // go to first token after array name
 							if (*p == U'=') {
 								/*
-									This must be an assignment to a string vector variable.
+									This must be an assignment to a string array variable.
 								*/
 								p ++;   // step over equals sign
 								while (Melder_isHorizontalSpace (*p))
 									p ++;   // go to first token after assignment
 								if (*p == U'\0')
-									Melder_throw (U"Missing right-hand expression in assignment to string vector ", vectorName.string, U".");
+									Melder_throw (U"Missing right-hand expression in assignment to string array ", arrayName.string, U".");
 								if (isCommand (p)) {
 									/*
 										Statement like: lines$# = Get all strings
 									*/
 									praat_executeCommand (me, p);
-									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
-									var -> stringArrayValue = std::move (theInterpreterStrvec);
+									if (my returnType != kInterpreter_ReturnType::STRINGARRAY_)
+										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the string array variable \"", arrayName.string, U"\".");
+									InterpreterVariable var = Interpreter_lookUpVariable (me, arrayName.string);
+									var -> stringArrayValue = my returnedStringArray.move();
 								} else {
 									STRVEC value;
 									bool owned;
 									Interpreter_stringArrayExpression (me, p, & value, & owned);
-									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
+									InterpreterVariable var = Interpreter_lookUpVariable (me, arrayName.string);
 									StringArrayVariable_move (var, value, owned);
 								}
 							} else if (*p == U'[') {
-								assignToStringArrayElement (me, ++ p, vectorName.string, valueString);
-							} else Melder_throw (U"Missing '=' or '[' after string vector variable ", vectorName.string, U".");
+								assignToStringArrayElement (me, ++ p, arrayName.string, valueString);
+							} else Melder_throw (U"Missing '=' or '[' after string array variable ", arrayName.string, U".");
 						} else {
 							/*
 								Assign to a string variable.
@@ -2483,8 +2494,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										Statement like: values## = Get all values
 									*/
 									praat_executeCommand (me, p);
+									if (my returnType != kInterpreter_ReturnType::REALMATRIX_)
+										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the matrix variable \"", matrixName.string, U"\".");
 									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
-									var -> numericMatrixValue = theInterpreterNummat.move();
+									var -> numericMatrixValue = my returnedRealMatrix.move();
 								} else {
 									MAT value;
 									bool owned;
@@ -2600,8 +2613,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										Statement like: times# = Get all times
 									*/
 									praat_executeCommand (me, p);
+									if (my returnType != kInterpreter_ReturnType::REALVECTOR_)
+										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the vector variable \"", vectorName.string, U"\".");
 									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
-									var -> numericVectorValue = theInterpreterNumvec.move();
+									var -> numericVectorValue = my returnedRealVector.move();
 								} else {
 									VEC value;
 									bool owned;
