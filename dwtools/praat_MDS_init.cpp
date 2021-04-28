@@ -52,9 +52,6 @@ static const conststring32 CONFIGURATION_BUTTON = U"To Configuration -";
 
 /* Tests */
 
-#undef iam
-#define iam iam_LOOP
-
 /************************* examples ***************************************/
 
 FORM (NEW1_Dissimilarity_createLetterRExample, U"Create letter R example", U"Create letter R example...") {
