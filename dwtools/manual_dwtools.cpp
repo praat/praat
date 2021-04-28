@@ -4509,6 +4509,8 @@ NORMAL (U"One of the characteristics of a ##ConstantQLogFSpectrogram#'s represen
 	"of frequency bins in the interval from 100 to 200 Hz equals 24 and that the number of frequency bins in the intervals "
 	"from 200\\--400 Hz, 400\\--800 Hz, 800\\--1600 Hz, 1600\\--3200 Hz, etc. also equal 24. This behaviour mimics the "
 	"layout of the frequency sensitivity of the human basilar membrane much better than a traditional @@Spectrogram@.")
+NORMAL (U"The frequency of the %k^^th^ frequency bin can be calculated as:")
+EQUATION (U"%f__%k_ = %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%). ")
 NORMAL (U"Another advantage of the representation that we use is its invertability: we can create the original sound back from it. ")
 MAN_END
 
@@ -4526,14 +4528,17 @@ DEFINITION (U"The number of frequency bins that will be used for each octave. Fo
 	"of 12 will be used.")
 TAG (U"##Frequency resolution (bins)")
 DEFINITION (U"defines the quality factor used for the analysis. The width of the filter (see below) applied in the frequency domain will then be twice this number. Taking the bandwidth of the filter to equal the width of the filter this definition of bandwidth gives the corresponding quality factor as:")
-EQUATION (U"%%qualityFactor% = 1 / (exp2 (%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%) - exp2 (\\--%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)). ")
+EQUATION (U"%%qualityFactor% = 1 / (2^^(%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)^ - 2^^(\\--%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)^). ")
 DEFINITION (U"For a frequency resolution of 1 bin and 24 frequency bins per octave we then get a quality factor of 14.26. "
 	"Strictly speaking, the bandwidth is defined as the width of the filter at and intensity -3 dB below its top. The actual "
 	"bandwidth would then depend on the form of the filter function.")
 TAG (U"##Time oversampling factor")
 DEFINITION (U"")
 ENTRY (U"Algorithm")
-NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@ and @@Holighaus et al. (2013)@.")
+NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@ and in @@Holighaus et al. (2013)@. ")
+NORMAL (U"First the sound is transformed to the frequency domain with an FFT. The filtering is than performed in the frequency "
+	"domain. For the %k^^th^ frequency bin the frequencies between %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%) and  %%lowestFrequency%\\.c2^^(%k+1)/%%numberOfFrequencyBinsPerOctave%) are transformed back with an inverse FFT. The resulting coefficients are copied to this frequency bin. Because of the constant bandwidth on a logarithmic scale the number of frequencies for each frequency bin may differ.  ")
+NORMAL (U"")
 MAN_END
 
 MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)
