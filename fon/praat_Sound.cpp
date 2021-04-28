@@ -156,7 +156,8 @@ DO
 }
 
 DIRECT (WINDOW_LongSound_view) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a LongSound from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a LongSound from batch.");
 	FIND_ONE_WITH_IOBJECT (LongSound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -677,7 +678,8 @@ static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) 
 	}
 }
 DIRECT (WINDOW_Sound_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Sound from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Sound from batch.");
 	FIND_ONE_WITH_IOBJECT (Sound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_SoundEditor_publication);
@@ -1821,8 +1823,10 @@ DO
 #ifdef HAVE_PULSEAUDIO
 void pulseAudio_serverReport ();
 DIRECT (INFO_Praat_reportSoundServerProperties) {
-	pulseAudio_serverReport ();
-END }
+	INFO_NONE
+		pulseAudio_serverReport ();
+	INFO_NONE_END
+}
 #endif
 
 FORM_SAVE (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
@@ -1834,7 +1838,8 @@ FORM_SAVE (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
 FORM_SAVE (SAVE_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
 	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
-END }
+	SAVE_TYPED_LIST_END
+}
 
 FORM_SAVE (SAVE_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
 	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)

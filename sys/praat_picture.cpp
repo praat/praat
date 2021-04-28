@@ -1297,74 +1297,78 @@ FORM (GRAPHICS_HorizontalMmToWorldCoordinates, U"Compute horizontal distance in 
 	REAL (distance, U"Distance (mm)", U"10.0")
 	OK
 DO
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double wc = Graphics_dxMMtoWC (GRAPHICS, distance);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, U"(world coordinates)");
-END }
+	NUMBER_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_dxMMtoWC (GRAPHICS, distance);
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" (world coordinates)");
+}
 
 FORM (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", nullptr) {
 	REAL (distance, U"Distance (wc)", U"0.1")
 	OK
 DO
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double mm = Graphics_dxWCtoMM (GRAPHICS, distance);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, U"mm");
-END }
+	NUMBER_NONE   // TODO: do we need autoPraatPicture for any of these?
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_dxWCtoMM (GRAPHICS, distance);
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" mm")
+}
 
 FORM (GRAPHICS_VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", nullptr) {
 	REAL (distance, U"Distance (mm)", U"10.0")
 	OK
 DO
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double wc = Graphics_dyMMtoWC (GRAPHICS, distance);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, U"(world coordinates)");
-END }
+	NUMBER_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_dyMMtoWC (GRAPHICS, distance);
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" (world coordinates)")
+}
 
 FORM (GRAPHICS_VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", nullptr) {
 	REAL (distance, U"Distance (wc)", U"1.0")
 	OK
 DO
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double mm = Graphics_dyWCtoMM (GRAPHICS, distance);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, U"mm");
-END }
+	NUMBER_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_dyWCtoMM (GRAPHICS, distance);
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" mm")
+}
 
 FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", nullptr) {
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	GRAPHICS_NONE
+	NUMBER_NONE
 		Graphics_setInner (GRAPHICS);
-		const double wc = Graphics_textWidth (GRAPHICS, text);
+		const double result = Graphics_textWidth (GRAPHICS, text);
 		Graphics_unsetInner (GRAPHICS);
-		Melder_informationReal (wc, U"(world coordinates)");
-	GRAPHICS_NONE_END
+	NUMBER_NONE_END (U" (world coordinates)")
 }
 
 FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, text));
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, U"mm");
-END }
+	NUMBER_NONE
+		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, text));
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" mm")
+}
 
 FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", nullptr) {
 	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
@@ -1373,14 +1377,16 @@ FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in 
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double wc = Graphics_textWidth_ps (GRAPHICS, text, phoneticFont);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (wc, U"(world coordinates)");
-END }
+	NUMBER_NONE
+		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_textWidth_ps (GRAPHICS, text, phoneticFont);
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" (world coordinates)")
+}
+
 
 FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", nullptr) {
 	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
@@ -1389,14 +1395,15 @@ FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
-	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-	Graphics_setInner (GRAPHICS);
-	const double mm = Graphics_textWidth_ps_mm (GRAPHICS, text, phoneticFont);
-	Graphics_unsetInner (GRAPHICS);
-	Melder_informationReal (mm, U"mm");
-END }
+	NUMBER_NONE
+		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_setInner (GRAPHICS);
+		const double result = Graphics_textWidth_ps_mm (GRAPHICS, text, phoneticFont);
+		Graphics_unsetInner (GRAPHICS);
+	NUMBER_NONE_END (U" mm")
+}
 
 DIRECT (HELP_SearchManual_Picture) { Melder_search (); END }
 DIRECT (HELP_PictureWindowHelp) { HELP (U"Picture window") }
@@ -1404,68 +1411,69 @@ DIRECT (HELP_AboutSpecialSymbols) { HELP (U"Special symbols") }
 DIRECT (HELP_AboutTextStyles) { HELP (U"Text styles") }
 DIRECT (HELP_PhoneticSymbols) { HELP (U"Phonetic symbols") }
 DIRECT (GRAPHICS_Picture_settings_report) {
-	MelderInfo_open ();
-	const conststring32 units = ( theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"" );
-	MelderInfo_writeLine (U"Outer viewport left: ", theCurrentPraatPicture -> x1NDC, units);
-	MelderInfo_writeLine (U"Outer viewport right: ", theCurrentPraatPicture -> x2NDC, units);
-	MelderInfo_writeLine (U"Outer viewport top: ",
-		theCurrentPraatPicture != & theForegroundPraatPicture ?
-			theCurrentPraatPicture -> y1NDC :
-			12 - theCurrentPraatPicture -> y2NDC, units);
-	MelderInfo_writeLine (U"Outer viewport bottom: ",
-		theCurrentPraatPicture != & theForegroundPraatPicture ?
-			theCurrentPraatPicture -> y2NDC :
-			12 - theCurrentPraatPicture -> y1NDC, units);
-	MelderInfo_writeLine (U"Font size: ", theCurrentPraatPicture -> fontSize, U" points");
-	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0;
-	double ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		integer x1DC, x2DC, y1DC, y2DC;
-		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
-		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
-		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
-		double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
-		double hDC = integer_abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
-		xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
-		ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
-	}
-	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
-		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
-		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-	MelderInfo_writeLine (U"Inner viewport left: ", theCurrentPraatPicture -> x1NDC + xmargin, units);
-	MelderInfo_writeLine (U"Inner viewport right: ", theCurrentPraatPicture -> x2NDC - xmargin, units);
-	MelderInfo_writeLine (U"Inner viewport top: ",
-		theCurrentPraatPicture != & theForegroundPraatPicture ?
-			theCurrentPraatPicture -> y1NDC + ymargin :
-			12 - theCurrentPraatPicture -> y2NDC + ymargin, units);
-	MelderInfo_writeLine (U"Inner viewport bottom: ",
-		theCurrentPraatPicture != & theForegroundPraatPicture ?
-			theCurrentPraatPicture -> y2NDC - ymargin :
-			12 - theCurrentPraatPicture -> y1NDC - ymargin, units);
-	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) theCurrentPraatPicture -> font));
-	MelderInfo_writeLine (U"Line type: ",
-		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? U"Solid" :
-		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? U"Dotted" :
-		theCurrentPraatPicture -> lineType == Graphics_DASHED ? U"Dashed" :
-		theCurrentPraatPicture -> lineType == Graphics_DASHED_DOTTED ? U"Dashed-dotted" :
-		U"(unknown)");
-	MelderInfo_writeLine (U"Line width: ", theCurrentPraatPicture -> lineWidth);
-	MelderInfo_writeLine (U"Arrow size: ", theCurrentPraatPicture -> arrowSize);
-	MelderInfo_writeLine (U"Speckle size: ", theCurrentPraatPicture -> speckleSize);
-	MelderInfo_writeLine (U"Colour: ", MelderColour_name (theCurrentPraatPicture -> colour));
-	MelderInfo_writeLine (U"Red: ", theCurrentPraatPicture -> colour. red);
-	MelderInfo_writeLine (U"Green: ", theCurrentPraatPicture -> colour. green);
-	MelderInfo_writeLine (U"Blue: ", theCurrentPraatPicture -> colour. blue);
-	double x1WC, x2WC, y1WC, y2WC;
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	MelderInfo_writeLine (U"Axis left: ", x1WC);
-	MelderInfo_writeLine (U"Axis right: ", x2WC);
-	MelderInfo_writeLine (U"Axis bottom: ", y1WC);
-	MelderInfo_writeLine (U"Axis top: ", y2WC);
-	MelderInfo_close ();
-END }
-
+	INFO_NONE
+		MelderInfo_open ();
+		const conststring32 units = ( theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"" );
+		MelderInfo_writeLine (U"Outer viewport left: ", theCurrentPraatPicture -> x1NDC, units);
+		MelderInfo_writeLine (U"Outer viewport right: ", theCurrentPraatPicture -> x2NDC, units);
+		MelderInfo_writeLine (U"Outer viewport top: ",
+			theCurrentPraatPicture != & theForegroundPraatPicture ?
+				theCurrentPraatPicture -> y1NDC :
+				12 - theCurrentPraatPicture -> y2NDC, units);
+		MelderInfo_writeLine (U"Outer viewport bottom: ",
+			theCurrentPraatPicture != & theForegroundPraatPicture ?
+				theCurrentPraatPicture -> y2NDC :
+				12 - theCurrentPraatPicture -> y1NDC, units);
+		MelderInfo_writeLine (U"Font size: ", theCurrentPraatPicture -> fontSize, U" points");
+		double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0;
+		double ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+		if (theCurrentPraatPicture != & theForegroundPraatPicture) {
+			integer x1DC, x2DC, y1DC, y2DC;
+			Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
+			double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+			Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
+			double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
+			double hDC = integer_abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
+			xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
+			ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
+		}
+		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
+			ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
+			xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+		MelderInfo_writeLine (U"Inner viewport left: ", theCurrentPraatPicture -> x1NDC + xmargin, units);
+		MelderInfo_writeLine (U"Inner viewport right: ", theCurrentPraatPicture -> x2NDC - xmargin, units);
+		MelderInfo_writeLine (U"Inner viewport top: ",
+			theCurrentPraatPicture != & theForegroundPraatPicture ?
+				theCurrentPraatPicture -> y1NDC + ymargin :
+				12 - theCurrentPraatPicture -> y2NDC + ymargin, units);
+		MelderInfo_writeLine (U"Inner viewport bottom: ",
+			theCurrentPraatPicture != & theForegroundPraatPicture ?
+				theCurrentPraatPicture -> y2NDC - ymargin :
+				12 - theCurrentPraatPicture -> y1NDC - ymargin, units);
+		MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) theCurrentPraatPicture -> font));
+		MelderInfo_writeLine (U"Line type: ",
+			theCurrentPraatPicture -> lineType == Graphics_DRAWN ? U"Solid" :
+			theCurrentPraatPicture -> lineType == Graphics_DOTTED ? U"Dotted" :
+			theCurrentPraatPicture -> lineType == Graphics_DASHED ? U"Dashed" :
+			theCurrentPraatPicture -> lineType == Graphics_DASHED_DOTTED ? U"Dashed-dotted" :
+			U"(unknown)");
+		MelderInfo_writeLine (U"Line width: ", theCurrentPraatPicture -> lineWidth);
+		MelderInfo_writeLine (U"Arrow size: ", theCurrentPraatPicture -> arrowSize);
+		MelderInfo_writeLine (U"Speckle size: ", theCurrentPraatPicture -> speckleSize);
+		MelderInfo_writeLine (U"Colour: ", MelderColour_name (theCurrentPraatPicture -> colour));
+		MelderInfo_writeLine (U"Red: ", theCurrentPraatPicture -> colour. red);
+		MelderInfo_writeLine (U"Green: ", theCurrentPraatPicture -> colour. green);
+		MelderInfo_writeLine (U"Blue: ", theCurrentPraatPicture -> colour. blue);
+		double x1WC, x2WC, y1WC, y2WC;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+		MelderInfo_writeLine (U"Axis left: ", x1WC);
+		MelderInfo_writeLine (U"Axis right: ", x2WC);
+		MelderInfo_writeLine (U"Axis bottom: ", y1WC);
+		MelderInfo_writeLine (U"Axis top: ", y2WC);
+		MelderInfo_close ();
+	INFO_NONE_END
+}
 
 /**********   **********/
 

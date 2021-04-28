@@ -171,7 +171,8 @@ DO
 // MARK: View & Edit
 
 DIRECT (WINDOW_Corpus_edit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Corpus from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot edit a Corpus from batch.");
 	FIND_ONE_WITH_IOBJECT (Corpus)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -1240,7 +1241,8 @@ static void cb_ManipulationEditor_publication (Editor /* editor */, autoDaata pu
 	}
 }
 DIRECT (WINDOW_Manipulation_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Manipulation from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Manipulation from batch.");
 	FIND_ONE_WITH_IOBJECT (Manipulation)
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
@@ -1251,28 +1253,32 @@ DIRECT (WINDOW_Manipulation_viewAndEdit) {
 
 DIRECT (NEW_Manipulation_extractDurationTier) {
 	CONVERT_EACH (Manipulation)
-		if (! my duration) Melder_throw (me, U": I don't contain a DurationTier.");
+		if (! my duration)
+			Melder_throw (me, U": I don't contain a DurationTier.");
 		autoDurationTier result = Data_copy (my duration.get());
 	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractOriginalSound) {
 	CONVERT_EACH (Manipulation)
-		if (! my sound) Melder_throw (me, U": I don't contain a Sound.");
+		if (! my sound)
+			Melder_throw (me, U": I don't contain a Sound.");
 		autoSound result = Data_copy (my sound.get());
 	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractPitchTier) {
 	CONVERT_EACH (Manipulation)
-		if (! my pitch) Melder_throw (me, U": I don't contain a PitchTier.");
+		if (! my pitch)
+			Melder_throw (me, U": I don't contain a PitchTier.");
 		autoPitchTier result = Data_copy (my pitch.get());
 	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractPulses) {
 	CONVERT_EACH (Manipulation)
-		if (! my pulses) Melder_throw (me, U": I don't contain a PointProcess.");
+		if (! my pulses)
+			Melder_throw (me, U": I don't contain a PointProcess.");
 		autoPointProcess result = Data_copy (my pulses.get());
 	CONVERT_EACH_END (my name.get())
 }
@@ -1420,7 +1426,8 @@ FORM (GRAPHICS_Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
+	if (toFrequency <= fromFrequency)
+		Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 				garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
@@ -1447,7 +1454,8 @@ FORM (GRAPHICS_Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw.
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
+	if (toFrequency <= fromFrequency)
+		Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 				garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
@@ -1510,7 +1518,8 @@ DO
 }
 
 DIRECT (WINDOW_Pitch_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Pitch from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Pitch from batch.");
 	FIND_ONE_WITH_IOBJECT (Pitch)
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -1599,18 +1608,12 @@ FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 		RADIOBUTTON (U"ERB")
 	OK
 DO
-	FIND_ONE (Pitch)
+	NUMBER_ONE (Pitch)
 		double slope;
 		const integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 			(me, & slope);
-		if (nVoiced < 2) {
-			Melder_information (U"--undefined--");
-		} else {
-			Melder_information (slope, U" ",
-				(unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB"),
-				U"/s");
-		}
-	END
+		const double result = ( nVoiced < 2 ? undefined : slope );
+	NUMBER_ONE_END (U" ", ( unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB" ), U"/s");
 }
 
 DIRECT (REAL_Pitch_getMeanAbsSlope_noOctave) {
@@ -1780,7 +1783,8 @@ FORM (GRAPHICS_Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency should be greater than minimum frequency.");
+	if (toFrequency <= fromFrequency)
+		Melder_throw (U"Maximum frequency should be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_EACH_END
@@ -1805,7 +1809,8 @@ FORM (GRAPHICS_Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch:
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
+	if (toFrequency <= fromFrequency)
+		Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
@@ -2238,7 +2243,8 @@ DO
 }
 
 DIRECT (WINDOW_Spectrogram_view) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
 	FIND_ONE_WITH_IOBJECT (Spectrogram)
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -2257,7 +2263,8 @@ DIRECT (HELP_Spectrum_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_Spectrum_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Spectrum from batch.");
 	FIND_ONE_WITH_IOBJECT (Spectrum)
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -2681,7 +2688,8 @@ DIRECT (HELP_Strings_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_Strings_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Strings from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a Strings from batch.");
 	FIND_ONE_WITH_IOBJECT (Strings)
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);

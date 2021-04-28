@@ -12,6 +12,8 @@ a = Draw inner box
 a# = Get all values in row: 6
 assert a# = { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60 }
 
+Remove
+
 Create Sound from formula: "silence", 1, 0.0, 0.1, 44100, ~ 0.0
 asserterror The command "Play" does not return anything; not assigned to the numeric variable "a".
 a = Play
@@ -36,6 +38,8 @@ a## = Get value at time: 1, 0.05, "nearest"
 selectObject: "Sound silence"
 asserterror The command "Get value at time:" returns a number or a string; not assigned to the string array variable "a$#".
 a$# = Get value at time: 1, 0.05, "nearest"
+
+removeObject: "Sound silence"
 
 #
 # The following two tests are repeated from our first two tests,
@@ -64,4 +68,4 @@ strings1 = Create Strings from tokens: "tokens1", "there are seven tokens in thi
 strings2 = Copy: "tokens2"
 selectObject: strings1, strings2
 equal = Equal?
-
+Remove

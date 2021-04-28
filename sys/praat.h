@@ -626,9 +626,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define CREATE_ONE
 #define CREATE_ONE_END(...) \
-	if (interpreter) { \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
 #define FIND_ONE(klas)  \
 	klas me = nullptr; \
@@ -716,19 +717,34 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	else if (CLASS == class##klas2) you = (klas2) OBJECT; }
 
 #define INFO_NONE
-#define INFO_NONE_END  END_NO_NEW_DATA
+#define INFO_NONE_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	END_NO_NEW_DATA
 
 #define INFO_ONE(klas)  FIND_ONE (klas)
-#define INFO_ONE_END  END_NO_NEW_DATA
+#define INFO_ONE_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	END_NO_NEW_DATA
 
 #define INFO_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define INFO_TWO_END  END_NO_NEW_DATA
+#define INFO_TWO_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	END_NO_NEW_DATA
 
 #define INFO_COUPLE(klas)  FIND_COUPLE (klas)
-#define INFO_COUPLE_END  END_NO_NEW_DATA
+#define INFO_COUPLE_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	END_NO_NEW_DATA
 
 #define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define INFO_THREE_END  END_NO_NEW_DATA
+#define INFO_THREE_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	END_NO_NEW_DATA
 
 #define HELP(page)  Melder_help (page); END_NO_NEW_DATA
 
@@ -765,193 +781,332 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_THREE (klas1, klas2, klas3)
 #define MOVIE_THREE_END  END_NO_NEW_DATA
 
-#define NUMBER_ONE(klas)  FIND_ONE (klas)
-#define NUMBER_ONE_END(...) \
+#define NUMBER_NONE
+#define NUMBER_NONE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMBER_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define NUMBER_TWO_END(...) \
+#define NUMBER_ONE(klas)  \
+	FIND_ONE (klas)
+#define NUMBER_ONE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMBER_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define NUMBER_THREE_END(...) \
+#define NUMBER_TWO(klas1,klas2)  \
+	FIND_TWO (klas1, klas2)
+#define NUMBER_TWO_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMBER_COUPLE(klas)  FIND_COUPLE (klas)
-#define NUMBER_COUPLE_END(...) \
+#define NUMBER_THREE(klas1,klas2,klas3)  \
+	FIND_THREE (klas1, klas2, klas3)
+#define NUMBER_THREE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMBER_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1, klas2)
-#define NUMBER_COUPLE_AND_ONE_END(...) \
+#define NUMBER_COUPLE(klas)  \
+	FIND_COUPLE (klas)
+#define NUMBER_COUPLE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMBER_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
-#define NUMBER_ONE_AND_LIST_END(...) \
+#define NUMBER_COUPLE_AND_ONE(klas1,klas2)  \
+	FIND_COUPLE_AND_ONE (klas1, klas2)
+#define NUMBER_COUPLE_AND_ONE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3)  FIND_TWO_AND_LIST (klas1, klas2, klas3)
-#define NUMBER_TWO_AND_LIST_END(...) \
+#define NUMBER_ONE_AND_LIST(klas1,klas2)  \
+	FIND_ONE_AND_LIST (klas1, klas2)
+#define NUMBER_ONE_AND_LIST_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define INTEGER_ONE(klas)  FIND_ONE (klas)
-#define INTEGER_ONE_END(...) \
+#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3)  \
+	FIND_TWO_AND_LIST (klas1, klas2, klas3)
+#define NUMBER_TWO_AND_LIST_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
-	} Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define COMPLEX_ONE(klas)  FIND_ONE (klas)
-#define COMPLEX_ONE_END(...) \
-	Melder_information (result, __VA_ARGS__); END_NO_NEW_DATA
+#define INTEGER_ONE(klas)  \
+	FIND_ONE (klas)
+#define INTEGER_ONE_END(...)  \
+	if (interpreter) { \
+		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
+		interpreter -> returnedReal = result; \
+	} \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define STRING_ONE(klas)  FIND_ONE (klas)
-#define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
+#define COMPLEX_ONE(klas)  \
+	FIND_ONE (klas)
+#define COMPLEX_ONE_END(...)  \
+	Melder_information (result, __VA_ARGS__); \
+	END_NO_NEW_DATA
 
-#define NUMVEC_ONE(klas)  FIND_ONE (klas)
-#define NUMVEC_ONE_END \
+#define STRING_ONE(klas)  \
+	FIND_ONE (klas)
+#define STRING_ONE_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	Melder_information (result); \
+	END_NO_NEW_DATA
+
+#define NUMVEC_ONE(klas)  \
+	FIND_ONE (klas)
+#define NUMVEC_ONE_END  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REALVECTOR_; \
 		interpreter -> returnedRealVector = result.move(); \
-	} else Melder_information (constVECVU (result.all())); END_NO_NEW_DATA
+	} else \
+		Melder_information (constVECVU (result.all())); \
+	END_NO_NEW_DATA
 
-#define NUMMAT_ONE(klas)  FIND_ONE (klas)
-#define NUMMAT_ONE_END \
+#define NUMMAT_ONE(klas)  \
+	FIND_ONE (klas)
+#define NUMMAT_ONE_END  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REALMATRIX_; \
 		interpreter -> returnedRealMatrix = result.move(); \
-	} else Melder_information (constMATVU (result.all())); END_NO_NEW_DATA
+	} else \
+		Melder_information (constMATVU (result.all())); \
+	END_NO_NEW_DATA
 
-#define STRVEC_ONE(klas)  FIND_ONE (klas)
+#define STRVEC_ONE(klas)  \
+	FIND_ONE (klas)
 #define STRVEC_ONE_END \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::STRINGARRAY_; \
 		interpreter -> returnedStringArray = result.move(); \
-	} else Melder_information (constSTRVEC (result.get())); END_NO_NEW_DATA
+	} else \
+		Melder_information (constSTRVEC (result.get())); \
+	END_NO_NEW_DATA
 
-#define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
-#define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA
+#define MODIFY_EACH(klas)  \
+	LOOP { \
+		iam_LOOP (klas);
+#define MODIFY_EACH_END  \
+		praat_dataChanged (me); \
+	} \
+	END_NO_NEW_DATA
 
-#define MODIFY_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
-#define MODIFY_EACH_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } } END_NO_NEW_DATA
+#define MODIFY_EACH_WEAK(klas)  \
+	LOOP { \
+		iam_LOOP (klas); \
+		try {
+#define MODIFY_EACH_WEAK_END  \
+			praat_dataChanged (me); \
+		} catch (MelderError) { \
+			praat_dataChanged (me); \
+			throw; \
+		} \
+	} \
+	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define MODIFY_FIRST_OF_TWO_END  praat_dataChanged (me); END_NO_NEW_DATA
+#define MODIFY_FIRST_OF_TWO(klas1,klas2)  \
+	FIND_TWO (klas1, klas2)
+#define MODIFY_FIRST_OF_TWO_END  \
+	praat_dataChanged (me); \
+	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  FIND_TWO (klas1, klas2) try {
-#define MODIFY_FIRST_OF_TWO_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } END_NO_NEW_DATA
+#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  \
+	FIND_TWO (klas1, klas2) \
+	try {
+#define MODIFY_FIRST_OF_TWO_WEAK_END  \
+		praat_dataChanged (me); \
+	} catch (MelderError) { \
+		praat_dataChanged (me); \
+		throw; \
+	} \
+	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define MODIFY_FIRST_OF_THREE_END  praat_dataChanged (me); END_NO_NEW_DATA
+#define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  \
+	FIND_THREE (klas1, klas2, klas3)
+#define MODIFY_FIRST_OF_THREE_END  \
+	praat_dataChanged (me); \
+	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  praat_dataChanged (me); END_NO_NEW_DATA
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  \
+	FIND_ONE_AND_COUPLE (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  \
+	praat_dataChanged (me); \
+	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  FIND_ONE_AND_COUPLE (klas1, klas2) try {
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  praat_dataChanged (me); } catch (MelderError) { praat_dataChanged (me); throw; } END_NO_NEW_DATA
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  \
+	FIND_ONE_AND_COUPLE (klas1, klas2) \
+	try {
+#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  \
+		praat_dataChanged (me); \
+	} catch (MelderError) { \
+		praat_dataChanged (me); \
+		throw; \
+	} \
+	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  FIND_ONE_AND_LIST (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_LIST_END  praat_dataChanged (me); END_NO_NEW_DATA
+#define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  \
+	FIND_ONE_AND_LIST (klas1, klas2)
+#define MODIFY_FIRST_OF_ONE_AND_LIST_END  \
+	praat_dataChanged (me); \
+	END_NO_NEW_DATA
 
-#define CONVERT_EACH(klas)  LOOP { iam_LOOP (klas);
-#define CONVERT_EACH_END(...) \
-	if (interpreter) { \
+#define CONVERT_EACH(klas)  \
+	LOOP { \
+		iam_LOOP (klas);
+#define CONVERT_EACH_END(...)  \
+		if (interpreter) \
+			interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+		praat_new (result.move(), __VA_ARGS__); \
+	} \
+	END
+
+#define CONVERT_EACH_WEAK(klas)  \
+	LOOP { \
+		iam_LOOP (klas); \
+		try {
+#define CONVERT_EACH_WEAK_END(...)  \
+			if (interpreter) \
+				interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+			praat_new (result.move(), __VA_ARGS__); \
+			praat_dataChanged (me); \
+		} catch (MelderError) { \
+			praat_dataChanged (me); \
+			throw; \
+		} \
+	} \
+	END
+
+#define CONVERT_TWO(klas1,klas2)  \
+	FIND_TWO (klas1, klas2)
+#define CONVERT_TWO_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); } END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
-#define CONVERT_EACH_WEAK_END(...) \
-	if (interpreter) { \
+#define CONVERT_TWO_FIRST_WEAK(klas1,klas2)  \
+	FIND_TWO (klas1, klas2) \
+	try {
+#define CONVERT_TWO_FIRST_WEAK_END(...)  \
+		if (interpreter) \
+			interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+		praat_new (result.move(), __VA_ARGS__); \
+		praat_dataChanged (me); \
+	} catch (MelderError) { \
+		praat_dataChanged (me); \
+		throw; \
+	} \
+	END
+
+#define CONVERT_COUPLE(klas)  \
+	FIND_COUPLE (klas)
+#define CONVERT_COUPLE_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); praat_dataChanged (me); } \
-	catch (MelderError) { praat_dataChanged (me); throw; } } END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
-#define CONVERT_TWO_END(...) \
-	if (interpreter) { \
+#define CONVERT_COUPLE_AND_ONE(klas1,klas2)  \
+	FIND_COUPLE_AND_ONE (klas1,klas2)
+#define CONVERT_COUPLE_AND_ONE_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_COUPLE(klas)  FIND_COUPLE (klas)
-#define CONVERT_COUPLE_END(...) \
-	if (interpreter) { \
+#define CONVERT_THREE(klas1,klas2,klas3)  \
+	FIND_THREE (klas1, klas2, klas3)
+#define CONVERT_THREE_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_COUPLE_AND_ONE(klas1,klas2)  FIND_COUPLE_AND_ONE (klas1,klas2)
-#define CONVERT_COUPLE_AND_ONE_END(...) \
-	if (interpreter) { \
+#define CONVERT_FOUR(klas1,klas2,klas3,klas4)  \
+	FIND_FOUR (klas1, klas2, klas3, klas4)
+#define CONVERT_FOUR_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
-#define CONVERT_THREE_END(...) \
-	if (interpreter) { \
+#define CONVERT_LIST(klas)  \
+	FIND_LIST (klas)
+#define CONVERT_LIST_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_FOUR(klas1,klas2,klas3,klas4)  FIND_FOUR (klas1, klas2, klas3, klas4)
-#define CONVERT_FOUR_END(...) \
-	if (interpreter) { \
+#define CONVERT_TYPED_LIST(klas,listClass)  \
+	FIND_TYPED_LIST (klas,listClass)
+#define CONVERT_TYPED_LIST_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_LIST(klas)  FIND_LIST (klas)
-#define CONVERT_LIST_END(...) \
-	if (interpreter) { \
+#define CONVERT_ONE_AND_LIST(klas1,klas2)  \
+	FIND_ONE_AND_LIST (klas1, klas2)
+#define CONVERT_ONE_AND_LIST_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas,listClass)
-#define CONVERT_TYPED_LIST_END(...) \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
-
-#define CONVERT_ONE_AND_LIST(klas1,klas2) FIND_ONE_AND_LIST (klas1, klas2)
-#define CONVERT_ONE_AND_LIST_END(...) \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
-
-#define CONVERT_ONE_AND_TYPED_LIST(klas1,klas2,listClass) FIND_ONE_AND_TYPED_LIST (klas1, klas2, listClass)
+#define CONVERT_ONE_AND_TYPED_LIST(klas1,klas2,listClass)  \
+	FIND_ONE_AND_TYPED_LIST (klas1, klas2, listClass)
 #define CONVERT_ONE_AND_TYPED_LIST_END(...) \
-	if (interpreter) { \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
-#define CONVERT_ONE_AND_GENERIC(klas1,klas2) FIND_ONE_AND_GENERIC(klas1,klas2)
+#define CONVERT_ONE_AND_GENERIC(klas1,klas2)  \
+	FIND_ONE_AND_GENERIC(klas1,klas2)
 #define CONVERT_ONE_AND_GENERIC_END(...) \
-	if (interpreter) { \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} praat_new (result.move(), __VA_ARGS__); END
+	praat_new (result.move(), __VA_ARGS__); \
+	END
 
 #define READ_ONE
 #define READ_ONE_END \
-	if (interpreter) { \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	} \
-	praat_newWithFile (result.move(), file, MelderFile_name (file)); END
+	praat_newWithFile (result.move(), file, MelderFile_name (file)); \
+	END
 
 #define SAVE_ONE(klas)  FIND_ONE (klas)
 #define SAVE_ONE_END  END_NO_NEW_DATA

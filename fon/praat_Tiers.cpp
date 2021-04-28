@@ -1008,9 +1008,11 @@ DO
 }
 
 DIRECT (HINT_PitchTier_Sound_viewAndEdit) {
-	Melder_information (U"To include a copy of a Sound in your PitchTier window:\n"
-		"   select a PitchTier and a Sound, and click \"View & Edit\".");
-END }
+	INFO_NONE
+		Melder_information (U"To include a copy of a Sound in your PitchTier window:\n"
+			"   select a PitchTier and a Sound, and click \"View & Edit\".");
+	INFO_NONE_END
+}
 
 FORM_SAVE (SAVE_PitchTier_writeToPitchTierSpreadsheetFile, U"Save PitchTier as spreadsheet", nullptr, U"PitchTier") {
 	SAVE_ONE (PitchTier)

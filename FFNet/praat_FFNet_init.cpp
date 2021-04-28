@@ -328,14 +328,18 @@ DO
 }
 
 DIRECT (HINT_hint_FFNet_PatternList_classify) {
-	Melder_information (U"You can use the FFNet as a classifier by selecting a\n"
-	"FFNet and a PatternList together and choosing \"To Categories...\".");
-END }
+	INFO_NONE
+		Melder_information (U"You can use the FFNet as a classifier by selecting a\n"
+			"FFNet and a PatternList together and choosing \"To Categories...\".");
+	INFO_NONE_END
+}
 	
 DIRECT (HINT_hint_FFNet_PatternList_Categories_learn) {
-	Melder_information (U"You can teach a FFNet to classify by selecting a\n"
-	"FFNet, a PatternList and a Categories together and choosing \"Learn...\".");
-END }
+	INFO_NONE
+		Melder_information (U"You can teach a FFNet to classify by selecting a\n"
+			"FFNet, a PatternList and a Categories together and choosing \"Learn...\".");
+	INFO_NONE_END
+}
 
 /******************* FFNet && ActivationList ******************************************/
 
