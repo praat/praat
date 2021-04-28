@@ -151,9 +151,6 @@
 #include "praat_TableOfReal.h"
 #include "praat_uvafon.h"
 
-#undef iam
-#define iam iam_LOOP
-
 static const conststring32 QUERY_BUTTON   = U"Query -";
 static const conststring32 DRAW_BUTTON    = U"Draw -";
 static const conststring32 MODIFY_BUTTON  = U"Modify -";
@@ -348,7 +345,7 @@ DIRECT (WINDOW_Categories_edit) {
 		Melder_throw (U"Cannot edit a Categories from batch.");
 	} else {
 		LOOP {
-			iam (Categories);
+			iam_LOOP (Categories);
 			autoCategoriesEditor editor = CategoriesEditor_create (my name.get(), me);
 			praat_installEditor (editor.get(), IOBJECT);
 			editor.releaseToUser();
@@ -1089,7 +1086,7 @@ DO
 DIRECT (INFO_Covariances_reportEquality) {
 	autoCovarianceList covariances = CovarianceList_create ();
 	LOOP {
-		iam (Covariance);
+		iam_LOOP (Covariance);
 		covariances -> addItem_ref (me);
 	}
 	MelderInfo_open ();
@@ -1141,7 +1138,7 @@ DIRECT (NEW1_Covariances_to_CovarianceList) {
 	autoCovarianceList result = CovarianceList_create ();
 	CREATE_ONE
 	LOOP {
-		iam (Covariance);
+		iam_LOOP (Covariance);
 		autoCovariance cov = Data_copy (me);
 		result -> addItem_move (cov.move());
 	}
@@ -1314,7 +1311,7 @@ DIRECT (REAL_Discriminant_getHomegeneityOfCovariances_box) {
 DIRECT (INFO_Discriminant_reportEqualityOfCovarianceMatrices) {
 	MelderInfo_open ();
 	LOOP {
-		iam (Discriminant);
+		iam_LOOP (Discriminant);
 		structCovarianceList list;
 		for (integer i = 1; i <= my groups->size; i ++) {
 			SSCP sscp = my groups->at [i];
@@ -1881,15 +1878,15 @@ FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
 	OK
 DO
 	LOOP {
-		iam (DTW);
+		iam_LOOP (DTW);
 		autoMatrix cp = DTW_to_Matrix_distances (me);
 		try {
 			Matrix_formula (me, formula, interpreter, 0);
 			double minimum, maximum;
 			Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-			if (minimum < 0) {
-				DTW_Matrix_replace (me, cp.get()); // restore original
-				Melder_throw (U"Execution of the formula has made some distance(s) negative which is not allowed.");
+			if (minimum < 0.0) {
+				DTW_Matrix_replace (me, cp.get());   // restore original
+				Melder_throw (U"Execution of the formula would have made some distance(s) negative, which is not allowed.");
 			}
 			praat_dataChanged (me);
 		} catch (MelderError) {
@@ -3550,7 +3547,7 @@ DO
 FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
 	OrderedOf<structSampled> list;
 	LOOP {
-		iam (Sampled);
+		iam_LOOP (Sampled);
 		list. addItem_ref (me);
 	}
 	LongSounds_appendToExistingSoundFile (& list, file);
@@ -4772,12 +4769,10 @@ FORM (MODIFY_Permutation_swapPositions, U"Permutation: Swap positions", U"Permut
 	NATURAL (secondIndex, U"Second index", U"2")
 	OK
 DO
-	LOOP {
-		iam (Permutation);
+	MODIFY_EACH (Permutation)
 		Permutation_swapPositions (me, firstIndex, secondIndex);
-		praat_dataChanged (me);
-	}
-END }
+	MODIFY_EACH_END
+}
 
 FORM (MODIFY_Permutation_swapNumbers, U"Permutation: Swap numbers", U"Permutation: Swap numbers...") {
 	NATURAL (firstNumber, U"First number", U"1")
@@ -5622,7 +5617,7 @@ FORM (PLAY_Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
     OK
 DO
     LOOP {
-        iam (Sound);
+        iam_LOOP (Sound);
 		if (channel > my ny) {
 			Melder_throw (me, U": there is no channel ", channel, U". Sound has only ", my ny, U" channel",
 				  (my ny > 1 ? U"s." : U"."));
@@ -5639,7 +5634,7 @@ FORM (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"
 	OK
 DO
 	LOOP {
-		iam (Sound);
+		iam_LOOP (Sound);
 		Sound_playAsFrequencyShifted (me, frequencyShift, samplingFrequency, samplePrecision);
 	}
 END }
@@ -6300,11 +6295,10 @@ FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"Speech
 DO
 	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
 	LOOP {
-		iam (SpeechSynthesizer);
+		iam_LOOP (SpeechSynthesizer);
 		SpeechSynthesizer_playText (me, text);
 	}
 	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
-
 END }
 
 FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
@@ -6825,8 +6819,7 @@ DO
 }
 
 DIRECT (NEW_SVD_extractLeftSingularVectors) {
-	LOOP {
-		iam (SVD);
+	CONVERT_EACH (SVD)
 		autoTableOfReal result = SVD_extractLeftSingularVectors (me);
 	CONVERT_EACH_END (my name.get(), U"_lsv")
 }

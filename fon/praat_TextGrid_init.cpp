@@ -27,9 +27,6 @@
 #include "praat_TimeTier.h"
 #include "praat_uvafon.h"
 
-#undef iam
-#define iam iam_LOOP
-
 static const conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 static const conststring32 STRING_TIER_NUMBER = U"Tier number";
@@ -732,7 +729,7 @@ DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
 	}
 	Melder_assert (ilongSound != 0);
 	LOOP if (CLASS == classTextGrid) {
-		iam (TextGrid);
+		iam_LOOP (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
@@ -751,7 +748,7 @@ DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
 	}
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
-		iam (TextGrid);
+		iam_LOOP (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, spellingChecker, nullptr);
 		praat_installEditor2 (editor.get(), IOBJECT, ispellingChecker);
 		editor.releaseToUser();
@@ -769,7 +766,7 @@ DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 	}
 	Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
-		iam (TextGrid);
+		iam_LOOP (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, spellingChecker, nullptr);
 		praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
 		editor.releaseToUser();

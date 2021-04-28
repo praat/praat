@@ -123,7 +123,7 @@ void Permutation_swapPositions (Permutation me, integer i1, integer i2) {
 			U"Positions should be within the range [1, ",  my numberOfElements, U"].");
 		std::swap (my p [i1], my p [i2]);
 	} catch (MelderError) {
-		Melder_throw (me, U":positions not swapped.");
+		Melder_throw (me, U": positions not swapped.");
 	}
 }
 

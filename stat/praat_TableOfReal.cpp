@@ -19,9 +19,6 @@
 #include "Matrix.h"
 #include "praat_TableOfReal.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - TABLEOFREAL
 
 // MARK: Help

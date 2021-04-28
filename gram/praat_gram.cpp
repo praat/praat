@@ -27,9 +27,6 @@
 #include "praat_TableOfReal.h"
 #include "praat_TimeFunction.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - NETWORK
 
 // MARK: New
@@ -665,16 +662,10 @@ DIRECT (NEW_OTGrammar_getInputs) {
 }
 
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
-	LOOP try {
-		iam (OTGrammar);
-		autoDistributions thee = OTGrammar_measureTypology_WEAK (me);
-		praat_new (std::move (thee), my name.get(), U"_out");
-		praat_dataChanged (me);
-	} catch (MelderError) {
-		praat_dataChanged (OBJECT);
-		throw;
-	}
-END }
+	CONVERT_EACH_WEAK (OTGrammar)
+		autoDistributions result = OTGrammar_measureTypology_WEAK (me);
+	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+}
 
 // MARK: Evaluate
 
@@ -717,34 +708,20 @@ FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distrib
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (OTGrammar);
-		try {
-			autoDistributions thee = OTGrammar_to_Distribution (me, trialsPerInput, evaluationNoise);
-			praat_new (thee.move(), my name.get(), U"_out");
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-END }
+	CONVERT_EACH_WEAK (OTGrammar)
+		autoDistributions result = OTGrammar_to_Distribution (me, trialsPerInput, evaluationNoise);
+	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+}
 
 FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", nullptr) {
 	NATURAL (trialsPerInput, U"Trials per input", U"100000")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	LOOP try {
-		iam (OTGrammar);
-		autoPairDistribution thee = OTGrammar_to_PairDistribution (me, trialsPerInput, evaluationNoise);
-		praat_new (thee.move(), my name.get(), U"_out");
-		praat_dataChanged (me);
-	} catch (MelderError) {
-		praat_dataChanged (OBJECT);
-		throw;
-	}
-END }
+	CONVERT_EACH_WEAK (OTGrammar)
+		autoPairDistribution result = OTGrammar_to_PairDistribution (me, trialsPerInput, evaluationNoise);
+	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+}
 
 // MARK: Modify ranking
 
@@ -1379,19 +1356,11 @@ FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	LOOP {
-		iam (OTMulti);
-		try {
-			autoDistributions result = OTMulti_to_Distribution (me, partialForm1, partialForm2,
+	CONVERT_EACH_WEAK (OTMulti)
+		autoDistributions result = OTMulti_to_Distribution (me, partialForm1, partialForm2,
 				numberOfTrials, evaluationNoise);
-			praat_new (result.move(), my name.get(), U"_out");
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-END }
+	CONVERT_EACH_WEAK_END (my name.get(), U"_out");
+}
 
 // MARK: Modify ranking
 

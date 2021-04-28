@@ -38,9 +38,6 @@
 
 #include "praat_Sound.h"
 
-#undef iam
-#define iam iam_LOOP
-
 /***** LONGSOUND *****/
 
 DIRECT (INFO_LongSound_concatenate) {
@@ -118,13 +115,13 @@ DO
 	LOOP n ++;
 	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
 		LOOP {
-			iam (LongSound);
+			iam_LOOP (LongSound);
 			LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
 		}
 	} else {
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
 		LOOP {
-			iam (LongSound);
+			iam_LOOP (LongSound);
 			LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
@@ -393,7 +390,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	integer numberOfChannels = 0, nx = 0, iinterval = 0;
 	double dx = 0.0, tmin = 0.0;
 	LOOP {
-		iam (Sound);
+		iam_LOOP (Sound);
 		if (numberOfChannels == 0) {
 			numberOfChannels = my ny;
 		} else if (my ny != numberOfChannels) {
@@ -411,7 +408,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	autoTextGrid him = TextGrid_create (0.0, nx * dx, U"labels", U"");
 	nx = 0;
 	LOOP {
-		iam (Sound);
+		iam_LOOP (Sound);
 		const double tmax = tmin + my nx * dx;
 		thy z.verticalBand (nx + 1, nx + my nx)  <<=  my z.all();
 		iinterval ++;
@@ -691,7 +688,7 @@ DIRECT (WINDOW_Sound_viewAndEdit) {
 
 DIRECT (NEWMANY_Sound_extractAllChannels) {
 	LOOP {
-		iam (Sound);
+		iam_LOOP (Sound);
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			autoSound thee = Sound_extractChannel (me, channel);
 			praat_new (thee.move(), my name.get(), U"_ch", channel);
@@ -1171,13 +1168,13 @@ DIRECT (PLAY_Sound_play) {
 	}
 	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
 		LOOP {
-			iam (Sound);
+			iam_LOOP (Sound);
 			Sound_play (me, nullptr, nullptr);
 		}
 	} else {
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
 		LOOP {
-			iam (Sound);
+			iam_LOOP (Sound);
 			Sound_play (me, nullptr, nullptr);   // BUG: exception-safe?
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
@@ -1611,14 +1608,10 @@ DIRECT (NEW_Sound_downto_Matrix) {
 }
 
 DIRECT (NEW1_Sounds_to_ParamCurve) {
-	Sound s1 = nullptr, s2 = nullptr;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	autoParamCurve thee = ParamCurve_create (s1, s2);
-	praat_new (thee.move(), s1 -> name.get(), U"_", s2 -> name.get());
-END }
+	CONVERT_COUPLE (Sound)
+		autoParamCurve result = ParamCurve_create (me, you);
+	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+}
 
 FORM (NEW_Sound_to_Pitch, U"Sound: To Pitch", U"Sound: To Pitch...") {
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")

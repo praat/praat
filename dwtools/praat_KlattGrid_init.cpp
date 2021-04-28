@@ -27,9 +27,6 @@
 #include "KlattTable.h"
 #include "praat_TimeFunction.h"
 
-#undef iam
-#define iam iam_LOOP
-
 /******************* KlattGrid  *********************************/
 
 #define KlattGrid_4formants_addCommonField(formantType) \
@@ -201,7 +198,7 @@ KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude)
 DIRECT (WINDOW_KlattGrid_edit##Name##FormantGrid) { \
 	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
 	LOOP { \
-		iam (KlattGrid); \
+		iam_LOOP (KlattGrid); \
 		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
 		praat_installEditor (editor.get(), IOBJECT); \
@@ -226,7 +223,7 @@ FORM (WINDOW_KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View & Edi
 DO \
 	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
 	LOOP { \
-		iam (KlattGrid); \
+		iam_LOOP (KlattGrid); \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
@@ -627,11 +624,10 @@ FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", null
 	OK \
 DO \
 	Melder_require (requireCondition, requireMessage); \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid) \
 		KlattGrid_add##Name##Point (me, formantType, formantNumber, time, value); \
-		praat_dataChanged (me); \
-	} \
-END } \
+	MODIFY_EACH_END \
+} \
 FORM (MODIFY_KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " point", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
@@ -639,11 +635,10 @@ FORM (MODIFY_KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " p
 	OK \
 DO \
 	Melder_require (requireCondition, requireMessage); \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid) \
 		KlattGrid_addDelta##Name##Point (me, formantNumber, time, value); \
-		praat_dataChanged (me); \
-	} \
-END } \
+	MODIFY_EACH_END \
+} \
 FORM (MODIFY_KlattGrid_remove##Name##Points, U"Remove " #name " points", nullptr) { \
 	KlattGrid_6formants_addCommonField (formantType) \
 	NATURAL (formantNumber, U"Formant number", U"1") \
@@ -651,22 +646,20 @@ FORM (MODIFY_KlattGrid_remove##Name##Points, U"Remove " #name " points", nullptr
 	REAL (toTime, U"To time (s)", U"0.7") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid) \
 		KlattGrid_remove##Name##Points (me, formantType, formantNumber, fromTime, toTime); \
-		praat_dataChanged (me);\
-	} \
-END } \
+	MODIFY_EACH_END \
+} \
 FORM (MODIFY_KlattGrid_removeDelta##Name##Points, U"Remove delta " #name " points", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (fromTime, U"From time (s)", U"0.3")\
 	REAL (toTime, U"To time (s)", U"0.7") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
+	MODIFY_EACH (KlattGrid) \
 		KlattGrid_removeDelta##Name##Points (me, formantNumber, fromTime, toTime); \
-		praat_dataChanged (me);\
-	} \
-END }
+	MODIFY_EACH_END \
+}
 
 KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, U" (Hz)", U"500.0", (value > 0), U"Frequency should be greater than zero.")
 KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, U" (Hz)", U"50.0", (value > 0), U"Bandwidth should be greater than zero.")
