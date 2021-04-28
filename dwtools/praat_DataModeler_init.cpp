@@ -615,7 +615,7 @@ DO
 	STRING_ONE (FormantModeler)
 		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	STRING_ONE_END (U"")
+	STRING_ONE_END
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
