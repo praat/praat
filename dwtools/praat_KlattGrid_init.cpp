@@ -250,7 +250,7 @@ FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nul
 	OK \
 DO \
 	NUMBER_ONE (KlattGrid) \
-		double result = KlattGrid_get##Name##AtTime (me, time); \
+		const double result = KlattGrid_get##Name##AtTime (me, time); \
 	NUMBER_ONE_END (unit) \
 } \
 FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) { \
@@ -501,10 +501,10 @@ FORM (REAL_KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name 
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
-		Melder_informationReal (KlattGrid_get##FormB##AtTime (me, formantType, formantNumber, time), U" (Hz)"); \
-	} \
-END }
+	NUMBER_ONE (KlattGrid); \
+		const double result = KlattGrid_get##FormB##AtTime (me, formantType, formantNumber, time); \
+	NUMBER_ONE_END (U" Hz"); \
+}
 
 #define KlattGrid_FORMANT_GET_A_VALUE(Name,name,formantType)  \
 FORM (REAL_KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " formant amplitude at time", nullptr) { \
@@ -512,10 +512,10 @@ FORM (REAL_KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
-	Melder_informationReal (KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time), U" (dB)"); \
-	} \
-END }
+	NUMBER_ONE (KlattGrid); \
+		const double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time); \
+	NUMBER_ONE_END (U" dB"); \
+}
 
 #define KlattGrid_FORMANT_GET_FB_VALUES(Name,name,formantType) \
 KlattGrid_FORMANT_GET_FB_VALUE (Name, name, Frequency, frequency, Formant, formantType) \
@@ -538,20 +538,20 @@ KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, kKlattGridFormantType::FRIC
 
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType)  \
 DIRECT (NEW_KlattGrid_extract##Name##FormantGrid) { \
-	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractFormantGrid (me, gridType), KlattGrid_getFormantName (gridType)); \
-	} \
-END }
+	CONVERT_EACH (KlattGrid) \
+		autoFormantGrid result = KlattGrid_extractFormantGrid (me, gridType); \
+	CONVERT_EACH_END (KlattGrid_getFormantName (gridType)) \
+}
 
 #define KlattGrid_EXTRACT_FORMANT_AMPLITUDE(Name,name,formantType)  \
 FORM (NEW_KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " #name " formant amplitude tier", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, formantNumber), KlattGrid_getFormantName (formantType)); \
-	} \
-END }
+	CONVERT_EACH (KlattGrid) \
+		autoIntensityTier result = KlattGrid_extractAmplitudeTier (me, formantType, formantNumber); \
+	CONVERT_EACH_END (KlattGrid_getFormantName (formantType)) \
+}
 
 KlattGrid_EXTRACT_FORMANT_GRID (Oral, kKlattGridFormantType::ORAL)
 KlattGrid_EXTRACT_FORMANT_AMPLITUDE (Oral, oral, kKlattGridFormantType::ORAL)
@@ -606,19 +606,19 @@ FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nul
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
-		Melder_informationReal (KlattGrid_get##Name##AtTime (me, formantType, formantNumber, time), U" (Hz)"); \
-	} \
-END } \
+	NUMBER_ONE (KlattGrid); \
+		const double result = KlattGrid_get##Name##AtTime (me, formantType, formantNumber, time); \
+	NUMBER_ONE_END (U" Hz"); \
+} \
 FORM (REAL_KlattGrid_getDelta##Name##AtTime, U"KlattGrid: Get delta " #name " at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	LOOP { iam (KlattGrid); \
-		Melder_informationReal (KlattGrid_getDelta##Name##AtTime (me, formantNumber, time), U" (Hz)"); \
-	} \
-END } \
+	NUMBER_ONE (KlattGrid); \
+		const double result = KlattGrid_getDelta##Name##AtTime (me, formantNumber, time); \
+	NUMBER_ONE_END (U" Hz"); \
+} \
 FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) { \
 	KlattGrid_6formants_addCommonField (formantType) \
 	NATURAL (formantNumber, U"Formant number", U"1") \
@@ -709,7 +709,7 @@ FORM (REAL_KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nu
 DO
 	NUMBER_ONE (KlattGrid)
 		double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
-	NUMBER_ONE_END (U" dB")
+	NUMBER_ONE_END ( U"dB")
 }
 
 FORM (MODIFY_KlattGrid_addAmplitudePoint, U"KlattGrid: Add amplitude point", nullptr) {

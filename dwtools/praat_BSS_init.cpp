@@ -100,7 +100,6 @@ DO
 	END
 }
 
-
 FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
