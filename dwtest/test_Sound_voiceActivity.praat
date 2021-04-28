@@ -8,7 +8,7 @@ assert numberOfIntervals = 1
 label$ = Get label of interval: 1, 1
 assert label$ = "silent"
 
-sound = Read from file: "Example.wav"
+sound = Read from file: "Example_vorbis_audio.ogg"
 textgrid2 = To TextGrid (voice activity): 0.0, 0.3, 0.1, 70, 6000, -10, -35, 0.1, 0.1, "silent", "sounding"
 numberOfIntervals = Get number of intervals: 1
 assert numberOfIntervals = 1
