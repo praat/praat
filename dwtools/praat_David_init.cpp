@@ -411,7 +411,7 @@ FORM (INTEGER_CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr
 	OK
 DO
 	INTEGER_ONE (CC)
-		integer result = CC_getNumberOfCoefficients (me, frameNumber);
+		const integer result = CC_getNumberOfCoefficients (me, frameNumber);
 	INTEGER_ONE_END (U" (number of coefficients)")
 }
 
@@ -421,8 +421,8 @@ FORM (REAL_CC_getValue, U"CC: Get value", U"CC: Get value...") {
 	OK
 DO
 	NUMBER_ONE (CC)
-		double result = CC_getValue (me, time, index);
-	NUMBER_ONE_END (U" value")
+		const double result = CC_getValue (me, time, index);
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in frame...") {
@@ -431,8 +431,8 @@ FORM (REAL_CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in fra
 	OK
 DO
 	NUMBER_ONE (CC)
-		double result = CC_getValueInFrame (me, frameNumber, index);
-	NUMBER_ONE_END (U" value")
+		const double result = CC_getValueInFrame (me, frameNumber, index);
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 value in frame...") {
@@ -440,8 +440,8 @@ FORM (REAL_CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 valu
 	OK
 DO
 	NUMBER_ONE (CC)
-		double result = CC_getC0ValueInFrame (me, frameNumber);
-	NUMBER_ONE_END (U" value")
+		const double result = CC_getC0ValueInFrame (me, frameNumber);
+	NUMBER_ONE_END (U"")
 }
 
 FORM (GRAPHICS_CC_paint, U"CC: Paint", U"CC: Paint...") {
@@ -532,7 +532,7 @@ FORM (REAL_CCA_getCorrelation, U"CCA: Get canonical correlation coefficient", U"
 	OK
 DO
 	NUMBER_ONE (CCA)
-		double result = CCA_getCorrelationCoefficient (me, coefficientNuber);
+		const double result = CCA_getCorrelationCoefficient (me, coefficientNuber);
 	NUMBER_ONE_END (U"")
 }
 
@@ -545,7 +545,7 @@ FORM (REAL_CCA_getEigenvectorElement, U"CCA: Get eigenvector element", U"Eigen: 
 	OK
 DO
 	NUMBER_ONE (CCA)
-		double result = CCA_getEigenvectorElement (me, xOrY, eigenvectorNumber, elementNumber);
+		const double result = CCA_getEigenvectorElement (me, xOrY, eigenvectorNumber, elementNumber);
 	NUMBER_ONE_END (U"")
 }
 
@@ -744,7 +744,7 @@ FORM (REAL_Confusion_getValue_labels, U"Confusion: Get value", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Confusion)
-		double result = Confusion_getValue (me, stimulus, response);
+		const double result = Confusion_getValue (me, stimulus, response);
 	NUMBER_ONE_END (U" ([\"", stimulus, U"\", \"",  response, U"\"])")
 }
 
@@ -753,7 +753,7 @@ FORM (REAL_Confusion_getResponseSum, U"Confusion: Get response sum", U"Confusion
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
-		double result = TableOfReal_getColumnSumByLabel (me, response);
+		const double result = TableOfReal_getColumnSumByLabel (me, response);
 	NUMBER_ONE_END (U" (response sum)")
 }
 
@@ -977,7 +977,7 @@ FORM (REAL_Covariance_getProbabilityAtPosition, U"Covariance: Get probability at
 	OK
 DO
 	NUMBER_ONE (Covariance)
-		double result = Covariance_getProbabilityAtPosition_string (me, position_string);
+		const double result = Covariance_getProbabilityAtPosition_string (me, position_string);
 	NUMBER_ONE_END (U" (= probability at position ", position_string, U")")
 }
 
@@ -1209,7 +1209,7 @@ FORM (NEW1_Discriminant_TableOfReal_mahalanobis, U"Discriminant & TableOfReal: T
 	OK
 DO
 	CONVERT_TWO (Discriminant, TableOfReal)
-		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
+		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"Your group label \"", groupLabel, U"\" does not exist.");
 		autoTableOfReal result = Discriminant_TableOfReal_mahalanobis (me, you, group, poolCovariances);
 	CONVERT_TWO_END (U"mahalanobis")
@@ -1222,24 +1222,23 @@ DO
 	CONVERT_TWO (Discriminant, TableOfReal)
 		autoTableOfReal result = Discriminant_TableOfReal_mahalanobis_all (me, you, poolCovariances);
 	CONVERT_TWO_END (U"mahalanobis")
-	
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfEigenvalues) {
 	INTEGER_ONE (Discriminant)
-		integer result = my eigen -> numberOfEigenvalues;
+		const integer result = my eigen -> numberOfEigenvalues;
 	INTEGER_ONE_END (U" (number of eigenvalues)")
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfEigenvectors) {
 	INTEGER_ONE (Discriminant)
-		integer result = my eigen -> numberOfEigenvalues;
+		const integer result = my eigen -> numberOfEigenvalues;
 	INTEGER_ONE_END (U" (number of eigenvectors)")
 }
 
 DIRECT (INTEGER_Discriminant_getEigenvectorDimension) {
 	INTEGER_ONE (Discriminant)
-		integer result = my eigen -> dimension;
+		const integer result = my eigen -> dimension;
 	INTEGER_ONE_END (U" (dimension)")
 }
 
@@ -1250,7 +1249,7 @@ DO
 	NUMBER_ONE (Discriminant)
 		Melder_require (eigenvalueNumber <= my eigen -> numberOfEigenvalues, 
 			U"Eigenvalue number should be smaller than ", my eigen -> numberOfEigenvalues + 1);
-		double result = my eigen -> eigenvalues[eigenvalueNumber];
+		const double result = my eigen -> eigenvalues[eigenvalueNumber];
 	NUMBER_ONE_END (U" (eigenvalue [)", eigenvalueNumber, U"])")
 }
 
@@ -1260,7 +1259,7 @@ FORM (REAL_Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalu
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		double result = Eigen_getSumOfEigenvalues (my eigen.get(), fromEigenvalue, toEigenvalue);
+		const double result = Eigen_getSumOfEigenvalues (my eigen.get(), fromEigenvalue, toEigenvalue);
 	NUMBER_ONE_END (U"")
 }
 
@@ -1270,7 +1269,7 @@ FORM (REAL_Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector e
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		double result = Eigen_getEigenvectorElement (my eigen.get(), eigenvectorNumber, elementNumber);
+		const double result = Eigen_getEigenvectorElement (my eigen.get(), eigenvectorNumber, elementNumber);
 	NUMBER_ONE_END (U"")
 }
 
@@ -1280,7 +1279,7 @@ FORM (REAL_Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Di
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		double result = Discriminant_getWilksLambda (me, from);
+		const double result = Discriminant_getWilksLambda (me, from);
 	NUMBER_ONE_END (U" (wilks lambda)")
 }
 
@@ -1290,10 +1289,9 @@ FORM (REAL_Discriminant_getCumulativeContributionOfComponents, U"Discriminant: G
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		double result = Eigen_getCumulativeContributionOfComponents (my eigen.get(), fromComponent, toComponent);
+		const double result = Eigen_getCumulativeContributionOfComponents (my eigen.get(), fromComponent, toComponent);
 	NUMBER_ONE_END (U" (cumulative contribution)")
 }
-
 
 FORM (REAL_Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get partial discrimination probability", U"Discriminant: Get partial discrimination probability...") {
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"1")
@@ -1343,9 +1341,9 @@ FORM (REAL_Discriminant_getSigmaEllipseArea, U"Discriminant: Get concentration e
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
+		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
-		double result = Discriminant_getConcentrationEllipseArea (me, group, numberOfSigmas, false, discriminatPlane, xDimension, yDimension);
+		const double result = Discriminant_getConcentrationEllipseArea (me, group, numberOfSigmas, false, discriminatPlane, xDimension, yDimension);
 	NUMBER_ONE_END (U" (concentration ellipse area)")
 }
 
@@ -1358,9 +1356,9 @@ FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
+		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
-		double result = Discriminant_getConcentrationEllipseArea (me, group, confidenceLevel, true, discriminatPlane, xDimension, yDimension);
+		const double result = Discriminant_getConcentrationEllipseArea (me, group, confidenceLevel, true, discriminatPlane, xDimension, yDimension);
 	NUMBER_ONE_END (U" (confidence ellipse area)")
 }
 
@@ -1369,15 +1367,15 @@ FORM (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant 
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
+		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
-		double result = Discriminant_getLnDeterminant_group (me, group);
+		const double result = Discriminant_getLnDeterminant_group (me, group);
 	NUMBER_ONE_END (U" (ln(determinant) group")
 }
 
 DIRECT (REAL_Discriminant_getLnDeterminant_total) {
 	NUMBER_ONE (Discriminant)
-		double result = Discriminant_getLnDeterminant_total (me);
+		const double result = Discriminant_getLnDeterminant_total (me);
 	NUMBER_ONE_END (U" (ln(determinant) total")
 }
 
@@ -1424,7 +1422,6 @@ DO
 		Eigen_drawEigenvector (my eigen.get(), GRAPHICS, eigenvectorNumber, fromElement, toElement, fromAmplitude, toAmplitude, componentLoadings, markSize_mm, mark_string, connectPoints, nullptr,  garnish);
 	GRAPHICS_EACH_END
 }
-
 
 FORM (GRAPHICS_Discriminant_drawSigmaEllipses, U"Discriminant: Draw sigma ellipses", U"Discriminant: Draw sigma ellipses...") {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
@@ -1547,19 +1544,19 @@ DO
 
 DIRECT (INTEGER_Discriminant_getNumberOfFunctions) {
 	INTEGER_ONE (Discriminant)
-		integer result = Discriminant_getNumberOfFunctions (me);
+		const integer result = Discriminant_getNumberOfFunctions (me);
 	INTEGER_ONE_END (U"")
 }
 
 DIRECT (INTEGER_Discriminant_getDimensionOfFunctions) {
 	INTEGER_ONE (Discriminant)
-		integer result = Eigen_getDimensionOfComponents (my eigen.get());
+		const integer result = Eigen_getDimensionOfComponents (my eigen.get());
 	INTEGER_ONE_END (U"")
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfGroups) {
 	INTEGER_ONE (Discriminant)
-		integer result = Discriminant_getNumberOfGroups (me);
+		const integer result = Discriminant_getNumberOfGroups (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -1568,7 +1565,7 @@ FORM (INTEGER_Discriminant_getNumberOfObservations, U"Discriminant: Get number o
 	OK
 DO
 	INTEGER_ONE (Discriminant)
-		integer result = Discriminant_getNumberOfObservations (me, group);
+		const integer result = Discriminant_getNumberOfObservations (me, group);
 	INTEGER_ONE_END (U"")
 }
 
@@ -1598,7 +1595,7 @@ FORM (NEW1_DTW_Polygon_to_Matrix_cumulativeDistances, U"DTW & Polygon: To Matrix
 DO
     CONVERT_TWO (DTW, Polygon)
 		autoMatrix result = DTW_Polygon_to_Matrix_cumulativeDistances (me, you, slopeConstraint);
-     CONVERT_TWO_END (my name.get(), U"_", slopeConstraint);
+	CONVERT_TWO_END (my name.get(), U"_", slopeConstraint);
 }
 
 FORM (GRAPHICS_DTW_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...") {
@@ -1704,51 +1701,50 @@ DO
 
 DIRECT (REAL_DTW_getStartTime_x) {
 	NUMBER_ONE (DTW)
-		double result = my xmin;
-	NUMBER_ONE_END (U" s (= start time along x)")
+		const double result = my xmin;
+	NUMBER_ONE_END (U" seconds (= start time along x)")
 }
 
 DIRECT (REAL_DTW_getEndTime_x) {
 	NUMBER_ONE (DTW)
-		double result = my xmax;
-	NUMBER_ONE_END (U" s (= end time along x)");
+		const double result = my xmax;
+	NUMBER_ONE_END (U" seconds (= end time along x)");
 }
 
 DIRECT (REAL_DTW_getTotalDuration_x) {
 	NUMBER_ONE (DTW)
-		double result = my xmax - my xmin;
-	NUMBER_ONE_END (U" s (= total duration along x)");
+		const double result = my xmax - my xmin;
+	NUMBER_ONE_END (U" seconds (= total duration along x)");
 }
 
 DIRECT (REAL_DTW_getStartTime_y) {
 	NUMBER_ONE (DTW)
-		double result = my ymin;
-	NUMBER_ONE_END (U" s (= start time along y)");
+		const double result = my ymin;
+	NUMBER_ONE_END (U" seconds (= start time along y)");
 }
 
 DIRECT (REAL_DTW_getEndTime_y) {
 	NUMBER_ONE (DTW)
-		double result = my ymax;
-	NUMBER_ONE_END (U" s (= end time along y)");
+		const double result = my ymax;
+	NUMBER_ONE_END (U" seconds (= end time along y)");
 }
 
 DIRECT (REAL_DTW_getTotalDuration_y) {
 	NUMBER_ONE (DTW)
-		double result = my ymax - my ymin;
-	NUMBER_ONE_END (U" s (= total duration along y)")
+		const double result = my ymax - my ymin;
+	NUMBER_ONE_END (U" seconds (= total duration along y)")
 }
 
 DIRECT (INTEGER_DTW_getNumberOfFrames_x) {
 	INTEGER_ONE (DTW)
-		integer result = my nx;
-	INTEGER_ONE_END (U" (= number of frames along x)")
+		const integer result = my nx;
+	INTEGER_ONE_END (U" frames along x")
 }
-
 
 DIRECT (REAL_DTW_getTimeStep_x) {
 	NUMBER_ONE (DTW)
-		double result = my dx;
-	NUMBER_ONE_END (U" s (= time step along x)")
+		const double result = my dx;
+	NUMBER_ONE_END (U" seconds (= time step along x)")
 }
 
 FORM (REAL_DTW_getTimeFromFrameNumber_x, U"DTW: Get time from frame number (x)", nullptr) {
@@ -1756,8 +1752,8 @@ FORM (REAL_DTW_getTimeFromFrameNumber_x, U"DTW: Get time from frame number (x)",
 	OK
 DO
 	NUMBER_ONE (DTW)
-		double result = Matrix_columnToX (me, frameNumber);
-	NUMBER_ONE_END (U" s (= y time at x frame ", frameNumber, U")")
+		const double result = Matrix_columnToX (me, frameNumber);
+	NUMBER_ONE_END (U" seconds (= y time at x frame ", frameNumber, U")")
 }
 
 FORM (INTEGER_DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x)", nullptr) {
@@ -1766,20 +1762,20 @@ FORM (INTEGER_DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x
 DO
 	INTEGER_ONE (DTW)
 		Melder_require (xTime >= my xmin && xTime <= my xmax, U"Time outside x domain.");
-		integer result = Melder_iround (Matrix_xToColumn (me, xTime));
+		const integer result = Melder_iround (Matrix_xToColumn (me, xTime));
 	INTEGER_ONE_END (U" (= x frame at y time ", xTime, U")")
 }
 
 DIRECT (INTEGER_DTW_getNumberOfFrames_y) {
 	INTEGER_ONE (DTW)
-		integer result = my ny;
+		const integer result = my ny;
 	INTEGER_ONE_END (U" (= number of frames along y)")
 }
 
 DIRECT (REAL_DTW_getTimeStep_y) {
 	NUMBER_ONE (DTW)
-		double result = my dy;
-	NUMBER_ONE_END (U" s (= time step along y)")
+		const double result = my dy;
+	NUMBER_ONE_END (U" seconds (= time step along y)")
 }
 
 
@@ -1788,8 +1784,8 @@ FORM (REAL_DTW_getTimeFromFrameNumber_y, U"DTW: Get time from frame number (y)",
 	OK
 DO
 	NUMBER_ONE (DTW)
-		double result = Matrix_rowToY (me, frameNumber);
-	NUMBER_ONE_END (U" s (= x time at y frame ", frameNumber, U")")
+		const double result = Matrix_rowToY (me, frameNumber);
+	NUMBER_ONE_END (U" seconds (= x time at y frame ", frameNumber, U")")
 }
 
 FORM (INTEGER_DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y)", nullptr) {
@@ -1798,7 +1794,7 @@ FORM (INTEGER_DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y
 DO
 	INTEGER_ONE (DTW)
 		Melder_require (yTime >= my ymin && yTime <= my ymax, U"Time outside y domain.");
-		integer result = Melder_iround (Matrix_yToRow (me, yTime));
+		const integer result = Melder_iround (Matrix_yToRow (me, yTime));
 	INTEGER_ONE_END (U" (= y frame at x time ", yTime, U")")
 }
 
@@ -1807,7 +1803,7 @@ FORM (REAL_DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path
 	OK
 DO
 	NUMBER_ONE (DTW)
-		double result = DTW_getYTimeFromXTime (me, xTime);
+		const double result = DTW_getYTimeFromXTime (me, xTime);
 	NUMBER_ONE_END (U"")
 }
 
@@ -1816,8 +1812,8 @@ FORM (REAL_DTW_getYTimeFromXTime, U"DTW: Get y time from x time", U"DTW: Get y t
 	OK
 DO
 	NUMBER_ONE (DTW)
-		double result = DTW_getYTimeFromXTime (me, xTime);
-	NUMBER_ONE_END (U" s (= y time at x time ", xTime, U")")
+		const double result = DTW_getYTimeFromXTime (me, xTime);
+	NUMBER_ONE_END (U" seconds (= y time at x time ", xTime, U")")
 }
 
 FORM (REAL_DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x time from y time...") {
@@ -1825,8 +1821,8 @@ FORM (REAL_DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x t
 	OK
 DO
 	NUMBER_ONE (DTW)
-		double result = DTW_getXTimeFromYTime (me, yTime);
-	NUMBER_ONE_END (U" s (= x time at y time ", yTime, U")")
+		const double result = DTW_getXTimeFromYTime (me, yTime);
+	NUMBER_ONE_END (U" seconds (= x time at y time ", yTime, U")")
 }
 
 FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {

@@ -327,7 +327,7 @@ DO
 		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, nullptr, & result);
 		double f = 1.0 / result;
-	NUMBER_ONE_END (U" s (f =", f, U" Hz)")
+	NUMBER_ONE_END (U" seconds (f = ", f, U" Hz)")
 }
 
 FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration", nullptr) {
@@ -498,13 +498,13 @@ DO
 DIRECT (REAL_PowerCepstrogram_getStartQuefrency) {
 	NUMBER_ONE (PowerCepstrogram)
 		const double result = my ymin;
-	NUMBER_ONE_END (U" (s)")
+	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
 	NUMBER_ONE (PowerCepstrogram)
 		const double result = my ymax;
-	NUMBER_ONE_END (U" (s)")
+	NUMBER_ONE_END (U" seconds")
 }
 
 DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
@@ -516,7 +516,7 @@ DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
 DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
 	NUMBER_ONE (PowerCepstrogram)
 		const double result = my dy;
-	NUMBER_ONE_END (U" s (quefrency step)")
+	NUMBER_ONE_END (U" seconds (quefrency step)")
 }
 
 FORM (NEW_PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", nullptr) {
