@@ -80,7 +80,6 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...) {
 }
 
 integer Thing_listReadableClasses () {
-	Melder_clearInfo ();
 	MelderInfo_open ();
 	for (integer iclass = 1; iclass <= theNumberOfReadableClasses; iclass ++) {
 		ClassInfo klas = theReadableClasses [iclass];

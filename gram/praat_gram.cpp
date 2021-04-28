@@ -439,7 +439,8 @@ DIRECT (HELP_OTGrammar_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_OTGrammar_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot edit from batch.");
 	FIND_ONE_WITH_IOBJECT (OTGrammar)
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -618,12 +619,12 @@ FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", n
 	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
-	FIND_ONE (OTGrammar)
+	INFO_ONE (OTGrammar)
 		integer bestInput, bestOutput;
 		OTGrammar_getInterpretiveParse (me, partialOutput, & bestInput, & bestOutput);
 		Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input.get(),
 			U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output.get());
-	END
+	INFO_ONE_END
 }
 
 FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammatical?", nullptr) {
@@ -690,17 +691,15 @@ DO
 	END
 }
 
-FORM (NEW1_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
+FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
 	NATURAL (trials, U"Trials", U"1000")
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	SENTENCE (inputForm, U"Input form", U"")
 	OK
 DO
-	FIND_ONE (OTGrammar)
-		autoStrings thee = OTGrammar_inputToOutputs (me, inputForm, trials, evaluationNoise);
-		praat_new (thee.move(), my name.get(), U"_out");
-		praat_dataChanged (me);
-	END
+	CONVERT_EACH_WEAK (OTGrammar)
+		autoStrings result = OTGrammar_inputToOutputs (me, inputForm, trials, evaluationNoise);
+	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
@@ -1150,9 +1149,9 @@ DO
 }
 
 DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
-	FIND_TWO (OTGrammar, PairDistribution)
+	INFO_TWO (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_listObligatoryRankings (me, you);
-	END
+	INFO_TWO_END
 }
 
 // MARK: - OTMULTI
@@ -1211,7 +1210,8 @@ DO
 // MARK: View & Edit
 
 DIRECT (WINDOW_OTMulti_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit an OTMulti from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot edit an OTMulti from batch.");
 	FIND_ONE_WITH_IOBJECT (OTMulti)
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -1487,14 +1487,12 @@ DO
 // MARK: OTMULTI & STRINGS
 
 FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
-	REAL (evaluationNoide, U"Evaluation noise", U"2.0")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	FIND_TWO (OTMulti, Strings)
-		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoide);
-		praat_new (result.move(), my name.get(), U"_out");
-		praat_dataChanged (me);
-	END
+	CONVERT_TWO_FIRST_WEAK (OTMulti, Strings)
+		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoise);
+	CONVERT_TWO_FIRST_WEAK_END (my name.get(), U"_out")
 }
 
 // MARK: - NET
@@ -1766,7 +1764,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction1 (classOTGrammar, 0, U"Evaluate", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Evaluate...", nullptr, 0, MODIFY_OTGrammar_evaluate);
 		praat_addAction1 (classOTGrammar, 0, U"Input to output...", nullptr, 0, STRING_MODIFY_OTGrammar_inputToOutput);
-		praat_addAction1 (classOTGrammar, 0, U"Input to outputs...", nullptr, 0, NEW1_MODIFY_OTGrammar_inputToOutputs);
+		praat_addAction1 (classOTGrammar, 0, U"Input to outputs...", nullptr, 0, NEW_MODIFY_OTGrammar_inputToOutputs);
 		praat_addAction1 (classOTGrammar, 0, U"To output Distributions...", nullptr, 0, NEW_MODIFY_OTGrammar_to_Distributions);
 		praat_addAction1 (classOTGrammar, 0, U"To PairDistribution...", nullptr, 0, NEW_MODIFY_OTGrammar_to_PairDistribution);
 	praat_addAction1 (classOTGrammar, 0, U"Modify ranking -", nullptr, 0, nullptr);

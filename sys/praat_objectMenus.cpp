@@ -69,19 +69,22 @@ DO
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot copy.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot copy more than one object at a time.");
-	
+	if (interpreter)
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_;
 	WHERE (SELECTED) {
 		praat_new (Data_copy ((Daata) OBJECT), newName);
 	}
 END }
 
 DIRECT (INFO_Info) {
-	if (theCurrentPraatObjects -> totalSelection == 0)
-		Melder_throw (U"Selection changed!\nNo object selected. Cannot query.");
-	if (theCurrentPraatObjects -> totalSelection > 1)
-		Melder_throw (U"Selection changed!\nCannot query more than one object at a time.");
-	WHERE (SELECTED) Thing_infoWithIdAndFile (OBJECT, ID, & theCurrentPraatObjects -> list [IOBJECT]. file);
-END }
+	INFO_NONE
+		if (theCurrentPraatObjects -> totalSelection == 0)
+			Melder_throw (U"Selection changed!\nNo object selected. Cannot query.");
+		if (theCurrentPraatObjects -> totalSelection > 1)
+			Melder_throw (U"Selection changed!\nCannot query more than one object at a time.");
+		WHERE (SELECTED) Thing_infoWithIdAndFile (OBJECT, ID, & theCurrentPraatObjects -> list [IOBJECT]. file);
+	INFO_NONE_END
+}
 
 DIRECT (WINDOW_Inspect) {
 	if (theCurrentPraatObjects -> totalSelection == 0)
@@ -261,26 +264,28 @@ FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"For details, click Help.")
 	OK
 DO
-	Formula_Result result;
-	if (! interpreter) {
-		autoInterpreter tempInterpreter = Interpreter_create (nullptr, nullptr);
-		Interpreter_anyExpression (tempInterpreter.get(), expression, & result);
-	} else {
-		Interpreter_anyExpression (interpreter, expression, & result);
-	}
-	switch (result. expressionType) {
-		case kFormula_EXPRESSION_TYPE_NUMERIC:
-			Melder_information (result. numericResult);
-		break; case kFormula_EXPRESSION_TYPE_STRING:
-			Melder_information (result. stringResult.get());
-		break; case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR:
-			Melder_information (constVECVU (result. numericVectorResult));
-		break; case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX:
-			Melder_information (constMATVU (result. numericMatrixResult));
-		break; case kFormula_EXPRESSION_TYPE_STRING_ARRAY:
-			Melder_information (result. stringArrayResult);
-	}
-END }
+	INFO_NONE
+		Formula_Result result;
+		if (! interpreter) {
+			autoInterpreter tempInterpreter = Interpreter_create (nullptr, nullptr);
+			Interpreter_anyExpression (tempInterpreter.get(), expression, & result);
+		} else {
+			Interpreter_anyExpression (interpreter, expression, & result);
+		}
+		switch (result. expressionType) {
+			case kFormula_EXPRESSION_TYPE_NUMERIC:
+				Melder_information (result. numericResult);
+			break; case kFormula_EXPRESSION_TYPE_STRING:
+				Melder_information (result. stringResult.get());
+			break; case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR:
+				Melder_information (constVECVU (result. numericVectorResult));
+			break; case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX:
+				Melder_information (constMATVU (result. numericMatrixResult));
+			break; case kFormula_EXPRESSION_TYPE_STRING_ARRAY:
+				Melder_information (result. stringArrayResult);
+		}
+	INFO_NONE_END
+}
 
 FORM (INFO_reportDifferenceOfTwoProportions, U"Report difference of two proportions", U"Difference of two proportions") {
 	INTEGER (a_int, U"left Row 1", U"71")
@@ -289,44 +294,46 @@ FORM (INFO_reportDifferenceOfTwoProportions, U"Report difference of two proporti
 	INTEGER (d_int, U"right Row 2", U"27")
 	OK
 DO
-	double a = a_int, b = b_int, c = c_int, d = d_int;
-	double n = a + b + c + d;
-	if (a < 0 || b < 0 || c < 0 || d < 0)
-		Melder_throw (U"The numbers should not be negative.");
-	if (a + b <= 0 || c + d <= 0)
-		Melder_throw (U"The row totals should be positive.");
-	if (a + c <= 0 || b + d <= 0)
-		Melder_throw (U"The column totals should be positive.");
-	MelderInfo_open ();
-	MelderInfo_writeLine (U"Observed row 1 =    ", Melder_iround (a), U"    ", Melder_iround (b));
-	MelderInfo_writeLine (U"Observed row 2 =    ", Melder_iround (c), U"    ", Melder_iround (d));
-	double aexp = (a + b) * (a + c) / n;
-	double bexp = (a + b) * (b + d) / n;
-	double cexp = (a + c) * (c + d) / n;
-	double dexp = (b + d) * (c + d) / n;
-	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"Expected row 1 =    ", aexp, U"    ", bexp);
-	MelderInfo_writeLine (U"Expected row 2 =    ", cexp, U"    ", dexp);
-	/*
-		Continuity correction:
-		bring the observed numbers closer to the expected numbers by 0.5 (if possible).
-	*/
-	Melder_moveCloserToBy (& a, aexp, 0.5);
-	Melder_moveCloserToBy (& b, bexp, 0.5);
-	Melder_moveCloserToBy (& c, cexp, 0.5);
-	Melder_moveCloserToBy (& d, dexp, 0.5);
-	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"Corrected observed row 1 =    ", a, U"    ", b);
-	MelderInfo_writeLine (U"Corrected observed row 2 =    ", c, U"    ", d);
-	
-	n = a + b + c + d;
-	double crossDifference = a * d - b * c;
-	double x2 = n * crossDifference * crossDifference / (a + b) / (c + d) / (a + c) / (b + d);
-	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"Chi-square =    ", x2);
-	MelderInfo_writeLine (U"Two-tailed p =    ", NUMchiSquareQ (x2, 1));
-	MelderInfo_close ();
-END }
+	INFO_NONE
+		double a = a_int, b = b_int, c = c_int, d = d_int;
+		double n = a + b + c + d;
+		if (a < 0 || b < 0 || c < 0 || d < 0)
+			Melder_throw (U"The numbers should not be negative.");
+		if (a + b <= 0 || c + d <= 0)
+			Melder_throw (U"The row totals should be positive.");
+		if (a + c <= 0 || b + d <= 0)
+			Melder_throw (U"The column totals should be positive.");
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Observed row 1 =    ", Melder_iround (a), U"    ", Melder_iround (b));
+		MelderInfo_writeLine (U"Observed row 2 =    ", Melder_iround (c), U"    ", Melder_iround (d));
+		double aexp = (a + b) * (a + c) / n;
+		double bexp = (a + b) * (b + d) / n;
+		double cexp = (a + c) * (c + d) / n;
+		double dexp = (b + d) * (c + d) / n;
+		MelderInfo_writeLine (U"");
+		MelderInfo_writeLine (U"Expected row 1 =    ", aexp, U"    ", bexp);
+		MelderInfo_writeLine (U"Expected row 2 =    ", cexp, U"    ", dexp);
+		/*
+			Continuity correction:
+			bring the observed numbers closer to the expected numbers by 0.5 (if possible).
+		*/
+		Melder_moveCloserToBy (& a, aexp, 0.5);
+		Melder_moveCloserToBy (& b, bexp, 0.5);
+		Melder_moveCloserToBy (& c, cexp, 0.5);
+		Melder_moveCloserToBy (& d, dexp, 0.5);
+		MelderInfo_writeLine (U"");
+		MelderInfo_writeLine (U"Corrected observed row 1 =    ", a, U"    ", b);
+		MelderInfo_writeLine (U"Corrected observed row 2 =    ", c, U"    ", d);
+
+		n = a + b + c + d;
+		double crossDifference = a * d - b * c;
+		double x2 = n * crossDifference * crossDifference / (a + b) / (c + d) / (a + c) / (b + d);
+		MelderInfo_writeLine (U"");
+		MelderInfo_writeLine (U"Chi-square =    ", x2);
+		MelderInfo_writeLine (U"Two-tailed p =    ", NUMchiSquareQ (x2, 1));
+		MelderInfo_close ();
+	INFO_NONE_END
+}
 
 /********** Callbacks of the Technical menu. **********/
 
@@ -356,8 +363,10 @@ DO
 END }
 
 DIRECT (INFO_listReadableTypesOfObjects) {
-	Thing_listReadableClasses ();
-END }
+	INFO_NONE
+		Thing_listReadableClasses ();
+	INFO_NONE_END
+}
 
 FORM (INFO_praat_library_createC, U"PraatLib: Create C header or file", nullptr) {
 	BOOLEAN (isInHeader, U"Is in header", true)
@@ -381,28 +390,40 @@ DO
 END }
 
 DIRECT (INFO_reportSystemProperties) {
-	praat_reportSystemProperties ();
-END }
+	INFO_NONE
+		praat_reportSystemProperties ();
+	INFO_NONE_END
+}
 
 DIRECT (INFO_reportGraphicalProperties) {
-	praat_reportGraphicalProperties ();
-END }
+	INFO_NONE
+		praat_reportGraphicalProperties ();
+	INFO_NONE_END
+}
 
 DIRECT (INFO_reportIntegerProperties) {
-	praat_reportIntegerProperties ();
-END }
+	INFO_NONE
+		praat_reportIntegerProperties ();
+	INFO_NONE_END
+}
 
 DIRECT (INFO_reportMemoryUse) {
-	praat_reportMemoryUse ();
-END }
+	INFO_NONE
+		praat_reportMemoryUse ();
+	INFO_NONE_END
+}
 
 DIRECT (INFO_reportTextProperties) {
-	praat_reportTextProperties ();
-END }
+	INFO_NONE
+		praat_reportTextProperties ();
+	INFO_NONE_END
+}
 
 DIRECT (INFO_reportFontProperties) {
-	praat_reportFontProperties ();
-END }
+	INFO_NONE
+		praat_reportFontProperties ();
+	INFO_NONE_END
+}
 
 /********** Callbacks of the Open menu. **********/
 

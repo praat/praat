@@ -53,7 +53,8 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 	}
 }
 DIRECT (WINDOW_EEG_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an EEG from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit an EEG from batch.");
 	FIND_ONE_WITH_IOBJECT (EEG)
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_EEGWindow_publication);
@@ -364,7 +365,8 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 	}
 }
 DIRECT (WINDOW_ERP_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an ERP from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit an ERP from batch.");
 	FIND_ONE_WITH_IOBJECT (ERP)
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ERPWindow_publication);
