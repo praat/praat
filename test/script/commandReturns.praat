@@ -1,8 +1,19 @@
-asserterror The command "Draw inner box" does not return anything. Not assigned to variable "a".
+Create simple Matrix: "xy", 10, 10, "x*y"
+a = Get value in cell: 3, 7
+assert a = 21
+a$ = Get value in cell: 3, 8
+assert a$ = "24 (value in column 8 of row 3)"
+Get value in cell: 9, 8
+assert info$() = "72 (value in column 8 of row 9)" + newline$
+
+asserterror The command "Draw inner box" does not return anything; not assigned to the numeric variable "a".
 a = Draw inner box
 
+a# = Get all values in row: 6
+assert a# = { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60 }
+
 Create Sound from formula: "silence", 1, 0.0, 0.1, 44100, ~ 0.0
-asserterror The command "Play" does not return anything. Not assigned to variable "a".
+asserterror The command "Play" does not return anything; not assigned to the numeric variable "a".
 a = Play
 
 selectObject: "Sound silence"
@@ -15,15 +26,15 @@ writeInfo: a$
 assert a$ = "0 Pascal"   ; 'a$'
 
 selectObject: "Sound silence"
-asserterror The command "Get value at time..." returns a number or a string. Not assigned to the vector variable "a#".
+asserterror The command "Get value at time:" returns a number or a string; not assigned to the vector variable "a#".
 a# = Get value at time: 1, 0.05, "nearest"
 
 selectObject: "Sound silence"
-asserterror The command "Get value at time..." returns a number or a string. Not assigned to the matrix variable "a##".
+asserterror The command "Get value at time:" returns a number or a string; not assigned to the matrix variable "a##".
 a## = Get value at time: 1, 0.05, "nearest"
 
 selectObject: "Sound silence"
-asserterror The command "Get value at time..." returns a number or a string. Not assigned to the string array variable "a$#".
+asserterror The command "Get value at time:" returns a number or a string; not assigned to the string array variable "a$#".
 a$# = Get value at time: 1, 0.05, "nearest"
 
 #
@@ -31,12 +42,12 @@ a$# = Get value at time: 1, 0.05, "nearest"
 # to check that the return type is reset to void by "Draw inner box" and "Play".
 #
 sound = Create Sound from formula: "silence2", 1, 0.0, 0.1, 44100, ~ 0.0   ; this sets the return type to OBJECT_
-asserterror The command "Draw inner box" does not return anything. Not assigned to variable "a".
+asserterror The command "Draw inner box" does not return anything; not assigned to the numeric variable "a".
 a = Draw inner box
-Return
+Remove
 ;
 sound = Create Sound from formula: "silence2", 1, 0.0, 0.1, 44100, ~ 0.0   ; this sets the return type to OBJECT_
-asserterror The command "Play" does not return anything. Not assigned to variable "a".
+asserterror The command "Play" does not return anything; not assigned to the numeric variable "a".
 a = Play
 Remove
 
@@ -49,4 +60,8 @@ asserterror The command "Draw inner box" does not return anything; not assigned 
 a# = Draw inner box
 Remove
 
+strings1 = Create Strings from tokens: "tokens1", "there are seven tokens in this text", " "
+strings2 = Copy: "tokens2"
+selectObject: strings1, strings2
+equal = Equal?
 

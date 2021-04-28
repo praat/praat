@@ -457,7 +457,7 @@ DO
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
 
-static void common_Sound_create (conststring32 name, integer numberOfChannels, double startTime, double endTime,
+static autoSound common_Sound_create (conststring32 name, integer numberOfChannels, double startTime, double endTime,
 	double samplingFrequency, conststring32 formula, Interpreter interpreter)
 {
 	const double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
@@ -510,8 +510,7 @@ static void common_Sound_create (conststring32 name, integer numberOfChannels, d
 		}
 	}
 	Matrix_formula (sound.get(), formula, interpreter, nullptr);
-	praat_new (sound.move(), name);
-	//praat_updateSelection ();
+	return sound;
 }
 
 FORM (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") {
@@ -522,8 +521,10 @@ FORM (NEW1_Sound_create, U"Create mono Sound", U"Create Sound from formula...") 
 	FORMULA (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
-	common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
-END }
+	CREATE_ONE
+		autoSound result = common_Sound_create (name, 1, startTime, endTime, samplingFrequency, formula, interpreter);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound from formula...") {
 	WORD (name, U"Name", U"sineWithNoise")
@@ -534,8 +535,10 @@ FORM (NEW1_Sound_createFromFormula, U"Create Sound from formula", U"Create Sound
 	FORMULA (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
-	common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
-END }
+	CREATE_ONE
+		autoSound result = common_Sound_create (name, numberOfChannels, startTime, endTime, samplingFrequency, formula, interpreter);
+	CREATE_ONE_END (name)
+}
 
 FORM (NEW1_Sound_createAsPureTone, U"Create Sound as pure tone", U"Create Sound as pure tone...") {
 	WORD (name, U"Name", U"tone")

@@ -72,6 +72,8 @@ DO
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot copy.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot copy more than one object at a time.");
+	if (interpreter)
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_;
 	WHERE (SELECTED) {
 		praat_new (Data_copy ((Daata) OBJECT), newName);
 	}
@@ -435,6 +437,8 @@ static void readFromFile (MelderFile file) {
 
 FORM_READ (READMANY_Data_readFromFile, U"Read Object(s) from file", 0, true) {
 	readFromFile (file);
+	if (interpreter)
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_;
 	praat_updateSelection ();
 END }
 
