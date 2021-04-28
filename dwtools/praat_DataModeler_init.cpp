@@ -25,9 +25,6 @@
 #include "Table_extensions.h"
 #include "TextGrid.h"
 
-#undef iam
-#define iam iam_LOOP
-
 /* DataModeler */
 
 FORM (NEW1_DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
@@ -388,7 +385,7 @@ FORM (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U
 DO
 	OrderedOf<structFormant> formants;
 	LOOP {
-		iam (Formant);
+		iam_LOOP (Formant);
 		formants. addItem_ref (me);
 	}
 	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighFormants, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
@@ -428,7 +425,7 @@ FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smooth
 DO
 	OrderedOf<structFormant> formants;
 	LOOP {
-		iam (Formant);
+		iam_LOOP (Formant);
 		formants. addItem_ref (me);
 	}
 	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighFormants, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);

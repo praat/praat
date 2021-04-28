@@ -76,9 +76,6 @@
 #include "praat_ExperimentMFC.h"
 #include "praat_uvafon.h"
 
-#undef iam
-#define iam iam_LOOP
-
 static const conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 
@@ -647,12 +644,10 @@ FORM (GRAPHICS_Harmonicity_draw, U"Draw harmonicity", nullptr) {
 	REAL (maximum, U"Maximum", U"0.0 (= auto)")
 	OK
 DO
-	LOOP {
-		iam (Harmonicity);
-		autoPraatPicture picture;
+	GRAPHICS_EACH (Harmonicity);
 		Matrix_drawRows (me, GRAPHICS, fromTime, toTime, 0.0, 0.0, minimum, maximum);
-	}
-END }
+	GRAPHICS_EACH_END
+}
 
 // MARK: Query
 
@@ -2865,7 +2860,7 @@ DO
 
 DIRECT (NEWTIMES2_Transition_eigen) {
 	LOOP {
-		iam (Transition);
+		iam_LOOP (Transition);
 		autoMatrix vectors, values;
 		Transition_eigen (me, & vectors, & values);
 		praat_new (vectors.move(), U"eigenvectors");

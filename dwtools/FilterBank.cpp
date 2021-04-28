@@ -336,13 +336,11 @@ autoMelFilter MelFilter_create (double tmin, double tmax, integer nt, double dt,
 }
 
 /*
-void FilterBank_drawFilters (I, Graphics g, integer fromf, integer tof,
+void FilterBank_drawFilters (FilterBank me, Graphics g, integer fromf, integer tof,
 	double xmin, double xmax, int xlinear, double ymin, double ymax, int ydb,
 	double (*tolinf)(double f), double (*tononlin) (double f),
 	double (*filteramp)(double f0, double b, double f))
 {
-	iam (Matrix);
-
 
 }*/
 
