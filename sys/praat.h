@@ -664,6 +664,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
+#define FIND_ONE_AND_GENERIC(klas1,klas2) \
+	klas1 me = nullptr; klas2 you = nullptr; \
+	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; \
+	else if (Thing_isSubclass (CLASS, class##klas2)) { you = (klas2) OBJECT; } } \
+	Melder_assert (me && you);
+
 #define FIND_THREE(klas1,klas2,klas3)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
@@ -923,6 +929,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define CONVERT_ONE_AND_TYPED_LIST(klas1,klas2,listClass) FIND_ONE_AND_TYPED_LIST (klas1, klas2, listClass)
 #define CONVERT_ONE_AND_TYPED_LIST_END(...) \
+	if (interpreter) { \
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+	} praat_new (result.move(), __VA_ARGS__); END
+
+#define CONVERT_ONE_AND_GENERIC(klas1,klas2) FIND_ONE_AND_GENERIC(klas1,klas2)
+#define CONVERT_ONE_AND_GENERIC_END(...) \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	} praat_new (result.move(), __VA_ARGS__); END

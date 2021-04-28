@@ -178,16 +178,6 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 #undef INCLUDE_DTW_SLOPES
 
-#define FIND_ONE_AND_GENERIC(klas1,klas2) \
-	klas1 me = nullptr; klas2 you = nullptr; \
-	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; \
-	else if (Thing_isSubclass (CLASS, class##klas2)) { you = (klas2) OBJECT; } } \
-	Melder_assert (me && you);
-
-#define CONVERT_ONE_AND_GENERIC(klas1,klas2) FIND_ONE_AND_GENERIC(klas1,klas2)
-#define CONVERT_ONE_AND_GENERIC_END(...)  praat_new (result.move(), __VA_ARGS__); END
-
-
 /********************** Activation *******************************************/
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
