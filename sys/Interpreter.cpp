@@ -75,6 +75,20 @@ conststring32 kInterpreter_ReturnType_errorMessage (kInterpreter_ReturnType retu
 	switch (returnType) {
 		case kInterpreter_ReturnType::VOID_:
 			return Melder_cat (U"The command \"", command, U"\" does not return anything");
+		case kInterpreter_ReturnType::OBJECT_:
+			return Melder_cat (U"The command \"", command, U"\" returns an object");
+		case kInterpreter_ReturnType::REAL_:
+		case kInterpreter_ReturnType::INTEGER_:
+			return Melder_cat (U"The command \"", command, U"\" returns a number or a string");
+		case kInterpreter_ReturnType::STRING_:
+			return Melder_cat (U"The command \"", command, U"\" returns a string");
+		case kInterpreter_ReturnType::REALVECTOR_:
+		case kInterpreter_ReturnType::INTEGERVECTOR_:
+			return Melder_cat (U"The command \"", command, U"\" returns a vector");
+		case kInterpreter_ReturnType::REALMATRIX_:
+			return Melder_cat (U"The command \"", command, U"\" returns a matrix");
+		case kInterpreter_ReturnType::STRINGARRAY_:
+			return Melder_cat (U"The command \"", command, U"\" returns a string array");
 		default:
 			return Melder_cat (U"The command \"", command, U"\" has an unknown return type");
 	}
@@ -2806,7 +2820,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							int status = praat_executeCommand (me, p);
 							if (status == 0) {
 								value = undefined;
-							} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
+							} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
 								int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
 								WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
 								if (numberOfSelectedObjects > 1) {
@@ -2816,6 +2830,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								} else {
 									value = theCurrentPraatObjects -> list [selectedObject]. id;
 								}
+							} else if (my returnType != kInterpreter_ReturnType::REAL_) {
+								Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the numeric variable \"", variableName, U"\".");
 							} else {
 								value = Melder_atof (valueString.string);   // including --undefined--
 							}
@@ -2861,7 +2877,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					}
 				} // endif fail
 				if (assertErrorLineNumber != 0 && assertErrorLineNumber != lineNumber) {
-					integer save_assertErrorLineNumber = assertErrorLineNumber;
+					const integer save_assertErrorLineNumber = assertErrorLineNumber;
 					assertErrorLineNumber = 0;
 					Melder_throw (U"Script assertion fails in line ", save_assertErrorLineNumber,
 							U": error « ", assertErrorString.string, U" » not raised. Instead: no error.");
@@ -2895,7 +2911,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		my stopped = false;
 	} catch (MelderError) {
 		if (lineNumber > 0) {
-			bool normalExplicitExit = str32nequ (lines [lineNumber], U"exit ", 5) || Melder_hasError (U"Script exited.");
+			const bool normalExplicitExit = str32nequ (lines [lineNumber], U"exit ", 5) || Melder_hasError (U"Script exited.");
 			if (! normalExplicitExit && ! assertionFailed) {   // don't show the message twice!
 				while (lines [lineNumber] [0] == U'\0') {   // did this use to be a continuation line?
 					lineNumber --;

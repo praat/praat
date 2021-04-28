@@ -178,16 +178,6 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 #undef INCLUDE_DTW_SLOPES
 
-#define FIND_ONE_AND_GENERIC(klas1,klas2) \
-	klas1 me = nullptr; klas2 you = nullptr; \
-	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; \
-	else if (Thing_isSubclass (CLASS, class##klas2)) { you = (klas2) OBJECT; } } \
-	Melder_assert (me && you);
-
-#define CONVERT_ONE_AND_GENERIC(klas1,klas2) FIND_ONE_AND_GENERIC(klas1,klas2)
-#define CONVERT_ONE_AND_GENERIC_END(...)  praat_new (result.move(), __VA_ARGS__); END
-
-
 /********************** Activation *******************************************/
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
@@ -5355,7 +5345,7 @@ DO
 
 DIRECT (INTEGER_Roots_getNumberOfRoots) {
 	INTEGER_ONE (Roots)
-		integer result = Roots_getNumberOfRoots (me);
+		const integer result = Roots_getNumberOfRoots (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -5363,9 +5353,9 @@ FORM (COMPLEX_Roots_getRoot, U"Roots: Get root", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
-	NUMBER_ONE (Roots)
-		dcomplex result = Roots_getRoot (me, rootNumber);
-	NUMBER_ONE_END (U"")
+	COMPLEX_ONE (Roots)
+		const dcomplex result = Roots_getRoot (me, rootNumber);
+	COMPLEX_ONE_END (U"")
 }
 
 FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
@@ -5374,7 +5364,7 @@ FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
 DO
 	NUMBER_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
-		double result = z.real();
+		const double result = z.real();
 	NUMBER_ONE_END (U"")
 }
 
@@ -5384,7 +5374,7 @@ FORM (REAL_Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", nullptr) 
 DO
 	NUMBER_ONE (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
-		double result = z.imag();
+		const double result = z.imag();
 	NUMBER_ONE_END (U" i")
 }
 

@@ -108,7 +108,7 @@ FORM (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", n
 	OK
 DO
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getParameterValue (me, parameterNumber);
+		const double result = DataModeler_getParameterValue (me, parameterNumber);
 	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"])")
 }
 
@@ -134,7 +134,7 @@ FORM (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get paramet
 	OK
 DO
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getParameterStandardDeviation (me, parameterNumber);
+		const double result = DataModeler_getParameterStandardDeviation (me, parameterNumber);
 	NUMBER_ONE_END (U" (= parameter[", parameterNumber, U"])")
 }
 
@@ -145,19 +145,19 @@ FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of p
 DO
 	integer nofp;
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getVarianceOfParameters (me, fromParameter, toParameter, &nofp);
+		const double result = DataModeler_getVarianceOfParameters (me, fromParameter, toParameter, &nofp);
 	NUMBER_ONE_END (U" (for ", nofp, U" free parameters)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfDataPoints) {
 	INTEGER_ONE (DataModeler)
-		integer result = my numberOfDataPoints;
+		const integer result = my numberOfDataPoints;
 	INTEGER_ONE_END (U" (= number of data points)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfInvalidDataPoints) {
 	INTEGER_ONE (DataModeler)
-		integer result = DataModeler_getNumberOfInvalidDataPoints (me);
+		const integer result = DataModeler_getNumberOfInvalidDataPoints (me);
 	INTEGER_ONE_END (U" (= number of invalid data points)")
 }
 
@@ -166,22 +166,20 @@ FORM (REAL_DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", n
 	OK
 DO
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getModelValueAtX (me, x);
+		const double result = DataModeler_getModelValueAtX (me, x);
 	NUMBER_ONE_END (U"")
 }
-
-
 
 DIRECT (REAL_DataModeler_getResidualSumOfSquares) {
 	NUMBER_ONE (DataModeler)
 		integer n;
-		double result = DataModeler_getResidualSumOfSquares (me, &n);
+		const double result = DataModeler_getResidualSumOfSquares (me, & n);
 	NUMBER_ONE_END (U"  (for ", n, U" datapoints)")
 }
 
 DIRECT (REAL_DataModeler_getDataStandardDeviation) {
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getDataStandardDeviation (me);
+		const double result = DataModeler_getDataStandardDeviation (me);
 	NUMBER_ONE_END (U"")
 }
 
@@ -190,7 +188,7 @@ FORM (REAL_DataModeler_getDataPointXValue, U"DataModeler: Get data point x value
 	OK
 DO
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getDataPointXValue (me, index);
+		const double result = DataModeler_getDataPointXValue (me, index);
 	NUMBER_ONE_END (U" (= value at point ", index, U")")
 }
 
@@ -199,7 +197,7 @@ FORM (REAL_DataModeler_getDataPointYValue, U"DataModeler: Get data point y value
 	OK
 DO
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getDataPointYValue (me, index);
+		const double result = DataModeler_getDataPointYValue (me, index);
 	NUMBER_ONE_END (U" (= value at point ", index, U")")
 }
 
@@ -208,7 +206,7 @@ FORM (REAL_DataModeler_getDataPointYSigma, U"DataModeler: Get data point y sigma
 	OK
 DO
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getDataPointYSigma (me, index);
+		const double result = DataModeler_getDataPointYSigma (me, index);
 	NUMBER_ONE_END (U" (= sigma at point ", index, U")")
 }
 
@@ -224,10 +222,9 @@ DO
 
 DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr);
+		const double result = DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr);
 	NUMBER_ONE_END (U" (= R^2)");
 }
-
 
 DIRECT (INFO_DataModeler_reportChiSquared) {
 	INFO_ONE (DataModeler)
@@ -239,10 +236,9 @@ DIRECT (INFO_DataModeler_reportChiSquared) {
 
 DIRECT (REAL_DataModeler_getDegreesOfFreedom) {
 	NUMBER_ONE (DataModeler)
-		double result = DataModeler_getDegreesOfFreedom (me);
+		const double result = DataModeler_getDegreesOfFreedom (me);
 	NUMBER_ONE_END (U" (= degrees of freedom)")
 }
-
 
 FORM (MODIFY_DataModeler_setDataWeighing, U"DataModeler: Set data weighing", nullptr) {
 	OPTIONMENU_ENUM (kDataModelerWeights, weighDataType, U"Weigh data", kDataModelerWeights::DEFAULT)
@@ -407,6 +403,8 @@ DO
 	}
 	Melder_assert (him);
 	autoFormant result = Formant_extractPart (him, fromTime, toTime);
+	if (interpreter)
+		interpreter -> returnType = kInterpreter_ReturnType::REAL_;
 	praat_new (result.move(), his name.get(), U"_part");
 END }
 
@@ -445,6 +443,8 @@ DO
 	}
 	Melder_assert (him);
 	autoFormant result = Formant_extractPart (him, fromTime, toTime);
+	if (interpreter)
+		interpreter -> returnType = kInterpreter_ReturnType::REAL_;
 	praat_new (result.move(), his name.get(), U"_part");
 END }
 
@@ -581,10 +581,9 @@ FORM (REAL_FormantModeler_getModelValueAtTime, U"", nullptr) {
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getModelValueAtTime (me, formantNumber, time);
+		const double result = FormantModeler_getModelValueAtTime (me, formantNumber, time);
 	NUMBER_ONE_END (U"Hertz")
 }
-
 
 FORM (REAL_FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
@@ -592,7 +591,7 @@ FORM (REAL_FormantModeler_getDataPointValue, U"FormantModeler: Get data point va
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getDataPointValue (me, formantNumber, index);
+		const double result = FormantModeler_getDataPointValue (me, formantNumber, index);
 	NUMBER_ONE_END (U" (= value of point ", index, U" in track F", formantNumber, U")")
 }
 
@@ -602,51 +601,48 @@ FORM (REAL_FormantModeler_getDataPointSigma, U"FormantModeler: Get data point si
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getDataPointSigma (me, formantNumber, index);
+		const double result = FormantModeler_getDataPointSigma (me, formantNumber, index);
 	NUMBER_ONE_END (U" (= sigma of point ", index, U" in track F", formantNumber, U")")
 }
-
 
 FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point status", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	INTEGER_ONE (FormantModeler)
+	STRING_ONE (FormantModeler)
 		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	INTEGER_ONE_END (U"")
+	STRING_ONE_END
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
 	INTEGER_ONE (FormantModeler)
-		integer result = FormantModeler_getNumberOfTracks (me);
+		const integer result = FormantModeler_getNumberOfTracks (me);
 	INTEGER_ONE_END (U" (= number of formants)")
 }
-
 
 FORM (INTEGER_FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		integer result = FormantModeler_getNumberOfParameters (me, formantNumber);
+		const integer result = FormantModeler_getNumberOfParameters (me, formantNumber);
 	INTEGER_ONE_END (U" (= number of parameters for F", formantNumber, U")")
 }
-
 
 FORM (INTEGER_FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		integer result = FormantModeler_getNumberOfFixedParameters (me, formantNumber);
+		const integer result = FormantModeler_getNumberOfFixedParameters (me, formantNumber);
 	INTEGER_ONE_END (U" (= number of fixed parameters for F", formantNumber, U")")
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfDataPoints) {
 	INTEGER_ONE (FormantModeler)
-		integer result = FormantModeler_getNumberOfDataPoints (me);
+		const integer result = FormantModeler_getNumberOfDataPoints (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -655,7 +651,7 @@ FORM (INTEGER_FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		integer result = FormantModeler_getNumberOfInvalidDataPoints (me, formantNumber);
+		const integer result = FormantModeler_getNumberOfInvalidDataPoints (me, formantNumber);
 	INTEGER_ONE_END (U" (= number of invalid data points for F", formantNumber, U")")
 }
 
@@ -665,7 +661,7 @@ FORM (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter val
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getParameterValue (me, formantNumber, parameterNumber);
+		const double result = FormantModeler_getParameterValue (me, formantNumber, parameterNumber);
 	NUMBER_ONE_END (U" (= parameter ", parameterNumber, U" for F", formantNumber, U")")
 }
 
@@ -689,10 +685,9 @@ FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get p
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getParameterStandardDeviation (me, formantNumber, parameterNumber);
+		const double result = FormantModeler_getParameterStandardDeviation (me, formantNumber, parameterNumber);
 	NUMBER_ONE_END (U" (= standard deviation of parameter ", parameterNumber, U" for F", formantNumber, U")")
 }
-
 
 FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
@@ -701,12 +696,11 @@ FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get varianc
 	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
-	integer numberOfFreeParameters;
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, fromParameter, toParameter, & numberOfFreeParameters);
+		integer numberOfFreeParameters;
+		const double result = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, fromParameter, toParameter, & numberOfFreeParameters);
 	NUMBER_ONE_END (U" (for ", numberOfFreeParameters, U" free parameters.)")
 }
-
 
 FORM (REAL_FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
@@ -714,17 +708,16 @@ FORM (REAL_FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get c
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getCoefficientOfDetermination (me, fromFormant, toFormant);
+		const double result = FormantModeler_getCoefficientOfDetermination (me, fromFormant, toFormant);
 	NUMBER_ONE_END (U" (= R^2)");
 }
-
 
 FORM (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residual sum of squares", U"FormantModeler: Get residual sum of squares...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getResidualSumOfSquares (me, formantNumber, nullptr);
+		const double result = FormantModeler_getResidualSumOfSquares (me, formantNumber, nullptr);
 	NUMBER_ONE_END (U" Hz^2,  (= residual sum of squares of F", formantNumber, U")")
 }
 
@@ -733,7 +726,7 @@ FORM (REAL_FormantModeler_getFormantStandardDeviation, U"FormantModeler: Get for
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getStandardDeviation (me, formantNumber);
+		const double result = FormantModeler_getStandardDeviation (me, formantNumber);
 	NUMBER_ONE_END (U" Hz (= standard deviation of F", formantNumber, U")")
 }
 
@@ -750,7 +743,7 @@ FORM (REAL_FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of 
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getDegreesOfFreedom (me, formantNumber);
+		const double result = FormantModeler_getDegreesOfFreedom (me, formantNumber);
 	NUMBER_ONE_END (U" (= degrees of freedom of F", formantNumber, U")")
 }
 
@@ -762,7 +755,7 @@ FORM (REAL_FormantModeler_getStress, U"FormantModeler: Get stress", nullptr) {
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getStress (me, fromFormant, toFormant, order, power);
+		const double result = FormantModeler_getStress (me, fromFormant, toFormant, order, power);
 	NUMBER_ONE_END (U" (= roughness)")
 }
 
@@ -775,7 +768,7 @@ FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getAverageDistanceBetweenTracks (me, track1, track2, typeOfData - 1);
+		const double result = FormantModeler_getAverageDistanceBetweenTracks (me, track1, track2, typeOfData - 1);
 	NUMBER_ONE_END (U" (= average |F", track1, U" - F", track2, U"|)")
 }
 
@@ -788,7 +781,7 @@ FORM (REAL_FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get fo
 	OK
 DO
 	NUMBER_ONE (FormantModeler)
-		double result = FormantModeler_getFormantsConstraintsFactor (me, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
+		const double result = FormantModeler_getFormantsConstraintsFactor (me, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
 	NUMBER_ONE_END (U" (= formants constraints factor)");
 }
 
@@ -919,7 +912,6 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_outliers");
 }
 
-
 DIRECT (WINDOW_OptimalCeilingTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an OptimalCeilingTier from batch.");
 	FIND_TWO_WITH_IOBJECT (OptimalCeilingTier, Sound)   // Sound may be null
@@ -928,7 +920,6 @@ DIRECT (WINDOW_OptimalCeilingTier_edit) {
 		editor.releaseToUser();
 	END
 }
-
 
 /*************************** PitchModeler *************************************/
 /*

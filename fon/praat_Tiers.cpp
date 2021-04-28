@@ -1255,7 +1255,7 @@ FORM (REAL_PointProcess_getTimeFromIndex, U"Get time", 0 /*"PointProcess: Get ti
 	OK
 DO
 	NUMBER_ONE (PointProcess)
-		double result =
+		const double result =
 			pointNumber > my nt ? undefined : my t [pointNumber];
 	NUMBER_ONE_END (U" seconds")
 }
