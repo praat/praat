@@ -612,10 +612,10 @@ FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point s
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	INTEGER_ONE (FormantModeler)
+	STRING_ONE (FormantModeler)
 		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	INTEGER_ONE_END (U"")
+	STRING_ONE_END (U"")
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
