@@ -879,6 +879,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	} praat_new (result.move(), __VA_ARGS__); } END
 
+#define CONVERT_EACH_WEAK(klas)  LOOP { iam_LOOP (klas); try {
+#define CONVERT_EACH_WEAK_END(...) \
+	if (interpreter) { \
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+	} praat_new (result.move(), __VA_ARGS__); praat_dataChanged (me); } \
+	catch (MelderError) { praat_dataChanged (me); throw; } } END
+
 #define CONVERT_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
 #define CONVERT_TWO_END(...) \
 	if (interpreter) { \

@@ -24,9 +24,6 @@
 #include "site.h"
 #include "GraphicsP.h"
 
-#undef iam
-#define iam iam_LOOP
-
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
 /********** Callbacks of the fixed buttons. **********/
@@ -72,8 +69,7 @@ DO
 		Melder_throw (U"Selection changed!\nNo object selected. Cannot copy.");
 	if (theCurrentPraatObjects -> totalSelection > 1)
 		Melder_throw (U"Selection changed!\nCannot copy more than one object at a time.");
-	if (interpreter)
-		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_;
+	
 	WHERE (SELECTED) {
 		praat_new (Data_copy ((Daata) OBJECT), newName);
 	}
@@ -447,7 +443,7 @@ END }
 FORM_SAVE (SAVE_Data_writeToTextFile, U"Save Object(s) as one text file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
-			iam (Daata);
+			iam_LOOP (Daata);
 			Data_writeToTextFile (me, file);
 		}
 	} else {
@@ -459,7 +455,7 @@ END }
 FORM_SAVE (SAVE_Data_writeToShortTextFile, U"Save Object(s) as one short text file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
-			iam (Daata);
+			iam_LOOP (Daata);
 			Data_writeToShortTextFile (me, file);
 		}
 	} else {
@@ -471,7 +467,7 @@ END }
 FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
-			iam (Daata);
+			iam_LOOP (Daata);
 			Data_writeToBinaryFile (me, file);
 		}
 	} else {
@@ -484,19 +480,19 @@ FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr)
 	FOLDER (folder, U"Folder:", U"")
 OK
 	LOOP {
-		iam (ManPages);
+		iam_LOOP (ManPages);
 		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	}
 DO
 	LOOP {
-		iam (ManPages);
+		iam_LOOP (ManPages);
 		ManPages_writeAllToHtmlDir (me, folder);
 	}
 END }
 
 DIRECT (WINDOW_ManPages_view) {
 	LOOP {
-		iam (ManPages);
+		iam_LOOP (ManPages);
 		ManPage firstPage = my pages.at [1];
 		autoManual manual = Manual_create (firstPage -> title.get(), me, false);
 		if (my executable)

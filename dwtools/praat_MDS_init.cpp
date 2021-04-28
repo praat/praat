@@ -52,9 +52,6 @@ static const conststring32 CONFIGURATION_BUTTON = U"To Configuration -";
 
 /* Tests */
 
-#undef iam
-#define iam iam_LOOP
-
 /************************* examples ***************************************/
 
 FORM (NEW1_Dissimilarity_createLetterRExample, U"Create letter R example", U"Create letter R example...") {
@@ -488,7 +485,7 @@ FORM (NEW1_Dissimilarity_Configuration_absolute_mds, U"Dissimilarity & Configura
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Configuration)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_TWO_END (my name.get(), U"_absolute")
 }
@@ -498,7 +495,7 @@ FORM (NEW1_Dissimilarity_Configuration_ratio_mds, U"Dissimilarity & Configuratio
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Configuration)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_TWO_END (my name.get(), U"_ratio")
 }
@@ -508,7 +505,7 @@ FORM (NEW1_Dissimilarity_Configuration_interval_mds, U"Dissimilarity & Configura
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Configuration)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_TWO_END (my name.get(), U"_interval")
 }
@@ -519,7 +516,7 @@ FORM (NEW1_Dissimilarity_Configuration_monotone_mds, U"Dissimilarity & Configura
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Configuration)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, nullptr, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_TWO_END (my name.get(), U"_monotone")
 }
@@ -532,7 +529,7 @@ FORM (NEW1_Dissimilarity_Configuration_ispline_mds, U"Dissimilarity & Configurat
 	OK
 DO
 	CONVERT_TWO (Dissimilarity, Configuration)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, nullptr, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_TWO_END (my name.get(), U"_ispline")
 }
@@ -542,7 +539,7 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_absolute_mds, U"Dissimilarity & Co
 	OK
 DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_THREE_END (my name.get(), U"_w_absolute")
 }
@@ -552,7 +549,7 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_ratio_mds, U"Dissimilarity & Confi
 	OK
 DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_THREE_END (my name.get(), U"_w_ratio")
 }
@@ -562,7 +559,7 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_interval_mds, U"Dissimilarity & Co
 	OK
 DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_THREE_END (my name.get(), U"_w_interval")
 }
@@ -573,7 +570,7 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Co
 	OK
 DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, him, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_THREE_END (my name.get(), U"_sw_monotone")
 }
@@ -586,7 +583,7 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Co
 	OK
 DO
 	CONVERT_THREE (Dissimilarity, Configuration, Weight)
-		bool showProgress = true;
+		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, him, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
 	CONVERT_THREE_END (my name.get(), U"_sw_ispline")
 }
@@ -597,7 +594,7 @@ FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuratio
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressMeasure);
+		const double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressMeasure);
 	NUMBER_TWO_END (U" (stress)")
 }
 

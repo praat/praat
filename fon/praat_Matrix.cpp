@@ -34,9 +34,6 @@
 
 #include "praat_Matrix.h"
 
-#undef iam
-#define iam iam_LOOP
-
 // MARK: - MATRIX
 
 // MARK: New
