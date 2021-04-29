@@ -52,7 +52,7 @@ DO
 			Melder_throw (U"Cannot edit an Art from batch.");
 		for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
 			my art [i] = muscles [i];
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: - ARTWORD
@@ -86,7 +86,7 @@ DIRECT (WINDOW_Artword_viewAndEdit) {
 		autoArtwordEditor editor = ArtwordEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
@@ -196,7 +196,7 @@ DO
 		if (velocity1) praat_new (v1.move(), U"velocity", velocity1);
 		if (velocity2) praat_new (v2.move(), U"velocity", velocity2);
 		if (velocity3) praat_new (v3.move(), U"velocity", velocity3);
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (MOVIE_Artword_Speaker_playMovie) {

@@ -60,7 +60,7 @@ DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_AmplitudeTier_Sound_viewAndEdit) {
@@ -260,7 +260,7 @@ DIRECT (WINDOW_DurationTier_edit) {
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_DurationTier_Sound_edit) {
@@ -392,7 +392,7 @@ DIRECT (WINDOW_FormantGrid_edit) {
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Modify
@@ -624,7 +624,7 @@ DIRECT (WINDOW_IntensityTier_viewAndEdit) {
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_IntensityTier_Sound_viewAndEdit) {
@@ -809,7 +809,7 @@ DIRECT (WINDOW_PitchTier_viewAndEdit) {
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...") {
@@ -1111,7 +1111,7 @@ DIRECT (WINDOW_PointProcess_viewAndEdit) {
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_PointProcess_fill, U"PointProcess: Fill", nullptr) {

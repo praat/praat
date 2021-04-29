@@ -60,7 +60,7 @@ DIRECT (WINDOW_EEG_viewAndEdit) {
 		Editor_setPublicationCallback (editor.get(), cb_EEGWindow_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Query
@@ -372,7 +372,7 @@ DIRECT (WINDOW_ERP_viewAndEdit) {
 		Editor_setPublicationCallback (editor.get(), cb_ERPWindow_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Tabulate

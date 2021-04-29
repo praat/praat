@@ -351,7 +351,7 @@ DIRECT (WINDOW_Categories_edit) {
 			editor.releaseToUser();
 		}
 	}
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (INTEGER_Categories_getNumberOfCategories) {
 	INTEGER_ONE (Categories)
@@ -2202,7 +2202,7 @@ DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot, use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
@@ -2302,7 +2302,7 @@ DO
 DIRECT (MODIFY_Eigens_alignEigenvectors) {
 	FIND_LIST (Eigen)
 		Eigens_alignEigenvectors (& list);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW1_Eigen_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
@@ -3539,37 +3539,36 @@ FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to ex
 		list. addItem_ref (me);
 	}
 	LongSounds_appendToExistingSoundFile (& list, file);
-END }
+END_WITH_NEW_DATA }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFFFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFF, file);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFCFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFC, file);
-	END
+	END_WITH_NEW_DATA
 }
-
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoWAVFile, U"LongSound: Save as WAV file", 0, U"wav") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_WAV, file);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoNeXtSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NEXT_SUN, file);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoNISTFile, U"LongSound: Save as NIST file", 0, U"nist") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NIST, file);
-	END
+	END_WITH_NEW_DATA
 }
 
 /******************* Matrix **************************************************/
@@ -3774,7 +3773,7 @@ DIRECT (NEWTIMES2_Matrix_eigen_complex) {
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...") {
 	NATURAL (numberOfFeatures, U"Number of features", U"2")
@@ -5302,7 +5301,7 @@ DO
 		if (wantRemainder) {
 			praat_new (ar.move(), my name.get(), U"_r");
 		}
-	END
+	END_WITH_NEW_DATA
 }
 
 /********************* Roots ******************************/
@@ -5625,7 +5624,7 @@ DO
         autoSound thee = Sound_extractChannel (me, channel);
         Sound_play (thee.get(), 0, 0);
     }
-END }
+END_WITH_NEW_DATA }
 
 FORM (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
 	REAL (frequencyShift, U"Shift by (Hz)", U"1000.0")
@@ -5637,7 +5636,7 @@ DO
 		iam_LOOP (Sound);
 		Sound_playAsFrequencyShifted (me, frequencyShift, samplingFrequency, samplePrecision);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (REAL_Sound_getNearestLevelCrossing, U"Sound: Get nearest level crossing", U"Sound: Get nearest level crossing...") {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
@@ -6303,7 +6302,7 @@ DO
 		SpeechSynthesizer_playText (me, text);
 	}
 	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
 	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
@@ -8275,7 +8274,7 @@ DIRECT (WINDOW_VowelEditor_create) {
 	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
 	Editor_setPublicationCallback (vowelEditor.get(), cb_publish);
 	vowelEditor.releaseToUser();
-END }
+END_WITH_NEW_DATA }
 
 static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, MelderFile file) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?

@@ -176,7 +176,7 @@ DIRECT (WINDOW_KlattGrid_edit##Name##Tier)  {\
 		auto##KlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
-	END }
+	END_WITH_NEW_DATA }
 
 KlattGrid_INSTALL_TIER_EDITOR (Pitch)
 KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude)
@@ -205,7 +205,7 @@ DIRECT (WINDOW_KlattGrid_edit##Name##FormantGrid) { \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
 	} \
-END }
+END_WITH_NEW_DATA }
 
 KlattGRID_EDIT_FORMANTGRID (Oral, kKlattGridFormantType::ORAL)
 KlattGRID_EDIT_FORMANTGRID (Nasal, kKlattGridFormantType::NASAL)
@@ -233,7 +233,7 @@ DO \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
 	} \
-END }
+END_WITH_NEW_DATA }
 
 KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, kKlattGridFormantType::ORAL)
 KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, kKlattGridFormantType::NASAL)

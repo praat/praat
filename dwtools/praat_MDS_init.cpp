@@ -69,7 +69,7 @@ FORM (NEWMANY_INDSCAL_createCarrollWishExample, U"Create INDSCAL Carroll & Wish 
 	OK
 DO
 	praat_new (INDSCAL_createCarrollWishExample (noiseStandardDeviation), U""); 
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEW1_Configuration_create, U"Create Configuration", U"Create Configuration...") {
 	WORD (name, U"Name", U"uniform")
@@ -944,7 +944,7 @@ DO
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
-	END 
+	END_WITH_NEW_DATA
 }
 
 FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
@@ -965,7 +965,7 @@ DO_ALTERNATIVE (NEWMANY_old_Distances_to_Configuration_indscal)
 		praat_new (configurationResult.move(), U"indscal");
 		if (wantSalience)
 			praat_new (salienceResult.move(), U"indscal");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (GRAPHICS_Distance_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
@@ -996,7 +996,7 @@ DO
 		DistanceList_Configuration_indscal ((DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (REAL_Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...") {
@@ -1043,7 +1043,7 @@ DO
 		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
-	END 
+	END_WITH_NEW_DATA
 }
 
 FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
@@ -1060,7 +1060,7 @@ DO
 		praat_new (configurationResult.move(), U"ytl");
 		if (wantSalienceObject)
 			praat_new (salienceResult.move(), U"ytl");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_Distance_to_Configuration_torsca, U"Distance: To Configuration (torsca)", U"") {

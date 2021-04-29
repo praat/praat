@@ -195,7 +195,7 @@ DO
 		PairDistribution_to_Stringses (me, number, & strings1, & strings2);
 		praat_new (strings1.move(), nameOfFirstStrings);
 		praat_new (strings2.move(), nameOfSecondStrings);
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (NEW_PairDistribution_to_Table) {
@@ -302,7 +302,7 @@ DIRECT (WINDOW_Table_viewAndEdit) {
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Tabulate

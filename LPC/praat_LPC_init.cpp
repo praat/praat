@@ -89,7 +89,7 @@ DIRECT (WINDOW_FormantPath_viewAndEditAlone) {
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_FormantPath_Sound_viewAndEdit) {
@@ -226,7 +226,7 @@ DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (WINDOW_Sound_FormantPath_createFormantPathEditor) {
@@ -237,7 +237,7 @@ DIRECT (WINDOW_Sound_FormantPath_createFormantPathEditor) {
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 /********************** Cepstrum  ****************************************/

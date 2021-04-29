@@ -74,7 +74,7 @@ FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris exa
 DO
 	autoCollection result = FFNet_createIrisExample (numberOfUnits1, numberOfUnits2);
 	praat_new (result.move());
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
 	WORD (name, U"Name", U"4-3")

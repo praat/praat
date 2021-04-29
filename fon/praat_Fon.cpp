@@ -177,7 +177,7 @@ DIRECT (WINDOW_Corpus_edit) {
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: - DISTRIBUTIONS
@@ -1248,7 +1248,7 @@ DIRECT (WINDOW_Manipulation_viewAndEdit) {
 		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (NEW_Manipulation_extractDurationTier) {
@@ -1524,7 +1524,7 @@ DIRECT (WINDOW_Pitch_viewAndEdit) {
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
@@ -2249,7 +2249,7 @@ DIRECT (WINDOW_Spectrogram_view) {
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: - SPECTRUM
@@ -2269,7 +2269,7 @@ DIRECT (WINDOW_Spectrum_viewAndEdit) {
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Draw
@@ -2694,7 +2694,7 @@ DIRECT (WINDOW_Strings_viewAndEdit) {
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Query
@@ -2874,7 +2874,7 @@ DIRECT (NEWTIMES2_Transition_eigen) {
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
 	}
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (HELP_Transition_help) {
 	HELP (U"Transition")
@@ -2924,7 +2924,7 @@ DIRECT (HELP_ScriptingTutorial) { HELP (U"Scripting") }
 DIRECT (HELP_DemoWindow) { HELP (U"Demo window") }
 DIRECT (HELP_Interoperability) { HELP (U"Interoperability") }
 DIRECT (HELP_Programming) { HELP (U"Programming with Praat") }
-DIRECT (HELP_SearchManual_Fon) { Melder_search (); END }
+DIRECT (HELP_SearchManual_Fon) { Melder_search (); END_WITH_NEW_DATA }
 
 // MARK: - file recognizers
 
