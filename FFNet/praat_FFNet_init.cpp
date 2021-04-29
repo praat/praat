@@ -406,7 +406,7 @@ FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories
 		RADIOBUTTON (U"stochastic")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PatternList)
+	TURN_ONE_AND_ONE_INTO_ONE (FFNet, PatternList)
 		autoCategories result = FFNet_PatternList_to_Categories (me, you, categorizationgMethod);
 	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
@@ -415,7 +415,7 @@ FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", null
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PatternList)
+	TURN_ONE_AND_ONE_INTO_ONE (FFNet, PatternList)
 		autoActivationList result = FFNet_PatternList_to_ActivationList (me, you, layer);
 	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
