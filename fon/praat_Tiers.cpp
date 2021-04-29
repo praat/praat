@@ -384,7 +384,7 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_FormantGrid_edit) {
+DIRECT (EDITOR_ONE_FormantGrid_edit) {
 	EDITOR_ONE (a,FormantGrid)
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
@@ -1702,8 +1702,8 @@ void praat_Tiers_init () {
 		praat_addAction1 (classDurationTier, 0, U"Down to PointProcess", nullptr, 0, NEW_DurationTier_downto_PointProcess);
 
 	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", nullptr, 0, HELP_FormantGrid_help);
-	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_FormantGrid_edit);
-	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classFormantGrid);
 		praat_addAction1 (classFormantGrid, 0, U"Formula (frequencies)...", nullptr, 1, MODIFY_FormantGrid_formula_frequencies);

@@ -79,7 +79,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_Artword_viewAndEdit) {
+DIRECT (EDITOR_ONE_Artword_viewAndEdit) {
 	EDITOR_ONE (an,Artword)
 		autoArtwordEditor editor = ArtwordEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -332,8 +332,8 @@ void praat_uvafon_Artsynth_init () {
 	praat_addAction1 (classArt, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Art_viewAndEdit);
 
 	praat_addAction1 (classArtword, 0, U"Artword help", nullptr, 0, HELP_Artword_help);
-	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Artword_viewAndEdit);
-	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Artword_viewAndEdit);
+	praat_addAction1 (classArtword, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Artword_viewAndEdit);
+	praat_addAction1 (classArtword, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Artword_viewAndEdit);
 	praat_addAction1 (classArtword, 0, U"Info", nullptr, 0, nullptr);
 	praat_addAction1 (classArtword, 1, U"Get target...", nullptr, 0, REAL_Artword_getTarget);
 	praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);

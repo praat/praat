@@ -168,9 +168,9 @@ DO
 }
 
 #define KlattGrid_INSTALL_TIER_EDITOR(Name)  \
-DIRECT (WINDOW_KlattGrid_edit##Name##Tier) { \
+DIRECT (EDITOR_ONE_KlattGrid_edit##Name##Tier) { \
 	EDITOR_ONE (a,KlattGrid) \
-	autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
+		autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
 	EDITOR_ONE_END \
 }
 
@@ -920,17 +920,17 @@ void praat_KlattGrid_init () {
 	*/
 	praat_addAction1 (classKlattGrid, 0, U"KlattGrid help", nullptr, 0, HELP_KlattGrid_help);
 	praat_addAction1 (classKlattGrid, 0, U"Edit phonation -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Edit pitch tier", nullptr, 1, WINDOW_KlattGrid_editPitchTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit voicing amplitude tier", nullptr, 1, WINDOW_KlattGrid_editVoicingAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit flutter tier", nullptr, 1, WINDOW_KlattGrid_editFlutterTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit power1 tier", nullptr, 1, WINDOW_KlattGrid_editPower1Tier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit power2 tier", nullptr, 1, WINDOW_KlattGrid_editPower2Tier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit open phase tier", nullptr, 1, WINDOW_KlattGrid_editOpenPhaseTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit collision phase tier", nullptr, 1, WINDOW_KlattGrid_editCollisionPhaseTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit double pulsing tier", nullptr, 1, WINDOW_KlattGrid_editDoublePulsingTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit spectral tilt tier", nullptr, 1, WINDOW_KlattGrid_editSpectralTiltTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit aspiration amplitude tier", nullptr, 1, WINDOW_KlattGrid_editAspirationAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit breathiness amplitude tier", nullptr, 1, WINDOW_KlattGrid_editBreathinessAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit pitch tier", nullptr, 1, EDITOR_ONE_KlattGrid_editPitchTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit voicing amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editVoicingAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit flutter tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFlutterTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit power1 tier", nullptr, 1, EDITOR_ONE_KlattGrid_editPower1Tier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit power2 tier", nullptr, 1, EDITOR_ONE_KlattGrid_editPower2Tier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit open phase tier", nullptr, 1, EDITOR_ONE_KlattGrid_editOpenPhaseTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit collision phase tier", nullptr, 1, EDITOR_ONE_KlattGrid_editCollisionPhaseTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit double pulsing tier", nullptr, 1, EDITOR_ONE_KlattGrid_editDoublePulsingTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit spectral tilt tier", nullptr, 1, EDITOR_ONE_KlattGrid_editSpectralTiltTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit aspiration amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editAspirationAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit breathiness amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editBreathinessAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, U"Edit filters -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant grid", nullptr, 1, WINDOW_KlattGrid_editOralFormantGrid);
@@ -944,11 +944,11 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal antiformant grid", nullptr, 1, WINDOW_KlattGrid_editTrachealAntiFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant amplitude tier...", nullptr, 1, WINDOW_KlattGrid_editTrachealFormantAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"-- edit frication tiers --", nullptr, 1, nullptr);
-	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1, WINDOW_KlattGrid_editFricationAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant grid", nullptr, 1, WINDOW_KlattGrid_editFricationFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant amplitude tier...", nullptr, 1, WINDOW_KlattGrid_editFricationFormantAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit frication bypass tier", nullptr, 1, WINDOW_KlattGrid_editFricationBypassTier);
-	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1, WINDOW_KlattGrid_editFricationAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit frication bypass tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationBypassTier);
+	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, U"Play", nullptr, 0, PLAY_KlattGrid_play);
 	praat_addAction1 (classKlattGrid, 0, U"Play special...", nullptr, 0, PLAY_KlattGrid_playSpecial);

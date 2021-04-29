@@ -80,7 +80,7 @@ static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata pub
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_FormantPath_viewAndEditAlone) {
+DIRECT (EDITOR_ONE_FormantPath_viewAndEditAlone) {
 	EDITOR_ONE (a,FormantPath)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
@@ -1372,7 +1372,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
-	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", 0, 0, WINDOW_FormantPath_viewAndEditAlone);
+	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", 0, 0, EDITOR_ONE_FormantPath_viewAndEditAlone);
 	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", 0, 0, HINT_FormantPath_Sound_viewAndEdit);
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);

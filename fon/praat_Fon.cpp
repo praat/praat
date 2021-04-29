@@ -170,7 +170,7 @@ DO
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Corpus_edit) {
+DIRECT (EDITOR_ONE_Corpus_edit) {
 	EDITOR_ONE (a,Corpus)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -1236,7 +1236,7 @@ static void cb_ManipulationEditor_publication (Editor /* editor */, autoDaata pu
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_Manipulation_viewAndEdit) {
+DIRECT (EDITOR_ONE_Manipulation_viewAndEdit) {
 	EDITOR_ONE (a,Manipulation)
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
@@ -1509,7 +1509,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_Pitch_viewAndEdit) {
+DIRECT (EDITOR_ONE_Pitch_viewAndEdit) {
 	EDITOR_ONE (a,Pitch)
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -2230,7 +2230,7 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
-DIRECT (WINDOW_Spectrogram_view) {
+DIRECT (EDITOR_ONE_Spectrogram_view) {
 	EDITOR_ONE (a,Spectrogram)
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -2246,7 +2246,7 @@ DIRECT (HELP_Spectrum_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Spectrum_viewAndEdit) {
+DIRECT (EDITOR_ONE_Spectrum_viewAndEdit) {
 	EDITOR_ONE (a,Spectrum)
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -2667,7 +2667,7 @@ DIRECT (HELP_Strings_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Strings_viewAndEdit) {
+DIRECT (EDITOR_ONE_Strings_viewAndEdit) {
 	EDITOR_ONE (a,Strings)
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -3021,7 +3021,7 @@ praat_addAction1 (classCochleagram, 0, U"Analyse", nullptr, 0, nullptr);
 praat_addAction1 (classCochleagram, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classCochleagram, 0, U"To Matrix", nullptr, 0, NEW_Cochleagram_to_Matrix);
 
-	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Corpus_edit);
+	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Corpus_edit);
 
 praat_addAction1 (classDistributions, 0, U"Learn", nullptr, 0, nullptr);
 	praat_addAction1 (classDistributions, 1, U"To Transition...", nullptr, 0, NEW_Distributions_to_Transition);
@@ -3168,8 +3168,8 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classLtas, 0, U"To Matrix", nullptr, 0, NEW_Ltas_to_Matrix);
 
 	praat_addAction1 (classManipulation, 0, U"Manipulation help", nullptr, 0, HELP_Manipulation_help);
-	praat_addAction1 (classManipulation, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Manipulation_viewAndEdit);
-	praat_addAction1 (classManipulation, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_Manipulation_viewAndEdit);
+	praat_addAction1 (classManipulation, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Manipulation_viewAndEdit);
+	praat_addAction1 (classManipulation, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, EDITOR_ONE_Manipulation_viewAndEdit);
 	praat_addAction1 (classManipulation, 0, U"Play (overlap-add)", nullptr, 0, PLAY_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0,   U"Play (PSOLA)", nullptr, praat_DEPRECATED_2007, PLAY_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0, U"Play (LPC)", nullptr, 0, PLAY_Manipulation_play_lpc);
@@ -3194,8 +3194,8 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classParamCurve, 0, U"Draw...", nullptr, 0, GRAPHICS_ParamCurve_draw);
 
 	praat_addAction1 (classPitch, 0, U"Pitch help", nullptr, 0, HELP_Pitch_help);
-	praat_addAction1 (classPitch, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Pitch_viewAndEdit);
-	praat_addAction1 (classPitch, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Pitch_viewAndEdit);
+	praat_addAction1 (classPitch, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Pitch_viewAndEdit);
+	praat_addAction1 (classPitch, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Pitch_viewAndEdit);
 	praat_addAction1 (classPitch, 0, U"Sound -", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Play pulses", nullptr, 1, PLAY_Pitch_play);
 		praat_addAction1 (classPitch, 0, U"Hum", nullptr, 1, PLAY_Pitch_hum);
@@ -3283,7 +3283,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classPolygon, 0, U"To Matrix", nullptr, 1, NEW_Polygon_to_Matrix);
 
 	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help", nullptr, 0, HELP_Spectrogram_help);
-	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, WINDOW_Spectrogram_view);
+	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, EDITOR_ONE_Spectrogram_view);
 	praat_addAction1 (classSpectrogram, 1, U"Play movie", nullptr, 0, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 0, U"Query -", nullptr, 0, nullptr);
@@ -3302,8 +3302,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrogram, 0, U"To Matrix", nullptr, 1, NEW_Spectrogram_to_Matrix);
 
 	praat_addAction1 (classSpectrum, 0, U"Spectrum help", nullptr, 0, HELP_Spectrum_help);
-	praat_addAction1 (classSpectrum, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Spectrum_viewAndEdit);
-	praat_addAction1 (classSpectrum, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Spectrum_viewAndEdit);
+	praat_addAction1 (classSpectrum, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Spectrum_viewAndEdit);
+	praat_addAction1 (classSpectrum, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Spectrum_viewAndEdit);
 	praat_addAction1 (classSpectrum, 0, U"Sound -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"To Sound", nullptr, 1, NEW_Spectrum_to_Sound);
 		praat_addAction1 (classSpectrum, 0,   U"To Sound (fft)", U"*To Sound", praat_DEPTH_1 | praat_DEPRECATED_2004, NEW_Spectrum_to_Sound);
@@ -3359,8 +3359,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classStrings, 0, U"Strings help", nullptr, 0, HELP_Strings_help);
 	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, SAVE_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1,   U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, SAVE_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Strings_viewAndEdit);
-	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Strings_viewAndEdit);
+	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Strings_viewAndEdit);
+	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Strings_viewAndEdit);
 	praat_addAction1 (classStrings, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 2, U"Equal?", nullptr, 1, BOOLEAN_Strings_equal);
 		praat_addAction1 (classStrings, 1, U"Get number of strings", nullptr, 1, INTEGER_Strings_getNumberOfStrings);

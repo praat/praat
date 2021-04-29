@@ -155,7 +155,7 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
-DIRECT (WINDOW_LongSound_view) {
+DIRECT (EDITOR_ONE_LongSound_view) {
 	EDITOR_ONE (a,LongSound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -673,7 +673,7 @@ static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) 
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_Sound_viewAndEdit) {
+DIRECT (EDITOR_ONE_Sound_viewAndEdit) {
 	EDITOR_ONE (a,Sound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_SoundEditor_publication);
@@ -2169,8 +2169,8 @@ void praat_Sound_init () {
 #endif
 
 	praat_addAction1 (classLongSound, 0, U"LongSound help", nullptr, 0, HELP_LongSound_help);
-	praat_addAction1 (classLongSound, 1, U"View", nullptr, praat_ATTRACTIVE, WINDOW_LongSound_view);
-	praat_addAction1 (classLongSound, 1,   U"Open", U"*View", praat_DEPRECATED_2011, WINDOW_LongSound_view);
+	praat_addAction1 (classLongSound, 1, U"View", nullptr, praat_ATTRACTIVE, EDITOR_ONE_LongSound_view);
+	praat_addAction1 (classLongSound, 1,   U"Open", U"*View", praat_DEPRECATED_2011, EDITOR_ONE_LongSound_view);
 	praat_addAction1 (classLongSound, 0, U"Play part...", nullptr, 0, PLAY_LongSound_playPart);
 	praat_addAction1 (classLongSound, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classLongSound);
@@ -2270,9 +2270,9 @@ void praat_Sound_init () {
 	praat_addAction1 (classSound, 1, U"Save as raw 32-bit big-endian file...", nullptr, 0, SAVE_Sound_saveAsRaw32bitBigEndianFile);
 	praat_addAction1 (classSound, 1, U"Save as raw 32-bit little-endian file...", nullptr, 0, SAVE_Sound_saveAsRaw32bitLittleEndianFile);
 	praat_addAction1 (classSound, 0, U"Sound help", nullptr, 0, HELP_Sound_help);
-	praat_addAction1 (classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, WINDOW_Sound_viewAndEdit);
-	praat_addAction1 (classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, WINDOW_Sound_viewAndEdit);
-	praat_addAction1 (classSound, 1,   U"Open", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, WINDOW_Sound_viewAndEdit);
+	praat_addAction1 (classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, EDITOR_ONE_Sound_viewAndEdit);
+	praat_addAction1 (classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, EDITOR_ONE_Sound_viewAndEdit);
+	praat_addAction1 (classSound, 1,   U"Open", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, EDITOR_ONE_Sound_viewAndEdit);
 	praat_addAction1 (classSound, 0, U"Play", nullptr, 0, PLAY_Sound_play);
 	praat_addAction1 (classSound, 1, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Draw...", nullptr, 1, GRAPHICS_Sound_draw);
