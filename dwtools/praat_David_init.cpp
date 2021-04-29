@@ -1880,24 +1880,14 @@ FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
 	FORMULA (formula, U"Formula:", U"self")
 	OK
 DO
-	LOOP {
-		iam_LOOP (DTW);
-		autoMatrix cp = DTW_to_Matrix_distances (me);
-		try {
-			Matrix_formula (me, formula, interpreter, 0);
-			double minimum, maximum;
-			Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-			if (minimum < 0.0) {
-				DTW_Matrix_replace (me, cp.get());   // restore original
-				Melder_throw (U"Execution of the formula would have made some distance(s) negative, which is not allowed.");
-			}
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-END }
+	MODIFY_EACH_WEAK (DTW)
+		Matrix_formula (me, formula, interpreter, 0);
+		double minimum, maximum;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+		if (minimum < 0.0)
+			Melder_throw (U"Execution of the formula would has some distance(s) negative.");
+	MODIFY_EACH_WEAK_END
+}
 
 FORM (MODIFY_DTW_setDistanceValue, U"DTW: Set distance value", nullptr) {
 	REAL (xTime, U"Time at x (s)", U"0.1")
@@ -1905,19 +1895,16 @@ FORM (MODIFY_DTW_setDistanceValue, U"DTW: Set distance value", nullptr) {
 	REAL (newDistance, U"New value", U"0.0")
 	OK
 DO
-	if (newDistance < 0) {
+	if (newDistance < 0)
 		Melder_throw (U"Distances cannot be negative.");
-	}
 	MODIFY_EACH (DTW)
-		if (xTime < my xmin || xTime > my xmax) {
+		if (xTime < my xmin || xTime > my xmax)
 			Melder_throw (U"Time at x outside domain.");
-		}
-		if (yTime < my ymin || yTime > my ymax) {
+		if (yTime < my ymin || yTime > my ymax)
 			Melder_throw (U"Time at y outside domain.");
-		}
-		integer irow = Matrix_yToNearestRow (me, yTime);
-		integer icol = Matrix_xToNearestColumn (me, xTime);
-		my z[irow][icol] = newDistance;
+		const integer irow = Matrix_yToNearestRow (me, yTime);
+		const integer icol = Matrix_xToNearestColumn (me, xTime);
+		my z [irow] [icol] = newDistance;
 	MODIFY_EACH_END
 }
 
@@ -2026,15 +2013,12 @@ FORM (MODIFY_EditDistanceTable_setDefaultCosts, U"", nullptr) {
 	REAL (substitutionCosts, U"Substitution costs", U"2.0")
 	OK
 DO
-	if (insertionCosts < 0) {
+	if (insertionCosts < 0.0)
 		Melder_throw (U"Insertion costs cannot be negative.");
-	}
-	if (deletionCosts < 0) {
+	if (deletionCosts < 0.0)
 		Melder_throw (U"Deletion costs cannot be negative.");
-	}
-	if (substitutionCosts < 0) {
+	if (substitutionCosts < 0.0)
 		Melder_throw (U"Substitution costs cannot be negative.");
-	}
 	MODIFY_EACH (EditDistanceTable)
 		EditDistanceTable_setDefaultCosts (me, insertionCosts, deletionCosts, substitutionCosts);
 	MODIFY_EACH_END
