@@ -188,15 +188,15 @@ DO
 }
 
 DIRECT (NEW_ActivationList_to_Matrix) {
-	CONVERT_EACH (ActivationList)
+	TURN_EACH_INTO_ONE (ActivationList)
 		autoMatrix result = ActivationList_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ActivationList_to_PatternList) {
-	CONVERT_EACH (ActivationList)
+	TURN_EACH_INTO_ONE (ActivationList)
 		autoPatternList result = ActivationList_to_PatternList (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (REAL_AmplitudeTier_getValueAtTime, U"AmplitudeTier: Get value at time", nullptr) {
@@ -312,21 +312,21 @@ DO
 }
 
 DIRECT (NEW_BarkFilter_to_BarkSpectrogram) {
-	CONVERT_EACH (BarkFilter)
+	TURN_EACH_INTO_ONE (BarkFilter)
 		autoBarkSpectrogram result = BarkFilter_to_BarkSpectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_MelFilter_to_MelSpectrogram) {
-	CONVERT_EACH (MelFilter)
+	TURN_EACH_INTO_ONE (MelFilter)
 		autoMelSpectrogram result = MelFilter_to_MelSpectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_FormantFilter_to_Spectrogram) {
-	CONVERT_EACH (FormantFilter);
+	TURN_EACH_INTO_ONE (FormantFilter);
 		autoSpectrogram result = FormantFilter_to_Spectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /********************** Categories  ****************************************/
@@ -372,33 +372,33 @@ DIRECT (REAL_Categories_getFractionDifferent) {
 }
 
 DIRECT (NEW_Categories_selectUniqueItems) {
-	CONVERT_EACH (Categories)
+	TURN_EACH_INTO_ONE (Categories)
 		autoCategories result = Categories_selectUniqueItems (me);
-	CONVERT_EACH_END (my name.get(), U"_uniq")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_uniq")
 }
 
 DIRECT (NEW_Categories_to_Confusion) {
-	CONVERT_COUPLE (Categories)
+	TURN_TWO_INTO_ONE (Categories)
 		autoConfusion result = Categories_to_Confusion (me, you);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Categories_to_Strings) {
-	CONVERT_EACH (Categories)
+	TURN_EACH_INTO_ONE (Categories)
 		autoStrings result = Categories_to_Strings (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Categories_join) {
-	CONVERT_COUPLE (Categories)
+	TURN_TWO_INTO_ONE (Categories)
 		autoStringList result = OrderedOfString_joinItems (me, you);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Categories_permuteItems) {
-	CONVERT_EACH (Collection)
+	TURN_EACH_INTO_ONE (Collection)
 		autoCollection result = Collection_permuteItems (me);
-	CONVERT_EACH_END (my name.get(), U"_perm")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_perm")
 }
 
 /***************** CC ****************************************/
@@ -477,16 +477,16 @@ FORM (NEW1_CCs_to_DTW, U"CC: To DTW", U"CC: To DTW...") {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	CONVERT_COUPLE (CC)
+	TURN_TWO_INTO_ONE (CC)
 		autoDTW result = CCs_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight, regressionWindowLength);
 		DTW_findPath (result.get(), matchStart, matchEnd, slopeConstraint);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 DIRECT (NEW_CC_to_Matrix) {
-	CONVERT_EACH (CC)
+	TURN_EACH_INTO_ONE (CC)
 		autoMatrix result = CC_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /******************* class CCA ********************************/
@@ -624,9 +624,9 @@ FORM (NEW_CCA_extractEigen, U"CCA: Extract Eigen", nullptr) {
 		OPTION (U"Independent")
 	OK
 DO
-	CONVERT_EACH (CCA)
+	TURN_EACH_INTO_ONE (CCA)
 		autoEigen result = choice == 1 ? Data_copy (my y.get()) : Data_copy (my x.get());
-	CONVERT_EACH_END (my name.get(), ( choice == 1 ? U"_y" : U"_x" ))
+	TURN_EACH_INTO_ONE_END (my name.get(), ( choice == 1 ? U"_y" : U"_x" ))
 }
 
 /***************** ChebyshevSeries ****************************************/
@@ -652,9 +652,9 @@ DO
 }
 
 DIRECT (NEW_ChebyshevSeries_to_Polynomial) {
-	CONVERT_EACH (ChebyshevSeries)
+	TURN_EACH_INTO_ONE (ChebyshevSeries)
 		autoPolynomial result = ChebyshevSeries_to_Polynomial (me);
-	CONVERT_EACH_END (my name.get());
+	TURN_EACH_INTO_ONE_END (my name.get());
 }
 
 /***************** ClassificationTable ****************************************/
@@ -683,30 +683,30 @@ DO
 
 // deprecated 2014
 DIRECT (NEW_ClassificationTable_to_Confusion_old) {
-	CONVERT_EACH (ClassificationTable)
+	TURN_EACH_INTO_ONE (ClassificationTable)
 		autoConfusion result = ClassificationTable_to_Confusion (me, false);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_ClassificationTable_to_Confusion, U"ClassificationTable: To Confusion", U"ClassificationTable: To Confusion...") {
 	BOOLEAN (onlyClassLabels, U"Only class labels", true)
 	OK
 DO
-	CONVERT_EACH (ClassificationTable)
+	TURN_EACH_INTO_ONE (ClassificationTable)
 		autoConfusion result = ClassificationTable_to_Confusion (me, onlyClassLabels);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ClassificationTable_to_Correlation_columns) {
-	CONVERT_EACH (ClassificationTable)
+	TURN_EACH_INTO_ONE (ClassificationTable)
 		autoCorrelation result = ClassificationTable_to_Correlation_columns (me);
-	CONVERT_EACH_END (my name.get(), U"_col")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_col")
 }
 
 DIRECT (NEW_ClassificationTable_to_Strings_maximumProbability) {
-	CONVERT_EACH (ClassificationTable)
+	TURN_EACH_INTO_ONE (ClassificationTable)
 		autoStrings result = ClassificationTable_to_Strings_maximumProbability (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /********************** Confusion *******************************************/
@@ -764,15 +764,15 @@ DO
 }
 
 DIRECT (NEW_Confusion_to_TableOfReal_marginals) {
-	CONVERT_EACH (Confusion)
+	TURN_EACH_INTO_ONE (Confusion)
 		autoTableOfReal result = Confusion_to_TableOfReal_marginals (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Confusion_difference) {
-	CONVERT_COUPLE (Confusion)
+	TURN_TWO_INTO_ONE (Confusion)
 		autoMatrix result = Confusion_difference (me, you);
-	CONVERT_COUPLE_END (U"diffs")
+	TURN_TWO_INTO_ONE_END (U"diffs")
 }
 
 FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...") {
@@ -784,9 +784,9 @@ FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
 DO
-	CONVERT_EACH (Confusion)
+	TURN_EACH_INTO_ONE (Confusion)
 		autoConfusion result = Confusion_condense (me, search_string, replace_string, replaceLimit, matchType == 2);
-	CONVERT_EACH_END (my name.get(), U"_cnd")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_cnd")
 }
 
 FORM (NEW_Confusion_group, U"Confusion: Group stimuli & responses", U"Confusion: Group...") {
@@ -795,9 +795,9 @@ FORM (NEW_Confusion_group, U"Confusion: Group stimuli & responses", U"Confusion:
 	INTEGER (newPosition, U"New label position", U"0 (= at start)")
 	OK
 DO
-	CONVERT_EACH (Confusion)
+	TURN_EACH_INTO_ONE (Confusion)
 		autoConfusion result = Confusion_group (me, labels, newLabel, newPosition);
-	CONVERT_EACH_END (my name.get(), U"_sr", newLabel)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_sr", newLabel)
 }
 
 FORM (NEW_Confusion_groupStimuli, U"Confusion: Group stimuli", U"Confusion: Group stimuli...") {
@@ -806,9 +806,9 @@ FORM (NEW_Confusion_groupStimuli, U"Confusion: Group stimuli", U"Confusion: Grou
 	INTEGER (newPosition, U"New label position", U"0")
 	OK
 DO
-	CONVERT_EACH (Confusion)
+	TURN_EACH_INTO_ONE (Confusion)
 		autoConfusion result = Confusion_groupStimuli (me,stimuli_string, newLabel, newPosition);
-	CONVERT_EACH_END (my name.get(), U"_s", newLabel);
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_s", newLabel);
 }
 
 FORM (NEW_Confusion_groupResponses, U"Confusion: Group responses", U"Confusion: Group responses...") {
@@ -817,9 +817,9 @@ FORM (NEW_Confusion_groupResponses, U"Confusion: Group responses", U"Confusion: 
 	INTEGER (newPosition, U"New label position", U"0")
 	OK
 DO
-	CONVERT_EACH (Confusion)
+	TURN_EACH_INTO_ONE (Confusion)
 		autoConfusion result = Confusion_groupResponses (me, responses_string, newLabel, newPosition);
-	CONVERT_EACH_END (my name.get(), U"_s", newLabel);
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_s", newLabel);
 }
 
 FORM (GRAPHICS_Confusion_drawAsNumbers, U"Confusion: Draw as numbers", nullptr) {
@@ -878,24 +878,24 @@ FORM (NEW_ComplexSpectrogram_to_Sound, U"ComplexSpectrogram: To Sound", nullptr)
 	POSITIVE (durationFactor, U"Duration factor", U"1.0")
 	OK
 DO
-	CONVERT_EACH (ComplexSpectrogram)
+	TURN_EACH_INTO_ONE (ComplexSpectrogram)
 		autoSound result = ComplexSpectrogram_to_Sound (me, durationFactor);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ComplexSpectrogram_downto_Spectrogram) {
-	CONVERT_EACH (ComplexSpectrogram)
+	TURN_EACH_INTO_ONE (ComplexSpectrogram)
 		autoSpectrogram result = ComplexSpectrogram_to_Spectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_ComplexSpectrogram_to_Spectrum_slice, U"ComplexSpectrogram: To Spectrum (slice)", nullptr) {
 	REAL (time, U"Time (s)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (ComplexSpectrogram)
+	TURN_EACH_INTO_ONE (ComplexSpectrogram)
 		autoSpectrum result = ComplexSpectrogram_to_Spectrum (me, time);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes) {
@@ -930,9 +930,9 @@ FORM (NEW_Correlation_confidenceIntervals, U"Correlation: Confidence intervals..
 		RADIOBUTTON (U"Fisher")
 	OK
 DO
-	CONVERT_EACH (Correlation)
+	TURN_EACH_INTO_ONE (Correlation)
 		autoTableOfReal result = Correlation_confidenceIntervals (me, confidenceLevel, numberOfTests, approximation);
-	CONVERT_EACH_END (my name.get(), U"_conf_intervals")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_conf_intervals")
 }
 
 FORM (REAL_Correlation_getDiagonality_bartlett, U"Correlation: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
@@ -946,9 +946,9 @@ DO
 }
 
 DIRECT (NEW_Correlation_to_PCA) {
-	CONVERT_EACH (Correlation)
+	TURN_EACH_INTO_ONE (Correlation)
 		autoPCA result = SSCP_to_PCA (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /********************** Covariance *******************************************/
@@ -1078,9 +1078,9 @@ FORM (NEW_Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal
 	INTEGER (numberOfDataPoints, U"Number of data points", U"0")
 	OK
 DO
-	CONVERT_EACH (Covariance)
+	TURN_EACH_INTO_ONE (Covariance)
 		autoTableOfReal result = Covariance_to_TableOfReal_randomSampling (me, numberOfDataPoints);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (INFO_Covariances_reportEquality) {
@@ -1107,15 +1107,15 @@ DIRECT (INFO_Covariances_reportEquality) {
 }
 
 DIRECT (NEW_Covariance_to_Correlation) {
-	CONVERT_EACH (Covariance)
+	TURN_EACH_INTO_ONE (Covariance)
 		autoCorrelation result = SSCP_to_Correlation (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Covariance_to_PCA) {
-	CONVERT_EACH (Covariance)
+	TURN_EACH_INTO_ONE (Covariance)
 		autoPCA result = SSCP_to_PCA (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Covariances_pool) {
@@ -1498,48 +1498,48 @@ DO
 }
 
 DIRECT (NEW_Discriminant_extractBetweenGroupsSSCP) {
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoSSCP result = Discriminant_extractBetweenGroupsSSCP (me);
-	CONVERT_EACH_END (my name.get(), U"_between")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_between")
 }
 
 DIRECT (NEW_Discriminant_extractGroupCentroids) {
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoTableOfReal result = Discriminant_extractGroupCentroids (me);
-	CONVERT_EACH_END (my name.get(), U"_centroids")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_centroids")
 }
 
 DIRECT (NEW_Discriminant_extractGroupStandardDeviations) {
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoTableOfReal result = Discriminant_extractGroupStandardDeviations (me);
-	CONVERT_EACH_END (U"group_stddevs")
+	TURN_EACH_INTO_ONE_END (U"group_stddevs")
 }
 
 DIRECT (NEW_Discriminant_extractGroupLabels) {
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoStrings result = Discriminant_extractGroupLabels (me);
-	CONVERT_EACH_END (U"group_labels")
+	TURN_EACH_INTO_ONE_END (U"group_labels")
 }
 
 DIRECT (NEW_Discriminant_extractEigen) {
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoEigen result = Data_copy (my eigen.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Discriminant_extractPooledWithinGroupsSSCP) {
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoSSCP result = Discriminant_extractPooledWithinGroupsSSCP (me);
-	CONVERT_EACH_END (U"pooled_within")
+	TURN_EACH_INTO_ONE_END (U"pooled_within")
 }
 
 FORM (NEW_Discriminant_extractWithinGroupSSCP, U"Discriminant: Extract within-group SSCP", U"Discriminant: Extract within-group SSCP...") {
 	NATURAL (groupIndex, U"Group index", U"1")
 	OK
 DO
-	CONVERT_EACH (Discriminant)
+	TURN_EACH_INTO_ONE (Discriminant)
 		autoSSCP result = Discriminant_extractWithinGroupSSCP (me, groupIndex);
-	CONVERT_EACH_END (my name.get(), U"_g", groupIndex)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_g", groupIndex)
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfFunctions) {
@@ -1940,9 +1940,9 @@ FORM (NEW_DTW_to_Matrix_cumulativeDistances, U"DTW: To Matrix", nullptr) {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    CONVERT_EACH (DTW)
+    TURN_EACH_INTO_ONE (DTW)
         autoMatrix result = DTW_to_Matrix_cumulativeDistances (me, sakoeChibaBand, slopeConstraint);
-	CONVERT_EACH_END (my name.get(), U"_cd")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_cd")
 }
 
 FORM (NEW_DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
@@ -1954,21 +1954,21 @@ FORM (NEW_DTW_to_Polygon, U"DTW: To Polygon...", nullptr) {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    CONVERT_EACH (DTW)
+    TURN_EACH_INTO_ONE (DTW)
         autoPolygon result = DTW_to_Polygon (me, sakoeChibaBand, slopeConstraint);
-    CONVERT_EACH_END (my name.get())
+    TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_DTW_to_Matrix_distances) {
-	CONVERT_EACH (DTW)
+	TURN_EACH_INTO_ONE (DTW)
 		autoMatrix result = DTW_to_Matrix_distances (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_DTW_swapAxes) {
-	CONVERT_EACH (DTW)
+	TURN_EACH_INTO_ONE (DTW)
 		autoDTW result = DTW_swapAxes (me);
-	CONVERT_EACH_END (my name.get(), U"_axesSwapped")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_axesSwapped")
 }
 
 DIRECT (MODIFY_DTW_Matrix_replace) {
@@ -1996,9 +1996,9 @@ DIRECT (HELP_EditDistanceTable_help) {
 }
 
 DIRECT (NEW_EditDistanceTable_to_TableOfReal_directions) {
-	CONVERT_EACH (EditDistanceTable)
+	TURN_EACH_INTO_ONE (EditDistanceTable)
 		autoTableOfReal result = EditDistanceTable_to_TableOfReal_directions (me);
-	CONVERT_EACH_END (my name.get());
+	TURN_EACH_INTO_ONE_END (my name.get());
 }
 
 DIRECT (MODIFY_EditDistanceTable_setEditCosts) {
@@ -2174,9 +2174,9 @@ DO
 }
 
 DIRECT (NEW_EditCostsTable_to_TableOfReal) {
-	CONVERT_EACH (EditCostsTable)
+	TURN_EACH_INTO_ONE (EditCostsTable)
 		autoTableOfReal result = EditCostsTable_to_TableOfReal (me);
-	CONVERT_EACH_END (my name.get());
+	TURN_EACH_INTO_ONE_END (my name.get());
 }
 
 FORM (NEW_EditCostsTable_createEmpty, U"Create empty EditCostsTable", U"Create empty EditCostsTable...") {
@@ -2333,9 +2333,9 @@ FORM (NEW_Electroglottogram_highPassFilter, U"Electroglottogram: High-pass filte
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK
 DO
-	CONVERT_EACH (Electroglottogram)
+	TURN_EACH_INTO_ONE (Electroglottogram)
 		autoElectroglottogram result = Electroglottogram_highPassFilter (me, fromFrequency, smoothing);
-	CONVERT_EACH_END (my name.get(), U"_filtered")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_filtered")
 }
 
 FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To IntervalTier", U"") {
@@ -2347,9 +2347,9 @@ FORM (NEW_Electroglottogram_getClosedGlottisIntervals, U"Electroglottogram: To I
 DO
 	Melder_require (closingThreshold < 1.0,
 		U"The closing threshold should be smaller than 1.");
-	CONVERT_EACH (Electroglottogram)
+	TURN_EACH_INTO_ONE (Electroglottogram)
 		autoIntervalTier result = Electroglottogram_getClosedGlottisIntervals (me, pitchFloor, pitchCeiling, closingThreshold, peakThresholdFraction);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Electroglottogram_to_AmplitudeTier_levels, U"Electroglottogram: To AmplitudeTier (levels)", U"") {
@@ -2360,14 +2360,14 @@ FORM (NEW_Electroglottogram_to_AmplitudeTier_levels, U"Electroglottogram: To Amp
 	BOOLEAN (wantValleys, U"Valleys", 0)
 	OK
 DO
-	CONVERT_EACH (Electroglottogram)
+	TURN_EACH_INTO_ONE (Electroglottogram)
 		autoAmplitudeTier peaks, valleys;
 		autoAmplitudeTier result = Electroglottogram_to_AmplitudeTier_levels (me, pitchFloor, pitchCeiling, closingThreshold, & peaks, & valleys);
 		if (wantPeaks)
 			praat_new (peaks.move(), my name.get(), U"_peaks");
 		if (wantValleys)
 			praat_new (valleys.move(), my name.get(), U"_valleys");
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 
 }
 
@@ -2377,24 +2377,24 @@ FORM (NEW_Electroglottogram_derivative, U"Electroglottogram: Derivative", U"Elec
 	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
 	OK
 DO
-	CONVERT_EACH (Electroglottogram)
+	TURN_EACH_INTO_ONE (Electroglottogram)
 		autoSound result = Electroglottogram_derivative (me, lowPassFrequency, smoothing, peak99);
-	CONVERT_EACH_END (my name.get(), U"_derivative")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_derivative")
 }
 
 FORM (NEW_Electroglottogram_firstCentralDifference, U"Electroglottogram: First central difference", U"Electroglottogram: First central difference...") {
 	BOOLEAN (peak99, U"Scale absolute peak at 0.99", 1)
 	OK
 DO
-	CONVERT_EACH (Electroglottogram)
+	TURN_EACH_INTO_ONE (Electroglottogram)
 		autoSound result = Electroglottogram_firstCentralDifference (me, peak99);
-	CONVERT_EACH_END (my name.get(), U"_cdiff")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_cdiff")
 }
 
 DIRECT (NEW_Electroglottogram_to_Sound) {
-	CONVERT_EACH (Electroglottogram)
+	TURN_EACH_INTO_ONE (Electroglottogram)
 		autoSound result = Electroglottogram_to_Sound (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /******************** Index ********************************************/
@@ -2459,24 +2459,24 @@ FORM (NEW_Index_extractPart, U"Index: Extract part", U"Index: Extract part...") 
 	INTEGER (toItem, U"right Item range", U"0")
 	OK
 DO
-	CONVERT_EACH (Index)
+	TURN_EACH_INTO_ONE (Index)
 		autoIndex result = Index_extractPart (me, fromItem, toItem);
-	CONVERT_EACH_END (my name.get(), U"_part")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_part")
 }
 
 FORM (NEW_Index_to_Permutation, U"Index: To Permutation", U"Index: To Permutation...") {
 	BOOLEAN (permuteWithinClasses, U"Permute within classes", true)
 	OK
 DO
-	CONVERT_EACH (Index)
+	TURN_EACH_INTO_ONE (Index)
 		autoPermutation result = Index_to_Permutation_permuteRandomly (me, permuteWithinClasses);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_StringsIndex_to_Strings) {
-	CONVERT_EACH (StringsIndex)
+	TURN_EACH_INTO_ONE (StringsIndex)
 		autoStrings result = StringsIndex_to_Strings (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /******************** Excitation ********************************************/
@@ -2511,31 +2511,31 @@ FORM (NEW_ExcitationList_extractItem, U"ExcitationList: Extract item", nullptr) 
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	CONVERT_EACH (ExcitationList)
+	TURN_EACH_INTO_ONE (ExcitationList)
 		autoExcitation result = ExcitationList_extractItem (me, itemIndex);
-	CONVERT_EACH_END (my name.get(), U"_", itemIndex)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_", itemIndex)
 }
 
 DIRECT (NEW1_ExcitationList_append) {
-	CONVERT_COUPLE (ExcitationList)
+	TURN_TWO_INTO_ONE (ExcitationList)
 		autoExcitationList result = Data_copy (me);
 		result -> merge (you);
-	CONVERT_COUPLE_END (U"appended")
+	TURN_TWO_INTO_ONE_END (U"appended")
 }
 
 FORM (NEW_ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr) {
 	NATURAL (join, U"Join", U"1")
 	OK
 DO
-	CONVERT_EACH (ExcitationList)
+	TURN_EACH_INTO_ONE (ExcitationList)
 		autoPatternList result = ExcitationList_to_PatternList (me, join);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ExcitationList_to_TableOfReal) {
-	CONVERT_EACH (ExcitationList)
+	TURN_EACH_INTO_ONE (ExcitationList)
 		autoTableOfReal result = ExcitationList_to_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 
@@ -2622,18 +2622,18 @@ FORM (NEW1_FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract file
 	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
-	CONVERT_EACH (FileInMemoryManager)
+	TURN_EACH_INTO_ONE (FileInMemoryManager)
 		autoFileInMemorySet result = FileInMemoryManager_extractFiles (me, which, criterion);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_FileInMemoryManager_downto_Table, U"FileInMemoryManager: Down to Table", nullptr) {
 	BOOLEAN (openFilesOnly, U"Open files only?", false)
 	OK
 DO
-	CONVERT_EACH (FileInMemoryManager)
+	TURN_EACH_INTO_ONE (FileInMemoryManager)
 		autoTable result = FileInMemoryManager_downto_Table (me, openFilesOnly);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
@@ -2653,9 +2653,9 @@ FORM (NEW1_FileInMemorySet_extractFiles, U"FileInMemorySet: Extract files", null
 	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
-	CONVERT_EACH (FileInMemorySet)
+	TURN_EACH_INTO_ONE (FileInMemorySet)
 		autoFileInMemorySet result = FileInMemorySet_extractFiles (me, which, criterion);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
@@ -2703,9 +2703,9 @@ DIRECT (NEW1_FileInMemorySets_merge) {
 }
 
 DIRECT (NEW_FileInMemorySet_to_Strings_id) {
-	CONVERT_EACH (FileInMemorySet)
+	TURN_EACH_INTO_ONE (FileInMemorySet)
 		autoStrings result = FileInMemorySet_to_Strings_id (me);
-	CONVERT_EACH_END (my name.get());
+	TURN_EACH_INTO_ONE_END (my name.get());
 }
 
 /************************* FilterBank ***********************************/
@@ -2908,18 +2908,18 @@ DO
 }
 
 DIRECT (NEW_FilterBank_to_Matrix) {
-	CONVERT_EACH (FilterBank)
+	TURN_EACH_INTO_ONE (FilterBank)
 		autoMatrix result = FilterBank_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_BandFilterSpectrogram_to_Matrix, U"BandFilterSpectrogram: To Matrix", nullptr) {
 	BOOLEAN (convertToDB, U"Convert to dB values", 1)
 	OK
 DO
-	CONVERT_EACH (BandFilterSpectrogram)
+	TURN_EACH_INTO_ONE (BandFilterSpectrogram)
 		autoMatrix result = BandFilterSpectrogram_to_Matrix (me, convertToDB);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
@@ -2929,9 +2929,9 @@ FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr)
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	CONVERT_COUPLE (FilterBank)
+	TURN_TWO_INTO_ONE (FilterBank)
 		autoSound result = FilterBanks_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
@@ -2941,9 +2941,9 @@ FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cros
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	CONVERT_COUPLE (BandFilterSpectrogram)
+	TURN_TWO_INTO_ONE (BandFilterSpectrogram)
 		autoSound result = BandFilterSpectrograms_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
@@ -2953,9 +2953,9 @@ FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	CONVERT_COUPLE (FilterBank)
+	TURN_TWO_INTO_ONE (FilterBank)
 		autoSound result = FilterBanks_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
@@ -2965,21 +2965,21 @@ FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve",
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	CONVERT_COUPLE (BandFilterSpectrogram)
+	TURN_TWO_INTO_ONE (BandFilterSpectrogram)
 		autoSound result = BandFilterSpectrograms_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_FilterBank_to_Intensity) {
-	CONVERT_EACH (FilterBank)
+	TURN_EACH_INTO_ONE (FilterBank)
 		autoIntensity result = FilterBank_to_Intensity (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_BandFilterSpectrogram_to_Intensity) {
-	CONVERT_EACH (BandFilterSpectrogram)
+	TURN_EACH_INTO_ONE (BandFilterSpectrogram)
 		autoIntensity result = BandFilterSpectrogram_to_Intensity (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /*********** FormantFilter *******************************************/
@@ -3196,9 +3196,9 @@ FORM (NEW_Intensity_to_TextGrid_silences, U"Intensity: To TextGrid (silences)", 
 	WORD (soundingLabel, U"Sounding interval label", U"sounding")
 	OK
 DO
-	CONVERT_EACH (Intensity)
+	TURN_EACH_INTO_ONE (Intensity)
 		autoTextGrid result = Intensity_to_TextGrid_detectSilences (me, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /***************** IntensityTier ***************************************************/
@@ -3212,18 +3212,18 @@ FORM (NEW_IntensityTier_to_TextGrid_silences, U"IntensityTier: To TextGrid (sile
 	POSITIVE (timeStep, U"Time step (s)", U"0.001")
 	OK
 DO
-	CONVERT_EACH (IntensityTier)
+	TURN_EACH_INTO_ONE (IntensityTier)
 		autoTextGrid result = IntensityTier_to_TextGrid_detectSilences (me, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_IntensityTier_to_Intensity, U"", nullptr) {
 	POSITIVE (timeStep, U"Time step (s)", U"0.001")
 	OK
 DO
-	CONVERT_EACH (IntensityTier)
+	TURN_EACH_INTO_ONE (IntensityTier)
 		autoIntensity result = IntensityTier_to_Intensity (me, timeStep);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /***************** ISpline ***************************************************/
@@ -3289,30 +3289,30 @@ DO
 	if (flutter_percentage < 0.0 || flutter_percentage > 100.0) {
 		Melder_throw (U"Flutter should be between 0 and 100%.");
 	}
-	CONVERT_EACH (KlattTable)
+	TURN_EACH_INTO_ONE (KlattTable)
 		autoSound result = KlattTable_to_Sound (me, samplingFrequency, synthesisModel, numberOfFormants, frameDuration, voicingSource, flutter_percentage, soundOutputType);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_KlattTable_to_KlattGrid, U"KlattTable: To KlattGrid", nullptr) {
 	POSITIVE (frameDuration, U"Frame duration (s)", U"0.002")
 	OK
 DO
-	CONVERT_EACH (KlattTable)
+	TURN_EACH_INTO_ONE (KlattTable)
 		autoKlattGrid result = KlattTable_to_KlattGrid (me, frameDuration);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_KlattTable_to_Table) {
-	CONVERT_EACH (KlattTable)
+	TURN_EACH_INTO_ONE (KlattTable)
 		autoTable result = KlattTable_to_Table (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Table_to_KlattTable) {
-	CONVERT_EACH (Table)
+	TURN_EACH_INTO_ONE (Table)
 		autoKlattTable result = Table_to_KlattTable (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviation", U"Table: Get median absolute deviation...") {
@@ -3458,10 +3458,10 @@ FORM (NEW_Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", null
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	CONVERT_EACH (Table)
+	TURN_EACH_INTO_ONE (Table)
 		integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		autoStringsIndex result = Table_to_StringsIndex_column (me, icol);
-	CONVERT_EACH_END (my name.get(), U"_", columnLabel)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_", columnLabel)
 }
 
 /******************* LegendreSeries *********************************/
@@ -3487,9 +3487,9 @@ DIRECT (HELP_LegendreSeries_help) {
 }
 
 DIRECT (NEW_LegendreSeries_to_Polynomial) {
-	CONVERT_EACH (LegendreSeries)
+	TURN_EACH_INTO_ONE (LegendreSeries)
 		autoPolynomial result = LegendreSeries_to_Polynomial (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /********************* LogFrequencySpectrogram **************************************/
@@ -3682,39 +3682,39 @@ DO
 }
 
 DIRECT (NEW_Matrix_transpose) {
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoMatrix result = Matrix_transpose (me);
-	CONVERT_EACH_END (my name.get(), U"_transposed")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_transposed")
 }
 
 DIRECT (NEW_Matrix_to_PCA_byColumns) {
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoPCA result = Matrix_to_PCA_byColumns (me);
-	CONVERT_EACH_END (my name.get(), U"_columns");
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_columns");
 }
 
 DIRECT (NEW_Matrix_to_PCA_byRows) {
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoPCA result = Matrix_to_PCA_byRows (me);
-	CONVERT_EACH_END (my name.get(), U"_rows")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_Matrix_solveEquation, U"Matrix: Solve equation", U"Matrix: Solve equation...") {
 	REAL (tolerance, U"Tolerance", U"1.0e-7")
 	OK
 DO
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoMatrix result = Matrix_solveEquation (me, tolerance);
-	CONVERT_EACH_END (my name.get(), U"_solution")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_solution")
 }
 
 FORM (NEW_Matrix_solveMatrixEquation, U"Matrix: Solve matrix equation", U"Matrix: Solve matrix equation...") {
 	REAL (tolerance, U"Tolerance", U"1.0e-7")
 	OK
 DO
-	CONVERT_COUPLE (Matrix)
+	TURN_TWO_INTO_ONE (Matrix)
 		autoMatrix result = Matrix_solveEquation (me, you, tolerance);
-	CONVERT_COUPLE_END (U"solution")
+	TURN_TWO_INTO_ONE_END (U"solution")
 }
 
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
@@ -3748,21 +3748,21 @@ DO
 }
 
 DIRECT (NEW_Matrix_to_ActivationList) {
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoActivationList result = Matrix_to_ActivationList (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Eigen) {
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoEigen result = Matrix_to_Eigen (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_SVD) {
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoSVD result = SVD_createFromGeneralMatrix (my z.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEWTIMES2_Matrix_eigen_complex) {
@@ -3785,9 +3785,9 @@ FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...
 	OK
 DO
 	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoNMF result = Matrix_to_NMF_mu (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
-	CONVERT_EACH_END (my name.get(), U"_mu")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_mu")
 }
 
 FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)...") {
@@ -3800,9 +3800,9 @@ FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)..."
 	OK
 DO
 	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoNMF result = Matrix_to_NMF_als (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
-	CONVERT_EACH_END (my name.get(), U"_als")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_als")
 }
 
 FORM (NEW_Matrix_to_NMF_is, U"Matrix: To NMF (IS)", U"Matrix: To NMF (IS)...") {
@@ -3815,9 +3815,9 @@ FORM (NEW_Matrix_to_NMF_is, U"Matrix: To NMF (IS)", U"Matrix: To NMF (IS)...") {
 	OK
 DO
 	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoNMF result = Matrix_to_NMF_is (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
-	CONVERT_EACH_END (my name.get(), U"_als")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_als")
 }
 
 DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
@@ -3874,18 +3874,18 @@ FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	CONVERT_COUPLE (Matrix)
+	TURN_TWO_INTO_ONE (Matrix)
 		autoDTW result = Matrices_to_DTW (me, you, matchStart, matchEnd, slopeConstraint, distanceMetric);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Matrix_to_PatternList, U"Matrix: To PatternList", nullptr) {
 	NATURAL (join, U"Join", U"1")
 	OK
 DO
-	CONVERT_EACH (Matrix)
+	TURN_EACH_INTO_ONE (Matrix)
 		autoPatternList result = Matrix_to_PatternList (me, join);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /**** Filterbank (deprecated) *******/
@@ -4139,18 +4139,18 @@ FORM (NEW_MelFilter_to_MFCC, U"MelFilter: To MFCC", U"MelSpectrogram: To MFCC...
 	NATURAL (numberOfCoefficients, U"Number of coefficients", U"12")
 	OK
 DO
-	CONVERT_EACH (MelFilter)
+	TURN_EACH_INTO_ONE (MelFilter)
 		autoMFCC result = MelFilter_to_MFCC (me, numberOfCoefficients);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_MelSpectrogram_to_MFCC, U"MelSpectrogram: To MFCC", U"MelSpectrogram: To MFCC...") {
 	NATURAL (numberOfCoefficients, U"Number of coefficients", U"12")
 	OK
 DO
-	CONVERT_EACH (MelSpectrogram)
+	TURN_EACH_INTO_ONE (MelSpectrogram)
 		autoMFCC result = MelSpectrogram_to_MFCC (me, numberOfCoefficients);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /**************** Ltas *******************************************/
@@ -4191,9 +4191,9 @@ FORM (NEW_MFCC_to_MelFilter, U"MFCC: To MelFilter", nullptr) {
 	INTEGER (toCoefficient, U"To coefficient", U"0")
 	OK
 DO
-	CONVERT_EACH (MFCC)
+	TURN_EACH_INTO_ONE (MFCC)
 		autoMelFilter result = MFCC_to_MelFilter (me, fromCoefficient, toCoefficient);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectrogram...") {
@@ -4202,18 +4202,18 @@ FORM (NEW_MFCC_to_MelSpectrogram, U"MFCC: MelSpectrogram", U"MFCC: To MelSpectro
 	BOOLEAN (includeConstant, U"Include constant term", true)
 	OK
 DO
-	CONVERT_EACH (MFCC)
+	TURN_EACH_INTO_ONE (MFCC)
 		autoMelSpectrogram result = MFCC_to_MelSpectrogram (me, fromCoefficient, toCoefficient, includeConstant);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_MFCC_to_TableOfReal, U"MFCC: To TableOfReal", U"MFCC: To TableOfReal...") {
 	BOOLEAN (includeEnergy, U"Include energy", false)
 	OK
 DO
-	CONVERT_EACH (MFCC)
+	TURN_EACH_INTO_ONE (MFCC)
 		autoTableOfReal result = MFCC_to_TableOfReal (me, includeEnergy);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", nullptr) {
@@ -4221,9 +4221,9 @@ FORM (NEW_MFCC_to_Matrix_features, U"MFCC: To Matrix (features)", nullptr) {
 	BOOLEAN (includeEnergy, U"Include energy", false)
 	OK
 DO
-	CONVERT_EACH (MFCC)
+	TURN_EACH_INTO_ONE (MFCC)
 		autoMatrix result = MFCC_to_Matrix_features (me, windowLength, includeEnergy);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
@@ -4233,9 +4233,9 @@ FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	CONVERT_COUPLE (MFCC)
+	TURN_TWO_INTO_ONE (MFCC)
 		autoSound result = MFCCs_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	CONVERT_COUPLE_END (my name.get(), U"_",your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_",your name.get())
 }
 
 FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
@@ -4245,15 +4245,15 @@ FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	CONVERT_COUPLE (MFCC)
+	TURN_TWO_INTO_ONE (MFCC)
 		autoSound result = MFCCs_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	CONVERT_COUPLE_END (my name.get(), U"_",your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_",your name.get())
 }
 
 DIRECT (NEW_MFCC_to_Sound) {
-	CONVERT_EACH (MFCC)
+	TURN_EACH_INTO_ONE (MFCC)
 		autoSound result = MFCC_to_Sound (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /**************** MSpline *******************************************/
@@ -4396,9 +4396,9 @@ DO
 }
 
 DIRECT (NEW_NMF_to_Matrix) {
-	CONVERT_EACH (NMF)
+	TURN_EACH_INTO_ONE (NMF)
 		autoMatrix result = NMF_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /********************** PatternList *******************************************/
@@ -4480,9 +4480,9 @@ DO
 }
 
 DIRECT (NEW_PatternList_to_Matrix) {
-	CONVERT_EACH (PatternList)
+	TURN_EACH_INTO_ONE (PatternList)
 		autoMatrix result = PatternList_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /******************* PCA ******************************/
@@ -4640,24 +4640,24 @@ FORM (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract 
 DO
 	Melder_require (numberOfRows >= 0, U"The number of rows should be at least 0.");
 	Melder_require (numberOfColumns >= 0, U"The number of columns should be at least 0.");
-	CONVERT_EACH (PCA);
+	TURN_EACH_INTO_ONE (PCA);
 		autoMatrix result = Eigen_extractEigenvector (me, eigenvectorNumber, numberOfRows, numberOfColumns);
-	CONVERT_EACH_END (my name.get(), U"_ev", eigenvectorNumber)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_ev", eigenvectorNumber)
 }
 
 DIRECT (NEW_PCA_extractEigen) {
-	CONVERT_EACH (PCA)
+	TURN_EACH_INTO_ONE (PCA)
 		autoEigen result = PCA_to_Eigen (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...") {
 	SENTENCE (coefficients_string, U"Coefficients", U"1.0 1.0")
 	OK
 DO
-	CONVERT_EACH (PCA)
+	TURN_EACH_INTO_ONE (PCA)
 		autoTableOfReal result = PCA_to_TableOfReal_reconstruct1 (me, coefficients_string);
-	CONVERT_EACH_END (my name.get(), U"_reconstructed")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_reconstructed")
 }
 
 FORM (NEW1_PCAs_to_Procrustes, U"PCA & PCA: To Procrustes", U"PCA & PCA: To Procrustes...") {
@@ -4665,9 +4665,9 @@ FORM (NEW1_PCAs_to_Procrustes, U"PCA & PCA: To Procrustes", U"PCA & PCA: To Proc
 	NATURAL (toEigenvector, U"right Eigenvector range", U"2")
 	OK
 DO
-	CONVERT_COUPLE (PCA)
+	TURN_TWO_INTO_ONE (PCA)
 		autoProcrustes result = Eigens_to_Procrustes (me, you, fromEigenvector, toEigenvector);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
@@ -4794,9 +4794,9 @@ FORM (NEW_Permutation_permuteRandomly, U"Permutation: Permute randomly", U"Permu
 	INTEGER (toIndex, U"right Index range", U"0")
 	OK
 DO
-	CONVERT_EACH (Permutation)
+	TURN_EACH_INTO_ONE (Permutation)
 		autoPermutation result = Permutation_permuteRandomly (me, fromIndex, toIndex);
-	CONVERT_EACH_END (my name.get(), U"_rdm")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_rdm")
 }
 
 FORM (NEW_Permutation_rotate, U"Permutation: Rotate", U"Permutation: Rotate...") {
@@ -4805,9 +4805,9 @@ FORM (NEW_Permutation_rotate, U"Permutation: Rotate", U"Permutation: Rotate...")
 	INTEGER (step, U"Step size", U"1")
 	OK
 DO
-	CONVERT_EACH (Permutation)
+	TURN_EACH_INTO_ONE (Permutation)
 		autoPermutation result = Permutation_rotate (me, fromIndex, toIndex, step);
-	CONVERT_EACH_END (my name.get(), U"_rot", step)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_rot", step)
 }
 
 FORM (NEW_Permutation_reverse, U"Permutation: Reverse", U"Permutation: Reverse...") {
@@ -4815,9 +4815,9 @@ FORM (NEW_Permutation_reverse, U"Permutation: Reverse", U"Permutation: Reverse..
 	INTEGER (toIndex, U"right Index range", U"0")
 	OK
 DO
-	CONVERT_EACH (Permutation)
+	TURN_EACH_INTO_ONE (Permutation)
 		autoPermutation result = Permutation_reverse (me, fromIndex, toIndex);
-	CONVERT_EACH_END (my name.get(), U"_rev")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_rev")
 }
 
 FORM (NEW_Permutation_permuteBlocksRandomly, U"Permutation: Permute blocks randomly", U"Permutation: Permute randomly (blocks)...") {
@@ -4828,9 +4828,9 @@ FORM (NEW_Permutation_permuteBlocksRandomly, U"Permutation: Permute blocks rando
 	BOOLEAN (noDoublets, U"No doublets", false)
 	OK
 DO
-	CONVERT_EACH (Permutation)
+	TURN_EACH_INTO_ONE (Permutation)
 		autoPermutation result = Permutation_permuteBlocksRandomly (me, fromIndex, toIndex, blockSize, permuteWithinBlocks, noDoublets);
-	CONVERT_EACH_END (my name.get(), U"_pbr", blockSize)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_pbr", blockSize)
 }
 
 FORM (NEW_Permutation_interleave, U"Permutation: Interleave", U"Permutation: Interleave...") {
@@ -4840,15 +4840,15 @@ FORM (NEW_Permutation_interleave, U"Permutation: Interleave", U"Permutation: Int
 	INTEGER (offset, U"Offset", U"0")
 	OK
 DO
-	CONVERT_EACH (Permutation)
+	TURN_EACH_INTO_ONE (Permutation)
 		autoPermutation result = Permutation_interleave (me, fromIndex, toIndex, blockSize, offset);
-	CONVERT_EACH_END (my name.get(), U"_itl")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_itl")
 }
 
 DIRECT (NEW_Permutation_invert) {
-	CONVERT_EACH (Permutation)
+	TURN_EACH_INTO_ONE (Permutation)
 		autoPermutation result = Permutation_invert (me);
-	CONVERT_EACH_END (my name.get(), U"_inv")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_inv")
 }
 
 DIRECT (NEW1_Permutations_multiply) {
@@ -4875,9 +4875,9 @@ FORM (NEW1_Pitches_to_DTW, U"Pitches: To DTW", U"Pitches: To DTW...") {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	CONVERT_COUPLE (Pitch)
+	TURN_TWO_INTO_ONE (Pitch)
 		autoDTW result = Pitches_to_DTW (me, you, vuvCosts, weight, matchStart, matchEnd, slopeConstraint);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_PitchTier_to_Pitch, U"PitchTier: To Pitch", U"PitchTier: To Pitch...") {
@@ -4886,9 +4886,9 @@ FORM (NEW_PitchTier_to_Pitch, U"PitchTier: To Pitch", U"PitchTier: To Pitch...")
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"400.0")
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoPitch result = PitchTier_to_Pitch (me, stepSize, pitchFloor, pitchCeiling);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTier: Modify interval...") {
@@ -5030,22 +5030,22 @@ FORM (NEW_Polygon_circularPermutation, U"Polygon: Circular permutation", nullptr
 	INTEGER (shift, U"Shift", U"1")
 	OK
 DO
-	CONVERT_EACH (Polygon)
+	TURN_EACH_INTO_ONE (Polygon)
 		autoPolygon result = Polygon_circularPermutation (me, shift);
-	CONVERT_EACH_END (my name.get(), U"_", shift)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_", shift)
 }
 
 
 DIRECT (NEW_Polygon_simplify) {
-	CONVERT_EACH (Polygon)
+	TURN_EACH_INTO_ONE (Polygon)
 		autoPolygon result = Polygon_simplify (me);
-	CONVERT_EACH_END (my name.get(), U"_s")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_s")
 }
 
 DIRECT (NEW_Polygon_convexHull) {
-	CONVERT_EACH (Polygon)
+	TURN_EACH_INTO_ONE (Polygon)
 		autoPolygon result = Polygon_convexHull (me);
-	CONVERT_EACH_END (my name.get(), U"_hull")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_hull")
 }
 
 FORM (MODIFY_Polygon_translate, U"Polygon: Translate", U"Polygon: Translate...") {
@@ -5218,18 +5218,18 @@ DO
 }
 
 DIRECT (NEW_Polynomial_getDerivative) {
-	CONVERT_EACH (Polynomial)
+	TURN_EACH_INTO_ONE (Polynomial)
 		autoPolynomial result = Polynomial_getDerivative (me);
-	CONVERT_EACH_END (my name.get(), U"_derivative")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_derivative")
 }
 
 FORM (NEW_Polynomial_getPrimitive, U"Polynomial: Get primitive", nullptr) {
 	REAL (constant, U"Constant", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Polynomial)
+	TURN_EACH_INTO_ONE (Polynomial)
 		autoPolynomial result = Polynomial_getPrimitive (me,constant);
-	CONVERT_EACH_END (my name.get(), U"_primitive")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_primitive")
 }
 
 FORM (NEW_Polynomial_scaleX, U"Polynomial: Scale x", U"Polynomial: Scale x...") {
@@ -5239,9 +5239,9 @@ FORM (NEW_Polynomial_scaleX, U"Polynomial: Scale x", U"Polynomial: Scale x...") 
 	OK
 DO
 	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
-	CONVERT_EACH (Polynomial)
+	TURN_EACH_INTO_ONE (Polynomial)
 		autoPolynomial result = Polynomial_scaleX (me, xmin, xmax);
-	CONVERT_EACH_END (my name.get(), U"_scaleX")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_scaleX")
 }
 
 DIRECT (MODIFY_Polynomial_scaleCoefficients_monic) {
@@ -5251,9 +5251,9 @@ DIRECT (MODIFY_Polynomial_scaleCoefficients_monic) {
 }
 
 DIRECT (NEW_Polynomial_to_Roots) {
-	CONVERT_EACH (Polynomial)
+	TURN_EACH_INTO_ONE (Polynomial)
 		autoRoots result = Polynomial_to_Roots (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (INFO_Polynomial_evaluate_z, U"Polynomial: Get value (complex)", U"Polynomial: Get value (complex)...") {
@@ -5275,15 +5275,15 @@ FORM (NEW_Polynomial_to_Spectrum, U"Polynomial: To Spectrum", U"Polynomial: To S
 	NATURAL (numberOfFrequencies, U"Number of frequencies (>1)", U"1025")
 	OK
 DO
-	CONVERT_EACH (Polynomial)
+	TURN_EACH_INTO_ONE (Polynomial)
 		autoSpectrum result = Polynomial_to_Spectrum (me, maximumFrequency, numberOfFrequencies, 1.0);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Polynomials_multiply) {
-	CONVERT_COUPLE (Polynomial)
+	TURN_TWO_INTO_ONE (Polynomial)
 		autoPolynomial result = Polynomials_multiply (me, you);
-	CONVERT_COUPLE_END (my name.get(), U"_x_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_x_", your name.get())
 }
 
 FORM (NEWMANY_Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...") {
@@ -5376,9 +5376,9 @@ FORM (NEW_Roots_to_Spectrum, U"Roots: To Spectrum", U"Roots: To Spectrum...") {
 	NATURAL (numberOfFrequencies, U"Number of frequencies (>1)", U"1025")
 	OK
 DO
-	CONVERT_EACH (Roots)
+	TURN_EACH_INTO_ONE (Roots)
 		autoSpectrum result = Roots_to_Spectrum (me, maximumFrequency, numberOfFrequencies, 1.0);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (MODIFY_Roots_Polynomial_polish) {
@@ -5664,9 +5664,9 @@ FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    CONVERT_COUPLE (Sound)
+    TURN_TWO_INTO_ONE (Sound)
 		autoDTW result = Sounds_to_DTW (me, you, windowLength, timeStep, sakoeChibaBand, slopeConstraint);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
@@ -5681,9 +5681,9 @@ FORM (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"
 	WORD (soundingLabel, U"Sounding interval label", U"sounding")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoTextGrid result = Sound_to_TextGrid_detectSilences (me, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_TextGrid_voiceActivity, U"Sound_to_TextGrid_voiceActivity", nullptr) {
@@ -5700,10 +5700,10 @@ FORM (NEW_Sound_to_TextGrid_voiceActivity, U"Sound_to_TextGrid_voiceActivity", n
 	WORD (speechLabel, U"Sounding interval label", U"sounding")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoTextGrid result = Sound_to_TextGrid_detectVoiceActivity_lsfm (me, timeStep, longtermWindow, shorttermWindow,
 			fmin, fmax, flatnessThreshold, silenceThreshold_dB, minimumSilenceDuration, minimumSpeechDuration, silenceLabel, speechLabel);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
@@ -5711,9 +5711,9 @@ FORM (NEW_Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSound result = Sound_copyChannelRanges (me, channels);
-	CONVERT_EACH_END (my name.get(), U"_channels")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_channels")
 }
 
 FORM (NEWMANY_Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silences...") {
@@ -5731,13 +5731,13 @@ FORM (NEWMANY_Sound_trimSilences, U"Sound: Trim silences", U"Sound: Trim silence
 	OK
 DO
     trimDuration = ( trimDuration < 0.0 ? 0.0 : trimDuration );
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
         autoTextGrid tg;
 		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, (saveTextGrid ? &tg : nullptr ), trim_string);
 		if (saveTextGrid) {
             praat_new (tg.move(), my name.get(), U"_trimmed");
         }
-	CONVERT_EACH_END (my name.get(), U"_trimmed")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_trimmed")
 }
 
 // deprecated
@@ -5750,9 +5750,9 @@ FORM (NEW_Sound_to_BarkFilter, U"Sound: To BarkFilter", U"Sound: To BarkSpectrog
 	REAL (maximumFrequency, U"Maximum frequency (bark)", U"0.0");
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoBarkFilter result = Sound_to_BarkFilter (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To BarkSpectrogram...") {
@@ -5764,9 +5764,9 @@ FORM (NEW_Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram", U"Sound: To Ba
 	REAL (maximumFrequency, U"Maximum frequency (bark)", U"0.0");
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoBarkSpectrogram result = Sound_to_BarkSpectrogram (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // deprecated
@@ -5783,9 +5783,9 @@ FORM (NEW_Sound_to_FormantFilter, U"Sound: To FormantFilter", U"Sound: To Forman
 	REAL (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoFormantFilter result = Sound_to_FormantFilter (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-dependent)", U"Sound: To Spectrogram (pitch-dependent)...") {
@@ -5801,9 +5801,9 @@ FORM (NEW_Sound_to_Spectrogram_pitchDependent, U"Sound: To Spectrogram (pitch-de
 	REAL (maximumPitch, U"Maximum pitch (Hz)", U"600.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSpectrogram result = Sound_to_Spectrogram_pitchDependent (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // deprecated
@@ -5816,9 +5816,9 @@ FORM (NEW_Sound_to_MelFilter, U"Sound: To MelFilter", U"Sound: To MelFilter...")
 	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoMelFilter result = Sound_to_MelFilter (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram", U"Sound: To MelSpectrogram...") {
@@ -5830,9 +5830,9 @@ FORM (NEW_Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram", U"Sound: To MelS
 	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoMelSpectrogram result = Sound_to_MelSpectrogram (me, windowLength, timeStep,  firstFrequency, maximumFrequency, deltaFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr) {
@@ -5840,9 +5840,9 @@ FORM (NEW_Sound_to_ComplexSpectrogram, U"Sound: To ComplexSpectrogram", nullptr)
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"8000.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoComplexSpectrogram result = Sound_to_ComplexSpectrogram (me, windowLength, maximumFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogram", U"Sound: To ConstantQLogFSpectrogram...") {
@@ -5853,15 +5853,15 @@ FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogra
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"4.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, fmax, numberOfFrequencyBinsPerOctave, frequencyResolutionInBins, timeOversamplingFactor);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ConstantQLogFSpectrogram_to_Sound) {
-	CONVERT_EACH (ConstantQLogFSpectrogram)
+	TURN_EACH_INTO_ONE (ConstantQLogFSpectrogram)
 		autoSound result = ConstantQLogFSpectrogram_to_Sound (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs)...") {
@@ -5878,9 +5878,9 @@ FORM (NEW_Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs).
 DO
 	Melder_require (pitchFloor < pitchCeiling, U"The minimum pitch should be less than the ceiling.");
 	Melder_require (pitchCeiling < maximumFrequency, U"The maximum frequency should be greater than or equal to the ceiling.");
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_shs (me, timeStep, pitchFloor, maximumFrequency, pitchCeiling, maximumNumberOfSubharmonics, maximumNumberOfCandidates, compressionFactor, numberOfPointsPerOctave);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...") {
@@ -5922,9 +5922,9 @@ FORM (NEW_Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (simple)", U"Sound: T
 	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoKlattGrid result = Sound_to_KlattGrid_simple (me, timeStep, numberOfFormants, formantCeiling, windowLength, preEmphasisFrequency, pitchFloor, pitchCeiling, minimumPitch, subtractMean);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: To SPINET...") {
@@ -5939,9 +5939,9 @@ FORM (NEW_Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: To SPINET...") {
 	OK
 DO
 	Melder_require (minimumFrequency < maximumFrequency, U"The maximum frequency should be greater than the minimum frequency.");
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_SPINET (me, timeStep, windowLength, minimumFrequency, maximumFrequency, numberOfFilters, pitchCeiling, maximumNumberOfCandidates);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U"Sound: Extract Electroglottogram...") {
@@ -5949,9 +5949,9 @@ FORM (NEW_Sound_extractElectroglottogram, U"Sound: Extract Electroglottogram", U
 	BOOLEAN (invert, U"Invert", 0)
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoElectroglottogram result = Sound_extractElectroglottogram (me, channelNumber, invert);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 	
 FORM (NEW_Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
@@ -5962,10 +5962,10 @@ FORM (NEW_Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To Polygon...") {
 	REAL (connectionY, U"Connection y-value", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		channel = channel > my ny ? 1 : channel;
 		autoPolygon result = Sound_to_Polygon (me, channel, fromTime, toTime, ymin, ymax, connectionY);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sounds: To Polygon (enclosed)...") {
@@ -5975,9 +5975,9 @@ FORM (NEW1_Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sound
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	CONVERT_COUPLE (Sound)
+	TURN_TWO_INTO_ONE (Sound)
 		autoPolygon result = Sounds_to_Polygon_enclosed (me, you, channel, fromTime, toTime, ymin, ymax);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Filter (gammatone)...") {
@@ -5985,9 +5985,9 @@ FORM (NEW_Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound:
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"150.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSound result = Sound_filterByGammaToneFilter4 (me, centreFrequency, bandwidth);
-	CONVERT_EACH_END (my name.get(), U"_filtered")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_filtered")
 }
 
 FORM (NEW_Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: Reduce noise...") {
@@ -6002,9 +6002,9 @@ FORM (NEW_Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: Reduce noise...") 
 	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSound result = Sound_reduceNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, smoothingBandwidth, noiseReduction_dB, noiseReductionMethod);
-	CONVERT_EACH_END (my name.get(), U"_denoised")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_denoised")
 }
 
 FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") {
@@ -6018,9 +6018,9 @@ FORM (NEW_Sound_removeNoise, U"Sound: Remove noise", U"Sound: Reduce noise...") 
 	OPTIONMENU_ENUM (kSoundNoiseReductionMethod, noiseReductionMethod, U"Noise reduction method", kSoundNoiseReductionMethod::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSound result = Sound_removeNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, smoothingBandwidth, noiseReductionMethod);
-	CONVERT_EACH_END (my name.get(), U"_denoised")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_denoised")
 }
 
 FORM (NEW_Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker...") {
@@ -6035,9 +6035,9 @@ FORM (NEW_Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker
 	OK
 DO
 	Melder_require (pitchFloor < pitchCeiling, U"The maximum pitch should be greater than the minimum pitch.");
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSound result = Sound_changeSpeaker (me, pitchFloor, pitchCeiling, formantMultiplicationFactor, pitchMultiplicationFactor, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
-	CONVERT_EACH_END (my name.get(), U"_changeSpeaker")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_changeSpeaker")
 }
 
 FORM (NEW_Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...") {
@@ -6052,9 +6052,9 @@ FORM (NEW_Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...
 	OK
 DO
 	Melder_require (pitchFloor < pitchCeiling, U"The maximum pitch should be greater than the minimum pitch.");
-	CONVERT_EACH (Sound)
+	TURN_EACH_INTO_ONE (Sound)
 		autoSound result = Sound_changeGender_old (me, pitchFloor, pitchCeiling, formantShiftRatio, pitchMedian, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
-	CONVERT_EACH_END (my name.get(), U"_changeGender");
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_changeGender");
 }
 
 FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...") {
@@ -6112,9 +6112,9 @@ FORM (NEW1_Spectrograms_to_DTW, U"Spectrograms: To DTW", nullptr) {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	CONVERT_COUPLE (Spectrogram)
+	TURN_TWO_INTO_ONE (Spectrogram)
 		autoDTW result = Spectrograms_to_DTW (me, you, matchStart, matchEnd, slopeConstraint, 1.0);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_Spectrogram_getLongtermSpectralFlatnessMeasure, U"Spectrogram_getLongtermSpectralFlatness", nullptr) {
@@ -6124,9 +6124,9 @@ FORM (NEW1_Spectrogram_getLongtermSpectralFlatnessMeasure, U"Spectrogram_getLong
 	POSITIVE (fmax, U"right Frequency range_(Hz)", U"4000.0")
 	OK
 DO
-	CONVERT_EACH (Spectrogram)
+	TURN_EACH_INTO_ONE (Spectrogram)
 		autoMatrix result = Spectrogram_getLongtermSpectralFlatnessMeasure (me, longtimeWindow, shorttimeWindow, fmin, fmax);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 /**************** Spectrum *******************************************/
 
@@ -6178,24 +6178,24 @@ FORM (NEW_Spectrum_shiftFrequencies, U"Spectrum: Shift frequencies", U"Spectrum:
 	NATURAL (interpolationDepth, U"Interpolation depth", U"50")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_shiftFrequencies (me, frequencyShift, maximumFrequency, interpolationDepth);
-	CONVERT_EACH_END (my name.get(), ( frequencyShift < 0.0 ? U"_m" : U"_" ), Melder_ifloor (fabs (frequencyShift)))
+	TURN_EACH_INTO_ONE_END (my name.get(), ( frequencyShift < 0.0 ? U"_m" : U"_" ), Melder_ifloor (fabs (frequencyShift)))
 }
 
 DIRECT (NEW_Spectra_multiply) {
-	CONVERT_COUPLE (Spectrum)
+	TURN_TWO_INTO_ONE (Spectrum)
 		autoSpectrum result = Spectra_multiply (me, you);
-	CONVERT_COUPLE_END (my name.get(), U"_x_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_x_", your name.get())
 }
 
 FORM (NEW_Spectrum_resample, U"Spectrum: Resample", nullptr) {
 	NATURAL (numberOfFrequencies, U"New number of frequencies", U"256")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_resample (me, numberOfFrequencies);
-	CONVERT_EACH_END (my name.get(), U"_", numberOfFrequencies)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_", numberOfFrequencies)
 }
 
 FORM (NEW_Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domain", nullptr) {
@@ -6206,27 +6206,27 @@ FORM (NEW_Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domai
 		RADIOBUTTON (U"logarithmic")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_compressFrequencyDomain (me, maximumFrequency, interpolationDepth, scale, 1);
-	CONVERT_EACH_END (my name.get(), U"_", Melder_ifloor (maximumFrequency))
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_", Melder_ifloor (maximumFrequency))
 }
 
 DIRECT (NEW_Spectrum_unwrap) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoMatrix result = Spectrum_unwrap (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_PowerCepstrum) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoPowerCepstrum result = Spectrum_to_PowerCepstrum (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Cepstrum) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoCepstrum result = Spectrum_to_Cepstrum (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /************* SpeechSynthesizer *************************************************/
@@ -6309,7 +6309,7 @@ FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"Spee
 	BOOLEAN (wantTextGrid, U"Create TextGrid with annotations", false);
 	OK
 DO
-	CONVERT_EACH (SpeechSynthesizer)
+	TURN_EACH_INTO_ONE (SpeechSynthesizer)
 		autoTextGrid tg;
 		autoTable t;
 		autoSound result = SpeechSynthesizer_to_Sound (me, text, (wantTextGrid ? & tg : nullptr), (Melder_debug == -2 ? & t : nullptr ));
@@ -6319,7 +6319,7 @@ DO
 		if (Melder_debug == -2) {
 			praat_new (t.move(), my name.get());
 		}
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
@@ -6485,9 +6485,9 @@ FORM (NEW_Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x...") {
 	OK
 DO
 	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
-	CONVERT_EACH (Spline)
+	TURN_EACH_INTO_ONE (Spline)
 		autoSpline result = Spline_scaleX (me, xmin, xmax);
-	CONVERT_EACH_END (my name.get(), U"_scaleX")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_scaleX")
 }
 
 /************ SSCP ***************************************************/
@@ -6529,9 +6529,9 @@ DO
 }
 
 DIRECT (NEW_SSCP_extractCentroid) {
-	CONVERT_EACH (SSCP)
+	TURN_EACH_INTO_ONE (SSCP)
 		autoTableOfReal result = SSCP_extractCentroid (me);
-	CONVERT_EACH_END (my name.get(), U"_centroid")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_centroid")
 }
 
 FORM (REAL_SSCP_getConfidenceEllipseArea, U"SSCP: Get confidence ellipse area", U"SSCP: Get confidence ellipse area...") {
@@ -6614,24 +6614,24 @@ DO
 }
 
 DIRECT (NEW_SSCP_to_Correlation) {
-	CONVERT_EACH (SSCP)
+	TURN_EACH_INTO_ONE (SSCP)
 		autoCorrelation result = SSCP_to_Correlation (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_SSCP_to_Covariance, U"SSCP: To Covariance", U"SSCP: To Covariance...") {
 	NATURAL (numberOfConstraints, U"Number of constraints", U"1")
 	OK
 DO
-	CONVERT_EACH (SSCP)
+	TURN_EACH_INTO_ONE (SSCP)
 		autoCovariance result = SSCP_to_Covariance (me, numberOfConstraints);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_SSCP_to_PCA) {
-	CONVERT_EACH (SSCP)
+	TURN_EACH_INTO_ONE (SSCP)
 		autoPCA result = SSCP_to_PCA (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /******************* Strings ****************************/
@@ -6686,9 +6686,9 @@ DIRECT (NEW1_Strings_append) {
 }
 
 DIRECT (NEW_Strings_to_Categories) {
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		autoCategories result = Strings_to_Categories (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Strings_change, U"Strings: Change", U"Strings: Change") {
@@ -6700,10 +6700,10 @@ FORM (NEW_Strings_change, U"Strings: Change", U"Strings: Change") {
 	RADIOBUTTON (U"Regular Expressions")
 	OK
 DO
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		integer nmatches, nstringmatches;
 		autoStrings result = Strings_change (me, search_string, replace_string, replaceLimit, &nmatches, &nstringmatches, stringType - 1);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Strings_extractPart, U"Strings: Extract part", nullptr) {
@@ -6711,24 +6711,24 @@ FORM (NEW_Strings_extractPart, U"Strings: Extract part", nullptr) {
 	NATURAL (toIndex, U"To index", U"1")
 	OK
 DO
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		autoStrings result = Strings_extractPart (me, fromIndex, toIndex);
-	CONVERT_EACH_END (my name.get(), U"_part");
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_part");
 }
 
 DIRECT (NEW_Strings_to_EditDistanceTable) {
-	CONVERT_COUPLE (Strings)
+	TURN_TWO_INTO_ONE (Strings)
 		autoEditDistanceTable result = EditDistanceTable_create (me, you);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
 	BOOLEAN (sort, U"Sort", true)
 	OK
 DO
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		autoPermutation result = Strings_to_Permutation (me, sort);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Strings_Permutation_permuteStrings) {
@@ -6806,9 +6806,9 @@ FORM (NEW_SVD_to_Matrix, U"SVD: To Matrix", U"SVD: To Matrix...") {
 	INTEGER (toComponent, U"Last component", U"0 (= all)")
 	OK
 DO
-	CONVERT_EACH (SVD)
+	TURN_EACH_INTO_ONE (SVD)
 		autoMatrix result = SVD_to_Matrix (me, fromComponent, toComponent);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
@@ -6816,27 +6816,27 @@ FORM (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...")
 	INTEGER (toComponent, U"Last component", U"0 (= all)")
 	OK
 DO
-	CONVERT_EACH (SVD)
+	TURN_EACH_INTO_ONE (SVD)
 		autoTableOfReal result = SVD_to_TableOfReal (me, fromComponent, toComponent);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_SVD_extractLeftSingularVectors) {
-	CONVERT_EACH (SVD)
+	TURN_EACH_INTO_ONE (SVD)
 		autoTableOfReal result = SVD_extractLeftSingularVectors (me);
-	CONVERT_EACH_END (my name.get(), U"_lsv")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_lsv")
 }
 
 DIRECT (NEW_SVD_extractRightSingularVectors) {
-	CONVERT_EACH (SVD)
+	TURN_EACH_INTO_ONE (SVD)
 		autoTableOfReal result = SVD_extractRightSingularVectors (me);
-	CONVERT_EACH_END (my name.get(), U"_rsv")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_rsv")
 }
 
 DIRECT (NEW_SVD_extractSingularValues) {
-	CONVERT_EACH (SVD)
+	TURN_EACH_INTO_ONE (SVD)
 		autoTableOfReal result = SVD_extractSingularValues (me);
-	CONVERT_EACH_END (my name.get(), U"_sv");
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_sv");
 }
 
 /******************* Table ****************************/
@@ -7272,9 +7272,9 @@ FORM (NEW_Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
 	FORMULA (formula, U"Extract rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
-	CONVERT_EACH (Table)
+	TURN_EACH_INTO_ONE (Table)
 		autoTable result = Table_extractRowsWhere (me, formula, interpreter);
-	CONVERT_EACH_END (my name.get(), U"_formula")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_formula")
 }
 
 FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
@@ -7286,9 +7286,9 @@ FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahala
 	FORMULA (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
-	CONVERT_EACH (Table)
+	TURN_EACH_INTO_ONE (Table)
 		autoTable result = Table_extractMahalanobisWhere (me, dataColumns_string, factorColumn_string, numberOfSigmas, haveAMahalanobisDistance, formula, interpreter);
-	CONVERT_EACH_END (my name.get(), U"_mahalanobis")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_mahalanobis")
 }
 
 FORM (NEW_Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
@@ -7296,9 +7296,9 @@ FORM (NEW_Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	CONVERT_EACH (Table)
+	TURN_EACH_INTO_ONE (Table)
 		autoTable result = Table_extractColumnRanges (me, columnRanges);
-	CONVERT_EACH_END (my name.get(), U"_columns")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_columns")
 }
 
 FORM (NUMVEC_Table_listRowNumbersWhere, U"Table: List rows where", U"") {
@@ -7351,9 +7351,9 @@ DIRECT (NEW1_TableOfReal_Permutation_permuteRows) {
 }
 
 DIRECT (NEW_TableOfReal_to_Permutation_sortRowlabels) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoPermutation result = TableOfReal_to_Permutation_sortRowLabels (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_TableOfReal_appendColumns) {
@@ -7578,39 +7578,39 @@ FORM (NEW_TableOfReal_to_Configuration_lda, U"TableOfReal: To Configuration (lda
 	OK
 DO
 	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoConfiguration result = TableOfReal_to_Configuration_lda (me, numberOfDimensions);
-	CONVERT_EACH_END (my name.get(), U"_lda")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_lda")
 }
 
 FORM (NEW_TableOfReal_to_CCA, U"TableOfReal: To CCA", U"TableOfReal: To CCA...") {
 	NATURAL (dimensionOfDependentVariate, U"Dimension of dependent variate", U"2")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoCCA result = TableOfReal_to_CCA (me, dimensionOfDependentVariate);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_Configuration_pca, U"TableOfReal: To Configuration (pca)", U"TableOfReal: To Configuration (pca)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoConfiguration result = TableOfReal_to_Configuration_pca (me, numberOfDimensions);
-	CONVERT_EACH_END (my name.get(), U"_pca")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_pca")
 }
 
 DIRECT (NEW_TableOfReal_to_Discriminant) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoDiscriminant result = TableOfReal_to_Discriminant (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_PCA_byRows) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoPCA result = TableOfReal_to_PCA_byRows (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_SSCP, U"TableOfReal: To SSCP", U"TableOfReal: To SSCP...") {
@@ -7620,9 +7620,9 @@ FORM (NEW_TableOfReal_to_SSCP, U"TableOfReal: To SSCP", U"TableOfReal: To SSCP..
 	INTEGER (toColumn, U"End column", U"0")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoSSCP result = TableOfReal_to_SSCP (me, fromRow, toRow, fromColumn, toColumn);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)", U"TableOfReal: To SSCP (row weights)...") {
@@ -7633,46 +7633,46 @@ FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)",
 	INTEGER (rowWeights, U"Weights column number", U"0")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoSSCP result = TableOfReal_to_SSCP_rowWeights (me, fromRow, toRow, fromColumn, toColumn, rowWeights);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 /* For the inheritors */
 DIRECT (NEW_TableOfReal_to_TableOfReal) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_to_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Correlation) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoCorrelation result = TableOfReal_to_Correlation (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Correlation_rank) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoCorrelation result = TableOfReal_to_Correlation_rank (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Covariance) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoCovariance result = TableOfReal_to_Covariance (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_SVD) {
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoSVD result = TableOfReal_to_SVD (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_TablesOfReal_to_Eigen_gsvd) {
-	CONVERT_COUPLE (TableOfReal)
+	TURN_TWO_INTO_ONE (TableOfReal)
 		autoEigen result = TablesOfReal_to_Eigen_gsvd (me, you);
-	CONVERT_COUPLE_END (U"gsvd");
+	TURN_TWO_INTO_ONE_END (U"gsvd");
 }
 
 FORM (NEW1_TableOfReal_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", nullptr) {
@@ -7684,9 +7684,9 @@ FORM (NEW1_TableOfReal_TableOfReal_crossCorrelations, U"TableOfReal & TableOfRea
 	OK
 DO
 	int by_columns = between - 1;
-	CONVERT_COUPLE (TableOfReal)
+	TURN_TWO_INTO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_TableOfReal_crossCorrelations (me, you, by_columns, center, normalize);
-	CONVERT_COUPLE_END (U"cc_", by_columns ? U"by_cols" : U"by_rows")
+	TURN_TWO_INTO_ONE_END (U"cc_", by_columns ? U"by_cols" : U"by_rows")
 }
 
 void praat_TableOfReal_init3 (ClassInfo klas);
@@ -7696,9 +7696,9 @@ void praat_TableOfReal_init3 (ClassInfo klas) {
 }
 
 DIRECT (NEW1_TablesOfReal_to_GSVD) {
-	CONVERT_COUPLE (TableOfReal)
+	TURN_TWO_INTO_ONE (TableOfReal)
 		autoGSVD result = TablesOfReal_to_GSVD (me, you);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition", nullptr) {
@@ -7706,9 +7706,9 @@ FORM (NEW_TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decompositi
 	BOOLEAN (wantInverse, U"Inverse", false)
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_choleskyDecomposition (me, wantUpper, wantInverse);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEWMANY_TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To PatternList and Categories", U"TableOfReal: To PatternList and Categories...") {
@@ -7718,12 +7718,12 @@ FORM (NEWMANY_TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To Patte
 	INTEGER (toColumn, U"right Column range", U"0 (= all)")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoPatternList ap;
 		autoCategories result;
 		TableOfReal_to_PatternList_and_Categories (me, fromRow, toRow, fromColumn, toColumn, & ap, & result);
 		praat_new (ap.move(), my name.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (REAL_TableOfReal_getColumnSum, U"TableOfReal: Get column sum", U"") {
@@ -7754,18 +7754,18 @@ FORM (NEW_TableOfReal_meansByRowLabels, U"TableOfReal: Means by row labels", U"T
 	BOOLEAN (expand, U"Expand", false)
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 0);
-	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_byrowlabels")
 }
 
 FORM (NEW_TableOfReal_mediansByRowLabels, U"TableOfReal: Medians by row labels", U"TableOfReal: To TableOfReal (medians by row labels)...") {
 	BOOLEAN (expand, U"Expand", false)
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 1);
-	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_byrowlabels")
 }
 
 FORM (NEW_TableOfReal_to_TableOfReal_rankColumns, U"TableOfReal: Rank columns", U"TableOfReal: To TableOfReal (rank columns)...") {
@@ -7773,9 +7773,9 @@ FORM (NEW_TableOfReal_to_TableOfReal_rankColumns, U"TableOfReal: Rank columns", 
 	INTEGER (toColumn, U"right Column range", U"0 (=all)")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	TURN_EACH_INTO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_rankColumns (me, fromColumn, toColumn);
-	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_byrowlabels")
 }
 
 /***** TableOfReal and FilterBank  *****/
@@ -7843,9 +7843,9 @@ FORM (NEW1_TextGrids_to_Table_textAlignment, U"TextGrids: To Table (text alignme
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
-	CONVERT_COUPLE (TextGrid)
+	TURN_TWO_INTO_ONE (TextGrid)
  		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, nullptr);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
+	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To DurationTier...") {
@@ -7858,10 +7858,10 @@ FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	CONVERT_EACH (TextGrid)
+	TURN_EACH_INTO_ONE (TextGrid)
 		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor,
 			leftTransitionDuration, rightTransitionDuration, scaleIntervalsWhoseLabel___, ___theText);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
@@ -7872,9 +7872,9 @@ FORM (NEW_TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavi
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (TextGrid)
+	TURN_EACH_INTO_ONE (TextGrid)
 		autoTextGridNavigator result = TextGrid_to_TextGridNavigator_topicSearch (me, tierNumber, topic_string, topicCriterion,  topicMatchBoolean, matchDomain);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_TextGrid_to_TextGridNavigator, U"", nullptr) {
@@ -7897,11 +7897,11 @@ FORM (NEW_TextGrid_to_TextGridNavigator, U"", nullptr) {
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (TextGrid)
+	TURN_EACH_INTO_ONE (TextGrid)
 		autoTextGridNavigator result = TextGrid_to_TextGridNavigator (me, tierNumber, topic_string, topicCriterion, topicMatchBoolean,  
 			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
 			useCriterion, excludeTopic, matchDomain);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TextGrid_DurationTier_to_TextGrid) {
@@ -8244,9 +8244,9 @@ DO
 }
 
 DIRECT (NEW_TextGridTierNavigator_to_TextGridNavigator) {
-	CONVERT_EACH (TextGridTierNavigator)
+	TURN_EACH_INTO_ONE (TextGridTierNavigator)
 		autoTextGridNavigator result = TextGridTierNavigator_to_TextGridNavigator (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {

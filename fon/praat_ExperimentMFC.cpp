@@ -67,9 +67,9 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 END_WITH_NEW_DATA }
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
-	CONVERT_EACH (ExperimentMFC)
+	TURN_EACH_INTO_ONE (ExperimentMFC)
 		autoResultsMFC result = ExperimentMFC_extractResults (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - RESULTS_MFC
@@ -103,21 +103,21 @@ DO
 }
 
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
-	CONVERT_COUPLE (ResultsMFC)
+	TURN_TWO_INTO_ONE (ResultsMFC)
 		autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (me, you);
-	CONVERT_COUPLE_END (your name.get(), U"_shared")
+	TURN_TWO_INTO_ONE_END (your name.get(), U"_shared")
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {
-	CONVERT_EACH (ResultsMFC)
+	TURN_EACH_INTO_ONE (ResultsMFC)
 		autoCategories result = ResultsMFC_to_Categories_stimuli (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_responses) {
-	CONVERT_EACH (ResultsMFC)
+	TURN_EACH_INTO_ONE (ResultsMFC)
 		autoCategories result = ResultsMFC_to_Categories_responses (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_ResultsMFCs_to_Table) {

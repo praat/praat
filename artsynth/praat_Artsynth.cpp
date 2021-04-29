@@ -101,7 +101,7 @@ DIRECT (HELP_Artword_help) {
 	HELP (U"Artword")
 }
 
-FORM (MODIFY_Artword_setTarget, U"Set one Artword target", nullptr) {
+FORM (MODIFY_EACH_Artword_setTarget, U"Set one Artword target", nullptr) {
 	REAL (time, U"Time (seconds)", U"0.0")
 	REAL (targetValue, U"Target value (0-1)", U"0.0")
 	OPTIONMENU (muscle, U"Muscle", (int) kArt_muscle::LUNGS)
@@ -115,13 +115,13 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW_Artword_to_Art, U"From Artword to Art", nullptr) {
+FORM (CONVERT_EACH_Artword_to_Art, U"From Artword to Art", nullptr) {
 	REAL (time, U"Time (seconds)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Artword)
+	TURN_EACH_INTO_ONE (Artword)
 		autoArt result = Artword_to_Art (me, time);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - ART & SPEAKER
@@ -144,7 +144,7 @@ DIRECT (GRAPHICS_Art_Speaker_drawMesh) {
 	GRAPHICS_TWO_END
 }
 
-DIRECT (NEW1_Art_Speaker_to_VocalTract) {
+DIRECT (CONVERT_TWO_Art_Speaker_to_VocalTract) {
 	CONVERT_TWO (Art, Speaker)
 		autoVocalTract result = Art_Speaker_to_VocalTract (me, you);
 	CONVERT_TWO_END (my name.get(), U"_", your name.get())
@@ -287,9 +287,9 @@ DIRECT (HELP_VocalTract_help) {
 }
 
 DIRECT (NEW_VocalTract_to_Matrix) {
-	CONVERT_EACH (VocalTract)
+	TURN_EACH_INTO_ONE (VocalTract)
 		autoMatrix result = VocalTract_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
@@ -301,10 +301,10 @@ FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
 	BOOLEAN (internalDamping, U"Internal damping", true)
 	OK
 DO
-	CONVERT_EACH (VocalTract)
+	TURN_EACH_INTO_ONE (VocalTract)
 		autoSpectrum result = VocalTract_to_Spectrum (me, numberOfFequencies,
 			maximumFrequency, glottalDamping, radiationDamping, internalDamping);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (HELP_ArticulatorySynthesisTutorial) {
@@ -339,16 +339,16 @@ void praat_uvafon_Artsynth_init () {
 	praat_addAction1 (classArtword, 0, U"Draw", nullptr, 0, nullptr);
 	praat_addAction1 (classArtword, 0, U"Draw...", nullptr, 0, GRAPHICS_Artword_draw);
 	praat_addAction1 (classArtword, 0, U"Modify", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 1, U"Set target...", nullptr, 0, MODIFY_Artword_setTarget);
+	praat_addAction1 (classArtword, 1, U"Set target...", nullptr, 0, MODIFY_EACH_Artword_setTarget);
 	praat_addAction1 (classArtword, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classArtword, 0, U"To Art (slice)...", nullptr, 0, NEW_Artword_to_Art);
+	praat_addAction1 (classArtword, 0, U"To Art (slice)...", nullptr, 0, CONVERT_EACH_Artword_to_Art);
 
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw", nullptr, 0, GRAPHICS_Art_Speaker_draw);
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Fill inner contour", nullptr, 0, GRAPHICS_Art_Speaker_fillInnerContour);
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Draw mesh", nullptr, 0, GRAPHICS_Art_Speaker_drawMesh);
 	praat_addAction2 (classArt, 1, classSpeaker, 1, U"Synthesize", nullptr, 0, nullptr);
-	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, NEW1_Art_Speaker_to_VocalTract);
+	praat_addAction2 (classArt, 1, classSpeaker, 1, U"To VocalTract", nullptr, 0, CONVERT_TWO_Art_Speaker_to_VocalTract);
 
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Play movie", nullptr, 0, MOVIE_Artword_Speaker_playMovie);
 	praat_addAction2 (classArtword, 1, classSpeaker, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Artword_Speaker_playMovie);
