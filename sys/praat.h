@@ -1015,10 +1015,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define CONVERT_TWO_FIRST_WEAK(klas1,klas2)  \
+#define TURN_ONE_WEAK_AND_ONE_INTO_ONE(klas1,klas2)  \
 	FIND_TWO (klas1, klas2) \
 	try {
-#define CONVERT_TWO_FIRST_WEAK_END(...)  \
+#define TURN_ONE_WEAK_AND_ONE_INTO_ONE_END(...)  \
 		if (interpreter) \
 			interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 		praat_new (result.move(), __VA_ARGS__); \
@@ -1037,9 +1037,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define CONVERT_COUPLE_AND_ONE(klas1,klas2)  \
+#define TURN_TWO_AND_ONE_INTO_ONE(klas1,klas2)  \
 	FIND_COUPLE_AND_ONE (klas1,klas2)
-#define CONVERT_COUPLE_AND_ONE_END(...)  \
+#define TURN_TWO_AND_ONE_INTO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
