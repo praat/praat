@@ -439,13 +439,9 @@ DIRECT (HELP_OTGrammar_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_OTGrammar_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit from batch.");
-	FIND_ONE_WITH_IOBJECT (OTGrammar)
+	EDITOR_ONE (an,OTGrammar)
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Draw
@@ -1210,13 +1206,9 @@ DO
 // MARK: View & Edit
 
 DIRECT (WINDOW_OTMulti_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit an OTMulti from batch.");
-	FIND_ONE_WITH_IOBJECT (OTMulti)
+	EDITOR_ONE (an,OTMulti)
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Query

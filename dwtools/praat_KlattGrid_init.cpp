@@ -167,16 +167,12 @@ DO
 	CREATE_ONE_END (name)
 }
 
-
-#define KlattGrid_INSTALL_TIER_EDITOR(Name) \
-DIRECT (WINDOW_KlattGrid_edit##Name##Tier)  {\
-	if (theCurrentPraatApplication -> batch) \
-		Melder_throw (U"Cannot edit a KlattGrid from batch."); \
-	FIND_ONE_WITH_IOBJECT (KlattGrid) \
-		auto##KlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
-		praat_installEditor (editor.get(), IOBJECT); \
-		editor.releaseToUser(); \
-	END_WITH_NEW_DATA }
+#define KlattGrid_INSTALL_TIER_EDITOR(Name)  \
+DIRECT (WINDOW_KlattGrid_edit##Name##Tier) { \
+	EDITOR_ONE (a,KlattGrid) \
+	autoKlattGrid_##Name##TierEditor editor = KlattGrid_##Name##TierEditor_create (ID_AND_FULL_NAME, me); \
+	EDITOR_ONE_END \
+}
 
 KlattGrid_INSTALL_TIER_EDITOR (Pitch)
 KlattGrid_INSTALL_TIER_EDITOR (VoicingAmplitude)

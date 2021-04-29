@@ -1117,6 +1117,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SAVE_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas, listClass)
 #define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
 
+#define EDITOR_ONE(indefiniteArticle,klas)  \
+	if (theCurrentPraatApplication -> batch) \
+		Melder_throw (U"Cannot edit " #indefiniteArticle " " #klas " from batch."); \
+	FIND_ONE_WITH_IOBJECT (klas)
+#define EDITOR_ONE_END  \
+	praat_installEditor (editor.get(), IOBJECT); \
+	editor.releaseToUser(); \
+	END_WITH_NEW_DATA
+
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 void praat_installEditor (Editor editor, int iobject);
 /* This routine adds a reference to a new editor (unless it is null) to the screen object
