@@ -659,9 +659,9 @@ DIRECT (NEW_OTGrammar_getInputs) {
 }
 
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
-	CONVERT_EACH_WEAK (OTGrammar)
+	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
 		autoDistributions result = OTGrammar_measureTypology_WEAK (me);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: Evaluate
@@ -693,9 +693,9 @@ FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTG
 	SENTENCE (inputForm, U"Input form", U"")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTGrammar)
+	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_inputToOutputs (me, inputForm, trials, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
@@ -703,9 +703,9 @@ FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distrib
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTGrammar)
+	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
 		autoDistributions result = OTGrammar_to_Distribution (me, trialsPerInput, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", nullptr) {
@@ -713,9 +713,9 @@ FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output dist
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTGrammar)
+	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
 		autoPairDistribution result = OTGrammar_to_PairDistribution (me, trialsPerInput, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: Modify ranking
@@ -1348,10 +1348,10 @@ FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTMulti)
+	TURN_EACH_WEAK_INTO_ONE (OTMulti)
 		autoDistributions result = OTMulti_to_Distribution (me, partialForm1, partialForm2,
 				numberOfTrials, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out");
+	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out");
 }
 
 // MARK: Modify ranking
@@ -1671,9 +1671,9 @@ FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To Activation
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
-	CONVERT_TWO (Net, PatternList)
+	TURN_ONE_AND_ONE_INTO_ONE (Net, PatternList)
 		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - NOULLIGRID

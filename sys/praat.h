@@ -991,11 +991,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_WITH_NEW_DATA
 
-#define CONVERT_EACH_WEAK(klas)  \
+#define TURN_EACH_WEAK_INTO_ONE(klas)  \
 	LOOP { \
 		iam_LOOP (klas); \
 		try {
-#define CONVERT_EACH_WEAK_END(...)  \
+#define TURN_EACH_WEAK_INTO_ONE_END(...)  \
 			if (interpreter) \
 				interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 			praat_new (result.move(), __VA_ARGS__); \
@@ -1007,9 +1007,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_WITH_NEW_DATA
 
-#define CONVERT_TWO(klas1,klas2)  \
+#define TURN_ONE_AND_ONE_INTO_ONE(klas1,klas2)  \
 	FIND_TWO (klas1, klas2)
-#define CONVERT_TWO_END(...)  \
+#define TURN_ONE_AND_ONE_INTO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \

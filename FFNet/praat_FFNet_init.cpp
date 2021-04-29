@@ -349,9 +349,9 @@ FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Cate
 		RADIOBUTTON (U"stochastic")
 	OK
 DO
-	CONVERT_TWO (FFNet, ActivationList)
+	TURN_ONE_AND_ONE_INTO_ONE (FFNet, ActivationList)
 		autoCategories result = FFNet_ActivationList_to_Categories (me, you, categorizationgMethod);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /******************* FFNet && Eigen ******************************************/
@@ -373,9 +373,9 @@ DO
 /************************* FFNet && Categories **********************************/
 
 DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
-	CONVERT_TWO (FFNet, Categories)
+	TURN_ONE_AND_ONE_INTO_ONE (FFNet, Categories)
 		autoActivationList result = FFNet_Categories_to_ActivationList (me, you);
-	CONVERT_TWO_END (my name.get());
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get());
 }
 
 /************************* FFNet && Matrix **********************************/
@@ -384,9 +384,9 @@ FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nu
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
-	CONVERT_TWO (FFNet, Matrix)
+	TURN_ONE_AND_ONE_INTO_ONE (FFNet, Matrix)
 		autoFFNet result = FFNet_weightsFromMatrix (me, you, layer);
-	CONVERT_TWO_END (my name.get());
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get());
 }
 
 /************************* FFNet && PatternList **********************************/
@@ -408,7 +408,7 @@ FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories
 DO
 	GRAPHICS_TWO (FFNet, PatternList)
 		autoCategories result = FFNet_PatternList_to_Categories (me, you, categorizationgMethod);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
@@ -417,7 +417,7 @@ FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", null
 DO
 	GRAPHICS_TWO (FFNet, PatternList)
 		autoActivationList result = FFNet_PatternList_to_ActivationList (me, you, layer);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /*********** FFNet & PatternList & ActivationList **********************************/
@@ -554,10 +554,10 @@ FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet
 	INTEGER (numberOfUnitsInHiddenLayer2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	CONVERT_TWO (PatternList, Categories)
+	TURN_ONE_AND_ONE_INTO_ONE (PatternList, Categories)
 		autoFFNet result = PatternList_Categories_to_FFNet (me, you, numberOfUnitsInHiddenLayer1, numberOfUnitsInHiddenLayer2);
 		autostring32 name = result -> name.move();
-	CONVERT_TWO_END (name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (name.get())
 }
 
 void praat_uvafon_FFNet_init () {
