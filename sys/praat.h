@@ -981,10 +981,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define CONVERT_EACH(klas)  \
+#define TURN_EACH_INTO_ONE(klas)  \
 	LOOP { \
 		iam_LOOP (klas);
-#define CONVERT_EACH_END(...)  \
+#define TURN_EACH_INTO_ONE_END(...)  \
 		if (interpreter) \
 			interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 		praat_new (result.move(), __VA_ARGS__); \
@@ -1029,9 +1029,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_WITH_NEW_DATA
 
-#define CONVERT_COUPLE(klas)  \
+#define TURN_TWO_INTO_ONE(klas)  \
 	FIND_COUPLE (klas)
-#define CONVERT_COUPLE_END(...)  \
+#define TURN_TWO_INTO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \

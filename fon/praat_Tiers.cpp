@@ -192,32 +192,32 @@ FORM (NEW_AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"Am
 	NATURAL (interpolationDepth, U"Interpolation depth (samples)", U"2000")
 	OK
 DO
-	CONVERT_EACH (AmplitudeTier)
+	TURN_EACH_INTO_ONE (AmplitudeTier)
 		autoSound result = AmplitudeTier_to_Sound (me, samplingFrequency, interpolationDepth);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: Convert
 
 DIRECT (NEW_AmplitudeTier_downto_PointProcess) {
-	CONVERT_EACH (AmplitudeTier)
+	TURN_EACH_INTO_ONE (AmplitudeTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_AmplitudeTier_downto_TableOfReal) {
-	CONVERT_EACH (AmplitudeTier)
+	TURN_EACH_INTO_ONE (AmplitudeTier)
 		autoTableOfReal result = AmplitudeTier_downto_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...") {
 	REAL (threshold, U"Threshold (dB)", U"-10000.0")
 	OK
 DO
-	CONVERT_EACH (AmplitudeTier)
+	TURN_EACH_INTO_ONE (AmplitudeTier)
 		autoIntensityTier result = AmplitudeTier_to_IntensityTier (me, threshold);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - AMPLITUDETIER & SOUND
@@ -337,9 +337,9 @@ DO
 // MARK: Convert
 
 DIRECT (NEW_DurationTier_downto_PointProcess) {
-	CONVERT_EACH (DurationTier)
+	TURN_EACH_INTO_ONE (DurationTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANTGRID
@@ -470,9 +470,9 @@ FORM (NEW_FormantGrid_to_Formant, U"FormantGrid: To Formant", nullptr) {
 DO
 	Melder_require (intensity >= 0.0,
 		U"The intensity cannot be negative.");
-	CONVERT_EACH (FormantGrid)
+	TURN_EACH_INTO_ONE (FormantGrid)
 		autoFormant result = FormantGrid_to_Formant (me, timeStep, intensity);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANTGRID & SOUND
@@ -569,9 +569,9 @@ FORM (NEW_FormantTier_downto_TableOfReal, U"Down to TableOfReal", nullptr) {
 	BOOLEAN (includeBandwidths, U"Include bandwidths", false)
 	OK
 DO
-	CONVERT_EACH (FormantTier)
+	TURN_EACH_INTO_ONE (FormantTier)
 		autoTableOfReal result = FormantTier_downto_TableOfReal (me, includeFormants, includeBandwidths);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANTTIER & SOUND
@@ -680,21 +680,21 @@ DO
 // MARK: Convert
 
 DIRECT (NEW_IntensityTier_downto_PointProcess) {
-	CONVERT_EACH (IntensityTier)
+	TURN_EACH_INTO_ONE (IntensityTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_IntensityTier_downto_TableOfReal) {
-	CONVERT_EACH (IntensityTier)
+	TURN_EACH_INTO_ONE (IntensityTier)
 		autoTableOfReal result = IntensityTier_downto_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_IntensityTier_to_AmplitudeTier) {
-	CONVERT_EACH (IntensityTier)
+	TURN_EACH_INTO_ONE (IntensityTier)
 		autoAmplitudeTier result = IntensityTier_to_AmplitudeTier (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITYTIER & POINTPROCESS
@@ -748,9 +748,9 @@ DO
 }
 
 DIRECT (NEW_PitchTier_downto_PointProcess) {
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", nullptr) {
@@ -759,9 +759,9 @@ FORM (NEW_PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", nullp
 		RADIOBUTTON (U"semitones")
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoTableOfReal result = PitchTier_downto_TableOfReal (me, unit);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
@@ -958,9 +958,9 @@ DO
 }
 
 DIRECT (NEW_PitchTier_to_PointProcess) {
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoPointProcess result = PitchTier_to_PointProcess (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", nullptr) {
@@ -974,10 +974,10 @@ FORM (NEW_PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", null
 	BOOLEAN (hum, U"Hum", false)
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoSound result = PitchTier_to_Sound_phonation (me, samplingFrequency,
 			adaptationFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, hum);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", nullptr) {
@@ -988,19 +988,19 @@ FORM (NEW_PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", n
 	BOOLEAN (hum, U"Hum", false)
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoSound result = PitchTier_to_Sound_pulseTrain (me, samplingFrequency,
 			adaptationFactor, adaptationTime, interpolationDepth, hum);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", nullptr) {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	TURN_EACH_INTO_ONE (PitchTier)
 		autoSound result = PitchTier_to_Sound_sine (me, 0.0, 0.0, samplingFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (HINT_PitchTier_Sound_viewAndEdit) {
@@ -1085,9 +1085,9 @@ DO
 }
 
 DIRECT (NEW1_PointProcesses_difference) {
-	CONVERT_COUPLE (PointProcess)
+	TURN_TWO_INTO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_difference (me, you);
-	CONVERT_COUPLE_END (U"difference")
+	TURN_TWO_INTO_ONE_END (U"difference")
 }
 
 FORM (GRAPHICS_PointProcess_draw, U"PointProcess: Draw", nullptr) {
@@ -1269,9 +1269,9 @@ DIRECT (PLAY_PointProcess_hum) {
 }
 
 DIRECT (NEW1_PointProcesses_intersection) {
-	CONVERT_COUPLE (PointProcess)
+	TURN_TWO_INTO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_intersection (me, you);
-	CONVERT_COUPLE_END (U"intersection")
+	TURN_TWO_INTO_ONE_END (U"intersection")
 }
 
 DIRECT (PLAY_PointProcess_play) {
@@ -1319,24 +1319,24 @@ DO
 }
 
 DIRECT (NEW_PointProcess_to_IntervalTier) {
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PointProcess_to_Matrix) {
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoMatrix result = PointProcess_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...") {
 	POSITIVE (maximumInterval, U"Maximum interval (s)", U"0.02")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoPitchTier result = PointProcess_to_PitchTier (me, maximumInterval);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProcess: To TextGrid...") {
@@ -1344,9 +1344,9 @@ FORM (NEW_PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProc
 	SENTENCE (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U"PointProcess: To TextGrid (vuv)...") {
@@ -1354,15 +1354,15 @@ FORM (NEW_PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U
 	REAL (meanPeriod, U"Mean period (s)", U"0.01")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoTextGrid result = PointProcess_to_TextGrid_vuv (me, maximumPeriod, meanPeriod);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PointProcess_to_TextTier) {
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoTextTier result = TextTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...") {
@@ -1375,10 +1375,10 @@ FORM (NEW_PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)"
 	POSITIVE (power2, U"Power 2", U"4.0")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoSound result = PointProcess_to_Sound_phonation (me, samplingFrequency,
 			adaptationFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...") {
@@ -1388,49 +1388,49 @@ FORM (NEW_PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse trai
 	NATURAL (interpolationDepth, U"Interpolation depth (samples)", U"2000")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoSound result = PointProcess_to_Sound_pulseTrain (me, samplingFrequency,
 			adaptationFactor, adaptationTime, interpolationDepth);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PointProcess_to_Sound_hum) {
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoSound result = PointProcess_to_Sound_hum (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_PointProcesses_union) {
-	CONVERT_COUPLE (PointProcess)
+	TURN_TWO_INTO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_union (me, you);
-	CONVERT_COUPLE_END (U"union")
+	TURN_TWO_INTO_ONE_END (U"union")
 }
 
 FORM (NEW_PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...") {
 	POSITIVE (intensity, U"Intensity (dB)", U"70.0")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoIntensityTier result = PointProcess_upto_IntensityTier (me, intensity);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...") {
 	POSITIVE (frequency, U"Frequency (Hz)", U"190.0")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoPitchTier result = PointProcess_upto_PitchTier (me, frequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...") {
 	SENTENCE (text, U"Text", U"")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	TURN_EACH_INTO_ONE (PointProcess)
 		autoTextTier result = PointProcess_upto_TextTier (me, text);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_PointProcess_voice, U"PointProcess: Fill unvoiced parts", nullptr) {
@@ -1581,9 +1581,9 @@ DO
 // MARK: - SPECTRUMTIER
 
 DIRECT (NEW_SpectrumTier_downto_Table) {
-	CONVERT_EACH (SpectrumTier)
+	TURN_EACH_INTO_ONE (SpectrumTier)
 		autoTable result = SpectrumTier_downto_Table (me, true, true, true);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19

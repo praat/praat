@@ -138,17 +138,17 @@ FORM (NEW_Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr)
 	REAL (time, U"Time (s)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Cochleagram)
+	TURN_EACH_INTO_ONE (Cochleagram)
 		autoExcitation result = Cochleagram_to_Excitation (me, time);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: Hack
 
 DIRECT (NEW_Cochleagram_to_Matrix) {
-	CONVERT_EACH (Cochleagram)
+	TURN_EACH_INTO_ONE (Cochleagram)
 		autoMatrix result = Cochleagram_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - CORPUS
@@ -183,9 +183,9 @@ FORM (NEW_Distributions_to_Transition, U"To Transition", nullptr) {
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	CONVERT_EACH (Distributions)
+	TURN_EACH_INTO_ONE (Distributions)
 		autoTransition result = Distributions_to_Transition (me, nullptr, environment, nullptr, greedy);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
@@ -203,9 +203,9 @@ FORM (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr)
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	CONVERT_COUPLE (Distributions)
+	TURN_TWO_INTO_ONE (Distributions)
 		autoTransition result = Distributions_to_Transition (me, you, environment, nullptr, greedy);
-	CONVERT_COUPLE_END (my name.get())
+	TURN_TWO_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
@@ -276,15 +276,15 @@ FORM (NEW_Excitation_to_Formant, U"From Excitation to Formant", 0) {
 	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"20")
 	OK
 DO
-	CONVERT_EACH (Excitation)
+	TURN_EACH_INTO_ONE (Excitation)
 		autoFormant result = Excitation_to_Formant (me, maximumNumberOfFormants);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Excitation_to_Matrix) {
-	CONVERT_EACH (Excitation)
+	TURN_EACH_INTO_ONE (Excitation)
 		autoMatrix result = Excitation_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANT
@@ -371,11 +371,11 @@ FORM (NEW_Formant_downto_Table, U"Formant: Down to Table", nullptr) {
 	BOOLEAN (includeBandwidths, U"Include bandwidths", true)
 	OK
 DO
-	CONVERT_EACH (Formant)
+	TURN_EACH_INTO_ONE (Formant)
 		autoTable result = Formant_downto_Table (me, includeFrameNumber, includeTime, numberOfTimeDecimals,
 			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
 			includeBandwidths);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -574,33 +574,33 @@ FORM (NEW_Formant_tracker, U"Formant tracker", U"Formant: Track...") {
 	OK
 DO
 	if (numberOfTracks > 5) Melder_throw (U"Your number of tracks should not be more than 5.");
-	CONVERT_EACH (Formant)
+	TURN_EACH_INTO_ONE (Formant)
 		autoFormant result = Formant_tracker (me, numberOfTracks,
 			referenceF1, referenceF2, referenceF3, referenceF4, referenceF5,
 			frequencyCost, bandwidthCost, transitionCost
 		);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Formant_downto_FormantGrid) {
-	CONVERT_EACH (Formant)
+	TURN_EACH_INTO_ONE (Formant)
 		autoFormantGrid result = Formant_downto_FormantGrid (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Formant_downto_FormantTier) {
-	CONVERT_EACH (Formant)
+	TURN_EACH_INTO_ONE (Formant)
 		autoFormantTier result = Formant_downto_FormantTier (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Formant_to_Matrix, U"From Formant to Matrix", nullptr) {
 	INTEGER (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	CONVERT_EACH (Formant)
+	TURN_EACH_INTO_ONE (Formant)
 		autoMatrix result = Formant_to_Matrix (me, formantNumber);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANT & POINTPROCESS
@@ -736,9 +736,9 @@ DO
 // MARK: Convert
 
 DIRECT (NEW_Harmonicity_to_Matrix) {
-	CONVERT_EACH (Harmonicity)
+	TURN_EACH_INTO_ONE (Harmonicity)
 		autoMatrix result = Harmonicity_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITY
@@ -876,29 +876,29 @@ DO
 // MARK: Analyse
 
 DIRECT (NEW_Intensity_to_IntensityTier_peaks) {
-	CONVERT_EACH (Intensity)
+	TURN_EACH_INTO_ONE (Intensity)
 		autoIntensityTier result = Intensity_to_IntensityTier_peaks (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Intensity_to_IntensityTier_valleys) {
-	CONVERT_EACH (Intensity)
+	TURN_EACH_INTO_ONE (Intensity)
 		autoIntensityTier result = Intensity_to_IntensityTier_valleys (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: Convert
 
 DIRECT (NEW_Intensity_downto_IntensityTier) {
-	CONVERT_EACH (Intensity)
+	TURN_EACH_INTO_ONE (Intensity)
 		autoIntensityTier result = Intensity_downto_IntensityTier (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Intensity_downto_Matrix) {
-	CONVERT_EACH (Intensity)
+	TURN_EACH_INTO_ONE (Intensity)
 		autoMatrix result = Intensity_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITY & PITCH
@@ -962,9 +962,9 @@ FORM (NEW_Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute tr
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
-	CONVERT_EACH (Ltas)
+	TURN_EACH_INTO_ONE (Ltas)
 		autoLtas result = Ltas_computeTrendLine (me, fromFrequency, toFrequency);
-	CONVERT_EACH_END (my name.get(), U"_trend")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_trend")
 }
 
 FORM (GRAPHICS_old_Ltas_draw, U"Ltas: Draw", nullptr) {
@@ -1209,21 +1209,21 @@ FORM (NEW_Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
-	CONVERT_EACH (Ltas)
+	TURN_EACH_INTO_ONE (Ltas)
 		autoLtas result = Ltas_subtractTrendLine (me, fromFrequency, toFrequency);
-	CONVERT_EACH_END (my name.get(), U"_fit")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_fit")
 }
 
 DIRECT (NEW_Ltas_to_Matrix) {
-	CONVERT_EACH (Ltas)
+	TURN_EACH_INTO_ONE (Ltas)
 		autoMatrix result = Ltas_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Ltas_to_SpectrumTier_peaks) {
-	CONVERT_EACH (Ltas)
+	TURN_EACH_INTO_ONE (Ltas)
 		autoSpectrumTier result = Ltas_to_SpectrumTier_peaks (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - MANIPULATION
@@ -1244,47 +1244,47 @@ DIRECT (EDITOR_ONE_Manipulation_viewAndEdit) {
 }
 
 DIRECT (NEW_Manipulation_extractDurationTier) {
-	CONVERT_EACH (Manipulation)
+	TURN_EACH_INTO_ONE (Manipulation)
 		if (! my duration)
 			Melder_throw (me, U": I don't contain a DurationTier.");
 		autoDurationTier result = Data_copy (my duration.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractOriginalSound) {
-	CONVERT_EACH (Manipulation)
+	TURN_EACH_INTO_ONE (Manipulation)
 		if (! my sound)
 			Melder_throw (me, U": I don't contain a Sound.");
 		autoSound result = Data_copy (my sound.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractPitchTier) {
-	CONVERT_EACH (Manipulation)
+	TURN_EACH_INTO_ONE (Manipulation)
 		if (! my pitch)
 			Melder_throw (me, U": I don't contain a PitchTier.");
 		autoPitchTier result = Data_copy (my pitch.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractPulses) {
-	CONVERT_EACH (Manipulation)
+	TURN_EACH_INTO_ONE (Manipulation)
 		if (! my pulses)
 			Melder_throw (me, U": I don't contain a PointProcess.");
 		autoPointProcess result = Data_copy (my pulses.get());
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_getResynthesis_lpc) {
-	CONVERT_EACH (Manipulation)
+	TURN_EACH_INTO_ONE (Manipulation)
 		autoSound result = Manipulation_to_Sound (me, Manipulation_PITCH_LPC);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_getResynthesis_overlapAdd) {
-	CONVERT_EACH (Manipulation)
+	TURN_EACH_INTO_ONE (Manipulation)
 		autoSound result = Manipulation_to_Sound (me, Manipulation_OVERLAPADD);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (HELP_Manipulation_help) {
@@ -1538,15 +1538,15 @@ FORM (NEW_Pitch_tabulateCandidatesInFrame, U"Pitch: Tabulate candidates in frame
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoTable result = Pitch_tabulateCandidatesInFrame (me, frameNumber);
-	CONVERT_EACH_END (my name.get(), U"_", frameNumber)
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_", frameNumber)
 }
 
 DIRECT (NEW_Pitch_tabulateCandidates) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoTable result = Pitch_tabulateCandidates (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
@@ -1712,15 +1712,15 @@ DIRECT (PLAY_Pitch_hum) {
 }
 
 DIRECT (NEW_Pitch_interpolate) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoPitch result = Pitch_interpolate (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_killOctaveJumps) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoPitch result = Pitch_killOctaveJumps (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: List values at times...") {
@@ -1759,9 +1759,9 @@ FORM (NEW_Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...") {
 	REAL (bandwidth, U"Bandwidth (Hz)", U"10.0")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoPitch result = Pitch_smooth (me, bandwidth);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
@@ -1870,45 +1870,45 @@ DO
 		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
 		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
 		kPitch_unit::ERB;
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoPitch result = Pitch_subtractLinearFit (me, unit);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_IntervalTier) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_Matrix) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoMatrix result = Pitch_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_downto_PitchTier) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoPitchTier result = Pitch_to_PitchTier (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_PointProcess) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoPointProcess result = Pitch_to_PointProcess (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_Sound_pulses) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoSound result = Pitch_to_Sound (me, 0.0, 0.0, false);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_Sound_hum) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoSound result = Pitch_to_Sound (me, 0.0, 0.0, true);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
@@ -1918,9 +1918,9 @@ FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
 		OPTION (U"at nearest zero crossings")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoSound result = Pitch_to_Sound_sine (me, 0.0, 0.0, samplingFrequency, cutVoicelessStretches);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
@@ -1928,15 +1928,15 @@ FORM (NEW_Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
 	SENTENCE (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_TextTier) {
-	CONVERT_EACH (Pitch)
+	TURN_EACH_INTO_ONE (Pitch)
 		autoTextTier result = TextTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - PITCH & PITCHTIER
@@ -2117,9 +2117,9 @@ DO
 }
 
 DIRECT (NEW_Polygon_to_Matrix) {
-	CONVERT_EACH (Polygon)
+	TURN_EACH_INTO_ONE (Polygon)
 		autoMatrix result = Polygon_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - SOUND & PITCH & POINTPROCESS
@@ -2207,27 +2207,27 @@ DIRECT (MOVIE_Spectrogram_playMovie) {
 }
 
 DIRECT (NEW_Spectrogram_to_Matrix) {
-	CONVERT_EACH (Spectrogram)
+	TURN_EACH_INTO_ONE (Spectrogram)
 		autoMatrix result = Spectrogram_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrogram_to_Sound, U"Spectrogram: To Sound", nullptr) {
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	OK
 DO
-	CONVERT_EACH (Spectrogram)
+	TURN_EACH_INTO_ONE (Spectrogram)
 		autoSound result = Spectrogram_to_Sound (me, samplingFrequency);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", nullptr) {
 	REAL (time, U"Time (seconds)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Spectrogram)
+	TURN_EACH_INTO_ONE (Spectrogram)
 		autoSpectrum result = Spectrogram_to_Spectrum (me, time);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (EDITOR_ONE_Spectrogram_view) {
@@ -2291,10 +2291,10 @@ FORM (NEW_Spectrum_tabulate, U"Spectrum: Tabulate", 0) {
 	BOOLEAN (includePowerDensity, U"Include power density", true)
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoTable result = Spectrum_tabulate (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
 				includeEnergyDensity, includePowerDensity);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -2518,9 +2518,9 @@ FORM (NEW_Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) 
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"500.0")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_cepstralSmoothing (me, bandwidth);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
@@ -2528,18 +2528,18 @@ FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
 	POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_lpcSmoothing (me, numberOfPeaks, preEmphasisFrom);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_to_Excitation, U"Spectrum: To Excitation", nullptr) {
 	POSITIVE (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoExcitation result = Spectrum_to_Excitation (me, frequencyResolution);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
@@ -2547,48 +2547,48 @@ FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
 	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"1000")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoFormant result = Spectrum_to_Formant (me, maximumNumberOfFormants);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", nullptr) {
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"1000.0")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoLtas result = Spectrum_to_Ltas (me, bandwidth);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Ltas_1to1) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoLtas result = Spectrum_to_Ltas_1to1 (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Matrix) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoMatrix result = Spectrum_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Sound) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSound result = Spectrum_to_Sound (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Spectrogram) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrogram result = Spectrum_to_Spectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
-	CONVERT_EACH (Spectrum)
+	TURN_EACH_INTO_ONE (Spectrum)
 		autoSpectrumTier result = Spectrum_to_SpectrumTier_peaks (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - STRINGS
@@ -2768,31 +2768,31 @@ FORM (NEW_Strings_replaceAll, U"Strings: Replace all", nullptr) {
 		RADIOBUTTON (U"regular expressions")
 	OK
 DO
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		integer numberOfMatches, numberOfStringMatches;
 		autoStrings result = Strings_change (me, find, replaceWith,
 				replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
-	CONVERT_EACH_END (my name.get(), U"_replaced")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_replaced")
 }
 
 DIRECT (NEW_Strings_to_Distributions) {
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		autoDistributions result = Strings_to_Distributions (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Strings_to_WordList) {
-	CONVERT_EACH (Strings)
+	TURN_EACH_INTO_ONE (Strings)
 		autoWordList result = Strings_to_WordList (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - TABLE; the remainder is in praat_Stat.cpp *****/
 
 DIRECT (NEW_Table_downto_Matrix) {
-	CONVERT_EACH (Table)
+	TURN_EACH_INTO_ONE (Table)
 		autoMatrix result = Table_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - TEXTGRID; the remainder is in praat_TextGrid_init.cpp
@@ -2823,9 +2823,9 @@ FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr,
 // MARK: - TRANSITION
 
 DIRECT (NEW_Transition_conflate) {
-	CONVERT_EACH (Transition)
+	TURN_EACH_INTO_ONE (Transition)
 		autoDistributions result = Transition_to_Distributions_conflate (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_Transition_drawAsNumbers, U"Draw as numbers", nullptr) {
@@ -2860,15 +2860,15 @@ FORM (NEW_Transition_power, U"Transition: Power...", nullptr) {
 	NATURAL (power, U"Power", U"2")
 	OK
 DO
-	CONVERT_EACH (Transition)
+	TURN_EACH_INTO_ONE (Transition)
 		autoTransition result = Transition_power (me, power);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Transition_to_Matrix) {
-	CONVERT_EACH (Transition)
+	TURN_EACH_INTO_ONE (Transition)
 		autoMatrix result = Transition_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: - Praat menu

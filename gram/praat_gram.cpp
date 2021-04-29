@@ -149,12 +149,12 @@ FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", nullptr) 
 	INTEGER (activityDecimals, U"Activity decimals", U"6")
 	OK
 DO
-	CONVERT_EACH (Network)
+	TURN_EACH_INTO_ONE (Network)
 		autoTable result = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
 			includeClamped, includeActivity, includeExcitation, activityDecimals
 		);
-	CONVERT_EACH_END (my name.get())
+	TURN_EACH_INTO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -647,15 +647,15 @@ FORM (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate in
 	NATURAL (numberOfTrials, U"Number of trials", U"1000")
 	OK
 DO
-	CONVERT_EACH (OTGrammar)
+	TURN_EACH_INTO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_generateInputs (me, numberOfTrials);
-	CONVERT_EACH_END (my name.get(), U"_in")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_OTGrammar_getInputs) {
-	CONVERT_EACH (OTGrammar)
+	TURN_EACH_INTO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_getInputs (me);
-	CONVERT_EACH_END (my name.get(), U"_in")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
@@ -1560,54 +1560,54 @@ DO
 // MARK: Extract
 
 DIRECT (NEW_Net_extractInputActivities) {
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractInputActivities (me);
-	CONVERT_EACH_END (my name.get(), U"_inputActivities")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_inputActivities")
 }
 
 DIRECT (NEW_Net_extractOutputActivities) {
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractOutputActivities (me);
-	CONVERT_EACH_END (my name.get(), U"_outputActivities")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_outputActivities")
 }
 
 DIRECT (NEW_Net_extractInputReconstruction) {
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractInputReconstruction (me);
-	CONVERT_EACH_END (my name.get(), U"_inputReconstruction")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_inputReconstruction")
 }
 
 DIRECT (NEW_Net_extractOutputReconstruction) {
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractOutputReconstruction (me);
-	CONVERT_EACH_END (my name.get(), U"_outputReconstruction")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_outputReconstruction")
 }
 
 FORM (NEW_Net_extractInputBiases, U"Net: Extract input biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractInputBiases (me, layerNumber);
-	CONVERT_EACH_END (my name.get(), U"_inputBiases")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_inputBiases")
 }
 
 FORM (NEW_Net_extractOutputBiases, U"Net: Extract output biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractOutputBiases (me, layerNumber);
-	CONVERT_EACH_END (my name.get(), U"_outputBiases")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_outputBiases")
 }
 
 FORM (NEW_Net_extractWeights, U"Net: Extract weights", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (Net)
+	TURN_EACH_INTO_ONE (Net)
 		autoMatrix result = Net_extractWeights (me, layerNumber);
-	CONVERT_EACH_END (my name.get(), U"_weights")
+	TURN_EACH_INTO_ONE_END (my name.get(), U"_weights")
 }
 
 FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
