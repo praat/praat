@@ -173,9 +173,9 @@ FORM (NUMVEC_Network_getActivities, U"Network: Get activities", nullptr) {
 	NATURAL (toNode, U"To node", U"0 (= all)")
 	OK
 DO
-	NUMVEC_ONE (Network)
+	QUERY_ONE_FOR_REAL_VECTOR (Network)
 		autoVEC result = Network_getActivities (me, fromNode, toNode);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
@@ -1695,9 +1695,9 @@ FORM (NUMVEC_NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average proba
 	REAL (toTime, U"To time (s)", U"0 (= all)")
 	OK
 DO
-	NUMVEC_ONE (NoulliGrid)
+	QUERY_ONE_FOR_REAL_VECTOR (NoulliGrid)
 		autoVEC result = NoulliGrid_getAverageProbabilities (me, tierNumber, fromTime, toTime);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 // MARK: - buttons

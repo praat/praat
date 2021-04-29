@@ -374,22 +374,22 @@ FORM (NUMVEC_Matrix_getAllValuesInColumn, U"Get all values in column", nullptr) 
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMVEC_ONE (Matrix)
+	QUERY_ONE_FOR_REAL_VECTOR (Matrix)
 		Melder_require (columnNumber <= my nx,
 			U"The column number (", columnNumber, U") should not be greater than the number of columns (", my nx, U").");
 		autoVEC result = copy_VEC (my z.column (columnNumber));
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NUMVEC_Matrix_getAllValuesInRow, U"Get all values in row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	NUMVEC_ONE (Matrix)
+	QUERY_ONE_FOR_REAL_VECTOR (Matrix)
 		Melder_require (rowNumber <= my ny,
 			U"The row number (", rowNumber, U") should not be greater than the number of rows (", my ny, U").");
 		autoVEC result = copy_VEC (my z.row (rowNumber));
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 // MARK: Modify

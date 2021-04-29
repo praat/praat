@@ -7305,12 +7305,12 @@ FORM (NUMVEC_Table_listRowNumbersWhere, U"Table: List rows where", U"") {
 	SENTENCE (formula, U"The following condition holds true", U"self [row,\"F1\"] > 800.0")
 	OK
 DO
-	NUMVEC_ONE (Table)
+	QUERY_ONE_FOR_REAL_VECTOR (Table)
 		autoINTVEC resulti = Table_listRowNumbersWhere (me, formula, interpreter);
 		autoVEC result = raw_VEC (resulti.size);
 		for (integer i = 1; i <= resulti.size; i ++)
 			result [i] = resulti [i];
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 /******************* TableOfReal ****************************/
@@ -8001,30 +8001,30 @@ FORM (NUMVEC_TextGridNavigator_listIndices, U"TextGridNavigator: List indices", 
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_REAL_VECTOR (TextGridNavigator)
 		autoINTVEC resulti = TextGridNavigator_listIndices (me, where);
 		autoVEC result = raw_VEC (resulti.size);
 		for (integer i = 1; i <= result.size; i++)
 			result [i] = resulti [i];
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NUMVEC_TextGridNavigator_listStartTimes, U"TextGridNavigator: List start times", nullptr) {
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_REAL_VECTOR (TextGridNavigator)
 		autoVEC result = TextGridNavigator_listStartTimes (me, where);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NUMVEC_TextGridNavigator_listEndTimes, U"TextGridNavigator: List end times", nullptr) {
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_REAL_VECTOR (TextGridNavigator)
 		autoVEC result = TextGridNavigator_listEndTimes (me, where);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (STRVEC_TextGridNavigator_listLabels, U"TextGridNavigator: List labels", nullptr) {

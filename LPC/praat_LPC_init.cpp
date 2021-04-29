@@ -669,16 +669,16 @@ DIRECT (NEW_Cepstrumc_to_Matrix) {
 
 /******************** Formant ********************************************/
 
-FORM (VEC_Formant_listFormantSlope, U"Formant: List formant slope", U"Formant: List formant slope...") {
+FORM (QUERY_ONE_Formant_listFormantSlope_REAL_VECTOR, U"Formant: List formant slope", U"Formant: List formant slope...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
 	OPTIONMENU_ENUM (kSlopeCurve, slopeCurve, U"Slope curve", kSlopeCurve::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (Formant)
+	QUERY_ONE_FOR_REAL_VECTOR (Formant)
 		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax, slopeCurve);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NEW_Formant_to_LPC, U"Formant: To LPC", nullptr) {
@@ -763,9 +763,9 @@ FORM (NUMVEC_LineSpectralFrequencies_listFrequenciesInFrame, U"LineSpectralFrequ
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMVEC_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_REAL_VECTOR (LineSpectralFrequencies)
 		autoVEC result = LineSpectralFrequencies_listFrequenciesInFrame (me, frameNumber);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 DIRECT (NUMMAT_LineSpectralFrequencies_listAllFrequencies) {
@@ -818,9 +818,9 @@ FORM (NUMVEC_LPC_listAllCoefficientsInFrame, U"", U"") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMVEC_ONE (LPC)
+	QUERY_ONE_FOR_REAL_VECTOR (LPC)
 		autoVEC result = LPC_listCoefficientsInFrame (me, frameNumber);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 DIRECT (NUMMAT_LPC_listAllCoefficients) {
@@ -841,9 +841,9 @@ DO
 }
 
 DIRECT (NUMVEC_LPC_listAllGains) {
-	NUMVEC_ONE (LPC)
+	QUERY_ONE_FOR_REAL_VECTOR (LPC)
 		autoVEC result = LPC_listAllGains (me);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (GRAPHICS_LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...") {
@@ -1366,7 +1366,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classCepstrumc, 0, U"Hack", 0, 0, 0);
 	praat_addAction1 (classCepstrumc, 0, U"To Matrix", 0, 0, NEW_Cepstrumc_to_Matrix);
 
-	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", praat_DEPTH_1 + praat_HIDDEN, VEC_Formant_listFormantSlope);
+	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", praat_DEPTH_1 + praat_HIDDEN, QUERY_ONE_Formant_listFormantSlope_REAL_VECTOR);
 	praat_addAction1 (classFormant, 0, U"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);

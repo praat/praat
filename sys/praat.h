@@ -884,9 +884,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result); \
 	END_NO_NEW_DATA
 
-#define NUMVEC_ONE(klas)  \
+#define QUERY_ONE_FOR_REAL_VECTOR(klas)  \
 	FIND_ONE (klas)
-#define NUMVEC_ONE_END  \
+#define QUERY_ONE_FOR_REAL_VECTOR_END  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REALVECTOR_; \
 		interpreter -> returnedRealVector = result.move(); \
