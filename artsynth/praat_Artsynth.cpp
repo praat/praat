@@ -80,13 +80,9 @@ DO
 }
 
 DIRECT (WINDOW_Artword_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit an Artword from batch.");
-	FIND_ONE_WITH_IOBJECT (Artword)
+	EDITOR_ONE (an,Artword)
 		autoArtwordEditor editor = ArtwordEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {

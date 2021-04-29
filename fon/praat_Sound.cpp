@@ -156,13 +156,9 @@ DO
 }
 
 DIRECT (WINDOW_LongSound_view) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a LongSound from batch.");
-	FIND_ONE_WITH_IOBJECT (LongSound)
+	EDITOR_ONE (a,LongSound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
@@ -678,14 +674,10 @@ static void cb_SoundEditor_publication (Editor /* me */, autoDaata publication) 
 	}
 }
 DIRECT (WINDOW_Sound_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Sound from batch.");
-	FIND_ONE_WITH_IOBJECT (Sound)
+	EDITOR_ONE (a,Sound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_SoundEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 DIRECT (NEWMANY_Sound_extractAllChannels) {

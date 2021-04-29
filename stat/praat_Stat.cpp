@@ -296,13 +296,9 @@ DIRECT (HELP_StatisticsTutorial) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_Table_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit a Table from batch.");
-	FIND_ONE_WITH_IOBJECT (Table)
+	EDITOR_ONE (a,Table)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Tabulate

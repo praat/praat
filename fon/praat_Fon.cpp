@@ -171,13 +171,9 @@ DO
 // MARK: View & Edit
 
 DIRECT (WINDOW_Corpus_edit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit a Corpus from batch.");
-	FIND_ONE_WITH_IOBJECT (Corpus)
+	EDITOR_ONE (a,Corpus)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: - DISTRIBUTIONS
@@ -1241,14 +1237,10 @@ static void cb_ManipulationEditor_publication (Editor /* editor */, autoDaata pu
 	}
 }
 DIRECT (WINDOW_Manipulation_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Manipulation from batch.");
-	FIND_ONE_WITH_IOBJECT (Manipulation)
+	EDITOR_ONE (a,Manipulation)
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 DIRECT (NEW_Manipulation_extractDurationTier) {
@@ -1518,13 +1510,9 @@ DO
 }
 
 DIRECT (WINDOW_Pitch_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Pitch from batch.");
-	FIND_ONE_WITH_IOBJECT (Pitch)
+	EDITOR_ONE (a,Pitch)
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
@@ -2243,13 +2231,9 @@ DO
 }
 
 DIRECT (WINDOW_Spectrogram_view) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
-	FIND_ONE_WITH_IOBJECT (Spectrogram)
+	EDITOR_ONE (a,Spectrogram)
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: - SPECTRUM
@@ -2263,13 +2247,9 @@ DIRECT (HELP_Spectrum_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_Spectrum_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Spectrum from batch.");
-	FIND_ONE_WITH_IOBJECT (Spectrum)
+	EDITOR_ONE (a,Spectrum)
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Draw
@@ -2688,13 +2668,9 @@ DIRECT (HELP_Strings_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_Strings_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Strings from batch.");
-	FIND_ONE_WITH_IOBJECT (Strings)
+	EDITOR_ONE (a,Strings)
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Query

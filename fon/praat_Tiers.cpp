@@ -385,14 +385,10 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 	}
 }
 DIRECT (WINDOW_FormantGrid_edit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit a FormantGrid from batch.");
-	FIND_ONE_WITH_IOBJECT (FormantGrid)
+	EDITOR_ONE (a,FormantGrid)
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Modify

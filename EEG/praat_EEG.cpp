@@ -53,14 +53,10 @@ static void cb_EEGWindow_publication (Editor /* editor */, autoDaata publication
 	}
 }
 DIRECT (WINDOW_EEG_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit an EEG from batch.");
-	FIND_ONE_WITH_IOBJECT (EEG)
+	EDITOR_ONE (an,EEG)
 		autoEEGWindow editor = EEGWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_EEGWindow_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Query
@@ -365,14 +361,10 @@ static void cb_ERPWindow_publication (Editor /* editor */, autoDaata publication
 	}
 }
 DIRECT (WINDOW_ERP_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit an ERP from batch.");
-	FIND_ONE_WITH_IOBJECT (ERP)
+	EDITOR_ONE (an,ERP)
 		autoERPWindow editor = ERPWindow_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ERPWindow_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: Tabulate

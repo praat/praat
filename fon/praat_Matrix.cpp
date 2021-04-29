@@ -794,13 +794,9 @@ DO
 }
 
 DIRECT (WINDOW_Movie_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Movie from batch.");
-	FIND_ONE_WITH_IOBJECT (Movie)
+	EDITOR_ONE (a,Movie)
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 // MARK: file recognizers

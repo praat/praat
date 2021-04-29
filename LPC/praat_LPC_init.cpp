@@ -80,16 +80,11 @@ static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata pub
 		Melder_flushError ();
 	}
 }
-
 DIRECT (WINDOW_FormantPath_viewAndEditAlone) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_ONE_WITH_IOBJECT (FormantPath)
+	EDITOR_ONE (a,FormantPath)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_END
 }
 
 DIRECT (HINT_FormantPath_Sound_viewAndEdit) {
