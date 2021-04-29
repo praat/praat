@@ -438,7 +438,7 @@ DIRECT (HELP_OTGrammar_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_OTGrammar_viewAndEdit) {
+DIRECT (EDITOR_ONE_OTGrammar_viewAndEdit) {
 	EDITOR_ONE (an,OTGrammar)
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -1205,7 +1205,7 @@ DO
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_OTMulti_viewAndEdit) {
+DIRECT (EDITOR_ONE_OTMulti_viewAndEdit) {
 	EDITOR_ONE (an,OTMulti)
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -1726,8 +1726,8 @@ void praat_uvafon_gram_init () {
 	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0, HELP_OTGrammar_help);
-	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_OTGrammar_viewAndEdit);
-	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_OTGrammar_viewAndEdit);
+	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_OTGrammar_viewAndEdit);
+	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_OTGrammar_viewAndEdit);
 	praat_addAction1 (classOTGrammar, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", nullptr, 0, GRAPHICS_OTGrammar_drawTableau);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau (narrowly)...", nullptr, 0, GRAPHICS_OTGrammar_drawTableau_narrowly);
@@ -1777,8 +1777,8 @@ void praat_uvafon_gram_init () {
 
 	praat_TableOfReal_init (classOTHistory);
 
-	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_OTMulti_viewAndEdit);
-	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_OTMulti_viewAndEdit);
+	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_OTMulti_viewAndEdit);
+	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_OTMulti_viewAndEdit);
 	praat_addAction1 (classOTMulti, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau...", nullptr, 1, GRAPHICS_OTMulti_drawTableau);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau (narrowly)...", nullptr, 1, GRAPHICS_OTMulti_drawTableau_narrowly);

@@ -793,7 +793,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_Movie_viewAndEdit) {
+DIRECT (EDITOR_ONE_Movie_viewAndEdit) {
 	EDITOR_ONE (a,Movie)
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -924,7 +924,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 	#endif
 
 	praat_addAction1 (classMovie, 1, U"Paint one image...", nullptr, 1, GRAPHICS_Movie_paintOneImage);
-	praat_addAction1 (classMovie, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Movie_viewAndEdit);
+	praat_addAction1 (classMovie, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Movie_viewAndEdit);
 
 	praat_addAction2 (classMatrix, 1, classSound, 1, U"To ParamCurve", nullptr, 0, NEW1_Matrix_to_ParamCurve);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace red", nullptr, 0, MODIFY_Photo_Matrix_replaceRed);
