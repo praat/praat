@@ -223,9 +223,9 @@ DO
 // MARK: - AMPLITUDETIER & SOUND
 
 DIRECT (NEW1_Sound_AmplitudeTier_multiply) {
-	CONVERT_TWO (Sound, AmplitudeTier)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, AmplitudeTier)
 		autoSound result = Sound_AmplitudeTier_multiply (me, you);
-	CONVERT_TWO_END (my name.get(), U"_amp")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_amp")
 }
 
 // MARK: - DURATIONTIER
@@ -478,15 +478,15 @@ DO
 // MARK: - FORMANTGRID & SOUND
 
 DIRECT (NEW1_Sound_FormantGrid_filter) {
-	CONVERT_TWO (Sound, FormantGrid)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, FormantGrid)
 		autoSound result = Sound_FormantGrid_filter (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_filt")
 }
 
 DIRECT (NEW1_Sound_FormantGrid_filter_noscale) {
-	CONVERT_TWO (Sound, FormantGrid)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, FormantGrid)
 		autoSound result = Sound_FormantGrid_filter_noscale (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_filt")
 }
 
 // MARK: - FORMANTTIER
@@ -577,15 +577,15 @@ DO
 // MARK: - FORMANTTIER & SOUND
 
 DIRECT (NEW1_Sound_FormantTier_filter) {
-	CONVERT_TWO (Sound, FormantTier)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, FormantTier)
 		autoSound result = Sound_FormantTier_filter (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_filt")
 }
 
 DIRECT (NEW1_Sound_FormantTier_filter_noscale) {
-	CONVERT_TWO (Sound, FormantTier)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, FormantTier)
 		autoSound result = Sound_FormantTier_filter_noscale (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_filt")
 }
 
 // MARK: - INTENSITYTIER
@@ -700,26 +700,26 @@ DIRECT (NEW_IntensityTier_to_AmplitudeTier) {
 // MARK: - INTENSITYTIER & POINTPROCESS
 
 DIRECT (NEW1_IntensityTier_PointProcess_to_IntensityTier) {
-	CONVERT_TWO (IntensityTier, PointProcess)
+	TURN_ONE_AND_ONE_INTO_ONE (IntensityTier, PointProcess)
 		autoIntensityTier result = IntensityTier_PointProcess_to_IntensityTier (me, you);
-	CONVERT_TWO_END (my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITYTIER & SOUND
 
 DIRECT (NEW1_Sound_IntensityTier_multiply_old) {
-	CONVERT_TWO (Sound, IntensityTier)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, IntensityTier)
 		autoSound result = Sound_IntensityTier_multiply (me, you, true);
-	CONVERT_TWO_END (my name.get(), U"_int")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_int")
 }
 
 FORM (NEW1_Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", nullptr) {
 	BOOLEAN (scaleTo09, U"Scale to 0.9", true)
 	OK
 DO
-	CONVERT_TWO (Sound, IntensityTier)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, IntensityTier)
 		autoSound result = Sound_IntensityTier_multiply (me, you, scaleTo09);
-	CONVERT_TWO_END (my name.get(), U"_int")
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_int")
 }
 
 // MARK: - PITCHTIER
@@ -1032,9 +1032,9 @@ DIRECT (INFO_PitchTier_Manipulation_replace) {
 // MARK: - PITCHTIER & POINTPROCESS
 
 DIRECT (NEW1_PitchTier_PointProcess_to_PitchTier) {
-	CONVERT_TWO (PitchTier, PointProcess)
+	TURN_ONE_AND_ONE_INTO_ONE (PitchTier, PointProcess)
 		autoPitchTier result = PitchTier_PointProcess_to_PitchTier (me, you);
-	CONVERT_TWO_END (my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
 }
 
 // MARK: - POINTPROCESS
@@ -1529,16 +1529,16 @@ FORM (NEW1_PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: T
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	CONVERT_TWO (PointProcess, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (PointProcess, Sound)
 		autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_period (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	CONVERT_TWO_END (your name.get(), U"_", my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get(), U"_", my name.get())
 }
 
 DIRECT (NEW1_PointProcess_Sound_to_AmplitudeTier_point) {
-	CONVERT_TWO (PointProcess, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (PointProcess, Sound)
 		autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_point (me, you);
-	CONVERT_TWO_END (your name.get(), U"_", my name.get());
+	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get(), U"_", my name.get());
 }
 
 FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr) {
@@ -1549,10 +1549,10 @@ FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr
 	POSITIVE (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	CONVERT_TWO (PointProcess, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (PointProcess, Sound)
 		autoLtas result = PointProcess_Sound_to_Ltas (me, you,
 			maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	CONVERT_TWO_END (your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get())
 }
 
 FORM (NEW1_PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", nullptr) {
@@ -1562,10 +1562,10 @@ FORM (NEW1_PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas
 	POSITIVE (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	CONVERT_TWO (PointProcess, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (PointProcess, Sound)
 		autoLtas result = PointProcess_Sound_to_Ltas_harmonics (me, you,
 			maximumHarmonic, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	CONVERT_TWO_END (your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get())
 }
 
 FORM (NEW1_Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", nullptr) {
@@ -1573,9 +1573,9 @@ FORM (NEW1_Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess
 	REAL (toTime, U"To time (s)", U"1.0")
 	OK
 DO
-	CONVERT_TWO (Sound, PointProcess)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, PointProcess)
 		autoSound result = Sound_PointProcess_to_SoundEnsemble_correlate (me, you, fromTime, toTime);
-	CONVERT_TWO_END (your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get())
 }
 
 // MARK: - SPECTRUMTIER

@@ -1671,9 +1671,9 @@ FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To Activation
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
-	CONVERT_TWO (Net, PatternList)
+	TURN_ONE_AND_ONE_INTO_ONE (Net, PatternList)
 		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - NOULLIGRID

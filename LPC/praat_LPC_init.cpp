@@ -710,9 +710,9 @@ FORM (NEW1_Formant_Spectrogram_to_IntensityTier, U"Formant & Spectrogram: To Int
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	CONVERT_TWO (Formant, Spectrogram)
+	TURN_ONE_AND_ONE_INTO_ONE (Formant, Spectrogram)
 		autoIntensityTier result = Formant_Spectrogram_to_IntensityTier (me, you, formantNumber);
-	CONVERT_TWO_END (my name.get(), U"_", formantNumber)
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", formantNumber)
 }
 
 /********************LFCC ********************************************/
@@ -1202,9 +1202,9 @@ FORM (NEW1_LPC_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter...") 
 	BOOLEAN (useGain, U"Use LPC gain", false)
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filter (me, you, useGain);
-	CONVERT_TWO_END (my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filter at time", U"LPC & Sound: Filter with filter at time...") {
@@ -1215,15 +1215,15 @@ FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filt
 	REAL (time, U"Use filter at time (s)", U"0.0")
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
-	CONVERT_TWO_END (my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_LPC_Sound_filterInverse) {
-	CONVERT_TWO (LPC, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filterInverse (me, you);
-	CONVERT_TWO_END (my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
@@ -1235,9 +1235,9 @@ FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inver
 	REAL (time, U"Use filter at time (s)", U"0.0")
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
-	CONVERT_TWO_END (my name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC (robust)...") {
@@ -1249,9 +1249,9 @@ FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LP
 	BOOLEAN (locationVariable, U"Variable location", false)
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	TURN_ONE_AND_ONE_INTO_ONE (LPC, Sound)
 		autoLPC result = LPC_Sound_to_LPC_robust (me, you, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, locationVariable);
-	CONVERT_TWO_END (my name.get(), U"_r");
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_r");
 }
 
 extern void praat_TimeTier_query_init (ClassInfo klas);

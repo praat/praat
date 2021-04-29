@@ -145,9 +145,9 @@ DIRECT (GRAPHICS_Art_Speaker_drawMesh) {
 }
 
 DIRECT (CONVERT_TWO_Art_Speaker_to_VocalTract) {
-	CONVERT_TWO (Art, Speaker)
+	TURN_ONE_AND_ONE_INTO_ONE (Art, Speaker)
 		autoVocalTract result = Art_Speaker_to_VocalTract (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - ARTWORD & SPEAKER

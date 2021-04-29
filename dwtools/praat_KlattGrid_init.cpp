@@ -872,9 +872,9 @@ FORM (NEW_Sound_KlattGrid_filterByVocalTract, U"Sound & KlattGrid: Filter by voc
 	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Vocal tract filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
-	CONVERT_TWO (Sound, KlattGrid)
+	TURN_ONE_AND_ONE_INTO_ONE (Sound, KlattGrid)
 		autoSound result = Sound_KlattGrid_filterByVocalTract (me, you, filterModel);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 void praat_KlattGrid_init ();
