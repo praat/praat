@@ -430,7 +430,7 @@ DIRECT (NEWTIMES2_Matrix_eigen) {
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
 	}
-END }
+END_WITH_NEW_DATA }
 
 // MARK: Synthesize
 
@@ -800,7 +800,7 @@ DIRECT (WINDOW_Movie_viewAndEdit) {
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: file recognizers

@@ -126,7 +126,7 @@ DO
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
 	OUTFILE (audioFile, U"Audio file:", U"")
@@ -162,7 +162,7 @@ DIRECT (WINDOW_LongSound_view) {
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
@@ -284,7 +284,7 @@ OK
 	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
 	LongSound_setBufferSizePref_seconds (maximumViewablePart);
-END }
+END_WITH_NEW_DATA }
 
 /********** LONGSOUND & SOUND **********/
 
@@ -421,7 +421,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	}
 	praat_new (thee.move(), U"chain");
 	praat_new (him.move(), U"chain");
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (NEW_Sound_convertToMono) {
@@ -685,7 +685,7 @@ DIRECT (WINDOW_Sound_viewAndEdit) {
 		Editor_setPublicationCallback (editor.get(), cb_SoundEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (NEWMANY_Sound_extractAllChannels) {
@@ -696,7 +696,7 @@ DIRECT (NEWMANY_Sound_extractAllChannels) {
 			praat_new (thee.move(), my name.get(), U"_ch", channel);
 		}
 	}
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_Sound_extractChannel, U"Sound: Extract channel", nullptr) {
@@ -1181,7 +1181,7 @@ DIRECT (PLAY_Sound_play) {
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (MODIFY_Sound_preemphasizeInplace, U"Sound: Pre-emphasize (in-place)", U"Sound: Pre-emphasize (in-place)...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
@@ -1205,7 +1205,7 @@ FORM_READ (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate cha
 		autoSound thee = Sound_extractChannel (sound.get(), ichan);
 		praat_new (thee.move(), name, U"_ch", ichan);
 	}
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM_READ (READ1_Sound_readFromRawAlawFile, U"Read Sound from raw Alaw file", nullptr, true) {
@@ -1245,10 +1245,10 @@ static void do_Sound_record (int numberOfChannels) {
 }
 DIRECT (WINDOW_Sound_recordMono) {
 	do_Sound_record (1);
-END }
+END_WITH_NEW_DATA }
 DIRECT (WINDOW_Sound_recordStereo) {
 	do_Sound_record (2);
-END }
+END_WITH_NEW_DATA }
 
 FORM (RECORD1_Sound_record_fixedTime, U"Record Sound", nullptr) {
 	LABEL (U"This menu command is usually hidden,")
@@ -1792,7 +1792,7 @@ DO
 		Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
 	MelderAudio_setInputSoundSystem (inputSoundSystem);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	LABEL (U"The following determines how sounds are played.")
@@ -1817,7 +1817,7 @@ DO
 	MelderAudio_setOutputSilenceBefore (silenceBefore);
 	MelderAudio_setOutputSilenceAfter (silenceAfter);
 	MelderAudio_setOutputSoundSystem (outputSoundSystem);
-	END
+	END_WITH_NEW_DATA
 }
 
 #ifdef HAVE_PULSEAUDIO
@@ -2004,14 +2004,14 @@ DO
 				& inputs, & outputs);
 		praat_new (inputs.move(), U"inputs");
 		praat_new (outputs.move(), U"outputs");
-	END
+	END_WITH_NEW_DATA
 }
 
 /***** STOP *****/
 
 DIRECT (PLAY_stopPlayingSound) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-END }
+END_WITH_NEW_DATA }
 
 /***** Help menus *****/
 

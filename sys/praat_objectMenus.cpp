@@ -32,7 +32,7 @@ DIRECT (PRAAT_Remove) {
 	WHERE_DOWN (SELECTED)
 		praat_removeObject (IOBJECT);
 	praat_show ();
-END }
+END_WITH_NEW_DATA }
 
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
 	TEXTFIELD (newName, U"New name:", U"", 3)
@@ -58,7 +58,7 @@ DO
 			if (EDITOR [ieditor]) Thing_setName (EDITOR [ieditor], fullName.string);
 		Thing_setName (OBJECT, string.string);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
 	TEXTFIELD (newName, U"Name of new object:", U"", 3)
@@ -74,7 +74,7 @@ DO
 	WHERE (SELECTED) {
 		praat_new (Data_copy ((Daata) OBJECT), newName);
 	}
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (INFO_Info) {
 	INFO_NONE
@@ -98,7 +98,7 @@ DIRECT (WINDOW_Inspect) {
 			editor.releaseToUser();
 		}
 	}
-END }
+END_WITH_NEW_DATA }
 
 /********** The fixed menus. **********/
 
@@ -129,18 +129,18 @@ GuiMenu praat_objects_resolveMenu (conststring32 menu) {
 
 DIRECT (WINDOW_About) {
 	praat_showLogo ();
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (WINDOW_praat_newScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
 	editor.releaseToUser();
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (WINDOW_praat_openScript) {
 	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
 	TextEditor_showOpen (editor.get());
 	editor.releaseToUser();
-END }
+END_WITH_NEW_DATA }
 
 static ButtonEditor theReferenceToTheOnlyButtonEditor;
 
@@ -157,7 +157,7 @@ DIRECT (WINDOW_praat_editButtons) {
 		theReferenceToTheOnlyButtonEditor = editor.get();
 		editor.releaseToUser();
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	WORD (window, U"Window", U"Objects")
@@ -169,7 +169,7 @@ FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	OK
 DO
 	praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
 	WORD (window, U"Window", U"Objects")
@@ -178,7 +178,7 @@ FORM (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
 	OK
 DO
 	praat_hideMenuCommand (window, menu, command);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_showMenuCommand, U"Show menu command", U"Show menu command...") {
 	WORD (window, U"Window", U"Objects")
@@ -187,7 +187,7 @@ FORM (PRAAT_showMenuCommand, U"Show menu command", U"Show menu command...") {
 	OK
 DO
 	praat_showMenuCommand (window, menu, command);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	WORD (class1, U"Class 1", U"Sound")
@@ -203,7 +203,7 @@ FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	OK
 DO
 	praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, script);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
 	WORD (class1, U"Class 1", U"Sound")
@@ -213,7 +213,7 @@ FORM (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
 	OK
 DO
 	praat_hideAction_classNames (class1, class2, class3, command);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_showAction, U"Show action command", U"Show action command...") {
 	WORD (class1, U"Class 1", U"Sound")
@@ -223,7 +223,7 @@ FORM (PRAAT_showAction, U"Show action command", U"Show action command...") {
 	OK
 DO
 	praat_showAction_classNames (class1, class2, class3, command);
-END }
+END_WITH_NEW_DATA }
 
 /********** Callbacks of the Preferences menu. **********/
 
@@ -234,7 +234,7 @@ OK
 	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
 	Melder_setInputEncoding (encodingOf8BitTextFiles);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
 	RADIO_ENUM (kMelder_textOutputEncoding, outputEncoding,
@@ -243,7 +243,7 @@ OK
 	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
 	Melder_setOutputEncoding (outputEncoding);
-END }
+END_WITH_NEW_DATA }
 
 FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
 	OPTIONMENU_ENUM (kGraphics_cjkFontStyle, cjkFontStyle,
@@ -252,7 +252,7 @@ OK
 	SET_ENUM (cjkFontStyle, kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
 	theGraphicsCjkFontStyle = cjkFontStyle;
-END }
+END_WITH_NEW_DATA }
 
 /********** Callbacks of the Goodies menu. **********/
 
@@ -360,7 +360,7 @@ OK
 DO
 	Melder_setTracing (tracing);
 	Melder_debug = debugOption;
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (INFO_listReadableTypesOfObjects) {
 	INFO_NONE
@@ -387,7 +387,7 @@ DO
 	praat_library_createC (isInHeader, includeCreateAPI, includeReadAPI, includeSaveAPI,
 		includeQueryAPI, includeModifyAPI, includeToAPI, includeRecordAPI, includePlayAPI,
 		includeDrawAPI, includeHelpAPI, includeWindowAPI, includeDemoAPI);
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (INFO_reportSystemProperties) {
 	INFO_NONE
@@ -457,7 +457,7 @@ FORM_READ (READMANY_Data_readFromFile, U"Read Object(s) from file", 0, true) {
 	if (interpreter)
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_;
 	praat_updateSelection ();
-END }
+END_WITH_NEW_DATA }
 
 /********** Callbacks of the Save menu. **********/
 
@@ -471,7 +471,7 @@ FORM_SAVE (SAVE_Data_writeToTextFile, U"Save Object(s) as one text file", nullpt
 		autoCollection set = praat_getSelectedObjects ();
 		Data_writeToTextFile (set.get(), file);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM_SAVE (SAVE_Data_writeToShortTextFile, U"Save Object(s) as one short text file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
@@ -483,7 +483,7 @@ FORM_SAVE (SAVE_Data_writeToShortTextFile, U"Save Object(s) as one short text fi
 		autoCollection set = praat_getSelectedObjects ();
 		Data_writeToShortTextFile (set.get(), file);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nullptr, nullptr) {
 	if (theCurrentPraatObjects -> totalSelection == 1) {
@@ -495,7 +495,7 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 		autoCollection set = praat_getSelectedObjects ();
 		Data_writeToBinaryFile (set.get(), file);
 	}
-END }
+END_WITH_NEW_DATA }
 
 FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr) {
 	FOLDER (folder, U"Folder:", U"")
@@ -509,7 +509,7 @@ DO
 		iam_LOOP (ManPages);
 		ManPages_writeAllToHtmlDir (me, folder);
 	}
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (WINDOW_ManPages_view) {
 	LOOP {
@@ -522,7 +522,7 @@ DIRECT (WINDOW_ManPages_view) {
 		praat_installEditor (manual.get(), IOBJECT);
 		manual.releaseToUser();
 	}
-END }
+END_WITH_NEW_DATA }
 
 /********** Callbacks of the Help menu. **********/
 
@@ -535,7 +535,7 @@ DO
 	autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
 	Manual_search (manual.get(), query);
 	manual.releaseToUser();
-END }
+END_WITH_NEW_DATA }
 
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
 	static constSTRVEC pages;
@@ -548,7 +548,7 @@ DO
 	autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
 	HyperPage_goToPage_number (manual.get(), goToPageNumber);
 	manual.releaseToUser();
-END }
+END_WITH_NEW_DATA }
 
 FORM (HELP_SaveManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
 	FOLDER (folder, U"Folder:", U"")
@@ -558,7 +558,7 @@ OK
 	SET_STRING (folder, Melder_dirToPath (& currentDirectory))
 DO
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, folder);
-END }
+END_WITH_NEW_DATA }
 
 /********** Menu descriptions. **********/
 
@@ -623,22 +623,22 @@ static void cb_finishedOpeningDocuments () {
 #if cocoa
 DIRECT (PRAAT_cut) {
 	[[[NSApp keyWindow] firstResponder] cut: nil];
-END }
+END_WITH_NEW_DATA }
 DIRECT (PRAAT_copy) {
 	[[[NSApp keyWindow] firstResponder] copy: nil];
-END }
+END_WITH_NEW_DATA }
 DIRECT (PRAAT_paste) {
 	[[[NSApp keyWindow] firstResponder] pasteAsPlainText: nil];
-END }
+END_WITH_NEW_DATA }
 DIRECT (PRAAT_minimize) {
 	[[NSApp keyWindow] performMiniaturize: nil];
-END }
+END_WITH_NEW_DATA }
 DIRECT (PRAAT_zoom) {
 	[[NSApp keyWindow] performZoom: nil];
-END }
+END_WITH_NEW_DATA }
 DIRECT (PRAAT_close) {
 	[[NSApp keyWindow] performClose: nil];
-END }
+END_WITH_NEW_DATA }
 #endif
 
 void praat_addMenus (GuiWindow window) {

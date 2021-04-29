@@ -97,7 +97,7 @@ DO
 		praat_new (resultingEEG.move(), my name.get(), U"_bss");
 		praat_new (resultingMixingMatrix.move(), my name.get());
 	}
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
@@ -458,7 +458,7 @@ DO
 DIRECT (PLAY_Sound_MixingMatrix_play) {
 	FIND_TWO (Sound, MixingMatrix);
 		Sound_MixingMatrix_play (me, you, nullptr, nullptr);
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (NEW1_Sound_MixingMatrix_mix) {

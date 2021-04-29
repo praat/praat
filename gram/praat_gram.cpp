@@ -445,7 +445,7 @@ DIRECT (WINDOW_OTGrammar_viewAndEdit) {
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Draw
@@ -688,7 +688,7 @@ DO
 		autostring32 output = OTGrammar_inputToOutput (me, inputForm, evaluationNoise);
 		Melder_information (output.get());
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
@@ -864,7 +864,7 @@ DO
 		autoStrings result = OTGrammar_inputsToOutputs (me, you, evaluationNoise);
 		praat_new (result.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
@@ -918,7 +918,7 @@ DO
 			// trickle down to save history
 		}
 		if (history) praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: OTGRAMMAR & DISTRIBUTIONS
@@ -934,7 +934,7 @@ DO
 			evaluationNoise, replications);
 		praat_dataChanged (me);
 		Melder_informationReal (result, nullptr);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
@@ -967,7 +967,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1000,7 +1000,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1033,7 +1033,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1066,7 +1066,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (LIST_OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distributions: Get fraction correct...", nullptr) {
@@ -1105,7 +1105,7 @@ DO
 			throw;
 		}
 		Melder_information (result, U" correct");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", nullptr) {
@@ -1124,7 +1124,7 @@ DO
 			throw;
 		}
 		Melder_information (result, U" (minimally correct)");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
@@ -1216,7 +1216,7 @@ DIRECT (WINDOW_OTMulti_viewAndEdit) {
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: Query
@@ -1331,7 +1331,7 @@ DO
 		autostring32 output = OTMulti_generateOptimalForm (me, partialForm1, partialForm2, evaluationNoise);
 		Melder_information (output.get());
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW1_MODIFY_OTMulti_generateOptimalForms, U"OTMulti: Generate optimal forms", nullptr) {
@@ -1346,7 +1346,7 @@ DO
 			numberOfTrials, evaluationNoise);
 		praat_new (thee.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution", nullptr) {
@@ -1481,7 +1481,7 @@ DO
 			// trickle down to save history
 		}
 		if (history) praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: OTMULTI & STRINGS
@@ -1694,7 +1694,7 @@ DIRECT (WINDOW_NoulliGrid_viewAndEdit) {
 		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NUMVEC_NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average probabilities", nullptr) {

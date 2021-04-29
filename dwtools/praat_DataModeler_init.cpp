@@ -403,7 +403,7 @@ DO
 	if (interpreter)
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_;
 	praat_new (result.move(), his name.get(), U"_part");
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
@@ -443,7 +443,7 @@ DO
 	if (interpreter)
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_;
 	praat_new (result.move(), his name.get(), U"_part");
-END }
+END_WITH_NEW_DATA }
 
 /********************** FormantModeler ******************************/
 
@@ -915,7 +915,7 @@ DIRECT (WINDOW_OptimalCeilingTier_edit) {
 		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 /*************************** PitchModeler *************************************/
