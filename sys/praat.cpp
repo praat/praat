@@ -426,7 +426,7 @@ void praat_new (autoDaata me,
 }
 
 void praat_updateSelection () {
-	if (theCurrentPraatObjects -> totalBeingCreated) {
+	if (theCurrentPraatObjects -> totalBeingCreated > 0) {
 		int IOBJECT;
 		praat_deselectAll ();
 		WHERE (theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated) {
