@@ -1731,22 +1731,22 @@ FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: L
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMVEC_ONE (Pitch)
+	QUERY_ONE_FOR_REAL_VECTOR (Pitch)
 		autoVEC result = Sampled_listValuesAtXes (me, times, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
 		for (integer iframe = 1; iframe <= result.size; iframe ++)
 			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NUMVEC_Pitch_listValuesInAllFrames, U"Pitch: List values in all frames", U"Pitch: List values in all frames...") {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (Pitch)
+	QUERY_ONE_FOR_REAL_VECTOR (Pitch)
 		autoVEC result = Sampled_listValuesOfAllSamples (me, Pitch_LEVEL_FREQUENCY, (int) unit);
 		for (integer iframe = 1; iframe <= result.size; iframe ++)
 			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 DIRECT (PLAY_Pitch_play) {

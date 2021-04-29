@@ -1037,9 +1037,9 @@ DO
 }
 
 DIRECT (NUMVEC_Sound_listAllSampleTimes) {
-	NUMVEC_ONE (Sound)
+	QUERY_ONE_FOR_REAL_VECTOR (Sound)
 		autoVEC result = Sampled_listAllXValues (me);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (REAL_Sound_getTimeOfMaximum, U"Sound: Get time of maximum", U"Sound: Get time of maximum...") {

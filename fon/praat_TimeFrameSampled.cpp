@@ -51,9 +51,9 @@ DO
 }
 
 DIRECT (NUMVEC_TimeFrameSampled_listAllFrameTimes) {
-	NUMVEC_ONE (Sampled)
+	QUERY_ONE_FOR_REAL_VECTOR (Sampled)
 		autoVEC result = Sampled_listAllXValues (me);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 // MARK: - buttons

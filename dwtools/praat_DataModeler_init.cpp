@@ -110,9 +110,9 @@ DO
 }
 
 DIRECT (NUMVEC_DataModeler_listParameterValues) {
-	NUMVEC_ONE (DataModeler)
+	QUERY_ONE_FOR_REAL_VECTOR (DataModeler)
 		autoVEC result = DataModeler_listParameterValues (me);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status", nullptr) {
