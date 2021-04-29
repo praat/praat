@@ -2438,12 +2438,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								} else if (typeOfAssignment == 3) {
 									if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Commands that write to a file are not available inside pictures.");
 									InterpreterVariable var = Interpreter_hasVariable (me, variableName);
-									if (! var) Melder_throw (U"Variable ", variableName, U" undefined.");
+									if (! var)
+										Melder_throw (U"Variable ", variableName, U" undefined.");
 									MelderFile_appendText (& file, var -> stringValue.get());
 								} else {
 									if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Commands that write to a file are not available inside pictures.");
 									InterpreterVariable var = Interpreter_hasVariable (me, variableName);
-									if (! var) Melder_throw (U"Variable ", variableName, U" undefined.");
+									if (! var)
+										Melder_throw (U"Variable ", variableName, U" undefined.");
 									MelderFile_writeText (& file, var -> stringValue.get(), Melder_getOutputEncoding ());
 								}
 							} else if (isCommand (p)) {
@@ -2453,8 +2455,11 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 								autoMelderDivertInfo divert (& valueString);
 								int status = praat_executeCommand (me, p);
-								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
-								var -> stringValue = Melder_dup (status ? valueString.string : U"");
+								if (my returnType == kInterpreter_ReturnType::STRING_ || my returnType == kInterpreter_ReturnType::REAL_) {
+									InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
+									var -> stringValue = Melder_dup (status ? valueString.string : U"");
+								} else
+									Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the string variable \"", variableName, U"\".");
 							} else {
 								/*
 									Evaluate a string expression and assign the result to the variable.

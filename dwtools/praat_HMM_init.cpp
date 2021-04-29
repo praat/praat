@@ -281,19 +281,22 @@ DO
 }
 
 DIRECT (GRAPHICS_HMM_drawForwardProbabilitiesIllustration) {
-	autoPraatPicture picture;
-	HMM_drawForwardProbabilitiesIllustration (GRAPHICS, true);
-END }
+	GRAPHICS_NONE
+		HMM_drawForwardProbabilitiesIllustration (GRAPHICS, true);
+	GRAPHICS_NONE_END
+}
 
 DIRECT (GRAPHICS_HMM_drawBackwardProbabilitiesIllustration) {
-	autoPraatPicture picture;
-	HMM_drawBackwardProbabilitiesIllustration (GRAPHICS, true);
-END }
+	GRAPHICS_NONE
+		HMM_drawBackwardProbabilitiesIllustration (GRAPHICS, true);
+	GRAPHICS_NONE_END
+}
 
 DIRECT (GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration) {
-	autoPraatPicture picture;
-	HMM_drawForwardAndBackwardProbabilitiesIllustration (GRAPHICS, true);
-END }
+	GRAPHICS_NONE
+		HMM_drawForwardAndBackwardProbabilitiesIllustration (GRAPHICS, true);
+	GRAPHICS_NONE_END
+}
 
 FORM (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"HMM: Get transition probability...") {
 	NATURAL (fromState, U"From state number", U"1")

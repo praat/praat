@@ -896,8 +896,10 @@ static void fit (int symbol) {
 
 static bool fitArguments () {
     int symbol = newread;
-    if (symbol == OPENING_PARENTHESIS_) return true;   // success: a function call like: myFunction (...)
-    if (symbol == COLON_) return false;   // success: a function call like: myFunction: ...
+    if (symbol == OPENING_PARENTHESIS_)
+    	return true;   // success: a function call like: myFunction (...)
+    if (symbol == COLON_)
+    	return false;   // success: a function call like: myFunction: ...
     const conststring32 symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
     bool needQuotes2 = ! str32chr (symbolName2, U' ');
     static MelderString message;

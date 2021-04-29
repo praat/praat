@@ -1084,25 +1084,27 @@ DO
 }
 
 DIRECT (INFO_Covariances_reportEquality) {
-	autoCovarianceList covariances = CovarianceList_create ();
-	LOOP {
-		iam_LOOP (Covariance);
-		covariances -> addItem_ref (me);
-	}
-	MelderInfo_open ();
-	double p, chisq, df;
-	Covariances_equality (covariances.get(), 1, & p, & chisq, & df);
-	MelderInfo_writeLine (U"Difference between covariance matrices:");
-	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
-	MelderInfo_writeLine (U"Chi-squared (bartlett) = ", chisq);
-	MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
+	INFO_NONE
+		autoCovarianceList covariances = CovarianceList_create ();
+		LOOP {
+			iam_LOOP (Covariance);
+			covariances -> addItem_ref (me);
+		}
+		MelderInfo_open ();
+		double p, chisq, df;
+		Covariances_equality (covariances.get(), 1, & p, & chisq, & df);
+		MelderInfo_writeLine (U"Difference between covariance matrices:");
+		MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
+		MelderInfo_writeLine (U"Chi-squared (bartlett) = ", chisq);
+		MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
 
-	Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
-	MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
-	MelderInfo_writeLine (U"Chi-squared (wald) = ", chisq);
-	MelderInfo_writeLine (U"Degrees of freedom (wald) = ", df);
-	MelderInfo_close ();
-END }
+		Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
+		MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
+		MelderInfo_writeLine (U"Chi-squared (wald) = ", chisq);
+		MelderInfo_writeLine (U"Degrees of freedom (wald) = ", df);
+		MelderInfo_close ();
+	INFO_NONE_END
+}
 
 DIRECT (NEW_Covariance_to_Correlation) {
 	CONVERT_EACH (Covariance)
@@ -1137,11 +1139,11 @@ DIRECT (NEW1_Covariances_to_Covariance_within) {
 DIRECT (NEW1_Covariances_to_CovarianceList) {
 	autoCovarianceList result = CovarianceList_create ();
 	CREATE_ONE
-	LOOP {
-		iam_LOOP (Covariance);
-		autoCovariance cov = Data_copy (me);
-		result -> addItem_move (cov.move());
-	}
+		LOOP {
+			iam_LOOP (Covariance);
+			autoCovariance cov = Data_copy (me);
+			result -> addItem_move (cov.move());
+		}
 	CREATE_ONE_END (U"List_of_", Melder_integer (result -> size))
 }
 
@@ -1187,8 +1189,10 @@ DO
 }
 
 DIRECT (hint_Discriminant_TableOfReal_to_ClassificationTable) {
-	Melder_information (U"You can use the Discriminant as a classifier by \nselecting a Discriminant and a TableOfReal object together.");
-END }
+	INFO_NONE
+		Melder_information (U"You can use the Discriminant as a classifier by \nselecting a Discriminant and a TableOfReal object together.");
+	INFO_NONE_END
+}
 
 FORM (NEW1_Discriminant_TableOfReal_to_ClassificationTable, U"Discriminant & TableOfReal: To ClassificationTable", U"Discriminant & TableOfReal: To ClassificationTable...") {
 	BOOLEAN (poolCovariances, U"Pool covariance matrices", true)
@@ -1309,9 +1313,8 @@ DIRECT (REAL_Discriminant_getHomegeneityOfCovariances_box) {
 }
 
 DIRECT (INFO_Discriminant_reportEqualityOfCovarianceMatrices) {
-	MelderInfo_open ();
-	LOOP {
-		iam_LOOP (Discriminant);
+	INFO_ONE (Discriminant)
+		MelderInfo_open ();
 		structCovarianceList list;
 		for (integer i = 1; i <= my groups->size; i ++) {
 			SSCP sscp = my groups->at [i];
@@ -1325,9 +1328,9 @@ DIRECT (INFO_Discriminant_reportEqualityOfCovarianceMatrices) {
 		MelderInfo_writeLine (U"Significance: ", prob);
 		MelderInfo_writeLine (U"Degrees of freedom: ", df);
 		MelderInfo_writeLine (U"Number of matrices: ", list.size);
-	}
-	MelderInfo_close ();
-END }
+		MelderInfo_close ();
+	INFO_NONE_END
+}
 
 FORM (REAL_Discriminant_getSigmaEllipseArea, U"Discriminant: Get concentration ellipse area", U"Discriminant: Get concentration ellipse area...") {
 	SENTENCE (groupLabel, U"Group label", U"")
@@ -2213,7 +2216,7 @@ DIRECT (HELP_Eigen_help) {
 
 DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
-		"removed.\n To get a scree plot use \"Draw eigenvalues...\" with the "
+		"removed.\n To get a scree plot, use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
 	END
 }
@@ -2427,7 +2430,7 @@ FORM (INFO_StringsIndex_getClassLabelFromClassIndex, U"StringsIndex: Get class l
 	OK
 DO
 	STRING_ONE (StringsIndex)
-		const char32* result = StringsIndex_getClassLabelFromClassIndex (me, index);
+		conststring32 result = StringsIndex_getClassLabelFromClassIndex (me, index);
 	STRING_ONE_END
 }
 
@@ -2556,9 +2559,10 @@ DIRECT (NEW_ExcitationList_to_TableOfReal) {
 
 
 FORM_READ (READ1_FileInMemory_create, U"Create file in memory", nullptr, true) {
-	autoFileInMemory me = FileInMemory_create (file);
-	praat_new (me.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoFileInMemory result = FileInMemory_create (file);
+	READ_ONE_END
+}
 
 FORM (MODIFY_FileInMemory_setId, U"FileInMemory: Set id", nullptr) {
 	SENTENCE (newId, U"New id", U"New id")
@@ -4408,12 +4412,12 @@ DO
 	GRAPHICS_EACH_END
 }
 
-
 DIRECT (NEW_NMF_to_Matrix) {
 	CONVERT_EACH (NMF)
 		autoMatrix result = NMF_to_Matrix (me);
 	CONVERT_EACH_END (my name.get())
 }
+
 /********************** PatternList *******************************************/
 
 DIRECT (NEW1_PatternList_Categories_to_Discriminant) {
@@ -4498,7 +4502,6 @@ DIRECT (NEW_PatternList_to_Matrix) {
 	CONVERT_EACH_END (my name.get())
 }
 
-
 /******************* PCA ******************************/
 
 DIRECT (HELP_PCA_help) {
@@ -4506,19 +4509,25 @@ DIRECT (HELP_PCA_help) {
 }
 
 DIRECT (HINT_hint_PCA_TableOfReal_to_Configuration) {
-	Melder_information (U"You can get principal components by selecting a PCA and a TableOfReal\n"
-		"together and choosing \"To Configuration...\".");
-END }
+	INFO_NONE
+		Melder_information (U"You can get principal components by selecting a PCA and a TableOfReal\n"
+			"together and choosing \"To Configuration...\".");
+	INFO_NONE_END
+}
 
 DIRECT (HINT_hint_PCA_Covariance_Project) {
-	Melder_information (U"You can get a new Covariance object rotated to the directions of the direction vectors\n"
-		" in the PCA object by selecting a PCA and a Covariance object together.");
-END }
+	INFO_NONE
+		Melder_information (U"You can get a new Covariance object rotated to the directions of the direction vectors\n"
+			" in the PCA object by selecting a PCA and a Covariance object together.");
+	INFO_NONE_END
+}
 
 DIRECT (HINT_hint_PCA_Configuration_to_TableOfReal_reconstruct) {
-	Melder_information (U"You can reconstruct the original TableOfReal as well as possible from\n"
-		" the principal components in the Configuration and the direction vectors in the PCA object.");
-END }
+	INFO_NONE
+		Melder_information (U"You can reconstruct the original TableOfReal as well as possible from\n"
+			" the principal components in the Configuration and the direction vectors in the PCA object.");
+	INFO_NONE_END
+}
 
 FORM (REAL_PCA_TableOfReal_getFractionVariance, U"PCA & TableOfReal: Get fraction variance", U"PCA & TableOfReal: Get fraction variance...") {
 	NATURAL (fromPrincipalComponent, U"left Principal component range", U"1")
@@ -4677,7 +4686,6 @@ DO
 		autoProcrustes result = Eigens_to_Procrustes (me, you, fromEigenvector, toEigenvector);
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
-
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 	NUMBER_COUPLE (PCA)
@@ -5399,25 +5407,27 @@ DIRECT (MODIFY_Roots_Polynomial_polish) {
 /*****************************************************************************/
 
 DIRECT (INFO_Praat_ReportFloatingPointProperties) {
-	if (! NUMfpp) {
-		NUMmachar ();
-	}
-	MelderInfo_open ();
-	MelderInfo_writeLine (U"Double precision floating point properties of this machine,");
-	MelderInfo_writeLine (U"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
-	MelderInfo_writeLine (U"Radix: ", NUMfpp -> base);
-	MelderInfo_writeLine (U"Number of digits in mantissa: ", NUMfpp -> t);
-	MelderInfo_writeLine (U"Smallest exponent before (gradual) underflow (expmin): ", NUMfpp -> emin);
-	MelderInfo_writeLine (U"Largest exponent before overflow (expmax): ", NUMfpp -> emax);
-	MelderInfo_writeLine (U"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? U"yes" : U"no"));
-	MelderInfo_writeLine (U"Quantization step (d): ", NUMfpp -> prec);
-	MelderInfo_writeLine (U"Quantization error (eps = d/2): ", NUMfpp -> eps);
-	MelderInfo_writeLine (U"Underflow threshold (= radix ^ (expmin - 1)): ", NUMfpp -> rmin);
-	MelderInfo_writeLine (U"Safe minimum (such that its inverse does not overflow): ", NUMfpp -> sfmin);
-	MelderInfo_writeLine (U"Overflow threshold (= (1 - eps) * radix ^ expmax): ", NUMfpp -> rmax);
-	MelderInfo_writeLine (U"\nA long double is ", sizeof (long double), U" bytes");
-	MelderInfo_close ();
-END }
+	INFO_NONE
+		if (! NUMfpp) {
+			NUMmachar ();
+		}
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Double precision floating point properties of this machine,");
+		MelderInfo_writeLine (U"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
+		MelderInfo_writeLine (U"Radix: ", NUMfpp -> base);
+		MelderInfo_writeLine (U"Number of digits in mantissa: ", NUMfpp -> t);
+		MelderInfo_writeLine (U"Smallest exponent before (gradual) underflow (expmin): ", NUMfpp -> emin);
+		MelderInfo_writeLine (U"Largest exponent before overflow (expmax): ", NUMfpp -> emax);
+		MelderInfo_writeLine (U"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? U"yes" : U"no"));
+		MelderInfo_writeLine (U"Quantization step (d): ", NUMfpp -> prec);
+		MelderInfo_writeLine (U"Quantization error (eps = d/2): ", NUMfpp -> eps);
+		MelderInfo_writeLine (U"Underflow threshold (= radix ^ (expmin - 1)): ", NUMfpp -> rmin);
+		MelderInfo_writeLine (U"Safe minimum (such that its inverse does not overflow): ", NUMfpp -> sfmin);
+		MelderInfo_writeLine (U"Overflow threshold (= (1 - eps) * radix ^ expmax): ", NUMfpp -> rmax);
+		MelderInfo_writeLine (U"\nA long double is ", sizeof (long double), U" bytes");
+		MelderInfo_close ();
+	INFO_NONE_END
+}
 
 FORM (REAL_Praat_getTukeyQ, U"Get TukeyQ", nullptr) {
 	POSITIVE (criticalValue, U"Critical value", U"2.0")
@@ -5426,9 +5436,11 @@ FORM (REAL_Praat_getTukeyQ, U"Get TukeyQ", nullptr) {
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
-	double result = NUMtukeyQ (criticalValue, numberOfMeans, degreesOfFreedon, numberOfRows);
-	Melder_information (result, U" (tukeyQ)");
-END }
+	INFO_NONE
+		const double result = NUMtukeyQ (criticalValue, numberOfMeans, degreesOfFreedon, numberOfRows);
+		Melder_information (result, U" (tukeyQ)");
+	INFO_NONE_END
+}
 
 FORM (REAL_Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
 	REAL (probability, U"Probability", U"0.05")
@@ -5437,10 +5449,12 @@ FORM (REAL_Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
-	Melder_require (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].");
-	double result = NUMinvTukeyQ (probability, numberOfMeans, degreesOfFreedon, numberOfRows);
-	Melder_information (result, U" (inv tukeyQ)");
-END }
+	INFO_NONE
+		Melder_require (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].");
+		double result = NUMinvTukeyQ (probability, numberOfMeans, degreesOfFreedon, numberOfRows);
+		Melder_information (result, U" (inv tukeyQ)");
+	INFO_NONE_END
+}
 
 FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplete gamma...") {
 	POSITIVE (reAlpha, U"Real part of alpha", U"4.0")
@@ -5449,9 +5463,11 @@ FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplet
 	REAL (imX, U"Imaginary part of X", U"0.0")
 	OK
 DO
-	dcomplex result = NUMincompleteGammaFunction (dcomplex {reAlpha, imAlpha}, dcomplex {reX, imX});
-	Melder_information (result);
-END }
+	INFO_NONE
+		dcomplex result = NUMincompleteGammaFunction (dcomplex {reAlpha, imAlpha}, dcomplex {reX, imX});
+		Melder_information (result);
+	INFO_NONE_END
+}
 
 /******************** Sound ****************************************/
 
@@ -5647,8 +5663,9 @@ FORM (REAL_Sound_getNearestLevelCrossing, U"Sound: Get nearest level crossing", 
 	OK
 DO
 	NUMBER_ONE (Sound)
-		if (channel > my ny) channel = 1;
-		double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
+		if (channel > my ny)   // TODO: why this arbitrary default against a user error?
+			channel = 1;
+		const double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
 	NUMBER_ONE_END (U" seconds")
 }
 
@@ -5666,7 +5683,7 @@ FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
 DO
     CONVERT_COUPLE (Sound)
 		autoDTW result = Sounds_to_DTW (me, you, windowLength, timeStep, sakoeChibaBand, slopeConstraint);
-   CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
@@ -6089,19 +6106,22 @@ DO
 }
 
 FORM_READ (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
-	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
-	praat_new (thee.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoSound result = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
+	READ_ONE_END
+}
 
 FORM_READ (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
-	autoSound thee = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
-	praat_new (thee.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoSound result = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
+	READ_ONE_END
+}
 
 FORM_READ (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
-	autoKlattTable thee = KlattTable_readFromRawTextFile (file);
-	praat_new (thee.move(), MelderFile_name (file));
-END }
+	READ_ONE
+		autoKlattTable result = KlattTable_readFromRawTextFile (file);
+	READ_ONE_END
+}
 
 /************ Spectrograms *********************************************/
 

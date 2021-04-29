@@ -45,7 +45,7 @@ FORM (REAL_Distributionses_getMeanAbsoluteDifference, U"Get mean difference", nu
 	OK
 DO
 	NUMBER_COUPLE (Distributions)
-		double result = Distributionses_getMeanAbsoluteDifference (me, you, columnNumber);
+		const double result = Distributionses_getMeanAbsoluteDifference (me, you, columnNumber);
 	NUMBER_COUPLE_END (U" (mean absolute difference between columns ", columnNumber, U")")
 }
 
@@ -55,7 +55,7 @@ FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Distributions)
-		double result = Distributions_getProbability (me, string, columnNumber);
+		const double result = Distributions_getProbability (me, string, columnNumber);
 	NUMBER_ONE_END (U" (probability)")
 }
 
@@ -103,8 +103,8 @@ FORM (GRAPHICS_LogisticRegression_drawBoundary, U"LogisticRegression: Draw bound
 	OK
 DO
 	GRAPHICS_EACH (LogisticRegression)
-		integer xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
-		integer yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
+		const integer xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
+		const integer yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
 		LogisticRegression_drawBoundary (me, GRAPHICS,
 			xfactor, fromHorizontal, toHorizontal,
 			yfactor, fromVertical, toVertical,
@@ -125,19 +125,19 @@ DIRECT (HELP_PairDistribution_help) {
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_maximumLikelihood) {
 	NUMBER_ONE (PairDistribution)
-		double result = PairDistribution_getFractionCorrect_maximumLikelihood (me);
+		const double result = PairDistribution_getFractionCorrect_maximumLikelihood (me);
 	NUMBER_ONE_END (U" (fraction correct)")
 }
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_probabilityMatching) {
 	NUMBER_ONE (PairDistribution)
-		double result = PairDistribution_getFractionCorrect_probabilityMatching (me);
+		const double result = PairDistribution_getFractionCorrect_probabilityMatching (me);
 	NUMBER_ONE_END (U" (fraction correct)")
 }
 
 DIRECT (INTEGER_PairDistribution_getNumberOfPairs) {
 	NUMBER_ONE (PairDistribution)
-		integer result = my pairs.size;
+		const integer result = my pairs.size;
 	NUMBER_ONE_END (U" pairs")
 }
 
@@ -296,7 +296,8 @@ DIRECT (HELP_StatisticsTutorial) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_Table_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Table from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot edit a Table from batch.");
 	FIND_ONE_WITH_IOBJECT (Table)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -487,16 +488,23 @@ DIRECT (INTEGER_Table_getNumberOfRows) {
 	NUMBER_ONE_END (U" rows")
 }
 
-FORM (STRING_Table_getValue, U"Table: Get value", nullptr) {
+FORM (REAL_Table_getValue, U"Table: Get value", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	STRING_ONE (Table)
+	NUMBER_ONE (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		conststring32 result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
-	STRING_ONE_END
+		/*
+			The following lines are a hack:
+			we are returning a number in a string.
+		*/
+		if (interpreter)
+			interpreter -> returnType = kInterpreter_ReturnType::REAL_;
+		Melder_information (result);
+	END_NO_NEW_DATA
 }
 
 FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
@@ -505,8 +513,8 @@ FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		integer result = Table_searchColumn (me, columnNumber, value);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer result = Table_searchColumn (me, columnNumber, value);
 	NUMBER_ONE_END (U" (first row in which ", columnLabel, U" is ", value)
 }
 	
@@ -519,10 +527,10 @@ FORM (INFO_Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
-		double correlation, significance, lowerLimit, upperLimit;
-		correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		double significance, lowerLimit, upperLimit;
+		const double correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 				& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, columnNumber1),
@@ -545,10 +553,10 @@ FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", 
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
-		double correlation, significance, lowerLimit, upperLimit;
-		correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		double significance, lowerLimit, upperLimit;
+		const double correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 				& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Correlation between column ", Table_messageColumn (me, columnNumber1),
@@ -572,10 +580,10 @@ FORM (INFO_Table_reportDifference_studentT, U"Report difference (Student t)", nu
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
-		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
-		difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		double t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
+		const double difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 				& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Difference between column ", Table_messageColumn (me, columnNumber1),
@@ -602,10 +610,10 @@ FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Stud
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
-		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-		mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		const integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		double tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
+		const double mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
 				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_write (U"Difference in column ", Table_messageColumn (me, columnNumber), U" between groups ", group1);
@@ -631,8 +639,8 @@ FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group differenc
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		const integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double areaUnderCurve, rankSum, significanceFromZero;
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, columnNumber, groupColumnNumber, group1, group2,
 				& rankSum, & significanceFromZero);
@@ -655,10 +663,10 @@ FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nul
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
-		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-		mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		const integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		double tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
+		const double mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
 				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_write (U"Mean in column ", Table_messageColumn (me, columnNumber), U" of group ", group);
@@ -682,9 +690,9 @@ FORM (INFO_Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
 	OK
 DO
 	INFO_ONE (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-		mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		double tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
+		const double mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
 				& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Mean of column ", Table_messageColumn (me, columnNumber), U":");
@@ -719,8 +727,8 @@ FORM (MODIFY_Table_appendDifferenceColumn, U"Table: Append difference column", n
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendDifferenceColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -732,8 +740,8 @@ FORM (MODIFY_Table_appendProductColumn, U"Table: Append product column", nullptr
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendProductColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -745,8 +753,8 @@ FORM (MODIFY_Table_appendQuotientColumn, U"Table: Append quotient column", nullp
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendQuotientColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -758,8 +766,8 @@ FORM (MODIFY_Table_appendSumColumn, U"Table: Append sum column", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendSumColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -776,7 +784,7 @@ FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_formula (me, columnNumber, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
@@ -788,8 +796,8 @@ FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Tabl
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
-		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
+		const integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
+		const integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
 		Table_formula_columnRange (me, columnNumber1, columnNumber2, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
@@ -818,7 +826,7 @@ FORM (MODIFY_Table_removeColumn, U"Table: Remove column", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_removeColumn (me, columnNumber);
 	MODIFY_EACH_END
 }
@@ -848,7 +856,7 @@ FORM (MODIFY_Table_setColumnLabel_label, U"Set column label", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
 		Table_setColumnLabel (me, columnNumber, newLabel);
 	MODIFY_EACH_END
 }
@@ -860,7 +868,7 @@ FORM (MODIFY_Table_setNumericValue, U"Table: Set numeric value", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_setNumericValue (me, rowNumber, columnNumber, numericValue);
 	MODIFY_EACH_END
 }
@@ -872,7 +880,7 @@ FORM (MODIFY_Table_setStringValue, U"Table: Set string value", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_setStringValue (me, rowNumber, columnNumber, stringValue);
 	MODIFY_EACH_END
 }
@@ -929,7 +937,7 @@ FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where colum
 	OK
 DO
 	CONVERT_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_EACH_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
 			isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
@@ -942,7 +950,7 @@ FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column 
 	OK
 DO
 	CONVERT_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
@@ -961,7 +969,7 @@ FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Table)
-		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
 		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
 	CONVERT_EACH_END (my name.get(), U"_nested")
 }
@@ -988,7 +996,7 @@ FORM (NEW_Table_downto_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Table)
-		integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
+		const integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
 	CONVERT_EACH_END (my name.get())
 }
@@ -1046,7 +1054,7 @@ static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, 
 	 * which must be before the first newline symbol (if any).
 	 */
 	unsigned char *uheader = (unsigned char *) header;
-	bool isTabSeparated =
+	const bool isTabSeparated =
 		uheader [0] == 0xef && uheader [1] == 0xff ? isTabSeparated_utf16be (nread, header) :
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
 		isTabSeparated_8bit (nread, header)
@@ -1127,7 +1135,7 @@ void praat_uvafon_stat_init () {
 		praat_addAction1 (classTable, 1, U"Get column label...", nullptr, 1, STRING_Table_getColumnLabel);
 		praat_addAction1 (classTable, 1, U"Get column index...", nullptr, 1, INTEGER_Table_getColumnIndex);
 		praat_addAction1 (classTable, 1, U"-- get value --", nullptr, 1, nullptr);
-		praat_addAction1 (classTable, 1, U"Get value...", nullptr, 1, STRING_Table_getValue);
+		praat_addAction1 (classTable, 1, U"Get value...", nullptr, 1, REAL_Table_getValue);
 		praat_addAction1 (classTable, 1, U"Search column...", nullptr, 1, INTEGER_Table_searchColumn);
 		praat_addAction1 (classTable, 1, U"-- statistics --", nullptr, 1, nullptr);
 		praat_addAction1 (classTable, 1, U"Statistics tutorial", nullptr, 1, HELP_StatisticsTutorial);
