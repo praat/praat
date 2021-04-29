@@ -7915,9 +7915,9 @@ FORM (NEW1_TextGrids_EditCostsTable_to_Table_textAlignment, U"TextGrids & EditCo
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
-	CONVERT_COUPLE_AND_ONE (TextGrid, EditCostsTable)
+	TURN_TWO_AND_ONE_INTO_ONE (TextGrid, EditCostsTable)
 		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, him);
-	CONVERT_COUPLE_AND_ONE_END (my name.get(), U"_", your name.get())
+	TURN_TWO_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 
