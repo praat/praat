@@ -655,7 +655,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	klas me = nullptr, you = nullptr; \
 	LOOP if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) (me ? you : me) = (klas) OBJECT;
 
-#define FIND_COUPLE_AND_ONE(klas1,klas2)  \
+#define FIND_TWO_AND_ONE(klas1,klas2)  \
 	klas1 me = nullptr, you = nullptr; klas2 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) (me ? you : me) = (klas1) OBJECT; else if (CLASS == class##klas2) him = (klas2) OBJECT; \
 	if (me && you && him) break; }
@@ -671,7 +671,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	else if (Thing_isSubclass (CLASS, class##klas2)) { you = (klas2) OBJECT; } } \
 	Melder_assert (me && you);
 
-#define FIND_THREE(klas1,klas2,klas3)  \
+#define FIND_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
@@ -682,7 +682,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; } \
 	IOBJECT = _klas1_position;
 
-#define FIND_FOUR(klas1,klas2,klas3,klas4)  \
+#define FIND_1_1_1_1(klas1,klas2,klas3,klas4)  \
 	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
@@ -740,7 +740,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_THREE(klas1,klas2,klas3)  FIND_THREE (klas1, klas2, klas3)
+#define INFO_THREE(klas1,klas2,klas3)  FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define INFO_THREE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
@@ -763,7 +763,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_TWO (klas)
 #define GRAPHICS_COUPLE_END  END_NO_NEW_DATA
 
-#define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
+#define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_TWO_AND_ONE (klas1, klas2)
 #define GRAPHICS_COUPLE_AND_ONE_END  END_NO_NEW_DATA
 
 #define MOVIE_ONE(klas,title,width,height)  \
@@ -778,7 +778,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define MOVIE_THREE(klas1,klas2,klas3,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
-	FIND_THREE (klas1, klas2, klas3)
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define MOVIE_THREE_END  END_NO_NEW_DATA
 
 #define NUMBER_NONE
@@ -811,7 +811,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define NUMBER_THREE(klas1,klas2,klas3)  \
-	FIND_THREE (klas1, klas2, klas3)
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define NUMBER_THREE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
@@ -831,7 +831,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define NUMBER_COUPLE_AND_ONE(klas1,klas2)  \
-	FIND_COUPLE_AND_ONE (klas1, klas2)
+	FIND_TWO_AND_ONE (klas1, klas2)
 #define NUMBER_COUPLE_AND_ONE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
@@ -953,7 +953,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  \
-	FIND_THREE (klas1, klas2, klas3)
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define MODIFY_FIRST_OF_THREE_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
@@ -1038,7 +1038,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_TWO_AND_ONE_TO_ONE(klas1,klas2)  \
-	FIND_COUPLE_AND_ONE (klas1,klas2)
+	FIND_TWO_AND_ONE (klas1,klas2)
 #define CONVERT_TWO_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
@@ -1046,7 +1046,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE(klas1,klas2,klas3)  \
-	FIND_THREE (klas1, klas2, klas3)
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
@@ -1054,7 +1054,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE(klas1,klas2,klas3,klas4)  \
-	FIND_FOUR (klas1, klas2, klas3, klas4)
+	FIND_1_1_1_1 (klas1, klas2, klas3, klas4)
 #define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
