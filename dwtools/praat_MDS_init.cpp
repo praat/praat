@@ -328,9 +328,9 @@ DO
 }
 
 DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
-	CONVERT_ONE_AND_TYPED_LIST (Weight, Configuration, ConfigurationList)
+	CONVERT_ONE_AND_ALL_LISTED_TO_ONE (Weight, Configuration, ConfigurationList)
 		autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), me);
-	CONVERT_ONE_AND_TYPED_LIST_END (U"congruence")
+	CONVERT_ONE_AND_ALL_LISTED_TO_ONE_END (U"congruence")
 }
 
 DIRECT (NEW1_Configuration_AffineTransform_to_Configuration) {
