@@ -856,7 +856,7 @@ FORM (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outp
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Strings)
+	FIND_ONE_AND_ONE (OTGrammar, Strings)
 		autoStrings result = OTGrammar_inputsToOutputs (me, you, evaluationNoise);
 		praat_new (result.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
@@ -902,7 +902,7 @@ FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from 
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Strings)
+	FIND_ONE_AND_ONE (OTGrammar, Strings)
 		autoOTHistory history;
 		try {
 			OTGrammar_learnFromPartialOutputs (me, you, evaluationNoise, updateRule, honourLocalRankings,
@@ -925,7 +925,7 @@ FORM (REAL_MODIFY_OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Dist
 	INTEGER (replications, U"Replications", U"100000")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		const double result = OTGrammar_Distributions_getFractionCorrect (me, you, columnNumber,
 			evaluationNoise, replications);
 		praat_dataChanged (me);
@@ -948,7 +948,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Dist
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -981,7 +981,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar &
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -1014,7 +1014,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & 
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -1047,7 +1047,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar &
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -1091,7 +1091,7 @@ FORM (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & P
 	INTEGER (replications, U"Replications", U"100000")
 	OK
 DO
-	FIND_TWO (OTGrammar, PairDistribution)
+	FIND_ONE_AND_ONE (OTGrammar, PairDistribution)
 		double result;
 		try {
 			result = OTGrammar_PairDistribution_getFractionCorrect (me, you, evaluationNoise, replications);
@@ -1109,7 +1109,7 @@ FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGra
 	INTEGER (replicationsPerInput, U"Replications per input", U"1000")
 	OK
 DO
-	FIND_TWO (OTGrammar, PairDistribution)
+	FIND_ONE_AND_ONE (OTGrammar, PairDistribution)
 		integer result;
 		try {
 			result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, you,
@@ -1459,7 +1459,7 @@ FORM (DANGEROUS_MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribut
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTMulti, PairDistribution)
+	FIND_ONE_AND_ONE (OTMulti, PairDistribution)
 		autoTable history;
 		try {
 			OTMulti_PairDistribution_learn (me, you, evaluationNoise,

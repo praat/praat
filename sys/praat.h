@@ -640,7 +640,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	LOOP { if (CLASS == class##klas) me = (klas) OBJECT, _klas_position = IOBJECT; break; } \
 	IOBJECT = _klas_position;
 
-#define FIND_TWO(klas1,klas2)  \
+#define FIND_ONE_AND_ONE(klas1,klas2)  \
 	klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	if (me && you) break; }
@@ -728,7 +728,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_TWO(klas1,klas2)  FIND_TWO (klas1, klas2)
+#define INFO_TWO(klas1,klas2)  FIND_ONE_AND_ONE (klas1, klas2)
 #define INFO_TWO_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
@@ -757,7 +757,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
 #define GRAPHICS_EACH_END  } END_NO_NEW_DATA
 
-#define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_TWO (klas1, klas2)
+#define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_ONE_AND_ONE (klas1, klas2)
 #define GRAPHICS_TWO_END  END_NO_NEW_DATA
 
 #define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
@@ -773,7 +773,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define MOVIE_TWO(klas1,klas2,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
-	FIND_TWO (klas1, klas2)
+	FIND_ONE_AND_ONE (klas1, klas2)
 #define MOVIE_TWO_END  END_NO_NEW_DATA
 
 #define MOVIE_THREE(klas1,klas2,klas3,title,width,height)  \
@@ -801,7 +801,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define NUMBER_TWO(klas1,klas2)  \
-	FIND_TWO (klas1, klas2)
+	FIND_ONE_AND_ONE (klas1, klas2)
 #define NUMBER_TWO_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
@@ -936,13 +936,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_TWO(klas1,klas2)  \
-	FIND_TWO (klas1, klas2)
+	FIND_ONE_AND_ONE (klas1, klas2)
 #define MODIFY_FIRST_OF_TWO_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  \
-	FIND_TWO (klas1, klas2) \
+	FIND_ONE_AND_ONE (klas1, klas2) \
 	try {
 #define MODIFY_FIRST_OF_TWO_WEAK_END  \
 		praat_dataChanged (me); \
@@ -1008,7 +1008,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_ONE_AND_ONE_TO_ONE(klas1,klas2)  \
-	FIND_TWO (klas1, klas2)
+	FIND_ONE_AND_ONE (klas1, klas2)
 #define CONVERT_ONE_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
@@ -1016,7 +1016,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_ONE_WEAK_AND_ONE_TO_ONE(klas1,klas2)  \
-	FIND_TWO (klas1, klas2) \
+	FIND_ONE_AND_ONE (klas1, klas2) \
 	try {
 #define CONVERT_ONE_WEAK_AND_ONE_TO_ONE_END(...)  \
 		if (interpreter) \

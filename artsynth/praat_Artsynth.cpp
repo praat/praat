@@ -175,7 +175,7 @@ FORM (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Sp
 	INTEGER (velocity3, U"Velocity 3", U"0")
 	OK
 DO
-	FIND_TWO (Artword, Speaker)
+	FIND_ONE_AND_ONE (Artword, Speaker)
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 		autoSound result = Artword_Speaker_to_Sound (me, you,
 			samplingFrequency, oversamplingFactor,

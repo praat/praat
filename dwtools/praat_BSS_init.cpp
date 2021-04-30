@@ -456,7 +456,7 @@ DO
 }
 
 DIRECT (PLAY_Sound_MixingMatrix_play) {
-	FIND_TWO (Sound, MixingMatrix);
+	FIND_ONE_AND_ONE (Sound, MixingMatrix);
 		Sound_MixingMatrix_play (me, you, nullptr, nullptr);
 	END_WITH_NEW_DATA
 }
