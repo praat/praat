@@ -265,9 +265,9 @@ FORM (REAL_CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTa
 	NATURAL (toTable, U"Last table", U"100")
 	OK
 DO
-	NUMBER_ONE (CrossCorrelationTableList)
+	QUERY_ONE_FOR_REAL (CrossCorrelationTableList)
 		double result = CrossCorrelationTableList_getDiagonalityMeasure (me, 0, fromTable, toTable);
-	NUMBER_ONE_END (U" (= average sum of squared off-diagonal elements)")
+	QUERY_ONE_FOR_REAL_END (U" (= average sum of squared off-diagonal elements)")
 }
 
 FORM (NEW_CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrelationTableList: Extract one CrossCorrelationTable", nullptr) {

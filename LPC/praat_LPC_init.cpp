@@ -305,10 +305,10 @@ FORM (REAL_PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: G
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, & result, nullptr);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of peak", U"PowerCepstrum: Get quefrency of peak...") {
@@ -318,11 +318,11 @@ FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of p
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, nullptr, & result);
 		double f = 1.0 / result;
-	NUMBER_ONE_END (U" seconds (f = ", f, U" Hz)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (f = ", f, U" Hz)")
 }
 
 FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration", nullptr) {
@@ -331,9 +331,9 @@ FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration"
 	POSITIVE (fractionalWIdth, U"Fractional width (0-1)", U"0.05")
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		const double result = PowerCepstrum_getRNR (me, fromPitch, toPitch, fractionalWIdth);
-	NUMBER_ONE_END (U" (rnr)")
+	QUERY_ONE_FOR_REAL_END (U" (rnr)")
 }
 
 FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get peak prominence (hillenbrand)", U"PowerCepstrum: Get peak prominence (hillenbrand)...") {
@@ -341,10 +341,10 @@ FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get pea
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
 		const double result = PowerCepstrum_getPeakProminence_hillenbrand (me, fromPitch, toPitch, & qpeak);
-	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
+	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
 }
 
 FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slope", U"PowerCepstrum: Get trend line slope...") {
@@ -354,10 +354,10 @@ FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slop
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, & result, nullptr, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTrendType::LINEAR ? U"s" : U"ln (s)");
+	QUERY_ONE_FOR_REAL_END (U" dB / ", lineType == kCepstrumTrendType::LINEAR ? U"s" : U"ln (s)");
 }
 
 FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {
@@ -367,10 +367,10 @@ FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line 
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, nullptr, & result, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence", U"PowerCepstrum: Get peak prominence...") {
@@ -384,10 +384,10 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
 		const double result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
-	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
+	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
 FORM (MODIFY_PowerCepstrum_subtractTrend_inplace, U"PowerCepstrum: Subtract trend (in-place)", U"PowerCepstrum: Subtract trend...") {
@@ -491,15 +491,15 @@ DO
 }
 
 DIRECT (REAL_PowerCepstrogram_getStartQuefrency) {
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my ymin;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my ymax;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
@@ -509,9 +509,9 @@ DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
 }
 
 DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my dy;
-	NUMBER_ONE_END (U" seconds (quefrency step)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (quefrency step)")
 }
 
 FORM (NEW_PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", nullptr) {
@@ -548,9 +548,9 @@ FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", 
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
 DO
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
@@ -571,9 +571,9 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB");
+	QUERY_ONE_FOR_REAL_END (U" dB");
 }
 
 FORM (MODIFY_PowerCepstrogram_formula, U"PowerCepstrogram: Formula", nullptr) {
@@ -799,9 +799,9 @@ DO
 }
 
 DIRECT (REAL_LPC_getSamplingInterval) {
-	NUMBER_ONE (LPC)
+	QUERY_ONE_FOR_REAL (LPC)
 		const double result = my samplingPeriod;
-	NUMBER_ONE_END (U" s");
+	QUERY_ONE_FOR_REAL_END (U" s");
 }
 
 FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U"LPC: Get number of coefficients...") {
@@ -833,11 +833,11 @@ FORM (REAL_LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in fra
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMBER_ONE (LPC)
+	QUERY_ONE_FOR_REAL (LPC)
 		double result = undefined;
 		if (frameNumber > 0 && frameNumber <= my nx)
 			result = my d_frames [frameNumber] .gain;
-	NUMBER_ONE_END (U" gain in frame ", frameNumber)
+	QUERY_ONE_FOR_REAL_END (U" gain in frame ", frameNumber)
 }
 
 DIRECT (NUMVEC_LPC_listAllGains) {
@@ -1138,9 +1138,9 @@ DO
 }
 
 DIRECT (REAL_VocalTract_getLength) {
-	NUMBER_ONE (VocalTract)
+	QUERY_ONE_FOR_REAL (VocalTract)
 		double result = my xmax - my xmin;
-	NUMBER_ONE_END (U" metres")
+	QUERY_ONE_FOR_REAL_END (U" metres")
 }
 
 FORM (MODIFY_VocalTract_setLength, U"", nullptr) {

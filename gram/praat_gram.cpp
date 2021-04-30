@@ -163,9 +163,9 @@ FORM (REAL_Network_getActivity, U"Network: Get activity", nullptr) {
 	NATURAL (node, U"Node", U"1")
 	OK
 DO
-	NUMBER_ONE (Network)
+	QUERY_ONE_FOR_REAL (Network)
 		const double result = Network_getActivity (me, node);
-	NUMBER_ONE_END (U" (activity of node ", node, U")")
+	QUERY_ONE_FOR_REAL_END (U" (activity of node ", node, U")")
 }
 
 FORM (NUMVEC_Network_getActivities, U"Network: Get activities", nullptr) {
@@ -182,9 +182,9 @@ FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
 	NATURAL (connection, U"Connection", U"1")
 	OK
 DO
-	NUMBER_ONE (Network)
+	QUERY_ONE_FOR_REAL (Network)
 		const double result = Network_getWeight (me, connection);
-	NUMBER_ONE_END (U" (weight of connection ", connection, U")")
+	QUERY_ONE_FOR_REAL_END (U" (weight of connection ", connection, U")")
 }
 
 // MARK: Modify
@@ -486,20 +486,20 @@ FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkConstraintNumber (constraintNumber);
 		const double result = my constraints [constraintNumber]. ranking;
-	NUMBER_ONE_END (U" (ranking of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (ranking of constraint ", constraintNumber, U")")
 }
 
 FORM (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkConstraintNumber (constraintNumber);
 		const double result = my constraints [constraintNumber]. disharmony;
-	NUMBER_ONE_END (U" (disharmony of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (disharmony of constraint ", constraintNumber, U")")
 }
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
@@ -522,10 +522,10 @@ FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", null
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const integer result = my tableaus [tableauNumber]. numberOfCandidates;
-	NUMBER_ONE_END (U" candidates in tableau ", tableauNumber)
+	QUERY_ONE_FOR_REAL_END (U" candidates in tableau ", tableauNumber)
 }
 
 FORM (STRING_OTGrammar_getCandidate, U"Get candidate", nullptr) {
@@ -545,11 +545,11 @@ FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", null
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		my checkConstraintNumber (constraintNumber);
 		const integer result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
-	NUMBER_ONE_END (U" violations")
+	QUERY_ONE_FOR_REAL_END (U" violations")
 }
 
 // MARK: Query (parse)
@@ -558,10 +558,10 @@ FORM (INTEGER_OTGrammar_getWinner, U"Get winner", nullptr) {
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const integer result = OTGrammar_getWinner (me, tableauNumber);
-	NUMBER_ONE_END (U" (winner in tableau ", tableauNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (winner in tableau ", tableauNumber, U")")
 }
 
 FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", nullptr) {
@@ -571,11 +571,11 @@ FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", nullptr) {
 	NATURAL (candidateNumber2, U"Candidate number 2", U"2")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber1, candidateNumber1);
 		my checkTableauAndCandidateNumber (tableauNumber2, candidateNumber2);
 		const integer result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
-	NUMBER_ONE_END (result == -1 ? U" (candidate 1 is better)" :
+	QUERY_ONE_FOR_REAL_END (result == -1 ? U" (candidate 1 is better)" :
 					result == +1 ? U" (candidate 2 is better)" : U" (candidates are equally good)")
 }
 
@@ -583,10 +583,10 @@ FORM (INTEGER_OTGrammar_getNumberOfOptimalCandidates, U"Get number of optimal ca
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const integer result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
-	NUMBER_ONE_END (U" optimal candidates in tableau ", tableauNumber)
+	QUERY_ONE_FOR_REAL_END (U" optimal candidates in tableau ", tableauNumber)
 }
 
 FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", nullptr) {
@@ -594,10 +594,10 @@ FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", nu
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const integer result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
-	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
 FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly grammatical?", nullptr) {
@@ -605,10 +605,10 @@ FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly gram
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const integer result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
-	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
 FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", nullptr) {
@@ -627,18 +627,18 @@ FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammati
 	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		const integer result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
-	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
 FORM (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output singly grammatical?", nullptr) {
 	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		const integer result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
-	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
 // MARK: -
@@ -1214,9 +1214,9 @@ DIRECT (EDITOR_ONE_OTMulti_viewAndEdit) {
 // MARK: Query
 
 DIRECT (INTEGER_OTMulti_getNumberOfConstraints) {
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		const integer result = my numberOfConstraints;
-	NUMBER_ONE_END (U" constraints")
+	QUERY_ONE_FOR_REAL_END (U" constraints")
 }
 
 FORM (STRING_OTMulti_getConstraint, U"Get constraint name", nullptr) {
@@ -1234,37 +1234,37 @@ FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint numb
 	SENTENCE (constraintName, U"Constraint name", U"")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		const integer result = OTMulti_getConstraintIndexFromName (me, constraintName);
-	NUMBER_ONE_END (U" (index of constraint ", constraintName, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of constraint ", constraintName, U")")
 }
 
 FORM (REAL_OTMulti_getRankingValue, U"Get ranking value", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		const double result = my constraints [constraintNumber]. ranking;
-	NUMBER_ONE_END (U" (ranking of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (ranking of constraint ", constraintNumber, U")")
 }
 
 FORM (REAL_OTMulti_getDisharmony, U"Get disharmony", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		const double result = my constraints [constraintNumber]. disharmony;
-	NUMBER_ONE_END (U" (disharmony of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (disharmony of constraint ", constraintNumber, U")")
 }
 
 DIRECT (INTEGER_OTMulti_getNumberOfCandidates) {
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		integer result = my numberOfCandidates;
-	NUMBER_ONE_END (U" candidates")
+	QUERY_ONE_FOR_REAL_END (U" candidates")
 }
 
 FORM (STRING_OTMulti_getCandidate, U"Get candidate", nullptr) {
@@ -1283,13 +1283,13 @@ FORM (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullpt
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		if (candidateNumber > my numberOfCandidates)
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		integer result = my candidates [candidateNumber]. marks [constraintNumber];
-	NUMBER_ONE_END (U" violations")
+	QUERY_ONE_FOR_REAL_END (U" violations")
 }
 
 FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
@@ -1297,9 +1297,9 @@ FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
 	SENTENCE (partialForm2, U"Partial form 2", U"")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		integer result = OTMulti_getWinner (me, partialForm1, partialForm2);
-	NUMBER_ONE_END (U" (winner)")
+	QUERY_ONE_FOR_REAL_END (U" (winner)")
 }
 
 // MARK: Evaluate

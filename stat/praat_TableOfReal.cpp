@@ -121,9 +121,9 @@ FORM (INTEGER_TableOfReal_getColumnIndex, U"Get column index", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = TableOfReal_columnLabelToIndex (me, columnLabel);
-	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of column ", columnLabel, U")")
 }
 	
 FORM (STRING_TableOfReal_getColumnLabel, U"Get column label", nullptr) {
@@ -141,65 +141,65 @@ FORM (REAL_TableOfReal_getColumnMean_index, U"Get column mean", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
 		double result = TableOfReal_getColumnMean (me, columnNumber);
-	NUMBER_ONE_END (U" (mean of column ", columnNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of column ", columnNumber, U")")
 }
 
 FORM (REAL_TableOfReal_getColumnMean_label, U"Get column mean", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": your column label does not exist.");
 		double result = TableOfReal_getColumnMean (me, columnNumber);
-	NUMBER_ONE_END (U" (mean of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of column ", columnLabel, U")")
 }
 
 FORM (REAL_TableOfReal_getColumnStdev_index, U"Get column standard deviation", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
 		double result = TableOfReal_getColumnStdev (me, columnNumber);
-	NUMBER_ONE_END (U" (standard deviation of column ", columnNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of column ", columnNumber, U")")
 }
 
 FORM (REAL_TableOfReal_getColumnStdev_label, U"Get column standard deviation", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
 		double result = TableOfReal_getColumnStdev (me, columnNumber);
-	NUMBER_ONE_END (U" (standard deviation of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of column ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_TableOfReal_getNumberOfColumns) {
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = my numberOfColumns;
-	NUMBER_ONE_END (U" columns")
+	QUERY_ONE_FOR_REAL_END (U" columns")
 }
 
 DIRECT (INTEGER_TableOfReal_getNumberOfRows) {
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = my numberOfRows;
-	NUMBER_ONE_END (U" rows")
+	QUERY_ONE_FOR_REAL_END (U" rows")
 }
 
 FORM (INTEGER_TableOfReal_getRowIndex, U"Get row index", nullptr) {
 	SENTENCE (rowLabel, U"Row label", U"")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = TableOfReal_rowLabelToIndex (me, rowLabel);
-	NUMBER_ONE_END (U" (index of row ", rowLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of row ", rowLabel, U")")
 }
 
 FORM (STRING_TableOfReal_getRowLabel, U"Get row label", nullptr) {
@@ -218,13 +218,13 @@ FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		if (rowNumber > my numberOfRows)
 			Melder_throw (me, U": your row number should not exceed the number of rows.");
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not exceed the number of columns.");
 		double result = my data [rowNumber] [columnNumber];
-	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
 
 // MARK: Modify

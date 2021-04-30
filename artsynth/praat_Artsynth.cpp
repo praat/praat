@@ -92,9 +92,9 @@ FORM (REAL_Artword_getTarget, U"Get one Artword target", nullptr) {
 		OPTION (kArt_muscle_getText ((kArt_muscle) ienum))
 	OK
 DO
-	NUMBER_ONE (Artword)
+	QUERY_ONE_FOR_REAL (Artword)
 		double result = Artword_getTarget (me, (kArt_muscle) muscle, time);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (HELP_Artword_help) {

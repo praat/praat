@@ -243,9 +243,9 @@ FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nul
 	REAL (time, U"Time", U"0.5") \
 	OK \
 DO \
-	NUMBER_ONE (KlattGrid) \
+	QUERY_ONE_FOR_REAL (KlattGrid) \
 		const double result = KlattGrid_get##Name##AtTime (me, time); \
-	NUMBER_ONE_END (unit) \
+	QUERY_ONE_FOR_REAL_END (unit) \
 } \
 FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) { \
 	REAL (time, U"Time (s)", U"0.5") \
@@ -495,9 +495,9 @@ FORM (REAL_KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name 
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	NUMBER_ONE (KlattGrid); \
+	QUERY_ONE_FOR_REAL (KlattGrid); \
 		const double result = KlattGrid_get##FormB##AtTime (me, formantType, formantNumber, time); \
-	NUMBER_ONE_END (U" Hz"); \
+	QUERY_ONE_FOR_REAL_END (U" Hz"); \
 }
 
 #define KlattGrid_FORMANT_GET_A_VALUE(Name,name,formantType)  \
@@ -506,9 +506,9 @@ FORM (REAL_KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	NUMBER_ONE (KlattGrid); \
+	QUERY_ONE_FOR_REAL (KlattGrid); \
 		const double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time); \
-	NUMBER_ONE_END (U" dB"); \
+	QUERY_ONE_FOR_REAL_END (U" dB"); \
 }
 
 #define KlattGrid_FORMANT_GET_FB_VALUES(Name,name,formantType) \
@@ -600,18 +600,18 @@ FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nul
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	NUMBER_ONE (KlattGrid); \
+	QUERY_ONE_FOR_REAL (KlattGrid); \
 		const double result = KlattGrid_get##Name##AtTime (me, formantType, formantNumber, time); \
-	NUMBER_ONE_END (U" Hz"); \
+	QUERY_ONE_FOR_REAL_END (U" Hz"); \
 } \
 FORM (REAL_KlattGrid_getDelta##Name##AtTime, U"KlattGrid: Get delta " #name " at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
 DO \
-	NUMBER_ONE (KlattGrid); \
+	QUERY_ONE_FOR_REAL (KlattGrid); \
 		const double result = KlattGrid_getDelta##Name##AtTime (me, formantNumber, time); \
-	NUMBER_ONE_END (U" Hz"); \
+	QUERY_ONE_FOR_REAL_END (U" Hz"); \
 } \
 FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", nullptr) { \
 	KlattGrid_6formants_addCommonField (formantType) \
@@ -697,9 +697,9 @@ FORM (REAL_KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nu
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (KlattGrid)
+	QUERY_ONE_FOR_REAL (KlattGrid)
 		double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
-	NUMBER_ONE_END ( U"dB")
+	QUERY_ONE_FOR_REAL_END ( U"dB")
 }
 
 FORM (MODIFY_KlattGrid_addAmplitudePoint, U"KlattGrid: Add amplitude point", nullptr) {

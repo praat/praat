@@ -128,21 +128,21 @@ FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get tran
 	NATURAL (icol, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (AffineTransform)
+	QUERY_ONE_FOR_REAL (AffineTransform)
 		Melder_require (irow <= my dimension, U"Row number should not exceed the dimension of the transform.");
 		Melder_require (icol <= my dimension, U"Column number should not exceed the dimension of the transform.");
 		double result = my r [irow] [icol];
-	NUMBER_ONE_END (U" r [", irow, U"] [", icol, U"]")
+	QUERY_ONE_FOR_REAL_END (U" r [", irow, U"] [", icol, U"]")
 }
 
 FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get translation element", U"Procrustes") {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	NUMBER_ONE (AffineTransform)
+	QUERY_ONE_FOR_REAL (AffineTransform)
 		Melder_require (index <= my dimension, U"Index should not exceed the dimension of the transform.");
 		double result = my t [index];
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (NEW_AffineTransform_extractMatrix) {
@@ -398,21 +398,21 @@ DO
 }
 
 DIRECT (REAL_ContingencyTable_chisqProbability) {
-	NUMBER_ONE (ContingencyTable)
+	QUERY_ONE_FOR_REAL (ContingencyTable)
 		const double result = ContingencyTable_chisqProbability (me);
-	NUMBER_ONE_END (U" (probability)")
+	QUERY_ONE_FOR_REAL_END (U" (probability)")
 }
 
 DIRECT (REAL_ContingencyTable_cramersStatistic) {
-	NUMBER_ONE (ContingencyTable)
+	QUERY_ONE_FOR_REAL (ContingencyTable)
 		const double result = ContingencyTable_cramersStatistic (me);
-	NUMBER_ONE_END (U" (cramer)")
+	QUERY_ONE_FOR_REAL_END (U" (cramer)")
 }
 
 DIRECT (REAL_ContingencyTable_contingencyCoefficient) {
-	NUMBER_ONE (ContingencyTable)
+	QUERY_ONE_FOR_REAL (ContingencyTable)
 		const double result = ContingencyTable_contingencyCoefficient (me);
-	NUMBER_ONE_END (U" (contingency coefficient)")
+	QUERY_ONE_FOR_REAL_END (U" (contingency coefficient)")
 }
 
 /************************* Correlation ***********************************/
@@ -464,9 +464,9 @@ DIRECT (HELP_Dissimilarity_help) {
 }
 
 DIRECT (REAL_Dissimilarity_getAdditiveConstant) {
-	NUMBER_ONE (Dissimilarity)
+	QUERY_ONE_FOR_REAL (Dissimilarity)
 		const double result = Dissimilarity_getAdditiveConstant (me);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_kruskal, U"Dissimilarity & Configuration: To Configuration (kruskal)", U"Dissimilarity & Configuration: To Configuration (kruskal)...") {
@@ -938,7 +938,7 @@ FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configurati
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
 	OK
 DO
-	FIND_LIST (Distance)
+	FIND_ALL (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
@@ -958,7 +958,7 @@ FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (
 	BOOLEAN (showProgressInfo, U"Show progress info", false)
 	OK
 DO_ALTERNATIVE (NEWMANY_old_Distances_to_Configuration_indscal)
-	FIND_LIST (Distance)
+	FIND_ALL (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr));
@@ -990,7 +990,7 @@ FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Con
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	OK
 DO
-	FIND_ONE_AND_LIST (Configuration, Distance)
+	FIND_ONE_AND_ALL (Configuration, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_indscal ((DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult);
@@ -1037,7 +1037,7 @@ FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuratio
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	OK
 DO
-	FIND_TWO_AND_LIST (Configuration, Salience, Distance)
+	FIND_TWO_AND_ALL (Configuration, Salience, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);
@@ -1052,7 +1052,7 @@ FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)
 	BOOLEAN (wantSalienceObject, U"Salience object", false)
 	OK
 DO
-	FIND_LIST (Distance)
+	FIND_ALL (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		Melder_require (list.size > 1, U"There should me more than one Distance selected.");
@@ -1131,9 +1131,9 @@ DIRECT (HELP_Procrustes_help) {
 }
 
 DIRECT (REAL_Procrustes_getScale) {
-	NUMBER_ONE (Procrustes)
+	QUERY_ONE_FOR_REAL (Procrustes)
 		const double result = my s;
-	NUMBER_ONE_END (U"(scale)")
+	QUERY_ONE_FOR_REAL_END (U"(scale)")
 }
 
 /********* Casts from & to TableOfReal ***************************/
@@ -1189,9 +1189,9 @@ DIRECT (NEW_TableOfReal_to_ContingencyTable) {
 /********************** TableOfReal ***************************************/
 
 DIRECT (REAL_TableOfReal_getTableNorm) {
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		const double result = TableOfReal_getTableNorm (me);
-	NUMBER_ONE_END (U"(norm)")
+	QUERY_ONE_FOR_REAL_END (U"(norm)")
 }
 
 FORM (MODIFY_TableOfReal_normalizeTable, U"TableOfReal: Normalize table", U"TableOfReal: Normalize table...") {

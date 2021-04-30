@@ -76,9 +76,9 @@ FORM (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	NUMBER_ONE (EEG)
+	QUERY_ONE_FOR_REAL (EEG)
 		integer result = EEG_getChannelNumber (me, channelName);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 // MARK: Modify
@@ -460,9 +460,9 @@ FORM (INTEGER_ERP_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	NUMBER_ONE (ERP)
+	QUERY_ONE_FOR_REAL (ERP)
 		integer result = ERP_getChannelNumber (me, channelName);
-	NUMBER_ONE_END (U" (number of channel ", channelName, U")")
+	QUERY_ONE_FOR_REAL_END (U" (number of channel ", channelName, U")")
 }
 
 FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
@@ -473,12 +473,12 @@ FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (ERP)
+	QUERY_ONE_FOR_REAL (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, & result, nullptr);
-	NUMBER_ONE_END (U" Volt")
+	QUERY_ONE_FOR_REAL_END (U" Volt")
 }
 
 FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time of minimum...") {
@@ -489,12 +489,12 @@ FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time 
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (ERP)
+	QUERY_ONE_FOR_REAL (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, nullptr, & result);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
@@ -505,12 +505,12 @@ FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (ERP)
+	QUERY_ONE_FOR_REAL (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, & result, nullptr);
-	NUMBER_ONE_END (U" Volt")
+	QUERY_ONE_FOR_REAL_END (U" Volt")
 }
 
 FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time of maximum...") {
@@ -521,12 +521,12 @@ FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time 
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (ERP)
+	QUERY_ONE_FOR_REAL (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, peakInterpolationType, nullptr, & result);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_ERP_getMean, U"ERP: Get mean", U"ERP: Get mean...") {
@@ -535,11 +535,11 @@ FORM (REAL_ERP_getMean, U"ERP: Get mean", U"ERP: Get mean...") {
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (ERP)
+	QUERY_ONE_FOR_REAL (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result = Vector_getMean (me, fromTime, toTime, channelNumber);
-	NUMBER_ONE_END (U" Volt")
+	QUERY_ONE_FOR_REAL_END (U" Volt")
 }
 
 // MARK: Modify
@@ -619,9 +619,9 @@ FORM (INTEGER_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	WORD (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	NUMBER_ONE (ERPTier)
+	QUERY_ONE_FOR_REAL (ERPTier)
 		integer result = ERPTier_getChannelNumber (me, channelName);
-	NUMBER_ONE_END (U" (number of channel ", channelName, U")")
+	QUERY_ONE_FOR_REAL_END (U" (number of channel ", channelName, U")")
 }
 
 FORM (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {
@@ -631,9 +631,9 @@ FORM (REAL_ERPTier_getMean, U"ERPTier: Get mean", U"ERPTier: Get mean...") {
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (ERPTier)
+	QUERY_ONE_FOR_REAL (ERPTier)
 		double result = ERPTier_getMean (me, pointNumber, channelName, fromTime, toTime);
-	NUMBER_ONE_END (U" Volt")
+	QUERY_ONE_FOR_REAL_END (U" Volt")
 }
 
 // MARK: Modify

@@ -203,18 +203,18 @@ FORM (REAL_AmplitudeTier_getValueAtTime, U"AmplitudeTier: Get value at time", nu
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = RealTier_getValueAtTime (me, time);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 	
 FORM (REAL_AmplitudeTier_getValueAtIndex, U"AmplitudeTier: Get value at index", nullptr) {
 	INTEGER (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = RealTier_getValueAtIndex (me, pointNumber);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 
@@ -417,9 +417,9 @@ FORM (REAL_CC_getValue, U"CC: Get value", U"CC: Get value...") {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	NUMBER_ONE (CC)
+	QUERY_ONE_FOR_REAL (CC)
 		const double result = CC_getValue (me, time, index);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in frame...") {
@@ -427,18 +427,18 @@ FORM (REAL_CC_getValueInFrame, U"CC: Get value in frame", U"CC: Get value in fra
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	NUMBER_ONE (CC)
+	QUERY_ONE_FOR_REAL (CC)
 		const double result = CC_getValueInFrame (me, frameNumber, index);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_CC_getC0ValueInFrame, U"CC: Get c0 value in frame", U"CC: Get c0 value in frame...") {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	NUMBER_ONE (CC)
+	QUERY_ONE_FOR_REAL (CC)
 		const double result = CC_getC0ValueInFrame (me, frameNumber);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (GRAPHICS_CC_paint, U"CC: Paint", U"CC: Paint...") {
@@ -528,9 +528,9 @@ FORM (REAL_CCA_getCorrelation, U"CCA: Get canonical correlation coefficient", U"
 	NATURAL (coefficientNuber, U"Coefficient number", U"1")
 	OK
 DO
-	NUMBER_ONE (CCA)
+	QUERY_ONE_FOR_REAL (CCA)
 		const double result = CCA_getCorrelationCoefficient (me, coefficientNuber);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_CCA_getEigenvectorElement, U"CCA: Get eigenvector element", U"Eigen: Get eigenvector element...") {
@@ -541,19 +541,19 @@ FORM (REAL_CCA_getEigenvectorElement, U"CCA: Get eigenvector element", U"Eigen: 
 	NATURAL (elementNumber, U"Element number", U"1")
 	OK
 DO
-	NUMBER_ONE (CCA)
+	QUERY_ONE_FOR_REAL (CCA)
 		const double result = CCA_getEigenvectorElement (me, xOrY, eigenvectorNumber, elementNumber);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_CCA_getZeroCorrelationProbability, U"CCA: Get zero correlation probability", U"CCA: Get zero correlation probability...") {
 	NATURAL (coefficientNumber, U"Coefficient number", U"1")
 	OK
 DO
-	NUMBER_ONE (CCA)
+	QUERY_ONE_FOR_REAL (CCA)
 		double result, chisq, df;
 		CCA_getZeroCorrelationProbability (me, coefficientNumber, & result, & chisq, & df);
-	NUMBER_ONE_END (U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")");
+	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")");
 }
 
 DIRECT (NEW1_CCA_Correlation_to_TableOfReal_loadings) {
@@ -740,27 +740,27 @@ FORM (REAL_Confusion_getValue_labels, U"Confusion: Get value", nullptr) {
 	WORD (response, U"Response", U"i")
 	OK
 DO
-	NUMBER_ONE (Confusion)
+	QUERY_ONE_FOR_REAL (Confusion)
 		const double result = Confusion_getValue (me, stimulus, response);
-	NUMBER_ONE_END (U" ([\"", stimulus, U"\", \"",  response, U"\"])")
+	QUERY_ONE_FOR_REAL_END (U" ([\"", stimulus, U"\", \"",  response, U"\"])")
 }
 
 FORM (REAL_Confusion_getResponseSum, U"Confusion: Get response sum", U"Confusion: Get response sum...") {
 	WORD (response, U"Response", U"u")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		const double result = TableOfReal_getColumnSumByLabel (me, response);
-	NUMBER_ONE_END (U" (response sum)")
+	QUERY_ONE_FOR_REAL_END (U" (response sum)")
 }
 
 FORM (REAL_Confusion_getStimulusSum, U"Confusion: Get stimulus sum", U"Confusion: Get stimulus sum...") {
 	WORD (stimulus, U"Stimulus", U"u")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		double result = TableOfReal_getRowSumByLabel (me, stimulus);
-	NUMBER_ONE_END (U" (stimulus sum)")
+	QUERY_ONE_FOR_REAL_END (U" (stimulus sum)")
 }
 
 DIRECT (NEW_Confusion_to_TableOfReal_marginals) {
@@ -838,10 +838,10 @@ DO
 }
 
 DIRECT (REAL_Confusion_getFractionCorrect) {
-	NUMBER_ONE (Confusion)
+	QUERY_ONE_FOR_REAL (Confusion)
 		double result;
 		Confusion_getFractionCorrect (me, & result, nullptr);
-	NUMBER_ONE_END (U" (fraction correct)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 DIRECT (MODIFY_Confusion_ClassificationTable_increaseConfusionCount) {
@@ -939,10 +939,10 @@ FORM (REAL_Correlation_getDiagonality_bartlett, U"Correlation: Get diagonality (
 	NATURAL (numberOfConstraints, U"Number of constraints", U"1")
 	OK
 DO
-	NUMBER_ONE (Correlation)
+	QUERY_ONE_FOR_REAL (Correlation)
 		double chisq, result, df;
 		Correlation_testDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & df);
-	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")")
 }
 
 DIRECT (NEW_Correlation_to_PCA) {
@@ -973,9 +973,9 @@ FORM (REAL_Covariance_getProbabilityAtPosition, U"Covariance: Get probability at
 	SENTENCE (position_string, U"Position", U"10.0 20.0")
 	OK
 DO
-	NUMBER_ONE (Covariance)
+	QUERY_ONE_FOR_REAL (Covariance)
 		const double result = Covariance_getProbabilityAtPosition_string (me, position_string);
-	NUMBER_ONE_END (U" (= probability at position ", position_string, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability at position ", position_string, U")")
 }
 
 FORM (REAL_Covariance_getSignificanceOfOneMean, U"Covariance: Get significance of one mean", U"Covariance: Get significance of one mean...") {
@@ -986,10 +986,10 @@ FORM (REAL_Covariance_getSignificanceOfOneMean, U"Covariance: Get significance o
 	REAL (value, U"Value", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Covariance)
+	QUERY_ONE_FOR_REAL (Covariance)
 		double result, t, ndf;
 		Covariance_getSignificanceOfOneMean (me, index, value, & result, & t, & ndf);
-	NUMBER_ONE_END (U" (= probability, based on t = ", t, U" and ndf = ", ndf)
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndf)
 }
 
 FORM (REAL_Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...") {
@@ -1004,10 +1004,10 @@ FORM (REAL_Covariance_getSignificanceOfMeansDifference, U"Covariance: Get signif
 	BOOLEAN (equalVariances, U"Equal variances", true)
 	OK
 DO
-	NUMBER_ONE (Covariance)
+	QUERY_ONE_FOR_REAL (Covariance)
 		double result, t, ndf;
 		Covariance_getSignificanceOfMeansDifference (me, index1, index2, value, paired, equalVariances, & result, & t, & ndf);
-	NUMBER_ONE_END (U" (= probability, based on t = ", t, U"and ndf = ", ndf, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U"and ndf = ", ndf, U")")
 }
 
 FORM (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...") {
@@ -1018,10 +1018,10 @@ FORM (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significan
 	REAL (value, U"Value", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Covariance)
+	QUERY_ONE_FOR_REAL (Covariance)
 		double result, chisq, ndf;
 		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndf);
-	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
 }
 
 FORM (REAL_Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
@@ -1033,10 +1033,10 @@ FORM (REAL_Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get signifi
 	REAL (value, U"Value", U"1.0")
 	OK
 DO
-	NUMBER_ONE (Covariance)
+	QUERY_ONE_FOR_REAL (Covariance)
 		double result, f, df;
 		Covariance_getSignificanceOfVariancesRatio (me, index1, index2, value, & result, & f , & df);
-	NUMBER_ONE_END (U" (= probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df, U")")
 }
 
 FORM (REAL_Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
@@ -1044,9 +1044,9 @@ FORM (REAL_Covariance_getFractionVariance, U"Covariance: Get fraction variance",
 	NATURAL (toDimension, U"To dimension", U"1")
 	OK
 DO
-	NUMBER_ONE (Covariance)
+	QUERY_ONE_FOR_REAL (Covariance)
 		double result = SSCP_getFractionVariation (me, fromDimension, toDimension);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (INFO_Covariances_reportMultivariateMeanDifference, U"Covariances: Report multivariate mean difference", U"Covariances: Report multivariate mean difference...") {
@@ -1247,11 +1247,11 @@ FORM (REAL_Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen:
 	NATURAL (eigenvalueNumber, U"Eigenvalue number", U"1")
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		Melder_require (eigenvalueNumber <= my eigen -> numberOfEigenvalues, 
 			U"Eigenvalue number should be smaller than ", my eigen -> numberOfEigenvalues + 1);
 		const double result = my eigen -> eigenvalues[eigenvalueNumber];
-	NUMBER_ONE_END (U" (eigenvalue [)", eigenvalueNumber, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (eigenvalue [)", eigenvalueNumber, U"])")
 }
 
 FORM (REAL_Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
@@ -1259,9 +1259,9 @@ FORM (REAL_Discriminant_getSumOfEigenvalues, U"Discriminant:Get sum of eigenvalu
 	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const double result = Eigen_getSumOfEigenvalues (my eigen.get(), fromEigenvalue, toEigenvalue);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector element", U"Eigen: Get eigenvector element...") {
@@ -1269,9 +1269,9 @@ FORM (REAL_Discriminant_getEigenvectorElement, U"Discriminant: Get eigenvector e
 	NATURAL (elementNumber, U"Element number", U"1")
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const double result = Eigen_getEigenvectorElement (my eigen.get(), eigenvectorNumber, elementNumber);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...") {
@@ -1279,9 +1279,9 @@ FORM (REAL_Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Di
 	NATURAL (from, U"From", U"1") //TODO better name
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const double result = Discriminant_getWilksLambda (me, from);
-	NUMBER_ONE_END (U" (wilks lambda)")
+	QUERY_ONE_FOR_REAL_END (U" (wilks lambda)")
 }
 
 FORM (REAL_Discriminant_getCumulativeContributionOfComponents, U"Discriminant: Get cumulative contribution of components", U"Eigen: Get cumulative contribution of components...") {
@@ -1289,9 +1289,9 @@ FORM (REAL_Discriminant_getCumulativeContributionOfComponents, U"Discriminant: G
 	NATURAL (toComponent, U"To component", U"1")
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const double result = Eigen_getCumulativeContributionOfComponents (my eigen.get(), fromComponent, toComponent);
-	NUMBER_ONE_END (U" (cumulative contribution)")
+	QUERY_ONE_FOR_REAL_END (U" (cumulative contribution)")
 }
 
 FORM (REAL_Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get partial discrimination probability", U"Discriminant: Get partial discrimination probability...") {
@@ -1299,17 +1299,17 @@ FORM (REAL_Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get
 	OK
 DO
 	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		double result, chisq, df;
 		Discriminant_getPartialDiscriminationProbability (me, numberOfDimensions, & result, & chisq, & df);
-	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")");
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")");
 }
 
 DIRECT (REAL_Discriminant_getHomegeneityOfCovariances_box) {
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		double chisq, result, ndf;
 		SSCPList_getHomegeneityOfCovariances_box (my groups.get(), & result, & chisq, & ndf);
-	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
 }
 
 DIRECT (INFO_Discriminant_reportEqualityOfCovarianceMatrices) {
@@ -1340,11 +1340,11 @@ FORM (REAL_Discriminant_getSigmaEllipseArea, U"Discriminant: Get concentration e
 	INTEGER (yDimension, U"Y-dimension", U"2")
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		const double result = Discriminant_getConcentrationEllipseArea (me, group, numberOfSigmas, false, discriminatPlane, xDimension, yDimension);
-	NUMBER_ONE_END (U" (concentration ellipse area)")
+	QUERY_ONE_FOR_REAL_END (U" (concentration ellipse area)")
 }
 
 FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence ellipse area", U"Discriminant: Get confidence ellipse area...") {
@@ -1355,28 +1355,28 @@ FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence
 	INTEGER (yDimension, U"Y-dimension", U"2")
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		const double result = Discriminant_getConcentrationEllipseArea (me, group, confidenceLevel, true, discriminatPlane, xDimension, yDimension);
-	NUMBER_ONE_END (U" (confidence ellipse area)")
+	QUERY_ONE_FOR_REAL_END (U" (confidence ellipse area)")
 }
 
 FORM (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant (group)", U"Discriminant: Get determinant (group)...")
 	SENTENCE (groupLabel, U"Group label", U"") {
 	OK
 DO
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		const double result = Discriminant_getLnDeterminant_group (me, group);
-	NUMBER_ONE_END (U" (ln(determinant) group")
+	QUERY_ONE_FOR_REAL_END (U" (ln(determinant) group")
 }
 
 DIRECT (REAL_Discriminant_getLnDeterminant_total) {
-	NUMBER_ONE (Discriminant)
+	QUERY_ONE_FOR_REAL (Discriminant)
 		const double result = Discriminant_getLnDeterminant_total (me);
-	NUMBER_ONE_END (U" (ln(determinant) total")
+	QUERY_ONE_FOR_REAL_END (U" (ln(determinant) total")
 }
 
 FORM (MODIFY_Discriminant_invertEigenvector, U"Discriminant: Invert eigenvector", nullptr) {
@@ -1700,39 +1700,39 @@ DO
 }
 
 DIRECT (REAL_DTW_getStartTime_x) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my xmin;
-	NUMBER_ONE_END (U" seconds (= start time along x)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= start time along x)")
 }
 
 DIRECT (REAL_DTW_getEndTime_x) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my xmax;
-	NUMBER_ONE_END (U" seconds (= end time along x)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (= end time along x)");
 }
 
 DIRECT (REAL_DTW_getTotalDuration_x) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my xmax - my xmin;
-	NUMBER_ONE_END (U" seconds (= total duration along x)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (= total duration along x)");
 }
 
 DIRECT (REAL_DTW_getStartTime_y) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my ymin;
-	NUMBER_ONE_END (U" seconds (= start time along y)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (= start time along y)");
 }
 
 DIRECT (REAL_DTW_getEndTime_y) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my ymax;
-	NUMBER_ONE_END (U" seconds (= end time along y)");
+	QUERY_ONE_FOR_REAL_END (U" seconds (= end time along y)");
 }
 
 DIRECT (REAL_DTW_getTotalDuration_y) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my ymax - my ymin;
-	NUMBER_ONE_END (U" seconds (= total duration along y)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= total duration along y)")
 }
 
 DIRECT (INTEGER_DTW_getNumberOfFrames_x) {
@@ -1742,18 +1742,18 @@ DIRECT (INTEGER_DTW_getNumberOfFrames_x) {
 }
 
 DIRECT (REAL_DTW_getTimeStep_x) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my dx;
-	NUMBER_ONE_END (U" seconds (= time step along x)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= time step along x)")
 }
 
 FORM (REAL_DTW_getTimeFromFrameNumber_x, U"DTW: Get time from frame number (x)", nullptr) {
 	NATURAL (frameNumber, U"Frame number (x)", U"1")
 	OK
 DO
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = Matrix_columnToX (me, frameNumber);
-	NUMBER_ONE_END (U" seconds (= y time at x frame ", frameNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= y time at x frame ", frameNumber, U")")
 }
 
 FORM (INTEGER_DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x)", nullptr) {
@@ -1773,9 +1773,9 @@ DIRECT (INTEGER_DTW_getNumberOfFrames_y) {
 }
 
 DIRECT (REAL_DTW_getTimeStep_y) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = my dy;
-	NUMBER_ONE_END (U" seconds (= time step along y)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= time step along y)")
 }
 
 
@@ -1783,9 +1783,9 @@ FORM (REAL_DTW_getTimeFromFrameNumber_y, U"DTW: Get time from frame number (y)",
 	NATURAL (frameNumber, U"Frame number (y)", U"1")
 	OK
 DO
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = Matrix_rowToY (me, frameNumber);
-	NUMBER_ONE_END (U" seconds (= x time at y frame ", frameNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= x time at y frame ", frameNumber, U")")
 }
 
 FORM (INTEGER_DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y)", nullptr) {
@@ -1802,27 +1802,27 @@ FORM (REAL_DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path
 	REAL (xTime, U"Time (s)", U"0.0")
 	OK
 DO
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = DTW_getYTimeFromXTime (me, xTime);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_DTW_getYTimeFromXTime, U"DTW: Get y time from x time", U"DTW: Get y time from x time...") {
 	REAL (xTime, U"Time at x (s)", U"0.0")
 	OK
 DO
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = DTW_getYTimeFromXTime (me, xTime);
-	NUMBER_ONE_END (U" seconds (= y time at x time ", xTime, U")")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= y time at x time ", xTime, U")")
 }
 
 FORM (REAL_DTW_getXTimeFromYTime, U"DTW: Get x time from y time", U"DTW: Get x time from y time...") {
 	REAL (yTime, U"Time at y (s)", U"0.0")
 	OK
 DO
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		const double result = DTW_getXTimeFromYTime (me, yTime);
-	NUMBER_ONE_END (U" seconds (= x time at y time ", yTime, U")")
+	QUERY_ONE_FOR_REAL_END (U" seconds (= x time at y time ", yTime, U")")
 }
 
 FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
@@ -1840,9 +1840,9 @@ DO
 }
 
 DIRECT (REAL_DTW_getDistance_weighted) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		double result = my weightedDistance;
-	NUMBER_ONE_END (U" (weighted distance)")
+	QUERY_ONE_FOR_REAL_END (U" (weighted distance)")
 }
 
 FORM (REAL_DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
@@ -1850,28 +1850,28 @@ FORM (REAL_DTW_getDistanceValue, U"DTW: Get distance value", nullptr) {
 	REAL (yTime, U"Time at y (s)", U"0.1")
 	OK
 DO
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		double result = undefined;
 		if ((xTime >= my xmin && xTime <= my xmax) && (yTime >= my ymin && yTime <= my ymax)) {
 			integer irow = Matrix_yToNearestRow (me, yTime);
 			integer icol = Matrix_xToNearestColumn (me, xTime);
 			result = my z[irow][icol];
 		}
-	NUMBER_ONE_END (U" (= distance at (", xTime, U", ", yTime, U"))")
+	QUERY_ONE_FOR_REAL_END (U" (= distance at (", xTime, U", ", yTime, U"))")
 }
 
 DIRECT (REAL_DTW_getMinimumDistance) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		double result, maximum;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & result, & maximum);
-	NUMBER_ONE_END (U" (minimum)")
+	QUERY_ONE_FOR_REAL_END (U" (minimum)")
 }
 
 DIRECT (REAL_DTW_getMaximumDistance) {
-	NUMBER_ONE (DTW)
+	QUERY_ONE_FOR_REAL (DTW)
 		double minimum, result;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & result);
-	NUMBER_ONE_END (U" (maximum)")
+	QUERY_ONE_FOR_REAL_END (U" (maximum)")
 }
 
 FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
@@ -2071,18 +2071,18 @@ FORM (REAL_EditCostsTable_getInsertionCosts, U"EditCostsTable: Get insertion cos
 	SENTENCE (target, U"Target", U"")
 	OK
 DO
-	NUMBER_ONE (EditCostsTable)
+	QUERY_ONE_FOR_REAL (EditCostsTable)
 		double result = EditCostsTable_getInsertionCost (me, target);
-	NUMBER_ONE_END (U" (insertion cost)")
+	QUERY_ONE_FOR_REAL_END (U" (insertion cost)")
 }
 
 FORM (REAL_EditCostsTable_getDeletionCost, U"EditCostsTable: Get deletion cost", nullptr) {
 	SENTENCE (source, U"Source", U"")
 	OK
 DO
-	NUMBER_ONE (EditCostsTable)
+	QUERY_ONE_FOR_REAL (EditCostsTable)
 		double result = EditCostsTable_getDeletionCost (me, source);
-	NUMBER_ONE_END (U" (deletion cost)")
+	QUERY_ONE_FOR_REAL_END (U" (deletion cost)")
 }
 
 FORM (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitution cost", nullptr) {
@@ -2090,9 +2090,9 @@ FORM (REAL_EditCostsTable_getSubstitutionCost, U"EditCostsTable: Get substitutio
 	SENTENCE (source, U"Source", U"")
 	OK
 DO
-	NUMBER_ONE (EditCostsTable)
+	QUERY_ONE_FOR_REAL (EditCostsTable)
 		double result = EditCostsTable_getSubstitutionCost (me, target, source);
-	NUMBER_ONE_END (U" (substitution cost)")
+	QUERY_ONE_FOR_REAL_END (U" (substitution cost)")
 }
 
 FORM (REAL_EditCostsTable_getCosts_others, U"EditCostsTable: Get cost (others)", nullptr) {
@@ -2103,9 +2103,9 @@ FORM (REAL_EditCostsTable_getCosts_others, U"EditCostsTable: Get cost (others)",
 		RADIOBUTTON (U"inequality")
 	OK
 DO
-	NUMBER_ONE (EditCostsTable)
+	QUERY_ONE_FOR_REAL (EditCostsTable)
 		double result = EditCostsTable_getOthersCost (me,costTypes);
-	NUMBER_ONE_END (U" (cost)")
+	QUERY_ONE_FOR_REAL_END (U" (cost)")
 }
 
 FORM (MODIFY_EditCostsTable_setTargetSymbol_index, U"EditCostsTable: Set target symbol (index)", nullptr) {
@@ -2262,12 +2262,12 @@ FORM (REAL_Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalu
 	NATURAL (eigenvalueNumber, U"Eigenvalue number", U"1")
 	OK
 DO
-	NUMBER_ONE (Eigen)
+	QUERY_ONE_FOR_REAL (Eigen)
 		double result = undefined;
 		if (eigenvalueNumber > 0 && eigenvalueNumber <= my numberOfEigenvalues) {
 			result = my eigenvalues [eigenvalueNumber];
 		}
-	NUMBER_ONE_END (U" (eigenvalue [", eigenvalueNumber, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (eigenvalue [", eigenvalueNumber, U"])")
 }
 
 FORM (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: Get sum of eigenvalues...") {
@@ -2275,9 +2275,9 @@ FORM (REAL_Eigen_getSumOfEigenvalues, U"Eigen:Get sum of eigenvalues", U"Eigen: 
 	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
 	OK
 DO
-	NUMBER_ONE (Eigen)
+	QUERY_ONE_FOR_REAL (Eigen)
 		double result = Eigen_getSumOfEigenvalues (me, fromEigenvalue, toEigenvalue);
-	NUMBER_ONE_END (U" (sum of eigenvalues [", fromEigenvalue, U"..", toEigenvalue, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (sum of eigenvalues [", fromEigenvalue, U"..", toEigenvalue, U"])")
 }
 
 FORM (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eigen: Get eigenvector element...") {
@@ -2285,9 +2285,9 @@ FORM (REAL_Eigen_getEigenvectorElement, U"Eigen: Get eigenvector element", U"Eig
 	NATURAL (elementNumber, U"Element number", U"1")
 	OK
 DO
-	NUMBER_ONE (Eigen)
+	QUERY_ONE_FOR_REAL (Eigen)
 		double result = Eigen_getEigenvectorElement (me, eigenvectorNumber, elementNumber);
-	NUMBER_ONE_END (U" (eigenvector [", eigenvectorNumber, U"] element [", elementNumber, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (eigenvector [", eigenvectorNumber, U"] element [", elementNumber, U"])")
 }
 
 FORM (MODIFY_Eigen_invertEigenvector, U"Eigen: Invert eigenvector", nullptr) {
@@ -2300,7 +2300,7 @@ DO
 }
 
 DIRECT (MODIFY_Eigens_alignEigenvectors) {
-	FIND_LIST (Eigen)
+	FIND_ALL (Eigen)
 		Eigens_alignEigenvectors (& list);
 	END_WITH_NEW_DATA
 }
@@ -2572,18 +2572,18 @@ DO
 /************************* FileInMemorySet ***********************************/
 
 DIRECT (INFO_FileInMemorySet_getNumberOfFiles) {
-	NUMBER_ONE (FileInMemorySet)
+	QUERY_ONE_FOR_REAL (FileInMemorySet)
 		integer result = my size;
-	NUMBER_ONE_END (U" (number of files)")
+	QUERY_ONE_FOR_REAL_END (U" (number of files)")
 }
 
 FORM (INFO_FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
 	WORD (name, U"Name", U"aav")
 	OK
 DO
-	NUMBER_ONE (FileInMemorySet)
+	QUERY_ONE_FOR_REAL (FileInMemorySet)
 		bool result = FileInMemorySet_hasDirectory (me, name);
-	NUMBER_ONE_END (U" (has directory?)")
+	QUERY_ONE_FOR_REAL_END (U" (has directory?)")
 }
 
 
@@ -2597,23 +2597,23 @@ DIRECT (NEW1_FileInMemoryManager_create) {
 }
 
 DIRECT (INFO_FileInMemoryManager_getNumberOfFiles) {
-	NUMBER_ONE (FileInMemoryManager)
+	QUERY_ONE_FOR_REAL (FileInMemoryManager)
 		integer result = my files -> size;
-	NUMBER_ONE_END (U" (number of files)")
+	QUERY_ONE_FOR_REAL_END (U" (number of files)")
 }
 DIRECT (INFO_FileInMemoryManager_getNumberOfOpenFiles) {
-	NUMBER_ONE (FileInMemoryManager)
+	QUERY_ONE_FOR_REAL (FileInMemoryManager)
 		integer result = my openFiles -> size;
-	NUMBER_ONE_END (U" (number of open files)")
+	QUERY_ONE_FOR_REAL_END (U" (number of open files)")
 }
 
 FORM (INFO_FileInMemoryManager_hasDirectory, U"FileInMemoryManager: Has directory?", nullptr) {
 	WORD (name, U"Name", U"aav")
 	OK
 DO
-	NUMBER_ONE (FileInMemoryManager)
+	QUERY_ONE_FOR_REAL (FileInMemoryManager)
 		bool result = FileInMemoryManager_hasDirectory (me, name);
-	NUMBER_ONE_END (U" (has directory?)")
+	QUERY_ONE_FOR_REAL_END (U" (has directory?)")
 }
 
 FORM (NEW1_FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract files", nullptr) {
@@ -2858,9 +2858,9 @@ FORM (REAL_FilterBank_getFrequencyInHertz, U"FilterBank: Get frequency in Hertz"
 		RADIOBUTTON (U"mel")
 	OK
 DO
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = FilterBank_getFrequencyInHertz (me, frequency, frequencyUnit);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_FilterBank_getFrequencyInBark, U"FilterBank: Get frequency in Bark", U"FilterBank: Get frequency in Bark...") {
@@ -2871,9 +2871,9 @@ FORM (REAL_FilterBank_getFrequencyInBark, U"FilterBank: Get frequency in Bark", 
 		RADIOBUTTON (U"mel")
 	OK
 DO
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = FilterBank_getFrequencyInBark (me, frequency, frequencyUnit);
-	NUMBER_ONE_END (U" bark")
+	QUERY_ONE_FOR_REAL_END (U" bark")
 }
 
 FORM (REAL_FilterBank_getFrequencyInMel, U"FilterBank: Get frequency in mel", U"FilterBank: Get frequency in mel...") {
@@ -2884,9 +2884,9 @@ FORM (REAL_FilterBank_getFrequencyInMel, U"FilterBank: Get frequency in mel", U"
 		RADIOBUTTON (U"mel")
 	OK
 DO
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = FilterBank_getFrequencyInMel (me, frequency, frequencyUnit);
-	NUMBER_ONE_END (U" mel")
+	QUERY_ONE_FOR_REAL_END (U" mel")
 }
 
 FORM (MODIFY_FilterBank_equalizeIntensities, U"FilterBank: Equalize intensities", nullptr) {
@@ -3091,9 +3091,9 @@ FORM (REAL_FunctionSeries_getValue, U"FunctionSeries: Evaluate", nullptr) {
 	REAL (x, U"X", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_REAL (FunctionSeries)
 		double result = FunctionSeries_evaluate (me, x);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (INTEGER_FunctionSeries_getNumberOfCoefficients) {
@@ -3107,9 +3107,9 @@ FORM (REAL_FunctionSeries_getCoefficient, U"FunctionSeries: Get coefficient", nu
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	NUMBER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_REAL (FunctionSeries)
 		double result = ( index > 0 && index <= my numberOfCoefficients ? my coefficients [index] : undefined );
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (INTEGER_FunctionSeries_getDegree) {
@@ -3124,9 +3124,9 @@ FORM (REAL_FunctionSeries_getMaximum, U"FunctionSeries: Get maximum", U"Polynomi
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_REAL (FunctionSeries)
 		double result = FunctionSeries_getMaximum (me, xmin, xmax);
-	NUMBER_ONE_END (U" (maximum)")
+	QUERY_ONE_FOR_REAL_END (U" (maximum)")
 }
 
 FORM (REAL_FunctionSeries_getMinimum, U"FunctionSeries: Get minimum", U"Polynomial: Get minimum...") {
@@ -3135,9 +3135,9 @@ FORM (REAL_FunctionSeries_getMinimum, U"FunctionSeries: Get minimum", U"Polynomi
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_REAL (FunctionSeries)
 		double result = FunctionSeries_getMinimum (me, xmin, xmax);
-	NUMBER_ONE_END (U" (minimum)")
+	QUERY_ONE_FOR_REAL_END (U" (minimum)")
 }
 
 FORM (REAL_FunctionSeries_getXOfMaximum, U"FunctionSeries: Get x of maximum", U"Polynomial: Get x of maximum...") {
@@ -3146,9 +3146,9 @@ FORM (REAL_FunctionSeries_getXOfMaximum, U"FunctionSeries: Get x of maximum", U"
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_REAL (FunctionSeries)
 		double result = FunctionSeries_getXOfMaximum (me, xmin, xmax);
-	NUMBER_ONE_END (U" (x of maximum)")
+	QUERY_ONE_FOR_REAL_END (U" (x of maximum)")
 }
 
 FORM (REAL_FunctionSeries_getXOfMinimum, U"FunctionSeries: Get x of minimum", U"Polynomial: Get x of minimum...") {
@@ -3157,9 +3157,9 @@ FORM (REAL_FunctionSeries_getXOfMinimum, U"FunctionSeries: Get x of minimum", U"
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_REAL (FunctionSeries)
 		double result = FunctionSeries_getXOfMinimum (me, xmin, xmax);
-	NUMBER_ONE_END (U" (x of minimum)")
+	QUERY_ONE_FOR_REAL_END (U" (x of minimum)")
 }
 
 FORM (MODIFY_FunctionSeries_setCoefficient, U"FunctionSeries: Set coefficient", nullptr) {
@@ -3319,10 +3319,10 @@ FORM (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviat
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMedianAbsoluteDeviation (me, columnNumber);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (INFO_Table_reportRobustStatistics, U"Table: Report robust statistics", U"Table: Report robust statistics...") {
@@ -3635,9 +3635,9 @@ FORM (REAL_Matrix_getMean, U"Matrix: Get mean", nullptr) {
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_getMean (me, xmin, xmax, ymin, ymax);
-	NUMBER_ONE_END (U" (mean)")
+	QUERY_ONE_FOR_REAL_END (U" (mean)")
 }
 
 FORM (REAL_Matrix_getStandardDeviation, U"Matrix: Get standard deviation", nullptr) {
@@ -3647,18 +3647,18 @@ FORM (REAL_Matrix_getStandardDeviation, U"Matrix: Get standard deviation", nullp
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_getStandardDeviation (me, xmin, xmax, ymin, ymax);
-	NUMBER_ONE_END (U" (std dev)")
+	QUERY_ONE_FOR_REAL_END (U" (std dev)")
 }
 
 FORM (REAL_Matrix_getNorm, U"Matrix: Get norm", U"Matrix: Get norm...") {
 	REAL (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = NUMnorm (my z.all(), power);
-	NUMBER_ONE_END (U" (norm with power = ", power, U")")
+	QUERY_ONE_FOR_REAL_END (U" (norm with power = ", power, U")")
 }
 
 /*
@@ -3891,15 +3891,15 @@ DO
 /**** Filterbank (deprecated) *******/
 
 DIRECT (REAL_FilterBank_getHighestFrequency) {
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = my ymax;
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 DIRECT (REAL_FilterBank_getLowestFrequency) {
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = my ymin;
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 DIRECT (INTEGER_FilterBank_getNumberOfFrequencies) {
@@ -3909,27 +3909,27 @@ DIRECT (INTEGER_FilterBank_getNumberOfFrequencies) {
 }
 
 DIRECT (REAL_FilterBank_getFrequencyDistance) {
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = my dy;
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 FORM (REAL_FilterBank_getTimeFromColumn, U"Get time of column", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = Matrix_columnToX (me, columnNumber);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_FilterBank_getFrequencyFromRow, U"Get frequency of row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = Matrix_rowToY (me, rowNumber);
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 FORM (REAL_FilterBank_getValueInCell, U"Get value in cell", nullptr) {
@@ -3937,7 +3937,7 @@ FORM (REAL_FilterBank_getValueInCell, U"Get value in cell", nullptr) {
 	POSITIVE (frequency, U"Frequency", U"1.0")
 	OK
 DO
-	NUMBER_ONE (FilterBank)
+	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = undefined;
 		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
 			integer col = Matrix_xToNearestColumn (me, time);
@@ -3956,21 +3956,21 @@ DO
 			}
 			result = my z[row][col];
 		}
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 /***** MATRIXFT *************/
 
 DIRECT (REAL_BandFilterSpectrogram_getHighestFrequency) {
-	NUMBER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
 		double result = my ymax;
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 DIRECT (REAL_BandFilterSpectrogram_getLowestFrequency) {
-	NUMBER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
 		double result = my ymin;
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 DIRECT (INTEGER_BandFilterSpectrogram_getNumberOfFrequencies) {
@@ -3980,27 +3980,27 @@ DIRECT (INTEGER_BandFilterSpectrogram_getNumberOfFrequencies) {
 }
 
 DIRECT (REAL_BandFilterSpectrogram_getFrequencyDistance) {
-	NUMBER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
 		double result = my dy;
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 FORM (REAL_BandFilterSpectrogram_getFrequencyFromRow, U"Get frequency of row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	NUMBER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
 		double result = Matrix_rowToY (me, rowNumber);
-	NUMBER_ONE_END (U" ", my v_getFrequencyUnit ())
+	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
 FORM (REAL_BandFilterSpectrogram_getTimeFromColumn, U"Get time of column", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
 		double result = Matrix_columnToX (me, columnNumber);
-	NUMBER_ONE_END (U" s")
+	QUERY_ONE_FOR_REAL_END (U" s")
 }
 
 FORM (REAL_BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr) {
@@ -4008,7 +4008,7 @@ FORM (REAL_BandFilterSpectrogram_getValueInCell, U"Get value in cell", nullptr) 
 	POSITIVE (frequency, U"Frequency", U"1")
 	OK
 DO
-	NUMBER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
 		double result = undefined;
 		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
 			integer col = Matrix_xToNearestColumn (me, time);
@@ -4027,7 +4027,7 @@ DO
 			}
 			result = my z[row][col];
 		}
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 /**************** MelFilter *******************************************/
@@ -4440,9 +4440,9 @@ FORM (REAL_PatternList_getValue, U"", nullptr) {
 	NATURAL (nodeNumber, U"Node number", U"2")
 	OK
 DO
-	NUMBER_ONE (PatternList)
+	QUERY_ONE_FOR_REAL (PatternList)
 		double result = ( patternNumber <= my ny && nodeNumber <= my nx ? my z [patternNumber] [nodeNumber] : undefined );
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (NUMMAT_PatternList_getAllValues) {
@@ -4582,10 +4582,10 @@ FORM (REAL_PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr) {
 	NATURAL (number, U"Number", U"1")
 	OK
 DO
-	NUMBER_ONE (PCA)
+	QUERY_ONE_FOR_REAL (PCA)
 		Melder_require (number <= my dimension, U"Number should not be greater than ", my dimension, U".");
 		double result = my centroid [number];
-	NUMBER_ONE_END (U" (element ", number, U")")
+	QUERY_ONE_FOR_REAL_END (U" (element ", number, U")")
 }
 
 FORM (REAL_PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"PCA: Get equality of eigenvalues...") {
@@ -4594,11 +4594,11 @@ FORM (REAL_PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"
 	BOOLEAN (conservativeTest, U"Conservative test", false)
 	OK
 DO
-	NUMBER_ONE (PCA)
+	QUERY_ONE_FOR_REAL (PCA)
 		double result, chisq, df;
 		PCA_getEqualityOfEigenvalues (me, fromEigenvalue, toEigenvalue,
 				conservativeTest, & result, & chisq, & df);
-	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and df = ", df)
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and df = ", df)
 }
 
 FORM (INTEGER_PCA_getNumberOfComponents_VAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
@@ -4606,9 +4606,9 @@ FORM (INTEGER_PCA_getNumberOfComponents_VAF, U"PCA: Get number of components (VA
 	OK
 DO
 	Melder_require (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction should be in interval [0-1].");
-	NUMBER_ONE (PCA)
+	QUERY_ONE_FOR_REAL (PCA)
 		double result = Eigen_getDimensionOfFraction (me, varianceFraction);
-	NUMBER_ONE_END (U" (variance fraction)")
+	QUERY_ONE_FOR_REAL_END (U" (variance fraction)")
 }
 
 FORM (REAL_PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PCA: Get fraction variance accounted for...") {
@@ -4617,9 +4617,9 @@ FORM (REAL_PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PC
 	OK
 DO
 	Melder_require (fromPrincipalComponent <= toPrincipalComponent, U"The second component should be greater than or equal to the first component.");
-	NUMBER_ONE (PCA)
+	QUERY_ONE_FOR_REAL (PCA)
 		double result = Eigen_getCumulativeContributionOfComponents (me, fromPrincipalComponent, toPrincipalComponent);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (MODIFY_PCA_invertEigenvector, U"PCA: Invert eigenvector", nullptr) {
@@ -4991,18 +4991,18 @@ FORM (REAL_Polygon_getPointX, U"Polygon: Get point (x)", nullptr) {
 	NATURAL (pointNumber, U"Point number", U"1")
 	OK
 DO
-	NUMBER_ONE (Polygon)
+	QUERY_ONE_FOR_REAL (Polygon)
 		double result = ( pointNumber <= my numberOfPoints ? my x [pointNumber] : undefined );
-	NUMBER_ONE_END (U" (x [", pointNumber, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (x [", pointNumber, U"])")
 }
 
 FORM (REAL_Polygon_getPointY, U"Polygon: Get point (y)", nullptr) {
 	NATURAL (pointNumber, U"Point number", U"1")
 	OK
 DO
-	NUMBER_ONE (Polygon)
+	QUERY_ONE_FOR_REAL (Polygon)
 		double result = ( pointNumber <= my numberOfPoints ? my y [pointNumber] : undefined );
-	NUMBER_ONE_END (U" (y [", pointNumber, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (y [", pointNumber, U"])")
 }
 
 FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get location of point...") {
@@ -5021,9 +5021,9 @@ DO
 }
 
 DIRECT (REAL_Polygon_getAreaOfConvexHull) {
-	NUMBER_ONE (Polygon)
+	QUERY_ONE_FOR_REAL (Polygon)
 		double result = Polygon_getAreaOfConvexHull (me);
-	NUMBER_ONE_END (U" (area convex hull)")
+	QUERY_ONE_FOR_REAL_END (U" (area convex hull)")
 }
 
 FORM (NEW_Polygon_circularPermutation, U"Polygon: Circular permutation", nullptr) {
@@ -5173,9 +5173,9 @@ FORM (REAL_Polynomial_getArea, U"Polynomial: Get area", U"Polynomial: Get area..
 	REAL (xmax, U"Xmax", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Polynomial)
+	QUERY_ONE_FOR_REAL (Polynomial)
 		double result = Polynomial_getArea (me, xmin, xmax);
-	NUMBER_ONE_END (U" (area)")
+	QUERY_ONE_FOR_REAL_END (U" (area)")
 }
 
 FORM (REAL_Polynomial_getRemainderAfterDivision, U"Polynomial: Get remainder after division", nullptr) {
@@ -5183,11 +5183,11 @@ FORM (REAL_Polynomial_getRemainderAfterDivision, U"Polynomial: Get remainder aft
 	REAL (factor, U"Monomial factor", U"1.0")
 	OK
 DO
-	NUMBER_ONE (Polynomial)
+	QUERY_ONE_FOR_REAL (Polynomial)
 		double result;
 		autoPolynomial p = Data_copy (me);
 		Polynomial_divide_firstOrderFactor (p.get(), factor, & result);
-	NUMBER_ONE_END (U" (remainder)")
+	QUERY_ONE_FOR_REAL_END (U" (remainder)")
 }
 
 FORM (INFO_Polynomial_getDerivativesAtX, U"Polynomial: Get derivatives at X", nullptr) {
@@ -5212,9 +5212,9 @@ FORM (REAL_Polynomial_getOneRealRoot, U"Polynomial: Get one real root", nullptr)
 	REAL (xmax, U"right X Range", U"1.0")
 	OK
 DO
-	NUMBER_ONE (Polynomial)
+	QUERY_ONE_FOR_REAL (Polynomial)
 		double result = Polynomial_findOneSimpleRealRoot_nr (me, xmin, xmax);
-	NUMBER_ONE_END (U" (root)")
+	QUERY_ONE_FOR_REAL_END (U" (root)")
 }
 
 DIRECT (NEW_Polynomial_getDerivative) {
@@ -5344,20 +5344,20 @@ FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
-	NUMBER_ONE (Roots)
+	QUERY_ONE_FOR_REAL (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
 		const double result = z.real();
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary part", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
-	NUMBER_ONE (Roots)
+	QUERY_ONE_FOR_REAL (Roots)
 		dcomplex z = Roots_getRoot (me, rootNumber);
 		const double result = z.imag();
-	NUMBER_ONE_END (U" i")
+	QUERY_ONE_FOR_REAL_END (U" i")
 }
 
 FORM (MODIFY_Roots_setRoot, U"Roots: Set root", nullptr) {
@@ -5645,11 +5645,11 @@ FORM (REAL_Sound_getNearestLevelCrossing, U"Sound: Get nearest level crossing", 
 	OPTIONMENU_ENUM (kSoundSearchDirection, searchDirection, U"Search direction", kSoundSearchDirection::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (channel > my ny)   // TODO: why this arbitrary default against a user error?
 			channel = 1;
 		const double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
@@ -6540,9 +6540,9 @@ FORM (REAL_SSCP_getConfidenceEllipseArea, U"SSCP: Get confidence ellipse area", 
 	NATURAL (yIndex, U"Index for Y-axis", U"2")
 	OK
 DO
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = SSCP_getConcentrationEllipseArea (me, confidenceLevel, 1, xIndex, yIndex);
-	NUMBER_ONE_END (U" (confidence ellipse area)")
+	QUERY_ONE_FOR_REAL_END (U" (confidence ellipse area)")
 }
 
 FORM (REAL_SSCP_getFractionVariation, U"SSCP: Get fraction variation", U"SSCP: Get fraction variation...") {
@@ -6550,9 +6550,9 @@ FORM (REAL_SSCP_getFractionVariation, U"SSCP: Get fraction variation", U"SSCP: G
 	NATURAL (toDimension, U"To dimension", U"1")
 	OK
 DO
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = SSCP_getFractionVariation (me, fromDimension, toDimension);
-	NUMBER_ONE_END (U" (fraction)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction)")
 }
 
 
@@ -6562,15 +6562,15 @@ FORM (REAL_SSCP_getConcentrationEllipseArea, U"SSCP: Get sigma ellipse area", U"
 	NATURAL (yIndex, U"Index for Y-axis", U"2")
 	OK
 DO
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = SSCP_getConcentrationEllipseArea (me, numberOfSigmas, 0, xIndex, yIndex);
-	NUMBER_ONE_END (U" (concentation ellipse area)")
+	QUERY_ONE_FOR_REAL_END (U" (concentation ellipse area)")
 }
 
 DIRECT (NUMBER_SSCP_getDegreesOfFreedom) {
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = SSCP_getDegreesOfFreedom (me);
-	NUMBER_ONE_END (U" (degrees of freedom)")
+	QUERY_ONE_FOR_REAL_END (U" (degrees of freedom)")
 }
 
 DIRECT (INTEGER_SSCP_getNumberOfObservations) {
@@ -6580,37 +6580,37 @@ DIRECT (INTEGER_SSCP_getNumberOfObservations) {
 }
 
 DIRECT (REAL_SSCP_getTotalVariance) {
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = SSCP_getTotalVariance (me);
-	NUMBER_ONE_END (U" (total variance)")
+	QUERY_ONE_FOR_REAL_END (U" (total variance)")
 }
 
 FORM (REAL_SSCP_getCentroidElement, U"SSCP: Get centroid element", U"SSCP: Get centroid element") {
 	NATURAL (number, U"Number", U"1")
 	OK
 DO
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = undefined;
 		if (number > 0 && number <= my numberOfColumns) {
 			result = my centroid [number];
 		}
-	NUMBER_ONE_END (U" (centroid [", number, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (centroid [", number, U"])")
 }
 
 DIRECT (REAL_SSCP_getLnDeterminant) {
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double result = SSCP_getLnDeterminant (me);
-	NUMBER_ONE_END (U" (ln (determinant))")
+	QUERY_ONE_FOR_REAL_END (U" (ln (determinant))")
 }
 
 FORM (REAL_SSCP_getDiagonality_bartlett, U"SSCP: Get diagonality (bartlett)", U"SSCP: Get diagonality (bartlett)...") {
 	NATURAL (numberOfConstraints, U"Number of constraints", U"1")
 	OK
 DO
-	NUMBER_ONE (SSCP)
+	QUERY_ONE_FOR_REAL (SSCP)
 		double chisq, result, df;
 		SSCP_getDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & df);
-	NUMBER_ONE_END (U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")")
 }
 
 DIRECT (NEW_SSCP_to_Correlation) {
@@ -6756,19 +6756,19 @@ DIRECT (INTEGER_SVD_getNumberOfColumns) {
 }
 
 DIRECT (REAL_SVD_getConditionNumber) {
-	NUMBER_ONE (SVD)
+	QUERY_ONE_FOR_REAL (SVD)
 		double result = SVD_getConditionNumber (me);
-	NUMBER_ONE_END (U" (= condition number)")
+	QUERY_ONE_FOR_REAL_END (U" (= condition number)")
 }
 
 FORM (REAL_SVD_getSingularValue, U"SVD: Get singular values", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	NUMBER_ONE (SVD)
+	QUERY_ONE_FOR_REAL (SVD)
 		Melder_require (index <= my numberOfColumns, U"Index must be in the range [1,", my numberOfColumns, U"].");
 		double result = my d [index];
-	NUMBER_ONE_END (U" (= singular value [", index, U"])")
+	QUERY_ONE_FOR_REAL_END (U" (= singular value [", index, U"])")
 }
 
 FORM (REAL_SVD_getSumOfSingularValues, U"SVD: Get sum of singular values", nullptr) {
@@ -6776,9 +6776,9 @@ FORM (REAL_SVD_getSumOfSingularValues, U"SVD: Get sum of singular values", nullp
 	INTEGER (to, U"To", U"0 (=last)")
 	OK
 DO
-	NUMBER_ONE (SVD)
+	QUERY_ONE_FOR_REAL (SVD)
 		double result = SVD_getSumOfSingularValues (me, from, to);
-	NUMBER_ONE_END (U" (sum of singular values)")
+	QUERY_ONE_FOR_REAL_END (U" (sum of singular values)")
 }
 
 FORM (REAL_SVD_getSumOfSingularValuesAsFractionOfTotal, U"SVD: Get sum of singular values as fraction of total", nullptr) {
@@ -6786,9 +6786,9 @@ FORM (REAL_SVD_getSumOfSingularValuesAsFractionOfTotal, U"SVD: Get sum of singul
 	INTEGER (to, U"To", U"0 (=last)")
 	OK
 DO
-	NUMBER_ONE (SVD)
+	QUERY_ONE_FOR_REAL (SVD)
 		double result = SVD_getSumOfSingularValuesAsFractionOfTotal (me, from, to);
-	NUMBER_ONE_END (U" (= fraction of total sum of singular values)")
+	QUERY_ONE_FOR_REAL_END (U" (= fraction of total sum of singular values)")
 }
 
 FORM (INTEGER_SVD_getMinimumNumberOfSingularValues, U"SVD: Get minimum number of singular values", U"SVD: Get minimum number of singular values...") {
@@ -7730,24 +7730,24 @@ FORM (REAL_TableOfReal_getColumnSum, U"TableOfReal: Get column sum", U"") {
 	INTEGER (columnNumber, U"Column", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		double result = TableOfReal_getColumnSum (me, columnNumber);
-	NUMBER_ONE_END (U"(column sum)")
+	QUERY_ONE_FOR_REAL_END (U"(column sum)")
 }
 
 FORM (REAL_TableOfReal_getRowSum, U"TableOfReal: Get row sum", U"") {
 	INTEGER (rowNumber, U"Row", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		double result = TableOfReal_getRowSum (me, rowNumber);
-	NUMBER_ONE_END (U"(row sum)")
+	QUERY_ONE_FOR_REAL_END (U"(row sum)")
 }
 
 DIRECT (REAL_TableOfReal_getGrandSum) {
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		double result = TableOfReal_getGrandSum (me);
-	NUMBER_ONE_END (U"(grand sum)")
+	QUERY_ONE_FOR_REAL_END (U"(grand sum)")
 }
 
 FORM (NEW_TableOfReal_meansByRowLabels, U"TableOfReal: Means by row labels", U"TableOfReal: To TableOfReal (means by row labels)...") {
@@ -7787,9 +7787,9 @@ FORM (REAL_TextGrid_getTotalDurationOfIntervalsWhere, U"Total duration of interv
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
-	NUMBER_ONE_END (U" s (duration of intervals containing \"", ___theText, U"\")");
+	QUERY_ONE_FOR_REAL_END (U" s (duration of intervals containing \"", ___theText, U"\")");
 }
 
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
@@ -7972,9 +7972,9 @@ FORM (REAL_TextGridNavigator_getStartTime, U"TextGridNavigator: Get start time",
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_REAL (TextGridNavigator)
 		double  result = TextGridNavigator_getStartTime (me, tierNumber, where);
-	NUMBER_ONE_END (U" s (start time)")
+	QUERY_ONE_FOR_REAL_END (U" s (start time)")
 }
 
 FORM (REAL_TextGridNavigator_getEndTime, U"TextGridNavigator: Get end time", nullptr) {
@@ -7982,9 +7982,9 @@ FORM (REAL_TextGridNavigator_getEndTime, U"TextGridNavigator: Get end time", nul
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_REAL (TextGridNavigator)
 		double  result = TextGridNavigator_getEndTime (me, tierNumber, where);
-	NUMBER_ONE_END (U" s (end time)")
+	QUERY_ONE_FOR_REAL_END (U" s (end time)")
 }
 
 FORM (INTEGER_TextGridNavigator_getIndex, U"TextGridNavigator: Get index", nullptr) {

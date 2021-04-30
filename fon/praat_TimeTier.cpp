@@ -23,49 +23,49 @@
 // MARK: Query
 
 DIRECT (INTEGER_TimeTier_getNumberOfPoints) {
-	NUMBER_ONE (AnyTier)
+	QUERY_ONE_FOR_REAL (AnyTier)
 		const integer result = my points.size;
-	NUMBER_ONE_END (U" points")
+	QUERY_ONE_FOR_REAL_END (U" points")
 }
 
 FORM (INTEGER_TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (AnyTier)
+	QUERY_ONE_FOR_REAL (AnyTier)
 		const double result =
 			my points.size == 0 ? undefined : AnyTier_timeToLowIndex (me, time);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (INTEGER_TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (AnyTier)
+	QUERY_ONE_FOR_REAL (AnyTier)
 		const double result =
 			my points.size == 0 ? undefined : AnyTier_timeToHighIndex (me, time);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (INTEGER_TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (AnyTier)   // not INTEGER_ONE, because we can return undefined
+	QUERY_ONE_FOR_REAL (AnyTier)   // not INTEGER_ONE, because we can return undefined
 		const double result =
 			my points.size == 0 ? undefined : AnyTier_timeToNearestIndex (me, time);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_TimeTier_getTimeFromIndex, U"Get time", nullptr /*"AnyTier: Get time from index..."*/) {
 	NATURAL (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (AnyTier)
+	QUERY_ONE_FOR_REAL (AnyTier)
 		const double result =
 			pointNumber > my points.size ? undefined : my points.at [pointNumber] -> number;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 // MARK: Modify
