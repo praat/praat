@@ -1119,21 +1119,21 @@ DIRECT (NEW_Covariance_to_PCA) {
 }
 
 DIRECT (NEW1_Covariances_pool) {
-	COMBINE_ALL_VIA_LIST_TO_ONE (Covariance, CovarianceList)
+	COMBINE_ALL_LISTED_TO_ONE (Covariance, CovarianceList)
 		autoCovariance result = CovarianceList_to_Covariance_pool (list.get());
-	COMBINE_ALL_VIA_LIST_TO_ONE_END (U"pool")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"pool")
 }
 
 DIRECT (NEW1_Covariances_to_Covariance_between) {
-	COMBINE_ALL_VIA_LIST_TO_ONE (Covariance, CovarianceList)
+	COMBINE_ALL_LISTED_TO_ONE (Covariance, CovarianceList)
 		autoCovariance result = CovarianceList_to_Covariance_between (list.get());
-	COMBINE_ALL_VIA_LIST_TO_ONE_END (U"between")	
+	COMBINE_ALL_LISTED_TO_ONE_END (U"between")
 }
 
 DIRECT (NEW1_Covariances_to_Covariance_within) {
 	COMBINE_ALL_VIA_LIST_TO_ONE (Covariance, CovarianceList)
 		autoCovariance result = CovarianceList_to_Covariance_within (list.get());
-	COMBINE_ALL_VIA_LIST_TO_ONE_END (U"within")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"within")
 }
 
 DIRECT (NEW1_Covariances_to_CovarianceList) {
@@ -7359,7 +7359,7 @@ DIRECT (NEW_TableOfReal_to_Permutation_sortRowlabels) {
 DIRECT (NEW1_TableOfReal_appendColumns) {
 	COMBINE_ALL_VIA_LIST_TO_ONE (TableOfReal, TableOfRealList)
 		autoTableOfReal result = TableOfRealList_appendColumnsMany (list.get());
-	COMBINE_ALL_VIA_LIST_TO_ONE_END (U"columns_appended");
+	COMBINE_ALL_LISTED_TO_ONE_END (U"columns_appended");
 }
 
 FORM (NEW1_TableOfReal_create_pols1973, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...") {
