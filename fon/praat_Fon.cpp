@@ -1406,9 +1406,9 @@ DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
 }
 
 DIRECT (INFO_Pitch_difference) {
-	INFO_COUPLE (Pitch)
+	INFO_TWO (Pitch)
 		Pitch_difference (me, you);
-	INFO_COUPLE_END
+	INFO_TWO_END
 }
 
 FORM (GRAPHICS_Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
@@ -2134,12 +2134,12 @@ FORM (INFO_Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	OK
 DO
-	INFO_THREE (Sound, Pitch, PointProcess)
+	INFO_ONE_AND_ONE_AND_ONE (Sound, Pitch, PointProcess)
 		MelderInfo_open ();
 		Sound_Pitch_PointProcess_voiceReport (me, you, him, fromTime, toTime, fromPitch, toPitch,
 				maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
 		MelderInfo_close ();
-	INFO_THREE_END
+	INFO_ONE_AND_ONE_AND_ONE_END
 }
 
 // MARK: - SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER

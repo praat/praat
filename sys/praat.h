@@ -728,28 +728,37 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_ONE_AND_ONE(klas1,klas2)  FIND_ONE_AND_ONE (klas1, klas2)
+#define INFO_ONE_AND_ONE(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2)
 #define INFO_ONE_AND_ONE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_COUPLE(klas)  FIND_TWO (klas)
-#define INFO_COUPLE_END  \
+#define INFO_TWO(klas)  \
+	FIND_TWO (klas)
+#define INFO_TWO_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_THREE(klas1,klas2,klas3)  FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define INFO_THREE_END  \
+#define INFO_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
+#define INFO_ONE_AND_ONE_AND_ONE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define HELP(page)  Melder_help (page); END_NO_NEW_DATA
+#define HELP(page)  \
+	Melder_help (page); \
+	END_NO_NEW_DATA
 
-#define PLAY_EACH(klas)  LOOP { iam_LOOP (klas);
-#define PLAY_EACH_END  } END_NO_NEW_DATA
+#define PLAY_EACH(klas)  \
+	LOOP { \
+		iam_LOOP (klas);
+#define PLAY_EACH_END  \
+	} \
+	END_NO_NEW_DATA
 
 #define GRAPHICS_NONE  \
 	autoPraatPicture picture;

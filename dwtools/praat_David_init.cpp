@@ -1057,7 +1057,7 @@ FORM (INFO_Covariances_reportMultivariateMeanDifference, U"Covariances: Report m
 	BOOLEAN (covariancesAreEqual, U"Equal covariances", true)
 	OK
 DO
-	INFO_COUPLE (Covariance)
+	INFO_TWO (Covariance)
 		double prob, fisher, df1, df2, difference;
 		MelderInfo_open ();
 		difference = Covariances_getMultivariateCentroidDifference (me, you, covariancesAreEqual, & prob, & fisher, & df1, & df2);
@@ -1071,7 +1071,7 @@ DO
 		MelderInfo_writeLine (U"Number of observations 2: ", you -> numberOfObservations);
 		MelderInfo_writeLine (U"Number of variables: ", me -> numberOfRows);
 		MelderInfo_close ();
-	INFO_COUPLE_END
+	INFO_TWO_END
 }
 
 FORM (NEW_Covariance_to_TableOfReal_randomSampling, U"Covariance: To TableOfReal (random sampling)", U"Covariance: To TableOfReal (random sampling)...") {
