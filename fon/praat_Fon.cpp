@@ -213,9 +213,9 @@ FORM (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", null
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	TURN_TWO_AND_ONE_INTO_ONE (Distributions, Transition)
+	CONVERT_TWO_AND_ONE_TO_ONE (Distributions, Transition)
 		autoTransition result = Distributions_to_Transition (me, you, environment, him, greedy);
-	TURN_TWO_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_TWO_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - DISTRIBUTIONS & TRANSITION
