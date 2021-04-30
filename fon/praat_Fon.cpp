@@ -2148,9 +2148,9 @@ FORM (NEW1_Sound_Point_Pitch_Duration_to_Sound, U"To Sound", nullptr) {
 	POSITIVE (longestPeriod, U"Longest period (s)", U"0.02")
 	OK
 DO
-	CONVERT_FOUR (Sound, PointProcess, PitchTier, DurationTier)
+	CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE (Sound, PointProcess, PitchTier, DurationTier)
 		autoSound result = Sound_Point_Pitch_Duration_to_Sound (me, you, him, she, longestPeriod);
-	CONVERT_FOUR_END (U"manip");
+	CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE_END (U"manip");
 }
 
 // MARK: - SPECTROGRAM
