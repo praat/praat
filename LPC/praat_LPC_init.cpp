@@ -656,9 +656,9 @@ FORM (NEW1_Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
 	OK
 DO
-	TURN_TWO_INTO_ONE (Cepstrumc)
+	CONVERT_TWO_TO_ONE (Cepstrumc)
 		autoDTW result = Cepstrumc_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight, windowDuration, matchBeginPositions, matchEndPositions, slopeConstraintType);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Cepstrumc_to_Matrix) {

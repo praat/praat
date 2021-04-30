@@ -103,9 +103,9 @@ DO
 }
 
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
-	TURN_TWO_INTO_ONE (ResultsMFC)
+	CONVERT_TWO_TO_ONE (ResultsMFC)
 		autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (me, you);
-	TURN_TWO_INTO_ONE_END (your name.get(), U"_shared")
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_shared")
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {

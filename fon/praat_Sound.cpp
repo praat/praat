@@ -433,10 +433,10 @@ DIRECT (NEW_Sound_convertToStereo) {
 }
 
 DIRECT (NEW1_Sounds_convolve_old) {
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoSound result = Sounds_convolve (me, you,
 			kSounds_convolve_scaling::SUM, kSounds_convolve_signalOutsideTimeDomain::ZERO);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_Sounds_convolve, U"Sounds: Convolve", U"Sounds: Convolve...") {
@@ -446,9 +446,9 @@ FORM (NEW1_Sounds_convolve, U"Sounds: Convolve", U"Sounds: Convolve...") {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoSound result = Sounds_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 static autoSound common_Sound_create (conststring32 name, integer numberOfChannels, double startTime, double endTime,
@@ -578,9 +578,9 @@ FORM (NEW1_old_Sounds_crossCorrelate, U"Cross-correlate (short)", nullptr) {
 	BOOLEAN (normalize, U"Normalize", true)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoSound result = Sounds_crossCorrelate_short (me, you, fromLag, toLag, normalize);
-	TURN_TWO_INTO_ONE_END (U"cc_", my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (U"cc_", my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-correlate...") {
@@ -590,9 +590,9 @@ FORM (NEW1_Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-co
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO_ALTERNATIVE (NEW1_old_Sounds_crossCorrelate)
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoSound result = Sounds_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (U"cc_", my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (U"cc_", my name.get(), U"_", your name.get())
 }
 
 FORM (MODIFY_Sound_deemphasizeInplace, U"Sound: De-emphasize (in-place)", U"Sound: De-emphasize (in-place)...") {
@@ -1602,9 +1602,9 @@ DIRECT (NEW_Sound_downto_Matrix) {
 }
 
 DIRECT (NEW1_Sounds_to_ParamCurve) {
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoParamCurve result = ParamCurve_create (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Sound_to_Pitch, U"Sound: To Pitch", U"Sound: To Pitch...") {

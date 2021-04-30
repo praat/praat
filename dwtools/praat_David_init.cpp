@@ -378,9 +378,9 @@ DIRECT (NEW_Categories_selectUniqueItems) {
 }
 
 DIRECT (NEW_Categories_to_Confusion) {
-	TURN_TWO_INTO_ONE (Categories)
+	CONVERT_TWO_TO_ONE (Categories)
 		autoConfusion result = Categories_to_Confusion (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Categories_to_Strings) {
@@ -390,9 +390,9 @@ DIRECT (NEW_Categories_to_Strings) {
 }
 
 DIRECT (NEW1_Categories_join) {
-	TURN_TWO_INTO_ONE (Categories)
+	CONVERT_TWO_TO_ONE (Categories)
 		autoStringList result = OrderedOfString_joinItems (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Categories_permuteItems) {
@@ -477,10 +477,10 @@ FORM (NEW1_CCs_to_DTW, U"CC: To DTW", U"CC: To DTW...") {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	TURN_TWO_INTO_ONE (CC)
+	CONVERT_TWO_TO_ONE (CC)
 		autoDTW result = CCs_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight, regressionWindowLength);
 		DTW_findPath (result.get(), matchStart, matchEnd, slopeConstraint);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get());
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 DIRECT (NEW_CC_to_Matrix) {
@@ -770,9 +770,9 @@ DIRECT (NEW_Confusion_to_TableOfReal_marginals) {
 }
 
 DIRECT (NEW1_Confusion_difference) {
-	TURN_TWO_INTO_ONE (Confusion)
+	CONVERT_TWO_TO_ONE (Confusion)
 		autoMatrix result = Confusion_difference (me, you);
-	TURN_TWO_INTO_ONE_END (U"diffs")
+	CONVERT_TWO_TO_ONE_END (U"diffs")
 }
 
 FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...") {
@@ -2517,10 +2517,10 @@ DO
 }
 
 DIRECT (NEW1_ExcitationList_append) {
-	TURN_TWO_INTO_ONE (ExcitationList)
+	CONVERT_TWO_TO_ONE (ExcitationList)
 		autoExcitationList result = Data_copy (me);
 		result -> merge (you);
-	TURN_TWO_INTO_ONE_END (U"appended")
+	CONVERT_TWO_TO_ONE_END (U"appended")
 }
 
 FORM (NEW_ExcitationList_to_PatternList, U"Excitations: To PatternList", nullptr) {
@@ -2929,9 +2929,9 @@ FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr)
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (FilterBank)
+	CONVERT_TWO_TO_ONE (FilterBank)
 		autoSound result = FilterBanks_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
@@ -2941,9 +2941,9 @@ FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cros
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (BandFilterSpectrogram)
+	CONVERT_TWO_TO_ONE (BandFilterSpectrogram)
 		autoSound result = BandFilterSpectrograms_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
@@ -2953,9 +2953,9 @@ FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (FilterBank)
+	CONVERT_TWO_TO_ONE (FilterBank)
 		autoSound result = FilterBanks_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
@@ -2965,9 +2965,9 @@ FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve",
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (BandFilterSpectrogram)
+	CONVERT_TWO_TO_ONE (BandFilterSpectrogram)
 		autoSound result = BandFilterSpectrograms_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_FilterBank_to_Intensity) {
@@ -3712,9 +3712,9 @@ FORM (NEW_Matrix_solveMatrixEquation, U"Matrix: Solve matrix equation", U"Matrix
 	REAL (tolerance, U"Tolerance", U"1.0e-7")
 	OK
 DO
-	TURN_TWO_INTO_ONE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoMatrix result = Matrix_solveEquation (me, you, tolerance);
-	TURN_TWO_INTO_ONE_END (U"solution")
+	CONVERT_TWO_TO_ONE_END (U"solution")
 }
 
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
@@ -3874,9 +3874,9 @@ FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoDTW result = Matrices_to_DTW (me, you, matchStart, matchEnd, slopeConstraint, distanceMetric);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Matrix_to_PatternList, U"Matrix: To PatternList", nullptr) {
@@ -4233,9 +4233,9 @@ FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (MFCC)
+	CONVERT_TWO_TO_ONE (MFCC)
 		autoSound result = MFCCs_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_",your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_",your name.get())
 }
 
 FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
@@ -4245,9 +4245,9 @@ FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
-	TURN_TWO_INTO_ONE (MFCC)
+	CONVERT_TWO_TO_ONE (MFCC)
 		autoSound result = MFCCs_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_",your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_",your name.get())
 }
 
 DIRECT (NEW_MFCC_to_Sound) {
@@ -4665,9 +4665,9 @@ FORM (NEW1_PCAs_to_Procrustes, U"PCA & PCA: To Procrustes", U"PCA & PCA: To Proc
 	NATURAL (toEigenvector, U"right Eigenvector range", U"2")
 	OK
 DO
-	TURN_TWO_INTO_ONE (PCA)
+	CONVERT_TWO_TO_ONE (PCA)
 		autoProcrustes result = Eigens_to_Procrustes (me, you, fromEigenvector, toEigenvector);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
@@ -4875,9 +4875,9 @@ FORM (NEW1_Pitches_to_DTW, U"Pitches: To DTW", U"Pitches: To DTW...") {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Pitch)
+	CONVERT_TWO_TO_ONE (Pitch)
 		autoDTW result = Pitches_to_DTW (me, you, vuvCosts, weight, matchStart, matchEnd, slopeConstraint);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_PitchTier_to_Pitch, U"PitchTier: To Pitch", U"PitchTier: To Pitch...") {
@@ -5281,9 +5281,9 @@ DO
 }
 
 DIRECT (NEW_Polynomials_multiply) {
-	TURN_TWO_INTO_ONE (Polynomial)
+	CONVERT_TWO_TO_ONE (Polynomial)
 		autoPolynomial result = Polynomials_multiply (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_x_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_x_", your name.get())
 }
 
 FORM (NEWMANY_Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...") {
@@ -5664,9 +5664,9 @@ FORM (NEW1_Sounds_to_DTW, U"Sounds: To DTW", nullptr) {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-    TURN_TWO_INTO_ONE (Sound)
+    CONVERT_TWO_TO_ONE (Sound)
 		autoDTW result = Sounds_to_DTW (me, you, windowLength, timeStep, sakoeChibaBand, slopeConstraint);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Sound_to_TextGrid_detectSilences, U"Sound: To TextGrid (silences)", U"Sound: To TextGrid (silences)...") {
@@ -5975,9 +5975,9 @@ FORM (NEW1_Sounds_to_Polygon_enclosed, U"Sounds: To Polygon (enclosed)", U"Sound
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoPolygon result = Sounds_to_Polygon_enclosed (me, you, channel, fromTime, toTime, ymin, ymax);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Sound_filterByGammaToneFilter4, U"Sound: Filter (gammatone)", U"Sound: Filter (gammatone)...") {
@@ -6112,9 +6112,9 @@ FORM (NEW1_Spectrograms_to_DTW, U"Spectrograms: To DTW", nullptr) {
 	DTW_constraints_addCommonFields (matchStart, matchEnd, slopeConstraint)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Spectrogram)
+	CONVERT_TWO_TO_ONE (Spectrogram)
 		autoDTW result = Spectrograms_to_DTW (me, you, matchStart, matchEnd, slopeConstraint, 1.0);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_Spectrogram_getLongtermSpectralFlatnessMeasure, U"Spectrogram_getLongtermSpectralFlatness", nullptr) {
@@ -6184,9 +6184,9 @@ DO
 }
 
 DIRECT (NEW_Spectra_multiply) {
-	TURN_TWO_INTO_ONE (Spectrum)
+	CONVERT_TWO_TO_ONE (Spectrum)
 		autoSpectrum result = Spectra_multiply (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_x_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_x_", your name.get())
 }
 
 FORM (NEW_Spectrum_resample, U"Spectrum: Resample", nullptr) {
@@ -6717,9 +6717,9 @@ DO
 }
 
 DIRECT (NEW_Strings_to_EditDistanceTable) {
-	TURN_TWO_INTO_ONE (Strings)
+	CONVERT_TWO_TO_ONE (Strings)
 		autoEditDistanceTable result = EditDistanceTable_create (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_Strings_to_Permutation, U"Strings: To Permutation", U"Strings: To Permutation...") {
@@ -7670,9 +7670,9 @@ DIRECT (NEW_TableOfReal_to_SVD) {
 }
 
 DIRECT (NEW1_TablesOfReal_to_Eigen_gsvd) {
-	TURN_TWO_INTO_ONE (TableOfReal)
+	CONVERT_TWO_TO_ONE (TableOfReal)
 		autoEigen result = TablesOfReal_to_Eigen_gsvd (me, you);
-	TURN_TWO_INTO_ONE_END (U"gsvd");
+	CONVERT_TWO_TO_ONE_END (U"gsvd");
 }
 
 FORM (NEW1_TableOfReal_TableOfReal_crossCorrelations, U"TableOfReal & TableOfReal: Cross-correlations", nullptr) {
@@ -7684,9 +7684,9 @@ FORM (NEW1_TableOfReal_TableOfReal_crossCorrelations, U"TableOfReal & TableOfRea
 	OK
 DO
 	int by_columns = between - 1;
-	TURN_TWO_INTO_ONE (TableOfReal)
+	CONVERT_TWO_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_TableOfReal_crossCorrelations (me, you, by_columns, center, normalize);
-	TURN_TWO_INTO_ONE_END (U"cc_", by_columns ? U"by_cols" : U"by_rows")
+	CONVERT_TWO_TO_ONE_END (U"cc_", by_columns ? U"by_cols" : U"by_rows")
 }
 
 void praat_TableOfReal_init3 (ClassInfo klas);
@@ -7696,9 +7696,9 @@ void praat_TableOfReal_init3 (ClassInfo klas) {
 }
 
 DIRECT (NEW1_TablesOfReal_to_GSVD) {
-	TURN_TWO_INTO_ONE (TableOfReal)
+	CONVERT_TWO_TO_ONE (TableOfReal)
 		autoGSVD result = TablesOfReal_to_GSVD (me, you);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_TableOfReal_choleskyDecomposition, U"TableOfReal: Cholesky decomposition", nullptr) {
@@ -7843,9 +7843,9 @@ FORM (NEW1_TextGrids_to_Table_textAlignment, U"TextGrids: To Table (text alignme
 	NATURAL (sourceTierNumber, U"Source tier", U"1")
 	OK
 DO
-	TURN_TWO_INTO_ONE (TextGrid)
+	CONVERT_TWO_TO_ONE (TextGrid)
  		autoTable result = TextGrids_to_Table_textAlignment (me, targetTierNumber, you, sourceTierNumber, nullptr);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get());
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To DurationTier...") {

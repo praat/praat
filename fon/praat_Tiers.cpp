@@ -1085,9 +1085,9 @@ DO
 }
 
 DIRECT (NEW1_PointProcesses_difference) {
-	TURN_TWO_INTO_ONE (PointProcess)
+	CONVERT_TWO_TO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_difference (me, you);
-	TURN_TWO_INTO_ONE_END (U"difference")
+	CONVERT_TWO_TO_ONE_END (U"difference")
 }
 
 FORM (GRAPHICS_PointProcess_draw, U"PointProcess: Draw", nullptr) {
@@ -1269,9 +1269,9 @@ DIRECT (PLAY_PointProcess_hum) {
 }
 
 DIRECT (NEW1_PointProcesses_intersection) {
-	TURN_TWO_INTO_ONE (PointProcess)
+	CONVERT_TWO_TO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_intersection (me, you);
-	TURN_TWO_INTO_ONE_END (U"intersection")
+	CONVERT_TWO_TO_ONE_END (U"intersection")
 }
 
 DIRECT (PLAY_PointProcess_play) {
@@ -1401,9 +1401,9 @@ DIRECT (NEW_PointProcess_to_Sound_hum) {
 }
 
 DIRECT (NEW1_PointProcesses_union) {
-	TURN_TWO_INTO_ONE (PointProcess)
+	CONVERT_TWO_TO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_union (me, you);
-	TURN_TWO_INTO_ONE_END (U"union")
+	CONVERT_TWO_TO_ONE_END (U"union")
 }
 
 FORM (NEW_PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...") {

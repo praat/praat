@@ -446,9 +446,9 @@ DO
 // MARK: Combine
 
 DIRECT (NEW1_Matrix_appendRows) {
-	TURN_TWO_INTO_ONE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoMatrix result = Matrix_appendRows (me, you, classMatrix);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: Cast
@@ -548,10 +548,10 @@ DIRECT (NEW_Matrix_to_VocalTract) {
 }
 
 DIRECT (NEW1_Matrix_to_ParamCurve) {
-	TURN_TWO_INTO_ONE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoSound sound1 = Matrix_to_Sound (me), sound2 = Matrix_to_Sound (you);
 		autoParamCurve result = ParamCurve_create (sound1.get(), sound2.get());
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get());
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 // MARK: - PHOTO

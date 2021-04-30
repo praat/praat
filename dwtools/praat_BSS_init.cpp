@@ -251,9 +251,9 @@ FORM (NEW1_Sounds_to_CrossCorrelationTable_combined, U"Sound: To CrossCorrelatio
 	REAL (lagStep, U"Lag step (s)", U"0.0")
 	OK
 DO
-	TURN_TWO_INTO_ONE (Sound)
+	CONVERT_TWO_TO_ONE (Sound)
 		autoCrossCorrelationTable result = Sounds_to_CrossCorrelationTable_combined (me, you, fromTime, toTime, lagStep);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get(), U"_cc")
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get(), U"_cc")
 }
 
 DIRECT (HELP_CrossCorrelationTableList_help) {

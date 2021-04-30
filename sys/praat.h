@@ -1029,9 +1029,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_WITH_NEW_DATA
 
-#define TURN_TWO_INTO_ONE(klas)  \
+#define CONVERT_TWO_TO_ONE(klas)  \
 	FIND_COUPLE (klas)
-#define TURN_TWO_INTO_ONE_END(...)  \
+#define CONVERT_TWO_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \

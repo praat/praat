@@ -312,9 +312,9 @@ FORM (NEW1_Configurations_to_Procrustes, U"Configuration & Configuration: To Pro
 	BOOLEAN (useOrthogonalTransform, U"Use orthogonal transform", false)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Configuration)
+	CONVERT_TWO_TO_ONE (Configuration)
 		autoProcrustes result = Configurations_to_Procrustes (me, you, useOrthogonalTransform);
-	TURN_TWO_INTO_ONE_END (your name.get(), U"_to_", my name.get())
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_to_", my name.get())
 }
 
 FORM (NEW1_Configurations_to_AffineTransform_congruence, U"Configurations: To AffineTransform (congruence)", U"Configurations: To AffineTransform (congruence)...") {
@@ -322,9 +322,9 @@ FORM (NEW1_Configurations_to_AffineTransform_congruence, U"Configurations: To Af
 	POSITIVE (tolerance, U"Tolerance", U"1e-6")
 	OK
 DO
-	TURN_TWO_INTO_ONE (Configuration)
+	CONVERT_TWO_TO_ONE (Configuration)
 		autoAffineTransform result = Configurations_to_AffineTransform_congruence (me, you, maximumNumberOfIterations, tolerance);
-	TURN_TWO_INTO_ONE_END (your name.get(), U"_to_", my name.get())
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_to_", my name.get())
 }
 
 DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
