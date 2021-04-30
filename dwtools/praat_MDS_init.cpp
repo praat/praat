@@ -303,9 +303,9 @@ DO
 }
 
 DIRECT (NEW1_Configurations_to_Similarity_cc) {
-	CONVERT_TYPED_LIST (Configuration, ConfigurationList)
+	COMBINE_ALL_VIA_LIST_TO_ONE (Configuration, ConfigurationList)
 		autoSimilarity result = ConfigurationList_to_Similarity_cc (list.get(), nullptr);
-	CONVERT_TYPED_LIST_END (U"congruence")
+	COMBINE_ALL_VIA_LIST_TO_ONE_END (U"congruence")
 }
 
 FORM (NEW1_Configurations_to_Procrustes, U"Configuration & Configuration: To Procrustes", U"Configuration & Configuration: To Procrustes...") {
@@ -370,9 +370,9 @@ DO
 }
 
 DIRECT (NEW1_Confusions_sum) {
-	CONVERT_TYPED_LIST (Confusion, ConfusionList)
+	COMBINE_ALL_VIA_LIST_TO_ONE (Confusion, ConfusionList)
 		autoConfusion result = ConfusionList_sum (list.get());
-	CONVERT_TYPED_LIST_END (U"sum")
+	COMBINE_ALL_VIA_LIST_TO_ONE_END (U"sum")
 }
 
 DIRECT (NEW_Confusion_to_ContingencyTable) {

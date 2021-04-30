@@ -1069,9 +1069,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define CONVERT_TYPED_LIST(klas,listClass)  \
+#define COMBINE_ALL_VIA_LIST_TO_ONE(klas,listClass)  \
 	FIND_TYPED_LIST (klas,listClass)
-#define CONVERT_TYPED_LIST_END(...)  \
+#define COMBINE_ALL_VIA_LIST_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
