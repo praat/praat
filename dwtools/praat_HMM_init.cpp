@@ -377,22 +377,22 @@ FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
 	NATURAL (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
-	STRING_ONE (HMM)
+	QUERY_ONE_FOR_STRING (HMM)
 		Melder_require (symbolNumber <= my numberOfObservationSymbols, U"Symbol number too high.");
 		HMMObservation observation = my observationSymbols->at [symbolNumber];
 		conststring32 result = observation -> label.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INFO_HMM_getStateLabel, U"HMM: Get state label", nullptr) {
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	STRING_ONE (HMM)
+	QUERY_ONE_FOR_STRING (HMM)
 		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		HMMState state = my states->at [stateNumber];
 		conststring32 result = state -> label.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_HMM_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...") {

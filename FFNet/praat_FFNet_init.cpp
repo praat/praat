@@ -174,7 +174,6 @@ DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
 	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
-
 FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
@@ -214,9 +213,9 @@ FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit",
 	NATURAL (outputUnit, U"Output unit", U"1")
 	OK
 DO
-	STRING_ONE (FFNet)
+	QUERY_ONE_FOR_STRING (FFNet)
 		conststring32 result = FFNet_getCategoryOfOutputUnit (me, outputUnit);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {

@@ -476,10 +476,10 @@ FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	STRING_ONE (OTGrammar)
+	QUERY_ONE_FOR_STRING (OTGrammar)
 		my checkConstraintNumber (constraintNumber);
 		const conststring32 result = my constraints [constraintNumber]. name.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
@@ -512,10 +512,10 @@ FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	STRING_ONE (OTGrammar)
+	QUERY_ONE_FOR_STRING (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const conststring32 result = my tableaus [tableauNumber]. input.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", nullptr) {
@@ -533,10 +533,10 @@ FORM (STRING_OTGrammar_getCandidate, U"Get candidate", nullptr) {
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	STRING_ONE (OTGrammar)
+	QUERY_ONE_FOR_STRING (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const conststring32 result = my tableaus [tableauNumber]. candidates [candidateNumber]. output.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", nullptr) {
@@ -1223,11 +1223,11 @@ FORM (STRING_OTMulti_getConstraint, U"Get constraint name", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	STRING_ONE (OTMulti)
+	QUERY_ONE_FOR_STRING (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		const conststring32 result = my constraints [constraintNumber]. name.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint number", nullptr) {
@@ -1271,11 +1271,11 @@ FORM (STRING_OTMulti_getCandidate, U"Get candidate", nullptr) {
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	STRING_ONE (OTMulti)
+	QUERY_ONE_FOR_STRING (OTMulti)
 		if (candidateNumber > my numberOfCandidates)
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		const conststring32 result = my candidates [candidateNumber]. string.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullptr) {
@@ -1614,9 +1614,9 @@ FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	NUMMAT_ONE (Net)
+	QUERY_ONE_FOR_MATRIX (Net)
 		autoMAT result = Net_getWeights (me, layerNumber);
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 // MARK: - NET & PATTERN

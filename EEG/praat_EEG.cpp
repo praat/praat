@@ -65,11 +65,11 @@ FORM (STRING_EEG_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (channelNumber, U"Channel number", U"1")
 	OK
 DO
-	STRING_ONE (EEG)
+	QUERY_ONE_FOR_STRING (EEG)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
 		conststring32 result = my channelNames [channelNumber].get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
@@ -449,11 +449,11 @@ FORM (STRING_ERP_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (channelNumber, U"Channel number", U"1")
 	OK
 DO
-	STRING_ONE (ERP)
+	QUERY_ONE_FOR_STRING (ERP)
 		if (channelNumber > my ny)
 			Melder_throw (me, U": there are only ", my ny, U" channels.");
 		conststring32 result = my channelNames [channelNumber].get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_ERP_getChannelNumber, U"Get channel number", nullptr) {
@@ -608,11 +608,11 @@ FORM (STRING_ERPTier_getChannelName, U"Get channel name", nullptr) {
 	NATURAL (channelNumber, U"Channel number", U"1")
 	OK
 DO
-	STRING_ONE (ERPTier)
+	QUERY_ONE_FOR_STRING (ERPTier)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
 		conststring32 result = my channelNames [channelNumber].get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_ERPTier_getChannelNumber, U"Get channel number", nullptr) {

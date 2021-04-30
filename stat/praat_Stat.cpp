@@ -145,18 +145,18 @@ FORM (STRING_PairDistribution_getString1, U"Get string1", nullptr) {
 	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	STRING_ONE (PairDistribution)
+	QUERY_ONE_FOR_STRING (PairDistribution)
 		conststring32 result = PairDistribution_getString1 (me, pairNumber);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (STRING_PairDistribution_getString2, U"Get string2", nullptr) {
 	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	STRING_ONE (PairDistribution)
+	QUERY_ONE_FOR_STRING (PairDistribution)
 		conststring32 result = PairDistribution_getString2 (me, pairNumber);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_PairDistribution_getWeight, U"Get weight", nullptr) {
@@ -401,11 +401,11 @@ FORM (STRING_Table_getColumnLabel, U"Table: Get column label", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	STRING_ONE (Table)
+	QUERY_ONE_FOR_STRING (Table)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (U"Your column number should not be greater than the number of columns.");
 		conststring32 result = my columnHeaders [columnNumber]. label.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {

@@ -119,11 +119,11 @@ FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status",
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	STRING_ONE (DataModeler)
+	QUERY_ONE_FOR_STRING (DataModeler)
 		kDataModelerParameterStatus status = DataModeler_getParameterStatus (me, parameterNumber);
 		conststring32 result = ( status == kDataModelerParameterStatus::FREE ? U"Free" :
 			status == kDataModelerParameterStatus::FIXED_ ? U"Fixed" : U"Undefined" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
@@ -211,10 +211,10 @@ FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status"
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	STRING_ONE (DataModeler)
+	QUERY_ONE_FOR_STRING (DataModeler)
 		kDataModelerData status = DataModeler_getDataPointStatus (me, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
@@ -607,10 +607,10 @@ FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point s
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	STRING_ONE (FormantModeler)
+	QUERY_ONE_FOR_STRING (FormantModeler)
 		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
@@ -667,13 +667,13 @@ FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter st
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	STRING_ONE (FormantModeler)
+	QUERY_ONE_FOR_STRING (FormantModeler)
 		kDataModelerParameterStatus status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		conststring32 result = Melder_cat (
 			status == kDataModelerParameterStatus::FREE ? U"Free" : status == kDataModelerParameterStatus::FIXED_ ? U"Fixed" : U"Undefined",
 			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
 		);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {

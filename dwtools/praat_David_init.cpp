@@ -676,9 +676,9 @@ FORM (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationT
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	STRING_ONE (ClassificationTable)
+	QUERY_ONE_FOR_STRING (ClassificationTable)
 		conststring32 result = TableOfReal_getColumnLabelAtMaximumInRow (me, rowNumber);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 // deprecated 2014
@@ -2413,18 +2413,18 @@ FORM (INFO_StringsIndex_getClassLabelFromClassIndex, U"StringsIndex: Get class l
 	NATURAL (index, U"Class index", U"1")
 	OK
 DO
-	STRING_ONE (StringsIndex)
+	QUERY_ONE_FOR_STRING (StringsIndex)
 		conststring32 result = StringsIndex_getClassLabelFromClassIndex (me, index);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INFO_StringsIndex_getItemLabelFromItemIndex, U"StringsIndex: Get item label", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	STRING_ONE (StringsIndex)
+	QUERY_ONE_FOR_STRING (StringsIndex)
 		conststring32 result = StringsIndex_getItemLabelFromItemIndex (me, itemIndex);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
@@ -4446,9 +4446,9 @@ DO
 }
 
 DIRECT (NUMMAT_PatternList_getAllValues) {
-	NUMMAT_ONE (PatternList)
+	QUERY_ONE_FOR_MATRIX (PatternList)
 		autoMAT result = copy_MAT (my z.all());
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
@@ -5013,11 +5013,11 @@ FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get 
 	OK
 DO
 	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
-	STRING_ONE (Polygon)
+	QUERY_ONE_FOR_STRING (Polygon)
 		int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
 			loc == Polygon_EDGE ? U"E" : U"V" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (REAL_Polygon_getAreaOfConvexHull) {
@@ -5335,9 +5335,9 @@ FORM (COMPLEX_Roots_getRoot, U"Roots: Get root", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
-	COMPLEX_ONE (Roots)
+	QUERY_ONE_FOR_COMPLEX (Roots)
 		const dcomplex result = Roots_getRoot (me, rootNumber);
-	COMPLEX_ONE_END (U"")
+	QUERY_ONE_FOR_COMPLEX_END (U"")
 }
 
 FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
@@ -6323,21 +6323,21 @@ DO
 }
 
 DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
-	STRING_ONE (SpeechSynthesizer)
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_languageName.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
-	STRING_ONE (SpeechSynthesizer)
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_voiceName.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
-	STRING_ONE (SpeechSynthesizer)
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_phonemeSet.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
@@ -8031,18 +8031,18 @@ FORM (STRVEC_TextGridNavigator_listLabels, U"TextGridNavigator: List labels", nu
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	STRVEC_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_STRING_ARRAY (TextGridNavigator)
 		autoSTRVEC result = TextGridNavigator_listLabels (me, where);
-	STRVEC_ONE_END
+	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
 FORM (NUMMAT_TextGridNavigator_listDomains, U"", nullptr) {
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
-	NUMMAT_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_MATRIX (TextGridNavigator)
 		autoMAT result = TextGridNavigator_listDomains (me, matchDomain);
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr) {
@@ -8050,9 +8050,9 @@ FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr)
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	STRING_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_STRING (TextGridNavigator)
 		conststring32 result = TextGridNavigator_getLabel (me, tierNumber, where);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INTEGER_TextGridNavigator_getNumberOfMatches) {

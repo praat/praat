@@ -1529,9 +1529,9 @@ FORM (NUMMAT_Pitch_getAllCandidatesInFrame, U"Pitch: Get all candidates in frame
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	NUMMAT_ONE (Pitch)
+	QUERY_ONE_FOR_MATRIX (Pitch)
 		autoMAT result = Pitch_getAllCandidatesInFrame (me, frameNumber);
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (NEW_Pitch_tabulateCandidatesInFrame, U"Pitch: Tabulate candidates in frame", nullptr) {
@@ -2691,15 +2691,15 @@ FORM (STRING_Strings_getString, U"Get string", nullptr) {
 	NATURAL (position, U"Position", U"1")
 	OK
 DO
-	STRING_ONE (Strings)
+	QUERY_ONE_FOR_STRING (Strings)
 		conststring32 result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (STRVEC_Strings_listAllStrings) {
-	STRVEC_ONE (Strings)
+	QUERY_ONE_FOR_STRING_ARRAY (Strings)
 		autoSTRVEC result = copy_STRVEC (my strings.get());
-	STRVEC_ONE_END
+	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
 // MARK: Modify

@@ -769,9 +769,9 @@ DO
 }
 
 DIRECT (NUMMAT_LineSpectralFrequencies_listAllFrequencies) {
-	NUMMAT_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_MATRIX (LineSpectralFrequencies)
 		autoMAT result = LineSpectralFrequencies_listAllFrequencies (me);
-	NUMMAT_ONE_END	
+	QUERY_ONE_FOR_MATRIX_END	
 }
 
 DIRECT (NEW_LineSpectralFrequencies_to_LPC) {
@@ -824,9 +824,9 @@ DO
 }
 
 DIRECT (NUMMAT_LPC_listAllCoefficients) {
-	NUMMAT_ONE (LPC)
+	QUERY_ONE_FOR_MATRIX (LPC)
 		autoMAT result = LPC_listAllCoefficients (me);
-	NUMMAT_ONE_END	
+	QUERY_ONE_FOR_MATRIX_END	
 }
 
 FORM (REAL_LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in frame...") {

@@ -886,15 +886,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define COMPLEX_ONE(klas)  \
+#define QUERY_ONE_FOR_COMPLEX(klas)  \
 	FIND_ONE (klas)
-#define COMPLEX_ONE_END(...)  \
+#define QUERY_ONE_FOR_COMPLEX_END(...)  \
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define STRING_ONE(klas)  \
+#define QUERY_ONE_FOR_STRING(klas)  \
 	FIND_ONE (klas)
-#define STRING_ONE_END  \
+#define QUERY_ONE_FOR_STRING_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	Melder_information (result); \
@@ -910,9 +910,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		Melder_information (constVECVU (result.all())); \
 	END_NO_NEW_DATA
 
-#define NUMMAT_ONE(klas)  \
+#define QUERY_ONE_FOR_MATRIX(klas)  \
 	FIND_ONE (klas)
-#define NUMMAT_ONE_END  \
+#define QUERY_ONE_FOR_MATRIX_END  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REALMATRIX_; \
 		interpreter -> returnedRealMatrix = result.move(); \
@@ -920,9 +920,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		Melder_information (constMATVU (result.all())); \
 	END_NO_NEW_DATA
 
-#define STRVEC_ONE(klas)  \
+#define QUERY_ONE_FOR_STRING_ARRAY(klas)  \
 	FIND_ONE (klas)
-#define STRVEC_ONE_END \
+#define QUERY_ONE_FOR_STRING_ARRAY_END \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::STRINGARRAY_; \
 		interpreter -> returnedStringArray = result.move(); \
