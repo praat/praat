@@ -356,9 +356,9 @@ DO
 // MARK: Extract
 
 DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoStrings result = TableOfReal_extractColumnLabelsAsStrings (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
@@ -366,18 +366,18 @@ FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnRanges (me, ranges);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_cols")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cols")
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
 	FORMULA (condition, U"Extract all columns with at least one cell where:", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhere (me, condition, interpreter);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_cols")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cols")
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
@@ -386,9 +386,9 @@ FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", n
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, extractAllColumnsWhoseLabel, ___theText);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", ___theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
@@ -397,15 +397,15 @@ FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", null
 	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, ___is___, ___theValue);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
 }
 
 DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoStrings result = TableOfReal_extractRowLabelsAsStrings (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
@@ -413,18 +413,18 @@ FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowRanges (me, ranges);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_rows")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
 	FORMULA (condition, U"Extract all rows with at least one cell where:", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhere (me, condition, interpreter);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_rows")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
@@ -433,9 +433,9 @@ FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", null
 	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, ___is___, ___theValue);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
@@ -444,33 +444,33 @@ FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullpt
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, extractAllRowsWhoseLabel, ___theText);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", ___theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
 // MARK: Convert
 
 DIRECT (NEW1_TablesOfReal_append) {
-	CONVERT_LIST (TableOfReal)
+	COMBINE_ALL_TO_ONE (TableOfReal)
 		autoTableOfReal result = TablesOfReal_appendMany (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 
 DIRECT (NEW_TableOfReal_to_Matrix) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoMatrix result = TableOfReal_to_Matrix (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
 	SENTENCE (labelOfFirstColumn, U"Label of first column", U"rowLabel")
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTable result = TableOfReal_to_Table (me, labelOfFirstColumn);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM_SAVE (SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as spreadsheet", 0, U"txt") {

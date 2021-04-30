@@ -149,12 +149,12 @@ FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", nullptr) 
 	INTEGER (activityDecimals, U"Activity decimals", U"6")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Network)
+	CONVERT_EACH_TO_ONE (Network)
 		autoTable result = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
 			includeClamped, includeActivity, includeExcitation, activityDecimals
 		);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -647,21 +647,21 @@ FORM (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate in
 	NATURAL (numberOfTrials, U"Number of trials", U"1000")
 	OK
 DO
-	TURN_EACH_INTO_ONE (OTGrammar)
+	CONVERT_EACH_TO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_generateInputs (me, numberOfTrials);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_in")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_OTGrammar_getInputs) {
-	TURN_EACH_INTO_ONE (OTGrammar)
+	CONVERT_EACH_TO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_getInputs (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_in")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
-	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoDistributions result = OTGrammar_measureTypology_WEAK (me);
-	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: Evaluate
@@ -693,9 +693,9 @@ FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTG
 	SENTENCE (inputForm, U"Input form", U"")
 	OK
 DO
-	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_inputToOutputs (me, inputForm, trials, evaluationNoise);
-	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
@@ -703,9 +703,9 @@ FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distrib
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoDistributions result = OTGrammar_to_Distribution (me, trialsPerInput, evaluationNoise);
-	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", nullptr) {
@@ -713,9 +713,9 @@ FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output dist
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	TURN_EACH_WEAK_INTO_ONE (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoPairDistribution result = OTGrammar_to_PairDistribution (me, trialsPerInput, evaluationNoise);
-	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: Modify ranking
@@ -1348,10 +1348,10 @@ FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	TURN_EACH_WEAK_INTO_ONE (OTMulti)
+	CONVERT_EACH_WEAK_TO_ONE (OTMulti)
 		autoDistributions result = OTMulti_to_Distribution (me, partialForm1, partialForm2,
 				numberOfTrials, evaluationNoise);
-	TURN_EACH_WEAK_INTO_ONE_END (my name.get(), U"_out");
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out");
 }
 
 // MARK: Modify ranking
@@ -1482,9 +1482,9 @@ FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to o
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	TURN_ONE_WEAK_AND_ONE_INTO_ONE (OTMulti, Strings)
+	CONVERT_ONE_WEAK_AND_ONE_TO_ONE (OTMulti, Strings)
 		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoise);
-	TURN_ONE_WEAK_AND_ONE_INTO_ONE_END (my name.get(), U"_out")
+	CONVERT_ONE_WEAK_AND_ONE_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: - NET
@@ -1560,54 +1560,54 @@ DO
 // MARK: Extract
 
 DIRECT (NEW_Net_extractInputActivities) {
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractInputActivities (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_inputActivities")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inputActivities")
 }
 
 DIRECT (NEW_Net_extractOutputActivities) {
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractOutputActivities (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_outputActivities")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outputActivities")
 }
 
 DIRECT (NEW_Net_extractInputReconstruction) {
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractInputReconstruction (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_inputReconstruction")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inputReconstruction")
 }
 
 DIRECT (NEW_Net_extractOutputReconstruction) {
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractOutputReconstruction (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_outputReconstruction")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outputReconstruction")
 }
 
 FORM (NEW_Net_extractInputBiases, U"Net: Extract input biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractInputBiases (me, layerNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_inputBiases")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inputBiases")
 }
 
 FORM (NEW_Net_extractOutputBiases, U"Net: Extract output biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractOutputBiases (me, layerNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_outputBiases")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outputBiases")
 }
 
 FORM (NEW_Net_extractWeights, U"Net: Extract weights", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractWeights (me, layerNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_weights")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_weights")
 }
 
 FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
@@ -1671,9 +1671,9 @@ FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To Activation
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Net, PatternList)
+	CONVERT_ONE_AND_ONE_TO_ONE (Net, PatternList)
 		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - NOULLIGRID

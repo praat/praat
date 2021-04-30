@@ -981,21 +981,21 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define TURN_EACH_INTO_ONE(klas)  \
+#define CONVERT_EACH_TO_ONE(klas)  \
 	LOOP { \
 		iam_LOOP (klas);
-#define TURN_EACH_INTO_ONE_END(...)  \
+#define CONVERT_EACH_TO_ONE_END(...)  \
 		if (interpreter) \
 			interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 		praat_new (result.move(), __VA_ARGS__); \
 	} \
 	END_WITH_NEW_DATA
 
-#define TURN_EACH_WEAK_INTO_ONE(klas)  \
+#define CONVERT_EACH_WEAK_TO_ONE(klas)  \
 	LOOP { \
 		iam_LOOP (klas); \
 		try {
-#define TURN_EACH_WEAK_INTO_ONE_END(...)  \
+#define CONVERT_EACH_WEAK_TO_ONE_END(...)  \
 			if (interpreter) \
 				interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 			praat_new (result.move(), __VA_ARGS__); \
@@ -1007,18 +1007,18 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_WITH_NEW_DATA
 
-#define TURN_ONE_AND_ONE_INTO_ONE(klas1,klas2)  \
+#define CONVERT_ONE_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_TWO (klas1, klas2)
-#define TURN_ONE_AND_ONE_INTO_ONE_END(...)  \
+#define CONVERT_ONE_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define TURN_ONE_WEAK_AND_ONE_INTO_ONE(klas1,klas2)  \
+#define CONVERT_ONE_WEAK_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_TWO (klas1, klas2) \
 	try {
-#define TURN_ONE_WEAK_AND_ONE_INTO_ONE_END(...)  \
+#define CONVERT_ONE_WEAK_AND_ONE_TO_ONE_END(...)  \
 		if (interpreter) \
 			interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 		praat_new (result.move(), __VA_ARGS__); \
@@ -1029,41 +1029,41 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_WITH_NEW_DATA
 
-#define TURN_TWO_INTO_ONE(klas)  \
+#define CONVERT_TWO_TO_ONE(klas)  \
 	FIND_COUPLE (klas)
-#define TURN_TWO_INTO_ONE_END(...)  \
+#define CONVERT_TWO_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define TURN_TWO_AND_ONE_INTO_ONE(klas1,klas2)  \
+#define CONVERT_TWO_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_COUPLE_AND_ONE (klas1,klas2)
-#define TURN_TWO_AND_ONE_INTO_ONE_END(...)  \
+#define CONVERT_TWO_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define CONVERT_THREE(klas1,klas2,klas3)  \
+#define CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE(klas1,klas2,klas3)  \
 	FIND_THREE (klas1, klas2, klas3)
-#define CONVERT_THREE_END(...)  \
+#define CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define CONVERT_FOUR(klas1,klas2,klas3,klas4)  \
+#define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE(klas1,klas2,klas3,klas4)  \
 	FIND_FOUR (klas1, klas2, klas3, klas4)
-#define CONVERT_FOUR_END(...)  \
+#define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
 
-#define CONVERT_LIST(klas)  \
+#define COMBINE_ALL_TO_ONE(klas)  \
 	FIND_LIST (klas)
-#define CONVERT_LIST_END(...)  \
+#define COMBINE_ALL_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
 	praat_new (result.move(), __VA_ARGS__); \

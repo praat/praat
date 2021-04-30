@@ -312,9 +312,9 @@ FORM (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weig
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (FFNet)
+	CONVERT_EACH_TO_ONE (FFNet)
 		autoTableOfReal result = FFNet_extractWeights (me, layer);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
@@ -322,9 +322,9 @@ FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (FFNet)
+	CONVERT_EACH_TO_ONE (FFNet)
 		autoMatrix result = FFNet_weightsToMatrix (me, layer, false);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HINT_hint_FFNet_PatternList_classify) {
@@ -349,9 +349,9 @@ FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Cate
 		RADIOBUTTON (U"stochastic")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (FFNet, ActivationList)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, ActivationList)
 		autoCategories result = FFNet_ActivationList_to_Categories (me, you, categorizationgMethod);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /******************* FFNet && Eigen ******************************************/
@@ -373,9 +373,9 @@ DO
 /************************* FFNet && Categories **********************************/
 
 DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
-	TURN_ONE_AND_ONE_INTO_ONE (FFNet, Categories)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, Categories)
 		autoActivationList result = FFNet_Categories_to_ActivationList (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
 }
 
 /************************* FFNet && Matrix **********************************/
@@ -384,9 +384,9 @@ FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nu
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (FFNet, Matrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, Matrix)
 		autoFFNet result = FFNet_weightsFromMatrix (me, you, layer);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
 }
 
 /************************* FFNet && PatternList **********************************/
@@ -406,18 +406,18 @@ FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories
 		RADIOBUTTON (U"stochastic")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (FFNet, PatternList)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, PatternList)
 		autoCategories result = FFNet_PatternList_to_Categories (me, you, categorizationgMethod);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (FFNet, PatternList)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, PatternList)
 		autoActivationList result = FFNet_PatternList_to_ActivationList (me, you, layer);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /*********** FFNet & PatternList & ActivationList **********************************/
@@ -554,10 +554,10 @@ FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet
 	INTEGER (numberOfUnitsInHiddenLayer2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (PatternList, Categories)
+	CONVERT_ONE_AND_ONE_TO_ONE (PatternList, Categories)
 		autoFFNet result = PatternList_Categories_to_FFNet (me, you, numberOfUnitsInHiddenLayer1, numberOfUnitsInHiddenLayer2);
 		autostring32 name = result -> name.move();
-	TURN_ONE_AND_ONE_INTO_ONE_END (name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (name.get())
 }
 
 void praat_uvafon_FFNet_init () {

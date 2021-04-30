@@ -438,73 +438,73 @@ FORM (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
 	NATURAL (power, U"Power", U"2")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoMatrix result = Matrix_power (me, power);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Combine
 
 DIRECT (NEW1_Matrix_appendRows) {
-	TURN_TWO_INTO_ONE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoMatrix result = Matrix_appendRows (me, you, classMatrix);
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: Cast
 
 DIRECT (NEW_Matrix_to_Cochleagram) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoCochleagram result = Matrix_to_Cochleagram (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Excitation) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoExcitation result = Matrix_to_Excitation (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Harmonicity) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoHarmonicity result = Matrix_to_Harmonicity (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Intensity) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoIntensity result = Matrix_to_Intensity (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Ltas) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoLtas result = Matrix_to_Ltas (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Pitch) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoPitch result = Matrix_to_Pitch (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_PointProcess) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoPointProcess result = Matrix_to_PointProcess (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Polygon) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoPolygon result = Matrix_to_Polygon (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Sound) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSound result = Matrix_to_Sound (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
@@ -512,46 +512,46 @@ FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
 	LABEL (U"(negative values count from last row)")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSound result = Matrix_to_Sound_mono (me, rowNumber);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Spectrogram) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSpectrogram result = Matrix_to_Spectrogram (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Spectrum) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSpectrum result = Matrix_to_Spectrum (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_TableOfReal) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoTableOfReal result = Matrix_to_TableOfReal (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Transition) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoTransition result = Matrix_to_Transition (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_VocalTract) {
-	TURN_EACH_INTO_ONE (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoVocalTract result = Matrix_to_VocalTract (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Matrix_to_ParamCurve) {
-	TURN_TWO_INTO_ONE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoSound sound1 = Matrix_to_Sound (me), sound2 = Matrix_to_Sound (you);
 		autoParamCurve result = ParamCurve_create (sound1.get(), sound2.get());
-	TURN_TWO_INTO_ONE_END (my name.get(), U"_", your name.get());
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 // MARK: - PHOTO
@@ -607,27 +607,27 @@ DO
 }
 
 DIRECT (NEW_Photo_extractBlue) {
-	TURN_EACH_INTO_ONE (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_blue.get());
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_blue");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_blue");
 }
 
 DIRECT (NEW_Photo_extractGreen) {
-	TURN_EACH_INTO_ONE (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_green.get());
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_green");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_green");
 }
 
 DIRECT (NEW_Photo_extractRed) {
-	TURN_EACH_INTO_ONE (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_red.get());
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_red");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_red");
 }
 
 DIRECT (NEW_Photo_extractTransparency) {
-	TURN_EACH_INTO_ONE (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_transparency.get());
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_transparency");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_transparency");
 }
 
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {

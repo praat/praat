@@ -118,9 +118,9 @@ DIRECT (HELP_AffineTransform_help) {
 }
 
 DIRECT (NEW_AffineTransform_invert) {
-	TURN_EACH_INTO_ONE (AffineTransform)
+	CONVERT_EACH_TO_ONE (AffineTransform)
 		autoAffineTransform result = AffineTransform_invert (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_inv")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inv")
 }
 
 FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get transformation element", U"Procrustes") {
@@ -146,15 +146,15 @@ DO
 }
 
 DIRECT (NEW_AffineTransform_extractMatrix) {
-	TURN_EACH_INTO_ONE (AffineTransform)
+	CONVERT_EACH_TO_ONE (AffineTransform)
 		autoTableOfReal result = AffineTransform_extractMatrix (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_AffineTransform_extractTranslationVector) {
-	TURN_EACH_INTO_ONE (AffineTransform)
+	CONVERT_EACH_TO_ONE (AffineTransform)
 		autoTableOfReal result = AffineTransform_extractTranslationVector (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /***************** Configuration ***************************************/
@@ -285,9 +285,9 @@ DO
 }
 
 DIRECT (NEW_Configuration_to_Distance) {
-	TURN_EACH_INTO_ONE (Configuration)
+	CONVERT_EACH_TO_ONE (Configuration)
 		autoDistance result = Configuration_to_Distance (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Configuration_varimax, U"Configuration: To Configuration (varimax)", U"Configuration: To Configuration (varimax)...") {
@@ -297,9 +297,9 @@ FORM (NEW_Configuration_varimax, U"Configuration: To Configuration (varimax)", U
 	POSITIVE (tolerance, U"Tolerance", U"1e-6")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Configuration)
+	CONVERT_EACH_TO_ONE (Configuration)
 		autoConfiguration result = Configuration_varimax (me, normalizeRows, useQuartimax, maximumNumberOfIterations, tolerance);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_varimax")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_varimax")
 }
 
 DIRECT (NEW1_Configurations_to_Similarity_cc) {
@@ -312,9 +312,9 @@ FORM (NEW1_Configurations_to_Procrustes, U"Configuration & Configuration: To Pro
 	BOOLEAN (useOrthogonalTransform, U"Use orthogonal transform", false)
 	OK
 DO
-	TURN_TWO_INTO_ONE (Configuration)
+	CONVERT_TWO_TO_ONE (Configuration)
 		autoProcrustes result = Configurations_to_Procrustes (me, you, useOrthogonalTransform);
-	TURN_TWO_INTO_ONE_END (your name.get(), U"_to_", my name.get())
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_to_", my name.get())
 }
 
 FORM (NEW1_Configurations_to_AffineTransform_congruence, U"Configurations: To AffineTransform (congruence)", U"Configurations: To AffineTransform (congruence)...") {
@@ -322,9 +322,9 @@ FORM (NEW1_Configurations_to_AffineTransform_congruence, U"Configurations: To Af
 	POSITIVE (tolerance, U"Tolerance", U"1e-6")
 	OK
 DO
-	TURN_TWO_INTO_ONE (Configuration)
+	CONVERT_TWO_TO_ONE (Configuration)
 		autoAffineTransform result = Configurations_to_AffineTransform_congruence (me, you, maximumNumberOfIterations, tolerance);
-	TURN_TWO_INTO_ONE_END (your name.get(), U"_to_", my name.get())
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_to_", my name.get())
 }
 
 DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
@@ -334,15 +334,15 @@ DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
 }
 
 DIRECT (NEW1_Configuration_AffineTransform_to_Configuration) {
-	TURN_ONE_AND_ONE_INTO_ONE (Configuration, AffineTransform)
+	CONVERT_ONE_AND_ONE_TO_ONE (Configuration, AffineTransform)
 		autoConfiguration result = Configuration_AffineTransform_to_Configuration (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_Configuration_Procrustes_to_Configuration) {
-	TURN_ONE_AND_ONE_INTO_ONE (Configuration, Procrustes)
+	CONVERT_ONE_AND_ONE_TO_ONE (Configuration, Procrustes)
 		autoConfiguration result = Configuration_AffineTransform_to_Configuration (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /*************** Confusion *********************************/
@@ -351,9 +351,9 @@ FORM (NEW_Confusion_to_Dissimilarity_pdf, U"Confusion: To Dissimilarity (pdf)", 
 	POSITIVE (minimumConfusionLevel, U"Minimum confusion level", U"0.5")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Confusion)
+	CONVERT_EACH_TO_ONE (Confusion)
 		autoDissimilarity result = Confusion_to_Dissimilarity_pdf (me, minimumConfusionLevel);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_pdf")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_pdf")
 }
 
 FORM (NEW_Confusion_to_Similarity, U"Confusion: To Similarity", U"Confusion: To Similarity...") {
@@ -364,9 +364,9 @@ FORM (NEW_Confusion_to_Similarity, U"Confusion: To Similarity", U"Confusion: To 
 		RADIOBUTTON (U"Houtgast (s[i][j]= sum (min(c[i][k],c[j][k])))")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Confusion)
+	CONVERT_EACH_TO_ONE (Confusion)
 		autoSimilarity result = Confusion_to_Similarity (me, normalize, symmetrizeMethod);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Confusions_sum) {
@@ -376,9 +376,9 @@ DIRECT (NEW1_Confusions_sum) {
 }
 
 DIRECT (NEW_Confusion_to_ContingencyTable) {
-	TURN_EACH_INTO_ONE (Confusion)
+	CONVERT_EACH_TO_ONE (Confusion)
 		autoContingencyTable result = Confusion_to_ContingencyTable (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /*************** ContingencyTable *********************************/
@@ -392,9 +392,9 @@ FORM (NEW_ContingencyTable_to_Configuration_ca, U"ContingencyTable: To Configura
 		RADIOBUTTON (U"row points and column points symmetric")
 	OK
 DO
-	TURN_EACH_INTO_ONE (ContingencyTable)
+	CONVERT_EACH_TO_ONE (ContingencyTable)
 		autoConfiguration result = ContingencyTable_to_Configuration_ca (me, numberOfDimensions, scalingType);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (REAL_ContingencyTable_chisqProbability) {
@@ -421,9 +421,9 @@ FORM (NEW_Correlation_to_Configuration, U"Correlation: To Configuration", nullpt
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Correlation)
+	CONVERT_EACH_TO_ONE (Correlation)
 		autoConfiguration result = Correlation_to_Configuration (me, numberOfDimensions);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 
@@ -437,9 +437,9 @@ FORM (NEW_Similarity_to_Dissimilarity, U"Similarity: To Dissimilarity", U"Simila
 	REAL (maximumDissimilarity, U"Maximum dissimilarity", U"0.0 (= from data)")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Similarity)
+	CONVERT_EACH_TO_ONE (Similarity)
 		autoDissimilarity result = Similarity_to_Dissimilarity (me, maximumDissimilarity);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /**************** Dissimilarity ***************************************/
@@ -475,39 +475,39 @@ FORM (NEW1_Dissimilarity_Configuration_kruskal, U"Dissimilarity & Configuration:
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Configuration)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		autoConfiguration result = Dissimilarity_Configuration_kruskal (me, you, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_kruskal")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_kruskal")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_absolute_mds, U"Dissimilarity & Configuration: To Configuration (absolute mds)", U"Dissimilarity & Configuration: To Configuration (absolute mds)...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Configuration)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_absolute")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_ratio_mds, U"Dissimilarity & Configuration: To Configuration (ratio mds)", U"Dissimilarity & Configuration: To Configuration (ratio mds)...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Configuration)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_ratio")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_ratio")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_interval_mds, U"Dissimilarity & Configuration: To Configuration (interval mds)", U"Dissimilarity & Configuration: To Configuration (interval mds)...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Configuration)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_interval")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_interval")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_monotone_mds, U"Dissimilarity & Configuration: To Configuration (monotone mds)", U"Dissimilarity & Configuration: To Configuration (monotone mds)...") {
@@ -515,10 +515,10 @@ FORM (NEW1_Dissimilarity_Configuration_monotone_mds, U"Dissimilarity & Configura
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Configuration)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, nullptr, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_monotone")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_monotone")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_ispline_mds, U"Dissimilarity & Configuration: To Configuration (i-spline mds)", U"Dissimilarity & Configuration: To Configuration (i-spline mds)...") {
@@ -528,40 +528,40 @@ FORM (NEW1_Dissimilarity_Configuration_ispline_mds, U"Dissimilarity & Configurat
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Configuration)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, nullptr, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_ispline")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_ispline")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_absolute_mds, U"Dissimilarity & Configuration & Weight: To Configuration (absolute mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_w_absolute")
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_w_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ratio_mds, U"Dissimilarity & Configuration & Weight: To Configuration (ratio mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_w_ratio")
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_w_ratio")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_interval_mds, U"Dissimilarity & Configuration & Weight: To Configuration (interval mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_w_interval")
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_w_interval")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Configuration & Weight: To Configuration (monotone mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -569,10 +569,10 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Co
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, him, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_sw_monotone")
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_sw_monotone")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Configuration & Weight: To Configuration (i-spline mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -582,10 +582,10 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Co
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, him, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_sw_ispline")
+	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_sw_ispline")
 }
 
 FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",  U"Dissimilarity & Configuration: get stress") {
@@ -754,9 +754,9 @@ FORM (NEW_Dissimilarity_to_Configuration_kruskal, U"Dissimilarity: To Configurat
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		autoConfiguration result = Dissimilarity_to_Configuration_kruskal (me, numberOfDimensions, distanceMetric, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_absolute_mds, U"Dissimilarity: To Configuration (absolute mds)", U"Dissimilarity: To Configuration (absolute mds)...") {
@@ -765,10 +765,10 @@ FORM (NEW_Dissimilarity_to_Configuration_absolute_mds, U"Dissimilarity: To Confi
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_absolute_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress); 
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_absolute")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_absolute")
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_ratio_mds, U"Dissimilarity: To Configuration (ratio mds)", U"Dissimilarity: To Configuration (ratio mds)...") {
@@ -777,10 +777,10 @@ FORM (NEW_Dissimilarity_to_Configuration_ratio_mds, U"Dissimilarity: To Configur
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_ratio_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_ratio")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ratio")
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_interval_mds, U"Dissimilarity: To Configuration (interval mds)", U"Dissimilarity: To Configuration (interval mds)...") {
@@ -789,10 +789,10 @@ FORM (NEW_Dissimilarity_to_Configuration_interval_mds, U"Dissimilarity: To Confi
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_interval_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_interval")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_interval")
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_monotone_mds, U"Dissimilarity: To Configuration (monotone mds)", U"Dissimilarity: To Configuration (monotone mds)...") {
@@ -802,10 +802,10 @@ FORM (NEW_Dissimilarity_to_Configuration_monotone_mds, U"Dissimilarity: To Confi
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance, maximumNumberOfIterations, numberOfRepetitions)	
 	OK
 DO
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_monotone_mds (me, nullptr, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_monotone")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_monotone")
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_ispline_mds, U"Dissimilarity: To Configuration (i-spline mds)", U"Dissimilarity: To Configuration (i-spline mds)...") {
@@ -819,10 +819,10 @@ FORM (NEW_Dissimilarity_to_Configuration_ispline_mds, U"Dissimilarity: To Config
 DO
 	Melder_require (order > 0 || numberOfInteriorKnots > 0,
 		U"Order-zero spline must at least have 1 interior knot.");
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_ispline_mds (me, nullptr, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_ispline")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ispline")
 }
 
 FORM (NEW1_Dissimilarity_Weight_ispline_mds, U"Dissimilarity & Weight: To Configuration (i-spline mds)", U"Dissimilarity & Weight: To Configuration (i-spline mds)...") {
@@ -834,12 +834,12 @@ FORM (NEW1_Dissimilarity_Weight_ispline_mds, U"Dissimilarity & Weight: To Config
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Weight)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
 		Melder_require (order > 0 || numberOfInteriorKnots > 0,
 			U"Order-zero spline must at least have 1 interior knot.");
 		autoConfiguration result = Dissimilarity_Weight_ispline_mds (me, you, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_ispline")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_ispline")
 }
 
 FORM (NEW1_Dissimilarity_Weight_absolute_mds, U"Dissimilarity & Weight: To Configuration (absolute mds)", U"Dissimilarity & Weight: To Configuration (absolute mds)...") {
@@ -848,10 +848,10 @@ FORM (NEW1_Dissimilarity_Weight_absolute_mds, U"Dissimilarity & Weight: To Confi
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Weight)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_absolute_mds (me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_absolute")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Weight_ratio_mds, U"Dissimilarity & Weight: To Configuration (ratio mds)", U"Dissimilarity & Weight: To Configuration (ratio mds)...") {
@@ -860,10 +860,10 @@ FORM (NEW1_Dissimilarity_Weight_ratio_mds, U"Dissimilarity & Weight: To Configur
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Weight)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_ratio_mds (me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_absolute")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Weight_interval_mds, U"Dissimilarity & Weight: To Configuration (interval mds)", U"Dissimilarity & Weight: To Configuration (interval mds)...") {
@@ -872,10 +872,10 @@ FORM (NEW1_Dissimilarity_Weight_interval_mds, U"Dissimilarity & Weight: To Confi
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Weight)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_interval_mds (me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_absolute")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Weight_monotone_mds, U"Dissimilarity & Weight: To Configuration (monotone mds)", U"Dissimilarity & Weight: To Configuration (monotone mds)...") {
@@ -885,31 +885,31 @@ FORM (NEW1_Dissimilarity_Weight_monotone_mds, U"Dissimilarity & Weight: To Confi
 	praat_Dissimilarity_to_Configuration_commonFields(tolerance,maximumNumberOfIterations,numberOfRepetitions)	
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Weight)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Weight_monotone_mds (me, you, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_monotone")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_monotone")
 }
 
 FORM (NEW_Dissimilarity_to_Distance, U"Dissimilarity: To Distance", U"Dissimilarity: To Distance...") {
 	BOOLEAN (scale, U"Scale (additive constant)", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		autoDistance result = Dissimilarity_to_Distance (me, scale ? kMDS_AnalysisScale::ORDINAL : kMDS_AnalysisScale::ABSOLUTE_);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Dissimilarity_to_Weight) {
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		autoWeight result = Dissimilarity_to_Weight (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Dissimilarity_to_MDSVec) {
-	TURN_EACH_INTO_ONE (Dissimilarity)
+	CONVERT_EACH_TO_ONE (Dissimilarity)
 		autoMDSVec result = Dissimilarity_to_MDSVec (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /************************* Distance(s) ***************************************/
@@ -918,15 +918,15 @@ FORM (NEW_Distance_to_ScalarProduct, U"Distance: To ScalarProduct", U"Distance: 
 	BOOLEAN (scaleSumOfSquares, U"Make sum of squares equal 1.0", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Distance)
+	CONVERT_EACH_TO_ONE (Distance)
 		autoScalarProduct result = Distance_to_ScalarProduct (me, scaleSumOfSquares);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Distance_to_Dissimilarity) {
-	TURN_EACH_INTO_ONE (Distance)
+	CONVERT_EACH_TO_ONE (Distance)
 		autoDissimilarity result = Distance_to_Dissimilarity (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
@@ -1067,18 +1067,18 @@ FORM (NEW_Distance_to_Configuration_torsca, U"Distance: To Configuration (torsca
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Distance)
+	CONVERT_EACH_TO_ONE (Distance)
 		autoConfiguration result = Distance_to_Configuration_torsca (me, numberOfDimensions);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_torsca")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_torsca")
 }
 
 FORM (NEW1_Dissimilarity_Distance_monotoneRegression, U"Dissimilarity & Distance: Monotone regression", nullptr) {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Dissimilarity, Distance)
+	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Distance)
 		autoDistance result = Dissimilarity_Distance_monotoneRegression (me, you, tiesHandling);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Draw Shepard diagram", nullptr) {
@@ -1119,9 +1119,9 @@ FORM (NEW_Covariance_to_Configuration, U"Covariance: To Configuration", nullptr)
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Covariance)
+	CONVERT_EACH_TO_ONE (Covariance)
 		autoConfiguration result = Covariance_to_Configuration (me, numberOfDimensions);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /********* Procrustes ***************************/
@@ -1139,51 +1139,51 @@ DIRECT (REAL_Procrustes_getScale) {
 /********* Casts from & to TableOfReal ***************************/
 
 DIRECT (NEW_TableOfReal_to_Dissimilarity) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoDissimilarity result = TableOfReal_to_Dissimilarity (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Similarity) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoSimilarity result = TableOfReal_to_Similarity (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Distance) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_to_Distance (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Salience) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoSalience result = TableOfReal_to_Salience (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Weight) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoWeight result = TableOfReal_to_Weight (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_ScalarProduct) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoScalarProduct result = TableOfReal_to_ScalarProduct (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_Configuration) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoConfiguration result = TableOfReal_to_Configuration (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_TableOfReal_to_ContingencyTable) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoContingencyTable result = TableOfReal_to_ContingencyTable (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /********************** TableOfReal ***************************************/
@@ -1252,9 +1252,9 @@ DIRECT (MODIFY_TableOfReal_standardizeColumns) {
 }
 
 DIRECT (NEW_TableOfReal_to_Confusion) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoConfusion result = TableOfReal_to_Confusion (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 static void praat_AffineTransform_init (ClassInfo klas) {

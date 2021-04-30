@@ -67,9 +67,9 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 END_WITH_NEW_DATA }
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
-	TURN_EACH_INTO_ONE (ExperimentMFC)
+	CONVERT_EACH_TO_ONE (ExperimentMFC)
 		autoResultsMFC result = ExperimentMFC_extractResults (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - RESULTS_MFC
@@ -103,27 +103,27 @@ DO
 }
 
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
-	TURN_TWO_INTO_ONE (ResultsMFC)
+	CONVERT_TWO_TO_ONE (ResultsMFC)
 		autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (me, you);
-	TURN_TWO_INTO_ONE_END (your name.get(), U"_shared")
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_shared")
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {
-	TURN_EACH_INTO_ONE (ResultsMFC)
+	CONVERT_EACH_TO_ONE (ResultsMFC)
 		autoCategories result = ResultsMFC_to_Categories_stimuli (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_responses) {
-	TURN_EACH_INTO_ONE (ResultsMFC)
+	CONVERT_EACH_TO_ONE (ResultsMFC)
 		autoCategories result = ResultsMFC_to_Categories_responses (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_ResultsMFCs_to_Table) {
-	CONVERT_LIST (ResultsMFC)
+	COMBINE_ALL_TO_ONE (ResultsMFC)
 		autoTable result = ResultsMFCs_to_Table (& list);
-	CONVERT_LIST_END (U"allResults")
+	COMBINE_ALL_TO_ONE_END (U"allResults")
 }
 
 // MARK: - buttons
