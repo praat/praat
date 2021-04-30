@@ -318,15 +318,15 @@ DO
 }
 
 DIRECT (NEW_EEG_MixingMatrix_to_EEG_unmix) {
-	TURN_ONE_AND_ONE_INTO_ONE (EEG, MixingMatrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (EEG, MixingMatrix)
 		autoEEG result = EEG_MixingMatrix_to_EEG_unmix (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_EEG_MixingMatrix_to_EEG_mix) {
-	TURN_ONE_AND_ONE_INTO_ONE (EEG, MixingMatrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (EEG, MixingMatrix)
 		autoEEG result = EEG_MixingMatrix_to_EEG_mix (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - EEG & TextGrid
@@ -692,10 +692,10 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (ERPTier, Table)
+	CONVERT_ONE_AND_ONE_TO_ONE (ERPTier, Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
 		autoERPTier result = ERPTier_extractEventsWhereColumn_number (me, you, columnNumber, (kMelder_number) ___is___, ___theNumber);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", nullptr) {
@@ -704,10 +704,10 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where c
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (ERPTier, Table)
+	CONVERT_ONE_AND_ONE_TO_ONE (ERPTier, Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
 		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, ___, ___theText);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - file recognizers

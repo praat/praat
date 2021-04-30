@@ -104,26 +104,26 @@ FORM (NEW1_IntervalTier_PointProcess_startToCentre, U"From start to centre", U"I
 	REAL (phase, U"Phase (0-1)", U"0.5")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (IntervalTier, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (IntervalTier, PointProcess)
 		autoPointProcess result = IntervalTier_PointProcess_startToCentre (me, you, phase);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get(), U"_", Melder_iround (100.0 * phase));
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get(), U"_", Melder_iround (100.0 * phase));
 }
 
 FORM (NEW1_IntervalTier_PointProcess_endToCentre, U"From end to centre", U"IntervalTier & PointProcess: End to centre...") {
 	REAL (phase, U"Phase (0-1)", U"0.5")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (IntervalTier, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (IntervalTier, PointProcess)
 		autoPointProcess result = IntervalTier_PointProcess_endToCentre (me, you, phase);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get(), U"_", Melder_iround (100.0 * phase));
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get(), U"_", Melder_iround (100.0 * phase));
 }
 
 // MARK: - LABEL (obsolete)
 
 DIRECT (NEW1_Label_Sound_to_TextGrid) {
-	TURN_ONE_AND_ONE_INTO_ONE (Label, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (Label, Sound)
 		autoTextGrid result = Label_Function_to_TextGrid (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get())
 }
 
 DIRECT (HINT_Label_Sound_to_TextGrid) {
@@ -463,9 +463,9 @@ FORM (NEW1_Pitch_TextTier_to_PitchTier, U"Pitch & TextTier to PitchTier", U"Pitc
 		RADIOBUTTON (U"interpolate")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Pitch, TextTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Pitch, TextTier)
 		autoPitchTier result = Pitch_AnyTier_to_PitchTier (me, you->asAnyTier(), unvoicedStrategy);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - SOUND & TEXTGRID
@@ -487,10 +487,10 @@ FORM (NEW1_TextGrid_Sound_extractAllIntervals, U"TextGrid & Sound: Extract all i
 	BOOLEAN (preserveTimes, U"Preserve times", false)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (TextGrid, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractAllIntervals (me, you, tierNumber, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
-	TURN_ONE_AND_ONE_INTO_ONE_END (U"dummy")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (U"dummy")
 }
 
 FORM (NEW1_TextGrid_Sound_extractNonemptyIntervals, U"TextGrid & Sound: Extract non-empty intervals", nullptr) {
@@ -498,10 +498,10 @@ FORM (NEW1_TextGrid_Sound_extractNonemptyIntervals, U"TextGrid & Sound: Extract 
 	BOOLEAN (preserveTimes, U"Preserve times", false)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (TextGrid, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractNonemptyIntervals (me, you, tierNumber, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
-	TURN_ONE_AND_ONE_INTO_ONE_END (U"dummy")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (U"dummy")
 }
 
 FORM (NEW1_TextGrid_Sound_extractIntervals, U"TextGrid & Sound: Extract intervals", nullptr) {
@@ -510,11 +510,11 @@ FORM (NEW1_TextGrid_Sound_extractIntervals, U"TextGrid & Sound: Extract interval
 	SENTENCE (labelText, U"Label text", U"")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (TextGrid, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractIntervalsWhere (me, you,
 			tierNumber, kMelder_string::EQUAL_TO, labelText, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
-	TURN_ONE_AND_ONE_INTO_ONE_END (U"dummy")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (U"dummy")
 }
 
 FORM (NEW1_TextGrid_Sound_extractIntervalsWhere, U"TextGrid & Sound: Extract intervals", nullptr) {
@@ -525,11 +525,11 @@ FORM (NEW1_TextGrid_Sound_extractIntervalsWhere, U"TextGrid & Sound: Extract int
 	SENTENCE (__theText, U"...the text", U"")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (TextGrid, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractIntervalsWhere (me, you, tierNumber,
 			extractEveryIntervalWhoseLabel___, __theText, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
-	TURN_ONE_AND_ONE_INTO_ONE_END (U"dummy")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (U"dummy")
 }
 
 DIRECT (MODIFY_TextGrid_Sound_scaleTimes) {
@@ -1447,17 +1447,17 @@ DIRECT (NEW1_TextGrids_concatenate) {
 // MARK: - TEXTGRID & ANYTIER
 
 DIRECT (NEW1_TextGrid_IntervalTier_append) {
-	TURN_ONE_AND_ONE_INTO_ONE (TextGrid, IntervalTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (TextGrid, IntervalTier)
 		autoTextGrid result = Data_copy (me);
 		TextGrid_addTier_copy (result.get(), you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_TextGrid_TextTier_append) {
-	TURN_ONE_AND_ONE_INTO_ONE (TextGrid, TextTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (TextGrid, TextTier)
 		autoTextGrid result = Data_copy (me);
 		TextGrid_addTier_copy (result.get(), you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - TEXTGRID & LONGSOUND

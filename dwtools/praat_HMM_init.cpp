@@ -135,9 +135,9 @@ FORM (NEW1_GaussianMixture_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Ma
 	NATURAL (numberOfRows, U"Number of rows", U"100")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, PCA)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, PCA)
 		autoMatrix result = GaussianMixture_PCA_to_Matrix_density (me, you, xDimension, yDimension, xmin, xmax, numberOfColumns, ymin, ymax, numberOfRows);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_GaussianMixture_extractComponent, U"GaussianMixture: Extract component", nullptr) {
@@ -446,9 +446,9 @@ DIRECT (REAL_HMM_HMMObservationSequence_getPerplexity) {
 }
 
 DIRECT (NEW1_HMM_HMMObservationSequence_to_HMMStateSequence) {
-	TURN_ONE_AND_ONE_INTO_ONE (HMM, HMMObservationSequence)
+	CONVERT_ONE_AND_ONE_TO_ONE (HMM, HMMObservationSequence)
 		autoHMMStateSequence result = HMM_HMMObservationSequence_to_HMMStateSequence (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get(), U"_states")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get(), U"_states")
 }
 
 FORM (MODIFY_HMM_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...") {
@@ -517,18 +517,18 @@ FORM (NEW1_HMM_HMMObservationSequence_to_TableOfReal_bigrams, U"HMM & HMMObserva
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (HMM, HMMObservationSequence)
+	CONVERT_ONE_AND_ONE_TO_ONE (HMM, HMMObservationSequence)
 		autoTableOfReal result = HMM_HMMObservationSequence_to_TableOfReal_transitions (me, you, asProbabilities);
-	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get(), U"_m")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_m")
 }
 
 FORM (NEW1_HMM_HMMStateSequence_to_TableOfReal_bigrams, U"HMM & HMMStateSequence: To TableOfReal", nullptr) {
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (HMM, HMMStateSequence)
+	CONVERT_ONE_AND_ONE_TO_ONE (HMM, HMMStateSequence)
 		autoTableOfReal result = HMM_HMMStateSequence_to_TableOfReal_transitions (me, you, asProbabilities);
-	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get(), U"_m")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_m")
 }
 
 FORM (NEW_HMMStateSequence_to_TableOfReal_bigrams, U"HMMStateSequence: To TableOfReal", nullptr) {
@@ -619,42 +619,42 @@ FORM (NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixtur
 	BOOLEAN (info, U"Info", false)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoGaussianMixture result = GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, maximumNumberOfIterations, tolerance, info);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_ClassificationTable) {
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoClassificationTable result = GaussianMixture_TableOfReal_to_ClassificationTable (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_probabilities) {
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_probabilities (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_responsibilities) {
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_responsibilities (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_Correlation) {
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoCorrelation result = GaussianMixture_TableOfReal_to_Correlation (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)", U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)...") {
 	REAL (smoothingParameter, U"Smoothing parameter", U"1.41")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoTable result = GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (me, you, smoothingParameter);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 void praat_HMM_init ();

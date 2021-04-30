@@ -118,18 +118,18 @@ FORM (NEW1_EEG_PCA_to_EEG_principalComponents, U"EEG & PCA: To EEG (principal co
 	INTEGER (numberOfComponents, U"Number of components", U"0 (= all)")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (EEG, PCA)
+	CONVERT_ONE_AND_ONE_TO_ONE (EEG, PCA)
 		autoEEG result = EEG_PCA_to_EEG_principalComponents (me, you, numberOfComponents);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_pc")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_pc")
 }
 
 FORM (NEW1_EEG_PCA_to_EEG_whiten, U"EEG & PCA: To EEG (whiten)", U"EEG & PCA: To EEG (whiten)...") {
 	INTEGER (numberOfComponents, U"Number of components", U"0 (= all)")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (EEG, PCA)
+	CONVERT_ONE_AND_ONE_TO_ONE (EEG, PCA)
 		autoEEG result = EEG_PCA_to_EEG_whiten (me, you, numberOfComponents);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_white");
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_white");
 }
 
 FORM (NEW_EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", nullptr) {
@@ -207,18 +207,18 @@ FORM (NEW1_Sound_PCA_principalComponents, U"Sound & PCA: To Sound (principal com
 	NATURAL (numberOfComponents, U"Number of components", U"10")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, PCA)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, PCA)
 		autoSound result = Sound_PCA_principalComponents (me, you, numberOfComponents);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_pc")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_pc")
 }
 
 FORM (NEW1_Sound_PCA_whitenChannels, U"Sound & PCA: To Sound (white channels)", nullptr) {
 	NATURAL (numberOfComponents, U"Number of components", U"10")
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, PCA)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, PCA)
 		autoSound result = Sound_PCA_whitenChannels (me, you, numberOfComponents);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_white")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_white")
 }
 
 DIRECT (NEW1_CrossCorrelationTables_to_CrossCorrelationTableList) {
@@ -319,15 +319,15 @@ DO
 }
 
 DIRECT (NEW1_CrossCorrelationTable_Diagonalizer_diagonalize) {
-	TURN_ONE_AND_ONE_INTO_ONE (CrossCorrelationTable, Diagonalizer)
+	CONVERT_ONE_AND_ONE_TO_ONE (CrossCorrelationTable, Diagonalizer)
 		autoCrossCorrelationTable result = CrossCorrelationTable_Diagonalizer_diagonalize (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (me -> name.get(), U"_", you -> name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (me -> name.get(), U"_", you -> name.get())
 }
 
 DIRECT (NEW1_CrossCorrelationTableList_Diagonalizer_diagonalize) {
-	TURN_ONE_AND_ONE_INTO_ONE (CrossCorrelationTableList, Diagonalizer)
+	CONVERT_ONE_AND_ONE_TO_ONE (CrossCorrelationTableList, Diagonalizer)
 		autoCrossCorrelationTableList result = CrossCorrelationTableList_Diagonalizer_diagonalize (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (me -> name.get(), U"_", you -> name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (me -> name.get(), U"_", you -> name.get());
 }
 
 FORM (MODIFY_CrossCorrelationTableList_MixingMatrix_improveUnmixing, U"", nullptr) {
@@ -462,9 +462,9 @@ DIRECT (PLAY_Sound_MixingMatrix_play) {
 }
 
 DIRECT (NEW1_Sound_MixingMatrix_mix) {
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, MixingMatrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, MixingMatrix)
 		autoSound result = Sound_MixingMatrix_mix (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_Sound_MixingMatrix_mixPart, U"Sound & MixingMatrix: Mix part", U"MixingMatrix") {
@@ -475,15 +475,15 @@ DO
 	if (toTime < fromTime) {
 		Melder_throw (U"The start time should be lower than the end time.");
 	}
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, MixingMatrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, MixingMatrix)
 		autoSound result = Sound_MixingMatrix_mixPart (me, you, fromTime, toTime);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_Sound_MixingMatrix_unmix) {
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, MixingMatrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, MixingMatrix)
 		autoSound result = Sound_MixingMatrix_unmix (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_unmixed");
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_unmixed");
 }
 
 DIRECT (NEW_TableOfReal_to_MixingMatrix) {

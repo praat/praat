@@ -193,9 +193,9 @@ FORM (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Distributions, Transition)
+	CONVERT_ONE_AND_ONE_TO_ONE (Distributions, Transition)
 		autoTransition result = Distributions_to_Transition (me, nullptr, environment, you, greedy);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
@@ -221,9 +221,9 @@ DO
 // MARK: - DISTRIBUTIONS & TRANSITION
 
 DIRECT (NEW1_Distributions_Transition_map) {
-	TURN_ONE_AND_ONE_INTO_ONE (Distributions, Transition)
+	CONVERT_ONE_AND_ONE_TO_ONE (Distributions, Transition)
 		autoDistributions result = Distributions_Transition_map (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (U"surface")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (U"surface")
 }
 
 // MARK: - EXCITATION
@@ -606,23 +606,23 @@ DO
 // MARK: - FORMANT & POINTPROCESS
 
 DIRECT (NEW1_Formant_PointProcess_to_FormantTier) {
-	TURN_ONE_AND_ONE_INTO_ONE (Formant, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Formant, PointProcess)
 		autoFormantTier result = Formant_PointProcess_to_FormantTier (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - FORMANT & SOUND
 
 DIRECT (NEW1_Sound_Formant_filter) {
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, Formant)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Formant)
 		autoSound result = Sound_Formant_filter (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 DIRECT (NEW1_Sound_Formant_filter_noscale) {
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, Formant)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Formant)
 		autoSound result = Sound_Formant_filter_noscale (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 // MARK: - HARMONICITY
@@ -936,9 +936,9 @@ DIRECT (REAL_Pitch_Intensity_getMeanAbsoluteSlope) {
 // MARK: - INTENSITY & POINTPROCESS
 
 DIRECT (NEW1_Intensity_PointProcess_to_IntensityTier) {
-	TURN_ONE_AND_ONE_INTO_ONE (Intensity, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Intensity, PointProcess)
 		autoIntensityTier result = Intensity_PointProcess_to_IntensityTier (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - INTERVALTIER, the remainder is in praat_TextGrid_init.cpp
@@ -1370,9 +1370,9 @@ DIRECT (MODIFY_Manipulation_replaceOriginalSound) {
 // MARK: - MANIPULATION & TEXTTIER
 
 DIRECT (NEW1_Manipulation_TextTier_to_Manipulation) {
-	TURN_ONE_AND_ONE_INTO_ONE (Manipulation, TextTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Manipulation, TextTier)
 		autoManipulation result = Manipulation_AnyTier_to_Manipulation (me, reinterpret_cast <AnyTier> (you));
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - PARAMCURVE
@@ -1981,31 +1981,31 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
 }
 
 DIRECT (NEW1_Pitch_PitchTier_to_Pitch) {
-	TURN_ONE_AND_ONE_INTO_ONE (Pitch, PitchTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Pitch, PitchTier)
 		autoPitch result = Pitch_PitchTier_to_Pitch (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_stylized");
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_stylized");
 }
 
 // MARK: - PITCH & POINTPROCESS
 
 DIRECT (NEW1_Pitch_PointProcess_to_PitchTier) {
-	TURN_ONE_AND_ONE_INTO_ONE (Pitch, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Pitch, PointProcess)
 		autoPitchTier result = Pitch_PointProcess_to_PitchTier (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
 }
 
 // MARK: - PITCH & SOUND
 
 DIRECT (NEW1_Sound_Pitch_to_Manipulation) {
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, Pitch)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
 		autoManipulation result = Sound_Pitch_to_Manipulation (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (your name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get());
 }
 
 DIRECT (NEW1_Sound_Pitch_to_PointProcess_cc) {
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, Pitch)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
 		autoPointProcess result = Sound_Pitch_to_PointProcess_cc (me, you);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
@@ -2013,9 +2013,9 @@ FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (
 	BOOLEAN (includeMinima, U"Include minima", false)
 	OK
 DO
-	TURN_ONE_AND_ONE_INTO_ONE (Sound, Pitch)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
 		autoPointProcess result = Sound_Pitch_to_PointProcess_peaks (me, you, includeMaxima, includeMinima);
-	TURN_ONE_AND_ONE_INTO_ONE_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - POLYGON
