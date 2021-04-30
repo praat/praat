@@ -94,9 +94,9 @@ FORM (REAL_GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get prob
 	SENTENCE (position_string, U"Position", U"100.0 300.0")
 	OK
 DO
-	NUMBER_ONE (GaussianMixture)
+	QUERY_ONE_FOR_REAL (GaussianMixture)
 		double result = GaussianMixture_getProbabilityAtPosition_string (me, position_string);
-	NUMBER_ONE_END (U" (= probability at position ", position_string, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability at position ", position_string, U")")
 }
 
 FORM (MODIFY_GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
@@ -303,10 +303,10 @@ FORM (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"H
 	NATURAL (toState, U"To state number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		Melder_require (fromState <= my numberOfStates && toState <= my numberOfStates, U"State number(s) too high.");
 		double result = my transitionProbs [fromState] [toState];
-	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
+	QUERY_ONE_FOR_REAL_END (U" : [ ", fromState, U", ", toState, U" ]")
 }
 
 FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
@@ -314,21 +314,21 @@ FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: 
 	NATURAL (symbolIndex, U"Symbol index", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		Melder_require (fromState <= my numberOfStates, U"State number too high.");
 		Melder_require (symbolIndex <= my numberOfObservationSymbols, U"Symbol number too high.");
 		double result = my emissionProbs[fromState][symbolIndex];
-	NUMBER_ONE_END (U" : [ ", fromState, U", ", symbolIndex, U" ]")
+	QUERY_ONE_FOR_REAL_END (U" : [ ", fromState, U", ", symbolIndex, U" ]")
 }
 
 FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		double result = my initialStateProbs [stateNumber];
-	NUMBER_ONE_END (U" : [ ", stateNumber, U" ]")
+	QUERY_ONE_FOR_REAL_END (U" : [ ", stateNumber, U" ]")
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being in state at time",
@@ -337,9 +337,9 @@ FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getProbabilityAtTimeBeingInState (me, timeIndex, stateNumber);
-	NUMBER_ONE_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" at time ", timeIndex)
+	QUERY_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" at time ", timeIndex)
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probability being at time in state emitting symbol", U"HMM: Get p (time, state, symbol)...") {
@@ -348,9 +348,9 @@ FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probab
 	NATURAL (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (me, timeIndex, stateNumber, symbolNumber);
-	NUMBER_ONE_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" emitting symbol ", symbolNumber, U" at time ", timeIndex)
+	QUERY_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" emitting symbol ", symbolNumber, U" at time ", timeIndex)
 }
 
 FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying in state", U"HMM: Get probability staying in state...") {
@@ -358,9 +358,9 @@ FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying
 	NATURAL (numberOfTimeUnits, U"Number of time units", U"2")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getProbabilityOfStayingInState (me, stateNumber, numberOfTimeUnits);
-	NUMBER_ONE_END (U"(probability of staying in state)")
+	QUERY_ONE_FOR_REAL_END (U"(probability of staying in state)")
 }
 
 FORM (REAL_HMM_getExpectedDurationInState, U"HMM: Get expected value of duration in state",
@@ -368,9 +368,9 @@ FORM (REAL_HMM_getExpectedDurationInState, U"HMM: Get expected value of duration
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getExpectedValueOfDurationInState (me, stateNumber);
-	NUMBER_ONE_END (U" time units")
+	QUERY_ONE_FOR_REAL_END (U" time units")
 }
 
 FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {

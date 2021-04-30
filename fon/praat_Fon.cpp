@@ -252,9 +252,9 @@ DO
 // MARK: Query
 
 DIRECT (REAL_Excitation_getLoudness) {
-	NUMBER_ONE (Excitation)
+	QUERY_ONE_FOR_REAL (Excitation)
 		double result = Excitation_getLoudness (me);
-	NUMBER_ONE_END (U" sones")
+	QUERY_ONE_FOR_REAL_END (U" sones")
 }
 
 // MARK: Modify
@@ -388,9 +388,9 @@ FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value a
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getValueAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
@@ -401,9 +401,9 @@ FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getBandwidthAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
@@ -415,9 +415,9 @@ FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum..
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
@@ -429,9 +429,9 @@ FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum..
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
@@ -443,9 +443,9 @@ FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant:
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getTimeOfMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
@@ -457,15 +457,15 @@ FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant:
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getTimeOfMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const integer result = Formant_getMaxNumFormants (me);
-	NUMBER_ONE_END (U" (there are at most this many formants in every frame)")
+	QUERY_ONE_FOR_REAL_END (U" (there are at most this many formants in every frame)")
 }
 
 FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
@@ -474,26 +474,26 @@ FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getMean (me, formantNumber, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const integer result = Formant_getMinNumFormants (me);
-	NUMBER_ONE_END (U" (there are at least this many formants in every frame)");
+	QUERY_ONE_FOR_REAL_END (U" (there are at least this many formants in every frame)");
 }
 
 FORM (INTEGER_Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		if (frameNumber > my nx)
 			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
 		const integer result = my frames [frameNumber]. numberOfFormants;
-	NUMBER_ONE_END (U" formants")
+	QUERY_ONE_FOR_REAL_END (U" formants")
 }
 
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
@@ -503,9 +503,9 @@ FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
@@ -515,9 +515,9 @@ FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth"
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
@@ -526,9 +526,9 @@ FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nul
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 // MARK: Modify
@@ -652,72 +652,72 @@ FORM (REAL_Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: G
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Harmonicity_getMean (me, fromTime, toTime);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Harmonicity_getStandardDeviation (me, fromTime, toTime);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
 	praat_TimeVector_INTERPOLATED_VALUE (time, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getValueAtX (me, time, 1, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...") {
 	INTEGER (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 // MARK: Modify
@@ -769,54 +769,54 @@ FORM (REAL_Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get v
 	praat_TimeVector_INTERPOLATED_VALUE (time, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getValueAtX (me, time, 1, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get value in frame...") {
 	INTEGER (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Intensity_getQuantile, U"Intensity: Get quantile", 0) {
@@ -824,18 +824,18 @@ FORM (REAL_Intensity_getQuantile, U"Intensity: Get quantile", 0) {
 	REAL (quantile, U"Quantile (0-1)", U"0.50")
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Intensity_getQuantile (me, fromTime, toTime, quantile);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, 0, true);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
@@ -846,18 +846,18 @@ FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
 		RADIOBUTTON (U"dB")
 	OK
 DO_ALTERNATIVE (REAL_old_Intensity_getMean)
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, averagingMethod, true);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"Intensity: Get standard deviation...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getStandardDeviation (me, fromTime, toTime, 1);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 // MARK: Modify
@@ -1011,39 +1011,39 @@ DO
 }
 
 DIRECT (REAL_Ltas_getLowestFrequency) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = my xmin;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Ltas_getHighestFrequency) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = my xmax;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Ltas_getBinWidth) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = my dx;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...") {
 	NATURAL (binNumber, U"Bin number", U"1")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_indexToX (me, binNumber);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
 	REAL (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_xToIndex (me, frequency);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
@@ -1053,9 +1053,9 @@ FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" hertz");
+	QUERY_ONE_FOR_REAL_END (U" hertz");
 }
 
 FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
@@ -1065,9 +1065,9 @@ FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" hertz");
+	QUERY_ONE_FOR_REAL_END (U" hertz");
 }
 
 FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
@@ -1081,7 +1081,7 @@ FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		if (environmentMin >= peakMin)
 			Melder_throw (U"The beginning of the environment must lie before the peak.");
 		if (peakMin >= peakMax)
@@ -1089,7 +1089,7 @@ DO
 		if (environmentMax <= peakMax)
 			Melder_throw (U"The end of the environment must lie after the peak.");
 		double result = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax, peakMin, peakMax, averagingMethod);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
@@ -1099,9 +1099,9 @@ FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getMaximum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
@@ -1113,10 +1113,10 @@ FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_getMean_standardUnit (me, fromFrequency, toFrequency,
 				0, averagingMethod, false);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
@@ -1126,15 +1126,15 @@ FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getMinimum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (INTEGER_Ltas_getNumberOfBins) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const integer result = my nx;
-	NUMBER_ONE_END (U" bins")
+	QUERY_ONE_FOR_REAL_END (U" bins")
 }
 
 FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
@@ -1148,9 +1148,9 @@ FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Ltas_getSlope (me, lowBandFrom, lowBandTo, highBandFrom, highBandTo, averagingMethod);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...") {
@@ -1162,13 +1162,13 @@ FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: G
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_getStandardDeviation_standardUnit (me, fromFrequency, toFrequency,
 			0,   // level (irrelevant)
 			averagingMethod,
 			false   // interpolate (don't)
 		);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
@@ -1177,21 +1177,21 @@ FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at fr
 			U"Interpolation", kVector_valueInterpolation :: NEAREST)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getValueAtX (me, frequency,
 			1,   // level
 			valueInterpolationType
 		);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...") {
 	INTEGER (binNumber, U"Bin number", U"100")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = binNumber < 1 || binNumber > my nx ? undefined : my z [1] [binNumber];
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (HELP_Ltas_help) {
@@ -1400,9 +1400,9 @@ DIRECT (HELP_ParamCurve_help) {
 // MARK: - PITCH
 
 DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		integer result = Pitch_countVoicedFrames (me);
-	NUMBER_ONE_END (U" voiced frames")
+	QUERY_ONE_FOR_REAL_END (U" voiced frames")
 }
 
 DIRECT (INFO_Pitch_difference) {
@@ -1557,10 +1557,10 @@ FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
@@ -1571,10 +1571,10 @@ FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
@@ -1582,10 +1582,10 @@ FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Pitch_getMean (me, fromTime, toTime, unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
@@ -1596,19 +1596,19 @@ FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 		RADIOBUTTON (U"ERB")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double slope;
 		const integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 			(me, & slope);
 		const double result = ( nVoiced < 2 ? undefined : slope );
-	NUMBER_ONE_END (U" ", ( unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB" ), U"/s");
+	QUERY_ONE_FOR_REAL_END (U" ", ( unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB" ), U"/s");
 }
 
 DIRECT (REAL_Pitch_getMeanAbsSlope_noOctave) {
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result;
 		(void) Pitch_getMeanAbsSlope_noOctave (me, & result);
-	NUMBER_ONE_END (U" semitones/s")
+	QUERY_ONE_FOR_REAL_END (U" semitones/s")
 }
 
 FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
@@ -1617,10 +1617,10 @@ FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
@@ -1639,7 +1639,7 @@ DO
 		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
 		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
 		kPitch_unit::ERB;
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		const double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
 		conststring32 unitText =
 			unit == kPitch_unit::HERTZ ? U"Hz" :
@@ -1647,7 +1647,7 @@ DO
 			unit == kPitch_unit::LOG_HERTZ ? U"logHz" :
 			unit == kPitch_unit::SEMITONES_1 ? U"semitones" :
 			U"ERB";
-	NUMBER_ONE_END (U" ", unitText)
+	QUERY_ONE_FOR_REAL_END (U" ", unitText)
 }
 
 FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
@@ -1658,9 +1658,9 @@ FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		const double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
@@ -1671,9 +1671,9 @@ FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		const double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
@@ -1684,10 +1684,10 @@ FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 	
 FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
@@ -1695,10 +1695,10 @@ FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get val
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, (int) unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 DIRECT (HELP_Pitch_help) {
@@ -2191,9 +2191,9 @@ FORM (REAL_Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)
 	REAL (frequency, U"Frequency (Hz)", U"1000")
 	OK
 DO
-	NUMBER_ONE (Spectrogram)
+	QUERY_ONE_FOR_REAL (Spectrogram)
 		const double result = Matrix_getValueAtXY (me, time, frequency);
-	NUMBER_ONE_END (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)")
+	QUERY_ONE_FOR_REAL_END (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)")
 }
 
 DIRECT (HELP_Spectrogram_help) {
@@ -2304,9 +2304,9 @@ FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
 	REAL (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandDensity (me, bandFloor, bandCeiling);
-	NUMBER_ONE_END (U" Pa2 / Hz2")
+	QUERY_ONE_FOR_REAL_END (U" Pa2 / Hz2")
 }
 
 FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
@@ -2316,10 +2316,10 @@ FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density diffe
 	REAL (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandDensityDifference (me,
 				lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
@@ -2327,9 +2327,9 @@ FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
 	REAL (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandEnergy (me, bandFloor, bandCeiling);
-	NUMBER_ONE_END (U" Pa2 sec")
+	QUERY_ONE_FOR_REAL_END (U" Pa2 sec")
 }
 
 FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
@@ -2339,25 +2339,25 @@ FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy differe
 	REAL (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandEnergyDifference (me,
 				lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from frequency", nullptr) {
 	REAL (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Sampled_xToIndex (me, frequency);
-	NUMBER_ONE_END (U" (bin number as a real value)")
+	QUERY_ONE_FOR_REAL_END (U" (bin number as a real value)")
 }
 
 DIRECT (REAL_Spectrum_getBinWidth) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = my dx;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
@@ -2365,112 +2365,112 @@ FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectru
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getCentralMoment (me, moment, power);
-	NUMBER_ONE_END (U" hertz to the power ", moment)
+	QUERY_ONE_FOR_REAL_END (U" hertz to the power ", moment)
 }
 
 FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getCentreOfGravity (me, power);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
 	NATURAL (bandNumber, U"Band number", U"1")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Sampled_indexToX (me, bandNumber);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getLowestFrequency) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = my xmin;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getHighestFrequency) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = my xmax;
-	NUMBER_ONE_END (U" hertz");
+	QUERY_ONE_FOR_REAL_END (U" hertz");
 }
 
 FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullptr) {
 	NATURAL (binNumber, U"Bin number", U"100")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"Bin number should not exceed number of bins.");
 		const double result = my z [1] [binNumber];
-	NUMBER_ONE_END (U" (real value in bin ", binNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (real value in bin ", binNumber, U")")
 }
 
 FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
 	NATURAL (binNumber, U"Bin number", U"100")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
 		const double result = my z [2] [binNumber];
-	NUMBER_ONE_END (U" (imaginary value in bin ", binNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (imaginary value in bin ", binNumber, U")")
 }
 
 FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getKurtosis (me, power);
-	NUMBER_ONE_END (U" (kurtosis)")
+	QUERY_ONE_FOR_REAL_END (U" (kurtosis)")
 }
 
 FORM (REAL_Spectrum_getSoundPressureLevelOfNearestMaximum, U"Spectrum: Get sound pressure level of nearest maximum", U"Spectrum: Get sound pressure level of nearest maximum...") {
 	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
 		const double result = maximum. y;
-	NUMBER_ONE_END (U" \"dB/Hz\"")
+	QUERY_ONE_FOR_REAL_END (U" \"dB/Hz\"")
 }
 
 FORM (REAL_Spectrum_getFrequencyOfNearestMaximum, U"Spectrum: Get frequency of nearest maximum", U"Spectrum: Get frequency of nearest maximum...") {
 	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
 		const double result = maximum. x;
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const integer result = my nx;
-	NUMBER_ONE_END (U" bins")
+	QUERY_ONE_FOR_REAL_END (U" bins")
 }
 
 FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getSkewness (me, power);
-	NUMBER_ONE_END (U" (skewness)")
+	QUERY_ONE_FOR_REAL_END (U" (skewness)")
 }
 
 FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getStandardDeviation (me, power);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 // MARK: Modify
@@ -2682,9 +2682,9 @@ DIRECT (BOOLEAN_Strings_equal) {
 }
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {
-	NUMBER_ONE (Strings)
+	QUERY_ONE_FOR_REAL (Strings)
 		const integer result = my numberOfStrings;
-	NUMBER_ONE_END (U" strings")
+	QUERY_ONE_FOR_REAL_END (U" strings")
 }
 
 FORM (STRING_Strings_getString, U"Get string", nullptr) {

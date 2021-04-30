@@ -806,9 +806,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_ONE(klas)  \
+#define QUERY_ONE_FOR_REAL(klas)  \
 	FIND_ONE (klas)
-#define NUMBER_ONE_END(...)  \
+#define QUERY_ONE_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \

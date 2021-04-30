@@ -255,69 +255,69 @@ DO
 // MARK: Query
 
 DIRECT (REAL_Matrix_getLowestX) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my xmin;
-	NUMBER_ONE_END (U" (xmin)")
+	QUERY_ONE_FOR_REAL_END (U" (xmin)")
 }
 
 DIRECT (REAL_Matrix_getHighestX) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my xmax;
-	NUMBER_ONE_END (U" (xmax)")
+	QUERY_ONE_FOR_REAL_END (U" (xmax)")
 }
 
 DIRECT (REAL_Matrix_getLowestY) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my ymin;
-	NUMBER_ONE_END (U" (ymin)")
+	QUERY_ONE_FOR_REAL_END (U" (ymin)")
 }
 
 DIRECT (REAL_Matrix_getHighestY) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my ymax;
-	NUMBER_ONE_END (U" (xmax)")
+	QUERY_ONE_FOR_REAL_END (U" (xmax)")
 }
 
 DIRECT (INTEGER_Matrix_getNumberOfRows) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		integer result = my ny;
-	NUMBER_ONE_END (U" rows")
+	QUERY_ONE_FOR_REAL_END (U" rows")
 }
 
 DIRECT (INTEGER_Matrix_getNumberOfColumns) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		integer result = my nx;
-	NUMBER_ONE_END (U" columns")
+	QUERY_ONE_FOR_REAL_END (U" columns")
 }
 
 DIRECT (REAL_Matrix_getRowDistance) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my dy;
-	NUMBER_ONE_END (U" (row distance)")
+	QUERY_ONE_FOR_REAL_END (U" (row distance)")
 }
 
 DIRECT (REAL_Matrix_getColumnDistance) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my dx;
-	NUMBER_ONE_END (U" (column distance)")
+	QUERY_ONE_FOR_REAL_END (U" (column distance)")
 }
 
 FORM (REAL_Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_rowToY (me, rowNumber);
-	NUMBER_ONE_END (U" (y of row ", rowNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (y of row ", rowNumber, U")")
 }
 
 FORM (REAL_Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_columnToX (me, columnNumber);
-	NUMBER_ONE_END (U" (x of column ", columnNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (x of column ", columnNumber, U")")
 }
 
 FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
@@ -325,11 +325,11 @@ FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		if (rowNumber > my ny) Melder_throw (U"Row number should not exceed number of rows.");
 		if (columnNumber > my nx) Melder_throw (U"Column number should not exceed number of columns.");
 		double result = my z [rowNumber] [columnNumber];
-	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
 
 FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
@@ -337,31 +337,31 @@ FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
 	REAL (y, U"Y", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_getValueAtXY (me, x, y);
-	NUMBER_ONE_END (U" (at x = ", x, U" and y = ", y, U")");
+	QUERY_ONE_FOR_REAL_END (U" (at x = ", x, U" and y = ", y, U")");
 }
 
 DIRECT (REAL_Matrix_getMinimum) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = minimum;
-	NUMBER_ONE_END (U" (minimum)");
+	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
 DIRECT (REAL_Matrix_getMaximum) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = maximum;
-	NUMBER_ONE_END (U" (maximum)");
+	QUERY_ONE_FOR_REAL_END (U" (maximum)");
 }
 
 DIRECT (REAL_Matrix_getSum) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_getSum (me);
-	NUMBER_ONE_END (U" (sum)");
+	QUERY_ONE_FOR_REAL_END (U" (sum)");
 }
 
 DIRECT (NUMMAT_Matrix_getAllValues) {

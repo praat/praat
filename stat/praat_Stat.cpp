@@ -54,9 +54,9 @@ FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
 	SENTENCE (string, U"String", U"")
 	OK
 DO
-	NUMBER_ONE (Distributions)
+	QUERY_ONE_FOR_REAL (Distributions)
 		const double result = Distributions_getProbability (me, string, columnNumber);
-	NUMBER_ONE_END (U" (probability)")
+	QUERY_ONE_FOR_REAL_END (U" (probability)")
 }
 
 // MARK: Modify
@@ -124,21 +124,21 @@ DIRECT (HELP_PairDistribution_help) {
 // MARK: Query
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_maximumLikelihood) {
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		const double result = PairDistribution_getFractionCorrect_maximumLikelihood (me);
-	NUMBER_ONE_END (U" (fraction correct)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_probabilityMatching) {
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		const double result = PairDistribution_getFractionCorrect_probabilityMatching (me);
-	NUMBER_ONE_END (U" (fraction correct)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 DIRECT (INTEGER_PairDistribution_getNumberOfPairs) {
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		const integer result = my pairs.size;
-	NUMBER_ONE_END (U" pairs")
+	QUERY_ONE_FOR_REAL_END (U" pairs")
 }
 
 FORM (STRING_PairDistribution_getString1, U"Get string1", nullptr) {
@@ -163,9 +163,9 @@ FORM (REAL_PairDistribution_getWeight, U"Get weight", nullptr) {
 	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		double result = PairDistribution_getWeight (me, pairNumber);
-	NUMBER_ONE_END (U" (weight of pair ", pairNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (weight of pair ", pairNumber, U")")
 }
 
 // MARK: Modify
@@ -382,19 +382,19 @@ FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution
 	SENTENCE (columnWithDistribution, U"Column with distribution", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
 		const integer result = Table_drawRowFromDistribution (me, columnNumber);
-	NUMBER_ONE_END (U" (random row number)")
+	QUERY_ONE_FOR_REAL_END (U" (random row number)")
 }
 
 FORM (INTEGER_Table_getColumnIndex, U"Table: Get column index", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
-	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of column ", columnLabel, U")")
 }
 
 FORM (STRING_Table_getColumnLabel, U"Table: Get column label", nullptr) {
@@ -414,41 +414,41 @@ FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
 	SENTENCE (group, U"Group", U"F")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
 		const double result = Table_getGroupMean (me, column, groupColumn, group);
-	NUMBER_ONE_END (U" (mean of ", columnLabel, U" in group ", group, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U" in group ", group, U")")
 }
 
 FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getMaximum (me, columnNumber);
-	NUMBER_ONE_END (U" (maximum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (maximum of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getMean (me, columnNumber);
-	NUMBER_ONE_END (U" (mean of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getMinimum (me, columnNumber);
-	NUMBER_ONE_END (U" (minimum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (minimum of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
@@ -456,32 +456,32 @@ FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
 	POSITIVE (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getQuantile (me, columnNumber, quantile);
-	NUMBER_ONE_END (U" (", quantile, U" quantile of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (", quantile, U" quantile of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getStdev (me, columnNumber);
-	NUMBER_ONE_END (U" (standard deviation of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_Table_getNumberOfColumns) {
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer result = my numberOfColumns;
-	NUMBER_ONE_END (U" columns")
+	QUERY_ONE_FOR_REAL_END (U" columns")
 }
 
 DIRECT (INTEGER_Table_getNumberOfRows) {
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer result = my rows.size;
-	NUMBER_ONE_END (U" rows")
+	QUERY_ONE_FOR_REAL_END (U" rows")
 }
 
 FORM (REAL_Table_getValue, U"Table: Get value", nullptr) {
@@ -489,7 +489,7 @@ FORM (REAL_Table_getValue, U"Table: Get value", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		conststring32 result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
@@ -508,10 +508,10 @@ FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
 	SENTENCE (value, U"Value", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const integer result = Table_searchColumn (me, columnNumber, value);
-	NUMBER_ONE_END (U" (first row in which ", columnLabel, U" is ", value)
+	QUERY_ONE_FOR_REAL_END (U" (first row in which ", columnLabel, U" is ", value)
 }
 	
 // MARK: Statistics

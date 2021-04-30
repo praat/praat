@@ -23,9 +23,9 @@
 // MARK: Query
 
 DIRECT (REAL_Categories_getEntropy) {
-	NUMBER_ONE (Categories)
+	QUERY_ONE_FOR_REAL (Categories)
 		double result = Categories_getEntropy (me);
-	NUMBER_ONE_END (U" bits")
+	QUERY_ONE_FOR_REAL_END (U" bits")
 }
 
 // MARK: Modify
@@ -75,9 +75,9 @@ DIRECT (NEW_ExperimentMFC_extractResults) {
 // MARK: - RESULTS_MFC
 
 DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
-	NUMBER_ONE (ResultsMFC)
+	QUERY_ONE_FOR_REAL (ResultsMFC)
 		integer result = my numberOfTrials;
-	NUMBER_ONE_END (U" trials")
+	QUERY_ONE_FOR_REAL_END (U" trials")
 }
 
 FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {

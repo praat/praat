@@ -234,9 +234,9 @@ FORM (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	NATURAL (unit, U"Unit", U"1")
 	OK
 DO
-	NUMBER_ONE (FFNet)
+	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getBias (me, layer, unit);
-	NUMBER_ONE_END (U" (bias)")
+	QUERY_ONE_FOR_REAL_END (U" (bias)")
 }
 
 
@@ -246,15 +246,15 @@ FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	NATURAL (unitFrom, U"Unit from", U"1")
 	OK
 DO
-	NUMBER_ONE (FFNet)
+	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
-	NUMBER_ONE_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
+	QUERY_ONE_FOR_REAL_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
 DIRECT (REAL_FFNet_getMinimum) {
-	NUMBER_ONE (FFNet)
+	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getMinimum (me);
-	NUMBER_ONE_END (U" (minimum)");
+	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
 FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {

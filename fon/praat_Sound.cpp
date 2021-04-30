@@ -64,36 +64,36 @@ FORM (REAL_LongSound_getIndexFromTime, U"LongSound: Get sample index from time",
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (LongSound)
+	QUERY_ONE_FOR_REAL (LongSound)
 		const double result = Sampled_xToIndex (me, time);
-	NUMBER_ONE_END (U" (index at ", time, U" seconds)")
+	QUERY_ONE_FOR_REAL_END (U" (index at ", time, U" seconds)")
 }
 
 DIRECT (REAL_LongSound_getSamplePeriod) {
-	NUMBER_ONE (LongSound)
+	QUERY_ONE_FOR_REAL (LongSound)
 		const double result = my dx;
-	NUMBER_ONE_END (U" seconds");
+	QUERY_ONE_FOR_REAL_END (U" seconds");
 }
 
 DIRECT (REAL_LongSound_getSampleRate) {
-	NUMBER_ONE (LongSound)
+	QUERY_ONE_FOR_REAL (LongSound)
 		const double result = 1.0 / my dx;
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 FORM (REAL_LongSound_getTimeFromIndex, U"LongSound: Get time from sample index", U"Sound: Get time from index...") {
 	INTEGER (sampleIndex, U"Sample index", U"100")
 	OK
 DO
-	NUMBER_ONE (LongSound)
+	QUERY_ONE_FOR_REAL (LongSound)
 		const double result = Sampled_indexToX (me, sampleIndex);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (INTEGER_LongSound_getNumberOfSamples) {
-	NUMBER_ONE (LongSound)
+	QUERY_ONE_FOR_REAL (LongSound)
 		const integer result = my nx;
-	NUMBER_ONE_END (U" samples")
+	QUERY_ONE_FOR_REAL_END (U" samples")
 }
 
 DIRECT (HELP_LongSound_help) {
@@ -852,9 +852,9 @@ FORM (REAL_Sound_getAbsoluteExtremum, U"Sound: Get absolute extremum", U"Sound: 
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getAbsoluteExtremum (me, fromTime, toTime, peakInterpolationType);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getEnergy, U"Sound: Get energy", U"Sound: Get energy...") {
@@ -862,30 +862,30 @@ FORM (REAL_Sound_getEnergy, U"Sound: Get energy", U"Sound: Get energy...") {
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sound_getEnergy (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Pa2 sec")
+	QUERY_ONE_FOR_REAL_END (U" Pa2 sec")
 }
 
 DIRECT (REAL_Sound_getEnergyInAir) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sound_getEnergyInAir (me);
-	NUMBER_ONE_END (U" Joule/m2")
+	QUERY_ONE_FOR_REAL_END (U" Joule/m2")
 }
 
 FORM (REAL_Sound_getIndexFromTime, U"Get sample number from time", U"Get sample number from time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sampled_xToIndex (me, time);
-	NUMBER_ONE_END (U" (index at time ", time, U" seconds)")
+	QUERY_ONE_FOR_REAL_END (U" (index at time ", time, U" seconds)")
 }
 
 DIRECT (REAL_Sound_getIntensity_dB) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sound_getIntensity_dB (me);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Sound_getMaximum, U"Sound: Get maximum", U"Sound: Get maximum...") {
@@ -895,9 +895,9 @@ FORM (REAL_Sound_getMaximum, U"Sound: Get maximum", U"Sound: Get maximum...") {
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getMaximum (me, fromTime, toTime, peakInterpolationType);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_old_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
@@ -905,9 +905,9 @@ FORM (REAL_old_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getMean (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
@@ -916,10 +916,10 @@ FORM (REAL_Sound_getMean, U"Sound: Get mean", U"Sound: Get mean...") {
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getMean)
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (channel > my ny) channel = 1;
 		const double result = Vector_getMean (me, fromTime, toTime, channel);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getMinimum, U"Sound: Get minimum", U"Sound: Get minimum...") {
@@ -929,19 +929,19 @@ FORM (REAL_Sound_getMinimum, U"Sound: Get minimum", U"Sound: Get minimum...") {
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getMinimum (me, fromTime, toTime, peakInterpolationType);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_old_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing", U"Sound: Get nearest zero crossing...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (my ny > 1) Melder_throw (U"Cannot determine a zero crossing for a stereo sound.");
 		const double result = Sound_getNearestZeroCrossing (me, time, 1);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing", U"Sound: Get nearest zero crossing...") {
@@ -949,22 +949,22 @@ FORM (REAL_Sound_getNearestZeroCrossing, U"Sound: Get nearest zero crossing", U"
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getNearestZeroCrossing)
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (channel > my ny) channel = 1;
 		const double result = Sound_getNearestZeroCrossing (me, time, channel);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfChannels) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const integer result = my ny;
-	NUMBER_ONE_END (result == 1 ? U" channel (mono)" : result == 2 ? U" channels (stereo)" : U" channels")
+	QUERY_ONE_FOR_REAL_END (result == 1 ? U" channel (mono)" : result == 2 ? U" channels (stereo)" : U" channels")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfSamples) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const integer result = my nx;
-	NUMBER_ONE_END (U" samples")
+	QUERY_ONE_FOR_REAL_END (U" samples")
 }
 
 FORM (REAL_Sound_getPower, U"Sound: Get power", U"Sound: Get power...") {
@@ -972,15 +972,15 @@ FORM (REAL_Sound_getPower, U"Sound: Get power", U"Sound: Get power...") {
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sound_getPower (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Pa2")
+	QUERY_ONE_FOR_REAL_END (U" Pa2")
 }
 
 DIRECT (REAL_Sound_getPowerInAir) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sound_getPowerInAir (me);
-	NUMBER_ONE_END (U" Watt/m2")
+	QUERY_ONE_FOR_REAL_END (U" Watt/m2")
 }
 
 FORM (REAL_Sound_getRootMeanSquare, U"Sound: Get root-mean-square", U"Sound: Get root-mean-square...") {
@@ -988,21 +988,21 @@ FORM (REAL_Sound_getRootMeanSquare, U"Sound: Get root-mean-square", U"Sound: Get
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sound_getRootMeanSquare (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 DIRECT (REAL_Sound_getSamplePeriod) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = my dx;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (REAL_Sound_getSampleRate) {
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = 1.0 / my dx;
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 FORM (REAL_old_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"Sound: Get standard deviation...") {
@@ -1010,9 +1010,9 @@ FORM (REAL_old_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"S
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getStandardDeviation (me, fromTime, toTime, Vector_CHANNEL_AVERAGE);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"Sound: Get standard deviation...") {
@@ -1021,19 +1021,19 @@ FORM (REAL_Sound_getStandardDeviation, U"Sound: Get standard deviation", U"Sound
 	REAL (toTime, U"right Time range (s)", U"0.0 (= all)")
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getStandardDeviation)
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (channel > my ny) channel = 1;
 		const double result = Vector_getStandardDeviation (me, fromTime, toTime, channel);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getTimeFromIndex, U"Get time from sample number", U"Get time from sample number...") {
 	INTEGER (sampleNumber, U"Sample number", U"100")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Sampled_indexToX (me, sampleNumber);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (NUMVEC_Sound_listAllSampleTimes) {
@@ -1049,9 +1049,9 @@ FORM (REAL_Sound_getTimeOfMaximum, U"Sound: Get time of maximum", U"Sound: Get t
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getXOfMaximum (me, fromTime, toTime, peakInterpolationType);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Sound_getTimeOfMinimum, U"Sound: Get time of minimum", U"Sound: Get time of minimum...") {
@@ -1061,19 +1061,19 @@ FORM (REAL_Sound_getTimeOfMinimum, U"Sound: Get time of minimum", U"Sound: Get t
 			U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getXOfMinimum (me, fromTime, toTime, peakInterpolationType);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_old_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound: Get value at sample number...") {
 	INTEGER (sampleNumber, U"Sample number", U"100")
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
 				my ny == 1 ? my z [1] [sampleNumber] : 0.5 * (my z [1] [sampleNumber] + my z [2] [sampleNumber]);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound: Get value at sample number...") {
@@ -1081,11 +1081,11 @@ FORM (REAL_Sound_getValueAtIndex, U"Sound: Get value at sample number", U"Sound:
 	INTEGER (sampleNumber, U"Sample number", U"100")
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtIndex)
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (channel > my ny) channel = 1;
 		const double result = sampleNumber < 1 || sampleNumber > my nx ? undefined :
 				Sampled_getValueAtSample (me, sampleNumber, channel, 0);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_old_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
@@ -1094,9 +1094,9 @@ FORM (REAL_old_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get v
 			U"Interpolation", kVector_valueInterpolation::SINC70)
 	OK
 DO
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		const double result = Vector_getValueAtX (me, time, Vector_CHANNEL_AVERAGE, valueInterpolationType);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 FORM (REAL_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value at time...") {
@@ -1106,10 +1106,10 @@ FORM (REAL_Sound_getValueAtTime, U"Sound: Get value at time", U"Sound: Get value
 			U"Interpolation", kVector_valueInterpolation::SINC70)
 	OK
 DO_ALTERNATIVE (REAL_old_Sound_getValueAtTime)
-	NUMBER_ONE (Sound)
+	QUERY_ONE_FOR_REAL (Sound)
 		if (channel > my ny) channel = 1;
 		const double result = Vector_getValueAtX (me, time, channel, valueInterpolationType);
-	NUMBER_ONE_END (U" Pascal")
+	QUERY_ONE_FOR_REAL_END (U" Pascal")
 }
 
 DIRECT (HELP_Sound_help) {

@@ -621,9 +621,9 @@ FORM (BOOLEAN_SpellingChecker_isWordAllowed, U"Is word allowed?", U"SpellingChec
 	SENTENCE (word, U"Word", U"")
 	OK
 DO
-	NUMBER_ONE (SpellingChecker)
+	QUERY_ONE_FOR_REAL (SpellingChecker)
 		integer result = SpellingChecker_isWordAllowed (me, word);
-	NUMBER_ONE_END (result ? U" (allowed)" : U" (not allowed)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (allowed)" : U" (not allowed)")
 }
 
 FORM (STRING_SpellingChecker_nextNotAllowedWord, U"Next not allowed word?", U"SpellingChecker") {
@@ -850,9 +850,9 @@ DO
 // MARK: Query
 
 DIRECT (INTEGER_TextGrid_getNumberOfTiers) {
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		integer result = my tiers->size;
-	NUMBER_ONE_END (U" tiers")
+	QUERY_ONE_FOR_REAL_END (U" tiers")
 }
 
 inline static void pr_TextGrid_checkTierNumber (TextGrid me, integer tierNumber) {
@@ -880,10 +880,10 @@ FORM (BOOLEAN_TextGrid_isIntervalTier, U"TextGrid: Is interval tier?", nullptr) 
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		Function tier = pr_TextGrid_peekTier (me, tierNumber);
 		integer result = ( tier -> classInfo == classIntervalTier );
-	NUMBER_ONE_END (result ? U" (yes, tier " : U" (no, tier ", tierNumber,
+	QUERY_ONE_FOR_REAL_END (result ? U" (yes, tier " : U" (no, tier ", tierNumber,
 		result ? U" is an interval tier)" : U" is a point tier)")
 }
 
@@ -898,10 +898,10 @@ FORM (INTEGER_TextGrid_getNumberOfIntervals, U"TextGrid: Get number of intervals
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 		integer result = intervalTier -> intervals.size;
-	NUMBER_ONE_END (U" intervals")
+	QUERY_ONE_FOR_REAL_END (U" intervals")
 }
 
 static TextInterval pr_TextGrid_peekInterval (TextGrid me, integer tierNumber, integer intervalNumber) {
@@ -915,10 +915,10 @@ FORM (REAL_TextGrid_getStartTimeOfInterval, U"TextGrid: Get start time of interv
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
 		double result = interval -> xmin;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_TextGrid_getEndTimeOfInterval, U"TextGrid: Get end time of interval", nullptr) {
@@ -926,10 +926,10 @@ FORM (REAL_TextGrid_getEndTimeOfInterval, U"TextGrid: Get end time of interval",
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
 		double result = interval -> xmax;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (STRING_TextGrid_getLabelOfInterval, U"TextGrid: Get label of interval", nullptr) {
@@ -948,10 +948,10 @@ FORM (INTEGER_TextGrid_getIntervalAtTime, U"TextGrid: Get interval at time", nul
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 		integer result = IntervalTier_timeToIndex (intervalTier, time);
-	NUMBER_ONE_END (U" (interval number)")
+	QUERY_ONE_FOR_REAL_END (U" (interval number)")
 }
 
 FORM (INTEGER_TextGrid_getLowIntervalAtTime, U"TextGrid: Get low interval at time", nullptr) {
@@ -959,10 +959,10 @@ FORM (INTEGER_TextGrid_getLowIntervalAtTime, U"TextGrid: Get low interval at tim
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 		integer result = IntervalTier_timeToHighIndex (intervalTier, time);
-	NUMBER_ONE_END (U" (low interval)")
+	QUERY_ONE_FOR_REAL_END (U" (low interval)")
 }
 
 FORM (INTEGER_TextGrid_getHighIntervalAtTime, U"TextGrid: Get high interval at time", nullptr) {
@@ -970,10 +970,10 @@ FORM (INTEGER_TextGrid_getHighIntervalAtTime, U"TextGrid: Get high interval at t
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 		integer result = IntervalTier_timeToLowIndex (intervalTier, time);
-	NUMBER_ONE_END (U" (high interval)")
+	QUERY_ONE_FOR_REAL_END (U" (high interval)")
 }
 
 FORM (INTEGER_TextGrid_getIntervalEdgeFromTime, U"TextGrid: Get interval edge from time", nullptr) {
@@ -981,10 +981,10 @@ FORM (INTEGER_TextGrid_getIntervalEdgeFromTime, U"TextGrid: Get interval edge fr
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 		integer result = IntervalTier_hasTime (intervalTier, time);
-	NUMBER_ONE_END (U" (interval edge)")
+	QUERY_ONE_FOR_REAL_END (U" (interval edge)")
 }
 
 FORM (INTEGER_TextGrid_getIntervalBoundaryFromTime, U"TextGrid: Get interval boundary from time", nullptr) {
@@ -992,10 +992,10 @@ FORM (INTEGER_TextGrid_getIntervalBoundaryFromTime, U"TextGrid: Get interval bou
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 		integer result = IntervalTier_hasBoundary (intervalTier, time);
-	NUMBER_ONE_END (U" (interval boundary)")
+	QUERY_ONE_FOR_REAL_END (U" (interval boundary)")
 }
 
 FORM (INTEGER_TextGrid_countIntervalsWhere, U"Count intervals", U"TextGrid: Count intervals where...") {
@@ -1005,9 +1005,9 @@ FORM (INTEGER_TextGrid_countIntervalsWhere, U"Count intervals", U"TextGrid: Coun
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		integer result = TextGrid_countIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
-	NUMBER_ONE_END (U" intervals containing ", ___theText);
+	QUERY_ONE_FOR_REAL_END (U" intervals containing ", ___theText);
 }
 
 static TextTier pr_TextGrid_peekTextTier (TextGrid me, integer tierNumber) {
@@ -1021,10 +1021,10 @@ FORM (INTEGER_TextGrid_getNumberOfPoints, U"TextGrid: Get number of points", nul
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
 		integer result = textTier -> points.size;
-	NUMBER_ONE_END (U" (points")
+	QUERY_ONE_FOR_REAL_END (U" (points")
 }
 
 static TextPoint pr_TextGrid_peekPoint (TextGrid me, integer tierNumber, integer pointNumber) {
@@ -1038,10 +1038,10 @@ FORM (REAL_TextGrid_getTimeOfPoint, U"TextGrid: Get time of point", nullptr) {
 	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
 		double result = point -> number;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (STRING_TextGrid_getLabelOfPoint, U"TextGrid: Get label of point", nullptr) {
@@ -1060,10 +1060,10 @@ FORM (INTEGER_TextGrid_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
 		integer result = AnyTier_timeToLowIndex (textTier->asAnyTier(), time);
-	NUMBER_ONE_END (U" (low index)")
+	QUERY_ONE_FOR_REAL_END (U" (low index)")
 }
 
 FORM (INTEGER_TextGrid_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...") {
@@ -1071,10 +1071,10 @@ FORM (INTEGER_TextGrid_getHighIndexFromTime, U"Get high index", U"AnyTier: Get h
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
 		integer result = AnyTier_timeToHighIndex (textTier->asAnyTier(), time);
-	NUMBER_ONE_END (U" (high index)")
+	QUERY_ONE_FOR_REAL_END (U" (high index)")
 }
 
 FORM (INTEGER_TextGrid_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...") {
@@ -1082,10 +1082,10 @@ FORM (INTEGER_TextGrid_getNearestIndexFromTime, U"Get nearest index", U"AnyTier:
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
 		integer result = AnyTier_timeToNearestIndex (textTier->asAnyTier(), time);
-	NUMBER_ONE_END (U" (nearest index)")
+	QUERY_ONE_FOR_REAL_END (U" (nearest index)")
 }
 
 FORM (INTEGER_TextGrid_countPointsWhere, U"Count points", U"TextGrid: Count points where...") {
@@ -1095,9 +1095,9 @@ FORM (INTEGER_TextGrid_countPointsWhere, U"Count points", U"TextGrid: Count poin
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		integer result = TextGrid_countPointsWhere (me, tierNumber, countPointsWhoseLabel___, ___theText);
-	NUMBER_ONE_END (U" points containing ", ___theText);
+	QUERY_ONE_FOR_REAL_END (U" points containing ", ___theText);
 }
 
 FORM (INTEGER_TextGrid_countLabels, U"Count labels", U"TextGrid: Count labels...") {
@@ -1105,9 +1105,9 @@ FORM (INTEGER_TextGrid_countLabels, U"Count labels", U"TextGrid: Count labels...
 	SENTENCE (labelText, U"Label text", U"a")
 	OK
 DO
-	NUMBER_ONE (TextGrid)
+	QUERY_ONE_FOR_REAL (TextGrid)
 		integer result = TextGrid_countLabels (me, tierNumber, labelText);
-	NUMBER_ONE_END (U" labels ", labelText)
+	QUERY_ONE_FOR_REAL_END (U" labels ", labelText)
 }
 
 // MARK: Modify
@@ -1531,9 +1531,9 @@ FORM (BOOLEAN_WordList_hasWord, U"Does word occur in list?", U"WordList") {
 	SENTENCE (word, U"Word", U"")
 	OK
 DO
-	NUMBER_ONE (WordList)
+	QUERY_ONE_FOR_REAL (WordList)
 		integer result = WordList_hasWord (me, word);
-	NUMBER_ONE_END (result ? U" (present)" : U" (absent)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (present)" : U" (absent)")
 }
 
 DIRECT (NEW_WordList_to_Strings) {

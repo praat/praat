@@ -23,21 +23,21 @@
 // MARK: Query
 
 DIRECT (REAL_TimeFunction_getStartTime) {
-	NUMBER_ONE (Function)
+	QUERY_ONE_FOR_REAL (Function)
 		double result = my xmin;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (REAL_TimeFunction_getEndTime) {
-	NUMBER_ONE (Function)
+	QUERY_ONE_FOR_REAL (Function)
 		double result = my xmax;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (REAL_TimeFunction_getTotalDuration) {
-	NUMBER_ONE (Function)
+	QUERY_ONE_FOR_REAL (Function)
 		double result = my xmax - my xmin;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 // MARK: Modify
