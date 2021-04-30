@@ -365,9 +365,9 @@ FORM (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection"
 	REAL (ymax, U"Ymax", U"0.0")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, Eigen)
+	GRAPHICS_ONE_AND_ONE (FFNet, Eigen)
 		FFNet_Eigen_drawIntersection (me, you, GRAPHICS, pcx, pcy, xmin, xmax, ymin, ymax);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 } 
 
 /************************* FFNet && Categories **********************************/
@@ -395,9 +395,9 @@ FORM (GRAPHICS_FFNet_PatternList_drawActivation, U"Draw an activation", nullptr)
 	NATURAL (row, U"PatternList (row) number", U"1");
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PatternList)
+	GRAPHICS_ONE_AND_ONE (FFNet, PatternList)
 		FFNet_PatternList_drawActivation (me, you, GRAPHICS, row);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
@@ -542,9 +542,9 @@ FORM (GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw deci
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PCA)
+	GRAPHICS_ONE_AND_ONE (FFNet, PCA)
 		FFNet_Eigen_drawDecisionPlaneInEigenspace (me, you, GRAPHICS, unitNumber, layer, horizontalEigenvectorNumber, verticalEigenvectorNumber, xmin, xmax, ymin, ymax);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 /*********** PatternList & Categories **********************************/

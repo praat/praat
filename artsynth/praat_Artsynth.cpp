@@ -127,21 +127,21 @@ DO
 // MARK: - ART & SPEAKER
 
 DIRECT (GRAPHICS_Art_Speaker_draw) {
-	GRAPHICS_TWO (Art, Speaker)
+	GRAPHICS_ONE_AND_ONE (Art, Speaker)
 		Art_Speaker_draw (me, you, GRAPHICS);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (GRAPHICS_Art_Speaker_fillInnerContour) {
-	GRAPHICS_TWO (Art, Speaker)
+	GRAPHICS_ONE_AND_ONE (Art, Speaker)
 		Art_Speaker_fillInnerContour (me, you, GRAPHICS);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (GRAPHICS_Art_Speaker_drawMesh) {
-	GRAPHICS_TWO (Art, Speaker)
+	GRAPHICS_ONE_AND_ONE (Art, Speaker)
 		Art_Speaker_drawMesh (me, you, GRAPHICS);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (CONVERT_TWO_Art_Speaker_to_VocalTract) {
@@ -156,9 +156,9 @@ FORM (GRAPHICS_Artword_Speaker_draw, U"Draw Artword & Speaker", nullptr) {
 	NATURAL (numberOfSteps, U"Number of steps", U"5")
 	OK
 DO
-	GRAPHICS_TWO (Artword, Speaker)
+	GRAPHICS_ONE_AND_ONE (Artword, Speaker)
 		Artword_Speaker_draw (me, you, GRAPHICS, numberOfSteps);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Speaker: To Sound...") {

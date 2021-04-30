@@ -863,9 +863,9 @@ FORM (GRAPHICS_Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with
 	OK
 DO
 	Melder_require (categoryPosition >= 0, U"Your category position should be at least 0.");
-	GRAPHICS_TWO (Confusion, Matrix)
+	GRAPHICS_ONE_AND_ONE (Confusion, Matrix)
 		Confusion_Matrix_draw (me, you, GRAPHICS, categoryPosition, lowerLevel, xmin, xmax, ymin, ymax, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 /********************** ComplexSpectrogram *******************************************/
@@ -1606,9 +1606,9 @@ FORM (GRAPHICS_DTW_Sounds_draw, U"DTW & Sounds: Draw", U"DTW & Sounds: Draw...")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_COUPLE_AND_ONE (Sound, DTW)
+	GRAPHICS_TWO_AND_ONE (Sound, DTW)
 		DTW_Sounds_draw (him, you, me, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
-	GRAPHICS_COUPLE_AND_ONE_END
+	GRAPHICS_TWO_AND_ONE_END
 }
 
 FORM (GRAPHICS_DTW_Sounds_drawWarp_x, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
@@ -1620,9 +1620,9 @@ FORM (GRAPHICS_DTW_Sounds_drawWarp_x, U"DTW & Sounds: Draw warp (x)", U"DTW & So
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_COUPLE_AND_ONE (Sound, DTW)
+	GRAPHICS_TWO_AND_ONE (Sound, DTW)
 		DTW_Sounds_drawWarpX (him, you, me, GRAPHICS, xmin, xmax, ymin, ymax, time, garnish);
-	GRAPHICS_COUPLE_AND_ONE_END
+	GRAPHICS_TWO_AND_ONE_END
 }
 
 DIRECT (HELP_DTW_help) {
@@ -5089,9 +5089,9 @@ FORM (GRAPHICS_Polygon_Categories_draw, U"Polygon & Categories: Draw", nullptr) 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (Polygon, Categories)
+	GRAPHICS_ONE_AND_ONE (Polygon, Categories)
 		Polygon_Categories_draw (me, you, GRAPHICS, xmin, xmax, ymin, ymax, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Polygon_reverseX) {
@@ -6083,9 +6083,9 @@ FORM (GRAPHICS_Sounds_paintEnclosed, U"Sounds paint enclosed", U"Sounds: Paint e
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_COUPLE (Sound)
+	GRAPHICS_TWO (Sound)
 		Sounds_paintEnclosed (me, you, GRAPHICS, colour, xFromTime, xToTime, yFromTime, yToTime, garnish);
-	GRAPHICS_COUPLE_END
+	GRAPHICS_TWO_END
 }
 
 FORM_READ (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {

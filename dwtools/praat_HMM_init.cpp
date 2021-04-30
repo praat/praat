@@ -56,10 +56,10 @@ FORM (GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses, U"GaussianMixture 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (GaussianMixture, PCA)
+	GRAPHICS_ONE_AND_ONE (GaussianMixture, PCA)
 		GaussianMixture_PCA_drawConcentrationEllipses (me, you, GRAPHICS, numberOfSigmas, false, nullptr,
 				xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
-	GRAPHICS_TWO_END	
+	GRAPHICS_ONE_AND_ONE_END	
 }
 
 FORM (GRAPHICS_GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
@@ -119,9 +119,9 @@ FORM (GRAPHICS_GaussianMixture_PCA_drawMarginalPdf, U"GaussianMixture & PCA: Dra
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (GaussianMixture, PCA)
+	GRAPHICS_ONE_AND_ONE (GaussianMixture, PCA)
 		GaussianMixture_PCA_drawMarginalPdf (me, you, GRAPHICS, xDimension, xmin, xmax, ymin, ymax, numberOfPoints, numberOfBins, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW1_GaussianMixture_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Matrix density", U"GaussianMixture & PCA: To Matrix (density)...") {
@@ -275,9 +275,9 @@ FORM (GRAPHICS_HMM_HMMStateSequence_drawTrellis, U"HMM & Strings: Draw trellis",
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
-	GRAPHICS_TWO (HMM, HMMStateSequence)
+	GRAPHICS_ONE_AND_ONE (HMM, HMMStateSequence)
 		HMM_HMMStateSequence_drawTrellis (me, you, GRAPHICS, connect, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (GRAPHICS_HMM_drawForwardProbabilitiesIllustration) {

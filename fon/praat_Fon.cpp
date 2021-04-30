@@ -915,10 +915,10 @@ FORM (GRAPHICS_Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
 		RADIOBUTTON (U"speckles and curve")
 	OK
 DO
-	GRAPHICS_TWO (Pitch, Intensity)
+	GRAPHICS_ONE_AND_ONE (Pitch, Intensity)
 		Pitch_Intensity_draw (me, you, GRAPHICS,
 			fromFrequency, toFrequency, fromIntensity, toIntensity, garnish, drawingMethod);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (REAL_Pitch_Intensity_getMean) {
@@ -1952,10 +1952,10 @@ FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (PitchTier, Pitch)
+	GRAPHICS_ONE_AND_ONE (PitchTier, Pitch)
 		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 				lineTypeForNonperiodicIntervals, garnish, U"lines and speckles");
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
@@ -1974,10 +1974,10 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
-	GRAPHICS_TWO (PitchTier, Pitch)
+	GRAPHICS_ONE_AND_ONE (PitchTier, Pitch)
 		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 				lineTypeForNonperiodicIntervals, garnish, drawingMethod);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (NEW1_Pitch_PitchTier_to_Pitch) {
@@ -2066,9 +2066,9 @@ FORM (GRAPHICS_Polygons_drawConnection, U"Polygons: Draw connection", nullptr) {
 	POSITIVE (relativeLength, U"Relative length", U"0.9")
 	OK
 DO
-	GRAPHICS_COUPLE (Polygon)
+	GRAPHICS_TWO (Polygon)
 		Polygons_drawConnection (me, you, GRAPHICS, xmin, xmax, ymin, ymax, arrow, relativeLength);
-	GRAPHICS_COUPLE_END
+	GRAPHICS_TWO_END
 }
 
 DIRECT (HELP_Polygon_help) {
