@@ -1990,7 +1990,7 @@ FORM (NEW2_SoundSet_Table_getRandomizedPatterns, U"SoundSet & Table: Get randomi
 	NATURAL (outputSize, U"Output size (number of classes)", U"5")
 	OK
 DO
-	FIND_TWO (SoundSet, Table)
+	FIND_ONE_AND_ONE (SoundSet, Table)
 		autoPatternList inputs, outputs;
 		SoundSet_Table_getRandomizedPatterns (me, you, columnName, numberOfPatterns, inputSize, outputSize,
 				& inputs, & outputs);
