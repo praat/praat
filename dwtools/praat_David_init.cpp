@@ -3523,9 +3523,9 @@ FORM (NEW_ConstantQLogFSpectrogram_translateSpectrum, U"", nullptr) {
 	REAL (numberOfBins, U"Number of bins", U"5.0")	
 	OK
 DO
-	CONVERT_EACH (ConstantQLogFSpectrogram)
+	CONVERT_EACH_TO_ONE (ConstantQLogFSpectrogram)
 		autoConstantQLogFSpectrogram result = ConstantQLogFSpectrogram_translateSpectrum (me, fromTime, toTime, fromFrequency, numberOfBins);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 
 }
 
