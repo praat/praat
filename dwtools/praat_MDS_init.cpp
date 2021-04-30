@@ -938,7 +938,7 @@ FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configurati
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
 	OK
 DO
-	FIND_LIST (Distance)
+	FIND_ALL (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
@@ -958,7 +958,7 @@ FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (
 	BOOLEAN (showProgressInfo, U"Show progress info", false)
 	OK
 DO_ALTERNATIVE (NEWMANY_old_Distances_to_Configuration_indscal)
-	FIND_LIST (Distance)
+	FIND_ALL (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr));
@@ -990,7 +990,7 @@ FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Con
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	OK
 DO
-	FIND_ONE_AND_LIST (Configuration, Distance)
+	FIND_ONE_AND_ALL (Configuration, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_indscal ((DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult);
@@ -1037,7 +1037,7 @@ FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuratio
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	OK
 DO
-	FIND_TWO_AND_LIST (Configuration, Salience, Distance)
+	FIND_TWO_AND_ALL (Configuration, Salience, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);
@@ -1052,7 +1052,7 @@ FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)
 	BOOLEAN (wantSalienceObject, U"Salience object", false)
 	OK
 DO
-	FIND_LIST (Distance)
+	FIND_ALL (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		Melder_require (list.size > 1, U"There should me more than one Distance selected.");

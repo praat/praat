@@ -1297,77 +1297,77 @@ FORM (GRAPHICS_HorizontalMmToWorldCoordinates, U"Compute horizontal distance in 
 	REAL (distance, U"Distance (mm)", U"10.0")
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_dxMMtoWC (GRAPHICS, distance);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" (world coordinates)");
+	QUERY_GRAPHICS_FOR_REAL_END (U" (world coordinates)");
 }
 
 FORM (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", nullptr) {
 	REAL (distance, U"Distance (wc)", U"0.1")
 	OK
 DO
-	NUMBER_NONE   // TODO: do we need autoPraatPicture for any of these?
+	QUERY_GRAPHICS_FOR_REAL   // TODO: do we need autoPraatPicture for any of these?
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_dxWCtoMM (GRAPHICS, distance);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" mm")
+	QUERY_GRAPHICS_FOR_REAL_END (U" mm")
 }
 
 FORM (GRAPHICS_VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", nullptr) {
 	REAL (distance, U"Distance (mm)", U"10.0")
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_dyMMtoWC (GRAPHICS, distance);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" (world coordinates)")
+	QUERY_GRAPHICS_FOR_REAL_END (U" (world coordinates)")
 }
 
 FORM (GRAPHICS_VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", nullptr) {
 	REAL (distance, U"Distance (wc)", U"1.0")
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_dyWCtoMM (GRAPHICS, distance);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" mm")
+	QUERY_GRAPHICS_FOR_REAL_END (U" mm")
 }
 
 FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", nullptr) {
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_textWidth (GRAPHICS, text);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" (world coordinates)")
+	QUERY_GRAPHICS_FOR_REAL_END (U" (world coordinates)")
 }
 
 FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, text));
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" mm")
+	QUERY_GRAPHICS_FOR_REAL_END (U" mm")
 }
 
 FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", nullptr) {
@@ -1377,14 +1377,14 @@ FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in 
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_textWidth_ps (GRAPHICS, text, phoneticFont);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" (world coordinates)")
+	QUERY_GRAPHICS_FOR_REAL_END (U" (world coordinates)")
 }
 
 
@@ -1395,14 +1395,14 @@ FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 
 	TEXTFIELD (text, U"Text:", U"Hello world", 3)
 	OK
 DO
-	NUMBER_NONE
+	QUERY_GRAPHICS_FOR_REAL
 		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
 		const double result = Graphics_textWidth_ps_mm (GRAPHICS, text, phoneticFont);
 		Graphics_unsetInner (GRAPHICS);
-	NUMBER_NONE_END (U" mm")
+	QUERY_GRAPHICS_FOR_REAL_END (U" mm")
 }
 
 DIRECT (HELP_SearchManual_Picture) { Melder_search (); END_WITH_NEW_DATA }

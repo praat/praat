@@ -2300,7 +2300,7 @@ DO
 }
 
 DIRECT (MODIFY_Eigens_alignEigenvectors) {
-	FIND_LIST (Eigen)
+	FIND_ALL (Eigen)
 		Eigens_alignEigenvectors (& list);
 	END_WITH_NEW_DATA
 }

@@ -699,19 +699,19 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	OrderedOf<struct##klas> list; \
 	LOOP { iam_LOOP (klas); list. addItem_ref (me); }
 	
-#define FIND_TYPED_LIST(klas,listClass)  \
+#define FIND_ALL_LISTED(klas,listClass)  \
 	auto##listClass list = listClass##_create (); \
 	LOOP { iam_LOOP (klas); list -> addItem_ref (me); }
 	
-#define FIND_ONE_AND_LIST(klas1,klas2)  \
+#define FIND_ONE_AND_ALL(klas1,klas2)  \
 	OrderedOf<struct##klas2> list; klas1 me = nullptr; \
 	LOOP { if (CLASS == class##klas2) list. addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
 
-#define FIND_ONE_AND_TYPED_LIST(klas1,klas2,listClass)  \
+#define FIND_ONE_AND_ALL_LISTED(klas1,klas2,listClass)  \
 	auto##listClass list = listClass##_create (); klas1 me = nullptr; \
 	LOOP { if (CLASS == class##klas2) list -> addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
 
-#define FIND_TWO_AND_LIST(klas1,klas2,klas3)  \
+#define FIND_TWO_AND_ALL(klas1,klas2,klas3)  \
 	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas3) list. addItem_ref ((klas3) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; \
 	else if (CLASS == class##klas2) you = (klas2) OBJECT; }
@@ -797,8 +797,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define MOVIE_THREE_END  END_NO_NEW_DATA
 
-#define NUMBER_NONE
-#define NUMBER_NONE_END(...)  \
+#define QUERY_GRAPHICS_FOR_REAL
+#define QUERY_GRAPHICS_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
@@ -857,7 +857,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define NUMBER_ONE_AND_LIST(klas1,klas2)  \
-	FIND_ONE_AND_LIST (klas1, klas2)
+	FIND_ONE_AND_ALL (klas1, klas2)
 #define NUMBER_ONE_AND_LIST_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
@@ -867,7 +867,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define NUMBER_TWO_AND_LIST(klas1,klas2,klas3)  \
-	FIND_TWO_AND_LIST (klas1, klas2, klas3)
+	FIND_TWO_AND_ALL (klas1, klas2, klas3)
 #define NUMBER_TWO_AND_LIST_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
@@ -992,7 +992,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  \
-	FIND_ONE_AND_LIST (klas1, klas2)
+	FIND_ONE_AND_ALL (klas1, klas2)
 #define MODIFY_FIRST_OF_ONE_AND_LIST_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
@@ -1086,7 +1086,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define COMBINE_ALL_LISTED_TO_ONE(klas,listClass)  \
-	FIND_TYPED_LIST (klas,listClass)
+	FIND_ALL_LISTED (klas,listClass)
 #define COMBINE_ALL_LISTED_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
@@ -1094,7 +1094,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_ONE_AND_ALL_TO_ONE(klas1,klas2)  \
-	FIND_ONE_AND_LIST (klas1, klas2)
+	FIND_ONE_AND_ALL (klas1, klas2)
 #define CONVERT_ONE_AND_ALL_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
@@ -1102,7 +1102,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_ONE_AND_ALL_LISTED_TO_ONE(klas1,klas2,listClass)  \
-	FIND_ONE_AND_TYPED_LIST (klas1, klas2, listClass)
+	FIND_ONE_AND_ALL_LISTED (klas1, klas2, listClass)
 #define CONVERT_ONE_AND_ALL_LISTED_TO_ONE_END(...) \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
@@ -1130,7 +1130,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SAVE_LIST(klas)  FIND_ALL (klas)
 #define SAVE_LIST_END  END_NO_NEW_DATA
 
-#define SAVE_TYPED_LIST(klas,listClass)  FIND_TYPED_LIST (klas, listClass)
+#define SAVE_TYPED_LIST(klas,listClass)  FIND_ALL_LISTED (klas, listClass)
 #define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
 
 #define EDITOR_ONE(indefiniteArticle,klas)  \
