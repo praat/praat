@@ -1119,21 +1119,21 @@ DIRECT (NEW_Covariance_to_PCA) {
 }
 
 DIRECT (NEW1_Covariances_pool) {
-	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+	COMBINE_ALL_LISTED_TO_ONE (Covariance, CovarianceList)
 		autoCovariance result = CovarianceList_to_Covariance_pool (list.get());
-	CONVERT_TYPED_LIST_END (U"pool")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"pool")
 }
 
 DIRECT (NEW1_Covariances_to_Covariance_between) {
-	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+	COMBINE_ALL_LISTED_TO_ONE (Covariance, CovarianceList)
 		autoCovariance result = CovarianceList_to_Covariance_between (list.get());
-	CONVERT_TYPED_LIST_END (U"between")	
+	COMBINE_ALL_LISTED_TO_ONE_END (U"between")
 }
 
 DIRECT (NEW1_Covariances_to_Covariance_within) {
-	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+	COMBINE_ALL_LISTED_TO_ONE (Covariance, CovarianceList)
 		autoCovariance result = CovarianceList_to_Covariance_within (list.get());
-	CONVERT_TYPED_LIST_END (U"within")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"within")
 }
 
 DIRECT (NEW1_Covariances_to_CovarianceList) {
@@ -3718,9 +3718,9 @@ DO
 }
 
 DIRECT (NEW1_Matrix_Categories_to_TableOfReal) {
-	CONVERT_ONE_AND_GENERIC (Categories, Matrix)
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE (Categories, Matrix)
 		autoTableOfReal result = Matrix_Categories_to_TableOfReal (you, me);
-	CONVERT_ONE_AND_GENERIC_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_ActivationList_Categories_to_TableOfReal) {
@@ -4533,9 +4533,9 @@ FORM (NEW1_PCA_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To T
 	OK
 DO
 	Melder_require (numberOfDimensionsToKeep >= 0, U"The number of dimensions to keep should be at least zero.");
-	CONVERT_ONE_AND_GENERIC (PCA, TableOfReal)
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE (PCA, TableOfReal)
 		autoTableOfReal result = PCA_TableOfReal_to_TableOfReal_projectRows (me, you, numberOfDimensionsToKeep);
-	CONVERT_ONE_AND_GENERIC_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_PCA_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configuration", U"PCA & TableOfReal: To Configuration...") {
@@ -4543,9 +4543,9 @@ FORM (NEW1_PCA_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configurati
 	OK
 DO
 	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
-	CONVERT_ONE_AND_GENERIC (PCA, TableOfReal)
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE (PCA, TableOfReal)
 		autoConfiguration result = PCA_TableOfReal_to_Configuration (me, you, numberOfDimensions);
-	CONVERT_ONE_AND_GENERIC_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_PCA_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To TableOfReal (z-scores)", U"PCA & TableOfReal: To TableOfReal (z-scores)...") {
@@ -4553,9 +4553,9 @@ FORM (NEW1_PCA_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To Table
 	OK
 DO
 	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
-	CONVERT_ONE_AND_GENERIC (PCA, TableOfReal)
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE (PCA, TableOfReal)
 		autoTableOfReal result = PCA_TableOfReal_to_TableOfReal_zscores (me, you, numberOfDimensions);
-	CONVERT_ONE_AND_GENERIC_END (my name.get(), U"_", your name.get(), U"_zscores")
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE_END (my name.get(), U"_", your name.get(), U"_zscores")
 }
 
 FORM (NEW1_PCA_Matrix_to_Matrix_projectRows, U"PCA & Matrix: To Matrix (project rows)", nullptr) {
@@ -4573,9 +4573,9 @@ FORM (NEW1_PCA_Matrix_to_Matrix_projectColumns, U"PCA & Matrix: To Matrix (proje
 	OK
 DO
 	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
-	CONVERT_ONE_AND_GENERIC (PCA, Matrix)
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE (PCA, Matrix)
 		autoMatrix result = Eigen_Matrix_to_Matrix_projectColumns (me, you, numberOfDimensions);
-	CONVERT_ONE_AND_GENERIC_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_GENERIC_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (REAL_PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr) {
@@ -7357,9 +7357,9 @@ DIRECT (NEW_TableOfReal_to_Permutation_sortRowlabels) {
 }
 
 DIRECT (NEW1_TableOfReal_appendColumns) {
-	CONVERT_TYPED_LIST (TableOfReal, TableOfRealList)
+	COMBINE_ALL_LISTED_TO_ONE (TableOfReal, TableOfRealList)
 		autoTableOfReal result = TableOfRealList_appendColumnsMany (list.get());
-	CONVERT_TYPED_LIST_END (U"columns_appended");
+	COMBINE_ALL_LISTED_TO_ONE_END (U"columns_appended");
 }
 
 FORM (NEW1_TableOfReal_create_pols1973, U"Create TableOfReal (Pols 1973)", U"Create TableOfReal (Pols 1973)...") {

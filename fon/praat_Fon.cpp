@@ -952,9 +952,9 @@ FORM_READ (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 
 // MARK: - LTAS
 
 DIRECT (NEW1_Ltases_average) {
-	CONVERT_TYPED_LIST (Ltas, LtasBag)
+	COMBINE_ALL_LISTED_TO_ONE (Ltas, LtasBag)
 		autoLtas result = Ltases_average (list.get());
-	CONVERT_TYPED_LIST_END (U"averaged")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"averaged")
 }
 
 FORM (NEW_Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
@@ -1199,9 +1199,9 @@ DIRECT (HELP_Ltas_help) {
 }
 
 DIRECT (NEW1_Ltases_merge) {
-	CONVERT_TYPED_LIST (Ltas, LtasBag)
+	COMBINE_ALL_LISTED_TO_ONE (Ltas, LtasBag)
 		autoLtas result = Ltases_merge (list.get());
-	CONVERT_TYPED_LIST_END (U"merged")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"merged")
 }
 
 FORM (NEW_Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...") {
