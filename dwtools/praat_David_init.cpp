@@ -6435,9 +6435,9 @@ FORM (NEW1_SpeechSynthesizer_Sound_TextGrid_align, U"SpeechSynthesizer & Sound &
 	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.1")
 	OK
 DO
-	CONVERT_THREE (SpeechSynthesizer, Sound, TextGrid)
+	CONVERT_ONE_AND_ONE_AND_ONE (SpeechSynthesizer, Sound, TextGrid)
 		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align (me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, minimumSilenceDuration, minimumSoundingDuration);
-	CONVERT_THREE_END (your name.get(), U"_aligned")
+	CONVERT_ONE_AND_ONE_AND_ONE_END (your name.get(), U"_aligned")
 }
 
 FORM (NEW1_SpeechSynthesizer_Sound_TextGrid_align2, U"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", nullptr) {
@@ -6452,9 +6452,9 @@ FORM (NEW1_SpeechSynthesizer_Sound_TextGrid_align2, U"SpeechSynthesizer & Sound 
 DO
 	if (trimDuration < 0.0)
 		trimDuration = 0.0;
-    CONVERT_THREE (SpeechSynthesizer, Sound, TextGrid)
+    CONVERT_ONE_AND_ONE_AND_ONE (SpeechSynthesizer, Sound, TextGrid)
 		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align2 (me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, minimumSilenceDuration, minimumSoundingDuration, trimDuration);
-    CONVERT_THREE_END (his name.get(), U"_aligned")
+    CONVERT_ONE_AND_ONE_AND_ONE_END (his name.get(), U"_aligned")
 }
 
 /************* Spline *************************************************/

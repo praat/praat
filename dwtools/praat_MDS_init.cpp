@@ -538,30 +538,30 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_absolute_mds, U"Dissimilarity & Co
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_w_absolute")
+	CONVERT_ONE_AND_ONE_AND_ONE_END (my name.get(), U"_w_absolute")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ratio_mds, U"Dissimilarity & Configuration & Weight: To Configuration (ratio mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_w_ratio")
+	CONVERT_ONE_AND_ONE_AND_ONE_END (my name.get(), U"_w_ratio")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_interval_mds, U"Dissimilarity & Configuration & Weight: To Configuration (interval mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_w_interval")
+	CONVERT_ONE_AND_ONE_AND_ONE_END (my name.get(), U"_w_interval")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Configuration & Weight: To Configuration (monotone mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -569,10 +569,10 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_monotone_mds, U"Dissimilarity & Co
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, him, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_sw_monotone")
+	CONVERT_ONE_AND_ONE_AND_ONE_END (my name.get(), U"_sw_monotone")
 }
 
 FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Configuration & Weight: To Configuration (i-spline mds)", U"Dissimilarity & Configuration & Weight: To Configuration...") {
@@ -582,10 +582,10 @@ FORM (NEW1_Dissimilarity_Configuration_Weight_ispline_mds,  U"Dissimilarity & Co
 	praat_Dissimilarity_to_Configuration_commonFields (tolerance,maximumNumberOfIterations,numberOfRepetitions)
 	OK
 DO
-	CONVERT_THREE (Dissimilarity, Configuration, Weight)
+	CONVERT_ONE_AND_ONE_AND_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
 		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, him, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
-	CONVERT_THREE_END (my name.get(), U"_sw_ispline")
+	CONVERT_ONE_AND_ONE_AND_ONE_END (my name.get(), U"_sw_ispline")
 }
 
 FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",  U"Dissimilarity & Configuration: get stress") {
