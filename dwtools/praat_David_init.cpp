@@ -2482,9 +2482,9 @@ DIRECT (NEW_StringsIndex_to_Strings) {
 /******************** Excitation ********************************************/
 
 DIRECT (NEW1_Excitations_to_ExcitationList) {
-	CONVERT_LIST (Excitation)
+	COMBINE_ALL_TO_ONE (Excitation)
 		autoExcitationList result = Excitations_to_ExcitationList (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 /******************** ExcitationList ********************************************/
@@ -2684,9 +2684,9 @@ DO
 }
 
 DIRECT (NEW1_FilesInMemory_to_FileInMemorySet) {
-	CONVERT_LIST (FileInMemory)
+	COMBINE_ALL_TO_ONE (FileInMemory)
 		autoFileInMemorySet result = FilesInMemory_to_FileInMemorySet (list);
-	CONVERT_LIST_END (U"merged");
+	COMBINE_ALL_TO_ONE_END (U"merged");
 }
 
 DIRECT (MODIFY_FileInMemorySet_addItemsToSet) {
@@ -2697,9 +2697,9 @@ DIRECT (MODIFY_FileInMemorySet_addItemsToSet) {
 }
 
 DIRECT (NEW1_FileInMemorySets_merge) {
-	CONVERT_LIST (FileInMemorySet)
+	COMBINE_ALL_TO_ONE (FileInMemorySet)
 		autoFileInMemorySet result = FileInMemorySets_merge (list);
-	CONVERT_LIST_END (U"merge");
+	COMBINE_ALL_TO_ONE_END (U"merge");
 }
 
 DIRECT (NEW_FileInMemorySet_to_Strings_id) {
@@ -4852,9 +4852,9 @@ DIRECT (NEW_Permutation_invert) {
 }
 
 DIRECT (NEW1_Permutations_multiply) {
-	CONVERT_LIST (Permutation)
+	COMBINE_ALL_TO_ONE (Permutation)
 		autoPermutation result = Permutations_multiply (& list);
-	CONVERT_LIST_END (U"mul_", list.size);
+	COMBINE_ALL_TO_ONE_END (U"mul_", list.size);
 }
 
 DIRECT (MODIFY_Permutations_next) {
@@ -6680,9 +6680,9 @@ DO_ALTERNATIVE (NEW1_old_Strings_createAsTokens)
 }
 
 DIRECT (NEW1_Strings_append) {
-	CONVERT_LIST (Strings)
+	COMBINE_ALL_TO_ONE (Strings)
 		autoStrings result = Strings_append (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 DIRECT (NEW_Strings_to_Categories) {

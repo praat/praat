@@ -452,9 +452,9 @@ DO
 // MARK: Convert
 
 DIRECT (NEW1_TablesOfReal_append) {
-	CONVERT_LIST (TableOfReal)
+	COMBINE_ALL_TO_ONE (TableOfReal)
 		autoTableOfReal result = TablesOfReal_appendMany (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 

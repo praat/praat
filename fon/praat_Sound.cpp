@@ -346,41 +346,41 @@ DO
 }
 
 DIRECT (NEW1_Sounds_combineToStereo) {
-	CONVERT_LIST (Sound)
+	COMBINE_ALL_TO_ONE (Sound)
 		autoSound result = Sounds_combineToStereo (& list);
 		const integer numberOfChannels = result -> ny;   // dereference before transferring
-	CONVERT_LIST_END (U"combined_", numberOfChannels)
+	COMBINE_ALL_TO_ONE_END (U"combined_", numberOfChannels)
 }
 
 DIRECT (NEW1_Sounds_combineIntoSoundList) {
-	CONVERT_LIST (Sound)
+	COMBINE_ALL_TO_ONE (Sound)
 		autoSoundList result = SoundList_create ();
 		for (integer iobject = 1; iobject <= list.size; iobject ++)
 			result -> addItem_move (Data_copy (list.at [iobject]));
-	CONVERT_LIST_END (U"list")
+	COMBINE_ALL_TO_ONE_END (U"list")
 }
 
 DIRECT (NEW1_Sounds_combineIntoSoundSet) {
-	CONVERT_LIST (Sound)
+	COMBINE_ALL_TO_ONE (Sound)
 		autoSoundSet result = SoundSet_create ();
 		for (integer iobject = 1; iobject <= list.size; iobject ++)
 			result -> addItem_move (Data_copy (list.at [iobject]));
-	CONVERT_LIST_END (U"ensemble")
+	COMBINE_ALL_TO_ONE_END (U"ensemble")
 }
 
 DIRECT (NEW1_Sounds_concatenate) {
-	CONVERT_LIST (Sound)
+	COMBINE_ALL_TO_ONE (Sound)
 		autoSound result = Sounds_concatenate (list, 0.0);
-	CONVERT_LIST_END (U"chain")
+	COMBINE_ALL_TO_ONE_END (U"chain")
 }
 
 FORM (NEW1_Sounds_concatenateWithOverlap, U"Sounds: Concatenate with overlap", U"Sounds: Concatenate with overlap...") {
 	POSITIVE (overlap, U"Overlap (s)", U"0.01")
 	OK
 DO
-	CONVERT_LIST (Sound)
+	COMBINE_ALL_TO_ONE (Sound)
 		autoSound result = Sounds_concatenate (list, overlap);
-	CONVERT_LIST_END (U"chain")
+	COMBINE_ALL_TO_ONE_END (U"chain")
 }
 
 DIRECT (NEW2_Sounds_concatenateRecoverably) {

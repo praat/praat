@@ -121,9 +121,9 @@ DIRECT (NEW_ResultsMFC_to_Categories_responses) {
 }
 
 DIRECT (NEW1_ResultsMFCs_to_Table) {
-	CONVERT_LIST (ResultsMFC)
+	COMBINE_ALL_TO_ONE (ResultsMFC)
 		autoTable result = ResultsMFCs_to_Table (& list);
-	CONVERT_LIST_END (U"allResults")
+	COMBINE_ALL_TO_ONE_END (U"allResults")
 }
 
 // MARK: - buttons

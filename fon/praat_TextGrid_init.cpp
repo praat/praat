@@ -36,12 +36,12 @@ static const conststring32 STRING_POINT_NUMBER = U"Point number";
 // MARK: - ANYTIER (generic)
 
 DIRECT (NEW1_AnyTier_into_TextGrid) {
-	CONVERT_LIST (Function)
+	COMBINE_ALL_TO_ONE (Function)
 		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
 		for (integer i = 1; i <= list.size; i ++) {
 			TextGrid_addTier_copy (result.get(), list.at [i]);
 		}
-	CONVERT_LIST_END (U"grid")
+	COMBINE_ALL_TO_ONE_END (U"grid")
 }
 
 // MARK: - INTERVALTIER
@@ -1433,15 +1433,15 @@ DO
 // MARK: Synthesize
 
 DIRECT (NEW1_TextGrids_merge) {
-	CONVERT_LIST (TextGrid)
+	COMBINE_ALL_TO_ONE (TextGrid)
 		autoTextGrid result = TextGrids_merge (& list);
-	CONVERT_LIST_END (U"merged")
+	COMBINE_ALL_TO_ONE_END (U"merged")
 }
 
 DIRECT (NEW1_TextGrids_concatenate) {
-	CONVERT_LIST (TextGrid)
+	COMBINE_ALL_TO_ONE (TextGrid)
 		autoTextGrid result = TextGrids_concatenate (& list);
-	CONVERT_LIST_END (U"chain")
+	COMBINE_ALL_TO_ONE_END (U"chain")
 }
 
 // MARK: - TEXTGRID & ANYTIER

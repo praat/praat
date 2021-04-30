@@ -294,9 +294,9 @@ DO
 // MARK: Convert
 
 DIRECT (NEW1_EEGs_concatenate) {
-	CONVERT_LIST (EEG)
+	COMBINE_ALL_TO_ONE (EEG)
 		autoEEG result = EEGs_concatenate (& list);
-	CONVERT_LIST_END (U"chain")
+	COMBINE_ALL_TO_ONE_END (U"chain")
 }
 
 FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {

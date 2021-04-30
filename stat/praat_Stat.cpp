@@ -62,9 +62,9 @@ DO
 // MARK: Modify
 
 DIRECT (NEW1_Distributionses_add) {
-	CONVERT_LIST (Distributions)
+	COMBINE_ALL_TO_ONE (Distributions)
 		autoDistributions result = Distributions_addMany (& list);
-	CONVERT_LIST_END (U"added")
+	COMBINE_ALL_TO_ONE_END (U"added")
 }
 
 // MARK: Generate
@@ -921,9 +921,9 @@ DO
 }
 
 DIRECT (NEW1_Tables_append) {
-	CONVERT_LIST (Table)
+	COMBINE_ALL_TO_ONE (Table)
 		autoTable result = Tables_append (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {

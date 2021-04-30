@@ -222,9 +222,9 @@ DO
 }
 
 DIRECT (NEW1_CrossCorrelationTables_to_CrossCorrelationTableList) {
-	CONVERT_LIST (CrossCorrelationTable)
+	COMBINE_ALL_TO_ONE (CrossCorrelationTable)
 		autoCrossCorrelationTableList result = CrossCorrelationTables_to_CrossCorrelationTableList (& list);
-	CONVERT_LIST_END (U"ct_", result -> size)
+	COMBINE_ALL_TO_ONE_END (U"ct_", result -> size)
 }
 
 FORM (NEW_Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound: To Covariance (channels)...") {
