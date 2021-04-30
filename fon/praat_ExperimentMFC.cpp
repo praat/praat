@@ -84,22 +84,22 @@ FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
 	NATURAL (trial, U"Trial", U"1")
 	OK
 DO
-	STRING_ONE (ResultsMFC)
+	QUERY_ONE_FOR_STRING (ResultsMFC)
 		if (trial > my numberOfTrials)
 			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 		conststring32 result = my result [trial]. response.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (STRING_ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
 	NATURAL (trial, U"Trial", U"1")
 	OK
 DO
-	STRING_ONE (ResultsMFC)
+	QUERY_ONE_FOR_STRING (ResultsMFC)
 		if (trial > my numberOfTrials)
 			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 		conststring32 result = my result [trial]. stimulus.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {

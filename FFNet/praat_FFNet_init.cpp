@@ -163,69 +163,68 @@ DO
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfLayers) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfLayers;
-	INTEGER_ONE_END (U" layer", (my numberOfLayers > 1 ? U"s" : U""))
+	QUERY_ONE_FOR_INTEGER_END (U" layer", (my numberOfLayers > 1 ? U"s" : U""))
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfUnitsInLayer[my numberOfLayers];
-	INTEGER_ONE_END (U" units")
+	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
-
 
 FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
 DO
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = layer > 0 && layer <= my numberOfLayers - 1 ? my numberOfUnitsInLayer[layer] : 0;
-	INTEGER_ONE_END (U" units")
+	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfInputs) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfInputs;
-	INTEGER_ONE_END (U" units")
+	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
 FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
 DO
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = 0;
 		if (layer <= my numberOfLayers - 1) {
 			integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer[layer - 1] );
 			result = my numberOfUnitsInLayer[layer] * (numberOfUnitsInPreviousLayer + 1);
 		}
-	INTEGER_ONE_END (U" weights (including biases)")
+	QUERY_ONE_FOR_INTEGER_END (U" weights (including biases)")
 }
 	
 DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer numberOfUnitsInPreviousLayer = ( my numberOfLayers == 1 ? my numberOfInputs : my numberOfUnitsInLayer[my numberOfLayers - 1] );
 		integer result = my numberOfUnitsInLayer[my numberOfLayers] * (numberOfUnitsInPreviousLayer + 1);
-	INTEGER_ONE_END (U" weights");
+	QUERY_ONE_FOR_INTEGER_END (U" weights");
 }
 
 FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
 	NATURAL (outputUnit, U"Output unit", U"1")
 	OK
 DO
-	STRING_ONE (FFNet)
+	QUERY_ONE_FOR_STRING (FFNet)
 		conststring32 result = FFNet_getCategoryOfOutputUnit (me, outputUnit);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
 	SENTENCE (category, U"Category", U"u")
 	OK
 DO
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = FFNet_getOutputUnitOfCategory (me, category);
-	INTEGER_ONE_END (U" (output unit)")
+	QUERY_ONE_FOR_INTEGER_END (U" (output unit)")
 }
 
 
@@ -428,9 +427,9 @@ FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, ActivationList)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
 		double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U"")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
@@ -439,9 +438,9 @@ FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternLi
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, ActivationList)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
 		double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U"")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
@@ -484,9 +483,9 @@ FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & C
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, Categories)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
 		double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U" (total costs)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (total costs)")
 }
 
 FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
@@ -495,9 +494,9 @@ FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList &
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, Categories)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
 		double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U" (average costs)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (average costs)")
 }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {

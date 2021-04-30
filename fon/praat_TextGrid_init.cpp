@@ -631,13 +631,13 @@ FORM (STRING_SpellingChecker_nextNotAllowedWord, U"Next not allowed word?", U"Sp
 	INTEGER (startingCharacter, U"Starting character", U"0")
 	OK
 DO
-	STRING_ONE (SpellingChecker)
+	QUERY_ONE_FOR_STRING (SpellingChecker)
 		if (startingCharacter < 0)
 			Melder_throw (U"Your starting character should be 0 or positive.");
 		if (startingCharacter > (int) str32len (sentence))
 			Melder_throw (U"Your starting character should not exceed the end of the sentence.");
 		conststring32 result = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (MODIFY_SpellingChecker_replaceWordList) {
@@ -870,10 +870,10 @@ FORM (STRING_TextGrid_getTierName, U"TextGrid: Get tier name", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	OK
 DO
-	STRING_ONE (TextGrid)
+	QUERY_ONE_FOR_STRING (TextGrid)
 		Function tier = pr_TextGrid_peekTier (me, tierNumber);
 		conststring32 result = tier -> name.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (BOOLEAN_TextGrid_isIntervalTier, U"TextGrid: Is interval tier?", nullptr) {
@@ -937,10 +937,10 @@ FORM (STRING_TextGrid_getLabelOfInterval, U"TextGrid: Get label of interval", nu
 	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
 	OK
 DO
-	STRING_ONE (TextGrid)
+	QUERY_ONE_FOR_STRING (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
 		conststring32 result = interval -> text.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_TextGrid_getIntervalAtTime, U"TextGrid: Get interval at time", nullptr) {
@@ -1049,10 +1049,10 @@ FORM (STRING_TextGrid_getLabelOfPoint, U"TextGrid: Get label of point", nullptr)
 	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
 	OK
 DO
-	STRING_ONE (TextGrid)
+	QUERY_ONE_FOR_STRING (TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
 		conststring32 result = point -> mark.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_TextGrid_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
@@ -1505,11 +1505,11 @@ FORM (STRING_TextTier_getLabelOfPoint, U"Get label of point", nullptr) {
 	NATURAL (pointNumber, U"Point number", U"1")
 	OK
 DO
-	STRING_ONE (TextTier)
+	QUERY_ONE_FOR_STRING (TextTier)
 		if (pointNumber > my points.size) Melder_throw (U"No such point.");
 		TextPoint point = my points.at [pointNumber];
 		conststring32 result = point -> mark.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (NEW_TextTier_getPoints, U"Get points", nullptr) {

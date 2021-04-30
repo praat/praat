@@ -365,9 +365,9 @@ DIRECT (REAL_Matrix_getSum) {
 }
 
 DIRECT (NUMMAT_Matrix_getAllValues) {
-	NUMMAT_ONE (Matrix)
+	QUERY_ONE_FOR_MATRIX (Matrix)
 		autoMAT result = copy_MAT (my z.all());
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (NUMVEC_Matrix_getAllValuesInColumn, U"Get all values in column", nullptr) {

@@ -89,15 +89,15 @@ DO
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfParameters) {
-	INTEGER_ONE (DataModeler)
+	QUERY_ONE_FOR_INTEGER (DataModeler)
 		integer result = my numberOfParameters;
-	INTEGER_ONE_END (U" (= number of parameters)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of parameters)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfFixedParameters) {
-	INTEGER_ONE (DataModeler)
+	QUERY_ONE_FOR_INTEGER (DataModeler)
 		integer result = DataModeler_getNumberOfFixedParameters (me);
-	INTEGER_ONE_END (U" (= number of fixed parameters)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of fixed parameters)")
 }
 
 FORM (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
@@ -119,11 +119,11 @@ FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status",
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	STRING_ONE (DataModeler)
+	QUERY_ONE_FOR_STRING (DataModeler)
 		kDataModelerParameterStatus status = DataModeler_getParameterStatus (me, parameterNumber);
 		conststring32 result = ( status == kDataModelerParameterStatus::FREE ? U"Free" :
 			status == kDataModelerParameterStatus::FIXED_ ? U"Fixed" : U"Undefined" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
@@ -147,15 +147,15 @@ DO
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfDataPoints) {
-	INTEGER_ONE (DataModeler)
+	QUERY_ONE_FOR_INTEGER (DataModeler)
 		const integer result = my numberOfDataPoints;
-	INTEGER_ONE_END (U" (= number of data points)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of data points)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfInvalidDataPoints) {
-	INTEGER_ONE (DataModeler)
+	QUERY_ONE_FOR_INTEGER (DataModeler)
 		const integer result = DataModeler_getNumberOfInvalidDataPoints (me);
-	INTEGER_ONE_END (U" (= number of invalid data points)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of invalid data points)")
 }
 
 FORM (REAL_DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", nullptr) {
@@ -211,10 +211,10 @@ FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status"
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	STRING_ONE (DataModeler)
+	QUERY_ONE_FOR_STRING (DataModeler)
 		kDataModelerData status = DataModeler_getDataPointStatus (me, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
@@ -607,49 +607,49 @@ FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point s
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	STRING_ONE (FormantModeler)
+	QUERY_ONE_FOR_STRING (FormantModeler)
 		kDataModelerData status = FormantModeler_getDataPointStatus (me, formantNumber, index);
 		conststring32 result = ( status == kDataModelerData::INVALID ? U"Invalid" : U"Valid" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
-	INTEGER_ONE (FormantModeler)
+	QUERY_ONE_FOR_INTEGER (FormantModeler)
 		const integer result = FormantModeler_getNumberOfTracks (me);
-	INTEGER_ONE_END (U" (= number of formants)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of formants)")
 }
 
 FORM (INTEGER_FormantModeler_getNumberOfParameters, U"FormantModeler: Get number of parameters", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	INTEGER_ONE (FormantModeler)
+	QUERY_ONE_FOR_INTEGER (FormantModeler)
 		const integer result = FormantModeler_getNumberOfParameters (me, formantNumber);
-	INTEGER_ONE_END (U" (= number of parameters for F", formantNumber, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of parameters for F", formantNumber, U")")
 }
 
 FORM (INTEGER_FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get number of fixed parameters", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	INTEGER_ONE (FormantModeler)
+	QUERY_ONE_FOR_INTEGER (FormantModeler)
 		const integer result = FormantModeler_getNumberOfFixedParameters (me, formantNumber);
-	INTEGER_ONE_END (U" (= number of fixed parameters for F", formantNumber, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of fixed parameters for F", formantNumber, U")")
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfDataPoints) {
-	INTEGER_ONE (FormantModeler)
+	QUERY_ONE_FOR_INTEGER (FormantModeler)
 		const integer result = FormantModeler_getNumberOfDataPoints (me);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (INTEGER_FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get number of invalid data points", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	INTEGER_ONE (FormantModeler)
+	QUERY_ONE_FOR_INTEGER (FormantModeler)
 		const integer result = FormantModeler_getNumberOfInvalidDataPoints (me, formantNumber);
-	INTEGER_ONE_END (U" (= number of invalid data points for F", formantNumber, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of invalid data points for F", formantNumber, U")")
 }
 
 FORM (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr) {
@@ -667,13 +667,13 @@ FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter st
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
-	STRING_ONE (FormantModeler)
+	QUERY_ONE_FOR_STRING (FormantModeler)
 		kDataModelerParameterStatus status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
 		conststring32 result = Melder_cat (
 			status == kDataModelerParameterStatus::FREE ? U"Free" : status == kDataModelerParameterStatus::FIXED_ ? U"Fixed" : U"Undefined",
 			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
 		);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {

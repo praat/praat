@@ -503,9 +503,9 @@ DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
 }
 
 DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
-	INTEGER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_INTEGER (PowerCepstrogram)
 		const integer result = my ny;
-	INTEGER_ONE_END (U" quefrency bins")
+	QUERY_ONE_FOR_INTEGER_END (U" quefrency bins")
 }
 
 DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
@@ -753,10 +753,10 @@ FORM (INTEGER_LineSpectralFrequencies_getNumberOfFrequencies, U"LineSpectralFreq
 	NATURAL (frameNumber, U"Frame number", U"2")
 	OK
 DO
-	INTEGER_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_INTEGER (LineSpectralFrequencies)
 		my checkIndex (frameNumber);
 		const integer result = my d_frames [frameNumber]. numberOfFrequencies;
-	INTEGER_ONE_END (U" frequencies")
+	QUERY_ONE_FOR_INTEGER_END (U" frequencies")
 }
 
 FORM (NUMVEC_LineSpectralFrequencies_listFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
@@ -769,9 +769,9 @@ DO
 }
 
 DIRECT (NUMMAT_LineSpectralFrequencies_listAllFrequencies) {
-	NUMMAT_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_MATRIX (LineSpectralFrequencies)
 		autoMAT result = LineSpectralFrequencies_listAllFrequencies (me);
-	NUMMAT_ONE_END	
+	QUERY_ONE_FOR_MATRIX_END	
 }
 
 DIRECT (NEW_LineSpectralFrequencies_to_LPC) {
@@ -808,10 +808,10 @@ FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	INTEGER_ONE (LPC)
+	QUERY_ONE_FOR_INTEGER (LPC)
 		my checkIndex (frameNumber);
 		const integer result = my d_frames [frameNumber]. nCoefficients;
-	INTEGER_ONE_END (U" coefficients")
+	QUERY_ONE_FOR_INTEGER_END (U" coefficients")
 }
 
 FORM (NUMVEC_LPC_listAllCoefficientsInFrame, U"", U"") {
@@ -824,9 +824,9 @@ DO
 }
 
 DIRECT (NUMMAT_LPC_listAllCoefficients) {
-	NUMMAT_ONE (LPC)
+	QUERY_ONE_FOR_MATRIX (LPC)
 		autoMAT result = LPC_listAllCoefficients (me);
-	NUMMAT_ONE_END	
+	QUERY_ONE_FOR_MATRIX_END	
 }
 
 FORM (REAL_LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in frame...") {

@@ -354,21 +354,21 @@ DIRECT (WINDOW_Categories_edit) {
 END_WITH_NEW_DATA }
 
 DIRECT (INTEGER_Categories_getNumberOfCategories) {
-	INTEGER_ONE (Categories)
+	QUERY_ONE_FOR_INTEGER (Categories)
 		integer result = my size;
-	INTEGER_ONE_END (U" categories")
+	QUERY_ONE_FOR_INTEGER_END (U" categories")
 }
 
 DIRECT (INTEGER_Categories_getNumberOfDifferences) {
-	NUMBER_COUPLE (Categories)
+	QUERY_TWO_FOR_REAL (Categories)
 		integer result = OrderedOfString_getNumberOfDifferences (me, you);
-	NUMBER_COUPLE_END (U" differences")
+	QUERY_TWO_FOR_REAL_END (U" differences")
 }
 
 DIRECT (REAL_Categories_getFractionDifferent) {
-	NUMBER_COUPLE (Categories)
+	QUERY_TWO_FOR_REAL (Categories)
 		double result = OrderedOfString_getFractionDifferent (me, you);
-	NUMBER_COUPLE_END (U" (fraction different)")
+	QUERY_TWO_FOR_REAL_END (U" (fraction different)")
 }
 
 DIRECT (NEW_Categories_selectUniqueItems) {
@@ -407,9 +407,9 @@ FORM (INTEGER_CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	INTEGER_ONE (CC)
+	QUERY_ONE_FOR_INTEGER (CC)
 		const integer result = CC_getNumberOfCoefficients (me, frameNumber);
-	INTEGER_ONE_END (U" (number of coefficients)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of coefficients)")
 }
 
 FORM (REAL_CC_getValue, U"CC: Get value", U"CC: Get value...") {
@@ -519,9 +519,9 @@ DO
 }
 
 DIRECT (INTEGER_CCA_getNumberOfCorrelations) {
-	INTEGER_ONE (CCA)
+	QUERY_ONE_FOR_INTEGER (CCA)
 		integer result = my numberOfCoefficients;
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (REAL_CCA_getCorrelation, U"CCA: Get canonical correlation coefficient", U"CCA: Get canonical correlation coefficient") {
@@ -572,9 +572,9 @@ FORM (REAL_CCA_Correlation_getVarianceFraction, U"CCA & Correlation: Get varianc
 	NATURAL (toCanonicalVariate, U"right Canonical variate range", U"1")
 	OK
 DO
-	NUMBER_TWO (CCA, Correlation)
+	QUERY_ONE_AND_ONE_FOR_REAL (CCA, Correlation)
 		double result = CCA_Correlation_getVarianceFraction (me, you, xOrY, fromCanonicalVariate, toCanonicalVariate);
-	NUMBER_TWO_END (U" (fraction variance from ", (xOrY == 1 ? U"y" : U"x"), U", extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (fraction variance from ", (xOrY == 1 ? U"y" : U"x"), U", extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
 }
 
 FORM (REAL_CCA_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Love redundancy", U"CCA & Correlation: Get redundancy (sl)...") {
@@ -588,9 +588,9 @@ FORM (REAL_CCA_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Lo
 	LABEL (U"...given the availability of the data in the other set.")
 	OK
 DO
-	NUMBER_TWO (CCA, Correlation)
+	QUERY_ONE_AND_ONE_FOR_REAL (CCA, Correlation)
 		double result = CCA_Correlation_getRedundancy_sl (me, you, xOrY, fromCanonicalVariate, toCanonicalVariate);
-	NUMBER_TWO_END (U" (redundancy from ", (xOrY == 1 ? U"y" : U"x"), U" extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (redundancy from ", (xOrY == 1 ? U"y" : U"x"), U" extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
 }
 
 DIRECT (NEW_CCA_TableOfReal_to_TableOfReal_loadings) {
@@ -667,18 +667,18 @@ FORM (INTEGER_ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationT
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	INTEGER_ONE (ClassificationTable)
+	QUERY_ONE_FOR_INTEGER (ClassificationTable)
 		integer result = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
-	INTEGER_ONE_END (U" (class index at maximum in row)")
+	QUERY_ONE_FOR_INTEGER_END (U" (class index at maximum in row)")
 }
 
 FORM (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	STRING_ONE (ClassificationTable)
+	QUERY_ONE_FOR_STRING (ClassificationTable)
 		conststring32 result = TableOfReal_getColumnLabelAtMaximumInRow (me, rowNumber);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 // deprecated 2014
@@ -1226,21 +1226,21 @@ DO
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfEigenvalues) {
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = my eigen -> numberOfEigenvalues;
-	INTEGER_ONE_END (U" (number of eigenvalues)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvalues)")
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfEigenvectors) {
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = my eigen -> numberOfEigenvalues;
-	INTEGER_ONE_END (U" (number of eigenvectors)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvectors)")
 }
 
 DIRECT (INTEGER_Discriminant_getEigenvectorDimension) {
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = my eigen -> dimension;
-	INTEGER_ONE_END (U" (dimension)")
+	QUERY_ONE_FOR_INTEGER_END (U" (dimension)")
 }
 
 FORM (REAL_Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen: Get eigenvalue...") {
@@ -1543,30 +1543,30 @@ DO
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfFunctions) {
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Discriminant_getNumberOfFunctions (me);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 DIRECT (INTEGER_Discriminant_getDimensionOfFunctions) {
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Eigen_getDimensionOfComponents (my eigen.get());
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfGroups) {
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Discriminant_getNumberOfGroups (me);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (INTEGER_Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...") {
 	INTEGER (group, U"Group", U"0 (= total)")
 	OK
 DO
-	INTEGER_ONE (Discriminant)
+	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Discriminant_getNumberOfObservations (me, group);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 
@@ -1736,9 +1736,9 @@ DIRECT (REAL_DTW_getTotalDuration_y) {
 }
 
 DIRECT (INTEGER_DTW_getNumberOfFrames_x) {
-	INTEGER_ONE (DTW)
+	QUERY_ONE_FOR_INTEGER (DTW)
 		const integer result = my nx;
-	INTEGER_ONE_END (U" frames along x")
+	QUERY_ONE_FOR_INTEGER_END (U" frames along x")
 }
 
 DIRECT (REAL_DTW_getTimeStep_x) {
@@ -1760,16 +1760,16 @@ FORM (INTEGER_DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x
 	REAL (xTime, U"Time along x (s)", U"0.1")
 	OK
 DO
-	INTEGER_ONE (DTW)
+	QUERY_ONE_FOR_INTEGER (DTW)
 		Melder_require (xTime >= my xmin && xTime <= my xmax, U"Time outside x domain.");
 		const integer result = Melder_iround (Matrix_xToColumn (me, xTime));
-	INTEGER_ONE_END (U" (= x frame at y time ", xTime, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (= x frame at y time ", xTime, U")")
 }
 
 DIRECT (INTEGER_DTW_getNumberOfFrames_y) {
-	INTEGER_ONE (DTW)
+	QUERY_ONE_FOR_INTEGER (DTW)
 		const integer result = my ny;
-	INTEGER_ONE_END (U" (= number of frames along y)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of frames along y)")
 }
 
 DIRECT (REAL_DTW_getTimeStep_y) {
@@ -1792,10 +1792,10 @@ FORM (INTEGER_DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y
 	REAL (yTime, U"Time along y (s)", U"0.1")
 	OK
 DO
-	INTEGER_ONE (DTW)
+	QUERY_ONE_FOR_INTEGER (DTW)
 		Melder_require (yTime >= my ymin && yTime <= my ymax, U"Time outside y domain.");
 		const integer result = Melder_iround (Matrix_yToRow (me, yTime));
-	INTEGER_ONE_END (U" (= y frame at x time ", yTime, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (= y frame at x time ", yTime, U")")
 }
 
 FORM (REAL_DTW_getPathY, U"DTW: Get time along path", U"DTW: Get time along path...") {
@@ -1834,9 +1834,9 @@ FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive ste
 DO
 	int direction_code [] = { DTW_START, DTW_X, DTW_Y, DTW_XANDY };
 	conststring32 direction_string [] = { U"", U"x", U"y", U"diagonal" };
-	INTEGER_ONE (DTW)
+	QUERY_ONE_FOR_INTEGER (DTW)
 		integer result = DTW_getMaximumConsecutiveSteps (me, direction_code [direction]);
-	INTEGER_ONE_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
 }
 
 DIRECT (REAL_DTW_getDistance_weighted) {
@@ -2053,18 +2053,18 @@ FORM (INTEGER_EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index"
 	SENTENCE (target, U"Target", U"")
 	OK
 DO
-	INTEGER_ONE (EditCostsTable)
+	QUERY_ONE_FOR_INTEGER (EditCostsTable)
 		integer result = EditCostsTable_getTargetIndex (me, target);
-	INTEGER_ONE_END (U" (target index)")
+	QUERY_ONE_FOR_INTEGER_END (U" (target index)")
 }
 
 FORM (INTEGER_EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
 	SENTENCE (source, U"Source", U"")
 	OK
 DO
-	INTEGER_ONE (EditCostsTable)
+	QUERY_ONE_FOR_INTEGER (EditCostsTable)
 		integer result = EditCostsTable_getSourceIndex (me, source);
-	INTEGER_ONE_END (U" (source index)")
+	QUERY_ONE_FOR_INTEGER_END (U" (source index)")
 }
 
 FORM (REAL_EditCostsTable_getInsertionCosts, U"EditCostsTable: Get insertion cost", nullptr) {
@@ -2241,21 +2241,21 @@ DO
 }
 
 DIRECT (INTEGER_Eigen_getNumberOfEigenvalues) {
-	INTEGER_ONE (Eigen)
+	QUERY_ONE_FOR_INTEGER (Eigen)
 		integer result = my numberOfEigenvalues;
-	INTEGER_ONE_END (U" (number of eigenvalues)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvalues)")
 }
 
 DIRECT (INTEGER_Eigen_getNumberOfEigenvectors) {
-	INTEGER_ONE (Eigen)
+	QUERY_ONE_FOR_INTEGER (Eigen)
 		integer result = my numberOfEigenvalues;
-	INTEGER_ONE_END (U" (number of eigenvectors)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvectors)")
 }
 
 DIRECT (INTEGER_Eigen_getEigenvectorDimension) {
-	INTEGER_ONE (Eigen)
+	QUERY_ONE_FOR_INTEGER (Eigen)
 		integer result = my dimension;
-	INTEGER_ONE_END (U" (dimension)")
+	QUERY_ONE_FOR_INTEGER_END (U" (dimension)")
 }
 
 FORM (REAL_Eigen_getEigenvalue, U"Eigen: Get eigenvalue", U"Eigen: Get eigenvalue...") {
@@ -2404,54 +2404,54 @@ DIRECT (HELP_Index_help) {
 }
 
 DIRECT (INTEGER_Index_getNumberOfClasses) {
-	INTEGER_ONE (Index)
+	QUERY_ONE_FOR_INTEGER (Index)
 		integer result = my classes -> size;
-	INTEGER_ONE_END (U" (number of classes)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of classes)")
 }
 
 FORM (INFO_StringsIndex_getClassLabelFromClassIndex, U"StringsIndex: Get class label", U"StringsIndex: Get class label...") {
 	NATURAL (index, U"Class index", U"1")
 	OK
 DO
-	STRING_ONE (StringsIndex)
+	QUERY_ONE_FOR_STRING (StringsIndex)
 		conststring32 result = StringsIndex_getClassLabelFromClassIndex (me, index);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INFO_StringsIndex_getItemLabelFromItemIndex, U"StringsIndex: Get item label", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	STRING_ONE (StringsIndex)
+	QUERY_ONE_FOR_STRING (StringsIndex)
 		conststring32 result = StringsIndex_getItemLabelFromItemIndex (me, itemIndex);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	INTEGER_ONE (Index)
+	QUERY_ONE_FOR_INTEGER (Index)
 		integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
-	INTEGER_ONE_END (U" (class index)")
+	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
 FORM (INTEGER_Index_getIndex, U"Index: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
-	INTEGER_ONE (Index)
+	QUERY_ONE_FOR_INTEGER (Index)
 		integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
-	INTEGER_ONE_END (U" (class index)")
+	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
 FORM (INTEGER_StringsIndex_getClassIndex, U"StringsIndex: Get class index from calss label", nullptr) {
 	WORD (klasLabel, U"Class label", U"label")
 	OK
 DO
-	INTEGER_ONE (StringsIndex)
+	QUERY_ONE_FOR_INTEGER (StringsIndex)
 		integer result = StringsIndex_getClassIndexFromClassLabel (me, klasLabel);
-	INTEGER_ONE_END (U" (class index)")
+	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
 FORM (NEW_Index_extractPart, U"Index: Extract part", U"Index: Extract part...") {
@@ -3097,9 +3097,9 @@ DO
 }
 
 DIRECT (INTEGER_FunctionSeries_getNumberOfCoefficients) {
-	INTEGER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_INTEGER (FunctionSeries)
 		integer result = my numberOfCoefficients;
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (REAL_FunctionSeries_getCoefficient, U"FunctionSeries: Get coefficient", nullptr) {
@@ -3113,9 +3113,9 @@ DO
 }
 
 DIRECT (INTEGER_FunctionSeries_getDegree) {
-	INTEGER_ONE (FunctionSeries)
+	QUERY_ONE_FOR_INTEGER (FunctionSeries)
 		integer result = FunctionSeries_getDegree (me);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (REAL_FunctionSeries_getMaximum, U"FunctionSeries: Get maximum", U"Polynomial: Get maximum...") {
@@ -3370,9 +3370,9 @@ FORM (INTEGER_Table_getNumberOfRowsWhere, U"", nullptr) {
 	FORMULA (formula, U"Count only rows where the following condition holds:", U"1; self$[\"gender\"]=\"M\"")
 	OK
 DO
-	INTEGER_ONE (Table)
+	QUERY_ONE_FOR_INTEGER (Table)
 		integer result = Table_getNumberOfRowsWhere (me, formula, interpreter);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (INFO_Table_reportOneWayAnova, U"Table: Report one-way anova",  U"Table: Report one-way anova...") {
@@ -3821,15 +3821,15 @@ DO
 }
 
 DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
-	NUMBER_TWO (NMF, Matrix)
+	QUERY_ONE_AND_ONE_FOR_REAL (NMF, Matrix)
 		double result = NMF_getEuclideanDistance (me, your z.get());
-	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
 DIRECT (REAL_NMF_Matrix_getItakuraSaitoDivergence) {
-	NUMBER_TWO (NMF, Matrix)
+	QUERY_ONE_AND_ONE_FOR_REAL (NMF, Matrix)
 		double result = NMF_getItakuraSaitoDivergence (me, your z.get());
-	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factorization (m.u.)", nullptr) {
@@ -3903,9 +3903,9 @@ DIRECT (REAL_FilterBank_getLowestFrequency) {
 }
 
 DIRECT (INTEGER_FilterBank_getNumberOfFrequencies) {
-	INTEGER_ONE (FilterBank)
+	QUERY_ONE_FOR_INTEGER (FilterBank)
 		integer result = my ny;
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 DIRECT (REAL_FilterBank_getFrequencyDistance) {
@@ -3974,9 +3974,9 @@ DIRECT (REAL_BandFilterSpectrogram_getLowestFrequency) {
 }
 
 DIRECT (INTEGER_BandFilterSpectrogram_getNumberOfFrequencies) {
-	INTEGER_ONE (BandFilterSpectrogram)
+	QUERY_ONE_FOR_INTEGER (BandFilterSpectrogram)
 		integer result = my ny;
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 DIRECT (REAL_BandFilterSpectrogram_getFrequencyDistance) {
@@ -4424,15 +4424,15 @@ DO
 }
 
 DIRECT (INTEGER_PatternList_getNumberOfPatterns) {
-	INTEGER_ONE (PatternList)
+	QUERY_ONE_FOR_INTEGER (PatternList)
 		integer result = my ny;
-	INTEGER_ONE_END (U" (number of patterns)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of patterns)")
 }
 
 DIRECT (INTEGER_PatternList_getPatternSize) {
-	INTEGER_ONE (PatternList)
+	QUERY_ONE_FOR_INTEGER (PatternList)
 		integer result = my nx;
-	INTEGER_ONE_END (U" (pattern size)")
+	QUERY_ONE_FOR_INTEGER_END (U" (pattern size)")
 }
 
 FORM (REAL_PatternList_getValue, U"", nullptr) {
@@ -4446,9 +4446,9 @@ DO
 }
 
 DIRECT (NUMMAT_PatternList_getAllValues) {
-	NUMMAT_ONE (PatternList)
+	QUERY_ONE_FOR_MATRIX (PatternList)
 		autoMAT result = copy_MAT (my z.all());
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
@@ -4517,9 +4517,9 @@ FORM (REAL_PCA_TableOfReal_getFractionVariance, U"PCA & TableOfReal: Get fractio
 	NATURAL (toPrincipalComponent, U"right Principal component range", U"1")
 	OK
 DO
-	NUMBER_TWO (PCA, TableOfReal)
+	QUERY_ONE_AND_ONE_FOR_REAL (PCA, TableOfReal)
 		double result = PCA_TableOfReal_getFractionVariance (me, you, fromPrincipalComponent, toPrincipalComponent);
-	NUMBER_TWO_END (U"")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (NEW_PCA_Configuration_to_TableOfReal_reconstruct) {
@@ -4671,11 +4671,11 @@ DO
 }
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
-	NUMBER_COUPLE (PCA)
+	QUERY_TWO_FOR_REAL (PCA)
 		Melder_require (my numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the first PCA.");
 		Melder_require (your numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the second PCA.");
 		double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
-	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
+	QUERY_TWO_FOR_REAL_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
 }
 
 DIRECT (NEW1_PCA_SSCP_project) {
@@ -4705,27 +4705,27 @@ DO
 }
 
 DIRECT (INTEGER_Permutation_getNumberOfElements) {
-	INTEGER_ONE (Permutation)
+	QUERY_ONE_FOR_INTEGER (Permutation)
 		integer result = my numberOfElements;
-	INTEGER_ONE_END (U" (number of elements)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of elements)")
 }
 
 FORM (INTEGER_Permutation_getValueAtIndex, U"Permutation: Get value", U"Permutation: Get value...") {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	INTEGER_ONE (Permutation)
+	QUERY_ONE_FOR_INTEGER (Permutation)
 		integer result = Permutation_getValueAtIndex (me, index);
-	INTEGER_ONE_END (U" (value, at index = ", index, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (value, at index = ", index, U")")
 }
 
 FORM (INTEGER_Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
 	NATURAL (value, U"Value", U"1")
 	OK
 DO
-	INTEGER_ONE (Permutation)
+	QUERY_ONE_FOR_INTEGER (Permutation)
 		integer result = Permutation_getIndexAtValue (me, value);
-	INTEGER_ONE_END (U" (index, at value = ", value, U")")
+	QUERY_ONE_FOR_INTEGER_END (U" (index, at value = ", value, U")")
 }
 
 FORM (MODIFY_Permutation_tableJump, U"Permutation: Table jump", U"Permutation: Table jump...") {
@@ -4982,9 +4982,9 @@ DO
 }
 
 DIRECT (INTEGER_Polygon_getNumberOfPoints) {
-	INTEGER_ONE (Polygon)
+	QUERY_ONE_FOR_INTEGER (Polygon)
 		integer result = my numberOfPoints;
-	INTEGER_ONE_END (U" (number of points)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of points)")
 }
 
 FORM (REAL_Polygon_getPointX, U"Polygon: Get point (x)", nullptr) {
@@ -5013,11 +5013,11 @@ FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get 
 	OK
 DO
 	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
-	STRING_ONE (Polygon)
+	QUERY_ONE_FOR_STRING (Polygon)
 		int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
 			loc == Polygon_EDGE ? U"E" : U"V" );
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (REAL_Polygon_getAreaOfConvexHull) {
@@ -5326,18 +5326,18 @@ DO
 }
 
 DIRECT (INTEGER_Roots_getNumberOfRoots) {
-	INTEGER_ONE (Roots)
+	QUERY_ONE_FOR_INTEGER (Roots)
 		const integer result = Roots_getNumberOfRoots (me);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (COMPLEX_Roots_getRoot, U"Roots: Get root", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
-	COMPLEX_ONE (Roots)
+	QUERY_ONE_FOR_COMPLEX (Roots)
 		const dcomplex result = Roots_getRoot (me, rootNumber);
-	COMPLEX_ONE_END (U"")
+	QUERY_ONE_FOR_COMPLEX_END (U"")
 }
 
 FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
@@ -6323,21 +6323,21 @@ DO
 }
 
 DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
-	STRING_ONE (SpeechSynthesizer)
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_languageName.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
-	STRING_ONE (SpeechSynthesizer)
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_voiceName.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
-	STRING_ONE (SpeechSynthesizer)
+	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_phonemeSet.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
@@ -6473,9 +6473,9 @@ DO
 }
 
 DIRECT (INTEGER_Spline_getOrder) {
-	INTEGER_ONE (Spline)
+	QUERY_ONE_FOR_INTEGER (Spline)
 		integer result = Spline_getOrder (me);
-	INTEGER_ONE_END (U" (order)")
+	QUERY_ONE_FOR_INTEGER_END (U" (order)")
 }
 
 FORM (NEW_Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x...") {
@@ -6574,9 +6574,9 @@ DIRECT (NUMBER_SSCP_getDegreesOfFreedom) {
 }
 
 DIRECT (INTEGER_SSCP_getNumberOfObservations) {
-	INTEGER_ONE (SSCP)
+	QUERY_ONE_FOR_INTEGER (SSCP)
 		integer result = Melder_ifloor (my numberOfObservations);   // ppgb: blijf ik raar vinden
-	INTEGER_ONE_END (U" (number of observations)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of observations)")
 }
 
 DIRECT (REAL_SSCP_getTotalVariance) {
@@ -6744,15 +6744,15 @@ DIRECT (HELP_SVD_help) {
 }
 
 DIRECT (INTEGER_SVD_getNumberOfRows) {
-	INTEGER_ONE (SVD)
+	QUERY_ONE_FOR_INTEGER (SVD)
 		integer result = my isTransposed ? my numberOfColumns : my numberOfRows;
-	INTEGER_ONE_END (U" (number of rows)")	
+	QUERY_ONE_FOR_INTEGER_END (U" (number of rows)")	
 }
 
 DIRECT (INTEGER_SVD_getNumberOfColumns) {
-	INTEGER_ONE (SVD)
+	QUERY_ONE_FOR_INTEGER (SVD)
 		integer result = my isTransposed ? my numberOfRows : my numberOfColumns;
-	INTEGER_ONE_END (U" (= number of columns)")	
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of columns)")	
 }
 
 DIRECT (REAL_SVD_getConditionNumber) {
@@ -6796,9 +6796,9 @@ FORM (INTEGER_SVD_getMinimumNumberOfSingularValues, U"SVD: Get minimum number of
 	OK
 DO
 	Melder_require (fraction <= 1.0, U"Fraction must be a number in (0,1).");
-	INTEGER_ONE (SVD)
+	QUERY_ONE_FOR_INTEGER (SVD)
 		integer result = SVD_getMinimumNumberOfSingularValues (me, fraction);
-	INTEGER_ONE_END (U" (= number of singular values needed)")
+	QUERY_ONE_FOR_INTEGER_END (U" (= number of singular values needed)")
 }
 
 FORM (NEW_SVD_to_Matrix, U"SVD: To Matrix", U"SVD: To Matrix...") {
@@ -7992,9 +7992,9 @@ FORM (INTEGER_TextGridNavigator_getIndex, U"TextGridNavigator: Get index", nullp
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	INTEGER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
 		integer  result = TextGridNavigator_getIndex (me, tierNumber, where);
-	INTEGER_ONE_END (U"")
+	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
 FORM (NUMVEC_TextGridNavigator_listIndices, U"TextGridNavigator: List indices", nullptr) {
@@ -8031,18 +8031,18 @@ FORM (STRVEC_TextGridNavigator_listLabels, U"TextGridNavigator: List labels", nu
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	STRVEC_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_STRING_ARRAY (TextGridNavigator)
 		autoSTRVEC result = TextGridNavigator_listLabels (me, where);
-	STRVEC_ONE_END
+	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
 FORM (NUMMAT_TextGridNavigator_listDomains, U"", nullptr) {
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
-	NUMMAT_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_MATRIX (TextGridNavigator)
 		autoMAT result = TextGridNavigator_listDomains (me, matchDomain);
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr) {
@@ -8050,42 +8050,42 @@ FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr)
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
-	STRING_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_STRING (TextGridNavigator)
 		conststring32 result = TextGridNavigator_getLabel (me, tierNumber, where);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (INTEGER_TextGridNavigator_getNumberOfMatches) {
-	INTEGER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
 		integer  result = TextGridNavigator_getNumberOfMatches (me);
-	INTEGER_ONE_END (U" (number of matches)")	
+	QUERY_ONE_FOR_INTEGER_END (U" (number of matches)")	
 }
 
 FORM (INTEGER_TextGridNavigator_getNumberOfTopicMatches, U"TextGridNavigator: Get number of Topic only matches", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
-	INTEGER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
 		integer  result = TextGridNavigator_getNumberOfTopicMatches (me, tierNumber);
-	INTEGER_ONE_END (U" (number of Topic only matches in tier number ", tierNumber, U")")	
+	QUERY_ONE_FOR_INTEGER_END (U" (number of Topic only matches in tier number ", tierNumber, U")")	
 }
 
 FORM (INTEGER_TextGridNavigator_getNumberOfBeforeMatches, U"TextGridNavigator: Get number of Before only matches", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
-	INTEGER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
 		integer  result = TextGridNavigator_getNumberOfBeforeMatches (me, tierNumber);
-	INTEGER_ONE_END (U" (number of Before only matches in tier number ", tierNumber, U")")	
+	QUERY_ONE_FOR_INTEGER_END (U" (number of Before only matches in tier number ", tierNumber, U")")	
 }
 
 FORM (INTEGER_TextGridNavigator_getNumberOfAfterMatches, U"TextGridNavigator: Get number of After only matches", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
-	INTEGER_ONE (TextGridNavigator)
+	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
 		integer  result = TextGridNavigator_getNumberOfAfterMatches (me, tierNumber);
-	INTEGER_ONE_END (U" (number of After only matches in tier number ", tierNumber, U")")	
+	QUERY_ONE_FOR_INTEGER_END (U" (number of After only matches in tier number ", tierNumber, U")")	
 }
 
 FORM (MODIFY_TextGridNavigator_modifyUseCriterion, U"TextGridNavigator: Modify Use criterion", nullptr) {

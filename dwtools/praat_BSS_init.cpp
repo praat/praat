@@ -313,9 +313,9 @@ FORM (REAL_CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure, U"Cross
 	NATURAL (toTable, U"Last table", U"100")
 	OK
 DO
-	NUMBER_TWO (CrossCorrelationTableList, Diagonalizer)
+	QUERY_ONE_AND_ONE_FOR_REAL (CrossCorrelationTableList, Diagonalizer)
 		double result = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (me, you, nullptr, fromTable, toTable);
-	NUMBER_TWO_END (U" (= average sum of squared off-diagonal elements)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= average sum of squared off-diagonal elements)")
 }
 
 DIRECT (NEW1_CrossCorrelationTable_Diagonalizer_diagonalize) {

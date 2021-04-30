@@ -130,11 +130,11 @@ FORM (STRING_TableOfReal_getColumnLabel, U"Get column label", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	STRING_ONE (TableOfReal)
+	QUERY_ONE_FOR_STRING (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
 		conststring32 result = my columnLabels ? my columnLabels [columnNumber].get() : U"";
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 	
 FORM (REAL_TableOfReal_getColumnMean_index, U"Get column mean", nullptr) {
@@ -206,11 +206,11 @@ FORM (STRING_TableOfReal_getRowLabel, U"Get row label", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	STRING_ONE (TableOfReal)
+	QUERY_ONE_FOR_STRING (TableOfReal)
 		if (rowNumber > my numberOfRows)
 			Melder_throw (me, U": your row number should not be greater than the number of rows.");
 		conststring32 result = my rowLabels ? my rowLabels [rowNumber].get() : U"";
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
