@@ -23,16 +23,21 @@
 #include "Sampled.h"
 #include "Matrix.h"
 #include "MultiSampledSpectrogram_def.h"
+#include "Vector.h"
 
 void FrequencyBin_init (FrequencyBin me, double xmin, double xmax, integer nx, double dx, double x1);
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1);
 
 void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter interpreter);
 
+double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType);
+
 void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
 
 void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
+
+integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me);
 
 #endif /* MultiSampledSpectrogram_h_ */

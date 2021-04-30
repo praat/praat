@@ -60,6 +60,7 @@ void structMultiSampledSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"Number of frequencies: ", numberOfFrequencies);
 	MelderInfo_writeLine (U"Number of frames in frequency bin 1: ", frequencyBins.at [1] -> nx);
 	MelderInfo_writeLine (U"Number of frames in frequency bin ", numberOfFrequencies, U": ", frequencyBins.at [numberOfFrequencies] -> nx);
+	MelderInfo_writeLine (U"Number of frames in all bins: ", MultiSampledSpectrogram_getNumberOfFrames (this));
 }
 
 double structMultiSampledSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
@@ -102,6 +103,24 @@ void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter i
 	} catch (MelderError) {
 		Melder_throw (me, U": formula not completed.");
 	}
+}
+
+double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType) {
+	const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
+	if (x <  leftEdge || x > rightEdge)
+		return undefined;
+	const integer interpolationDepth = kVector_valueInterpolation_to_interpolationDepth (valueInterpolationType);
+	const double index_real = (x - my x1) / my dx + 1.0;
+	return NUM_interpolate_sinc (my z.row (1), index_real, interpolationDepth);
+}
+
+integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
+	double numberOfFrames = 0;
+	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
+		FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
+		numberOfFrames += frequencyBin -> nx;
+	}
+	return numberOfFrames;
 }
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {

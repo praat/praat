@@ -3532,6 +3532,19 @@ DO
 	MODIFY_EACH_WEAK_END
 }
 
+FORM (NEW_ConstantQLogFSpectrogram_translateSpectrum, U"", nullptr) {
+	REAL (fromTime, U"From time", U"0.0")
+	REAL (toTime, U"To time", U"0.0 (= all)")
+	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
+	REAL (numberOfBins, U"Number of bins", U"5.0")	
+	OK
+DO
+	CONVERT_EACH (ConstantQLogFSpectrogram)
+		autoConstantQLogFSpectrogram result = ConstantQLogFSpectrogram_translateSpectrum (me, fromTime, toTime, fromFrequency, numberOfBins);
+	CONVERT_EACH_END (my name.get())
+
+}
+
 FORM (GRAPHICS_ConstantQLogFSpectrogram_paint, U"ConstantQLogFSpectrogram: Paint", nullptr) {
 	REAL (xmin, U"left Time range (s)", U"0.0")
 	REAL (xmax, U"right Time range (s)", U"0.0 (=all)")
@@ -9029,6 +9042,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Paint...", nullptr, 0, GRAPHICS_ConstantQLogFSpectrogram_paint);
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Formula...", nullptr, 0, MODIFY_ConstantQLogFSpectrogram_formula);
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Formula (part)...", nullptr, 0, MODIFY_ConstantQLogFSpectrogram_formula_part);
+	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"Translate spectrum...", nullptr, 0, NEW_ConstantQLogFSpectrogram_translateSpectrum);
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"To Sound", nullptr, 0, NEW_ConstantQLogFSpectrogram_to_Sound);
 	
 	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
