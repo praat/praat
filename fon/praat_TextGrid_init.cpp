@@ -699,7 +699,7 @@ static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata public
 }
 DIRECT (WINDOW_TextGrid_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
-	FIND_TWO_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
+	FIND_ONE_AND_ONE_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -712,7 +712,7 @@ FORM (WINDOW_TextGrid_viewAndEditWithCallback, U"TextGrid: View & Edit with call
 	OK
 DO
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
-	FIND_TWO_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
+	FIND_ONE_AND_ONE_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, callbackText);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);

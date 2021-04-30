@@ -56,7 +56,7 @@ DIRECT (HELP_AmplitudeTier_help) {
 DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit an AmplitudeTier from batch.");
-	FIND_TWO_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -256,7 +256,7 @@ DIRECT (HELP_DurationTier_help) {
 DIRECT (WINDOW_DurationTier_edit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit a DurationTier from batch.");
-	FIND_TWO_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -616,7 +616,7 @@ DIRECT (HELP_IntensityTier_help) {
 DIRECT (WINDOW_IntensityTier_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit an IntensityTier from batch.");
-	FIND_TWO_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -801,7 +801,7 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 DIRECT (WINDOW_PitchTier_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit a PitchTier from batch.");
-	FIND_TWO_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
@@ -1103,7 +1103,7 @@ DO
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit a PointProcess from batch.");
-	FIND_TWO_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();

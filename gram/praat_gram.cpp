@@ -1682,7 +1682,7 @@ DO
 
 DIRECT (WINDOW_NoulliGrid_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a NoulliGrid from batch.");
-	FIND_TWO_WITH_IOBJECT (NoulliGrid, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (NoulliGrid, Sound)   // Sound may be null
 		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
