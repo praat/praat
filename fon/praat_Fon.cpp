@@ -101,9 +101,9 @@ FORM (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_COUPLE (Cochleagram)
+	QUERY_TWO_FOR_REAL (Cochleagram)
 		double result = Cochleagram_difference (me, you, fromTime, toTime);
-	NUMBER_COUPLE_END (U" hertz (root-mean-square)")
+	QUERY_TWO_FOR_REAL_END (U" hertz (root-mean-square)")
 }
 
 // MARK: Draw
@@ -922,15 +922,15 @@ DO
 }
 
 DIRECT (REAL_Pitch_Intensity_getMean) {
-	NUMBER_TWO (Pitch, Intensity)
+	QUERY_ONE_AND_ONE_FOR_REAL (Pitch, Intensity)
 		double result = Pitch_Intensity_getMean (me, you);
-	NUMBER_TWO_END (U" dB")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (REAL_Pitch_Intensity_getMeanAbsoluteSlope) {
-	NUMBER_TWO (Pitch, Intensity)
+	QUERY_ONE_AND_ONE_FOR_REAL (Pitch, Intensity)
 		double result = Pitch_Intensity_getMeanAbsoluteSlope (me, you);
-	NUMBER_TWO_END (U" dB/second")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB/second")
 }
 
 // MARK: - INTENSITY & POINTPROCESS
@@ -2676,9 +2676,9 @@ DIRECT (EDITOR_ONE_Strings_viewAndEdit) {
 // MARK: Query
 
 DIRECT (BOOLEAN_Strings_equal) {
-	NUMBER_COUPLE (Strings)
+	QUERY_TWO_FOR_REAL (Strings)
 		const integer result = (integer) Data_equal (me, you);   // cast bool to 0 or 1
-	NUMBER_COUPLE_END (result ? U" (equal)" : U" (unequal)")
+	QUERY_TWO_FOR_REAL_END (result ? U" (equal)" : U" (unequal)")
 }
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {

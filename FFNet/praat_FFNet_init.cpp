@@ -428,9 +428,9 @@ FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, ActivationList)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
 		double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U"")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
@@ -439,9 +439,9 @@ FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternLi
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, ActivationList)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
 		double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U"")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
@@ -484,9 +484,9 @@ FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & C
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, Categories)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
 		double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U" (total costs)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (total costs)")
 }
 
 FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
@@ -495,9 +495,9 @@ FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList &
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, Categories)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
 		double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U" (average costs)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (average costs)")
 }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {

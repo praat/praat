@@ -864,15 +864,15 @@ DO
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
-	NUMBER_TWO (OTGrammar, Strings)
+	QUERY_ONE_AND_ONE_FOR_REAL (OTGrammar, Strings)
 		integer result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
-	NUMBER_TWO_END (result ? U" (all grammatical)" : U" (not all grammatical)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (result ? U" (all grammatical)" : U" (not all grammatical)")
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
-	NUMBER_TWO (OTGrammar, Strings)
+	QUERY_ONE_AND_ONE_FOR_REAL (OTGrammar, Strings)
 		integer result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
-	NUMBER_TWO_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
 }
 
 FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {

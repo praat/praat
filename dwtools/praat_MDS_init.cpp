@@ -593,36 +593,36 @@ FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuratio
 	OPTIONMENU_ENUM (kMDS_KruskalStress, stressMeasure, U"Stress measure", kMDS_KruskalStress::KRUSKAL_1)
 	OK
 DO
-	NUMBER_TWO (Dissimilarity, Configuration)
+	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
 		const double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressMeasure);
-	NUMBER_TWO_END (U" (stress)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_TWO (Dissimilarity, Configuration)
+	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, nullptr,stressMeasure);
-	NUMBER_TWO_END (U" (absolute mds stress)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_TWO (Dissimilarity, Configuration)
+	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, nullptr, stressMeasure);
-	NUMBER_TWO_END (U" (ratio mds stress)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_TWO (Dissimilarity, Configuration)
+	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, nullptr, stressMeasure);
-	NUMBER_TWO_END (U" (interval mds stress)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Configuration: Get stress (monotone mds)", U"Dissimilarity & Configuration: Get stress (monotone mds)...") {
@@ -630,9 +630,9 @@ FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Config
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_TWO (Dissimilarity, Configuration)
+	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, nullptr, tiesHandling,stressMeasure);
-	NUMBER_TWO_END (U" (monotone mds stress)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
@@ -641,36 +641,36 @@ FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configu
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_TWO (Dissimilarity, Configuration)
+	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, nullptr, numberOfInteriorKnots, order, stressMeasure);
-	NUMBER_TWO_END (U" (i-spline mds stress)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (i-spline mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_THREE (Dissimilarity, Configuration, Weight)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U" (absolute mds stress)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_THREE (Dissimilarity, Configuration, Weight)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U" (ratio mds stress)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_THREE (Dissimilarity, Configuration, Weight)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U" (interval mds stress)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)", U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...") {
@@ -678,9 +678,9 @@ FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity &
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_THREE (Dissimilarity, Configuration, Weight)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, him, tiesHandling, stressMeasure);
-	NUMBER_THREE_END (U" (monotone mds stress)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
@@ -689,9 +689,9 @@ FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & 
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
-	NUMBER_THREE (Dissimilarity, Configuration, Weight)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, him, numberOfInteriorKnots, order, stressMeasure);
-	NUMBER_THREE_END (U" (i-spline mds stress)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (i-spline mds stress)")
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
@@ -1003,20 +1003,20 @@ FORM (REAL_Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"D
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
-	NUMBER_ONE_AND_LIST (Configuration, Distance)
+	QUERY_ONE_AND_ALL_FOR_REAL (Configuration, Distance)
 		double result;
 		DistanceList_Configuration_vaf ((DistanceList) & list, me, normalizeScalarProducts, & result);
-	NUMBER_ONE_AND_LIST_END (U" (variance accounted for)")
+	QUERY_ONE_AND_ALL_FOR_REAL_END (U" (variance accounted for)")
 }
 
 FORM (REAL_Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
-	NUMBER_TWO_AND_LIST (Configuration, Salience, Distance)
+	QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL (Configuration, Salience, Distance)
 		double result;
 		DistanceList_Configuration_Salience_vaf ((DistanceList) & list, me, you, normalizeScalarProducts, & result);
-	NUMBER_TWO_AND_LIST_END (U" (variance accounted for)")
+	QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END (U" (variance accounted for)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF", U"Dissimilarity & Configuration & Salience: Get VAF...") {
@@ -1024,10 +1024,10 @@ FORM (REAL_Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configura
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
-	NUMBER_TWO_AND_LIST (Configuration, Salience, Dissimilarity)
+	QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL (Configuration, Salience, Dissimilarity)
 		double result;
 		DissimilarityList_Configuration_Salience_vaf ((DissimilarityList) & list, me, you ,tiesHandling, normalizeScalarProducts, & result);
-	NUMBER_TWO_AND_LIST_END (U" (variance accounted for)");
+	QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END (U" (variance accounted for)");
 }
 
 FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuration & Salience: To Configuration (indscal)", U"Distance & Configuration & Salience: To Configuration (indscal)...") {
@@ -1037,7 +1037,7 @@ FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuratio
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	OK
 DO
-	FIND_TWO_AND_ALL (Configuration, Salience, Distance)
+	FIND_ONE_AND_ONE_AND_ALL (Configuration, Salience, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);

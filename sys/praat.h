@@ -711,7 +711,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	auto##listClass list = listClass##_create (); klas1 me = nullptr; \
 	LOOP { if (CLASS == class##klas2) list -> addItem_ref ((klas2) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; }
 
-#define FIND_TWO_AND_ALL(klas1,klas2,klas3)  \
+#define FIND_ONE_AND_ONE_AND_ALL(klas1,klas2,klas3)  \
 	OrderedOf<struct##klas3> list; klas1 me = nullptr; klas2 you = nullptr; \
 	LOOP { if (CLASS == class##klas3) list. addItem_ref ((klas3) OBJECT); else if (CLASS == class##klas1) me = (klas1) OBJECT; \
 	else if (CLASS == class##klas2) you = (klas2) OBJECT; }
@@ -816,9 +816,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_TWO(klas1,klas2)  \
+#define QUERY_ONE_AND_ONE_FOR_REAL(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
-#define NUMBER_TWO_END(...)  \
+#define QUERY_ONE_AND_ONE_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
@@ -826,9 +826,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_THREE(klas1,klas2,klas3)  \
+#define QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL(klas1,klas2,klas3)  \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define NUMBER_THREE_END(...)  \
+#define QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
@@ -836,9 +836,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_COUPLE(klas)  \
+#define QUERY_TWO_FOR_REAL(klas)  \
 	FIND_TWO (klas)
-#define NUMBER_COUPLE_END(...)  \
+#define QUERY_TWO_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
@@ -846,9 +846,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_COUPLE_AND_ONE(klas1,klas2)  \
+#define QUERY_TWO_AND_ONE_FOR_REAL(klas1,klas2)  \
 	FIND_TWO_AND_ONE (klas1, klas2)
-#define NUMBER_COUPLE_AND_ONE_END(...)  \
+#define QUERY_TWO_AND_ONE_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
@@ -856,9 +856,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_ONE_AND_LIST(klas1,klas2)  \
+#define QUERY_ONE_AND_ALL_FOR_REAL(klas1,klas2)  \
 	FIND_ONE_AND_ALL (klas1, klas2)
-#define NUMBER_ONE_AND_LIST_END(...)  \
+#define QUERY_ONE_AND_ALL_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \
@@ -866,9 +866,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
-#define NUMBER_TWO_AND_LIST(klas1,klas2,klas3)  \
-	FIND_TWO_AND_ALL (klas1, klas2, klas3)
-#define NUMBER_TWO_AND_LIST_END(...)  \
+#define QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL(klas1,klas2,klas3)  \
+	FIND_ONE_AND_ONE_AND_ALL (klas1, klas2, klas3)
+#define QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
 		interpreter -> returnedReal = result; \

@@ -1464,10 +1464,10 @@ FORM (REAL_Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (lo
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_local (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (local shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (local shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...") {
@@ -1475,10 +1475,10 @@ FORM (REAL_Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer 
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_local_dB (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" dB (local shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB (local shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...") {
@@ -1486,10 +1486,10 @@ FORM (REAL_Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_apq3 (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (apq3 shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (apq3 shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...") {
@@ -1497,10 +1497,10 @@ FORM (REAL_Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_apq5 (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (apq5 shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (apq5 shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...") {
@@ -1508,10 +1508,10 @@ FORM (REAL_Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (ap
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_apq11 (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (apq11 shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (apq11 shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...") {
@@ -1519,10 +1519,10 @@ FORM (REAL_Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_dda (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (dda shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (dda shimmer)");
 }
 
 FORM (NEW1_PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", nullptr) {

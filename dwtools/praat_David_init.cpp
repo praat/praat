@@ -360,15 +360,15 @@ DIRECT (INTEGER_Categories_getNumberOfCategories) {
 }
 
 DIRECT (INTEGER_Categories_getNumberOfDifferences) {
-	NUMBER_COUPLE (Categories)
+	QUERY_TWO_FOR_REAL (Categories)
 		integer result = OrderedOfString_getNumberOfDifferences (me, you);
-	NUMBER_COUPLE_END (U" differences")
+	QUERY_TWO_FOR_REAL_END (U" differences")
 }
 
 DIRECT (REAL_Categories_getFractionDifferent) {
-	NUMBER_COUPLE (Categories)
+	QUERY_TWO_FOR_REAL (Categories)
 		double result = OrderedOfString_getFractionDifferent (me, you);
-	NUMBER_COUPLE_END (U" (fraction different)")
+	QUERY_TWO_FOR_REAL_END (U" (fraction different)")
 }
 
 DIRECT (NEW_Categories_selectUniqueItems) {
@@ -572,9 +572,9 @@ FORM (REAL_CCA_Correlation_getVarianceFraction, U"CCA & Correlation: Get varianc
 	NATURAL (toCanonicalVariate, U"right Canonical variate range", U"1")
 	OK
 DO
-	NUMBER_TWO (CCA, Correlation)
+	QUERY_ONE_AND_ONE_FOR_REAL (CCA, Correlation)
 		double result = CCA_Correlation_getVarianceFraction (me, you, xOrY, fromCanonicalVariate, toCanonicalVariate);
-	NUMBER_TWO_END (U" (fraction variance from ", (xOrY == 1 ? U"y" : U"x"), U", extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (fraction variance from ", (xOrY == 1 ? U"y" : U"x"), U", extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
 }
 
 FORM (REAL_CCA_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Love redundancy", U"CCA & Correlation: Get redundancy (sl)...") {
@@ -588,9 +588,9 @@ FORM (REAL_CCA_Correlation_getRedundancy_sl, U"CCA & Correlation: Get Stewart-Lo
 	LABEL (U"...given the availability of the data in the other set.")
 	OK
 DO
-	NUMBER_TWO (CCA, Correlation)
+	QUERY_ONE_AND_ONE_FOR_REAL (CCA, Correlation)
 		double result = CCA_Correlation_getRedundancy_sl (me, you, xOrY, fromCanonicalVariate, toCanonicalVariate);
-	NUMBER_TWO_END (U" (redundancy from ", (xOrY == 1 ? U"y" : U"x"), U" extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (redundancy from ", (xOrY == 1 ? U"y" : U"x"), U" extracted by canonical variates ", fromCanonicalVariate, U" to ", toCanonicalVariate, U")")
 }
 
 DIRECT (NEW_CCA_TableOfReal_to_TableOfReal_loadings) {
@@ -3821,15 +3821,15 @@ DO
 }
 
 DIRECT (REAL_NMF_Matrix_getEuclideanDistance) {
-	NUMBER_TWO (NMF, Matrix)
+	QUERY_ONE_AND_ONE_FOR_REAL (NMF, Matrix)
 		double result = NMF_getEuclideanDistance (me, your z.get());
-	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
 DIRECT (REAL_NMF_Matrix_getItakuraSaitoDivergence) {
-	NUMBER_TWO (NMF, Matrix)
+	QUERY_ONE_AND_ONE_FOR_REAL (NMF, Matrix)
 		double result = NMF_getItakuraSaitoDivergence (me, your z.get());
-	NUMBER_TWO_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factorization (m.u.)", nullptr) {
@@ -4517,9 +4517,9 @@ FORM (REAL_PCA_TableOfReal_getFractionVariance, U"PCA & TableOfReal: Get fractio
 	NATURAL (toPrincipalComponent, U"right Principal component range", U"1")
 	OK
 DO
-	NUMBER_TWO (PCA, TableOfReal)
+	QUERY_ONE_AND_ONE_FOR_REAL (PCA, TableOfReal)
 		double result = PCA_TableOfReal_getFractionVariance (me, you, fromPrincipalComponent, toPrincipalComponent);
-	NUMBER_TWO_END (U"")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 DIRECT (NEW_PCA_Configuration_to_TableOfReal_reconstruct) {
@@ -4671,11 +4671,11 @@ DO
 }
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
-	NUMBER_COUPLE (PCA)
+	QUERY_TWO_FOR_REAL (PCA)
 		Melder_require (my numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the first PCA.");
 		Melder_require (your numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the second PCA.");
 		double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
-	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
+	QUERY_TWO_FOR_REAL_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
 }
 
 DIRECT (NEW1_PCA_SSCP_project) {

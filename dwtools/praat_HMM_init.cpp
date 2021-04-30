@@ -198,11 +198,11 @@ FORM (REAL_GaussianMixture_TableOfReal_getLikelihoodValue, U"GaussianMixture & T
       U"GaussianMixture & TableOfReal: Get likelihood value...") {
 	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)	OK
 DO
-	NUMBER_TWO (GaussianMixture, TableOfReal)
+	QUERY_ONE_AND_ONE_FOR_REAL (GaussianMixture, TableOfReal)
 		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		double lnpdn = GaussianMixture_TableOfReal_getLikelihoodValue (me, you, criterion);
 		double result = lnpdn / you -> numberOfRows;
-	NUMBER_TWO_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
 }
 
 DIRECT (HELP_HMM_help) {
@@ -400,15 +400,15 @@ FORM (REAL_HMM_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & 
 	BOOLEAN (symmetric, U"Symmetric", true)
 	OK
 DO
-	NUMBER_COUPLE (HMM)
+	QUERY_TWO_FOR_REAL (HMM)
 		double result = HMM_HMM_getCrossEntropy (me, you, observationLength, symmetric);
-	NUMBER_COUPLE_END (U" (= ", (symmetric ? U"symmetric " : U""), U" cross-entropy between models for observation length = ", observationLength, U")")
+	QUERY_TWO_FOR_REAL_END (U" (= ", (symmetric ? U"symmetric " : U""), U" cross-entropy between models for observation length = ", observationLength, U")")
 }
 
 DIRECT (REAL_HMM_HMM_HMMObservationSequence_getCrossEntropy) {
-	NUMBER_COUPLE_AND_ONE (HMM, HMMObservationSequence)
+	QUERY_TWO_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		double result = HMM_HMM_HMMObservationSequence_getCrossEntropy (me, you, him);
-	NUMBER_COUPLE_AND_ONE_END (U"(= symmetric cross-entropy between models)")
+	QUERY_TWO_AND_ONE_FOR_REAL_END (U"(= symmetric cross-entropy between models)")
 }
 
 FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
@@ -422,27 +422,27 @@ DO
 }
 
 DIRECT (REAL_HMM_HMMStateSequence_getProbability) {
-	NUMBER_TWO (HMM, HMMStateSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMStateSequence)
 		double result = HMM_HMMStateSequence_getProbability (me, you);
-	NUMBER_TWO_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
 }
 
 DIRECT (REAL_HMM_HMMObservationSequence_getProbability) {
-	NUMBER_TWO (HMM, HMMObservationSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		double result = HMM_HMMObservationSequence_getProbability (me, you);
-	NUMBER_TWO_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
 }
 
 DIRECT (REAL_HMM_HMMObservationSequence_getCrossEntropy) {
-	NUMBER_TWO (HMM, HMMObservationSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 	double result = HMM_HMMObservationSequence_getCrossEntropy (me, you);
-	NUMBER_TWO_END (U" (= cross-entropy)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= cross-entropy)")
 }
 
 DIRECT (REAL_HMM_HMMObservationSequence_getPerplexity) {
-	NUMBER_TWO (HMM, HMMObservationSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		double result = HMM_HMMObservationSequence_getPerplexity (me, you);
-	NUMBER_TWO_END (U" (= perplexity)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= perplexity)")
 }
 
 DIRECT (NEW1_HMM_HMMObservationSequence_to_HMMStateSequence) {

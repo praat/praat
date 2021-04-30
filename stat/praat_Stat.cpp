@@ -44,9 +44,9 @@ FORM (REAL_Distributionses_getMeanAbsoluteDifference, U"Get mean difference", nu
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_COUPLE (Distributions)
+	QUERY_TWO_FOR_REAL (Distributions)
 		const double result = Distributionses_getMeanAbsoluteDifference (me, you, columnNumber);
-	NUMBER_COUPLE_END (U" (mean absolute difference between columns ", columnNumber, U")")
+	QUERY_TWO_FOR_REAL_END (U" (mean absolute difference between columns ", columnNumber, U")")
 }
 
 FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
@@ -210,9 +210,9 @@ FORM (REAL_PairDistribution_Distributions_getFractionCorrect, U"PairDistribution
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_TWO (PairDistribution, Distributions)
+	QUERY_ONE_AND_ONE_FOR_REAL (PairDistribution, Distributions)
 		const double result = PairDistribution_Distributions_getFractionCorrect (me, you, columnNumber);
-	NUMBER_TWO_END (U" (fraction correct)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 // MARK: - TABLE
