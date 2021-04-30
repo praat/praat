@@ -806,104 +806,94 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define MOVIE_ONE_AND_ONE_AND_ONE_END  END_NO_NEW_DATA
 
-#define QUERY_GRAPHICS_FOR_REAL
-#define QUERY_GRAPHICS_FOR_REAL_END(...)  \
-	if (interpreter) { \
+#define QUERY_FOR_REAL_END(...)  \
+	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
+
+#define QUERY_GRAPHICS_FOR_REAL
+#define QUERY_GRAPHICS_FOR_REAL_END(...)  \
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_ONE_FOR_REAL(klas)  \
 	FIND_ONE (klas)
 #define QUERY_ONE_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
-	Melder_information (result, __VA_ARGS__); \
-	END_NO_NEW_DATA
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_ONE_AND_ONE_FOR_REAL(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
 #define QUERY_ONE_AND_ONE_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
-	Melder_information (result, __VA_ARGS__); \
-	END_NO_NEW_DATA
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL(klas1,klas2,klas3)  \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
 #define QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
-	Melder_information (result, __VA_ARGS__); \
-	END_NO_NEW_DATA
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_TWO_FOR_REAL(klas)  \
 	FIND_TWO (klas)
 #define QUERY_TWO_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
-	Melder_information (result, __VA_ARGS__); \
-	END_NO_NEW_DATA
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_TWO_AND_ONE_FOR_REAL(klas1,klas2)  \
 	FIND_TWO_AND_ONE (klas1, klas2)
 #define QUERY_TWO_AND_ONE_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
-	Melder_information (result, __VA_ARGS__); \
-	END_NO_NEW_DATA
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_ONE_AND_ALL_FOR_REAL(klas1,klas2)  \
 	FIND_ONE_AND_ALL (klas1, klas2)
 #define QUERY_ONE_AND_ALL_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
-	Melder_information (result, __VA_ARGS__); \
-	END_NO_NEW_DATA
+	QUERY_FOR_REAL_END (__VA_ARGS__)
 
 #define QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL(klas1,klas2,klas3)  \
 	FIND_ONE_AND_ONE_AND_ALL (klas1, klas2, klas3)
 #define QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
+	QUERY_FOR_REAL_END (__VA_ARGS__)
+
+#define QUERY_FOR_INTEGER_END(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::INTEGER_; \
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
 #define QUERY_ONE_FOR_INTEGER(klas)  \
 	FIND_ONE (klas)
 #define QUERY_ONE_FOR_INTEGER_END(...)  \
-	if (interpreter) { \
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
-		interpreter -> returnedReal = result; \
-	} \
+	QUERY_FOR_INTEGER_END (__VA_ARGS__)
+
+#define QUERY_NONE_FOR_COMPLEX
+#define QUERY_NONE_FOR_COMPLEX_END(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
 #define QUERY_ONE_FOR_COMPLEX(klas)  \
 	FIND_ONE (klas)
 #define QUERY_ONE_FOR_COMPLEX_END(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	Melder_information (result, __VA_ARGS__); \
 	END_NO_NEW_DATA
 
 #define QUERY_ONE_FOR_STRING(klas)  \
 	FIND_ONE (klas)
 #define QUERY_ONE_FOR_STRING_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	Melder_information (result); \
+	END_NO_NEW_DATA
+
+#define QUERY_ONE_WEAK_FOR_STRING(klas)  \
+	FIND_ONE (klas) \
+	try {
+#define QUERY_ONE_WEAK_FOR_STRING_END  \
+		praat_dataChanged (me); \
+	} catch (MelderError) { \
+		praat_dataChanged (me); \
+		throw; \
+	} \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	Melder_information (result); \
@@ -1133,14 +1123,20 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_newWithFile (result.move(), file, MelderFile_name (file)); \
 	END_WITH_NEW_DATA
 
-#define SAVE_ONE(klas)  FIND_ONE (klas)
-#define SAVE_ONE_END  END_NO_NEW_DATA
+#define SAVE_ONE(klas)  \
+	FIND_ONE (klas)
+#define SAVE_ONE_END  \
+	END_NO_NEW_DATA
 
-#define SAVE_ALL(klas)  FIND_ALL (klas)
-#define SAVE_ALL_END  END_NO_NEW_DATA
+#define SAVE_ALL(klas)  \
+	FIND_ALL (klas)
+#define SAVE_ALL_END  \
+	END_NO_NEW_DATA
 
-#define SAVE_ALL_LISTED(klas,listClass)  FIND_ALL_LISTED (klas, listClass)
-#define SAVE_ALL_LISTED_END  END_NO_NEW_DATA
+#define SAVE_ALL_LISTED(klas,listClass)  \
+	FIND_ALL_LISTED (klas, listClass)
+#define SAVE_ALL_LISTED_END  \
+	END_NO_NEW_DATA
 
 #define EDITOR_ONE(indefiniteArticle,klas)  \
 	if (theCurrentPraatApplication -> batch) \

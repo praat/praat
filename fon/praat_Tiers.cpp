@@ -413,7 +413,6 @@ FORM (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)
 DO
 	MODIFY_EACH_WEAK (FormantGrid)
 		FormantGrid_formula_bandwidths (me, formula, interpreter, nullptr);
-			praat_dataChanged (me);
 	MODIFY_EACH_WEAK_END
 }
 
