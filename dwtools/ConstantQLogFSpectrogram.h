@@ -33,6 +33,8 @@ void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring3
 
 void ConstantQLogFSpectrogram_formula_part (ConstantQLogFSpectrogram me, double fromTime, double toTime, double fromFrequency, double toFrequency, conststring32 formula, Interpreter interpreter);
 
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_translateSpectrum (ConstantQLogFSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins);
+
 void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dBRange, bool garnish);
 
 #endif /* MultiSampledSpectrogram_h_ */

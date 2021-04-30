@@ -58,12 +58,23 @@ double structConstantQLogFSpectrogram :: v_myFrequencyToHertz (double log2_f) {
 }
 
 double structConstantQLogFSpectrogram :: v_hertzToMyFrequency (double f_hz) {
-	return log2 (f_hz);
+	return (f_hz > 0 ? log2 (f_hz) : undefined);
 }
 
-void ConstantQLogFSpectrogram_getExtrema (ConstantQLogFSpectrogram me, double tmin, double tmax, double fmin, double lfmax,
-	double *out_minimum, double *out_maximum) {
-	
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
+	try {
+		const double ymin = 0.0, ymax = log2 (fmax);
+		const double dy = 1.0 / numberOfBinsPerOctave;
+		const integer numberOfBins = Melder_iroundDown (log2 (fmax / f1) * numberOfBinsPerOctave);
+		Melder_require (numberOfBins > 1,
+			U"The number of bins should be larger than 1.");
+		autoConstantQLogFSpectrogram me = Thing_new (ConstantQLogFSpectrogram);
+		my frequencyResolutionInBins = frequencyResolutionInBins;
+		MultiSampledSpectrogram_init (me.get(), ymin, ymax, numberOfBins, dy, log2 (f1));
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create ConstantQLogFSpectrogram.");
+	}
 }
 
 double ConstantQLogFSpectrogram_getQualityFactor (ConstantQLogFSpectrogram me) {
@@ -158,23 +169,6 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 	}
 }
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
-	try {
-		const double ymin = 0.0, ymax = log2 (fmax);
-		const double dy = 1.0 / numberOfBinsPerOctave;
-		const integer numberOfBins = Melder_iroundDown (log2 (fmax / f1) * numberOfBinsPerOctave);
-		Melder_require (numberOfBins > 1,
-			U"The number of bins should be larger than 1.");
-		autoConstantQLogFSpectrogram me = Thing_new (ConstantQLogFSpectrogram);
-		my frequencyResolutionInBins = frequencyResolutionInBins;
-		MultiSampledSpectrogram_init (me.get(), ymin, ymax, numberOfBins, dy, log2 (f1));
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Could not create ConstantQLogFSpectrogram.");
-	}
-}
-
-
 void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter) {
 	try {
 		
@@ -202,6 +196,41 @@ void ConstantQLogFSpectrogram_formula_part (ConstantQLogFSpectrogram me, double 
 			}
 	} catch (MelderError) {
 		Melder_throw (me, U": formula not completed on part.");
+	}
+}
+
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_translateSpectrum (ConstantQLogFSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins) {
+	try {
+		autoConstantQLogFSpectrogram thee = Data_copy (me);
+		if (shiftNumberOfBins == 0.0)
+			return thee;
+		Melder_require (fabs (shiftNumberOfBins) < my nx,
+			U"The shift should not be larger than the number of frequency bins (", my nx, U").");
+		fromFrequency = ( fromFrequency <= 0.0 ? (shiftNumberOfBins > 0.0 ? my x1 : my xmax) : my v_hertzToMyFrequency (fromFrequency) );
+		if (shiftNumberOfBins > 0.0) {
+			// start at the hihest frequency and work down.
+			const integer ifreqFrom = Sampled_xToHighIndex (me, fromFrequency);
+			const integer int_shiftNumberofBins = shiftNumberOfBins;
+			const integer lowestBin = std::max (1_integer, ifreqFrom - int_shiftNumberofBins);
+			for (integer ifreq = my nx; ifreq >= lowestBin; ifreq --) {
+				FrequencyBin to_bin = thy frequencyBins.at [ifreq];
+				const integer from_index = ifreq - int_shiftNumberofBins;
+				integer itmin, itmax;
+				if (Sampled_getWindowSamples (to_bin, fromTime, toTime, & itmin, & itmax) > 0 && from_index > 0) {
+					FrequencyBin from_bin = my frequencyBins.at [from_index];
+					for (integer index = itmin; index <= itmax; index ++) {
+						const double time = Sampled_indexToX (to_bin, index);
+						const double newValue = FrequencyBin_getValueAtX (from_bin, time, kVector_valueInterpolation::SINC70);
+						if (isdefined (newValue))
+							to_bin -> z[1] [index] = newValue;
+					}
+				}
+			}
+		}
+		
+		return thee;	
+	} catch (MelderError) {
+		Melder_throw (me, U": shift not completed.");
 	}
 }
 
