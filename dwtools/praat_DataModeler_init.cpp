@@ -911,7 +911,7 @@ DO
 
 DIRECT (WINDOW_OptimalCeilingTier_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an OptimalCeilingTier from batch.");
-	FIND_TWO_WITH_IOBJECT (OptimalCeilingTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (OptimalCeilingTier, Sound)   // Sound may be null
 		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
