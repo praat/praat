@@ -1069,9 +1069,9 @@ FORM (LIST_OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distrib
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	INFO_TWO (OTGrammar, Distributions)
+	INFO_ONE_AND_ONE (OTGrammar, Distributions)
 		OTGrammar_Distributions_listObligatoryRankings (me, you, columnNumber);
-	INFO_TWO_END
+	INFO_ONE_AND_ONE_END
 }
 
 // MARK: OTGRAMMAR & PAIRDISTRIBUTION
@@ -1145,9 +1145,9 @@ DO
 }
 
 DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
-	INFO_TWO (OTGrammar, PairDistribution)
+	INFO_ONE_AND_ONE (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_listObligatoryRankings (me, you);
-	INFO_TWO_END
+	INFO_ONE_AND_ONE_END
 }
 
 // MARK: - OTMULTI

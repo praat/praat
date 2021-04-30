@@ -728,8 +728,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_TWO(klas1,klas2)  FIND_ONE_AND_ONE (klas1, klas2)
-#define INFO_TWO_END  \
+#define INFO_ONE_AND_ONE(klas1,klas2)  FIND_ONE_AND_ONE (klas1, klas2)
+#define INFO_ONE_AND_ONE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
