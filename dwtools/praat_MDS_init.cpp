@@ -697,42 +697,42 @@ DO
 FORM (GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Configuration)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
 		Dissimilarity_Configuration_drawShepardDiagram (me, you, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawAbsoluteRegression, U"Dissimilarity & Configuration: Draw regression (absolute mds)", U"Dissimilarity & Configuration: Draw regression (absolute mds)...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Configuration)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
 		Dissimilarity_Configuration_Weight_drawAbsoluteRegression (me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawRatioRegression, U"Dissimilarity & Configuration: Draw regression (ratio mds)", U"Dissimilarity & Configuration: Draw regression (ratio mds)...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Configuration)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
 		Dissimilarity_Configuration_Weight_drawRatioRegression (me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawIntervalRegression, U"Dissimilarity & Configuration: Draw regression (interval mds)", U"Dissimilarity & Configuration: Draw regression (interval mds)...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Configuration)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
 		Dissimilarity_Configuration_Weight_drawIntervalRegression (me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawMonotoneRegression, U"Dissimilarity & Configuration: Draw regression (monotone mds)", U"Dissimilarity & Configuration: Draw regression (monotone mds)...") {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Configuration)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
 		Dissimilarity_Configuration_Weight_drawMonotoneRegression (me, you, nullptr, GRAPHICS, tiesHandling, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawISplineRegression, U"Dissimilarity & Configuration: Draw regression (i-spline mds)", U"Dissimilarity & Configuration: Draw regression (i-spline mds)...") {
@@ -740,9 +740,9 @@ FORM (GRAPHICS_Dissimilarity_Configuration_drawISplineRegression, U"Dissimilarit
 	INTEGER (order, U"Order of I-spline", U"3")
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Configuration)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
 		Dissimilarity_Configuration_Weight_drawISplineRegression (me, you, nullptr, GRAPHICS, numberOfInteriorKnots, order,fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW_Dissimilarity_to_Configuration_kruskal, U"Dissimilarity: To Configuration (kruskal)", U"Dissimilarity: To Configuration (kruskal)...") {
@@ -978,9 +978,9 @@ FORM (GRAPHICS_Distance_Configuration_drawScatterDiagram, U"Distance & Configura
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (Distance, Configuration)
+	GRAPHICS_ONE_AND_ONE (Distance, Configuration)
 		Distance_Configuration_drawScatterDiagram (me, you, GRAPHICS, xmin, xmax, ymin, ymax, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)", U"Distance & Configuration: To Configuration (indscal)...") {
@@ -1091,9 +1091,9 @@ FORM (GRAPHICS_Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimila
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (Dissimilarity, Distance)
+	GRAPHICS_ONE_AND_ONE (Dissimilarity, Distance)
 		Proximity_Distance_drawScatterDiagram (me, you, GRAPHICS, fromDissimilarity, toDissimilarity, fromDistance, toDistance, markSize, markString, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_MDS_help) {

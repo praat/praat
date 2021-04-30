@@ -146,10 +146,10 @@ FORM (GRAPHICS_TextGrid_Pitch_draw, U"TextGrid & Pitch: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
 			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
@@ -163,10 +163,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
 			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarithmic", nullptr) {
@@ -180,10 +180,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarith
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
 			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
@@ -197,10 +197,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
 			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones", nullptr) {
@@ -215,10 +215,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones"
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
 			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparately, U"TextGrid & Pitch: Draw separately", nullptr) {
@@ -230,10 +230,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparately, U"TextGrid & Pitch: Draw separatel
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyErb, U"TextGrid & Pitch: Draw separately erb", nullptr) {
@@ -245,10 +245,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyErb, U"TextGrid & Pitch: Draw separa
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyLogarithmic, U"TextGrid & Pitch: Draw separately logarithmic", nullptr) {
@@ -260,10 +260,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyLogarithmic, U"TextGrid & Pitch: Dra
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyMel, U"TextGrid & Pitch: Draw separately mel", nullptr) {
@@ -275,10 +275,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyMel, U"TextGrid & Pitch: Draw separa
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw separately semitones", nullptr) {
@@ -291,10 +291,10 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckle, U"TextGrid & Pitch: Speckle", nullptr) {
@@ -307,10 +307,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckle, U"TextGrid & Pitch: Speckle", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleErb, U"TextGrid & Pitch: Speckle erb", nullptr) {
@@ -323,10 +323,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleErb, U"TextGrid & Pitch: Speckle erb", null
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleLogarithmic, U"TextGrid & Pitch: Speckle logarithmic", nullptr) {
@@ -339,10 +339,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleLogarithmic, U"TextGrid & Pitch: Speckle lo
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleMel, U"TextGrid & Pitch: Speckle mel", nullptr) {
@@ -355,10 +355,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleMel, U"TextGrid & Pitch: Speckle mel", null
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semitones", nullptr) {
@@ -372,10 +372,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semi
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparately, U"TextGrid & Pitch: Speckle separately", nullptr) {
@@ -387,10 +387,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparately, U"TextGrid & Pitch: Speckle sep
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb, U"TextGrid & Pitch: Speckle separately erb", nullptr) {
@@ -402,10 +402,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb, U"TextGrid & Pitch: Speckle 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyLogarithmic, U"TextGrid & Pitch: Speckle separately logarithmic", nullptr) {
@@ -417,10 +417,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyLogarithmic, U"TextGrid & Pitch: 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel, U"TextGrid & Pitch: Speckle separately mel", nullptr) {
@@ -432,10 +432,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel, U"TextGrid & Pitch: Speckle 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelySemitones, U"TextGrid & Pitch: Speckle separately semitones", nullptr) {
@@ -448,10 +448,10 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelySemitones, U"TextGrid & Pitch: Sp
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Pitch)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 // MARK: - PITCH & TEXTTIER
@@ -477,9 +477,9 @@ FORM (GRAPHICS_TextGrid_Sound_draw, U"TextGrid & Sound: Draw...", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (TextGrid, Sound)
+	GRAPHICS_ONE_AND_ONE (TextGrid, Sound)
 		TextGrid_Sound_draw (me, you, GRAPHICS, fromTime, toTime, showBoundaries, useTextStyles, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW1_TextGrid_Sound_extractAllIntervals, U"TextGrid & Sound: Extract all intervals", nullptr) {

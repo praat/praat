@@ -751,20 +751,36 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define PLAY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define PLAY_EACH_END  } END_NO_NEW_DATA
 
-#define GRAPHICS_NONE  autoPraatPicture picture;
-#define GRAPHICS_NONE_END  END_NO_NEW_DATA
+#define GRAPHICS_NONE  \
+	autoPraatPicture picture;
+#define GRAPHICS_NONE_END  \
+	END_NO_NEW_DATA
 
-#define GRAPHICS_EACH(klas)  autoPraatPicture picture; LOOP { iam_LOOP (klas);
-#define GRAPHICS_EACH_END  } END_NO_NEW_DATA
+#define GRAPHICS_EACH(klas)  \
+	autoPraatPicture picture; \
+	LOOP { \
+		iam_LOOP (klas);
+#define GRAPHICS_EACH_END  \
+	} \
+	END_NO_NEW_DATA
 
-#define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_ONE_AND_ONE (klas1, klas2)
-#define GRAPHICS_TWO_END  END_NO_NEW_DATA
+#define GRAPHICS_ONE_AND_ONE(klas1,klas2)  \
+	autoPraatPicture picture; \
+	FIND_ONE_AND_ONE (klas1, klas2)
+#define GRAPHICS_ONE_AND_ONE_END  \
+	END_NO_NEW_DATA
 
-#define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_TWO (klas)
-#define GRAPHICS_COUPLE_END  END_NO_NEW_DATA
+#define GRAPHICS_TWO(klas)  \
+	autoPraatPicture picture; \
+	FIND_TWO (klas)
+#define GRAPHICS_TWO_END  \
+	END_NO_NEW_DATA
 
-#define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_TWO_AND_ONE (klas1, klas2)
-#define GRAPHICS_COUPLE_AND_ONE_END  END_NO_NEW_DATA
+#define GRAPHICS_TWO_AND_ONE(klas1,klas2)  \
+	autoPraatPicture picture; \
+	FIND_TWO_AND_ONE (klas1, klas2)
+#define GRAPHICS_TWO_AND_ONE_END  \
+	END_NO_NEW_DATA
 
 #define MOVIE_ONE(klas,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
