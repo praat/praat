@@ -845,9 +845,9 @@ DIRECT (REAL_Confusion_getFractionCorrect) {
 }
 
 DIRECT (MODIFY_Confusion_ClassificationTable_increaseConfusionCount) {
-	MODIFY_FIRST_OF_TWO (Confusion, ClassificationTable)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Confusion, ClassificationTable)
 		Confusion_ClassificationTable_increase (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 /******************* Confusion & Matrix *************************************/
@@ -899,9 +899,9 @@ DO
 }
 
 DIRECT (MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes) {
-	MODIFY_FIRST_OF_TWO (ComplexSpectrogram, Spectrogram)
+	MODIFY_FIRST_OF_ONE_AND_ONE (ComplexSpectrogram, Spectrogram)
 		ComplexSpectrogram_Spectrogram_replaceAmplitudes (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 /********************** Correlation *******************************************/
@@ -1163,9 +1163,9 @@ DIRECT (HELP_Discriminant_help) {
 }
 
 DIRECT (MODIFY_Discriminant_setGroupLabels) {
-	MODIFY_FIRST_OF_TWO (Discriminant, Strings)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Discriminant, Strings)
 		Discriminant_setGroupLabels (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_Discriminant_PatternList_to_Categories, U"Discriminant & PatternList: To Categories", U"Discriminant & PatternList: To Categories...") {
@@ -1580,9 +1580,9 @@ FORM (MODIFY_DTW_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nul
 		RADIOBUTTON (U"2/3 < slope < 3/2")
     OK
 DO
-	MODIFY_FIRST_OF_TWO (DTW, Polygon)
+	MODIFY_FIRST_OF_ONE_AND_ONE (DTW, Polygon)
 		DTW_Polygon_findPathInside (me, you, slopeConstraint, 0);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_DTW_Polygon_to_Matrix_cumulativeDistances, U"DTW & Polygon: To Matrix (cum. distances)", nullptr) {
@@ -1972,9 +1972,9 @@ DIRECT (NEW_DTW_swapAxes) {
 }
 
 DIRECT (MODIFY_DTW_Matrix_replace) {
-	MODIFY_FIRST_OF_TWO (DTW, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (DTW, Matrix)
 		DTW_Matrix_replace (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (NEW1_DTW_TextGrid_to_TextGrid) {
@@ -2002,9 +2002,9 @@ DIRECT (NEW_EditDistanceTable_to_TableOfReal_directions) {
 }
 
 DIRECT (MODIFY_EditDistanceTable_setEditCosts) {
-	MODIFY_FIRST_OF_TWO (EditDistanceTable, EditCostsTable)
+	MODIFY_FIRST_OF_ONE_AND_ONE (EditDistanceTable, EditCostsTable)
 		EditDistanceTable_setEditCosts (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_EditDistanceTable_setDefaultCosts, U"", nullptr) {
@@ -2502,9 +2502,9 @@ DO
 }
 
 DIRECT (MODIFY_ExcitationList_addItem) {
-	MODIFY_FIRST_OF_ONE_AND_LIST (ExcitationList, Excitation)
+	MODIFY_FIRST_OF_ONE_AND_ALL (ExcitationList, Excitation)
 		ExcitationList_addItems (me, & list);
-	MODIFY_FIRST_OF_ONE_AND_LIST_END
+	MODIFY_FIRST_OF_ONE_AND_ALL_END
 }
 
 FORM (NEW_ExcitationList_extractItem, U"ExcitationList: Extract item", nullptr) {
@@ -2690,10 +2690,10 @@ DIRECT (NEW1_FilesInMemory_to_FileInMemorySet) {
 }
 
 DIRECT (MODIFY_FileInMemorySet_addItemsToSet) {
-	MODIFY_FIRST_OF_TWO (FileInMemorySet, FileInMemory)
+	MODIFY_FIRST_OF_ONE_AND_ONE (FileInMemorySet, FileInMemory)
 		autoFileInMemory him = Data_copy (you);
 		my addItem_move (him.move());
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (NEW1_FileInMemorySets_merge) {
@@ -3839,9 +3839,9 @@ FORM (MODIFY_NMF_Matrix_improveFactorization_mu, U"NMF & Matrix: Improve factori
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (NMF, Matrix)
 		NMF_improveFactorization_mu (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factorization (ALS)", nullptr) {
@@ -3851,9 +3851,9 @@ FORM (MODIFY_NMF_Matrix_improveFactorization_als, U"NMF & Matrix: Improve factor
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (NMF, Matrix)
 		NMF_improveFactorization_als (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_NMF_Matrix_improveFactorization_is, U"NMF & Matrix: Improve factorization (IS)", nullptr) {
@@ -3863,9 +3863,9 @@ FORM (MODIFY_NMF_Matrix_improveFactorization_is, U"NMF & Matrix: Improve factori
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (NMF, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (NMF, Matrix)
 		NMF_improveFactorization_is (me, your z.get(), maximumNumberOfIterations, tolx, told, info);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
@@ -4322,21 +4322,21 @@ DO
 }
 
 DIRECT (MODIFY_NavigationContext_replaceTopicLabels) {
-	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
+	MODIFY_FIRST_OF_ONE_AND_ONE (NavigationContext, Strings)
 		NavigationContext_replaceTopicLabels (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_NavigationContext_replaceBeforeLabels) {
-	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
+	MODIFY_FIRST_OF_ONE_AND_ONE (NavigationContext, Strings)
 		NavigationContext_replaceBeforeLabels (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_NavigationContext_replaceAfterLabels) {
-	MODIFY_FIRST_OF_TWO (NavigationContext, Strings)
+	MODIFY_FIRST_OF_ONE_AND_ONE (NavigationContext, Strings)
 		NavigationContext_replaceAfterLabels (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 
@@ -5382,9 +5382,9 @@ DO
 }
 
 DIRECT (MODIFY_Roots_Polynomial_polish) {
-	MODIFY_FIRST_OF_TWO (Roots, Polynomial)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Roots, Polynomial)
 		Roots_Polynomial_polish (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 /*****************************************************************************/
@@ -8178,24 +8178,24 @@ FORM (MODIFY_TextGridNavigator_replaceNavigationContext, U"TextGridNavigator: Re
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, NavigationContext)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, NavigationContext)
 		TextGridNavigator_replaceNavigationContext (me, you, tierNumber);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_TextGridNavigator_addTextGridTierNavigator, U"TextGridNavigator: Add TextGridTierNavigator", nullptr) {
 	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGridTierNavigator)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGridTierNavigator)
 		TextGridNavigator_addTextGridTierNavigator (me, you, matchLocation);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_TextGridNavigator_replaceSearchTiers) {
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_replaceTiers (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 	
 }
 
@@ -8209,10 +8209,10 @@ FORM (MODIFY_TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add
 	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (me, you, tierNumber, 
 			topic_string, topicCriterion, topicMatchBoolean, matchDomain, matchLocation);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
@@ -8236,11 +8236,11 @@ FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search ti
 	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (TextGridNavigator, TextGrid)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_and_TextGrid_addSearchTier (me, you, tierNumber, 
 			topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, beforeMatchBoolean,
 			after_string, afterCriterion, afterMatchBoolean, useCriterion, excludeTopic, matchDomain, matchLocation);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (NEW_TextGridTierNavigator_to_TextGridNavigator) {

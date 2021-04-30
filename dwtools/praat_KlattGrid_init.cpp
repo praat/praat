@@ -272,9 +272,9 @@ DIRECT (NEW_KlattGrid_extract##Name##Tier) { \
 	CONVERT_EACH_TO_ONE_END (newname) \
 } \
 DIRECT (MODIFY_KlattGrid_replace##Name##Tier) { \
-	MODIFY_FIRST_OF_TWO (KlattGrid, tiertype); \
+	MODIFY_FIRST_OF_ONE_AND_ONE (KlattGrid, tiertype); \
 		KlattGrid_replace##Name##Tier (me, you); \
-	MODIFY_FIRST_OF_TWO_END \
+	MODIFY_FIRST_OF_ONE_AND_ONE_END \
 }
 
 // 55 DO_KlattGrid... functions
@@ -563,9 +563,9 @@ KlattGrid_EXTRACT_FORMANT_GRID (Delta, kKlattGridFormantType::DELTA)
 
 #define KlattGrid_REPLACE_FORMANT_GRID(Name,formantType)  \
 DIRECT (MODIFY_KlattGrid_replace##Name##FormantGrid) { \
-	MODIFY_FIRST_OF_TWO (KlattGrid, FormantGrid); \
+	MODIFY_FIRST_OF_ONE_AND_ONE (KlattGrid, FormantGrid); \
 		KlattGrid_replaceFormantGrid (me, formantType, you); \
-	MODIFY_FIRST_OF_TWO_END \
+	MODIFY_FIRST_OF_ONE_AND_ONE_END \
 }
 
 #define KlattGrid_REPLACE_FORMANT_AMPLITUDE(Name,name,formantType)  \
@@ -573,9 +573,9 @@ FORM (MODIFY_KlattGrid_replace##Name##FormantAmplitudeTier, U"KlattGrid: Replace
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	OK \
 DO \
-	MODIFY_FIRST_OF_TWO (KlattGrid, IntensityTier); \
+	MODIFY_FIRST_OF_ONE_AND_ONE (KlattGrid, IntensityTier); \
 		KlattGrid_replaceAmplitudeTier (me, formantType, formantNumber, you); \
-	MODIFY_FIRST_OF_TWO_END \
+	MODIFY_FIRST_OF_ONE_AND_ONE_END \
 }
 
 KlattGrid_REPLACE_FORMANT_GRID (Oral, kKlattGridFormantType::ORAL)
@@ -686,9 +686,9 @@ FORM (MODIFY_KlattGrid_replaceFormantGrid, U"KlattGrid: Replace formant grid", n
 	KlattGrid_6formants_addCommonField (formantType)
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (KlattGrid, FormantGrid)
+	MODIFY_FIRST_OF_ONE_AND_ONE (KlattGrid, FormantGrid)
 		KlattGrid_replaceFormantGrid (me, formantType, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (REAL_KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nullptr) {
@@ -741,9 +741,9 @@ FORM (MODIFY_KlattGrid_replaceAmplitudeTier, U"KlattGrid: Replace amplitude tier
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (KlattGrid, IntensityTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (KlattGrid, IntensityTier)
 		KlattGrid_replaceAmplitudeTier (me, formantType, formantNumber, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW_KlattGrid_to_Sound_special, U"KlattGrid: To Sound (special)", U"KlattGrid: To Sound (special)...") {

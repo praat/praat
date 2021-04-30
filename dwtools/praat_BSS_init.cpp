@@ -303,9 +303,9 @@ FORM (MODIFY_Diagonalizer_CrossCorrelationTableList_improveDiagonality, U"Diagon
 		OPTION (U"ffdiag")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Diagonalizer, CrossCorrelationTableList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Diagonalizer, CrossCorrelationTableList)
 		Diagonalizer_CrossCorrelationTableList_improveDiagonality (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	MODIFY_FIRST_OF_TWO_END	
+	MODIFY_FIRST_OF_ONE_AND_ONE_END	
 }
 
 FORM (REAL_CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr) {
@@ -339,9 +339,9 @@ FORM (MODIFY_CrossCorrelationTableList_MixingMatrix_improveUnmixing, U"", nullpt
 		OPTION (U"ffdiag")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (MixingMatrix, CrossCorrelationTableList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (MixingMatrix, CrossCorrelationTableList)
 		MixingMatrix_CrossCorrelationTableList_improveUnmixing (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Diagonalizer_help) {
@@ -406,11 +406,11 @@ FORM (MODIFY_Sound_MixingMatrix_improveUnmixing, U"", nullptr) {
 		OPTION (U"ffdiag")
 	OK
 DO
-		MODIFY_FIRST_OF_TWO (MixingMatrix, Sound)
+		MODIFY_FIRST_OF_ONE_AND_ONE (MixingMatrix, Sound)
 		MixingMatrix_Sound_improveUnmixing (me, you,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep,
 			maximumNumberOfIterations, tolerance, diagonalizationMethod);
-		MODIFY_FIRST_OF_TWO_END
+		MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW_Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableList", nullptr) {

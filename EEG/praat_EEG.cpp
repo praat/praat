@@ -332,9 +332,9 @@ DIRECT (NEW_EEG_MixingMatrix_to_EEG_mix) {
 // MARK: - EEG & TextGrid
 
 DIRECT (MODIFY_EEG_TextGrid_replaceTextGrid) {
-	MODIFY_FIRST_OF_TWO (EEG, TextGrid)
+	MODIFY_FIRST_OF_ONE_AND_ONE (EEG, TextGrid)
 		EEG_replaceTextGrid (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - ERP

@@ -885,10 +885,10 @@ FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Str
 	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK (OTGrammar, Strings)
+	MODIFY_FIRST_OF_ONE_WEAK_AND_TWO (OTGrammar, Strings)
 		OTGrammar_learn (me, you, him, evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, numberOfChews);
-	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END
+	MODIFY_FIRST_OF_ONE_WEAK_AND_TWO_END
 }
 
 FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial adult outputs", nullptr) {
@@ -1081,9 +1081,9 @@ FORM (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairD
 	POSITIVE (marginOfSeparation, U"Margin of separation", U"1.0")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (OTGrammar, PairDistribution)
+	MODIFY_FIRST_OF_ONE_AND_ONE (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_findPositiveWeights (me, you, weightFloor, marginOfSeparation);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & PairDistribution: Get fraction correct...", nullptr) {
@@ -1136,12 +1136,12 @@ FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: L
 	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO_WEAK (OTGrammar, PairDistribution)
+	MODIFY_FIRST_OF_ONE_WEAK_AND_ONE (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_learn (me, you,
 			evaluationNoise, updateRule, honourLocalRankings,
 			initialPlasticity, replicationsPerPlasticity,
 			plasticityDecrement, numberOfPlasticities, relativePlasticitySpreading, numberOfChews);
-	MODIFY_FIRST_OF_TWO_WEAK_END
+	MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_END
 }
 
 DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
@@ -1625,45 +1625,45 @@ FORM (MODIFY_Net_PatternList_applyToInput, U"Net & PatternList: Apply to input",
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_applyToInput (me, you, rowNumber);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_applyToOutput, U"Net & PatternList: Apply to output", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_applyToOutput (me, you, rowNumber);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_learn, U"Net & PatternList: Learn", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_learn (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_learnByLayer, U"Net & PatternList: Learn by layer", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_learnByLayer (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_learn_twoPhases, U"Net & PatternList: Learn (two phases)", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_learn_twoPhases (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {

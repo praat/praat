@@ -1191,9 +1191,9 @@ FORM (MODIFY_VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", nu
 	REAL (time, U"Time (s)", U"0.1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (VocalTractTier, VocalTract)
+	MODIFY_FIRST_OF_ONE_AND_ONE (VocalTractTier, VocalTract)
 		VocalTractTier_addVocalTract (me, time, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 /******************* LPC & Sound *************************************/

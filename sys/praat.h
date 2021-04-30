@@ -960,16 +960,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_TWO(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
-#define MODIFY_FIRST_OF_TWO_END  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2) \
 	try {
-#define MODIFY_FIRST_OF_TWO_WEAK_END  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_END  \
 		praat_dataChanged (me); \
 	} catch (MelderError) { \
 		praat_dataChanged (me); \
@@ -977,22 +977,22 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define MODIFY_FIRST_OF_THREE_END  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_AND_TWO(klas1,klas2)  \
 	FIND_ONE_AND_TWO (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  \
+#define MODIFY_FIRST_OF_ONE_AND_TWO_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_TWO(klas1,klas2)  \
 	FIND_ONE_AND_TWO (klas1, klas2) \
 	try {
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_TWO_END  \
 		praat_dataChanged (me); \
 	} catch (MelderError) { \
 		praat_dataChanged (me); \
@@ -1000,9 +1000,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_AND_ALL(klas1,klas2)  \
 	FIND_ONE_AND_ALL (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_LIST_END  \
+#define MODIFY_FIRST_OF_ONE_AND_ALL_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 

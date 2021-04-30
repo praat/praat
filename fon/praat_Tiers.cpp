@@ -1453,10 +1453,10 @@ DIRECT (HINT_PointProcess_Sound_viewAndEdit) {
 // MARK: - POINTPROCESS & SOUND
 
 DIRECT (MODIFY_Point_Sound_transplantDomain) {
-	MODIFY_FIRST_OF_TWO (PointProcess, Sound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (PointProcess, Sound)
 		my xmin = your xmin;
 		my xmax = your xmax;
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (REAL_Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...") {

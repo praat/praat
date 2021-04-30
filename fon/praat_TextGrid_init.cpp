@@ -533,17 +533,17 @@ DO
 }
 
 DIRECT (MODIFY_TextGrid_Sound_scaleTimes) {
-	MODIFY_FIRST_OF_TWO (TextGrid, Sound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGrid, Sound)
 		Function_scaleXTo (me, your xmin, your xmax);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_TextGrid_Sound_cloneTimeDomain) {
-	MODIFY_FIRST_OF_TWO (Sound, TextGrid)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Sound, TextGrid)
 		my x1 += your xmin - your xmin;
 		my xmin = your xmin;
 		my xmax = your xmax;
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - SPELLINGCHECKER
@@ -641,9 +641,9 @@ DO
 }
 
 DIRECT (MODIFY_SpellingChecker_replaceWordList) {
-	MODIFY_FIRST_OF_TWO (SpellingChecker, WordList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (SpellingChecker, WordList)
 		SpellingChecker_replaceWordList (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HINT_SpellingChecker_replaceWordList_help) {
@@ -655,9 +655,9 @@ DIRECT (HINT_SpellingChecker_replaceWordList_help) {
 }
 
 DIRECT (MODIFY_SpellingChecker_replaceUserDictionary) {
-	MODIFY_FIRST_OF_TWO (SpellingChecker, StringSet)
+	MODIFY_FIRST_OF_ONE_AND_ONE (SpellingChecker, StringSet)
 		SpellingChecker_replaceUserDictionary (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - TEXTGRID
@@ -1463,9 +1463,9 @@ DIRECT (NEW1_TextGrid_TextTier_append) {
 // MARK: - TEXTGRID & LONGSOUND
 
 DIRECT (MODIFY_TextGrid_LongSound_scaleTimes) {
-	MODIFY_FIRST_OF_TWO (TextGrid, LongSound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (TextGrid, LongSound)
 		Function_scaleXTo (me, your xmin, your xmax);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - TEXTTIER

@@ -1330,9 +1330,9 @@ FORM_SAVE (SAVE_Manipulation_writeToTextFileWithoutSound, U"Text file without So
 // MARK: - MANIPULATION & DURATIONTIER
 
 DIRECT (MODIFY_Manipulation_replaceDurationTier) {
-	MODIFY_FIRST_OF_TWO (Manipulation, DurationTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, DurationTier)
 		Manipulation_replaceDurationTier (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Manipulation_replaceDurationTier_help) {
@@ -1342,9 +1342,9 @@ DIRECT (HELP_Manipulation_replaceDurationTier_help) {
 // MARK: - MANIPULATION & PITCHTIER
 
 DIRECT (MODIFY_Manipulation_replacePitchTier) {
-	MODIFY_FIRST_OF_TWO (Manipulation, PitchTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, PitchTier)
 		Manipulation_replacePitchTier (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Manipulation_replacePitchTier_help) {
@@ -1354,17 +1354,17 @@ DIRECT (HELP_Manipulation_replacePitchTier_help) {
 // MARK: - MANIPULATION & POINTPROCESS
 
 DIRECT (MODIFY_Manipulation_replacePulses) {
-	MODIFY_FIRST_OF_TWO (Manipulation, PointProcess)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, PointProcess)
 		Manipulation_replacePulses (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MANIPULATION & SOUND
 
 DIRECT (MODIFY_Manipulation_replaceOriginalSound) {
-	MODIFY_FIRST_OF_TWO (Manipulation, Sound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, Sound)
 		Manipulation_replaceOriginalSound (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MANIPULATION & TEXTTIER
