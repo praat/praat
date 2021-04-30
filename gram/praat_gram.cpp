@@ -467,9 +467,9 @@ DO
 // MARK: Query
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
-	INTEGER_ONE (OTGrammar)
+	QUERY_ONE_FOR_INTEGER (OTGrammar)
 		const integer result = my numberOfConstraints;
-	INTEGER_ONE_END (U" constraints")
+	QUERY_ONE_FOR_INTEGER_END (U" constraints")
 }
 
 FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
@@ -503,9 +503,9 @@ DO
 }
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
-	INTEGER_ONE (OTGrammar)
+	QUERY_ONE_FOR_INTEGER (OTGrammar)
 		const integer result = my numberOfTableaus;
-	INTEGER_ONE_END (U" tableaus")
+	QUERY_ONE_FOR_INTEGER_END (U" tableaus")
 }
 
 FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {

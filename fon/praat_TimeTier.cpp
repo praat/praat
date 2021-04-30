@@ -52,7 +52,7 @@ FORM (INTEGER_TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier:
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	QUERY_ONE_FOR_REAL (AnyTier)   // not INTEGER_ONE, because we can return undefined
+	QUERY_ONE_FOR_REAL (AnyTier)   // not QUERY_ONE_FOR_INTEGER, because we can return undefined
 		const double result =
 			my points.size == 0 ? undefined : AnyTier_timeToNearestIndex (me, time);
 	QUERY_ONE_FOR_REAL_END (U"")

@@ -79,15 +79,15 @@ DO
 }
 
 DIRECT (INTEGER_GaussianMixture_getNumberOfComponents) {
-	INTEGER_ONE (GaussianMixture)
+	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		integer result = my numberOfComponents;
-	INTEGER_ONE_END (U"(= number of components)")
+	QUERY_ONE_FOR_INTEGER_END (U"(= number of components)")
 }
 
 DIRECT (INTEGER_GaussianMixture_getDimensionOfComponent) {
-	INTEGER_ONE (GaussianMixture)
+	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		integer result = my dimension;
-	INTEGER_ONE_END (U"(= dimension of component)")
+	QUERY_ONE_FOR_INTEGER_END (U"(= dimension of component)")
 }
 
 FORM (REAL_GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get probability at position", nullptr) {
