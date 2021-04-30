@@ -796,15 +796,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ONE (klas)
 #define MOVIE_ONE_END  END_NO_NEW_DATA
 
-#define MOVIE_TWO(klas1,klas2,title,width,height)  \
+#define MOVIE_ONE_AND_ONE(klas1,klas2,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_ONE_AND_ONE (klas1, klas2)
-#define MOVIE_TWO_END  END_NO_NEW_DATA
+#define MOVIE_ONE_AND_ONE_END  END_NO_NEW_DATA
 
-#define MOVIE_THREE(klas1,klas2,klas3,title,width,height)  \
+#define MOVIE_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define MOVIE_THREE_END  END_NO_NEW_DATA
+#define MOVIE_ONE_AND_ONE_AND_ONE_END  END_NO_NEW_DATA
 
 #define QUERY_GRAPHICS_FOR_REAL
 #define QUERY_GRAPHICS_FOR_REAL_END(...)  \
@@ -1136,11 +1136,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SAVE_ONE(klas)  FIND_ONE (klas)
 #define SAVE_ONE_END  END_NO_NEW_DATA
 
-#define SAVE_LIST(klas)  FIND_ALL (klas)
-#define SAVE_LIST_END  END_NO_NEW_DATA
+#define SAVE_ALL(klas)  FIND_ALL (klas)
+#define SAVE_ALL_END  END_NO_NEW_DATA
 
-#define SAVE_TYPED_LIST(klas,listClass)  FIND_ALL_LISTED (klas, listClass)
-#define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
+#define SAVE_ALL_LISTED(klas,listClass)  FIND_ALL_LISTED (klas, listClass)
+#define SAVE_ALL_LISTED_END  END_NO_NEW_DATA
 
 #define EDITOR_ONE(indefiniteArticle,klas)  \
 	if (theCurrentPraatApplication -> batch) \

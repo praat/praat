@@ -196,17 +196,17 @@ DO
 }
 
 DIRECT (MOVIE_Artword_Speaker_playMovie) {
-	MOVIE_TWO (Artword, Speaker, U"Artword & Speaker movie", 300, 300)
+	MOVIE_ONE_AND_ONE (Artword, Speaker, U"Artword & Speaker movie", 300, 300)
 		Artword_Speaker_playMovie (me, you, graphics);
-	MOVIE_TWO_END
+	MOVIE_ONE_AND_ONE_END
 }
 
 // MARK: - ARTWORD & SPEAKER & SOUND
 
 DIRECT (MOVIE_Artword_Speaker_Sound_playMovie) {
-	MOVIE_THREE (Artword, Speaker, Sound, U"Artword & Speaker & Sound movie", 300, 300)
+	MOVIE_ONE_AND_ONE_AND_ONE (Artword, Speaker, Sound, U"Artword & Speaker & Sound movie", 300, 300)
 		Artword_Speaker_Sound_playMovie (me, you, him, graphics);
-	MOVIE_THREE_END
+	MOVIE_ONE_AND_ONE_AND_ONE_END
 }
 
 // MARK: - SPEAKER
