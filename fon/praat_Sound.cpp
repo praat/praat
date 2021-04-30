@@ -55,9 +55,9 @@ FORM (NEW_LongSound_extractPart, U"LongSound: Extract part", nullptr) {
 	BOOLEAN (preserveTimes, U"Preserve times", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (LongSound)
+	CONVERT_EACH_TO_ONE (LongSound)
 		autoSound result = LongSound_extractPart (me, fromTime, toTime, preserveTimes);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (REAL_LongSound_getIndexFromTime, U"LongSound: Get sample index from time", U"Sound: Get index from time...") {
@@ -150,9 +150,9 @@ FORM (NEW_LongSound_to_TextGrid, U"LongSound: To TextGrid...", U"LongSound: To T
 	SENTENCE (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	TURN_EACH_INTO_ONE (LongSound)
+	CONVERT_EACH_TO_ONE (LongSound)
 		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (EDITOR_ONE_LongSound_view) {
@@ -340,9 +340,9 @@ FORM (NEW_Sound_autoCorrelate, U"Sound: autocorrelate", U"Sound: Autocorrelate..
 			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
  	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_autoCorrelate (me, amplitudeScaling, signalOutsideTimeDomainIs);
-	TURN_EACH_INTO_ONE_END (U"ac_", my name.get())
+	CONVERT_EACH_TO_ONE_END (U"ac_", my name.get())
 }
 
 DIRECT (NEW1_Sounds_combineToStereo) {
@@ -421,15 +421,15 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 }
 
 DIRECT (NEW_Sound_convertToMono) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_convertToMono (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_mono")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mono")
 }
 
 DIRECT (NEW_Sound_convertToStereo) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_convertToStereo (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_stereo")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_stereo")
 }
 
 DIRECT (NEW1_Sounds_convolve_old) {
@@ -614,10 +614,10 @@ FORM (NEW_Sound_deepenBandModulation, U"Deepen band modulation", U"Sound: Deepen
 	POSITIVE (bandSmoothing, U"Band smoothing (Hz)", U"100.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_deepenBandModulation (me, enhancement, fromFrequency, toFrequency,
 				slowModulation, fastModulation, bandSmoothing);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", Melder_roundTowardsZero (enhancement))
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_roundTowardsZero (enhancement))
 }
 
 FORM (GRAPHICS_old_Sound_draw, U"Sound: Draw", nullptr) {
@@ -695,24 +695,24 @@ FORM (NEW_Sound_extractChannel, U"Sound: Extract channel", nullptr) {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_extractChannel (me, channel);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_ch", channel)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ch", channel)
 }
 
 FORM (NEW_Sound_extractChannels, U"Sound: Extract channels", nullptr) {
 	NATURALVECTOR (channels, U"Channel numbers", RANGES_, U"1:64")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_extractChannels (me, channels);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_ch")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ch")
 }
 
 DIRECT (NEW_Sound_extractLeftChannel) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_extractChannel (me, 1);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_left")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_left")
 }
 
 FORM (NEW_Sound_extractPart, U"Sound: Extract part", nullptr) {
@@ -723,10 +723,10 @@ FORM (NEW_Sound_extractPart, U"Sound: Extract part", nullptr) {
 	BOOLEAN (preserveTimes, U"Preserve times", false)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_extractPart (me, fromTime, toTime,
 				windowShape, relativeWidth, preserveTimes);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_part")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_part")
 }
 
 FORM (NEW_Sound_extractPartForOverlap, U"Sound: Extract part for overlap", nullptr) {
@@ -735,24 +735,24 @@ FORM (NEW_Sound_extractPartForOverlap, U"Sound: Extract part for overlap", nullp
 	POSITIVE (overlap, U"Overlap (s)", U"0.01")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_extractPartForOverlap (me, fromTime, toTime, overlap);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_part")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_part")
 }
 
 DIRECT (NEW_Sound_extractRightChannel) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_extractChannel (me, 2);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_right")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_right")
 }
 
 FORM (NEW_Sound_filter_deemphasis, U"Sound: Filter (de-emphasis)", U"Sound: Filter (de-emphasis)...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_filter_deemphasis (me, fromFrequency);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_deemp")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_deemp")
 }
 
 FORM (NEW_Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
@@ -760,9 +760,9 @@ FORM (NEW_Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
 	FORMULA (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_filter_formula (me, formula, interpreter);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_filt")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_filt")
 }
 
 FORM (NEW_Sound_filter_oneFormant, U"Sound: Filter (one formant)", U"Sound: Filter (one formant)...") {
@@ -770,9 +770,9 @@ FORM (NEW_Sound_filter_oneFormant, U"Sound: Filter (one formant)", U"Sound: Filt
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"100.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_filter_oneFormant (me, frequency, bandwidth);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_filt")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_filt")
 }
 
 FORM (MODIFY_Sound_filterWithOneFormantInplace, U"Sound: Filter with one formant (in-place)", U"Sound: Filter with one formant (in-place)...") {
@@ -791,18 +791,18 @@ FORM (NEW_Sound_filter_passHannBand, U"Sound: Filter (pass Hann band)", U"Sound:
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_filter_passHannBand (me, fromFrequency, toFrequency, smoothing);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_band")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_band")
 }
 
 FORM (NEW_Sound_filter_preemphasis, U"Sound: Filter (pre-emphasis)", U"Sound: Filter (pre-emphasis)...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_filter_preemphasis (me, fromFrequency);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_preemp")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_preemp")
 }
 
 FORM (NEW_Sound_filter_stopHannBand, U"Sound: Filter (stop Hann band)", U"Sound: Filter (stop Hann band)...") {
@@ -811,9 +811,9 @@ FORM (NEW_Sound_filter_stopHannBand, U"Sound: Filter (stop Hann band)", U"Sound:
 	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_filter_stopHannBand (me, fromFrequency, toFrequency, smoothing);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_band")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_band")
 }
 
 FORM (MODIFY_Sound_formula, U"Sound: Formula", U"Sound: Formula...") {
@@ -1123,9 +1123,9 @@ FORM (NEW_Sound_lengthen_overlapAdd, U"Sound: Lengthen (overlap-add)", U"Sound: 
 	OK
 DO
 	if (minimumPitch >= maximumPitch) Melder_throw (U"Maximum pitch should be greater than minimum pitch.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_lengthen_overlapAdd (me, minimumPitch, maximumPitch, factor);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", Melder_fixed (factor, 2));
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (factor, 2));
 }
 
 FORM (MODIFY_Sound_multiply, U"Sound: Multiply", nullptr) {
@@ -1311,9 +1311,9 @@ FORM (NEW_Sound_resample, U"Sound: Resample", U"Sound: Resample...") {
 	NATURAL (precision, U"Precision (samples)", U"50")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_resample (me, newSamplingFrequency, precision);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", Melder_iround (newSamplingFrequency));
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_iround (newSamplingFrequency));
 }
 
 DIRECT (MODIFY_Sound_reverse) {
@@ -1411,9 +1411,9 @@ FORM (NEW_Sound_to_Manipulation, U"Sound: To Manipulation", U"Manipulation") {
 DO
 	if (maximumPitch <= minimumPitch)
 		Melder_throw (U"The maximum pitch should be greater than the minimum pitch.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoManipulation result = Sound_to_Manipulation (me, timeStep, minimumPitch, maximumPitch);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Cochleagram, U"Sound: To Cochleagram", nullptr) {
@@ -1423,10 +1423,10 @@ FORM (NEW_Sound_to_Cochleagram, U"Sound: To Cochleagram", nullptr) {
 	REAL (forwardMaskingTime, U"Forward-masking time (s)", U"0.03")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoCochleagram result = Sound_to_Cochleagram (me, timeStep,
 			frequencyResolution, windowLength, forwardMaskingTime);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & Hewitt)", nullptr) {
@@ -1440,10 +1440,10 @@ FORM (NEW_Sound_to_Cochleagram_edb, U"Sound: To Cochleagram (De Boer, Meddis & H
 	POSITIVE (reprocessingRate, U"   reprocessing rate (/sec)", U"66.31")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoCochleagram result = Sound_to_Cochleagram_edb (me, timeStep, frequencyResolution, hasSynapse,
 				replenishmentRate, lossRate, returnRate, reprocessingRate);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Formant_burg, U"Sound: To Formant (Burg method)", U"Sound: To Formant (burg)...") {
@@ -1454,10 +1454,10 @@ FORM (NEW_Sound_to_Formant_burg, U"Sound: To Formant (Burg method)", U"Sound: To
 	POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoFormant result = Sound_to_Formant_burg (me, timeStep,
 				maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Formant_keepAll, U"Sound: To Formant (keep all)", U"Sound: To Formant (keep all)...") {
@@ -1468,10 +1468,10 @@ FORM (NEW_Sound_to_Formant_keepAll, U"Sound: To Formant (keep all)", U"Sound: To
 	POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoFormant result = Sound_to_Formant_keepAll (me, timeStep,
 				maximumNumberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Formant_willems, U"Sound: To Formant (split Levinson (Willems))", U"Sound: To Formant (sl)...") {
@@ -1482,10 +1482,10 @@ FORM (NEW_Sound_to_Formant_willems, U"Sound: To Formant (split Levinson (Willems
 	POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoFormant result = Sound_to_Formant_willems (me, timeStep,
 				numberOfFormants, formantCeiling, windowLength, preEmphasisFrom);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Harmonicity_ac, U"Sound: To Harmonicity (ac)", U"Sound: To Harmonicity (ac)...") {
@@ -1496,10 +1496,10 @@ FORM (NEW_Sound_to_Harmonicity_ac, U"Sound: To Harmonicity (ac)", U"Sound: To Ha
 	OK
 DO
 	if (periodsPerWindow < 3.0) Melder_throw (U"Number of periods per window must be at least 3.0.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoHarmonicity result = Sound_to_Harmonicity_ac (me, timeStep,
 				minimumPitch, silenceThreshold, periodsPerWindow);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Harmonicity_cc, U"Sound: To Harmonicity (cc)", U"Sound: To Harmonicity (cc)...") {
@@ -1509,10 +1509,10 @@ FORM (NEW_Sound_to_Harmonicity_cc, U"Sound: To Harmonicity (cc)", U"Sound: To Ha
 	POSITIVE (periodsPerWindow, U"Periods per window", U"1.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoHarmonicity result = Sound_to_Harmonicity_cc (me, timeStep,
 				minimumPitch, silenceThreshold, periodsPerWindow);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Harmonicity_gne, U"Sound: To Harmonicity (gne)", nullptr) {
@@ -1522,10 +1522,10 @@ FORM (NEW_Sound_to_Harmonicity_gne, U"Sound: To Harmonicity (gne)", nullptr) {
 	POSITIVE (step, U"Step (Hz)", U"80.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoMatrix result = Sound_to_Harmonicity_GNE (me, minimumFrequency,
 				maximumFrequency, bandwidth, step);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_old_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...") {
@@ -1533,10 +1533,10 @@ FORM (NEW_old_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity.
 	REAL (timeStep, U"Time step (s)", U"0.0 (= auto)")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoIntensity result = Sound_to_Intensity (me,
 				minimumPitch, timeStep, false);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...") {
@@ -1545,10 +1545,10 @@ FORM (NEW_Sound_to_Intensity, U"Sound: To Intensity", U"Sound: To Intensity...")
 	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO_ALTERNATIVE (NEW_old_Sound_to_Intensity)
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoIntensity result = Sound_to_Intensity (me,
 				minimumPitch, timeStep, subtractMean);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_IntensityTier, U"Sound: To IntensityTier", nullptr) {
@@ -1557,25 +1557,25 @@ FORM (NEW_Sound_to_IntensityTier, U"Sound: To IntensityTier", nullptr) {
 	BOOLEAN (subtractMean, U"Subtract mean", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoIntensityTier result = Sound_to_IntensityTier (me,
 				minimumPitch, timeStep, subtractMean);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Sound_to_IntervalTier) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Ltas, U"Sound: To long-term average spectrum", nullptr) {
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"100")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoLtas result = Sound_to_Ltas (me, bandwidth);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Ltas_pitchCorrected, U"Sound: To Ltas (pitch-corrected)", U"Sound: To Ltas (pitch-corrected)...") {
@@ -1589,16 +1589,16 @@ FORM (NEW_Sound_to_Ltas_pitchCorrected, U"Sound: To Ltas (pitch-corrected)", U"S
 	OK
 DO
 	if (maximumPitch <= minimumPitch) Melder_throw (U"Your maximum pitch should be greater than your minimum pitch.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoLtas result = Sound_to_Ltas_pitchCorrected (me, minimumPitch, maximumPitch,
 				maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Sound_downto_Matrix) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoMatrix result = Sound_to_Matrix (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Sounds_to_ParamCurve) {
@@ -1613,9 +1613,9 @@ FORM (NEW_Sound_to_Pitch, U"Sound: To Pitch", U"Sound: To Pitch...") {
 	POSITIVE (pitchCeiling, U"Pitch ceiling (Hz)", U"600.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch (me, timeStep, pitchFloor, pitchCeiling);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)...") {
@@ -1635,12 +1635,12 @@ FORM (NEW_Sound_to_Pitch_ac, U"Sound: To Pitch (ac)", U"Sound: To Pitch (ac)..."
 DO
 	if (maximumNumberOfCandidates <= 1)
 		Melder_throw (U"Your maximum number of candidates should be greater than 1.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_ac (me, timeStep,
 			pitchFloor, 3.0, maximumNumberOfCandidates, veryAccurate,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling
 		);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)...") {
@@ -1659,12 +1659,12 @@ FORM (NEW_Sound_to_Pitch_cc, U"Sound: To Pitch (cc)", U"Sound: To Pitch (cc)..."
 	OK
 DO
 	if (maximumNumberOfCandidates <= 1) Melder_throw (U"Youraximum number of candidates should be greater than 1.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPitch result = Sound_to_Pitch_cc (me, timeStep,
 			pitchFloor, 1.0, maximumNumberOfCandidates, veryAccurate,
 			silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost, pitchCeiling
 		);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", nullptr) {
@@ -1675,10 +1675,10 @@ FORM (NEW_Sound_to_PointProcess_extrema, U"Sound: To PointProcess (extrema)", nu
 		U"Interpolation", kVector_peakInterpolation::SINC70)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPointProcess result = Sound_to_PointProcess_extrema (me, channel > my ny ? 1 : channel,
 				peakInterpolationType, includeMaxima, includeMinima);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_PointProcess_periodic_cc, U"Sound: To PointProcess (periodic, cc)", U"Sound: To PointProcess (periodic, cc)...") {
@@ -1688,9 +1688,9 @@ FORM (NEW_Sound_to_PointProcess_periodic_cc, U"Sound: To PointProcess (periodic,
 DO
 	if (maximumPitch <= minimumPitch)
 		Melder_throw (U"Your maximum pitch should be greater than your minimum pitch.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPointProcess result = Sound_to_PointProcess_periodic_cc (me, minimumPitch, maximumPitch);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_PointProcess_periodic_peaks, U"Sound: To PointProcess (periodic, peaks)", U"Sound: To PointProcess (periodic, peaks)...") {
@@ -1702,10 +1702,10 @@ FORM (NEW_Sound_to_PointProcess_periodic_peaks, U"Sound: To PointProcess (period
 DO
 	if (maximumPitch <= minimumPitch)
 		Melder_throw (U"Your maximum pitch should be greater than your minimum pitch.");
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPointProcess result = Sound_to_PointProcess_periodic_peaks (me,
 				minimumPitch, maximumPitch, includeMaxima, includeMinima);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_PointProcess_zeroes, U"Get zeroes", nullptr) {
@@ -1714,10 +1714,10 @@ FORM (NEW_Sound_to_PointProcess_zeroes, U"Get zeroes", nullptr) {
 	BOOLEAN (includeFallers, U"Include fallers", false)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPointProcess result = Sound_to_PointProcess_zeroes (me, channel > my ny ? 1 : channel,
 				includeRaisers, includeFallers);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sound: To Spectrogram...") {
@@ -1729,31 +1729,31 @@ FORM (NEW_Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sound: To Spectrogra
 			U"Window shape", kSound_to_Spectrogram_windowShape::DEFAULT)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSpectrogram result = Sound_to_Spectrogram (me, windowLength,
 				maximumFrequency, timeStep, frequencyStep, windowShape, 8.0, 8.0);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Spectrum, U"Sound: To Spectrum", U"Sound: To Spectrum...") {
 	BOOLEAN (fast, U"Fast", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSpectrum result = Sound_to_Spectrum (me, fast);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Sound_to_Spectrum_dft) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSpectrum result = Sound_to_Spectrum (me, false);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Sound_to_Spectrum_fft) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSpectrum result = Sound_to_Spectrum (me, true);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_TextGrid, U"Sound: To TextGrid", U"Sound: To TextGrid...") {
@@ -1761,15 +1761,15 @@ FORM (NEW_Sound_to_TextGrid, U"Sound: To TextGrid", U"Sound: To TextGrid...") {
 	SENTENCE (whichOfTheseArePointTiers, U"Which of these are point tiers?", U"bell")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoTextGrid result = TextGrid_create (my xmin, my xmax, allTierNames, whichOfTheseArePointTiers);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Sound_to_TextTier) {
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoTextTier result = TextTier_create (my xmin, my xmax);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
@@ -1968,19 +1968,19 @@ FORM_SAVE (SAVE_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
 /***** SOUNDLIST *****/
 
 DIRECT (NEWMANY_SoundList_extractAllSounds) {
-	TURN_EACH_INTO_ONE (SoundList)
+	CONVERT_EACH_TO_ONE (SoundList)
 		autoSoundList result = Data_copy (me);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
-	TURN_EACH_INTO_ONE_END (U"dummy")
+	CONVERT_EACH_TO_ONE_END (U"dummy")
 }
 
 /***** SOUNDSET *****/
 
 DIRECT (NEWMANY_SoundSet_extractAllSounds) {
-	TURN_EACH_INTO_ONE (SoundSet)
+	CONVERT_EACH_TO_ONE (SoundSet)
 		autoSoundSet result = Data_copy (me);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
-	TURN_EACH_INTO_ONE_END (U"dummy")
+	CONVERT_EACH_TO_ONE_END (U"dummy")
 }
 
 FORM (NEW2_SoundSet_Table_getRandomizedPatterns, U"SoundSet & Table: Get randomized patterns", nullptr) {

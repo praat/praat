@@ -312,9 +312,9 @@ FORM (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weig
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (FFNet)
+	CONVERT_EACH_TO_ONE (FFNet)
 		autoTableOfReal result = FFNet_extractWeights (me, layer);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
@@ -322,9 +322,9 @@ FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (FFNet)
+	CONVERT_EACH_TO_ONE (FFNet)
 		autoMatrix result = FFNet_weightsToMatrix (me, layer, false);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HINT_hint_FFNet_PatternList_classify) {

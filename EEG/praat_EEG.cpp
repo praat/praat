@@ -200,18 +200,18 @@ FORM (NEW_EEG_extractChannel, U"EEG: Extract channel", nullptr) {
 	SENTENCE (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoEEG result = EEG_extractChannel (me, channelName);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", channelName)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", channelName)
 }
 
 FORM (NEW_EEG_extractChannels, U"EEG: Extract channels", nullptr) {
 	NATURALVECTOR (channels, U"Channel numbers", RANGES_, U"1:64")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoEEG result = EEG_extractChannels (me, channels);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_ch")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ch")
 }
 
 FORM (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
@@ -220,23 +220,23 @@ FORM (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
 	BOOLEAN (preserveTimes, U"Preserve times", false)
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoEEG result = EEG_extractPart (me, fromTime, toTime, preserveTimes);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_part")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_part")
 }
 
 DIRECT (NEW_EEG_extractSound) {
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		if (! my sound) Melder_throw (me, U": I don't contain a waveform.");
 		autoSound result = EEG_extractSound (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_EEG_extractTextGrid) {
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		if (! my textgrid) Melder_throw (me, U": I don't contain marks.");
 		autoTextGrid result = EEG_extractTextGrid (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_EEG_to_ERPTier_bit, U"To ERPTier (bit)", nullptr) {
@@ -245,9 +245,9 @@ FORM (NEW_EEG_to_ERPTier_bit, U"To ERPTier (bit)", nullptr) {
 	NATURAL (markerBit, U"Marker bit", U"8")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoERPTier result = EEG_to_ERPTier_bit (me, fromTime, toTime, markerBit);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_bit", markerBit)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_bit", markerBit)
 }
 
 FORM (NEW_EEG_to_ERPTier_marker, U"To ERPTier (marker)", nullptr) {
@@ -256,9 +256,9 @@ FORM (NEW_EEG_to_ERPTier_marker, U"To ERPTier (marker)", nullptr) {
 	NATURAL (markerNumber, U"Marker number", U"12")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoERPTier result = EEG_to_ERPTier_marker (me, fromTime, toTime, (uint16) markerNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", markerNumber)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", markerNumber)
 }
 
 FORM (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
@@ -269,9 +269,9 @@ FORM (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
 	SENTENCE (theText, U"...the text", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoERPTier result = EEG_to_ERPTier_triggers (me, fromTime, toTime, getEveryEventWithATriggerThat, theText);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_trigger", theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_trigger", theText)
 }
 
 FORM (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", nullptr) {
@@ -285,10 +285,10 @@ FORM (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", 
 	SENTENCE (text2, U" ...the text", U"4")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoERPTier result = EEG_to_ERPTier_triggers_preceded (me, fromTime, toTime,
 			(kMelder_string) getEveryEventWithATriggerThat, text1, andIsPrecededByATriggerThat, text2);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_trigger", text2)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_trigger", text2)
 }
 
 // MARK: Convert
@@ -310,11 +310,11 @@ FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
 		OPTION (U"ffdiag")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoMixingMatrix result = EEG_to_MixingMatrix (me,
 			startTime, endTime, numberOfCrossCorrelations, lagStep,
 			maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_EEG_MixingMatrix_to_EEG_unmix) {
@@ -379,10 +379,10 @@ FORM (NEW_ERP_downto_Table, U"ERP: Down to Table", nullptr) {
 		OPTION (U"microvolt")
 	OK
 DO
-	TURN_EACH_INTO_ONE (ERP)
+	CONVERT_EACH_TO_ONE (ERP)
 		autoTable result = ERP_tabulate (me, includeSampleNumber,
 			includeTime, timeDecimals, voltageDecimals, voltageUnits);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Draw
@@ -579,19 +579,19 @@ FORM (NEW_ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nu
 	WORD (channelName, U"Channel name", U"Cz")
 	OK
 DO
-	TURN_EACH_INTO_ONE (ERP)
+	CONVERT_EACH_TO_ONE (ERP)
 		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		autoSound result = Sound_extractChannel (me, channelNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", channelName)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", channelName)
 }
 
 // MARK: Convert
 
 DIRECT (NEW_ERP_downto_Sound) {
-	TURN_EACH_INTO_ONE (ERP)
+	CONVERT_EACH_TO_ONE (ERP)
 		autoSound result = ERP_downto_Sound (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - ERPTIER
@@ -673,15 +673,15 @@ FORM (NEW_ERPTier_to_ERP, U"ERPTier: To ERP", nullptr) {
 	NATURAL (eventNumber, U"Event number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (ERPTier)
+	CONVERT_EACH_TO_ONE (ERPTier)
 		autoERP result = ERPTier_extractERP (me, eventNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", eventNumber)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", eventNumber)
 }
 
 DIRECT (NEW_ERPTier_to_ERP_mean) {
-	TURN_EACH_INTO_ONE (ERPTier)
+	CONVERT_EACH_TO_ONE (ERPTier)
 		autoERP result = ERPTier_to_ERP_mean (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_mean")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mean")
 }
 
 // MARK: - ERPTIER & TABLE

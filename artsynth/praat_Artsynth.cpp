@@ -119,9 +119,9 @@ FORM (CONVERT_EACH_Artword_to_Art, U"From Artword to Art", nullptr) {
 	REAL (time, U"Time (seconds)", U"0.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Artword)
+	CONVERT_EACH_TO_ONE (Artword)
 		autoArt result = Artword_to_Art (me, time);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - ART & SPEAKER
@@ -287,9 +287,9 @@ DIRECT (HELP_VocalTract_help) {
 }
 
 DIRECT (NEW_VocalTract_to_Matrix) {
-	TURN_EACH_INTO_ONE (VocalTract)
+	CONVERT_EACH_TO_ONE (VocalTract)
 		autoMatrix result = VocalTract_to_Matrix (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
@@ -301,10 +301,10 @@ FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
 	BOOLEAN (internalDamping, U"Internal damping", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (VocalTract)
+	CONVERT_EACH_TO_ONE (VocalTract)
 		autoSpectrum result = VocalTract_to_Spectrum (me, numberOfFequencies,
 			maximumFrequency, glottalDamping, radiationDamping, internalDamping);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HELP_ArticulatorySynthesisTutorial) {

@@ -74,18 +74,18 @@ FORM (NEW_Distributions_to_Strings, U"To Strings", nullptr) {
 	NATURAL (numberOfStrings, U"Number of strings", U"1000")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Distributions)
+	CONVERT_EACH_TO_ONE (Distributions)
 		autoStrings result = Distributions_to_Strings (me, columnNumber, numberOfStrings);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Distributions)
+	CONVERT_EACH_TO_ONE (Distributions)
 		autoStrings result = Distributions_to_Strings_exact (me, columnNumber);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - LOGISTICREGRESSION
@@ -199,9 +199,9 @@ DO
 }
 
 DIRECT (NEW_PairDistribution_to_Table) {
-	TURN_EACH_INTO_ONE (PairDistribution)
+	CONVERT_EACH_TO_ONE (PairDistribution)
 		autoTable result = PairDistribution_to_Table (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - PAIRDISTRIBUTION & DISTRIBUTIONS
@@ -914,10 +914,10 @@ FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoTable result = Table_collapseRows (me, factors, columnsToSum, columnsToAverage,
 			columnsToMedianize, columnsToAverageLogarithmically, columnsToMedianizeLogarithmically);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_pooled")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_pooled")
 }
 
 DIRECT (NEW1_Tables_append) {
@@ -932,10 +932,10 @@ FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where colum
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
 			isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
 }
 
@@ -945,16 +945,16 @@ FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column 
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", ___theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
 DIRECT (NEW_Table_transpose) {
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoTable result = Table_transpose (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_transposed");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_transposed");
 }
 
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
@@ -964,16 +964,16 @@ FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
 		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_nested")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_nested")
 }
 
 DIRECT (NEW_Table_to_LinearRegression) {
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoLinearRegression result = Table_to_LinearRegression (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
@@ -982,19 +982,19 @@ FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr)
 	SENTENCE (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoLogisticRegression result = Table_to_LogisticRegression (me, factors, dependent1, dependent2);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Table_downto_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
 	SENTENCE (columnForRowLabels, U"Column for row labels", U"")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {

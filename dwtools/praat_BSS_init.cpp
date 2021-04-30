@@ -38,9 +38,9 @@ FORM (NEW_EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG:
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoCrossCorrelationTable result = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channels);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", Melder_iround (lagTime * 1000.0))
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_iround (lagTime * 1000.0))
 }
 
 FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
@@ -49,9 +49,9 @@ FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoCovariance result = EEG_to_Covariance (me, fromTime, toTime, channels);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList", U"EEG: To CrossCorrelationTableList...") {
@@ -62,10 +62,10 @@ FORM (NEW_EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList"
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoCrossCorrelationTableList result = EEG_to_CrossCorrelationTableList (me, fromTime, toTime,
 			numberOfCrossCorrelations, lagStep, channels);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
@@ -109,9 +109,9 @@ FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 		OPTION (U"Correlation")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoPCA result = EEG_to_PCA (me, fromTime, toTime, channels, (method == 2));
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_EEG_PCA_to_EEG_principalComponents, U"EEG & PCA: To EEG (principal components)", U"EEG & PCA: To EEG (principal components)...") {
@@ -139,9 +139,9 @@ FORM (NEW_EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoSound result = EEG_to_Sound_modulated (me, baseFrequency, channelBandwidth, channels);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_EEG_to_Sound_frequencyShifted, U"EEG: To Sound (frequency shifted)", 0) {
@@ -151,9 +151,9 @@ FORM (NEW_EEG_to_Sound_frequencyShifted, U"EEG: To Sound (frequency shifted)", 0
 	REAL (maximumAmplitude, U"Maximum amplitude", U"0.99")
 	OK
 DO
-	TURN_EACH_INTO_ONE (EEG)
+	CONVERT_EACH_TO_ONE (EEG)
 		autoSound result = EEG_to_Sound_frequencyShifted (me, channel, frequencyShift, samplingFrequency, maximumAmplitude);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_ch", channel)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ch", channel)
 }
 
 /********************** CrossCorrelationTable(s) ******************/
@@ -231,9 +231,9 @@ FORM (NEW_Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"So
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoCovariance result = Sound_to_Covariance_channels (me, fromTime, toTime);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_CrossCorrelationTable, U"Sound: To CrossCorrelationTable", U"Sound: To CrossCorrelationTable...") {
@@ -241,9 +241,9 @@ FORM (NEW_Sound_to_CrossCorrelationTable, U"Sound: To CrossCorrelationTable", U"
 	REAL (lagStep, U"Lag step (s)", U"0.0")
     OK
 DO
-    TURN_EACH_INTO_ONE (Sound)
+    CONVERT_EACH_TO_ONE (Sound)
 		autoCrossCorrelationTable result = Sound_to_CrossCorrelationTable (me, fromTime, toTime, lagStep);
-    TURN_EACH_INTO_ONE_END (my name.get())
+    CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Sounds_to_CrossCorrelationTable_combined, U"Sound: To CrossCorrelationTable (combined)", nullptr) {
@@ -274,12 +274,12 @@ FORM (NEW_CrossCorrelationTableList_extractCrossCorrelationTable, U"CrossCorrela
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (CrossCorrelationTableList)
+	CONVERT_EACH_TO_ONE (CrossCorrelationTableList)
 		if (index > my size) {
 			Melder_throw (U"Index too large.");
 		}
 		autoCrossCorrelationTable result = Data_copy (my at [index]);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", index)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", index)
 }
 
 FORM (NEW_CrossCorrelationTableList_to_Diagonalizer, U"CrossCorrelationTableList: To Diagonalizer", nullptr) {
@@ -290,9 +290,9 @@ FORM (NEW_CrossCorrelationTableList_to_Diagonalizer, U"CrossCorrelationTableList
 		OPTION (U"ffdiag")
 	OK
 DO
-	TURN_EACH_INTO_ONE (CrossCorrelationTableList)
+	CONVERT_EACH_TO_ONE (CrossCorrelationTableList)
 		autoDiagonalizer result = CrossCorrelationTableList_to_Diagonalizer (me, maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_Diagonalizer_CrossCorrelationTableList_improveDiagonality, U"Diagonalizer & CrossCorrelationTableList: Improve diagonality", nullptr) {
@@ -349,9 +349,9 @@ DIRECT (HELP_Diagonalizer_help) {
 }
 
 DIRECT (NEW_Diagonalizer_to_MixingMatrix) {
-	TURN_EACH_INTO_ONE (Diagonalizer)
+	CONVERT_EACH_TO_ONE (Diagonalizer)
 		autoMixingMatrix result = Diagonalizer_to_MixingMatrix (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_MixingMatrix_multiplyInputChannel, U"MixingMatrix: Multiply input channel", U"MixingMatrix: Multiply input channel...") {
@@ -371,9 +371,9 @@ DIRECT (MODIFY_MixingMatrix_setStandardChannelInterpretation) {
 }
 
 DIRECT (NEW1_MixingMatrix_to_Diagonalizer) {
-	TURN_EACH_INTO_ONE (MixingMatrix)
+	CONVERT_EACH_TO_ONE (MixingMatrix)
 		autoDiagonalizer result = MixingMatrix_to_Diagonalizer (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 FORM (NEW_Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
@@ -387,11 +387,11 @@ FORM (NEW_Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 		OPTION (U"ffdiag")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoMixingMatrix result = Sound_to_MixingMatrix (me,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep,
 			maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_Sound_MixingMatrix_improveUnmixing, U"", nullptr) {
@@ -419,10 +419,10 @@ FORM (NEW_Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableL
 	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoCrossCorrelationTableList result = Sound_to_CrossCorrelationTableList (me,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"Sound: To Sound (blind source separation)...") {
@@ -437,11 +437,11 @@ FORM (NEW_Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"So
 		OPTION (U"ffdiag")
 	OK
 DO
-	TURN_EACH_INTO_ONE (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_to_Sound_BSS (me,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep,
 			maximumNumberOfIterations, tolerance, diagonalizationMethod);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_bss")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_bss")
 }
 
 FORM (NEW_Sound_to_Sound_whiteChannels, U"Sound: To Sound (white channels)", U"Sound: To Sound (white channels)...") {
@@ -450,9 +450,9 @@ FORM (NEW_Sound_to_Sound_whiteChannels, U"Sound: To Sound (white channels)", U"S
 DO
     if (varianceFraction > 1.0) varianceFraction = 1.0;
     integer permille = Melder_ifloor (varianceFraction * 1000.0);
-    TURN_EACH_INTO_ONE (Sound)
+    CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_whitenChannels (me, varianceFraction);
-    TURN_EACH_INTO_ONE_END (my name.get(), U"_", permille);
+    CONVERT_EACH_TO_ONE_END (my name.get(), U"_", permille);
 }
 
 DIRECT (PLAY_Sound_MixingMatrix_play) {
@@ -487,9 +487,9 @@ DIRECT (NEW1_Sound_MixingMatrix_unmix) {
 }
 
 DIRECT (NEW_TableOfReal_to_MixingMatrix) {
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoMixingMatrix result = TableOfReal_to_MixingMatrix (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 void praat_BSS_init ();

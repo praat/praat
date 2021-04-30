@@ -144,54 +144,54 @@ FORM (NEW_GaussianMixture_extractComponent, U"GaussianMixture: Extract component
 	NATURAL (component, U"Component", U"1")
 	OK
 DO
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_extractComponent (me, component);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_extractCentroids) {
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoTableOfReal result = GaussianMixture_extractCentroids (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_extractMixingProbabilities) {
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoTableOfReal result = GaussianMixture_extractMixingProbabilities (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_to_PCA) {
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoPCA result = GaussianMixture_to_PCA (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_GaussianMixture_to_TableOfReal_randomSampling, U"GaussianMixture: To TableOfReal (random sampling)", U"GaussianMixture: To TableOfReal (random sampling)...") {
 	NATURAL (numberOfPoints, U"Number of data points", U"100")
 	OK
 DO
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoTableOfReal result = GaussianMixture_to_TableOfReal_randomSampling (me, numberOfPoints);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_between) {
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_between (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_b")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_b")
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_within) {
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_within (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_w");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_w");
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_total) {
-	TURN_EACH_INTO_ONE (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_total (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_t");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_t");
 }
 
 FORM (REAL_GaussianMixture_TableOfReal_getLikelihoodValue, U"GaussianMixture & TableOfReal: Get likelihood value",
@@ -256,9 +256,9 @@ FORM (NEW_HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", null
 	BOOLEAN (leftToRightModel, U"Left to right model", false)
 	OK
 DO
-	TURN_EACH_INTO_ONE (HMMObservationSequence)
+	CONVERT_EACH_TO_ONE (HMMObservationSequence)
 		autoHMM result = HMM_createFromHMMObservationSequence (me, numberOfHiddenStates, leftToRightModel);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_", numberOfHiddenStates)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", numberOfHiddenStates)
 }
 
 FORM (GRAPHICS_HMM_draw, U"HMM: Draw", nullptr) {
@@ -416,9 +416,9 @@ FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (gener
 	NATURAL (numberOfObservations, U"Number of observations", U"20")
 	OK
 DO
-	TURN_EACH_INTO_ONE (HMM)
+	CONVERT_EACH_TO_ONE (HMM)
 		autoHMMObservationSequence result = HMM_to_HMMObservationSequence (me, startState, numberOfObservations);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (REAL_HMM_HMMStateSequence_getProbability) {
@@ -493,24 +493,24 @@ DO
 }
 
 DIRECT (NEW_HMM_extractTransitionProbabilities) {
-	TURN_EACH_INTO_ONE (HMM)
+	CONVERT_EACH_TO_ONE (HMM)
 		autoTableOfReal result = HMM_extractTransitionProbabilities (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_t")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_t")
 }
 
 DIRECT (NEW_HMM_extractEmissionProbabilities) {
-	TURN_EACH_INTO_ONE (HMM)
+	CONVERT_EACH_TO_ONE (HMM)
 		autoTableOfReal result = HMM_extractEmissionProbabilities (me);
-	TURN_EACH_INTO_ONE_END (my name.get(), U"_e")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_e")
 }
 
 FORM (NEW_HMMObservationSequence_to_TableOfReal_bigrams, U"HMMObservationSequence: To TableOfReal ", U"HMMObservationSequence: To TableOfReal (bigrams)...") {
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (HMMObservationSequence)
+	CONVERT_EACH_TO_ONE (HMMObservationSequence)
 		autoTableOfReal result = HMMObservationSequence_to_TableOfReal_transitions (me, asProbabilities);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_HMM_HMMObservationSequence_to_TableOfReal_bigrams, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...") {
@@ -535,27 +535,27 @@ FORM (NEW_HMMStateSequence_to_TableOfReal_bigrams, U"HMMStateSequence: To TableO
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	TURN_EACH_INTO_ONE (HMMStateSequence)
+	CONVERT_EACH_TO_ONE (HMMStateSequence)
 		autoTableOfReal result = Strings_to_TableOfReal_transitions (me, asProbabilities);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_HMMObservationSequence_to_Strings) {
-	TURN_EACH_INTO_ONE (HMMObservationSequence)
+	CONVERT_EACH_TO_ONE (HMMObservationSequence)
 		autoStrings result = HMMObservationSequence_to_Strings (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Strings_to_HMMObservationSequence) {
-	TURN_EACH_INTO_ONE (Strings)
+	CONVERT_EACH_TO_ONE (Strings)
 		autoHMMObservationSequence result = Strings_to_HMMObservationSequence (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_HMMStateSequence_to_Strings) {
-	TURN_EACH_INTO_ONE (HMMStateSequence)
+	CONVERT_EACH_TO_ONE (HMMStateSequence)
 		autoStrings result = HMMStateSequence_to_Strings (me);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture_rowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
@@ -563,9 +563,9 @@ FORM (NEW_TableOfReal_to_GaussianMixture_rowlabels, U"TableOfReal: To GaussianMi
 		U"Covariance matrices are", kGaussianMixtureStorage::DEFAULT)
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture_fromRowLabels (me, storage);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no labels)", U"TableOfReal: To GaussianMixture...") {
@@ -579,9 +579,9 @@ FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no 
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture (me, numberOfComponents, tolerance, maximumNumberOfIterations, lambda, storage, criterion);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_TableOfReal_to_GaussianMixture_CEMM, U"TableOfReal: To GaussianMixture (CEMM)", U"TableOfReal: To GaussianMixture (CEMM)...") {
@@ -594,9 +594,9 @@ FORM (NEW1_TableOfReal_to_GaussianMixture_CEMM, U"TableOfReal: To GaussianMixtur
 	BOOLEAN (info, U"Info", false)
 	OK
 DO
-	TURN_EACH_INTO_ONE (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture_CEMM (me, minimumNumberOfComponents, maximumNumberOfComponents, storage, maximumNumberOfIterations, tolerance, info);
-	TURN_EACH_INTO_ONE_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_GaussianMixture_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
