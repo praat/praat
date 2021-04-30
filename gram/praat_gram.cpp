@@ -1482,9 +1482,9 @@ FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to o
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	TURN_ONE_WEAK_AND_ONE_INTO_ONE (OTMulti, Strings)
+	CONVERT_ONE_WEAK_AND_ONE_TO_ONE (OTMulti, Strings)
 		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoise);
-	TURN_ONE_WEAK_AND_ONE_INTO_ONE_END (my name.get(), U"_out")
+	CONVERT_ONE_WEAK_AND_ONE_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: - NET
