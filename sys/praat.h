@@ -728,28 +728,37 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_TWO(klas1,klas2)  FIND_ONE_AND_ONE (klas1, klas2)
+#define INFO_ONE_AND_ONE(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2)
+#define INFO_ONE_AND_ONE_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	END_NO_NEW_DATA
+
+#define INFO_TWO(klas)  \
+	FIND_TWO (klas)
 #define INFO_TWO_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_COUPLE(klas)  FIND_TWO (klas)
-#define INFO_COUPLE_END  \
+#define INFO_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
+#define INFO_ONE_AND_ONE_AND_ONE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_THREE(klas1,klas2,klas3)  FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define INFO_THREE_END  \
-	if (interpreter) \
-		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+#define HELP(page)  \
+	Melder_help (page); \
 	END_NO_NEW_DATA
 
-#define HELP(page)  Melder_help (page); END_NO_NEW_DATA
-
-#define PLAY_EACH(klas)  LOOP { iam_LOOP (klas);
-#define PLAY_EACH_END  } END_NO_NEW_DATA
+#define PLAY_EACH(klas)  \
+	LOOP { \
+		iam_LOOP (klas);
+#define PLAY_EACH_END  \
+	} \
+	END_NO_NEW_DATA
 
 #define GRAPHICS_NONE  \
 	autoPraatPicture picture;
@@ -787,15 +796,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ONE (klas)
 #define MOVIE_ONE_END  END_NO_NEW_DATA
 
-#define MOVIE_TWO(klas1,klas2,title,width,height)  \
+#define MOVIE_ONE_AND_ONE(klas1,klas2,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_ONE_AND_ONE (klas1, klas2)
-#define MOVIE_TWO_END  END_NO_NEW_DATA
+#define MOVIE_ONE_AND_ONE_END  END_NO_NEW_DATA
 
-#define MOVIE_THREE(klas1,klas2,klas3,title,width,height)  \
+#define MOVIE_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3,title,width,height)  \
 	Graphics graphics = Movie_create (title, width, height); \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define MOVIE_THREE_END  END_NO_NEW_DATA
+#define MOVIE_ONE_AND_ONE_AND_ONE_END  END_NO_NEW_DATA
 
 #define QUERY_GRAPHICS_FOR_REAL
 #define QUERY_GRAPHICS_FOR_REAL_END(...)  \
@@ -951,16 +960,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_TWO(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
-#define MODIFY_FIRST_OF_TWO_END  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_TWO_WEAK(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2) \
 	try {
-#define MODIFY_FIRST_OF_TWO_WEAK_END  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_END  \
 		praat_dataChanged (me); \
 	} catch (MelderError) { \
 		praat_dataChanged (me); \
@@ -968,22 +977,22 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_THREE(klas1,klas2,klas3)  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
-#define MODIFY_FIRST_OF_THREE_END  \
+#define MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_AND_TWO(klas1,klas2)  \
 	FIND_ONE_AND_TWO (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_END  \
+#define MODIFY_FIRST_OF_ONE_AND_TWO_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_TWO(klas1,klas2)  \
 	FIND_ONE_AND_TWO (klas1, klas2) \
 	try {
-#define MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END  \
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_TWO_END  \
 		praat_dataChanged (me); \
 	} catch (MelderError) { \
 		praat_dataChanged (me); \
@@ -991,9 +1000,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	} \
 	END_NO_NEW_DATA
 
-#define MODIFY_FIRST_OF_ONE_AND_LIST(klas1,klas2)  \
+#define MODIFY_FIRST_OF_ONE_AND_ALL(klas1,klas2)  \
 	FIND_ONE_AND_ALL (klas1, klas2)
-#define MODIFY_FIRST_OF_ONE_AND_LIST_END  \
+#define MODIFY_FIRST_OF_ONE_AND_ALL_END  \
 	praat_dataChanged (me); \
 	END_NO_NEW_DATA
 
@@ -1127,11 +1136,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SAVE_ONE(klas)  FIND_ONE (klas)
 #define SAVE_ONE_END  END_NO_NEW_DATA
 
-#define SAVE_LIST(klas)  FIND_ALL (klas)
-#define SAVE_LIST_END  END_NO_NEW_DATA
+#define SAVE_ALL(klas)  FIND_ALL (klas)
+#define SAVE_ALL_END  END_NO_NEW_DATA
 
-#define SAVE_TYPED_LIST(klas,listClass)  FIND_ALL_LISTED (klas, listClass)
-#define SAVE_TYPED_LIST_END  END_NO_NEW_DATA
+#define SAVE_ALL_LISTED(klas,listClass)  FIND_ALL_LISTED (klas, listClass)
+#define SAVE_ALL_LISTED_END  END_NO_NEW_DATA
 
 #define EDITOR_ONE(indefiniteArticle,klas)  \
 	if (theCurrentPraatApplication -> batch) \

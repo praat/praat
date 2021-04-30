@@ -1330,9 +1330,9 @@ FORM_SAVE (SAVE_Manipulation_writeToTextFileWithoutSound, U"Text file without So
 // MARK: - MANIPULATION & DURATIONTIER
 
 DIRECT (MODIFY_Manipulation_replaceDurationTier) {
-	MODIFY_FIRST_OF_TWO (Manipulation, DurationTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, DurationTier)
 		Manipulation_replaceDurationTier (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Manipulation_replaceDurationTier_help) {
@@ -1342,9 +1342,9 @@ DIRECT (HELP_Manipulation_replaceDurationTier_help) {
 // MARK: - MANIPULATION & PITCHTIER
 
 DIRECT (MODIFY_Manipulation_replacePitchTier) {
-	MODIFY_FIRST_OF_TWO (Manipulation, PitchTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, PitchTier)
 		Manipulation_replacePitchTier (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Manipulation_replacePitchTier_help) {
@@ -1354,17 +1354,17 @@ DIRECT (HELP_Manipulation_replacePitchTier_help) {
 // MARK: - MANIPULATION & POINTPROCESS
 
 DIRECT (MODIFY_Manipulation_replacePulses) {
-	MODIFY_FIRST_OF_TWO (Manipulation, PointProcess)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, PointProcess)
 		Manipulation_replacePulses (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MANIPULATION & SOUND
 
 DIRECT (MODIFY_Manipulation_replaceOriginalSound) {
-	MODIFY_FIRST_OF_TWO (Manipulation, Sound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, Sound)
 		Manipulation_replaceOriginalSound (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MANIPULATION & TEXTTIER
@@ -1406,9 +1406,9 @@ DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
 }
 
 DIRECT (INFO_Pitch_difference) {
-	INFO_COUPLE (Pitch)
+	INFO_TWO (Pitch)
 		Pitch_difference (me, you);
-	INFO_COUPLE_END
+	INFO_TWO_END
 }
 
 FORM (GRAPHICS_Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
@@ -2134,12 +2134,12 @@ FORM (INFO_Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	OK
 DO
-	INFO_THREE (Sound, Pitch, PointProcess)
+	INFO_ONE_AND_ONE_AND_ONE (Sound, Pitch, PointProcess)
 		MelderInfo_open ();
 		Sound_Pitch_PointProcess_voiceReport (me, you, him, fromTime, toTime, fromPitch, toPitch,
 				maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
 		MelderInfo_close ();
-	INFO_THREE_END
+	INFO_ONE_AND_ONE_AND_ONE_END
 }
 
 // MARK: - SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER

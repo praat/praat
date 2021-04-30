@@ -452,9 +452,9 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & Act
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, ActivationList)
 		FFNet_PatternList_ActivationList_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END	
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END	
 }
 	
 
@@ -470,9 +470,9 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList &
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, ActivationList)
 		FFNet_PatternList_ActivationList_learnSD (me, you, him, maximumNumberOfEpochs, tolerance, learningRate, momentum, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END	
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END	
 }
 
 /*********** FFNet & PatternList & Categories **********************************/
@@ -507,9 +507,9 @@ FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categor
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, Categories)
 		FFNet_PatternList_Categories_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
@@ -523,9 +523,9 @@ FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Cat
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, Categories)
 		FFNet_PatternList_Categories_learnSD (me, you, him, maximumNumberOfEpochs,tolerance, learningRate, momentum, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END
 }
 
 /*********** FFNet & PCA **********************************/

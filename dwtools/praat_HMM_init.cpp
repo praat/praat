@@ -458,9 +458,9 @@ FORM (MODIFY_HMM_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: L
 	OK
 DO
 	Melder_require (minimumProbability >= 0.0 && minimumProbability < 1.0, U"The minimum probabilty should be in [0, 1).");
-	MODIFY_FIRST_OF_ONE_AND_LIST(HMM, HMMObservationSequence)
+	MODIFY_FIRST_OF_ONE_AND_ALL(HMM, HMMObservationSequence)
 		HMM_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) & list, relativePrecision_log, minimumProbability, showProgress);
-	MODIFY_FIRST_OF_ONE_AND_LIST_END
+	MODIFY_FIRST_OF_ONE_AND_ALL_END
 }
 
 FORM (MODIFY_HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
@@ -607,9 +607,9 @@ FORM (MODIFY_GaussianMixture_TableOfReal_improveLikelihood, U"GaussianMixture & 
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
-	MODIFY_FIRST_OF_TWO (GaussianMixture, TableOfReal)
+	MODIFY_FIRST_OF_ONE_AND_ONE (GaussianMixture, TableOfReal)
 		GaussianMixture_TableOfReal_improveLikelihood (me, you, tolerance, maximumNumberOfIterations, lambda, criterion);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)", U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...") {

@@ -162,39 +162,39 @@ DIRECT (EDITOR_ONE_LongSound_view) {
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NIST, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_WAV, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_saveLeftChannelAsAifcFile, U"Save left channel as AIFC file", nullptr, U"aifc") {
@@ -285,39 +285,39 @@ END_WITH_NEW_DATA }
 /********** LONGSOUND & SOUND **********/
 
 FORM_SAVE (SAVE_LongSound_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NIST, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_LongSound_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_WAV, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 /********** SOUND **********/
@@ -1323,15 +1323,15 @@ DIRECT (MODIFY_Sound_reverse) {
 }
 
 FORM_SAVE (SAVE_Sound_saveAs24BitWavFile, U"Save as 24-bit WAV file", nullptr, U"wav") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_WAV, 24);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAs32BitWavFile, U"Save as 32-bit WAV file", nullptr, U"wav") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_WAV, 32);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM (MODIFY_Sound_scalePeak, U"Sound: Scale peak", U"Sound: Scale peak...") {
@@ -1822,21 +1822,21 @@ DIRECT (INFO_Praat_reportSoundServerProperties) {
 #endif
 
 FORM_SAVE (SAVE_Sound_saveAsAifcFile, U"Save as AIFC file", nullptr, U"aifc") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFC, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsAiffFile, U"Save as AIFF file", nullptr, U"aiff") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_AIFF, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsFlacFile, U"Save as FLAC file", nullptr, U"flac") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_FLAC, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsKayFile, U"Save as Kay sound file", nullptr, U"kay") {
@@ -1846,15 +1846,15 @@ FORM_SAVE (SAVE_Sound_saveAsKayFile, U"Save as Kay sound file", nullptr, U"kay")
 }
 
 FORM_SAVE (SAVE_Sound_saveAsNextSunFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsNistFile, U"Save as NIST file", nullptr, U"nist") {
-	SAVE_TYPED_LIST (Sampled, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sampled, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NIST, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsRaw8bitSignedFile, U"Save as raw 8-bit signed sound file", nullptr, U"8sig") {
@@ -1912,57 +1912,57 @@ FORM_SAVE (SAVE_Sound_saveAsSesamFile, U"Save as Sesam file", nullptr, U"sdf") {
 }
 
 FORM_SAVE (SAVE_Sound_saveAsStereoAifcFile, U"Save as stereo AIFC file", nullptr, U"aifc") {
-	SAVE_LIST (Sound)
+	SAVE_ALL (Sound)
 		autoSound stereo = Sounds_combineToStereo (& list);
 		Sound_saveAsAudioFile (stereo.get(), file, Melder_AIFC, 16);
-	SAVE_LIST_END
+	SAVE_ALL_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsStereoAiffFile, U"Save as stereo AIFF file", nullptr, U"aiff") {
-	SAVE_LIST (Sound)
+	SAVE_ALL (Sound)
 		autoSound stereo = Sounds_combineToStereo (& list);
 		Sound_saveAsAudioFile (stereo.get(), file, Melder_AIFF, 16);
-	SAVE_LIST_END
+	SAVE_ALL_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsStereoNextSunFile, U"Save as stereo NeXT/Sun file", nullptr, U"au") {
-	SAVE_LIST (Sound)
+	SAVE_ALL (Sound)
 		autoSound stereo = Sounds_combineToStereo (& list);
 		Sound_saveAsAudioFile (stereo.get(), file, Melder_NEXT_SUN, 16);
-	SAVE_LIST_END
+	SAVE_ALL_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsStereoNistFile, U"Save as stereo NIST file", nullptr, U"nist") {
-	SAVE_LIST (Sound)
+	SAVE_ALL (Sound)
 		autoSound stereo = Sounds_combineToStereo (& list);
 		Sound_saveAsAudioFile (stereo.get(), file, Melder_NIST, 16);
-	SAVE_LIST_END
+	SAVE_ALL_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsStereoFlacFile, U"Save as stereo FLAC file", nullptr, U"flac") {
-	SAVE_LIST (Sound)
+	SAVE_ALL (Sound)
 		autoSound stereo = Sounds_combineToStereo (& list);
 		Sound_saveAsAudioFile (stereo.get(), file, Melder_FLAC, 16);
-	SAVE_LIST_END
+	SAVE_ALL_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsStereoWavFile, U"Save as stereo WAV file", nullptr, U"wav") {
-	SAVE_LIST (Sound)
+	SAVE_ALL (Sound)
 		autoSound stereo = Sounds_combineToStereo (& list);
 		Sound_saveAsAudioFile (stereo.get(), file, Melder_WAV, 16);
-	SAVE_LIST_END
+	SAVE_ALL_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsSunAudioFile, U"Save as NeXT/Sun file", nullptr, U"au") {
-	SAVE_TYPED_LIST (Sound, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sound, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_NEXT_SUN, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 FORM_SAVE (SAVE_Sound_saveAsWavFile, U"Save as WAV file", nullptr, U"wav") {
-	SAVE_TYPED_LIST (Sound, SoundAndLongSoundList)
+	SAVE_ALL_LISTED (Sound, SoundAndLongSoundList)
 		LongSound_concatenate (list.get(), file, Melder_WAV, 16);
-	SAVE_TYPED_LIST_END
+	SAVE_ALL_LISTED_END
 }
 
 /***** SOUNDLIST *****/

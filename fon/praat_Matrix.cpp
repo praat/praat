@@ -749,27 +749,27 @@ FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullp
 // MARK: - PHOTO & MATRIX
 
 DIRECT (MODIFY_Photo_Matrix_replaceBlue) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceBlue (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Photo_Matrix_replaceGreen) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceGreen (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Photo_Matrix_replaceRed) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceRed (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Photo_Matrix_replaceTransparency) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceTransparency (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MOVIE
