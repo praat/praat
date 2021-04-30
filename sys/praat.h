@@ -651,7 +651,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		else if (CLASS == class##klas2) you = (klas2) OBJECT; if (me && you) break; } \
 	IOBJECT = _klas1_position;
 
-#define FIND_COUPLE(klas)  \
+#define FIND_TWO(klas)  \
 	klas me = nullptr, you = nullptr; \
 	LOOP if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) (me ? you : me) = (klas) OBJECT;
 
@@ -734,7 +734,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
 	END_NO_NEW_DATA
 
-#define INFO_COUPLE(klas)  FIND_COUPLE (klas)
+#define INFO_COUPLE(klas)  FIND_TWO (klas)
 #define INFO_COUPLE_END  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
@@ -760,7 +760,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define GRAPHICS_TWO(klas1,klas2)  autoPraatPicture picture; FIND_ONE_AND_ONE (klas1, klas2)
 #define GRAPHICS_TWO_END  END_NO_NEW_DATA
 
-#define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_COUPLE (klas)
+#define GRAPHICS_COUPLE(klas)  autoPraatPicture picture; FIND_TWO (klas)
 #define GRAPHICS_COUPLE_END  END_NO_NEW_DATA
 
 #define GRAPHICS_COUPLE_AND_ONE(klas1,klas2)  autoPraatPicture picture; FIND_COUPLE_AND_ONE (klas1, klas2)
@@ -821,7 +821,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define NUMBER_COUPLE(klas)  \
-	FIND_COUPLE (klas)
+	FIND_TWO (klas)
 #define NUMBER_COUPLE_END(...)  \
 	if (interpreter) { \
 		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
@@ -1030,7 +1030,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_WITH_NEW_DATA
 
 #define CONVERT_TWO_TO_ONE(klas)  \
-	FIND_COUPLE (klas)
+	FIND_TWO (klas)
 #define CONVERT_TWO_TO_ONE_END(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \

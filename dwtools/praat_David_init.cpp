@@ -3542,31 +3542,31 @@ FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to ex
 END_WITH_NEW_DATA }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFFFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
-	FIND_COUPLE (LongSound)
+	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFF, file);
 	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFCFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
-	FIND_COUPLE (LongSound)
+	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFC, file);
 	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoWAVFile, U"LongSound: Save as WAV file", 0, U"wav") {
-	FIND_COUPLE (LongSound)
+	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_WAV, file);
 	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoNeXtSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
-	FIND_COUPLE (LongSound)
+	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NEXT_SUN, file);
 	END_WITH_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoNISTFile, U"LongSound: Save as NIST file", 0, U"nist") {
-	FIND_COUPLE (LongSound)
+	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NIST, file);
 	END_WITH_NEW_DATA
 }
@@ -5292,7 +5292,7 @@ FORM (NEWMANY_Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide.
 	OK
 DO
 	Melder_require (wantQuotient || wantRemainder, U"You should select \"Want quotient\", \"Want remainder\", or both.");
-	FIND_COUPLE (Polynomial)
+	FIND_TWO (Polynomial)
 		autoPolynomial aq, ar;
 		Polynomials_divide (me, you, wantQuotient ? & aq : nullptr, wantRemainder ? & ar : nullptr);
 		if (wantQuotient) {
