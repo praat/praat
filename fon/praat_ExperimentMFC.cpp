@@ -23,9 +23,9 @@
 // MARK: Query
 
 DIRECT (REAL_Categories_getEntropy) {
-	NUMBER_ONE (Categories)
+	QUERY_ONE_FOR_REAL (Categories)
 		double result = Categories_getEntropy (me);
-	NUMBER_ONE_END (U" bits")
+	QUERY_ONE_FOR_REAL_END (U" bits")
 }
 
 // MARK: Modify
@@ -47,7 +47,7 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 			This `scope` comment refers to the idea that an autoThing (here, `list`)
 			is created at the beginning of the scope and invalidated at the end of the scope (by `move`).
 		*/
-		FIND_TYPED_LIST (ExperimentMFC, ExperimentMFCList)
+		FIND_ALL_LISTED (ExperimentMFC, ExperimentMFCList)
 		Melder_assert (list->size >= 1);
 		Melder_assert (list->at [1] -> classInfo == classExperimentMFC);
 		Melder_assert (list->at [list->size] -> classInfo == classExperimentMFC);
@@ -64,66 +64,66 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 	*/
 	praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
 	runner.releaseToUser();
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
-	CONVERT_EACH (ExperimentMFC)
+	CONVERT_EACH_TO_ONE (ExperimentMFC)
 		autoResultsMFC result = ExperimentMFC_extractResults (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - RESULTS_MFC
 
 DIRECT (INTEGER_ResultsMFC_getNumberOfTrials) {
-	NUMBER_ONE (ResultsMFC)
+	QUERY_ONE_FOR_REAL (ResultsMFC)
 		integer result = my numberOfTrials;
-	NUMBER_ONE_END (U" trials")
+	QUERY_ONE_FOR_REAL_END (U" trials")
 }
 
 FORM (STRING_ResultsMFC_getResponse, U"ResultsMFC: Get response", nullptr) {
 	NATURAL (trial, U"Trial", U"1")
 	OK
 DO
-	STRING_ONE (ResultsMFC)
+	QUERY_ONE_FOR_STRING (ResultsMFC)
 		if (trial > my numberOfTrials)
 			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 		conststring32 result = my result [trial]. response.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (STRING_ResultsMFC_getStimulus, U"ResultsMFC: Get stimulus", nullptr) {
 	NATURAL (trial, U"Trial", U"1")
 	OK
 DO
-	STRING_ONE (ResultsMFC)
+	QUERY_ONE_FOR_STRING (ResultsMFC)
 		if (trial > my numberOfTrials)
 			Melder_throw (U"Trial ", trial, U" does not exist (maximum ", my numberOfTrials, U").");
 		conststring32 result = my result [trial]. stimulus.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (NEW1_ResultsMFC_removeUnsharedStimuli) {
-	CONVERT_COUPLE (ResultsMFC)
+	CONVERT_TWO_TO_ONE (ResultsMFC)
 		autoResultsMFC result = ResultsMFC_removeUnsharedStimuli (me, you);
-	CONVERT_COUPLE_END (your name.get(), U"_shared")
+	CONVERT_TWO_TO_ONE_END (your name.get(), U"_shared")
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_stimuli) {
-	CONVERT_EACH (ResultsMFC)
+	CONVERT_EACH_TO_ONE (ResultsMFC)
 		autoCategories result = ResultsMFC_to_Categories_stimuli (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_ResultsMFC_to_Categories_responses) {
-	CONVERT_EACH (ResultsMFC)
+	CONVERT_EACH_TO_ONE (ResultsMFC)
 		autoCategories result = ResultsMFC_to_Categories_responses (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_ResultsMFCs_to_Table) {
-	CONVERT_LIST (ResultsMFC)
+	COMBINE_ALL_TO_ONE (ResultsMFC)
 		autoTable result = ResultsMFCs_to_Table (& list);
-	CONVERT_LIST_END (U"allResults")
+	COMBINE_ALL_TO_ONE_END (U"allResults")
 }
 
 // MARK: - buttons

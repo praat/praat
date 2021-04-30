@@ -74,7 +74,7 @@ FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris exa
 DO
 	autoCollection result = FFNet_createIrisExample (numberOfUnits1, numberOfUnits2);
 	praat_new (result.move());
-END }
+END_WITH_NEW_DATA }
 
 FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
 	WORD (name, U"Name", U"4-3")
@@ -163,69 +163,68 @@ DO
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfLayers) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfLayers;
-	INTEGER_ONE_END (U" layer", (my numberOfLayers > 1 ? U"s" : U""))
+	QUERY_ONE_FOR_INTEGER_END (U" layer", (my numberOfLayers > 1 ? U"s" : U""))
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfUnitsInLayer[my numberOfLayers];
-	INTEGER_ONE_END (U" units")
+	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
-
 
 FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
 DO
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = layer > 0 && layer <= my numberOfLayers - 1 ? my numberOfUnitsInLayer[layer] : 0;
-	INTEGER_ONE_END (U" units")
+	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
 DIRECT (INTEGER_FFNet_getNumberOfInputs) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfInputs;
-	INTEGER_ONE_END (U" units")
+	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
 FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
 DO
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = 0;
 		if (layer <= my numberOfLayers - 1) {
 			integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer[layer - 1] );
 			result = my numberOfUnitsInLayer[layer] * (numberOfUnitsInPreviousLayer + 1);
 		}
-	INTEGER_ONE_END (U" weights (including biases)")
+	QUERY_ONE_FOR_INTEGER_END (U" weights (including biases)")
 }
 	
 DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer numberOfUnitsInPreviousLayer = ( my numberOfLayers == 1 ? my numberOfInputs : my numberOfUnitsInLayer[my numberOfLayers - 1] );
 		integer result = my numberOfUnitsInLayer[my numberOfLayers] * (numberOfUnitsInPreviousLayer + 1);
-	INTEGER_ONE_END (U" weights");
+	QUERY_ONE_FOR_INTEGER_END (U" weights");
 }
 
 FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
 	NATURAL (outputUnit, U"Output unit", U"1")
 	OK
 DO
-	STRING_ONE (FFNet)
+	QUERY_ONE_FOR_STRING (FFNet)
 		conststring32 result = FFNet_getCategoryOfOutputUnit (me, outputUnit);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
 	SENTENCE (category, U"Category", U"u")
 	OK
 DO
-	INTEGER_ONE (FFNet)
+	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = FFNet_getOutputUnitOfCategory (me, category);
-	INTEGER_ONE_END (U" (output unit)")
+	QUERY_ONE_FOR_INTEGER_END (U" (output unit)")
 }
 
 
@@ -234,9 +233,9 @@ FORM (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	NATURAL (unit, U"Unit", U"1")
 	OK
 DO
-	NUMBER_ONE (FFNet)
+	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getBias (me, layer, unit);
-	NUMBER_ONE_END (U" (bias)")
+	QUERY_ONE_FOR_REAL_END (U" (bias)")
 }
 
 
@@ -246,15 +245,15 @@ FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	NATURAL (unitFrom, U"Unit from", U"1")
 	OK
 DO
-	NUMBER_ONE (FFNet)
+	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
-	NUMBER_ONE_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
+	QUERY_ONE_FOR_REAL_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
 DIRECT (REAL_FFNet_getMinimum) {
-	NUMBER_ONE (FFNet)
+	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getMinimum (me);
-	NUMBER_ONE_END (U" (minimum)");
+	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
 FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
@@ -312,9 +311,9 @@ FORM (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weig
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (FFNet)
+	CONVERT_EACH_TO_ONE (FFNet)
 		autoTableOfReal result = FFNet_extractWeights (me, layer);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
@@ -322,9 +321,9 @@ FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
 	NATURAL (layer, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (FFNet)
+	CONVERT_EACH_TO_ONE (FFNet)
 		autoMatrix result = FFNet_weightsToMatrix (me, layer, false);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HINT_hint_FFNet_PatternList_classify) {
@@ -349,9 +348,9 @@ FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Cate
 		RADIOBUTTON (U"stochastic")
 	OK
 DO
-	CONVERT_TWO (FFNet, ActivationList)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, ActivationList)
 		autoCategories result = FFNet_ActivationList_to_Categories (me, you, categorizationgMethod);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /******************* FFNet && Eigen ******************************************/
@@ -365,17 +364,17 @@ FORM (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection"
 	REAL (ymax, U"Ymax", U"0.0")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, Eigen)
+	GRAPHICS_ONE_AND_ONE (FFNet, Eigen)
 		FFNet_Eigen_drawIntersection (me, you, GRAPHICS, pcx, pcy, xmin, xmax, ymin, ymax);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 } 
 
 /************************* FFNet && Categories **********************************/
 
 DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
-	CONVERT_TWO (FFNet, Categories)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, Categories)
 		autoActivationList result = FFNet_Categories_to_ActivationList (me, you);
-	CONVERT_TWO_END (my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
 }
 
 /************************* FFNet && Matrix **********************************/
@@ -384,9 +383,9 @@ FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nu
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
-	CONVERT_TWO (FFNet, Matrix)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, Matrix)
 		autoFFNet result = FFNet_weightsFromMatrix (me, you, layer);
-	CONVERT_TWO_END (my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
 }
 
 /************************* FFNet && PatternList **********************************/
@@ -395,9 +394,9 @@ FORM (GRAPHICS_FFNet_PatternList_drawActivation, U"Draw an activation", nullptr)
 	NATURAL (row, U"PatternList (row) number", U"1");
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PatternList)
+	GRAPHICS_ONE_AND_ONE (FFNet, PatternList)
 		FFNet_PatternList_drawActivation (me, you, GRAPHICS, row);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
@@ -406,18 +405,18 @@ FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories
 		RADIOBUTTON (U"stochastic")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PatternList)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, PatternList)
 		autoCategories result = FFNet_PatternList_to_Categories (me, you, categorizationgMethod);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PatternList)
+	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, PatternList)
 		autoActivationList result = FFNet_PatternList_to_ActivationList (me, you, layer);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 /*********** FFNet & PatternList & ActivationList **********************************/
@@ -428,9 +427,9 @@ FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, ActivationList)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
 		double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U"")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
@@ -439,9 +438,9 @@ FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternLi
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, ActivationList)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
 		double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U"")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
 FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
@@ -453,9 +452,9 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & Act
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, ActivationList)
 		FFNet_PatternList_ActivationList_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END	
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END	
 }
 	
 
@@ -471,9 +470,9 @@ FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList &
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, ActivationList)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, ActivationList)
 		FFNet_PatternList_ActivationList_learnSD (me, you, him, maximumNumberOfEpochs, tolerance, learningRate, momentum, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END	
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END	
 }
 
 /*********** FFNet & PatternList & Categories **********************************/
@@ -484,9 +483,9 @@ FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & C
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, Categories)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
 		double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U" (total costs)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (total costs)")
 }
 
 FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
@@ -495,9 +494,9 @@ FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList &
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	NUMBER_THREE (FFNet, PatternList, Categories)
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
 		double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
-	NUMBER_THREE_END (U" (average costs)")
+	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (average costs)")
 }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
@@ -508,9 +507,9 @@ FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categor
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, Categories)
 		FFNet_PatternList_Categories_learnSM (me, you, him, maximumNumberOfEpochs, tolerance, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
@@ -524,9 +523,9 @@ FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Cat
 		RADIOBUTTON (U"minimum-cross-entropy")
 	OK
 DO
-	MODIFY_FIRST_OF_THREE (FFNet, PatternList, Categories)
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE (FFNet, PatternList, Categories)
 		FFNet_PatternList_Categories_learnSD (me, you, him, maximumNumberOfEpochs,tolerance, learningRate, momentum, costFunctionType);
-	MODIFY_FIRST_OF_THREE_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END
 }
 
 /*********** FFNet & PCA **********************************/
@@ -542,9 +541,9 @@ FORM (GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw deci
 	REAL (ymax, U"right Vertical range", U"0.0")
 	OK
 DO
-	GRAPHICS_TWO (FFNet, PCA)
+	GRAPHICS_ONE_AND_ONE (FFNet, PCA)
 		FFNet_Eigen_drawDecisionPlaneInEigenspace (me, you, GRAPHICS, unitNumber, layer, horizontalEigenvectorNumber, verticalEigenvectorNumber, xmin, xmax, ymin, ymax);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 /*********** PatternList & Categories **********************************/
@@ -554,10 +553,10 @@ FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet
 	INTEGER (numberOfUnitsInHiddenLayer2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	CONVERT_TWO (PatternList, Categories)
+	CONVERT_ONE_AND_ONE_TO_ONE (PatternList, Categories)
 		autoFFNet result = PatternList_Categories_to_FFNet (me, you, numberOfUnitsInHiddenLayer1, numberOfUnitsInHiddenLayer2);
 		autostring32 name = result -> name.move();
-	CONVERT_TWO_END (name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (name.get())
 }
 
 void praat_uvafon_FFNet_init () {

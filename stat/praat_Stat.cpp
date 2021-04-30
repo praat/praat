@@ -44,9 +44,9 @@ FORM (REAL_Distributionses_getMeanAbsoluteDifference, U"Get mean difference", nu
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_COUPLE (Distributions)
+	QUERY_TWO_FOR_REAL (Distributions)
 		const double result = Distributionses_getMeanAbsoluteDifference (me, you, columnNumber);
-	NUMBER_COUPLE_END (U" (mean absolute difference between columns ", columnNumber, U")")
+	QUERY_TWO_FOR_REAL_END (U" (mean absolute difference between columns ", columnNumber, U")")
 }
 
 FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
@@ -54,17 +54,17 @@ FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
 	SENTENCE (string, U"String", U"")
 	OK
 DO
-	NUMBER_ONE (Distributions)
+	QUERY_ONE_FOR_REAL (Distributions)
 		const double result = Distributions_getProbability (me, string, columnNumber);
-	NUMBER_ONE_END (U" (probability)")
+	QUERY_ONE_FOR_REAL_END (U" (probability)")
 }
 
 // MARK: Modify
 
 DIRECT (NEW1_Distributionses_add) {
-	CONVERT_LIST (Distributions)
+	COMBINE_ALL_TO_ONE (Distributions)
 		autoDistributions result = Distributions_addMany (& list);
-	CONVERT_LIST_END (U"added")
+	COMBINE_ALL_TO_ONE_END (U"added")
 }
 
 // MARK: Generate
@@ -74,18 +74,18 @@ FORM (NEW_Distributions_to_Strings, U"To Strings", nullptr) {
 	NATURAL (numberOfStrings, U"Number of strings", U"1000")
 	OK
 DO
-	CONVERT_EACH (Distributions)
+	CONVERT_EACH_TO_ONE (Distributions)
 		autoStrings result = Distributions_to_Strings (me, columnNumber, numberOfStrings);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	CONVERT_EACH (Distributions)
+	CONVERT_EACH_TO_ONE (Distributions)
 		autoStrings result = Distributions_to_Strings_exact (me, columnNumber);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - LOGISTICREGRESSION
@@ -124,48 +124,48 @@ DIRECT (HELP_PairDistribution_help) {
 // MARK: Query
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_maximumLikelihood) {
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		const double result = PairDistribution_getFractionCorrect_maximumLikelihood (me);
-	NUMBER_ONE_END (U" (fraction correct)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 DIRECT (REAL_PairDistribution_getFractionCorrect_probabilityMatching) {
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		const double result = PairDistribution_getFractionCorrect_probabilityMatching (me);
-	NUMBER_ONE_END (U" (fraction correct)")
+	QUERY_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 DIRECT (INTEGER_PairDistribution_getNumberOfPairs) {
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		const integer result = my pairs.size;
-	NUMBER_ONE_END (U" pairs")
+	QUERY_ONE_FOR_REAL_END (U" pairs")
 }
 
 FORM (STRING_PairDistribution_getString1, U"Get string1", nullptr) {
 	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	STRING_ONE (PairDistribution)
+	QUERY_ONE_FOR_STRING (PairDistribution)
 		conststring32 result = PairDistribution_getString1 (me, pairNumber);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (STRING_PairDistribution_getString2, U"Get string2", nullptr) {
 	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	STRING_ONE (PairDistribution)
+	QUERY_ONE_FOR_STRING (PairDistribution)
 		conststring32 result = PairDistribution_getString2 (me, pairNumber);
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_PairDistribution_getWeight, U"Get weight", nullptr) {
 	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
-	NUMBER_ONE (PairDistribution)
+	QUERY_ONE_FOR_REAL (PairDistribution)
 		double result = PairDistribution_getWeight (me, pairNumber);
-	NUMBER_ONE_END (U" (weight of pair ", pairNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (weight of pair ", pairNumber, U")")
 }
 
 // MARK: Modify
@@ -195,13 +195,13 @@ DO
 		PairDistribution_to_Stringses (me, number, & strings1, & strings2);
 		praat_new (strings1.move(), nameOfFirstStrings);
 		praat_new (strings2.move(), nameOfSecondStrings);
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (NEW_PairDistribution_to_Table) {
-	CONVERT_EACH (PairDistribution)
+	CONVERT_EACH_TO_ONE (PairDistribution)
 		autoTable result = PairDistribution_to_Table (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - PAIRDISTRIBUTION & DISTRIBUTIONS
@@ -210,9 +210,9 @@ FORM (REAL_PairDistribution_Distributions_getFractionCorrect, U"PairDistribution
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_TWO (PairDistribution, Distributions)
+	QUERY_ONE_AND_ONE_FOR_REAL (PairDistribution, Distributions)
 		const double result = PairDistribution_Distributions_getFractionCorrect (me, you, columnNumber);
-	NUMBER_TWO_END (U" (fraction correct)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (fraction correct)")
 }
 
 // MARK: - TABLE
@@ -295,14 +295,10 @@ DIRECT (HELP_StatisticsTutorial) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Table_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit a Table from batch.");
-	FIND_ONE_WITH_IOBJECT (Table)
+DIRECT (EDITOR_ONE_Table_viewAndEdit) {
+	EDITOR_ONE (a,Table)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: Tabulate
@@ -386,30 +382,30 @@ FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution
 	SENTENCE (columnWithDistribution, U"Column with distribution", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
 		const integer result = Table_drawRowFromDistribution (me, columnNumber);
-	NUMBER_ONE_END (U" (random row number)")
+	QUERY_ONE_FOR_REAL_END (U" (random row number)")
 }
 
 FORM (INTEGER_Table_getColumnIndex, U"Table: Get column index", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
-	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of column ", columnLabel, U")")
 }
 
 FORM (STRING_Table_getColumnLabel, U"Table: Get column label", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	STRING_ONE (Table)
+	QUERY_ONE_FOR_STRING (Table)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (U"Your column number should not be greater than the number of columns.");
 		conststring32 result = my columnHeaders [columnNumber]. label.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
@@ -418,41 +414,41 @@ FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
 	SENTENCE (group, U"Group", U"F")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
 		const double result = Table_getGroupMean (me, column, groupColumn, group);
-	NUMBER_ONE_END (U" (mean of ", columnLabel, U" in group ", group, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U" in group ", group, U")")
 }
 
 FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getMaximum (me, columnNumber);
-	NUMBER_ONE_END (U" (maximum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (maximum of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getMean (me, columnNumber);
-	NUMBER_ONE_END (U" (mean of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getMinimum (me, columnNumber);
-	NUMBER_ONE_END (U" (minimum of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (minimum of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
@@ -460,32 +456,32 @@ FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
 	POSITIVE (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getQuantile (me, columnNumber, quantile);
-	NUMBER_ONE_END (U" (", quantile, U" quantile of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (", quantile, U" quantile of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getStdev (me, columnNumber);
-	NUMBER_ONE_END (U" (standard deviation of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_Table_getNumberOfColumns) {
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer result = my numberOfColumns;
-	NUMBER_ONE_END (U" columns")
+	QUERY_ONE_FOR_REAL_END (U" columns")
 }
 
 DIRECT (INTEGER_Table_getNumberOfRows) {
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer result = my rows.size;
-	NUMBER_ONE_END (U" rows")
+	QUERY_ONE_FOR_REAL_END (U" rows")
 }
 
 FORM (REAL_Table_getValue, U"Table: Get value", nullptr) {
@@ -493,7 +489,7 @@ FORM (REAL_Table_getValue, U"Table: Get value", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		conststring32 result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
@@ -512,10 +508,10 @@ FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
 	SENTENCE (value, U"Value", U"")
 	OK
 DO
-	NUMBER_ONE (Table)
+	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const integer result = Table_searchColumn (me, columnNumber, value);
-	NUMBER_ONE_END (U" (first row in which ", columnLabel, U" is ", value)
+	QUERY_ONE_FOR_REAL_END (U" (first row in which ", columnLabel, U" is ", value)
 }
 	
 // MARK: Statistics
@@ -918,16 +914,16 @@ FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoTable result = Table_collapseRows (me, factors, columnsToSum, columnsToAverage,
 			columnsToMedianize, columnsToAverageLogarithmically, columnsToMedianizeLogarithmically);
-	CONVERT_EACH_END (my name.get(), U"_pooled")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_pooled")
 }
 
 DIRECT (NEW1_Tables_append) {
-	CONVERT_LIST (Table)
+	COMBINE_ALL_TO_ONE (Table)
 		autoTable result = Tables_append (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
@@ -936,10 +932,10 @@ FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where colum
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
-	CONVERT_EACH_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
 			isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
 }
 
@@ -949,16 +945,16 @@ FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column 
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
-	CONVERT_EACH_END (my name.get(), U"_", ___theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
 DIRECT (NEW_Table_transpose) {
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoTable result = Table_transpose (me);
-	CONVERT_EACH_END (my name.get(), U"_transposed");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_transposed");
 }
 
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
@@ -968,16 +964,16 @@ FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
 		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
-	CONVERT_EACH_END (my name.get(), U"_nested")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_nested")
 }
 
 DIRECT (NEW_Table_to_LinearRegression) {
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoLinearRegression result = Table_to_LinearRegression (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
@@ -986,19 +982,19 @@ FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr)
 	SENTENCE (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
 DO
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoLogisticRegression result = Table_to_LogisticRegression (me, factors, dependent1, dependent2);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Table_downto_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
 	SENTENCE (columnForRowLabels, U"Column for row labels", U"")
 	OK
 DO
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		const integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {
@@ -1121,8 +1117,8 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, SAVE_Table_writeToCommaSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...", nullptr, 0, SAVE_Table_writeToSemicolonSeparatedFile);
-	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, WINDOW_Table_viewAndEdit);
-	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, WINDOW_Table_viewAndEdit);
+	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, EDITOR_ONE_Table_viewAndEdit);
+	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, EDITOR_ONE_Table_viewAndEdit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classTable, 0, U"Scatter plot...", nullptr, 1, GRAPHICS_Table_scatterPlot);
 		praat_addAction1 (classTable, 0, U"Scatter plot (mark)...", nullptr, 1, GRAPHICS_Table_scatterPlot_mark);

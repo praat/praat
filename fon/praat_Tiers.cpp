@@ -56,11 +56,11 @@ DIRECT (HELP_AmplitudeTier_help) {
 DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit an AmplitudeTier from batch.");
-	FIND_TWO_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_AmplitudeTier_Sound_viewAndEdit) {
@@ -78,9 +78,9 @@ FORM (REAL_AmplitudeTier_getShimmer_local, U"AmplitudeTier: Get shimmer (local)"
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = AmplitudeTier_getShimmer_local (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
-	NUMBER_ONE_END (U" (local shimmer)")
+	QUERY_ONE_FOR_REAL_END (U" (local shimmer)")
 }
 
 FORM (REAL_AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (local, dB)", U"AmplitudeTier: Get shimmer (local, dB)...") {
@@ -89,9 +89,9 @@ FORM (REAL_AmplitudeTier_getShimmer_local_dB, U"AmplitudeTier: Get shimmer (loca
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = AmplitudeTier_getShimmer_local_dB (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
-	NUMBER_ONE_END (U" dB (local shimmer)")
+	QUERY_ONE_FOR_REAL_END (U" dB (local shimmer)")
 }
 
 FORM (REAL_AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", U"AmplitudeTier: Get shimmer (apq3)...") {
@@ -100,9 +100,9 @@ FORM (REAL_AmplitudeTier_getShimmer_apq3, U"AmplitudeTier: Get shimmer (apq3)", 
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = AmplitudeTier_getShimmer_apq3 (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
-	NUMBER_ONE_END (U" (apq3 shimmer)")
+	QUERY_ONE_FOR_REAL_END (U" (apq3 shimmer)")
 }
 
 FORM (REAL_AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", U"AmplitudeTier: Get shimmer (apq5)...") {
@@ -111,9 +111,9 @@ FORM (REAL_AmplitudeTier_getShimmer_apq5, U"AmplitudeTier: Get shimmer (apq5)", 
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = AmplitudeTier_getShimmer_apq5 (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
-	NUMBER_ONE_END (U" (apq5 shimmer)")
+	QUERY_ONE_FOR_REAL_END (U" (apq5 shimmer)")
 }
 
 FORM (REAL_AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)", U"AmplitudeTier: Get shimmer (apq11)...") {
@@ -122,9 +122,9 @@ FORM (REAL_AmplitudeTier_getShimmer_apq11, U"AmplitudeTier: Get shimmer (apq11)"
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = AmplitudeTier_getShimmer_apq11 (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
-	NUMBER_ONE_END (U" (apq11 shimmer)")
+	QUERY_ONE_FOR_REAL_END (U" (apq11 shimmer)")
 }
 
 FORM (REAL_AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"AmplitudeTier: Get shimmer (dda)...") {
@@ -133,9 +133,9 @@ FORM (REAL_AmplitudeTier_getShimmer_dda, U"AmplitudeTier: Get shimmer (dda)", U"
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = AmplitudeTier_getShimmer_dda (me, shortestPeriod, longestPeriod, maximumAmplitudeFactor);
-	NUMBER_ONE_END (U" (dda shimmer)")
+	QUERY_ONE_FOR_REAL_END (U" (dda shimmer)")
 }
 
 /*
@@ -143,18 +143,18 @@ FORM (REAL_AmplitudeTier_getValueAtTime, U"Get AmplitudeTier value", U"Amplitude
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = RealTier_getValueAtTime (me, time);
-	NUMBER_ONE_END (U" Pa")
+	QUERY_ONE_FOR_REAL_END (U" Pa")
 }
 	
 FORM (REAL_AmplitudeTier_getValueAtIndex, U"Get AmplitudeTier value", U"AmplitudeTier: Get value at index...") {
 	INTEGER (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (AmplitudeTier)
+	QUERY_ONE_FOR_REAL (AmplitudeTier)
 		double result = RealTier_getValueAtIndex (me, pointNumber);
-	NUMBER_ONE_END (U" Pa")
+	QUERY_ONE_FOR_REAL_END (U" Pa")
 }
 */
 
@@ -192,40 +192,40 @@ FORM (NEW_AmplitudeTier_to_Sound, U"AmplitudeTier: To Sound (pulse train)", U"Am
 	NATURAL (interpolationDepth, U"Interpolation depth (samples)", U"2000")
 	OK
 DO
-	CONVERT_EACH (AmplitudeTier)
+	CONVERT_EACH_TO_ONE (AmplitudeTier)
 		autoSound result = AmplitudeTier_to_Sound (me, samplingFrequency, interpolationDepth);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Convert
 
 DIRECT (NEW_AmplitudeTier_downto_PointProcess) {
-	CONVERT_EACH (AmplitudeTier)
+	CONVERT_EACH_TO_ONE (AmplitudeTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_AmplitudeTier_downto_TableOfReal) {
-	CONVERT_EACH (AmplitudeTier)
+	CONVERT_EACH_TO_ONE (AmplitudeTier)
 		autoTableOfReal result = AmplitudeTier_downto_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_AmplitudeTier_to_IntensityTier, U"AmplitudeTier: To IntensityTier", U"AmplitudeTier: To IntensityTier...") {
 	REAL (threshold, U"Threshold (dB)", U"-10000.0")
 	OK
 DO
-	CONVERT_EACH (AmplitudeTier)
+	CONVERT_EACH_TO_ONE (AmplitudeTier)
 		autoIntensityTier result = AmplitudeTier_to_IntensityTier (me, threshold);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - AMPLITUDETIER & SOUND
 
 DIRECT (NEW1_Sound_AmplitudeTier_multiply) {
-	CONVERT_TWO (Sound, AmplitudeTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, AmplitudeTier)
 		autoSound result = Sound_AmplitudeTier_multiply (me, you);
-	CONVERT_TWO_END (my name.get(), U"_amp")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_amp")
 }
 
 // MARK: - DURATIONTIER
@@ -256,11 +256,11 @@ DIRECT (HELP_DurationTier_help) {
 DIRECT (WINDOW_DurationTier_edit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit a DurationTier from batch.");
-	FIND_TWO_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_DurationTier_Sound_edit) {
@@ -284,27 +284,27 @@ FORM (REAL_DurationTier_getTargetDuration, U"Get target duration", nullptr) {
 	REAL (toSourceTime, U"right Source time range (s)", U"1.0")
 	OK
 DO
-	NUMBER_ONE (DurationTier)
+	QUERY_ONE_FOR_REAL (DurationTier)
 		double result = RealTier_getArea (me, fromSourceTime, toSourceTime);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_DurationTier_getValueAtTime, U"Get DurationTier value", U"DurationTier: Get value at time...") {
 	REAL (sourceTime, U"Source time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (DurationTier)
+	QUERY_ONE_FOR_REAL (DurationTier)
 		double result = RealTier_getValueAtTime (me, sourceTime);
-	NUMBER_ONE_END (U" (relative duration)")
+	QUERY_ONE_FOR_REAL_END (U" (relative duration)")
 }
 
 FORM (REAL_DurationTier_getValueAtIndex, U"Get DurationTier value", U"Duration: Get value at index...") {
 	INTEGER (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (DurationTier)
+	QUERY_ONE_FOR_REAL (DurationTier)
 		double result = RealTier_getValueAtIndex (me, pointNumber);
-	NUMBER_ONE_END (U" (relative duration)")
+	QUERY_ONE_FOR_REAL_END (U" (relative duration)")
 }
 
 // MARK: Modify
@@ -337,9 +337,9 @@ DO
 // MARK: Convert
 
 DIRECT (NEW_DurationTier_downto_PointProcess) {
-	CONVERT_EACH (DurationTier)
+	CONVERT_EACH_TO_ONE (DurationTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANTGRID
@@ -384,15 +384,11 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_FormantGrid_edit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit a FormantGrid from batch.");
-	FIND_ONE_WITH_IOBJECT (FormantGrid)
+DIRECT (EDITOR_ONE_FormantGrid_edit) {
+	EDITOR_ONE (a,FormantGrid)
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: Modify
@@ -417,7 +413,6 @@ FORM (MODIFY_FormantGrid_formula_bandwidths, U"FormantGrid: Formula (bandwidths)
 DO
 	MODIFY_EACH_WEAK (FormantGrid)
 		FormantGrid_formula_bandwidths (me, formula, interpreter, nullptr);
-			praat_dataChanged (me);
 	MODIFY_EACH_WEAK_END
 }
 
@@ -474,23 +469,23 @@ FORM (NEW_FormantGrid_to_Formant, U"FormantGrid: To Formant", nullptr) {
 DO
 	Melder_require (intensity >= 0.0,
 		U"The intensity cannot be negative.");
-	CONVERT_EACH (FormantGrid)
+	CONVERT_EACH_TO_ONE (FormantGrid)
 		autoFormant result = FormantGrid_to_Formant (me, timeStep, intensity);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANTGRID & SOUND
 
 DIRECT (NEW1_Sound_FormantGrid_filter) {
-	CONVERT_TWO (Sound, FormantGrid)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, FormantGrid)
 		autoSound result = Sound_FormantGrid_filter (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 DIRECT (NEW1_Sound_FormantGrid_filter_noscale) {
-	CONVERT_TWO (Sound, FormantGrid)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, FormantGrid)
 		autoSound result = Sound_FormantGrid_filter_noscale (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 // MARK: - FORMANTTIER
@@ -530,9 +525,9 @@ FORM (REAL_FormantTier_getValueAtTime, U"FormantTier: Get value", U"FormantTier:
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (FormantTier)
+	QUERY_ONE_FOR_REAL (FormantTier)
 		double result = FormantTier_getValueAtTime (me, formantNumber, time);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 FORM (REAL_FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"FormantTier: Get bandwidth at time...") {
@@ -540,9 +535,9 @@ FORM (REAL_FormantTier_getBandwidthAtTime, U"FormantTier: Get bandwidth", U"Form
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (FormantTier)
+	QUERY_ONE_FOR_REAL (FormantTier)
 		double result = FormantTier_getBandwidthAtTime (me, formantNumber, time);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 // MARK: Modify
@@ -573,23 +568,23 @@ FORM (NEW_FormantTier_downto_TableOfReal, U"Down to TableOfReal", nullptr) {
 	BOOLEAN (includeBandwidths, U"Include bandwidths", false)
 	OK
 DO
-	CONVERT_EACH (FormantTier)
+	CONVERT_EACH_TO_ONE (FormantTier)
 		autoTableOfReal result = FormantTier_downto_TableOfReal (me, includeFormants, includeBandwidths);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANTTIER & SOUND
 
 DIRECT (NEW1_Sound_FormantTier_filter) {
-	CONVERT_TWO (Sound, FormantTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, FormantTier)
 		autoSound result = Sound_FormantTier_filter (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 DIRECT (NEW1_Sound_FormantTier_filter_noscale) {
-	CONVERT_TWO (Sound, FormantTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, FormantTier)
 		autoSound result = Sound_FormantTier_filter_noscale (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 // MARK: - INTENSITYTIER
@@ -620,11 +615,11 @@ DIRECT (HELP_IntensityTier_help) {
 DIRECT (WINDOW_IntensityTier_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit an IntensityTier from batch.");
-	FIND_TWO_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (HINT_IntensityTier_Sound_viewAndEdit) {
@@ -640,18 +635,18 @@ FORM (REAL_IntensityTier_getValueAtTime, U"Get IntensityTier value", U"Intensity
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (IntensityTier)
+	QUERY_ONE_FOR_REAL (IntensityTier)
 		double result = RealTier_getValueAtTime (me, time);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_IntensityTier_getValueAtIndex, U"Get IntensityTier value", U"IntensityTier: Get value at index...") {
 	INTEGER (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (IntensityTier)
+	QUERY_ONE_FOR_REAL (IntensityTier)
 		double result = RealTier_getValueAtIndex (me, pointNumber);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 // MARK: Modify
@@ -684,46 +679,46 @@ DO
 // MARK: Convert
 
 DIRECT (NEW_IntensityTier_downto_PointProcess) {
-	CONVERT_EACH (IntensityTier)
+	CONVERT_EACH_TO_ONE (IntensityTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_IntensityTier_downto_TableOfReal) {
-	CONVERT_EACH (IntensityTier)
+	CONVERT_EACH_TO_ONE (IntensityTier)
 		autoTableOfReal result = IntensityTier_downto_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_IntensityTier_to_AmplitudeTier) {
-	CONVERT_EACH (IntensityTier)
+	CONVERT_EACH_TO_ONE (IntensityTier)
 		autoAmplitudeTier result = IntensityTier_to_AmplitudeTier (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITYTIER & POINTPROCESS
 
 DIRECT (NEW1_IntensityTier_PointProcess_to_IntensityTier) {
-	CONVERT_TWO (IntensityTier, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (IntensityTier, PointProcess)
 		autoIntensityTier result = IntensityTier_PointProcess_to_IntensityTier (me, you);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITYTIER & SOUND
 
 DIRECT (NEW1_Sound_IntensityTier_multiply_old) {
-	CONVERT_TWO (Sound, IntensityTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, IntensityTier)
 		autoSound result = Sound_IntensityTier_multiply (me, you, true);
-	CONVERT_TWO_END (my name.get(), U"_int")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_int")
 }
 
 FORM (NEW1_Sound_IntensityTier_multiply, U"Sound & IntervalTier: Multiply", nullptr) {
 	BOOLEAN (scaleTo09, U"Scale to 0.9", true)
 	OK
 DO
-	CONVERT_TWO (Sound, IntensityTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, IntensityTier)
 		autoSound result = Sound_IntensityTier_multiply (me, you, scaleTo09);
-	CONVERT_TWO_END (my name.get(), U"_int")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_int")
 }
 
 // MARK: - PITCHTIER
@@ -752,9 +747,9 @@ DO
 }
 
 DIRECT (NEW_PitchTier_downto_PointProcess) {
-	CONVERT_EACH (PitchTier)
+	CONVERT_EACH_TO_ONE (PitchTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", nullptr) {
@@ -763,9 +758,9 @@ FORM (NEW_PitchTier_downto_TableOfReal, U"PitchTier: Down to TableOfReal", nullp
 		RADIOBUTTON (U"semitones")
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	CONVERT_EACH_TO_ONE (PitchTier)
 		autoTableOfReal result = PitchTier_downto_TableOfReal (me, unit);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
@@ -805,11 +800,11 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 DIRECT (WINDOW_PitchTier_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit a PitchTier from batch.");
-	FIND_TWO_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...") {
@@ -831,54 +826,54 @@ FORM (REAL_PitchTier_getMean_curve, U"PitchTier: Get mean (curve)", U"PitchTier:
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (PitchTier)
+	QUERY_ONE_FOR_REAL (PitchTier)
 		double result = RealTier_getMean_curve (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 	
 FORM (REAL_PitchTier_getMean_points, U"PitchTier: Get mean (points)", U"PitchTier: Get mean (points)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (PitchTier)
+	QUERY_ONE_FOR_REAL (PitchTier)
 		double result = RealTier_getMean_points (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 	
 FORM (REAL_PitchTier_getStandardDeviation_curve, U"PitchTier: Get standard deviation (curve)", U"PitchTier: Get standard deviation (curve)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (PitchTier)
+	QUERY_ONE_FOR_REAL (PitchTier)
 		double result = RealTier_getStandardDeviation_curve (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 	
 FORM (REAL_PitchTier_getStandardDeviation_points, U"PitchTier: Get standard deviation (points)", U"PitchTier: Get standard deviation (points)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (PitchTier)
+	QUERY_ONE_FOR_REAL (PitchTier)
 		double result = RealTier_getStandardDeviation_points (me, fromTime, toTime);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 	
 FORM (REAL_PitchTier_getValueAtTime, U"PitchTier: Get value at time", U"PitchTier: Get value at time...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (PitchTier)
+	QUERY_ONE_FOR_REAL (PitchTier)
 		double result = RealTier_getValueAtTime (me, time);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 	
 FORM (REAL_PitchTier_getValueAtIndex, U"PitchTier: Get value at index", U"PitchTier: Get value at index...") {
 	INTEGER (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (PitchTier)
+	QUERY_ONE_FOR_REAL (PitchTier)
 		double result = RealTier_getValueAtIndex (me, pointNumber);
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 DIRECT (HELP_PitchTier_help) {
@@ -962,9 +957,9 @@ DO
 }
 
 DIRECT (NEW_PitchTier_to_PointProcess) {
-	CONVERT_EACH (PitchTier)
+	CONVERT_EACH_TO_ONE (PitchTier)
 		autoPointProcess result = PitchTier_to_PointProcess (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", nullptr) {
@@ -978,10 +973,10 @@ FORM (NEW_PitchTier_to_Sound_phonation, U"PitchTier: To Sound (phonation)", null
 	BOOLEAN (hum, U"Hum", false)
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	CONVERT_EACH_TO_ONE (PitchTier)
 		autoSound result = PitchTier_to_Sound_phonation (me, samplingFrequency,
 			adaptationFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, hum);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", nullptr) {
@@ -992,19 +987,19 @@ FORM (NEW_PitchTier_to_Sound_pulseTrain, U"PitchTier: To Sound (pulse train)", n
 	BOOLEAN (hum, U"Hum", false)
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	CONVERT_EACH_TO_ONE (PitchTier)
 		autoSound result = PitchTier_to_Sound_pulseTrain (me, samplingFrequency,
 			adaptationFactor, adaptationTime, interpolationDepth, hum);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PitchTier_to_Sound_sine, U"PitchTier: To Sound (sine)", nullptr) {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	OK
 DO
-	CONVERT_EACH (PitchTier)
+	CONVERT_EACH_TO_ONE (PitchTier)
 		autoSound result = PitchTier_to_Sound_sine (me, 0.0, 0.0, samplingFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HINT_PitchTier_Sound_viewAndEdit) {
@@ -1036,9 +1031,9 @@ DIRECT (INFO_PitchTier_Manipulation_replace) {
 // MARK: - PITCHTIER & POINTPROCESS
 
 DIRECT (NEW1_PitchTier_PointProcess_to_PitchTier) {
-	CONVERT_TWO (PitchTier, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (PitchTier, PointProcess)
 		autoPitchTier result = PitchTier_PointProcess_to_PitchTier (me, you);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - POINTPROCESS
@@ -1089,9 +1084,9 @@ DO
 }
 
 DIRECT (NEW1_PointProcesses_difference) {
-	CONVERT_COUPLE (PointProcess)
+	CONVERT_TWO_TO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_difference (me, you);
-	CONVERT_COUPLE_END (U"difference")
+	CONVERT_TWO_TO_ONE_END (U"difference")
 }
 
 FORM (GRAPHICS_PointProcess_draw, U"PointProcess: Draw", nullptr) {
@@ -1107,11 +1102,11 @@ DO
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
 	Melder_require (! theCurrentPraatApplication -> batch,
 		U"Cannot view or edit a PointProcess from batch.");
-	FIND_TWO_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_PointProcess_fill, U"PointProcess: Fill", nullptr) {
@@ -1128,9 +1123,9 @@ FORM (REAL_PointProcess_getInterval, U"PointProcess: Get interval", U"PointProce
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getInterval (me, time);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 #define dia_PointProcess_getRangeProperty(fromTime,toTime,shortestPeriod,longestPeriod,maximumPeriodfactor) \
@@ -1143,123 +1138,123 @@ FORM (REAL_PointProcess_getJitter_local, U"PointProcess: Get jitter (local)", U"
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getJitter_local (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" (local jitter)")
+	QUERY_ONE_FOR_REAL_END (U" (local jitter)")
 }
 
 FORM (REAL_PointProcess_getJitter_local_absolute, U"PointProcess: Get jitter (local, absolute)", U"PointProcess: Get jitter (local, absolute)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getJitter_local_absolute (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" seconds (local absolute jitter)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (local absolute jitter)")
 }
 
 FORM (REAL_PointProcess_getJitter_rap, U"PointProcess: Get jitter (rap)", U"PointProcess: Get jitter (rap)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getJitter_rap (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" (rap jitter)")
+	QUERY_ONE_FOR_REAL_END (U" (rap jitter)")
 }
 
 FORM (REAL_PointProcess_getJitter_ppq5, U"PointProcess: Get jitter (ppq5)", U"PointProcess: Get jitter (ppq5)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getJitter_ppq5 (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" (ppq5 jitter)")
+	QUERY_ONE_FOR_REAL_END (U" (ppq5 jitter)")
 }
 
 FORM (REAL_PointProcess_getJitter_ddp, U"PointProcess: Get jitter (ddp)", U"PointProcess: Get jitter (ddp)...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getJitter_ddp (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" (ddp jitter)")
+	QUERY_ONE_FOR_REAL_END (U" (ddp jitter)")
 }
 
 FORM (REAL_PointProcess_getMeanPeriod, U"PointProcess: Get mean period", U"PointProcess: Get mean period...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getMeanPeriod (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" seconds (mean period)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (mean period)")
 }
 
 FORM (REAL_PointProcess_getStdevPeriod, U"PointProcess: Get stdev period", U"PointProcess: Get stdev period...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		double result = PointProcess_getStdevPeriod (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" (stdev period)")
+	QUERY_ONE_FOR_REAL_END (U" (stdev period)")
 }
 
 FORM (INTEGER_PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointProcess: Get low index...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		integer result = PointProcess_getLowIndex (me, time);
-	NUMBER_ONE_END (U" (low index)")
+	QUERY_ONE_FOR_REAL_END (U" (low index)")
 }
 
 FORM (INTEGER_PointProcess_getHighIndex, U"PointProcess: Get high index", U"PointProcess: Get high index...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		integer result = PointProcess_getHighIndex (me, time);
-	NUMBER_ONE_END (U" (high index)")
+	QUERY_ONE_FOR_REAL_END (U" (high index)")
 }
 
 FORM (INTEGER_PointProcess_getNearestIndex, U"PointProcess: Get nearest index", U"PointProcess: Get nearest index...") {
 	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		integer result = PointProcess_getNearestIndex (me, time);
-	NUMBER_ONE_END (U" (nearest index)")
+	QUERY_ONE_FOR_REAL_END (U" (nearest index)")
 }
 
 DIRECT (INTEGER_PointProcess_getNumberOfPoints) {
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		integer result = my nt;
-	NUMBER_ONE_END (U" points")
+	QUERY_ONE_FOR_REAL_END (U" points")
 }
 
 FORM (INTEGER_PointProcess_getNumberOfPeriods, U"PointProcess: Get number of periods", U"PointProcess: Get number of periods...") {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		integer result = PointProcess_getNumberOfPeriods (me, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	NUMBER_ONE_END (U" periods")
+	QUERY_ONE_FOR_REAL_END (U" periods")
 }
 
 FORM (REAL_PointProcess_getTimeFromIndex, U"Get time", 0 /*"PointProcess: Get time from index..."*/) {
 	NATURAL (pointNumber, U"Point number", U"10")
 	OK
 DO
-	NUMBER_ONE (PointProcess)
+	QUERY_ONE_FOR_REAL (PointProcess)
 		const double result =
 			pointNumber > my nt ? undefined : my t [pointNumber];
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (HELP_PointProcess_help) {
@@ -1273,9 +1268,9 @@ DIRECT (PLAY_PointProcess_hum) {
 }
 
 DIRECT (NEW1_PointProcesses_intersection) {
-	CONVERT_COUPLE (PointProcess)
+	CONVERT_TWO_TO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_intersection (me, you);
-	CONVERT_COUPLE_END (U"intersection")
+	CONVERT_TWO_TO_ONE_END (U"intersection")
 }
 
 DIRECT (PLAY_PointProcess_play) {
@@ -1323,24 +1318,24 @@ DO
 }
 
 DIRECT (NEW_PointProcess_to_IntervalTier) {
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PointProcess_to_Matrix) {
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoMatrix result = PointProcess_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_PitchTier, U"PointProcess: To PitchTier", U"PointProcess: To PitchTier...") {
 	POSITIVE (maximumInterval, U"Maximum interval (s)", U"0.02")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoPitchTier result = PointProcess_to_PitchTier (me, maximumInterval);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProcess: To TextGrid...") {
@@ -1348,9 +1343,9 @@ FORM (NEW_PointProcess_to_TextGrid, U"PointProcess: To TextGrid...", U"PointProc
 	SENTENCE (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U"PointProcess: To TextGrid (vuv)...") {
@@ -1358,15 +1353,15 @@ FORM (NEW_PointProcess_to_TextGrid_vuv, U"PointProcess: To TextGrid (vuv)...", U
 	REAL (meanPeriod, U"Mean period (s)", U"0.01")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoTextGrid result = PointProcess_to_TextGrid_vuv (me, maximumPeriod, meanPeriod);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PointProcess_to_TextTier) {
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoTextTier result = TextTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)", U"PointProcess: To Sound (phonation)...") {
@@ -1379,10 +1374,10 @@ FORM (NEW_PointProcess_to_Sound_phonation, U"PointProcess: To Sound (phonation)"
 	POSITIVE (power2, U"Power 2", U"4.0")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoSound result = PointProcess_to_Sound_phonation (me, samplingFrequency,
 			adaptationFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse train)", U"PointProcess: To Sound (pulse train)...") {
@@ -1392,49 +1387,49 @@ FORM (NEW_PointProcess_to_Sound_pulseTrain, U"PointProcess: To Sound (pulse trai
 	NATURAL (interpolationDepth, U"Interpolation depth (samples)", U"2000")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoSound result = PointProcess_to_Sound_pulseTrain (me, samplingFrequency,
 			adaptationFactor, adaptationTime, interpolationDepth);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PointProcess_to_Sound_hum) {
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoSound result = PointProcess_to_Sound_hum (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_PointProcesses_union) {
-	CONVERT_COUPLE (PointProcess)
+	CONVERT_TWO_TO_ONE (PointProcess)
 		autoPointProcess result = PointProcesses_union (me, you);
-	CONVERT_COUPLE_END (U"union")
+	CONVERT_TWO_TO_ONE_END (U"union")
 }
 
 FORM (NEW_PointProcess_upto_IntensityTier, U"PointProcess: Up to IntensityTier", U"PointProcess: Up to IntensityTier...") {
 	POSITIVE (intensity, U"Intensity (dB)", U"70.0")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoIntensityTier result = PointProcess_upto_IntensityTier (me, intensity);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_upto_PitchTier, U"PointProcess: Up to PitchTier", U"PointProcess: Up to PitchTier...") {
 	POSITIVE (frequency, U"Frequency (Hz)", U"190.0")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoPitchTier result = PointProcess_upto_PitchTier (me, frequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_PointProcess_upto_TextTier, U"PointProcess: Up to TextTier", U"PointProcess: Up to TextTier...") {
 	SENTENCE (text, U"Text", U"")
 	OK
 DO
-	CONVERT_EACH (PointProcess)
+	CONVERT_EACH_TO_ONE (PointProcess)
 		autoTextTier result = PointProcess_upto_TextTier (me, text);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_PointProcess_voice, U"PointProcess: Fill unvoiced parts", nullptr) {
@@ -1457,10 +1452,10 @@ DIRECT (HINT_PointProcess_Sound_viewAndEdit) {
 // MARK: - POINTPROCESS & SOUND
 
 DIRECT (MODIFY_Point_Sound_transplantDomain) {
-	MODIFY_FIRST_OF_TWO (PointProcess, Sound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (PointProcess, Sound)
 		my xmin = your xmin;
 		my xmax = your xmax;
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (REAL_Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (local)", U"PointProcess & Sound: Get shimmer (local)...") {
@@ -1468,10 +1463,10 @@ FORM (REAL_Point_Sound_getShimmer_local, U"PointProcess & Sound: Get shimmer (lo
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_local (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (local shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (local shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer (local, dB)", U"PointProcess & Sound: Get shimmer (local, dB)...") {
@@ -1479,10 +1474,10 @@ FORM (REAL_Point_Sound_getShimmer_local_dB, U"PointProcess & Sound: Get shimmer 
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_local_dB (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" dB (local shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB (local shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq3)", U"PointProcess & Sound: Get shimmer (apq3)...") {
@@ -1490,10 +1485,10 @@ FORM (REAL_Point_Sound_getShimmer_apq3, U"PointProcess & Sound: Get shimmer (apq
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_apq3 (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (apq3 shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (apq3 shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq)", U"PointProcess & Sound: Get shimmer (apq5)...") {
@@ -1501,10 +1496,10 @@ FORM (REAL_Point_Sound_getShimmer_apq5, U"PointProcess & Sound: Get shimmer (apq
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_apq5 (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (apq5 shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (apq5 shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (apq11)", U"PointProcess & Sound: Get shimmer (apq11)...") {
@@ -1512,10 +1507,10 @@ FORM (REAL_Point_Sound_getShimmer_apq11, U"PointProcess & Sound: Get shimmer (ap
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_apq11 (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (apq11 shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (apq11 shimmer)");
 }
 
 FORM (REAL_Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)", U"PointProcess & Sound: Get shimmer (dda)...") {
@@ -1523,26 +1518,26 @@ FORM (REAL_Point_Sound_getShimmer_dda, U"PointProcess & Sound: Get shimmer (dda)
 	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
 	OK
 DO
-	NUMBER_TWO (PointProcess, Sound)
+	QUERY_ONE_AND_ONE_FOR_REAL (PointProcess, Sound)
 		double result = PointProcess_Sound_getShimmer_dda (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor, maximumAmplitudeFactor);
-	NUMBER_TWO_END (U" (dda shimmer)");
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (dda shimmer)");
 }
 
 FORM (NEW1_PointProcess_Sound_to_AmplitudeTier_period, U"PointProcess & Sound: To AmplitudeTier (period)", nullptr) {
 	dia_PointProcess_getRangeProperty (fromTime, toTime, shortestPeriod, longestPeriod, maximumPeriodfactor)
 	OK
 DO
-	CONVERT_TWO (PointProcess, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (PointProcess, Sound)
 		autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_period (me, you, fromTime, toTime,
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
-	CONVERT_TWO_END (your name.get(), U"_", my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_", my name.get())
 }
 
 DIRECT (NEW1_PointProcess_Sound_to_AmplitudeTier_point) {
-	CONVERT_TWO (PointProcess, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (PointProcess, Sound)
 		autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_point (me, you);
-	CONVERT_TWO_END (your name.get(), U"_", my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_", my name.get());
 }
 
 FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr) {
@@ -1553,10 +1548,10 @@ FORM (NEW1_PointProcess_Sound_to_Ltas, U"PointProcess & Sound: To Ltas", nullptr
 	POSITIVE (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	CONVERT_TWO (PointProcess, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (PointProcess, Sound)
 		autoLtas result = PointProcess_Sound_to_Ltas (me, you,
 			maximumFrequency, bandwidth, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	CONVERT_TWO_END (your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get())
 }
 
 FORM (NEW1_PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas (harmonics", nullptr) {
@@ -1566,10 +1561,10 @@ FORM (NEW1_PointProcess_Sound_to_Ltas_harmonics, U"PointProcess & Sound: To Ltas
 	POSITIVE (maximumPeriodFactor, U"Maximum period factor", U"1.3")
 	OK
 DO
-	CONVERT_TWO (PointProcess, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (PointProcess, Sound)
 		autoLtas result = PointProcess_Sound_to_Ltas_harmonics (me, you,
 			maximumHarmonic, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	CONVERT_TWO_END (your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get())
 }
 
 FORM (NEW1_Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess: To SoundEnsemble (correlate)", nullptr) {
@@ -1577,17 +1572,17 @@ FORM (NEW1_Sound_PointProcess_to_SoundEnsemble_correlate, U"Sound & PointProcess
 	REAL (toTime, U"To time (s)", U"1.0")
 	OK
 DO
-	CONVERT_TWO (Sound, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, PointProcess)
 		autoSound result = Sound_PointProcess_to_SoundEnsemble_correlate (me, you, fromTime, toTime);
-	CONVERT_TWO_END (your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get())
 }
 
 // MARK: - SPECTRUMTIER
 
 DIRECT (NEW_SpectrumTier_downto_Table) {
-	CONVERT_EACH (SpectrumTier)
+	CONVERT_EACH_TO_ONE (SpectrumTier)
 		autoTable result = SpectrumTier_downto_Table (me, true, true, true);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_old_SpectrumTier_draw, U"SpectrumTier: Draw", nullptr) {   // 2010-10-19
@@ -1706,8 +1701,8 @@ void praat_Tiers_init () {
 		praat_addAction1 (classDurationTier, 0, U"Down to PointProcess", nullptr, 0, NEW_DurationTier_downto_PointProcess);
 
 	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", nullptr, 0, HELP_FormantGrid_help);
-	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_FormantGrid_edit);
-	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classFormantGrid);
 		praat_addAction1 (classFormantGrid, 0, U"Formula (frequencies)...", nullptr, 1, MODIFY_FormantGrid_formula_frequencies);

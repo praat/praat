@@ -101,9 +101,9 @@ FORM (REAL_Cochleagram_difference, U"Cochleagram difference", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_COUPLE (Cochleagram)
+	QUERY_TWO_FOR_REAL (Cochleagram)
 		double result = Cochleagram_difference (me, you, fromTime, toTime);
-	NUMBER_COUPLE_END (U" hertz (root-mean-square)")
+	QUERY_TWO_FOR_REAL_END (U" hertz (root-mean-square)")
 }
 
 // MARK: Draw
@@ -138,17 +138,17 @@ FORM (NEW_Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr)
 	REAL (time, U"Time (s)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Cochleagram)
+	CONVERT_EACH_TO_ONE (Cochleagram)
 		autoExcitation result = Cochleagram_to_Excitation (me, time);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Hack
 
 DIRECT (NEW_Cochleagram_to_Matrix) {
-	CONVERT_EACH (Cochleagram)
+	CONVERT_EACH_TO_ONE (Cochleagram)
 		autoMatrix result = Cochleagram_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - CORPUS
@@ -170,14 +170,10 @@ DO
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Corpus_edit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit a Corpus from batch.");
-	FIND_ONE_WITH_IOBJECT (Corpus)
+DIRECT (EDITOR_ONE_Corpus_edit) {
+	EDITOR_ONE (a,Corpus)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: - DISTRIBUTIONS
@@ -187,9 +183,9 @@ FORM (NEW_Distributions_to_Transition, U"To Transition", nullptr) {
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	CONVERT_EACH (Distributions)
+	CONVERT_EACH_TO_ONE (Distributions)
 		autoTransition result = Distributions_to_Transition (me, nullptr, environment, nullptr, greedy);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
@@ -197,9 +193,9 @@ FORM (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	CONVERT_TWO (Distributions, Transition)
+	CONVERT_ONE_AND_ONE_TO_ONE (Distributions, Transition)
 		autoTransition result = Distributions_to_Transition (me, nullptr, environment, you, greedy);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
@@ -207,9 +203,9 @@ FORM (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr)
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	CONVERT_COUPLE (Distributions)
+	CONVERT_TWO_TO_ONE (Distributions)
 		autoTransition result = Distributions_to_Transition (me, you, environment, nullptr, greedy);
-	CONVERT_COUPLE_END (my name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
@@ -217,17 +213,17 @@ FORM (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", null
 	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
-	CONVERT_COUPLE_AND_ONE (Distributions, Transition)
+	CONVERT_TWO_AND_ONE_TO_ONE (Distributions, Transition)
 		autoTransition result = Distributions_to_Transition (me, you, environment, him, greedy);
-	CONVERT_COUPLE_AND_ONE_END (my name.get())
+	CONVERT_TWO_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - DISTRIBUTIONS & TRANSITION
 
 DIRECT (NEW1_Distributions_Transition_map) {
-	CONVERT_TWO (Distributions, Transition)
+	CONVERT_ONE_AND_ONE_TO_ONE (Distributions, Transition)
 		autoDistributions result = Distributions_Transition_map (me, you);
-	CONVERT_TWO_END (U"surface")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (U"surface")
 }
 
 // MARK: - EXCITATION
@@ -256,9 +252,9 @@ DO
 // MARK: Query
 
 DIRECT (REAL_Excitation_getLoudness) {
-	NUMBER_ONE (Excitation)
+	QUERY_ONE_FOR_REAL (Excitation)
 		double result = Excitation_getLoudness (me);
-	NUMBER_ONE_END (U" sones")
+	QUERY_ONE_FOR_REAL_END (U" sones")
 }
 
 // MARK: Modify
@@ -280,15 +276,15 @@ FORM (NEW_Excitation_to_Formant, U"From Excitation to Formant", 0) {
 	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"20")
 	OK
 DO
-	CONVERT_EACH (Excitation)
+	CONVERT_EACH_TO_ONE (Excitation)
 		autoFormant result = Excitation_to_Formant (me, maximumNumberOfFormants);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Excitation_to_Matrix) {
-	CONVERT_EACH (Excitation)
+	CONVERT_EACH_TO_ONE (Excitation)
 		autoMatrix result = Excitation_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANT
@@ -375,11 +371,11 @@ FORM (NEW_Formant_downto_Table, U"Formant: Down to Table", nullptr) {
 	BOOLEAN (includeBandwidths, U"Include bandwidths", true)
 	OK
 DO
-	CONVERT_EACH (Formant)
+	CONVERT_EACH_TO_ONE (Formant)
 		autoTable result = Formant_downto_Table (me, includeFrameNumber, includeTime, numberOfTimeDecimals,
 			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
 			includeBandwidths);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -392,9 +388,9 @@ FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value a
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getValueAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
@@ -405,9 +401,9 @@ FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getBandwidthAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
@@ -419,9 +415,9 @@ FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum..
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
@@ -433,9 +429,9 @@ FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum..
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
@@ -447,9 +443,9 @@ FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant:
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getTimeOfMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
@@ -461,15 +457,15 @@ FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant:
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getTimeOfMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const integer result = Formant_getMaxNumFormants (me);
-	NUMBER_ONE_END (U" (there are at most this many formants in every frame)")
+	QUERY_ONE_FOR_REAL_END (U" (there are at most this many formants in every frame)")
 }
 
 FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
@@ -478,26 +474,26 @@ FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getMean (me, formantNumber, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const integer result = Formant_getMinNumFormants (me);
-	NUMBER_ONE_END (U" (there are at least this many formants in every frame)");
+	QUERY_ONE_FOR_REAL_END (U" (there are at least this many formants in every frame)");
 }
 
 FORM (INTEGER_Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		if (frameNumber > my nx)
 			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
 		const integer result = my frames [frameNumber]. numberOfFormants;
-	NUMBER_ONE_END (U" formants")
+	QUERY_ONE_FOR_REAL_END (U" formants")
 }
 
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
@@ -507,9 +503,9 @@ FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
@@ -519,9 +515,9 @@ FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth"
 	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
@@ -530,9 +526,9 @@ FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nul
 	RADIO_ENUM (kFormant_unit, unit, U"Unit", kFormant_unit::HERTZ)
 	OK
 DO
-	NUMBER_ONE (Formant)
+	QUERY_ONE_FOR_REAL (Formant)
 		const double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
+	QUERY_ONE_FOR_REAL_END (U" ", kFormant_unit_getText (unit))
 }
 
 // MARK: Modify
@@ -578,55 +574,55 @@ FORM (NEW_Formant_tracker, U"Formant tracker", U"Formant: Track...") {
 	OK
 DO
 	if (numberOfTracks > 5) Melder_throw (U"Your number of tracks should not be more than 5.");
-	CONVERT_EACH (Formant)
+	CONVERT_EACH_TO_ONE (Formant)
 		autoFormant result = Formant_tracker (me, numberOfTracks,
 			referenceF1, referenceF2, referenceF3, referenceF4, referenceF5,
 			frequencyCost, bandwidthCost, transitionCost
 		);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Formant_downto_FormantGrid) {
-	CONVERT_EACH (Formant)
+	CONVERT_EACH_TO_ONE (Formant)
 		autoFormantGrid result = Formant_downto_FormantGrid (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Formant_downto_FormantTier) {
-	CONVERT_EACH (Formant)
+	CONVERT_EACH_TO_ONE (Formant)
 		autoFormantTier result = Formant_downto_FormantTier (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Formant_to_Matrix, U"From Formant to Matrix", nullptr) {
 	INTEGER (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	CONVERT_EACH (Formant)
+	CONVERT_EACH_TO_ONE (Formant)
 		autoMatrix result = Formant_to_Matrix (me, formantNumber);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - FORMANT & POINTPROCESS
 
 DIRECT (NEW1_Formant_PointProcess_to_FormantTier) {
-	CONVERT_TWO (Formant, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Formant, PointProcess)
 		autoFormantTier result = Formant_PointProcess_to_FormantTier (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - FORMANT & SOUND
 
 DIRECT (NEW1_Sound_Formant_filter) {
-	CONVERT_TWO (Sound, Formant)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Formant)
 		autoSound result = Sound_Formant_filter (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 DIRECT (NEW1_Sound_Formant_filter_noscale) {
-	CONVERT_TWO (Sound, Formant)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Formant)
 		autoSound result = Sound_Formant_filter_noscale (me, you);
-	CONVERT_TWO_END (my name.get(), U"_filt")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_filt")
 }
 
 // MARK: - HARMONICITY
@@ -656,72 +652,72 @@ FORM (REAL_Harmonicity_getMaximum, U"Harmonicity: Get maximum", U"Harmonicity: G
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getMean, U"Harmonicity: Get mean", U"Harmonicity: Get mean...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Harmonicity_getMean (me, fromTime, toTime);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getMinimum, U"Harmonicity: Get minimum", U"Harmonicity: Get minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getStandardDeviation, U"Harmonicity: Get standard deviation", U"Harmonicity: Get standard deviation...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Harmonicity_getStandardDeviation (me, fromTime, toTime);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getTimeOfMaximum, U"Harmonicity: Get time of maximum", U"Harmonicity: Get time of maximum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Harmonicity_getTimeOfMinimum, U"Harmonicity: Get time of minimum", U"Harmonicity: Get time of minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Harmonicity_getValueAtTime, U"Harmonicity: Get value", U"Harmonicity: Get value at time...") {
 	praat_TimeVector_INTERPOLATED_VALUE (time, interpolation)
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = Vector_getValueAtX (me, time, 1, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...") {
 	INTEGER (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMBER_ONE (Harmonicity)
+	QUERY_ONE_FOR_REAL (Harmonicity)
 		const double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 // MARK: Modify
@@ -740,9 +736,9 @@ DO
 // MARK: Convert
 
 DIRECT (NEW_Harmonicity_to_Matrix) {
-	CONVERT_EACH (Harmonicity)
+	CONVERT_EACH_TO_ONE (Harmonicity)
 		autoMatrix result = Harmonicity_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITY
@@ -773,54 +769,54 @@ FORM (REAL_Intensity_getValueAtTime, U"Intensity: Get value", U"Intensity: Get v
 	praat_TimeVector_INTERPOLATED_VALUE (time, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getValueAtX (me, time, 1, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get value in frame...") {
 	INTEGER (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getMinimum, U"Intensity: Get minimum", U"Intensity: Get minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getTimeOfMinimum, U"Intensity: Get time of minimum", U"Intensity: Get time of minimum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getXOfMinimum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Intensity_getMaximum, U"Intensity: Get maximum", U"Intensity: Get maximum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getTimeOfMaximum, U"Intensity: Get time of maximum", U"Intensity: Get time of maximum...") {
 	praat_TimeVector_INTERPOLATED_EXTREMUM (fromTime, toTime, interpolation)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getXOfMaximum (me, fromTime, toTime, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Intensity_getQuantile, U"Intensity: Get quantile", 0) {
@@ -828,18 +824,18 @@ FORM (REAL_Intensity_getQuantile, U"Intensity: Get quantile", 0) {
 	REAL (quantile, U"Quantile (0-1)", U"0.50")
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Intensity_getQuantile (me, fromTime, toTime, quantile);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_old_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, 0, true);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
@@ -850,18 +846,18 @@ FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...")
 		RADIOBUTTON (U"dB")
 	OK
 DO_ALTERNATIVE (REAL_old_Intensity_getMean)
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Sampled_getMean_standardUnit (me, fromTime, toTime, 0, averagingMethod, true);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Intensity_getStandardDeviation, U"Intensity: Get standard deviation", U"Intensity: Get standard deviation...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	OK
 DO
-	NUMBER_ONE (Intensity)
+	QUERY_ONE_FOR_REAL (Intensity)
 		const double result = Vector_getStandardDeviation (me, fromTime, toTime, 1);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 // MARK: Modify
@@ -880,29 +876,29 @@ DO
 // MARK: Analyse
 
 DIRECT (NEW_Intensity_to_IntensityTier_peaks) {
-	CONVERT_EACH (Intensity)
+	CONVERT_EACH_TO_ONE (Intensity)
 		autoIntensityTier result = Intensity_to_IntensityTier_peaks (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Intensity_to_IntensityTier_valleys) {
-	CONVERT_EACH (Intensity)
+	CONVERT_EACH_TO_ONE (Intensity)
 		autoIntensityTier result = Intensity_to_IntensityTier_valleys (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Convert
 
 DIRECT (NEW_Intensity_downto_IntensityTier) {
-	CONVERT_EACH (Intensity)
+	CONVERT_EACH_TO_ONE (Intensity)
 		autoIntensityTier result = Intensity_downto_IntensityTier (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Intensity_downto_Matrix) {
-	CONVERT_EACH (Intensity)
+	CONVERT_EACH_TO_ONE (Intensity)
 		autoMatrix result = Intensity_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - INTENSITY & PITCH
@@ -919,30 +915,30 @@ FORM (GRAPHICS_Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
 		RADIOBUTTON (U"speckles and curve")
 	OK
 DO
-	GRAPHICS_TWO (Pitch, Intensity)
+	GRAPHICS_ONE_AND_ONE (Pitch, Intensity)
 		Pitch_Intensity_draw (me, you, GRAPHICS,
 			fromFrequency, toFrequency, fromIntensity, toIntensity, garnish, drawingMethod);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (REAL_Pitch_Intensity_getMean) {
-	NUMBER_TWO (Pitch, Intensity)
+	QUERY_ONE_AND_ONE_FOR_REAL (Pitch, Intensity)
 		double result = Pitch_Intensity_getMean (me, you);
-	NUMBER_TWO_END (U" dB")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (REAL_Pitch_Intensity_getMeanAbsoluteSlope) {
-	NUMBER_TWO (Pitch, Intensity)
+	QUERY_ONE_AND_ONE_FOR_REAL (Pitch, Intensity)
 		double result = Pitch_Intensity_getMeanAbsoluteSlope (me, you);
-	NUMBER_TWO_END (U" dB/second")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" dB/second")
 }
 
 // MARK: - INTENSITY & POINTPROCESS
 
 DIRECT (NEW1_Intensity_PointProcess_to_IntensityTier) {
-	CONVERT_TWO (Intensity, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Intensity, PointProcess)
 		autoIntensityTier result = Intensity_PointProcess_to_IntensityTier (me, you);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - INTERVALTIER, the remainder is in praat_TextGrid_init.cpp
@@ -956,9 +952,9 @@ FORM_READ (READ1_IntervalTier_readFromXwaves, U"Read IntervalTier from Xwaves", 
 // MARK: - LTAS
 
 DIRECT (NEW1_Ltases_average) {
-	CONVERT_TYPED_LIST (Ltas, LtasBag)
+	COMBINE_ALL_LISTED_TO_ONE (Ltas, LtasBag)
 		autoLtas result = Ltases_average (list.get());
-	CONVERT_TYPED_LIST_END (U"averaged")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"averaged")
 }
 
 FORM (NEW_Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
@@ -966,9 +962,9 @@ FORM (NEW_Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute tr
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
-	CONVERT_EACH (Ltas)
+	CONVERT_EACH_TO_ONE (Ltas)
 		autoLtas result = Ltas_computeTrendLine (me, fromFrequency, toFrequency);
-	CONVERT_EACH_END (my name.get(), U"_trend")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_trend")
 }
 
 FORM (GRAPHICS_old_Ltas_draw, U"Ltas: Draw", nullptr) {
@@ -1015,39 +1011,39 @@ DO
 }
 
 DIRECT (REAL_Ltas_getLowestFrequency) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = my xmin;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Ltas_getHighestFrequency) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = my xmax;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Ltas_getBinWidth) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = my dx;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...") {
 	NATURAL (binNumber, U"Bin number", U"1")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_indexToX (me, binNumber);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
 	REAL (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_xToIndex (me, frequency);
-	NUMBER_ONE_END (U"")
+	QUERY_ONE_FOR_REAL_END (U"")
 }
 
 FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
@@ -1057,9 +1053,9 @@ FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getXOfMinimum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" hertz");
+	QUERY_ONE_FOR_REAL_END (U" hertz");
 }
 
 FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
@@ -1069,9 +1065,9 @@ FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getXOfMaximum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" hertz");
+	QUERY_ONE_FOR_REAL_END (U" hertz");
 }
 
 FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
@@ -1085,7 +1081,7 @@ FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		if (environmentMin >= peakMin)
 			Melder_throw (U"The beginning of the environment must lie before the peak.");
 		if (peakMin >= peakMax)
@@ -1093,7 +1089,7 @@ DO
 		if (environmentMax <= peakMax)
 			Melder_throw (U"The end of the environment must lie after the peak.");
 		double result = Ltas_getLocalPeakHeight (me, environmentMin, environmentMax, peakMin, peakMax, averagingMethod);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
@@ -1103,9 +1099,9 @@ FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getMaximum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
@@ -1117,10 +1113,10 @@ FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_getMean_standardUnit (me, fromFrequency, toFrequency,
 				0, averagingMethod, false);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
@@ -1130,15 +1126,15 @@ FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
 			U"Interpolation", kVector_peakInterpolation::NONE)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getMinimum (me, fromFrequency, toFrequency, peakInterpolationType);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (INTEGER_Ltas_getNumberOfBins) {
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const integer result = my nx;
-	NUMBER_ONE_END (U" bins")
+	QUERY_ONE_FOR_REAL_END (U" bins")
 }
 
 FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
@@ -1152,9 +1148,9 @@ FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Ltas_getSlope (me, lowBandFrom, lowBandTo, highBandFrom, highBandTo, averagingMethod);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...") {
@@ -1166,13 +1162,13 @@ FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: G
 		RADIOBUTTON (U"dB")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Sampled_getStandardDeviation_standardUnit (me, fromFrequency, toFrequency,
 			0,   // level (irrelevant)
 			averagingMethod,
 			false   // interpolate (don't)
 		);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
@@ -1181,21 +1177,21 @@ FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at fr
 			U"Interpolation", kVector_valueInterpolation :: NEAREST)
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = Vector_getValueAtX (me, frequency,
 			1,   // level
 			valueInterpolationType
 		);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...") {
 	INTEGER (binNumber, U"Bin number", U"100")
 	OK
 DO
-	NUMBER_ONE (Ltas)
+	QUERY_ONE_FOR_REAL (Ltas)
 		const double result = binNumber < 1 || binNumber > my nx ? undefined : my z [1] [binNumber];
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 DIRECT (HELP_Ltas_help) {
@@ -1203,9 +1199,9 @@ DIRECT (HELP_Ltas_help) {
 }
 
 DIRECT (NEW1_Ltases_merge) {
-	CONVERT_TYPED_LIST (Ltas, LtasBag)
+	COMBINE_ALL_LISTED_TO_ONE (Ltas, LtasBag)
 		autoLtas result = Ltases_merge (list.get());
-	CONVERT_TYPED_LIST_END (U"merged")
+	COMBINE_ALL_LISTED_TO_ONE_END (U"merged")
 }
 
 FORM (NEW_Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...") {
@@ -1213,21 +1209,21 @@ FORM (NEW_Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract
 	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
-	CONVERT_EACH (Ltas)
+	CONVERT_EACH_TO_ONE (Ltas)
 		autoLtas result = Ltas_subtractTrendLine (me, fromFrequency, toFrequency);
-	CONVERT_EACH_END (my name.get(), U"_fit")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_fit")
 }
 
 DIRECT (NEW_Ltas_to_Matrix) {
-	CONVERT_EACH (Ltas)
+	CONVERT_EACH_TO_ONE (Ltas)
 		autoMatrix result = Ltas_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Ltas_to_SpectrumTier_peaks) {
-	CONVERT_EACH (Ltas)
+	CONVERT_EACH_TO_ONE (Ltas)
 		autoSpectrumTier result = Ltas_to_SpectrumTier_peaks (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - MANIPULATION
@@ -1240,59 +1236,55 @@ static void cb_ManipulationEditor_publication (Editor /* editor */, autoDaata pu
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_Manipulation_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Manipulation from batch.");
-	FIND_ONE_WITH_IOBJECT (Manipulation)
+DIRECT (EDITOR_ONE_Manipulation_viewAndEdit) {
+	EDITOR_ONE (a,Manipulation)
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 DIRECT (NEW_Manipulation_extractDurationTier) {
-	CONVERT_EACH (Manipulation)
+	CONVERT_EACH_TO_ONE (Manipulation)
 		if (! my duration)
 			Melder_throw (me, U": I don't contain a DurationTier.");
 		autoDurationTier result = Data_copy (my duration.get());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractOriginalSound) {
-	CONVERT_EACH (Manipulation)
+	CONVERT_EACH_TO_ONE (Manipulation)
 		if (! my sound)
 			Melder_throw (me, U": I don't contain a Sound.");
 		autoSound result = Data_copy (my sound.get());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractPitchTier) {
-	CONVERT_EACH (Manipulation)
+	CONVERT_EACH_TO_ONE (Manipulation)
 		if (! my pitch)
 			Melder_throw (me, U": I don't contain a PitchTier.");
 		autoPitchTier result = Data_copy (my pitch.get());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_extractPulses) {
-	CONVERT_EACH (Manipulation)
+	CONVERT_EACH_TO_ONE (Manipulation)
 		if (! my pulses)
 			Melder_throw (me, U": I don't contain a PointProcess.");
 		autoPointProcess result = Data_copy (my pulses.get());
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_getResynthesis_lpc) {
-	CONVERT_EACH (Manipulation)
+	CONVERT_EACH_TO_ONE (Manipulation)
 		autoSound result = Manipulation_to_Sound (me, Manipulation_PITCH_LPC);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Manipulation_getResynthesis_overlapAdd) {
-	CONVERT_EACH (Manipulation)
+	CONVERT_EACH_TO_ONE (Manipulation)
 		autoSound result = Manipulation_to_Sound (me, Manipulation_OVERLAPADD);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HELP_Manipulation_help) {
@@ -1338,9 +1330,9 @@ FORM_SAVE (SAVE_Manipulation_writeToTextFileWithoutSound, U"Text file without So
 // MARK: - MANIPULATION & DURATIONTIER
 
 DIRECT (MODIFY_Manipulation_replaceDurationTier) {
-	MODIFY_FIRST_OF_TWO (Manipulation, DurationTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, DurationTier)
 		Manipulation_replaceDurationTier (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Manipulation_replaceDurationTier_help) {
@@ -1350,9 +1342,9 @@ DIRECT (HELP_Manipulation_replaceDurationTier_help) {
 // MARK: - MANIPULATION & PITCHTIER
 
 DIRECT (MODIFY_Manipulation_replacePitchTier) {
-	MODIFY_FIRST_OF_TWO (Manipulation, PitchTier)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, PitchTier)
 		Manipulation_replacePitchTier (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (HELP_Manipulation_replacePitchTier_help) {
@@ -1362,25 +1354,25 @@ DIRECT (HELP_Manipulation_replacePitchTier_help) {
 // MARK: - MANIPULATION & POINTPROCESS
 
 DIRECT (MODIFY_Manipulation_replacePulses) {
-	MODIFY_FIRST_OF_TWO (Manipulation, PointProcess)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, PointProcess)
 		Manipulation_replacePulses (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MANIPULATION & SOUND
 
 DIRECT (MODIFY_Manipulation_replaceOriginalSound) {
-	MODIFY_FIRST_OF_TWO (Manipulation, Sound)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Manipulation, Sound)
 		Manipulation_replaceOriginalSound (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MANIPULATION & TEXTTIER
 
 DIRECT (NEW1_Manipulation_TextTier_to_Manipulation) {
-	CONVERT_TWO (Manipulation, TextTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Manipulation, TextTier)
 		autoManipulation result = Manipulation_AnyTier_to_Manipulation (me, reinterpret_cast <AnyTier> (you));
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 // MARK: - PARAMCURVE
@@ -1408,15 +1400,15 @@ DIRECT (HELP_ParamCurve_help) {
 // MARK: - PITCH
 
 DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		integer result = Pitch_countVoicedFrames (me);
-	NUMBER_ONE_END (U" voiced frames")
+	QUERY_ONE_FOR_REAL_END (U" voiced frames")
 }
 
 DIRECT (INFO_Pitch_difference) {
-	INFO_COUPLE (Pitch)
+	INFO_TWO (Pitch)
 		Pitch_difference (me, you);
-	INFO_COUPLE_END
+	INFO_TWO_END
 }
 
 FORM (GRAPHICS_Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
@@ -1517,14 +1509,10 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_Pitch_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Pitch from batch.");
-	FIND_ONE_WITH_IOBJECT (Pitch)
+DIRECT (EDITOR_ONE_Pitch_viewAndEdit) {
+	EDITOR_ONE (a,Pitch)
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
@@ -1541,24 +1529,24 @@ FORM (NUMMAT_Pitch_getAllCandidatesInFrame, U"Pitch: Get all candidates in frame
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	NUMMAT_ONE (Pitch)
+	QUERY_ONE_FOR_MATRIX (Pitch)
 		autoMAT result = Pitch_getAllCandidatesInFrame (me, frameNumber);
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (NEW_Pitch_tabulateCandidatesInFrame, U"Pitch: Tabulate candidates in frame", nullptr) {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoTable result = Pitch_tabulateCandidatesInFrame (me, frameNumber);
-	CONVERT_EACH_END (my name.get(), U"_", frameNumber)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", frameNumber)
 }
 
 DIRECT (NEW_Pitch_tabulateCandidates) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoTable result = Pitch_tabulateCandidates (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
@@ -1569,10 +1557,10 @@ FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
@@ -1583,10 +1571,10 @@ FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
@@ -1594,10 +1582,10 @@ FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Pitch_getMean (me, fromTime, toTime, unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
@@ -1608,19 +1596,19 @@ FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 		RADIOBUTTON (U"ERB")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double slope;
 		const integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 			(me, & slope);
 		const double result = ( nVoiced < 2 ? undefined : slope );
-	NUMBER_ONE_END (U" ", ( unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB" ), U"/s");
+	QUERY_ONE_FOR_REAL_END (U" ", ( unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB" ), U"/s");
 }
 
 DIRECT (REAL_Pitch_getMeanAbsSlope_noOctave) {
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result;
 		(void) Pitch_getMeanAbsSlope_noOctave (me, & result);
-	NUMBER_ONE_END (U" semitones/s")
+	QUERY_ONE_FOR_REAL_END (U" semitones/s")
 }
 
 FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
@@ -1629,10 +1617,10 @@ FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
@@ -1651,7 +1639,7 @@ DO
 		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
 		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
 		kPitch_unit::ERB;
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		const double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
 		conststring32 unitText =
 			unit == kPitch_unit::HERTZ ? U"Hz" :
@@ -1659,7 +1647,7 @@ DO
 			unit == kPitch_unit::LOG_HERTZ ? U"logHz" :
 			unit == kPitch_unit::SEMITONES_1 ? U"semitones" :
 			U"ERB";
-	NUMBER_ONE_END (U" ", unitText)
+	QUERY_ONE_FOR_REAL_END (U" ", unitText)
 }
 
 FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
@@ -1670,9 +1658,9 @@ FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		const double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
@@ -1683,9 +1671,9 @@ FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 		RADIOBUTTON (U"parabolic")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		const double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
@@ -1696,10 +1684,10 @@ FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 	
 FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
@@ -1707,10 +1695,10 @@ FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get val
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (Pitch)
+	QUERY_ONE_FOR_REAL (Pitch)
 		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, (int) unit);
 		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
+	QUERY_ONE_FOR_REAL_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 DIRECT (HELP_Pitch_help) {
@@ -1724,15 +1712,15 @@ DIRECT (PLAY_Pitch_hum) {
 }
 
 DIRECT (NEW_Pitch_interpolate) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoPitch result = Pitch_interpolate (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_killOctaveJumps) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoPitch result = Pitch_killOctaveJumps (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: List values at times...") {
@@ -1743,22 +1731,22 @@ FORM (NUMVEC_Pitch_listValuesAtTimes, U"Pitch: List values at times", U"Pitch: L
 		RADIOBUTTON (U"linear")
 	OK
 DO
-	NUMVEC_ONE (Pitch)
+	QUERY_ONE_FOR_REAL_VECTOR (Pitch)
 		autoVEC result = Sampled_listValuesAtXes (me, times, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
 		for (integer iframe = 1; iframe <= result.size; iframe ++)
 			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NUMVEC_Pitch_listValuesInAllFrames, U"Pitch: List values in all frames", U"Pitch: List values in all frames...") {
 	OPTIONMENU_ENUM (kPitch_unit, unit, U"Unit", kPitch_unit::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (Pitch)
+	QUERY_ONE_FOR_REAL_VECTOR (Pitch)
 		autoVEC result = Sampled_listValuesOfAllSamples (me, Pitch_LEVEL_FREQUENCY, (int) unit);
 		for (integer iframe = 1; iframe <= result.size; iframe ++)
 			result [iframe] = Function_convertToNonlogarithmic (me, result [iframe], Pitch_LEVEL_FREQUENCY, (int) unit);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 DIRECT (PLAY_Pitch_play) {
@@ -1771,9 +1759,9 @@ FORM (NEW_Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...") {
 	REAL (bandwidth, U"Bandwidth (Hz)", U"10.0")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoPitch result = Pitch_smooth (me, bandwidth);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
@@ -1882,45 +1870,45 @@ DO
 		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
 		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
 		kPitch_unit::ERB;
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoPitch result = Pitch_subtractLinearFit (me, unit);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_IntervalTier) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoIntervalTier result = IntervalTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_Matrix) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoMatrix result = Pitch_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_downto_PitchTier) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoPitchTier result = Pitch_to_PitchTier (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_PointProcess) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoPointProcess result = Pitch_to_PointProcess (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_Sound_pulses) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoSound result = Pitch_to_Sound (me, 0.0, 0.0, false);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_Sound_hum) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoSound result = Pitch_to_Sound (me, 0.0, 0.0, true);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
@@ -1930,9 +1918,9 @@ FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
 		OPTION (U"at nearest zero crossings")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoSound result = Pitch_to_Sound_sine (me, 0.0, 0.0, samplingFrequency, cutVoicelessStretches);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
@@ -1940,15 +1928,15 @@ FORM (NEW_Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
 	SENTENCE (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoTextGrid result = TextGrid_create (my xmin, my xmax, tierNames, pointTiers);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Pitch_to_TextTier) {
-	CONVERT_EACH (Pitch)
+	CONVERT_EACH_TO_ONE (Pitch)
 		autoTextTier result = TextTier_create (my xmin, my xmax);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - PITCH & PITCHTIER
@@ -1964,10 +1952,10 @@ FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (PitchTier, Pitch)
+	GRAPHICS_ONE_AND_ONE (PitchTier, Pitch)
 		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 				lineTypeForNonperiodicIntervals, garnish, U"lines and speckles");
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
@@ -1986,38 +1974,38 @@ FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_PitchTier_Pitch_draw)
-	GRAPHICS_TWO (PitchTier, Pitch)
+	GRAPHICS_ONE_AND_ONE (PitchTier, Pitch)
 		PitchTier_Pitch_draw (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 				lineTypeForNonperiodicIntervals, garnish, drawingMethod);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (NEW1_Pitch_PitchTier_to_Pitch) {
-	CONVERT_TWO (Pitch, PitchTier)
+	CONVERT_ONE_AND_ONE_TO_ONE (Pitch, PitchTier)
 		autoPitch result = Pitch_PitchTier_to_Pitch (me, you);
-	CONVERT_TWO_END (my name.get(), U"_stylized");
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_stylized");
 }
 
 // MARK: - PITCH & POINTPROCESS
 
 DIRECT (NEW1_Pitch_PointProcess_to_PitchTier) {
-	CONVERT_TWO (Pitch, PointProcess)
+	CONVERT_ONE_AND_ONE_TO_ONE (Pitch, PointProcess)
 		autoPitchTier result = Pitch_PointProcess_to_PitchTier (me, you);
-	CONVERT_TWO_END (my name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
 }
 
 // MARK: - PITCH & SOUND
 
 DIRECT (NEW1_Sound_Pitch_to_Manipulation) {
-	CONVERT_TWO (Sound, Pitch)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
 		autoManipulation result = Sound_Pitch_to_Manipulation (me, you);
-	CONVERT_TWO_END (your name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get());
 }
 
 DIRECT (NEW1_Sound_Pitch_to_PointProcess_cc) {
-	CONVERT_TWO (Sound, Pitch)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
 		autoPointProcess result = Sound_Pitch_to_PointProcess_cc (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get());
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
@@ -2025,9 +2013,9 @@ FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (
 	BOOLEAN (includeMinima, U"Include minima", false)
 	OK
 DO
-	CONVERT_TWO (Sound, Pitch)
+	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
 		autoPointProcess result = Sound_Pitch_to_PointProcess_peaks (me, you, includeMaxima, includeMinima);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - POLYGON
@@ -2078,9 +2066,9 @@ FORM (GRAPHICS_Polygons_drawConnection, U"Polygons: Draw connection", nullptr) {
 	POSITIVE (relativeLength, U"Relative length", U"0.9")
 	OK
 DO
-	GRAPHICS_COUPLE (Polygon)
+	GRAPHICS_TWO (Polygon)
 		Polygons_drawConnection (me, you, GRAPHICS, xmin, xmax, ymin, ymax, arrow, relativeLength);
-	GRAPHICS_COUPLE_END
+	GRAPHICS_TWO_END
 }
 
 DIRECT (HELP_Polygon_help) {
@@ -2129,9 +2117,9 @@ DO
 }
 
 DIRECT (NEW_Polygon_to_Matrix) {
-	CONVERT_EACH (Polygon)
+	CONVERT_EACH_TO_ONE (Polygon)
 		autoMatrix result = Polygon_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - SOUND & PITCH & POINTPROCESS
@@ -2146,12 +2134,12 @@ FORM (INFO_Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	OK
 DO
-	INFO_THREE (Sound, Pitch, PointProcess)
+	INFO_ONE_AND_ONE_AND_ONE (Sound, Pitch, PointProcess)
 		MelderInfo_open ();
 		Sound_Pitch_PointProcess_voiceReport (me, you, him, fromTime, toTime, fromPitch, toPitch,
 				maximumPeriodFactor, maximumAmplitudeFactor, silenceThreshold, voicingThreshold);
 		MelderInfo_close ();
-	INFO_THREE_END
+	INFO_ONE_AND_ONE_AND_ONE_END
 }
 
 // MARK: - SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER
@@ -2160,9 +2148,9 @@ FORM (NEW1_Sound_Point_Pitch_Duration_to_Sound, U"To Sound", nullptr) {
 	POSITIVE (longestPeriod, U"Longest period (s)", U"0.02")
 	OK
 DO
-	CONVERT_FOUR (Sound, PointProcess, PitchTier, DurationTier)
+	CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE (Sound, PointProcess, PitchTier, DurationTier)
 		autoSound result = Sound_Point_Pitch_Duration_to_Sound (me, you, him, she, longestPeriod);
-	CONVERT_FOUR_END (U"manip");
+	CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE_END (U"manip");
 }
 
 // MARK: - SPECTROGRAM
@@ -2203,9 +2191,9 @@ FORM (REAL_Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)
 	REAL (frequency, U"Frequency (Hz)", U"1000")
 	OK
 DO
-	NUMBER_ONE (Spectrogram)
+	QUERY_ONE_FOR_REAL (Spectrogram)
 		const double result = Matrix_getValueAtXY (me, time, frequency);
-	NUMBER_ONE_END (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)")
+	QUERY_ONE_FOR_REAL_END (U" Pa2/Hz (at time = ", time, U" seconds and frequency = ", frequency, U" Hz)")
 }
 
 DIRECT (HELP_Spectrogram_help) {
@@ -2219,37 +2207,33 @@ DIRECT (MOVIE_Spectrogram_playMovie) {
 }
 
 DIRECT (NEW_Spectrogram_to_Matrix) {
-	CONVERT_EACH (Spectrogram)
+	CONVERT_EACH_TO_ONE (Spectrogram)
 		autoMatrix result = Spectrogram_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrogram_to_Sound, U"Spectrogram: To Sound", nullptr) {
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	OK
 DO
-	CONVERT_EACH (Spectrogram)
+	CONVERT_EACH_TO_ONE (Spectrogram)
 		autoSound result = Spectrogram_to_Sound (me, samplingFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", nullptr) {
 	REAL (time, U"Time (seconds)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (Spectrogram)
+	CONVERT_EACH_TO_ONE (Spectrogram)
 		autoSpectrum result = Spectrogram_to_Spectrum (me, time);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (WINDOW_Spectrogram_view) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
-	FIND_ONE_WITH_IOBJECT (Spectrogram)
+DIRECT (EDITOR_ONE_Spectrogram_view) {
+	EDITOR_ONE (a,Spectrogram)
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: - SPECTRUM
@@ -2262,14 +2246,10 @@ DIRECT (HELP_Spectrum_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Spectrum_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Spectrum from batch.");
-	FIND_ONE_WITH_IOBJECT (Spectrum)
+DIRECT (EDITOR_ONE_Spectrum_viewAndEdit) {
+	EDITOR_ONE (a,Spectrum)
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: Draw
@@ -2311,10 +2291,10 @@ FORM (NEW_Spectrum_tabulate, U"Spectrum: Tabulate", 0) {
 	BOOLEAN (includePowerDensity, U"Include power density", true)
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoTable result = Spectrum_tabulate (me, includeBinNumber, includeFrequency, includeRealPart, includeImaginaryPart,
 				includeEnergyDensity, includePowerDensity);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -2324,9 +2304,9 @@ FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
 	REAL (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandDensity (me, bandFloor, bandCeiling);
-	NUMBER_ONE_END (U" Pa2 / Hz2")
+	QUERY_ONE_FOR_REAL_END (U" Pa2 / Hz2")
 }
 
 FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
@@ -2336,10 +2316,10 @@ FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density diffe
 	REAL (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandDensityDifference (me,
 				lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
@@ -2347,9 +2327,9 @@ FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
 	REAL (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandEnergy (me, bandFloor, bandCeiling);
-	NUMBER_ONE_END (U" Pa2 sec")
+	QUERY_ONE_FOR_REAL_END (U" Pa2 sec")
 }
 
 FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
@@ -2359,25 +2339,25 @@ FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy differe
 	REAL (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getBandEnergyDifference (me,
 				lowBandFloor, lowBandCeiling, highBandFloor, highBandCeiling);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from frequency", nullptr) {
 	REAL (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Sampled_xToIndex (me, frequency);
-	NUMBER_ONE_END (U" (bin number as a real value)")
+	QUERY_ONE_FOR_REAL_END (U" (bin number as a real value)")
 }
 
 DIRECT (REAL_Spectrum_getBinWidth) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = my dx;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
@@ -2385,112 +2365,112 @@ FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectru
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getCentralMoment (me, moment, power);
-	NUMBER_ONE_END (U" hertz to the power ", moment)
+	QUERY_ONE_FOR_REAL_END (U" hertz to the power ", moment)
 }
 
 FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getCentreOfGravity (me, power);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
 	NATURAL (bandNumber, U"Band number", U"1")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Sampled_indexToX (me, bandNumber);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getLowestFrequency) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = my xmin;
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 DIRECT (REAL_Spectrum_getHighestFrequency) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = my xmax;
-	NUMBER_ONE_END (U" hertz");
+	QUERY_ONE_FOR_REAL_END (U" hertz");
 }
 
 FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullptr) {
 	NATURAL (binNumber, U"Bin number", U"100")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"Bin number should not exceed number of bins.");
 		const double result = my z [1] [binNumber];
-	NUMBER_ONE_END (U" (real value in bin ", binNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (real value in bin ", binNumber, U")")
 }
 
 FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
 	NATURAL (binNumber, U"Bin number", U"100")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		if (binNumber > my nx) Melder_throw (U"The bin number should not exceed the number of bins.");
 		const double result = my z [2] [binNumber];
-	NUMBER_ONE_END (U" (imaginary value in bin ", binNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (imaginary value in bin ", binNumber, U")")
 }
 
 FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getKurtosis (me, power);
-	NUMBER_ONE_END (U" (kurtosis)")
+	QUERY_ONE_FOR_REAL_END (U" (kurtosis)")
 }
 
 FORM (REAL_Spectrum_getSoundPressureLevelOfNearestMaximum, U"Spectrum: Get sound pressure level of nearest maximum", U"Spectrum: Get sound pressure level of nearest maximum...") {
 	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
 		const double result = maximum. y;
-	NUMBER_ONE_END (U" \"dB/Hz\"")
+	QUERY_ONE_FOR_REAL_END (U" \"dB/Hz\"")
 }
 
 FORM (REAL_Spectrum_getFrequencyOfNearestMaximum, U"Spectrum: Get frequency of nearest maximum", U"Spectrum: Get frequency of nearest maximum...") {
 	POSITIVE (frequency, U"Frequency (Hz)", U"1000.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		MelderPoint maximum = Spectrum_getNearestMaximum (me, frequency);
 		const double result = maximum. x;
-	NUMBER_ONE_END (U" Hz")
+	QUERY_ONE_FOR_REAL_END (U" Hz")
 }
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const integer result = my nx;
-	NUMBER_ONE_END (U" bins")
+	QUERY_ONE_FOR_REAL_END (U" bins")
 }
 
 FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getSkewness (me, power);
-	NUMBER_ONE_END (U" (skewness)")
+	QUERY_ONE_FOR_REAL_END (U" (skewness)")
 }
 
 FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
 	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
-	NUMBER_ONE (Spectrum)
+	QUERY_ONE_FOR_REAL (Spectrum)
 		const double result = Spectrum_getStandardDeviation (me, power);
-	NUMBER_ONE_END (U" hertz")
+	QUERY_ONE_FOR_REAL_END (U" hertz")
 }
 
 // MARK: Modify
@@ -2538,9 +2518,9 @@ FORM (NEW_Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) 
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"500.0")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_cepstralSmoothing (me, bandwidth);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
@@ -2548,18 +2528,18 @@ FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
 	POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoSpectrum result = Spectrum_lpcSmoothing (me, numberOfPeaks, preEmphasisFrom);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_to_Excitation, U"Spectrum: To Excitation", nullptr) {
 	POSITIVE (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoExcitation result = Spectrum_to_Excitation (me, frequencyResolution);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
@@ -2567,48 +2547,48 @@ FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
 	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"1000")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoFormant result = Spectrum_to_Formant (me, maximumNumberOfFormants);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", nullptr) {
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"1000.0")
 	OK
 DO
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoLtas result = Spectrum_to_Ltas (me, bandwidth);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Ltas_1to1) {
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoLtas result = Spectrum_to_Ltas_1to1 (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Matrix) {
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoMatrix result = Spectrum_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Sound) {
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoSound result = Spectrum_to_Sound (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_Spectrogram) {
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoSpectrogram result = Spectrum_to_Spectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
-	CONVERT_EACH (Spectrum)
+	CONVERT_EACH_TO_ONE (Spectrum)
 		autoSpectrumTier result = Spectrum_to_SpectrumTier_peaks (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - STRINGS
@@ -2687,43 +2667,39 @@ DIRECT (HELP_Strings_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_Strings_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Strings from batch.");
-	FIND_ONE_WITH_IOBJECT (Strings)
+DIRECT (EDITOR_ONE_Strings_viewAndEdit) {
+	EDITOR_ONE (a,Strings)
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: Query
 
 DIRECT (BOOLEAN_Strings_equal) {
-	NUMBER_COUPLE (Strings)
+	QUERY_TWO_FOR_REAL (Strings)
 		const integer result = (integer) Data_equal (me, you);   // cast bool to 0 or 1
-	NUMBER_COUPLE_END (result ? U" (equal)" : U" (unequal)")
+	QUERY_TWO_FOR_REAL_END (result ? U" (equal)" : U" (unequal)")
 }
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {
-	NUMBER_ONE (Strings)
+	QUERY_ONE_FOR_REAL (Strings)
 		const integer result = my numberOfStrings;
-	NUMBER_ONE_END (U" strings")
+	QUERY_ONE_FOR_REAL_END (U" strings")
 }
 
 FORM (STRING_Strings_getString, U"Get string", nullptr) {
 	NATURAL (position, U"Position", U"1")
 	OK
 DO
-	STRING_ONE (Strings)
+	QUERY_ONE_FOR_STRING (Strings)
 		conststring32 result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 DIRECT (STRVEC_Strings_listAllStrings) {
-	STRVEC_ONE (Strings)
+	QUERY_ONE_FOR_STRING_ARRAY (Strings)
 		autoSTRVEC result = copy_STRVEC (my strings.get());
-	STRVEC_ONE_END
+	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
 // MARK: Modify
@@ -2792,31 +2768,31 @@ FORM (NEW_Strings_replaceAll, U"Strings: Replace all", nullptr) {
 		RADIOBUTTON (U"regular expressions")
 	OK
 DO
-	CONVERT_EACH (Strings)
+	CONVERT_EACH_TO_ONE (Strings)
 		integer numberOfMatches, numberOfStringMatches;
 		autoStrings result = Strings_change (me, find, replaceWith,
 				replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
-	CONVERT_EACH_END (my name.get(), U"_replaced")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_replaced")
 }
 
 DIRECT (NEW_Strings_to_Distributions) {
-	CONVERT_EACH (Strings)
+	CONVERT_EACH_TO_ONE (Strings)
 		autoDistributions result = Strings_to_Distributions (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Strings_to_WordList) {
-	CONVERT_EACH (Strings)
+	CONVERT_EACH_TO_ONE (Strings)
 		autoWordList result = Strings_to_WordList (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - TABLE; the remainder is in praat_Stat.cpp *****/
 
 DIRECT (NEW_Table_downto_Matrix) {
-	CONVERT_EACH (Table)
+	CONVERT_EACH_TO_ONE (Table)
 		autoMatrix result = Table_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - TEXTGRID; the remainder is in praat_TextGrid_init.cpp
@@ -2847,9 +2823,9 @@ FORM_READ (READ1_TextTier_readFromXwaves, U"Read TextTier from Xwaves", nullptr,
 // MARK: - TRANSITION
 
 DIRECT (NEW_Transition_conflate) {
-	CONVERT_EACH (Transition)
+	CONVERT_EACH_TO_ONE (Transition)
 		autoDistributions result = Transition_to_Distributions_conflate (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_Transition_drawAsNumbers, U"Draw as numbers", nullptr) {
@@ -2874,7 +2850,7 @@ DIRECT (NEWTIMES2_Transition_eigen) {
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
 	}
-END }
+END_WITH_NEW_DATA }
 
 DIRECT (HELP_Transition_help) {
 	HELP (U"Transition")
@@ -2884,15 +2860,15 @@ FORM (NEW_Transition_power, U"Transition: Power...", nullptr) {
 	NATURAL (power, U"Power", U"2")
 	OK
 DO
-	CONVERT_EACH (Transition)
+	CONVERT_EACH_TO_ONE (Transition)
 		autoTransition result = Transition_power (me, power);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Transition_to_Matrix) {
-	CONVERT_EACH (Transition)
+	CONVERT_EACH_TO_ONE (Transition)
 		autoMatrix result = Transition_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: - Praat menu
@@ -2924,7 +2900,7 @@ DIRECT (HELP_ScriptingTutorial) { HELP (U"Scripting") }
 DIRECT (HELP_DemoWindow) { HELP (U"Demo window") }
 DIRECT (HELP_Interoperability) { HELP (U"Interoperability") }
 DIRECT (HELP_Programming) { HELP (U"Programming with Praat") }
-DIRECT (HELP_SearchManual_Fon) { Melder_search (); END }
+DIRECT (HELP_SearchManual_Fon) { Melder_search (); END_WITH_NEW_DATA }
 
 // MARK: - file recognizers
 
@@ -3045,7 +3021,7 @@ praat_addAction1 (classCochleagram, 0, U"Analyse", nullptr, 0, nullptr);
 praat_addAction1 (classCochleagram, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classCochleagram, 0, U"To Matrix", nullptr, 0, NEW_Cochleagram_to_Matrix);
 
-	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Corpus_edit);
+	praat_addAction1 (classCorpus, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Corpus_edit);
 
 praat_addAction1 (classDistributions, 0, U"Learn", nullptr, 0, nullptr);
 	praat_addAction1 (classDistributions, 1, U"To Transition...", nullptr, 0, NEW_Distributions_to_Transition);
@@ -3192,8 +3168,8 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classLtas, 0, U"To Matrix", nullptr, 0, NEW_Ltas_to_Matrix);
 
 	praat_addAction1 (classManipulation, 0, U"Manipulation help", nullptr, 0, HELP_Manipulation_help);
-	praat_addAction1 (classManipulation, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Manipulation_viewAndEdit);
-	praat_addAction1 (classManipulation, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_Manipulation_viewAndEdit);
+	praat_addAction1 (classManipulation, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Manipulation_viewAndEdit);
+	praat_addAction1 (classManipulation, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, EDITOR_ONE_Manipulation_viewAndEdit);
 	praat_addAction1 (classManipulation, 0, U"Play (overlap-add)", nullptr, 0, PLAY_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0,   U"Play (PSOLA)", nullptr, praat_DEPRECATED_2007, PLAY_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0, U"Play (LPC)", nullptr, 0, PLAY_Manipulation_play_lpc);
@@ -3218,8 +3194,8 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 	praat_addAction1 (classParamCurve, 0, U"Draw...", nullptr, 0, GRAPHICS_ParamCurve_draw);
 
 	praat_addAction1 (classPitch, 0, U"Pitch help", nullptr, 0, HELP_Pitch_help);
-	praat_addAction1 (classPitch, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Pitch_viewAndEdit);
-	praat_addAction1 (classPitch, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Pitch_viewAndEdit);
+	praat_addAction1 (classPitch, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Pitch_viewAndEdit);
+	praat_addAction1 (classPitch, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Pitch_viewAndEdit);
 	praat_addAction1 (classPitch, 0, U"Sound -", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Play pulses", nullptr, 1, PLAY_Pitch_play);
 		praat_addAction1 (classPitch, 0, U"Hum", nullptr, 1, PLAY_Pitch_hum);
@@ -3307,7 +3283,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classPolygon, 0, U"To Matrix", nullptr, 1, NEW_Polygon_to_Matrix);
 
 	praat_addAction1 (classSpectrogram, 0, U"Spectrogram help", nullptr, 0, HELP_Spectrogram_help);
-	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, WINDOW_Spectrogram_view);
+	praat_addAction1 (classSpectrogram, 1, U"View", nullptr, 0, EDITOR_ONE_Spectrogram_view);
 	praat_addAction1 (classSpectrogram, 1, U"Play movie", nullptr, 0, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 1, U"Movie", nullptr, praat_HIDDEN, MOVIE_Spectrogram_playMovie);
 	praat_addAction1 (classSpectrogram, 0, U"Query -", nullptr, 0, nullptr);
@@ -3326,8 +3302,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrogram, 0, U"To Matrix", nullptr, 1, NEW_Spectrogram_to_Matrix);
 
 	praat_addAction1 (classSpectrum, 0, U"Spectrum help", nullptr, 0, HELP_Spectrum_help);
-	praat_addAction1 (classSpectrum, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Spectrum_viewAndEdit);
-	praat_addAction1 (classSpectrum, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Spectrum_viewAndEdit);
+	praat_addAction1 (classSpectrum, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Spectrum_viewAndEdit);
+	praat_addAction1 (classSpectrum, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Spectrum_viewAndEdit);
 	praat_addAction1 (classSpectrum, 0, U"Sound -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"To Sound", nullptr, 1, NEW_Spectrum_to_Sound);
 		praat_addAction1 (classSpectrum, 0,   U"To Sound (fft)", U"*To Sound", praat_DEPTH_1 | praat_DEPRECATED_2004, NEW_Spectrum_to_Sound);
@@ -3383,8 +3359,8 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classStrings, 0, U"Strings help", nullptr, 0, HELP_Strings_help);
 	praat_addAction1 (classStrings, 1, U"Save as raw text file...", nullptr, 0, SAVE_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1,   U"Write to raw text file...", U"*Save as raw text file...", praat_DEPRECATED_2011, SAVE_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Strings_viewAndEdit);
-	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_Strings_viewAndEdit);
+	praat_addAction1 (classStrings, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Strings_viewAndEdit);
+	praat_addAction1 (classStrings, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_Strings_viewAndEdit);
 	praat_addAction1 (classStrings, 0, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 2, U"Equal?", nullptr, 1, BOOLEAN_Strings_equal);
 		praat_addAction1 (classStrings, 1, U"Get number of strings", nullptr, 1, INTEGER_Strings_getNumberOfStrings);

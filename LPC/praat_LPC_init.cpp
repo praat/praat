@@ -80,16 +80,11 @@ static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata pub
 		Melder_flushError ();
 	}
 }
-
-DIRECT (WINDOW_FormantPath_viewAndEditAlone) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_ONE_WITH_IOBJECT (FormantPath)
+DIRECT (EDITOR_ONE_FormantPath_viewAndEditAlone) {
+	EDITOR_ONE (a,FormantPath)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 DIRECT (HINT_FormantPath_Sound_viewAndEdit) {
@@ -136,19 +131,19 @@ FORM (NEW_FormantPath_to_Matrix_stress, U"FormantPath: To Matrix (stress)", null
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
-	CONVERT_EACH (FormantPath)
+	CONVERT_EACH_TO_ONE (FormantPath)
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
 		autoMatrix result = FormantPath_to_Matrix_stress (me, windowLength, parameters.get (), powerf);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_FormantPath_to_Matrix_qsums, U"FormantPath: To Matrix (qsums)", nullptr) {
 	INTEGER (numberOfTracks, U"Number of tracks", U"4")
 	OK
 DO
-	CONVERT_EACH (FormantPath)
+	CONVERT_EACH_TO_ONE (FormantPath)
 		autoMatrix result = FormantPath_to_Matrix_qSums (me, numberOfTracks);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_FormantPath_to_Matrix_transition,  U"FormantPath: To Matrix (transition)", nullptr) {
@@ -156,9 +151,9 @@ FORM (NEW_FormantPath_to_Matrix_transition,  U"FormantPath: To Matrix (transitio
 	BOOLEAN (maximumCosts, U"Maximum costs", false)
 	OK
 DO
-	CONVERT_EACH (FormantPath)
+	CONVERT_EACH_TO_ONE (FormantPath)
 		autoMatrix result = FormantPath_to_Matrix_transition (me, numberOfTracks, maximumCosts);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nullptr) {
@@ -175,7 +170,7 @@ FORM (NEW_FormantPath_to_Matrix_deltas,  U"FormantPath: To Matrix (deltas)", nul
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
-	CONVERT_EACH (FormantPath)
+	CONVERT_EACH_TO_ONE (FormantPath)
 		autoMatrix result;
 		Melder_require (qWeight >= 0 && qWeight <= 1.0 &&
 			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
@@ -184,7 +179,7 @@ DO
 			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
 		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters.get(), powerf, & result);	
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr) {
@@ -213,39 +208,39 @@ DO
 }
 
 DIRECT (NEW_FormantPath_extractFormant) {
-	CONVERT_EACH (FormantPath)
+	CONVERT_EACH_TO_ONE (FormantPath)
 		autoFormant result = FormantPath_extractFormant (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_THREE_WITH_IOBJECT (FormantPath, Sound, TextGrid)
+	FIND_ONE_AND_ONE_AND_ONE_WITH_IOBJECT (FormantPath, Sound, TextGrid)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, him);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (WINDOW_Sound_FormantPath_createFormantPathEditor) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (U"Cannot view or edit a Formant from batch.");
-	FIND_TWO_WITH_IOBJECT (FormantPath, Sound)
+	FIND_ONE_AND_ONE_WITH_IOBJECT (FormantPath, Sound)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 /********************** Cepstrum  ****************************************/
 
 DIRECT (NEW_Cepstrum_downto_PowerCepstrum) {
-	CONVERT_EACH (Cepstrum)
+	CONVERT_EACH_TO_ONE (Cepstrum)
 		autoPowerCepstrum result = Cepstrum_downto_PowerCepstrum (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HELP_PowerCepstrum_help) {
@@ -310,10 +305,10 @@ FORM (REAL_PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: G
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, & result, nullptr);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of peak", U"PowerCepstrum: Get quefrency of peak...") {
@@ -323,11 +318,11 @@ FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of p
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, nullptr, & result);
 		double f = 1.0 / result;
-	NUMBER_ONE_END (U" seconds (f = ", f, U" Hz)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (f = ", f, U" Hz)")
 }
 
 FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration", nullptr) {
@@ -336,9 +331,9 @@ FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration"
 	POSITIVE (fractionalWIdth, U"Fractional width (0-1)", U"0.05")
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		const double result = PowerCepstrum_getRNR (me, fromPitch, toPitch, fractionalWIdth);
-	NUMBER_ONE_END (U" (rnr)")
+	QUERY_ONE_FOR_REAL_END (U" (rnr)")
 }
 
 FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get peak prominence (hillenbrand)", U"PowerCepstrum: Get peak prominence (hillenbrand)...") {
@@ -346,10 +341,10 @@ FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get pea
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
 		const double result = PowerCepstrum_getPeakProminence_hillenbrand (me, fromPitch, toPitch, & qpeak);
-	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
+	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
 }
 
 FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slope", U"PowerCepstrum: Get trend line slope...") {
@@ -359,10 +354,10 @@ FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slop
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, & result, nullptr, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB / ", lineType == kCepstrumTrendType::LINEAR ? U"s" : U"ln (s)");
+	QUERY_ONE_FOR_REAL_END (U" dB / ", lineType == kCepstrumTrendType::LINEAR ? U"s" : U"ln (s)");
 }
 
 FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {
@@ -372,10 +367,10 @@ FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line 
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_fitTrendLine (me, fromQuefrency_trendLine, toQuefrency_trendLine, nullptr, & result, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence", U"PowerCepstrum: Get peak prominence...") {
@@ -389,10 +384,10 @@ FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrum)
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double qpeak;
 		const double result = PowerCepstrum_getPeakProminence (me, fromPitch, toPitch, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod, & qpeak);
-	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
+	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
 FORM (MODIFY_PowerCepstrum_subtractTrend_inplace, U"PowerCepstrum: Subtract trend (in-place)", U"PowerCepstrum: Subtract trend...") {
@@ -422,9 +417,9 @@ FORM (NEW_PowerCepstrum_smooth, U"PowerCepstrum: Smooth", U"PowerCepstrum: Smoot
 	NATURAL (numberOfIterations, U"Number of iterations", U"1");
 	OK
 DO
-	CONVERT_EACH (PowerCepstrum)
+	CONVERT_EACH_TO_ONE (PowerCepstrum)
 		autoPowerCepstrum result = PowerCepstrum_smooth (me, quefrencySmoothingWindowDuration, numberOfIterations);
-	CONVERT_EACH_END (my name.get(), U"_smooth")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_smooth")
 }
 
 FORM (NEW_PowerCepstrum_subtractTrend, U"PowerCepstrum: Subtract trend", U"PowerCepstrum: Subtract trend...") {
@@ -434,21 +429,21 @@ FORM (NEW_PowerCepstrum_subtractTrend, U"PowerCepstrum: Subtract trend", U"Power
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (PowerCepstrum)
+	CONVERT_EACH_TO_ONE (PowerCepstrum)
 		autoPowerCepstrum result = PowerCepstrum_subtractTrend (me, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name.get(), U"_minusTrend")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_minusTrend")
 }
 
 DIRECT (NEW_Cepstrum_to_Spectrum) {
-	CONVERT_EACH (Cepstrum)
+	CONVERT_EACH_TO_ONE (Cepstrum)
 		autoSpectrum result = Cepstrum_to_Spectrum (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_PowerCepstrum_to_Matrix) {
-	CONVERT_EACH (PowerCepstrum)
+	CONVERT_EACH_TO_ONE (PowerCepstrum)
 		autoMatrix result = PowerCepstrum_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /********************** Cepstrogram  ****************************************/
@@ -490,33 +485,33 @@ FORM (NEW_PowerCepstrogram_smooth, U"PowerCepstrogram: Smooth", U"PowerCepstrogr
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
 	OK
 DO
-	CONVERT_EACH (PowerCepstrogram)
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoPowerCepstrogram result = PowerCepstrogram_smooth (me, smoothingWindowDuration, quefrencySmoothingWindowDuration);
-	CONVERT_EACH_END (my name.get(), U"_smoothed")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_smoothed")
 }
 
 DIRECT (REAL_PowerCepstrogram_getStartQuefrency) {
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my ymin;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my ymax;
-	NUMBER_ONE_END (U" seconds")
+	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
 DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
-	INTEGER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_INTEGER (PowerCepstrogram)
 		const integer result = my ny;
-	INTEGER_ONE_END (U" quefrency bins")
+	QUERY_ONE_FOR_INTEGER_END (U" quefrency bins")
 }
 
 DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my dy;
-	NUMBER_ONE_END (U" seconds (quefrency step)")
+	QUERY_ONE_FOR_REAL_END (U" seconds (quefrency step)")
 }
 
 FORM (NEW_PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", nullptr) {
@@ -526,9 +521,9 @@ FORM (NEW_PowerCepstrogram_subtractTrend, U"PowerCepstrogram: Subtract trend", n
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (PowerCepstrogram)
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoPowerCepstrogram result = PowerCepstrogram_subtractTrend (me, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name.get(), U"_minusTrend")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_minusTrend")
 }
 
 FORM (MODIFY_PowerCepstrogram_subtractTrend_inplace, U"PowerCepstrogram: Subtract trend (in-place)", nullptr) {
@@ -553,9 +548,9 @@ FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", 
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
 DO
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = PowerCepstrogram_getCPPS_hillenbrand (me, subtractTrendBeforeSmoothing, smoothinWindowDuration, quefrencySmoothinWindowDuration, fromPitch, toPitch);
-	NUMBER_ONE_END (U" dB")
+	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
 FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
@@ -576,9 +571,9 @@ FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepst
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	NUMBER_ONE (PowerCepstrogram)
+	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = PowerCepstrogram_getCPPS (me, subtractTrendBeforeSmoothing, smoothingWindowDuration, quefrencySmoothingWindowDuration, fromPitch, toPitch, tolerance, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
-	NUMBER_ONE_END (U" dB");
+	QUERY_ONE_FOR_REAL_END (U" dB");
 }
 
 FORM (MODIFY_PowerCepstrogram_formula, U"PowerCepstrogram: Formula", nullptr) {
@@ -598,9 +593,9 @@ FORM (NEW_PowerCepstrogram_to_PowerCepstrum_slice, U"PowerCepstrogram: To PowerC
 	REAL (time, U"Time (s)", U"0.1")
 	OK
 DO
-	CONVERT_EACH (PowerCepstrogram)
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoPowerCepstrum result = PowerCepstrogram_to_PowerCepstrum_slice (me, time);
-	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time));
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time));
 }
 
 FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prominence)", U"PowerCepstrogram: To Table (peak prominence)...") {
@@ -615,9 +610,9 @@ FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prom
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (PowerCepstrogram)
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoTable result = PowerCepstrogram_to_Table_cpp (me, fromPitch, toPitch, tolerance, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name.get(), U"_cpp");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cpp");
 }
 
 FORM (NEW_PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (hillenbrand)", U"PowerCepstrogram: To Table (peak prominence...") {
@@ -625,23 +620,23 @@ FORM (NEW_PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (h
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
 DO
-	CONVERT_EACH (PowerCepstrogram)
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoTable result = PowerCepstrogram_to_Table_hillenbrand (me,fromPitch, toPitch);
-	CONVERT_EACH_END (my name.get(), U"_cpp")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cpp")
 }
 
 DIRECT (NEW_PowerCepstrogram_to_Matrix) {
-	CONVERT_EACH (PowerCepstrogram)
+	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoMatrix result = PowerCepstrogram_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /********************** Cepstrumc  ****************************************/
 
 DIRECT (NEW_Cepstrumc_to_LPC) {
-	CONVERT_EACH (Cepstrumc)
+	CONVERT_EACH_TO_ONE (Cepstrumc)
 		autoLPC result = Cepstrumc_to_LPC (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
@@ -661,38 +656,38 @@ FORM (NEW1_Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
 		RADIOBUTTON (U"2/3 < slope < 3/2")
 	OK
 DO
-	CONVERT_COUPLE (Cepstrumc)
+	CONVERT_TWO_TO_ONE (Cepstrumc)
 		autoDTW result = Cepstrumc_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight, windowDuration, matchBeginPositions, matchEndPositions, slopeConstraintType);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Cepstrumc_to_Matrix) {
-	CONVERT_EACH (Cepstrumc)
+	CONVERT_EACH_TO_ONE (Cepstrumc)
 		autoMatrix result = Cepstrumc_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 /******************** Formant ********************************************/
 
-FORM (VEC_Formant_listFormantSlope, U"Formant: List formant slope", U"Formant: List formant slope...") {
+FORM (QUERY_ONE_Formant_listFormantSlope_REAL_VECTOR, U"Formant: List formant slope", U"Formant: List formant slope...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
 	OPTIONMENU_ENUM (kSlopeCurve, slopeCurve, U"Slope curve", kSlopeCurve::DEFAULT)
 	OK
 DO
-	NUMVEC_ONE (Formant)
+	QUERY_ONE_FOR_REAL_VECTOR (Formant)
 		autoVEC result = Formant_listFormantSlope (me, formantNumber, tmin, tmax, slopeCurve);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NEW_Formant_to_LPC, U"Formant: To LPC", nullptr) {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"16000.0")
 	OK
 DO
-	CONVERT_EACH (Formant)
+	CONVERT_EACH_TO_ONE (Formant)
 		autoLPC result = Formant_to_LPC (me, 1.0 / samplingFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_Formant_formula, U"Formant: Formula", nullptr) {
@@ -715,9 +710,9 @@ FORM (NEW1_Formant_Spectrogram_to_IntensityTier, U"Formant & Spectrogram: To Int
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
-	CONVERT_TWO (Formant, Spectrogram)
+	CONVERT_ONE_AND_ONE_TO_ONE (Formant, Spectrogram)
 		autoIntensityTier result = Formant_Spectrogram_to_IntensityTier (me, you, formantNumber);
-	CONVERT_TWO_END (my name.get(), U"_", formantNumber)
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", formantNumber)
 }
 
 /********************LFCC ********************************************/
@@ -731,9 +726,9 @@ FORM (NEW_LFCC_to_LPC, U"LFCC: To LPC", U"LFCC: To LPC...") {
 	OK
 DO
 	Melder_require (numberOfCoefficients >= 0, U"Number of coefficients should not be less than zero.");
-	CONVERT_EACH (LFCC)
+	CONVERT_EACH_TO_ONE (LFCC)
 		autoLPC result = LFCC_to_LPC (me, numberOfCoefficients);
-	CONVERT_EACH_END (my name.get());
+	CONVERT_EACH_TO_ONE_END (my name.get());
 }
 
 /********************LineSpectralFrequencies ********************************************/
@@ -758,31 +753,31 @@ FORM (INTEGER_LineSpectralFrequencies_getNumberOfFrequencies, U"LineSpectralFreq
 	NATURAL (frameNumber, U"Frame number", U"2")
 	OK
 DO
-	INTEGER_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_INTEGER (LineSpectralFrequencies)
 		my checkIndex (frameNumber);
 		const integer result = my d_frames [frameNumber]. numberOfFrequencies;
-	INTEGER_ONE_END (U" frequencies")
+	QUERY_ONE_FOR_INTEGER_END (U" frequencies")
 }
 
 FORM (NUMVEC_LineSpectralFrequencies_listFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMVEC_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_REAL_VECTOR (LineSpectralFrequencies)
 		autoVEC result = LineSpectralFrequencies_listFrequenciesInFrame (me, frameNumber);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 DIRECT (NUMMAT_LineSpectralFrequencies_listAllFrequencies) {
-	NUMMAT_ONE (LineSpectralFrequencies)
+	QUERY_ONE_FOR_MATRIX (LineSpectralFrequencies)
 		autoMAT result = LineSpectralFrequencies_listAllFrequencies (me);
-	NUMMAT_ONE_END	
+	QUERY_ONE_FOR_MATRIX_END	
 }
 
 DIRECT (NEW_LineSpectralFrequencies_to_LPC) {
-	CONVERT_EACH (LineSpectralFrequencies)
+	CONVERT_EACH_TO_ONE (LineSpectralFrequencies)
 		autoLPC result = LineSpectralFrequencies_to_LPC (me);
-	CONVERT_EACH_END (my name.get());
+	CONVERT_EACH_TO_ONE_END (my name.get());
 }
 
 /********************LPC ********************************************/
@@ -804,51 +799,51 @@ DO
 }
 
 DIRECT (REAL_LPC_getSamplingInterval) {
-	NUMBER_ONE (LPC)
+	QUERY_ONE_FOR_REAL (LPC)
 		const double result = my samplingPeriod;
-	NUMBER_ONE_END (U" s");
+	QUERY_ONE_FOR_REAL_END (U" s");
 }
 
 FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U"LPC: Get number of coefficients...") {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
-	INTEGER_ONE (LPC)
+	QUERY_ONE_FOR_INTEGER (LPC)
 		my checkIndex (frameNumber);
 		const integer result = my d_frames [frameNumber]. nCoefficients;
-	INTEGER_ONE_END (U" coefficients")
+	QUERY_ONE_FOR_INTEGER_END (U" coefficients")
 }
 
 FORM (NUMVEC_LPC_listAllCoefficientsInFrame, U"", U"") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMVEC_ONE (LPC)
+	QUERY_ONE_FOR_REAL_VECTOR (LPC)
 		autoVEC result = LPC_listCoefficientsInFrame (me, frameNumber);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 DIRECT (NUMMAT_LPC_listAllCoefficients) {
-	NUMMAT_ONE (LPC)
+	QUERY_ONE_FOR_MATRIX (LPC)
 		autoMAT result = LPC_listAllCoefficients (me);
-	NUMMAT_ONE_END	
+	QUERY_ONE_FOR_MATRIX_END	
 }
 
 FORM (REAL_LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in frame...") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
-	NUMBER_ONE (LPC)
+	QUERY_ONE_FOR_REAL (LPC)
 		double result = undefined;
 		if (frameNumber > 0 && frameNumber <= my nx)
 			result = my d_frames [frameNumber] .gain;
-	NUMBER_ONE_END (U" gain in frame ", frameNumber)
+	QUERY_ONE_FOR_REAL_END (U" gain in frame ", frameNumber)
 }
 
 DIRECT (NUMVEC_LPC_listAllGains) {
-	NUMVEC_ONE (LPC)
+	QUERY_ONE_FOR_REAL_VECTOR (LPC)
 		autoVEC result = LPC_listAllGains (me);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (GRAPHICS_LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...") {
@@ -862,15 +857,15 @@ DO
 }
 
 DIRECT (NEW_LPC_to_Formant) {
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoFormant result = LPC_to_Formant (me, 50.0);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_LPC_to_Formant_keep_all) {
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoFormant result = LPC_to_Formant (me, 0.0);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...") {
@@ -878,27 +873,27 @@ FORM (NEW_LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...") {
 	OK
 DO
 	Melder_require (numberOfCoefficients >= 0, U"The number of coefficients should not be less than zero.");
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoLFCC result = LPC_to_LFCC (me, numberOfCoefficients);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_LPC_to_LineSpectralFrequencies, U"LPC: To LineSpectralFrequencies", nullptr) {
 	REAL (gridSize, U"Grid size", U"0.0")
 	OK
 DO
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoLineSpectralFrequencies result = LPC_to_LineSpectralFrequencies (me, gridSize);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_LPC_to_Polynomial_slice, U"LPC: To Polynomial", U"LPC: To Polynomial (slice)...") {
 	REAL (time, U"Time (s)", U"0.0")
 	OK
 DO
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoPolynomial result = LPC_to_Polynomial (me, time);
-	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_Spectrum_slice, U"LPC: To Spectrum", U"LPC: To Spectrum (slice)...") {
@@ -908,9 +903,9 @@ FORM (NEW_LPC_to_Spectrum_slice, U"LPC: To Spectrum", U"LPC: To Spectrum (slice)
 	REAL (deemphasisFrequency, U"De-emphasis frequency (Hz)", U"50.0")
 	OK
 DO
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoSpectrum result = LPC_to_Spectrum (me, time, minimumFrequencyResolution, bandwidthReduction, deemphasisFrequency);
-	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_Spectrogram, U"LPC: To Spectrogram", U"LPC: To Spectrogram...") {
@@ -919,9 +914,9 @@ FORM (NEW_LPC_to_Spectrogram, U"LPC: To Spectrogram", U"LPC: To Spectrogram...")
 	REAL (deemphasisFrequency, U"De-emphasis frequency (Hz)", U"50.0")
 	OK
 DO
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoSpectrogram result = LPC_to_Spectrogram (me, minimumFrequencyResolution, bandwidthReduction, deemphasisFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_LPC_to_VocalTract_slice_special, U"LPC: To VocalTract", U"LPC: To VocalTract (slice, special)...") {
@@ -931,9 +926,9 @@ FORM (NEW_LPC_to_VocalTract_slice_special, U"LPC: To VocalTract", U"LPC: To Voca
 	BOOLEAN (internalDamping, U"Internal damping", true)
 	OK
 DO
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoVocalTract result = LPC_to_VocalTract_slice_special (me, time, glottalDamping, radiationDamping, internalDamping);
-	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC: To VocalTract (slice)...") {
@@ -941,27 +936,27 @@ FORM (NEW_LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC: To VocalTract (
 	POSITIVE (length, U"Length (m)", U"0.17")
 	OK
 DO
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoVocalTract result = LPC_to_VocalTract_slice (me, time, length);
-	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 DIRECT (NEW_LPC_downto_Matrix_lpc) {
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoMatrix result = LPC_downto_Matrix_lpc (me);
-	CONVERT_EACH_END (my name.get(), U"_lpc")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_lpc")
 }
 
 DIRECT (NEW_LPC_downto_Matrix_rc) {
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoMatrix result = LPC_downto_Matrix_rc (me);
-	CONVERT_EACH_END (my name.get(), U"_rc");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_rc");
 }
 
 DIRECT (NEW_LPC_downto_Matrix_area) {
-	CONVERT_EACH (LPC)
+	CONVERT_EACH_TO_ONE (LPC)
 		autoMatrix result = LPC_downto_Matrix_area (me);
-	CONVERT_EACH_END (my name.get(), U"_area");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_area");
 }
 
 /********************** Sound *******************************************/
@@ -973,9 +968,9 @@ FORM (NEW_Sound_to_PowerCepstrogram, U"Sound: To PowerCepstrogram", U"Sound: To 
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPowerCepstrogram result = Sound_to_PowerCepstrogram (me, pitchFloor, timeStep, maximumFrequency, preEmphasisFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_PowerCepstrogram_hillenbrand, U"Sound: To PowerCepstrogram (hillenbrand)", U"Sound: To PowerCepstrogram...") {
@@ -983,9 +978,9 @@ FORM (NEW_Sound_to_PowerCepstrogram_hillenbrand, U"Sound: To PowerCepstrogram (h
 	POSITIVE (timeStep, U"Time step (s)", U"0.002")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoPowerCepstrogram result = Sound_to_PowerCepstrogram_hillenbrand (me, pitchFloor, timeStep);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 	
 FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Formant (robust)...") {
@@ -999,9 +994,9 @@ FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Fo
 	REAL (tolerance, U"Tolerance", U"0.000001")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, middleCeiling, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
@@ -1025,13 +1020,13 @@ FORM (NEW_Sound_to_FormantPath, U"Sound: To FormantPath", nullptr) {
 	BOOLEAN (sourcesAsMultichannel, U"Get sources as multi channel sound", false)
 	OK
 DO
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoSound multichannel;
 		autoFormantPath result = Sound_to_FormantPath_any (me, lpcModel, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsToACeiling, marple_tol1, marple_tol2, huber_numberOfStdDev, huber_tolerance, huber_maximumNumberOfIterations,
 			( sourcesAsMultichannel ? & multichannel : nullptr ));
 		if (sourcesAsMultichannel)
 			praat_new (multichannel.move(), my name.get(), U"_sources");
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", U"Sound: To FormantPath (burg)...") {
@@ -1046,9 +1041,9 @@ FORM (NEW_Sound_to_FormantPath_burg, U"Sound: To FormantPath (Burg method)", U"S
 	NATURAL (numberOfStepsToACeiling, U"Number of steps up / down", U"4")
 	OK
 DO
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoFormantPath result = Sound_to_FormantPath_burg (me, timeStep, maximumNumberOfFormants, middleFormantCeiling, windowLength, preEmphasisFrequency, ceilingStepSize, numberOfStepsToACeiling);
-	CONVERT_EACH_END (my name.get())	
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 #define Sound_to_LPC_addWarning \
@@ -1066,9 +1061,9 @@ FORM (NEW_Sound_to_LPC_autocorrelation, U"Sound: To LPC (autocorrelation)", U"So
 	OK
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoLPC result = Sound_to_LPC_autocorrelation (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_LPC_covariance, U"Sound: To LPC (covariance)", U"Sound: To LPC (covariance)...") {
@@ -1080,9 +1075,9 @@ FORM (NEW_Sound_to_LPC_covariance, U"Sound: To LPC (covariance)", U"Sound: To LP
 	OK
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoLPC result = Sound_to_LPC_covariance (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_LPC_burg, U"Sound: To LPC (burg)", U"Sound: To LPC (burg)...") {
@@ -1094,9 +1089,9 @@ FORM (NEW_Sound_to_LPC_burg, U"Sound: To LPC (burg)", U"Sound: To LPC (burg)..."
 	OK
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoLPC result = Sound_to_LPC_burg (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_LPC_marple, U"Sound: To LPC (marple)", U"Sound: To LPC (marple)...") {
@@ -1110,9 +1105,9 @@ FORM (NEW_Sound_to_LPC_marple, U"Sound: To LPC (marple)", U"Sound: To LPC (marpl
 	OK
 DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoLPC result = Sound_to_LPC_marple (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency, tolerance1, tolerance2);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...") {
@@ -1126,9 +1121,9 @@ FORM (NEW_Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...") {
 	OK
 DO
 	Melder_require (numberOfCoefficients < 25, U"The number of coefficients should be less than 25.");
-	CONVERT_EACH (Sound)
+	CONVERT_EACH_TO_ONE (Sound)
 		autoMFCC result = Sound_to_MFCC (me, numberOfCoefficients, windowLength, timeStep, firstFilterFrequency, maximumFrequency, distancBetweenFilters);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (GRAPHICS_VocalTract_drawSegments, U"VocalTract: Draw segments", nullptr) {
@@ -1143,9 +1138,9 @@ DO
 }
 
 DIRECT (REAL_VocalTract_getLength) {
-	NUMBER_ONE (VocalTract)
+	QUERY_ONE_FOR_REAL (VocalTract)
 		double result = my xmax - my xmin;
-	NUMBER_ONE_END (U" metres")
+	QUERY_ONE_FOR_REAL_END (U" metres")
 }
 
 FORM (MODIFY_VocalTract_setLength, U"", nullptr) {
@@ -1165,9 +1160,9 @@ FORM (NEW_VocalTract_to_VocalTractTier, U"VocalTract: To VocalTractTier", nullpt
 DO
 	Melder_require (fromTime < toTime, U"Your start time should be before your end time.");
 	Melder_require (time >= fromTime && time <= toTime, U"Your insert time should be between your start and end times.");
-	CONVERT_EACH (VocalTract)
+	CONVERT_EACH_TO_ONE (VocalTract)
 		autoVocalTractTier result = VocalTract_to_VocalTractTier (me, fromTime, toTime, time);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (HELP_VocalTractTier_help) {
@@ -1178,27 +1173,27 @@ FORM (NEW_VocalTractTier_to_LPC, U"VocalTractTier: To LPC", nullptr) {
 	POSITIVE (timeStep, U"Time step", U"0.005")
 	OK
 DO
-	CONVERT_EACH (VocalTractTier)
+	CONVERT_EACH_TO_ONE (VocalTractTier)
 		autoLPC result = VocalTractTier_to_LPC (me, timeStep);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_VocalTractTier_to_VocalTract, U"", nullptr) {
 	REAL (time, U"Time (s)", U"0.1")
 	OK
 DO
-	CONVERT_EACH (VocalTractTier)
+	CONVERT_EACH_TO_ONE (VocalTractTier)
 		autoVocalTract result = VocalTractTier_to_VocalTract (me, time);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", nullptr) {
 	REAL (time, U"Time (s)", U"0.1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (VocalTractTier, VocalTract)
+	MODIFY_FIRST_OF_ONE_AND_ONE (VocalTractTier, VocalTract)
 		VocalTractTier_addVocalTract (me, time, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 /******************* LPC & Sound *************************************/
@@ -1207,9 +1202,9 @@ FORM (NEW1_LPC_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter...") 
 	BOOLEAN (useGain, U"Use LPC gain", false)
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filter (me, you, useGain);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filter at time", U"LPC & Sound: Filter with filter at time...") {
@@ -1220,15 +1215,15 @@ FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filt
 	REAL (time, U"Use filter at time (s)", U"0.0")
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_LPC_Sound_filterInverse) {
-	CONVERT_TWO (LPC, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filterInverse (me, you);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
@@ -1240,9 +1235,9 @@ FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inver
 	REAL (time, U"Use filter at time (s)", U"0.0")
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (LPC, Sound)
 		autoSound result = LPC_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC (robust)...") {
@@ -1254,9 +1249,9 @@ FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LP
 	BOOLEAN (locationVariable, U"Variable location", false)
 	OK
 DO
-	CONVERT_TWO (LPC, Sound)
+	CONVERT_ONE_AND_ONE_TO_ONE (LPC, Sound)
 		autoLPC result = LPC_Sound_to_LPC_robust (me, you, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, locationVariable);
-	CONVERT_TWO_END (my name.get(), U"_r");
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_r");
 }
 
 extern void praat_TimeTier_query_init (ClassInfo klas);
@@ -1371,13 +1366,13 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classCepstrumc, 0, U"Hack", 0, 0, 0);
 	praat_addAction1 (classCepstrumc, 0, U"To Matrix", 0, 0, NEW_Cepstrumc_to_Matrix);
 
-	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", praat_DEPTH_1 + praat_HIDDEN, VEC_Formant_listFormantSlope);
+	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", praat_DEPTH_1 + praat_HIDDEN, QUERY_ONE_Formant_listFormantSlope_REAL_VECTOR);
 	praat_addAction1 (classFormant, 0, U"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 	
-	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", 0, 0, WINDOW_FormantPath_viewAndEditAlone);
+	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", 0, 0, EDITOR_ONE_FormantPath_viewAndEditAlone);
 	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", 0, 0, HINT_FormantPath_Sound_viewAndEdit);
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, GRAPHICS_FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);

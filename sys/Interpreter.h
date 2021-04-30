@@ -86,8 +86,6 @@ Thing_define (Interpreter, Thing) {
 	bool running, stopped;
 
 	kInterpreter_ReturnType returnType;   // automatically initialized as kInterpreter_ReturnType::VOID_
-	double returnedReal;
-	integer returnedInteger;
 	bool returnedBoolean;
 	autostring32 returnedString;
 	autoVEC returnedRealVector;

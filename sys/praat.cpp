@@ -426,7 +426,7 @@ void praat_new (autoDaata me,
 }
 
 void praat_updateSelection () {
-	if (theCurrentPraatObjects -> totalBeingCreated) {
+	if (theCurrentPraatObjects -> totalBeingCreated > 0) {
 		int IOBJECT;
 		praat_deselectAll ();
 		WHERE (theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated) {
@@ -851,7 +851,7 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 }
 DO
 	praat_exit (0);
-END }
+END_WITH_NEW_DATA }
 
 static void gui_cb_quit (Thing /* me */) {
 	DO_Quit (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);

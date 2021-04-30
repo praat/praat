@@ -121,96 +121,96 @@ FORM (INTEGER_TableOfReal_getColumnIndex, U"Get column index", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = TableOfReal_columnLabelToIndex (me, columnLabel);
-	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of column ", columnLabel, U")")
 }
 	
 FORM (STRING_TableOfReal_getColumnLabel, U"Get column label", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	STRING_ONE (TableOfReal)
+	QUERY_ONE_FOR_STRING (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
 		conststring32 result = my columnLabels ? my columnLabels [columnNumber].get() : U"";
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 	
 FORM (REAL_TableOfReal_getColumnMean_index, U"Get column mean", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
 		double result = TableOfReal_getColumnMean (me, columnNumber);
-	NUMBER_ONE_END (U" (mean of column ", columnNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of column ", columnNumber, U")")
 }
 
 FORM (REAL_TableOfReal_getColumnMean_label, U"Get column mean", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": your column label does not exist.");
 		double result = TableOfReal_getColumnMean (me, columnNumber);
-	NUMBER_ONE_END (U" (mean of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (mean of column ", columnLabel, U")")
 }
 
 FORM (REAL_TableOfReal_getColumnStdev_index, U"Get column standard deviation", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
 		double result = TableOfReal_getColumnStdev (me, columnNumber);
-	NUMBER_ONE_END (U" (standard deviation of column ", columnNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of column ", columnNumber, U")")
 }
 
 FORM (REAL_TableOfReal_getColumnStdev_label, U"Get column standard deviation", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
 		double result = TableOfReal_getColumnStdev (me, columnNumber);
-	NUMBER_ONE_END (U" (standard deviation of column ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (standard deviation of column ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_TableOfReal_getNumberOfColumns) {
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = my numberOfColumns;
-	NUMBER_ONE_END (U" columns")
+	QUERY_ONE_FOR_REAL_END (U" columns")
 }
 
 DIRECT (INTEGER_TableOfReal_getNumberOfRows) {
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = my numberOfRows;
-	NUMBER_ONE_END (U" rows")
+	QUERY_ONE_FOR_REAL_END (U" rows")
 }
 
 FORM (INTEGER_TableOfReal_getRowIndex, U"Get row index", nullptr) {
 	SENTENCE (rowLabel, U"Row label", U"")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		integer result = TableOfReal_rowLabelToIndex (me, rowLabel);
-	NUMBER_ONE_END (U" (index of row ", rowLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of row ", rowLabel, U")")
 }
 
 FORM (STRING_TableOfReal_getRowLabel, U"Get row label", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	STRING_ONE (TableOfReal)
+	QUERY_ONE_FOR_STRING (TableOfReal)
 		if (rowNumber > my numberOfRows)
 			Melder_throw (me, U": your row number should not be greater than the number of rows.");
 		conststring32 result = my rowLabels ? my rowLabels [rowNumber].get() : U"";
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
@@ -218,13 +218,13 @@ FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (TableOfReal)
+	QUERY_ONE_FOR_REAL (TableOfReal)
 		if (rowNumber > my numberOfRows)
 			Melder_throw (me, U": your row number should not exceed the number of rows.");
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not exceed the number of columns.");
 		double result = my data [rowNumber] [columnNumber];
-	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
 
 // MARK: Modify
@@ -356,9 +356,9 @@ DO
 // MARK: Extract
 
 DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoStrings result = TableOfReal_extractColumnLabelsAsStrings (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
@@ -366,18 +366,18 @@ FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnRanges (me, ranges);
-	CONVERT_EACH_END (my name.get(), U"_cols")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cols")
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
 	FORMULA (condition, U"Extract all columns with at least one cell where:", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhere (me, condition, interpreter);
-	CONVERT_EACH_END (my name.get(), U"_cols")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cols")
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
@@ -386,9 +386,9 @@ FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", n
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, extractAllColumnsWhoseLabel, ___theText);
-	CONVERT_EACH_END (my name.get(), U"_", ___theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
@@ -397,15 +397,15 @@ FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", null
 	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, ___is___, ___theValue);
-	CONVERT_EACH_END (my name.get(), U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
 }
 
 DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoStrings result = TableOfReal_extractRowLabelsAsStrings (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
@@ -413,18 +413,18 @@ FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowRanges (me, ranges);
-	CONVERT_EACH_END (my name.get(), U"_rows")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
 	FORMULA (condition, U"Extract all rows with at least one cell where:", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhere (me, condition, interpreter);
-	CONVERT_EACH_END (my name.get(), U"_rows")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
@@ -433,9 +433,9 @@ FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", null
 	REAL (___theValue, U"...the value", U"0.0")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, ___is___, ___theValue);
-	CONVERT_EACH_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
@@ -444,33 +444,33 @@ FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullpt
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, extractAllRowsWhoseLabel, ___theText);
-	CONVERT_EACH_END (my name.get(), U"_", ___theText)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
 // MARK: Convert
 
 DIRECT (NEW1_TablesOfReal_append) {
-	CONVERT_LIST (TableOfReal)
+	COMBINE_ALL_TO_ONE (TableOfReal)
 		autoTableOfReal result = TablesOfReal_appendMany (& list);
-	CONVERT_LIST_END (U"appended")
+	COMBINE_ALL_TO_ONE_END (U"appended")
 }
 
 
 DIRECT (NEW_TableOfReal_to_Matrix) {
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoMatrix result = TableOfReal_to_Matrix (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
 	SENTENCE (labelOfFirstColumn, U"Label of first column", U"rowLabel")
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoTable result = TableOfReal_to_Table (me, labelOfFirstColumn);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM_SAVE (SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as spreadsheet", 0, U"txt") {

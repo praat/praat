@@ -149,12 +149,12 @@ FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", nullptr) 
 	INTEGER (activityDecimals, U"Activity decimals", U"6")
 	OK
 DO
-	CONVERT_EACH (Network)
+	CONVERT_EACH_TO_ONE (Network)
 		autoTable result = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
 			includeClamped, includeActivity, includeExcitation, activityDecimals
 		);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Query
@@ -163,9 +163,9 @@ FORM (REAL_Network_getActivity, U"Network: Get activity", nullptr) {
 	NATURAL (node, U"Node", U"1")
 	OK
 DO
-	NUMBER_ONE (Network)
+	QUERY_ONE_FOR_REAL (Network)
 		const double result = Network_getActivity (me, node);
-	NUMBER_ONE_END (U" (activity of node ", node, U")")
+	QUERY_ONE_FOR_REAL_END (U" (activity of node ", node, U")")
 }
 
 FORM (NUMVEC_Network_getActivities, U"Network: Get activities", nullptr) {
@@ -173,18 +173,18 @@ FORM (NUMVEC_Network_getActivities, U"Network: Get activities", nullptr) {
 	NATURAL (toNode, U"To node", U"0 (= all)")
 	OK
 DO
-	NUMVEC_ONE (Network)
+	QUERY_ONE_FOR_REAL_VECTOR (Network)
 		autoVEC result = Network_getActivities (me, fromNode, toNode);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
 	NATURAL (connection, U"Connection", U"1")
 	OK
 DO
-	NUMBER_ONE (Network)
+	QUERY_ONE_FOR_REAL (Network)
 		const double result = Network_getWeight (me, connection);
-	NUMBER_ONE_END (U" (weight of connection ", connection, U")")
+	QUERY_ONE_FOR_REAL_END (U" (weight of connection ", connection, U")")
 }
 
 // MARK: Modify
@@ -438,14 +438,10 @@ DIRECT (HELP_OTGrammar_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_OTGrammar_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit from batch.");
-	FIND_ONE_WITH_IOBJECT (OTGrammar)
+DIRECT (EDITOR_ONE_OTGrammar_viewAndEdit) {
+	EDITOR_ONE (an,OTGrammar)
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: Draw
@@ -471,65 +467,65 @@ DO
 // MARK: Query
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
-	INTEGER_ONE (OTGrammar)
+	QUERY_ONE_FOR_INTEGER (OTGrammar)
 		const integer result = my numberOfConstraints;
-	INTEGER_ONE_END (U" constraints")
+	QUERY_ONE_FOR_INTEGER_END (U" constraints")
 }
 
 FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	STRING_ONE (OTGrammar)
+	QUERY_ONE_FOR_STRING (OTGrammar)
 		my checkConstraintNumber (constraintNumber);
 		const conststring32 result = my constraints [constraintNumber]. name.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkConstraintNumber (constraintNumber);
 		const double result = my constraints [constraintNumber]. ranking;
-	NUMBER_ONE_END (U" (ranking of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (ranking of constraint ", constraintNumber, U")")
 }
 
 FORM (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkConstraintNumber (constraintNumber);
 		const double result = my constraints [constraintNumber]. disharmony;
-	NUMBER_ONE_END (U" (disharmony of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (disharmony of constraint ", constraintNumber, U")")
 }
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
-	INTEGER_ONE (OTGrammar)
+	QUERY_ONE_FOR_INTEGER (OTGrammar)
 		const integer result = my numberOfTableaus;
-	INTEGER_ONE_END (U" tableaus")
+	QUERY_ONE_FOR_INTEGER_END (U" tableaus")
 }
 
 FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	STRING_ONE (OTGrammar)
+	QUERY_ONE_FOR_STRING (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const conststring32 result = my tableaus [tableauNumber]. input.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", nullptr) {
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const integer result = my tableaus [tableauNumber]. numberOfCandidates;
-	NUMBER_ONE_END (U" candidates in tableau ", tableauNumber)
+	QUERY_ONE_FOR_REAL_END (U" candidates in tableau ", tableauNumber)
 }
 
 FORM (STRING_OTGrammar_getCandidate, U"Get candidate", nullptr) {
@@ -537,10 +533,10 @@ FORM (STRING_OTGrammar_getCandidate, U"Get candidate", nullptr) {
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	STRING_ONE (OTGrammar)
+	QUERY_ONE_FOR_STRING (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const conststring32 result = my tableaus [tableauNumber]. candidates [candidateNumber]. output.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", nullptr) {
@@ -549,11 +545,11 @@ FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", null
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		my checkConstraintNumber (constraintNumber);
 		const integer result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
-	NUMBER_ONE_END (U" violations")
+	QUERY_ONE_FOR_REAL_END (U" violations")
 }
 
 // MARK: Query (parse)
@@ -562,10 +558,10 @@ FORM (INTEGER_OTGrammar_getWinner, U"Get winner", nullptr) {
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const integer result = OTGrammar_getWinner (me, tableauNumber);
-	NUMBER_ONE_END (U" (winner in tableau ", tableauNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (winner in tableau ", tableauNumber, U")")
 }
 
 FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", nullptr) {
@@ -575,11 +571,11 @@ FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", nullptr) {
 	NATURAL (candidateNumber2, U"Candidate number 2", U"2")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber1, candidateNumber1);
 		my checkTableauAndCandidateNumber (tableauNumber2, candidateNumber2);
 		const integer result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
-	NUMBER_ONE_END (result == -1 ? U" (candidate 1 is better)" :
+	QUERY_ONE_FOR_REAL_END (result == -1 ? U" (candidate 1 is better)" :
 					result == +1 ? U" (candidate 2 is better)" : U" (candidates are equally good)")
 }
 
@@ -587,10 +583,10 @@ FORM (INTEGER_OTGrammar_getNumberOfOptimalCandidates, U"Get number of optimal ca
 	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauNumber (tableauNumber);
 		const integer result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
-	NUMBER_ONE_END (U" optimal candidates in tableau ", tableauNumber)
+	QUERY_ONE_FOR_REAL_END (U" optimal candidates in tableau ", tableauNumber)
 }
 
 FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", nullptr) {
@@ -598,10 +594,10 @@ FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", nu
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const integer result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
-	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
 FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly grammatical?", nullptr) {
@@ -609,10 +605,10 @@ FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly gram
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		my checkTableauAndCandidateNumber (tableauNumber, candidateNumber);
 		const integer result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
-	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
 FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", nullptr) {
@@ -631,18 +627,18 @@ FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammati
 	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		const integer result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
-	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
 FORM (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output singly grammatical?", nullptr) {
 	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
-	NUMBER_ONE (OTGrammar)
+	QUERY_ONE_FOR_REAL (OTGrammar)
 		const integer result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
-	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
+	QUERY_ONE_FOR_REAL_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
 // MARK: -
@@ -651,21 +647,21 @@ FORM (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate in
 	NATURAL (numberOfTrials, U"Number of trials", U"1000")
 	OK
 DO
-	CONVERT_EACH (OTGrammar)
+	CONVERT_EACH_TO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_generateInputs (me, numberOfTrials);
-	CONVERT_EACH_END (my name.get(), U"_in")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_OTGrammar_getInputs) {
-	CONVERT_EACH (OTGrammar)
+	CONVERT_EACH_TO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_getInputs (me);
-	CONVERT_EACH_END (my name.get(), U"_in")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
-	CONVERT_EACH_WEAK (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoDistributions result = OTGrammar_measureTypology_WEAK (me);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: Evaluate
@@ -688,7 +684,7 @@ DO
 		autostring32 output = OTGrammar_inputToOutput (me, inputForm, evaluationNoise);
 		Melder_information (output.get());
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
@@ -697,9 +693,9 @@ FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTG
 	SENTENCE (inputForm, U"Input form", U"")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoStrings result = OTGrammar_inputToOutputs (me, inputForm, trials, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
@@ -707,9 +703,9 @@ FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distrib
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoDistributions result = OTGrammar_to_Distribution (me, trialsPerInput, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", nullptr) {
@@ -717,9 +713,9 @@ FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output dist
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTGrammar)
+	CONVERT_EACH_WEAK_TO_ONE (OTGrammar)
 		autoPairDistribution result = OTGrammar_to_PairDistribution (me, trialsPerInput, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out")
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: Modify ranking
@@ -860,23 +856,23 @@ FORM (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outp
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Strings)
+	FIND_ONE_AND_ONE (OTGrammar, Strings)
 		autoStrings result = OTGrammar_inputsToOutputs (me, you, evaluationNoise);
 		praat_new (result.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
-	NUMBER_TWO (OTGrammar, Strings)
+	QUERY_ONE_AND_ONE_FOR_REAL (OTGrammar, Strings)
 		integer result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
-	NUMBER_TWO_END (result ? U" (all grammatical)" : U" (not all grammatical)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (result ? U" (all grammatical)" : U" (not all grammatical)")
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
-	NUMBER_TWO (OTGrammar, Strings)
+	QUERY_ONE_AND_ONE_FOR_REAL (OTGrammar, Strings)
 		integer result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
-	NUMBER_TWO_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
 }
 
 FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {
@@ -889,10 +885,10 @@ FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Str
 	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK (OTGrammar, Strings)
+	MODIFY_FIRST_OF_ONE_WEAK_AND_TWO (OTGrammar, Strings)
 		OTGrammar_learn (me, you, him, evaluationNoise, updateRule, honourLocalRankings,
 			plasticity, relativePlasticitySpreading, numberOfChews);
-	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK_END
+	MODIFY_FIRST_OF_ONE_WEAK_AND_TWO_END
 }
 
 FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial adult outputs", nullptr) {
@@ -906,7 +902,7 @@ FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from 
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Strings)
+	FIND_ONE_AND_ONE (OTGrammar, Strings)
 		autoOTHistory history;
 		try {
 			OTGrammar_learnFromPartialOutputs (me, you, evaluationNoise, updateRule, honourLocalRankings,
@@ -918,7 +914,7 @@ DO
 			// trickle down to save history
 		}
 		if (history) praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: OTGRAMMAR & DISTRIBUTIONS
@@ -929,12 +925,12 @@ FORM (REAL_MODIFY_OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Dist
 	INTEGER (replications, U"Replications", U"100000")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		const double result = OTGrammar_Distributions_getFractionCorrect (me, you, columnNumber,
 			evaluationNoise, replications);
 		praat_dataChanged (me);
 		Melder_informationReal (result, nullptr);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
@@ -952,7 +948,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Dist
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -967,7 +963,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -985,7 +981,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar &
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -1000,7 +996,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1018,7 +1014,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & 
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -1033,7 +1029,7 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
@@ -1051,7 +1047,7 @@ FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar &
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTGrammar, Distributions)
+	FIND_ONE_AND_ONE (OTGrammar, Distributions)
 		autoOTHistory history;
 		try {
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
@@ -1066,16 +1062,16 @@ DO
 		}
 		if (history)
 			praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (LIST_OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distributions: Get fraction correct...", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	INFO_TWO (OTGrammar, Distributions)
+	INFO_ONE_AND_ONE (OTGrammar, Distributions)
 		OTGrammar_Distributions_listObligatoryRankings (me, you, columnNumber);
-	INFO_TWO_END
+	INFO_ONE_AND_ONE_END
 }
 
 // MARK: OTGRAMMAR & PAIRDISTRIBUTION
@@ -1085,9 +1081,9 @@ FORM (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairD
 	POSITIVE (marginOfSeparation, U"Margin of separation", U"1.0")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (OTGrammar, PairDistribution)
+	MODIFY_FIRST_OF_ONE_AND_ONE (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_findPositiveWeights (me, you, weightFloor, marginOfSeparation);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & PairDistribution: Get fraction correct...", nullptr) {
@@ -1095,7 +1091,7 @@ FORM (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & P
 	INTEGER (replications, U"Replications", U"100000")
 	OK
 DO
-	FIND_TWO (OTGrammar, PairDistribution)
+	FIND_ONE_AND_ONE (OTGrammar, PairDistribution)
 		double result;
 		try {
 			result = OTGrammar_PairDistribution_getFractionCorrect (me, you, evaluationNoise, replications);
@@ -1105,7 +1101,7 @@ DO
 			throw;
 		}
 		Melder_information (result, U" correct");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", nullptr) {
@@ -1113,7 +1109,7 @@ FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGra
 	INTEGER (replicationsPerInput, U"Replications per input", U"1000")
 	OK
 DO
-	FIND_TWO (OTGrammar, PairDistribution)
+	FIND_ONE_AND_ONE (OTGrammar, PairDistribution)
 		integer result;
 		try {
 			result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, you,
@@ -1124,7 +1120,7 @@ DO
 			throw;
 		}
 		Melder_information (result, U" (minimally correct)");
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
@@ -1140,18 +1136,18 @@ FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: L
 	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO_WEAK (OTGrammar, PairDistribution)
+	MODIFY_FIRST_OF_ONE_WEAK_AND_ONE (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_learn (me, you,
 			evaluationNoise, updateRule, honourLocalRankings,
 			initialPlasticity, replicationsPerPlasticity,
 			plasticityDecrement, numberOfPlasticities, relativePlasticitySpreading, numberOfChews);
-	MODIFY_FIRST_OF_TWO_WEAK_END
+	MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_END
 }
 
 DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
-	INFO_TWO (OTGrammar, PairDistribution)
+	INFO_ONE_AND_ONE (OTGrammar, PairDistribution)
 		OTGrammar_PairDistribution_listObligatoryRankings (me, you);
-	INFO_TWO_END
+	INFO_ONE_AND_ONE_END
 }
 
 // MARK: - OTMULTI
@@ -1209,81 +1205,77 @@ DO
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_OTMulti_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit an OTMulti from batch.");
-	FIND_ONE_WITH_IOBJECT (OTMulti)
+DIRECT (EDITOR_ONE_OTMulti_viewAndEdit) {
+	EDITOR_ONE (an,OTMulti)
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: Query
 
 DIRECT (INTEGER_OTMulti_getNumberOfConstraints) {
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		const integer result = my numberOfConstraints;
-	NUMBER_ONE_END (U" constraints")
+	QUERY_ONE_FOR_REAL_END (U" constraints")
 }
 
 FORM (STRING_OTMulti_getConstraint, U"Get constraint name", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	STRING_ONE (OTMulti)
+	QUERY_ONE_FOR_STRING (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		const conststring32 result = my constraints [constraintNumber]. name.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint number", nullptr) {
 	SENTENCE (constraintName, U"Constraint name", U"")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		const integer result = OTMulti_getConstraintIndexFromName (me, constraintName);
-	NUMBER_ONE_END (U" (index of constraint ", constraintName, U")")
+	QUERY_ONE_FOR_REAL_END (U" (index of constraint ", constraintName, U")")
 }
 
 FORM (REAL_OTMulti_getRankingValue, U"Get ranking value", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		const double result = my constraints [constraintNumber]. ranking;
-	NUMBER_ONE_END (U" (ranking of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (ranking of constraint ", constraintNumber, U")")
 }
 
 FORM (REAL_OTMulti_getDisharmony, U"Get disharmony", nullptr) {
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		const double result = my constraints [constraintNumber]. disharmony;
-	NUMBER_ONE_END (U" (disharmony of constraint ", constraintNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (disharmony of constraint ", constraintNumber, U")")
 }
 
 DIRECT (INTEGER_OTMulti_getNumberOfCandidates) {
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		integer result = my numberOfCandidates;
-	NUMBER_ONE_END (U" candidates")
+	QUERY_ONE_FOR_REAL_END (U" candidates")
 }
 
 FORM (STRING_OTMulti_getCandidate, U"Get candidate", nullptr) {
 	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
-	STRING_ONE (OTMulti)
+	QUERY_ONE_FOR_STRING (OTMulti)
 		if (candidateNumber > my numberOfCandidates)
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		const conststring32 result = my candidates [candidateNumber]. string.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullptr) {
@@ -1291,13 +1283,13 @@ FORM (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullpt
 	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		if (candidateNumber > my numberOfCandidates)
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
 		integer result = my candidates [candidateNumber]. marks [constraintNumber];
-	NUMBER_ONE_END (U" violations")
+	QUERY_ONE_FOR_REAL_END (U" violations")
 }
 
 FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
@@ -1305,9 +1297,9 @@ FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
 	SENTENCE (partialForm2, U"Partial form 2", U"")
 	OK
 DO
-	NUMBER_ONE (OTMulti)
+	QUERY_ONE_FOR_REAL (OTMulti)
 		integer result = OTMulti_getWinner (me, partialForm1, partialForm2);
-	NUMBER_ONE_END (U" (winner)")
+	QUERY_ONE_FOR_REAL_END (U" (winner)")
 }
 
 // MARK: Evaluate
@@ -1331,7 +1323,7 @@ DO
 		autostring32 output = OTMulti_generateOptimalForm (me, partialForm1, partialForm2, evaluationNoise);
 		Melder_information (output.get());
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW1_MODIFY_OTMulti_generateOptimalForms, U"OTMulti: Generate optimal forms", nullptr) {
@@ -1346,7 +1338,7 @@ DO
 			numberOfTrials, evaluationNoise);
 		praat_new (thee.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution", nullptr) {
@@ -1356,10 +1348,10 @@ FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_EACH_WEAK (OTMulti)
+	CONVERT_EACH_WEAK_TO_ONE (OTMulti)
 		autoDistributions result = OTMulti_to_Distribution (me, partialForm1, partialForm2,
 				numberOfTrials, evaluationNoise);
-	CONVERT_EACH_WEAK_END (my name.get(), U"_out");
+	CONVERT_EACH_WEAK_TO_ONE_END (my name.get(), U"_out");
 }
 
 // MARK: Modify ranking
@@ -1467,7 +1459,7 @@ FORM (DANGEROUS_MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribut
 	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
-	FIND_TWO (OTMulti, PairDistribution)
+	FIND_ONE_AND_ONE (OTMulti, PairDistribution)
 		autoTable history;
 		try {
 			OTMulti_PairDistribution_learn (me, you, evaluationNoise,
@@ -1481,7 +1473,7 @@ DO
 			// trickle down to save history
 		}
 		if (history) praat_new (history.move(), my name.get());
-	END
+	END_WITH_NEW_DATA
 }
 
 // MARK: OTMULTI & STRINGS
@@ -1490,9 +1482,9 @@ FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to o
 	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
-	CONVERT_TWO_FIRST_WEAK (OTMulti, Strings)
+	CONVERT_ONE_WEAK_AND_ONE_TO_ONE (OTMulti, Strings)
 		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoise);
-	CONVERT_TWO_FIRST_WEAK_END (my name.get(), U"_out")
+	CONVERT_ONE_WEAK_AND_ONE_TO_ONE_END (my name.get(), U"_out")
 }
 
 // MARK: - NET
@@ -1568,63 +1560,63 @@ DO
 // MARK: Extract
 
 DIRECT (NEW_Net_extractInputActivities) {
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractInputActivities (me);
-	CONVERT_EACH_END (my name.get(), U"_inputActivities")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inputActivities")
 }
 
 DIRECT (NEW_Net_extractOutputActivities) {
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractOutputActivities (me);
-	CONVERT_EACH_END (my name.get(), U"_outputActivities")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outputActivities")
 }
 
 DIRECT (NEW_Net_extractInputReconstruction) {
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractInputReconstruction (me);
-	CONVERT_EACH_END (my name.get(), U"_inputReconstruction")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inputReconstruction")
 }
 
 DIRECT (NEW_Net_extractOutputReconstruction) {
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractOutputReconstruction (me);
-	CONVERT_EACH_END (my name.get(), U"_outputReconstruction")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outputReconstruction")
 }
 
 FORM (NEW_Net_extractInputBiases, U"Net: Extract input biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractInputBiases (me, layerNumber);
-	CONVERT_EACH_END (my name.get(), U"_inputBiases")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inputBiases")
 }
 
 FORM (NEW_Net_extractOutputBiases, U"Net: Extract output biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractOutputBiases (me, layerNumber);
-	CONVERT_EACH_END (my name.get(), U"_outputBiases")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outputBiases")
 }
 
 FORM (NEW_Net_extractWeights, U"Net: Extract weights", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (Net)
+	CONVERT_EACH_TO_ONE (Net)
 		autoMatrix result = Net_extractWeights (me, layerNumber);
-	CONVERT_EACH_END (my name.get(), U"_weights")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_weights")
 }
 
 FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	NUMMAT_ONE (Net)
+	QUERY_ONE_FOR_MATRIX (Net)
 		autoMAT result = Net_getWeights (me, layerNumber);
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 // MARK: - NET & PATTERN
@@ -1633,45 +1625,45 @@ FORM (MODIFY_Net_PatternList_applyToInput, U"Net & PatternList: Apply to input",
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_applyToInput (me, you, rowNumber);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_applyToOutput, U"Net & PatternList: Apply to output", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_applyToOutput (me, you, rowNumber);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_learn, U"Net & PatternList: Learn", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_learn (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_learnByLayer, U"Net & PatternList: Learn by layer", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_learnByLayer (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_Net_PatternList_learn_twoPhases, U"Net & PatternList: Learn (two phases)", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (Net, PatternList)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Net, PatternList)
 		Net_PatternList_learn_twoPhases (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {
@@ -1679,9 +1671,9 @@ FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To Activation
 			U"Activation type", kLayer_activationType::DETERMINISTIC)
 	OK
 DO
-	CONVERT_TWO (Net, PatternList)
+	CONVERT_ONE_AND_ONE_TO_ONE (Net, PatternList)
 		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - NOULLIGRID
@@ -1690,11 +1682,11 @@ DO
 
 DIRECT (WINDOW_NoulliGrid_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a NoulliGrid from batch.");
-	FIND_TWO_WITH_IOBJECT (NoulliGrid, Sound)   // Sound may be null
+	FIND_ONE_AND_ONE_WITH_IOBJECT (NoulliGrid, Sound)   // Sound may be null
 		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END
+	END_WITH_NEW_DATA
 }
 
 FORM (NUMVEC_NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average probabilities", nullptr) {
@@ -1703,9 +1695,9 @@ FORM (NUMVEC_NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average proba
 	REAL (toTime, U"To time (s)", U"0 (= all)")
 	OK
 DO
-	NUMVEC_ONE (NoulliGrid)
+	QUERY_ONE_FOR_REAL_VECTOR (NoulliGrid)
 		autoVEC result = NoulliGrid_getAverageProbabilities (me, tierNumber, fromTime, toTime);
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 // MARK: - buttons
@@ -1734,8 +1726,8 @@ void praat_uvafon_gram_init () {
 	praat_addAction1 (classOTGrammar, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_OTGrammar_writeToHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classOTGrammar, 0, U"OTGrammar help", nullptr, 0, HELP_OTGrammar_help);
-	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_OTGrammar_viewAndEdit);
-	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_OTGrammar_viewAndEdit);
+	praat_addAction1 (classOTGrammar, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_OTGrammar_viewAndEdit);
+	praat_addAction1 (classOTGrammar, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_OTGrammar_viewAndEdit);
 	praat_addAction1 (classOTGrammar, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau...", nullptr, 0, GRAPHICS_OTGrammar_drawTableau);
 		praat_addAction1 (classOTGrammar, 0, U"Draw tableau (narrowly)...", nullptr, 0, GRAPHICS_OTGrammar_drawTableau_narrowly);
@@ -1785,8 +1777,8 @@ void praat_uvafon_gram_init () {
 
 	praat_TableOfReal_init (classOTHistory);
 
-	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_OTMulti_viewAndEdit);
-	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_OTMulti_viewAndEdit);
+	praat_addAction1 (classOTMulti, 0, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_OTMulti_viewAndEdit);
+	praat_addAction1 (classOTMulti, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_OTMulti_viewAndEdit);
 	praat_addAction1 (classOTMulti, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau...", nullptr, 1, GRAPHICS_OTMulti_drawTableau);
 		praat_addAction1 (classOTMulti, 0, U"Draw tableau (narrowly)...", nullptr, 1, GRAPHICS_OTMulti_drawTableau_narrowly);

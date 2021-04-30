@@ -255,69 +255,69 @@ DO
 // MARK: Query
 
 DIRECT (REAL_Matrix_getLowestX) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my xmin;
-	NUMBER_ONE_END (U" (xmin)")
+	QUERY_ONE_FOR_REAL_END (U" (xmin)")
 }
 
 DIRECT (REAL_Matrix_getHighestX) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my xmax;
-	NUMBER_ONE_END (U" (xmax)")
+	QUERY_ONE_FOR_REAL_END (U" (xmax)")
 }
 
 DIRECT (REAL_Matrix_getLowestY) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my ymin;
-	NUMBER_ONE_END (U" (ymin)")
+	QUERY_ONE_FOR_REAL_END (U" (ymin)")
 }
 
 DIRECT (REAL_Matrix_getHighestY) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my ymax;
-	NUMBER_ONE_END (U" (xmax)")
+	QUERY_ONE_FOR_REAL_END (U" (xmax)")
 }
 
 DIRECT (INTEGER_Matrix_getNumberOfRows) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		integer result = my ny;
-	NUMBER_ONE_END (U" rows")
+	QUERY_ONE_FOR_REAL_END (U" rows")
 }
 
 DIRECT (INTEGER_Matrix_getNumberOfColumns) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		integer result = my nx;
-	NUMBER_ONE_END (U" columns")
+	QUERY_ONE_FOR_REAL_END (U" columns")
 }
 
 DIRECT (REAL_Matrix_getRowDistance) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my dy;
-	NUMBER_ONE_END (U" (row distance)")
+	QUERY_ONE_FOR_REAL_END (U" (row distance)")
 }
 
 DIRECT (REAL_Matrix_getColumnDistance) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = my dx;
-	NUMBER_ONE_END (U" (column distance)")
+	QUERY_ONE_FOR_REAL_END (U" (column distance)")
 }
 
 FORM (REAL_Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_rowToY (me, rowNumber);
-	NUMBER_ONE_END (U" (y of row ", rowNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (y of row ", rowNumber, U")")
 }
 
 FORM (REAL_Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_columnToX (me, columnNumber);
-	NUMBER_ONE_END (U" (x of column ", columnNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (x of column ", columnNumber, U")")
 }
 
 FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
@@ -325,11 +325,11 @@ FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		if (rowNumber > my ny) Melder_throw (U"Row number should not exceed number of rows.");
 		if (columnNumber > my nx) Melder_throw (U"Column number should not exceed number of columns.");
 		double result = my z [rowNumber] [columnNumber];
-	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
+	QUERY_ONE_FOR_REAL_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
 
 FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
@@ -337,59 +337,59 @@ FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
 	REAL (y, U"Y", U"0.0")
 	OK
 DO
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_getValueAtXY (me, x, y);
-	NUMBER_ONE_END (U" (at x = ", x, U" and y = ", y, U")");
+	QUERY_ONE_FOR_REAL_END (U" (at x = ", x, U" and y = ", y, U")");
 }
 
 DIRECT (REAL_Matrix_getMinimum) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = minimum;
-	NUMBER_ONE_END (U" (minimum)");
+	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
 DIRECT (REAL_Matrix_getMaximum) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = maximum;
-	NUMBER_ONE_END (U" (maximum)");
+	QUERY_ONE_FOR_REAL_END (U" (maximum)");
 }
 
 DIRECT (REAL_Matrix_getSum) {
-	NUMBER_ONE (Matrix)
+	QUERY_ONE_FOR_REAL (Matrix)
 		double result = Matrix_getSum (me);
-	NUMBER_ONE_END (U" (sum)");
+	QUERY_ONE_FOR_REAL_END (U" (sum)");
 }
 
 DIRECT (NUMMAT_Matrix_getAllValues) {
-	NUMMAT_ONE (Matrix)
+	QUERY_ONE_FOR_MATRIX (Matrix)
 		autoMAT result = copy_MAT (my z.all());
-	NUMMAT_ONE_END
+	QUERY_ONE_FOR_MATRIX_END
 }
 
 FORM (NUMVEC_Matrix_getAllValuesInColumn, U"Get all values in column", nullptr) {
 	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
-	NUMVEC_ONE (Matrix)
+	QUERY_ONE_FOR_REAL_VECTOR (Matrix)
 		Melder_require (columnNumber <= my nx,
 			U"The column number (", columnNumber, U") should not be greater than the number of columns (", my nx, U").");
 		autoVEC result = copy_VEC (my z.column (columnNumber));
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (NUMVEC_Matrix_getAllValuesInRow, U"Get all values in row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	NUMVEC_ONE (Matrix)
+	QUERY_ONE_FOR_REAL_VECTOR (Matrix)
 		Melder_require (rowNumber <= my ny,
 			U"The row number (", rowNumber, U") should not be greater than the number of rows (", my ny, U").");
 		autoVEC result = copy_VEC (my z.row (rowNumber));
-	NUMVEC_ONE_END
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 // MARK: Modify
@@ -430,7 +430,7 @@ DIRECT (NEWTIMES2_Matrix_eigen) {
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
 	}
-END }
+END_WITH_NEW_DATA }
 
 // MARK: Synthesize
 
@@ -438,73 +438,73 @@ FORM (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
 	NATURAL (power, U"Power", U"2")
 	OK
 DO
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoMatrix result = Matrix_power (me, power);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 // MARK: Combine
 
 DIRECT (NEW1_Matrix_appendRows) {
-	CONVERT_COUPLE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoMatrix result = Matrix_appendRows (me, you, classMatrix);
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: Cast
 
 DIRECT (NEW_Matrix_to_Cochleagram) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoCochleagram result = Matrix_to_Cochleagram (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Excitation) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoExcitation result = Matrix_to_Excitation (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Harmonicity) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoHarmonicity result = Matrix_to_Harmonicity (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Intensity) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoIntensity result = Matrix_to_Intensity (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Ltas) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoLtas result = Matrix_to_Ltas (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Pitch) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoPitch result = Matrix_to_Pitch (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_PointProcess) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoPointProcess result = Matrix_to_PointProcess (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Polygon) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoPolygon result = Matrix_to_Polygon (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Sound) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSound result = Matrix_to_Sound (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
@@ -512,46 +512,46 @@ FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
 	LABEL (U"(negative values count from last row)")
 	OK
 DO
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSound result = Matrix_to_Sound_mono (me, rowNumber);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Spectrogram) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSpectrogram result = Matrix_to_Spectrogram (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Spectrum) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoSpectrum result = Matrix_to_Spectrum (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_TableOfReal) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoTableOfReal result = Matrix_to_TableOfReal (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Transition) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoTransition result = Matrix_to_Transition (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_VocalTract) {
-	CONVERT_EACH (Matrix)
+	CONVERT_EACH_TO_ONE (Matrix)
 		autoVocalTract result = Matrix_to_VocalTract (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_Matrix_to_ParamCurve) {
-	CONVERT_COUPLE (Matrix)
+	CONVERT_TWO_TO_ONE (Matrix)
 		autoSound sound1 = Matrix_to_Sound (me), sound2 = Matrix_to_Sound (you);
 		autoParamCurve result = ParamCurve_create (sound1.get(), sound2.get());
-	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
+	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
 // MARK: - PHOTO
@@ -607,27 +607,27 @@ DO
 }
 
 DIRECT (NEW_Photo_extractBlue) {
-	CONVERT_EACH (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_blue.get());
-	CONVERT_EACH_END (my name.get(), U"_blue");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_blue");
 }
 
 DIRECT (NEW_Photo_extractGreen) {
-	CONVERT_EACH (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_green.get());
-	CONVERT_EACH_END (my name.get(), U"_green");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_green");
 }
 
 DIRECT (NEW_Photo_extractRed) {
-	CONVERT_EACH (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_red.get());
-	CONVERT_EACH_END (my name.get(), U"_red");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_red");
 }
 
 DIRECT (NEW_Photo_extractTransparency) {
-	CONVERT_EACH (Photo)
+	CONVERT_EACH_TO_ONE (Photo)
 		autoMatrix result = Data_copy (my d_transparency.get());
-	CONVERT_EACH_END (my name.get(), U"_transparency");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_transparency");
 }
 
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
@@ -749,27 +749,27 @@ FORM_SAVE (SAVE_Photo_saveAsWindowsIconFile, U"Save as Windows icon file", nullp
 // MARK: - PHOTO & MATRIX
 
 DIRECT (MODIFY_Photo_Matrix_replaceBlue) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceBlue (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Photo_Matrix_replaceGreen) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceGreen (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Photo_Matrix_replaceRed) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceRed (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 DIRECT (MODIFY_Photo_Matrix_replaceTransparency) {
-	MODIFY_FIRST_OF_TWO (Photo, Matrix)
+	MODIFY_FIRST_OF_ONE_AND_ONE (Photo, Matrix)
 		Photo_replaceTransparency (me, you);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 // MARK: - MOVIE
@@ -793,14 +793,10 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_Movie_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a Movie from batch.");
-	FIND_ONE_WITH_IOBJECT (Movie)
+DIRECT (EDITOR_ONE_Movie_viewAndEdit) {
+	EDITOR_ONE (a,Movie)
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END
+	EDITOR_ONE_END
 }
 
 // MARK: file recognizers
@@ -928,7 +924,7 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 	#endif
 
 	praat_addAction1 (classMovie, 1, U"Paint one image...", nullptr, 1, GRAPHICS_Movie_paintOneImage);
-	praat_addAction1 (classMovie, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_Movie_viewAndEdit);
+	praat_addAction1 (classMovie, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_Movie_viewAndEdit);
 
 	praat_addAction2 (classMatrix, 1, classSound, 1, U"To ParamCurve", nullptr, 0, NEW1_Matrix_to_ParamCurve);
 	praat_addAction2 (classPhoto, 1, classMatrix, 1, U"Replace red", nullptr, 0, MODIFY_Photo_Matrix_replaceRed);

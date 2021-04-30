@@ -56,10 +56,10 @@ FORM (GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses, U"GaussianMixture 
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (GaussianMixture, PCA)
+	GRAPHICS_ONE_AND_ONE (GaussianMixture, PCA)
 		GaussianMixture_PCA_drawConcentrationEllipses (me, you, GRAPHICS, numberOfSigmas, false, nullptr,
 				xDimension, yDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
-	GRAPHICS_TWO_END	
+	GRAPHICS_ONE_AND_ONE_END	
 }
 
 FORM (GRAPHICS_GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
@@ -79,24 +79,24 @@ DO
 }
 
 DIRECT (INTEGER_GaussianMixture_getNumberOfComponents) {
-	INTEGER_ONE (GaussianMixture)
+	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		integer result = my numberOfComponents;
-	INTEGER_ONE_END (U"(= number of components)")
+	QUERY_ONE_FOR_INTEGER_END (U"(= number of components)")
 }
 
 DIRECT (INTEGER_GaussianMixture_getDimensionOfComponent) {
-	INTEGER_ONE (GaussianMixture)
+	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		integer result = my dimension;
-	INTEGER_ONE_END (U"(= dimension of component)")
+	QUERY_ONE_FOR_INTEGER_END (U"(= dimension of component)")
 }
 
 FORM (REAL_GaussianMixture_getProbabilityAtPosition, U"GaussianMixture: Get probability at position", nullptr) {
 	SENTENCE (position_string, U"Position", U"100.0 300.0")
 	OK
 DO
-	NUMBER_ONE (GaussianMixture)
+	QUERY_ONE_FOR_REAL (GaussianMixture)
 		double result = GaussianMixture_getProbabilityAtPosition_string (me, position_string);
-	NUMBER_ONE_END (U" (= probability at position ", position_string, U")")
+	QUERY_ONE_FOR_REAL_END (U" (= probability at position ", position_string, U")")
 }
 
 FORM (MODIFY_GaussianMixture_splitComponent, U"GaussianMixture: Split component", U"GaussianMixture: Split component...") {
@@ -119,9 +119,9 @@ FORM (GRAPHICS_GaussianMixture_PCA_drawMarginalPdf, U"GaussianMixture & PCA: Dra
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	GRAPHICS_TWO (GaussianMixture, PCA)
+	GRAPHICS_ONE_AND_ONE (GaussianMixture, PCA)
 		GaussianMixture_PCA_drawMarginalPdf (me, you, GRAPHICS, xDimension, xmin, xmax, ymin, ymax, numberOfPoints, numberOfBins, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 FORM (NEW1_GaussianMixture_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Matrix density", U"GaussianMixture & PCA: To Matrix (density)...") {
@@ -135,74 +135,74 @@ FORM (NEW1_GaussianMixture_PCA_to_Matrix_density, U"GaussianMixture & PCA: To Ma
 	NATURAL (numberOfRows, U"Number of rows", U"100")
 	OK
 DO
-	CONVERT_TWO (GaussianMixture, PCA)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, PCA)
 		autoMatrix result = GaussianMixture_PCA_to_Matrix_density (me, you, xDimension, yDimension, xmin, xmax, numberOfColumns, ymin, ymax, numberOfRows);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW_GaussianMixture_extractComponent, U"GaussianMixture: Extract component", nullptr) {
 	NATURAL (component, U"Component", U"1")
 	OK
 DO
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_extractComponent (me, component);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_extractCentroids) {
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoTableOfReal result = GaussianMixture_extractCentroids (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_extractMixingProbabilities) {
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoTableOfReal result = GaussianMixture_extractMixingProbabilities (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_to_PCA) {
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoPCA result = GaussianMixture_to_PCA (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_GaussianMixture_to_TableOfReal_randomSampling, U"GaussianMixture: To TableOfReal (random sampling)", U"GaussianMixture: To TableOfReal (random sampling)...") {
 	NATURAL (numberOfPoints, U"Number of data points", U"100")
 	OK
 DO
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoTableOfReal result = GaussianMixture_to_TableOfReal_randomSampling (me, numberOfPoints);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_between) {
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_between (me);
-	CONVERT_EACH_END (my name.get(), U"_b")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_b")
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_within) {
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_within (me);
-	CONVERT_EACH_END (my name.get(), U"_w");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_w");
 }
 
 DIRECT (NEW_GaussianMixture_to_Covariance_total) {
-	CONVERT_EACH (GaussianMixture)
+	CONVERT_EACH_TO_ONE (GaussianMixture)
 		autoCovariance result = GaussianMixture_to_Covariance_total (me);
-	CONVERT_EACH_END (my name.get(), U"_t");
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_t");
 }
 
 FORM (REAL_GaussianMixture_TableOfReal_getLikelihoodValue, U"GaussianMixture & TableOfReal: Get likelihood value",
       U"GaussianMixture & TableOfReal: Get likelihood value...") {
 	OPTIONMENU_ENUM (kGaussianMixtureCriterion, criterion, U"Criterion based on", kGaussianMixtureCriterion::DEFAULT)	OK
 DO
-	NUMBER_TWO (GaussianMixture, TableOfReal)
+	QUERY_ONE_AND_ONE_FOR_REAL (GaussianMixture, TableOfReal)
 		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		double lnpdn = GaussianMixture_TableOfReal_getLikelihoodValue (me, you, criterion);
 		double result = lnpdn / you -> numberOfRows;
-	NUMBER_TWO_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
 }
 
 DIRECT (HELP_HMM_help) {
@@ -256,9 +256,9 @@ FORM (NEW_HMMObservationSequence_to_HMM, U"HMMObservationSequence: To HMM", null
 	BOOLEAN (leftToRightModel, U"Left to right model", false)
 	OK
 DO
-	CONVERT_EACH (HMMObservationSequence)
+	CONVERT_EACH_TO_ONE (HMMObservationSequence)
 		autoHMM result = HMM_createFromHMMObservationSequence (me, numberOfHiddenStates, leftToRightModel);
-	CONVERT_EACH_END (my name.get(), U"_", numberOfHiddenStates)
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", numberOfHiddenStates)
 }
 
 FORM (GRAPHICS_HMM_draw, U"HMM: Draw", nullptr) {
@@ -275,9 +275,9 @@ FORM (GRAPHICS_HMM_HMMStateSequence_drawTrellis, U"HMM & Strings: Draw trellis",
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
-	GRAPHICS_TWO (HMM, HMMStateSequence)
+	GRAPHICS_ONE_AND_ONE (HMM, HMMStateSequence)
 		HMM_HMMStateSequence_drawTrellis (me, you, GRAPHICS, connect, garnish);
-	GRAPHICS_TWO_END
+	GRAPHICS_ONE_AND_ONE_END
 }
 
 DIRECT (GRAPHICS_HMM_drawForwardProbabilitiesIllustration) {
@@ -303,10 +303,10 @@ FORM (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"H
 	NATURAL (toState, U"To state number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		Melder_require (fromState <= my numberOfStates && toState <= my numberOfStates, U"State number(s) too high.");
 		double result = my transitionProbs [fromState] [toState];
-	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
+	QUERY_ONE_FOR_REAL_END (U" : [ ", fromState, U", ", toState, U" ]")
 }
 
 FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: Get emission probability...") {
@@ -314,21 +314,21 @@ FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: 
 	NATURAL (symbolIndex, U"Symbol index", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		Melder_require (fromState <= my numberOfStates, U"State number too high.");
 		Melder_require (symbolIndex <= my numberOfObservationSymbols, U"Symbol number too high.");
 		double result = my emissionProbs[fromState][symbolIndex];
-	NUMBER_ONE_END (U" : [ ", fromState, U", ", symbolIndex, U" ]")
+	QUERY_ONE_FOR_REAL_END (U" : [ ", fromState, U", ", symbolIndex, U" ]")
 }
 
 FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get start probability...") {
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		double result = my initialStateProbs [stateNumber];
-	NUMBER_ONE_END (U" : [ ", stateNumber, U" ]")
+	QUERY_ONE_FOR_REAL_END (U" : [ ", stateNumber, U" ]")
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being in state at time",
@@ -337,9 +337,9 @@ FORM (REAL_HMM_getProbabilityAtTimeBeingInState, U"HMM: Get probability of being
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getProbabilityAtTimeBeingInState (me, timeIndex, stateNumber);
-	NUMBER_ONE_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" at time ", timeIndex)
+	QUERY_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" at time ", timeIndex)
 }
 
 FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probability being at time in state emitting symbol", U"HMM: Get p (time, state, symbol)...") {
@@ -348,9 +348,9 @@ FORM (REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol, U"HMM: get probab
 	NATURAL (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (me, timeIndex, stateNumber, symbolNumber);
-	NUMBER_ONE_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" emitting symbol ", symbolNumber, U" at time ", timeIndex)
+	QUERY_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U") Being in state ", stateNumber, U" emitting symbol ", symbolNumber, U" at time ", timeIndex)
 }
 
 FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying in state", U"HMM: Get probability staying in state...") {
@@ -358,9 +358,9 @@ FORM (REAL_HMM_getProbabilityOfStayingInState, U"HMM: Get probability of staying
 	NATURAL (numberOfTimeUnits, U"Number of time units", U"2")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getProbabilityOfStayingInState (me, stateNumber, numberOfTimeUnits);
-	NUMBER_ONE_END (U"(probability of staying in state)")
+	QUERY_ONE_FOR_REAL_END (U"(probability of staying in state)")
 }
 
 FORM (REAL_HMM_getExpectedDurationInState, U"HMM: Get expected value of duration in state",
@@ -368,31 +368,31 @@ FORM (REAL_HMM_getExpectedDurationInState, U"HMM: Get expected value of duration
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	NUMBER_ONE (HMM)
+	QUERY_ONE_FOR_REAL (HMM)
 		double result = HMM_getExpectedValueOfDurationInState (me, stateNumber);
-	NUMBER_ONE_END (U" time units")
+	QUERY_ONE_FOR_REAL_END (U" time units")
 }
 
 FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
 	NATURAL (symbolNumber, U"Symbol number", U"1")
 	OK
 DO
-	STRING_ONE (HMM)
+	QUERY_ONE_FOR_STRING (HMM)
 		Melder_require (symbolNumber <= my numberOfObservationSymbols, U"Symbol number too high.");
 		HMMObservation observation = my observationSymbols->at [symbolNumber];
 		conststring32 result = observation -> label.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (INFO_HMM_getStateLabel, U"HMM: Get state label", nullptr) {
 	NATURAL (stateNumber, U"State number", U"1")
 	OK
 DO
-	STRING_ONE (HMM)
+	QUERY_ONE_FOR_STRING (HMM)
 		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		HMMState state = my states->at [stateNumber];
 		conststring32 result = state -> label.get();
-	STRING_ONE_END
+	QUERY_ONE_FOR_STRING_END
 }
 
 FORM (REAL_HMM_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & HMM: Get cross-entropy...") {
@@ -400,15 +400,15 @@ FORM (REAL_HMM_HMM_getCrossEntropy, U"HMM & HMM: Get cross-entropy...", U"HMM & 
 	BOOLEAN (symmetric, U"Symmetric", true)
 	OK
 DO
-	NUMBER_COUPLE (HMM)
+	QUERY_TWO_FOR_REAL (HMM)
 		double result = HMM_HMM_getCrossEntropy (me, you, observationLength, symmetric);
-	NUMBER_COUPLE_END (U" (= ", (symmetric ? U"symmetric " : U""), U" cross-entropy between models for observation length = ", observationLength, U")")
+	QUERY_TWO_FOR_REAL_END (U" (= ", (symmetric ? U"symmetric " : U""), U" cross-entropy between models for observation length = ", observationLength, U")")
 }
 
 DIRECT (REAL_HMM_HMM_HMMObservationSequence_getCrossEntropy) {
-	NUMBER_COUPLE_AND_ONE (HMM, HMMObservationSequence)
+	QUERY_TWO_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		double result = HMM_HMM_HMMObservationSequence_getCrossEntropy (me, you, him);
-	NUMBER_COUPLE_AND_ONE_END (U"(= symmetric cross-entropy between models)")
+	QUERY_TWO_AND_ONE_FOR_REAL_END (U"(= symmetric cross-entropy between models)")
 }
 
 FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (generate observations)", U"HMM: To HMMObservationSequence...") {
@@ -416,39 +416,39 @@ FORM (NEW_HMM_to_HMMObservationSequence, U"HMM: To HMMObservationSequence (gener
 	NATURAL (numberOfObservations, U"Number of observations", U"20")
 	OK
 DO
-	CONVERT_EACH (HMM)
+	CONVERT_EACH_TO_ONE (HMM)
 		autoHMMObservationSequence result = HMM_to_HMMObservationSequence (me, startState, numberOfObservations);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (REAL_HMM_HMMStateSequence_getProbability) {
-	NUMBER_TWO (HMM, HMMStateSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMStateSequence)
 		double result = HMM_HMMStateSequence_getProbability (me, you);
-	NUMBER_TWO_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
 }
 
 DIRECT (REAL_HMM_HMMObservationSequence_getProbability) {
-	NUMBER_TWO (HMM, HMMObservationSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		double result = HMM_HMMObservationSequence_getProbability (me, you);
-	NUMBER_TWO_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ln(p), p = ", Melder_naturalLogarithm (result), U")")
 }
 
 DIRECT (REAL_HMM_HMMObservationSequence_getCrossEntropy) {
-	NUMBER_TWO (HMM, HMMObservationSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 	double result = HMM_HMMObservationSequence_getCrossEntropy (me, you);
-	NUMBER_TWO_END (U" (= cross-entropy)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= cross-entropy)")
 }
 
 DIRECT (REAL_HMM_HMMObservationSequence_getPerplexity) {
-	NUMBER_TWO (HMM, HMMObservationSequence)
+	QUERY_ONE_AND_ONE_FOR_REAL (HMM, HMMObservationSequence)
 		double result = HMM_HMMObservationSequence_getPerplexity (me, you);
-	NUMBER_TWO_END (U" (= perplexity)")
+	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= perplexity)")
 }
 
 DIRECT (NEW1_HMM_HMMObservationSequence_to_HMMStateSequence) {
-	CONVERT_TWO (HMM, HMMObservationSequence)
+	CONVERT_ONE_AND_ONE_TO_ONE (HMM, HMMObservationSequence)
 		autoHMMStateSequence result = HMM_HMMObservationSequence_to_HMMStateSequence (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get(), U"_states")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get(), U"_states")
 }
 
 FORM (MODIFY_HMM_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: Learn", U"HMM & HMMObservationSequences: Learn...") {
@@ -458,9 +458,9 @@ FORM (MODIFY_HMM_HMMObservationSequence_learn, U"HMM & HMMObservationSequence: L
 	OK
 DO
 	Melder_require (minimumProbability >= 0.0 && minimumProbability < 1.0, U"The minimum probabilty should be in [0, 1).");
-	MODIFY_FIRST_OF_ONE_AND_LIST(HMM, HMMObservationSequence)
+	MODIFY_FIRST_OF_ONE_AND_ALL(HMM, HMMObservationSequence)
 		HMM_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) & list, relativePrecision_log, minimumProbability, showProgress);
-	MODIFY_FIRST_OF_ONE_AND_LIST_END
+	MODIFY_FIRST_OF_ONE_AND_ALL_END
 }
 
 FORM (MODIFY_HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
@@ -493,69 +493,69 @@ DO
 }
 
 DIRECT (NEW_HMM_extractTransitionProbabilities) {
-	CONVERT_EACH (HMM)
+	CONVERT_EACH_TO_ONE (HMM)
 		autoTableOfReal result = HMM_extractTransitionProbabilities (me);
-	CONVERT_EACH_END (my name.get(), U"_t")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_t")
 }
 
 DIRECT (NEW_HMM_extractEmissionProbabilities) {
-	CONVERT_EACH (HMM)
+	CONVERT_EACH_TO_ONE (HMM)
 		autoTableOfReal result = HMM_extractEmissionProbabilities (me);
-	CONVERT_EACH_END (my name.get(), U"_e")
+	CONVERT_EACH_TO_ONE_END (my name.get(), U"_e")
 }
 
 FORM (NEW_HMMObservationSequence_to_TableOfReal_bigrams, U"HMMObservationSequence: To TableOfReal ", U"HMMObservationSequence: To TableOfReal (bigrams)...") {
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	CONVERT_EACH (HMMObservationSequence)
+	CONVERT_EACH_TO_ONE (HMMObservationSequence)
 		autoTableOfReal result = HMMObservationSequence_to_TableOfReal_transitions (me, asProbabilities);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_HMM_HMMObservationSequence_to_TableOfReal_bigrams, U"HMM & HMMObservationSequence: To TableOfReal", U"HMM & HMMObservationSequence: To TableOfReal (bigrams)...") {
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	CONVERT_TWO (HMM, HMMObservationSequence)
+	CONVERT_ONE_AND_ONE_TO_ONE (HMM, HMMObservationSequence)
 		autoTableOfReal result = HMM_HMMObservationSequence_to_TableOfReal_transitions (me, you, asProbabilities);
-	CONVERT_TWO_END (your name.get(), U"_m")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_m")
 }
 
 FORM (NEW1_HMM_HMMStateSequence_to_TableOfReal_bigrams, U"HMM & HMMStateSequence: To TableOfReal", nullptr) {
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	CONVERT_TWO (HMM, HMMStateSequence)
+	CONVERT_ONE_AND_ONE_TO_ONE (HMM, HMMStateSequence)
 		autoTableOfReal result = HMM_HMMStateSequence_to_TableOfReal_transitions (me, you, asProbabilities);
-	CONVERT_TWO_END (your name.get(), U"_m")
+	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_m")
 }
 
 FORM (NEW_HMMStateSequence_to_TableOfReal_bigrams, U"HMMStateSequence: To TableOfReal", nullptr) {
 	BOOLEAN (asProbabilities, U"As probabilities", true)
 	OK
 DO
-	CONVERT_EACH (HMMStateSequence)
+	CONVERT_EACH_TO_ONE (HMMStateSequence)
 		autoTableOfReal result = Strings_to_TableOfReal_transitions (me, asProbabilities);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_HMMObservationSequence_to_Strings) {
-	CONVERT_EACH (HMMObservationSequence)
+	CONVERT_EACH_TO_ONE (HMMObservationSequence)
 		autoStrings result = HMMObservationSequence_to_Strings (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_Strings_to_HMMObservationSequence) {
-	CONVERT_EACH (Strings)
+	CONVERT_EACH_TO_ONE (Strings)
 		autoHMMObservationSequence result = Strings_to_HMMObservationSequence (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW_HMMStateSequence_to_Strings) {
-	CONVERT_EACH (HMMStateSequence)
+	CONVERT_EACH_TO_ONE (HMMStateSequence)
 		autoStrings result = HMMStateSequence_to_Strings (me);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture_rowlabels, U"TableOfReal: To GaussianMixture from row labels", U"TableOfReal: To GaussianMixture (row labels)...") {
@@ -563,9 +563,9 @@ FORM (NEW_TableOfReal_to_GaussianMixture_rowlabels, U"TableOfReal: To GaussianMi
 		U"Covariance matrices are", kGaussianMixtureStorage::DEFAULT)
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture_fromRowLabels (me, storage);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no labels)", U"TableOfReal: To GaussianMixture...") {
@@ -579,9 +579,9 @@ FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no 
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture (me, numberOfComponents, tolerance, maximumNumberOfIterations, lambda, storage, criterion);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (NEW1_TableOfReal_to_GaussianMixture_CEMM, U"TableOfReal: To GaussianMixture (CEMM)", U"TableOfReal: To GaussianMixture (CEMM)...") {
@@ -594,9 +594,9 @@ FORM (NEW1_TableOfReal_to_GaussianMixture_CEMM, U"TableOfReal: To GaussianMixtur
 	BOOLEAN (info, U"Info", false)
 	OK
 DO
-	CONVERT_EACH (TableOfReal)
+	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture_CEMM (me, minimumNumberOfComponents, maximumNumberOfComponents, storage, maximumNumberOfIterations, tolerance, info);
-	CONVERT_EACH_END (my name.get())
+	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (MODIFY_GaussianMixture_TableOfReal_improveLikelihood, U"GaussianMixture & TableOfReal: Improve likelihood", U"GaussianMixture & TableOfReal: Improve likelihood...") {
@@ -607,9 +607,9 @@ FORM (MODIFY_GaussianMixture_TableOfReal_improveLikelihood, U"GaussianMixture & 
 	OK
 DO
 	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
-	MODIFY_FIRST_OF_TWO (GaussianMixture, TableOfReal)
+	MODIFY_FIRST_OF_ONE_AND_ONE (GaussianMixture, TableOfReal)
 		GaussianMixture_TableOfReal_improveLikelihood (me, you, tolerance, maximumNumberOfIterations, lambda, criterion);
-	MODIFY_FIRST_OF_TWO_END
+	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)", U"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...") {
@@ -619,42 +619,42 @@ FORM (NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMixtur
 	BOOLEAN (info, U"Info", false)
 	OK
 DO
-	CONVERT_TWO (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoGaussianMixture result = GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, maximumNumberOfIterations, tolerance, info);
-	CONVERT_TWO_END (my name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_ClassificationTable) {
-	CONVERT_TWO (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoClassificationTable result = GaussianMixture_TableOfReal_to_ClassificationTable (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_probabilities) {
-	CONVERT_TWO (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_probabilities (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_TableOfReal_responsibilities) {
-	CONVERT_TWO (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoTableOfReal result = GaussianMixture_TableOfReal_to_TableOfReal_responsibilities (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW1_GaussianMixture_TableOfReal_to_Correlation) {
-	CONVERT_TWO (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoCorrelation result = GaussianMixture_TableOfReal_to_Correlation (me, you);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests, U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)", U"GaussianMixture & TableOfReal: To Table (BHEP normality tests)...") {
 	REAL (smoothingParameter, U"Smoothing parameter", U"1.41")
 	OK
 DO
-	CONVERT_TWO (GaussianMixture, TableOfReal)
+	CONVERT_ONE_AND_ONE_TO_ONE (GaussianMixture, TableOfReal)
 		autoTable result = GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (me, you, smoothingParameter);
-	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
 void praat_HMM_init ();
