@@ -5446,10 +5446,9 @@ FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplet
 	REAL (imX, U"Imaginary part of X", U"0.0")
 	OK
 DO
-	INFO_NONE
+	QUERY_NONE_FOR_COMPLEX
 		dcomplex result = NUMincompleteGammaFunction (dcomplex {reAlpha, imAlpha}, dcomplex {reX, imX});
-		Melder_information (result);
-	INFO_NONE_END
+	QUERY_NONE_FOR_COMPLEX_END (U"")
 }
 
 /******************** Sound ****************************************/
