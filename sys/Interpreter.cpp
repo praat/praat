@@ -2455,7 +2455,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 								autoMelderDivertInfo divert (& valueString);
 								int status = praat_executeCommand (me, p);
-								if (my returnType == kInterpreter_ReturnType::STRING_ || my returnType == kInterpreter_ReturnType::REAL_) {
+								if (my returnType == kInterpreter_ReturnType::STRING_ || my returnType == kInterpreter_ReturnType::REAL_ || my returnType == kInterpreter_ReturnType::INTEGER_) {
 									InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 									var -> stringValue = Melder_dup (status ? valueString.string : U"");
 								} else
@@ -2835,7 +2835,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								} else {
 									value = theCurrentPraatObjects -> list [selectedObject]. id;
 								}
-							} else if (my returnType != kInterpreter_ReturnType::REAL_) {
+							} else if (my returnType != kInterpreter_ReturnType::REAL_ && my returnType != kInterpreter_ReturnType::INTEGER_) {
 								Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the numeric variable \"", variableName, U"\".");
 							} else {
 								value = Melder_atof (valueString.string);   // including --undefined--
