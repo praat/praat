@@ -2857,7 +2857,8 @@ CODE (U"#endproc")
 CODE (U"\\@ texts: \\\" \\\" \\\" hello\\\" \\\"  at the top\\\" , \\\" \\\" \\\" goodbye\\\" \\\"  at the bottom\\\" ")
 ENTRY (U"Functions")
 NORMAL (U"The Praat scripting language does not have the concept of a \"function\" like some other scripting languages do. "
-	"A function is a procedure that returns a number or a string. For instance, you can imagine the function $$squareNumber$ "
+	"A function is a procedure that returns a number, a string, a vector, a matrix, or a string array. "
+	"For instance, you can imagine the function $$squareNumber$, "
 	"which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). "
 	"Here is an example of how you can do that, using the global availability of local variables:")
 CODE (U"\\@ squareNumber: 5")
