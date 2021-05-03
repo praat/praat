@@ -2292,10 +2292,10 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_Eigens_alignEigenvectors) {
-	FIND_ALL (Eigen)
+DIRECT (MODIFY_ALL_Eigens_alignEigenvectors) {
+	MODIFY_ALL (Eigen)
 		Eigens_alignEigenvectors (& list);
-	END_WITH_NEW_DATA
+	MODIFY_ALL_END
 }
 
 FORM (NEW1_Eigen_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
@@ -8798,7 +8798,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classDiscriminant, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_Discriminant_invertEigenvector);
-	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
+	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, MODIFY_ALL_Eigens_alignEigenvectors);
 
 	praat_addAction1 (classDiscriminant, 0, U"Extract -", nullptr, 0, 0);
 		praat_addAction1 (classDiscriminant, 0, U"Extract pooled within-groups SSCP", nullptr, 1, NEW_Discriminant_extractPooledWithinGroupsSSCP);
@@ -9149,7 +9149,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1, REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees);
 	praat_addAction1 (classPCA, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_PCA_invertEigenvector);
-	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
+	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, MODIFY_ALL_Eigens_alignEigenvectors);
 	praat_addAction1 (classPCA, 0, U"Extract -", nullptr, 0, 0);
 		praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 1, NEW_PCA_extractEigenvector);
 		praat_addAction1 (classPCA, 0, U"Extract Eigen", nullptr, 1, NEW_PCA_extractEigen);
