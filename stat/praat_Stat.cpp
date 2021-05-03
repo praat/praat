@@ -190,12 +190,12 @@ FORM (NEW2_PairDistribution_to_Stringses, U"Generate two Strings objects", nullp
 	SENTENCE (nameOfSecondStrings, U"Name of second Strings", U"output")
 	OK
 DO
-	FIND_ONE (PairDistribution)
+	CONVERT_ONE_TO_MULTIPLE (PairDistribution)
 		autoStrings strings1, strings2;
 		PairDistribution_to_Stringses (me, number, & strings1, & strings2);
 		praat_new (strings1.move(), nameOfFirstStrings);
 		praat_new (strings2.move(), nameOfSecondStrings);
-	END_WITH_NEW_DATA
+	CONVERT_ONE_TO_MULTIPLE_END
 }
 
 DIRECT (NEW_PairDistribution_to_Table) {

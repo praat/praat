@@ -684,7 +684,7 @@ DO
 		autostring32 output = OTGrammar_inputToOutput (me, inputForm, evaluationNoise);
 		Melder_information (output.get());
 		praat_dataChanged (me);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM (NEW_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
@@ -931,7 +931,7 @@ DO
 			evaluationNoise, replications);
 		praat_dataChanged (me);
 		Melder_informationReal (result, nullptr);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
@@ -1102,7 +1102,7 @@ DO
 			throw;
 		}
 		Melder_information (result, U" correct");
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", nullptr) {
@@ -1121,7 +1121,7 @@ DO
 			throw;
 		}
 		Melder_information (result, U" (minimally correct)");
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
@@ -1324,7 +1324,7 @@ DO
 		autostring32 output = OTMulti_generateOptimalForm (me, partialForm1, partialForm2, evaluationNoise);
 		Melder_information (output.get());
 		praat_dataChanged (me);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM (NEW1_MODIFY_OTMulti_generateOptimalForms, U"OTMulti: Generate optimal forms", nullptr) {

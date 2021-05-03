@@ -64,7 +64,8 @@ DIRECT (WINDOW_ExperimentMFC_run) {
 	*/
 	praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
 	runner.releaseToUser();
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
 	CONVERT_EACH_TO_ONE (ExperimentMFC)

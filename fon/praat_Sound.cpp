@@ -126,7 +126,8 @@ DO
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (SAVE_LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
 	OUTFILE (audioFile, U"Audio file:", U"")
@@ -280,7 +281,8 @@ OK
 	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
 	LongSound_setBufferSizePref_seconds (maximumViewablePart);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 /********** LONGSOUND & SOUND **********/
 
@@ -1173,7 +1175,8 @@ DIRECT (PLAY_Sound_play) {
 		}
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (MODIFY_Sound_preemphasizeInplace, U"Sound: Pre-emphasize (in-place)", U"Sound: Pre-emphasize (in-place)...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
@@ -1784,7 +1787,8 @@ DO
 		Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
 	MelderAudio_setInputSoundSystem (inputSoundSystem);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	LABEL (U"The following determines how sounds are played.")
@@ -1809,7 +1813,7 @@ DO
 	MelderAudio_setOutputSilenceBefore (silenceBefore);
 	MelderAudio_setOutputSilenceAfter (silenceAfter);
 	MelderAudio_setOutputSoundSystem (outputSoundSystem);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 #ifdef HAVE_PULSEAUDIO
@@ -2003,7 +2007,8 @@ DO
 
 DIRECT (PLAY_stopPlayingSound) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 /***** Help menus *****/
 

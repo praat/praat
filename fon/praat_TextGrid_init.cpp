@@ -729,7 +729,8 @@ DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
 		praat_installEditor2 (editor.get(), IOBJECT, ilongSound);
 		editor.releaseToUser();
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
@@ -747,7 +748,8 @@ DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
 		praat_installEditor2 (editor.get(), IOBJECT, ispellingChecker);
 		editor.releaseToUser();
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
@@ -765,7 +767,8 @@ DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 		praat_installEditor3 (editor.get(), IOBJECT, ilongSound, ispellingChecker);
 		editor.releaseToUser();
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 DIRECT (HINT_TextGrid_Sound_viewAndEdit) {
 	INFO_NONE
