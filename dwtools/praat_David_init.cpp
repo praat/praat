@@ -5622,16 +5622,14 @@ FORM (PLAY_Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
     NATURAL (channel, U"Channel", U"1")
     OK
 DO
-    LOOP {
-        iam_LOOP (Sound);
-		if (channel > my ny) {
-			Melder_throw (me, U": there is no channel ", channel, U". Sound has only ", my ny, U" channel",
+    PLAY_EACH (Sound)
+		Melder_require (channel <= my ny,
+			me, U": there is no channel ", channel, U". Sound has only ", my ny, U" channel",
 				  (my ny > 1 ? U"s." : U"."));
-        }
         autoSound thee = Sound_extractChannel (me, channel);
         Sound_play (thee.get(), 0, 0);
-    }
-END_WITH_NEW_DATA }
+    PLAY_EACH_END
+}
 
 FORM (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
 	REAL (frequencyShift, U"Shift by (Hz)", U"1000.0")
@@ -5639,11 +5637,10 @@ FORM (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"
 	NATURAL (samplePrecision, U"Precision (samples)", U"50")
 	OK
 DO
-	LOOP {
-		iam_LOOP (Sound);
+    PLAY_EACH (Sound)
 		Sound_playAsFrequencyShifted (me, frequencyShift, samplingFrequency, samplePrecision);
-	}
-END_WITH_NEW_DATA }
+    PLAY_EACH_END
+}
 
 FORM (REAL_Sound_getNearestLevelCrossing, U"Sound: Get nearest level crossing", U"Sound: Get nearest level crossing...") {
 	CHANNEL (channel, U"Channel (number, Left, or Right)", U"1")

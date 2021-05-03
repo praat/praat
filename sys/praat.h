@@ -798,6 +798,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define PLAY_ONE_END  \
 	PLAY_END__
 
+#define PLAY_ONE_AND_ONE(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2)
+#define PLAY_ONE_AND_ONE_END  \
+	PLAY_END__
+
 /*
 	DRAW
 */
@@ -1152,6 +1157,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	TO_MULTIPLE__ \
 	CONVERT_END__
 
+#define CONVERT_ALL_LISTED_TO_MULTIPLE(klas,listClass)  \
+	FIND_ALL_LISTED (klas,listClass)
+#define CONVERT_ALL_LISTED_TO_MULTIPLE_END \
+	TO_MULTIPLE__ \
+	CONVERT_END__
+
 #define CONVERT_ONE_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
 #define CONVERT_ONE_AND_ONE_TO_ONE_END(...)  \
@@ -1190,6 +1201,18 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	TO_ONE__ (__VA_ARGS__) \
 	CONVERT_END__
 
+#define CONVERT_ONE_AND_ONE_AND_ONE_TO_MULTIPLE(klas1,klas2,klas3)  \
+	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
+#define CONVERT_ONE_AND_ONE_AND_ONE_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
+	CONVERT_END__
+
+#define CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE(klas1,klas2,klas3)  \
+	FIND_ONE_AND_ONE_AND_ALL (klas1, klas2, klas3)
+#define CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
+	CONVERT_END__
+
 #define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE(klas1,klas2,klas3,klas4)  \
 	FIND_1_1_1_1 (klas1, klas2, klas3, klas4)
 #define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE_END(...)  \
@@ -1200,6 +1223,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ONE_AND_ALL (klas1, klas2)
 #define CONVERT_ONE_AND_ALL_TO_ONE_END(...)  \
 	TO_ONE__ (__VA_ARGS__) \
+	CONVERT_END__
+
+#define CONVERT_ONE_AND_ALL_TO_MULTIPLE(klas1,klas2)  \
+	FIND_ONE_AND_ALL (klas1, klas2)
+#define CONVERT_ONE_AND_ALL_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
 	CONVERT_END__
 
 #define CONVERT_ONE_AND_ALL_LISTED_TO_ONE(klas1,klas2,listClass)  \

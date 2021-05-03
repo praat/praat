@@ -422,15 +422,14 @@ DO
 
 // MARK: Analyse
 
-DIRECT (NEWTIMES2_Matrix_eigen) {
-	LOOP {
-		iam_LOOP (Matrix);
+DIRECT (CONVERT_EACH_TO_MULTIPLE_Matrix_eigen) {
+	CONVERT_EACH_TO_MULTIPLE (Matrix)
 		autoMatrix vectors, values;
 		Matrix_eigen (me, & vectors, & values);
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
-	}
-END_WITH_NEW_DATA }
+	CONVERT_EACH_TO_MULTIPLE_END
+}
 
 // MARK: Synthesize
 
@@ -874,7 +873,7 @@ void praat_Matrix_init () {
 		praat_addAction1 (classMatrix, 0, U"Formula...", nullptr, 1, MODIFY_Matrix_formula);
 		praat_addAction1 (classMatrix, 0, U"Set value...", nullptr, 1, MODIFY_Matrix_setValue);
 praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction1 (classMatrix, 0, U"Eigen", nullptr, 0, NEWTIMES2_Matrix_eigen);
+	praat_addAction1 (classMatrix, 0, U"Eigen", nullptr, 0, CONVERT_EACH_TO_MULTIPLE_Matrix_eigen);
 	praat_addAction1 (classMatrix, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction1 (classMatrix, 0, U"Power...", nullptr, 0, NEW_Matrix_power);
 	praat_addAction1 (classMatrix, 0, U"Combine two Matrices -", nullptr, 0, nullptr);
