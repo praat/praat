@@ -364,7 +364,8 @@ autoDaata Data_readFromFile (MelderFile file) {
 	for (; i < nread; i ++)
 		if (header [i] < 32 || header [i] > 126)   // not ASCII? (note: this expression happens to work correctly for both signed and unsigned char)
 			break;
-	if (i >= nread) return Data_readFromTextFile (file);
+	if (i >= nread)
+		return Data_readFromTextFile (file);
 
 	Melder_throw (U"File ", file, U" not recognized.");
 }

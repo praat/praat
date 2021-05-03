@@ -2292,10 +2292,10 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_Eigens_alignEigenvectors) {
-	FIND_ALL (Eigen)
+DIRECT (MODIFY_ALL_Eigens_alignEigenvectors) {
+	MODIFY_ALL (Eigen)
 		Eigens_alignEigenvectors (& list);
-	END_WITH_NEW_DATA
+	MODIFY_ALL_END
 }
 
 FORM (NEW1_Eigen_Matrix_projectColumns, U"Eigen & Matrix: Project columns", U"Eigen & Matrix: Project...") {
@@ -3771,15 +3771,14 @@ DIRECT (NEW_Matrix_to_SVD) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (NEWTIMES2_Matrix_eigen_complex) {
-	LOOP {
-		iam_LOOP (Matrix);
+DIRECT (CONVERT_EACH_TO_MULTIPLE_Matrix_eigen_complex) {
+	CONVERT_EACH_TO_MULTIPLE (Matrix)
 		autoMatrix vectors, values;
 		Matrix_Eigen_complex (me, & vectors, & values);
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
-	}
-END_WITH_NEW_DATA }
+	CONVERT_EACH_TO_MULTIPLE_END
+}
 
 FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...") {
 	NATURAL (numberOfFeatures, U"Number of features", U"2")
@@ -3790,7 +3789,8 @@ FORM (NEW_Matrix_to_NMF_mu, U"Matrix: To NMF (m.u.)", U"Matrix: To NMF (m.u.)...
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
-	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	Melder_require (maximumNumberOfIterations >= 0,
+		U"The maximum number of iterations should not be negative.");
 	CONVERT_EACH_TO_ONE (Matrix)
 		autoNMF result = Matrix_to_NMF_mu (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mu")
@@ -3805,7 +3805,8 @@ FORM (NEW_Matrix_to_NMF_als, U"Matrix: To NMF (ALS)", U"Matrix: To NMF (ALS)..."
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
-	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	Melder_require (maximumNumberOfIterations >= 0,
+		U"The maximum number of iterations should not be negative.");
 	CONVERT_EACH_TO_ONE (Matrix)
 		autoNMF result = Matrix_to_NMF_als (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_als")
@@ -3820,7 +3821,8 @@ FORM (NEW_Matrix_to_NMF_is, U"Matrix: To NMF (IS)", U"Matrix: To NMF (IS)...") {
 	BOOLEAN (info, U"Info", 0)
 	OK
 DO
-	Melder_require (maximumNumberOfIterations >= 0, U"The maximum number of iterations should not e negative.");
+	Melder_require (maximumNumberOfIterations >= 0,
+		U"The maximum number of iterations should not be negative.");
 	CONVERT_EACH_TO_ONE (Matrix)
 		autoNMF result = Matrix_to_NMF_is (me, numberOfFeatures, maximumNumberOfIterations, tolx, told, initializationMethod, info);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_als")
@@ -8796,7 +8798,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classDiscriminant, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDiscriminant, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_Discriminant_invertEigenvector);
-	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
+	praat_addAction1 (classDiscriminant, 0, U"Align eigenvectors", nullptr, 1, MODIFY_ALL_Eigens_alignEigenvectors);
 
 	praat_addAction1 (classDiscriminant, 0, U"Extract -", nullptr, 0, 0);
 		praat_addAction1 (classDiscriminant, 0, U"Extract pooled within-groups SSCP", nullptr, 1, NEW_Discriminant_extractPooledWithinGroupsSSCP);
@@ -9062,7 +9064,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To NMF (m.u.)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_mu);
 	praat_addAction1 (classMatrix, 0, U"To NMF (ALS)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_als);
 	praat_addAction1 (classMatrix, 0, U"To NMF (IS)...", U"To SVD", praat_HIDDEN, NEW_Matrix_to_NMF_is);
-	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
+	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, CONVERT_EACH_TO_MULTIPLE_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);
@@ -9147,7 +9149,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1, REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees);
 	praat_addAction1 (classPCA, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classPCA, 1, U"Invert eigenvector...", nullptr, 1, MODIFY_PCA_invertEigenvector);
-	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, MODIFY_Eigens_alignEigenvectors);
+	praat_addAction1 (classPCA, 0, U"Align eigenvectors", nullptr, 1, MODIFY_ALL_Eigens_alignEigenvectors);
 	praat_addAction1 (classPCA, 0, U"Extract -", nullptr, 0, 0);
 		praat_addAction1 (classPCA, 0, U"Extract eigenvector...", nullptr, 1, NEW_PCA_extractEigenvector);
 		praat_addAction1 (classPCA, 0, U"Extract Eigen", nullptr, 1, NEW_PCA_extractEigen);

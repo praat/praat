@@ -72,9 +72,11 @@ FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris exa
 	INTEGER (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
 	OK
 DO
-	autoCollection result = FFNet_createIrisExample (numberOfUnits1, numberOfUnits2);
-	praat_new (result.move());
-END_WITH_NEW_DATA }
+	CREATE_MULTIPLE
+		autoCollection result = FFNet_createIrisExample (numberOfUnits1, numberOfUnits2);
+		praat_new (result.move());
+	CREATE_MULTIPLE_END
+}
 
 FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
 	WORD (name, U"Name", U"4-3")

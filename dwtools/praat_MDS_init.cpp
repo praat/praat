@@ -64,12 +64,14 @@ DO
 	CREATE_ONE_END (U"R")
 }
 
-FORM (NEWMANY_INDSCAL_createCarrollWishExample, U"Create INDSCAL Carroll & Wish example...", U"Create INDSCAL Carroll & Wish example...") {
+FORM (CREATE_MULTIPLE_INDSCAL_createCarrollWishExample, U"Create INDSCAL Carroll & Wish example...", U"Create INDSCAL Carroll & Wish example...") {
 	REAL (noiseStandardDeviation, U"Noise standard deviation", U"0.0")
 	OK
 DO
-	praat_new (INDSCAL_createCarrollWishExample (noiseStandardDeviation), U""); 
-END_WITH_NEW_DATA }
+	CREATE_MULTIPLE
+		praat_new (INDSCAL_createCarrollWishExample (noiseStandardDeviation), U"");
+	CREATE_MULTIPLE_END
+}
 
 FORM (NEW1_Configuration_create, U"Create Configuration", U"Create Configuration...") {
 	WORD (name, U"Name", U"uniform")
@@ -929,7 +931,7 @@ DIRECT (NEW_Distance_to_Dissimilarity) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
+FORM (CONVERT_ALL_TO_MULTIPLE_old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	LABEL (U"Minimization parameters")
@@ -938,16 +940,16 @@ FORM (NEWMANY_old_Distances_to_Configuration_indscal, U"Distance: To Configurati
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
 	OK
 DO
-	FIND_ALL (Distance)
+	CONVERT_ALL_TO_MULTIPLE (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
-	END_WITH_NEW_DATA
+	CONVERT_ALL_TO_MULTIPLE_END
 }
 
-FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
+FORM (CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	LABEL (U"Minimization parameters")
@@ -957,15 +959,15 @@ FORM (NEWMANY_Distances_to_Configuration_indscal, U"Distance: To Configuration (
 	BOOLEAN (wantSalience, U"Want Salience", true)
 	BOOLEAN (showProgressInfo, U"Show progress info", false)
 	OK
-DO_ALTERNATIVE (NEWMANY_old_Distances_to_Configuration_indscal)
-	FIND_ALL (Distance)
+DO_ALTERNATIVE (CONVERT_ALL_TO_MULTIPLE_old_Distances_to_Configuration_indscal)
+	CONVERT_ALL_TO_MULTIPLE (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr));
 		praat_new (configurationResult.move(), U"indscal");
 		if (wantSalience)
 			praat_new (salienceResult.move(), U"indscal");
-	END_WITH_NEW_DATA
+	CONVERT_ALL_TO_MULTIPLE_END
 }
 
 FORM (GRAPHICS_Distance_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
@@ -1286,7 +1288,7 @@ void praat_uvafon_MDS_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, HELP_MDS_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 1, NEW1_Dissimilarity_createLetterRExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create INDSCAL Carroll Wish example...", nullptr, 1, NEWMANY_INDSCAL_createCarrollWishExample);
+	praat_addMenuCommand (U"Objects", U"New", U"Create INDSCAL Carroll Wish example...", nullptr, 1, CREATE_MULTIPLE_INDSCAL_createCarrollWishExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Configuration...", nullptr, 1, NEW1_Configuration_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw splines...", nullptr, 1, GRAPHICS_drawSplines);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw MDS class relations", nullptr, 1, GRAPHICS_drawMDSClassRelations);
@@ -1367,7 +1369,7 @@ void praat_uvafon_MDS_init () {
 	praat_TableOfReal_extras (classDistance);
 	praat_addAction1 (classDistance, 0, U"Analyse -", nullptr, 0, nullptr);
 	praat_addAction1 (classDistance, 0, CONFIGURATION_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1, NEWMANY_Distances_to_Configuration_indscal);
+	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1, CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_indscal);
 	praat_addAction1 (classDistance, 0, U"-- linear scaling --", nullptr, 1, nullptr);
 	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1, NEWMANY_Distances_to_Configuration_ytl);
 	praat_addAction1 (classDistance, 0, U"To Configuration (torsca)...", nullptr, 1, NEW_Distance_to_Configuration_torsca);

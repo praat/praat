@@ -697,27 +697,21 @@ static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata public
 		Melder_flushError ();
 	}
 }
-DIRECT (WINDOW_TextGrid_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
+DIRECT (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be NULL
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
-FORM (WINDOW_TextGrid_viewAndEditWithCallback, U"TextGrid: View & Edit with callback", nullptr) {
+FORM (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback, U"TextGrid: View & Edit with callback", nullptr) {
 	SENTENCE (callbackText, U"Callback text", U"r1")
 	OK
 DO
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (TextGrid, Sound)   // Sound may be NULL
+	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be NULL
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, callbackText);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
@@ -1584,9 +1578,9 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classTextGrid, 1, U"Save as chronological text file...", nullptr, 0, SAVE_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 1,   U"Write to chronological text file...", nullptr, praat_HIDDEN, SAVE_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 0, U"TextGrid help", nullptr, 0, HELP_TextGrid_help);
-	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, WINDOW_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011, WINDOW_TextGrid_viewAndEdit);
-	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011, WINDOW_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1, U"View & Edit alone", nullptr, 0, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1,   U"View & Edit", U"*View & Edit alone", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction1 (classTextGrid, 1,   U"Edit", U"*View & Edit alone", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
 	praat_addAction1 (classTextGrid, 1, U"View & Edit with Sound?", nullptr, praat_ATTRACTIVE | praat_NO_API, HINT_TextGrid_Sound_viewAndEdit);
 	praat_addAction1 (classTextGrid, 0, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Draw...", nullptr, 1, GRAPHICS_TextGrid_draw);
@@ -1722,9 +1716,9 @@ praat_addAction1 (classTextGrid, 0, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (mel)...", nullptr, 1, GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, U"Speckle separately (erb)...", nullptr, 1, GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, U"To PitchTier...", nullptr, 0, NEW1_Pitch_TextTier_to_PitchTier);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_TextGrid_viewAndEdit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_TextGrid_viewAndEdit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, praat_HIDDEN, WINDOW_TextGrid_viewAndEditWithCallback);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, U"View & Edit with callback...", nullptr, praat_HIDDEN, EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Draw...", nullptr, 0, GRAPHICS_TextGrid_Sound_draw);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract -", nullptr, 0, nullptr);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, U"Extract all intervals...", nullptr, praat_DEPTH_1, NEW1_TextGrid_Sound_extractAllIntervals);

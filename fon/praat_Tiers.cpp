@@ -53,14 +53,10 @@ DIRECT (HELP_AmplitudeTier_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit an AmplitudeTier from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
+DIRECT (EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (an,AmplitudeTier, Sound)   // Sound may be null
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 DIRECT (HINT_AmplitudeTier_Sound_viewAndEdit) {
@@ -253,14 +249,10 @@ DIRECT (HELP_DurationTier_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_DurationTier_edit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit a DurationTier from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
+DIRECT (EDITOR_ONE_WITH_ONE_DurationTier_edit) {
+	EDITOR_ONE_WITH_ONE (a,DurationTier, Sound)   // Sound may be null
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 DIRECT (HINT_DurationTier_Sound_edit) {
@@ -612,14 +604,10 @@ DIRECT (HELP_IntensityTier_help) {
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_IntensityTier_viewAndEdit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit an IntensityTier from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
+DIRECT (EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (an,IntensityTier, Sound)   // Sound may be null
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 DIRECT (HINT_IntensityTier_Sound_viewAndEdit) {
@@ -797,14 +785,10 @@ DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_PitchTier_viewAndEdit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit a PitchTier from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
+DIRECT (EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (a,PitchTier, Sound)   // Sound may be null
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 FORM (MODIFY_PitchTier_formula, U"PitchTier: Formula", U"PitchTier: Formula...") {
@@ -1099,14 +1083,10 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (WINDOW_PointProcess_viewAndEdit) {
-	Melder_require (! theCurrentPraatApplication -> batch,
-		U"Cannot view or edit a PointProcess from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
+DIRECT (EDITOR_ONE_WITH_ONE_PointProcess_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (a,PointProcess, Sound)   // Sound may be null
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 FORM (MODIFY_PointProcess_fill, U"PointProcess: Fill", nullptr) {
@@ -1660,8 +1640,8 @@ void praat_Tiers_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create AmplitudeTier...", nullptr, 1, NEW1_AmplitudeTier_create);
 
 	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, HELP_AmplitudeTier_help);
-	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_AmplitudeTier_viewAndEdit);
-	praat_addAction1 (classAmplitudeTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_AmplitudeTier_viewAndEdit);
+	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit);
+	praat_addAction1 (classAmplitudeTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit);
 	praat_addAction1 (classAmplitudeTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_AmplitudeTier_Sound_viewAndEdit);
 	praat_addAction1 (classAmplitudeTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classAmplitudeTier);
@@ -1683,8 +1663,8 @@ void praat_Tiers_init () {
 		praat_addAction1 (classAmplitudeTier, 0, U"Down to TableOfReal", nullptr, 0, NEW_AmplitudeTier_downto_TableOfReal);
 
 	praat_addAction1 (classDurationTier, 0, U"DurationTier help", nullptr, 0, HELP_DurationTier_help);
-	praat_addAction1 (classDurationTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_DurationTier_edit);
 	praat_addAction1 (classDurationTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_DurationTier_Sound_edit);
 	praat_addAction1 (classDurationTier, 0, U"& Manipulation: Replace?", nullptr, 0, HINT_DurationTier_Manipulation_replace);
 	praat_addAction1 (classDurationTier, 0, U"Query -", nullptr, 0, nullptr);
@@ -1728,8 +1708,8 @@ void praat_Tiers_init () {
 		praat_addAction1 (classFormantTier, 0, U"Down to TableOfReal...", nullptr, 0, NEW_FormantTier_downto_TableOfReal);
 
 	praat_addAction1 (classIntensityTier, 0, U"IntensityTier help", nullptr, 0, HELP_IntensityTier_help);
-	praat_addAction1 (classIntensityTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_IntensityTier_viewAndEdit);
-	praat_addAction1 (classIntensityTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_IntensityTier_viewAndEdit);
+	praat_addAction1 (classIntensityTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit);
+	praat_addAction1 (classIntensityTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit);
 	praat_addAction1 (classIntensityTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_IntensityTier_Sound_viewAndEdit);
 	praat_addAction1 (classIntensityTier, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeTier_query_init (classIntensityTier);
@@ -1750,8 +1730,8 @@ void praat_Tiers_init () {
 	praat_addAction1 (classPitchTier, 1, U"Save as headerless spreadsheet file...", nullptr, 0, SAVE_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 1,   U"Write to headerless spreadsheet file...", U"*Save as headerless spreadsheet file...", praat_DEPRECATED_2011, SAVE_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 0, U"PitchTier help", nullptr, 0, HELP_PitchTier_help);
-	praat_addAction1 (classPitchTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_PitchTier_viewAndEdit);
-	praat_addAction1 (classPitchTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_PitchTier_viewAndEdit);
+	praat_addAction1 (classPitchTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit);
+	praat_addAction1 (classPitchTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit);
 	praat_addAction1 (classPitchTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_PitchTier_Sound_viewAndEdit);
 	praat_addAction1 (classPitchTier, 0, U"Play -", nullptr, 0, nullptr);
 	praat_addAction1 (classPitchTier, 0, U"Play pulses", nullptr, 1, PLAY_PitchTier_play);
@@ -1789,9 +1769,9 @@ void praat_Tiers_init () {
 		praat_addAction1 (classPitchTier, 0, U"Down to TableOfReal...", nullptr, 1, NEW_PitchTier_downto_TableOfReal);
 
 	praat_addAction1 (classPointProcess, 0, U"PointProcess help", nullptr, 0, HELP_PointProcess_help);
-	praat_addAction1 (classPointProcess, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_PointProcess_viewAndEdit);
-	praat_addAction1 (classPointProcess, 1,   U"View & Edit alone", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_PointProcess_viewAndEdit);
-	praat_addAction1 (classPointProcess, 1,   U"Edit alone", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_PointProcess_viewAndEdit);
+	praat_addAction1 (classPointProcess, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_PointProcess_viewAndEdit);
+	praat_addAction1 (classPointProcess, 1,   U"View & Edit alone", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_PointProcess_viewAndEdit);
+	praat_addAction1 (classPointProcess, 1,   U"Edit alone", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_PointProcess_viewAndEdit);
 	praat_addAction1 (classPointProcess, 0, U"View & Edit with Sound?", nullptr, praat_NO_API, HINT_PointProcess_Sound_viewAndEdit);
 	praat_addAction1 (classPointProcess, 0, U"Play -", nullptr, 0, nullptr);
 		praat_addAction1 (classPointProcess, 0, U"Play as pulse train", nullptr, 1, PLAY_PointProcess_play);
@@ -1855,25 +1835,25 @@ void praat_Tiers_init () {
 		praat_addAction1 (classSpectrumTier, 0, U"Down to Table", nullptr, 1, NEW_SpectrumTier_downto_Table);
 	praat_addAction1 (classSpectrumTier, 0, U"Remove points below...", nullptr, 0, MODIFY_SpectrumTier_removePointsBelow);
 
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_AmplitudeTier_viewAndEdit);
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_AmplitudeTier_viewAndEdit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit);
 	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, U"Multiply", nullptr, 0, NEW1_Sound_AmplitudeTier_multiply);
-	praat_addAction2 (classDurationTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_DurationTier_edit);
-	praat_addAction2 (classDurationTier, 1, classSound, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, WINDOW_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1,   U"Edit", nullptr, praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_DurationTier_edit);
 	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter", nullptr, 0, NEW1_Sound_FormantGrid_filter);
 	praat_addAction2 (classFormantGrid, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, NEW1_Sound_FormantGrid_filter_noscale);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter", nullptr, 0, NEW1_Sound_FormantTier_filter);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, U"Filter (no scale)", nullptr, 0, NEW1_Sound_FormantTier_filter_noscale);
 	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, NEW1_IntensityTier_PointProcess_to_IntensityTier);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_IntensityTier_viewAndEdit);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_IntensityTier_viewAndEdit);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, U"Multiply...", nullptr, 0, NEW1_Sound_IntensityTier_multiply);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1,   U"Multiply", U"*Multiply...", praat_DEPRECATED_2005, NEW1_Sound_IntensityTier_multiply_old);
 	praat_addAction2 (classPitchTier, 1, classPointProcess, 1, U"To PitchTier", nullptr, 0, NEW1_PitchTier_PointProcess_to_PitchTier);
-	praat_addAction2 (classPitchTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_PitchTier_viewAndEdit);
-	praat_addAction2 (classPitchTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_PitchTier_viewAndEdit);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_PointProcess_viewAndEdit);
-	praat_addAction2 (classPointProcess, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, WINDOW_PointProcess_viewAndEdit);
+	praat_addAction2 (classPitchTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit);
+	praat_addAction2 (classPitchTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_PitchTier_viewAndEdit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_PointProcess_viewAndEdit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_PointProcess_viewAndEdit);
 praat_addAction2 (classPointProcess, 1, classSound, 1, U"Query", nullptr, 0, nullptr);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (local)...", nullptr, 0, REAL_Point_Sound_getShimmer_local);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"Get shimmer (local_dB)...", nullptr, 0, REAL_Point_Sound_getShimmer_local_dB);

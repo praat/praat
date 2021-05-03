@@ -427,9 +427,14 @@ DIRECT (INFO_reportFontProperties) {
 
 /********** Callbacks of the Open menu. **********/
 
+/*
+	Note: readFromFile should not call praat_updateSelection(),
+	because praat_updateSelection() should be called after all files have been read,
+	not just the current one.
+*/
 static void readFromFile (MelderFile file) {
 	autoDaata object = Data_readFromFile (file);
-	if (! object) return;
+	Melder_assert (object);   // if the object was not created, there should have been an exception
 	if (Thing_isa (object.get(), classManPages) && ! Melder_batch) {
 		ManPages manPages = (ManPages) object.get();
 		ManPage firstPage = manPages -> pages.at [1];
@@ -456,8 +461,8 @@ FORM_READ (READMANY_Data_readFromFile, U"Read Object(s) from file", 0, true) {
 	readFromFile (file);
 	if (interpreter)
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_;
-	praat_updateSelection ();
-END_WITH_NEW_DATA }
+	END_WITH_NEW_DATA   // this calls praat_updateSelection(), after reading a single file; see also cb_openDocument
+}
 
 /********** Callbacks of the Save menu. **********/
 
@@ -607,14 +612,14 @@ static autoDaata scriptRecognizer (integer nread, const char *header, MelderFile
 
 static void cb_openDocument (MelderFile file) {
 	try {
-		readFromFile (file);
+		readFromFile (file);   // read a single file without calling praat_updateSelection()
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
 }
 static void cb_finishedOpeningDocuments () {
 	try {
-		praat_updateSelection ();
+		praat_updateSelection ();   // this finally calls praat_updateSelection(), after each separate file has been read
 	} catch (MelderError) {
 		Melder_flushError ();
 	}
