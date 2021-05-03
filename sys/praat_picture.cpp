@@ -552,7 +552,7 @@ END_WITH_NEW_DATA }
 #ifdef _WIN32
 	FORM_SAVE (GRAPHICS_Picture_writeToWindowsMetafile, U"Save as Windows metafile", nullptr, U"praat.emf") {
 		Picture_writeToWindowsMetafile (praat_picture.get(), file);
-	END }
+	END_WITH_NEW_DATA }
 #endif
 
 #if defined (_WIN32) || defined (macintosh)

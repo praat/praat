@@ -1112,6 +1112,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	TO_ONE__ (__VA_ARGS__) \
 	CONVERT_END__
 
+#define CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2)
+#define CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_MIDDLE(...)  \
+	TO_ONE__ (__VA_ARGS__)
+#define CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_END  \
+	CONVERT_END__
+
 #define CONVERT_ONE_WEAK_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2) \
 	FIRST_WEAK_BEGIN
@@ -1215,7 +1222,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define EDITOR_ONE_END  \
 	praat_installEditor (editor.get(), IOBJECT); \
 	editor.releaseToUser(); \
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
+
+#define EDITOR_ONE_WITH_ONE(indefiniteArticle,klas1,klas2)  \
+	if (theCurrentPraatApplication -> batch) \
+		Melder_throw (U"Cannot edit " #indefiniteArticle " " #klas1 " from batch."); \
+	FIND_ONE_AND_ONE_WITH_IOBJECT (klas1, klas2)
+#define EDITOR_ONE_WITH_ONE_END  \
+	praat_installEditor (editor.get(), IOBJECT); \
+	editor.releaseToUser(); \
+	END_NO_NEW_DATA
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 void praat_installEditor (Editor editor, int iobject);
@@ -1226,14 +1242,6 @@ void praat_installEditor (Editor editor, int iobject);
    so that a subsequent click on the "View & Edit" button will create a new editor;
    the dataChangedCallback will notify an open DataEditor with the same data,
    after that data will have changed.
-      Return value: normally 1, but 0 if 'editor' is null.
-   A typical calling sequence is:
-	DIRECT (WINDOW_Spectrogram_viewAndEdit) {
-		if (praat.batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
-		else WHERE (SELECTED)
-			praat_installEditor
-				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
-	END }
 */
 void praat_installEditor2 (Editor editor, int iobject1, int iobject2);
 void praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);

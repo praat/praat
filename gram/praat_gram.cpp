@@ -913,7 +913,8 @@ DO
 			Melder_flushError ();
 			// trickle down to save history
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END_WITH_NEW_DATA
 }
 
@@ -1472,7 +1473,8 @@ DO
 			Melder_flushError ();
 			// trickle down to save history
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END_WITH_NEW_DATA
 }
 
@@ -1680,13 +1682,10 @@ DO
 
 // MARK: View & Edit
 
-DIRECT (WINDOW_NoulliGrid_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a NoulliGrid from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (NoulliGrid, Sound)   // Sound may be null
+DIRECT (EDITOR_ONE_WITH_ONE_NoulliGrid_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (a,NoulliGrid, Sound)   // Sound may be null
 		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you, true);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	EDITOR_ONE_WITH_ONE_END
 }
 
 FORM (NUMVEC_NoulliGrid_getAverageProbabilities, U"NoulliGrid: Get average probabilities", nullptr) {
@@ -1890,11 +1889,11 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn (two phases)...", nullptr, 0, MODIFY_Net_PatternList_learn_twoPhases);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_Net_PatternList_to_ActivationList);
 
-	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);
+	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_NoulliGrid_viewAndEdit);
 	praat_addAction1 (classNoulliGrid, 0, U"Query -", nullptr, 0, nullptr);
 	praat_TimeFunction_query_init (classNoulliGrid);
 	praat_addAction1 (classNoulliGrid, 1, U"Get average probabilities...", nullptr, 1, NUMVEC_NoulliGrid_getAverageProbabilities);
-	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);
+	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_NoulliGrid_viewAndEdit);
 }
 
 /* End of file praat_gram.cpp */
