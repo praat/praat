@@ -624,12 +624,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
 
-#define CREATE_ONE
-#define CREATE_ONE_END(...) \
+#define CREATE_MULTIPLE
+#define CREATE_MULTIPLE_END \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	praat_new (result.move(), __VA_ARGS__); \
 	END_WITH_NEW_DATA
+
+#define CREATE_ONE
+#define CREATE_ONE_END(...) \
+	praat_new (result.move(), __VA_ARGS__); \
+	CREATE_MULTIPLE_END
 
 #define FIND_ONE(klas)  \
 	klas me = nullptr; \
@@ -1036,6 +1040,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	EACH_END__ \
 	MODIFY_END__
 
+#define MODIFY_ALL(klas) \
+	FIND_ALL (klas) \
+	FIRST_STRONG_BEGIN__
+#define MODIFY_ALL_END  \
+	FIRST_STRONG_END__ \
+	MODIFY_END__
+
 #define MODIFY_FIRST_OF_ONE_AND_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2) \
 	FIRST_STRONG_BEGIN__
@@ -1082,13 +1093,23 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	CONVERT
 */
 
-#define TO_ONE__(...)  \
+#define TO_MULTIPLE__  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+
+#define TO_ONE__(...)  \
 	praat_new (result.move(), __VA_ARGS__); \
+	TO_MULTIPLE__
 
 #define CONVERT_END__  \
 	END_WITH_NEW_DATA
+
+#define CONVERT_EACH_TO_MULTIPLE(klas)  \
+	EACH_BEGIN__ (klas)
+#define CONVERT_EACH_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
+	EACH_END__ \
+	CONVERT_END__
 
 #define CONVERT_EACH_TO_ONE(klas)  \
 	EACH_BEGIN__ (klas)
@@ -1106,17 +1127,40 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	EACH_END__ \
 	CONVERT_END__
 
+#define CONVERT_ONE_TO_MULTIPLE(klas)  \
+	FIND_ONE (klas)
+#define CONVERT_ONE_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
+	CONVERT_END__
+
+#define COMBINE_ALL_TO_ONE(klas)  \
+	FIND_ALL (klas)
+#define COMBINE_ALL_TO_ONE_END(...)  \
+	TO_ONE__ (__VA_ARGS__) \
+	CONVERT_END__
+
+#define COMBINE_ALL_LISTED_TO_ONE(klas,listClass)  \
+	FIND_ALL_LISTED (klas,listClass)
+#define COMBINE_ALL_LISTED_TO_ONE_END(...)  \
+	TO_ONE__ (__VA_ARGS__) \
+	CONVERT_END__
+
+#define CONVERT_ALL_TO_MULTIPLE(klas)  \
+	FIND_ALL(klas)
+#define CONVERT_ALL_TO_MULTIPLE_END \
+	TO_MULTIPLE__ \
+	CONVERT_END__
+
 #define CONVERT_ONE_AND_ONE_TO_ONE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
 #define CONVERT_ONE_AND_ONE_TO_ONE_END(...)  \
 	TO_ONE__ (__VA_ARGS__) \
 	CONVERT_END__
 
-#define CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE(klas1,klas2)  \
+#define CONVERT_ONE_AND_ONE_TO_MULTIPLE(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
-#define CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_MIDDLE(...)  \
-	TO_ONE__ (__VA_ARGS__)
-#define CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_END  \
+#define CONVERT_ONE_AND_ONE_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
 	CONVERT_END__
 
 #define CONVERT_ONE_WEAK_AND_ONE_TO_ONE(klas1,klas2)  \
@@ -1148,18 +1192,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE(klas1,klas2,klas3,klas4)  \
 	FIND_1_1_1_1 (klas1, klas2, klas3, klas4)
 #define CONVERT_ONE_AND_ONE_AND_ONE_AND_ONE_TO_ONE_END(...)  \
-	TO_ONE__ (__VA_ARGS__) \
-	CONVERT_END__
-
-#define COMBINE_ALL_TO_ONE(klas)  \
-	FIND_ALL (klas)
-#define COMBINE_ALL_TO_ONE_END(...)  \
-	TO_ONE__ (__VA_ARGS__) \
-	CONVERT_END__
-
-#define COMBINE_ALL_LISTED_TO_ONE(klas,listClass)  \
-	FIND_ALL_LISTED (klas,listClass)
-#define COMBINE_ALL_LISTED_TO_ONE_END(...)  \
 	TO_ONE__ (__VA_ARGS__) \
 	CONVERT_END__
 

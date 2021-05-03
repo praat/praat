@@ -175,14 +175,14 @@ FORM (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Sp
 	INTEGER (velocity3, U"Velocity 3", U"0")
 	OK
 DO
-	CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE (Artword, Speaker)
+	CONVERT_ONE_AND_ONE_TO_MULTIPLE (Artword, Speaker)
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
-		autoSound result = Artword_Speaker_to_Sound (me, you,
+		autoSound sound = Artword_Speaker_to_Sound (me, you,
 			samplingFrequency, oversamplingFactor,
 			& w1, width1, & w2, width2, & w3, width3,
 			& p1, pressure1, & p2, pressure2, & p3, pressure3,
 			& v1, velocity1, & v2, velocity2, & v3, velocity3);
-	CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_MIDDLE (my name.get(), U"_", your name.get())
+		praat_new (sound.move(), my name.get(), U"_", your name.get());
 		if (width1)
 			praat_new (w1.move(), U"width", width1);
 		if (width2)
@@ -201,7 +201,7 @@ DO
 			praat_new (v2.move(), U"velocity", velocity2);
 		if (velocity3)
 			praat_new (v3.move(), U"velocity", velocity3);
-	CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_END
+	CONVERT_ONE_AND_ONE_TO_MULTIPLE_END
 }
 
 DIRECT (MOVIE_Artword_Speaker_playMovie) {

@@ -192,16 +192,12 @@ KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude)
 #undef KlattGrid_INSTALL_TIER_EDITOR
 
 #define KlattGRID_EDIT_FORMANTGRID(Name,formantType)  \
-DIRECT (WINDOW_KlattGrid_edit##Name##FormantGrid) { \
-	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
-	LOOP { \
-		iam_LOOP (KlattGrid); \
+DIRECT (EDITOR_ONE_KlattGrid_edit##Name##FormantGrid) { \
+	EDITOR_ONE (a,KlattGrid) \
 		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
-		praat_installEditor (editor.get(), IOBJECT); \
-		editor.releaseToUser(); \
-	} \
-END_WITH_NEW_DATA }
+	EDITOR_ONE_END \
+}
 
 KlattGRID_EDIT_FORMANTGRID (Oral, kKlattGridFormantType::ORAL)
 KlattGRID_EDIT_FORMANTGRID (Nasal, kKlattGridFormantType::NASAL)
@@ -214,22 +210,18 @@ KlattGRID_EDIT_FORMANTGRID (Frication, kKlattGridFormantType::FRICATION)
 #undef KlattGRID_EDIT_FORMANTGRID
 
 #define KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER(Name,name,formantType)  \
-FORM (WINDOW_KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View & Edit " #name " formant amplitude tier", nullptr) { \
+FORM (EDITOR_ONE_KlattGrid_edit##Name##FormantAmplitudeTier, U"KlattGrid: View & Edit " #name " formant amplitude tier", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	OK \
 DO \
-	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
-	LOOP { \
-		iam_LOOP (KlattGrid); \
+	EDITOR_ONE (a,KlattGrid) \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
 		conststring32 id_and_name = Melder_cat (ID, U". ", KlattGrid_getFormantName (formantType), U" amplitude tier"); \
 		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, amp->at [formantNumber]); \
-		praat_installEditor (editor.get(), IOBJECT); \
-		editor.releaseToUser(); \
-	} \
-END_WITH_NEW_DATA }
+	EDITOR_ONE_END \
+}
 
 KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, kKlattGridFormantType::ORAL)
 KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, kKlattGridFormantType::NASAL)
@@ -933,20 +925,20 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"Edit breathiness amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editBreathinessAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, U"Edit filters -", nullptr, 0, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant grid", nullptr, 1, WINDOW_KlattGrid_editOralFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit nasal formant grid", nullptr, 1, WINDOW_KlattGrid_editNasalFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit nasal antiformant grid", nullptr, 1, WINDOW_KlattGrid_editNasalAntiFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant amplitude tier...", nullptr, 1, WINDOW_KlattGrid_editOralFormantAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit nasal formant amplitude tier...", nullptr, 1, WINDOW_KlattGrid_editNasalFormantAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editOralFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit nasal formant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editNasalFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit nasal antiformant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editNasalAntiFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit oral formant amplitude tier...", nullptr, 1, EDITOR_ONE_KlattGrid_editOralFormantAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit nasal formant amplitude tier...", nullptr, 1, EDITOR_ONE_KlattGrid_editNasalFormantAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"-- edit delta formant grid --", nullptr, 1, nullptr);
-	praat_addAction1 (classKlattGrid, 0, U"Edit delta formant grid", nullptr, 1, WINDOW_KlattGrid_editDeltaFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant grid", nullptr, 1, WINDOW_KlattGrid_editTrachealFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal antiformant grid", nullptr, 1, WINDOW_KlattGrid_editTrachealAntiFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant amplitude tier...", nullptr, 1, WINDOW_KlattGrid_editTrachealFormantAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit delta formant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editDeltaFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editTrachealFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal antiformant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editTrachealAntiFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit tracheal formant amplitude tier...", nullptr, 1, EDITOR_ONE_KlattGrid_editTrachealFormantAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"-- edit frication tiers --", nullptr, 1, nullptr);
 	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationAmplitudeTier);
-	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant grid", nullptr, 1, WINDOW_KlattGrid_editFricationFormantGrid);
-	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant amplitude tier...", nullptr, 1, WINDOW_KlattGrid_editFricationFormantAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant grid", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, U"Edit frication formant amplitude tier...", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationFormantAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"Edit frication bypass tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationBypassTier);
 	praat_addAction1 (classKlattGrid, 1, U"Edit frication amplitude tier", nullptr, 1, EDITOR_ONE_KlattGrid_editFricationAmplitudeTier);
 
