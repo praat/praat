@@ -340,18 +340,11 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (WINDOW_Categories_edit) {
-	if (theCurrentPraatApplication -> batch) {
-		Melder_throw (U"Cannot edit a Categories from batch.");
-	} else {
-		LOOP {
-			iam_LOOP (Categories);
-			autoCategoriesEditor editor = CategoriesEditor_create (my name.get(), me);
-			praat_installEditor (editor.get(), IOBJECT);
-			editor.releaseToUser();
-		}
-	}
-END_WITH_NEW_DATA }
+DIRECT (EDITOR_ONE_Categories_edit) {
+	EDITOR_ONE (a,Categories)
+		autoCategoriesEditor editor = CategoriesEditor_create (ID_AND_FULL_NAME, me);
+	EDITOR_ONE_END
+}
 
 DIRECT (INTEGER_Categories_getNumberOfCategories) {
 	QUERY_ONE_FOR_INTEGER (Categories)
@@ -8653,8 +8646,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, NEW1_BandFilterSpectrograms_crossCorrelate);
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, NEW1_BandFilterSpectrograms_convolve);
 
-	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, WINDOW_Categories_edit);
-	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, WINDOW_Categories_edit);
+	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, EDITOR_ONE_Categories_edit);
+	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, EDITOR_ONE_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, INTEGER_Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get number of differences", QUERY_BUTTON, 1, INTEGER_Categories_getNumberOfDifferences);

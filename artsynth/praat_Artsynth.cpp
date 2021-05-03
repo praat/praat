@@ -175,24 +175,33 @@ FORM (NEW1_Artword_Speaker_to_Sound, U"Articulatory synthesizer", U"Artword & Sp
 	INTEGER (velocity3, U"Velocity 3", U"0")
 	OK
 DO
-	FIND_ONE_AND_ONE (Artword, Speaker)
+	CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE (Artword, Speaker)
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 		autoSound result = Artword_Speaker_to_Sound (me, you,
 			samplingFrequency, oversamplingFactor,
 			& w1, width1, & w2, width2, & w3, width3,
 			& p1, pressure1, & p2, pressure2, & p3, pressure3,
 			& v1, velocity1, & v2, velocity2, & v3, velocity3);
-		praat_new (result.move(), my name.get(), U"_", your name.get());
-		if (width1) praat_new (w1.move(), U"width", width1);
-		if (width2) praat_new (w2.move(), U"width", width2);
-		if (width3) praat_new (w3.move(), U"width", width3);
-		if (pressure1) praat_new (p1.move(), U"pressure", pressure1);
-		if (pressure2) praat_new (p2.move(), U"pressure", pressure2);
-		if (pressure3) praat_new (p3.move(), U"pressure", pressure3);
-		if (velocity1) praat_new (v1.move(), U"velocity", velocity1);
-		if (velocity2) praat_new (v2.move(), U"velocity", velocity2);
-		if (velocity3) praat_new (v3.move(), U"velocity", velocity3);
-	END_WITH_NEW_DATA
+	CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_MIDDLE (my name.get(), U"_", your name.get())
+		if (width1)
+			praat_new (w1.move(), U"width", width1);
+		if (width2)
+			praat_new (w2.move(), U"width", width2);
+		if (width3)
+			praat_new (w3.move(), U"width", width3);
+		if (pressure1)
+			praat_new (p1.move(), U"pressure", pressure1);
+		if (pressure2)
+			praat_new (p2.move(), U"pressure", pressure2);
+		if (pressure3)
+			praat_new (p3.move(), U"pressure", pressure3);
+		if (velocity1)
+			praat_new (v1.move(), U"velocity", velocity1);
+		if (velocity2)
+			praat_new (v2.move(), U"velocity", velocity2);
+		if (velocity3)
+			praat_new (v3.move(), U"velocity", velocity3);
+	CONVERT_ONE_AND_ONE_TO_ONE_AND_MORE_END
 }
 
 DIRECT (MOVIE_Artword_Speaker_playMovie) {
