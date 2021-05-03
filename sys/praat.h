@@ -1233,7 +1233,7 @@ void praat_installEditor (Editor editor, int iobject);
 		else WHERE (SELECTED)
 			praat_installEditor
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
-	END }
+	END_WITH_NEW_DATA }
 */
 void praat_installEditor2 (Editor editor, int iobject1, int iobject2);
 void praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
