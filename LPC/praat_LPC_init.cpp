@@ -221,7 +221,7 @@ DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 DIRECT (EDITOR_ONE_WITH_ONE_Sound_FormantPath_createFormantPathEditor) {

@@ -2195,7 +2195,7 @@ DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot, use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
@@ -3545,36 +3545,37 @@ FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to ex
 		list. addItem_ref (me);
 	}
 	LongSounds_appendToExistingSoundFile (& list, file);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFFFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
 	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFF, file);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFCFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
 	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFC, file);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoWAVFile, U"LongSound: Save as WAV file", 0, U"wav") {
 	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_WAV, file);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoNeXtSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
 	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NEXT_SUN, file);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 FORM_SAVE (SAVE_LongSounds_saveAsStereoNISTFile, U"LongSound: Save as NIST file", 0, U"nist") {
 	FIND_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NIST, file);
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 /******************* Matrix **************************************************/
@@ -6306,7 +6307,8 @@ DO
 		SpeechSynthesizer_playText (me, text);
 	}
 	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
 	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
@@ -8278,7 +8280,8 @@ DIRECT (WINDOW_VowelEditor_create) {
 	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
 	Editor_setPublicationCallback (vowelEditor.get(), cb_publish);
 	vowelEditor.releaseToUser();
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, MelderFile file) {
 	return nread < 12 || header [0] != 6 || header [1] != 0 ?

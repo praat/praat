@@ -52,7 +52,7 @@ DO
 			Melder_throw (U"Cannot edit an Art from batch.");
 		for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
 			my art [i] = muscles [i];
-	END_WITH_NEW_DATA
+	END_NO_NEW_DATA
 }
 
 // MARK: - ARTWORD

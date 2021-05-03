@@ -59,10 +59,10 @@ static void setFont (kGraphics_font font) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updateFontMenu ();
 }
-DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font::TIMES);     END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font::HELVETICA); END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font::PALATINO);  END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END_WITH_NEW_DATA }
+DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font::TIMES);     END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font::HELVETICA); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font::PALATINO);  END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END_NO_NEW_DATA }
 
 /***** "Font" MENU: size part *****/
 
@@ -87,18 +87,19 @@ static void setFontSize (double fontSize) {
 		updateSizeMenu ();
 }
 
-DIRECT (GRAPHICS_10) { setFontSize (10.0); END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_12) { setFontSize (12.0); END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_14) { setFontSize (14.0); END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_18) { setFontSize (18.0); END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_24) { setFontSize (24.0); END_WITH_NEW_DATA }
+DIRECT (GRAPHICS_10) { setFontSize (10.0); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_12) { setFontSize (12.0); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_14) { setFontSize (14.0); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_18) { setFontSize (18.0); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_24) { setFontSize (24.0); END_NO_NEW_DATA }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
 	POSITIVE (fontSize, U"Font size (points)", U"10")
 OK
 	SET_REAL (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (fontSize);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 /*static void setFontSize_keepInnerViewport (int fontSize) {
 	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
@@ -141,7 +142,8 @@ DIRECT (GRAPHICS_MouseSelectsInnerViewport) {
 		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = true);
 	}
 	updateViewportMenu ();
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
@@ -151,7 +153,8 @@ DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 		Picture_setMouseSelectsInnerViewport (praat_picture.get(), praat_mouseSelectsInnerViewport = false);
 	}
 	updateViewportMenu ();
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
 	LABEL (U"The viewport is the selected rectangle in the Picture window.")
@@ -222,7 +225,8 @@ DO
 		U" y1NDC ", theCurrentPraatPicture -> y1NDC,
 		U" y2NDC ", theCurrentPraatPicture -> y2NDC
 	);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"Select outer viewport...") {
 	LABEL (U"The viewport is the selected rectangle in the Picture window.")
@@ -269,7 +273,8 @@ DO
 			theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC
 		);   // to ensure that Demo_x() updates
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
 	RADIOx (horizontalAlignment, U"Horizontal alignment", 2, 0)
@@ -294,7 +299,8 @@ DO
 		verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 /***** "Pen" MENU *****/
 
@@ -336,10 +342,10 @@ static void setLineType (int lineType) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
 }
-DIRECT (GRAPHICS_Solid_line)         { setLineType (Graphics_DRAWN);         END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END_WITH_NEW_DATA }
+DIRECT (GRAPHICS_Solid_line)         { setLineType (Graphics_DRAWN);         END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END_NO_NEW_DATA }
 
 FORM (GRAPHICS_Line_width, U"Praat picture: Line width", nullptr) {
 	POSITIVE (lineWidth, U"Line width", U"1.0")
@@ -351,7 +357,8 @@ DO
 		Graphics_setLineWidth (GRAPHICS, lineWidth);
 	}
 	theCurrentPraatPicture -> lineWidth = lineWidth;
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
 	POSITIVE (arrowSize, U"Arrow size", U"1.0")
@@ -363,7 +370,8 @@ DO
 		Graphics_setArrowSize (GRAPHICS, arrowSize);
 	}
 	theCurrentPraatPicture -> arrowSize = arrowSize;
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
 	LABEL (U"Here you determine the diameter (in millimetres)")
@@ -377,7 +385,9 @@ DO
 		Graphics_setSpeckleSize (GRAPHICS, speckleSize);
 	}
 	theCurrentPraatPicture -> speckleSize = speckleSize;
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
+
 
 static void setColour (MelderColour colour) {
 	{// scope
@@ -388,23 +398,23 @@ static void setColour (MelderColour colour) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
 }
-DIRECT (GRAPHICS_Black)   { setColour (Melder_BLACK);   END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_White)   { setColour (Melder_WHITE);   END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Red)     { setColour (Melder_RED);     END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Green)   { setColour (Melder_GREEN);   END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Blue)    { setColour (Melder_BLUE);    END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Yellow)  { setColour (Melder_YELLOW);  END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Cyan)    { setColour (Melder_CYAN);    END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Magenta) { setColour (Melder_MAGENTA); END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Maroon)  { setColour (Melder_MAROON);  END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Lime)    { setColour (Melder_LIME);    END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Navy)    { setColour (Melder_NAVY);    END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Teal)    { setColour (Melder_TEAL);    END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Purple)  { setColour (Melder_PURPLE);  END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Olive)   { setColour (Melder_OLIVE);   END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Pink)    { setColour (Melder_PINK);    END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Silver)  { setColour (Melder_SILVER);  END_WITH_NEW_DATA }
-DIRECT (GRAPHICS_Grey)    { setColour (Melder_GREY);    END_WITH_NEW_DATA }
+DIRECT (GRAPHICS_Black)   { setColour (Melder_BLACK);   END_NO_NEW_DATA }
+DIRECT (GRAPHICS_White)   { setColour (Melder_WHITE);   END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Red)     { setColour (Melder_RED);     END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Green)   { setColour (Melder_GREEN);   END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Blue)    { setColour (Melder_BLUE);    END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Yellow)  { setColour (Melder_YELLOW);  END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Cyan)    { setColour (Melder_CYAN);    END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Magenta) { setColour (Melder_MAGENTA); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Maroon)  { setColour (Melder_MAROON);  END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Lime)    { setColour (Melder_LIME);    END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Navy)    { setColour (Melder_NAVY);    END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Teal)    { setColour (Melder_TEAL);    END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Purple)  { setColour (Melder_PURPLE);  END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Olive)   { setColour (Melder_OLIVE);   END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Pink)    { setColour (Melder_PINK);    END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Silver)  { setColour (Melder_SILVER);  END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Grey)    { setColour (Melder_GREY);    END_NO_NEW_DATA }
 
 FORM (GRAPHICS_Colour, U"Praat picture: Colour", nullptr) {
 	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.0")
@@ -417,25 +427,30 @@ DO
 	theCurrentPraatPicture -> colour = colour;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 /***** "File" MENU *****/
 
 FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat picture file", nullptr, false) {
 	Picture_readFromPraatPictureFile (praat_picture.get(), file);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", nullptr, U"praat.eps") {
 	Picture_writeToEpsFile (praat_picture.get(), file, true, false);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (GRAPHICS_Picture_writeToFontlessEpsFile_xipa, U"Save as fontless EPS file", nullptr, U"praat.eps") {
 	Picture_writeToEpsFile (praat_picture.get(), file, false, false);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (GRAPHICS_Picture_writeToFontlessEpsFile_silipa, U"Save as fontless EPS file", nullptr, U"praat.eps") {
 	Picture_writeToEpsFile (praat_picture.get(), file, false, true);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (GRAPHICS_Picture_writeToPdfFile, U"Save as PDF file", nullptr, U"praat.pdf") {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -449,7 +464,8 @@ FORM_SAVE (GRAPHICS_Picture_writeToPdfFile, U"Save as PDF file", nullptr, U"praa
 			Melder_throw (U"Picture not written to PDF file ", file, U".");
 		}
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (GRAPHICS_Picture_writeToPngFile_300, U"Save as PNG file", nullptr, U"praat.png") {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -462,7 +478,8 @@ FORM_SAVE (GRAPHICS_Picture_writeToPngFile_300, U"Save as PNG file", nullptr, U"
 			Melder_throw (U"Picture not written to PNG file ", file, U".");
 		}
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 FORM_SAVE (GRAPHICS_Picture_writeToPngFile_600, U"Save as PNG file", nullptr, U"praat.png") {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -475,16 +492,20 @@ FORM_SAVE (GRAPHICS_Picture_writeToPngFile_600, U"Save as PNG file", nullptr, U"
 			Melder_throw (U"Picture not written to PNG file ", file, U".");
 		}
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
+
 
 FORM_SAVE (GRAPHICS_Picture_writeToPraatPictureFile, U"Save as Praat picture file", nullptr, U"praat.prapic") {
 	Picture_writeToPraatPictureFile (praat_picture.get(), file);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 #ifdef macintosh
 DIRECT (GRAPHICS_Page_setup) {
 	Printer_pageSetup ();
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 #endif
 
 FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript settings...") {
@@ -547,18 +568,22 @@ DO
 
 DIRECT (GRAPHICS_Print) {
 	Picture_print (praat_picture.get());
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 #ifdef _WIN32
 	FORM_SAVE (GRAPHICS_Picture_writeToWindowsMetafile, U"Save as Windows metafile", nullptr, U"praat.emf") {
 		Picture_writeToWindowsMetafile (praat_picture.get(), file);
-	END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
+
 #endif
 
 #if defined (_WIN32) || defined (macintosh)
 	DIRECT (GRAPHICS_Copy_picture_to_clipboard) {
 		Picture_copyToClipboard (praat_picture.get());
-	END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 #endif
 
 /***** "Edit" MENU *****/
@@ -566,7 +591,8 @@ END_WITH_NEW_DATA }
 DIRECT (GRAPHICS_Undo) {
 	Graphics_undoGroup (GRAPHICS);
 	Graphics_updateWs (GRAPHICS);
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 DIRECT (GRAPHICS_Erase_all) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
@@ -575,7 +601,8 @@ DIRECT (GRAPHICS_Erase_all) {
 		Graphics_clearRecording (GRAPHICS);
 		Graphics_clearWs (GRAPHICS);
 	}
-END_WITH_NEW_DATA }
+	END_NO_NEW_DATA
+}
 
 /***** "World" MENU *****/
 
