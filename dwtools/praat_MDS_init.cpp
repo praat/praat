@@ -1049,7 +1049,7 @@ DO
 FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
-	BOOLEAN (wantSalienceObject, U"Salience object", false)
+	BOOLEAN (wantSalience, U"Want Salience", false)
 	OK
 DO
 	FIND_ALL (Distance)
@@ -1058,7 +1058,7 @@ DO
 		Melder_require (list.size > 1, U"There should me more than one Distance selected.");
 		DistanceList_to_Configuration_ytl ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"ytl");
-		if (wantSalienceObject)
+		if (wantSalience)
 			praat_new (salienceResult.move(), U"ytl");
 	END_WITH_NEW_DATA
 }
