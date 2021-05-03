@@ -1044,7 +1044,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ALL (klas) \
 	FIRST_STRONG_BEGIN__
 #define MODIFY_ALL_END  \
-	FIRST_STRONG_END__ \
+	for (integer i = 1; i <= list.size; i ++) \
+		praat_dataChanged (list.at [i]); \
 	MODIFY_END__
 
 #define MODIFY_FIRST_OF_ONE_AND_ONE(klas1,klas2)  \
