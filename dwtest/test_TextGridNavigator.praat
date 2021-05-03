@@ -340,6 +340,7 @@ procedure test_timing
 	for .i to .numberOfMatches 
 		domains## = List domains: "Topic start to Topic end"
 	endfor
+	removeObject: .navigator
 	time2 = stopwatch
 	appendInfoLine: tab$, .numberOfCreations, " navigator creations + matches (3 tiers) took ", fixed$ (time1, 3), " s."
 	appendInfoLine:  tab$, .numberOfMatches, " navigator matches (3 tiers) took ", fixed$ (time2, 3), " s."
