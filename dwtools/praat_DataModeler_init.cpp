@@ -20,7 +20,6 @@
 #include "DataModeler.h"
 #include "Formant_extensions.h"
 #include "FormantModeler.h"
-#include "OptimalCeilingTierEditor.h"
 #include "Pitch.h"
 #include "Table_extensions.h"
 #include "TextGrid.h"
@@ -909,15 +908,6 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_outliers");
 }
 
-DIRECT (WINDOW_OptimalCeilingTier_edit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an OptimalCeilingTier from batch.");
-	FIND_ONE_AND_ONE_WITH_IOBJECT (OptimalCeilingTier, Sound)   // Sound may be null
-		autoOptimalCeilingTierEditor editor = OptimalCeilingTierEditor_create (ID_AND_FULL_NAME, me, you, true);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_WITH_NEW_DATA
-}
-
 /*************************** PitchModeler *************************************/
 /*
 FORM (NEW_Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
@@ -1090,7 +1080,7 @@ DO
 
 void praat_DataModeler_init ();
 void praat_DataModeler_init () {
-	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, nullptr);
+	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, nullptr);
 	
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1, NEW1_DataModeler_createSimple);
 
@@ -1200,8 +1190,6 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classFormantModeler, 0, U"To Table (z-scores)", 0, 0, NEW_FormantModeler_to_Table_zscores);
 	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0, NEW_FormantModeler_to_FormantModeler_processOutliers);
 	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, NEW_FormantModeler_extractDataModeler);
-
-	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, WINDOW_OptimalCeilingTier_edit);
 	
 	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, NEW_Pitch_to_PitchModeler);
 
