@@ -1154,12 +1154,12 @@ INTRO (U"Perform an @@INDSCAL analysis@ on the selected object(s) of type @Dista
 	"results in a @Configuration and a @Salience object.")
 MAN_END
 
-MAN_BEGIN (U"Distance: To Configuration (ytl)...", U"djmw", 19971124)
+MAN_BEGIN (U"Distance: To Configuration (ytl)...", U"djmw", 20210502)
 INTRO (U"A command that creates one @Configuration and one @Salience object "
 	"from a collection of one or more @Distance objects.")
-NORMAL (U"This Configuration and Salience object normally serve as starting points "
+NORMAL (U"These Configuration and Salience objects normally serve as starting points "
 	"for an @@individual difference scaling@ such as an @@INDSCAL analysis@.")
-NORMAL (U"The algorithm is ddescribedin @@Young, Takane & Lewyckyj (1978)@.")
+NORMAL (U"The algorithm is described in @@Young, Takane & Lewyckyj (1978)@.")
 MAN_END
 
 MAN_BEGIN (U"Distance: To ScalarProduct...", U"djmw", 20040407)
