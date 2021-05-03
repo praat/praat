@@ -2843,14 +2843,13 @@ DO
 }
 
 DIRECT (NEWTIMES2_Transition_eigen) {
-	LOOP {
-		iam_LOOP (Transition);
+	CONVERT_EACH_TO_MULTIPLE (Transition)
 		autoMatrix vectors, values;
 		Transition_eigen (me, & vectors, & values);
 		praat_new (vectors.move(), U"eigenvectors");
 		praat_new (values.move(), U"eigenvalues");
-	}
-END_WITH_NEW_DATA }
+	CONVERT_EACH_TO_MULTIPLE_END
+}
 
 DIRECT (HELP_Transition_help) {
 	HELP (U"Transition")
@@ -2900,7 +2899,7 @@ DIRECT (HELP_ScriptingTutorial) { HELP (U"Scripting") }
 DIRECT (HELP_DemoWindow) { HELP (U"Demo window") }
 DIRECT (HELP_Interoperability) { HELP (U"Interoperability") }
 DIRECT (HELP_Programming) { HELP (U"Programming with Praat") }
-DIRECT (HELP_SearchManual_Fon) { Melder_search (); END_WITH_NEW_DATA }
+DIRECT (HELP_SearchManual_Fon) { Melder_search (); END_NO_NEW_DATA }
 
 // MARK: - file recognizers
 

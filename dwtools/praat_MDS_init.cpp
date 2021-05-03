@@ -992,13 +992,13 @@ FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Con
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100 (= each repetition)")
 	OK
 DO
-	FIND_ONE_AND_ALL (Configuration, Distance)
+	CONVERT_ONE_AND_ALL_TO_MULTIPLE (Configuration, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_indscal ((DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
-	END_WITH_NEW_DATA
+	CONVERT_ONE_AND_ALL_TO_MULTIPLE_END
 }
 
 FORM (REAL_Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...") {
@@ -1039,30 +1039,31 @@ FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuratio
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	OK
 DO
-	FIND_ONE_AND_ONE_AND_ALL (Configuration, Salience, Distance)
+	CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE (Configuration, Salience, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
 		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
-	END_WITH_NEW_DATA
+	CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE_END
 }
 
-FORM (NEWMANY_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
+FORM (CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	BOOLEAN (wantSalienceObject, U"Salience object", false)
 	OK
 DO
-	FIND_ALL (Distance)
+	CONVERT_ALL_LISTED_TO_MULTIPLE (Distance, DistanceList)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
-		Melder_require (list.size > 1, U"There should me more than one Distance selected.");
-		DistanceList_to_Configuration_ytl ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
+		Melder_require (list->size > 1,
+			U"There should me more than one Distance selected.");
+		DistanceList_to_Configuration_ytl (list.get(), numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"ytl");
 		if (wantSalienceObject)
 			praat_new (salienceResult.move(), U"ytl");
-	END_WITH_NEW_DATA
+	CONVERT_ALL_LISTED_TO_MULTIPLE_END
 }
 
 FORM (NEW_Distance_to_Configuration_torsca, U"Distance: To Configuration (torsca)", U"") {
@@ -1371,7 +1372,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classDistance, 0, CONFIGURATION_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1, CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_indscal);
 	praat_addAction1 (classDistance, 0, U"-- linear scaling --", nullptr, 1, nullptr);
-	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1, NEWMANY_Distances_to_Configuration_ytl);
+	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1, CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_ytl);
 	praat_addAction1 (classDistance, 0, U"To Configuration (torsca)...", nullptr, 1, NEW_Distance_to_Configuration_torsca);
 	praat_addAction1 (classDistance, 0, U"To Dissimilarity", nullptr, 0, NEW_Distance_to_Dissimilarity);
 	praat_addAction1 (classDistance, 0, U"To ScalarProduct...", nullptr, 0, NEW_Distance_to_ScalarProduct);
