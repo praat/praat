@@ -36,7 +36,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Matrix_and_NMF.o Matrix_extensions.o \
 	Matrix_Categories.o MDS.o MultiSampledSpectrogram.o \
 	NavigationContext.o \
-	OptimalCeilingTier.o \
+	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
 	Pitch_extensions.o Polynomial_to_Spectrum.o \
 	Polygon_extensions.o Procrustes.o \
