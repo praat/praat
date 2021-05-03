@@ -18,6 +18,7 @@
 
 #include "Sound_and_ConstantQLogFSpectrogram.h"
 #include "Sound_and_Spectrum.h"
+#include "NUM2.h"
 
 void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape windowShape) {
 	const integer n = target.size;
@@ -101,7 +102,6 @@ autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
 	return result;
 }
 
-
 static void Spectrum_reuse (Spectrum me, double fmax, double nx) {
 	my xmin = 0.0;
 	my xmax = fmax;
@@ -111,24 +111,22 @@ static void Spectrum_reuse (Spectrum me, double fmax, double nx) {
 
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double fmax,integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor) {
 	try {
-		double nyquistFrequency = 0.5 / my dx;
+		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
 		if (fmax <= 0.0)
 			fmax = nyquistFrequency;
 		Melder_require (fmax  <= nyquistFrequency,
 			U"The maximum frequency should not exceed the nyquist frequency (", nyquistFrequency, U" Hz).");
+		Melder_require (lowestFrequency < fmax,
+			U"The lowest frequency should be smaller than the maximum frequency (", fmax, U" Hz).");
 		autoSpectrum spectrum;
+		Melder_clipLeft (1.0, & timeOversamplingFactor);
 		if (fmax < nyquistFrequency) {
 			autoSound resampled = Sound_resample (me, 2.0 * fmax, 50);
 			spectrum = Sound_to_Spectrum (resampled.get(), true);
-			nyquistFrequency = fmax;
 		} else {
 			spectrum = Sound_to_Spectrum (me, true);
 		}
-		Melder_require (lowestFrequency < nyquistFrequency,
-			U"The lowest frequency should be smaller than the maximum frequency.");
-		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, nyquistFrequency, numberOfBinsPerOctave, frequencyResolutionInBins);
-		if (timeOversamplingFactor < 1.0)
-			timeOversamplingFactor = 1.0; // default oversampling TODO
+		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, fmax, numberOfBinsPerOctave, frequencyResolutionInBins);
 		/*
 			Allocate space for the filter in the frequency domain only once. 
 			Each octave has twice the number of frequencies of the previous one which means that the 
@@ -143,20 +141,30 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 		autoVEC window = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 			const double log2_f = Sampled_indexToX (thee.get(), ifreq);
-			const double frequency =  thy v_myFrequencyToHertz (log2_f);
 			double flow = thy v_myFrequencyToHertz (log2_f - frequencyResolutionInBins * thy dx);
 			double fhigh = thy v_myFrequencyToHertz (log2_f + frequencyResolutionInBins * thy dx);
 			Melder_clipLeft (0.0, & flow);
 			Melder_clipRight (& fhigh, nyquistFrequency);
+			double filterBandwidth = fhigh - flow;
 			integer iflow, ifhigh;
-			const integer numberOfFilterSamples = Sampled_getWindowSamples (spectrum.get(), flow, fhigh, & iflow, & ifhigh);
-			Melder_require (numberOfFilterSamples > 1,
+			const integer numberOfSamplesFromSpectrum = Sampled_getWindowSamples (spectrum.get(), flow, fhigh, & iflow, & ifhigh);
+			Melder_require (numberOfSamplesFromSpectrum > 1,
 				U"The number of spectral filter values should be larger than 1.");
-			Spectrum_reuse (filter.get(), fhigh - flow, numberOfFilterSamples);
-			filter -> z.part (1, 2, 1, numberOfFilterSamples)  <<=  spectrum -> z.part (1, 2, iflow, ifhigh);
-			window.resize (numberOfFilterSamples);
+			integer numberOfFilterValues = numberOfSamplesFromSpectrum;
+			if (timeOversamplingFactor > 1.0) {
+				filterBandwidth *= timeOversamplingFactor;
+				const integer numOversampled = Melder_iroundUp (timeOversamplingFactor * numberOfSamplesFromSpectrum);
+				numberOfFilterValues = 2;
+				while (numberOfFilterValues < numOversampled)
+					numberOfFilterValues *= 2;
+			}
+			Spectrum_reuse (filter.get(), filterBandwidth, numberOfFilterValues);
+			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  spectrum -> z.part (1, 2, iflow, ifhigh);
+			window.resize (numberOfSamplesFromSpectrum);
 			windowShape_VEC_preallocated (window.get(), kSound_windowShape :: HANNING);
-			filter -> z.part (1, 2, 1, numberOfFilterSamples)  *=  window.get();
+			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  *=  window.get();
+			if (numberOfFilterValues > numberOfSamplesFromSpectrum)
+				filter -> z.part (1, 2, numberOfSamplesFromSpectrum + 1, numberOfFilterValues)  <<=  0.0;
 			autoSound filtered = Spectrum_to_Sound (filter.get());
 			autoFrequencyBin frequencyBin = FrequencyBin_create (my xmin, my xmax, filtered -> nx, filtered -> dx, filtered -> x1);
 			frequencyBin -> z.row (1)  <<=  filtered -> z.row (1);
@@ -189,7 +197,6 @@ autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
 			reusable -> nx = frequencyBin -> nx;
 			autoSpectrum filter = Sound_to_Spectrum (reusable.get(), false);
 			const double log2_f = Sampled_indexToX (me, ifreq);
-			const double frequency =  my v_myFrequencyToHertz (log2_f);
 			double flow = my v_myFrequencyToHertz (log2_f - my frequencyResolutionInBins * my dx);
 			double fhigh = my v_myFrequencyToHertz (log2_f + my frequencyResolutionInBins * my dx);
 			Melder_clipLeft (0.0, & flow);
