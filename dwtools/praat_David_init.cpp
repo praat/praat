@@ -5295,22 +5295,21 @@ DIRECT (NEW_Polynomials_multiply) {
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_x_", your name.get())
 }
 
-FORM (NEWMANY_Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...") {
+FORM (CONVERT_TWO_TO_MULTIPLE__Polynomials_divide, U"Polynomials: Divide", U"Polynomials: Divide...") {
 	BOOLEAN (wantQuotient, U"Want quotient", true)
 	BOOLEAN (wantRemainder, U"Want remainder", true)
 	OK
 DO
-	Melder_require (wantQuotient || wantRemainder, U"You should select \"Want quotient\", \"Want remainder\", or both.");
-	FIND_TWO (Polynomial)
-		autoPolynomial aq, ar;
-		Polynomials_divide (me, you, wantQuotient ? & aq : nullptr, wantRemainder ? & ar : nullptr);
-		if (wantQuotient) {
-			praat_new (aq.move(), my name.get(), U"_q");
-		}
-		if (wantRemainder) {
-			praat_new (ar.move(), my name.get(), U"_r");
-		}
-	END_WITH_NEW_DATA
+	Melder_require (wantQuotient || wantRemainder,
+		U"You should select \"Want quotient\", \"Want remainder\", or both.");
+	CONVERT_TWO_TO_MULTIPLE (Polynomial)
+		autoPolynomial quotient, remainder;
+		Polynomials_divide (me, you, wantQuotient ? & quotient : nullptr, wantRemainder ? & remainder : nullptr);
+		if (wantQuotient)
+			praat_new (quotient.move(), my name.get(), U"_q");
+		if (wantRemainder)
+			praat_new (remainder.move(), my name.get(), U"_r");
+	CONVERT_TWO_TO_MULTIPLE_END
 }
 
 /********************* Roots ******************************/
@@ -9246,7 +9245,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPolynomial, 0, U"To Polynomial (primitive)...", nullptr, 0, NEW_Polynomial_getPrimitive);
 	praat_addAction1 (classPolynomial, 0, U"Scale x...", nullptr, 0, NEW_Polynomial_scaleX);
 	praat_addAction1 (classPolynomial, 2, U"Multiply", nullptr, 0, NEW_Polynomials_multiply);
-	praat_addAction1 (classPolynomial, 2, U"Divide...", nullptr, 0, NEWMANY_Polynomials_divide);
+	praat_addAction1 (classPolynomial, 2, U"Divide...", nullptr, 0, CONVERT_TWO_TO_MULTIPLE__Polynomials_divide);
 
 	praat_addAction1 (classRoots, 1, U"Roots help", nullptr, 0, HELP_Roots_help);
 	praat_addAction1 (classRoots, 1, U"Draw...", nullptr, 0, GRAPHICS_Roots_draw);

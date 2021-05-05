@@ -1280,6 +1280,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIRST_WEAK_END \
 	CONVERT_END__
 
+#define CONVERT_TWO_TO_MULTIPLE(klas)  \
+	FIND_TWO (klas)
+#define CONVERT_TWO_TO_MULTIPLE_END  \
+	TO_MULTIPLE__ \
+	CONVERT_END__
+
 #define CONVERT_TWO_TO_ONE(klas)  \
 	FIND_TWO (klas)
 #define CONVERT_TWO_TO_ONE_END(...)  \
