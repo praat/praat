@@ -804,6 +804,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	PLAY_END__
 
 /*
+	RECORD
+*/
+
+#define RECORD_ONE
+#define RECORD_ONE_END(...)  \
+	praat_new (result.move(), __VA_ARGS__); \
+	END_WITH_NEW_DATA
+
+/*
 	DRAW
 */
 
@@ -1350,12 +1359,16 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	READ
 */
 
-#define READ_ONE
-#define READ_ONE_END \
+#define READ_MULTIPLE
+#define READ_MULTIPLE_END \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
-	praat_newWithFile (result.move(), file, MelderFile_name (file)); \
 	END_WITH_NEW_DATA
+
+#define READ_ONE
+#define READ_ONE_END \
+	praat_newWithFile (result.move(), file, MelderFile_name (file)); \
+	READ_MULTIPLE_END
 
 /*
 	SAVE
@@ -1397,6 +1410,23 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	praat_installEditor (editor.get(), IOBJECT); \
 	editor.releaseToUser(); \
 	END_NO_NEW_DATA
+
+/*
+	CREATION_WINDOW
+*/
+
+#define SINGLETON_CREATION_WINDOW(indefiniteArticle,klas)  \
+	if (theCurrentPraatApplication -> batch) \
+		Melder_throw (U"Cannot create " #indefiniteArticle " " #klas " in a window from batch.");
+#define SINGLETON_CREATION_WINDOW_END  \
+	END_NO_NEW_DATA   // no new data *yet*, because the window is asynchronous
+
+#define CREATION_WINDOW(indefiniteArticle,klas)  \
+	if (theCurrentPraatApplication -> batch) \
+		Melder_throw (U"Cannot create " #indefiniteArticle " " #klas " in a window from batch.");
+#define CREATION_WINDOW_END  \
+	creationWindow.releaseToUser(); \
+	END_NO_NEW_DATA   // no new data *yet*, because the window is asynchronous
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 void praat_installEditor (Editor editor, int iobject);
