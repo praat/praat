@@ -788,9 +788,17 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 #define PLAY_EACH(klas)  \
+	int _numberOfSelectedSounds = 0; \
+	LOOP { \
+		_numberOfSelectedSounds ++; \
+	} \
+	if (_numberOfSelectedSounds > 1) \
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE); \
 	EACH_BEGIN__ (klas)
 #define PLAY_EACH_END  \
 	EACH_END__ \
+	if (_numberOfSelectedSounds > 1) \
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS); \
 	PLAY_END__
 
 #define PLAY_ONE(klas)  \
