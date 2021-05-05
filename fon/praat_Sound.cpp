@@ -1156,25 +1156,10 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (PLAY_Sound_play) {
-	int n = 0;
-	LOOP {
-		n ++;
-	}
-	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
-		LOOP {
-			iam_LOOP (Sound);
-			Sound_play (me, nullptr, nullptr);
-		}
-	} else {
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
-		LOOP {
-			iam_LOOP (Sound);
-			Sound_play (me, nullptr, nullptr);   // BUG: exception-safe?
-		}
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
-	}
-	END_NO_NEW_DATA
+DIRECT (PLAY_EACH__Sound_play) {
+	PLAY_EACH (Sound)
+		Sound_play (me, nullptr, nullptr);   // BUG: exception-safe?
+	PLAY_EACH_END
 }
 
 FORM (MODIFY_Sound_preemphasizeInplace, U"Sound: Pre-emphasize (in-place)", U"Sound: Pre-emphasize (in-place)...") {
@@ -2361,7 +2346,8 @@ void praat_Sound_init () {
 	praat_addAction1 (classSound, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, EDITOR_ONE_Sound_viewAndEdit);
 	praat_addAction1 (classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, EDITOR_ONE_Sound_viewAndEdit);
 	praat_addAction1 (classSound, 1,   U"Open", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, EDITOR_ONE_Sound_viewAndEdit);
-	praat_addAction1 (classSound, 0, U"Play", nullptr, 0, PLAY_Sound_play);
+	praat_addAction1 (classSound, 0, U"Play", nullptr, 0,
+			PLAY_EACH__Sound_play);
 	praat_addAction1 (classSound, 1, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Draw...", nullptr, 1, GRAPHICS_Sound_draw);
 	praat_addAction1 (classSound, 1, U"Query -", nullptr, 0, nullptr);
