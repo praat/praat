@@ -4498,26 +4498,23 @@ NORMAL (U"The effectiveness of the %%Minimum silent interval duration% and %%Min
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
 
-MAN_BEGIN (U"ConstantQLogFSpectrogram", U"djmw", 20210505)
-INTRO (U"A ##ConstantQLogFSpectrogram# is a time-frequency representatioon of a sound that deviates from a traditional @Spectrogram in two important ways. ")
-LIST_ITEM (U"1. The frequency scale is logarithmic which means that the distances between successive "
-	"frequencies are equal on a logarithmic scale.")
-LIST_ITEM (U"2. The frequency analysis is performed with filters that have a constant quality factor which essencially "
-	"means that we are using the same number of periods in the analysis of each frequency bin and this results in longer "
-	"analysis windows at low frequencies and shorter analysis windows at higher frequencies. As a result the sampling of each "
-	"frequency bin is different, hence it is %%multi-sampled%.")
+MAN_BEGIN (U"ConstantQLogFSpectrogram", U"djmw", 20210425)
+INTRO (U"A ##ConstantQLogFSpectrogram# is a time-frequency representatioon of a sound where the distances between successive "
+	"frequencies are equal on a logarithmic scale. This is not the only difference with a traditional spectrogram because the "
+	"frequency analysis was performed with a different window length for each frequency bin. Low frequencies were analysed "
+	"with long analysis windows and high frequencies were analysed with short windows. As a result the sampling of each "
+	"frequency bin is different, hence it is %%multi-sampled% in the time domain.")
 NORMAL (U"One of the characteristics of a ##ConstantQLogFSpectrogram#'s representation is that the number of "
-	"frequency bins in an octave is constant. If, for example, the number of frequency bins per octave is 24 this "
-	"means that the number "
+	"frequency bins in an octave is constant. If, for example, the number of frequency bins per octave is 24 this means that the number "
 	"of frequency bins in the interval from 100 to 200 Hz equals 24 and that the number of frequency bins in the intervals "
 	"from 200\\--400 Hz, 400\\--800 Hz, 800\\--1600 Hz, 1600\\--3200 Hz, etc. also equal 24. This behaviour mimics the "
 	"layout of the frequency sensitivity of the human basilar membrane much better than a traditional @@Spectrogram@.")
 NORMAL (U"The frequency of the %k^^th^ frequency bin can be calculated as:")
 EQUATION (U"%f__%k_ = %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%). ")
-NORMAL (U"A big advantage of the ##ConstantQLogFSpectrogram# over a traditional #Spectrogram is its invertability: we can create the original sound back from it. This provides a way to manipulate a sound in the frequency domain. ")
+NORMAL (U"Another advantage of the representation that we use is its invertability: we can create the original sound back from it. ")
 MAN_END
 
-MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20210505)
+MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20210425)
 INTRO (U"A command that creates a @@ConstantQLogFSpectrogram@ from a selected @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Lowest frequency (Hz)")
@@ -4527,24 +4524,20 @@ DEFINITION (U"defines the lowest frequency about which information will be obtai
 TAG (U"##Maximum frequency (Hz)")
 DEFINITION (U"The maximum frequency you are interested in. The default will be the Nyquist frequency of the sound. ")
 TAG (U"##Number of frequecy bins / octave")
-DEFINITION (U"determines the frequency division as the number of frequency bins that will be used for each octave. "
-	"For the analysis of music generally a multiple of 12 will be used.")
+DEFINITION (U"The number of frequency bins that will be used for each octave. For the analysis of music generally a multiple "
+	"of 12 will be used.")
 TAG (U"##Frequency resolution (bins)")
-DEFINITION (U"determines, together with the number of frequency bins per octave, the %%quality factor% used in the analysis."
-	"The quality factor Q of a filter is defined as its "
-	"central frequency divided by its bandwidth. The bandwith of a filter, i.e its domain, will be be set as twice the "
-	"frequency resolution in bins. Therefore, the corresponding quality factor will be: ")
+DEFINITION (U"defines the quality factor used for the analysis. The width of the filter (see below) applied in the frequency domain will then be twice this number. Taking the bandwidth of the filter to equal the width of the filter this definition of bandwidth gives the corresponding quality factor as:")
 EQUATION (U"%%qualityFactor% = 1 / (2^^(%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)^ - 2^^(\\--%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)^). ")
-DEFINITION (U"For a frequency resolution of 1 bin and a frequency division of 24 frequency bins per octave we get a "
-	"quality factor of 14.26, for a frequency division of 48 bins per octave we get a quality factor of 34.6. "
-	"THe higher the quality factor the more frequency selective the filters will be and consequently, in the time domain, the longer their analysis window has to be. Consequently, a  (Strictly speaking, the bandwidth of a filter is defined as the width of the filter at "
-	"an intensity -3 dB below its top. The actual bandwidth depends on the form of the used filter function.)")
+DEFINITION (U"For a frequency resolution of 1 bin and 24 frequency bins per octave we then get a quality factor of 14.26. "
+	"Strictly speaking, the bandwidth is defined as the width of the filter at and intensity -3 dB below its top. The actual "
+	"bandwidth would then depend on the form of the filter function.")
 TAG (U"##Time oversampling factor")
-DEFINITION (U"determines the number of frames in each frequency bin. Any number larger than 1 will increase the number of frames in a bin by approximately this factor.  ")
+DEFINITION (U"")
 ENTRY (U"Algorithm")
 NORMAL (U"The algorithm for constructing the invertable constant-Q transform is described in @@Velasco et al. (2011)@ and in @@Holighaus et al. (2013)@. ")
-NORMAL (U"First the sound is transformed to the frequency domain with an FFT. The filtering is then performed in the frequency "
-	"domain. For the %k^^th^ frequency bin the frequencies between %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%)^ and  %%lowestFrequency%\\.c2^^(%k+1)/%%numberOfFrequencyBinsPerOctave%)^ are transformed back with an inverse @FFT. The resulting coefficients are copied to the frames of the frequency bin. Because of the logarithmic frequency scale, the number of coefficients in a frequency bin will increase with bin number. ")
+NORMAL (U"First the sound is transformed to the frequency domain with an FFT. The filtering is than performed in the frequency "
+	"domain. For the %k^^th^ frequency bin the frequencies between %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%) and  %%lowestFrequency%\\.c2^^(%k+1)/%%numberOfFrequencyBinsPerOctave%) are transformed back with an inverse FFT. The resulting coefficients are copied to this frequency bin. Because of the constant bandwidth on a logarithmic scale the number of frequencies for each frequency bin may differ.  ")
 NORMAL (U"")
 MAN_END
 
