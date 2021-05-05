@@ -869,7 +869,12 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define FOR_INTEGER__(...)  \
 	if (interpreter) \
 		interpreter -> returnType = kInterpreter_ReturnType::INTEGER_; \
-	Melder_information (result, __VA_ARGS__);
+	Melder_information (double (result), __VA_ARGS__);
+
+#define FOR_BOOLEAN__(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::BOOLEAN_; \
+	Melder_information (double (result), __VA_ARGS__);
 
 #define FOR_COMPLEX__(...)  \
 	if (interpreter) \
@@ -888,16 +893,45 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FOR_REAL__ (__VA_ARGS__) \
 	QUERY_END__
 
+#define QUERY_WEAK_FOR_REAL_END__(...)  \
+	FOR_REAL__ (__VA_ARGS__) \
+	FIRST_WEAK_END \
+	QUERY_END__
+
 #define QUERY_FOR_INTEGER_END__(...)  \
 	FOR_INTEGER__ (__VA_ARGS__) \
+	QUERY_END__
+
+#define QUERY_WEAK_FOR_INTEGER_END__(...)  \
+	FOR_INTEGER__ (__VA_ARGS__) \
+	FIRST_WEAK_END \
+	QUERY_END__
+
+#define QUERY_FOR_BOOLEAN_END__(...)  \
+	FOR_BOOLEAN__ (__VA_ARGS__) \
+	QUERY_END__
+
+#define QUERY_WEAK_FOR_BOOLEAN_END__(...)  \
+	FOR_BOOLEAN__ (__VA_ARGS__) \
+	FIRST_WEAK_END \
 	QUERY_END__
 
 #define QUERY_FOR_COMPLEX_END__(...)  \
 	FOR_COMPLEX__ (__VA_ARGS__) \
 	QUERY_END__
 
+#define QUERY_WEAK_FOR_COMPLEX_END__(...)  \
+	FOR_COMPLEX__ (__VA_ARGS__) \
+	FIRST_WEAK_END \
+	QUERY_END__
+
 #define QUERY_FOR_STRING_END__  \
 	FOR_STRING__ \
+	QUERY_END__
+
+#define QUERY_WEAK_FOR_STRING_END__  \
+	FOR_STRING__ \
+	FIRST_WEAK_END \
 	QUERY_END__
 
 #define QUERY_GRAPHICS_FOR_REAL
@@ -909,10 +943,66 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define QUERY_ONE_FOR_REAL_END(...)  \
 	QUERY_FOR_REAL_END__ (__VA_ARGS__)
 
+#define QUERY_ONE_WEAK_FOR_REAL(klas)  \
+	FIND_ONE (klas) \
+	FIRST_WEAK_BEGIN
+#define QUERY_ONE_WEAK_FOR_REAL_END(...)  \
+	QUERY_WEAK_FOR_REAL_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_FOR_INTEGER(klas)  \
+	FIND_ONE (klas)
+#define QUERY_ONE_FOR_INTEGER_END(...)  \
+	QUERY_FOR_INTEGER_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_WEAK_FOR_INTEGER(klas)  \
+	FIND_ONE (klas) \
+	FIRST_WEAK_BEGIN
+#define QUERY_ONE_WEAK_FOR_INTEGER_END(...)  \
+	QUERY_WEAK_FOR_INTEGER_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_FOR_BOOLEAN(klas)  \
+	FIND_ONE (klas)
+#define QUERY_ONE_FOR_BOOLEAN_END(...)  \
+	QUERY_FOR_BOOLEAN_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_WEAK_FOR_BOOLEAN(klas)  \
+	FIND_ONE (klas) \
+	FIRST_WEAK_BEGIN
+#define QUERY_ONE_WEAK_FOR_BOOLEAN_END(...)  \
+	QUERY_WEAK_FOR_BOOLEAN_END__ (__VA_ARGS__)
+
 #define QUERY_ONE_AND_ONE_FOR_REAL(klas1,klas2)  \
 	FIND_ONE_AND_ONE (klas1, klas2)
 #define QUERY_ONE_AND_ONE_FOR_REAL_END(...)  \
 	QUERY_FOR_REAL_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_WEAK_AND_ONE_FOR_REAL(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2) \
+	FIRST_WEAK_BEGIN
+#define QUERY_ONE_WEAK_AND_ONE_FOR_REAL_END(...)  \
+	QUERY_WEAK_FOR_REAL_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_AND_ONE_FOR_INTEGER(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2)
+#define QUERY_ONE_AND_ONE_FOR_INTEGER_END(...)  \
+	QUERY_FOR_INTEGER_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_WEAK_AND_ONE_FOR_INTEGER(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2) \
+	FIRST_WEAK_BEGIN
+#define QUERY_ONE_WEAK_AND_ONE_FOR_INTEGER_END(...)  \
+	QUERY_WEAK_FOR_INTEGER_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_AND_ONE_FOR_BOOLEAN(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2)
+#define QUERY_ONE_AND_ONE_FOR_BOOLEAN_END(...)  \
+	QUERY_FOR_BOOLEAN_END__ (__VA_ARGS__)
+
+#define QUERY_ONE_WEAK_AND_ONE_FOR_BOOLEAN(klas1,klas2)  \
+	FIND_ONE_AND_ONE (klas1, klas2) \
+	FIRST_WEAK_BEGIN
+#define QUERY_ONE_WEAK_AND_ONE_FOR_BOOLEAN_END(...)  \
+	QUERY_WEAK_FOR_BOOLEAN_END__ (__VA_ARGS__)
 
 #define QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL(klas1,klas2,klas3)  \
 	FIND_ONE_AND_ONE_AND_ONE (klas1, klas2, klas3)
@@ -939,11 +1029,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END(...)  \
 	QUERY_FOR_REAL_END__ (__VA_ARGS__)
 
-#define QUERY_ONE_FOR_INTEGER(klas)  \
-	FIND_ONE (klas)
-#define QUERY_ONE_FOR_INTEGER_END(...)  \
-	QUERY_FOR_INTEGER_END__ (__VA_ARGS__)
-
 #define QUERY_NONE_FOR_COMPLEX
 #define QUERY_NONE_FOR_COMPLEX_END(...)  \
 	QUERY_FOR_COMPLEX_END__ (__VA_ARGS__)
@@ -962,8 +1047,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIND_ONE (klas) \
 	FIRST_WEAK_BEGIN
 #define QUERY_ONE_WEAK_FOR_STRING_END  \
-	FIRST_WEAK_END \
-	QUERY_FOR_STRING_END__
+	QUERY_WEAK_FOR_STRING_END__
 
 #define QUERY_ONE_FOR_REAL_VECTOR(klas)  \
 	FIND_ONE (klas)
@@ -1065,6 +1149,19 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	FIRST_WEAK_BEGIN__
 #define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_END  \
 	FIRST_WEAK_END__ \
+	MODIFY_END__
+
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_WITH_HISTORY(klas1,klas2,historyKlas)  \
+	FIND_ONE_AND_ONE (klas1, klas2) \
+	auto##historyKlas history; \
+	try {
+#define MODIFY_FIRST_OF_ONE_WEAK_AND_ONE_WITH_HISTORY_END  \
+	} catch (MelderError) { \
+		praat_dataChanged (me);   /* e.g. in case of partial learning */ \
+		Melder_flushError ();   /* trickle down to save history */ \
+	} \
+	if (history) \
+		praat_new (history.move(), my name.get()); \
 	MODIFY_END__
 
 #define MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE(klas1,klas2,klas3)  \
