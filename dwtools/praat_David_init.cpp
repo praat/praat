@@ -8273,13 +8273,11 @@ static void cb_publish (Editor /*editor*/, autoDaata publish) {
 	}
 }
 
-DIRECT (WINDOW_VowelEditor_create) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot edit from batch.");
-	autoVowelEditor vowelEditor = VowelEditor_create (U"VowelEditor", nullptr);
-	Editor_setPublicationCallback (vowelEditor.get(), cb_publish);
-	vowelEditor.releaseToUser();
-	END_NO_NEW_DATA
+DIRECT (CREATION_WINDOW__VowelEditor_create) {
+	CREATION_WINDOW (a,Sound)
+		autoVowelEditor creationWindow = VowelEditor_create (U"VowelEditor", nullptr);
+		Editor_setPublicationCallback (creationWindow.get(), cb_publish);
+	CREATION_WINDOW_END
 }
 
 static autoDaata cmuAudioFileRecognizer (integer nread, const char *header, MelderFile file) {
@@ -8579,7 +8577,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"*Create Sound as gammatone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW1_Sound_createAsGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as Shepard tone...", U"Create Sound as gammatone...", praat_DEPTH_1, NEW_Sound_createAsShepardTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from Shepard tone...", U"*Create Sound as Shepard tone...", praat_DEPTH_1 | praat_DEPRECATED_2016, NEW_Sound_createAsShepardTone);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1 | praat_NO_API, WINDOW_VowelEditor_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1 | praat_NO_API,
+			CREATION_WINDOW__VowelEditor_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1, NEW1_SpeechSynthesizer_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2, NEW1_Table_create_petersonBarney1952);
