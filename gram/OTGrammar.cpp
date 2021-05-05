@@ -2176,9 +2176,8 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 {
 	try {
 		autoOTHistory history;
-		if (storeHistoryEvery) {
+		if (storeHistoryEvery)
 			history = OTGrammar_createHistory (me, storeHistoryEvery, partialOutputs -> numberOfStrings);
-		}
 		try {
 			for (integer idatum = 1; idatum <= partialOutputs -> numberOfStrings; idatum ++) {
 				try {
@@ -2186,18 +2185,15 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 						evaluationNoise, updateRule, honourLocalRankings,
 						plasticity, relativePlasticityNoise, numberOfChews, false);
 				} catch (MelderError) {
-					if (history) {
+					if (history)
 						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum].get());   // so that we can inspect
-					}
 					throw;
 				}
-				if (history) {
+				if (history)
 					OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum].get());
-				}
 			}
-			if (history) {
+			if (history)
 				OTGrammar_finalizeHistory (me, history.get(), partialOutputs -> numberOfStrings);
-			}
 			*history_out = history.move();
 		} catch (MelderError) {
 			*history_out = history.move();   // so that we can inspect
@@ -2506,34 +2502,39 @@ static bool OTGrammarTableau_isHarmonicallyBounded (OTGrammarTableau me, integer
 
 static bool OTGrammarTableau_candidateIsPossibleWinner (OTGrammar me, integer itab, integer icand) {
 	OTGrammar_save (me);
-	OTGrammar_reset (me, 100.0);
-	for (;;) {
-		bool grammarHasChanged = false;
-		OTGrammar_learnOne (me, my tableaus [itab]. input.get(), my tableaus [itab]. candidates [icand]. output.get(),
-			1e-3, kOTGrammar_rerankingStrategy::EDCD, false, 1.0, 0.0, true, true, & grammarHasChanged);
-		if (! grammarHasChanged) {
-			OTGrammar_restore (me);
-			return true;
-		}
-		double previousStratum = 101.0;
-		OTGrammar_newDisharmonies (me, 0.0);
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			const double stratum = my constraints [my index [icons]]. ranking;
-			#if 0
-			if (stratum < 50.0 - my numberOfConstraints) {
+	try {
+		OTGrammar_reset (me, 100.0);
+		for (;;) {
+			bool grammarHasChanged = false;
+			OTGrammar_learnOne (me, my tableaus [itab]. input.get(), my tableaus [itab]. candidates [icand]. output.get(),
+				1e-3, kOTGrammar_rerankingStrategy::EDCD, false, 1.0, 0.0, true, true, & grammarHasChanged);
+			if (! grammarHasChanged) {
 				OTGrammar_restore (me);
-				return false;   // we detected a tumble
+				return true;
 			}
-			#else
-			if (stratum < previousStratum) {
-				if (stratum < previousStratum - 1.0) {
+			double previousStratum = 101.0;
+			OTGrammar_newDisharmonies (me, 0.0);
+			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+				const double stratum = my constraints [my index [icons]]. ranking;
+				#if 0
+				if (stratum < 50.0 - my numberOfConstraints) {
 					OTGrammar_restore (me);
-					return false;   // we detected a vacated stratum
+					return false;   // we detected a tumble
 				}
-				previousStratum = stratum;
+				#else
+				if (stratum < previousStratum) {
+					if (stratum < previousStratum - 1.0) {
+						OTGrammar_restore (me);
+						return false;   // we detected a vacated stratum
+					}
+					previousStratum = stratum;
+				}
+				#endif
 			}
-			#endif
 		}
+	} catch (MelderError) {
+		OTGrammar_restore (me);   // strong exception guarantee
+		throw;
 	}
 	return false;   // cannot occur
 }

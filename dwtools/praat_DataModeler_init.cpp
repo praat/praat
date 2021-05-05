@@ -371,7 +371,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_o", order);
 }
 
-FORM (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Formants: Extract smoothest part") {
+FORM (COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U"Formants: Extract smoothest part") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
@@ -383,29 +383,14 @@ FORM (NEW1_Formants_extractSmoothestPart, U"Formants: Extract smoothest part", U
 	REAL (power, U"Parameter variance power", U"1.5")
 	OK
 DO
-	OrderedOf<structFormant> formants;
-	LOOP {
-		iam_LOOP (Formant);
-		formants. addItem_ref (me);
-	}
-	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighFormants, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
-	// next code is necessary to get the Formant at postion index selected and to get its name
-	integer iselected = 0;
-	Formant him = nullptr;
-	LOOP {
-		iselected ++;
-		if (iselected == index) {
-			him = static_cast<Formant> (OBJECT);
-		}
-	}
-	Melder_assert (him);
-	autoFormant result = Formant_extractPart (him, fromTime, toTime);
-	if (interpreter)
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_;
-	praat_new (result.move(), his name.get(), U"_part");
-END_WITH_NEW_DATA }
+	COMBINE_ALL_TO_ONE (Formant)
+		const integer index = Formants_getSmoothestInInterval (& list, fromTime, toTime, numberOfFormantTracks, order + 1, weighFormants, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
+		Formant him = list.at [index];
+		autoFormant result = Formant_extractPart (him, fromTime, toTime);
+	COMBINE_ALL_TO_ONE_END (his name.get(), U"_part")
+}
 
-FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...") {
+FORM (COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart_constrained, U"Formants: Extract smoothest part (constrained)", U"Formants: Extract smoothest part (constrained)...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	NATURAL (numberOfFormantTracks, U"Number of formant tracks", U"4")
@@ -423,27 +408,12 @@ FORM (NEW1_Formants_extractSmoothestPart_constrained, U"Formants: Extract smooth
 	POSITIVE (minimumF3, U"Minimum F3 (Hz)", U"1500.0")
 	OK
 DO
-	OrderedOf<structFormant> formants;
-	LOOP {
-		iam_LOOP (Formant);
-		formants. addItem_ref (me);
-	}
-	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighFormants, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
-	// next code is necessary to get the Formant at postion index selected and to get its name
-	integer iselected = 0;
-	Formant him = nullptr;
-	LOOP {
-		iselected ++;
-		if (iselected == index) {
-			him = static_cast<Formant> (OBJECT);
-		}
-	}
-	Melder_assert (him);
-	autoFormant result = Formant_extractPart (him, fromTime, toTime);
-	if (interpreter)
-		interpreter -> returnType = kInterpreter_ReturnType::REAL_;
-	praat_new (result.move(), his name.get(), U"_part");
-END_WITH_NEW_DATA }
+	COMBINE_ALL_TO_ONE (Formant)
+		const integer index = Formants_getSmoothestInInterval (& list, fromTime, toTime, numberOfFormantTracks, order + 1, weighFormants, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
+		Formant him = list.at [index];
+		autoFormant result = Formant_extractPart (him, fromTime, toTime);
+	COMBINE_ALL_TO_ONE_END (his name.get(), U"_part")
+}
 
 /********************** FormantModeler ******************************/
 
@@ -1138,8 +1108,10 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)", 0, 0, NEW_DataModeler_to_Table_zscores);
 
 	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, NEW_Formant_to_FormantModeler);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN, NEW1_Formants_extractSmoothestPart);
-	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN, NEW1_Formants_extractSmoothestPart_constrained);
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN,
+			COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart);
+	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN,
+			COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart_constrained);
 
 	praat_addAction1 (classFormantModeler, 0, U"Draw -", 0, 0, 0);
 	praat_addAction1 (classFormantModeler, 0, U"Speckle...", 0, 1, GRAPHICS_FormantModeler_speckle);
