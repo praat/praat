@@ -102,13 +102,6 @@ autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
 	return result;
 }
 
-static void Spectrum_reuse (Spectrum me, double fmax, double nx) {
-	my xmin = 0.0;
-	my xmax = fmax;
-	my nx = nx;
-	my dx = fmax / (nx - 1);
-}
-
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double fmax,integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor) {
 	try {
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
@@ -128,15 +121,15 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 		}
 		autoConstantQLogFSpectrogram thee = ConstantQLogFSpectrogram_create (lowestFrequency, fmax, numberOfBinsPerOctave, frequencyResolutionInBins);
 		/*
-			Allocate space for the filter in the frequency domain only once. 
+			Calculate the maximum memory space needed for the filter in the frequency domain and allocate it. 
 			Each octave has twice the number of frequencies of the previous one which means that the 
 			last octave contains appproximately half of all frequencies (spectrum -> nx / 2).
 			The filter width is 2 * frequencyResolutionBins.
 			We need an extra factor of 2 because of the intermediate FFT that might need zero padding.
-			the maximum number of frequencies is therefore:
-				2 * 0.5 * spectrum -> nx * 2 * frequencyResolutionBins / numberOfBinsPerOctave
+			the maximum number of doubles is therefore:
+				2 * (spectrum -> nx / 2)  * 2 * frequencyResolutionBins / numberOfBinsPerOctave
 		*/
-		const double maximumFilterSize = Melder_iround_tieUp (timeOversamplingFactor * 2 * spectrum -> nx * frequencyResolutionInBins / numberOfBinsPerOctave) ;
+		const double maximumFilterSize = Melder_iround_tieUp (timeOversamplingFactor * 2 * spectrum -> nx * frequencyResolutionInBins / numberOfBinsPerOctave);
 		autoSpectrum filter = Spectrum_create (nyquistFrequency, maximumFilterSize);	
 		autoVEC window = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
@@ -152,13 +145,10 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 				U"The number of spectral filter values should be larger than 1.");
 			integer numberOfFilterValues = numberOfSamplesFromSpectrum;
 			if (timeOversamplingFactor > 1.0) {
+				numberOfFilterValues = Melder_iroundUp (timeOversamplingFactor * numberOfSamplesFromSpectrum);
 				filterBandwidth *= timeOversamplingFactor;
-				const integer numOversampled = Melder_iroundUp (timeOversamplingFactor * numberOfSamplesFromSpectrum);
-				numberOfFilterValues = 2;
-				while (numberOfFilterValues < numOversampled)
-					numberOfFilterValues *= 2;
 			}
-			Spectrum_reuse (filter.get(), filterBandwidth, numberOfFilterValues);
+			autoSpectrum filter = Spectrum_create (filterBandwidth, numberOfFilterValues);
 			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  spectrum -> z.part (1, 2, iflow, ifhigh);
 			window.resize (numberOfSamplesFromSpectrum);
 			windowShape_VEC_preallocated (window.get(), kSound_windowShape :: HANNING);
