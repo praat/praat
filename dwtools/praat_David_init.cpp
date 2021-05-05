@@ -5855,7 +5855,7 @@ FORM (NEW_Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogra
 	REAL (fmax, U"Maximum frequency (Hz)", U"0.0 (=nyquist)")
 	NATURAL (numberOfFrequencyBinsPerOctave, U"Number of frequency bins / octave", U"24")
 	POSITIVE (frequencyResolutionInBins, U"Freqency resolution (bins)", U"1.0")
-	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"4.0")
+	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"1.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
