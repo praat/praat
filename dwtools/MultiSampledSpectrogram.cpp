@@ -114,6 +114,15 @@ double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpo
 	return NUM_interpolate_sinc (my z.row (1), index_real, interpolationDepth);
 }
 
+autoSound FrequencyBin_to_Sound (FrequencyBin me) {
+	try {
+		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
+		thy z.row (1)  <<=  my z.row (1);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannor convert toSound.");
+	}
+}
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	double numberOfFrames = 0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {

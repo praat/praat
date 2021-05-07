@@ -219,6 +219,16 @@ autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
 		Melder_throw (me, U": could not create Sound.");
 	}
 }
+autoSound ConstantQLogFSpectrogram_to_Sound_frequencyBin (ConstantQLogFSpectrogram me, integer frequencyBinNumber) {
+	try  {
+		Melder_require (frequencyBinNumber > 0 && frequencyBinNumber <= my nx,
+			U"The frequency bin number should be in the interval from 1 to ", my nx, U".");
+		FrequencyBin frequencyBin = my frequencyBins.at [frequencyBinNumber];
+		return FrequencyBin_to_Sound (frequencyBin);
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create Sound from frequency bin ", frequencyBinNumber, U".");
+	}
+}
 
 static autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram_brown (Sound me, double lowestFrequency, double q, integer numberOfBinsPerOctave, integer numberOfSteps, double timeOversamplingFactor) {
 	try {

@@ -25,4 +25,6 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 
 autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me);
 
+autoSound ConstantQLogFSpectrogram_to_Sound_frequencyBin (ConstantQLogFSpectrogram me, integer frequencyBinNumber);
+
 #endif /* Sound_and_ConstantQLogFSpectrogram_h_ */
