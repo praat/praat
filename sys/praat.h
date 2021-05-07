@@ -787,6 +787,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define PLAY_END__  \
 	END_NO_NEW_DATA
 
+#define PLAY_NONE
+#define PLAY_NONE_END  \
+	PLAY_END__
+
 #define PLAY_EACH(klas)  \
 	int _numberOfSelectedSounds = 0; \
 	LOOP { \
