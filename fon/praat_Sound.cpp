@@ -2218,9 +2218,9 @@ void praat_Sound_init () {
 			SAVE_ALL__LongSound_saveAsAifcFile);
 	praat_addAction1 (classLongSound, 0,   U"Write to AIFC file...", U"*Save as AIFC file...", praat_DEPRECATED_2011,
 			SAVE_ALL__LongSound_saveAsAifcFile);
-	praat_addAction1 (classLongSound, 0, U"Save as Next/Sun file...", nullptr, 0,
+	praat_addAction1 (classLongSound, 0, U"Save as NeXT/Sun file...", nullptr, 0,
 			SAVE_ALL__LongSound_saveAsNextSunFile);
-	praat_addAction1 (classLongSound, 0,   U"Write to Next/Sun file...", U"*Save as Next/Sun file...", praat_DEPRECATED_2011,
+	praat_addAction1 (classLongSound, 0,   U"Write to NeXT/Sun file...", U"*Save as NeXT/Sun file...", praat_DEPRECATED_2011,
 			SAVE_ALL__LongSound_saveAsNextSunFile);
 	praat_addAction1 (classLongSound, 0, U"Save as NIST file...", nullptr, 0,
 			SAVE_ALL__LongSound_saveAsNistFile);
@@ -2242,9 +2242,9 @@ void praat_Sound_init () {
 			SAVE_ONE__LongSound_saveLeftChannelAsAifcFile);
 	praat_addAction1 (classLongSound, 1,   U"Write left channel to AIFC file...", U"*Save left channel as AIFC file...", praat_DEPRECATED_2011,
 			SAVE_ONE__LongSound_saveLeftChannelAsAifcFile);
-	praat_addAction1 (classLongSound, 1, U"Save left channel as Next/Sun file...", nullptr, 0,
+	praat_addAction1 (classLongSound, 1, U"Save left channel as NeXT/Sun file...", nullptr, 0,
 			SAVE_ONE__LongSound_saveLeftChannelAsNextSunFile);
-	praat_addAction1 (classLongSound, 1,   U"Write left channel to Next/Sun file...", U"*Save left channel as Next/Sun file...", praat_DEPRECATED_2011,
+	praat_addAction1 (classLongSound, 1,   U"Write left channel to NeXT/Sun file...", U"*Save left channel as NeXT/Sun file...", praat_DEPRECATED_2011,
 			SAVE_ONE__LongSound_saveLeftChannelAsNextSunFile);
 	praat_addAction1 (classLongSound, 1, U"Save left channel as NIST file...", nullptr, 0,
 			SAVE_ONE__LongSound_saveLeftChannelAsNistFile);
@@ -2266,9 +2266,9 @@ void praat_Sound_init () {
 			SAVE_ONE__LongSound_saveRightChannelAsAifcFile);
 	praat_addAction1 (classLongSound, 1,   U"Write right channel to AIFC file...", U"*Save right channel as AIFC file...", praat_DEPRECATED_2011,
 			SAVE_ONE__LongSound_saveRightChannelAsAifcFile);
-	praat_addAction1 (classLongSound, 1, U"Save right channel as Next/Sun file...", nullptr, 0,
+	praat_addAction1 (classLongSound, 1, U"Save right channel as NeXT/Sun file...", nullptr, 0,
 			SAVE_ONE__LongSound_saveRightChannelAsNextSunFile);
-	praat_addAction1 (classLongSound, 1,   U"Write right channel to Next/Sun file...", U"*Save right channel as Next/Sun file...", praat_DEPRECATED_2011,
+	praat_addAction1 (classLongSound, 1,   U"Write right channel to NeXT/Sun file...", U"*Save right channel as NeXT/Sun file...", praat_DEPRECATED_2011,
 			SAVE_ONE__LongSound_saveRightChannelAsNextSunFile);
 	praat_addAction1 (classLongSound, 1, U"Save right channel as NIST file...", nullptr, 0,
 			SAVE_ONE__LongSound_saveRightChannelAsNistFile);
@@ -2295,9 +2295,9 @@ void praat_Sound_init () {
 			SAVE_ALL__Sound_saveAsAifcFile);
 	praat_addAction1 (classSound, 0,   U"Write to AIFC file...", U"*Save as AIFC file...", praat_DEPRECATED_2011,
 			SAVE_ALL__Sound_saveAsAifcFile);
-	praat_addAction1 (classSound, 0, U"Save as Next/Sun file...", nullptr, 0,
+	praat_addAction1 (classSound, 0, U"Save as NeXT/Sun file...", nullptr, 0,
 			SAVE_ALL__Sound_saveAsNextSunFile);
-	praat_addAction1 (classSound, 0,   U"Write to Next/Sun file...", U"*Save as Next/Sun file...", praat_DEPRECATED_2011,
+	praat_addAction1 (classSound, 0,   U"Write to NeXT/Sun file...", U"*Save as NeXT/Sun file...", praat_DEPRECATED_2011,
 			SAVE_ALL__Sound_saveAsNextSunFile);
 	praat_addAction1 (classSound, 0, U"Save as Sun audio file...", nullptr, praat_HIDDEN,
 			SAVE_ALL__Sound_saveAsSunAudioFile);
@@ -2329,7 +2329,7 @@ void praat_Sound_init () {
 			SAVE_ALL__Sound_saveAsStereoAiffFile);
 	praat_addAction1 (classSound, 2,   U"Write to stereo AIFC file...", U"* \"Combine to stereo\" and \"Save to AIFC file...\"", praat_DEPRECATED_2007,
 			SAVE_ALL__Sound_saveAsStereoAifcFile);
-	praat_addAction1 (classSound, 2,   U"Write to stereo Next/Sun file...", U"* \"Combine to stereo\" and \"Save to Next/Sun file...\"", praat_DEPRECATED_2007,
+	praat_addAction1 (classSound, 2,   U"Write to stereo NeXT/Sun file...", U"* \"Combine to stereo\" and \"Save to NeXT/Sun file...\"", praat_DEPRECATED_2007,
 			SAVE_ALL__Sound_saveAsStereoNextSunFile);
 	praat_addAction1 (classSound, 2,   U"Write to stereo NIST file...", U"* \"Combine to stereo\" and \"Save to NIST file...\"", praat_DEPRECATED_2007,
 			SAVE_ALL__Sound_saveAsStereoNistFile);
