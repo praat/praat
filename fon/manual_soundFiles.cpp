@@ -334,7 +334,7 @@ MAN_BEGIN (U"How to concatenate sound files", U"ppgb", 20110131)
 INTRO (U"You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, NIST "
 	"and FLAC audio files, and other files that you have read into memory.")
 NORMAL (U"For instance, if you want to concatenate a 30-minute AIFF file, "
-	"a 4-minute Kay sound file, and a 60-minute Next/Sun file, "
+	"a 4-minute Kay sound file, and a 60-minute NeXT/Sun file, "
 	"by saving them into a 94-minute WAV file, "
 	"you do the following:")
 LIST_ITEM (U"1. Open the AIFF file with @@Open long sound file...@ from the @@Open menu@. "

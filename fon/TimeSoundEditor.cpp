@@ -327,10 +327,10 @@ void structTimeSoundEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 			EditorMenu_addCommand (menu, U"Write selected sound to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, U"Write sound selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, U"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-		our writeNextSunButton = EditorMenu_addCommand (menu, U"Save selected sound as Next/Sun file...", 0, menu_cb_WriteNextSun);
-			EditorMenu_addCommand (menu, U"Write selected sound to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-			EditorMenu_addCommand (menu, U"Write sound selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-			EditorMenu_addCommand (menu, U"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
+		our writeNextSunButton = EditorMenu_addCommand (menu, U"Save selected sound as NeXT/Sun file...", 0, menu_cb_WriteNextSun);
+			EditorMenu_addCommand (menu, U"Write selected sound to NeXT/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
+			EditorMenu_addCommand (menu, U"Write sound selection to NeXT/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
+			EditorMenu_addCommand (menu, U"Write selection to NeXT/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 		our writeNistButton = EditorMenu_addCommand (menu, U"Save selected sound as NIST file...", 0, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, U"Write selected sound to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, U"Write sound selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);

@@ -214,14 +214,10 @@ DIRECT (NEW_FormantPath_extractFormant) {
 }
 
 DIRECT (WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor) {
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view or edit a FormantPath from batch.");
-	FIND_ONE_AND_ONE_AND_ONE_WITH_IOBJECT (FormantPath, Sound, TextGrid)
+	EDITOR_ONE_WITH_ONE_AND_ONE (a,FormantPath, Sound, TextGrid)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, you, him);
 		Editor_setPublicationCallback (editor.get(), cb_FormantPathEditor_publication);
-		praat_installEditor (editor.get(), IOBJECT);
-		editor.releaseToUser();
-	END_NO_NEW_DATA
+	EDITOR_ONE_WITH_ONE_AND_ONE_END
 }
 
 DIRECT (EDITOR_ONE_WITH_ONE_Sound_FormantPath_createFormantPathEditor) {

@@ -2191,11 +2191,13 @@ DIRECT (HELP_Eigen_help) {
 	HELP (U"Eigen")
 }
 
-DIRECT (GRAPHICS_EACH__Eigen_drawEigenvalues_scree) {
-	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
-		"removed.\n To get a scree plot, use \"Draw eigenvalues...\" with the "
-		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
-	END_NO_NEW_DATA
+DIRECT (WARNING__Eigen_drawEigenvalues_scree) {
+	WARNING
+		Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
+			"removed.\n To get a scree plot, use \"Draw eigenvalues...\" with the "
+			"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked."
+		);
+	WARNING_END
 }
 
 FORM (GRAPHICS_EACH__Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
@@ -3538,44 +3540,40 @@ DO
 
 /********************* LongSound **************************************/
 
-FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
-	OrderedOf<structSampled> list;
-	LOOP {
-		iam_LOOP (Sampled);
-		list. addItem_ref (me);
-	}
-	LongSounds_appendToExistingSoundFile (& list, file);
-	END_NO_NEW_DATA
+FORM_READ (APPEND_ALL__LongSounds_appendToExistingSoundFile, U"LongSound: Append to existing sound file", 0, false) {
+	APPEND_ALL (Sampled)
+		LongSounds_appendToExistingSoundFile (& list, file);
+	APPEND_ALL_END
 }
 
-FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFFFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
-	FIND_TWO (LongSound)
+FORM_SAVE (SAVE_TWO__LongSounds_saveAsStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
+	SAVE_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFF, file);
-	END_NO_NEW_DATA
+	SAVE_TWO_END
 }
 
-FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFCFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
-	FIND_TWO (LongSound)
+FORM_SAVE (SAVE_TWO__LongSounds_saveAsStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
+	SAVE_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFC, file);
-	END_NO_NEW_DATA
+	SAVE_TWO_END
 }
 
-FORM_SAVE (SAVE_LongSounds_saveAsStereoWAVFile, U"LongSound: Save as WAV file", 0, U"wav") {
-	FIND_TWO (LongSound)
+FORM_SAVE (SAVE_TWO__LongSounds_saveAsStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
+	SAVE_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_WAV, file);
-	END_NO_NEW_DATA
+	SAVE_TWO_END
 }
 
-FORM_SAVE (SAVE_LongSounds_saveAsStereoNeXtSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
-	FIND_TWO (LongSound)
+FORM_SAVE (SAVE_TWO__LongSounds_saveAsStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
+	SAVE_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NEXT_SUN, file);
-	END_NO_NEW_DATA
+	SAVE_TWO_END
 }
 
-FORM_SAVE (SAVE_LongSounds_saveAsStereoNISTFile, U"LongSound: Save as NIST file", 0, U"nist") {
-	FIND_TWO (LongSound)
+FORM_SAVE (SAVE_TWO__LongSounds_saveAsStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
+	SAVE_TWO (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NIST, file);
-	END_NO_NEW_DATA
+	SAVE_TWO_END
 }
 
 /******************* Matrix **************************************************/
@@ -6310,13 +6308,9 @@ FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"Speech
 	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
 	OK
 DO
-	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
-	LOOP {
-		iam_LOOP (SpeechSynthesizer);
+	PLAY_EACH (SpeechSynthesizer)
 		SpeechSynthesizer_playText (me, text);
-	}
-	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
-	END_NO_NEW_DATA
+	PLAY_EACH_END
 }
 
 FORM (CONVERT_EACH_TO_ONE__SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
@@ -6324,17 +6318,16 @@ FORM (CONVERT_EACH_TO_ONE__SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To S
 	BOOLEAN (wantTextGrid, U"Create TextGrid with annotations", false);
 	OK
 DO
-	CONVERT_EACH_TO_ONE (SpeechSynthesizer)
+	CONVERT_EACH_TO_MULTIPLE (SpeechSynthesizer)
 		autoTextGrid tg;
 		autoTable t;
 		autoSound result = SpeechSynthesizer_to_Sound (me, text, (wantTextGrid ? & tg : nullptr), (Melder_debug == -2 ? & t : nullptr ));
-		if (wantTextGrid) {
+		if (wantTextGrid)
 			praat_new (tg.move(), my name.get());
-		}
-		if (Melder_debug == -2) {
+		if (Melder_debug == -2)
 			praat_new (t.move(), my name.get());
-		}
-	CONVERT_EACH_TO_ONE_END (my name.get())
+		praat_new (result.move(), my name.get());
+	CONVERT_EACH_TO_MULTIPLE_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
@@ -8369,8 +8362,9 @@ static void praat_Eigen_draw_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1,
 			GRAPHICS_EACH__Eigen_drawEigenvalues);
 	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", U"*Draw eigenvalues...", praat_DEPRECATED_2010 | praat_DEPTH_1,
-			GRAPHICS_EACH__Eigen_drawEigenvalues_scree);
-	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_EACH__Eigen_drawEigenvector);
+			WARNING__Eigen_drawEigenvalues_scree);
+	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1,
+			GRAPHICS_EACH__Eigen_drawEigenvector);
 }
 
 static void praat_Index_init (ClassInfo klas) {
@@ -8992,12 +8986,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDiscriminant, 0, U"Discriminant help", 0, 0,
 			HELP_Discriminant_help);
 	praat_addAction1 (classDiscriminant, 0, DRAW_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1, 
-			GRAPHICS_EACH__Discriminant_drawEigenvalues);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Discriminant_drawEigenvalues);
 	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN,
-			GRAPHICS_EACH__Eigen_drawEigenvalues_scree);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1, 
-			GRAPHICS_EACH__Discriminant_drawEigenvector);
+			WARNING__Eigen_drawEigenvalues_scree);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Discriminant_drawEigenvector);
 
 	praat_addAction1 (classDiscriminant, 0, U"-- sscps --", 0, 1, 0);
 	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1, 
@@ -9285,11 +9277,9 @@ void praat_uvafon_David_init () {
 			HELP_Eigen_help);
 	praat_addAction1 (classEigen, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2010,
-				GRAPHICS_EACH__Eigen_drawEigenvalues_scree);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1, 
-				GRAPHICS_EACH__Eigen_drawEigenvalues);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1, 
-				GRAPHICS_EACH__Eigen_drawEigenvector);
+				WARNING__Eigen_drawEigenvalues_scree);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Eigen_drawEigenvalues);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
 	praat_addAction1 (classEigen, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 1, U"Get number of eigenvalues", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvalues);
@@ -9428,51 +9418,43 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classConstantQLogFSpectrogram, 0, U"To Sound (frequencyBin)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__ConstantQLogFSpectrogram_to_Sound_frequencyBin);
 	
-	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0, 
-			READ1_LongSounds_appendToExistingSoundFile);
+	praat_addAction1 (classLongSound, 0, U"Append to existing sound file...", nullptr, 0,
+			APPEND_ALL__LongSounds_appendToExistingSoundFile);
 	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0,
-			READ1_LongSounds_appendToExistingSoundFile);
-	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0, 
-			READ1_LongSounds_appendToExistingSoundFile);
+			APPEND_ALL__LongSounds_appendToExistingSoundFile);
+	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0,
+			APPEND_ALL__LongSounds_appendToExistingSoundFile);
 
-	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1, 
-			SAVE_LongSounds_saveAsStereoAIFFFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1,
+			SAVE_TWO__LongSounds_saveAsStereoAiffFile);
 	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFF file...", U"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1,
-			SAVE_LongSounds_saveAsStereoAIFFFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFC file...", U"Save as stereo AIFF file...", 1, 
-			SAVE_LongSounds_saveAsStereoAIFCFile);
+			SAVE_TWO__LongSounds_saveAsStereoAiffFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFC file...", U"Save as stereo AIFF file...", 1,
+			SAVE_TWO__LongSounds_saveAsStereoAifcFile);
 	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFC file...", U"Write to stereo AIFF file...", praat_HIDDEN + praat_DEPTH_1,
-			SAVE_LongSounds_saveAsStereoAIFCFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo WAV file...", U"Save as stereo AIFC file...", 1, 
-			SAVE_LongSounds_saveAsStereoWAVFile);
+			SAVE_TWO__LongSounds_saveAsStereoAifcFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo WAV file...", U"Save as stereo AIFC file...", 1,
+			SAVE_TWO__LongSounds_saveAsStereoWavFile);
 	praat_addAction1 (classLongSound, 2, U"Write to stereo WAV file...", U"Write to stereo AIFC file...", praat_HIDDEN + praat_DEPTH_1,
-			SAVE_LongSounds_saveAsStereoWAVFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo NeXt/Sun file...", U"Save as stereo WAV file...", 1, 
-			SAVE_LongSounds_saveAsStereoNeXtSunFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo NeXt/Sun file...", U"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1,
-			SAVE_LongSounds_saveAsStereoNeXtSunFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo NIST file...", U"Save as stereo NeXt/Sun file...", 1, 
-			SAVE_LongSounds_saveAsStereoNISTFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo NIST file...", U"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1,
-			SAVE_LongSounds_saveAsStereoNISTFile);
+			SAVE_TWO__LongSounds_saveAsStereoWavFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo NeXT/Sun file...", U"Save as stereo WAV file...", 1,
+			SAVE_TWO__LongSounds_saveAsStereoNextSunFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo NeXT/Sun file...", U"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1,
+			SAVE_TWO__LongSounds_saveAsStereoNextSunFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo NIST file...", U"Save as stereo NeXT/Sun file...", 1,
+			SAVE_TWO__LongSounds_saveAsStereoNistFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo NIST file...", U"Write to stereo NeXT/Sun file...", praat_HIDDEN + praat_DEPTH_1,
+			SAVE_TWO__LongSounds_saveAsStereoNistFile);
 
-	praat_addAction1 (classLtas, 0, U"Report spectral trend...", U"Get slope...", 1, 
-			INFO_Ltas_reportSpectralTrend);
-	praat_addAction1 (classLtas, 0, U"Report spectral tilt...", U"Get slope...", praat_DEPTH_1 + praat_HIDDEN, 
-			INFO_Ltas_reportSpectralTrend);
+	praat_addAction1 (classLtas, 0, U"Report spectral trend...", U"Get slope...", 1, INFO_Ltas_reportSpectralTrend);
+	praat_addAction1 (classLtas, 0, U"Report spectral tilt...", U"Get slope...", praat_DEPTH_1 + praat_HIDDEN, INFO_Ltas_reportSpectralTrend);
 
-	praat_addAction1 (classMatrix, 0, U"Scatter plot...", U"Paint cells...", 1, 
-			GRAPHICS_EACH__Matrix_scatterPlot);
-	praat_addAction1 (classMatrix, 0, U"Draw as squares...", U"Scatter plot...", 1, 
-			GRAPHICS_EACH__Matrix_drawAsSquares);
-	praat_addAction1 (classMatrix, 0, U"Draw distribution...", U"Draw as squares...", 1, 
-			GRAPHICS_EACH__Matrix_drawDistribution);
-	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1,
-			GRAPHICS_EACH__Matrix_drawCumulativeDistribution);
-	praat_addAction1 (classMatrix, 0, U"Get mean...", U"Get sum", 1,
-			REAL_Matrix_getMean);
-	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, 
-			REAL_Matrix_getStandardDeviation);
+	praat_addAction1 (classMatrix, 0, U"Scatter plot...", U"Paint cells...", 1, GRAPHICS_Matrix_scatterPlot);
+	praat_addAction1 (classMatrix, 0, U"Draw as squares...", U"Scatter plot...", 1, GRAPHICS_Matrix_drawAsSquares);
+	praat_addAction1 (classMatrix, 0, U"Draw distribution...", U"Draw as squares...", 1, GRAPHICS_Matrix_drawDistribution);
+	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1, GRAPHICS_Matrix_drawCumulativeDistribution);
+	praat_addAction1 (classMatrix, 0, U"Get mean...", U"Get sum", 1, REAL_Matrix_getMean);
+	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, REAL_Matrix_getStandardDeviation);
 	praat_addAction1 (classMatrix, 0, U"Mathematical -", U"Get standard deviation...", 1, nullptr);
 	praat_addAction1 (classMatrix, 0, U"Get norm...", U"Mathematical -", 2,
 			REAL_Matrix_getNorm);

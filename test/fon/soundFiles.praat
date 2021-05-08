@@ -63,7 +63,7 @@ call test WAV wav 3
 Debug... no 0
 call test AIFF aiff 3
 call test AIFC aifc 3
-call test Next/Sun au 3
+call test NeXT/Sun au 3
 call test NIST nist 3
 @test: "Kay sound", "nsp", 3
 call test FLAC flac 3
