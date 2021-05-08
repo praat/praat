@@ -346,7 +346,7 @@ DIRECT (EDITOR_ONE_Categories_edit) {
 	EDITOR_ONE_END
 }
 
-DIRECT (INTEGER_Categories_getNumberOfCategories) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Categories_getNumberOfCategories) {
 	QUERY_ONE_FOR_INTEGER (Categories)
 		integer result = my size;
 	QUERY_ONE_FOR_INTEGER_END (U" categories")
@@ -396,7 +396,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Categories_permuteItems) {
 
 /***************** CC ****************************************/
 
-FORM (INTEGER_CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr) {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
@@ -511,7 +511,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_CCA_getNumberOfCorrelations) {
+DIRECT (QUERY_ONE_FOR_INTEGER__CCA_getNumberOfCorrelations) {
 	QUERY_ONE_FOR_INTEGER (CCA)
 		integer result = my numberOfCoefficients;
 	QUERY_ONE_FOR_INTEGER_END (U"")
@@ -656,7 +656,7 @@ DIRECT (HELP_ClassificationTable_help) {
 	HELP (U"ClassificationTable")
 }
 
-FORM (INTEGER_ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationTable: Get class index at maximum in row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
@@ -665,7 +665,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (class index at maximum in row)")
 }
 
-FORM (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
+FORM (QUERY_ONE_FOR_STRING__ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
@@ -1218,19 +1218,19 @@ DO
 	CONVERT_ONE_AND_ONE_TO_ONE_END (U"mahalanobis")
 }
 
-DIRECT (INTEGER_Discriminant_getNumberOfEigenvalues) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfEigenvalues) {
 	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = my eigen -> numberOfEigenvalues;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvalues)")
 }
 
-DIRECT (INTEGER_Discriminant_getNumberOfEigenvectors) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfEigenvectors) {
 	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = my eigen -> numberOfEigenvalues;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvectors)")
 }
 
-DIRECT (INTEGER_Discriminant_getEigenvectorDimension) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Discriminant_getEigenvectorDimension) {
 	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = my eigen -> dimension;
 	QUERY_ONE_FOR_INTEGER_END (U" (dimension)")
@@ -1535,25 +1535,25 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_g", groupIndex)
 }
 
-DIRECT (INTEGER_Discriminant_getNumberOfFunctions) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfFunctions) {
 	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Discriminant_getNumberOfFunctions (me);
 	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
-DIRECT (INTEGER_Discriminant_getDimensionOfFunctions) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Discriminant_getDimensionOfFunctions) {
 	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Eigen_getDimensionOfComponents (my eigen.get());
 	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
-DIRECT (INTEGER_Discriminant_getNumberOfGroups) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfGroups) {
 	QUERY_ONE_FOR_INTEGER (Discriminant)
 		const integer result = Discriminant_getNumberOfGroups (me);
 	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
-FORM (INTEGER_Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...") {
+FORM (QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfObservations, U"Discriminant: Get number of observations", U"Discriminant: Get number of observations...") {
 	INTEGER (group, U"Group", U"0 (= total)")
 	OK
 DO
@@ -1728,7 +1728,7 @@ DIRECT (REAL_DTW_getTotalDuration_y) {
 	QUERY_ONE_FOR_REAL_END (U" seconds (= total duration along y)")
 }
 
-DIRECT (INTEGER_DTW_getNumberOfFrames_x) {
+DIRECT (QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_x) {
 	QUERY_ONE_FOR_INTEGER (DTW)
 		const integer result = my nx;
 	QUERY_ONE_FOR_INTEGER_END (U" frames along x")
@@ -1749,7 +1749,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" seconds (= y time at x frame ", frameNumber, U")")
 }
 
-FORM (INTEGER_DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x)", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x)", nullptr) {
 	REAL (xTime, U"Time along x (s)", U"0.1")
 	OK
 DO
@@ -1759,7 +1759,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (= x frame at y time ", xTime, U")")
 }
 
-DIRECT (INTEGER_DTW_getNumberOfFrames_y) {
+DIRECT (QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_y) {
 	QUERY_ONE_FOR_INTEGER (DTW)
 		const integer result = my ny;
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of frames along y)")
@@ -1781,7 +1781,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" seconds (= x time at y frame ", frameNumber, U")")
 }
 
-FORM (INTEGER_DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y)", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y)", nullptr) {
 	REAL (yTime, U"Time along y (s)", U"0.1")
 	OK
 DO
@@ -1818,7 +1818,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" seconds (= x time at y time ", yTime, U")")
 }
 
-FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
+FORM (QUERY_ONE_FOR_INTEGER__DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive steps", U"DTW: Get maximum consecutive steps...") {
 	OPTIONMENU (direction, U"Direction", 1)
 		OPTION (U"X")
 		OPTION (U"Y")
@@ -2042,7 +2042,7 @@ DIRECT (HELP_EditCostsTable_help) {
 	HELP (U"EditCostsTable")
 }
 
-FORM (INTEGER_EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index", nullptr) {
 	SENTENCE (target, U"Target", U"")
 	OK
 DO
@@ -2051,7 +2051,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (target index)")
 }
 
-FORM (INTEGER_EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index", nullptr) {
 	SENTENCE (source, U"Source", U"")
 	OK
 DO
@@ -2233,19 +2233,19 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_Eigen_getNumberOfEigenvalues) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvalues) {
 	QUERY_ONE_FOR_INTEGER (Eigen)
 		integer result = my numberOfEigenvalues;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvalues)")
 }
 
-DIRECT (INTEGER_Eigen_getNumberOfEigenvectors) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvectors) {
 	QUERY_ONE_FOR_INTEGER (Eigen)
 		integer result = my numberOfEigenvalues;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of eigenvectors)")
 }
 
-DIRECT (INTEGER_Eigen_getEigenvectorDimension) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Eigen_getEigenvectorDimension) {
 	QUERY_ONE_FOR_INTEGER (Eigen)
 		integer result = my dimension;
 	QUERY_ONE_FOR_INTEGER_END (U" (dimension)")
@@ -2396,7 +2396,7 @@ DIRECT (HELP_Index_help) {
 	HELP (U"Index")
 }
 
-DIRECT (INTEGER_Index_getNumberOfClasses) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses) {
 	QUERY_ONE_FOR_INTEGER (Index)
 		integer result = my classes -> size;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of classes)")
@@ -2420,7 +2420,7 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (INTEGER_StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
@@ -2429,7 +2429,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
-FORM (INTEGER_Index_getIndex, U"Index: Get item index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__Index_getIndex, U"Index: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
@@ -2438,7 +2438,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (class index)")
 }
 
-FORM (INTEGER_StringsIndex_getClassIndex, U"StringsIndex: Get class index from calss label", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex, U"StringsIndex: Get class index from calss label", nullptr) {
 	WORD (klasLabel, U"Class label", U"label")
 	OK
 DO
@@ -3089,7 +3089,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
-DIRECT (INTEGER_FunctionSeries_getNumberOfCoefficients) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FunctionSeries_getNumberOfCoefficients) {
 	QUERY_ONE_FOR_INTEGER (FunctionSeries)
 		integer result = my numberOfCoefficients;
 	QUERY_ONE_FOR_INTEGER_END (U"")
@@ -3105,7 +3105,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
-DIRECT (INTEGER_FunctionSeries_getDegree) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FunctionSeries_getDegree) {
 	QUERY_ONE_FOR_INTEGER (FunctionSeries)
 		integer result = FunctionSeries_getDegree (me);
 	QUERY_ONE_FOR_INTEGER_END (U"")
@@ -3359,7 +3359,7 @@ static void print_means (Table me) {
 	}
 }
 
-FORM (INTEGER_Table_getNumberOfRowsWhere, U"", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere, U"", nullptr) {
 	FORMULA (formula, U"Count only rows where the following condition holds:", U"1; self$[\"gender\"]=\"M\"")
 	OK
 DO
@@ -3911,7 +3911,7 @@ DIRECT (REAL_FilterBank_getLowestFrequency) {
 	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
-DIRECT (INTEGER_FilterBank_getNumberOfFrequencies) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FilterBank_getNumberOfFrequencies) {
 	QUERY_ONE_FOR_INTEGER (FilterBank)
 		integer result = my ny;
 	QUERY_ONE_FOR_INTEGER_END (U"")
@@ -3982,7 +3982,7 @@ DIRECT (REAL_BandFilterSpectrogram_getLowestFrequency) {
 	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
-DIRECT (INTEGER_BandFilterSpectrogram_getNumberOfFrequencies) {
+DIRECT (QUERY_ONE_FOR_INTEGER__BandFilterSpectrogram_getNumberOfFrequencies) {
 	QUERY_ONE_FOR_INTEGER (BandFilterSpectrogram)
 		integer result = my ny;
 	QUERY_ONE_FOR_INTEGER_END (U"")
@@ -4432,13 +4432,13 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_PatternList_getNumberOfPatterns) {
+DIRECT (QUERY_ONE_FOR_INTEGER__PatternList_getNumberOfPatterns) {
 	QUERY_ONE_FOR_INTEGER (PatternList)
 		integer result = my ny;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of patterns)")
 }
 
-DIRECT (INTEGER_PatternList_getPatternSize) {
+DIRECT (QUERY_ONE_FOR_INTEGER__PatternList_getPatternSize) {
 	QUERY_ONE_FOR_INTEGER (PatternList)
 		integer result = my nx;
 	QUERY_ONE_FOR_INTEGER_END (U" (pattern size)")
@@ -4610,14 +4610,14 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and df = ", df)
 }
 
-FORM (INTEGER_PCA_getNumberOfComponents_VAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
+FORM (QUERY_ONE_FOR_INTEGER__PCA_getNumberOfComponents_VAF, U"PCA: Get number of components (VAF)", U"PCA: Get number of components (VAF)...") {
 	POSITIVE (varianceFraction, U"Variance fraction (0-1)", U"0.95")
 	OK
 DO
 	Melder_require (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction should be in interval [0-1].");
-	QUERY_ONE_FOR_REAL (PCA)
-		double result = Eigen_getDimensionOfFraction (me, varianceFraction);
-	QUERY_ONE_FOR_REAL_END (U" (variance fraction)")
+	QUERY_ONE_FOR_INTEGER (PCA)
+		const integer result = Eigen_getDimensionOfFraction (me, varianceFraction);
+	QUERY_ONE_FOR_INTEGER_END (U" (for variance fraction)")
 }
 
 FORM (REAL_PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PCA: Get fraction variance accounted for...") {
@@ -4713,13 +4713,13 @@ DO
 	CREATE_ONE_END (name)
 }
 
-DIRECT (INTEGER_Permutation_getNumberOfElements) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfElements) {
 	QUERY_ONE_FOR_INTEGER (Permutation)
 		integer result = my numberOfElements;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of elements)")
 }
 
-FORM (INTEGER_Permutation_getValueAtIndex, U"Permutation: Get value", U"Permutation: Get value...") {
+FORM (QUERY_ONE_FOR_INTEGER__Permutation_getValueAtIndex, U"Permutation: Get value", U"Permutation: Get value...") {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
@@ -4728,7 +4728,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (value, at index = ", index, U")")
 }
 
-FORM (INTEGER_Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
+FORM (QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutation: Get index...") {
 	NATURAL (value, U"Value", U"1")
 	OK
 DO
@@ -4990,7 +4990,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-DIRECT (INTEGER_Polygon_getNumberOfPoints) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Polygon_getNumberOfPoints) {
 	QUERY_ONE_FOR_INTEGER (Polygon)
 		integer result = my numberOfPoints;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of points)")
@@ -5333,7 +5333,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_Roots_getNumberOfRoots) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Roots_getNumberOfRoots) {
 	QUERY_ONE_FOR_INTEGER (Roots)
 		const integer result = Roots_getNumberOfRoots (me);
 	QUERY_ONE_FOR_INTEGER_END (U"")
@@ -6487,7 +6487,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_Spline_getOrder) {
+DIRECT (QUERY_ONE_FOR_INTEGER__Spline_getOrder) {
 	QUERY_ONE_FOR_INTEGER (Spline)
 		integer result = Spline_getOrder (me);
 	QUERY_ONE_FOR_INTEGER_END (U" (order)")
@@ -6588,7 +6588,7 @@ DIRECT (NUMBER_SSCP_getDegreesOfFreedom) {
 	QUERY_ONE_FOR_REAL_END (U" (degrees of freedom)")
 }
 
-DIRECT (INTEGER_SSCP_getNumberOfObservations) {
+DIRECT (QUERY_ONE_FOR_INTEGER__SSCP_getNumberOfObservations) {
 	QUERY_ONE_FOR_INTEGER (SSCP)
 		integer result = Melder_ifloor (my numberOfObservations);   // ppgb: blijf ik raar vinden
 	QUERY_ONE_FOR_INTEGER_END (U" (number of observations)")
@@ -6754,13 +6754,13 @@ DIRECT (HELP_SVD_help) {
 	HELP (U"singular value decomposition")
 }
 
-DIRECT (INTEGER_SVD_getNumberOfRows) {
+DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows) {
 	QUERY_ONE_FOR_INTEGER (SVD)
 		integer result = my isTransposed ? my numberOfColumns : my numberOfRows;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of rows)")	
 }
 
-DIRECT (INTEGER_SVD_getNumberOfColumns) {
+DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns) {
 	QUERY_ONE_FOR_INTEGER (SVD)
 		integer result = my isTransposed ? my numberOfRows : my numberOfColumns;
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of columns)")	
@@ -6802,7 +6802,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= fraction of total sum of singular values)")
 }
 
-FORM (INTEGER_SVD_getMinimumNumberOfSingularValues, U"SVD: Get minimum number of singular values", U"SVD: Get minimum number of singular values...") {
+FORM (QUERY_ONE_FOR_INTEGER__SVD_getMinimumNumberOfSingularValues, U"SVD: Get minimum number of singular values", U"SVD: Get minimum number of singular values...") {
 	POSITIVE (fraction, U"Fraction of total sum", U"0.95")
 	OK
 DO
@@ -7999,7 +7999,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" s (end time)")
 }
 
-FORM (INTEGER_TextGridNavigator_getIndex, U"TextGridNavigator: Get index", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getIndex, U"TextGridNavigator: Get index", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
@@ -8067,13 +8067,13 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-DIRECT (INTEGER_TextGridNavigator_getNumberOfMatches) {
+DIRECT (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfMatches) {
 	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
 		integer  result = TextGridNavigator_getNumberOfMatches (me);
 	QUERY_ONE_FOR_INTEGER_END (U" (number of matches)")	
 }
 
-FORM (INTEGER_TextGridNavigator_getNumberOfTopicMatches, U"TextGridNavigator: Get number of Topic only matches", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfTopicMatches, U"TextGridNavigator: Get number of Topic only matches", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
@@ -8082,7 +8082,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (number of Topic only matches in tier number ", tierNumber, U")")	
 }
 
-FORM (INTEGER_TextGridNavigator_getNumberOfBeforeMatches, U"TextGridNavigator: Get number of Before only matches", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfBeforeMatches, U"TextGridNavigator: Get number of Before only matches", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
@@ -8091,7 +8091,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (number of Before only matches in tier number ", tierNumber, U")")	
 }
 
-FORM (INTEGER_TextGridNavigator_getNumberOfAfterMatches, U"TextGridNavigator: Get number of After only matches", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfAfterMatches, U"TextGridNavigator: Get number of After only matches", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
@@ -8323,7 +8323,7 @@ void praat_CC_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, QUERY_BUTTON, nullptr, 0, 0);
 	praat_TimeFrameSampled_query_init (klas);
 	praat_addAction1 (klas, 1, U"Get number of coefficients...", nullptr, 1, 
-			INTEGER_CC_getNumberOfCoefficients);
+		QUERY_ONE_FOR_INTEGER__CC_getNumberOfCoefficients);
 	praat_addAction1 (klas, 1, U"Get value in frame...", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__CC_getValueInFrame);
 	praat_addAction1 (klas, 1, U"Get c0 value in frame...", nullptr, 1, 
@@ -8358,9 +8358,9 @@ static void praat_Eigen_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get sum of eigenvalues...", nullptr, 1, 
 			REAL_Eigen_getSumOfEigenvalues);
 	praat_addAction1 (klas, 1, U"Get number of eigenvectors", nullptr, 1, 
-			INTEGER_Eigen_getNumberOfEigenvectors);
+		QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvectors);
 	praat_addAction1 (klas, 1, U"Get eigenvector dimension", nullptr, 1, 
-			INTEGER_Eigen_getEigenvectorDimension);
+		QUERY_ONE_FOR_INTEGER__Eigen_getEigenvectorDimension);
 	praat_addAction1 (klas, 1, U"Get eigenvector element...", nullptr, 1, 
 			REAL_Eigen_getEigenvectorElement);
 }
@@ -8375,7 +8375,7 @@ static void praat_Eigen_draw_init (ClassInfo klas) {
 
 static void praat_Index_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get number of classes", nullptr, 0,
-			INTEGER_Index_getNumberOfClasses);
+		QUERY_ONE_FOR_INTEGER__Index_getNumberOfClasses);
 	praat_addAction1 (klas, 1, U"To Permutation...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Index_to_Permutation);
 	praat_addAction1 (klas, 1, U"Extract part...", nullptr, 0, 
@@ -8408,7 +8408,8 @@ static void praat_FilterBank_query_init (ClassInfo klas) {
 			REAL_FilterBank_getLowestFrequency);
 	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 
 			REAL_FilterBank_getHighestFrequency);
-	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, INTEGER_FilterBank_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1,
+			QUERY_ONE_FOR_INTEGER__FilterBank_getNumberOfFrequencies);
 	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 
 			REAL_FilterBank_getFrequencyDistance);
 	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 
@@ -8476,11 +8477,11 @@ static void praat_FunctionSeries_init (ClassInfo klas) {
 			GRAPHICS_EACH__FunctionSeries_drawBasisFunction);
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (klas, 1, U"Get number of coefficients", nullptr, 1, 
-			INTEGER_FunctionSeries_getNumberOfCoefficients);
+		QUERY_ONE_FOR_INTEGER__FunctionSeries_getNumberOfCoefficients);
 	praat_addAction1 (klas, 1, U"Get coefficient...", nullptr, 1, 
 			REAL_FunctionSeries_getCoefficient);
 	praat_addAction1 (klas, 1, U"Get degree", nullptr, 1, 
-			INTEGER_FunctionSeries_getDegree);
+		QUERY_ONE_FOR_INTEGER__FunctionSeries_getDegree);
 	praat_addAction1 (klas, 0, U"-- function specifics --", nullptr, 1, 0);
 	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, 
 			REAL_FunctionSeries_getValue);
@@ -8512,7 +8513,7 @@ void praat_BandFilterSpectrogram_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get highest frequency", nullptr, 1,
 			REAL_BandFilterSpectrogram_getHighestFrequency);
 	praat_addAction1 (klas, 1, U"Get number of frequencies", nullptr, 1, 
-			INTEGER_BandFilterSpectrogram_getNumberOfFrequencies);
+		QUERY_ONE_FOR_INTEGER__BandFilterSpectrogram_getNumberOfFrequencies);
 	praat_addAction1 (klas, 1, U"Get frequency distance", nullptr, 1, 
 			REAL_BandFilterSpectrogram_getFrequencyDistance);
 	praat_addAction1 (klas, 1, U"Get frequency from row...", nullptr, 1, 
@@ -8525,9 +8526,9 @@ void praat_BandFilterSpectrogram_query_init (ClassInfo klas) {
 static void praat_PatternList_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (klas, 1, U"Get number of patterns", nullptr, 1, 
-			INTEGER_PatternList_getNumberOfPatterns);
+		QUERY_ONE_FOR_INTEGER__PatternList_getNumberOfPatterns);
 	praat_addAction1 (klas, 1, U"Get pattern size", nullptr, 1, 
-			INTEGER_PatternList_getPatternSize);
+		QUERY_ONE_FOR_INTEGER__PatternList_getPatternSize);
 	praat_addAction1 (klas, 1, U"Get value...", nullptr, 1, 
 			REAL_PatternList_getValue);
 
@@ -8538,7 +8539,7 @@ static void praat_Spline_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Draw knots...", U"Draw basis function...", 1, 
 			GRAPHICS_EACH__Spline_drawKnots);
 	praat_addAction1 (klas, 1, U"Get order", U"Get degree", 1, 
-			INTEGER_Spline_getOrder);
+		QUERY_ONE_FOR_INTEGER__Spline_getOrder);
 	praat_addAction1 (klas, 1, U"Scale x...", U"Analyse", 0, 
 			CONVERT_EACH_TO_ONE__Spline_scaleX);
 }
@@ -8546,7 +8547,7 @@ static void praat_Spline_init (ClassInfo klas) {
 static void praat_SSCP_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"-- statistics --", U"Get value...", 1, 0);
 	praat_addAction1 (klas, 1, U"Get number of observations", U"-- statistics --", 1, 
-			INTEGER_SSCP_getNumberOfObservations);
+		QUERY_ONE_FOR_INTEGER__SSCP_getNumberOfObservations);
 	praat_addAction1 (klas, 1, U"Get degrees of freedom", U"Get number of observations", 1, 
 			NUMBER_SSCP_getDegreesOfFreedom);
 	praat_addAction1 (klas, 1, U"Get centroid element...", U"Get degrees of freedom", 1, 
@@ -8803,7 +8804,7 @@ void praat_uvafon_David_init () {
 			EDITOR_ONE_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, 
-			INTEGER_Categories_getNumberOfCategories);
+		QUERY_ONE_FOR_INTEGER__Categories_getNumberOfCategories);
 	praat_addAction1 (classCategories, 2, U"Get number of differences", QUERY_BUTTON, 1, 
 			INTEGER_Categories_getNumberOfDifferences);
 	praat_addAction1 (classCategories, 2, U"Get fraction different", QUERY_BUTTON, 1, 
@@ -8838,7 +8839,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCCA, 1, U"Draw eigenvector...", nullptr, 0, 
 			GRAPHICS_EACH__CCA_drawEigenvector);
 	praat_addAction1 (classCCA, 1, U"Get number of correlations", nullptr, 0, 
-			INTEGER_CCA_getNumberOfCorrelations);
+		QUERY_ONE_FOR_INTEGER__CCA_getNumberOfCorrelations);
 	praat_addAction1 (classCCA, 1, U"Get correlation...", nullptr, 0, 
 			REAL_CCA_getCorrelation);
 	praat_addAction1 (classCCA, 1, U"Get eigenvector element...", nullptr, 0, 
@@ -8964,9 +8965,9 @@ void praat_uvafon_David_init () {
 			HELP_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
 	praat_addAction1 (classClassificationTable, 0, U"Get class index at maximum in row...", U"Get column index...", 1,
-			INTEGER_ClassificationTable_getClassIndexAtMaximumInRow);
+		QUERY_ONE_FOR_INTEGER__ClassificationTable_getClassIndexAtMaximumInRow);
 	praat_addAction1 (classClassificationTable, 0, U"Get class label at maximum in row...", U"Get class index at maximum in row...", 1,
-			INTEGER_ClassificationTable_getClassLabelAtMaximumInRow);
+		QUERY_ONE_FOR_STRING__ClassificationTable_getClassLabelAtMaximumInRow);
 	praat_addAction1 (classClassificationTable, 0, U"To Confusion", U"*To Confusion...", praat_DEPRECATED_2014,
 			CONVERT_EACH_TO_ONE__ClassificationTable_to_Confusion_old); // deprecated 2014
 	praat_addAction1 (classClassificationTable, 0, U"To Confusion...", nullptr, 0, 
@@ -9013,21 +9014,21 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDiscriminant, 1, U"Get sum of eigenvalues...", nullptr, 1, 
 			REAL_Discriminant_getSumOfEigenvalues);
 	praat_addAction1 (classDiscriminant, 1, U"Get number of eigenvectors", nullptr, 1, 
-			INTEGER_Discriminant_getNumberOfEigenvectors);
+		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfEigenvectors);
 	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector dimension", nullptr, 1, 
-			INTEGER_Discriminant_getEigenvectorDimension);
+		QUERY_ONE_FOR_INTEGER__Discriminant_getEigenvectorDimension);
 	praat_addAction1 (classDiscriminant, 1, U"Get eigenvector element...", nullptr, 1,
 			REAL_Discriminant_getEigenvectorElement);
 
 	praat_addAction1 (classDiscriminant, 1, U"-- discriminant --", 0, 1, 0);
 	praat_addAction1 (classDiscriminant, 1, U"Get number of functions", 0, 1, 
-			INTEGER_Discriminant_getNumberOfFunctions);
+		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfFunctions);
 	praat_addAction1 (classDiscriminant, 1, U"Get dimension of functions", 0, 1, 
-			INTEGER_Discriminant_getDimensionOfFunctions);
+		QUERY_ONE_FOR_INTEGER__Discriminant_getDimensionOfFunctions);
 	praat_addAction1 (classDiscriminant, 1, U"Get number of groups", 0, 1, 
-			INTEGER_Discriminant_getNumberOfGroups);
+		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfGroups);
 	praat_addAction1 (classDiscriminant, 1, U"Get number of observations...", 0, 1, 
-			INTEGER_Discriminant_getNumberOfObservations);
+		QUERY_ONE_FOR_INTEGER__Discriminant_getNumberOfObservations);
 	praat_addAction1 (classDiscriminant, 1, U"-- tests --", 0, 1, 0);
 	praat_addAction1 (classDiscriminant, 1, U"Get Wilks lambda...", 0, 1, 
 			REAL_Discriminant_getWilksLambda);
@@ -9127,22 +9128,22 @@ void praat_uvafon_David_init () {
 			REAL_DTW_getTotalDuration_y);
 	praat_addAction1 (classDTW, 1, U"Query time samplings", nullptr, 1, 0);
 	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2, 
-			INTEGER_DTW_getNumberOfFrames_x);
+		QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_x);
 	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2, 
 			REAL_DTW_getTimeStep_x);
 	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2, 
 			REAL_DTW_getTimeFromFrameNumber_x);
 	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2, 
-			INTEGER_DTW_getFrameNumberFromTime_x);
+		QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_x);
 	praat_addAction1 (classDTW, 1, U"-- time sampling x from y separator --", nullptr, 2, 0);
 	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2, 
-			INTEGER_DTW_getNumberOfFrames_y);
+		QUERY_ONE_FOR_INTEGER__DTW_getNumberOfFrames_y);
 	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2, 
 			REAL_DTW_getTimeStep_y);
 	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2, 
 			REAL_DTW_getTimeFromFrameNumber_y);
 	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2, 
-			INTEGER_DTW_getFrameNumberFromTime_y);
+		QUERY_ONE_FOR_INTEGER__DTW_getFrameNumberFromTime_y);
 
 	praat_addAction1 (classDTW, 1, U"Get y time from x time...", nullptr, 1, 
 			REAL_DTW_getYTimeFromXTime);
@@ -9153,7 +9154,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDTW, 1, U"Get x time...", nullptr, praat_HIDDEN + praat_DEPTH_1,
 			REAL_DTW_getXTimeFromYTime);
 	praat_addAction1 (classDTW, 1, U"Get maximum consecutive steps...", nullptr, 1, 
-			INTEGER_DTW_getMaximumConsecutiveSteps);
+		QUERY_ONE_FOR_INTEGER__DTW_getMaximumConsecutiveSteps);
 	praat_addAction1 (classDTW, 1, U"Get time along path...", nullptr, praat_DEPTH_1 | praat_HIDDEN,
 			REAL_DTW_getPathY);
 	praat_addAction1 (classDTW, 1, U"-- distance queries --", nullptr, 1, 0);
@@ -9215,9 +9216,9 @@ void praat_uvafon_David_init () {
 			HELP_EditCostsTable_help);
 	praat_addAction1 (classEditCostsTable, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classEditCostsTable, 1, U"Get target index...", nullptr, 1, 
-			INTEGER_EditCostsTable_getTargetIndex);
+		QUERY_ONE_FOR_INTEGER__EditCostsTable_getTargetIndex);
 	praat_addAction1 (classEditCostsTable, 1, U"Get source index...", nullptr, 1,
-			INTEGER_EditCostsTable_getSourceIndex);
+		QUERY_ONE_FOR_INTEGER__EditCostsTable_getSourceIndex);
 	praat_addAction1 (classEditCostsTable, 1, U"Get insertion costs...", nullptr, 1, 
 			REAL_EditCostsTable_getInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Get insertion cost...", nullptr, praat_DEPRECATED_2017, 
@@ -9270,13 +9271,13 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, 
 			INFO_StringsIndex_getClassLabelFromClassIndex);
 	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, 
-			INTEGER_StringsIndex_getClassIndex);
+		QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndex);
 	praat_addAction1 (classStringsIndex, 1, U"Get label...", nullptr, 0, 
 			INFO_StringsIndex_getItemLabelFromItemIndex);
 	praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 0,
-			INTEGER_StringsIndex_getClassIndexFromItemIndex);
+		QUERY_ONE_FOR_INTEGER__StringsIndex_getClassIndexFromItemIndex);
 	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, 
-			INTEGER_Index_getIndex);
+		QUERY_ONE_FOR_INTEGER__Index_getIndex);
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0,
 			CONVERT_EACH_TO_ONE__StringsIndex_to_Strings);
 
@@ -9291,16 +9292,16 @@ void praat_uvafon_David_init () {
 				GRAPHICS_EACH__Eigen_drawEigenvector);
 	praat_addAction1 (classEigen, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 1, U"Get number of eigenvalues", nullptr, 1,
-				INTEGER_Eigen_getNumberOfEigenvalues);
+			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvalues);
 		praat_addAction1 (classEigen, 1, U"Get eigenvalue...", nullptr, 1, 
 				REAL_Eigen_getEigenvalue);
 		praat_addAction1 (classEigen, 1, U"Get sum of eigenvalues...", nullptr, 1, 
 				REAL_Eigen_getSumOfEigenvalues);
 	praat_addAction1 (classEigen, 1, U"-- eigenvectors --", nullptr, 1, 0);
 		praat_addAction1 (classEigen, 1, U"Get number of eigenvectors", nullptr, 1, 
-				INTEGER_Eigen_getNumberOfEigenvectors);
+			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvectors);
 		praat_addAction1 (classEigen, 1, U"Get eigenvector dimension", nullptr, 1,
-				INTEGER_Eigen_getEigenvectorDimension);
+			QUERY_ONE_FOR_INTEGER__Eigen_getEigenvectorDimension);
 		praat_addAction1 (classEigen, 1, U"Get eigenvector element...", nullptr, 1, 
 				REAL_Eigen_getEigenvectorElement);
 	praat_addAction1 (classEigen, 0, U"Modify -", nullptr, 0, nullptr);
@@ -9640,7 +9641,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPCA, 1, U"Get fraction variance accounted for...", nullptr, 1,
 			REAL_PCA_getFractionVAF);
 	praat_addAction1 (classPCA, 1, U"Get number of components (VAF)...", nullptr, 1, 
-			INTEGER_PCA_getNumberOfComponents_VAF);
+		QUERY_ONE_FOR_INTEGER__PCA_getNumberOfComponents_VAF);
 	praat_addAction1 (classPCA, 2, U"Get angle between pc1-pc2 planes", nullptr, 1,
 			REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees);
 	praat_addAction1 (classPCA, 0, MODIFY_BUTTON, nullptr, 0, 0);
@@ -9701,11 +9702,11 @@ void praat_uvafon_David_init () {
 			HELP_Permutation_help);
 	praat_addAction1 (classPermutation, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classPermutation, 1, U"Get number of elements", nullptr, 1, 
-			INTEGER_Permutation_getNumberOfElements);
+		QUERY_ONE_FOR_INTEGER__Permutation_getNumberOfElements);
 	praat_addAction1 (classPermutation, 1, U"Get value...", nullptr, 1, 
-			INTEGER_Permutation_getValueAtIndex);
+		QUERY_ONE_FOR_INTEGER__Permutation_getValueAtIndex);
 	praat_addAction1 (classPermutation, 1, U"Get index...", nullptr, 1, 
-			INTEGER_Permutation_getIndexAtValue);
+		QUERY_ONE_FOR_INTEGER__Permutation_getIndexAtValue);
 	praat_addAction1 (classPermutation, 0, MODIFY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classPermutation, 1, U"Jump...", nullptr, 1,
 			MODIFY_Permutation_tableJump);
@@ -9750,7 +9751,7 @@ void praat_uvafon_David_init () {
 			MODIFY_PitchTier_modifyInterval_toneLevels);
 	praat_addAction1 (classPolygon, 0, QUERY_BUTTON, U"Paint circles...", 0, 0);
 	praat_addAction1 (classPolygon, 0, U"Get number of points", QUERY_BUTTON, 1, 
-			INTEGER_Polygon_getNumberOfPoints);
+		QUERY_ONE_FOR_INTEGER__Polygon_getNumberOfPoints);
 	praat_addAction1 (classPolygon, 0, U"Get point (x)...", U"Get number of points", 1, 
 			REAL_Polygon_getPointX);
 	praat_addAction1 (classPolygon, 0, U"Get point (y)...",  U"Get point (x)...", 1, 
@@ -9824,7 +9825,7 @@ void praat_uvafon_David_init () {
 			GRAPHICS_EACH__Roots_draw);
 	praat_addAction1 (classRoots, 1, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classRoots, 1, U"Get number of roots", nullptr, 1, 
-			INTEGER_Roots_getNumberOfRoots);
+		QUERY_ONE_FOR_INTEGER__Roots_getNumberOfRoots);
 	praat_addAction1 (classRoots, 1, U"-- roots --", nullptr, 1, 0);
 	praat_addAction1 (classRoots, 1, U"Get root...", nullptr, 1, 
 			COMPLEX_Roots_getRoot);
@@ -10033,9 +10034,9 @@ void praat_uvafon_David_init () {
 			HELP_SVD_help);
 	praat_addAction1 (classSVD, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classSVD, 1, U"Get number of rows", nullptr, 1, 
-			INTEGER_SVD_getNumberOfRows);
+		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows);
 	praat_addAction1 (classSVD, 1, U"Get number of columns", nullptr, 1, 
-			INTEGER_SVD_getNumberOfColumns);
+		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns);
 	praat_addAction1 (classSVD, 1, U"Get condition number", nullptr, 1, 
 			REAL_SVD_getConditionNumber);
 	praat_addAction1 (classSVD, 0, U"-- singular values ---", nullptr, 1, nullptr);
@@ -10046,7 +10047,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSVD, 1, U"Get sum of singular values (fraction)...", nullptr, 1,
 			REAL_SVD_getSumOfSingularValuesAsFractionOfTotal);
 	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1, 
-			INTEGER_SVD_getMinimumNumberOfSingularValues);
+		QUERY_ONE_FOR_INTEGER__SVD_getMinimumNumberOfSingularValues);
 	
 	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__SVD_to_TableOfReal);
@@ -10105,7 +10106,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", praat_DEPTH_1,
 			NUMVEC_Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,
-			INTEGER_Table_getNumberOfRowsWhere);
+		QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere);
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,
 			INFO_Table_reportOneWayAnova);
 	praat_addAction1 (classTable, 1, U"Report one-way Kruskal-Wallis...", U"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN,
@@ -10265,7 +10266,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 1, U"Get end time...", nullptr, 1, 
 			REAL_TextGridNavigator_getEndTime);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get index...", nullptr, 1, 
-			INTEGER_TextGridNavigator_getIndex);
+		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getIndex);
 	praat_addAction1 (classTextGridNavigator, 1, U"-- number of matches --", nullptr, 1, nullptr);
 	praat_addAction1 (classTextGridNavigator, 1, U"List indices...", nullptr, 1, 
 			NUMVEC_TextGridNavigator_listIndices);
@@ -10278,13 +10279,13 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 1, U"List domains...", nullptr, 1, 
 			NUMMAT_TextGridNavigator_listDomains);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of matches", nullptr, 1, 
-			INTEGER_TextGridNavigator_getNumberOfMatches);
+		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfMatches);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of Topic matches...", nullptr, 1, 
-			INTEGER_TextGridNavigator_getNumberOfTopicMatches);
+		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfTopicMatches);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of Before matches...", nullptr, 1,
-			INTEGER_TextGridNavigator_getNumberOfBeforeMatches);
+		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfBeforeMatches);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of After matches...", nullptr, 1,
-			INTEGER_TextGridNavigator_getNumberOfAfterMatches);
+		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfAfterMatches);
 	praat_addAction1 (classTextGridNavigator, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Use criterion...", nullptr, 1, 
 			MODIFY_TextGridNavigator_modifyUseCriterion);
