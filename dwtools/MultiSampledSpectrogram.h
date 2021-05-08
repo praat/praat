@@ -21,6 +21,7 @@
 #include "Function.h"
 #include "Graphics.h"
 #include "Sampled.h"
+#include "Sound.h"
 #include "Matrix.h"
 #include "MultiSampledSpectrogram_def.h"
 #include "Vector.h"
@@ -33,6 +34,8 @@ void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter i
 double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType);
 
 void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
+
+autoSound FrequencyBin_to_Sound (FrequencyBin me);
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
 

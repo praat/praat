@@ -4517,7 +4517,7 @@ EQUATION (U"%f__%k_ = %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPer
 NORMAL (U"A big advantage of the ##ConstantQLogFSpectrogram# over a traditional #Spectrogram is its invertability: we can create the original sound back from it. This provides a way to manipulate a sound in the frequency domain. ")
 MAN_END
 
-MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20210505)
+MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20210507)
 INTRO (U"A command that creates a @@ConstantQLogFSpectrogram@ from a selected @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Lowest frequency (Hz)")
@@ -4537,7 +4537,9 @@ DEFINITION (U"determines, together with the number of frequency bins per octave,
 EQUATION (U"%%qualityFactor% = 1 / (2^^(%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)^ - 2^^(\\--%%frequencyResolutionBins% / %%numberOfFrequencyBinsPerOctave%)^). ")
 DEFINITION (U"For a frequency resolution of 1 bin and a frequency division of 24 frequency bins per octave we get a "
 	"quality factor of 14.26, for a frequency division of 48 bins per octave we get a quality factor of 34.6. "
-	"THe higher the quality factor the more frequency selective the filters will be and consequently, in the time domain, the longer their analysis window has to be. Consequently, a  (Strictly speaking, the bandwidth of a filter is defined as the width of the filter at "
+	"The larger the quality factor the more frequency selective the filters will be and consequently, in the time domain, "
+	"the longer their analysis window has to be. (Strictly speaking, the bandwidth of a filter is defined as the "
+	"width of the filter at "
 	"an intensity -3 dB below its top. The actual bandwidth depends on the form of the used filter function.)")
 TAG (U"##Time oversampling factor")
 DEFINITION (U"determines the number of frames in each frequency bin. Any number larger than 1 will increase the number of frames in a bin by approximately this factor.  ")

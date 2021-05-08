@@ -1,6 +1,6 @@
 /* praat_FFNet_init.cpp
  *
- * Copyright (C) 1994-2019 David Weenink
+ * Copyright (C) 1994-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -565,79 +565,127 @@ void praat_uvafon_FFNet_init () {
 	Thing_recognizeClassesByName (classFFNet, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Feedforward neural networks", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet...", nullptr, 1, NEW1_FFNet_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create iris example...", nullptr, 1, NEWMANY_FFNet_createIrisExample);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet...", nullptr, 1, 
+			NEW1_FFNet_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create iris example...", nullptr, 1, 
+			NEWMANY_FFNet_createIrisExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Advanced", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet (linear outputs)...", nullptr, 2, NEW1_FFNet_create_linearOutputs);
-	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", nullptr, 2, NEW1_PatternList_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2015, NEW1_PatternList_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, NEW1_Categories_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet (linear outputs)...", nullptr, 2, 
+			NEW1_FFNet_create_linearOutputs);
+	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", nullptr, 2, 
+			NEW1_PatternList_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2015,
+			NEW1_PatternList_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, 
+			NEW1_Categories_create);
 
-	praat_addAction1 (classFFNet, 0, U"FFNet help", nullptr, 0, HELP_FFNet_help);
+	praat_addAction1 (classFFNet, 0, U"FFNet help", nullptr, 0, 
+			HELP_FFNet_help);
 	praat_addAction1 (classFFNet, 0, DRAW_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classFFNet, 0, U"Draw topology", nullptr, 1, GRAPHICS_FFNet_drawTopology);
-	praat_addAction1 (classFFNet, 0, U"Draw weights...", nullptr, 1, GRAPHICS_FFNet_drawWeights);
-	praat_addAction1 (classFFNet, 0, U"Draw weights to layer...", nullptr, praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_FFNet_drawWeightsToLayer);
-	praat_addAction1 (classFFNet, 0, U"Draw cost history...", nullptr, 1, GRAPHICS_FFNet_drawCostHistory);
+	praat_addAction1 (classFFNet, 0, U"Draw topology", nullptr, 1, 
+			GRAPHICS_FFNet_drawTopology);
+	praat_addAction1 (classFFNet, 0, U"Draw weights...", nullptr, 1, 
+			GRAPHICS_FFNet_drawWeights);
+	praat_addAction1 (classFFNet, 0, U"Draw weights to layer...", nullptr, praat_DEPTH_1 | praat_HIDDEN,
+			GRAPHICS_FFNet_drawWeightsToLayer);
+	praat_addAction1 (classFFNet, 0, U"Draw cost history...", nullptr, 1, 
+			GRAPHICS_FFNet_drawCostHistory);
 	praat_addAction1 (classFFNet, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Query structure", nullptr, 1, nullptr);
-	praat_addAction1 (classFFNet, 1, U"Get number of layers", nullptr, 2, INTEGER_FFNet_getNumberOfLayers);
-	praat_addAction1 (classFFNet, 1, U"Get number of outputs", nullptr, 2, INTEGER_FFNet_getNumberOfOutputs);
-	praat_addAction1 (classFFNet, 1, U"Get number of hidden units...", nullptr, 2, INTEGER_FFNet_getNumberOfHiddenUnits);
-	praat_addAction1 (classFFNet, 1, U"Get number of inputs", nullptr, 2, INTEGER_FFNet_getNumberOfInputs);
-	praat_addAction1 (classFFNet, 1, U"Get number of hidden weights...", nullptr, 2, INTEGER_FFNet_getNumberOfHiddenWeights);
-	praat_addAction1 (classFFNet, 1, U"Get number of output weights", nullptr, 2, INTEGER_FFNet_getNumberOfOutputWeights);
-	praat_addAction1 (classFFNet, 1, U"Get category of output unit...", nullptr, 2, INFO_FFNet_getCategoryOfOutputUnit);
-	praat_addAction1 (classFFNet, 1, U"Get output unit of category...", nullptr, 2, INTEGER_FFNet_getOutputUnitOfCategory);
+	praat_addAction1 (classFFNet, 1, U"Get number of layers", nullptr, 2, 
+			INTEGER_FFNet_getNumberOfLayers);
+	praat_addAction1 (classFFNet, 1, U"Get number of outputs", nullptr, 2, 
+			INTEGER_FFNet_getNumberOfOutputs);
+	praat_addAction1 (classFFNet, 1, U"Get number of hidden units...", nullptr, 2, 
+			INTEGER_FFNet_getNumberOfHiddenUnits);
+	praat_addAction1 (classFFNet, 1, U"Get number of inputs", nullptr, 2, 
+			INTEGER_FFNet_getNumberOfInputs);
+	praat_addAction1 (classFFNet, 1, U"Get number of hidden weights...", nullptr, 2, 
+			INTEGER_FFNet_getNumberOfHiddenWeights);
+	praat_addAction1 (classFFNet, 1, U"Get number of output weights", nullptr, 2, 
+			INTEGER_FFNet_getNumberOfOutputWeights);
+	praat_addAction1 (classFFNet, 1, U"Get category of output unit...", nullptr, 2, 
+			INFO_FFNet_getCategoryOfOutputUnit);
+	praat_addAction1 (classFFNet, 1, U"Get output unit of category...", nullptr, 2, 
+			INTEGER_FFNet_getOutputUnitOfCategory);
 	praat_addAction1 (classFFNet, 0, U"-- FFNet weights --", nullptr, 1, nullptr);
-	praat_addAction1 (classFFNet, 1, U"Get bias...", nullptr, 1, REAL_FFNet_getBias);
-	praat_addAction1 (classFFNet, 1, U"Get weight...", nullptr, 1, REAL_FFNet_getWeight);
-	praat_addAction1 (classFFNet, 1, U"Get minimum", nullptr, 1, REAL_FFNet_getMinimum);
+	praat_addAction1 (classFFNet, 1, U"Get bias...", nullptr, 1, 
+			REAL_FFNet_getBias);
+	praat_addAction1 (classFFNet, 1, U"Get weight...", nullptr, 1, 
+			REAL_FFNet_getWeight);
+	praat_addAction1 (classFFNet, 1, U"Get minimum", nullptr, 1, 
+			REAL_FFNet_getMinimum);
 	praat_addAction1 (classFFNet, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classFFNet, 0, U"Set bias...", nullptr, 1, MODIFY_FFNet_setBias);
-	praat_addAction1 (classFFNet, 0, U"Set weight...", nullptr, 1, MODIFY_FFNet_setWeight);
-	praat_addAction1 (classFFNet, 0, U"Reset...", nullptr, 1, MODIFY_FFNet_reset);
-	praat_addAction1 (classFFNet, 0, U"Select biases...", nullptr, 1, MODIFY_FFNet_selectBiasesInLayer);
-	praat_addAction1 (classFFNet, 0, U"Select all weights", nullptr, 1, MODIFY_FFNet_selectAllWeights);
+	praat_addAction1 (classFFNet, 0, U"Set bias...", nullptr, 1, 
+			MODIFY_FFNet_setBias);
+	praat_addAction1 (classFFNet, 0, U"Set weight...", nullptr, 1, 
+			MODIFY_FFNet_setWeight);
+	praat_addAction1 (classFFNet, 0, U"Reset...", nullptr, 1, 
+			MODIFY_FFNet_reset);
+	praat_addAction1 (classFFNet, 0, U"Select biases...", nullptr, 1, 
+			MODIFY_FFNet_selectBiasesInLayer);
+	praat_addAction1 (classFFNet, 0, U"Select all weights", nullptr, 1, 
+			MODIFY_FFNet_selectAllWeights);
 	praat_addAction1 (classFFNet, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classFFNet, 0, U"Extract weights...", nullptr, 1, NEW_FFNet_extractWeights);
-	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", nullptr, praat_DEPTH_1 | praat_HIDDEN, NEW_FFNet_weightsToMatrix);
-	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", nullptr, 0, HINT_hint_FFNet_PatternList_classify);
-	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", nullptr, 0, HINT_hint_FFNet_PatternList_Categories_learn);
+	praat_addAction1 (classFFNet, 0, U"Extract weights...", nullptr, 1, 
+			NEW_FFNet_extractWeights);
+	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", nullptr, praat_DEPTH_1 | praat_HIDDEN, 
+			NEW_FFNet_weightsToMatrix);
+	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", nullptr, 0, 
+			HINT_hint_FFNet_PatternList_classify);
+	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", nullptr, 0,
+			HINT_hint_FFNet_PatternList_Categories_learn);
 
 	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", nullptr, 0, NEW1_FFNet_ActivationList_to_Categories);
+	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", nullptr, 0, 
+			NEW1_FFNet_ActivationList_to_Categories);
 
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw hyperplane intersections", nullptr, 0, GRAPHICS_FFNet_Eigen_drawIntersection);
+	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw hyperplane intersections", nullptr, 0,
+			GRAPHICS_FFNet_Eigen_drawIntersection);
 
 	praat_addAction2 (classFFNet, 1, classCategories, 1, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classCategories, 1, U"To ActivationList", nullptr, 0, NEW1_FFNet_Categories_to_ActivationList);
+	praat_addAction2 (classFFNet, 1, classCategories, 1, U"To ActivationList", nullptr, 0, 
+			NEW1_FFNet_Categories_to_ActivationList);
 
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Modify", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Weights from Matrix...", nullptr, 0, NEW1_FFNet_weightsFromMatrix);
+	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Weights from Matrix...", nullptr, 0, 
+			NEW1_FFNet_weightsFromMatrix);
 
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw activation...", nullptr, 0, GRAPHICS_FFNet_PatternList_drawActivation);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw activation...", nullptr, 0,
+			GRAPHICS_FFNet_PatternList_drawActivation);
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Analyse", nullptr, 0, nullptr);
-	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To Categories...", nullptr, 0, NEW1_FFNet_PatternList_to_Categories);
-	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To ActivationList...", nullptr, 0, NEW1_FFNet_PatternList_to_ActivationList);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To Categories...", nullptr, 0,
+			NEW1_FFNet_PatternList_to_Categories);
+	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To ActivationList...", nullptr, 0,
+			NEW1_FFNet_PatternList_to_ActivationList);
 
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get total costs...", nullptr, 0, REAL_FFNet_PatternList_ActivationList_getTotalCosts);
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get average costs...", nullptr, 0, REAL_FFNet_PatternList_ActivationList_getAverageCosts);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get total costs...", nullptr, 0,
+			REAL_FFNet_PatternList_ActivationList_getTotalCosts);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get average costs...", nullptr, 0,
+			REAL_FFNet_PatternList_ActivationList_getAverageCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn", nullptr, 0, nullptr);
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn...", nullptr, 0, MODIFY_FFNet_PatternList_ActivationList_learn);
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn slow...", nullptr, 0, MODIFY_FFNet_PatternList_ActivationList_learnSlow);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn...", nullptr, 0,
+			MODIFY_FFNet_PatternList_ActivationList_learn);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn slow...", nullptr, 0,
+			MODIFY_FFNet_PatternList_ActivationList_learnSlow);
 
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get total costs...", nullptr, 0, REAL_FFNet_PatternList_Categories_getTotalCosts);
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get average costs...", nullptr, 0, REAL_FFNet_PatternList_Categories_getAverageCosts);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get total costs...", nullptr, 0,
+			REAL_FFNet_PatternList_Categories_getTotalCosts);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get average costs...", nullptr, 0,
+			REAL_FFNet_PatternList_Categories_getAverageCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn", nullptr, 0, nullptr);
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn...", nullptr, 0, MODIFY_FFNet_PatternList_Categories_learn);
-	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn slow...", nullptr, 0, MODIFY_FFNet_PatternList_Categories_learnSlow);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn...", nullptr, 0,
+			MODIFY_FFNet_PatternList_Categories_learn);
+	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn slow...", nullptr, 0,
+			MODIFY_FFNet_PatternList_Categories_learnSlow);
 	
-	praat_addAction2 (classFFNet, 1, classPCA, 1, U"Draw decision plane...", nullptr, 0, GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace);
+	praat_addAction2 (classFFNet, 1, classPCA, 1, U"Draw decision plane...", nullptr, 0,
+			GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace);
 	
-	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To FFNet...", nullptr, 0, NEW1_PatternList_Categories_to_FFNet);
+	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To FFNet...", nullptr, 0, 
+			NEW1_PatternList_Categories_to_FFNet);
 	
 	INCLUDE_MANPAGES (manual_FFNet_init)
 }

@@ -1,6 +1,6 @@
 /* praat_HMM_init.cpp
  *
- * Copyright (C) 2010-2020 David Weenink
+ * Copyright (C) 2010-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,13 +78,13 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_GaussianMixture_getNumberOfComponents) {
+DIRECT (QUERY_ONE_FOR_INTEGER__GaussianMixture_getNumberOfComponents) {
 	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		integer result = my numberOfComponents;
 	QUERY_ONE_FOR_INTEGER_END (U"(= number of components)")
 }
 
-DIRECT (INTEGER_GaussianMixture_getDimensionOfComponent) {
+DIRECT (QUERY_ONE_FOR_INTEGER__GaussianMixture_getDimensionOfComponent) {
 	QUERY_ONE_FOR_INTEGER (GaussianMixture)
 		integer result = my dimension;
 	QUERY_ONE_FOR_INTEGER_END (U"(= dimension of component)")
@@ -662,96 +662,163 @@ void praat_HMM_init () {
 	Thing_recognizeClassesByName (classHMM, classHMMState, classHMMObservation, classHMMObservationSequence, classHMMStateSequence, classGaussianMixture, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Markov models", nullptr, praat_HIDDEN, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_HMM_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_HMM_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create continuous HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_HMM_createContinuousModel);
+	praat_addMenuCommand (U"Objects", U"New", U"Create HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+			NEW1_HMM_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+			NEW1_HMM_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create continuous HMM...", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+			NEW1_HMM_createContinuousModel);
 	praat_addMenuCommand (U"Objects", U"New", U"--drawings--", nullptr, praat_HIDDEN + praat_DEPTH_1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, GRAPHICS_HMM_drawForwardProbabilitiesIllustration);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, GRAPHICS_HMM_drawBackwardProbabilitiesIllustration);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1,
+			GRAPHICS_HMM_drawForwardProbabilitiesIllustration);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1,
+			GRAPHICS_HMM_drawBackwardProbabilitiesIllustration);
+	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, 
+			GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration);
 	
-	praat_addAction1 (classGaussianMixture, 0, U"GaussianMixture help", nullptr, 0, HELP_GaussianMixture_help);
-	praat_addAction1 (classGaussianMixture, 0, U"Draw concentration ellipses...", nullptr, 0, GRAPHICS_GaussianMixture_drawConcentrationEllipses);
-	praat_addAction1 (classGaussianMixture, 0, U"Draw marginal pdf...", nullptr, 0, GRAPHICS_GaussianMixture_drawMarginalPdf);
+	praat_addAction1 (classGaussianMixture, 0, U"GaussianMixture help", nullptr, 0, 
+			HELP_GaussianMixture_help);
+	praat_addAction1 (classGaussianMixture, 0, U"Draw concentration ellipses...", nullptr, 0,
+			GRAPHICS_GaussianMixture_drawConcentrationEllipses);
+	praat_addAction1 (classGaussianMixture, 0, U"Draw marginal pdf...", nullptr, 0, 
+			GRAPHICS_GaussianMixture_drawMarginalPdf);
 	praat_addAction1 (classGaussianMixture, 0, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classGaussianMixture, 1, U"Get number of components", nullptr, 1, INTEGER_GaussianMixture_getNumberOfComponents);
-	praat_addAction1 (classGaussianMixture, 1, U"Get dimension of component", nullptr, 1, INTEGER_GaussianMixture_getDimensionOfComponent);
-	praat_addAction1 (classGaussianMixture, 1, U"Get probability at position...", nullptr, 1, REAL_GaussianMixture_getProbabilityAtPosition);
+	praat_addAction1 (classGaussianMixture, 1, U"Get number of components", nullptr, 1,
+			QUERY_ONE_FOR_INTEGER__GaussianMixture_getNumberOfComponents);
+	praat_addAction1 (classGaussianMixture, 1, U"Get dimension of component", nullptr, 1,
+			QUERY_ONE_FOR_INTEGER__GaussianMixture_getDimensionOfComponent);
+	praat_addAction1 (classGaussianMixture, 1, U"Get probability at position...", nullptr, 1,
+			REAL_GaussianMixture_getProbabilityAtPosition);
 	praat_addAction1 (classGaussianMixture, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classGaussianMixture, 1, U"Split component...", nullptr, 1, MODIFY_GaussianMixture_splitComponent);
+	praat_addAction1 (classGaussianMixture, 1, U"Split component...", nullptr, 1, 
+			MODIFY_GaussianMixture_splitComponent);
 	praat_addAction1 (classGaussianMixture, 0, U"Extract -", nullptr, 0, nullptr);
-	praat_addAction1 (classGaussianMixture, 0, U"Extract mixing probabilities", nullptr, 1, NEW_GaussianMixture_extractMixingProbabilities);
-	praat_addAction1 (classGaussianMixture, 0, U"Extract component...", nullptr, 1, NEW_GaussianMixture_extractComponent);
-	praat_addAction1 (classGaussianMixture, 0, U"Extract centroids", nullptr, 1, NEW_GaussianMixture_extractCentroids);
-	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (between)", nullptr, 0, NEW_GaussianMixture_to_Covariance_between);
-	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (within)", nullptr, 0, NEW_GaussianMixture_to_Covariance_within);
-	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (total)", nullptr, 0, NEW_GaussianMixture_to_Covariance_total);
+	praat_addAction1 (classGaussianMixture, 0, U"Extract mixing probabilities", nullptr, 1,
+			NEW_GaussianMixture_extractMixingProbabilities);
+	praat_addAction1 (classGaussianMixture, 0, U"Extract component...", nullptr, 1, 
+			NEW_GaussianMixture_extractComponent);
+	praat_addAction1 (classGaussianMixture, 0, U"Extract centroids", nullptr, 1, 
+			NEW_GaussianMixture_extractCentroids);
+	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (between)", nullptr, 0, 
+			NEW_GaussianMixture_to_Covariance_between);
+	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (within)", nullptr, 0, 
+			NEW_GaussianMixture_to_Covariance_within);
+	praat_addAction1 (classGaussianMixture, 0, U"To Covariance (total)", nullptr, 0, 
+			NEW_GaussianMixture_to_Covariance_total);
 	praat_addAction1 (classGaussianMixture, 0, U"To PCA", nullptr, 0, NEW_GaussianMixture_to_PCA);
-	praat_addAction1 (classGaussianMixture, 0, U"To TableOfReal (random sampling)...", nullptr, 0, NEW_GaussianMixture_to_TableOfReal_randomSampling);
+	praat_addAction1 (classGaussianMixture, 0, U"To TableOfReal (random sampling)...", nullptr, 0,
+			NEW_GaussianMixture_to_TableOfReal_randomSampling);
 
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Get likelihood value...", nullptr, 0, REAL_GaussianMixture_TableOfReal_getLikelihoodValue);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Improve likelihood...", nullptr, 0, MODIFY_GaussianMixture_TableOfReal_improveLikelihood);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To GaussianMixture (CEMM)...", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (probabilities)", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_TableOfReal_probabilities);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (responsibilities)", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_TableOfReal_responsibilities);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Get likelihood value...", nullptr, 0,
+			REAL_GaussianMixture_TableOfReal_getLikelihoodValue);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"Improve likelihood...", nullptr, 0,
+			MODIFY_GaussianMixture_TableOfReal_improveLikelihood);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To GaussianMixture (CEMM)...", nullptr, 0,
+			NEW1_GaussianMixture_TableOfReal_to_GaussianMixture_CEMM);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (probabilities)", nullptr, 0,
+			NEW1_GaussianMixture_TableOfReal_to_TableOfReal_probabilities);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To TableOfReal (responsibilities)", nullptr, 0,
+			NEW1_GaussianMixture_TableOfReal_to_TableOfReal_responsibilities);
 	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To ClassificationTable", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_ClassificationTable);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Correlation", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_Correlation);
-	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Table (BHEP normality tests)...", nullptr, 0, NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Correlation", nullptr, 0,
+			NEW1_GaussianMixture_TableOfReal_to_Correlation);
+	praat_addAction2 (classGaussianMixture, 1, classTableOfReal, 1, U"To Table (BHEP normality tests)...", nullptr, 0,
+			NEW1_GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests);
 
-	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw concentration ellipses...", nullptr, 0, GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses);
-	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw marginal pdf...", nullptr, 0, GRAPHICS_GaussianMixture_PCA_drawMarginalPdf);
-	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"To Matrix (density)...", nullptr, 0, NEW1_GaussianMixture_PCA_to_Matrix_density);
+	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw concentration ellipses...", nullptr, 0,
+			GRAPHICS_GaussianMixture_PCA_drawConcentrationEllipses);
+	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"Draw marginal pdf...", nullptr, 0,
+			GRAPHICS_GaussianMixture_PCA_drawMarginalPdf);
+	praat_addAction2 (classGaussianMixture, 1, classPCA, 1, U"To Matrix (density)...", nullptr, 0,
+			NEW1_GaussianMixture_PCA_to_Matrix_density);
 
-	praat_addAction1 (classHMM, 0, U"HMM help ", nullptr, 0, HELP_HMM_help);
-	praat_addAction1 (classHMM, 0, U"Draw...", nullptr, 0, GRAPHICS_HMM_draw);
+	praat_addAction1 (classHMM, 0, U"HMM help ", nullptr, 0,
+			HELP_HMM_help);
+	praat_addAction1 (classHMM, 0, U"Draw...", nullptr, 0, 
+			GRAPHICS_HMM_draw);
 	praat_addAction1 (classHMM, 0, U"Query -", nullptr, 0, nullptr);
-	praat_addAction1 (classHMM, 1, U"Get transition probability...", nullptr, 1, REAL_HMM_getTransitionProbability);
-	praat_addAction1 (classHMM, 1, U"Get emission probability...", nullptr, 1, REAL_HMM_getEmissionProbability);
-	praat_addAction1 (classHMM, 1, U"Get start probability...", nullptr, 1, REAL_HMM_getStartProbability);
-	praat_addAction1 (classHMM, 1, U"Get p (time, state)...", nullptr, 1, REAL_HMM_getProbabilityAtTimeBeingInState);
-	praat_addAction1 (classHMM, 1, U"Get p (time, state, symbol)...", nullptr, 1, REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol);
-	praat_addAction1 (classHMM, 1, U"Get probability staying in state...", nullptr, 1, REAL_HMM_getProbabilityOfStayingInState);
-	praat_addAction1 (classHMM, 1, U"Get expected duration in state...", nullptr, 1, REAL_HMM_getExpectedDurationInState);
+	praat_addAction1 (classHMM, 1, U"Get transition probability...", nullptr, 1, 
+			REAL_HMM_getTransitionProbability);
+	praat_addAction1 (classHMM, 1, U"Get emission probability...", nullptr, 1,
+			REAL_HMM_getEmissionProbability);
+	praat_addAction1 (classHMM, 1, U"Get start probability...", nullptr, 1, 
+			REAL_HMM_getStartProbability);
+	praat_addAction1 (classHMM, 1, U"Get p (time, state)...", nullptr, 1,
+			REAL_HMM_getProbabilityAtTimeBeingInState);
+	praat_addAction1 (classHMM, 1, U"Get p (time, state, symbol)...", nullptr, 1,
+			REAL_HMM_getProbabilityAtTimeBeingInStateEmittingSymbol);
+	praat_addAction1 (classHMM, 1, U"Get probability staying in state...", nullptr, 1, 
+			REAL_HMM_getProbabilityOfStayingInState);
+	praat_addAction1 (classHMM, 1, U"Get expected duration in state...", nullptr, 1,
+			REAL_HMM_getExpectedDurationInState);
 	praat_addAction1 (classHMM, 1, U"---- states / symbols -----", nullptr, 1, nullptr);
-	praat_addAction1 (classHMM, 1, U"Get state label...", nullptr, 1, INFO_HMM_getStateLabel);
-	praat_addAction1 (classHMM, 1, U"Get symbol label...", nullptr, 1, INFO_HMM_getSymbolLabel);
+	praat_addAction1 (classHMM, 1, U"Get state label...", nullptr, 1, 
+			INFO_HMM_getStateLabel);
+	praat_addAction1 (classHMM, 1, U"Get symbol label...", nullptr, 1,
+			INFO_HMM_getSymbolLabel);
 	praat_addAction1 (classHMM, 0, U"--- multiple HMMs ----", nullptr, 1, nullptr);
-	praat_addAction1 (classHMM, 2, U"Get cross-entropy...", nullptr, 1, REAL_HMM_HMM_getCrossEntropy);
+	praat_addAction1 (classHMM, 2, U"Get cross-entropy...", nullptr, 1, 
+			REAL_HMM_HMM_getCrossEntropy);
 
 	praat_addAction1 (classHMM, 0, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classHMM, 1, U"Set transition probabilities...", nullptr, 1, MODIFY_HMM_setTransitionProbabilities);
-	praat_addAction1 (classHMM, 1, U"Set emission probabilities...", nullptr, 1, MODIFY_HMM_setEmissionProbabilities);
-	praat_addAction1 (classHMM, 1, U"Set start probabilities...", nullptr, 1, MODIFY_HMM_setStartProbabilities);
+	praat_addAction1 (classHMM, 1, U"Set transition probabilities...", nullptr, 1, 
+			MODIFY_HMM_setTransitionProbabilities);
+	praat_addAction1 (classHMM, 1, U"Set emission probabilities...", nullptr, 1, 
+			MODIFY_HMM_setEmissionProbabilities);
+	praat_addAction1 (classHMM, 1, U"Set start probabilities...", nullptr, 1, 
+			MODIFY_HMM_setStartProbabilities);
 
 	praat_addAction1 (classHMM, 0, U"Extract -", nullptr, 0, nullptr);
-	praat_addAction1 (classHMM, 0, U"Extract transition probabilities", nullptr, 1, NEW_HMM_extractTransitionProbabilities);
-	praat_addAction1 (classHMM, 0, U"Extract emission probabilities", nullptr, 1, NEW_HMM_extractEmissionProbabilities);
+	praat_addAction1 (classHMM, 0, U"Extract transition probabilities", nullptr, 1, 
+			NEW_HMM_extractTransitionProbabilities);
+	praat_addAction1 (classHMM, 0, U"Extract emission probabilities", nullptr, 1, 
+			NEW_HMM_extractEmissionProbabilities);
 
-	praat_addAction1 (classHMM, 0, U"To HMMObservationSequence...", nullptr, 0, NEW_HMM_to_HMMObservationSequence);
-	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Draw trellis...", nullptr, 0, GRAPHICS_HMM_HMMStateSequence_drawTrellis);
-	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Get probability", nullptr, 0, REAL_HMM_HMMStateSequence_getProbability);
-	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, NEW1_HMM_HMMStateSequence_to_TableOfReal_bigrams);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get probability", nullptr, 0, REAL_HMM_HMMObservationSequence_getProbability);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0, REAL_HMM_HMMObservationSequence_getCrossEntropy);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get perplexity", nullptr, 0, REAL_HMM_HMMObservationSequence_getPerplexity);
+	praat_addAction1 (classHMM, 0, U"To HMMObservationSequence...", nullptr, 0,
+			NEW_HMM_to_HMMObservationSequence);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Draw trellis...", nullptr, 0,
+			GRAPHICS_HMM_HMMStateSequence_drawTrellis);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"Get probability", nullptr, 0, 
+			REAL_HMM_HMMStateSequence_getProbability);
+	praat_addAction2 (classHMM, 1, classHMMStateSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, 
+			NEW1_HMM_HMMStateSequence_to_TableOfReal_bigrams);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get probability", nullptr, 0,
+			REAL_HMM_HMMObservationSequence_getProbability);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0,
+			REAL_HMM_HMMObservationSequence_getCrossEntropy);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"Get perplexity", nullptr, 0,
+			REAL_HMM_HMMObservationSequence_getPerplexity);
 
 
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To HMMStateSequence", nullptr, 0, NEW1_HMM_HMMObservationSequence_to_HMMStateSequence);
-	praat_addAction2 (classHMM, 2, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0, REAL_HMM_HMM_HMMObservationSequence_getCrossEntropy);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0, NEW1_HMM_HMMObservationSequence_to_TableOfReal_bigrams);
-	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 0, U"Learn...", nullptr, 0, MODIFY_HMM_HMMObservationSequence_learn);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To HMMStateSequence", nullptr, 0,
+			NEW1_HMM_HMMObservationSequence_to_HMMStateSequence);
+	praat_addAction2 (classHMM, 2, classHMMObservationSequence, 1, U"Get cross-entropy", nullptr, 0,
+			REAL_HMM_HMM_HMMObservationSequence_getCrossEntropy);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 1, U"To TableOfReal (bigrams)...", nullptr, 0,
+			NEW1_HMM_HMMObservationSequence_to_TableOfReal_bigrams);
+	praat_addAction2 (classHMM, 1, classHMMObservationSequence, 0, U"Learn...", nullptr, 0, 
+			MODIFY_HMM_HMMObservationSequence_learn);
 
-	praat_addAction1 (classHMMObservationSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0, NEW_HMMObservationSequence_to_TableOfReal_bigrams);
-	praat_addAction1 (classHMMObservationSequence, 0, U"To Strings", nullptr, 0, NEW_HMMObservationSequence_to_Strings);
-	praat_addAction1 (classHMMStateSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0, NEW_HMMStateSequence_to_TableOfReal_bigrams);
-	praat_addAction1 (classHMMStateSequence, 0, U"To Strings", nullptr, 0, NEW_HMMStateSequence_to_Strings);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0,
+			NEW_HMMObservationSequence_to_TableOfReal_bigrams);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To Strings", nullptr, 0, 
+			NEW_HMMObservationSequence_to_Strings);
+	praat_addAction1 (classHMMStateSequence, 0, U"To TableOfReal (bigrams)...", nullptr, 0,
+			NEW_HMMStateSequence_to_TableOfReal_bigrams);
+	praat_addAction1 (classHMMStateSequence, 0, U"To Strings", nullptr, 0, 
+			NEW_HMMStateSequence_to_Strings);
 
-	praat_addAction1 (classHMMObservationSequence, 0, U"To HMM...", nullptr, 1, NEW_HMMObservationSequence_to_HMM);
+	praat_addAction1 (classHMMObservationSequence, 0, U"To HMM...", nullptr, 1, 
+			NEW_HMMObservationSequence_to_HMM);
 
-	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, praat_HIDDEN, NEW_Strings_to_HMMObservationSequence);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_GaussianMixture_rowlabels);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1, NEW_TableOfReal_to_GaussianMixture);
-	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (CEMM)...", U"To GaussianMixture...", praat_HIDDEN + praat_DEPTH_1, NEW1_TableOfReal_to_GaussianMixture_CEMM);
+	praat_addAction1 (classStrings, 0, U"To HMMObservationSequence", nullptr, praat_HIDDEN, 
+			NEW_Strings_to_HMMObservationSequence);
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (row labels)...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1,
+			NEW_TableOfReal_to_GaussianMixture_rowlabels);
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture...", U"To Covariance", praat_HIDDEN + praat_DEPTH_1,
+			NEW_TableOfReal_to_GaussianMixture);
+	praat_addAction1 (classTableOfReal, 0, U"To GaussianMixture (CEMM)...", U"To GaussianMixture...", praat_HIDDEN + praat_DEPTH_1,
+			NEW1_TableOfReal_to_GaussianMixture_CEMM);
 	INCLUDE_MANPAGES (manual_HMM)
 }
 
