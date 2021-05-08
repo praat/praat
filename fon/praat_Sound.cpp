@@ -113,16 +113,7 @@ FORM (PLAY_LongSound_playPart, U"LongSound: Play part", nullptr) {
 DO
 	PLAY_EACH (LongSound)
 		LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
-		}
-	} else {
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
-		LOOP {
-			iam_LOOP (LongSound);
-			LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
-		}
-		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
-	}
-	END_NO_NEW_DATA
+	PLAY_EACH_END
 }
 
 FORM (SAVE_ONE__LongSound_savePartAsAudioFile, U"LongSound: Save part as audio file", nullptr) {
