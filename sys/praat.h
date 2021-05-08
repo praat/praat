@@ -1391,6 +1391,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define SAVE_ONE_END  \
 	END_NO_NEW_DATA
 
+#define SAVE_TWO(klas)  \
+	FIND_TWO (klas)
+#define SAVE_TWO_END  \
+	END_NO_NEW_DATA
+
 #define SAVE_ALL(klas)  \
 	FIND_ALL (klas)
 #define SAVE_ALL_END  \
@@ -1402,26 +1407,44 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	END_NO_NEW_DATA
 
 /*
+	APPEND
+*/
+
+#define APPEND_ALL(klas)  \
+	FIND_ALL (klas)
+#define APPEND_ALL_END  \
+	END_NO_NEW_DATA
+
+
+/*
 	EDITOR
 */
+
+#define EDITOR_END__  \
+	praat_installEditor (editor.get(), IOBJECT); \
+	editor.releaseToUser(); \
+	END_NO_NEW_DATA
 
 #define EDITOR_ONE(indefiniteArticle,klas)  \
 	if (theCurrentPraatApplication -> batch) \
 		Melder_throw (U"Cannot edit " #indefiniteArticle " " #klas " from batch."); \
 	FIND_ONE_WITH_IOBJECT (klas)
 #define EDITOR_ONE_END  \
-	praat_installEditor (editor.get(), IOBJECT); \
-	editor.releaseToUser(); \
-	END_NO_NEW_DATA
+	EDITOR_END__
 
 #define EDITOR_ONE_WITH_ONE(indefiniteArticle,klas1,klas2)  \
 	if (theCurrentPraatApplication -> batch) \
 		Melder_throw (U"Cannot edit " #indefiniteArticle " " #klas1 " from batch."); \
 	FIND_ONE_AND_ONE_WITH_IOBJECT (klas1, klas2)
 #define EDITOR_ONE_WITH_ONE_END  \
-	praat_installEditor (editor.get(), IOBJECT); \
-	editor.releaseToUser(); \
-	END_NO_NEW_DATA
+	EDITOR_END__
+
+#define EDITOR_ONE_WITH_ONE_AND_ONE(indefiniteArticle,klas1,klas2,klas3)  \
+	if (theCurrentPraatApplication -> batch) \
+		Melder_throw (U"Cannot edit " #indefiniteArticle " " #klas1 " from batch."); \
+	FIND_ONE_AND_ONE_AND_ONE_WITH_IOBJECT (klas1, klas2, klas3)
+#define EDITOR_ONE_WITH_ONE_AND_ONE_END  \
+	EDITOR_END__
 
 /*
 	CREATION_WINDOW
@@ -1439,6 +1462,14 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CREATION_WINDOW_END  \
 	creationWindow.releaseToUser(); \
 	END_NO_NEW_DATA   // no new data *yet*, because the window is asynchronous
+
+/*
+	WARNING
+*/
+
+#define WARNING
+#define WARNING_END  \
+	END_NO_NEW_DATA
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 void praat_installEditor (Editor editor, int iobject);

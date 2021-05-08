@@ -500,7 +500,7 @@ DO
 		if (interpreter)
 			interpreter -> returnType = kInterpreter_ReturnType::REAL_;
 		Melder_information (result);
-	END_NO_NEW_DATA
+	END_NO_NEW_DATA   // SMELL
 }
 
 FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
