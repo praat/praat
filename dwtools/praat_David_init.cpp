@@ -2200,7 +2200,7 @@ DIRECT (WARNING__Eigen_drawEigenvalues_scree) {
 	WARNING_END
 }
 
-FORM (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
+FORM (GRAPHICS_EACH__Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
 	INTEGER (fromEigenvalue, U"left Eigenvalue range", U"0")
 	INTEGER (toEigenvalue, U"right Eigenvalue range", U"0")
 	REAL (fromAmplitude, U"left Amplitude range", U"0.0")
@@ -2217,7 +2217,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...") {
+FORM (GRAPHICS_EACH__Eigen_drawEigenvector, U"Eigen: Draw eigenvector", U"Eigen: Draw eigenvector...") {
 	INTEGER (eigenvectorNumber, U"Eigenvector number", U"1")
 	BOOLEAN (loadings, U"Component loadings", false)
 	INTEGER (fromElement, U"left Element range", U"0")
@@ -8335,10 +8335,12 @@ static void praat_Eigen_query_init (ClassInfo klas) {
 }
 
 static void praat_Eigen_draw_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Eigen_drawEigenvalues);
+	praat_addAction1 (klas, 0, U"Draw eigenvalues...", nullptr, 1,
+			GRAPHICS_EACH__Eigen_drawEigenvalues);
 	praat_addAction1 (klas, 0, U"Draw eigenvalues (scree)...", U"*Draw eigenvalues...", praat_DEPRECATED_2010 | praat_DEPTH_1,
-		WARNING__Eigen_drawEigenvalues_scree);
-	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
+			WARNING__Eigen_drawEigenvalues_scree);
+	praat_addAction1 (klas, 0, U"Draw eigenvector...", nullptr, 1,
+			GRAPHICS_EACH__Eigen_drawEigenvector);
 }
 
 static void praat_Index_init (ClassInfo klas) {

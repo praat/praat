@@ -111,12 +111,8 @@ FORM (PLAY_LongSound_playPart, U"LongSound: Play part", nullptr) {
 	REAL (toTime, U"right Time range (s)", U"10.0")
 	OK
 DO
-	int n = 0;
-	LOOP n ++;
-	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel::ASYNCHRONOUS) {
-		LOOP {
-			iam_LOOP (LongSound);
-			LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
+	PLAY_EACH (LongSound)
+		LongSound_playPart (me, fromTime, toTime, nullptr, nullptr);
 		}
 	} else {
 		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
