@@ -8986,10 +8986,12 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDiscriminant, 0, U"Discriminant help", 0, 0,
 			HELP_Discriminant_help);
 	praat_addAction1 (classDiscriminant, 0, DRAW_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Discriminant_drawEigenvalues);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues...", nullptr, 1,
+			GRAPHICS_EACH__Discriminant_drawEigenvalues);
 	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_HIDDEN,
 			WARNING__Eigen_drawEigenvalues_scree);
-	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Discriminant_drawEigenvector);
+	praat_addAction1 (classDiscriminant, 0, U"Draw eigenvector...", nullptr, 1,
+			GRAPHICS_EACH__Discriminant_drawEigenvector);
 
 	praat_addAction1 (classDiscriminant, 0, U"-- sscps --", 0, 1, 0);
 	praat_addAction1 (classDiscriminant, 0, U"Draw sigma ellipses...", 0, 1, 
@@ -9278,8 +9280,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEigen, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2010,
 				WARNING__Eigen_drawEigenvalues_scree);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Eigen_drawEigenvalues);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1,
+				GRAPHICS_EACH__Eigen_drawEigenvalues);
+		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1,
+				GRAPHICS_EACH__Eigen_drawEigenvector);
 	praat_addAction1 (classEigen, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 1, U"Get number of eigenvalues", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvalues);
@@ -9449,10 +9453,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classLtas, 0, U"Report spectral trend...", U"Get slope...", 1, INFO_Ltas_reportSpectralTrend);
 	praat_addAction1 (classLtas, 0, U"Report spectral tilt...", U"Get slope...", praat_DEPTH_1 + praat_HIDDEN, INFO_Ltas_reportSpectralTrend);
 
-	praat_addAction1 (classMatrix, 0, U"Scatter plot...", U"Paint cells...", 1, GRAPHICS_Matrix_scatterPlot);
-	praat_addAction1 (classMatrix, 0, U"Draw as squares...", U"Scatter plot...", 1, GRAPHICS_Matrix_drawAsSquares);
-	praat_addAction1 (classMatrix, 0, U"Draw distribution...", U"Draw as squares...", 1, GRAPHICS_Matrix_drawDistribution);
-	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1, GRAPHICS_Matrix_drawCumulativeDistribution);
+	praat_addAction1 (classMatrix, 0, U"Scatter plot...", U"Paint cells...", 1,
+			GRAPHICS_EACH__Matrix_scatterPlot);
+	praat_addAction1 (classMatrix, 0, U"Draw as squares...", U"Scatter plot...", 1,
+			GRAPHICS_EACH__Matrix_drawAsSquares);
+	praat_addAction1 (classMatrix, 0, U"Draw distribution...", U"Draw as squares...", 1,
+			GRAPHICS_EACH__Matrix_drawDistribution);
+	praat_addAction1 (classMatrix, 0, U"Draw cumulative distribution...", U"Draw distribution...", 1,
+			GRAPHICS_EACH__Matrix_drawCumulativeDistribution);
 	praat_addAction1 (classMatrix, 0, U"Get mean...", U"Get sum", 1, REAL_Matrix_getMean);
 	praat_addAction1 (classMatrix, 0, U"Get standard deviation...", U"Get mean...", 1, REAL_Matrix_getStandardDeviation);
 	praat_addAction1 (classMatrix, 0, U"Mathematical -", U"Get standard deviation...", 1, nullptr);
