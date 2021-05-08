@@ -231,7 +231,7 @@ KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, kKlattGridFormantTy
 #undef KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER
 
 #define KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(Name,name,unit,default,requireCondition,requireMessage,newname,tiertype)  \
-FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) { \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) { \
 	REAL (time, U"Time", U"0.5") \
 	OK \
 DO \
@@ -482,7 +482,7 @@ DO
 }
 
 #define KlattGrid_FORMANT_GET_FB_VALUE(Name,name,ForB,forb,FormB,formantType)  \
-FORM (REAL_KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name " " #forb " at time", nullptr) { \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##Formant##ForB##AtTime, U"KlattGrid: Get " #name " " #forb " at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
@@ -493,7 +493,7 @@ DO \
 }
 
 #define KlattGrid_FORMANT_GET_A_VALUE(Name,name,formantType)  \
-FORM (REAL_KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " formant amplitude at time", nullptr) { \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantAmplitudeAtTime, U"KlattGrid: Get " #name " formant amplitude at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
@@ -586,7 +586,7 @@ KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, kKlattGridFormantType
 #undef KlattGrid_REPLACE_FORMANTGRID
 
 #define KlattGrid_FORMANT_GET_ADD_REMOVE(Name,name,unit,default,requireCondition,requireMessage)  \
-FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) { \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) { \
 	KlattGrid_6formants_addCommonField (formantType) \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
@@ -596,7 +596,7 @@ DO \
 		const double result = KlattGrid_get##Name##AtTime (me, formantType, formantNumber, time); \
 	QUERY_ONE_FOR_REAL_END (U" Hz"); \
 } \
-FORM (REAL_KlattGrid_getDelta##Name##AtTime, U"KlattGrid: Get delta " #name " at time", nullptr) { \
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_getDelta##Name##AtTime, U"KlattGrid: Get delta " #name " at time", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	OK \
@@ -683,7 +683,7 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-FORM (REAL_KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitude at time", nullptr) {
 	KlattGrid_4formants_addCommonField (formantType)
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (time, U"Time (s)", U"0.5")
@@ -809,7 +809,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_phonation")
 }
 
-DIRECT (HELP_KlattGrid_help)  {
+DIRECT (HELP__KlattGrid_help)  {
 	HELP (U"KlattGrid")
 }
 
@@ -876,7 +876,7 @@ void praat_KlattGrid_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"Acoustic synthesis (Klatt)", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, praat_DEPTH_1 | praat_NO_API, 
-			HELP_KlattGrid_help);
+			HELP__KlattGrid_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- the synthesizer grid --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid...", nullptr, 1, 
 			NEW1_KlattGrid_create);
@@ -915,7 +915,7 @@ void praat_KlattGrid_init () {
 	Add nasal/tracheal antiformant and bandwidth tier
 	*/
 	praat_addAction1 (classKlattGrid, 0, U"KlattGrid help", nullptr, 0, 
-			HELP_KlattGrid_help);
+			HELP__KlattGrid_help);
 	praat_addAction1 (classKlattGrid, 0, U"Edit phonation -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Edit pitch tier", nullptr, 1, 
 			EDITOR_ONE_KlattGrid_editPitchTier);
@@ -995,49 +995,49 @@ void praat_KlattGrid_init () {
 
 	praat_addAction1 (classKlattGrid, 0, U"Query phonation -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 1, U"Get pitch at time...", nullptr, 1, 
-			REAL_KlattGrid_getPitchAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getPitchAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get voicing amplitude at time...", nullptr, 1, 
-			REAL_KlattGrid_getVoicingAmplitudeAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getVoicingAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get flutter at time...", nullptr, 1,
-			REAL_KlattGrid_getFlutterAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getFlutterAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get power1 at time...", nullptr, 1, 
-			REAL_KlattGrid_getPower1AtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getPower1AtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get power2 at time...", nullptr, 1, 
-			REAL_KlattGrid_getPower2AtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getPower2AtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get open phase at time...", nullptr, 1, 
-			REAL_KlattGrid_getOpenPhaseAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getOpenPhaseAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get collision phase at time...", nullptr, 1,
-			REAL_KlattGrid_getCollisionPhaseAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getCollisionPhaseAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get double pulsing at time...", nullptr, 1, 
-			REAL_KlattGrid_getDoublePulsingAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getDoublePulsingAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get spectral tilt at time...", nullptr, 1, 
-			REAL_KlattGrid_getSpectralTiltAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getSpectralTiltAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get aspiration amplitude at time...", nullptr, 1,
-			REAL_KlattGrid_getAspirationAmplitudeAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getAspirationAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get breathiness amplitude at time...", nullptr, 1,
-			REAL_KlattGrid_getBreathinessAmplitudeAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getBreathinessAmplitudeAtTime);
 
 	praat_addAction1 (classKlattGrid, 0, U"Query filters -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 1, U"Get formant at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
-			REAL_KlattGrid_getFormantAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getFormantAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get bandwidth at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
-			REAL_KlattGrid_getBandwidthAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getBandwidthAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get amplitude at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
-			REAL_KlattGrid_getAmplitudeAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get delta formant at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
-			REAL_KlattGrid_getDeltaFormantAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getDeltaFormantAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get delta bandwidth at time...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
-			REAL_KlattGrid_getDeltaBandwidthAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getDeltaBandwidthAtTime);
 
 #define KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Name, formantname) \
 	praat_addAction1 (classKlattGrid, 1, U"Get " #formantname " frequency at time...", nullptr, 1, \
-			REAL_KlattGrid_get##Name##FormantFrequencyAtTime); \
+			QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantFrequencyAtTime); \
 	praat_addAction1 (classKlattGrid, 1, U"Get " #formantname " bandwidth at time...", nullptr, 1, \
-			REAL_KlattGrid_get##Name##FormantBandwidthAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantBandwidthAtTime);
 
 #define KlattGRID_GET_FORMANT_A_VALUES_ACTION(Name,formantname) \
 	praat_addAction1 (classKlattGrid, 1, U"Get " #formantname " amplitude at time...", nullptr, 1, \
-			REAL_KlattGrid_get##Name##FormantAmplitudeAtTime); \
+			QUERY_ONE_FOR_REAL__KlattGrid_get##Name##FormantAmplitudeAtTime); \
 
 	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (Oral, oral formant)
 	KlattGRID_GET_FORMANT_A_VALUES_ACTION (Oral, oral formant)
@@ -1058,9 +1058,9 @@ void praat_KlattGrid_init () {
 #undef KlattGRID_GET_FORMANT_A_VALUES_ACTION
 
 	praat_addAction1 (classKlattGrid, 1, U"Get frication bypass at time...", nullptr, 1, 
-			REAL_KlattGrid_getFricationBypassAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getFricationBypassAtTime);
 	praat_addAction1 (classKlattGrid, 1, U"Get frication amplitude at time...", nullptr, 1,
-			REAL_KlattGrid_getFricationAmplitudeAtTime);
+			QUERY_ONE_FOR_REAL__KlattGrid_getFricationAmplitudeAtTime);
 
 	praat_addAction1 (classKlattGrid, 0, U"Modify phonation -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Add pitch point...", nullptr, 1, 

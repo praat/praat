@@ -164,19 +164,19 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (INTEGER_FFNet_getNumberOfLayers) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfLayers) {
 	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfLayers;
 	QUERY_ONE_FOR_INTEGER_END (U" layer", (my numberOfLayers > 1 ? U"s" : U""))
 }
 
-DIRECT (INTEGER_FFNet_getNumberOfOutputs) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputs) {
 	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfUnitsInLayer[my numberOfLayers];
 	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
-FORM (INTEGER_FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
+FORM (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfHiddenUnits, U"FFNet: Get number of hidden units", U"FFNet: Get number of hidden units...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
 DO
@@ -185,13 +185,13 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
-DIRECT (INTEGER_FFNet_getNumberOfInputs) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfInputs) {
 	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = my numberOfInputs;
 	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
-FORM (INTEGER_FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
+FORM (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfHiddenWeights, U"FFNet: Get number of hidden weights", U"FFNet: Get number of hidden weights...") {
 	NATURAL (layer, U"Hidden layer number", U"1")
 	OK
 DO
@@ -204,7 +204,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" weights (including biases)")
 }
 	
-DIRECT (INTEGER_FFNet_getNumberOfOutputWeights) {
+DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputWeights) {
 	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer numberOfUnitsInPreviousLayer = ( my numberOfLayers == 1 ? my numberOfInputs : my numberOfUnitsInLayer[my numberOfLayers - 1] );
 		integer result = my numberOfUnitsInLayer[my numberOfLayers] * (numberOfUnitsInPreviousLayer + 1);
@@ -220,7 +220,7 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (INTEGER_FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
+FORM (QUERY_ONE_FOR_INTEGER__FFNet_getOutputUnitOfCategory, U"FFNet: Get output unit of category", nullptr) {
 	SENTENCE (category, U"Category", U"u")
 	OK
 DO
@@ -230,7 +230,7 @@ DO
 }
 
 
-FORM (REAL_FFNet_getBias, U"FFNet: Get bias", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	NATURAL (unit, U"Unit", U"1")
 	OK
@@ -241,7 +241,7 @@ DO
 }
 
 
-FORM (REAL_FFNet_getWeight, U"FFNet: Get weight", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	NATURAL (unitTo, U"Unit", U"1")
 	NATURAL (unitFrom, U"Unit from", U"1")
@@ -252,7 +252,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
-DIRECT (REAL_FFNet_getMinimum) {
+DIRECT (QUERY_ONE_FOR_REAL__FFNet_getMinimum) {
 	QUERY_ONE_FOR_REAL (FFNet)
 		double result = FFNet_getMinimum (me);
 	QUERY_ONE_FOR_REAL_END (U" (minimum)");
@@ -423,7 +423,7 @@ DO
 
 /*********** FFNet & PatternList & ActivationList **********************************/
 
-FORM (REAL_FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getTotalCosts, U"FFNet & PatternList & ActivationList: Get total costs", U"FFNet & PatternList & ActivationList: Get total costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"minimum-squared-error")
 		RADIOBUTTON (U"minimum-cross-entropy")
@@ -434,7 +434,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
-FORM (REAL_FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getAverageCosts, U"FFNet & PatternList & ActivationList: Get average costs", U"FFNet & PatternList & ActivationList: Get average costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"minimum-squared-error")
 		RADIOBUTTON (U"minimum-cross-entropy")
@@ -479,7 +479,7 @@ DO
 
 /*********** FFNet & PatternList & Categories **********************************/
 
-FORM (REAL_FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getTotalCosts, U"FFNet & PatternList & Categories: Get total costs", U"FFNet & PatternList & Categories: Get total costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"minimum-squared-error")
 		RADIOBUTTON (U"minimum-cross-entropy")
@@ -490,7 +490,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (total costs)")
 }
 
-FORM (REAL_FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getAverageCosts, U"FFNet & PatternList & Categories: Get average costs", U"FFNet & PatternList & Categories: Get average costs...") {
 	RADIO (costFunctionType, U"Cost function", 1)
 		RADIOBUTTON (U"minimum-squared-error")
 		RADIOBUTTON (U"minimum-cross-entropy")
@@ -593,28 +593,28 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Query structure", nullptr, 1, nullptr);
 	praat_addAction1 (classFFNet, 1, U"Get number of layers", nullptr, 2, 
-			INTEGER_FFNet_getNumberOfLayers);
+			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfLayers);
 	praat_addAction1 (classFFNet, 1, U"Get number of outputs", nullptr, 2, 
-			INTEGER_FFNet_getNumberOfOutputs);
+			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputs);
 	praat_addAction1 (classFFNet, 1, U"Get number of hidden units...", nullptr, 2, 
-			INTEGER_FFNet_getNumberOfHiddenUnits);
+			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfHiddenUnits);
 	praat_addAction1 (classFFNet, 1, U"Get number of inputs", nullptr, 2, 
-			INTEGER_FFNet_getNumberOfInputs);
+			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfInputs);
 	praat_addAction1 (classFFNet, 1, U"Get number of hidden weights...", nullptr, 2, 
-			INTEGER_FFNet_getNumberOfHiddenWeights);
+			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfHiddenWeights);
 	praat_addAction1 (classFFNet, 1, U"Get number of output weights", nullptr, 2, 
-			INTEGER_FFNet_getNumberOfOutputWeights);
+			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputWeights);
 	praat_addAction1 (classFFNet, 1, U"Get category of output unit...", nullptr, 2, 
 			INFO_FFNet_getCategoryOfOutputUnit);
 	praat_addAction1 (classFFNet, 1, U"Get output unit of category...", nullptr, 2, 
-			INTEGER_FFNet_getOutputUnitOfCategory);
+			QUERY_ONE_FOR_INTEGER__FFNet_getOutputUnitOfCategory);
 	praat_addAction1 (classFFNet, 0, U"-- FFNet weights --", nullptr, 1, nullptr);
 	praat_addAction1 (classFFNet, 1, U"Get bias...", nullptr, 1, 
-			REAL_FFNet_getBias);
+			QUERY_ONE_FOR_REAL__FFNet_getBias);
 	praat_addAction1 (classFFNet, 1, U"Get weight...", nullptr, 1, 
-			REAL_FFNet_getWeight);
+			QUERY_ONE_FOR_REAL__FFNet_getWeight);
 	praat_addAction1 (classFFNet, 1, U"Get minimum", nullptr, 1, 
-			REAL_FFNet_getMinimum);
+			QUERY_ONE_FOR_REAL__FFNet_getMinimum);
 	praat_addAction1 (classFFNet, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Set bias...", nullptr, 1, 
 			MODIFY_FFNet_setBias);
@@ -662,9 +662,9 @@ void praat_uvafon_FFNet_init () {
 			NEW1_FFNet_PatternList_to_ActivationList);
 
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get total costs...", nullptr, 0,
-			REAL_FFNet_PatternList_ActivationList_getTotalCosts);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getTotalCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get average costs...", nullptr, 0,
-			REAL_FFNet_PatternList_ActivationList_getAverageCosts);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getAverageCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn", nullptr, 0, nullptr);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn...", nullptr, 0,
 			MODIFY_FFNet_PatternList_ActivationList_learn);
@@ -672,9 +672,9 @@ void praat_uvafon_FFNet_init () {
 			MODIFY_FFNet_PatternList_ActivationList_learnSlow);
 
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get total costs...", nullptr, 0,
-			REAL_FFNet_PatternList_Categories_getTotalCosts);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getTotalCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get average costs...", nullptr, 0,
-			REAL_FFNet_PatternList_Categories_getAverageCosts);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getAverageCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn", nullptr, 0, nullptr);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn...", nullptr, 0,
 			MODIFY_FFNet_PatternList_Categories_learn);
