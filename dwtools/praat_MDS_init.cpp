@@ -115,7 +115,7 @@ DIRECT (GRAPHICS_drawMDSClassRelations) {
 /***************** AffineTransform ***************************************/
 
 
-DIRECT (HELP_AffineTransform_help) {
+DIRECT (HELP__AffineTransform_help) {
 	HELP (U"AffineTransform");
 }
 
@@ -125,7 +125,7 @@ DIRECT (NEW_AffineTransform_invert) {
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_inv")
 }
 
-FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get transformation element", U"Procrustes") {
+FORM (QUERY_ONE_FOR_REAL__AffineTransform_getTransformationElement, U"AffineTransform: Get transformation element", U"Procrustes") {
 	NATURAL (irow, U"Row number", U"1")
 	NATURAL (icol, U"Column number", U"1")
 	OK
@@ -137,7 +137,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" r [", irow, U"] [", icol, U"]")
 }
 
-FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get translation element", U"Procrustes") {
+FORM (QUERY_ONE_FOR_REAL__AffineTransform_getTranslationElement, U"AffineTransform: Get translation element", U"Procrustes") {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
@@ -161,7 +161,7 @@ DIRECT (NEW_AffineTransform_extractTranslationVector) {
 
 /***************** Configuration ***************************************/
 
-DIRECT (HELP_Configuration_help) {
+DIRECT (HELP__Configuration_help) {
 	HELP (U"Configuration")
 }
 
@@ -399,19 +399,19 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (REAL_ContingencyTable_chisqProbability) {
+DIRECT (QUERY_ONE_FOR_REAL__ContingencyTable_chisqProbability) {
 	QUERY_ONE_FOR_REAL (ContingencyTable)
 		const double result = ContingencyTable_chisqProbability (me);
 	QUERY_ONE_FOR_REAL_END (U" (probability)")
 }
 
-DIRECT (REAL_ContingencyTable_cramersStatistic) {
+DIRECT (QUERY_ONE_FOR_REAL__ContingencyTable_cramersStatistic) {
 	QUERY_ONE_FOR_REAL (ContingencyTable)
 		const double result = ContingencyTable_cramersStatistic (me);
 	QUERY_ONE_FOR_REAL_END (U" (cramer)")
 }
 
-DIRECT (REAL_ContingencyTable_contingencyCoefficient) {
+DIRECT (QUERY_ONE_FOR_REAL__ContingencyTable_contingencyCoefficient) {
 	QUERY_ONE_FOR_REAL (ContingencyTable)
 		const double result = ContingencyTable_contingencyCoefficient (me);
 	QUERY_ONE_FOR_REAL_END (U" (contingency coefficient)")
@@ -431,7 +431,7 @@ DO
 
 /************************* Similarity ***************************************/
 
-DIRECT (HELP_Similarity_help) {
+DIRECT (HELP__Similarity_help) {
 	HELP (U"Similarity")
 }
 
@@ -461,11 +461,11 @@ DO
 	SENTENCE (markString, U"Mark string (+xo.)", U"+") \
 	BOOLEAN (garnish, U"Garnish", true)
 
-DIRECT (HELP_Dissimilarity_help) {
+DIRECT (HELP__Dissimilarity_help) {
 	HELP (U"Dissimilarity")
 }
 
-DIRECT (REAL_Dissimilarity_getAdditiveConstant) {
+DIRECT (QUERY_ONE_FOR_REAL__Dissimilarity_getAdditiveConstant) {
 	QUERY_ONE_FOR_REAL (Dissimilarity)
 		const double result = Dissimilarity_getAdditiveConstant (me);
 	QUERY_ONE_FOR_REAL_END (U"")
@@ -590,7 +590,7 @@ DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_sw_ispline")
 }
 
-FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",  U"Dissimilarity & Configuration: get stress") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuration: Get stress",  U"Dissimilarity & Configuration: get stress") {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	OPTIONMENU_ENUM (kMDS_KruskalStress, stressMeasure, U"Stress measure", kMDS_KruskalStress::KRUSKAL_1)
 	OK
@@ -600,7 +600,7 @@ DO
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
@@ -609,7 +609,7 @@ DO
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (absolute mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
@@ -618,7 +618,7 @@ DO
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (ratio mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
@@ -627,7 +627,7 @@ DO
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (interval mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Configuration: Get stress (monotone mds)", U"Dissimilarity & Configuration: Get stress (monotone mds)...") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Configuration: Get stress (monotone mds)", U"Dissimilarity & Configuration: Get stress (monotone mds)...") {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
@@ -637,7 +637,7 @@ DO
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (monotone mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
@@ -648,7 +648,7 @@ DO
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (i-spline mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
@@ -657,7 +657,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (absolute mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
@@ -666,7 +666,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (ratio mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
 DO
@@ -675,7 +675,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (interval mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)", U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)", U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...") {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
 	OK
@@ -685,7 +685,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (monotone mds stress)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
+FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
 	OPTIONMENU_ENUM (kMDS_stressMeasure, stressMeasure, U"Stress measure", kMDS_stressMeasure::DEFAULT)
@@ -1001,7 +1001,7 @@ DO
 	CONVERT_ONE_AND_ALL_TO_MULTIPLE_END
 }
 
-FORM (REAL_Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...") {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__Distance_Configuration_vaf, U"Distance & Configuration: Get VAF", U"Distance & Configuration: Get VAF...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
@@ -1011,7 +1011,7 @@ DO
 	QUERY_ONE_AND_ALL_FOR_REAL_END (U" (variance accounted for)")
 }
 
-FORM (REAL_Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...") {
+FORM (QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL__Distance_Configuration_Salience_vaf, U"Distance & Configuration & Salience: Get VAF", U"Distance & Configuration & Salience: Get VAF...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
 DO
@@ -1021,7 +1021,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END (U" (variance accounted for)")
 }
 
-FORM (REAL_Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF", U"Dissimilarity & Configuration & Salience: Get VAF...") {
+FORM (QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL__Dissimilarity_Configuration_Salience_vaf, U"Dissimilarity & Configuration & Salience: Get VAF", U"Dissimilarity & Configuration & Salience: Get VAF...") {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	OK
@@ -1099,7 +1099,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-DIRECT (HELP_MDS_help) {
+DIRECT (HELP__MDS_help) {
 	HELP (U"Multidimensional scaling")
 }
 
@@ -1129,11 +1129,11 @@ DO
 
 /********* Procrustes ***************************/
 
-DIRECT (HELP_Procrustes_help) {
+DIRECT (HELP__Procrustes_help) {
 	HELP (U"Procrustes")
 }
 
-DIRECT (REAL_Procrustes_getScale) {
+DIRECT (QUERY_ONE_FOR_REAL__Procrustes_getScale) {
 	QUERY_ONE_FOR_REAL (Procrustes)
 		const double result = my s;
 	QUERY_ONE_FOR_REAL_END (U"(scale)")
@@ -1191,7 +1191,7 @@ DIRECT (NEW_TableOfReal_to_ContingencyTable) {
 
 /********************** TableOfReal ***************************************/
 
-DIRECT (REAL_TableOfReal_getTableNorm) {
+DIRECT (QUERY_ONE_FOR_REAL__TableOfReal_getTableNorm) {
 	QUERY_ONE_FOR_REAL (TableOfReal)
 		const double result = TableOfReal_getTableNorm (me);
 	QUERY_ONE_FOR_REAL_END (U"(norm)")
@@ -1263,9 +1263,9 @@ DIRECT (NEW_TableOfReal_to_Confusion) {
 static void praat_AffineTransform_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (klas, 1, U"Get transformation element...", QUERY_BUTTON, 1, 
-			REAL_AffineTransform_getTransformationElement);
+			QUERY_ONE_FOR_REAL__AffineTransform_getTransformationElement);
 	praat_addAction1 (klas, 1, U"Get translation element...", QUERY_BUTTON, 1, 
-			REAL_AffineTransform_getTranslationElement);
+			QUERY_ONE_FOR_REAL__AffineTransform_getTranslationElement);
 	praat_addAction1 (klas, 0, U"Invert", nullptr, 0, 
 			NEW_AffineTransform_invert);
 }
@@ -1274,7 +1274,7 @@ void praat_TableOfReal_extras (ClassInfo klas);
 void praat_TableOfReal_extras (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"-- get additional --", U"Get value...", 1, nullptr);
 	praat_addAction1 (klas, 1, U"Get table norm", U"-- get additional --", 1, 
-			REAL_TableOfReal_getTableNorm);
+			QUERY_ONE_FOR_REAL__TableOfReal_getTableNorm);
 	praat_addAction1 (klas, 0, U"-- set additional --", U"Set column label (label)...", 1, nullptr);
 	praat_addAction1 (klas, 0, U"Normalize rows...", U"-- set additional --", 1, 
 			MODIFY_TableOfReal_normalizeRows);
@@ -1296,7 +1296,7 @@ void praat_uvafon_MDS_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, 
-			HELP_MDS_help);
+			HELP__MDS_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 1, 
 			NEW1_Dissimilarity_createLetterRExample);
@@ -1312,12 +1312,12 @@ void praat_uvafon_MDS_init () {
 	/****** 1 class ********************************************************/
 
 	praat_addAction1 (classAffineTransform, 0, U"AffineTransform help", nullptr, 0, 
-			HELP_AffineTransform_help);
+			HELP__AffineTransform_help);
 	praat_AffineTransform_init (classAffineTransform);
 
 
 	praat_addAction1 (classConfiguration, 0, U"Configuration help", nullptr, 0,
-			HELP_Configuration_help);
+			HELP__Configuration_help);
 	praat_TableOfReal_init2 (classConfiguration);
 	praat_TableOfReal_extras (classConfiguration);
 	praat_removeAction (classConfiguration, nullptr, nullptr, U"Insert column (index)...");
@@ -1376,11 +1376,11 @@ void praat_uvafon_MDS_init () {
 	praat_TableOfReal_init2 (classContingencyTable);
 	praat_addAction1 (classContingencyTable, 1, U"-- statistics --", U"Get value...", 1, nullptr);
 	praat_addAction1 (classContingencyTable, 1, U"Get chi squared probability", U"-- statistics --", 1,
-			REAL_ContingencyTable_chisqProbability);
+			QUERY_ONE_FOR_REAL__ContingencyTable_chisqProbability);
 	praat_addAction1 (classContingencyTable, 1, U"Get Cramer's statistic", U"Get chi squared probability", 1,
-			REAL_ContingencyTable_cramersStatistic);
+			QUERY_ONE_FOR_REAL__ContingencyTable_cramersStatistic);
 	praat_addAction1 (classContingencyTable, 1, U"Get contingency coefficient", U"Get Cramer's statistic", 1,
-			REAL_ContingencyTable_contingencyCoefficient);
+			QUERY_ONE_FOR_REAL__ContingencyTable_contingencyCoefficient);
 	praat_addAction1 (classContingencyTable, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classContingencyTable, 1, U"To Configuration (ca)...", nullptr, 0, 
 			NEW_ContingencyTable_to_Configuration_ca);
@@ -1390,11 +1390,11 @@ void praat_uvafon_MDS_init () {
 			NEW_Correlation_to_Configuration);
 
 	praat_addAction1 (classDissimilarity, 0, U"Dissimilarity help", nullptr, 0, 
-			HELP_Dissimilarity_help);
+			HELP__Dissimilarity_help);
 	praat_TableOfReal_init2 (classDissimilarity);
 	praat_TableOfReal_extras (classDissimilarity);
 	praat_addAction1 (classDissimilarity, 0, U"Get additive constant", U"Get table norm", 1,
-			REAL_Dissimilarity_getAdditiveConstant);
+			QUERY_ONE_FOR_REAL__Dissimilarity_getAdditiveConstant);
 	praat_addAction1 (classDissimilarity, 0, CONFIGURATION_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classDissimilarity, 1, U"To Configuration (monotone mds)...", nullptr, 1,
 			NEW_Dissimilarity_to_Configuration_monotone_mds);
@@ -1434,10 +1434,10 @@ void praat_uvafon_MDS_init () {
 
 
 	praat_addAction1 (classProcrustes, 0, U"Procrustes help", nullptr, 0, 
-			HELP_Procrustes_help);
+			HELP__Procrustes_help);
 	praat_AffineTransform_init (classProcrustes);
 	praat_addAction1 (classProcrustes, 1, U"Get scale", QUERY_BUTTON, 1, 
-			REAL_Procrustes_getScale);
+			QUERY_ONE_FOR_REAL__Procrustes_getScale);
 	praat_addAction1 (classProcrustes, 0, U"Extract transformation matrix", nullptr, 0,
 			NEW_AffineTransform_extractMatrix);
 	praat_addAction1 (classProcrustes, 0, U"Extract translation vector", nullptr, 0, 
@@ -1450,7 +1450,7 @@ void praat_uvafon_MDS_init () {
 
 
 	praat_addAction1 (classSimilarity, 0, U"Similarity help", nullptr, 0, 
-			HELP_Similarity_help);
+			HELP__Similarity_help);
 	praat_TableOfReal_init2 (classSimilarity);
 	praat_TableOfReal_extras (classSimilarity);
 	praat_addAction1 (classSimilarity, 0, U"Analyse -", nullptr, 0, nullptr);
@@ -1532,17 +1532,17 @@ void praat_uvafon_MDS_init () {
 			GRAPHICS_Dissimilarity_Configuration_drawAbsoluteRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress (monotone mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_monotone_stress);
+			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_monotone_stress);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress (i-spline mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_ispline_stress);
+			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_ispline_stress);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress (interval mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_interval_stress);
+			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_interval_stress);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress (ratio mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_ratio_stress);
+			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_ratio_stress);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress (absolute mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_absolute_stress);
+			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_absolute_stress);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_getStress);
+			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_getStress);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, ANALYSE_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"To Configuration (monotone mds)...", nullptr, 1,
 			NEW1_Dissimilarity_Configuration_monotone_mds);
@@ -1562,7 +1562,7 @@ void praat_uvafon_MDS_init () {
 			GRAPHICS_Distance_Configuration_drawScatterDiagram);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDistance, 0, classConfiguration, 1, U"Get VAF...", nullptr, 0, 
-			REAL_Distance_Configuration_vaf);
+			QUERY_ONE_AND_ONE_FOR_REAL__Distance_Configuration_vaf);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, ANALYSE_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDistance, 0, classConfiguration, 1, U"To Configuration (indscal)...", nullptr, 1,
 			NEWMANY_Distance_Configuration_indscal);
@@ -1576,19 +1576,19 @@ void praat_uvafon_MDS_init () {
 
 	praat_addAction3 (classDissimilarity, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction3 (classDissimilarity, 0, classConfiguration, 1, classSalience, 1, U"Get VAF...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_Salience_vaf);
+			QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL__Dissimilarity_Configuration_Salience_vaf);
 
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"Get stress (monotone mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_Weight_monotone_stress);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_monotone_stress);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"Get stress (i-spline mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_Weight_ispline_stress);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_ispline_stress);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"Get stress (interval mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_Weight_interval_stress);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_interval_stress);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"Get stress (ratio mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_Weight_ratio_stress);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_ratio_stress);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"Get stress (absolute mds)...", nullptr, 1,
-			REAL_Dissimilarity_Configuration_Weight_absolute_stress);
+			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_absolute_stress);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, ANALYSE_BUTTON, nullptr, 0, nullptr);
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"To Configuration (monotone mds)...", nullptr, 1,
 			NEW1_Dissimilarity_Configuration_Weight_monotone_mds);
@@ -1604,7 +1604,7 @@ void praat_uvafon_MDS_init () {
 
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"Get VAF...", nullptr, 1,
-			REAL_Distance_Configuration_Salience_vaf);
+			QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL__Distance_Configuration_Salience_vaf);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"To Configuration (indscal)...", nullptr, 0,
 			NEWMANY_Distance_Configuration_Salience_indscal);

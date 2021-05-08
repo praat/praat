@@ -294,7 +294,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (REAL_PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: Get peak...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: Get peak...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
@@ -307,7 +307,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
-FORM (REAL_PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of peak", U"PowerCepstrum: Get quefrency of peak...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of peak", U"PowerCepstrum: Get quefrency of peak...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
@@ -321,7 +321,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" seconds (f = ", f, U" Hz)")
 }
 
-FORM (REAL_PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getRNR, U"PowerCepstrum: Get rhamonics to noise ration", nullptr) {
 	REAL (fromPitch, U"left Pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Pitch range (Hz)", U"333.3")
 	POSITIVE (fractionalWIdth, U"Fractional width (0-1)", U"0.05")
@@ -332,7 +332,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (rnr)")
 }
 
-FORM (REAL_PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get peak prominence (hillenbrand)", U"PowerCepstrum: Get peak prominence (hillenbrand)...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence_hillenbrand, U"PowerCepstrum: Get peak prominence (hillenbrand)", U"PowerCepstrum: Get peak prominence (hillenbrand)...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	OK
@@ -343,7 +343,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).")
 }
 
-FORM (REAL_PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slope", U"PowerCepstrum: Get trend line slope...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope, U"PowerCepstrum: Get trend line slope", U"PowerCepstrum: Get trend line slope...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
@@ -356,7 +356,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" dB / ", lineType == kCepstrumTrendType::LINEAR ? U"s" : U"ln (s)");
 }
 
-FORM (REAL_PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineIntercept, U"PowerCepstrum: Get trend line intercept", U"PowerCepstrum: Get trend line intercept...") {
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
@@ -369,7 +369,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
-FORM (REAL_PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence", U"PowerCepstrum: Get peak prominence...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence, U"PowerCepstrum: Get peak prominence", U"PowerCepstrum: Get peak prominence...") {
 	REAL (fromPitch, U"left Search peak in pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Search peak in pitch range (Hz)", U"333.3")
 	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
@@ -486,25 +486,25 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_smoothed")
 }
 
-DIRECT (REAL_PowerCepstrogram_getStartQuefrency) {
+DIRECT (QUERY_ONE_FOR_REAL__PowerCepstrogram_getStartQuefrency) {
 	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my ymin;
 	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
-DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
+DIRECT (QUERY_ONE_FOR_REAL__PowerCepstrogram_getEndQuefrency) {
 	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my ymax;
 	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
 
-DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
+DIRECT (QUERY_ONE_FOR_INTEGER__PowerCepstrogram_getNumberOfQuefrencyBins) {
 	QUERY_ONE_FOR_INTEGER (PowerCepstrogram)
 		const integer result = my ny;
 	QUERY_ONE_FOR_INTEGER_END (U" quefrency bins")
 }
 
-DIRECT (REAL_PowerCepstrogram_getQuefrencyStep) {
+DIRECT (QUERY_ONE_FOR_REAL__PowerCepstrogram_getQuefrencyStep) {
 	QUERY_ONE_FOR_REAL (PowerCepstrogram)
 		const double result = my dy;
 	QUERY_ONE_FOR_REAL_END (U" seconds (quefrency step)")
@@ -534,7 +534,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (REAL_PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS_hillenbrand, U"PowerCepstrogram: Get CPPS", nullptr) {
 	LABEL (U"Smoothing:")
 	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
 	REAL (smoothinWindowDuration, U"Time averaging window (s)", U"0.001")
@@ -549,7 +549,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
-FORM (REAL_PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS, U"PowerCepstrogram: Get CPPS", U"PowerCepstrogram: Get CPPS...") {
 	LABEL (U"Smoothing of the Cepstrogram")
 	BOOLEAN (subtractTrendBeforeSmoothing, U"Subtract trend before smoothing", true)
 	REAL (smoothingWindowDuration, U"Time averaging window (s)", U"0.02")
@@ -745,7 +745,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (INTEGER_LineSpectralFrequencies_getNumberOfFrequencies, U"LineSpectralFrequencies: Get number of frequencies", U"LineSpectralFrequencies: Get number of frequencies...") {
+FORM (QUERY_ONE_FOR_INTEGER__LineSpectralFrequencies_getNumberOfFrequencies, U"LineSpectralFrequencies: Get number of frequencies", U"LineSpectralFrequencies: Get number of frequencies...") {
 	NATURAL (frameNumber, U"Frame number", U"2")
 	OK
 DO
@@ -794,13 +794,13 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (REAL_LPC_getSamplingInterval) {
+DIRECT (QUERY_ONE_FOR_REAL__LPC_getSamplingInterval) {
 	QUERY_ONE_FOR_REAL (LPC)
 		const double result = my samplingPeriod;
 	QUERY_ONE_FOR_REAL_END (U" s");
 }
 
-FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U"LPC: Get number of coefficients...") {
+FORM (QUERY_ONE_FOR_INTEGER__LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U"LPC: Get number of coefficients...") {
 	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
@@ -825,7 +825,7 @@ DIRECT (NUMMAT_LPC_listAllCoefficients) {
 	QUERY_ONE_FOR_MATRIX_END	
 }
 
-FORM (REAL_LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in frame...") {
+FORM (QUERY_ONE_FOR_REAL__LPC_getGainInFrame, U"LPC: Get gain in frame", U"LPC: Get gain in frame...") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
@@ -1133,7 +1133,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (REAL_VocalTract_getLength) {
+DIRECT (QUERY_ONE_FOR_REAL__VocalTract_getLength) {
 	QUERY_ONE_FOR_REAL (VocalTract)
 		double result = my xmax - my xmin;
 	QUERY_ONE_FOR_REAL_END (U" metres")
@@ -1315,23 +1315,23 @@ void praat_uvafon_LPC_init () {
 	
 	praat_addAction1 (classPowerCepstrum, 1, U"Query -", 0, 0, 0);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak...", 0, 1, 
-				REAL_PowerCepstrum_getPeak);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get quefrency of peak...", 0, 1, 
-				REAL_PowerCepstrum_getQuefrencyOfPeak);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN,
-				REAL_PowerCepstrum_getPeakProminence_hillenbrand);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence_hillenbrand);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence...", 0, 1, 
-				REAL_PowerCepstrum_getPeakProminence);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakProminence);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line slope...", 0, 1,
-				REAL_PowerCepstrum_getTrendLineSlope);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get trend line intercept...", 0, 1,
-				REAL_PowerCepstrum_getTrendLineIntercept);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineIntercept);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get rhamonics to noise ratio...", 0, 1, 
-				REAL_PowerCepstrum_getRNR);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getRNR);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line slope...", 0, praat_DEPRECATED_2019,
-				REAL_PowerCepstrum_getTrendLineSlope);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineSlope);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get tilt line intercept...", 0, praat_DEPRECATED_2019,
-				REAL_PowerCepstrum_getTrendLineIntercept);
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getTrendLineIntercept);
 	praat_addAction1 (classPowerCepstrum, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classPowerCepstrum, 0, U"Formula...", 0, 1, 
 				MODIFY_PowerCepstrum_formula);
@@ -1363,18 +1363,18 @@ void praat_uvafon_LPC_init () {
 		praat_TimeFrameSampled_query_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 1, U"Query quefrency domain", 0, 1, 0);
 			praat_addAction1 (classPowerCepstrogram, 1, U"Get start quefrency", 0, 2,
-					REAL_PowerCepstrogram_getStartQuefrency);
+					QUERY_ONE_FOR_REAL__PowerCepstrogram_getStartQuefrency);
 			praat_addAction1 (classPowerCepstrogram, 1, U"Get end quefrency", 0, 2, 
-					REAL_PowerCepstrogram_getEndQuefrency);
+					QUERY_ONE_FOR_REAL__PowerCepstrogram_getEndQuefrency);
 		praat_addAction1 (classPowerCepstrogram, 1, U"Query quefrency sampling", 0, 1, 0);
 			praat_addAction1 (classPowerCepstrogram, 1, U"Get number of quefrency bins", 0, 2,
-					INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins);
+					QUERY_ONE_FOR_INTEGER__PowerCepstrogram_getNumberOfQuefrencyBins);
 			praat_addAction1 (classPowerCepstrogram, 1, U"Get quefrency step", 0, 2,
-					REAL_PowerCepstrogram_getQuefrencyStep);
+					QUERY_ONE_FOR_REAL__PowerCepstrogram_getQuefrencyStep);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN,
-				REAL_PowerCepstrogram_getCPPS_hillenbrand);
+				QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS_hillenbrand);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Get CPPS...", 0, 1,
-				REAL_PowerCepstrogram_getCPPS);
+				QUERY_ONE_FOR_REAL__PowerCepstrogram_getCPPS);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Formula...", 0, 1, 
@@ -1452,7 +1452,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLineSpectralFrequencies, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classLineSpectralFrequencies);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", 0, 1,
-				INTEGER_LineSpectralFrequencies_getNumberOfFrequencies);
+				QUERY_ONE_FOR_INTEGER__LineSpectralFrequencies_getNumberOfFrequencies);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"List frequencies in frame...", 0, 1,
 				NUMVEC_LineSpectralFrequencies_listFrequenciesInFrame);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"List all frequencies", 0, 1,
@@ -1471,10 +1471,10 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLPC, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classLPC);
 		praat_addAction1 (classLPC, 1, U"Get sampling interval", 0, 1, 
-				REAL_LPC_getSamplingInterval);
+				QUERY_ONE_FOR_REAL__LPC_getSamplingInterval);
 		praat_addAction1 (classLPC, 1, U"-- get coefficients --", nullptr, 1, nullptr);
 		praat_addAction1 (classLPC, 1, U"Get number of coefficients...", 0, 1, 
-				INTEGER_LPC_getNumberOfCoefficients);
+				QUERY_ONE_FOR_INTEGER__LPC_getNumberOfCoefficients);
 		praat_addAction1 (classLPC, 1, U"Get coefficients in frame...", 0, 1, 
 				NUMVEC_LPC_listAllCoefficientsInFrame);
 		praat_addAction1 (classLPC, 1, U"List all coefficients", 0, 1, 
@@ -1482,7 +1482,7 @@ void praat_uvafon_LPC_init () {
 		praat_addAction1 (classLPC, 1, U"-- get gain --", nullptr, 1, 
 				nullptr);
 		praat_addAction1 (classLPC, 1, U"Get gain in frame...", 0, 1, 
-				REAL_LPC_getGainInFrame);
+				QUERY_ONE_FOR_REAL__LPC_getGainInFrame);
 		praat_addAction1 (classLPC, 1, U"List all gains", 0, 1, 
 				NUMVEC_LPC_listAllGains);
 	praat_addAction1 (classLPC, 0, MODIFY_BUTTON, 0, 0, 0);
@@ -1556,7 +1556,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, 
 			GRAPHICS_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0,
-			REAL_VocalTract_getLength);
+			QUERY_ONE_FOR_REAL__VocalTract_getLength);
 	praat_addAction1 (classVocalTract, 1, U"Set length", U"Formula...", 0, 
 			MODIFY_VocalTract_setLength);
 	praat_addAction1 (classVocalTract, 0, U"To VocalTractTier...", U"To Spectrum...", 0, 

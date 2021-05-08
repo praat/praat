@@ -181,7 +181,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-DIRECT (HELP_MixingMatrix_help) {
+DIRECT (HELP__MixingMatrix_help) {
 	HELP (U"MixingMatrix");
 }
 
@@ -197,7 +197,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-DIRECT (HELP_CrossCorrelationTable_help) {
+DIRECT (HELP__CrossCorrelationTable_help) {
 	HELP (U"CrossCorrelationTable");
 }
 
@@ -254,11 +254,11 @@ DO
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get(), U"_cc")
 }
 
-DIRECT (HELP_CrossCorrelationTableList_help) {
+DIRECT (HELP__CrossCorrelationTableList_help) {
 	HELP (U"CrossCorrelationTableList")
 }
 
-FORM (REAL_CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTableList: Get diagonality measure", U"CrossCorrelationTableList: Get diagonality measure...") {
+FORM (QUERY_ONE_FOR_REAL__CrossCorrelationTableList_getDiagonalityMeasure, U"CrossCorrelationTableList: Get diagonality measure", U"CrossCorrelationTableList: Get diagonality measure...") {
 	NATURAL (fromTable, U"First table", U"1")
 	NATURAL (toTable, U"Last table", U"100")
 	OK
@@ -342,7 +342,7 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-DIRECT (HELP_Diagonalizer_help) {
+DIRECT (HELP__Diagonalizer_help) {
 	HELP (U"Diagonalizer");
 }
 
@@ -498,18 +498,18 @@ void praat_BSS_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create test CrossCorrelationTableList...", U"Create simple CrossCorrelationTable...", praat_HIDDEN + praat_DEPTH_1, NEW1_CrossCorrelationTableList_createTestSet);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple MixingMatrix...", U"Create test CrossCorrelationTableList...", praat_HIDDEN + praat_DEPTH_1, NEW1_MixingMatrix_createSimple);
 
-	praat_addAction1 (classCrossCorrelationTable, 0, U"CrossCorrelationTable help", 0, 0, HELP_CrossCorrelationTable_help);
+	praat_addAction1 (classCrossCorrelationTable, 0, U"CrossCorrelationTable help", 0, 0, HELP__CrossCorrelationTable_help);
 	praat_SSCP_as_TableOfReal_init (classCrossCorrelationTable);
 
 	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTableList", nullptr, 0, NEW1_CrossCorrelationTables_to_CrossCorrelationTableList);
 	praat_addAction1 (classCrossCorrelationTable, 0, U"To CrossCorrelationTables", U"*To CrossCorrelationTableList", praat_DEPRECATED_2015, NEW1_CrossCorrelationTables_to_CrossCorrelationTableList);
 
-	praat_addAction1 (classCrossCorrelationTableList, 0, U"CrossCorrelationTableList help", 0, 0, HELP_CrossCorrelationTableList_help);
+	praat_addAction1 (classCrossCorrelationTableList, 0, U"CrossCorrelationTableList help", 0, 0, HELP__CrossCorrelationTableList_help);
 	praat_addAction1 (classCrossCorrelationTableList, 1, U"Extract CrossCorrelationTable...", 0, 0, NEW_CrossCorrelationTableList_extractCrossCorrelationTable);
-	praat_addAction1 (classCrossCorrelationTableList, 1, U"Get diagonality measure...", 0, 0, REAL_CrossCorrelationTableList_getDiagonalityMeasure);
+	praat_addAction1 (classCrossCorrelationTableList, 1, U"Get diagonality measure...", 0, 0, QUERY_ONE_FOR_REAL__CrossCorrelationTableList_getDiagonalityMeasure);
 	praat_addAction1 (classCrossCorrelationTableList, 0, U"To Diagonalizer...", 0, 0, NEW_CrossCorrelationTableList_to_Diagonalizer);
 	
-	praat_addAction1 (classDiagonalizer, 0, U"Diagonalizer help", 0, 0, HELP_Diagonalizer_help);
+	praat_addAction1 (classDiagonalizer, 0, U"Diagonalizer help", 0, 0, HELP__Diagonalizer_help);
 	praat_TableOfReal_init3 (classDiagonalizer);
 	praat_addAction1 (classDiagonalizer, 0, U"To MixingMatrix", 0, 0, NEW_Diagonalizer_to_MixingMatrix);
 
@@ -526,7 +526,7 @@ void praat_BSS_init () {
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (principal components)...", 0, 0, NEW1_EEG_PCA_to_EEG_principalComponents);
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (whiten)...", 0, 0, NEW1_EEG_PCA_to_EEG_whiten);
 
-	praat_addAction1 (classMixingMatrix, 0, U"MixingMatrix help", 0, 0, HELP_MixingMatrix_help);
+	praat_addAction1 (classMixingMatrix, 0, U"MixingMatrix help", 0, 0, HELP__MixingMatrix_help);
 	praat_TableOfReal_init3 (classMixingMatrix);
 		praat_addAction1 (classMixingMatrix, 0, U"Multiply input channel...", U"Set value...", praat_DEPTH_1, MODIFY_MixingMatrix_multiplyInputChannel);
 		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by label...");	

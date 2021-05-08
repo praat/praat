@@ -100,7 +100,7 @@ DIRECT (QUERY_ONE_FOR_INTEGER__DataModeler_getNumberOfFixedParameters) {
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of fixed parameters)")
 }
 
-FORM (REAL_DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getParameterValue, U"DataModeler: Get parameter value", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
@@ -126,7 +126,7 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (REAL_DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getParameterStandardDeviation, U"DataModeler: Get parameter standard deviation", nullptr) {
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
 DO
@@ -135,7 +135,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= parameter[", parameterNumber, U"])")
 }
 
-FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of parameters", nullptr) {
 	NATURAL (fromParameter, U"left Parameter range", U"1")
 	INTEGER (toParameter, U"right Parameter range", U"0 (=all)")
 	OK
@@ -158,7 +158,7 @@ DIRECT (QUERY_ONE_FOR_INTEGER__DataModeler_getNumberOfInvalidDataPoints) {
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of invalid data points)")
 }
 
-FORM (REAL_DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getModelValueAtX, U"DataModeler: Get model value at x", nullptr) {
 	REAL (x, U"X", U"0.1")
 	OK
 DO
@@ -167,20 +167,20 @@ DO
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
-DIRECT (REAL_DataModeler_getResidualSumOfSquares) {
+DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getResidualSumOfSquares) {
 	QUERY_ONE_FOR_REAL (DataModeler)
 		integer n;
 		const double result = DataModeler_getResidualSumOfSquares (me, & n);
 	QUERY_ONE_FOR_REAL_END (U"  (for ", n, U" datapoints)")
 }
 
-DIRECT (REAL_DataModeler_getDataStandardDeviation) {
+DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getDataStandardDeviation) {
 	QUERY_ONE_FOR_REAL (DataModeler)
 		const double result = DataModeler_getDataStandardDeviation (me);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
-FORM (REAL_DataModeler_getDataPointXValue, U"DataModeler: Get data point x value", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getDataPointXValue, U"DataModeler: Get data point x value", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
@@ -189,7 +189,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= value at point ", index, U")")
 }
 
-FORM (REAL_DataModeler_getDataPointYValue, U"DataModeler: Get data point y value", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getDataPointYValue, U"DataModeler: Get data point y value", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
@@ -198,7 +198,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= value at point ", index, U")")
 }
 
-FORM (REAL_DataModeler_getDataPointYSigma, U"DataModeler: Get data point y sigma", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__DataModeler_getDataPointYSigma, U"DataModeler: Get data point y sigma", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	OK
 DO
@@ -217,7 +217,7 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-DIRECT (REAL_DataModeler_getCoefficientOfDetermination) {
+DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getCoefficientOfDetermination) {
 	QUERY_ONE_FOR_REAL (DataModeler)
 		const double result = DataModeler_getCoefficientOfDetermination (me, nullptr, nullptr);
 	QUERY_ONE_FOR_REAL_END (U" (= R^2)");
@@ -231,7 +231,7 @@ DIRECT (INFO_DataModeler_reportChiSquared) {
 	INFO_ONE_END
 }
 
-DIRECT (REAL_DataModeler_getDegreesOfFreedom) {
+DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getDegreesOfFreedom) {
 	QUERY_ONE_FOR_REAL (DataModeler)
 		const double result = DataModeler_getDegreesOfFreedom (me);
 	QUERY_ONE_FOR_REAL_END (U" (= degrees of freedom)")
@@ -542,7 +542,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (REAL_FormantModeler_getModelValueAtTime, U"", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getModelValueAtTime, U"", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (time, U"Time (s)", U"0.1")
 	OK
@@ -552,7 +552,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U"Hertz")
 }
 
-FORM (REAL_FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getDataPointValue, U"FormantModeler: Get data point value", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (index, U"Index", U"1")
 	OK
@@ -562,7 +562,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= value of point ", index, U" in track F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getDataPointSigma, U"FormantModeler: Get data point sigma", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (index, U"Index", U"1")
 	OK
@@ -622,7 +622,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of invalid data points for F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getParameterValue, U"FormantModeler: Get parameter value", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
@@ -646,7 +646,7 @@ DO
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (REAL_FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getParameterStandardDeviation, U"FormantModeler: Get parameter standard deviatio", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (parameterNumber, U"Parameter number", U"1")
 	OK
@@ -656,7 +656,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= standard deviation of parameter ", parameterNumber, U" for F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getVarianceOfParameters, U"FormantModeler: Get variance of parameters", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
 	INTEGER (toFormant, U"right Formant range", U"0")
 	INTEGER (fromParameter, U"left Parameter range", U"0")
@@ -669,7 +669,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (for ", numberOfFreeParameters, U" free parameters.)")
 }
 
-FORM (REAL_FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getCoefficientOfDetermination, U"FormantModeler: Get coefficient of determination", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
 	INTEGER (toFormant, U"right Formant range", U"0")
 	OK
@@ -679,7 +679,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= R^2)");
 }
 
-FORM (REAL_FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residual sum of squares", U"FormantModeler: Get residual sum of squares...") {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getResidualSumOfSquares, U"FormantModeler: Get residual sum of squares", U"FormantModeler: Get residual sum of squares...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
@@ -688,7 +688,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" Hz^2,  (= residual sum of squares of F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getFormantStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getFormantStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
@@ -705,7 +705,7 @@ DIRECT (INFO_FormantModeler_reportChiSquared) {
 	INFO_ONE_END
 }
 
-FORM (REAL_FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getDegreesOfFreedom, U"FormantModeler: Get degrees of freedom", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
@@ -714,7 +714,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= degrees of freedom of F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getStress, U"FormantModeler: Get stress", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getStress, U"FormantModeler: Get stress", nullptr) {
 	INTEGER (fromFormant, U"left Formant range", U"0")
 	INTEGER (toFormant, U"right Formant range", U"0")
 	INTEGER (order, U"Order of polynomials", U"3")
@@ -726,7 +726,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= roughness)")
 }
 
-FORM (REAL_FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getAverageDistanceBetweenTracks, U"FormantModeler: Get average distance between tracks", nullptr) {
 	NATURAL (track1, U"Track 1", U"2")
 	NATURAL (track2, U"Track 2", U"3")
 	OPTIONMENU (typeOfData, U"Type of data", 1)
@@ -739,7 +739,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (= average |F", track1, U" - F", track2, U"|)")
 }
 
-FORM (REAL_FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__FormantModeler_getFormantsConstraintsFactor, U"FormantModeler: Get formants constraints factor", nullptr) {
 	REAL (minimumF1, U"Minimum F1 (Hz)", U"100.0")
 	REAL (maximumF1, U"Maximum F1 (Hz)", U"1200.0")
 	REAL (minimumF2, U"Minimum F2 (Hz)", U"0.0")
@@ -913,7 +913,7 @@ DO
 }
 */
 
-FORM (REAL_Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr) {
+FORM (QUERY_ONE_FOR_REAL__Sound_getOptimalFormantCeiling, U"Sound: Get optimal formant ceiling", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.1")
 	REAL (toTime, U"right Time range (s)", U"0.15")
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
@@ -1075,42 +1075,42 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Get number of fixed parameters", 0, 1,
 				QUERY_ONE_FOR_INTEGER__DataModeler_getNumberOfFixedParameters);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter value...", 0, 1, 
-				REAL_DataModeler_getParameterValue);
+				QUERY_ONE_FOR_REAL__DataModeler_getParameterValue);
 		praat_addAction1 (classDataModeler, 0, U"List parameter values", 0, 1, 
 				NUMVEC_DataModeler_listParameterValues);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter status...", 0, 1, 
 				INFO_DataModeler_getParameterStatus);
 		praat_addAction1 (classDataModeler, 0, U"Get parameter standard deviation...", 0, 1,
-				REAL_DataModeler_getParameterStandardDeviation);
+				QUERY_ONE_FOR_REAL__DataModeler_getParameterStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get variance of parameters...", 0, 1, 
-				REAL_DataModeler_getVarianceOfParameters);
+				QUERY_ONE_FOR_REAL__DataModeler_getVarianceOfParameters);
 		praat_addAction1 (classDataModeler, 1, U"-- get data points info --", 0, 1, 0);
 		praat_addAction1 (classDataModeler, 0, U"Get model value at x...", 0, 1, 
-				REAL_DataModeler_getModelValueAtX);
+				QUERY_ONE_FOR_REAL__DataModeler_getModelValueAtX);
 		praat_addAction1 (classDataModeler, 0, U"Get number of data points", 0, 1, 
 				QUERY_ONE_FOR_INTEGER__DataModeler_getNumberOfDataPoints);
 		praat_addAction1 (classDataModeler, 0, U"Get number of invalid data points", 0, 1,
 				QUERY_ONE_FOR_INTEGER__DataModeler_getNumberOfInvalidDataPoints);
 		praat_addAction1 (classDataModeler, 0, U"Get data point y value...", 0, 1, 
-				REAL_DataModeler_getDataPointYValue);
+				QUERY_ONE_FOR_REAL__DataModeler_getDataPointYValue);
 		praat_addAction1 (classDataModeler, 0, U"Get data point x value...", 0, 1, 
-				REAL_DataModeler_getDataPointXValue);
+				QUERY_ONE_FOR_REAL__DataModeler_getDataPointXValue);
 		praat_addAction1 (classDataModeler, 0, U"Get data point y sigma...", 0, 1, 
-				REAL_DataModeler_getDataPointYSigma);
+				QUERY_ONE_FOR_REAL__DataModeler_getDataPointYSigma);
 		praat_addAction1 (classDataModeler, 0, U"Get data point status...", 0, 1, 
 				INFO_DataModeler_getDataPointStatus);
 		praat_addAction1 (classDataModeler, 1, U"-- get statistics info --", 0, 1, 0);
 		
 		praat_addAction1 (classDataModeler, 0, U"Get residual sum of squares", 0, 1, 
-				REAL_DataModeler_getResidualSumOfSquares);
+				QUERY_ONE_FOR_REAL__DataModeler_getResidualSumOfSquares);
 		praat_addAction1 (classDataModeler, 0, U"Get data standard deviation", 0, 1,
-				REAL_DataModeler_getDataStandardDeviation);
+				QUERY_ONE_FOR_REAL__DataModeler_getDataStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get coefficient of determination", 0, 1,
-				REAL_DataModeler_getCoefficientOfDetermination);
+				QUERY_ONE_FOR_REAL__DataModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classDataModeler, 0, U"Report chi squared", 0, 1, 
 				INFO_DataModeler_reportChiSquared);
 		praat_addAction1 (classDataModeler, 0, U"Get degrees of freedom", 0, 1,
-				REAL_DataModeler_getDegreesOfFreedom);
+				QUERY_ONE_FOR_REAL__DataModeler_getDegreesOfFreedom);
 
 		praat_addAction1 (classDataModeler, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classDataModeler, 0, U"Set data weighing...", 0, 1, 
@@ -1176,44 +1176,44 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classFormantModeler, 0, U"Get number of fixed parameters...", 0, 1,
 				QUERY_ONE_FOR_INTEGER__FormantModeler_getNumberOfFixedParameters);
 		praat_addAction1 (classFormantModeler, 0, U"Get parameter value...", 0, 1, 
-				REAL_FormantModeler_getParameterValue);
+				QUERY_ONE_FOR_REAL__FormantModeler_getParameterValue);
 		praat_addAction1 (classFormantModeler, 0, U"Get parameter status...", 0, 1, 
 				INFO_FormantModeler_getParameterStatus);
 		praat_addAction1 (classFormantModeler, 0, U"Get parameter standard deviation...", 0, 1,
-				REAL_FormantModeler_getParameterStandardDeviation);
+				QUERY_ONE_FOR_REAL__FormantModeler_getParameterStandardDeviation);
 		praat_addAction1 (classFormantModeler, 0, U"Get variance of parameters...", 0, 1,
-				REAL_FormantModeler_getVarianceOfParameters);
+				QUERY_ONE_FOR_REAL__FormantModeler_getVarianceOfParameters);
 		praat_addAction1 (classFormantModeler, 1, U"-- get data points info --", 0, 1, 0);
 		praat_addAction1 (classFormantModeler, 0, U"Get number of data points", 0, 1, 
 				QUERY_ONE_FOR_INTEGER__FormantModeler_getNumberOfDataPoints);
 		praat_addAction1 (classFormantModeler, 0, U"Get number of invalid data points...", 0, praat_DEPTH_1 + praat_HIDDEN,
 				QUERY_ONE_FOR_INTEGER__FormantModeler_getNumberOfInvalidDataPoints);
 		praat_addAction1 (classFormantModeler, 0, U"Get model value at time...", 0, 1, 
-				REAL_FormantModeler_getModelValueAtTime);
+				QUERY_ONE_FOR_REAL__FormantModeler_getModelValueAtTime);
 		praat_addAction1 (classFormantModeler, 0, U"Get data point value...", 0, 1, 
-				REAL_FormantModeler_getDataPointValue);
+				QUERY_ONE_FOR_REAL__FormantModeler_getDataPointValue);
 		praat_addAction1 (classFormantModeler, 0, U"Get data point sigma...", 0, 1, 
-				REAL_FormantModeler_getDataPointSigma);
+				QUERY_ONE_FOR_REAL__FormantModeler_getDataPointSigma);
 		praat_addAction1 (classFormantModeler, 0, U"Get data point status...", 0, 1, 
 				INFO_FormantModeler_getDataPointStatus);
 
 		praat_addAction1 (classFormantModeler, 1, U"-- get statistics info --", 0, 1, 0);
 		praat_addAction1 (classFormantModeler, 0, U"Get residual sum of squares...", 0, 1, 
-				REAL_FormantModeler_getResidualSumOfSquares);
+				QUERY_ONE_FOR_REAL__FormantModeler_getResidualSumOfSquares);
 		praat_addAction1 (classFormantModeler, 0, U"Get formant standard deviation...", 0, 1,
-				REAL_FormantModeler_getFormantStandardDeviation);
+				QUERY_ONE_FOR_REAL__FormantModeler_getFormantStandardDeviation);
 		praat_addAction1 (classFormantModeler, 0, U"Get coefficient of determination...", 0, 1,
-				REAL_FormantModeler_getCoefficientOfDetermination);
+				QUERY_ONE_FOR_REAL__FormantModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classFormantModeler, 0, U"Report chi squared", 0, 1, 
 				INFO_FormantModeler_reportChiSquared);
 		praat_addAction1 (classFormantModeler, 0, U"Get degrees of freedom...", 0, 1, 
-				REAL_FormantModeler_getDegreesOfFreedom);
+				QUERY_ONE_FOR_REAL__FormantModeler_getDegreesOfFreedom);
 		praat_addAction1 (classFormantModeler, 0, U"Get stress...", 0, 1, 
-				REAL_FormantModeler_getStress);
+				QUERY_ONE_FOR_REAL__FormantModeler_getStress);
 		praat_addAction1 (classFormantModeler, 0, U"Get average distance between tracks...", 0, 1,
-				REAL_FormantModeler_getAverageDistanceBetweenTracks);
+				QUERY_ONE_FOR_REAL__FormantModeler_getAverageDistanceBetweenTracks);
 		praat_addAction1 (classFormantModeler, 0, U"Get formants constraints factor...", 0, 1,
-				REAL_FormantModeler_getFormantsConstraintsFactor);
+				QUERY_ONE_FOR_REAL__FormantModeler_getFormantsConstraintsFactor);
 
 	praat_addAction1 (classFormantModeler, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classFormantModeler, 0, U"Set data weighing...", 0, 1,
@@ -1256,7 +1256,7 @@ void praat_DataModeler_init () {
 	//praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_PitchModeler_draw);
 
 	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN,
-			REAL_Sound_getOptimalFormantCeiling);
+			QUERY_ONE_FOR_REAL__Sound_getOptimalFormantCeiling);
 	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN,
 			NEW_Sound_to_Formant_interval);
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained)...", U"To Formant (interval)...",
