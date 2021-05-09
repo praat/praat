@@ -26,7 +26,7 @@ DIRECT (HELP__GaussianMixture_help) {
 	HELP (U"GaussianMixture")
 }
 
-FORM (GRAPHICS_GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
+FORM (GRAPHICS_EACH__GaussianMixture_drawConcentrationEllipses, U"GaussianMixture: Draw concentration ellipses", U"GaussianMixture: Draw concentration ellipses...") {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	BOOLEAN (principalComponentPlane, U"Principal component plane", true)
 	INTEGER (xDimension, U"X-dimension", U"1")
@@ -62,7 +62,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END	
 }
 
-FORM (GRAPHICS_GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
+FORM (GRAPHICS_EACH__GaussianMixture_drawMarginalPdf, U"GaussianMixture: Draw marginal pdf", U"GaussianMixture: Draw marginal pdf...") {
 	INTEGER (xDimension, U"X-dimension", U"1")
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
@@ -261,7 +261,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", numberOfHiddenStates)
 }
 
-FORM (GRAPHICS_HMM_draw, U"HMM: Draw", nullptr) {
+FORM (GRAPHICS_EACH__HMM_draw, U"HMM: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
@@ -280,19 +280,19 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-DIRECT (GRAPHICS_HMM_drawForwardProbabilitiesIllustration) {
+DIRECT (GRAPHICS_NONE__HMM_drawForwardProbabilitiesIllustration) {
 	GRAPHICS_NONE
 		HMM_drawForwardProbabilitiesIllustration (GRAPHICS, true);
 	GRAPHICS_NONE_END
 }
 
-DIRECT (GRAPHICS_HMM_drawBackwardProbabilitiesIllustration) {
+DIRECT (GRAPHICS_NONE__HMM_drawBackwardProbabilitiesIllustration) {
 	GRAPHICS_NONE
 		HMM_drawBackwardProbabilitiesIllustration (GRAPHICS, true);
 	GRAPHICS_NONE_END
 }
 
-DIRECT (GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration) {
+DIRECT (GRAPHICS_NONE__HMM_drawForwardAndBackwardProbabilitiesIllustration) {
 	GRAPHICS_NONE
 		HMM_drawForwardAndBackwardProbabilitiesIllustration (GRAPHICS, true);
 	GRAPHICS_NONE_END
@@ -670,18 +670,18 @@ void praat_HMM_init () {
 			NEW1_HMM_createContinuousModel);
 	praat_addMenuCommand (U"Objects", U"New", U"--drawings--", nullptr, praat_HIDDEN + praat_DEPTH_1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw forward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1,
-			GRAPHICS_HMM_drawForwardProbabilitiesIllustration);
+			GRAPHICS_NONE__HMM_drawForwardProbabilitiesIllustration);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1,
-			GRAPHICS_HMM_drawBackwardProbabilitiesIllustration);
+			GRAPHICS_NONE__HMM_drawBackwardProbabilitiesIllustration);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw forward and backward probabilities illustration", nullptr, praat_HIDDEN + praat_DEPTH_1, 
-			GRAPHICS_HMM_drawForwardAndBackwardProbabilitiesIllustration);
+			GRAPHICS_NONE__HMM_drawForwardAndBackwardProbabilitiesIllustration);
 	
 	praat_addAction1 (classGaussianMixture, 0, U"GaussianMixture help", nullptr, 0, 
 			HELP__GaussianMixture_help);
 	praat_addAction1 (classGaussianMixture, 0, U"Draw concentration ellipses...", nullptr, 0,
-			GRAPHICS_GaussianMixture_drawConcentrationEllipses);
+			GRAPHICS_EACH__GaussianMixture_drawConcentrationEllipses);
 	praat_addAction1 (classGaussianMixture, 0, U"Draw marginal pdf...", nullptr, 0, 
-			GRAPHICS_GaussianMixture_drawMarginalPdf);
+			GRAPHICS_EACH__GaussianMixture_drawMarginalPdf);
 	praat_addAction1 (classGaussianMixture, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classGaussianMixture, 1, U"Get number of components", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__GaussianMixture_getNumberOfComponents);
@@ -735,7 +735,7 @@ void praat_HMM_init () {
 	praat_addAction1 (classHMM, 0, U"HMM help ", nullptr, 0,
 			HELP__HMM_help);
 	praat_addAction1 (classHMM, 0, U"Draw...", nullptr, 0, 
-			GRAPHICS_HMM_draw);
+			GRAPHICS_EACH__HMM_draw);
 	praat_addAction1 (classHMM, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classHMM, 1, U"Get transition probability...", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__HMM_getTransitionProbability);

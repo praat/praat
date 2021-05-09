@@ -42,7 +42,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (GRAPHICS_DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
+FORM (GRAPHICS_EACH__DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
@@ -58,7 +58,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_DataModeler_drawModel, U"DataModeler: Draw model", nullptr) {
+FORM (GRAPHICS_EACH__DataModeler_drawModel, U"DataModeler: Draw model", nullptr) {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
@@ -72,7 +72,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
+FORM (GRAPHICS_EACH__DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated track", nullptr) {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
@@ -417,7 +417,7 @@ DO
 
 /********************** FormantModeler ******************************/
 
-FORM (GRAPHICS_FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estimated tracks", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
@@ -433,7 +433,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
@@ -448,7 +448,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
@@ -464,7 +464,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_drawOutliersMarked, U"FormantModeler: Draw outliers marked", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
@@ -481,7 +481,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_drawVariancesOfShiftedTracks, U"FormantModeler: Draw variances of shifted tracks", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromVariance, U"left Variance range", U"0.0")
@@ -497,7 +497,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_drawCumulativeChisqScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_drawCumulativeChisqScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromChisq, U"left Chisq range", U"0.0")
@@ -511,7 +511,7 @@ DO
 }
 
 
-FORM (GRAPHICS_FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_normalProbabilityPlot, U"FormantModeler: Normal probability plot", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (numberOfQuantiles, U"Number of quantiles", U"100")
 	REAL (numberOfSigmas, U"Number of sigmas", U"0.0")
@@ -525,7 +525,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", nullptr) {
+FORM (GRAPHICS_EACH__FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis function", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (ymin, U"left Amplitude range (Hz)", U"0.0")
@@ -898,7 +898,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (GRAPHICS_PitchModeler_draw, U"PitchModeler: Draw", nullptr) {
+FORM (GRAPHICS_EACH__PitchModeler_draw, U"PitchModeler: Draw", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
@@ -1063,11 +1063,11 @@ void praat_DataModeler_init () {
 			NEW1_DataModeler_createSimple);
 
 	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, 
-			GRAPHICS_DataModeler_speckle);
+			GRAPHICS_EACH__DataModeler_speckle);
 	praat_addAction1 (classDataModeler, 0, U"Draw model...", 0, 0, 
-			GRAPHICS_DataModeler_drawModel);
+			GRAPHICS_EACH__DataModeler_drawModel);
 	praat_addAction1 (classDataModeler, 0, U"Draw estimated track...", 0, 0, 
-			GRAPHICS_DataModeler_drawEstimatedTrack);
+			GRAPHICS_EACH__DataModeler_drawEstimatedTrack);
 
 	praat_addAction1 (classDataModeler, 1, U"Query -", 0, 0, 0);
 		praat_addAction1 (classDataModeler, 0, U"Get number of parameters", 0, 1,
@@ -1151,21 +1151,21 @@ void praat_DataModeler_init () {
 
 	praat_addAction1 (classFormantModeler, 0, U"Draw -", 0, 0, 0);
 	praat_addAction1 (classFormantModeler, 0, U"Speckle...", 0, 1, 
-			GRAPHICS_FormantModeler_speckle);
+			GRAPHICS_EACH__FormantModeler_speckle);
 	praat_addAction1 (classFormantModeler, 0, U"Draw tracks...", 0, 1, 
-			GRAPHICS_FormantModeler_drawTracks);
+			GRAPHICS_EACH__FormantModeler_drawTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw estimated tracks...", 0, 1, 
-			GRAPHICS_FormantModeler_drawEstimatedTracks);
+			GRAPHICS_EACH__FormantModeler_drawEstimatedTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw variances of shifted tracks...", 0, 1,
-			GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks);
+			GRAPHICS_EACH__FormantModeler_drawVariancesOfShiftedTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw outliers marked...", 0, 1, 
-			GRAPHICS_FormantModeler_drawOutliersMarked);
+			GRAPHICS_EACH__FormantModeler_drawOutliersMarked);
 	praat_addAction1 (classFormantModeler, 0, U"Draw cumulative chisq scores...", 0, 1,
-			GRAPHICS_FormantModeler_drawCumulativeChisqScores);
+			GRAPHICS_EACH__FormantModeler_drawCumulativeChisqScores);
 	praat_addAction1 (classFormantModeler, 0, U"Normal probability plot...", 0, 1,
-			GRAPHICS_FormantModeler_normalProbabilityPlot);
+			GRAPHICS_EACH__FormantModeler_normalProbabilityPlot);
 	praat_addAction1 (classFormantModeler, 0, U"Draw basis function...", 0, 1, 
-			GRAPHICS_FormantModeler_drawBasisFunction);
+			GRAPHICS_EACH__FormantModeler_drawBasisFunction);
 	
 	praat_addAction1 (classFormantModeler, 1, U"Query -", 0, 0, 0);
 		praat_addAction1 (classFormantModeler, 0, U"Get number of tracks", 0, 1,
@@ -1253,7 +1253,7 @@ void praat_DataModeler_init () {
 	
 	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, NEW_Pitch_to_PitchModeler);
 
-	//praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_PitchModeler_draw);
+	//praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_EACH__PitchModeler_draw);
 
 	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN,
 			QUERY_ONE_FOR_REAL__Sound_getOptimalFormantCeiling);

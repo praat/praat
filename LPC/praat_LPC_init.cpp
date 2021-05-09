@@ -94,7 +94,7 @@ DIRECT (HINT_FormantPath_Sound_viewAndEdit) {
 	INFO_NONE_END
 }
 
-FORM (GRAPHICS_FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
+FORM (GRAPHICS_EACH__FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullptr) {
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.1")
 	POSITIVE (fmax, U"Maximum frequency", U"6200.0")
@@ -239,7 +239,7 @@ DIRECT (HELP_PowerCepstrum_help) {
 	HELP (U"PowerCepstrum")
 }
 
-FORM (GRAPHICS_Cepstrum_drawLinear, U"Cepstrum: Draw linear", U"Cepstrum: Draw (linear)...") {
+FORM (GRAPHICS_EACH__Cepstrum_drawLinear, U"Cepstrum: Draw linear", U"Cepstrum: Draw (linear)...") {
 	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (ymin, U"Minimum", U"0.0")
 	REAL (ymax, U"Maximum", U"0.0")
@@ -251,7 +251,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_PowerCepstrum_draw, U"PowerCepstrum: Draw", U"PowerCepstrum: Draw...") {
+FORM (GRAPHICS_EACH__PowerCepstrum_draw, U"PowerCepstrum: Draw", U"PowerCepstrum: Draw...") {
 	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REAL (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
@@ -263,7 +263,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_PowerCepstrum_drawTrendLine, U"PowerCepstrum: Draw trend line", U"PowerCepstrum: Draw trend line...") {
+FORM (GRAPHICS_EACH__PowerCepstrum_drawTrendLine, U"PowerCepstrum: Draw trend line", U"PowerCepstrum: Draw trend line...") {
 	praat_Quefrency_RANGE(fromQuefrency,toQuefrency)
 	REAL (fromAmplitude_dB, U"left Amplitude range (dB)", U"0.0")
 	REAL (toAmplitude_dB, U"right Amplitude range (dB)", U"0.0")
@@ -444,7 +444,7 @@ DIRECT (HELP_PowerCepstrogram_help) {
 	HELP (U"PowerCepstrogram")
 }
 
-FORM (GRAPHICS_old_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", nullptr) {
+FORM (GRAPHICS_EACH__old_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (minimum_dB, U"Minimum (dB)", U"0.0")
@@ -457,7 +457,7 @@ DO
     GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepstrogram: Paint...") {
+FORM (GRAPHICS_EACH__PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepstrogram: Paint...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	praat_Quefrency_RANGE (fromQuefrency, toQuefrency)
 	REAL (maximum_dB, U"Maximum (dB)", U"80.0")
@@ -466,7 +466,7 @@ FORM (GRAPHICS_PowerCepstrogram_paint, U"PowerCepstrogram: Paint", U"PowerCepstr
 	REAL (compression, U"Dynamic compression (0-1)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
-DO_ALTERNATIVE (GRAPHICS_old_PowerCepstrogram_paint)
+DO_ALTERNATIVE (GRAPHICS_EACH__old_PowerCepstrogram_paint)
 	GRAPHICS_EACH (PowerCepstrogram)
 		PowerCepstrogram_paint (me, GRAPHICS, fromTime, toTime, fromQuefrency, toQuefrency, maximum_dB, autoscaling, dynamicRange_dB, compression, garnish);
 	GRAPHICS_EACH_END
@@ -729,7 +729,7 @@ DIRECT (HELP_LineSpectralFrequencies_help) {
 	HELP (U"LineSpectralFrequencies")
 }
 
-FORM (GRAPHICS_LineSpectralFrequencies_drawFrequencies, U"LineSpectralFrequencies: Draw frequencies", nullptr) {
+FORM (GRAPHICS_EACH__LineSpectralFrequencies_drawFrequencies, U"LineSpectralFrequencies: Draw frequencies", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (Hz)", U"5000.0")
@@ -778,7 +778,7 @@ DIRECT (HELP_LPC_help) {
 	HELP (U"LPC")
 }
 
-FORM (GRAPHICS_LPC_drawGain, U"LPC: Draw gain", U"LPC: Draw gain...") {
+FORM (GRAPHICS_EACH__LPC_drawGain, U"LPC: Draw gain", U"LPC: Draw gain...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (minimumGain, U"Minimum gain", U"0.0")
 	REAL (maximumGain, U"Maximum gain", U"0.0")
@@ -838,7 +838,7 @@ DIRECT (NUMVEC_LPC_listAllGains) {
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
-FORM (GRAPHICS_LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...") {
+FORM (GRAPHICS_EACH__LPC_drawPoles, U"LPC: Draw poles", U"LPC: Draw poles...") {
 	REAL (time, U"Time (seconds)", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
@@ -1118,7 +1118,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (GRAPHICS_VocalTract_drawSegments, U"VocalTract: Draw segments", nullptr) {
+FORM (GRAPHICS_EACH__VocalTract_drawSegments, U"VocalTract: Draw segments", nullptr) {
 	POSITIVE (maximumLength, U"Maximum length (cm)", U"20.0")
 	POSITIVE (maximumArea, U"Maximum area (cm^2)", U"90.0")
 	BOOLEAN (glottisClosed, U"Closed at glottis", true)
@@ -1299,13 +1299,13 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classPowerCepstrum, 0, U"PowerCepstrum help", 0, 0, 
 			HELP_PowerCepstrum_help);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw...", 0, 0, 
-			GRAPHICS_PowerCepstrum_draw);
+			GRAPHICS_EACH__PowerCepstrum_draw);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw trend line...", 0, 0, 
-			GRAPHICS_PowerCepstrum_drawTrendLine);
+			GRAPHICS_EACH__PowerCepstrum_drawTrendLine);
 	praat_addAction1 (classPowerCepstrum, 0, U"Draw tilt line...", 0, praat_DEPRECATED_2019, 
-			GRAPHICS_PowerCepstrum_drawTrendLine);
+			GRAPHICS_EACH__PowerCepstrum_drawTrendLine);
 	praat_addAction1 (classCepstrum, 0, U"Draw (linear)...", 0, praat_HIDDEN, 
-			GRAPHICS_Cepstrum_drawLinear);
+			GRAPHICS_EACH__Cepstrum_drawLinear);
 	praat_addAction1 (classCepstrum, 0, U"Down to PowerCepstrum", 0, 0, 
 			NEW_Cepstrum_downto_PowerCepstrum);
 	
@@ -1354,7 +1354,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classPowerCepstrogram, 0, U"PowerCepstrogram help", 0, 0,
 			HELP_PowerCepstrogram_help);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Paint...", 0, 0, 
-			GRAPHICS_PowerCepstrogram_paint);
+			GRAPHICS_EACH__PowerCepstrogram_paint);
 	praat_addAction1 (classPowerCepstrogram, 1, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 1, U"Query quefrency domain", 0, 1, 0);
@@ -1420,7 +1420,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", 0, 0, 
 			HINT_FormantPath_Sound_viewAndEdit);
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, 
-			GRAPHICS_FormantPath_drawAsGrid);	
+			GRAPHICS_EACH__FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, 
 			NEW_FormantPath_extractFormant);
@@ -1444,7 +1444,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"LineSpectralFrequencies help", 0, 0, 
 			HELP_LineSpectralFrequencies_help);
 	praat_addAction1 (classLineSpectralFrequencies, 0, U"Draw frequencies...", 0, 0,
-			GRAPHICS_LineSpectralFrequencies_drawFrequencies);
+			GRAPHICS_EACH__LineSpectralFrequencies_drawFrequencies);
 	praat_addAction1 (classLineSpectralFrequencies, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classLineSpectralFrequencies);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", 0, 1,
@@ -1461,9 +1461,9 @@ void praat_uvafon_LPC_init () {
 			HELP_LPC_help);
 	praat_addAction1 (classLPC, 0, DRAW_BUTTON, 0, 0, 0);
 	praat_addAction1 (classLPC, 0, U"Draw gain...", 0, 1, 
-			GRAPHICS_LPC_drawGain);
+			GRAPHICS_EACH__LPC_drawGain);
 	praat_addAction1 (classLPC, 0, U"Draw poles...", 0, 1, 
-			GRAPHICS_LPC_drawPoles);
+			GRAPHICS_EACH__LPC_drawPoles);
 	praat_addAction1 (classLPC, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classLPC);
 		praat_addAction1 (classLPC, 1, U"Get sampling interval", 0, 1, 
@@ -1550,7 +1550,7 @@ void praat_uvafon_LPC_init () {
 			WINDOW_Sound_TextGrid_FormantPath_createFormantPathEditor);
 	
 	praat_addAction1 (classVocalTract, 0, U"Draw segments...", U"Draw", 0, 
-			GRAPHICS_VocalTract_drawSegments);
+			GRAPHICS_EACH__VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, U"Get length", U"Draw segments...", 0,
 			QUERY_ONE_FOR_REAL__VocalTract_getLength);
 	praat_addAction1 (classVocalTract, 1, U"Set length", U"Formula...", 0, 

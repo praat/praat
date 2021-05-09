@@ -819,7 +819,7 @@ DIRECT (PLAY_KlattGrid_play) {
 	PLAY_EACH_END
 }
 
-FORM (GRAPHICS_KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
+FORM (GRAPHICS_EACH__KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
 	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
@@ -828,7 +828,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr) {
+FORM (GRAPHICS_EACH__KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr) {
 	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	BOOLEAN (includeTrachealFormants, U"Include tracheal formants", true);
 	OK
@@ -838,13 +838,13 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (GRAPHICS_KlattGrid_drawPhonation) {
+DIRECT (GRAPHICS_EACH__KlattGrid_drawPhonation) {
 	GRAPHICS_EACH (KlattGrid)
 		PhonationGrid_draw (my phonation.get(), GRAPHICS);
 	GRAPHICS_EACH_END
 }
 
-DIRECT (GRAPHICS_KlattGrid_drawFrication) {
+DIRECT (GRAPHICS_EACH__KlattGrid_drawFrication) {
 	GRAPHICS_EACH (KlattGrid)
 		FricationGrid_draw (my frication.get(), GRAPHICS);
 	GRAPHICS_EACH_END
@@ -985,13 +985,13 @@ void praat_KlattGrid_init () {
 
 	praat_addAction1 (classKlattGrid, 0, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Draw synthesizer...", nullptr, 1, 
-			GRAPHICS_KlattGrid_draw);
+			GRAPHICS_EACH__KlattGrid_draw);
 	praat_addAction1 (classKlattGrid, 0, U"Draw vocal tract...", nullptr, 1, 
-			GRAPHICS_KlattGrid_drawVocalTract);
+			GRAPHICS_EACH__KlattGrid_drawVocalTract);
 	praat_addAction1 (classKlattGrid, 0, U"Draw phonation", nullptr, 1, 
-			GRAPHICS_KlattGrid_drawPhonation);
+			GRAPHICS_EACH__KlattGrid_drawPhonation);
 	praat_addAction1 (classKlattGrid, 0, U"Draw frication", nullptr, 1,
-			GRAPHICS_KlattGrid_drawFrication);
+			GRAPHICS_EACH__KlattGrid_drawFrication);
 
 	praat_addAction1 (classKlattGrid, 0, U"Query phonation -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 1, U"Get pitch at time...", nullptr, 1, 

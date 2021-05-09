@@ -86,7 +86,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (GRAPHICS_drawSplines, U"Draw splines", U"spline") {
+FORM (GRAPHICS_EACH__drawSplines, U"Draw splines", U"spline") {
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"1.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -105,7 +105,7 @@ DO
 	GRAPHICS_NONE_END
 }
 
-DIRECT (GRAPHICS_drawMDSClassRelations) {
+DIRECT (GRAPHICS_NONE__drawMDSClassRelations) {
 	GRAPHICS_NONE
 		drawMDSClassRelations (GRAPHICS);
 	GRAPHICS_NONE_END	
@@ -173,7 +173,7 @@ DIRECT (HELP__Configuration_help) {
 	REAL (ymin, U"left Vertical range", U"0.0") \
 	REAL (ymax, U"right Vertical range", U"0.0")
 
-FORM (GRAPHICS_Configuration_draw, U"Configuration: Draw", U"Configuration: Draw...") {
+FORM (GRAPHICS_EACH__Configuration_draw, U"Configuration: Draw", U"Configuration: Draw...") {
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
 	NATURAL (labelSize, U"Label size", U"12")
 	BOOLEAN (useRowLables, U"Use row labels", false)
@@ -186,7 +186,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_Configuration_drawSigmaEllipses, U"Configuration: Draw sigma ellipses", U"Configuration: Draw sigma ellipses...") {
+FORM (GRAPHICS_EACH__Configuration_drawSigmaEllipses, U"Configuration: Draw sigma ellipses", U"Configuration: Draw sigma ellipses...") {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
 	POSITIVE (labelSize, U"Label size", U"12")
@@ -198,7 +198,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_Configuration_drawOneSigmaEllipse, U"Configuration: Draw one sigma ellipse", U"Configuration: Draw sigma ellipses...") {
+FORM (GRAPHICS_EACH__Configuration_drawOneSigmaEllipse, U"Configuration: Draw one sigma ellipse", U"Configuration: Draw sigma ellipses...") {
 	SENTENCE (label, U"Label", U"")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
@@ -212,7 +212,7 @@ DO
 }
 
 
-FORM (GRAPHICS_Configuration_drawConfidenceEllipses, U"Configuration: Draw confidence ellipses", nullptr) {
+FORM (GRAPHICS_EACH__Configuration_drawConfidenceEllipses, U"Configuration: Draw confidence ellipses", nullptr) {
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
 	POSITIVE (labelSize, U"Label size", U"12")
@@ -224,7 +224,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_Configuration_drawOneConfidenceEllipse, U"Configuration: Draw one confidence ellipse", nullptr) {
+FORM (GRAPHICS_EACH__Configuration_drawOneConfidenceEllipse, U"Configuration: Draw one confidence ellipse", nullptr) {
 	SENTENCE (label, U"Label", U"")
 	POSITIVE (confidenceLevel, U"Confidence level (0-1)", U"0.95")
 	praat_Configuration_draw_commonFields(horizontalDimension,verticalDimension,xmin,xmax,ymin,ymax)
@@ -1105,7 +1105,7 @@ DIRECT (HELP__MDS_help) {
 
 /************************* Salience ***************************************/
 
-FORM (GRAPHICS_Salience_draw, U"Salience: Draw", nullptr) {
+FORM (GRAPHICS_EACH__Salience_draw, U"Salience: Draw", nullptr) {
 	NATURAL (horizontalDimension, U"Horizontal dimension", U"1")
 	NATURAL (verticalDimension, U"Vertical dimension", U"2")
 	BOOLEAN (garnish, U"Garnish", true)
@@ -1305,9 +1305,9 @@ void praat_uvafon_MDS_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Configuration...", nullptr, 1, 
 			NEW1_Configuration_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw splines...", nullptr, 1, 
-			GRAPHICS_drawSplines);
+			GRAPHICS_EACH__drawSplines);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw MDS class relations", nullptr, 1,
-			GRAPHICS_drawMDSClassRelations);
+			GRAPHICS_NONE__drawMDSClassRelations);
 
 	/****** 1 class ********************************************************/
 
@@ -1324,15 +1324,15 @@ void praat_uvafon_MDS_init () {
 	praat_removeAction (classConfiguration, nullptr, nullptr, U"Remove column (index)...");
 	praat_removeAction (classConfiguration, nullptr, nullptr, U"Append");
 	praat_addAction1 (classConfiguration, 0, U"Draw...", DRAW_BUTTON, 1, 
-			GRAPHICS_Configuration_draw);
+			GRAPHICS_EACH__Configuration_draw);
 	praat_addAction1 (classConfiguration, 0, U"Draw sigma ellipses...", U"Draw...", 1, 
-			GRAPHICS_Configuration_drawSigmaEllipses);
+			GRAPHICS_EACH__Configuration_drawSigmaEllipses);
 	praat_addAction1 (classConfiguration, 0, U"Draw one sigma ellipse...", U"Draw...", 1, 
-			GRAPHICS_Configuration_drawOneSigmaEllipse);
+			GRAPHICS_EACH__Configuration_drawOneSigmaEllipse);
 	praat_addAction1 (classConfiguration, 0, U"Draw confidence ellipses...", U"Draw sigma ellipses...", 1,
-			GRAPHICS_Configuration_drawConfidenceEllipses);
+			GRAPHICS_EACH__Configuration_drawConfidenceEllipses);
 	praat_addAction1 (classConfiguration, 0, U"Draw one confidence ellipse...", U"Draw sigma ellipses...", 1,
-			GRAPHICS_Configuration_drawOneConfidenceEllipse);
+			GRAPHICS_EACH__Configuration_drawOneConfidenceEllipse);
 
 	praat_addAction1 (classConfiguration, 0, U"Randomize", U"Normalize table...", 1, 
 			MODIFY_Configuration_randomize);
@@ -1446,7 +1446,7 @@ void praat_uvafon_MDS_init () {
 	praat_TableOfReal_init2 (classSalience);
 	praat_TableOfReal_extras (classSalience);
 	praat_addAction1 (classSalience, 0, U"Draw...", DRAW_BUTTON, 1, 
-			GRAPHICS_Salience_draw);
+			GRAPHICS_EACH__Salience_draw);
 
 
 	praat_addAction1 (classSimilarity, 0, U"Similarity help", nullptr, 0, 

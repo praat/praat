@@ -120,13 +120,13 @@ DIRECT (HELP_FFNet_help)  {
 }
 		
 
-DIRECT (GRAPHICS_FFNet_drawTopology) {
+DIRECT (GRAPHICS_EACH__FFNet_drawTopology) {
 	GRAPHICS_EACH (FFNet)
 		FFNet_drawTopology (me, GRAPHICS);
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FFNet_drawWeights, U"FFNet: Draw weights", U"FFNet: Draw weights...") {
+FORM (GRAPHICS_EACH__FFNet_drawWeights, U"FFNet: Draw weights", U"FFNet: Draw weights...") {
 	NATURAL (layer, U"Layer number", U"1")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
@@ -136,7 +136,7 @@ DO
 	GRAPHICS_EACH_END
 }
 	
-FORM (GRAPHICS_FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
+FORM (GRAPHICS_EACH__FFNet_drawWeightsToLayer, U"FFNet: Draw weights to layer", nullptr) {
 	LABEL (U"Warning: Disapproved. Use \"Draw weights..\" instead.")
 	NATURAL (layer, U"Layer number", U"1")
 	RADIO (scale, U"Scale", 1)
@@ -151,7 +151,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FFNet_drawCostHistory, U"FFNet: Draw cost history", U"FFNet: Draw cost history...") {
+FORM (GRAPHICS_EACH__FFNet_drawCostHistory, U"FFNet: Draw cost history", U"FFNet: Draw cost history...") {
 	INTEGER (fromIteration, U"left Iteration_range", U"0")
 	INTEGER (toIteration, U"right Iteration_range", U"0")
 	REAL (fromCost, U"left Cost_range", U"0.0")
@@ -583,13 +583,13 @@ void praat_uvafon_FFNet_init () {
 			HELP_FFNet_help);
 	praat_addAction1 (classFFNet, 0, DRAW_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Draw topology", nullptr, 1, 
-			GRAPHICS_FFNet_drawTopology);
+			GRAPHICS_EACH__FFNet_drawTopology);
 	praat_addAction1 (classFFNet, 0, U"Draw weights...", nullptr, 1, 
-			GRAPHICS_FFNet_drawWeights);
+			GRAPHICS_EACH__FFNet_drawWeights);
 	praat_addAction1 (classFFNet, 0, U"Draw weights to layer...", nullptr, praat_DEPTH_1 | praat_HIDDEN,
-			GRAPHICS_FFNet_drawWeightsToLayer);
+			GRAPHICS_EACH__FFNet_drawWeightsToLayer);
 	praat_addAction1 (classFFNet, 0, U"Draw cost history...", nullptr, 1, 
-			GRAPHICS_FFNet_drawCostHistory);
+			GRAPHICS_EACH__FFNet_drawCostHistory);
 	praat_addAction1 (classFFNet, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Query structure", nullptr, 1, nullptr);
 	praat_addAction1 (classFFNet, 1, U"Get number of layers", nullptr, 2, 
