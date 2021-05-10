@@ -143,7 +143,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (EDITOR_ONE_LongSound_view) {
+DIRECT (EDITOR_ONE__LongSound_view) {
 	EDITOR_ONE (a,LongSound)
 		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 	EDITOR_ONE_END
@@ -257,7 +257,7 @@ FORM_SAVE (SAVE_ONE__LongSound_saveRightChannelAsWavFile, U"Save right channel a
 	SAVE_ONE_END
 }
 
-FORM (PREFS_LongSoundPrefs, U"LongSound preferences", U"LongSound") {
+FORM (PREFS__LongSoundPrefs, U"LongSound preferences", U"LongSound") {
 	LABEL (U"This setting determines the maximum number of seconds")
 	LABEL (U"for viewing the waveform and playing a sound in the LongSound window.")
 	LABEL (U"The LongSound window can become very slow if you set it too high.")
@@ -267,8 +267,9 @@ FORM (PREFS_LongSoundPrefs, U"LongSound preferences", U"LongSound") {
 OK
 	SET_INTEGER (maximumViewablePart, LongSound_getBufferSizePref_seconds ())
 DO
-	LongSound_setBufferSizePref_seconds (maximumViewablePart);
-	END_NO_NEW_DATA
+	PREFS
+		LongSound_setBufferSizePref_seconds (maximumViewablePart);
+	PREFS_END
 }
 
 /********** LONGSOUND & SOUND **********/
@@ -1752,7 +1753,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Sound_to_TextTier) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
+FORM (PREFS__SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
 	NATURAL (bufferSize, U"Buffer size (MB)", U"60")
 	OPTIONMENU_ENUM (kMelder_inputSoundSystem, inputSoundSystem,
 			U"Input sound system", kMelder_inputSoundSystem::DEFAULT)
@@ -1760,14 +1761,15 @@ OK
 	SET_INTEGER (bufferSize, SoundRecorder_getBufferSizePref_MB ())
 	SET_ENUM (inputSoundSystem, kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
-	if (bufferSize > 1000)
-		Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
-	SoundRecorder_setBufferSizePref_MB (bufferSize);
-	MelderAudio_setInputSoundSystem (inputSoundSystem);
-	END_NO_NEW_DATA
+	PREFS
+		if (bufferSize > 1000)
+			Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
+		SoundRecorder_setBufferSizePref_MB (bufferSize);
+		MelderAudio_setInputSoundSystem (inputSoundSystem);
+	PREFS_END
 }
 
-FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
+FORM (PREFS__SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	LABEL (U"The following determines how sounds are played.")
 	LABEL (U"Between parentheses, you find what you can do simultaneously.")
 	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
@@ -1785,17 +1787,18 @@ OK
 	SET_REAL (silenceAfter, MelderAudio_getOutputSilenceAfter ())
 	SET_ENUM (outputSoundSystem, kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
 DO
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	MelderAudio_setOutputMaximumAsynchronicity (maximumAsynchronicity);
-	MelderAudio_setOutputSilenceBefore (silenceBefore);
-	MelderAudio_setOutputSilenceAfter (silenceAfter);
-	MelderAudio_setOutputSoundSystem (outputSoundSystem);
-	END_NO_NEW_DATA
+	PREFS
+		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
+		MelderAudio_setOutputMaximumAsynchronicity (maximumAsynchronicity);
+		MelderAudio_setOutputSilenceBefore (silenceBefore);
+		MelderAudio_setOutputSilenceAfter (silenceAfter);
+		MelderAudio_setOutputSoundSystem (outputSoundSystem);
+	PREFS_END
 }
 
 #ifdef HAVE_PULSEAUDIO
 void pulseAudio_serverReport ();
-DIRECT (INFO_Praat_reportSoundServerProperties) {
+DIRECT (INFO_NONE__Praat_reportSoundServerProperties) {
 	INFO_NONE
 		pulseAudio_serverReport ();
 	INFO_NONE_END
@@ -2158,17 +2161,23 @@ void praat_Sound_init () {
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Stop playing sound", nullptr, GuiMenu_ESCAPE,
 			PLAY__stopPlayingSound);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- sound prefs --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound recording preferences...", nullptr, 0, PREFS_SoundInputPrefs);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound playing preferences...", nullptr, 0, PREFS_SoundOutputPrefs);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"LongSound preferences...", nullptr, 0, PREFS_LongSoundPrefs);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound recording preferences...", nullptr, 0,
+			PREFS__SoundInputPrefs);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Sound playing preferences...", nullptr, 0,
+			PREFS__SoundOutputPrefs);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"LongSound preferences...", nullptr, 0,
+			PREFS__LongSoundPrefs);
 #ifdef HAVE_PULSEAUDIO
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report sound server properties", U"Report system properties", 0, INFO_Praat_reportSoundServerProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report sound server properties", U"Report system properties", 0,
+			INFO_NONE__Praat_reportSoundServerProperties);
 #endif
 
 	praat_addAction1 (classLongSound, 0, U"LongSound help", nullptr, 0,
 			HELP__LongSound_help);
-	praat_addAction1 (classLongSound, 1, U"View", nullptr, praat_ATTRACTIVE, EDITOR_ONE_LongSound_view);
-	praat_addAction1 (classLongSound, 1,   U"Open", U"*View", praat_DEPRECATED_2011, EDITOR_ONE_LongSound_view);
+	praat_addAction1 (classLongSound, 1, U"View", nullptr, praat_ATTRACTIVE,
+			EDITOR_ONE__LongSound_view);
+	praat_addAction1 (classLongSound, 1,   U"Open", U"*View", praat_DEPRECATED_2011,
+			EDITOR_ONE__LongSound_view);
 	praat_addAction1 (classLongSound, 0, U"Play part...", nullptr, 0, PLAY_LongSound_playPart);
 	praat_addAction1 (classLongSound, 1, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classLongSound);

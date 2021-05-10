@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2020 Paul Boersma
+ * Copyright (C) 2009-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ void structDemoEditor :: v_destroy () noexcept {
 void structDemoEditor :: v_info () {
 	DemoEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Colour: ", MelderColour_name (((PraatPicture) praatPicture) -> colour));
-	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) ((PraatPicture) praatPicture) -> font));
+	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
 	MelderInfo_writeLine (U"Font size: ", ((PraatPicture) praatPicture) -> fontSize);
 }
 
@@ -148,7 +148,7 @@ void Demo_open () {
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
 		theCurrentPraatPicture -> graphics = editor -> graphics.get();
-		theCurrentPraatPicture -> font = (int) kGraphics_font::HELVETICA;
+		theCurrentPraatPicture -> font = kGraphics_font::HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 		theCurrentPraatPicture -> colour = Melder_BLACK;
