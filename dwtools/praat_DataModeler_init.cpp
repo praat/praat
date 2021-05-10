@@ -223,7 +223,7 @@ DIRECT (QUERY_ONE_FOR_REAL__DataModeler_getCoefficientOfDetermination) {
 	QUERY_ONE_FOR_REAL_END (U" (= R^2)");
 }
 
-DIRECT (INFO_DataModeler_reportChiSquared) {
+DIRECT (INFO_ONE__DataModeler_reportChiSquared) {
 	INFO_ONE (DataModeler)
 		MelderInfo_open();
 		DataModeler_reportChiSquared (me);
@@ -697,7 +697,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" Hz (= standard deviation of F", formantNumber, U")")
 }
 
-DIRECT (INFO_FormantModeler_reportChiSquared) {
+DIRECT (INFO_ONE__FormantModeler_reportChiSquared) {
 	INFO_ONE (FormantModeler)
 		MelderInfo_open();
 		FormantModeler_reportChiSquared (me);
@@ -1108,7 +1108,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 0, U"Get coefficient of determination", 0, 1,
 				QUERY_ONE_FOR_REAL__DataModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classDataModeler, 0, U"Report chi squared", 0, 1, 
-				INFO_DataModeler_reportChiSquared);
+				INFO_ONE__DataModeler_reportChiSquared);
 		praat_addAction1 (classDataModeler, 0, U"Get degrees of freedom", 0, 1,
 				QUERY_ONE_FOR_REAL__DataModeler_getDegreesOfFreedom);
 
@@ -1205,7 +1205,7 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classFormantModeler, 0, U"Get coefficient of determination...", 0, 1,
 				QUERY_ONE_FOR_REAL__FormantModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classFormantModeler, 0, U"Report chi squared", 0, 1, 
-				INFO_FormantModeler_reportChiSquared);
+				INFO_ONE__FormantModeler_reportChiSquared);
 		praat_addAction1 (classFormantModeler, 0, U"Get degrees of freedom...", 0, 1, 
 				QUERY_ONE_FOR_REAL__FormantModeler_getDegreesOfFreedom);
 		praat_addAction1 (classFormantModeler, 0, U"Get stress...", 0, 1, 

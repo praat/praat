@@ -86,7 +86,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (GRAPHICS_EACH__drawSplines, U"Draw splines", U"spline") {
+FORM (GRAPHICS_NONE__drawSplines, U"Draw splines", U"spline") {
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"1.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -696,7 +696,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (i-spline mds stress)")
 }
 
-FORM (GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
+FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
@@ -704,7 +704,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (GRAPHICS_Dissimilarity_Configuration_drawAbsoluteRegression, U"Dissimilarity & Configuration: Draw regression (absolute mds)", U"Dissimilarity & Configuration: Draw regression (absolute mds)...") {
+FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawAbsoluteRegression, U"Dissimilarity & Configuration: Draw regression (absolute mds)", U"Dissimilarity & Configuration: Draw regression (absolute mds)...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
@@ -712,7 +712,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (GRAPHICS_Dissimilarity_Configuration_drawRatioRegression, U"Dissimilarity & Configuration: Draw regression (ratio mds)", U"Dissimilarity & Configuration: Draw regression (ratio mds)...") {
+FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawRatioRegression, U"Dissimilarity & Configuration: Draw regression (ratio mds)", U"Dissimilarity & Configuration: Draw regression (ratio mds)...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
@@ -720,7 +720,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (GRAPHICS_Dissimilarity_Configuration_drawIntervalRegression, U"Dissimilarity & Configuration: Draw regression (interval mds)", U"Dissimilarity & Configuration: Draw regression (interval mds)...") {
+FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawIntervalRegression, U"Dissimilarity & Configuration: Draw regression (interval mds)", U"Dissimilarity & Configuration: Draw regression (interval mds)...") {
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
@@ -728,7 +728,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (GRAPHICS_Dissimilarity_Configuration_drawMonotoneRegression, U"Dissimilarity & Configuration: Draw regression (monotone mds)", U"Dissimilarity & Configuration: Draw regression (monotone mds)...") {
+FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawMonotoneRegression, U"Dissimilarity & Configuration: Draw regression (monotone mds)", U"Dissimilarity & Configuration: Draw regression (monotone mds)...") {
 	OPTIONMENU_ENUM (kMDS_TiesHandling, tiesHandling, U"Handling of ties", kMDS_TiesHandling::DEFAULT)
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
@@ -737,7 +737,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (GRAPHICS_Dissimilarity_Configuration_drawISplineRegression, U"Dissimilarity & Configuration: Draw regression (i-spline mds)", U"Dissimilarity & Configuration: Draw regression (i-spline mds)...") {
+FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawISplineRegression, U"Dissimilarity & Configuration: Draw regression (i-spline mds)", U"Dissimilarity & Configuration: Draw regression (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
@@ -970,7 +970,7 @@ DO_ALTERNATIVE (CONVERT_ALL_TO_MULTIPLE_old_Distances_to_Configuration_indscal)
 	CONVERT_ALL_TO_MULTIPLE_END
 }
 
-FORM (GRAPHICS_Distance_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
+FORM (GRAPHICS_ONE_AND_ONE__Distance_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
 	REAL (xmin, U"Minimum x-distance", U"0.0")
 	REAL (xmax, U"Maximum x-distance", U"0.0")
 	REAL (ymin, U"Minimum y-distance", U"0.0")
@@ -1084,7 +1084,7 @@ DO
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
 }
 
-FORM (GRAPHICS_Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Draw Shepard diagram", nullptr) {
+FORM (GRAPHICS_ONE_AND_ONE__Distance_Dissimilarity_drawShepardDiagram, U"Distance & Dissimilarity: Draw Shepard diagram", nullptr) {
 	REAL (fromDissimilarity, U"left dissimilarity range", U"0.0")
 	REAL (toDissimilarity, U"right dissimilarity range", U"0.0")
 	REAL (fromDistance, U"left Distance range", U"0.0")
@@ -1305,7 +1305,7 @@ void praat_uvafon_MDS_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create Configuration...", nullptr, 1, 
 			CREATE_ONE__Configuration_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw splines...", nullptr, 1, 
-			GRAPHICS_EACH__drawSplines);
+			GRAPHICS_NONE__drawSplines);
 	praat_addMenuCommand (U"Objects", U"New", U"Draw MDS class relations", nullptr, 1,
 			GRAPHICS_NONE__drawMDSClassRelations);
 
@@ -1518,18 +1518,18 @@ void praat_uvafon_MDS_init () {
 
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, DRAW_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Draw Shepard diagram...", nullptr, 1,
-			GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram);
+			GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawShepardDiagram);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"-- draw regressions --", nullptr, 1, nullptr);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Draw monotone regression...", nullptr, 1,
-			GRAPHICS_Dissimilarity_Configuration_drawMonotoneRegression);
+			GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawMonotoneRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Draw i-spline regression...", nullptr, 1,
-			GRAPHICS_Dissimilarity_Configuration_drawISplineRegression);
+			GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawISplineRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Draw interval regression...", nullptr, 1,
-			GRAPHICS_Dissimilarity_Configuration_drawIntervalRegression);
+			GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawIntervalRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Draw ratio regression...", nullptr, 1,
-			GRAPHICS_Dissimilarity_Configuration_drawRatioRegression);
+			GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawRatioRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Draw absolute regression...", nullptr, 1,
-			GRAPHICS_Dissimilarity_Configuration_drawAbsoluteRegression);
+			GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawAbsoluteRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"Get stress (monotone mds)...", nullptr, 1,
 			QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_monotone_stress);
@@ -1559,7 +1559,7 @@ void praat_uvafon_MDS_init () {
 
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, DRAW_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, U"Draw scatter diagram...", nullptr, 0,
-			GRAPHICS_Distance_Configuration_drawScatterDiagram);
+			GRAPHICS_ONE_AND_ONE__Distance_Configuration_drawScatterDiagram);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDistance, 0, classConfiguration, 1, U"Get VAF...", nullptr, 0, 
 			QUERY_ONE_AND_ONE_FOR_REAL__Distance_Configuration_vaf);
@@ -1568,7 +1568,7 @@ void praat_uvafon_MDS_init () {
 			NEWMANY_Distance_Configuration_indscal);
 
 	praat_addAction2 (classDistance, 1, classDissimilarity, 1, U"Draw Shepard diagram...", nullptr, 0,
-			GRAPHICS_Distance_Dissimilarity_drawShepardDiagram);
+			GRAPHICS_ONE_AND_ONE__Distance_Dissimilarity_drawShepardDiagram);
 	praat_addAction2 (classDissimilarity, 1, classDistance, 1, U"Monotone regression...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Distance_monotoneRegression);
 
