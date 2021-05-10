@@ -185,7 +185,8 @@ typedef struct {   /* Readonly */
 } structPraatObjects, *PraatObjects;
 typedef struct {   // read-only
 	Graphics graphics;   // the Graphics associated with the Picture window
-	int font, lineType;
+	kGraphics_font font;
+	int lineType;
 	double fontSize;
 	MelderColour colour;
 	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
@@ -1469,6 +1470,22 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define WARNING
 #define WARNING_END  \
+	END_NO_NEW_DATA
+
+/*
+	PREFS
+*/
+
+#define PREFS
+#define PREFS_END  \
+	END_NO_NEW_DATA
+
+/*
+	PRAAT
+*/
+
+#define PRAAT
+#define PRAAT_END  \
 	END_NO_NEW_DATA
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */

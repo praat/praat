@@ -45,24 +45,39 @@ static GuiMenuItem praatButton_fonts [1 + (int) kGraphics_font::MAX];
 
 static void updateFontMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		Melder_clip ((int) kGraphics_font::MIN, & theCurrentPraatPicture -> font, (int) kGraphics_font::MAX);
+		Melder_clip ((int) kGraphics_font::MIN, (int *) & theCurrentPraatPicture -> font, (int) kGraphics_font::MAX);
 		for (int i = (int) kGraphics_font::MIN; i <= (int) kGraphics_font::MAX; i ++)
-			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
+			GuiMenuItem_check (praatButton_fonts [i], (int) theCurrentPraatPicture -> font == i);
 	}
 }
-static void setFont (kGraphics_font font) {
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setFont (GRAPHICS, font);
-	}
-	theCurrentPraatPicture -> font = (int) font;
+DIRECT (GRAPHICS_NONE__Times) {
+	GRAPHICS_NONE
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font = kGraphics_font::TIMES);
+	GRAPHICS_NONE_END
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updateFontMenu ();
 }
-DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font::TIMES);     END_NO_NEW_DATA }
-DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font::HELVETICA); END_NO_NEW_DATA }
-DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font::PALATINO);  END_NO_NEW_DATA }
-DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END_NO_NEW_DATA }
+DIRECT (GRAPHICS_NONE__Helvetica) {
+	GRAPHICS_NONE
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font = kGraphics_font::HELVETICA);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateFontMenu ();
+}
+DIRECT (GRAPHICS_NONE__Palatino) {
+	GRAPHICS_NONE
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font = kGraphics_font::PALATINO);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateFontMenu ();
+}
+DIRECT (GRAPHICS_NONE__Courier) {
+	GRAPHICS_NONE
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font = kGraphics_font::COURIER);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateFontMenu ();
+}
 
 /***** "Font" MENU: size part *****/
 
@@ -76,28 +91,47 @@ static void updateSizeMenu () {
 		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24.0);
 	}
 }
-static void setFontSize (double fontSize) {
-	//Melder_casual("Praat picture: set font size %d", (int) fontSize);
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setFontSize (GRAPHICS, fontSize);
-	}
-	theCurrentPraatPicture -> fontSize = fontSize;
+DIRECT (GRAPHICS_10) {
+	GRAPHICS_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = 10.0);
+	GRAPHICS_NONE_END
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updateSizeMenu ();
 }
-
-DIRECT (GRAPHICS_10) { setFontSize (10.0); END_NO_NEW_DATA }
-DIRECT (GRAPHICS_12) { setFontSize (12.0); END_NO_NEW_DATA }
-DIRECT (GRAPHICS_14) { setFontSize (14.0); END_NO_NEW_DATA }
-DIRECT (GRAPHICS_18) { setFontSize (18.0); END_NO_NEW_DATA }
-DIRECT (GRAPHICS_24) { setFontSize (24.0); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_12) {
+	GRAPHICS_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = 12.0);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateSizeMenu ();
+}
+DIRECT (GRAPHICS_14) {
+	GRAPHICS_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = 14.0);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateSizeMenu ();
+}
+DIRECT (GRAPHICS_18) {
+	GRAPHICS_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = 18.0);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateSizeMenu ();
+}
+DIRECT (GRAPHICS_24) {
+	GRAPHICS_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = 24.0);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateSizeMenu ();
+}
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
 	POSITIVE (fontSize, U"Font size (points)", U"10")
 OK
 	SET_REAL (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
-	setFontSize (fontSize);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = fontSize);
 	END_NO_NEW_DATA
 }
 
@@ -1388,7 +1422,7 @@ FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL
-		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
@@ -1405,7 +1439,7 @@ FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in 
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL
-		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
@@ -1423,7 +1457,7 @@ FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL
-		Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+		Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setInner (GRAPHICS);
@@ -1464,10 +1498,8 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 			xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
 			ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
 		}
-		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
-			ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
-			xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+		Melder_clipRight (& ymargin, 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC));
+		Melder_clipRight (& xmargin, 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC));
 		MelderInfo_writeLine (U"Inner viewport left: ", theCurrentPraatPicture -> x1NDC + xmargin, units);
 		MelderInfo_writeLine (U"Inner viewport right: ", theCurrentPraatPicture -> x2NDC - xmargin, units);
 		MelderInfo_writeLine (U"Inner viewport top: ",
@@ -1478,7 +1510,7 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 			theCurrentPraatPicture != & theForegroundPraatPicture ?
 				theCurrentPraatPicture -> y2NDC - ymargin :
 				12 - theCurrentPraatPicture -> y1NDC - ymargin, units);
-		MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) theCurrentPraatPicture -> font));
+		MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
 		MelderInfo_writeLine (U"Line type: ",
 			theCurrentPraatPicture -> lineType == Graphics_DRAWN ? U"Solid" :
 			theCurrentPraatPicture -> lineType == Graphics_DOTTED ? U"Dotted" :
@@ -1579,7 +1611,7 @@ void praat_picture_open () {
 	/* This is especially necessary after an 'erase picture': */
 	/* the output attributes that were set by the user before the 'erase' */
 	/* must be recorded before copying to a PostScript file. */
-	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
+	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);
 	Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth);
@@ -1840,10 +1872,14 @@ void praat_picture_init () {
 	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_18);
 	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_24);
 	praat_addMenuCommand (U"Picture", U"Font", U"-- font ---", nullptr, 0, nullptr);
-	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, GRAPHICS_Times);
-	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, GRAPHICS_Helvetica);
-	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, GRAPHICS_Palatino);
-	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, GRAPHICS_Courier);
+	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST,
+			GRAPHICS_NONE__Times);
+	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT,
+			GRAPHICS_NONE__Helvetica);
+	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT,
+			GRAPHICS_NONE__Palatino);
+	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT,
+			GRAPHICS_NONE__Courier);
 
 	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?', HELP_PictureWindowHelp);
 	praat_addMenuCommand (U"Picture", U"Help", U"About special symbols", nullptr, 0, HELP_AboutSpecialSymbols);

@@ -495,7 +495,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 				theCurrentPraatObjects = (PraatObjects) & praatObjects;
 				theCurrentPraatPicture = (PraatPicture) & praatPicture;
 				theCurrentPraatPicture -> graphics = graphics.get();   // FIXME: should be move()?
-				theCurrentPraatPicture -> font = (int) kGraphics_font::TIMES;
+				theCurrentPraatPicture -> font = kGraphics_font::TIMES;
 				theCurrentPraatPicture -> fontSize = 12.0;
 				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 				theCurrentPraatPicture -> colour = Melder_BLACK;
