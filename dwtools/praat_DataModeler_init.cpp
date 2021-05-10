@@ -27,7 +27,7 @@
 
 /* DataModeler */
 
-FORM (NEW1_DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
+FORM (CREATE_ONE__DataModeler_createSimple, U"Create simple DataModeler", nullptr) {
 	WORD (name, U"Name", U"dm")
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"1.0")
@@ -345,19 +345,19 @@ DIRECT (MODIFY_DataModeler_fitModel) {
 	MODIFY_EACH_END
 }
 
-DIRECT (NEW_DataModeler_to_Covariance_parameters) {
+DIRECT (CONVERT_EACH_TO_ONE__DataModeler_to_Covariance_parameters) {
 	CONVERT_EACH_TO_ONE (DataModeler)
 		autoCovariance result = DataModeler_to_Covariance_parameters (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (NEW_DataModeler_to_Table_zscores) {
+DIRECT (CONVERT_EACH_TO_ONE__DataModeler_to_Table_zscores) {
 	CONVERT_EACH_TO_ONE (DataModeler)
 		autoTable result = DataModeler_to_Table_zscores (me);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_z");
 }
 
-FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 //double tmin, double tmax, integer numberOfFormants, integer numberOfParametersPerTrack
 	REAL (fromTime, U"left Start time", U"0.0")
 	REAL (toTime, U"right End time", U"0.1")
@@ -846,7 +846,7 @@ DIRECT (MODIFY_FormantModeler_fitModel) {
 	MODIFY_EACH_END
 }
 
-FORM (NEW_FormantModeler_to_Covariance_parameters, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__FormantModeler_to_Covariance_parameters, U"", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
@@ -855,7 +855,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", formantNumber);
 }
 
-FORM (NEW_FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__FormantModeler_extractDataModeler, U"FormantModeler: Extract DataModeler", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
@@ -864,13 +864,13 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", formantNumber)
 }
 
-DIRECT (NEW_FormantModeler_to_Table_zscores) {
+DIRECT (CONVERT_EACH_TO_ONE__FormantModeler_to_Table_zscores) {
 	CONVERT_EACH_TO_ONE (FormantModeler)
 		autoTable result = FormantModeler_to_Table_zscores (me);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_z")
 }
 
-FORM (NEW_FormantModeler_to_FormantModeler_processOutliers, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__FormantModeler_to_FormantModeler_processOutliers, U"", nullptr) {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
 	OK
 DO
@@ -887,7 +887,7 @@ DIRECT (EDITOR_ONE_WITH_ONE_OptimalCeilingTier_edit) {
 
 /*************************** PitchModeler *************************************/
 /*
-FORM (NEW_Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Pitch_to_PitchModeler, U"Pitch: To PitchModeler", nullptr) {
 	REAL (fromTime, U"left Start time (s)", U"0.0")
 	REAL (toTime, U"right End time (s)", U"0.1")
 	INTEGER (order, U"Order of polynomials", U"2")
@@ -935,7 +935,7 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" Hz");
 }
 
-FORM (NEW_Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Formant_interval, U"Sound: To Formant (interval)", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.1")
 	REAL (toTime, U"right Time range (s)", U"0.15")
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
@@ -958,7 +958,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (ceiling, 0))
 }
 
-FORM (NEW_Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Formant_interval_constrained, U"Sound: To Formant (interval, constrained)", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.1")
 	REAL (toTime, U"right Time range (s)", U"0.15")
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
@@ -987,7 +987,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (ceiling, 0));
 }
 
-FORM (NEW_Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Formant_interval_constrained_robust, U"Sound: To Formant (interval, constrained, robust)", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.1")
 	REAL (toTime, U"right Time range (s)", U"0.15")
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
@@ -1016,7 +1016,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (ceiling, 0))
 }
 
-FORM (NEW_Sound_to_OptimalCeilingTier, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_OptimalCeilingTier, U"", nullptr) {
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
 	POSITIVE (timeStep, U"Time step (s)", U"0.0025")
 	POSITIVE (fromFrequency, U"left Maximum frequency range (Hz)", U"4500.0")
@@ -1037,7 +1037,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get());
 }
 
-FORM (NEW_Table_to_DataModeler, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Table_to_DataModeler, U"", nullptr) {
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"0.0 (= auto)")
 	WORD (columnWithX_string, U"Column with X data", U"")
@@ -1060,7 +1060,7 @@ void praat_DataModeler_init () {
 	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, nullptr);
 	
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1,
-			NEW1_DataModeler_createSimple);
+			CREATE_ONE__DataModeler_createSimple);
 
 	praat_addAction1 (classDataModeler, 0, U"Speckle...", 0, 0, 
 			GRAPHICS_EACH__DataModeler_speckle);
@@ -1138,12 +1138,12 @@ void praat_DataModeler_init () {
 			MODIFY_DataModeler_fitModel);
 	
 	praat_addAction1 (classDataModeler, 0, U"To Covariance (parameters)", 0, 0, 
-			NEW_DataModeler_to_Covariance_parameters);
+			CONVERT_EACH_TO_ONE__DataModeler_to_Covariance_parameters);
 	praat_addAction1 (classDataModeler, 0, U"To Table (z-scores)", 0, 0, 
-			NEW_DataModeler_to_Table_zscores);
+			CONVERT_EACH_TO_ONE__DataModeler_to_Table_zscores);
 
 	praat_addAction1 (classFormant, 0, U"To FormantModeler...", U"To LPC...", praat_HIDDEN, 
-			NEW_Formant_to_FormantModeler);
+			CONVERT_EACH_TO_ONE__Formant_to_FormantModeler);
 	praat_addAction1 (classFormant, 0, U"Extract smoothest part...", 0, praat_HIDDEN,
 			COMBINE_ALL_TO_ONE__Formants_extractSmoothestPart);
 	praat_addAction1 (classFormant, 0, U"Extract smoothest part (constrained)...", 0, praat_HIDDEN,
@@ -1240,37 +1240,37 @@ void praat_DataModeler_init () {
 	
 	
 	praat_addAction1 (classFormantModeler, 0, U"To Covariance (parameters)...", 0, 0,
-			NEW_FormantModeler_to_Covariance_parameters);
+			CONVERT_EACH_TO_ONE__FormantModeler_to_Covariance_parameters);
 	praat_addAction1 (classFormantModeler, 0, U"To Table (z-scores)", 0, 0, 
-			NEW_FormantModeler_to_Table_zscores);
+			CONVERT_EACH_TO_ONE__FormantModeler_to_Table_zscores);
 	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0,
-			NEW_FormantModeler_to_FormantModeler_processOutliers);
+			CONVERT_EACH_TO_ONE__FormantModeler_to_FormantModeler_processOutliers);
 	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, 
-			NEW_FormantModeler_extractDataModeler);
+			CONVERT_EACH_TO_ONE__FormantModeler_extractDataModeler);
 
 	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API,
 			EDITOR_ONE_WITH_ONE_OptimalCeilingTier_edit);
 	
-	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, NEW_Pitch_to_PitchModeler);
+	//praat_addAction1 (classPitch, 0, U"To PitchModeler...", U"To PointProcess", praat_HIDDEN, CONVERT_EACH_TO_ONE__Pitch_to_PitchModeler);
 
 	//praat_addAction1 (classPitchModeler, 0, U"Draw...", 0, 0, GRAPHICS_EACH__PitchModeler_draw);
 
 	praat_addAction1 (classSound, 0, U"Get optimal formant ceiling...", U"Get intensity (dB)", praat_DEPTH_1 | praat_HIDDEN,
 			QUERY_ONE_FOR_REAL__Sound_getOptimalFormantCeiling);
 	praat_addAction1 (classSound, 0, U"To Formant (interval)...", U"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN,
-			NEW_Sound_to_Formant_interval);
+			CONVERT_EACH_TO_ONE__Sound_to_Formant_interval);
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained)...", U"To Formant (interval)...",
 		praat_DEPTH_2 | praat_HIDDEN,
-			NEW_Sound_to_Formant_interval_constrained);
+			CONVERT_EACH_TO_ONE__Sound_to_Formant_interval_constrained);
 
 	praat_addAction1 (classSound, 0, U"To OptimalCeilingTier...", U"To Formant (interval, constrained)...", praat_DEPTH_2 | praat_HIDDEN, 
-			NEW_Sound_to_OptimalCeilingTier);
+			CONVERT_EACH_TO_ONE__Sound_to_OptimalCeilingTier);
 	
 	praat_addAction1 (classSound, 0, U"To Formant (interval, constrained, robust)...", U"To Formant (interval, constrained)...", 
 		praat_DEPTH_2 | praat_HIDDEN, 
-			NEW_Sound_to_Formant_interval_constrained_robust);
+			CONVERT_EACH_TO_ONE__Sound_to_Formant_interval_constrained_robust);
 	praat_addAction1 (classTable, 0, U"To DataModeler...", U"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN,
-			NEW_Table_to_DataModeler);
+			CONVERT_EACH_TO_ONE__Table_to_DataModeler);
 }
 
 /* End of file praat_DataModeler_init.cpp 1566*/
