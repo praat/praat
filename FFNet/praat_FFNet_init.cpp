@@ -53,7 +53,7 @@ static char32 const *EXTRACT_BUTTON = U"Extract -";
 
 /**************** New FFNet ***************************/
 
-FORM (NEW1_FFNet_create, U"Create FFNet", U"Create FFNet...") {
+FORM (CREATE_ONE__FFNet_create, U"Create FFNet", U"Create FFNet...") {
 	WORD (name, U"Name", U"4-3")
 	NATURAL (numberOfInputs, U"Number of inputs", U"4")
 	NATURAL (numberOfOutputs, U"Number of outputs", U"3")
@@ -66,7 +66,7 @@ DO
 	CREATE_ONE_END (name);
 }
 
-FORM (NEWMANY_FFNet_createIrisExample, U"Create iris example", U"Create iris example...") {
+FORM (CREATE_MULTIPLE__FFNet_createIrisExample, U"Create iris example", U"Create iris example...") {
 	LABEL (U"For the feedforward neural net we need to know the:")
 	INTEGER (numberOfUnits1, U"Number of units in hidden layer 1", U"0")
 	INTEGER (numberOfUnits2, U"Number of units in hidden layer 2", U"0")
@@ -78,7 +78,7 @@ DO
 	CREATE_MULTIPLE_END
 }
 
-FORM (NEW1_FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
+FORM (CREATE_ONE__FFNet_create_linearOutputs, U"Create FFNet", U"Create FFNet (linear outputs)...") {
 	WORD (name, U"Name", U"4-3")
 	NATURAL (numberOfInputs, U"Number of inputs", U"4")
 	NATURAL (numberOfOutputs, U"Number of outputs", U"3")
@@ -93,7 +93,7 @@ DO
 
 /**************** New PatternList ***************************/
 
-FORM (NEW1_PatternList_create, U"Create PatternList", nullptr) {
+FORM (CREATE_ONE__PatternList_create, U"Create PatternList", nullptr) {
 	WORD (name, U"Name", U"1x1")
 	NATURAL (patternDimension, U"Dimension of a pattern", U"1")
 	NATURAL (numberOfPatterns, U"Number of patterns", U"1")
@@ -106,7 +106,7 @@ DO
 
 /**************** New Categories ***************************/
 	
-FORM (NEW1_Categories_create, U"Create Categories", nullptr) {
+FORM (CREATE_ONE__Categories_create, U"Create Categories", nullptr) {
 	WORD (name, U"Name", U"empty")
 	OK
 DO
@@ -115,7 +115,7 @@ DO
 	CREATE_ONE_END (name);
 }
 
-DIRECT (HELP_FFNet_help)  {
+DIRECT (HELP__FFNet_help)  {
 	HELP (U"Feedforward neural networks")
 }
 		
@@ -211,7 +211,7 @@ DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputWeights) {
 	QUERY_ONE_FOR_INTEGER_END (U" weights");
 }
 
-FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
+FORM (QUERY_ONE_FOR_STRING__FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit", nullptr) {
 	NATURAL (outputUnit, U"Output unit", U"1")
 	OK
 DO
@@ -258,7 +258,7 @@ DIRECT (QUERY_ONE_FOR_REAL__FFNet_getMinimum) {
 	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
-FORM (MODIFY_FFNet_setBias, U"FFNet: Set bias", nullptr) {
+FORM (MODIFY_EACH__FFNet_setBias, U"FFNet: Set bias", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	NATURAL (unit, U"Unit", U"1")
 	REAL (value, U"Value", U"0.0")
@@ -269,7 +269,7 @@ DO
 	MODIFY_EACH_END 
 }
 
-FORM (MODIFY_FFNet_setWeight, U"FFNet: Set weight", nullptr) {
+FORM (MODIFY_EACH__FFNet_setWeight, U"FFNet: Set weight", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	NATURAL (unitTo, U"Unit", U"1")
 	NATURAL (unitFrom, U"Unit (from)", U"1")
@@ -281,7 +281,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
+FORM (MODIFY_EACH__FFNet_reset, U"FFNet: Reset", U"FFNet: Reset...") {
 	LABEL (U"Warning: this command destroys all previous learning.")
 	LABEL (U"New weights will be randomly chosen from the interval [-range, +range].")
 	POSITIVE (range, U"Range", U"0.1")
@@ -292,7 +292,7 @@ DO
 	MODIFY_EACH_END
 }
 	
-FORM (MODIFY_FFNet_selectBiasesInLayer, U"FFNet: Select biases", U"FFNet: Select biases...") {
+FORM (MODIFY_EACH__FFNet_selectBiasesInLayer, U"FFNet: Select biases", U"FFNet: Select biases...") {
 	LABEL (U"WARNING: This command induces very specific behaviour ")
 	LABEL (U"during a following learning phase.")
 	NATURAL (layer, U"Layer number", U"1")
@@ -303,7 +303,7 @@ DO
 	MODIFY_EACH_END
 }
 	
-DIRECT (MODIFY_FFNet_selectAllWeights) {
+DIRECT (MODIFY_EACH__FFNet_selectAllWeights) {
 	MODIFY_EACH (FFNet)
 		FFNet_selectAllWeights (me);
 	MODIFY_EACH_END
@@ -328,14 +328,14 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (HINT_hint_FFNet_PatternList_classify) {
+DIRECT (HINT__hint_FFNet_PatternList_classify) {
 	INFO_NONE
 		Melder_information (U"You can use the FFNet as a classifier by selecting a\n"
 			"FFNet and a PatternList together and choosing \"To Categories...\".");
 	INFO_NONE_END
 }
 	
-DIRECT (HINT_hint_FFNet_PatternList_Categories_learn) {
+DIRECT (HINT__hint_FFNet_PatternList_Categories_learn) {
 	INFO_NONE
 		Melder_information (U"You can teach a FFNet to classify by selecting a\n"
 			"FFNet, a PatternList and a Categories together and choosing \"Learn...\".");
@@ -344,7 +344,7 @@ DIRECT (HINT_hint_FFNet_PatternList_Categories_learn) {
 
 /******************* FFNet && ActivationList ******************************************/
 
-FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
+FORM (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Categories", 0) {
 	RADIO (categorizationgMethod, U"Categorization method", 1)
 		RADIOBUTTON (U"winner-takes-all")
 		RADIOBUTTON (U"stochastic")
@@ -357,7 +357,7 @@ DO
 
 /******************* FFNet && Eigen ******************************************/
 
-FORM (GRAPHICS_FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection", 0) {
+FORM (GRAPHICS_ONE_AND_ONE__FFNet_Eigen_drawIntersection, U"FFnet & Eigen: Draw intersection", 0) {
 	NATURAL (pcx, U"X-component", U"1")
 	NATURAL (pcy, U"Y-component", U"2")
 	REAL (xmin, U"Xmin", U"0.0")
@@ -373,7 +373,7 @@ DO
 
 /************************* FFNet && Categories **********************************/
 
-DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
+DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_Categories_to_ActivationList) {
 	CONVERT_ONE_AND_ONE_TO_ONE (FFNet, Categories)
 		autoActivationList result = FFNet_Categories_to_ActivationList (me, you);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get());
@@ -381,7 +381,7 @@ DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
 
 /************************* FFNet && Matrix **********************************/
 
-FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nullptr) {
+FORM (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
@@ -392,7 +392,7 @@ DO
 
 /************************* FFNet && PatternList **********************************/
 
-FORM (GRAPHICS_FFNet_PatternList_drawActivation, U"Draw an activation", nullptr) {
+FORM (GRAPHICS_ONE_AND_ONE__FFNet_PatternList_drawActivation, U"Draw an activation", nullptr) {
 	NATURAL (row, U"PatternList (row) number", U"1");
 	OK
 DO
@@ -401,7 +401,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
+FORM (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories", U"FFNet & PatternList: To Categories...") {
 	RADIO (categorizationgMethod, U"Categorization method", 1)
 		RADIOBUTTON (U"winner-takes-all")
 		RADIOBUTTON (U"stochastic")
@@ -412,7 +412,7 @@ DO
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
-FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
+FORM (CONVERT_ONE_AND_ONE_TO_ONE__FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
 	NATURAL (layer, U"Layer", U"1")
 	OK
 DO
@@ -445,7 +445,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
-FORM (MODIFY_FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_learn, U"FFNet & PatternList & ActivationList: Learn", nullptr) {
 	// NATURAL (U"Layer", U"1")
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
@@ -460,7 +460,7 @@ DO
 }
 	
 
-FORM (MODIFY_FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList & ActivationList: Learn slow", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_learnSlow, U"FFNet & PatternList & ActivationList: Learn slow", nullptr) {
 	// NATURAL (U"Layer", U"1")
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
@@ -501,7 +501,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (average costs)")
 }
 
-FORM (MODIFY_FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learn, U"FFNet & PatternList & Categories: Learn", U"FFNet & PatternList & Categories: Learn...") {
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
 	RADIO (costFunctionType, U"Cost function", 1)
@@ -514,7 +514,7 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE_END
 }
 
-FORM (MODIFY_FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learnSlow, U"FFNet & PatternList & Categories: Learn slow", U"FFNet & PatternList & Categories: Learn slow...") {
 	NATURAL (maximumNumberOfEpochs, U"Maximum number of epochs", U"100")
 	POSITIVE (tolerance, U"Tolerance of minimizer", U"1e-7")
 	LABEL (U"Specific for this minimization")
@@ -532,7 +532,7 @@ DO
 
 /*********** FFNet & PCA **********************************/
 
-FORM (GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw decision plane", nullptr) {
+FORM (GRAPHICS_ONE_AND_ONE__FFNet_PCA_drawDecisionPlaneInEigenspace, U"FFNet & PCA: Draw decision plane", nullptr) {
 	NATURAL (unitNumber, U"Unit number", U"1")
 	NATURAL (layer, U"Layer number", U"1")
 	NATURAL (horizontalEigenvectorNumber, U"Horizontal eigenvector number", U"1")
@@ -550,7 +550,7 @@ DO
 
 /*********** PatternList & Categories **********************************/
 
-FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet", U"PatternList & Categories: To FFNet...") {
+FORM (CONVERT_ONE_AND_ONE_TO_ONE__PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet", U"PatternList & Categories: To FFNet...") {
 	INTEGER (numberOfUnitsInHiddenLayer1, U"Number of units in hidden layer 1", U"0")
 	INTEGER (numberOfUnitsInHiddenLayer2, U"Number of units in hidden layer 2", U"0")
 	OK
@@ -566,21 +566,21 @@ void praat_uvafon_FFNet_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"Feedforward neural networks", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet...", nullptr, 1, 
-			NEW1_FFNet_create);
+			CREATE_ONE__FFNet_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create iris example...", nullptr, 1, 
-			NEWMANY_FFNet_createIrisExample);
+			CREATE_MULTIPLE__FFNet_createIrisExample);
 	praat_addMenuCommand (U"Objects", U"New", U"Advanced", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet (linear outputs)...", nullptr, 2, 
-			NEW1_FFNet_create_linearOutputs);
+			CREATE_ONE__FFNet_create_linearOutputs);
 	praat_addMenuCommand (U"Objects", U"New", U"Create PatternList...", nullptr, 2, 
-			NEW1_PatternList_create);
+			CREATE_ONE__PatternList_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Pattern...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2015,
-			NEW1_PatternList_create);
+			CREATE_ONE__PatternList_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Categories...", nullptr, 2, 
-			NEW1_Categories_create);
+			CREATE_ONE__Categories_create);
 
 	praat_addAction1 (classFFNet, 0, U"FFNet help", nullptr, 0, 
-			HELP_FFNet_help);
+			HELP__FFNet_help);
 	praat_addAction1 (classFFNet, 0, DRAW_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Draw topology", nullptr, 1, 
 			GRAPHICS_EACH__FFNet_drawTopology);
@@ -605,7 +605,7 @@ void praat_uvafon_FFNet_init () {
 	praat_addAction1 (classFFNet, 1, U"Get number of output weights", nullptr, 2, 
 			QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputWeights);
 	praat_addAction1 (classFFNet, 1, U"Get category of output unit...", nullptr, 2, 
-			INFO_FFNet_getCategoryOfOutputUnit);
+			QUERY_ONE_FOR_STRING__FFNet_getCategoryOfOutputUnit);
 	praat_addAction1 (classFFNet, 1, U"Get output unit of category...", nullptr, 2, 
 			QUERY_ONE_FOR_INTEGER__FFNet_getOutputUnitOfCategory);
 	praat_addAction1 (classFFNet, 0, U"-- FFNet weights --", nullptr, 1, nullptr);
@@ -617,49 +617,49 @@ void praat_uvafon_FFNet_init () {
 			QUERY_ONE_FOR_REAL__FFNet_getMinimum);
 	praat_addAction1 (classFFNet, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Set bias...", nullptr, 1, 
-			MODIFY_FFNet_setBias);
+			MODIFY_EACH__FFNet_setBias);
 	praat_addAction1 (classFFNet, 0, U"Set weight...", nullptr, 1, 
-			MODIFY_FFNet_setWeight);
+			MODIFY_EACH__FFNet_setWeight);
 	praat_addAction1 (classFFNet, 0, U"Reset...", nullptr, 1, 
-			MODIFY_FFNet_reset);
+			MODIFY_EACH__FFNet_reset);
 	praat_addAction1 (classFFNet, 0, U"Select biases...", nullptr, 1, 
-			MODIFY_FFNet_selectBiasesInLayer);
+			MODIFY_EACH__FFNet_selectBiasesInLayer);
 	praat_addAction1 (classFFNet, 0, U"Select all weights", nullptr, 1, 
-			MODIFY_FFNet_selectAllWeights);
+			MODIFY_EACH__FFNet_selectAllWeights);
 	praat_addAction1 (classFFNet, 0, EXTRACT_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFFNet, 0, U"Extract weights...", nullptr, 1, 
 			NEW_FFNet_extractWeights);
 	praat_addAction1 (classFFNet, 0, U"Weights to Matrix...", nullptr, praat_DEPTH_1 | praat_HIDDEN, 
 			NEW_FFNet_weightsToMatrix);
 	praat_addAction1 (classFFNet, 0, U"& PatternList: Classify?", nullptr, 0, 
-			HINT_hint_FFNet_PatternList_classify);
+			HINT__hint_FFNet_PatternList_classify);
 	praat_addAction1 (classFFNet, 0, U"& PatternList & Categories: Learn?", nullptr, 0,
-			HINT_hint_FFNet_PatternList_Categories_learn);
+			HINT__hint_FFNet_PatternList_Categories_learn);
 
 	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classActivationList, 1, U"To Categories...", nullptr, 0, 
-			NEW1_FFNet_ActivationList_to_Categories);
+			CONVERT_ONE_AND_ONE_TO_ONE__FFNet_ActivationList_to_Categories);
 
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classEigen, 1, U"Draw hyperplane intersections", nullptr, 0,
-			GRAPHICS_FFNet_Eigen_drawIntersection);
+			GRAPHICS_ONE_AND_ONE__FFNet_Eigen_drawIntersection);
 
 	praat_addAction2 (classFFNet, 1, classCategories, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classCategories, 1, U"To ActivationList", nullptr, 0, 
-			NEW1_FFNet_Categories_to_ActivationList);
+			CONVERT_ONE_AND_ONE_TO_ONE__FFNet_Categories_to_ActivationList);
 
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Modify", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, U"Weights from Matrix...", nullptr, 0, 
-			NEW1_FFNet_weightsFromMatrix);
+			CONVERT_ONE_AND_ONE_TO_ONE__FFNet_weightsFromMatrix);
 
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Draw activation...", nullptr, 0,
-			GRAPHICS_FFNet_PatternList_drawActivation);
+			GRAPHICS_ONE_AND_ONE__FFNet_PatternList_drawActivation);
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To Categories...", nullptr, 0,
-			NEW1_FFNet_PatternList_to_Categories);
+			CONVERT_ONE_AND_ONE_TO_ONE__FFNet_PatternList_to_Categories);
 	praat_addAction2 (classFFNet, 1, classPatternList, 1, U"To ActivationList...", nullptr, 0,
-			NEW1_FFNet_PatternList_to_ActivationList);
+			CONVERT_ONE_AND_ONE_TO_ONE__FFNet_PatternList_to_ActivationList);
 
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Get total costs...", nullptr, 0,
 			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getTotalCosts);
@@ -667,9 +667,9 @@ void praat_uvafon_FFNet_init () {
 			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getAverageCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn", nullptr, 0, nullptr);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn...", nullptr, 0,
-			MODIFY_FFNet_PatternList_ActivationList_learn);
+			MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_learn);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classActivationList, 1, U"Learn slow...", nullptr, 0,
-			MODIFY_FFNet_PatternList_ActivationList_learnSlow);
+			MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_ActivationList_learnSlow);
 
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Get total costs...", nullptr, 0,
 			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getTotalCosts);
@@ -677,15 +677,15 @@ void praat_uvafon_FFNet_init () {
 			QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getAverageCosts);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn", nullptr, 0, nullptr);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn...", nullptr, 0,
-			MODIFY_FFNet_PatternList_Categories_learn);
+			MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learn);
 	praat_addAction3 (classFFNet, 1, classPatternList, 1, classCategories, 1, U"Learn slow...", nullptr, 0,
-			MODIFY_FFNet_PatternList_Categories_learnSlow);
+			MODIFY_FIRST_OF_ONE_AND_ONE_AND_ONE__FFNet_PatternList_Categories_learnSlow);
 	
 	praat_addAction2 (classFFNet, 1, classPCA, 1, U"Draw decision plane...", nullptr, 0,
-			GRAPHICS_FFNet_PCA_drawDecisionPlaneInEigenspace);
+			GRAPHICS_ONE_AND_ONE__FFNet_PCA_drawDecisionPlaneInEigenspace);
 	
 	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To FFNet...", nullptr, 0, 
-			NEW1_PatternList_Categories_to_FFNet);
+			CONVERT_ONE_AND_ONE_TO_ONE__PatternList_Categories_to_FFNet);
 	
 	INCLUDE_MANPAGES (manual_FFNet_init)
 }
