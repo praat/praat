@@ -320,9 +320,9 @@ if (! my printing) {
 }
 
 void HyperPage_picture (HyperPage me, double width_inches, double height_inches, void (*draw) (Graphics g)) {
-	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
-	kGraphics_font font = my p_font;
-	int size = my p_fontSize;
+	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
+	const kGraphics_font font = my p_font;
+	const int size = my p_fontSize;
 	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
 if (! my printing) {
@@ -346,7 +346,7 @@ if (! my printing) {
 	Graphics_setFont (my ps, font);
 	Graphics_setFontStyle (my ps, 0);
 	Graphics_setFontSize (my ps, size);
-	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
 	my d_y -= height_inches;
 	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
 		Graphics_nextSheetOfPaper (my ps);
@@ -371,9 +371,9 @@ if (! my printing) {
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, conststring32 script) {
 	autostring32 text = Melder_dup (script);
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
-	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
-	kGraphics_font font = my p_font;
-	double size = my p_fontSize;
+	constexpr double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
+	const kGraphics_font font = my p_font;
+	const double size = my p_fontSize;
 	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
 	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
 if (! my printing) {
@@ -401,7 +401,7 @@ if (! my printing) {
 			theCurrentPraatObjects = (PraatObjects) my praatObjects;
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
 			theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
-			theCurrentPraatPicture -> font = (int) font;
+			theCurrentPraatPicture -> font = font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 			theCurrentPraatPicture -> colour = Melder_BLACK;
@@ -471,7 +471,7 @@ if (! my printing) {
 	Graphics_setFont (my ps, font);
 	Graphics_setFontStyle (my ps, 0);
 	Graphics_setFontSize (my ps, size);
-	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
 	my d_y -= true_height_inches;
 	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
 		Graphics_nextSheetOfPaper (my ps);
@@ -498,7 +498,7 @@ if (! my printing) {
 		theCurrentPraatObjects = (PraatObjects) my praatObjects;
 		theCurrentPraatPicture = (PraatPicture) my praatPicture;
 		theCurrentPraatPicture -> graphics = my ps;
-		theCurrentPraatPicture -> font = (int) font;
+		theCurrentPraatPicture -> font = font;
 		theCurrentPraatPicture -> fontSize = size;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 		theCurrentPraatPicture -> colour = Melder_BLACK;

@@ -88,19 +88,20 @@ DIRECT (INFO_Info) {
 	INFO_NONE_END
 }
 
-DIRECT (WINDOW_Inspect) {
-	if (theCurrentPraatObjects -> totalSelection == 0)
-		Melder_throw (U"Selection changed!\nNo object selected. Cannot inspect.");
-	if (theCurrentPraatApplication -> batch) {
-		Melder_throw (U"Cannot inspect data from batch.");
-	} else {
-		WHERE (SELECTED) {
-			autoDataEditor editor = DataEditor_create (ID_AND_FULL_NAME, OBJECT);
-			praat_installEditor (editor.get(), IOBJECT);
-			editor.releaseToUser();
+DIRECT (PRAAT__Inspect) {
+	PRAAT
+		if (theCurrentPraatObjects -> totalSelection == 0)
+			Melder_throw (U"Selection changed!\nNo object selected. Cannot inspect.");
+		if (theCurrentPraatApplication -> batch) {
+			Melder_throw (U"Cannot inspect data from batch.");
+		} else {
+			WHERE (SELECTED) {
+				autoDataEditor editor = DataEditor_create (ID_AND_FULL_NAME, OBJECT);
+				praat_installEditor (editor.get(), IOBJECT);
+				editor.releaseToUser();
+			}
 		}
-	}
-	END_NO_NEW_DATA
+	PRAAT_END
 }
 
 /********** The fixed menus. **********/
@@ -130,22 +131,25 @@ GuiMenu praat_objects_resolveMenu (conststring32 menu) {
 
 /********** Callbacks of the Praat menu. **********/
 
-DIRECT (WINDOW_About) {
-	praat_showLogo ();
-	END_NO_NEW_DATA
+DIRECT (PRAAT__About) {
+	PRAAT
+		praat_showLogo ();
+	PRAAT_END
 }
 
-DIRECT (WINDOW_praat_newScript) {
-	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
-	editor.releaseToUser();
-	END_NO_NEW_DATA
+DIRECT (PRAAT__newScript) {
+	PRAAT
+		autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
+		editor.releaseToUser();
+	PRAAT_END
 }
 
-DIRECT (WINDOW_praat_openScript) {
-	autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
-	TextEditor_showOpen (editor.get());
-	editor.releaseToUser();
-	END_NO_NEW_DATA
+DIRECT (PRAAT__openScript) {
+	PRAAT
+		autoScriptEditor editor = ScriptEditor_createFromText (nullptr, nullptr);
+		TextEditor_showOpen (editor.get());
+		editor.releaseToUser();
+	PRAAT_END
 }
 
 static ButtonEditor theReferenceToTheOnlyButtonEditor;
@@ -154,19 +158,20 @@ static void cb_ButtonEditor_destruction (Editor /* editor */) {
 	theReferenceToTheOnlyButtonEditor = nullptr;
 }
 
-DIRECT (WINDOW_praat_editButtons) {
-	if (theReferenceToTheOnlyButtonEditor) {
-		Editor_raise (theReferenceToTheOnlyButtonEditor);
-	} else {
-		autoButtonEditor editor = ButtonEditor_create ();
-		Editor_setDestructionCallback (editor.get(), cb_ButtonEditor_destruction);
-		theReferenceToTheOnlyButtonEditor = editor.get();
-		editor.releaseToUser();
-	}
-	END_NO_NEW_DATA
+DIRECT (PRAAT__editButtons) {
+	PRAAT
+		if (theReferenceToTheOnlyButtonEditor) {
+			Editor_raise (theReferenceToTheOnlyButtonEditor);
+		} else {
+			autoButtonEditor editor = ButtonEditor_create ();
+			Editor_setDestructionCallback (editor.get(), cb_ButtonEditor_destruction);
+			theReferenceToTheOnlyButtonEditor = editor.get();
+			editor.releaseToUser();
+		}
+	PRAAT_END
 }
 
-FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
+FORM (PRAAT__addMenuCommand, U"Add menu command", U"Add menu command...") {
 	WORD (window, U"Window", U"Objects")
 	WORD (menu, U"Menu", U"New")
 	SENTENCE (command, U"Command", U"Hallo...")
@@ -175,31 +180,34 @@ FORM (PRAAT_addMenuCommand, U"Add menu command", U"Add menu command...") {
 	INFILE (script, U"Script file:", U"/u/miep/hallo.praat")
 	OK
 DO
-	praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
-	END_NO_NEW_DATA
+	PRAAT
+		praat_addMenuCommandScript (window, menu, command, afterCommand, depth, script);
+	PRAAT_END
 }
 
-FORM (PRAAT_hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
+FORM (PRAAT__hideMenuCommand, U"Hide menu command", U"Hide menu command...") {
 	WORD (window, U"Window", U"Objects")
 	WORD (menu, U"Menu", U"New")
 	SENTENCE (command, U"Command", U"Hallo...")
 	OK
 DO
-	praat_hideMenuCommand (window, menu, command);
-	END_NO_NEW_DATA
+	PRAAT
+		praat_hideMenuCommand (window, menu, command);
+	PRAAT_END
 }
 
-FORM (PRAAT_showMenuCommand, U"Show menu command", U"Show menu command...") {
+FORM (PRAAT__showMenuCommand, U"Show menu command", U"Show menu command...") {
 	WORD (window, U"Window", U"Objects")
 	WORD (menu, U"Menu", U"New")
 	SENTENCE (command, U"Command", U"Hallo...")
 	OK
 DO
-	praat_showMenuCommand (window, menu, command);
-	END_NO_NEW_DATA
+	PRAAT
+		praat_showMenuCommand (window, menu, command);
+	PRAAT_END
 }
 
-FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
+FORM (PRAAT__addAction, U"Add action command", U"Add action command...") {
 	WORD (class1, U"Class 1", U"Sound")
 	INTEGER (number1, U"Number 1", U"0")
 	WORD (class2, U"Class 2", U"")
@@ -212,67 +220,73 @@ FORM (PRAAT_addAction, U"Add action command", U"Add action command...") {
 	INFILE (script, U"Script file:", U"/u/miep/playReverse.praat")
 	OK
 DO
-	praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, script);
-	END_NO_NEW_DATA
+	PRAAT
+		praat_addActionScript (class1, number1, class2, number2, class3, number3, command, afterCommand, depth, script);
+	PRAAT_END
 }
 
-FORM (PRAAT_hideAction, U"Hide action command", U"Hide action command...") {
+FORM (PRAAT__hideAction, U"Hide action command", U"Hide action command...") {
 	WORD (class1, U"Class 1", U"Sound")
 	WORD (class2, U"Class 2", U"")
 	WORD (class3, U"Class 3", U"")
 	SENTENCE (command, U"Command", U"Play")
 	OK
 DO
-	praat_hideAction_classNames (class1, class2, class3, command);
-	END_NO_NEW_DATA
+	PRAAT
+		praat_hideAction_classNames (class1, class2, class3, command);
+	PRAAT_END
 }
 
-FORM (PRAAT_showAction, U"Show action command", U"Show action command...") {
+FORM (PRAAT__showAction, U"Show action command", U"Show action command...") {
 	WORD (class1, U"Class 1", U"Sound")
 	WORD (class2, U"Class 2", U"")
 	WORD (class3, U"Class 3", U"")
 	SENTENCE (command, U"Command", U"Play")
 	OK
 DO
-	praat_showAction_classNames (class1, class2, class3, command);
-	END_NO_NEW_DATA
+	PRAAT
+		praat_showAction_classNames (class1, class2, class3, command);
+	PRAAT_END
 }
 
 /********** Callbacks of the Preferences menu. **********/
 
-FORM (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
+FORM (PREFS__TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
 	RADIO_ENUM (kMelder_textInputEncoding, encodingOf8BitTextFiles,
 			U"Encoding of 8-bit text files", kMelder_textInputEncoding::DEFAULT)
 OK
 	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
-	Melder_setInputEncoding (encodingOf8BitTextFiles);
-	END_NO_NEW_DATA
+	PREFS
+		Melder_setInputEncoding (encodingOf8BitTextFiles);
+	PREFS_END
 }
 
-FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
+FORM (PREFS__TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
 	RADIO_ENUM (kMelder_textOutputEncoding, outputEncoding,
 			U"Output encoding", kMelder_textOutputEncoding::DEFAULT)
 OK
 	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
-	Melder_setOutputEncoding (outputEncoding);
-	END_NO_NEW_DATA
+	PREFS
+		Melder_setOutputEncoding (outputEncoding);
+	PREFS_END
 }
 
-FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
+FORM (PREFS__GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
 	OPTIONMENU_ENUM (kGraphics_cjkFontStyle, cjkFontStyle,
 			U"CJK font style", kGraphics_cjkFontStyle::DEFAULT)
 OK
 	SET_ENUM (cjkFontStyle, kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
-	theGraphicsCjkFontStyle = cjkFontStyle;
-	END_NO_NEW_DATA
+	PREFS
+		theGraphicsCjkFontStyle = cjkFontStyle;
+	PREFS_END
 }
 
 /********** Callbacks of the Goodies menu. **********/
 
-FORM (STRING_praat_calculator, U"Calculator", U"Calculator") {
+FORM (INFO_NONE__praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"Type any numeric formula or string formula:")
 	TEXTFIELD (expression, nullptr, U"5*5", 5)
 	LABEL (U"Note that you can include many special functions in your formula,")
@@ -353,7 +367,7 @@ DO
 
 /********** Callbacks of the Technical menu. **********/
 
-FORM (PRAAT_debug, U"Set debugging options", nullptr) {
+FORM (PREFS__debug, U"Set debugging options", nullptr) {
 	LABEL (U"If you switch Tracing on, Praat will write lots of detailed ")
 	LABEL (U"information about what goes on in Praat")
 	structMelderDir dir;
@@ -374,12 +388,13 @@ OK
 	SET_BOOLEAN (tracing, Melder_isTracing)
 	SET_INTEGER (debugOption, Melder_debug)
 DO
-	Melder_setTracing (tracing);
-	Melder_debug = debugOption;
-	END_NO_NEW_DATA
+	PREFS
+		Melder_setTracing (tracing);
+		Melder_debug = debugOption;
+	PREFS_END
 }
 
-DIRECT (INFO_listReadableTypesOfObjects) {
+DIRECT (INFO_NONE__listReadableTypesOfObjects) {
 	INFO_NONE
 		Thing_listReadableClasses ();
 	INFO_NONE_END
@@ -407,37 +422,37 @@ DO
 	END_NO_NEW_DATA
 }
 
-DIRECT (INFO_reportSystemProperties) {
+DIRECT (INFO_NONE__reportSystemProperties) {
 	INFO_NONE
 		praat_reportSystemProperties ();
 	INFO_NONE_END
 }
 
-DIRECT (INFO_reportGraphicalProperties) {
+DIRECT (INFO_NONE__reportGraphicalProperties) {
 	INFO_NONE
 		praat_reportGraphicalProperties ();
 	INFO_NONE_END
 }
 
-DIRECT (INFO_reportIntegerProperties) {
+DIRECT (INFO_NONE__reportIntegerProperties) {
 	INFO_NONE
 		praat_reportIntegerProperties ();
 	INFO_NONE_END
 }
 
-DIRECT (INFO_reportMemoryUse) {
+DIRECT (INFO_NONE__reportMemoryUse) {
 	INFO_NONE
 		praat_reportMemoryUse ();
 	INFO_NONE_END
 }
 
-DIRECT (INFO_reportTextProperties) {
+DIRECT (INFO_NONE__reportTextProperties) {
 	INFO_NONE
 		praat_reportTextProperties ();
 	INFO_NONE_END
 }
 
-DIRECT (INFO_reportFontProperties) {
+DIRECT (INFO_NONE__reportFontProperties) {
 	INFO_NONE
 		praat_reportFontProperties ();
 	INFO_NONE_END
@@ -538,7 +553,6 @@ DO
 	END_NO_NEW_DATA
 }
 
-
 DIRECT (WINDOW_ManPages_view) {
 	LOOP {
 		iam_LOOP (ManPages);
@@ -555,30 +569,32 @@ DIRECT (WINDOW_ManPages_view) {
 
 /********** Callbacks of the Help menu. **********/
 
-FORM (HELP_SearchManual, U"Search manual", U"Manual") {
+FORM (PRAAT__SearchManual, U"Search manual", U"Manual") {
 	TEXTFIELD (query, U"Search for strings (separate with spaces):", U"", 3)
 	OK
 DO
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view a manual from batch.");
-	autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
-	Manual_search (manual.get(), query);
-	manual.releaseToUser();
-	END_NO_NEW_DATA
+	PRAAT
+		if (theCurrentPraatApplication -> batch)
+			Melder_throw (U"Cannot view a manual from batch.");
+		autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
+		Manual_search (manual.get(), query);
+		manual.releaseToUser();
+	PRAAT_END
 }
 
-FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
+FORM (PRAAT__GoToManualPage, U"Go to manual page", nullptr) {
 	static constSTRVEC pages;
 	pages = ManPages_getTitles (theCurrentPraatApplication -> manPages);
 	LIST (goToPageNumber, U"Page", pages, 1)
 	OK
 DO
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw (U"Cannot view a manual from batch.");
-	autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
-	HyperPage_goToPage_number (manual.get(), goToPageNumber);
-	manual.releaseToUser();
-	END_NO_NEW_DATA
+	PRAAT
+		if (theCurrentPraatApplication -> batch)
+			Melder_throw (U"Cannot view a manual from batch.");
+		autoManual manual = Manual_create (U"Intro", theCurrentPraatApplication -> manPages, false);
+		HyperPage_goToPage_number (manual.get(), goToPageNumber);
+		manual.releaseToUser();
+	PRAAT_END
 }
 
 FORM (HELP_SaveManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
@@ -613,13 +629,14 @@ void praat_show () {
 void praat_addFixedButtons (GuiWindow window) {
 	praat_addFixedButtonCommand (window, U"Rename...", MODIFY_Rename, 8, 70);
 	praat_addFixedButtonCommand (window, U"Copy...", NEW1_Copy, 98, 70);
-	praat_addFixedButtonCommand (window, U"Inspect", WINDOW_Inspect, 8, 40);
+	praat_addFixedButtonCommand (window, U"Inspect",
+			PRAAT__Inspect, 8, 40);
 	praat_addFixedButtonCommand (window, U"Info", INFO_Info, 98, 40);
 	praat_addFixedButtonCommand (window, U"Remove", PRAAT_Remove, 8, 10);
 }
 
 static void searchProc () {
-	HELP_SearchManual (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+	PRAAT__SearchManual (nullptr, 0, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 }
 
 static MelderString itemTitle_about;
@@ -653,29 +670,35 @@ static void cb_finishedOpeningDocuments () {
 }
 
 #if cocoa
-DIRECT (PRAAT_cut) {
-	[[[NSApp keyWindow] firstResponder] cut: nil];
-	END_NO_NEW_DATA
+DIRECT (PRAAT__cut) {
+	PRAAT
+		[[[NSApp keyWindow] firstResponder] cut: nil];
+	PRAAT_END
 }
-DIRECT (PRAAT_copy) {
-	[[[NSApp keyWindow] firstResponder] copy: nil];
-	END_NO_NEW_DATA
+DIRECT (PRAAT__copy) {
+	PRAAT
+		[[[NSApp keyWindow] firstResponder] copy: nil];
+	PRAAT_END
 }
-DIRECT (PRAAT_paste) {
-	[[[NSApp keyWindow] firstResponder] pasteAsPlainText: nil];
-	END_NO_NEW_DATA
+DIRECT (PRAAT__paste) {
+	PRAAT
+		[[[NSApp keyWindow] firstResponder] pasteAsPlainText: nil];
+	PRAAT_END
 }
-DIRECT (PRAAT_minimize) {
-	[[NSApp keyWindow] performMiniaturize: nil];
-	END_NO_NEW_DATA
+DIRECT (PRAAT__minimize) {
+	PRAAT
+		[[NSApp keyWindow] performMiniaturize: nil];
+	PRAAT_END
 }
-DIRECT (PRAAT_zoom) {
-	[[NSApp keyWindow] performZoom: nil];
-	END_NO_NEW_DATA
+DIRECT (PRAAT__zoom) {
+	PRAAT
+		[[NSApp keyWindow] performZoom: nil];
+	PRAAT_END
 }
-DIRECT (PRAAT_close) {
-	[[NSApp keyWindow] performClose: nil];
-	END_NO_NEW_DATA
+DIRECT (PRAAT__close) {
+	PRAAT
+		[[NSApp keyWindow] performClose: nil];
+	PRAAT_END
 }
 #endif
 
@@ -707,7 +730,8 @@ void praat_addMenus (GuiWindow window) {
 	}
 	
 	MelderString_append (& itemTitle_about, U"About ", praatP.title.get());
-	praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
+	praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE,
+			PRAAT__About);
 	#ifdef macintosh
 		#if cocoa
 			/*
@@ -715,49 +739,76 @@ void praat_addMenus (GuiWindow window) {
 				because otherwise they may be called from a script.
 				(we add three alt-spaces)
 			*/
-			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE | 'X' | praat_NO_API, PRAAT_cut);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE | 'C' | praat_NO_API, PRAAT_copy);
-			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE | 'V' | praat_NO_API, PRAAT_paste);
-			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", nullptr, praat_UNHIDABLE | praat_NO_API, PRAAT_minimize);
-			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE | praat_NO_API, PRAAT_zoom);
-			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W' | praat_NO_API, PRAAT_close);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Cut   ", nullptr, praat_UNHIDABLE | 'X' | praat_NO_API,
+					PRAAT__cut);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Copy   ", nullptr, praat_UNHIDABLE | 'C' | praat_NO_API,
+					PRAAT__copy);
+			praat_addMenuCommand (U"Objects", U"Edit", U"Paste   ", nullptr, praat_UNHIDABLE | 'V' | praat_NO_API,
+					PRAAT__paste);
+			praat_addMenuCommand (U"Objects", U"Window", U"Minimize   ", nullptr, praat_UNHIDABLE | praat_NO_API,
+					PRAAT__minimize);
+			praat_addMenuCommand (U"Objects", U"Window", U"Zoom   ", nullptr, praat_UNHIDABLE | praat_NO_API,
+					PRAAT__zoom);
+			praat_addMenuCommand (U"Objects", U"Window", U"Close   ", nullptr, 'W' | praat_NO_API,
+					PRAAT__close);
 		#endif
 	#endif
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- script --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat script", nullptr, praat_NO_API, WINDOW_praat_newScript);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Open Praat script...", nullptr, praat_NO_API, WINDOW_praat_openScript);
+	praat_addMenuCommand (U"Objects", U"Praat", U"New Praat script", nullptr, praat_NO_API,
+			PRAAT__newScript);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Open Praat script...", nullptr, praat_NO_API,
+			PRAAT__openScript);
 	praat_addMenuCommand (U"Objects", U"Praat", U"-- buttons --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Add menu command...", nullptr, praat_HIDDEN | praat_NO_API, PRAAT_addMenuCommand);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Hide menu command...", nullptr, praat_HIDDEN | praat_NO_API, PRAAT_hideMenuCommand);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Show menu command...", nullptr, praat_HIDDEN | praat_NO_API, PRAAT_showMenuCommand);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Add action command...", nullptr, praat_HIDDEN | praat_NO_API, PRAAT_addAction);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Hide action command...", nullptr, praat_HIDDEN | praat_NO_API, PRAAT_hideAction);
-	praat_addMenuCommand (U"Objects", U"Praat", U"Show action command...", nullptr, praat_HIDDEN | praat_NO_API, PRAAT_showAction);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Add menu command...", nullptr, praat_HIDDEN | praat_NO_API,
+			PRAAT__addMenuCommand);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Hide menu command...", nullptr, praat_HIDDEN | praat_NO_API,
+			PRAAT__hideMenuCommand);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Show menu command...", nullptr, praat_HIDDEN | praat_NO_API,
+			PRAAT__showMenuCommand);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Add action command...", nullptr, praat_HIDDEN | praat_NO_API,
+			PRAAT__addAction);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Hide action command...", nullptr, praat_HIDDEN | praat_NO_API,
+			PRAAT__hideAction);
+	praat_addMenuCommand (U"Objects", U"Praat", U"Show action command...", nullptr, praat_HIDDEN | praat_NO_API,
+			PRAAT__showAction);
 
 	GuiMenuItem menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Goodies", nullptr, praat_UNHIDABLE, nullptr);
 	goodiesMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Goodies", U"Calculator...", nullptr, 'U', STRING_praat_calculator);
+	praat_addMenuCommand (U"Objects", U"Goodies", U"Calculator...", nullptr, 'U',
+			INFO_NONE__praat_calculator);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Report difference of two proportions...", nullptr, 0, INFO_reportDifferenceOfTwoProportions);
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Preferences", nullptr, praat_UNHIDABLE, nullptr);
 	preferencesMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, praat_UNHIDABLE, WINDOW_praat_editButtons);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Buttons...", nullptr, praat_UNHIDABLE,
+			PRAAT__editButtons);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- encoding prefs --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Text reading preferences...", nullptr, 0, PREFS_TextInputEncodingSettings);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"Text writing preferences...", nullptr, 0, PREFS_TextOutputEncodingSettings);
-	praat_addMenuCommand (U"Objects", U"Preferences", U"CJK font style preferences...", nullptr, 0, PREFS_GraphicsCjkFontStyleSettings);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Text reading preferences...", nullptr, 0,
+			PREFS__TextInputEncodingSettings);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"Text writing preferences...", nullptr, 0,
+			PREFS__TextOutputEncodingSettings);
+	praat_addMenuCommand (U"Objects", U"Preferences", U"CJK font style preferences...", nullptr, 0,
+			PREFS__GraphicsCjkFontStyleSettings);
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Technical", nullptr, praat_UNHIDABLE, nullptr);
 	technicalMenu = menuItem ? menuItem -> d_menu : nullptr;
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", nullptr, 0, INFO_reportMemoryUse);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", nullptr, 0, INFO_reportIntegerProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties", nullptr, 0, INFO_reportSystemProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", nullptr, 0, INFO_reportGraphicalProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0, INFO_reportTextProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Report font properties", nullptr, 0, INFO_reportFontProperties);
-	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0, PRAAT_debug);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report memory use", nullptr, 0,
+			INFO_NONE__reportMemoryUse);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report integer properties", nullptr, 0,
+			INFO_NONE__reportIntegerProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report system properties", nullptr, 0,
+			INFO_NONE__reportSystemProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report graphical properties", nullptr, 0,
+			INFO_NONE__reportGraphicalProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report text properties", nullptr, 0,
+			INFO_NONE__reportTextProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Report font properties", nullptr, 0,
+			INFO_NONE__reportFontProperties);
+	praat_addMenuCommand (U"Objects", U"Technical", U"Debug...", nullptr, 0,
+			PREFS__debug);
 	praat_addMenuCommand (U"Objects", U"Technical", U"-- api --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0, INFO_listReadableTypesOfObjects);
+	praat_addMenuCommand (U"Objects", U"Technical", U"List readable types of objects", nullptr, 0,
+			INFO_NONE__listReadableTypesOfObjects);
 	praat_addMenuCommand (U"Objects", U"Technical", U"Create C interface...", nullptr, 0, INFO_praat_library_createC);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from file...", nullptr, praat_ATTRACTIVE | 'O', READMANY_Data_readFromFile);
@@ -776,13 +827,14 @@ void praat_addMenus (GuiWindow window) {
 
 void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- manual --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, 0, HELP_GoToManualPage);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, 0,
+			PRAAT__GoToManualPage);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Save manual to HTML folder...", nullptr, praat_HIDDEN, HELP_SaveManualToHtmlFolder);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp",
-		Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
-		nullptr, 'M' | praat_NO_API, HELP_SearchManual);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", Melder_cat (U"Search ", praatP.title.get(), U" manual..."), nullptr, 'M' | praat_NO_API,
+			PRAAT__SearchManual);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- about --", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, praat_UNHIDABLE,
+			PRAAT__About);
 
 	#if defined (macintosh) || defined (_WIN32)
 		Gui_setOpenDocumentCallback (cb_openDocument, cb_finishedOpeningDocuments);
