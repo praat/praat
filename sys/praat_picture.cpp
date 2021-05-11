@@ -131,8 +131,11 @@ FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
 OK
 	SET_REAL (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
-	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = fontSize);
-	END_NO_NEW_DATA
+	GRAPHICS_NONE
+		Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize = fontSize);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updateSizeMenu ();
 }
 
 /*static void setFontSize_keepInnerViewport (int fontSize) {
@@ -376,7 +379,13 @@ static void setLineType (int lineType) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
 }
-DIRECT (GRAPHICS_Solid_line)         { setLineType (Graphics_DRAWN);         END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Solid_line) {
+	GRAPHICS_NONE
+		Graphics_setLineType (GRAPHICS, Graphics_DRAWN);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updatePenMenu ();
+}
 DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END_NO_NEW_DATA }
 DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END_NO_NEW_DATA }
 DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END_NO_NEW_DATA }
