@@ -38,11 +38,9 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents);
 
 autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents);
 
-void EEG_to_EEG_bss (EEG me,
-	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
-	conststring32 channelRanges,
-	int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
-	autoEEG *p_resultingEEG, autoMixingMatrix *p_resultingMixingMatrix);
+autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	conststring32 channelRanges, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
+	autoMixingMatrix *p_resultingMixingMatrix);
 
 autoSound EEG_to_Sound_frequencyShifted (EEG me, integer channel, double frequencyShift, double samplingFrequency, double maxAmp);
 

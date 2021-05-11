@@ -97,9 +97,10 @@ FORM (GRAPHICS_NONE__drawSplines, U"Draw splines", U"spline") {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	if (xmax <= xmin or ymax <= ymin) {
-		Melder_throw (U"Required: xmin < xmax and ymin < ymax.");
-	}
+	Melder_require (xmin < xmax, 
+		U"For the horizontal range the minimum value needs to be smaller than the maximum value.");
+	Melder_require (xmin < xmax, 
+		U"For the verticalal range the minimum value needs to be smaller than the maximum value.");
 	GRAPHICS_NONE
 		drawSplines (GRAPHICS, xmin, xmax, ymin, ymax, splineType,order, interiorKnots_string, garnish);
 	GRAPHICS_NONE_END
@@ -131,9 +132,11 @@ FORM (QUERY_ONE_FOR_REAL__AffineTransform_getTransformationElement, U"AffineTran
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AffineTransform)
-		Melder_require (irow <= my dimension, U"Row number should not exceed the dimension of the transform.");
-		Melder_require (icol <= my dimension, U"Column number should not exceed the dimension of the transform.");
-		double result = my r [irow] [icol];
+		Melder_require (irow <= my dimension, 
+			U"Row number should not exceed the dimension of the transform.");
+		Melder_require (icol <= my dimension, 
+			U"Column number should not exceed the dimension of the transform.");
+		const double result = my r [irow] [icol];
 	QUERY_ONE_FOR_REAL_END (U" r [", irow, U"] [", icol, U"]")
 }
 
@@ -142,8 +145,9 @@ FORM (QUERY_ONE_FOR_REAL__AffineTransform_getTranslationElement, U"AffineTransfo
 	OK
 DO
 	QUERY_ONE_FOR_REAL (AffineTransform)
-		Melder_require (index <= my dimension, U"Index should not exceed the dimension of the transform.");
-		double result = my t [index];
+		Melder_require (index <= my dimension, 
+			U"Index should not exceed the dimension of the transform.");
+		const double result = my t [index];
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
@@ -182,7 +186,10 @@ FORM (GRAPHICS_EACH__Configuration_draw, U"Configuration: Draw", U"Configuration
 	OK
 DO
 	GRAPHICS_EACH (Configuration)
-		Configuration_draw (me, GRAPHICS, horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax, labelSize, useRowLables, label, garnish);
+		Configuration_draw (
+			me, GRAPHICS, horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax,
+			labelSize, useRowLables, label, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -194,7 +201,10 @@ FORM (GRAPHICS_EACH__Configuration_drawSigmaEllipses, U"Configuration: Draw sigm
 	OK
 DO
 	GRAPHICS_EACH (Configuration)
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, numberOfSigmas, false, nullptr, horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
+		Configuration_drawConcentrationEllipses (
+			me, GRAPHICS, numberOfSigmas, false, nullptr, horizontalDimension, verticalDimension, 
+			xmin, xmax, ymin, ymax, labelSize, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -207,7 +217,10 @@ FORM (GRAPHICS_EACH__Configuration_drawOneSigmaEllipse, U"Configuration: Draw on
 	OK
 DO
 	GRAPHICS_EACH (Configuration)
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, numberOfSigmas,false, label, horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
+		Configuration_drawConcentrationEllipses (
+			me, GRAPHICS, numberOfSigmas,false, label, horizontalDimension, verticalDimension,
+			xmin, xmax, ymin, ymax, labelSize, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -220,7 +233,10 @@ FORM (GRAPHICS_EACH__Configuration_drawConfidenceEllipses, U"Configuration: Draw
 	OK
 DO
 	GRAPHICS_EACH (Configuration)
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, confidenceLevel, true /* confidence */, nullptr, horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
+		Configuration_drawConcentrationEllipses (
+			me, GRAPHICS, confidenceLevel, true /* confidence */, nullptr, 
+			horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax, labelSize, garnish)
+		;
 	GRAPHICS_EACH_END
 }
 
@@ -233,7 +249,9 @@ FORM (GRAPHICS_EACH__Configuration_drawOneConfidenceEllipse, U"Configuration: Dr
 	OK
 DO
 	GRAPHICS_EACH (Configuration)
-		Configuration_drawConcentrationEllipses (me, GRAPHICS, confidenceLevel, true, label, horizontalDimension, verticalDimension, xmin, xmax, ymin, ymax, labelSize, garnish);
+		Configuration_drawConcentrationEllipses (
+			me, GRAPHICS, confidenceLevel, true, label, horizontalDimension, verticalDimension, 
+			xmin, xmax, ymin, ymax, labelSize, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -478,7 +496,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_kruskal, U"Dissimi
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
-		autoConfiguration result = Dissimilarity_Configuration_kruskal (me, you, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions);
+		autoConfiguration result = Dissimilarity_Configuration_kruskal (
+			me, you, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_kruskal")
 }
 
@@ -488,7 +508,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_absolute_mds, U"Di
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (
+			me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
@@ -498,7 +520,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_ratio_mds, U"Dissi
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (
+			me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_ratio")
 }
 
@@ -508,7 +532,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_interval_mds, U"Di
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (
+			me, you, nullptr, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_interval")
 }
 
@@ -519,7 +545,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_monotone_mds, U"Di
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, nullptr, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (
+			me, you, nullptr, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_monotone")
 }
 
@@ -532,7 +560,10 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_ispline_mds, U"Dis
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, nullptr, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (
+			me, you, nullptr, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations,
+			numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_ispline")
 }
 
@@ -542,7 +573,9 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_Weight_abs
 DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_absolute_mds (
+			me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_w_absolute")
 }
 
@@ -552,7 +585,9 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_Weight_rat
 DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_ratio_mds (
+			me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_w_ratio")
 }
 
@@ -562,7 +597,9 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_Weight_int
 DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_interval_mds (
+			me, you, him, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_w_interval")
 }
 
@@ -573,7 +610,9 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_Weight_mon
 DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (me, you, him, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_monotone_mds (
+			me, you, him, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_sw_monotone")
 }
 
@@ -586,7 +625,10 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_Weight_isp
 DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (Dissimilarity, Configuration, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (me, you, him, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Configuration_Weight_ispline_mds (
+			me, you, him, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, 
+			numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_sw_ispline")
 }
 
@@ -605,7 +647,7 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_absolute_stress, U
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, nullptr,stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, nullptr,stressMeasure);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (absolute mds stress)")
 }
 
@@ -614,7 +656,7 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_ratio_stress, U"Di
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, nullptr, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, nullptr, stressMeasure);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (ratio mds stress)")
 }
 
@@ -623,7 +665,7 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_interval_stress, U
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, nullptr, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, nullptr, stressMeasure);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (interval mds stress)")
 }
 
@@ -633,7 +675,7 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_monotone_stress, U
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, nullptr, tiesHandling,stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, nullptr, tiesHandling,stressMeasure);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (monotone mds stress)")
 }
 
@@ -644,7 +686,9 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_ispline_stress, U"
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration)
-		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, nullptr, numberOfInteriorKnots, order, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_ispline_stress (
+			me, you, nullptr, numberOfInteriorKnots, order, stressMeasure
+		);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (i-spline mds stress)")
 }
 
@@ -653,7 +697,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_abs
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
-		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, him, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, him, stressMeasure);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (absolute mds stress)")
 }
 
@@ -662,7 +706,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_rat
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
-		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, him, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, him, stressMeasure);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (ratio mds stress)")
 }
 
@@ -671,7 +715,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_int
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
-		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, him, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, him, stressMeasure);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (interval mds stress)")
 }
 
@@ -681,7 +725,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_mon
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
-		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, him, tiesHandling, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, him, tiesHandling, stressMeasure);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (monotone mds stress)")
 }
 
@@ -692,15 +736,20 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__Dissimilarity_Configuration_Weight_isp
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (Dissimilarity, Configuration, Weight)
-		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, him, numberOfInteriorKnots, order, stressMeasure);
+		const double result = Dissimilarity_Configuration_Weight_ispline_stress (
+			me, you, him, numberOfInteriorKnots, order, stressMeasure
+		);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (i-spline mds stress)")
 }
 
 FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {
-	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
+	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)
+	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
-		Dissimilarity_Configuration_drawShepardDiagram (me, you, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
+		Dissimilarity_Configuration_drawShepardDiagram (
+			me, you, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -708,7 +757,9 @@ FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawAbsoluteRegression, 
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
-		Dissimilarity_Configuration_Weight_drawAbsoluteRegression (me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
+		Dissimilarity_Configuration_Weight_drawAbsoluteRegression (
+			me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -716,7 +767,9 @@ FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawRatioRegression, U"D
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
-		Dissimilarity_Configuration_Weight_drawRatioRegression (me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
+		Dissimilarity_Configuration_Weight_drawRatioRegression (
+			me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -724,7 +777,9 @@ FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawIntervalRegression, 
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
-		Dissimilarity_Configuration_Weight_drawIntervalRegression (me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
+		Dissimilarity_Configuration_Weight_drawIntervalRegression (
+			me, you, nullptr, GRAPHICS, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -733,7 +788,10 @@ FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawMonotoneRegression, 
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
-		Dissimilarity_Configuration_Weight_drawMonotoneRegression (me, you, nullptr, GRAPHICS, tiesHandling, fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
+		Dissimilarity_Configuration_Weight_drawMonotoneRegression (
+			me, you, nullptr, GRAPHICS, tiesHandling, fromProximity, toProximity, fromDistance, toDistance, 
+			markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -743,7 +801,10 @@ FORM (GRAPHICS_ONE_AND_ONE__Dissimilarity_Configuration_drawISplineRegression, U
 	praat_Dissimilarity_Configuration_drawing_commonFields(fromProximity,toProximity,fromDistance,toDistance,markSize,markString,garnish)	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Configuration)
-		Dissimilarity_Configuration_Weight_drawISplineRegression (me, you, nullptr, GRAPHICS, numberOfInteriorKnots, order,fromProximity, toProximity, fromDistance, toDistance, markSize, markString, garnish);
+		Dissimilarity_Configuration_Weight_drawISplineRegression (
+			me, you, nullptr, GRAPHICS, numberOfInteriorKnots, order,fromProximity, toProximity, fromDistance, toDistance,
+			markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -757,7 +818,10 @@ FORM (CONVERT_EACH_TO_ONE__Dissimilarity_to_Configuration_kruskal, U"Dissimilari
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Dissimilarity)
-		autoConfiguration result = Dissimilarity_to_Configuration_kruskal (me, numberOfDimensions, distanceMetric, tiesHandling, stressMeasure, tolerance, maximumNumberOfIterations, numberOfRepetitions);
+		autoConfiguration result = Dissimilarity_to_Configuration_kruskal (
+			me, numberOfDimensions, distanceMetric, tiesHandling, stressMeasure, tolerance, 
+			maximumNumberOfIterations, numberOfRepetitions
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -769,7 +833,9 @@ FORM (CONVERT_EACH_TO_ONE__Dissimilarity_to_Configuration_absolute_mds, U"Dissim
 DO
 	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_absolute_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress); 
+		autoConfiguration result = Dissimilarity_Weight_absolute_mds (
+			me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		); 
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_absolute")
 }
 
@@ -781,7 +847,9 @@ FORM (CONVERT_EACH_TO_ONE__Dissimilarity_to_Configuration_ratio_mds, U"Dissimila
 DO
 	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_ratio_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_ratio_mds (
+			me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ratio")
 }
 
@@ -793,7 +861,9 @@ FORM (CONVERT_EACH_TO_ONE__Dissimilarity_to_Configuration_interval_mds, U"Dissim
 DO
 	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_interval_mds (me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_interval_mds (
+			me, nullptr, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_interval")
 }
 
@@ -806,7 +876,9 @@ FORM (CONVERT_EACH_TO_ONE__Dissimilarity_to_Configuration_monotone_mds, U"Dissim
 DO
 	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_monotone_mds (me, nullptr, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_monotone_mds (
+			me, nullptr, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_monotone")
 }
 
@@ -823,7 +895,10 @@ DO
 		U"Order-zero spline must at least have 1 interior knot.");
 	CONVERT_EACH_TO_ONE (Dissimilarity)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_ispline_mds (me, nullptr, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_ispline_mds (
+			me, nullptr, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, 
+			numberOfRepetitions, showProgress
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_ispline")
 }
 
@@ -840,7 +915,10 @@ DO
 		constexpr bool showProgress = true;
 		Melder_require (order > 0 || numberOfInteriorKnots > 0,
 			U"Order-zero spline must at least have 1 interior knot.");
-		autoConfiguration result = Dissimilarity_Weight_ispline_mds (me, you, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_ispline_mds (
+			me, you, numberOfDimensions, numberOfInteriorKnots, order, tolerance, maximumNumberOfIterations,
+			numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_ispline")
 }
 
@@ -852,7 +930,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Weight_absolute_mds, U"Dissimila
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_absolute_mds (me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_absolute_mds (
+			me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
@@ -864,7 +944,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Weight_ratio_mds, U"Dissimilarit
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_ratio_mds (me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_ratio_mds (
+			me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
@@ -876,7 +958,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Weight_interval_mds, U"Dissimila
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_interval_mds (me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_interval_mds (
+			me, you, numberOfDimensions, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_absolute")
 }
 
@@ -889,7 +973,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Dissimilarity_Weight_monotone_mds, U"Dissimila
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Dissimilarity, Weight)
 		constexpr bool showProgress = true;
-		autoConfiguration result = Dissimilarity_Weight_monotone_mds (me, you, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress);
+		autoConfiguration result = Dissimilarity_Weight_monotone_mds (
+			me, you, numberOfDimensions, tiesHandling, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgress
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_monotone")
 }
 
@@ -931,7 +1017,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Distance_to_Dissimilarity) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_ALL_TO_MULTIPLE_old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
+FORM (CONVERT_ALL_TO_MULTIPLE__old_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	LABEL (U"Minimization parameters")
@@ -943,13 +1029,16 @@ DO
 	CONVERT_ALL_TO_MULTIPLE (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
-		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult);
+		DistanceList_to_Configuration_indscal (
+			(DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations,
+			numberOfRepetitions,true /* showProgress */, & configurationResult, & salienceResult
+		);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
 	CONVERT_ALL_TO_MULTIPLE_END
 }
 
-FORM (CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
+FORM (CONVERT_ALL_TO_MULTIPLE__Distances_to_Configuration_indscal, U"Distance: To Configuration (indscal)", U"Distance: To Configuration (indscal)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	LABEL (U"Minimization parameters")
@@ -959,11 +1048,14 @@ FORM (CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_indscal, U"Distance: To
 	BOOLEAN (wantSalience, U"Want Salience", true)
 	BOOLEAN (showProgressInfo, U"Show progress info", false)
 	OK
-DO_ALTERNATIVE (CONVERT_ALL_TO_MULTIPLE_old_Distances_to_Configuration_indscal)
+DO_ALTERNATIVE (CONVERT_ALL_TO_MULTIPLE__old_Distances_to_Configuration_indscal)
 	CONVERT_ALL_TO_MULTIPLE (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
-		DistanceList_to_Configuration_indscal ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations, numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr));
+		DistanceList_to_Configuration_indscal (
+			(DistanceList) & list, numberOfDimensions, normalizeScalarProducts, tolerance, maximumNumberOfIterations,
+			numberOfRepetitions, showProgressInfo, & configurationResult, (wantSalience ? & salienceResult: nullptr)
+		);
 		praat_new (configurationResult.move(), U"indscal");
 		if (wantSalience)
 			praat_new (salienceResult.move(), U"indscal");
@@ -985,7 +1077,7 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-FORM (NEWMANY_Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)", U"Distance & Configuration: To Configuration (indscal)...") {
+FORM (CONVERT_ONE_AND_ALL_TO_MULTIPLE__Distance_Configuration_indscal, U"Distance & Configuration: To Configuration (indscal)", U"Distance & Configuration: To Configuration (indscal)...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	LABEL (U"Minimization parameters")
 	REAL (tolerance, U"Tolerance", U"1e-5")
@@ -995,7 +1087,10 @@ DO
 	CONVERT_ONE_AND_ALL_TO_MULTIPLE (Configuration, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
-		DistanceList_Configuration_indscal ((DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult);
+		DistanceList_Configuration_indscal (
+			(DistanceList) & list, me, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true,
+			& configurationResult, & salienceResult
+		);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
 	CONVERT_ONE_AND_ALL_TO_MULTIPLE_END
@@ -1032,7 +1127,7 @@ DO
 	QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL_END (U" (variance accounted for)");
 }
 
-FORM (NEWMANY_Distance_Configuration_Salience_indscal, U"Distance & Configuration & Salience: To Configuration (indscal)", U"Distance & Configuration & Salience: To Configuration (indscal)...") {
+FORM (CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE__Distance_Configuration_Salience_indscal, U"Distance & Configuration & Salience: To Configuration (indscal)", U"Distance & Configuration & Salience: To Configuration (indscal)...") {
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	LABEL (U"Minimization parameters")
 	REAL (tolerance, U"Tolerance", U"1e-5")
@@ -1042,13 +1137,16 @@ DO
 	CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE (Configuration, Salience, Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
-		DistanceList_Configuration_Salience_indscal ((DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, true, & configurationResult, & salienceResult, nullptr);
+		DistanceList_Configuration_Salience_indscal (
+			(DistanceList) & list, me, you, normalizeScalarProducts, tolerance, maximumNumberOfIterations, 
+			true, & configurationResult, & salienceResult, nullptr
+		);
 		praat_new (configurationResult.move(), U"indscal");
 		praat_new (salienceResult.move(), U"indscal");
 	CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE_END
 }
 
-FORM (CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
+FORM (CONVERT_ALL_TO_MULTIPLE__Distances_to_Configuration_ytl, U"Distance: To Configuration (ytl)", U"Distance: To Configuration (ytl)...") {
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
 	BOOLEAN (normalizeScalarProducts, U"Normalize scalar products", true)
 	BOOLEAN (wantSalience, U"Want Salience", false)
@@ -1095,7 +1193,9 @@ FORM (GRAPHICS_ONE_AND_ONE__Distance_Dissimilarity_drawShepardDiagram, U"Distanc
 	OK
 DO
 	GRAPHICS_ONE_AND_ONE (Dissimilarity, Distance)
-		Proximity_Distance_drawScatterDiagram (me, you, GRAPHICS, fromDissimilarity, toDissimilarity, fromDistance, toDistance, markSize, markString, garnish);
+		Proximity_Distance_drawScatterDiagram (
+			me, you, GRAPHICS, fromDissimilarity, toDissimilarity, fromDistance, toDistance, markSize, markString, garnish
+		);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -1197,7 +1297,7 @@ DIRECT (QUERY_ONE_FOR_REAL__TableOfReal_getTableNorm) {
 	QUERY_ONE_FOR_REAL_END (U"(norm)")
 }
 
-FORM (MODIFY_TableOfReal_normalizeTable, U"TableOfReal: Normalize table", U"TableOfReal: Normalize table...") {
+FORM (MODIFY_EACH__TableOfReal_normalizeTable, U"TableOfReal: Normalize table", U"TableOfReal: Normalize table...") {
 	POSITIVE (norm, U"Norm", U"1.0")
 	OK
 DO
@@ -1206,7 +1306,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TableOfReal_normalizeRows, U"TableOfReal: Normalize rows", U"TableOfReal: Normalize rows...") {
+FORM (MODIFY_EACH__TableOfReal_normalizeRows, U"TableOfReal: Normalize rows", U"TableOfReal: Normalize rows...") {
 	POSITIVE (norm, U"Norm", U"1.0")
 	OK
 DO
@@ -1215,7 +1315,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TableOfReal_normalizeColumns, U"TableOfReal: Normalize columns", U"TableOfReal: Normalize columns...") {
+FORM (MODIFY_EACH__TableOfReal_normalizeColumns, U"TableOfReal: Normalize columns", U"TableOfReal: Normalize columns...") {
 	POSITIVE (norm, U"Norm", U"1.0")
 	OK
 DO
@@ -1224,31 +1324,31 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TableOfReal_centreRows) {
+DIRECT (MODIFY_EACH__TableOfReal_centreRows) {
 	MODIFY_EACH (TableOfReal)
 		TableOfReal_centreRows (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TableOfReal_centreColumns) {
+DIRECT (MODIFY_EACH__TableOfReal_centreColumns) {
 	MODIFY_EACH (TableOfReal)
 		TableOfReal_centreColumns (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TableOfReal_doubleCentre) {
+DIRECT (MODIFY_EACH__TableOfReal_doubleCentre) {
 	MODIFY_EACH (TableOfReal)
 		TableOfReal_doubleCentre (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TableOfReal_standardizeRows) {
+DIRECT (MODIFY_EACH__TableOfReal_standardizeRows) {
 	MODIFY_EACH (TableOfReal)
 		TableOfReal_standardizeRows (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TableOfReal_standardizeColumns) {
+DIRECT (MODIFY_EACH__TableOfReal_standardizeColumns) {
 	MODIFY_EACH (TableOfReal)
 		TableOfReal_standardizeColumns (me);
 	MODIFY_EACH_END
@@ -1277,15 +1377,15 @@ void praat_TableOfReal_extras (ClassInfo klas) {
 			QUERY_ONE_FOR_REAL__TableOfReal_getTableNorm);
 	praat_addAction1 (klas, 0, U"-- set additional --", U"Set column label (label)...", 1, nullptr);
 	praat_addAction1 (klas, 0, U"Normalize rows...", U"-- set additional --", 1, 
-			MODIFY_TableOfReal_normalizeRows);
+			MODIFY_EACH__TableOfReal_normalizeRows);
 	praat_addAction1 (klas, 0, U"Normalize columns...", U"Normalize rows...", 1, 
-			MODIFY_TableOfReal_normalizeColumns);
+			MODIFY_EACH__TableOfReal_normalizeColumns);
 	praat_addAction1 (klas, 0, U"Normalize table...", U"Normalize columns...", 1, 
-			MODIFY_TableOfReal_normalizeTable);
+			MODIFY_EACH__TableOfReal_normalizeTable);
 	praat_addAction1 (klas, 0, U"Standardize rows", U"Normalize table...", 1, 
-			MODIFY_TableOfReal_standardizeRows);
+			MODIFY_EACH__TableOfReal_standardizeRows);
 	praat_addAction1 (klas, 0, U"Standardize columns", U"Standardize rows", 1, 
-			MODIFY_TableOfReal_standardizeColumns);
+			MODIFY_EACH__TableOfReal_standardizeColumns);
 }
 
 void praat_uvafon_MDS_init ();
@@ -1422,9 +1522,11 @@ void praat_uvafon_MDS_init () {
 	praat_TableOfReal_extras (classDistance);
 	praat_addAction1 (classDistance, 0, U"Analyse -", nullptr, 0, nullptr);
 	praat_addAction1 (classDistance, 0, CONFIGURATION_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1, CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_indscal);
+	praat_addAction1 (classDistance, 0, U"To Configuration (indscal)...", nullptr, 1,
+			CONVERT_ALL_TO_MULTIPLE__Distances_to_Configuration_indscal);
 	praat_addAction1 (classDistance, 0, U"-- linear scaling --", nullptr, 1, nullptr);
-	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1, CONVERT_ALL_TO_MULTIPLE_Distances_to_Configuration_ytl);
+	praat_addAction1 (classDistance, 0, U"To Configuration (ytl)...", nullptr, 1,
+			CONVERT_ALL_TO_MULTIPLE__Distances_to_Configuration_ytl);
 	praat_addAction1 (classDistance, 0, U"To Configuration (torsca)...", nullptr, 1, 
 			CONVERT_EACH_TO_ONE__Distance_to_Configuration_torsca);
 	praat_addAction1 (classDistance, 0, U"To Dissimilarity", nullptr, 0, 
@@ -1463,11 +1565,11 @@ void praat_uvafon_MDS_init () {
 
 	praat_TableOfReal_extras (classTableOfReal);
 	praat_addAction1 (classTableOfReal, 1, U"Centre rows", U"Normalize table...", 1,
-			MODIFY_TableOfReal_centreRows);
+			MODIFY_EACH__TableOfReal_centreRows);
 	praat_addAction1 (classTableOfReal, 1, U"Centre columns", U"Centre rows", 1, 
-			MODIFY_TableOfReal_centreColumns);
+			MODIFY_EACH__TableOfReal_centreColumns);
 	praat_addAction1 (classTableOfReal, 1, U"Double centre", U"Centre columns", 1,
-			MODIFY_TableOfReal_doubleCentre);
+			MODIFY_EACH__TableOfReal_doubleCentre);
 	praat_addAction1 (classTableOfReal, 0, U"Cast -", nullptr, 0, nullptr);
 	praat_addAction1 (classTableOfReal, 0, U"To Confusion", nullptr, 1, 
 			CONVERT_EACH_TO_ONE__TableOfReal_to_Confusion);
@@ -1496,8 +1598,6 @@ void praat_uvafon_MDS_init () {
 			CONVERT_ONE_AND_ONE_TO_ONE__Configuration_AffineTransform_to_Configuration);
 	praat_addAction2 (classConfiguration, 1, classProcrustes, 1, U"To Configuration", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Configuration_Procrustes_to_Configuration);
-	//praat_Configuration_AffineTransform_init (classAffineTransform);
-	//praat_Configuration_AffineTransform_init (classProcrustes);
 
 	praat_addAction2 (classConfiguration, 0, classWeight, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction2 (classConfiguration, 0, classWeight, 1, U"To Similarity (cc)", nullptr, 0,
@@ -1565,7 +1665,7 @@ void praat_uvafon_MDS_init () {
 			QUERY_ONE_AND_ONE_FOR_REAL__Distance_Configuration_vaf);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, ANALYSE_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDistance, 0, classConfiguration, 1, U"To Configuration (indscal)...", nullptr, 1,
-			NEWMANY_Distance_Configuration_indscal);
+			CONVERT_ONE_AND_ALL_TO_MULTIPLE__Distance_Configuration_indscal);
 
 	praat_addAction2 (classDistance, 1, classDissimilarity, 1, U"Draw Shepard diagram...", nullptr, 0,
 			GRAPHICS_ONE_AND_ONE__Distance_Dissimilarity_drawShepardDiagram);
@@ -1601,13 +1701,12 @@ void praat_uvafon_MDS_init () {
 	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, U"To Configuration (absolute mds)...", nullptr, 1,
 			CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__Dissimilarity_Configuration_Weight_absolute_mds);
 
-
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"Get VAF...", nullptr, 1,
 			QUERY_ONE_AND_ONE_AND_ALL_FOR_REAL__Distance_Configuration_Salience_vaf);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"To Configuration (indscal)...", nullptr, 0,
-			NEWMANY_Distance_Configuration_Salience_indscal);
+			CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE__Distance_Configuration_Salience_indscal);
 
 	INCLUDE_MANPAGES (manual_MDS_init)
 }

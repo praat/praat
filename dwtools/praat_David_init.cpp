@@ -2608,19 +2608,19 @@ DO
 
 /************************* FileInMemorySet ***********************************/
 
-DIRECT (INFO_FileInMemorySet_getNumberOfFiles) {
-	QUERY_ONE_FOR_REAL (FileInMemorySet)
+DIRECT (QUERY_ONE_FOR_INTEGER__FileInMemorySet_getNumberOfFiles) {
+	QUERY_ONE_FOR_INTEGER (FileInMemorySet)
 		const integer result = my size;
-	QUERY_ONE_FOR_REAL_END (U" (number of files)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of files)")
 }
 
-FORM (INFO_FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
+FORM (QUERY_ONE_FOR_BOOLEAN__FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
 	WORD (name, U"Name", U"aav")
 	OK
 DO
-	QUERY_ONE_FOR_REAL (FileInMemorySet)
+	QUERY_ONE_FOR_BOOLEAN (FileInMemorySet)
 		const bool result = FileInMemorySet_hasDirectory (me, name);
-	QUERY_ONE_FOR_REAL_END (U" (has directory?)")
+	QUERY_ONE_FOR_BOOLEAN_END (U" (has directory?)")
 }
 
 
@@ -5086,14 +5086,15 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (y [", pointNumber, U"])")
 }
 
-FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get location of point...") {
+FORM (QUERY_ONE_FOR_STRING__Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get location of point...") {
 	LABEL (U"Point is (I)n, (O)ut, (E)dge or (V)ertex?")
 	REAL (x, U"X", U"0.0")
 	REAL (y, U"Y", U"0.0")
 	REAL (eps, U"Precision", U"1.64e-15")
 	OK
 DO
-	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
+	Melder_require (eps >= 0.0, 
+		U"The precision cannot be negative.");
 	QUERY_ONE_FOR_STRING (Polygon)
 		const int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
@@ -7472,7 +7473,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_columns")
 }
 
-FORM (NUMVEC_Table_listRowNumbersWhere, U"Table: List rows where", U"") {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere, U"Table: List rows where", U"") {
 	SENTENCE (formula, U"The following condition holds true", U"self [row,\"F1\"] > 800.0")
 	OK
 DO
@@ -9527,9 +9528,9 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFileInMemorySet, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, 
-			INFO_FileInMemorySet_getNumberOfFiles);
+			QUERY_ONE_FOR_INTEGER__FileInMemorySet_getNumberOfFiles);
 	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, 
-			INFO_FileInMemorySet_hasDirectory);
+			QUERY_ONE_FOR_BOOLEAN__FileInMemorySet_hasDirectory);
 
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, 
 			INFO_ONE__FileInMemorySet_showAsCode);
@@ -9938,7 +9939,7 @@ void praat_uvafon_David_init () {
 			QUERY_ONE_FOR_REAL__Polygon_getPointY);
 	praat_addAction1 (classPolygon, 0, U"-- other queries --",  U"Get point (y)...", 1, 0);
 	praat_addAction1 (classPolygon, 0, U"Get location of point...", U"-- other queries --", 1, 
-			INFO_Polygon_getLocationOfPoint);
+			QUERY_ONE_FOR_STRING__Polygon_getLocationOfPoint);
 	praat_addAction1 (classPolygon, 0, U"Get area of convex hull...", U"Get location of point...", praat_DEPTH_1 + praat_HIDDEN,
 			QUERY_ONE_FOR_REAL__Polygon_getAreaOfConvexHull);
 
@@ -10284,7 +10285,7 @@ void praat_uvafon_David_init () {
 					GRAPHICS_EACH__Table_drawEllipsesWhere);
 
 	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", praat_DEPTH_1,
-			NUMVEC_Table_listRowNumbersWhere);
+			QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,
 		QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere);
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,
