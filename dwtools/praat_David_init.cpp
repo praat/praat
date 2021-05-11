@@ -2012,6 +2012,7 @@ DIRECT (MODIFY_DTW_Matrix_replace) {
 DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__DTW_TextGrid_to_TextGrid) {
 	CONVERT_ONE_AND_ONE_TO_ONE (DTW, TextGrid)
 		autoTextGrid result = DTW_TextGrid_to_TextGrid (me, you, 0);
+		// in result use the name of the textgrid and append the name of the DTW object
 	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_", my name.get())
 }
 
@@ -4002,22 +4003,11 @@ FORM (QUERY_ONE_FOR_REAL__FilterBank_getValueInCell, U"Get value in cell", nullp
 DO
 	QUERY_ONE_FOR_REAL (FilterBank)
 		double result = undefined;
-		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
-			integer col = Matrix_xToNearestColumn (me, time);
-			if (col < 1) {
-				col = 1;
-			}
-			if (col > my nx) {
-				col = my nx;
-			}
-			integer row = Matrix_yToNearestRow (me, frequency);
-			if (row < 1) {
-				row = 1;
-			}
-			if (row > my ny) {
-				row = my ny;
-			}
-			result = my z[row][col];
+		const integer icol = Matrix_xToNearestColumn (me, time);
+		if (icol > 0 && icol <= my nx) {
+			const integer irow = Matrix_yToNearestRow (me, frequency);
+			if (irow > 0 && irow <= my ny)
+				result = my z[irow][icol];
 		}
 	QUERY_ONE_FOR_REAL_END (U"")
 }
@@ -4201,8 +4191,8 @@ FORM (GRAPHICS_EACH__MelFilter_paint, U"FilterBank: Paint", nullptr) {
 	BOOLEAN (garnish, U"Garnish", false)
 	OK
 DO
-	GRAPHICS_EACH (Matrix)
-		FilterBank_paint ((FilterBank) me, GRAPHICS, fromTime, toTime, 
+	GRAPHICS_EACH (MelFilter)
+		FilterBank_paint (me, GRAPHICS, fromTime, toTime, 
 			fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
 		);
 	GRAPHICS_EACH_END
@@ -9480,12 +9470,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEigen, 0, U"Eigen help", nullptr, 0,
 			HELP__Eigen_help);
 	praat_addAction1 (classEigen, 0, U"Draw -", nullptr, 0, nullptr);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2010,
-				WARNING__Eigen_drawEigenvalues_scree);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1,
-				GRAPHICS_EACH__Eigen_drawEigenvalues);
-		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1,
-				GRAPHICS_EACH__Eigen_drawEigenvector);
+		praat_Eigen_draw_init (classEigen);
 	praat_addAction1 (classEigen, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 1, U"Get number of eigenvalues", nullptr, 1,
 			QUERY_ONE_FOR_INTEGER__Eigen_getNumberOfEigenvalues);
