@@ -1055,6 +1055,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define QUERY_NONE_FOR_COMPLEX_END(...)  \
 	QUERY_FOR_COMPLEX_END__ (__VA_ARGS__)
 
+#define QUERY_NONE_FOR_REAL
+#define QUERY_NONE_FOR_REAL_END(...)  \
+	QUERY_FOR_REAL_END__ (__VA_ARGS__)
+
 #define QUERY_ONE_FOR_COMPLEX(klas)  \
 	FIND_ONE (klas)
 #define QUERY_ONE_FOR_COMPLEX_END(...)  \

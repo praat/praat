@@ -117,13 +117,13 @@ static void KlattGrid_formantSelection_frication (KlattGrid me, integer fromFric
 	pf -> bypass = useFricationBypass;
 }
 
-DIRECT (NEW1_KlattGrid_createExample) {
+DIRECT (CREATE_ONE__KlattGrid_createExample) {
 	CREATE_ONE
 		autoKlattGrid result = KlattGrid_createExample();
 	CREATE_ONE_END (U"example")
 }
 
-FORM (NEW1_KlattGrid_createFromVowel, U"Create KlattGrid from vowel", U"Create KlattGrid from vowel...") {
+FORM (CREATE_ONE__KlattGrid_createFromVowel, U"Create KlattGrid from vowel", U"Create KlattGrid from vowel...") {
 	WORD (name, U"Name", U"a")
 	POSITIVE (duration, U"Duration (s)", U"0.4")
 	POSITIVE (f0start, U"Pitch (Hz)", U"125.0")
@@ -143,7 +143,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (NEW1_KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...") {
+FORM (CREATE_ONE__KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...") {
 	WORD (name, U"Name", U"kg")
 	REAL (fromTime, U"Start time (s)", U"0.0")
 	REAL (toTime, U"End time (s)", U"1.0")
@@ -258,7 +258,7 @@ DO \
 		KlattGrid_remove##Name##Points (me, fromTime, toTime); \
 	MODIFY_EACH_END \
 } \
-DIRECT (NEW_KlattGrid_extract##Name##Tier) { \
+DIRECT (CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##Tier) { \
 	CONVERT_EACH_TO_ONE (KlattGrid) \
 		autoDaata result = KlattGrid_extract##Name##Tier (me); \
 	CONVERT_EACH_TO_ONE_END (newname) \
@@ -453,7 +453,7 @@ KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, kKlattGridFormantType:
 #undef KlattGrid_ADD_FBA_VALUE
 #undef KlattGrid_FORMULA_FORMANT_FB_VALUE
 
-DIRECT (NEW_KlattGrid_extractPointProcess_glottalClosures) {
+DIRECT (CONVERT_EACH_TO_ONE__KlattGrid_extractPointProcess_glottalClosures) {
 	CONVERT_EACH_TO_ONE (KlattGrid)
 		autoPointProcess result = KlattGrid_extractPointProcess_glottalClosures (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
@@ -523,14 +523,14 @@ KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, kKlattGridFormantType::FRIC
 #undef KlattGrid_FORMANT_GET_A_VALUE
 
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType)  \
-DIRECT (NEW_KlattGrid_extract##Name##FormantGrid) { \
+DIRECT (CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##FormantGrid) { \
 	CONVERT_EACH_TO_ONE (KlattGrid) \
 		autoFormantGrid result = KlattGrid_extractFormantGrid (me, gridType); \
 	CONVERT_EACH_TO_ONE_END (KlattGrid_getFormantName (gridType)) \
 }
 
 #define KlattGrid_EXTRACT_FORMANT_AMPLITUDE(Name,name,formantType)  \
-FORM (NEW_KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " #name " formant amplitude tier", nullptr) { \
+FORM (CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " #name " formant amplitude tier", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	OK \
 DO \
@@ -665,7 +665,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW_KlattGrid_extractFormantGrid, U"KlattGrid: Extract formant grid", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__KlattGrid_extractFormantGrid, U"KlattGrid: Extract formant grid", nullptr) {
 	KlattGrid_6formants_addCommonField (formantType)
 	OK
 DO
@@ -718,7 +718,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (NEW_KlattGrid_extractAmplitudeTier, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__KlattGrid_extractAmplitudeTier, U"", nullptr) {
 	KlattGrid_4formants_addCommonField (formantType)
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
@@ -738,7 +738,7 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-FORM (NEW_KlattGrid_to_Sound_special, U"KlattGrid: To Sound (special)", U"KlattGrid: To Sound (special)...") {
+FORM (CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_special, U"KlattGrid: To Sound (special)", U"KlattGrid: To Sound (special)...") {
 	REAL (fromTime, U"left Time range (s)", U"0")
 	REAL (toTime, U"right Time range (s)", U"0")
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
@@ -765,7 +765,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (NEW_KlattGrid_to_Sound) {
+DIRECT (CONVERT_EACH_TO_ONE__KlattGrid_to_Sound) {
 	CONVERT_EACH_TO_ONE (KlattGrid)
 		KlattGrid_setDefaultPlayOptions (me);
 		autoSound result = KlattGrid_to_Sound (me);
@@ -797,7 +797,7 @@ DO
 	PLAY_EACH_END
 }
 
-FORM (NEW_KlattGrid_to_Sound_phonation, U"KlattGrid: To Sound (phonation)", U"KlattGrid: To Sound (phonation)...") {
+FORM (CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_phonation, U"KlattGrid: To Sound (phonation)", U"KlattGrid: To Sound (phonation)...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	KlattGrid_PhonationGridPlayOptions_addCommonFields (useVoicing, useFlutter, useDoublePulsing, useCollisionPhase, useSpectralTilt, flowFunctionType, useFlowDerivative, useAspiration, useBreathiness)
 	OK
@@ -819,7 +819,7 @@ DIRECT (PLAY_KlattGrid_play) {
 	PLAY_EACH_END
 }
 
-FORM (GRAPHICS_KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
+FORM (GRAPHICS_EACH__KlattGrid_draw, U"KlattGrid: Draw", nullptr) {
 	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
@@ -828,7 +828,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr) {
+FORM (GRAPHICS_EACH__KlattGrid_drawVocalTract, U"KlattGrid: Draw vocal tract", nullptr) {
 	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Synthesis filter model", kKlattGridFilterModel::DEFAULT)
 	BOOLEAN (includeTrachealFormants, U"Include tracheal formants", true);
 	OK
@@ -838,19 +838,19 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (GRAPHICS_KlattGrid_drawPhonation) {
+DIRECT (GRAPHICS_EACH__KlattGrid_drawPhonation) {
 	GRAPHICS_EACH (KlattGrid)
 		PhonationGrid_draw (my phonation.get(), GRAPHICS);
 	GRAPHICS_EACH_END
 }
 
-DIRECT (GRAPHICS_KlattGrid_drawFrication) {
+DIRECT (GRAPHICS_EACH__KlattGrid_drawFrication) {
 	GRAPHICS_EACH (KlattGrid)
 		FricationGrid_draw (my frication.get(), GRAPHICS);
 	GRAPHICS_EACH_END
 }
 
-FORM (NEW_KlattGrid_to_oralFormantGrid_openPhases, U"KlattGrid: Extract oral formant grid (open phases)", U"KlattGrid: Extract oral formant grid (open phases)...") {
+FORM (CONVERT_EACH_TO_ONE__KlattGrid_to_oralFormantGrid_openPhases, U"KlattGrid: Extract oral formant grid (open phases)", U"KlattGrid: Extract oral formant grid (open phases)...") {
 	REAL (fadeFraction, U"Fade fraction (0..0.5)", U"0.1")
 	OK
 DO
@@ -860,7 +860,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (U"corrected")
 }
 
-FORM (NEW_Sound_KlattGrid_filterByVocalTract, U"Sound & KlattGrid: Filter by vocal tract", U"Sound & KlattGrid: Filter by vocal tract...") {
+FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_KlattGrid_filterByVocalTract, U"Sound & KlattGrid: Filter by vocal tract", U"Sound & KlattGrid: Filter by vocal tract...") {
 	RADIO_ENUM (kKlattGridFilterModel, filterModel, U"Vocal tract filter model", kKlattGridFilterModel::DEFAULT)
 	OK
 DO
@@ -879,11 +879,11 @@ void praat_KlattGrid_init () {
 			HELP__KlattGrid_help);
 	praat_addMenuCommand (U"Objects", U"New", U"-- the synthesizer grid --", nullptr, 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid...", nullptr, 1, 
-			NEW1_KlattGrid_create);
+			CREATE_ONE__KlattGrid_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid from vowel...", nullptr, 1, 
-			NEW1_KlattGrid_createFromVowel);
+			CREATE_ONE__KlattGrid_createFromVowel);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattGrid example", nullptr, praat_DEPTH_1 + praat_HIDDEN,
-			NEW1_KlattGrid_createExample);
+			CREATE_ONE__KlattGrid_createExample);
 
 	/*
 	Edit oral/nasal/tracheal/frication/delta formant grid
@@ -977,21 +977,21 @@ void praat_KlattGrid_init () {
 	praat_addAction1 (classKlattGrid, 0, U"Play special...", nullptr, 0, 
 			PLAY_KlattGrid_playSpecial);
 	praat_addAction1 (classKlattGrid, 0, U"To Sound", nullptr, 0, 
-			NEW_KlattGrid_to_Sound);
+			CONVERT_EACH_TO_ONE__KlattGrid_to_Sound);
 	praat_addAction1 (classKlattGrid, 0, U"To Sound (special)...", nullptr, 0, 
-			NEW_KlattGrid_to_Sound_special);
+			CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_special);
 	praat_addAction1 (classKlattGrid, 0, U"To Sound (phonation)...", nullptr, 0, 
-			NEW_KlattGrid_to_Sound_phonation);
+			CONVERT_EACH_TO_ONE__KlattGrid_to_Sound_phonation);
 
 	praat_addAction1 (classKlattGrid, 0, U"Draw -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Draw synthesizer...", nullptr, 1, 
-			GRAPHICS_KlattGrid_draw);
+			GRAPHICS_EACH__KlattGrid_draw);
 	praat_addAction1 (classKlattGrid, 0, U"Draw vocal tract...", nullptr, 1, 
-			GRAPHICS_KlattGrid_drawVocalTract);
+			GRAPHICS_EACH__KlattGrid_drawVocalTract);
 	praat_addAction1 (classKlattGrid, 0, U"Draw phonation", nullptr, 1, 
-			GRAPHICS_KlattGrid_drawPhonation);
+			GRAPHICS_EACH__KlattGrid_drawPhonation);
 	praat_addAction1 (classKlattGrid, 0, U"Draw frication", nullptr, 1,
-			GRAPHICS_KlattGrid_drawFrication);
+			GRAPHICS_EACH__KlattGrid_drawFrication);
 
 	praat_addAction1 (classKlattGrid, 0, U"Query phonation -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 1, U"Get pitch at time...", nullptr, 1, 
@@ -1215,48 +1215,48 @@ void praat_KlattGrid_init () {
 
 	praat_addAction1 (classKlattGrid, 0, U"Extract phonation -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Extract pitch tier", nullptr, 1, 
-			NEW_KlattGrid_extractPitchTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractPitchTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract voicing amplitude tier", nullptr, 1, 
-			NEW_KlattGrid_extractVoicingAmplitudeTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractVoicingAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract flutter tier", nullptr, 1, 
-			NEW_KlattGrid_extractFlutterTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractFlutterTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract power1 tier", nullptr, 1, 
-			NEW_KlattGrid_extractPower1Tier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractPower1Tier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract power2 tier", nullptr, 1, 
-			NEW_KlattGrid_extractPower2Tier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractPower2Tier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract open phase tier", nullptr, 1, 
-			NEW_KlattGrid_extractOpenPhaseTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractOpenPhaseTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract collision phase tier", nullptr, 1, 
-			NEW_KlattGrid_extractCollisionPhaseTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractCollisionPhaseTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract double pulsing tier", nullptr, 1,
-			NEW_KlattGrid_extractDoublePulsingTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractDoublePulsingTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract spectral tilt tier", nullptr, 1, 
-			NEW_KlattGrid_extractSpectralTiltTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractSpectralTiltTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract aspiration amplitude tier", nullptr, 1,
-			NEW_KlattGrid_extractAspirationAmplitudeTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractAspirationAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract breathiness amplitude tier", nullptr, 1,
-			NEW_KlattGrid_extractBreathinessAmplitudeTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractBreathinessAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, U"-- extract glottal events--", nullptr, 1, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Extract PointProcess (glottal closures)", nullptr, 1,
-			NEW_KlattGrid_extractPointProcess_glottalClosures);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractPointProcess_glottalClosures);
 
 #define KlattGRID_EXTRACT_FORMANT_GRID_ACTION(Name,namef)  \
 	praat_addAction1 (classKlattGrid, 0, U"Extract " #namef "ormant grid", nullptr, 1, \
-			NEW_KlattGrid_extract##Name##FormantGrid);
+			CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##FormantGrid);
 #define KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION(Name,name)  \
 	praat_addAction1 (classKlattGrid, 0, U"Extract " #name " formant amplitude tier...", nullptr, 1, \
-			NEW_KlattGrid_extract##Name##FormantAmplitudeTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extract##Name##FormantAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, U"Extract filters -", nullptr, 0, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Extract formant grid...", nullptr, praat_DEPTH_1 + praat_HIDDEN + praat_NO_API,
-			NEW_KlattGrid_extractFormantGrid); // deprecated
+			CONVERT_EACH_TO_ONE__KlattGrid_extractFormantGrid); // deprecated
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Oral, oral f)
 	praat_addAction1 (classKlattGrid, 0, U"Extract amplitude tier...", nullptr, praat_DEPTH_1 + praat_HIDDEN + praat_NO_API,
-			NEW_KlattGrid_extractAmplitudeTier); // deprecated
+			CONVERT_EACH_TO_ONE__KlattGrid_extractAmplitudeTier); // deprecated
 	praat_addAction1 (classKlattGrid, 0, U"Extract formant grid (open phases)...", nullptr, praat_HIDDEN + praat_DEPTH_1,
-			NEW_KlattGrid_to_oralFormantGrid_openPhases);
+			CONVERT_EACH_TO_ONE__KlattGrid_to_oralFormantGrid_openPhases);
 	praat_addAction1 (classKlattGrid, 0, U"Extract oral formant grid (open phases)...", nullptr, 1,
-			NEW_KlattGrid_to_oralFormantGrid_openPhases);
+			CONVERT_EACH_TO_ONE__KlattGrid_to_oralFormantGrid_openPhases);
 	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Oral, oral)
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Nasal, nasal f)
 	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Nasal, nasal)
@@ -1264,7 +1264,7 @@ void praat_KlattGrid_init () {
 
 	praat_addAction1 (classKlattGrid, 0, U"-- extract delta characteristics", nullptr, 1, nullptr);
 	praat_addAction1 (classKlattGrid, 0, U"Extract delta formant grid", nullptr, 1, 
-			NEW_KlattGrid_extractDeltaFormantGrid);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractDeltaFormantGrid);
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Tracheal, tracheal f)
 	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Tracheal, tracheal)
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (TrachealAnti, tracheal antif)
@@ -1272,9 +1272,9 @@ void praat_KlattGrid_init () {
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Frication, frication f)
 	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Frication, frication)
 	praat_addAction1 (classKlattGrid, 0, U"Extract frication bypass tier", nullptr, 1, 
-			NEW_KlattGrid_extractFricationBypassTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractFricationBypassTier);
 	praat_addAction1 (classKlattGrid, 0, U"Extract frication amplitude tier", nullptr, 1,
-			NEW_KlattGrid_extractFricationAmplitudeTier);
+			CONVERT_EACH_TO_ONE__KlattGrid_extractFricationAmplitudeTier);
 
 #undef KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION
 #undef KlattGRID_EXTRACT_FORMANT_GRID_ACTION
@@ -1337,7 +1337,7 @@ void praat_KlattGrid_init () {
 #undef KlattGrid_REPLACE_FORMANTGRID_ACTION
 
 	praat_addAction2 (classKlattGrid, 1, classSound, 1, U"Filter by vocal tract...", nullptr, 1,
-			NEW_Sound_KlattGrid_filterByVocalTract);
+			CONVERT_ONE_AND_ONE_TO_ONE__Sound_KlattGrid_filterByVocalTract);
 
 	INCLUDE_MANPAGES (manual_KlattGrid)
 }
