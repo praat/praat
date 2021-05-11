@@ -200,9 +200,9 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 	}
 }
 
-void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, conststring32 channelRanges,
-	int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
-	autoEEG *p_resultingEEG, autoMixingMatrix *p_resultingMixingMatrix)
+autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, 
+	conststring32 channelRanges, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
+	autoMixingMatrix *p_resultingMixingMatrix)
 {
 	try {
 		// autowindow
@@ -235,10 +235,9 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 
 		// Calculate the cross-correlations between eye-channels and the ic's
 
-		if (p_resultingEEG)
-			*p_resultingEEG = thee.move();
 		if (p_resultingMixingMatrix)
 			*p_resultingMixingMatrix = mm.move();
+		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no independent components determined.");
 	}
