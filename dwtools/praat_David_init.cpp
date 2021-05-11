@@ -5074,7 +5074,7 @@ DO
 
 DIRECT (QUERY_ONE_FOR_INTEGER__Polygon_getNumberOfPoints) {
 	QUERY_ONE_FOR_INTEGER (Polygon)
-		integer result = my numberOfPoints;
+		const integer result = my numberOfPoints;
 	QUERY_ONE_FOR_INTEGER_END (U" (number of points)")
 }
 
@@ -5083,7 +5083,7 @@ FORM (QUERY_ONE_FOR_REAL__Polygon_getPointX, U"Polygon: Get point (x)", nullptr)
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Polygon)
-		double result = ( pointNumber <= my numberOfPoints ? my x [pointNumber] : undefined );
+		const double result = ( pointNumber <= my numberOfPoints ? my x [pointNumber] : undefined );
 	QUERY_ONE_FOR_REAL_END (U" (x [", pointNumber, U"])")
 }
 
@@ -5105,7 +5105,7 @@ FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get 
 DO
 	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
 	QUERY_ONE_FOR_STRING (Polygon)
-		int loc = Polygon_getLocationOfPoint (me, x, y, eps);
+		const int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
 			loc == Polygon_EDGE ? U"E" : U"V" );
 	QUERY_ONE_FOR_STRING_END
@@ -5139,7 +5139,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Polygon_convexHull) {
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_hull")
 }
 
-FORM (MODIFY_Polygon_translate, U"Polygon: Translate", U"Polygon: Translate...") {
+FORM (MODIFY_EACH__Polygon_translate, U"Polygon: Translate", U"Polygon: Translate...") {
 	REAL (xDistance, U"X distance", U"0.0")
 	REAL (yDistance, U"Y distance", U"0.0")
 	OK
@@ -5149,7 +5149,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_Polygon_rotate, U"Polygon: Rotate", U"Polygon: Rotate...") {
+FORM (MODIFY_EACH__Polygon_rotate, U"Polygon: Rotate", U"Polygon: Rotate...") {
 	LABEL (U"Rotate counterclockwise over the")
 	REAL (angle_degrees, U"Angle (degrees)", U"0.0")
 	LABEL (U"With respect to the point")
@@ -5162,7 +5162,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_Polygon_scale, U"Polygon: Scale polygon", nullptr) {
+FORM (MODIFY_EACH__Polygon_scale, U"Polygon: Scale polygon", nullptr) {
 	REAL (x, U"X", U"0.0")
 	REAL (y, U"Y", U"0.0")
 	OK
@@ -5172,7 +5172,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (GRAPHICS_Polygon_Categories_draw, U"Polygon & Categories: Draw", nullptr) {
+FORM (GRAPHICS_ONE_AND_ONE__Polygon_Categories_draw, U"Polygon & Categories: Draw", nullptr) {
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -5185,13 +5185,13 @@ DO
 	GRAPHICS_ONE_AND_ONE_END
 }
 
-DIRECT (MODIFY_Polygon_reverseX) {
+DIRECT (MODIFY_EACH__Polygon_reverseX) {
 	MODIFY_EACH (Polygon)
 		Polygon_reverseX (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_Polygon_reverseY) {
+DIRECT (MODIFY_EACH__Polygon_reverseY) {
 	MODIFY_EACH (Polygon)
 		Polygon_reverseY (me);
 	MODIFY_EACH_END
@@ -5248,7 +5248,7 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (MODIFY_Polynomial_divide_secondOrderFactor, U"Polynomial: Divide second order factor", nullptr) {
+FORM (MODIFY_EACH__Polynomial_divide_secondOrderFactor, U"Polynomial: Divide second order factor", nullptr) {
 	LABEL (U"P(x) / (x^2 - factor)")
 	REAL (factor, U"Factor", U"1.0")
 	OK
@@ -5265,7 +5265,7 @@ FORM (QUERY_ONE_FOR_REAL__Polynomial_getArea, U"Polynomial: Get area", U"Polynom
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Polynomial)
-		double result = Polynomial_getArea (me, xmin, xmax);
+		const double result = Polynomial_getArea (me, xmin, xmax);
 	QUERY_ONE_FOR_REAL_END (U" (area)")
 }
 
@@ -5304,7 +5304,7 @@ FORM (QUERY_ONE_FOR_REAL__Polynomial_getOneRealRoot, U"Polynomial: Get one real 
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Polynomial)
-		double result = Polynomial_findOneSimpleRealRoot_nr (me, xmin, xmax);
+		const double result = Polynomial_findOneSimpleRealRoot_nr (me, xmin, xmax);
 	QUERY_ONE_FOR_REAL_END (U" (root)")
 }
 
@@ -5354,7 +5354,7 @@ FORM (INFO_ONE__Polynomial_evaluate_z, U"Polynomial: Get value (complex)", U"Pol
 DO
 	dcomplex z { x, y };
 	INFO_ONE (Polynomial)
-		dcomplex result = Polynomial_evaluate_z (me, z);
+		const dcomplex result = Polynomial_evaluate_z (me, z);
 		MelderInfo_open ();
 		MelderInfo_writeLine (result);
 		MelderInfo_close ();
@@ -5435,7 +5435,7 @@ FORM (QUERY_ONE_FOR_REAL__Roots_getRealPartOfRoot, U"Roots: Get real part", null
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Roots)
-		dcomplex z = Roots_getRoot (me, rootNumber);
+		const dcomplex z = Roots_getRoot (me, rootNumber);
 		const double result = z.real();
 	QUERY_ONE_FOR_REAL_END (U"")
 }
@@ -5445,12 +5445,12 @@ FORM (QUERY_ONE_FOR_REAL__Roots_getImaginaryPartOfRoot, U"Roots: Get imaginary p
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Roots)
-		dcomplex z = Roots_getRoot (me, rootNumber);
+		const dcomplex z = Roots_getRoot (me, rootNumber);
 		const double result = z.imag();
 	QUERY_ONE_FOR_REAL_END (U" i")
 }
 
-FORM (MODIFY_Roots_setRoot, U"Roots: Set root", nullptr) {
+FORM (MODIFY_EACH__Roots_setRoot, U"Roots: Set root", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	REAL (x, U"Real part", U"1.0/sqrt(2)")
 	REAL (y, U"Imaginary part", U"1.0/sqrt(2)")
@@ -5471,7 +5471,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-DIRECT (MODIFY_Roots_Polynomial_polish) {
+DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__Roots_Polynomial_polish) {
 	MODIFY_FIRST_OF_ONE_AND_ONE (Roots, Polynomial)
 		Roots_Polynomial_polish (me, you);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
@@ -5479,11 +5479,11 @@ DIRECT (MODIFY_Roots_Polynomial_polish) {
 
 /*****************************************************************************/
 
-DIRECT (INFO_Praat_ReportFloatingPointProperties) {
+DIRECT (INFO_NONE__Praat_ReportFloatingPointProperties) {
 	INFO_NONE
-		if (! NUMfpp) {
+		if (! NUMfpp)
 			NUMmachar ();
-		}
+
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Double precision floating point properties of this machine,");
 		MelderInfo_writeLine (U"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
@@ -5502,34 +5502,33 @@ DIRECT (INFO_Praat_ReportFloatingPointProperties) {
 	INFO_NONE_END
 }
 
-FORM (REAL_Praat_getTukeyQ, U"Get TukeyQ", nullptr) {
+FORM (QUERY_NONE_FOR_REAL__Praat_getTukeyQ, U"Get TukeyQ", nullptr) {
 	POSITIVE (criticalValue, U"Critical value", U"2.0")
 	NATURAL (numberOfMeans, U"Number of means", U"3")
 	POSITIVE (degreesOfFreedon, U"Degrees of freedom", U"10.0")
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
-	INFO_NONE
+	QUERY_NONE_FOR_REAL
 		const double result = NUMtukeyQ (criticalValue, numberOfMeans, degreesOfFreedon, numberOfRows);
-		Melder_information (result, U" (tukeyQ)");
-	INFO_NONE_END
+	QUERY_NONE_FOR_REAL_END (U" (tukeyQ)")
 }
 
-FORM (REAL_Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
+FORM (QUERY_NONE_FOR_REAL__Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
 	REAL (probability, U"Probability", U"0.05")
 	NATURAL (numberOfMeans, U"Number of means", U"3")
 	POSITIVE (degreesOfFreedon, U"Degrees of freedom", U"10.0")
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
-	INFO_NONE
-		Melder_require (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].");
-		double result = NUMinvTukeyQ (probability, numberOfMeans, degreesOfFreedon, numberOfRows);
-		Melder_information (result, U" (inv tukeyQ)");
-	INFO_NONE_END
+	QUERY_NONE_FOR_REAL
+		Melder_require (probability >= 0.0 && probability <= 1.0, 
+			U"The probability should be in the interval [0, 1].");
+		const double result = NUMinvTukeyQ (probability, numberOfMeans, degreesOfFreedon, numberOfRows);
+	QUERY_NONE_FOR_REAL_END (U" (inv tukeyQ)")
 }
 
-FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplete gamma...") {
+FORM (QUERY_NONE_FOR_COMPLEX__Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplete gamma...") {
 	POSITIVE (reAlpha, U"Real part of alpha", U"4.0")
 	REAL (imAlpha, U"Imaginary part of alpha", U"0.0")
 	REAL (reX, U"Real part of X", U"4.0")
@@ -5537,7 +5536,7 @@ FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplet
 	OK
 DO
 	QUERY_NONE_FOR_COMPLEX
-		dcomplex result = NUMincompleteGammaFunction (dcomplex {reAlpha, imAlpha}, dcomplex {reX, imX});
+		const dcomplex result = NUMincompleteGammaFunction (dcomplex {reAlpha, imAlpha}, dcomplex {reX, imX});
 	QUERY_NONE_FOR_COMPLEX_END (U"")
 }
 
@@ -5592,7 +5591,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_to_FormantFilter, U"Sound & Pitch:
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
-		autoFormantFilter result = Sound_Pitch_to_FormantFilter (me, you, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth);
+		autoFormantFilter result = Sound_Pitch_to_FormantFilter (me, you, windowLength, timeStep, 
+			firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -5607,7 +5608,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_to_Spectrogram, U"Sound & Pitch: T
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
-		autoSpectrogram result = Sound_Pitch_to_Spectrogram (me, you, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth);
+		autoSpectrogram result = Sound_Pitch_to_Spectrogram (me, you, windowLength, timeStep, 
+			firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -5619,7 +5622,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_changeGender, U"Sound & Pitch: Cha
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
-		autoSound result = Sound_Pitch_changeGender_old (me, you, formantShiftRatio, newPitchMedian, pitchRangeFactor, durationFactor);
+		autoSound result = Sound_Pitch_changeGender_old (me, you, formantShiftRatio, 
+			newPitchMedian, pitchRangeFactor, durationFactor
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -5631,7 +5636,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_changeSpeaker, U"Sound & Pitch: Ch
 	OK
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (Sound, Pitch)
-		autoSound result = Sound_Pitch_changeSpeaker (me, you, formantFrequencyMultiplicationFactor, pitchMultiplicationFactor, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
+		autoSound result = Sound_Pitch_changeSpeaker (me, you, formantFrequencyMultiplicationFactor,
+			pitchMultiplicationFactor, pitchRangeMultiplicationFactor, durationMultiplicationFactor
+		);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_", your name.get())
 }
 
@@ -5659,8 +5666,11 @@ DO
 		Sound_create_checkCommonFields (startTime, endTime, samplingFrequency);
 		Melder_require (frequency < 0.5 * samplingFrequency,
 			U"Your frequency should not be greater than half the sampling frequency. Use a frequency less than ", 0.5 * samplingFrequency, U".");
-		Melder_require (gamma >= 0, U"Gamma should not be negative. Use a positive or zero gamma.");
-		autoSound result = Sound_createGammaTone (startTime, endTime, samplingFrequency, gamma, frequency, bandwidth, initialPhase, additionFactor, scaleAmplitudes);
+		Melder_require (gamma >= 0, 
+			U"Gamma should not be negative.");
+		autoSound result = Sound_createGammaTone (startTime, endTime, samplingFrequency, gamma, 
+			frequency, bandwidth, initialPhase, additionFactor, scaleAmplitudes
+		);
 	CREATE_ONE_END (name)
 }
 
@@ -5676,7 +5686,9 @@ FORM (CREATE_ONE__Sound_createAsShepardTone, U"Create a Shepard tone", U"Create 
 DO
 	CREATE_ONE
 		Sound_create_checkCommonFields (startTime, endTime, samplingFrequency);
-		autoSound result = Sound_createShepardToneComplex (startTime, endTime, samplingFrequency, minimumFrequency, numberOfComponents, frequencyChange, amplitudeRange_dB, octaveShiftFraction);
+		autoSound result = Sound_createShepardToneComplex (startTime, endTime, samplingFrequency, minimumFrequency,
+			numberOfComponents, frequencyChange, amplitudeRange_dB, octaveShiftFraction
+		);
 	CREATE_ONE_END (name)
 }
 
@@ -5694,26 +5706,28 @@ FORM (GRAPHICS_EACH__Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where.
 	FORMULA (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
-	integer numberOfBisections = 10;
+	const integer numberOfBisections = 10;
 	GRAPHICS_EACH (Sound)
-		Sound_drawWhere (me, GRAPHICS, fromTime, toTime, ymin, ymax, garnish, drawingMethod, numberOfBisections, formula, interpreter);
+		Sound_drawWhere (me, GRAPHICS, fromTime, toTime, ymin, ymax, garnish, drawingMethod, 
+			numberOfBisections, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
-FORM (PLAY_Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
+FORM (PLAY_EACH__Sound_playOneChannel, U"Sound: Play one channel", nullptr) {
     NATURAL (channel, U"Channel", U"1")
     OK
 DO
     PLAY_EACH (Sound)
 		Melder_require (channel <= my ny,
 			me, U": there is no channel ", channel, U". Sound has only ", my ny, U" channel",
-				  (my ny > 1 ? U"s." : U"."));
+				(my ny > 1 ? U"s." : U"."));
         autoSound thee = Sound_extractChannel (me, channel);
         Sound_play (thee.get(), 0, 0);
     PLAY_EACH_END
 }
 
-FORM (PLAY_Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
+FORM (PLAY_EACH__Sound_playAsFrequencyShifted, U"Sound: Play as frequency shifted", U"Sound: Play as frequency shifted...") {
 	REAL (frequencyShift, U"Shift by (Hz)", U"1000.0")
 	POSITIVE (samplingFrequency, U"New sampling frequency (Hz)", U"44100.0")
 	NATURAL (samplePrecision, U"Precision (samples)", U"50")
@@ -5732,8 +5746,8 @@ FORM (QUERY_ONE_FOR_REAL__Sound_getNearestLevelCrossing, U"Sound: Get nearest le
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Sound)
-		if (channel > my ny)   // TODO: why this arbitrary default against a user error?
-			channel = 1;
+		Melder_require (channel > 0 && channel <= my ny,
+			U"The channel number should be between 1 and ", my ny, U".");
 		const double result = Sound_getNearestLevelCrossing (me, channel, time, level, searchDirection);
 	QUERY_ONE_FOR_REAL_END (U" seconds")
 }
@@ -5768,7 +5782,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences, U"Sound: To TextGri
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoTextGrid result = Sound_to_TextGrid_detectSilences (me, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel);
+		autoTextGrid result = Sound_to_TextGrid_detectSilences (me, minimumPitch, timeStep, silenceThreshold, 
+			minimumSilenceDuration, minimumSoundingDuration, silenceLabel, soundingLabel
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5788,7 +5804,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_voiceActivity, U"Sound_to_TextGrid_
 DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoTextGrid result = Sound_to_TextGrid_detectVoiceActivity_lsfm (me, timeStep, longtermWindow, shorttermWindow,
-			fmin, fmax, flatnessThreshold, silenceThreshold_dB, minimumSilenceDuration, minimumSpeechDuration, silenceLabel, speechLabel);
+			fmin, fmax, flatnessThreshold, silenceThreshold_dB, minimumSilenceDuration, minimumSpeechDuration, 
+			silenceLabel, speechLabel
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5819,10 +5837,12 @@ DO
     trimDuration = ( trimDuration < 0.0 ? 0.0 : trimDuration );
 	CONVERT_EACH_TO_ONE (Sound)
         autoTextGrid tg;
-		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, (saveTextGrid ? &tg : nullptr ), trim_string);
-		if (saveTextGrid) {
+		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, 
+			silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, 
+			(saveTextGrid ? &tg : nullptr ), trim_string
+		);
+		if (saveTextGrid)
             praat_new (tg.move(), my name.get(), U"_trimmed");
-        }
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_trimmed")
 }
 
@@ -5851,7 +5871,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_BarkSpectrogram, U"Sound: To BarkSpectrogram
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoBarkSpectrogram result = Sound_to_BarkSpectrogram (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency);
+		autoBarkSpectrogram result = Sound_to_BarkSpectrogram (me, windowLength, timeStep, 
+			firstFrequency, maximumFrequency, deltaFrequency
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5870,7 +5892,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantFilter, U"Sound: To FormantFilter", U
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoFormantFilter result = Sound_to_FormantFilter (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch);
+		autoFormantFilter result = Sound_to_FormantFilter (me, windowLength, timeStep, 
+			firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5888,7 +5912,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrogram_pitchDependent, U"Sound: To Spec
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSpectrogram result = Sound_to_Spectrogram_pitchDependent (me, windowLength, timeStep, firstFrequency, maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch);
+		autoSpectrogram result = Sound_to_Spectrogram_pitchDependent (me, windowLength, timeStep, firstFrequency, 
+			maximumFrequency, deltaFrequency, relativeBandwidth, minimumPitch, maximumPitch
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5917,7 +5943,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_MelSpectrogram, U"Sound: To MelSpectrogram",
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoMelSpectrogram result = Sound_to_MelSpectrogram (me, windowLength, timeStep,  firstFrequency, maximumFrequency, deltaFrequency);
+		autoMelSpectrogram result = Sound_to_MelSpectrogram (me, windowLength, timeStep,
+			firstFrequency, maximumFrequency, deltaFrequency
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5940,7 +5968,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_ConstantQLogFSpectrogram, U"Sound: To Consta
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, fmax, numberOfFrequencyBinsPerOctave, frequencyResolutionInBins, timeOversamplingFactor);
+		autoConstantQLogFSpectrogram result = Sound_to_ConstantQLogFSpectrogram (me, f1, fmax, 
+			numberOfFrequencyBinsPerOctave, frequencyResolutionInBins, timeOversamplingFactor
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5949,7 +5979,6 @@ DIRECT (CONVERT_EACH_TO_ONE__ConstantQLogFSpectrogram_to_Sound) {
 		autoSound result = ConstantQLogFSpectrogram_to_Sound (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
-
 
 FORM (CONVERT_EACH_TO_ONE__ConstantQLogFSpectrogram_to_Sound_frequencyBin, U"ConstantQLogFSpectrogram: To Sound (frequencyBin)", nullptr) {
 	NATURAL (frequencyBinNumber, U"Frequency bin number", U"1")
@@ -5972,10 +6001,14 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound
 	NATURAL (numberOfPointsPerOctave, U"Number of points per octave", U"48");
 	OK
 DO
-	Melder_require (pitchFloor < pitchCeiling, U"The minimum pitch should be less than the ceiling.");
-	Melder_require (pitchCeiling < maximumFrequency, U"The maximum frequency should be greater than or equal to the ceiling.");
+	Melder_require (pitchFloor < pitchCeiling,
+		U"The minimum pitch should be less than the ceiling.");
+	Melder_require (pitchCeiling < maximumFrequency, 
+		U"The maximum frequency should be greater than or equal to the ceiling.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_shs (me, timeStep, pitchFloor, maximumFrequency, pitchCeiling, maximumNumberOfSubharmonics, maximumNumberOfCandidates, compressionFactor, numberOfPointsPerOctave);
+		autoPitch result = Sound_to_Pitch_shs (me, timeStep, pitchFloor, maximumFrequency, pitchCeiling, 
+			maximumNumberOfSubharmonics, maximumNumberOfCandidates, compressionFactor, numberOfPointsPerOctave
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -6019,7 +6052,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_KlattGrid_simple, U"Sound: To KlattGrid (sim
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoKlattGrid result = Sound_to_KlattGrid_simple (me, timeStep, numberOfFormants, formantCeiling, windowLength, preEmphasisFrequency, pitchFloor, pitchCeiling, minimumPitch, subtractMean);
+		autoKlattGrid result = Sound_to_KlattGrid_simple (me, timeStep, numberOfFormants, formantCeiling, windowLength,
+			preEmphasisFrequency, pitchFloor, pitchCeiling, minimumPitch, subtractMean
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -6034,9 +6069,12 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: 
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	OK
 DO
-	Melder_require (minimumFrequency < maximumFrequency, U"The maximum frequency should be greater than the minimum frequency.");
+	Melder_require (minimumFrequency < maximumFrequency, 
+		U"The maximum frequency should be greater than the minimum frequency.");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoPitch result = Sound_to_Pitch_SPINET (me, timeStep, windowLength, minimumFrequency, maximumFrequency, numberOfFilters, pitchCeiling, maximumNumberOfCandidates);
+		autoPitch result = Sound_to_Pitch_SPINET (me, timeStep, windowLength, minimumFrequency, maximumFrequency,
+			numberOfFilters, pitchCeiling, maximumNumberOfCandidates
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -6059,7 +6097,8 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Polygon, U"Sound: To Polygon", U"Sound: To P
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		channel = channel > my ny ? 1 : channel;
+		Melder_require (channel > 0 && channel <= my ny,
+			U"The channel number should be bewteen 1 and ", my ny, U".");
 		autoPolygon result = Sound_to_Polygon (me, channel, fromTime, toTime, ymin, ymax, connectionY);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -6099,7 +6138,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_reduceNoise, U"Sound: Reduce noise", U"Sound: R
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_reduceNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, smoothingBandwidth, noiseReduction_dB, noiseReductionMethod);
+		autoSound result = Sound_reduceNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency,
+			smoothingBandwidth, noiseReduction_dB, noiseReductionMethod
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_denoised")
 }
 
@@ -6115,7 +6156,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_removeNoise, U"Sound: Remove noise", U"Sound: R
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_removeNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, smoothingBandwidth, noiseReductionMethod);
+		autoSound result = Sound_removeNoise (me, fromTime, toTime, windowLength, fromFrequency, toFrequency, 
+			smoothingBandwidth, noiseReductionMethod
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_denoised")
 }
 
@@ -6130,9 +6173,12 @@ FORM (CONVERT_EACH_TO_ONE__Sound_changeSpeaker, U"Sound: Change speaker", U"Soun
 	POSITIVE (durationMultiplicationFactor, U"Multiply duration by", U"1.0")
 	OK
 DO
-	Melder_require (pitchFloor < pitchCeiling, U"The maximum pitch should be greater than the minimum pitch.");
+	Melder_require (pitchFloor < pitchCeiling, 
+		U"The \"Pitch floor\" should be smaller than the \"Pitch ceiling\".");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_changeSpeaker (me, pitchFloor, pitchCeiling, formantMultiplicationFactor, pitchMultiplicationFactor, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
+		autoSound result = Sound_changeSpeaker (me, pitchFloor, pitchCeiling, formantMultiplicationFactor,
+			pitchMultiplicationFactor, pitchRangeMultiplicationFactor, durationMultiplicationFactor
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_changeSpeaker")
 }
 
@@ -6147,9 +6193,12 @@ FORM (CONVERT_EACH_TO_ONE__Sound_changeGender, U"Sound: Change gender", U"Sound:
 	POSITIVE (durationMultiplicationFactor, U"Duration factor", U"1.0")
 	OK
 DO
-	Melder_require (pitchFloor < pitchCeiling, U"The maximum pitch should be greater than the minimum pitch.");
+	Melder_require (pitchFloor < pitchCeiling, 
+		U"The \"Pitch floor\" should be smaller than the \"Pitch ceiling\".");
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_changeGender_old (me, pitchFloor, pitchCeiling, formantShiftRatio, pitchMedian, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
+		autoSound result = Sound_changeGender_old (me, pitchFloor, pitchCeiling, formantShiftRatio, pitchMedian,
+			pitchRangeMultiplicationFactor, durationMultiplicationFactor
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_changeGender");
 }
 
@@ -6163,10 +6212,11 @@ FORM (GRAPHICS_EACH__Sound_paintWhere, U"Sound paint where", U"Sound: Paint wher
 	FORMULA (formula, U"Paint only those parts where the following condition holds:", U"1; always")
 	OK
 DO
-	integer numberOfBisections = 10;
+	const integer numberOfBisections = 10;
 	GRAPHICS_EACH (Sound)
-		Sound_paintWhere (me, GRAPHICS, colour, fromTime, toTime, ymin, ymax, level, garnish, numberOfBisections, formula,
-			interpreter);
+		Sound_paintWhere (me, GRAPHICS, colour, fromTime, toTime, ymin, ymax, level, garnish, 
+			numberOfBisections, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -6184,19 +6234,19 @@ DO
 	GRAPHICS_TWO_END
 }
 
-FORM_READ (READ1_Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
+FORM_READ (READ_ONE__Sound_readFromRawFileLE, U"Read Sound from raw Little Endian file", nullptr, true) {
 	READ_ONE
 		autoSound result = Sound_readFromRawFile (file, nullptr, 16, 1, 0, 0, 16000.0);
 	READ_ONE_END
 }
 
-FORM_READ (READ1_Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
+FORM_READ (READ_ONE__Sound_readFromRawFileBE, U"Read Sound from raw 16-bit Little Endian file", nullptr, true) {
 	READ_ONE
 		autoSound result = Sound_readFromRawFile (file, nullptr, 16, 0, 0, 0, 16000.0);
 	READ_ONE_END
 }
 
-FORM_READ (READ1_KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
+FORM_READ (READ_ONE__KlattTable_readFromRawTextFile, U"KlattTable_readFromRawTextFile", nullptr, true) {
 	READ_ONE
 		autoKlattTable result = KlattTable_readFromRawTextFile (file);
 	READ_ONE_END
@@ -6240,29 +6290,31 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (MODIFY_Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nullptr) {
+FORM (MODIFY_EACH__Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nullptr) {
 	NATURAL (binNumber, U"Bin number", U"100")
 	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Spectrum)
-		Melder_require (binNumber <= my nx, U"Your bin number should not exceed the number of bins (", my nx, U").");
+		Melder_require (binNumber <= my nx, 
+			U"Your bin number should not exceed the number of bins (", my nx, U").");
 		my z[1][binNumber]= value;
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", nullptr) {
+FORM (MODIFY_EACH__Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in bin", nullptr) {
 	NATURAL (binNumber, U"Bin number", U"100")
 	REAL (value, U"Value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Spectrum)
-		Melder_require (binNumber <= my nx, U"Your bin number should not exceed the number of bins (", my nx, U").");
+		Melder_require (binNumber <= my nx, 
+			U"Your bin number should not exceed the number of bins (", my nx, U").");
 		my z[2][binNumber]= value;
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_Spectrum_conjugate) {
+DIRECT (MODIFY_EACH__Spectrum_conjugate) {
 	MODIFY_EACH (Spectrum)
 		Spectrum_conjugate (me);
 	MODIFY_EACH_END
@@ -6370,7 +6422,7 @@ DO
     CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex].get(), U"_", espeakdata_voices_names -> strings [voiceIndex].get())
 }
 
-FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
+FORM (MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
 	OPTIONMENU (phoneneSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 			OPTION (espeakdata_languages_names -> strings [i].get());
@@ -6388,7 +6440,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
+FORM (PLAY_EACH__SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
 	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
 	OK
 DO
@@ -6405,7 +6457,9 @@ DO
 	CONVERT_EACH_TO_MULTIPLE (SpeechSynthesizer)
 		autoTextGrid tg;
 		autoTable t;
-		autoSound result = SpeechSynthesizer_to_Sound (me, text, (wantTextGrid ? & tg : nullptr), (Melder_debug == -2 ? & t : nullptr ));
+		autoSound result = SpeechSynthesizer_to_Sound (
+			me, text, (wantTextGrid ? & tg : nullptr), (Melder_debug == -2 ? & t : nullptr )
+		);
 		if (wantTextGrid)
 			praat_new (tg.move(), my name.get());
 		if (Melder_debug == -2)
@@ -6414,25 +6468,25 @@ DO
 	CONVERT_EACH_TO_MULTIPLE_END
 }
 
-DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
+DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getLanguageName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_languageName.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
-DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
+DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_voiceName.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
-DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
+DIRECT (QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName) {
 	QUERY_ONE_FOR_STRING (SpeechSynthesizer)
 		conststring32 result = my d_phonemeSet.get();
 	QUERY_ONE_FOR_STRING_END
 }
 
-FORM (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
+FORM (MODIFY_EACH__SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set text input settings", U"SpeechSynthesizer: Set text input settings...") {
 	OPTIONMENU (inputTextFormat, U"Input text format is", 1)
 		OPTION (U"text only")
 		OPTION (U"phoneme codes only")
@@ -6441,13 +6495,13 @@ FORM (MODIFY_SpeechSynthesizer_setTextInputSettings, U"SpeechSynthesizer: Set te
 		OPTION (U"Kirshenbaum_espeak")
 	OK
 DO
-	int inputPhonemeCoding_always = SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM;
+	const int inputPhonemeCoding_always = SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM;
 	MODIFY_EACH (SpeechSynthesizer)
 		SpeechSynthesizer_setTextInputSettings (me, inputTextFormat, inputPhonemeCoding_always);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_SpeechSynthesizer_estimateSpeechRateFromSpeech, U"SpeechSynthesizer: Estimate speech rate from speech", U"SpeechSynthesizer: Estimate speech rate from speech...") {
+FORM (MODIFY_EACH__SpeechSynthesizer_estimateSpeechRateFromSpeech, U"SpeechSynthesizer: Estimate speech rate from speech", U"SpeechSynthesizer: Estimate speech rate from speech...") {
 	BOOLEAN (estimate, U"Estimate speech rate from speech", true);
 	OK
 DO
@@ -6456,7 +6510,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Speech output settings", U"SpeechSynthesizer: Speech output settings...") {
+FORM (MODIFY_EACH__SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Speech output settings", U"SpeechSynthesizer: Speech output settings...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	REAL (wordGap, U"Gap between words (s)", U"0.01")
 	POSITIVE (pitchAdjustment, U"Pitch multiplier (0.5-2.0)", U"1.0")
@@ -6473,11 +6527,13 @@ DO
 	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0,
 		U"The pitch range multiplier should be between 0.0 and 2.0.");
 	MODIFY_EACH (SpeechSynthesizer)
-		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes);
+		SpeechSynthesizer_setSpeechOutputSettings (
+			me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes
+		);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Speech output settings...") {
+FORM (MODIFY_EACH__SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Speech output settings...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	REAL (wordGap, U"Gap between words (s)", U"0.01")
 	INTEGER (pitchAdjustment_0_99, U"Pitch adjustment (0-99)", U"50")
@@ -6489,15 +6545,15 @@ FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set
 		OPTION (U"IPA")
 	OK
 DO
-	if (wordGap < 0.0) wordGap = 0.0;
-	if (pitchAdjustment_0_99 < 0) pitchAdjustment_0_99 = 0;
-	if (pitchAdjustment_0_99 > 99) pitchAdjustment_0_99 = 99;
-	if (pitchRange_0_99 < 0) pitchRange_0_99 = 0;
-	if (pitchRange_0_99 > 99) pitchRange_0_99 = 99;
-	double pitchAdjustment = (1.5/99.0 * pitchAdjustment_0_99 + 0.5);
-	double pitchRange = (pitchRange_0_99 / 49.5);
+	Melder_clipLeft (0.0, & wordGap);
+	Melder_clip (0_integer, & pitchAdjustment_0_99, 99_integer);
+	Melder_clip (0_integer, & pitchRange_0_99, 99_integer);
+	double pitchAdjustment = (1.5 / 99.0 * pitchAdjustment_0_99 + 0.5);
+	double pitchRange = pitchRange_0_99 / 49.5;
 	MODIFY_EACH (SpeechSynthesizer)
-		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes);
+		SpeechSynthesizer_setSpeechOutputSettings (
+			me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes
+		);
 		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me, estimateWordsPerMinute);
 	MODIFY_EACH_END
 }
@@ -6512,7 +6568,9 @@ FORM (CONVERT_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_TextGrid_to_Sound, U"SpeechS
 DO
 	CONVERT_ONE_AND_ONE_TO_ONE (SpeechSynthesizer, TextGrid)
 		autoTextGrid annotations;
-		autoSound result = SpeechSynthesizer_TextGrid_to_Sound (me, you, tierNumber, intervalNumber, (createAnnotations ? & annotations : nullptr ));
+		autoSound result = SpeechSynthesizer_TextGrid_to_Sound (
+			me, you, tierNumber, intervalNumber, (createAnnotations ? & annotations : nullptr)
+		);
 		if (createAnnotations)
 			praat_new (annotations.move(), my name.get());
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
@@ -6528,7 +6586,10 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_Sound_TextGrid_align
 	OK
 DO
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (SpeechSynthesizer, Sound, TextGrid)
-		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align (me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, minimumSilenceDuration, minimumSoundingDuration);
+		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align (
+			me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, 
+			minimumSilenceDuration, minimumSoundingDuration
+		);
 	CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (your name.get(), U"_aligned")
 }
 
@@ -6542,10 +6603,13 @@ FORM (CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_Sound_TextGrid_align
     REAL (trimDuration, U"Silence trim duration (s)", U"0.08")
     OK
 DO
-	if (trimDuration < 0.0)
-		trimDuration = 0.0;
+	Melder_require (trimDuration >= 0.0,
+		U"The \"Silence trim duration\" should not be negative."); 
     CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE (SpeechSynthesizer, Sound, TextGrid)
-		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align2 (me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, minimumSilenceDuration, minimumSoundingDuration, trimDuration);
+		autoTextGrid result = SpeechSynthesizer_Sound_TextGrid_align2 (
+			me, you, him, tierNumber, fromInterval, toInterval, silenceThreshold_dB, minimumSilenceDuration,
+			minimumSoundingDuration, trimDuration
+		);
     CONVERT_ONE_AND_ONE_AND_ONE_TO_ONE_END (his name.get(), U"_aligned")
 }
 
@@ -6566,7 +6630,7 @@ DO
 
 DIRECT (QUERY_ONE_FOR_INTEGER__Spline_getOrder) {
 	QUERY_ONE_FOR_INTEGER (Spline)
-		integer result = Spline_getOrder (me);
+		const integer result = Spline_getOrder (me);
 	QUERY_ONE_FOR_INTEGER_END (U" (order)")
 }
 
@@ -6576,7 +6640,8 @@ FORM (CONVERT_EACH_TO_ONE__Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x.
 	REAL (xmax, U"Xmax", U"1.0")
 	OK
 DO
-	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
+	Melder_require (xmin < xmax, 
+		U"\"Xmin\" should be smaller than \"Xmax\".");
 	CONVERT_EACH_TO_ONE (Spline)
 		autoSpline result = Spline_scaleX (me, xmin, xmax);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_scaleX")
@@ -6633,7 +6698,7 @@ FORM (QUERY_ONE_FOR_REAL__SSCP_getConfidenceEllipseArea, U"SSCP: Get confidence 
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SSCP)
-		double result = SSCP_getConcentrationEllipseArea (me, confidenceLevel, 1, xIndex, yIndex);
+		const double result = SSCP_getConcentrationEllipseArea (me, confidenceLevel, 1, xIndex, yIndex);
 	QUERY_ONE_FOR_REAL_END (U" (confidence ellipse area)")
 }
 
@@ -6643,7 +6708,7 @@ FORM (QUERY_ONE_FOR_REAL__SSCP_getFractionVariation, U"SSCP: Get fraction variat
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SSCP)
-		double result = SSCP_getFractionVariation (me, fromDimension, toDimension);
+		const double result = SSCP_getFractionVariation (me, fromDimension, toDimension);
 	QUERY_ONE_FOR_REAL_END (U" (fraction)")
 }
 
@@ -6655,25 +6720,25 @@ FORM (QUERY_ONE_FOR_REAL__SSCP_getConcentrationEllipseArea, U"SSCP: Get sigma el
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SSCP)
-		double result = SSCP_getConcentrationEllipseArea (me, numberOfSigmas, 0, xIndex, yIndex);
+		const double result = SSCP_getConcentrationEllipseArea (me, numberOfSigmas, 0, xIndex, yIndex);
 	QUERY_ONE_FOR_REAL_END (U" (concentation ellipse area)")
 }
 
-DIRECT (NUMBER_SSCP_getDegreesOfFreedom) {
+DIRECT (QUERY_ONE_FOR_REAL__SSCP_getDegreesOfFreedom) {
 	QUERY_ONE_FOR_REAL (SSCP)
-		double result = SSCP_getDegreesOfFreedom (me);
+		const double result = SSCP_getDegreesOfFreedom (me);
 	QUERY_ONE_FOR_REAL_END (U" (degrees of freedom)")
 }
 
 DIRECT (QUERY_ONE_FOR_INTEGER__SSCP_getNumberOfObservations) {
 	QUERY_ONE_FOR_INTEGER (SSCP)
-		integer result = Melder_ifloor (my numberOfObservations);   // ppgb: blijf ik raar vinden
+		const integer result = Melder_ifloor (my numberOfObservations);   // ppgb: blijf ik raar vinden
 	QUERY_ONE_FOR_INTEGER_END (U" (number of observations)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__SSCP_getTotalVariance) {
 	QUERY_ONE_FOR_REAL (SSCP)
-		double result = SSCP_getTotalVariance (me);
+		const double result = SSCP_getTotalVariance (me);
 	QUERY_ONE_FOR_REAL_END (U" (total variance)")
 }
 
@@ -6691,7 +6756,7 @@ DO
 
 DIRECT (QUERY_ONE_FOR_REAL__SSCP_getLnDeterminant) {
 	QUERY_ONE_FOR_REAL (SSCP)
-		double result = SSCP_getLnDeterminant (me);
+		const double result = SSCP_getLnDeterminant (me);
 	QUERY_ONE_FOR_REAL_END (U" (ln (determinant))")
 }
 
@@ -6790,7 +6855,9 @@ FORM (CONVERT_EACH_TO_ONE__Strings_change, U"Strings: Change", U"Strings: Change
 DO
 	CONVERT_EACH_TO_ONE (Strings)
 		integer nmatches, nstringmatches;
-		autoStrings result = Strings_change (me, search_string, replace_string, replaceLimit, &nmatches, &nstringmatches, stringType - 1);
+		autoStrings result = Strings_change (
+			me, search_string, replace_string, replaceLimit, &nmatches, &nstringmatches, stringType - 1
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -6833,19 +6900,19 @@ DIRECT (HELP__SVD_help) {
 
 DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows) {
 	QUERY_ONE_FOR_INTEGER (SVD)
-		integer result = my isTransposed ? my numberOfColumns : my numberOfRows;
+		const integer result = ( my isTransposed ? my numberOfColumns : my numberOfRows );
 	QUERY_ONE_FOR_INTEGER_END (U" (number of rows)")	
 }
 
 DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns) {
 	QUERY_ONE_FOR_INTEGER (SVD)
-		integer result = my isTransposed ? my numberOfRows : my numberOfColumns;
+		const integer result = ( my isTransposed ? my numberOfRows : my numberOfColumns );
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of columns)")	
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__SVD_getConditionNumber) {
 	QUERY_ONE_FOR_REAL (SVD)
-		double result = SVD_getConditionNumber (me);
+		const double result = SVD_getConditionNumber (me);
 	QUERY_ONE_FOR_REAL_END (U" (= condition number)")
 }
 
@@ -6854,8 +6921,9 @@ FORM (QUERY_ONE_FOR_REAL__SVD_getSingularValue, U"SVD: Get singular values", nul
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SVD)
-		Melder_require (index <= my numberOfColumns, U"Index must be in the range [1,", my numberOfColumns, U"].");
-		double result = my d [index];
+		Melder_require (index <= my numberOfColumns, 
+			U"Index must be in the range [1,", my numberOfColumns, U"].");
+		const double result = my d [index];
 	QUERY_ONE_FOR_REAL_END (U" (= singular value [", index, U"])")
 }
 
@@ -6865,7 +6933,7 @@ FORM (QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValues, U"SVD: Get sum of singular
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SVD)
-		double result = SVD_getSumOfSingularValues (me, from, to);
+		const double result = SVD_getSumOfSingularValues (me, from, to);
 	QUERY_ONE_FOR_REAL_END (U" (sum of singular values)")
 }
 
@@ -6875,7 +6943,7 @@ FORM (QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValuesAsFractionOfTotal, U"SVD: Ge
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SVD)
-		double result = SVD_getSumOfSingularValuesAsFractionOfTotal (me, from, to);
+		const double result = SVD_getSumOfSingularValuesAsFractionOfTotal (me, from, to);
 	QUERY_ONE_FOR_REAL_END (U" (= fraction of total sum of singular values)")
 }
 
@@ -6883,9 +6951,10 @@ FORM (QUERY_ONE_FOR_INTEGER__SVD_getMinimumNumberOfSingularValues, U"SVD: Get mi
 	POSITIVE (fraction, U"Fraction of total sum", U"0.95")
 	OK
 DO
-	Melder_require (fraction <= 1.0, U"Fraction must be a number in (0,1).");
+	Melder_require (fraction <= 1.0, 
+		U"Fraction must be a number in (0,1).");
 	QUERY_ONE_FOR_INTEGER (SVD)
-		integer result = SVD_getMinimumNumberOfSingularValues (me, fraction);
+		const integer result = SVD_getMinimumNumberOfSingularValues (me, fraction);
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of singular values needed)")
 }
 
@@ -6961,9 +7030,9 @@ FORM (GRAPHICS_EACH__Table_scatterPlotWhere, U"Table: Scatter plot where", nullp
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer markColumn = Table_getColumnIndexFromColumnLabel (me, markColumn_string);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer markColumn = Table_getColumnIndexFromColumnLabel (me, markColumn_string);
 		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
 		Table_scatterPlot (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
@@ -6983,8 +7052,8 @@ FORM (GRAPHICS_EACH__Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
 		Table_scatterPlot_mark (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markSize_mm, mark_string, garnish);
 	GRAPHICS_EACH_END
@@ -7006,7 +7075,9 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		Table_barPlotWhere (me, GRAPHICS, yColumns_string, ymin, ymax, markColumn_string, distanceFromBorder, distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, formula, interpreter);
+		Table_barPlotWhere (me, GRAPHICS, yColumns_string, ymin, ymax, markColumn_string, distanceFromBorder, 
+			distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7024,8 +7095,8 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer xcolumn = Table_findColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer xcolumn = Table_findColumnIndexFromColumnLabel (me, xColumn_string);
 		Table_lineGraphWhere (me, GRAPHICS, xcolumn, xmin, xmax,ycolumn, ymin, ymax, text, angle, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -7039,7 +7110,7 @@ FORM (GRAPHICS_EACH__Table_boxPlots, U"Table: Box plots", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -7054,7 +7125,7 @@ FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Bo
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -7072,8 +7143,8 @@ FORM (GRAPHICS_EACH__Table_drawEllipseWhere, U"Draw ellipse (standard deviation)
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
 		Table_drawEllipse_e (thee.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
@@ -7093,10 +7164,12 @@ FORM (GRAPHICS_EACH__Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin, xmax, ymin, ymax, numberOfSigmas, fontSize, garnish, U"1", interpreter);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin, xmax, 
+			ymin, ymax, numberOfSigmas, fontSize, garnish, U"1", interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7115,10 +7188,12 @@ FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nul
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin,  xmax, ymin, ymax,  numberOfSigmas, fontSize, garnish, formula, interpreter);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin,  xmax, 
+			ymin, ymax, numberOfSigmas, fontSize, garnish, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7133,7 +7208,7 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlot, U"Table: Normal probability pl
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
+		const integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
 		Table_normalProbabilityPlot (me, GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
@@ -7149,8 +7224,8 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probabili
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
-		autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
+		const integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
+		const autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
 		Table_normalProbabilityPlot (thee.get(), GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
@@ -7169,9 +7244,11 @@ FORM (GRAPHICS_EACH__Table_quantileQuantilePlot, U"Table: Quantile-quantile plot
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		Table_quantileQuantilePlot (me, GRAPHICS, xcolumn, ycolumn, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, label, garnish);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		Table_quantileQuantilePlot (me, GRAPHICS, xcolumn, ycolumn, numberOfQuantiles, xmin, xmax, 
+			ymin, ymax, labelSize, label, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7191,9 +7268,11 @@ FORM (GRAPHICS_EACH__Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_quantileQuantilePlot_betweenLevels (me, GRAPHICS, dataColumn, factorColumn, xLevel_string, yLevelString, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, label, garnish);
+		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		Table_quantileQuantilePlot_betweenLevels (me, GRAPHICS, dataColumn, factorColumn, xLevel_string, yLevelString,
+			numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, label, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7208,7 +7287,7 @@ FORM (GRAPHICS_EACH__Table_lagPlot, U"Table: lag plot", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -7226,7 +7305,7 @@ FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -7243,8 +7322,10 @@ FORM (GRAPHICS_EACH__Table_distributionPlot, U"Table: Distribution plot", nullpt
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, minimumFrequency, maximumFrequency, garnish, U"1", interpreter);
+		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, 
+			numberOfBins, minimumFrequency, maximumFrequency, garnish, U"1", interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7261,8 +7342,10 @@ FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot whe
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, minimumFrequency, maximumFrequency, garnish, formula, interpreter);
+		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, 
+			minimumFrequency, maximumFrequency, garnish, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7280,11 +7363,13 @@ FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlot, U"Table: Horizontal error ba
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, xl, xu, barSize_mm, garnish, U"1", interpreter);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		const integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax,
+			xl, xu, barSize_mm, garnish, U"1", interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7303,11 +7388,13 @@ FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal err
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, xl, xu, barSize_mm, garnish, formula, interpreter);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		const integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax,
+			xl, xu, barSize_mm, garnish, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7325,11 +7412,13 @@ FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlot, U"Table: Vertical error bars p
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, yl, yu, barSize_mm, garnish, U"1", interpreter);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		const integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, 
+			yl, yu, barSize_mm, garnish, U"1", interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7348,11 +7437,13 @@ FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error b
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
-		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, yl, yu, barSize_mm, garnish, formula, interpreter);
+		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		const integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		const integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, 
+			yl, yu, barSize_mm, garnish, formula, interpreter
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7375,7 +7466,9 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract r
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		autoTable result = Table_extractMahalanobisWhere (me, dataColumns_string, factorColumn_string, numberOfSigmas, haveAMahalanobisDistance, formula, interpreter);
+		autoTable result = Table_extractMahalanobisWhere (me, dataColumns_string, factorColumn_string, 
+			numberOfSigmas, haveAMahalanobisDistance, formula, interpreter
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
 }
 
@@ -7416,7 +7509,7 @@ DO
 	INFO_ONE (TableOfReal)
 		bool singular;
 		double tnb, lnmu, lnvar;
-		double prob = TableOfReal_normalityTest_BHEP (me, & smoothing, & tnb, & lnmu, & lnvar, & singular);
+		const double prob = TableOfReal_normalityTest_BHEP (me, & smoothing, & tnb, & lnmu, & lnvar, & singular);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Baringhaus–Henze–Epps–Pulley normality test:");
 		MelderInfo_writeLine (U"Significance of normality: ", prob);
@@ -7513,7 +7606,8 @@ FORM (GRAPHICS_EACH__TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as s
 DO
 	GRAPHICS_EACH (TableOfReal)
 		TableOfReal_drawAsScalableSquares (me, GRAPHICS, rowmin, rowmax, colmin, colmax,
-				origin, scaleFactor, drawingOrder, garnish);
+			origin, scaleFactor, drawingOrder, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7535,7 +7629,9 @@ FORM (GRAPHICS_EACH__TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter pl
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawScatterPlot (me, GRAPHICS, xColumn, yColumn, fromRow, toRow, xmin, xmax, ymin, ymax, labelSize, useRowLabels, label, garnish);
+		TableOfReal_drawScatterPlot (me, GRAPHICS, xColumn, yColumn, fromRow, toRow, xmin, xmax, 
+			ymin, ymax, labelSize, useRowLabels, label, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7586,7 +7682,9 @@ FORM (GRAPHICS_EACH__TableOfReal_drawVectors, U"Draw vectors", U"TableOfReal: Dr
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawVectors (me, GRAPHICS, x1Column, y1Column, x2Column, y2Column, xmin, xmax, ymin, ymax, vectorType, labelSize, garnish);
+		TableOfReal_drawVectors (me, GRAPHICS, x1Column, y1Column, x2Column, y2Column, xmin, xmax, 
+			ymin, ymax, vectorType, labelSize, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7606,7 +7704,9 @@ FORM (GRAPHICS_EACH__TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumber, fromColumn, toColumn, ymin, ymax, xOffset, 0, distanceBetweenBars, greys, garnish);
+		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumber, fromColumn, toColumn, ymin, ymax, 
+			xOffset, 0, distanceBetweenBars, greys, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7627,7 +7727,9 @@ FORM (GRAPHICS_EACH__TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram",
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumbers_string, fromColumn, toColumn, ymin, ymax,xOffset, distanceBetweenBars,distanceBetweenBarGroups, greys_string, garnish);
+		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumbers_string, fromColumn, toColumn, ymin, ymax,
+			xOffset, distanceBetweenBars,distanceBetweenBarGroups, greys_string, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7657,7 +7759,9 @@ FORM (GRAPHICS_EACH__TableOfReal_drawColumnAsDistribution, U"TableOfReal: Draw c
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawColumnAsDistribution (me, GRAPHICS, columnNumber, fromValue, toValue, numberOfBins, fromFrequency, toFrequency, false, garnish);
+		TableOfReal_drawColumnAsDistribution (me, GRAPHICS, columnNumber, fromValue, toValue, numberOfBins, 
+			fromFrequency, toFrequency, false, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -7665,7 +7769,8 @@ FORM (CONVERT_EACH_TO_ONE__TableOfReal_to_Configuration_lda, U"TableOfReal: To C
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
-	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
+	Melder_require (numberOfDimensions >= 0, 
+		U"The number of dimensions should be at least zero.");
 	CONVERT_EACH_TO_ONE (TableOfReal)
 		autoConfiguration result = TableOfReal_to_Configuration_lda (me, numberOfDimensions);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_lda")
@@ -7771,7 +7876,7 @@ FORM (CONVERT_TWO_TO_ONE__TableOfReal_TableOfReal_crossCorrelations, U"TableOfRe
 	BOOLEAN (normalize, U"Normalize", false)
 	OK
 DO
-	int by_columns = between - 1;
+	const bool by_columns = ( between == 2 );
 	CONVERT_TWO_TO_ONE (TableOfReal)
 		autoTableOfReal result = TableOfReal_TableOfReal_crossCorrelations (me, you, by_columns, center, normalize);
 	CONVERT_TWO_TO_ONE_END (U"cc_", by_columns ? U"by_cols" : U"by_rows")
@@ -7820,7 +7925,7 @@ FORM (QUERY_ONE_FOR_REAL__TableOfReal_getColumnSum, U"TableOfReal: Get column su
 	OK
 DO
 	QUERY_ONE_FOR_REAL (TableOfReal)
-		double result = TableOfReal_getColumnSum (me, columnNumber);
+		const double result = TableOfReal_getColumnSum (me, columnNumber);
 	QUERY_ONE_FOR_REAL_END (U"(column sum)")
 }
 
@@ -7829,13 +7934,13 @@ FORM (QUERY_ONE_FOR_REAL__TableOfReal_getRowSum, U"TableOfReal: Get row sum", U"
 	OK
 DO
 	QUERY_ONE_FOR_REAL (TableOfReal)
-		double result = TableOfReal_getRowSum (me, rowNumber);
+		const double result = TableOfReal_getRowSum (me, rowNumber);
 	QUERY_ONE_FOR_REAL_END (U"(row sum)")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__TableOfReal_getGrandSum) {
 	QUERY_ONE_FOR_REAL (TableOfReal)
-		double result = TableOfReal_getGrandSum (me);
+		const double result = TableOfReal_getGrandSum (me);
 	QUERY_ONE_FOR_REAL_END (U"(grand sum)")
 }
 
@@ -7877,7 +7982,7 @@ FORM (QUERY_ONE_FOR_REAL__TextGrid_getTotalDurationOfIntervalsWhere, U"Total dur
 	OK
 DO
 	QUERY_ONE_FOR_REAL (TextGrid)
-		double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
+		const double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
 	QUERY_ONE_FOR_REAL_END (U" s (duration of intervals containing \"", ___theText, U"\")");
 }
 
@@ -7906,7 +8011,9 @@ FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts",
 DO
 	MODIFY_EACH (TextGrid)
 		integer nmatches, nstringmatches;
-		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, searchType - 1, &nmatches, &nstringmatches);
+		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, 
+			searchType - 1, &nmatches, &nstringmatches
+		);
 	MODIFY_EACH_END
 }
 
@@ -7923,7 +8030,9 @@ FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"Tex
 DO
 	MODIFY_EACH (TextGrid)
 		integer nmatches, nstringmatches;
-		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string, searchType - 1, &nmatches, &nstringmatches);
+		TextGrid_changeLabels (me, tierNumber, fromInterval, toInterval, search_string, replace_string,
+			searchType - 1, &nmatches, &nstringmatches
+		);
 	MODIFY_EACH_END
 }
 
@@ -7949,7 +8058,8 @@ FORM (CONVERT_EACH_TO_ONE__TextGrid_to_DurationTier, U"TextGrid: To DurationTier
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor,
-			leftTransitionDuration, rightTransitionDuration, scaleIntervalsWhoseLabel___, ___theText);
+			leftTransitionDuration, rightTransitionDuration, scaleIntervalsWhoseLabel___, ___theText
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -7962,7 +8072,9 @@ FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
-		autoTextGridNavigator result = TextGrid_to_TextGridNavigator_topicSearch (me, tierNumber, topic_string, topicCriterion,  topicMatchBoolean, matchDomain);
+		autoTextGridNavigator result = TextGrid_to_TextGridNavigator_topicSearch (me, tierNumber, 
+			topic_string, topicCriterion,  topicMatchBoolean, matchDomain
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -7987,9 +8099,12 @@ FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"", nullptr) {
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
-		autoTextGridNavigator result = TextGrid_to_TextGridNavigator (me, tierNumber, topic_string, topicCriterion, topicMatchBoolean,  
-			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic, matchDomain);
+		autoTextGridNavigator result = TextGrid_to_TextGridNavigator (me, tierNumber, 
+			topic_string, topicCriterion, topicMatchBoolean, 
+			before_string, beforeCriterion, beforeMatchBoolean, 
+			after_string, afterCriterion, afterMatchBoolean,
+			useCriterion, excludeTopic, matchDomain
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -8014,7 +8129,7 @@ DIRECT (HELP__TextGridNavigator_help) {
 	HELP (U"TextGridNavigator")
 }
 
-FORM (MODIFY_TextGridNavigator_findNextAfterTime, U"TextGridNavigator: Find next after time", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_findNextAfterTime, U"TextGridNavigator: Find next after time", nullptr) {
 	REAL (time, U"Time (s)", U"-1.0")
 	OK
 DO
@@ -8023,7 +8138,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_findPreviousBeforeTime, U"TextGridNavigator: Find previous before time", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_findPreviousBeforeTime, U"TextGridNavigator: Find previous before time", nullptr) {
 	REAL (time, U"Time (s)", U"10.0")
 	OK
 DO
@@ -8032,25 +8147,25 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_findFirst) {
+DIRECT (MODIFY_EACH__TextGridNavigator_findFirst) {
 	MODIFY_EACH (TextGridNavigator)
 		(void) TextGridNavigator_findFirst (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_findLast) {
+DIRECT (MODIFY_EACH__TextGridNavigator_findLast) {
 	MODIFY_EACH (TextGridNavigator)
 		(void) TextGridNavigator_findLast (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_findNext) {
+DIRECT (MODIFY_EACH__TextGridNavigator_findNext) {
 	MODIFY_EACH (TextGridNavigator)
 		(void) TextGridNavigator_findNext (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_findPrevious) {
+DIRECT (MODIFY_EACH__TextGridNavigator_findPrevious) {
 	MODIFY_EACH (TextGridNavigator)
 		(void) TextGridNavigator_findPrevious (me);
 	MODIFY_EACH_END
@@ -8062,7 +8177,7 @@ FORM (QUERY_ONE_FOR_REAL__TextGridNavigator_getStartTime, U"TextGridNavigator: G
 	OK
 DO
 	QUERY_ONE_FOR_REAL (TextGridNavigator)
-		double  result = TextGridNavigator_getStartTime (me, tierNumber, where);
+		const double result = TextGridNavigator_getStartTime (me, tierNumber, where);
 	QUERY_ONE_FOR_REAL_END (U" s (start time)")
 }
 
@@ -8072,7 +8187,7 @@ FORM (QUERY_ONE_FOR_REAL__TextGridNavigator_getEndTime, U"TextGridNavigator: Get
 	OK
 DO
 	QUERY_ONE_FOR_REAL (TextGridNavigator)
-		double  result = TextGridNavigator_getEndTime (me, tierNumber, where);
+		const double result = TextGridNavigator_getEndTime (me, tierNumber, where);
 	QUERY_ONE_FOR_REAL_END (U" s (end time)")
 }
 
@@ -8082,11 +8197,11 @@ FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getIndex, U"TextGridNavigator: Ge
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
-		integer  result = TextGridNavigator_getIndex (me, tierNumber, where);
+		const integer result = TextGridNavigator_getIndex (me, tierNumber, where);
 	QUERY_ONE_FOR_INTEGER_END (U"")
 }
 
-FORM (NUMVEC_TextGridNavigator_listIndices, U"TextGridNavigator: List indices", nullptr) {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listIndices, U"TextGridNavigator: List indices", nullptr) {
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
@@ -8098,7 +8213,7 @@ DO
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
-FORM (NUMVEC_TextGridNavigator_listStartTimes, U"TextGridNavigator: List start times", nullptr) {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listStartTimes, U"TextGridNavigator: List start times", nullptr) {
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
@@ -8107,7 +8222,7 @@ DO
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
-FORM (NUMVEC_TextGridNavigator_listEndTimes, U"TextGridNavigator: List end times", nullptr) {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listEndTimes, U"TextGridNavigator: List end times", nullptr) {
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
@@ -8116,7 +8231,7 @@ DO
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
-FORM (STRVEC_TextGridNavigator_listLabels, U"TextGridNavigator: List labels", nullptr) {
+FORM (QUERY_ONE_FOR_STRING_ARRAY__TextGridNavigator_listLabels, U"TextGridNavigator: List labels", nullptr) {
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
 DO
@@ -8125,7 +8240,7 @@ DO
 	QUERY_ONE_FOR_STRING_ARRAY_END
 }
 
-FORM (NUMMAT_TextGridNavigator_listDomains, U"", nullptr) {
+FORM (QUERY_ONE_FOR_MATRIX__TextGridNavigator_listDomains, U"", nullptr) {
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
@@ -8134,7 +8249,7 @@ DO
 	QUERY_ONE_FOR_MATRIX_END
 }
 
-FORM (INFO_TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr) {
+FORM (QUERY_ONE_FOR_STRING__TextGridNavigator_getLabel, U"TextGridNavigator: Get label", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kContext_where, where, U"Where", kContext_where::DEFAULT)
 	OK
@@ -8146,7 +8261,7 @@ DO
 
 DIRECT (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfMatches) {
 	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
-		integer  result = TextGridNavigator_getNumberOfMatches (me);
+		const integer result = TextGridNavigator_getNumberOfMatches (me);
 	QUERY_ONE_FOR_INTEGER_END (U" (number of matches)")	
 }
 
@@ -8155,7 +8270,7 @@ FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfTopicMatches, U"TextGr
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
-		integer  result = TextGridNavigator_getNumberOfTopicMatches (me, tierNumber);
+		const integer result = TextGridNavigator_getNumberOfTopicMatches (me, tierNumber);
 	QUERY_ONE_FOR_INTEGER_END (U" (number of Topic only matches in tier number ", tierNumber, U")")	
 }
 
@@ -8164,7 +8279,7 @@ FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfBeforeMatches, U"TextG
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
-		integer  result = TextGridNavigator_getNumberOfBeforeMatches (me, tierNumber);
+		const integer result = TextGridNavigator_getNumberOfBeforeMatches (me, tierNumber);
 	QUERY_ONE_FOR_INTEGER_END (U" (number of Before only matches in tier number ", tierNumber, U")")	
 }
 
@@ -8173,11 +8288,11 @@ FORM (QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfAfterMatches, U"TextGr
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (TextGridNavigator)
-		integer  result = TextGridNavigator_getNumberOfAfterMatches (me, tierNumber);
+		const integer result = TextGridNavigator_getNumberOfAfterMatches (me, tierNumber);
 	QUERY_ONE_FOR_INTEGER_END (U" (number of After only matches in tier number ", tierNumber, U")")	
 }
 
-FORM (MODIFY_TextGridNavigator_modifyUseCriterion, U"TextGridNavigator: Modify Use criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyUseCriterion, U"TextGridNavigator: Modify Use criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Use criterion", kContext_use::DEFAULT)
 	BOOLEAN (excludeTopic, U"Exclude topic", false)
@@ -8188,7 +8303,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
@@ -8199,7 +8314,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
@@ -8210,7 +8325,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
@@ -8221,7 +8336,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyLocationCriterion, U"TextGridNavigator: Modify location criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyLocationCriterion, U"TextGridNavigator: Modify location criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
 	OK
@@ -8231,7 +8346,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyMatchDomain, U"TextGridNavigator: Modify match domain", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyMatchDomain, U"TextGridNavigator: Modify match domain", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
@@ -8241,7 +8356,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyBeforeRange, U"TextGridNavigator: Modify Before range", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyBeforeRange, U"TextGridNavigator: Modify Before range", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	NATURAL (from, U"From", U"1")
 	NATURAL (to, U"To", U"1")
@@ -8252,7 +8367,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_modifyAfterRange, U"TextGridNavigator: Modify After range", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyAfterRange, U"TextGridNavigator: Modify After range", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	NATURAL (from, U"From", U"1")
 	NATURAL (to, U"To", U"1")
@@ -8263,7 +8378,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_TextGridNavigator_replaceNavigationContext, U"TextGridNavigator: Replace NavigationContext", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceNavigationContext, U"TextGridNavigator: Replace NavigationContext", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OK
 DO
@@ -8272,7 +8387,7 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-FORM (MODIFY_TextGridNavigator_addTextGridTierNavigator, U"TextGridNavigator: Add TextGridTierNavigator", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addTextGridTierNavigator, U"TextGridNavigator: Add TextGridTierNavigator", nullptr) {
 	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
 	OK
 DO
@@ -8281,14 +8396,13 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-DIRECT (MODIFY_TextGridNavigator_replaceSearchTiers) {
+DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers) {
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_replaceTiers (me, you);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
-	
 }
 
-FORM (MODIFY_TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
@@ -8299,12 +8413,13 @@ FORM (MODIFY_TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
-		TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (me, you, tierNumber, 
-			topic_string, topicCriterion, topicMatchBoolean, matchDomain, matchLocation);
+		TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (
+			me, you, tierNumber, topic_string, topicCriterion, topicMatchBoolean, matchDomain, matchLocation
+		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
@@ -8327,8 +8442,11 @@ FORM (MODIFY_TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search ti
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_and_TextGrid_addSearchTier (me, you, tierNumber, 
-			topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, beforeMatchBoolean,
-			after_string, afterCriterion, afterMatchBoolean, useCriterion, excludeTopic, matchDomain, matchLocation);
+			topic_string, topicCriterion, topicMatchBoolean, 
+			before_string, beforeCriterion, beforeMatchBoolean,
+			after_string, afterCriterion, afterMatchBoolean, 
+			useCriterion, excludeTopic, matchDomain, matchLocation
+		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
@@ -8338,7 +8456,7 @@ DIRECT (CONVERT_EACH_TO_ONE__TextGridTierNavigator_to_TextGridNavigator) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (MODIFY_TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
+FORM (MODIFY_EACH__TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
 	NATURAL (tierNUmber, U"Tier number:", U"1")
 	SENTENCE (name, U"Name", U"");
 	OK
@@ -8627,7 +8745,7 @@ static void praat_SSCP_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Get number of observations", U"-- statistics --", 1, 
 		QUERY_ONE_FOR_INTEGER__SSCP_getNumberOfObservations);
 	praat_addAction1 (klas, 1, U"Get degrees of freedom", U"Get number of observations", 1, 
-			NUMBER_SSCP_getDegreesOfFreedom);
+			QUERY_ONE_FOR_REAL__SSCP_getDegreesOfFreedom);
 	praat_addAction1 (klas, 1, U"Get centroid element...", U"Get degrees of freedom", 1, 
 			QUERY_ONE_FOR_REAL__SSCP_getCentroidElement);
 	praat_addAction1 (klas, 1, U"Get ln(determinant)", U"Get centroid element...", 1, 
@@ -8729,13 +8847,13 @@ void praat_uvafon_David_init () {
 	espeakdata_praat_init ();
 
 	praat_addMenuCommand (U"Objects", U"Technical", U"Report floating point properties", U"Report integer properties", 0,
-			INFO_Praat_ReportFloatingPointProperties);
+			INFO_NONE__Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get TukeyQ...", 0, praat_HIDDEN,
-			REAL_Praat_getTukeyQ);
+			QUERY_NONE_FOR_REAL__Praat_getTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get invTukeyQ...", 0, praat_HIDDEN,
-			REAL_Praat_getInvTukeyQ);
+			QUERY_NONE_FOR_REAL__Praat_getInvTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get incomplete gamma...", 0, praat_HIDDEN, 
-			COMPLEX_Praat_getIncompleteGamma);
+			QUERY_NONE_FOR_COMPLEX__Praat_getIncompleteGamma);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, 
 			CREATE_ONE__Permutation_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
@@ -8820,11 +8938,11 @@ void praat_uvafon_David_init () {
 			CREATE_ONE__SpeechSynthesizer_extractEspeakData);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, 
-			READ1_Sound_readFromRawFileLE);
+			READ_ONE__Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1,
-			READ1_Sound_readFromRawFileBE);
+			READ_ONE__Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN,
-			READ1_KlattTable_readFromRawTextFile);
+			READ_ONE__KlattTable_readFromRawTextFile);
 
 	praat_addAction1 (classActivationList, 0, U"Modify", nullptr, 0, nullptr);
 	praat_addAction1 (classActivationList, 0, U"Formula...", nullptr, 0, 
@@ -9840,15 +9958,15 @@ void praat_uvafon_David_init () {
 			QUERY_ONE_FOR_REAL__Polygon_getAreaOfConvexHull);
 
 	praat_addAction1 (classPolygon, 0, U"Translate...", MODIFY_BUTTON, 1,
-			MODIFY_Polygon_translate);
+			MODIFY_EACH__Polygon_translate);
 	praat_addAction1 (classPolygon, 0, U"Rotate...", U"Translate...", 1, 
-			MODIFY_Polygon_rotate);
+			MODIFY_EACH__Polygon_rotate);
 	praat_addAction1 (classPolygon, 0, U"Scale...", U"Rotate...", 1,
-			MODIFY_Polygon_scale);
+			MODIFY_EACH__Polygon_scale);
 	praat_addAction1 (classPolygon, 0, U"Reverse X", U"Scale...", 1, 
-			MODIFY_Polygon_reverseX);
+			MODIFY_EACH__Polygon_reverseX);
 	praat_addAction1 (classPolygon, 0, U"Reverse Y", U"Reverse X", 1, 
-			MODIFY_Polygon_reverseY);
+			MODIFY_EACH__Polygon_reverseY);
 	praat_addAction1 (classPolygon, 0, U"Simplify", nullptr, praat_HIDDEN,
 			CONVERT_EACH_TO_ONE__Polygon_simplify);
 	praat_addAction1 (classPolygon, 0, U"Convex hull", nullptr, 0, 
@@ -9857,7 +9975,7 @@ void praat_uvafon_David_init () {
 			CONVERT_EACH_TO_ONE__Polygon_circularPermutation);
 
 	praat_addAction2 (classPolygon, 1, classCategories, 1, U"Draw...", nullptr, 0,
-			GRAPHICS_Polygon_Categories_draw);
+			GRAPHICS_ONE_AND_ONE__Polygon_Categories_draw);
 
 	praat_addAction1 (classPolynomial, 0, U"Polynomial help", nullptr, 0, 
 			HELP__Polynomial_help);
@@ -9873,7 +9991,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPolynomial, 0, U"Scale coefficients (monic)", U"-- monic --", 1, 
 			MODIFY_Polynomial_scaleCoefficients_monic);
 	praat_addAction1 (classPolynomial, 1, U"Divide (second order factor)...", U"Scale coefficients (monic)", 1, 
-			MODIFY_Polynomial_divide_secondOrderFactor);
+			MODIFY_EACH__Polynomial_divide_secondOrderFactor);
 
 	praat_addAction1 (classPolynomial, 1, U"Get value (complex)...", U"Get value...", 1, 
 			INFO_ONE__Polynomial_evaluate_z);
@@ -9912,22 +10030,22 @@ void praat_uvafon_David_init () {
 			QUERY_ONE_FOR_REAL__Roots_getImaginaryPartOfRoot);
 	praat_addAction1 (classRoots, 1, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classRoots, 1, U"Set root...", nullptr, 1, 
-			MODIFY_Roots_setRoot);
+			MODIFY_EACH__Roots_setRoot);
 	praat_addAction1 (classRoots, 0, U"Analyse", nullptr, 0, 0);
 	praat_addAction1 (classRoots, 0, U"To Spectrum...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__Roots_to_Spectrum);
 
 	praat_addAction2 (classRoots, 1, classPolynomial, 1, U"Polish roots", nullptr, 0,
-			MODIFY_Roots_Polynomial_polish);
+			MODIFY_FIRST_OF_ONE_AND_ONE__Roots_Polynomial_polish);
 
 	praat_addAction1 (classSound, 0, U"To TextGrid (silences)...", U"To IntervalTier", 1, 
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences);
 	praat_addAction1 (classSound, 0, U"To TextGrid (voice activity)...", U"To IntervalTier", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_voiceActivity);
     praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", praat_HIDDEN, 
-			PLAY_Sound_playOneChannel);
+			PLAY_EACH__Sound_playOneChannel);
     praat_addAction1 (classSound, 0, U"Play as frequency shifted...", U"Play", praat_HIDDEN, 
-			PLAY_Sound_playAsFrequencyShifted);
+			PLAY_EACH__Sound_playAsFrequencyShifted);
 	praat_addAction1 (classSound, 0, U"Draw where...", U"Draw...", 1,
 			GRAPHICS_EACH__Sound_drawWhere);
 	praat_addAction1 (classSound, 0, U"Paint where...", U"Draw where...", 1, 
@@ -10013,11 +10131,11 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpectrum, 0, U"Draw phases...", U"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, 
 			GRAPHICS_EACH__Spectrum_drawPhases);
 	praat_addAction1 (classSpectrum, 0, U"Set real value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, 
-			MODIFY_Spectrum_setRealValueInBin);
+			MODIFY_EACH__Spectrum_setRealValueInBin);
 	praat_addAction1 (classSpectrum, 0, U"Set imaginary value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1,
-			MODIFY_Spectrum_setImaginaryValueInBin);
+			MODIFY_EACH__Spectrum_setImaginaryValueInBin);
 	praat_addAction1 (classSpectrum, 0, U"Conjugate", U"Formula...", praat_HIDDEN | praat_DEPTH_1,
-			MODIFY_Spectrum_conjugate);
+			MODIFY_EACH__Spectrum_conjugate);
 	praat_addAction1 (classSpectrum, 2, U"Multiply", U"To Sound (fft)", praat_HIDDEN, 
 			CONVERT_TWO_TO_ONE__Spectra_multiply);
 	praat_addAction1 (classSpectrum, 0, U"To Matrix (unwrap)", U"To Matrix", praat_HIDDEN, 
@@ -10036,29 +10154,29 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpeechSynthesizer, 0, U"SpeechSynthesizer help", nullptr, 0,
 			HELP__SpeechSynthesizer_help);
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0, 
-			PLAY_SpeechSynthesizer_playText);
+			PLAY_EACH__SpeechSynthesizer_playText);
 	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__SpeechSynthesizer_to_Sound);
 	praat_addAction1 (classSpeechSynthesizer, 0, QUERY_BUTTON, nullptr, 0, 0);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get language name", nullptr, 1, 
-				INFO_SpeechSynthesizer_getLanguageName);
+				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getLanguageName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, 
-				INFO_SpeechSynthesizer_getVoiceName);
+				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phoneme set name", nullptr, 1,
-				INFO_SpeechSynthesizer_getPhonemeSetName);
+				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getPhonemeSetName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, praat_DEPRECATED_2017, 
-				INFO_SpeechSynthesizer_getVoiceName);
+				QUERY_ONE_FOR_STRING__SpeechSynthesizer_getVoiceName);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, praat_DEPTH_1,
-				MODIFY_SpeechSynthesizer_modifyPhonemeSet);
+				MODIFY_EACH__SpeechSynthesizer_modifyPhonemeSet);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1,
-				MODIFY_SpeechSynthesizer_setTextInputSettings);
+				MODIFY_EACH__SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Speech output settings...", nullptr, 1,
-				MODIFY_SpeechSynthesizer_speechOutputSettings);
+				MODIFY_EACH__SpeechSynthesizer_speechOutputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Estimate speech rate from speech...", nullptr, 1,
-				MODIFY_SpeechSynthesizer_estimateSpeechRateFromSpeech);
+				MODIFY_EACH__SpeechSynthesizer_estimateSpeechRateFromSpeech);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, praat_DEPTH_1 |praat_DEPRECATED_2017,
-				MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
+				MODIFY_EACH__SpeechSynthesizer_setSpeechOutputSettings);
 
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__SpeechSynthesizer_TextGrid_to_Sound);
@@ -10293,7 +10411,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, 
 			MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1,
-			MODIFY_TextGrid_setTierName);
+			MODIFY_EACH__TextGrid_setTierName);
 	praat_addAction1 (classTextGrid, 0, U"Replace interval texts...", U"Set interval text...", 2, 
 			MODIFY_TextGrid_replaceIntervalTexts);
 	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"*Replace interval texts...", praat_DEPTH_2 | praat_DEPRECATED_2018,
@@ -10323,38 +10441,38 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 0, U"TextGridNavigator help", nullptr, 0, 
 			HELP__TextGridNavigator_help);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find first", nullptr, 0, 
-			MODIFY_TextGridNavigator_findFirst);
+			MODIFY_EACH__TextGridNavigator_findFirst);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find last", nullptr, 0,
-			MODIFY_TextGridNavigator_findLast);
+			MODIFY_EACH__TextGridNavigator_findLast);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find next", nullptr, 0, 
-			MODIFY_TextGridNavigator_findNext);
+			MODIFY_EACH__TextGridNavigator_findNext);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find next after time...", nullptr, 0, 
-			MODIFY_TextGridNavigator_findNextAfterTime);
+			MODIFY_EACH__TextGridNavigator_findNextAfterTime);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find previous", nullptr, 0, 
-			MODIFY_TextGridNavigator_findPrevious);
+			MODIFY_EACH__TextGridNavigator_findPrevious);
 	praat_addAction1 (classTextGridNavigator, 0, U"Find previous before time...", nullptr, 0, 
-			MODIFY_TextGridNavigator_findPreviousBeforeTime);
+			MODIFY_EACH__TextGridNavigator_findPreviousBeforeTime);
 	
 	praat_addAction1 (classTextGridNavigator, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get start time...", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__TextGridNavigator_getStartTime);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get label...", nullptr, 1, 
-			INFO_TextGridNavigator_getLabel);
+			QUERY_ONE_FOR_STRING__TextGridNavigator_getLabel);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get end time...", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__TextGridNavigator_getEndTime);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get index...", nullptr, 1, 
 		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getIndex);
 	praat_addAction1 (classTextGridNavigator, 1, U"-- number of matches --", nullptr, 1, nullptr);
 	praat_addAction1 (classTextGridNavigator, 1, U"List indices...", nullptr, 1, 
-			NUMVEC_TextGridNavigator_listIndices);
+			QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listIndices);
 	praat_addAction1 (classTextGridNavigator, 1, U"List start times...", nullptr, 1, 
-			NUMVEC_TextGridNavigator_listStartTimes);
+			QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listStartTimes);
 	praat_addAction1 (classTextGridNavigator, 1, U"List labels...", nullptr, 1, 
-			STRVEC_TextGridNavigator_listLabels);
+			QUERY_ONE_FOR_STRING_ARRAY__TextGridNavigator_listLabels);
 	praat_addAction1 (classTextGridNavigator, 1, U"List end times...", nullptr, 1, 
-			NUMVEC_TextGridNavigator_listEndTimes);
+			QUERY_ONE_FOR_REAL_VECTOR__TextGridNavigator_listEndTimes);
 	praat_addAction1 (classTextGridNavigator, 1, U"List domains...", nullptr, 1, 
-			NUMMAT_TextGridNavigator_listDomains);
+			QUERY_ONE_FOR_MATRIX__TextGridNavigator_listDomains);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of matches", nullptr, 1, 
 		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfMatches);
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of Topic matches...", nullptr, 1, 
@@ -10365,32 +10483,32 @@ void praat_uvafon_David_init () {
 		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfAfterMatches);
 	praat_addAction1 (classTextGridNavigator, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Use criterion...", nullptr, 1, 
-			MODIFY_TextGridNavigator_modifyUseCriterion);
+			MODIFY_EACH__TextGridNavigator_modifyUseCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic criterion...", nullptr, 1,
-			MODIFY_TextGridNavigator_modifyTopicCriterion);
+			MODIFY_EACH__TextGridNavigator_modifyTopicCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before criterion...", nullptr, 1,
-			MODIFY_TextGridNavigator_modifyBeforeCriterion);
+			MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After criterion...", nullptr, 1, 
-			MODIFY_TextGridNavigator_modifyAfterCriterion);
+			MODIFY_EACH__TextGridNavigator_modifyAfterCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify location criterion...", nullptr, 1,
-			MODIFY_TextGridNavigator_modifyLocationCriterion);
+			MODIFY_EACH__TextGridNavigator_modifyLocationCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain...", nullptr, 1, 
-			MODIFY_TextGridNavigator_modifyMatchDomain);
+			MODIFY_EACH__TextGridNavigator_modifyMatchDomain);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before range...", nullptr, 1, 
-			MODIFY_TextGridNavigator_modifyBeforeRange);
+			MODIFY_EACH__TextGridNavigator_modifyBeforeRange);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After range...", nullptr, 1, 
-			MODIFY_TextGridNavigator_modifyAfterRange);
+			MODIFY_EACH__TextGridNavigator_modifyAfterRange);
 	
 	praat_addAction2 (classTextGridNavigator, 1, classNavigationContext, 1, U"Replace navigation context...", nullptr, 0,
-			MODIFY_TextGridNavigator_replaceNavigationContext);
+			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceNavigationContext);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGridTierNavigator, 1, U"Add TextGridTierNavigator...", nullptr, 0,
-			MODIFY_TextGridNavigator_addTextGridTierNavigator);
+			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addTextGridTierNavigator);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Replace search tiers", nullptr, 0, 
-			MODIFY_TextGridNavigator_replaceSearchTiers);
+			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Add search tier (topic only)...", nullptr, 0,
-			MODIFY_TextGridNavigator_addSearchTier_topicOnly);
+			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly);
 	praat_addAction2 (classTextGridNavigator, 1, classTextGrid, 1, U"Add search tier...", nullptr, 0,
-			MODIFY_TextGridNavigator_addSearchTier);
+			MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier);
 	
 	praat_addAction1 (classTextGridTierNavigator, 0, U"To TextGridNavigator", nullptr, 1, 
 			CONVERT_EACH_TO_ONE__TextGridTierNavigator_to_TextGridNavigator);
