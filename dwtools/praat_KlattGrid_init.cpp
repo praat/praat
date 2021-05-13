@@ -50,7 +50,9 @@
 	BOOLEAN (useAspiration, U"Aspiration", true) \
 	BOOLEAN (useBreathiness, U"Breathiness", true)
 
-static void KlattGrid_PhonationGridPlayOptions (KlattGrid me, int useVoicing, int useFlutter, int useDoublePulsing, int useCollisionPhase, int useSpectralTilt, int flowFunctionType, int useFlowDerivative, int useAspiration, int useBreathiness) {
+static void KlattGrid_PhonationGridPlayOptions (KlattGrid me, int useVoicing, int useFlutter, int useDoublePulsing, 
+	int useCollisionPhase, int useSpectralTilt, int flowFunctionType, int useFlowDerivative, int useAspiration, int useBreathiness)
+{
 	PhonationGridPlayOptions pp = my phonation -> options.get();
 	pp -> voicing = useVoicing;
 	pp -> flutter = useFlutter;
@@ -72,7 +74,9 @@ static void KlattGrid_PhonationGridPlayOptions (KlattGrid me, int useVoicing, in
 	INTEGER (fromNasalAntiFormant, U"left Nasal antiformant range", U"1") \
 	INTEGER (toNasalAntiFormant, U"right Nasal antiformant range", U"1")
 	
-static void KlattGrid_formantSelection_vocalTract (KlattGrid me, kKlattGridFilterModel filterModel, integer fromOralFormant, integer toOralFormant, integer fromNasalFormant, integer toNasalFormant, integer fromNasalAntiFormant, integer toNasalAntiFormant) {
+static void KlattGrid_formantSelection_vocalTract (KlattGrid me, kKlattGridFilterModel filterModel, integer fromOralFormant,
+	integer toOralFormant, integer fromNasalFormant, integer toNasalFormant, integer fromNasalAntiFormant, integer toNasalAntiFormant)
+{
 	VocalTractGridPlayOptions pv = my vocalTract -> options.get();
 	pv -> filterModel = filterModel;
 	pv -> startOralFormant = fromOralFormant;
@@ -93,7 +97,10 @@ static void KlattGrid_formantSelection_vocalTract (KlattGrid me, kKlattGridFilte
 	INTEGER (fromDeltaBandwidth, U"left Delta bandwidth range", U"1") \
 	INTEGER (toDeltaBandwidth, U"right Delta bandwidth range", U"1")
 
-static void KlattGrid_formantSelection_coupling (KlattGrid me, integer fromTrachealFormant, integer toTrachealFormant, integer fromTrachealAntiFormant, integer toTrachealAntiFormant, integer fromDeltaFormant, integer toDeltaFormant, integer fromDeltaBandwidth, integer toDeltaBandwidth) {
+static void KlattGrid_formantSelection_coupling (KlattGrid me, integer fromTrachealFormant, integer toTrachealFormant, 
+	integer fromTrachealAntiFormant, integer toTrachealAntiFormant, integer fromDeltaFormant, integer toDeltaFormant, 
+	integer fromDeltaBandwidth, integer toDeltaBandwidth)
+{
 	CouplingGridPlayOptions pc = my coupling -> options.get();
 	pc -> startTrachealFormant = fromTrachealFormant;
 	pc -> endTrachealFormant = toTrachealFormant;
@@ -157,7 +164,8 @@ FORM (CREATE_ONE__KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...")
 	INTEGER (numberOfDeltaFormants, U"Number of delta formants", U"1")
 	OK
 DO
-	Melder_require (fromTime < toTime, U"The start time must lie before the end time.");
+	Melder_require (fromTime < toTime, 
+		U"The start time must lie before the end time.");
 	Melder_require (numberOfOralFormants >= 0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0
 		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
 		&& numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
