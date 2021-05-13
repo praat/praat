@@ -1660,7 +1660,11 @@ void structTextGridEditor :: v_drawSelectionViewer () {
 	Graphics_fillRectangle (our graphics.get(), 0.5, 10.5, 0.5, 12.5);
 	Graphics_setColour (our graphics.get(), Melder_BLACK);
 	Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
-	Graphics_setFontSize (our graphics.get(), 12);
+	const double pointsPerMillimetre = 72.0 / 25.4;
+	const double cellWidth_points = Graphics_dxWCtoMM (our graphics.get(), 1.0) * pointsPerMillimetre;
+	const double cellHeight_points = Graphics_dyWCtoMM (our graphics.get(), 1.0) * pointsPerMillimetre;
+	const double fontSize = std::min (0.8 * cellHeight_points, 1.2 * cellWidth_points);
+	Graphics_setFontSize (our graphics.get(), fontSize);
 	Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 	for (integer irow = 1; irow <= 12; irow ++)
 		for (integer icol = 1; icol <= 10; icol ++)
