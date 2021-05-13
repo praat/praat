@@ -311,8 +311,8 @@ FORM (GRAPHICS_EACH__BarkFilter_paint, U"FilterBank: Paint", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (BarkFilter)
-		FilterBank_paint ((FilterBank) me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			fromAmplitude, toAmplitude, garnish
+		FilterBank_paint (me, GRAPHICS, 
+			fromTime, toTime, fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
 		);
 	GRAPHICS_EACH_END
 }
@@ -3996,19 +3996,27 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
+static double Matrix_getValueAtNearestColRow (Matrix me, double x, double y) {
+	/*
+		Compatibility with old behaviour. Having real values as arguments would suggest interpolation which is not done.
+	*/
+	if ((y >= my ymin && y <= my ymax) && (x >= my xmin && x <= my xmin)) {
+		integer icol = Matrix_xToNearestColumn (me, x);
+		Melder_clip (1_integer, & icol, my nx);
+		integer irow = Matrix_yToNearestRow (me, y);
+		Melder_clip (1_integer, & irow, my ny);
+		return my z[irow][icol];
+	} else
+		return undefined;	
+}
+
 FORM (QUERY_ONE_FOR_REAL__FilterBank_getValueInCell, U"Get value in cell", nullptr) {
 	REAL (time, U"Time (s)", U"0.5")
 	POSITIVE (frequency, U"Frequency", U"1.0")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FilterBank)
-		double result = undefined;
-		const integer icol = Matrix_xToNearestColumn (me, time);
-		if (icol > 0 && icol <= my nx) {
-			const integer irow = Matrix_yToNearestRow (me, frequency);
-			if (irow > 0 && irow <= my ny)
-				result = my z[irow][icol];
-		}
+		const double result = Matrix_getValueAtNearestColRow (me, time, frequency);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
@@ -4062,24 +4070,7 @@ FORM (QUERY_ONE_FOR_REAL__BandFilterSpectrogram_getValueInCell, U"Get value in c
 	OK
 DO
 	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
-		double result = undefined;
-		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
-			integer col = Matrix_xToNearestColumn (me, time);
-			if (col < 1) {
-				col = 1;
-			}
-			if (col > my nx) {
-				col = my nx;
-			}
-			integer row = Matrix_yToNearestRow (me, frequency);
-			if (row < 1) {
-				row = 1;
-			}
-			if (row > my ny) {
-				row = my ny;
-			}
-			result = my z[row][col];
-		}
+		const double result = Matrix_getValueAtNearestColRow (me, time, frequency);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
@@ -4192,8 +4183,8 @@ FORM (GRAPHICS_EACH__MelFilter_paint, U"FilterBank: Paint", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (MelFilter)
-		FilterBank_paint (me, GRAPHICS, fromTime, toTime, 
-			fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
+		FilterBank_paint (me, GRAPHICS, 
+			fromTime, toTime, fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
 		);
 	GRAPHICS_EACH_END
 }
