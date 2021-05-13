@@ -4000,7 +4000,7 @@ static double Matrix_getValueAtNearestColRow (Matrix me, double x, double y) {
 	/*
 		Compatibility with old behaviour. Having real values as arguments would suggest interpolation which is not done.
 	*/
-	if ((y >= my ymin && y <= my ymax) && (x >= my xmin && x <= my xmin)) {
+	if ((y >= my ymin && y <= my ymax) && (x >= my xmin && x <= my xmax)) {
 		integer icol = Matrix_xToNearestColumn (me, x);
 		Melder_clip (1_integer, & icol, my nx);
 		integer irow = Matrix_yToNearestRow (me, y);
