@@ -1,6 +1,6 @@
 /* praat_BSS_init.cpp
  *
- * Copyright (C) 2010-2017 David Weenink, 2015,2018 Paul Boersma
+ * Copyright (C) 2010-2021 David Weenink, 2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,12 +63,13 @@ FORM (CONVERT_EACH_TO_ONE__EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorr
 	OK
 DO
 	CONVERT_EACH_TO_ONE (EEG)
-		autoCrossCorrelationTableList result = EEG_to_CrossCorrelationTableList (me, fromTime, toTime,
-			numberOfCrossCorrelations, lagStep, channels);
+		autoCrossCorrelationTableList result = EEG_to_CrossCorrelationTableList (
+			me, fromTime, toTime, numberOfCrossCorrelations, lagStep, channels
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_MULTIPLE_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
+FORM (CONVERT_EACH_TO_MULTIPLE__EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
 	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
@@ -90,10 +91,11 @@ DO
 	CONVERT_EACH_TO_MULTIPLE (EEG)
 		autoEEG resultingEEG;
 		autoMixingMatrix resultingMixingMatrix;
-		EEG_to_EEG_bss (me, fromTime, toTime, numberOfCrossCorrelations, lagStep, channels,
-			whiteningMethod, diagonalizationMethod, maximumNumberOfIterations, tolerance,
-			& resultingEEG, & resultingMixingMatrix);
-		praat_new (resultingEEG.move(), my name.get(), U"_bss");
+		autoEEG eeg = EEG_to_EEG_bss (me, fromTime, toTime, numberOfCrossCorrelations, 
+			lagStep, channels, whiteningMethod, diagonalizationMethod, maximumNumberOfIterations,
+			tolerance, & resultingMixingMatrix
+		);
+		praat_new (eeg.move(), my name.get()); 
 		praat_new (resultingMixingMatrix.move(), my name.get());
 	CONVERT_EACH_TO_MULTIPLE_END
 }
@@ -165,7 +167,9 @@ FORM (CREATE_ONE__CrossCorrelationTableList_createTestSet, U"CrossCorrelationTab
 	OK
 DO
 	CREATE_ONE
-		autoCrossCorrelationTableList result = CrossCorrelationTableList_createTestSet (matrixDimension, numberOfMatrices, firstIsPositiveDefinite, sigma);
+		autoCrossCorrelationTableList result = CrossCorrelationTableList_createTestSet (
+			matrixDimension, numberOfMatrices, firstIsPositiveDefinite, sigma
+		);
 	CREATE_ONE_END (name)
 }
 
@@ -177,7 +181,9 @@ FORM (CREATE_ONE__CrossCorrelationTable_createSimple, U"Create simple CrossCorre
 	OK
 DO
 	CREATE_ONE
-		autoCrossCorrelationTable result = CrossCorrelationTable_createSimple (crosscorrelations_string, centroid_string, numberOfSamples);
+		autoCrossCorrelationTable result = CrossCorrelationTable_createSimple (
+			crosscorrelations_string, centroid_string, numberOfSamples
+		);
 	CREATE_ONE_END (name)
 }
 
@@ -264,7 +270,7 @@ FORM (QUERY_ONE_FOR_REAL__CrossCorrelationTableList_getDiagonalityMeasure, U"Cro
 	OK
 DO
 	QUERY_ONE_FOR_REAL (CrossCorrelationTableList)
-		double result = CrossCorrelationTableList_getDiagonalityMeasure (me, 0, fromTable, toTable);
+		const double result = CrossCorrelationTableList_getDiagonalityMeasure (me, 0, fromTable, toTable);
 	QUERY_ONE_FOR_REAL_END (U" (= average sum of squared off-diagonal elements)")
 }
 
@@ -273,9 +279,8 @@ FORM (CONVERT_EACH_TO_ONE__CrossCorrelationTableList_extractCrossCorrelationTabl
 	OK
 DO
 	CONVERT_EACH_TO_ONE (CrossCorrelationTableList)
-		if (index > my size) {
-			Melder_throw (U"Index too large.");
-		}
+		Melder_require (index <= my size,
+			U"\"Index\" should not exceed ", my size, U".");
 		autoCrossCorrelationTable result = Data_copy (my at [index]);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", index)
 }
@@ -289,11 +294,13 @@ FORM (CONVERT_EACH_TO_ONE__CrossCorrelationTableList_to_Diagonalizer, U"CrossCor
 	OK
 DO
 	CONVERT_EACH_TO_ONE (CrossCorrelationTableList)
-		autoDiagonalizer result = CrossCorrelationTableList_to_Diagonalizer (me, maximumNumberOfIterations, tolerance, diagonalizationMethod);
+		autoDiagonalizer result = CrossCorrelationTableList_to_Diagonalizer (
+			me, maximumNumberOfIterations, tolerance, diagonalizationMethod
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (MODIFY_FIRST_OF_ONE_AND_ONE_Diagonalizer_CrossCorrelationTableList_improveDiagonality, U"Diagonalizer & CrossCorrelationTableList: Improve diagonality", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__Diagonalizer_CrossCorrelationTableList_improveDiagonality, U"Diagonalizer & CrossCorrelationTableList: Improve diagonality", nullptr) {
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	POSITIVE (tolerance, U"Tolerance", U"0.001")
 	OPTIONMENU (diagonalizationMethod, U"Diagonalization method", 2)
@@ -302,27 +309,29 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE_Diagonalizer_CrossCorrelationTableList_improve
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (Diagonalizer, CrossCorrelationTableList)
-		Diagonalizer_CrossCorrelationTableList_improveDiagonality (me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod);
+		Diagonalizer_CrossCorrelationTableList_improveDiagonality (
+			me, you, maximumNumberOfIterations, tolerance, diagonalizationMethod
+		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END	
 }
 
-FORM (QUERY_ONE_AND_ONE_FOR_REAL_CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr) {
+FORM (QUERY_ONE_AND_ONE_FOR_REAL__CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure, U"CrossCorrelationTableList & Diagonalizer: Get diagonality measure", nullptr) {
 	NATURAL (fromTable, U"First table", U"1")
 	NATURAL (toTable, U"Last table", U"100")
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (CrossCorrelationTableList, Diagonalizer)
-		double result = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (me, you, nullptr, fromTable, toTable);
+		const double result = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (me, you, nullptr, fromTable, toTable);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= average sum of squared off-diagonal elements)")
 }
 
-DIRECT (CONVERT_ONE_AND_ONE_TO_ONE_CrossCorrelationTable_Diagonalizer_diagonalize) {
+DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__CrossCorrelationTable_Diagonalizer_diagonalize) {
 	CONVERT_ONE_AND_ONE_TO_ONE (CrossCorrelationTable, Diagonalizer)
 		autoCrossCorrelationTable result = CrossCorrelationTable_Diagonalizer_diagonalize (me, you);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (me -> name.get(), U"_", you -> name.get())
 }
 
-DIRECT (CONVERT_ONE_AND_ONE_TO_ONE_CrossCorrelationTableList_Diagonalizer_diagonalize) {
+DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__CrossCorrelationTableList_Diagonalizer_diagonalize) {
 	CONVERT_ONE_AND_ONE_TO_ONE (CrossCorrelationTableList, Diagonalizer)
 		autoCrossCorrelationTableList result = CrossCorrelationTableList_Diagonalizer_diagonalize (me, you);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (me -> name.get(), U"_", you -> name.get());
@@ -352,7 +361,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Diagonalizer_to_MixingMatrix) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (MODIFY_EACH_MixingMatrix_multiplyInputChannel, U"MixingMatrix: Multiply input channel", U"MixingMatrix: Multiply input channel...") {
+FORM (MODIFY_EACH__MixingMatrix_multiplyInputChannel, U"MixingMatrix: Multiply input channel", U"MixingMatrix: Multiply input channel...") {
 	NATURAL (inputChannel, U"Input channel number", U"1")
 	REAL  (value, U"Multiply by", U"1.0")
 	OK
@@ -362,7 +371,7 @@ DO
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_EACH_MixingMatrix_setStandardChannelInterpretation) {
+DIRECT (MODIFY_EACH__MixingMatrix_setStandardChannelInterpretation) {
 	MODIFY_EACH (MixingMatrix)
 		MixingMatrix_setStandardChannelInterpretation (me);
 	MODIFY_EACH_END
@@ -388,7 +397,8 @@ DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoMixingMatrix result = Sound_to_MixingMatrix (me,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep,
-			maximumNumberOfIterations, tolerance, diagonalizationMethod);
+			maximumNumberOfIterations, tolerance, diagonalizationMethod
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -407,7 +417,8 @@ DO
 		MODIFY_FIRST_OF_ONE_AND_ONE (MixingMatrix, Sound)
 		MixingMatrix_Sound_improveUnmixing (me, you,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep,
-			maximumNumberOfIterations, tolerance, diagonalizationMethod);
+			maximumNumberOfIterations, tolerance, diagonalizationMethod
+		);
 		MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
@@ -418,8 +429,9 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_CrossCorrelationTableList, U"Sound: To Cross
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoCrossCorrelationTableList result = Sound_to_CrossCorrelationTableList (me,
-			fromTime, toTime, numberOfCrossCorrelations, lagStep);
+		autoCrossCorrelationTableList result = Sound_to_CrossCorrelationTableList (
+			me, fromTime, toTime, numberOfCrossCorrelations, lagStep
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -438,7 +450,8 @@ DO
 	CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_to_Sound_BSS (me,
 			fromTime, toTime, numberOfCrossCorrelations, lagStep,
-			maximumNumberOfIterations, tolerance, diagonalizationMethod);
+			maximumNumberOfIterations, tolerance, diagonalizationMethod
+		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_bss")
 }
 
@@ -447,13 +460,13 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_Sound_whiteChannels, U"Sound: To Sound (whit
     OK
 DO
     Melder_clipRight (& varianceFraction, 1.0);
-    integer permille = Melder_ifloor (varianceFraction * 1000.0);
+    const integer permille = Melder_ifloor (varianceFraction * 1000.0);
     CONVERT_EACH_TO_ONE (Sound)
 		autoSound result = Sound_whitenChannels (me, varianceFraction);
     CONVERT_EACH_TO_ONE_END (my name.get(), U"_", permille);
 }
 
-DIRECT (PLAY_Sound_MixingMatrix_play) {
+DIRECT (PLAY_ONE_AND_ONE__Sound_MixingMatrix_play) {
 	PLAY_ONE_AND_ONE (Sound, MixingMatrix)
 		Sound_MixingMatrix_play (me, you, nullptr, nullptr);
 	PLAY_ONE_AND_ONE_END
@@ -541,7 +554,7 @@ void praat_BSS_init () {
 	praat_addAction1 (classEEG, 0, U"To Covariance...", U"To CrossCorrelationTable...", praat_HIDDEN,
 			CONVERT_EACH_TO_ONE__EEG_to_Covariance);
 	praat_addAction1 (classEEG, 0, U"To EEG (bss)...", U"To CrossCorrelationTable...", praat_HIDDEN,
-			CONVERT_EACH_TO_MULTIPLE_EEG_to_EEG_bss);
+			CONVERT_EACH_TO_MULTIPLE__EEG_to_EEG_bss);
 
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (principal components)...", 0, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__EEG_PCA_to_EEG_principalComponents);
@@ -552,11 +565,11 @@ void praat_BSS_init () {
 			HELP__MixingMatrix_help);
 	praat_TableOfReal_init3 (classMixingMatrix);
 		praat_addAction1 (classMixingMatrix, 0, U"Multiply input channel...", U"Set value...", praat_DEPTH_1,
-				MODIFY_EACH_MixingMatrix_multiplyInputChannel);
+				MODIFY_EACH__MixingMatrix_multiplyInputChannel);
 		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by label...");	
 		praat_removeAction (classMixingMatrix, nullptr, nullptr, U"Sort by column...");	
 	praat_addAction1 (classMixingMatrix, 0, U"Set standard channel interpretation", U"Set column label (label)...", praat_DEPTH_1,
-			MODIFY_EACH_MixingMatrix_setStandardChannelInterpretation);
+			MODIFY_EACH__MixingMatrix_setStandardChannelInterpretation);
 	praat_addAction1 (classMixingMatrix, 0, U"To Diagonalizer", U"To Matrix", praat_DEPTH_1, 
 			CONVERT_EACH_TO_ONE__MixingMatrix_to_Diagonalizer);
 
@@ -582,7 +595,7 @@ void praat_BSS_init () {
 			CONVERT_EACH_TO_ONE__TableOfReal_to_MixingMatrix);
 
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Play", 0, 0, 
-			PLAY_Sound_MixingMatrix_play);
+			PLAY_ONE_AND_ONE__Sound_MixingMatrix_play);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix", 0, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_MixingMatrix_mix);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, U"Mix part...", 0, 0, 
@@ -598,14 +611,14 @@ void praat_BSS_init () {
 			CONVERT_ONE_AND_ONE_TO_ONE__Sound_PCA_principalComponents);
 
 	praat_addAction2 (classCrossCorrelationTable, 1, classDiagonalizer, 1, U"Diagonalize", 0 , 0,
-			CONVERT_ONE_AND_ONE_TO_ONE_CrossCorrelationTable_Diagonalizer_diagonalize);
+			CONVERT_ONE_AND_ONE_TO_ONE__CrossCorrelationTable_Diagonalizer_diagonalize);
 
 	praat_addAction2 (classCrossCorrelationTableList, 1, classDiagonalizer, 1, U"Get diagonality measure...", 0 , 0,
-			QUERY_ONE_AND_ONE_FOR_REAL_CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure);
+			QUERY_ONE_AND_ONE_FOR_REAL__CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure);
 	praat_addAction2 (classCrossCorrelationTableList, 1, classDiagonalizer, 1, U"Diagonalize", 0 , 0,
-			CONVERT_ONE_AND_ONE_TO_ONE_CrossCorrelationTableList_Diagonalizer_diagonalize);
+			CONVERT_ONE_AND_ONE_TO_ONE__CrossCorrelationTableList_Diagonalizer_diagonalize);
 	praat_addAction2 (classCrossCorrelationTableList, 1, classDiagonalizer, 1, U"Improve diagonality...", 0 , 0,
-			MODIFY_FIRST_OF_ONE_AND_ONE_Diagonalizer_CrossCorrelationTableList_improveDiagonality);
+			MODIFY_FIRST_OF_ONE_AND_ONE__Diagonalizer_CrossCorrelationTableList_improveDiagonality);
 
 	praat_addAction2 (classCrossCorrelationTableList, 1, classMixingMatrix, 1, U"Improve unmixing...", 0 , 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__CrossCorrelationTableList_MixingMatrix_improveUnmixing);

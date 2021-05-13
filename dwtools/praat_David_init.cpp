@@ -311,8 +311,8 @@ FORM (GRAPHICS_EACH__BarkFilter_paint, U"FilterBank: Paint", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (BarkFilter)
-		FilterBank_paint ((FilterBank) me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			fromAmplitude, toAmplitude, garnish
+		FilterBank_paint (me, GRAPHICS, 
+			fromTime, toTime, fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
 		);
 	GRAPHICS_EACH_END
 }
@@ -2608,19 +2608,19 @@ DO
 
 /************************* FileInMemorySet ***********************************/
 
-DIRECT (INFO_FileInMemorySet_getNumberOfFiles) {
-	QUERY_ONE_FOR_REAL (FileInMemorySet)
+DIRECT (QUERY_ONE_FOR_INTEGER__FileInMemorySet_getNumberOfFiles) {
+	QUERY_ONE_FOR_INTEGER (FileInMemorySet)
 		const integer result = my size;
-	QUERY_ONE_FOR_REAL_END (U" (number of files)")
+	QUERY_ONE_FOR_INTEGER_END (U" (number of files)")
 }
 
-FORM (INFO_FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
+FORM (QUERY_ONE_FOR_BOOLEAN__FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
 	WORD (name, U"Name", U"aav")
 	OK
 DO
-	QUERY_ONE_FOR_REAL (FileInMemorySet)
+	QUERY_ONE_FOR_BOOLEAN (FileInMemorySet)
 		const bool result = FileInMemorySet_hasDirectory (me, name);
-	QUERY_ONE_FOR_REAL_END (U" (has directory?)")
+	QUERY_ONE_FOR_BOOLEAN_END (U" (has directory?)")
 }
 
 
@@ -3996,19 +3996,27 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" ", my v_getFrequencyUnit ())
 }
 
+static double Matrix_getValueAtNearestColRow (Matrix me, double x, double y) {
+	/*
+		Compatibility with old behaviour. Having real values as arguments would suggest interpolation which is not done.
+	*/
+	if ((y >= my ymin && y <= my ymax) && (x >= my xmin && x <= my xmax)) {
+		integer icol = Matrix_xToNearestColumn (me, x);
+		Melder_clip (1_integer, & icol, my nx);
+		integer irow = Matrix_yToNearestRow (me, y);
+		Melder_clip (1_integer, & irow, my ny);
+		return my z[irow][icol];
+	} else
+		return undefined;	
+}
+
 FORM (QUERY_ONE_FOR_REAL__FilterBank_getValueInCell, U"Get value in cell", nullptr) {
 	REAL (time, U"Time (s)", U"0.5")
 	POSITIVE (frequency, U"Frequency", U"1.0")
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FilterBank)
-		double result = undefined;
-		const integer icol = Matrix_xToNearestColumn (me, time);
-		if (icol > 0 && icol <= my nx) {
-			const integer irow = Matrix_yToNearestRow (me, frequency);
-			if (irow > 0 && irow <= my ny)
-				result = my z[irow][icol];
-		}
+		const double result = Matrix_getValueAtNearestColRow (me, time, frequency);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
@@ -4062,24 +4070,7 @@ FORM (QUERY_ONE_FOR_REAL__BandFilterSpectrogram_getValueInCell, U"Get value in c
 	OK
 DO
 	QUERY_ONE_FOR_REAL (BandFilterSpectrogram)
-		double result = undefined;
-		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
-			integer col = Matrix_xToNearestColumn (me, time);
-			if (col < 1) {
-				col = 1;
-			}
-			if (col > my nx) {
-				col = my nx;
-			}
-			integer row = Matrix_yToNearestRow (me, frequency);
-			if (row < 1) {
-				row = 1;
-			}
-			if (row > my ny) {
-				row = my ny;
-			}
-			result = my z[row][col];
-		}
+		const double result = Matrix_getValueAtNearestColRow (me, time, frequency);
 	QUERY_ONE_FOR_REAL_END (U"")
 }
 
@@ -4192,8 +4183,8 @@ FORM (GRAPHICS_EACH__MelFilter_paint, U"FilterBank: Paint", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (MelFilter)
-		FilterBank_paint (me, GRAPHICS, fromTime, toTime, 
-			fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
+		FilterBank_paint (me, GRAPHICS, 
+			fromTime, toTime, fromFrequency, toFrequency, fromAmplitude, toAmplitude, garnish
 		);
 	GRAPHICS_EACH_END
 }
@@ -5086,14 +5077,15 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (y [", pointNumber, U"])")
 }
 
-FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get location of point...") {
+FORM (QUERY_ONE_FOR_STRING__Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get location of point...") {
 	LABEL (U"Point is (I)n, (O)ut, (E)dge or (V)ertex?")
 	REAL (x, U"X", U"0.0")
 	REAL (y, U"Y", U"0.0")
 	REAL (eps, U"Precision", U"1.64e-15")
 	OK
 DO
-	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
+	Melder_require (eps >= 0.0, 
+		U"The precision cannot be negative.");
 	QUERY_ONE_FOR_STRING (Polygon)
 		const int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
@@ -7472,7 +7464,7 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_columns")
 }
 
-FORM (NUMVEC_Table_listRowNumbersWhere, U"Table: List rows where", U"") {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere, U"Table: List rows where", U"") {
 	SENTENCE (formula, U"The following condition holds true", U"self [row,\"F1\"] > 800.0")
 	OK
 DO
@@ -9527,9 +9519,9 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFileInMemorySet, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, 
-			INFO_FileInMemorySet_getNumberOfFiles);
+			QUERY_ONE_FOR_INTEGER__FileInMemorySet_getNumberOfFiles);
 	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, 
-			INFO_FileInMemorySet_hasDirectory);
+			QUERY_ONE_FOR_BOOLEAN__FileInMemorySet_hasDirectory);
 
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, 
 			INFO_ONE__FileInMemorySet_showAsCode);
@@ -9938,7 +9930,7 @@ void praat_uvafon_David_init () {
 			QUERY_ONE_FOR_REAL__Polygon_getPointY);
 	praat_addAction1 (classPolygon, 0, U"-- other queries --",  U"Get point (y)...", 1, 0);
 	praat_addAction1 (classPolygon, 0, U"Get location of point...", U"-- other queries --", 1, 
-			INFO_Polygon_getLocationOfPoint);
+			QUERY_ONE_FOR_STRING__Polygon_getLocationOfPoint);
 	praat_addAction1 (classPolygon, 0, U"Get area of convex hull...", U"Get location of point...", praat_DEPTH_1 + praat_HIDDEN,
 			QUERY_ONE_FOR_REAL__Polygon_getAreaOfConvexHull);
 
@@ -10284,7 +10276,7 @@ void praat_uvafon_David_init () {
 					GRAPHICS_EACH__Table_drawEllipsesWhere);
 
 	praat_addAction1 (classTable, 1, U"List row numbers where...", U"Get number of rows", praat_DEPTH_1,
-			NUMVEC_Table_listRowNumbersWhere);
+			QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere);
 	praat_addAction1 (classTable, 1, U"Get number of rows where...", U"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,
 		QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere);
 	praat_addAction1 (classTable, 1, U"Report one-way anova...", U"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,
