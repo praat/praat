@@ -1615,7 +1615,7 @@ void structTextGridEditor :: v_draw () {
 			Graphics_line (our graphics.get(), our endWindow, soundY, our endWindow, soundY2);
 		}
 	}
-	if (isdefined (our draggingTime)) {
+	if (isdefined (our draggingTime) && hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
 		Graphics_xorOn (our graphics.get(), Melder_MAROON);
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			if (our draggingTiers [itier]) {
@@ -1678,11 +1678,10 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	static bool anchorIsInWideTextGridPart = false;
 	static double anchorTime = undefined;
 	static integer clickedLeftBoundary = 0, clickedPoint = 0;
-	static bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 	static double leftDraggingBoundary = our tmin, rightDraggingBoundary = our tmax;   // initial dragging range
 
 	constexpr double clickingVicinityRadius_mm = 1.0;
-	constexpr double draggingVicinityRadius_mm = clickingVicinityRadius_mm + 1.0;   // must be greater than `clickingVicinityRadius_mm`
+	constexpr double draggingVicinityRadius_mm = clickingVicinityRadius_mm + 0.2;   // must be greater than `clickingVicinityRadius_mm`
 	constexpr double droppingVicinityRadius_mm = 1.5;
 
 	if (event -> isClick()) {
@@ -1706,7 +1705,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		if (isdefined (anchorTime))   // sanity check for the fixed order click-drag-drop
 			return false;
 		Melder_assert (clickedLeftBoundary == 0);
-		Melder_assert (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);
+		Melder_assert (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce);
 		our draggingTiers.reset();
 		/*
 			The user clicked in the grid part.
@@ -1777,7 +1776,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			}
 			if (! boundaryOrPointIsMovable) {
 				our draggingTime = undefined;
-				hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+				our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 				anchorTime = undefined;
 				clickedLeftBoundary = 0;
 				return FunctionEditor_UPDATE_NEEDED;
@@ -1843,16 +1842,16 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	} else if (event -> isDrag ()) {
 		if (isdefined (anchorTime) && our draggingTiers.size > 0) {
 			our draggingTime = xWC;
-			if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+			if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
 				const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), xWC - anchorTime));
 				if (distanceToAnchor_mm > draggingVicinityRadius_mm)
-					hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
+					our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
 			}
 		}
 	} else if (event -> isDrop ()) {
 		if (our draggingTiers.size == 0) {
 			our draggingTime = undefined;
-			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
 			clickedLeftBoundary = 0;
 			return FunctionEditor_UPDATE_NEEDED;
@@ -1901,10 +1900,10 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			If the user wiggled near the anchor, we snap to the anchor and bail out
 			(a boundary has been selected, but nothing has been dragged).
 		*/
-		if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce && ! droppedOnABoundaryOrPointInsideAnUnselectedTier) {
+		if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce && ! droppedOnABoundaryOrPointInsideAnUnselectedTier) {
 			our startSelection = our endSelection = anchorTime;
 			our draggingTime = undefined;
-			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
 			clickedLeftBoundary = 0;
 			return FunctionEditor_UPDATE_NEEDED;
@@ -1916,7 +1915,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		if (xWC <= leftDraggingBoundary || xWC >= rightDraggingBoundary) {
 			Melder_beep ();
 			our draggingTime = undefined;
-			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
 			clickedLeftBoundary = 0;
 			return FunctionEditor_UPDATE_NEEDED;
@@ -1965,7 +1964,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		our startSelection = our endSelection = xWC;
 		Melder_sort (& our startSelection, & our endSelection);
 		our draggingTime = undefined;
-		hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+		our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		anchorTime = undefined;
 		clickedLeftBoundary = 0;
 		//FunctionEditor_marksChanged (this, true);
