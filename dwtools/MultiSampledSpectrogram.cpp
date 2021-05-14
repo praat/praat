@@ -43,9 +43,9 @@ Thing_implement (FrequencyBin, Matrix, 2);
 
 double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which , int unit) {
 	if (unit == 0) {
-		return ( which == 1 ? z [1] [iframe] : undefined );
+		return ( which == 1 ? z [1] [iframe] : which == 2 ? z [2] [iframe] : undefined );
 	}
-	double power = sqr (z [1] [iframe]);
+	double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
 	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 (power / 4e-10) : undefined );
 }
 
@@ -80,7 +80,7 @@ double structMultiSampledSpectrogram :: v_hertzToMyFrequency (double f_hz) {
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1) {
 	try {
 		autoFrequencyBin me = Thing_new (FrequencyBin);
-		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 0.5, 1.5, 1, 1.0, 1.0);
+		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 0.5, 2.5, 2, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FrequencyBin not created.");

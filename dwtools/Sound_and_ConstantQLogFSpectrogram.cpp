@@ -102,6 +102,13 @@ autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
 	return result;
 }
 
+static void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
+	for (integer i = 2; i <= my nx - 1; i ++) {
+		std::swap (my z[1] [i], my z [2] [i]);
+		my z [1] [i] = - my z [1] [i];
+	}
+}
+
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double fmax,integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor) {
 	try {
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
@@ -158,6 +165,9 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 			autoSound filtered = Spectrum_to_Sound (filter.get());
 			autoFrequencyBin frequencyBin = FrequencyBin_create (my xmin, my xmax, filtered -> nx, filtered -> dx, filtered -> x1);
 			frequencyBin -> z.row (1)  <<=  filtered -> z.row (1);
+			Spectrum_shiftPhaseBy90Degrees (filter.get());
+			autoSound filtered90 = Spectrum_to_Sound (filter.get());
+			frequencyBin -> z.row (2)  <<=  filtered90 -> z.row (1);
 			thy frequencyBins.addItem_move (frequencyBin.move());
 		}
 		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
