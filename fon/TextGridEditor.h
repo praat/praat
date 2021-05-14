@@ -33,6 +33,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	double draggingTime;
 	autoBOOLVEC draggingTiers;
+	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 
 	void v_info ()
 		override;
