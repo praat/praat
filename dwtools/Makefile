@@ -6,7 +6,7 @@ include ../makefile.defs
 
 CPPFLAGS = -I . -I ../kar -I ../melder -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../external/clapack -I ../EEG -I ../external/vorbis -I ../external/opusfile
 
-OBJECTS = ActivationList.o AffineTransform.o \
+OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Categories.o CategoriesEditor.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
 	Correlation.o Covariance.o CC.o CCs_to_DTW.o \

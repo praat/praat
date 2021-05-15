@@ -56,6 +56,8 @@ autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee);
 
 void Spectrum_conjugate (Spectrum me);
 
+void Spectrum_shiftPhaseBy90Degrees (Spectrum me);
+
 void Spectrum_getMaximumInInterval (Spectrum me, double fromFrequencyHz, double toFrequencyHz, double *frequency, double *amplitude_dB);
 
 

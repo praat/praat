@@ -120,9 +120,20 @@ autoSound FrequencyBin_to_Sound (FrequencyBin me) {
 		thy z.row (1)  <<=  my z.row (1);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannor convert toSound.");
+		Melder_throw (me, U": cannot convert to Sound.");
 	}
 }
+
+autoAnalyticSound FrequencyBin_to_AnalyticSound (FrequencyBin me) {
+	try {
+		autoAnalyticSound thee = AnalyticSound_create (my xmin, my xmax, my nx, my dx, my x1);
+		thy z.get()  <<=  my z.get();
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot convert to AnalyticSound.");
+	}
+}
+
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	double numberOfFrames = 0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
