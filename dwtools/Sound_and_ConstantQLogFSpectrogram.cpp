@@ -18,6 +18,7 @@
 
 #include "Sound_and_ConstantQLogFSpectrogram.h"
 #include "Sound_and_Spectrum.h"
+#include "Spectrum_extensions.h"
 #include "NUM2.h"
 
 void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape windowShape) {
@@ -102,13 +103,6 @@ autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
 	return result;
 }
 
-static void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
-	for (integer i = 2; i <= my nx - 1; i ++) {
-		std::swap (my z[1] [i], my z [2] [i]);
-		my z [1] [i] = - my z [1] [i];
-	}
-}
-
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double lowestFrequency, double fmax,integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor) {
 	try {
 		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 * samplingFrequency;
@@ -151,17 +145,19 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 			Melder_require (numberOfSamplesFromSpectrum > 1,
 				U"The number of spectral filter values should be larger than 1.");
 			integer numberOfFilterValues = numberOfSamplesFromSpectrum;
-			if (timeOversamplingFactor > 1.0) {
+			if (timeOversamplingFactor > 1.0)
 				numberOfFilterValues = Melder_iroundUp (timeOversamplingFactor * numberOfSamplesFromSpectrum);
-				filterBandwidth *= timeOversamplingFactor;
-			}
-			autoSpectrum filter = Spectrum_create (filterBandwidth, numberOfFilterValues);
+			integer numberOfSamplesFFT = 2;
+			while (numberOfSamplesFFT < numberOfFilterValues)
+				numberOfSamplesFFT *= 2;
+			filterBandwidth *= ((double) numberOfSamplesFFT) / numberOfSamplesFromSpectrum;
+			const integer numberOfFrequencies = numberOfSamplesFFT + 1;
+			//const integer numberOfFrequencies = numberOfFilterValues + 1;
+			autoSpectrum filter = Spectrum_create (filterBandwidth, numberOfFrequencies);
 			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  spectrum -> z.part (1, 2, iflow, ifhigh);
 			window.resize (numberOfSamplesFromSpectrum);
 			windowShape_VEC_preallocated (window.get(), kSound_windowShape :: HANNING);
 			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  *=  window.get();
-			if (numberOfFilterValues > numberOfSamplesFromSpectrum)
-				filter -> z.part (1, 2, numberOfSamplesFromSpectrum + 1, numberOfFilterValues)  <<=  0.0;
 			autoSound filtered = Spectrum_to_Sound (filter.get());
 			autoFrequencyBin frequencyBin = FrequencyBin_create (my xmin, my xmax, filtered -> nx, filtered -> dx, filtered -> x1);
 			frequencyBin -> z.row (1)  <<=  filtered -> z.row (1);
@@ -177,13 +173,14 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 	}
 }
 
-autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
+autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me, bool shiftPhaseBy90degrees) {
 	try {
 		FrequencyBin frequencyBin = my frequencyBins.at [1];
 		const double duration = frequencyBin -> xmax - frequencyBin -> xmin;
 		const double nyquistFrequency = my v_myFrequencyToHertz (my xmax);
 		const double samplingFrequency = 2.0 * nyquistFrequency;
 		const integer numberOfSamples = duration * samplingFrequency;
+		const integer irow = ( shiftPhaseBy90degrees ? 2 : 1 );
 		integer numberOfFFTSamples = 2;
 		while (numberOfFFTSamples < numberOfSamples)
 			numberOfFFTSamples *= 2;
@@ -191,7 +188,7 @@ autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
 		autoSound reusable = Sound_createSimple (1, duration, samplingFrequency);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 			frequencyBin = my frequencyBins.at [ifreq];
-			reusable -> z.row (1).part (1, frequencyBin -> nx)  <<=  frequencyBin -> z.row (1);
+			reusable -> z.row (1).part (1, frequencyBin -> nx)  <<=  frequencyBin -> z.row (irow);
 			reusable -> dx = frequencyBin -> dx;
 			reusable -> x1 = frequencyBin -> x1;
 			reusable -> nx = frequencyBin -> nx;
@@ -229,12 +226,24 @@ autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me) {
 		Melder_throw (me, U": could not create Sound.");
 	}
 }
+
 autoSound ConstantQLogFSpectrogram_to_Sound_frequencyBin (ConstantQLogFSpectrogram me, integer frequencyBinNumber) {
 	try  {
 		Melder_require (frequencyBinNumber > 0 && frequencyBinNumber <= my nx,
 			U"The frequency bin number should be in the interval from 1 to ", my nx, U".");
 		FrequencyBin frequencyBin = my frequencyBins.at [frequencyBinNumber];
 		return FrequencyBin_to_Sound (frequencyBin);
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create Sound from frequency bin ", frequencyBinNumber, U".");
+	}
+}
+
+autoAnalyticSound ConstantQLogFSpectrogram_to_AnalyticSound_frequencyBin (ConstantQLogFSpectrogram me, integer frequencyBinNumber) {
+	try  {
+		Melder_require (frequencyBinNumber > 0 && frequencyBinNumber <= my nx,
+			U"The frequency bin number should be in the interval from 1 to ", my nx, U".");
+		FrequencyBin frequencyBin = my frequencyBins.at [frequencyBinNumber];
+		return FrequencyBin_to_AnalyticSound (frequencyBin);
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create Sound from frequency bin ", frequencyBinNumber, U".");
 	}

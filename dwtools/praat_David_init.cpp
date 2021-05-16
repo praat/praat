@@ -5958,7 +5958,7 @@ DO
 
 DIRECT (CONVERT_EACH_TO_ONE__ConstantQLogFSpectrogram_to_Sound) {
 	CONVERT_EACH_TO_ONE (ConstantQLogFSpectrogram)
-		autoSound result = ConstantQLogFSpectrogram_to_Sound (me);
+		autoSound result = ConstantQLogFSpectrogram_to_Sound (me, false);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 

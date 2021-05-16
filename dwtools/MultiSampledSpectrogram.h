@@ -18,6 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "AnalyticSound.h"
 #include "Function.h"
 #include "Graphics.h"
 #include "Sampled.h"
@@ -36,6 +37,7 @@ double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpo
 void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
 
 autoSound FrequencyBin_to_Sound (FrequencyBin me);
+autoAnalyticSound FrequencyBin_to_AnalyticSound (FrequencyBin me);
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
 

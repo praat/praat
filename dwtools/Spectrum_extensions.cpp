@@ -1,6 +1,6 @@
 /* Spectrum_extensions.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,6 +282,14 @@ autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied.");
+	}
+}
+
+void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
+	// shifting pi/2 a multiplication by -i
+	for (integer i = 2; i <= my nx - 1; i ++) {
+		std::swap (my z[1] [i], my z [2] [i]);
+		my z [1] [i] = - my z [1] [i];
 	}
 }
 

@@ -99,14 +99,14 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin, tmax, & ixmin, & ixmax)) == 0)
 			continue;
 		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
-			double power = sqr (frequencyBin -> z [1] [iframe]);
-			powerExtrema.update (power);
+			double powerdB = frequencyBin -> v_getValueAtSample (iframe, 0, 2); // 10*log10 (power/..)
+			powerExtrema.update (powerdB);
 		}
 	}
 	if (powerExtrema.max == 0.0)
 		return; // empty
-	const double maximum = 10.0 * log10 (powerExtrema.max / 4e-10);
-	const double minimum = std::max (maximum - dBRange, 10.0 * log10 ((powerExtrema.min + 1e-30) / 4e-10));
+	const double maximum = powerExtrema.max;
+	const double minimum = std::max (maximum - dBRange, powerExtrema.min);
 
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
@@ -116,12 +116,9 @@ void ConstantQLogFSpectrogram_paintInside (ConstantQLogFSpectrogram me, Graphics
 		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & ixmin, & ixmax)) == 0)
 			continue;
 		p.resize (1, numberOfFrames);
-		MAT z = frequencyBin -> z.get();
 		integer index = 0;
-		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
-			double power = sqr (z [1] [iframe]);
-			p [1] [ ++ index] = 10.0 * log10 (power / 4e-10);
-		}
+		for (integer iframe = ixmin; iframe <= ixmax; iframe ++)
+			p [1] [ ++ index] = frequencyBin -> v_getValueAtSample (iframe, 0, 2);
 		double xmin = Sampled_indexToX (frequencyBin, ixmin) - 0.5 * dx;
 		double xmax = Sampled_indexToX (frequencyBin, ixmax) + 0.5 * dx;
 		double ymin = log2_freq - 0.5 * my dx; 

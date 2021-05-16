@@ -45,8 +45,8 @@ double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which ,
 	if (unit == 0) {
 		return ( which == 1 ? z [1] [iframe] : which == 2 ? z [2] [iframe] : undefined );
 	}
-	double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
-	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 (power / 4e-10) : undefined );
+	const double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
+	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 ((power + 1e-30) / 4e-10) : undefined );
 }
 
 Thing_implement (MultiSampledSpectrogram, Sampled, 0);
@@ -105,6 +105,7 @@ void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter i
 	}
 }
 
+// TODO:multiple rows!
 double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType) {
 	const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 	if (x <  leftEdge || x > rightEdge)
@@ -120,9 +121,20 @@ autoSound FrequencyBin_to_Sound (FrequencyBin me) {
 		thy z.row (1)  <<=  my z.row (1);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannor convert toSound.");
+		Melder_throw (me, U": cannot convert to Sound.");
 	}
 }
+
+autoAnalyticSound FrequencyBin_to_AnalyticSound (FrequencyBin me) {
+	try {
+		autoAnalyticSound thee = AnalyticSound_create (my xmin, my xmax, my nx, my dx, my x1);
+		thy z.get()  <<=  my z.get();
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot convert to AnalyticSound.");
+	}
+}
+
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	double numberOfFrames = 0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
