@@ -45,8 +45,8 @@ double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which ,
 	if (unit == 0) {
 		return ( which == 1 ? z [1] [iframe] : which == 2 ? z [2] [iframe] : undefined );
 	}
-	double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
-	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 (power / 4e-10) : undefined );
+	const double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
+	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 ((power + 1e-30) / 4e-10) : undefined );
 }
 
 Thing_implement (MultiSampledSpectrogram, Sampled, 0);
@@ -105,6 +105,7 @@ void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter i
 	}
 }
 
+// TODO:multiple rows!
 double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType) {
 	const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
 	if (x <  leftEdge || x > rightEdge)

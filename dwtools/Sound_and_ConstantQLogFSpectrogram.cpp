@@ -145,17 +145,19 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 			Melder_require (numberOfSamplesFromSpectrum > 1,
 				U"The number of spectral filter values should be larger than 1.");
 			integer numberOfFilterValues = numberOfSamplesFromSpectrum;
-			if (timeOversamplingFactor > 1.0) {
+			if (timeOversamplingFactor > 1.0)
 				numberOfFilterValues = Melder_iroundUp (timeOversamplingFactor * numberOfSamplesFromSpectrum);
-				filterBandwidth *= timeOversamplingFactor;
-			}
-			autoSpectrum filter = Spectrum_create (filterBandwidth, numberOfFilterValues);
+			integer numberOfSamplesFFT = 2;
+			while (numberOfSamplesFFT < numberOfFilterValues)
+				numberOfSamplesFFT *= 2;
+			filterBandwidth *= ((double) numberOfSamplesFFT) / numberOfSamplesFromSpectrum;
+			const integer numberOfFrequencies = numberOfSamplesFFT + 1;
+			//const integer numberOfFrequencies = numberOfFilterValues + 1;
+			autoSpectrum filter = Spectrum_create (filterBandwidth, numberOfFrequencies);
 			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  spectrum -> z.part (1, 2, iflow, ifhigh);
 			window.resize (numberOfSamplesFromSpectrum);
 			windowShape_VEC_preallocated (window.get(), kSound_windowShape :: HANNING);
 			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  *=  window.get();
-			if (numberOfFilterValues > numberOfSamplesFromSpectrum)
-				filter -> z.part (1, 2, numberOfSamplesFromSpectrum + 1, numberOfFilterValues)  <<=  0.0;
 			autoSound filtered = Spectrum_to_Sound (filter.get());
 			autoFrequencyBin frequencyBin = FrequencyBin_create (my xmin, my xmax, filtered -> nx, filtered -> dx, filtered -> x1);
 			frequencyBin -> z.row (1)  <<=  filtered -> z.row (1);
