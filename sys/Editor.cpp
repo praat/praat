@@ -315,13 +315,16 @@ void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
-static void menu_cb_settingsReport (Editor me, EDITOR_ARGS_DIRECT) {
-	Thing_info (me);
+static void INFO_EDITOR__settingsReport (Editor me, EDITOR_ARGS_DIRECT) {
+	INFO_EDITOR
+		Thing_info (me);
+	INFO_EDITOR_END
 }
 
-static void menu_cb_info (Editor me, EDITOR_ARGS_DIRECT) {
-	if (my data)
+static void INFO_DATA__info (Editor me, EDITOR_ARGS_DIRECT) {
+	INFO_DATA
 		Thing_info (my data);
+	INFO_DATA_END
 }
 
 void structEditor :: v_createMenuItems_query (EditorMenu menu) {
@@ -329,10 +332,10 @@ void structEditor :: v_createMenuItems_query (EditorMenu menu) {
 }
 
 void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"Editor info", 0, menu_cb_settingsReport);
-	EditorMenu_addCommand (menu, U"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
-	if (data)
-		EditorMenu_addCommand (menu, Melder_cat (Thing_className (data), U" info"), 0, menu_cb_info);
+	EditorMenu_addCommand (menu, U"Editor info", 0, INFO_EDITOR__settingsReport);
+	EditorMenu_addCommand (menu, U"Settings report", Editor_HIDDEN, INFO_EDITOR__settingsReport);
+	if (our data)
+		EditorMenu_addCommand (menu, Melder_cat (Thing_className (data), U" info"), 0, INFO_DATA__info);
 }
 
 void structEditor :: v_createMenus () {
