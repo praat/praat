@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,14 +49,14 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 	const double jitter_rap = PointProcess_getJitter_rap (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	const double jitter_ppq5 = PointProcess_getJitter_ppq5 (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	const double jitter_ddp = PointProcess_getJitter_ddp (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
-	MelderInfo_writeLine (U"     Number of periods: ", numberOfPeriods);
-	MelderInfo_writeLine (U"     Mean period: ", meanPeriod, U" seconds");
-	MelderInfo_writeLine (U"     Stdev period: ", stdevPeriod, U" seconds");
-	MelderInfo_writeLine (U"     Jitter (local): ", Melder_percent (jitter_local, precision));
-	MelderInfo_writeLine (U"     Jitter (local, absolute): ", Melder_fixedExponent (jitter_local_absolute, -6, precision), U" seconds");
-	MelderInfo_writeLine (U"     Jitter (rap): ", Melder_percent (jitter_rap, precision));
-	MelderInfo_writeLine (U"     Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
-	MelderInfo_writeLine (U"     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
+	MelderInfo_writeLine (U"   Number of periods: ", numberOfPeriods);
+	MelderInfo_writeLine (U"   Mean period: ", meanPeriod, U" seconds");
+	MelderInfo_writeLine (U"   Stdev period: ", stdevPeriod, U" seconds");
+	MelderInfo_writeLine (U"   Jitter (local): ", Melder_percent (jitter_local, precision));
+	MelderInfo_writeLine (U"   Jitter (local, absolute): ", Melder_fixedExponent (jitter_local_absolute, -6, precision), U" seconds");
+	MelderInfo_writeLine (U"   Jitter (rap): ", Melder_percent (jitter_rap, precision));
+	MelderInfo_writeLine (U"   Jitter (ppq5): ", Melder_percent (jitter_ppq5, precision));
+	MelderInfo_writeLine (U"   Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
 }
 
 void structPointProcess :: v_info () {
