@@ -1,6 +1,6 @@
 /* PitchEditor.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,13 +65,14 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
-	Pitch pitch = (Pitch) my data;
-	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime (pitch, my startSelection, kPitch_unit::HERTZ, 1), U"Hz");
-	} else {
-		Melder_informationReal (Pitch_getMean (pitch, my startSelection, my endSelection, kPitch_unit::HERTZ), U"Hz");
-	}
+static void QUERY_DATA_FOR_REAL__getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_DATA_FOR_REAL
+		Pitch pitch = (Pitch) my data;
+		const double result = ( my startSelection == my endSelection
+			? Pitch_getValueAtTime (pitch, my startSelection, kPitch_unit::HERTZ, 1)
+			: Pitch_getMean (pitch, my startSelection, my endSelection, kPitch_unit::HERTZ)
+		);
+	QUERY_DATA_FOR_REAL_END (U" Hz")
 }
 
 static void menu_cb_octaveUp (PitchEditor me, EDITOR_ARGS_DIRECT) {
@@ -131,7 +132,8 @@ void structPitchEditor :: v_createMenus () {
 	Editor_addCommand (this, U"Edit", U"Path finder...", 0, menu_cb_pathFinder);
 
 	Editor_addCommand (this, U"Query", U"-- pitch --", 0, nullptr);
-	Editor_addCommand (this, U"Query", U"Get pitch", GuiMenu_F5, menu_cb_getPitch);
+	Editor_addCommand (this, U"Query", U"Get pitch", GuiMenu_F5,
+			QUERY_DATA_FOR_REAL__getPitch);
 
 	Editor_addMenu (this, U"Selection", 0);
 	Editor_addCommand (this, U"Selection", U"Unvoice", 0, menu_cb_voiceless);

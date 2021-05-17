@@ -511,6 +511,13 @@ _form_inited_: \
 #define QUERY_DATA_FOR_STRING_END  \
 	FOR_STRING__
 
+#define MODIFY_DATA(undoTitle)  \
+	Editor_save (me, undoTitle);
+#define MODIFY_DATA_END  \
+	FunctionEditor_redraw (me); \
+	Editor_broadcastDataChanged (me); \
+	(void) interpreter;
+
 #define HELP(title)  \
 	Melder_help (title); \
 	(void) interpreter;
