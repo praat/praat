@@ -353,20 +353,24 @@ void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 
 /********** QUERY MENU **********/
 
-static void menu_cb_SoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	Thing_info (my d_sound.data);
+static void INFO_DATA__SoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+	INFO_DATA
+		Thing_info (my d_sound.data);
+	INFO_DATA_END
 }
 
-static void menu_cb_LongSoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	Thing_info (my d_longSound.data);
+static void INFO_DATA__LongSoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+	INFO_DATA
+		Thing_info (my d_longSound.data);
+	INFO_DATA_END
 }
 
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
 	if (our d_sound.data && our d_sound.data != data) {
-		EditorMenu_addCommand (menu, U"Sound info", 0, menu_cb_SoundInfo);
+		EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
 	} else if (our d_longSound.data && our d_longSound.data != data) {
-		EditorMenu_addCommand (menu, U"LongSound info", 0, menu_cb_LongSoundInfo);
+		EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
 	}
 }
 
