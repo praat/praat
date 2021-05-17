@@ -54,7 +54,7 @@
 #define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
 #define EDITOR_ARGS_CMD_FORWARD  cmd, nullptr, 0, nullptr, nullptr, nullptr
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter
+#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter interpreter
 #define EDITOR_ARGS_DIRECT_FORWARD  nullptr, nullptr, 0, nullptr, nullptr, nullptr
 
 #define EDITOR_FORM(title, helpTitle)  \
@@ -426,6 +426,94 @@ _form_inited_: \
 	} else { \
 		file = UiFile_getFile (cmd -> d_uiform.get()); \
 	}
+
+#define VOID_EDITOR
+#define VOID_EDITOR_END  \
+	(void) interpreter;
+
+#define DATA_BEGIN__  \
+	Melder_assert (my data);
+
+#define PLAY_DATA  \
+	DATA_BEGIN__
+#define PLAY_DATA_END  \
+	(void) interpreter;
+
+#define INFO_EDITOR
+#define INFO_EDITOR_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_;
+
+#define INFO_DATA  \
+	DATA_BEGIN__
+#define INFO_DATA_END  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_;
+
+#define FOR_REAL__(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::REAL_; \
+	Melder_information (result, __VA_ARGS__);
+
+#define FOR_INTEGER__(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::INTEGER_; \
+	Melder_information (double (result), __VA_ARGS__);
+
+#define FOR_BOOLEAN__(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::BOOLEAN_; \
+	Melder_information (double (result), __VA_ARGS__);
+
+#define FOR_COMPLEX__(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; /* TODO: make true complex types in script */ \
+	Melder_information (result, __VA_ARGS__);
+
+#define FOR_STRING__  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::STRING_; \
+	Melder_information (result);
+
+#define QUERY_EDITOR_FOR_REAL
+#define QUERY_EDITOR_FOR_REAL_END(...)  \
+	FOR_REAL__ (__VA_ARGS__)
+
+#define QUERY_EDITOR_FOR_INTEGER
+#define QUERY_EDITOR_FOR_INTEGER_END(...)  \
+	FOR_INTEGER__ (__VA_ARGS__)
+
+#define QUERY_EDITOR_FOR_BOOLEAN
+#define QUERY_EDITOR_FOR_BOOLEAN_END(...)  \
+	FOR_BOOLEAN__ (__VA_ARGS__)
+
+#define QUERY_EDITOR_FOR_STRING
+#define QUERY_EDITOR_FOR_STRING_END  \
+	FOR_STRING__
+
+#define QUERY_DATA_FOR_REAL  \
+	DATA_BEGIN__
+#define QUERY_DATA_FOR_REAL_END(...)  \
+	FOR_REAL__ (__VA_ARGS__)
+
+#define QUERY_DATA_FOR_INTEGER  \
+	DATA_BEGIN__
+#define QUERY_DATA_FOR_INTEGER_END(...)  \
+	FOR_INTEGER__ (__VA_ARGS__)
+
+#define QUERY_DATA_FOR_BOOLEAN  \
+	DATA_BEGIN__
+#define QUERY_DATA_FOR_BOOLEAN_END(...)  \
+	FOR_BOOLEAN__ (__VA_ARGS__)
+
+#define QUERY_DATA_FOR_STRING  \
+	DATA_BEGIN__
+#define QUERY_DATA_FOR_STRING_END  \
+	FOR_STRING__
+
+#define HELP(title)  \
+	Melder_help (title); \
+	(void) interpreter;
 
 /* End of file EditorM.h */
 #endif

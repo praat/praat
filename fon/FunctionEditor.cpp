@@ -421,17 +421,25 @@ void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 
 /********** QUERY MENU **********/
 
-static void menu_cb_getB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (my startSelection, my v_format_units_long());
+static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = my startSelection;
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void menu_cb_getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (0.5 * (my startSelection + my endSelection), my v_format_units_long());
+static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = 0.5 * (my startSelection + my endSelection);
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void menu_cb_getE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (my endSelection, my v_format_units_long());
+static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = my endSelection;
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void menu_cb_getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	Melder_informationReal (my endSelection - my startSelection, my v_format_units_long());
+static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_EDITOR_FOR_REAL
+		const double result = my endSelection - my startSelection;
+	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
 
 /********** VIEW MENU **********/
@@ -545,26 +553,36 @@ static void gui_button_cb_zoomBack (FunctionEditor me, GuiButtonEvent /* event *
 }
 
 static void menu_cb_showAll (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	do_showAll (me);
+	VOID_EDITOR
+		do_showAll (me);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_zoomIn (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	do_zoomIn (me);
+	VOID_EDITOR
+		do_zoomIn (me);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_zoomOut (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	do_zoomOut (me);
+	VOID_EDITOR
+		do_zoomOut (me);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_zoomToSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	do_zoomToSelection (me);
+	VOID_EDITOR
+		do_zoomToSelection (me);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_zoomBack (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	do_zoomBack (me);
+	VOID_EDITOR
+		do_zoomBack (me);
+	VOID_EDITOR_END
 }
 
-static void menu_cb_play (FunctionEditor me, EDITOR_ARGS_FORM) {
+static void PLAY_DATA__play (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Play", nullptr)
 		REAL (from, Melder_cat (U"From (", my v_format_units_short(), U")"), U"0.0")
 		REAL (to,   Melder_cat (U"To (", my v_format_units_short(), U")"),   U"1.0")
@@ -577,26 +595,32 @@ static void menu_cb_play (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	if (MelderAudio_isPlaying) {
-		MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
-	} else if (my startSelection < my endSelection) {
-		my v_play (my startSelection, my endSelection);
-	} else {
-		if (my startSelection == my endSelection && my startSelection > my startWindow && my startSelection < my endWindow)
-			my v_play (my startSelection, my endWindow);
-		else
-			my v_play (my startWindow, my endWindow);
-	}
+static void PLAY_DATA__playOrStop (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	PLAY_DATA
+		if (MelderAudio_isPlaying) {
+			MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
+		} else if (my startSelection < my endSelection) {
+			my v_play (my startSelection, my endSelection);
+		} else {
+			if (my startSelection == my endSelection && my startSelection > my startWindow && my startSelection < my endWindow)
+				my v_play (my startSelection, my endWindow);
+			else
+				my v_play (my startWindow, my endWindow);
+		}
+	PLAY_DATA_END
 }
 
-static void menu_cb_playWindow (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	my v_play (my startWindow, my endWindow);
+static void PLAY_DATA__playWindow (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	PLAY_DATA
+		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
+		my v_play (my startWindow, my endWindow);
+	PLAY_DATA_END
 }
 
-static void menu_cb_interruptPlaying (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
+static void PLAY_DATA__interruptPlaying (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+	PLAY_DATA
+		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
+	PLAY_DATA_END
 }
 
 /********** SELECT MENU **********/
@@ -665,17 +689,21 @@ static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM)
 }
 
 static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my endSelection = my startSelection;
-	my v_updateText ();
-	FunctionEditor_redraw (me);
-	updateGroup (me);
+	VOID_EDITOR
+		my endSelection = my startSelection;
+		my v_updateText ();
+		FunctionEditor_redraw (me);
+		updateGroup (me);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_moveCursorToEndOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my startSelection = my endSelection;
-	my v_updateText ();
-	FunctionEditor_redraw (me);
-	updateGroup (me);
+	VOID_EDITOR
+		my startSelection = my endSelection;
+		my v_updateText ();
+		FunctionEditor_redraw (me);
+		updateGroup (me);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
@@ -757,11 +785,15 @@ void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGrou
 }
 
 static void menu_cb_pageUp (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	FunctionEditor_shift (me, -RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
+	VOID_EDITOR
+		FunctionEditor_shift (me, -RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
+	VOID_EDITOR_END
 }
 
 static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
+	VOID_EDITOR
+		FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
+	VOID_EDITOR_END
 }
 
 static void scrollToView (FunctionEditor me, double t) {
@@ -775,61 +807,73 @@ static void scrollToView (FunctionEditor me, double t) {
 }
 
 static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my startSelection -= my p_arrowScrollStep;
-	if (my startSelection < my tmin + 1e-12)
-		my startSelection = my tmin;
-	my endSelection -= my p_arrowScrollStep;
-	if (my endSelection < my tmin + 1e-12)
-		my endSelection = my tmin;
-	scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR
+		my startSelection -= my p_arrowScrollStep;
+		if (my startSelection < my tmin + 1e-12)
+			my startSelection = my tmin;
+		my endSelection -= my p_arrowScrollStep;
+		if (my endSelection < my tmin + 1e-12)
+			my endSelection = my tmin;
+		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR_END
 }
 
 static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my startSelection += my p_arrowScrollStep;
-	if (my startSelection > my tmax - 1e-12)
-		my startSelection = my tmax;
-	my endSelection += my p_arrowScrollStep;
-	if (my endSelection > my tmax - 1e-12)
-		my endSelection = my tmax;
-	scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR
+		my startSelection += my p_arrowScrollStep;
+		if (my startSelection > my tmax - 1e-12)
+			my startSelection = my tmax;
+		my endSelection += my p_arrowScrollStep;
+		if (my endSelection > my tmax - 1e-12)
+			my endSelection = my tmax;
+		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR_END
 }
 
 static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my startSelection -= my p_arrowScrollStep;
-	if (my startSelection < my tmin + 1e-12)
-		my startSelection = my tmin;
-	scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR
+		my startSelection -= my p_arrowScrollStep;
+		if (my startSelection < my tmin + 1e-12)
+			my startSelection = my tmin;
+		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR_END
 }
 
 static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my startSelection += my p_arrowScrollStep;
-	if (my startSelection > my tmax - 1e-12)
-		my startSelection = my tmax;
-	if (my startSelection > my endSelection) {
-		double dummy = my startSelection;
-		my startSelection = my endSelection;
-		my endSelection = dummy;
-	}
-	scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR
+		my startSelection += my p_arrowScrollStep;
+		if (my startSelection > my tmax - 1e-12)
+			my startSelection = my tmax;
+		if (my startSelection > my endSelection) {
+			double dummy = my startSelection;
+			my startSelection = my endSelection;
+			my endSelection = dummy;
+		}
+		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR_END
 }
 
 static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my endSelection -= my p_arrowScrollStep;
-	if (my endSelection < my tmin + 1e-12)
-		my endSelection = my tmin;
-	if (my startSelection > my endSelection) {
-		double dummy = my startSelection;
-		my startSelection = my endSelection;
-		my endSelection = dummy;
-	}
-	scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR
+		my endSelection -= my p_arrowScrollStep;
+		if (my endSelection < my tmin + 1e-12)
+			my endSelection = my tmin;
+		if (my startSelection > my endSelection) {
+			double dummy = my startSelection;
+			my startSelection = my endSelection;
+			my endSelection = dummy;
+		}
+		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR_END
 }
 
 static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRECT) {
-	my endSelection += my p_arrowScrollStep;
-	if (my endSelection > my tmax - 1e-12)
-		my endSelection = my tmax;
-	scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR
+		my endSelection += my p_arrowScrollStep;
+		if (my endSelection > my tmax - 1e-12)
+			my endSelection = my tmax;
+		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+	VOID_EDITOR_END
 }
 
 /********** GUI CALLBACKS **********/
@@ -951,8 +995,8 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		updateGroup (me);
 }
 
-static void menu_cb_intro (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
-	Melder_help (U"Intro");
+static void HELP__intro (FunctionEditor /* me */, EDITOR_ARGS_DIRECT) {
+	HELP (U"Intro")
 }
 
 void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
@@ -975,11 +1019,11 @@ void structFunctionEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 
 void structFunctionEditor :: v_createMenuItems_view_audio (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"-- play --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Audio:", GuiMenu_INSENSITIVE, menu_cb_play /* dummy */);
-	EditorMenu_addCommand (menu, U"Play...", 0, menu_cb_play);
-	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, menu_cb_playOrStop);
-	EditorMenu_addCommand (menu, U"Play window", GuiMenu_SHIFT | GuiMenu_TAB, menu_cb_playWindow);
-	EditorMenu_addCommand (menu, U"Interrupt playing", GuiMenu_ESCAPE, menu_cb_interruptPlaying);
+	EditorMenu_addCommand (menu, U"Audio:", GuiMenu_INSENSITIVE, PLAY_DATA__play /* dummy */);
+	EditorMenu_addCommand (menu, U"Play...", 0, PLAY_DATA__play);
+	EditorMenu_addCommand (menu, U"Play or stop", GuiMenu_TAB, PLAY_DATA__playOrStop);
+	EditorMenu_addCommand (menu, U"Play window", GuiMenu_SHIFT | GuiMenu_TAB, PLAY_DATA__playWindow);
+	EditorMenu_addCommand (menu, U"Interrupt playing", GuiMenu_ESCAPE, PLAY_DATA__interruptPlaying);
 }
 
 void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
@@ -990,11 +1034,11 @@ void structFunctionEditor :: v_createMenuItems_view (EditorMenu menu) {
 void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createMenuItems_query (menu);
 	EditorMenu_addCommand (menu, U"-- query selection --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Get start of selection", 0, menu_cb_getB);
-	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
-	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, menu_cb_getCursor);
-	EditorMenu_addCommand (menu, U"Get end of selection", 0, menu_cb_getE);
-	EditorMenu_addCommand (menu, U"Get selection length", 0, menu_cb_getSelectionDuration);
+	EditorMenu_addCommand (menu, U"Get start of selection", 0, QUERY_EDITOR_FOR_REAL__getB);
+	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
+	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
+	EditorMenu_addCommand (menu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
+	EditorMenu_addCommand (menu, U"Get selection duration", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
 }
 
 void structFunctionEditor :: v_createMenus () {
@@ -1028,7 +1072,7 @@ void structFunctionEditor :: v_createMenus () {
 
 void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, U"Intro", 0, menu_cb_intro);
+	EditorMenu_addCommand (menu, U"Intro", 0, HELP__intro);
 }
 
 static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeEvent /* event */) {
