@@ -289,49 +289,46 @@ static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 /***** QUERY MENU *****/
 
-static void menu_cb_GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
-	checkTierSelection (me, U"query the starting point of an interval");
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
+static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_DATA_FOR_REAL
+		const TextGrid grid = (TextGrid) my data;
+		checkTierSelection (me, U"query the starting point of an interval");
+		const Function anyTier = grid -> tiers->at [my selectedTier];
+		Melder_require (anyTier -> classInfo == classIntervalTier,
+			U"The selected tier is not an interval tier.");
 		const IntervalTier tier = (IntervalTier) anyTier;
 		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const double time = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
+		const double result = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
 				tier -> intervals.at [iinterval] -> xmin );
-		Melder_informationReal (time, U"seconds");
-	} else {
-		Melder_throw (U"The selected tier is not an interval tier.");
-	}
+	QUERY_DATA_FOR_REAL_END (U" seconds")
 }
 
-static void menu_cb_GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
-	checkTierSelection (me, U"query the end point of an interval");
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
+static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_DATA_FOR_REAL
+		const TextGrid grid = (TextGrid) my data;
+		checkTierSelection (me, U"query the end point of an interval");
+		const Function anyTier = grid -> tiers->at [my selectedTier];
+		Melder_require (anyTier -> classInfo == classIntervalTier,
+			U"The selected tier is not an interval tier.");
 		const IntervalTier tier = (IntervalTier) anyTier;
 		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const double time = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
+		const double result = ( iinterval < 1 || iinterval > tier -> intervals.size ? undefined :
 				tier -> intervals.at [iinterval] -> xmax );
-		Melder_informationReal (time, U"seconds");
-	} else {
-		Melder_throw (U"The selected tier is not an interval tier.");
-	}
+	QUERY_DATA_FOR_REAL_END (U" seconds")
 }
 
-static void menu_cb_GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
-	checkTierSelection (me, U"query the label of an interval");
-	const Function anyTier = grid -> tiers->at [my selectedTier];
-	if (anyTier -> classInfo == classIntervalTier) {
+static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+	QUERY_DATA_FOR_STRING
+		const TextGrid grid = (TextGrid) my data;
+		checkTierSelection (me, U"query the label of an interval");
+		const Function anyTier = grid -> tiers->at [my selectedTier];
+		Melder_require (anyTier -> classInfo == classIntervalTier,
+			U"The selected tier is not an interval tier.");
 		const IntervalTier tier = (IntervalTier) anyTier;
 		const integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const conststring32 label = ( iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
+		const conststring32 result = ( iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
 				tier -> intervals.at [iinterval] -> text.get() );
-		Melder_information (label);
-	} else {
-		Melder_throw (U"The selected tier is not an interval tier.");
-	}
+	QUERY_DATA_FOR_STRING_END
 }
 
 /***** VIEW MENU *****/
@@ -1162,9 +1159,12 @@ void structTextGridEditor :: v_createMenus () {
 	}
 
 	Editor_addCommand (this, U"Query", U"-- query interval --", 0, nullptr);
-	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
-	Editor_addCommand (this, U"Query", U"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
-	Editor_addCommand (this, U"Query", U"Get label of interval", 0, menu_cb_GetLabelOfInterval);
+	Editor_addCommand (this, U"Query", U"Get starting point of interval", 0,
+			QUERY_DATA_FOR_REAL__GetStartingPointOfInterval);
+	Editor_addCommand (this, U"Query", U"Get end point of interval", 0,
+			QUERY_DATA_FOR_REAL__GetEndPointOfInterval);
+	Editor_addCommand (this, U"Query", U"Get label of interval", 0,
+			QUERY_DATA_FOR_STRING__GetLabelOfInterval);
 
 	menu = Editor_addMenu (this, U"Interval", 0);
 	if (our d_sound.data || our d_longSound.data) {
