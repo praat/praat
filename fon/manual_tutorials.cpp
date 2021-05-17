@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210513)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210517)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.44# (17 May 2021)")
+LIST_ITEM (U"• Scripting: queries in editor windows are scriptable again.")
 NORMAL (U"##6.1.43# (13 May 2021)")
 LIST_ITEM (U"• TextGrid window: characters in the IPA chart grow with the window.")
 LIST_ITEM (U"• TextGrid window: seeing the maroon shadow now always means that the boundary will be moved when the mouse is released (problem since 6.1.20 or so).")
