@@ -20,6 +20,7 @@
 
 #include "Sound.h"
 #include "Graphics.h"
+#include "Intensity.h"
 
 Thing_define (AnalyticSound, Sound) {
 };
@@ -27,5 +28,7 @@ Thing_define (AnalyticSound, Sound) {
 autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, double dx, double x1);
 
 autoAnalyticSound Sound_to_AnalyticSound (Sound me);
+
+autoIntensity AnalyticSound_to_Intensity (AnalyticSound me);
 
 #endif /* _AnalyticSound_h_ */

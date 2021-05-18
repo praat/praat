@@ -131,7 +131,7 @@ autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double
 				2 * (spectrum -> nx / 2)  * 2 * frequencyResolutionBins / numberOfBinsPerOctave
 		*/
 		const double maximumFilterSize = Melder_iround_tieUp (timeOversamplingFactor * 2 * spectrum -> nx * frequencyResolutionInBins / numberOfBinsPerOctave);
-		autoSpectrum filter = Spectrum_create (nyquistFrequency, maximumFilterSize);	
+		//autoSpectrum filter = Spectrum_create (nyquistFrequency, maximumFilterSize); 	
 		autoVEC window = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 			const double log2_f = Sampled_indexToX (thee.get(), ifreq);
