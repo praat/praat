@@ -69,26 +69,22 @@ double structMultiSampledSpectrogram :: v_getValueAtSample (integer ifreq, integ
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
 }
 
-double structMultiSampledSpectrogram :: v_myFrequencyToHertz (double log2_f) {
+double structMultiSampledSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) {
 	return exp2 (log2_f);
 }
 
-double structMultiSampledSpectrogram :: v_hertzToMyFrequency (double f_hz) {
+double structMultiSampledSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
 	return log2 (f_hz);
 }
 
-autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1) {
+autoFrequencyBin FrequencyBin_create (double tmin, double tmax, integer nx, double dx, double x1) {
 	try {
 		autoFrequencyBin me = Thing_new (FrequencyBin);
-		Matrix_init (me.get(), xmin, xmax, nx, dx, x1, 0.5, 2.5, 2, 1.0, 1.0);
+		Matrix_init (me.get(), tmin, tmax, nx, dx, x1, 0.5, 2.5, 2, 1.0, 1.0);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FrequencyBin not created.");
 	}
-}
-
-void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1) {
-	Sampled_init (me, fmin, fmax, numberOfFrequencies, df, f1);
 }
 
 void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter interpreter) {
@@ -133,6 +129,28 @@ autoAnalyticSound FrequencyBin_to_AnalyticSound (FrequencyBin me) {
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot convert to AnalyticSound.");
 	}
+}
+
+void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, 
+	integer numberOfFrequencies, double df, double f1, double frequencyResolutionInBins)
+{
+	my tmin = tmin;
+	my tmax = tmax;
+	my frequencyResolutionInBins = frequencyResolutionInBins;
+	Sampled_init (me, fmin, fmax, numberOfFrequencies, df, f1);
+}
+
+void MultiSampledSpectrogram_getFrequencyBand (MultiSampledSpectrogram me, integer index, double *out_flow, double *out_fhigh) {
+	const double maximumFrequency = my v_myFrequencyUnitToHertz (my xmax);
+	const double myFrequencyUnit = Sampled_indexToX (me, index);
+	double flow = my v_myFrequencyUnitToHertz (myFrequencyUnit - my frequencyResolutionInBins * my dx);
+	double fhigh = my v_myFrequencyUnitToHertz (myFrequencyUnit + my frequencyResolutionInBins * my dx);
+	Melder_clipLeft (0.0, & flow);
+	Melder_clipRight (& fhigh, maximumFrequency);
+	if (out_flow)
+		*out_flow = flow;
+	if (out_fhigh)
+		*out_fhigh = fhigh;
 }
 
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {

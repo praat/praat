@@ -20,16 +20,14 @@
 #define ooSTRUCT ConstantQLogFSpectrogram
 oo_DEFINE_CLASS (ConstantQLogFSpectrogram, MultiSampledSpectrogram)
 
-	oo_DOUBLE (frequencyResolutionInBins) // invariant frequencyBins.size == my nx
-	
 	#if oo_DECLARING
 		void v_info ()
 			override;
 		double v_getValueAtSample (integer /* ifreq */, integer /* iframe */ , int /* unit */)
 			override;
-		double v_myFrequencyToHertz (double /* log2_f */)
+		double v_myFrequencyUnitToHertz (double /* log2_f */)
 			override;
-		double v_hertzToMyFrequency (double /* f_hz */)
+		double v_hertzToMyFrequencyUnit (double /* f_hz */)
 			override;
 	#endif
 

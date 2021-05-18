@@ -116,6 +116,7 @@
 #include "Sound_and_ConstantQLogFSpectrogram.h"
 #include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"
+#include "Spectrum_and_MultiSampledSpectrogram.h"
 #include "Spectrogram.h"
 #include "SpeechSynthesizer.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
@@ -5958,7 +5959,7 @@ DO
 
 DIRECT (CONVERT_EACH_TO_ONE__ConstantQLogFSpectrogram_to_Sound) {
 	CONVERT_EACH_TO_ONE (ConstantQLogFSpectrogram)
-		autoSound result = ConstantQLogFSpectrogram_to_Sound (me, false);
+		autoSound result = MultiSampledSpectrogram_to_Sound (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -5967,7 +5968,7 @@ FORM (CONVERT_EACH_TO_ONE__ConstantQLogFSpectrogram_to_Sound_frequencyBin, U"Con
 	OK
 DO
 	CONVERT_EACH_TO_ONE (ConstantQLogFSpectrogram)
-		autoSound result = ConstantQLogFSpectrogram_to_Sound_frequencyBin (me, frequencyBinNumber);
+		autoSound result = MultiSampledSpectrogram_to_Sound_frequencyBin (me, frequencyBinNumber);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_",frequencyBinNumber)
 }
 

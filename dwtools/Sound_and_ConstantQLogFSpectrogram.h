@@ -24,7 +24,7 @@
 
 autoConstantQLogFSpectrogram Sound_to_ConstantQLogFSpectrogram (Sound me, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor);
 
-autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me, bool shiftPhaseBy90degrees);
+autoSound ConstantQLogFSpectrogram_to_Sound (ConstantQLogFSpectrogram me);
 
 autoSound ConstantQLogFSpectrogram_to_Sound_frequencyBin (ConstantQLogFSpectrogram me, integer frequencyBinNumber);
 autoAnalyticSound ConstantQLogFSpectrogram_to_AnalyticSound_frequencyBin (ConstantQLogFSpectrogram me, integer frequencyBinNumber);

@@ -34,15 +34,19 @@ void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter i
 
 double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType);
 
-void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double fmin, double fmax, integer numberOfFrequencies, double df, double f1);
-
 autoSound FrequencyBin_to_Sound (FrequencyBin me);
+
 autoAnalyticSound FrequencyBin_to_AnalyticSound (FrequencyBin me);
+
+void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double tmin, double tmax, double fmin, double fmax, 
+	integer numberOfFrequencies, double df, double f1, double frequencyResolutionInBins);
 
 void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
 
 void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
 
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me);
+
+void MultiSampledSpectrogram_getFrequencyBand (MultiSampledSpectrogram me, integer index, double *out_flow, double *out_fhigh);
 
 #endif /* MultiSampledSpectrogram_h_ */

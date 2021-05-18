@@ -53,15 +53,15 @@ double structConstantQLogFSpectrogram :: v_getValueAtSample (integer ifreq, inte
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
 }
 
-double structConstantQLogFSpectrogram :: v_myFrequencyToHertz (double log2_f) {
+double structConstantQLogFSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) {
 	return exp2 (log2_f);
 }
 
-double structConstantQLogFSpectrogram :: v_hertzToMyFrequency (double f_hz) {
+double structConstantQLogFSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
 	return (f_hz > 0 ? log2 (f_hz) : undefined);
 }
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
+autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
 	try {
 		const double ymin = 0.0, ymax = log2 (fmax);
 		const double dy = 1.0 / numberOfBinsPerOctave;
@@ -69,8 +69,7 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double f1, double 
 		Melder_require (numberOfBins > 1,
 			U"The number of bins should be larger than 1.");
 		autoConstantQLogFSpectrogram me = Thing_new (ConstantQLogFSpectrogram);
-		my frequencyResolutionInBins = frequencyResolutionInBins;
-		MultiSampledSpectrogram_init (me.get(), ymin, ymax, numberOfBins, dy, log2 (f1));
+		MultiSampledSpectrogram_init (me.get(), tmin, tmax, ymin, ymax, numberOfBins, dy, log2 (f1), frequencyResolutionInBins);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create ConstantQLogFSpectrogram.");
@@ -139,7 +138,7 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 		fmax = my xmax;
 	} else {
 		fmin = ( fmin > 0 ? log2 (fmin) : 0.0 );
-		fmax = ( fmax > my v_myFrequencyToHertz (my xmax) ? my xmax : log2 (fmax) );
+		fmax = ( fmax > my v_myFrequencyUnitToHertz (my xmax) ? my xmax : log2 (fmax) );
 	}
 	FrequencyBin frequencyBin = my frequencyBins.at [1];
 	if (tmin >= tmax) {
@@ -156,7 +155,7 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 		double f = my x1;
 		while (f <= my xmax ) {
 			if (f >= fmin) {
-				const double f_hz = my v_myFrequencyToHertz (f);
+				const double f_hz = my v_myFrequencyUnitToHertz (f);
 				conststring32 f_string = Melder_fixed (f_hz, 1);
 				Graphics_markLeft (g, f, false, true, false, f_string);
 			}
@@ -203,7 +202,7 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_translateSpectrum (Constan
 			return thee;
 		Melder_require (fabs (shiftNumberOfBins) < my nx,
 			U"The shift should not be larger than the number of frequency bins (", my nx, U").");
-		fromFrequency = ( fromFrequency <= 0.0 ? (shiftNumberOfBins > 0.0 ? my x1 : my xmax) : my v_hertzToMyFrequency (fromFrequency) );
+		fromFrequency = ( fromFrequency <= 0.0 ? (shiftNumberOfBins > 0.0 ? my x1 : my xmax) : my v_hertzToMyFrequencyUnit (fromFrequency) );
 		if (shiftNumberOfBins > 0.0) {
 			// start at the hihest frequency and work down.
 			const integer ifreqFrom = Sampled_xToHighIndex (me, fromFrequency);

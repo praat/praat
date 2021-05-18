@@ -46,7 +46,8 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
-	Spectrogram_extensions.o Spectrum_extensions.o SSCP.o Strings_extensions.o \
+	Spectrogram_extensions.o Spectrum_extensions.o Spectrum_and_MultiSampledSpectrogram.o \
+	SSCP.o Strings_extensions.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
 	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
