@@ -23,7 +23,16 @@
 #include "MultiSampledSpectrogram.h"
 #include "melder.h"
 
-#include "ConstantQLogFSpectrogram_def.h"
+Thing_define (ConstantQLogFSpectrogram, MultiSampledSpectrogram) {
+	void v_info ()
+		override;
+	double v_getValueAtSample (integer /* ifreq */, integer /* iframe */ , int /* unit */)
+		override;
+	double v_myFrequencyUnitToHertz (double /* log2_f */)
+		override;
+	double v_hertzToMyFrequencyUnit (double /* f_hz */)
+		override;	
+};
 
 autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins);
 

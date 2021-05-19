@@ -153,6 +153,42 @@ void MultiSampledSpectrogram_getFrequencyBand (MultiSampledSpectrogram me, integ
 		*out_fhigh = fhigh;
 }
 
+void MultiSampledSpectrogram_formula (MultiSampledSpectrogram me, conststring32 formula, Interpreter interpreter) {
+	try {
+		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
+			FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
+			FrequencyBin_formula (frequencyBin, formula, interpreter);
+		}
+	} catch (MelderError) {
+		Melder_throw (me, U": formula not completed.");
+	}
+}
+
+void MultiSampledSpectrogram_formula_part (MultiSampledSpectrogram me, double fromTime, double toTime, double fromFrequency, double toFrequency, conststring32 formula, Interpreter interpreter) {
+	try {
+		const double fx1 = my v_myFrequencyUnitToHertz (my x1);
+		const double fnyquist = my v_myFrequencyUnitToHertz (my xmax);
+		if (fromFrequency == toFrequency && fromFrequency == 0.0) {
+			fromFrequency  = fx1;
+			toFrequency = fnyquist;
+		}
+		Melder_require (toFrequency >= fx1 && fromFrequency <= toFrequency && fromFrequency < fnyquist,
+			U"At least one of the frequencies needs to be in the interval from ", fx1, U" to ", fnyquist, U" Hz.");
+		Melder_clip (fx1, & fromFrequency, fnyquist);
+		Melder_clip (fx1, & toFrequency, fnyquist);
+		const double flow = my v_hertzToMyFrequencyUnit (fromFrequency);
+		const double fhigh = my v_hertzToMyFrequencyUnit (toFrequency);
+		integer iflow, ifhigh;
+		if (Sampled_getWindowSamples (me, flow, fhigh, & iflow, & ifhigh) > 0)
+			for (integer ifreq = iflow; ifreq <= ifhigh; ifreq ++) {
+				FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
+				Matrix_formula_part (frequencyBin, fromTime, toTime, 0.5, 1.5, formula, interpreter, nullptr);
+			}
+	} catch (MelderError) {
+		Melder_throw (me, U": formula not completed on part.");
+	}
+}
+
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	double numberOfFrames = 0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
@@ -166,11 +202,56 @@ void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, doubl
 	
 }
 
-void MultiSampledSpectrogram_paint_inside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {
+void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange) {
+	integer ixmin, ixmax, ifmin, ifmax;
+	if (Sampled_getWindowSamples (me, fmin, fmax, & ifmin, & ifmax) == 0)
+		return;
+	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
+	integer numberOfFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & ixmin, & ixmax);
+	autoMAT p = raw_MAT (1, numberOfFrames);
 	
+	/*
+		Find maximum power. No need for logarithm in the test
+	*/
+	MelderExtremaWithInit powerExtrema;
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+		FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
+		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin, tmax, & ixmin, & ixmax)) == 0)
+			continue;
+		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
+			double powerdB = frequencyBin -> v_getValueAtSample (iframe, 0, 2); // 10*log10 (power/..)
+			powerExtrema.update (powerdB);
+		}
+	}
+	if (powerExtrema.max == 0.0)
+		return; // empty
+	const double maximum = powerExtrema.max;
+	const double minimum = std::max (maximum - dBRange, powerExtrema.min);
+
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
+		double xmin1, xmax1 ;
+		const double dx = frequencyBin -> dx;
+		const double freq = Sampled_indexToX (me, ifreq);
+		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & ixmin, & ixmax)) == 0)
+			continue;
+		p.resize (1, numberOfFrames);
+		integer index = 0;
+		for (integer iframe = ixmin; iframe <= ixmax; iframe ++)
+			p [1] [ ++ index] = frequencyBin -> v_getValueAtSample (iframe, 0, 2);
+		double xmin = Sampled_indexToX (frequencyBin, ixmin) - 0.5 * dx;
+		double xmax = Sampled_indexToX (frequencyBin, ixmax) + 0.5 * dx;
+		double ymin = freq - 0.5 * my dx; 
+		double ymax = freq + 0.5 * my dx;
+		if (ifreq > 1) {
+			Melder_clipRight (& xmin, xmin1);
+			Melder_clipLeft (xmax1, & xmax);
+		}
+		Graphics_image (g, p.get(), xmin, xmax, ymin, ymax, minimum, maximum);
+		xmin1 = xmin;
+		xmax1 = xmax;
+	}
 }
-void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {
-	MultiSampledSpectrogram_paint_inside (me, g, tmin, tmax, fmin, fmax, garnish);
-}
+
 
 /* End of file  MultiSampledSpectrogram.cpp */

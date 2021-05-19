@@ -19,26 +19,6 @@
 #include "Formula.h"
 #include "ConstantQLogFSpectrogram.h"
 
-#include "oo_DESTROY.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_COPY.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_EQUAL.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_CAN_WRITE_AS_ENCODING.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_WRITE_TEXT.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_READ_TEXT.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_WRITE_BINARY.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_READ_BINARY.h"
-#include "ConstantQLogFSpectrogram_def.h"
-#include "oo_DESCRIPTION.h"
-#include "ConstantQLogFSpectrogram_def.h"
-
-
 Thing_implement (ConstantQLogFSpectrogram, MultiSampledSpectrogram, 0);
 
 void structConstantQLogFSpectrogram :: v_info () {
@@ -58,7 +38,7 @@ double structConstantQLogFSpectrogram :: v_myFrequencyUnitToHertz (double log2_f
 }
 
 double structConstantQLogFSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
-	return (f_hz > 0 ? log2 (f_hz) : undefined);
+	return ( f_hz > 0 ? log2 (f_hz) : undefined );
 }
 
 autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
@@ -146,7 +126,8 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 		tmax = frequencyBin -> xmax;
 	}
 	Graphics_setInner (g);
-	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
+//	ConstantQLogFSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
+	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -167,7 +148,6 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 
 void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter) {
 	try {
-		
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 			FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
 			FrequencyBin_formula (frequencyBin, formula, interpreter);
