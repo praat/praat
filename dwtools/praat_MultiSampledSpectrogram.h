@@ -1,6 +1,7 @@
-#ifndef _AnalyticSound_h_
-#define _AnalyticSound_h_
-/* AnalyticSound.h
+#ifndef _praat_MultiSampledSpectrogram_h_
+#define _praat_MultiSampledSpectrogram_h_
+
+/* praat_MultiSampledSpectrogram_.h
  *
  * Copyright (C) 2021 David Weenink
  *
@@ -18,17 +19,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Sound.h"
-#include "Graphics.h"
-#include "Intensity.h"
+#include "AnalyticSound.h"
+#include "ConstantQLogFSpectrogram.h"
+#include "MultiSampledSpectrogram.h"
 
-Thing_define (AnalyticSound, Sound) {
-};
+#include "praat.h"
 
-autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, double dx, double x1);
+void praat_MultiSampledSpectrogram_init ();
 
-autoAnalyticSound Sound_to_AnalyticSound (Sound me);
+#endif /* _praat_MultiSampledSpectrogram_h_ */
 
-autoIntensity AnalyticSound_to_Intensity (AnalyticSound me);
-
-#endif /* _AnalyticSound_h_ */

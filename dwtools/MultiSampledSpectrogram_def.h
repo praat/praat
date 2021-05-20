@@ -31,15 +31,19 @@ oo_END_CLASS (FrequencyBin)
 #define ooSTRUCT  MultiSampledSpectrogram
 oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 
-	oo_COLLECTION_OF (OrderedOf, frequencyBins, FrequencyBin, 0) // invariant frequencyBins.size == my nx
+	oo_DOUBLE (tmin) // invariant: frequencyBin [i] -> xmin = my tmin for all I
+	oo_DOUBLE (tmax) // invariant: frequencyBin [i] -> xmax = my tmax for all I
+	oo_DOUBLE (frequencyResolutionInBins)
 	
+	oo_COLLECTION_OF (OrderedOf, frequencyBins, FrequencyBin, 0) // invariant frequencyBins.size == my nx
+																 
 	#if oo_DECLARING
 		void v_info ()
 			override;
 		double v_getValueAtSample (integer /* ifreq */, integer /* iframe */, int /* unit */)
 			override;
-		virtual double v_myFrequencyToHertz (double /* x */);
-		virtual double v_hertzToMyFrequency (double /* f_hz */);
+		virtual double v_myFrequencyUnitToHertz (double /* x */);
+		virtual double v_hertzToMyFrequencyUnit (double /* f_hz */);
 	#endif
 
 oo_END_CLASS (MultiSampledSpectrogram)
