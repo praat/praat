@@ -467,7 +467,8 @@ DIRECT (INFO_NONE__reportFontProperties) {
 */
 static void readFromFile (MelderFile file) {
 	autoDaata object = Data_readFromFile (file);
-	Melder_assert (object);   // if the object was not created, there should have been an exception
+	if (! object)
+		return;   // this can happen with Picture_readFromPraatPictureFile (file recognized, but no data)
 	if (Thing_isa (object.get(), classManPages) && ! Melder_batch) {
 		ManPages manPages = (ManPages) object.get();
 		ManPage firstPage = manPages -> pages.at [1];

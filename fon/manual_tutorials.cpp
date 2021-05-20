@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210517)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210520)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.45# (20 May 2021)")
+LIST_ITEM (U"• Praat picture files can be drawn with ##Read from file# again.")
 NORMAL (U"##6.1.44# (17 May 2021)")
 LIST_ITEM (U"• Scripting: queries in editor windows are scriptable again.")
 NORMAL (U"##6.1.43# (13 May 2021)")

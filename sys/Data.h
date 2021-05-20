@@ -308,7 +308,7 @@ autoDaata Data_readFromFile (MelderFile file);
 Purpose:
 	to read a file with data of any kind.
 Return value:
-	the object read from `file`.
+	the object read from `file`, or null if there was no object (as with Picture_readFromPraatPictureFile).
 Failure:
 	the file was not recognized.
 Behaviour:
