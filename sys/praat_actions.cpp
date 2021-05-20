@@ -449,13 +449,13 @@ void praat_sortActions () {
 	);
 }
 
-static conststring32 numberString (int number) {
+static conststring32 numberString (integer number) {
 	return number == 1 ? U"one" : number == 2 ? U"two" : number == 3 ? U"three" : U"any number of";
 }
 static conststring32 classString (ClassInfo klas) {
 	return klas == classDaata ? U"" : klas -> className;
 }
-static conststring32 objectString (int number) {
+static conststring32 objectString (integer number) {
 	return number == 1 ? U"object" : U"objects";
 }
 static bool allowExecutionHook (void *closure) {
@@ -482,10 +482,14 @@ static bool allowExecutionHook (void *closure) {
 	if (numberOfMatchingCallbacks == 1) {
 		Praat_Command me = theActions.at [firstMatchingCallback];
 		Melder_appendError (U"Selection changed! It should be:");
-		if (my class1) Melder_appendError (U"   ", numberString (my n1), U" ", classString (my class1), U" ", objectString (my n1));
-		if (my class2) Melder_appendError (U"   ", numberString (my n2), U" ", classString (my class2), U" ", objectString (my n2));
-		if (my class3) Melder_appendError (U"   ", numberString (my n3), U" ", classString (my class3), U" ", objectString (my n3));
-		if (my class4) Melder_appendError (U"   ", numberString (my n4), U" ", classString (my class4), U" ", objectString (my n4));
+		if (my class1)
+			Melder_appendError (U"   ", numberString (my n1), U" ", classString (my class1), U" ", objectString (my n1));
+		if (my class2)
+			Melder_appendError (U"   ", numberString (my n2), U" ", classString (my class2), U" ", objectString (my n2));
+		if (my class3)
+			Melder_appendError (U"   ", numberString (my n3), U" ", classString (my class3), U" ", objectString (my n3));
+		if (my class4)
+			Melder_appendError (U"   ", numberString (my n4), U" ", classString (my class4), U" ", objectString (my n4));
 		throw MelderError ();
 	} else {
 		Melder_throw (U"Selection changed!");
