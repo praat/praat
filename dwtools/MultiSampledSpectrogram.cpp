@@ -198,10 +198,6 @@ integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	return numberOfFrames;
 }
 
-void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish) {
-	
-}
-
 void MultiSampledSpectrogram_checkFrequencyRange (MultiSampledSpectrogram me, double *fmin, double *fmax) {
 	if (*fmax <= *fmin) {
 		*fmin = my v_myFrequencyUnitToHertz (my xmin);
@@ -228,7 +224,7 @@ void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, doub
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
-		double f = my x1;
+		double f = my x1; // TODO
 		while (f <= my xmax ) {
 			if (f >= my v_hertzToMyFrequencyUnit (fmin)) {
 				const double f_hz = my v_myFrequencyUnitToHertz (f);

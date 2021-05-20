@@ -45,11 +45,7 @@ void MultiSampledSpectrogram_formula (MultiSampledSpectrogram me, conststring32 
 
 void MultiSampledSpectrogram_formula_part (MultiSampledSpectrogram me, double fromTime, double toTime, double fromFrequency, double toFrequency, conststring32 formula, Interpreter interpreter);
 
-void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
-
 void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin_hz, double fmax_hz, double dBRange);
-
-void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
 
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me);
 

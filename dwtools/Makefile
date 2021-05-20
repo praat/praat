@@ -55,7 +55,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
 	TextGridTierNavigator.o TextGridNavigator.o TextGridView.o VowelEditor.o \
 	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o \
-	praat_KlattGrid_init.o praat_DataModeler_init.o praat_David_init.o
+	praat_KlattGrid_init.o praat_MultiSampledSpectrogram.o praat_DataModeler_init.o praat_David_init.o
 
 .PHONY: all clean
 

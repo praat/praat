@@ -62,7 +62,27 @@ double ConstantQLogFSpectrogram_getQualityFactor (ConstantQLogFSpectrogram me) {
 	return 1.0 / (a - 1.0 / a);
 }
 
-
+void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+	Graphics_setInner (g);
+	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_inqWindow (g, & tmin, & tmax, & fmin, & fmax);
+		double f = my x1; // TODO Can the ticks be generalized into MultiSampledSpectrogram_paint ??
+		while (f <= my xmax ) {
+			if (f >= fmin) {
+				const double f_hz = my v_myFrequencyUnitToHertz (f);
+				conststring32 f_string = Melder_fixed (f_hz, 1);
+				Graphics_markLeft (g, f, false, true, false, f_string);
+			}
+			f += 1.0;
+		}
+		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
+	}
+}
 void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter) {
 	try {
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {

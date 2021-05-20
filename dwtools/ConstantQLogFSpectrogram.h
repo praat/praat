@@ -36,6 +36,8 @@ Thing_define (ConstantQLogFSpectrogram, MultiSampledSpectrogram) {
 
 autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins);
 
+void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
+
 double ConstantQLogFSpectrogram_getQualityFactor (ConstantQLogFSpectrogram me);
 
 void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter);
