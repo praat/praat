@@ -1038,7 +1038,7 @@ void structFunctionEditor :: v_createMenuItems_query (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Get begin of selection", Editor_HIDDEN, QUERY_EDITOR_FOR_REAL__getB);
 	EditorMenu_addCommand (menu, U"Get cursor", GuiMenu_F6, QUERY_EDITOR_FOR_REAL__getCursor);
 	EditorMenu_addCommand (menu, U"Get end of selection", 0, QUERY_EDITOR_FOR_REAL__getE);
-	EditorMenu_addCommand (menu, U"Get selection duration", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
+	EditorMenu_addCommand (menu, U"Get selection length", 0, QUERY_EDITOR_FOR_REAL__getSelectionDuration);
 }
 
 void structFunctionEditor :: v_createMenus () {
