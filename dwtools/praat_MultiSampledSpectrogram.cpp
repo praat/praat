@@ -29,7 +29,6 @@ DO
 	MODIFY_EACH_WEAK_END
 }
 
-
 FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula_part, U"MultiSampledSpectrogram: Formula (part)", U"MultiSampledSpectrogram: Formula...") {
 	REAL (fromTime, U"From time", U"0.0")
 	REAL (toTime, U"To time", U"0.0 (= all)")
@@ -82,7 +81,6 @@ DO
 	CONVERT_EACH_TO_ONE (ConstantQLogFSpectrogram)
 		autoConstantQLogFSpectrogram result = ConstantQLogFSpectrogram_translateSpectrum (me, fromTime, toTime, fromFrequency, numberOfBins);
 	CONVERT_EACH_TO_ONE_END (my name.get())
-
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_ConstantQLogFSpectrogram, U"Sound: To ConstantQLogFSpectrogram", U"Sound: To ConstantQLogFSpectrogram...") {
@@ -123,7 +121,6 @@ void praat_MultiSampledSpectrogram_init () {
 	
 	praat_addAction1 (classSound, 0, U"To ConstantQLogFSpectrogram...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_ConstantQLogFSpectrogram);
-
 }
 
 /* End of file praat_MultiSampledSpectrogram.cpp */
