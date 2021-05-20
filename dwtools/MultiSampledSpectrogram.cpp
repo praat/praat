@@ -101,6 +101,7 @@ void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter i
 	}
 }
 
+
 // TODO:multiple rows!
 double FrequencyBin_getValueAtX (FrequencyBin me, double x, kVector_valueInterpolation valueInterpolationType) {
 	const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
@@ -182,7 +183,7 @@ void MultiSampledSpectrogram_formula_part (MultiSampledSpectrogram me, double fr
 		if (Sampled_getWindowSamples (me, flow, fhigh, & iflow, & ifhigh) > 0)
 			for (integer ifreq = iflow; ifreq <= ifhigh; ifreq ++) {
 				FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-				Matrix_formula_part (frequencyBin, fromTime, toTime, 0.5, 1.5, formula, interpreter, nullptr);
+				Matrix_formula_part (frequencyBin, fromTime, toTime, 0.5, 2.5, formula, interpreter, nullptr);
 			}
 	} catch (MelderError) {
 		Melder_throw (me, U": formula not completed on part.");

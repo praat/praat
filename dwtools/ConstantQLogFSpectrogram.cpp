@@ -121,7 +121,7 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_translateSpectrum (Constan
 			U"The shift should not be larger than the number of frequency bins (", my nx, U").");
 		fromFrequency = ( fromFrequency <= 0.0 ? (shiftNumberOfBins > 0.0 ? my x1 : my xmax) : my v_hertzToMyFrequencyUnit (fromFrequency) );
 		if (shiftNumberOfBins > 0.0) {
-			// start at the hihest frequency and work down.
+			// start at the highest frequency and work down.
 			const integer ifreqFrom = Sampled_xToHighIndex (me, fromFrequency);
 			const integer int_shiftNumberofBins = shiftNumberOfBins;
 			const integer lowestBin = std::max (1_integer, ifreqFrom - int_shiftNumberofBins);
