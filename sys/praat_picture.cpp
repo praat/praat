@@ -370,37 +370,44 @@ static void updatePenMenu () {
 		GuiMenuItem_check (praatButton_grey    , MelderColour_equal (theCurrentPraatPicture -> colour, Melder_GREY));
 	}
 }
-static void setLineType (int lineType) {
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setLineType (GRAPHICS, lineType);
-	}
-	theCurrentPraatPicture -> lineType = lineType;
-	if (theCurrentPraatPicture == & theForegroundPraatPicture)
-		updatePenMenu ();
-}
+
 DIRECT (GRAPHICS_Solid_line) {
 	GRAPHICS_NONE
-		Graphics_setLineType (GRAPHICS, Graphics_DRAWN);
+		Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType = Graphics_DRAWN);
 	GRAPHICS_NONE_END
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
 }
-DIRECT (GRAPHICS_Dotted_line)        { setLineType (Graphics_DOTTED);        END_NO_NEW_DATA }
-DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END_NO_NEW_DATA }
-DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END_NO_NEW_DATA }
+DIRECT (GRAPHICS_Dotted_line) {
+	GRAPHICS_NONE
+		Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType = Graphics_DOTTED);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updatePenMenu ();
+}
+DIRECT (GRAPHICS_Dashed_line) {
+	GRAPHICS_NONE
+		Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType = Graphics_DASHED);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updatePenMenu ();
+}
+DIRECT (GRAPHICS_Dashed_dotted_line) {
+	GRAPHICS_NONE
+		Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType = Graphics_DASHED_DOTTED);
+	GRAPHICS_NONE_END
+	if (theCurrentPraatPicture == & theForegroundPraatPicture)
+		updatePenMenu ();
+}
 
 FORM (GRAPHICS_Line_width, U"Praat picture: Line width", nullptr) {
 	POSITIVE (lineWidth, U"Line width", U"1.0")
 OK
 	SET_REAL (lineWidth, theCurrentPraatPicture -> lineWidth)
 DO
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setLineWidth (GRAPHICS, lineWidth);
-	}
-	theCurrentPraatPicture -> lineWidth = lineWidth;
-	END_NO_NEW_DATA
+	GRAPHICS_NONE
+		Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth = lineWidth);
+	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
@@ -408,12 +415,9 @@ FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
 OK
 	SET_REAL (arrowSize, theCurrentPraatPicture -> arrowSize)
 DO
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setArrowSize (GRAPHICS, arrowSize);
-	}
-	theCurrentPraatPicture -> arrowSize = arrowSize;
-	END_NO_NEW_DATA
+	GRAPHICS_NONE
+		Graphics_setArrowSize (GRAPHICS, theCurrentPraatPicture -> arrowSize = arrowSize);
+	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
@@ -423,14 +427,10 @@ FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
 OK
 	SET_REAL (speckleSize, theCurrentPraatPicture -> speckleSize)
 DO
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setSpeckleSize (GRAPHICS, speckleSize);
-	}
-	theCurrentPraatPicture -> speckleSize = speckleSize;
-	END_NO_NEW_DATA
+	GRAPHICS_NONE
+		Graphics_setSpeckleSize (GRAPHICS, theCurrentPraatPicture -> speckleSize = speckleSize);
+	GRAPHICS_NONE_END
 }
-
 
 static void setColour (MelderColour colour) {
 	{// scope
@@ -463,14 +463,11 @@ FORM (GRAPHICS_Colour, U"Praat picture: Colour", nullptr) {
 	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.0")
 OK
 DO
-	{// scope
-		autoPraatPicture picture;
-		Graphics_setColour (GRAPHICS, colour);
-	}
-	theCurrentPraatPicture -> colour = colour;
+	GRAPHICS_NONE
+		Graphics_setColour (GRAPHICS, theCurrentPraatPicture -> colour = colour);
+	GRAPHICS_NONE_END
 	if (theCurrentPraatPicture == & theForegroundPraatPicture)
 		updatePenMenu ();
-	END_NO_NEW_DATA
 }
 
 /***** "File" MENU *****/
@@ -615,8 +612,8 @@ DIRECT (GRAPHICS_Print) {
 }
 
 #ifdef _WIN32
-	FORM_SAVE (GRAPHICS_Picture_writeToWindowsMetafile, U"Save as Windows metafile", nullptr, U"praat.emf") {
-		Picture_writeToWindowsMetafile (praat_picture.get(), file);
+FORM_SAVE (GRAPHICS_Picture_writeToWindowsMetafile, U"Save as Windows metafile", nullptr, U"praat.emf") {
+	Picture_writeToWindowsMetafile (praat_picture.get(), file);
 	END_NO_NEW_DATA
 }
 
