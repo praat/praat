@@ -49,7 +49,7 @@ void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, doubl
 
 void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin_hz, double fmax_hz, double dBRange);
 
-void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish);
+void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
 
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me);
 

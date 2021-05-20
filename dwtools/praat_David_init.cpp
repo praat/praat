@@ -3588,7 +3588,7 @@ FORM (GRAPHICS_EACH__ConstantQLogFSpectrogram_paint, U"ConstantQLogFSpectrogram:
 	OK
 DO
 	GRAPHICS_EACH (ConstantQLogFSpectrogram)
-		ConstantQLogFSpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, dBRange, garnish);
+		MultiSampledSpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, dBRange, garnish);
 	GRAPHICS_EACH_END
 }
 

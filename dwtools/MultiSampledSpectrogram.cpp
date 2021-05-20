@@ -69,12 +69,12 @@ double structMultiSampledSpectrogram :: v_getValueAtSample (integer ifreq, integ
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
 }
 
-double structMultiSampledSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) {
-	return exp2 (log2_f);
+double structMultiSampledSpectrogram :: v_myFrequencyUnitToHertz (double f) {
+	return f;
 }
 
-double structMultiSampledSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
-	return log2 (f_hz);
+double structMultiSampledSpectrogram :: v_hertzToMyFrequencyUnit (double f) {
+	return f;
 }
 
 autoFrequencyBin FrequencyBin_create (double tmin, double tmax, integer nx, double dx, double x1) {
@@ -202,23 +202,70 @@ void MultiSampledSpectrogram_draw (MultiSampledSpectrogram me, Graphics g, doubl
 	
 }
 
+void MultiSampledSpectrogram_checkFrequencyRange (MultiSampledSpectrogram me, double *fmin, double *fmax) {
+	if (*fmax <= *fmin) {
+		*fmin = my v_myFrequencyUnitToHertz (my xmin);
+		*fmax = my v_myFrequencyUnitToHertz (my xmax);
+		return;
+	}
+	/*
+		fmin <= 0 is a problem for log-based scales. In this case we take the xmin value as the minimum.
+	*/
+	if (*fmin <= 0.0 && ! isdefined (my v_hertzToMyFrequencyUnit (*fmin))) {
+		if (*fmax <= my v_myFrequencyUnitToHertz (my xmin))
+			*fmin = 0.99 * *fmax; // some positive value will do
+		else
+			*fmin = my v_myFrequencyUnitToHertz (my xmin);
+	}
+}
+
+void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+	MultiSampledSpectrogram_checkFrequencyRange (me, & fmin, & fmax);
+	Graphics_setInner (g);
+	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		double f = my x1;
+		while (f <= my xmax ) {
+			if (f >= my v_hertzToMyFrequencyUnit (fmin)) {
+				const double f_hz = my v_myFrequencyUnitToHertz (f);
+				conststring32 f_string = Melder_fixed (f_hz, 1);
+				Graphics_markLeft (g, f, false, true, false, f_string);
+			}
+			f += 1.0;
+		}
+		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
+	}
+}
+
 void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange) {
-	integer ixmin, ixmax, ifmin, ifmax;
+	integer itmin, itmax, ifmin, ifmax;
+	if (tmax <= tmin) {
+		tmin = my tmin;
+		tmax = my tmax;
+	}
+	MultiSampledSpectrogram_checkFrequencyRange (me, & fmin, & fmax);
+	fmin = my v_hertzToMyFrequencyUnit (fmin);
+	fmax = my v_hertzToMyFrequencyUnit (fmax);
 	if (Sampled_getWindowSamples (me, fmin, fmax, & ifmin, & ifmax) == 0)
 		return;
+	const integer maximumNumberOfFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & itmin, & itmax);
+	if (maximumNumberOfFrames == 0)
+		return;	
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	integer numberOfFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & ixmin, & ixmax);
-	autoMAT p = raw_MAT (1, numberOfFrames);
-	
+	autoMAT p = raw_MAT (1, maximumNumberOfFrames);	
 	/*
 		Find maximum power. No need for logarithm in the test
 	*/
 	MelderExtremaWithInit powerExtrema;
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
-		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin, tmax, & ixmin, & ixmax)) == 0)
+		if (Sampled_getWindowSamples (frequencyBin, tmin, tmax, & itmin, & itmax) == 0)
 			continue;
-		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
+		for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 			double powerdB = frequencyBin -> v_getValueAtSample (iframe, 0, 2); // 10*log10 (power/..)
 			powerExtrema.update (powerdB);
 		}
@@ -230,26 +277,27 @@ void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g
 
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-		double xmin1, xmax1 ;
+		double tmin_previousBin, tmax_previousBin ;
 		const double dx = frequencyBin -> dx;
-		const double freq = Sampled_indexToX (me, ifreq);
-		if ((numberOfFrames = Sampled_getWindowSamples (frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & ixmin, & ixmax)) == 0)
+		const integer numberOfFrames = Sampled_getWindowSamples (
+			frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & itmin, & itmax);
+		if (numberOfFrames == 0)
 			continue;
 		p.resize (1, numberOfFrames);
 		integer index = 0;
-		for (integer iframe = ixmin; iframe <= ixmax; iframe ++)
+		for (integer iframe = itmin; iframe <= itmax; iframe ++)
 			p [1] [ ++ index] = frequencyBin -> v_getValueAtSample (iframe, 0, 2);
-		double xmin = Sampled_indexToX (frequencyBin, ixmin) - 0.5 * dx;
-		double xmax = Sampled_indexToX (frequencyBin, ixmax) + 0.5 * dx;
-		double ymin = freq - 0.5 * my dx; 
-		double ymax = freq + 0.5 * my dx;
+		double tmin_bin = Sampled_indexToX (frequencyBin, itmin) - 0.5 * dx;
+		double tmax_bin = Sampled_indexToX (frequencyBin, itmax) + 0.5 * dx;
 		if (ifreq > 1) {
-			Melder_clipRight (& xmin, xmin1);
-			Melder_clipLeft (xmax1, & xmax);
+			Melder_clipRight (& tmin_bin, tmin_previousBin); // clip against previous
+			Melder_clipLeft (tmax_previousBin, & tmax_bin);
 		}
-		Graphics_image (g, p.get(), xmin, xmax, ymin, ymax, minimum, maximum);
-		xmin1 = xmin;
-		xmax1 = xmax;
+		const double freq = Sampled_indexToX (me, ifreq);
+		const double ymin = freq - 0.5 * my dx, ymax = freq + 0.5 * my dx;
+		Graphics_image (g, p.get(), tmin_bin, tmax_bin, ymin, ymax, minimum, maximum);
+		tmin_previousBin = tmin_bin;
+		tmax_previousBin = tmax_bin;
 	}
 }
 
