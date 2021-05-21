@@ -22,8 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210520)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210521)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.47# (21 May 2021)")
+LIST_ITEM (U"• The Escape key now means Cancel also in a non-pausing pause window.")
+NORMAL (U"##6.1.46# (20 May 2021)")
+LIST_ITEM (U"• Fixed a bug with line types in the Picture window.")
+LIST_ITEM (U"• TextGrid window: shift-click on a boundary again extends the selection.")
 NORMAL (U"##6.1.45# (20 May 2021)")
 LIST_ITEM (U"• Praat picture files can be drawn with ##Read from file# again.")
 NORMAL (U"##6.1.44# (17 May 2021)")
