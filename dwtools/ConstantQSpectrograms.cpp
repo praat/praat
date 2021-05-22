@@ -1,4 +1,4 @@
-/* ConstantQLogFSpectrogram.cpp
+/* ConstantQLog2FSpectrogram.cpp
  * 
  * Copyright (C) 2021 David Weenink
  * 
@@ -17,31 +17,31 @@
  */
 
 #include "Formula.h"
-#include "ConstantQLogFSpectrogram.h"
+#include "ConstantQSpectrograms.h"
 
-Thing_implement (ConstantQLogFSpectrogram, MultiSampledSpectrogram, 0);
+Thing_implement (ConstantQLog2FSpectrogram, MultiSampledSpectrogram, 0);
 
-void structConstantQLogFSpectrogram :: v_info () {
+void structConstantQLog2FSpectrogram :: v_info () {
 	structMultiSampledSpectrogram :: v_info ();
 	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
-	MelderInfo_writeLine (U"Quality factor Q: ", ConstantQLogFSpectrogram_getQualityFactor (this));
+	MelderInfo_writeLine (U"Quality factor Q: ", ConstantQLog2FSpectrogram_getQualityFactor (this));
 }
 
-double structConstantQLogFSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
+double structConstantQLog2FSpectrogram :: v_getValueAtSample (integer ifreq, integer iframe , int unit) {
 	FrequencyBin bin = frequencyBins.at [ifreq];
 	const double value = bin -> v_getValueAtSample (iframe, 1, unit);
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, iframe, unit) : undefined );
 }
 
-double structConstantQLogFSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) {
+double structConstantQLog2FSpectrogram :: v_myFrequencyUnitToHertz (double log2_f) {
 	return exp2 (log2_f);
 }
 
-double structConstantQLogFSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
+double structConstantQLog2FSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz) {
 	return ( f_hz > 0.0 ? log2 (f_hz) : undefined );
 }
 
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
+autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
 	try {
 		const double dy = 1.0 / numberOfBinsPerOctave;
 		const integer numberOfBins = Melder_iroundDown (log2 (fmax / f1) * numberOfBinsPerOctave);
@@ -49,20 +49,20 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_create (double tmin, doubl
 			U"The number of bins should be larger than 1.");
 		const double log2_f1 = log2 (f1);
 		const double ymin = log2_f1 - 0.5 * dy, ymax = log2 (fmax);		
-		autoConstantQLogFSpectrogram me = Thing_new (ConstantQLogFSpectrogram);
+		autoConstantQLog2FSpectrogram me = Thing_new (ConstantQLog2FSpectrogram);
 		MultiSampledSpectrogram_init (me.get(), tmin, tmax, ymin, ymax, numberOfBins, dy, log2_f1, frequencyResolutionInBins);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Could not create ConstantQLogFSpectrogram.");
+		Melder_throw (U"Could not create ConstantQLog2FSpectrogram.");
 	}
 }
 
-double ConstantQLogFSpectrogram_getQualityFactor (ConstantQLogFSpectrogram me) {
+double ConstantQLog2FSpectrogram_getQualityFactor (ConstantQLog2FSpectrogram me) {
 	const double a = exp2 (my frequencyResolutionInBins * my dx);
 	return 1.0 / (a - 1.0 / a);
 }
 
-void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+void ConstantQLog2FSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
 	Graphics_setInner (g);
 	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
 	Graphics_unsetInner (g);
@@ -83,38 +83,10 @@ void ConstantQLogFSpectrogram_paint (ConstantQLogFSpectrogram me, Graphics g, do
 		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
 	}
 }
-void ConstantQLogFSpectrogram_formula (ConstantQLogFSpectrogram me, conststring32 formula, Interpreter interpreter) {
-	try {
-		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-			FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-			FrequencyBin_formula (frequencyBin, formula, interpreter);
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": formula not completed.");
-	}
-}
 
-void ConstantQLogFSpectrogram_formula_part (ConstantQLogFSpectrogram me, double fromTime, double toTime, double fromFrequency, double toFrequency, conststring32 formula, Interpreter interpreter) {
+autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (ConstantQLog2FSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins) {
 	try {
-		double flow = my xmin, fhigh = my xmax;
-		if (fromFrequency < toFrequency && fromFrequency >= 0.0 && toFrequency <= Melder_round_tieUp (exp2 (my xmax))) {
-			flow = (fromFrequency > 0 ? log2 (fromFrequency) : 0.0 );
-			fhigh = log2 (toFrequency);
-		}
-		integer iflow, ifhigh;
-		if (Sampled_getWindowSamples (me, flow, fhigh, & iflow, & ifhigh) > 0)
-			for (integer ifreq = iflow; ifreq <= ifhigh; ifreq ++) {
-				FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-				Matrix_formula_part (frequencyBin, fromTime, toTime, 0.5, 1.5, formula, interpreter, nullptr);
-			}
-	} catch (MelderError) {
-		Melder_throw (me, U": formula not completed on part.");
-	}
-}
-
-autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_translateSpectrum (ConstantQLogFSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins) {
-	try {
-		autoConstantQLogFSpectrogram thee = Data_copy (me);
+		autoConstantQLog2FSpectrogram thee = Data_copy (me);
 		if (shiftNumberOfBins == 0.0)
 			return thee;
 		Melder_require (fabs (shiftNumberOfBins) < my nx,
@@ -147,4 +119,21 @@ autoConstantQLogFSpectrogram ConstantQLogFSpectrogram_translateSpectrum (Constan
 	}
 }
 
-/* End of file  MultiSampledSpectrogram.cpp */
+Thing_implement (ConstantQSpectrogram, MultiSampledSpectrogram, 0);
+
+void structConstantQSpectrogram :: v_info () {
+	structMultiSampledSpectrogram :: v_info ();
+	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
+}
+
+autoConstantQSpectrogram ConstantQSpectrogram_create (double tmin, double tmax, double fmax, integer nf, double df, double f1) {
+	try {
+		autoConstantQSpectrogram me = Thing_new (ConstantQSpectrogram);		
+		MultiSampledSpectrogram_init (me.get(), tmin, tmax, 0.0, fmax, nf, df, f1, 0.5 * df);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Could not create ConstantQSpectrogram.");
+	}
+}
+
+/* End of file ConstantQSpectrograms.cpp */

@@ -103,10 +103,12 @@ static autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
 	return result;
 }
 
-void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram thee, double approximateTimeOverSampling) {
+void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram thee, double approximateTimeOverSampling,
+	kSound_windowShape filterShape) 
+{
 	try {
 		const integer maximumFilterSize = 2 * my nx;
-		autoVEC window = raw_VEC (maximumFilterSize);
+		autoVEC filterWindow = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 			double flow, fhigh;
 			integer iflow, ifhigh;
@@ -124,9 +126,9 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			const integer numberOfFrequencies = numberOfSamplesFFT + 1;
 			autoSpectrum filter = Spectrum_create (filterBandwidth, numberOfFrequencies);
 			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  my z.part (1, 2, iflow, ifhigh);
-			window.resize (numberOfSamplesFromSpectrum);
-			windowShape_VEC_preallocated (window.get(), kSound_windowShape :: HANNING);
-			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  *=  window.get();
+			filterWindow.resize (numberOfSamplesFromSpectrum);
+			windowShape_VEC_preallocated (filterWindow.get(), filterShape);
+			filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  *=  filterWindow.get();
 			autoSound filtered = Spectrum_to_Sound (filter.get());
 			autoFrequencyBin frequencyBin = FrequencyBin_create (thy tmin, thy tmax, filtered -> nx, filtered -> dx, filtered -> x1);
 			frequencyBin -> z.row (1)  <<=  filtered -> z.row (1);
