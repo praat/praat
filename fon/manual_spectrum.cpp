@@ -310,7 +310,7 @@ TAG (U"##Bin number")
 DEFINITION (U"the bin whose value is to be looked up.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Spectrogram...", U"ppgb", 20170828)
+MAN_BEGIN (U"Sound: To Spectrogram...", U"ppgb", 20210522)
 INTRO (U"A command that creates a @Spectrogram from every selected @Sound object. "
 	"It performs a %%short-term spectral analysis%, which means that for a number of time points in the Sound, "
 	"Praat computes an approximation of the spectrum at that time. Each such spectrum is called an %%analysis frame%.")
@@ -352,7 +352,7 @@ DEFINITION (U"determines the shape of the analysis window. "
 NORMAL (U"For purposes of computation speed, Praat may decide to change the time step and the frequency step. "
 	"This is because the time step never needs to be smaller than 1/(8√%π) of the window length, "
 	"and the frequency step never needs to be smaller than (√%π)/8 of the inverse of the window length. "
-	"For instance, if the window length is 29 ms, the actual time step will be never be less than 29/(8√%π) = 2.045 ms. "
+	"For instance, if the window length is 29 ms, the actual time step will never be less than 29/(8√%π) = 2.045 ms. "
 	"And if the window length is 5 ms, the actual frequency step will never be less than (√%π)/8/0.005 = 44.31 Hz.")
 ENTRY (U"Tests of the bandwidth")
 NORMAL (U"You can check the bandwidth formula with the following procedure:")
