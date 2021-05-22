@@ -1778,6 +1778,15 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				const bool isRightEdgeOfLastInterval = ( clickedLeftBoundary > selectedIntervalTier -> intervals.size );
 				boundaryOrPointIsMovable = ! isLeftEdgeOfFirstInterval && ! isRightEdgeOfLastInterval;
 			}
+			/*
+				If the user clicked on an unselected boundary or point, we extend or shrink the selection to it.
+			*/
+			if (event -> shiftKeyPressed) {
+				if (anchorTime > 0.5 * (our startSelection + our endSelection))
+					our endSelection = anchorTime;
+				else
+					our startSelection = anchorTime;
+			}
 			if (! boundaryOrPointIsMovable) {
 				our draggingTime = undefined;
 				our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
@@ -1854,6 +1863,16 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		}
 	} else if (event -> isDrop ()) {
 		if (our draggingTiers.size == 0) {
+			our draggingTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			anchorTime = undefined;
+			clickedLeftBoundary = 0;
+			return FunctionEditor_UPDATE_NEEDED;
+		}
+		/*
+			If the use shift-clicked, we extend the selection (this already happened during click()).
+		*/
+		if (event -> shiftKeyPressed) {
 			our draggingTime = undefined;
 			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;

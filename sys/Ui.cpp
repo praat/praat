@@ -1501,7 +1501,9 @@ void UiForm_finish (UiForm me) {
 		for (int i = 1; i <= my numberOfContinueButtons; i ++) {
 			x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - roomPerContinueButton * (my numberOfContinueButtons - i + 1) + horizontalSpacing;
 			my continueButtons [i] = GuiButton_createShown (form, x, x + continueButtonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
-				my continueTexts [i], gui_button_cb_ok, me, i == my defaultContinueButton && okButtonIsDefault ? GuiButton_DEFAULT : 0);
+				my continueTexts [i], gui_button_cb_ok, me,
+				i == my defaultContinueButton && okButtonIsDefault ? GuiButton_DEFAULT : i == my cancelContinueButton ? GuiButton_CANCEL : 0
+			);
 		}
 	} else {
 		int x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
