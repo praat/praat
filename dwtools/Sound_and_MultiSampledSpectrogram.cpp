@@ -44,10 +44,21 @@ autoConstantQLog2FSpectrogram Sound_to_ConstantQLog2FSpectrogram (Sound me, doub
 	}
 }
 
-autoConstantQSpectrogram Sound_to_ConstantQSpectrogram (Sound me, double f1, double fmax, 
-	double frequencyStep_hz, double timeOversamplingFactor, kSound_windowShape filterShape) {
-	const double samplingFrequency = 1.0 / my dx;
-	const double df = samplingFrequency / my nx;
-	
+autoGaborSpectrogram Sound_to_GaborSpectrogram (Sound me, double fmax, double filterBandwidth,
+	double frequencyStep, double timeOversamplingFactor, kSound_windowShape filterShape)
+{
+	try {
+		const double nyquistFrequency = 0.5 / my dx;
+		if (fmax <= 0.0)
+			fmax = nyquistFrequency;
+		Melder_require (fmax  <= nyquistFrequency,
+			U"The maximum frequency should not exceed the nyquist frequency (", nyquistFrequency, U" Hz).");
+		autoGaborSpectrogram thee = GaborSpectrogram_create (my xmin, my xmax, fmax, filterBandwidth, frequencyStep);
+		autoSpectrum him = Sound_and_MultiSampledSpectrogram_to_Spectrum (me, thee.get());
+		Spectrum_into_MultiSampledSpectrogram (him.get(), thee.get(), timeOversamplingFactor, filterShape);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot create GaborSpectrogram.");
+	}
 }
 /* End of file Sound_and_MultiSampledSpectrogram.cpp */

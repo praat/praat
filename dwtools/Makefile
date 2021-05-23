@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 24 April 2021
+# 23 May 2021
 
 include ../makefile.defs
 
@@ -43,6 +43,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Proximity.o Proximity_and_Distance.o \
 	Resonator.o Roots_to_Spectrum.o \
 	Sound_and_MultiSampledSpectrogram.o Sound_and_MixingMatrix.o \
+	Sound_and_Spectrum_dft.o \
 	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \

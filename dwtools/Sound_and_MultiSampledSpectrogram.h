@@ -26,8 +26,8 @@ autoConstantQLog2FSpectrogram Sound_to_ConstantQLog2FSpectrogram (Sound me, doub
 	integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor, 
 	kSound_windowShape filterShape);
 
-autoConstantQSpectrogram Sound_to_ConstantQSpectrogram (Sound me, double f1, double fmax, 
-	double frequencyResolution_hz, double timeOversamplingFactor, kSound_windowShape filterShape);
+autoGaborSpectrogram Sound_to_GaborSpectrogram (Sound me, double fmax, double filterBandwidth,
+	double frequencyStep, double timeOversamplingFactor, kSound_windowShape filterShape);
 
 autoSound ConstantQLog2FSpectrogram_to_Sound (ConstantQLog2FSpectrogram me);
 

@@ -46,7 +46,7 @@ void ConstantQLog2FSpectrogram_formula_part (ConstantQLog2FSpectrogram me, doubl
 
 autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (ConstantQLog2FSpectrogram me, double fromTime, double toTime, double fromFrequency, double shiftNumberOfBins);
 
-Thing_define (ConstantQSpectrogram, MultiSampledSpectrogram) {
+Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
 	void v_info ()
 		override;
 	double v_myFrequencyUnitToHertz (double f) {
@@ -57,6 +57,6 @@ Thing_define (ConstantQSpectrogram, MultiSampledSpectrogram) {
 	}
 };
 
-autoConstantQSpectrogram ConstantQSpectrogram_create (double tmin, double tmax, double fmax, integer nf, double df, double f1);
+autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double fmax, double frequencyResolution, double df);
 
 #endif /* ConstantQSpectrograms_h_ */

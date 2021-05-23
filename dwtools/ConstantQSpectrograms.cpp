@@ -119,20 +119,28 @@ autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (Const
 	}
 }
 
-Thing_implement (ConstantQSpectrogram, MultiSampledSpectrogram, 0);
+Thing_implement (GaborSpectrogram, MultiSampledSpectrogram, 0);
 
-void structConstantQSpectrogram :: v_info () {
+void structGaborSpectrogram :: v_info () {
 	structMultiSampledSpectrogram :: v_info ();
 	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
 }
 
-autoConstantQSpectrogram ConstantQSpectrogram_create (double tmin, double tmax, double fmax, integer nf, double df, double f1) {
+autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double fmax, double frequencyResolution, double df) {
 	try {
-		autoConstantQSpectrogram me = Thing_new (ConstantQSpectrogram);		
-		MultiSampledSpectrogram_init (me.get(), tmin, tmax, 0.0, fmax, nf, df, f1, 0.5 * df);
+		autoGaborSpectrogram me = Thing_new (GaborSpectrogram);
+		const double bandwidth = 2.0* frequencyResolution;
+		Melder_assert (bandwidth > 0.0);
+		Melder_assert (df > 0.0);
+		Melder_require (bandwidth <= fmax,
+			U"The filter bandwidth should not exceed ", fmax, U".");
+		const integer numberOfFrequencyBins = Melder_ifloor ((fmax - bandwidth) / df) + 1;
+		const double f1 = 0.5 * (fmax - (numberOfFrequencyBins - 1) * df - bandwidth);
+		const double frequencyResolutionBins = frequencyResolution / df;
+		MultiSampledSpectrogram_init (me.get(), tmin, tmax, 0.0, fmax, numberOfFrequencyBins, df, f1, frequencyResolutionBins);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Could not create ConstantQSpectrogram.");
+		Melder_throw (U"Could not create GaborSpectrogram.");
 	}
 }
 
