@@ -110,6 +110,7 @@
 #include "Polygon_extensions.h"
 #include "Polynomial_to_Spectrum.h"
 #include "Roots_to_Spectrum.h"
+#include "Sound_and_Spectrum_dft.h"
 #include "Sound_extensions.h"
 #include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"
@@ -5805,6 +5806,15 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrum_dft2, U"", nullptr) {
+	NATURAL (precision, U"Precision (samples)", U"50")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Sound)
+		autoSpectrum result = Sound_to_Spectrum_dft (me, precision);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 // deprecated
 FORM (CONVERT_EACH_TO_ONE__Sound_to_FormantFilter, U"Sound: To FormantFilter", U"Sound: To FormantFilter...") {
 	POSITIVE (windowLength, U"Window length (s)", U"0.015")
@@ -9944,6 +9954,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"To Pitch (SPINET)...", U"To Pitch (cc)...", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_Pitch_SPINET);
 
+	praat_addAction1 (classSound, 0, U"To Spectrum (dft)...", U"To Spectrum...", praat_DEPTH_1 + praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Sound_to_Spectrum_dft2);
 	praat_addAction1 (classSound, 0, U"To FormantFilter...", U"To Cochleagram (edb)...", praat_DEPRECATED_2014 | praat_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_to_FormantFilter);
 	praat_addAction1 (classSound, 0, U"To Spectrogram (pitch-dependent)...", U"To Cochleagram (edb)...", 1,

@@ -127,7 +127,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		/*
 			Compute the absolute value of the globally largest amplitude w.r.t. the global mean.
 		*/
-		const double globalMean = Sound_localMean (sound.get(), sound -> xmin, sound -> xmax);
+		const double globalMean = Sound_approximateLocalSampleMean (sound.get(), sound -> xmin, sound -> xmax);
 		const double globalPeak = Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean);
 		/*
 			For the cubic spline interpolation we need the frequencies on an octave
@@ -154,7 +154,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			*/
 			Sound_into_Sound (sound.get(), analysisframe.get(), tmid - halfWindow);
 			Sounds_multiply (analysisframe.get(), hamming.get());
-			const double localMean = Sound_localMean (sound.get(), tmid - 3.0 * halfWindow, tmid + 3.0 * halfWindow);
+			const double localMean = Sound_approximateLocalSampleMean (sound.get(), tmid - 3.0 * halfWindow, tmid + 3.0 * halfWindow);
 			const double localPeak = Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean);
 			pitchFrame -> intensity = localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
 			/*

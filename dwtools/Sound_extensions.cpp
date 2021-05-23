@@ -1317,19 +1317,10 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	return rxy;
 }
 
-double Sound_localMean (Sound me, double fromTime, double toTime) {
-	integer n1 = Sampled_xToNearestIndex (me, fromTime);
-	integer n2 = Sampled_xToNearestIndex (me, toTime);
-	double mean = undefined;
-	if (fromTime <= toTime) {
-		if (n1 < 1)
-			n1 = 1;
-		if (n2 > my nx)
-			n2 = my nx;
-		Melder_assert (n1 <= n2);
-		mean = NUMmean (my z [1].part (n1, n2));
-	}
-	return mean;
+double Sound_approximateLocalSampleMean (Sound me, double fromTime, double toTime) {
+	const integer n1 = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (me, fromTime));
+	const integer n2 = Melder_clippedRight (Sampled_xToNearestIndex (me, toTime), my nx);
+	return n1 <= n2 ? NUMmean (my z [1].part (n1, n2)) : undefined;
 }
 
 static double interpolate (Sound me, integer i1, integer channel, double level)
