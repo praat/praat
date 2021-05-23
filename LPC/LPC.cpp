@@ -107,7 +107,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		NUMextrema (gain.get(), & gmin, & gmax);
 
 	if (gmax == gmin) {
-		gmin = 0;
+		gmin = 0.0;
 		gmax += 0.5;
 	}
 

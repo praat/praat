@@ -39,9 +39,10 @@ void structSoundEditor :: v_dataChanged () {
 
 static void menu_cb_Copy (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	try {
-		Sound_clipboard = my d_longSound.data ?
-				LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, false) :
-				Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, false);
+		Sound_clipboard = ( my d_longSound.data
+			? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, false)
+			: Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, false)
+		);
 	} catch (MelderError) {
 		Melder_throw (U"Sound selection not copied to clipboard.");
 	}
@@ -57,7 +58,8 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 		if (newNumberOfSamples < 1)
 			Melder_throw (U"You cannot cut all of the signal away,\n"
 				U"because you cannot create a Sound with 0 samples.\n"
-				U"You could consider using Copy instead.");
+				U"You could consider using Copy instead."
+			);
 		if (selectionNumberOfSamples) {
 			/*
 				Create without change.
@@ -121,13 +123,11 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				my endWindow = my startWindow + windowLength;   // first try
 				if (my endWindow > my tmax) {
 					my startWindow -= my endWindow - my tmax;   // second try
-					if (my startWindow < my tmin)
-						my startWindow = my tmin;   // third try
+					Melder_clipLeft (my tmin, & my startWindow);   // third try
 					my endWindow = my tmax;   // second try
 				} else if (my startWindow < my tmin) {
 					my endWindow -= my startWindow - my tmin;   // second try
-					if (my endWindow > my tmax)
-						my endWindow = my tmax;   // third try
+					Melder_clipRight (& my endWindow, my tmax);   // third try
 					my startWindow = my tmin;   // second try
 				}
 			}
@@ -363,13 +363,13 @@ void structSoundEditor :: v_draw () {
 }
 
 void structSoundEditor :: v_play (double startTime, double endTime) {
-	integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
+	const integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
 	integer numberOfMuteChannels = 0;
 	Melder_assert (our d_sound.muteChannels.size == numberOfChannels);
 	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
 		if (our d_sound.muteChannels [ichan])
 			numberOfMuteChannels ++;
-	integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	Melder_require (numberOfChannelsToPlay > 0,
 		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {

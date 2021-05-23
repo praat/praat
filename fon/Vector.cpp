@@ -161,7 +161,7 @@ integer kVector_peakInterpolation_to_interpolationDepth (kVector_peakInterpolati
 	or if `ilevel` == 0, then the average of all the interpolated channels.
 */
 double Vector_getValueAtX (Vector me, double x, integer ilevel, kVector_valueInterpolation valueInterpolationType) {
-	const double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
+	const volatile double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;   // Sound_to_Polygon depends on this weird computation
 	if (x <  leftEdge || x > rightEdge)
 		return undefined;
 	const integer interpolationDepth = kVector_valueInterpolation_to_interpolationDepth (valueInterpolationType);

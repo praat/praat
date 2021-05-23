@@ -1702,7 +1702,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	if (anchorIsInWideSoundOrAnalysisPart)
 		return our TextGridEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 	Melder_assert (anchorIsInWideTextGridPart);
-	integer mouseTier = _TextGridEditor_yWCtoTier (this, yWC);
+	const integer mouseTier = _TextGridEditor_yWCtoTier (this, yWC);
 
 	our draggingTime = undefined;   // information to next expose event
 	if (event -> isClick()) {
