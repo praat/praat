@@ -43,9 +43,9 @@ static double Polygon_area (Polygon me) {
 
 void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double *out_ymin, double *out_ymax) {
     const double xmin = NUMmin (my x.get());
-	const double xmax = NUMmax (my x.get());;
+	const double xmax = NUMmax (my x.get());
     const double ymin = NUMmin (my y.get());
-	const double ymax = NUMmax (my y.get());;
+	const double ymax = NUMmax (my y.get());
     if (out_xmin)
 		*out_xmin = xmin;
     if (out_xmax)
@@ -70,7 +70,7 @@ autoPolygon Polygon_createSimple (conststring32 xystring) {
 			my x [i] = xys [2 * i - 1];
 			my y [i] = xys [2 * i];
 			if (i > 1 && my x [i] == my x [i - 1] && my y [i] == my y [i - 1])
-				Melder_warning (U"Two successives vertices are equal.");
+				Melder_warning (U"Two successive vertices are equal.");
 		}
 		return me;
 	} catch (MelderError) {
@@ -102,7 +102,7 @@ void Polygon_rotate (Polygon me, double alpha, double xc, double yc) {
 
 	Polygon_translate (me, -xc, -yc);
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
-		double x = my x [i];
+		const double x = my x [i];
 		my x [i] = cosa * my x [i] - sina * my y [i];
 		my y [i] = sina * x + cosa * my y [i];
 	}
@@ -123,23 +123,19 @@ void Polygon_reverseY (Polygon me) {
 }
 
 void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, bool garnish) {
-	double min, max, tmp;
-
 	if (my numberOfPoints != thy size)
 		return;
-
 	if (xmax == xmin) {
-		NUMextrema (my x.get(), & min, & max);
-		tmp = ( max - min == 0 ? 0.5 : 0.0 );
-		xmin = min - tmp;
-		xmax = max + tmp;
+		const MelderRealRange xrange = NUMextrema (my x.get());
+		const double tmp = 0.5 * xrange.isEmpty();
+		xmin = xrange.min - tmp;
+		xmax = xrange.max + tmp;
 	}
-
 	if (ymax == ymin) {
-		NUMextrema (my y.get(), & min, & max);
-		tmp = ( max - min == 0 ? 0.5 : 0.0 );
-		ymin = min - tmp;
-		ymax = max + tmp;
+		const MelderRealRange yrange = NUMextrema (my y.get());
+		const double tmp = 0.5 * yrange.isEmpty();
+		ymin = yrange.min - tmp;
+		ymax = yrange.max + tmp;
 	}
 
 	Graphics_setInner (graphics);
@@ -222,10 +218,10 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 			Querying for the value at xmin which is outside the interpolation domain then produces an 'undefined'.
 			We try to avoid this with the following workaround.
 		*/
-		const double xmin = my x1 - 0.5 * my dx;
-		const double xmax = xmin + my nx * my dx;
-		tmin = std::max (tmin, xmin); // yes, looks strange
-		tmax = std::min (tmax, xmax);
+		const volatile double xmin = my x1 - 0.5 * my dx;
+		const volatile double xmax = xmin + my nx * my dx;   // don't change this to e.g. my x1 + (my nx - 0.5) * my dx; see Vector_getValueAtX()
+		Melder_clipLeft (xmin, & tmin);
+		Melder_clipRight (& tmax, xmax);
 		// End of workaround
 		integer k = 1;
 		his x [k] = tmin;

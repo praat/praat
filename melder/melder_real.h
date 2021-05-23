@@ -50,7 +50,7 @@ struct MelderPoint {
 
 struct MelderRealRange {
 	double min = undefined, max = undefined;
-	//bool isEmpty () { return ! (max > min); }   // note edge case: will return true if min or max is NaN
+	bool isEmpty () const { return ! (max > min); }   // note edge case: will return true if min or max is NaN
 	//double size () {
 	//	const double result = max - min;
 	//	return std::max (result, 0.0);
