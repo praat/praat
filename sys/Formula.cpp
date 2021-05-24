@@ -6097,7 +6097,8 @@ static void do_solveSparse_VEC () {
 		if (dict->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR &&
 			xstart->which == Stackel_NUMERIC_VECTOR &&
 			nonzeros->which == Stackel_NUMBER && niter->which == Stackel_NUMBER &&
-			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
+			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER)
+		{
 			const constMAT d = dict->numericMatrix;
 			Melder_require (d.ncol > d.nrow,
 				U"The number of columns should be larger than the number of rows (sparse!).");
@@ -6130,7 +6131,8 @@ static void do_solveNonnegative_VEC () {
 		Stackel info = pop, tol = pop, itermax = pop, xstart = pop, y = pop, m = pop;
 		if (m->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR &&
 			xstart->which == Stackel_NUMERIC_VECTOR && itermax->which == Stackel_NUMBER &&
-			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
+			tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER)
+		{
 			const double tolerance = tol->number;
 			const integer maximumNumberOfIterations = Melder_iround (itermax->number);
 			const integer infoLevel = Melder_iround (info->number);
@@ -6150,7 +6152,8 @@ static void do_solveNonnegative_VEC () {
 	} else if (n -> number == 5) {
 		Stackel info = pop, tol = pop, itermax = pop, y = pop, m = pop;
 		if (m->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR &&
-			itermax->which == Stackel_NUMBER && tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER) {
+			itermax->which == Stackel_NUMBER && tol->which == Stackel_NUMBER && info->which == Stackel_NUMBER)
+		{
 			const double tolerance = tol->number;
 			const integer maximumNumberOfIterations = Melder_iround (itermax->number);
 			const integer infoLevel = Melder_iround (info->number);

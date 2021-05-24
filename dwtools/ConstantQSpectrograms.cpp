@@ -126,17 +126,38 @@ void structGaborSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
 }
 
-autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double fmax, double frequencyResolution, double df) {
+void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+	Graphics_setInner (g);
+	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, true, U"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
+		Graphics_inqWindow (g, & tmin, & tmax, & fmin, & fmax);
+		double f = my xmin; // TODO Can the ticks be generalized into MultiSampledSpectrogram_paint ??
+		while (f <= my xmax ) {
+			if (f >= fmin) {
+				const double f_hz = my v_myFrequencyUnitToHertz (f);
+				conststring32 f_string = Melder_fixed (f_hz, 1);
+				Graphics_markLeft (g, f, false, true, false, f_string);
+			}
+			f += 1000.0;
+		}
+		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
+	}
+}
+
+autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double fmax, double filterBandwidth, double df) {
 	try {
 		autoGaborSpectrogram me = Thing_new (GaborSpectrogram);
-		const double bandwidth = 2.0* frequencyResolution;
-		Melder_assert (bandwidth > 0.0);
+		Melder_assert (filterBandwidth > 0.0);
 		Melder_assert (df > 0.0);
-		Melder_require (bandwidth <= fmax,
+		Melder_require (filterBandwidth <= fmax,
 			U"The filter bandwidth should not exceed ", fmax, U".");
-		const integer numberOfFrequencyBins = Melder_ifloor ((fmax - bandwidth) / df) + 1;
-		const double f1 = 0.5 * (fmax - (numberOfFrequencyBins - 1) * df - bandwidth);
-		const double frequencyResolutionBins = frequencyResolution / df;
+		const integer numberOfFrequencyBins = Melder_ifloor ((fmax - filterBandwidth) / df) + 1;
+		const double f1 = 0.5 * (fmax - (numberOfFrequencyBins - 1) * df - filterBandwidth);
+		const double frequencyResolutionBins = 0.5 * filterBandwidth / df;
 		MultiSampledSpectrogram_init (me.get(), tmin, tmax, 0.0, fmax, numberOfFrequencyBins, df, f1, frequencyResolutionBins);
 		return me;
 	} catch (MelderError) {

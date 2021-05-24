@@ -21,7 +21,7 @@
 /********** Sorting **********/
 
 double NUMquantile (integer n, double a [], double factor);
-double NUMquantile (const constVECVU& a, double factor) noexcept;
+double NUMquantile (constVECVU const& a, double factor) noexcept;
 /*
 	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
 	from which the set 'a [1..n]' is a sorted array of random samples.

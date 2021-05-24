@@ -57,6 +57,8 @@ Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
 	}
 };
 
+void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
+
 autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double fmax, double frequencyResolution, double df);
 
 #endif /* ConstantQSpectrograms_h_ */

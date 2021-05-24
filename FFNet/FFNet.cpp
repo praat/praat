@@ -90,12 +90,12 @@ static double sigmoid (FFNet /*me*/, double x, double *out_deriv) {
 		if target < activity ==> error < 0
 */
 
-static double minimumSquaredError (FFNet me, constVEC& target) {
+static double minimumSquaredError (FFNet me, constVEC const& target) {
 	Melder_assert (my numberOfOutputs == target.size);
 	integer k = my numberOfNodes - my numberOfOutputs + 1;
 	double cost = 0.0;
 	for (integer i = 1; i <= my numberOfOutputs; i ++, k ++) {
-		double e = my error [k] = target [i] - my activity [k];
+		const double e = my error [k] = target [i] - my activity [k];
 		cost += e * e;
 	}
 	return 0.5 * cost;
@@ -104,7 +104,7 @@ static double minimumSquaredError (FFNet me, constVEC& target) {
 /* E = - sum (i=1; i=numberOfPatterns; sum (k=1;k=numberOfOutputs; t [k]*ln (o [k]) + (1-t [k])ln (1-o [k]))) */
 /* dE/do [k] = -(1-t [k])/ (1-o [k]) + t [k]/o [k] */
 /* werkt niet bij (grote?) netten */
-static double minimumCrossEntropy (FFNet me, constVEC& target) {
+static double minimumCrossEntropy (FFNet me, constVEC const& target) {
 	Melder_assert (my numberOfOutputs == target.size);
 	integer k = my numberOfNodes - my numberOfOutputs + 1;
 	double cost = 0.0;

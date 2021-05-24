@@ -1,6 +1,6 @@
 /* VEC.cpp
  *
- * Copyright (C) 2017-2020 Paul Boersma
+ * Copyright (C) 2017-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #endif
 
 #if defined (macintosh)
-void _add_macfast_VEC_out (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+void _add_macfast_VEC_out (VECVU const& target, constVECVU const& x, constVECVU const& y) noexcept {
 	integer n = target.size;
 	vDSP_vaddD (& x [1], x.stride, & y [1], y.stride, & target [1], target.stride, integer_to_uinteger (n));
 	/*
