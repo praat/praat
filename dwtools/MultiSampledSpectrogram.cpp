@@ -41,10 +41,9 @@
 
 Thing_implement (FrequencyBin, Matrix, 2);
 
-double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which , int unit) {
-	if (unit == 0) {
+double structFrequencyBin :: v_getValueAtSample (integer iframe, integer which, int unit) {
+	if (unit == 0)
 		return ( which == 1 ? z [1] [iframe] : which == 2 ? z [2] [iframe] : undefined );
-	}
 	const double power = sqr (z [1] [iframe]) + sqr (z [2] [iframe]);
 	return ( unit == 1 ? power : unit == 2 ? 10.0 * log10 ((power + 1e-30) / 4e-10) : undefined );
 }
