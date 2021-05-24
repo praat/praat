@@ -30,13 +30,11 @@
 #include "TableOfReal.h"
 #include "NUM2.h"
 
-#define HZTOBARK(x) NUMhertzToBark2(x)
 #define HZTOMEL(x)	NUMhertzToMel2(x)
-#define BARKTOHZ(x) NUMbarkToHertz2(x)
 #define MELTOHZ(x)	NUMmelToHertz2(x)
 
-#define BARKTOMEL(x) HZTOMEL(BARKTOHZ(x))
-#define MELTOBARK(x) HZTOBARK(MELTOHZ(x))
+#define BARKTOMEL(x) HZTOMEL(NUMbarkToHertz(x))
+#define MELTOBARK(x) NUMhertzToBark (MELTOHZ(x))
 
 #define BandFilterSpectrogram_DBREF 4e-10
 #define BandFilterSpectrogram_DBFAC 10
@@ -61,9 +59,9 @@ Thing_define (BarkSpectrogram, BandFilterSpectrogram) {
 	void v_info ()
 		override;
 	double v_frequencyToHertz (double f)
-		override { return NUMbarkToHertz2 (f); }
+		override { return NUMbarkToHertz (f); }
 	double v_hertzToFrequency (double hertz)
-		override { return NUMhertzToBark2 (hertz); }
+		override { return NUMhertzToBark (hertz); }
 	conststring32 v_getFrequencyUnit ()
 		override { return U"bark"; }
 };

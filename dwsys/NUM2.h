@@ -794,19 +794,9 @@ double NUMbarkToHertz_traunmueller (double bark);
 	return 1960* (bark + 0.53) / (26.28 - bark);
 */
 
-double NUMbarkToHertz_schroeder (double bark);
-/*
-	return 650.0 * sinh (bark / 7.0);
-*/
-
 double NUMbarkToHertz_zwickerterhardt (double hz);
 /*
 	return 13 * atan (0.00076 * hz) + 3.5 * atan (hz / 7500);
-*/
-
-double NUMhertzToBark_schroeder (double hz);
-/*
-	return 7.0 * log (hz / 650 + sqrt (1 + (hz / 650)^2));
 */
 
 double NUMbladonlindblomfilter_amplitude (double zc, double z);

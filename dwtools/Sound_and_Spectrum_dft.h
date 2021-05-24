@@ -28,19 +28,6 @@
 */
 autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth);
 
-<<<<<<< HEAD:dwtools/Sound_and_Spectrum_dft.h
-autoSound Spectrum_to_Sound (Spectrum me, integer interpolationDepth);
-=======
-	#if oo_DECLARING
-		void v_info ()
-			override;
-		double v_getValueAtSample (integer ifreq, integer iframe, int unit)
-			override;
-		double v_myFrequencyUnitToHertz (double log2_f)
-			override;
-		double v_hertzToMyFrequencyUnit (double f_hz)
-			override;
-	#endif
->>>>>>> e520b7c65c6c0f83ae0829741358f4e3a92e6d8a:dwtools/ConstantQLogFSpectrogram_def.h
+autoSound Spectrum_to_Sound_dft (Spectrum me, integer interpolationDepth);
 
 #endif /* _Sound_and_Spectrum_dft_h_ */

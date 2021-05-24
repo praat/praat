@@ -16,9 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat_MultiSampledSpectrogram.h"
+#include "AnalyticSound.h"
+#include "ConstantQSpectrograms.h"
+#include "MultiSampledSpectrogram.h"
 #include "Sound_and_MultiSampledSpectrogram.h"
 #include "Spectrum_and_MultiSampledSpectrogram.h"
+
+#include "praat.h"
 
 FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula, U"MultiSampledSpectrogram: Formula", U"MultiSampledSpectrogram: Formula...") {
 	FORMULA (formula, U"Formula:", U"2 * self")
@@ -141,6 +145,7 @@ void praat_MultiSampledSpectrograms_generics (ClassInfo klas) {
 			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Sound_frequencyBin);
 }
 
+void praat_MultiSampledSpectrogram_init ();
 void praat_MultiSampledSpectrogram_init () {
 	Thing_recognizeClassesByName (classAnalyticSound, classConstantQLog2FSpectrogram, classFrequencyBin,
 		classGaborSpectrogram, classMultiSampledSpectrogram, nullptr);

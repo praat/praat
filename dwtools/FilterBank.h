@@ -33,13 +33,11 @@
 #include "Pitch.h"
 #include "Spectrogram_extensions.h"
 
-#define HZTOBARK(x) NUMhertzToBark2(x)
 #define HZTOMEL(x)	NUMhertzToMel2(x)
-#define BARKTOHZ(x) NUMbarkToHertz2(x)
 #define MELTOHZ(x)	NUMmelToHertz2(x)
 
-#define BARKTOMEL(x) HZTOMEL(BARKTOHZ(x))
-#define MELTOBARK(x) HZTOBARK(MELTOHZ(x))
+#define BARKTOMEL(x) HZTOMEL(NUMbearkToHertz(x))
+#define MELTOBARK(x) NUMMhertzToBark(MELTOHZ(x))
 
 #define FilterBank_DBREF 4e-10
 #define FilterBank_DBFAC 1.0

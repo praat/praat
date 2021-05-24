@@ -114,7 +114,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 	try {
 		const double samplingFrequency = 1.0 / my dx, nyquist = 0.5 * samplingFrequency;
 		const double windowDuration = 2.0 * analysisWidth; /* gaussian window */
-		const double zmax = NUMhertzToBark2 (nyquist);
+		const double zmax = NUMhertzToBark (nyquist);
 		double fmin_bark = 0.0;
 
 		// Check defaults.

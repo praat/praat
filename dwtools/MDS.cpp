@@ -311,7 +311,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		}
 	}
 
-	our b = newVECsolveNonnegativeLeastSquaresRegression (m.get(), d.get(), tol, itermax, 0);
+	our b = newVECsolveNonnegativeLeastSquaresRegression (m.get(), d.get(), itermax, tol, 0);
 
 	for (integer iprox = 1; iprox <= numberOfProximities; iprox ++) {
 		const integer ii = vec->rowIndex [iprox];
@@ -1443,7 +1443,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (
 
 		double stress, stressmax = 1e308;
 		for (integer i = 1; i <= numberOfRepetitions; i ++) {
-			autoConfiguration cresult = Dissimilarity_Configuration_Weight_Transformator_smacof (me, cstart.get(), w, t, tolerance, numberOfIterations, showSingle, &stress);
+			autoConfiguration cresult = Dissimilarity_Configuration_Weight_Transformator_smacof (me, cstart.get(), w, t, tolerance, numberOfIterations, showSingle, & stress);
 			if (stress < stressmax) {
 				stressmax = stress;
 				cbest = cresult.move();

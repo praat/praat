@@ -28,6 +28,7 @@
 #include "Vector.h"
 
 void FrequencyBin_init (FrequencyBin me, double xmin, double xmax, integer nx, double dx, double x1);
+
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1);
 
 void FrequencyBin_formula (FrequencyBin me, conststring32 formula, Interpreter interpreter);

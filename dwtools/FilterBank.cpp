@@ -44,7 +44,7 @@ static double scaleFrequency (double f, int scale_from, int scale_to) {
 	if (scale_from == FilterBank_HERTZ)
 		fhz = f;
 	else if (scale_from == FilterBank_BARK)
-		fhz = BARKTOHZ (f);
+		fhz = NUMbarkToHertz (f);
 	else if (scale_from == FilterBank_MEL)
 		fhz = MELTOHZ (f);
 
@@ -54,7 +54,7 @@ static double scaleFrequency (double f, int scale_from, int scale_to) {
 
 
 	if (scale_to == FilterBank_BARK)
-		f = HZTOBARK (fhz);
+		f = NUMhertzToBark (fhz);
 	else if (scale_to == FilterBank_MEL)
 		f = HZTOMEL (fhz);
 	else
@@ -748,7 +748,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, integer frame
 
 	autoVEC z = raw_VEC (nf);
 	for (integer j = 1; j <= nf; j ++)
-		z [j] = HZTOBARK (pv -> x1 + (j - 1) * pv -> dx);
+		z [j] = NUMhertzToBark (pv -> x1 + (j - 1) * pv -> dx);
 
 	for (integer i = 1; i <= thy ny; i ++) {
 		const double z0 = thy y1 + (i - 1) * thy dy;
@@ -773,7 +773,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 
 		const double nyquist = 0.5 / my dx, samplingFrequency = 2.0 * nyquist;
 		const double windowDuration = 2.0 * analysisWidth; /* gaussian window */
-		const double zmax = NUMhertzToBark2 (nyquist);
+		const double zmax = NUMhertzToBark (nyquist);
 		double fmin_bark = 0.0;
 
 		// Check defaults.
