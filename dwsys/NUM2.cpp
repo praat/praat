@@ -2897,7 +2897,7 @@ void MATmul3_XYXt (MATVU const& target, constMATVU const& x, constMATVU const& y
 		}
 }
 
-void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) { // X.Y.X'
+void MATmul3_XYsXt (MATVU const& target, constMATVU const& x, constMATVU const& y) { // X.Y.X'
 	Melder_assert (x.ncol == y.nrow && y.ncol == x.ncol);
 	Melder_assert (target.nrow == target.ncol && target.nrow == x.nrow);
 	for (integer irow = 1; irow <= target.nrow; irow ++)
