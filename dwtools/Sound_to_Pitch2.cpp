@@ -30,6 +30,12 @@
 #include "SPINET_to_Pitch.h"
 #include "NUM2.h"
 
+static double Sound_approximateLocalSampleMean (Sound me, double fromTime, double toTime) {
+	const integer n1 = Melder_clippedLeft (1_integer, Sampled_xToNearestIndex (me, fromTime));
+	const integer n2 = Melder_clippedRight (Sampled_xToNearestIndex (me, toTime), my nx);
+	return n1 <= n2 ? NUMmean (my z [1].part (n1, n2)) : undefined;
+}
+
 static void spec_enhance_SHS (VEC const & a) {
 	Melder_assert (a.size >= 2);
 

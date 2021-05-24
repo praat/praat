@@ -111,7 +111,6 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 	Correlate part (t1, t1+duration) with (t2, t2+duration)
 */
 
-double Sound_approximateLocalSampleMean (Sound me, double fromTime, double toTime);
 double Sound_localPeak (Sound me, double fromTime, double toTime, double reference);
 
 double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection);
