@@ -1320,7 +1320,7 @@ void MATmul3 (MATVU const & target, constMATVU const& X, constMATVU const& Y, co
 void MATmul3_XYXt (MATVU const& target, constMATVU const& X, constMATVU const& Y);
 
 /* Z = X.Y.X where Y is a symmetric matrix */
-void MATmul3_XYsXt (MATVU const& target, constMAT const& X, constMAT const& Y);
+void MATmul3_XYsXt (MATVU const& target, constMATVU const& X, constMATVU const& Y);
 
 /*
 	First row (n elements) is at v[1]..v[n],
