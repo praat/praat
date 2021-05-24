@@ -57,9 +57,9 @@ oo_DEFINE_CLASS (FFNet, Daata)
 		oo_INTEGER (dimension)
 
 		#if oo_DECLARING
-			double (*nonLinearity) (FFNet me, double x, double * deriv);
+			double (*nonLinearity) (FFNet me, double x, double *deriv);
     		void *nlClosure;
-    		double (*costFunction) (FFNet me, constVEC& target);
+    		double (*costFunction) (FFNet me, constVEC const& target);
 			void *cfClosure;
 		#endif
 		

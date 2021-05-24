@@ -140,7 +140,7 @@ inline autoVEC multiply_VEC (double number, constVECVU const& x) {
 struct TypeVECadd_VEC_VEC          { constVECVU const& x; constVECVU const& y; };
 inline TypeVECadd_VEC_VEC operator+ (constVECVU const& x, constVECVU const& y) { return { x, y }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
-	inline void operator (const VECVU& target, TypeVECadd_VEC_VEC expr) noexcept { \
+	inline void operator (VECVU const& target, TypeVECadd_VEC_VEC expr) noexcept { \
 		integer n = target.size; \
 		Melder_assert (expr.x.size == n); \
 		Melder_assert (expr.y.size == n); \
@@ -158,7 +158,7 @@ inline autoVEC add_VEC (constVECVU const& x, constVECVU const& y) {
 struct TypeVECsubtract_VEC_VEC          { constVECVU const& x; constVECVU const& y; };
 inline TypeVECsubtract_VEC_VEC operator- (constVECVU const& x, constVECVU const& y) { return { x, y }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
-	inline void operator (const VECVU& target, TypeVECsubtract_VEC_VEC expr) noexcept { \
+	inline void operator (VECVU const& target, TypeVECsubtract_VEC_VEC expr) noexcept { \
 		integer n = target.size; \
 		Melder_assert (expr.x.size == n); \
 		Melder_assert (expr.y.size == n); \
@@ -176,7 +176,7 @@ inline autoVEC subtract_VEC (constVECVU const& x, constVECVU const& y) {
 struct TypeVECmultiply_VEC_VEC          { constVECVU const& x; constVECVU const& y; };
 inline TypeVECmultiply_VEC_VEC operator* (constVECVU const& x, constVECVU const& y) { return { x, y }; }
 #define GENERATE_ONE_TENSOR_FUNCTION(operator, op)  \
-	inline void operator (const VECVU& target, TypeVECmultiply_VEC_VEC expr) noexcept { \
+	inline void operator (VECVU const& target, TypeVECmultiply_VEC_VEC expr) noexcept { \
 		integer n = target.size; \
 		Melder_assert (expr.x.size == n); \
 		Melder_assert (expr.y.size == n); \
@@ -191,8 +191,8 @@ inline autoVEC multiply_VEC (constVECVU const& x, constVECVU const& y) {
 	return result;
 }
 
-extern void _add_macfast_VEC_out (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept;
-inline void add_VEC_out (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+extern void _add_macfast_VEC_out (VECVU const& target, constVECVU const& x, constVECVU const& y) noexcept;
+inline void add_VEC_out (VECVU const& target, constVECVU const& x, constVECVU const& y) noexcept {
 	integer n = target.size;
 	Melder_assert (x.size == n);
 	Melder_assert (y.size == n);

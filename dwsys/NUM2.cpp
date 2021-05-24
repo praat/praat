@@ -2635,7 +2635,7 @@ double NUMrandomBinomial_real (double p, integer n) {
 }
 
 double NUMrandomWeibull (double scale_lambda, double shape_k) {
-	Melder_require (scale_lambda > 0 && shape_k > 0,
+	Melder_require (scale_lambda > 0.0 && shape_k > 0.0,
 		U"NUMrandomWeibull: both arguments should be positive.");
 	const double u = NUMrandomUniform (0, 1);
 	return scale_lambda * pow (- log (u), 1.0 / shape_k);	
@@ -2704,8 +2704,8 @@ double NUMbiharmonic2DSplineInterpolation (constVECVU const& x, constVECVU const
 	Melder_assert (x.size == y.size && x.size == w.size);
 	longdouble result = 0.0;
 	for (integer i = 1; i <= x.size; i ++) {
-		double dx = xp - x [i], dy = yp - y [i];
-		double d = dx * dx + dy * dy;
+		const double dx = xp - x [i], dy = yp - y [i];
+		const double d = dx * dx + dy * dy;
 		result += w [i] * d * (0.5 * log (d) - 1.0);
 	}
 	return (double) result;
@@ -2747,9 +2747,9 @@ void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double
 	if (totalSum > 0.0) {
 		longdouble hy_t = 0.0;
 		for (integer i = 1; i <= m.nrow; i ++) {
-			double rowsum = NUMsum (m.row (i));
+			const double rowsum = NUMsum (m.row (i));
 			if (rowsum > 0.0) {
-				double p = rowsum / totalSum;
+				const double p = rowsum / double (totalSum);
 				hy_t -= p * NUMlog2 (p);
 			}
 		}
@@ -2757,9 +2757,9 @@ void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double
 		
 		longdouble hx_t = 0.0;
 		for (integer j = 1; j <= m.ncol; j ++) {
-			double colsum = NUMsum (m.column (j));
+			const double colsum = NUMsum (m.column (j));
 			if (colsum > 0.0) {
-				double p = colsum / totalSum;
+				const double p = colsum / double (totalSum);
 				hx_t -= p * NUMlog2 (p);
 			}
 		}
@@ -2770,7 +2770,7 @@ void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double
 		for (integer i = 1; i <= m.nrow; i ++) {
 			for (integer j = 1; j <= m.ncol; j ++) {
 				if (m [i] [j] > 0.0) {
-					double p = m [i] [j] / totalSum;
+					const double p = m [i] [j] / double (totalSum);
 					h_t -= p * NUMlog2 (p);
 				}
 			}
@@ -2802,7 +2802,7 @@ void NUMgetEntropies (constMATVU const& m, double *out_h, double *out_hx, double
 }
 #undef TINY
 
-double NUMtrace (const constMATVU& a) {
+double NUMtrace (constMATVU const& a) {
 	Melder_assert (a.nrow == a.ncol);
 	longdouble trace = 0.0;
 	for (integer i = 1; i <= a.nrow; i ++)
@@ -2810,7 +2810,7 @@ double NUMtrace (const constMATVU& a) {
 	return (double) trace;
 }
 
-double NUMtrace2 (const constMATVU& x, const constMATVU& y) {
+double NUMtrace2 (constMATVU const& x, constMATVU const& y) {
 	Melder_assert (x.ncol == y.nrow && x.nrow == y.ncol);
 	longdouble trace = 0.0;
 	for (integer irow = 1; irow <= x.nrow; irow ++)
@@ -2916,7 +2916,7 @@ void MATmul3_XYXt (MATVU const& target, constMATVU const& x, constMATVU const& y
 			longdouble sum = 0.0;
 			for (integer k = 1; k <= x.ncol; k ++)
 				sum += x [irow] [k] * NUMinner (y.row (k), x.row (icol));
-			target [irow] [icol] = sum;
+			target [irow] [icol] = double (sum);
 		}
 }
 
@@ -2928,7 +2928,7 @@ void MATmul3_XYsXt (MATVU const& target, constMAT const& x, constMAT const& y) {
 			longdouble sum = 0.0;
 			for (integer k = 1; k <= x.ncol; k ++)
 				sum += x [irow] [k] * NUMinner (y.row (k), x.row (icol));
-			target [irow] [icol] = sum;
+			target [irow] [icol] = double (sum);
 		}
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = irow + 1; icol <= target.ncol; icol ++)

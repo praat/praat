@@ -1381,10 +1381,10 @@ inline autoMAT raw_MAT (integer nrow, integer ncol) {
 inline autoMAT zero_MAT (integer nrow, integer ncol) {
 	return newmatrixzero <double> (nrow, ncol);
 }
-inline autoMAT copy_MAT (constMATVU source) {
+inline autoMAT copy_MAT (constMATVU const& source) {
 	return newmatrixcopy (source);
 }
-inline autoMAT part_MAT (const constMAT& source,
+inline autoMAT part_MAT (constMAT const& source,
 	integer firstRow, integer lastRow,
 	integer firstColumn, integer lastColumn
 ) {

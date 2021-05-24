@@ -921,7 +921,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, doub
 	variable -> numericVectorValue.all()  +=  scalar;
 }
 inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
-	const VEC& variableVector = variable -> numericVectorValue.get();
+	VEC const& variableVector = variable -> numericVectorValue.get();
 	Melder_require (vector.size == variableVector.size,
 		U"You cannot add a vector with size ", vector.size,
 		U" to a vector with a different size (", variableVector.size, U")."
@@ -932,7 +932,7 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 	variable -> numericVectorValue.all()  -=  scalar;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
-	const VEC& variableVector = variable -> numericVectorValue.get();
+	VEC const& variableVector = variable -> numericVectorValue.get();
 	Melder_require (vector.size == variable -> numericVectorValue.size,
 		U"You cannot subtract a vector with size ", vector.size,
 		U" from a vector with a different size (", variableVector.size, U")."
@@ -943,7 +943,7 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 	variable -> numericVectorValue.all()  *=  scalar;
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
-	const VEC& variableVector = variable -> numericVectorValue.get();
+	VEC const& variableVector = variable -> numericVectorValue.get();
 	Melder_require (vector.size != variableVector.size,
 		U"You cannot multiply a vector with size ", variableVector.size,
 		U" with a vector with a different size (", vector.size, U")."
@@ -954,7 +954,7 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, d
 	variable -> numericVectorValue.all()  /=  scalar;
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
-	const VEC& variableVector = variable -> numericVectorValue.get();
+	VEC const& variableVector = variable -> numericVectorValue.get();
 	Melder_require (vector.size != variableVector.size,
 		U"You cannot divide a vector with size ", variableVector.size,
 		U" by a vector with a different size (", vector.size, U")."
