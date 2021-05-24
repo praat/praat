@@ -460,12 +460,12 @@ double NUMtotalLength (constSTRVEC const& x) {
 	return double (totalLength);
 }
 
-double NUMvariance (const constVECVU& vec) noexcept {
+double NUMvariance (constVECVU const& vec) noexcept {
 	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
 	const longdouble variance = stats.sumsq / (vec.size - 1);
 	return double (variance);
 }
-double NUMvariance (const constMATVU& mat) noexcept {
+double NUMvariance (constMATVU const& mat) noexcept {
 	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
 	const longdouble variance = stats.sumsq / (mat.nrow * mat.ncol - 1);
 	return double (variance);

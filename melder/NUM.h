@@ -64,7 +64,7 @@ inline bool NUMisEmpty (constSTRVEC const& x) noexcept {
 	return x.size == 0;
 }
 
-inline MelderRealRange NUMextrema (const constVECVU& vec) {
+inline MelderRealRange NUMextrema (constVECVU const& vec) {
 	if (NUMisEmpty (vec))
 		return { undefined, undefined };
 	double minimum = vec [1], maximum = minimum;
@@ -77,7 +77,7 @@ inline MelderRealRange NUMextrema (const constVECVU& vec) {
 	}
 	return { minimum, maximum };
 }
-inline MelderRealRange NUMextrema (const constMATVU& mat) {
+inline MelderRealRange NUMextrema (constMATVU const& mat) {
 	if (NUMisEmpty (mat))
 		return { undefined, undefined };
 	double minimum = mat [1] [1], maximum = minimum;
@@ -92,7 +92,7 @@ inline MelderRealRange NUMextrema (const constMATVU& mat) {
 	}
 	return { minimum, maximum };
 }
-inline MelderIntegerRange NUMextrema (const constINTVECVU& vec) {
+inline MelderIntegerRange NUMextrema (constINTVECVU const& vec) {
 	if (NUMisEmpty (vec))
 		return { INTEGER_MIN, INTEGER_MAX };
 	integer minimum = vec [1], maximum = minimum;

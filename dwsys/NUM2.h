@@ -479,8 +479,8 @@ double NUMmahalanobisDistanceSquared (constMAT lowerInverse, constVEC v, constVE
 			(L**-1.(x-m))' . (L**-1.(x-m))
 */
 
-double NUMtrace (const constMATVU& a);
-double NUMtrace2 (const constMATVU& x, const constMATVU& y);
+double NUMtrace (constMATVU const& a);
+double NUMtrace2 (constMATVU const& x, constMATVU const& y);
 /*
 	Calculates the trace from a product matrix x*y
 */
