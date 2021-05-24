@@ -31,9 +31,9 @@ oo_DEFINE_CLASS (Layer, Daata)
 		virtual void v_spreadDown (kLayer_activationType) { }
 		virtual void v_spreadDown_reconstruction () { }
 		virtual void v_spreadUp_reconstruction () { }
-		virtual void v_update (double /* learningRate */) { }
-		virtual void v_updateFirstPhase (double /* learningRate */) { }
-		virtual void v_updateSecondPhase (double /* learningRate */) { }
+		virtual void v_update (double learningRate) { }
+		virtual void v_updateFirstPhase (double learningRate) { }
+		virtual void v_updateSecondPhase (double learningRate) { }
 		virtual autoMatrix v_extractInputReconstruction () { return autoMatrix (); }
 		virtual autoMatrix v_extractOutputReconstruction () { return autoMatrix (); }
 		virtual autoMatrix v_extractInputBiases () { return autoMatrix (); }
