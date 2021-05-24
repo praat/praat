@@ -26,11 +26,11 @@
 Thing_define (ConstantQLog2FSpectrogram, MultiSampledSpectrogram) {
 	void v_info ()
 		override;
-	double v_getValueAtSample (integer /* ifreq */, integer /* iframe */ , int /* unit */)
+	double v_getValueAtSample (integer ifreq, integer iframe, int unit)
 		override;
-	double v_myFrequencyUnitToHertz (double /* log2_f */)
+	double v_myFrequencyUnitToHertz (double log2_f)
 		override;
-	double v_hertzToMyFrequencyUnit (double /* f_hz */)
+	double v_hertzToMyFrequencyUnit (double f_hz)
 		override;	
 };
 
