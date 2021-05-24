@@ -23,7 +23,8 @@
 #include "Spectrum.h"
 #include "MultiSampledSpectrogram.h"
 
-void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram thee, double approximateTimeOverSampling);
+void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram thee, double approximateTimeOverSampling,
+	kSound_windowShape filterShape);
 
 autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me);
 

@@ -20,7 +20,7 @@
  */
 
 #include "AnalyticSound.h"
-#include "ConstantQLogFSpectrogram.h"
+#include "ConstantQSpectrograms.h"
 #include "MultiSampledSpectrogram.h"
 
 #include "praat.h"
