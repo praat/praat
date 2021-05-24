@@ -1371,34 +1371,11 @@ double NUMbarkToHertz_traunmueller (double bark) {
 	return 1960.0 * (bark + 0.53) / (26.28 - bark);
 }
 
-double NUMbarkToHertz_schroeder (double bark) {
-	return 650.0 * sinh (bark / 7.0);
-}
 
 double NUMbarkToHertz_zwickerterhardt (double hz) {
 	if (hz < 0.0)
 		return undefined;
 	return 13.0 * atan (0.00076 * hz) + 3.5 * atan (hz / 7500.0);
-}
-
-double NUMhertzToBark_schroeder (double hz) {
-	if (hz < 0.0)
-		return undefined;
-	const double h650 = hz / 650.0;
-	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
-}
-
-double NUMbarkToHertz2 (double bark) {
-	if (bark < 0.0)
-		return undefined;
-	return 650.0 * sinh (bark / 7.0);
-}
-
-double NUMhertzToBark2 (double hz) {
-	if (hz < 0)
-		return undefined;
-	const double h650 = hz / 650.0;
-	return 7.0 * log (h650 + sqrt (1.0 + h650 * h650));
 }
 
 double NUMbladonlindblomfilter_amplitude (double zc, double z) {
