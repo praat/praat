@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009,2011-2020 Paul Boersma
+ * Copyright (C) 2009,2011-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -523,7 +523,7 @@ autoTable Network_nodes_downto_Table (Network me, integer fromNodeNumber, intege
 			toNodeNumber = my numberOfNodes;
 		}
 		integer numberOfNodes = toNodeNumber - fromNodeNumber + 1;
-		Melder_assert (numberOfNodes >= 1);
+		Melder_assert (numberOfNodes >= 0);
 		autoTable thee = Table_createWithoutColumnNames (numberOfNodes,
 				includeNodeNumbers + includeX + includeY + includeClamped + includeActivity + includeExcitation);
 		integer icol = 0;
