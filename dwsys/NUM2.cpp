@@ -455,12 +455,15 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 	return x;
 }
 
+/*
+	Non-negative least squares: Solve Ax = y, i.e
+	minimize || Ax - y ||^2 for vector x, where all x[i] >= 0.0
+*/
 void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, integer infoLevel) {
 	Melder_assert (a.nrow == y.size);
 	Melder_assert (a.ncol == x.size);
 	for (integer i = 1; i <= x.size; i ++)
-		if (x [i] < 0.0)
-			x [i] = 0.0;
+		Melder_clipLeft (0.0, & x[i]);
 	autoVEC r = raw_VEC (y.size);
 	const double normSquared_y = NUMsum2 (y);
 	integer iter = 1;
