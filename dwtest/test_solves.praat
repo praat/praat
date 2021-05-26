@@ -1,5 +1,5 @@
 # test_solves.praat
-# djmw 20191201
+# djmw 20191201, 20210526
 
 appendInfoLine: "test_solves.praat"
 
@@ -64,6 +64,28 @@ procedure test_nonnegative
 	;appendInfoLine: result#
 	result# = solveNonnegative# (a##, y#,  result3#, 100, 1e-17, 1)
 	;appendInfoLine: result#
+	dif = norm (result# - solution#)
+	assert dif < 1e-6
+	appendInfoLine: tab$, "Example fromR with library (nnls)"
+	# next example is from R with library
+	# set.seed(1)
+	# n <- 8; p <- 4
+	# x <- matrix(rnorm(n * p), nrow = n)
+	# y <- x %*% matrix(rep(c(1, -1), length.out = p), ncol = 1) + rnorm(n)
+	# library(nnls)
+	# mod1 <- nnls(x, y)
+	# mod1$x 
+	a## = { {-0.6264538,  0.57578135, -0.01619026,  0.61982575},
+	... {0.1836433, -0.30538839,  0.94383621, -0.05612874},
+	... { -0.8356286,  1.51178117,  0.82122120, -0.15579551},
+	... {  1.5952808,  0.38984324,  0.59390132, -1.47075238},
+	... { 0.3295078, -0.62124058,  0.91897737, -0.47815006},
+	... { -0.8204684, -2.21469989, 0.78213630,  0.41794156},
+	... { 0.4874291,  1.12493092,  0.07456498,  1.35867955},
+	... { 0.7383247, -0.04493361, -1.98935170, -0.10278773}}
+	y# = { -1.4505796, 1.4351916, -2.7474526, 2.8550967, 1.9535858, 1.6991128, -0.8215911, -0.3401299}
+	solution# = {1.4907686, 0.0000000, 0.8906014, 0.0000000}
+	result# = solveNonnegative# (a##, y#,  100, 1e-17, 1)
 	dif = norm (result# - solution#)
 	assert dif < 1e-6
 endproc
