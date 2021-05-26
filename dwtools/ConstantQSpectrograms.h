@@ -49,12 +49,10 @@ autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (Const
 Thing_define (GaborSpectrogram, MultiSampledSpectrogram) {
 	void v_info ()
 		override;
-	double v_myFrequencyUnitToHertz (double f) {
-		return f;
-	}
-	double v_hertzToMyFrequencyUnit (double f) {
-		return f;
-	}
+	double v_myFrequencyUnitToHertz (double f)
+		override { return f; }
+	double v_hertzToMyFrequencyUnit (double f)
+		override { return f; }
 };
 
 void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish);
