@@ -309,7 +309,7 @@ autoMAT newMATlowerCholesky (constMATVU const& a, double *out_lnd) {
 	MATlowerCholesky_inplace (result.get(), out_lnd);
 	for (integer irow = 1; irow <= a.nrow - 1; irow ++)
 		for (integer icol = irow + 1; icol <= a.nrow; icol ++)
-			result [irow][icol] = 0.0;
+			result [irow] [icol] = 0.0;
 	return result;
 }
 

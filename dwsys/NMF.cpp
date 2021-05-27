@@ -130,7 +130,7 @@ autoNMF NMF_create (integer numberOfRows, integer numberOfColumns, integer numbe
 static void MATmakeElementsNonNegative (MATVU const& m, int strategy) {
 	for (integer irow = 1; irow <= m.nrow; irow ++)
 		for (integer icol = 1; icol <= m.ncol; icol ++)
-			if (m [irow][icol] < 0.0)
+			if (m [irow] [icol] < 0.0)
 				m [irow] [icol] = strategy == 0 ? 0.0 : fabs (m [irow] [icol]);	
 }
 

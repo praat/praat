@@ -127,9 +127,9 @@ void MAT_getEigenSystemFromGeneralSquareMatrix (constMAT const& data, autoCOMPVE
 			// imaginary part is zero by initialisation
 			if (evals [ivec].imag() != 0.0) {
 				for (integer icol = 1; icol <= a.nrow; icol ++) {
-					evecs [ivec    ] [icol] .imag ( eigenvectors_right [icol][ivec + 1]);
-					evecs [ivec + 1] [icol] .real ( eigenvectors_right [icol][ivec    ]);
-					evecs [ivec + 1] [icol] .imag (-eigenvectors_right [icol][ivec + 1]);
+					evecs [ivec    ] [icol] .imag ( eigenvectors_right [icol] [ivec + 1]);
+					evecs [ivec + 1] [icol] .real ( eigenvectors_right [icol] [ivec    ]);
+					evecs [ivec + 1] [icol] .imag (-eigenvectors_right [icol] [ivec + 1]);
 				}
 				ivec ++;
 			}
