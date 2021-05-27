@@ -49,7 +49,7 @@ Collection_define (CrossCorrelationTableList, OrderedOf, CrossCorrelationTable) 
 	matrices. Differences between a CrossCorrelationTable and a Covariance:
 	1. a Covariance matrix is always positive definite, for a cross-correlation table this is only guaranteed for
 	  lag time tau = 0.
-	2. The elements c[i][j] in a Covariance always satisfy |c[i][j]/sqrt(c[i][i]*c[j][j])| <= 1, this is
+	2. The elements c [i] [j] in a Covariance always satisfy |c [i] [j] / sqrt (c [i] [i] * c [j] [j])| <= 1, this is
 	  in general not the case for cross-correlations.
 */
 
@@ -57,7 +57,7 @@ autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension);
 
 autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars, conststring32 centroid, integer numberOfSamples);
 
-/* (sum(i,j=1..dimension, i!=j; C[i][j]^2))/(dimension*(dimension-1)) */
+/* (sum(i,j=1..dimension, i!=j; C [i] [j]^2)) / (dimension * (dimension - 1)) */
 double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);
 
 autoCrossCorrelationTable CrossCorrelationTable_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
@@ -92,7 +92,7 @@ void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me,
 
 autoCrossCorrelationTableList CrossCorrelationTables_to_CrossCorrelationTableList (OrderedOf<structCrossCorrelationTable> *me);
 /*
-	Determine V*C[k]*V' for k=1..n, where V is the diagonalizer matrix and C[k} the k-th CrossCorrelationTable.
+	Determine V * C [k] * V' for k=1..n, where V is the diagonalizer matrix and C [k] the k-th CrossCorrelationTable.
 */
 autoCrossCorrelationTableList CrossCorrelationTableList_Diagonalizer_diagonalize (CrossCorrelationTableList me, Diagonalizer thee);
 
@@ -104,7 +104,7 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me);
 /*
 	For multi-channel "sounds" like EEG signals.
 	The cross-correlation between channel i and channel j is defined as
-		sum(k=1..nsamples; (z[i][k] - mean[i])(z[j][k + lag] - mean[j])) / (nsamples - 1).
+		sum (k=1..nsamples; (z [i] [k] - mean [i]) (z [j] [k + lag] - mean [j])) / (nsamples - 1).
 */
 autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,
 	double startTime, double endTime, double lagStep);

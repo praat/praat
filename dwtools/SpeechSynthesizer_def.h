@@ -57,7 +57,7 @@ oo_DEFINE_CLASS (EspeakVoice, Daata)
 	oo_INTVEC (height2, numberOfFormants)	// (short) 100% = 256
 	oo_INTVEC (width2, numberOfFormants)	// (short) 100% = 256
 
-	oo_INTVEC (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath[0] indicates whether any are set.
+	oo_INTVEC (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath [0] indicates whether any are set.
 	oo_INTVEC (breathw, numberOfFormants)	// width of each breath formant
 	oo_INTEGER (numberOfToneAdjusts)
 	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts)

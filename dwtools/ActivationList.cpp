@@ -23,7 +23,7 @@ Thing_implement (ActivationList, Matrix, 2);
 int _ActivationList_checkElements (ActivationList me) {
 	for (integer i = 1; i <= my ny; i ++) {
 		for (integer j = 1; j <= my nx; j ++) {
-			if (my z[i][j] < 0.0 || my z [i] [j] > 1.0) {
+			if (my z [i] [j] < 0.0 || my z [i] [j] > 1.0) {
 				return 0;
 			}
 		}

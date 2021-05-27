@@ -61,7 +61,7 @@ autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, inte
 void MixingMatrix_setRandomGauss (MixingMatrix me, double mean, double stdev) {
 	for (integer i = 1; i <= my numberOfRows; i++) {
 		for (integer j = 1; j <= my numberOfColumns; j++) {
-			my data[i][j] = NUMrandomGauss (mean, stdev);
+			my data [i] [j] = NUMrandomGauss (mean, stdev);
 		}
 	}
 }
@@ -78,7 +78,7 @@ void MixingMatrix_multiplyInputChannel (MixingMatrix me, integer inputChannel, d
 void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 	for (integer i = 1; i <= my numberOfRows; i++) {
 		for (integer j = 1; j <= my numberOfColumns; j++) {
-			my data [i][j] = 0;
+			my data [i] [j] = 0.0;
 		}
 	}
 	bool dimensionsCovered = true;
@@ -89,7 +89,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.L = input.M
 					output.R = input.M
 			*/
-			my data [1][1] = my data [2][1] = 1.0;
+			my data [1] [1] = my data [2] [1] = 1.0;
 		} else if (my numberOfRows == 4) { // up-mix to quad
 			/*
 				The M input channel is used for non-surround output channels (L and R).
@@ -99,7 +99,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.SL = 0
 					output.SR = 0
 			*/
-			my data [1][1] = my data [2][1] = 1.0;
+			my data [1] [1] = my data [2] [1] = 1.0;
 		} else if (my numberOfRows == 6) { // up-mix to to 5.1
 			/*
 				The M input channel is used for the center output channel (C). 
@@ -111,7 +111,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.SL = 0
 					output.SR = 0
 			*/
-			my data [3][1] = 1.0;
+			my data [3] [1] = 1.0;
 		} else {
 			dimensionsCovered = false;
 		}
@@ -121,13 +121,13 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 				Both input channels (L and R) are equally combined to produce the unique output channel (M).
 					output.M = 0.5 * (input.L + input.R)
 			*/
-			my data [1][1] = my data [1][2] = 0.5;
+			my data [1] [1] = my data [1] [2] = 0.5;
 		} else if (my numberOfRows == 2) { // to stereo
 			/*
 				output.L = input.L
 				output.R = input.R
 			*/
-			my data [1][1] = my data [2][2] = 1.0;
+			my data [1] [1] = my data [2] [2] = 1.0;
 		} else if (my numberOfRows == 4) { // up-mix to quad
 			/*
 				The L and R input channels are used for their non-surround respective output channels (L and R). 
@@ -137,7 +137,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.SL = 0
 					output.SR = 0
 			*/
-			my data [1][1] = my data [2][2] = 1.0;
+			my data [1] [1] = my data [2] [2] = 1.0;
 		} else if (my numberOfRows == 6) { // up-mix to 5.1
 			/*
 				The L and R input channels are used for their non-surround respective output channels (L and R). 
@@ -149,7 +149,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.SL = 0
 					output.SR = 0
 			*/
-			my data [1][1] = my data [2][2] = 1.0;
+			my data [1] [1] = my data [2] [2] = 1.0;
 		} else { // up-mix 
 			dimensionsCovered = false;
 		}
@@ -160,7 +160,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 				channel (M).
 				output.M = 0.25 * (input.L + input.R + input.SL + input.SR)
 			*/
-			my data [1][1] = my data [1][2] = my data [1][3] = my data [1][4] = 0.25;
+			my data [1] [1] = my data [1] [2] = my data [1] [3] = my data [1] [4] = 0.25;
 		} else if (my numberOfRows == 2) { // down-mix to stereo
 			/*
 				Both left input channels (L and SL) are equally combined to produce the unique left output channel (L). 
@@ -168,8 +168,8 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.L = 0.5 * (input.L + input.SL)
 					output.R = 0.5 * (input.R + input.SR)
 			*/
-			my data [1][1] = my data [1][3] = 0.5;
-			my data [1][2] = my data [1][4] = 0.5;
+			my data [1] [1] = my data [1] [3] = 0.5;
+			my data [1] [2] = my data [1] [4] = 0.5;
 		} else if (my numberOfRows == 6) { // up-mix to 5.1
 			/*
 				The L, R, SL, and SR input channels are used for their respective output channels (L and R). 
@@ -181,7 +181,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.SL = input.SL
 					output.SR = input.SR
 			*/
-			my data [1][1] = my data [2][2] = my data [5][3] = my data [6][4] = 1.0;
+			my data [1] [1] = my data [2] [2] = my data [5] [3] = my data [6] [4] = 1.0;
 		} else {
 			dimensionsCovered = false;
 		}
@@ -193,9 +193,9 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 				The subwoofer (LFE) channel is lost.
 					output.M = 0.7071 * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
 			*/
-			my data [1][3] = 1.0;
-			my data [1][1] = my data [1][2] = 0.5; // NUMsqrt1_2 is not safe if the channels are equal;
-			my data [1][5] = my data [1][6] = 0.5;
+			my data [1] [3] = 1.0;
+			my data [1] [1] = my data [1] [2] = 0.5; // NUMsqrt1_2 is not safe if the channels are equal;
+			my data [1] [5] = my data [1] [6] = 0.5;
 		} else if (my numberOfRows == 2)  { // down-mix to stereo
 			/*
 				The central channel (C) is summed with each lateral surround channel (SL or SR) and mixed to each lateral channel. 
@@ -204,9 +204,9 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.L = input.L + 0.7071 * (input.C + input.SL)
 					output.R = input.R + 0.7071 * (input.C + input.SR)
 			*/
-			my data [1][1] = my data [2][2] = 1.0;
-			my data [1][3] = my data [1][5] = 0.5; // NUMsqrt1_2;
-			my data [2][4] = my data [2][6] = 0.5; // NUMsqrt1_2;
+			my data [1] [1] = my data [2] [2] = 1.0;
+			my data [1] [3] = my data [1] [5] = 0.5; // NUMsqrt1_2;
+			my data [2] [4] = my data [2] [6] = 0.5; // NUMsqrt1_2;
 		} else if (my numberOfRows == 4)  { // down-mix to quad
 			/*
 				The central (C) is mixed with the lateral non-surround channels (L and R). 
@@ -217,8 +217,8 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 					output.SL = input.SL
 					output.SR = input.SR
 			*/
-			my data [1][1] = my data [2][2] = my data [3][5] = my data [4][6] = 1.0;
-			my data [1][3] = my data [2][3] = NUMsqrt1_2;
+			my data [1] [1] = my data [2] [2] = my data [3] [5] = my data [4] [6] = 1.0;
+			my data [1] [3] = my data [2] [3] = NUMsqrt1_2;
 		} else {
 			dimensionsCovered = false;
 		}
@@ -232,7 +232,7 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 		*/
 		const integer lowerDimension = std::min (my numberOfRows, my numberOfColumns);
 		for (integer i = 1; i <= lowerDimension; i++)
-			my data [i][i] = 1.0;
+			my data [i] [i] = 1.0;
 	}
 }
 

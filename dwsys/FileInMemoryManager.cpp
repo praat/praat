@@ -473,7 +473,7 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 	If some other reading error happens, the function also returns EOF, but sets its error indicator (ferror) instead.
 */
 int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
-	char str[4];
+	char str [4];
 	(void) FileInMemoryManager_fgets (me, str, 1, stream);
 	return FileInMemoryManager_feof (me, stream) ? EOF : static_cast<int> (*str);
 }

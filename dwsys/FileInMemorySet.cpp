@@ -66,7 +66,7 @@ autoFileInMemorySet FileInMemorySet_create () {
 
 autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list) {
 	try {
-		autoFileInMemorySet thee = Data_copy (list.at[1]);
+		autoFileInMemorySet thee = Data_copy (list.at [1]);
 		for (integer iset = 1; iset <= list.size; iset ++)
 			thy merge (list.at [iset]);
 		return thee;

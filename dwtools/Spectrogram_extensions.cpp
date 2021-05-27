@@ -624,7 +624,7 @@ autoMatrix Spectrogram_getLongtermSpectralFlatnessMeasure (Spectrogram me, doubl
 					frequencyBins [iframe] = Sampled_getMean (me, xmid - halfWindwow, xmid + halfWindwow, ifreq, 0, true);
 				}
 			} else 
-				frequencyBins  <<=  my z.row(ifreq);
+				frequencyBins  <<=  my z.row (ifreq);
 			/*
 				Get the geometric versus arithmetic mean of the power spectrum, Eqs. (2) and (3)
 			*/

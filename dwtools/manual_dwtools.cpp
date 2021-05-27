@@ -730,7 +730,7 @@ MAN_BEGIN (U"Confusion", U"djmw", 20110517)
 INTRO (U"One of the @@types of objects@ in Praat.")
 NORMAL (U"An object of type Confusions represents a confusion matrix, with "
 	"stimuli as row labels and responses as column labels. The entry at "
-	"position [%i][%j] represents the number of times response %j "
+	"position [%i] [%j] represents the number of times response %j "
 	"was given to the stimulus %i.")
 ENTRY (U"Creating a Confusion from data in a text file")
 NORMAL (U"Suppose you have two objects A and B. "
@@ -1077,7 +1077,7 @@ NORMAL (U"which has the Student %t distribution with %ndf = %N-1 degrees of free
 NORMAL (U"In the formulas above, %mean is the element of the mean vector at "
 	"position %index, %\\mu is the hypothesized mean, "
 	"%N is the number of observations, %s^2 "
-	"is the variance at position [%index][%index] in the covariance matrix.")
+	"is the variance at position [%index] [%index] in the covariance matrix.")
 NORMAL (U"The returned probability %p is the %%two-sided% probability")
 EQUATION (U"%p = 2 * studentQ (%t, %ndf)")
 NORMAL (U"A low probability %p means that the difference is significant.")
@@ -2054,20 +2054,20 @@ CODE (U"edt = To EditDistanceTable")
 CODE (U"Draw edit operations")
 NORMAL (U"The default EditCostsTable which is in every new EditDistanceTable object has only two rows and two columns, "
 	"where the cells in this EditCostsTable have the following interpretation:\n")
-TAG (U"Cell [1][2]:")
+TAG (U"Cell [1] [2]:")
 DEFINITION (U"defines the cost for the insertion of a target symbol in the source string. The default insertion cost is 1.0.")
-TAG (U"Cell [2][1]:")
+TAG (U"Cell [2] [1]:")
 DEFINITION (U"defines the cost of the deletion of a source symbol. The default value is 1.0.")
-TAG (U"Cell [1][1]:")
+TAG (U"Cell [1] [1]:")
 DEFINITION (U"defines the cost of substituting a target symbol for a source symbol where the target and source symbols don't match. The default substitution cost is 2.0.")
-TAG (U"Cell [2][2]:")
+TAG (U"Cell [2] [2]:")
 DEFINITION (U"defines the cost of substituting a target symbol for a source symbol where the target and source symbols do match. The deault value is 0.0.")
 ENTRY (U"How to create a non-default EditCostsTable")
 NORMAL (U"In general we can define a table for %%numberOfTargets% target symbols and %%numberOfSources% source symbols. These numbers "
 	"do not necessarily have to be equal to the number of different symbols that may occur in the target and source strings. They only represent the number of symbols that you like to give special edit costs. "
 	"The EditCostTable will provide one extra dimension to accommodate target symbol insertion costs and source symbol deletion costs and another extra dimension to represent other target and source symbols that don't have separate entries and can therefore be treated as one group. "
 	"The actual dimension of the table will therefore be (%%numberOfTargets% + 2) \\xx (%%numberOfSources% + 2). This is what the cells in the non-default table mean: ")
-LIST_ITEM (U"\\bu The upper matrix part of dimension %%numberOfTargets% \\xx %%numberOfSources% will show at cell [%i][%j] the costs "
+LIST_ITEM (U"\\bu The upper matrix part of dimension %%numberOfTargets% \\xx %%numberOfSources% will show at cell [%i] [%j] the costs "
 	"of substituting the %i-th target symbol for the %j-th source symbol.")
 LIST_ITEM (U"\\bu The first %%numberOfSources% values in row (%%numberOfTargets% + 1) represent the costs of substituting one of the target "
 	"symbols from the target %%rest% category for the source symbol in the corresponding column.  The target rest category is the group of "
@@ -2100,15 +2100,15 @@ CODE (U"Set costs (others): 1.6, 1.8, 0, 1.5")
 NORMAL (U"In the first line we create the (empty) table, we name it %%editCosts% and it creates space for one target "
 	"and one source symbol. The next line defines the target symbol which becomes the label of the first row of the table. "
 	"Line 3 defines the source symbol which will become the label of the first column of the table. "
-	"We next define the insertion and deletion costs, they fill cells [1][3] and [3][1], respectively. "
-	"Cell [1][1] is filled by the command in line 6.  The command in line 7 fills cell [2][1] which defines the cost "
-	"of substituting any target symbol unequal to \"t\" for \"s\". The next line fills cell [1][2] which defines "
+	"We next define the insertion and deletion costs, they fill cells [1] [3] and [3] [1], respectively. "
+	"Cell [1] [1] is filled by the command in line 6.  The command in line 7 fills cell [2] [1] which defines the cost "
+	"of substituting any target symbol unequal to \"t\" for \"s\". The next line fills cell [1] [2] which defines "
 	"the substitution costs of \"t\" for any source symbol unequal to \"s\". "
 	"Finally, the command in the last line defines the little 2\\xx2 matrix at the bottom-right that "
-	"is analogous to the default cost matrix explained above. Therefore cell [2][2] defines the cost of substituting a "
-	"target symbol unequal to \"t\" for a source symbol unequal to \"s\" where the target and source symbols don't match, while cell [3][3] "
+	"is analogous to the default cost matrix explained above. Therefore cell [2] [2] defines the cost of substituting a "
+	"target symbol unequal to \"t\" for a source symbol unequal to \"s\" where the target and source symbols don't match, while cell [3] [3] "
 	"defines the costs when they do match. "
-	"Cell [3][2] defines the cost of the deletion of a source symbol unequal \"s\", while cell [2][3] defines the cost "
+	"Cell [3] [2] defines the cost of the deletion of a source symbol unequal \"s\", while cell [2] [3] defines the cost "
 	"for  the insertion of a target symbol unequal \"t\" in the source string. ")
 ENTRY (U"How to use a special EditCostsTable")
 NORMAL (U"After creating the special EditCostsTable you select it together with the EditDistanceTable and issue the command @@EditDistanceTable & EditCostsTable: Set new edit costs|Set new edit costs@. The EditDistanceTable will then find the minimum edit distance based on the new cost values.")
@@ -2176,7 +2176,7 @@ TAG (U"%dimension")
 DEFINITION (U"the dimension of an eigenvector.")
 TAG (U"%eigenvalues[1..%numberOfEigenvalues]")
 DEFINITION (U"the real eigenvalues.")
-TAG (U"%eigenvectors[1..%numberOfEigenvalues][1..%dimension]")
+TAG (U"%eigenvectors[1..%numberOfEigenvalues] [1..%dimension]")
 DEFINITION (U"the real eigenvectors, stored by row.")
 MAN_END
 
@@ -5401,17 +5401,17 @@ TAG (U"##From column#, ##To column#")
 DEFINITION (U"determine the columns to be drawn.")
 TAG (U"##Origin#")
 DEFINITION (U"determines the drawing orientation. For a table with %%nrow% rows and %%ncol% columns:")
-TAG1 (U"%%top-left%: cel [1][1] will be at the top left position in the drawing, cell [%%nrow%][%%ncol%] will be at bottom right position.")
-TAG1 (U"%%top-right%: cel [1][1] will be at the top right position in the drawing, cell [%%nrow%][%%ncol%] will be at bottom left position.")
-TAG1 (U"%%bottom-left%: cel [1][1] will be at the bottom left position in the drawing, cell [%%nrow%][%%ncol%] will be at top right position.")
-TAG1 (U"%%bottom-right%: cel [1][1] will be at the bottom right position in the drawing, cell [%%nrow%][%%ncol%] will be at top left position.")
+TAG1 (U"%%top-left%: cel [1] [1] will be at the top left position in the drawing, cell [%%nrow%] [%%ncol%] will be at bottom right position.")
+TAG1 (U"%%top-right%: cel [1] [1] will be at the top right position in the drawing, cell [%%nrow%] [%%ncol%] will be at bottom left position.")
+TAG1 (U"%%bottom-left%: cel [1] [1] will be at the bottom left position in the drawing, cell [%%nrow%] [%%ncol%] will be at top right position.")
+TAG1 (U"%%bottom-right%: cel [1] [1] will be at the bottom right position in the drawing, cell [%%nrow%] [%%ncol%] will be at top left position.")
 TAG (U"##Cell area scale factor#")
 DEFINITION (U"multiplies the area of each cell's square. If this factor is larger than 1.0 some of the squares might overlap.")
 TAG (U"##Filling order#")
 DEFINITION (U"determines in what order the squares will be drawn. The order is only important if some of the squares overlap, "
 	"i.e. if the cell area scale factor is larger than 1.0.")
-TAG1 (U"%%rows%: start with the first row, cell [1][1] to cell [1][%%ncol%], next the second row, etc...")
-TAG1 (U"%%columns% start with column 1, cell [1][1] to cell [%%nrow%][1], next column 2 etc...")
+TAG1 (U"%%rows%: start with the first row, cell [1] [1] to cell [1] [%%ncol%], next the second row, etc...")
+TAG1 (U"%%columns% start with column 1, cell [1] [1] to cell [%%nrow%] [1], next column 2 etc...")
 TAG1 (U"%%increasing values%: first sort the cell values in increasing order and then start drawing them, the cell with the smallest value first. ")
 TAG1 (U"%%decreasing values%: first sort the cell values in decreasing order and then start drawing them, the cell with the largest value first.")
 TAG1 (U"%%random%: draw cells in random order. If the cell area scale factor is larger than 1.0 this may result in a different graph of the same table for each successive call.")

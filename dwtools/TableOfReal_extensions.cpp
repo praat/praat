@@ -1193,10 +1193,10 @@ autoTableOfReal TableOfReal_rankColumns (TableOfReal me, integer fromColumn, int
 }
 
 /*
-	s[lo]   = precursor<number>
-	s[lo+1] = precursor<number+1>
+	s [lo]   = precursor<number>
+	s [lo+1] = precursor<number+1>
 	...
-	s[hi]   = precursor<number+hi-lo>
+	s [hi]   = precursor<number+hi-lo>
 */
 void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, integer to, conststring32 precursor, integer number, integer increment) {
 	from = ( from == 0 ? 1 : from );

@@ -22,7 +22,7 @@
 #include "Graphics_extensions_enums.h"
 
 /**
-	Draw a box plot of data[1..ndata]. The vertical center line of the plot
+	Draw a box plot of data [1..ndata]. The vertical center line of the plot
 	is at position 'x'. The rectangle box is 2*w wide, the whisker 2*r.
 	All drawing outside [ymin, ymax] is clipped.
 */

@@ -76,7 +76,7 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, const
 		Melder_assert (times.size == pitches.size);
 		autoPitchTier me = PitchTier_create (xmin, xmax);
 		for (integer i = 1; i <= times.size; i ++)
-			RealTier_addPoint (me.get(), times[i], pitches [i]);
+			RealTier_addPoint (me.get(), times [i], pitches [i]);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"No PitchTier created from points.");

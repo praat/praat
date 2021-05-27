@@ -133,7 +133,7 @@ autoCovariance TableOfReal_to_Covariance (TableOfReal me) {
 
 autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 	try {
-		autoCovariance thee = Data_copy (my at[1]);
+		autoCovariance thee = Data_copy (my at [1]);
 		SSCP_reset (thee.get());
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
@@ -151,7 +151,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 
 autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 	try {
-		autoCovariance thee = Data_copy (my at[1]);
+		autoCovariance thee = Data_copy (my at [1]);
 		SSCP_reset (thee.get());
 
 		//	First the new centroid,
@@ -172,7 +172,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			mean.all()  <<=  covi -> centroid.all()  -  thy centroid.all();
 			outer_MAT_out (outer.all(), mean.all(), mean.all());
 			if (thy numberOfRows == 1)
-				thy data.row(1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
+				thy data.row (1)  +=  outer.diagonal()  *  covi -> numberOfObservations;
 			else
 				thy data.all()  +=  outer.all()  *  covi -> numberOfObservations;   // Y += aX
 		}
@@ -196,7 +196,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 				Sum the sscp's and weigh the centroid.
 			*/
 			for (integer k = 1; k <= thy numberOfRows; k ++) // catch 1xn
-				thy data.row(k)  +=  covi -> data.row(k)  *  (covi -> numberOfObservations - 1.0);
+				thy data.row (k)  +=  covi -> data.row (k)  *  (covi -> numberOfObservations - 1.0);
 
 			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
 		}
@@ -588,7 +588,7 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 			
 			double singleSum = 0.0;	
 			for (integer j = 1; j <= data.nrow; j ++) {
-				const double djj_sq = NUMmahalanobisDistanceSquared (lowerInverse, data.row(j), my centroid.get());
+				const double djj_sq = NUMmahalanobisDistanceSquared (lowerInverse, data.row (j), my centroid.get());
 				buf [j] = exp (-0.5 * beta2 * djj_sq / (1.0 + beta2));
 			}
 			if (weighting)

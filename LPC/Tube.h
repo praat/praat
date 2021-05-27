@@ -24,8 +24,8 @@
 
 /*
 	Tube's as a function of time.
-	Tube_frame: c[1] -> mouth
-	            c[numberOfSegments] -> glottis.
+	Tube_frame: c [1] -> mouth
+	            c [numberOfSegments] -> glottis.
 */
 
 void Tube_Frame_init (Tube_Frame me, integer numberOfSegments, double length);

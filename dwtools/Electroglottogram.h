@@ -55,7 +55,7 @@ autoSound Electroglottogram_derivative (Electroglottogram me, double lowPassFreq
 /* The real derivative */
 
 autoSound Electroglottogram_firstCentralDifference (Electroglottogram me, bool peak99);
-/* d(EEG)/dt [col] = z[col+1]-z[col-1] */
+/* d(EEG)/dt [col] = z [col+1] - z [col-1] */
 
 autoElectroglottogram Electroglottogram_highPassFilter (Electroglottogram me, double fromFrequency, double smoothing);
 /*

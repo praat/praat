@@ -76,7 +76,7 @@ const char * espeakdata_get_voicedata (const char *data, integer ndata, char *bu
 	(*index) ++;   // ppgb 20151020 fix
 	const integer idata = i + 1;
 	buf [i] = '\0';
-	while (-- i >= 0 && ESPEAK_ISSPACE (buf[i]))
+	while (-- i >= 0 && ESPEAK_ISSPACE (buf [i]))
 		buf [i] = 0;
 
 	char *p = strstr (buf, "//");

@@ -24,6 +24,12 @@
 
 #include "praat.h"
 
+DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity) {
+	CONVERT_EACH_TO_ONE (AnalyticSound)
+		autoIntensity result = AnalyticSound_to_Intensity (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula, U"MultiSampledSpectrogram: Formula", U"MultiSampledSpectrogram: Formula...") {
 	FORMULA (formula, U"Formula:", U"2 * self")
 	OK
@@ -104,6 +110,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+DIRECT (CONVERT_EACH_TO_ONE__Sound_to_AnalyticSound) {
+	CONVERT_EACH_TO_ONE (Sound)
+		autoAnalyticSound result = Sound_to_AnalyticSound (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (GRAPHICS_EACH__GaborSpectrogram_paint, U"GaborSpectrogram: Paint", nullptr) {
 	REAL (xmin, U"left Time range (s)", U"0.0")
 	REAL (xmax, U"right Time range (s)", U"0.0 (=all)")
@@ -150,6 +162,9 @@ void praat_MultiSampledSpectrogram_init () {
 	Thing_recognizeClassesByName (classAnalyticSound, classConstantQLog2FSpectrogram, classFrequencyBin,
 		classGaborSpectrogram, classMultiSampledSpectrogram, nullptr);
 
+	praat_addAction1 (classAnalyticSound, 0, U"To Intensity", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity);
+	
 	praat_addAction1 (classConstantQLog2FSpectrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__ConstantQLog2FSpectrogram_paint);
 	praat_MultiSampledSpectrograms_generics (classConstantQLog2FSpectrogram);
@@ -158,6 +173,9 @@ void praat_MultiSampledSpectrogram_init () {
 	
 	praat_addAction1 (classSound, 0, U"To ConstantQLog2FSpectrogram...", U"To ComplexSpectrogram...", praat_DEPTH_1 + praat_HIDDEN,
 			CONVERT_EACH_TO_ONE__Sound_to_ConstantQLog2FSpectrogram);
+	praat_addAction1 (classSound, 0, U"To AnalyticSound", U"Resample...", praat_DEPTH_1 + praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Sound_to_AnalyticSound);
+	
 	
 	praat_addAction1 (classGaborSpectrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__GaborSpectrogram_paint);

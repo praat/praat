@@ -181,12 +181,12 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w);
 void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *out_eta_fit, double *out_eta_conf, double *out_rho);
 /*
 	Computes
-		eta_fit = sum (i<j,i=1..n; w[i][j] * dfit[i][j]^2)
-		eta_conf = sum (i<j,i=1..n; w[i][j] * conf[i][j]^2)
-		rho   = sum (i<j,i=1..n; w[i][j] * dfit[i][j] * conf[i][j];
+		eta_fit = sum (i<j,i=1..n; w [i] [j] * dfit [i] [j]^2)
+		eta_conf = sum (i<j,i=1..n; w [i] [j] * conf [i] [j]^2)
+		rho = sum (i<j,i=1..n; w [i] [j] * dfit [i] [j] * conf [i] [j];
 	where,
-		dfit[i][j] = transformation (dissimilarity[i][j])
-		conf[i][j] = distance between x[i] and x[j] (in the configuration)
+		dfit [i] [j] = transformation (dissimilarity [i] [j])
+		conf [i] [j] = distance between x [i] and x [j] (in the configuration)
 */
 
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, kMDS_stressMeasure stressMeasure);

@@ -172,7 +172,7 @@ DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfLayers) {
 
 DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputs) {
 	QUERY_ONE_FOR_INTEGER (FFNet)
-		integer result = my numberOfUnitsInLayer[my numberOfLayers];
+		integer result = my numberOfUnitsInLayer [my numberOfLayers];
 	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
@@ -181,7 +181,7 @@ FORM (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfHiddenUnits, U"FFNet: Get number o
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (FFNet)
-		integer result = layer > 0 && layer <= my numberOfLayers - 1 ? my numberOfUnitsInLayer[layer] : 0;
+		integer result = layer > 0 && layer <= my numberOfLayers - 1 ? my numberOfUnitsInLayer [layer] : 0;
 	QUERY_ONE_FOR_INTEGER_END (U" units")
 }
 
@@ -198,16 +198,16 @@ DO
 	QUERY_ONE_FOR_INTEGER (FFNet)
 		integer result = 0;
 		if (layer <= my numberOfLayers - 1) {
-			integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer[layer - 1] );
-			result = my numberOfUnitsInLayer[layer] * (numberOfUnitsInPreviousLayer + 1);
+			integer numberOfUnitsInPreviousLayer = ( layer == 1 ? my numberOfInputs : my numberOfUnitsInLayer [layer - 1] );
+			result = my numberOfUnitsInLayer [layer] * (numberOfUnitsInPreviousLayer + 1);
 		}
 	QUERY_ONE_FOR_INTEGER_END (U" weights (including biases)")
 }
 	
 DIRECT (QUERY_ONE_FOR_INTEGER__FFNet_getNumberOfOutputWeights) {
 	QUERY_ONE_FOR_INTEGER (FFNet)
-		integer numberOfUnitsInPreviousLayer = ( my numberOfLayers == 1 ? my numberOfInputs : my numberOfUnitsInLayer[my numberOfLayers - 1] );
-		integer result = my numberOfUnitsInLayer[my numberOfLayers] * (numberOfUnitsInPreviousLayer + 1);
+		integer numberOfUnitsInPreviousLayer = ( my numberOfLayers == 1 ? my numberOfInputs : my numberOfUnitsInLayer [my numberOfLayers - 1] );
+		integer result = my numberOfUnitsInLayer [my numberOfLayers] * (numberOfUnitsInPreviousLayer + 1);
 	QUERY_ONE_FOR_INTEGER_END (U" weights");
 }
 

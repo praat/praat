@@ -148,8 +148,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 			For the eigenvectors we want a row representation:
 			colums(Y) = rows(Y') = rows(Vc' * inv(Dy) * Vy')
 			colums(X) = rows(X') = rows(Uc' * inv(Dx) * Vx')
-			rows(Y') = evecy[i][j] = Vc[k][i] * Vy[j][k] / Dy[k]
-			rows(X') = evecx[i][j] = Uc[k][i] * Vx[j][k] / Dx[k]
+			rows(Y') = evecy [i] [j] = Vc [k] [i] * Vy [j] [k] / Dy [k]
+			rows(X') = evecx [i] [j] = Uc [k] [i] * Vx [j] [k] / Dx [k]
 		*/
 		for (integer icoef = 1; icoef <= numberOfCoefficients; icoef ++) {
 			const double ccc = svdc -> d [icoef];
@@ -267,7 +267,7 @@ autoTableOfReal CCA_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
 double CCA_getCorrelationCoefficient (CCA me, integer index) {
 	if (index < 1 || index > my numberOfCoefficients)
 		return undefined;
-	return sqrt (my y -> eigenvalues[index]);
+	return sqrt (my y -> eigenvalues [index]);
 }
 
 void CCA_getZeroCorrelationProbability (CCA me, integer eigenvalueNumber, double *out_prob, double *out_chisq, double *out_df) {

@@ -32,14 +32,14 @@ autoConfiguration Configuration_create (integer numberOfPoints, integer numberOf
 void Configuration_setMetric (Configuration me, integer metric);
 
 void Configuration_setDefaultWeights (Configuration me);
-/* All w[i] = 1 */
+/* All w [i] = 1 */
 
-void Configuration_setSqWeights (Configuration me, const double weight[]);
-/* All w[i] = sqrt (weight[i]) */
+void Configuration_setSqWeights (Configuration me, const double weight []);
+/* All w [i] = sqrt (weight [i]) */
 
 void Configuration_randomize (Configuration me);
 /*
-	new x[i][j] = randomUniform (-1,1)
+	new x [i] [j] = randomUniform (-1,1)
 */
 
 void Configuration_normalize (Configuration me, double variance, bool choice);
@@ -62,7 +62,7 @@ void Configuration_invertDimension (Configuration me, int dimension);
 	Function:
 		Invert one dimension.
 		for (i=1; i <= my numberOfRows; i++)
-			my data[i][dimension] = - my data[i][dimension];
+			my data [i] [dimension] = - my data [i] [dimension];
 */
 
 autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee,

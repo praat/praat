@@ -48,13 +48,13 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 		Distance between frame i (from me) and j (from thee) is
 		wc * d1 + wle * d2 + wr * d3 + wer * d4,
 			where wc, wle, wr & wer are weights and
-			d1 = Sum (k=1; k=nCoefficients; (c[i,k]-c[j,k])^2)
-			d2 = (c[0,k]-c[0,k])^2
-			d3 = Sum (k=1; k=nCoefficients; (r[i,k]-r[j,k])^2), with
-				r[i,k] the regression coefficient of the cepstral coefficients
+			d1 = Sum (k=1; k=nCoefficients; (c [i,k]-c [j,k])^2)
+			d2 = (c [0,k]-c [0,k])^2
+			d3 = Sum (k=1; k=nCoefficients; (r [i,k]-r [j,k])^2), with
+				r [i,k] the regression coefficient of the cepstral coefficients
 				from the frames within a time span of 'dtr' seconds.
-				c[i,j] is jth cepstral coefficient in frame i.
-			d4 = regression on energy (c[0])
+				c [i,j] is jth cepstral coefficient in frame i.
+			d4 = regression on energy (c [0])
 	2. Find optimum path through the distance matrix (see DTW).
 	
 	PRECONDITIONS:

@@ -38,7 +38,7 @@ void structFilter :: v_setCoefficients (double frequency, double bandwidth) {
 }
 
 /*
-	y[n] = a * x[n] + b * y[n-1] + c * y[n-2]
+	y [n] = a * x [n] + b * y [n-1] + c * y [n-2]
 */
 double structFilter :: v_getOutput (double input) {
 	double output = a * input + b * p1 + c * p2;
@@ -82,7 +82,7 @@ void structAntiResonator :: v_setCoefficients (double frequency, double bandwidt
 }
 
 /*
-	y[n] = a * (x[n] - b * x[n-1] - c * x[n-2])
+	y [n] = a * (x [n] - b * x [n-1] - c * x [n-2])
 */
 double structAntiResonator :: v_getOutput (double input) {
 	const double output = a * (input - b * p1 - c * p2);
@@ -105,7 +105,7 @@ void structConstantGainResonator :: v_setCoefficients (double frequency, double 
 }
 
 /*
-	y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2]
+	y [n] = a * (x [n] + d * x [n-2]) + b * y [n-1] + c * y [n-2]
 */
 double structConstantGainResonator :: v_getOutput (double input) {
 	const double output = a * (input + d * p4) + b * p1 + c * p2;

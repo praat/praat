@@ -236,7 +236,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 		*/
 		for (integer i = 1; i <= nsteps + 1; i ++) {
 			double xp =  cosine * x [i] -   sine * y [i];			
-			y [i]     =    sine * x [i] + cosine * y[i];
+			y [i]     =    sine * x [i] + cosine * y [i];
 			x [i] = xp;
 		}
 		/*

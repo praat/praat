@@ -117,7 +117,7 @@ autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 				const double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (section.get(), vtpi -> number, areai);
 			}
-			thy z[1] [isection] = RealTier_getValueAtTime (section.get(), time);
+			thy z [1] [isection] = RealTier_getValueAtTime (section.get(), time);
 		}
 		return thee;
 	} catch (MelderError) {

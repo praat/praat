@@ -107,7 +107,7 @@ autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_translateSpectrum (Const
 						const double time = Sampled_indexToX (to_bin, index);
 						const double newValue = FrequencyBin_getValueAtX (from_bin, time, kVector_valueInterpolation::SINC70);
 						if (isdefined (newValue))
-							to_bin -> z[1] [index] = newValue;
+							to_bin -> z [1] [index] = newValue;
 					}
 				}
 			}

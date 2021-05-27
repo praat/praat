@@ -55,7 +55,7 @@ bool OrderedOfString_containSameElements (StringList me, StringList thee);
 	if (index.size == my size) the returned index table has the following property:
 		if (index [i] > 0)
 			my label [i] = thy label [index [i]];
-		else if (index[i] == 0) my label[i] not in thy labels.
+		else if (index [i] == 0) my label [i] not in thy labels.
  */
 
 #endif /* _Collection_extensions_h_ */

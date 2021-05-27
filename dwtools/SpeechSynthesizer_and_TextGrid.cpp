@@ -311,7 +311,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 						const double tixmin = ti -> xmin + xShift;
 						const double tixmax = ti -> xmax + xShift;
 						if ((patch -> xmin > tixmin - precision) && (patch -> xmin < tixmax + precision)) {
-							durations[myInterval] += patch -> xmax - patch -> xmin;
+							durations [myInterval] += patch -> xmax - patch -> xmin;
 							break;
 						}
 						myInterval++;

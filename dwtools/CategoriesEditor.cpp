@@ -162,7 +162,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	bool moveUp = false, moveDown = false;
 	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
-		const integer firstPos = posList[1], lastPos = posList[posList.size];
+		const integer firstPos = posList [1], lastPos = posList [posList.size];
 		bool contiguous = ( lastPos - firstPos + 1 == posList.size );
 		moveUp = contiguous && firstPos > 1;
 		moveDown = contiguous && lastPos < size;
@@ -172,7 +172,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 		//insertAtEnd = false;
 		if (posList.size == 1) {
 			insert = true;
-			//if (posList[1] == size) insertAtEnd = true;
+			//if (posList [1] == size) insertAtEnd = true;
 			if (size == 1 && str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string.get()))
 				remove = false;
 		}
@@ -434,7 +434,7 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 		autoSimpleString str = Data_copy (my categories->at [i + 1]);
 		categories -> replaceItem_move (str.move(), my selection [i]);
 	}
-	update (editor, my selection [1], my selection[my nSelected], my selection.get(), my nSelected);
+	update (editor, my selection [1], my selection [my nSelected], my selection.get(), my nSelected);
 	return 1;
 }
 
@@ -507,7 +507,7 @@ static int CategoriesEditorMoveDown_execute (CategoriesEditorMoveDown me) {
 	autoINTVEC selection = raw_INTVEC (my nSelected);
 	for (integer i = 1; i <= my nSelected; i ++)
 		selection [i] = my newPos - my nSelected + i;
-	update (editor, my selection[1], my newPos, selection.get(), my nSelected);
+	update (editor, my selection [1], my newPos, selection.get(), my nSelected);
 	return 1;
 }
 
@@ -601,7 +601,7 @@ static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event *
 static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event */) {
 	autoINTVEC posList = GuiList_getSelectedPositions (my list);
 	if (posList.size > 0) {
-		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.get(), posList[posList.size] + 1);
+		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.get(), posList [posList.size] + 1);
 		Command_do (command.get());
 		if (my history)
 			CommandHistory_insertItem_move (my history.get(), command.move());

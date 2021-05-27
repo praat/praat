@@ -222,12 +222,12 @@ void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU c
 inline void MATmultiplyRows_inplace (MATVU const& x, constVECVU const& v) {
 	Melder_assert (x.nrow == v.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
-		x.row (irow)  *=  v [irow];  // x[i,j]*v[i]
+		x.row (irow)  *=  v [irow];  // x [i,j] * v [i]
 }
 inline void MATmultiplyColumns_inplace (MATVU const& x, constVECVU const& v) {
 	Melder_assert (x.ncol == v.size);
 	for (integer icol = 1; icol <= x.nrow; icol ++)
-		x.column (icol)  *=  v [icol];  // x[i,j]*v[j]
+		x.column (icol)  *=  v [icol];  // x [i,j] * v [j]
 }
 
 double NUMmultivariateKurtosis (constMATVU const& m, integer method) {
@@ -457,13 +457,13 @@ autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tolerance)
 
 /*
 	Non-negative least squares: Solve Ax = y, i.e
-	minimize || Ax - y ||^2 for vector x, where all x[i] >= 0.0
+	minimize || Ax - y ||^2 for vector x, where all x [i] >= 0.0
 */
 void VECsolveNonnegativeLeastSquaresRegression (VECVU const& x, constMATVU const& a, constVECVU const& y, integer maximumNumberOfIterations, double tol, integer infoLevel) {
 	Melder_assert (a.nrow == y.size);
 	Melder_assert (a.ncol == x.size);
 	for (integer i = 1; i <= x.size; i ++)
-		Melder_clipLeft (0.0, & x[i]);
+		Melder_clipLeft (0.0, & x [i]);
 	autoVEC r = raw_VEC (y.size);
 	const double normSquared_y = NUMsum2 (y);
 	integer iter = 1;
@@ -718,7 +718,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	}
 	/*
 		Evaluate q, the multiplicity of the smallest eigenvalue in C.
-		The c[i] are ordered, i.e. c[i] >= c[i+1] for all i.
+		The c [i] are ordered, i.e. c [i] >= c [i+1] for all i.
 	*/
 	integer q = 1;
 	const double tol = 1e-6;
@@ -744,7 +744,7 @@ autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVE
 	if (xqsq < tol) { // Case3.b page 608
 		r = a.ncol - q;
 		me.numberOfTerms = r;
-		const double fm = bolzanoFunction (c[a.ncol], & me);
+		const double fm = bolzanoFunction (c [a.ncol], & me);
 		if (fm >= 0.0) { // step 3.b1
 			/*
 				Get w0 by overwriting vector x.
@@ -1421,7 +1421,7 @@ double VECburg (VEC const& a, constVEC const& x) {
 		a [j] = 0.0;
 	if (n <= 2) {
 		a [1] = -1.0;
-		return ( n == 2 ? 0.5 * (x [1] * x[1] + x [2] * x [2]) : x [1] * x[1] );
+		return ( n == 2 ? 0.5 * (x [1] * x [1] + x [2] * x [2]) : x [1] * x [1] );
 	}
 
 	autoVEC b1 = zero_VEC (n), b2 = zero_VEC (n), aa = zero_VEC (m);

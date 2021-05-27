@@ -68,7 +68,7 @@ autoEspeakVoice EspeakVoice_create () {
 		my height2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
 		my width2 = zero_INTVEC (my numberOfFormants);   // 100% = 256
 
-		my breath = zero_INTVEC (my numberOfFormants);   // amount of breath for each formant. breath[0] indicates whether any are set.
+		my breath = zero_INTVEC (my numberOfFormants);   // amount of breath for each formant. breath [0] indicates whether any are set.
 		my breathw = zero_INTVEC (my numberOfFormants);   // width of each breath formant
 		my numberOfToneAdjusts = 1000;   // equals N_TONE_ADJUST in voice.h
 		my tone_adjust = newvectorzero<unsigned char> (my numberOfToneAdjusts);
@@ -193,7 +193,7 @@ void structSpeechSynthesizer :: v_info () {
 
 static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 {
-	char phoneme_name[9];
+	char phoneme_name [9];
 	if (wav == 0) return 1;
 	
 	// It is essential that the SpeechSynthesizer is identified here by the user_data,
@@ -222,7 +222,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			} else {
 				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
-				phoneme_name[8] = 0;
+				phoneme_name [8] = 0;
 				Table_setStringValue (my d_events.get(), irow, 8, Melder_peek8to32 (phoneme_name));
 			}
 			Table_setNumericValue (my d_events.get(), irow, 9, events -> unique_identifier);
@@ -328,7 +328,7 @@ static autoSound buffer_to_Sound (constINTVEC const& wav, double samplingFrequen
 		const double xmax = wav.size * dx;
 		autoSound thee = Sound_create (1, 0.0, xmax, wav.size, dx, dx / 2.0);
 		for (integer i = 1; i <= wav.size; i++)
-			thy z[1][i] = wav [i] / 32768.0;
+			thy z [1] [i] = wav [i] / 32768.0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created from synthesizer data.");

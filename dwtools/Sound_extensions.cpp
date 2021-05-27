@@ -615,7 +615,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 									integer numberOfSamplesDecoded;
 									/*
 										The output from vorbis_synthesis_pcmout is a multichannel float vector. In stereo, for
-										example, pcmOutFloats[0] is the left channel, and pcmOutFloats[1] is the right.
+										example, pcmOutFloats [0] is the left channel, and pcmOutFloats [1] is the right.
 										The numberOfSamplesDecoded is the size of each channel, where all
 										floats are in the interval [-1.0, 1.0].
 									*/
@@ -1276,7 +1276,7 @@ autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double 
 
 void Sounds_multiply (Sound me, Sound thee) {
 	const integer n = std::min (my nx, thy nx );
-	my z.row(1).part(1, n)  *=  thy z.row(1).part(1, n);
+	my z.row (1).part(1, n)  *=  thy z.row (1).part(1, n);
 }
 
 double Sound_power (Sound me) {

@@ -121,7 +121,7 @@ static double wprob(double w, double rr, double cc)
 		0.367831498998180193752691536644,
 		0.125233408511468915472441369464
     };
-    constexpr static double aleg[ihalf] = {
+    constexpr static double aleg [ihalf] = {
 		0.047175336386511827194615961485,
 		0.106939325995318430960254718194,
 		0.160078328543346226334652529543,
@@ -207,7 +207,7 @@ static double wprob(double w, double rr, double cc)
 
 			rinsum = pplus * 0.5 - pminus * 0.5;
 			if (rinsum >= exp (C1 / cc1)) {
-				rinsum = aleg[j-1] * exp(-(0.5 * qexpo)) * pow(rinsum, cc1);
+				rinsum = aleg [j-1] * exp(-(0.5 * qexpo)) * pow(rinsum, cc1);
 				elsum += rinsum;
 			}
 		}
@@ -236,12 +236,12 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 	rr = no. of rows or groups
 	cc = no. of columns or treatments
 	df = degrees of freedom of error term
-	ir[0] = error flag = 1 if wprob probability > 1
-	ir[1] = error flag = 1 if qprob probability > 1
+	ir [0] = error flag = 1 if wprob probability > 1
+	ir [1] = error flag = 1 if qprob probability > 1
 
 	qprob = returned probability integral over [0, q]
 
-	The program will not terminate if ir[0] or ir[1] are raised.
+	The program will not terminate if ir [0] or ir [1] are raised.
 
 	All references in wprob to Abramowitz and Stegun
 	are from the following reference:
@@ -305,7 +305,7 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     constexpr static double ulen2 = 0.5;
     constexpr static double ulen3 = 0.25;
     constexpr static double ulen4 = 0.125;
-    constexpr static double xlegq[ihalfq] = {
+    constexpr static double xlegq [ihalfq] = {
 		0.989400934991649932596154173450,
 		0.944575023073232576077988415535,
 		0.865631202387831743880467897712,
@@ -315,7 +315,7 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 		0.281603550779258913230460501460,
 		0.950125098376374401853193354250e-1
     };
-    constexpr static double alegq[ihalfq] = {
+    constexpr static double alegq [ihalfq] = {
 		0.271524594117540948517805724560e-1,
 		0.622535239386478928628438369944e-1,
 		0.951585116824927848099251076022e-1,
@@ -385,17 +385,17 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
 			integer j;
 			if (ihalfq < jj) {
 				j = jj - ihalfq - 1;
-				t1 = f2lf + f21 * log (twa1 + xlegq[j] * ulen) - (xlegq[j] * ulen + twa1) * ff4;
+				t1 = f2lf + f21 * log (twa1 + xlegq [j] * ulen) - (xlegq [j] * ulen + twa1) * ff4;
 			} else {
 				j = jj - 1;
-				t1 = f2lf + f21 * log (twa1 - xlegq[j] * ulen) + (xlegq[j] * ulen - twa1) * ff4;
+				t1 = f2lf + f21 * log (twa1 - xlegq [j] * ulen) + (xlegq [j] * ulen - twa1) * ff4;
 			}
 
 			/* if exp(t1) < 9e-14, then doesn't contribute to integral */
 			if (t1 >= eps1) {
 				const double qsqz = ( ihalfq < jj ?
-					q * sqrt ((xlegq[j] * ulen + twa1) * 0.5) :
-					q * sqrt ((-(xlegq[j] * ulen) + twa1) * 0.5) );
+					q * sqrt ((xlegq [j] * ulen + twa1) * 0.5) :
+					q * sqrt ((-(xlegq [j] * ulen) + twa1) * 0.5) );
 				
 				/* call wprob to find integral of range portion */
 

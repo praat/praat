@@ -71,21 +71,21 @@ autoPolygon Sound_to_Polygon (Sound me, integer channel, double tmin, double tma
 	and the last at index i2, the Polygon will have np = 2 + ns + 2 + 1 points.
 	i1 = Sampled_xToHighIndex (me, tmin)
 	i2 = Sampled_xToLowIndex (me, tmax)
-	thy x[1] = tmin
-	thy y[1] = clip(level)
-	thy x[2] = tmin
-	thy y[2] = interpolated amplitude in 'channel' at tmin (or, averaged over all channels if channel = 0)
-	thy x[3] = my x1 + (i1 - 1) * my dx
-	thy y[3] = clip(my z[channel][i1]) (or, averaged over all channels if channel == 0)
+	thy x [1] = tmin
+	thy y [1] = clip(level)
+	thy x [2] = tmin
+	thy y [2] = interpolated amplitude in 'channel' at tmin (or, averaged over all channels if channel = 0)
+	thy x [3] = my x1 + (i1 - 1) * my dx
+	thy y [3] = clip(my z [channel] [i1]) (or, averaged over all channels if channel == 0)
 	...
-	thy x[ns+2] = my x1 +(i2 - 1) * my dx
-	thy y[ns+2] = clip(my z[channel][i2]) (or, averaged over all channels if channel == 0)
-	thy x[ns+3] = tmax
-	thy y[ns+3] = clip(interpolated amplitude in 'channel' at tmax (or, averaged over all channels if channel == 0))
-	thy x[ns+4] = tmax
-	thy y[ns+4] = clip(level)
-	thy x[ns+5] = thy x[1] (close the path)
-	thy y[ns+5] = thy y[1]
+	thy x [ns+2] = my x1 +(i2 - 1) * my dx
+	thy y [ns+2] = clip(my z [channel] [i2]) (or, averaged over all channels if channel == 0)
+	thy x [ns+3] = tmax
+	thy y [ns+3] = clip(interpolated amplitude in 'channel' at tmax (or, averaged over all channels if channel == 0))
+	thy x [ns+4] = tmax
+	thy y [ns+4] = clip(level)
+	thy x [ns+5] = thy x [1] (close the path)
+	thy y [ns+5] = thy y [1]
 	where clip(y) = y < ymin ? ymin : y > ymax ? ymax ; y;
 */
 

@@ -67,8 +67,8 @@ static void spec_smoooth_SHS (VEC const& a) {
 		The basic equation for an output element a_new [i] is:
 			a_new [i] := 0.25 * (a [i - 1] + 2.0 * a [i] + a [i + 1])
 
-		The procedure is performed in place, i.e., the vector a_new[]
-		appears as the new version of the vector a[], so that care has
+		The procedure is performed in place, i.e., the vector a_new []
+		appears as the new version of the vector a [], so that care has
 		to be taken to timely save elements that will be overwritten.
 		At the edges we perform "same" convolution, meaning that
 		the output vector has the same number of elements as the

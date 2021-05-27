@@ -40,19 +40,19 @@ void Sound_into_LPC (Sound me, LPC thee, double analysisWidth, double preEmphasi
 /*
  * Function:
  *	Calculate linear prediction coefficients according to following model:
- *  Minimize E(m) = Sum(n=n0;n=n1; (x[n] + Sum(k=1;k=m; a[k]*x[n-k])))
+ *  Minimize E(m) = Sum(n=n0;n=n1; (x [n] + Sum(k=1;k=m; a [k]*x [n-k])))
  * Method:
  *  The minimization is carried out by solving the equations:
- *  Sum(i=1;i=m; a[i]*c[i][k]) = -c[0][k] for k=1,2,...,m
- *  where c[i][k] = Sum(n=n0;n=n1;x[n-i]*x[n-k])
+ *  Sum(i=1;i=m; a [i]*c [i] [k]) = -c [0] [k] for k=1,2,...,m
+ *  where c [i] [k] = Sum(n=n0;n=n1;x [n-i]*x [n-k])
  *  1. Covariance:
  *		n0=m; n1 = N-1;
- *      c[i][k] is symmetric, positive semi-definite matrix
+ *      c [i] [k] is symmetric, positive semi-definite matrix
  *  	Markel&Gray, LP of Speech, page 221;
  *  2. Autocorrelation
  *		signal is zero outside the interval;
  *      n0=-infinity; n1=infinity
- *      c[i][k] symmetric, positive definite Toeplitz matrix
+ *      c [i] [k] symmetric, positive definite Toeplitz matrix
  *  	Markel&Gray, LP of Speech, page 219;
  * Preconditions:
  *	predictionOrder > 0;

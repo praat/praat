@@ -91,7 +91,7 @@ void Configuration_setDefaultWeights (Configuration me) {
 	my w.all()  <<=  1.0;
 }
 
-void Configuration_setSqWeights (Configuration me, const double weight[]) {
+void Configuration_setSqWeights (Configuration me, const double weight []) {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		my w [icol] = sqrt (weight [icol]);
 	}
@@ -391,15 +391,15 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numb
 /********************** Examples *********************************************/
 
 autoConfiguration Configuration_createLetterRExample (int choice) {
-	const double x1[33] = { 0,
+	const double x1 [33] = { 0,
 		-5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
 		-5, -4, -3, -2, -1,  0,  1, 2.25,  3,  3,
 		2.25,  1,  0, -1, -2, -3, -4,   -1,  0,  1, 2, 3 };
-	const double y1[33] = { 0,
+	const double y1 [33] = { 0,
 		-6, -5, -4, -3, -2, -1, 0,   1,  2,  3,
 		4,  4,  4,  4,  4,  4, 4, 3.5,  2,  1,
 		-0.5, -1, -1, -1, -1, -1, -1, -2, -3, -4, -5, -6 };
-	const double x2[33] = {0, 0.94756043346272423, 0.73504466902509913,
+	const double x2 [33] = {0, 0.94756043346272423, 0.73504466902509913,
 		0.4528453515175927,    0.46311499024105723,   0.30345454816993439,
 		0.075184942115601547, -0.090010071904764719, -0.19630977381424003,
 		-0.36341509807865086,  -0.54216996409132612,  -0.68704678013309872,
@@ -410,7 +410,7 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 		0.18201798315035453,   0.048445620192953162,  0.081595930742961439,
 		0.20063623749033621,   0.28546520751183313,   0.39384438699721991,
 		0.62832258520372286,   0.78548335015622228,   1.0610707888793069 };
-	const double y2[33] = {0, 0.49630791172076621, 0.53320347382055022,
+	const double y2 [33] = {0, 0.49630791172076621, 0.53320347382055022,
 		0.62384637225470441,  0.47592708487655661,  0.50364353255684202,
 		0.55311720162084443,  0.55118713773007066,  0.50007736370068601,
 		0.40432332354648709,  0.49817059660482677,  0.49803436631629411,
@@ -440,14 +440,14 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 autoConfiguration Configuration_createCarrollWishExample () {
 	const double x [10] = {0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0 };
 	const double y [10] = {0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0 };
-	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
+	char32 const *label [] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
 		constexpr integer nObjects = 9;
 		autoConfiguration me = Configuration_create (nObjects, 2);
 		for (integer i = 1; i <= nObjects; i ++) {
 			my data [i] [1] = x [i];
 			my data [i] [2] = y [i];
-			TableOfReal_setRowLabel (me.get(), i, label[i]);
+			TableOfReal_setRowLabel (me.get(), i, label [i]);
 		}
 		return me;
 	} catch (MelderError) {

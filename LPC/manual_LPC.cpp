@@ -796,7 +796,7 @@ NORMAL (U"The Spectrum at time %t will be calculated from the %nearest LPC_Frame
 EQUATION (U"Spectrum (%f) = \\Vr(%gain\\.c%T/%df) / (1 + \\su__%k=1..%numberOfCoefficients_ %a__%k_%z^^\\--%k^),")
 NORMAL (U"where %T is the sampling period and %z = exp (\\--2 %\\pi %i %f %T) and %df is the distance in Hz "
 	"between two successive components in the Spectrum.")
-LIST_ITEM (U"1. Allocate a large enough buffer[1..%nfft] to perform an FFT analysis.")
+LIST_ITEM (U"1. Allocate a large enough buffer [1..%nfft] to perform an FFT analysis.")
 LIST_ITEM (U"2. Make the first value of the buffer 1 and copy the prediction coefficients #a into "
 	"the buffer. This results in buffer values: (1, %a__1_, ..., %a__%numberOfCoefficients_, 0, ..., 0).")
 LIST_ITEM (U"3. If ##De-emphasis frequency# is in the interval (0, %nyquistFrequency) then \"multiply\" "
@@ -996,7 +996,7 @@ NORMAL (U"The acronym LPC stands for Linear Predictive Coding.")
 NORMAL (U"In the LPC analysis one tries to predict %x__%n_ on the basis of the %p previous samples,")
 EQUATION (U"%x\\'p__%n_ = \\su %a__%k_ %x__%%n-k%_")
 NORMAL (U"then {%a__1_, %a__2_, ..., %a__%p_} can be chosen to minimize the prediction power %%Q__p_% where")
-EQUATION (U"%%Q__p_% = E[ |%x__%n_ - %x\\'p__%n_|^2].")
+EQUATION (U"%%Q__p_% = E [ |%x__%n_ - %x\\'p__%n_|^2].")
 NORMAL (U"Several different algorithms exist for minimizing %%Q__p_%:")
 LIST_ITEM (U"\\bu @@Sound: To LPC (autocorrelation)...|To LPC (autocorrelation)...@")
 LIST_ITEM (U"\\bu @@Sound: To LPC (covariance)...|To LPC (covariance)...@")

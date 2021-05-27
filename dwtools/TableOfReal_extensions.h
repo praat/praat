@@ -42,7 +42,7 @@ autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
 autoINTVEC TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
 
 autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, bool reverse);
-// thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
+// thy data [reverse ? i : index [i]] [j] = my data [reverse ? index [i] : i]
 
 autoTableOfReal TableOfReal_createIrisDataset ();
 

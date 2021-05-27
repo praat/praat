@@ -37,16 +37,16 @@
 
 	Interpretation:
 
-	The eigenvectors v1[i] en v2[i] have the property that for the linear
+	The eigenvectors v1 [i] en v2 [i] have the property that for the linear
 	compounds
 
-	c1[1] = v1[1]' . Table1   c2[1]= v2[1]' . Table2
+	c1 [1] = v1 [1]' . Table1   c2 [1]= v2 [1]' . Table2
 	..............................................
-	c1[p] = v1[p]' . Table1   c2[p]= v2[p]' . Table2
+	c1 [p] = v1 [p]' . Table1   c2 [p]= v2 [p]' . Table2
 
-	the sample correlation of c1[1] and c2[1] is greatest, the sample
-	correlation of c1[2] and c2[2] is greatest amoung all linear compounds
-	uncorrelated with c1[1] and c2[1], and so on, for all p possible pairs.
+	the sample correlation of c1 [1] and c2 [1] is greatest, the sample
+	correlation of c1 [2] and c2 [2] is greatest amoung all linear compounds
+	uncorrelated with c1 [1] and c2 [1], and so on, for all p possible pairs.
 */
 
 autoCCA CCA_create (integer numberOfCoefficients, integer ny, integer nx);

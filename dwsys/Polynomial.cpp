@@ -331,8 +331,8 @@ autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, c
 	
 }
 
-/* Product (i=1; a.size; (1 + a[i]*x + x^2)
- * Postcondition : my numberOfCoeffcients = 2*a.size+1
+/* Product (i=1; a.size; (1 + a [i] * x + x^2)
+ * Postcondition : my numberOfCoeffcients = 2 * a.size + 1
  */
 void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
 	my extendCapacity (2 * a.size + 1);

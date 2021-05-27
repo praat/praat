@@ -30,7 +30,7 @@
 #include "Graphics_extensions_enums.h"
 
 /*
-	Draw a box plot of x[1..x.size]. The vertical center line of the plot
+	Draw a box plot of x [1..x.size]. The vertical center line of the plot
 	is at position 'x'. The rectangle box is 2*w wide, the whisker 2*r.
 	All drawing outside [ymin, ymax] is clipped.
 */
@@ -42,7 +42,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	if (data.size < 3)
 		return;
 	/*
-		Sort the data (ascending: x[1] <= ... <= x[ndata]).
+		Sort the data (ascending: x [1] <= ... <= x [ndata]).
 		Get the median (q50) and the upper and lower quartile points
 		(q25 and q75).
 		Now q25 and q75 are the lower and upper hinges, respectively.
@@ -84,7 +84,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, 
 	while (i <= sorted.size && sorted [i] < lowerOuterFence)
 		Graphics_text (g, x, sorted [i ++], U"o");
 
-	while (i <= sorted.size && sorted[i] < lowerInnerFence)
+	while (i <= sorted.size && sorted [i] < lowerInnerFence)
 		Graphics_text (g, x, sorted [i ++], U"*");
 
 	const double lowerWhisker = sorted [i] < q25 ? sorted [i] : lowerInnerFence;

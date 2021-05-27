@@ -1257,7 +1257,7 @@ DO
 	QUERY_ONE_FOR_REAL (Discriminant)
 		Melder_require (eigenvalueNumber <= my eigen -> numberOfEigenvalues, 
 			U"Eigenvalue number should be smaller than ", my eigen -> numberOfEigenvalues + 1);
-		const double result = my eigen -> eigenvalues[eigenvalueNumber];
+		const double result = my eigen -> eigenvalues [eigenvalueNumber];
 	QUERY_ONE_FOR_REAL_END (U" (eigenvalue [)", eigenvalueNumber, U"])")
 }
 
@@ -1885,7 +1885,7 @@ DO
 		if ((xTime >= my xmin && xTime <= my xmax) && (yTime >= my ymin && yTime <= my ymax)) {
 			integer irow = Matrix_yToNearestRow (me, yTime);
 			integer icol = Matrix_xToNearestColumn (me, xTime);
-			result = my z[irow][icol];
+			result = my z [irow] [icol];
 		}
 	QUERY_ONE_FOR_REAL_END (U" (= distance at (", xTime, U", ", yTime, U"))")
 }
@@ -3952,7 +3952,7 @@ static double Matrix_getValueAtNearestColRow (Matrix me, double x, double y) {
 		Melder_clip (1_integer, & icol, my nx);
 		integer irow = Matrix_yToNearestRow (me, y);
 		Melder_clip (1_integer, & irow, my ny);
-		return my z[irow][icol];
+		return my z [irow] [icol];
 	} else
 		return undefined;	
 }
@@ -6206,7 +6206,7 @@ DO
 	MODIFY_EACH (Spectrum)
 		Melder_require (binNumber <= my nx, 
 			U"Your bin number should not exceed the number of bins (", my nx, U").");
-		my z[1][binNumber]= value;
+		my z [1] [binNumber] = value;
 	MODIFY_EACH_END
 }
 
@@ -6218,7 +6218,7 @@ DO
 	MODIFY_EACH (Spectrum)
 		Melder_require (binNumber <= my nx, 
 			U"Your bin number should not exceed the number of bins (", my nx, U").");
-		my z[2][binNumber]= value;
+		my z [2] [binNumber] = value;
 	MODIFY_EACH_END
 }
 
