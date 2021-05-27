@@ -602,7 +602,7 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 
 		A format specifier follows this prototype:
 
-		%[flags][width][.precision][length]specifier
+		%[flags][width][.precision][length] specifier
 
 		Where the specifier character at the end is the most significant component, since it defines the type and the interpretation of its corresponding argument:
 		specifier	Output	Example

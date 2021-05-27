@@ -577,7 +577,7 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 static bool isSymmetric (Matrix me) {
 	for (integer irow = 1; irow <= my ny - 1; irow ++)
 		for (integer icol = irow + 1; icol <= my nx; icol ++)
-			if (my z [irow] [icol] != my z [icol][irow])
+			if (my z [irow] [icol] != my z [icol] [irow])
 				return false;
 	return true;
 }

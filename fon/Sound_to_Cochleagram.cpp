@@ -67,7 +67,7 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 			/* Copy a window to a frame. */
 			for (integer i = 1; i <= nsamp_window; i ++)
 				window -> z [1] [i] =
-					( my ny == 1 ? my z[1][i+startSample-1] : 0.5 * (my z[1][i+startSample-1] + my z[2][i+startSample-1]) ) *
+					( my ny == 1 ? my z [1] [i+startSample-1] : 0.5 * (my z [1] [i+startSample-1] + my z [2] [i+startSample-1]) ) *
 					(0.5 - 0.5 * cos (2.0 * NUMpi * i / (nsamp_window + 1)));
 			autoSpectrum spec = Sound_to_Spectrum (window.get(), true);
 			autoExcitation excitation = Spectrum_to_Excitation (spec.get(), df);

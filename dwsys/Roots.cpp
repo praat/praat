@@ -174,7 +174,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 		uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
 		for (integer irow = 2; irow <= n; irow ++) {
 			uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
-			uh_CM [irow][irow - 1] = 1.0;
+			uh_CM [irow] [irow - 1] = 1.0;
 		}
 		/*
 			Find out the working storage needed
@@ -239,7 +239,7 @@ void Polynomial_into_Roots (Polynomial me, Roots r, VEC const& workspace) {
 	uh_CM [1] [n] = - (my coefficients [1] / my coefficients [np1]);
 	for (integer irow = 2; irow <= n; irow ++) {
 		uh_CM [irow] [n] = - (my coefficients [irow] / my coefficients [np1]);
-		uh_CM [irow][irow - 1] = 1.0;
+		uh_CM [irow] [irow - 1] = 1.0;
 	}
 	/*
 		We don't need to find out size of the working storage needed because for the current version 3.1.1.1 

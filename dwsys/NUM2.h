@@ -197,7 +197,7 @@ inline void VECabs_inplace (VECVU const& v) {
 inline bool NUMhasZeroElement (constMATVU const m) {
 	for (integer irow = 1; irow <= m.nrow; irow ++)
 		for (integer icol = 1; icol <= m.ncol; icol++)
-			if (m [irow][icol] == 0.0)
+			if (m [irow] [icol] == 0.0)
 				return true;
 	return false;
 }
@@ -250,7 +250,7 @@ inline void MATnormalizeColumns_inplace (MATVU const& a, double power, double no
 	MATnormalizeRows_inplace (a.transpose(), power, norm);
 }
 /*
-	Scale a [.][j] such that sqrt (Sum(a [i][j]^2, i=1..nPoints)) = norm.
+	Scale a [.] [j] such that sqrt (Sum(a [i] [j]^2, i=1..nPoints)) = norm.
 */
 
 void VECsmoothByMovingAverage_preallocated (VECVU const& out, constVECVU const& in, integer window);
@@ -259,7 +259,7 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMATVU const& x, integer ndf);
 /*
 	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
 	The matrix x must be column centered.
-	covar [i][j] = sum (k=1..nrows, x [i]k]*x [k][j])/(nrows - ndf)
+	covar [i] [j] = sum (k=1..nrows, x [i] [k] * x [k] [j]) / (nrows - ndf)
 */
 
 void MATmtm_weighRows (MATVU const& result, constMATVU const& data, constVECVU const& rowWeights);
@@ -489,7 +489,7 @@ void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMATVU cons
 /* Input:
  	data [dimension, numberOfColumns]
  		contains the column vectors to be projected on the eigenspace.
-  eigenvectors [numberOfEigenvectors][dimension]
+  eigenvectors [numberOfEigenvectors] [dimension]
  		the eigenvectors stored as rowvectors
  Input/Output
  	projection [numberOfEigenvectors, numberOfColumns] 
@@ -523,14 +523,14 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 autoVEC newVECsolve (constMATVU const& a, constVECVU const& b, double tol);
 /*
 	Solve the equation: A.x = b for x;
-	a [1..nr][1..nc], b [1..nr] and the unknown x [1..nc]
+	a [1..nr] [1..nc], b [1..nr] and the unknown x [1..nc]
 	Algorithm: s.v.d.
 */
 
 autoMAT newMATsolve (constMATVU const& a, constMATVU const& b, double tol);
 /*
 	Solve the equations: A.X = B;
-	a [1..nr][1..nc], b [1..nr][1..nc2] and the unknown x [1..nc][1..nc2]
+	a [1..nr] [1..nc], b [1..nr] [1..nc2] and the unknown x [1..nc] [1..nc2]
 	Algorithm: s.v.d.
 */
 
@@ -577,7 +577,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC y, do
 autoVEC newVECsolveWeaklyConstrainedLinearRegression (constMAT const& a, constVEC const& y, double alpha, double delta);
 /*
 	Solve g(x) = ||A*x - y||^2 + alpha (x'*x - delta)^2 for x [1..m],
-	where A [1..n][1..m] is a matrix, y [1..n] a given vector, and alpha
+	where A [1..n] [1..m] is a matrix, y [1..n] a given vector, and alpha
 	and delta are fixed numbers.
 	This class of functions is composed of a linear regression function and
 	a penalty function for the sum of squared regression weights. It is weakly
@@ -868,10 +868,10 @@ void VECfilterInverse_inplace (VEC const& s, constVEC const& filter, VEC const& 
 
 void NUMdmatrix_to_dBs (MAT const& m, double ref, double factor, double floor);
 /*
-	Transforms the values in the matrix m [rb..re][cb..ce] to dB's
+	Transforms the values in the matrix m [rb..re] [cb..ce] to dB's
 
-	m [i][j] = factor * 10 * log10 (m [i][j] / ref)
-	if (m [i][j] < floor) m [i][j] = floor;
+	m [i] [j] = factor * 10 * log10 (m [i] [j] / ref)
+	if (m [i] [j] < floor) m [i] [j] = floor;
 
 	Preconditions:
 		rb <= re
