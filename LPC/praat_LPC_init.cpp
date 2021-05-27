@@ -688,7 +688,7 @@ FORM (MODIFY_EACH_WEAK__Formant_formula, U"Formant: Formula", nullptr) {
 	NATURAL (toFormant, U"right Formant range", U"5")
 	LABEL (U"Formant frequencies in odd numbered rows")
 	LABEL (U"Formant bandwidths in even numbered rows")
-	SENTENCE (formula, U"Formula", U"if row mod 2 = 1 and self[row,col]/self[row+1,col] < 5 then 0 else self fi")
+	SENTENCE (formula, U"Formula", U"if row mod 2 = 1 and self [row,col] / self [row+1,col] < 5 then 0 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)

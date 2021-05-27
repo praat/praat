@@ -288,7 +288,7 @@ autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
 	// shifting pi/2 a multiplication by -i
 	for (integer i = 2; i <= my nx - 1; i ++) {
-		std::swap (my z[1] [i], my z [2] [i]);
+		std::swap (my z [1] [i], my z [2] [i]);
 		my z [1] [i] = - my z [1] [i];
 	}
 }

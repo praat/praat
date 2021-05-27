@@ -59,7 +59,7 @@ autoCepstrum Spectrum_to_Cepstrum (Spectrum me) {
 		}
 		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.get());
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
-		thy z.row (1)  <<=  cepstrum -> z.row(1).part (1, thy nx);
+		thy z.row (1)  <<=  cepstrum -> z.row (1).part (1, thy nx);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");

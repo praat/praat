@@ -65,10 +65,10 @@ void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency);
 /* deEmphasis = exp(- 2 * NUMpi * deEmphasisFrequency * my dx); */
-/* for (i=my nx; i >=2; i-- ) my z[1][i] -= preEmphasis * my z[1][i-1]; */
+/* for (i=my nx; i >=2; i-- ) my z [1] [i] -= preEmphasis * my z [1] [i-1]; */
 
 void Sound_deEmphasis (Sound me, double preEmphasisFrequency);
-/*	for (i=2; i <= my nx; i++ ) my z[1][i] += deEmphasis * my z[1][i-1]; */
+/*	for (i=2; i <= my nx; i++ ) my z [1] [i] += deEmphasis * my z [1] [i-1]; */
 
 autoSound Sound_createGaussian (double windowDuration, double samplingFrequency);
 
@@ -116,7 +116,7 @@ double Sound_localPeak (Sound me, double fromTime, double toTime, double referen
 double Sound_getNearestLevelCrossing (Sound me, integer channel, double position, double level, kSoundSearchDirection searchDirection);
 
 autoSound Sound_localAverage (Sound me, double averaginginterval, int windowType);
-/* y[n] = sum(i=-n, i=n, x[n+i])/(2*n+1) */
+/* y [n] = sum(i=-n, i=n, x [n+i]) / (2*n+1) */
 
 double Sound_power (Sound me);
 

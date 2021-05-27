@@ -37,7 +37,7 @@ autoPitch Pitch_scaleTime (Pitch me, double scaleFactor);
 /*  Scale time domain and pitches:
 	xmin' = xmin; dx' = dx * scaleFactor; x1' = xmin + 0.5 * dx'; 
 	xmax' = xmin + nx * dx';
-	pitch[i]' = pitch[i]/scaleFactor;
+	pitch [i]' = pitch [i] / scaleFactor;
 */
 
 autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling);

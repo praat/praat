@@ -213,7 +213,7 @@ static autoPolygon Polygon_createPointer () {
 }
 
 static void Polygon_drawInside (Polygon me, Graphics g) {
-	Graphics_polyline (g, my numberOfPoints, & my x[1], & my y[1]);
+	Graphics_polyline (g, my numberOfPoints, & my x [1], & my y [1]);
 }
 
 void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, bool garnish) {

@@ -54,7 +54,7 @@ void MATrankColumns (MAT m, integer cb, integer ce) {
 }
 
 template <class T>
-void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *, void *)) {
+void NUMindexx (const T a [], integer n, integer index [], int (*compare) (void *, void *)) {
 	T min;
 	for (integer j = 1; j <= n; j ++)
 		index [j] = j;
@@ -73,7 +73,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			integer imin = i;
 			min = a [index [imin]];
 			for (integer j = i + 1; j <= n; j ++) {
-				if (COMPARELT (a[index [j]], min)) {
+				if (COMPARELT (a [index [j]], min)) {
 					imin = j;
 					min = a [index [j]];
 				}
@@ -122,7 +122,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 				index [j] = k;
 				break;
 			}
-			index[j] = index[i];
+			index [j] = index [i];
 		}
 	}
 }
@@ -191,7 +191,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			j = i; \
 			i = j >> 1; \
 			/* H9' */ \
-			if (j == l || COMPARELT (v [k], v[index [i]])) { \
+			if (j == l || COMPARELT (v [k], v [index [i]])) { \
 				index [j] = k; \
 				break; \
 			} \
@@ -205,13 +205,13 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 void INTVECindex (INTVEC const& index, constVEC const& v)
 MACRO_NUMindex (double)
 
-//void NUMindexx (const double a[], integer n, integer index[])
+//void NUMindexx (const double a [], integer n, integer index [])
 //MACRO_NUMindex (double, n)
 
 
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
-//void NUMindexx_s (char32 **a, integer n, integer index[])
+//void NUMindexx_s (char32 **a, integer n, integer index [])
 void INTVECindex (INTVEC const& index, constSTRVEC const& v)
 MACRO_NUMindex (const char32_t *)
 

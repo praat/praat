@@ -38,15 +38,15 @@ Thing_define (MFCC, CC) {
 /*
 	Three slightly "different" definitions of MFCC
 	1. Davis & Mermelstein
-		MFCC[i] = SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i = 1..N-1
+		MFCC [i] = SUM (j=1..N, f [j] * cos (i(j-1/2)pi/N)), i = 1..N-1
 	2. Vergin & O'Shaughnessy
-		MFCC[i] = SUM (j=0..N-1, f[j] * cos (i(j+1/2)pi/N)), i = 0..N-1
+		MFCC [i] = SUM (j=0..N-1, f [j] * cos (i(j+1/2)pi/N)), i = 0..N-1
 	3. HTK-book
-		MFCC[i] = sqrt(2/n) SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i = 0..N-1
+		MFCC [i] = sqrt(2/n) SUM (j=1..N, f [j] * cos (i(j-1/2)pi/N)), i = 0..N-1
 
-	The f[j]'s are the MelSpectrogram values converted to dB.
+	The f [j]'s are the MelSpectrogram values converted to dB.
 	We follow the definition of Davis and Mermelstein:
-    	MFCC[i] = SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i=1..N-1,
+    	MFCC [i] = SUM (j=1..N, f [j] * cos (i(j-1/2)pi/N)), i=1..N-1,
 */
 
 /*
@@ -60,7 +60,7 @@ autoMFCC MFCC_create (double tmin, double tmax, integer nt, double dt, double t1
 void MFCC_lifter (MFCC me, integer lifter);
 /*
 	Lifter the cepstral coefficients:
-	c[i] *= (1 + lifter / 2 * sin (NUMpi * i / lifter))
+	c [i] *= (1 + lifter / 2 * sin (NUMpi * i / lifter))
 */
 
 autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0);

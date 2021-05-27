@@ -192,7 +192,7 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 			Sounds_multiply (sframe.get(), window.get());
 			//huber_struct_resize (& struct_huber, lpc -> nCoefficients);
 			try {
-				huber_struct_minimize (& struct_huber, sframe -> z.row(1), lpc -> a.get(), lpcto -> a.get());
+				huber_struct_minimize (& struct_huber, sframe -> z.row (1), lpc -> a.get(), lpcto -> a.get());
 			} catch (MelderError) {
 				frameErrorCount ++;
 			}

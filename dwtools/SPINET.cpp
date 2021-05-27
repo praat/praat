@@ -74,7 +74,7 @@ static integer SampledXY_getWindowExtrema (SampledXY me, constMAT z, integer ixm
 	MelderExtremaWithInit extrema;
 	for (integer iy = iymin; iy <= iymax; iy ++)
 		for (integer ix = ixmin; ix <= ixmax; ix ++)
-			extrema.update (z [iy][ix]);
+			extrema.update (z [iy] [ix]);
 	if (out_minimum)
 		*out_minimum = extrema.min;
 	if (out_maximum)

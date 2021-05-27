@@ -73,9 +73,9 @@ double Polynomial_evaluate (Polynomial me, double x);
 void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *fx, double *dfx);
 
 autoVEC Polynomial_evaluateDerivatives (Polynomial me, double x, long numberOfDerivatives);
-/* result[1] is function value at x, result[2..numberOfDerivatives+1] are derivatives at x. */
+/* result [1] is function value at x, result [2..numberOfDerivatives+1] are derivatives at x. */
 
-void Polynomial_evaluateTerms (Polynomial me, double x, double terms[]);
+void Polynomial_evaluateTerms (Polynomial me, double x, double terms []);
 
 autoPolynomial Polynomials_multiply (Polynomial me, Polynomial thee);
 

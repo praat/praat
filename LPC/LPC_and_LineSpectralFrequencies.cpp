@@ -104,10 +104,10 @@ static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
 }
 
 #if 0
-/* g[0]+g[1]x + ... g[m]*x^ m = 0 ; m should be even
+/* g [0]+g [1]x + ... g [m]*x^ m = 0 ; m should be even
  * Semenov, Kalyuzhny, Kovtonyuk (2003), Efficient calculation of line spectral frequencies based on new method for solution of transcendental equations,
  * ICASSP 2003, 457--460
- * 		g[0 .. g_order]
+ * 		g [0 .. g_order]
  * 		work [0.. g_order + 1 + (numberOfDerivatives + 1) * 5]
  * 		root [1 .. (g_order+1)/2]
  */
@@ -129,7 +129,7 @@ static void Roots_fromPolynomial (Roots me, Polynomial g, integer numberOfDeriva
 		p2 [j] = p2 [j - 1] * 2.0; // 2^j
 	}
 	
-	/* The constraints M[j] (Semenov et al. eq. (8)) can be calculated by taking absolute values of 
+	/* The constraints M [j] (Semenov et al. eq. (8)) can be calculated by taking absolute values of 
 	 * the polynomial coefficients and evaluating the polynomial and the derivatives at x = 1.0
 	 */
 	for (integer k = 0; k <= g_order; k ++) {
@@ -141,7 +141,7 @@ static void Roots_fromPolynomial (Roots me, Polynomial g, integer numberOfDeriva
 		double dsum1 = 0.0, dsum2 = 0.0;
 		double xmid = (xmin + xmax) / 2.0;
 		evaluatePolynomialAndDerivatives (g, g_order, xmid, derivatives, numberOfDerivatives);
-		double fxmid = derivatives[0], fdxmin = derivatives[1];
+		double fxmid = derivatives [0], fdxmin = derivatives [1];
 		integer j = 1;
 		bool rootsOnIntervalPossible_f = true, rootsOnIntervalPossible_df = true;
 		while (j <= numberOfDerivatives && (rootsOnIntervalPossible_f || rootsOnIntervalPossible_df)) {

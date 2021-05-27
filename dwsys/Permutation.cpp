@@ -204,7 +204,7 @@ autoPermutation Permutation_rotate (Permutation me, integer from, integer to, in
 				ifrom -= n;
 			if (ifrom < from)
 				ifrom += n;
-			thy p [ifrom] = my p[i];
+			thy p [ifrom] = my p [i];
 		}
 		return thee;
 	} catch (MelderError) {

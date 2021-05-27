@@ -163,7 +163,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	Melder_require (info == 0,
 		U"dggsvd fails with code ", info, U".");
 	/*
-		Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
+		Calculate the eigenvalues (alpha [i] / beta [i])^2 and store in alpha [i].
 	*/
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		const double t = alpha [i] / beta [i];
@@ -226,7 +226,7 @@ integer Eigen_getNumberOfEigenvectors (Eigen me) {
 double Eigen_getEigenvectorElement (Eigen me, integer ivec, integer element) {
 	if (ivec > my numberOfEigenvalues || element < 1 || element > my dimension)
 		return undefined;
-	return my eigenvectors[ivec][element];
+	return my eigenvectors [ivec] [element];
 }
 
 integer Eigen_getDimensionOfComponents (Eigen me) {

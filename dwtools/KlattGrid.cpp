@@ -110,7 +110,7 @@ conststring32 KlattGrid_getFormantName (kKlattGridFormantType formantType) {
 	return result;
 }
 
-static const conststring32 formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
+static const conststring32 formant_names [] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
 
 #define KlattGrid_OPENPHASE_DEFAULT 0.7
 #define KlattGrid_POWER1_DEFAULT 3

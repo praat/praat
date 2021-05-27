@@ -147,9 +147,9 @@ autoMatrix FilterBank_to_Matrix (FilterBank me);
 autoSpectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t);
 /*
 	Calculate amplitude spectrum at time t.
-	power[i] = ref * 10 ^ (my z[i][t] / 10)
-	spec->z[1][i] = sqrt(power[i]) = sqrt(ref) * 10 ^ (my z[i][t] / (2*10))
-	spec->z[2][i] = 0
+	power [i] = ref * 10 ^ (my z [i] [t] / 10)
+	spec -> z [1] [i] = sqrt (power [i]) = sqrt (ref) * 10 ^ (my z [i] [t] / (2*10))
+	spec -> z [2] [i] = 0
 */
 
 autoIntensity FilterBank_to_Intensity (FilterBank me);

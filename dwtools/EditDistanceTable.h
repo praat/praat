@@ -41,10 +41,10 @@ autoEditCostsTable EditCostsTable_create (integer targetAlphabetSize, integer so
  * 1..n-2 target symbols (target alphabet)
  * 1..m-2 source symbols (source alphabet)
  * row n-1 and col m-1 specify no-match symbols
- * cells [n][1..m-1] specify insertion costs
- * cells [1..n-1][m] specify deletion costs
- * cell [n-1][m-1] no-match target == no-match source
- * cell [n][m] no-match target != no-match source
+ * cells [n] [1..m-1] specify insertion costs
+ * cells [1..n-1] [m] specify deletion costs
+ * cell [n-1] [m-1] no-match target == no-match source
+ * cell [n] [m] no-match target != no-match source
  */
 
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts);

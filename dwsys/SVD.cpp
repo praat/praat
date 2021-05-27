@@ -260,7 +260,7 @@ void SVD_sort (SVD me) { // Superfluous??, SVD is always sorted
 }
 
 double SVD_getConditionNumber (SVD me) {
-	return my d[my numberOfColumns] > 0.0 ? my d[1] / my d[my numberOfColumns] : undefined;
+	return my d [my numberOfColumns] > 0.0 ? my d [1] / my d [my numberOfColumns] : undefined;
 }
 
 double SVD_getSumOfSingularValuesAsFractionOfTotal (SVD me, integer from, integer to) {
@@ -303,9 +303,9 @@ integer SVD_getRank (SVD me) {
 
 /*
 	SVD of A = U D V'.
-	This can be written as A = sum_{r=1}^n d[i] u[i]v[i]', where u[i] and [v[i] are columnvectors
+	This can be written as A = sum_{r=1}^n d [i] u [i] v [i]', where u [i] and v [i] are columnvectors
 	(Golub & van Loan, 3rd ed, p 71).
-	If (internally) the matrix was transposed we can rewrite this as A=sum_{r=1}^n d[i] u[i]'v[i].
+	If (internally) the matrix was transposed we can rewrite this as A=sum_{r=1}^n d [i] u [i]' v [i].
 */
 autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 	if (sv_to == 0)
@@ -322,9 +322,9 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			if (my isTransposed)
-				outer_MAT_out (outer.get(), my v.column(k), my u.column(k));
+				outer_MAT_out (outer.get(), my v.column (k), my u.column (k));
 			else
-				outer_MAT_out (outer.get(), my u.column(k), my v.row(k)); // because the transposed of v is in the svd!
+				outer_MAT_out (outer.get(), my u.column (k), my v.row (k)); // because the transposed of v is in the svd!
 			result.get()  +=  outer.get()  *  my d [k];
 		}
 		return result;

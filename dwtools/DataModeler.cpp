@@ -160,7 +160,7 @@ static double sigmoid_plus_constant_evaluate (DataModeler me, double xin, vector
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-		No need to translate because xin and p[3] are in the same domain. 
+		No need to translate because xin and p [3] are in the same domain. 
 	*/
 	double result = p [1].value;
 	if (p [2].value != 0.0)
@@ -172,7 +172,7 @@ static double sigmoid_evaluate (DataModeler me, double xin, vector<structDataMod
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-		No need to translate because xin and p[3] are in the same domain.
+		No need to translate because xin and p [3] are in the same domain.
 	*/
 	const double result = p [1].value / (1.0 + exp (- (xin - p [2].value) / p [3].value));
 	return result;
@@ -218,7 +218,7 @@ autoVEC DataModeler_solveDesign (DataModeler me, constMAT const& design, constVE
 /*
 	Model: y [i] = a * exp (b * x [i]), i=1..n, solve for a, b.
 	log(y(x)= log(a) + b * x is linear model
-	Precondition: y[i] > 0 || y[i] < 0
+	Precondition: y [i] > 0 || y [i] < 0
 */
 static void exponential_fit (DataModeler me) {
 	if (my parameters [1].status == kDataModelerParameterStatus::FIXED_ && my parameters [2].status == kDataModelerParameterStatus::FIXED_)
@@ -241,8 +241,8 @@ static void exponential_fit (DataModeler me) {
 		integer index = 0;
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k].status != kDataModelerData::INVALID) {
-				design [++ index] [1] = (my data [k].x - xtr) * weights [k] * my data[k].y;
-				yEstimate [index] = (log (my data[k].y) - log (my parameters [1].value)) * weights [k] * my data[k].y;
+				design [++ index] [1] = (my data [k].x - xtr) * weights [k] * my data [k].y;
+				yEstimate [index] = (log (my data [k].y) - log (my parameters [1].value)) * weights [k] * my data [k].y;
 			}
 		}
 		design.resize (index, 1);
@@ -259,7 +259,7 @@ static void exponential_fit (DataModeler me) {
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k].status != kDataModelerData::INVALID) {
 				design [++ index] [1] = exp (my parameters [2].value * (my data [k].x - xtr)) * weights [k];
-				yEstimate [index] = my data[k].y * weights [k];
+				yEstimate [index] = my data [k].y * weights [k];
 			}
 		}
 		design.resize (index, 1);
@@ -277,9 +277,9 @@ static void exponential_fit (DataModeler me) {
 		integer index = 0;
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k].status != kDataModelerData::INVALID) {
-				design [++ index] [1] = 1.0 * my data[k].y * weights [k];
-				design [index] [2] = (my data[k].x - xtr) * my data[k].y * weights [k];
-				yEstimate [index] = log ( sign >= 0.0 ? my data[k].y : - my data[k].y ) * my data[k].y * weights [k];
+				design [++ index] [1] = 1.0 * my data [k].y * weights [k];
+				design [index] [2] = (my data [k].x - xtr) * my data [k].y * weights [k];
+				yEstimate [index] = log ( sign >= 0.0 ? my data [k].y : - my data [k].y ) * my data [k].y * weights [k];
 			}
 		}
 		design.resize (index, 2);
@@ -359,7 +359,7 @@ static void exponential_plus_constant_fit (DataModeler me) {
 	} else {
 		/*
 			First we determine c.
-			Model: z(x) = A * f1(x) + B * f2(x), where z(x) = y(x) - y[1], f1(x) = x - x[1], f2(x) = integral (x1, x, y(x)dx)
+			Model: z(x) = A * f1(x) + B * f2(x), where z(x) = y(x) - y [1], f1(x) = x - x [1], f2(x) = integral (x1, x, y(x)dx)
 			A = - a * c, B = c
 		*/
 		autoMAT design = zero_MAT (my numberOfDataPoints, 2);
@@ -465,8 +465,8 @@ void sigmoid_fit (DataModeler me) {
 			if (my parameters [3].status == kDataModelerParameterStatus::FIXED_)
 				return;
 			/*
-				Model: z(X)*ln(z(X) = A * f5 (X) + B * f6 (X), where f5 (X) = z (X) * X - z (X) * integral (x[1], X, z(x)dx)), 
-				f6 (X) = y (X), z(X) = y (X) / lambda and X[k] = x[k] - mu - x1
+				Model: z(X)*ln(z(X) = A * f5 (X) + B * f6 (X), where f5 (X) = z (X) * X - z (X) * integral (x [1], X, z(x)dx)), 
+				f6 (X) = y (X), z(X) = y (X) / lambda and X [k] = x [k] - mu - x1
 				A = 1 / sigma, B = ln (y (x1))
 			*/
 			autoMAT design = zero_MAT (my numberOfDataPoints, 2);
@@ -478,7 +478,7 @@ void sigmoid_fit (DataModeler me) {
 					const long double xk = my data [k].x, yk = my data [k].y / lambda;
 					sk += 0.5 * (yk + ykm1) * (xk - xkm1); // invariant under translations in x
 					const double f1x = yk * sk;
-					const double f2x = (xk - mu - x1) * yk; // X[k]
+					const double f2x = (xk - mu - x1) * yk; // X [k]
 					design [++ index] [1] = (f2x - f1x) * weights [k];
 					design [index] [2] = yk * weights [k];
 					yEstimate [index] = yk * log (yk) * weights [k];
@@ -492,7 +492,7 @@ void sigmoid_fit (DataModeler me) {
 			sigma = 1.0 /solution [1];
 		} else if (my parameters [3].status == kDataModelerParameterStatus::FIXED_) {
 			/*
-				Model: z(X)*ln(z(X) = C * f3 (X), where z(X)= y(X)/lambda + f1 (X) / sigma - f2 (X) / sigma, X [l] = x[k] - x1
+				Model: z(X)*ln(z(X) = C * f3 (X), where z(X)= y(X)/lambda + f1 (X) / sigma - f2 (X) / sigma, X [l] = x [k] - x1
 			*/
 			autoMAT design = zero_MAT (my numberOfDataPoints, 1);
 			long double sk = 0.0, x1 = my data [1].x;
@@ -501,7 +501,7 @@ void sigmoid_fit (DataModeler me) {
 			for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 				if (my data [k] .status != kDataModelerData::INVALID) {
 					const long double xk = my data [k].x, yk = my data [k].y / lambda;
-					sk += 0.5 * (yk + ykm1) * (xk - xkm1); // xk - xkm1 ==  X[k]-X[k-1]
+					sk += 0.5 * (yk + ykm1) * (xk - xkm1); // xk - xkm1 ==  X [k] - X [k-1]
 					const double f1x = yk * sk;
 					const double f2x = (xk - x1) * yk;
 					design [++ index] [1] = yk * weights [k];
@@ -520,7 +520,7 @@ void sigmoid_fit (DataModeler me) {
 				mu = undefined;
 		} else {
 			/*
-				Model: z*ln(z) = A * f4(X) + B * f3 (X), where z(X) = y(X) / lambda, f4(X)= -f1(X) + f2(X), f3 (X) = z(X), A = 1/sigma, B = - ln (1+exp(-(mu - x1)/sigma)) and X[k] = x [k] - x [1].
+				Model: z*ln(z) = A * f4(X) + B * f3 (X), where z(X) = y(X) / lambda, f4(X)= -f1(X) + f2(X), f3 (X) = z(X), A = 1/sigma, B = - ln (1+exp(-(mu - x1)/sigma)) and X [k] = x [k] - x [1].
 			*/
 			autoMAT design = zero_MAT (my numberOfDataPoints, 2);
 			long double sk = 0.0, x1 = my data [1].x;
@@ -655,12 +655,12 @@ void sigmoid_fit (DataModeler me) {
 	lambda = ± 1/s * sqrt (b^2-4ac) (the artile wrongly shows "sqrt (b^2+4ac)")
 	gamma = (−b ∓ sqrt (b^2 − 4ac))/ (2*a)
 	sigma = ∓ 1 / sqrt (b^2 − 4ac)
-	mu = x[1]+ sigma * ln (lambda/(d-gamma) - 1)
+	mu = x [1]+ sigma * ln (lambda/(d-gamma) - 1)
 	Two models are indistinguishable if:
 		gamma' = gamma + lambda
 		sigma' = -sigma
 		lambda' = - lambda
-	Precondition: x[i] are increasing order.
+	Precondition: x [i] are increasing order.
 */
 void sigmoid_plus_constant_fit (DataModeler me) {
 	double gamma = my parameters [1].value, lambda = my parameters [2].value;
@@ -672,7 +672,7 @@ void sigmoid_plus_constant_fit (DataModeler me) {
 		autoDataModeler thee = DataModeler_createFromDataModeler (me, 3, kDataModelerFunction::SIGMOID);
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
 			if (my data [k] .status != kDataModelerData::INVALID) {
-				thy data[k].y -= gamma;
+				thy data [k].y -= gamma;
 			}
 		}
 		DataModeler_fit (thee.get());
@@ -829,14 +829,14 @@ void series_fit (DataModeler me) {
 
 		/*
 			We solve for the parameters p by minimizing the chi-squared function:
-			chiSquared = sum (i=1...n, (y[i] - sum (k=1..m, p[k]X[k](x[i]))/sigma[i] ),
+			chiSquared = sum (i=1...n, (y [i] - sum (k=1..m, p [k] X [k] (x [i])) / sigma [i] ),
 			where n is the 'numberOfValidDataPoints', m is the 'numberOfFreeParameters',
-				- x[i] and y[i] are the i-th datapoint x and y values, respectively,
-				- sum (k=1..m, p[k]X[k](x[i]) is the model estimation at x[i],
-				- X[k](x[i]) is the k-th function term evaluated at x[i],
-				- and y[i] has been measured with some uncertainty sigma[i].
+				- x [i] and y [i] are the i-th datapoint x and y values, respectively,
+				- sum (k=1..m, p [k] X [k] (x [i]) is the model estimation at x [i],
+				- X [k] (x [i]) is the k-th function term evaluated at x [i],
+				- and y [i] has been measured with some uncertainty sigma [i].
 			If we define the design matrix matrix A [i] [j] = X [j] (x [i]) / sigma [i] and
-			the vector b[i] = y [i] / sigma [i], the problem can be stated as 
+			the vector b [i] = y [i] / sigma [i], the problem can be stated as 
 			minimize the norm ||A.p - b|| for p.
 			This problem can be solved by SVD.
 		*/

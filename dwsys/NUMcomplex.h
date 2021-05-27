@@ -20,7 +20,7 @@
 
 #include "NUM2.h"
 
-/* Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
+/* Gamma [alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma [alpha]= Gamma [alpha,0]
  * alpha and x are complex numbers with Re(alpha) > 0
  */
 dcomplex NUMincompleteGammaFunction (const dcomplex alpha, const dcomplex x);

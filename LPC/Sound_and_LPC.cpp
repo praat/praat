@@ -223,7 +223,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 		a [j] = 0.0;
 	if (n <= 2) {
 		a [1] = -1.0;
-		return ( n == 2 ? 0.5 * (x [1] * x[1] + x [2] * x [2]) : x [1] * x[1] );
+		return ( n == 2 ? 0.5 * (x [1] * x [1] + x [2] * x [2]) : x [1] * x [1] );
 	}
 
 	VEC b1 = workspace.part (1, n); // autoVEC b1 = zero_VEC (n);
@@ -287,7 +287,7 @@ static double VECburg_buffered (VEC const& a, constVEC const& x, VEC const& work
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee, VEC const& workspace) {
 	Melder_assert (thy nCoefficients == thy a.size); // check invariant
-	thy gain = VECburg_buffered (thy a.get(), my z.row(1), workspace);
+	thy gain = VECburg_buffered (thy a.get(), my z.row (1), workspace);
 	if (thy gain <= 0.0) {
 		thy a.resize (0);
 		thy nCoefficients = thy a.size; // maintain invariant

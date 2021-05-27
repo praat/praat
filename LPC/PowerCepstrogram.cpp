@@ -79,7 +79,7 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	for (integer icol = 1; icol <= my nx; icol ++) {
 		const double lmax = NUMmax (thy z.column (icol));
 		const double factor = dynamicCompression * (extrema.max - lmax);
-		thy z.column(icol) += factor;
+		thy z.column (icol) += factor;
 	}
 	
 	Graphics_setInner (g);
@@ -364,11 +364,11 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 
 //       1           2                          nfftdiv2
 //    re   im    re     im                   re      im
-// ((fft[1],0) (fft[2],fft[3]), (,), (,), (fft[nfft], 0))  nfft even
-// ((fft[1],0) (fft[2],fft[3]), (,), (,), (fft[nfft-1], fft[nfft]))  nfft uneven
+// ((fft [1],0) (fft [2],fft [3]), (,), (,), (fft [nfft], 0))  nfft even
+// ((fft [1],0) (fft [2],fft [3]), (,), (,), (fft [nfft-1], fft [nfft]))  nfft uneven
 static void complexfftoutput_to_power (constVEC fft, VEC dbs, bool to_db) {
 	double valsq = fft [1] * fft [1];
-	dbs[1] = to_db ? TOLOG (valsq) : valsq;
+	dbs [1] = to_db ? TOLOG (valsq) : valsq;
 	const integer nfftdiv2p1 = (fft.size + 2) / 2;
 	const integer nend = fft.size % 2 == 0 ? nfftdiv2p1 : nfftdiv2p1 + 1;
 	for (integer i = 2; i < nend; i ++) {
@@ -378,7 +378,7 @@ static void complexfftoutput_to_power (constVEC fft, VEC dbs, bool to_db) {
 	}
 	if (fft.size % 2 == 0) {
 		valsq = fft [fft.size] * fft [fft.size];
-		dbs[nfftdiv2p1] = to_db ? TOLOG (valsq) : valsq;
+		dbs [nfftdiv2p1] = to_db ? TOLOG (valsq) : valsq;
 	}
 }
 

@@ -34,14 +34,14 @@ Thing_define (PatternList, Matrix) {
    ymax				:#patterns.
    dy				:1.
    y1				:1.
-   z[iy][ix]		:the inputs. All elements in interval [0,1].
+   z [iy] [ix]		:the inputs. All elements in interval [0,1].
 */
 
 autoPatternList PatternList_create (integer ny, integer nx);
 
 void PatternList_normalize (PatternList me, int choice, double pmin, double pmax);
-/* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);
- * choice == 2: z[i][j] *= 1.0 / sum(j=1,j=nx, z[i][j]-pmin)
+/* choice == 1: z [i] [j] = (z [i] [j] - pmin) / (pmax - pmin);
+ * choice == 2: z [i] [j] *= 1.0 / sum (j=1, j=nx, z [i] [j] - pmin)
  */
 
 void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin, double xmax,

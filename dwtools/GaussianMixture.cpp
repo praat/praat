@@ -76,8 +76,9 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 	if (criterion == kGaussianMixtureCriterion::COMPLETE_DATA_ML) {
 		/*
 			Bishop eq. 9.40 (we rewrote ln(a)+ln(b) = ln (a*b)):
-			ln(p(X,Z|μ,S,π)= sum(n=1...N, sum (k=1...K, gamma [n][k])*ln (π [k]*N(x [n]|μ [k],S [k])),
-			where gamma[n][k] = mixingProbablities[k]*probabilities[n][k]/sum(1...K, mixingProbablities[k]*probabilities[n][k])
+			ln(p(X,Z|μ,S,π)= sum(n=1...N, sum (k=1...K, gamma [n] [k])*ln (π [k]*N(x [n]|μ [k],S [k])),
+			where gamma [n] [k] = mixingProbablities [k] * probabilities [n] [k] / 
+				sum(1...K, mixingProbablities [k] * probabilities [n] [k])
 		*/
 		longdouble lnpcd = 0.0;
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
@@ -583,8 +584,8 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee) {
 	try {
 		autoCovariance cov_t = TableOfReal_to_Covariance (thee);
 		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-			const double min = NUMmin (thy data.column(icol));
-			const double max = NUMmax (thy data.column(icol));
+			const double min = NUMmin (thy data.column (icol));
+			const double max = NUMmax (thy data.column (icol));
 			for (integer component = 1; component <= my numberOfComponents; component ++) {
 				const Covariance covi = my covariances->at [component];
 				covi -> centroid [icol] = NUMrandomUniform (min, max);
@@ -594,7 +595,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee) {
 		for (integer component = 1; component <= my numberOfComponents; component ++) {
 			const Covariance cov = my covariances->at [component];
 			if (cov -> numberOfRows == 1)
-				cov -> data.row(1)  <<=  varianceScaleFactor  *  cov_t -> data.diagonal();
+				cov -> data.row (1)  <<=  varianceScaleFactor  *  cov_t -> data.diagonal();
 			else
 				cov -> data.diagonal()  <<=  varianceScaleFactor  *  cov_t -> data.diagonal();
 		}
@@ -676,7 +677,7 @@ void GaussianMixture_initialGuess2 (GaussianMixture me, TableOfReal thee, double
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				const Covariance cov = my covariances->at [im];
 				if (cov -> numberOfRows == 1)
-					cov -> data.row(1)  <<=  cov_t -> data.diagonal();
+					cov -> data.row (1)  <<=  cov_t -> data.diagonal();
 				 else
 					cov -> data.all()  <<=  cov_t -> data.all();
 			}

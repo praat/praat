@@ -109,18 +109,18 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 		autoINTMAT psi = zero_INTMAT (my formants.size, my nx);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, my formants.size + 0.5, my formants.size, 1.0, 1.0);
 		/*
-			delta [i][j] = minimum cost to reach state i at time j
+			delta [i] [j] = minimum cost to reach state i at time j
 		*/
-		MAT delta (& thy z[1][1], thy ny, thy nx);
+		MAT delta (& thy z [1] [1], thy ny, thy nx);
 		autoINTVEC path = zero_INTVEC (my nx);
 		autoVEC intensity = raw_VEC (my nx);
 		/*
 			We have a trellis of size S x T, where S is the number of states, i.e. the number of formant objects,
 			and T the number of frames (S= formants.size and T=nx).
-			Evaluate the static costs for state s[i] at times t=1..T
+			Evaluate the static costs for state s [i] at times t=1..T
 			There are two components at each t: 
-				1. (+) the local stress at s[i][t], which is evaluated from an interval around time t
-				2. (-) the local qsums at s[i][t], evaluated from the frequencies/bandwidths in s[i][t]
+				1. (+) the local stress at s [i] [t], which is evaluated from an interval around time t
+				2. (-) the local qsums at s [i] [t], evaluated from the frequencies/bandwidths in s [i] [t]
 			The sum of these components might be modulated by the local intensity
 		*/
 		for (integer itime = 1; itime <= my nx; itime ++) {
@@ -142,11 +142,11 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 			}
 		}
 		/*
-			Evaluate the costs delta[j][t] going from s[i][t-1] to s[j][t]
-			delta[j][t] = min_over_i { delta[i][t-1] + transition_costs (s[i][t-1], s[j][t] },
+			Evaluate the costs delta [j] [t] going from s [i] [t-1] to s [j] [t]
+			delta [j] [t] = min_over_i { delta [i] [t-1] + transition_costs (s [i] [t-1], s [j] [t] },
 			where the transition_costs consists of two parts:
-				3. (+) costs involving the sum of the distances between the formant frequencies in state s[i][t-1] and s[j][t]
-				4. (+) costs involving the difference in ceiling[i][t-1] and ceiling[j][t]
+				3. (+) costs involving the sum of the distances between the formant frequencies in state s [i] [t-1] and s [j] [t]
+				4. (+) costs involving the difference in ceiling [i] [t-1] and ceiling [j] [t]
 				       (or should we measure the costs w.r.t the middle frequency?)
 		*/
 		const double ceilingsRange = my ceilings [my formants.size] - my ceilings [1];
@@ -159,7 +159,7 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
 					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
-					double transitionCosts = delta [jformant][itime - 1];
+					double transitionCosts = delta [jformant] [itime - 1];
 					if (frequencyChangeWeight > 0.0) {
 						double fcost = 0.0;
 						for (integer itrack = 1; itrack <= ntracks; itrack ++) {

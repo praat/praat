@@ -331,7 +331,7 @@ DO
 			U"\"From state number\" should not be larger than ", my numberOfStates, U".");
 		Melder_require (symbolNumber <= my numberOfObservationSymbols,
 			U"\"Symbol number\" should not be larger than ", my numberOfObservationSymbols, U".");
-		const double result = my emissionProbs[fromState][symbolNumber];
+		const double result = my emissionProbs [fromState] [symbolNumber];
 	QUERY_ONE_FOR_REAL_END (U" : [ ", fromState, U", ", symbolNumber, U" ]")
 }
 

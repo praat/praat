@@ -27,7 +27,7 @@
 
 static integer winnerTakesAll (FFNet me, constVEC activation) {
 	integer pos = 1;
-	double max = activation[1];
+	double max = activation [1];
 	for (integer i = 2; i <= my numberOfOutputs; i ++)
 		if (activation [i] > max)
 			max = activation [pos = i];

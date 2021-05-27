@@ -117,7 +117,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 				thy phase [ifreq] [iframe] = atan2 (y, x); // phase [-pi,+pi]
 			}
 			// even number of samples
-			thy z [numberOfFrequencies] [iframe] = spec -> z [1] [numberOfFrequencies] * spec -> z [1][numberOfFrequencies];
+			thy z [numberOfFrequencies] [iframe] = spec -> z [1] [numberOfFrequencies] * spec -> z [1] [numberOfFrequencies];
 			thy phase [numberOfFrequencies] [iframe] = 0.0;
 		}
 		return thee;
@@ -193,7 +193,7 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 		double pi = atan2 (0.0, - 0.5);
 		double samplingFrequency = 2.0 * my ymax;
 		double lastFrequency = my y1 + (my ny - 1) * my dy;
-		int originalNumberOfSamplesProbablyOdd = (my phase [my ny] [1] != 0.0 && my phase[my ny] [1] != pi) || my ymax - lastFrequency > 0.25 * my dx;
+		int originalNumberOfSamplesProbablyOdd = (my phase [my ny] [1] != 0.0 && my phase [my ny] [1] != pi) || my ymax - lastFrequency > 0.25 * my dx;
 		if (my y1 != 0.0) {
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		}

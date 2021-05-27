@@ -28,7 +28,7 @@
 
 autoTableOfReal TableOfReal_Permutation_permuteRows (TableOfReal me, Permutation thee);
 /*
-	Permutation (n1,n2,..nn) new his z[1] = my z[n1], his z[2] = my z[n2], ..*/
+	Permutation (n1,n2,..nn) new his z [1] = my z [n1], his z [2] = my z [n2], ..*/
 
 autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me);
 

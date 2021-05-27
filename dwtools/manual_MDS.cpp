@@ -174,7 +174,7 @@ TAG (U"%rowLabels")
 DEFINITION (U"the names associated with the points.")
 TAG (U"%columnLabels")
 DEFINITION (U"the names for the dimensions.")
-TAG (U"%data [1..%numberOfPoints][1..%numberOfDimensions]")
+TAG (U"%data [1..%numberOfPoints] [1..%numberOfDimensions]")
 DEFINITION (U"the coordinates of the points.")
 TAG (U"%metric")
 DEFINITION (U"determines the way distances between points are measured. In general "
@@ -1461,7 +1461,7 @@ NORMAL (U"When you can't have equal confidence in all the number in the "
 NORMAL (U"The following script summarizes:")
 CODE (U"selectObject: dissimilarity")
 CODE (U"weight = To Weight")
-CODE (U"! Change [i][j] and [j][i] cells in the Weight object")
+CODE (U"! Change [i] [j] and [j] [i] cells in the Weight object")
 CODE (U"Set value: i, j, val")
 CODE (U"Set value: j, i, val")
 CODE (U"...")
@@ -1529,7 +1529,7 @@ DEFINITION (U"the number of objects (%numberOfRows and %numberOfColumns are "
 TAG (U"%rowLabels, %columnLabels")
 DEFINITION (U"the names associated with the objects (%rowLabels and "
 	"%columnLabels are equal.")
-TAG (U"%data [1..%numberOfRows][1..%numberOfColumns]")
+TAG (U"%data [1..%numberOfRows] [1..%numberOfColumns]")
 DEFINITION (U"the proximities between the objects.")
 MAN_END
 

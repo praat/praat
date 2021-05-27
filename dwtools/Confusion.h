@@ -42,10 +42,10 @@ autoConfusion Confusion_createFromStringses (Strings stimulusLabels, Strings res
 autoConfusion Categories_to_Confusion (Categories me, Categories thee);
 
 void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 response);
-/* Increase the confusion count by one: data['stim']['resp'] += 1; */
+/* Increase the confusion count by one: data ['stim'] ['resp'] += 1; */
 
 double Confusion_getValue (Confusion me, conststring32 stimulus, conststring32 response);
-/* data['stim']['resp'] ; */
+/* data ['stim'] ['resp'] ; */
 
 void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double *out_hy,
     double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
@@ -63,16 +63,16 @@ void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double
 void Confusion_getFractionCorrect (Confusion me, double *out_fraction, integer *out_numberOfCorrect);
 
 void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, bool garnish);
-/* 1. Draw my rowLabels centered at ( matrix->z[i][1], matrix->z[i][2]).
+/* 1. Draw my rowLabels centered at ( matrix->z [i] [1], matrix -> z [i] [2]).
 	2. Draw arrows and circles according to:
 	for (i=1; i <= my numberOfRows; i++)
 	{
 		if (index != 0 && index != i) continue;
-		draw circle at i of width: my z[i][i]/rowSum;
+		draw circle at i of width: my z [i] [i] / rowSum;
 		for (j=1; j <= my numberOfColumns; j++)
 		{
-			if (i != j && 100*my data[i][j]/rowSum > lowerPercentage)
-				draw arrow from i to j of width: my data[i][j]/rowSum;
+			if (i != j && 100*my data [i] [j] / rowSum > lowerPercentage)
+				draw arrow from i to j of width: my data [i] [j] / rowSum;
 		}
 	}
  */
