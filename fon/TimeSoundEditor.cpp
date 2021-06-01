@@ -126,27 +126,30 @@ static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
-	autoSound extract;
+static autoSound do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 	if (my endSelection <= my startSelection)
 		Melder_throw (U"No selection.");
-	if (my d_longSound.data) {
-		extract = LongSound_extractPart (my d_longSound.data, my startSelection, my endSelection, preserveTimes);
-	} else if (my d_sound.data) {
-		extract = Sound_extractPart (my d_sound.data, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
-	}
-	Editor_broadcastPublication (me, extract.move());
+	if (my d_longSound.data)
+		return LongSound_extractPart (my d_longSound.data, my startSelection, my endSelection, preserveTimes);
+	else if (my d_sound.data)
+		return Sound_extractPart (my d_sound.data, my startSelection, my endSelection, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
+	Melder_fatal (U"No Sound or LongSound available.");
+	return autoSound();   // never reached
 }
 
-static void menu_cb_ExtractSelectedSound_timeFromZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	do_ExtractSelectedSound (me, false);
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = do_ExtractSelectedSound (me, false);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
-	do_ExtractSelectedSound (me, true);
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = do_ExtractSelectedSound (me, true);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
 		WORD (name, U"Name", U"slice")
 		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape ())
@@ -159,17 +162,17 @@ static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_AR
 	EDITOR_DO
 		Sound sound = my d_sound.data;
 		Melder_assert (sound);
-		my pref_extract_windowShape () = windowShape;
-		my pref_extract_relativeWidth () = relativeWidth;
-		my pref_extract_preserveTimes () = preserveTimes;
-		autoSound extract = Sound_extractPart (sound, my startSelection, my endSelection, my pref_extract_windowShape (),
-			my pref_extract_relativeWidth (), my pref_extract_preserveTimes ());
-		Thing_setName (extract.get(), name);
-		Editor_broadcastPublication (me, extract.move());
+		CONVERT_DATA_TO_ONE
+			my pref_extract_windowShape () = windowShape;
+			my pref_extract_relativeWidth () = relativeWidth;
+			my pref_extract_preserveTimes () = preserveTimes;
+			autoSound result = Sound_extractPart (sound, my startSelection, my endSelection, my pref_extract_windowShape (),
+					my pref_extract_relativeWidth (), my pref_extract_preserveTimes ());
+		CONVERT_DATA_TO_ONE_END (name)
 	EDITOR_END
 }
 
-static void menu_cb_ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_ARGS_FORM) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound for overlap)", nullptr)
 		WORD (name, U"Name", U"slice")
 		POSITIVE (overlap, U"Overlap (s)", my default_extract_overlap ())
@@ -178,11 +181,11 @@ static void menu_cb_ExtractSelectedSoundForOverlap (TimeSoundEditor me, EDITOR_A
 	EDITOR_DO
 		Sound sound = my d_sound.data;
 		Melder_assert (sound);
-		my pref_extract_overlap () = overlap;
-		autoSound extract = Sound_extractPartForOverlap (sound, my startSelection, my endSelection,
-			my pref_extract_overlap ());
-		Thing_setName (extract.get(), name);
-		Editor_broadcastPublication (me, extract.move());
+		CONVERT_DATA_TO_ONE
+			my pref_extract_overlap () = overlap;
+			autoSound result = Sound_extractPartForOverlap (sound, my startSelection, my endSelection,
+				my pref_extract_overlap ());
+		CONVERT_DATA_TO_ONE_END (name)
 	EDITOR_END
 }
 
@@ -290,20 +293,32 @@ void structTimeSoundEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 }
 
 void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
-	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_ExtractSelectedSound_preserveTimes /* dummy */);
+	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+			CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes /* dummy */);
 	if (our d_sound.data || our d_longSound.data) {
-		our publishPreserveButton = EditorMenu_addCommand (menu, U"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
-			EditorMenu_addCommand (menu, U"Extract sound selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
-			EditorMenu_addCommand (menu, U"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
-		our publishButton = EditorMenu_addCommand (menu, U"Extract selected sound (time from 0)", 0, menu_cb_ExtractSelectedSound_timeFromZero);
-			EditorMenu_addCommand (menu, U"Extract sound selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
-			EditorMenu_addCommand (menu, U"Extract selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
-			EditorMenu_addCommand (menu, U"Extract selection", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
+		our publishPreserveButton = EditorMenu_addCommand (menu, U"Extract selected sound (preserve times)", 0,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes);
+			EditorMenu_addCommand (menu, U"Extract sound selection (preserve times)", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes);
+			EditorMenu_addCommand (menu, U"Extract selection (preserve times)", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes);
+		our publishButton = EditorMenu_addCommand (menu, U"Extract selected sound (time from 0)", 0,
+				CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
+			EditorMenu_addCommand (menu, U"Extract sound selection (time from 0)", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
+			EditorMenu_addCommand (menu, U"Extract selection (time from 0)", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
+			EditorMenu_addCommand (menu, U"Extract selection", Editor_HIDDEN,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero);
 		if (our d_sound.data) {
-			our publishWindowButton = EditorMenu_addCommand (menu, U"Extract selected sound (windowed)...", 0, menu_cb_ExtractSelectedSound_windowed);
-				EditorMenu_addCommand (menu, U"Extract windowed sound selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
-				EditorMenu_addCommand (menu, U"Extract windowed selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
-			our publishOverlapButton = EditorMenu_addCommand (menu, U"Extract selected sound for overlap...", 0, menu_cb_ExtractSelectedSoundForOverlap);
+			our publishWindowButton = EditorMenu_addCommand (menu, U"Extract selected sound (windowed)...", 0,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed);
+				EditorMenu_addCommand (menu, U"Extract windowed sound selection...", Editor_HIDDEN,
+						CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed);
+				EditorMenu_addCommand (menu, U"Extract windowed selection...", Editor_HIDDEN,
+						CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed);
+			our publishOverlapButton = EditorMenu_addCommand (menu, U"Extract selected sound for overlap...", 0,
+					CONVERT_DATA_TO_ONE__ExtractSelectedSoundForOverlap);
 		}
 	}
 }

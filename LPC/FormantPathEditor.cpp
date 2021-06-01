@@ -125,28 +125,30 @@ static void scrollToView (FormantPathEditor me, double t) {
 
 /***** FILE MENU *****/
 
-static void menu_cb_ExtractSelectedTextGrid_preserveTimes (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	if (my endSelection <= my startSelection)
-		Melder_throw (U"No selection.");
-	autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
-	autoTextGrid extract = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, true);
-	Editor_broadcastPublication (me, extract.move());
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (my endSelection <= my startSelection)
+			Melder_throw (U"No selection.");
+		autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+		autoTextGrid result = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, true);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_ExtractSelectedTextGrid_timeFromZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	if (my endSelection <= my startSelection)
-		Melder_throw (U"No selection.");
-	autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
-	autoTextGrid extract = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, false);
-	Editor_broadcastPublication (me, extract.move());
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (my endSelection <= my startSelection)
+			Melder_throw (U"No selection.");
+		autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+		autoTextGrid result = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, false);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 void structFormantPathEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 	FormantPathEditor_Parent :: v_createMenuItems_file_extract (menu);
-	extractSelectedTextGridPreserveTimesButton =
-		EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0, menu_cb_ExtractSelectedTextGrid_preserveTimes);
-	extractSelectedTextGridTimeFromZeroButton =
-		EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0, menu_cb_ExtractSelectedTextGrid_timeFromZero);
+	extractSelectedTextGridPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes);
+	extractSelectedTextGridTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero);
 }
 
 static void menu_cb_WriteToTextFile (FormantPathEditor me, EDITOR_ARGS_FORM) {

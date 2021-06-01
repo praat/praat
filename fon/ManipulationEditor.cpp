@@ -85,37 +85,42 @@ static bool getSoundArea (ManipulationEditor me, double *ymin, double *ymax) {
 
 /***** FILE MENU *****/
 
-static void menu_cb_extractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
-	if (! my sound())
-		return;
-	autoSound publish = Data_copy (my sound().get());
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (! my sound())
+			return;
+		autoSound result = Data_copy (my sound().get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_extractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
-	if (! my pulses())
-		return;
-	autoPointProcess publish = Data_copy (my pulses().get());
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (! my pulses())
+			return;
+		autoPointProcess result = Data_copy (my pulses().get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_extractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
-	if (! my pitch())
-		return;
-	autoPitchTier publish = Data_copy (my pitch().get());
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (! my pitch())
+			return;
+		autoPitchTier result = Data_copy (my pitch().get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_extractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
-	if (! my duration())
-		return;
-	autoDurationTier publish = Data_copy (my duration().get());
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (! my duration())
+			return;
+		autoDurationTier result = Data_copy (my duration().get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_extractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
-	autoSound publish = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 /***** EDIT MENU *****/
@@ -519,11 +524,16 @@ menu_cb_Synth_common (menu_cb_Synth_Pitch_Lpc, Manipulation_PITCH_LPC)
 void structManipulationEditor :: v_createMenus () {
 	ManipulationEditor_Parent :: v_createMenus ();
 
-	Editor_addCommand (this, U"File", U"Extract original sound", 0, menu_cb_extractOriginalSound);
-	Editor_addCommand (this, U"File", U"Extract pulses", 0, menu_cb_extractPulses);
-	Editor_addCommand (this, U"File", U"Extract pitch tier", 0, menu_cb_extractPitchTier);
-	Editor_addCommand (this, U"File", U"Extract duration tier", 0, menu_cb_extractDurationTier);
-	Editor_addCommand (this, U"File", U"Publish resynthesis", 0, menu_cb_extractManipulatedSound);
+	Editor_addCommand (this, U"File", U"Extract original sound", 0,
+			CONVERT_DATA_TO_ONE__ExtractOriginalSound);
+	Editor_addCommand (this, U"File", U"Extract pulses", 0,
+			CONVERT_DATA_TO_ONE__ExtractPulses);
+	Editor_addCommand (this, U"File", U"Extract pitch tier", 0,
+			CONVERT_DATA_TO_ONE__ExtractPitchTier);
+	Editor_addCommand (this, U"File", U"Extract duration tier", 0,
+			CONVERT_DATA_TO_ONE__ExtractDurationTier);
+	Editor_addCommand (this, U"File", U"Publish resynthesis", 0,
+			CONVERT_DATA_TO_ONE__ExtractManipulatedSound);
 	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 
 	Editor_addMenu (this, U"Pulse", 0);

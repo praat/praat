@@ -160,5 +160,4 @@ autoSimilarity Similarity_create (integer numberOfPoints) {
 	}
 }
 
-
 /* End of file Proximity.cpp */
