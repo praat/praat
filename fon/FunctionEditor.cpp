@@ -56,6 +56,9 @@ static bool group_equalDomain (double tmin, double tmax) {
 
 static void updateScrollBar (FunctionEditor me) {
 /* We cannot call this immediately after creation. */
+	if (my endWindow - my startWindow > my tmax - my tmin)
+		Melder_fatal (U"updateScrollBar: the window runs from ", my startWindow, U" to ", my endWindow,
+			 	U", but the whole time domain runs only from ", my tmin, U" to ", my tmax);
 	const double slider_size = Melder_clippedLeft (1.0, (my endWindow - my startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1.0);
 	const double value = Melder_clipped (1.0, (my startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1.0, maximumScrollBarValue - slider_size);
 	const double increment = slider_size / SCROLL_INCREMENT_FRACTION + 1.0;
@@ -640,7 +643,9 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
 		if (my startSelection > my endSelection)
-			std::swap (my startSelection, my endSelection);
+			std::swap (my startSelection, my endSelection);   // this can invalidate the above logic
+		Melder_clip (my tmin, & my startSelection, my tmax);
+		Melder_clip (my tmin, & my endSelection, my tmax);
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
