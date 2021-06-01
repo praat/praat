@@ -560,21 +560,21 @@ static autoSound extractSound (TimeSoundAnalysisEditor me, double tmin, double t
 	return sound;
 }
 
-static void menu_cb_extractVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	VOID_EDITOR
+static void CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
 		if (! my p_spectrogram_show)
 			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my d_spectrogram) {
 			TimeSoundAnalysisEditor_computeSpectrogram (me);
-			if (! my d_spectrogram) Melder_throw (theMessage_Cannot_compute_spectrogram);
+			if (! my d_spectrogram)
+				Melder_throw (theMessage_Cannot_compute_spectrogram);
 		}
-		autoSpectrogram publish = Data_copy (my d_spectrogram.get());
-		Editor_broadcastPublication (me, publish.move());
-	VOID_EDITOR_END
+		autoSpectrogram result = Data_copy (my d_spectrogram.get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	VOID_EDITOR
+static void CONVERT_DATA_TO_ONE__ViewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
 		const double start = ( my startSelection == my endSelection ?
 			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? my startSelection - my p_spectrogram_windowLength :
 			my startSelection - my p_spectrogram_windowLength / 2 : my startSelection
@@ -592,11 +592,9 @@ static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::HANNING ? kSound_windowShape::HANNING :
 			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? kSound_windowShape::GAUSSIAN_2 : kSound_windowShape::RECTANGULAR
 		);
-		autoSpectrum publish = Sound_to_Spectrum (sound.get(), true);
-		Thing_setName (publish.get(), Melder_cat (( my data ? my data -> name.get() : U"untitled" ),
-				U"_", Melder_fixed (0.5 * (my startSelection + my endSelection), 3)));
-		Editor_broadcastPublication (me, publish.move());
-	VOID_EDITOR_END
+		autoSpectrum result = Sound_to_Spectrum (sound.get(), true);
+	CONVERT_DATA_TO_ONE_END (Melder_cat (( my data ? my data -> name.get() : U"untitled" ),
+			U"_", Melder_fixed (0.5 * (my startSelection + my endSelection), 3)))
 }
 
 static void menu_cb_paintVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -875,8 +873,8 @@ static void menu_cb_moveCursorToMaximumPitch (TimeSoundAnalysisEditor me, EDITOR
 	VOID_EDITOR_END
 }
 
-static void menu_cb_extractVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	VOID_EDITOR
+static void CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
 		if (! my p_pitch_show)
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my d_pitch) {
@@ -884,9 +882,8 @@ static void menu_cb_extractVisiblePitchContour (TimeSoundAnalysisEditor me, EDIT
 			if (! my d_pitch)
 				Melder_throw (theMessage_Cannot_compute_pitch);
 		}
-		autoPitch publish = Data_copy (my d_pitch.get());
-		Editor_broadcastPublication (me, publish.move());
-	VOID_EDITOR_END
+		autoPitch result = Data_copy (my d_pitch.get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void menu_cb_drawVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -970,8 +967,8 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 	EDITOR_END
 }
 
-static void menu_cb_extractVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	VOID_EDITOR
+static void CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
 		if (! my p_intensity_show)
 			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 		if (! my d_intensity) {
@@ -979,9 +976,8 @@ static void menu_cb_extractVisibleIntensityContour (TimeSoundAnalysisEditor me, 
 			if (! my d_intensity)
 				Melder_throw (theMessage_Cannot_compute_intensity);
 		}
-		autoIntensity publish = Data_copy (my d_intensity.get());
-		Editor_broadcastPublication (me, publish.move());
-	VOID_EDITOR_END
+		autoIntensity result = Data_copy (my d_intensity.get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -1158,8 +1154,8 @@ static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_
 	EDITOR_END
 }
 
-static void menu_cb_extractVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	VOID_EDITOR
+static void CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
 		if (! my p_formant_show)
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 		if (! my d_formant) {
@@ -1167,9 +1163,8 @@ static void menu_cb_extractVisibleFormantContour (TimeSoundAnalysisEditor me, ED
 			if (! my d_formant)
 				Melder_throw (theMessage_Cannot_compute_formant);
 		}
-		autoFormant publish = Data_copy (my d_formant.get());
-		Editor_broadcastPublication (me, publish.move());
-	VOID_EDITOR_END
+		autoFormant result = Data_copy (my d_formant.get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -1347,8 +1342,8 @@ static void menu_cb_advancedPulsesSettings (TimeSoundAnalysisEditor me, EDITOR_A
 	EDITOR_END
 }
 
-static void menu_cb_extractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	VOID_EDITOR
+static void CONVERT_DATA_TO_ONE__ExtractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
 		if (! my p_pulses_show)
 			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 		if (! my d_pulses) {
@@ -1356,9 +1351,8 @@ static void menu_cb_extractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARG
 			if (! my d_pulses)
 				Melder_throw (theMessage_Cannot_compute_pulses);
 		}
-		autoPointProcess publish = Data_copy (my d_pulses.get());
-		Editor_broadcastPublication (me, publish.move());
-	VOID_EDITOR_END
+		autoPointProcess result = Data_copy (my d_pulses.get());
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
@@ -1532,8 +1526,10 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_formant (EditorMenu menu
 	EditorMenu_addCommand (menu, U"Get bandwidth...", 0, QUERY_DATA_FOR_REAL__getBandwidth);
 	v_createMenuItems_formant_picture (menu);
 	EditorMenu_addCommand (menu, U"-- formant extract --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
-	EditorMenu_addCommand (menu, U"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);	
+	EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+			CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour /* dummy */);
+	EditorMenu_addCommand (menu, U"Extract visible formant contour", 0,
+			CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour);
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
@@ -1554,9 +1550,12 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Move frequency cursor to...", 0, menu_cb_moveFrequencyCursorTo);
 		v_createMenuItems_spectrum_picture (menu);
 		EditorMenu_addCommand (menu, U"-- spectrum extract --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
-		EditorMenu_addCommand (menu, U"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
-		EditorMenu_addCommand (menu, U"View spectral slice", 'L', menu_cb_viewSpectralSlice);
+		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+				CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram /* dummy */);
+		EditorMenu_addCommand (menu, U"Extract visible spectrogram", 0,
+				CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram);
+		EditorMenu_addCommand (menu, U"View spectral slice", 'L',
+				CONVERT_DATA_TO_ONE__ViewSpectralSlice);
 	}
 
 	if (v_hasPitch ()) {
@@ -1577,8 +1576,10 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Move cursor to maximum pitch", GuiMenu_SHIFT | 'H', menu_cb_moveCursorToMaximumPitch);
 		v_createMenuItems_pitch_picture (menu);
 		EditorMenu_addCommand (menu, U"-- pitch extract --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
-		EditorMenu_addCommand (menu, U"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
+		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+				CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour /* dummy */);
+		EditorMenu_addCommand (menu, U"Extract visible pitch contour", 0,
+				CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour);
 	}
 
 	if (v_hasIntensity ()) {
@@ -1594,8 +1595,10 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		EditorMenu_addCommand (menu, U"Get maximum intensity", GuiMenu_F8 | GuiMenu_SHIFT, QUERY_DATA_FOR_REAL__getMaximumIntensity);
 		v_createMenuItems_intensity_picture (menu);
 		EditorMenu_addCommand (menu, U"-- intensity extract --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
-		EditorMenu_addCommand (menu, U"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
+		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+				CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour /* dummy */);
+		EditorMenu_addCommand (menu, U"Extract visible intensity contour", 0,
+				CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour);
 	}
 	if (v_hasFormants ()) {
 		menu = Editor_addMenu (this, U"Formant", 0);
@@ -1626,8 +1629,10 @@ void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 		*/
 		v_createMenuItems_pulses_picture (menu);
 		EditorMenu_addCommand (menu, U"-- pulses extract --", 0, nullptr);
-		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
-		EditorMenu_addCommand (menu, U"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
+		EditorMenu_addCommand (menu, U"Extract to objects window:", GuiMenu_INSENSITIVE,
+				CONVERT_DATA_TO_ONE__ExtractVisiblePulses /* dummy */);
+		EditorMenu_addCommand (menu, U"Extract visible pulses", 0,
+				CONVERT_DATA_TO_ONE__ExtractVisiblePulses);
 	}
 }
 

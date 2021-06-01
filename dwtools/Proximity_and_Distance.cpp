@@ -54,7 +54,6 @@ autoDissimilarity Distance_to_Dissimilarity (Distance me) {
 	}
 }
 
-
 autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, kMDS_AnalysisScale scale) {
 	try {
 		autoDistanceList thee = DistanceList_create ();
@@ -69,3 +68,5 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, kMDS_A
 		Melder_throw (me, U": no DistanceList created.");
 	}
 }
+
+/* End of file Proximity_and_Distance.cpp */

@@ -1,6 +1,6 @@
 /* EEGWindow.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2011-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,24 +44,28 @@ conststring32 structEEGWindow :: v_getChannelName (integer channelNumber) {
 	return our eeg -> channelNames [channelNumber].get();
 }
 
-static void menu_cb_ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {
-	if (my endSelection <= my startSelection) Melder_throw (U"No selection.");
-	autoEEG extract = EEG_extractPart (my eeg, my startSelection, my endSelection, true);
-	Editor_broadcastPublication (me, extract.move());
+static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (my endSelection <= my startSelection)
+			Melder_throw (U"No selection.");
+		autoEEG result = EEG_extractPart (my eeg, my startSelection, my endSelection, true);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT) {
-	if (my endSelection <= my startSelection) Melder_throw (U"No selection.");
-	autoEEG extract = EEG_extractPart (my eeg, my startSelection, my endSelection, false);
-	Editor_broadcastPublication (me, extract.move());
+static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (my endSelection <= my startSelection)
+			Melder_throw (U"No selection.");
+		autoEEG result = EEG_extractPart (my eeg, my startSelection, my endSelection, false);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 void structEEGWindow :: v_createMenuItems_file_extract (EditorMenu menu) {
 	EEGWindow_Parent :: v_createMenuItems_file_extract (menu);
-	our extractSelectedEEGPreserveTimesButton =
-		EditorMenu_addCommand (menu, U"Extract selected EEG (preserve times)", 0, menu_cb_ExtractSelectedEEG_preserveTimes);
-	our extractSelectedEEGTimeFromZeroButton =
-		EditorMenu_addCommand (menu, U"Extract selected EEG (time from zero)", 0, menu_cb_ExtractSelectedEEG_timeFromZero);
+	our extractSelectedEEGPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected EEG (preserve times)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes);
+	our extractSelectedEEGTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected EEG (time from zero)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero);
 }
 
 void structEEGWindow :: v_updateMenuItems_file () {

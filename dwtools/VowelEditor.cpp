@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2020 David Weenink, 2015-2020 Paul Boersma
+ * Copyright (C) 2008-2020 David Weenink, 2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -692,7 +692,7 @@ static void updateInfoLabels (VowelEditor me) {
 }
 
 static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
-	Melder_help (U"VowelEditor");
+	HELP (U"VowelEditor")
 }
 
 static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -783,45 +783,50 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	autoSound publish = VowelEditor_createTargetSound (me);
-	Editor_broadcastPublication (me, publish.move());
+static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	CREATE_ONE
+		autoSound result = VowelEditor_createTargetSound (me);
+	CREATE_ONE_END (U"untitled")
 }
 
-static void menu_cb_extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateTrajectorySpecification (me);
-	autoFormantGrid publish = VowelEditor_to_FormantGrid (me);
-	Editor_broadcastPublication (me, publish.move());
+static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	CREATE_ONE
+		VowelEditor_updateTrajectorySpecification (me);
+		autoFormantGrid result = VowelEditor_to_FormantGrid (me);
+	CREATE_ONE_END (U"untitled")
 }
 
-static void menu_cb_extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateTrajectorySpecification (me);
-	autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
-	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
-	KlattGrid_addVoicingAmplitudePoint (publish.get(), fg -> xmin, 90.0);
-	autoPitchTier pitchTier = VowelEditor_to_PitchTier (me);
-	KlattGrid_replacePitchTier (publish.get(), pitchTier.get());
-	KlattGrid_replaceFormantGrid (publish.get(), kKlattGridFormantType::ORAL, fg.get());
-	Editor_broadcastPublication (me, publish.move());
+static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	CREATE_ONE
+		VowelEditor_updateTrajectorySpecification (me);
+		autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
+		autoKlattGrid result = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants.size, 0, 0, 0, 0, 0, 0);
+		KlattGrid_addVoicingAmplitudePoint (result.get(), fg -> xmin, 90.0);
+		autoPitchTier pitchTier = VowelEditor_to_PitchTier (me);
+		KlattGrid_replacePitchTier (result.get(), pitchTier.get());
+		KlattGrid_replaceFormantGrid (result.get(), kKlattGridFormantType::ORAL, fg.get());
+	CREATE_ONE_END (U"untitled")
 }
 
-static void menu_cb_extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateTrajectorySpecification (me);
-	autoPitchTier publish = VowelEditor_to_PitchTier (me);
-	Editor_broadcastPublication (me, publish.move());
+static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	CREATE_ONE
+		VowelEditor_updateTrajectorySpecification (me);
+		autoPitchTier result = VowelEditor_to_PitchTier (me);
+	CREATE_ONE_END (U"untitled")
 }
 
-static void menu_cb_extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
-	VowelEditor_updateTrajectorySpecification (me);
-	autoTable publish = Table_createWithColumnNames (my trajectory -> points.size, { U"Time", U"F1", U"F2", U"Colour" });
-	for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
-		TrajectoryPoint point = my trajectory -> points.at [ipoint];
-		Table_setNumericValue (publish.get(), ipoint, 1, point -> number);
-		Table_setNumericValue (publish.get(), ipoint, 2, point -> f1);
-		Table_setNumericValue (publish.get(), ipoint, 3, point -> f2);
-		Table_setStringValue  (publish.get(), ipoint, 4, MelderColour_namePrettyOrNull (point -> colour));
-	}
-	Editor_broadcastPublication (me, publish.move());
+static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
+	CREATE_ONE
+		VowelEditor_updateTrajectorySpecification (me);
+		autoTable result = Table_createWithColumnNames (my trajectory -> points.size, { U"Time", U"F1", U"F2", U"Colour" });
+		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
+			TrajectoryPoint point = my trajectory -> points.at [ipoint];
+			Table_setNumericValue (result.get(), ipoint, 1, point -> number);
+			Table_setNumericValue (result.get(), ipoint, 2, point -> f1);
+			Table_setNumericValue (result.get(), ipoint, 3, point -> f2);
+			Table_setStringValue  (result.get(), ipoint, 4, MelderColour_namePrettyOrNull (point -> colour));
+		}
+	CREATE_ONE_END (U"untitled")
 }
 
 static void menu_cb_drawTrajectory (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -1179,11 +1184,16 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addMenu (this, U"View", 0);
 	Editor_addCommand (this, U"File", U"Preferences...", 0, menu_cb_prefs);
 	Editor_addCommand (this, U"File", U"-- publish data --", 0, nullptr);
-	Editor_addCommand (this, U"File", U"Publish Sound", 0, menu_cb_publishSound);
-	Editor_addCommand (this, U"File", U"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
-	Editor_addCommand (this, U"File", U"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
-	Editor_addCommand (this, U"File", U"Extract PitchTier", 0, menu_cb_extract_PitchTier);
-	Editor_addCommand (this, U"File", U"Extract Trajectory as Table", 0, menu_cb_extract_TrajectoryAsTable);
+	Editor_addCommand (this, U"File", U"Publish Sound", 0,
+			CREATE_ONE__publishSound);
+	Editor_addCommand (this, U"File", U"Extract KlattGrid", 0,
+			CREATE_ONE__Extract_KlattGrid);
+	Editor_addCommand (this, U"File", U"Extract FormantGrid", 0,
+			CREATE_ONE__Extract_FormantGrid);
+	Editor_addCommand (this, U"File", U"Extract PitchTier", 0,
+			CREATE_ONE__Extract_PitchTier);
+	Editor_addCommand (this, U"File", U"Extract Trajectory as Table", 0,
+			CREATE_ONE__Extract_TrajectoryAsTable);
 	Editor_addCommand (this, U"File", U"-- drawing --", 0, nullptr);
 	Editor_addCommand (this, U"File", U"Draw trajectory...", 0, menu_cb_drawTrajectory);
 	Editor_addCommand (this, U"File", U"-- scripting --", 0, nullptr);

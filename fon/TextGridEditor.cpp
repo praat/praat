@@ -158,26 +158,28 @@ static void scrollToView (TextGridEditor me, double t) {
 
 /***** FILE MENU *****/
 
-static void menu_cb_ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	if (my endSelection <= my startSelection)
-		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, true);
-	Editor_broadcastPublication (me, extract.move());
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (my endSelection <= my startSelection)
+			Melder_throw (U"No selection.");
+		autoTextGrid result = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, true);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	if (my endSelection <= my startSelection)
-		Melder_throw (U"No selection.");
-	autoTextGrid extract = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, false);
-	Editor_broadcastPublication (me, extract.move());
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		if (my endSelection <= my startSelection)
+			Melder_throw (U"No selection.");
+		autoTextGrid result = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, false);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 	TextGridEditor_Parent :: v_createMenuItems_file_extract (menu);
-	extractSelectedTextGridPreserveTimesButton =
-		EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0, menu_cb_ExtractSelectedTextGrid_preserveTimes);
-	extractSelectedTextGridTimeFromZeroButton =
-		EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0, menu_cb_ExtractSelectedTextGrid_timeFromZero);
+	extractSelectedTextGridPreserveTimesButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (preserve times)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes);
+	extractSelectedTextGridTimeFromZeroButton = EditorMenu_addCommand (menu, U"Extract selected TextGrid (time from 0)", 0,
+			CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero);
 }
 
 static void menu_cb_WriteToTextFile (TextGridEditor me, EDITOR_ARGS_FORM) {
@@ -992,14 +994,14 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void menu_cb_PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = (TextGrid) my data;
-	checkTierSelection (me, U"publish a tier");
-	const Function tier = grid -> tiers->at [my selectedTier];
-	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier_copy (publish.get(), tier);
-	Thing_setName (publish.get(), tier -> name.get());
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		const TextGrid grid = (TextGrid) my data;
+		checkTierSelection (me, U"publish a tier");
+		const Function tier = grid -> tiers->at [my selectedTier];
+		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
+		TextGrid_addTier_copy (result.get(), tier);
+	CONVERT_DATA_TO_ONE_END (tier -> name.get())
 }
 
 static void menu_cb_RemoveAllTextFromTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
@@ -1123,10 +1125,10 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 /***** HELP MENU *****/
 
-static void menu_cb_TextGridEditorHelp (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"TextGridEditor"); }
-static void menu_cb_AboutSpecialSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Special symbols"); }
-static void menu_cb_PhoneticSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Phonetic symbols"); }
-static void menu_cb_AboutTextStyles (TextGridEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Text styles"); }
+static void menu_cb_TextGridEditorHelp (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"TextGridEditor") }
+static void menu_cb_AboutSpecialSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Special symbols") }
+static void menu_cb_PhoneticSymbols (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Phonetic symbols") }
+static void menu_cb_AboutTextStyles (TextGridEditor, EDITOR_ARGS_DIRECT) { HELP (U"Text styles") }
 
 void structTextGridEditor :: v_createMenus () {
 	TextGridEditor_Parent :: v_createMenus ();
@@ -1210,8 +1212,10 @@ void structTextGridEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
 	EditorMenu_addCommand (menu, U"Remove entire tier", 0, menu_cb_RemoveTier);
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
-	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
-	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
+	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE,
+			CONVERT_DATA_TO_ONE__PublishTier /* dummy */);
+	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0,
+			CONVERT_DATA_TO_ONE__PublishTier);
 
 	if (our spellingChecker) {
 		menu = Editor_addMenu (this, U"Spell", 0);

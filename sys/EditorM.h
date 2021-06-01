@@ -518,6 +518,21 @@ _form_inited_: \
 	Editor_broadcastDataChanged (me); \
 	(void) interpreter;
 
+#define CONVERT_DATA_TO_ONE  \
+	DATA_BEGIN__
+#define CONVERT_DATA_TO_ONE_END(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+	Thing_setName (result.get(), __VA_ARGS__); \
+	Editor_broadcastPublication (me, result.move());
+
+#define CREATE_ONE
+#define CREATE_ONE_END(...)  \
+	if (interpreter) \
+		interpreter -> returnType = kInterpreter_ReturnType::OBJECT_; \
+	Thing_setName (result.get(), __VA_ARGS__); \
+	Editor_broadcastPublication (me, result.move());
+
 #define HELP(title)  \
 	Melder_help (title); \
 	(void) interpreter;

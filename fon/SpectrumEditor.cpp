@@ -1,6 +1,6 @@
 /* SpectrumEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,14 +96,16 @@ void structSpectrumEditor :: v_play (double fmin, double fmax) {
 	Sound_play (sound.get(), nullptr, nullptr);
 }
 
-static void menu_cb_publishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
-	autoSpectrum publish = Spectrum_band ((Spectrum) my data, my startSelection, my endSelection);
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		autoSpectrum result = Spectrum_band ((Spectrum) my data, my startSelection, my endSelection);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void menu_cb_publishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
-	autoSound publish = Spectrum_to_Sound_part ((Spectrum) my data, my startSelection, my endSelection);
-	Editor_broadcastPublication (me, publish.move());
+static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
+	CONVERT_DATA_TO_ONE
+		autoSound result = Spectrum_to_Sound_part ((Spectrum) my data, my startSelection, my endSelection);
+	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
 static void menu_cb_passBand (SpectrumEditor me, EDITOR_ARGS_FORM) {
@@ -162,8 +164,10 @@ static void menu_cb_help_Spectrum (SpectrumEditor, EDITOR_ARGS_DIRECT) { Melder_
 
 void structSpectrumEditor :: v_createMenus () {
 	SpectrumEditor_Parent :: v_createMenus ();
-	our publishBandButton = Editor_addCommand (this, U"File", U"Publish band", 0, menu_cb_publishBand);
-	our publishSoundButton = Editor_addCommand (this, U"File", U"Publish band-filtered sound", 0, menu_cb_publishSound);
+	our publishBandButton = Editor_addCommand (this, U"File", U"Publish band", 0,
+			CONVERT_DATA_TO_ONE__PublishBand);
+	our publishSoundButton = Editor_addCommand (this, U"File", U"Publish band-filtered sound", 0,
+			CONVERT_DATA_TO_ONE__PublishSound);
 	Editor_addCommand (this, U"File", U"-- close --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"-- edit band --", 0, nullptr);
 	Editor_addCommand (this, U"Edit", U"Pass band...", 0, menu_cb_passBand);
