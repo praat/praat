@@ -391,15 +391,15 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numb
 /********************** Examples *********************************************/
 
 autoConfiguration Configuration_createLetterRExample (int choice) {
-	const double x1 [33] = { 0,
+	const constVEC x1 = {
 		-5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
 		-5, -4, -3, -2, -1,  0,  1, 2.25,  3,  3,
 		2.25,  1,  0, -1, -2, -3, -4,   -1,  0,  1, 2, 3 };
-	const double y1 [33] = { 0,
+	const constVEC y1 = {
 		-6, -5, -4, -3, -2, -1, 0,   1,  2,  3,
 		4,  4,  4,  4,  4,  4, 4, 3.5,  2,  1,
 		-0.5, -1, -1, -1, -1, -1, -1, -2, -3, -4, -5, -6 };
-	const double x2 [33] = {0, 0.94756043346272423, 0.73504466902509913,
+	const constVEC x2 = { 0.94756043346272423, 0.73504466902509913,
 		0.4528453515175927,    0.46311499024105723,   0.30345454816993439,
 		0.075184942115601547, -0.090010071904764719, -0.19630977381424003,
 		-0.36341509807865086,  -0.54216996409132612,  -0.68704678013309872,
@@ -410,7 +410,7 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 		0.18201798315035453,   0.048445620192953162,  0.081595930742961439,
 		0.20063623749033621,   0.28546520751183313,   0.39384438699721991,
 		0.62832258520372286,   0.78548335015622228,   1.0610707888793069 };
-	const double y2 [33] = {0, 0.49630791172076621, 0.53320347382055022,
+	const constVEC y2 = { 0.49630791172076621, 0.53320347382055022,
 		0.62384637225470441,  0.47592708487655661,  0.50364353255684202,
 		0.55311720162084443,  0.55118713773007066,  0.50007736370068601,
 		0.40432332354648709,  0.49817059660482677,  0.49803436631629411,
@@ -424,12 +424,14 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 	try {
 		autoConfiguration me = Configuration_create (32, 2);
 		Thing_setName (me.get(), ( choice == 2 ? U"R_fit" : U"R" ));
-		for (integer i = 1; i <= 32; i ++) {
-			char32 s [20];
-			Melder_sprint (s, 20, i);
-			TableOfReal_setRowLabel (me.get(), i, s);
-			my data [i] [1] = ( choice == 2 ? x2 [i] : x1 [i] );
-			my data [i] [2] = ( choice == 2 ? y2 [i] : y1 [i] );
+		for (integer i = 1; i <= 32; i ++)
+			TableOfReal_setRowLabel (me.get(), i, Melder_integer (i));
+		if (choice == 2) {
+			my data.column (1)  <<=  x2;
+			my data.column (2)  <<=  y2;
+		} else {
+			my data.column (1)  <<=  x1;
+			my data.column (2)  <<=  y1;
 		}
 		return me;
 	} catch (MelderError) {
