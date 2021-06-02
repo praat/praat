@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210521)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210604)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.48# (2 June 2021)")
+LIST_ITEM (U"• TextGrid window: Shift-drag drags multiple boundaries again even if the Shift key is not released.")
+LIST_ITEM (U"• Scripting: publishing (\"Extract\") an object from an editor window returns its ID again.")
+LIST_ITEM (U"• Scripting: \"Select...\") in an editor window is now prevented from selecting outside the time domain.")
 NORMAL (U"##6.1.47# (21 May 2021)")
 LIST_ITEM (U"• The Escape key now means Cancel also in a non-pausing pause window.")
 NORMAL (U"##6.1.46# (20 May 2021)")

@@ -1874,9 +1874,9 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 		/*
-			If the use shift-clicked, we extend the selection (this already happened during click()).
+			If the user shift-clicked, we extend the selection (this already happened during click()).
 		*/
-		if (event -> shiftKeyPressed) {
+		if (event -> shiftKeyPressed && ! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
 			our draggingTime = undefined;
 			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
