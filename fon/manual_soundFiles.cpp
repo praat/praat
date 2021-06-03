@@ -218,7 +218,7 @@ MAN_END
 
 MAN_BEGIN (U"Sound files 2.9. Ogg Opus files", U"djmw", 20210102)
 NORMAL (U"Opus is a general-purpose patent-free lossy audio compression format. "
-	"It is a newer and better formant than @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
+	"It is a newer and better format than @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
 	"It was developed by the Xiph.Org Foundation and standardized by the Internet Engineering Task Force, designed to efficiently "
 	"code speech and general audio in a single format, while remaining low-latency enough for real-time interactive communication "
 	"and low-complexity enough for low-end embedded processors. "
