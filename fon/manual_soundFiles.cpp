@@ -197,7 +197,7 @@ NORMAL (U"An audio file type used by speech researchers. Used, for instance, in 
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.6. FLAC files", U"Erez Volk", 20070514)
-NORMAL (U"A lossless compressed audio format (see ##http://flac.sourceforge.net##). "
+NORMAL (U"A lossless compressed audio format (see ##http://flac.sourceforge.net#). "
 	"Praat reads FLAC files in all bitrate/frequency settings "
 	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
@@ -205,14 +205,14 @@ MAN_END
 MAN_BEGIN (U"Sound files 2.7. MP3 files", U"Erez Volk", 20070601)
 NORMAL (U"A ubiquitous lossy audio compression format. "
 	"Praat supports MP3 decoding through the MPEG Audio Decoder library "
-	"##http://www.underbit.com/products/mad/##. "
+	"##http://www.underbit.com/products/mad/#. "
 	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.8. Ogg Vorbis files", U"djmw", 20210604)
 NORMAL (U"Vorbis is a general-purpose patent-free lossy audio compression format. "
 	"Praat supports Ogg Vorbis decoding through open source code made available at "
-	"##https://xiph.org/downloads/##. Praat uses libogg-1.3.4 and libvorbis-1.3.7 "
+	"##https://xiph.org/downloads/#. Praat uses libogg-1.3.4 and libvorbis-1.3.7 "
 	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
@@ -223,7 +223,7 @@ NORMAL (U"Opus is a general-purpose patent-free lossy audio compression format. 
 	"code speech and general audio in a single format, while remaining low-latency enough for real-time interactive communication "
 	"and low-complexity enough for low-end embedded processors. "
 	"Praat supports Ogg Opus decoding through open source code made available at "
-	"##https://opus-codec.org/downloads/##. Praat uses opus-1.3.1 and opusfile-0.12 "
+	"##https://opus-codec.org/downloads/#. Praat uses opus-1.3.1 and opusfile-0.12 "
 	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
