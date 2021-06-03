@@ -21,7 +21,7 @@
 void manual_soundFiles_init (ManPages me);
 void manual_soundFiles_init (ManPages me) {
 
-MAN_BEGIN (U"Sound files", U"ppgb", 20070602)
+MAN_BEGIN (U"Sound files", U"ppgb", 20210603)
 INTRO (U"This tutorial describes the sound files that you can read "
 	"and write with Praat. It assumes you are familiar with the @Intro.")
 NORMAL (U"You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
@@ -40,6 +40,8 @@ LIST_ITEM1 (U"2.4. @@Sound files 2.4. NeXT/Sun (.au) files|NeXT/Sun (.au) files@
 LIST_ITEM1 (U"2.5. @@Sound files 2.5. NIST files|NIST files@")
 LIST_ITEM1 (U"2.6. @@Sound files 2.6. FLAC files|FLAC files@")
 LIST_ITEM1 (U"2.7. @@Sound files 2.7. MP3 files|MP3 files@")
+LIST_ITEM1 (U"2.8. @@Sound files 2.8. Ogg Vorbis files|Ogg Vorbis files@")
+LIST_ITEM1 (U"2.9. @@Sound files 2.9. Ogg Opus files|Ogg Opus files@")
 LIST_ITEM (U"3. @@Sound files 3. Files that Praat can read|Files that Praat can read@")
 LIST_ITEM (U"4. @@Sound files 4. Files that Praat can write|Files that Praat can write@")
 MAN_END
@@ -121,11 +123,11 @@ EQUATION (U"28 + 1 * 3.0 * 8000 * 1 = 24028 bytes")
 NORMAL (U"The first example is typical of CD quality, the second of telephone speech.")
 MAN_END
 
-MAN_BEGIN (U"Sound files 1.6. Compression", U"ppgb", 20201229)
+MAN_BEGIN (U"Sound files 1.6. Compression", U"ppgb", 20210604)
 NORMAL (U"Praat used to be able to read some compressed sound file formats (shortened NIST, Polyphone), "
 	"but because of licensing problems (Praat went open source, Shorten did not), "
 	"you now need to use other (freely available) programs to do the conversion before reading them into Praat. "
-	"Praat can decode (but not create) MP3 files and Ogg Vorbis files. "
+	"Praat can decode (but not create) MP3 files, Ogg Vorbis files, and Ogg Opus files. "
 	"Praat fully supports FLAC compressed files.")
 MAN_END
 
@@ -167,17 +169,17 @@ NORMAL (U"Praat reads uncompressed AIFC files with plain 8-bit, 16-bit, 24-bit o
 	"but does not support compressed AIFC files.")
 MAN_END
 
-MAN_BEGIN (U"Sound files 2.4. NeXT/Sun (.au) files", U"ppgb", 20110131)
+MAN_BEGIN (U"Sound files 2.4. NeXT/Sun (.au) files", U"ppgb", 20210604)
 NORMAL (U"This is the format of the sound files on the Sun.")
 ENTRY (U"Reading")
-NORMAL (U"To read a #Sound from a Sun audio file on disk, use @@Read from file...@."
+NORMAL (U"To read a #Sound from a Sun audio file on disk, use @@Read from file...@. "
 	"Praat then asks you for a file name. "
 	"After you click OK, Praat determines the encoding of the file. "
 	"If the encoding is 16-bit linear, the 16-bit sample values are divided by 32768 so that the amplitude "
 	"of the resulting Sound is between -1.0 and +1.0. "
 	"If the encoding is 8-bit %μ-law, the 16-bit sample value is determined by table look-up first.")
 NORMAL (U"The resulting Sound will appear in the list of objects; "
-	"its name will be equal to the file name, without extension.")
+	"its name will be identical to the file name, without extension.")
 ENTRY (U"Saving")
 NORMAL (U"Use @@Save as NeXT/Sun file...@. The samples of the Sound are multiplied by 32768 "
 	"and quantized between -32768 and 32767; "
@@ -191,41 +193,41 @@ MAN_BEGIN (U"Sound files 2.5. NIST files", U"ppgb", 20040223)
 NORMAL (U"An audio file type used by speech researchers. Used, for instance, in the TIMIT database. "
 	"Praat reads several kinds of NIST files: big-endian, little-endian, μ-law, A-law, Polyphone. "
 	"NIST files compressed with #shorten are no longer supported "
-	"(see @@Sound files 1.6. Compression|§1.6@)")
+	"(see @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.6. FLAC files", U"Erez Volk", 20070514)
 NORMAL (U"A lossless compressed audio format (see ##http://flac.sourceforge.net##). "
 	"Praat reads FLAC files in all bitrate/frequency settings "
-	"(see also @@Sound files 1.6. Compression|§1.6@)")
+	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.7. MP3 files", U"Erez Volk", 20070601)
 NORMAL (U"A ubiquitous lossy audio compression format. "
 	"Praat supports MP3 decoding through the MPEG Audio Decoder library "
 	"##http://www.underbit.com/products/mad/##. "
-	"(see also @@Sound files 1.6. Compression|§1.6@)")
+	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
-MAN_BEGIN (U"Sound files 2.8. Ogg Vorbis files", U"djmw", 20210102)
-NORMAL (U"Vorbis is a general purpose patent-free lossy audio compression format. "
+MAN_BEGIN (U"Sound files 2.8. Ogg Vorbis files", U"djmw", 20210604)
+NORMAL (U"Vorbis is a general-purpose patent-free lossy audio compression format. "
 	"Praat supports Ogg Vorbis decoding through open source code made available at "
-	"##https://xiph.org/downloads/##. We used libogg-1.3.4 and libvorbis-1.3.7. "
-	"(see also @@Sound files 1.6. Compression|§1.6@)")
+	"##https://xiph.org/downloads/##. Praat uses libogg-1.3.4 and libvorbis-1.3.7 "
+	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.9. Ogg Opus files", U"djmw", 20210102)
-NORMAL (U"Opus is a general purpose patent-free lossy audio compression format. "
-	"It is a newer and better formant than  @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
+NORMAL (U"Opus is a general-purpose patent-free lossy audio compression format. "
+	"It is a newer and better formant than @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
 	"It was developed by the Xiph.Org Foundation and standardized by the Internet Engineering Task Force, designed to efficiently "
 	"code speech and general audio in a single format, while remaining low-latency enough for real-time interactive communication "
 	"and low-complexity enough for low-end embedded processors. "
 	"Praat supports Ogg Opus decoding through open source code made available at "
-	"##https://opus-codec.org/downloads/##. We used opus-1.3.1 and opusfile-0.12. "
-	"(see also @@Sound files 1.6. Compression|§1.6@)")
+	"##https://opus-codec.org/downloads/##. Praat uses opus-1.3.1 and opusfile-0.12 "
+	"(see also @@Sound files 1.6. Compression|§1.6@).")
 MAN_END
 
-MAN_BEGIN (U"Sound files 3. Files that Praat can read", U"ppgb", 20070602)
+MAN_BEGIN (U"Sound files 3. Files that Praat can read", U"ppgb", 20210604)
 INTRO (U"Praat can read five types of standard sound files in several formats, "
 	"and a number of proprietary types of sound files as well.")
 ENTRY (U"Standard sound files")
@@ -236,11 +238,11 @@ LIST_ITEM (U"• With @@Read from file...@, you read the entire file into memory
 	"The advantage of having a @Sound object is that you can perform analysis "
 	"on it directly.")
 LIST_ITEM (U"• With @@Open long sound file...@, you open a sound file that is too long "
-	"to read into memory completely. A @LongSound object will appear in the list. "
+	"to read into memory completely (i.e. several hours long). A @LongSound object will appear in the list. "
 	"You will typically choose #View to view the contents of this sound and analyse it. "
-	"Praat will only read so much of the file into memory as is needed to play or display "
+	"Praat will only read as much of the file into memory as is needed to play or display "
 	"parts of it.")
-NORMAL (U"Both commands understand the following five standard audio file formats:")
+NORMAL (U"Both commands understand the following six standard audio file formats:")
 LIST_ITEM (U"• WAV:")
 LIST_ITEM1 (U"• linear 16-bit little-endian")
 LIST_ITEM1 (U"• 8-bit μ-law")
@@ -267,9 +269,8 @@ LIST_ITEM (U"• MP3:")
 LIST_ITEM1 (U"• all constant or variable bitrates")
 MAN_END
 
-MAN_BEGIN (U"Sound files 4. Files that Praat can write", U"ppgb", 20110129)
-INTRO (U"Praat can write five types of standard sound files in an appropriate linear 16-bit formats, "
-	"and a number of proprietary types of sound files as well:")
+MAN_BEGIN (U"Sound files 4. Files that Praat can write", U"ppgb", 20210604)
+INTRO (U"Praat can export a Sound to six types of standard sound files, in the appropriate linear 16-bit format:")
 LIST_ITEM (U"• @@Save as WAV file...@ (16-bit little-endian)")
 LIST_ITEM (U"• @@Save as AIFF file...@ (16-bit big-endian)")
 LIST_ITEM (U"• @@Save as AIFC file...@ (16-bit big-endian)")
