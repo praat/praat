@@ -375,6 +375,7 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		REAL (dataFreeMinimum, U"Data-free minimum (Hz)", my pitchTierArea -> default_dataFreeMinimum ())
 		REAL (dataFreeMaximum, U"Data-free maximum (Hz)", my pitchTierArea -> default_dataFreeMaximum ())
 	EDITOR_OK
+		SET_REAL (dataFreeMinimum, my pitchTierArea -> p_dataFreeMinimum)
 		SET_REAL (dataFreeMaximum, my pitchTierArea -> p_dataFreeMaximum)
 	EDITOR_DO
 		my pitchTierArea -> pref_dataFreeMinimum () = my pitchTierArea -> p_dataFreeMinimum = dataFreeMinimum;
@@ -404,28 +405,21 @@ static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set duration range", nullptr)
-		REAL (minimum, U"Minimum", my durationTierArea -> default_minimum ())
-		REAL (maximum, U"Maximum", my durationTierArea -> default_maximum ())
+		REAL (dataFreeMinimum, U"Data-free minimum", my durationTierArea -> default_dataFreeMinimum ())
+		REAL (dataFreeMaximum, U"Data-free maximum", my durationTierArea -> default_dataFreeMaximum ())
 	EDITOR_OK
-		SET_REAL (minimum, my durationTierArea -> p_minimum)
-		SET_REAL (maximum, my durationTierArea -> p_maximum)
+		SET_REAL (dataFreeMinimum, my durationTierArea -> p_dataFreeMinimum)
+		SET_REAL (dataFreeMaximum, my durationTierArea -> p_dataFreeMaximum)
 	EDITOR_DO
-		double minimumValue = ( my duration() ? RealTier_getMinimumValue (my duration().get()) : undefined );
-		double maximumValue = ( my duration() ? RealTier_getMaximumValue (my duration().get()) : undefined );
-		if (minimum > 1.0)
+		if (dataFreeMinimum > 1.0)
 			Melder_throw (U"Minimum relative duration should not be greater than 1.");
-		if (maximum < 1.0)
+		if (dataFreeMaximum < 1.0)
 			Melder_throw (U"Maximum relative duration should not be less than 1.");
-		if (minimum >= maximum)
+		if (dataFreeMinimum >= dataFreeMaximum)
 			Melder_throw (U"Maximum relative duration should be greater than minimum.");
-		if (isdefined (minimumValue) && minimum > minimumValue)
-			Melder_throw (U"Minimum relative duration should not be greater than the minimum value present, "
-				U"which is ", Melder_half (minimumValue), U".");
-		if (isdefined (maximumValue) && maximum < maximumValue)
-			Melder_throw (U"Maximum relative duration should not be less than the maximum value present, "
-				U"which is ", Melder_half (maximumValue), U".");
-		my durationTierArea -> ymin = my durationTierArea -> pref_minimum () = my durationTierArea -> p_minimum = minimum;
-		my durationTierArea -> ymax = my durationTierArea -> pref_maximum () = my durationTierArea -> p_maximum = maximum;
+		my durationTierArea -> pref_dataFreeMinimum () = my durationTierArea -> p_dataFreeMinimum = dataFreeMinimum;
+		my durationTierArea -> pref_dataFreeMaximum () = my durationTierArea -> p_dataFreeMaximum = dataFreeMaximum;
+		RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -724,18 +718,18 @@ static void drawDurationArea (ManipulationEditor me) {
 	Graphics_text (my graphics.get(), 1.0, 1.0, U"%%Duration manip");
 	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> p_minimum, my durationTierArea -> p_maximum);
+	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> ymin, my durationTierArea -> ymax);
 	FunctionEditor_drawGridLine (me, 1.0);
-	//FunctionEditor_drawRangeMark (me, my durationTierArea -> p_maximum, Melder_fixed (my durationTierArea -> p_maximum, 3), U"", Graphics_HALF);
-	//FunctionEditor_drawRangeMark (me, my durationTierArea -> p_minimum, Melder_fixed (my durationTierArea -> p_minimum, 3), U"", Graphics_HALF);
-	//if (my startSelection == my endSelection && my durationTierArea -> ycursor >= my durationTierArea -> p_minimum && my durationTierArea -> ycursor <= my durationTierArea -> p_maximum)
+	//FunctionEditor_drawRangeMark (me, my durationTierArea -> ymax, Melder_fixed (my durationTierArea -> ymax, 3), U"", Graphics_HALF);
+	//FunctionEditor_drawRangeMark (me, my durationTierArea -> ymin, Melder_fixed (my durationTierArea -> ymin, 3), U"", Graphics_HALF);
+	//if (my startSelection == my endSelection && my durationTierArea -> ycursor >= my durationTierArea -> ymin && my durationTierArea -> ycursor <= my durationTierArea -> ymax)
 	//	FunctionEditor_drawHorizontalHair (me, my durationTierArea -> ycursor, Melder_fixed (my durationTierArea -> ycursor, 3), U"");
 	if (cursorVisible && duration -> points.size > 0) {
 		const double y = RealTier_getValueAtTime (duration, my startSelection);
-		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), U"", my durationTierArea -> p_minimum, my durationTierArea -> p_maximum);
+		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), U"", my durationTierArea -> ymin, my durationTierArea -> ymax);
 	}
 
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> p_minimum, my durationTierArea -> p_maximum);
+	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my durationTierArea -> ymin, my durationTierArea -> ymax);
 	RealTierArea_draw (my durationTierArea.get(), duration);
 	if (isdefined (my durationTierArea -> anchorTime))
 		RealTierArea_drawWhileDragging (my durationTierArea.get(), duration);
@@ -769,8 +763,7 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 		RealTierArea_updateScaling (our pitchTierArea.get(), our manipulation() -> pitch.get());
 	} else if (clickedInWideDurationArea) {
 		result = RealTierArea_mouse (our durationTierArea.get(), our manipulation() -> duration.get(), event, x_world, globalY_fraction);
-		our durationTierArea -> p_minimum = our durationTierArea -> ymin;
-		our durationTierArea -> p_maximum = our durationTierArea -> ymax;
+		RealTierArea_updateScaling (our durationTierArea.get(), our manipulation() -> duration.get());
 	} else {
 		result = our ManipulationEditor_Parent :: v_mouseInWideDataView (event, x_world, globalY_fraction);
 	}
@@ -801,25 +794,11 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		/*
 			If needed, fix preferences to sane values.
 		*/
-		if (my durationTierArea -> pref_minimum() > 1.0)
-			my durationTierArea -> pref_minimum() = Melder_atof (my durationTierArea -> default_minimum());   // sanity
-		if (my durationTierArea -> pref_maximum() < 1.0)
-			my durationTierArea -> pref_maximum() = Melder_atof (my durationTierArea -> default_maximum());
-		Melder_assert (my durationTierArea -> pref_minimum() < my durationTierArea -> pref_maximum());
-		/*
-			Honour preferences.
-		*/
-		my durationTierArea -> ymin = my durationTierArea -> p_minimum = my durationTierArea -> pref_minimum();
-		my durationTierArea -> ymax = my durationTierArea -> p_maximum = my durationTierArea -> pref_maximum();
-		/*
-			If needed, widen on the basis of the data.
-		*/
-		const double minimumDurationValue = ( manipulation -> duration ? RealTier_getMinimumValue (manipulation -> duration.get()) : undefined );
-		const double maximumDurationValue = ( manipulation -> duration ? RealTier_getMaximumValue (manipulation -> duration.get()) : undefined );
-		if (minimumDurationValue < my durationTierArea -> p_minimum)   // NaN-safe
-			my durationTierArea -> ymin = my durationTierArea -> p_minimum = minimumDurationValue / 1.25;
-		if (maximumDurationValue > my durationTierArea -> p_maximum)   // NaN-safe
-			my durationTierArea -> ymax = my durationTierArea -> p_maximum = minimumDurationValue * 1.25;
+		if (my durationTierArea -> pref_dataFreeMinimum() > 1.0)
+			my durationTierArea -> pref_dataFreeMinimum() = Melder_atof (my durationTierArea -> default_dataFreeMinimum());   // sanity
+		if (my durationTierArea -> pref_dataFreeMaximum() < 1.0)
+			my durationTierArea -> pref_dataFreeMaximum() = Melder_atof (my durationTierArea -> default_dataFreeMaximum());
+		Melder_assert (my durationTierArea -> pref_dataFreeMinimum() < my durationTierArea -> pref_dataFreeMaximum());
 
 		my durationTierArea -> ycursor = 1.0;
 
@@ -831,11 +810,8 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 			my soundmax = +1.0;
 		}
 		RealTierArea_updateScaling (my pitchTierArea.get(), manipulation -> pitch.get());
-		if (manipulation -> duration) {
+		if (manipulation -> duration)
 			RealTierArea_updateScaling (my durationTierArea.get(), manipulation -> duration.get());
-			my durationTierArea -> p_minimum = my durationTierArea -> ymin;
-			my durationTierArea -> p_maximum = my durationTierArea -> ymax;
-		}
 		updateMenus (me.get());
 		return me;
 	} catch (MelderError) {
