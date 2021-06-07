@@ -1345,9 +1345,23 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	p ++;   // step over closing bracket
 	while (Melder_isHorizontalSpace (*p))
 		p ++;
-	if (*p != U'=')
-		Melder_throw (U"Missing '=' after vector element ", vectorName, U" [", index.string, U"].");
-	p ++;   // step over equals sign
+	int assignmentType = 0;
+	if (*p == U'=') {
+		p ++;   // step over equals sign
+	} else if (*p == U'+' && p [1] == U'=') {
+		assignmentType = 1;
+		p += 2;   // step over plus-gets sign
+	} else if (*p == U'-' && p [1] == U'=') {
+		assignmentType = 2;
+		p += 2;   // step over minus-gets sign
+	} else if (*p == U'*' && p [1] == U'=') {
+		assignmentType = 3;
+		p += 2;   // step over times-gets sign
+	} else if (*p == U'/' && p [1] == U'=') {
+		assignmentType = 4;
+		p += 2;   // step over div-gets sign
+	} else
+		Melder_throw (U"Missing '=', '+=', '-=', '*=' or '/=' after vector element ", vectorName, U" [", index.string, U"].");
 	while (Melder_isHorizontalSpace (*p))
 		p ++;   // go to first token after assignment
 	if (*p == U'\0')
@@ -1388,7 +1402,18 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	if (indexValue > var -> numericVectorValue.size)
 		Melder_throw (U"A vector index cannot be greater than the number of elements (here ",
 			var -> numericVectorValue.size, U"). The index you supplied is ", indexValue, U".");
-	var -> numericVectorValue [indexValue] = value;
+	if (assignmentType == 0)
+		var -> numericVectorValue [indexValue] = value;
+	else if (assignmentType == 1)
+		var -> numericVectorValue [indexValue] += value;
+	else if (assignmentType == 2)
+		var -> numericVectorValue [indexValue] -= value;
+	else if (assignmentType == 3)
+		var -> numericVectorValue [indexValue] *= value;
+	else if (assignmentType == 4)
+		var -> numericVectorValue [indexValue] /= value;
+	else
+		Melder_assert (false);
 }
 
 static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const char32* matrixName, MelderString& valueString) {
@@ -1451,12 +1476,28 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		Melder_throw (U"Column number should be numeric.");
 	}
 	p ++;   // step over closing bracket
-	while (Melder_isHorizontalSpace (*p)) p ++;
-	if (*p != U'=')
-		Melder_throw (U"Missing '=' after matrix element ", matrixName, U" [",
+	while (Melder_isHorizontalSpace (*p))
+		p ++;
+	int assignmentType = 0;
+	if (*p == U'=') {
+		p ++;   // step over equals sign
+	} else if (*p == U'+' && p [1] == U'=') {
+		assignmentType = 1;
+		p += 2;   // step over plus-gets sign
+	} else if (*p == U'-' && p [1] == U'=') {
+		assignmentType = 2;
+		p += 2;   // step over minus-gets sign
+	} else if (*p == U'*' && p [1] == U'=') {
+		assignmentType = 3;
+		p += 2;   // step over times-gets sign
+	} else if (*p == U'/' && p [1] == U'=') {
+		assignmentType = 4;
+		p += 2;   // step over div-gets sign
+	} else
+		Melder_throw (U"Missing '=', '+=', '-=', '*=' or '/=' after matrix element ", matrixName, U" [",
 			rowFormula.string, U",", columnFormula.string, U"].");
-	p ++;   // step over equals sign
-	while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
+	while (Melder_isHorizontalSpace (*p))
+		p ++;   // go to first token after assignment
 	if (*p == U'\0')
 		Melder_throw (U"Missing expression after matrix element ", matrixName, U" [",
 				rowFormula.string, U",", columnFormula.string, U"].");
@@ -1500,7 +1541,18 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	if (columnNumber > var -> numericMatrixValue. ncol)
 		Melder_throw (U"A column number cannot be greater than the number of columns (here ",
 			var -> numericMatrixValue. ncol, U"). The column number you supplied is ", columnNumber, U".");
-	var -> numericMatrixValue [rowNumber] [columnNumber] = value;
+	if (assignmentType == 0)
+		var -> numericMatrixValue [rowNumber] [columnNumber] = value;
+	else if (assignmentType == 1)
+		var -> numericMatrixValue [rowNumber] [columnNumber] += value;
+	else if (assignmentType == 2)
+		var -> numericMatrixValue [rowNumber] [columnNumber] -= value;
+	else if (assignmentType == 3)
+		var -> numericMatrixValue [rowNumber] [columnNumber] *= value;
+	else if (assignmentType == 4)
+		var -> numericMatrixValue [rowNumber] [columnNumber] /= value;
+	else
+		Melder_assert (false);
 }
 
 static void assignToStringArrayElement (Interpreter me, char32 *& p, const char32* vectorName, MelderString& valueString) {
