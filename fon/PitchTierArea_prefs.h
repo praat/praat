@@ -18,7 +18,6 @@
 
 prefs_begin (PitchTierArea)
 
-	prefs_add_enum_with_data (PitchTierArea, units, 1, kPitchTierArea_units, DEFAULT)
 	prefs_override_double (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
 	prefs_override_double (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
 

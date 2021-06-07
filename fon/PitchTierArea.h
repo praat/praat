@@ -21,43 +21,15 @@
 #include "RealTierArea.h"
 #include "PitchTier.h"
 
-#include "PitchTierArea_enums.h"
-
 Thing_define (PitchTierArea, RealTierArea) {
 	double v_minimumLegalY ()
 		override { return 0.0; }
-	conststring32 v_rightTickUnits () override {
-		if (our p_units == kPitchTierArea_units::HERTZ)
-			return U" Hz";
-		else if (our p_units == kPitchTierArea_units::SEMITONES)
-			return U" st";
-		else
-			Melder_fatal (U"PitchTierArea::v_rightTickUnits: Unknown pitch units: ", (int) our p_units);
-		return nullptr;
-	}
+	conststring32 v_rightTickUnits ()
+		override { return U" Hz"; }
 	double v_defaultMinimumValue ()
 		override { return 50.0; }
 	double v_defaultMaximumValue ()
 		override { return 600.0; }
-	double v_valueToY (double value) override {
-		const double clippedValue = Melder_clippedLeft (25.0, value);
-		if (our p_units == kPitchTierArea_units::HERTZ)
-			return clippedValue;
-		else if (our p_units == kPitchTierArea_units::SEMITONES)
-			return NUMhertzToSemitones (clippedValue);
-		else
-			Melder_fatal (U"PitchTierArea::v_valueToY: Unknown pitch units: ", (int) our p_units);
-		return undefined;
-	}
-	double v_yToValue (double y) override {
-		if (our p_units == kPitchTierArea_units::HERTZ)
-			return y;
-		else if (our p_units == kPitchTierArea_units::SEMITONES)
-			return NUMsemitonesToHertz (y);
-		else
-			Melder_fatal (U"PitchTierArea::v_yToValue: Unknown pitch units: ", (int) our p_units);
-		return undefined;
-	}
 
 	#include "PitchTierArea_prefs.h"
 };
