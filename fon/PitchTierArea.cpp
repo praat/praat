@@ -1,6 +1,6 @@
 /* PitchTierArea.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2018,2020 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,6 @@
  */
 
 #include "PitchTierArea.h"
-
-#include "enums_getText.h"
-#include "PitchTierArea_enums.h"
-#include "enums_getValue.h"
-#include "PitchTierArea_enums.h"
 
 Thing_implement (PitchTierArea, RealTierArea, 0);
 

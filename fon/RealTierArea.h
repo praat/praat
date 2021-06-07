@@ -27,8 +27,6 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual conststring32 v_rightTickUnits () { return U""; }
 	virtual double v_defaultMinimumValue () { return 0.0; }
 	virtual double v_defaultMaximumValue () { return 1.0; }
-	virtual double v_valueToY (double value) { return value; }
-	virtual double v_yToValue (double y) { return y; }
 
 	double ymin, ymax, ycursor;
 	double anchorTime = undefined, anchorY;
