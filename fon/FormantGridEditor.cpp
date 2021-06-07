@@ -285,7 +285,7 @@ void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantG
 	FunctionEditor_init (me, title, data);
 	my selectedFormant = 1;
 	my formantGridArea = Thing_new (FormantGridArea);
-	FunctionArea_init (my formantGridArea.get(), me, 0.0, 1.0);
+	RealTierArea_init (my formantGridArea.get(), me, 0.0, 1.0);
 	my formantGridArea -> ycursor = 0.382 * my p_formantFloor + 0.618 * my p_formantCeiling;
 }
 

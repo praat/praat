@@ -33,7 +33,7 @@ Thing_define (IntensityTierArea, RealTierArea) {
 
 inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	autoIntensityTierArea me = Thing_new (IntensityTierArea);
-	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 

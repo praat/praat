@@ -2,7 +2,7 @@
 #define _PitchTierArea_h_
 /* PitchTierArea.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@ Thing_define (PitchTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
 	double v_defaultMinimumValue ()
-		override { return 50.0; }
+		override { return our pref_dataFreeMinimum(); }
 	double v_defaultMaximumValue ()
-		override { return 600.0; }
+		override { return our pref_dataFreeMaximum(); }
 
 	#include "PitchTierArea_prefs.h"
 };
@@ -38,7 +38,7 @@ Thing_declare (PitchTierEditor);
 
 inline autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
 	autoPitchTierArea me = Thing_new (PitchTierArea);
-	FunctionArea_init (me.get(), editor, bottom_fraction, top_fraction);
+	RealTierArea_init (me.get(), editor, bottom_fraction, top_fraction);
 	return me;
 }
 
