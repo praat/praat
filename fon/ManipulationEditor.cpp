@@ -372,15 +372,14 @@ static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS
 
 static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch range", nullptr)
-		/* BUG: should include Minimum */
-		REAL (maximum, U"Maximum (Hz or st)", my pitchTierArea -> default_maximum ())
+		REAL (dataFreeMinimum, U"Data-free minimum (Hz)", my pitchTierArea -> default_dataFreeMinimum ())
+		REAL (dataFreeMaximum, U"Data-free maximum (Hz)", my pitchTierArea -> default_dataFreeMaximum ())
 	EDITOR_OK
-		SET_REAL (maximum, my pitchTierArea -> p_maximum)
+		SET_REAL (dataFreeMaximum, my pitchTierArea -> p_dataFreeMaximum)
 	EDITOR_DO
-		if (maximum <= my pitchTier.minPeriodic)
-			Melder_throw (U"Maximum pitch should be greater than ",
-				Melder_half (my pitchTier.minPeriodic), U" ", units_strings [(int) my pitchTierArea -> p_units], U".");
-		my pitchTierArea -> ymax = my pitchTierArea -> pref_maximum () = my pitchTierArea -> p_maximum = maximum;
+		my pitchTierArea -> pref_dataFreeMinimum () = my pitchTierArea -> p_dataFreeMinimum = dataFreeMinimum;
+		my pitchTierArea -> pref_dataFreeMaximum () = my pitchTierArea -> p_dataFreeMaximum = dataFreeMaximum;
+		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -394,18 +393,9 @@ static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		enum kPitchTierArea_units oldPitchUnits = my pitchTierArea -> p_units;
 		my pitchTierArea -> pref_units () = my pitchTierArea -> p_units = pitchUnits;
-		if (my pitchTierArea -> p_units == oldPitchUnits) return;
-		if (my pitchTierArea -> p_units == kPitchTierArea_units::HERTZ) {
-			my pitchTierArea -> p_minimum = 25.0;
-			my pitchTier.minPeriodic = 50.0;
-			my pitchTierArea -> ymax = my pitchTierArea -> pref_maximum () = my pitchTierArea -> p_maximum = NUMsemitonesToHertz (my pitchTierArea -> p_maximum);
-			my pitchTierArea -> ycursor = NUMsemitonesToHertz (my pitchTierArea -> ycursor);
-		} else {
-			my pitchTierArea -> p_minimum = -24.0;
-			my pitchTier.minPeriodic = -12.0;
-			my pitchTierArea -> ymax = my pitchTierArea -> pref_maximum () = my pitchTierArea -> p_maximum = NUMhertzToSemitones (my pitchTierArea -> p_maximum);
-			my pitchTierArea -> ycursor = NUMhertzToSemitones (my pitchTierArea -> ycursor);
-		}
+		if (my pitchTierArea -> p_units == oldPitchUnits)
+			return;
+		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -684,7 +674,7 @@ static void drawPitchArea (ManipulationEditor me) {
 	Graphics_text (my graphics.get(), 1.0, 1.0 - Graphics_dyMMtoWC (my graphics.get(), 3), U"%%Pitch from pulses");
 	Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my pitchTierArea -> p_minimum, my pitchTierArea -> p_maximum);
+	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my pitchTierArea -> ymin, my pitchTierArea -> ymax);
 
 	/*
 		Draw pitch contour based on pulses.
@@ -694,9 +684,9 @@ static void drawPitchArea (ManipulationEditor me) {
 		const double tleft = my pulses() -> t [i], tright = my pulses() -> t [i + 1], t = 0.5 * (tleft + tright);
 		if (t >= my startWindow && t <= my endWindow) {
 			if (tleft != tright) {
-				const double f = my pitchTierArea -> v_valueToY (1 / (tright - tleft));
-				if (f >= my pitchTier.minPeriodic && f <= my pitchTierArea -> p_maximum)
-					Graphics_fillCircle_mm (my graphics.get(), t, f, 1);
+				const double y = my pitchTierArea -> v_valueToY (1.0 / (tright - tleft));
+				if (y >= my pitchTierArea -> ymin && y <= my pitchTierArea -> ymax)
+					Graphics_fillCircle_mm (my graphics.get(), t, y, 1.0);
 			}
 		}
 	}
@@ -707,7 +697,7 @@ static void drawPitchArea (ManipulationEditor me) {
 		const double y = my pitchTierArea -> v_valueToY (RealTier_getValueAtTime (my pitch().get(), my startSelection));
 		FunctionEditor_insertCursorFunctionValue (me, y,
 			Melder_fixed (y, rangePrecisions [(int) my pitchTierArea -> p_units]), rangeUnits [(int) my pitchTierArea -> p_units],
-			my pitchTierArea -> p_minimum, my pitchTierArea -> p_maximum);
+			my pitchTierArea -> ymin, my pitchTierArea -> ymax);
 	}
 	RealTierArea_draw (my pitchTierArea.get(), my pitch().get());
 	if (isdefined (my pitchTierArea -> anchorTime))
@@ -776,8 +766,7 @@ bool structManipulationEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEven
 	bool result = false;
 	if (clickedInWidePitchArea) {
 		result = RealTierArea_mouse (our pitchTierArea.get(), our manipulation() -> pitch.get(), event, x_world, globalY_fraction);
-		our pitchTierArea -> p_minimum = our pitchTierArea -> ymin;
-		our pitchTierArea -> p_maximum = our pitchTierArea -> ymax;
+		RealTierArea_updateScaling (our pitchTierArea.get(), our manipulation() -> pitch.get());
 	} else if (clickedInWideDurationArea) {
 		result = RealTierArea_mouse (our durationTierArea.get(), our manipulation() -> duration.get(), event, x_world, globalY_fraction);
 		our durationTierArea -> p_minimum = our durationTierArea -> ymin;
@@ -806,27 +795,8 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.get(), title, manipulation);
 		my pitchTierArea = PitchTierArea_create (me.get(), ( manipulation -> duration ? 0.17 : 0.0 ), 0.67);
-		if (manipulation -> duration) {
+		if (manipulation -> duration)
 			my durationTierArea = DurationTierArea_create (me.get(), 0.0, 0.17);
-		}
-
-		const double maximumPitchValue = RealTier_getMaximumValue (manipulation -> pitch.get());
-		if (my pitchTierArea -> p_units == kPitchTierArea_units::HERTZ) {
-			my pitchTierArea -> ymin = my pitchTierArea -> p_minimum = 25.0;
-			my pitchTier.minPeriodic = 50.0;
-			my pitchTierArea -> p_maximum = maximumPitchValue;
-			my pitchTierArea -> ycursor = my pitchTierArea -> p_maximum * 0.8;
-			my pitchTierArea -> ymax = my pitchTierArea -> p_maximum *= 1.2;
-		} else if (my pitchTierArea -> p_units == kPitchTierArea_units::SEMITONES) {
-			my pitchTierArea -> ymin = my pitchTierArea -> p_minimum = -24.0;
-			my pitchTier.minPeriodic = -12.0;
-			my pitchTierArea -> p_maximum = ( isdefined (maximumPitchValue) ? NUMhertzToSemitones (maximumPitchValue) : undefined );
-			my pitchTierArea -> ycursor = my pitchTierArea -> p_maximum - 4.0;
-			my pitchTierArea -> ymax = my pitchTierArea -> p_maximum *= 3.0;
-		} else
-			Melder_fatal (U"ManipulationEditor_create: Unknown pitch units: ", (int) my pitchTierArea -> p_units);
-		if (isundef (my pitchTierArea -> p_maximum) || my pitchTierArea -> p_maximum < my pitchTierArea -> pref_maximum())
-			my pitchTierArea -> ymax = my pitchTierArea -> p_maximum = my pitchTierArea -> pref_maximum();
 
 		/*
 			If needed, fix preferences to sane values.

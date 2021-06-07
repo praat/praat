@@ -52,7 +52,6 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 	autoPitchTierArea pitchTierArea;
 	autoDurationTierArea durationTierArea;
 
-	struct { double minPeriodic; } pitchTier;
 	Graphics_Viewport inset;
 
 	void v_createMenus ()

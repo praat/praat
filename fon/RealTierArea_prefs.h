@@ -1,4 +1,4 @@
-/* PitchTierArea_prefs.h
+/* RealTierArea_prefs.h
  *
  * Copyright (C) 2012,2014-2016,2020,2021 Paul Boersma
  *
@@ -16,12 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (PitchTierArea)
+prefs_begin (RealTierArea)
 
-	prefs_add_enum_with_data (PitchTierArea, units, 1, kPitchTierArea_units, DEFAULT)
-	prefs_override_double (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
-	prefs_override_double (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
+	prefs_add_double_with_data (RealTierArea, dataFreeMinimum, 1, U"0.0")
+	prefs_add_double_with_data (RealTierArea, dataFreeMaximum, 1, U"1.0")
 
-prefs_end (PitchTierArea)
+prefs_end (RealTierArea)
 
-/* End of file PitchTierArea_prefs.h */
+/* End of file RealTierArea_prefs.h */
