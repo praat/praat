@@ -18,8 +18,8 @@
 
 prefs_begin (RealTierArea)
 
-	prefs_add_double_with_data (RealTierArea, dataFreeMinimum, 1, U"0.0")
-	prefs_add_double_with_data (RealTierArea, dataFreeMaximum, 1, U"1.0")
+	prefs_add_double_with_data (RealTierArea, dataFreeMinimum, 1, U"undefined")
+	prefs_add_double_with_data (RealTierArea, dataFreeMaximum, 1, U"undefined")
 
 prefs_end (RealTierArea)
 
