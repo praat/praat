@@ -25,9 +25,9 @@
 Thing_define (IntensityTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 100.0; }
 };
 

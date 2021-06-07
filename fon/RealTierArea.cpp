@@ -49,8 +49,8 @@ void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier) {
 }
 
 void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
-	my ymin = my v_valueToY (isdefined (my p_dataFreeMinimum) ? my p_dataFreeMinimum : my v_defaultYmin());
-	my ymax = my v_valueToY (isdefined (my p_dataFreeMaximum) ? my p_dataFreeMaximum : my v_defaultYmax());
+	my ymin = my v_valueToY (isdefined (my p_dataFreeMinimum) ? my p_dataFreeMinimum : my v_defaultMinimumValue());
+	my ymax = my v_valueToY (isdefined (my p_dataFreeMaximum) ? my p_dataFreeMaximum : my v_defaultMaximumValue());
 	if (tier -> points.size > 0) {
 		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (tier), my v_maximumLegalY());
 		const double maximumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMaximumValue (tier), my v_maximumLegalY());
@@ -162,7 +162,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 		integer inearestPoint = AnyTier_timeToNearestIndexInTimeWindow (tier->asAnyTier(), x_world, my startWindow(), my endWindow());
 		if (inearestPoint != 0) {
 			RealPoint nearestPoint = tier -> points.at [inearestPoint];
-			if (Graphics_distanceWCtoMM (my graphics(), x_world, y_world, nearestPoint -> number, nearestPoint -> value) < 1.5)
+			if (Graphics_distanceWCtoMM (my graphics(), x_world, y_world, nearestPoint -> number, my v_valueToY (nearestPoint -> value)) < 1.5)
 				clickedPoint = nearestPoint;
 		}
 		if (! clickedPoint) {

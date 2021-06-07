@@ -35,9 +35,9 @@ Thing_define (PitchTierArea, RealTierArea) {
 			Melder_fatal (U"PitchTierArea::v_rightTickUnits: Unknown pitch units: ", (int) our p_units);
 		return nullptr;
 	}
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 600.0; }
 	double v_valueToY (double value) override {
 		const double clippedValue = Melder_clippedLeft (25.0, value);
