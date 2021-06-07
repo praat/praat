@@ -2,7 +2,7 @@
 #define _DurationTierArea_h_
 /* DurationTierArea.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2014-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ Thing_define (DurationTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
 	double v_defaultMinimumValue ()
-		override { return 0.25; }
+		override { return our pref_dataFreeMinimum(); }
 	double v_defaultMaximumValue ()
-		override { return 3.0; }
+		override { return our pref_dataFreeMaximum(); }
 
 	#include "DurationTierArea_prefs.h"
 };
 
 inline autoDurationTierArea DurationTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	autoDurationTierArea me = Thing_new (DurationTierArea);
-	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 

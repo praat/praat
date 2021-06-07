@@ -56,5 +56,13 @@ void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier);
 
 bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
 
+inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	FunctionArea_init (me, editor, ymin_fraction, ymax_fraction);
+	if (isundef (my p_dataFreeMinimum))
+		my p_dataFreeMinimum = my v_defaultMinimumValue();
+	if (isundef (my p_dataFreeMaximum))
+		my p_dataFreeMaximum = my v_defaultMaximumValue();
+}
+
 /* End of file RealTierArea.h */
 #endif

@@ -60,13 +60,12 @@ static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 		REAL (ymin, my v_yminText (), my v_defaultYminText ())
 		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
 	EDITOR_OK
-		SET_REAL (ymin, my realTierArea -> ymin)
-		SET_REAL (ymax, my realTierArea -> ymax)
+		SET_REAL (ymin, my realTierArea -> p_dataFreeMinimum)
+		SET_REAL (ymax, my realTierArea -> p_dataFreeMaximum)
 	EDITOR_DO
-		my realTierArea -> ymin = ymin;
-		my realTierArea -> ymax = ymax;
-		if (my realTierArea -> ymax <= my realTierArea -> ymin)
-			RealTierEditor_updateScaling (me);
+		my realTierArea -> p_dataFreeMinimum = ymin;
+		my realTierArea -> p_dataFreeMaximum = ymax;
+		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -154,7 +153,7 @@ void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, consts
 	Melder_assert (Thing_isa (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
 	my realTierArea = Thing_newFromClass (realTierAreaClass). static_cast_move <structRealTierArea>();
-	FunctionArea_init (my realTierArea.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
+	RealTierArea_init (my realTierArea.get(), me, 0.0, sound ? 1.0 - my SOUND_HEIGHT : 1.0);
 	RealTierEditor_updateScaling (me);
 	my realTierArea -> ycursor = 0.382 * my realTierArea -> ymin + 0.618 * my realTierArea -> ymax;
 }
