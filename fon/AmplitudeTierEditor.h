@@ -25,9 +25,9 @@
 Thing_define (AmplitudeTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Pa"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return -1.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return +1.0; }
 };
 

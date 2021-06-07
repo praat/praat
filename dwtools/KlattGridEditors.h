@@ -46,9 +46,9 @@ Thing_define (KlattGrid_OpenPhaseTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 1.0; }
 };
 
@@ -77,9 +77,9 @@ Thing_define (KlattGrid_CollisionPhaseTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 0.1; }
 };
 
@@ -106,9 +106,9 @@ Thing_define (KlattGrid_Power1TierArea, KlattGrid_RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 4.0; }
 };
 
@@ -135,9 +135,9 @@ Thing_define (KlattGrid_Power2TierArea, KlattGrid_RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 5.0; }
 };
 
@@ -166,9 +166,9 @@ Thing_define (KlattGrid_DoublePulsingTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 1.0; }
 };
 
@@ -195,9 +195,9 @@ Thing_define (KlattGrid_PitchTierArea, KlattGrid_RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 600.0; }
 };
 
@@ -228,9 +228,9 @@ Thing_define (KlattGrid_FlutterTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 1.0; }
 };
 
@@ -255,9 +255,9 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 Thing_define (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 100.0; }
 };
 
@@ -284,9 +284,9 @@ void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, Class
 Thing_define (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return -30.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 30.0; }
 };
 
@@ -336,9 +336,9 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 
 
 Thing_define (KlattGrid_SpectralTiltTierArea, KlattGrid_IntensityTierArea) {
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return -50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 10.0; }
 };
 
@@ -353,9 +353,9 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 
 
 Thing_define (KlattGrid_FricationBypassTierArea, KlattGrid_IntensityTierArea) {
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return -50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 10.0; }
 };
 

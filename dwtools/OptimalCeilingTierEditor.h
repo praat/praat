@@ -25,9 +25,9 @@
 Thing_define (OptimalCeilingTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 4000.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 6000.0; }
 };
 

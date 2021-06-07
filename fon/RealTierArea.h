@@ -25,8 +25,8 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U""; }
-	virtual double v_defaultYmin () { return 0.0; }
-	virtual double v_defaultYmax () { return 1.0; }
+	virtual double v_defaultMinimumValue () { return 0.0; }
+	virtual double v_defaultMaximumValue () { return 1.0; }
 	virtual double v_valueToY (double value) { return value; }
 	virtual double v_yToValue (double y) { return y; }
 

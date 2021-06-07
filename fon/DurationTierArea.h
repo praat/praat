@@ -26,9 +26,9 @@ Thing_define (DurationTierArea, RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 0.25; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 3.0; }
 
 	#include "DurationTierArea_prefs.h"
