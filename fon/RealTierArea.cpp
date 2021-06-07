@@ -49,42 +49,16 @@ void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier) {
 }
 
 void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
-	if (tier -> points.size == 0) {
-		my ymin = my v_valueToY (my v_defaultYmin ());
-		my ymax = my v_valueToY (my v_defaultYmax ());
-	} else {
-		double ymin = my v_valueToY (RealTier_getMinimumValue (tier));
-		double ymax = my v_valueToY (RealTier_getMaximumValue (tier));
-		const double yrange = ymax - ymin;
-		if (yrange == 0.0) {
-			ymin -= 1.0;
-			ymax += 1.0;
-		} else {
-			ymin -= 0.2 * yrange;
-			ymax += 0.2 * yrange;
-		}
-		Melder_clip (my v_minimumLegalY(), & ymin, my v_maximumLegalY());
-		Melder_clip (my v_minimumLegalY(), & ymax, my v_maximumLegalY());
-		if (ymin >= ymax) {
-			if (isdefined (my v_minimumLegalY ()) && isdefined (my v_maximumLegalY ())) {
-				ymin = my v_minimumLegalY ();
-				ymax = my v_maximumLegalY ();
-			} else if (isdefined (my v_minimumLegalY ())) {
-				ymin = my v_minimumLegalY ();
-				ymax = ymin + 1.0;
-			} else {
-				Melder_assert (isdefined (my v_maximumLegalY ()));
-				ymax = my v_maximumLegalY ();
-				ymin = ymax - 1.0;
-			}
-		}
-		if (ymin < my ymin)
-			my ymin = ymin;
-		if (ymax > my ymax)
-			my ymax = ymax;
-		if (my ycursor <= my ymin || my ycursor >= my ymax)
-			my ycursor = 0.382 * my ymin + 0.618 * my ymax;
+	my ymin = my v_valueToY (my p_dataFreeMinimum);
+	my ymax = my v_valueToY (my p_dataFreeMaximum);
+	if (tier -> points.size > 0) {
+		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (tier), my v_maximumLegalY());
+		const double maximumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMaximumValue (tier), my v_maximumLegalY());
+		Melder_clipRight (& my ymin, my v_valueToY (minimumValue));
+		Melder_clipLeft (my v_valueToY (maximumValue), & my ymax);
 	}
+	if (my ycursor <= my ymin || my ycursor >= my ymax)
+		my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 }
 
 void RealTierArea_draw (RealTierArea me, RealTier tier) {
