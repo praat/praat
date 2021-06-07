@@ -2953,6 +2953,7 @@ void praat_uvafon_init () {
 	
 	structRealTierArea       :: f_preferences ();
 	structPitchTierArea      :: f_preferences ();
+	structDurationTierArea   :: f_preferences ();
 	structManipulationEditor :: f_preferences ();
 	structSpectrumEditor     :: f_preferences ();
 	structFormantGridEditor  :: f_preferences ();
