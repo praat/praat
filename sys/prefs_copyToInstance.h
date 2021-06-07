@@ -1,6 +1,6 @@
 /* prefs_copyToInstance.h
  *
- * Copyright (C) 2013,2015-2018 Paul Boersma
+ * Copyright (C) 2013,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,27 +44,27 @@
 		Klas##_Parent :: v_copyPreferencesToInstance ();
 
 #define prefs_add_int(Klas,name,version,default)
-#define prefs_add_int_with_data(Klas,name,version,default)  p_##name = pref_##name ();
+#define prefs_add_int_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
 #define prefs_override_int(Klas,name,version,default)
 
 #define prefs_add_integer(Klas,name,version,default)
-#define prefs_add_integer_with_data(Klas,name,version,default)  p_##name = pref_##name ();
+#define prefs_add_integer_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
 #define prefs_override_integer(Klas,name,version,default)
 
 #define prefs_add_bool(Klas,name,version,default)
-#define prefs_add_bool_with_data(Klas,name,version,default)  p_##name = pref_##name ();
+#define prefs_add_bool_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
 #define prefs_override_bool(Klas,name,version,default)
 
 #define prefs_add_double(Klas,name,version,default)
-#define prefs_add_double_with_data(Klas,name,version,default)  p_##name = pref_##name ();
+#define prefs_add_double_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
 #define prefs_override_double(Klas,name,version,default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default)
-#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  p_##name = pref_##name ();
+#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  our p_##name = our pref_##name ();
 #define prefs_override_enum(Klas,name,version,enumerated,default)
 
 #define prefs_add_string(Klas,name,version,default)
-#define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& p_##name [0], pref_##name ());
+#define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& our p_##name [0], our pref_##name ());
 #define prefs_override_string(Klas,name,version,default)
 
 #define prefs_end(Klas) \

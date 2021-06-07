@@ -40,6 +40,8 @@ Thing_define (RealTierArea, FunctionArea) {
 		our setViewport ();
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
+
+	#include "RealTierArea_prefs.h"
 };
 
 void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY);

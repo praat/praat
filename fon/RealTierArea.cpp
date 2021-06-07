@@ -1,6 +1,6 @@
 /* RealTierArea.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
 #include "RealTierEditor.h"
 
 Thing_implement (RealTierArea, FunctionArea, 0);
+
+#include "prefs_define.h"
+#include "RealTierArea_prefs.h"
+#include "prefs_install.h"
+#include "RealTierArea_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "RealTierArea_prefs.h"
 
 void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY) {
 	if (isdefined (my v_minimumLegalY ()) && desiredY < my v_minimumLegalY ())
@@ -43,8 +50,8 @@ void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier) {
 
 void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
 	if (tier -> points.size == 0) {
-		my ymin = my v_defaultYmin ();
-		my ymax = my v_defaultYmax ();
+		my ymin = my v_valueToY (my v_defaultYmin ());
+		my ymax = my v_valueToY (my v_defaultYmax ());
 	} else {
 		double ymin = my v_valueToY (RealTier_getMinimumValue (tier));
 		double ymax = my v_valueToY (RealTier_getMaximumValue (tier));
