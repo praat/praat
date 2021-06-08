@@ -1,6 +1,6 @@
 /* PitchTierArea_prefs.h
  *
- * Copyright (C) 2013,2015-2017,2020 Paul Boersma
+ * Copyright (C) 2012,2014-2016,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 prefs_begin (PitchTierArea)
 
-	prefs_add_enum_with_data (PitchTierArea, units, 1, kPitchTierArea_units, DEFAULT)
-	prefs_add_double_with_data  (PitchTierArea, minimum, 1, U"50.0")   // Hz
-	prefs_add_double_with_data  (PitchTierArea, maximum, 1, U"300.0")   // Hz
+	prefs_override_double (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
+	prefs_override_double (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
 
 prefs_end (PitchTierArea)
 

@@ -1,6 +1,6 @@
 /* RealTierArea.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,19 @@
 
 Thing_implement (RealTierArea, FunctionArea, 0);
 
+#include "prefs_define.h"
+#include "RealTierArea_prefs.h"
+#include "prefs_install.h"
+#include "RealTierArea_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "RealTierArea_prefs.h"
+
 void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY) {
 	if (isdefined (my v_minimumLegalY ()) && desiredY < my v_minimumLegalY ())
 		Melder_throw (U"Cannot add a point below ", my v_minimumLegalY (), my v_rightTickUnits (), U".");
 	if (isdefined (my v_maximumLegalY ()) && desiredY > my v_maximumLegalY ())
 		Melder_throw (U"Cannot add a point above ", my v_maximumLegalY (), my v_rightTickUnits (), U".");
-	RealTier_addPoint (tier, time, my v_yToValue (desiredY));
+	RealTier_addPoint (tier, time, desiredY);
 }
 
 void RealTierArea_removePoints (RealTierArea me, RealTier tier) {
@@ -38,46 +45,20 @@ void RealTierArea_removePoints (RealTierArea me, RealTier tier) {
 
 void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier) {
 	const double cursorTime = 0.5 * (my startSelection() + my endSelection());
-	RealTierArea_addPointAt (me, tier, cursorTime, my v_yToValue (my ycursor));
+	RealTierArea_addPointAt (me, tier, cursorTime, my ycursor);
 }
 
 void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
-	if (tier -> points.size == 0) {
-		my ymin = my v_defaultYmin ();
-		my ymax = my v_defaultYmax ();
-	} else {
-		double ymin = my v_valueToY (RealTier_getMinimumValue (tier));
-		double ymax = my v_valueToY (RealTier_getMaximumValue (tier));
-		const double yrange = ymax - ymin;
-		if (yrange == 0.0) {
-			ymin -= 1.0;
-			ymax += 1.0;
-		} else {
-			ymin -= 0.2 * yrange;
-			ymax += 0.2 * yrange;
-		}
-		Melder_clip (my v_minimumLegalY(), & ymin, my v_maximumLegalY());
-		Melder_clip (my v_minimumLegalY(), & ymax, my v_maximumLegalY());
-		if (ymin >= ymax) {
-			if (isdefined (my v_minimumLegalY ()) && isdefined (my v_maximumLegalY ())) {
-				ymin = my v_minimumLegalY ();
-				ymax = my v_maximumLegalY ();
-			} else if (isdefined (my v_minimumLegalY ())) {
-				ymin = my v_minimumLegalY ();
-				ymax = ymin + 1.0;
-			} else {
-				Melder_assert (isdefined (my v_maximumLegalY ()));
-				ymax = my v_maximumLegalY ();
-				ymin = ymax - 1.0;
-			}
-		}
-		if (ymin < my ymin)
-			my ymin = ymin;
-		if (ymax > my ymax)
-			my ymax = ymax;
-		if (my ycursor <= my ymin || my ycursor >= my ymax)
-			my ycursor = 0.382 * my ymin + 0.618 * my ymax;
+	my ymin = ( isdefined (my p_dataFreeMinimum) ? my p_dataFreeMinimum : my v_defaultMinimumValue() );
+	my ymax = ( isdefined (my p_dataFreeMaximum) ? my p_dataFreeMaximum : my v_defaultMaximumValue() );
+	if (tier -> points.size > 0) {
+		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (tier), my v_maximumLegalY());
+		const double maximumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMaximumValue (tier), my v_maximumLegalY());
+		Melder_clipRight (& my ymin, minimumValue);
+		Melder_clipLeft (maximumValue, & my ymax);
 	}
+	if (my ycursor <= my ymin || my ycursor >= my ymax)
+		my ycursor = 0.382 * my ymin + 0.618 * my ymax;
 }
 
 void RealTierArea_draw (RealTierArea me, RealTier tier) {
@@ -104,30 +85,30 @@ void RealTierArea_draw (RealTierArea me, RealTier tier) {
 		Graphics_text (my graphics(), 0.5 * (my startWindow() + my endWindow()), 0.5 * (my ymin + my ymax),
 				U"(no points)");
 	} else if (imax < imin) {
-		const double yleft = my v_valueToY (RealTier_getValueAtTime (tier, my startWindow()));
-		const double yright = my v_valueToY (RealTier_getValueAtTime (tier, my endWindow()));
+		const double yleft = RealTier_getValueAtTime (tier, my startWindow());
+		const double yright = RealTier_getValueAtTime (tier, my endWindow());
 		Graphics_line (my graphics(), my startWindow(), yleft, my endWindow(), yright);
 	} else {
 		Graphics_setColour (my graphics(), Melder_BLUE);
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
 			RealPoint point = tier -> points.at [ipoint];
-			const double t = point -> number, y = my v_valueToY (point -> value);
+			const double t = point -> number, y = point -> value;
 			if (ipoint == 1)
 				Graphics_line (my graphics(), my startWindow(), y, t, y);
 			else if (ipoint == imin)
-				Graphics_line (my graphics(), t, y, my startWindow(), my v_valueToY (RealTier_getValueAtTime (tier, my startWindow())));
+				Graphics_line (my graphics(), t, y, my startWindow(), RealTier_getValueAtTime (tier, my startWindow()));
 			if (ipoint == tier -> points.size)
 				Graphics_line (my graphics(), t, y, my endWindow(), y);
 			else if (ipoint == imax)
-				Graphics_line (my graphics(), t, y, my endWindow(), my v_valueToY (RealTier_getValueAtTime (tier, my endWindow())));
+				Graphics_line (my graphics(), t, y, my endWindow(), RealTier_getValueAtTime (tier, my endWindow()));
 			else {
 				RealPoint pointRight = tier -> points.at [ipoint + 1];
-				Graphics_line (my graphics(), t, y, pointRight -> number, my v_valueToY (pointRight -> value));
+				Graphics_line (my graphics(), t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 		for (integer ipoint = imin; ipoint <= imax; ipoint ++) {
 			RealPoint point = tier -> points.at [ipoint];
-			const double t = point -> number, y = my v_valueToY (point -> value);
+			const double t = point -> number, y = point -> value;
 			const bool pointIsSelected = ( ipoint >= ifirstSelected && ipoint <= ilastSelected );
 			Graphics_setColour (my graphics(), pointIsSelected ? Melder_RED : Melder_BLUE);
 			Graphics_fillCircle_mm (my graphics(), t, y, 3.0);
@@ -144,7 +125,7 @@ void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier) {
 	*/
 	for (integer ipoint = my firstSelected; ipoint <= my lastSelected; ipoint ++) {
 		const RealPoint point = tier -> points.at [ipoint];
-		const double t = point -> number + my dt, y = my v_valueToY (point -> value) + my dy;
+		const double t = point -> number + my dt, y = point -> value + my dy;
 		if (t >= my startWindow() && t <= my endWindow())
 			Graphics_circle_mm (my graphics(), t, y, 3);
 	}
@@ -154,7 +135,7 @@ void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier) {
 			Draw a crosshair with time and y.
 		*/
 		const RealPoint point = tier -> points.at [my firstSelected];
-		const double t = point -> number + my dt, y = my v_valueToY (point -> value) + my dy;
+		const double t = point -> number + my dt, y = point -> value + my dy;
 		Graphics_line (my graphics(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics(), 4.0));
 		Graphics_setTextAlignment (my graphics(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 		Graphics_text (my graphics(), t, my ymax, Melder_fixed (t, 6));
@@ -229,10 +210,10 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 			for (integer i = my firstSelected; i <= my lastSelected; i ++) {
 				RealPoint point = tier -> points.at [i];
 				point -> number += my dt;
-				double pointY = my v_valueToY (point -> value);
+				double pointY = point -> value;
 				pointY += my dy;
 				Melder_clip (my v_minimumLegalY (), & pointY, my v_maximumLegalY ());
-				point -> value = my v_yToValue (pointY);
+				point -> value = pointY;
 			}
 
 			/*

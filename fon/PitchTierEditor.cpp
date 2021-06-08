@@ -44,7 +44,6 @@ autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
 		autoPitchTierArea area = PitchTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
 		RealTierEditor_init (me.get(), area.move(), title, pitch, sound, ownSound);
-		my pitchTierArea() -> p_units = kPitchTierArea_units::HERTZ;   // override preferences
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PitchTier window not created.");

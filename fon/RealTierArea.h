@@ -25,10 +25,8 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U""; }
-	virtual double v_defaultYmin () { return 0.0; }
-	virtual double v_defaultYmax () { return 1.0; }
-	virtual double v_valueToY (double value) { return value; }
-	virtual double v_yToValue (double y) { return y; }
+	virtual double v_defaultMinimumValue () { return 0.0; }
+	virtual double v_defaultMaximumValue () { return 1.0; }
 
 	double ymin, ymax, ycursor;
 	double anchorTime = undefined, anchorY;
@@ -40,6 +38,8 @@ Thing_define (RealTierArea, FunctionArea) {
 		our setViewport ();
 		Graphics_setWindow (our graphics(), our startWindow(), our endWindow(), our ymin, our ymax);
 	}
+
+	#include "RealTierArea_prefs.h"
 };
 
 void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY);
@@ -55,6 +55,14 @@ void RealTierArea_draw (RealTierArea me, RealTier tier);
 void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier);
 
 bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction);
+
+inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	FunctionArea_init (me, editor, ymin_fraction, ymax_fraction);
+	if (isundef (my p_dataFreeMinimum))
+		my p_dataFreeMinimum = my v_defaultMinimumValue();
+	if (isundef (my p_dataFreeMaximum))
+		my p_dataFreeMaximum = my v_defaultMaximumValue();
+}
 
 /* End of file RealTierArea.h */
 #endif

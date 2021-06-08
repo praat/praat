@@ -25,15 +25,15 @@
 Thing_define (IntensityTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
-	double v_defaultYmin ()
+	double v_defaultMinimumValue ()
 		override { return 50.0; }
-	double v_defaultYmax ()
+	double v_defaultMaximumValue ()
 		override { return 100.0; }
 };
 
 inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	autoIntensityTierArea me = Thing_new (IntensityTierArea);
-	FunctionArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 

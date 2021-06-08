@@ -1,6 +1,6 @@
-/* PitchTierArea_enums.h
+/* RealTierArea_prefs.h
  *
- * Copyright (C) 2020 Paul Boersma
+ * Copyright (C) 2012,2014-2016,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kPitchTierArea_units, 1)
-	enums_add (kPitchTierArea_units, 1, HERTZ, U"Hertz")
-	enums_add (kPitchTierArea_units, 2, SEMITONES, U"semitones re 100 Hz")
-enums_end (kPitchTierArea_units, 2, HERTZ)
+prefs_begin (RealTierArea)
 
-/* End of file PitchTierArea_enums.h */
+	prefs_add_double_with_data (RealTierArea, dataFreeMinimum, 1, U"undefined")
+	prefs_add_double_with_data (RealTierArea, dataFreeMaximum, 1, U"undefined")
+
+prefs_end (RealTierArea)
+
+/* End of file RealTierArea_prefs.h */
