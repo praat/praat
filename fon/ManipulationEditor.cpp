@@ -376,14 +376,14 @@ static void menu_cb_multiplyPitchFrequencies (ManipulationEditor me, EDITOR_ARGS
 
 static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch range", nullptr)
-		REAL (dataFreeMinimum, U"Data-free minimum (Hz)", my pitchTierArea -> default_dataFreeMinimum ())
-		REAL (dataFreeMaximum, U"Data-free maximum (Hz)", my pitchTierArea -> default_dataFreeMaximum ())
+		REAL (dataFreeMinimum, U"Data-free minimum (Hz)", my pitchTierArea -> default_dataFreeMinimum())
+		REAL (dataFreeMaximum, U"Data-free maximum (Hz)", my pitchTierArea -> default_dataFreeMaximum())
 	EDITOR_OK
 		SET_REAL (dataFreeMinimum, my pitchTierArea -> p_dataFreeMinimum)
 		SET_REAL (dataFreeMaximum, my pitchTierArea -> p_dataFreeMaximum)
 	EDITOR_DO
-		my pitchTierArea -> pref_dataFreeMinimum () = my pitchTierArea -> p_dataFreeMinimum = dataFreeMinimum;
-		my pitchTierArea -> pref_dataFreeMaximum () = my pitchTierArea -> p_dataFreeMaximum = dataFreeMaximum;
+		my pitchTierArea -> pref_dataFreeMinimum() = my pitchTierArea -> p_dataFreeMinimum = dataFreeMinimum;
+		my pitchTierArea -> pref_dataFreeMaximum() = my pitchTierArea -> p_dataFreeMaximum = dataFreeMaximum;
 		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -393,8 +393,8 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set duration range", nullptr)
-		REAL (dataFreeMinimum, U"Data-free minimum", my durationTierArea -> default_dataFreeMinimum ())
-		REAL (dataFreeMaximum, U"Data-free maximum", my durationTierArea -> default_dataFreeMaximum ())
+		REAL (dataFreeMinimum, U"Data-free minimum", my durationTierArea -> default_dataFreeMinimum())
+		REAL (dataFreeMaximum, U"Data-free maximum", my durationTierArea -> default_dataFreeMaximum())
 	EDITOR_OK
 		SET_REAL (dataFreeMinimum, my durationTierArea -> p_dataFreeMinimum)
 		SET_REAL (dataFreeMaximum, my durationTierArea -> p_dataFreeMaximum)
@@ -405,8 +405,8 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 			Melder_throw (U"Maximum relative duration should not be less than 1.");
 		if (dataFreeMinimum >= dataFreeMaximum)
 			Melder_throw (U"Maximum relative duration should be greater than minimum.");
-		my durationTierArea -> pref_dataFreeMinimum () = my durationTierArea -> p_dataFreeMinimum = dataFreeMinimum;
-		my durationTierArea -> pref_dataFreeMaximum () = my durationTierArea -> p_dataFreeMaximum = dataFreeMaximum;
+		my durationTierArea -> pref_dataFreeMinimum() = my durationTierArea -> p_dataFreeMinimum = dataFreeMinimum;
+		my durationTierArea -> pref_dataFreeMaximum() = my durationTierArea -> p_dataFreeMaximum = dataFreeMaximum;
 		RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -456,7 +456,7 @@ static void menu_cb_addDurationPointAt (ManipulationEditor me, EDITOR_ARGS_FORM)
 		if (! my duration())
 			return;
 		Editor_save (me, U"Add duration point");
-		RealTier_addPoint (my duration().get(), time, relativeDuration);
+		RealTierArea_addPointAt (my durationTierArea.get(), my duration().get(), time, relativeDuration);
 		RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);

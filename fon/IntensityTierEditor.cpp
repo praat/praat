@@ -19,15 +19,15 @@
 #include "IntensityTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (IntensityTierArea, RealTierArea, 0);
-
 Thing_implement (IntensityTierEditor, RealTierEditor, 0);
 
-static void menu_cb_IntensityTierHelp (IntensityTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"IntensityTier"); }
+static void HELP_IntensityTierHelp (IntensityTierEditor, EDITOR_ARGS_DIRECT) {
+	HELP (U"IntensityTier")
+}
 
 void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	IntensityTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, U"IntensityTier help", 0, menu_cb_IntensityTierHelp);
+	EditorMenu_addCommand (menu, U"IntensityTier help", 0, HELP_IntensityTierHelp);
 }
 
 void structIntensityTierEditor :: v_play (double startTime, double endTime) {
@@ -41,7 +41,8 @@ void structIntensityTierEditor :: v_play (double startTime, double endTime) {
 autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensity, Sound sound, bool ownSound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
-		RealTierEditor_init (me.get(), classIntensityTierArea, title, intensity, sound, ownSound);
+		autoIntensityTierArea area = IntensityTierArea_create (me.get(), 0.0, ( sound ? 1.0 - structRealTierEditor::SOUND_HEIGHT : 1.0 ));
+		RealTierEditor_init (me.get(), area.move(), title, intensity, sound, ownSound);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"IntensityTier window not created.");
