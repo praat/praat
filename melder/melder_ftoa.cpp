@@ -173,6 +173,26 @@ conststring32 Melder_double (double value) noexcept {
 	CONVERT_BUFFER_TO_CHAR32
 }
 
+const char * Melder8_double_overtlyReal (double value) noexcept {
+	if (isundef (value))
+		return "--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS)
+		ibuffer = 0;
+	sprintf (buffers8 [ibuffer], "%.15g", value);
+	if (strtod (buffers8 [ibuffer], nullptr) != value) {
+		sprintf (buffers8 [ibuffer], "%.16g", value);
+		if (strtod (buffers8 [ibuffer], nullptr) != value)
+			sprintf (buffers8 [ibuffer], "%.17g", value);
+	}
+	if (! strchr (buffers8 [ibuffer], '.') && ! strchr (buffers8 [ibuffer], 'e') && ! strchr (buffers8 [ibuffer], 'E'))
+		strcat (buffers8 [ibuffer], ".0");
+	return buffers8 [ibuffer];
+}
+conststring32 Melder_double_overtlyReal (double value) noexcept {
+	const char *p = Melder8_double_overtlyReal (value);
+	CONVERT_BUFFER_TO_CHAR32
+}
+
 const char * Melder8_single (double value) noexcept {
 	if (isundef (value))
 		return "--undefined--";

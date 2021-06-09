@@ -31,13 +31,9 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 		override { return U"Intensity (dB)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set intensity range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"50.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"100.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum intensity (dB)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum intensity (dB)"; }
 };
 

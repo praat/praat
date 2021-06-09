@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.cpp
  *
- * Copyright (C) 2003-2012,2014-2016,2018,2020 Paul Boersma
+ * Copyright (C) 2003-2012,2014-2016,2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,15 @@
 #include "AmplitudeTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (AmplitudeTierArea, RealTierArea, 0);
-
 Thing_implement (AmplitudeTierEditor, RealTierEditor, 0);
 
-static void menu_cb_AmplitudeTierHelp (AmplitudeTierEditor /* me */, EDITOR_ARGS_DIRECT) {
-	Melder_help (U"AmplitudeTier");
+static void HELP_AmplitudeTierHelp (AmplitudeTierEditor /* me */, EDITOR_ARGS_DIRECT) {
+	HELP (U"AmplitudeTier")
 }
 
 void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	AmplitudeTierEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, U"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
+	EditorMenu_addCommand (menu, U"AmplitudeTier help", 0, HELP_AmplitudeTierHelp);
 }
 
 void structAmplitudeTierEditor :: v_play (double startTime, double endTime) {

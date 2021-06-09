@@ -31,13 +31,9 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override { return U"Relative duration"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set duration range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.25"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"3.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum duration"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum duration"; }
 };
 

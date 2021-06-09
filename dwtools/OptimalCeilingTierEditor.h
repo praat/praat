@@ -2,7 +2,7 @@
 #define _OptimalCeilingTierEditor_h_
 /* OptimalCeilingTierEditor.h
  *
- * Copyright (C) 2015 David Weenink, 2017,2020 Paul Boersma
+ * Copyright (C) 2015 David Weenink, 2017,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 		override { return U"4000.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"6000.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum frequency (Hz)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum frequency (Hz)"; }
 };
 

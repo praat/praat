@@ -1,8 +1,8 @@
-#ifndef _IntensityTierArea_h_
-#define _IntensityTierArea_h_
-/* IntensityTierArea.h
+#ifndef _OptimalCeilingTierArea_h_
+#define _OptimalCeilingTierArea_h_
+/* OptimalCeilingTierArea.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 2015 David Weenink, 2017,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,18 @@
  */
 
 #include "RealTierArea.h"
-#include "IntensityTier.h"
+#include "OptimalCeilingTier.h"
 
-Thing_define (IntensityTierArea, RealTierArea) {
+Thing_define (OptimalCeilingTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
-		override { return U" dB"; }
+		override { return U" Hz"; }
 	double v_defaultMinimumValue ()
 		override { return our pref_dataFreeMinimum(); }
 	double v_defaultMaximumValue ()
 		override { return our pref_dataFreeMaximum(); }
 
-	#include "IntensityTierArea_prefs.h"
+	#include "OptimalCeilingTierArea_prefs.h"
 };
 
-inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	autoIntensityTierArea me = Thing_new (IntensityTierArea);
-	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
-	return me;
-}
-
-/* End of file IntensityTierArea.h */
+/* End of file OptimalCeilingTierArea.h */
 #endif
