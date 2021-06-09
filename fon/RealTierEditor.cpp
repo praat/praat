@@ -65,6 +65,10 @@ static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		my realTierArea -> p_dataFreeMinimum = ymin;
 		my realTierArea -> p_dataFreeMaximum = ymax;
+		if (isdefined (my realTierArea -> pref_dataFreeMinimum()))
+			my realTierArea -> pref_dataFreeMinimum() = my realTierArea -> p_dataFreeMinimum;
+		if (isdefined (my realTierArea -> pref_dataFreeMaximum()))
+			my realTierArea -> pref_dataFreeMaximum() = my realTierArea -> p_dataFreeMaximum;
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
