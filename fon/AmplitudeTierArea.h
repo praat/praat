@@ -1,6 +1,6 @@
-#ifndef _IntensityTierArea_h_
-#define _IntensityTierArea_h_
-/* IntensityTierArea.h
+#ifndef _AmplitudeTierArea_h_
+#define _AmplitudeTierArea_h_
+/* AmplitudeTierArea.h
  *
  * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
  *
@@ -19,24 +19,24 @@
  */
 
 #include "RealTierArea.h"
-#include "IntensityTier.h"
+#include "AmplitudeTier.h"
 
-Thing_define (IntensityTierArea, RealTierArea) {
+Thing_define (AmplitudeTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
-		override { return U" dB"; }
+		override { return U" Pa"; }
 	double v_defaultMinimumValue ()
 		override { return our pref_dataFreeMinimum(); }
 	double v_defaultMaximumValue ()
 		override { return our pref_dataFreeMaximum(); }
 
-	#include "IntensityTierArea_prefs.h"
+	#include "AmplitudeTierArea_prefs.h"
 };
 
-inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
-	autoIntensityTierArea me = Thing_new (IntensityTierArea);
+inline autoAmplitudeTierArea AmplitudeTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoAmplitudeTierArea me = Thing_new (AmplitudeTierArea);
 	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 
-/* End of file IntensityTierArea.h */
+/* End of file AmplitudeTierArea.h */
 #endif

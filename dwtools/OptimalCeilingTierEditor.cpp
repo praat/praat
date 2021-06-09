@@ -19,8 +19,6 @@
 #include "OptimalCeilingTierEditor.h"
 #include "EditorM.h"
 
-Thing_implement (OptimalCeilingTierArea, RealTierArea, 0);
-
 Thing_implement (OptimalCeilingTierEditor, RealTierEditor, 0);
 
 static void menu_cb_OptimalCeilingTierHelp (OptimalCeilingTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"OptimalCeilingTier"); }

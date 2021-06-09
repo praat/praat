@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 23 May 2021
+# 9 June 2021
 
 include ../makefile.defs
 
@@ -36,7 +36,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Matrix_and_NMF.o Matrix_extensions.o \
 	Matrix_Categories.o MDS.o MultiSampledSpectrogram.o \
 	NavigationContext.o \
-	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
+	OptimalCeilingTier.o OptimalCeilingTierArea.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
 	Pitch_extensions.o Polynomial_to_Spectrum.o \
 	Polygon_extensions.o Procrustes.o \

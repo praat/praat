@@ -1101,7 +1101,9 @@ DO
 void praat_DataModeler_init ();
 void praat_DataModeler_init () {
 	Thing_recognizeClassesByName (classDataModeler, classFormantModeler, classOptimalCeilingTier, classOptimalCeilingTierEditor, nullptr);
-	
+
+	structOptimalCeilingTierArea :: f_preferences ();
+
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple DataModeler...", U"Create ISpline...", praat_HIDDEN + praat_DEPTH_1,
 			CREATE_ONE__DataModeler_createSimple);
 

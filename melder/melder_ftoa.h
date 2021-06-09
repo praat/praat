@@ -45,6 +45,8 @@ conststring8 Melder8_kleenean (kleenean value) noexcept;
 */
 conststring32 Melder_double (double value) noexcept;
 conststring8 Melder8_double (double value) noexcept;
+conststring32 Melder_double_overtlyReal (double value) noexcept;
+conststring8 Melder8_double_overtlyReal (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.9g" format.

@@ -61,9 +61,9 @@ Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"0.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"1.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum (0..1)"; }
 };
 
@@ -92,9 +92,9 @@ Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"0.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"0.1"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum (0..1)"; }
 };
 
@@ -118,12 +118,12 @@ Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_setRangeTitle ()
 		override { return U"Set power1 range..."; }
 	conststring32 v_defaultYminText ()
-		override { return U"0"; }
+		override { return U"0.0"; }
 	conststring32 v_defaultYmaxText ()
-		override { return U"4"; }
-	conststring32 v_yminText ()
+		override { return U"4.0"; }
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum"; }
 };
 
@@ -147,12 +147,12 @@ Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
 	conststring32 v_setRangeTitle ()
 		override { return U"Set power2 range..."; }
 	conststring32 v_defaultYminText ()
-		override { return U"0"; }
+		override { return U"0.0"; }
 	conststring32 v_defaultYmaxText ()
-		override { return U"5"; }
-	conststring32 v_yminText ()
+		override { return U"5.0"; }
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum"; }
 };
 
@@ -181,9 +181,9 @@ Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"0.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"1.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum (0..1)"; }
 };
 
@@ -212,9 +212,9 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"50.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"600.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum frequency (Hz)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum frequency (Hz)"; }
 };
 
@@ -243,9 +243,9 @@ Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"0.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"1.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum (0..1)"; }
 };
 
@@ -272,9 +272,9 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"50.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"100.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum intensity (dB)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum intensity (dB)"; }
 };
 
@@ -299,9 +299,9 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 		override { return U"-30.0"; }
 	conststring32 v_defaultYmaxText ()
 		override { return U"30.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum amplitude (dB)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum amplitude (dB)"; }
 };
 
