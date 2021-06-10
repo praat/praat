@@ -45,8 +45,6 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 
 	virtual conststring32 v_quantityText () { return U"Y"; }   // normally includes units
 	virtual conststring32 v_setRangeTitle () { return U"Set range..."; }
-	virtual conststring32 v_defaultYminText () { return U"undefined"; }
-	virtual conststring32 v_defaultYmaxText () { return U"undefined"; }
 	virtual conststring32 v_minimumLabelText () { return U"Minimum"; }   // normally includes units
 	virtual conststring32 v_maximumLabelText () { return U"Maximum"; }   // normally includes units
 };

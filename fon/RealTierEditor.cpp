@@ -57,16 +57,8 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (my v_setRangeTitle (), nullptr)
-		REAL (ymin, my v_minimumLabelText (),
-			! str32equ (my v_defaultYminText(), U"undefined")   // has a RealTierEditor default been defined?
-			? my v_defaultYminText()                            // then use the RealTierEditor default
-			: my realTierArea -> default_dataFreeMinimum()      // else fall back on the RealTierArea default
-		)
-		REAL (ymax, my v_maximumLabelText (),
-			! str32equ (my v_defaultYmaxText(), U"undefined")
-			? my v_defaultYmaxText()
-			: my realTierArea -> default_dataFreeMaximum()
-		)
+		REAL (ymin, my v_minimumLabelText (), my realTierArea -> default_dataFreeMinimum())
+		REAL (ymax, my v_maximumLabelText (), my realTierArea -> default_dataFreeMaximum())
 	EDITOR_OK
 		SET_REAL (ymin, my realTierArea -> p_dataFreeMinimum)
 		SET_REAL (ymax, my realTierArea -> p_dataFreeMaximum)
