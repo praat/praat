@@ -19,17 +19,8 @@
  */
 
 #include "RealTierEditor.h"
-#include "OptimalCeilingTier.h"
+#include "OptimalCeilingTierArea.h"
 #include "Sound.h"
-
-Thing_define (OptimalCeilingTierArea, RealTierArea) {
-	conststring32 v_rightTickUnits ()
-		override { return U" Hz"; }
-	double v_defaultMinimumValue ()
-		override { return 4000.0; }
-	double v_defaultMaximumValue ()
-		override { return 6000.0; }
-};
 
 Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
@@ -40,10 +31,6 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 		override { return U"Frequency (Hz)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set frequency range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"4000.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"6000.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum frequency (Hz)"; }
 	conststring32 v_maximumLabelText ()
