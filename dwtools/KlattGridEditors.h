@@ -39,10 +39,6 @@ Thing_define (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Open phase (0..1)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set open phase range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"1.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
 	conststring32 v_maximumLabelText ()
@@ -55,10 +51,6 @@ Thing_define (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Collision phase (0..1)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set collision phase range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"0.1"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
 	conststring32 v_maximumLabelText ()
@@ -71,10 +63,6 @@ Thing_define (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Power1"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set power1 range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"4.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum"; }
 	conststring32 v_maximumLabelText ()
@@ -87,10 +75,6 @@ Thing_define (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Power2"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set power2 range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"5.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum"; }
 	conststring32 v_maximumLabelText ()
@@ -103,10 +87,6 @@ Thing_define (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Double pulsing (0..1)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set double pulsing range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"1.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
 	conststring32 v_maximumLabelText ()
@@ -121,10 +101,6 @@ Thing_define (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Frequency (Hz)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set frequency range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"50.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"600.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum frequency (Hz)"; }
 	conststring32 v_maximumLabelText ()
@@ -137,10 +113,6 @@ Thing_define (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Flutter (0..1)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set flutter range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"0.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"1.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum (0..1)"; }
 	conststring32 v_maximumLabelText ()
@@ -155,10 +127,6 @@ Thing_define (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor) {
 		override { return U"Intensity (dB)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set intensity range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"50.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"100.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum intensity (dB)"; }
 	conststring32 v_maximumLabelText ()
@@ -171,10 +139,6 @@ Thing_define (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor) {
 		override { return U"Amplitude (dB)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set amplitude range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"-30.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"30.0"; }
 	conststring32 v_minimumLabelText ()
 		override { return U"Minimum amplitude (dB)"; }
 	conststring32 v_maximumLabelText ()
@@ -195,18 +159,10 @@ Thing_define (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierE
 autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor) {
-	conststring32 v_defaultYminText ()
-		override { return U"-50.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"10.0"; }
 };
 autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
 Thing_define (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor) {
-	conststring32 v_defaultYminText ()
-		override { return U"-50.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"10.0"; }
 };
 autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_create (conststring32 title, KlattGrid klattgrid);
 
