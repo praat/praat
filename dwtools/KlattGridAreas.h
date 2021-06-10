@@ -31,10 +31,6 @@ Thing_define (KlattGrid_OpenPhaseTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_OpenPhaseTierArea_prefs.h"
 };
 
@@ -45,10 +41,6 @@ Thing_define (KlattGrid_CollisionPhaseTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_CollisionPhaseTierArea_prefs.h"
 };
 
@@ -57,10 +49,6 @@ Thing_define (KlattGrid_Power1TierArea, KlattGrid_RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_Power1TierArea_prefs.h"
 };
 
@@ -69,10 +57,6 @@ Thing_define (KlattGrid_Power2TierArea, KlattGrid_RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_Power2TierArea_prefs.h"
 };
 
@@ -83,10 +67,6 @@ Thing_define (KlattGrid_DoublePulsingTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_DoublePulsingTierArea_prefs.h"
 };
 
@@ -95,10 +75,6 @@ Thing_define (KlattGrid_PitchTierArea, KlattGrid_RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_PitchTierArea_prefs.h"
 };
 
@@ -109,30 +85,18 @@ Thing_define (KlattGrid_FlutterTierArea, KlattGrid_RealTierArea) {
 		override { return 1.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U""; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_FlutterTierArea_prefs.h"
 };
 
 Thing_define (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_IntensityTierArea_prefs.h"
 };
 
 Thing_define (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" dB"; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_DecibelTierArea_prefs.h"
 };
 
@@ -146,18 +110,10 @@ Thing_define (KlattGrid_BreathinessAmplitudeTierArea, KlattGrid_IntensityTierAre
 };
 
 Thing_define (KlattGrid_SpectralTiltTierArea, KlattGrid_IntensityTierArea) {
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_SpectralTiltTierArea_prefs.h"
 };
 
 Thing_define (KlattGrid_FricationBypassTierArea, KlattGrid_IntensityTierArea) {
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 	#include "KlattGrid_FricationBypassTierArea_prefs.h"
 };
 

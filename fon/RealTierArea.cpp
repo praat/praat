@@ -49,8 +49,10 @@ void RealTierArea_addPointAtCursor (RealTierArea me, RealTier tier) {
 }
 
 void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
-	my ymin = ( isdefined (my p_dataFreeMinimum) ? my p_dataFreeMinimum : my v_defaultMinimumValue() );
-	my ymax = ( isdefined (my p_dataFreeMaximum) ? my p_dataFreeMaximum : my v_defaultMaximumValue() );
+	Melder_assert (isdefined (my p_dataFreeMinimum));
+	Melder_assert (isdefined (my p_dataFreeMaximum));
+	my ymin = my p_dataFreeMinimum;
+	my ymax = my p_dataFreeMaximum;
 	if (tier -> points.size > 0) {
 		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (tier), my v_maximumLegalY());
 		const double maximumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMaximumValue (tier), my v_maximumLegalY());

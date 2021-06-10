@@ -26,10 +26,6 @@ Thing_define (PitchTierArea, RealTierArea) {
 		override { return 0.0; }
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 
 	#include "PitchTierArea_prefs.h"
 };
