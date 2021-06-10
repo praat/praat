@@ -1,6 +1,6 @@
 /* KlattGridEditors.cpp
  *
- * Copyright (C) 2009-2019 david Weenink
+ * Copyright (C) 2009-2019 David Weenink, 2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
  * djmw 20110304 Thing_new
  */
 
-#include "Preferences.h"
 #include "KlattGridEditors.h"
 #include "EditorM.h"
 
@@ -35,8 +34,6 @@ static void KlattGrid_Editor_defaultPlay (KlattGrid me, double tmin, double tmax
 }
 
 /************************** KlattGrid_RealTierEditor *********************************/
-
-Thing_implement (KlattGrid_RealTierArea, RealTierArea, 0);
 
 Thing_implement (KlattGrid_RealTierEditor, RealTierEditor, 0);
 
@@ -59,8 +56,6 @@ void KlattGrid_RealTierEditor_init (KlattGrid_RealTierEditor me, ClassInfo viewC
 }
 
 /************************** KlattGrid_PitchTierEditor *********************************/
-
-Thing_implement (KlattGrid_PitchTierArea, KlattGrid_RealTierArea, 0);
 
 Thing_implement (KlattGrid_PitchTierEditor, KlattGrid_RealTierEditor, 0);
 
@@ -90,8 +85,6 @@ autoKlattGrid_PitchTierEditor KlattGrid_PitchTierEditor_create (conststring32 ti
 
 /************************** KlattGrid_IntensityTierEditor *********************************/
 
-Thing_implement (KlattGrid_IntensityTierArea, KlattGrid_RealTierArea, 0);
-
 Thing_implement (KlattGrid_IntensityTierEditor, KlattGrid_RealTierEditor, 0);
 
 static void menu_cb_IntensityTierHelp (KlattGrid_IntensityTierEditor, EDITOR_ARGS_DIRECT) {
@@ -107,10 +100,7 @@ void KlattGrid_IntensityTierEditor_init (KlattGrid_IntensityTierEditor me, Class
 	KlattGrid_RealTierEditor_init (me, viewClass, title, klattgrid, tier);
 }
 
-
 /************************** KlattGrid_DecibelTierEditor *********************************/
-
-Thing_implement (KlattGrid_DecibelTierArea, KlattGrid_IntensityTierArea, 0);
 
 Thing_implement (KlattGrid_DecibelTierEditor, KlattGrid_IntensityTierEditor, 0);
 
@@ -125,8 +115,6 @@ autoKlattGrid_DecibelTierEditor KlattGrid_DecibelTierEditor_create (conststring3
 }
 
 /************************** KlattGrid_VoicingAmplitudeTierEditor *********************************/
-
-Thing_implement (KlattGrid_VoicingAmplitudeTierArea, KlattGrid_IntensityTierArea, 0);
 
 Thing_implement (KlattGrid_VoicingAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
 
@@ -143,8 +131,6 @@ autoKlattGrid_VoicingAmplitudeTierEditor KlattGrid_VoicingAmplitudeTierEditor_cr
 
 /************************** KlattGrid_AspirationAmplitudeTierEditor *********************************/
 
-Thing_implement (KlattGrid_AspirationAmplitudeTierArea, KlattGrid_IntensityTierArea, 0);
-
 Thing_implement (KlattGrid_AspirationAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
 
 autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid) {
@@ -159,8 +145,6 @@ autoKlattGrid_AspirationAmplitudeTierEditor KlattGrid_AspirationAmplitudeTierEdi
 }
 
 /************************** KlattGrid_BreathinessAmplitudeTierEditor *********************************/
-
-Thing_implement (KlattGrid_BreathinessAmplitudeTierArea, KlattGrid_IntensityTierArea, 0);
 
 Thing_implement (KlattGrid_BreathinessAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
 
@@ -177,8 +161,6 @@ autoKlattGrid_BreathinessAmplitudeTierEditor KlattGrid_BreathinessAmplitudeTierE
 
 /************************** KlattGrid_SpectralTiltTierEditor *********************************/
 
-Thing_implement (KlattGrid_SpectralTiltTierArea, KlattGrid_IntensityTierArea, 0);
-
 Thing_implement (KlattGrid_SpectralTiltTierEditor, KlattGrid_IntensityTierEditor, 0);
 
 autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (conststring32 title, KlattGrid klattgrid) {
@@ -193,8 +175,6 @@ autoKlattGrid_SpectralTiltTierEditor KlattGrid_SpectralTiltTierEditor_create (co
 }
 
 /************************** KlattGrid_FricationBypassTierEditor *********************************/
-
-Thing_implement (KlattGrid_FricationBypassTierArea, KlattGrid_IntensityTierArea, 0);
 
 Thing_implement (KlattGrid_FricationBypassTierEditor, KlattGrid_IntensityTierEditor, 0);
 
@@ -211,8 +191,6 @@ autoKlattGrid_FricationBypassTierEditor KlattGrid_FricationBypassTierEditor_crea
 
 /************************** KlattGrid_FricationAmplitudeTierEditor *********************************/
 
-Thing_implement (KlattGrid_FricationAmplitudeTierArea, KlattGrid_IntensityTierArea, 0);
-
 Thing_implement (KlattGrid_FricationAmplitudeTierEditor, KlattGrid_IntensityTierEditor, 0);
 
 autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEditor_create (conststring32 title, KlattGrid klattgrid) {
@@ -227,8 +205,6 @@ autoKlattGrid_FricationAmplitudeTierEditor KlattGrid_FricationAmplitudeTierEdito
 }
 
 /************************** KlattGrid_OpenPhaseTierEditor *********************************/
-
-Thing_implement (KlattGrid_OpenPhaseTierArea, KlattGrid_RealTierArea, 0);
 
 Thing_implement (KlattGrid_OpenPhaseTierEditor, KlattGrid_RealTierEditor, 0);
 
@@ -245,8 +221,6 @@ autoKlattGrid_OpenPhaseTierEditor KlattGrid_OpenPhaseTierEditor_create (conststr
 
 /************************** KlattGrid_CollisionPhaseTierEditor *********************************/
 
-Thing_implement (KlattGrid_CollisionPhaseTierArea, KlattGrid_RealTierArea, 0);
-
 Thing_implement (KlattGrid_CollisionPhaseTierEditor, KlattGrid_RealTierEditor, 0);
 
 autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create (conststring32 title, KlattGrid klattgrid) {
@@ -261,8 +235,6 @@ autoKlattGrid_CollisionPhaseTierEditor KlattGrid_CollisionPhaseTierEditor_create
 }
 
 /************************** KlattGrid_Power1TierEditor *********************************/
-
-Thing_implement (KlattGrid_Power1TierArea, KlattGrid_RealTierArea, 0);
 
 Thing_implement (KlattGrid_Power1TierEditor, KlattGrid_RealTierEditor, 0);
 
@@ -279,8 +251,6 @@ autoKlattGrid_Power1TierEditor KlattGrid_Power1TierEditor_create (conststring32 
 
 /************************** KlattGrid_Power2TierEditor *********************************/
 
-Thing_implement (KlattGrid_Power2TierArea, KlattGrid_RealTierArea, 0);
-
 Thing_implement (KlattGrid_Power2TierEditor, KlattGrid_RealTierEditor, 0);
 
 autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 title, KlattGrid klattgrid) {
@@ -296,8 +266,6 @@ autoKlattGrid_Power2TierEditor KlattGrid_Power2TierEditor_create (conststring32 
 
 /************************** KlattGrid_FlutterTierEditor *********************************/
 
-Thing_implement (KlattGrid_FlutterTierArea, KlattGrid_RealTierArea, 0);
-
 Thing_implement (KlattGrid_FlutterTierEditor, KlattGrid_RealTierEditor, 0);
 
 autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring32 title, KlattGrid klattgrid) {
@@ -312,8 +280,6 @@ autoKlattGrid_FlutterTierEditor KlattGrid_FlutterTierEditor_create (conststring3
 }
 
 /************************** KlattGrid_DoublePulsingTierEditor *********************************/
-
-Thing_implement (KlattGrid_DoublePulsingTierArea, KlattGrid_RealTierArea, 0);
 
 Thing_implement (KlattGrid_DoublePulsingTierEditor, KlattGrid_RealTierEditor, 0);
 
