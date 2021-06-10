@@ -882,6 +882,18 @@ void praat_KlattGrid_init () {
 
 	Thing_recognizeClassesByName (classKlattGrid, nullptr);
 
+	structKlattGrid_OpenPhaseTierArea       :: f_preferences();
+	structKlattGrid_CollisionPhaseTierArea  :: f_preferences();
+	structKlattGrid_Power1TierArea          :: f_preferences();
+	structKlattGrid_Power2TierArea          :: f_preferences();
+	structKlattGrid_DoublePulsingTierArea   :: f_preferences();
+	structKlattGrid_PitchTierArea           :: f_preferences();
+	structKlattGrid_FlutterTierArea         :: f_preferences();
+	structKlattGrid_IntensityTierArea       :: f_preferences();
+	structKlattGrid_DecibelTierArea         :: f_preferences();
+	structKlattGrid_SpectralTiltTierArea    :: f_preferences();
+	structKlattGrid_FricationBypassTierArea :: f_preferences();
+
 	praat_addMenuCommand (U"Objects", U"New", U"Acoustic synthesis (Klatt)", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"KlattGrid help", nullptr, praat_DEPTH_1 | praat_NO_API, 
 			HELP__KlattGrid_help);

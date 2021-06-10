@@ -57,14 +57,26 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (my v_setRangeTitle (), nullptr)
-		REAL (ymin, my v_yminText (), my v_defaultYminText ())
-		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
+		REAL (ymin, my v_minimumLabelText (),
+			! str32equ (my v_defaultYminText(), U"undefined")   // has a RealTierEditor default been defined?
+			? my v_defaultYminText()                            // then use the RealTierEditor default
+			: my realTierArea -> default_dataFreeMinimum()      // else fall back on the RealTierArea default
+		)
+		REAL (ymax, my v_maximumLabelText (),
+			! str32equ (my v_defaultYmaxText(), U"undefined")
+			? my v_defaultYmaxText()
+			: my realTierArea -> default_dataFreeMaximum()
+		)
 	EDITOR_OK
 		SET_REAL (ymin, my realTierArea -> p_dataFreeMinimum)
 		SET_REAL (ymax, my realTierArea -> p_dataFreeMaximum)
 	EDITOR_DO
 		my realTierArea -> p_dataFreeMinimum = ymin;
 		my realTierArea -> p_dataFreeMaximum = ymax;
+		if (isdefined (my realTierArea -> pref_dataFreeMinimum()))
+			my realTierArea -> pref_dataFreeMinimum() = my realTierArea -> p_dataFreeMinimum;
+		if (isdefined (my realTierArea -> pref_dataFreeMaximum()))
+			my realTierArea -> pref_dataFreeMaximum() = my realTierArea -> p_dataFreeMaximum;
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END

@@ -37,13 +37,9 @@ Thing_define (PitchTierEditor, RealTierEditor) {
 		override { return U"Frequency (Hz)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set frequency range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"50.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"600.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum frequency (Hz)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum frequency (Hz)"; }
 };
 

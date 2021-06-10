@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 23 May 2021
+# 10 June 2021
 
 include ../makefile.defs
 
@@ -27,7 +27,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	HMM.o \
 	ICA.o Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
-	KlattGrid.o KlattGridEditors.o KlattTable.o \
+	KlattGrid.o KlattGridAreas.o KlattGridEditors.o KlattTable.o \
 	Ltas_extensions.o \
 	MDSVec.o MFCC.o \
 	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
@@ -36,7 +36,7 @@ OBJECTS = ActivationList.o AffineTransform.o AnalyticSound.o \
 	Matrix_and_NMF.o Matrix_extensions.o \
 	Matrix_Categories.o MDS.o MultiSampledSpectrogram.o \
 	NavigationContext.o \
-	OptimalCeilingTier.o OptimalCeilingTierEditor.o \
+	OptimalCeilingTier.o OptimalCeilingTierArea.o OptimalCeilingTierEditor.o \
 	PatternList.o PCA.o \
 	Pitch_extensions.o Polynomial_to_Spectrum.o \
 	Polygon_extensions.o Procrustes.o \

@@ -1,8 +1,8 @@
-#ifndef _PitchTierArea_h_
-#define _PitchTierArea_h_
-/* PitchTierArea.h
+#ifndef _OptimalCeilingTierArea_h_
+#define _OptimalCeilingTierArea_h_
+/* OptimalCeilingTierArea.h
  *
- * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 2015 David Weenink, 2017,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,9 @@
  */
 
 #include "RealTierArea.h"
-#include "PitchTier.h"
+#include "OptimalCeilingTier.h"
 
-Thing_define (PitchTierArea, RealTierArea) {
-	double v_minimumLegalY ()
-		override { return 0.0; }
+Thing_define (OptimalCeilingTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
 	double v_defaultMinimumValue ()
@@ -31,14 +29,8 @@ Thing_define (PitchTierArea, RealTierArea) {
 	double v_defaultMaximumValue ()
 		override { return our pref_dataFreeMaximum(); }
 
-	#include "PitchTierArea_prefs.h"
+	#include "OptimalCeilingTierArea_prefs.h"
 };
 
-inline autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
-	autoPitchTierArea me = Thing_new (PitchTierArea);
-	RealTierArea_init (me.get(), editor, bottom_fraction, top_fraction);
-	return me;
-}
-
-/* End of file PitchTierArea.h */
+/* End of file OptimalCeilingTierArea.h */
 #endif

@@ -19,17 +19,8 @@
  */
 
 #include "RealTierEditor.h"
-#include "AmplitudeTier.h"
+#include "AmplitudeTierArea.h"
 #include "Sound.h"
-
-Thing_define (AmplitudeTierArea, RealTierArea) {
-	conststring32 v_rightTickUnits ()
-		override { return U" Pa"; }
-	double v_defaultMinimumValue ()
-		override { return -1.0; }
-	double v_defaultMaximumValue ()
-		override { return +1.0; }
-};
 
 Thing_define (AmplitudeTierEditor, RealTierEditor) {
 	void v_createHelpMenuItems (EditorMenu menu)
@@ -40,13 +31,9 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override { return U"Sound pressure (Pa)"; }
 	conststring32 v_setRangeTitle ()
 		override { return U"Set amplitude range..."; }
-	conststring32 v_defaultYminText ()
-		override { return U"-1.0"; }
-	conststring32 v_defaultYmaxText ()
-		override { return U"+1.0"; }
-	conststring32 v_yminText ()
+	conststring32 v_minimumLabelText ()
 		override { return U"Minimum amplitude (Pa)"; }
-	conststring32 v_ymaxText ()
+	conststring32 v_maximumLabelText ()
 		override { return U"Maximum amplitude (Pa)"; }
 };
 

@@ -1,6 +1,6 @@
-#ifndef _PitchTierArea_h_
-#define _PitchTierArea_h_
-/* PitchTierArea.h
+#ifndef _IntensityTierArea_h_
+#define _IntensityTierArea_h_
+/* IntensityTierArea.h
  *
  * Copyright (C) 1992-2005,2007,2009-2012,2015-2018,2020,2021 Paul Boersma
  *
@@ -19,26 +19,24 @@
  */
 
 #include "RealTierArea.h"
-#include "PitchTier.h"
+#include "IntensityTier.h"
 
-Thing_define (PitchTierArea, RealTierArea) {
-	double v_minimumLegalY ()
-		override { return 0.0; }
+Thing_define (IntensityTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
-		override { return U" Hz"; }
+		override { return U" dB"; }
 	double v_defaultMinimumValue ()
 		override { return our pref_dataFreeMinimum(); }
 	double v_defaultMaximumValue ()
 		override { return our pref_dataFreeMaximum(); }
 
-	#include "PitchTierArea_prefs.h"
+	#include "IntensityTierArea_prefs.h"
 };
 
-inline autoPitchTierArea PitchTierArea_create (FunctionEditor editor, double bottom_fraction, double top_fraction) {
-	autoPitchTierArea me = Thing_new (PitchTierArea);
-	RealTierArea_init (me.get(), editor, bottom_fraction, top_fraction);
+inline autoIntensityTierArea IntensityTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoIntensityTierArea me = Thing_new (IntensityTierArea);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
 	return me;
 }
 
-/* End of file PitchTierArea.h */
+/* End of file IntensityTierArea.h */
 #endif
