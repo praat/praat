@@ -60,5 +60,11 @@ inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, double ym
 	Melder_assert (isdefined (my p_dataFreeMaximum));
 }
 
+inline autoRealTierArea RealTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoRealTierArea me = Thing_new (RealTierArea);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	return me;
+}
+
 /* End of file RealTierArea.h */
 #endif
