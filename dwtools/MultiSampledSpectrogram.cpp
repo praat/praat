@@ -52,9 +52,9 @@ Thing_implement (MultiSampledSpectrogram, Sampled, 0);
 
 void structMultiSampledSpectrogram :: v_info () {
 	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Minimum frequency (Hz): ", exp2 (xmin), U" Hz");
-	MelderInfo_writeLine (U"Maximum frequency (Hz): ", exp2 (xmax), U" Hz");
-	MelderInfo_writeLine (U"First frequency (Hz): ", exp2 (x1), U" Hz");
+	MelderInfo_writeLine (U"Minimum frequency (Hz): ", v_myFrequencyUnitToHertz (xmin), U" Hz");
+	MelderInfo_writeLine (U"Maximum frequency (Hz): ", v_myFrequencyUnitToHertz (xmax), U" Hz");
+	MelderInfo_writeLine (U"First frequency (Hz): ", v_myFrequencyUnitToHertz (x1), U" Hz");
 	const integer numberOfFrequencies = frequencyBins.size;
 	MelderInfo_writeLine (U"Number of frequencies: ", numberOfFrequencies);
 	MelderInfo_writeLine (U"Number of frames in frequency bin 1: ", frequencyBins.at [1] -> nx);
@@ -141,16 +141,18 @@ void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double tmin, doub
 }
 
 void MultiSampledSpectrogram_getFrequencyBand (MultiSampledSpectrogram me, integer index, double *out_flow, double *out_fhigh) {
-	const double maximumFrequency = my v_myFrequencyUnitToHertz (my xmax);
 	const double myFrequencyUnit = Sampled_indexToX (me, index);
-	double flow = my v_myFrequencyUnitToHertz (myFrequencyUnit - my frequencyResolutionInBins * my dx);
-	double fhigh = my v_myFrequencyUnitToHertz (myFrequencyUnit + my frequencyResolutionInBins * my dx);
-	Melder_clipLeft (0.0, & flow);
-	Melder_clipRight (& fhigh, maximumFrequency);
-	if (out_flow)
+	if (out_flow) {
+		double flow = my v_myFrequencyUnitToHertz (myFrequencyUnit - my frequencyResolutionInBins * my dx);
+		Melder_clipLeft (0.0, & flow);
 		*out_flow = flow;
-	if (out_fhigh)
+	}
+	if (out_fhigh) {
+		const double maximumFrequency = my v_myFrequencyUnitToHertz (my xmax);
+		double fhigh = my v_myFrequencyUnitToHertz (myFrequencyUnit + my frequencyResolutionInBins * my dx);
+		Melder_clipRight (& fhigh, maximumFrequency);
 		*out_fhigh = fhigh;
+	}
 }
 
 void MultiSampledSpectrogram_formula (MultiSampledSpectrogram me, conststring32 formula, Interpreter interpreter) {
@@ -192,7 +194,7 @@ void MultiSampledSpectrogram_formula_part (MultiSampledSpectrogram me, double fr
 integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	double numberOfFrames = 0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-		FrequencyBin frequencyBin = my frequencyBins . at [ifreq];
+		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
 		numberOfFrames += frequencyBin -> nx;
 	}
 	return numberOfFrames;

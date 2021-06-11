@@ -1,5 +1,5 @@
 # test_Eigen.praat
-# djmw 20161116, 20180829
+# djmw 20161116, 20180829, 20210609
 
 appendInfoLine: "test_Eigen.praat"
 
@@ -14,23 +14,34 @@ endfor
 @test3by3
 @testgeneralSquare
 
+procedure appendInterfaceName: .i, .text$
+	if  .i = 1
+		appendInfoLine: tab$, tab$, .text$
+	endif
+endproc
+
 procedure testInterface
+	appendInfoLine: tab$, "interface test"
 	for .i to 5
 		.numberOfColumns = randomInteger (3, 12)
 		.tableofreal = Create TableOfReal: "t", 100, .numberOfColumns
 		Formula: ~ randomGauss (0, 1)
 		.pca = To PCA
 		.eigen = Extract Eigen
+		@appendInterfaceName: .i, "Get number of eigenvalues"
 		.numberOfEigenvalues = Get number of eigenvalues
 		assert .numberOfEigenvalues == .numberOfColumns
+		@appendInterfaceName: .i, "Get eigenvector dimension"
 		.dimension = Get eigenvector dimension
 		assert .dimension == .numberOfColumns
 		for .j to .numberOfEigenvalues
+			@appendInterfaceName: .i, "Get eigenvalue: "+ string$ (.j)
 			.eigenvalue [.j] = Get eigenvalue: .j
 		endfor
 		for .j to .numberOfEigenvalues
 			.sump = Get eigenvalue: .j
 			for .k from .j to .numberOfEigenvalues
+				@appendInterfaceName: .i, "Get sum of eigenvalues: " + string$ (.j) + ", " + string$ (.k)
 				.sum = Get sum of eigenvalues: .j, .k
 				assert .sum >= .eigenvalue [.j]
 			endfor
@@ -38,6 +49,7 @@ procedure testInterface
 
 		for .j to .numberOfEigenvalues
 			for .k from .j to .dimension
+				@appendInterfaceName: .i, "Get eigenvector element: " + string$ (.j) + ", " + string$ (.k)
 				.val[.j,.k] = Get eigenvector element: .j, .k
 			endfor
 		endfor
@@ -45,6 +57,7 @@ procedure testInterface
 			for .k to .dimension
 				.val[.k] = Get eigenvector element: .j, .k
 			endfor
+			@appendInterfaceName: .i, "Invert eigenvector: " + string$ (.j)
 			Invert eigenvector: .j
 			for .k to .dimension
 				.valk = Get eigenvector element: .j, .k
@@ -53,6 +66,7 @@ procedure testInterface
 		endfor
 		removeObject: .tableofreal, .pca, .eigen
 	endfor
+	appendInfoLine: tab$, "interface test OK"
 endproc
 
 procedure assertApproximatelyEqual: .val1, .val2, .eps, .comment$
@@ -150,6 +164,7 @@ procedure testDiagonal: .dim
 endproc
 
 procedure testgeneralSquare
+	appendInfoLine: tab$, "3x3 general "
 	.dim = 3
 	.name$ = "3x3square"
 	.mat = Create simple Matrix: .name$, .dim, .dim, "0"
@@ -165,7 +180,7 @@ procedure testgeneralSquare
 	.nrow = Get number of rows
 	assert .nrow = 3
 	# lite version of equality: check for occurrence
-	# the eigenvalues of a real square matrix are not "sorted". We only know that complex conjugate eigenvalues occur
+	# the eigenvalues of a real square matrix are not "sorted". We only know that complex conjugate eigenvalues
 	# have the one with positive imaginary part first.
 	.eval_re# = {object [.eigenvalues, 1, 1], object [.eigenvalues, 2, 1],object [.eigenvalues, 3, 1]}
 	.eval_im# = {object [.eigenvalues, 1, 2], object [.eigenvalues, 2, 2],object [.eigenvalues, 3, 2]}

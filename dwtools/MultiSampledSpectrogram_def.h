@@ -36,7 +36,9 @@ oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 	oo_DOUBLE (frequencyResolutionInBins)
 	
 	oo_COLLECTION_OF (OrderedOf, frequencyBins, FrequencyBin, 0) // invariant frequencyBins.size == my nx
-																 
+	oo_OBJECT (FrequencyBin, 0, fzero)	// needs special windowing														 
+	oo_OBJECT (FrequencyBin, 0, fnyquist)	// needs special windowing
+	
 	#if oo_DECLARING
 		void v_info ()
 			override;
