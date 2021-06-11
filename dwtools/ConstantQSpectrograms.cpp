@@ -156,7 +156,7 @@ autoGaborSpectrogram GaborSpectrogram_create (double tmin, double tmax, double f
 		Melder_require (filterBandwidth <= fmax,
 			U"The filter bandwidth should not exceed ", fmax, U".");
 		const integer numberOfFrequencyBins = Melder_ifloor ((fmax - filterBandwidth) / df) + 1;
-		const double f1 = 0.5 * (fmax - (numberOfFrequencyBins - 1) * df - filterBandwidth);
+		const double f1 = 0.5 * (fmax - (numberOfFrequencyBins - 1) * df);
 		const double frequencyResolutionBins = 0.5 * filterBandwidth / df;
 		MultiSampledSpectrogram_init (me.get(), tmin, tmax, 0.0, fmax, numberOfFrequencyBins, df, f1, frequencyResolutionBins);
 		return me;
