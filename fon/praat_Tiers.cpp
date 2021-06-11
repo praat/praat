@@ -624,7 +624,7 @@ FORM (REAL_IntensityTier_getValueAtTime, U"Get IntensityTier value", U"Intensity
 	OK
 DO
 	QUERY_ONE_FOR_REAL (IntensityTier)
-		double result = RealTier_getValueAtTime (me, time);
+		const double result = RealTier_getValueAtTime (me, time);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
@@ -633,7 +633,7 @@ FORM (REAL_IntensityTier_getValueAtIndex, U"Get IntensityTier value", U"Intensit
 	OK
 DO
 	QUERY_ONE_FOR_REAL (IntensityTier)
-		double result = RealTier_getValueAtIndex (me, pointNumber);
+		const double result = RealTier_getValueAtIndex (me, pointNumber);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
@@ -1656,9 +1656,29 @@ DIRECT (NEW_RealTier_downto_TableOfReal) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+// MARK: Cast
+
 DIRECT (NEW_RealTier_to_AmplitudeTier) {
 	CONVERT_EACH_TO_ONE (RealTier)
 		autoAmplitudeTier result = RealTier_to_AmplitudeTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_to_DurationTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoDurationTier result = RealTier_to_DurationTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_to_IntensityTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoIntensityTier result = RealTier_to_IntensityTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_to_PitchTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoPitchTier result = RealTier_to_PitchTier (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1751,6 +1771,7 @@ void praat_Tiers_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create IntensityTier...", nullptr, 1, NEW1_IntensityTier_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create DurationTier...", nullptr, 1, NEW1_DurationTier_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create AmplitudeTier...", nullptr, 1, NEW1_AmplitudeTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create RealTier...", nullptr, 1, NEW1_RealTier_create);
 
 	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, HELP_AmplitudeTier_help);
 	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit);
@@ -1956,9 +1977,13 @@ void praat_Tiers_init () {
 		praat_addAction1 (classRealTier, 0, U"Add point...", nullptr, 1, MODIFY_RealTier_addPoint);
 		praat_addAction1 (classRealTier, 0, U"Formula...", nullptr, 1, MODIFY_RealTier_formula);
 	praat_addAction1 (classRealTier, 0, U"Convert", nullptr, 0, nullptr);
-		praat_addAction1 (classRealTier, 0, U"To AmplitudeTier", nullptr, 0, NEW_RealTier_to_AmplitudeTier);
 		praat_addAction1 (classRealTier, 0, U"Down to PointProcess", nullptr, 0, NEW_RealTier_downto_PointProcess);
 		praat_addAction1 (classRealTier, 0, U"Down to TableOfReal", nullptr, 0, NEW_RealTier_downto_TableOfReal);
+	praat_addAction1 (classRealTier, 0, U"Cast", nullptr, 0, nullptr);
+		praat_addAction1 (classRealTier, 0, U"To PitchTier", nullptr, 0, NEW_RealTier_to_PitchTier);
+		praat_addAction1 (classRealTier, 0, U"To IntensityTier", nullptr, 0, NEW_RealTier_to_IntensityTier);
+		praat_addAction1 (classRealTier, 0, U"To DurationTier", nullptr, 0, NEW_RealTier_to_DurationTier);
+		praat_addAction1 (classRealTier, 0, U"To AmplitudeTier", nullptr, 0, NEW_RealTier_to_AmplitudeTier);
 
 	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, GRAPHICS_SpectrumTier_draw);
 	praat_addAction1 (classSpectrumTier, 0, U"Tabulate -", nullptr, 0, nullptr);
@@ -2002,9 +2027,9 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, U"Analyse", nullptr, 0, n
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Ltas (only harmonics)...", nullptr, 0, NEW1_PointProcess_Sound_to_Ltas_harmonics);
 praat_addAction2 (classPointProcess, 1, classSound, 1, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Sound ensemble...", nullptr, 0, NEW1_Sound_PointProcess_to_SoundEnsemble_correlate);
-	praat_addAction2 (classRealTier, 1, classPointProcess, 1, U"To IntensityTier", nullptr, 0, NEW1_IntensityTier_PointProcess_to_IntensityTier);
-	praat_addAction2 (classRealTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit);
-	praat_addAction2 (classRealTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_IntensityTier_viewAndEdit);
+	praat_addAction2 (classRealTier, 1, classPointProcess, 1, U"To RealTier", nullptr, 0, NEW1_RealTier_PointProcess_to_RealTier);
+	praat_addAction2 (classRealTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit);
+	praat_addAction2 (classRealTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit);
 }
 
 /* End of file praat_Tiers.cpp */

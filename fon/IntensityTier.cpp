@@ -1,6 +1,6 @@
 /* IntensityTier.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +117,16 @@ autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int s
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied with ", intensity, U".");
+	}
+}
+
+autoIntensityTier RealTier_to_IntensityTier (RealTier me) {
+	try {
+		autoIntensityTier thee = Thing_new (IntensityTier);
+		my structRealTier :: v_copy (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to IntensityTier.");
 	}
 }
 
