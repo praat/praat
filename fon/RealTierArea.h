@@ -25,8 +25,6 @@ Thing_define (RealTierArea, FunctionArea) {
 	virtual double v_minimumLegalY () { return undefined; }
 	virtual double v_maximumLegalY () { return undefined; }
 	virtual conststring32 v_rightTickUnits () { return U""; }
-	virtual double v_defaultMinimumValue () { return 0.0; }
-	virtual double v_defaultMaximumValue () { return 1.0; }
 
 	double ymin, ymax, ycursor;
 	double anchorTime = undefined, anchorY;
@@ -58,10 +56,14 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 
 inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	FunctionArea_init (me, editor, ymin_fraction, ymax_fraction);
-	if (isundef (my p_dataFreeMinimum))
-		my p_dataFreeMinimum = my v_defaultMinimumValue();
-	if (isundef (my p_dataFreeMaximum))
-		my p_dataFreeMaximum = my v_defaultMaximumValue();
+	Melder_assert (isdefined (my p_dataFreeMinimum));
+	Melder_assert (isdefined (my p_dataFreeMaximum));
+}
+
+inline autoRealTierArea RealTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
+	autoRealTierArea me = Thing_new (RealTierArea);
+	RealTierArea_init (me.get(), editor, ymin_fraction, ymax_fraction);
+	return me;
 }
 
 /* End of file RealTierArea.h */

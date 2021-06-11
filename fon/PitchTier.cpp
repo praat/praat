@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2013,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,6 +147,16 @@ void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, doub
 		RealPoint point = my points.at [i];
 		if (point -> number < tmin || point -> number > tmax) continue;
 		point -> value *= factor;
+	}
+}
+
+autoPitchTier RealTier_to_PitchTier (RealTier me) {
+	try {
+		autoPitchTier thee = Thing_new (PitchTier);
+		my structRealTier :: v_copy (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to PitchTier.");
 	}
 }
 

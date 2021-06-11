@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2015-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,16 @@ autoDurationTier PointProcess_upto_DurationTier (PointProcess me) {
 		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
 		for (integer i = 1; i <= my nt; i ++)
 			RealTier_addPoint (thee.get(), my t [i], 1.0);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to DurationTier.");
+	}
+}
+
+autoDurationTier RealTier_to_DurationTier (RealTier me) {
+	try {
+		autoDurationTier thee = Thing_new (DurationTier);
+		my structRealTier :: v_copy (thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to DurationTier.");

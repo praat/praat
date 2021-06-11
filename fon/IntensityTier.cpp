@@ -1,6 +1,6 @@
 /* IntensityTier.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010-2012,2015-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,13 +84,10 @@ autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointPr
 
 autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp) {
 	try {
-		if (my points.size == 0) Melder_throw (U"No intensity points.");
+		if (my points.size == 0)
+			Melder_throw (U"No intensity points.");
 		autoIntensityTier thee = IntensityTier_create (pp -> xmin, pp -> xmax);
-		for (integer i = 1; i <= pp -> nt; i ++) {
-			double time = pp -> t [i];
-			double value = RealTier_getValueAtTime (me, time);
-			RealTier_addPoint (thee.get(), time, value);
-		}
+		RealTier_PointProcess_into_RealTier (me, pp, thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");
@@ -120,6 +117,16 @@ autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int s
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not multiplied with ", intensity, U".");
+	}
+}
+
+autoIntensityTier RealTier_to_IntensityTier (RealTier me) {
+	try {
+		autoIntensityTier thee = Thing_new (IntensityTier);
+		my structRealTier :: v_copy (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to IntensityTier.");
 	}
 }
 

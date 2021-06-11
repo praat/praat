@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2005,2007-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,6 @@ Thing_define (RealTierEditor, TimeSoundEditor) {
 
 	virtual conststring32 v_quantityText () { return U"Y"; }   // normally includes units
 	virtual conststring32 v_setRangeTitle () { return U"Set range..."; }
-	virtual conststring32 v_defaultYminText () { return U"undefined"; }
-	virtual conststring32 v_defaultYmaxText () { return U"undefined"; }
 	virtual conststring32 v_minimumLabelText () { return U"Minimum"; }   // normally includes units
 	virtual conststring32 v_maximumLabelText () { return U"Maximum"; }   // normally includes units
 };
@@ -67,6 +65,9 @@ void RealTierEditor_init (RealTierEditor me, ClassInfo realTierAreaClass, consts
 	if `ownSound` is `true`, the editor will contain a deep copy of the Sound,
 	which the editor will destroy when the editor is destroyed.
 */
+
+autoRealTierEditor RealTierEditor_create (conststring32 title,
+	RealTier tier, Sound sound, bool ownSound);
 
 /* End of file RealTierEditor.h */
 #endif

@@ -624,7 +624,7 @@ FORM (REAL_IntensityTier_getValueAtTime, U"Get IntensityTier value", U"Intensity
 	OK
 DO
 	QUERY_ONE_FOR_REAL (IntensityTier)
-		double result = RealTier_getValueAtTime (me, time);
+		const double result = RealTier_getValueAtTime (me, time);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
@@ -633,7 +633,7 @@ FORM (REAL_IntensityTier_getValueAtIndex, U"Get IntensityTier value", U"Intensit
 	OK
 DO
 	QUERY_ONE_FOR_REAL (IntensityTier)
-		double result = RealTier_getValueAtIndex (me, pointNumber);
+		const double result = RealTier_getValueAtIndex (me, pointNumber);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
 
@@ -1557,6 +1557,139 @@ DO
 	CONVERT_ONE_AND_ONE_TO_ONE_END (your name.get())
 }
 
+// MARK: - REALTIER
+
+// MARK: New
+
+FORM (NEW1_RealTier_create, U"Create empty RealTier", nullptr) {
+	WORD (name, U"Name", U"empty")
+	REAL (startTime, U"Start time (s)", U"0.0")
+	REAL (endTime, U"End time (s)", U"1.0")
+	OK
+DO
+	Melder_require (endTime > startTime,
+		U"Your end time should be greater than your start time.");
+	CREATE_ONE
+		autoRealTier result = RealTier_create (startTime, endTime);
+	CREATE_ONE_END (name)
+}
+
+// MARK: Help
+
+DIRECT (HELP_RealTier_help) {
+	HELP (U"RealTier")
+}
+
+// MARK: View & Edit
+
+DIRECT (EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit) {
+	EDITOR_ONE_WITH_ONE (a,RealTier, Sound)   // Sound may be null
+		autoRealTierEditor editor = RealTierEditor_create (ID_AND_FULL_NAME, me, you, true);
+	EDITOR_ONE_WITH_ONE_END
+}
+
+DIRECT (HINT_RealTier_Sound_viewAndEdit) {
+	INFO_NONE
+		Melder_information (U"To include a copy of a Sound in your RealTier window:\n"
+			"   select a RealTier and a Sound, and click \"View & Edit\".");
+	INFO_NONE_END
+}
+
+// MARK: Query
+
+FORM (REAL_RealTier_getValueAtTime, U"Get RealTier value", U"RealTier: Get value at time...") {
+	REAL (time, U"Time (s)", U"0.5")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (RealTier)
+		const double result = RealTier_getValueAtTime (me, time);
+	QUERY_ONE_FOR_REAL_END (U"")
+}
+
+FORM (REAL_RealTier_getValueAtIndex, U"Get RealTier value", U"RealTier: Get value at index...") {
+	INTEGER (pointNumber, U"Point number", U"10")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (IntensityTier)
+		const double result = RealTier_getValueAtIndex (me, pointNumber);
+	QUERY_ONE_FOR_REAL_END (U"")
+}
+
+// MARK: Modify
+
+FORM (MODIFY_RealTier_addPoint, U"Add one point", U"RealTier: Add point...") {
+	REAL (time, U"Time (s)", U"0.5")
+	REAL (intensity, U"Intensity (dB)", U"75")
+	OK
+DO
+	MODIFY_EACH (RealTier)
+		RealTier_addPoint (me, time, intensity);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_RealTier_formula, U"RealTier: Formula", U"RealTier: Formula...") {
+	LABEL (U"# ncol = the number of points")
+	LABEL (U"for col from 1 to ncol")
+	LABEL (U"   # x = the time of the colth point, in seconds")
+	LABEL (U"   # self = the value of the colth point")
+	LABEL (U"   self = `formula`")
+	LABEL (U"endfor")
+	FORMULA (formula, U"Formula:", U"self + 3.0")
+	OK
+DO
+	MODIFY_EACH_WEAK (RealTier)
+		RealTier_formula (me, formula, interpreter, nullptr);
+	MODIFY_EACH_WEAK_END
+}
+
+// MARK: Convert
+
+DIRECT (NEW_RealTier_downto_PointProcess) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_downto_TableOfReal) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoTableOfReal result = RealTier_downto_TableOfReal (me, U"Time (s)", U"Y");
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+// MARK: Cast
+
+DIRECT (NEW_RealTier_to_AmplitudeTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoAmplitudeTier result = RealTier_to_AmplitudeTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_to_DurationTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoDurationTier result = RealTier_to_DurationTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_to_IntensityTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoIntensityTier result = RealTier_to_IntensityTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_RealTier_to_PitchTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoPitchTier result = RealTier_to_PitchTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+// MARK: - REALTIER & POINTPROCESS
+
+DIRECT (NEW1_RealTier_PointProcess_to_RealTier) {
+	CONVERT_ONE_AND_ONE_TO_ONE (RealTier, PointProcess)
+		autoRealTier result = RealTier_PointProcess_to_RealTier (me, you);
+	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get())
+}
+
 // MARK: - SPECTRUMTIER
 
 DIRECT (NEW_SpectrumTier_downto_Table) {
@@ -1638,6 +1771,7 @@ void praat_Tiers_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create IntensityTier...", nullptr, 1, NEW1_IntensityTier_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create DurationTier...", nullptr, 1, NEW1_DurationTier_create);
 		praat_addMenuCommand (U"Objects", U"New", U"Create AmplitudeTier...", nullptr, 1, NEW1_AmplitudeTier_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create RealTier...", nullptr, 1, NEW1_RealTier_create);
 
 	praat_addAction1 (classAmplitudeTier, 0, U"AmplitudeTier help", nullptr, 0, HELP_AmplitudeTier_help);
 	praat_addAction1 (classAmplitudeTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_AmplitudeTier_viewAndEdit);
@@ -1829,6 +1963,28 @@ void praat_Tiers_init () {
 		praat_addAction1 (classPointProcess, 2, U"Intersection", nullptr, 1, NEW1_PointProcesses_intersection);
 		praat_addAction1 (classPointProcess, 2, U"Difference", nullptr, 1, NEW1_PointProcesses_difference);
 
+	praat_addAction1 (classRealTier, 0, U"RealTier help", nullptr, 0, HELP_RealTier_help);
+	praat_addAction1 (classRealTier, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit);
+	praat_addAction1 (classRealTier, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit);
+	praat_addAction1 (classRealTier, 0, U"View & Edit with Sound?", nullptr, 0, HINT_RealTier_Sound_viewAndEdit);
+	praat_addAction1 (classRealTier, 0, U"Query -", nullptr, 0, nullptr);
+		praat_TimeTier_query_init (classRealTier);
+		praat_addAction1 (classRealTier, 1, U"-- get content --", nullptr, 1, nullptr);
+		praat_addAction1 (classRealTier, 1, U"Get value at time...", nullptr, 1, REAL_RealTier_getValueAtTime);
+		praat_addAction1 (classRealTier, 1, U"Get value at index...", nullptr, 1, REAL_RealTier_getValueAtIndex);
+	praat_addAction1 (classRealTier, 0, U"Modify -", nullptr, 0, nullptr);
+		praat_TimeTier_modify_init (classRealTier);
+		praat_addAction1 (classRealTier, 0, U"Add point...", nullptr, 1, MODIFY_RealTier_addPoint);
+		praat_addAction1 (classRealTier, 0, U"Formula...", nullptr, 1, MODIFY_RealTier_formula);
+	praat_addAction1 (classRealTier, 0, U"Convert", nullptr, 0, nullptr);
+		praat_addAction1 (classRealTier, 0, U"Down to PointProcess", nullptr, 0, NEW_RealTier_downto_PointProcess);
+		praat_addAction1 (classRealTier, 0, U"Down to TableOfReal", nullptr, 0, NEW_RealTier_downto_TableOfReal);
+	praat_addAction1 (classRealTier, 0, U"Cast", nullptr, 0, nullptr);
+		praat_addAction1 (classRealTier, 0, U"To PitchTier", nullptr, 0, NEW_RealTier_to_PitchTier);
+		praat_addAction1 (classRealTier, 0, U"To IntensityTier", nullptr, 0, NEW_RealTier_to_IntensityTier);
+		praat_addAction1 (classRealTier, 0, U"To DurationTier", nullptr, 0, NEW_RealTier_to_DurationTier);
+		praat_addAction1 (classRealTier, 0, U"To AmplitudeTier", nullptr, 0, NEW_RealTier_to_AmplitudeTier);
+
 	praat_addAction1 (classSpectrumTier, 0, U"Draw...", nullptr, 0, GRAPHICS_SpectrumTier_draw);
 	praat_addAction1 (classSpectrumTier, 0, U"Tabulate -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrumTier, 1, U"List...", nullptr, 1, LIST_SpectrumTier_list);
@@ -1871,6 +2027,9 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, U"Analyse", nullptr, 0, n
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Ltas (only harmonics)...", nullptr, 0, NEW1_PointProcess_Sound_to_Ltas_harmonics);
 praat_addAction2 (classPointProcess, 1, classSound, 1, U"Synthesize", nullptr, 0, nullptr);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, U"To Sound ensemble...", nullptr, 0, NEW1_Sound_PointProcess_to_SoundEnsemble_correlate);
+	praat_addAction2 (classRealTier, 1, classPointProcess, 1, U"To RealTier", nullptr, 0, NEW1_RealTier_PointProcess_to_RealTier);
+	praat_addAction2 (classRealTier, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit);
+	praat_addAction2 (classRealTier, 1, classSound, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011, EDITOR_ONE_WITH_ONE_RealTier_viewAndEdit);
 }
 
 /* End of file praat_Tiers.cpp */

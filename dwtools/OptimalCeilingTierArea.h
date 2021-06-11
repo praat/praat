@@ -24,10 +24,6 @@
 Thing_define (OptimalCeilingTierArea, RealTierArea) {
 	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
-	double v_defaultMinimumValue ()
-		override { return our pref_dataFreeMinimum(); }
-	double v_defaultMaximumValue ()
-		override { return our pref_dataFreeMaximum(); }
 
 	#include "OptimalCeilingTierArea_prefs.h"
 };
