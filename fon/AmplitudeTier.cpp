@@ -339,7 +339,8 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pma
 			}
 		}
 	}
-	if (numberOfPeaks < 1) return undefined;
+	if (numberOfPeaks < 1)
+		return undefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
 	for (integer i = 1; i < my points.size; i ++) {
