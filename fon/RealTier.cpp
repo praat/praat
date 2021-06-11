@@ -512,4 +512,24 @@ void RealTier_removePointsBelow (RealTier me, double level) {
 	}
 }
 
+void RealTier_PointProcess_into_RealTier (RealTier me, PointProcess pp, RealTier thee) {
+	for (integer i = 1; i <= pp -> nt; i ++) {
+		const double time = pp -> t [i];
+		const double value = RealTier_getValueAtTime (me, time);
+		RealTier_addPoint (thee, time, value);
+	}
+}
+
+autoRealTier RealTier_PointProcess_to_RealTier (RealTier me, PointProcess pp) {
+	try {
+		if (my points.size == 0)
+			Melder_throw (U"No points.");
+		autoRealTier thee = RealTier_create (pp -> xmin, pp -> xmax);
+		RealTier_PointProcess_into_RealTier (me, pp, thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", pp, U": not converted to RealTier.");
+	}
+}
+
 /* End of file RealTier.cpp */

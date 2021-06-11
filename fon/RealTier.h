@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2005,2007-2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,9 @@ autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInf
 void RealTier_formula (RealTier me, conststring32 expression, Interpreter interpreter, RealTier thee);
 void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
+
+void RealTier_PointProcess_into_RealTier (RealTier me, PointProcess pp, RealTier thee);
+autoRealTier RealTier_PointProcess_to_RealTier (RealTier me, PointProcess pp);
 
 /* End of file RealTier.h */
 #endif

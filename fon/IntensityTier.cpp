@@ -84,13 +84,10 @@ autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointPr
 
 autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp) {
 	try {
-		if (my points.size == 0) Melder_throw (U"No intensity points.");
+		if (my points.size == 0)
+			Melder_throw (U"No intensity points.");
 		autoIntensityTier thee = IntensityTier_create (pp -> xmin, pp -> xmax);
-		for (integer i = 1; i <= pp -> nt; i ++) {
-			double time = pp -> t [i];
-			double value = RealTier_getValueAtTime (me, time);
-			RealTier_addPoint (thee.get(), time, value);
-		}
+		RealTier_PointProcess_into_RealTier (me, pp, thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", pp, U": not converted to IntensityTier.");

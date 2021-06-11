@@ -2,7 +2,7 @@
 #define _AmplitudeTier_h_
 /* AmplitudeTier.h
  *
- * Copyright (C) 2003-2011,2015,2017 Paul Boersma
+ * Copyright (C) 2003-2005,2007,2010-2012,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, conststring32 method, bool garnish);
 
 autoAmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure);
+autoAmplitudeTier RealTier_to_AmplitudeTier (RealTier me);
 autoAmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me);
 autoIntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB);
 autoTableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me);
