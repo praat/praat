@@ -293,6 +293,14 @@ void Spectrum_shiftPhaseBy90Degrees (Spectrum me) {
 	}
 }
 
+void Spectrum_unshiftPhaseBy90Degrees (Spectrum me) {
+	// shifting -pi/2 a multiplication by i
+	for (integer i = 2; i <= my nx - 1; i ++) {
+		my z [1] [i] = - my z [1] [i];
+		std::swap (my z [1] [i], my z [2] [i]);
+	}
+}
+
 void Spectrum_conjugate (Spectrum me) {
 	for (integer i = 1; i <= my nx; i ++)
 		my z [2] [i] = - my z [2] [i];
