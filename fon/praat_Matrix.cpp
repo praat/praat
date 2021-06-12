@@ -27,6 +27,7 @@
 #include "MovieWindow.h"
 #include "ParamCurve.h"
 #include "Photo.h"
+#include "RealTier.h"
 #include "Spectrogram.h"
 #include "Spectrum.h"
 #include "Transition.h"
@@ -553,6 +554,18 @@ DIRECT (NEW1_Matrix_to_ParamCurve) {
 	CONVERT_TWO_TO_ONE_END (my name.get(), U"_", your name.get());
 }
 
+FORM (CONVERT_EACH_TO_ONE__Matrix_to_RealTier, U"Matrix: To RealTier", nullptr) {
+	NATURAL (columnWithTimes, U"Column with times", U"1")
+	NATURAL (columnWithValues, U"Column with values", U"2")
+	REAL_OR_UNDEFINED (startTime, U"Start time (s)", U"0.0")
+	REAL_OR_UNDEFINED (endTime, U"End time (s)", U"undefined")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Matrix)
+		autoRealTier result = Matrix_to_RealTier (me, columnWithTimes, columnWithValues, startTime, endTime);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 // MARK: - PHOTO
 
 // MARK: New
@@ -888,6 +901,8 @@ praat_addAction1 (classMatrix, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classMatrix, 0, U"To Pitch", nullptr, 1, NEW_Matrix_to_Pitch);
 		praat_addAction1 (classMatrix, 0, U"To PointProcess", nullptr, 1, NEW_Matrix_to_PointProcess);
 		praat_addAction1 (classMatrix, 0, U"To Polygon", nullptr, 1, NEW_Matrix_to_Polygon);
+		praat_addAction1 (classMatrix, 0, U"To RealTier...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Matrix_to_RealTier);
 		praat_addAction1 (classMatrix, 0, U"To Sound", nullptr, 1, NEW_Matrix_to_Sound);
 		praat_addAction1 (classMatrix, 0, U"To Sound (slice)...", nullptr, 1, NEW_Matrix_to_Sound_mono);
 		praat_addAction1 (classMatrix, 0, U"To Spectrogram", nullptr, 1, NEW_Matrix_to_Spectrogram);

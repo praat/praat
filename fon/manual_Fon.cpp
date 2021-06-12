@@ -2104,6 +2104,37 @@ INTRO (U"A command to read a @Strings object from a simple text file. "
 	"Each line is read as a separate string. See @Strings for an example.")
 MAN_END
 
+MAN_BEGIN (U"RealTier", U"ppgb", 20210612)
+INTRO (U"One of the @@types of objects@ in Praat. "
+	"An RealTier object represents a time-stamped curve, i.e., it contains a series of (%time, %value) points. "
+	"The values have no physical units, so a RealTier is a generic, \"mathematical\", type, "
+	"just as a @Matrix is. Special, physically interpretable, kinds of RealTiers "
+	"are @PitchTier, @IntensityTier, @DurationTier and @AmplitudeTier. "
+	"You can convert a RealTier to and from these other tier types.")
+NORMAL (U"A RealTier can come in handy if you have time-stamped real-valued data "
+	"that cannot be interpreted as any of the physical tier types. "
+	"You can \"View & Edit\" a RealTier in its own window.")
+ENTRY (U"How to import a RealTier from raw data")
+NORMAL (U"While you create a RealTier from the New menu, you will often have data in a text file produced by "
+	"a different app than Praat. For instance, your text file may look like this, with a header:")
+CODE (U"Time Value")
+CODE (U"0.134 67.9")
+CODE (U"0.178 -138.6")
+CODE (U"0.211 78.9")
+CODE (U"0.213 100.0")
+CODE (U"0.456 -97.0")
+NORMAL (U"You can import this text file as a Table object with ##Read Table from whitespace-separated file...# "
+	"or perhaps with ##Read Table from tab-separated file...#). You can then choose ##To RealTier...# from the Convert menu. "
+	"Alternatively, your text file may simply look like this, without header:")
+CODE (U"0.134 67.9")
+CODE (U"0.178 -138.6")
+CODE (U"0.211 78.9")
+CODE (U"0.213 100.0")
+CODE (U"0.456 -97.0")
+NORMAL (U"You can import this text file as a Matrix object with @@Read Matrix from raw text file...@. "
+	"You can then choose ##To RealTier...# from the Cast menu.")
+MAN_END
+
 MAN_BEGIN (U"Sound: To Intensity...", U"ppgb", 20100605)
 INTRO (U"A command to create an @Intensity object from every selected @Sound.")
 ENTRY (U"Settings")

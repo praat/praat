@@ -22,6 +22,7 @@
 #include "PairDistribution.h"
 #include "Table.h"
 #include "TableEditor.h"
+#include "RealTier.h"
 #include "../kar/UnicodeData.h"
 
 #include "praat_TableOfReal.h"
@@ -997,6 +998,26 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+DIRECT (CONVERT_EACH_TO_ONE__Table_downto_Matrix) {
+	CONVERT_EACH_TO_ONE (Table)
+		autoMatrix result = Table_to_Matrix (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+FORM (CONVERT_EACH_TO_ONE__Table_to_RealTier, U"Table: To RealTier", nullptr) {
+	SENTENCE (columnWithTimes, U"Column with times", U"")
+	SENTENCE (columnWithValues, U"Column with values", U"")
+	REAL_OR_UNDEFINED (startTime, U"Start time (s)", U"0.0")
+	REAL_OR_UNDEFINED (endTime, U"End time (s)", U"undefined")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Table)
+		const integer timeColumn = Table_findColumnIndexFromColumnLabel (me, columnWithTimes);
+		const integer valueColumn = Table_findColumnIndexFromColumnLabel (me, columnWithValues);
+		autoRealTier result = Table_to_RealTier (me, timeColumn, valueColumn, startTime, endTime);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {
 	WORD (name, U"Name", U"table")
 	NATURAL (numberOfRows, U"Number of rows", U"10")
@@ -1269,8 +1290,14 @@ void praat_uvafon_stat_init () {
 				CONVERT_EACH_TO_ONE__Table_collapseRows);
 		praat_addAction1 (classTable, 0, U"Rows to columns...", nullptr, 1,
 				CONVERT_EACH_TO_ONE__Table_rowsToColumns);
-	praat_addAction1 (classTable, 0, U"Down to TableOfReal...", nullptr, 0,
-			CONVERT_EACH_TO_ONE__Table_downto_TableOfReal);
+	praat_addAction1 (classTable, 0, U"Convert -", nullptr, 0, nullptr);
+		praat_addAction1 (classTable, 0, U"To RealTier...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Table_to_RealTier);
+		praat_addAction1 (classTable, 0, U"Down to TableOfReal...", nullptr, 1,
+				CONVERT_EACH_TO_ONE__Table_downto_TableOfReal);
+		praat_addAction1 (classTable, 0, U"Down to Matrix", nullptr, 0,
+				CONVERT_EACH_TO_ONE__Table_downto_Matrix);
+
 
 	praat_TableOfReal_init (classTableOfReal);
 
