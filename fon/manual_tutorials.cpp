@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210604)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210612)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.49# (12 June 2021)")
+LIST_ITEM (U"• @PitchTier, @IntensityTier, @DurationTier and @AmplitudeTier windows: save preferences.")
+LIST_ITEM (U"• @Manipulation window: removed unused semitone options.")
+LIST_ITEM (U"• @RealTier object: editing; conversions from and to other tiers and from Table and Matrix.")
 NORMAL (U"##6.1.48# (2 June 2021)")
 LIST_ITEM (U"• TextGrid window: Shift-drag drags multiple boundaries again even if the Shift key is not released.")
 LIST_ITEM (U"• Scripting: publishing (\"Extract\") an object from an editor window returns its ID again.")
