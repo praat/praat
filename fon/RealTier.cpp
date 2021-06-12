@@ -532,4 +532,119 @@ autoRealTier RealTier_PointProcess_to_RealTier (RealTier me, PointProcess pp) {
 	}
 }
 
+autoRealTier AnyRealTier_downto_RealTier (RealTier me) {
+	try {
+		autoRealTier thee = Thing_new (RealTier);
+		my structRealTier :: v_copy (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to RealTier.");
+	}
+}
+
+static void RealTier_checkThatNoPointFallsOutsideDefinedTimeDomain (RealTier me) {
+	if (my points.size == 0) {
+		// nothing to check
+	} else if (my points.size == 1) {
+		const double onlyTime = my points.at [1] -> number;
+		if (isdefined (my xmin))
+			Melder_require (my xmin <= onlyTime,
+				U"The only point (at time ", onlyTime, U" seconds) falls outside the time domain, i.e. before ", my xmin, U" seconds.");
+		if (isdefined (my xmax))
+			Melder_require (my xmax >= onlyTime,
+				U"The only point (at time ", onlyTime, U" seconds) falls outside the time domain, i.e. after ", my xmax, U" seconds.");
+	} else {
+		const double firstTime = my points.at [1] -> number;
+		const double lastTime = my points.at [my points.size] -> number;
+		if (isdefined (my xmin))
+			Melder_require (my xmin <= firstTime,
+				U"The first point (at time ", firstTime, U" seconds) falls outside the time domain, i.e. before ", my xmin, U" seconds.");
+		if (isdefined (my xmax))
+			Melder_require (my xmax >= lastTime,
+				U"The last point (at time ", lastTime, U" seconds) falls outside the time domain, i.e. after ", my xmax, U" seconds.");
+	}
+}
+
+static void RealTier_fitUndefinedTimeDomainToData (RealTier me) {
+	if (my points.size == 0) {
+		if (isundef (my xmin) && isundef (my xmax)) {
+			my xmin = 0.0;
+			my xmax = 1.0;
+		} else if (isundef (my xmin)) {
+			my xmin = my xmax - 1.0;
+		} else if (isundef (my xmax)) {
+			my xmax = my xmin + 1.0;
+		}
+	} else if (my points.size == 1) {
+		const double onlyTime = my points.at [1] -> number;
+		if (isundef (my xmin) && isundef (my xmax)) {
+			my xmin = onlyTime - 1.0;
+			my xmax = onlyTime + 1.0;
+		} else if (isundef (my xmin)) {
+			my xmin = onlyTime - 1.0 * ( my xmax == onlyTime );
+		} else if (isundef (my xmax)) {
+			my xmax = onlyTime + 1.0 * ( my xmin == onlyTime );
+		}
+	} else {
+		const double firstTime = my points.at [1] -> number;
+		const double lastTime = my points.at [my points.size] -> number;
+		if (isundef (my xmin))
+			my xmin = firstTime;
+		if (isundef (my xmax))
+			my xmax = lastTime;
+	}
+}
+
+autoRealTier Table_to_RealTier (Table me, integer timeColumn, integer valueColumn, double tmin, double tmax) {
+	try {
+		Melder_require (timeColumn >= 1 && timeColumn <= my numberOfColumns,
+			U"The column number (for the times) should be between 1 and ", my numberOfColumns);
+		Melder_require (valueColumn >= 1 && valueColumn <= my numberOfColumns,
+			U"The column number (for the values) should be between 1 and ", my numberOfColumns);
+		Melder_require (! (tmax <= tmin),   // NaN-safe
+			U"The end of the time domain (", tmax, U") should be greater than the start of the time domain (", tmin, U").");
+		autoRealTier thee = RealTier_create (tmin, tmax);
+		Table_numericize_Assert (me, timeColumn);
+		Table_numericize_Assert (me, valueColumn);
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
+			TableRow row = my rows.at [irow];
+			RealTier_addPoint (thee.get(), row -> cells [timeColumn]. number, row -> cells [valueColumn]. number);
+		}
+		/*
+			At this point, all times are in sorted order and unique,
+			because RealTier_addPoint inserts its time in order and complains if the time already exists.
+			The data-dependent tests therefore need to be only about the time domain.
+		*/
+		RealTier_checkThatNoPointFallsOutsideDefinedTimeDomain (thee.get());
+		RealTier_fitUndefinedTimeDomainToData (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to RealTier.");
+	}
+}
+
+autoRealTier Matrix_to_RealTier (Matrix me, integer timeColumn, integer valueColumn, double tmin, double tmax) {
+	try {
+		Melder_require (timeColumn >= 1 && timeColumn <= my nx,
+			U"The column number (for the times) should be between 1 and ", my nx);
+		Melder_require (valueColumn >= 1 && valueColumn <= my nx,
+			U"The column number (for the values) should be between 1 and ", my nx);
+		Melder_require (! (tmax <= tmin),   // NaN-safe
+			U"The end of the time domain (", tmax, U") should be greater than the start of the time domain (", tmin, U").");
+		autoRealTier thee = RealTier_create (tmin, tmax);
+		for (integer irow = 1; irow <= my ny; irow ++)
+			RealTier_addPoint (thee.get(), my z [irow] [timeColumn], my z [irow] [valueColumn]);
+		/*
+			At this point, all times are in sorted order and unique,
+			because RealTier_addPoint inserts its time in order and complains if the time already exists.
+			The data-dependent tests therefore need to be only about the time domain.
+		*/
+		RealTier_checkThatNoPointFallsOutsideDefinedTimeDomain (thee.get());
+		RealTier_fitUndefinedTimeDomainToData (thee.get());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to RealTier.");
+	}
+}
+
 /* End of file RealTier.cpp */

@@ -82,6 +82,10 @@ void RealTier_removePointsBelow (RealTier me, double level);
 
 void RealTier_PointProcess_into_RealTier (RealTier me, PointProcess pp, RealTier thee);
 autoRealTier RealTier_PointProcess_to_RealTier (RealTier me, PointProcess pp);
+autoRealTier AnyRealTier_downto_RealTier (RealTier me);
+
+autoRealTier Table_to_RealTier (Table me, integer timeColumn, integer valueColumn, double tmin, double tmax);
+autoRealTier Matrix_to_RealTier (Matrix me, integer timeColumn, integer valueColumn, double tmin, double tmax);
 
 /* End of file RealTier.h */
 #endif

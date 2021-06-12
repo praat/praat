@@ -2787,14 +2787,6 @@ DIRECT (NEW_Strings_to_WordList) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-// MARK: - TABLE; the remainder is in praat_Stat.cpp *****/
-
-DIRECT (NEW_Table_downto_Matrix) {
-	CONVERT_EACH_TO_ONE (Table)
-		autoMatrix result = Table_to_Matrix (me);
-	CONVERT_EACH_TO_ONE_END (my name.get())
-}
-
 // MARK: - TEXTGRID; the remainder is in praat_TextGrid_init.cpp
 
 FORM (NEW1_TextGrid_create, U"Create TextGrid", U"Create TextGrid...") {
@@ -3387,8 +3379,6 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"To Distributions", nullptr, 0, NEW_Strings_to_Distributions);
 	praat_addAction1 (classStrings, 0, U"Synthesize", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"To WordList", nullptr, 0, NEW_Strings_to_WordList);
-
-	praat_addAction1 (classTable, 0, U"Down to Matrix", nullptr, 0, NEW_Table_downto_Matrix);
 
 	praat_addAction1 (classTransition, 0, U"Transition help", nullptr, 0, HELP_Transition_help);
 praat_addAction1 (classTransition, 0, U"Draw", nullptr, 0, nullptr);

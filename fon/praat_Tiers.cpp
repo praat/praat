@@ -201,6 +201,12 @@ DIRECT (NEW_AmplitudeTier_downto_PointProcess) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+DIRECT (NEW_AmplitudeTier_downto_RealTier) {
+	CONVERT_EACH_TO_ONE (AmplitudeTier)
+		autoRealTier result = AnyRealTier_downto_RealTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 DIRECT (NEW_AmplitudeTier_downto_TableOfReal) {
 	CONVERT_EACH_TO_ONE (AmplitudeTier)
 		autoTableOfReal result = AmplitudeTier_downto_TableOfReal (me);
@@ -331,6 +337,12 @@ DO
 DIRECT (NEW_DurationTier_downto_PointProcess) {
 	CONVERT_EACH_TO_ONE (DurationTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_DurationTier_downto_RealTier) {
+	CONVERT_EACH_TO_ONE (DurationTier)
+		autoRealTier result = AnyRealTier_downto_RealTier (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -672,6 +684,12 @@ DIRECT (NEW_IntensityTier_downto_PointProcess) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+DIRECT (NEW_IntensityTier_downto_RealTier) {
+	CONVERT_EACH_TO_ONE (IntensityTier)
+		autoRealTier result = AnyRealTier_downto_RealTier (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 DIRECT (NEW_IntensityTier_downto_TableOfReal) {
 	CONVERT_EACH_TO_ONE (IntensityTier)
 		autoTableOfReal result = IntensityTier_downto_TableOfReal (me);
@@ -737,6 +755,12 @@ DO
 DIRECT (NEW_PitchTier_downto_PointProcess) {
 	CONVERT_EACH_TO_ONE (PitchTier)
 		autoPointProcess result = AnyTier_downto_PointProcess (me->asAnyTier());
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (NEW_PitchTier_downto_RealTier) {
+	CONVERT_EACH_TO_ONE (RealTier)
+		autoRealTier result = AnyRealTier_downto_RealTier (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -1794,6 +1818,7 @@ void praat_Tiers_init () {
 	praat_addAction1 (classAmplitudeTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_addAction1 (classAmplitudeTier, 0, U"To IntensityTier...", nullptr, 0, NEW_AmplitudeTier_to_IntensityTier);
 		praat_addAction1 (classAmplitudeTier, 0, U"Down to PointProcess", nullptr, 0, NEW_AmplitudeTier_downto_PointProcess);
+		praat_addAction1 (classAmplitudeTier, 0, U"Down to RealTier", nullptr, 0, NEW_AmplitudeTier_downto_RealTier);
 		praat_addAction1 (classAmplitudeTier, 0, U"Down to TableOfReal", nullptr, 0, NEW_AmplitudeTier_downto_TableOfReal);
 
 	praat_addAction1 (classDurationTier, 0, U"DurationTier help", nullptr, 0, HELP_DurationTier_help);
@@ -1813,6 +1838,7 @@ void praat_Tiers_init () {
 		praat_addAction1 (classDurationTier, 0, U"Formula...", nullptr, 1, MODIFY_DurationTier_formula);
 	praat_addAction1 (classDurationTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_addAction1 (classDurationTier, 0, U"Down to PointProcess", nullptr, 0, NEW_DurationTier_downto_PointProcess);
+		praat_addAction1 (classDurationTier, 0, U"Down to RealTier", nullptr, 0, NEW_DurationTier_downto_RealTier);
 
 	praat_addAction1 (classFormantGrid, 0, U"FormantGrid help", nullptr, 0, HELP_FormantGrid_help);
 	praat_addAction1 (classFormantGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, EDITOR_ONE_FormantGrid_edit);
@@ -1857,6 +1883,7 @@ void praat_Tiers_init () {
 	praat_addAction1 (classIntensityTier, 0, U"Convert", nullptr, 0, nullptr);
 		praat_addAction1 (classIntensityTier, 0, U"To AmplitudeTier", nullptr, 0, NEW_IntensityTier_to_AmplitudeTier);
 		praat_addAction1 (classIntensityTier, 0, U"Down to PointProcess", nullptr, 0, NEW_IntensityTier_downto_PointProcess);
+		praat_addAction1 (classIntensityTier, 0, U"Down to RealTier", nullptr, 0, NEW_IntensityTier_downto_RealTier);
 		praat_addAction1 (classIntensityTier, 0, U"Down to TableOfReal", nullptr, 0, NEW_IntensityTier_downto_TableOfReal);
 
 	praat_addAction1 (classPitchTier, 1, U"Save as PitchTier spreadsheet file...", nullptr, 0, SAVE_PitchTier_writeToPitchTierSpreadsheetFile);
@@ -1900,6 +1927,7 @@ void praat_Tiers_init () {
 		praat_addAction1 (classPitchTier, 0, U"To Sound (sine)...", nullptr, 1, NEW_PitchTier_to_Sound_sine);
 	praat_addAction1 (classPitchTier, 0, U"Convert -", nullptr, 0, nullptr);
 		praat_addAction1 (classPitchTier, 0, U"Down to PointProcess", nullptr, 1, NEW_PitchTier_downto_PointProcess);
+		praat_addAction1 (classPitchTier, 0, U"Down to RealTier", nullptr, 0, NEW_PitchTier_downto_RealTier);
 		praat_addAction1 (classPitchTier, 0, U"Down to TableOfReal...", nullptr, 1, NEW_PitchTier_downto_TableOfReal);
 
 	praat_addAction1 (classPointProcess, 0, U"PointProcess help", nullptr, 0, HELP_PointProcess_help);
