@@ -56,6 +56,9 @@ static int ilabel, ilexan, iparse, numberOfInstructions, numberOfStringConstants
 
 enum { NO_SYMBOL_,
 
+#define DECLARE_WITH_TENSORS(symbol)  \
+	symbol, symbol##VEC_, symbol##MAT_,
+
 /* First, all symbols after which "-" is unary. */
 /* The list ends with "MINUS_" itself. */
 
@@ -87,18 +90,23 @@ enum { NO_SYMBOL_,
 
 	/* Functions of 1 variable; if you add, update the #defines. */
 	#define LOW_FUNCTION_1  ABS_
-		ABS_, ROUND_, FLOOR_, CEILING_,
-		RECTIFY_, RECTIFY_VEC_, RECTIFY_MAT_,
-		SQRT_, SIN_, COS_, TAN_, ARCSIN_, ARCCOS_, ARCTAN_, SINC_, SINCPI_,
-		EXP_, EXP_VEC_, EXP_MAT_,
-		SINH_, COSH_, TANH_, TANH_VEC_,
-		ARCSINH_, ARCCOSH_, ARCTANH_,
+		DECLARE_WITH_TENSORS (ABS_)
+		DECLARE_WITH_TENSORS (ROUND_)    DECLARE_WITH_TENSORS (FLOOR_)    DECLARE_WITH_TENSORS (CEILING_)
+		DECLARE_WITH_TENSORS (RECTIFY_)
+		DECLARE_WITH_TENSORS (SQRT_)
+		DECLARE_WITH_TENSORS (SIN_)      DECLARE_WITH_TENSORS (COS_)      DECLARE_WITH_TENSORS (TAN_)
+		DECLARE_WITH_TENSORS (ARCSIN_)   DECLARE_WITH_TENSORS (ARCCOS_)   DECLARE_WITH_TENSORS (ARCTAN_)
+		SINC_, SINCPI_,
+		DECLARE_WITH_TENSORS (EXP_)
+		DECLARE_WITH_TENSORS (SINH_)     DECLARE_WITH_TENSORS (COSH_)     DECLARE_WITH_TENSORS (TANH_)
+		DECLARE_WITH_TENSORS (ARCSINH_)  DECLARE_WITH_TENSORS (ARCCOSH_)  DECLARE_WITH_TENSORS (ARCTANH_)
 		SIGMOID_, SIGMOID_VEC_, SOFTMAX_VEC_, SOFTMAX_PER_ROW_MAT_,
 		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, RANDOM_BERNOULLI_VEC_,
 		RANDOM_POISSON_, TRANSPOSE_MAT_,
 		ROW_SUMS_VEC_, COLUMN_SUMS_VEC_,
-		LOG2_, LN_, LOG10_, LN_GAMMA_,
+		DECLARE_WITH_TENSORS (LOG2_)     DECLARE_WITH_TENSORS (LN_)       DECLARE_WITH_TENSORS (LOG10_)
+		LN_GAMMA_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
@@ -223,6 +231,9 @@ enum { NO_SYMBOL_,
 /* they are used in error messages and in debugging (see Formula_print). */
 
 static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
+	#define NAME_WITH_TENSORS(name)  \
+		U"" #name, U"" #name "#", U"" #name "##",
+
 	U"if", U"then", U"else", U"(", U"[", U"{", U",", U":", U"from", U"to",
 	U"or", U"and", U"not", U"=", U"<>", U"<=", U"<", U">=", U">",
 	U"+", U"-", U"*", U"/", U"div", U"mod", U"^", U"_call", U"_neg",
@@ -232,18 +243,23 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"row", U"col", U"nrow", U"ncol", U"row$", U"col$", U"y", U"x",
 	U"self", U"self$", U"object", U"object$", U"_matrix", U"_matrix$",
 	U"stopwatch",
-	U"abs", U"round", U"floor", U"ceiling",
-	U"rectify", U"rectify#", U"rectify##",
-	U"sqrt", U"sin", U"cos", U"tan", U"arcsin", U"arccos", U"arctan", U"sinc", U"sincpi",
-	U"exp", U"exp#", U"exp##",
-	U"sinh", U"cosh", U"tanh", U"tanh#",
-	U"arcsinh", U"arccosh", U"arctanh",
+	NAME_WITH_TENSORS (abs)
+	NAME_WITH_TENSORS (round)    NAME_WITH_TENSORS (floor)    NAME_WITH_TENSORS (ceiling)
+	NAME_WITH_TENSORS (rectify)
+	NAME_WITH_TENSORS (sqrt)
+	NAME_WITH_TENSORS (sin)      NAME_WITH_TENSORS (cos)      NAME_WITH_TENSORS (tan)
+	NAME_WITH_TENSORS (arcsin)   NAME_WITH_TENSORS (arccos)   NAME_WITH_TENSORS (arctan)
+	U"sinc", U"sincpi",
+	NAME_WITH_TENSORS (exp)
+	NAME_WITH_TENSORS (sinh)     NAME_WITH_TENSORS (cosh)     NAME_WITH_TENSORS (tanh)
+	NAME_WITH_TENSORS (arcsinh)  NAME_WITH_TENSORS (arccosh)  NAME_WITH_TENSORS (arctanh)
 	U"sigmoid", U"sigmoid#", U"softmax#", U"softmaxPerRow##",
 	U"invSigmoid", U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
 	U"randomBernoulli", U"randomBernoulli#",
 	U"randomPoisson", U"transpose##",
 	U"rowSums#", U"columnSums#",
-	U"log2", U"ln", U"log10", U"lnGamma",
+	NAME_WITH_TENSORS (log2)     NAME_WITH_TENSORS (ln)       NAME_WITH_TENSORS (log10)
+	U"lnGamma",
 	U"hertzToBark", U"barkToHertz", U"phonToDifferenceLimens", U"differenceLimensToPhon",
 	U"hertzToMel", U"melToHertz", U"hertzToSemitones", U"semitonesToHertz",
 	U"erb", U"hertzToErb", U"erbToHertz",
@@ -3331,230 +3347,99 @@ static void do_softmaxPerRow_MAT () {
 			U" requires a numeric matrix argument, not ", x->whichText(), U".");
 	}
 }
-static void do_abs () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : fabs (x->number));
-	} else {
-		Melder_throw (U"Cannot take the absolute value (abs) of ", x->whichText(), U".");
-	}
+
+#define DO_NUM_WITH_TENSORS(function, formula, message)  \
+static void do_##function () { \
+	Stackel x = pop; \
+	if (x->which == Stackel_NUMBER) { \
+		const double xvalue = x->number; \
+		pushNumber (formula); \
+	} else if (x->which == Stackel_NUMERIC_VECTOR) { \
+		Melder_throw (U"The function " #function " requires a numeric argument, " \
+				"not a vector. Did you mean to use " #function "# instead?"); \
+	} else if (x->which == Stackel_NUMERIC_MATRIX) { \
+		Melder_throw (U"The function " #function " requires a numeric argument, " \
+				"not a matrix. Did you mean to use " #function "## instead?"); \
+	} else { \
+		Melder_throw (message, x->whichText(), \
+				U". The function " #function " requires a numeric argument"); \
+	} \
+} \
+static void do_##function##_VEC () { \
+	Stackel x = topOfStack; \
+	if (x->which == Stackel_NUMERIC_VECTOR) { \
+		if (x->owned) { \
+			const integer numberOfElements = x->numericVector.size; \
+			for (integer i = 1; i <= numberOfElements; i ++) { \
+				const double xvalue = x->numericVector [i]; \
+				x->numericVector [i] = isundef (xvalue) ? undefined : formula; \
+			} \
+		} else { \
+			pop; \
+			const integer numberOfElements = x->numericVector.size; \
+			autoVEC result = raw_VEC (numberOfElements); \
+			for (integer i = 1; i <= numberOfElements; i ++) { \
+				const double xvalue = x->numericVector [i]; \
+				result [i] = isundef (xvalue) ? undefined : formula; \
+			} \
+			pushNumericVector (result.move()); \
+		} \
+	} else { \
+		Melder_throw (message, x->whichText(), \
+				U". The function " #function " requires a vector argument"); \
+	} \
+} \
+static void do_##function##_MAT () { \
+	Stackel x = topOfStack; \
+	if (x->which == Stackel_NUMERIC_MATRIX) { \
+		if (x->owned) { \
+			const integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol; \
+			for (integer irow = 1; irow <= nrow; irow ++) { \
+				for (integer icol = 1; icol <= ncol; icol ++) { \
+					const double xvalue = x->numericMatrix [irow] [icol]; \
+					x->numericMatrix [irow] [icol] = isundef (xvalue) ? undefined : formula; \
+				} \
+			} \
+		} else { \
+			pop; \
+			const integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol; \
+			autoMAT result = raw_MAT (nrow, ncol); \
+			for (integer irow = 1; irow <= nrow; irow ++) { \
+				for (integer icol = 1; icol <= ncol; icol ++) { \
+					const double xvalue = x->numericMatrix [irow] [icol]; \
+					result [irow] [icol] = isundef (xvalue) ? undefined : formula; \
+				} \
+			} \
+			pushNumericMatrix (result.move()); \
+		} \
+	} else { \
+		Melder_throw (message, x->whichText(), \
+				U". The function " #function " requires a matrix argument"); \
+	} \
 }
-static void do_round () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : floor (x->number + 0.5));
-	} else {
-		Melder_throw (U"Cannot round ", x->whichText(), U".");
-	}
-}
-static void do_floor () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : Melder_roundDown (x->number));
-	} else {
-		Melder_throw (U"Cannot round down (floor) ", x->whichText(), U".");
-	}
-}
-static void do_ceiling () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : Melder_roundUp (x->number));
-	} else {
-		Melder_throw (U"Cannot round up (ceiling) ", x->whichText(), U".");
-	}
-}
-static void do_rectify () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : x->number > 0.0 ? x->number : 0.0);
-	} else {
-		Melder_throw (U"Cannot rectify ", x->whichText(), U".");
-	}
-}
-static void do_rectify_VEC () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMERIC_VECTOR) {
-		integer nelm = x->numericVector.size;
-		autoVEC result = raw_VEC (nelm);
-		for (integer i = 1; i <= nelm; i ++) {
-			double xvalue = x->numericVector [i];
-			result [i] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
-		}
-		pushNumericVector (result.move());
-	} else {
-		Melder_throw (U"Cannot rectify ", x->whichText(), U".");
-	}
-}
-static void do_rectify_MAT () {
-	Stackel x = topOfStack;
-	if (x->which == Stackel_NUMERIC_MATRIX) {
-		if (x->owned) {
-			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-			for (integer irow = 1; irow <= nrow; irow ++) {
-				for (integer icol = 1; icol <= ncol; icol ++) {
-					double xvalue = x->numericMatrix [irow] [icol];
-					x->numericMatrix [irow] [icol] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
-				}
-			}
-		} else {
-			pop;
-			integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-			autoMAT result = raw_MAT (nrow, ncol);
-			for (integer irow = 1; irow <= nrow; irow ++) {
-				for (integer icol = 1; icol <= ncol; icol ++) {
-					double xvalue = x->numericMatrix [irow] [icol];
-					result [irow] [icol] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
-				}
-			}
-			pushNumericMatrix (result.move());
-		}
-	} else {
-		Melder_throw (U"Cannot rectify ", x->whichText(), U".");
-	}
-}
-static void do_sqrt () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined :
-			x->number < 0.0 ? undefined : sqrt (x->number));
-	} else {
-		Melder_throw (U"Cannot take the square root (sqrt) of ", x->whichText(), U".");
-	}
-}
-static void do_sin () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : sin (x->number));
-	} else {
-		Melder_throw (U"Cannot take the sine (sin) of ", x->whichText(), U".");
-	}
-}
-static void do_cos () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : cos (x->number));
-	} else {
-		Melder_throw (U"Cannot take the cosine (cos) of ", x->whichText(), U".");
-	}
-}
-static void do_tan () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : tan (x->number));
-	} else {
-		Melder_throw (U"Cannot take the tangent (tan) of ", x->whichText(), U".");
-	}
-}
-static void do_arcsin () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined :
-			fabs (x->number) > 1.0 ? undefined : asin (x->number));
-	} else {
-		Melder_throw (U"Cannot take the arcsine (arcsin) of ", x->whichText(), U".");
-	}
-}
-static void do_arccos () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined :
-			fabs (x->number) > 1.0 ? undefined : acos (x->number));
-	} else {
-		Melder_throw (U"Cannot take the arccosine (arccos) of ", x->whichText(), U".");
-	}
-}
-static void do_arctan () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : atan (x->number));
-	} else {
-		Melder_throw (U"Cannot take the arctangent (arctan) of ", x->whichText(), U".");
-	}
-}
-static void do_exp () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : exp (x->number));
-	} else {
-		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
-	}
-}
-static void do_exp_VEC () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMERIC_VECTOR) {
-		integer nelm = x->numericVector.size;
-		autoVEC result = raw_VEC (nelm);
-		for (integer i = 1; i <= nelm; i ++)
-			result [i] = exp (x->numericVector [i]);
-		pushNumericVector (result.move());
-	} else {
-		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
-	}
-}
-static void do_exp_MAT () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMERIC_MATRIX) {
-		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-		autoMAT result = raw_MAT (nrow, ncol);
-		for (integer irow = 1; irow <= nrow; irow ++)
-			for (integer icol = 1; icol <= ncol; icol ++)
-				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
-		pushNumericMatrix (result.move());
-	} else {
-		Melder_throw (U"Cannot exponentiate (exp) ", x->whichText(), U".");
-	}
-}
-static void do_sinh () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : sinh (x->number));
-	} else {
-		Melder_throw (U"Cannot take the hyperbolic sine (sinh) of ", x->whichText(), U".");
-	}
-}
-static void do_cosh () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : cosh (x->number));
-	} else {
-		Melder_throw (U"Cannot take the hyperbolic cosine (cosh) of ", x->whichText(), U".");
-	}
-}
-static void do_tanh () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : tanh (x->number));
-	} else {
-		Melder_throw (U"Cannot take the hyperbolic tangent (tanh) of ", x->whichText(), U".");
-	}
-}
-static void do_log2 () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined :
-			x->number <= 0.0 ? undefined : log (x->number) * NUMlog2e);
-	} else {
-		Melder_throw (U"Cannot take the base-2 logarithm (log2) of ", x->whichText(), U".");
-	}
-}
-static void do_ln () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined :
-			x->number <= 0.0 ? undefined : log (x->number));
-	} else {
-		Melder_throw (U"Cannot take the natural logarithm (ln) of ", x->whichText(), U".");
-	}
-}
-static void do_log10 () {
-	Stackel x = pop;
-	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined :
-			x->number <= 0.0 ? undefined : log10 (x->number));
-	} else {
-		Melder_throw (U"Cannot take the base-10 logarithm (log10) of ", x->whichText(), U".");
-	}
-}
+DO_NUM_WITH_TENSORS (abs, fabs (xvalue), U"Cannot take the absolute value (abs) of ")
+DO_NUM_WITH_TENSORS (round, floor (xvalue + 0.5), U"Cannot round ")
+DO_NUM_WITH_TENSORS (floor, Melder_roundDown (xvalue), U"Cannot round down (floor) ")
+DO_NUM_WITH_TENSORS (ceiling, Melder_roundUp (xvalue), U"Cannot round up (ceiling) ")
+DO_NUM_WITH_TENSORS (rectify, xvalue < 0.0 ? 0.0 : xvalue, U"Cannot rectify ")   // NaN-safe
+DO_NUM_WITH_TENSORS (sqrt, /*xvalue < 0.0 ? undefined :*/ sqrt (xvalue), U"Cannot take the square root (sqrt) of ")
+DO_NUM_WITH_TENSORS (sin, sin (xvalue), U"Cannot take the sine (sin) of ")
+DO_NUM_WITH_TENSORS (cos, cos (xvalue), U"Cannot take the cosine (cos) of ")
+DO_NUM_WITH_TENSORS (tan, tan (xvalue), U"Cannot take the tangent (tan) of ")
+DO_NUM_WITH_TENSORS (arcsin, /*fabs (xvalue) > 1.0 ? undefined :*/ asin (xvalue), U"Cannot take the arcsine (arcsin) of ")
+DO_NUM_WITH_TENSORS (arccos, /*fabs (xvalue) > 1.0 ? undefined :*/ acos (xvalue), U"Cannot take the arccosine (arccos) of ")
+DO_NUM_WITH_TENSORS (arctan, atan (xvalue), U"Cannot take the arctangent (arctan) of ")
+DO_NUM_WITH_TENSORS (exp, exp (xvalue), U"Cannot exponentiate (exp) ")
+DO_NUM_WITH_TENSORS (sinh, sinh (xvalue), U"Cannot take the hyperbolic sine (sinh) of ")
+DO_NUM_WITH_TENSORS (cosh, cosh (xvalue), U"Cannot take the hyperbolic cosine (cosh) of ")
+DO_NUM_WITH_TENSORS (tanh, tanh (xvalue), U"Cannot take the hyperbolic tangent (tanh) of ")
+DO_NUM_WITH_TENSORS (arcsinh, asinh (xvalue), U"Cannot take the hyperbolic arcsine (arcsinh) of ")
+DO_NUM_WITH_TENSORS (arccosh, acosh (xvalue), U"Cannot take the hyperbolic arccosine (arccosh) of ")
+DO_NUM_WITH_TENSORS (arctanh, atanh (xvalue), U"Cannot take the hyperbolic arctangent (arctanh) of ")
+DO_NUM_WITH_TENSORS (log2, /*xvalue <= 0.0 ? undefined :*/ log (xvalue) * NUMlog2e, U"Cannot take the base-2 logarithm (log2) of ")
+DO_NUM_WITH_TENSORS (ln, /*xvalue <= 0.0 ? undefined :*/ log (xvalue), U"Cannot take the natural logarithm (ln) of ")
+DO_NUM_WITH_TENSORS (log10, /*xvalue <= 0.0 ? undefined :*/ log10 (xvalue), U"Cannot take the base-10 logarithm (log10) of ")
+
 static void do_sum () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
@@ -7273,32 +7158,32 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MINUS_: { do_minus ();
 } break; case POWER_: { do_power ();
 /********** Functions of 1 variable: **********/
-} break; case ABS_: { do_abs ();
-} break; case ROUND_: { do_round ();
-} break; case FLOOR_: { do_floor ();
-} break; case CEILING_: { do_ceiling ();
-} break; case RECTIFY_: { do_rectify ();
-} break; case RECTIFY_VEC_: { do_rectify_VEC ();
-} break; case RECTIFY_MAT_: { do_rectify_MAT ();
-} break; case SQRT_: { do_sqrt ();
-} break; case SIN_: { do_sin ();
-} break; case COS_: { do_cos ();
-} break; case TAN_: { do_tan ();
-} break; case ARCSIN_: { do_arcsin ();
-} break; case ARCCOS_: { do_arccos ();
-} break; case ARCTAN_: { do_arctan ();
+
+#define CASE_NUM_WITH_TENSORS(label, function)  \
+} break; case label: { function (); \
+} break; case label##VEC_: { function##_VEC (); \
+} break; case label##MAT_: { function##_MAT ();
+CASE_NUM_WITH_TENSORS (ABS_, do_abs)
+CASE_NUM_WITH_TENSORS (ROUND_, do_round)
+CASE_NUM_WITH_TENSORS (FLOOR_, do_floor)
+CASE_NUM_WITH_TENSORS (CEILING_, do_ceiling)
+CASE_NUM_WITH_TENSORS (RECTIFY_, do_rectify)
+CASE_NUM_WITH_TENSORS (SQRT_, do_sqrt)
+CASE_NUM_WITH_TENSORS (SIN_, do_sin)
+CASE_NUM_WITH_TENSORS (COS_, do_cos)
+CASE_NUM_WITH_TENSORS (TAN_, do_tan)
+CASE_NUM_WITH_TENSORS (ARCSIN_, do_arcsin)
+CASE_NUM_WITH_TENSORS (ARCCOS_, do_arccos)
+CASE_NUM_WITH_TENSORS (ARCTAN_, do_arctan)
 } break; case SINC_: { do_function_n_n (NUMsinc);
 } break; case SINCPI_: { do_function_n_n (NUMsincpi);
-} break; case EXP_: { do_exp ();
-} break; case EXP_VEC_: { do_exp_VEC ();
-} break; case EXP_MAT_: { do_exp_MAT ();
-} break; case SINH_: { do_sinh ();
-} break; case COSH_: { do_cosh ();
-} break; case TANH_: { do_tanh ();
-} break; case TANH_VEC_: { do_functionvec_n_n (tanh);
-} break; case ARCSINH_: { do_function_n_n (NUMarcsinh);
-} break; case ARCCOSH_: { do_function_n_n (NUMarccosh);
-} break; case ARCTANH_: { do_function_n_n (NUMarctanh);
+CASE_NUM_WITH_TENSORS (EXP_, do_exp)
+CASE_NUM_WITH_TENSORS (SINH_, do_sinh)
+CASE_NUM_WITH_TENSORS (COSH_, do_cosh)
+CASE_NUM_WITH_TENSORS (TANH_, do_tanh)
+CASE_NUM_WITH_TENSORS (ARCSINH_, do_arcsinh)
+CASE_NUM_WITH_TENSORS (ARCCOSH_, do_arccosh)
+CASE_NUM_WITH_TENSORS (ARCTANH_, do_arctanh)
 } break; case SIGMOID_: { do_function_n_n (NUMsigmoid);
 } break; case SIGMOID_VEC_: { do_functionvec_n_n (NUMsigmoid);
 } break; case SOFTMAX_VEC_: { do_softmax_VEC ();
@@ -7315,9 +7200,9 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case TRANSPOSE_MAT_: { do_transpose_MAT ();
 } break; case ROW_SUMS_VEC_: { do_rowSums_VEC ();
 } break; case COLUMN_SUMS_VEC_: { do_columnSums_VEC ();
-} break; case LOG2_: { do_log2 ();
-} break; case LN_: { do_ln ();
-} break; case LOG10_: { do_log10 ();
+CASE_NUM_WITH_TENSORS (LOG2_, do_log2)
+CASE_NUM_WITH_TENSORS (LN_, do_ln)
+CASE_NUM_WITH_TENSORS (LOG10_, do_log10)
 } break; case LN_GAMMA_: { do_function_n_n (NUMlnGamma);
 } break; case HERTZ_TO_BARK_: { do_function_n_n (NUMhertzToBark);
 } break; case BARK_TO_HERTZ_: { do_function_n_n (NUMbarkToHertz);

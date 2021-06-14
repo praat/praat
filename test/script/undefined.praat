@@ -40,6 +40,31 @@ assert 0 * undefined = undefined
 assert 1 / undefined = undefined
 assert 0 ^ undefined = undefined
 assert undefined ^ undefined = undefined
+assert abs (undefined) = undefined
+assert round (undefined) = undefined
+assert floor (undefined) = undefined
+assert ceiling (undefined) = undefined
+assert rectify (undefined) = undefined
+assert sin (undefined) = undefined
+assert cos (undefined) = undefined
+assert tan (undefined) = undefined
+assert arcsin (undefined) = undefined
+assert arccos (undefined) = undefined
+assert arctan (undefined) = undefined
+assert sinh (undefined) = undefined
+assert cosh (undefined) = undefined
+assert tanh (undefined) = undefined
+assert arcsinh (undefined) = undefined
+assert arccosh (undefined) = undefined
+assert arctanh (undefined) = undefined
+assert exp (undefined) = undefined
+assert log2 (undefined) = undefined
+assert ln (undefined) = undefined
+assert log10 (undefined) = undefined
+assert exp (1e6) = undefined
+assert 0 * exp (1e6) = undefined
+assert sqrt (-1) = undefined
+assert 0 * sqrt (-1) = undefined
 
 #
 # Propagation within larger expressions.
@@ -59,3 +84,4 @@ assert 0 ^ 0 = 1
 assert undefined ^ 0 = undefined
 ;assert sqrt (-1) ^ 0 = 1
 assert sqrt (-1) ^ 0 = undefined
+
