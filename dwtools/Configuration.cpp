@@ -390,6 +390,11 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numb
 
 /********************** Examples *********************************************/
 
+/*
+	20210614: Configuration_createLetterRExample. Revert to version without initialisation lists because 
+	that version is buggy when compiled with gcc (Ubuntu 10.3.0-1ubuntu1) 10.3.0
+	It turn out that x1 and y2 will contain the same values as x2 and y2.
+*/
 autoConfiguration Configuration_createLetterRExample (int choice) {
 	const double x1[33] = { 0,
 		-5, -5, -5, -5, -5, -5, -5,   -5, -5, -5,
