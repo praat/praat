@@ -3013,7 +3013,8 @@ CODE (U"confusion\\# \\#  = {{ 3, 6, 2 }, { 8, 2, 1 }}")
 NORMAL (U"After this, the variable %%confusion\\# \\# % contains the value {{ 3, 6, 2 }, { 8, 2, 1 }}. "
 	"We say that the matrix %%confusion\\# % has two %rows and three %columns, i.e. it contains six numbers.")
 NORMAL (U"Whereas a numeric vector with five dimensions could be seen (see above) as a street that contains five houses, "
-	"the matrix %%confusion\\# \\# % can be seen as a city district with two avenues crossed by three streets.")
+	"the matrix %%confusion\\# \\# % can be seen as a city district with two avenues crossed by three streets, "
+	"where everybody lives on an intersection (the analogies start to get less realistic).")
 ENTRY (U"6. Creating a matrix")
 NORMAL (U"You can create a matrix in many ways. The first way we saw was with a ##matrix literal#, "
 	"i.e. a series of series of numbers (or numeric formulas) between nested braces.")
