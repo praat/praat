@@ -6,7 +6,7 @@ appendInfoLine: "test_MDS.praat"
 # side effect: 6 configurations in the list of objects: configuration[1]...configuration[6]
 # testINDSCAL uses these 6 configurations
 @testINDSCAL
-@testProcrustus
+@testProcrustes
 
 for i to 6
 	removeObject: configuration [i]
@@ -14,18 +14,18 @@ endfor
 
 appendInfoLine: "test_MDS.praat OK"
 
-procedure testProcrustus
-	appendInfoLine: tab$,  tab$, "Configuration & Configuration"
+procedure testProcrustes
+	appendInfoLine: tab$,  tab$, "Procrustes: Configuration & Configuration"
 	for .i from 2 to  6
 		selectObject: configuration [1]
 		plusObject: configuration [.i]
-		.procrustus [1] = To Procrustes: "no"
+		.procrustes [1] = To Procrustes: "no"
 		plusObject: configuration [.i]
 		.ct [.i] = To Configuration
 		plusObject: configuration [1]
-		.procrustus [2] = To Procrustes... no
-		@check_if_identity_transform: .procrustus [2]
-		removeObject: .procrustus [1], .procrustus [2]
+		.procrustes [2] = To Procrustes... no
+		@check_if_identity_transform: .procrustes [2]
+		removeObject: .procrustes [1], .procrustes [2]
 	endfor
 	for .i from 2 to 6
 		removeObject: .ct [.i]
