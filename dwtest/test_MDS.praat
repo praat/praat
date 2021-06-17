@@ -1,6 +1,7 @@
 # test_MDS.praat
 
 appendInfoLine: "test_MDS.praat"
+@testLetterRExample
 @test_additiveConstant
 @testDissimilarityInterface
 # side effect: 6 configurations in the list of objects: configuration[1]...configuration[6]
@@ -14,8 +15,23 @@ endfor
 
 appendInfoLine: "test_MDS.praat OK"
 
+procedure testLetterRExample
+	appendInfoLine: tab$, "test Dissimilarity letter R"
+	.dissimilarity = Create letter R example: 0
+	# check some values
+	assert object[.dissimilarity, 1, 1] = 0
+	assert object[.dissimilarity, 1, 2] = 6
+	assert object[.dissimilarity, 1, 3] = 9
+	assert object[.dissimilarity, 12, 10] = 7
+	assert object[.dissimilarity, 22, 13] = 46
+	assert object[.dissimilarity, 32, 27] = 79
+	assert object[.dissimilarity, 32, 31] = 7
+	removeObject: .dissimilarity
+	appendInfoLine: tab$, "test Dissimilarity letter R OK"
+endproc
+
 procedure testProcrustes
-	appendInfoLine: tab$,  tab$, "Procrustes: Configuration & Configuration"
+	appendInfoLine: tab$, "Procrustes: Configuration & Configuration"
 	for .i from 2 to  6
 		selectObject: configuration [1]
 		plusObject: configuration [.i]
@@ -30,6 +46,7 @@ procedure testProcrustes
 	for .i from 2 to 6
 		removeObject: .ct [.i]
 	endfor
+	appendInfoLine: tab$, "Procrustes: Configuration & Configuration OK"
 endproc
 
 procedure check_if_identity_transform:  .p
@@ -73,6 +90,7 @@ procedure testDissimilarityInterface
 	endfor
 	.norm = Get table norm
 	.additiveConstant = Get additive constant
+	assert abs (.additiveConstant -153.74)/ 153.74 < 1e-6
 
 	appendInfoLine: tab$, tab$, "Modify: skipped"
 	appendInfoLine: tab$, tab$, "Synthesize: skipped"
@@ -261,6 +279,7 @@ endif
 	endfor
 
 	removeObject: .dissimilarity, .randomConfiguration
+	appendInfoLine: tab$, "test interface OK"
 endproc
 
 procedure dissimilarity_to_Configurations: .dissimilarity
