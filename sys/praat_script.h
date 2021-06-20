@@ -2,7 +2,7 @@
 #define _praat_script_h_
 /* praat_script.h
  *
- * Copyright (C) 1992-2005,2007,2009-2016,2018 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2016,2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "Interpreter.h"
 
-int praat_executeCommand (Interpreter me, char32 *command);
+bool praat_executeCommand (Interpreter me, char32 *command);   // returns false only if nocheck cancelled an error
 void praat_executeCommandFromStandardInput (conststring32 programName);
 void praat_executeScriptFromFile (MelderFile file, conststring32 arguments);
 void praat_executeScriptFromFileName (conststring32 fileName, integer narg, Stackel args);
