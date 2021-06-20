@@ -1374,14 +1374,15 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 		MelderString_empty (& valueString);
 		autoMelderDivertInfo divert (& valueString);
 		MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
-		int status = praat_executeCommand (me, p);
-		if (status == 0) {
+		bool status = praat_executeCommand (me, p);
+		if (! status) {
 			value = undefined;
-		} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
+		} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
 			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
 			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
 			if (numberOfSelectedObjects > 1)
-				Melder_throw (U"Multiple objects selected. Cannot assign object ID to vector element.");
+				Melder_throw (U"Multiple objects selected. Cannot assign object IDs to vector element. "
+						"Perhaps use a vector variable instead.");
 			if (numberOfSelectedObjects == 0)
 				Melder_throw (U"No objects selected. Cannot assign object ID to vector element.");
 			value = theCurrentPraatObjects -> list [selectedObject]. id;
@@ -1509,23 +1510,25 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		MelderString_empty (& valueString);
 		autoMelderDivertInfo divert (& valueString);
 		MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
-		int status = praat_executeCommand (me, p);
-		if (status == 0) {
+		bool status = praat_executeCommand (me, p);
+		if (! status) {
 			value = undefined;
-		} else if (valueString.string [0] == 1) {   // ...not overwritten by any MelderInfo function? then the return value will be the selected object
+		} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
 			int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
 			WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
-			if (numberOfSelectedObjects > 1) {
-				Melder_throw (U"Multiple objects selected. Cannot assign object ID to matrix element.");
-			} else if (numberOfSelectedObjects == 0) {
+			if (numberOfSelectedObjects > 1)
+				Melder_throw (U"Multiple objects selected. Cannot assign object IDs to matrix element. "
+						"Perhaps use a vector variable instead.");
+			if (numberOfSelectedObjects == 0)
 				Melder_throw (U"No objects selected. Cannot assign object ID to matrix element.");
-			} else {
-				value = theCurrentPraatObjects -> list [selectedObject]. id;
-			}
+			value = theCurrentPraatObjects -> list [selectedObject]. id;
 		} else {
 			value = Melder_atof (valueString.string);   // including --undefined--
 		}
 	} else {
+		/*
+			Get the value of the formula.
+		*/
 		Interpreter_numericExpression (me, p, & value);
 	}
 	InterpreterVariable var = Interpreter_hasVariable (me, matrixName);
@@ -1599,8 +1602,11 @@ static void assignToStringArrayElement (Interpreter me, char32 *& p, const char3
 		*/
 		MelderString_empty (& valueString);
 		autoMelderDivertInfo divert (& valueString);
-		int status = praat_executeCommand (me, p);
-		value = ( status == 0 ? autostring32 () : Melder_dup (valueString.string) );
+		bool status = praat_executeCommand (me, p);
+		if (! status)
+			value = autostring32();
+		else
+			value = Melder_dup (valueString.string);
 	} else {
 		/*
 			Get the value of the formula.
@@ -1832,8 +1838,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 				trace (U"resume");
 				c0 = command2.string [0];   // resume in order to allow things like 'c$' = 5
 				if ((! Melder_isLetter (c0) || Melder_isUpperCaseLetter (c0)) && c0 != U'@' &&
-						! (c0 == U'.' && Melder_isLetter (command2.string [1]) && ! Melder_isUpperCaseLetter (command2.string [1]))) {
-					praat_executeCommand (me, command2.string);
+						! (c0 == U'.' && Melder_isLetter (command2.string [1]) && ! Melder_isUpperCaseLetter (command2.string [1])))
+				{
+					(void) praat_executeCommand (me, command2.string);
 				/*
 				 * Interpret control flow and variables.
 				 */
@@ -2045,7 +2052,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							/*
 								Make sure that lines like "echo = 3" will not be regarded as assignments.
 							*/
-							praat_executeCommand (me, command2.string);
+							(void) praat_executeCommand (me, command2.string);
 						} else
 							fail = true;
 						break;
@@ -2239,7 +2246,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							 * Make sure that lines like "print = 3" will not be regarded as assignments.
 							 */
 							if (command2.string [5] == U' ' || (str32nequ (command2.string + 5, U"line", 4) && (command2.string [9] == U' ' || command2.string [9] == U'\0'))) {
-								praat_executeCommand (me, command2.string);
+								(void) praat_executeCommand (me, command2.string);
 							} else
 								fail = true;
 						} else
@@ -2378,20 +2385,26 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to string array ", arrayName.string, U".");
+								InterpreterVariable var = Interpreter_lookUpVariable (me, arrayName.string);
 								if (isCommand (p)) {
 									/*
 										Statement like: lines$# = Get all strings
 									*/
-									praat_executeCommand (me, p);
-									if (my returnType != kInterpreter_ReturnType::STRINGARRAY_)
-										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the string array variable \"", arrayName.string, U"\".");
-									InterpreterVariable var = Interpreter_lookUpVariable (me, arrayName.string);
-									var -> stringArrayValue = my returnedStringArray.move();
+									bool status = praat_executeCommand (me, p);
+									if (! status)
+										var -> stringArrayValue = autoSTRVEC();   // anything can have happened, including an incorrect returnType
+									else if (my returnType == kInterpreter_ReturnType::STRINGARRAY_)
+										var -> stringArrayValue = my returnedStringArray.move();
+									else
+										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p),
+												U"; not assigned to the string array variable \"", arrayName.string, U"\".");
 								} else {
+									/*
+										Statement like: files$# = fileNames$# ("*.wav")
+									 */
 									STRVEC value;
 									bool owned;
 									Interpreter_stringArrayExpression (me, p, & value, & owned);
-									InterpreterVariable var = Interpreter_lookUpVariable (me, arrayName.string);
 									StringArrayVariable_move (var, value, owned);
 								}
 							} else if (*p == U'[') {
@@ -2506,12 +2519,18 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								*/
 								MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 								autoMelderDivertInfo divert (& valueString);
-								int status = praat_executeCommand (me, p);
-								if (my returnType == kInterpreter_ReturnType::STRING_ || my returnType == kInterpreter_ReturnType::REAL_ || my returnType == kInterpreter_ReturnType::INTEGER_) {
-									InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
-									var -> stringValue = Melder_dup (status ? valueString.string : U"");
-								} else
-									Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the string variable \"", variableName, U"\".");
+								bool status = praat_executeCommand (me, p);
+								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
+								if (! status)
+									var -> stringValue = Melder_dup (U"");   // anything can have happened, including an incorrect returnType
+								else if (my returnType == kInterpreter_ReturnType::STRING_ ||
+									my returnType == kInterpreter_ReturnType::REAL_ ||
+									my returnType == kInterpreter_ReturnType::INTEGER_
+								)
+									var -> stringValue = Melder_dup (valueString.string);
+								else
+									Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p),
+											U"; not assigned to the string variable \"", variableName, U"\".");
 							} else {
 								/*
 									Evaluate a string expression and assign the result to the variable.
@@ -2560,20 +2579,23 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to matrix ", matrixName.string, U".");
+								InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
 								if (isCommand (p)) {
 									/*
 										Statement like: values## = Get all values
 									*/
-									praat_executeCommand (me, p);
-									if (my returnType != kInterpreter_ReturnType::REALMATRIX_)
-										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the matrix variable \"", matrixName.string, U"\".");
-									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
-									var -> numericMatrixValue = my returnedRealMatrix.move();
+									bool status = praat_executeCommand (me, p);
+									if (! status)
+										var -> numericMatrixValue = autoMAT();   // anything can have happened, including an incorrect returnType
+									else if (my returnType == kInterpreter_ReturnType::REALMATRIX_)
+										var -> numericMatrixValue = my returnedRealMatrix.move();
+									else
+										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p),
+												U"; not assigned to the matrix variable \"", matrixName.string, U"\".");
 								} else {
 									MAT value;
 									bool owned;
 									Interpreter_numericMatrixExpression (me, p, & value, & owned);
-									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
 									NumericMatrixVariable_move (var, value, owned);
 								}
 							} else if (*p == U'[') {
@@ -2679,20 +2701,26 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to vector ", vectorName.string, U".");
+								InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
 								if (isCommand (p)) {
 									/*
 										Statement like: times# = Get all times
 									*/
-									praat_executeCommand (me, p);
-									if (my returnType != kInterpreter_ReturnType::REALVECTOR_)
+									bool status = praat_executeCommand (me, p);
+									if (! status)
+										var -> numericVectorValue = autoVEC();   // anything can have happened, including an incorrect returnType
+									else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
+										var -> numericVectorValue = autoVEC();
+										int IOBJECT;
+										WHERE (SELECTED) *var -> numericVectorValue. append() = ID;
+									} else if (my returnType == kInterpreter_ReturnType::REALVECTOR_)
+										var -> numericVectorValue = my returnedRealVector.move();
+									else
 										Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the vector variable \"", vectorName.string, U"\".");
-									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
-									var -> numericVectorValue = my returnedRealVector.move();
 								} else {
 									VEC value;
 									bool owned;
 									Interpreter_numericVectorExpression (me, p, & value, & owned);
-									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
 									NumericVectorVariable_move (var, value, owned);
 								}
 							} else if (*p == U'[') {
@@ -2790,7 +2818,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							/*
 								Command ends here: it may be a PraatShell command.
 							*/
-							praat_executeCommand (me, command2.string);
+							(void) praat_executeCommand (me, command2.string);
 							continue;   // next line
 						}
 						char32 *endOfVariable = p;
@@ -2833,7 +2861,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								Melder_assert (! result. stringResult);
 								Interpreter_anyExpression (me, index.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
-									double numericIndexValue = result. numericResult;
+									const double numericIndexValue = result. numericResult;
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
@@ -2853,7 +2881,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							/*
 								Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
 							*/
-							praat_executeCommand (me, variableName);
+							(void) praat_executeCommand (me, variableName);
 							continue;   // next line
 						}
 						p += ( typeOfAssignment == 0 ? 1 : 2 );
@@ -2874,24 +2902,23 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							MelderString_empty (& valueString);
 							autoMelderDivertInfo divert (& valueString);
 							MelderString_appendCharacter (& valueString, 1);   // will be overwritten by something totally different if any MelderInfo function is called...
-							int status = praat_executeCommand (me, p);
-							if (status == 0) {
-								value = undefined;
+							bool status = praat_executeCommand (me, p);
+							if (! status) {
+								value = undefined;   // anything can have happened, including an incorrect return type
 							} else if (my returnType == kInterpreter_ReturnType::OBJECT_) {
 								int IOBJECT, selectedObject = 0, numberOfSelectedObjects = 0;
 								WHERE (SELECTED) { selectedObject = IOBJECT; numberOfSelectedObjects += 1; }
-								if (numberOfSelectedObjects > 1) {
-									Melder_throw (U"Multiple objects selected. Cannot assign object ID to variable.");
-								} else if (numberOfSelectedObjects == 0) {
+								if (numberOfSelectedObjects > 1)
+									Melder_throw (U"Multiple objects selected. Cannot assign object IDs to numeric variable. "
+											"Perhaps use a vector variable instead.");
+								if (numberOfSelectedObjects == 0)
 									Melder_throw (U"No objects selected. Cannot assign object ID to variable.");
-								} else {
-									value = theCurrentPraatObjects -> list [selectedObject]. id;
-								}
-							} else if (my returnType != kInterpreter_ReturnType::REAL_ && my returnType != kInterpreter_ReturnType::INTEGER_) {
-								Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p), U"; not assigned to the numeric variable \"", variableName, U"\".");
-							} else {
+								value = theCurrentPraatObjects -> list [selectedObject]. id;
+							} else if (my returnType == kInterpreter_ReturnType::REAL_ || my returnType == kInterpreter_ReturnType::INTEGER_) {
 								value = Melder_atof (valueString.string);   // including --undefined--
-							}
+							} else
+								Melder_throw (kInterpreter_ReturnType_errorMessage (my returnType, p),
+										U"; not assigned to the numeric variable \"", variableName, U"\".");
 						} else {
 							/*
 								Get the value of the formula.

@@ -1898,7 +1898,7 @@ void praat_run () {
 						char32 *newline = str32chr (line, U'\n');
 						if (newline) *newline = U'\0';
 						try {
-							praat_executeCommand (nullptr, line);
+							(void) praat_executeCommand (nullptr, line);   // should contain no cases of "nocheck"
 						} catch (MelderError) {
 							Melder_clearError ();   // ignore this line, but not necessarily the next
 						}

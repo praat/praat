@@ -217,9 +217,9 @@ NORMAL (U"Vorbis is a general-purpose patent-free lossy audio compression format
 MAN_END
 
 MAN_BEGIN (U"Sound files 2.9. Ogg Opus files", U"djmw", 20210604)
-NORMAL (U"Opus is a general-purpose patent-free lossy audio compression format. "
-	"It is a newer and better format than @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
-	"According to the website at ##https://xiph.org/#: \"It was developed by the Xiph.Org Foundation and standardized by the Internet Engineering Task Force, designed to efficiently "
+NORMAL (U"Opus is a general-purpose patent-free lossy audio compression format, "
+	"a successor to @@Sound files 2.8. Ogg Vorbis files|Vorbis@. "
+	"According to Xiph.Org's website, this format \"was developed by the Xiph.Org Foundation and standardized by the Internet Engineering Task Force, designed to efficiently "
 	"code speech and general audio in a single format, while remaining low-latency enough for real-time interactive communication "
 	"and low-complexity enough for low-end embedded processors.\" "
 	"Praat supports Ogg Opus decoding through open source code made available at "
