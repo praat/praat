@@ -469,7 +469,7 @@ autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 				double val = thy z [irow] [jcol];
 				if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) // bw == 0?
 					val = thy z [irow] [jcol - 1] / 10;
-				Table_setNumericValue ( (Table) me.get(), irow, jcol, val);
+				Table_setNumericValue (me.get(), irow, jcol, val);
 			}
 		}
 		return me;
@@ -618,13 +618,13 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 }
 
 /*
-This function adds F0 flutter, as specified in:
+	This function adds F0 flutter, as specified in:
 
-"Analysis, synthesis and perception of voice quality variations among
-female and male talkers" D.H. Klatt and L.C. Klatt JASA 87(2) February 1990.
+	"Analysis, synthesis and perception of voice quality variations among
+	female and male talkers", D.H. Klatt and L.C. Klatt, JASA 87(2), February 1990.
 
-Flutter is added by applying a quasi-random element constructed from three
-slowly varying sine waves.
+	Flutter is added by applying a quasi-random element constructed from three
+	slowly varying sine waves.
 */
 
 static void KlattFrame_flutter (KlattGlobal me) {
@@ -640,9 +640,9 @@ static void KlattFrame_flutter (KlattGlobal me) {
 }
 
 /*
-  Random number generator (return a number between -8191 and +8191)
-  Noise spectrum is tilted down by soft low-pass filter having a pole near
-    the origin in the z-plane, i.e. output = input + (0.75 * lastoutput)
+	Random number generator (return a number between -8191 and +8191)
+	Noise spectrum is tilted down by soft low-pass filter having a pole near
+	the origin in the Z-plane, i.e. output = input + (0.75 * lastoutput)
 */
 static double KlattGlobal_gen_noise (KlattGlobal me) {
 	static double nlast = 0.0;
@@ -1114,50 +1114,50 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 			for (integer col = 1; col <= KlattTable_NPAR; col ++)
 				par [col] = Table_getNumericValue_Assert (me, irow, col);   // ppgb: truncatie?
 			integer jcol = 1;
-			frame ->  F0hz10 = par [jcol ++];
-			frame ->  AVdb = par [jcol ++];
-			frame ->  Fhz [1] = par [jcol ++];
-			frame ->  Bhz [1] = par [jcol ++];
-			frame ->  Fhz [2] = par [jcol ++];
-			frame ->  Bhz [2] = par [jcol ++];
-			frame ->  Fhz [3] = par [jcol ++];
-			frame ->  Bhz [3] = par [jcol ++];
-			frame ->  Fhz [4] = par [jcol ++];
-			frame ->  Bhz [4] = par [jcol ++];
-			frame ->  Fhz [5] = par [jcol ++];
-			frame ->  Bhz [5] = par [jcol ++];
-			frame ->  Fhz [6] = par [jcol ++];
-			frame ->  Bhz [6] = par [jcol ++];
-			frame ->  FNZhz = par [jcol ++];
-			frame ->  BNZhz = par [jcol ++];
-			frame ->  FNPhz = par [jcol ++];
-			frame ->  BNPhz = par [jcol ++];
-			frame ->  ah = par [jcol ++];
-			frame ->  Kopen = par [jcol ++];
-			frame ->  Aturb = par [jcol ++];
-			frame ->  TLTdb = par [jcol ++];
-			frame ->  AF = par [jcol ++];
-			frame ->  Kskew = par [jcol ++];
-			frame ->  A [1] = par [jcol ++];
-			frame ->  Bphz [1] = par [jcol ++];
-			frame ->  A [2] = par [jcol ++];
-			frame ->  Bphz [2] = par [jcol ++];
-			frame ->  A [3] = par [jcol ++];
-			frame ->  Bphz [3] = par [jcol ++];
-			frame ->  A [4] = par [jcol ++];
-			frame ->  Bphz [4] = par [jcol ++];
-			frame ->  A [5] = par [jcol ++];
-			frame ->  Bphz [5] = par [jcol ++];
-			frame ->  A [6] = par [jcol ++];
-			frame ->  Bphz [6] = par [jcol ++];
-			frame ->  ANP = par [jcol ++];
-			frame ->  AB = par [jcol ++];
-			frame ->  AVpdb = par [jcol ++];
-			frame ->  Gain0 = par [jcol ++];;
-			frame ->  Fhz [7] = 6500;
-			frame ->  Bhz [7] = 600;
-			frame ->  Fhz [8] = 7500;
-			frame ->  Bhz [8] = 600;
+			frame -> F0hz10 = par [jcol ++];
+			frame -> AVdb = par [jcol ++];
+			frame -> Fhz [1] = par [jcol ++];
+			frame -> Bhz [1] = par [jcol ++];
+			frame -> Fhz [2] = par [jcol ++];
+			frame -> Bhz [2] = par [jcol ++];
+			frame -> Fhz [3] = par [jcol ++];
+			frame -> Bhz [3] = par [jcol ++];
+			frame -> Fhz [4] = par [jcol ++];
+			frame -> Bhz [4] = par [jcol ++];
+			frame -> Fhz [5] = par [jcol ++];
+			frame -> Bhz [5] = par [jcol ++];
+			frame -> Fhz [6] = par [jcol ++];
+			frame -> Bhz [6] = par [jcol ++];
+			frame -> FNZhz = par [jcol ++];
+			frame -> BNZhz = par [jcol ++];
+			frame -> FNPhz = par [jcol ++];
+			frame -> BNPhz = par [jcol ++];
+			frame -> ah = par [jcol ++];
+			frame -> Kopen = par [jcol ++];
+			frame -> Aturb = par [jcol ++];
+			frame -> TLTdb = par [jcol ++];
+			frame -> AF = par [jcol ++];
+			frame -> Kskew = par [jcol ++];
+			frame -> A [1] = par [jcol ++];
+			frame -> Bphz [1] = par [jcol ++];
+			frame -> A [2] = par [jcol ++];
+			frame -> Bphz [2] = par [jcol ++];
+			frame -> A [3] = par [jcol ++];
+			frame -> Bphz [3] = par [jcol ++];
+			frame -> A [4] = par [jcol ++];
+			frame -> Bphz [4] = par [jcol ++];
+			frame -> A [5] = par [jcol ++];
+			frame -> Bphz [5] = par [jcol ++];
+			frame -> A [6] = par [jcol ++];
+			frame -> Bphz [6] = par [jcol ++];
+			frame -> ANP = par [jcol ++];
+			frame -> AB = par [jcol ++];
+			frame -> AVpdb = par [jcol ++];
+			frame -> Gain0 = par [jcol ++];;
+			frame -> Fhz [7] = 6500;
+			frame -> Bhz [7] = 600;
+			frame -> Fhz [8] = 7500;
+			frame -> Bhz [8] = 600;
 
 			KlattGlobal_getFrame (thee, frame);
 
@@ -1175,7 +1175,6 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 		Melder_throw (me, U": no Sound created.");
 	}
 }
-
 
 autoKlattTable KlattTable_createExample () {
 	const integer nrows = 1376;

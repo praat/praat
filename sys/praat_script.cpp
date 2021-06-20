@@ -180,7 +180,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 	return narg;
 }
 
-int praat_executeCommand (Interpreter interpreter, char32 *command) {
+bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 	if (interpreter)
 		interpreter -> returnType = kInterpreter_ReturnType::VOID_;   // clear return type to its default
 
@@ -274,26 +274,26 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			}
 		} else if (str32nequ (command, U"nowarn ", 7)) {
 			autoMelderWarningOff nowarn;
-			praat_executeCommand (interpreter, command + 7);
+			return praat_executeCommand (interpreter, command + 7);
 		} else if (str32nequ (command, U"noprogress ", 11)) {
 			autoMelderProgressOff noprogress;
-			praat_executeCommand (interpreter, command + 11);
+			return praat_executeCommand (interpreter, command + 11);
 		} else if (str32nequ (command, U"nocheck ", 8)) {
 			try {
-				praat_executeCommand (interpreter, command + 8);
+				return praat_executeCommand (interpreter, command + 8);
 			} catch (MelderError) {
 				Melder_clearError ();
-				return 0;
+				return false;
 			}
 		} else if (str32nequ (command, U"demo ", 5)) {
 			autoDemoOpen demo;
-			praat_executeCommand (interpreter, command + 5);
+			return praat_executeCommand (interpreter, command + 5);
 		} else if (str32nequ (command, U"asynchronous ", 13)) {
 			autoMelderAsynchronous asynchronous;
-			praat_executeCommand (interpreter, command + 13);
+			return praat_executeCommand (interpreter, command + 13);
 		} else if (str32nequ (command, U"pause ", 6) || str32equ (command, U"pause")) {
 			if (theCurrentPraatApplication -> batch)
-				return 1;   // in batch we ignore pause statements
+				return true;   // in batch we ignore pause statements
 			UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", interpreter);
 			UiPause_comment (str32equ (command, U"pause") ? U"..." : command + 6);
 			UiPause_end (1, 1, 0, U"Continue", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, interpreter);
@@ -532,7 +532,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		}
 		praat_updateSelection ();
 	}
-	return 1;
+	return true;
 }
 
 void praat_executeCommandFromStandardInput (conststring32 programName) {
@@ -549,7 +549,7 @@ void praat_executeCommandFromStandardInput (conststring32 programName) {
 			*newLine = '\0';
 		autostring32 command32 = Melder_8to32 (command8);
 		try {
-			praat_executeCommand (nullptr, command32.get());
+			(void) praat_executeCommand (nullptr, command32.get());
 		} catch (MelderError) {
 			Melder_flushError (programName, U": Command \"", Melder_peek8to32 (command8), U"\" not executed.");
 		}
