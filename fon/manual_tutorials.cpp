@@ -22,8 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210612)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210620)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.50# (20 June 2021)")
+LIST_ITEM (U"• RealTier: editing, Formula, conversion from and to Matrix and Table and other tiers such as PitchTier, "
+	"DurationTier, IntensityTier and AmplitudeTier.")
+LIST_ITEM (U"• Scripting: can now assign multiple objects to a vector.")
+LIST_ITEM (U"• Fix crashes in ##Create letter R example# and ##Create KlattTable example# introduced in 6.1.49.")
 NORMAL (U"##6.1.49# (12 June 2021)")
 LIST_ITEM (U"• @PitchTier, @IntensityTier, @DurationTier and @AmplitudeTier windows: save preferences.")
 LIST_ITEM (U"• @Manipulation window: removed unused semitone options.")
