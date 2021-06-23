@@ -202,9 +202,9 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			
 			thy frequencyBins.addItem_move (toFrequencyBin (1).move());
 			if (ifreq == 1)
-				thy fzero = toFrequencyBin (2).move();
+				thy zeroBin = toFrequencyBin (2).move();
 			if (ifreq == thy nx)
-				thy fnyquist = toFrequencyBin (3).move();
+				thy nyquistBin = toFrequencyBin (3).move();
 		}
 		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
 	} catch (MelderError) {
@@ -218,19 +218,30 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		const double nyquistFrequency = my v_myFrequencyUnitToHertz (my xmax);
 		const double samplingFrequency = 2.0 * nyquistFrequency;
 		const integer numberOfSamples = duration * samplingFrequency;
-		integer numberOfFFTSamples = 2;
-		while (numberOfFFTSamples < numberOfSamples)
-			numberOfFFTSamples *= 2;
+		integer numberOfFFTSamples = getNumberOfFFTSamples (numberOfSamples);
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFFTSamples / 2 + 1);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-			autoSound sound = FrequencyBin_to_Sound (frequencyBin);
-			autoSpectrum filter = Sound_to_Spectrum (sound.get(), false);
+			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];			
 			double flow, fhigh;
 			MultiSampledSpectrogram_getFrequencyBand (me, ifreq, & flow, & fhigh);
-			integer iflow, ifhigh;
-			(void) Sampled_getWindowSamples (thee.get(), flow, fhigh, & iflow, & ifhigh);
-			thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1, ifhigh - iflow + 1);
+			auto fillSpectrumPart = [&] (FrequencyBin fbin) {
+				autoSound sound = FrequencyBin_to_Sound (fbin);
+				autoSpectrum filter = Sound_to_Spectrum (sound.get(), false);
+				integer iflow, ifhigh;
+				(void) Sampled_getWindowSamples (thee.get(), flow, fhigh, & iflow, & ifhigh);
+				thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1, ifhigh - iflow + 1);
+			};
+			fillSpectrumPart (frequencyBin);
+			if (ifreq == 1) {
+				fhigh = 0.5 * (flow + fhigh);
+				flow = 0.0;
+				fillSpectrumPart (my zeroBin.get());
+			}
+			if (ifreq == my nx) {
+				flow = 0.5 * (flow + fhigh);
+				fhigh = my v_myFrequencyUnitToHertz (my xmax);
+				fillSpectrumPart (my nyquistBin.get());
+			}
 		}
 		return thee;
 	} catch (MelderError) {
