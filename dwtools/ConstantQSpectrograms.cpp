@@ -62,6 +62,17 @@ double ConstantQLog2FSpectrogram_getQualityFactor (ConstantQLog2FSpectrogram me)
 	return 1.0 / (a - 1.0 / a);
 }
 
+static void MultiSampledSpectrogram_setFrequencyTicks (MultiSampledSpectrogram me, Graphics g, double fmin, double fmax, double df) {
+	double f = fmin;
+	while (f <= my v_myFrequencyUnitToHertz (fmax) ) {
+		if (f >= fmin) {
+			const double f_hz = my v_myFrequencyUnitToHertz (f);
+			conststring32 f_string = Melder_fixed (f_hz, 1);
+			Graphics_markLeft (g, f, false, true, false, f_string);
+		}
+		f += df;
+	}
+}
 void ConstantQLog2FSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
 	Graphics_setInner (g);
 	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
@@ -71,15 +82,7 @@ void ConstantQLog2FSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, 
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_inqWindow (g, & tmin, & tmax, & fmin, & fmax);
-		double f = my x1; // TODO Can the ticks be generalized into MultiSampledSpectrogram_paint ??
-		while (f <= my xmax ) {
-			if (f >= fmin) {
-				const double f_hz = my v_myFrequencyUnitToHertz (f);
-				conststring32 f_string = Melder_fixed (f_hz, 1);
-				Graphics_markLeft (g, f, false, true, false, f_string);
-			}
-			f += 1.0;
-		}
+		MultiSampledSpectrogram_setFrequencyTicks (me, g, fmin, fmax, 1.0);
 		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
 	}
 }
@@ -135,16 +138,8 @@ void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tm
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_inqWindow (g, & tmin, & tmax, & fmin, & fmax);
-		double f = my xmin; // TODO Can the ticks be generalized into MultiSampledSpectrogram_paint ??
-		while (f <= my xmax ) {
-			if (f >= fmin) {
-				const double f_hz = my v_myFrequencyUnitToHertz (f);
-				conststring32 f_string = Melder_fixed (f_hz, 1);
-				Graphics_markLeft (g, f, false, true, false, f_string);
-			}
-			f += 1000.0;
-		}
-		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
+		MultiSampledSpectrogram_setFrequencyTicks (me, g, fmin, fmax, 1000.0);
+		Graphics_textLeft (g, true, U"Frequency (Hz)");
 	}
 }
 

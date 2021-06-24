@@ -31,7 +31,7 @@ Thing_define (ConstantQLog2FSpectrogram, MultiSampledSpectrogram) {
 	double v_myFrequencyUnitToHertz (double log2_f)
 		override;
 	double v_hertzToMyFrequencyUnit (double f_hz)
-		override;	
+		override;
 };
 
 autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins);
