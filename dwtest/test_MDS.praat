@@ -37,12 +37,12 @@ procedure testLetterRExample
 
 	# check some dissimilarity values
 	assert object[.dissimilarity, 1, 1] = 0
-	assert object[.dissimilarity, 1, 2] = 6
-	assert object[.dissimilarity, 1, 3] = 9
-	assert object[.dissimilarity, 12, 10] = 7
-	assert object[.dissimilarity, 22, 13] = 46
-	assert object[.dissimilarity, 32, 27] = 79
-	assert object[.dissimilarity, 32, 31] = 7
+	assert abs(object[.dissimilarity, 1, 2] - 6) < 1e-10
+	assert abs(object[.dissimilarity, 1, 3] - 9) < 1e-10
+	assert abs(object[.dissimilarity, 12, 10] - 7) < 1e-10
+	assert abs(object[.dissimilarity, 22, 13] - 46) < 1e-10
+	assert abs(object[.dissimilarity, 32, 27] - 79) < 1e-10
+	assert abs(object[.dissimilarity, 32, 31] - 7) < 1e-10
 	.norm = Get table norm
 
 	.additiveConstant = Get additive constant

@@ -217,28 +217,6 @@ void MultiSampledSpectrogram_checkFrequencyRange (MultiSampledSpectrogram me, do
 	}
 }
 
-void MultiSampledSpectrogram_paint (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
-	MultiSampledSpectrogram_checkFrequencyRange (me, & fmin, & fmax);
-	Graphics_setInner (g);
-	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
-	Graphics_unsetInner (g);
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, true, U"Time (s)");
-		Graphics_marksBottom (g, 2, true, true, false);
-		double f = my x1; // TODO
-		while (f <= my xmax ) {
-			if (f >= my v_hertzToMyFrequencyUnit (fmin)) {
-				const double f_hz = my v_myFrequencyUnitToHertz (f);
-				conststring32 f_string = Melder_fixed (f_hz, 1);
-				Graphics_markLeft (g, f, false, true, false, f_string);
-			}
-			f += 1.0;
-		}
-		Graphics_textLeft (g, true, U"Frequency (log__2_Hz)");
-	}
-}
-
 void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange) {
 	integer itmin, itmax, ifmin, ifmax;
 	if (tmax <= tmin) {

@@ -144,39 +144,17 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			integer window_imax_previous = 0;
 			double spectrum_fmin, spectrum_fmax;		
 			MultiSampledSpectrogram_getFrequencyBand (thee, ifreq, & spectrum_fmin, & spectrum_fmax);
+			double window_fmin = spectrum_fmin, window_fmax = spectrum_fmax;
 			
-			auto toFrequencyBin = [&] (int part) -> autoFrequencyBin {
-				double window_fmin = spectrum_fmin, window_fmax = spectrum_fmax;
+			auto toFrequencyBin = [&] (int partOfSpectrum) -> autoFrequencyBin {
 				integer window_imin = 0, window_imax = 0;
-				if (part == 1) {
-					/*
-						Initialisation before part = 2 and part = 3 can be used.
-					*/
-				} else if (part == 2) {
-					/*
-						Fill with values from 0 Hz to the mid of the first window
-						Multiply with a window only the part that overlaps with the first window.
-					*/
-					spectrum_fmax = 0.5 * (spectrum_fmin + spectrum_fmax);
-					spectrum_fmin = 0.0;
-					window_fmax = spectrum_fmax;
-				} else if (part == 3) {
-					/*
-						Fill with the part from the mid of the last window to the end
-						Window only the part that overlaps the last window.
-					*/
-					spectrum_fmin = 0.5 * (spectrum_fmin + spectrum_fmax);
-					window_fmin = spectrum_fmin;
-					spectrum_fmax = thy v_myFrequencyUnitToHertz (thy xmax);
-
-				}
 				integer spectrum_imin, spectrum_imax;
 				const integer numberOfSamplesFromSpectrum = Sampled_getWindowSamples (me, spectrum_fmin, spectrum_fmax, 
 					& spectrum_imin, & spectrum_imax);			
 				Melder_require (numberOfSamplesFromSpectrum > 1,
 					U"The number of spectral filter values should be larger than 1.");
 				integer numberOfFilterValues = numberOfSamplesFromSpectrum;
-				if (part == 1) {
+				if (partOfSpectrum == 1) {
 					filterWindow.resize (numberOfSamplesFromSpectrum);
 					windowShape_VEC_preallocated (filterWindow.get(), filterShape);
 					if (approximateTimeOverSampling > 1.0)
@@ -191,7 +169,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 					& window_imin, & window_imax);
 				const integer filter_imin = window_imin - spectrum_imin + 1;
 				const integer filter_imax = window_imax - spectrum_imin + 1;
-				window_imax = ( part == 1 ? filterWindow.size : part == 2 ? window_imax_previous : numberToBeWindowed );
+				window_imax = ( partOfSpectrum == 1 ? filterWindow.size : 
+					( partOfSpectrum == 2 ? window_imax_previous : numberToBeWindowed ) );
 				window_imin = window_imax - numberToBeWindowed + 1;
 				window_imax_previous = window_imax;
 				filter -> z.part (1, 2, filter_imin, filter_imax)  *=  
@@ -201,10 +180,26 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			};
 			
 			thy frequencyBins.addItem_move (toFrequencyBin (1).move());
-			if (ifreq == 1)
-				thy fzero = toFrequencyBin (2).move();
-			if (ifreq == thy nx)
-				thy fnyquist = toFrequencyBin (3).move();
+			if (ifreq == 1) {
+				/*
+					Fill with values from 0 Hz to the mid of the first window
+					Multiply with a window only the part that overlaps with the first window.
+				*/
+				spectrum_fmax = 0.5 * (spectrum_fmin + spectrum_fmax);
+				spectrum_fmin = 0.0;
+				window_fmax = spectrum_fmax;
+				thy zeroBin = toFrequencyBin (2).move();
+			}
+			if (ifreq == thy nx) {
+				/*
+					Fill with the part from the mid of the last window to the end
+					Window only the part that overlaps the last window.
+				*/
+				spectrum_fmin = 0.5 * (spectrum_fmin + spectrum_fmax);
+				window_fmin = spectrum_fmin;
+				spectrum_fmax = thy v_myFrequencyUnitToHertz (thy xmax);
+				thy nyquistBin = toFrequencyBin (3).move();
+			}
 		}
 		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
 	} catch (MelderError) {
@@ -218,19 +213,30 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		const double nyquistFrequency = my v_myFrequencyUnitToHertz (my xmax);
 		const double samplingFrequency = 2.0 * nyquistFrequency;
 		const integer numberOfSamples = duration * samplingFrequency;
-		integer numberOfFFTSamples = 2;
-		while (numberOfFFTSamples < numberOfSamples)
-			numberOfFFTSamples *= 2;
+		integer numberOfFFTSamples = getNumberOfFFTSamples (numberOfSamples);
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFFTSamples / 2 + 1);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-			autoSound sound = FrequencyBin_to_Sound (frequencyBin);
-			autoSpectrum filter = Sound_to_Spectrum (sound.get(), false);
+			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];			
 			double flow, fhigh;
 			MultiSampledSpectrogram_getFrequencyBand (me, ifreq, & flow, & fhigh);
-			integer iflow, ifhigh;
-			(void) Sampled_getWindowSamples (thee.get(), flow, fhigh, & iflow, & ifhigh);
-			thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1, ifhigh - iflow + 1);
+			auto fillSpectrumPart = [&] (FrequencyBin fbin) {
+				autoSound sound = FrequencyBin_to_Sound (fbin);
+				autoSpectrum filter = Sound_to_Spectrum (sound.get(), false);
+				integer iflow, ifhigh;
+				(void) Sampled_getWindowSamples (thee.get(), flow, fhigh, & iflow, & ifhigh);
+				thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1, ifhigh - iflow + 1);
+			};
+			fillSpectrumPart (frequencyBin);
+			if (ifreq == 1) {
+				fhigh = 0.5 * (flow + fhigh);
+				flow = 0.0;
+				fillSpectrumPart (my zeroBin.get());
+			}
+			if (ifreq == my nx) {
+				flow = 0.5 * (flow + fhigh);
+				fhigh = my v_myFrequencyUnitToHertz (my xmax);
+				fillSpectrumPart (my nyquistBin.get());
+			}
 		}
 		return thee;
 	} catch (MelderError) {

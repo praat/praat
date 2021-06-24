@@ -55,7 +55,7 @@
 #include "Sound_to_MFCC.h"
 #include "VocalTractTier.h"
 
-#include "praat_TimeFunction.h"
+#include "praat_TimeFrameSampled.h"
 #include "praat_Matrix.h"
 
 #define praat_Quefrency_RANGE(fromQuefrency,toQuefrency) \
@@ -123,6 +123,18 @@ DO
 		autoINTVEC parameters = newINTVECfromString (parameters_string);
 		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, markColour, parameters.get(), markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish);
 	GRAPHICS_EACH_END
+}
+
+DIRECT (QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates) {
+	QUERY_ONE_FOR_REAL (FormantPath)
+		const integer result = my ceilings.size;
+	QUERY_ONE_FOR_REAL_END (U"")
+}
+
+DIRECT (QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies) {
+	QUERY_ONE_FOR_REAL_VECTOR (FormantPath)
+		autoVEC result = copy_VEC (my ceilings.get());
+	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
 FORM (CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_stress, U"FormantPath: To Matrix (stress)", nullptr) {
@@ -661,7 +673,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Cepstrumc_to_Matrix) {
 
 /******************** Formant ********************************************/
 
-FORM (QUERY_ONE_Formant_listFormantSlope_REAL_VECTOR, U"Formant: List formant slope", U"Formant: List formant slope...") {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__Formant_listFormantSlope, U"Formant: List formant slope", U"Formant: List formant slope...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	REAL (tmin, U"left Time range (s)", U"0.0")
 	REAL (tmax, U"right Time range (s)", U"0.0 (=all)")
@@ -751,7 +763,7 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" frequencies")
 }
 
-FORM (QUERY_ONE_FOR_REAL_VECTOR_LineSpectralFrequencies_listFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
+FORM (QUERY_ONE_FOR_REAL_VECTOR__LineSpectralFrequencies_listFrequenciesInFrame, U"LineSpectralFrequencies: List all frequencies in frame", U"") {
 	NATURAL (frameNumber, U"Frame number", U"10")
 	OK
 DO
@@ -1406,7 +1418,7 @@ void praat_uvafon_LPC_init () {
 			CONVERT_EACH_TO_ONE__Cepstrumc_to_Matrix);
 
 	praat_addAction1 (classFormant, 0, U"List formant slope...", U"Get standard deviation...", praat_DEPTH_1 + praat_HIDDEN,
-			QUERY_ONE_Formant_listFormantSlope_REAL_VECTOR);
+			QUERY_ONE_FOR_REAL_VECTOR__Formant_listFormantSlope);
 	praat_addAction1 (classFormant, 0, U"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, 
 			CONVERT_EACH_TO_ONE__Formant_to_LPC);
@@ -1422,6 +1434,11 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, 
 			GRAPHICS_EACH__FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
+		praat_TimeFrameSampled_query_init (classFormantPath);
+		praat_addAction1 (classFormantPath, 0, U"Get number of candidates", nullptr, 1,
+			QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates);
+		praat_addAction1 (classFormantPath, 0, U"List ceiling frequencies", nullptr, 1,
+			QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies);
 	praat_addAction1 (classFormantPath, 0, U"Extract Formant", 0, 0, 
 			CONVERT_EACH_TO_ONE__FormantPath_extractFormant);
 	praat_addAction1 (classFormantPath, 0, U"To Matrix (stress)...", 0, 0, 
@@ -1450,7 +1467,7 @@ void praat_uvafon_LPC_init () {
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"Get number of frequencies...", 0, 1,
 				QUERY_ONE_FOR_INTEGER__LineSpectralFrequencies_getNumberOfFrequencies);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"List frequencies in frame...", 0, 1,
-				QUERY_ONE_FOR_REAL_VECTOR_LineSpectralFrequencies_listFrequenciesInFrame);
+				QUERY_ONE_FOR_REAL_VECTOR__LineSpectralFrequencies_listFrequenciesInFrame);
 		praat_addAction1 (classLineSpectralFrequencies, 1, U"List all frequencies", 0, 1,
 				QUERY_ONE_FOR_MATRIX__LineSpectralFrequencies_listAllFrequencies);
 

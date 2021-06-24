@@ -84,19 +84,26 @@ static double _FormantPathEditor_computeSoundY (FormantPathEditor me) {
 	return (my d_longSound.data || my d_sound.data) ? 0.7 : 1.0;
 }
 
-static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *startTime, double *endTime, double *xCursor, double *yCursor) {
-	*startTime = my startWindow;
-	*endTime = my endWindow;
+static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_startTime, double *out_endTime, double *out_xCursor, double *out_yCursor) {
+	double startTime = my startWindow, endTime = my endWindow;
+	double xCursor;
 	if (my startSelection == my endSelection) {
-		*startTime = my startWindow;
-		*endTime = my endWindow;
-		*xCursor = my startSelection;
+		startTime = my startWindow;
+		endTime = my endWindow;
+		xCursor = my startSelection;
 	} else {
-		*startTime = my startSelection;
-		*endTime = my endSelection;
-		*xCursor = my tmin - 1.0; // don't show
+		startTime = my startSelection;
+		endTime = my endSelection;
+		xCursor = my tmin - 1.0; // don't show
 	}
-	*yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom &&
+	if (out_startTime)
+		*out_startTime = startTime;
+	if (out_endTime)
+		*out_endTime = endTime;	
+	if (out_xCursor)
+		*out_xCursor = xCursor;
+	if (out_yCursor)
+		*out_yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom &&
 		my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
 }
 
@@ -486,6 +493,25 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 	EDITOR_END
 }
 
+static void INFO_DATA__StressListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+	INFO_DATA
+		FormantPath formantPath = (FormantPath) my data;
+		Formant formant = formantPath -> formants.at [1];
+		const integer maximumFormantNumber = formant -> maxnFormants;
+		VEC ceilings = formantPath -> ceilings.get();
+		double startTime, endTime;
+		FormantPathEditor_getDrawingData (me, & startTime, & endTime, nullptr, nullptr);
+		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
+		autoVEC stresses = FormantPath_getStresses (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Ceiling_Hz Stress");
+		for (integer iceiling = 1; iceiling <= ceilings.size; iceiling ++) {
+			MelderInfo_writeLine (Melder_fixed (ceilings [iceiling], 1), U" ", Melder_fixed (stresses [iceiling], 2));
+		}
+		MelderInfo_close ();
+	INFO_DATA_END
+}
+
 static void menu_cb_FormantColourSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant colour settings", nullptr)
 		WORD (oddPathColour_string, U"Dots in F1, F3, F5", my default_formant_path_oddColour ())
@@ -585,6 +611,8 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U" -- drawing -- ", 0, 0);
 	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
+	EditorMenu_addCommand (menu, U" -- candidate queries -- ", 0, 0);
+	EditorMenu_addCommand (menu, U"Stress listing", 0, INFO_DATA__StressListing);
 }
 
 void structFormantPathEditor :: v_createHelpMenuItems (EditorMenu menu) {
