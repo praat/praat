@@ -389,10 +389,10 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 	}
 }
 
-autoVEC FormantPath_getStress (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
+autoVEC FormantPath_getStresses (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
 	autoVEC stress = raw_VEC (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
-		const Formant formanti = (Formant) my formants . at [iformant];
+		const Formant formanti = (Formant) my formants.at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
 		stress [iformant] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
@@ -507,13 +507,13 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 			if (showStress && numberOfSamples > 0) {
 				const double stress = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 				MelderString_append (& info, U"Fit=", Melder_fixed (stress, 2));
-				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
-				Graphics_text (g, tLeftPos, fmax, info.string);
+				Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_BOTTOM);
+				Graphics_text (g, tRightPos, fmax, info.string);
 			}
 			MelderString_empty (& info);
-			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::RIGHT, Graphics_BOTTOM);
+			Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::LEFT, Graphics_BOTTOM);
 			MelderString_append (& info, U"Ceiling=", Melder_fixed (my ceilings [iformant], 0), U" Hz");
-			Graphics_text (g, tRightPos, fmax, info.string);
+			Graphics_text (g, tLeftPos, fmax, info.string);
 		}
 		Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 		if (garnish) {
