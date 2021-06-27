@@ -108,7 +108,6 @@ struct constvector {
 		= default;
 	explicit constvector (const T *givenCells, integer givenSize)
 		: cells (givenCells), size (givenSize) { }
-	constvector (std::initializer_list <T> list): cells (list.begin()), size (uinteger_to_integer (list.size())) { }
 	explicit constvector (constmatrix<T> const& mat)
 		: constvector (mat.cells, mat.nrow * mat.ncol) { }
 	constvector (vector<T> const& other)
@@ -219,7 +218,7 @@ struct autovector {
 	}
 	autovector (std::initializer_list <const T> list) {
 		our size = uinteger_to_integer (list.size());
-		our cells = MelderArray:: _alloc <T> (our size, MelderArray::kInitializationType::RAW);
+		our cells = MelderArray:: _alloc <T> (our size, MelderArray::kInitializationType::RAW);   // raw is possible because T is copyable data
 		T *p = our cells;
 		for (auto cell : list)
 			* (p ++) = cell;
