@@ -1709,7 +1709,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 			}
 		}
 	}
-	Table_sortRows_Assert (thee.get(), { tmin_columnNumber, tmax_columnNumber });   // sort by tmin and tmax
+	Table_sortRows_Assert (thee.get(), autoINTVEC ({ tmin_columnNumber, tmax_columnNumber }).get());   // sort by tmin and tmax
 	return thee;
 }
 
@@ -1773,7 +1773,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMeld
 			}
 		}
 	}
-	Table_sortRows_Assert (thee.get(), { time_columnNumber });   // sort by time
+	Table_sortRows_Assert (thee.get(), autoINTVEC ({ time_columnNumber }).get());   // sort by time
 	return thee;
 }
 
