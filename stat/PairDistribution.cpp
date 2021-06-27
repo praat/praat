@@ -308,7 +308,8 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 
 autoTable PairDistribution_to_Table (PairDistribution me) {
 	try {
-		autoTable thee = Table_createWithColumnNames (my pairs.size, { U"string1", U"string2", U"weight" });
+		autoTable thee = Table_createWithColumnNames (my pairs.size,
+				autoSTRVEC ({ U"string1", U"string2", U"weight" }).get());
 		for (integer ipair = 1; ipair <= my pairs.size; ipair ++) {
 			PairProbability prob = my pairs.at [ipair];
 			Table_setStringValue (thee.get(), ipair, 1, prob -> string1.get());

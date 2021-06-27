@@ -223,7 +223,7 @@ DO
 FORM (NEW1_Table_createWithColumnNames, U"Create Table with column names", nullptr) {
 	WORD (name, U"Name", U"table")
 	INTEGER (numberOfRows, U"Number of rows", U"10")
-	TEXTVEC (columnNames, U"Column names:", constSTRVEC ({ U"speaker", U"dialect", U"age_yr", U"vowel", U"F0_Hz", U"F1_Hz", U"F2_Hz" }))
+	TEXTVEC (columnNames, U"Column names:", { U"speaker", U"dialect", U"age_yr", U"vowel", U"F0_Hz", U"F1_Hz", U"F2_Hz" })
 	OK
 DO
 	CREATE_ONE
@@ -895,7 +895,7 @@ DIRECT (MODIFY_EACH__Table_reflectRows) {
 }
 
 FORM (MODIFY_EACH__Table_sortRows, U"Table: Sort rows", nullptr) {
-	TEXTVEC (columnNames, U"One or more column names for sorting:", constSTRVEC ({ U"dialect", U"gender", U"name" }))
+	TEXTVEC (columnNames, U"One or more column names for sorting:", { U"dialect", U"gender", U"name" })
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -906,12 +906,12 @@ DO
 // MARK: Convert
 
 FORM (CONVERT_EACH_TO_ONE__Table_collapseRows, U"Table: Collapse rows", nullptr) {
-	TEXTVEC_LINES (factors, U"Columns with factors (independent variables):", constSTRVEC ({ U"speaker", U"dialect", U"age", U"vowel" }), 3)
-	TEXTVEC_LINES (columnsToSum, U"Columns to sum:", constSTRVEC ({ U"number", U"cost" }), 3)
-	TEXTVEC_LINES (columnsToAverage, U"Columns to average:", constSTRVEC ({ U"price" }), 3)
-	TEXTVEC_LINES (columnsToMedianize, U"Columns to medianize:", constSTRVEC ({ U"vot" }), 3)
-	TEXTVEC_LINES (columnsToAverageLogarithmically, U"Columns to average logarithmically:", constSTRVEC ({ U"duration" }), 3)
-	TEXTVEC_LINES (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", constSTRVEC ({ U"F0", U"F1", U"F2", U"F3" }), 3)
+	TEXTVEC_LINES (3, factors, U"Columns with factors (independent variables):", { U"speaker", U"dialect", U"age", U"vowel" })
+	TEXTVEC_LINES (3, columnsToSum, U"Columns to sum:", { U"number", U"cost" })
+	TEXTVEC_LINES (3, columnsToAverage, U"Columns to average:", { U"price" })
+	TEXTVEC_LINES (3, columnsToMedianize, U"Columns to medianize:", { U"vot" })
+	TEXTVEC_LINES (3, columnsToAverageLogarithmically, U"Columns to average logarithmically:", { U"duration" })
+	TEXTVEC_LINES (3, columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", { U"F0", U"F1", U"F2", U"F3" })
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO

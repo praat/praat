@@ -145,7 +145,8 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		constexpr conststring32 criterion = U"/voices/!v/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, { U"id", U"name", U"index", U"gender", U"age", U"variant" });
+		autoTable thee = Table_createWithColumnNames (numberOfMatches,
+				autoSTRVEC ({ U"id", U"name", U"index", U"gender", U"age", U"variant" }).get());
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];
@@ -173,7 +174,8 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
-		Table_sortRows (thee.get(), { U"name" });
+		Table_sortRows (thee.get(),
+				autoSTRVEC ({ U"name" }).get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng voice properties not created.");
@@ -185,7 +187,8 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		constexpr conststring32 criterion = U"/lang/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		const integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, { U"id", U"name", U"index" }); // old: Default English
+		autoTable thee = Table_createWithColumnNames (numberOfMatches,
+				autoSTRVEC ({ U"id", U"name", U"index" }).get()); // old: Default English
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			const FileInMemory fim = (FileInMemory) my at [ifile];
@@ -198,7 +201,8 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
-		Table_sortRows (thee.get(), { U"name" });
+		Table_sortRows (thee.get(),
+				autoSTRVEC ({ U"name" }).get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng languages not created.");

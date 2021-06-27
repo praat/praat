@@ -54,7 +54,6 @@ public:
 	_conststringvector (const T* const * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): elements (other.elements), size (other.size) { }
 	_conststringvector (_autostringvectorview<T> other): elements (reinterpret_cast <const T* const *> (other.elements)), size (other.size) { }
-	_conststringvector (std::initializer_list <const T*> strings): elements (strings.begin()), size (strings.size()) { }
 	const T* const & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
@@ -105,8 +104,16 @@ public:
 	}
 	explicit _autostringautovector (integer givenSize) {
 		our elements = MelderArray:: _alloc <_autostring <T>> (givenSize, MelderArray::kInitializationType :: ZERO);
-		our size = givenSize;
 		our _capacity = givenSize;
+		our size = givenSize;
+	}
+	explicit _autostringautovector (std::initializer_list <const conststring32> list) {
+		our size = uinteger_to_integer (list.size());
+		our elements = MelderArray:: _alloc <autostring32> (our size, MelderArray::kInitializationType::ZERO);
+		our _capacity = our size;
+		autostring32 *p = our elements;
+		for (auto element : list)
+			* (p ++) = Melder_dup (element);
 	}
 	void reset () {
 		if (our elements) {

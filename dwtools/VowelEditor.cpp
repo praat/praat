@@ -557,7 +557,14 @@ static void VowelEditor_getMarks (VowelEditor me) {
 		VowelEditor_getVowelMarksFromFile (me);
 		return;
 	}
-	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(), { U"IPA" }, {}, { U"F1", U"F2" }, {}, {}, {});
+	/* mutable move */ autoTable newMarks = Table_collapseRows (te.get(),
+		autoSTRVEC ({ U"IPA" }).get(),
+		autoSTRVEC ({}).get(),
+		autoSTRVEC ({ U"F1", U"F2" }).get(),
+		autoSTRVEC ({}).get(),
+		autoSTRVEC ({}).get(),
+		autoSTRVEC ({}).get()
+	);
 	const integer col_ipa = Table_findColumnIndexFromColumnLabel (newMarks.get(), U"IPA");
 	Table_setColumnLabel (newMarks.get(), col_ipa, U"Vowel");
 
@@ -818,7 +825,8 @@ static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
-		autoTable result = Table_createWithColumnNames (my trajectory -> points.size, { U"Time", U"F1", U"F2", U"Colour" });
+		autoTable result = Table_createWithColumnNames (my trajectory -> points.size,
+				autoSTRVEC ({ U"Time", U"F1", U"F2", U"Colour" }).get());
 		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 			TrajectoryPoint point = my trajectory -> points.at [ipoint];
 			Table_setNumericValue (result.get(), ipoint, 1, point -> number);
@@ -859,7 +867,8 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 		Melder_require (f2 >= my p_window_f2min && f2 <= my p_window_f1max,
 			U"The second formant should be in the range from ", my p_window_f2min, U" to ", my p_window_f2max, U" Hz.");
 		if (! my marks)
-			my marks = Table_createWithColumnNames (1, { U"IPA", U"F1", U"F2", U"Size", U"Colour" });
+			my marks = Table_createWithColumnNames (1,
+					autoSTRVEC ({ U"IPA", U"F1", U"F2", U"Size", U"Colour" }).get());
 		else
 			Table_appendRow (my marks.get());
 		integer irow = my marks -> rows.size;

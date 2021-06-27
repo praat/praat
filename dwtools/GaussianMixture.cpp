@@ -1233,7 +1233,8 @@ autoTable GaussianMixture_TableOfReal_to_Table_BHEPNormalityTests (GaussianMixtu
 		autoVEC numberOfData = columnSums_VEC (responsibilities.get());
 		
 		autoTable him = Table_createWithColumnNames (my numberOfComponents,
-			{ U"component", U"probability", U"smoothing", U"statistic", U"lnmu", U"lnvar", U"numberOfData", U"dimension", U"singular" });
+				autoSTRVEC ({ U"component", U"probability", U"smoothing", U"statistic",
+						U"lnmu", U"lnvar", U"numberOfData", U"dimension", U"singular" }).get());
 
 		for (integer component = 1; component <= my numberOfComponents; component ++) {
 			const Covariance cov = my covariances->at [component];

@@ -368,17 +368,19 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static constMAT numericMatrixVariable; \
 		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultNumericMatrixValue.get());
 
-#define TEXTVEC(stringArrayVariable, labelText, defaultStringArrayValue)  \
+#define TEXTVEC(stringArrayVariable, labelText, ...)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static constSTRVEC stringArrayVariable; \
-		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", defaultStringArrayValue);
+		static autoSTRVEC _default_##stringArrayVariable __VA_ARGS__; \
+		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", _default_##stringArrayVariable.get());
 
-#define TEXTVEC_LINES(stringArrayVariable, labelText, defaultStringArrayValue, numberOfLines)  \
+#define TEXTVEC_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static constSTRVEC stringArrayVariable; \
-		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", defaultStringArrayValue, numberOfLines);
+		static autoSTRVEC _default_##stringArrayVariable __VA_ARGS__; \
+		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", _default_##stringArrayVariable.get(), numberOfLines);
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
