@@ -1300,7 +1300,7 @@ inline autoVEC zero_VEC (integer size) {
 inline autoVEC copy_VEC (constVECVU const& source) {
 	return newvectorcopy (source);
 }
-#define C_VEC(doubleArray)  constVEC (& doubleArray [0], sizeof (doubleArray) / sizeof (double))
+#define ARRAY_TO_VEC(doubleArray)  constVEC (& doubleArray [0], sizeof (doubleArray) / sizeof (double))
 
 /*
 	And simply because we use vector<integer> so much as well,
@@ -1324,7 +1324,7 @@ inline autoINTVEC zero_INTVEC (integer size) {
 inline autoINTVEC copy_INTVEC (constINTVECVU const& source) {
 	return newvectorcopy (source);
 }
-#define C_INTVEC(integerArray)  constINTVEC (& integerArray [0], sizeof (integerArray) / sizeof (integer))
+#define ARRAY_TO_INTVEC(integerArray)  constINTVEC (& integerArray [0], sizeof (integerArray) / sizeof (integer))
 
 using BOOLVEC = vector <bool>;
 using BOOLVECVU = vectorview <bool>;
@@ -1340,7 +1340,7 @@ inline autoBOOLVEC zero_BOOLVEC (integer size) {
 inline autoBOOLVEC copy_BOOLVEC (constBOOLVECVU const& source) {
 	return newvectorcopy (source);
 }
-#define C_BOOLVEC(boolArray)  constBOOLVEC (& boolArray [0], sizeof (boolArray) / sizeof (bool))
+#define ARRAY_TO_BOOLVEC(boolArray)  constBOOLVEC (& boolArray [0], sizeof (boolArray) / sizeof (bool))
 
 using BYTEVEC = vector <byte>;
 using BYTEVECVU = vectorview <byte>;
@@ -1356,7 +1356,7 @@ inline autoBYTEVEC zero_BYTEVEC (integer size) {
 inline autoBYTEVEC copy_BYTEVEC (constBYTEVECVU const& source) {
 	return newvectorcopy (source);
 }
-#define C_BYTEVEC(byteArray)  constBYTEVEC (& byteArray [0], sizeof (byteArray) / sizeof (byte))
+#define ARRAY_TO_BYTEVEC(byteArray)  constBYTEVEC (& byteArray [0], sizeof (byteArray) / sizeof (byte))
 
 using COMPVEC = vector <dcomplex>;
 using COMPVECVU = vectorview <dcomplex>;
@@ -1372,7 +1372,7 @@ inline autoCOMPVEC zero_COMPVEC (integer size) {
 inline autoCOMPVEC copy_COMPVEC (constCOMPVECVU const& source) {
 	return newvectorcopy (source);
 }
-#define C_COMPVEC(dcomplexArray)  constCOMPVEC (& dcomplexArray [0], sizeof (dcomplexArray) / sizeof (dcomplex))
+#define ARRAY_TO_COMPVEC(dcomplexArray)  constCOMPVEC (& dcomplexArray [0], sizeof (dcomplexArray) / sizeof (dcomplex))
 
 using MAT = matrix <double>;
 using MATVU = matrixview <double>;

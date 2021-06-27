@@ -3709,7 +3709,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			Table_setNumericValue (ameans.get(), irow, 3, factorLevelSizes [irow]);
 		}
 		const integer sortingColumns [] = { 2 };   // sort by column 2
-		Table_sortRows_Assert (ameans.get(), C_INTVEC (sortingColumns));
+		Table_sortRows_Assert (ameans.get(), ARRAY_TO_INTVEC (sortingColumns));
 		_Table_postHocTukeyHSD (ameans.get(), ms_within, degreesOfFreedom_within, meansDiff, meansDiffProbabilities);
 		if (means)
 			*means = ameans.move();

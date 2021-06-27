@@ -860,7 +860,7 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 			row -> sortingIndex = irow;
 		}
 		const integer sortingColumns [] = { column };
-		Table_sortRows_Assert (me, C_INTVEC (sortingColumns));
+		Table_sortRows_Assert (me, ARRAY_TO_INTVEC (sortingColumns));
 		integer numberOfLevels = 0;
 		integer irow = 1;
 		while (irow <= my rows.size) {
@@ -1641,8 +1641,8 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	Table_numericize_Assert (ranks.get(), 1);
 	Table_numericize_Assert (ranks.get(), 2);
 	Table_numericize_Assert (ranks.get(), 3);
-	const integer columns [] = { 2 };   // we're gonna sort by column 2
-	Table_sortRows_Assert (ranks.get(), C_INTVEC (columns));
+	const integer sortingColumns [] = { 2 };
+	Table_sortRows_Assert (ranks.get(), ARRAY_TO_INTVEC (sortingColumns));
 	double totalNumberOfTies3 = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		TableRow row = ranks -> rows.at [irow];
