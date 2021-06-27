@@ -372,15 +372,19 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static constSTRVEC stringArrayVariable; \
-		static autoSTRVEC _default_##stringArrayVariable __VA_ARGS__; \
-		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", _default_##stringArrayVariable.get());
+		{ \
+			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
+			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", C_STRVEC (_defaultStringArrayValue)); \
+		}
 
 #define TEXTVEC_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
 		static constSTRVEC stringArrayVariable; \
-		static autoSTRVEC _default_##stringArrayVariable __VA_ARGS__; \
-		UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", _default_##stringArrayVariable.get(), numberOfLines);
+		{ \
+			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
+			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", C_STRVEC (_defaultStringArrayValue), numberOfLines); \
+		}
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
 		static int intVariable; \
