@@ -215,7 +215,7 @@ autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separato
 			*/
 			return autoSTRVEC();
 		}
-		return copy_STRVEC ({ string });
+		return autoSTRVEC ({ string });
 	}
 	integer n = 1;
 	do {

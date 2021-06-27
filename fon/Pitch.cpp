@@ -1,6 +1,6 @@
 /* Pitch.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -970,7 +970,8 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 }
 
 static autoTable Pitch_Frame_tabulateCandidates (Pitch_Frame me) {
-	autoTable you = Table_createWithColumnNames (my nCandidates, { U"frequency", U"strength" });
+	autoTable you = Table_createWithColumnNames (my nCandidates,
+			autoSTRVEC ({ U"frequency", U"strength" }).get());
 	for (integer icand = 1; icand <= my nCandidates; icand ++) {
 		const Pitch_Candidate candidate = & my candidates [icand];
 		Table_setNumericValue (you.get(), icand, 1, candidate -> frequency);
@@ -991,7 +992,8 @@ autoTable Pitch_tabulateCandidates (Pitch me) {
 		const Pitch_Frame frame = & my frames [iframe];
 		totalNumberOfCandidates += frame -> nCandidates;
 	}
-	autoTable result = Table_createWithColumnNames (totalNumberOfCandidates, { U"frame", U"frequency", U"strength" });
+	autoTable result = Table_createWithColumnNames (totalNumberOfCandidates,
+			autoSTRVEC ({ U"frame", U"frequency", U"strength" }).get());
 	integer rowNumber = 0;
 	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		const Pitch_Frame frame = & my frames [iframe];

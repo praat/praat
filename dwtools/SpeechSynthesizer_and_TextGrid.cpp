@@ -719,8 +719,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 		}
 		const integer pathLength = edit -> warpingPath -> pathLength;
 		autoTable thee = Table_createWithColumnNames (pathLength - 1,
-			{ U"targetInterval", U"targetText", U"targetStart", U"targetEnd",
-			  U"sourceInterval", U"sourceText", U"sourceStart", U"sourceEnd", U"operation" }
+			autoSTRVEC ({ U"targetInterval", U"targetText", U"targetStart", U"targetEnd",
+					U"sourceInterval", U"sourceText", U"sourceStart", U"sourceEnd", U"operation" }).get()
 		);
 		for (integer i = 2; i <= pathLength; i++) {
 			const structPairOfInteger p = edit -> warpingPath -> path [i];

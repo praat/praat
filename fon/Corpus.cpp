@@ -1,6 +1,6 @@
 /* Corpus.cpp
  *
- * Copyright (C) 2011,2026,2018,2020 Paul Boersma
+ * Copyright (C) 2011,2026,2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,8 @@ autoCorpus Corpus_create (conststring32 folderWithSoundFiles, conststring32 soun
 		folderWithAnnotationFiles = folderWithSoundFiles;
 	my folderWithAnnotationFiles = Melder_dup (folderWithAnnotationFiles);
 	autoSTRVEC fileList = fileNames_STRVEC (Melder_cat (folderWithSoundFiles, U"/*.", soundFileExtension));
-	Table_initWithColumnNames (me.get(), fileList.size, { U"Sound", U"Annotation" });
+	Table_initWithColumnNames (me.get(), fileList.size,
+			autoSTRVEC ({ U"Sound", U"Annotation" }).get());
 	autoMelderString annotationFileName;
 	for (integer ifile = 1; ifile <= fileList.size; ifile ++) {
 		conststring32 soundFileName = fileList [ifile].get();

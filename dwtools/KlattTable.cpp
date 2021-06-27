@@ -392,9 +392,9 @@ typedef struct structKlattFrame {
 	integer Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
 } *KlattFrame;
 
-static autoSTRVEC theColumnNames = copy_STRVEC (constSTRVEC ({ U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6",
+static autoSTRVEC theColumnNames { U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6",
 	U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew",
-	U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain" }));
+	U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain" };
 
 static double DBtoLIN (integer dB) {
 	static const double amptable [88] = {
@@ -411,9 +411,6 @@ static double DBtoLIN (integer dB) {
 	};
 	return ( (dB < 0) || (dB > 87) ? 0 : amptable [dB] * .001 );
 }
-
-/* Structure for Klatt Globals */
-
 
 typedef struct structKlattGlobal {
 	int synthesis_model; /* cascade-parallel or all-parallel */
