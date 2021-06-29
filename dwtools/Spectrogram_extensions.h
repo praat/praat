@@ -33,9 +33,6 @@
 #define HZTOMEL(x)	NUMhertzToMel2(x)
 #define MELTOHZ(x)	NUMmelToHertz2(x)
 
-#define BARKTOMEL(x) HZTOMEL(NUMbarkToHertz(x))
-#define MELTOBARK(x) NUMhertzToBark (MELTOHZ(x))
-
 #define BandFilterSpectrogram_DBREF 4e-10
 #define BandFilterSpectrogram_DBFAC 10
 #define BandFilterSpectrogram_DBFLOOR -100
