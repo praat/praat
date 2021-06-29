@@ -28,7 +28,6 @@
 #include "FormantPathEditor.h"
 #include "FormantPath_to_IntervalTier.h"
 #include "EditorM.h"
-#include "praat.h"
 #include "melder_kar.h"
 #include "Sampled.h"
 #include "SoundEditor.h"
@@ -483,8 +482,6 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		Graphics_setInner (my pictureGraphics);
 		double startTime, endTime, xCursor, yCursor;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
-
-		
 		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
@@ -493,20 +490,21 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 	EDITOR_END
 }
 
-static void INFO_DATA__StressListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__stressListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	INFO_DATA
 		FormantPath formantPath = (FormantPath) my data;
 		Formant formant = formantPath -> formants.at [1];
 		const integer maximumFormantNumber = formant -> maxnFormants;
-		VEC ceilings = formantPath -> ceilings.get();
+		constVEC ceilings = formantPath -> ceilings.get();
 		double startTime, endTime;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, nullptr, nullptr);
 		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
 		autoVEC stresses = FormantPath_getStresses (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Ceiling_Hz Stress");
+		MelderInfo_writeLine (U"Ceiling_Hz Stress StartTime_s EndTime_s ");
 		for (integer iceiling = 1; iceiling <= ceilings.size; iceiling ++) {
-			MelderInfo_writeLine (Melder_fixed (ceilings [iceiling], 1), U" ", Melder_fixed (stresses [iceiling], 2));
+			MelderInfo_writeLine (Melder_fixed (ceilings [iceiling], 1), U" ", Melder_fixed (stresses [iceiling], 2), U" ", 
+				startTime, U" ", endTime);
 		}
 		MelderInfo_close ();
 	INFO_DATA_END
@@ -612,7 +610,7 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
 	EditorMenu_addCommand (menu, U" -- candidate queries -- ", 0, 0);
-	EditorMenu_addCommand (menu, U"Stress listing", 0, INFO_DATA__StressListing);
+	EditorMenu_addCommand (menu, U"Stress listing", 0, INFO_DATA__stressListing);
 }
 
 void structFormantPathEditor :: v_createHelpMenuItems (EditorMenu menu) {
