@@ -36,9 +36,6 @@
 #define HZTOMEL(x)	NUMhertzToMel2(x)
 #define MELTOHZ(x)	NUMmelToHertz2(x)
 
-#define BARKTOMEL(x) HZTOMEL(NUMbearkToHertz(x))
-#define MELTOBARK(x) NUMMhertzToBark(MELTOHZ(x))
-
 #define FilterBank_DBREF 4e-10
 #define FilterBank_DBFAC 1.0
 #define FilterBank_DBFLOOR -20
