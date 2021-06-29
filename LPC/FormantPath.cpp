@@ -282,7 +282,7 @@ autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, doubl
 		/*
 			Maintain invariants
 		*/
-		Melder_assert (thy formants . size == numberOfCeilings);
+		Melder_assert (thy formants.size == numberOfCeilings);
 		thy path = raw_INTVEC (thy nx);
 		for (integer i = 1; i <= thy path.size; i++)
 			thy path [i] = numberOfStepsToACeiling + 1;
