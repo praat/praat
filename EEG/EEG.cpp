@@ -96,37 +96,37 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char buffer [81];
-		fread (buffer, 1, 8, f);
+		(void) fread (buffer, 1, 8, f);
 		buffer [8] = '\0';
 		const bool is24bit = ( buffer [0] == (char) 255 );
-		fread (buffer, 1, 80, f);
+		(void) fread (buffer, 1, 80, f);
 		buffer [80] = '\0';
 		trace (U"Local subject identification: \"", Melder_peek8to32 (buffer), U"\"");
-		fread (buffer, 1, 80, f);
+		(void) fread (buffer, 1, 80, f);
 		buffer [80] = '\0';
 		trace (U"Local recording identification: \"", Melder_peek8to32 (buffer), U"\"");
-		fread (buffer, 1, 8, f);
+		(void) fread (buffer, 1, 8, f);
 		buffer [8] = '\0';
 		trace (U"Start date of recording: \"", Melder_peek8to32 (buffer), U"\"");
-		fread (buffer, 1, 8, f);
+		(void) fread (buffer, 1, 8, f);
 		buffer [8] = '\0';
 		trace (U"Start time of recording: \"", Melder_peek8to32 (buffer), U"\"");
-		fread (buffer, 1, 8, f);
+		(void) fread (buffer, 1, 8, f);
 		buffer [8] = '\0';
 		const integer numberOfBytesInHeaderRecord = atol (buffer);
 		trace (U"Number of bytes in header record: ", numberOfBytesInHeaderRecord);
-		fread (buffer, 1, 44, f);
+		(void) fread (buffer, 1, 44, f);
 		buffer [44] = '\0';
 		trace (U"Version of data format: \"", Melder_peek8to32 (buffer), U"\"");
-		fread (buffer, 1, 8, f);
+		(void) fread (buffer, 1, 8, f);
 		buffer [8] = '\0';
 		const integer numberOfDataRecords = strtol (buffer, nullptr, 10);
 		trace (U"Number of data records: ", numberOfDataRecords);
-		fread (buffer, 1, 8, f);
+		(void) fread (buffer, 1, 8, f);
 		buffer [8] = '\0';
 		const double durationOfDataRecord = atof (buffer);
 		trace (U"Duration of a data record: ", durationOfDataRecord);
-		fread (buffer, 1, 4, f);
+		(void) fread (buffer, 1, 4, f);
 		buffer [4] = '\0';
 		const integer numberOfChannels = atol (buffer);
 		trace (U"Number of channels in data record: ", numberOfChannels);
@@ -135,7 +135,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 				U") doesn't match number of channels (", numberOfChannels, U").");
 		autoSTRVEC channelNames (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			fread (buffer, 1, 16, f);
+			(void) fread (buffer, 1, 16, f);
 			buffer [16] = '\0';   // labels of the channels
 			/*
 			 * Strip all final spaces.
@@ -152,44 +152,44 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		const bool hasLetters = str32equ (channelNames [numberOfChannels].get(), U"EDF Annotations");
 		double samplingFrequency = undefined;
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			fread (buffer, 1, 80, f);
+			(void) fread (buffer, 1, 80, f);
 			buffer [80] = '\0';   // transducer type
 		}
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			fread (buffer, 1, 8, f);
+			(void) fread (buffer, 1, 8, f);
 			buffer [8] = '\0';   // physical dimension of channels
 		}
 		autoVEC physicalMinimum = raw_VEC (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			fread (buffer, 1, 8, f);
+			(void) fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			physicalMinimum [ichannel] = atof (buffer);
 		}
 		autoVEC physicalMaximum = raw_VEC (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			fread (buffer, 1, 8, f);
+			(void) fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			physicalMaximum [ichannel] = atof (buffer);
 		}
 		autoVEC digitalMinimum = raw_VEC (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			fread (buffer, 1, 8, f);
+			(void) fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			digitalMinimum [ichannel] = atof (buffer);
 		}
 		autoVEC digitalMaximum = raw_VEC (numberOfChannels);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			fread (buffer, 1, 8, f);
+			(void) fread (buffer, 1, 8, f);
 			buffer [8] = '\0';
 			digitalMaximum [ichannel] = atof (buffer);
 		}
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			fread (buffer, 1, 80, f);
+			(void) fread (buffer, 1, 80, f);
 			buffer [80] = '\0';   // prefiltering
 		}
 		integer numberOfSamplesPerDataRecord = 0;
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			fread (buffer, 1, 8, f);
+			(void) fread (buffer, 1, 8, f);
 			buffer [8] = '\0';   // number of samples in each data record
 			const integer numberOfSamplesInThisDataRecord = atol (buffer);
 			if (isundef (samplingFrequency)) {
@@ -202,7 +202,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 					U") doesn't match sampling frequency of channel 1 (", samplingFrequency, U").");
 		}
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			fread (buffer, 1, 32, f);
+			(void) fread (buffer, 1, 32, f);
 			buffer [32] = '\0';   // reserved
 		}
 		const double duration = numberOfDataRecords * durationOfDataRecord;
@@ -217,7 +217,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 				if (channel < numberOfChannels - EEG_getNumberOfExtraSensors (him.get()))
 					factor /= 1000000.0;
 				if (is24bit) {
-					fread (dataBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), 3, (size_t) numberOfSamplesPerDataRecord, f);
+					(void) fread (dataBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), 3, (size_t) numberOfSamplesPerDataRecord, f);
 					byte *p = & dataBuffer [1];
 					for (integer i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 						const integer sample = i + (record - 1) * numberOfSamplesPerDataRecord;
@@ -229,7 +229,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						my z [channel] [sample] = (int32) externalValue * factor;
 					}
 				} else {
-					fread (dataBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), 2, (size_t) numberOfSamplesPerDataRecord, f);
+					(void) fread (dataBuffer.asArgumentToFunctionThatExpectsZeroBasedArray(), 2, (size_t) numberOfSamplesPerDataRecord, f);
 					byte *p = & dataBuffer [1];
 					for (integer i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 						const integer sample = i + (record - 1) * numberOfSamplesPerDataRecord;
