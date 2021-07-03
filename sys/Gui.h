@@ -104,11 +104,6 @@ constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
 #define Gui_HOMOGENEOUS  1
 
 #if gtk
-	typedef GMainContext *AppContext;
-	typedef gint Dimension;
-	typedef gboolean Boolean;
-	#define True 1
-	#define False 0
 	typedef void *GuiObject;
 #elif cocoa
 	Thing_declare (GuiThing);
