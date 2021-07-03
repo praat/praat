@@ -3375,7 +3375,7 @@ static void do_##function##_VEC () { \
 				x->numericVector [i] = isundef (xvalue) ? undefined : formula; \
 			} \
 		} else { \
-			pop; \
+			(void) pop; \
 			const integer numberOfElements = x->numericVector.size; \
 			autoVEC result = raw_VEC (numberOfElements); \
 			for (integer i = 1; i <= numberOfElements; i ++) { \
@@ -3401,7 +3401,7 @@ static void do_##function##_MAT () { \
 				} \
 			} \
 		} else { \
-			pop; \
+			(void) pop; \
 			const integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol; \
 			autoMAT result = raw_MAT (nrow, ncol); \
 			for (integer irow = 1; irow <= nrow; irow ++) { \
@@ -3422,7 +3422,22 @@ DO_NUM_WITH_TENSORS (round, floor (xvalue + 0.5), U"Cannot round ")
 DO_NUM_WITH_TENSORS (floor, Melder_roundDown (xvalue), U"Cannot round down (floor) ")
 DO_NUM_WITH_TENSORS (ceiling, Melder_roundUp (xvalue), U"Cannot round up (ceiling) ")
 DO_NUM_WITH_TENSORS (rectify, xvalue < 0.0 ? 0.0 : xvalue, U"Cannot rectify ")   // NaN-safe
-DO_NUM_WITH_TENSORS (sqrt, /*xvalue < 0.0 ? undefined :*/ sqrt (xvalue), U"Cannot take the square root (sqrt) of ")
+/*@praat
+	assert rectify (-1.0) = 0.0
+	assert rectify (0.0) = 0.0
+	assert rectify (1.0) = 1.0
+	assert rectify (undefined) = undefined
+	assert rectify# ({ 1.2, -2.3, 4.5, 0, undefined, -44 }) = { 1.2, 0, 4.5, 0, undefined, 0 }
+@*/
+DO_NUM_WITH_TENSORS (sqrt, sqrt (xvalue), U"Cannot take the square root (sqrt) of ")
+/*@praat
+	assert sqrt (-1.0) = undefined
+	assert sqrt (0.0) = 0.0
+	assert sqrt (1.0) = 1.0
+	assert sqrt (4.0) = 2.0
+	assert sqrt (undefined) = undefined
+	assert sqrt# ({ -1.0, 0.0, 1.0, 4.0, undefined }) = { undefined, 0.0, 1.0, 2.0, undefined }
+@*/
 DO_NUM_WITH_TENSORS (sin, sin (xvalue), U"Cannot take the sine (sin) of ")
 DO_NUM_WITH_TENSORS (cos, cos (xvalue), U"Cannot take the cosine (cos) of ")
 DO_NUM_WITH_TENSORS (tan, tan (xvalue), U"Cannot take the tangent (tan) of ")
@@ -3434,11 +3449,55 @@ DO_NUM_WITH_TENSORS (sinh, sinh (xvalue), U"Cannot take the hyperbolic sine (sin
 DO_NUM_WITH_TENSORS (cosh, cosh (xvalue), U"Cannot take the hyperbolic cosine (cosh) of ")
 DO_NUM_WITH_TENSORS (tanh, tanh (xvalue), U"Cannot take the hyperbolic tangent (tanh) of ")
 DO_NUM_WITH_TENSORS (arcsinh, asinh (xvalue), U"Cannot take the hyperbolic arcsine (arcsinh) of ")
+/*@praat
+	assert arcsinh (-1.0) < 0
+	assert arcsinh (0.0) = 0
+	assert arcsinh (1.0) > 0
+	assert arcsinh (undefined) = undefined
+@*/
 DO_NUM_WITH_TENSORS (arccosh, acosh (xvalue), U"Cannot take the hyperbolic arccosine (arccosh) of ")
+/*@praat
+	assert arccosh (1.0) = 0
+	assert arccosh (0.9) = undefined
+	assert arccosh (0.0) = undefined
+	assert arccosh (-10.0) = undefined
+	assert arccosh (undefined) = undefined
+@*/
 DO_NUM_WITH_TENSORS (arctanh, atanh (xvalue), U"Cannot take the hyperbolic arctangent (arctanh) of ")
+/*@praat
+	assert arctanh (-1.0) = undefined
+	assert arctanh (0.0) = 0
+	assert arctanh (1.0) = undefined
+	assert arctanh (undefined) = undefined
+@*/
 DO_NUM_WITH_TENSORS (log2, /*xvalue <= 0.0 ? undefined :*/ log (xvalue) * NUMlog2e, U"Cannot take the base-2 logarithm (log2) of ")
+/*@praat
+	assert log2 (-1.0) = undefined
+	assert log2 (0.0) = undefined
+	assert log2 (1.0) = 0.0
+	assert log2 (2.0) = 1.0
+	assert log2 (10.0) > 3.0
+	assert log2 (undefined) = undefined
+@*/
 DO_NUM_WITH_TENSORS (ln, /*xvalue <= 0.0 ? undefined :*/ log (xvalue), U"Cannot take the natural logarithm (ln) of ")
+/*@praat
+	assert ln (-1.0) = undefined
+	assert ln (0.0) = undefined
+	assert ln (1.0) = 0.0
+	assert abs (ln (2.0) - 0.693) < 0.001
+	assert ln (3.0) > 1.0
+	assert ln (undefined) = undefined
+@*/
 DO_NUM_WITH_TENSORS (log10, /*xvalue <= 0.0 ? undefined :*/ log10 (xvalue), U"Cannot take the base-10 logarithm (log10) of ")
+/*@praat
+	assert log10 (-1.0) = undefined
+	assert log10 (0.0) = undefined
+	assert log10 (1.0) = 0.0
+	assert abs (log10 (2.0) - 0.301) < 0.001
+	assert log10 (10.0) = 1.0
+	assert log10 (11.0) > 1.0
+	assert log10 (undefined) = undefined
+@*/
 
 static void do_sum () {
 	Stackel x = pop;
@@ -7099,16 +7158,6 @@ static void do_col_STR () {
 	pushString (result.move());
 }
 
-static double NUMarcsinh (double x) {
-	//Melder_casual (U"NUMarcsinh ", fileno(stdout));
-	return log (x + sqrt (1.0 + x * x));
-}
-static double NUMarccosh (double x) {
-	return x < 1.0 ? undefined : log (x + sqrt (x * x - 1.0));
-}
-static double NUMarctanh (double x) {
-	return x <= -1.0 || x >= 1.0 ? undefined : 0.5 * log ((1.0 + x) / (1.0 - x));
-}
 static double NUMerf (double x) {
 	return 1.0 - NUMerfcc (x);
 }
