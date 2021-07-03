@@ -142,6 +142,71 @@ assert sum (a#) = 250
 a# ~ sum ({ col } ^ 2)
 assert sum (a#) = 385
 
+assert rectify (-1.0) = 0.0
+assert rectify (0.0) = 0.0
+assert rectify (1.0) = 1.0
+assert rectify (undefined) = undefined
+assert rectify# ({ 1.2, -2.3, 4.5, 0, undefined, -44 }) = { 1.2, 0, 4.5, 0, undefined, 0 }
+
+assert sqrt (-1.0) = undefined
+assert sqrt (0.0) = 0.0
+assert sqrt (1.0) = 1.0
+assert sqrt (4.0) = 2.0
+assert sqrt (undefined) = undefined
+assert sqrt# ({ -1.0, 0.0, 1.0, 4.0, undefined }) = { undefined, 0.0, 1.0, 2.0, undefined }
+
+assert arcsin (-1.1) = undefined
+assert abs (arcsin (-1.0) - -pi/2) < 1e-17
+assert arcsin (0.0) = 0
+assert abs (arcsin (1.0) - pi/2) < 1e-17
+assert arcsin (1.1) = undefined
+assert arcsin (undefined) = undefined
+
+assert arccos (-1.1) = undefined
+assert abs (arccos (-1.0) - pi) < 1e-17
+assert abs (arccos (0.0) - pi/2) < 1e-17
+assert arccos (1.0) = 0
+assert arccos (1.1) = undefined
+assert arccos (undefined) = undefined
+
+assert arcsinh (-1.0) < 0
+assert arcsinh (0.0) = 0
+assert arcsinh (1.0) > 0
+assert arcsinh (undefined) = undefined
+
+assert arccosh (1.0) = 0
+assert arccosh (0.9) = undefined
+assert arccosh (0.0) = undefined
+assert arccosh (-10.0) = undefined
+assert arccosh (undefined) = undefined
+
+assert arctanh (-1.0) = undefined
+assert arctanh (0.0) = 0
+assert arctanh (1.0) = undefined
+assert arctanh (undefined) = undefined
+
+assert log2 (-1.0) = undefined
+assert log2 (0.0) = undefined
+assert log2 (1.0) = 0.0
+assert log2 (2.0) = 1.0
+assert log2 (10.0) > 3.0
+assert log2 (undefined) = undefined
+
+assert ln (-1.0) = undefined
+assert ln (0.0) = undefined
+assert ln (1.0) = 0.0
+assert abs (ln (2.0) - 0.693) < 0.001
+assert ln (3.0) > 1.0
+assert ln (undefined) = undefined
+
+assert log10 (-1.0) = undefined
+assert log10 (0.0) = undefined
+assert log10 (1.0) = 0.0
+assert abs (log10 (2.0) - 0.301) < 0.001
+assert log10 (10.0) = 1.0
+assert log10 (11.0) > 1.0
+assert log10 (undefined) = undefined
+
 #
 # A published test: the 10,000th element of the default 64-bit Mersenne Twister random sequence
 # should be 9981545732273789042.

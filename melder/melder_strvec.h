@@ -253,7 +253,7 @@ using autostring8vector  = _autostringautovector <char>;
 using STRVEC = _stringvector <char32>;
 using constSTRVEC = _conststringvector <char32>;
 using autoSTRVEC = _autostringautovector <char32>;
-#define C_STRVEC(conststring32Array)  constSTRVEC (& conststring32Array [0], sizeof (conststring32Array) / sizeof (conststring32))
+#define ARRAY_TO_STRVEC(conststring32Array)  constSTRVEC (& conststring32Array [0], sizeof (conststring32Array) / sizeof (conststring32))
 
 using autoSTRVECVU = _autostringvectorview <char32>;
 

@@ -97,7 +97,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	oo_INT (d_inputPhonemeCoding)
 	// speech output
 	oo_DOUBLE (d_samplingFrequency)
-	oo_DOUBLE (d_wordgap)
+	oo_DOUBLE (d_wordGap)
 	oo_DOUBLE (d_pitchAdjustment)
 	oo_DOUBLE (d_pitchRange)
 	// 1/2: output phonemes in espeak/IPA notation

@@ -580,7 +580,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, integer level
 				} else if (fmid < fleft && fmid <= fright) {
 					const double y [] = { fleft, fmid, fright };
 					double i_real;
-					const double localMinimum = NUMimproveMinimum (C_VEC (y), 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
+					const double localMinimum = NUMimproveMinimum (ARRAY_TO_VEC (y), 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
 					if (localMinimum < minimum) {
 						minimum = localMinimum;
 						xOfMinimum = i_real + i - 2;
@@ -681,7 +681,7 @@ void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, integer level
 				} else if (fmid > fleft && fmid >= fright) {
 					const double y [] = { fleft, fmid, fright };
 					double i_real;
-					const double localMaximum = NUMimproveMaximum (C_VEC (y), 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
+					const double localMaximum = NUMimproveMaximum (ARRAY_TO_VEC (y), 2, NUM_PEAK_INTERPOLATE_PARABOLIC, & i_real);
 					if (localMaximum > maximum) {
 						maximum = localMaximum;
 						xOfMaximum = i_real + i - 2;

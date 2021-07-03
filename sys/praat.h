@@ -374,7 +374,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", C_STRVEC (_defaultStringArrayValue)); \
+			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
 		}
 
 #define TEXTVEC_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
@@ -383,7 +383,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", C_STRVEC (_defaultStringArrayValue), numberOfLines); \
+			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
 		}
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
