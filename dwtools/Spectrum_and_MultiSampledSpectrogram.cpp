@@ -97,13 +97,6 @@ static void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape 
 	}
 }
 
-static integer getNumberOfFFTSamples (integer numberOfSamples) {
-	integer numberOfFFTSamples = 2;
-	while (numberOfFFTSamples < numberOfSamples)
-		numberOfFFTSamples *= 2;
-	return numberOfFFTSamples;
-}
-
 static autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
 	autoVEC result = raw_VEC (n);
 	windowShape_VEC_preallocated (result.get(), windowShape);
@@ -160,11 +153,11 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 					if (approximateTimeOverSampling > 1.0)
 						numberOfFilterValues = Melder_iroundUp (approximateTimeOverSampling * numberOfSamplesFromSpectrum);
 				}
-				const integer numberOfSamplesFFT = getNumberOfFFTSamples (numberOfFilterValues);
+				const integer numberOfSamplesFFT = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (numberOfFilterValues));   // TODO: explain the edge case
 				const integer numberOfFrequencies = numberOfSamplesFFT + 1;
 				const double filterDomain = (spectrum_fmax - spectrum_fmin) * numberOfSamplesFFT / numberOfSamplesFromSpectrum;
 				autoSpectrum filter = Spectrum_create (filterDomain, numberOfFrequencies);
-				filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  my z.part (1, 2,  spectrum_imin, spectrum_imax);			
+				filter -> z.part (1, 2, 1, numberOfSamplesFromSpectrum)  <<=  my z.part (1, 2, spectrum_imin, spectrum_imax);
 				const integer numberToBeWindowed = Sampled_getWindowSamples (me, window_fmin, window_fmax,
 					& window_imin, & window_imax);
 				const integer filter_imin = window_imin - spectrum_imin + 1;
@@ -213,7 +206,7 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		const double nyquistFrequency = my v_myFrequencyUnitToHertz (my xmax);
 		const double samplingFrequency = 2.0 * nyquistFrequency;
 		const integer numberOfSamples = duration * samplingFrequency;
-		integer numberOfFFTSamples = getNumberOfFFTSamples (numberOfSamples);
+		const integer numberOfFFTSamples = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (numberOfSamples));   // TODO: explain the edge case
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFFTSamples / 2 + 1);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];			

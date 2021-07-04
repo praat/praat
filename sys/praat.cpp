@@ -1832,6 +1832,34 @@ void praat_run () {
 		autoVEC x4 = { 3.14, 2.718 };
 		Melder_assert (x4 [2] == 2.718);
 	}
+	Melder_assert (Melder_iroundUpToPowerOfTwo (-10) == 1);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (-1) == 1);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (0) == 1);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (1) == 1);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (2) == 2);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (3) == 4);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (4) == 4);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (5) == 8);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (6) == 8);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (7) == 8);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (8) == 8);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (9) == 16);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (44100) == 65536);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (131071) == 131072);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (131072) == 131072);
+	Melder_assert (Melder_iroundUpToPowerOfTwo (131073) == 262144);
+	if (sizeof (integer) == 4) {
+		Melder_assert (Melder_iroundUpToPowerOfTwo (1073741823) == 1073741824);   // 2^30 - 1
+		Melder_assert (Melder_iroundUpToPowerOfTwo (1073741824) == 1073741824);   // 2^30
+		Melder_assert (Melder_iroundUpToPowerOfTwo (1073741825) == 0);   // 2^30 + 1
+		Melder_assert (Melder_iroundUpToPowerOfTwo (2147483647) == 0);   // 2^31 - 1, i.e. INTEGER_MAX
+	} else {
+		Melder_assert (Melder_iroundUpToPowerOfTwo (4611686018427387903LL) == 4611686018427387904LL);   // 2^62 - 1
+		Melder_assert (Melder_iroundUpToPowerOfTwo (4611686018427387904LL) == 4611686018427387904LL);   // 2^62
+		Melder_assert (Melder_iroundUpToPowerOfTwo (4611686018427387905LL) == 0);   // 2^62 + 1
+		Melder_assert (Melder_iroundUpToPowerOfTwo (9223372036854775807LL) == 0);   // 2^63 - 1, i.e. INTEGER_MAX
+	}
+	Melder_assert (Melder_iroundUpToPowerOfTwo (4) == 4);
 	{
 		autoMAT mat = { { 10, 20, 30, 40 }, { 60, 70, 80, 90 }, { 170, 180, 190, -300 } };
 		Melder_assert (mat [1] [1] == 10.0);
