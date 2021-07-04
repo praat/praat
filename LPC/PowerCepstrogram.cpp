@@ -242,9 +242,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		const double numberOfFrames = timeAveragingWindow / my dx;
 		if (numberOfFrames > 1.0) {
 			const double sigma = numberOfFrames / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
-			integer nfft = 2;
-			while (nfft < my nx) 
-				nfft *= 2;
+			const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my nx));   // TODO: explain edge case
 			autoNUMfft_Table fourierTable;
 			NUMfft_Table_init (& fourierTable, nfft);
 			for (integer iq = 1; iq <= my ny; iq ++) {
@@ -257,9 +255,7 @@ static autoPowerCepstrogram PowerCepstrogram_smoothGaussian (PowerCepstrogram me
 		*/
 		const double numberOfQuefrencyBins = quefrencyAveragingWindow / my dy;
 		if (numberOfQuefrencyBins > 1.0) {
-			integer nfft = 2;
-			while (nfft < my ny)
-				nfft *= 2;
+			const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my ny));   // TODO: explain edge case
 			autoNUMfft_Table fourierTable;
 			NUMfft_Table_init (& fourierTable, nfft);
 			const double sigma = numberOfQuefrencyBins / numberOfSigmasInWindow;  // 2sigma -> 95.4%, 3sigma -> 99.7 % of the data
@@ -334,9 +330,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 		/*
 			Find out the size of the FFT
 		*/
-		integer nfft = 2;
-		while (nfft < sframe -> nx)
-			nfft *= 2;
+		const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (sframe -> nx));   // TODO: explain edge case
 		const integer nq = nfft / 2 + 1;
 		const double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nq - 1);
 		autoPowerCepstrogram thee = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
@@ -415,9 +409,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		for (integer i = 1; i <= nosInWindow; i ++)
 			hamming [i] = 0.54 - 0.46 * cos (NUM2pi * (i - 1) / (nosInWindow - 1));
 
-		integer nfft = 8; // minimum possible
-		while (nfft < nosInWindow)
-			nfft *= 2;
+		const integer nfft = Melder_clippedLeft (8_integer /* minimum possible */, Melder_iroundUpToPowerOfTwo (nosInWindow));
 		const integer nfftdiv2 = nfft / 2;
 		autoVEC fftbuf = zero_VEC (nfft); // "complex" array
 		autoVEC spectrum = zero_VEC (nfftdiv2 + 1); // +1 needed 

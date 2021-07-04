@@ -180,12 +180,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		struct tribolet_struct tbs;
 		int remove_linear_part = 1;
 
-		integer nfft = 2;
-		while (nfft < my nx - 1) {
-			nfft *= 2;
-		}
-		nfft *= 2;
-
+		const integer nfft = 2 * Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my nx - 1));   // TODO: explain edge case
 		Melder_require (nfft / 2 == my nx - 1,
 			U"Dimension of Spectrum should be a power of 2 - 1.");
 
