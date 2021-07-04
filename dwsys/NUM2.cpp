@@ -176,9 +176,7 @@ void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma, NUMfft_Table
 }
 
 void VECsmooth_gaussian_inplace (VECVU const& in_out, double sigma) {
-	integer nfft = 1;
-	while (nfft < in_out.size)
-		nfft *= 2;
+	const integer nfft = Melder_iroundUpToPowerOfTwo (in_out.size);
 	autoNUMfft_Table fftTable;
 	NUMfft_Table_init (& fftTable, nfft);
 	VECsmooth_gaussian_inplace (in_out, sigma, & fftTable);

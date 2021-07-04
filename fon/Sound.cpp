@@ -365,9 +365,7 @@ autoSound Sound_upsample (Sound me) {
 		constexpr integer antiTurnAround = 1000;
 		constexpr integer sampleRateFactor = 2;
 		constexpr integer numberOfPaddingSides = 2;   // namely beginning and end
-		integer nfft = 1;
-		while (nfft < my nx + antiTurnAround * numberOfPaddingSides)
-			nfft *= 2;
+		const integer nfft = Melder_iroundUpToPowerOfTwo (my nx + antiTurnAround * numberOfPaddingSides);
 		const double newDx = my dx / sampleRateFactor;
 		/*
 			The computation of the new x1 relies on the idea that the left edge
@@ -414,9 +412,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 		if (weNeedAnAntiAliasingFilter) {
 			constexpr integer antiTurnAround = 1000;
 			constexpr integer numberOfPaddingSides = 2;   // namely beginning and end
-			integer nfft = 1;
-			while (nfft < my nx + antiTurnAround * numberOfPaddingSides)
-				nfft *= 2;
+			const integer nfft = Melder_iroundUpToPowerOfTwo (my nx + antiTurnAround * numberOfPaddingSides);
 			autoVEC data = raw_VEC (nfft);   // will be zeroed in every turn of the loop
 			filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 			for (integer ichan = 1; ichan <= my ny; ichan ++) {
@@ -553,9 +549,7 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 			Melder_throw (U"The sampling frequencies of the two sounds have to be equal.");
 		const integer n1 = my nx, n2 = thy nx;
 		const integer n3 = n1 + n2 - 1;
-		integer nfft = 1;
-		while (nfft < n3)
-			nfft *= 2;
+		const integer nfft = Melder_iroundUpToPowerOfTwo (n3);
 		autoVEC data1 = raw_VEC (nfft);
 		autoVEC data2 = raw_VEC (nfft);
 		integer numberOfChannels = std::max (my ny, thy ny);
@@ -636,9 +630,7 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 			U"The sampling frequencies of the two sounds have to be equal.");
 		const integer numberOfChannels = std::max (my ny, thy ny);
 		const integer n1 = my nx, n2 = thy nx, n3 = n1 + n2 - 1;
-		integer nfft = 1;
-		while (nfft < n3)
-			nfft *= 2;
+		const integer nfft = Melder_iroundUpToPowerOfTwo (n3);
 		autoVEC data1 = raw_VEC (nfft);
 		autoVEC data2 = raw_VEC (nfft);
 		const double my_xlast = my x1 + (n1 - 1) * my dx;
@@ -716,9 +708,7 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
 		const integer numberOfChannels = my ny, n1 = my nx, n2 = n1 + n1 - 1;
-		integer nfft = 1;
-		while (nfft < n2)
-			nfft *= 2;
+		const integer nfft = Melder_iroundUpToPowerOfTwo (n2);
 		autoVEC data = raw_VEC (nfft);
 		const double my_xlast = my x1 + (n1 - 1) * my dx;
 		autoSound thee = Sound_create (numberOfChannels, my xmin - my xmax, my xmax - my xmin, n2, my dx, my x1 - my_xlast);

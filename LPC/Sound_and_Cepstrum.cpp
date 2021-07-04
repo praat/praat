@@ -35,8 +35,7 @@
 */
 autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 	try {
-		integer nfft = 2;
-		while (nfft < my nx) nfft *= 2;
+		const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (my nx));   // TODO: explain edge case
 
 		const double qmax = (my xmax - my xmin) * nfft / my nx;
 		autoCepstrum thee = Cepstrum_create (qmax, nfft);

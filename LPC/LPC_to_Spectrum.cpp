@@ -97,11 +97,8 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
 		const double samplingFrequency = 1.0 / my samplingPeriod;
-		integer nfft = 2, index = Sampled_xToNearestIndex (me, t);
-		if (index < 1)
-			index = 1;
-		if (index > my nx)
-			index = my nx;
+		const integer index = Melder_clipped (1_integer, Sampled_xToNearestIndex (me, t), my nx);
+		integer nfft = 2;
 		if (dfMin <= 0) {
 			nfft = 512;
 			dfMin = samplingFrequency / nfft;

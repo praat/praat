@@ -99,9 +99,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 		const integer numberOfSamples = Melder_iround (windowDuration * newSamplingFrequency);
 		const double frameDuration = numberOfSamples / newSamplingFrequency;
 		
-		integer nfft = 256; // the minimum number of points for the FFT
-		while (nfft < numberOfSamples)
-			nfft *= 2;
+		const integer nfft = Melder_clippedLeft (256_integer /* the minimum number of points for the FFT */, Melder_iroundUpToPowerOfTwo (numberOfSamples));
 		const integer nfft2 = nfft / 2 + 1;
 		const double fftframeDuration = nfft / newSamplingFrequency;
 		const double df = newSamplingFrequency / nfft;
