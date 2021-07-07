@@ -2,7 +2,7 @@
 #define _melder_time_h_
 /* melder_time.h
  *
- * Copyright (C) 1992-2016,2018,2020 Paul Boersma
+ * Copyright (C) 1992-2016,2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,14 @@ void Melder_sleep (double duration);
 
 double Melder_clock ();   // typically the number of seconds since system start-up, with microsecond precision
 
-autostring32 STRdate ();
+autostring32 date_STR ();
+autostring32 date_utc_STR ();
+
+autostring32 date_iso_STR ();
+autostring32 date_utc_iso_STR ();
+
+autoVEC date_VEC ();
+autoVEC date_utc_VEC ();
 
 /* End of file melder_time.h */
 #endif
