@@ -19,7 +19,7 @@
 #include "FormantPath_to_IntervalTier.h"
 
 static void IntervalTier_addCandidate (IntervalTier me, double splitTime, integer candidate) {
-	conststring32 label =  Melder_integer (candidate);
+	conststring32 label = Melder_integer (candidate);
 	TextInterval last = my intervals.at [my intervals.size];
 	last -> xmax = splitTime;
 	last -> text = Melder_dup (label);
