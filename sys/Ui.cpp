@@ -1982,7 +1982,7 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
-			Melder_throw (U"Command requires more than the given ", narg, U" arguments: no value for argument \"", my field [i] -> name.get(), U"\".");
+			Melder_throw (U"Command requires more than the given ", narg, U" arguments: argument \"", my field [i] -> name.get(), U"\" not given.");
 		UiField_argToValue (my field [i].get(), & args [iarg], interpreter);
 	}
 	if (iarg < narg)

@@ -362,7 +362,7 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
-	TEXTFIELD (ranges, U"Create a new TableOfReal from the following columns:", U"1 2", 3)
+	TEXTFIELD (ranges, U"Create a new TableOfReal from the following columns", U"1 2", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -409,7 +409,7 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
-	TEXTFIELD (ranges, U"Create a new TableOfReal from the following rows:", U"1 2", 3)
+	TEXTFIELD (ranges, U"Create a new TableOfReal from the following rows", U"1 2", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO

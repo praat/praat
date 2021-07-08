@@ -205,7 +205,7 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		SENTENCE (middleFooter, U"Middle footer", U"")
 		SENTENCE (rightOrOutsideFooter, U"Right or outside footer", U"")
 		BOOLEAN (mirrorEvenOddHeaders, U"Mirror even/odd headers", true)
-		TEXTFIELD (printAllPagesWhoseTitleStartsWith, U"Print all pages whose title starts with:", U"Intro", 2)
+		TEXTFIELD (printAllPagesWhoseTitleStartsWith, U"Print all pages whose title starts with", U"Intro", 2)
 		INTEGER (firstPageNumber, U"First page number", U"1")
 		BOOLEAN (suppressLinksToThisPage, U"Suppress \"Links to this page\"", false)
 	EDITOR_OK

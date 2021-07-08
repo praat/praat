@@ -318,9 +318,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #define TEXTFIELD(stringVariable, labelText, defaultStringValue, numberOfLines)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
-		UiForm_addText (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue, numberOfLines);
+		UiForm_addText (_dia_.get(), & stringVariable, U"" #stringVariable, labelText, defaultStringValue, numberOfLines);
 
 #define FORMULA(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \

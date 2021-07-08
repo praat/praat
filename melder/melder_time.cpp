@@ -175,7 +175,7 @@ autostring32 date_iso_STR () {
 	result8 [25] = '\0';   // new trailing null byte
 	result8 [24] = result8 [23];   // shift the last digit
 	result8 [23] = result8 [22];   // shift the penultimate digit
-	result8 [22] = ':';   // insert the semicolon before the two digits
+	result8 [22] = ':';   // insert the semicolon between the 22 characters and the two digits
 	return Melder_8to32 (result8);
 }
 

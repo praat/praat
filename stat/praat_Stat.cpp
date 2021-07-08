@@ -959,9 +959,9 @@ DIRECT (CONVERT_EACH_TO_ONE__Table_transpose) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
-	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"dialect gender speaker", 3)
+	TEXTFIELD (factors, U"Columns with factors (independent variables)", U"dialect gender speaker", 3)
 	SENTENCE (columnToTranspose, U"Column to transpose", U"vowel")
-	TEXTFIELD (columnsToExpand, U"Columns to expand:", U"duration F0 F1 F2 F3", 3)
+	TEXTFIELD (columnsToExpand, U"Columns to expand", U"duration F0 F1 F2 F3", 3)
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
@@ -978,7 +978,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Table_to_LinearRegression) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
-	TEXTFIELD (factors, U"Factors (column names):", U"F0 F1 duration", 3)
+	TEXTFIELD (factors, U"Factors (column names)", U"F0 F1 duration", 3)
 	SENTENCE (dependent1, U"Dependent 1 (column name)", U"e")
 	SENTENCE (dependent2, U"Dependent 2 (column name)", U"i")
 	OK

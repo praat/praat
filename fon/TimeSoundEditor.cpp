@@ -416,7 +416,7 @@ static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Mute channels", nullptr)
-		TEXTFIELD (channels_string, U"Channels:", U"2", 5)
+		TEXTFIELD (channels_string, U"Channels", U"2", 5)
 	EDITOR_OK
 	EDITOR_DO
 		integer numberOfChannels = ( my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny );

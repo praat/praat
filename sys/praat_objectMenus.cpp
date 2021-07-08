@@ -36,7 +36,7 @@ DIRECT (PRAAT_Remove) {
 }
 
 FORM (MODIFY_Rename, U"Rename object", U"Rename...") {
-	TEXTFIELD (newName, U"New name:", U"", 3)
+	TEXTFIELD (newName, U"New name", U"", 3)
 OK
 	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
@@ -63,7 +63,7 @@ DO
 }
 
 FORM (NEW1_Copy, U"Copy object", U"Copy...") {
-	TEXTFIELD (newName, U"Name of new object:", U"", 3)
+	TEXTFIELD (newName, U"Name of new object", U"", 3)
 OK
 	WHERE (SELECTED) SET_STRING (newName, NAME)
 DO
@@ -288,7 +288,7 @@ DO
 
 FORM (INFO_NONE__praat_calculator, U"Calculator", U"Calculator") {
 	LABEL (U"Type any numeric formula or string formula:")
-	TEXTFIELD (expression, nullptr, U"5*5", 5)
+	TEXTFIELD (expression, U"", U"5*5", 5)
 	LABEL (U"Note that you can include many special functions in your formula,")
 	LABEL (U"including statistical functions and acoustics-auditory conversions.")
 	LABEL (U"For details, click Help.")
@@ -571,7 +571,7 @@ DIRECT (WINDOW_ManPages_view) {
 /********** Callbacks of the Help menu. **********/
 
 FORM (PRAAT__SearchManual, U"Search manual", U"Manual") {
-	TEXTFIELD (query, U"Search for strings (separate with spaces):", U"", 3)
+	TEXTFIELD (query, U"Search for strings (separate with spaces)", U"", 3)
 	OK
 DO
 	PRAAT

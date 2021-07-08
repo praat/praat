@@ -34,7 +34,7 @@ void praat_TableOfReal_init3 (ClassInfo klas);
 FORM (CONVERT_EACH_TO_ONE__EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG: To CrossCorrelationTable...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	REAL (lagTime, U"Lag time (s)", U"0.05")
-	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -45,7 +45,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -58,7 +58,7 @@ FORM (CONVERT_EACH_TO_ONE__EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorr
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
 	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
-	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -73,7 +73,7 @@ FORM (CONVERT_EACH_TO_MULTIPLE__EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To 
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
 	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
-	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	LABEL (U"Pre-whitening parameters")
 	OPTIONMENUx (whiteningMethod, U"Whitening method", 1, 0)
@@ -102,7 +102,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OPTIONMENU (method, U"Method", 1)
 		OPTION (U"Covariance")
@@ -135,7 +135,7 @@ DO
 FORM (CONVERT_EACH_TO_ONE__EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", nullptr) {
 	POSITIVE (baseFrequency, U"Base frequency (Hz)", U"100.0")
 	POSITIVE (channelBandwidth, U"Channel bandwidth (Hz)", U"100.0")
-	TEXTFIELD (channels, U"Channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO

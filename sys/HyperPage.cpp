@@ -704,7 +704,7 @@ static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
-		TEXTFIELD (page, U"Page:", U"a", 2)
+		TEXTFIELD (page, U"Page", U"a", 2)
 	EDITOR_OK
 	EDITOR_DO
 		HyperPage_goToPage (me, page);
