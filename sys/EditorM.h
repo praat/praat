@@ -212,8 +212,8 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue, numberOfLines) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue, numberOfLines);
+	UiForm_addLabel (cmd -> d_uiform.get(), nullptr, Melder_cat (labelText, U":")); \
+	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue, numberOfLines);
 
 #define TEXTFIELD(stringVariable, labelText, defaultValue, numberOfLines) \
 	TEXTFIELD_VARIABLE (stringVariable) \

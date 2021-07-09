@@ -391,7 +391,7 @@ static void do_find (FormantPathEditor me) {
 
 static void menu_cb_Find (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find text", nullptr)
-		TEXTFIELD (findString, U"Text:", U"", 3)
+		TEXTFIELD (findString, U"Text", U"", 3)
 	EDITOR_OK
 	EDITOR_DO
 		my findString = Melder_dup (findString);

@@ -548,7 +548,7 @@ DO
 
 FORM (MODIFY_FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...") {
 	REAL (time, U"Time (s)", U"0.5")
-	TEXTFIELD (formantBandwidthPairs, U"Frequencies and bandwidths (Hz):", U"500 50 1500 100 2500 150 3500 200 4500 300", 5)
+	TEXTFIELD (formantBandwidthPairs, U"Frequencies and bandwidths (Hz)", U"500 50 1500 100 2500 150 3500 200 4500 300", 5)
 	OK
 DO
 	autoFormantPoint point = FormantPoint_create (time, 10);

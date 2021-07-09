@@ -988,8 +988,8 @@ UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName
 	return thee;
 }
 
-UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue, integer numberOfLines) {
-	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, name);
+UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue, integer numberOfLines) {
+	UiField thee = UiForm_addField (me, _kUiField_type::TEXT_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -997,8 +997,8 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
-UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, name);
+UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::FORMULA_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1006,8 +1006,8 @@ UiField UiForm_addFormula (UiForm me, conststring32 *variable, conststring32 var
 	return thee;
 }
 
-UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, name);
+UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::INFILE_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1015,8 +1015,8 @@ UiField UiForm_addInfile (UiForm me, conststring32 *variable, conststring32 vari
 	return thee;
 }
 
-UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, name);
+UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::OUTFILE_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1024,8 +1024,8 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 	return thee;
 }
 
-UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, name);
+UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::FOLDER_, label);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -1033,8 +1033,8 @@ UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 vari
 	return thee;
 }
 
-UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, name);
+UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, label);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
@@ -1043,8 +1043,8 @@ UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 varia
 	return thee;
 }
 
-UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, name);
+UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_realVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, label);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
@@ -1053,8 +1053,8 @@ UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 v
 	return thee;
 }
 
-UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, name);
+UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, label);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
@@ -1063,8 +1063,8 @@ UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 va
 	return thee;
 }
 
-UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, name);
+UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, label);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
@@ -1073,8 +1073,8 @@ UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 va
 	return thee;
 }
 
-UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue) {
-	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, name);
+UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 label, constMATVU defaultValue) {
+	UiField thee = UiForm_addField (me, _kUiField_type::REALMATRIX_, label);
 	thy numericMatrixDefaultValue = copy_MAT (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
@@ -1082,8 +1082,8 @@ UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 varia
 	return thee;
 }
 
-UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines) {
-	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, name);
+UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 label, constSTRVEC defaultValue, integer numberOfLines) {
+	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, label);
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
@@ -1982,7 +1982,7 @@ void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
-			Melder_throw (U"Command requires more than the given ", narg, U" arguments: no value for argument \"", my field [i] -> name.get(), U"\".");
+			Melder_throw (U"Command requires more than the given ", narg, U" arguments: argument \"", my field [i] -> name.get(), U"\" not given.");
 		UiField_argToValue (my field [i].get(), & args [iarg], interpreter);
 	}
 	if (iarg < narg)

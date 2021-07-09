@@ -323,7 +323,7 @@ FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...
 		RADIOBUTTON (U"half")
 		RADIOBUTTON (U"top")
 	REAL (rotation, U"Rotation (degrees)", U"0")
-	TEXTFIELD (text, U"Text:", U"", 3)
+	TEXTFIELD (text, U"Text", U"", 3)
 OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
@@ -561,9 +561,9 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 				U"Orientation", kGraphicsPostscript_orientation::DEFAULT)
 		POSITIVE (magnification, U"Magnification", U"1.0");
 		#if defined (linux)
-			TEXTFIELD (printCommand, U"Print command:", U"lpr %s", 4)
+			TEXTFIELD (printCommand, U"Print command", U"lpr %s", 4)
 		#else
-			TEXTFIELD (printCommand, U"Print command:", U"lp -c %s", 4)
+			TEXTFIELD (printCommand, U"Print command", U"lp -c %s", 4)
 		#endif
 	#endif
 	RADIO_ENUM (kGraphicsPostscript_fontChoiceStrategy, fontChoiceStrategy,
@@ -655,7 +655,7 @@ FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 		OPTION (U"bottom")
 		OPTION (U"half")
 		OPTION (U"top")
-	TEXTFIELD (text, U"Text:", U"", 4)
+	TEXTFIELD (text, U"Text", U"", 4)
 	OK
 DO
 	GRAPHICS_NONE
@@ -678,7 +678,7 @@ FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
 	OPTIONMENU_ENUM (kGraphics_font, font, U"Font", kGraphics_font::DEFAULT)
 	POSITIVE (fontSize, U"Font size", U"10")
 	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
-	TEXTFIELD (text, U"Text:", U"", 4)
+	TEXTFIELD (text, U"Text", U"", 4)
 OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
@@ -1006,7 +1006,7 @@ DIRECT (GRAPHICS_DrawInnerBox) {
 
 FORM (GRAPHICS_TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"Text:", U"", 3)
+	TEXTFIELD (text, U"Text", U"", 3)
 	OK
 DO
 	GRAPHICS_NONE
@@ -1016,7 +1016,7 @@ DO
 
 FORM (GRAPHICS_TextRight, U"Praat picture: Text right", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"Text:", U"", 3)
+	TEXTFIELD (text, U"Text", U"", 3)
 	OK
 DO
 	GRAPHICS_NONE
@@ -1026,7 +1026,7 @@ DO
 
 FORM (GRAPHICS_TextTop, U"Praat picture: Text top", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"Text:", U"", 3)
+	TEXTFIELD (text, U"Text", U"", 3)
 	OK
 DO
 	GRAPHICS_NONE
@@ -1036,7 +1036,7 @@ DO
 
 FORM (GRAPHICS_TextBottom, U"Praat picture: Text bottom", U"Text left/right/top/bottom...") {
 	BOOLEAN (farr, U"Far", true)
-	TEXTFIELD (text, U"Text:", U"", 3)
+	TEXTFIELD (text, U"Text", U"", 3)
 	OK
 DO
 	GRAPHICS_NONE
@@ -1189,7 +1189,7 @@ FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/rig
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1211,7 +1211,7 @@ FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/r
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1233,7 +1233,7 @@ FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1255,7 +1255,7 @@ FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left
 	BOOLEAN (writeNumber, U"Write number", true)
 	BOOLEAN (drawTick, U"Draw tick", true)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1277,7 +1277,7 @@ FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark lef
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1299,7 +1299,7 @@ FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark ri
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1321,7 +1321,7 @@ FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top"
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1343,7 +1343,7 @@ FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark b
 	BOOLEAN (writeNumber, U"Write number", 1)
 	BOOLEAN (drawTick, U"Draw tick", 1)
 	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
-	TEXTFIELD (text, U"Draw text:", U"", 3)
+	TEXTFIELD (text, U"Draw text", U"", 3)
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1413,7 +1413,7 @@ DO
 }
 
 FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", nullptr) {
-	TEXTFIELD (text, U"Text:", U"Hello world", 3)
+	TEXTFIELD (text, U"Text", U"Hello world", 3)
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL
@@ -1424,7 +1424,7 @@ DO
 }
 
 FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
-	TEXTFIELD (text, U"Text:", U"Hello world", 3)
+	TEXTFIELD (text, U"Text", U"Hello world", 3)
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL
@@ -1441,7 +1441,7 @@ FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in 
 	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD (text, U"Text:", U"Hello world", 3)
+	TEXTFIELD (text, U"Text", U"Hello world", 3)
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL
@@ -1459,7 +1459,7 @@ FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", 
 	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD (text, U"Text:", U"Hello world", 3)
+	TEXTFIELD (text, U"Text", U"Hello world", 3)
 	OK
 DO
 	QUERY_GRAPHICS_FOR_REAL

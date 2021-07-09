@@ -154,7 +154,7 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 			do {
 				p ++;
 			} while (Melder_isAsciiDecimalNumber (*p));
-		} else if (*p == ':') {
+		} else if (*p == U':') {
 			Melder_require (previousElement != 0,
 				U"The range should not start with a colon.");
 			do {

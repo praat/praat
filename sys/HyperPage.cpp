@@ -666,7 +666,7 @@ static void menu_cb_font (HyperPage me, EDITOR_ARGS_FORM) {
 		SET_OPTION (font, my p_font == kGraphics_font::TIMES ? 1 :
 				my p_font == kGraphics_font::HELVETICA ? 2 : my p_font == kGraphics_font::PALATINO ? 3 : 1);
 	EDITOR_DO
-		my pref_font () = my p_font = font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA;
+		my pref_font () = my p_font = ( font == 1 ? kGraphics_font::TIMES : kGraphics_font::HELVETICA );
 		if (my graphics)
 			Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -704,7 +704,7 @@ static void menu_cb_fontSize (HyperPage me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
-		TEXTFIELD (page, U"Page:", U"a", 2)
+		TEXTFIELD (page, U"Page", U"a", 2)
 	EDITOR_OK
 	EDITOR_DO
 		HyperPage_goToPage (me, page);

@@ -5740,7 +5740,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
-	TEXTFIELD (channels, U"Create a new Sound from the following channels:", U"1:64", 3)
+	TEXTFIELD (channels, U"Create a new Sound from the following channels", U"1:64", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -6349,7 +6349,7 @@ DO
 }
 
 FORM (PLAY_EACH__SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
-	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
+	TEXTFIELD (text, U"Text", U"This is some text.", 10)
 	OK
 DO
 	PLAY_EACH (SpeechSynthesizer)
@@ -6358,7 +6358,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
-	TEXTFIELD (text, U"Text:", U"This is some text.", 10)
+	TEXTFIELD (text, U"Text", U"This is some text.", 10)
 	BOOLEAN (wantTextGrid, U"Create TextGrid with annotations", false);
 	OK
 DO
@@ -6711,7 +6711,7 @@ DO
 }
 
 FORM (CREATE_ONE__old_Strings_createAsTokens, U"Strings: Create as tokens", nullptr) {
-	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text", 10)
+	TEXTFIELD (text, U"Text", U"There are seven tokens in this text", 10)
 	OK
 DO
 	CREATE_ONE
@@ -6721,7 +6721,7 @@ DO
 
 FORM (CREATE_ONE__Strings_createFromTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
 	WORD (name, U"Name", U"tokens")
-	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text", 10)
+	TEXTFIELD (text, U"Text", U"There are seven tokens in this text", 10)
 	SENTENCE (separators, U"Separators", U" ,")
 	OK
 DO
@@ -6731,7 +6731,7 @@ DO
 }
 
 FORM (CREATE_ONE__Strings_createAsTokens, U"Strings: Create as tokens", U"Create Strings as tokens...") {
-	TEXTFIELD (text, U"Text:", U"There are seven tokens in this text", 10)
+	TEXTFIELD (text, U"Text", U"There are seven tokens in this text", 10)
 	SENTENCE (separators, U"Separators", U" ,")
 	OK
 DO_ALTERNATIVE (CREATE_ONE__old_Strings_createAsTokens)
@@ -7381,7 +7381,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
-	TEXTFIELD (columnRanges, U"Create a new Table from the following columns:", U"1 2", 3)
+	TEXTFIELD (columnRanges, U"Create a new Table from the following columns", U"1 2", 3)
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
@@ -7973,7 +7973,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 3)
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
@@ -7988,15 +7988,15 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 2)
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels:", U"p b t d k g", 2)
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels:", U"m n", 2)
+	TEXTFIELD (after_string, U"After labels", U"m n", 2)
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8312,7 +8312,7 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers) {
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 3)
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8329,15 +8329,15 @@ DO
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels:", U"i u e o \\as ", 2)
+	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels:", U"p b t d k g", 2)
+	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels:", U"m n", 2)
+	TEXTFIELD (after_string, U"After labels", U"m n", 2)
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")

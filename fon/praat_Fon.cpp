@@ -2706,7 +2706,7 @@ DIRECT (STRVEC_Strings_listAllStrings) {
 
 FORM (MODIFY_Strings_insertString, U"Strings: Insert string", nullptr) {
 	INTEGER (atPosition, U"At position", U"0 (= at end)")
-	TEXTFIELD (string, U"String:", U"", 10)
+	TEXTFIELD (string, U"String", U"", 10)
 	OK
 DO
 	MODIFY_EACH (Strings)
@@ -2743,7 +2743,7 @@ DO
 
 FORM (MODIFY_Strings_setString, U"Strings: Set string", nullptr) {
 	NATURAL (position, U"Position", U"1")
-	TEXTFIELD (newString, U"New string:", U"", 10)
+	TEXTFIELD (newString, U"New string", U"", 10)
 	OK
 DO
 	MODIFY_EACH (Strings)
