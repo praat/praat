@@ -317,7 +317,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				}
 				char32 *q = my formats [my numberOfParameters];
 				if (*formatLocation != U'(') {
-					*formatLocation = U'0';   // destroy input in order to limit printing of line
+					*formatLocation = U'\0';   // destroy input in order to limit printing of line
 					Melder_throw (U"Missing format (should start with \"(\"):\n\"", startOfLine, U"\".");
 				}
 				while (*formatLocation != U')') {

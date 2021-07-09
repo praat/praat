@@ -287,8 +287,7 @@ DO
 /********** Callbacks of the Goodies menu. **********/
 
 FORM (INFO_NONE__praat_calculator, U"Calculator", U"Calculator") {
-	LABEL (U"Type any numeric formula or string formula:")
-	TEXTFIELD (expression, U"", U"5*5", 5)
+	TEXTFIELD (expression, U"Type any numeric formula or string formula", U"5*5", 5)
 	LABEL (U"Note that you can include many special functions in your formula,")
 	LABEL (U"including statistical functions and acoustics-auditory conversions.")
 	LABEL (U"For details, click Help.")
