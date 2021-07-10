@@ -225,7 +225,7 @@ void power_VEC_out (VECVU const& target, constVECVU const& vec, double power) {
 autoVEC splitByWhitespace_VEC (conststring32 string) {
 	if (! string)
 		return autoVEC();   // accept null pointer input
-	integer n = NUMnumberOfTokens (string);
+	const integer n = NUMnumberOfTokens (string);
 	if (n == 0)
 		return autoVEC();
 	autoVEC result (n, MelderArray::kInitializationType::ZERO);
@@ -244,6 +244,33 @@ autoVEC splitByWhitespace_VEC (conststring32 string) {
 	return result;
 }
 
+autoVEC cast_VEC (constINTVEC const& intvec) {
+	autoVEC result = raw_VEC (intvec.size);
+	for (integer i = 1; i <= intvec.size; i ++)
+		result [i] = intvec [i];
+	return result;
+}
+
+autoINTVEC ifloor_INTVEC (constVEC const& vec) {
+	autoINTVEC result = raw_INTVEC (vec.size);
+	for (integer i = 1; i <= vec.size; i ++)
+		result [i] = Melder_ifloor (vec [i]);
+	return result;
+}
+
+autoINTVEC iround_INTVEC (constVEC const& vec) {
+	autoINTVEC result = raw_INTVEC (vec.size);
+	for (integer i = 1; i <= vec.size; i ++)
+		result [i] = Melder_iround (vec [i]);
+	return result;
+}
+
+autoINTVEC iceiling_INTVEC (constVEC const& vec) {
+	autoINTVEC result = raw_INTVEC (vec.size);
+	for (integer i = 1; i <= vec.size; i ++)
+		result [i] = Melder_iceiling (vec [i]);
+	return result;
+}
 
 void to_INTVEC_out (INTVECVU const& x) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
