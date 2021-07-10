@@ -215,6 +215,19 @@ void praat_new (autoDaata me, const MelderArg& arg1, const MelderArg& arg2,
 void praat_newWithFile (autoDaata me, MelderFile file, conststring32 name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
+#define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
+#define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
+#define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
+#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. isSelected)
+#define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
+#define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
+#define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
+#define GRAPHICS  theCurrentPraatPicture -> graphics
+#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name.get())
+#define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
+#define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
+#define NAME  praat_name (IOBJECT)
+
 /* Macros for description of forms (dialog boxes, setting windows).
 	FORM prompts the user for arguments to proc.
 	Macros for FORM:
@@ -615,21 +628,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				} else { \
 					file = UiFile_getFile (_dia_.get()); \
 				}
-
-#endif // _EditorM_h_
-
-#define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
-#define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
-#define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
-#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. isSelected)
-#define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
-#define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
-#define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
-#define GRAPHICS  theCurrentPraatPicture -> graphics
-#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name.get())
-#define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
-#define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
-#define NAME  praat_name (IOBJECT)
 
 #define CREATE_MULTIPLE
 #define CREATE_MULTIPLE_END \
@@ -1426,7 +1424,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define APPEND_ALL_END  \
 	END_NO_NEW_DATA
 
-
 /*
 	EDITOR
 */
@@ -1497,6 +1494,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define PRAAT
 #define PRAAT_END  \
 	END_NO_NEW_DATA
+
+#endif // _EditorM_h_
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
 void praat_installEditor (Editor editor, int iobject);

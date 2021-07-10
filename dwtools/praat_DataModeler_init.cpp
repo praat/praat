@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praatP.h"
+#include "praat.h"
 #include "DataModeler.h"
 #include "Formant_extensions.h"
 #include "FormantModeler.h"
