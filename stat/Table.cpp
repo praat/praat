@@ -733,9 +733,8 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 		/*
 			Make sure that all the columns in the original table that we will use in the pooled table are defined.
 		*/
-		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
+		for (integer icol = 1; icol <= thy numberOfColumns; icol ++)
 			Table_numericize_checkDefined (me, columns [icol]);
-		}
 		/*
 			Remember the present sorting of the original table.
 			(This is safe: the sorting index may change only vacuously when numericizing.)
@@ -748,7 +747,7 @@ autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columns
 		/*
 			We will now sort the original table temporarily, by the factors (independent variables) only.
 		*/
-		Table_sortRows_Assert (me, constINTVEC (columns.cells, factors.size));   /* This works only because the factors come first. */
+		Table_sortRows_Assert (me, constINTVEC (columns.cells, factors.size));   // this works only because the factors come first
 		originalChanged = true;
 		/*
 			Find stretches of identical factors.

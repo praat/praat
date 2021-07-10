@@ -4711,7 +4711,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 autoTable Table_extractColumnRanges (Table me, conststring32 ranges) {
 	try {
 		const integer numberOfRows = my rows.size;
-		autoINTVEC columnRanges = NUMstring_getElementsOfRanges (ranges, my numberOfColumns, U"columnn number", true);
+		autoINTVEC columnRanges = NUMstring_getElementsOfRanges (ranges, my numberOfColumns, U"column number", true);
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, columnRanges.size); 
 		for (integer icol = 1; icol <= columnRanges.size; icol ++)
 			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));

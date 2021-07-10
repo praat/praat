@@ -1,6 +1,6 @@
 /* Sampled.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,8 +174,6 @@ autoVEC Sampled_getSortedValues (Sampled me, double xmin, double xmax, integer l
 double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantile, integer levelNumber, int unit) {
 	try {
 		autoVEC values = Sampled_getSortedValues (me, xmin, xmax, levelNumber, unit);
-		if (values.size == 0)
-			return undefined;
 		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
 		Melder_throw (me, U": quantile not computed.");
