@@ -396,7 +396,7 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_realVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined positive vector format \"", my formats [ipar], U"\".");
-				UiForm_addRealVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
+				UiForm_addPositiveVector (form.get(), nullptr, nullptr, parameter, format, my arguments [ipar].get());
 			} break; case Interpreter_INTEGERVECTOR: {
 				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_integerVectorFormat::UNDEFINED)
@@ -406,7 +406,7 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				kUi_integerVectorFormat format = kUi_integerVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_integerVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined natural vector format \"", my formats [ipar], U"\".");
-				UiForm_addIntegerVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get());
+				UiForm_addNaturalVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get());
 			// } break; case Interpreter_REALMATRIX: {
 			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_CHOICE: {
@@ -468,7 +468,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 		switch (my types [ipar]) {
 			case Interpreter_REAL:
 			case Interpreter_POSITIVE: {
-				double value = UiForm_getReal_check (dialog, parameter);
+				const double value = UiForm_getReal_check (dialog, parameter);
 				my arguments [ipar] = autostring32 (40, true);
 				Melder_sprint (my arguments [ipar].get(),40+1, value);
 				break;
@@ -476,16 +476,15 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			case Interpreter_INTEGER:
 			case Interpreter_NATURAL:
 			case Interpreter_BOOLEAN: {
-				integer value = UiForm_getInteger (dialog, parameter);
+				const integer value = UiForm_getInteger (dialog, parameter);
 				my arguments [ipar] = autostring32 (40, true);
 				Melder_sprint (my arguments [ipar].get(),40+1, value);
 				break;
 			}
 			case Interpreter_CHOICE:
 			case Interpreter_OPTIONMENU: {
-				integer integerValue = 0;
-				integerValue = UiForm_getInteger (dialog, parameter);
-				conststring32 stringValue = UiForm_getString (dialog, parameter);
+				const integer integerValue = UiForm_getInteger (dialog, parameter);
+				const conststring32 stringValue = UiForm_getString (dialog, parameter);
 				my arguments [ipar] = autostring32 (40, true);
 				Melder_sprint (my arguments [ipar].get(),40+1, integerValue);
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
@@ -493,14 +492,25 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			}
 			case Interpreter_REALVECTOR:
 			case Interpreter_POSITIVEVECTOR:
+			{
+				const VEC realVectorValue = UiForm_getRealVector (dialog, parameter);
+				autoMelderString buffer;
+				for (integer i = 1; i <= realVectorValue.size; i ++) {
+					MelderString_append (& buffer, realVectorValue [i]);
+					if (i < realVectorValue.size)
+						MelderString_appendCharacter (& buffer, U' ');
+				}
+				my arguments [ipar] = Melder_dup (buffer.string);
+				break;
+			}
 			case Interpreter_INTEGERVECTOR:
 			case Interpreter_NATURALVECTOR:
 			{
-				VEC numvecValue = UiForm_getNumvec (dialog, parameter);
+				const INTVEC integerVectorValue = UiForm_getIntegerVector (dialog, parameter);
 				autoMelderString buffer;
-				for (integer i = 1; i <= numvecValue.size; i ++) {
-					MelderString_append (& buffer, numvecValue [i]);
-					if (i < numvecValue.size)
+				for (integer i = 1; i <= integerVectorValue.size; i ++) {
+					MelderString_append (& buffer, integerVectorValue [i]);
+					if (i < integerVectorValue.size)
 						MelderString_appendCharacter (& buffer, U' ');
 				}
 				my arguments [ipar] = Melder_dup (buffer.string);
@@ -511,7 +521,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			case Interpreter_COMMENT:
 				break;
 			default: {
-				conststring32 value = UiForm_getString (dialog, parameter);
+				const conststring32 value = UiForm_getString (dialog, parameter);
 				my arguments [ipar] = Melder_dup_f (value);
 				break;
 			}

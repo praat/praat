@@ -536,7 +536,7 @@ double Table_getGroupMean (Table me, integer columnNumber, integer groupColumnNu
 		}
 		if (n < 1)
 			return undefined;
-		double mean = double (sum) / n;
+		const double mean = double (sum) / n;
 		return mean;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U" for group \"", group, U"\" of column ", groupColumnNumber, U".");
@@ -569,8 +569,7 @@ double Table_getStdev (Table me, integer columnNumber) {
 		longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			double d = row -> cells [columnNumber]. number - mean;
-			sum += d * d;
+			sum += sqr (row -> cells [columnNumber]. number - mean);
 		}
 		return sqrt (double (sum) / (my rows.size - 1));
 	} catch (MelderError) {
@@ -593,7 +592,7 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 			Melder_throw (me, U": the total weight of column ", columnNumber, U" is not positive.");
 		integer irow;
 		do {
-			double rand = NUMrandomUniform (0.0, double (total));
+			const double rand = NUMrandomUniform (0.0, double (total));
 			longdouble sum = 0.0;
 			for (irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
@@ -643,9 +642,8 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 				thy rows. addItem_move (newRow.move());
 			}
 		}
-		if (thy rows.size == 0) {
+		if (thy rows.size == 0)
 			Melder_warning (U"No row matches criterion.");
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": rows not extracted.");
@@ -865,9 +863,8 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 		while (irow <= my rows.size) {
 			const double value = my rows.at [irow] -> cells [column]. number;
 			numberOfLevels ++;
-			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) {
+			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value)
 				;
-			}
 		}
 		autoSTRVEC result (numberOfLevels);
 		numberOfLevels = 0;
@@ -875,7 +872,8 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 		while (irow <= my rows.size) {
 			const double value = my rows.at [irow] -> cells [column]. number;
 			result [++ numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
-			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) { }
+			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value)
+				;
 		}
 		sortRowsByIndex_NoError (me);   // unsort the original table
 		return result;

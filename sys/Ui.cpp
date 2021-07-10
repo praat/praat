@@ -366,26 +366,26 @@ static void UiField_widgetToValue (UiField me) {
 			kUi_realVectorFormat format = (kUi_realVectorFormat) GuiOptionMenu_getValue (my optionMenu);
 			switch (format) {
 				case kUi_realVectorFormat::WHITESPACE_SEPARATED_: {
-					my numericVectorValue = splitByWhitespace_VEC (stringValue.get());
+					my realVectorValue = splitByWhitespace_VEC (stringValue.get());
 				} break; case kUi_realVectorFormat::FORMULA_: {
 					VEC result;
 					bool ownedByInterpreter;
 					Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
 					if (ownedByInterpreter) {
-						my numericVectorValue. adoptFromAmbiguousOwner (result);
+						my realVectorValue. adoptFromAmbiguousOwner (result);
 					} else {
-						my numericVectorValue = copy_VEC (result);
+						my realVectorValue = copy_VEC (result);
 					}
 				} break; case kUi_realVectorFormat::UNDEFINED: {
 					Melder_fatal (U"Unknown real vector format.");
 				}
 			}
 			if (my type == _kUiField_type::POSITIVEVECTOR_)
-				for (integer i = 1; i <= my numericVectorValue.size; i ++)
-					if (my numericVectorValue [i] <= 0.0)
-						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.0.");
-			if (my numericVectorVariable)
-				*my numericVectorVariable = my numericVectorValue.get();
+				for (integer i = 1; i <= my realVectorValue.size; i ++)
+					if (my realVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U" of vector “", my name.get(), U"” is ", my realVectorValue [i], U" but should be greater than 0.0.");
+			if (my realVectorVariable)
+				*my realVectorVariable = my realVectorValue.get();
 		}
 		break;
 		case _kUiField_type::INTEGERVECTOR_:
@@ -395,33 +395,29 @@ static void UiField_widgetToValue (UiField me) {
 			kUi_integerVectorFormat format = (kUi_integerVectorFormat) GuiOptionMenu_getValue (my optionMenu);
 			switch (format) {
 				case kUi_integerVectorFormat::WHITESPACE_SEPARATED_: {
-					my numericVectorValue = splitByWhitespace_VEC (stringValue.get());
+					my integerVectorValue = iround_INTVEC (splitByWhitespace_VEC (stringValue.get()).get());
 				} break; case kUi_integerVectorFormat::RANGES_: {
-					autoINTVEC intvec = NUMstring_getElementsOfRanges (stringValue.get(), INTEGER_MAX, U"element", false);   // TODO: make correct (no two ":"; uniquing)
-					my numericVectorValue = autoVEC (intvec.size, MelderArray::kInitializationType::RAW);
-					for (integer i = 1; i <= my numericVectorValue.size; i++)
-						my numericVectorValue [i] = intvec [i];
+					my integerVectorValue = NUMstring_getElementsOfRanges (stringValue.get(), INTEGER_MAX, U"element", false);
 				} break; case kUi_integerVectorFormat::FORMULA_: {
 					VEC result;
 					bool ownedByInterpreter;
 					Interpreter_numericVectorExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
-					if (ownedByInterpreter) {
-						my numericVectorValue. adoptFromAmbiguousOwner (result);
-					} else {
-						my numericVectorValue = copy_VEC (result);
+					my integerVectorValue = raw_INTVEC (result.size);
+					for (integer i = 1; i <= result.size; i ++) {
+						my integerVectorValue [i] = Melder_iround (result [i]);
+						Melder_require (my integerVectorValue [i] == result [i],
+							U"Element ", i, U" of vector “", my name.get(), U"” is ", result [i], U" but should be a whole number.");
 					}
 				} break; case kUi_integerVectorFormat::UNDEFINED: {
 					Melder_fatal (U"Unknown integer vector format.");
 				}
 			}
-			for (integer i = 1; i <= my numericVectorValue.size; i ++)
-				my numericVectorValue [i] = Melder_iround (my numericVectorValue [i]);
 			if (my type == _kUiField_type::NATURALVECTOR_)
-				for (integer i = 1; i <= my numericVectorValue.size; i ++)
-					if (my numericVectorValue [i] <= 0.0)
-						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.");
-			if (my numericVectorVariable)
-				*my numericVectorVariable = my numericVectorValue.get();
+				for (integer i = 1; i <= my integerVectorValue.size; i ++)
+					if (my integerVectorValue [i] <= 0)
+						Melder_throw (U"Element ", i, U" of vector “", my name.get(), U"” is ", my integerVectorValue [i], U" but should be greater than 0.");
+			if (my integerVectorVariable)
+				*my integerVectorVariable = my integerVectorValue.get();
 		}
 		break;
 		case _kUiField_type::REALMATRIX_:
@@ -702,16 +698,27 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					break;
 					case _kUiField_type:: REALVECTOR_:
 					case _kUiField_type:: POSITIVEVECTOR_:
-					case _kUiField_type:: INTEGERVECTOR_:
-					case _kUiField_type:: NATURALVECTOR_:
 					{
-						if (NUMisEmpty (field -> numericVectorValue.get())) {
+						if (NUMisEmpty (field -> realVectorValue.get())) {
 							UiHistory_write (next -- ? U", zero# (0)" : U" zero# (0)");
 						} else {
 							UiHistory_write (next -- ? U", { " : U" { ");
-							for (integer i = 1; i <= field -> numericVectorValue.size; i ++) {
-								UiHistory_write (Melder_double (field -> numericVectorValue [i]));
-								UiHistory_write (i == field -> numericVectorValue.size ? U" }" : U", ");
+							for (integer i = 1; i <= field -> realVectorValue.size; i ++) {
+								UiHistory_write (Melder_double (field -> realVectorValue [i]));
+								UiHistory_write (i == field -> realVectorValue.size ? U" }" : U", ");
+							}
+						}
+					} break;
+					case _kUiField_type:: INTEGERVECTOR_:
+					case _kUiField_type:: NATURALVECTOR_:
+					{
+						if (NUMisEmpty (field -> integerVectorValue.get())) {
+							UiHistory_write (next -- ? U", zero# (0)" : U" zero# (0)");
+						} else {
+							UiHistory_write (next -- ? U", { " : U" { ");
+							for (integer i = 1; i <= field -> integerVectorValue.size; i ++) {
+								UiHistory_write (Melder_integer (field -> integerVectorValue [i]));
+								UiHistory_write (i == field -> integerVectorValue.size ? U" }" : U", ");
 							}
 						}
 					} break;
@@ -1037,7 +1044,7 @@ UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 varia
 	UiField thee = UiForm_addField (me, _kUiField_type::REALVECTOR_, label);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
-	thy numericVectorVariable = variable;
+	thy realVectorVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 7;
 	return thee;
@@ -1047,27 +1054,27 @@ UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 v
 	UiField thee = UiForm_addField (me, _kUiField_type::POSITIVEVECTOR_, label);
 	thy realVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
-	thy numericVectorVariable = variable;
+	thy realVectorVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 7;
 	return thee;
 }
 
-UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::INTEGERVECTOR_, label);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
-	thy numericVectorVariable = variable;
+	thy integerVectorVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 7;
 	return thee;
 }
 
-UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
+UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 label, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NATURALVECTOR_, label);
 	thy integerVectorDefaultFormat = defaultFormat;
 	thy stringDefaultValue = Melder_dup (defaultValue);
-	thy numericVectorVariable = variable;
+	thy integerVectorVariable = variable;
 	thy variableName = variableName;
 	thy numberOfLines = 7;
 	return thee;
@@ -1805,19 +1812,19 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
 			if (arg -> which == Stackel_STRING) {
-				my numericVectorValue = splitByWhitespace_VEC (arg -> getString());
+				my realVectorValue = splitByWhitespace_VEC (arg -> getString());
 			} else if (arg -> owned) {
-				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
+				my realVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
 				arg -> owned = false;
 			} else {
-				my numericVectorValue = copy_VEC (arg -> numericVector);
+				my realVectorValue = copy_VEC (arg -> numericVector);
 			}
 			if (my type == _kUiField_type::POSITIVEVECTOR_)
-				for (integer i = 1; i <= my numericVectorValue.size; i ++)
-					if (my numericVectorValue [i] <= 0.0)
-						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.0.");
-			if (my numericVectorVariable)
-				*my numericVectorVariable = my numericVectorValue.get();
+				for (integer i = 1; i <= my realVectorValue.size; i ++)
+					if (my realVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U" of vector “", my name.get(), U"” is ", my realVectorValue [i], U" but should be greater than 0.0.");
+			if (my realVectorVariable)
+				*my realVectorVariable = my realVectorValue.get();
 		}
 		break;
 		case _kUiField_type::INTEGERVECTOR_:
@@ -1826,21 +1833,21 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
 			if (arg -> which == Stackel_STRING) {
-				my numericVectorValue = splitByWhitespace_VEC (arg -> getString());
-			} else if (arg -> owned) {
-				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
-				arg -> owned = false;
+				my integerVectorValue = NUMstring_getElementsOfRanges (arg -> getString(), INTEGER_MAX, U"element", false);
 			} else {
-				my numericVectorValue = copy_VEC (arg -> numericVector);
+				my integerVectorValue = raw_INTVEC (arg -> numericVector.size);
+				for (integer i = 1; i <= arg -> numericVector.size; i ++) {
+					my integerVectorValue [i] = Melder_iround (arg -> numericVector [i]);
+					Melder_require (my integerVectorValue [i] == arg -> numericVector [i],
+						U"Element ", i, U" of vector “", my name.get(), U"” is ", arg -> numericVector [i], U" but should be a whole number.");
+				}
 			}
-			for (integer i = 1; i <= my numericVectorValue.size; i ++)
-				my numericVectorValue [i] = Melder_iround (my numericVectorValue [i]);
 			if (my type == _kUiField_type::NATURALVECTOR_)
-				for (integer i = 1; i <= my numericVectorValue.size; i ++)
-					if (my numericVectorValue [i] <= 0.0)
-						Melder_throw (U"Element ", i, U"of vector “", my name.get(), U"” is ", my numericVectorValue [i], U" but should be greater than 0.0.");
-			if (my numericVectorVariable)
-				*my numericVectorVariable = my numericVectorValue.get();
+				for (integer i = 1; i <= my integerVectorValue.size; i ++)
+					if (my integerVectorValue [i] <= 0)
+						Melder_throw (U"Element ", i, U" of vector “", my name.get(), U"” is ", my integerVectorValue [i], U" but should be greater than 0.");
+			if (my integerVectorVariable)
+				*my integerVectorVariable = my integerVectorValue.get();
 		}
 		break;
 		case _kUiField_type::REALMATRIX_:
@@ -2659,18 +2666,16 @@ char32 * UiForm_getString_check (UiForm me, conststring32 fieldName) {
 	return nullptr;
 }
 
-VEC UiForm_getNumvec (UiForm me, conststring32 fieldName) {
+VEC UiForm_getRealVector (UiForm me, conststring32 fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field)
-		Melder_fatal (U"(UiForm_getNumvec:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+		Melder_fatal (U"(UiForm_getRealVector:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
 	switch (field -> type)
 	{
 		case _kUiField_type::REALVECTOR_:
 		case _kUiField_type::POSITIVEVECTOR_:
-		case _kUiField_type::INTEGERVECTOR_:
-		case _kUiField_type::NATURALVECTOR_:
 		{
-			return field -> numericVectorValue.get();
+			return field -> realVectorValue.get();
 		}
 		break;
 		default:
@@ -2679,6 +2684,26 @@ VEC UiForm_getNumvec (UiForm me, conststring32 fieldName) {
 		}
 	}
 	return VEC();
+}
+
+INTVEC UiForm_getIntegerVector (UiForm me, conststring32 fieldName) {
+	UiField field = findField (me, fieldName);
+	if (! field)
+		Melder_fatal (U"(UiForm_getIntegerVector:) No field \"", fieldName, U"\" in command window \"", my name.get(), U"\".");
+	switch (field -> type)
+	{
+		case _kUiField_type::INTEGERVECTOR_:
+		case _kUiField_type::NATURALVECTOR_:
+		{
+			return field -> integerVectorValue.get();
+		}
+		break;
+		default:
+		{
+			fatalField (me);
+		}
+	}
+	return INTVEC();
 }
 
 MelderColour UiForm_getColour_check (UiForm me, conststring32 fieldName) {
@@ -2766,12 +2791,18 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 			break;
 			case _kUiField_type::REALVECTOR_:
 			case _kUiField_type::POSITIVEVECTOR_:
+			{
+				MelderString_appendCharacter (& lowerCaseFieldName, U'#');
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
+				var -> numericVectorValue = copy_VEC (field -> realVectorValue.get());   // TODO: can we move this instead of copying it?
+			}
+			break;
 			case _kUiField_type::INTEGERVECTOR_:
 			case _kUiField_type::NATURALVECTOR_:
 			{
 				MelderString_appendCharacter (& lowerCaseFieldName, U'#');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
-				var -> numericVectorValue = copy_VEC (field -> numericVectorValue.get());   // TODO: can we move this instead of copying it?
+				var -> numericVectorValue = cast_VEC (field -> integerVectorValue.get());
 			}
 			break;
 			case _kUiField_type::COLOUR_:
