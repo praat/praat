@@ -346,21 +346,21 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		static conststring32 stringVariable; \
 		UiForm_addFolder (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
-#define REALVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addRealVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
+#define REALVECTOR(realVectorVariable, labelText, defaultFormat, defaultStringValue)  \
+		static constVEC realVectorVariable; \
+		UiForm_addRealVector (_dia_.get(), & realVectorVariable, U"" #realVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
 
-#define POSITIVEVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addPositiveVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
+#define POSITIVEVECTOR(realVectorVariable, labelText, defaultFormat, defaultStringValue)  \
+		static constVEC realVectorVariable; \
+		UiForm_addPositiveVector (_dia_.get(), & realVectorVariable, U"" #realVectorVariable, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
 
-#define INTEGERVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addIntegerVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
+#define INTEGERVECTOR(integerVectorVariable, labelText, defaultFormat, defaultStringValue)  \
+		static constINTVEC integerVectorVariable; \
+		UiForm_addIntegerVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
-#define NATURALVECTOR(numericVectorVariable, labelText, defaultFormat, defaultStringValue)  \
-		static constVEC numericVectorVariable; \
-		UiForm_addNaturalVector (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
+#define NATURALVECTOR(integerVectorVariable, labelText, defaultFormat, defaultStringValue)  \
+		static constINTVEC integerVectorVariable; \
+		UiForm_addNaturalVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
 #define REALMATRIX(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \

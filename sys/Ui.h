@@ -118,9 +118,10 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
-	kUi_realVectorFormat realVectorDefaultFormat;
-	kUi_integerVectorFormat integerVectorDefaultFormat;
-	autoVEC numericVectorValue, numericVectorDefaultValue;   // for REALVECTOR_, POSITIVEVECTOR_, INTEGERVECTOR_, NATURALVECTOR_
+	kUi_realVectorFormat realVectorDefaultFormat;   // for REALVECTOR_, POSITIVEVECTOR_
+	autoVEC realVectorValue, realVectorDefaultValue;   // for REALVECTOR_, POSITIVEVECTOR_
+	kUi_integerVectorFormat integerVectorDefaultFormat;   // for INTEGERVECTOR_, NATURALVECTOR_
+	autoINTVEC integerVectorValue, integerVectorDefaultValue;   // for INTEGERVECTOR_, NATURALVECTOR_
 	autoMAT numericMatrixValue, numericMatrixDefaultValue;   // for REALMATRIX_
 	kUi_stringArrayFormat stringArrayFormat;   // for TEXTVEC_
 	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for TEXTVEC_
@@ -143,7 +144,8 @@ Thing_define (UiField, Thing) {
 	bool *boolVariable;
 	conststring32 *stringVariable;
 	MelderColour *colourVariable;
-	constVEC *numericVectorVariable;
+	constVEC *realVectorVariable;
+	constINTVEC *integerVectorVariable;
 	constMAT *numericMatrixVariable;
 	constSTRVEC *stringArrayVariable;
 
@@ -218,8 +220,8 @@ UiField UiForm_addOutfile (UiForm me, conststring32 *variable, conststring32 var
 UiField UiForm_addFolder (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addRealVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue);
 UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_realVectorFormat defaultFormat, conststring32 defaultValue);
-UiField UiForm_addIntegerVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
-UiField UiForm_addNaturalVector (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
+UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
+UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
 UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue);
 UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
@@ -298,9 +300,10 @@ void UiForm_info (UiForm me, integer narg);
 	These functions work from the GUI as well as from a script.
 */
 integer UiForm_getInteger (UiForm me, conststring32 fieldName);   // Integer, Natural, Boolean, Radio, List
-char32 * UiForm_getString (UiForm me, conststring32 fieldName);   // Word, Sentence, Text, Nummat, Radio, List
+char32 * UiForm_getString (UiForm me, conststring32 fieldName);   // Word, Sentence, Text, RealMatrix, Radio, List
 MelderFile UiForm_getFile (UiForm me, conststring32 fieldName);   // FileIn, FileOut
-VEC UiForm_getNumvec (UiForm me, conststring32 fieldName);   // Numvec
+VEC UiForm_getRealVector (UiForm me, conststring32 fieldName);   // RealVector
+INTVEC UiForm_getIntegerVector (UiForm me, conststring32 fieldName);   // IntegerVector
 
 double UiForm_getReal_check (UiForm me, conststring32 fieldName);
 integer UiForm_getInteger_check (UiForm me, conststring32 fieldName);

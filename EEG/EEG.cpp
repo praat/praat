@@ -573,7 +573,7 @@ autoEEG EEG_extractChannel (EEG me, conststring32 channelName) {
 	}
 }
 
-autoEEG EEG_extractChannels (EEG me, constVECVU const& channelNumbers) {
+autoEEG EEG_extractChannels (EEG me, constINTVECVU const& channelNumbers) {
 	try {
 		const integer numberOfChannels = channelNumbers.size;
 		Melder_require (numberOfChannels > 0,
@@ -583,7 +583,7 @@ autoEEG EEG_extractChannels (EEG me, constVECVU const& channelNumbers) {
 		your numberOfChannels = numberOfChannels;
 		your channelNames = autoSTRVEC (numberOfChannels);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			const integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
+			const integer originalChannelNumber = channelNumbers [ichan];
 			your channelNames [ichan] = Melder_dup (my channelNames [originalChannelNumber].get());
 		}
 		your textgrid = Data_copy (my textgrid.get());

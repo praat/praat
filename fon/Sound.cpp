@@ -248,14 +248,14 @@ autoSound Sound_extractChannel (Sound me, integer channelNumber) {
 	}
 }
 
-autoSound Sound_extractChannels (Sound me, constVECVU const& channelNumbers) {
+autoSound Sound_extractChannels (Sound me, constINTVECVU const& channelNumbers) {
 	try {
 		const integer numberOfChannels = channelNumbers.size;
 		Melder_require (numberOfChannels > 0,
 			U"The number of channels should be greater than 0.");
 		autoSound you = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			const integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
+			const integer originalChannelNumber = channelNumbers [ichan];
 			Melder_require (originalChannelNumber > 0,
 				U"Your channel number is ", originalChannelNumber,
 				U", but it should be positive."
