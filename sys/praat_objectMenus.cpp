@@ -17,6 +17,7 @@
  */
 
 #include "praatP.h"
+#include "praatM.h"
 #include "praat_script.h"
 #include "ScriptEditor.h"
 #include "ButtonEditor.h"

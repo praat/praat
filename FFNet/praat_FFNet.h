@@ -2,7 +2,7 @@
 #define _praat_FFNet_h_
 /* praat_FFNet.h
  *
- * Copyright (C) 2016 David Weenink & Paul Boersma
+ * Copyright (C) 2016,2021 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 */
 
 #include "FFNet.h"
-#include "praat.h"
+#include "praatM.h"
 
 void praat_uvafon_FFNet_init ();
 

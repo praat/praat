@@ -33,7 +33,6 @@
 */
 
 #include "NUM2.h"
-#include "praat.h"
 #include "MDS.h"
 #include "ContingencyTable.h"
 #include "TableOfReal_extensions.h"
@@ -42,6 +41,8 @@
 #include "Proximity_and_Distance.h"
 #include "Confusion.h"
 #include "Formula.h"
+
+#include "praatM.h"
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 

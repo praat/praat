@@ -20,11 +20,10 @@
 	djmw 20090420
 */
 
-#include "praat.h"
-
 #include "IntensityTierEditor.h"
 #include "KlattGridEditors.h"
 #include "KlattTable.h"
+
 #include "praat_TimeFunction.h"
 
 /******************* KlattGrid  *********************************/
