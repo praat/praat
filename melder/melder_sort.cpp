@@ -67,26 +67,17 @@ autoSTRVEC sort_STRVEC (STRVEC const& x) {
 	return result;
 }
 
-double NUMquantile (integer n, double a [], double factor) {
-	double place = factor * n + 0.5;
-	integer left = (integer) floor (place);
-	if (n < 1) return 0.0;
-	if (n == 1) return a [1];
-	if (left < 1) left = 1;
-	if (left >= n) left = n - 1;
-	if (a [left + 1] == a [left]) return a [left];
-	return a [left] + (place - left) * (a [left + 1] - a [left]);
-}
-
 double NUMquantile (constVECVU const& a, double factor) noexcept {
-	double place = factor * a.size + 0.5;
-	integer left = (integer) floor (place);
-	if (a.size < 1) return 0.0;
-	if (a.size == 1) return a [1];
-	if (left < 1) left = 1;
-	if (left >= a.size) left = a.size - 1;
-	if (a [left + 1] == a [left]) return a [left];
-	return a [left] + (place - left) * (a [left + 1] - a [left]);
+	if (a.size < 1)
+		return undefined;
+	if (a.size == 1)
+		return a [1];
+	const double place = factor * a.size + 0.5;
+	const integer left = Melder_clipped (1_integer, Melder_ifloor (place), a.size - 1);
+	const double slope = a [left + 1] - a [left];
+	if (slope == 0.0)
+		return a [left];   // or a [left + 1], which is the same
+	return a [left] + (place - left) * slope;
 }
 
 /* End of file melder_sort.cpp */

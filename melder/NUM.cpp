@@ -234,7 +234,7 @@ struct MelderMeanSumsq_longdouble {
 static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept {
 	MelderMeanSumsq_longdouble result;
 	result.mean = NUMsum_longdouble (vec) / vec.size;
-	double mean = double (result.mean);
+	const double mean = double (result.mean);
 	if (vec.stride == 1) {
 		PAIRWISE_SUM (longdouble, sumsq, integer, vec.size,
 			const double *p = vec. firstCell,
@@ -255,7 +255,7 @@ static MelderMeanSumsq_longdouble NUMmeanSumsq (constVECVU const& vec) noexcept 
 static MelderMeanSumsq_longdouble NUMmeanSumsq (constMATVU const& mat) noexcept {
 	MelderMeanSumsq_longdouble result;
 	result.mean = NUMsum_longdouble (mat) / (mat.nrow * mat.ncol);
-	double mean = double (result.mean);
+	const double mean = double (result.mean);
 	if (mat.nrow <= mat.ncol) {
 		PAIRWISE_SUM (longdouble, sumsq, integer, mat.nrow,
 			integer irow = 1,
@@ -339,20 +339,20 @@ double NUMmean (constMATVU const& mat) noexcept {
 }
 
 MelderGaussianStats NUMmeanStdev (constVECVU const& vec) noexcept {
-	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
-	const longdouble variance = stats.sumsq / (vec.size - 1);
 	MelderGaussianStats result;
-	result.mean = double (stats.mean);
-	result.stdev = sqrt (double (variance));
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
+	result.mean = double (stats.mean);   // SHOULD be undefined if vec.size < 1
+	const integer df = vec.size - 1;
+	result.stdev = ( df <= 0 ? undefined : sqrt (double (stats.sumsq) / df) );
 	return result;
 }
 
 MelderGaussianStats NUMmeanStdev (constMATVU const& mat) noexcept {
-	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
-	const longdouble variance = stats.sumsq / (mat.nrow * mat.ncol - 1);
 	MelderGaussianStats result;
-	result.mean = double (stats.mean);
-	result.stdev = sqrt (double (variance));
+	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
+	result.mean = double (stats.mean);   // SHOULD be undefined if mat.nrow * mat.ncol < 1
+	const integer df = mat.nrow * mat.ncol - 1;
+	result.stdev = ( df <= 0 ? undefined : sqrt (double (stats.sumsq / df)) );
 	return result;
 }
 
@@ -380,28 +380,30 @@ double NUMmaximumLength (constSTRVEC const& x) {
 }
 
 double NUMnorm (constVECVU const& vec, double power) noexcept {
-	if (power < 0.0) return undefined;
+	if (power < 0.0)
+		return undefined;
 	if (power == 2.0) {
-		double sum2 = double (NUMsum2_longdouble (vec));
+		const double sum2 = double (NUMsum2_longdouble (vec));
 		return sqrt (sum2);
 	} else if (power == 1.0) {
-		double sumAbs = double (NUMsumAbs_longdouble (vec));
+		const double sumAbs = double (NUMsumAbs_longdouble (vec));
 		return sumAbs;
 	} else {
-		longdouble sumPower = NUMsumPower_longdouble (vec, power);
+		const longdouble sumPower = NUMsumPower_longdouble (vec, power);
 		return double (powl (sumPower, longdouble (1.0) / power));
 	}
 }
 double NUMnorm (constMATVU const& mat, double power) noexcept {
-	if (power < 0.0) return undefined;
+	if (power < 0.0)
+		return undefined;
 	if (power == 2.0) {
-		double sum2 = double (NUMsum2_longdouble (mat));
+		const double sum2 = double (NUMsum2_longdouble (mat));
 		return sqrt (sum2);
 	} else if (power == 1.0) {
-		double sumAbs = double (NUMsumAbs_longdouble (mat));
+		const double sumAbs = double (NUMsumAbs_longdouble (mat));
 		return sumAbs;
 	} else {
-		longdouble sumPower = NUMsumPower_longdouble (mat, power);
+		const longdouble sumPower = NUMsumPower_longdouble (mat, power);
 		return double (powl (sumPower, longdouble (1.0) / power));
 	}
 }
@@ -421,24 +423,30 @@ integer NUMnumberOfTokens (conststring32 string) noexcept {
 }
 
 double NUMstdev (constVECVU const& vec) noexcept {
+	const integer df = vec.size - 1;
+	if (df <= 0)
+		return undefined;
 	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (vec);
-	const longdouble variance = stats.sumsq / (vec.size - 1);
-	double stdev = sqrt (double (variance));
+	const longdouble variance = stats.sumsq / df;
+	const double stdev = sqrt (double (variance));
 	return stdev;
 }
 double NUMstdev (constMATVU const& mat) noexcept {
+	const integer df = mat.nrow * mat.ncol - 1;
+	if (df <= 0)
+		return undefined;
 	MelderMeanSumsq_longdouble stats = NUMmeanSumsq (mat);
-	const longdouble variance = stats.sumsq / (mat.nrow * mat.ncol - 1);
-	double stdev = sqrt (double (variance));
+	const longdouble variance = stats.sumsq / df;
+	const double stdev = sqrt (double (variance));
 	return stdev;
 }
 
 double NUMsum (constVECVU const& vec) noexcept {
-	longdouble sum = NUMsum_longdouble (vec);
+	const longdouble sum = NUMsum_longdouble (vec);
 	return double (sum);
 }
 double NUMsum (constMATVU const& mat) noexcept {
-	longdouble sum = NUMsum_longdouble (mat);
+	const longdouble sum = NUMsum_longdouble (mat);
 	return double (sum);
 }
 

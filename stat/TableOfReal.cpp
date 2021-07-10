@@ -150,24 +150,17 @@ integer TableOfReal_columnLabelToIndex (TableOfReal me, conststring32 label) {
 }
 
 double TableOfReal_getColumnMean (TableOfReal me, integer columnNumber) {
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
-	if (my numberOfRows < 1) return undefined;
-	longdouble sum = 0.0;
-	for (integer irow = 1; irow <= my numberOfRows; irow ++)
-		sum += my data [irow] [columnNumber];
-	return (double) sum / my numberOfRows;
+	if (columnNumber < 1 || columnNumber > my numberOfColumns)
+		return undefined;
+	return NUMmean (my data.column (columnNumber));
 }
 
 double TableOfReal_getColumnStdev (TableOfReal me, integer columnNumber) {
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
-	if (my numberOfRows < 2) return undefined;
-	double mean = TableOfReal_getColumnMean (me, columnNumber);
-	longdouble sum = 0.0;
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		double d = my data [irow] [columnNumber] - mean;
-		sum += d * d;
-	}
-	return sqrt ((double) sum / (my numberOfRows - 1));
+	if (columnNumber < 1 || columnNumber > my numberOfColumns)
+		return undefined;
+	if (my numberOfRows < 2)
+		return undefined;
+	return NUMstdev (my data.column (columnNumber));
 }
 
 /***** MODIFY *****/
@@ -456,10 +449,12 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	integer numberOfElements = 0;
 	const char32 *p = & ranges [0];
 	for (;;) {
-		while (*p == U' ' || *p == U'\t') p ++;
-		if (*p == U'\0') break;
+		while (*p == U' ' || *p == U'\t')
+			p ++;
+		if (*p == U'\0')
+			break;
 		if (Melder_isAsciiDecimalNumber (*p)) {
-			integer currentElement = Melder_atoi (p);
+			const integer currentElement = Melder_atoi (p);
 			if (currentElement == 0)
 				Melder_throw (U"No such ", elementType, U": 0 (minimum is 1).");
 			if (currentElement > maximumElement)

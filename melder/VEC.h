@@ -342,6 +342,11 @@ extern autoVEC between_count_VEC (double from, double to, integer count);
 
 autoVEC splitByWhitespace_VEC (conststring32 string);
 
+autoVEC cast_VEC (constINTVEC const& intvec);
+autoINTVEC ifloor_INTVEC (constVEC const& vec);
+autoINTVEC iround_INTVEC (constVEC const& vec);
+autoINTVEC iceiling_INTVEC (constVEC const& vec);
+
 extern void to_INTVEC_out (INTVECVU const& x) noexcept;
 extern autoINTVEC to_INTVEC (integer to);
 extern autoINTVEC from_to_INTVEC (integer from, integer to);

@@ -1326,6 +1326,7 @@ inline autoINTVEC copy_INTVEC (constINTVECVU const& source) {
 }
 #define ARRAY_TO_INTVEC(integerArray)  constINTVEC (& integerArray [0], sizeof (integerArray) / sizeof (integer))
 
+
 using BOOLVEC = vector <bool>;
 using BOOLVECVU = vectorview <bool>;
 using constBOOLVEC = constvector <bool>;

@@ -2,7 +2,7 @@
 #define _melder_ftoi_h_
 /* melder_ftoi.h
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ inline double Melder_roundDown (double x) {
 }
 
 inline integer Melder_iroundDown (double x) {
-	double xround = Melder_roundDown (x);
+	const double xround = Melder_roundDown (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,   // this formulation handles NaN correctly
 		U"When rounding down the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
@@ -37,7 +37,7 @@ inline double Melder_roundUp (double x) {
 }
 
 inline integer Melder_iroundUp (double x) {
-	double xround = Melder_roundUp (x);
+	const double xround = Melder_roundUp (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
 		U"When rounding up the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
@@ -59,7 +59,7 @@ inline double Melder_roundAwayFromZero (double x) {
 }
 
 inline integer Melder_iroundAwayFromZero (double x) {
-	double xround = Melder_roundAwayFromZero (x);
+	const double xround = Melder_roundAwayFromZero (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
 		U"When rounding the real value ", x, U" away from zero, the result cannot be represented in an integer.");
 	return (integer) xround;
@@ -70,7 +70,7 @@ inline double Melder_round_tieUp (double x) {
 }
 
 inline integer Melder_iround_tieUp (double x) {
-	double xround = Melder_round_tieUp (x);
+	const double xround = Melder_round_tieUp (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
 		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
@@ -82,7 +82,7 @@ inline double Melder_round_tieDown (double x) {
 }
 
 inline integer Melder_iround_tieDown (double x) {
-	double xround = Melder_round_tieDown (x);
+	const double xround = Melder_round_tieDown (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
 		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
@@ -93,7 +93,7 @@ inline double Melder_round_tieTowardsZero (double x) {
 }
 
 inline integer Melder_iround_tieTowardsZero (double x) {
-	double xround = Melder_round_tieTowardsZero (x);
+	const double xround = Melder_round_tieTowardsZero (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
 		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
@@ -104,7 +104,7 @@ inline double Melder_round_tieAwayFromZero (double x) {
 }
 
 inline integer Melder_iround_tieAwayFromZero (double x) {
-	double xround = Melder_round_tieAwayFromZero (x);
+	const double xround = Melder_round_tieAwayFromZero (x);
 	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
 		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;

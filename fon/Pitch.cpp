@@ -358,11 +358,11 @@ void structPitch :: v_info () {
 	MelderInfo_writeLine (U"Ceiling at: ", our ceiling, U" Hz");
 
 	if (frequencies.size > 0) {   // quantiles
-		double quantile10 = NUMquantile (frequencies.get(), 0.10);
-		double quantile16 = NUMquantile (frequencies.get(), 0.16);
-		double quantile50 = NUMquantile (frequencies.get(), 0.50);   // median
-		double quantile84 = NUMquantile (frequencies.get(), 0.84);
-		double quantile90 = NUMquantile (frequencies.get(), 0.90);
+		const double quantile10 = NUMquantile (frequencies.get(), 0.10);
+		const double quantile16 = NUMquantile (frequencies.get(), 0.16);
+		const double quantile50 = NUMquantile (frequencies.get(), 0.50);   // median
+		const double quantile84 = NUMquantile (frequencies.get(), 0.84);
+		const double quantile90 = NUMquantile (frequencies.get(), 0.90);
 		MelderInfo_writeLine (U"\nEstimated quantiles:");
 		MelderInfo_writeLine (U"   10% = ",
 				Melder_single (quantile10), U" Hz = ",
@@ -390,7 +390,7 @@ void structPitch :: v_info () {
 				Melder_single (NUMhertzToSemitones (quantile90)), U" semitones above 100 Hz = ",
 				Melder_single (NUMhertzToErb (quantile90)), U" ERB");
 		if (frequencies.size > 1) {
-			double correction = sqrt (frequencies.size / (frequencies.size - 1.0));
+			const double correction = sqrt (frequencies.size / (frequencies.size - 1.0));
 			MelderInfo_writeLine (U"\nEstimated spreading:");
 			MelderInfo_writeLine (U"   84%-median = ",
 					Melder_half ((quantile84 - quantile50) * correction), U" Hz = ",
@@ -410,8 +410,8 @@ void structPitch :: v_info () {
 		}
 	}
 	if (frequencies.size > 0) {   // extrema, range, mean and standard deviation
-		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit::HERTZ, false);
-		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit::HERTZ, false);
+		const double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit::HERTZ, false);
+		const double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit::HERTZ, false);
 		MelderInfo_writeLine (U"\nMinimum ",
 				Melder_single (minimum), U" Hz = ",
 				Melder_single (NUMhertzToMel (minimum)), U" Mel = ",
@@ -427,20 +427,20 @@ void structPitch :: v_info () {
 				Melder_single (NUMhertzToMel (maximum) - NUMhertzToMel (minimum)), U" Mel = ",
 				Melder_half (NUMhertzToSemitones (maximum) - NUMhertzToSemitones (minimum)), U" semitones = ",
 				Melder_half (NUMhertzToErb (maximum) - NUMhertzToErb (minimum)), U" ERB");
-		double meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
-		double meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
-		double meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
-		double meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
+		const double meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
+		const double meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
+		const double meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
+		const double meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
 		MelderInfo_writeLine (U"Average: ",
 				Melder_single (meanHertz), U" Hz = ",
 				Melder_single (meanMel), U" Mel = ",
 				Melder_single (meanSemitones), U" semitones above 100 Hz = ",
 				Melder_single (meanErb), U" ERB");
 		if (frequencies.size > 1) {
-			double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::HERTZ);
-			double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::MEL);
-			double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::SEMITONES_100);
-			double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::ERB);
+			const double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::HERTZ);
+			const double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::MEL);
+			const double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::SEMITONES_100);
+			const double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::ERB);
 			MelderInfo_writeLine (U"Standard deviation: ",
 					Melder_half (stdevHertz), U" Hz = ",
 					Melder_half (stdevMel), U" Mel = ",
