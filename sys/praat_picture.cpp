@@ -17,6 +17,7 @@
  */
 
 #include "praatP.h"
+#include "praatM.h"
 #include "Picture.h"
 #include "Printer.h"
 #include "machine.h"

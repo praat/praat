@@ -18,6 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _praatM_h_
+	#error Include either praatM.h or EditorM.h, but not both.
+#endif
+
 #undef REAL
 #undef REAL_OR_UNDEFINED
 #undef POSITIVE

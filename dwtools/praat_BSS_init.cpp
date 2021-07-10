@@ -16,12 +16,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
 #include "praat_TimeFunction.h"
 
 #include "EEG_extensions.h"
 #include "ICA.h"
-#include "praat_TimeFunction.h"
 #include "Sound_and_MixingMatrix.h"
 #include "Sound_and_PCA.h"
 

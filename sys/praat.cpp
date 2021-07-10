@@ -34,6 +34,7 @@
 #endif
 
 #include "praatP.h"
+#include "praatM.h"
 #include "praat_script.h"
 #include "praat_version.h"
 #include "site.h"

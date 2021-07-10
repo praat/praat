@@ -2,7 +2,7 @@
 #define _praat_ExperimentMFC_h_
 /* praat_ExperimentMFC.h
  *
- * Copyright (C) 2016 Paul Boersma
+ * Copyright (C) 2016,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include "ExperimentMFC.h"
 #include "RunnerMFC.h"
-#include "praat.h"
+#include "praatM.h"
 
 void praat_ExperimentMFC_init ();
 

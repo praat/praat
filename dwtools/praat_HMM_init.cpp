@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "praat.h"
+#include "praatM.h"
 #include "GaussianMixture.h"
 #include "HMM.h"
 #include "Strings_extensions.h"

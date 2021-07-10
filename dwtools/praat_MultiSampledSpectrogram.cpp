@@ -16,13 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "praatM.h"
+
 #include "AnalyticSound.h"
 #include "ConstantQSpectrograms.h"
 #include "MultiSampledSpectrogram.h"
 #include "Sound_and_MultiSampledSpectrogram.h"
 #include "Spectrum_and_MultiSampledSpectrogram.h"
-
-#include "praat.h"
 
 DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity) {
 	CONVERT_EACH_TO_ONE (AnalyticSound)
