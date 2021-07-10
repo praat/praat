@@ -22,38 +22,6 @@
 	#error Include either praatM.h or EditorM.h, but not both.
 #endif
 
-#undef REAL
-#undef REAL_OR_UNDEFINED
-#undef POSITIVE
-#undef INTEGER
-#undef NATURAL
-#undef WORD
-#undef SENTENCE
-#undef COLOUR
-#undef CHANNEL
-#undef BOOLEAN
-#undef LABEL
-#undef MUTABLE_LABEL
-#undef TEXTFIELD
-#undef FORMULA
-#undef INFILE
-#undef OUTFILE
-#undef FOLDER
-#undef RADIO
-#undef RADIOSTR
-#undef RADIOBUTTON
-#undef OPTIONMENU
-#undef OPTIONMENUSTR
-#undef OPTION
-#undef RADIO_ENUM
-#undef OPTIONMENU_ENUM
-#undef LIST
-#undef SET_REAL
-#undef SET_INTEGER
-#undef SET_BOOLEAN
-#undef SET_STRING
-#undef SET_ENUM
-
 #define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter
 #define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
