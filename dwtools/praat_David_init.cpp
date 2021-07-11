@@ -5767,7 +5767,7 @@ DO
         autoTextGrid tg;
 		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, 
 			silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, 
-			(saveTextGrid ? &tg : nullptr ), trim_string
+			( saveTextGrid ? & tg : nullptr ), trim_string
 		);
 		if (saveTextGrid)
             praat_new (tg.move(), my name.get(), U"_trimmed");
@@ -7379,13 +7379,13 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
 }
 
-FORM (CONVERT_EACH_TO_ONE__Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
-	TEXTFIELD (columnRanges, U"Create a new Table from the following columns", U"1 2", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+FORM (CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber, U"Table: Extract columns by number", nullptr) {
+	LABEL (U"Create a new Table from the columns with the following numbers.")
+	NATURALVECTOR (columnNumbers, U"Column numbers", RANGES_, U"1 2")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		autoTable result = Table_extractColumnRanges (me, columnRanges);
+		autoTable result = Table_extractColumnsByNumber (me, columnNumbers);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_columns")
 }
 
@@ -10200,11 +10200,13 @@ void praat_uvafon_David_init () {
 			INFO_ONE__Table_reportRobustStatistics);
 	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", praat_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Table_extractRowsWhere);
-	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN,
+	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1 | praat_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere);
-	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1| praat_HIDDEN, 0);
-	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"-- Extract columns ----", praat_DEPTH_1| praat_HIDDEN,
-			CONVERT_EACH_TO_ONE__Table_extractColumnRanges);
+	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1 | praat_HIDDEN, 0);
+	praat_addAction1 (classTable, 0, U"Extract columns by number...", U"-- Extract columns ----", praat_DEPTH_1 | praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
+	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"*Extract columns by number...", praat_DEPTH_1 | praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
 
 	praat_addAction1 (classTable, 0, U"To KlattTable", nullptr, praat_HIDDEN, 
 			CONVERT_EACH_TO_ONE__Table_to_KlattTable);

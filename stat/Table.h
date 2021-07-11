@@ -30,6 +30,8 @@ void Table_initWithoutColumnNames (Table me, integer numberOfRows, integer numbe
 autoTable Table_createWithoutColumnNames (integer numberOfRows, integer numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
 
+void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU const& columnNumbers);
+
 autoTable Tables_append (OrderedOf<structTable>* me);
 void Table_appendRow (Table me);
 void Table_appendColumn (Table me, conststring32 label);
