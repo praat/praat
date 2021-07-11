@@ -60,8 +60,8 @@ void TableOfReal_sortByColumn (TableOfReal me, integer column1, integer column2)
 void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file);
 autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 
-autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, conststring32 ranges);
-autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, conststring32 ranges);
+autoTableOfReal TableOfReal_extractRowsByNumber (TableOfReal me, constINTVECVU const& rowNumbers);
+autoTableOfReal TableOfReal_extractColumnsByNumber (TableOfReal me, constINTVECVU const& columnNumbers);
 
 autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer icol, kMelder_number which, double criterion);
 autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer icol, kMelder_number which, double criterion);

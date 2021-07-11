@@ -361,13 +361,13 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
-	TEXTFIELD (ranges, U"Create a new TableOfReal from the following columns", U"1 2", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+FORM (NEW_TableOfReal_extractColumnsByNumber, U"Extract columns by number", nullptr) {
+	LABEL (U"Create a new TableOfReal from the following columns.")
+	NATURALVECTOR (columnNumbers, U"Column numbers", RANGES_, U"1 2")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractColumnRanges (me, ranges);
+		autoTableOfReal result = TableOfReal_extractColumnsByNumber (me, columnNumbers);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cols")
 }
 
@@ -408,13 +408,13 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
-	TEXTFIELD (ranges, U"Create a new TableOfReal from the following rows", U"1 2", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+FORM (NEW_TableOfReal_extractRowsByNumber, U"Extract rows by number", nullptr) {
+	LABEL (U"Create a new TableOfReal from the following rows.")
+	NATURALVECTOR (rowNumbers, U"Row numbers", RANGES_, U"1 2")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractRowRanges (me, ranges);
+		autoTableOfReal result = TableOfReal_extractRowsByNumber (me, rowNumbers);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_rows")
 }
 
@@ -456,7 +456,6 @@ DIRECT (NEW1_TablesOfReal_append) {
 		autoTableOfReal result = TablesOfReal_appendMany (& list);
 	COMBINE_ALL_TO_ONE_END (U"appended")
 }
-
 
 DIRECT (NEW_TableOfReal_to_Matrix) {
 	CONVERT_EACH_TO_ONE (TableOfReal)
@@ -528,12 +527,14 @@ void praat_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Synthesize -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Append", nullptr, 1, NEW1_TablesOfReal_append);
 	praat_addAction1 (klas, 0, U"Extract part -", nullptr, 0, nullptr);
-		praat_addAction1 (klas, 0, U"Extract row ranges...", nullptr, 1, NEW_TableOfReal_extractRowRanges);
+		praat_addAction1 (klas, 0, U"Extract rows by number...", nullptr, 1, NEW_TableOfReal_extractRowsByNumber);
+		praat_addAction1 (klas, 0,     U"Extract row ranges...", U"*Extract rows by number...", 1, NEW_TableOfReal_extractRowsByNumber);
 		praat_addAction1 (klas, 0, U"Extract rows where column...", nullptr, 1, NEW_TableOfReal_extractRowsWhereColumn);
 		praat_addAction1 (klas, 0, U"Extract rows whose label...", nullptr, 1, NEW_TableOfReal_extractRowsWhoseLabel);
 		praat_addAction1 (klas, 0,     U"Extract rows where label...", U"*Extract rows whose label...", praat_DEPRECATED_2021, NEW_TableOfReal_extractRowsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract rows where...", nullptr, 1, NEW_TableOfReal_extractRowsWhere);
-		praat_addAction1 (klas, 0, U"Extract column ranges...", nullptr, 1, NEW_TableOfReal_extractColumnRanges);
+		praat_addAction1 (klas, 0, U"Extract columns by number...", nullptr, 1, NEW_TableOfReal_extractColumnsByNumber);
+		praat_addAction1 (klas, 0,     U"Extract column ranges...", nullptr, 1, NEW_TableOfReal_extractColumnsByNumber);
 		praat_addAction1 (klas, 0, U"Extract columns where row...", nullptr, 1, NEW_TableOfReal_extractColumnsWhereRow);
 		praat_addAction1 (klas, 0, U"Extract columns whose label...", nullptr, 1, NEW_TableOfReal_extractColumnsWhoseLabel);
 		praat_addAction1 (klas, 0,     U"Extract columns where label...", U"*Extract columns whose label...", praat_DEPRECATED_2021, NEW_TableOfReal_extractColumnsWhoseLabel);

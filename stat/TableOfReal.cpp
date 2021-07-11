@@ -436,118 +436,40 @@ autoTableOfReal TableOfReal_extractColumnsWhoseLabel (TableOfReal me, kMelder_st
 	}
 }
 
-/*
-	Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
-	1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
-	Overlap is allowed. Ranges can go up and down.
-*/
-static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType) {
-	/*
-		Count the elements.
-	*/
-	integer previousElement = 0;
-	integer numberOfElements = 0;
-	const char32 *p = & ranges [0];
-	for (;;) {
-		while (*p == U' ' || *p == U'\t')
-			p ++;
-		if (*p == U'\0')
-			break;
-		if (Melder_isAsciiDecimalNumber (*p)) {
-			const integer currentElement = Melder_atoi (p);
-			if (currentElement == 0)
-				Melder_throw (U"No such ", elementType, U": 0 (minimum is 1).");
-			if (currentElement > maximumElement)
-				Melder_throw (U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
-			numberOfElements += 1;
-			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
-		} else if (*p == ':') {
-			if (previousElement == 0)
-				Melder_throw (U"Cannot start range with colon.");
-			do { p ++; } while (*p == U' ' || *p == U'\t');
-			if (*p == U'\0')
-				Melder_throw (U"Cannot end range with colon.");
-			Melder_require (Melder_isAsciiDecimalNumber (*p), U"End of range should be a positive whole number.");
-			integer currentElement = Melder_atoi (p);
-			if (currentElement == 0)
-				Melder_throw (U"No such ", elementType, U": 0 (minimum is 1).");
-			if (currentElement > maximumElement)
-				Melder_throw (U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
-			if (currentElement > previousElement) {
-				numberOfElements += currentElement - previousElement;
-			} else {
-				numberOfElements += previousElement - currentElement;
-			}
-			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
-		} else {
-			Melder_throw (U"Start of range should be a positive whole number.");
-		}
-	}
-	/*
-		Create room for the elements.
-	*/
-	autoINTVEC elements = zero_INTVEC (numberOfElements);
-	/*
-		Store the elements.
-	*/
-	previousElement = 0;
-	numberOfElements = 0;
-	p = & ranges [0];
-	for (;;) {
-		while (*p == U' ' || *p == U'\t')
-			p ++;
-		if (*p == U'\0')
-			break;
-		if (Melder_isAsciiDecimalNumber (*p)) {
-			integer currentElement = Melder_atoi (p);
-			elements [++ numberOfElements] = currentElement;
-			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
-		} else if (*p == ':') {
-			do { p ++; } while (*p == U' ' || *p == U'\t');
-			integer currentElement = Melder_atoi (p);
-			if (currentElement > previousElement) {
-				for (integer ielement = previousElement + 1; ielement <= currentElement; ielement ++) {
-					elements [++ numberOfElements] = ielement;
-				}
-			} else {
-				for (integer ielement = previousElement - 1; ielement >= currentElement; ielement --) {
-					elements [++ numberOfElements] = ielement;
-				}
-			}
-			previousElement = currentElement;
-			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
-		}
-	}
-	Melder_assert (numberOfElements == elements.size);
-	return elements;
+static void TableOfReal_checkRowNumberWithinRange (TableOfReal me, integer rowNumber) {
+	Melder_require (rowNumber >= 1 && rowNumber <= my data.nrow,
+		me, U": row number (", rowNumber, U") should be between 1 and my number of rows (", my data.nrow, U").");
+}
+static void TableOfReal_checkColumnNumberWithinRange (TableOfReal me, integer columnNumber) {
+	Melder_require (columnNumber >= 1 && columnNumber <= my data.ncol,
+		me, U": column number (", columnNumber, U") should be between 1 and my number of rows (", my data.ncol, U").");
 }
 
-autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, conststring32 ranges) {
+autoTableOfReal TableOfReal_extractRowsByNumber (TableOfReal me, constINTVECVU const& rowNumbers) {
 	try {
-		autoINTVEC elements = getElementsOfRanges (ranges, my numberOfRows, U"row");
-		autoTableOfReal thee = TableOfReal_create (elements.size, my numberOfColumns);
-		copyColumnLabels (me, thee.get());
-		for (integer ielement = 1; ielement <= elements.size; ielement ++)
-			copyRow (me, elements [ielement], thee.get(), ielement);
-		return thee;
+		autoTableOfReal you = TableOfReal_create (rowNumbers.size, my numberOfColumns);
+		copyColumnLabels (me, you.get());
+		for (integer ielement = 1; ielement <= rowNumbers.size; ielement ++) {
+			TableOfReal_checkRowNumberWithinRange (me, rowNumbers [ielement]);
+			copyRow (me, rowNumbers [ielement], you.get(), ielement);
+		}
+		return you;
 	} catch (MelderError) {
-		Melder_throw (me, U": row ranges not extracted.");
+		Melder_throw (me, U": rows not extracted.");
 	}
 }
 
-autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, conststring32 ranges) {
+autoTableOfReal TableOfReal_extractColumnsByNumber (TableOfReal me, constINTVECVU const& columnNumbers) {
 	try {
-		autoINTVEC elements = getElementsOfRanges (ranges, my numberOfColumns, U"column");
-		autoTableOfReal thee = TableOfReal_create (my numberOfRows, elements.size);
-		copyRowLabels (me, thee.get());
-		for (integer ielement = 1; ielement <= elements.size; ielement ++)
-			copyColumn (me, elements [ielement], thee.get(), ielement);
-		return thee;
+		autoTableOfReal you = TableOfReal_create (my numberOfRows, columnNumbers.size);
+		copyRowLabels (me, you.get());
+		for (integer ielement = 1; ielement <= columnNumbers.size; ielement ++) {
+			TableOfReal_checkColumnNumberWithinRange (me, columnNumbers [ielement]);
+			copyColumn (me, columnNumbers [ielement], you.get(), ielement);
+		}
+		return you;
 	} catch (MelderError) {
-		Melder_throw (me, U": column ranges not extracted.");
+		Melder_throw (me, U": columns not extracted.");
 	}
 }
 

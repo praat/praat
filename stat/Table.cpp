@@ -649,7 +649,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 	}
 }
 
-static void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU columnNumbers) {
+void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU const& columnNumbers) {
 	for (integer i = 1; i <= columnNumbers.size; i ++)
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumbers [i]);
 }
