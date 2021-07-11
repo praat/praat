@@ -160,25 +160,27 @@ void structUiField :: v_destroy () noexcept {
 	our UiField_Parent :: v_destroy ();
 }
 
-static autoUiField UiField_create (_kUiField_type type, conststring32 name) {
+static autoUiField UiField_create (_kUiField_type type, conststring32 nameOrNull) {
 	autoUiField me = Thing_new (UiField);
-	char32 shortName [1+100], *p;
 	my type = type;
-	my formLabel = Melder_dup (name);
-	str32ncpy (shortName, name, 100);
-	shortName [100] = U'\0';
-	/*
-		Strip parentheses and colon off parameter name.
-	*/
-	if (!! (p = (char32 *) str32chr (shortName, U'('))) {
-		*p = U'\0';
-		if (p - shortName > 0 && p [-1] == U' ')
-			p [-1] = U'\0';
+	my formLabel = Melder_dup (nameOrNull);
+	if (nameOrNull) {
+		char32 shortName [1+100], *p;
+		str32ncpy (shortName, nameOrNull, 100);
+		shortName [100] = U'\0';
+		/*
+			Strip parentheses and colon off parameter name.
+		*/
+		if (!! (p = (char32 *) str32chr (shortName, U'('))) {
+			*p = U'\0';
+			if (p - shortName > 0 && p [-1] == U' ')
+				p [-1] = U'\0';
+		}
+		p = shortName;
+		if (*p != U'\0' && p [str32len (p) - 1] == U':')
+			p [str32len (p) - 1] = U'\0';
+		Thing_setName (me.get(), shortName);
 	}
-	p = shortName;
-	if (*p != U'\0' && p [str32len (p) - 1] == U':')
-		p [str32len (p) - 1] = U'\0';
-	Thing_setName (me.get(), shortName);
 	return me;
 }
 
@@ -1205,31 +1207,42 @@ void UiForm_finish (UiForm me) {
 	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++ ) {
 		UiField thee = my field [ifield].get(), previous = my field [ifield - 1].get();
 		dialogHeight +=
-			ifield == 1 ? Gui_TOP_DIALOG_SPACING :
-			thy type == _kUiField_type::RADIO_ || previous -> type == _kUiField_type::RADIO_ ? Gui_VERTICAL_DIALOG_SPACING_DIFFERENT :
-			thy type >= _kUiField_type::LABELLED_TEXT_MIN_ && thy type <= _kUiField_type::LABELLED_TEXT_MAX_ && str32nequ (thy name.get(), U"right ", 6) &&
-			previous -> type >= _kUiField_type::LABELLED_TEXT_MIN_ && previous -> type <= _kUiField_type::LABELLED_TEXT_MAX_ &&
-			str32nequ (previous -> name.get(), U"left ", 5) ? - textFieldHeight : Gui_VERTICAL_DIALOG_SPACING_SAME;
-		if (thy type == _kUiField_type::REALVECTOR_ || thy type == _kUiField_type::POSITIVEVECTOR_ ||
-				thy type == _kUiField_type::INTEGERVECTOR_ || thy type == _kUiField_type::NATURALVECTOR_ )
-			dialogHeight += headerLabelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME;
+			ifield == 1 ?
+				Gui_TOP_DIALOG_SPACING
+			: thy type == _kUiField_type::RADIO_ || previous -> type == _kUiField_type::RADIO_ ?
+				Gui_VERTICAL_DIALOG_SPACING_DIFFERENT
+			: thy type >= _kUiField_type::LABELLED_TEXT_MIN_ && thy type <= _kUiField_type::LABELLED_TEXT_MAX_ && str32nequ (thy name.get(), U"right ", 6) &&
+					previous -> type >= _kUiField_type::LABELLED_TEXT_MIN_ && previous -> type <= _kUiField_type::LABELLED_TEXT_MAX_ &&
+							str32nequ (previous -> name.get(), U"left ", 5) ?
+				- textFieldHeight
+			:
+				Gui_VERTICAL_DIALOG_SPACING_SAME;
+		const bool thouHastVerticallyAddedLabel =
+			thy type == _kUiField_type::TEXT_ || thy type == _kUiField_type::FORMULA_ ||
+			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ||
+			thy type == _kUiField_type::REALVECTOR_ || thy type == _kUiField_type::POSITIVEVECTOR_ ||
+			thy type == _kUiField_type::INTEGERVECTOR_ || thy type == _kUiField_type::NATURALVECTOR_ ||
+			thy type == _kUiField_type::REALMATRIX_ ||
+			thy type == _kUiField_type::TEXTVEC_
+		;
+		if (thouHastVerticallyAddedLabel)
+			dialogHeight += (headerLabelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME) * !! thy formLabel;
 		thy y = dialogHeight;
 		dialogHeight +=
-			thy type == _kUiField_type::BOOLEAN_ ? Gui_CHECKBUTTON_HEIGHT :
-			thy type == _kUiField_type::RADIO_ ? thy options.size * Gui_RADIOBUTTON_HEIGHT +
-				(thy options.size - 1) * Gui_RADIOBUTTON_SPACING :
-			thy type == _kUiField_type::OPTIONMENU_ ? Gui_OPTIONMENU_HEIGHT :
-			thy type == _kUiField_type::LIST_ ? LIST_HEIGHT :
-			thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue.get()) - 1] != U'.' &&
-				ifield != my numberOfFields ? headerLabelHeight :
-			thy type == _kUiField_type::TEXT_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::FORMULA_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::INFILE_ || thy type == _kUiField_type::OUTFILE_ || thy type == _kUiField_type::FOLDER_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::REALVECTOR_ || thy type == _kUiField_type::POSITIVEVECTOR_ ||
-				thy type == _kUiField_type::INTEGERVECTOR_ || thy type == _kUiField_type::NATURALVECTOR_ ||
-				thy type == _kUiField_type::TEXTVEC_ ? multiLineTextHeight (thy numberOfLines) :
-			thy type == _kUiField_type::REALMATRIX_ ? multiLineTextHeight (thy numberOfLines) :
-			textFieldHeight;
+			thy type == _kUiField_type::BOOLEAN_ ?
+				Gui_CHECKBUTTON_HEIGHT
+			: thy type == _kUiField_type::RADIO_ ?
+				thy options.size * Gui_RADIOBUTTON_HEIGHT + (thy options.size - 1) * Gui_RADIOBUTTON_SPACING
+			: thy type == _kUiField_type::OPTIONMENU_ ?
+				Gui_OPTIONMENU_HEIGHT
+			: thy type == _kUiField_type::LIST_ ?
+				LIST_HEIGHT
+			: thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue.get()) - 1] != U'.' && ifield != my numberOfFields ?
+				headerLabelHeight
+			: thouHastVerticallyAddedLabel ?
+				multiLineTextHeight (thy numberOfLines)
+			:
+				textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
 	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name.get(), gui_dialog_cb_close, me, 0);
@@ -1277,6 +1290,14 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::TEXT_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
@@ -1325,6 +1346,14 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::REALMATRIX_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
@@ -1338,6 +1367,14 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::TEXTVEC_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 				thy optionMenu = GuiOptionMenu_createShown (form,
@@ -1350,12 +1387,28 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::FORMULA_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_INKWRAP | GuiText_SCROLLED);
 			}
 			break;
 			case _kUiField_type::INFILE_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
@@ -1366,6 +1419,14 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::OUTFILE_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
@@ -1376,6 +1437,14 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::FOLDER_:
 			{
+				MelderString_copy (& theFinishBuffer, thy formLabel.get());
+				appendColon ();
+				const int ylabel = thy y + 5 - headerLabelHeight - Gui_VERTICAL_DIALOG_SPACING_SAME;
+				thy label = GuiLabel_createShown (form,
+					Gui_LEFT_DIALOG_SPACING, dialogWidth /* allow to extend into the margin */,
+					ylabel, ylabel + textFieldHeight,
+					theFinishBuffer.string, 0
+				);
 				thy text = GuiText_createShown (form, Gui_LEFT_DIALOG_SPACING, dialogWidth - Gui_RIGHT_DIALOG_SPACING,
 					thy y, thy y + multiLineTextHeight (thy numberOfLines), GuiText_CHARWRAP | GuiText_SCROLLED);
 				thy pushButton = GuiButton_createShown (form,
