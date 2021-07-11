@@ -2577,18 +2577,6 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, MelderColour colour
 	}
 }
 
-autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
-	try {
-		autoINTVEC channels = NUMstring_getElementsOfRanges (ranges, my ny, U"channel", true);
-		autoSound thee = Sound_create (channels.size, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer ichan = 1; ichan <= channels.size; ichan ++)
-			thy z.row (ichan)  <<=  my z.row (channels [ichan]);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": could not extract channels.");
-	}
-}
-
 /* After a script by Ton Wempe */
 static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength, double noiseReduction_dB) {
 	try {

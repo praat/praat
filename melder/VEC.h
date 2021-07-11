@@ -1,7 +1,7 @@
 #pragma once
 /* VEC.h
  *
- * Copyright (C) 2017-2020 Paul Boersma
+ * Copyright (C) 2017-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,22 +304,22 @@ inline autoINTVEC shuffle_INTVEC (constINTVECVU const& x) {
 	return result;
 }
 
-extern void sort_VEC_inout (VEC const& x) noexcept;
-extern void sort_INTVEC_inout (INTVEC const& x) noexcept;
+extern void sort_VEC_inout (VEC const& x) noexcept;   // cannot be a VECVU
+extern void sort_INTVEC_inout (INTVEC const& x) noexcept;   // cannot be an INTVECVU
 
-inline autoVEC sort_VEC (constVEC const& x) {
+inline autoVEC sort_VEC (constVECVU const& x) {
 	autoVEC result = copy_VEC (x);
 	sort_VEC_inout (result.get());
 	return result;
 }
 
-inline autoINTVEC sort_INTVEC (constINTVEC const& x) {
+inline autoINTVEC sort_INTVEC (constINTVECVU const& x) {
 	autoINTVEC result = copy_INTVEC (x);
 	sort_INTVEC_inout (result.get());
 	return result;
 }
 
-inline autoINTVEC sortedSet_INTVEC (constINTVEC const& x) {
+inline autoINTVEC sortedSet_INTVEC (constINTVECVU const& x) {
 	if (x.size <= 0)
 		return autoINTVEC ();
 	autoINTVEC result = sort_INTVEC (x);
