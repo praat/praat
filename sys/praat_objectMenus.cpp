@@ -178,7 +178,7 @@ FORM (PRAAT__addMenuCommand, U"Add menu command", U"Add menu command...") {
 	SENTENCE (command, U"Command", U"Hallo...")
 	SENTENCE (afterCommand, U"After command", U"")
 	INTEGER (depth, U"Depth", U"0")
-	INFILE (script, U"Script file:", U"/u/miep/hallo.praat")
+	INFILE (script, U"Script file", U"/u/miep/hallo.praat")
 	OK
 DO
 	PRAAT
@@ -218,7 +218,7 @@ FORM (PRAAT__addAction, U"Add action command", U"Add action command...") {
 	SENTENCE (command, U"Command", U"Play reverse")
 	SENTENCE (afterCommand, U"After command", U"Play")
 	INTEGER (depth, U"Depth", U"0")
-	INFILE (script, U"Script file:", U"/u/miep/playReverse.praat")
+	INFILE (script, U"Script file", U"/u/miep/playReverse.praat")
 	OK
 DO
 	PRAAT
@@ -540,7 +540,7 @@ FORM_SAVE (SAVE_Data_writeToBinaryFile, U"Save Object(s) as one binary file", nu
 }
 
 FORM (PRAAT_ManPages_saveToHtmlFolder, U"Save all pages as HTML files", nullptr) {
-	FOLDER (folder, U"Folder:", U"")
+	FOLDER (folder, U"Folder", U"")
 OK
 	LOOP {
 		iam_LOOP (ManPages);
@@ -599,7 +599,7 @@ DO
 }
 
 FORM (HELP_SaveManualToHtmlFolder, U"Save all pages as HTML files", nullptr) {
-	FOLDER (folder, U"Folder:", U"")
+	FOLDER (folder, U"Folder", U"")
 OK
 	structMelderDir currentDirectory { };
 	Melder_getDefaultDir (& currentDirectory);

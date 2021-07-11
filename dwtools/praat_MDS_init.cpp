@@ -78,7 +78,7 @@ FORM (CREATE_ONE__Configuration_create, U"Create Configuration", U"Create Config
 	WORD (name, U"Name", U"uniform")
 	NATURAL (numberOfPoints, U"Number of points", U"10")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	FORMULA (formula, U"Formula:", U"randomUniform (-1.5, 1.5)")
+	FORMULA (formula, U"Formula", U"randomUniform (-1.5, 1.5)")
 	OK
 DO
 	CREATE_ONE

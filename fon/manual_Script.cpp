@@ -3581,7 +3581,7 @@ NORMAL (U"In this example, $$fonsg19.hum.uva.nl$ is the computer on which MovieE
 NORMAL (U"The number 6667 is the port number on which MovieEdit is listening. Other programs will use different port numbers.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 20170718)
+MAN_BEGIN (U"Scripting 6.8. Messages to the user", U"ppgb", 20210711)
 NORMAL (U"If the user makes a mistake (e.g. types conflicting settings into your form window), "
 	"you can use the #exitScript function (@@Scripting 5.9. Quitting|\\SS5.8@) "
 	"to stop the execution of the script with an error message:")
@@ -3606,7 +3606,7 @@ NORMAL (U"You can prevent Praat from issuing warning messages:")
 CODE (U"nowarn Save as WAV file: \"hello.wav\"")
 NORMAL (U"This prevents warning messages about clipped samples, for instance.")
 NORMAL (U"You can also prevent Praat from showing a progress window:")
-CODE (U"noprogress To Pitch: 0, 75, 500")
+CODE (U"pitch = noprogress To Pitch: 0, 75, 500")
 NORMAL (U"This prevents the progress window from popping up during lengthy operations. "
 	"Use this only if you want to prevent the user from stopping the execution of the script.")
 NORMAL (U"Finally, you can make Praat ignore error messages:")

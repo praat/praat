@@ -31,7 +31,7 @@ DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity) {
 }
 
 FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula, U"MultiSampledSpectrogram: Formula", U"MultiSampledSpectrogram: Formula...") {
-	FORMULA (formula, U"Formula:", U"2 * self")
+	FORMULA (formula, U"Formula", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (MultiSampledSpectrogram)
@@ -44,7 +44,7 @@ FORM (MODIFY_EACH_WEAK__MultiSampledSpectrogram_formula_part, U"MultiSampledSpec
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	REAL (fromFrequency, U"From frequency (Hz)", U"100.0")
 	REAL (toFrequency, U"To Frequncy (Hz)", U"200.0")
-	FORMULA (formula, U"Formula:", U"2 * self")
+	FORMULA (formula, U"Formula", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (MultiSampledSpectrogram)

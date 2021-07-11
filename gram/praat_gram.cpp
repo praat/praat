@@ -251,7 +251,7 @@ FORM (MODIFY_EACH_WEAK__Network_formula_activities, U"Network: Formula (activiti
 	INTEGER (toNode, U"To node", U"0 (= all)")
 	LABEL (U"`col` is the node number, `self` is the current activity")
 	LABEL (U"for col := 1 to ncol do { self [col] := `formula' }")
-	FORMULA (formula, U"Formula:", U"0")
+	FORMULA (formula, U"Formula", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Network)
