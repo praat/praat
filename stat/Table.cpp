@@ -649,7 +649,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 	}
 }
 
-static void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVEC columnNumbers) {
+static void Table_checkSpecifiedColumnNumbersWithinRange (Table me, constINTVECVU columnNumbers) {
 	for (integer i = 1; i <= columnNumbers.size; i ++)
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumbers [i]);
 }
@@ -660,7 +660,7 @@ static void Table_columns_checkExist (Table me, constSTRVEC columnNames) {
 			Melder_throw (me, U": column \"", columnNames [i], U"\" does not exist.");
 }
 
-static void Table_columns_checkCrossSectionEmpty (Table me, constINTVEC factors, constINTVEC vars) {
+static void Table_columns_checkCrossSectionEmpty (Table me, constINTVECVU factors, constINTVECVU vars) {
 	for (integer ifactor = 1; ifactor <= factors.size; ifactor ++)
 		for (integer ivar = 1; ivar <= vars.size; ivar ++)
 			if (factors [ifactor] == vars [ivar])
@@ -894,7 +894,7 @@ static autoSTRVEC Table_getLevels_ (Table me, integer column) {
 	}
 }
 
-static autoTable Table_rowsToColumns (Table me, constINTVEC const& factorColumns, integer columnToTranspose, constINTVEC const& columnsToExpand) {
+static autoTable Table_rowsToColumns (Table me, constINTVECVU const& factorColumns, integer columnToTranspose, constINTVECVU const& columnsToExpand) {
 	bool originalChanged = false;
 	try {
 		bool warned = false;
@@ -1041,7 +1041,7 @@ autoTable Table_transpose (Table me) {
 	}
 }
 
-void Table_sortRows_Assert (Table me, constINTVEC columnNumbers) {
+void Table_sortRows_Assert (Table me, constINTVECVU const& columnNumbers) {
 	for (integer icol = 1; icol <= columnNumbers.size; icol ++)
 		Table_numericize_Assert (me, columnNumbers [icol]);
 	std::sort (my rows.begin(), my rows.end(),

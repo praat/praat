@@ -372,7 +372,7 @@ autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer colu
 	}
 }
 
-autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion) {
+autoTableOfReal TableOfReal_extractRowsWhoseLabel (TableOfReal me, kMelder_string which, conststring32 criterion) {
 	try {
 		integer n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
@@ -415,7 +415,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer row,
 	}
 }
 
-autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion) {
+autoTableOfReal TableOfReal_extractColumnsWhoseLabel (TableOfReal me, kMelder_string which, conststring32 criterion) {
 	try {
 		integer n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)

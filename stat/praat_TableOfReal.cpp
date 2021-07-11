@@ -380,14 +380,14 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cols")
 }
 
-FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
+FORM (NEW_TableOfReal_extractColumnsWhoseLabel, U"Extract columns whose label...", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, extractAllColumnsWhoseLabel,
 			U"Extract all columns whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, extractAllColumnsWhoseLabel, ___theText);
+		autoTableOfReal result = TableOfReal_extractColumnsWhoseLabel (me, extractAllColumnsWhoseLabel, ___theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
@@ -438,14 +438,14 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
 }
 
-FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
+FORM (NEW_TableOfReal_extractRowsWhoseLabel, U"Extract rows whose label", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, extractAllRowsWhoseLabel,
 			U"Extract all rows whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"a")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TableOfReal)
-		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, extractAllRowsWhoseLabel, ___theText);
+		autoTableOfReal result = TableOfReal_extractRowsWhoseLabel (me, extractAllRowsWhoseLabel, ___theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
@@ -530,11 +530,13 @@ void praat_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Extract part -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Extract row ranges...", nullptr, 1, NEW_TableOfReal_extractRowRanges);
 		praat_addAction1 (klas, 0, U"Extract rows where column...", nullptr, 1, NEW_TableOfReal_extractRowsWhereColumn);
-		praat_addAction1 (klas, 0, U"Extract rows where label...", nullptr, 1, NEW_TableOfReal_extractRowsWhereLabel);
+		praat_addAction1 (klas, 0, U"Extract rows whose label...", nullptr, 1, NEW_TableOfReal_extractRowsWhoseLabel);
+		praat_addAction1 (klas, 0,     U"Extract rows where label...", U"*Extract rows whose label...", praat_DEPRECATED_2021, NEW_TableOfReal_extractRowsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract rows where...", nullptr, 1, NEW_TableOfReal_extractRowsWhere);
 		praat_addAction1 (klas, 0, U"Extract column ranges...", nullptr, 1, NEW_TableOfReal_extractColumnRanges);
 		praat_addAction1 (klas, 0, U"Extract columns where row...", nullptr, 1, NEW_TableOfReal_extractColumnsWhereRow);
-		praat_addAction1 (klas, 0, U"Extract columns where label...", nullptr, 1, NEW_TableOfReal_extractColumnsWhereLabel);
+		praat_addAction1 (klas, 0, U"Extract columns whose label...", nullptr, 1, NEW_TableOfReal_extractColumnsWhoseLabel);
+		praat_addAction1 (klas, 0,     U"Extract columns where label...", U"*Extract columns whose label...", praat_DEPRECATED_2021, NEW_TableOfReal_extractColumnsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract columns where...", nullptr, 1, NEW_TableOfReal_extractColumnsWhere);
 	praat_addAction1 (klas, 0, U"Extract -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Extract row labels as Strings", nullptr, 1, NEW_TableOfReal_extractRowLabelsAsStrings);

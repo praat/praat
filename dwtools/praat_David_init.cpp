@@ -5740,12 +5740,11 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
-	TEXTFIELD (channels, U"Create a new Sound from the following channels", U"1:64", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	NATURALVECTOR (channels, U"Create a new Sound from the following channels", RANGES_, U"1:64")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_copyChannelRanges (me, channels);
+		autoSound result = Sound_extractChannels (me, sortedSet_INTVEC (channels).get());   // TODO: why sorting? (ppgb 20210711)
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_channels")
 }
 

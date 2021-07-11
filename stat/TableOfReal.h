@@ -66,8 +66,8 @@ autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, conststring32 r
 autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer icol, kMelder_number which, double criterion);
 autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer icol, kMelder_number which, double criterion);
 
-autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
-autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
+autoTableOfReal TableOfReal_extractRowsWhoseLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
+autoTableOfReal TableOfReal_extractColumnsWhoseLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
 
 autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, conststring32 condition, Interpreter interpreter);
 autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, conststring32 condition, Interpreter interpreter);

@@ -2,7 +2,7 @@
 #define _EEG_extensions_h_
 /* EEG_extensions.h
  *
- * Copyright (C) 2012-2017 David Weenink, 2018 Paul Boersma
+ * Copyright (C) 2012-2017 David Weenink, 2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,24 +23,25 @@
 #include "EEG.h"
 
 autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me,
-	double startTime, double endTime, double lagTime,
-	conststring32 channelRanges);
+		double startTime, double endTime, double lagTime, constINTVECVU const& channels);
 
-autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, conststring32 channelRanges);
+autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, constINTVECVU const& channels);
 
 autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
 	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
-	conststring32 channelRanges);
+	constINTVECVU const& channels
+);
 
-autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, conststring32 channelRanges, int fromCorrelation);
+autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, constINTVECVU const& channels, int fromCorrelation);
 
 autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents);
 
 autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents);
 
 autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
-	conststring32 channelRanges, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
-	autoMixingMatrix *p_resultingMixingMatrix);
+	constINTVECVU const& channels, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
+	autoMixingMatrix *p_resultingMixingMatrix
+);
 
 autoSound EEG_to_Sound_frequencyShifted (EEG me, integer channel, double frequencyShift, double samplingFrequency, double maxAmp);
 
