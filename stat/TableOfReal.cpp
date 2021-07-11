@@ -436,11 +436,11 @@ autoTableOfReal TableOfReal_extractColumnsWhoseLabel (TableOfReal me, kMelder_st
 	}
 }
 
-static void TableOfReal_checkRowNumberWithinRange (TableOfReal me, integer rowNumber) {
+void TableOfReal_checkRowNumberWithinRange (TableOfReal me, integer rowNumber) {
 	Melder_require (rowNumber >= 1 && rowNumber <= my data.nrow,
 		me, U": row number (", rowNumber, U") should be between 1 and my number of rows (", my data.nrow, U").");
 }
-static void TableOfReal_checkColumnNumberWithinRange (TableOfReal me, integer columnNumber) {
+void TableOfReal_checkColumnNumberWithinRange (TableOfReal me, integer columnNumber) {
 	Melder_require (columnNumber >= 1 && columnNumber <= my data.ncol,
 		me, U": column number (", columnNumber, U") should be between 1 and my number of rows (", my data.ncol, U").");
 }

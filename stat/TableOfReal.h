@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009,2011,2012,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@ Thing_declare (Interpreter);
 
 void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfColumns);
 autoTableOfReal TableOfReal_create (integer numberOfRows, integer numberOfColumns);
+
+void TableOfReal_checkRowNumberWithinRange (TableOfReal me, integer rowNumber);
+void TableOfReal_checkColumnNumberWithinRange (TableOfReal me, integer columnNumber);
+
 void TableOfReal_removeRow (TableOfReal me, integer rowNumber);
 void TableOfReal_removeColumn (TableOfReal me, integer columnNumber);
 void TableOfReal_insertRow (TableOfReal me, integer rowNumber);

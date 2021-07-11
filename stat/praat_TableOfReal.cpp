@@ -219,11 +219,9 @@ FORM (REAL_TableOfReal_getValue, U"Get value", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_REAL (TableOfReal)
-		if (rowNumber > my numberOfRows)
-			Melder_throw (me, U": your row number should not exceed the number of rows.");
-		if (columnNumber > my numberOfColumns)
-			Melder_throw (me, U": your column number should not exceed the number of columns.");
-		double result = my data [rowNumber] [columnNumber];
+		TableOfReal_checkRowNumberWithinRange (me, rowNumber);
+		TableOfReal_checkColumnNumberWithinRange (me, columnNumber);
+		const double result = my data [rowNumber] [columnNumber];
 	QUERY_ONE_FOR_REAL_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
 
@@ -291,7 +289,7 @@ FORM (MODIFY_TableOfReal_setColumnLabel_label, U"Set column label", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
-		integer columnNumber = TableOfReal_columnLabelToIndex (me, oldLabel);
+		const integer columnNumber = TableOfReal_columnLabelToIndex (me, oldLabel);
 		TableOfReal_setColumnLabel (me, columnNumber, newLabel);
 	MODIFY_EACH_END
 }
@@ -313,10 +311,8 @@ FORM (MODIFY_TableOfReal_setValue, U"Set value", U"TableOfReal: Set value...") {
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
-		if (rowNumber > my numberOfRows)
-			Melder_throw (me, U": your row number should not be greater than the number of rows.");
-		if (columnNumber > my numberOfColumns)
-			Melder_throw (me, U": your column number should not be greater than the number of columns.");
+		TableOfReal_checkRowNumberWithinRange (me, rowNumber);
+		TableOfReal_checkColumnNumberWithinRange (me, columnNumber);
 		my data [rowNumber] [columnNumber] = newValue;
 	MODIFY_EACH_END
 }
@@ -327,7 +323,7 @@ FORM (MODIFY_TableOfReal_setRowLabel_label, U"Set row label", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
-		integer rowNumber = TableOfReal_rowLabelToIndex (me, oldLabel);
+		const integer rowNumber = TableOfReal_rowLabelToIndex (me, oldLabel);
 		TableOfReal_setRowLabel (me, rowNumber, newLabel);
 	MODIFY_EACH_END
 }
@@ -362,7 +358,7 @@ DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractColumnsByNumber, U"Extract columns by number", nullptr) {
-	LABEL (U"Create a new TableOfReal from the following columns.")
+	LABEL (U"Create a new TableOfReal from the following existing columns.")
 	NATURALVECTOR (columnNumbers, U"Column numbers", RANGES_, U"1 2")
 	OK
 DO
@@ -372,7 +368,8 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
-	FORMULA (condition, U"Extract all columns with at least one cell where", U"col mod 3 = 0 ; this example extracts every third column")
+	LABEL (U"Extract all columns with at least one cell where the following condition holds.")
+	FORMULA (condition, U"Condition", U"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TableOfReal)
@@ -409,7 +406,7 @@ DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 }
 
 FORM (NEW_TableOfReal_extractRowsByNumber, U"Extract rows by number", nullptr) {
-	LABEL (U"Create a new TableOfReal from the following rows.")
+	LABEL (U"Create a new TableOfReal from the following existing rows.")
 	NATURALVECTOR (rowNumbers, U"Row numbers", RANGES_, U"1 2")
 	OK
 DO
@@ -419,7 +416,8 @@ DO
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
-	FORMULA (condition, U"Extract all rows with at least one cell where", U"row mod 3 = 0 ; this example extracts every third row")
+	LABEL (U"Extract all rows with at least one cell where the following condition holds.")
+	FORMULA (condition, U"Condition", U"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (TableOfReal)
@@ -531,13 +529,13 @@ void praat_TableOfReal_init (ClassInfo klas) {
 		praat_addAction1 (klas, 0,     U"Extract row ranges...", U"*Extract rows by number...", 1, NEW_TableOfReal_extractRowsByNumber);
 		praat_addAction1 (klas, 0, U"Extract rows where column...", nullptr, 1, NEW_TableOfReal_extractRowsWhereColumn);
 		praat_addAction1 (klas, 0, U"Extract rows whose label...", nullptr, 1, NEW_TableOfReal_extractRowsWhoseLabel);
-		praat_addAction1 (klas, 0,     U"Extract rows where label...", U"*Extract rows whose label...", praat_DEPRECATED_2021, NEW_TableOfReal_extractRowsWhoseLabel);
+		praat_addAction1 (klas, 0,     U"Extract rows where label...", U"*Extract rows whose label...", praat_DEPTH_1 | praat_DEPRECATED_2021, NEW_TableOfReal_extractRowsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract rows where...", nullptr, 1, NEW_TableOfReal_extractRowsWhere);
 		praat_addAction1 (klas, 0, U"Extract columns by number...", nullptr, 1, NEW_TableOfReal_extractColumnsByNumber);
 		praat_addAction1 (klas, 0,     U"Extract column ranges...", nullptr, 1, NEW_TableOfReal_extractColumnsByNumber);
 		praat_addAction1 (klas, 0, U"Extract columns where row...", nullptr, 1, NEW_TableOfReal_extractColumnsWhereRow);
 		praat_addAction1 (klas, 0, U"Extract columns whose label...", nullptr, 1, NEW_TableOfReal_extractColumnsWhoseLabel);
-		praat_addAction1 (klas, 0,     U"Extract columns where label...", U"*Extract columns whose label...", praat_DEPRECATED_2021, NEW_TableOfReal_extractColumnsWhoseLabel);
+		praat_addAction1 (klas, 0,     U"Extract columns where label...", U"*Extract columns whose label...", praat_DEPTH_1 | praat_DEPRECATED_2021, NEW_TableOfReal_extractColumnsWhoseLabel);
 		praat_addAction1 (klas, 0, U"Extract columns where...", nullptr, 1, NEW_TableOfReal_extractColumnsWhere);
 	praat_addAction1 (klas, 0, U"Extract -", nullptr, 0, nullptr);
 		praat_addAction1 (klas, 0, U"Extract row labels as Strings", nullptr, 1, NEW_TableOfReal_extractRowLabelsAsStrings);
