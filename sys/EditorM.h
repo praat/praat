@@ -184,7 +184,6 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue, numberOfLines) \
-	UiForm_addLabel (cmd -> d_uiform.get(), nullptr, Melder_cat (labelText, U":")); \
 	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue, numberOfLines);
 
 #define TEXTFIELD(stringVariable, labelText, defaultValue, numberOfLines) \
@@ -196,8 +195,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define FORMULA_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addFormula (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addFormula (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define FORMULA(stringVariable, labelText, defaultValue) \
 	FORMULA_VARIABLE (stringVariable) \
@@ -208,8 +206,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define INFILE_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define INFILE(stringVariable, labelText, defaultValue) \
 	INFILE_VARIABLE (stringVariable) \
@@ -220,8 +217,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define OUTFILE_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addOutfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addOutfile (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define OUTFILE(stringVariable, labelText, defaultValue) \
 	OUTFILE_VARIABLE (stringVariable) \
@@ -232,8 +228,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define FOLDER_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addFolder (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addFolder (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define FOLDER(stringVariable, labelText, defaultValue) \
 	FOLDER_VARIABLE (stringVariable) \

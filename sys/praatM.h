@@ -124,34 +124,24 @@
 		UiForm_addLabel (_dia_.get(), & stringVariable, labelText);
 
 #define TEXTFIELD(stringVariable, labelText, defaultStringValue, numberOfLines)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
 		UiForm_addText (_dia_.get(), & stringVariable, U"" #stringVariable, labelText, defaultStringValue, numberOfLines);
 
 #define FORMULA(stringVariable, labelText, defaultStringValue)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat ((conststring32) labelText, U":")); \
 		static conststring32 stringVariable; \
-		UiForm_addFormula (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
+		UiForm_addFormula (_dia_.get(), & stringVariable, U"" #stringVariable, labelText, defaultStringValue);
 
 #define INFILE(stringVariable, labelText, defaultStringValue)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
-		UiForm_addInfile (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
+		UiForm_addInfile (_dia_.get(), & stringVariable, U"" #stringVariable, labelText, defaultStringValue);
 
 #define OUTFILE(stringVariable, labelText, defaultStringValue)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
-		UiForm_addOutfile (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
+		UiForm_addOutfile (_dia_.get(), & stringVariable, U"" #stringVariable, labelText, defaultStringValue);
 
 #define FOLDER(stringVariable, labelText, defaultStringValue)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
-		UiForm_addFolder (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
+		UiForm_addFolder (_dia_.get(), & stringVariable, U"" #stringVariable, labelText, defaultStringValue);
 
 #define REALVECTOR(realVectorVariable, labelText, defaultFormat, defaultStringValue)  \
 		static constVEC realVectorVariable; \
@@ -170,27 +160,21 @@
 		UiForm_addNaturalVector (_dia_.get(), & integerVectorVariable, U"" #integerVectorVariable, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
 
 #define REALMATRIX(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static constMAT numericMatrixVariable; \
-		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultNumericMatrixValue.get());
+		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, labelText, defaultNumericMatrixValue.get());
 
 #define TEXTVEC(stringArrayVariable, labelText, ...)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
+			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
 		}
 
 #define TEXTVEC_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
-		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, U"", ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
+			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
 		}
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
