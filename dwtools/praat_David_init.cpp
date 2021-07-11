@@ -177,7 +177,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	LABEL (U"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
-	FORMULA (formula, U"Formula:", U"self")
+	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
 	MODIFY_EACH (ActivationList)
@@ -1907,7 +1907,7 @@ DIRECT (QUERY_ONE_FOR_REAL__DTW_getMaximumDistance) {
 FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	FORMULA (formula, U"Formula:", U"self")
+	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (DTW)
@@ -2526,7 +2526,7 @@ DIRECT (COMBINE_ALL_TO_ONE__Excitations_to_ExcitationList) {
 
 FORM (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	LABEL (U"for all objects in ExcitationList do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
-	FORMULA (formula, U"Formula:", U"self")
+	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
 	MODIFY_EACH (ExcitationList)
@@ -2674,7 +2674,7 @@ DO
 
 FORM (CREATE_ONE__FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
-	FOLDER (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
+	FOLDER (directory, U"Directory", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
 	WORD (fileGlobber, U"Only files that match pattern", U"*")
 	OK
 DO
@@ -3416,7 +3416,7 @@ static void print_means (Table me) {
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere, U"", nullptr) {
-	FORMULA (formula, U"Count only rows where the following condition holds:", U"1; self$[\"gender\"]=\"M\"")
+	FORMULA (formula, U"Count only rows where the following condition holds", U"1; self$[\"gender\"]=\"M\"")
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (Table)
@@ -5632,7 +5632,7 @@ FORM (GRAPHICS_EACH__Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where.
 		OPTION (U"bars")
 		OPTION (U"poles")
 		OPTION (U"speckles")
-	FORMULA (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half")
+	FORMULA (formula, U"Draw only those parts where the following condition holds", U"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
 	const integer numberOfBisections = 10;
@@ -6117,7 +6117,7 @@ FORM (GRAPHICS_EACH__Sound_paintWhere, U"Sound paint where", U"Sound: Paint wher
 	REAL (ymax, U"right Vertical range", U"0.0")
 	REAL (level, U"Fill from level", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Paint only those parts where the following condition holds:", U"1; always")
+	FORMULA (formula, U"Paint only those parts where the following condition holds", U"1; always")
 	OK
 DO
 	const integer numberOfBisections = 10;
@@ -6934,7 +6934,7 @@ FORM (GRAPHICS_EACH__Table_scatterPlotWhere, U"Table: Scatter plot where", nullp
 	WORD (markColumn_string, U"Column with marks", U"")
 	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6956,7 +6956,7 @@ FORM (GRAPHICS_EACH__Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", 
 	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6979,7 +6979,7 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	SENTENCE (colours, U"Colours", U"Grey")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"row >= 1 and row <= 8")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"row >= 1 and row <= 8")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6999,7 +6999,7 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 	WORD (text, U"Text", U"+")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"1; (= everything)")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; (= everything)")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7029,7 +7029,7 @@ FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Bo
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7047,7 +7047,7 @@ FORM (GRAPHICS_EACH__Table_drawEllipseWhere, U"Draw ellipse (standard deviation)
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7092,7 +7092,7 @@ FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nul
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7128,7 +7128,7 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probabili
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7209,7 +7209,7 @@ FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7246,7 +7246,7 @@ FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot whe
 	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7292,7 +7292,7 @@ FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal err
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7341,7 +7341,7 @@ FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error b
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7356,7 +7356,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
-	FORMULA (formula, U"Extract rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Extract rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
@@ -7370,7 +7370,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract r
 			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	SENTENCE (factorColumn_string, U"Factor column", U"")
-	FORMULA (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Process only rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)

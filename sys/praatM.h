@@ -131,25 +131,25 @@
 
 #define FORMULA(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat ((conststring32) labelText, U":")); \
 		static conststring32 stringVariable; \
 		UiForm_addFormula (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
 #define INFILE(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
 		UiForm_addInfile (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
 #define OUTFILE(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
 		UiForm_addOutfile (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
 #define FOLDER(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static conststring32 stringVariable; \
 		UiForm_addFolder (_dia_.get(), & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
@@ -171,13 +171,13 @@
 
 #define REALMATRIX(numericMatrixVariable, labelText, defaultNumericMatrixValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static constMAT numericMatrixVariable; \
 		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultNumericMatrixValue.get());
 
 #define TEXTVEC(stringArrayVariable, labelText, ...)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
@@ -186,7 +186,7 @@
 
 #define TEXTVEC_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
-			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
+			UiForm_addLabel (_dia_.get(), nullptr, Melder_cat (labelText, U":")); \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \

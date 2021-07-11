@@ -55,7 +55,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
-		FOLDER (folder, U"Folder:", U"")
+		FOLDER (folder, U"Folder", U"")
 	EDITOR_OK
 		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	EDITOR_DO

@@ -116,7 +116,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer column, kMelder
 autoTable Table_collapseRows (Table me, constSTRVEC factors, constSTRVEC columnsToSum,
 	constSTRVEC columnsToAverage, constSTRVEC columnsToMedianize,
 	constSTRVEC columnsToAverageLogarithmically, constSTRVEC columnsToMedianizeLogarithmically);
-autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer columnToTranspose, conststring32 columnsToExpand_string);
+autoTable Table_rowsToColumns (Table me, constSTRVEC const& factors_names, conststring32 columnToTranspose, constSTRVEC const& columnsToExpand_names);
 autoTable Table_transpose (Table me);
 
 void Table_checkSpecifiedRowNumberWithinRange (Table me, integer rowNumber);
