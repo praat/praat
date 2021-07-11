@@ -226,20 +226,10 @@ static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElem
 	return elements;
 }
 
-static autoINTVEC INTVEC_getUniqueNumbers (constINTVEC const& numbers) {
-	autoINTVEC sorted = sort_INTVEC (numbers);
-	integer numberOfUniques = 1;
-	for (integer i = 2; i <= numbers.size; i ++)
-		if (sorted [i] != sorted [i - 1])
-			sorted [++ numberOfUniques] = sorted [i];
-	sorted. resize (numberOfUniques);
-	return sorted;
-}
-
 autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques) {
 	autoINTVEC elements = getElementsOfRanges (ranges, maximumElement, elementType);
 	if (sortedUniques)
-		return INTVEC_getUniqueNumbers (elements.get());
+		return sortedSet_INTVEC (elements.get());
 	return elements;
 }
 

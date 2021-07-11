@@ -319,6 +319,18 @@ inline autoINTVEC sort_INTVEC (constINTVEC const& x) {
 	return result;
 }
 
+inline autoINTVEC sortedSet_INTVEC (constINTVEC const& x) {
+	if (x.size <= 0)
+		return autoINTVEC ();
+	autoINTVEC result = sort_INTVEC (x);
+	integer newSize = 1;
+	for (integer i = 2; i <= x.size; i ++)
+		if (result [i] != result [i - 1])
+			result [++ newSize] = result [i];
+	result. resize (newSize);
+	return result;
+}
+
 inline autoVEC rowSums_VEC (constMATVU const& x) {
 	autoVEC result = raw_VEC (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)

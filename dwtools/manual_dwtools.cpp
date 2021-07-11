@@ -685,36 +685,36 @@ MAN_END
 
 MAN_BEGIN (U"concentration ellipse", U"djmw", 20071113)
 INTRO (U"The percentage of bivariate normally distributed data covered by an ellipse "
-	"whose axes have a length of %numberOfSigmas\\.c\\si can be obtained by integration of the p.d.f. "
-	"over an elliptical area. This results in the following equation as can be "
+	"whose axes have a length of %numberOfSigmas \\.c %\\si can be obtained by integration of the probability distribution function "
+	"over an elliptical area. This results in the following equation, as can be "
 	"verified from equation 26.3.21 in @@Abramowitz & Stegun (1970)@:")
-EQUATION (U"%percentage = (1 - exp (-%numberOfSigmas^^2^/2))\\.c 100\\% ,")
+EQUATION (U"%percentage = (1 - exp (-%numberOfSigmas^^2^/2)) \\.c 100\\% ,")
 NORMAL (U"where the %numberOfSigmas is the radius of the \"ellipse\":")
 EQUATION (U"(%x/%\\si__x_)^2 + (%y/%\\si__y_)^2 = %numberOfSigmas^2.")
-NORMAL (U"The %numberOfSigmas = 1 ellipse covers 39.3\\% , "
-	"the %numberOfSigmas = 2 ellipse covers 86.5\\%  and "
-	"the %numberOfSigmas = 3 ellipse covers 98.9\\%  of the data.")
+NORMAL (U"The %numberOfSigmas=1 ellipse covers 39.3\\%  of the data, "
+	"the %numberOfSigmas=2 ellipse 86.5\\% , and "
+	"the %numberOfSigmas=3 ellipse 98.9\\% .")
 NORMAL (U"From the formula above we can show that if we want to cover %p percent of the data, we have to "		"chose %numberOfSigmas as:")
 EQUATION (U"%numberOfSigmas = \\Vr(-2 ln(1-%p/100)).")
-NORMAL (U"For covering 95\\% of the data we calculate %numberOfSigmas = 2.45.")
+NORMAL (U"For covering 95\\%  of the data we calculate %numberOfSigmas = 2.45.")
 MAN_END
 
 MAN_BEGIN (U"confidence interval", U"djmw", 20151109)
 INTRO (U"The confidence interval gives an estimated range of values which "
-	"is likely to include an unknown population parameter. "
+	"is likely to include a true but unknown population parameter. "
 	"The estimated range is calculated from a given set of observations.")
 ENTRY (U"Examples")
-NORMAL (U"At the \\al level of significance a two sided confidence interval "
-	"for the true mean \\mu for normally distributed data with mean %%mean% and "
-	"known standard deviation %\\si can be constructed as:")
-EQUATION (U"%%mean% - %z__\\al/2_ \\si / \\Vr%N \\<_ \\mu \\<_ "
-	"%%mean% + %z__\\al/2_ \\si / \\Vr%N,")
-NORMAL (U"where %z__\\al/2_ = invGaussQ (\\al/2) and %N is the number of observations.")
+NORMAL (U"At the %\\al level of significance, a two-sided confidence interval "
+	"for the true mean %\\mu for normally distributed data with %observed mean %m and "
+	"%true standard deviation %\\si can be constructed as:")
+EQUATION (U"%%mean% - %z__\\al/2_ %\\si / \\Vr%N \\<_ %\\mu \\<_ "
+	"%%mean% + %z__%\\al/2_ %\\si / \\Vr%N,")
+NORMAL (U"where %z__%\\al/2_ = invGaussQ (%\\al/2) and %N is the number of observations.")
 NORMAL (U"If the standard deviation is %not known, we have to estimate its value (%s) "
 	"from the data and the formula above becomes:")
-EQUATION (U"%%mean% - %t__%%\\al/2;N%_ %s / \\Vr%N \\<_ \\mu \\<_ "
-	"%%mean% + %t__%%\\al/2;N%_ %s / \\Vr%N,")
-NORMAL (U"where %t__%%\\al/2;N%_ = invStudentQ (%\\al/2, %N-1).")
+EQUATION (U"%%mean% - %t__%%\\al/2;N%_ %s / \\Vr%N \\<_ %\\mu \\<_ "
+	"%%mean% + %t__%\\al/2;%N_ %s / \\Vr%N,")
+NORMAL (U"where %t__%\\al/2;%N_ = invStudentQ (%\\al/2, %N-1).")
 NORMAL (U"For %\\al=0.05 and %N=20 we get %z__0.025_=1.96 and %t__0.025;20_=2.093. "
 	"This shows that for a fixed value of the standard deviation the confidence interval will always be wider if we had to estimate the standard deviation's value from the data instead of its value being known beforehand.")
 MAN_END

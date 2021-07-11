@@ -342,7 +342,7 @@ autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me
 		GaussianMixture_setColumnLabelsFromTableOfReal (thee.get(), me);
 
 		for (integer component = 1; component <= numberOfComponents; component ++) {
-			autoTableOfReal tab = TableOfReal_extractRowsWhereLabel (me, kMelder_string::EQUAL_TO, dist -> rowLabels [component].get());
+			autoTableOfReal tab = TableOfReal_extractRowsWhoseLabel (me, kMelder_string::EQUAL_TO, dist -> rowLabels [component].get());
 			autoCovariance cov = TableOfReal_to_Covariance (tab.get());
 			Covariance_into_Covariance (cov.get(), thy covariances->at [component]);
 			Thing_setName (thy covariances->at [component], dist -> rowLabels [component].get());
