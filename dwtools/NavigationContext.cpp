@@ -125,7 +125,7 @@ autoNavigationContext NavigationContext_createBeforeAndTopic (
 }
 
 static autoStrings Strings_createAsUniqueTokens (constSTRVEC strings, conststring32 where) {
-	autoStrings me = Strings_createFromSTRVEC (strings, 1, strings.size);
+	autoStrings me = Strings_createFromSTRVEC (strings);
 	autoStrings thee = Data_copy (me.get());
 	Strings_sort (thee.get());
 	for (integer istring = 2; istring <= thy numberOfStrings; istring ++)

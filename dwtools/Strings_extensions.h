@@ -46,7 +46,7 @@ autoStrings Strings_append (OrderedOf<structStrings>* me);
 autoStrings Strings_change (Strings me, conststring32 search, conststring32 replace,
 	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 
-autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings, integer from, integer to);
+autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings);
 
 autoStrings Strings_extractPart (Strings me, integer start, integer end);
 
