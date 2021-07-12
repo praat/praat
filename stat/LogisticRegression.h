@@ -2,7 +2,7 @@
 #define _LogisticRegression_h_
 /* LogisticRegression.h
  *
- * Copyright (C) 2005-2011,2015,2017 Paul Boersma
+ * Copyright (C) 2005,2007,2011,2012,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 
 autoLogisticRegression LogisticRegression_create (conststring32 dependent1, conststring32 dependent2);
 
-autoLogisticRegression Table_to_LogisticRegression (Table me, conststring32 columnsWithFactors_string,
-	conststring32 columnWithDependent1_string, conststring32 columnWithDependent2_string);
+autoLogisticRegression Table_to_LogisticRegression (Table me, constSTRVEC const& columnsWithFactors,
+	conststring32 columnWithDependent1, conststring32 columnWithDependent2);
 
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, integer colx, double xmin, double xmax,
 	integer coly, double ymin, double ymax, bool garnish);

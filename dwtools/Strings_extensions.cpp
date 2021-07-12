@@ -25,8 +25,8 @@
 
 autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	try {
-		Melder_require (numberOfStrings > 0,
-			U"The number of strings should be positive.");
+		Melder_require (numberOfStrings >= 0,
+			U"The number of strings should not be negative.");
 		autoStrings me = Thing_new (Strings);
 		my strings = autoSTRVEC (numberOfStrings);
 		my numberOfStrings = numberOfStrings;

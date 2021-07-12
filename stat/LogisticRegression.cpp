@@ -1,6 +1,6 @@
 /* LogisticRegression.cpp
  *
- * Copyright (C) 2005-2012,2015-2020 Paul Boersma
+ * Copyright (C) 2005-2012,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,8 +94,8 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	autoMAT smallMatrix = zero_MAT (1+numberOfFactors, 1+numberOfParameters);
 	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label.get(), my columnHeaders [dependent2]. label.get());
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
-		double minimum = Table_getMinimum (me, factors [ivar]);
-		double maximum = Table_getMaximum (me, factors [ivar]);
+		const double minimum = Table_getMinimum (me, factors [ivar]);
+		const double maximum = Table_getMaximum (me, factors [ivar]);
 		Regression_addParameter (thee.get(), my columnHeaders [factors [ivar]]. label.get(), minimum, maximum, 0.0);
 	}
 	for (integer icell = 1; icell <= numberOfCells; icell ++) {
@@ -117,8 +117,8 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	if (numberOfY1 == 0)
 		Melder_throw (U"No data in class ", my columnHeaders [dependent2]. label.get(), U". Cannot determine result.");
 	/*
-	 * Normalize the data.
-	 */
+		Normalize the data.
+	*/
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
 		meanX [ivar] /= numberOfData;
 		for (integer icell = 1; icell <= numberOfCells; icell ++)
@@ -133,8 +133,8 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 			x [icell] [1+ivar] /= stdevX [ivar];
 	}
 	/*
-	 * Initial state of iteration: the null model.
-	 */
+		Initial state of iteration: the null model.
+	*/
 	thy intercept = log ((double) numberOfY1 / (double) numberOfY0);   // initial state of intercept: best guess for average log odds
 	for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
 		RegressionParameter parm = thy parameters.at [ivar];
@@ -147,8 +147,8 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 			for (integer jvar = ivar; jvar <= numberOfParameters; jvar ++)
 				smallMatrix [1+ivar] [1+jvar] = 0.0;
 		/*
-		 * Compute the current log likelihood.
-		 */
+			Compute the current log likelihood.
+		*/
 		logLikelihood = 0.0;
 		for (integer icell = 1; icell <= numberOfCells; icell ++) {
 			double fittedLogit = thy intercept, fittedP, fittedQ, fittedLogP, fittedLogQ, fittedPQ, fittedVariance;
@@ -157,9 +157,9 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 				fittedLogit += parm -> value * x [icell] [1+ivar];
 			}
 			/*
-			 * Basically we have fittedP = 1.0 / (1.0 + exp (- fittedLogit)),
-			 * but that works neither for fittedP values near 0 nor for values near 1.
-			 */
+				Basically we have fittedP = 1.0 / (1.0 + exp (- fittedLogit)),
+				but that works neither for fittedP values near 0 nor for values near 1.
+			*/
 			if (fittedLogit > 15.0) {
 				/*
 				 * For large fittedLogit, fittedLogP = ln (1/(1+exp(-fittedLogit))) = -ln (1+exp(-fittedLogit)) =~ - exp(-fittedLogit)
@@ -184,19 +184,19 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 			}
 			logLikelihood += -2 * (y1 [icell] * fittedLogP + y0 [icell] * fittedLogQ);
 			/*
-			 * Matrix shifting stuff.
-			 * Suppose a + b Sk + c Tk = ln (pk / qk),
-			 * where {a, b, c} are the coefficients to be optimized,
-			 * Sk and Tk are properties of stimulus k,
-			 * and pk and qk are the fitted probabilities for y1 and y0, respectively, given stimulus k.
-			 * Then ln pk = - ln (1 + qk / pk) = - ln (1 + exp (- (a + b Sk + c Tk)))
-			 * d ln pk / da = 1 / (1 + exp (a + b Sk + c Tk)) = qk
-			 * d ln pk / db = qk Sk
-			 * d ln pk / dc = qk Tk
-			 * d ln qk / da = - pk
-			 * Now LL = Sum(k) (y1k ln pk + y0k ln qk)
-			 * so that dLL/da = Sum(k) (y1k d ln pk / da + y0k ln qk / da) = Sum(k) (y1k qk - y0k pk)
-			 */
+				Matrix shifting stuff.
+				Suppose a + b Sk + c Tk = ln (pk / qk),
+				where {a, b, c} are the coefficients to be optimized,
+				Sk and Tk are properties of stimulus k,
+				and pk and qk are the fitted probabilities for y1 and y0, respectively, given stimulus k.
+				Then ln pk = - ln (1 + qk / pk) = - ln (1 + exp (- (a + b Sk + c Tk)))
+				d ln pk / da = 1 / (1 + exp (a + b Sk + c Tk)) = qk
+				d ln pk / db = qk Sk
+				d ln pk / dc = qk Tk
+				d ln qk / da = - pk
+				Now LL = Sum(k) (y1k ln pk + y0k ln qk)
+				so that dLL/da = Sum(k) (y1k d ln pk / da + y0k ln qk / da) = Sum(k) (y1k qk - y0k pk)
+			*/
 			fittedVariance = fittedPQ * (y0 [icell] + y1 [icell]);
 			for (integer ivar = 0; ivar <= numberOfFactors; ivar ++) {
 				/*
@@ -210,14 +210,14 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 		if (fabs (logLikelihood - previousLogLikelihood) < 1e-11)
 			break;
 		/*
-		 * Make matrix symmetric.
-		 */
+			Make matrix symmetric.
+		*/
 		for (integer ivar = 1; ivar <= numberOfFactors; ivar ++)
 			for (integer jvar = 0; jvar < ivar; jvar ++)
 				smallMatrix [1+ivar] [1+jvar] = smallMatrix [1+jvar] [1+ivar];
 		/*
-		 * Invert matrix in the simplest way, and shift and wipe the last column with it.
-		 */
+			Invert matrix in the simplest way, and shift and wipe the last column with it.
+		*/
 		for (integer ivar = 0; ivar <= numberOfFactors; ivar ++) {
 			const double pivot = smallMatrix [1+ivar] [1+ivar];   /* Save diagonal. */
 			smallMatrix [1+ivar] [1+ivar] = 1.0;
@@ -233,8 +233,8 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 			}
 		}
 		/*
-		 * Update the parameters from the last column of smallMatrix.
-		 */
+			Update the parameters from the last column of smallMatrix.
+		*/
 		thy intercept += smallMatrix [1+0] [1+numberOfParameters];
 		for (integer ivar = 1; ivar <= numberOfFactors; ivar ++) {
 			const RegressionParameter parm = thy parameters.at [ivar];
@@ -251,26 +251,19 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVE
 	return thee;
 }
 
-autoLogisticRegression Table_to_LogisticRegression (Table me, conststring32 factors_columnLabelString,
-	conststring32 dependent1_columnLabel, conststring32 dependent2_columnLabel)
+autoLogisticRegression Table_to_LogisticRegression (Table me, constSTRVEC const& factors_columnNames,
+	conststring32 dependent1_columnName, conststring32 dependent2_columnName)
 {
 	try {
-		auto factors_columnIndices = Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString);
-		const integer dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel);
-		const integer dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel);
-		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.get(), dependent1_columnIndex, dependent2_columnIndex);
+		autoINTVEC factors_columnNumbers = Table_columnNamesToNumbers (me, factors_columnNames);
+		const integer dependent1_columnNumber = Table_getColumnIndexFromColumnLabel (me, dependent1_columnName);
+		const integer dependent2_columnNumber = Table_getColumnIndexFromColumnLabel (me, dependent2_columnName);
+		autoLogisticRegression thee = _Table_to_LogisticRegression (me,
+				factors_columnNumbers.get(), dependent1_columnNumber, dependent2_columnNumber);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": logistic regression not performed.");
 	}
-}
-
-static inline double NUMmin2 (double a, double b) {
-	return a < b ? a : b;
-}
-
-static inline double NUMmax2 (double a, double b) {
-	return a > b ? a : b;
 }
 
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, integer colx, double xleft, double xright,
@@ -295,12 +288,12 @@ void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, 
 	}
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, xleft, xright, ybottom, ytop);
-	double xbottom = (intercept + parmy -> value * ybottom) / - parmx -> value;
-	double xtop = (intercept + parmy -> value * ytop) / - parmx -> value;
-	double yleft = (intercept + parmx -> value * xleft) / - parmy -> value;
-	double yright = (intercept + parmx -> value * xright) / - parmy -> value;
-	double xmin = NUMmin2 (xleft, xright), xmax = NUMmax2 (xleft, xright);
-	double ymin = NUMmin2 (ybottom, ytop), ymax = NUMmax2 (ybottom, ytop);
+	const double xbottom = (intercept + parmy -> value * ybottom) / - parmx -> value;
+	const double xtop = (intercept + parmy -> value * ytop) / - parmx -> value;
+	const double yleft = (intercept + parmx -> value * xleft) / - parmy -> value;
+	const double yright = (intercept + parmx -> value * xright) / - parmy -> value;
+	const double xmin = std::min (xleft, xright), xmax = std::max (xleft, xright);
+	const double ymin = std::min (ybottom, ytop), ymax = std::max (ybottom, ytop);
 	trace (U"LogisticRegression_drawBoundary: ",
 		xmin, U" ", xmax, U" ", xbottom, U" ", xtop, U" ", ymin, U" ", ymax, U" ", yleft, U" ", yright);
 	if (xbottom >= xmin && xbottom <= xmax) {   // line goes through bottom?

@@ -89,9 +89,12 @@ autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNa
 	}
 }
 
-autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber, conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain) {
+autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber,
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain)
+{
 	try {
-		autoTextGridTierNavigator tn = TextGrid_to_TextGridTierNavigator_topic (me, tierNumber, topic_string, topicCriterion,  topicMatchBoolean,  matchDomain);
+		autoTextGridTierNavigator tn = TextGrid_to_TextGridTierNavigator_topic (me, tierNumber,
+				topicLabels, topicCriterion, topicMatchBoolean, matchDomain);
 		autoTextGridNavigator thee = TextGridTierNavigator_to_TextGridNavigator (tn.get());
 		return thee;
 	} catch (MelderError) {
@@ -100,14 +103,17 @@ autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, in
 }
 
 autoTextGridNavigator TextGrid_to_TextGridNavigator (TextGrid me, integer tierNumber, 
-	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,  
-	conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
-	conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
 	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain) {
 try {
-		autoNavigationContext navigationContext = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean,
-			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic);
+		autoNavigationContext navigationContext = NavigationContext_create (
+			topicLabels, topicCriterion, topicMatchBoolean,
+			beforeLabels, beforeCriterion, beforeMatchBoolean,
+			afterLabels, afterCriterion, afterMatchBoolean,
+			useCriterion, excludeTopic
+		);
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber, matchDomain);
 		autoTextGridNavigator him = TextGridTierNavigator_to_TextGridNavigator (thee.get());
 		return him;
@@ -117,16 +123,19 @@ try {
 }
 
 void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGrid thee, integer tierNumber, 
-	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,  
-	conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
-	conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
 	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
-		autoNavigationContext navigationContext = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean,
-			before_string, beforeCriterion, beforeMatchBoolean, after_string, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic);
+		autoNavigationContext navigationContext = NavigationContext_create (
+			topicLabels, topicCriterion, topicMatchBoolean,
+			beforeLabels, beforeCriterion, beforeMatchBoolean,
+			afterLabels, afterCriterion, afterMatchBoolean,
+			useCriterion, excludeTopic
+		);
 		autoTextGridTierNavigator him = TextGrid_and_NavigationContext_to_TextGridTierNavigator (thee, navigationContext.get(), tierNumber, matchDomain);
 		TextGridNavigator_addTextGridTierNavigator (me, him.get(), matchLocation);
 	} catch (MelderError) {
@@ -135,17 +144,24 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 }
 
 void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator me, TextGrid thee, integer tierNumber, 
-	conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, kMatchDomain matchDomain, kMatchLocation matchLocation) {
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	kMatchDomain matchDomain, kMatchLocation matchLocation)
+{
 	try {
-		TextGridNavigator_and_TextGrid_addSearchTier (me, thee, tierNumber, topic_string, topicCriterion, topicMatchBoolean,  
-			U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
-			kContext_use::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchLocation);
+		TextGridNavigator_and_TextGrid_addSearchTier (me, thee, tierNumber,
+			topicLabels, topicCriterion, topicMatchBoolean,
+			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
+			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
+			kContext_use::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchLocation
+		);
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add search topic tier from TextGrid.");	
 	}
 }
 	
-void TextGridNavigator_addNewTierNavigation (TextGridNavigator me, TextGrid thee, NavigationContext navigationContext, integer tierNumber, kMatchDomain matchDomain, kMatchLocation matchLocation) {
+void TextGridNavigator_addNewTierNavigation (TextGridNavigator me, TextGrid thee, NavigationContext navigationContext,
+	integer tierNumber, kMatchDomain matchDomain, kMatchLocation matchLocation)
+{
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
@@ -665,6 +681,5 @@ autoMAT TextGridNavigator_listDomains (TextGridNavigator me, kMatchDomain matchD
 		Melder_throw (me, U": could not list indices.");
 	}	
 }
-
 
 /* End of file TextGridNavigator.cpp */

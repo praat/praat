@@ -46,6 +46,7 @@ void Table_insertColumn (Table me, integer column, conststring32 label /* cattab
 void Table_setColumnLabel (Table me, integer column, conststring32 label /* cattable */);
 integer Table_findColumnIndexFromColumnLabel (Table me, conststring32 label) noexcept;
 integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel);
+autoINTVEC Table_columnNamesToNumbers (Table me, constSTRVEC const& columnNames);
 autoINTVEC Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 string);
 integer Table_searchColumn (Table me, integer column, conststring32 value) noexcept;
 

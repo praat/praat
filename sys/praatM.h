@@ -163,7 +163,7 @@
 		static constMAT numericMatrixVariable; \
 		UiForm_addRealMatrix (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, labelText, defaultNumericMatrixValue.get());
 
-#define TEXTVEC(stringArrayVariable, labelText, ...)  \
+#define STRINGARRAY(stringArrayVariable, labelText, ...)  \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
