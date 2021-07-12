@@ -127,8 +127,7 @@ DO
 FORM (CONVERT_EACH_TO_ONE__EEG_to_Sound_modulated, U"EEG: To Sound (modulated)", nullptr) {
 	POSITIVE (baseFrequency, U"Base frequency (Hz)", U"100.0")
 	POSITIVE (channelBandwidth, U"Channel bandwidth (Hz)", U"100.0")
-	TEXTFIELD (channels, U"Channels", U"1:64", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	NATURALVECTOR (channels, U"Channels", RANGES_, U"1:64")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (EEG)

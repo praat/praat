@@ -416,17 +416,16 @@ static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Mute channels", nullptr)
-		TEXTFIELD (channels_string, U"Channels", U"2", 5)
+		NATURALVECTOR (channels, U"Channels to mute", WHITESPACE_SEPARATED_, U"2")
 	EDITOR_OK
 	EDITOR_DO
-		integer numberOfChannels = ( my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny );
-		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, U"channel", false);
+		const integer numberOfChannels = ( my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny );
 		Melder_assert (my d_sound.muteChannels.size == numberOfChannels);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
 			my d_sound.muteChannels [ichan] = false;
-		for (integer ichan = 1; ichan <= channelNumbers.size; ichan ++)
-			if (channelNumbers [ichan] >= 1 && channelNumbers [ichan] <= numberOfChannels)
-				my d_sound.muteChannels [channelNumbers [ichan]] = true;
+		for (integer ichan = 1; ichan <= channels.size; ichan ++)
+			if (channels [ichan] >= 1 && channels [ichan] <= numberOfChannels)
+				my d_sound.muteChannels [channels [ichan]] = true;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
