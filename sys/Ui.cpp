@@ -257,7 +257,7 @@ static void UiField_setDefault (UiField me) {
 			GuiText_setString (my text, formatNumericMatrix (my numericMatrixDefaultValue.get(), theRealMatrixFormat));
 		}
 		break;
-		case _kUiField_type::TEXTVEC_:
+		case _kUiField_type::STRINGARRAY_:
 		{
 			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
 			GuiText_setString (my text, formatStringArray (my stringArrayDefaultValue.get(), theStringArrayFormat));
@@ -437,7 +437,7 @@ static void UiField_widgetToValue (UiField me) {
 				*my numericMatrixVariable = my numericMatrixValue.get();
 		}
 		break;
-		case _kUiField_type::TEXTVEC_:
+		case _kUiField_type::STRINGARRAY_:
 		{
 			autostring32 stringValue = GuiText_getString (my text);
 			theStringArrayFormat = (kUi_stringArrayFormat) GuiOptionMenu_getValue (my optionMenu);
@@ -740,7 +740,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 							}
 						}
 					} break;
-					case _kUiField_type:: TEXTVEC_:
+					case _kUiField_type:: STRINGARRAY_:
 					{
 						if (NUMisEmpty (field -> stringArrayValue.get())) {
 							UiHistory_write_expandQuotes (next -- ? U", empty$# (0)" : U" empty$# (0)");
@@ -1092,7 +1092,7 @@ UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 varia
 }
 
 UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 label, constSTRVEC defaultValue, integer numberOfLines) {
-	UiField thee = UiForm_addField (me, _kUiField_type::TEXTVEC_, label);
+	UiField thee = UiForm_addField (me, _kUiField_type::STRINGARRAY_, label);
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;
 	thy stringArrayVariable = variable;
@@ -1223,7 +1223,7 @@ void UiForm_finish (UiForm me) {
 			thy type == _kUiField_type::REALVECTOR_ || thy type == _kUiField_type::POSITIVEVECTOR_ ||
 			thy type == _kUiField_type::INTEGERVECTOR_ || thy type == _kUiField_type::NATURALVECTOR_ ||
 			thy type == _kUiField_type::REALMATRIX_ ||
-			thy type == _kUiField_type::TEXTVEC_
+			thy type == _kUiField_type::STRINGARRAY_
 		;
 		if (thouHastVerticallyAddedLabel)
 			dialogHeight += (headerLabelHeight + Gui_VERTICAL_DIALOG_SPACING_SAME) * !! thy formLabel;
@@ -1365,7 +1365,7 @@ void UiForm_finish (UiForm me) {
 				okButtonIsDefault = false;   // because otherwise, the Enter key would be ambiguous
 			}
 			break;
-			case _kUiField_type::TEXTVEC_:
+			case _kUiField_type::STRINGARRAY_:
 			{
 				MelderString_copy (& theFinishBuffer, thy formLabel.get());
 				appendColon ();
@@ -1618,7 +1618,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			next -> type == _kUiField_type::INFILE_ || next -> type == _kUiField_type::OUTFILE_ ||
 			next -> type == _kUiField_type::FOLDER_ ||
 			next -> type == _kUiField_type::REALMATRIX_ ||
-			next -> type == _kUiField_type::TEXTVEC_);
+			next -> type == _kUiField_type::STRINGARRAY_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
 			Melder_stringMatchesCriterion (my stringValue.get(), kMelder_string::ENDS_WITH, U":", true);
@@ -1933,7 +1933,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*my numericMatrixVariable = my numericMatrixValue.get();
 		}
 		break;
-		case _kUiField_type::TEXTVEC_:
+		case _kUiField_type::STRINGARRAY_:
 		{
 			if (arg -> which != Stackel_STRING_ARRAY && arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string array, not ", arg -> whichText(), U".");
@@ -2127,7 +2127,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
-		case _kUiField_type::TEXTVEC_:
+		case _kUiField_type::STRINGARRAY_:
 			my stringArrayValue = splitByWhitespace_STRVEC (string);
 			if (my stringArrayVariable)
 				*my stringArrayVariable = my stringArrayValue.get();

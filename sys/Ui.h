@@ -103,7 +103,7 @@ enum class _kUiField_type {
 	INTEGERVECTOR_ = 18,
 	NATURALVECTOR_ = 19,
 	REALMATRIX_ = 20,
-	TEXTVEC_ = 21,
+	STRINGARRAY_ = 21,
 	BOOLEAN_ = 22,
 	RADIO_ = 23,
 	OPTIONMENU_ = 24,
@@ -123,8 +123,8 @@ Thing_define (UiField, Thing) {
 	kUi_integerVectorFormat integerVectorDefaultFormat;   // for INTEGERVECTOR_, NATURALVECTOR_
 	autoINTVEC integerVectorValue, integerVectorDefaultValue;   // for INTEGERVECTOR_, NATURALVECTOR_
 	autoMAT numericMatrixValue, numericMatrixDefaultValue;   // for REALMATRIX_
-	kUi_stringArrayFormat stringArrayFormat;   // for TEXTVEC_
-	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for TEXTVEC_
+	kUi_stringArrayFormat stringArrayFormat;   // for STRINGARRAY_
+	autoSTRVEC stringArrayValue, stringArrayDefaultValue;   // for STRINGARRAY_
 	MelderColour colourValue;
 	OrderedOf<structUiOption> options;
 	constSTRVEC strings;

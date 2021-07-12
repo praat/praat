@@ -1012,7 +1012,7 @@ static autoTable Table_rowsToColumns (Table me, constINTVECVU const& factorColum
 	}
 }
 
-static autoINTVEC Table_columnNamesToNumbers (Table me, constSTRVEC columnNames) {
+autoINTVEC Table_columnNamesToNumbers (Table me, constSTRVEC const& columnNames) {
 	autoINTVEC columnNumbers = zero_INTVEC (columnNames.size);
 	for (integer i = 1; i <= columnNames.size; i ++)
 		columnNumbers [i] = Table_getColumnIndexFromColumnLabel (me, columnNames [i]);

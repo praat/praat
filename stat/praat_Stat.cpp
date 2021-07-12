@@ -223,7 +223,7 @@ DO
 FORM (NEW1_Table_createWithColumnNames, U"Create Table with column names", nullptr) {
 	WORD (name, U"Name", U"table")
 	INTEGER (numberOfRows, U"Number of rows", U"10")
-	TEXTVEC (columnNames, U"Column names", { U"speaker", U"dialect", U"age_yr", U"vowel", U"F0_Hz", U"F1_Hz", U"F2_Hz" })
+	STRINGARRAY (columnNames, U"Column names", { U"speaker", U"dialect", U"age_yr", U"vowel", U"F0_Hz", U"F1_Hz", U"F2_Hz" })
 	OK
 DO
 	CREATE_ONE
@@ -895,7 +895,7 @@ DIRECT (MODIFY_EACH__Table_reflectRows) {
 }
 
 FORM (MODIFY_EACH__Table_sortRows, U"Table: Sort rows", nullptr) {
-	TEXTVEC (columnNames, U"One or more column names for sorting", { U"dialect", U"gender", U"name" })
+	STRINGARRAY (columnNames, U"One or more column names for sorting", { U"dialect", U"gender", U"name" })
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -959,9 +959,9 @@ DIRECT (CONVERT_EACH_TO_ONE__Table_transpose) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
-	TEXTVEC (factors, U"Columns with factors (independent variables)", { U"dialect", U"gender", U"speaker" })
+	STRINGARRAY (factors, U"Columns with factors (independent variables)", { U"dialect", U"gender", U"speaker" })
 	SENTENCE (columnToTranspose, U"Column to transpose", U"vowel")
-	TEXTVEC (columnsToExpand, U"Columns to expand", { U"duration", U"F0", U"F1", U"F2", U"F3" })
+	STRINGARRAY (columnsToExpand, U"Columns to expand", { U"duration", U"F0", U"F1", U"F2", U"F3" })
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
@@ -977,7 +977,7 @@ DIRECT (CONVERT_EACH_TO_ONE__Table_to_LinearRegression) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
-	TEXTFIELD (factors, U"Factors (column names)", U"F0 F1 duration", 3)
+	STRINGARRAY (factors, U"Factors (column names)", { U"F0", U"F1", U"duration" })
 	SENTENCE (dependent1, U"Dependent 1 (column name)", U"e")
 	SENTENCE (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
