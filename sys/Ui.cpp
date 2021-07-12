@@ -2127,6 +2127,30 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
+		case _kUiField_type::REALVECTOR_:
+		case _kUiField_type::POSITIVEVECTOR_:
+		{
+			my realVectorValue = splitByWhitespace_VEC (string);
+			if (my type == _kUiField_type::POSITIVEVECTOR_)
+				for (integer i = 1; i <= my realVectorValue.size; i ++)
+					if (my realVectorValue [i] <= 0.0)
+						Melder_throw (U"Element ", i, U" of vector “", my name.get(), U"” is ", my realVectorValue [i], U" but should be greater than 0.0.");
+			if (my realVectorVariable)
+				*my realVectorVariable = my realVectorValue.get();
+		}
+		break;
+		case _kUiField_type::INTEGERVECTOR_:
+		case _kUiField_type::NATURALVECTOR_:
+		{
+			my integerVectorValue = splitByWhitespaceWithRanges_INTVEC (string);
+			if (my type == _kUiField_type::NATURALVECTOR_)
+				for (integer i = 1; i <= my integerVectorValue.size; i ++)
+					if (my integerVectorValue [i] <= 0)
+						Melder_throw (U"Element ", i, U" of vector “", my name.get(), U"” is ", my integerVectorValue [i], U" but should be greater than 0.");
+			if (my integerVectorVariable)
+				*my integerVectorVariable = my integerVectorValue.get();
+		}
+		break;
 		case _kUiField_type::STRINGARRAY_:
 			my stringArrayValue = splitByWhitespace_STRVEC (string);
 			if (my stringArrayVariable)
