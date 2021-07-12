@@ -238,9 +238,8 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer number
 	}
 }
 
-autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, conststring32 channelRanges) {
+autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, constINTVEC const& channelNumbers) {
 	try {
-		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, U"channel", true);
 		const double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
 		const double samplingFrequency = std::max (2.0 * maxFreq, 44100.0);
 		autoSound thee = Sound_createSimple (1, my xmax - my xmin, samplingFrequency);

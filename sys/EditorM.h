@@ -235,6 +235,17 @@ _form_inited_: \
 	FOLDER_FIELD (stringVariable, labelText, defaultValue)
 
 
+#define NATURALVECTOR_VARIABLE(integerVectorVariable) \
+	static constINTVEC integerVectorVariable;
+
+#define NATURALVECTOR_FIELD(integerVectorVariable, labelText, defaultFormat, defaultStringValue) \
+	UiForm_addNaturalVector (cmd -> d_uiform.get(), & integerVectorVariable, nullptr, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
+
+#define NATURALVECTOR(integerVectorVariable, labelText, defaultFormat, defaultStringValue) \
+	NATURALVECTOR_VARIABLE (integerVectorVariable) \
+	NATURALVECTOR_FIELD (integerVectorVariable, labelText, defaultFormat, defaultStringValue)
+
+
 #define RADIO_VARIABLE(optionVariable) \
 	static int optionVariable;
 

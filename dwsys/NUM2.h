@@ -47,13 +47,6 @@ autoINTVEC newINTVECfromString (conststring32 s);
 autoVEC newVECfromString (conststring32 s);
 /* return array with the numbers found */
 
-/*
- * Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
- * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
- * Overlap is allowed. Ranges can go up and down.
- */
-autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques);
-
 char32 * NUMstring_timeNoDot (double time);
 
 regexp *NUMregexp_compile (conststring32 regexp);

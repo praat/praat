@@ -45,7 +45,7 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer number
 
 autoSound EEG_to_Sound_frequencyShifted (EEG me, integer channel, double frequencyShift, double samplingFrequency, double maxAmp);
 
-autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandWidth, conststring32 channelRanges);
+autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandWidth, constINTVEC const& channelNumbers);
 
 /* End of file EEG_extensions.h */
 #endif

@@ -399,7 +399,7 @@ static void UiField_widgetToValue (UiField me) {
 				case kUi_integerVectorFormat::WHITESPACE_SEPARATED_: {
 					my integerVectorValue = iround_INTVEC (splitByWhitespace_VEC (stringValue.get()).get());
 				} break; case kUi_integerVectorFormat::RANGES_: {
-					my integerVectorValue = NUMstring_getElementsOfRanges (stringValue.get(), INTEGER_MAX, U"element", false);
+					my integerVectorValue = splitByWhitespaceWithRanges_INTVEC (stringValue.get());
 				} break; case kUi_integerVectorFormat::FORMULA_: {
 					VEC result;
 					bool ownedByInterpreter;
@@ -1902,7 +1902,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_NUMERIC_VECTOR && arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
 			if (arg -> which == Stackel_STRING) {
-				my integerVectorValue = NUMstring_getElementsOfRanges (arg -> getString(), INTEGER_MAX, U"element", false);
+				my integerVectorValue = splitByWhitespaceWithRanges_INTVEC (arg -> getString());
 			} else {
 				my integerVectorValue = raw_INTVEC (arg -> numericVector.size);
 				for (integer i = 1; i <= arg -> numericVector.size; i ++) {

@@ -354,6 +354,8 @@ extern autoVEC between_count_VEC (double from, double to, integer count);
 
 autoVEC splitByWhitespace_VEC (conststring32 string);
 
+autoINTVEC splitByWhitespaceWithRanges_INTVEC (conststring32 ranges);
+
 autoVEC cast_VEC (constINTVEC const& intvec);
 autoINTVEC ifloor_INTVEC (constVEC const& vec);
 autoINTVEC iround_INTVEC (constVEC const& vec);
