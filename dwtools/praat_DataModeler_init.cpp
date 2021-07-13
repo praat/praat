@@ -32,13 +32,13 @@ FORM (CREATE_ONE__DataModeler_createSimple, U"Create simple DataModeler", nullpt
 	REAL (xmin, U"left X range", U"0.0")
 	REAL (xmax, U"right X range", U"1.0")
 	NATURAL (numberOfDataPoints, U"Number of data points", U"20")
-	SENTENCE (parameter_string, U"Parameters", U"0.0 1.0 1.0")
+	REALVECTOR (parameters, U"Parameters", WHITESPACE_SEPARATED_, U"0.0 1.0 1.0")
 	POSITIVE (standardDeviation, U"Gaussian noise stdev", U"0.2")
 	OPTIONMENU_ENUM (kDataModelerFunction, type, U"Basis functions", kDataModelerFunction::DEFAULT)		
 	OK
 DO
 	CREATE_ONE
-		autoDataModeler result = DataModeler_createSimple (xmin, xmax, numberOfDataPoints, parameter_string, standardDeviation, type);
+		autoDataModeler result = DataModeler_createSimple (xmin, xmax, numberOfDataPoints, parameters, standardDeviation, type);
 	CREATE_ONE_END (name)
 }
 
