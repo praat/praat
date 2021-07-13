@@ -230,10 +230,10 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage 
 
 
 
-autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring32 s_centroid, integer numberOfObservations) {
+autoCovariance Covariance_createSimple (conststring32 covariances_string, conststring32 centroid_string, integer numberOfObservations) {
 	try {
-		autoVEC centroid = newVECfromString (s_centroid);
-		autoVEC covariances = newVECfromString (s_covariances);
+		autoVEC centroid = newVECfromString (centroid_string);
+		autoVEC covariances = newVECfromString (covariances_string);
 		integer numberOfCovariances_wanted = centroid.size * (centroid.size + 1) / 2;
 		Melder_require (covariances.size == numberOfCovariances_wanted,
 			U"The number of covariance matrix elements and the number of centroid elements (d) should conform. "

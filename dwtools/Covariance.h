@@ -2,7 +2,7 @@
 #define _Covariance_h_
 /* Covariance.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VECVU vec
 
 autoCovariance Covariance_create (integer dimension);
 
-autoCovariance Covariance_createSimple (conststring32 covars, conststring32 centroid, integer numberOfObservations);
+autoCovariance Covariance_createSimple (conststring32 covariances_string, conststring32 centroid_string, integer numberOfObservations);
 
 autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage storage);
 /*
