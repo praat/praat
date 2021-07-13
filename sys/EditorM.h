@@ -235,6 +235,17 @@ _form_inited_: \
 	FOLDER_FIELD (stringVariable, labelText, defaultValue)
 
 
+#define REALVECTOR_VARIABLE(realVectorVariable) \
+	static constVEC realVectorVariable;
+
+#define REALVECTOR_FIELD(realVectorVariable, labelText, defaultFormat, defaultStringValue) \
+	UiForm_addRealVector (cmd -> d_uiform.get(), & realVectorVariable, nullptr, labelText, kUi_realVectorFormat::defaultFormat, defaultStringValue);
+
+#define REALVECTOR(realVectorVariable, labelText, defaultFormat, defaultStringValue) \
+	REALVECTOR_VARIABLE (realVectorVariable) \
+	REALVECTOR_FIELD (realVectorVariable, labelText, defaultFormat, defaultStringValue)
+
+
 #define NATURALVECTOR_VARIABLE(integerVectorVariable) \
 	static constINTVEC integerVectorVariable;
 
