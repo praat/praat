@@ -27,7 +27,7 @@
 
 #include "FormantModelerList_def.h"
 
-autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string);
+autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double startTime, double endTime, constINTVEC const& numberOfParametersPerTrack);
 
 /*
 	Find best model according to Weenink (2015), Improved formant frequency measurements of short segments.

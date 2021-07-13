@@ -450,13 +450,12 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 		LABEL (U"Global stress parameters:")
 		POSITIVE (windowLength, U"Window length", U"0.035")
-		SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
+		NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
 		POSITIVE (powerf, U"Power", U"1.25")
 	EDITOR_OK
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
-		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
+		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -482,9 +481,12 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		Graphics_setInner (my pictureGraphics);
 		double startTime, endTime, xCursor, yCursor;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
-		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5, my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true);
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5,
+			my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz,
+			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true
+		);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
 	EDITOR_END
@@ -498,7 +500,7 @@ static void INFO_DATA__stressListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) 
 		constVEC ceilings = formantPath -> ceilings.get();
 		double startTime, endTime;
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, nullptr, nullptr);
-		autoINTVEC parameters = newINTVECfromString (my p_modeler_numberOfParametersPerTrack);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		autoVEC stresses = FormantPath_getStresses (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Ceiling_Hz Stress StartTime_s EndTime_s ");
@@ -721,7 +723,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	const integer nrow = 0, ncol = 0;
 	if (startTime != previousStartTime || endTime != previousEndTime)
 		our selectedCandidate = 0;
-	autoINTVEC parameters = newINTVECfromString (our p_modeler_numberOfParametersPerTrack);
+	autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (our p_modeler_numberOfParametersPerTrack);
 	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 

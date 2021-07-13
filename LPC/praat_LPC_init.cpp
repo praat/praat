@@ -115,7 +115,7 @@ FORM (GRAPHICS_EACH__FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullp
 	POSITIVE (lineEvery_Hz, U"Horizontal line every (Hz)", U"1000.0")
 	REAL (xCursor, U"X cursor line at (s)", U"-0.1 (=no line)")
 	REAL (yCursor, U"Y cursor at (Hz)", U"-100.0 (=no line)")
-	SENTENCE (parameters_string, U"Coefficients by track", U"7 7 7 7")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"7 7 7 7")
 	BOOLEAN (markCandidatesWithinPath, U"Mark candidates within path", false)
 	COLOUR (markColour, U"Mark colour", U"{0.984,0.984, 0.7}")
 	BOOLEAN (showStress, U"Show stress", true)
@@ -125,8 +125,10 @@ FORM (GRAPHICS_EACH__FormantPath_drawAsGrid, U"FormantPath: Draw as grid", nullp
 	OK
 DO
 	GRAPHICS_EACH (FormantPath)
-		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz, xCursor, yCursor, markColour, parameters.get(), markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish);
+		FormantPath_drawAsGrid (me, GRAPHICS, tmin, tmax, fmax, fromFormant, toFormant,
+			showBandwidths, odd, even, numberOfRows, numberOfColumns, xSpaceFraction, ySpaceFraction, lineEvery_Hz,
+			xCursor, yCursor, markColour, parameters, markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish
+		);
 	GRAPHICS_EACH_END
 }
 
@@ -144,13 +146,12 @@ DIRECT (QUERY_ONE_FOR_REAL_VECTOR__FormantPath_listCeilingFrequencies) {
 
 FORM (CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_stress, U"FormantPath: To Matrix (stress)", nullptr) {
 	POSITIVE (windowLength, U"Window length", U"0.025")
-	SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (FormantPath)
-		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		autoMatrix result = FormantPath_to_Matrix_stress (me, windowLength, parameters.get (), powerf);
+		autoMatrix result = FormantPath_to_Matrix_stress (me, windowLength, parameters, powerf);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -183,7 +184,7 @@ FORM (CONVERT_EACH_TO_ONE__FormantPath_to_Matrix_deltas,  U"FormantPath: To Matr
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 	LABEL (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
-	SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
@@ -193,9 +194,9 @@ DO
 			frequencyChangeWeight >= 0 && frequencyChangeWeight <= 1.0 &&
 			stressWeight >= 0 && stressWeight <= 1.0 &&
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
-			U"A weight should greater or equal 0.0 and smaller or equal 1.0.");
-		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, windowLength, intensityModulationStepSize, parameters.get(), powerf, & result);	
+			U"A weight should be greater or equal 0.0 and smaller or equal 1.0.");
+		autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
+				windowLength, intensityModulationStepSize, parameters, powerf, & result);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -209,7 +210,7 @@ FORM (MODIFY_EACH__FormantPath_pathFinder,  U"FormantPath: Path finder", nullptr
 	POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 	LABEL (U"Global stress parameters:")
 	POSITIVE (windowLength, U"Window length", U"0.035")
-	SENTENCE (parameters_string, U"Coefficients by track", U"3 3 3 3")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	OK
 DO
@@ -219,8 +220,7 @@ DO
 			stressWeight >= 0 && stressWeight <= 1.0 &&
 			ceilingChangeWeight >= 0 && ceilingChangeWeight <= 1.0,
 			U"A weight should be greater than or equal to 0.0 and smaller than or equal to 1.0.");
-		autoINTVEC parameters = newINTVECfromString (parameters_string);
-		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), powerf);
+		FormantPath_pathFinder (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
 	MODIFY_EACH_END
 }
 
