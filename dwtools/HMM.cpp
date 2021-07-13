@@ -93,24 +93,6 @@ autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence 
 
 autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes);
 
-// evaluate the numbers given to probabilities
-static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
-	autoVEC numbers = newVECfromString (s);
-	if (numbers.size != nwanted)
-		Melder_throw (U"You supplied ", numbers.size, U", while ", nwanted, U" numbers needed.");
-	longdouble sum = 0.0;
-	for (integer i = 1; i <= numbers.size; i ++) {
-		if (numbers [i] < 0.0)
-			Melder_throw (U"Numbers have to be positive.");
-		sum += numbers [i];
-	}
-	Melder_require (sum > 0.0,
-		U"All probabilities cannot be zero.");
-	for (integer i = 1; i <= numbers.size; i ++)
-		numbers [i] /= sum;
-	return numbers;
-}
-
 #if 0
 static integer NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *out_x1, double *out_y1, double *out_x2, double *out_y2) {
 	const double ca = a * a + 1.0, bmyc = (b - yc);
@@ -508,7 +490,7 @@ void HMM_setDefaultTransitionProbs (HMM me) {
 		}
 		// leftToRight must have end state!
 		my transitionProbs [my numberOfStates] [my numberOfStates] =
-			my transitionProbs [my numberOfStates] [my numberOfStates + 1] = 0.5;
+				my transitionProbs [my numberOfStates] [my numberOfStates + 1] = 0.5;
 	} else {
 		my transitionProbs.part (1, my numberOfStates, 1, my numberOfStates)  <<=  1.0 / my numberOfStates;
 		my transitionProbs.column (my numberOfStates + 1)  <<=  0.0;
@@ -521,8 +503,8 @@ void HMM_setDefaultInitialStateProbs (HMM me) {
 
 void HMM_setDefaultEmissionProbs (HMM me) {
 	if (my notHidden) {
-		my emissionProbs.get ()  <<=  0.0;
-		my emissionProbs.diagonal ()  <<=  1.0;
+		my emissionProbs.get()  <<=  0.0;
+		my emissionProbs.diagonal()  <<=  1.0;
 	} else 
 		my emissionProbs.part (1, my numberOfStates, 1, my numberOfObservationSymbols)  <<=  1.0 / my numberOfObservationSymbols;
 }
@@ -535,38 +517,52 @@ void HMM_setDefaultMixingProbabilities (HMM me) {
 	}
 }
 
-void HMM_setStartProbabilities (HMM me, conststring32 probs) {
+// evaluate the numbers given to probabilities
+static autoVEC normalizeProbabilities_VEC (constVECVU const& relativeProbabilities, integer nwanted) {
+	if (relativeProbabilities.size != nwanted)
+		Melder_throw (U"You supplied ", relativeProbabilities.size, U" numbers, whereas we need ", nwanted, U" numbers.");
+	for (integer i = 1; i <= relativeProbabilities.size; i ++)
+		Melder_require (relativeProbabilities [i] >= 0.0,
+			U"Relative probabilities have to be non-negative.");
+	const double sum = NUMsum (relativeProbabilities);
+	Melder_require (sum > 0.0,
+		U"All probabilities cannot be zero.");
+	autoVEC absoluteProbabilities = copy_VEC (relativeProbabilities);
+	absoluteProbabilities.all()  /=  sum;
+	return absoluteProbabilities;
+}
+
+void HMM_setStartProbabilities (HMM me, constVECVU const& relativeProbabilities) {
 	try {
-		autoVEC p = NUMwstring_to_probs (probs, my numberOfStates);
-		my initialStateProbs.get ()  <<=  p.get();
+		autoVEC absoluteProbabilities = normalizeProbabilities_VEC (relativeProbabilities, my numberOfStates);
+		my initialStateProbs.all()  <<=  absoluteProbabilities.all();
 	} catch (MelderError) {
 		Melder_throw (me, U": no start probabilities set.");
 	}
 }
 
-void HMM_setTransitionProbabilities (HMM me, integer state_number, conststring32 state_probs) {
+void HMM_setTransitionProbabilities (HMM me, integer state_number, constVECVU const& relativeProbabilities) {
 	try {
 		Melder_require (state_number <= my states->size,
 			U"State number should not exceed ", my states->size, U".");
-		autoVEC p = NUMwstring_to_probs (state_probs, my numberOfStates);
-		my transitionProbs.row (state_number).part (1, my numberOfStates)  <<=  p.get ();
+		autoVEC absoluteProbabilities = normalizeProbabilities_VEC (relativeProbabilities, my numberOfStates);
+		my transitionProbs.row (state_number).part (1, my numberOfStates)  <<=  absoluteProbabilities.all();
 	} catch (MelderError) {
 		Melder_throw (me, U": no transition probabilities set.");
 	}
 }
 
-void HMM_setEmissionProbabilities (HMM me, integer state_number, conststring32 emission_probs) {
+void HMM_setEmissionProbabilities (HMM me, integer state_number, constVECVU const& relativeProbabilities) {
 	try {
 		Melder_require (state_number <= my states->size,
 			U"State number should not exceed ", my states->size, U".");
 		Melder_require (! my notHidden,
 			U"The emission probabilities of this model are fixed.");
-		autoVEC p = NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols);
-		my emissionProbs.row (state_number).part (1, my numberOfObservationSymbols)  <<=  p.get ();
+		autoVEC absoluteProbabilities = normalizeProbabilities_VEC (relativeProbabilities, my numberOfObservationSymbols);
+		my emissionProbs.row (state_number).part (1, my numberOfObservationSymbols)  <<=  absoluteProbabilities.all();
 	} catch (MelderError) {
 		Melder_throw (me, U": no emission probabilities set.");
 	}
-
 }
 
 void HMM_addObservation_move (HMM me, autoHMMObservation thee) {

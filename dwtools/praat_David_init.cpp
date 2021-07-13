@@ -4665,11 +4665,11 @@ DIRECT (CONVERT_EACH_TO_ONE__PCA_extractEigen) {
 }
 
 FORM (CONVERT_EACH_TO_ONE__PCA_to_TableOfReal_reconstruct1, U"PCA: To TableOfReal (reconstruct)", U"PCA: To TableOfReal (reconstruct 1)...") {
-	SENTENCE (coefficients_string, U"Coefficients", U"1.0 1.0")
+	REALVECTOR (coefficients, U"Coefficients", WHITESPACE_SEPARATED_, U"1.0 1.0")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (PCA)
-		autoTableOfReal result = PCA_to_TableOfReal_reconstruct1 (me, coefficients_string);
+		autoTableOfReal result = PCA_to_TableOfReal_reconstruct1 (me, coefficients);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_reconstructed")
 }
 
@@ -4978,11 +4978,11 @@ DO
 
 FORM (CREATE_ONE__Polygon_createSimple, U"Create simple Polygon", U"Create simple Polygon...") {
 	WORD (name, U"Name", U"p")
-	SENTENCE (vertices_string, U"Vertices as X-Y pairs", U"0.0 0.0  0.0 1.0  1.0 0.0")
+	REALVECTOR (vertices_asXYPairs, U"Vertices as X-Y pairs", WHITESPACE_SEPARATED_, U"0.0 0.0  0.0 1.0  1.0 0.0")
 	OK
 DO
 	CREATE_ONE
-		autoPolygon result = Polygon_createSimple (vertices_string);
+		autoPolygon result = Polygon_createSimple (vertices_asXYPairs);
 	CREATE_ONE_END (name)
 }
 
@@ -7597,7 +7597,7 @@ DO
 
 FORM (GRAPHICS_EACH__TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U"TableOfReal: Draw rows as histogram...") {
 	LABEL (U"Select from the table")
-	WORD (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	INTEGER (fromColumn, U"left Column range", U"0")
 	INTEGER (toColumn, U"right Column range", U"0")
 	LABEL (U"Vertical drawing range")
@@ -7606,22 +7606,22 @@ FORM (GRAPHICS_EACH__TableOfReal_drawRowAsHistogram, U"Draw row as histogram", U
 	LABEL (U"Offset and distance in units of 'bar width'")
 	REAL (xOffset, U"Horizontal offset", U"0.5")
 	REAL (distanceBetweenBars, U"Distance between bars", U"1.0")
-	WORD (greys, U"Grey value (1=white)", U"0.7")
+	REAL (greyValue, U"Grey value (1.0=white)", U"0.7")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumber, fromColumn, toColumn, ymin, ymax, 
-			xOffset, 0, distanceBetweenBars, greys, garnish
+		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, autoINTVEC ({ rowNumber }).get(), fromColumn, toColumn, ymin, ymax,
+			xOffset, 0, distanceBetweenBars, autoVEC ({ greyValue }).get(), garnish
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_EACH__TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram", U"TableOfReal: Draw rows as histogram...") {
 	LABEL (U"Select from the table")
-	SENTENCE (rowNumbers_string, U"Row numbers", U"1 2")
-	INTEGER (fromColumn, U"left Column range", U"0")
-	INTEGER (toColumn, U"right Column range", U"0")
+	NATURALVECTOR (rowNumbers, U"Row numbers", WHITESPACE_SEPARATED_, U"1 2")
+	INTEGER (fromColumn, U"left Column range", U"0 (= all)")
+	INTEGER (toColumn, U"right Column range", U"0 (= all)")
 	LABEL (U"Vertical drawing range")
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
@@ -7629,13 +7629,13 @@ FORM (GRAPHICS_EACH__TableOfReal_drawRowsAsHistogram, U"Draw rows as histogram",
 	REAL (xOffset, U"Horizontal offset", U"1.0")
 	REAL (distanceBetweenBarGroups, U"Distance between bar groups", U"1.0")
 	REAL (distanceBetweenBars, U"Distance between bars", U"0.0")
-	SENTENCE (greys_string, U"Grey values (1=white)", U"1 1")
+	REALVECTOR (greys, U"Grey values (1.0=white)", WHITESPACE_SEPARATED_, U"1.0 1.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumbers_string, fromColumn, toColumn, ymin, ymax,
-			xOffset, distanceBetweenBars,distanceBetweenBarGroups, greys_string, garnish
+		TableOfReal_drawRowsAsHistogram (me, GRAPHICS, rowNumbers, fromColumn, toColumn, ymin, ymax,
+			xOffset, distanceBetweenBars, distanceBetweenBarGroups, greys, garnish
 		);
 	GRAPHICS_EACH_END
 }

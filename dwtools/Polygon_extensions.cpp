@@ -56,19 +56,18 @@ void Polygon_getExtrema (Polygon me, double *out_xmin, double *out_xmax, double 
 		*out_ymax = ymax;
 }
 
-autoPolygon Polygon_createSimple (conststring32 xystring) {
+autoPolygon Polygon_createSimple (constVECVU const& vertices_asXYPairs) {
 	try {
-		autoVEC xys = newVECfromString (xystring);
-		Melder_require (xys.size >= 6,
+		Melder_require (vertices_asXYPairs.size >= 6,
 			U"There should be at least 3 points (= x,y pairs) in the Polygon");
-		Melder_require (xys.size % 2 == 0,
+		Melder_require (vertices_asXYPairs.size % 2 == 0,
 			U"One value is missing.");
 		
-		const integer numberOfPoints = xys.size / 2;
+		const integer numberOfPoints = vertices_asXYPairs.size / 2;
 		autoPolygon me = Polygon_create (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
-			my x [i] = xys [2 * i - 1];
-			my y [i] = xys [2 * i];
+			my x [i] = vertices_asXYPairs [2 * i - 1];
+			my y [i] = vertices_asXYPairs [2 * i];
 			if (i > 1 && my x [i] == my x [i - 1] && my y [i] == my y [i - 1])
 				Melder_warning (U"Two successive vertices are equal.");
 		}

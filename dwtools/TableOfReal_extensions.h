@@ -61,13 +61,15 @@ integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNum
 
 conststring32 TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber);
 
-void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 rows, integer colb, integer cole,
+void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, constINTVECVU const& rowNumbers, integer colb, integer cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
-	double interbarsFraction, conststring32 greys, bool garnish);
+	double interbarsFraction, constVECVU const& greys, bool garnish
+);
 
 void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb,
 	integer rowe, double xmin, double xmax, double ymin, double ymax,
-	integer labelSize, bool useRowLabels, conststring32 label, bool garnish);
+	integer labelSize, bool useRowLabels, conststring32 label, bool garnish
+);
 
 void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax, kGraphicsMatrixOrigin origin, double cellSizeFactor, kGraphicsMatrixCellDrawingOrder fillOrder, bool garnish);
 
