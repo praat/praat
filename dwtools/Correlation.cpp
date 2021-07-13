@@ -46,15 +46,15 @@ autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me) {
 	}
 }
 
-autoCorrelation Correlation_createSimple (constVECVU const& correlations, constVECVU const& centroids, integer numberOfObservations) {
+autoCorrelation Correlation_createSimple (constVECVU const& correlations, constVECVU const& centroid, integer numberOfObservations) {
 	try {
-		integer numberOfCorrelations_wanted = centroids.size * (centroids.size + 1) / 2;
+		integer numberOfCorrelations_wanted = centroid.size * (centroid.size + 1) / 2;
 		Melder_require (correlations.size == numberOfCorrelations_wanted,
 			U"The number of correlation matrix elements and the number of centroid elements should agree. "
 			"If there are d centroid values, there should be d(d+1)/2 correlation values, "
-			"so if there are ", centroids.size, U" centroid values, there should be ", numberOfCorrelations_wanted, U" correlation values.");
+			"so if there are ", centroid.size, U" centroid values, there should be ", numberOfCorrelations_wanted, U" correlation values.");
 
-		autoCorrelation me = Correlation_create (centroids.size);
+		autoCorrelation me = Correlation_create (centroid.size);
 		/*
 			Construct the full correlation matrix from the upper-diagonal elements
 		*/
@@ -62,24 +62,24 @@ autoCorrelation Correlation_createSimple (constVECVU const& correlations, constV
 		for (integer inum = 1; inum <= correlations.size; inum ++) {
 			const integer nmissing = (rowNumber - 1) * rowNumber / 2;
 			const integer inumc = inum + nmissing;
-			rowNumber = (inumc - 1) / centroids.size + 1;
-			const integer icol = ( (inumc - 1) % centroids.size) + 1;
+			rowNumber = (inumc - 1) / centroid.size + 1;
+			const integer icol = ( (inumc - 1) % centroid.size) + 1;
 			my data [rowNumber] [icol] = my data [icol] [rowNumber] = correlations [inum];
-			if (icol == centroids.size)
+			if (icol == centroid.size)
 				rowNumber ++;
 		}
 		/*
 			Check if a valid correlations, first check diagonal then off-diagonals
 		*/
-		for (integer irow = 1; irow <= centroids.size; irow ++)
+		for (integer irow = 1; irow <= centroid.size; irow ++)
 			Melder_require (my data [irow] [irow] == 1.0,
 				U"The diagonal matrix elements should all equal 1.0.");
-		for (integer irow = 1; irow <= centroids.size; irow ++)
-			for (integer icol = irow + 1; icol <= centroids.size; icol ++)
+		for (integer irow = 1; irow <= centroid.size; irow ++)
+			for (integer icol = irow + 1; icol <= centroid.size; icol ++)
 				Melder_require (fabs (my data [irow] [icol]) <= 1.0,
 					U"The correlation in cell [", irow, U",", icol, U"], i.e. input item ",
-					(irow - 1) * centroids.size + icol - (irow - 1) * irow / 2, U" should not exceed 1.0.");
-		my centroid.all()  <<=  centroids;
+					(irow - 1) * centroid.size + icol - (irow - 1) * irow / 2, U" should not exceed 1.0.");
+		my centroid.all()  <<=  centroid;
 		my numberOfObservations = numberOfObservations;
 		return me;
 	} catch (MelderError) {

@@ -30,7 +30,7 @@ autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me);
 
 autoCorrelation Correlation_create (integer dimension);
 
-autoCorrelation Correlation_createSimple (constVECVU const& correlations, constVECVU const& centroids, integer numberOfObservations);
+autoCorrelation Correlation_createSimple (constVECVU const& correlations, constVECVU const& centroid, integer numberOfObservations);
 
 autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, integer numberOfTests, int method);
 /*

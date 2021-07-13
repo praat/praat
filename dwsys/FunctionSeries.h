@@ -2,7 +2,7 @@
 #define _FunctionSeries_h_
 /* FunctionSeries.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,6 @@ void FunctionSeries_setDomain (FunctionSeries me, double xmin, double xmax);
 void FunctionSeries_setCoefficient (FunctionSeries me, integer index, double value);
 
 double FunctionSeries_evaluate (FunctionSeries me, double x);
-
-void FunctionSeries_evaluate_z (FunctionSeries me, dcomplex *z, dcomplex *p);
 
 void FunctionSeries_evaluateTerms (FunctionSeries me, double x, VEC terms);
 
