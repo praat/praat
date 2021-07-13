@@ -30,7 +30,7 @@
 
 void FunctionSeries_init (FunctionSeries me, double xmin, double xmax, integer numberOfCoefficients);
 
-void FunctionSeries_initFromString (FunctionSeries me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros);
+void FunctionSeries_initWithCoefficients (FunctionSeries me, double xmin, double xmax, constVECVU const& coefficients, bool allowTrailingZeros);
 
 autoFunctionSeries FunctionSeries_create (double xmin, double xmax, integer numberOfCoefficients);
 

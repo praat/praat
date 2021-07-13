@@ -38,7 +38,7 @@ Thing_define (Polynomial, FunctionSeries) {
 
 autoPolynomial Polynomial_create (double xmin, double xmax, integer degree);
 
-autoPolynomial Polynomial_createFromString (double xmin, double xmax, conststring32 s);
+autoPolynomial Polynomial_createWithCoefficients (double xmin, double xmax, constVECVU const& coefficients);
 
 void Polynomial_scaleCoefficients_monic (Polynomial me);
 /* Make coefficent of leading term 1.0 */

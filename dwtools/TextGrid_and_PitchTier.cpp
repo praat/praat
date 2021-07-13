@@ -83,23 +83,20 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, const
 	} 
 }
 
-static autoVEC getTimesFromRelativeTimesString (double tmin, double tmax, conststring32 times_string, int time_offset) {
-	autoVEC times = newVECfromString (times_string);
-	/*
-		translate the "times" to real time
-	*/
-	for (integer i = 1; i <= times.size; i ++) {
+static autoVEC getAbsoluteFromRelativeTimes (double tmin, double tmax, constVECVU const& relativeTimes, int time_offset) {
+	autoVEC absoluteTimes = raw_VEC (relativeTimes.size);
+	for (integer i = 1; i <= relativeTimes.size; i ++) {
 		if (time_offset == TIME_OFFSET_AS_FRACTION_FROM_START)
-			times [i] = tmin + times [i] * (tmax - tmin);
+			absoluteTimes [i] = tmin + relativeTimes [i] * (tmax - tmin);
 		else if (time_offset == TIME_OFFSET_AS_PERCENTAGE_FROM_START)
-			times [i] = tmin + times [i] * (tmax - tmin) * 0.01;
+			absoluteTimes [i] = tmin + relativeTimes [i] * (tmax - tmin) * 0.01;
 		else if (time_offset == TIME_OFFSET_AS_SECONDS_FROM_START)
-			times [i] = tmin + times [i];
+			absoluteTimes [i] = tmin + relativeTimes [i];
 		else {
 			// we should not be here
 		}
 	}
-	return times;
+	return absoluteTimes;
 }
 
 /*
@@ -143,7 +140,8 @@ static double note_to_frequency (conststring32 token, double a4) {
 }
 
 static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, double tmax,
-	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status) {
+	constVECVU const& relativeTimes, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status)
+{
 	(void) pitch_unit;
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
@@ -152,7 +150,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 				pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED)
 			Melder_throw (U"You need to specify an anchor value to calculate ", (pitch_as == PITCH_VALUE_AS_FRACTION ? U"fractions" : U"percentages"), U".");
 		
-		autoVEC times = getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset);
+		autoVEC times = getAbsoluteFromRelativeTimes (tmin, tmax, relativeTimes, time_offset);
 		
 		autoStrings items = Strings_createAsTokens (pitches_string, U" ");
 		const integer numberOfPitches = items -> numberOfStrings;
@@ -243,67 +241,40 @@ static void PitchTiers_replacePoints (PitchTier me, PitchTier thee) {
 	}
 }
 
-void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status) {
+void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax,
+	constVECVU const& relativeTimes, int time_offset, conststring32 pitches_string,
+	int pitch_unit, int pitch_as, int pitchAnchor_status)
+{
 	try {
-		autoPitchTier thee = PitchTier_createAsModifiedPart (me, tmin, tmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
+		autoPitchTier thee = PitchTier_createAsModifiedPart (me, tmin, tmax, relativeTimes, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
 		PitchTiers_replacePoints (me, thee.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": interval modification not completed.");
 	}
 }
 
-
-autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status,
-	kMelder_string which, conststring32 criterion) {
-	try {
-		autoPitchTier him = Data_copy (thee);
-		for (integer i = 1; i <= my intervals.size; i ++) {
-			const TextInterval segment = my intervals.at [i];
-			if (Melder_stringMatchesCriterion (segment -> text.get(), which, criterion, true)) {
-				const double xmin = segment -> xmin, xmax = segment -> xmax;
-				autoPitchTier modified = PitchTier_createAsModifiedPart (thee, xmin, xmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
-				PitchTiers_replacePoints (him.get(), modified.get());
-			}
-		}
-		return him;
-	} catch (MelderError) {
-		Melder_throw (me, U": cannot create PitchTier.");
-	}
-}
-
-#if 0
-static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber,
-	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, conststring32 criterion) {
-	try {
-		const IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		return IntervalTier_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which, criterion);
-	} catch (MelderError) {
-		Melder_throw (me, U": cannot create PitchTier.");
-	}
-}
-#endif
-
 /* 
 	We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.
 	(normally in Mandarin Chinese they count 5 levels).
 */
-static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, conststring32 times_string, int time_offset, conststring32 pitches_string)
+static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax,
+	integer numberOfToneLevels, constVECVU const& relativeTimes, int time_offset, constVECVU const& pitchesAsToneLevels)
 {
 	try {
 		Function_unidirectionalAutowindow (me, & tmin, & tmax);
 		Melder_require (fmin < fmax,
 			U"The lowest frequency should be lower than the highest frequency.");
 
-		autoVEC times = getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset);
-		autoVEC pitches = newVECfromString (pitches_string);
-		Melder_require (times.size == pitches.size,
-			U"The number of items in the times and the pitches string have to be equal.");
+		autoVEC times = getAbsoluteFromRelativeTimes (tmin, tmax, relativeTimes, time_offset);
+		Melder_require (times.size == pitchesAsToneLevels.size,
+			U"The number of times and the number of pitches have to be equal.");
 
+		autoVEC pitches_hertz = raw_VEC (pitchesAsToneLevels.size);
 		const double scale = log10 (fmax / fmin) / numberOfToneLevels;
-		for (integer i = 1; i <= pitches.size; i ++)
-			pitches [i] = fmin * pow (10.0, scale * pitches [i]);
-		NUMsortTogether (times.get(), pitches.get());
-		autoPitchTier thee = PitchTier_createFromPoints (times [1], times [times.size], times.get(), pitches.get());
+		for (integer i = 1; i <= pitchesAsToneLevels.size; i ++)
+			pitches_hertz [i] = fmin * pow (10.0, scale * pitchesAsToneLevels [i]);
+		NUMsortTogether (times.get(), pitches_hertz.get());
+		autoPitchTier thee = PitchTier_createFromPoints (times [1], times [times.size], times.get(), pitches_hertz.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": interval modification not succeeded.");
@@ -311,9 +282,10 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 }
 
 void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax,
-	integer numberOfToneLevels, conststring32 times_string, int time_offset, conststring32 pitches_string) {
+	integer numberOfToneLevels, constVECVU const& relativeTimes, int time_offset, constVECVU const& pitchesAsToneLevels)
+{
 	try {
-		autoPitchTier thee = PitchTier_createAsModifiedPart_toneLevels (me, tmin, tmax, fmin, fmax, numberOfToneLevels, times_string, time_offset, pitches_string);
+		autoPitchTier thee = PitchTier_createAsModifiedPart_toneLevels (me, tmin, tmax, fmin, fmax, numberOfToneLevels, relativeTimes, time_offset, pitchesAsToneLevels);
 		PitchTiers_replacePoints (me, thee.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": interval modification as tone levels not succeeded.");
