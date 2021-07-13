@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2012,2015-2020 David Weenink, 2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,12 +139,11 @@ autoStrings Strings_change (Strings me, conststring32 search, conststring32 repl
 	}
 }
 
-autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings, integer from, integer to) {
+autoStrings Strings_createFromSTRVEC (constSTRVEC const& strings) {
 	try {
-		autoStrings thee = Strings_createFixedLength (to - from + 1);
-		for (integer i = from; i <= to; i ++)
-			thy strings [i - from + 1] = Melder_dup (strings [i]);
-
+		autoStrings thee = Strings_createFixedLength (strings.size);
+		for (integer i = 1; i <= strings.size; i ++)
+			thy strings [i] = Melder_dup (strings [i]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Strings not created.");
@@ -155,7 +154,7 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	try {
 		Melder_require (from > 0 && from <= to && to <= my numberOfStrings,
 			U"Strings_extractPart: begin and end should be in interval [1, ", my numberOfStrings, U"].");
-		return Strings_createFromSTRVEC (my strings.get(), from, to);
+		return Strings_createFromSTRVEC (my strings.part (from, to));
 	} catch (MelderError) {
 		Melder_throw (me, U": no part extracted.");
 	}
@@ -254,15 +253,14 @@ autoStrings StringsIndex_to_Strings (StringsIndex me) {
 
 autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
 	try {
-		Melder_require (column > 0 && column <= my numberOfColumns,
-			U"Invalid column number.");
+		Table_checkSpecifiedColumnNumberWithinRange (me, column);
 		const integer numberOfRows = my rows.size;
 		Table_numericize_Assert (me, column);
 		autoSTRVEC groupLabels (numberOfRows);
 		for (integer irow = 1; irow <= numberOfRows; irow ++)
-			groupLabels [irow] = Melder_dup(my rows.at [irow] -> cells [column]. string.get()); //TODO no dup
+			groupLabels [irow] = Melder_dup (my rows.at [irow] -> cells [column]. string.get());   // TODO: no dup
 
-		autoStrings thee = Strings_createFromSTRVEC (groupLabels.get(), 1, numberOfRows);
+		autoStrings thee = Strings_createFromSTRVEC (groupLabels.get());
 		autoStringsIndex him = Strings_to_StringsIndex (thee.get());
 		return him;
 	} catch (MelderError) {

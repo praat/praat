@@ -195,10 +195,10 @@ autoPolynomial Polynomial_create (double xmin, double xmax, integer degree) {
 	}
 }
 
-autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, conststring32 s) {
+autoPolynomial Polynomial_createWithCoefficients (double lxmin, double lxmax, constVECVU const& coefficients) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		FunctionSeries_initFromString (me.get(), lxmin, lxmax, s, false);
+		FunctionSeries_initWithCoefficients (me.get(), lxmin, lxmax, coefficients, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from string.");
@@ -299,7 +299,7 @@ autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant) {
 }
 
 /* P(x)= (x-roots [1])*(x-roots [2])*..*(x-roots [numberOfRoots]) */
-void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
+void Polynomial_initFromRealRoots (Polynomial me, constVECVU const& roots) {
 	try {
 		my extendCapacity (roots.size + 1);
 		integer n = 1;
@@ -318,12 +318,11 @@ void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
 	}
 }
 
-autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s) {
+autoPolynomial Polynomial_createFromRealRoots (double xmin, double xmax, constVECVU const& roots) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		autoVEC roots = newVECfromString (s);
 		FunctionSeries_init (me.get(), xmin, xmax, roots.size + 1);
-		Polynomial_initFromRealRoots (me.get(), roots.get());
+		Polynomial_initFromRealRoots (me.get(), roots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from roots.");
@@ -334,7 +333,7 @@ autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, c
 /* Product (i=1; a.size; (1 + a [i] * x + x^2)
  * Postcondition : my numberOfCoeffcients = 2 * a.size + 1
  */
-void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVECVU const& a) {
 	my extendCapacity (2 * a.size + 1);
 	my coefficients [1] = my coefficients [3] = 1.0;
 	my coefficients [2] = a [1];
@@ -350,12 +349,11 @@ void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
 	my numberOfCoefficients = ncoef;
 }
 
-autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s) {
+autoPolynomial Polynomial_createFromProductOfSecondOrderTerms (double xmin, double xmax, constVECVU const& a) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		autoVEC a = newVECfromString (s);
 		FunctionSeries_init (me.get(), xmin, xmax, 2 * a.size + 1);
-		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.get());
+		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from second order terms string.");
@@ -521,47 +519,5 @@ dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
 	}
 	return result;
 }
-
-/*
-
-#define RationalFunction_members Function_members \
-	Polynomial num, denum;
-#define RationalFunction_methods Function_methods
-class_create (RationalFunction, Function)
-
-RationalFunction RationalFunction_create (double xmin, double xmax,
-	integer degree_num, integer degree_denum)
-{
-	RationalFunction me = new (RationalFunction);
-	if (! me || ! (my num = Polynomial_create (xmin, xmax, degree_num)) ||
-		!  (my denum = Polynomial_create (xmin, xmax, degree_denum))) forget (me);
-	return me;
-}
-
-RationalFunction RationalFunction_createFromString (I, double xmin, double xmax,
-	char *num, char *denum)
-{
-	RationalFunction me = new (RationalFunction); integer i;
-
-	if (! (my num = Polynomial_createFromString (xmin, xmax, num)) ||
-		! (my denum = Polynomial_createFromString (xmin, xmax, denum))) forget (me);
-	if (my denum -> v [1] != 1 && my denum -> v [1] != 0)
-	{
-		double q0 = my denum -> v [1];
-		for (i=1; 1 <= my num ->numberOfCoefficients; i ++) my num -> v [i] /= q0;
-		for (i=1; 1 <= my denum ->numberOfCoefficients; i ++) my denum -> v [i] /= q0;
-	}
-	return me;
-}
-
-// divide out common roots
-RationalFunction RationalFunction_simplify (RationalFunction me)
-{
-	Roots num = nullptr, denum = nullptr; RationalFunction thee = nullptr;
-	if (! (num = Polynomial_to_Roots (my num)) ||
-		! (denum = Polynomial_to_Roots (my denum))) goto end;
-}
-
-*/
 
 /* end of file Polynomial.cpp */

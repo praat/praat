@@ -38,7 +38,7 @@ Thing_define (Polynomial, FunctionSeries) {
 
 autoPolynomial Polynomial_create (double xmin, double xmax, integer degree);
 
-autoPolynomial Polynomial_createFromString (double xmin, double xmax, conststring32 s);
+autoPolynomial Polynomial_createWithCoefficients (double xmin, double xmax, constVECVU const& coefficients);
 
 void Polynomial_scaleCoefficients_monic (Polynomial me);
 /* Make coefficent of leading term 1.0 */
@@ -54,11 +54,11 @@ dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z);
  * Precondition : my numberOfCoeffcients >= 3+2*numberOfOmegas
  * 	Polynomial is uses as a "buffer". We define it one and reuse it 
  */
-void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a);
-autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s);
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVECVU const& a);
+autoPolynomial Polynomial_createFromProductOfSecondOrderTerms (double xmin, double xmax, constVECVU const& a);
 
-void Polynomial_initFromRealRoots (Polynomial me, constVEC roots);
-autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s);
+void Polynomial_initFromRealRoots (Polynomial me, constVECVU const& roots);
+autoPolynomial Polynomial_createFromRealRoots (double xmin, double xmax, constVECVU const& roots);
 
 double Polynomial_getArea (Polynomial me, double xmin, double xmax);
 

@@ -230,14 +230,13 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage 
 
 
 
-autoCovariance Covariance_createSimple (conststring32 covariances_string, conststring32 centroid_string, integer numberOfObservations) {
+autoCovariance Covariance_createSimple (constVECVU const& covariances, constVECVU const& centroid, integer numberOfObservations) {
 	try {
-		autoVEC centroid = newVECfromString (centroid_string);
-		autoVEC covariances = newVECfromString (covariances_string);
-		integer numberOfCovariances_wanted = centroid.size * (centroid.size + 1) / 2;
+		const integer numberOfCovariances_wanted = centroid.size * (centroid.size + 1) / 2;
 		Melder_require (covariances.size == numberOfCovariances_wanted,
-			U"The number of covariance matrix elements and the number of centroid elements (d) should conform. "
-			"There should be d(d+1)/2 covariance values and d centroid values.");
+			U"The number of covariance matrix elements and the number of centroid elements should agree. "
+			"If there are d centroid values, there should be d(d+1)/2 covariance values, "
+			"so if there are ", centroid.size, U" centroid values, there should be ", numberOfCovariances_wanted, U" covariance values.");
 		
 		autoCovariance me = Covariance_create (centroid.size);
 		/*
@@ -265,7 +264,7 @@ autoCovariance Covariance_createSimple (conststring32 covariances_string, consts
 				Melder_require (fabs (my data [irow] [icol] / sqrt (my data [irow] [irow] * my data [icol] [icol])) <= 1.0,
 					U"The covariance in cell [", irow, U",", icol, U"], i.e. input item ",
 				(irow - 1) * centroid.size + icol - (irow - 1) * irow / 2, U" is too large.");
-		my centroid.all()  <<=  centroid.all();
+		my centroid.all()  <<=  centroid;
 		my numberOfObservations = numberOfObservations;
 		return me;
 	} catch (MelderError) {

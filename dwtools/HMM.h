@@ -151,11 +151,11 @@ void HMM_unExpandPCA (HMM me);
 /*
 	Set the probabilities. A probability zero value indicates that this p cannot be changed during training/learning.
 */
-void HMM_setTransitionProbabilities (HMM me, integer state_number, conststring32 state_probs);
+void HMM_setTransitionProbabilities (HMM me, integer state_number, constVECVU const& relativeProbabilities);
 
-void HMM_setEmissionProbabilities (HMM me, integer state_number, conststring32 emission_probs);
+void HMM_setEmissionProbabilities (HMM me, integer state_number, constVECVU const& relativeProbabilities);
 
-void HMM_setStartProbabilities (HMM me, conststring32 probs);
+void HMM_setStartProbabilities (HMM me, constVECVU const& relativeProbabilities);
 
 
 double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer istate);

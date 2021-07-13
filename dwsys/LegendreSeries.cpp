@@ -89,10 +89,10 @@ autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numb
 	}
 }
 
-autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, conststring32 s) {
+autoLegendreSeries LegendreSeries_createWithCoefficients (double xmin, double xmax, constVECVU const& coefficients) {
 	try {
 		autoLegendreSeries me = Thing_new (LegendreSeries);
-		FunctionSeries_initFromString (me.get(), xmin, xmax, s, false);
+		FunctionSeries_initWithCoefficients (me.get(), xmin, xmax, coefficients, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"LegendreSeries not created from string.");

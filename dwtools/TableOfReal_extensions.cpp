@@ -262,22 +262,24 @@ void TableOfReal_getColumnExtrema (TableOfReal me, integer col, double *out_min,
 		*out_max = NUMmax (my data.column (col));
 }
 
-void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 rows, integer colb, integer cole, double ymin,
-	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 greys, bool garnish) {
-	colb = colb == 0 ? 1 : colb;
-	cole = cole == 0 ? my numberOfColumns : cole;
+void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, constINTVECVU const& rowNumbers, integer colb, integer cole, double ymin,
+	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, constVECVU const& greys, bool garnish)
+{
+	if (colb == 0)   // undefined?
+		colb = 1;   // sensible default: all
+	if (cole == 0)   // undefined?
+		cole = my numberOfColumns;   // sensible default: all
 
-	Melder_require (colb > 0 && colb <= cole && cole <= my numberOfColumns,
-		U"Invalid columns");
+	Melder_require (NUMisSorted4 (1_integer, colb, cole, my numberOfColumns),
+		U"Invalid column numbers");
 
-	autoVEC irows = newVECfromString (rows);
-	for (integer i = 1; i <= irows.size; i ++) {
-		const integer irow = Melder_ifloor (irows [i]);
-		Melder_require (irow > 0 && irow <= my numberOfRows,
-			U"Invalid row (", irow, U").");
+	for (integer i = 1; i <= rowNumbers.size; i ++) {
+		const integer rowNumber = rowNumbers [i];
+		Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
+			U"Invalid row (", rowNumber, U").");
 		if (ymin >= ymax) {
 			double min, max;
-			NUMextrema (my data.row (irow).part (colb, cole), & min, & max);
+			NUMextrema (my data.row (rowNumber).part (colb, cole), & min, & max);
 			if (i > 1) {
 				if (min < ymin)
 					ymin = min;
@@ -290,24 +292,22 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 		}
 	}
 
-	autoVEC igreys = newVECfromString (greys);
-
 	Graphics_setWindow (g, 0.0, 1.0, ymin, ymax);
 	Graphics_setInner (g);
 
-	const integer ncols = cole - colb + 1, nrows = irows.size;
+	const integer ncols = cole - colb + 1, nrows = rowNumbers.size;
 	const double bar_width = 1.0 / (ncols * nrows + 2.0 * xoffsetFraction + (ncols - 1) * interbarsFraction + ncols * (nrows - 1) * interbarFraction);
 	const double dx = (interbarsFraction + nrows + (nrows - 1) * interbarFraction) * bar_width;
 
 	for (integer i = 1; i <= nrows; i ++) {
-		const integer irow = Melder_ifloor (irows [i]);
+		const integer rowNumber = rowNumbers [i];
 		const double xb = xoffsetFraction * bar_width + (i - 1) * (1.0 + interbarFraction) * bar_width;
 
-		const double grey = i <= igreys.size ? igreys [i] : igreys [igreys.size];
+		const double grey = greys [1 + (i - 1) % greys.size];   // cycle through the colours
 		double x1 = xb;
 		for (integer j = colb; j <= cole; j ++) {
 			const double x2 = x1 + bar_width;
-			double y2 = my data [irow] [j];
+			double y2 = my data [rowNumber] [j];
 			if (y2 > ymin) {
 				if (y2 > ymax)
 					y2 = ymax;

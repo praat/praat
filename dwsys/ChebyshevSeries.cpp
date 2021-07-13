@@ -91,10 +91,10 @@ autoChebyshevSeries ChebyshevSeries_create (double lxmin, double lxmax, integer 
 	}
 }
 
-autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, conststring32 s) {
+autoChebyshevSeries ChebyshevSeries_createWithCoefficients (double lxmin, double lxmax, constVECVU const& coefficients) {
 	try {
 		autoChebyshevSeries me = Thing_new (ChebyshevSeries);
-		FunctionSeries_initFromString (me.get(), lxmin, lxmax, s, false);
+		FunctionSeries_initWithCoefficients (me.get(), lxmin, lxmax, coefficients, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ChebyshevSeries not created from string.");

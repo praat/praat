@@ -138,8 +138,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer numberOfDependents) {
 		const integer numberOfCoefficients = numberOfDependents - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, numberOfDependents, numberOfIndependents);
-		thy yLabels = Strings_createFromSTRVEC (my columnLabels.get(), 1, numberOfDependents);
-		thy xLabels = Strings_createFromSTRVEC (my columnLabels.get(), numberOfDependents + 1, my numberOfColumns);
+		thy yLabels = Strings_createFromSTRVEC (my columnLabels.part (1, numberOfDependents));
+		thy xLabels = Strings_createFromSTRVEC (my columnLabels.part (numberOfDependents + 1, my numberOfColumns));
 		thy numberOfObservations = numberOfObservations;
 
 		/*

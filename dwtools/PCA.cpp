@@ -294,14 +294,13 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 	}
 }
 
-autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 coefficients) {
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, constVECVU const& coefficients) {
 	try {
-		autoVEC pc = newVECfromString (coefficients);
-		Melder_require (pc.size == my numberOfEigenvalues,
+		Melder_require (coefficients.size == my numberOfEigenvalues,
 			U"The number of coefficients should equal the number of eigenvectors (", my numberOfEigenvalues, U").");
-		autoConfiguration c = Configuration_create (1, pc.size);
-		c -> data.row (1)  <<=  pc.all();
-		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
+		autoConfiguration configuration = Configuration_create (1, coefficients.size);
+		configuration -> data.row (1)  <<=  coefficients;
+		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, configuration.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" not reconstructed.");

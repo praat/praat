@@ -65,7 +65,7 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VECVU vec
 
 autoCovariance Covariance_create (integer dimension);
 
-autoCovariance Covariance_createSimple (conststring32 covariances_string, conststring32 centroid_string, integer numberOfObservations);
+autoCovariance Covariance_createSimple (constVECVU const& covariances, constVECVU const& centroid, integer numberOfObservations);
 
 autoCovariance Covariance_create_reduceStorage (integer dimension, kSSCPstorage storage);
 /*

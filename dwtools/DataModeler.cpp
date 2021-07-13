@@ -1296,8 +1296,8 @@ void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double x
 	Graphics_setTextAlignment (g, kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
 	const double currentFontSize = Graphics_inqFontSize (g);
 	for (integer ipoint = 1; ipoint <= my numberOfDataPoints; ipoint ++) {
-		if (my data [ipoint] .status != kDataModelerData::INVALID) {
-			const double x = my data [ipoint] .x, y = my data [ipoint] .y;
+		if (my data [ipoint]. status != kDataModelerData::INVALID) {
+			const double x = my data [ipoint]. x, y = my data [ipoint]. y;
 			if (x >= xmin && x <= xmax && y >= ymin && y <= ymax)
 				if (fabs (zscores [ipoint]) > numberOfSigmas)
 					Graphics_text (g, x, y, mark);
@@ -1311,10 +1311,10 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 
 	integer ixmin = 1;
-	while (ixmin <= my numberOfDataPoints && my data [ixmin] .x < xmin)
+	while (ixmin <= my numberOfDataPoints && my data [ixmin]. x < xmin)
 		ixmin ++;
 	integer ixmax = my numberOfDataPoints;
-	while (ixmax > 0 && my data [ixmax] .x > xmax)
+	while (ixmax > 0 && my data [ixmax]. x > xmax)
 		ixmax --;
 	if (ixmin > ixmax)
 		return; // nothing to draw
@@ -1325,7 +1325,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	bool x1defined = false, x2defined = false;
 	for (integer ipoint = ixmin; ipoint <= ixmax; ipoint ++) {
 		if (my data [ipoint] .status != kDataModelerData::INVALID) {
-			const double x = my  data [ipoint] .x, y = my data [ipoint].y;
+			const double x = my  data [ipoint]. x, y = my data [ipoint]. y;
 			if (! x1defined) {
 				x1 = x;
 				y1 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
@@ -1521,7 +1521,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 		U"The number of parameters should be greater than zero.");
 	my parameters = newvectorzero<structDataModelerParameter> (my numberOfParameters);
 	for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
-		my parameters [ipar] .status = kDataModelerParameterStatus::FREE;
+		my parameters [ipar]. status = kDataModelerParameterStatus::FREE;
 	my parameterNames = Strings_createFixedLength (my numberOfParameters);
 	my parameterCovariances = Covariance_create (my numberOfParameters);
 	my type = type;
@@ -1538,23 +1538,21 @@ autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDa
 }
 
 autoDataModeler DataModeler_createSimple (double xmin, double xmax,
-	integer numberOfDataPoints, conststring32 parameters, double gaussianNoiseStd, kDataModelerFunction type)
+	integer numberOfDataPoints, constVECVU const& parameterValues, double gaussianNoiseStd, kDataModelerFunction type)
 {
 	try {
-
-		autoVEC parameterValues = newVECfromString (parameters);
 		Melder_require (xmin < xmax,
 			U"The domain should be defined properly.");
 		
 		autoDataModeler me = DataModeler_create (xmin, xmax, numberOfDataPoints, parameterValues.size, type);
 		for (integer ipar = 1; ipar <= parameterValues.size; ipar ++)
-			my parameters [ipar] .value = parameterValues [ipar];   // parameters status ok
+			my parameters [ipar]. value = parameterValues [ipar];   // parameters status ok
 		// generate the data that beinteger to the parameter values
 		for (integer ipoint = 1; ipoint <= numberOfDataPoints; ipoint ++) {
-			my  data [ipoint] .x = xmin + (ipoint - 0.5) * (xmax - xmin) / numberOfDataPoints;
-			const double modelY = my f_evaluate (me.get(), my data [ipoint] .x, my parameters.get());
-			my data [ipoint] .y = modelY + NUMrandomGauss (0.0, gaussianNoiseStd);
-			my data [ipoint] .sigmaY = undefined;
+			my data [ipoint]. x = xmin + (ipoint - 0.5) * (xmax - xmin) / numberOfDataPoints;
+			const double modelY = my f_evaluate (me.get(), my data [ipoint]. x, my parameters.get());
+			my data [ipoint]. y = modelY + NUMrandomGauss (0.0, gaussianNoiseStd);
+			my data [ipoint]. sigmaY = undefined;
 		}
 		my weighData = kDataModelerWeights::EQUAL_WEIGHTS;
 		return me;
@@ -1567,9 +1565,9 @@ autoDataModeler DataModeler_createFromDataModeler (DataModeler thee, integer num
 	try {
 		autoDataModeler me = DataModeler_create (thy xmin, thy xmax, thy numberOfDataPoints, numberOfParameters, type);
 		for (integer k = 1; k <= my numberOfDataPoints; k ++) {
-			my data [k].status = my data [k].status;
-			my data [k].x = thy data [k].x;
-			my data [k].y = thy data [k].y;
+			my data [k]. status = my data [k]. status;
+			my data [k]. x = thy data [k]. x;
+			my data [k]. y = thy data [k]. y;
 		}
 		return me;
 	} catch (MelderError) {
@@ -1645,12 +1643,12 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		numberOfDataPoints = 0;
 		for (integer i = 1; i <= numberOfData; i ++) {
 			if (x [i] >= xmin && x [i] <= xmax) {
-				thy data [++ numberOfDataPoints] .x = x [i];
-				thy data [numberOfDataPoints] .status = kDataModelerData::INVALID;
+				thy data [++ numberOfDataPoints]. x = x [i];
+				thy data [numberOfDataPoints]. status = kDataModelerData::INVALID;
 				if (isdefined (y [i])) {
-					thy data [numberOfDataPoints] .y = y [i];
-					thy data [numberOfDataPoints] .sigmaY = sy [i];
-					thy data [numberOfDataPoints] .status = kDataModelerData::VALID;
+					thy data [numberOfDataPoints]. y = y [i];
+					thy data [numberOfDataPoints]. sigmaY = sy [i];
+					thy data [numberOfDataPoints]. status = kDataModelerData::VALID;
 					validData ++;
 				}
 			}
@@ -1674,8 +1672,7 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, integer *out_numberO
 	for (integer i = 1; i <= my numberOfDataPoints; i ++) {
 		if (my data [i] .status != kDataModelerData::INVALID) {
 			++ numberOfValidDataPoints;
-			const double dif = my data [i] .y - my f_evaluate (me, my data [i] .x, my parameters.get());
-			residualSS += dif * dif;
+			residualSS += sqr (my data [i]. y - my f_evaluate (me, my data [i]. x, my parameters.get()));
 		}
 	}
 	if (out_numberOfValidDataPoints)
@@ -1700,10 +1697,9 @@ double DataModeler_getDataStandardDeviation (DataModeler me) {
 	try {
 		integer numberOfDataPoints = 0;
 		autoVEC y = raw_VEC (my numberOfDataPoints);
-		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
+		for (integer i = 1; i <= my numberOfDataPoints; i ++)
 			if (my data [i] .status != kDataModelerData::INVALID)
 				y [++ numberOfDataPoints] = my data [i]. y;
-		}
 		y. resize (numberOfDataPoints);   // fake shrink
 		return NUMstdev (y.get());
 	} catch (MelderError) {

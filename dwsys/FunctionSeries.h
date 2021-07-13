@@ -30,7 +30,7 @@
 
 void FunctionSeries_init (FunctionSeries me, double xmin, double xmax, integer numberOfCoefficients);
 
-void FunctionSeries_initFromString (FunctionSeries me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros);
+void FunctionSeries_initWithCoefficients (FunctionSeries me, double xmin, double xmax, constVECVU const& coefficients, bool allowTrailingZeros);
 
 autoFunctionSeries FunctionSeries_create (double xmin, double xmax, integer numberOfCoefficients);
 
@@ -39,8 +39,6 @@ void FunctionSeries_setDomain (FunctionSeries me, double xmin, double xmax);
 void FunctionSeries_setCoefficient (FunctionSeries me, integer index, double value);
 
 double FunctionSeries_evaluate (FunctionSeries me, double x);
-
-void FunctionSeries_evaluate_z (FunctionSeries me, dcomplex z);
 
 void FunctionSeries_evaluateTerms (FunctionSeries me, double x, VEC terms);
 
