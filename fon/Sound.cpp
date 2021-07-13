@@ -236,36 +236,35 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 	}
 }
 
-autoSound Sound_extractChannel (Sound me, integer channelNumber) {
+static void Sound_checkChannelNumberWithinRange (Sound me, integer channel) {
+	Melder_require (channel > 0,
+		U"Your channel number is ", channel, U", but it should be positive.");
+	Melder_require (channel <= my ny,
+		U"Your channel number is ", channel,
+		U", but it should not be greater than my number of channels, which is ",
+		my ny, U"."
+	);
+}
+
+autoSound Sound_extractChannel (Sound me, integer channel) {
 	try {
-		Melder_require (channelNumber >= 1 && channelNumber <= my ny,
-			U"There is no channel ", channelNumber, U".");
-		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		thy z.row (1)  <<=  my z.row (channelNumber);
-		return thee;
+		Sound_checkChannelNumberWithinRange (me, channel);
+		autoSound you = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
+		your z.row (1)  <<=  my z.row (channel);
+		return you;
 	} catch (MelderError) {
-		Melder_throw (me, U": channel ", channelNumber, U" not extracted.");
+		Melder_throw (me, U": channel ", channel, U" not extracted.");
 	}
 }
 
-autoSound Sound_extractChannels (Sound me, constVECVU const& channelNumbers) {
+autoSound Sound_extractChannels (Sound me, constINTVECVU const& channels) {
 	try {
-		const integer numberOfChannels = channelNumbers.size;
-		Melder_require (numberOfChannels > 0,
+		Melder_require (channels.size > 0,
 			U"The number of channels should be greater than 0.");
-		autoSound you = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			const integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
-			Melder_require (originalChannelNumber > 0,
-				U"Your channel number is ", originalChannelNumber,
-				U", but it should be positive."
-			);
-			Melder_require (originalChannelNumber <= my ny,
-				U"Your channel number is ", originalChannelNumber,
-				U", but it should not be greater than my number of channels, which is ",
-				my ny, U"."
-			);
-			your z.row (ichan)  <<=  my z.row (originalChannelNumber);
+		autoSound you = Sound_create (channels.size, my xmin, my xmax, my nx, my dx, my x1);
+		for (integer ichan = 1; ichan <= channels.size; ichan ++) {
+			Sound_checkChannelNumberWithinRange (me, channels [ichan]);
+			your z.row (ichan)  <<=  my z.row (channels [ichan]);
 		}
 		return you;
 	} catch (MelderError) {

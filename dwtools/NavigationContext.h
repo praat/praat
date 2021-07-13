@@ -26,11 +26,21 @@
 
 #include "NavigationContext_def.h"
 
-autoNavigationContext NavigationContext_createTopicOnly (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean);
+autoNavigationContext NavigationContext_createTopicOnly (
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean
+);
 
-autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean);
+autoNavigationContext NavigationContext_createBeforeAndTopic (
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean
+);
 
-autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool contextOnly);
+autoNavigationContext NavigationContext_create (
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	kContext_use useCriterion, bool contextOnly
+);
 
 void NavigationContext_replaceTopicLabels (NavigationContext me, Strings labels);
 void NavigationContext_replaceBeforeLabels (NavigationContext me, Strings labels);

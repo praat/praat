@@ -4708,16 +4708,16 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 	}
 }
 
-autoTable Table_extractColumnRanges (Table me, conststring32 ranges) {
+autoTable Table_extractColumnsByNumber (Table me, constINTVECVU const& columnNumbers) {
 	try {
+		Table_checkSpecifiedColumnNumbersWithinRange (me, columnNumbers);
 		const integer numberOfRows = my rows.size;
-		autoINTVEC columnRanges = NUMstring_getElementsOfRanges (ranges, my numberOfColumns, U"column number", true);
-		autoTable thee = Table_createWithoutColumnNames (numberOfRows, columnRanges.size); 
-		for (integer icol = 1; icol <= columnRanges.size; icol ++)
-			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));
+		autoTable thee = Table_createWithoutColumnNames (numberOfRows, columnNumbers.size);
+		for (integer icol = 1; icol <= columnNumbers.size; icol ++)
+			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnNumbers [icol]));
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			for (integer icol = 1; icol <= columnRanges.size; icol ++) {
-				const conststring32 value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
+			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
+				const conststring32 value = Table_getStringValue_Assert (me, irow, columnNumbers [icol]);
 				Table_setStringValue (thee.get(), irow, icol, value);
 			}
 		}

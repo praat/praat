@@ -23,7 +23,7 @@
 */
 
 #include "Matrix.h"
-#include "praat.h"
+#include "praatM.h"
 
 extern "C" Graphics Movie_create (conststring32 title, int width, int height);
 

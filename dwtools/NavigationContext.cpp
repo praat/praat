@@ -91,58 +91,78 @@ void structNavigationContext :: v_info () {
 	MelderInfo_writeLine (U"\tExclude topic match: ", ( excludeTopicMatch ? U"yes" : U"no" ));
 }
 
-autoNavigationContext NavigationContext_createTopicOnly (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean) {
+autoNavigationContext NavigationContext_createTopicOnly (
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean)
+{
 	try {
-		autoNavigationContext me = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, kContext_use::NO_BEFORE_AND_NO_AFTER, false);
+		autoNavigationContext me = NavigationContext_create (
+			topicLabels, topicCriterion, topicMatchBoolean,
+			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
+			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
+			kContext_use::NO_BEFORE_AND_NO_AFTER, false
+		);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NavigationContext could not be created for Topic.");
 	}
 }
 
-autoNavigationContext NavigationContext_createBeforeAndTopic (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean) {
+autoNavigationContext NavigationContext_createBeforeAndTopic (
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean)
+{
 	try {
-		autoNavigationContext me = NavigationContext_create (topic_string, topicCriterion, topicMatchBoolean, before_string, beforeCriterion, kMatchBoolean::OR_, U"", kMelder_string::EQUAL_TO, kMatchBoolean::OR_, kContext_use::BEFORE, false);
+		autoNavigationContext me = NavigationContext_create (
+			topicLabels, topicCriterion, topicMatchBoolean,
+			beforeLabels, beforeCriterion, kMatchBoolean::OR_,
+			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
+			kContext_use::BEFORE, false
+		);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"NavigationContext could not be created for Topic.");
 	}
 }
 
-static autoStrings Strings_createAsUniqueTokens (conststring32 strings, conststring32 where) {
-	autoStrings me = Strings_createAsTokens (strings, U" ");
+static autoStrings Strings_createAsUniqueTokens (constSTRVEC strings, conststring32 where) {
+	autoStrings me = Strings_createFromSTRVEC (strings, 1, strings.size);
 	autoStrings thee = Data_copy (me.get());
 	Strings_sort (thee.get());
 	for (integer istring = 2; istring <= thy numberOfStrings; istring ++)
-		Melder_require (Melder_cmp (thy strings [istring].get(), thy strings [istring - 1].get()) != 0,
+		Melder_require (! Melder_equ (thy strings [istring].get(), thy strings [istring - 1].get()),
 			U"The ", where, U" labels should be unique, however \"", thy strings [istring].get(), U"\" occurs more than once.");
 	return me;
 }
 
-autoNavigationContext NavigationContext_create (conststring32 topic_string, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean, conststring32 before_string, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean, conststring32 after_string, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean, kContext_use useCriterion, bool excludeTopicMatch) {
+autoNavigationContext NavigationContext_create (
+	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
+	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
+	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
+	kContext_use useCriterion, bool excludeTopicMatch)
+{
 	try {
 		Melder_require (! (excludeTopicMatch && useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER), 
 			U"You should not exclude Before & After & Topic from matching. One of the three should be included.");
 		autoNavigationContext me = Thing_new (NavigationContext);
-		my topicLabels = Strings_createAsUniqueTokens (topic_string, U"Topic");
+		my topicLabels = Strings_createAsUniqueTokens (topicLabels, U"Topic");
 		my topicCriterion = topicCriterion;
 		my topicMatchBoolean = topicMatchBoolean;
-		my beforeLabels = Strings_createAsUniqueTokens (before_string, U"Before");
+		my beforeLabels = Strings_createAsUniqueTokens (beforeLabels, U"Before");
 		my beforeCriterion = beforeCriterion;
 		my beforeMatchBoolean = beforeMatchBoolean;
-		my afterLabels = Strings_createAsUniqueTokens (after_string, U"After");
+		my afterLabels = Strings_createAsUniqueTokens (afterLabels, U"After");
 		my afterCriterion = afterCriterion;
 		my afterMatchBoolean = afterMatchBoolean;
 		my useCriterion = useCriterion;
-		if (useCriterion == kContext_use::BEFORE && before_string [0] == U'\0')
+		if (useCriterion == kContext_use::BEFORE && beforeLabels.size == 0)
 			Strings_insert (my beforeLabels.get(), 1, U"");
-		else if (useCriterion == kContext_use::AFTER && after_string [0] == U'\0')
+		else if (useCriterion == kContext_use::AFTER && afterLabels.size == 0)
 			Strings_insert (my afterLabels.get(), 1, U"");
 		else if (useCriterion  == kContext_use::BEFORE_AND_AFTER || useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH ||
 			useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
-			if (before_string [0] == U'\0')
+			if (beforeLabels.size == 0)
 				Strings_insert (my beforeLabels.get(), 1, U"");
-			if (after_string [0] == U'\0')
+			if (afterLabels.size == 0)
 				Strings_insert (my afterLabels.get(), 1, U"");
 		}
 		my excludeTopicMatch = excludeTopicMatch;
@@ -207,8 +227,8 @@ void NavigationContext_modifyAfterCriterion (NavigationContext me, kMelder_strin
 }
 
 void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch) {
-	bool hasBefore = ( my beforeLabels && my beforeLabels -> strings.size > 0 );
-	bool hasAfter = ( my afterLabels && my afterLabels -> strings.size > 0 );
+	const bool hasBefore = ( my beforeLabels && my beforeLabels -> strings.size > 0 );
+	const bool hasAfter = ( my afterLabels && my afterLabels -> strings.size > 0 );
 	if (useCriterion == kContext_use::BEFORE)
 		Melder_require (hasBefore,
 			U"For the ", kContext_use_getText (useCriterion), U" criterion the NavigationContext should have Before labels.");

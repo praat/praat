@@ -2,7 +2,7 @@
 #define _praat_TimeFunction_h_
 /* praat_TimeFunction.h
  *
- * Copyright (C) 2016 Paul Boersma
+ * Copyright (C) 2016,2017,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 */
 
 #include "Function.h"
-#include "praat.h"
+#include "praatM.h"
 
 /*
 	Prompting for fromTime and toTime on one row with two fields.

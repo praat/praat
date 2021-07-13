@@ -564,7 +564,7 @@ FORM (MODIFY_ERP_formula_part, U"ERP: Formula (part)", U"ERP: Formula...") {
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	FORMULA (formula, U"Formula:", U"2 * self")
+	FORMULA (formula, U"Formula", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (ERP)

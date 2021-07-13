@@ -33,7 +33,6 @@
 */
 
 #include "NUM2.h"
-#include "praat.h"
 #include "MDS.h"
 #include "ContingencyTable.h"
 #include "TableOfReal_extensions.h"
@@ -42,6 +41,8 @@
 #include "Proximity_and_Distance.h"
 #include "Confusion.h"
 #include "Formula.h"
+
+#include "praatM.h"
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 
@@ -77,7 +78,7 @@ FORM (CREATE_ONE__Configuration_create, U"Create Configuration", U"Create Config
 	WORD (name, U"Name", U"uniform")
 	NATURAL (numberOfPoints, U"Number of points", U"10")
 	NATURAL (numberOfDimensions, U"Number of dimensions", U"2")
-	FORMULA (formula, U"Formula:", U"randomUniform (-1.5, 1.5)")
+	FORMULA (formula, U"Formula", U"randomUniform (-1.5, 1.5)")
 	OK
 DO
 	CREATE_ONE

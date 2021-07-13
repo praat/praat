@@ -55,7 +55,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeAllToHtmlFolder (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
-		FOLDER (folder, U"Folder:", U"")
+		FOLDER (folder, U"Folder", U"")
 	EDITOR_OK
 		SET_STRING (folder, Melder_dirToPath (& my rootDirectory))
 	EDITOR_DO
@@ -210,21 +210,10 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		BOOLEAN (suppressLinksToThisPage, U"Suppress \"Links to this page\"", false)
 	EDITOR_OK
 		ManPages manPages = (ManPages) my data;
-		time_t today = time (nullptr);
-		char dateA [50];
-		#ifdef UNIX
-			struct tm *tm = localtime (& today);
-			strftime (dateA, 50, "%B %e, %Y", tm);
-		#else
-			strcpy (dateA, ctime (& today));
-		#endif
-		autostring32 date = Melder_8to32 (dateA);
-		char32 *newline = str32chr (date.get(), U'\n');
-		if (newline)
-			*newline = U'\0';
-		SET_STRING (leftOrInsideHeader, date.get())
+		SET_STRING (leftOrInsideHeader, date_STR().get())
 		SET_STRING (rightOrOutsideHeader, my name.get())
-		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
+		if (my d_printingPageNumber)
+			SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
 		if (my visiblePageNumber >= 1 && my visiblePageNumber <= manPages -> pages.size) {
 			ManPage page = manPages -> pages.at [my visiblePageNumber];
 			SET_STRING (printAllPagesWhoseTitleStartsWith, page -> title.get());
@@ -513,7 +502,7 @@ void Manual_init (Manual me, conststring32 title, Daata data, bool ownData) {
 		if (windowTitle [str32len (windowTitle) - 1] == U'-')
 			windowTitle [str32len (windowTitle) - 1] = U'\0';
 	} else {
-		Melder_sprint (windowTitle,101, U"Manual");
+		Melder_sprint (windowTitle,101, U"Praat Manual");
 	}
 	my ownData = ownData;
 	HyperPage_init (me, windowTitle, data);

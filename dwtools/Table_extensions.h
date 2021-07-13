@@ -92,7 +92,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 
 autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
 
-autoTable Table_extractColumnRanges (Table me, conststring32 ranges);
+autoTable Table_extractColumnsByNumber (Table me, constINTVECVU const& columnNumbers);
 
 autoTable Table_extractMahalanobisWhere (Table me,
 	conststring32 columnLabels, conststring32 factorColumn, double numberOfSigmas,

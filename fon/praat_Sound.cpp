@@ -503,7 +503,7 @@ FORM (CREATE_ONE__Sound_create, U"Create mono Sound", U"Create Sound from formul
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	FORMULA (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	FORMULA (formula, U"Formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	CREATE_ONE
@@ -517,7 +517,7 @@ FORM (CREATE_ONE__Sound_createFromFormula, U"Create Sound from formula", U"Creat
 	REAL (startTime, U"Start time (s)", U"0.0")
 	REAL (endTime, U"End time (s)", U"1.0")
 	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100")
-	FORMULA (formula, U"Formula:", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
+	FORMULA (formula, U"Formula", U"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
 	CREATE_ONE
@@ -746,7 +746,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__Sound_filter_formula, U"Sound: Filter (formula)...", U"Formula...") {
 	LABEL (U"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
-	FORMULA (formula, U"Formula:", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
+	FORMULA (formula, U"Formula", U"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
@@ -825,7 +825,7 @@ FORM (MODIFY_Sound_formula_part, U"Sound: Formula (part)", U"Sound: Formula...")
 	REAL (toTime, U"To time", U"0.0 (= all)")
 	NATURAL (fromChannel, U"From channel", U"1")
 	NATURAL (toChannel, U"To channel", U"2")
-	FORMULA (formula, U"Formula:", U"2 * self")
+	FORMULA (formula, U"Formula", U"2 * self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Sound)

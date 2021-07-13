@@ -244,6 +244,55 @@ autoVEC splitByWhitespace_VEC (conststring32 string) {
 	return result;
 }
 
+/*
+	Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
+	1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
+	Overlap is allowed. Ranges can go up and down.
+*/
+autoINTVEC splitByWhitespaceWithRanges_INTVEC (conststring32 ranges) {
+	autoINTVEC elements = raw_INTVEC (0);
+	integer previousElement = 0;
+	const char32 *p = & ranges [0];
+	for (;;) {
+		while (Melder_isHorizontalSpace (*p))
+			p ++;
+		if (*p == U'\0')
+			break;
+		if (Melder_isAsciiDecimalNumber (*p) || *p == '-' && Melder_isAsciiDecimalNumber (p [1])) {
+			const integer currentElement = Melder_atoi (p);
+			* elements.append() = currentElement;
+			previousElement = currentElement;
+			do {
+				p ++;
+			} while (Melder_isAsciiDecimalNumber (*p));
+		} else if (*p == U':') {
+			Melder_require (previousElement != 0,
+				U"The range should not start with a colon.");
+			do {
+				p ++;
+			} while (Melder_isHorizontalSpace (*p));
+			Melder_require (*p != U'\0',
+				U"The range should not end with a colon.");
+			Melder_require (Melder_isAsciiDecimalNumber (*p) || *p == '-' && Melder_isAsciiDecimalNumber (p [1]),
+				U"End of range should be a whole number.");
+			const integer currentElement = Melder_atoi (p);
+			if (currentElement > previousElement)
+				for (integer ielement = previousElement + 1; ielement <= currentElement; ielement ++)
+					* elements.append() = ielement;
+			else
+				for (integer ielement = previousElement - 1; ielement >= currentElement; ielement --)
+					* elements.append() = ielement;
+			previousElement = currentElement;
+			do {
+				p ++;
+			} while (Melder_isAsciiDecimalNumber (*p));
+		} else {
+			Melder_throw (U"Start of range should be a whole number.");
+		}
+	}
+	return elements;
+}
+
 autoVEC cast_VEC (constINTVEC const& intvec) {
 	autoVEC result = raw_VEC (intvec.size);
 	for (integer i = 1; i <= intvec.size; i ++)

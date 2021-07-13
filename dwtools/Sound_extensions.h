@@ -202,8 +202,6 @@ double minSilenceDuration, double minSoundingDuration, double *startTimeOfSoundi
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
     double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *tg, conststring32 trimLabel);
 
-autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges);
-
 autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, kSoundNoiseReductionMethod method);
 
 autoSound Sound_reduceNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, double noiseReduction_dB, kSoundNoiseReductionMethod method);

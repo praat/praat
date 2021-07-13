@@ -18,37 +18,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#undef REAL
-#undef REAL_OR_UNDEFINED
-#undef POSITIVE
-#undef INTEGER
-#undef NATURAL
-#undef WORD
-#undef SENTENCE
-#undef COLOUR
-#undef CHANNEL
-#undef BOOLEAN
-#undef LABEL
-#undef MUTABLE_LABEL
-#undef TEXTFIELD
-#undef FORMULA
-#undef INFILE
-#undef OUTFILE
-#undef FOLDER
-#undef RADIO
-#undef RADIOSTR
-#undef RADIOBUTTON
-#undef OPTIONMENU
-#undef OPTIONMENUSTR
-#undef OPTION
-#undef RADIO_ENUM
-#undef OPTIONMENU_ENUM
-#undef LIST
-#undef SET_REAL
-#undef SET_INTEGER
-#undef SET_BOOLEAN
-#undef SET_STRING
-#undef SET_ENUM
+#ifdef _praatM_h_
+	#error Include either praatM.h or EditorM.h, but not both.
+#endif
 
 #define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter
 #define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, interpreter
@@ -212,7 +184,6 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue, numberOfLines) \
-	UiForm_addLabel (cmd -> d_uiform.get(), nullptr, Melder_cat (labelText, U":")); \
 	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue, numberOfLines);
 
 #define TEXTFIELD(stringVariable, labelText, defaultValue, numberOfLines) \
@@ -224,8 +195,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define FORMULA_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addFormula (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addFormula (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define FORMULA(stringVariable, labelText, defaultValue) \
 	FORMULA_VARIABLE (stringVariable) \
@@ -236,8 +206,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define INFILE_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addInfile (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define INFILE(stringVariable, labelText, defaultValue) \
 	INFILE_VARIABLE (stringVariable) \
@@ -248,8 +217,7 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define OUTFILE_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addOutfile (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addOutfile (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define OUTFILE(stringVariable, labelText, defaultValue) \
 	OUTFILE_VARIABLE (stringVariable) \
@@ -260,12 +228,22 @@ _form_inited_: \
 	static conststring32 stringVariable;
 
 #define FOLDER_FIELD(stringVariable, labelText, defaultValue) \
-	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
-	UiForm_addFolder (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+	UiForm_addFolder (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultValue);
 
 #define FOLDER(stringVariable, labelText, defaultValue) \
 	FOLDER_VARIABLE (stringVariable) \
 	FOLDER_FIELD (stringVariable, labelText, defaultValue)
+
+
+#define NATURALVECTOR_VARIABLE(integerVectorVariable) \
+	static constINTVEC integerVectorVariable;
+
+#define NATURALVECTOR_FIELD(integerVectorVariable, labelText, defaultFormat, defaultStringValue) \
+	UiForm_addNaturalVector (cmd -> d_uiform.get(), & integerVectorVariable, nullptr, labelText, kUi_integerVectorFormat::defaultFormat, defaultStringValue);
+
+#define NATURALVECTOR(integerVectorVariable, labelText, defaultFormat, defaultStringValue) \
+	NATURALVECTOR_VARIABLE (integerVectorVariable) \
+	NATURALVECTOR_FIELD (integerVectorVariable, labelText, defaultFormat, defaultStringValue)
 
 
 #define RADIO_VARIABLE(optionVariable) \

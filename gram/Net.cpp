@@ -93,22 +93,22 @@ void Net_addRBMLayer (Net me, integer numberOfOutputNodes) {
 }
 */
 
-void Net_initAsDeepBeliefNet (Net me, constVECVU const& numbersOfNodes, bool inputsAreBinary) {
+void Net_initAsDeepBeliefNet (Net me, constINTVECVU const& numbersOfNodes, bool inputsAreBinary) {
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
 	Net_initEmpty (me);
 	for (integer ilayer = 1; ilayer <= numberOfLayers; ilayer ++) {
 		autoRBMLayer layer = RBMLayer_create (
-			Melder_iround (numbersOfNodes [ilayer]),
-			Melder_iround (numbersOfNodes [ilayer + 1]),
+			numbersOfNodes [ilayer],
+			numbersOfNodes [ilayer + 1],
 			ilayer == 1 ? inputsAreBinary : true
 		);
 		my layers -> addItem_move (layer.move());
 	}
 }
 
-autoNet Net_createAsDeepBeliefNet (constVECVU const& numbersOfNodes, bool inputsAreBinary) {
+autoNet Net_createAsDeepBeliefNet (constINTVECVU const& numbersOfNodes, bool inputsAreBinary) {
 	try {
 		autoNet me = Thing_new (Net);
 		Net_initAsDeepBeliefNet (me.get(), numbersOfNodes, inputsAreBinary);

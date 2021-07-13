@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009,2011,2012,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@ Thing_declare (Interpreter);
 
 void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfColumns);
 autoTableOfReal TableOfReal_create (integer numberOfRows, integer numberOfColumns);
+
+void TableOfReal_checkRowNumberWithinRange (TableOfReal me, integer rowNumber);
+void TableOfReal_checkColumnNumberWithinRange (TableOfReal me, integer columnNumber);
+
 void TableOfReal_removeRow (TableOfReal me, integer rowNumber);
 void TableOfReal_removeColumn (TableOfReal me, integer columnNumber);
 void TableOfReal_insertRow (TableOfReal me, integer rowNumber);
@@ -60,14 +64,14 @@ void TableOfReal_sortByColumn (TableOfReal me, integer column1, integer column2)
 void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file);
 autoTableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 
-autoTableOfReal TableOfReal_extractRowRanges (TableOfReal me, conststring32 ranges);
-autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, conststring32 ranges);
+autoTableOfReal TableOfReal_extractRowsByNumber (TableOfReal me, constINTVECVU const& rowNumbers);
+autoTableOfReal TableOfReal_extractColumnsByNumber (TableOfReal me, constINTVECVU const& columnNumbers);
 
 autoTableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, integer icol, kMelder_number which, double criterion);
 autoTableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, integer icol, kMelder_number which, double criterion);
 
-autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
-autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
+autoTableOfReal TableOfReal_extractRowsWhoseLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
+autoTableOfReal TableOfReal_extractColumnsWhoseLabel (TableOfReal me, kMelder_string which, conststring32 criterion);
 
 autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, conststring32 condition, Interpreter interpreter);
 autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, conststring32 condition, Interpreter interpreter);

@@ -177,7 +177,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	LABEL (U"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
-	FORMULA (formula, U"Formula:", U"self")
+	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
 	MODIFY_EACH (ActivationList)
@@ -1907,7 +1907,7 @@ DIRECT (QUERY_ONE_FOR_REAL__DTW_getMaximumDistance) {
 FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	FORMULA (formula, U"Formula:", U"self")
+	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (DTW)
@@ -2526,7 +2526,7 @@ DIRECT (COMBINE_ALL_TO_ONE__Excitations_to_ExcitationList) {
 
 FORM (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	LABEL (U"for all objects in ExcitationList do { for col := 1 to ncol do { self [col] := `formula' ; x := x + dx } }")
-	FORMULA (formula, U"Formula:", U"self")
+	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
 	MODIFY_EACH (ExcitationList)
@@ -2674,7 +2674,7 @@ DO
 
 FORM (CREATE_ONE__FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
-	FOLDER (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
+	FOLDER (directory, U"Directory", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
 	WORD (fileGlobber, U"Only files that match pattern", U"*")
 	OK
 DO
@@ -3416,7 +3416,7 @@ static void print_means (Table me) {
 }
 
 FORM (QUERY_ONE_FOR_INTEGER__Table_getNumberOfRowsWhere, U"", nullptr) {
-	FORMULA (formula, U"Count only rows where the following condition holds:", U"1; self$[\"gender\"]=\"M\"")
+	FORMULA (formula, U"Count only rows where the following condition holds", U"1; self$[\"gender\"]=\"M\"")
 	OK
 DO
 	QUERY_ONE_FOR_INTEGER (Table)
@@ -5632,7 +5632,7 @@ FORM (GRAPHICS_EACH__Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where.
 		OPTION (U"bars")
 		OPTION (U"poles")
 		OPTION (U"speckles")
-	FORMULA (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half")
+	FORMULA (formula, U"Draw only those parts where the following condition holds", U"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
 	const integer numberOfBisections = 10;
@@ -5740,12 +5740,11 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
-	TEXTFIELD (channels, U"Create a new Sound from the following channels", U"1:64", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	NATURALVECTOR (channels, U"Create a new Sound from the following channels", RANGES_, U"1:64")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSound result = Sound_copyChannelRanges (me, channels);
+		autoSound result = Sound_extractChannels (me, sortedSet_INTVEC (channels).get());   // TODO: why sorting? (ppgb 20210711)
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_channels")
 }
 
@@ -5768,7 +5767,7 @@ DO
         autoTextGrid tg;
 		autoSound result = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minimumPitch, timeStep, 
 			silenceThreshold, minimumSilenceDuration, minimumSoundingDuration, 
-			(saveTextGrid ? &tg : nullptr ), trim_string
+			( saveTextGrid ? & tg : nullptr ), trim_string
 		);
 		if (saveTextGrid)
             praat_new (tg.move(), my name.get(), U"_trimmed");
@@ -6117,7 +6116,7 @@ FORM (GRAPHICS_EACH__Sound_paintWhere, U"Sound paint where", U"Sound: Paint wher
 	REAL (ymax, U"right Vertical range", U"0.0")
 	REAL (level, U"Fill from level", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Paint only those parts where the following condition holds:", U"1; always")
+	FORMULA (formula, U"Paint only those parts where the following condition holds", U"1; always")
 	OK
 DO
 	const integer numberOfBisections = 10;
@@ -6934,7 +6933,7 @@ FORM (GRAPHICS_EACH__Table_scatterPlotWhere, U"Table: Scatter plot where", nullp
 	WORD (markColumn_string, U"Column with marks", U"")
 	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6956,7 +6955,7 @@ FORM (GRAPHICS_EACH__Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", 
 	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6979,7 +6978,7 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	SENTENCE (colours, U"Colours", U"Grey")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"row >= 1 and row <= 8")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"row >= 1 and row <= 8")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -6999,7 +6998,7 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 	WORD (text, U"Text", U"+")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds:", U"1; (= everything)")
+	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; (= everything)")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7029,7 +7028,7 @@ FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Bo
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7047,7 +7046,7 @@ FORM (GRAPHICS_EACH__Table_drawEllipseWhere, U"Draw ellipse (standard deviation)
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7092,7 +7091,7 @@ FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nul
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7128,7 +7127,7 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probabili
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7209,7 +7208,7 @@ FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7246,7 +7245,7 @@ FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot whe
 	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7292,7 +7291,7 @@ FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal err
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7341,7 +7340,7 @@ FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error b
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7356,7 +7355,7 @@ DO
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
-	FORMULA (formula, U"Extract rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Extract rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
@@ -7370,7 +7369,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract r
 			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	SENTENCE (factorColumn_string, U"Factor column", U"")
-	FORMULA (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
+	FORMULA (formula, U"Process only rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
@@ -7380,13 +7379,13 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
 }
 
-FORM (CONVERT_EACH_TO_ONE__Table_extractColumnRanges, U"Table: Extract column ranges", nullptr) {
-	TEXTFIELD (columnRanges, U"Create a new Table from the following columns", U"1 2", 3)
-	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+FORM (CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber, U"Table: Extract columns by number", nullptr) {
+	LABEL (U"Create a new Table from the columns with the following numbers.")
+	NATURALVECTOR (columnNumbers, U"Column numbers", RANGES_, U"1 2")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		autoTable result = Table_extractColumnRanges (me, columnRanges);
+		autoTable result = Table_extractColumnsByNumber (me, columnNumbers);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_columns")
 }
 
@@ -7973,7 +7972,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
+	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
@@ -7981,22 +7980,22 @@ FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoTextGridNavigator result = TextGrid_to_TextGridNavigator_topicSearch (me, tierNumber, 
-			topic_string, topicCriterion,  topicMatchBoolean, matchDomain
+			topicLabels, topicCriterion, topicMatchBoolean, matchDomain
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
+	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
+	STRINGARRAY (beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n", 2)
+	STRINGARRAY (afterLabels, U"After labels", { U"m", U"n" })
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8008,9 +8007,9 @@ FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"", nullptr) {
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoTextGridNavigator result = TextGrid_to_TextGridNavigator (me, tierNumber, 
-			topic_string, topicCriterion, topicMatchBoolean, 
-			before_string, beforeCriterion, beforeMatchBoolean, 
-			after_string, afterCriterion, afterMatchBoolean,
+			topicLabels, topicCriterion, topicMatchBoolean,
+			beforeLabels, beforeCriterion, beforeMatchBoolean,
+			afterLabels, afterCriterion, afterMatchBoolean,
 			useCriterion, excludeTopic, matchDomain
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
@@ -8312,7 +8311,7 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers) {
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 3)
+	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8322,22 +8321,22 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, U"
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (
-			me, you, tierNumber, topic_string, topicCriterion, topicMatchBoolean, matchDomain, matchLocation
+			me, you, tierNumber, topicLabels, topicCriterion, topicMatchBoolean, matchDomain, matchLocation
 		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	TEXTFIELD (topic_string, U"Topic labels", U"i u e o \\as ", 2)
+	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (before_string, U"Before labels", U"p b t d k g", 2)
+	STRINGARRAY (beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	TEXTFIELD (after_string, U"After labels", U"m n", 2)
+	STRINGARRAY (afterLabels, U"After labels", { U"m", U"n" })
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8350,9 +8349,9 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNa
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_and_TextGrid_addSearchTier (me, you, tierNumber, 
-			topic_string, topicCriterion, topicMatchBoolean, 
-			before_string, beforeCriterion, beforeMatchBoolean,
-			after_string, afterCriterion, afterMatchBoolean, 
+			topicLabels, topicCriterion, topicMatchBoolean,
+			beforeLabels, beforeCriterion, beforeMatchBoolean,
+			afterLabels, afterCriterion, afterMatchBoolean,
 			useCriterion, excludeTopic, matchDomain, matchLocation
 		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
@@ -8426,7 +8425,7 @@ void praat_CC_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, QUERY_BUTTON, nullptr, 0, 0);
 	praat_TimeFrameSampled_query_init (klas);
 	praat_addAction1 (klas, 1, U"Get number of coefficients...", nullptr, 1, 
-		QUERY_ONE_FOR_INTEGER__CC_getNumberOfCoefficients);
+			QUERY_ONE_FOR_INTEGER__CC_getNumberOfCoefficients);
 	praat_addAction1 (klas, 1, U"Get value in frame...", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__CC_getValueInFrame);
 	praat_addAction1 (klas, 1, U"Get c0 value in frame...", nullptr, 1, 
@@ -8549,7 +8548,7 @@ static void praat_FilterBank_draw_init (ClassInfo klas) {
 			GRAPHICS_EACH__FilterBank_paintImage);
 	praat_addAction1 (klas, 0, U"Paint contours...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, 
 			GRAPHICS_EACH__FilterBank_paintContours);
-	praat_addAction1 (klas, 0, U"Paint cells...", nullptr,praat_DEPRECATED_2014 |  praat_DEPTH_1, 
+	praat_addAction1 (klas, 0, U"Paint cells...", nullptr, praat_DEPRECATED_2014 |  praat_DEPTH_1, 
 			GRAPHICS_EACH__FilterBank_paintCells);
 	praat_addAction1 (klas, 0, U"Paint surface...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1,
 			GRAPHICS_EACH__FilterBank_paintSurface);
@@ -10201,11 +10200,13 @@ void praat_uvafon_David_init () {
 			INFO_ONE__Table_reportRobustStatistics);
 	praat_addAction1 (classTable, 0, U"Extract rows where...", U"Extract rows where column (text)...", praat_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Table_extractRowsWhere);
-	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1| praat_HIDDEN,
+	praat_addAction1 (classTable, 0, U"Extract rows where (mahalanobis)...", U"Extract rows where...", praat_DEPTH_1 | praat_HIDDEN,
 			CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere);
-	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1| praat_HIDDEN, 0);
-	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"-- Extract columns ----", praat_DEPTH_1| praat_HIDDEN,
-			CONVERT_EACH_TO_ONE__Table_extractColumnRanges);
+	praat_addAction1 (classTable, 0, U"-- Extract columns ----", U"Extract rows where (mahalanobis)...", praat_DEPTH_1 | praat_HIDDEN, 0);
+	praat_addAction1 (classTable, 0, U"Extract columns by number...", U"-- Extract columns ----", praat_DEPTH_1 | praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
+	praat_addAction1 (classTable, 0, U"Extract column ranges...", U"*Extract columns by number...", praat_DEPTH_1 | praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Table_extractColumnsByNumber);
 
 	praat_addAction1 (classTable, 0, U"To KlattTable", nullptr, praat_HIDDEN, 
 			CONVERT_EACH_TO_ONE__Table_to_KlattTable);
