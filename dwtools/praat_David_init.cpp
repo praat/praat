@@ -5152,12 +5152,12 @@ FORM (CREATE_ONE__Polynomial_createFromProductTerms, U"Create Polynomial from se
 	REAL (xmin, U"Xmin", U"-2.0")
 	REAL (xmax, U"Xmax", U"2.0")
 	LABEL (U"(1+a[1]*x+x^2)*(1+a[2]*x+x^2)*...*(1+a[n]*x+x^2)")
-	SENTENCE (coefficients_string, U"The a's", U"1.0 2.0")
+	REALVECTOR (coefficients, U"The a's", WHITESPACE_SEPARATED_, U"1.0 2.0")
 	OK
 DO
 	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CREATE_ONE
-		autoPolynomial result = Polynomial_createFromProductOfSecondOrderTermsString (xmin, xmax, coefficients_string);
+		autoPolynomial result = Polynomial_createFromProductOfSecondOrderTerms (xmin, xmax, coefficients);
 	CREATE_ONE_END (name)
 }
 
@@ -5167,12 +5167,12 @@ FORM (CREATE_ONE__Polynomial_createFromRealZeros, U"Create Polynomial from first
 	REAL (xmin, U"Xmin", U"-3.0")
 	REAL (xmax, U"Xmax", U"3.0")
 	LABEL (U"(P(x) = (x-zero[1])*(1-zero[2])*...*(x-zero[n])")
-	SENTENCE (zeros_string, U"The zero's", U"1.0 2.0")
+	REALVECTOR (zeroes, U"The zeroes", WHITESPACE_SEPARATED_, U"1.0 2.0")
 	OK
 DO
 	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CREATE_ONE
-		autoPolynomial result = Polynomial_createFromRealRootsString (xmin, xmax, zeros_string);
+		autoPolynomial result = Polynomial_createFromRealRoots (xmin, xmax, zeroes);
 	CREATE_ONE_END (name)
 }
 
