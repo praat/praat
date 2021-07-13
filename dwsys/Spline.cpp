@@ -147,13 +147,11 @@ integer structSpline :: v_getOrder () {
 }
 
 /* Precondition: FunctionSeries part inited + degree */
-static void Spline_initKnotsFromString (Spline me, integer degree, conststring32 interiorKnots_string) {
+static void Spline_initKnots (Spline me, integer degree, constVECVU const& interiorKnots_org) {
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 		U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
-	autoVEC interiorKnots = newVECfromString (interiorKnots_string);
-
-	sort_VEC_inout (interiorKnots.get());
+	autoVEC interiorKnots = sort_VEC (interiorKnots_org);
 	Melder_require (interiorKnots [1] > my xmin && interiorKnots [interiorKnots.size] <= my xmax,
 		U"Knots should be inside domain.");
 
@@ -281,13 +279,13 @@ autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer nu
 	}
 }
 
-autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots) {
+autoMSpline MSpline_createWithCoefficients (double xmin, double xmax, integer degree, constVECVU const& coefficients, constVECVU const& interiorKnots) {
 	try {
 		Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 			U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 		autoMSpline me = Thing_new (MSpline);
-		FunctionSeries_initFromString (me.get(), xmin, xmax, coef, true);
-		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
+		FunctionSeries_initWithCoefficients (me.get(), xmin, xmax, coefficients, true);
+		Spline_initKnots (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MSpline not created from strings.");
@@ -330,13 +328,13 @@ autoISpline ISpline_create (double xmin, double xmax, integer degree, integer nu
 	}
 }
 
-autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots) {
+autoISpline ISpline_createWithCoefficients (double xmin, double xmax, integer degree, constVECVU const& coefficients, constVECVU const& interiorKnots) {
 	try {
 		Melder_require (degree <= Spline_MAXIMUM_DEGREE,
 			U"Degree should should not exceed ", Spline_MAXIMUM_DEGREE);
 		autoISpline me = Thing_new (ISpline);
-		FunctionSeries_initFromString (me.get(), xmin, xmax, coef, true);
-		Spline_initKnotsFromString (me.get(), degree, interiorKnots);
+		FunctionSeries_initWithCoefficients (me.get(), xmin, xmax, coefficients, true);
+		Spline_initKnots (me.get(), degree, interiorKnots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ISpline not created from strings.");

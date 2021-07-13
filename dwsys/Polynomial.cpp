@@ -195,10 +195,10 @@ autoPolynomial Polynomial_create (double xmin, double xmax, integer degree) {
 	}
 }
 
-autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, conststring32 s) {
+autoPolynomial Polynomial_createWithCoefficients (double lxmin, double lxmax, constVECVU const& coefficients) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		FunctionSeries_initFromString (me.get(), lxmin, lxmax, s, false);
+		FunctionSeries_initWithCoefficients (me.get(), lxmin, lxmax, coefficients, false);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from string.");
@@ -521,47 +521,5 @@ dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
 	}
 	return result;
 }
-
-/*
-
-#define RationalFunction_members Function_members \
-	Polynomial num, denum;
-#define RationalFunction_methods Function_methods
-class_create (RationalFunction, Function)
-
-RationalFunction RationalFunction_create (double xmin, double xmax,
-	integer degree_num, integer degree_denum)
-{
-	RationalFunction me = new (RationalFunction);
-	if (! me || ! (my num = Polynomial_create (xmin, xmax, degree_num)) ||
-		!  (my denum = Polynomial_create (xmin, xmax, degree_denum))) forget (me);
-	return me;
-}
-
-RationalFunction RationalFunction_createFromString (I, double xmin, double xmax,
-	char *num, char *denum)
-{
-	RationalFunction me = new (RationalFunction); integer i;
-
-	if (! (my num = Polynomial_createFromString (xmin, xmax, num)) ||
-		! (my denum = Polynomial_createFromString (xmin, xmax, denum))) forget (me);
-	if (my denum -> v [1] != 1 && my denum -> v [1] != 0)
-	{
-		double q0 = my denum -> v [1];
-		for (i=1; 1 <= my num ->numberOfCoefficients; i ++) my num -> v [i] /= q0;
-		for (i=1; 1 <= my denum ->numberOfCoefficients; i ++) my denum -> v [i] /= q0;
-	}
-	return me;
-}
-
-// divide out common roots
-RationalFunction RationalFunction_simplify (RationalFunction me)
-{
-	Roots num = nullptr, denum = nullptr; RationalFunction thee = nullptr;
-	if (! (num = Polynomial_to_Roots (my num)) ||
-		! (denum = Polynomial_to_Roots (my denum))) goto end;
-}
-
-*/
 
 /* end of file Polynomial.cpp */

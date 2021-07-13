@@ -104,14 +104,13 @@ autoFunctionSeries FunctionSeries_create (double xmin, double xmax, integer numb
 	}
 }
 
-void FunctionSeries_initFromString (FunctionSeries me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros) {
-	autoVEC numbers = newVECfromString (s);
-	integer numberOfCoefficients = numbers.size;
+void FunctionSeries_initWithCoefficients (FunctionSeries me, double xmin, double xmax, constVECVU const& coefficients, bool allowTrailingZeros) {
+	integer numberOfCoefficients = coefficients.size;
 	if (! allowTrailingZeros)
-		while (numbers [numberOfCoefficients] == 0.0 && numberOfCoefficients > 1)
+		while (coefficients [numberOfCoefficients] == 0.0 && numberOfCoefficients > 1)
 			numberOfCoefficients --;
 	FunctionSeries_init (me, xmin, xmax, numberOfCoefficients);
-	my coefficients.part (1, numberOfCoefficients)  <<=  numbers.part (1, numberOfCoefficients);
+	my coefficients.all()  <<=  coefficients.part (1, numberOfCoefficients);
 }
 
 integer FunctionSeries_getDegree (FunctionSeries me) {

@@ -645,12 +645,12 @@ FORM (CREATE_ONE__ChebyshevSeries_create, U"Create ChebyshevSeries", U"Create Ch
 	REAL (xmax, U"Xmax", U"1")
 	LABEL (U"ChebyshevSeries(x) = c[1] T[0](x) + c[2] T[1](x) + ... c[n+1] T[n](x)")
 	LABEL (U"T[k] is a Chebyshev polynomial of degree k")
-	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"0 0 1.0")
+	REALVECTOR (coefficients, U"Coefficients (c[k])", WHITESPACE_SEPARATED_, U"0 0 1.0")
 	OK
 DO
 	Melder_require (xmin < xmax, U"Xmin should be smaller than Xmax.");
 	CREATE_ONE
-		autoChebyshevSeries result = ChebyshevSeries_createFromString (xmin, xmax, coefficients_string);
+		autoChebyshevSeries result = ChebyshevSeries_createWithCoefficients (xmin, xmax, coefficients);
 	CREATE_ONE_END (name)
 }
 
@@ -3289,14 +3289,14 @@ FORM (CREATE_ONE__ISpline_create, U"Create ISpline", U"Create ISpline...") {
 	LABEL (U"all I[k] are polynomials of degree \"Degree\"")
 	LABEL (U"Relation: numberOfCoefficients == numberOfInteriorKnots + degree")
 	INTEGER (degree, U"Degree", U"3")
-	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"1.2 2.0 1.2 1.2 3.0 0.0")
-	SENTENCE (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
+	REALVECTOR (coefficients, U"Coefficients (c[k])", WHITESPACE_SEPARATED_, U"1.2 2.0 1.2 1.2 3.0 0.0")
+	REALVECTOR (interiorKnots, U"Interior knots", WHITESPACE_SEPARATED_, U"0.3 0.5 0.6")
 	OK
 DO
 	CREATE_ONE
 		Melder_require (xmin < xmax,
 			U"Xmin should be smaller than Xmax.");
-		autoISpline result = ISpline_createFromStrings (xmin, xmax, degree, coefficients_string, knots_string);
+		autoISpline result = ISpline_createWithCoefficients (xmin, xmax, degree, coefficients, interiorKnots);
 	CREATE_ONE_END (name)
 }
 
@@ -3518,13 +3518,13 @@ FORM (CREATE_ONE__LegendreSeries_create, U"Create LegendreSeries", U"Create Lege
 	REAL (xmax, U"Xmax", U"1")
 	LABEL (U"LegendreSeries(x) = c[1] P[0](x) + c[2] P[1](x) + ... c[n+1] P[n](x)")
 	LABEL (U"P[k] is a Legendre polynomial of degree k")
-	SENTENCE (coefficients_string, U"Coefficients", U"0 0 1.0")
+	REALVECTOR (coefficients, U"Coefficients", WHITESPACE_SEPARATED_, U"0 0 1.0")
 	OK
 DO
 	Melder_require (xmin < xmax, 
 		U"Xmin should be smaller than Xmax.");
 	CREATE_ONE
-		autoLegendreSeries result = LegendreSeries_createFromString (xmin, xmax, coefficients_string);
+		autoLegendreSeries result = LegendreSeries_createWithCoefficients (xmin, xmax, coefficients);
 	CREATE_ONE_END (name)
 }
 
@@ -4268,14 +4268,14 @@ FORM (CREATE_ONE__MSpline_create, U"Create MSpline", U"Create MSpline...") {
 	LABEL (U"all M[k] are polynomials of degree \"Degree\"")
 	LABEL (U"Relation: numberOfCoefficients == numberOfInteriorKnots + degree + 1")
 	INTEGER (degree, U"Degree", U"2")
-	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"1.2 2.0 1.2 1.2 3.0 0.0")
-	SENTENCE (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
+	REALVECTOR (coefficients, U"Coefficients (c[k])", WHITESPACE_SEPARATED_, U"1.2 2.0 1.2 1.2 3.0 0.0")
+	REALVECTOR (interiorKnots, U"Interior knots", WHITESPACE_SEPARATED_, U"0.3 0.5 0.6")
 	OK
 DO
 	Melder_require (xmin < xmax, 
-		U"\"Xmi\"n should be smaller than \"Xmax\".");
+		U"\"Xmin\" should be smaller than \"Xmax\".");
 	CREATE_ONE
-		autoMSpline result = MSpline_createFromStrings (xmin, xmax, degree, coefficients_string, knots_string);
+		autoMSpline result = MSpline_createWithCoefficients (xmin, xmax, degree, coefficients, interiorKnots);
 	CREATE_ONE_END (name)
 }
 
@@ -4912,7 +4912,7 @@ FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTie
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range", U"0.0 (= all)")
 	LABEL (U"")
-	SENTENCE (timesString, U"Relative times", U"0.0 0.5 1.0")
+	REALVECTOR (relativeTimes, U"Relative times", WHITESPACE_SEPARATED_, U"0.0 0.5 1.0")
 	OPTIONMENU (timeOffset, U"...are...", 1)
 		OPTION (U"fractions")
 		OPTION (U"percentages")
@@ -4945,10 +4945,9 @@ FORM (MODIFY_PitchTier_modifyInterval, U"PitchTier: Modify interval", U"PitchTie
 	OK
 DO
 	MODIFY_EACH (PitchTier)
-		PitchTier_modifyInterval (me, fromTime, toTime, timesString, timeOffset, pitches_string, pitch_unit, pitch_as, pitch_is);
+		PitchTier_modifyInterval (me, fromTime, toTime, relativeTimes, timeOffset, pitches_string, pitch_unit, pitch_as, pitch_is);
 	MODIFY_EACH_END
 }
-
 
 FORM (MODIFY_PitchTier_modifyInterval_toneLevels, U"PitchTier: Modify interval (tone levels)", U"PitchTier: Modify interval (tone levels)...") {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
@@ -4957,19 +4956,19 @@ FORM (MODIFY_PitchTier_modifyInterval_toneLevels, U"PitchTier: Modify interval (
 	REAL (fmax, U"right Pitch range", U"200.0")
 	NATURAL (numberOfToneLevels, U"Number of tone levels", U"5")
 	LABEL (U"")
-	SENTENCE (times_string, U"Relative times", U"0.0 0.5 1.0")
+	REALVECTOR (relativeTimes, U"Relative times", WHITESPACE_SEPARATED_, U"0.0 0.5 1.0")
 	OPTIONMENU (time_offset, U"...are...", 1)
 		OPTION (U"fractions")
 		OPTION (U"percentages")
 		OPTION (U"independent")
 	LABEL (U"...of the interval duration which will be added...")
 	LABEL (U"...to the start time of the interval.")
-	SENTENCE (pitches_string, U"Tone levels", U"2.1 2.1 5.0")
+	REALVECTOR (pitchesAsToneLevels, U"Pitches as tone levels", WHITESPACE_SEPARATED_, U"2.1 2.1 5.0")
 	OK
 DO
 	MODIFY_EACH (PitchTier)
 		PitchTier_modifyInterval_toneLevels (me, fromTime, toTime, fmin, fmax, numberOfToneLevels,
-			times_string, time_offset, pitches_string
+			relativeTimes, time_offset, pitchesAsToneLevels
 		);
 	MODIFY_EACH_END
 }
@@ -5036,7 +5035,7 @@ DO
 	QUERY_ONE_FOR_STRING (Polygon)
 		const int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
-			loc == Polygon_EDGE ? U"E" : U"V" );
+				loc == Polygon_EDGE ? U"E" : U"V" );
 	QUERY_ONE_FOR_STRING_END
 }
 
@@ -5138,12 +5137,12 @@ FORM (CREATE_ONE__Polynomial_create, U"Create Polynomial from coefficients", U"C
 	REAL (xmin, U"Xmin", U"-3.0")
 	REAL (xmax, U"Xmax", U"4.0")
 	LABEL (U"p(x) = c[1] + c[2] x + ... c[n+1] x^n")
-	SENTENCE (coefficients_string, U"Coefficients", U"2.0 -1.0 -2.0 1.0")
+	REALVECTOR (coefficients, U"Coefficients", WHITESPACE_SEPARATED_, U"2.0 -1.0 -2.0 1.0")
 	OK
 DO
 	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CREATE_ONE
-		autoPolynomial result = Polynomial_createFromString (xmin, xmax, coefficients_string);
+		autoPolynomial result = Polynomial_createWithCoefficients (xmin, xmax, coefficients);
 	CREATE_ONE_END (name)
 }
 

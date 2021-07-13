@@ -41,7 +41,7 @@ Thing_define (ChebyshevSeries, FunctionSeries) {
 
 autoChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, integer numberOfPolynomials);
 
-autoChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, conststring32 s);
+autoChebyshevSeries ChebyshevSeries_createWithCoefficients (double xmin, double xmax, constVECVU const& coefficients);
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 

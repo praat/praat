@@ -32,7 +32,7 @@ Thing_define (LegendreSeries, FunctionSeries) {
 
 autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numberOfPolynomials);
 
-autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, conststring32 s);
+autoLegendreSeries LegendreSeries_createWithCoefficients (double xmin, double xmax, constVECVU const& coefficients);
 
 autoLegendreSeries LegendreSeries_getDerivative (LegendreSeries me);
 

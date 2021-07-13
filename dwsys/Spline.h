@@ -42,7 +42,7 @@ Thing_define (MSpline, Spline) {
 
 autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
 
-autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots);
+autoMSpline MSpline_createWithCoefficients (double xmin, double xmax, integer degree, constVECVU const& coefficients, constVECVU const& interiorKnots);
 
 Thing_define (ISpline, Spline) {
 	// overridden methods:
@@ -54,6 +54,6 @@ Thing_define (ISpline, Spline) {
 
 autoISpline ISpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
 
-autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots);
+autoISpline ISpline_createWithCoefficients (double xmin, double xmax, integer degree, constVECVU const& coefficients, constVECVU const& interiorKnots);
 
 #endif /* _Spline_h_ */
