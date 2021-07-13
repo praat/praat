@@ -155,19 +155,24 @@ NORMAL (U"HTK parameter files do not contain timing information and therefore we
 	"The value in these files for the samplePeriod is 10000 which is a factor 10 off from the correct value of 1000 in units of 100 ns.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20201013)
-INTRO (U"One of the @@types of objects@ in Praat. It maintains a path through a collection of Formant objects, "
-	"each the result of a formant frequency analysis of the same sound but with a different setting of the analysis parameters.")
+MAN_BEGIN (U"FormantPath", U"djmw", 20210630)
+INTRO (U"One of the @@types of objects@ in Praat. A ##FormantPath# object maintains a path through a collection of "
+	"Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting "
+	"of the analysis parameters.")
 NORMAL (U"A FormantPath combines a collection of @@Formant@s with an index that indicates which of these formants is preferred "
-	"at each moment in its time domain. "
-	"For example, consider a collection with nine Formant objects. "
-	"These formant objects could be the result of multiple @@Sound: To Formant (burg)...@ analyses on the same sound, "
-	"with a difference only in the \"Formant ceiling (Hz)\" parameter setting. "
-	"Suppose that the formant ceilings were chosen as 4093.7, 4303.5, 4524.2, 4756.1, 5000.0, 5256.4, 5525.9, 5809.2, and 6107.0 Hz, respectively. "
-	"In this way, the collection functions as a set of alternative analyses. "
-	"The middle one in this set with a ceiling of 5000 Hz corresponds to the result of a \"standard\" analysis for a male voice. ")
-NORMAL (U"You can create a FormantPath with @@Sound: To FormantPath (burg)...@. The FormantPath example above could have been created from a Sound by:")
+	"in each time frame of its time domain. ")
+NORMAL (U"As an example we consider a FormantPath that has nine Formant objects in its collection. "
+	"Suppose these formant objects were the result of nine @@Sound: To Formant (burg)...@ analyses of the ##same# sound, "
+	"however, with a difference only in the \"Formant ceiling (Hz)\" parameter setting which was 4093.7, 4303.5, 4524.2, 4756.1, "
+	"5000.0, 5256.4, 5525.9, 5809.2, and 6107.0 Hz, respectively. "
+	"In this way, this collection of Formants functions as a set of alternative analyses where the \"Time step\", "
+	"the \"Max. number of formants\", the \"Window length\" and the \"Pre-emphasis from\" are constant for each analysis and only "
+	"the interval in which the number of formants should fit varies. ")
+NORMAL (U"You create a FormantPath with the @@Sound: To FormantPath (burg)...@ command. The FormantPath example above could have been created from a Sound by:")
 CODE (U"To FormantPath (burg): 0.005, 5.0, 5000.0, 0.025, 50.0, 0.05, 4")
+NORMAL (U"The Formant object which has a ceiling of 5000 Hz, the object at the middle in the set, here corresponds to the "
+	"result of the \"standard\" analysis for a male voice where the interval from 0 to 5000 Hz is chosen and we expect, "
+	"on average, five formant to exist in this interval. ")
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
@@ -181,8 +186,8 @@ TAG (U"##Middle formant ceiling (Hz)")
 DEFINITION (U"determines the middle formant ceiling frequency in Hz. You normaly would use 5500.0 Hz for an average female voice "
 	"and 5000.0 Hz for an average male voice as you would do for the ##Formant ceiling (Hz)# setting in ##To Formant (burg)...#. "
 	"However, instead of performing only one analysis with a fixed ceiling, we perform in a number of steps "
-	"multiple analyses, each with a different ceiling frequency. The number of analyses with a %lower formant ceiling than the "
-	"%%middle formant ceiling% is equal to the number of analyses with a %higher formant ceiling than the %%middle formant ceiling%. ")
+	"multiple analyses, each with a different ceiling frequency. The number of analyses with a %%lower% formant ceiling than the "
+	"%%middle formant ceiling% is equal to the number of analyses with a %%higher% formant ceiling than the %%middle formant ceiling%. ")
 TAG (U"##Ceiling step size#")
 DEFINITION (U"defines the increase or decrease in the formant ceiling between two successive analyses as exp(%ceilingStepSize) "
 	"when we step up or as exp(-%ceilingStepSize) when we step down.")

@@ -69,6 +69,10 @@ static const conststring32 MODIFY_BUTTON   = U"Modify -";
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
 
+DIRECT (HELP__FormantPath_help) {
+	HELP (U"FormantPath")
+}
+
 static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
 	 * Keep the gate for error handling.
@@ -80,6 +84,7 @@ static void cb_FormantPathEditor_publication (Editor /* editor */, autoDaata pub
 		Melder_flushError ();
 	}
 }
+
 DIRECT (EDITOR_ONE_FormantPath_viewAndEditAlone) {
 	EDITOR_ONE (a,FormantPath)
 		autoFormantPathEditor editor = FormantPathEditor_create (ID_AND_FULL_NAME, me, nullptr, nullptr);
@@ -1427,6 +1432,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0,
 			CONVERT_ONE_AND_ONE_TO_ONE__Formant_Spectrogram_to_IntensityTier);
 	
+	praat_addAction1 (classFormantPath, 0, U"FormantPath help", 0, 0, 
+			HELP__FormantPath_help);
 	praat_addAction1 (classFormantPath, 1, U"View & Edit alone", 0, 0, 
 			EDITOR_ONE_FormantPath_viewAndEditAlone);
 	praat_addAction1 (classFormantPath, 1, U"View & Edit with Sound?", 0, 0, 
