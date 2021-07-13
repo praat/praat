@@ -27,5 +27,13 @@ double NUMquantile (constVECVU const& a, double factor) noexcept;
 	If your array has not been sorted, first sort it with sort_VEC_inout ().
 */
 
+inline bool NUMisSorted3 (integer a, integer b, integer c) {
+	return a <= b && b <= c;
+}
+
+inline bool NUMisSorted4 (integer a, integer b, integer c, integer d) {
+	return a <= b && b <= c && c <= d;
+}
+
 /* End of file melder_sort.h */
 #endif

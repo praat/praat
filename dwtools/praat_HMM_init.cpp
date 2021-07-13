@@ -485,30 +485,30 @@ DO
 
 FORM (MODIFY_EACH__HMM_setTransitionProbabilities, U"HMM: Set transition probabilities", U"HMM: Set transition probabilities...") {
 	NATURAL (stateNumber, U"State number", U"1")
-	SENTENCE (probabilities_string, U"Probabilities", U"0.1 0.9")
+	REALVECTOR (relativeProbabilities, U"Relative probabilities", WHITESPACE_SEPARATED_, U"0.1 0.9")
 	OK
 DO
 	MODIFY_EACH (HMM)
-		HMM_setTransitionProbabilities (me, stateNumber, probabilities_string);
+		HMM_setTransitionProbabilities (me, stateNumber, relativeProbabilities);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_EACH__HMM_setEmissionProbabilities, U"HMM: Set emission probabilities", U"HMM: Set emission probabilities...") {
 	NATURAL (stateNumber, U"State number", U"1")
-	SENTENCE (probabilities_string, U"Probabilities", U"0.1 0.7 0.2")
+	REALVECTOR (relativeProbabilities, U"Relative probabilities", WHITESPACE_SEPARATED_, U"0.1 0.7 0.2")
 	OK
 DO
 	MODIFY_EACH (HMM)
-		HMM_setEmissionProbabilities (me, stateNumber, probabilities_string);
+		HMM_setEmissionProbabilities (me, stateNumber, relativeProbabilities);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_EACH__HMM_setStartProbabilities, U"HMM: Set start probabilities", U"HMM: Set start probabilities...") {
-	SENTENCE (probabilities_string, U"Probabilities", U"0.1 0.9")
+	REALVECTOR (relativeProbabilities, U"Relative probabilities", WHITESPACE_SEPARATED_, U"0.1 0.9")
 	OK
 DO
 	MODIFY_EACH (HMM)
-		HMM_setStartProbabilities (me, probabilities_string);
+		HMM_setStartProbabilities (me, relativeProbabilities);
 	MODIFY_EACH_END
 }
 
