@@ -126,12 +126,21 @@ autoSTRVEC string32vector_searchAndReplace (constSTRVEC me,
 		string32vector_searchAndReplace_literal (me, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }
 
-char32 * NUMstring_timeNoDot (double time) {
+char32 * NUMnumber_as_stringWithDotReplacedByUnderscore (double time) {
 	static char32 string [100];
-	const integer seconds = Melder_ifloor (time);
-	const integer ms = Melder_iround ((time - seconds) * 1000.0);
-	Melder_sprint (string,100, U"_", seconds, U"_", ms);
+	conststring32 time_string = Melder_double (time);
+	const char32 *from = time_string;
+	char32 *to = & string [0];
+	while (*from != U'\0') {
+		if (*from != U'.')
+			*to = *from;
+		else
+			*to = U'_';
+		to ++; from ++;
+	}
+	*to = U'\0';
 	return string;
 }
+
 
 /* End of file NUMstring.cpp */
