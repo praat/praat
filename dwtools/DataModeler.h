@@ -60,7 +60,7 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, kDataModelerFunction type);
 autoDataModeler DataModeler_createFromDataModeler (DataModeler thee, integer numberOfParameters, kDataModelerFunction type);
 autoDataModeler DataModeler_createSimple (double xmin, double xmax, integer numberOfDataPoints,
-	conststring32 parameters, double gaussianNoiseStd, kDataModelerFunction type);
+	constVECVU const& parameterValues, double gaussianNoiseStd, kDataModelerFunction type);
 
 void DataModeler_setBasisFunctions (DataModeler me, kDataModelerFunction type);
 

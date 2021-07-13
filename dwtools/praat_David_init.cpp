@@ -911,13 +911,13 @@ DIRECT (MODIFY_ComplexSpectrogram_Spectrogram_replaceAmplitudes) {
 
 FORM (CREATE_ONE__Correlation_createSimple, U"Create simple Correlation", U"Create simple Correlation...") {
 	WORD (name, U"Name", U"correlation")
-	SENTENCE (correlations_string, U"Correlations", U"1.0 0.5 1.0")
-	SENTENCE (centroid_string, U"Centroid", U"0.0 0.0")
+	REALVECTOR (correlations, U"Correlations", WHITESPACE_SEPARATED_, U"1.0 0.5 1.0")
+	REALVECTOR (centroid, U"Centroid", WHITESPACE_SEPARATED_, U"0.0 0.0")
 	NATURAL (numberOfObservations, U"Number of observations", U"100")
 	OK
 DO
 	CREATE_ONE
-		autoCorrelation result = Correlation_createSimple (correlations_string, centroid_string, numberOfObservations);
+		autoCorrelation result = Correlation_createSimple (correlations, centroid, numberOfObservations);
 	CREATE_ONE_END (name)
 }
 
@@ -962,13 +962,13 @@ DIRECT (HELP__Covariance_help) {
 
 FORM (CREATE_ONE__Covariance_createSimple, U"Create simple Covariance", U"Create simple Covariance...") {
 	WORD (name, U"Name", U"c")
-	SENTENCE (covariances_string, U"Covariances", U"1.0 0.0 1.0")
-	SENTENCE (centroid_string, U"Centroid", U"0.0 0.0")
+	REALVECTOR (covariances, U"Covariances", WHITESPACE_SEPARATED_, U"1.0 0.0 1.0")
+	REALVECTOR (centroid, U"Centroid", WHITESPACE_SEPARATED_, U"0.0 0.0")
 	NATURAL (numberOfObservations, U"Number of observations", U"100")
 	OK
 DO
 	CREATE_ONE
-		autoCovariance result = Covariance_createSimple (covariances_string, centroid_string, numberOfObservations);
+		autoCovariance result = Covariance_createSimple (covariances, centroid, numberOfObservations);
 	CREATE_ONE_END (name)
 }
 
