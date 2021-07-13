@@ -46,14 +46,13 @@ autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me) {
 	}
 }
 
-autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststring32 s_centroid, integer numberOfObservations) {
+autoCorrelation Correlation_createSimple (constVECVU const& correlations, constVECVU const& centroids, integer numberOfObservations) {
 	try {
-		autoVEC centroids = newVECfromString (s_centroid);
-		autoVEC correlations = newVECfromString (s_correlations);
 		integer numberOfCorrelations_wanted = centroids.size * (centroids.size + 1) / 2;
 		Melder_require (correlations.size == numberOfCorrelations_wanted,
 			U"The number of correlation matrix elements and the number of centroid elements should agree. "
-			"There should be d(d+1)/2 correlation values and d centroid values.");
+			"If there are d centroid values, there should be d(d+1)/2 correlation values, "
+			"so if there are ", centroids.size, U" centroid values, there should be ", numberOfCorrelations_wanted, U" correlation values.");
 
 		autoCorrelation me = Correlation_create (centroids.size);
 		/*
@@ -80,8 +79,7 @@ autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststr
 				Melder_require (fabs (my data [irow] [icol]) <= 1.0,
 					U"The correlation in cell [", irow, U",", icol, U"], i.e. input item ",
 					(irow - 1) * centroids.size + icol - (irow - 1) * irow / 2, U" should not exceed 1.0.");
-		for (integer inum = 1; inum <= centroids.size; inum ++)
-			my centroid [inum] = centroids [inum];
+		my centroid.all()  <<=  centroids;
 		my numberOfObservations = numberOfObservations;
 		return me;
 	} catch (MelderError) {
