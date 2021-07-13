@@ -299,7 +299,7 @@ autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant) {
 }
 
 /* P(x)= (x-roots [1])*(x-roots [2])*..*(x-roots [numberOfRoots]) */
-void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
+void Polynomial_initFromRealRoots (Polynomial me, constVECVU const& roots) {
 	try {
 		my extendCapacity (roots.size + 1);
 		integer n = 1;
@@ -318,12 +318,11 @@ void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
 	}
 }
 
-autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s) {
+autoPolynomial Polynomial_createFromRealRoots (double xmin, double xmax, constVECVU const& roots) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		autoVEC roots = newVECfromString (s);
 		FunctionSeries_init (me.get(), xmin, xmax, roots.size + 1);
-		Polynomial_initFromRealRoots (me.get(), roots.get());
+		Polynomial_initFromRealRoots (me.get(), roots);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from roots.");
@@ -334,7 +333,7 @@ autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, c
 /* Product (i=1; a.size; (1 + a [i] * x + x^2)
  * Postcondition : my numberOfCoeffcients = 2 * a.size + 1
  */
-void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVECVU const& a) {
 	my extendCapacity (2 * a.size + 1);
 	my coefficients [1] = my coefficients [3] = 1.0;
 	my coefficients [2] = a [1];
@@ -350,12 +349,11 @@ void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
 	my numberOfCoefficients = ncoef;
 }
 
-autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s) {
+autoPolynomial Polynomial_createFromProductOfSecondOrderTerms (double xmin, double xmax, constVECVU const& a) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		autoVEC a = newVECfromString (s);
 		FunctionSeries_init (me.get(), xmin, xmax, 2 * a.size + 1);
-		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.get());
+		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from second order terms string.");
