@@ -44,8 +44,6 @@ void NUMgetGridDimensions (integer n, integer *out_nrow, integer *out_ncol);
 
 
 autoINTVEC newINTVECfromString (conststring32 s);
-autoVEC newVECfromString (conststring32 s);
-/* return array with the numbers found */
 
 /*
 	only used to append the time info to the name of an object.

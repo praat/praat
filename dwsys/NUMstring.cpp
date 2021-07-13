@@ -23,16 +23,6 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-autoVEC newVECfromString (conststring32 s) {
-	autoSTRVEC tokens = splitByWhitespace_STRVEC (s);
-	if (tokens.size < 1)
-		Melder_throw (U"Empty string.");
-	autoVEC numbers = raw_VEC (tokens.size);
-	for (integer inum = 1; inum <= tokens.size; inum ++)
-		Interpreter_numericExpression (nullptr, tokens [inum].get(), & numbers [inum]);
-	return numbers;
-}
-
 autoINTVEC newINTVECfromString (conststring32 s) {
 	autoSTRVEC tokens = splitByWhitespace_STRVEC (s);
 	if (tokens.size < 1)
@@ -46,11 +36,8 @@ autoINTVEC newINTVECfromString (conststring32 s) {
 char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {
 	char32 *charp = nullptr;
 	regexp *compiled_regexp = CompileRE_throwable (search_regexp, 0);
-
-	if (ExecRE (compiled_regexp, nullptr, string, nullptr, false, U'\0', U'\0', nullptr, nullptr)) {
+	if (ExecRE (compiled_regexp, nullptr, string, nullptr, false, U'\0', U'\0', nullptr, nullptr))
 		charp = compiled_regexp -> startp [0];
-	}
-
 	free (compiled_regexp);
 	return charp;
 }
@@ -141,6 +128,5 @@ char32 * NUMnumber_as_stringWithDotReplacedByUnderscore (double time) {
 	*to = U'\0';
 	return string;
 }
-
 
 /* End of file NUMstring.cpp */
