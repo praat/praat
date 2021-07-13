@@ -727,20 +727,20 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (q2, U"F2 sharpness", my default_synthesis_q2 ())
 		LABEL (U"You can define extra fixed formants for the synthesis by supplying")
 		LABEL (U"formant frequency bandwidth pairs.")
-		SENTENCE (fbpairs, U"Frequency bandwidth pairs", my default_synthesis_extraFBPairs ())
+		TEXTFIELD (extraFrequencyBandwidthPairs_string, U"Frequency bandwidth pairs", my default_synthesis_extraFBPairs(), 3)
 		LABEL (U"The total number of formants used for synthesis")
 		NATURAL (numberOfFormants, U"Number of formants for synthesis", my default_synthesis_numberOfFormants ())
 	EDITOR_OK
 		SET_BOOLEAN (soundFollowsMouse, my p_soundFollowsMouse)
 		SET_REAL (q1, my p_synthesis_q1)
 		SET_REAL (q2, my p_synthesis_q2)
-		SET_STRING (fbpairs, my p_synthesis_extraFBPairs)
+		SET_STRING (extraFrequencyBandwidthPairs_string, my p_synthesis_extraFBPairs)
 		SET_INTEGER (numberOfFormants, my p_synthesis_numberOfFormants)
 	EDITOR_DO
 		my pref_soundFollowsMouse () = my p_soundFollowsMouse = soundFollowsMouse;
 		my pref_synthesis_q1 () = my p_synthesis_q1 = q1;
 		my pref_synthesis_q2 () = my p_synthesis_q2 = q2;
-		autoVEC extraFrequencyBandwidthPairs = newVECfromString (fbpairs);
+		autoVEC extraFrequencyBandwidthPairs = splitByWhitespace_VEC (extraFrequencyBandwidthPairs_string);
 
 		Melder_require (extraFrequencyBandwidthPairs.size % 2 == 0,
 			U"There should be an even number of values in the \"Frequencies and bandwidths pairs\" list.");
@@ -764,7 +764,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		/*
 			Formants and bandwidths are valid. It is safe to copy them.
 		*/
-		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, fbpairs);
+		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, extraFrequencyBandwidthPairs_string);
 		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
 		my extraFrequencyBandwidthPairs = extraFrequencyBandwidthPairs.move();
 	EDITOR_END
@@ -1354,7 +1354,7 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		}
 		if (str32len (my p_synthesis_extraFBPairs) == 0)
 			pref_str32cpy (my p_synthesis_extraFBPairs, my default_synthesis_extraFBPairs ());
-		my extraFrequencyBandwidthPairs = newVECfromString (my p_synthesis_extraFBPairs);
+		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my p_synthesis_extraFBPairs);
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4
 		my p_soundFollowsMouse = true;   // no real preference yet
 		if (my p_synthesis_samplingFrequency <= 0.0)

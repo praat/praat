@@ -73,8 +73,10 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 	return me;
 }
 
-void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight, double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf) {
-	autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength,parameters, powerf, nullptr);
+void FormantPath_pathFinder (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight,
+	double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf)
+{
+	autoINTVEC path = FormantPath_getOptimumPath (me, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf, nullptr);
 	my path = path.move();
 }
 
@@ -222,7 +224,8 @@ autoFormant FormantPath_extractFormant (FormantPath me) {
 autoFormantPath Sound_to_FormantPath_any (Sound me, kLPC_Analysis lpcType, double timeStep, double maximumNumberOfFormants,
 	double middleCeiling, double analysisWidth, double preemphasisFrequency, double ceilingStepSize, 
 	integer numberOfStepsToACeiling, double marple_tol1, double marple_tol2, double huber_numberOfStdDev, double huber_tol,
-	integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel) {
+	integer huber_maximumNumberOfIterations, autoSound *out_sourcesMultiChannel)
+{
 	try {
 		Melder_require (timeStep > 0.0,
 			U"The timeStep needs to greater than zero seconds.");
@@ -399,7 +402,8 @@ autoVEC FormantPath_getStresses (FormantPath me, double tmin, double tmax, integ
 	return stress;
 }
 
-static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants)
+static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax,
+	integer fromFormant, integer toFormant, double suppress_dB, bool drawBandWidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants)
 {
 	double maximumIntensity = 0.0, minimumIntensity;
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
@@ -449,7 +453,7 @@ static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double
 void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, double tmax, double fmax,
 	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants,
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
-	double xCursor, double yCursor, MelderColour selectedCeilingsColour, constINTVEC const & parameters,
+	double xCursor, double yCursor, MelderColour selectedCeilingsColour, constINTVEC const& parameters,
 	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	constexpr double fmin = 0.0;
@@ -586,12 +590,15 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 void FormantPath_drawAsGrid (FormantPath me, Graphics g, double tmin, double tmax, double fmax, 
 	integer fromFormant, integer toFormant, bool showBandwidths, MelderColour oddNumberedFormants, MelderColour evenNumberedFormants, 
 	integer nrow, integer ncol, double spaceBetweenFraction_x, double spaceBetweenFraction_y, double yGridLineEvery_Hz,
-	double xCursor, double yCursor, MelderColour selected, constINTVEC const & parameters,
+	double xCursor, double yCursor, MelderColour selected, constINTVEC const& parameters,
 	bool markCandidatesWithinPath, bool showStress, double powerf, bool showEstimatedModels, bool garnish)
 {
 	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	Graphics_setInner (g);
-	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, oddNumberedFormants, evenNumberedFormants, nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, selected, parameters, markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish);
+	FormantPath_drawAsGrid_inside (me, g, tmin, tmax, fmax, fromFormant, toFormant, showBandwidths, oddNumberedFormants, evenNumberedFormants,
+		nrow, ncol, spaceBetweenFraction_x, spaceBetweenFraction_y, yGridLineEvery_Hz, xCursor, yCursor, selected, parameters,
+		markCandidatesWithinPath, showStress, powerf, showEstimatedModels, garnish
+	);
 	Graphics_unsetInner (g);
 }	
 

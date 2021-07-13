@@ -6932,14 +6932,15 @@ FORM (GRAPHICS_EACH__Table_scatterPlotWhere, U"Table: Scatter plot where", nullp
 	WORD (markColumn_string, U"Column with marks", U"")
 	POSITIVE (fontSize, U"Font size", U"12")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only from rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		const integer markColumn = Table_getColumnIndexFromColumnLabel (me, markColumn_string);
-		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
+		autoTable part = Table_extractRowsWhere (me, condition, interpreter);
 		Table_scatterPlot (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
@@ -6954,13 +6955,14 @@ FORM (GRAPHICS_EACH__Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", 
 	POSITIVE (markSize_mm, U"Mark size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true)
 	SENTENCE (mark_string, U"Mark string (+xo.)", U"+")
-	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only from rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
+		autoTable part = Table_extractRowsWhere (me, condition, interpreter);
 		Table_scatterPlot_mark (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markSize_mm, mark_string, garnish);
 	GRAPHICS_EACH_END
 }
@@ -6977,12 +6979,13 @@ FORM (GRAPHICS_EACH__Table_barPlotWhere, U"Table: Bar plot where", U"Table: Bar 
 	SENTENCE (colours, U"Colours", U"Grey")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds", U"row >= 1 and row <= 8")
+	LABEL (U"Use data only from rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"row >= 1 and row <= 8")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		Table_barPlotWhere (me, GRAPHICS, yColumns_string, ymin, ymax, markColumn_string, distanceFromBorder, 
-			distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, formula, interpreter
+			distanceWithinGroup, distanceBetweenGroups, colours, angle, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
@@ -6997,13 +7000,14 @@ FORM (GRAPHICS_EACH__Table_LineGraphWhere, U"Table: Line graph where", U"Table: 
 	WORD (text, U"Text", U"+")
 	REAL (angle, U"Label text angle (degrees)", U"0.0");
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data from rows where the following condition holds", U"1; (= everything)")
+	LABEL (U"Use data only from rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; (= everything)")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		const integer xcolumn = Table_findColumnIndexFromColumnLabel (me, xColumn_string);
-		Table_lineGraphWhere (me, GRAPHICS, xcolumn, xmin, xmax,ycolumn, ymin, ymax, text, angle, garnish, formula, interpreter);
+		Table_lineGraphWhere (me, GRAPHICS, xcolumn, xmin, xmax, ycolumn, ymin, ymax, text, angle, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }
 
@@ -7027,12 +7031,13 @@ FORM (GRAPHICS_EACH__Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Bo
 	REAL (ymin, U"left Vertical range", U"0.0")
 	REAL (ymax, U"right Vertical range", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
-		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, formula, interpreter);
+		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }
 
@@ -7045,13 +7050,14 @@ FORM (GRAPHICS_EACH__Table_drawEllipseWhere, U"Draw ellipse (standard deviation)
 	REAL (ymax, U"right Vertical range", U"0.0 (= auto)")
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
+		autoTable thee = Table_extractRowsWhere (me, condition, interpreter);
 		Table_drawEllipse_e (thee.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
 }
@@ -7090,7 +7096,8 @@ FORM (GRAPHICS_EACH__Table_drawEllipsesWhere, U"Table: Draw ellipses where", nul
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"1.0")
 	REAL (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7098,11 +7105,10 @@ DO
 		const integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		const integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin,  xmax, 
-			ymin, ymax, numberOfSigmas, fontSize, garnish, formula, interpreter
+			ymin, ymax, numberOfSigmas, fontSize, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
-
 
 FORM (GRAPHICS_EACH__Table_normalProbabilityPlot, U"Table: Normal probability plot", U"Table: Normal probability plot...") {
 	SENTENCE (column_string, U"Column", U"F1")
@@ -7126,12 +7132,13 @@ FORM (GRAPHICS_EACH__Table_normalProbabilityPlotWhere, U"Table: Normal probabili
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
-		const autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
+		const autoTable thee = Table_extractRowsWhere (me, condition, interpreter);
 		Table_normalProbabilityPlot (thee.get(), GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
@@ -7207,12 +7214,13 @@ FORM (GRAPHICS_EACH__Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	NATURAL (labelSize, U"Label size", U"12")
 	SENTENCE (label, U"Label", U"+")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, formula, interpreter);
+		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, condition, interpreter);
 	GRAPHICS_EACH_END
 }
 
@@ -7244,13 +7252,14 @@ FORM (GRAPHICS_EACH__Table_distributionPlotWhere, U"Table: Distribution plot whe
 	REAL (minimumFrequency, U"Minimum frequency", U"0.0")
 	REAL (maximumFrequency, U"Maximum frequency", U"0.0")
 	BOOLEAN (garnish, U"Garnish", true)
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
 		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, 
-			minimumFrequency, maximumFrequency, garnish, formula, interpreter
+			minimumFrequency, maximumFrequency, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
@@ -7290,7 +7299,8 @@ FORM (GRAPHICS_EACH__Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal err
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7299,7 +7309,7 @@ DO
 		const integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
 		const integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
 		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax,
-			xl, xu, barSize_mm, garnish, formula, interpreter
+			xl, xu, barSize_mm, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
@@ -7339,7 +7349,8 @@ FORM (GRAPHICS_EACH__Table_verticalErrorBarsPlotWhere, U"Table: Vertical error b
 	SENTENCE (upperErrorColumn_string, U"Upper error value column", U"error2")
 	REAL (barSize_mm, U"Bar size (mm)", U"1.0")
 	BOOLEAN (garnish, U"Garnish", true);
-	FORMULA (formula, U"Use only data in rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Use data only in rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7348,17 +7359,18 @@ DO
 		const integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
 		const integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
 		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, 
-			yl, yu, barSize_mm, garnish, formula, interpreter
+			yl, yu, barSize_mm, garnish, condition, interpreter
 		);
 	GRAPHICS_EACH_END
 }
 
 FORM (CONVERT_EACH_TO_ONE__Table_extractRowsWhere, U"Table: Extract rows where", nullptr) {
-	FORMULA (formula, U"Extract rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Extract rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
-		autoTable result = Table_extractRowsWhere (me, formula, interpreter);
+		autoTable result = Table_extractRowsWhere (me, condition, interpreter);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_formula")
 }
 
@@ -7368,12 +7380,13 @@ FORM (CONVERT_EACH_TO_ONE__Table_extractRowsMahalanobisWhere, U"Table: Extract r
 			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	SENTENCE (factorColumn_string, U"Factor column", U"")
-	FORMULA (formula, U"Process only rows where the following condition holds", U"1; self$[\"gender\"]=\"male\"")
+	LABEL (U"Process only rows where the following condition holds.")
+	FORMULA (condition, U"Condition", U"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		autoTable result = Table_extractMahalanobisWhere (me, dataColumns_string, factorColumn_string, 
-			numberOfSigmas, haveAMahalanobisDistance, formula, interpreter
+			numberOfSigmas, haveAMahalanobisDistance, condition, interpreter
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_mahalanobis")
 }
@@ -7389,11 +7402,12 @@ DO
 }
 
 FORM (QUERY_ONE_FOR_REAL_VECTOR__Table_listRowNumbersWhere, U"Table: List rows where", U"") {
-	SENTENCE (formula, U"The following condition holds true", U"self [row,\"F1\"] > 800.0")
+	LABEL (U"List rows where the following condition holds true.")
+	FORMULA (condition, U"Condition", U"self [row,\"F1\"] > 800.0")
 	OK
 DO
 	QUERY_ONE_FOR_REAL_VECTOR (Table)
-		autoINTVEC resulti = Table_listRowNumbersWhere (me, formula, interpreter);
+		autoINTVEC resulti = Table_listRowNumbersWhere (me, condition, interpreter);
 		autoVEC result = raw_VEC (resulti.size);
 		for (integer i = 1; i <= resulti.size; i ++)
 			result [i] = resulti [i];

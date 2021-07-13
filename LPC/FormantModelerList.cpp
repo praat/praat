@@ -50,12 +50,11 @@ void structFormantModelerList :: v_info () {
 Thing_implement (FormantModelerList, Function, 0);
 Thing_implement (FormantModelerListDrawingSpecification, Daata, 0);
 
-autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double startTime, double endTime, conststring32 numberOfParametersPerTrack_string) {
+autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double startTime, double endTime, constINTVEC const& numberOfParametersPerTrack) {
 	try {
 		autoFormantModelerList thee = Thing_new (FormantModelerList);
 		thy xmin = startTime;
 		thy xmax = endTime;
-		autoINTVEC numberOfParametersPerTrack = newINTVECfromString (numberOfParametersPerTrack_string);
 		Melder_require (numberOfParametersPerTrack.size > 0,
 			U"The number of items in the parameter list should be larger than zero.");
 		thy numberOfTracksPerModel = numberOfParametersPerTrack.size;
@@ -67,7 +66,7 @@ autoFormantModelerList FormantPath_to_FormantModelerList (FormantPath me, double
 			if (value == 0)
 				numberOfZeros += 1;
 		}
-		thy numberOfParametersPerTrack = numberOfParametersPerTrack.move();
+		thy numberOfParametersPerTrack = copy_INTVEC (numberOfParametersPerTrack);
 		thy numberOfTracksPerModel = thy numberOfParametersPerTrack.size;
 		thy numberOfModelers = my formants . size;
 		for (integer imodel = 1; imodel <= thy numberOfModelers; imodel ++) {
