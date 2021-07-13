@@ -604,7 +604,7 @@ FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_to_PowerCepstrum_slice, U"PowerCepst
 DO
 	CONVERT_EACH_TO_ONE (PowerCepstrogram)
 		autoPowerCepstrum result = PowerCepstrogram_to_PowerCepstrum_slice (me, time);
-	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time));
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMnumber_as_stringWithDotReplacedByUnderscore (time));
 }
 
 FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prominence)", U"PowerCepstrogram: To Table (peak prominence)...") {
@@ -902,7 +902,7 @@ FORM (CONVERT_EACH_TO_ONE__LPC_to_Polynomial_slice, U"LPC: To Polynomial", U"LPC
 DO
 	CONVERT_EACH_TO_ONE (LPC)
 		autoPolynomial result = LPC_to_Polynomial (me, time);
-	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMnumber_as_stringWithDotReplacedByUnderscore (time))
 }
 
 FORM (CONVERT_EACH_TO_ONE__LPC_to_Spectrum_slice, U"LPC: To Spectrum", U"LPC: To Spectrum (slice)...") {
@@ -914,7 +914,7 @@ FORM (CONVERT_EACH_TO_ONE__LPC_to_Spectrum_slice, U"LPC: To Spectrum", U"LPC: To
 DO
 	CONVERT_EACH_TO_ONE (LPC)
 		autoSpectrum result = LPC_to_Spectrum (me, time, minimumFrequencyResolution, bandwidthReduction, deemphasisFrequency);
-	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMnumber_as_stringWithDotReplacedByUnderscore (time))
 }
 
 FORM (CONVERT_EACH_TO_ONE__LPC_to_Spectrogram, U"LPC: To Spectrogram", U"LPC: To Spectrogram...") {
@@ -937,7 +937,7 @@ FORM (CONVERT_EACH_TO_ONE__LPC_to_VocalTract_slice_special, U"LPC: To VocalTract
 DO
 	CONVERT_EACH_TO_ONE (LPC)
 		autoVocalTract result = LPC_to_VocalTract_slice_special (me, time, glottalDamping, radiationDamping, internalDamping);
-	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMnumber_as_stringWithDotReplacedByUnderscore (time))
 }
 
 FORM (CONVERT_EACH_TO_ONE__LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC: To VocalTract (slice)...") {
@@ -947,7 +947,7 @@ FORM (CONVERT_EACH_TO_ONE__LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC
 DO
 	CONVERT_EACH_TO_ONE (LPC)
 		autoVocalTract result = LPC_to_VocalTract_slice (me, time, length);
-	CONVERT_EACH_TO_ONE_END (my name.get(), NUMstring_timeNoDot (time))
+	CONVERT_EACH_TO_ONE_END (my name.get(), NUMnumber_as_stringWithDotReplacedByUnderscore (time))
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__LPC_downto_Matrix_lpc) {

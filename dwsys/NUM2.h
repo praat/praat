@@ -47,7 +47,13 @@ autoINTVEC newINTVECfromString (conststring32 s);
 autoVEC newVECfromString (conststring32 s);
 /* return array with the numbers found */
 
-char32 * NUMstring_timeNoDot (double time);
+/*
+	only used to append the time info to the name of an object.
+	1.2345678 -> 1_2345678
+	1.2       -> 1_2
+	2         -> 2
+*/
+char32 * NUMnumber_as_stringWithDotReplacedByUnderscore (double time);
 
 regexp *NUMregexp_compile (conststring32 regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
