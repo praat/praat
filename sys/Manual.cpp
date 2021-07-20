@@ -485,8 +485,8 @@ int structManual :: v_goToPage (conststring32 title) {
 
 void Manual_init (Manual me, conststring32 title, Daata data, bool ownData) {
 	ManPages manPages = (ManPages) data;
-	integer lookUpPageNumber;
-	if ((lookUpPageNumber = ManPages_lookUp (manPages, title)) == 0)
+	const integer lookUpPageNumber = ManPages_lookUp (manPages, title);
+	if (lookUpPageNumber == 0)
 		Melder_throw (U"Page \"", title, U"\" not found.");
 	my visiblePageNumber = lookUpPageNumber;
 	ManPage page = manPages -> pages.at [lookUpPageNumber];
@@ -494,7 +494,7 @@ void Manual_init (Manual me, conststring32 title, Daata data, bool ownData) {
 	/*
 		The title of the window is the title of the whole manual, not the title of the page.
 		If the first page has a title that starts with "-", then that is the title;
-		otherwise, the title is just "Manual".
+		otherwise, the title is just "Praat Manual".
 	*/
 	char32 windowTitle [101];
 	if (manPages -> pages.at [1] -> title [0] == U'-') {
