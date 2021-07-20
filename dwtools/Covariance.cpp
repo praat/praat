@@ -22,15 +22,13 @@
 #include "NUM2.h"
 #include "SVD.h"
 
-#define TOVEC(x) (&(x) - 1)
-
 Thing_implement (Covariance, SSCP, 0);
 Thing_implement (CovarianceList, SSCPList, 0);
 
 autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid) {
 	try {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
-			U"The dimension of the Covariance and the TableOfReal shoiuld be equal.");
+			U"The number of dimensions of the Covariance should be equal to that of the TableOfReal.");
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
 		autoVEC centroid = copy_VEC (my centroid.get());
 		autoMAT covari = copy_MAT (my data.get());
@@ -60,9 +58,9 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 /* For nxn matrix only ! */
 void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VECVU vec, VEC buf) {
 	Melder_require (thy dimension == my numberOfRows,
-		U"The PCA must have the same dimension as the Covariance.");
+		U"The PCA should have the same number of dimensions as the Covariance.");
 	Melder_require (vec.size == buf.size && my numberOfColumns == buf.size, 
-		U"The vectors and the PCA must have the same dimension.");
+		U"The vectors and the PCA should have the same number of dimensions.");
 	/*
 		Generate the multi-normal vector elements N(0,sigma)
 	*/
@@ -138,7 +136,7 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows,
-				U"The dimensions of item ", i, U" does not conform.");
+				U"The dimensions of item ", i, U" do not conform.");
 			thy data.all()  +=  covi -> data.all()  *  (covi -> numberOfObservations - 1.0);
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
@@ -159,7 +157,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		for (integer i = 1; i <= my size; i ++) {
 			const Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows,
-				U"The dimensions of item ", i, U" does not conform.");
+				U"The dimensions of item ", i, U" do not conform.");
 			thy centroid.all()  +=  covi -> centroid.all()  *  covi -> numberOfObservations;
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
@@ -633,10 +631,9 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	Melder_require (my numberOfRows == thy numberOfRows,
 		U"Matrices should have equal dimensions.");
 	if (my numberOfObservations != thy numberOfObservations) {
-		numberOfObservations = Melder_ifloor (my numberOfObservations > thy numberOfObservations ?
-			thy numberOfObservations : my numberOfObservations) - 1;
-		Melder_warning (U"Covariance_difference: number of observations of matrices do not agree.\n"
-			U" The minimum  size (", numberOfObservations, U") of the two is used.");
+		numberOfObservations = Melder_ifloor (std::min (my numberOfObservations, thy numberOfObservations)) - 1;
+		Melder_warning (U"Covariance_difference: numbers of observations of the two matrices do not agree.\n"
+			U"The lesser of the two (", numberOfObservations, U") is used.");
 	}
 	Melder_require (numberOfObservations > 1,
 		U"Number of observations too small.");
@@ -695,7 +692,8 @@ void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double m
 
 	if (var > 0.0) {
 		t = (my centroid [index] - mu) / sqrt (var / my numberOfObservations);
-		if (out_prob) prob = 2.0 * NUMstudentQ (fabs (t), df);
+		if (out_prob)
+			prob = 2.0 * NUMstudentQ (fabs (t), df);
 	}	
 	if (out_prob)
 		*out_prob = prob;
@@ -754,9 +752,9 @@ end:
 }
 
 void Covariance_getSignificanceOfOneVariance (Covariance me, integer index, double sigmasq, double *out_prob, double *out_chisq, double *out_df) {
-	double var = my data [index] [index];
+	const double var = my data [index] [index];
 	double prob = undefined, chisq = undefined;
-	double df = my numberOfObservations - 1.0;
+	const double df = my numberOfObservations - 1.0;
 
 	checkOneIndex (me, index);
 
