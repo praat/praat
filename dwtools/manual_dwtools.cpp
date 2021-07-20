@@ -5813,7 +5813,7 @@ NORMAL (U"As a simple example consider a TextGridNavigator that searches for the
 	"occur if a label in tier 1 equals one of the labels in this topic set. The command to define the TextGridNavigator "
 	"if the TextGrid is selected is:")
 CODE (U"To TextGridNavigator (topic search): 1, \"a e i u o\", ")
-CODE (U"    ... \"is equal to\", \"OR\", \"Match start to Match end\"")
+CODE (U"... \"is equal to\", \"OR\", \"Match start to Match end\"")
 NORMAL (U"The command to start the search would then probably be ##Find first#. Because of this command the navigator will "
 	"search for the first occurrence of one of the vowels in the %topic set% in the labels of tier 1, and, if a match "
 	"has been found, sets an internal pointer to this location. "
@@ -5829,10 +5829,10 @@ NORMAL (U"A more complex example could query for a vowel from the same %topic se
 	"additionally it is immediately preceded by an unvoiced plosive from a %Before set, like e.g. \"p t k\", and also is "
 	"immediately followed by a nasal from an %After set, like \"m n\". The command to create this navigator once the "
 	"TextGrid is selected is: ")
-CODE (U" To TextGridNavigator: 1, \"a e i u o\", \"is equal to\", \"OR\",")
-CODE (U"    ... \"p t k\", \"is equal to\", \"OR\",")
-CODE (U"    ... \"m n\", \"is equal to\", \"OR\",")
-CODE (U"    ... \"before and after\", \"false\", \"Topic start to Topic end\"")
+CODE (U"To TextGridNavigator: 1, \"a e i u o\", \"is equal to\", \"OR\",")
+CODE (U"... \"p t k\", \"is equal to\", \"OR\",")
+CODE (U"... \"m n\", \"is equal to\", \"OR\",")
+CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
 
 NORMAL (U"These two examples involve only searches on one tier and the two cases follow the same scheme: they "
 	"search for a %%topic label% which may be preceded by a %%before label% and/or followed by an %after label%. "
@@ -5882,7 +5882,7 @@ ENTRY (U"Example 1, simple search in one tier")
 CODE (U"tierNumber = 1")
 CODE (U"selectObject: <textgrid>")
 CODE (U"navigator = To TextGridNavigator (topic search): tierNumber, \"a e i u o\", ")
-CODE (U"    ... \"is equal to\", \"OR\", \"Match start to Match end\"")
+CODE (U"... \"is equal to\", \"OR\", \"Match start to Match end\"")
 CODE (U"Find first")
 CODE (U"index = Get index: tierNumber, \"topic\"")
 CODE (U"while index > 0")
@@ -5900,7 +5900,7 @@ NORMAL (U"Instead of finding the indices one at a time in a %while loop until we
 CODE (U"tierNumber = 1")
 CODE (U"selectObject: <textgrid>")
 CODE (U"navigator = To TextGridNavigator (topic search): tierNumber, \"a e i u o\", ")
-CODE (U"    ... \"is equal to\", \"OR\", \"Match start to Match end\"")
+CODE (U"... \"is equal to\", \"OR\", \"Match start to Match end\"")
 CODE (U"startTimes\\#  = List start times: \"topic\"")
 CODE (U"labels$\\#  = List labels: \"Topic\"")
 CODE (U"endTimes\\#  = List end times: \"topic\"")
@@ -5922,10 +5922,10 @@ NORMAL (U"Search for one of the vowels \"a e i u o\" immediately preceded by one
 CODE (U"tierNumber = 1")
 CODE (U"selectObject: <textgrid>")
 CODE (U"navigator = To TextGridNavigator: tierNumber,")
-CODE (U"    ... \"a e i u o\", \"is equal to\", \"OR\",")
-CODE (U"    ... \"p t k\", \"is equal to\", \"OR\",")
-CODE (U"    ... \"m n\", \"is equal to\", \"OR\",")
-CODE (U"    ... \"before and after\", \"false\", \"Topic start to Topic end\"")
+CODE (U"... \"a e i u o\", \"is equal to\", \"OR\",")
+CODE (U"... \"p t k\", \"is equal to\", \"OR\",")
+CODE (U"... \"m n\", \"is equal to\", \"OR\",")
+CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
 CODE (U"domains\\# \\#  = List domains: \"Topic start to Topic end\"")
 CODE (U"<your code>")
 NORMAL (U"If, for example, the start time should equal the start time of the Before match, i.e. the plosive, "
