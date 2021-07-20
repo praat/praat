@@ -680,24 +680,66 @@ DEFINITION (U"the interpolation method (None, Parabolic, Sinc) of the @@vector p
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Get energy...", U"ppgb", 20070129)
+MAN_BEGIN (U"Sound: Get energy...", U"ppgb", 20210719)
 INTRO (U"A @query to the selected @Sound object.")
-ENTRY (U"Return value")
-NORMAL (U"the energy. If the unit of sound amplitude is Pa (Pascal), the unit of energy will be Pa^2\\.cs.")
+ENTRY (U"Availability")
+NORMAL (U"This command becomes available in the Query submenu when you select one Sound. "
+	"Like most query commands, it is greyed out if you select two Sounds or more.")
+ENTRY (U"Behaviour")
+NORMAL (U"If you execute this command, Praat should write the energy of the selected Sound (in the time interval you are asking for) into the Info window. "
+	"If the unit of sound amplitude is Pa (Pascal), the unit of energy will be Pa^2\\.cs.")
 ENTRY (U"Setting")
 TAG (U"##Time range (s)")
 DEFINITION (U"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
-ENTRY (U"Algorithm")
+ENTRY (U"Definition")
 NORMAL (U"The energy is defined as")
 EQUATION (U"\\in__%%t%1_^^%%t%2^ %x^2(%t) %dt")
 NORMAL (U"where %x(%t) is the amplitude of the sound. For stereo sounds, it is")
-EQUATION (U"\\in__%%t%1_^^%%t%2^ (%x__1_^2(%t) + %x__2_^2(%t))/2 %dt")
-NORMAL (U"where %x__1_(%t) and %x__2_(%t) are the two channels; this definition ensures that "
+EQUATION (U"\\in__%%t%1_^^%%t%2^ (%x^2(%t) + %y^2(%t))/2 %dt")
+NORMAL (U"where %x(%t) and %y(%t) are the two channels; this definition, which averages (rathaer than sums) over the channels, ensures that "
 	"if you convert a mono sound to a stereo sound, the energy will stay the same.")
-ENTRY (U"See also")
+ENTRY (U"Related commands")
 NORMAL (U"For an interpretation of the energy as the sound energy in air, see @@Sound: Get energy in air@. "
 	"For the power, see @@Sound: Get power...@.")
+ENTRY (U"Implementation")
+NORMAL (U"In Praat, a Sound is defined only at a finite number of time points, spaced evenly. "
+	"For instance, a three-seconds long Sound with a sampling frequency of 10 kHz is defined at 30,000 time points, "
+	"which usually (e.g. when you create the Sound with @@Create Sound from formula...@) lie "
+	"at 0.00005, 0.00015, 0.00025 ... 2.99975, 2.99985 and 2.99995 seconds. "
+	"The simple way Praat looks at this is that the first %sample is centred around 0.00005 seconds, "
+	"and the amplitude of that sample (%x__1_) represents %x(%t) for %t between 0 and 0.00010 seconds. "
+	"Likewise, the second sample is centred around 0.00015 seconds but can be said to run from 0.00010 to 0.00020 seconds, "
+	"and the 30,000th and last sample is centred around 2.99995 seconds and its amplitude (%x__30000_) "
+	"represents all times between 2.99990 and 3.00000 seconds. "
+	"This example sound %x(%t) is therefore defined for all times between 0 and 3 seconds, "
+	"but is undefined before 0 seconds or after 3 seconds.")
+NORMAL (U"The energy of the whole example sound is therefore")
+EQUATION (U"\\in__0_^^3^ %x^2(%t) %dt")
+NORMAL (U"and we approximate this as a sum over all 30,000 samples:")
+EQUATION (U"\\su__%i=1_^^30000^ %x__%i_^2 %\\Det__%i_")
+NORMAL (U"where %\\Det__%i_ is the duration of the %%i%th sample, i.e. 0.0001 seconds for every sample.")
+NORMAL (U"Now consider what happens if we want to know the energy between %t__1_ = 0.00013 and %t__2_ = 0.00054 seconds. "
+	"The first sample of the sound falls entirely outside this interval; "
+	"70 percent of the second sample falls within the interval, namely the part from 0.00013 to 0.00020 seconds; "
+	"all of the third, fourth and fifth samples fall within the interval; "
+	"and 40 percent of the sixth sample falls within the interval, namely the part from 0.00050 to 0.00054 seconds "
+	"(note that the centre of this sixth sample, which is at 0.00055 seconds, even lies outside the interval). "
+	"The energy is then")
+EQUATION (U"\\su__%i=2_^^6^ %x__%i_^2 %\\Det__%i_")
+NORMAL (U"where %\\Det__3_ = %\\Det__4_ = %\\Det__5_ = 0.0001 seconds, "
+	"but %\\Det__2_ is only 0.00007 seconds (namely the part of the second sample that falls between %t__1_ and %t__2_), "
+	"and %\\Det__6_ is only 0.00004 seconds (namely the part of the sixth sample that falls between %t__1_ and %t__2_).")
+NORMAL (U"This way of integrating the squared signal (technically, a Riemann sum over a partition [of the interval from "
+	"%t__1_ to %t__2_] that is regular everywhere except at the edges and has central tags everywhere except at the edges) "
+	"ensures that the result is a continuous function of %t__1_ and %t__2_, "
+	"i.e., a very small change in %t__1_ or %t__2_ can only lead to a very small change in the computed energy "
+	"(instead, simply summing over all samples whose centre falls between %t__1_ and %t__2_ would result instead in a sudden jump "
+	"in the computed energy whenever %t__1_ or %t__2_ crosses a sample centre, "
+	"which would be unphysical behaviour and therefore not how Praat should behave).")
+ENTRY (U"Edge cases")
+NORMAL (U"If the sound is not defined everywhere between %t__1_ and %t__2_, then the energy is not defined there either. "
+	"Those times are skipped in the integral.")
 MAN_END
 
 MAN_BEGIN (U"Sound: Get energy in air", U"ppgb", 20070129)
