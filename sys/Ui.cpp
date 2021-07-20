@@ -1091,7 +1091,7 @@ UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 varia
 	return thee;
 }
 
-UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 label, constSTRVEC defaultValue, integer numberOfLines) {
+UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 label, constSTRVEC defaultValue, integer numberOfLines) {
 	UiField thee = UiForm_addField (me, _kUiField_type::STRINGARRAY_, label);
 	thy stringArrayDefaultValue = copy_STRVEC (defaultValue);
 	thy stringArrayFormat = theStringArrayFormat;

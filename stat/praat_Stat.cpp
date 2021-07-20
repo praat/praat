@@ -906,12 +906,12 @@ DO
 // MARK: Convert
 
 FORM (CONVERT_EACH_TO_ONE__Table_collapseRows, U"Table: Collapse rows", nullptr) {
-	TEXTVEC_LINES (3, factors, U"Columns with factors (independent variables)", { U"speaker", U"dialect", U"age", U"vowel" })
-	TEXTVEC_LINES (3, columnsToSum, U"Columns to sum", { U"number", U"cost" })
-	TEXTVEC_LINES (3, columnsToAverage, U"Columns to average", { U"price" })
-	TEXTVEC_LINES (3, columnsToMedianize, U"Columns to medianize", { U"vot" })
-	TEXTVEC_LINES (3, columnsToAverageLogarithmically, U"Columns to average logarithmically", { U"duration" })
-	TEXTVEC_LINES (3, columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically", { U"F0", U"F1", U"F2", U"F3" })
+	STRINGARRAY_LINES (3, factors, U"Columns with factors (independent variables)", { U"speaker", U"dialect", U"age", U"vowel" })
+	STRINGARRAY_LINES (3, columnsToSum, U"Columns to sum", { U"number", U"cost" })
+	STRINGARRAY_LINES (3, columnsToAverage, U"Columns to average", { U"price" })
+	STRINGARRAY_LINES (3, columnsToMedianize, U"Columns to medianize", { U"vot" })
+	STRINGARRAY_LINES (3, columnsToAverageLogarithmically, U"Columns to average logarithmically", { U"duration" })
+	STRINGARRAY_LINES (3, columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically", { U"F0", U"F1", U"F2", U"F3" })
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
