@@ -917,7 +917,7 @@ FORM (CONVERT_EACH_TO_ONE__Table_collapseRows, U"Table: Collapse rows", nullptr)
 DO
 	CONVERT_EACH_TO_ONE (Table)
 		autoTable result = Table_collapseRows (me, factors, columnsToSum, columnsToAverage,
-			columnsToMedianize, columnsToAverageLogarithmically, columnsToMedianizeLogarithmically);
+				columnsToMedianize, columnsToAverageLogarithmically, columnsToMedianizeLogarithmically);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_pooled")
 }
 
