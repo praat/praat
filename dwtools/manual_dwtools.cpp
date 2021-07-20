@@ -5811,7 +5811,7 @@ DEFINITION (U"defines the set of labels that we want to find. As an example cons
 	"that match with one of these labels. ")
 TAG (U"##Topic match criterion#")
 DEFINITION (U"defines what type of match you want. To name just a few of the possible options: "
-	"##is equal to# or its oppposite #is not equal to#, #contains# or its opposite #does not contain#, "
+	"##is equal to# or its oppposite ##is not equal to#, ##contains# or its opposite ##does not contain#, "
 	"##starts with# or its opposite ##does not start with#. ")
 TAG (U"##Topic match boolean#")
 DEFINITION (U"defines the relation between the matches of the labels in the topic set. Two options are available, "
@@ -5828,29 +5828,30 @@ DEFINITION (U"defines the relation between the matches of the labels in the topi
 TAG (U"##Before label set#")
 DEFINITION (U"defines the set of labels that the preceeding interval label has to match if the current interval label "
 	"matches the topic label set. This makes the search context sensitive because it is not enough that the current "
-	"interval label matches (in a specified way) the %topic set but also the label of the preceeding interval has to "
-	"match the %before set. If, for example, the %before set contains "
-	"\"p\", \"t\" and \"k\" then in combination with the %topic labels defined above this would limit the search to only "
+	"interval label matches (in a specified way) the topic set but also the label of the preceeding interval has to "
+	"match the before set. If, for example, the before set contains "
+	"\"p\", \"t\" and \"k\" then in combination with the topic labels defined above this would limit the search to only "
 	"vowels preceeded by plosives.")
 TAG (U"##Before match criterion#")
-DEFINITION (U"defines, just like for the %topic match criterion, the kind of match you are looking for only now for "
+DEFINITION (U"defines, just like for the topic match criterion, the kind of match you are looking for only now for "
 	"the labels of the %%before set%.")
 TAG (U"##Before match boolean#")
 DEFINITION (U"defines, also in analogy with the description of the topic match boolean, the relation between the matches "
 	"of the labels in the %%before set% ")
-TAG (U"##After labels#")
-DEFINITION (U"defines the set of labels that should occur after the %topic label. An example set could consist of "
-	"\"m\" and \"n\". In combination with the %topic set we would search for vowels followed by a nasal.")
+TAG (U"##After label set#")
+DEFINITION (U"defines the set of labels that the following interval label has to match if the current interval label "
+	"matches the topic label set. An example set could consist of "
+	"\"m\" and \"n\". In combination with the topic set we would search for vowels followed by a nasal.")
 TAG (U"##After match criterion# and ##After match boolean#")
-DEFINITION (U"have the same meaning as defined above for the %topic and %before sets.")
+DEFINITION (U"have the same meaning as defined above for the topic and before sets.")
 TAG (U"##Before and after use criterion#")
-DEFINITION (U"defines how the %before and %after sets have to be combined in the matching. The possible options are ##before#, or "
+DEFINITION (U"defines how the before and after sets have to be combined in the matching. The possible options are ##before#, or "
 	"##after# or ##before and after# or ##before or after, not both# or ##before or after, or both# or finally "
-	"##no before and no after#. Given the %topic, %before and %after labels examples used above then ##before and after# "
+	"##no before and no after#. Given the topic, before and after labels examples defined above then ##before and after# "
 	"would limit the search to vowels preceeded by a plosive and followed by a nasal.")
 TAG (U"##Exclude topic labels boolean#")
-DEFINITION (U"when on, only the %before and / or the %after label set will be used in matching. Of course the same effect "
-	"could be reached by leaving the topic set empty.")
+DEFINITION (U"when on, only the before and / or the after label set will be used in matching. Of course this "
+	"could also be reached by leaving the topic set empty.")
 MAN_END
 
 MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210718)
