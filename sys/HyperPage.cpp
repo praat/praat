@@ -53,17 +53,18 @@ autoHyperLink HyperLink_create (conststring32 name, double x1DC, double x2DC, do
 }
 
 static void saveHistory (HyperPage me, conststring32 title) {
-	if (! title) return;
+	if (! title)
+		return;
 
 	/*
-	 * The page title will be saved at the top. Go there.
-	 */
+		The page title will be saved at the top. Go there.
+	*/
 	while (my historyPointer < 19 && my history [my historyPointer]. page)
 		my historyPointer ++;
 
 	/*
-	 * If the page title to be saved is already at the top, ignore it.
-	 */	
+		If the page title to be saved is already at the top, ignore it.
+	*/
 	if (my history [my historyPointer]. page) {
 		if (str32equ (my history [my historyPointer]. page.get(), title)) return;
 	} else if (my historyPointer > 0 && str32equ (my history [my historyPointer - 1]. page.get(), title)) {
@@ -72,8 +73,8 @@ static void saveHistory (HyperPage me, conststring32 title) {
 	}
 
 	/*
-	 * If the history buffer is full, shift it.
-	 */
+		If the history buffer is full, shift it.
+	*/
 	if (my historyPointer == 19 && my history [my historyPointer]. page) {
 		for (int i = 0; i < 19; i ++)
 			my history [i] = std::move (my history [i + 1]);
@@ -81,8 +82,8 @@ static void saveHistory (HyperPage me, conststring32 title) {
 	}
 
 	/*
-	 * Add the page title to the top of the history list.
-	 */
+		Add the page title to the top of the history list.
+	*/
 	my history [my historyPointer]. page = Melder_dup_f (title);
 }
 
@@ -100,7 +101,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 	conststring32 rightFooter = reflect ? my insideFooter : my outsideFooter;
 
 	my d_y = PAPER_TOP - TOP_MARGIN;
-	my d_x = 0;
+	my d_x = 0.0;
 	my previousBottomSpacing = 0.0;
 	Graphics_setFont (my ps, kGraphics_font::TIMES);
 	Graphics_setFontSize (my ps, 12);
@@ -140,73 +141,74 @@ static void updateVerticalScrollBar (HyperPage me);
 void HyperPage_any (HyperPage me, conststring32 text, kGraphics_font font, double size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method)
 {
-	if (my rightMargin == 0)
+	if (my rightMargin == 0.0)
 		return;   // no infinite heights please
-	double heightGuess = size * (1.2/72) * ((integer) size * str32len (text) / (int) (my rightMargin * 150));
+	const double heightGuess = size * (1.2/72) * ((integer) size * str32len (text) / (int) (my rightMargin * 150));
 
-if (! my printing) {
-	Graphics_Link *paragraphLinks;
-	int numberOfParagraphLinks, ilink;
-	if (my entryHint && (method & HyperPage_USE_ENTRY_HINT) && str32equ (text, my entryHint.get())) {
-		my entryPosition = my d_y;
-	}
-	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my d_y -= size * (1.2/72);
-	my d_x = x;
+	if (! my printing) {
+		Graphics_Link *paragraphLinks;
+		int numberOfParagraphLinks, ilink;
+		if (my entryHint && (method & HyperPage_USE_ENTRY_HINT) && str32equ (text, my entryHint.get()))
+			my entryPosition = my d_y;
+		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+		my d_y -= size * (1.2/72);
+		my d_x = x;
 
-	if (/* my d_y > PAGE_HEIGHT + 2.0 + heightGuess || */ my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-		my d_y -= heightGuess;
+		if (/* my d_y > PAGE_HEIGHT + 2.0 + heightGuess || */ my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+			my d_y -= heightGuess;
+		} else {
+			Graphics_setFont (my graphics.get(), font);
+			Graphics_setFontSize (my graphics.get(), size);
+			Graphics_setWrapWidth (my graphics.get(), my rightMargin - x - 0.1);
+			Graphics_setSecondIndent (my graphics.get(), secondIndent);
+			Graphics_setFontStyle (my graphics.get(), style);
+			Graphics_text (my graphics.get(), my d_x, my d_y, text);
+			numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
+			for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
+				autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
+					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
+					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2
+				);
+				my links. addItem_move (link.move());
+			}
+			if (method & HyperPage_ADD_BORDER) {
+				Graphics_setLineWidth (my graphics.get(), 2.0);
+				Graphics_line (my graphics.get(), 0.0, my d_y, my rightMargin, my d_y);
+				Graphics_setLineWidth (my graphics.get(), 1.0);
+			}
+			/*
+				The text may have wrapped.
+				Ask the Graphics manager by how much, and update our text position accordingly.
+			*/
+			my d_y = Graphics_inqTextY (my graphics.get());
+		}
 	} else {
-		Graphics_setFont (my graphics.get(), font);
-		Graphics_setFontSize (my graphics.get(), size);
-		Graphics_setWrapWidth (my graphics.get(), my rightMargin - x - 0.1);
-		Graphics_setSecondIndent (my graphics.get(), secondIndent);
-		Graphics_setFontStyle (my graphics.get(), style);
-		Graphics_text (my graphics.get(), my d_x, my d_y, text);
-		numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
-		for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
-			autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
-				paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
-				paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-			my links. addItem_move (link.move());
-		}
-		if (method & HyperPage_ADD_BORDER) {
-			Graphics_setLineWidth (my graphics.get(), 2.0);
-			Graphics_line (my graphics.get(), 0.0, my d_y, my rightMargin, my d_y);
-			Graphics_setLineWidth (my graphics.get(), 1.0);
-		}
-		/*
-		 * The text may have wrapped.
-		 * Ask the Graphics manager by how much, and update our text position accordingly.
-		 */
-		my d_y = Graphics_inqTextY (my graphics.get());
-	}
-} else {
-	Graphics_setFont (my ps, font);
-	Graphics_setFontSize (my ps, size);
-	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my d_y -= size * (1.2/72);
-	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance + size * (1.2/72) * (str32len (text) / (6.0 * 10))) {
-		Graphics_nextSheetOfPaper (my ps);
-		if (my d_printingPageNumber) my d_printingPageNumber ++;
-		HyperPage_initSheetOfPaper (me);
 		Graphics_setFont (my ps, font);
 		Graphics_setFontSize (my ps, size);
+		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
 		my d_y -= size * (1.2/72);
+		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance + size * (1.2/72) * (str32len (text) / (6.0 * 10))) {
+			Graphics_nextSheetOfPaper (my ps);
+			if (my d_printingPageNumber != 0)
+				my d_printingPageNumber ++;
+			HyperPage_initSheetOfPaper (me);
+			Graphics_setFont (my ps, font);
+			Graphics_setFontSize (my ps, size);
+			my d_y -= size * (1.2/72);
+		}
+		my d_x = 0.7 + x;
+		Graphics_setWrapWidth (my ps, 6.0 - x);
+		Graphics_setSecondIndent (my ps, secondIndent);
+		Graphics_setFontStyle (my ps, style);
+		Graphics_text (my ps, my d_x, my d_y, text);
+		if (method & HyperPage_ADD_BORDER) {
+			Graphics_setLineWidth (my ps, 3.0);
+			/*Graphics_line (my ps, 0.7, my d_y, 6.7, my d_y);*/
+			Graphics_line (my ps, 0.7, my d_y + size * (1.2/72) + 0.07, 6.7, my d_y + size * (1.2/72) + 0.07);
+			Graphics_setLineWidth (my ps, 1.0);
+		}
+		my d_y = Graphics_inqTextY (my ps);
 	}
-	my d_x = 0.7 + x;
-	Graphics_setWrapWidth (my ps, 6.0 - x);
-	Graphics_setSecondIndent (my ps, secondIndent);
-	Graphics_setFontStyle (my ps, style);
-	Graphics_text (my ps, my d_x, my d_y, text);
-	if (method & HyperPage_ADD_BORDER) {
-		Graphics_setLineWidth (my ps, 3);
-		/*Graphics_line (my ps, 0.7, my d_y, 6.7, my d_y);*/
-		Graphics_line (my ps, 0.7, my d_y + size * (1.2/72) + 0.07, 6.7, my d_y + size * (1.2/72) + 0.07);
-		Graphics_setLineWidth (my ps, 1);
-	}
-	my d_y = Graphics_inqTextY (my ps);
-}
 	my previousBottomSpacing = bottomSpacing;
 }
 
@@ -284,38 +286,38 @@ void HyperPage_formula (HyperPage me, conststring32 formula) {
 	double topSpacing = 0.2, bottomSpacing = 0.2, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
 	double size = my p_fontSize;
-if (! my printing) {
-	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my d_y -= size * (1.2/72);
-	if (my d_y > PAGE_HEIGHT + 2.0 || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-	} else {
-		Graphics_setFont (my graphics.get(), font);
-		Graphics_setFontStyle (my graphics.get(), 0);
-		Graphics_setFontSize (my graphics.get(), size);
-		Graphics_setWrapWidth (my graphics.get(), 0.0);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (my graphics.get(), 0.5 * my rightMargin, my d_y, formula);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
-	}
-} else {
-	Graphics_setFont (my ps, font);
-	Graphics_setFontStyle (my ps, 0);
-	Graphics_setFontSize (my ps, size);
-	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my d_y -= size * (1.2/72);
-	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
-		Graphics_nextSheetOfPaper (my ps);
-		if (my d_printingPageNumber) my d_printingPageNumber ++;
-		HyperPage_initSheetOfPaper (me);
-		Graphics_setFont (my ps, font);
-		Graphics_setFontSize (my ps, size);
+	if (! my printing) {
+		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 		my d_y -= size * (1.2/72);
+		if (my d_y > PAGE_HEIGHT + 2.0 || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+		} else {
+			Graphics_setFont (my graphics.get(), font);
+			Graphics_setFontStyle (my graphics.get(), 0);
+			Graphics_setFontSize (my graphics.get(), size);
+			Graphics_setWrapWidth (my graphics.get(), 0.0);
+			Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
+			Graphics_text (my graphics.get(), 0.5 * my rightMargin, my d_y, formula);
+			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		}
+	} else {
+		Graphics_setFont (my ps, font);
+		Graphics_setFontStyle (my ps, 0);
+		Graphics_setFontSize (my ps, size);
+		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
+		my d_y -= size * (1.2/72);
+		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+			Graphics_nextSheetOfPaper (my ps);
+			if (my d_printingPageNumber) my d_printingPageNumber ++;
+			HyperPage_initSheetOfPaper (me);
+			Graphics_setFont (my ps, font);
+			Graphics_setFontSize (my ps, size);
+			my d_y -= size * (1.2/72);
+		}
+		Graphics_setWrapWidth (my ps, 0.0);
+		Graphics_setTextAlignment (my ps, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (my ps, 3.7, my d_y, formula);
+		Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 	}
-	Graphics_setWrapWidth (my ps, 0);
-	Graphics_setTextAlignment (my ps, Graphics_CENTRE, Graphics_BOTTOM);
-	Graphics_text (my ps, 3.7, my d_y, formula);
-	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
-}
 	my previousBottomSpacing = bottomSpacing;
 }
 
@@ -325,46 +327,45 @@ void HyperPage_picture (HyperPage me, double width_inches, double height_inches,
 	const int size = my p_fontSize;
 	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
-if (! my printing) {
-	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	if (my d_y > PAGE_HEIGHT + height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-		my d_y -= height_inches;
+	if (! my printing) {
+		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+		if (my d_y > PAGE_HEIGHT + height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+			my d_y -= height_inches;
+		} else {
+			my d_y -= height_inches;
+			Graphics_setFont (my graphics.get(), font);
+			Graphics_setFontStyle (my graphics.get(), 0);
+			Graphics_setFontSize (my graphics.get(), size);
+			my d_x = ( width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - width_inches) );
+			Graphics_setWrapWidth (my graphics.get(), 0.0);
+			Graphics_setViewport (my graphics.get(), my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
+			draw (my graphics.get());
+			Graphics_setViewport (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		}
 	} else {
-		my d_y -= height_inches;
-		Graphics_setFont (my graphics.get(), font);
-		Graphics_setFontStyle (my graphics.get(), 0);
-		Graphics_setFontSize (my graphics.get(), size);
-		my d_x = width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - width_inches);
-		Graphics_setWrapWidth (my graphics.get(), 0.0);
-		Graphics_setViewport (my graphics.get(), my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
-		draw (my graphics.get());
-		Graphics_setViewport (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
-	}
-} else {
-	Graphics_setFont (my ps, font);
-	Graphics_setFontStyle (my ps, 0);
-	Graphics_setFontSize (my ps, size);
-	my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
-	my d_y -= height_inches;
-	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
-		Graphics_nextSheetOfPaper (my ps);
-		if (my d_printingPageNumber) my d_printingPageNumber ++;
-		HyperPage_initSheetOfPaper (me);
 		Graphics_setFont (my ps, font);
+		Graphics_setFontStyle (my ps, 0);
 		Graphics_setFontSize (my ps, size);
+		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
 		my d_y -= height_inches;
+		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+			Graphics_nextSheetOfPaper (my ps);
+			if (my d_printingPageNumber) my d_printingPageNumber ++;
+			HyperPage_initSheetOfPaper (me);
+			Graphics_setFont (my ps, font);
+			Graphics_setFontSize (my ps, size);
+			my d_y -= height_inches;
+		}
+		my d_x = Melder_clippedLeft (0.0, 3.7 - 0.5 * width_inches);
+		Graphics_setWrapWidth (my ps, 0.0);
+		Graphics_setViewport (my ps, my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
+		draw (my ps);
+		Graphics_setViewport (my ps, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setWindow (my ps, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 	}
-	my d_x = 3.7 - 0.5 * width_inches;
-	if (my d_x < 0) my d_x = 0;
-	Graphics_setWrapWidth (my ps, 0);
-	Graphics_setViewport (my ps, my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
-	draw (my ps);
-	Graphics_setViewport (my ps, 0, 1, 0, 1);
-	Graphics_setWindow (my ps, 0, 1, 0, 1);
-	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
-}
 	my previousBottomSpacing = bottomSpacing;
 }
 
@@ -376,31 +377,133 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 	const double size = my p_fontSize;
 	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
 	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
-if (! my printing) {
-	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	if (my d_y > PAGE_HEIGHT + true_height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-		my d_y -= true_height_inches;
+	if (! my printing) {
+		my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+		if (my d_y > PAGE_HEIGHT + true_height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+			my d_y -= true_height_inches;
+		} else {
+			my d_y -= true_height_inches;
+			Graphics_setFont (my graphics.get(), font);
+			Graphics_setFontStyle (my graphics.get(), 0);
+			Graphics_setFontSize (my graphics.get(), size);
+			my d_x = ( true_width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - true_width_inches) );
+			Graphics_setWrapWidth (my graphics.get(), 0.0);
+			integer x1DCold, x2DCold, y1DCold, y2DCold;
+			Graphics_inqWsViewport (my graphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
+			double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
+			Graphics_inqWsWindow (my graphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
+			{
+				if (! my praatApplication)
+					my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+				if (! my praatObjects)
+					my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+				if (! my praatPicture)
+					my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+				theCurrentPraatApplication = (PraatApplication) my praatApplication;
+				theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
+				theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
+				theCurrentPraatObjects = (PraatObjects) my praatObjects;
+				theCurrentPraatPicture = (PraatPicture) my praatPicture;
+				theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
+				theCurrentPraatPicture -> font = font;
+				theCurrentPraatPicture -> fontSize = size;
+				theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+				theCurrentPraatPicture -> colour = Melder_BLACK;
+				theCurrentPraatPicture -> lineWidth = 1.0;
+				theCurrentPraatPicture -> arrowSize = 1.0;
+				theCurrentPraatPicture -> speckleSize = 1.0;
+				theCurrentPraatPicture -> x1NDC = my d_x;
+				theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
+				theCurrentPraatPicture -> y1NDC = my d_y;
+				theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
+
+				Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+				Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+				integer x1DC, y1DC, x2DC, y2DC;
+				Graphics_WCtoDC (my graphics.get(), 0.0, 0.0, & x1DC, & y2DC);
+				Graphics_WCtoDC (my graphics.get(), 1.0, 1.0, & x2DC, & y1DC);
+				Graphics_resetWsViewport (my graphics.get(), x1DC, x2DC, y1DC, y2DC);
+				Graphics_setWsWindow (my graphics.get(), 0, width_inches, 0, height_inches);
+				theCurrentPraatPicture -> x1NDC = 0.0;
+				theCurrentPraatPicture -> x2NDC = width_inches;
+				theCurrentPraatPicture -> y1NDC = 0.0;
+				theCurrentPraatPicture -> y2NDC = height_inches;
+				Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+
+				{// scope
+					autoMelderProgressOff progress;
+					autoMelderWarningOff warning;
+					autoMelderSaveDefaultDir saveDir;
+					if (! MelderDir_isNull (& my rootDirectory)) {
+						Melder_setDefaultDir (& my rootDirectory);
+					}
+					try {
+						Interpreter_run (interpreter.get(), text.get());
+					} catch (MelderError) {
+						if (my scriptErrorHasBeenNotified) {
+							Melder_clearError ();
+						} else {
+							Melder_flushError ();
+							my scriptErrorHasBeenNotified = true;
+						}
+					}
+				}
+				Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
+				Graphics_setLineWidth (my graphics.get(), 1.0);
+				Graphics_setArrowSize (my graphics.get(), 1.0);
+				Graphics_setSpeckleSize (my graphics.get(), 1.0);
+				Graphics_setColour (my graphics.get(), Melder_BLACK);
+				/*Graphics_Link *paragraphLinks;
+				integer numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
+				if (my links) for (integer ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
+					autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
+						paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
+						paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
+					my links -> addItem_move (link.move());
+				}*/
+				theCurrentPraatApplication = & theForegroundPraatApplication;
+				theCurrentPraatObjects = & theForegroundPraatObjects;
+				theCurrentPraatPicture = & theForegroundPraatPicture;
+			}
+			Graphics_resetWsViewport (my graphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
+			Graphics_setWsWindow (my graphics.get(), x1NDCold, x2NDCold, y1NDCold, y2NDCold);
+			Graphics_setViewport (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
+		}
 	} else {
+		Graphics_setFont (my ps, font);
+		Graphics_setFontStyle (my ps, 0);
+		Graphics_setFontSize (my ps, size);
+		my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
 		my d_y -= true_height_inches;
-		Graphics_setFont (my graphics.get(), font);
-		Graphics_setFontStyle (my graphics.get(), 0);
-		Graphics_setFontSize (my graphics.get(), size);
-		my d_x = true_width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - true_width_inches);
-		Graphics_setWrapWidth (my graphics.get(), 0.0);
+		if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+			Graphics_nextSheetOfPaper (my ps);
+			if (my d_printingPageNumber) my d_printingPageNumber ++;
+			HyperPage_initSheetOfPaper (me);
+			Graphics_setFont (my ps, font);
+			Graphics_setFontSize (my ps, size);
+			my d_y -= true_height_inches;
+		}
+		my d_x = Melder_clippedLeft (0.0, 3.7 - 0.5 * true_width_inches);
+		Graphics_setWrapWidth (my ps, 0.0);
 		integer x1DCold, x2DCold, y1DCold, y2DCold;
-		Graphics_inqWsViewport (my graphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
+		Graphics_inqWsViewport (my ps, & x1DCold, & x2DCold, & y1DCold, & y2DCold);
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
-		Graphics_inqWsWindow (my graphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
+		Graphics_inqWsWindow (my ps, & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
 		{
-			if (! my praatApplication) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
-			if (! my praatObjects) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
-			if (! my praatPicture) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
+			if (! my praatApplication)
+				my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+			if (! my praatObjects)
+				my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+			if (! my praatPicture)
+				my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 			theCurrentPraatApplication = (PraatApplication) my praatApplication;
-			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
+			theCurrentPraatApplication -> batch = true;
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 			theCurrentPraatObjects = (PraatObjects) my praatObjects;
 			theCurrentPraatPicture = (PraatPicture) my praatPicture;
-			theCurrentPraatPicture -> graphics = my graphics.get();   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> graphics = my ps;
 			theCurrentPraatPicture -> font = font;
 			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -413,18 +516,22 @@ if (! my printing) {
 			theCurrentPraatPicture -> y1NDC = my d_y;
 			theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
 
-			Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-			Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
+			Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+			Graphics_setWindow (my ps, 0.0, 1.0, 0.0, 1.0);
 			integer x1DC, y1DC, x2DC, y2DC;
-			Graphics_WCtoDC (my graphics.get(), 0.0, 0.0, & x1DC, & y2DC);
-			Graphics_WCtoDC (my graphics.get(), 1.0, 1.0, & x2DC, & y1DC);
-			Graphics_resetWsViewport (my graphics.get(), x1DC, x2DC, y1DC, y2DC);
-			Graphics_setWsWindow (my graphics.get(), 0, width_inches, 0, height_inches);
+			Graphics_WCtoDC (my ps, 0.0, 0.0, & x1DC, & y2DC);
+			Graphics_WCtoDC (my ps, 1.0, 1.0, & x2DC, & y1DC);
+			integer shift = (integer) (Graphics_getResolution (my ps) * true_height_inches) + (y1DCold - y2DCold);
+			#if cocoa
+				shift = 0;   // this is a FIX
+			#endif
+			Graphics_resetWsViewport (my ps, x1DC, x2DC, y1DC + shift, y2DC + shift);
+			Graphics_setWsWindow (my ps, 0, width_inches, 0, height_inches);
 			theCurrentPraatPicture -> x1NDC = 0.0;
 			theCurrentPraatPicture -> x2NDC = width_inches;
 			theCurrentPraatPicture -> y1NDC = 0.0;
 			theCurrentPraatPicture -> y2NDC = height_inches;
-			Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+			Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 
 			{// scope
 				autoMelderProgressOff progress;
@@ -436,125 +543,24 @@ if (! my printing) {
 				try {
 					Interpreter_run (interpreter.get(), text.get());
 				} catch (MelderError) {
-					if (my scriptErrorHasBeenNotified) {
-						Melder_clearError ();
-					} else {
-						Melder_flushError ();
-						my scriptErrorHasBeenNotified = true;
-					}
+					Melder_clearError ();
 				}
 			}
-			Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
-			Graphics_setLineWidth (my graphics.get(), 1.0);
-			Graphics_setArrowSize (my graphics.get(), 1.0);
-			Graphics_setSpeckleSize (my graphics.get(), 1.0);
-			Graphics_setColour (my graphics.get(), Melder_BLACK);
-			/*Graphics_Link *paragraphLinks;
-			integer numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
-			if (my links) for (integer ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
-				autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
-					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
-					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-				my links -> addItem_move (link.move());
-			}*/
+			Graphics_setLineType (my ps, Graphics_DRAWN);
+			Graphics_setLineWidth (my ps, 1.0);
+			Graphics_setArrowSize (my ps, 1.0);
+			Graphics_setSpeckleSize (my ps, 1.0);
+			Graphics_setColour (my ps, Melder_BLACK);
 			theCurrentPraatApplication = & theForegroundPraatApplication;
 			theCurrentPraatObjects = & theForegroundPraatObjects;
 			theCurrentPraatPicture = & theForegroundPraatPicture;
 		}
-		Graphics_resetWsViewport (my graphics.get(), x1DCold, x2DCold, y1DCold, y2DCold);
-		Graphics_setWsWindow (my graphics.get(), x1NDCold, x2NDCold, y1NDCold, y2NDCold);
-		Graphics_setViewport (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
-	}
-} else {
-	Graphics_setFont (my ps, font);
-	Graphics_setFontStyle (my ps, 0);
-	Graphics_setFontSize (my ps, size);
-	my d_y -= ( my d_y == PAPER_TOP - TOP_MARGIN ? 0.0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0 );
-	my d_y -= true_height_inches;
-	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
-		Graphics_nextSheetOfPaper (my ps);
-		if (my d_printingPageNumber) my d_printingPageNumber ++;
-		HyperPage_initSheetOfPaper (me);
-		Graphics_setFont (my ps, font);
-		Graphics_setFontSize (my ps, size);
-		my d_y -= true_height_inches;
-	}
-	my d_x = 3.7 - 0.5 * true_width_inches;
-	if (my d_x < 0) my d_x = 0;
-	Graphics_setWrapWidth (my ps, 0);
-	integer x1DCold, x2DCold, y1DCold, y2DCold;
-	Graphics_inqWsViewport (my ps, & x1DCold, & x2DCold, & y1DCold, & y2DCold);
-	double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
-	Graphics_inqWsWindow (my ps, & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
-	{
-		if (! my praatApplication) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
-		if (! my praatObjects) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
-		if (! my praatPicture) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
-		theCurrentPraatApplication = (PraatApplication) my praatApplication;
-		theCurrentPraatApplication -> batch = true;
-		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
-		theCurrentPraatObjects = (PraatObjects) my praatObjects;
-		theCurrentPraatPicture = (PraatPicture) my praatPicture;
-		theCurrentPraatPicture -> graphics = my ps;
-		theCurrentPraatPicture -> font = font;
-		theCurrentPraatPicture -> fontSize = size;
-		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
-		theCurrentPraatPicture -> colour = Melder_BLACK;
-		theCurrentPraatPicture -> lineWidth = 1.0;
-		theCurrentPraatPicture -> arrowSize = 1.0;
-		theCurrentPraatPicture -> speckleSize = 1.0;
-		theCurrentPraatPicture -> x1NDC = my d_x;
-		theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
-		theCurrentPraatPicture -> y1NDC = my d_y;
-		theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
-
-		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		Graphics_resetWsViewport (my ps, x1DCold, x2DCold, y1DCold, y2DCold);
+		Graphics_setWsWindow (my ps, x1NDCold, x2NDCold, y1NDCold, y2NDCold);
+		Graphics_setViewport (my ps, 0.0, 1.0, 0.0, 1.0);
 		Graphics_setWindow (my ps, 0.0, 1.0, 0.0, 1.0);
-		integer x1DC, y1DC, x2DC, y2DC;
-		Graphics_WCtoDC (my ps, 0.0, 0.0, & x1DC, & y2DC);
-		Graphics_WCtoDC (my ps, 1.0, 1.0, & x2DC, & y1DC);
-		integer shift = (integer) (Graphics_getResolution (my ps) * true_height_inches) + (y1DCold - y2DCold);
-		#if cocoa
-			shift = 0;   // this is a FIX
-		#endif
-		Graphics_resetWsViewport (my ps, x1DC, x2DC, y1DC + shift, y2DC + shift);
-		Graphics_setWsWindow (my ps, 0, width_inches, 0, height_inches);
-		theCurrentPraatPicture -> x1NDC = 0;
-		theCurrentPraatPicture -> x2NDC = width_inches;
-		theCurrentPraatPicture -> y1NDC = 0;
-		theCurrentPraatPicture -> y2NDC = height_inches;
-		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-
-		{// scope
-			autoMelderProgressOff progress;
-			autoMelderWarningOff warning;
-			autoMelderSaveDefaultDir saveDir;
-			if (! MelderDir_isNull (& my rootDirectory)) {
-				Melder_setDefaultDir (& my rootDirectory);
-			}
-			try {
-				Interpreter_run (interpreter.get(), text.get());
-			} catch (MelderError) {
-				Melder_clearError ();
-			}
-		}
-		Graphics_setLineType (my ps, Graphics_DRAWN);
-		Graphics_setLineWidth (my ps, 1.0);
-		Graphics_setArrowSize (my ps, 1.0);
-		Graphics_setSpeckleSize (my ps, 1.0);
-		Graphics_setColour (my ps, Melder_BLACK);
-		theCurrentPraatApplication = & theForegroundPraatApplication;
-		theCurrentPraatObjects = & theForegroundPraatObjects;
-		theCurrentPraatPicture = & theForegroundPraatPicture;
+		Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 	}
-	Graphics_resetWsViewport (my ps, x1DCold, x2DCold, y1DCold, y2DCold);
-	Graphics_setWsWindow (my ps, x1NDCold, x2NDCold, y1NDCold, y2NDCold);
-	Graphics_setViewport (my ps, 0, 1, 0, 1);
-	Graphics_setWindow (my ps, 0, 1, 0, 1);
-	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
-}
 	my previousBottomSpacing = bottomSpacing;
 }
 
@@ -590,11 +596,11 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 		return;   // could be the case in the very beginning
 	if (my entryHint && my entryPosition != 0.0) {
 		my entryHint. reset();
-		my top = (int) floor (5.0 * (PAGE_HEIGHT - my entryPosition));
-		Melder_clipLeft (0, & my top);
+		my top = 5.0 * (PAGE_HEIGHT - my entryPosition);
+		Melder_clipLeft (0.0, & my top);
 	}
 	my d_y = PAGE_HEIGHT + my top / 5.0;
-	my d_x = 0;
+	my d_x = 0.0;
 	my previousBottomSpacing = 0.0;
 	my links. removeAllItems ();
 	trace (U"going to draw");
@@ -727,17 +733,17 @@ static void menu_cb_searchForPage (HyperPage me, EDITOR_ARGS_FORM) {
 
 static void gui_cb_verticalScroll (HyperPage me, GuiScrollBarEvent	event) {
 	trace (U"gui_cb_verticalScroll");
-	double value = GuiScrollBar_getValue (event -> scrollBar);
+	const double value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my top) {
 		trace (U"scroll from ", my top, U" to ", value);
-		my top = (int) floor (value);
+		my top = value;
 		updateVerticalScrollBar (me);
 		Graphics_updateWs (my graphics.get());
 	}
 }
 
 static void createVerticalScrollBar (HyperPage me, GuiForm parent) {
-	int height = Machine_getTextHeight ();
+	const int height = Machine_getTextHeight ();
 	my verticalScrollBar = GuiScrollBar_createShown (parent,
 		- Machine_getScrollBarWidth (), 0,
 		Machine_getMenuBarHeight () + (my d_hasExtraRowOfTools ? 2 * height + 19 : height + 12), - Machine_getScrollBarWidth (),
@@ -759,8 +765,7 @@ static void updateVerticalScrollBar (HyperPage me)
 static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 	if (! my verticalScrollBar)
 		return;
-	int value = GuiScrollBar_getValue (my verticalScrollBar) - 24;
-	Melder_clipLeft (0, & value);
+	const double value = Melder_clippedLeft (0.0, GuiScrollBar_getValue (my verticalScrollBar) - 24.0);
 	if (value != my top) {
 		my top = value;
 		updateVerticalScrollBar (me);
@@ -771,8 +776,7 @@ static void menu_cb_pageUp (HyperPage me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
 	if (! my verticalScrollBar)
 		return;
-	int value = GuiScrollBar_getValue (my verticalScrollBar) + 24;
-	Melder_clipRight (& value, (int) (PAGE_HEIGHT * 5) - 25);
+	const double value = Melder_clippedRight (GuiScrollBar_getValue (my verticalScrollBar) + 24.0, (PAGE_HEIGHT * 5.0) - 25.0);
 	if (value != my top) {
 		my top = value;
 		updateVerticalScrollBar (me);
@@ -786,7 +790,7 @@ static void do_back (HyperPage me) {
 	if (my historyPointer <= 0)
 		return;
 	autostring32 page = Melder_dup_f (my history [-- my historyPointer]. page.get());   // temporary, because pointer will be moved
-	int top = my history [my historyPointer]. top;
+	const double top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
 		my top = top;
 		updateVerticalScrollBar (me);
@@ -806,7 +810,7 @@ static void do_forth (HyperPage me) {
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page)
 		return;
 	autostring32 page = Melder_dup_f (my history [++ my historyPointer]. page.get());
-	int top = my history [my historyPointer]. top;
+	const double top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
 		my top = top;
 		updateVerticalScrollBar (me);
@@ -872,13 +876,13 @@ static void gui_button_cb_previousPage (HyperPage me, GuiButtonEvent /* event */
 }
 
 static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
-	integer currentPageNumber = my v_getCurrentPageNumber ();
+	const integer currentPageNumber = my v_getCurrentPageNumber ();
 	HyperPage_goToPage_number (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
 }
 
 void structHyperPage :: v_createChildren () {
-	int height = Machine_getTextHeight ();
-	int y = Machine_getMenuBarHeight () + 4;
+	const int height = Machine_getTextHeight ();
+	const int y = Machine_getMenuBarHeight () + 4;
 
 	/***** Create navigation buttons. *****/
 
@@ -938,7 +942,7 @@ void HyperPage_clear (HyperPage me) {
 }
 
 void structHyperPage :: v_dataChanged () {
-	bool oldError = Melder_hasError ();   // this method can be called during error time
+	const bool oldError = Melder_hasError ();   // this method can be called during error time
 	(void) our v_goToPage (our currentPageTitle.get());
 	if (Melder_hasError () && ! oldError)
 		Melder_flushError ();
@@ -953,7 +957,7 @@ int HyperPage_goToPage (HyperPage me, conststring32 title) {
 	}
 	saveHistory (me, title);   // last chance: HyperPage_clear will destroy "title" !!!
 	my currentPageTitle = Melder_dup_f (title);
-	my top = 0;
+	my top = 0.0;
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
 	HyperPage_clear (me);
 	return 1;
@@ -961,8 +965,8 @@ int HyperPage_goToPage (HyperPage me, conststring32 title) {
 
 void HyperPage_goToPage_number (HyperPage me, integer i) {
 	my v_goToPage_number (i);   // catch -> HyperPage_clear (me); ?
-	my top = 0;
-	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
+	my top = 0.0;
+	updateVerticalScrollBar (me);   // scroll to the top (my top == 0.0)
 	HyperPage_clear (me);
 }
 

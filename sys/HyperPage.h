@@ -38,11 +38,11 @@ Thing_define (HyperPage, Editor) {
 	integer d_printingPageNumber;
 	CollectionOf<structHyperLink> links;
 	bool printing, mirror;
-	int top;
+	double top;
 	conststring32 insideHeader, middleHeader, outsideHeader;
 	conststring32 insideFooter, middleFooter, outsideFooter;
 	autostring32 entryHint; double entryPosition;
-	struct { autostring32 page; int top; } history [20];
+	struct { autostring32 page; double top; } history [20];
 	int historyPointer;
 	autostring32 currentPageTitle;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;

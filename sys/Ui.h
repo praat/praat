@@ -223,7 +223,7 @@ UiField UiForm_addPositiveVector (UiForm me, constVEC *variable, conststring32 v
 UiField UiForm_addIntegerVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
 UiField UiForm_addNaturalVector (UiForm me, constINTVEC *variable, conststring32 variableName, conststring32 name, kUi_integerVectorFormat defaultFormat, conststring32 defaultValue);
 UiField UiForm_addRealMatrix (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, constMATVU defaultValue);
-UiField UiForm_addTextvec (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines = 7);
+UiField UiForm_addStringArray (UiForm me, constSTRVEC *variable, conststring32 variableName, conststring32 name, constSTRVEC defaultValue, integer numberOfLines = 7);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);

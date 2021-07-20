@@ -167,14 +167,14 @@
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
+			UiForm_addStringArray (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue)); \
 		}
 
-#define TEXTVEC_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
+#define STRINGARRAY_LINES(numberOfLines, stringArrayVariable, labelText, ...)  \
 		static constSTRVEC stringArrayVariable; \
 		{ \
 			static const conststring32 _defaultStringArrayValue [] = __VA_ARGS__; \
-			UiForm_addTextvec (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
+			UiForm_addStringArray (_dia_.get(), & stringArrayVariable, U"" #stringArrayVariable, labelText, ARRAY_TO_STRVEC (_defaultStringArrayValue), numberOfLines); \
 		}
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
