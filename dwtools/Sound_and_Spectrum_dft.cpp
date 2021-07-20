@@ -22,18 +22,18 @@
 autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth) {
 	try {
 		const integer powerOf2 = Melder_iroundUp (log2 (my nx));
-		const integer numberOfSamplesIsPowerOf2 = exp2 (powerOf2);
+		const integer numberOfSamplesPowerOf2 = exp2 (powerOf2);
 		autoSpectrum thee;
-		if (numberOfSamplesIsPowerOf2 != my nx) {
+		if (numberOfSamplesPowerOf2 != my nx) {
 			const double samplingFrequency = 1.0 / my dx;
 			const double df = samplingFrequency / my nx;
-			const double newSamplingFrequency = numberOfSamplesIsPowerOf2 * df;
+			const double newSamplingFrequency = numberOfSamplesPowerOf2 * df;
 			autoSound resampled = Sound_resample (me, newSamplingFrequency, interpolationDepth);
 			autoSpectrum extendedSpectrum = Sound_to_Spectrum (resampled.get(), true);
 			const integer numberOfFrequencies = my nx / 2 + 1;
 			thee = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
 			thy z.get()  <<=  extendedSpectrum -> z.part (1, 2, 1, numberOfFrequencies);
-			thy z [2] [numberOfFrequencies] = 0.0; // set imaginary value at Nyquist to zero
+			thy z [numberOfFrequencies] [2]  = 0.0; // set imaginary value at Nyquist to zero
 		} else
 			thee = Sound_to_Spectrum (me, true);
 		return thee;
