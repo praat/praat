@@ -5802,31 +5802,33 @@ LIST_ITEM (U"6. Optionally you may also want to scale the TextGrid to line up wi
 MAN_END
 
 MAN_BEGIN (U"NavigationContext", U"djmw", 20210720)
-INTRO (U"The ##NavigationContext# contains all the information that the @@TextGridNavigator@ needs to search for a match "
-	"on one specified tier of a @@TextGrid@.")
+INTRO (U"One of the @@types of objects@ in Praat. The ##NavigationContext# contains the information that the '
+	"@@TextGridNavigator@ needs to search for a match on one tier of a @@TextGrid@.")
 ENTRY (U"What is inside a NavigationContext?")
 TAG (U"##Topic label set#")
-DEFINITION (U"defines the set of labels that we want to find. As an example consider the following "
+DEFINITION (U"defines the labels that we want to find. As an example consider the following "
 	"set of vowel labels \"u o a i e\". Our intention is to find only those intervals in the specified tier of the TextGrid "
 	"that match with one of these labels. ")
 TAG (U"##Topic match criterion#")
-DEFINITION (U"defines what type of match you want. To name just a few of the possible options: "
-	"##is equal to# or its oppposite ##is not equal to#, ##contains# or its opposite ##does not contain#, "
-	"##starts with# or its opposite ##does not start with#. ")
+DEFINITION (U"defines the type of match you want. To name just a few of the possible options: "
+	"##is equal to# or ##is not equal to# or ##contains# or ##does not contain# or "
+	"##starts with# or ##does not start with#. Many more match criteria can be chosen and these criteria "
+	"come in pairs where the second one of the pair is the negation of the first.")
 TAG (U"##Topic match boolean#")
-DEFINITION (U"defines the relation between the matches of the labels in the topic set. Two options are available, "
-	"##OR# and ##AND#. Consider the topic set defined above. If the topic match criterion "
-	"chosen was ##is equal to# then we would want the match for the label label\\$ of an interval in the tier to succeeed "
-	"only if the expression (label\\$  = \"u\" OR label\\$  = \"o\" "
-	"OR label\\$  = \"a\" OR label\\$  = \"i\" OR label\\$  = \"e\") evaluates as true, i.e. if one of the labels of the "
-	"topic set matches the label\\$ in the tier then we would have a match. "
+DEFINITION (U"defines the whether the match criteria of the labels in the topic set have to be combined by "
+	"##OR# or by  ##AND#. Consider the topic set defined above. If the topic match criterion "
+	"chosen was ##is equal to# then we would want the match for current interval label in the tier to succeeed "
+	"only if the expression (currentLabel\\$  = \"u\" OR currentLabel\\$  = \"o\" OR currentLabel\\$  = \"a\" "
+	"OR currentLabel\\$  = \"i\" OR currentLabel\\$  = \"e\") evaluates as true, i.e. if one of the labels of the "
+	"topic set matches the current label in the tier then we would have a match. "
 	"On the other hand, if the chosen match criterium were the opposite, ##not equal to#, then we would want our match for "
-	"the interval label label\\$ to succeed only if the expression (label\\$  != \"u\" AND label\\$  != \"o\" AND "
-	"label\\$  != \"a\" AND label\\$  != \"i\" AND label\\$  != \"e\") evaluates as true. "
+	"the current interval label to succeed only if the expression (currentLabel\\$  != \"u\" AND currentLabel\\$  != \"o\" AND "
+	"currentLabel\\$  != \"a\" AND currentLabel\\$  != \"i\" AND currentLabel\\$  != \"e\") evaluates as true. "
 	"Therefore, in general for a positive match criterion, like the ##is equal to# we would chose the ##OR#  while for "
-	"a negative match criterion, like the ##is not equal to# we would chose the ##AND#. ")
+	"a negative match criterion, like the ##is not equal to# we would chose the ##AND#. Only if our criteria involve "
+	"regular expressions")
 TAG (U"##Before label set#")
-DEFINITION (U"defines the set of labels that the preceeding interval label has to match if the current interval label "
+DEFINITION (U"defines the labels that the label of the preceeding interval has to match if the current interval label "
 	"matches the topic label set. This makes the search context sensitive because it is not enough that the current "
 	"interval label matches (in a specified way) the topic set but also the label of the preceeding interval has to "
 	"match the before set. If, for example, the before set contains "
@@ -5839,7 +5841,7 @@ TAG (U"##Before match boolean#")
 DEFINITION (U"defines, also in analogy with the description of the topic match boolean, the relation between the matches "
 	"of the labels in the %%before set% ")
 TAG (U"##After label set#")
-DEFINITION (U"defines the set of labels that the following interval label has to match if the current interval label "
+DEFINITION (U"defines the labels that the label of the following interval has to match if the current interval label "
 	"matches the topic label set. An example set could consist of "
 	"\"m\" and \"n\". In combination with the topic set we would search for vowels followed by a nasal.")
 TAG (U"##After match criterion# and ##After match boolean#")
