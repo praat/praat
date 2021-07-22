@@ -31,7 +31,8 @@ autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth) {
 			autoSound resampled = Sound_resample (me, newSamplingFrequency, interpolationDepth);
 			autoSpectrum extendedSpectrum = Sound_to_Spectrum (resampled.get(), true);
 			const integer numberOfFrequencies = my nx / 2 + 1;
-			thee = Spectrum_create (0.5 / my dx, numberOfFrequencies);
+			const double fmax = (numberOfFrequencies - 0.5) * extendedSpectrum -> dx;
+			thee = Spectrum_create (fmax, numberOfFrequencies);
 			thy z.get()  <<=  extendedSpectrum -> z.part (1, 2, 1, numberOfFrequencies);
 			thy z [2] [numberOfFrequencies] = 0.0; // set imaginary value at maximum frequency to zero
 		} else

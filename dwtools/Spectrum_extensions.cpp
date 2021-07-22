@@ -314,6 +314,21 @@ autoSpectrum Spectrum_resample (Spectrum me, integer numberOfFrequencies) {
 	}
 }
 
+autoSpectrum Spectrum_resample2 (Spectrum me, integer numberOfFrequencies) {
+	try {
+		autoSound sound = Spectrum_to_Sound (me);
+		const double newSamplingFrequency = (1.0 / my dx) * numberOfFrequencies / my nx;
+		const double resampleFactor = (my nx - 1.0) / numberOfFrequencies;
+		autoSound resampled = Sound_resample (sound.get(), resampleFactor / sound -> dx, 50);
+		autoSpectrum extendedSpectrum = Sound_to_Spectrum_dft (
+		autoSpectrum him = Spectrum_create (my xmax, numberOfFrequencies);
+		his z.all()  <<=  thy z.all();
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": not resampled.");
+	}
+}
+
 #if 0
 static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
