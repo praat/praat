@@ -7985,7 +7985,7 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
+	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
@@ -8000,15 +8000,15 @@ DO
 
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
+	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	STRINGARRAY (beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
+	STRINGARRAY_LINES (4, beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	STRINGARRAY (afterLabels, U"After labels", { U"m", U"n" })
+	STRINGARRAY_LINES (4, afterLabels, U"After labels", { U"m", U"n" })
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8324,7 +8324,7 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers) {
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
+	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
@@ -8341,15 +8341,15 @@ DO
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	STRINGARRAY (topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
+	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
 	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	STRINGARRAY (beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
+	STRINGARRAY_LINES (4, beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
 	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
-	STRINGARRAY (afterLabels, U"After labels", { U"m", U"n" })
+	STRINGARRAY_LINES (4, afterLabels, U"After labels", { U"m", U"n" })
 	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
 	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
 	LABEL (U"")
