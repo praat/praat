@@ -5801,6 +5801,59 @@ LIST_ITEM (U"6. Optionally you may also want to scale the TextGrid to line up wi
 	"aligned with the new sound.")
 MAN_END
 
+MAN_BEGIN (U"NavigationContext", U"djmw", 20210720)
+INTRO (U"The ##NavigationContext# contains all the information that the @@TextGridNavigator@ needs to search for a match "
+	"on one specified tier of a @@TextGrid@.")
+ENTRY (U"What is inside a NavigationContext?")
+TAG (U"##Topic label set#")
+DEFINITION (U"defines the set of labels that we want to find. As an example consider the following "
+	"set of vowel labels \"u o a i e\". Our intention is to find only those intervals in the specified tier of the TextGrid "
+	"that match with one of these labels. ")
+TAG (U"##Topic match criterion#")
+DEFINITION (U"defines what type of match you want. To name just a few of the possible options: "
+	"##is equal to# or its oppposite ##is not equal to#, ##contains# or its opposite ##does not contain#, "
+	"##starts with# or its opposite ##does not start with#. ")
+TAG (U"##Topic match boolean#")
+DEFINITION (U"defines the relation between the matches of the labels in the topic set. Two options are available, "
+	"##OR# and ##AND#. Consider the topic set defined above. If the topic match criterion "
+	"chosen was ##is equal to# then we would want the match for the label label\\$ of an interval in the tier to succeeed "
+	"only if the expression (label\\$  = \"u\" OR label\\$  = \"o\" "
+	"OR label\\$  = \"a\" OR label\\$  = \"i\" OR label\\$  = \"e\") evaluates as true, i.e. if one of the labels of the "
+	"topic set matches the label\\$ in the tier then we would have a match. "
+	"On the other hand, if the chosen match criterium were the opposite, ##not equal to#, then we would want our match for "
+	"the interval label label\\$ to succeed only if the expression (label\\$  != \"u\" AND label\\$  != \"o\" AND "
+	"label\\$  != \"a\" AND label\\$  != \"i\" AND label\\$  != \"e\") evaluates as true. "
+	"Therefore, in general for a positive match criterion, like the ##is equal to# we would chose the ##OR#  while for "
+	"a negative match criterion, like the ##is not equal to# we would chose the ##AND#. ")
+TAG (U"##Before label set#")
+DEFINITION (U"defines the set of labels that the preceeding interval label has to match if the current interval label "
+	"matches the topic label set. This makes the search context sensitive because it is not enough that the current "
+	"interval label matches (in a specified way) the topic set but also the label of the preceeding interval has to "
+	"match the before set. If, for example, the before set contains "
+	"\"p\", \"t\" and \"k\" then in combination with the topic labels defined above this would limit the search to only "
+	"vowels preceeded by plosives.")
+TAG (U"##Before match criterion#")
+DEFINITION (U"defines, just like for the topic match criterion, the kind of match you are looking for only now for "
+	"the labels of the %%before set%.")
+TAG (U"##Before match boolean#")
+DEFINITION (U"defines, also in analogy with the description of the topic match boolean, the relation between the matches "
+	"of the labels in the %%before set% ")
+TAG (U"##After label set#")
+DEFINITION (U"defines the set of labels that the following interval label has to match if the current interval label "
+	"matches the topic label set. An example set could consist of "
+	"\"m\" and \"n\". In combination with the topic set we would search for vowels followed by a nasal.")
+TAG (U"##After match criterion# and ##After match boolean#")
+DEFINITION (U"have the same meaning as defined above for the topic and before sets.")
+TAG (U"##Before and after use criterion#")
+DEFINITION (U"defines how the before and after sets have to be combined in the matching. The possible options are ##before#, or "
+	"##after# or ##before and after# or ##before or after, not both# or ##before or after, or both# or finally "
+	"##no before and no after#. Given the topic, before and after labels examples defined above then ##before and after# "
+	"would limit the search to vowels preceeded by a plosive and followed by a nasal.")
+TAG (U"##Exclude topic labels boolean#")
+DEFINITION (U"when on, only the before and / or the after label set will be used in matching. Of course this "
+	"could also be reached by leaving the topic set empty.")
+MAN_END
+
 MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210718)
 INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
 ENTRY (U"What is a multi-tier search machine?")
@@ -5848,9 +5901,9 @@ NORMAL (U"Additionally we also need to specify whether it is enough that at leas
 	"or that %all labels in the set should match the condition. In set theory this translates to whether we have an OR or "
 	"an AND relation between the individual matches. For example, in the first example above where we wanted to match one of the given vowels, "
 	"we choose the ##is equal to# match criterion and OR as the match boolean because what we want is that for the match "
-	"to succeed only one of the labels in the topic set needs to match. We can write this match as (label == topicSymbol__1_) "
-	"OR (label == topicSymbol__2_) OR ... OR (label == topicSymbol__%n_), where the OR implies that only one of the matches "
-	"needs to succeed to make the complete expression %true. "
+	"to succeed only one of the labels in the topic set needs to match. We can write this topic match expression as "
+	"(label == topicSymbol__1_) OR (label == topicSymbol__2_) OR ... OR (label == topicSymbol__%n_), where the OR implies "
+	"that only one of the matches needs to succeed to make the complete expression %true. "
 	"If on the other hand we did %not want to match any of the labels in the topic set, i.e. if we had chosen "
 	"##is not equal to# as criterion, then we should use an AND match boolean because we can now write our match intention "
 	"as (label != topicSymbol__1_) AND (label != topicSymbol__2_) AND ... AND (label != topicSymbol__%n_), "
