@@ -259,6 +259,54 @@ autoTable Spectrum_tabulate (Spectrum me, bool includeBinNumbers, bool includeFr
 	}
 }
 
+autoTable Spectrum_tabulate_verbose (Spectrum me) {
+	try {
+		static const conststring32 columnNames [] = { U"bin", U"frequency(Hz)", U"re(Pa/Hz)", U"im(Pa/Hz)",
+			U"energySpectralDensity(Pa^2s/Hz)", U"startOfBinWithinDomain(Hz)", U"endOfBinWithinDomain(Hz)", U"binWidthWithinDomain(Hz)", U"binEnergy(Pa^2s)",
+			U"powerSpectralDensity(Pa^2/Hz)", U"powerSpectralDensityInAir(W/m^2/Hz)", U"auditorySpectralDensityLevel(dB/Hz)",
+			U"binPower(Pa^2)", U"binPowerInAir(W/m^2)"
+		};
+		autoTable thee = Table_createWithColumnNames (my nx, ARRAY_TO_STRVEC (columnNames));
+		for (integer ibin = 1; ibin <= my nx; ibin ++) {
+			Table_setNumericValue (thee.get(), ibin, 1, ibin);   // column "bin"
+			const double frequency = my x1 + (ibin - 1) * my dx;
+			Table_setNumericValue (thee.get(), ibin, 2, frequency);   // column "frequency(Hz)"
+			const double re = my z [1] [ibin], im = my z [2] [ibin];
+			Table_setNumericValue (thee.get(), ibin, 3, re);   // column "re(Pa/Hz)"
+			Table_setNumericValue (thee.get(), ibin, 4, im);   // column "im(Pa/Hz)"
+			const double energySpectralDensity = Sampled_getValueAtSample (me, ibin, 0, 1);
+			Table_setNumericValue (thee.get(), ibin, 5, energySpectralDensity);   // column "energySpectralDensity(Pa^2s/Hz)"
+			/*
+				The energy in a bin is integrated over only that part of the bin that falls within the frequency domain.
+				Practically speaking, the integration time (bin width) is my dx for most bins,
+				but almost always 0.5 * my dx for the first bin,
+				and also 0.5 * my dx for the last bin if the Nyquist falls within the bin
+				(i.e. if the original number of samples was even).
+			*/
+			const double startOfBinWithinDomain = Melder_clipped (my xmin, frequency - 0.5 * my dx, my xmax);
+			Table_setNumericValue (thee.get(), ibin, 6, startOfBinWithinDomain);   // column "startOfBinWithinDomain(Hz)"
+			const double endOfBinWithinDomain = Melder_clipped (my xmin, frequency + 0.5 * my dx, my xmax);
+			Table_setNumericValue (thee.get(), ibin, 7, endOfBinWithinDomain);   // column "endOfBinWithinDomain(Hz)"
+			const double binWidthWithinDomain = endOfBinWithinDomain - startOfBinWithinDomain;
+			Table_setNumericValue (thee.get(), ibin, 8, binWidthWithinDomain);   // column "binWidthWithinDomain(Hz)"
+			Table_setNumericValue (thee.get(), ibin, 9, energySpectralDensity * binWidthWithinDomain);   // column "binEnergy(Pa^2s)"
+			const double inverseOfEstimatedOriginalDuration = my dx;
+			const double powerSpectralDensity = energySpectralDensity * inverseOfEstimatedOriginalDuration;
+			Table_setNumericValue (thee.get(), ibin, 10, powerSpectralDensity);   // column "powerSpectralDensity(Pa^2/Hz)"
+			constexpr double RHO_C = 400.0;
+			const double powerSpectralDensityInAir = powerSpectralDensity / RHO_C;
+			Table_setNumericValue (thee.get(), ibin, 11, powerSpectralDensityInAir);   // column "powerSpectralDensityInAir(W/m^2/Hz)"
+			const double auditorySpectralDensityLevel = Sampled_getValueAtSample (me, ibin, 0, 2);
+			Table_setNumericValue (thee.get(), ibin, 12, auditorySpectralDensityLevel);   // column "auditorySpectralDensityLevel(dB/Hz)"
+			Table_setNumericValue (thee.get(), ibin, 13, powerSpectralDensity * binWidthWithinDomain);   // column "binPower(Pa^2)"
+			Table_setNumericValue (thee.get(), ibin, 14, powerSpectralDensity * binWidthWithinDomain / RHO_C);   // column "binPowerInAir(W/m^2)"
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to Table.");
+	}
+}
+
 autoSpectrum Matrix_to_Spectrum (Matrix me) {
 	try {
 		if (my ny != 2)

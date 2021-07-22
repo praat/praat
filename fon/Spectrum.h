@@ -2,7 +2,7 @@
 #define _Spectrum_h_
 /* Spectrum.h
  *
- * Copyright (C) 1992-2005,2007,2011,2015-2017,2019,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015-2017,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,7 @@ void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, do
 
 autoTable Spectrum_tabulate (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 	bool includeRealPart, bool includeImaginaryPart, bool includeEnergyDensity, bool includePowerDensity);
+autoTable Spectrum_tabulate_verbose (Spectrum me);
 
 autoSpectrum Matrix_to_Spectrum (Matrix me);
 
