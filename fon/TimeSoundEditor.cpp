@@ -49,6 +49,29 @@ void structTimeSoundEditor :: v_info () {
 	MelderInfo_writeLine (U"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (our p_sound_scalingStrategy));
 }
 
+enum {
+	TimeSoundEditor_PART_CURSOR = 1,
+	TimeSoundEditor_PART_SELECTION = 2
+};
+
+static int makeQueriable (TimeSoundEditor me, bool allowCursor, double *tmin, double *tmax) {
+	if (my startSelection == my endSelection) {
+		if (allowCursor) {
+			*tmin = *tmax = my startSelection;
+			return TimeSoundEditor_PART_CURSOR;
+		} else {
+			Melder_throw (U"Make a selection first.");
+		}
+	} else if (my startSelection < my startWindow || my endSelection > my endWindow) {
+		Melder_throw (U"Command ambiguous: a part of the selection (", my startSelection, U", ", my endSelection, U") "
+			U"is outside of the window (", my startWindow, U", ", my endWindow, U"). "
+			U"Either zoom or re-select.");
+	}
+	*tmin = my startSelection;
+	*tmax = my endSelection;
+	return TimeSoundEditor_PART_SELECTION;
+}
+
 /***** FILE MENU *****/
 
 static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
@@ -380,12 +403,35 @@ static void INFO_DATA__LongSoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
 	INFO_DATA_END
 }
 
+static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+	INFO_DATA
+		double tmin, tmax;
+		const int part = makeQueriable (me, true, & tmin, & tmax);
+		if (! my d_sound.data)
+			Melder_throw (U"No Sound object is visible (a LongSound cannot be queried).");
+		MelderInfo_open ();
+		if (part == TimeSoundEditor_PART_CURSOR)
+			for (integer ichan = 1; ichan <= my d_sound.data -> ny; ichan ++)
+				MelderInfo_writeLine (Vector_getValueAtX (my d_sound.data, 0.5 * (my startSelection + my endSelection), ichan, kVector_valueInterpolation :: SINC70),
+						U" (interpolated amplitude at CURSOR in channel ", ichan, U")");
+		else
+			for (integer ichan = 1; ichan <= my d_sound.data -> ny; ichan ++)
+				MelderInfo_writeLine (Sampled_getMean (my d_sound.data, my startSelection, my endSelection, ichan, 0, true),
+						U" (mean amplitude in SELECTION in channel ", ichan, U")");
+		MelderInfo_close ();
+	INFO_DATA_END
+}
+
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
 	if (our d_sound.data && our d_sound.data != data) {
 		EditorMenu_addCommand (menu, U"Sound info", 0, INFO_DATA__SoundInfo);
 	} else if (our d_longSound.data && our d_longSound.data != data) {
 		EditorMenu_addCommand (menu, U"LongSound info", 0, INFO_DATA__LongSoundInfo);
+	}
+	if (our d_sound.data) {
+		EditorMenu_addCommand (menu, U"-- sound query --", 0, nullptr);
+		EditorMenu_addCommand (menu, U"Get amplitude(s)", 0, INFO_DATA__getAmplitudes);
 	}
 }
 
