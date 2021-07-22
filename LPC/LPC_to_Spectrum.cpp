@@ -99,7 +99,7 @@ autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthRe
 		const double samplingFrequency = 1.0 / my samplingPeriod;
 		const integer index = Melder_clipped (1_integer, Sampled_xToNearestIndex (me, t), my nx);
 		integer nfft = 2;
-		if (dfMin <= 0) {
+		if (dfMin <= 0.0) {
 			nfft = 512;
 			dfMin = samplingFrequency / nfft;
 		}

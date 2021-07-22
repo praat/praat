@@ -170,13 +170,10 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 					rmin /= sqrt (1.0 + rmin * rmin);
 					rmax = c / q; 
 					rmax /= sqrt (1.0 + rmax * rmax);
-					if (rmin > rmax) {
-						double t = rmin;
-						rmin = rmax;
-						rmax = t;
-					}
+					if (rmin > rmax)
+						std::swap (rmin, rmax);
 				} else {
-					rmax = rmin = 0;
+					rmax = rmin = 0.0;
 				}
 				thy data [i] [j] = rmax;
 				thy data [j] [i] = rmin;

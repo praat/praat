@@ -952,7 +952,7 @@ static void NUMgammatoneFilter4 (double *x, double *y, integer n, double centre_
 	double n2 = nr * nr + ni * ni;
 	double gr = tr * nr + ti * ni;
 	double gi = ti * nr - tr * ni;
-	double gain = sqrt (gr * gr + gi * gi) / n2;
+	double gain = hypot (gr, gi) / n2;
 
 	for (integer j = 0; j <= 4; j ++) {
 		a [j] /= gain;
@@ -1313,7 +1313,7 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 		sxy += xt * yt;
 	}
 	const double denum = sxx * syy;
-	const double rxy = denum > 0.0 ? sxy / sqrt (denum) : 0.0;
+	const double rxy = ( denum > 0.0 ? sxy / sqrt (denum) : 0.0 );
 	return rxy;
 }
 
@@ -2622,7 +2622,7 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			*/
 			VEC const re = analysisSpectrum -> z.row (1), im = analysisSpectrum -> z.row (2);
 			for (integer ifreq = 1; ifreq <= analysisSpectrum -> nx; ifreq ++) {
-				const double amp = sqrt (re [ifreq] * re [ifreq] + im [ifreq] * im [ifreq]);
+				const double amp = hypot (re [ifreq], im [ifreq]);
 				const double factor = std::max (1.0 - noiseAmplitudeSubtractionScaleFactor * noiseAmplitudes [ifreq] / amp, 1e-6);
 				re [ifreq] *= factor;
 				im [ifreq] *= factor;

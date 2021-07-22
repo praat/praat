@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity_GNE.cpp
  *
- * Copyright (C) 1999-2012,2015-2020 Paul Boersma
+ * Copyright (C) 1999-2012,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			 */
 			for (integer col = 1; col <= envelope [ienvelope] -> nx; col ++) {
 				double self = envelope [ienvelope] -> z [1] [col], other = hilbertBand -> z [1] [col];
-				envelope [ienvelope] -> z [1] [col] = sqrt (self * self + other * other);
+				envelope [ienvelope] -> z [1] [col] = hypot (self, other);
 			}
 			Vector_subtractMean (envelope [ienvelope].get());
 			/*

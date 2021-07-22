@@ -172,7 +172,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			*/
 			for (integer j = 1; j <= nfft2; j ++) {
 				const double rs = spec -> z [1] [j], is = spec -> z [2] [j];
-				specAmp [j] = sqrt (rs * rs + is * is);
+				specAmp [j] = hypot (rs, is);
 			}
 			/*
 				Enhance the peaks in the spectrum.

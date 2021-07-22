@@ -2,7 +2,7 @@
 #define _complex_h_
 /* complex.h
  *
- * Copyright (C) 1992-2005,2011,2016-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2016-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,17 +67,7 @@ inline dcomplex dcomplex_div (dcomplex a, dcomplex b) {
 }
 
 inline double dcomplex_abs (dcomplex z) {
-	const double x = fabs (z.real());
-	const double y = fabs (z.imag());
-	if (x == 0.0) return y;
-	if (y == 0.0) return x;
-	if (x > y) {
-		const double temp = y / x;
-		return x * sqrt (1.0 + temp * temp);
-	} else {
-		const double temp = x / y;
-		return y * sqrt (1.0 + temp * temp);
-	}
+	return hypot (z.real(), z.imag());
 }
 
 inline dcomplex dcomplex_rmul (double x, dcomplex a) {
@@ -89,7 +79,7 @@ inline dcomplex dcomplex_rmul (double x, dcomplex a) {
 
 inline dcomplex dcomplex_exp (dcomplex z) {
 	dcomplex result;
-	double size = exp (z.real());
+	const double size = exp (z.real());
 	result. real (size * cos (z.imag()));
 	result. imag (size * sin (z.imag()));
 	return result;
