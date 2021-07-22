@@ -190,14 +190,14 @@ void praat_reportGraphicalProperties () {
 	#if defined (macintosh)
 		CGDirectDisplayID screen = CGMainDisplayID ();
 		CGSize screenSize_mm = CGDisplayScreenSize (screen);
-		double diagonal_mm = sqrt (screenSize_mm. width * screenSize_mm. width + screenSize_mm. height * screenSize_mm. height);
-		double diagonal_inch = diagonal_mm / 25.4;
+		const double diagonal_mm = hypot (screenSize_mm. width, screenSize_mm. height);
+		const double diagonal_inch = diagonal_mm / 25.4;
 		MelderInfo_writeLine (U"\nScreen size: ", screenSize_mm. width, U" x ", screenSize_mm. height,
 			U" mm (diagonal ", Melder_fixed (diagonal_mm, 1), U" mm = ", Melder_fixed (diagonal_inch, 1), U" inch)");
-		size_t screenWidth_pixels = CGDisplayPixelsWide (screen);
-		size_t screenHeight_pixels = CGDisplayPixelsHigh (screen);
+		const size_t screenWidth_pixels = CGDisplayPixelsWide (screen);
+		const size_t screenHeight_pixels = CGDisplayPixelsHigh (screen);
 		MelderInfo_writeLine (U"Screen \"resolution\": ", screenWidth_pixels, U" x ", screenHeight_pixels, U" pixels");
-		double resolution = 25.4 * screenWidth_pixels / screenSize_mm. width;
+		const double resolution = 25.4 * screenWidth_pixels / screenSize_mm. width;
 		MelderInfo_writeLine (U"Screen resolution: ", Melder_fixed (resolution, 1), U" pixels/inch");
 	#elif defined (_WIN32)
 		/*for (int i = 0; i <= 88; i ++)
@@ -208,11 +208,11 @@ void praat_reportGraphicalProperties () {
 
 #if cairo
 static void testFont (PangoFontMap *pangoFontMap, PangoContext *pangoContext, conststring32 fontName) {
-		PangoFontDescription *pangoFontDescription = pango_font_description_from_string (Melder_peek32to8 (fontName));
-		PangoFont *pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, pangoFontDescription);
-		PangoFontDescription *pangoFontDescription2 = pango_font_describe (pangoFont);
-		const char *familyName = pango_font_description_get_family (pangoFontDescription2);
-		MelderInfo_writeLine (U"Asking for font ", fontName, U" gives ", Melder_peek8to32 (familyName), U".");
+	PangoFontDescription *pangoFontDescription = pango_font_description_from_string (Melder_peek32to8 (fontName));
+	PangoFont *pangoFont = pango_font_map_load_font (pangoFontMap, pangoContext, pangoFontDescription);
+	PangoFontDescription *pangoFontDescription2 = pango_font_describe (pangoFont);
+	const char *familyName = pango_font_description_get_family (pangoFontDescription2);
+	MelderInfo_writeLine (U"Asking for font ", fontName, U" gives ", Melder_peek8to32 (familyName), U".");
 }
 #endif
 void praat_reportFontProperties () {

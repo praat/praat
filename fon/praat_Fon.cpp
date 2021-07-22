@@ -2297,6 +2297,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+DIRECT (NEW_Spectrum_tabulate_verbose) {
+	CONVERT_EACH_TO_ONE (Spectrum)
+		autoTable result = Spectrum_tabulate_verbose (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 // MARK: Query
 
 FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
@@ -3305,7 +3311,9 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classSpectrum, 0, U"Draw -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 0, U"Draw...", nullptr, 1, GRAPHICS_Spectrum_draw);
 		praat_addAction1 (classSpectrum, 0, U"Draw (log freq)...", nullptr, 1, GRAPHICS_Spectrum_drawLogFreq);
-	praat_addAction1 (classSpectrum, 1, U"Tabulate...", nullptr, 0, NEW_Spectrum_tabulate);
+	praat_addAction1 (classSpectrum, 0, U"Tabulate -", nullptr, 0, nullptr);
+		praat_addAction1 (classSpectrum, 1, U"Tabulate...", nullptr, 1, NEW_Spectrum_tabulate);
+		praat_addAction1 (classSpectrum, 1, U"Tabulate (verbose)", nullptr, 1, NEW_Spectrum_tabulate_verbose);
 	praat_addAction1 (classSpectrum, 1, U"Query -", nullptr, 0, nullptr);
 		praat_addAction1 (classSpectrum, 1, U"Frequency domain", nullptr, 1, nullptr);
 			praat_addAction1 (classSpectrum, 1, U"Get lowest frequency", nullptr, 2, REAL_Spectrum_getLowestFrequency);

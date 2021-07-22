@@ -1,6 +1,6 @@
 /* Speaker_to_Delta.cpp
  *
- * Copyright (C) 1992-2005,2006,2011,2015-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2006,2011,2015-2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,11 +224,12 @@ autoDelta Speaker_to_Delta (Speaker me) {
 		integer i = itube - 37;
 		dx = xmm [i] - xmm [i + 1];
 		dy = ymm [i] - ymm [i + 1];
-		t -> Dx = t -> Dxeq = sqrt (dx * dx + dy * dy);
+		t -> Dx = t -> Dxeq = hypot (dx, dy);
 		dx = xe [i] - xi [i];
 		dy = ye [i] - yi [i];
-		t -> Dyeq = sqrt (dx * dx + dy * dy);
-		if (closed [i]) t -> Dyeq = - t -> Dyeq;
+		t -> Dyeq = hypot (dx, dy);
+		if (closed [i])
+			t -> Dyeq = - t -> Dyeq;
 		t -> Dy = t -> Dyeq;
 		t -> Dz = t -> Dzeq = 0.015;
 		t -> mass = 0.006;

@@ -1,6 +1,6 @@
 /* Art_Speaker_Delta.cpp
  *
- * Copyright (C) 1992-2005,2009,2011,2016-2019 Paul Boersma
+ * Copyright (C) 1992-2005,2009,2011,2016-2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,10 +66,10 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 		integer i = itube - 37;
 		double dx = xmm [i] - xmm [i + 1];
 		double dy = ymm [i] - ymm [i + 1];
-		t -> Dxeq = sqrt (dx * dx + dy * dy);
+		t -> Dxeq = hypot (dx, dy);
 		dx = xe [i] - xi [i];
 		dy = ye [i] - yi [i];
-		t -> Dyeq = sqrt (dx * dx + dy * dy);
+		t -> Dyeq = hypot (dx, dy);
 		if (closed [i])
 			t -> Dyeq = - t -> Dyeq;
 	}

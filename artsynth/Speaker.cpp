@@ -92,7 +92,7 @@ autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCord
 	my velum.x = -0.031 * scaling;
 	my velum.y = 0.023 * scaling;
 	my velum.a = atan2 (my velum.y, my velum.x);
-	my palate.radius = sqrt (my velum.x * my velum.x + my velum.y * my velum.y);
+	my palate.radius = hypot (my velum.x, my velum.y);
 	my tip.length = 0.034 * scaling;
 	my neutralBodyDistance = 0.086 * scaling;
 	my alveoli.x = 0.024 * scaling;

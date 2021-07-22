@@ -48,10 +48,10 @@ double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, do
 		/*
 			Match the average distance between the first two formants in the VocaTract and the LPC spectrum
 		*/
-		const integer numberOfFrequencies = 1000;
+		constexpr integer numberOfFrequencies = 1000;
 		const double maximumFrequency = 5000.0;
 		autoSpectrum vts = VocalTract_to_Spectrum (me, numberOfFrequencies, maximumFrequency, glottalDamping, radiationDamping, internalDamping);
-		const double samplingFrequency =  1000.0 * my nx;
+		const double samplingFrequency = 1000.0 * my nx;
 		autoSpectrum lps = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
 		LPC_Frame_into_Spectrum (thee, lps.get(), 0, 50);
 		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.get());
@@ -83,7 +83,6 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		memset (& f_struct, 0, sizeof (f_struct));
 		memset (& rc_struct, 0, sizeof (rc_struct));
 		memset (& af_struct, 0, sizeof (af_struct));
-
 
 		LPC_Frame_init (lpc, numberOfCoefficients);
 		Tube_Frame_init (rc, numberOfCoefficients, refLength);

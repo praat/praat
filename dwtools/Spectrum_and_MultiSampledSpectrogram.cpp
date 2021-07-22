@@ -82,14 +82,14 @@ static void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape 
 			for (integer i = 1; i <= n; i ++) { 
 				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 				const double root = 1.0 - phase * phase;
-				target [i] = root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root));
+				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root)) );
 			}
 		} break; case kSound_windowShape::KAISER_2: {
 			const double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
 			for (integer i = 1; i <= n; i ++) { 
 				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 				const double root = 1.0 - phase * phase;
-				target [i] = root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root)); 
+				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root)) ); 
 			}
 		} break; default: {
 			target  <<=  1.0;

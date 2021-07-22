@@ -1051,7 +1051,7 @@ void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
 		if (i < 4 or i == np) {
 			Graphics_circle (g, x, y, r);
 			const double xx = x0 - x, yy = y - y0;
-			const double c = sqrt (xx * xx + yy * yy);
+			const double c = hypot (xx, yy);
 			const double cosa = xx / c, sina = yy / c;
 			Graphics_line (g, x0 - r * cosa, y0 + r * sina, x + r * cosa, y - r * sina);
 		} else if (i == 4) {
@@ -1112,7 +1112,7 @@ void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
 		if (i < 4 or i == np) {
 			Graphics_circle (g, x, y, r);
 			const double xx = x0 - x, yy = y - y0;
-			const double c = sqrt (xx * xx + yy * yy);
+			const double c = hypot (xx, yy);
 			const double cosa = xx / c, sina = yy / c;
 			Graphics_line (g, x0 - r * cosa, y0 + r * sina, x + r * cosa, y - r * sina);
 		} else if (i == 4) {

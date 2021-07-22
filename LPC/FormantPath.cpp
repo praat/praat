@@ -165,11 +165,11 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 					if (frequencyChangeWeight > 0.0) {
 						double fcost = 0.0;
 						for (integer itrack = 1; itrack <= ntracks; itrack ++) {
-							const double fi = ffi -> formant [itrack].frequency, fj = ffj -> formant [itrack] . frequency;
+							const double fi = ffi -> formant [itrack]. frequency, fj = ffj -> formant [itrack]. frequency;
 							if (transtionCostType == 1) {
 								const double dif = fabs (fi  - fj);
 								const double sum = fi  + fj;
-								const double bw = sqrt (ffi -> formant [itrack] . bandwidth * ffj -> formant [itrack] . bandwidth);
+								const double bw = sqrt (ffi -> formant [itrack]. bandwidth * ffj -> formant [itrack]. bandwidth);
 								fcost += bw * dif / sum;
 							} else
 								fcost += fabs (NUMlog2 (fi / fj));
