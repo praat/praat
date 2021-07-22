@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210620)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210722)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.51# (22 July 2021)")
+LIST_ITEM (U"• ##Spectrum: Tabulate (verbose)# with:  power spectral density, bin width within domain, bin energy, and much more.")
+LIST_ITEM (U"• Sound window: ##Get amplitude(s)#.")
+LIST_ITEM (U"• Scripting: ##date_utc\\$  ( )#, ##date\\#  ( )#, ##date_utc\\#  ( )#.")
 NORMAL (U"##6.1.50# (20 June 2021)")
 LIST_ITEM (U"• RealTier: editing, Formula, conversion from and to Matrix and Table and other tiers such as PitchTier, "
 	"DurationTier, IntensityTier and AmplitudeTier.")
