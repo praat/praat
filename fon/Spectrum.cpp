@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,21 +65,22 @@ double structSpectrum :: v_getValueAtSample (integer isamp, integer which, int u
 		return which == 1 ? z [1] [isamp] : which == 2 ? z [2] [isamp] : undefined;
 	} else {
 		/*
-		 * The energy in a bin is 2 * (re^2 + im^2) times the bin width.
-		 * The factor of 2 derives from the assumption that the spectrum contains positive-frequency values only,
-		 * and that the negative-frequency values have the same norm, since they are the complex conjugates
-		 * of the positive-frequency values.
-		 */
-		double energyDensity = 2.0 * (z [1] [isamp] * z [1] [isamp] + z [2] [isamp] * z [2] [isamp]);
+			The energy in a bin is 2 * (re^2 + im^2) times the bin width.
+			The factor of 2 derives from the assumption that the spectrum contains positive-frequency values only,
+			and that the negative-frequency values have the same norm, since they are the complex conjugates
+			of the positive-frequency values.
+			The bin width is usually my dx, although it is 0.5 * my dx for the first bin,
+			and if the last bin is centred on my xmax [the Nyquist] then it is also 0.5 * my dx for the last bin.
+		*/
+		const double energyDensity = 2.0 * (sqr (z [1] [isamp]) + sqr (z [2] [isamp]));
 			/* Pa2/Hz2; sum of positive and negative frequencies */
 		if (units == 1) {
 			return energyDensity;
 		} else {
-			double powerDensity = energyDensity * dx;   // Pa^2 Hz-2 s-1, after division by approximate duration
-			if (units == 2) {
+			const double powerDensity = energyDensity * our dx;   // Pa^2 Hz-2 s-1, after division by approximate duration
+			if (units == 2)
 				/* "dB/Hz" */
 				return powerDensity == 0.0 ? -300.0 : 10.0 * log10 (powerDensity / 4.0e-10);
-			}
 		}
 	}
 	return undefined;
@@ -99,8 +100,8 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 	*minimum = 1e308;
 	*maximum = 0.0;
 	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-		double oneSidedPowerSpectralDensity =   // Pa2 Hz-2 s-1
-			2.0 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
+		const double oneSidedPowerSpectralDensity =   // Pa2 Hz-2 s-1
+			2.0 * (sqr (my z [1] [ifreq]) + sqr (my z [2] [ifreq])) * my dx;
 		if (oneSidedPowerSpectralDensity < *minimum)
 			*minimum = oneSidedPowerSpectralDensity;
 		if (oneSidedPowerSpectralDensity > *maximum)
@@ -114,7 +115,7 @@ int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum
 }
 
 void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum) {
-	bool autoscaling = ( minimum >= maximum );
+	const bool autoscaling = ( minimum >= maximum );
 	if (fmax <= fmin) {
 		fmin = my xmin;
 		fmax = my xmax;
@@ -132,13 +133,13 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	if (autoscaling)
 		maximum = -1e308;
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
-		double y = my v_getValueAtSample (ifreq, 0, 2);
+		const double y = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && y > maximum)
 			maximum = y;
 		yWC [ifreq] = y;
 	}
 	if (autoscaling) {
-		constexpr double defaultDynamicRange_dB { 60.0 };
+		constexpr double defaultDynamicRange_dB = 60.0;
 		minimum = maximum - defaultDynamicRange_dB;
 		if (minimum == maximum) {   // because infinity minus something is still infinity
 			Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
@@ -172,7 +173,7 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 }
 
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish) {
-	bool autoscaling = ( minimum >= maximum );
+	const bool autoscaling = ( minimum >= maximum );
 	if (fmax <= fmin) {
 		fmin = my xmin;
 		fmax = my xmax;
@@ -197,7 +198,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 			maximum = yWC [ifreq];
 	}
 	if (autoscaling)
-		minimum = maximum - 60;   // default dynamic range is 60 dB
+		minimum = maximum - 60.0;   // default dynamic range is 60 dB
 
 	/*
 		Second pass: clip.
@@ -288,7 +289,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		autoSpectrum dBspectrum = Data_copy (me);
 		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
-			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-308);
+			re [i] = log (sqr (re [i]) + sqr (im [i]) + 1e-308);
 			im [i] = 0.0;
 		}
 
@@ -302,8 +303,8 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		*/
 		const double factor = - bandWidth * bandWidth;
 		for (integer i = 1; i <= cepstrum -> nx; i ++) {
-			double t = (i - 1) * cepstrum -> dx;
-			cepstrum -> z [1] [i] *= exp (factor * t * t) * ( i == 1 ? 1.0 : 2.0 );
+			const double t = (i - 1) * cepstrum -> dx;
+			cepstrum -> z [1] [i] *= exp (factor * sqr (t)) * ( i == 1 ? 1.0 : 2.0 );
 		}
 
 		/*
@@ -327,19 +328,20 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 }
 
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smooth) {
-	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
-	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
-	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
-	double *re = & my z [1] [0], *im = & my z [2] [0];
+	const double fmax = ( fmax0 == 0.0 ? my xmax : fmax0 );
+	const double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
+	const double halfpibysmooth = ( smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0 );
+	const VEC re = my z.row (1), im = my z.row (2);
 	for (integer i = 1; i <= my nx; i ++) {
-		double frequency = my x1 + (i - 1) * my dx;
-		if (frequency < f1 || frequency > f4) re [i] = im [i] = 0.0;
+		const double frequency = my x1 + (i - 1) * my dx;
+		if (frequency < f1 || frequency > f4)
+			re [i] = im [i] = 0.0;
 		if (frequency < f2 && fmin > 0.0) {
-			double factor = 0.5 - 0.5 * cos (halfpibysmooth * (frequency - f1));
+			const double factor = 0.5 - 0.5 * cos (halfpibysmooth * (frequency - f1));
 			re [i] *= factor;
 			im [i] *= factor;
 		} else if (frequency > f3 && fmax < my xmax) {
-			double factor = 0.5 + 0.5 * cos (halfpibysmooth * (frequency - f3));
+			const double factor = 0.5 + 0.5 * cos (halfpibysmooth * (frequency - f3));
 			re [i] *= factor;
 			im [i] *= factor;
 		}
@@ -347,79 +349,89 @@ void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smoot
 }
 
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax0, double smooth) {
-	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
-	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
-	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
-	VEC re = my z.row (1), im = my z.row (2);
+	const double fmax = ( fmax0 == 0.0 ? my xmax : fmax0 );
+	const double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
+	const double halfpibysmooth = ( smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0 );
+	const VEC re = my z.row (1), im = my z.row (2);
 	for (integer i = 1; i <= my nx; i ++) {
-		double frequency = my x1 + (i - 1) * my dx;
-		if (frequency < f1 || frequency > f4) continue;
+		const double frequency = my x1 + (i - 1) * my dx;
+		if (frequency < f1 || frequency > f4)
+			continue;
 		if (frequency < f2 && fmin > 0.0) {
-			double factor = 0.5 + 0.5 * cos (halfpibysmooth * (frequency - f1));
+			const double factor = 0.5 + 0.5 * cos (halfpibysmooth * (frequency - f1));
 			re [i] *= factor;
 			im [i] *= factor;
 		} else if (frequency > f3 && fmax < my xmax) {
-			double factor = 0.5 - 0.5 * cos (halfpibysmooth * (frequency - f3));
+			const double factor = 0.5 - 0.5 * cos (halfpibysmooth * (frequency - f3));
 			re [i] *= factor;
 			im [i] *= factor;
-		} else re [i] = im [i] = 0.0;
+		} else
+			re [i] = im [i] = 0.0;
 	}
 }
 
 double Spectrum_getBandEnergy (Spectrum me, double fmin, double fmax) {
 	/*
-	 * The computation requires that the negative-frequency values are the complex conjugates
-	 * of the positive-frequency values, and that only the positive-frequency values are included
-	 * in the spectrum.
-	 */
-	if (my xmin < 0.0) return undefined;
+		The computation requires that the negative-frequency values are the complex conjugates
+		of the positive-frequency values, and that only the positive-frequency values are included
+		in the spectrum.
+	*/
+	if (my xmin < 0.0)
+		return undefined;
 	/*
-	 * Any energy outside [my xmin, my xmax] is ignored.
-	 * This is very important, since my xmin and my xmax determine the meaning of the first and last bins; see below.
-	 *
-	 * The width of most bins is my dx, but the first and last bins can be truncated by fmin and fmax.
-	 *
-	 * This truncation even applies in the case of autowindowing,
-	 * i.e. if the total energy in the spectrum is computed.
-	 * In that case, the first and last bins can be truncated by my xmin and my xmax.
-	 * This happens almost always for the first bin,
-	 * which is usually centred at f=0, hence has a width of 0.5 * my dx,
-	 * and quite often for the last bin as well (namely if the original sound had an even number of samples),
-	 * which is then centred at f=nyquist, hence has a width of 0.5 * my dx.
-	 *
-	 * All this truncation is automatically performed by Sampled_getMean ().
-	 */
+		Any energy outside [my xmin, my xmax] is ignored.
+		This is very important, since my xmin and my xmax determine the meaning of the first and last bins; see below.
+
+		The width of most bins is my dx, but the first and last bins can be truncated by fmin and fmax.
+
+		This truncation even applies in the case of autowindowing,
+		i.e. if the total energy in the spectrum is computed.
+		In that case, the first and last bins can be truncated by my xmin and my xmax.
+		This happens almost always for the first bin,
+		which is usually centred at f=0, hence has a width of 0.5 * my dx,
+		and quite often for the last bin as well (namely if the original sound had an even number of samples),
+		which is then centred at f=nyquist, hence has a width of 0.5 * my dx.
+
+		All this truncation is automatically performed by Sampled_getIntegral ().
+	*/
 	return Sampled_getIntegral (me, fmin, fmax, 0, 1, false);
 }
 
 double Spectrum_getBandDensity (Spectrum me, double fmin, double fmax) {
-	if (my xmin < 0.0) return undefined;   // no negative frequencies allowed in one-sided spectral density
+	if (my xmin < 0.0)
+		return undefined;   // no negative frequencies allowed in one-sided spectral density
 	return Sampled_getMean (me, fmin, fmax, 0, 1, false);
 }
 
 double Spectrum_getBandDensityDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
-	double lowBandDensity = Spectrum_getBandDensity (me, lowBandMin, lowBandMax);
-	double highBandDensity = Spectrum_getBandDensity (me, highBandMin, highBandMax);
-	if (isundef (lowBandDensity) || isundef (highBandDensity)) return undefined;
-	if (lowBandDensity == 0.0 || highBandDensity == 0.0) return undefined;
+	const double lowBandDensity = Spectrum_getBandDensity (me, lowBandMin, lowBandMax);
+	const double highBandDensity = Spectrum_getBandDensity (me, highBandMin, highBandMax);
+	if (isundef (lowBandDensity) || isundef (highBandDensity))
+		return undefined;
+	if (lowBandDensity == 0.0 || highBandDensity == 0.0)
+		return undefined;
 	return 10.0 * log10 (highBandDensity / lowBandDensity);
 }
 
 double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double lowBandMax, double highBandMin, double highBandMax) {
-	double lowBandEnergy = Spectrum_getBandEnergy (me, lowBandMin, lowBandMax);
-	double highBandEnergy = Spectrum_getBandEnergy (me, highBandMin, highBandMax);
-	if (isundef (lowBandEnergy) || isundef (highBandEnergy)) return undefined;
-	if (lowBandEnergy == 0.0 || highBandEnergy == 0.0) return undefined;
+	const double lowBandEnergy = Spectrum_getBandEnergy (me, lowBandMin, lowBandMax);
+	const double highBandEnergy = Spectrum_getBandEnergy (me, highBandMin, highBandMax);
+	if (isundef (lowBandEnergy) || isundef (highBandEnergy))
+		return undefined;
+	if (lowBandEnergy == 0.0 || highBandEnergy == 0.0)
+		return undefined;
 	return 10.0 * log10 (highBandEnergy / lowBandEnergy);
 }
 
 double Spectrum_getCentreOfGravity (Spectrum me, double power) {
-	double halfpower = 0.5 * power;
+	const double halfpower = 0.5 * power;
 	longdouble sumenergy = 0.0, sumfenergy = 0.0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
-		double f = my x1 + (i - 1) * my dx;
-		if (halfpower != 1.0) energy = pow (energy, halfpower);
+		const double re = my z [1] [i], im = my z [2] [i];
+		double energy = sqr (re) + sqr (im);
+		const double f = my x1 + (i - 1) * my dx;
+		if (halfpower != 1.0)
+			energy = pow (energy, halfpower);
 		sumenergy += energy;
 		sumfenergy += f * energy;
 	}
@@ -427,14 +439,17 @@ double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 }
 
 double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
-	double fmean = Spectrum_getCentreOfGravity (me, power);
-	if (isundef (fmean)) return undefined;
-	double halfpower = 0.5 * power;
+	const double fmean = Spectrum_getCentreOfGravity (me, power);
+	if (isundef (fmean))
+		return undefined;
+	const double halfpower = 0.5 * power;
 	longdouble sumenergy = 0.0, sumfenergy = 0.0;
 	for (integer i = 1; i <= my nx; i ++) {
-		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
-		double f = my x1 + (i - 1) * my dx;
-		if (halfpower != 1.0) energy = pow (energy, halfpower);
+		const double re = my z [1] [i], im = my z [2] [i];
+		double energy = sqr (re) + sqr (im);
+		const double f = my x1 + (i - 1) * my dx;
+		if (halfpower != 1.0)
+			energy = pow (energy, halfpower);
 		sumenergy += energy;
 		sumfenergy += pow (f - fmean, moment) * energy;
 	}
@@ -446,23 +461,25 @@ double Spectrum_getStandardDeviation (Spectrum me, double power) {
 }
 
 double Spectrum_getSkewness (Spectrum me, double power) {
-	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
-	double m3 = Spectrum_getCentralMoment (me, 3.0, power);
-	if (isundef (m2) || isundef (m3) || m2 == 0.0) return undefined;
+	const double m2 = Spectrum_getCentralMoment (me, 2.0, power);
+	const double m3 = Spectrum_getCentralMoment (me, 3.0, power);
+	if (isundef (m2) || isundef (m3) || m2 == 0.0)
+		return undefined;
 	return m3 / (m2 * sqrt (m2));
 }
 
 double Spectrum_getKurtosis (Spectrum me, double power) {
-	double m2 = Spectrum_getCentralMoment (me, 2.0, power);
-	double m4 = Spectrum_getCentralMoment (me, 4.0, power);
-	if (isundef (m2) || isundef (m4) || m2 == 0.0) return undefined;
-	return m4 / (m2 * m2) - 3;
+	const double m2 = Spectrum_getCentralMoment (me, 2.0, power);
+	const double m4 = Spectrum_getCentralMoment (me, 4.0, power);
+	if (isundef (m2) || isundef (m4) || m2 == 0.0)
+		return undefined;
+	return m4 / (m2 * m2) - 3.0;
 }
 
 MelderPoint Spectrum_getNearestMaximum (Spectrum me, double frequency) {
 	try {
 		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
-		integer index = AnyTier_timeToNearestIndex (thee.get()->asAnyTier(), frequency);
+		const integer index = AnyTier_timeToNearestIndex (thee.get()->asAnyTier(), frequency);
 		if (index == 0)
 			Melder_throw (U"No peak.");
 		RealPoint point = thy points.at [index];

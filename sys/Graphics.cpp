@@ -332,9 +332,9 @@ double Graphics_dyMMtoWC (Graphics me, double dy_mm) {
 }
 
 double Graphics_distanceWCtoMM (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
-	double dxDC = (x1WC - x2WC) * my scaleX;
-	double dyDC = (y1WC - y2WC) * my scaleY;
-	return sqrt (dxDC * dxDC + dyDC * dyDC) * 25.4 / my resolution;
+	const double dxDC = (x1WC - x2WC) * my scaleX;
+	const double dyDC = (y1WC - y2WC) * my scaleY;
+	return hypot (dxDC, dyDC) * 25.4 / my resolution;
 }
 
 double Graphics_dxWCtoMM (Graphics me, double dxWC) {

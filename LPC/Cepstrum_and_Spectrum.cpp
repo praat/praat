@@ -76,7 +76,7 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 
 		const VEC re = thy z.row (1), im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
-			re [i] =  exp (0.5 * re [i]);   // i.e., sqrt (exp(re [i]))
+			re [i] = exp (0.5 * re [i]);   // i.e., sqrt (exp(re [i]))
 			im [i] = 0.0;
 		}
 		return thee;

@@ -326,10 +326,10 @@ static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, boo
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
 		// shiftBy >= 0
 		for (integer i = 1; i <= thy nx; i ++) {
-			double thyf = thy x1 + (i - 1) * thy dx;
-			double myf = thyf - shiftBy;
+			const double thyf = thy x1 + (i - 1) * thy dx;
+			const double myf = thyf - shiftBy;
 			if (myf >= my xmin && myf <= my xmax) {
-				double index = Sampled_xToIndex (me, myf);
+				const double index = Sampled_xToIndex (me, myf);
 				thy z [1] [i] = NUM_interpolate_sinc (my z.row (1), index, interpolationDepth);
 				thy z [2] [i] = NUM_interpolate_sinc (my z.row (2), index, interpolationDepth);
 			}
@@ -363,11 +363,9 @@ autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newM
 			Make imaginary part of first and last sample zero
 			so Spectrum_to_Sound uses FFT if numberOfSamples was power of 2!
 		*/
-		double amp = sqrt (thy z [1] [1] * thy z [1] [1] + thy z [2] [1] * thy z [2] [1]);
-		thy z [1] [1] = amp;
+		thy z [1] [1] = hypot (thy z [1] [1], thy z [2] [1]);
 		thy z [2] [1] = 0.0;
-		amp = sqrt (thy z [1] [thy nx] * thy z [1] [thy nx] + thy z [2] [thy nx] * thy z [2] [thy nx]);
-		thy z [1] [thy nx] = amp;
+		thy z [1] [thy nx] = hypot (thy z [1] [thy nx], thy z [2] [thy nx]);
 		thy z [2] [thy nx] = 0.0;
 		return thee;
 	} catch (MelderError) {

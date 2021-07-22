@@ -199,9 +199,9 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 				double value = undefined;
 				longdouble sum = 0.0, weight = 0.0;
 				for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-					double dx = x - biosemiLocationData [ichan]. topX;
-					double dy = y - biosemiLocationData [ichan]. topY;
-					double distance = sqrt (dx * dx + dy * dy);
+					const double dx = x - biosemiLocationData [ichan]. topX;
+					const double dy = y - biosemiLocationData [ichan]. topY;
+					double distance = hypot (dx, dy);
 					if (distance < 1e-12) {
 						value = mean [ichan];
 						break;

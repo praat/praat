@@ -273,7 +273,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 				ymax = y1;
 			}
 			autoPolygon p = Polygon_createPointer();
-			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
+			double xs = hypot (dx, dy) - 2.2 * r;
 			if (xs < 0.0)
 				xs = 0.0;
 			const double ys = perc * rmax / 100.0;

@@ -1,6 +1,6 @@
 /* Art_Speaker.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2018 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,17 +94,16 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 		+ art [(int) kArt_muscle::STYLOGLOSSUS] * (5.0 * f);
 	*out_bodyX = body.x;
 	*out_bodyY = body.y;
-	body.r = sqrt ((jaw.x - body.x) * (jaw.x - body.x) + (jaw.y - body.y) * (jaw.y - body.y));
+	body.r = hypot (jaw.x - body.x, jaw.y - body.y);
 	body.radius = 20.0 * f;
 	HBody_x = body.x - intX [4];
 	HBody_y = body.y - intY [4];
-	HC = sqrt (HBody_x * HBody_x + HBody_y * HBody_y);
+	HC = hypot (HBody_x, HBody_y);
 	if (HC <= body.radius) {
 		HC = body.radius;
 		Sp = 0.0;   // prevent rounding errors in sqrt (can occur on processors with e.g. 80-bit registers)
-	} else {
-		Sp = sqrt (HC * HC - body.radius * body.radius);
-	}
+	} else
+		Sp = sqrt (sqr (HC) - sqr (body.radius));
 	a = atan2 (HBody_y, HBody_x);
 	b = asin (body.radius / HC);
 	p = 0.57 * (34.8 * f - Sp);
@@ -112,8 +111,12 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	intY [5] = intY [4] + 0.5 * Sp * sin (a + b) + p * cos (a + b);
 	HBody_x = body.x - intX [5];
 	HBody_y = body.y - intY [5];
-	HC = sqrt (HBody_x * HBody_x + HBody_y * HBody_y);
-	if (HC <= body.radius) { HC = body.radius; Sp = 0.0; } else Sp = sqrt (HC * HC - body.radius * body.radius);
+	HC = hypot (HBody_x, HBody_y);
+	if (HC <= body.radius) {
+		HC = body.radius;
+		Sp = 0.0;
+	} else
+		Sp = sqrt (sqr (HC) - sqr (body.radius));
 	a = atan2 (HBody_y, HBody_x);
 	b = asin (body.radius / HC);
 	intX [6] = intX [5] + Sp * cos (a + b);
@@ -189,13 +192,11 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 }
 
 void Art_Speaker_draw (Art art, Speaker speaker, Graphics g) {
-	double f = speaker -> relativeSize * 1e-3;
+	const double f = speaker -> relativeSize * 1e-3;
 	double intX [1 + 16], intY [1 + 16], extX [1 + 11], extY [1 + 11];
 	double bodyX, bodyY;
-	Graphics_Viewport previous;
-
 	Art_Speaker_toVocalTract (art, speaker, intX, intY, extX, extY, & bodyX, & bodyY);
-	previous = Graphics_insetViewport (g, 0.1, 0.9, 0.1, 0.9);
+	const Graphics_Viewport previous = Graphics_insetViewport (g, 0.1, 0.9, 0.1, 0.9);
 	Graphics_setWindow (g, -0.05, 0.05, -0.05, 0.05);
 
 	/* Draw inner contour. */
@@ -221,14 +222,12 @@ void Art_Speaker_draw (Art art, Speaker speaker, Graphics g) {
 }
 
 void Art_Speaker_fillInnerContour (Art art, Speaker speaker, Graphics g) {
-	double f = speaker -> relativeSize * 1e-3;
+	const double f = speaker -> relativeSize * 1e-3;
 	double intX [1 + 16], intY [1 + 16], extX [1 + 11], extY [1 + 11];
 	double x [1 + 16], y [1 + 16];
 	double bodyX, bodyY;
-	Graphics_Viewport previous;
-
 	Art_Speaker_toVocalTract (art, speaker, intX, intY, extX, extY, & bodyX, & bodyY);
-	previous = Graphics_insetViewport (g, 0.1, 0.9, 0.1, 0.9);
+	const Graphics_Viewport previous = Graphics_insetViewport (g, 0.1, 0.9, 0.1, 0.9);
 	Graphics_setWindow (g, -0.05, 0.05, -0.05, 0.05);
 	for (integer i = 1; i <= 16; i ++) {
 		x [i] = intX [i];
@@ -243,8 +242,10 @@ void Art_Speaker_fillInnerContour (Art art, Speaker speaker, Graphics g) {
 
 static double arcLength (double from, double to) {
 	double result = to - from;
-	while (result > 0.0) result -= 2.0 * NUMpi;
-	while (result < 0.0) result += 2.0 * NUMpi;
+	while (result > 0.0)
+		result -= 2.0 * NUMpi;
+	while (result < 0.0)
+		result += 2.0 * NUMpi;
 	return result;
 }
 
@@ -254,15 +255,15 @@ static double bodyX, bodyY, bodyRadius;
 static double toLine (double x, double y, const double intX [], const double intY [], integer i) {
 	integer nearby;
 	if (i == 6) {
-		double a7 = atan2 (intY [7] - bodyY, intX [7] - bodyX);
-		double a6 = atan2 (intY [6] - bodyY, intX [6] - bodyX);
-		double a = atan2 (y - bodyY, x - bodyX);
-		double da6 = arcLength (a7, a6);
-		double da = arcLength (a7, a);
+		const double a7 = atan2 (intY [7] - bodyY, intX [7] - bodyX);
+		const double a6 = atan2 (intY [6] - bodyY, intX [6] - bodyX);
+		const double a = atan2 (y - bodyY, x - bodyX);
+		const double da6 = arcLength (a7, a6);
+		const double da = arcLength (a7, a);
 		if (da <= da6)
-			return fabs (sqrt ((bodyX - x) * (bodyX - x) + (bodyY - y) * (bodyY - y)) - bodyRadius);
+			return fabs (hypot (bodyX - x, bodyY - y) - bodyRadius);
 		else
-			nearby = arcLength (a7 + 0.5 * da6, a) < NUMpi ? 6 : 7;
+			nearby = ( arcLength (a7 + 0.5 * da6, a) < NUMpi ? 6 : 7 );
 	} else if ((x - intX [i]) * (intX [i + 1] - intX [i]) +
 				(y - intY [i]) * (intY [i + 1] - intY [i]) < 0) {
 		nearby = i;
@@ -270,13 +271,11 @@ static double toLine (double x, double y, const double intX [], const double int
 				(y - intY [i + 1]) * (intY [i] - intY [i + 1]) < 0) {
 		nearby = i + 1;
 	} else {
-		double boundaryDistance =
-			sqrt ((intX [i + 1] - intX [i]) * (intX [i + 1] - intX [i]) +
-					(intY [i + 1] - intY [i]) * (intY [i + 1] - intY [i]));
-		double outerProduct = (intX [i] - x) * (intY [i + 1] - intY [i]) - (intY [i] - y) * (intX [i + 1] - intX [i]);
+		const double boundaryDistance = hypot (intX [i + 1] - intX [i], intY [i + 1] - intY [i]);
+		const double outerProduct = (intX [i] - x) * (intY [i + 1] - intY [i]) - (intY [i] - y) * (intX [i + 1] - intX [i]);
 		return fabs (outerProduct) / boundaryDistance;
 	}
-	return sqrt ((intX [nearby] - x) * (intX [nearby] - x) + (intY [nearby] - y) * (intY [nearby] - y));
+	return hypot (intX [nearby] - x, intY [nearby] - y);
 }
 
 static int inside (double x, double y,
@@ -285,12 +284,11 @@ static int inside (double x, double y,
 	integer up = 0;
 	for (integer i = 1; i <= 16 - 1; i ++)
 		if ((y > intY [i]) != (y > intY [i + 1])) {
-			double slope = (intX [i + 1] - intX [i]) / (intY [i + 1] - intY [i]);
+			const double slope = (intX [i + 1] - intX [i]) / (intY [i + 1] - intY [i]);
 			if (x > intX [i] + (y - intY [i]) * slope)
 				up += ( y > intY [i] ? 1 : -1 );
 		}
-	return up != 0 || bodyRadius * bodyRadius >
-		(x - bodyX) * (x - bodyX) + (y - bodyY) * (y - bodyY);
+	return up != 0 || bodyRadius * bodyRadius > sqr (x - bodyX) + sqr (y - bodyY);
 }
 
 void Art_Speaker_meshVocalTract (Art art, Speaker speaker,

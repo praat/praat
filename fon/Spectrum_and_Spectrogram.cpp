@@ -1,6 +1,6 @@
 /* Spectrum_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2017 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017,2021 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,9 @@ autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double tim) {
 		thy xmax = my ymax;
 		thy x1 = my y1;   // centre of first band, instead of 0 (makes it unFFTable)
 		thy dx = my dy;   // frequency step
-		integer itime = Sampled_xToNearestIndex (me, tim);
-		if (itime < 1 ) itime = 1;
-		if (itime > my nx) itime = my nx;
+		const integer itime = Melder_clipped (1_integer, Sampled_xToNearestIndex (me, tim), my nx);
 		for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
-			double value = my z [ifreq] [itime];
+			const double value = my z [ifreq] [itime];
 			if (value < 0.0)
 				Melder_throw (U"Negative values in spectrogram.");
 			thy z [1] [ifreq] = sqrt (value);

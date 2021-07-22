@@ -217,7 +217,7 @@ static void NUMvarimax (MAT xm, MAT ym, bool normalizeRows, bool quartimax, inte
 				const double a = 2.0 * NUMinner (u.get(), v.get());
 				const double b = NUMinner (u.get(), u.get()) - NUMinner (v.get(), v.get());
 				
-				const double c = sqrt (a * a + b * b);
+				const double c = hypot (a, b);
 				double vc = sqrt ((c + b) / (2.0 * c)); // Eq. (1)
 				if (a > 0.0)
 					vc = -vc;

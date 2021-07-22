@@ -388,7 +388,7 @@ static connections connections_create (integer numberOfConnections) {
 // The line starts at the origin and P (xp, yp) is on that line.
 static void NUMcircle_radial_intersection_sq (double x, double y, double r, double xp, double yp, double *xi, double *yi) {
 	double dx = xp - x, dy = yp - y;
-	const double d = sqrt (dx * dx + dy * dy);
+	const double d = hypot (dx, dy);
 	if (d > 0) {
 		*xi = x + dx * r / d;
 		*yi = y + dy * r / d;

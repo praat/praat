@@ -446,7 +446,7 @@ static void VowelEditor_drawF1F2Trajectory (VowelEditor me, Graphics g) {
 			const double dx = x2 - x1, dy = y2 - y1;
 			const double xm = x1 + s * dx;
 			const double ym = y1 + s * dy;
-			const double d = sqrt (dx * dx + dy * dy);
+			const double d = hypot (dx, dy);
 			const double v = my p_trajectory_markLength / (2.0 * d); // d > 0
 			const double xl1 = xm - v * dy, yl1 = ym + v * dx;
 			const double xl2 = xm + v * dy, yl2 = ym - v * dx;

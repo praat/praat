@@ -593,8 +593,8 @@ void FFNet_drawTopology (FFNet me, Graphics g) {
 				double x1WC = x1;
 				for (integer k = 1; k <= numberOfUnitsInLayer_m1; k ++) {
 					const double xd = x2WC - x1WC;
-					const double cosa = xd / sqrt (xd * xd + dy * dy);
-					const double sina = dy / sqrt (xd * xd + dy * dy);
+					const double cosa = xd / hypot (xd, dy);
+					const double sina = dy / hypot (xd, dy);
 					Graphics_line (g, x1WC + radius * cosa, y1WC + radius * sina, x2WC - radius * cosa, y2WC - radius * sina);
 					x1WC += dx1;
 				}
