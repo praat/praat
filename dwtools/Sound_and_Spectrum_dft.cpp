@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum_dft.cpp
  *
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021 David Weenink, Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,15 @@ autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth) {
 			return Sound_to_Spectrum (me, true);   // FFT without resampling
 		const double samplingFrequency = 1.0 / my dx;
 		const double df = samplingFrequency / my nx;
-		const double newSamplingFrequency = fftNumberOfSamples * df;
-		autoSound resampled = Sound_resample (me, newSamplingFrequency, interpolationDepth);
+		const double temporarySamplingFrequency = fftNumberOfSamples * df;
+		autoSound resampled = Sound_resample (me, temporarySamplingFrequency, interpolationDepth);
 		autoSpectrum extendedSpectrum = Sound_to_Spectrum (resampled.get(), true);   // FFT after resampling
 		const integer numberOfFrequencies = my nx / 2 + 1;
 		autoSpectrum thee = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
+		thy dx = df;   // override, just in case my nx is odd
 		thy z.get()  <<=  extendedSpectrum -> z.part (1, 2, 1, numberOfFrequencies);
-		thy z [2] [numberOfFrequencies] = 0.0;   // set imaginary value at Nyquist to zero
+		if ((my nx & 1) != 0)
+			thy z [2] [numberOfFrequencies] = 0.0;   // set imaginary value at Nyquist to zero
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not convert to Spectrum by DFT.");
