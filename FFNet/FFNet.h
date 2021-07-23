@@ -105,7 +105,7 @@
  * 3. nodeLast [1..numberOfNodes]        : usage is j=nodeLast [k]
  *      j is the  last node that is connected to k (bias included).
  * For the calculation of the errors,  during learning,  in unit k we need to
- * know which weights from the preceeding layer connect to it.
+ * know which weights from the preceding layer connect to it.
  * 4. wFirst [1..numberOfNodes] : usage j=wFirst [k]
  *      w [j] is first weight to node k.
  * 5. wLast [1..numberOfNodes]  : usage j=wLast [k]
