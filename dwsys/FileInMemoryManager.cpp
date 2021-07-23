@@ -631,7 +631,7 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 
 		flags	description
 		-	Left-justify within the given field width; Right justification is the default (see width sub-specifier).
-		+	Forces to preceed the result with a plus or minus sign (+ or -) even for positive numbers. By default, only negative numbers are preceded with a - sign.
+		+	Forces to precede the result with a plus or minus sign (+ or -) even for positive numbers. By default, only negative numbers are preceded with a - sign.
 		(space)	If no sign is going to be written, a blank space is inserted before the value.
 		#	Used with o, x or X specifiers the value is preceded with 0, 0x or 0X respectively for values different than zero.
 		Used with a, A, e, E, f, F, g or G it forces the written output to contain a decimal point even if no more digits follow. By default, if no digits follow, no decimal point is written.
