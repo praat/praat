@@ -75,7 +75,7 @@ void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierN
 void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 
-void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newUse, bool excludeTopicMatch);
+void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_combination newUse, bool excludeTopicMatch);
 
 void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain newDomain);
 
@@ -127,7 +127,7 @@ autoTextGridNavigator TextGrid_to_TextGridNavigator (TextGrid me, integer tierNu
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain
 );
 
 autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, integer tierNumber,
@@ -144,7 +144,7 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation
 );
 
 #endif /* _TextGridNavigator_h_ */

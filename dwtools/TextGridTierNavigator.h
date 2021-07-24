@@ -50,7 +50,7 @@ void TextGridTierNavigator_modifyAfterRange (TextGridTierNavigator me, integer f
 void TextGridTierNavigator_modifyTopicCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridTierNavigator_modifyBeforeCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridTierNavigator_modifyAfterCriterion (TextGridTierNavigator me, kMelder_string newCriterion, kMatchBoolean matchBoolean);
-void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContext_use newUse, bool excludeTopicMatch);
+void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContext_combination newUse, bool excludeTopicMatch);
 void TextGridTierNavigator_modifyMatchDomain (TextGridTierNavigator me, kMatchDomain newDomain);
 
 void TextGridTierNavigator_modifyMatchingRange (TextGridTierNavigator me, integer maximumLookAhead, integer maximumLookBack);

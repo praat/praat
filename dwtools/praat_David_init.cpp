@@ -4284,18 +4284,18 @@ DIRECT (HELP__MSpline_help) {
 }
 
 FORM (MODIFY_EACH__NavigationContext_modifyUseCriterion, U"NavigationContext: Modify use criterion", nullptr) {
-	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Use criterion", kContext_use::DEFAULT)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"Use criterion", kContext_combination::DEFAULT)
 	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
-		NavigationContext_modifyUseCriterion (me, useCriterion, excludeTopic);
+		NavigationContext_modifyUseCriterion (me, combinationCriterion, excludeTopic);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__NavigationContext_modifyTopicCriterion, U"NavigationContext: Modify Topic criterion", nullptr) {
+FORM (MODIFY_EACH__NavigationContext_modifyTopicCriterion, U"NavigationContext: Modify Topic match criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
@@ -4303,9 +4303,9 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__NavigationContext_modifyBeforeCriterion, U"NavigationContext: Modify Before criterion", nullptr) {
+FORM (MODIFY_EACH__NavigationContext_modifyBeforeCriterion, U"NavigationContext: Modify Before match criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Combine before matches with", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
@@ -4313,9 +4313,9 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__NavigationContext_modifyAfterCriterion, U"NavigationContext: Modify After criterion", nullptr) {
+FORM (MODIFY_EACH__NavigationContext_modifyAfterCriterion, U"NavigationContext: Modify After match criterion", nullptr) {
 	OPTIONMENU_ENUM (kMelder_string, criterion, U"Match criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"Combine after matches with", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (NavigationContext)
@@ -7986,8 +7986,8 @@ DO
 FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator_topicSearch, U"TextGrid: To TextGridNavigator (topic search)", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
 	OK
 DO
@@ -7998,21 +7998,21 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__TextGrid_to_TextGridNavigator, U"TextGrid: To TextGridNavigator", U"TextGrid: To TextGridNavigator...") {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	LABEL (U"")
 	STRINGARRAY_LINES (4, beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Combine before matches with", kMatchBoolean::OR_)
 	LABEL (U"")
 	STRINGARRAY_LINES (4, afterLabels, U"After labels", { U"m", U"n" })
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"Combine after matches with", kMatchBoolean::OR_)
 	LABEL (U"")
-	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"Combination criterion", kContext_combination::BEFORE_AND_AFTER)
 	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
 	LABEL (U"")
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
@@ -8023,7 +8023,7 @@ DO
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic, matchDomain
+			combinationCriterion, excludeTopic, matchDomain
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
@@ -8214,19 +8214,19 @@ DO
 
 FORM (MODIFY_EACH__TextGridNavigator_modifyUseCriterion, U"TextGridNavigator: Modify Use criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Use criterion", kContext_use::DEFAULT)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"Use criterion", kContext_combination::DEFAULT)
 	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyUseCriterion (me, tierNumber, useCriterion, excludeTopic);
+		TextGridNavigator_modifyUseCriterion (me, tierNumber, combinationCriterion, excludeTopic);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyTopicCriterion, U"TextGridNavigator: Modify Topic match criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
@@ -8234,10 +8234,10 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion, U"TextGridNavigator: Modify Before match criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Combine before matches with", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
@@ -8245,10 +8245,10 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyAfterCriterion, U"TextGridNavigator: Modify After match criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::DEFAULT)
-	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After match criterion", kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"Combine after matches with", kMatchBoolean::OR_)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
@@ -8258,7 +8258,7 @@ DO
 
 FORM (MODIFY_EACH__TextGridNavigator_modifyLocationCriterion, U"TextGridNavigator: Modify location criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
@@ -8308,7 +8308,7 @@ DO
 }
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addTextGridTierNavigator, U"TextGridNavigator: Add TextGridTierNavigator", nullptr) {
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGridTierNavigator)
@@ -8322,14 +8322,16 @@ DIRECT (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_replaceSearchTiers) {
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, U"TextGridNavigator: Add search tier (topic only)", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly, 
+	U"TextGridNavigator & TextGrid: Add search tier (topic only)", U"TextGridNavigator & TextGrid: Add search tier...")
+{
 	NATURAL (tierNumber, U"Tier number", U"1")
 	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	LABEL (U"")
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
@@ -8339,25 +8341,27 @@ DO
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
-FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNavigator: Add search tier", nullptr) {
+FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNavigator & TextGrid: Add search tier",
+	U"TextGridNavigator & TextGrid: Add search tier...")
+{
 	NATURAL (tierNumber, U"Tier number", U"1")
 	STRINGARRAY_LINES (4, topicLabels, U"Topic labels", { U"i", U"u", U"e", U"o", U"\\as" })
-	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Topic match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, topicCriterion, U"Topic match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	LABEL (U"")
 	STRINGARRAY_LINES (4, beforeLabels, U"Before labels", { U"p", U"b", U"t", U"d", U"k", U"g" })
-	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Before match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, beforeCriterion, U"Before match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, beforeMatchBoolean, U"Combine before matches with", kMatchBoolean::OR_)
 	LABEL (U"")
 	STRINGARRAY_LINES (4, afterLabels, U"After labels", { U"m", U"n" })
-	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After criterion", kMelder_string::EQUAL_TO)
-	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"After match boolean", kMatchBoolean::OR_)
+	OPTIONMENU_ENUM (kMelder_string, afterCriterion, U"After match criterion", kMelder_string::EQUAL_TO)
+	OPTIONMENU_ENUM (kMatchBoolean, afterMatchBoolean, U"Combine after matches with", kMatchBoolean::OR_)
 	LABEL (U"")
-	OPTIONMENU_ENUM (kContext_use, useCriterion, U"Before and after use criterion", kContext_use::BEFORE_AND_AFTER)
+	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"Combination criterion", kContext_combination::BEFORE_AND_AFTER)
 	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
 	LABEL (U"")
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match location", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
@@ -8365,7 +8369,7 @@ DO
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic, matchDomain, matchLocation
+			combinationCriterion, excludeTopic, matchDomain, matchLocation
 		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
@@ -9671,11 +9675,11 @@ void praat_uvafon_David_init () {
 	
 	praat_addAction1 (classNavigationContext, 0, U"Modify use criterion...", nullptr, 0, 
 			MODIFY_EACH__NavigationContext_modifyUseCriterion);
-	praat_addAction1 (classNavigationContext, 0, U"Modify Topic criterion...", nullptr, 0, 
+	praat_addAction1 (classNavigationContext, 0, U"Modify Topic match criterion...", nullptr, 0, 
 			MODIFY_EACH__NavigationContext_modifyTopicCriterion);
-	praat_addAction1 (classNavigationContext, 0, U"Modify Before criterion...", nullptr, 0, 
+	praat_addAction1 (classNavigationContext, 0, U"Modify Before match criterion...", nullptr, 0, 
 			MODIFY_EACH__NavigationContext_modifyBeforeCriterion);
-	praat_addAction1 (classNavigationContext, 0, U"Modify After criterion...", nullptr, 0, 
+	praat_addAction1 (classNavigationContext, 0, U"Modify After match criterion...", nullptr, 0, 
 			MODIFY_EACH__NavigationContext_modifyAfterCriterion);
 	praat_addAction2 (classNavigationContext, 1, classStrings, 1, U"Replace Topic labels", nullptr, 0,
 			MODIFY_FIRST_OF_ONE_AND_ONE__NavigationContext_replaceTopicLabels);
@@ -10387,11 +10391,11 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Use criterion...", nullptr, 1, 
 			MODIFY_EACH__TextGridNavigator_modifyUseCriterion);
-	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic criterion...", nullptr, 1,
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic match criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyTopicCriterion);
-	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before criterion...", nullptr, 1,
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before match criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion);
-	praat_addAction1 (classTextGridNavigator, 0, U"Modify After criterion...", nullptr, 1, 
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify After match criterion...", nullptr, 1, 
 			MODIFY_EACH__TextGridNavigator_modifyAfterCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify location criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyLocationCriterion);

@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (NavigationContext, Daata)
 	oo_ENUM (kMelder_string, afterCriterion)	
 	oo_ENUM (kMatchBoolean, afterMatchBoolean)
 	
-	oo_ENUM (kContext_use, useCriterion)
+	oo_ENUM (kContext_combination, combinationCriterion)
 	oo_BOOLEAN (excludeTopicMatch)
 	
 	#if oo_DECLARING

@@ -151,20 +151,20 @@ void structTextGridTierNavigator :: v_info () {
 static void NavigationContext_checkMatchDomain (NavigationContext me, kMatchDomain matchDomain) {
 	try {
 		if (matchDomain == kMatchDomain::BEFORE_START_TO_TOPIC_END)
-			Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion != kContext_use::BEFORE_AND_AFTER,
-				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_TOPIC_END), U"> if you don't always use Before in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+			Melder_require (my combinationCriterion == kContext_combination::BEFORE || my combinationCriterion != kContext_combination::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_TOPIC_END), U"> if you don't always use Before in the matching where you use <", kContext_combination_getText (my combinationCriterion), U">.");
 		else if (matchDomain == kMatchDomain::BEFORE_START_TO_AFTER_END)
-			Melder_require (my useCriterion == kContext_use::BEFORE_AND_AFTER,
-				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_AFTER_END), U"> if you don't always use Before and After in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+			Melder_require (my combinationCriterion == kContext_combination::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_AFTER_END), U"> if you don't always use Before and After in the matching where you use <", kContext_combination_getText (my combinationCriterion), U">.");
 		else if (matchDomain == kMatchDomain::TOPIC_START_TO_AFTER_END)
-			Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::TOPIC_START_TO_AFTER_END), U"> if you don't always use After in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+			Melder_require (my combinationCriterion == kContext_combination::AFTER || my combinationCriterion == kContext_combination::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::TOPIC_START_TO_AFTER_END), U"> if you don't always use After in the matching where you use <", kContext_combination_getText (my combinationCriterion), U">.");
 		else if (matchDomain == kMatchDomain::BEFORE_START_TO_BEFORE_END)
-			Melder_require (my useCriterion == kContext_use::BEFORE || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_BEFORE_END), U"> if you don't always use Before in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+			Melder_require (my combinationCriterion == kContext_combination::BEFORE || my combinationCriterion == kContext_combination::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::BEFORE_START_TO_BEFORE_END), U"> if you don't always use Before in the matching where you use <", kContext_combination_getText (my combinationCriterion), U">.");
 		else if (matchDomain == kMatchDomain::AFTER_START_TO_AFTER_END)
-			Melder_require (my useCriterion == kContext_use::AFTER || my useCriterion == kContext_use::BEFORE_AND_AFTER,
-				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::AFTER_START_TO_AFTER_END), U"> if you don't always use After in the matching where you use <", kContext_use_getText (my useCriterion), U">.");
+			Melder_require (my combinationCriterion == kContext_combination::AFTER || my combinationCriterion == kContext_combination::BEFORE_AND_AFTER,
+				U"You should not use the match domain <", kMatchDomain_getText (kMatchDomain::AFTER_START_TO_AFTER_END), U"> if you don't always use After in the matching where you use <", kContext_combination_getText (my combinationCriterion), U">.");
 		// else MATCH_START_TO_MATCH_END || TOPIC_START_TO_TOPIC_END are always ok.
 	} catch (MelderError) {
 		Melder_throw (U"Invalid match domain.");
@@ -232,7 +232,7 @@ void TextGridTierNavigator_replaceNavigationContext (TextGridTierNavigator me, N
 		my navigationContext -> afterLabels = Data_copy (thy afterLabels.get());
 		my navigationContext -> afterCriterion = thy afterCriterion;
 		my navigationContext -> afterMatchBoolean = thy afterMatchBoolean;
-		my navigationContext -> useCriterion = thy useCriterion;
+		my navigationContext -> combinationCriterion = thy combinationCriterion;
 		my navigationContext -> excludeTopicMatch = thy excludeTopicMatch;		
 	} catch (MelderError) {
 		Melder_throw (me, U": could not replace navigation context.");
@@ -250,7 +250,7 @@ autoNavigationContext TextGridTierNavigator_extractNavigationContext (TextGridTi
 		thy beforeMatchBoolean = my navigationContext -> beforeMatchBoolean;
 		thy afterLabels = Data_copy (my navigationContext -> afterLabels.get());
 		thy afterCriterion = my navigationContext -> afterCriterion;
-		thy useCriterion = my navigationContext -> useCriterion;
+		thy combinationCriterion = my navigationContext -> combinationCriterion;
 		thy afterMatchBoolean = my navigationContext -> afterMatchBoolean;
 		thy excludeTopicMatch = my navigationContext -> excludeTopicMatch;
 		return thee;
@@ -297,7 +297,7 @@ void TextGridTierNavigator_modifyAfterCriterion (TextGridTierNavigator me, kMeld
 	NavigationContext_modifyAfterCriterion (my navigationContext.get(), newCriterion, matchBoolean);
 }
 
-void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContext_use newUse, bool excludeTopicMatch) {
+void TextGridTierNavigator_modifyUseCriterion (TextGridTierNavigator me, kContext_combination newUse, bool excludeTopicMatch) {
 	NavigationContext_modifyUseCriterion (my navigationContext.get(), newUse, excludeTopicMatch);
 }
 
@@ -377,7 +377,7 @@ bool TextGridTierNavigator_isMatch (TextGridTierNavigator me, integer topicIndex
 	if (topicIndex < 1 && topicIndex > my v_getSize ())
 		return false;
 	const bool isTopicMatch = ( my navigationContext -> excludeTopicMatch ? true : TextGridTierNavigator_isTopicMatch (me, topicIndex) );
-	if (! isTopicMatch || my navigationContext -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
+	if (! isTopicMatch || my navigationContext -> combinationCriterion == kContext_combination::NO_BEFORE_AND_NO_AFTER) {
 		if (out_beforeIndex)
 			*out_beforeIndex = 0;
 		if (out_afterIndex)
@@ -386,17 +386,17 @@ bool TextGridTierNavigator_isMatch (TextGridTierNavigator me, integer topicIndex
 	}
 	bool isMatch = false;
 	integer beforeIndex = 0, afterIndex = 0;
-	if (my navigationContext -> useCriterion == kContext_use::BEFORE_AND_AFTER)
+	if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE_AND_AFTER)
 		isMatch = ((beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0) &&
 			((afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0);
-	else if (my navigationContext -> useCriterion == kContext_use::AFTER)
+	else if (my navigationContext -> combinationCriterion == kContext_combination::AFTER)
 		isMatch = (afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0;
-	else if (my navigationContext -> useCriterion == kContext_use::BEFORE)
+	else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE)
 		isMatch = (beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0;
-	else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH)
+	else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE_OR_AFTER_OR_BOTH)
 		isMatch = ((beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0) ||
 			((afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0);
-	else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH)
+	else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE_OR_AFTER_NOT_BOTH)
 		isMatch = ((beforeIndex = TextGridTierNavigator_findBeforeIndex (me, topicIndex)) > 0) !=
 			((afterIndex = TextGridTierNavigator_findAfterIndex (me, topicIndex)) > 0);
 	if (out_beforeIndex)
@@ -425,19 +425,19 @@ integer TextGridTierNavigator_getNumberOfTopicMatches (TextGridTierNavigator me)
 void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, kMatchDomain matchDomain, integer topicIndex, integer beforeIndex, integer afterIndex, double *out_startTime, double *out_endTime) {
 	double startTime, endTime;
 	if (matchDomain == kMatchDomain::MATCH_START_TO_MATCH_END) {
-		if (my navigationContext -> useCriterion == kContext_use::NO_BEFORE_AND_NO_AFTER) {
+		if (my navigationContext -> combinationCriterion == kContext_combination::NO_BEFORE_AND_NO_AFTER) {
 			startTime = my v_getStartTime (topicIndex);
 			endTime =  my v_getEndTime (topicIndex);
-		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE) {
+		} else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE) {
 			startTime = my v_getStartTime (beforeIndex);
 			endTime =  my v_getEndTime (my navigationContext -> excludeTopicMatch ? beforeIndex : topicIndex );
-		} else if (my navigationContext -> useCriterion == kContext_use::AFTER) {
+		} else if (my navigationContext -> combinationCriterion == kContext_combination::AFTER) {
 			startTime = my v_getStartTime (my navigationContext -> excludeTopicMatch ? afterIndex : topicIndex);
 			endTime =  my v_getEndTime (afterIndex );
-		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE_AND_AFTER) {
+		} else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE_AND_AFTER) {
 			startTime = my v_getStartTime (beforeIndex);
 			endTime =  my v_getEndTime (afterIndex);
-		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_NOT_BOTH) {
+		} else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE_OR_AFTER_NOT_BOTH) {
 			if (beforeIndex > 0) {
 				startTime = my v_getStartTime (beforeIndex);
 				endTime =  my v_getEndTime (my navigationContext -> excludeTopicMatch ? beforeIndex : topicIndex);
@@ -445,7 +445,7 @@ void TextGridTierNavigator_getMatchDomain (TextGridTierNavigator me, kMatchDomai
 				startTime = my v_getStartTime (my navigationContext -> excludeTopicMatch ? afterIndex : topicIndex);
 				endTime = my v_getEndTime (afterIndex);
 			}
-		} else if (my navigationContext -> useCriterion == kContext_use::BEFORE_OR_AFTER_OR_BOTH) {
+		} else if (my navigationContext -> combinationCriterion == kContext_combination::BEFORE_OR_AFTER_OR_BOTH) {
 			if (beforeIndex > 0 && afterIndex > 0) {
 				startTime = my v_getStartTime (beforeIndex);
 				endTime = my v_getEndTime (afterIndex);

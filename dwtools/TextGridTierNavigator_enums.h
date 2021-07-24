@@ -17,14 +17,14 @@
  */
 
 enums_begin (kMatchDomain, 1)
-	enums_add (kMatchDomain, 1, MATCH_START_TO_MATCH_END, U"Match start to Match end")
-	enums_add (kMatchDomain, 2, TOPIC_START_TO_TOPIC_END, U"Topic start to Topic end")
+	enums_add (kMatchDomain, 1, TOPIC_START_TO_TOPIC_END, U"Topic start to Topic end")
+	enums_add (kMatchDomain, 2, MATCH_START_TO_MATCH_END, U"Match start to Match end")
 	enums_add (kMatchDomain, 3, BEFORE_START_TO_TOPIC_END, U"Before start to Topic end")
 	enums_add (kMatchDomain, 4, BEFORE_START_TO_AFTER_END, U"Before start to After end")
 	enums_add (kMatchDomain, 5, TOPIC_START_TO_AFTER_END, U"Topic start to After end")
 	enums_add (kMatchDomain, 6, BEFORE_START_TO_BEFORE_END, U"Before start to Before end")
 	enums_add (kMatchDomain, 7, AFTER_START_TO_AFTER_END, U"After start to After end")
-enums_end (kMatchDomain, 7, MATCH_START_TO_MATCH_END)
+enums_end (kMatchDomain, 7, TOPIC_START_TO_TOPIC_END)
 
 enums_begin (kMatchLocation, 1)
 	enums_add (kMatchLocation, 1, IS_BEFORE, U"is before")

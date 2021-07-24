@@ -106,13 +106,13 @@ autoTextGridNavigator TextGrid_to_TextGridNavigator (TextGrid me, integer tierNu
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain) {
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain) {
 try {
 		autoNavigationContext navigationContext = NavigationContext_create (
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic
+			combinationCriterion, excludeTopic
 		);
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber, matchDomain);
 		autoTextGridNavigator him = TextGridTierNavigator_to_TextGridNavigator (thee.get());
@@ -126,7 +126,7 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation) {
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
@@ -134,7 +134,7 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic
+			combinationCriterion, excludeTopic
 		);
 		autoTextGridTierNavigator him = TextGrid_and_NavigationContext_to_TextGridTierNavigator (thee, navigationContext.get(), tierNumber, matchDomain);
 		TextGridNavigator_addTextGridTierNavigator (me, him.get(), matchLocation);
@@ -152,7 +152,7 @@ void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator m
 			topicLabels, topicCriterion, topicMatchBoolean,
 			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
 			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
-			kContext_use::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchLocation
+			kContext_combination::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchLocation
 		);
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add search topic tier from TextGrid.");	
@@ -316,7 +316,7 @@ void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierN
 	}
 }
 
-void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newCriterion, bool excludeTopicMatch) {
+void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_combination newCriterion, bool excludeTopicMatch) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
 		TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
