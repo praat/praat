@@ -5929,17 +5929,17 @@ NORMAL (U"These two examples involve only searches on one tier and the two cases
 	"search for a %%topic label% which may be preceded by a %%before label% and/or followed by an %after label%. "
 	"The %topic, %before and %after label belong to different sets (the three sets may of course have labels in common). With a choice from a number of "
 	"use criterions like ##Before or After, not both# or ##Before and After# you specify how the corresponding label "
-	"sets have to be used during the matching.")
+	"sets will be used during the matching.")
 NORMAL (U"For each tier in the TextGrid, we can define a tier search based on tier-specific sets of %%topic labels%, and/ or "
 	"tier-specific %%before% and %after labels%. Besides these maximally three sets of labels, we also need to specify "
 	"the kind of match that we want. This is all specified in a tier's @@NavigationContext@. ")
 
 ENTRY (U"Example 3: Multi-tier search by combining single-tier searches")
-NORMAL (U"A multi-tier search can be defined by successively adding one or more single tier searches to an "
-	"already existing TextGridNavigator. Each single tier search that is added should have a unique tier number. "
-	"To combine matches on different tiers we have to chose how to relate these matches on the basis of time because time is "
+NORMAL (U"A multi-tier search naviagtor can be created by successively adding one or more single tier searches to an "
+	"already existing TextGridNavigator. Each tier added for searching should have a unique tier number. "
+	"To combine the matches on different tiers we have to chose how to relate these matches on the basis of time because time is "
 	"the only feature that all tiers have in common as they all have the same time domain. "
-	"Suppose the TextGrid has two tiers: the first is a phoneme tier like we met in the previous example and the second "
+	"Suppose the TextGrid has two tiers: the first is a phoneme tier like we used in the previous example and the second "
 	"is a syntactic tier where intervals may be labeled as \"Noun\", \"Determiner\", \"Verb\" etc. "
 	"Next we want to restrict the vowel search on tier 1 to only those vowels that are within an interval at tier 2 that "
 	"is labeled as \"Noun\" and is preceded by an interval labeled \"Determiner\". "
@@ -5947,11 +5947,13 @@ NORMAL (U"A multi-tier search can be defined by successively adding one or more 
 	"to create the two-tier navigator.")	
 CODE (U"phonemeTierNumber = 1")
 CODE (U"syntaxTierNumber = 2")
+CODE (U"selectObject: texgrid")
 CODE (U"navigator = To TextGridNavigator: phonemeTierNumber,")
 CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"p\", \"t\", \"k\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"m\", \"n\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
+CODE (U"selectObject: texgrid, navigator")
 CODE (U"Add search tier: syntaxTierNumber,")
 CODE (U"... { \"Noun\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"Determiner\" }, \"is equal to\", \"OR\",")
@@ -5985,6 +5987,11 @@ CODE (U"selectObject: navigator")
 CODE (U"Modify match domain: phonemeTierNumber, \"Before start to Topic end\"")
 NORMAL (U"Even more stricter to exact alignment:")
 CODE (U"Modify match domain alignment: syntaxTierNumber, \"touches before and after\"")
+ENTRY (U"Using the TextGridNavigator with other TextGrids")
+NORMAL (U"If the TextGrids in your corpus have identical structure, i.e. your search tiers all have the same tier number "
+	"you can simply reuse your already defined navigator.")
+CODE (U"selectObject: navigator, otherTextGrid")
+CODE (U"Replace search tiers")
 MAN_END
 
 MAN_BEGIN (U"TextGrid: To TextGridNavigator...", U"djmw", 20210723)
