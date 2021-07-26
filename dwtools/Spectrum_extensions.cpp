@@ -33,6 +33,7 @@
 #include "Ltas.h"
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
+#include "Sound_and_Spectrum_dft.h"
 #include "NUM2.h"
 
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
@@ -313,7 +314,22 @@ autoSpectrum Spectrum_resample (Spectrum me, integer numberOfFrequencies) {
 		Melder_throw (me, U": not resampled.");
 	}
 }
-
+/*
+autoSpectrum Spectrum_resample2 (Spectrum me, integer numberOfFrequencies) {
+	try {
+		autoSound sound = Spectrum_to_Sound (me);
+		const double newSamplingFrequency = (1.0 / my dx) * numberOfFrequencies / my nx;
+		const double resampleFactor = (my nx - 1.0) / numberOfFrequencies;
+		autoSound resampled = Sound_resample (sound.get(), resampleFactor / sound -> dx, 50);
+		autoSpectrum extendedSpectrum = Sound_to_Spectrum_dft (resampled.get(), 50);
+		autoSpectrum him = Spectrum_create (my xmax, numberOfFrequencies);
+		his z.all()  <<=  extendedSpectrum -> z.all();
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U": not resampled.");
+	}
+}
+*/
 #if 0
 static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {

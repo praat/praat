@@ -39,7 +39,7 @@ autoNavigationContext NavigationContext_create (
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool contextOnly
+	kContext_combination combinationCriterion, bool contextOnly
 );
 
 void NavigationContext_replaceTopicLabels (NavigationContext me, Strings labels);
@@ -54,6 +54,6 @@ bool NavigationContext_isTopicLabel (NavigationContext me, conststring32 label);
 bool NavigationContext_isBeforeLabel (NavigationContext me, conststring32 label);
 bool NavigationContext_isAfterLabel (NavigationContext me, conststring32 label);
 
-void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_use useCriterion, bool excludeTopicMatch);
+void NavigationContext_modifyUseCriterion (NavigationContext me, kContext_combination combinationCriterion, bool excludeTopicMatch);
 
 #endif /* _NavigationContext_h_ */

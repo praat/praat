@@ -41,7 +41,7 @@ oo_DEFINE_CLASS (TextGridTierNavigator, Function)
 	oo_INTEGER (currentTopicIndex)  // maintain state: index of current match, (offLeft) 0 <= currentTopicIndex <= size + 1 : (offRight)
 
 	oo_ENUM (kMatchDomain, matchDomain) // what is to be considered as the domain (startTime, endTime) of the match? 
-	oo_ENUM (kMatchLocation, matchLocation) // relation to match in possible other navigators
+	oo_ENUM (kMatchDomainAlignment, matchDomainAlignment) // relation to match in possible other navigators
 	
 	#if oo_DECLARING
 		void v_info () override;

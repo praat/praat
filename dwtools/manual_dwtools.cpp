@@ -5802,143 +5802,79 @@ LIST_ITEM (U"6. Optionally you may also want to scale the TextGrid to line up wi
 MAN_END
 
 MAN_BEGIN (U"NavigationContext", U"djmw", 20210723)
-INTRO (U"The ##NavigationContext# contains all the information that the @@TextGridNavigator@ needs to search for a match "
-	"on one specified tier of a @@TextGrid@.")
+INTRO (U"One of the @@types of objects@ in Praat. The ##NavigationContext# contains the information that the "
+	"@@TextGridNavigator@ needs to search for a match on one tier of a @@TextGrid@.")
 ENTRY (U"What is inside a NavigationContext?")
 TAG (U"##Topic label set#")
-DEFINITION (U"defines the set of labels that we want to find. As an example, consider the following "
-	"set of vowel labels: { \"u\", \"o\", \"a\", \"i\", \"e\" }. Our intention is to find only those intervals in the specified tier of the TextGrid "
-	"that match with one of these labels. ")
+DEFINITION (U"defines the labels that we want to find. As an example consider the following "
+	"set of vowel labels { \"u\", \"o\", \"a\", \"i\", \"e\" }. Our intention is to find only those intervals in "
+	"the specified tier of the TextGrid that match with one of these labels. ")
 TAG (U"##Topic match criterion#")
-DEFINITION (U"defines what type of match you want. To name just a few of the possible options: "
-	"##is equal to# or its oppposite ##is not equal to#, ##contains# or its opposite ##does not contain#, "
-	"##starts with# or its opposite ##does not start with#. ")
-TAG (U"##Topic match boolean#")
-DEFINITION (U"defines the relation between the matches of the labels in the topic set. Two options are available, "
-	"##OR# and ##AND#. Consider the topic set defined above. If the topic match criterion "
-	"chosen was ##is equal to# then we would want the match for the label label\\$ of an interval in the tier to succeeed "
-	"only if the expression (label\\$  = \"u\" OR label\\$  = \"o\" "
-	"OR label\\$  = \"a\" OR label\\$  = \"i\" OR label\\$  = \"e\") evaluates as true, i.e. if one of the labels of the "
-	"topic set matches the label\\$  in the tier then we would have a match. "
+DEFINITION (U"defines the type of match you want. To name just a few of the possible options: "
+	"##is equal to# or ##is not equal to# or ##contains# or ##does not contain# or "
+	"##starts with# or ##does not start with#. Many more match criteria can be chosen and these criteria "
+	"come in pairs where the second one of the pair is the negation of the first.")
+TAG (U"##Combine topic matches with#")
+DEFINITION (U"defines whether the match criteria of the labels in the topic set have to be combined by "
+	"##OR# or by  ##AND#. Consider the topic set defined above. If the topic match criterion "
+	"chosen was ##is equal to# then we would want the match for the current interval label in the tier to succeeed "
+	"only if the expression (currentLabel\\$  = \"u\" OR currentLabel\\$  = \"o\" OR currentLabel\\$  = \"a\" "
+	"OR currentLabel\\$  = \"i\" OR currentLabel\\$  = \"e\") evaluates as true, i.e. if one of the labels of the "
+	"topic set matches the current label in the tier then we would have a match. "
 	"On the other hand, if the chosen match criterium were the opposite, ##not equal to#, then we would want our match for "
-	"the interval label label\\$ to succeed only if the expression (label\\$  \\=/ \"u\" AND label\\$  \\=/ \"o\" AND "
-	"label\\$  \\=/ \"a\" AND label\\$  \\=/ \"i\" AND label\\$  \\=/ \"e\") evaluates as true. "
-	"Therefore, in general, for a positive match criterion, like ##is equal to#, we would choose ##OR#, while for "
-	"a negative match criterion, like ##is not equal to#, we would choose ##AND#.")
+	"the current interval label to succeed only if the expression (currentLabel\\$  \\=/ \"u\" AND currentLabel\\$  \\=/ \"o\" "
+	"AND currentLabel\\$  \\=/ \"a\" AND currentLabel\\$  \\=/ \"i\" AND currentLabel\\$  \\=/ \"e\") evaluates as true. "
+	"Therefore, in general, for labels that are single words, a positive match criterion, like ##is equal to#, "
+	"we would choose ##OR# while for a negative match criterion, like ##is not equal to# we would choose ##AND#. "
+	"However, for labels that are multi-word both ##AND# as well as ##OR# combinations can be useful.")
 TAG (U"##Before label set#")
-DEFINITION (U"defines the set of labels that the preceding interval label has to match if the current interval label "
+DEFINITION (U"defines the labels that the label of the preceding interval has to match if the current interval label "
 	"matches the topic label set. This makes the search context-sensitive because it is not enough that the current "
 	"interval label matches (in a specified way) the topic set but also the label of the preceding interval has to "
 	"match the before set. If, for example, the before set contains "
-	"\"p\", \"t\" and \"k\", then in combination with the topic labels defined above this would limit the search to only "
-	"vowels preceded by plosives.")
-TAG (U"##Before match criterion#")
+	"\"p\", \"t\" and \"k\" then in combination with the topic labels defined above this would limit the search to only "
+	"those vowels that are preceded by a plosive.")
+TAG (U"##Combine before matches with#")
+
 DEFINITION (U"defines, just like for the topic match criterion, the kind of match you are looking for only now for "
 	"the labels of the %%before set%.")
 TAG (U"##Before match boolean#")
 DEFINITION (U"defines, also in analogy with the description of the topic match boolean, the relation between the matches "
 	"of the labels in the %%before set%.")
 TAG (U"##After label set#")
-DEFINITION (U"defines the set of labels that the following interval label has to match if the current interval label "
+DEFINITION (U"defines the labels that the label of the following interval has to match if the current interval label "
 	"matches the topic label set. An example set could consist of "
 	"\"m\" and \"n\". In combination with the topic set we would search for vowels followed by a nasal.")
-TAG (U"##After match criterion# and ##After match boolean#")
+TAG (U"##After match criterion# and ##Combine after matches with#")
 DEFINITION (U"have the same meaning as defined above for the topic and before sets.")
-TAG (U"##Before and after use criterion#")
+TAG (U"##Context combination criterion#")
 DEFINITION (U"defines how the before and after sets have to be combined in the matching. The possible options are ##before#, or "
 	"##after# or ##before and after# or ##before or after, not both# or ##before or after, or both# or finally "
-	"##no before and no after#. Given the topic, before and after labels examples defined above then ##before and after# "
+	"##no before and no after#. Given the topic, before and after labels examples defined above, chosing ##before and after# "
 	"would limit the search to vowels preceded by a plosive and followed by a nasal.")
 TAG (U"##Exclude topic labels boolean#")
-DEFINITION (U"when on, only the before and / or the after label set will be used in matching. Of course this "
+DEFINITION (U"when on, only the before and / or the after label set will be used in matching. Of course this effect "
 	"could also be reached by leaving the topic set empty.")
 MAN_END
 
-MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210723)
+MAN_BEGIN (U"TextGridNavigator", U"djmw", 20210726)
 INTRO (U"One of the @@types of objects@ in Praat. A ##TextGridNavigator# is a multi-tier search machine.")
 ENTRY (U"What is a multi-tier search machine?")
 NORMAL (U"A multi-tier search machine enables you to find an interval (or a point) on a tier, based on criteria "
-	"that can have a specified relation with intervals (or points) on the same or on other tiers of the TextGrid. "
-	"Matches are primarily based on the labels in a tier.")
-ENTRY (U"Single-tier searches")
-NORMAL (U"As a simple example consider a TextGridNavigator that searches for the occurrence of one of the labels "
-	"in a %topic set that consists of the labels { \"a\", \"e\", \"i\", \"o\", \"u\" }, and you want tier 1 to be searched. A match should "
-	"occur if a label in tier 1 equals one of the labels in this topic set. The command to define the TextGridNavigator "
-	"if the TextGrid is selected is:")
+	"that can have a specified relation with intervals (or points) on the same tier or on other tiers of the TextGrid. "
+	"Matches on each tier are based on the labels in a tier. Matches found on different tiers are combined based on time. "
+	"The match criteria for each tier are specified in the tier's @@NavigationContext@. ")
+ENTRY (U"Example 1: Single-tier topic search: ")
+NORMAL (U"We create a TextGridNavigator that searches for the occurrence in tier 1 of one of the labels "
+	"in a %topic set that consists of the labels { \"a\", \"e\", \"i\", \"o\", \"u\" }. If a label in tier 1 equals one of the labels in this topic set we have a match. "
+	"The command to create the TextGridNavigator for the selected TextGrid is:")
 CODE (U"To TextGridNavigator (topic search): 1,")
 CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"Match start to Match end\"")
-NORMAL (U"The command to start the search would then probably be ##Find first#. Because of this command the navigator will "
-	"search for the first occurrence of one of the vowels in the %topic set% in the labels of tier 1, and, if a match "
-	"has been found, sets an internal pointer to this location. "
-	"If you next perform a query with ##Get index: 1, \"topic\"# it will return the number of the interval (or point) "
-	"that matched (or 0 if no match could be found). The next match can then be found by using the ##Find next# command "
-	"and its value can be queried then. This may go on until the last match has been found. A following ##Find next# "
-	"will not be able to find a match and "
-	"consequently the query for the index of the match will return 0. See ##Example 1# below for an example script.")
-NORMAL (U"Instead of starting at the beginning of the TextGrid you could also start at the end with ##Find last# and "
-	"next finding previous matches with ##Find previous# or you could start the search at a certain time with "
-	"##Find next after time# or ##Find previous before time#.")
-NORMAL (U"A more complex example could query for a vowel from the same %topic set as we used above but only matches if "
-	"additionally it is immediately preceded by an unvoiced plosive from a %Before set, like e.g. \"p t k\", and also is "
-	"immediately followed by a nasal from an %After set, like \"m n\". The command to create this navigator once the "
-	"TextGrid is selected is: ")
-CODE (U"To TextGridNavigator: 1,")
-CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
-CODE (U"... { \"p\", \"t\", \"k\" }, \"is equal to\", \"OR\",")
-CODE (U"... { \"m\", \"n\" }, \"is equal to\", \"OR\",")
-CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
-NORMAL (U"These two examples involve only searches on one tier and the two cases follow the same scheme: they "
-	"search for a %%topic label% which may be preceded by a %%before label% and/or followed by an %after label%. "
-	"The %topic, %before and %after label belong to different sets (the three sets may of course have labels in common). With a choice from a number of Boolean "
-	"use criterions like ##Before or After, not both# or ##Before and After# you specify how the corresponding label "
-	"sets are to be used during the matching.")
-NORMAL (U"For each tier in the TextGrid, we can define a tier search based on tier-specific sets of %%topic labels%, and/ or "
-	"tier-specific %%before% and %after labels%. Besides these maximally three sets of labels, we also need to specify "
-	"the kind of match that we want. In the first example above we chose the label of the item in the topic tier 1 to have "
-	"the ##is equal to# relation to one of the labels in the topic set. Other criteria for a match are possible to "
-	"guarantee maximum flexibility and ease of use, like ##is not equal to#, ##contains#, ##does not start with# and many more. ")
-NORMAL (U"Additionally we also need to specify whether it is enough that at least %one label in the set matches the condition "
-	"or that %all labels in the set should match the condition. In set theory this translates to whether we have an OR or "
-	"an AND relation between the individual matches. For example, in the first example above where we wanted to match one of the given vowels, "
-	"we choose the ##is equal to# match criterion and OR as the match boolean because what we want is that for the match "
-	"to succeed only one of the labels in the topic set needs to match. We can write this topic match expression as "
-	"(label = topicSymbol__1_) OR (label = topicSymbol__2_) OR ... OR (label = topicSymbol__%n_), where the OR implies "
-	"that only one of the matches needs to succeed to make the complete expression %true. "
-	"If on the other hand we did %not want to match any of the labels in the topic set, i.e. if we had chosen "
-	"##is not equal to# as our criterion, then we should use an AND match boolean because we can now write our match intention "
-	"as (label \\=/ topicSymbol__1_) AND (label \\=/ topicSymbol__2_) AND ... AND (label \\=/ topicSymbol__%n_), "
-	"where the AND implies that all matches have to succeed to make the whole expression %true. "
-	"Most of the time, inclusive searches are based on OR and exclusive searches are based on AND.")
-ENTRY (U"Multi-tier search by combining single-tier searches")
-NORMAL (U"A multi-tier search can now be defined by successively adding one or more single tier searches to an "
-	"already existing TextGridNavigator. Each single tier search that is added should have a unique tier number. "
-	"To combine the matches on each tier we have to chose how to relate them on the basis of time because time is "
-	"the only feature that all tiers have in common as they all have the same time domain. "
-	"One tier, called the %%topic tier%, serves as the basis for comparisons between the matches on the other tiers. "
-	"As a multi-tier TextGridNavigator can only be created by adding a new search tier to an already existing single-tier "
-	"TextGridNavigator whose tier automatically will be the topic tier, no explicit definition of a topic tier is necessary. "
-	"The matches on the other tiers, the sub-ordinate tiers, all have have a specific time relation to the match on the "
-	"topic tier. Although we can have matches on interval tiers as well as on point tiers, in the sequel we assume that "
-	"only interval tiers are used. "
-	"Suppose on the topic tier we have a match for the label on the interval whose start time is %tmin and whose end time "
-	"is %tmax, i.e. the matched interval is [%tmin, %tmax], and on a sub-ordinate tier the label on the interval located at "
-	"[%tmin2, %tmax2] matches. If the TextGridNavigator has only one sub-ordinate tier and the match location criterion "
-	"were chosen as ##is before# and the end time of the sub-ordinate interval lies before the start time of the topic "
-	"interval, i.e. %tmax2 < %tmin then we would have a multi-tier match. "
-	"With the same two-tier TextGridNavigator as above if we had chosen as location match criterion ##overlaps before and after# "
-	"which translates to %tmin2 < %tmin and %tmax2 > %tmax then we would not have a match. "
-	"Of cource, more than these two mentioned location match criteria above exist.")
-NORMAL (U"For a multi-tier search to succeed both the search on each tier have to be succesful as well as the location "
-	"criteria on the sub-ordinate tier matches have to be met. ")
-ENTRY (U"How to create a TextGridNavigator")
-ENTRY (U"Example 1: simple search in one tier")
-NORMAL (U"The following script should work on a selected TextGrid:")
-CODE (U"textgrid = selected (\"TextGrid\")")
-CODE (U"tierNumber = 1")
-CODE (U"navigator = To TextGridNavigator (topic search): tierNumber,")
-CODE (U"... { \"a\", \"e\", \"i\", \"u\", \"o\" }, \"is equal to\", \"OR\",")
-CODE (U"... \"Match start to Match end\"")
+NORMAL (U"In this case the tier's ##NavigationContext# is very simple as the searching / matching only involves "
+	"labels of the topic set. After the TextGridNavigator has been created it doesn't need the TextGrid anymore because "
+	"tier 1 has been copied into the navigator object. The following code would find all the intervals that match and "
+	"get their start time, end time and label. ")
 CODE (U"Find first")
 CODE (U"index = Get index: tierNumber, \"topic\"")
 CODE (U"while index > 0")
@@ -5951,6 +5887,10 @@ CODE (U"while index > 0")
 	CODE1 (U"Find next")
 	CODE1 (U"index = Get index: tierNumber, \"topic\"")
 CODE (U"endwhile")
+NORMAL (U"The ##Find first# command finds the index of the first interval (or point) in the tier that matches. "
+	"The ##Get index# command returns this index. Besides giving the index of the topic match it can also return "
+	"indices of before or after matches. If no match was found it returns zero. ##Find next# finds the next interval "
+	"that matches.")
 NORMAL (U"Instead of finding the indices one at a time in a %while loop until we are done, we could use alternatives "
 	"and query for a list of all indices or times where the labels match. We then know beforehand how many matches we have "
 	"and therefore we can use a %for loop.")
@@ -5970,25 +5910,115 @@ CODE (U"domains\\# \\#  = List domains: \"Topic start to Topic end\"")
 CODE (U"numberOfMatches = numberOfRows (domains\\# \\# )")
 NORMAL (U"and use it in a loop as, for example,")
 CODE (U"for index to numberOfMatches")
-	CODE1 (U"duration = domains\\# \\#  [index, 2] - domains\\# \\#  [index, 1]")
-	CODE1 (U"<your code>")
+CODE (U"  duration = domains\\# \\#  [index, 2] - domains\\# \\#  [index, 1]")
+CODE (U"  <your code>")
 CODE (U"endfor")
-ENTRY (U"Example 2: search in one tier")
-NORMAL (U"Search for one of the vowels { \"a\", \"e\", \"i\", \"u\", \"o\" } "
-	"immediately preceded by one of the plosives { \"p\", \"t\", \"k\" } and "
-	"immediately followed by one of the nasals { \"m\", \"n\" }.")
+
+ENTRY (U"Example 2: Single-tier before + topic + after search ")
+NORMAL (U"A more complex example could query for a vowel from the same %topic set as we used above but only matches if "
+	"additionally it is immediately preceded by an unvoiced plosive from a %Before set, like e.g. { \"p\", \"t\", \"k\" }, "
+	"and also is immediately followed by a nasal from an %After set, like { \"m\", \"n\" }. "
+	"The command to create this navigator once the TextGrid is selected is: ")
 CODE (U"tierNumber = 1")
-CODE (U"navigator = To TextGridNavigator: tierNumber,")
-CODE (U"... { \"a\", \"e\", \"i\", \"u\", \"o\" }, \"is equal to\", \"OR\",")
+CODE (U"To TextGridNavigator: tierNumber,")
+CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"p\", \"t\", \"k\" }, \"is equal to\", \"OR\",")
 CODE (U"... { \"m\", \"n\" }, \"is equal to\", \"OR\",")
 CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
-CODE (U"domains\\# \\#  = List domains: \"Topic start to Topic end\"")
-CODE (U"<your code>")
-NORMAL (U"If, for example, the start time should equal the start time of the Before match, i.e. the plosive, "
-	"and the end time should equal the end time of the After match, i.e. the nasal, you could use instead:")
-CODE (U"domains\\# \\#  = List domains: \"Before start to After end\"")
+NORMAL (U"These two examples involve only searches on one tier and the two cases follow the same scheme: they "
+	"search for a %%topic label% which may be preceded by a %%before label% and/or followed by an %after label%. "
+	"The %topic, %before and %after label belong to different sets (the three sets may of course have labels in common). With a choice from a number of "
+	"use criterions like ##Before or After, not both# or ##Before and After# you specify how the corresponding label "
+	"sets have to be used during the matching.")
+NORMAL (U"For each tier in the TextGrid, we can define a tier search based on tier-specific sets of %%topic labels%, and/ or "
+	"tier-specific %%before% and %after labels%. Besides these maximally three sets of labels, we also need to specify "
+	"the kind of match that we want. This is all specified in a tier's @@NavigationContext@. ")
+
+ENTRY (U"Example 3: Multi-tier search by combining single-tier searches")
+NORMAL (U"A multi-tier search can be defined by successively adding one or more single tier searches to an "
+	"already existing TextGridNavigator. Each single tier search that is added should have a unique tier number. "
+	"To combine matches on different tiers we have to chose how to relate these matches on the basis of time because time is "
+	"the only feature that all tiers have in common as they all have the same time domain. "
+	"Suppose the TextGrid has two tiers: the first is a phoneme tier like we met in the previous example and the second "
+	"is a syntactic tier where intervals may be labeled as \"Noun\", \"Determiner\", \"Verb\" etc. "
+	"Next we want to restrict the vowel search on tier 1 to only those vowels that are within an interval at tier 2 that "
+	"is labeled as \"Noun\" and is preceded by an interval labeled \"Determiner\". "
+	"The only complexity of a multi-tier TextGrid navigator is within its creation process. The following script shows how "
+	"to create the two-tier navigator.")	
+CODE (U"phonemeTierNumber = 1")
+CODE (U"syntaxTierNumber = 2")
+CODE (U"navigator = To TextGridNavigator: phonemeTierNumber,")
+CODE (U"... { \"a\", \"e\", \"i\", \"o\", \"u\" }, \"is equal to\", \"OR\",")
+CODE (U"... { \"p\", \"t\", \"k\" }, \"is equal to\", \"OR\",")
+CODE (U"... { \"m\", \"n\" }, \"is equal to\", \"OR\",")
+CODE (U"... \"before and after\", \"false\", \"Topic start to Topic end\"")
+CODE (U"Add search tier: syntaxTierNumber,")
+CODE (U"... { \"Noun\" }, \"is equal to\", \"OR\",")
+CODE (U"... { \"Determiner\" }, \"is equal to\", \"OR\",")
+CODE (U"... { }, \"is equal to\", \"OR\",")
+CODE (U"... \"before\", \"false\", \"Topic start to Topic end\",")
+CODE (U"... overlaps before and after")
+NORMAL (U"The script starts by creating the navigator for the %topic tier, tier number 1, that we already discussed in "
+	"##Example 2# which searches for vowels in a plosive-nasal context. "
+	"The %%match domain%, i.e. that time interval in the topic tier that will be used as the anchor for the comparisons with the match domains of other tiers, is chosen as ##Topic start to Topic end#. This means that, in case of a match on this tier, "
+	"the start and end times of the match equal the start and end times of the matched vowel interval, respectively. "
+	"More options exist for the choice of the match domain. "
+	"The chosen match domain on the %topic tier will %always serve as the anchor for the comparisons with matches on other tiers. "
+	"The ##Add search tier# command adds a tier to the navigator that will be searched for combinations of a \"Noun\" label "
+	"preceded by a \"Determiner\" label. "
+	"The @@NavigationContext@ for this tier therefore consists of only a topic set and a before set and both have "
+	"only one member. "  
+	"The matches on the added search tier will be used to limit the number of matches on the topic tier by checking if a "
+	"specified time relation between the match domains on both tiers exist. "
+	"Suppose that on both tiers we have a match which means that on the topic tier we found a vowel that is preceded "
+	"by a plosive and followed by a nasal, and, on the syntax tier we found an interval labeled \"Noun\" that is preceded "
+	"by an interval labeled \"Determiner\". The start and end time of the match domain on the topic tier equal the start and "
+	"end time of the vowel interval; name them %tmin1 and %tmax1, respectively. The match domain on the syntax tier will be "
+	"the interval [%tmin2, %tmax2], where %tmin2 and %tmax2 are the start and end time of the interval labeled \"Noun\" because we "
+	"also have chosen the ##Topic start to Topic end# option as the match domain for the syntax tier. " 
+	"How to combine these two separate matches on the two different tiers will be determined by the last option of the "
+	"##Add search tier# command which was chosen as ##overlaps before and after#. "
+	"Now, only if %tmin2 < %tmin1 and %tmax2 > %tmax1 the two intervals have the desired alignment and the match would succeed. ")
+NORMAL (U"We can, of course, make our match stricter and demand that, for example, the complete three phoneme match of the topic "
+	"tier is located within the match domain of the systax tier by issuing the following command:")
+CODE (U"selectObject: navigator")
+CODE (U"Modify match domain: phonemeTierNumber, \"Before start to Topic end\"")
+NORMAL (U"Even more stricter to exact alignment:")
+CODE (U"Modify match domain alignment: syntaxTierNumber, \"touches before and after\"")
 MAN_END
+
+MAN_BEGIN (U"TextGrid: To TextGridNavigator...", U"djmw", 20210723)
+INTRO (U"A command to create a new @@TextGridNavigator@ object for the selected @@TextGrid@.")
+ENTRY (U"Settings")
+TAG (U"##Tier number#")
+DEFINITION (U"defines the tier of the TextGrid that will be used for the navigation. This tier will be copied "
+	"into the TextGridNavigator. This tier will be called the %%topic tier%.")
+TAG (U"Next follow the settings for the @@NavigationContext|navigation context@. You can define a full "
+	"context-sensitive search on the selected tier. This means that whether a label in an interval matches may depend "
+	"on whether the label of the preceeding interval matches a certain condition and / or whether the label in the succeeding interval matches a possibly different condition. ")
+TAG (U"##Match domain#")
+DEFINITION (U"defines the start and end times of the match domain on this tier. Various options exist, the default, "
+	"##Topic start to Topic end# takes the start time and end time of the interval that matches the topic. "
+	"As is explained in the @@TextGridNavigator@ matching in multi-tier search is based on time intervals,  "
+	"therefore this option is irrelevant for single-tier searches.")
+MAN_END
+
+MAN_BEGIN (U"TextGridNavigator & TextGrid: Add search tier...", U"djmw", 20210723)
+INTRO (U"A command to extend the search of the selected @@TextGridNavigator@ with another tier of the selected @@TextGrid@. ")
+ENTRY (U"Settings")
+TAG (U"##Tier number#")
+DEFINITION (U"defines the tier of the TextGrid that will also be used to limit make the searches more specific. This tier has to be different from the tiers that are already in use.")
+TAG (U"The @@NavigationContext|navigation context@ for this tiers has to be defined.")
+TAG (U"##Match domain#")
+DEFINITION (U"defines the start and end times of the match domain on this tier. Various options exist, the default, "
+	"##Topic start to Topic end# takes the start time and end time of the interval that matches the topic on this tier. ")
+TAG (U"##Match domain alignment#")
+DEFINITION (U"defines the alignment between the match domain in this tier to the match domain in the topic tier. "
+	"For example, if the option ##overlaps before and after# were chosen and the match domain in the selected tier "
+	"is [%%tmin2%, %%tmax2%] while on the topic tier it is [%%tmin1%, %%tmax1%] then a match would only succeed "
+	"if %%tmin2% < %%tmin1% and %%tmax2% > %%tmax1%.")
+MAN_END
+
 
 MAN_BEGIN (U"TextGridNavigator & TextGrid: Replace search tiers", U"djmw", 20210719)
 INTRO (U"A command to replace the current search tiers in the selected @@TextGridNavigator@ with the tiers from the "

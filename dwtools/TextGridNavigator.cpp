@@ -52,7 +52,7 @@ void structTextGridNavigator :: v_info () {
 		MelderInfo_writeLine (U"Tier number: ", tierNumber, U" (item number: ", item, U")");
 		tn -> v_info ();
 		MelderInfo_writeLine (U"\tMatch location to tier number ", topicTierNumber, U": ", 
-			kMatchLocation_getText (tn -> matchLocation));
+			kMatchDomainAlignment_getText (tn -> matchDomainAlignment));
 	}	
 }
 
@@ -81,7 +81,7 @@ autoTextGridNavigator TextGridTierNavigator_to_TextGridNavigator (TextGridTierNa
 		autoTextGridNavigator thee = Thing_new (TextGridNavigator);
 		Function_init (thee.get(), my xmin, my xmax);
 		autoTextGridTierNavigator tn = Data_copy (me);
-		tn -> matchLocation = kMatchLocation::IS_ANYWHERE;
+		tn -> matchDomainAlignment = kMatchDomainAlignment::IS_ANYWHERE;
 		thy tierNavigators.addItem_move (tn.move());
 		return thee;
 	} catch (MelderError) {
@@ -106,13 +106,13 @@ autoTextGridNavigator TextGrid_to_TextGridNavigator (TextGrid me, integer tierNu
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain) {
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain) {
 try {
 		autoNavigationContext navigationContext = NavigationContext_create (
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic
+			combinationCriterion, excludeTopic
 		);
 		autoTextGridTierNavigator thee = TextGrid_and_NavigationContext_to_TextGridTierNavigator (me, navigationContext.get(), tierNumber, matchDomain);
 		autoTextGridNavigator him = TextGridTierNavigator_to_TextGridNavigator (thee.get());
@@ -126,7 +126,7 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_use useCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation) {
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchDomainAlignment matchDomainAlignment) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
@@ -134,10 +134,10 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			useCriterion, excludeTopic
+			combinationCriterion, excludeTopic
 		);
 		autoTextGridTierNavigator him = TextGrid_and_NavigationContext_to_TextGridTierNavigator (thee, navigationContext.get(), tierNumber, matchDomain);
-		TextGridNavigator_addTextGridTierNavigator (me, him.get(), matchLocation);
+		TextGridNavigator_addTextGridTierNavigator (me, him.get(), matchDomainAlignment);
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add search tier from TextGrid.");	
 	}
@@ -145,14 +145,14 @@ void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGri
 
 void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator me, TextGrid thee, integer tierNumber, 
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
-	kMatchDomain matchDomain, kMatchLocation matchLocation)
+	kMatchDomain matchDomain, kMatchDomainAlignment matchDomainAlignment)
 {
 	try {
 		TextGridNavigator_and_TextGrid_addSearchTier (me, thee, tierNumber,
 			topicLabels, topicCriterion, topicMatchBoolean,
 			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
 			{ }, kMelder_string::EQUAL_TO, kMatchBoolean::OR_,
-			kContext_use::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchLocation
+			kContext_combination::NO_BEFORE_AND_NO_AFTER, false, matchDomain, matchDomainAlignment
 		);
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add search topic tier from TextGrid.");	
@@ -160,20 +160,20 @@ void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator m
 }
 	
 void TextGridNavigator_addNewTierNavigation (TextGridNavigator me, TextGrid thee, NavigationContext navigationContext,
-	integer tierNumber, kMatchDomain matchDomain, kMatchLocation matchLocation)
+	integer tierNumber, kMatchDomain matchDomain, kMatchDomainAlignment matchDomainAlignment)
 {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 		TextGridNavigator_checkTierNumberNotInUse (me, tierNumber);
 		autoTextGridTierNavigator tn = TextGrid_and_NavigationContext_to_TextGridTierNavigator (thee, navigationContext, tierNumber, matchDomain);
-		tn -> matchLocation = matchLocation;
+		tn -> matchDomainAlignment = matchDomainAlignment;
 		my tierNavigators.addItem_move (tn.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": a new tier navigator could not be added.");
 	}
 }
 											 
-void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridTierNavigator thee, kMatchLocation matchLocation) {
+void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridTierNavigator thee, kMatchDomainAlignment matchDomainAlignment) {
 	try {
 		for (integer inum = 1; inum <= my tierNavigators.size; inum ++) {
 			TextGridTierNavigator tn = my tierNavigators.at [inum];
@@ -181,7 +181,7 @@ void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridT
 				U"The tiernumber of the tier you want tor add is already in use.");
 		}
 		autoTextGridTierNavigator tn = Data_copy (thee);
-		tn -> matchLocation = matchLocation;
+		tn -> matchDomainAlignment = matchDomainAlignment;
 		my tierNavigators.addItem_move (tn.move());
 	} catch (MelderError) {
 		Melder_throw (me, U": could not add TextGridTierNavigator.");
@@ -266,11 +266,11 @@ void TextGridNavigator_modifyAfterRange (TextGridNavigator me, integer tierNumbe
 	}
 }
 
-void TextGridNavigator_modifyLocationCriterion (TextGridNavigator me, integer tierNumber, kMatchLocation matchLocation) {
+void TextGridNavigator_modifyMatchDomainAlignment (TextGridNavigator me, integer tierNumber, kMatchDomainAlignment matchDomainAlignment) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
 		const TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
-		tn -> matchLocation = matchLocation;
+		tn -> matchDomainAlignment = matchDomainAlignment;
 	} catch (MelderError) {
 		Melder_throw (me, U": location criterion not changed.");
 	}
@@ -316,7 +316,7 @@ void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierN
 	}
 }
 
-void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_use newCriterion, bool excludeTopicMatch) {
+void TextGridNavigator_modifyCombinationCriterion (TextGridNavigator me, integer tierNumber, kContext_combination newCriterion, bool excludeTopicMatch) {
 	try {
 		const integer navigatorNumber = TextGridNavigator_checkNavigatorNumberFromTierNumber (me, tierNumber);
 		TextGridTierNavigator tn = my tierNavigators .at [navigatorNumber];
@@ -408,16 +408,16 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 		tni -> currentTopicIndex = 0;
 		const integer startIndex = 1;
 		const integer endIndex =  tierSize;
-		const kMatchLocation matchLocation = tni -> matchLocation;
+		const kMatchDomainAlignment matchDomainAlignment = tni -> matchDomainAlignment;
 		const kMatchDomain matchDomain = tni -> matchDomain;
-		if (matchLocation == kMatchLocation::IS_ANYWHERE) {
+		if (matchDomainAlignment == kMatchDomainAlignment::IS_ANYWHERE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
 					tni -> currentTopicIndex = index;
 					break;
 				}
 			}
-		} else if (matchLocation == kMatchLocation::IS_BEFORE) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::IS_BEFORE) {
 			for (integer index = referenceIndex; index >= startIndex; index --) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
 					TextGridTierNavigator_getMatchDomain (tni, matchDomain, index, beforeIndex_sub, afterIndex_sub, nullptr, & endTime_sub);
@@ -427,7 +427,7 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 					}
 				}
 			}
-		} else if (matchLocation == kMatchLocation::TOUCHES_BEFORE) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::TOUCHES_BEFORE) {
 			for (integer index = referenceIndex; index >= startIndex; index --) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
 					TextGridTierNavigator_getMatchDomain (tni, matchDomain, index, beforeIndex_sub, afterIndex_sub, nullptr, & endTime_sub);
@@ -438,7 +438,7 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 						break;
 				}
 			}
-		} else if (matchLocation == kMatchLocation::OVERLAPS_BEFORE) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::OVERLAPS_BEFORE) {
 			// OVERLAPS_BEFORE	tmin2 < tmin && tmax2 <= tmax
 			for (integer index = referenceIndex; index >= startIndex; index --) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
@@ -450,13 +450,13 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 						break;
 				}
 			}
-		} else if (matchLocation == kMatchLocation::IS_INSIDE) { // TODO checken of tmid correct is
+		} else if (matchDomainAlignment == kMatchDomainAlignment::IS_INSIDE) { // TODO checken of tmid correct is
 			if (TextGridTierNavigator_isMatch (tni, referenceIndex, & beforeIndex_sub, & afterIndex_sub)) {
 				TextGridTierNavigator_getMatchDomain (tni, matchDomain, referenceIndex, beforeIndex_sub, afterIndex_sub, & startTime_sub, & endTime_sub);
 				if (startTime_sub >= startTime && endTime_sub <= endTime)
 					tni -> currentTopicIndex = referenceIndex;
 			}
-		} else if (matchLocation == kMatchLocation::OVERLAPS_AFTER) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::OVERLAPS_AFTER) {
 			// OVERLAPS_AFTER	tmin2 >= tmin && tmax2 > tmax
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
@@ -468,7 +468,7 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 						break;
 				}
 			}
-		} else if (matchLocation == kMatchLocation::TOUCHES_AFTER) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::TOUCHES_AFTER) {
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
 					TextGridTierNavigator_getMatchDomain (tni, matchDomain, index, beforeIndex_sub, afterIndex_sub, & startTime_sub, nullptr);
@@ -479,7 +479,7 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 						break;
 				}
 			}
-		} else if (matchLocation == kMatchLocation::IS_AFTER) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::IS_AFTER) {
 			for (integer index = referenceIndex; index <= endIndex; index ++) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
 					TextGridTierNavigator_getMatchDomain (tni, matchDomain, index, beforeIndex_sub, afterIndex_sub, & startTime_sub, nullptr);
@@ -489,19 +489,19 @@ bool TextGridNavigator_isMatch (TextGridNavigator me, integer topicIndex, intege
 					}
 				}
 			}
-		} else if (matchLocation == kMatchLocation::OVERLAPS_BEFORE_AND_AFTER) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::OVERLAPS_BEFORE_AND_AFTER) {
 			if (TextGridTierNavigator_isMatch (tni, referenceIndex, & beforeIndex_sub, & afterIndex_sub)) {
 				TextGridTierNavigator_getMatchDomain (tni, matchDomain, referenceIndex, beforeIndex_sub, afterIndex_sub, & startTime_sub, & endTime_sub);
 				if (startTime_sub <= startTime && endTime_sub >= endTime)
 					tni -> currentTopicIndex = referenceIndex;
 			}
-		} else if (matchLocation == kMatchLocation::TOUCHES_BEFORE_AND_AFTER) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::TOUCHES_BEFORE_AND_AFTER) {
 			if (TextGridTierNavigator_isMatch (tni, referenceIndex, & beforeIndex_sub, & afterIndex_sub)) {
 				TextGridTierNavigator_getMatchDomain (tni, matchDomain, referenceIndex, beforeIndex_sub, afterIndex_sub, & startTime_sub, & endTime_sub);
 				if (startTime_sub == startTime && endTime_sub == endTime)
 					tni -> currentTopicIndex = referenceIndex;
 			}
-		} else if (matchLocation == kMatchLocation::IS_OUTSIDE) {
+		} else if (matchDomainAlignment == kMatchDomainAlignment::IS_OUTSIDE) {
 			for (integer index = startIndex; index <= endIndex; index ++) {
 				if (TextGridTierNavigator_isMatch (tni, index, & beforeIndex_sub, & afterIndex_sub)) {
 				TextGridTierNavigator_getMatchDomain (tni, matchDomain, index, beforeIndex_sub, afterIndex_sub, & startTime_sub, & endTime_sub);
