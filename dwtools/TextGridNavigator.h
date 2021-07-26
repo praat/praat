@@ -44,7 +44,7 @@ autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextG
 
 /*
 	Add navigation context for a tier.
-	The matchLocation determines how a matched location in this tier relates to the matched location on the topic tier.
+	The matchDomainAlignment determines how a matched location in this tier relates to the matched location on the topic tier.
 	Suppose the interval on the topic tier that matched has domain [tmin, tmax].
 	(a TextPoint has tmin == tmax). The potential match in the tier in one of the other contexts has domain [tmin2, tmax2].
 	Constraint:					Relation between matched domains:
@@ -62,7 +62,7 @@ autoTextGridNavigator TextGrid_and_NavigationContext_to_TextGridNavigator (TextG
 
 void TextGridNavigator_replaceNavigationContext (TextGridNavigator me, NavigationContext thee, integer tierNumber);
 
-void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridTierNavigator thee, kMatchLocation matchLocation);
+void TextGridNavigator_addTextGridTierNavigator (TextGridNavigator me, TextGridTierNavigator thee, kMatchDomainAlignment matchDomainAlignment);
 
 autoNavigationContext TextGridNavigator_extractNavigationContext (TextGridNavigator me, integer tierNumber);
 
@@ -75,11 +75,11 @@ void TextGridNavigator_modifyTopicCriterion (TextGridNavigator me, integer tierN
 void TextGridNavigator_modifyBeforeCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 void TextGridNavigator_modifyAfterCriterion (TextGridNavigator me, integer tierNumber, kMelder_string newCriterion, kMatchBoolean matchBoolean);
 
-void TextGridNavigator_modifyUseCriterion (TextGridNavigator me, integer tierNumber, kContext_combination newUse, bool excludeTopicMatch);
+void TextGridNavigator_modifyCombinationCriterion (TextGridNavigator me, integer tierNumber, kContext_combination newUse, bool excludeTopicMatch);
 
 void TextGridNavigator_modifyMatchDomain (TextGridNavigator me, integer tierNumber, kMatchDomain newDomain);
 
-void TextGridNavigator_modifyLocationCriterion (TextGridNavigator me, integer tierNumber, kMatchLocation matchLocation);
+void TextGridNavigator_modifyMatchDomainAlignment (TextGridNavigator me, integer tierNumber, kMatchDomainAlignment matchDomainAlignment);
 
 void TextGridNavigator_replaceTiers (TextGridNavigator me, TextGrid thee);
 
@@ -137,14 +137,14 @@ autoTextGridNavigator TextGrid_to_TextGridNavigator_topicSearch (TextGrid me, in
 
 void TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (TextGridNavigator me, TextGrid thee, integer tierNumber, 
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
-	kMatchDomain matchDomain, kMatchLocation matchLocation
+	kMatchDomain matchDomain, kMatchDomainAlignment matchDomainAlignment
 );
 
 void TextGridNavigator_and_TextGrid_addSearchTier (TextGridNavigator me, TextGrid thee, integer tierNumber, 
 	constSTRVEC const& topicLabels, kMelder_string topicCriterion, kMatchBoolean topicMatchBoolean,
 	constSTRVEC const& beforeLabels, kMelder_string beforeCriterion, kMatchBoolean beforeMatchBoolean,
 	constSTRVEC const& afterLabels, kMelder_string afterCriterion, kMatchBoolean afterMatchBoolean,
-	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchLocation matchLocation
+	kContext_combination combinationCriterion, bool excludeTopic, kMatchDomain matchDomain, kMatchDomainAlignment matchDomainAlignment
 );
 
 #endif /* _TextGridNavigator_h_ */

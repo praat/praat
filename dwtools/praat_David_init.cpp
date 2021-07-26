@@ -8212,14 +8212,14 @@ DO
 	QUERY_ONE_FOR_INTEGER_END (U" (number of After only matches in tier number ", tierNumber, U")")	
 }
 
-FORM (MODIFY_EACH__TextGridNavigator_modifyUseCriterion, U"TextGridNavigator: Modify Use criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyCombinationCriterion, U"TextGridNavigator: Modify combination criterion", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
 	OPTIONMENU_ENUM (kContext_combination, combinationCriterion, U"Use criterion", kContext_combination::DEFAULT)
 	BOOLEAN (excludeTopic, U"Exclude topic", false)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyUseCriterion (me, tierNumber, combinationCriterion, excludeTopic);
+		TextGridNavigator_modifyCombinationCriterion (me, tierNumber, combinationCriterion, excludeTopic);
 	MODIFY_EACH_END
 }
 
@@ -8256,13 +8256,13 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EACH__TextGridNavigator_modifyLocationCriterion, U"TextGridNavigator: Modify location criterion", nullptr) {
+FORM (MODIFY_EACH__TextGridNavigator_modifyMatchDomainAlignment, U"TextGridNavigator: Modify match domain alignment", nullptr) {
 	NATURAL (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchDomainAlignment, matchDomainAlignment, U"Match domain alignment", kMatchDomainAlignment::DEFAULT)
 	OK
 DO
 	MODIFY_EACH (TextGridNavigator)
-		TextGridNavigator_modifyLocationCriterion (me, tierNumber, matchLocation);
+		TextGridNavigator_modifyMatchDomainAlignment (me, tierNumber, matchDomainAlignment);
 	MODIFY_EACH_END
 }
 
@@ -8308,11 +8308,11 @@ DO
 }
 
 FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addTextGridTierNavigator, U"TextGridNavigator: Add TextGridTierNavigator", nullptr) {
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchDomainAlignment, matchDomainAlignment, U"Match domain alignment", kMatchDomainAlignment::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGridTierNavigator)
-		TextGridNavigator_addTextGridTierNavigator (me, you, matchLocation);
+		TextGridNavigator_addTextGridTierNavigator (me, you, matchDomainAlignment);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 
@@ -8331,12 +8331,12 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier_topicOnly,
 	OPTIONMENU_ENUM (kMatchBoolean, topicMatchBoolean, U"Combine topic matches with", kMatchBoolean::OR_)
 	LABEL (U"")
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchDomainAlignment, matchDomainAlignment, U"Match domain alignment", kMatchDomainAlignment::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
 		TextGridNavigator_and_TextGrid_addSearchTier_topicOnly (
-			me, you, tierNumber, topicLabels, topicCriterion, topicMatchBoolean, matchDomain, matchLocation
+			me, you, tierNumber, topicLabels, topicCriterion, topicMatchBoolean, matchDomain, matchDomainAlignment
 		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
@@ -8361,7 +8361,7 @@ FORM (MODIFY_FIRST_OF_ONE_AND_ONE__TextGridNavigator_addSearchTier, U"TextGridNa
 	BOOLEAN (excludeTopic, U"Exclude topic labels", false)
 	LABEL (U"")
 	OPTIONMENU_ENUM (kMatchDomain, matchDomain, U"Match domain", kMatchDomain::DEFAULT)
-	OPTIONMENU_ENUM (kMatchLocation, matchLocation, U"Match with topic tier domain", kMatchLocation::DEFAULT)
+	OPTIONMENU_ENUM (kMatchDomainAlignment, matchDomainAlignment, U"Match domain alignment", kMatchDomainAlignment::DEFAULT)
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (TextGridNavigator, TextGrid)
@@ -8369,7 +8369,7 @@ DO
 			topicLabels, topicCriterion, topicMatchBoolean,
 			beforeLabels, beforeCriterion, beforeMatchBoolean,
 			afterLabels, afterCriterion, afterMatchBoolean,
-			combinationCriterion, excludeTopic, matchDomain, matchLocation
+			combinationCriterion, excludeTopic, matchDomain, matchDomainAlignment
 		);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
@@ -10389,18 +10389,19 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGridNavigator, 1, U"Get number of After matches...", nullptr, 1,
 		QUERY_ONE_FOR_INTEGER__TextGridNavigator_getNumberOfAfterMatches);
 	praat_addAction1 (classTextGridNavigator, 0, MODIFY_BUTTON, nullptr, 0, nullptr);
-	praat_addAction1 (classTextGridNavigator, 0, U"Modify Use criterion...", nullptr, 1, 
-			MODIFY_EACH__TextGridNavigator_modifyUseCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Topic match criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyTopicCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before match criterion...", nullptr, 1,
 			MODIFY_EACH__TextGridNavigator_modifyBeforeCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After match criterion...", nullptr, 1, 
 			MODIFY_EACH__TextGridNavigator_modifyAfterCriterion);
-	praat_addAction1 (classTextGridNavigator, 0, U"Modify location criterion...", nullptr, 1,
-			MODIFY_EACH__TextGridNavigator_modifyLocationCriterion);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify combination criterion...", nullptr, 1, 
+			MODIFY_EACH__TextGridNavigator_modifyCombinationCriterion);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain...", nullptr, 1, 
 			MODIFY_EACH__TextGridNavigator_modifyMatchDomain);
+	praat_addAction1 (classTextGridNavigator, 0, U"Modify match domain alignment...", nullptr, 1,
+			MODIFY_EACH__TextGridNavigator_modifyMatchDomainAlignment);
+	praat_addAction1 (classTextGridNavigator, 0, U"-- search range extensions --", nullptr, 1, nullptr);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify Before range...", nullptr, 1, 
 			MODIFY_EACH__TextGridNavigator_modifyBeforeRange);
 	praat_addAction1 (classTextGridNavigator, 0, U"Modify After range...", nullptr, 1, 

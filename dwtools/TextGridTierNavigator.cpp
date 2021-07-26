@@ -190,7 +190,7 @@ autoTextGridTierNavigator TextGridTierNavigator_create (Function me, NavigationC
 		his beforeRange.first = his beforeRange.last = 1;
 		his afterRange.first = his afterRange.last = 1;
 		his matchDomain = matchDomain;
-		his matchLocation = kMatchLocation::IS_ANYWHERE;
+		his matchDomainAlignment = kMatchDomainAlignment::IS_ANYWHERE;
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridTierNavigator not created");

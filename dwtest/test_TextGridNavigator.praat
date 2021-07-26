@@ -49,10 +49,10 @@ procedure test_topic
 		Find next
 	endfor
 
-	Modify Topic criterion: 1, "is not equal to", "AND"
+	Modify Topic match criterion: 1, "is not equal to", "AND"
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = numberOfIntervals# [1] - .numberOfVowels
-	Modify Topic criterion: 1, "is equal to", "OR"
+	Modify Topic match criterion: 1, "is equal to", "OR"
 	.numberOfMatches = Get number of matches
 	assert .numberOfMatches = .numberOfVowels
 	selectObject: .navigator, textgrid
@@ -96,7 +96,16 @@ procedure test_topicAndBeforeAndAfter
 	# before them and one of "hv q sh" after them
 	selectObject: textgrid
 	.navigator = To TextGridNavigator: 1, "ix eh ih ux ao ah", "is equal to", "OR",
-	... "sh hv jh k s q r w y", "is equal to", "OR", "hv q sh", "is equal to", "OR", "before and after", "no", "Topic start to Topic end"
+	... "sh hv jh k s q r w y", "is equal to", "OR", 
+	... "hv q sh", "is equal to", "OR", 
+	... "before and after", "no", "Topic start to Topic end"
+	Modify Topic match criterion: 1, "is equal to", "OR"
+	Modify Before match criterion: 1, "is equal to", "OR"
+	Modify After match criterion: 1, "is equal to", "OR"
+	Modify combination criterion: 1, "before and after", "no"
+	Modify match domain: 1, "Topic start to Topic end"
+	Modify Before range: 1, 1, 1
+	Modify After range: 1, 1, 1
 	.index1# = {3, 15,  25}
 	.index_before1# = {2, 14, 24}
 	.index_after1# = {4, 16, 26}
