@@ -564,11 +564,41 @@ static void menu_cb_showFormants (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	FunctionEditor_redraw (me);
 }
 
+static void INFO_DATA__formantListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+	INFO_DATA
+		FormantPath formantPath = (FormantPath) my data;
+		Formant formant = formantPath -> formants.at [1];
+		const integer maximumFormantNumber = formant -> maxnFormants;
+		const double startTime = my startSelection, endTime = my endSelection;
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
+		if (startTime == endTime) {
+			const double f1 = Formant_getValueAtTime (my d_formant.get(), 1, startTime, kFormant_unit::HERTZ);
+			const double f2 = Formant_getValueAtTime (my d_formant.get(), 2, startTime, kFormant_unit::HERTZ);
+			const double f3 = Formant_getValueAtTime (my d_formant.get(), 3, startTime, kFormant_unit::HERTZ);
+			const double f4 = Formant_getValueAtTime (my d_formant.get(), 4, startTime, kFormant_unit::HERTZ);
+			MelderInfo_writeLine (Melder_fixed (startTime, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
+		} else {
+			integer i1, i2;
+			Sampled_getWindowSamples (my d_formant.get(), startTime, endTime, & i1, & i2);
+			for (integer i = i1; i <= i2; i ++) {
+				double t = Sampled_indexToX (my d_formant.get(), i);
+				double f1 = Formant_getValueAtTime (my d_formant.get(), 1, t, kFormant_unit::HERTZ);
+				double f2 = Formant_getValueAtTime (my d_formant.get(), 2, t, kFormant_unit::HERTZ);
+				double f3 = Formant_getValueAtTime (my d_formant.get(), 3, t, kFormant_unit::HERTZ);
+				double f4 = Formant_getValueAtTime (my d_formant.get(), 4, t, kFormant_unit::HERTZ);
+				MelderInfo_writeLine (Melder_fixed (t, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
+			}
+		}
+		MelderInfo_close ();
+	INFO_DATA_END
+}
 void structFormantPathEditor :: v_createMenuItems_formant (EditorMenu menu) {
 	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
 		GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
 	EditorMenu_addCommand (menu, U"Formant colour settings...", 0, menu_cb_FormantColourSettings);
 	EditorMenu_addCommand (menu, U"Draw visible formant contour...", 0, menu_cb_DrawVisibleFormantContour);
+	EditorMenu_addCommand (menu, U"Formant listing", 0, INFO_DATA__formantListing);
 }
 
 /***** HELP MENU *****/
@@ -867,6 +897,7 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf,
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
 }
+
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
 	SET_REAL (v_prefs_addFields_fontSize, our p_fontSize)
