@@ -1,6 +1,6 @@
 /* Covariance.cpp
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -631,7 +631,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	Melder_require (my numberOfRows == thy numberOfRows,
 		U"Matrices should have equal dimensions.");
 	if (my numberOfObservations != thy numberOfObservations) {
-		numberOfObservations = Melder_ifloor (std::min (my numberOfObservations, thy numberOfObservations)) - 1;
+		numberOfObservations = Melder_ifloor (std::min (my numberOfObservations, thy numberOfObservations));
 		Melder_warning (U"Covariance_difference: numbers of observations of the two matrices do not agree.\n"
 			U"The lesser of the two (", numberOfObservations, U") is used.");
 	}
@@ -644,7 +644,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	const double ln_me = NUMdeterminant_fromSymmetricMatrix (my data.get());
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the
-		cholesky decomposition L^T L of B in the lower triangle + diagonal.
+		Cholesky decomposition L^T L of B in the lower triangle + diagonal.
 		Always: tr (A B) = tr (B A)
 		tr (A B^-1) = tr (A (L L^T)^-1) = tr (A L^-1 (L^T)^-1)
 		trace = sum(i=1..p, j=1..p, l=max(i,j)..p, A [i] [j]Lm [l] [j]Lm [l] [i],
