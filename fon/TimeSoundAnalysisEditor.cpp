@@ -232,18 +232,21 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 	str32cpy (format, which == 1 ? my p_log1_format : my p_log2_format);
 	for (p = format; *p != U'\0'; p ++) if (*p == U'\'') {
 		/*
-		 * Found a left quote. Search for a matching right quote.
-		 */
+			Found a left quote. Search for a matching right quote.
+		*/
 		char32 *q = p + 1, varName [300], *r, *s, *colon;
 		integer precision = -1;
 		double value = undefined;
 		conststring32 stringValue = nullptr;
-		while (*q != U'\0' && *q != U'\'') q ++;
-		if (*q == U'\0') break;   /* No matching right quote: done with this line. */
-		if (q - p == 1) continue;   /* Ignore empty variable names. */
+		while (*q != U'\0' && *q != U'\'')
+			q ++;
+		if (*q == U'\0')
+			break;   // no matching right quote: done with this line
+		if (q - p == 1)
+			continue;   // ignore empty variable names
 		/*
-		 * Found a right quote. Get potential variable name.
-		 */
+			Found a right quote. Get potential variable name.
+		*/
 		for (r = p + 1, s = varName; q - r > 0; r ++, s ++) *s = *r;
 		*s = U'\0';   // trailing null byte
 		colon = str32chr (varName, U':');
@@ -312,11 +315,10 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		if (isdefined (value)) {
 			integer varlen = (q - p) - 1, headlen = p - format;
 			char32 formattedNumber [400];
-			if (precision >= 0) {
+			if (precision >= 0)
 				Melder_sprint (formattedNumber,400, Melder_fixed (value, precision));
-			} else {
+			else
 				Melder_sprint (formattedNumber,400, value);
-			}
 			integer arglen = str32len (formattedNumber);
 			static MelderString buffer;
 			MelderString_ncopy (& buffer, format, headlen);
@@ -1213,20 +1215,20 @@ static void INFO_DATA__formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
 		if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
-			double f1 = Formant_getValueAtTime (my d_formant.get(), 1, tmin, kFormant_unit::HERTZ);
-			double f2 = Formant_getValueAtTime (my d_formant.get(), 2, tmin, kFormant_unit::HERTZ);
-			double f3 = Formant_getValueAtTime (my d_formant.get(), 3, tmin, kFormant_unit::HERTZ);
-			double f4 = Formant_getValueAtTime (my d_formant.get(), 4, tmin, kFormant_unit::HERTZ);
+			const double f1 = Formant_getValueAtTime (my d_formant.get(), 1, tmin, kFormant_unit::HERTZ);
+			const double f2 = Formant_getValueAtTime (my d_formant.get(), 2, tmin, kFormant_unit::HERTZ);
+			const double f3 = Formant_getValueAtTime (my d_formant.get(), 3, tmin, kFormant_unit::HERTZ);
+			const double f4 = Formant_getValueAtTime (my d_formant.get(), 4, tmin, kFormant_unit::HERTZ);
 			MelderInfo_writeLine (Melder_fixed (tmin, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
 		} else {
 			integer i1, i2;
 			Sampled_getWindowSamples (my d_formant.get(), tmin, tmax, & i1, & i2);
 			for (integer i = i1; i <= i2; i ++) {
-				double t = Sampled_indexToX (my d_formant.get(), i);
-				double f1 = Formant_getValueAtTime (my d_formant.get(), 1, t, kFormant_unit::HERTZ);
-				double f2 = Formant_getValueAtTime (my d_formant.get(), 2, t, kFormant_unit::HERTZ);
-				double f3 = Formant_getValueAtTime (my d_formant.get(), 3, t, kFormant_unit::HERTZ);
-				double f4 = Formant_getValueAtTime (my d_formant.get(), 4, t, kFormant_unit::HERTZ);
+				const double t = Sampled_indexToX (my d_formant.get(), i);
+				const double f1 = Formant_getValueAtTime (my d_formant.get(), 1, t, kFormant_unit::HERTZ);
+				const double f2 = Formant_getValueAtTime (my d_formant.get(), 2, t, kFormant_unit::HERTZ);
+				const double f3 = Formant_getValueAtTime (my d_formant.get(), 3, t, kFormant_unit::HERTZ);
+				const double f4 = Formant_getValueAtTime (my d_formant.get(), 4, t, kFormant_unit::HERTZ);
 				MelderInfo_writeLine (Melder_fixed (t, 6), U"   ", Melder_fixed (f1, 6), U"   ", Melder_fixed (f2, 6), U"   ", Melder_fixed (f3, 6), U"   ", Melder_fixed (f4, 6));
 			}
 		}
@@ -1440,7 +1442,8 @@ static void cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_g
 		Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my d_pulses) {
 		computePulses (me);
-		if (! my d_pulses) Melder_throw (theMessage_Cannot_compute_pulses);
+		if (! my d_pulses)
+			Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	if (my startSelection == my endSelection)
 		Melder_throw (U"Make a selection first.");
@@ -1460,7 +1463,8 @@ static void cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_
 		Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my d_pulses) {
 		computePulses (me);
-		if (! my d_pulses) Melder_throw (theMessage_Cannot_compute_pulses);
+		if (! my d_pulses)
+			Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	if (my startSelection == my endSelection)
 		Melder_throw (U"Make a selection first.");

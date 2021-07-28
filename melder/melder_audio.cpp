@@ -30,7 +30,7 @@
 	#include <fcntl.h>
 	#include <unistd.h>
 	#if defined HAVE_PULSEAUDIO
-		#include "melder_audio_pulse.h"
+		#include <pulse/pulseaudio.h>
 	#endif
 	#if ! defined (NO_AUDIO)
 		#if defined (__OpenBSD__) || defined (__NetBSD__)
@@ -49,6 +49,14 @@
 #include "../external/portaudio/portaudio.h"
 
 #ifdef HAVE_PULSEAUDIO
+	#define PA_GETTINGINFO 1
+	#define PA_GETTINGINFO_DONE 2
+	#define PA_WRITING 4
+	#define PA_WRITING_DONE 8
+	#define PA_RECORDING 16
+	#define PA_RECORDING_DONE 32
+	#define PA_QUERY_NUMBEROFCHANNELS 64
+	#define PA_QUERY_NUMBEROFCHANNELS_DONE 128
 	void pulseAudio_initialize ();
 	void pulseAudio_cleanup ();
 	void pulseAudio_serverReport ();
@@ -60,6 +68,28 @@
 	void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
 	void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata);
 	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
+
+	typedef struct pulseAudio {
+		pa_sample_spec sample_spec;
+		pa_threaded_mainloop *mainloop = nullptr;
+		pa_mainloop_api *mainloop_api = nullptr;
+		pa_context *context = nullptr;
+		pa_stream *stream = nullptr;
+		pa_operation *operation_drain = nullptr;
+		pa_operation *operation_info = nullptr;
+		pa_stream_flags_t stream_flags;
+		const pa_timing_info *timing_info = nullptr;
+		struct timeval startTime = {0, 0};
+		pa_usec_t timer_event_usec = 50000; // 50 ms
+		pa_time_event *timer_event = nullptr;
+		const pa_channel_map *channel_map = nullptr;
+		pa_usec_t r_usec;
+		pa_buffer_attr buffer_attr;
+		uint32 latency = 0; // in bytes of buffer
+		int32 latency_msec = 20;
+		bool pulseAudioInitialized = false;
+		unsigned int occupation = PA_WRITING;
+	} pulseAudioStruct;
 #endif
 
 static struct {
