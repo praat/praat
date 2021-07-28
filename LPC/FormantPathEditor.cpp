@@ -492,21 +492,24 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 	EDITOR_END
 }
 
-static void INFO_DATA__stressListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	INFO_DATA
 		FormantPath formantPath = (FormantPath) my data;
 		Formant formant = formantPath -> formants.at [1];
 		const integer maximumFormantNumber = formant -> maxnFormants;
 		constVEC ceilings = formantPath -> ceilings.get();
-		double startTime, endTime;
-		FormantPathEditor_getDrawingData (me, & startTime, & endTime, nullptr, nullptr);
+		double startTime = my startSelection, endTime = my endSelection;
+		if (my startSelection == my endSelection) {
+			startTime = my startWindow;
+			endTime = my endWindow;
+		}
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		autoVEC stresses = FormantPath_getStresses (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
-		MelderInfo_open ();
+		MelderInfo_open (); 
 		MelderInfo_writeLine (U"Ceiling_Hz Stress StartTime_s EndTime_s ");
 		for (integer iceiling = 1; iceiling <= ceilings.size; iceiling ++) {
 			MelderInfo_writeLine (Melder_fixed (ceilings [iceiling], 1), U" ", Melder_fixed (stresses [iceiling], 2), U" ", 
-				startTime, U" ", endTime);
+				Melder_fixed (startTime, 6), U" ", Melder_fixed (endTime, 6));
 		}
 		MelderInfo_close ();
 	INFO_DATA_END
@@ -642,7 +645,7 @@ void structFormantPathEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"Find path...", 0, menu_cb_candidates_FindPath);
 	EditorMenu_addCommand (menu, U"Draw visible candidates...", 0, menu_cb_DrawVisibleCandidates);
 	EditorMenu_addCommand (menu, U" -- candidate queries -- ", 0, 0);
-	EditorMenu_addCommand (menu, U"Stress listing", 0, INFO_DATA__stressListing);
+	EditorMenu_addCommand (menu, U"Stress of fits listing", 0, INFO_DATA__stressOfFitsListing);
 }
 
 void structFormantPathEditor :: v_createHelpMenuItems (EditorMenu menu) {
