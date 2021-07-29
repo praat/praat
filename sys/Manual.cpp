@@ -20,14 +20,11 @@
 #include "Printer.h"
 #include "machine.h"
 #include "site.h"
-#include <time.h>
 #include "EditorM.h"
 #include "praat_script.h"
 #include "praatP.h"
 
 Thing_implement (Manual, HyperPage, 0);
-
-/* Remaining BUGS: HTML writer does not recognize "\s{". */
 
 #define SEARCH_PAGE  0
 
@@ -77,52 +74,52 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 }
 
 void structManual :: v_draw () {
-	ManPages manPages = (ManPages) our data;
+	const ManPages manPages = (ManPages) our data;
 	if (our visiblePageNumber == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, U"Best matches");
 		HyperPage_intro (this, U"The best matches to your query seem to be:");
 		for (int i = 1; i <= our numberOfMatches; i ++) {
 			char32 link [300];
-			ManPage page = manPages -> pages.at [matches [i]];
+			const ManPage page = manPages -> pages.at [matches [i]];
 			Melder_sprint (link,300, U"• @@", page -> title.get());
 			HyperPage_listItem (this, link);
 		}
 		return;
 	}
-	ManPage page = manPages -> pages.at [our visiblePageNumber];
+	const ManPage page = manPages -> pages.at [our visiblePageNumber];
 	//if (! our paragraphs____)
 	//	return;
 	HyperPage_pageTitle (this, page -> title.get());
 	for (integer ipar = 1; ipar <= page -> paragraphs.size; ipar ++) {
 		ManPage_Paragraph paragraph = & page -> paragraphs [ipar];
 		switch (paragraph -> type) {
-			case  kManPage_type::INTRO: HyperPage_intro (this, paragraph -> text); break;
-			case  kManPage_type::ENTRY: HyperPage_entry (this, paragraph -> text); break;
-			case  kManPage_type::NORMAL: HyperPage_paragraph (this, paragraph -> text); break;
-			case  kManPage_type::LIST_ITEM: HyperPage_listItem (this, paragraph -> text); break;
-			case  kManPage_type::TAG: HyperPage_listTag (this, paragraph -> text); break;
-			case  kManPage_type::DEFINITION: HyperPage_definition (this, paragraph -> text); break;
-			case  kManPage_type::CODE: HyperPage_code (this, paragraph -> text); break;
-			case  kManPage_type::PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;
-			case  kManPage_type::EQUATION: HyperPage_formula (this, paragraph -> text); break;
-			case  kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
-				paragraph -> height, paragraph -> draw); break;
-			case  kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width,
-				paragraph -> height, paragraph -> text); break;
-			case  kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
-			case  kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
-			case  kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
-			case  kManPage_type::TAG1: HyperPage_listTag1 (this, paragraph -> text); break;
-			case  kManPage_type::TAG2: HyperPage_listTag2 (this, paragraph -> text); break;
-			case  kManPage_type::TAG3: HyperPage_listTag3 (this, paragraph -> text); break;
-			case  kManPage_type::DEFINITION1: HyperPage_definition1 (this, paragraph -> text); break;
-			case  kManPage_type::DEFINITION2: HyperPage_definition2 (this, paragraph -> text); break;
-			case  kManPage_type::DEFINITION3: HyperPage_definition3 (this, paragraph -> text); break;
-			case  kManPage_type::CODE1: HyperPage_code1 (this, paragraph -> text); break;
-			case  kManPage_type::CODE2: HyperPage_code2 (this, paragraph -> text); break;
-			case  kManPage_type::CODE3: HyperPage_code3 (this, paragraph -> text); break;
-			case  kManPage_type::CODE4: HyperPage_code4 (this, paragraph -> text); break;
-			case  kManPage_type::CODE5: HyperPage_code5 (this, paragraph -> text); break;
+			case kManPage_type::INTRO: HyperPage_intro (this, paragraph -> text); break;
+			case kManPage_type::ENTRY: HyperPage_entry (this, paragraph -> text); break;
+			case kManPage_type::NORMAL: HyperPage_paragraph (this, paragraph -> text); break;
+			case kManPage_type::LIST_ITEM: HyperPage_listItem (this, paragraph -> text); break;
+			case kManPage_type::TAG: HyperPage_listTag (this, paragraph -> text); break;
+			case kManPage_type::DEFINITION: HyperPage_definition (this, paragraph -> text); break;
+			case kManPage_type::CODE: HyperPage_code (this, paragraph -> text); break;
+			case kManPage_type::PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;
+			case kManPage_type::EQUATION: HyperPage_formula (this, paragraph -> text); break;
+			case kManPage_type::PICTURE: HyperPage_picture (this, paragraph -> width,
+					paragraph -> height, paragraph -> draw); break;
+			case kManPage_type::SCRIPT: HyperPage_script (this, paragraph -> width,
+					paragraph -> height, paragraph -> text); break;
+			case kManPage_type::LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
+			case kManPage_type::LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
+			case kManPage_type::LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
+			case kManPage_type::TAG1: HyperPage_listTag1 (this, paragraph -> text); break;
+			case kManPage_type::TAG2: HyperPage_listTag2 (this, paragraph -> text); break;
+			case kManPage_type::TAG3: HyperPage_listTag3 (this, paragraph -> text); break;
+			case kManPage_type::DEFINITION1: HyperPage_definition1 (this, paragraph -> text); break;
+			case kManPage_type::DEFINITION2: HyperPage_definition2 (this, paragraph -> text); break;
+			case kManPage_type::DEFINITION3: HyperPage_definition3 (this, paragraph -> text); break;
+			case kManPage_type::CODE1: HyperPage_code1 (this, paragraph -> text); break;
+			case kManPage_type::CODE2: HyperPage_code2 (this, paragraph -> text); break;
+			case kManPage_type::CODE3: HyperPage_code3 (this, paragraph -> text); break;
+			case kManPage_type::CODE4: HyperPage_code4 (this, paragraph -> text); break;
+			case kManPage_type::CODE5: HyperPage_code5 (this, paragraph -> text); break;
 			default: break;
 		}
 	}
@@ -139,7 +136,7 @@ void structManual :: v_draw () {
 			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> linksHither.size; ilink ++) {
-			integer link = page -> linksHither [ilink];
+			const integer link = page -> linksHither [ilink];
 			bool alreadyShown = false;
 			for (jlink = 1; jlink <= page -> linksThither.size; jlink ++)
 				if (page -> linksThither [jlink] == link)
@@ -154,7 +151,7 @@ void structManual :: v_draw () {
 	}
 	if (! our printing && page -> date) {
 		char32 signature [100];
-		integer date = page -> date;
+		const integer date = page -> date;
 		const integer imonth = Melder_clipped (0_integer, date % 10000 / 100, 12_integer);
 		Melder_sprint (signature,100,
 			U"© ", str32equ (page -> author.get(), U"ppgb") ? U"Paul Boersma" :
@@ -381,7 +378,7 @@ void structManual :: v_createChildren () {
 	#else
 		#define STRING_SPACING 2
 	#endif
-	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
+	const int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	our homeButton = GuiButton_createShown (our windowForm, 104, 168, y, y + height,
 		U"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
@@ -423,8 +420,8 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 		char32 string [400];
 		static const conststring32 shortMonth [] =
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
-		ManPage page = manPages -> pages.at [my visiblePageNumber];
-		integer date = page -> date;
+		const ManPage page = manPages -> pages.at [my visiblePageNumber];
+		const integer date = page -> date;
 		SET_STRING (my outsideHeader, page -> title.get())
 		SET_STRING (my insideFooter, page -> author.get())
 		if (date) {
@@ -465,7 +462,7 @@ int structManual :: v_goToPage (conststring32 title) {
 		Melder_recordFromFile (& file);
 		return -1;
 	} else if (title [0] == U'\\' && title [1] == U'S' && title [2] == U'C') {
-		autoMelderSetDefaultDir dir (& manPages -> rootDirectory);
+		autoMelderSetDefaultDir saveDir (& manPages -> rootDirectory);
 		autoPraatBackground background;
 		try {
 			autostring32 fileNameWithArguments = Melder_dup (title + 3);
@@ -475,8 +472,8 @@ int structManual :: v_goToPage (conststring32 title) {
 		}
 		return 0;
 	} else {
-		integer i = ManPages_lookUp (manPages, title);
-		if (! i)
+		const integer i = ManPages_lookUp (manPages, title);
+		if (i == 0)
 			Melder_throw (U"Page \"", title, U"\" not found.");
 		our v_goToPage_number (i);
 		return 1;
