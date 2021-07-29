@@ -61,6 +61,11 @@ using uint64 = uint64_t;
 	#define INT54_MIN  -9007199254740991LL
 #endif
 
+inline bool Melder_integersAreBigEndian () {
+	int32_t dummy = 1;
+	return * (char *) & dummy == '\0';
+}
+
 inline integer operator"" _integer (unsigned long long value) { return integer (value); }
 
 /*

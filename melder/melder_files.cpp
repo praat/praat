@@ -283,11 +283,8 @@ void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile fil
 }
 
 void MelderDir_relativePathToFile (MelderDir dir, conststring32 path, MelderFile file) {
-	structMelderDir saveDir { };
-	Melder_getDefaultDir (& saveDir);
-	Melder_setDefaultDir (dir);
+	autoMelderSetDefaultDir saveDir (dir);
 	Melder_relativePathToFile (path, file);
-	Melder_setDefaultDir (& saveDir);
 }
 
 #ifndef UNIX
