@@ -69,7 +69,7 @@
 	void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata);
 	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
 
-	typedef struct pulseAudio {
+	struct pulseAudioStruct {
 		pa_sample_spec sample_spec;
 		pa_threaded_mainloop *mainloop = nullptr;
 		pa_mainloop_api *mainloop_api = nullptr;
@@ -89,7 +89,7 @@
 		int32 latency_msec = 20;
 		bool pulseAudioInitialized = false;
 		unsigned int occupation = PA_WRITING;
-	} pulseAudioStruct;
+	};
 #endif
 
 static struct {
