@@ -434,9 +434,8 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 					autoMelderProgressOff progress;
 					autoMelderWarningOff warning;
 					autoMelderSaveDefaultDir saveDir;
-					if (! MelderDir_isNull (& my rootDirectory)) {
+					if (! MelderDir_isNull (& my rootDirectory))
 						Melder_setDefaultDir (& my rootDirectory);
-					}
 					try {
 						Interpreter_run (interpreter.get(), text.get());
 					} catch (MelderError) {
@@ -537,9 +536,8 @@ void HyperPage_script (HyperPage me, double width_inches, double height_inches, 
 				autoMelderProgressOff progress;
 				autoMelderWarningOff warning;
 				autoMelderSaveDefaultDir saveDir;
-				if (! MelderDir_isNull (& my rootDirectory)) {
+				if (! MelderDir_isNull (& my rootDirectory))
 					Melder_setDefaultDir (& my rootDirectory);
-				}
 				try {
 					Interpreter_run (interpreter.get(), text.get());
 				} catch (MelderError) {
