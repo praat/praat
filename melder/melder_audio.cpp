@@ -68,28 +68,6 @@
 	void stream_write_cb (pa_stream *stream, size_t length, void *userdata);
 	void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata);
 	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
-
-	struct pulseAudioStruct {
-		pa_sample_spec sample_spec;
-		pa_threaded_mainloop *mainloop = nullptr;
-		pa_mainloop_api *mainloop_api = nullptr;
-		pa_context *context = nullptr;
-		pa_stream *stream = nullptr;
-		pa_operation *operation_drain = nullptr;
-		pa_operation *operation_info = nullptr;
-		pa_stream_flags_t stream_flags;
-		const pa_timing_info *timing_info = nullptr;
-		struct timeval startTime = {0, 0};
-		pa_usec_t timer_event_usec = 50000; // 50 ms
-		pa_time_event *timer_event = nullptr;
-		const pa_channel_map *channel_map = nullptr;
-		pa_usec_t r_usec;
-		pa_buffer_attr buffer_attr;
-		uint32 latency = 0; // in bytes of buffer
-		int32 latency_msec = 20;
-		bool pulseAudioInitialized = false;
-		unsigned int occupation = PA_WRITING;
-	};
 #endif
 
 static struct {
@@ -195,7 +173,27 @@ static struct MelderPlay {
 		MMRESULT status;
 	#endif
 	#ifdef HAVE_PULSEAUDIO
-		pulseAudioStruct pulseAudio;
+		struct {
+			pa_sample_spec sample_spec;
+			pa_threaded_mainloop *mainloop = nullptr;
+			pa_mainloop_api *mainloop_api = nullptr;
+			pa_context *context = nullptr;
+			pa_stream *stream = nullptr;
+			pa_operation *operation_drain = nullptr;
+			pa_operation *operation_info = nullptr;
+			pa_stream_flags_t stream_flags;
+			const pa_timing_info *timing_info = nullptr;
+			struct timeval startTime = {0, 0};
+			pa_usec_t timer_event_usec = 50000;   // 50 ms
+			pa_time_event *timer_event = nullptr;
+			const pa_channel_map *channel_map = nullptr;
+			pa_usec_t r_usec;
+			pa_buffer_attr buffer_attr;
+			uint32 latency = 0; // in bytes of buffer
+			int32 latency_msec = 20;
+			bool pulseAudioInitialized = false;
+			unsigned int occupation = PA_WRITING;
+		} pulseAudio;
 	#endif
 } thePlay;
 
@@ -738,7 +736,7 @@ void stream_drain_complete_cb (pa_stream *stream, int success, void *userdata) {
 	}
 }
 
-static void free_cb(void * /* p */) { // to prevent copying of data
+static void free_cb (void * /* p */) { // to prevent copying of data
 }
 
 // asynchronous version
@@ -894,19 +892,14 @@ static void stream_underflow_callback (pa_stream *s, void *userdata) {
 	trace (U"yes");
 }
 
-static void stream_overflow_callback(pa_stream *s, void *userdata) {
+static void stream_overflow_callback (pa_stream *s, void *userdata) {
 	(void) s;
 	(void) userdata;
 	trace (U"yes");
 }
 
 void prepare_and_play (struct MelderPlay *me) {
-	
-	#if __BYTE_ORDER == __BIG_ENDIAN
-		my pulseAudio.sample_spec.format = PA_SAMPLE_S16BE;
-	#else
-		my pulseAudio.sample_spec.format = PA_SAMPLE_S16LE;
-	#endif
+	my pulseAudio.sample_spec.format = ( Melder_integersAreBigEndian () ? PA_SAMPLE_S16BE : PA_SAMPLE_S16LE );
 	my samplesPlayed = my samplesSent = 0;
 	my pulseAudio.sample_spec.rate = my sampleRate;
 	my pulseAudio.sample_spec.channels = my numberOfChannels;
