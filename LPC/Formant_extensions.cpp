@@ -225,4 +225,24 @@ autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 	}
 }
 
+autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
+	try {
+		Function_unidirectionalAutowindow (me, & tmin, & tmax);
+		Melder_require (tmin < my xmax && tmax > my xmin,
+			U"Your start and end time should be between ", my xmin, U" and ", my xmax, U".");
+		integer ifmin, ifmax;
+		const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
+		const double t1 = Sampled_indexToX (me, ifmin);
+		autoFormant thee = Formant_create (tmin, tmax, numberOfFrames, my dx, t1, my maxnFormants);
+		for (integer iframe = ifmin; iframe <= ifmax; iframe ++) {
+			const Formant_Frame myFrame = & my frames [iframe];
+			const Formant_Frame thyFrame = & thy frames [iframe - ifmin + 1];
+			myFrame -> copy (thyFrame);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Formant part could not be extracted.");
+	}
+}
+
 /* End of file Formant_extensions.cpp */
