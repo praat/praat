@@ -132,6 +132,32 @@ DO
 	GRAPHICS_EACH_END
 }
 
+FORM (NEW__FormantPath_downTo_Table_optimumInterval, U"FormantPath: Down to Table (optimum interval)", nullptr) {
+	REAL (tmin, U"Time range (s) left", U"0.1")
+	REAL (tmax, U"Time range (s) right", U"0.2")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	BOOLEAN (includeFrameNumber, U"Include frame number", false)
+	BOOLEAN (includeTime, U"Include time", true)
+	NATURAL (numberOfTimeDecimals, U"Number of time decimals", U"6")
+	BOOLEAN (includeIntensity, U"Include intensity", false)
+	NATURAL (numberOfIntensityDecimals, U"Number of intensity decimals", U"3")
+	BOOLEAN (includeNumberOfFormants, U"Include number of formants", true)
+	NATURAL (numberOfFrequencyDecimals, U"Number of frequency decimals", U"3")
+	BOOLEAN (includeBandwidths, U"Include bandwidths", true)
+	BOOLEAN (includeOptimumCeiling, U"Include optimum ceiling", true)
+	BOOLEAN (includeMinimumStress, U"Include minimum stress", false)
+	OK
+DO
+	CONVERT_EACH_TO_ONE (FormantPath)
+		autoTable result = FormantPath_downTo_Table_optimumInterval (me, tmin, tmax, parameters, powerf, 
+			includeFrameNumber, includeTime, numberOfTimeDecimals,
+			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
+			includeBandwidths, includeOptimumCeiling, includeMinimumStress
+		);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 DIRECT (QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates) {
 	QUERY_ONE_FOR_REAL (FormantPath)
 		const integer result = my ceilings.size;
@@ -1440,6 +1466,9 @@ void praat_uvafon_LPC_init () {
 			HINT__FormantPath_Sound_viewAndEdit);
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, 
 			GRAPHICS_EACH__FormantPath_drawAsGrid);	
+	praat_addAction1 (classFormantPath, 0, U"Tabulate - " , nullptr, 0, nullptr);
+		praat_addAction1 (classFormantPath, 0, U"Down to Table (optimum interval)...", nullptr, 1,
+			NEW__FormantPath_downTo_Table_optimumInterval);
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classFormantPath);
 		praat_addAction1 (classFormantPath, 0, U"Get number of candidates", nullptr, 1,

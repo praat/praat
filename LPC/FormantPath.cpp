@@ -1,6 +1,6 @@
 /* FormantPath.cpp
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "FormantPath.h"
 #include "FormantPath_to_IntervalTier.h"
 #include "FormantModeler.h"
+#include "Formant_extensions.h"
 #include "Graphics_extensions.h"
 #include "LPC_and_Formant.h"
 #include "Matrix.h"
@@ -392,14 +393,52 @@ autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, co
 	}
 }
 
-autoVEC FormantPath_getStresses (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
-	autoVEC stress = raw_VEC (my formants.size);
+autoVEC FormantPath_getStressOfFits (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf) {
+	autoVEC stresses = raw_VEC (my formants.size);
 	for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 		const Formant formanti = (Formant) my formants.at [iformant];
 		autoFormantModeler fm = Formant_to_FormantModeler (formanti, tmin, tmax,  parameters);
-		stress [iformant] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
+		stresses [iformant] = FormantModeler_getStress (fm.get(), fromFormant, toFormant, 0, powerf);
 	}
-	return stress;
+	return stresses;
+}
+
+autoTable FormantPath_downTo_Table_optimumInterval (FormantPath me, double tmin, double tmax, 
+	constINTVEC const& parameters, double powerf, bool includeFrameNumber, bool includeTime, integer numberOfTimeDecimals,
+	bool includeIntensity, integer numberOfIntensityDecimals, bool includeNumberOfFormants, integer numberOfFrequencyDecimals,
+	bool includeBandwidths, bool includeOptimumCeiling, bool includeMinimumStress)
+{
+	try {
+		autoVEC stresses = FormantPath_getStressOfFits (me, tmin, tmax, 0, 0, parameters, powerf);
+		const integer minPos = NUMminPos (stresses.get());
+		const integer minPosFallBack = ( minPos != 0 ? minPos : stresses.size / 2 );
+		const Formant formant = (Formant) my formants.at [minPosFallBack];
+		integer ifmin, ifmax;
+		Sampled_getWindowSamples (formant, tmin, tmax, & ifmin, & ifmax);
+		autoFormant thee = Formant_extractPart (formant, tmin, tmax);
+		autoTable him = Formant_downto_Table (thee.get(), includeFrameNumber, includeTime, numberOfTimeDecimals,
+			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals, includeBandwidths);
+		if (includeFrameNumber) {
+			/*
+				Correct frame number, it has to start at ifmin instead of 1
+			*/
+			for (integer irow = 1; irow <= his rows.size; irow ++)
+				Table_setNumericValue (him.get(), irow, 1, ifmin + irow - 1);
+		}
+		if (includeOptimumCeiling) {
+			Table_appendColumn (him.get(), U"Ceiling(Hz)");
+			for (integer irow = 1; irow <= his rows.size; irow ++)
+				Table_setStringValue (him.get(), irow, his numberOfColumns, Melder_fixed (my ceilings [minPosFallBack], 1));
+		}
+		if (includeMinimumStress) {
+			Table_appendColumn (him.get(), U"Stress");
+			for (integer irow = 1; irow <= his rows.size; irow ++)
+				Table_setStringValue (him.get(), irow, his numberOfColumns, Melder_fixed (stresses [minPosFallBack], 2));
+		}
+		return him;
+	} catch (MelderError) {
+		Melder_throw (me, U"could not list as Table.");
+	}
 }
 
 static void Formant_speckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax,
