@@ -2,7 +2,7 @@
 #define _FormantPath_h_
 /* FormantPath.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "Function.h"
 #include "LPC.h"
 #include "Sound.h"
+#include "Table.h"
 
 #include "FormantPath_def.h"
 
@@ -36,13 +37,18 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 
 void FormantPath_replaceFrames (FormantPath me, integer beginFrame, integer endFrame, integer formantIndex);
 
+autoTable FormantPath_downTo_Table_optimumInterval (FormantPath me, double tmin, double tmax, 
+	constINTVEC const& parameters, double powerf, bool includeFrameNumber, bool includeTime, integer numberOfTimeDecimals,
+	bool includeIntensity, integer numberOfIntensityDecimals, bool includeNumberOfFormants, integer numberOfFrequencyDecimals,
+	bool includeBandwidths, bool includeOptimalCeiling, bool includeMinimumStress);
+
 autoFormant FormantPath_extractFormant (FormantPath me);
 
 autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);
 autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTracks, bool maximumCosts);
 autoMatrix FormantPath_to_Matrix_stress (FormantPath me, double windowLength, constINTVEC const& parameters, double powerf);
 
-autoVEC FormantPath_getStresses (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf);
+autoVEC FormantPath_getStressOfFits (FormantPath me, double tmin, double tmax, integer fromFormant, integer toFormant, constINTVEC const& parameters, double powerf);
 
 autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double frequencyChangeWeight, double stressWeight, double ceilingChangeWeight,
 	double intensityModulationStepSize, double windowLength, constINTVEC const& parameters, double powerf, autoMatrix *out_delta

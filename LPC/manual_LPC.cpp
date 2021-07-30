@@ -209,7 +209,7 @@ CODE (U"endfor")
 NORMAL (U"This description is approximate because in the \"To Formant\" step we have to guarantee that all the Formant objects get the same time sampling.")
 MAN_END
 
-MAN_BEGIN (U"FormantPathEditor", U"djmw", 20201004)
+MAN_BEGIN (U"FormantPathEditor", U"djmw", 20210730)
 INTRO (U"One of the @@Editors@ in Praat, for editing a @@FormantPath@ object.")
 NORMAL (U"You can optionally include a @Sound and a @TextGrid in this editor, by selecting both the Sound and the FormantPath together, or the Sound and the TextGrid and the FormantPath together before clicking ##View & Edit#.")
 NORMAL (U"With the FormantPathEditor you can, for each interval that you select, "
@@ -231,7 +231,7 @@ NORMAL (U"When you start to edit a new FormantPath object, the formants in the p
 	"in the selected part on the left are replaced by the values present in the rectangle and the fat red line will indicate "
 	"the new ceiling. The colour of the clicked rectangle on the right will also change.")
 ENTRY (U"Details")
-NORMAL (U"The meaning of the numbers in the upper left corner of the rectangles in the selection viewer "
+NORMAL (U"The meaning of the numbers in the upper right corner of the rectangles in the selection viewer "
 	"are explained in @@Weenink (2015)@. Basically this number is a combined stress score of the individual formant tracks "
 	"within the rectangle. Each track's stress score quantifies how well a track has been modelled. "
 	"The lower this number is, the better the track is modelled by a smooth curve, a polynomial of a certain order. "

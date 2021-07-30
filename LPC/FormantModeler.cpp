@@ -1,6 +1,6 @@
 /* FormantModeler.cpp
  *
- * Copyright (C) 2014-2020 David Weenink
+ * Copyright (C) 2014-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "DataModeler.h"
 #include "FormantModeler.h"
+#include "Formant_extensions.h"
 #include "NUM2.h"
 #include "NUMmachar.h"
 #include "SVD.h"
@@ -991,26 +992,6 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 		return index;
 	} catch (MelderError) {
 		Melder_throw (U"No Formant object could be selected.");
-	}
-}
-
-autoFormant Formant_extractPart (Formant me, double tmin, double tmax) {
-	try {
-		Function_unidirectionalAutowindow (me, & tmin, & tmax);
-		Melder_require (tmin < my xmax && tmax > my xmin,
-			U"Your start and end time should be between ", my xmin, U" and ", my xmax, U".");
-		integer ifmin, ifmax, thyindex = 1;
-		const integer numberOfFrames = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		const double t1 = Sampled_indexToX (me, ifmin);
-		autoFormant thee = Formant_create (tmin, tmax, numberOfFrames, my dx, t1, my maxnFormants);
-		for (integer iframe = ifmin; iframe <= ifmax; iframe ++, thyindex ++) {
-			const Formant_Frame myFrame = & my frames [iframe];
-			const Formant_Frame thyFrame = & thy frames [thyindex];
-			myFrame -> copy (thyFrame);
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (U"Formant part could not be extracted.");
 	}
 }
 

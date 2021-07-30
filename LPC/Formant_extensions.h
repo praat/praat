@@ -27,6 +27,8 @@
 #include "Spectrogram.h"
 #include "Formant_extensions_enums.h"
 
+autoFormant Formant_extractPart (Formant me, double tmin, double tmax);
+
 autoFormant Formant_readFromHTKParameterFile (MelderFile file);
 
 void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, conststring32 expression);

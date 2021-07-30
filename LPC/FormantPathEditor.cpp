@@ -504,7 +504,7 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 			endTime = my endWindow;
 		}
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
-		autoVEC stresses = FormantPath_getStresses (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
+		autoVEC stresses = FormantPath_getStressOfFits (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
 		MelderInfo_open (); 
 		MelderInfo_writeLine (U"Ceiling_Hz Stress StartTime_s EndTime_s ");
 		for (integer iceiling = 1; iceiling <= ceilings.size; iceiling ++) {
