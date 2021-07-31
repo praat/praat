@@ -496,7 +496,6 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 	INFO_DATA
 		FormantPath formantPath = (FormantPath) my data;
 		Formant formant = formantPath -> formants.at [1];
-		const integer maximumFormantNumber = formant -> maxnFormants;
 		constVEC ceilings = formantPath -> ceilings.get();
 		double startTime = my startSelection, endTime = my endSelection;
 		if (my startSelection == my endSelection) {
@@ -504,14 +503,10 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 			endTime = my endWindow;
 		}
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
-		autoVEC stresses = FormantPath_getStressOfFits (formantPath, startTime, endTime, 1, maximumFormantNumber, parameters.get(), my p_modeler_varianceExponent);
-		MelderInfo_open (); 
-		MelderInfo_writeLine (U"Ceiling_Hz Stress StartTime_s EndTime_s ");
-		for (integer iceiling = 1; iceiling <= ceilings.size; iceiling ++) {
-			MelderInfo_writeLine (Melder_fixed (ceilings [iceiling], 1), U" ", Melder_fixed (stresses [iceiling], 2), U" ", 
-				Melder_fixed (startTime, 6), U" ", Melder_fixed (endTime, 6));
-		}
-		MelderInfo_close ();
+		const integer numberOfStressDecimals = 2, numberOfTimeDecimals = 6;
+		autoTable stressTable = FormantPath_downTo_Table_stresses (formantPath, startTime, endTime, parameters.get(),
+			my p_modeler_varianceExponent, numberOfStressDecimals, true, numberOfTimeDecimals);
+		Table_list (stressTable.get(), false);
 	INFO_DATA_END
 }
 

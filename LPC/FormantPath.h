@@ -42,6 +42,9 @@ autoTable FormantPath_downTo_Table_optimumInterval (FormantPath me, double tmin,
 	bool includeIntensity, integer numberOfIntensityDecimals, bool includeNumberOfFormants, integer numberOfFrequencyDecimals,
 	bool includeBandwidths, bool includeOptimalCeiling, bool includeMinimumStress);
 
+autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double tmax, constINTVEC const& parameters,
+	double powerf, integer numberOfStressDecimals, bool includeIntervalTimes, integer numberOfTimeDecimals);
+
 autoFormant FormantPath_extractFormant (FormantPath me);
 
 autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks);

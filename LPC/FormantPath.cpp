@@ -403,6 +403,45 @@ autoVEC FormantPath_getStressOfFits (FormantPath me, double tmin, double tmax, i
 	return stresses;
 }
 
+autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double tmax, constINTVEC const& parameters,
+	double powerf, integer numberOfStressDecimals, bool includeIntervalTimes, integer numberOfTimeDecimals) {
+	try {
+		autoVEC stresses = FormantPath_getStressOfFits (me, tmin, tmax, 0, 0, parameters, powerf);
+		const integer numberOfFormantObjects = my formants.size;
+		const integer numberOfFormantsInFit = parameters.size;
+		autoTable thee = Table_createWithoutColumnNames (numberOfFormantObjects, includeIntervalTimes + 1 + includeIntervalTimes + numberOfFormantsInFit + numberOfFormantsInFit - 1);
+		integer icol = 0;
+		if (includeIntervalTimes) {
+			Table_setColumnLabel (thee.get(), 1, U"Start(s)");
+			Table_setColumnLabel (thee.get(), 2, U"End(s)");
+			for (integer irow = 1; irow <= numberOfFormantObjects; irow ++) {
+				Table_setStringValue (thee.get(), irow, 1, Melder_fixed (tmin, numberOfTimeDecimals));	
+				Table_setStringValue (thee.get(), irow, 2, Melder_fixed (tmax, numberOfTimeDecimals));	
+			}
+			icol = 2;
+		}
+		Table_setColumnLabel (thee.get(), ++ icol, U"Ceiling(Hz)");
+		for (integer irow = 1; irow <= numberOfFormantObjects; irow ++)
+				Table_setStringValue (thee.get(), irow, icol, Melder_fixed (my ceilings [irow], 1));
+		
+		for (integer iformant = 1; iformant <= numberOfFormantsInFit; iformant ++) {
+			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"Stress", iformant));
+			autoVEC stresses_fi = FormantPath_getStressOfFits (me, tmin, tmax, iformant, iformant, parameters, powerf);
+			for (integer irow = 1; irow <= numberOfFormantObjects; irow ++)
+				Table_setStringValue (thee.get(), irow, icol, Melder_fixed (stresses_fi [irow], numberOfStressDecimals));
+		}
+		for (integer iformant = 2; iformant <= numberOfFormantsInFit; iformant ++) {
+			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (U"Stress", 1, iformant));
+			autoVEC stresses_fij = FormantPath_getStressOfFits (me, tmin, tmax, 1, iformant, parameters, powerf);
+			for (integer irow = 1; irow <= numberOfFormantObjects; irow ++)
+				Table_setStringValue (thee.get(), irow, icol, Melder_fixed (stresses_fij [irow], numberOfStressDecimals));
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot create Table with stresses of fit.");
+	}
+}
+
 autoTable FormantPath_downTo_Table_optimumInterval (FormantPath me, double tmin, double tmax, 
 	constINTVEC const& parameters, double powerf, bool includeFrameNumber, bool includeTime, integer numberOfTimeDecimals,
 	bool includeIntensity, integer numberOfIntensityDecimals, bool includeNumberOfFormants, integer numberOfFrequencyDecimals,
