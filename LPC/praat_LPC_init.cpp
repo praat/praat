@@ -158,6 +158,22 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (NEW__FormantPath_downTo_Table_stresses, U"", nullptr) {
+	REAL (tmin, U"Time range (s) left", U"0.1")
+	REAL (tmax, U"Time range (s) right", U"0.2")
+	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
+	POSITIVE (powerf, U"Power", U"1.25")
+	NATURAL (numberOfStressDecimals, U"Number of stress decimals", U"2")
+	BOOLEAN (includeIntervalTimes, U"Include interval times", true)
+	NATURAL (numberOfTimeDecimals, U"Number of time decimals", U"6")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (FormantPath)
+		autoTable result = FormantPath_downTo_Table_stresses (me, tmin, tmax, parameters, 
+			numberOfStressDecimals, powerf, includeIntervalTimes, numberOfTimeDecimals);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 DIRECT (QUERY_ONE_FOR_REAL__FormantPath_getNumberOfCandidates) {
 	QUERY_ONE_FOR_REAL (FormantPath)
 		const integer result = my ceilings.size;
@@ -1469,6 +1485,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 0, U"Tabulate - " , nullptr, 0, nullptr);
 		praat_addAction1 (classFormantPath, 0, U"Down to Table (optimum interval)...", nullptr, 1,
 			NEW__FormantPath_downTo_Table_optimumInterval);
+		praat_addAction1 (classFormantPath, 0, U"Down to Table (stresses)...", nullptr, 1,
+			NEW__FormantPath_downTo_Table_stresses);
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFrameSampled_query_init (classFormantPath);
 		praat_addAction1 (classFormantPath, 0, U"Get number of candidates", nullptr, 1,
