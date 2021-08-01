@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2020 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +194,27 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 
 /* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23. */
 double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_singularCovariance);
+
+/*
+	Sphericity test of covariance (correlation) matrix
+	This test is a combinaation of two tests:
+	1. H0: Sigma = sigma^2 I vs. H1: Sigma = diag (sigma[1]^2, sigma-2[^2, ... sigma[p]^2)
+	2. H0: Sigma = diag (sigma[1]^2, sigma-2[^2, ... sigma[p]^2) vs. H1: Sigma != diag (sigma[1]^2, sigma-2[^2, ... sigma[p]^2)
+	This is test 1 in:
+	L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
+	arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.
+*/
+double TableOfReal_testSpericityOfCovariance (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
+
+/*
+	Test the equality of two covariance (correlation) matrices.
+	H0: Sigma[1] = Sigma[2]
+	This is test4 in:
+		L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
+		arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.
+*/	
+double TableOfReal_testEqualityOfCovariance (TableOfReal me, TableOfReal thee, integer numberOfPermutations, bool useCorrelation);
+
 
 autoTableOfReal TableOfReal_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize);
 
