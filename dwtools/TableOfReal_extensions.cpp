@@ -1430,7 +1430,7 @@ static void TableOfReal_permuteRowElements_inplace (TableOfReal me, integer from
 	for (integer irow = fromRow; irow <= toRow; irow ++) {
 		if (! allRowsHaveEqualPermutation)
 			Permutation_permuteRandomly_inplace (row.get(), 0, 0);
-		rowData.get()  <<=  my data.row(irow);
+		rowData.get()  <<=  my data.row (irow);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			my data [irow][icol] = rowData [Permutation_getValueAtIndex (row.get(), icol)];
 	}
@@ -1476,7 +1476,7 @@ static void TableOfReal_shuffleCombinedRows (TableOfReal xShuffled, TableOfReal 
 	}
 }
 
-static autoVEC Covariance_to_vech (Covariance me) {
+static autoVEC Covariance_vectorizeLower (Covariance me) {
 	const integer size = my numberOfColumns * (my numberOfColumns + 1) / 2;
 	autoVEC vech = raw_VEC (size);
 	integer ipos = 0;
@@ -1487,7 +1487,7 @@ static autoVEC Covariance_to_vech (Covariance me) {
 	return vech;
 }
 
-static autoVEC Correlation_to_vech (Correlation me) {
+static autoVEC Correlation_vectorizeLowerWithoutDiagonal (Correlation me) {
 	const integer size = my numberOfColumns * (my numberOfColumns - 1) / 2;
 	autoVEC vech = raw_VEC (size);
 	integer ipos = 0;
@@ -1503,10 +1503,10 @@ static double TableOfReal_computeTestStatistic_WuEtAl12 (TableOfReal me, bool us
 	double testStatistic = undefined;
 	if (useCorrelation) {
 		autoCorrelation him = SSCP_to_Correlation (thee.get());
-		autoVEC vech = Correlation_to_vech (him.get());
+		autoVEC vech = Correlation_vectorizeLowerWithoutDiagonal (him.get());
 		testStatistic = 1.0 - sqrt (my numberOfColumns) / NUMnorm (vech.get(), 2.0);
 	} else {
-		autoVEC vech = Covariance_to_vech (thee.get());
+		autoVEC vech = Covariance_vectorizeLower (thee.get());
 		testStatistic = 1.0 - NUMtrace (thy data.get()) / (sqrt (my numberOfColumns) * NUMnorm (vech.get(), 2.0));
 	}
 	return testStatistic;	
@@ -1536,12 +1536,12 @@ static double TableOfReal_computeTestStatistic_WuEtAl17 (TableOfReal me, TableOf
 	autoVEC mevech, theevech;
 	if (useCorrelation) {
 		autoCorrelation mecor = SSCP_to_Correlation (mecov.get());
-		mevech = Correlation_to_vech (mecor.get());
+		mevech = Correlation_vectorizeLowerWithoutDiagonal (mecor.get());
 		autoCorrelation theecor = SSCP_to_Correlation (theecov.get());
-		theevech = Correlation_to_vech (theecor.get());
+		theevech = Correlation_vectorizeLowerWithoutDiagonal (theecor.get());
 	} else {
-		mevech = Covariance_to_vech (mecov.get());
-		theevech = Covariance_to_vech (theecov.get());
+		mevech = Covariance_vectorizeLower (mecov.get());
+		theevech = Covariance_vectorizeLower (theecov.get());
 	}
 	double testStatistic = NUMinner (mevech.get(), theevech.get()) / (NUMnorm (mevech.get(), 2.0) * NUMnorm (theevech.get(), 2.0));
 	return testStatistic;
