@@ -1,6 +1,6 @@
 /* StringsEditor.cpp
  *
- * Copyright (C) 2007-2012,2015-2020 Paul Boersma
+ * Copyright (C) 2007-2012,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ void structStringsEditor :: v_destroy () noexcept {
 }
 
 static void menu_cb_help (StringsEditor /* me */, EDITOR_ARGS_DIRECT) {
-	Melder_help (U"StringsEditor");
+	HELP (U"StringsEditor")
 }
 
 void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {

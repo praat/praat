@@ -16,20 +16,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AmplitudeTier.h"
-#include "AmplitudeTierEditor.h"
 #include "Cochleagram_and_Excitation.h"
 #include "Corpus.h"
 #include "Distributions_and_Strings.h"
 #include "Distributions_and_Transition.h"
-#include "DurationTierEditor.h"
 #include "Excitation_to_Formant.h"
-#include "FormantGrid.h"
-#include "FormantGridEditor.h"
-#include "FormantTier.h"
 #include "Harmonicity.h"
-#include "IntensityTier.h"
-#include "IntensityTierEditor.h"
 #include "LongSound.h"
 #include "Ltas_to_SpectrumTier.h"
 #include "ManipulationEditor.h"
@@ -46,7 +38,6 @@
 #include "PitchEditor.h"
 #include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"
-#include "PitchTierEditor.h"
 #include "PointEditor.h"
 #include "PointProcess_and_Sound.h"
 #include "Praat_tests.h"

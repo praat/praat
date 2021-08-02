@@ -1,6 +1,6 @@
 /* PitchTierEditor.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2018,2020 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,13 @@
 
 Thing_implement (PitchTierEditor, RealTierEditor, 0);
 
-static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchTierEditor"); }
-static void menu_cb_PitchTierHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"PitchTier"); }
+static void menu_cb_PitchTierEditorHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
+	HELP (U"PitchTierEditor")
+}
+
+static void menu_cb_PitchTierHelp (PitchTierEditor, EDITOR_ARGS_DIRECT) {
+	HELP (U"PitchTier")
+}
 
 void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	PitchTierEditor_Parent :: v_createHelpMenuItems (menu);
@@ -32,11 +37,10 @@ void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structPitchTierEditor :: v_play (double startTime, double endTime) {
-	if (our d_sound.data) {
+	if (our d_sound.data)
 		Sound_playPart (our d_sound.data, startTime, endTime, theFunctionEditor_playCallback, this);
-	} else {
+	else
 		PitchTier_playPart (our pitchTier(), startTime, endTime, false);
-	}
 }
 
 autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound sound, bool ownSound) {

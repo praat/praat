@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
+ * Copyright (C) 1992-2021 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,14 +37,14 @@ extern const char * ipaSerifRegularPS [];
 #if cairo
 	PangoFontMap *thePangoFontMap;
 	PangoContext *thePangoContext;
-	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
+	static bool hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 #elif gdi
 	#define win_MAXIMUM_FONT_SIZE  500
 	static HFONT fonts [1 + (int) kGraphics_resolution::MAX] [1 + kGraphics_font_JAPANESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
 #elif quartz
-	static bool hasTimes, hasHelvetica, hasCourier, hasSymbol, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
+	static bool hasTimes, hasHelvetica, hasCourier, hasPalatino, hasDoulos, hasCharis, hasIpaSerif;
 	#define mac_MAXIMUM_FONT_SIZE  500
 	static CTFontRef theScreenFonts [1 + kGraphics_font_DINGBATS] [1+mac_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 #endif
@@ -279,10 +279,9 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 
 static void charSize (Graphics anyGraphics, _Graphics_widechar *lc) {
 	if (anyGraphics -> screen) {
-		GraphicsScreen me = static_cast <GraphicsScreen> (anyGraphics);
 		#if cairo
+			GraphicsScreen me = static_cast <GraphicsScreen> (anyGraphics);
 			Melder_assert (my duringXor);
-			const Longchar_Info info = lc -> karInfo;
 			const int normalSize = my fontSize * my resolution / 72.0;
 			const int smallSize = (3 * normalSize + 2) / 4;
 			const int size = ( lc -> size < 100 ? smallSize : normalSize );
@@ -293,6 +292,7 @@ static void charSize (Graphics anyGraphics, _Graphics_widechar *lc) {
 			lc -> font.integer_ = 0;
 			lc -> size = size;
 		#elif gdi
+			GraphicsScreen me = static_cast <GraphicsScreen> (anyGraphics);
 			Longchar_Info info = lc -> karInfo;
 			const int normalSize = win_size2isize (my fontSize);
 			const int smallSize = (3 * normalSize + 2) / 4;
@@ -1747,7 +1747,6 @@ double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) 
 		hasCourier = [fontNames containsObject: @"Courier"];
 		if (! hasCourier)
 			hasCourier = [fontNames containsObject: @"Courier New"];
-		hasSymbol = [fontNames containsObject: @"Symbol"];
 		hasPalatino = [fontNames containsObject: @"Palatino"];
 		if (! hasPalatino)
 			hasPalatino = [fontNames containsObject: @"Book Antiqua"];
