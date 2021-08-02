@@ -1,4 +1,4 @@
-/* praat_Sound_init.cpp
+/* praat_Sound.cpp
  *
  * Copyright (C) 1992-2021 Paul Boersma
  *
@@ -17,7 +17,6 @@
  */
 
 #include "Ltas.h"
-#include "LongSound.h"
 #include "Manipulation.h"
 #include "ParamCurve.h"
 #include "Sound_and_Spectrogram.h"

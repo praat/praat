@@ -32,11 +32,10 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	RealTierArea_addPointAtCursor (my realTierArea.get(), my realTier());
-	Editor_save (me, U"Add point");
-	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastDataChanged (me);
+	MODIFY_DATA (U"Add point")
+		RealTierArea_addPointAtCursor (my realTierArea.get(), my realTier());
+		RealTierEditor_updateScaling (me);
+	MODIFY_DATA_END
 }
 
 static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
@@ -47,11 +46,10 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
 		SET_REAL (desiredY, my realTierArea -> ycursor)
 	EDITOR_DO
-		RealTierArea_addPointAt (my realTierArea.get(), my realTier(), time, desiredY);
-		Editor_save (me, U"Add point");
-		RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastDataChanged (me);
+		MODIFY_DATA (U"Add point")
+			RealTierArea_addPointAt (my realTierArea.get(), my realTier(), time, desiredY);
+			RealTierEditor_updateScaling (me);
+		MODIFY_DATA_END
 	EDITOR_END
 }
 
