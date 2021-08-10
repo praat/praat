@@ -6258,8 +6258,8 @@ NORMAL (U"D.J. Hermes (1988): \"Measurement of pitch by subharmonic "
 	"summation.\" %%Journal of the Acoustical Society of America% #83: 257\\--264.")
 MAN_END
 
-MAN_BEGIN (U"Henze & Wagner (1997)", U"djmw", 20090630)
-NORMAL (U"N. Henze & T. Wagner (1997): \"A new npproach to the BHEP Tests for Multivariate Normality.\" "
+MAN_BEGIN (U"Henze & Wagner (1997)", U"djmw", 20210803)
+NORMAL (U"N. Henze & T. Wagner (1997): \"A new approach to the BHEP Tests for Multivariate Normality.\" "
 	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
 MAN_END
 
@@ -6460,6 +6460,11 @@ MAN_END
 MAN_BEGIN (U"Wessel & Bercovici (1989)", U"djmw", 20170917)
 NORMAL (U"P. Wessel & D. Bercovici (1998): \"Interpolation with splines in tension: a Green's function approach.\" "
 	"%%Mathematical Geology% #30: 77\\--93.")
+MAN_END
+
+MAN_BEGIN (U"Wu et al. (2018)", U"djmw", 20210803)
+NORMAL (U"L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): \"Test of covariance and correlation matrices\", "
+	"arXiv: 1812.01172 [stat.ME]: 32 pp.")
 MAN_END
 }
 
