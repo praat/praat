@@ -2,7 +2,7 @@
 #define _TableOfReal_and_Permutation_h_
 /* TableOfReal_and_Permutation.h
  *
- * Copyright (C) 2005-2017 David Weenink
+ * Copyright (C) 2005-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,14 @@
 
 autoTableOfReal TableOfReal_Permutation_permuteRows (TableOfReal me, Permutation thee);
 /*
-	Permutation (n1,n2,..nn) new his z [1] = my z [n1], his z [2] = my z [n2], ..*/
+	Permutation (n1,n2,..nn) new his z [1] = my z [n1], his z [2] = my z [n2], ..
+*/
+
+
+autoTableOfReal TableOfReal_Permutation_permuteColumns (TableOfReal me, Permutation thee);
+/*
+	Permutation (n1,n2,..nn) new his z [.][1] = my z [.][n1], his z [.][2] = my z [.][n2], ..
+*/
 
 autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me);
 

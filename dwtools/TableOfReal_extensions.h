@@ -192,9 +192,12 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
 
 void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer myrow, integer thyrow);
 
-/* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23. */
 double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tnb, double *out_lnmu, double *out_lnvar, bool *out_singularCovariance);
+/*
+	Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23.
+*/
 
+double TableOfReal_testSphericityOfCovariance (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
 /*
 	Sphericity test of covariance (correlation) matrix
 	This test is a combinaation of two tests:
@@ -204,17 +207,34 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *out_tn
 	L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
 	arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.
 */
-double TableOfReal_testSpericityOfCovariance (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
 
+double TableOfReal_testCovarianceEqualsIdentityMatrix (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
 /*
-	Test the equality of two covariance (correlation) matrices.
-	H0: Sigma[1] = Sigma[2]
+	Test if the covariance or correlation equals the identity matrix I.
+	H0: Sigma = I vs H1: Sigma != I
+	This is test2 in:
+		L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
+		arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.
+*/	
+
+double TableOfReal_testCovarianceCompoundSymmetry (TableOfReal me, integer numberOfPermutations, bool useCorrelation);
+/*
+	H0: Sigma = sigma^2 (1-rho) * I + rho * J,
+	where I is identity matrix and J is sqaure matrix of ones znd rho > 0 (intra-class correlation coefficient
+	This is test3 in:
+		L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
+		arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.
+
+*/
+
+double TableOfReal_testEqualityOfCovariances (TableOfReal me, TableOfReal thee, integer numberOfPermutations, bool useCorrelation);
+/*
+	Test the equality of two covariance or correlation matrices.
+	H0: Sigma[1] = Sigma[2] vs H1: Sigma[1] != Sigma[2]
 	This is test4 in:
 		L. Wu, C. Weng, X. Wang, K. Wang & X. Liu (2018): Test of covariance and correlation matrices,
 		arXiv: 1812.01172v1 [start.ME] 4 Dec 2018.
 */	
-double TableOfReal_testEqualityOfCovariance (TableOfReal me, TableOfReal thee, integer numberOfPermutations, bool useCorrelation);
-
 
 autoTableOfReal TableOfReal_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize);
 

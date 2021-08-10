@@ -101,9 +101,9 @@ autoCorrelation SSCP_to_Correlation (SSCP me) {
 	try {
 		autoCorrelation thee = Thing_new (Correlation);
 		my structSSCP :: v_copy (thee.get());
-		for (integer i = 1; i <= my numberOfRows; i ++)
-			for (integer j = i; j <= my numberOfColumns; j ++)
-				thy data [j] [i] = thy data [i] [j] /= sqrt (my data [i] [i] * my data [j] [j]);
+		for (integer irow = 1; irow <= my numberOfRows; irow ++)
+			for (integer icol = irow; icol <= my numberOfColumns; icol ++)
+				thy data [icol] [irow] = thy data [irow] [icol] /= sqrt (my data [irow] [irow] * my data [icol] [icol]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Correlation not created.");
@@ -138,9 +138,9 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 		const double zf = z / sqrt (my numberOfObservations - 3.0);
 		const double two_n = 2.0 * my numberOfObservations;
 
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = i + 1; j <= my numberOfRows; j ++) {
-				const double rij = my data [i] [j];
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			for (integer icol = irow + 1; icol <= my numberOfRows; icol ++) {
+				const double rij = my data [irow] [icol];
 				double rmin, rmax;
 				if (method == 2) {
 					/*
@@ -175,10 +175,10 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 				} else {
 					rmax = rmin = 0.0;
 				}
-				thy data [i] [j] = rmax;
-				thy data [j] [i] = rmin;
+				thy data [irow] [icol] = rmax;
+				thy data [icol] [irow] = rmin;
 			}
-			thy data [i] [i] = 1;
+			thy data [irow] [irow] = 1;
 		}
 		return thee;
 	} catch (MelderError) {
