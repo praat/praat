@@ -1417,41 +1417,37 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 	}
 }
 
-static void TableOfReal_permuteRowElements_inplace (TableOfReal me, integer fromRow, integer toRow, bool allRowsHaveEqualPermutation) {
+static void TableOfReal_permuteRowElements_inplace (TableOfReal me, integer fromRow, integer toRow) {
 	if (fromRow == 0 && toRow == 0) {
 		fromRow = 1;
 		toRow = my numberOfRows;
 	}
 	Melder_require (fromRow <= toRow && fromRow >= 1 && toRow <= my numberOfRows,
 		U"The row range should be larger than 0 and smaller than ", my numberOfRows + 1);
-	autoPermutation row = Permutation_create (my numberOfColumns);
-	Permutation_permuteRandomly_inplace (row.get(), 0, 0);
+	autoPermutation permutation = Permutation_create (my numberOfColumns);
 	autoVEC rowData = raw_VEC (my numberOfColumns);
 	for (integer irow = fromRow; irow <= toRow; irow ++) {
-		if (! allRowsHaveEqualPermutation)
-			Permutation_permuteRandomly_inplace (row.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (permutation.get(), 0, 0);
 		rowData.get()  <<=  my data.row (irow);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-			my data [irow][icol] = rowData [Permutation_getValueAtIndex (row.get(), icol)];
+			my data [irow][icol] = rowData [Permutation_getValueAtIndex (permutation.get(), icol)];
 	}
 }
 
-static void TableOfReal_permuteColumnElements_inplace (TableOfReal me, integer fromColumn, integer toColumn, bool allColumnsHaveEualPermutations) {
+static void TableOfReal_permuteColumnElements_inplace (TableOfReal me, integer fromColumn, integer toColumn) {
 	if (fromColumn == 0 && toColumn == 0) {
 		fromColumn = 1;
 		toColumn = my numberOfColumns;
 	}
 	Melder_require (fromColumn <= toColumn && fromColumn >= 1 && toColumn <= my numberOfColumns,
 		U"The column range should be larger than 0 and smaller than ", my numberOfColumns + 1);
-	autoPermutation column = Permutation_create (my numberOfRows);
-	Permutation_permuteRandomly_inplace (column.get(), 0, 0);
+	autoPermutation permutation = Permutation_create (my numberOfRows);
 	autoVEC columnData = raw_VEC (my numberOfRows);
 	for (integer icol = fromColumn; icol <= toColumn; icol ++) {
-		if (! allColumnsHaveEualPermutations)
-			Permutation_permuteRandomly_inplace (column.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (permutation.get(), 0, 0);
 		columnData.get()  <<=  my data.column (icol);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			my data [irow] [icol] = columnData [Permutation_getValueAtIndex (column.get(), irow)];
+			my data [irow] [icol] = columnData [Permutation_getValueAtIndex (permutation.get(), irow)];
 	}
 }
 
@@ -1464,63 +1460,95 @@ static void TableOfReal_shuffleCombinedRows (TableOfReal xShuffled, TableOfReal 
 		U"The number of rows of the first and the third TableOfReal should be equal and the number of rows of the "
 		"second and forth TableOfReal should also be equal.");
 	const integer numberOfRowsCombined = x -> numberOfRows + y -> numberOfRows;
-	autoPermutation rowShuffle = Permutation_create (numberOfRowsCombined);
-	Permutation_permuteRandomly_inplace (rowShuffle.get(), 0, 0);
+	autoPermutation permutation = Permutation_create (numberOfRowsCombined);
+	Permutation_permuteRandomly_inplace (permutation.get(), 0, 0);
 	for (integer irow = 1; irow <= numberOfRowsCombined; irow ++) {
-		const integer rowIndex = Permutation_getValueAtIndex (rowShuffle.get(), irow);
-		constVECVU fromRow = ( rowIndex > x -> numberOfRows ? y -> data.row (rowIndex - x -> numberOfRows + 1) : 
+		const integer rowIndex = Permutation_getValueAtIndex (permutation.get(), irow);
+		constVEC fromRow = ( rowIndex > x -> numberOfRows ? y -> data.row (rowIndex - x -> numberOfRows) : 
 			x -> data.row (rowIndex) );
-		VECVU toRow = ( irow > xShuffled -> numberOfRows ? yShuffled -> data.row (irow - xShuffled -> numberOfRows + 1) :
+		VEC toRow = ( irow > xShuffled -> numberOfRows ? yShuffled -> data.row (irow - xShuffled -> numberOfRows) :
 			xShuffled -> data.row (irow) );
 		toRow  <<=  fromRow;
 	}
 }
 
-static autoVEC Covariance_vectorizeLower (Covariance me) {
-	const integer size = my numberOfColumns * (my numberOfColumns + 1) / 2;
+static autoVEC vectorizeLowerMinusDiagonal_VEC (constMATVU m) {
+	Melder_assert (m.nrow == m.ncol);
+	integer index = 0;
+	const integer size = m.nrow * (m.nrow - 1) / 2;
 	autoVEC vech = raw_VEC (size);
-	integer ipos = 0;
-	for (integer irow = 2; irow <= my numberOfRows; irow ++)
-		for (integer icol = 1; icol <= irow; icol ++)
-			vech [++ ipos] = my data [irow] [icol];
-	Melder_assert (ipos == size);
-	return vech;
-}
-
-static autoVEC Correlation_vectorizeLowerWithoutDiagonal (Correlation me) {
-	const integer size = my numberOfColumns * (my numberOfColumns - 1) / 2;
-	autoVEC vech = raw_VEC (size);
-	integer ipos = 0;
-	for (integer irow = 2; irow <= my numberOfRows; irow ++)
+	for (integer irow = 2; irow <= m.nrow; irow ++)
 		for (integer icol = 1; icol < irow; icol ++)
-			vech [++ ipos] = my data [irow] [icol];
-	Melder_assert (ipos == size);
+			vech [++ index] = m [irow] [icol];
+	Melder_assert (index == size);
 	return vech;
 }
 
-static double TableOfReal_computeTestStatistic_WuEtAl12 (TableOfReal me, bool useCorrelation) {
+static autoVEC vectorizeLowerPlusDiagonal_VEC (constMATVU m) {
+	Melder_assert (m.nrow == m.ncol);
+	integer index = 0;
+	const integer size = m.nrow * (m.nrow + 1) / 2;
+	autoVEC vech = raw_VEC (size);
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		for (integer icol = 1; icol <= irow; icol ++)
+			vech [++ index] = m [irow] [icol];
+	Melder_assert (index == size);
+	return vech;	
+}
+
+static double TableOfReal_computeTestStatistic_WuEtAl1215 (TableOfReal me, bool useCorrelation) {
 	autoCovariance thee = TableOfReal_to_Covariance (me);
-	double testStatistic = undefined;
+	double testStatistic;
 	if (useCorrelation) {
 		autoCorrelation him = SSCP_to_Correlation (thee.get());
-		autoVEC vech = Correlation_vectorizeLowerWithoutDiagonal (him.get());
+		autoVEC vech = vectorizeLowerMinusDiagonal_VEC (his data.get());
 		testStatistic = 1.0 - sqrt (my numberOfColumns) / NUMnorm (vech.get(), 2.0);
 	} else {
-		autoVEC vech = Covariance_vectorizeLower (thee.get());
+		autoVEC vech = vectorizeLowerPlusDiagonal_VEC (thy data.get());
 		testStatistic = 1.0 - NUMtrace (thy data.get()) / (sqrt (my numberOfColumns) * NUMnorm (vech.get(), 2.0));
 	}
 	return testStatistic;	
 }
 
+static double TableOfReal_computeTestStatistic_WuEtAl16 (TableOfReal me, bool useCorrelation) {
+	autoCovariance thee = TableOfReal_to_Covariance (me);
+	autoCorrelation him;
+	constMATVU data = thy data.get();
+	if (useCorrelation) {
+		him = SSCP_to_Correlation (thee.get());
+		data = his data.get();
+	}
+	autoVEC vech = vectorizeLowerMinusDiagonal_VEC (data);
+	const double testStatistic = 1.0 - NUMsum (vech.get()) / (NUMnorm (vech.get(), 2.0) * sqrt (vech.size));
+	return testStatistic;	
+}
+
+static double TableOfReal_computeTestStatistic_WuEtAl17 (TableOfReal me, TableOfReal thee, bool useCorrelation) {
+	autoCovariance mycov = TableOfReal_to_Covariance (me);
+	autoCovariance thycov = TableOfReal_to_Covariance (thee);
+	autoVEC myvech,thyvech;
+	if (useCorrelation) {
+		autoCorrelation mycor = SSCP_to_Correlation (mycov.get());
+		myvech = vectorizeLowerMinusDiagonal_VEC (mycor -> data.get());
+		autoCorrelation thycor = SSCP_to_Correlation (thycov.get());
+		thyvech = vectorizeLowerMinusDiagonal_VEC (thycor -> data.get());
+	} else {
+		myvech = vectorizeLowerPlusDiagonal_VEC (mycov -> data.get());
+		thyvech = vectorizeLowerPlusDiagonal_VEC (thycov -> data.get());
+	}
+	const double testStatistic = 1.0 - NUMinner (myvech.get(), thyvech.get()) / (NUMnorm (myvech.get(), 2.0) * NUMnorm (thyvech.get(), 2.0));
+	return testStatistic;
+}
+
 double TableOfReal_testSphericityOfCovariance (TableOfReal me, integer numberOfPermutations, bool useCorrelation) {
 	try {
 		autoTableOfReal thee = Data_copy (me);	
-		double testStatistic0 = TableOfReal_computeTestStatistic_WuEtAl12 (me, useCorrelation);
+		double testStatistic0 = TableOfReal_computeTestStatistic_WuEtAl1215 (me, useCorrelation);
 		integer countLargerOrEqual = 0;
 		for (integer iperm = 1; iperm <= numberOfPermutations; iperm ++) {
-			TableOfReal_permuteRowElements_inplace (thee.get(), 0, 0, false);
-			TableOfReal_permuteColumnElements_inplace (thee.get(), 0, 0, false);
-			const double testStatistic = TableOfReal_computeTestStatistic_WuEtAl12 (thee.get(), useCorrelation);
+			TableOfReal_permuteRowElements_inplace (thee.get(), 0, 0);
+			TableOfReal_permuteColumnElements_inplace (thee.get(), 0, 0);
+			const double testStatistic = TableOfReal_computeTestStatistic_WuEtAl1215 (thee.get(), useCorrelation);
 			if (testStatistic >= testStatistic0)
 				countLargerOrEqual ++;
 		}
@@ -1530,36 +1558,55 @@ double TableOfReal_testSphericityOfCovariance (TableOfReal me, integer numberOfP
 	}
 }
 
-static double TableOfReal_computeTestStatistic_WuEtAl17 (TableOfReal me, TableOfReal thee, bool useCorrelation) {
-	autoCovariance mecov = TableOfReal_to_Covariance (me);
-	autoCovariance theecov = TableOfReal_to_Covariance (thee);
-	autoVEC mevech, theevech;
-	if (useCorrelation) {
-		autoCorrelation mecor = SSCP_to_Correlation (mecov.get());
-		mevech = Correlation_vectorizeLowerWithoutDiagonal (mecor.get());
-		autoCorrelation theecor = SSCP_to_Correlation (theecov.get());
-		theevech = Correlation_vectorizeLowerWithoutDiagonal (theecor.get());
-	} else {
-		mevech = Covariance_vectorizeLower (mecov.get());
-		theevech = Covariance_vectorizeLower (theecov.get());
+double TableOfReal_testCovarianceEqualsIdentityMatrix (TableOfReal me, integer numberOfPermutations, bool useCorrelation) {
+	try {
+		autoTableOfReal mycopy = Data_copy (me);		
+		double testStatistic0 = TableOfReal_computeTestStatistic_WuEtAl1215 (me, useCorrelation);
+		integer countLargerOrEqual = 0;
+		for (integer iperm = 1; iperm <= numberOfPermutations; iperm ++) {
+			TableOfReal_permuteColumnElements_inplace (mycopy.get(), 0, 0);
+			const double testStatistic = TableOfReal_computeTestStatistic_WuEtAl1215 (mycopy.get(), useCorrelation);
+			if (testStatistic >= testStatistic0)
+				countLargerOrEqual ++;
+		}
+		return (1.0 + countLargerOrEqual) / (1.0 + numberOfPermutations);
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot determine probability for identity.");
 	}
-	double testStatistic = NUMinner (mevech.get(), theevech.get()) / (NUMnorm (mevech.get(), 2.0) * NUMnorm (theevech.get(), 2.0));
-	return testStatistic;
 }
 
-double TableOfReal_testEqualityOfCovariance (TableOfReal me, TableOfReal thee, integer numberOfPermutations, bool useCorrelation) {
+double TableOfReal_testCovarianceCompoundSymmetry (TableOfReal me, integer numberOfPermutations, bool useCorrelation) {
 	try {
-		autoTableOfReal meCopy = Data_copy (me);
-		autoTableOfReal theeCopy = Data_copy (thee);
+		autoTableOfReal mycopy = Data_copy (me);		
+		double testStatistic0 = TableOfReal_computeTestStatistic_WuEtAl16 (me, useCorrelation);
+		integer countLargerOrEqual = 0;
+		for (integer iperm = 1; iperm <= numberOfPermutations; iperm ++) {
+			TableOfReal_permuteRowElements_inplace (mycopy.get(), 0, 0);
+			const double testStatistic = TableOfReal_computeTestStatistic_WuEtAl16 (mycopy.get(), useCorrelation);
+			if (testStatistic >= testStatistic0)
+				countLargerOrEqual ++;
+		}
+		return (1.0 + countLargerOrEqual) / (1.0 + numberOfPermutations);
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot determine compound symmetry.");
+	}
+}
+
+double TableOfReal_testEqualityOfCovariances (TableOfReal me, TableOfReal thee, integer numberOfPermutations, bool useCorrelation) {
+	try {
+		Melder_require (my numberOfColumns == thy numberOfColumns,
+			U"The number of columns of both TableOfReal should be equal.");
+		autoTableOfReal myCopy = Data_copy (me);
+		autoTableOfReal thyCopy = Data_copy (thee);
 		double testStatistic0 = TableOfReal_computeTestStatistic_WuEtAl17 (me, thee, useCorrelation);
 		integer countLargerOrEqual = 0;
 		for (integer iperm = 1; iperm <= numberOfPermutations; iperm ++) {
 			double testStatistic;
 			if (iperm % 2 == 1) {
-				TableOfReal_shuffleCombinedRows (meCopy.get(), theeCopy.get(), me, thee);
-				testStatistic = TableOfReal_computeTestStatistic_WuEtAl17 (meCopy.get(), theeCopy.get(), useCorrelation);
+				TableOfReal_shuffleCombinedRows (myCopy.get(), thyCopy.get(), me, thee);
+				testStatistic = TableOfReal_computeTestStatistic_WuEtAl17 (myCopy.get(), thyCopy.get(), useCorrelation);
 			} else {
-				TableOfReal_shuffleCombinedRows (me, thee, meCopy.get(), theeCopy.get());
+				TableOfReal_shuffleCombinedRows (me, thee, myCopy.get(), thyCopy.get());
 				testStatistic = TableOfReal_computeTestStatistic_WuEtAl17 (me, thee, useCorrelation);
 			}
 			if (testStatistic >= testStatistic0)
