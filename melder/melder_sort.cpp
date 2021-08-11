@@ -73,6 +73,7 @@ double NUMquantile (constVECVU const& a, double factor) noexcept {
 	if (a.size == 1)
 		return a [1];
 	const double place = factor * a.size + 0.5;
+	Melder_assert (a.size - 1 >= 1);
 	const integer left = Melder_clipped (1_integer, Melder_ifloor (place), a.size - 1);
 	const double slope = a [left + 1] - a [left];
 	if (slope == 0.0)

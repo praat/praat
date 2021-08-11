@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,15 @@ autoSound PointProcess_to_Sound_pulseTrain
 	 double adaptFactor, double adaptTime, integer interpolationDepth)
 {
 	try {
-		integer sound_nt = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
-		double dt = 1.0 / samplingFrequency;
-		double tmid = (my xmin + my xmax) / 2;
-		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
+		const integer sound_nt = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		const double dt = 1.0 / samplingFrequency;
+		const double tmid = 0.5 * (my xmin + my xmax);
+		const double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 		autoSound thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
-		VEC sound = thy z.row (1);
+		const VEC sound = thy z.row (1);
 		for (integer it = 1; it <= my nt; it ++) {
-			double t = my t [it], amplitude = 0.9, angle, halfampsinangle;
+			const double t = my t [it];
+			double amplitude = 0.9;
 			integer mid = Sampled_xToNearestIndex (thee.get(), t);
 			if (it <= 2 || my t [it - 2] < my t [it] - adaptTime) {
 				amplitude *= adaptFactor;
@@ -40,8 +41,8 @@ autoSound PointProcess_to_Sound_pulseTrain
 			integer begin = mid - interpolationDepth, end = mid + interpolationDepth;
 			if (begin < 1) begin = 1;
 			if (end > thy nx) end = thy nx;
-			angle = NUMpi * (Sampled_indexToX (thee.get(), begin) - t) / thy dx;
-			halfampsinangle = 0.5 * amplitude * sin (angle);
+			double angle = NUMpi * (Sampled_indexToX (thee.get(), begin) - t) / thy dx;
+			double halfampsinangle = 0.5 * amplitude * sin (angle);
 			for (integer j = begin; j <= end; j ++) {
 				if (fabs (angle) < 1e-6)
 					sound [j] += amplitude;
@@ -66,106 +67,101 @@ autoSound PointProcess_to_Sound_phonation
 	 double openPhase, double collisionPhase, double power1, double power2)
 {
 	try {
-		integer sound_nt = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
-		double dt = 1.0 / samplingFrequency;
-		double tmid = (my xmin + my xmax) / 2.0;
-		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
-		double a = (power1 + power2 + 1.0) / (power2 - power1);
-		double re = openPhase - collisionPhase;
+		const integer sound_nt = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		const double dt = 1.0 / samplingFrequency;
+		const double tmid = 0.5 * (my xmin + my xmax);
+		const double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
+		const double a = (power1 + power2 + 1.0) / (power2 - power1);
 		autoSound thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 		/*
-		 * Compute "re" by iteration.
-		 */
+			Compute "re" by iteration.
+		*/
+		double re = openPhase - collisionPhase;
 		if (collisionPhase <= 0.0) {
 			re = openPhase;
 		} else {
-			double xmaxFlow = pow (power1 / power2, 1.0 / (power2 - power1));
-			double xleft = xmaxFlow;
-			double xright = 1.0;
+			const double xmaxFlow = pow (power1 / power2, 1.0 / (power2 - power1));
+			/* mutable by iteration */ double xleft = xmaxFlow;
+			/* mutable by iteration */ double xright = 1.0;
 			for (int i = 1; i <= 50; i ++) {
-				double xmid = 0.5 * (xleft + xright);
-				double gmid = pow (xmid, power1) - pow (xmid, power2);
-				double gderivmid = power1 * pow (xmid, power1 - 1.0) - power2 * pow (xmid, power2 - 1.0);
-				double fmid = - gmid / gderivmid;
-				if (fmid > collisionPhase / openPhase) {
+				const double xmid = 0.5 * (xleft + xright);
+				const double gmid = pow (xmid, power1) - pow (xmid, power2);
+				const double gderivmid = power1 * pow (xmid, power1 - 1.0) - power2 * pow (xmid, power2 - 1.0);
+				const double fmid = - gmid / gderivmid;
+				if (fmid > collisionPhase / openPhase)
 					xleft = xmid;
-				} else {
+				else
 					xright = xmid;
-				}
 				re = xmid * openPhase;
 			}
 		}
 		/*
-		 * Cycle through the points. Each will become a period.
-		 */
+			Cycle through the points. Each will become a period.
+		*/
 		VEC sound = thy z.row (1);
 		for (integer it = 1; it <= my nt; it ++) {
-			double t = my t [it], amplitude = a;
-			double period = undefined, te, phase, flow;
-			integer midSample = Sampled_xToNearestIndex (thee.get(), t);
+			const double t = my t [it];
+			const integer midSample = Sampled_xToNearestIndex (thee.get(), t);
 			/*
-			 * Determine the period: first look left (because that's where the open phase is),
-			 * then right.
-			 */
+				Determine the period: first look left (because that's where the open phase is),
+				then right.
+			*/
+			double period = undefined;
 			if (it >= 2) {
 				period = my t [it] - my t [it - 1];
-				if (period > maximumPeriod) {
+				if (period > maximumPeriod)
 					period = undefined;
-				}
 			}
 			if (isundef (period)) {
 				if (it < my nt) {
 					period = my t [it + 1] - my t [it];
-					if (period > maximumPeriod) {
+					if (period > maximumPeriod)
 						period = undefined;
-					}
 				}
-				if (isundef (period)) {
+				if (isundef (period))
 					period = 0.5 * maximumPeriod;   // some default value
-				}
 			}
-			te = re * period;
+			const double te = re * period;
 			/*
-			 * Determine the amplitude of this peak.
-			 */
-			amplitude /= period * openPhase;
-			if (it == 1 || my t [it - 1] < my t [it] - maximumPeriod) {
-				amplitude *= adaptFactor * adaptFactor;
-			} else if (it == 2 || my t [it - 2] < my t [it - 1] - maximumPeriod) {
-				amplitude *= adaptFactor;
-			}
+				Determine the amplitude of this peak.
+			*/
+			const double unadaptedAmplitude = a / (period * openPhase);
+			const double amplitude = unadaptedAmplitude * (
+				it == 1 || my t [it - 1] < my t [it] - maximumPeriod ?
+					adaptFactor * adaptFactor
+				: it == 2 || my t [it - 2] < my t [it - 1] - maximumPeriod ?
+					adaptFactor
+				:
+					1.0
+			);
 			/*
-			 * Fill in the samples to the left of the current point.
-			 */
+				Fill in the samples to the left of the current point.
+			*/
 			{// scope
-				integer beginSample = midSample - Melder_ifloor (te / thy dx);
-				if (beginSample < 1) beginSample = 1;
-				integer endSample = midSample;
-				if (endSample > thy nx) endSample = thy nx;
+				const integer beginSample = Melder_clippedLeft (1_integer, midSample - Melder_ifloor (te / thy dx));
+				const integer endSample = Melder_clippedRight (midSample, thy nx);
 				for (integer isamp = beginSample; isamp <= endSample; isamp ++) {
-					double tsamp = thy x1 + (isamp - 1) * thy dx;
-					phase = (tsamp - (t - te)) / (period * openPhase);
+					const double tsamp = thy x1 + (isamp - 1) * thy dx;
+					const double phase = (tsamp - (t - te)) / (period * openPhase);
 					if (phase > 0.0)
 						sound [isamp] += amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
 				}
 			}
 			/*
-			 * Determine the signal parameters at the current point.
-			 */
-			phase = te / (period * openPhase);
-			flow = amplitude * (period * openPhase) * (pow (phase, power1) - pow (phase, power2));
+				Determine the signal parameters at the current point.
+			*/
+			const double phase = te / (period * openPhase);
+			const double flow = amplitude * (period * openPhase) * (pow (phase, power1) - pow (phase, power2));
 			/*
-			 * Fill in the samples to the right of the current point.
-			 */
+				Fill in the samples to the right of the current point.
+			*/
 			if (flow > 0.0) {
-				double flowDerivative = amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
-				double ta = - flow / flowDerivative;
-				double factorPerSample = exp (- thy dx / ta);
+				const double flowDerivative = amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
+				const double ta = - flow / flowDerivative;
+				const double factorPerSample = exp (- thy dx / ta);
+				const integer beginSample = Melder_clippedLeft (1_integer, midSample + 1);
+				const integer endSample = Melder_clippedRight (midSample + Melder_ifloor (20.0 * ta / thy dx), thy nx);
 				double value = flowDerivative * factorPerSample;
-				integer beginSample = midSample + 1;
-				if (beginSample < 1) beginSample = 1;
-				integer endSample = midSample + Melder_ifloor (20.0 * ta / thy dx);
-				if (endSample > thy nx) endSample = thy nx;
 				for (integer isamp = beginSample; isamp <= endSample; isamp ++) {
 					sound [isamp] += value;
 					value *= factorPerSample;

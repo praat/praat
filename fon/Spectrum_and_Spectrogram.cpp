@@ -32,6 +32,7 @@ autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double tim) {
 		thy xmax = my ymax;
 		thy x1 = my y1;   // centre of first band, instead of 0 (makes it unFFTable)
 		thy dx = my dy;   // frequency step
+		Melder_assert (my nx >= 1);   // for Melder_clipped
 		const integer itime = Melder_clipped (1_integer, Sampled_xToNearestIndex (me, tim), my nx);
 		for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
 			const double value = my z [ifreq] [itime];
