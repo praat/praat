@@ -283,6 +283,7 @@ autoTable Spectrum_tabulate_verbose (Spectrum me) {
 				and also 0.5 * my dx for the last bin if the Nyquist falls within the bin
 				(i.e. if the original number of samples was even).
 			*/
+			Melder_assert (my xmax >= my xmin);   // required for Melder_clipped
 			const double startOfBinWithinDomain = Melder_clipped (my xmin, frequency - 0.5 * my dx, my xmax);
 			Table_setNumericValue (thee.get(), ibin, 6, startOfBinWithinDomain);   // column "startOfBinWithinDomain(Hz)"
 			const double endOfBinWithinDomain = Melder_clipped (my xmin, frequency + 0.5 * my dx, my xmax);

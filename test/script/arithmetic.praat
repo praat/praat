@@ -1,5 +1,5 @@
 echo arithmetic
-# Paul Boersma, January 27, 2006
+# Paul Boersma 2021-08-06
 
 assert 1 + 1 = 2
 assert 1 + undefined = undefined
@@ -23,6 +23,9 @@ assert 19 - 7 = 12
 assert 19 - undefined = undefined
 assert undefined - 7 = undefined
 assert undefined - undefined = undefined
+
+assert  368421052631578947 * 2 = 736842105263157894
+assert 736842105263157894  / 2 =  368421052631578947
 
 # From the manual (Formulas 2. Operators):
 

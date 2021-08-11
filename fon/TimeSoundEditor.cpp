@@ -708,6 +708,7 @@ bool structTimeSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent e
 			if (event -> commandKeyPressed) {
 				if (numberOfChannels > 1) {
 					const integer numberOfVisibleChannels = Melder_clippedRight (numberOfChannels, 8_integer);
+					Melder_assert (numberOfVisibleChannels >= 1);   // for Melder_clipped
 					const integer clickedChannel = our d_sound.channelOffset +
 							Melder_clipped (1_integer, Melder_ifloor ((1.0 - y_fraction) * numberOfVisibleChannels + 1), numberOfVisibleChannels);
 					const integer firstVisibleChannel = our d_sound.channelOffset + 1;

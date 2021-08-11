@@ -60,6 +60,7 @@ static void updateScrollBar (FunctionEditor me) {
 		Melder_fatal (U"updateScrollBar: the window runs from ", my startWindow, U" to ", my endWindow,
 			 	U", but the whole time domain runs only from ", my tmin, U" to ", my tmax);
 	const double slider_size = Melder_clippedLeft (1.0, (my endWindow - my startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1.0);
+	Melder_assert (maximumScrollBarValue - slider_size >= 1.0);
 	const double value = Melder_clipped (1.0, (my startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1.0, maximumScrollBarValue - slider_size);
 	const double increment = slider_size / SCROLL_INCREMENT_FRACTION + 1.0;
 	const double page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1.0;
@@ -733,6 +734,7 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		REAL (distance, Melder_cat (U"Distance (", my v_format_units_short(), U")"), U"0.05")
 	EDITOR_OK
 	EDITOR_DO
+		Melder_assert (my tmax >= my tmin);
 		const double position = Melder_clipped (my tmin, 0.5 * (my startSelection + my endSelection) + distance, my tmax);
 		my startSelection = my endSelection = position;
 		my v_updateText ();
@@ -746,6 +748,7 @@ static void menu_cb_moveStartOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM)
 		REAL (distance, Melder_cat (U"Distance (", my v_format_units_short(), U")"), U"0.05")
 	EDITOR_OK
 	EDITOR_DO
+		Melder_assert (my tmax >= my tmin);
 		my startSelection = Melder_clipped (my tmin, my startSelection + distance, my tmax);
 		Melder_sort (& my startSelection, & my endSelection);
 		my v_updateText ();
@@ -759,6 +762,7 @@ static void menu_cb_moveEndOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		REAL (distance, Melder_cat (U"Distance (", my v_format_units_short(), U")"), U"0.05")
 	EDITOR_OK
 	EDITOR_DO
+		Melder_assert (my tmax >= my tmin);
 		my endSelection = Melder_clipped (my tmin, my endSelection + distance, my tmax);
 		Melder_sort (& my startSelection, & my endSelection);
 		my v_updateText ();

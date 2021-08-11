@@ -1604,7 +1604,7 @@ FORM (MODIFY_DTW_Polygon_findPathInside, U"DTW & Polygon: Find path inside", nul
     OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_ONE (DTW, Polygon)
-		DTW_Polygon_findPathInside (me, you, slopeConstraint, 0);
+		DTW_Polygon_findPathInside (me, you, slopeConstraint, nullptr);
 	MODIFY_FIRST_OF_ONE_AND_ONE_END
 }
 

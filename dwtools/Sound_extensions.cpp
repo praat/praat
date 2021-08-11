@@ -2085,6 +2085,7 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 	const integer channelFrom = channel == 0 ? 1 : channel;
 	const integer channelTo = channel == 0 ? my ny : channel;
 	
+	Melder_assert (my xmax >= my xmin);   // for Melder_clipped
 	double startTime = Melder_clipped (my xmin, time, my xmax);
 	double endTime = startTime + fadeTime;
 	if (startTime > endTime)

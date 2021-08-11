@@ -96,7 +96,9 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 
 autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
+		Melder_assert (my samplingPeriod > 0.0);
 		const double samplingFrequency = 1.0 / my samplingPeriod;
+		Melder_assert (my nx >= 1);   // preparing for the assertion in Melder_clipped
 		const integer index = Melder_clipped (1_integer, Sampled_xToNearestIndex (me, t), my nx);
 		integer nfft = 2;
 		if (dfMin <= 0.0) {

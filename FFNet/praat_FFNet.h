@@ -18,20 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	Interface functions for time-based subclasses of Function.
-*/
-
 #include "FFNet.h"
 #include "praatM.h"
 
 void praat_uvafon_FFNet_init ();
-
-/*
-	Special request from contrib/Ola, who wants to include these commands in the KNN menu.
-*/
-extern "C" void NEW1_PatternList_create (UiCallback_ARGS);
-extern "C" void NEW1_Categories_create (UiCallback_ARGS);
 
 /* End of file praat_FFNet.h */
 #endif

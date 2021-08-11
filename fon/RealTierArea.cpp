@@ -54,6 +54,7 @@ void RealTierArea_updateScaling (RealTierArea me, RealTier tier) {
 	my ymin = my p_dataFreeMinimum;
 	my ymax = my p_dataFreeMaximum;
 	if (tier -> points.size > 0) {
+		Melder_assert (my v_maximumLegalY() >= my v_minimumLegalY());
 		const double minimumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMinimumValue (tier), my v_maximumLegalY());
 		const double maximumValue = Melder_clipped (my v_minimumLegalY(), RealTier_getMaximumValue (tier), my v_maximumLegalY());
 		Melder_clipRight (& my ymin, minimumValue);

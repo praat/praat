@@ -68,6 +68,7 @@ bool structSpectrogramEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 	if (event -> isClick()) {
 		Spectrogram spectrogram = (Spectrogram) our data;
 		double clickedFrequency = y_fraction * our maximum;
+		Melder_assert (spectrogram -> nx >= 1);
 		const integer clickedFrame = Melder_clipped (1_integer, Sampled_xToNearestIndex (spectrogram, x_world), spectrogram -> nx);
 		// TODO
 	}
