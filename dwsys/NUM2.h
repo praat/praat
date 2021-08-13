@@ -39,9 +39,6 @@
 */
 #define NUMeps 2.3e-16
 
-void NUMgetGridDimensions (integer n, integer *out_nrow, integer *out_ncol);
-/* Get dimensions of a grid for n elements where nrow*ncol >= n */
-
 /*
 	only used to append the time info to the name of an object.
 	1.2345678 -> 1_2345678

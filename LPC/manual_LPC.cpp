@@ -28,15 +28,15 @@
 void manual_LPC (ManPages me);
 void manual_LPC (ManPages me)
 {
-MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20201011)
+MAN_BEGIN (U"Candidate modelling settings...", U"djmw", 20210813)
 INTRO (U"A command in the #Candidates menu of the @FormantPathEditor window.")
 TAG (U"##Coefficients by track#")
 DEFINITION (U"determines how many coefficients will be used in the modelling of a formant track. "
-	"The first number determines the number of coefficients that will be used in modeling formant 1 with a polynomial function."
-	"The second number determines the number of coefficients in the modelling of formant 2, and so on. " 
+	"The first number determines the number of coefficients that will be used for modeling formant 1 with a polynomial function."
+	"The second number determines the number of coefficients for the modelling of formant 2, and so on. " 
 	"For example, if you specify \"4 3 3\", the first three formants will be modelled. Formant 1 will be modelled with 4 "
-	"coefficients which means that a third order polynomial is modelled. Formant 2 and formant 3 are modelled with "
-	"3 coefficients polynomials (parabolas).")
+	"coefficients which means that a third order polynomial is used for modelling. Formant 2 and formant 3 are modelled with "
+	"3 coefficients which means that their tracks will be modelled as parabolas.")
 TAG (U"##Variance exponent#")
 DEFINITION (U"determines the power of the first term in the overall stress criterion #S. "
 	"The best model is the one with the lowest value for the stress %S.")
@@ -48,7 +48,7 @@ NORMAL (U"where %s^^2^ is the sum of the squares of the standard errors of all t
 	"degrees of freedom of each track. "
 	"Because the standard error %s is proportional to bandwidth and \\ci^^2^ is inversely proportional to bandwidth, "
 	"the expression for %S grows approximately as 2\\.c%varianceExponent-2 with bandwidth. Setting the %varianceExponent "
-	"somewhat larger than one guarantees that for two tracks that only differ in their bandwidths, the track with the "
+	"somewhat larger than one guarantees that for two tracks whose formants only differ in their bandwidths, the track with the "
 	"larger bandwidths obtains a larger value for the stress value %S.")
 MAN_END
 
@@ -88,29 +88,29 @@ NORMAL (U"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210309)
+MAN_BEGIN (U"Formant: List formant slope...", U"djmw", 20210813)
 INTRO (U"A command available in the ##Query# menu if you select a @@Formant@ object. The Info window will show the characteristics of the slope of the chosen interval as a vector with a number of values.")
 ENTRY (U"Settings")
 TAG (U"##Formant number#,")
-DEFINITION (U"defines the formant whose characteristics you want.")
+DEFINITION (U"defines the formant whose slope characteristics you want.")
 TAG (U"##Time range (s)#,")
-DEFINITION (U"defines the time domain on which the slope should be determined.")
+DEFINITION (U"defines the start time and the end time of the segment on which the slope should be determined.")
 TAG (U"##Slope curve#")
 DEFINITION (U"defines the kind of curve you want to fit on the formant points to determine the slope characteristics. "
 	"The options available are ##Exponential plus constant#, ##Parabolic# and ##Sigmoid plus constant#.")
 ENTRY (U"The vector result")
-NORMAL (U"The vector values are determined from the fit of the formant track with a an exponential plus constant function "
-	"%F(%t) = %a+%b\\.cexp(%c\\.c%t), or a parabolic function %F(%t) = %a+%b\\.ct+%c\\.ct^2, or a sigmoid plus constant function "
+NORMAL (U"The vector values are determined from the fit of the formant track with a an ##exponential plus constant# function "
+	"%F(%t) = %a+%b\\.cexp(%c\\.c%t), or a ##parabolic# function %F(%t) = %a+%b\\.ct+%c\\.ct^2, or a ##sigmoid plus constant# function "
 	"%F(%t) = %a+%b / (1 + exp(- (%t -c) / d)) "
 	"on the chosen interval [%t__min_, %t__max_].")
-TAG (U"##1. Average slope (Hz / s)#,")
+TAG (U"##1. Average slope (Hz / s)#")
 DEFINITION (U"defined as (%F__start_ - %F__end_) / (%t__max_ - %t__min_), where %F__start_ and %F__end_ are the start and "
-	"end values of the fitted funcion %F(%t) on the interval.")
+	"end values of the fitted function %F(%t) and %t__max_ and %t__min_ are the start and end times of the interval.")
 TAG (U"##2. %R^2#")
-DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - varianceAfter / varianceBefore.")
-TAG (U"##3. %F__start_#,")
+DEFINITION (U"The %R^2 value of the fit defined as %R^2 = 1 - %varianceAfter / %varianceBefore.")
+TAG (U"##3. %F__start_#")
 DEFINITION (U"the frequency in hertz of the function %F(%t__min_).")
-TAG (U"##4. %F__end_#,")
+TAG (U"##4. %F__end_#")
 DEFINITION (U"the frequency in hertz of the function %F(%t__max_).")
 TAG (U"##5. %a#")
 DEFINITION (U"the parameter %a (hertz) of the function %F(%t).")
@@ -155,7 +155,7 @@ NORMAL (U"HTK parameter files do not contain timing information and therefore we
 	"The value in these files for the samplePeriod is 10000 which is a factor 10 off from the correct value of 1000 in units of 100 ns.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath", U"djmw", 20210630)
+MAN_BEGIN (U"FormantPath", U"djmw", 20210813)
 INTRO (U"One of the @@types of objects@ in Praat. A ##FormantPath# object maintains a path through a collection of "
 	"Formant objects, each the result of a formant frequency analysis of the same sound but with a different setting "
 	"of the analysis parameters.")
@@ -167,8 +167,8 @@ NORMAL (U"As an example we consider a FormantPath that has nine Formant objects 
 	"5000.0, 5256.4, 5525.9, 5809.2, and 6107.0 Hz, respectively. "
 	"In this way, this collection of Formants functions as a set of alternative analyses where the \"Time step\", "
 	"the \"Max. number of formants\", the \"Window length\" and the \"Pre-emphasis from\" are constant for each analysis and only "
-	"the interval in which the number of formants should fit varies. ")
-NORMAL (U"You create a FormantPath with the @@Sound: To FormantPath (burg)...@ command. The FormantPath example above could have been created from a Sound by:")
+	"the frequency interval in which the number of formants should fit varies. ")
+NORMAL (U"You create a FormantPath from a Sound with the @@Sound: To FormantPath (burg)...@ command. The FormantPath example above could have been created from a Sound by:")
 CODE (U"To FormantPath (burg): 0.005, 5.0, 5000.0, 0.025, 50.0, 0.05, 4")
 NORMAL (U"The Formant object which has a ceiling of 5000 Hz, the object at the middle in the set, here corresponds to the "
 	"result of the \"standard\" analysis for a male voice where the interval from 0 to 5000 Hz is chosen and we expect, "
@@ -176,7 +176,7 @@ NORMAL (U"The Formant object which has a ceiling of 5000 Hz, the object at the m
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20201026)
+MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20210813)
 INTRO (U"A command that creates a @@FormantPath@ object from each selected @@Sound@ . ")
 ENTRY (U"##Settings")
 NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Window length (s)# and ##Pre-emphasis from (Hz)# "
@@ -185,12 +185,12 @@ NORMAL (U"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Wi
 TAG (U"##Middle formant ceiling (Hz)")
 DEFINITION (U"determines the middle formant ceiling frequency in Hz. You normaly would use 5500.0 Hz for an average female voice "
 	"and 5000.0 Hz for an average male voice as you would do for the ##Formant ceiling (Hz)# setting in ##To Formant (burg)...#. "
-	"However, instead of performing only one analysis with a fixed ceiling, we perform in a number of steps "
+	"However, instead of performing only one analysis with a fixed ceiling, we perform "
 	"multiple analyses, each with a different ceiling frequency. The number of analyses with a %%lower% formant ceiling than the "
 	"%%middle formant ceiling% is equal to the number of analyses with a %%higher% formant ceiling than the %%middle formant ceiling%. ")
 TAG (U"##Ceiling step size#")
 DEFINITION (U"defines the increase or decrease in the formant ceiling between two successive analyses as exp(%ceilingStepSize) "
-	"when we step up or as exp(-%ceilingStepSize) when we step down.")
+	"when we step up, or as exp(-%ceilingStepSize) when we step down.")
 TAG (U"##Number of steps up / down")
 DEFINITION (U"determines the number steps we go up as well as the number of steps we go down with respect to the %middle formant ceiling%. "
 	"The ceiling frequency for the %i^^th^ step down is %middleFormantCeiling\\.cexp (-%i\\.c%ceilingStepSize) and for the %i^^th^ step up "
@@ -225,8 +225,8 @@ NORMAL (U"The selection viewer shows not only a formant's frequency but also its
 	"and, therefore, show short vertical lines.")
 ENTRY (U"How to operate")
 NORMAL (U"When you start to edit a new FormantPath object, the formants in the path are set equal to the formants of the default "
-	"analysis. This guarantees that there always is a path at the start. The path is indicated by the fat read line in the "
-	"upper part of the spectrogram. "
+	"analysis. This guarantees that there always is a path at the start. The ceiling of this path is indicated by the fat red "
+	"line in the upper part of the spectrogram. "
 	"If you click in one of the rectangles in the selection viewer the values of the formant frequencies (and bandwidths) "
 	"in the selected part on the left are replaced by the values present in the rectangle and the fat red line will indicate "
 	"the new ceiling. The colour of the clicked rectangle on the right will also change.")

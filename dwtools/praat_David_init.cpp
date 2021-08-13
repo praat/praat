@@ -4889,6 +4889,16 @@ DIRECT (MODIFY_Permutations_previous) {
 	MODIFY_EACH_END
 }
 
+FORM (MODIFY__Permutation_permuteRandomlyInplace, U"Permutation: Permute randomly (in-place)", nullptr) {
+	INTEGER (fromIndex, U"left Index range", U"0")
+	INTEGER (toIndex, U"right Index range", U"0")
+	OK
+DO
+	MODIFY_EACH (Permutation)
+		Permutation_permuteRandomly_inplace (me, fromIndex, toIndex);
+	MODIFY_EACH_END
+}
+
 FORM (CONVERT_TWO_TO_ONE__Pitches_to_DTW, U"Pitches: To DTW", U"Pitches: To DTW...") {
 	REAL (vuvCosts, U"Voiced-unvoiced costs", U"24.0")
 	REAL (weight, U"Time costs weight", U"10.0")
@@ -9888,6 +9898,9 @@ void praat_uvafon_David_init () {
 			MODIFY_Permutations_next);
 	praat_addAction1 (classPermutation, 0, U"Previous", nullptr, 1, 
 			MODIFY_Permutations_previous);
+	praat_addAction1 (classPermutation, 0, U"Permute randomly (in-place)...", nullptr, 1, 
+			MODIFY__Permutation_permuteRandomlyInplace);
+	
 	praat_addAction1 (classPermutation, 1, U"Permute randomly...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__Permutation_permuteRandomly);
 	praat_addAction1 (classPermutation, 1, U"Permute randomly (blocks)...", nullptr, 0, 
