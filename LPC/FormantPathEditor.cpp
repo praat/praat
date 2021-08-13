@@ -823,7 +823,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 	*/
 	FormantPath formantPath = (FormantPath) our data;
 	integer numberOfRows, numberOfColums;
-	NUMgetGridDimensions (formantPath -> formants.size, & numberOfRows, & numberOfColums);
+	FormantPath_getGridDimensions (formantPath, & numberOfRows, & numberOfColums);
 	const integer icol = 1 + (int) (xWC * numberOfColums);
 	if (icol < 1 || icol > numberOfColums)
 		return;

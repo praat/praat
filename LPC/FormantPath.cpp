@@ -66,6 +66,19 @@ conststring32 structFormantPath :: v_getUnitText (integer /*level*/, int /*unit*
 
 Thing_implement (FormantPath, Sampled, 0);
 
+void FormantPath_getGridDimensions (FormantPath me, integer *out_nrow, integer *out_ncol) {
+	integer ncol = 1;
+	integer nrow = my ceilings.size;
+	if (nrow > 3) {
+		nrow = 1 + Melder_ifloor (sqrt (nrow - 0.5));
+		ncol = 1 + Melder_ifloor ((my ceilings.size - 1.0) / nrow);
+	}
+	if (out_nrow)
+		*out_nrow = nrow;
+	if (out_ncol)
+		*out_ncol = ncol;
+}
+
 autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double dx, double x1, integer numberOfCeilings) {
 	autoFormantPath me = Thing_new (FormantPath);
 	Sampled_init (me.get (), xmin, xmax, nx, dx, x1);
@@ -536,7 +549,7 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 {
 	constexpr double fmin = 0.0;
 	if (nrow <= 0 || ncol <= 0)
-		NUMgetGridDimensions (my formants.size, & nrow, & ncol);
+		FormantPath_getGridDimensions (me, & nrow, & ncol);
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	const double fontSize_old = Graphics_inqFontSize (g), newFontSize = 8.0;
