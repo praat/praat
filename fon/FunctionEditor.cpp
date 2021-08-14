@@ -57,8 +57,8 @@ static bool group_equalDomain (double tmin, double tmax) {
 static void updateScrollBar (FunctionEditor me) {
 /* We cannot call this immediately after creation. */
 	if (my endWindow - my startWindow > my tmax - my tmin)
-		Melder_fatal (U"updateScrollBar: the window runs from ", my startWindow, U" to ", my endWindow,
-			 	U", but the whole time domain runs only from ", my tmin, U" to ", my tmax);
+		Melder_fatal (U"updateScrollBar: the window runs from ", my startWindow, U" to ", my endWindow, U" ", my v_format_units_long (),
+			 	U", but the whole domain runs only from ", my tmin, U" to ", my tmax, U" ", my v_format_units_long (), U".");
 	const double slider_size = Melder_clippedLeft (1.0, (my endWindow - my startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1.0);
 	Melder_assert (maximumScrollBarValue - slider_size >= 1.0);
 	const double value = Melder_clipped (1.0, (my startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1.0, maximumScrollBarValue - slider_size);
@@ -1441,6 +1441,14 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 	theGroupSize --;
 	my v_updateText ();
 	FunctionEditor_redraw (me);   // for setting buttons in v_draw() method
+	/*
+		We should also ungroup all other editors that show the same object.
+	*/
+	for (i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
+		const FunctionEditor other = theGroupMembers [i];
+		if (other && other -> group && other -> data == my data)
+			FunctionEditor_ungroup (other);   // BUG: this may not be precise enough, in case an editor is editing multiple objects
+	}
 }
 
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment) {

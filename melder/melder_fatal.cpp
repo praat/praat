@@ -36,7 +36,8 @@ static const conststring32 theCrashMessage { U"Praat will crash. Notify the auth
 void Melder_fatal (const MelderArg& arg1,
 	const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7,
-	const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10)
+	const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
+	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13)
 {
 	std::lock_guard <std::mutex> lock (theMelder_fatal_mutex);
 	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
@@ -49,6 +50,9 @@ void Melder_fatal (const MelderArg& arg1,
 	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
 	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
 	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
+	conststring32 s11 = arg10._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
+	conststring32 s12 = arg10._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
+	conststring32 s13 = arg10._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -61,6 +65,9 @@ void Melder_fatal (const MelderArg& arg1,
 	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
 	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
 	if (length + length10 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s10); length += length10; }
+	if (length + length11 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s11); length += length11; }
+	if (length + length12 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s12); length += length12; }
+	if (length + length13 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s13); length += length13; }
 	trace (U"FATAL: ", theFatalBuffer);
 	(*theFatalProc) (theFatalBuffer);
 	abort ();

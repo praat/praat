@@ -646,7 +646,7 @@ void praat_executeScriptFromText (conststring32 text) {
 }
 
 void praat_executeScriptFromDialog (UiForm dia) {
-	char32 *path = UiForm_getString (dia, U"$file");
+	char32 *path = UiForm_getString (dia, U"Script file");
 	structMelderFile file { };
 	Melder_pathToFile (path, & file);
 	autostring32 text = MelderFile_readText (& file);
