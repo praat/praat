@@ -60,7 +60,8 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				U"because you cannot create a Sound with 0 samples.\n"
 				U"You could consider using Copy instead."
 			);
-		if (selectionNumberOfSamples) {
+
+		if (selectionNumberOfSamples > 0) {
 			/*
 				Create without change.
 			*/

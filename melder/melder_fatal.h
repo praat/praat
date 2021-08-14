@@ -2,7 +2,7 @@
 #define _melder_fatal_h_
 /* melder_fatal.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2014-2016,2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 */
 
 void Melder_fatal (const MelderArg&,
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U""
