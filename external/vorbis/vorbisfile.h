@@ -55,7 +55,7 @@ typedef struct {
 
 static ov_callbacks OV_CALLBACKS_NOCLOSE = {
   (size_t (*)(void *, size_t, size_t, void *))  fread,
-  (int (*)(void *, ogg_int64_t, int))           fseek,
+  (int (*)(void *, ogg_int64_t, int))           fseeko,
   (int (*)(void *))                             nullptr,
   (long (*)(void *))                            ftell
 };

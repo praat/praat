@@ -466,7 +466,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 		double xmin = 0.0; // the start time in the file can be > 0!!!
 		const double xmax = numberOfSamples * samplingTime;
 		autoSound me = Sound_create (numberOfChannels, xmin, xmax, numberOfSamples, samplingTime, 0.5 * samplingTime);
-		
+
 		ov_clear (& vorbisFile);
 		rewind (f);
 		
@@ -656,7 +656,7 @@ autoSound Sound_readFromOggVorbisFile (MelderFile file) {
 			} else {
 				Melder_throw (U"Corrupt header during playback initialization");
 			}
-			/* 
+			/*
 				Clean up this logical bitstream; before exit we see if we're
 				followed by another [chained]
 			*/
