@@ -138,7 +138,7 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 			*/
 			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 			my v_reset_analysis ();
-			FunctionEditor_ungroup (me);
+			FunctionEditor_ungroup (my data);
 			FunctionEditor_marksChanged (me, false);
 			Editor_broadcastDataChanged (me);
 		} else {
@@ -208,7 +208,7 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	*/
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 	my v_reset_analysis ();
-	FunctionEditor_ungroup (me);
+	FunctionEditor_ungroup (my data);
 	FunctionEditor_marksChanged (me, false);
 	Editor_broadcastDataChanged (me);
 }

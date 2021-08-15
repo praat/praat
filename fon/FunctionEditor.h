@@ -263,10 +263,10 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable);
 		This may happen if you call an analysis routine which calls Melder_progress.
 */
 
-void FunctionEditor_ungroup (FunctionEditor me);
+void FunctionEditor_ungroup (Daata data);
 /*
 	Function:
-		force me out of the group.
+		force all editors containing `data` out of the group.
 	Usage:
 		Start cut or paste methods by calling this function,
 		as the grouped editors will not be synchronized

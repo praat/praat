@@ -1429,25 +1429,17 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 	my enableUpdates = enable;
 }
 
-void FunctionEditor_ungroup (FunctionEditor me) {
-	if (! my group)
-		return;
-	my group = false;
-	GuiCheckButton_setValue (my groupButton, false);
-	integer i = 1;
-	while (theGroupMembers [i] != me)
-		i ++;
-	theGroupMembers [i] = nullptr;
-	theGroupSize --;
-	my v_updateText ();
-	FunctionEditor_redraw (me);   // for setting buttons in v_draw() method
-	/*
-		We should also ungroup all other editors that show the same object.
-	*/
-	for (i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
-		const FunctionEditor other = theGroupMembers [i];
-		if (other && other -> group && other -> data == my data)
-			FunctionEditor_ungroup (other);   // BUG: this may not be precise enough, in case an editor is editing multiple objects
+void FunctionEditor_ungroup (Daata data) {
+	for (integer ieditor = 1; ieditor <= THE_MAXIMUM_GROUP_SIZE; ieditor ++) {
+		const FunctionEditor me = theGroupMembers [ieditor];
+		if (me && my group && my data == data) {   // BUG: this may not be precise enough, in case an editor is editing multiple objects
+			my group = false;
+			GuiCheckButton_setValue (my groupButton, false);
+			theGroupMembers [ieditor] = nullptr;
+			theGroupSize --;
+			my v_updateText ();
+			FunctionEditor_redraw (me);   // for setting buttons in v_draw() method
+		}
 	}
 }
 
