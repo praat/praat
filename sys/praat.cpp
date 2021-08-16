@@ -1359,7 +1359,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	#elif defined (macintosh)
 		if (! Melder_batch) {
 			mac_setUserMessageCallback (cb_userMessage);
-			Gui_setQuitApplicationCallback (cb_quitApplication);
+			Gui_setQuitApplicationCallback (cb_quitApplication);   // BUG: the Quit Application message (from the system) is never actually handled
 		}
 	#endif
 

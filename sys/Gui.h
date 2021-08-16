@@ -992,8 +992,13 @@ void GuiObject_destroy (GuiObject me);
 
 /********** EVENTS **********/
 
+#if defined (macintosh) || defined (_WIN32)
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file), void (*finishedOpeningDocumentsCallback) ());
+#endif
+
+#if defined (macintosh)
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
+#endif
 
 extern uinteger theGuiTopLowAccelerators [8];
 

@@ -1,5 +1,5 @@
 # Makefile of the library "melder"
-# Paul Boersma, 14 March 2020
+# Paul Boersma, 16 August 2021
 
 include ../makefile.defs
 
@@ -31,4 +31,4 @@ libmelder.a: $(OBJECTS)
 	$(AR) cq libmelder.a $(OBJECTS)
 	$(RANLIB) libmelder.a
 
-$(OBJECTS): ../kar/*.h ../sys/*.h ../dwsys/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h

@@ -698,7 +698,7 @@ static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata public
 	}
 }
 DIRECT (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEdit) {
-	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be NULL
+	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be null
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, nullptr);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
@@ -708,7 +708,7 @@ FORM (EDITOR_ONE_WITH_ONE_TextGrid_viewAndEditWithCallback, U"TextGrid: View & E
 	SENTENCE (callbackText, U"Callback text", U"r1")
 	OK
 DO
-	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be NULL
+	EDITOR_ONE_WITH_ONE (a,TextGrid, Sound)   // Sound may be null
 		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, you, true, nullptr, callbackText);
 		Editor_setPublicationCallback (editor.get(), cb_TextGridEditor_publication);
 	EDITOR_ONE_WITH_ONE_END
