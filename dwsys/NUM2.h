@@ -588,7 +588,7 @@ void NUMprocrustes (constMATVU const& x, constMATVU const& y, autoMAT *out_rotat
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling
 	factor s such that Y = sXT+1v' (1 is the nPoints vector with ones).
 	Solution: see Borg and Groenen (1997), Modern Multidimensional Scaling, pp 340-346.
-	When on input v == NULL or s == NULL, only the matrix T will be solved for:
+	When out_translation == nullptr or out_scale == nullptr, only the matrix T will be solved for:
 	the orthogonal Procrustes transform.
 */
 
@@ -1081,7 +1081,6 @@ void NUMfft_backward (NUMfft_Table table, VEC data);
 		(Result in this case should be multiplied by 1/n.)
 	Preconditions:
 		n is an integer power of 2.
-		data != NULL;
 		data [1] contains real valued first component (Direct Current)
 		data [2..n-1] even index : real part; odd index: imaginary part of DFT.
 		data [n] contains real valued last component (Nyquist frequency)
@@ -1133,7 +1132,6 @@ void NUMreverseRealFastFourierTransform (VEC data);
 		(Result in this case should be multiplied by 1/n.)
 	Preconditions:
 		n is an integer power of 2.
-		data != NULL;
 		data [1] contains real valued first component (Direct Current)
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
