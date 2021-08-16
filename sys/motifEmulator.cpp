@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2020 Paul Boersma
+ * Copyright (C) 1993-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,22 @@
 #include "GuiP.h"
 #include "machine.h"
 
-static void (*theOpenDocumentCallback) (MelderFile file);
-static void (*theFinishedOpeningDocumentsCallback) ();
+#if defined (macintosh)
+
 static int (*theQuitApplicationCallback) ();
+
+void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void)) {
+	theQuitApplicationCallback = quitApplicationCallback;
+}
+
+#endif // defined (macintosh)
 
 #if defined (_WIN32)
 
-/* The Motif emulator for Macintosh and Windows. */
+static void (*theOpenDocumentCallback) (MelderFile file);
+static void (*theFinishedOpeningDocumentsCallback) ();
+
+/* The Motif emulator for Windows. */
 
 #define PRAAT_WINDOW_CLASS_NUMBER  1
 
@@ -2709,10 +2718,6 @@ void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)
 	theOpenDocumentCallback = openDocumentCallback;
 	theFinishedOpeningDocumentsCallback = finishedOpeningDocumentsCallback;
 }
-#endif
-
-void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void)) {
-	theQuitApplicationCallback = quitApplicationCallback;
-}
+#endif // defined (_WIN32)
 
 /* End of file motifEmulator.cpp */

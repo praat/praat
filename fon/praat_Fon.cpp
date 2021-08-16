@@ -119,7 +119,7 @@ FORM (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula
 	OK
 DO
 	MODIFY_EACH_WEAK (Cochleagram)
-		Matrix_formula (me, formula, interpreter, NULL);
+		Matrix_formula (me, formula, interpreter, nullptr);
 	MODIFY_EACH_WEAK_END
 }
 
