@@ -74,7 +74,7 @@ LIST_ITEM (U"      %d3 = \\su (%k=1..%nCoefficients; (%r__%ik_ - %r__%jk_)^2), w
 LIST_ITEM (U"      %r__%ik_ the regression coefficient of the cepstral coefficients "
 	"from the frames within a time span of %dtr seconds. "
 	"c__%ij_ is %j-th cepstral coefficient in frame %i. ")
-NORMAL (U"Next we find the optimum path through the distance matrix with a "
+NORMAL (U"Next we find the optimal path through the distance matrix with a "
 	"Viterbi-algorithm.")
 MAN_END
 
@@ -176,7 +176,7 @@ NORMAL (U"The Formant object which has a ceiling of 5000 Hz, the object at the m
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
-MAN_BEGIN (U"FormantPath: Down to Table (optimum interval)...", U"djmw", 20210817)
+MAN_BEGIN (U"FormantPath: Down to Table (optimal interval)...", U"djmw", 20210817)
 INTRO (U"A command that creates a @Table with formant frequency values for the chosen interval of the selected @@FormantPath@. The values in the table are from the segment that has the lowest stress value for the fit of its formant tracks.")
 MAN_END
 

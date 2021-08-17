@@ -1359,7 +1359,7 @@ EQUATION (U"%t^^%\\ga\\--1^ e^^\\--2%\\pi\\.c%bandwidth\\.c%t^ "
 NORMAL (U"The %gammachirp function has a monotonically frequency-modulated carrier (the chirp) with "
 	"instantaneous frequency ")
 EQUATION (U"%instantaneousFrequency(%t) = %frequency + %additionFactor / (2\\.c\\pi\\.c%t)")
-NORMAL (U"and an envelope that is a gamma distribution function. It is a theoretically optimum "
+NORMAL (U"and an envelope that is a gamma distribution function. It is a theoretically optimal "
 	"auditory filter, in the sense that it leads to minimal uncertainty in the joint time and "
 	"scale representation of auditory signal analysis.")
 NORMAL (U"For faithful modelling of the inner ear, "

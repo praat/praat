@@ -37,7 +37,7 @@ autoFormantPath FormantPath_create (double xmin, double xmax, integer nx, double
 
 void FormantPath_replaceFrames (FormantPath me, integer beginFrame, integer endFrame, integer formantIndex);
 
-autoTable FormantPath_downTo_Table_optimumInterval (FormantPath me, double tmin, double tmax, 
+autoTable FormantPath_downTo_Table_optimalInterval (FormantPath me, double tmin, double tmax, 
 	constINTVEC const& parameters, double powerf, bool includeFrameNumber, bool includeTime, integer numberOfTimeDecimals,
 	bool includeIntensity, integer numberOfIntensityDecimals, bool includeNumberOfFormants, integer numberOfFrequencyDecimals,
 	bool includeBandwidths, bool includeOptimalCeiling, bool includeMinimumStress);
