@@ -752,6 +752,9 @@ struct automatrix {
 			other.cells = nullptr;   // disown source
 			other.nrow = 0;   // to keep the source in a valid state
 			other.ncol = 0;   // to keep the source in a valid state
+		} else if (! our cells) {
+			our nrow = other.nrow;   // yes; if both cells are null, we still have to copy the shape, which could be { 0, 2 } or so
+			our ncol = other.ncol;
 		}
 		return *this;
 	}
@@ -1189,6 +1192,10 @@ struct autotensor3 : public tensor3<T> {
 			other.ndim1 = 0;   // to keep the source in a valid state
 			other.ndim2 = 0;   // to keep the source in a valid state
 			other.ndim3 = 0;   // to keep the source in a valid state
+		} else if (! our cells) {
+			our ndim1 = other.ndim1;   // me and other may or may not be the same object
+			our ndim2 = other.ndim2;
+			our ndim3 = other.ndim3;
 		}
 		return *this;
 	}
