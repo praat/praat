@@ -135,8 +135,8 @@ DO
 FORM (NEW__FormantPath_downTo_Table_optimumInterval, U"FormantPath: Down to Table (optimum interval)...",
 	U"FormantPath: Down to Table (optimum interval)...")
 {
-	REAL (tmin, U"Time range (s) left", U"0.1")
-	REAL (tmax, U"Time range (s) right", U"0.2")
+	REAL (tmin, U"left Time range (s)", U"0.1")
+	REAL (tmax, U"right Time range (s)", U"0.2")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	BOOLEAN (includeFrameNumber, U"Include frame number", false)
