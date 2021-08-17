@@ -176,6 +176,16 @@ NORMAL (U"The Formant object which has a ceiling of 5000 Hz, the object at the m
 NORMAL (U"To choose your own path through the alternatives you can use Praat's @@FormantPathEditor@.")
 MAN_END
 
+MAN_BEGIN (U"FormantPath: Down to Table (optimum interval)...", U"djmw", 20210817)
+INTRO (U"A command that creates a @Table with formant frequency values for the chosen interval of the selected @@FormantPath@. The values in the table are from the segment that has the lowest stress value for the fit of its formant tracks.")
+MAN_END
+
+MAN_BEGIN (U"FormantPath: Down to Table (stresses)...", U"djmw", 20210817)
+INTRO (U"A command that creates a @Table with stress of fit values for the selected @@FormantPath@.")
+NORMAL (U"The resulting Table has one row for each of the ceilings. The number of columns will depend on the number of "
+	"formant tracks  that are modelled. ")
+MAN_END
+
 MAN_BEGIN (U"Sound: To FormantPath (burg)...", U"djmw", 20210813)
 INTRO (U"A command that creates a @@FormantPath@ object from each selected @@Sound@ . ")
 ENTRY (U"##Settings")

@@ -132,7 +132,9 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (NEW__FormantPath_downTo_Table_optimumInterval, U"FormantPath: Down to Table (optimum interval)", nullptr) {
+FORM (NEW__FormantPath_downTo_Table_optimumInterval, U"FormantPath: Down to Table (optimum interval)...",
+	U"FormantPath: Down to Table (optimum interval)...")
+{
 	REAL (tmin, U"Time range (s) left", U"0.1")
 	REAL (tmax, U"Time range (s) right", U"0.2")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
@@ -158,9 +160,9 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (NEW__FormantPath_downTo_Table_stresses, U"", nullptr) {
-	REAL (tmin, U"Time range (s) left", U"0.1")
-	REAL (tmax, U"Time range (s) right", U"0.2")
+FORM (NEW__FormantPath_downTo_Table_stresses, U"FormantPath: Down to Table (stresses)", U"FormantPath: Down to Table (stresses)...") {
+	REAL (tmin, U"left Time range (s)", U"0.1")
+	REAL (tmax, U"right Time range (s)", U"0.2")
 	NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 	POSITIVE (powerf, U"Power", U"1.25")
 	NATURAL (numberOfStressDecimals, U"Number of stress decimals", U"2")
