@@ -132,8 +132,8 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (NEW__FormantPath_downTo_Table_optimumInterval, U"FormantPath: Down to Table (optimum interval)...",
-	U"FormantPath: Down to Table (optimum interval)...")
+FORM (NEW__FormantPath_downTo_Table_optimalInterval, U"FormantPath: Down to Table (optimal interval)...",
+	U"FormantPath: Down to Table (optimal interval)...")
 {
 	REAL (tmin, U"left Time range (s)", U"0.1")
 	REAL (tmax, U"right Time range (s)", U"0.2")
@@ -147,12 +147,12 @@ FORM (NEW__FormantPath_downTo_Table_optimumInterval, U"FormantPath: Down to Tabl
 	BOOLEAN (includeNumberOfFormants, U"Include number of formants", true)
 	NATURAL (numberOfFrequencyDecimals, U"Number of frequency decimals", U"3")
 	BOOLEAN (includeBandwidths, U"Include bandwidths", true)
-	BOOLEAN (includeOptimumCeiling, U"Include optimum ceiling", true)
+	BOOLEAN (includeOptimumCeiling, U"Include optimal ceiling", true)
 	BOOLEAN (includeMinimumStress, U"Include minimum stress", false)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (FormantPath)
-		autoTable result = FormantPath_downTo_Table_optimumInterval (me, tmin, tmax, parameters, powerf, 
+		autoTable result = FormantPath_downTo_Table_optimalInterval (me, tmin, tmax, parameters, powerf, 
 			includeFrameNumber, includeTime, numberOfTimeDecimals,
 			includeIntensity, numberOfIntensityDecimals, includeNumberOfFormants, numberOfFrequencyDecimals,
 			includeBandwidths, includeOptimumCeiling, includeMinimumStress
@@ -1485,8 +1485,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormantPath, 1, U"Draw as grid...", 0, 0, 
 			GRAPHICS_EACH__FormantPath_drawAsGrid);	
 	praat_addAction1 (classFormantPath, 0, U"Tabulate - " , nullptr, 0, nullptr);
-		praat_addAction1 (classFormantPath, 0, U"Down to Table (optimum interval)...", nullptr, 1,
-			NEW__FormantPath_downTo_Table_optimumInterval);
+		praat_addAction1 (classFormantPath, 0, U"Down to Table (optimal interval)...", nullptr, 1,
+			NEW__FormantPath_downTo_Table_optimalInterval);
 		praat_addAction1 (classFormantPath, 0, U"Down to Table (stresses)...", nullptr, 1,
 			NEW__FormantPath_downTo_Table_stresses);
 	praat_addAction1 (classFormantPath, 0, U"Query -", nullptr, 0, nullptr);

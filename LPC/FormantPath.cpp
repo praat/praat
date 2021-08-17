@@ -455,7 +455,7 @@ autoTable FormantPath_downTo_Table_stresses (FormantPath me, double tmin, double
 	}
 }
 
-autoTable FormantPath_downTo_Table_optimumInterval (FormantPath me, double tmin, double tmax, 
+autoTable FormantPath_downTo_Table_optimalInterval (FormantPath me, double tmin, double tmax, 
 	constINTVEC const& parameters, double powerf, bool includeFrameNumber, bool includeTime, integer numberOfTimeDecimals,
 	bool includeIntensity, integer numberOfIntensityDecimals, bool includeNumberOfFormants, integer numberOfFrequencyDecimals,
 	bool includeBandwidths, bool includeOptimumCeiling, bool includeMinimumStress)

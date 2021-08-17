@@ -42,7 +42,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double coefficientWeight, double logEnergyWe
 				from the frames within a time span of 'dtr' seconds.
 				c [i,j] is jth cepstral coefficient in frame i.
 			d4 = regression on energy (c [0])
-	2. Find optimum path through the distance matrix (see DTW).
+	2. Find optimal path through the distance matrix (see DTW).
 
 	PRECONDITIONS:
 
