@@ -1282,8 +1282,13 @@ void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatri
                 }
                 break;
 
-                // P = 1/2
-
+                /*
+					Sakoe & Chiba (1978) define the slope constraint measure as P = n / m, 
+						where n is the number of steps in the diagonal and 
+						m the number of steps in one of the other directions.
+						
+					P = 1/2
+				*/
                 case 2: {   // P = 1/2
                     if (j >= 4 && DTW_ISREACHABLE (i - 1, j - 3) && psi [i] [j - 1] == DTW_X && psi [i] [j - 2] == DTW_XANDY &&
                         (g = delta [i-1] [j-3] + 2.0 * my z [i] [j-2] + my z [i] [j-1] + my z [i] [j]) < gmin) {
