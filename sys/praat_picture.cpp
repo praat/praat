@@ -985,8 +985,8 @@ OK
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	SET_REAL (left, x1WC)
 	SET_REAL (right, x2WC)
-	SET_REAL (top, y1WC)
-	SET_REAL (bottom, y2WC)
+	SET_REAL (bottom, y1WC)
+	SET_REAL (top, y2WC)
 DO
 	if (left == right)
 		Melder_throw (U"Left and right should not be equal.");

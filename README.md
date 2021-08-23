@@ -144,8 +144,8 @@ Then type `make` to build `Praat.exe`
 
 Extract the *praatXXXX_xcodeproj.zip* file from the [latest release](https://github.com/praat/praat/releases)
 into the directory that contains `sys`, `fon`, `dwtools` and so on.
-Then open the project `praat.xcodeproj` in Xcode 12.4 and choose Build or Run for the target `praat_mac`.
-You can compile with the 11.1 SDK, which will work as far back as macOS 10.9, which is our deployment target.
+Then open the project `praat.xcodeproj` in Xcode 12.5 and choose Build or Run for the target `praat_mac`.
+You can compile with the 11.3 SDK, which will work as far back as macOS 10.9, which is our deployment target.
 
 If you get an error message like “Code Signing Identity xxx does not match any valid, non-expired,
 code-signing certificate in your keychain”, then select the target `praat_mac`, go to Info → Build,
@@ -249,7 +249,7 @@ takes 120 seconds for the x86_64 part and 110 seconds for the ARM64 part (optimi
 
 ### 4.2. Windows development set-up
 
-Under Parallels Desktop 15 or later, install Windows 10. In Windows 10, install Cygwin,
+Under Parallels Desktop 17 or later, install Windows 10. In Windows 10, install Cygwin,
 and create a `praats` folder, as described above in 3.1.
 
 There are two options for your source tree: either it resides on the MacOS disk
@@ -301,7 +301,7 @@ If you also want to develop the 32-bit edition, you add to `.profile`:
 
 ### 4.3. Linux development set-up
 
-Under Parallels Desktop 15 or later, install Ubuntu 18.04, and create
+Under Parallels Desktop 17 or later, install Ubuntu 18.04 (or 20.04), and create
 a folder `praats` in your home folder, as described above in 3.3.
 
 In Parallels Desktop, choose `Ubuntu 18.04` -> `Configure`,
@@ -381,7 +381,7 @@ or you transfer it to a Chromebook for the real test.
 
 ### 4.4. Chromebook development set-up
 
-Parallels Desktop 15 has no emulator for Chrome, so the choice is between
+Parallels Desktop 17 has no emulator for Chrome, so the choice is between
 building Praat on a Chromebook directly or building Praat on Ubuntu 18.04.
 On a 2019 HP Chromebook with Intel processor, building Praat takes
 a forbidding 27 minutes.
