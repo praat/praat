@@ -1,50 +1,134 @@
 Praats/external/flac/READ_ME.TXT
-Paul Boersma, 18 December 2014
-This file describes the adaptations to the FLAC 1.2.1 sources
+Paul Boersma, 20 August 2021
+
+This file describes the adaptations to the FLAC 1.3.2 sources
 that are needed to make them compatible with Praat.
 
-The .c and .h files are put into the single FLAC directory.
+The FLAC sources are distributed over multiple folders, which are in different deep
+branches of the FLAC root folder, as listed below. We flatten this hierarchy as shown.
 
+flac-1.3.3
+	config.cmake.h.in -> flac_config.h
+	include
+		FLAC
+			all.h -> flac_FLAC_all.h
+			assert.h -> flac_FLAC_assert.h
+			callback.h -> flac_FLAC_callback.h
+			export.h -> flac_FLAC_export.h
+			format.h -> flac_FLAC_format.h
+			metadata.h -> flac_FLAC_metadata.h
+			ordinals.h -> flac_FLAC_ordinals.h
+			stream_decoder.h -> flac_FLAC_stream_decoder.h
+			stream_encoder.h -> flac_FLAC_stream_encoder.h
+		share
+			alloc.h -> flac_share_alloc.h
+			compat.h -> flac_share_compat.h
+			endswap.h -> flac_share_endswap.h
+			private.h -> flac_share_private.h
+	src
+		libFLAC
+			bitmath.c -> flac_bitmath.c
+			bitreader.c -> flac_bitreader.c
+			bitwriter.c -> flac_bitwriter.c
+			cpu.c -> flac_cpu.c
+			crc.c -> flac_crc.c
+			fixed.c -> flac_fixed.c
+			float.c -> flac_float.c
+			format.c -> flac_format.c
+			include
+				private
+					all.h -> flac_private_all.h
+					bitmath.h -> flac_private_bitmath.h
+					bitreader.h -> flac_private_bitreader.h
+					bitwriter.h -> flac_private_bitwriter.h
+					cpu.h -> flac_private_cpu.h
+					crc.h -> flac_private_crc.h
+					fixed.h -> flac_private_fixed.h
+					float.h -> flac_private_float.h
+					format.h -> flac_private_format.h
+					lpc.h -> flac_private_lpc.h
+					macros.h -> flac_private_macros.h
+					md5.h -> flac_private_md5.h
+					memory.h -> flac_private_memory.h
+					metadata.h -> flac_private_metadata.h
+					ogg_decoder_aspect.h -> flac_private_ogg_decoder_aspect.h
+					ogg_encoder_aspect.h -> flac_private_ogg_encoder_aspect.h
+					ogg_helper.h -> flac_private_ogg_helper.h
+					ogg_mapping.h -> flac_private_ogg_mapping.h
+					stream_encoder_framing.h -> flac_private_stream_encoder_framing.h
+					stream_encoder.h -> UNUSED
+					window.h -> flac_private_window.h
+				protected
+					all.h -> flac_protected_all.h
+					stream_decoder.h -> flac_protected_stream_decoder.h
+					stream_encoder.h -> flac_protected_stream_encoder.h
+			lpc.c -> flac_lpc.c
+			md5.c -> flac_md5.c
+			memory.c -> flac_memory.c
+			metadata_iterators.c -> flac_metadata_iterators.c
+			metadata_object.c -> flac_metadata_object.c
+			ogg_decoder_aspect.c -> flac_ogg_decoder_aspect.c
+			ogg_encoder_aspect.c -> flac_ogg_encoder_aspect.c
+			ogg_helper.c -> flac_ogg_helper.c
+			ogg_mapping.c -> flac_ogg_mapping.c
+			stream_decoder.c -> flac_stream_decoder.c
+			stream_encoder.c -> flac_stream_encoder.c
+			window.c -> flac_window.c
+
+All these files are put into the single external/flac source folder.
 The #include statements are flattened, e.g.
 #include private/float.h becomes #include flac_private_float.h.
 
-The FLaC__INLINE statement is turned into an inline statement
-in flac_share_alloc.h, and removed elsewhere (i.e. wherever there is a
-compiler message).
+Any Praat-specific declarations should go in flac_config.h,
+so we have to #include flac_config.h in most *.c files.
+Including the config file is done in FLAC inside #if HAVE_CONFIG_H,
+just as in many other libraries. This is appropriate for libraries that are compiled
+separately, but not for libraries that are included in a larger project as source code.
+So we remove all instances of #if HAVE_CONFIG_H. Specifically, we replace
 
-For MinGW we need to change in flac_share_alloc.h:
-
-#if !defined _MSC_VER && !defined __EMX__
-#include <stdint.h> /* for SIZE_MAX in case limits.h didn't get it */
+#if HAVE_CONFIG_H
+#  include <config.h>
 #endif
 
-The sources contain a confusion of FLAC__int32 and int,
-especially in calls to local_bitreader_read_rice_signed_block
-or FLAC__bitreader_read_rice_signed_block;
-Some changes from int to FLAC__int32 may be necessary.
-We also have to insert
-Melder_assert (sizeof (int) == 4)
-in read_residual_partitioned_rice_.
+with
 
-To ensure compatibility with international file names on Windows,
-the following is added to flac_FLAC_formant.h:
-#ifdef _WIN32
-	#include "melder.h"
-	#define fopen(filename,mode)  _wfopen (Melder_peekWcsToUtf16 (Melder_peekUtf8ToWcs (filename)), L"" mode)
-#endif
+//ppgb #if HAVE_CONFIG_H
+#include "flac_config.h"
+//ppgb #endif
 
-There were two mistakes in FLAC__MD%Final () in flac_md5.c:
-	memset(ctx, 0, sizeof(ctx));	/* In case it's sensitive */
-	if(0 != ctx->internal_buf) {
-		free(ctx->internal_buf);
-		ctx->internal_buf = 0;
-		ctx->capacity = 0;
-	}
-should be
-	if(0 != ctx->internal_buf) {   // test before clearing!
-		free(ctx->internal_buf);
-		ctx->internal_buf = 0;
-		ctx->capacity = 0;
-	}
-	memset(ctx, 0, sizeof(*ctx));	// clear the whole structure, not just the first four or eight bytes!
+in all *.c files.
 
+We have #ifdef NDEBUG in flac_FLAC_assert.h. That is fine, because Praat wants to keep
+assertions in its code.
+
+flac_FLAC_stream_decoder.h:
+
+typedef struct {
+	struct FLAC__StreamDecoderProtected *protected_; /* avoid the C++ keyword 'protected' */
+	struct FLAC__StreamDecoderPrivate *private_; /* avoid the C++ keyword 'private' */
+} FLAC__StreamDecoder;
+
+into
+
+typedef struct FLAC__StreamDecoder {   //ppgb 20071120
+	struct FLAC__StreamDecoderProtected *protected_; /* avoid the C++ keyword 'protected' */
+	struct FLAC__StreamDecoderPrivate *private_; /* avoid the C++ keyword 'private' */
+} FLAC__StreamDecoder;
+
+flac_FLAC_stream_encoder.h:
+
+typedef struct {
+	struct FLAC__StreamEncoderProtected *protected_; /* avoid the C++ keyword 'protected' */
+	struct FLAC__StreamEncoderPrivate *private_; /* avoid the C++ keyword 'private' */
+} FLAC__StreamEncoder;
+
+into
+
+typedef struct FLAC__StreamEncoder {   //ppgb 20071120
+	struct FLAC__StreamEncoderProtected *protected_; /* avoid the C++ keyword 'protected' */
+	struct FLAC__StreamEncoderPrivate *private_; /* avoid the C++ keyword 'private' */
+} FLAC__StreamEncoder;
+
+Before #including any FLAC header files, do
+
+#define FLAC__NO_DLL

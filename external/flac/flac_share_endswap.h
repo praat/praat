@@ -1,6 +1,5 @@
 /* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2012-2016  Xiph.org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,44 +29,56 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ppgb #ifdef HAVE_CONFIG_H
-#include "flac_config.h"
-//ppgb #endif
+/* It is assumed that this header will be included after "config.h". */
 
-#include "flac_private_bitmath.h"
+#if HAVE_BSWAP32			/* GCC and Clang */
 
-/* An example of what FLAC__bitmath_silog2() computes:
- *
- * silog2(-10) = 5
- * silog2(- 9) = 5
- * silog2(- 8) = 4
- * silog2(- 7) = 4
- * silog2(- 6) = 4
- * silog2(- 5) = 4
- * silog2(- 4) = 3
- * silog2(- 3) = 3
- * silog2(- 2) = 2
- * silog2(- 1) = 2
- * silog2(  0) = 0
- * silog2(  1) = 2
- * silog2(  2) = 3
- * silog2(  3) = 3
- * silog2(  4) = 4
- * silog2(  5) = 4
- * silog2(  6) = 4
- * silog2(  7) = 4
- * silog2(  8) = 5
- * silog2(  9) = 5
- * silog2( 10) = 5
- */
-uint32_t FLAC__bitmath_silog2(FLAC__int64 v)
+/* GCC prior to 4.8 didn't provide bswap16 on x86_64 */
+#if ! HAVE_BSWAP16
+static inline unsigned short __builtin_bswap16(unsigned short a)
 {
-	if(v == 0)
-		return 0;
-
-	if(v == -1)
-		return 2;
-
-	v = (v < 0) ? (-(v+1)) : v;
-	return FLAC__bitmath_ilog2_wide(v)+2;
+	return (a<<8)|(a>>8);
 }
+#endif
+
+#define	ENDSWAP_16(x)		(__builtin_bswap16 (x))
+#define	ENDSWAP_32(x)		(__builtin_bswap32 (x))
+#define	ENDSWAP_64(x)		(__builtin_bswap64 (x))
+
+#elif defined _MSC_VER		/* Windows */
+
+#include <stdlib.h>
+
+#define	ENDSWAP_16(x)		(_byteswap_ushort (x))
+#define	ENDSWAP_32(x)		(_byteswap_ulong (x))
+#define	ENDSWAP_64(x)		(_byteswap_uint64 (x))
+
+#elif defined HAVE_BYTESWAP_H		/* Linux */
+
+#include <byteswap.h>
+
+#define	ENDSWAP_16(x)		(bswap_16 (x))
+#define	ENDSWAP_32(x)		(bswap_32 (x))
+#define	ENDSWAP_64(x)		(bswap_64 (x))
+
+#else
+
+#define	ENDSWAP_16(x)		((((x) >> 8) & 0xFF) | (((x) & 0xFF) << 8))
+#define	ENDSWAP_32(x)		((((x) >> 24) & 0xFF) | (((x) >> 8) & 0xFF00) | (((x) & 0xFF00) << 8) | (((x) & 0xFF) << 24))
+#define	ENDSWAP_64(x)		((ENDSWAP_32(((x) >> 32) & 0xFFFFFFFF)) | (ENDSWAP_32((x) & 0xFFFFFFFF) << 32))
+
+#endif
+
+
+/* Host to little-endian byte swapping (for MD5 calculation) */
+#if CPU_IS_BIG_ENDIAN
+
+#define H2LE_16(x)		ENDSWAP_16 (x)
+#define H2LE_32(x)		ENDSWAP_32 (x)
+
+#else
+
+#define H2LE_16(x)		(x)
+#define H2LE_32(x)		(x)
+
+#endif

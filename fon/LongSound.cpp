@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2008,2010-2019 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2019,2021 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,9 @@
 
 #include "LongSound.h"
 #include "Preferences.h"
-#include "flac_FLAC_stream_decoder.h"
-#include "mp3.h"
+#define FLAC__NO_DLL
+#include "../external/flac/flac_FLAC_stream_decoder.h"
+#include "../external/mp3/mp3.h"
 
 Thing_implement (LongSound, Sampled, 0);
 Thing_implement (SoundAndLongSoundList, Ordered, 0);

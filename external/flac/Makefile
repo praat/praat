@@ -1,17 +1,10 @@
 # Makefile of the library "external/flac"
 # Erez Volk, March 2007
-# pb 20100108: include sys/melder.h
-# Paul Boersma, 24 August 2013
+# Paul Boersma, 23 August 2021
 
 include ../../makefile.defs
 
-CPPFLAGS = -DFLAC__NOASM -I ../../melder
-
-# EREZ ?
-# On non-Intel, also define -DFLAC__CPU_UNKNOWN
-# On Intel, define -DFLAC__CPU_IA32
-# On PowerPC, define -DFLAC__CPU_PPC
-# How/when are these relevant?
+CPPFLAGS = -I ../../melder
 
 OBJECTS = \
 	flac_bitmath.o \
@@ -30,7 +23,8 @@ OBJECTS = \
 	flac_stream_decoder.o \
 	flac_stream_encoder.o \
 	flac_stream_encoder_framing.o \
-	flac_window.o
+	flac_window.o \
+	flac_windows_unicode_filenames.o
 
 .PHONY: all clean
 

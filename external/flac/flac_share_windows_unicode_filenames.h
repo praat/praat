@@ -1,6 +1,5 @@
 /* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2013-2016  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,44 +29,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ppgb #ifdef HAVE_CONFIG_H
-#include "flac_config.h"
-//ppgb #endif
+#ifdef _WIN32
 
-#include "flac_private_bitmath.h"
+#ifndef flac__windows_unicode_filenames_h
+#define flac__windows_unicode_filenames_h
 
-/* An example of what FLAC__bitmath_silog2() computes:
- *
- * silog2(-10) = 5
- * silog2(- 9) = 5
- * silog2(- 8) = 4
- * silog2(- 7) = 4
- * silog2(- 6) = 4
- * silog2(- 5) = 4
- * silog2(- 4) = 3
- * silog2(- 3) = 3
- * silog2(- 2) = 2
- * silog2(- 1) = 2
- * silog2(  0) = 0
- * silog2(  1) = 2
- * silog2(  2) = 3
- * silog2(  3) = 3
- * silog2(  4) = 4
- * silog2(  5) = 4
- * silog2(  6) = 4
- * silog2(  7) = 4
- * silog2(  8) = 5
- * silog2(  9) = 5
- * silog2( 10) = 5
- */
-uint32_t FLAC__bitmath_silog2(FLAC__int64 v)
-{
-	if(v == 0)
-		return 0;
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/utime.h>
+#include "flac_FLAC_ordinals.h"
 
-	if(v == -1)
-		return 2;
+/***** FIXME: KLUDGE: export these syms for flac.exe, metaflac.exe, etc. *****/
+#include "flac_FLAC_export.h"
 
-	v = (v < 0) ? (-(v+1)) : v;
-	return FLAC__bitmath_ilog2_wide(v)+2;
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+FLAC_API void flac_internal_set_utf8_filenames(FLAC__bool flag);
+FLAC_API FLAC__bool flac_internal_get_utf8_filenames(void);
+#define flac_set_utf8_filenames flac_internal_set_utf8_filenames
+#define flac_get_utf8_filenames flac_internal_get_utf8_filenames
+
+FLAC_API FILE* flac_internal_fopen_utf8(const char *filename, const char *mode);
+FLAC_API int flac_internal_stat64_utf8(const char *path, struct __stat64 *buffer);
+FLAC_API int flac_internal_chmod_utf8(const char *filename, int pmode);
+FLAC_API int flac_internal_utime_utf8(const char *filename, struct utimbuf *times);
+FLAC_API int flac_internal_unlink_utf8(const char *filename);
+FLAC_API int flac_internal_rename_utf8(const char *oldname, const char *newname);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif
+#endif
