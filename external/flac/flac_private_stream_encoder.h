@@ -1,5 +1,5 @@
 /* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2001-2009  Josh Coalson
+ * Copyright (C) 2000-2009  Josh Coalson
  * Copyright (C) 2011-2016  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,44 +30,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ppgb #ifdef HAVE_CONFIG_H
-#include "flac_config.h"
-//ppgb #endif
+#ifndef FLAC__PRIVATE__STREAM_ENCODER_H
+#define FLAC__PRIVATE__STREAM_ENCODER_H
 
-#include "flac_private_bitmath.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-/* An example of what FLAC__bitmath_silog2() computes:
- *
- * silog2(-10) = 5
- * silog2(- 9) = 5
- * silog2(- 8) = 4
- * silog2(- 7) = 4
- * silog2(- 6) = 4
- * silog2(- 5) = 4
- * silog2(- 4) = 3
- * silog2(- 3) = 3
- * silog2(- 2) = 2
- * silog2(- 1) = 2
- * silog2(  0) = 0
- * silog2(  1) = 2
- * silog2(  2) = 3
- * silog2(  3) = 3
- * silog2(  4) = 4
- * silog2(  5) = 4
- * silog2(  6) = 4
- * silog2(  7) = 4
- * silog2(  8) = 5
- * silog2(  9) = 5
- * silog2( 10) = 5
+/*
+ * This is used to avoid overflow with unusual signals in 32-bit
+ * accumulator in the *precompute_partition_info_sums_* functions.
  */
-uint32_t FLAC__bitmath_silog2(FLAC__int64 v)
-{
-	if(v == 0)
-		return 0;
+#define FLAC__MAX_EXTRA_RESIDUAL_BPS 4
 
-	if(v == -1)
-		return 2;
+#if (defined FLAC__CPU_IA32 || defined FLAC__CPU_X86_64) && defined FLAC__HAS_X86INTRIN
+#include "private/cpu.h"
+#include "FLAC/format.h"
 
-	v = (v < 0) ? (-(v+1)) : v;
-	return FLAC__bitmath_ilog2_wide(v)+2;
-}
+#ifdef FLAC__SSE2_SUPPORTED
+extern void FLAC__precompute_partition_info_sums_intrin_sse2(const FLAC__int32 residual[], FLAC__uint64 abs_residual_partition_sums[],
+			uint32_t residual_samples, uint32_t predictor_order, uint32_t min_partition_order, uint32_t max_partition_order, uint32_t bps);
+#endif
+
+#ifdef FLAC__SSSE3_SUPPORTED
+extern void FLAC__precompute_partition_info_sums_intrin_ssse3(const FLAC__int32 residual[], FLAC__uint64 abs_residual_partition_sums[],
+			uint32_t residual_samples, uint32_t predictor_order, uint32_t min_partition_order, uint32_t max_partition_order, uint32_t bps);
+#endif
+
+#ifdef FLAC__AVX2_SUPPORTED
+extern void FLAC__precompute_partition_info_sums_intrin_avx2(const FLAC__int32 residual[], FLAC__uint64 abs_residual_partition_sums[],
+			uint32_t residual_samples, uint32_t predictor_order, uint32_t min_partition_order, uint32_t max_partition_order, uint32_t bps);
+#endif
+
+#endif
+
+#endif

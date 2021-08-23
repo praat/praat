@@ -1,6 +1,5 @@
 /* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2013-2016  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,44 +29,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ppgb #ifdef HAVE_CONFIG_H
-#include "flac_config.h"
-//ppgb #endif
+#ifdef _WIN32
 
-#include "flac_private_bitmath.h"
+#ifndef flac__win_utf8_io_h
+#define flac__win_utf8_io_h
 
-/* An example of what FLAC__bitmath_silog2() computes:
- *
- * silog2(-10) = 5
- * silog2(- 9) = 5
- * silog2(- 8) = 4
- * silog2(- 7) = 4
- * silog2(- 6) = 4
- * silog2(- 5) = 4
- * silog2(- 4) = 3
- * silog2(- 3) = 3
- * silog2(- 2) = 2
- * silog2(- 1) = 2
- * silog2(  0) = 0
- * silog2(  1) = 2
- * silog2(  2) = 3
- * silog2(  3) = 3
- * silog2(  4) = 4
- * silog2(  5) = 4
- * silog2(  6) = 4
- * silog2(  7) = 4
- * silog2(  8) = 5
- * silog2(  9) = 5
- * silog2( 10) = 5
- */
-uint32_t FLAC__bitmath_silog2(FLAC__int64 v)
-{
-	if(v == 0)
-		return 0;
+#include <stdio.h>
+#include <stdarg.h>
 
-	if(v == -1)
-		return 2;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-	v = (v < 0) ? (-(v+1)) : v;
-	return FLAC__bitmath_ilog2_wide(v)+2;
-}
+size_t strlen_utf8(const char *str);
+int win_get_console_width(void);
+
+int get_utf8_argv(int *argc, char ***argv);
+
+int printf_utf8(const char *format, ...);
+int fprintf_utf8(FILE *stream, const char *format, ...);
+int vfprintf_utf8(FILE *stream, const char *format, va_list argptr);
+
+#include <windows.h>
+HANDLE WINAPI CreateFile_utf8(const char *lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif
+#endif

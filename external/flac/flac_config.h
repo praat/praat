@@ -1,6 +1,5 @@
-/* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+/* flac_config.h
+ * copyright Paul Boersma 2021
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,44 +29,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ppgb #ifdef HAVE_CONFIG_H
-#include "flac_config.h"
-//ppgb #endif
+/*
+	The configuration settings needed for including the FLAC sources into Praat
+*/
 
-#include "flac_private_bitmath.h"
+#define HAVE_LROUND
+#define HAVE_FSEEKO
 
-/* An example of what FLAC__bitmath_silog2() computes:
- *
- * silog2(-10) = 5
- * silog2(- 9) = 5
- * silog2(- 8) = 4
- * silog2(- 7) = 4
- * silog2(- 6) = 4
- * silog2(- 5) = 4
- * silog2(- 4) = 3
- * silog2(- 3) = 3
- * silog2(- 2) = 2
- * silog2(- 1) = 2
- * silog2(  0) = 0
- * silog2(  1) = 2
- * silog2(  2) = 3
- * silog2(  3) = 3
- * silog2(  4) = 4
- * silog2(  5) = 4
- * silog2(  6) = 4
- * silog2(  7) = 4
- * silog2(  8) = 5
- * silog2(  9) = 5
- * silog2( 10) = 5
- */
-uint32_t FLAC__bitmath_silog2(FLAC__int64 v)
-{
-	if(v == 0)
-		return 0;
+#define HAVE_STDINT_H  1
+#define HAVE_INTTYPES_H  1
 
-	if(v == -1)
-		return 2;
+#define FLAC__HAS_OGG  0
 
-	v = (v < 0) ? (-(v+1)) : v;
-	return FLAC__bitmath_ilog2_wide(v)+2;
-}
+#define FLAC__NO_DLL
+
+#define PACKAGE_VERSION  "1.3.2"
+
+/* End of file flac_config.h */

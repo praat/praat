@@ -1,6 +1,5 @@
 /* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2012-2016  Xiph.org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,44 +29,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ppgb #ifdef HAVE_CONFIG_H
-#include "flac_config.h"
-//ppgb #endif
+#ifndef FLAC__PRIVATE__MACROS_H
+#define FLAC__PRIVATE__MACROS_H
 
-#include "flac_private_bitmath.h"
+#if defined(__GNUC__) && (__GNUC__ > 4 || ( __GNUC__ == 4 && __GNUC_MINOR__ >= 3))
 
-/* An example of what FLAC__bitmath_silog2() computes:
- *
- * silog2(-10) = 5
- * silog2(- 9) = 5
- * silog2(- 8) = 4
- * silog2(- 7) = 4
- * silog2(- 6) = 4
- * silog2(- 5) = 4
- * silog2(- 4) = 3
- * silog2(- 3) = 3
- * silog2(- 2) = 2
- * silog2(- 1) = 2
- * silog2(  0) = 0
- * silog2(  1) = 2
- * silog2(  2) = 3
- * silog2(  3) = 3
- * silog2(  4) = 4
- * silog2(  5) = 4
- * silog2(  6) = 4
- * silog2(  7) = 4
- * silog2(  8) = 5
- * silog2(  9) = 5
- * silog2( 10) = 5
- */
-uint32_t FLAC__bitmath_silog2(FLAC__int64 v)
-{
-	if(v == 0)
-		return 0;
+#define flac_max(a,b) \
+	({ __typeof__ (a) _a = (a); \
+	__typeof__ (b) _b = (b); \
+	_a > _b ? _a : _b; })
 
-	if(v == -1)
-		return 2;
+#define MIN_PASTE(A,B) A##B
+#define MIN_IMPL(A,B,L) ({ \
+	__typeof__(A) MIN_PASTE(__a,L) = (A); \
+	__typeof__(B) MIN_PASTE(__b,L) = (B); \
+	MIN_PASTE(__a,L) < MIN_PASTE(__b,L) ? MIN_PASTE(__a,L) : MIN_PASTE(__b,L); \
+	})
 
-	v = (v < 0) ? (-(v+1)) : v;
-	return FLAC__bitmath_ilog2_wide(v)+2;
-}
+#define flac_min(A,B) MIN_IMPL(A,B,__COUNTER__)
+
+/* Whatever other unix that has sys/param.h */
+#elif defined(HAVE_SYS_PARAM_H)
+#include <sys/param.h>
+#if defined(MIN) && defined(MAX)
+#define flac_max(a,b) MAX(a,b)
+#define flac_min(a,b) MIN(a,b)
+#endif
+
+/* Windows VS has them in stdlib.h.. XXX:Untested */
+#elif defined(_MSC_VER)
+#include <stdlib.h>
+#define flac_max(a,b) __max(a,b)
+#define flac_min(a,b) __min(a,b)
+#endif
+
+#ifndef flac_min
+#define flac_min(x,y)	((x) <= (y) ? (x) : (y))
+#endif
+
+#ifndef flac_max
+#define flac_max(x,y)	((x) >= (y) ? (x) : (y))
+#endif
+
+#endif
