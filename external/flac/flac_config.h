@@ -43,6 +43,6 @@
 
 #define FLAC__NO_DLL
 
-#define PACKAGE_VERSION  "1.3.2"
+#define PACKAGE_VERSION  "1.3.3"
 
 /* End of file flac_config.h */

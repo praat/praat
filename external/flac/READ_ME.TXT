@@ -1,7 +1,7 @@
 Praats/external/flac/READ_ME.TXT
 Paul Boersma, 20 August 2021
 
-This file describes the adaptations to the FLAC 1.3.2 sources
+This file describes the adaptations to the FLAC 1.3.3 sources
 that are needed to make them compatible with Praat.
 
 The FLAC sources are distributed over multiple folders, which are in different deep
@@ -24,7 +24,10 @@ flac-1.3.3
 			alloc.h -> flac_share_alloc.h
 			compat.h -> flac_share_compat.h
 			endswap.h -> flac_share_endswap.h
+			macros.h -> flac_share_macros.h
 			private.h -> flac_share_private.h
+			safe_str.h -> flac_share_safe_str.h
+			win_utf8_io.h -> flac_share_win_utf8_io.h
 	src
 		libFLAC
 			bitmath.c -> flac_bitmath.c
@@ -73,7 +76,9 @@ flac-1.3.3
 			ogg_mapping.c -> flac_ogg_mapping.c
 			stream_decoder.c -> flac_stream_decoder.c
 			stream_encoder.c -> flac_stream_encoder.c
+			stream_encoder_framing.c -> flac_stream_encoder_framing.c
 			window.c -> flac_window.c
+			windows_unicode_filenames.c -> flac_windows_unicode_filenames.c
 
 All these files are put into the single external/flac source folder.
 The #include statements are flattened, e.g.
