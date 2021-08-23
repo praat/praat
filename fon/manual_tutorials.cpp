@@ -2118,11 +2118,12 @@ ENTRY (U"Known bugs in the Windows version")
 	LIST_ITEM (U"• Cannot stand infinitesimal zooming in SpectrogramEditor.")
 */
 
-MAN_BEGIN (U"FLAC BSD 3-clause license", U"ppgb", 20201227)
+MAN_BEGIN (U"FLAC BSD 3-clause license", U"ppgb", 20210823)
 NORMAL (U"The Praat source code contains a copy of the FLAC software (see @Acknowledgments). "
 	"Here is the FLAC license text:")
 CODE (U"libFLAC - Free Lossless Audio Codec library")
-CODE (U"Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007  Josh Coalson")
+CODE (U"Copyright (C) 2000-2009  Josh Coalson")
+CODE (U"Copyright (C) 2011-2018  Xiph.Org Foundation")
 CODE (U"")
 CODE (U"Redistribution and use in source and binary forms, with or without "
 	"modification, are permitted provided that the following conditions "
@@ -2267,7 +2268,7 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20210105)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20211023)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2295,7 +2296,7 @@ LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn
 	"(CC-BY-like license).")
 LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington and Reece Dunn (GPL 3 or later).")
 LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
-LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (@@FLAC BSD 3-clause license@).")
+LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson and Xiph.Org, version 1.3.3 (@@FLAC BSD 3-clause license@).")
 LIST_ITEM (U"Ogg Vorbis: audio compression by Christopher Montgomery (@@Ogg Vorbis BSD 3-clause license@).")
 LIST_ITEM (U"Opus: audio compression by Jean-Marc Valin, Gregory Maxwell, Christopher Montgomery, Timothy Terriberry, "
 	"Koen Vos, Andrew Allen and others (@@Opus BSD 3-clause license@).")
