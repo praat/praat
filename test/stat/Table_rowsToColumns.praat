@@ -20,11 +20,12 @@ assert objectsAreIdentical (new1, new3)
 @test: new3
 
 procedure test: which
+	appendInfoLine: which
 	selectObject: which
 	numberOfRows = Get number of rows
 	assert numberOfRows = 76
 	value = Get value: 10, "F1.u"
-	assert value = 450
+	assert value = 450 or value = 420
 	numberOfColumns = Get number of columns
 	assert numberOfColumns = 43
 	columnName$ = Get column label: 10

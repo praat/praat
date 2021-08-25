@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210722)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210825)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.52# (25 August 2021)")
+LIST_ITEM (U"• FormantPath window: more formant listings and stress listings.")
+LIST_ITEM (U"• Sound window: on Cut or Paste, all windows that contain that Sound now get ungrouped.")
+LIST_ITEM (U"• Corrected a crash when reading Vorbis files on some 32-bit platforms.")
 NORMAL (U"##6.1.51# (22 July 2021)")
 LIST_ITEM (U"• ##Spectrum: Tabulate (verbose)# with:  power spectral density, bin width within domain, bin energy, and much more.")
 LIST_ITEM (U"• Sound window: ##Get amplitude(s)#.")
