@@ -15,7 +15,7 @@ editor: pitch
 	assert index (info$, "Time domain:" + newline$)
 	assert index (info$, "   Start time: 0 seconds" + newline$)
 	assert index (info$, "   End time: 1 seconds" + newline$)
-	assert index (info$, "   Number of frames: 97 (97 voiced)" + newline$)
+	assert index (info$, "   Number of frames: 97 (97 voiced)" + newline$) or index (info$, "   Number of frames: 96 (96 voiced)" + newline$)
 	assert index (info$, "Ceiling at: 600 Hz")
 	assert index (info$, "Estimated quantiles:" + newline$)
 	assert index (info$, "Minimum 3")

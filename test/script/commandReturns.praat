@@ -15,8 +15,8 @@ assert a# = { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60 }
 Remove
 
 Create Sound from formula: "silence", 1, 0.0, 0.1, 44100, ~ 0.0
-asserterror The command "Play" does not return anything; not assigned to the numeric variable "a".
-a = Play
+asserterror The command "Draw:" does not return anything; not assigned to the numeric variable "a".
+a = Draw: 0.0, 0.0, 0.0, 0.0, "yes", "curve"
 
 selectObject: "Sound silence"
 a = Get value at time: 1, 0.05, "nearest"
@@ -43,7 +43,7 @@ removeObject: "Sound silence"
 
 #
 # The following two tests are repeated from our first two tests,
-# to check that the return type is reset to void by "Draw inner box" and "Play".
+# to check that the return type is reset to void by "Draw inner box" and "Draw...".
 #
 sound = Create Sound from formula: "silence2", 1, 0.0, 0.1, 44100, ~ 0.0   ; this sets the return type to OBJECT_
 asserterror The command "Draw inner box" does not return anything; not assigned to the numeric variable "a".
@@ -51,8 +51,8 @@ a = Draw inner box
 Remove
 ;
 sound = Create Sound from formula: "silence2", 1, 0.0, 0.1, 44100, ~ 0.0   ; this sets the return type to OBJECT_
-asserterror The command "Play" does not return anything; not assigned to the numeric variable "a".
-a = Play
+asserterror The command "Draw:" does not return anything; not assigned to the numeric variable "a".
+a = Draw: 0.0, 0.0, 0.0, 0.0, "yes", "curve"
 Remove
 
 #

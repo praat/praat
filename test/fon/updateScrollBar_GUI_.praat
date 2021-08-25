@@ -1,5 +1,5 @@
-# updateScrollBar_GUI.praat
-# Paul Boersma 2021-08-14
+# updateScrollBar_GUI_.praat
+# Paul Boersma 2021-08-25
 
 #
 # Scenario:
@@ -29,3 +29,5 @@ endeditor
 #
 selectObject: manip
 View & Edit
+
+removeObject: sound, manip
