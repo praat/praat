@@ -2586,20 +2586,39 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		Melder_require (noise -> ny == 1 && noise -> ny == 1,
 			U"The number of channels in the noise and the sound should equal 1.");
 
-		const double samplingFrequency = 1.0 / my dx;
+		const double samplingFrequency = 1.0 / my dx, nyquistFrequency = 0.5 / my dx;
 		autoSound denoised = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		autoSound const analysisWindow = Sound_createSimple (1, windowLength, samplingFrequency);
 		const integer windowSamples = analysisWindow -> nx;
+		const integer wantedNumberOfFrequencyBins = windowSamples / 2 + 1;
 		autoSound const noise_copy = Data_copy (noise);
 		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape::HANNING);
-		const double bandwidth = samplingFrequency / windowSamples;
+		/*
+			The number of bands in the noise Ltas and the number of frequencies in the 
+			sound spectra preferably should to be equal but can be one off due to rounding.
+			numberOfBands = Melder_iceiling (nyquistFrequency / bandwidth)
+			wantedNumberOfFrequencyBins = windowSamples / 2 + 1;
+			We can calculate the bandwidth to make numberOfBands == wantedNumberOfFrequencyBins as
+			bandwidth = nyquistFrequency / wantedNumberOfFrequencyBins
+		*/
+		double bandwidth = (0.5 / my dx) / wantedNumberOfFrequencyBins;
+		integer numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
+		while (numberOfFrequencyBins > wantedNumberOfFrequencyBins) {
+			bandwidth *= 1.001;
+			numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
+		}
+		while (numberOfFrequencyBins < wantedNumberOfFrequencyBins) {
+			bandwidth *= 0.999;
+			numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
+		}
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
+		Melder_require (noiseLtas -> nx == wantedNumberOfFrequencyBins,
+			U"F:",nyquistFrequency, U" bins:", noiseLtas -> nx, U" nF:", wantedNumberOfFrequencyBins);
 		autoVEC const noiseAmplitudes = raw_VEC (noiseLtas -> nx);
 		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++) {
 			const double powerDensity = 4e-10 * pow (10.0, noiseLtas -> z [1] [iband] / 10.0);
 			noiseAmplitudes [iband] = sqrt (0.5 * powerDensity);
 		}
-		
 		autoMelderProgress progress (U"Remove noise");
 		
 		const double noiseAmplitudeSubtractionScaleFactor = 1.0 - pow (10.0, noiseReduction_dB / 20.0);
