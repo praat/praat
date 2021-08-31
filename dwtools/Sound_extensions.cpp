@@ -2612,8 +2612,7 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
 		}
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
-		Melder_require (noiseLtas -> nx == wantedNumberOfFrequencyBins,
-			U"F:",nyquistFrequency, U" bins:", noiseLtas -> nx, U" nF:", wantedNumberOfFrequencyBins);
+		Melder_assert (noiseLtas -> nx == wantedNumberOfFrequencyBins);
 		autoVEC const noiseAmplitudes = raw_VEC (noiseLtas -> nx);
 		for (integer iband = 1; iband <= noiseLtas -> nx; iband ++) {
 			const double powerDensity = 4e-10 * pow (10.0, noiseLtas -> z [1] [iband] / 10.0);
