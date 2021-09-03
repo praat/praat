@@ -2595,22 +2595,17 @@ static autoSound Sound_reduceNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		Sound_multiplyByWindow (noise_copy.get(), kSound_windowShape::HANNING);
 		/*
 			The number of bands in the noise Ltas and the number of frequencies in the 
-			sound spectra preferably should to be equal but can be one off due to rounding.
+			sound spectra preferably should to be equal.
 			numberOfBands = Melder_iceiling (nyquistFrequency / bandwidth)
 			wantedNumberOfFrequencyBins = windowSamples / 2 + 1;
-			We can calculate the bandwidth to make numberOfBands == wantedNumberOfFrequencyBins as
-			bandwidth = nyquistFrequency / wantedNumberOfFrequencyBins
+			We can calculate the bandwidth to make numberOfBands == wantedNumberOfFrequencyBins by applying 
+			the following two conditions
+			(1) nyquistFrequency / b > wantedNumberOfFrequencyBins - 1 && (2) nyquistFrequency / b < wantedNumberOfFrequencyBins
+			(1) gives b1 < nyquistFrequency / (wantedNumberOfFrequencyBins - 1)
+			(2) gives b2 > nyquistFrequency / wantedNumberOfFrequencyBins
+			Take b = (b1 + b2) / 2
 		*/
-		double bandwidth = (0.5 / my dx) / wantedNumberOfFrequencyBins;
-		integer numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
-		while (numberOfFrequencyBins > wantedNumberOfFrequencyBins) {
-			bandwidth *= 1.001;
-			numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
-		}
-		while (numberOfFrequencyBins < wantedNumberOfFrequencyBins) {
-			bandwidth *= 0.999;
-			numberOfFrequencyBins = Melder_iceiling (nyquistFrequency / bandwidth);
-		}
+		double bandwidth = nyquistFrequency * (wantedNumberOfFrequencyBins - 0.5) / (wantedNumberOfFrequencyBins * (wantedNumberOfFrequencyBins - 1));
 		autoLtas const noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
 		Melder_assert (noiseLtas -> nx == wantedNumberOfFrequencyBins);
 		autoVEC const noiseAmplitudes = raw_VEC (noiseLtas -> nx);
