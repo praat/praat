@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210825)
+MAN_BEGIN (U"What's new?", U"ppgb", 20210908)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.53# (8 September 2021)")
+LIST_ITEM (U"• Linux: corrected a bug that caused PDF files to be misaligned "
+	"if the origin was not in the top left corner.")
 NORMAL (U"##6.1.52# (25 August 2021)")
 LIST_ITEM (U"• FormantPath window: more formant listings and stress listings.")
 LIST_ITEM (U"• Sound window: on Cut or Paste, all windows that contain that Sound now get ungrouped.")
