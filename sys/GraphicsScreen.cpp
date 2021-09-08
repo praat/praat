@@ -604,6 +604,9 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 			isdefined (y1inches) ? 1.0 : 0.0, isdefined (y1inches) ? 12.0 : y2inches
 		);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
+		cairo_translate (my d_cairoGraphicsContext,
+			( isdefined (x1inches) ? - x1inches : 0.0 ) * resolution,
+			( isdefined (y1inches) ? y2inches - 12.0 : 0.0 ) * resolution);
 	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,
