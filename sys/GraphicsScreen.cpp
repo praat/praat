@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -606,7 +606,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 		cairo_translate (my d_cairoGraphicsContext,
 			( isdefined (x1inches) ? - x1inches : 0.0 ) * resolution,
-			( isdefined (y1inches) ? y2inches - 12.0 : 0.0 ) * resolution);
+			( isdefined (y1inches) ? (y2inches - 12.0) : 0.0 ) * resolution);
 	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,

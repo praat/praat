@@ -825,8 +825,8 @@ static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
 static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
-		autoTable result = Table_createWithColumnNames (my trajectory -> points.size,
-				autoSTRVEC ({ U"Time", U"F1", U"F2", U"Colour" }).get());
+		const conststring32 columnNames [] = { U"Time", U"F1", U"F2", U"Colour" };
+		autoTable result = Table_createWithColumnNames (my trajectory -> points.size, ARRAY_TO_STRVEC (columnNames));
 		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 			TrajectoryPoint point = my trajectory -> points.at [ipoint];
 			Table_setNumericValue (result.get(), ipoint, 1, point -> number);
@@ -866,12 +866,12 @@ static void menu_cb_showOneVowelMark (VowelEditor me, EDITOR_ARGS_FORM) {
 			U"The first formant should be in the range from ", my p_window_f1min, U" to ", my p_window_f1max, U" Hz.");
 		Melder_require (f2 >= my p_window_f2min && f2 <= my p_window_f1max,
 			U"The second formant should be in the range from ", my p_window_f2min, U" to ", my p_window_f2max, U" Hz.");
-		if (! my marks)
-			my marks = Table_createWithColumnNames (1,
-					autoSTRVEC ({ U"IPA", U"F1", U"F2", U"Size", U"Colour" }).get());
-		else
-			Table_appendRow (my marks.get());
-		integer irow = my marks -> rows.size;
+		if (! my marks) {
+			const conststring32 columnNames [] = { U"IPA", U"F1", U"F2", U"Size", U"Colour" };
+			my marks = Table_createWithColumnNames (0, ARRAY_TO_STRVEC (columnNames));
+		}
+		Table_appendRow (my marks.get());
+		const integer irow = my marks -> rows.size;
 		Table_setStringValue (my marks.get(), irow, 1, mark);
 		Table_setNumericValue (my marks.get(), irow, 2, f1);
 		Table_setNumericValue (my marks.get(), irow, 3, f2);

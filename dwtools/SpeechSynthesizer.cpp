@@ -649,8 +649,9 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 			}
 		}
 
-		my d_events = Table_createWithColumnNames (0,
-				autoSTRVEC ({ U"time", U"type", U"type-t", U"t-pos", U"length", U"a-pos", U"sample", U"id", U"uniq" }).get());
+		const conststring32 columnNames [] =
+				{ U"time", U"type", U"type-t", U"t-pos", U"length", U"a-pos", U"sample", U"id", U"uniq" };
+		my d_events = Table_createWithColumnNames (0, ARRAY_TO_STRVEC (columnNames));
 
 		#ifdef _WIN32
 			conststringW textW = Melder_peek32toW (text);
