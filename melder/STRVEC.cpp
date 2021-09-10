@@ -200,7 +200,7 @@ autoSTRVEC splitByWhitespace_STRVEC (conststring32 string) {
 	return result;
 }
 
-autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separator) {
+autoSTRVEC splitBy_STRVEC (conststring32 string, conststring32 separator) {
 	if (! string)
 		return autoSTRVEC();   // accept null pointer input
 	const integer separatorLength = str32len (separator);

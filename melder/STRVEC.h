@@ -36,8 +36,6 @@ void sort_STRVEC_inout (STRVEC const& a) noexcept;
 */
 autoSTRVEC splitByWhitespace_STRVEC (conststring32 string);
 
-autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separator);
-
 /*
 	Regard a string as a sequence of tokens,
 	separated by commas (or another separator) according to RFC 1480.
@@ -60,6 +58,6 @@ autoSTRVEC splitBySeparator_STRVEC (conststring32 string, conststring32 separato
 	in which case it would be much easier (if possible) to use a string vector:
 		{ "abc", """def""" }
 */
-autoSTRVEC splitCharacterSeparated_STRVEC (conststring32 string, char32 separator);
+autoSTRVEC splitBy_STRVEC (conststring32 string, conststring32 separator);
 
 /* End of file STRVEC.h */

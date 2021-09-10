@@ -445,13 +445,13 @@ static void UiField_widgetToValue (UiField me) {
 				case kUi_stringArrayFormat::WHITESPACE_SEPARATED_: {
 					my stringArrayValue = splitByWhitespace_STRVEC (stringValue.get());
 				} break; case kUi_stringArrayFormat::COMMA_SEPARATED_: {
-					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U",");
+					my stringArrayValue = splitBy_STRVEC (stringValue.get(), U",");
 				} break; case kUi_stringArrayFormat::SEMICOLON_SEPARATED_: {
-					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U";");
+					my stringArrayValue = splitBy_STRVEC (stringValue.get(), U";");
 				} break; case kUi_stringArrayFormat::PIPE_SEPARATED_: {
-					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"|");
+					my stringArrayValue = splitBy_STRVEC (stringValue.get(), U"|");
 				} break; case kUi_stringArrayFormat::ONE_PER_LINE_: {
-					my stringArrayValue = splitBySeparator_STRVEC (stringValue.get(), U"\n");
+					my stringArrayValue = splitBy_STRVEC (stringValue.get(), U"\n");
 				} break; case kUi_stringArrayFormat::FORMULA_: {
 					if (stringValue [0] == U'\0') {
 						my stringArrayValue = autoSTRVEC();   // interpret the empty string as zero elements, as for all other formats
