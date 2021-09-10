@@ -718,10 +718,12 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			EditDistanceTable_findPath (edit.get(), nullptr);
 		}
 		const integer pathLength = edit -> warpingPath -> pathLength;
-		autoTable thee = Table_createWithColumnNames (pathLength - 1,
-			autoSTRVEC ({ U"targetInterval", U"targetText", U"targetStart", U"targetEnd",
-					U"sourceInterval", U"sourceText", U"sourceStart", U"sourceEnd", U"operation" }).get()
-		);
+		const conststring32 columnNames [] = {
+			U"targetInterval", U"targetText", U"targetStart", U"targetEnd",
+			U"sourceInterval", U"sourceText", U"sourceStart", U"sourceEnd",
+			U"operation"
+		};
+		autoTable thee = Table_createWithColumnNames (pathLength - 1, ARRAY_TO_STRVEC (columnNames));
 		for (integer i = 2; i <= pathLength; i++) {
 			const structPairOfInteger p = edit -> warpingPath -> path [i];
 			const structPairOfInteger p1 = edit -> warpingPath -> path [i - 1];
