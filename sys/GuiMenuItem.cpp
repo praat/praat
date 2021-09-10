@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,11 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) widget -> userData
 #elif cocoa
 	#define iam_menuitem  GuiMenuItem me = (GuiMenuItem) [(GuiCocoaMenuItem *) widget getUserData];
+#endif
+
+#if cocoa
+	GuiMenuItemCallback theGuiEscapeMenuItemCallback;
+	Thing theGuiEscapeMenuItemBoss;
 #endif
 
 #if motif
@@ -293,6 +298,18 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 					if (flags & GuiMenu_OPTION) {
 						window -> d_optionBackspaceCallback = commandCallback;
 						window -> d_optionBackspaceBoss = boss;
+					}
+				} else if (accelerator == GuiMenu_ESCAPE) {
+					GuiWindow window = (GuiWindow) my d_shell;
+					if (window) {
+						trace (U"setting the escape callback in a window");
+						Melder_assert (window -> classInfo == classGuiWindow);   // fairly safe, because dialogs have no menus
+						window -> d_escapeCallback = commandCallback;
+						window -> d_escapeBoss = boss;
+					} else {
+						trace (U"setting the global escape callback");
+						theGuiEscapeMenuItemCallback = commandCallback;
+						theGuiEscapeMenuItemBoss = boss;
 					}
 				}
 			} else {

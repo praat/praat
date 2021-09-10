@@ -1,6 +1,6 @@
 /* GuiShell.cpp
  *
- * Copyright (C) 1993-2018,2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Thing_implement (GuiShell, GuiForm, 0);
 		d_userData = static_cast <GuiShell> (userData);
 	}
 	- (void) keyDown: (NSEvent *) theEvent {
-		trace (U"key down");
+		trace (U"GuiCocoaShell: key down");
 		[super keyDown: theEvent];   // for automatic behaviour in dialog boxes; do GuiWindows have to override this to do nothing?
 	}
 	- (BOOL) windowShouldClose: (id) sender {
@@ -56,6 +56,30 @@ Thing_implement (GuiShell, GuiForm, 0);
 			[widget orderOut: nil];
 		}
 		return false;
+	}
+	- (void) cancelOperation: (id) sender {
+		trace (U"GuiCocoaShell: escape key pressed");
+		GuiCocoaShell *widget = (GuiCocoaShell *) sender;
+		GuiWindow me = (GuiWindow) [widget getUserData];
+		if (me && my classInfo == classGuiWindow && my d_escapeCallback) {
+			try {
+				structGuiMenuItemEvent event { nullptr, false, false, false };
+				my d_escapeCallback (my d_escapeBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError (U"Cancelling in window not completely handled.");
+			}
+		} else {
+			trace (U"calling the global escape callback (1)");
+			if (theGuiEscapeMenuItemCallback) {
+				try {
+					trace (U"calling the global escape callback (2)");
+					structGuiMenuItemEvent event { nullptr, false, false, false };
+					theGuiEscapeMenuItemCallback (theGuiEscapeMenuItemBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError (U"Cancelling not completely handled.");
+				}
+			}
+		}
 	}
 	@end
 #endif

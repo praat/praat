@@ -685,6 +685,11 @@ typedef struct structGuiMenuItemEvent {
 
 using GuiMenuItemCallback = MelderCallback <void, structThing /* boss */, GuiMenuItemEvent>;
 
+#if cocoa
+	extern GuiMenuItemCallback theGuiEscapeMenuItemCallback;
+	extern Thing theGuiEscapeMenuItemBoss;
+#endif
+
 Thing_define (GuiMenuItem, GuiThing) {
 	GuiMenu d_menu;
 	GuiMenuItemCallback d_callback;
@@ -962,6 +967,8 @@ Thing_define (GuiWindow, GuiShell) {
 		Thing d_enterBoss;
 		GuiMenuItemCallback d_optionBackspaceCallback;
 		Thing d_optionBackspaceBoss;
+		GuiMenuItemCallback d_escapeCallback;
+		Thing d_escapeBoss;
 	#elif motif
 		GuiObject d_xmMenuBar;
 	#endif
