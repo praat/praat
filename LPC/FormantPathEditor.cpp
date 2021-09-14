@@ -1,6 +1,6 @@
 /* FormantPathEditor.cpp
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,14 +74,17 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	GuiThing_setSensitive (our navigatePreviousButton, previousSensitive);*/
 }
 
-/********** UTILITIES **********/
-
-static double _FormantPathEditor_computeSoundY (FormantPathEditor me) {
-	/*
-		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
-	*/
-	return (my d_longSound.data || my d_sound.data) ? 0.7 : 1.0;
+bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
+	const double spectrogramTop = our v_getBottomOfSoundArea (), spectrogramBottom = our v_getBottomOfSoundAndAnalysisArea ();
+	if ((our p_spectrogram_show || our p_formant_show) && yWC < spectrogramTop && yWC > spectrogramBottom && 
+		xWC > our startWindow && xWC < our endWindow) {
+		const double yFractionFromBottomOfSpectrogram = (yWC - spectrogramBottom) / (spectrogramTop - spectrogramBottom);
+		our d_spectrogram_cursor = our p_spectrogram_viewFrom +
+				yFractionFromBottomOfSpectrogram  * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
+	}
+	return FormantPathEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
+/********** UTILITIES **********/
 
 static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_startTime, double *out_endTime, double *out_xCursor, double *out_yCursor) {
 	double startTime = my startWindow, endTime = my endWindow;
@@ -495,8 +498,6 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	INFO_DATA
 		FormantPath formantPath = (FormantPath) my data;
-		Formant formant = formantPath -> formants.at [1];
-		constVEC ceilings = formantPath -> ceilings.get();
 		double startTime = my startSelection, endTime = my endSelection;
 		if (my startSelection == my endSelection) {
 			startTime = my startWindow;
@@ -564,9 +565,6 @@ static void menu_cb_showFormants (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 
 static void INFO_DATA__formantListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	INFO_DATA
-		FormantPath formantPath = (FormantPath) my data;
-		Formant formant = formantPath -> formants.at [1];
-		const integer maximumFormantNumber = formant -> maxnFormants;
 		const double startTime = my startSelection, endTime = my endSelection;
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
@@ -689,7 +687,7 @@ void structFormantPathEditor :: v_draw () {
 	const bool showAnalysis = v_hasAnalysis () &&
 			(p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) &&
 			(d_longSound.data || d_sound.data);
-	double soundY = _FormantPathEditor_computeSoundY (this);
+	double soundY = our v_getBottomOfSoundArea ();
 
 	/*
 		Draw the sound.
@@ -918,7 +916,7 @@ void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 
 void structFormantPathEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY = _FormantPathEditor_computeSoundY (this);
+		const double soundY = our v_getBottomOfSoundArea ();
 		Graphics_highlight (our graphics.get(), left, right, bottom+(top-bottom)*soundY, top);
 	} else {
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
@@ -926,7 +924,10 @@ void structFormantPathEditor :: v_highlightSelection (double left, double right,
 }
 
 double structFormantPathEditor :: v_getBottomOfSoundArea () {
-	return _FormantPathEditor_computeSoundY (this);
+	/*
+		We want half of the screen for the spectrogram. 3/8 for the sound and 1/8 for the textgrid
+	*/
+	return (our d_longSound.data ||our d_sound.data) ? 0.7 : 1.0;
 }
 
 double structFormantPathEditor :: v_getBottomOfSoundAndAnalysisArea () {

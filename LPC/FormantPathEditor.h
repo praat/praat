@@ -87,6 +87,8 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 		override;
 	void v_play (double startTime, double endTime)
 		override;
+	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC)
+		override;
 	void v_updateText ()
 		override {};
 	void v_prefs_addFields (EditorCommand cmd)
