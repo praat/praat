@@ -424,17 +424,17 @@ static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDIT
 		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels ())
 		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
-		BOOLEAN (drawErrorBars, U"Draw error bars", my default_modeler_draw_showErrorBars ())
+		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_modeler_draw_showBandwidths ())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedModels, my p_modeler_draw_estimatedModels)
 		SET_REAL (yGridLineEvery_Hz, my p_modeler_draw_yGridLineEvery_Hz)
 		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
-		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showErrorBars)
+		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showBandwidths)
 	EDITOR_DO
 		my pref_modeler_draw_estimatedModels () = my p_modeler_draw_estimatedModels = drawEstimatedModels;
 		my pref_modeler_draw_maximumFrequency () = my p_modeler_draw_maximumFrequency = maximumFrequency;
 		my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
-		my pref_modeler_draw_showErrorBars () = my p_modeler_draw_showErrorBars = drawErrorBars;
+		my pref_modeler_draw_showBandwidths () = my p_modeler_draw_showBandwidths = drawErrorBars;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -450,7 +450,7 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 		LABEL (U"Global stress parameters:")
 		POSITIVE (windowLength, U"Window length", U"0.035")
-		NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3 3")
+		NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
 		POSITIVE (powerf, U"Power", U"1.25")
 	EDITOR_OK
 	EDITOR_DO
@@ -484,7 +484,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5,
-			my p_modeler_draw_showErrorBars, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz,
+			my p_modeler_draw_showBandwidths, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz,
 			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true
 		);
 		Graphics_unsetInner (my pictureGraphics);
@@ -755,7 +755,7 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showErrorBars, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showBandwidths, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
 	Graphics_unsetInner (our graphics.get());
 	previousStartTime = startTime;
 	previousEndTime = endTime;
