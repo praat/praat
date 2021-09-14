@@ -48,12 +48,12 @@ prefs_begin (FormantPathEditor)
 	prefs_add_bool_with_data   (FormantPathEditor, formant_draw_showBandWidths,        1, false)
 	
 	prefs_add_integer_with_data(FormantPathEditor, modeler_numberOfTracks,             1, U"3")
-	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"7 7 7")
+	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"3 3 3")
 	prefs_add_double_with_data (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showAllModels,         1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"5000.0")
+	prefs_add_double_with_data (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"6200.0")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_estimatedModels,       1, false)
-	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showErrorBars,         1, true)
+	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showBandwidths,        1, true)
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
 	
 prefs_end (FormantPathEditor)

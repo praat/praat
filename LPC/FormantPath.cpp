@@ -574,15 +574,16 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 		Graphics_setViewport (g, vpi_x1, vpi_x2, vpi_y1, vpi_y2);
 		Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 		if (garnish && markCandidatesWithinPath) {
-			MelderColour colourCopy = Graphics_inqColour (g);
-			Graphics_setColour (g, selectedCeilingsColour);
 			for (integer interval = 1; interval <= intervalTier -> intervals.size; interval ++) {
 				TextInterval textInterval = intervalTier -> intervals.at [interval];
 				const integer candidate = ( textInterval -> text.get() ? Melder_atoi (textInterval -> text.get()) : 0);
-				if (candidate == iformant)
+				if (candidate == iformant) {
+					MelderColour colourCopy = Graphics_inqColour (g);
+					Graphics_setColour (g, selectedCeilingsColour);
 					Graphics_fillRectangle (g, textInterval -> xmin, textInterval -> xmax, 0, fmax);
+					Graphics_setColour (g, colourCopy);
+				}
 			}
-			Graphics_setColour (g, colourCopy);
 		}
 		Formant_speckles_inside (formant, g, tmin, tmax, fmin, fmax, fromFormant, toFormant, 100.0, showBandwidths, oddNumberedFormants, evenNumberedFormants);
 		if (showEstimatedModels && numberOfSamples > 0)
