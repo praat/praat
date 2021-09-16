@@ -687,13 +687,13 @@ void structFormantPathEditor :: v_draw () {
 	const bool showAnalysis = v_hasAnalysis () &&
 			(p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) &&
 			(d_longSound.data || d_sound.data);
-	double soundY = our v_getBottomOfSoundArea ();
+	double soundBottom = our v_getBottomOfSoundArea ();
 
 	/*
 		Draw the sound.
 	*/
 	if (d_longSound.data || d_sound.data) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
+		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_WHITE);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 		Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -706,12 +706,12 @@ void structFormantPathEditor :: v_draw () {
 	*/
 	if (our textgrid) {}
 	if (showAnalysis) {
-		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, (our textgrid ? 0.3 : 0.0), soundY);
+		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, (our textgrid ? 0.3 : 0.0), soundBottom);
 		v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
 		if (p_pulses_show) {
-			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
+			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
 			v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), vp1);
@@ -719,11 +719,11 @@ void structFormantPathEditor :: v_draw () {
 	}
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	/*if (our d_longSound.data || our d_sound.data) {
-		Graphics_line (our graphics.get(), our startWindow, soundY, our endWindow, soundY);
+		Graphics_line (our graphics.get(), our startWindow, soundBottom, our endWindow, soundBottom);
 		if (showAnalysis) {
-			Graphics_line (our graphics.get(), our startWindow, soundY2, our endWindow, soundY2);
-			Graphics_line (our graphics.get(), our startWindow, soundY, our startWindow, soundY2);
-			Graphics_line (our graphics.get(), our endWindow, soundY, our endWindow, soundY2);
+			Graphics_line (our graphics.get(), our startWindow, soundBottom2, our endWindow, soundBottom2);
+			Graphics_line (our graphics.get(), our startWindow, soundBottom, our startWindow, soundBottom2);
+			Graphics_line (our graphics.get(), our endWindow, soundBottom, our endWindow, soundBottom2);
 		}
 	}*/
 
@@ -915,12 +915,10 @@ void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 }
 
 void structFormantPathEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
-		const double soundY = our v_getBottomOfSoundArea ();
-		Graphics_highlight (our graphics.get(), left, right, bottom+(top-bottom)*soundY, top);
-	} else {
+	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data))
+		Graphics_highlight (our graphics.get(), left, right, bottom + (top - bottom) * our v_getBottomOfSoundArea (), top);
+	else
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);
-	}
 }
 
 double structFormantPathEditor :: v_getBottomOfSoundArea () {

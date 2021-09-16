@@ -345,11 +345,11 @@ TAG (U"##Fit method#")
 DEFINITION (PowerCepstrum_manual_fitMethod)
 MAN_END
 
-MAN_BEGIN (U"PowerCepstrogram: To Table (peak prominence)...", U"djmw", 20191008)
+MAN_BEGIN (U"PowerCepstrogram: To Table (cepstral peak prominences)...", U"djmw", 20210916)
 INTRO (U"A command to create a table with @@PowerCepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (U"Settings")
 SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7.8), U""
-	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (peak prominence)", 7.8)   // 9 - 4 * 0.3 (four is the number of additional radio buttons)
+	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (cepstral peak prominences)", 7.8)   // 9 - 4 * 0.3 (four is the number of additional radio buttons)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search pitch range (Hz)", U"60.0", U"300.0")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (U"Interpolation", U"None", 0)
 	"y -= 12\n"

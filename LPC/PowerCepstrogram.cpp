@@ -1,6 +1,6 @@
 /* PowerCepstrogram.cpp
  *
- * Copyright (C) 2013 - 2020 David Weenink
+ * Copyright (C) 2013 - 2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ autoPowerCepstrogram PowerCepstrogram_subtractTrend (PowerCepstrogram me, double
 
 autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pitchFloor, double pitchCeiling) {
 	try {
-		const conststring32 columnNames [] = { U"time", U"quefrency", U"cpp", U"f0" };
+		const conststring32 columnNames [] = { U"time(s)", U"quefrency(s)", U"CPP(dB)", U"f0(Hz)" };
 		autoTable thee = Table_createWithColumnNames (my nx, ARRAY_TO_STRVEC (columnNames));
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer icol = 1; icol <= my nx; icol ++) {
@@ -146,26 +146,50 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 	}
 }
 
-autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
+autoTable PowerCepstrogram_to_Table_CPP (PowerCepstrogram me, bool includeFrameNumber, bool includeTime, 
+	integer numberOfTimeDecimals, integer numberOfCPPdecimals, bool includePeakQuefrency, integer numberOfQuefrencyDecimals,
+	double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
 	try {
-		const conststring32 columnNames [] = { U"time", U"quefrency", U"cpp", U"f0", U"rnr" };
-		autoTable thee = Table_createWithColumnNames (my nx, ARRAY_TO_STRVEC (columnNames));
+		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumber + includeTime + includePeakQuefrency + 1);
+		integer icol = 0;
+		if (includeFrameNumber)
+			Table_setColumnLabel (thee.get(), ++ icol, U"frame");
+		if (includeTime)
+			Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
+		if (includePeakQuefrency)
+			Table_setColumnLabel (thee.get(), ++ icol, U"quefrency(s)");
+		Table_setColumnLabel (thee.get(), ++ icol, U"CPP(dB)");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
+			icol = 0;
+			if (includeFrameNumber)
+				Table_setNumericValue (thee.get(), iframe, ++ icol, iframe);
+			if (includeTime)
+				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (Sampled_indexToX (me, iframe), numberOfTimeDecimals));
 			his z.row (1)  <<=  my z.column (iframe);
-			double qpeak, cpp = PowerCepstrum_getPeakProminence (him.get(), pitchFloor, pitchCeiling, peakInterpolationType,
-				qstartFit, qendFit, lineType, fitMethod, & qpeak);
-			double rnr = PowerCepstrum_getRNR (him.get(), pitchFloor, pitchCeiling, deltaF0);
-			double time = Sampled_indexToX (me, iframe);
-			Table_setNumericValue (thee.get(), iframe, 1, time);
-			Table_setNumericValue (thee.get(), iframe, 2, qpeak);
-			Table_setNumericValue (thee.get(), iframe, 3, cpp); // Cepstrogram_getCPPS depends on this index!!
-			Table_setNumericValue (thee.get(), iframe, 4, 1.0 / qpeak);
-			Table_setNumericValue (thee.get(), iframe, 5, rnr);
+			double peakQuefrency;
+			const double cpp = PowerCepstrum_getPeakProminence (him.get(), pitchFloor, pitchCeiling, peakInterpolationType,
+				qstartFit, qendFit, lineType, fitMethod, & peakQuefrency);
+			if (includePeakQuefrency)
+				Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (peakQuefrency, numberOfQuefrencyDecimals));
+			Table_setStringValue (thee.get(), iframe, ++ icol, Melder_fixed (cpp, numberOfCPPdecimals));
 		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table with cepstral peak prominence values created.");
+	}
+}
+
+void PowerCepstrogram_listCPP (PowerCepstrogram me, bool includeFrameNumber, bool includeTime, 
+	integer numberOfTimeDecimals, integer numberOfCPPdecimals, bool includePeakQuefrency, integer numberOfQuefrencyDecimals,
+	double pitchFloor, double pitchCeiling, double deltaF0, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
+	try {
+		autoTable table = PowerCepstrogram_to_Table_CPP (me, includeFrameNumber, includeTime,
+			numberOfTimeDecimals, numberOfCPPdecimals, includePeakQuefrency, numberOfQuefrencyDecimals,
+			pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
+		Table_list (table.get(), false);
+	} catch (MelderError) {
+		Melder_throw (me, U": CPP not listed.");
 	}
 }
 
@@ -468,8 +492,8 @@ double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmo
 			flattened = PowerCepstrogram_subtractTrend (me, qstartFit, qendFit, lineType, fitMethod);
 
 		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (flattened ? flattened.get() : me, timeAveragingWindow, quefrencyAveragingWindow);
-		autoTable table = PowerCepstrogram_to_Table_cpp (smooth.get(), pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
-		const double cpps = Table_getMean (table.get(), 3);
+		autoTable table = PowerCepstrogram_to_Table_CPP (smooth.get(), false, false, 6, 16, false, 6, pitchFloor, pitchCeiling, deltaF0, peakInterpolationType, qstartFit, qendFit, lineType, fitMethod);
+		const double cpps = Table_getMean (table.get(), 1); // no frame number, no time, quefrency
 		return cpps;
 	} catch (MelderError) {
 		Melder_throw (me, U": no CPPS value calculated.");

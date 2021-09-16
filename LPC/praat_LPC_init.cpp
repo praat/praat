@@ -651,24 +651,57 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), NUMnumber_as_stringWithDotReplacedByUnderscore (time));
 }
 
-FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prominence)", U"PowerCepstrogram: To Table (peak prominence)...") {
+FORM (LIST__PowerCepstrogram_listCPP, U"PowerCepstrogram: List cepstral peak prominences", U"PowerCepstrogram: To Table (cepstral peak prominences)...") {
+	BOOLEAN (includeFrameNumbers, U"Include frame numbers", false)
+	BOOLEAN (includeTimes, U"Include times", true)
+	NATURAL (numberOfTimeDecimals, U"Number of time decimals", U"6")
+	NATURAL (numberOfCPPdecimals, U"Number of CPP decimals", U"3")
+	BOOLEAN (includePeakQuefrency, U"Include peak quefrency", false)
+	NATURAL (numberOfQuefrencyDecimals, U"Number of quefrency decimals", U"3")
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
 	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
 			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
 	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
-	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05)")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
+	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
+	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
+	OK
+DO
+	INFO_ONE (PowerCepstrogram)
+		PowerCepstrogram_listCPP (me, includeFrameNumbers,includeTimes, numberOfTimeDecimals,
+			numberOfCPPdecimals, includePeakQuefrency, numberOfQuefrencyDecimals, fromPitch, toPitch, tolerance, 
+			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+	INFO_ONE_END
+}
+
+FORM (NEW__PowerCepstrogram_to_Table_CPP, U"PowerCepstrogram: To Table (cepstral peak prominences)", U"PowerCepstrogram: To Table (cepstral peak prominences)...") {
+	BOOLEAN (includeFrameNumbers, U"Include frame numbers", false)
+	BOOLEAN (includeTimes, U"Include times", true)
+	NATURAL (numberOfTimeDecimals, U"Number of time decimals", U"6")
+	NATURAL (numberOfCPPdecimals, U"Number of CPP decimals", U"3")
+	BOOLEAN (includePeakQuefrency, U"Include peak quefrency", false)
+	NATURAL (numberOfQuefrencyDecimals, U"Number of quefrency decimals", U"3")
+	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
+	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
+	POSITIVE (tolerance, U"Tolerance (0-1)", U"0.05")
+	RADIO_ENUM (kVector_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kVector_peakInterpolation :: PARABOLIC)
+	REAL (fromQuefrency_trendLine, U"left Trend line quefrency range (s)", U"0.001")
+	REAL (toQuefrency_trendLine, U"right Trend line quefrency range (s)", U"0.05")
 	OPTIONMENU_ENUM (kCepstrumTrendType, lineType, U"Trend type", kCepstrumTrendType::DEFAULT)
 	OPTIONMENU_ENUM (kCepstrumTrendFit, fitMethod, U"Fit method", kCepstrumTrendFit::DEFAULT)
 	OK
 DO
 	CONVERT_EACH_TO_ONE (PowerCepstrogram)
-		autoTable result = PowerCepstrogram_to_Table_cpp (me, fromPitch, toPitch, tolerance, peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
+		autoTable result = PowerCepstrogram_to_Table_CPP (me, includeFrameNumbers,includeTimes, numberOfTimeDecimals,
+			numberOfCPPdecimals, includePeakQuefrency, numberOfQuefrencyDecimals, fromPitch, toPitch, tolerance, 
+			peakInterpolationType, fromQuefrency_trendLine, toQuefrency_trendLine, lineType, fitMethod);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_cpp");
 }
 
-FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (hillenbrand)", U"PowerCepstrogram: To Table (peak prominence...") {
+FORM (CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (hillenbrand)", U"PowerCepstrogram: To Table (peak prominences)...") {
 	REAL (fromPitch, U"left Peak search pitch range (Hz)", U"60.0")
 	REAL (toPitch, U"right Peak search pitch range (Hz)", U"330.0")
 	OK
@@ -1416,6 +1449,11 @@ void praat_uvafon_LPC_init () {
 			HELP__PowerCepstrogram_help);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Paint...", 0, 0, 
 			GRAPHICS_EACH__PowerCepstrogram_paint);
+	praat_addAction1 (classPowerCepstrogram, 0, U"Tabulate -", nullptr, 0, nullptr);
+		praat_addAction1 (classPowerCepstrogram, 1, U"List cepstral peak prominences...", nullptr, 1, LIST__PowerCepstrogram_listCPP);
+		praat_addAction1 (classPowerCepstrogram, 0, U"To Table (cepstral peak prominences)...", nullptr, 1, NEW__PowerCepstrogram_to_Table_CPP);
+	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (hillenbrand)...", nullptr, praat_DEPTH_1 + praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand);
 	praat_addAction1 (classPowerCepstrogram, 1, U"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 1, U"Query quefrency domain", 0, 1, 0);
@@ -1450,10 +1488,6 @@ void praat_uvafon_LPC_init () {
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_subtractTrend);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt...", 0, praat_DEPRECATED_2019, 
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_subtractTrend);
-	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (hillenbrand)...", 0, praat_HIDDEN,
-			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_hillenbrand);
-	praat_addAction1 (classPowerCepstrogram, 0, U"To Table (peak prominence)...", 0, praat_HIDDEN, 
-			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Table_cpp);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To Matrix", 0, 0, 
 			CONVERT_EACH_TO_ONE__PowerCepstrogram_to_Matrix);
 
