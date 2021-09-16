@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2020 Paul Boersma
+ * Copyright (C) 2001-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -296,9 +296,6 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 		return;
 	if (! event -> isClick())
 		return;
-	double reactionTime = Melder_clock () - experiment -> startingTime;
-	if (! experiment -> blankWhilePlaying)
-		reactionTime -= experiment -> stimulusInitialSilenceDuration;
 	double x, y;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x, & y);
 	if (experiment -> trial == 0) {   // the first click of the experiment
@@ -320,6 +317,8 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
+		if (experiment -> responsesAreSounds)
+			experiment -> startingTime = Melder_clock ();
 		my blanked = false;
 		Graphics_updateWs (my graphics.get());
 	} else if (experiment -> pausing) {   // a click to leave the break
@@ -342,6 +341,8 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 			}
+			if (experiment -> responsesAreSounds)
+				experiment -> startingTime = Melder_clock ();
 			my blanked = false;
 			Graphics_updateWs (my graphics.get());
 		}
@@ -351,6 +352,8 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 			experiment -> responses [experiment -> trial] != 0 &&
 			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
 		{
+			if (experiment -> responsesAreSounds)
+				experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
 			do_ok (me);
 		} else if (x > experiment -> replay_left && x < experiment -> replay_right &&
 			y > experiment -> replay_bottom && y < experiment -> replay_top &&
@@ -367,10 +370,11 @@ static void gui_drawingarea_cb_mouse (RunnerMFC me, GuiDrawingArea_MouseEvent ev
 				const ResponseMFC response = & experiment -> response [iresponse];
 				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
 					experiment -> responses [experiment -> trial] = iresponse;
-					experiment -> reactionTimes [experiment -> trial] = reactionTime;
-					if (experiment -> responsesAreSounds) {
+					experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
+					if (! experiment -> blankWhilePlaying)
+						experiment -> reactionTimes [experiment -> trial] -= experiment -> stimulusInitialSilenceDuration;
+					if (experiment -> responsesAreSounds)
 						ExperimentMFC_playResponse (experiment, iresponse);
-					}
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
@@ -423,16 +427,19 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 	const ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (! my data)
 		return;
-	double reactionTime = Melder_clock () - experiment -> startingTime;
-	if (! experiment -> blankWhilePlaying)
-		reactionTime -= experiment -> stimulusInitialSilenceDuration;
 	if (experiment -> trial == 0) {
+		if (experiment -> responsesAreSounds)
+			experiment -> startingTime = Melder_clock ();
 	} else if (experiment -> pausing) {
+		if (experiment -> responsesAreSounds)
+			experiment -> startingTime = Melder_clock ();
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		if (experiment -> ok_key && experiment -> ok_key [0] == event -> key &&
 			experiment -> responses [experiment -> trial] != 0 &&
 			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
 		{
+			if (experiment -> responsesAreSounds)
+				experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
 			do_ok (me);
 		} else if (experiment -> replay_key && experiment -> replay_key [0] == event -> key &&
 			my numberOfReplays < experiment -> maximumNumberOfReplays)
@@ -446,10 +453,11 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 				const ResponseMFC response = & experiment -> response [iresponse];
 				if (response -> key && response -> key [0] == event -> key) {
 					experiment -> responses [experiment -> trial] = iresponse;
-					experiment -> reactionTimes [experiment -> trial] = reactionTime;
-					if (experiment -> responsesAreSounds) {
+					experiment -> reactionTimes [experiment -> trial] = Melder_clock () - experiment -> startingTime;
+					if (! experiment -> blankWhilePlaying)
+						experiment -> reactionTimes [experiment -> trial] -= experiment -> stimulusInitialSilenceDuration;
+					if (experiment -> responsesAreSounds)
 						ExperimentMFC_playResponse (experiment, iresponse);
-					}
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {

@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2009,2011-2013,2015-2020 Paul Boersma
+ * Copyright (C) 2001-2009,2011-2013,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +186,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		my stimuli = zero_INTVEC (my numberOfTrials);
 		my responses = zero_INTVEC (my numberOfTrials);
 		my goodnesses = zero_VEC (my numberOfTrials);
+		my startingTime = undefined;   // not zero, in order that reaction times are never the duration that the computer has been running
 		my reactionTimes = zero_VEC (my numberOfTrials);
 		/*
 			Read all the sounds. They must all have the same sampling frequency and number of channels.
@@ -312,10 +313,10 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 	my playBuffer -> z.verticalBand (numberOfSamplesWritten + 1, numberOfSamplesWritten + finalSilenceSamples)  <<=  0.0;
 	numberOfSamplesWritten += finalSilenceSamples;
 
-	if (! my blankWhilePlaying)
+	if (my stimuliAreSounds && ! my blankWhilePlaying)
 		my startingTime = Melder_clock ();
 	Sound_playPart (my playBuffer.get(), 0.0, numberOfSamplesWritten * my samplePeriod, 0, nullptr);
-	if (my blankWhilePlaying)
+	if (my stimuliAreSounds && my blankWhilePlaying)
 		my startingTime = Melder_clock ();
 }
 
