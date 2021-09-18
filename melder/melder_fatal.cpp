@@ -97,7 +97,6 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	trace (U"FATAL: ", theFatalBuffer);
 	//Melder_throw (theFatalBuffer);   // un-comment-out if you want to trace an assert
 	(*theFatalProc) (theFatalBuffer);   // ...but this call will use heap memory...
-	abort ();
 }
 
 void Melder_setFatalProc (void (*fatal) (conststring32))
