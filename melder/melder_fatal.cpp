@@ -33,7 +33,7 @@ constexpr int Melder_FATAL_BUFFER_SIZE { 2000 };
 static char32 theFatalBuffer [Melder_FATAL_BUFFER_SIZE];
 static const conststring32 theCrashMessage { U"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n" };
 
-void Melder_fatal (const MelderArg& arg1,
+void Melder_fatal_ (const MelderArg& arg1,
 	const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7,
 	const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
@@ -70,7 +70,6 @@ void Melder_fatal (const MelderArg& arg1,
 	if (length + length13 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s13); length += length13; }
 	trace (U"FATAL: ", theFatalBuffer);
 	(*theFatalProc) (theFatalBuffer);
-	abort ();
 }
 
 void Melder_assert_ (const char *fileName, int lineNumber, const char *condition) {
@@ -97,7 +96,6 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	trace (U"FATAL: ", theFatalBuffer);
 	//Melder_throw (theFatalBuffer);   // un-comment-out if you want to trace an assert
 	(*theFatalProc) (theFatalBuffer);   // ...but this call will use heap memory...
-	abort ();
 }
 
 void Melder_setFatalProc (void (*fatal) (conststring32))
