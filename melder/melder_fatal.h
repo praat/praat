@@ -29,12 +29,14 @@
 	See also Melder_assert ().
 */
 
-void Melder_fatal (const MelderArg&,
+void Melder_fatal_ (const MelderArg&,
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
 	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U""
 );
+
+#define Melder_fatal(...)  do { Melder_fatal_ (__VA_ARGS__); abort (); } while (0)
 
 void Melder_setFatalProc (void (*p_fatalProc) (conststring32));
 
