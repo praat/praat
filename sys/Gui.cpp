@@ -97,6 +97,7 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 		NSRect rect;
 		NSArray *screenArray = [NSScreen screens];
 		NSUInteger screenCount = [screenArray count];
+		Melder_assert (screenCount >= 1);   // otherwise, output would be garbage
 		NSUInteger index = 0;
 		for (index = 0; index < screenCount; index ++) {
 			NSScreen *screen = [screenArray objectAtIndex: index];
