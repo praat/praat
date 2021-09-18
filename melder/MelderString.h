@@ -65,8 +65,9 @@ void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& 
 
 template <typename... Args>
 void MelderString_append (MelderString *me, const MelderArg& first, Args... rest) {
-	integer extraLength = MelderArg__length (first, rest...);
-	integer sizeNeeded = my length + extraLength + 1;
+	const integer extraLength = MelderArg__length (first, rest...);
+	const integer sizeNeeded = my length + extraLength + 1;
+	Melder_assert (sizeNeeded > 0);   // this assertion was added to silence an analyzer complaint
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand (me, sizeNeeded);
 	_recursiveTemplate_MelderString_append (me, first, rest...);
@@ -77,8 +78,9 @@ void MelderString_copy (MelderString *me, const MelderArg& first, Args... rest) 
 	constexpr int64 FREE_THRESHOLD_BYTES = 10'000;
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
-	integer length = MelderArg__length (first, rest...);
-	integer sizeNeeded = length + 1;
+	const integer length = MelderArg__length (first, rest...);
+	const integer sizeNeeded = length + 1;
+	Melder_assert (sizeNeeded > 0);   // this assertion was added to silence an analyzer complaint
 	if (sizeNeeded > my bufferSize)
 		MelderString_expand (me, sizeNeeded);
 	my length = 0;
