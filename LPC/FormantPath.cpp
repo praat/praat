@@ -321,10 +321,10 @@ autoMatrix FormantPath_to_Matrix_qSums (FormantPath me, integer numberOfTracks) 
 			for (integer iformant = 1; iformant <= my formants.size; iformant ++) {
 				const Formant_Frame frame = & my formants.at [iformant] -> frames [itime];
 				const integer currentNumberOfFormants = std::min (numberOfTracks, frame -> numberOfFormants);
-				double qsum = 0.0;
+				longdouble qsum = 0.0;
 				for (integer itrack = 1; itrack <= currentNumberOfFormants; itrack ++)
 					qsum += frame -> formant [itrack] . frequency / frame-> formant [itrack]. bandwidth;
-				thy z [iformant] [itime] = (currentNumberOfFormants > 0 ? qsum /= currentNumberOfFormants : 0.0 );
+				thy z [iformant] [itime] = ( currentNumberOfFormants > 0 ? (double) (qsum / currentNumberOfFormants) : 0.0 );
 			}
 		}
 		return thee;
