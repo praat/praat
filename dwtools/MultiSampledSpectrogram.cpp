@@ -250,10 +250,9 @@ void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g
 		return; // empty
 	const double maximum = powerExtrema.max;
 	const double minimum = std::max (maximum - dBRange, powerExtrema.min);
-
+	double tmin_previousBin = undefined, tmax_previousBin = undefined;
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		FrequencyBin frequencyBin = my frequencyBins.at [ifreq];
-		double tmin_previousBin, tmax_previousBin ;
 		const double dx = frequencyBin -> dx;
 		const integer numberOfFrames = Sampled_getWindowSamples (
 			frequencyBin, tmin - 0.4999 * dx, tmax + 0.4999 * dx, & itmin, & itmax);
@@ -265,15 +264,13 @@ void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g
 			p [1] [ ++ index] = frequencyBin -> v_getValueAtSample (iframe, 0, 2);
 		double tmin_bin = Sampled_indexToX (frequencyBin, itmin) - 0.5 * dx;
 		double tmax_bin = Sampled_indexToX (frequencyBin, itmax) + 0.5 * dx;
-		if (ifreq > 1) {
-			Melder_clipRight (& tmin_bin, tmin_previousBin); // clip against previous
-			Melder_clipLeft (tmax_previousBin, & tmax_bin);
-		}
+		Melder_clipRight (& tmin_bin, tmin_previousBin); // clip against previous
+		Melder_clipLeft (tmax_previousBin, & tmax_bin);
+		tmin_previousBin = tmin_bin;
+		tmax_previousBin = tmax_bin;
 		const double freq = Sampled_indexToX (me, ifreq);
 		const double ymin = freq - 0.5 * my dx, ymax = freq + 0.5 * my dx;
 		Graphics_image (g, p.get(), tmin_bin, tmax_bin, ymin, ymax, minimum, maximum);
-		tmin_previousBin = tmin_bin;
-		tmax_previousBin = tmax_bin;
 	}
 }
 
