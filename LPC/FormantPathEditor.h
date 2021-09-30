@@ -48,7 +48,8 @@
 
 Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	autoTextGrid textgrid;
-	autoTextGridView pathGridView;
+	autoTextGridView textGridView, previousTextGridView;
+	autoFormant previousFormant;
 	Graphics_Viewport selectionViewer_viewport;
 	integer selectedTier, selectedCandidate;
 	bool suppressRedraw;
@@ -116,7 +117,10 @@ Thing_define (FormantPathEditor, TimeSoundAnalysisEditor) {
 	void v_createMenuItems_formant (EditorMenu menu)
 		override;
 	virtual void v_updateMenuItems_navigation ();
-	
+	void v_saveData () 
+		override;
+	void v_restoreData ()
+		override;
 	#include "FormantPathEditor_prefs.h"
 };
 

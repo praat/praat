@@ -60,7 +60,7 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 	/*FormantPath formantPath = (FormantPath) our data;
 	IntervalTierNavigator navigator = formantPath -> intervalTierNavigator.get();
 	bool navigationPossible = ( navigator && IntervalTierNavigator_isNavigationPossible (navigator) &&
-		our pathGridView && TextGridView_hasTierInView (our pathGridView.get(), formantPath -> navigationTierNumber) );
+		our textGridView && TextGridView_hasTierInView (our textGridView.get(), formantPath -> navigationTierNumber) );
 	bool nextSensitive = false;
 	bool previousSensitive = false;
 	if (navigationPossible) {
@@ -84,6 +84,15 @@ bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 	}
 	return FormantPathEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
+
+void structFormantPathEditor :: v_saveData () {
+	
+}
+
+void structFormantPathEditor :: v_restoreData () {
+	
+}
+
 /********** UTILITIES **********/
 
 static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_startTime, double *out_endTime, double *out_xCursor, double *out_yCursor) {
@@ -110,7 +119,7 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 }
 
 static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) {
-	if (my selectedTier < 1 || my selectedTier > my pathGridView -> tiers -> size)
+	if (my selectedTier < 1 || my selectedTier > my textGridView -> tiers -> size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
@@ -138,7 +147,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantP
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
-		autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+		autoTextGrid grid = TextGridView_to_TextGrid (my textGridView.get());
 		autoTextGrid result = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, true);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -147,7 +156,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (FormantPa
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
-		autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+		autoTextGrid grid = TextGridView_to_TextGrid (my textGridView.get());
 		autoTextGrid result = TextGrid_extractPart (grid.get(), my startSelection, my endSelection, false);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
@@ -162,9 +171,9 @@ void structFormantPathEditor :: v_createMenuItems_file_extract (EditorMenu menu)
 
 static void menu_cb_WriteToTextFile (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
-		Melder_sprint (defaultName,300, my pathGridView -> name.get(), U".TextGrid");
+		Melder_sprint (defaultName,300, my textGridView -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
-		autoTextGrid grid = TextGridView_to_TextGrid (my pathGridView.get());
+		autoTextGrid grid = TextGridView_to_TextGrid (my textGridView.get());
 		Data_writeToTextFile (grid.get(), file);
 	EDITOR_END
 }
@@ -191,7 +200,7 @@ static void menu_cb_DrawVisibleTextGrid (FormantPathEditor me, EDITOR_ARGS_FORM)
 		my v_do_pictureSelection (cmd);
 		my pref_picture_garnish () = garnish;
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my pathGridView.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
+		TextGrid_Sound_draw (my textGridView.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
 			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -220,7 +229,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_AR
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 					kSound_windowShape::RECTANGULAR, 1.0, true);
-			TextGrid_Sound_draw (my pathGridView.get(), sound.get(), my pictureGraphics,
+			TextGrid_Sound_draw (my textGridView.get(), sound.get(), my pictureGraphics,
 				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
 		}
 		FunctionEditor_garnish (me);
@@ -238,7 +247,7 @@ void structFormantPathEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 /***** QUERY MENU *****/
 #if 0
 static void menu_cb_GetStartingPointOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my pathGridView.get();
+	const TextGrid grid = my textGridView.get();
 	checkTierSelection (me, U"query the starting point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -253,7 +262,7 @@ static void menu_cb_GetStartingPointOfInterval (FormantPathEditor me, EDITOR_ARG
 }
 
 static void menu_cb_GetEndPointOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my pathGridView.get();
+	const TextGrid grid = my textGridView.get();
 	checkTierSelection (me, U"query the end point of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -268,7 +277,7 @@ static void menu_cb_GetEndPointOfInterval (FormantPathEditor me, EDITOR_ARGS_DIR
 }
 
 static void menu_cb_GetLabelOfInterval (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	const TextGrid grid = my pathGridView.get();
+	const TextGrid grid = my textGridView.get();
 	checkTierSelection (me, U"query the label of an interval");
 	const Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -322,7 +331,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
 		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
-		TextGrid_Pitch_drawSeparately (my pathGridView.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
+		TextGrid_Pitch_drawSeparately (my textGridView.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
 			speckle, my p_pitch_unit
 		);
@@ -334,7 +343,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 /***** SEARCH MENU *****/
 
 static void findInTier (FormantPathEditor me) {
-	const TextGrid grid =  my pathGridView.get();
+	const TextGrid grid =  my textGridView.get();
 	checkTierSelection (me, U"find a text");
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -453,12 +462,11 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 		POSITIVE (intensityModulationStepSize, U"Intensity modulation step size (dB)", U"5.0")
 		LABEL (U"Global stress parameters:")
 		POSITIVE (windowLength, U"Window length", U"0.035")
-		NATURALVECTOR (parameters, U"Coefficients by track", WHITESPACE_SEPARATED_, U"3 3 3")
-		POSITIVE (powerf, U"Power", U"1.25")
 	EDITOR_OK
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
-		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters, powerf);
+		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
+		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), my p_modeler_varianceExponent);
 		my d_formant = FormantPath_extractFormant (formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -658,7 +666,7 @@ void structFormantPathEditor :: v_createChildren () {
 }
 
 void structFormantPathEditor :: v_dataChanged () {
-	const TextGrid grid = our pathGridView.get();
+	const TextGrid grid = our textGridView.get();
 	/*
 		Perform a minimal selection change.
 		Most changes will involve intervals and boundaries; however, there may also be tier removals.
@@ -836,7 +844,7 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 			tmax_ = our endSelection;
 		}
 		our selectedCandidate = index;
-		Editor_save (this, U"insert interval by selection viewer");
+		// Editor_save (this, U"insert interval by selection viewer"); // we need complete undo of every command!
 		integer itmin, itmax;
 		Sampled_getWindowSamples (formantPath, tmin_, tmax_, & itmin, & itmax);
 		for (integer iframe = itmin; iframe <= itmax; iframe ++)
@@ -953,7 +961,7 @@ autoFormantPathEditor FormantPathEditor_create (conststring32 title, FormantPath
 		my d_formant = FormantPath_extractFormant (formantPath);
 		if (textgrid) {
 			my textgrid = Data_copy (textgrid);
-			my pathGridView = TextGridView_create (my textgrid.get());
+			my textGridView = TextGridView_create (my textgrid.get());
 		}
 		if (my p_modeler_numberOfParametersPerTrack [0] == U'\0')
 			pref_str32cpy2(my p_modeler_numberOfParametersPerTrack, my pref_modeler_numberOfParametersPerTrack (), my default_modeler_numberOfParametersPerTrack ());
