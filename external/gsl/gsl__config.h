@@ -35,11 +35,7 @@
 
 /* Define to 1 if you have the declaration of `finite', and to 0 if you don't.
    */
-#if defined(linux) || defined (_WIN32)
-   #define HAVE_DECL_FINITE 1
-#else
-   #define HAVE_DECL_FINITE 0
-#endif
+#define HAVE_DECL_FINITE 0
 
 /* Define to 1 if you have the declaration of `frexp', and to 0 if you don't.
    */
@@ -51,29 +47,15 @@
 
 /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
    don't. */
-#if defined(linux)
-   #define HAVE_DECL_ISFINITE 1
-#else
-   #define HAVE_DECL_ISFINITE 0
-#endif
+#define HAVE_DECL_ISFINITE 1
 
 /* Define to 1 if you have the declaration of `isinf', and to 0 if you don't.
    */
-#if defined(linux) || defined (macintosh) || defined (_WIN32)
-  #define HAVE_DECL_ISINF 1
-#else
-  #define HAVE_DECL_ISINF 0
-#endif
-
+#define HAVE_DECL_ISINF 1
 
 /* Define to 1 if you have the declaration of `isnan', and to 0 if you don't.
    */
-#if defined(linux) || defined (macintosh) || defined (_WIN32)
-  #define HAVE_DECL_ISNAN 1
-#else
-  #define HAVE_DECL_ISNAN 0
-#endif
-
+#define HAVE_DECL_ISNAN 1
 
 /* Define to 1 if you have the declaration of `ldexp', and to 0 if you don't.
    */
@@ -313,9 +295,9 @@
 #define isinf gsl_isinf
 #endif
 
-#if !HAVE_DECL_FINITE
-#define finite gsl_finite
-#endif
+//#if !HAVE_DECL_FINITE
+//#define finite gsl_finite
+//#endif
 
 #if !HAVE_DECL_ISNAN
 #define isnan gsl_isnan
