@@ -1,6 +1,6 @@
 /* Sound_to_Formant.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ static void burg (constVEC samples, VEC coefficients,
 	 */
 	for (integer iroot = 1; iroot <= roots -> numberOfRoots; iroot ++)
 		if (roots -> roots [iroot].imag() >= 0.0) {
-			double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
+			const double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
 				frame -> numberOfFormants ++;
 		}
@@ -77,7 +77,7 @@ static void burg (constVEC samples, VEC coefficients,
 	int iformant = 0;
 	for (integer iroot = 1; iroot <= roots -> numberOfRoots; iroot ++)
 		if (roots -> roots [iroot].imag() >= 0.0) {
-			double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
+			const double f = fabs (atan2 (roots -> roots [iroot].imag(), roots -> roots [iroot].real())) * nyquistFrequency / NUMpi;
 			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin) {
 				Formant_Formant formant = & frame -> formant [++ iformant];
 				formant -> frequency = f;
@@ -89,7 +89,7 @@ static void burg (constVEC samples, VEC coefficients,
 }
 
 static int findOneZero (integer ijt, double vcx [], double a, double b, double *zero) {
-	double x = 0.5 * (a + b), fa = 0.0, fb = 0.0, fx = 0.0;
+	double fa = 0.0, fb = 0.0;
 	for (integer k = ijt; k >= 0; k --) {
 		fa = vcx [k] + a * fa;
 		fb = vcx [k] + b * fb;
@@ -104,10 +104,11 @@ static int findOneZero (integer ijt, double vcx [], double a, double b, double *
 		);
 		return 0;
 	}
+	double x, fx;
 	do {
-		fx = 0.0;
-		/*x = fa == fb ? 0.5 * (a + b) : a + fa * (a - b) / (fb - fa);*/
+		//x = fa == fb ? 0.5 * (a + b) : a + fa * (a - b) / (fb - fa);   // interpolation
 		x = 0.5 * (a + b);   // simple bisection
+		fx = 0.0;
 		for (integer k = ijt; k >= 0; k --)
 			fx = vcx [k] + x * fx;
 		if (fa * fx > 0.0) {
@@ -115,7 +116,7 @@ static int findOneZero (integer ijt, double vcx [], double a, double b, double *
 			fa = fx;
 		} else {
 			b = x;
-			fb = fx;
+			//fb = fx;   // comment out if simple bisection
 		}
 	} while (fabs (fx) > 1e-5);
 	*zero = x;

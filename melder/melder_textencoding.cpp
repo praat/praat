@@ -594,7 +594,8 @@ void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
 			So we first convert to UTF-16, then turn into CFString, then decompose, then convert to UTF-8.
 		*/
 		UniChar unipath [kMelder_MAXPATH+1];
-		int64 n = str32len (string), n_utf16 = 0;
+		const int64 n = str32len (string);
+		int n_utf16 = 0;
 		for (int64 i = 0; i < n; i ++) {
 			char32 kar = (char32) string [i];   // change sign (bit 32 is never used)
 			if (kar <= 0x00'FFFF) {
@@ -617,10 +618,10 @@ void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
 	#elif defined (UNIX) || defined (__CYGWIN__)
 		Melder_32to8_inplace (string, utf8);
 	#elif defined (_WIN32)
-		int n = str32len (string), i, j;
-		for (i = 0, j = 0; i < n; i ++) {
-			utf8 [j ++] = string [i] <= 255 ? string [i] : '?';   // the usual replacement on Windows
-		}
+		const int n = str32len (string);
+		int j = 0;
+		for (int i = 0; i < n; i ++)
+			utf8 [j ++] = ( string [i] <= 255 ? string [i] : '?' );   // the usual replacement on Windows
 		utf8 [j] = '\0';
 	#else
 		//#error Unsupported platform.
