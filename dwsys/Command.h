@@ -2,7 +2,7 @@
 #define _Command_h_
 /* Command.h
  *
- * Copyright (C) 1994-2018 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1994-2018, 2021 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,38 +47,56 @@ Collection_define (CommandHistory, OrderedOf, Command) {
 	integer current;
 };
 
-/* Active data structure. 'current' is position of the cursor in the list */
-/* Queries and insertions are at the current position */
-/* Invariants: */
-/*	0 <= current <= size + 1; */
+/*
+	Active data structure. 'current' is position of the cursor in the command history list
+	Queries and insertions are at the current position
+	Invariants:
+	0 <= current <= size + 1;
+*/
 
 void CommandHistory_forth (CommandHistory me);
-/* Precondition: ! offright */
-/* my current++; */
+/*
+	Precondition: ! offright
+	Postcondition: my current++;
+*/
 
 void CommandHistory_back (CommandHistory me);
-/* Precondition: ! offleft */
-/* my current--; */
+/*
+	Precondition: ! offleft
+	Postcondition: my current--;
+*/
 
 Command CommandHistory_getItem (CommandHistory me);
-/* return (pointer to) my item [my current]; */
+/*
+	return command at my item [my current];
+*/
 
 void CommandHistory_insertItem_move (CommandHistory me, autoCommand command);
-/* 1. forget about item [ current+1..size ] */
-/* 2. insert item after current. */
-/* 3. current = size */
+/*
+	1. forget about item [ current+1..size ]
+	2. insert item after current.
+	3. new_size = current+1
+*/
 
 bool CommandHistory_isEmpty (CommandHistory me);
-/*	return my size == 0; */
+/*
+	return my size == 0;
+*/
 
 bool CommandHistory_isOffleft (CommandHistory me);
-/*	return my current == 0; */
+/*
+	return my current == 0;
+*/
 
 bool CommandHistory_isOffright (CommandHistory me);
-/*	return my size == 0 || my current == my size + 1; */
+/*
+	return my size == 0 || my current == my size + 1;
+*/
 
 conststring32 CommandHistory_commandName (CommandHistory me, integer offsetFromCurrent);
-/* offsetFromCurrent may be zero, positive or negative. */
-/* References outside the list will return nullptr. */
+/*
+	offsetFromCurrent may be zero, positive or negative.
+	References outside the list will return nullptr.
+*/
 
 #endif /* _Command_h_ */
