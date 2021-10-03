@@ -26,19 +26,17 @@
 
 Thing_declare (Command);
 
-typedef MelderCallback<int, structCommand> Command_Callback;
-
 Thing_define (Command, Thing) {
 	Thing boss;
-	Command_Callback execute;
-	Command_Callback undo;
+	virtual void v_do ();
+	virtual void v_undo ();
 };
 
-void Command_init (Command me, conststring32 name, Thing boss, Command_Callback execute, Command_Callback undo);
+void Command_init (Command me, conststring32 name, Thing boss);
 
-int Command_do (Command me);
+void Command_do (Command me);
 
-int Command_undo (Command me);
+void Command_undo (Command me);
 
 
 #pragma mark - class CommandHistory
