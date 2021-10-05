@@ -320,7 +320,7 @@ void structCategoriesEditorCommand :: v_destroy () noexcept {
 }
 
 static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststring32 name, Thing boss,
-	integer /*nCategories*/, integer nSelected)
+	integer /*nCategories*/, integer nSelected) 
 {
 	my nSelected = nSelected;
 	Command_init (me, name, boss);
@@ -338,6 +338,7 @@ Thing_define (CategoriesEditorInsert, CategoriesEditorCommand) {
 		editorCategories -> addItemAtPosition_move (str.move(), selection [1]);
 		update (editor, selection [1], 0, selection.get(), 1);
 	};
+
 	void v_undo () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
 		Categories editorCategories = static_cast<Categories> (editor -> data);
@@ -366,7 +367,6 @@ Thing_define (CategoriesEditorRemove, CategoriesEditorCommand) {
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
 		Categories editorCategories = static_cast<Categories> (editor -> data);
-
 		for (integer i = nSelected; i >= 1; i--) {
 			autoSimpleString item = Data_copy (editorCategories->at [selection [i]]);   // FIXME this copy can probably be replaced with a move
 			categories -> addItemAtPosition_move (item.move(), 1);
