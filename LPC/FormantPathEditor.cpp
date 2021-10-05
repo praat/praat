@@ -389,7 +389,7 @@ static void findInTier (FormantPathEditor me) {
 }
 
 static void do_find (FormantPathEditor me) {
-	if (my findString) {
+	if (my findString && my textArea) {
 		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my textArea, & left, & right);
 		const char32 * const position = str32str (& label [right], my findString.get());   // CRLF BUG?
