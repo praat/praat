@@ -1,6 +1,6 @@
 /* TextGridView.cpp
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,16 +56,16 @@ bool TextGridView_isDefaultView (TextGridView me) {
 	return true;
 }
 
-autoTextGridView TextGridView_create (TextGrid me) {
+autoTextGridView TextGridView_create (TextGrid thee) {
 	try {
-		autoTextGridView thee = Thing_new (TextGridView);
-		thy tiers = FunctionList_create ();
-		thy tiers -> _initializeOwnership (false);
-		thy xmin = my xmin;
-		thy xmax = my xmax;
-		thy origin = me;
-		TextGridView_setDefaultView (thee.get());
-		return thee;
+		autoTextGridView me = Thing_new (TextGridView);
+		my tiers = FunctionList_create ();
+		my tiers -> _initializeOwnership (false);
+		my xmin = thy xmin;
+		my xmax = thy xmax;
+		my origin = thee;
+		TextGridView_setDefaultView (me.get());
+		return me;
 	} catch (MelderError) {
 		Melder_throw (U"TextGridView not created.");
 	}	
@@ -85,9 +85,9 @@ void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbe
 	const integer min = NUMmin (newTierNumbers);
 	const integer max = NUMmax (newTierNumbers);
 	Melder_require (min > 0,
-		U"A tier number should be positive.");
+		U"The tier number should be positive.");
 	Melder_require (max <= my origin -> tiers -> size,
-		U"A tier number should not exceed ", size, U" (=the number of tiers in the original TextGrid).");
+		U"The tier number should not exceed ", size, U" (=the number of tiers in the original TextGrid).");
 }
 
 void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers) {
@@ -102,22 +102,22 @@ void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers
 	}
 }
 
-void TextGridView_viewAllWithSelectedOnTop (TextGridView me, integer selected) {
+void TextGridView_viewAllWithSelectedOnTop (TextGridView me, integer originSelected) {
 	const integer originSize = my origin -> tiers -> size;
-	Melder_require (selected >= 0 && selected <= originSize,
+	Melder_require (originSelected >= 0 && originSelected <= originSize,
 		U"The selected tier number should not exceed ", originSize, U".");
 	autoINTVEC tierNumbers = to_INTVEC (originSize);
-	if (selected > 0) {
+	if (originSelected > 0) {
 		integer selectedPosition = 0;
 		for (integer inum = 1; inum <= tierNumbers.size; inum ++)
-			if (tierNumbers [inum] == selected) {
+			if (tierNumbers [inum] == originSelected) {
 				selectedPosition = inum;
 				break;
 			}
 		if (selectedPosition != 1) {
 			for (integer inum = selectedPosition; inum > 1; inum --)
 				tierNumbers [inum] = tierNumbers [inum - 1];
-			tierNumbers [1] = selected;
+			tierNumbers [1] = originSelected;
 		}
 	}
 	TextGridView_modifyView (me, tierNumbers.get());
