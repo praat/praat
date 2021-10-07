@@ -129,17 +129,17 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 		GuiLabel_setText (my outOfView, U"");
 }
 
-static void updateUndoAndRedoMenuItems (CategoriesEditor me) {
+static void updateUndoAndRedoButtons (CategoriesEditor me) {
 	/*
 		Menu item `Undo`.
 	 */
 	bool undoItemIsSensitive = true;
 	conststring32 commandName = CommandHistory_commandName (my history.get(), 0);
 	if (! commandName) {
-		commandName = U"nothing";
+		GuiButton_setText (my undo, U"Cannot undo");
 		undoItemIsSensitive = false;
-	}
-	GuiButton_setText (my undo, Melder_cat (U"Undo ", U"\"", commandName, U"\""));
+	} else
+		GuiButton_setText (my undo, Melder_cat (U"Undo ", U"\"", commandName, U"\""));
 	GuiThing_setSensitive (my undo, undoItemIsSensitive);
 
 	/*
@@ -148,10 +148,10 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me) {
 	bool redoItemIsSensitive = true;
 	commandName = CommandHistory_commandName (my history.get(), 1);
 	if (! commandName) {
-		commandName = U"nothing";
+		GuiButton_setText (my redo, U"Cannot redo");
 		redoItemIsSensitive = false;
-	}
-	GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", commandName, U"\""));
+	} else
+		GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", commandName, U"\""));
 	GuiThing_setSensitive (my redo, redoItemIsSensitive);
 }
 
@@ -184,7 +184,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	GuiThing_setSensitive (my moveUp,      moveUp);
 	GuiThing_setSensitive (my moveDown,    moveDown);
 	if (my history)
-		updateUndoAndRedoMenuItems (me);
+		updateUndoAndRedoButtons (me);
 	notifyNumberOfSelected (me);
 }
 
@@ -301,19 +301,15 @@ Thing_define (CategoriesEditorCommand, Command) {
 	integer nSelected, newPos;
 	
 	void v_do ()
-		override;
+		override {};
 	void v_undo ()
-		override;
+		override {};
 	void v_destroy () noexcept
 		override;
 };
 
 
 Thing_implement (CategoriesEditorCommand, Command, 0);
-
-void structCategoriesEditorCommand :: v_do () {}
-
-void structCategoriesEditorCommand :: v_undo () {}
 
 void structCategoriesEditorCommand :: v_destroy () noexcept {
 	CategoriesEditorCommand_Parent :: v_destroy ();
@@ -370,6 +366,7 @@ Thing_define (CategoriesEditorRemove, CategoriesEditorCommand) {
 		for (integer i = nSelected; i >= 1; i--) {
 			autoSimpleString item = Data_copy (editorCategories->at [selection [i]]);   // FIXME this copy can probably be replaced with a move
 			categories -> addItemAtPosition_move (item.move(), 1);
+			
 			editorCategories -> removeItem (selection [i]);
 		}
 		update (editor, selection [1], 0, selection.get(), 0); // was nullptr
