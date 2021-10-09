@@ -144,7 +144,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 					}
 				} break;
 				case intwa: {
-					int oldValue = * (int *) my d_fieldData [irow]. address, newValue = Melder_atoi (text.get());
+					int oldValue = * (int *) my d_fieldData [irow]. address, newValue = (int) Melder_atoi (text.get());
 					if (newValue != oldValue) {
 						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
@@ -168,7 +168,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 					}
 				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text.get()); } break;
-				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text.get()); } break;
+				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = (uint) Melder_atoi (text.get()); } break;
 				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (uinteger) Melder_atoi (text.get()); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;

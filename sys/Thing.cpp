@@ -108,7 +108,7 @@ ClassInfo Thing_classFromClassName (conststring32 klas, int *out_formatVersion) 
 	if (space) {
 		*space = U'\0';   // strip version number
 		if (out_formatVersion)
-			*out_formatVersion = Melder_atoi (space + 1);
+			*out_formatVersion = (int) Melder_atoi (space + 1);
 	} else {
 		if (out_formatVersion)
 			*out_formatVersion = 0;

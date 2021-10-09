@@ -2079,17 +2079,17 @@ void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 tit
 		Repair preferences.
 	*/
 	if (my p_pitch_floor >= my p_pitch_ceiling) {
-		my p_pitch_floor = Melder_atoi (my default_pitch_floor());
-		my p_pitch_ceiling = Melder_atoi (my default_pitch_ceiling());
+		my p_pitch_floor = Melder_atof (my default_pitch_floor());
+		my p_pitch_ceiling = Melder_atof (my default_pitch_ceiling());
 		my p_pitch_unit = kPitch_unit::HERTZ;
 	}
 	if (my p_spectrogram_viewFrom >= my p_spectrogram_viewTo) {
-		my p_spectrogram_viewFrom = Melder_atoi (my default_spectrogram_viewFrom());
-		my p_spectrogram_viewTo = Melder_atoi (my default_spectrogram_viewTo());
+		my p_spectrogram_viewFrom = Melder_atof (my default_spectrogram_viewFrom());
+		my p_spectrogram_viewTo = Melder_atof (my default_spectrogram_viewTo());
 	}
 	if (my p_intensity_viewFrom >= my p_intensity_viewTo) {
-		my p_intensity_viewFrom = Melder_atoi (my default_intensity_viewFrom());
-		my p_intensity_viewTo = Melder_atoi (my default_intensity_viewTo());
+		my p_intensity_viewFrom = Melder_atof (my default_intensity_viewFrom());
+		my p_intensity_viewTo = Melder_atof (my default_intensity_viewTo());
 	}
 	if (my v_hasAnalysis ()) {
 		if (my p_log1_toLogFile == false && my p_log1_toInfoWindow == false) {
