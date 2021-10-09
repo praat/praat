@@ -168,7 +168,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 					}
 				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text.get()); } break;
-				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = (uint) Melder_atoi (text.get()); } break;
+				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = (uint32) Melder_atoi (text.get()); } break;
 				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (uinteger) Melder_atoi (text.get()); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;

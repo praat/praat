@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20210908)
+MAN_BEGIN (U"What's new?", U"ppgb", 20211009)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.54# (9 October 2021)")
+LIST_ITEM (U"• PowerCepstrogram: can tabulate cepstral peak prominence values.")
+LIST_ITEM (U"• Mac: repaired global Escape key menu shortcut (stops sounds that play from the Objects window).")
 NORMAL (U"##6.1.53# (8 September 2021)")
 LIST_ITEM (U"• Linux: corrected a bug that caused PDF files to be misaligned "
 	"if the origin was not in the top left corner.")
