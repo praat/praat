@@ -135,6 +135,7 @@ static integer getSelectedPoint (TextGridEditor me) {
 	Melder_assert (my selectedTier >= 1 || my selectedTier <= grid -> tiers->size);
 	const TextTier tier = (TextTier) grid -> tiers->at [my selectedTier];
 	Melder_assert (tier -> classInfo == classTextTier);
+	Melder_assert (isdefined (my startSelection));
 	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection);
 }
 
@@ -611,6 +612,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 			}
 		}
 	} else {
+		Melder_assert (isdefined (t1));
 		if (AnyTier_hasPoint (textTier->asAnyTier(), t1))
 			Melder_throw (U"Cannot add a point at ", Melder_fixed (t1, 6), U" seconds, because there is already a point there.");
 
@@ -1814,7 +1816,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 					TextTier textTier;
 					AnyTextGridTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
 					if (intervalTier) {
-						integer ibound = IntervalTier_hasBoundary (intervalTier, anchorTime);
+						const integer ibound = IntervalTier_hasBoundary (intervalTier, anchorTime);
 						if (ibound) {
 							TextInterval leftInterval = intervalTier -> intervals.at [ibound - 1];
 							TextInterval rightInterval = intervalTier -> intervals.at [ibound];
@@ -1826,6 +1828,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 							Melder_clipRight (& rightDraggingBoundary, rightInterval -> xmax);
 						}
 					} else {
+						Melder_assert (isdefined (anchorTime));
 						if (AnyTier_hasPoint (textTier->asAnyTier(), anchorTime)) {
 							/*
 								Other than with boundaries on interval tiers,
@@ -1866,6 +1869,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			}
 		}
 	} else if (event -> isDrop ()) {
+		//if (isundef (anchorTime))   // TODO: figure out a circumstance under which this could happen
+		//	return false;
 		if (our draggingTiers.size == 0) {
 			our draggingTime = undefined;
 			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
@@ -1965,9 +1970,11 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 						}
 					}
 				} else {
+					Melder_assert (isdefined (anchorTime));
 					const integer iDraggedPoint = AnyTier_hasPoint (textTier->asAnyTier(), anchorTime);
 					if (iDraggedPoint) {
-						integer dropSiteHasPoint = AnyTier_hasPoint (textTier->asAnyTier(), xWC);
+						Melder_assert (isdefined (xWC));
+						const integer dropSiteHasPoint = AnyTier_hasPoint (textTier->asAnyTier(), xWC);
 						if (dropSiteHasPoint != 0) {
 							Melder_warning (U"Cannot drop point on an existing point.");
 						} else {
@@ -2107,7 +2114,8 @@ void structTextGridEditor :: v_updateText () {
 					newText = interval -> text.get();
 			}
 		} else {
-			integer ipoint = AnyTier_hasPoint (textTier->asAnyTier(), our startSelection);
+			Melder_assert (isdefined (our startSelection));
+			const integer ipoint = AnyTier_hasPoint (textTier->asAnyTier(), our startSelection);
 			if (ipoint) {
 				TextPoint point = textTier -> points.at [ipoint];
 				if (point -> mark)
@@ -2119,7 +2127,7 @@ void structTextGridEditor :: v_updateText () {
 		our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 		trace (U"setting new text ", newText);
 		GuiText_setString (our textArea, newText);
-		integer cursor = str32len (newText);   // at end
+		const integer cursor = str32len (newText);   // at end
 		GuiText_setSelection (our textArea, cursor, cursor);
 		our suppressRedraw = false;
 	}
