@@ -129,62 +129,50 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 		GuiLabel_setText (my outOfView, U"");
 }
 
-static void updateUndoAndRedoMenuItems (CategoriesEditor me) {
-	/*
-		Menu item `Undo`.
-	 */
-	bool undoItemIsSensitive = true;
-	conststring32 commandName = CommandHistory_commandName (my history.get(), 0);
-	if (! commandName) {
-		commandName = U"nothing";
-		undoItemIsSensitive = false;
-	}
-	GuiButton_setText (my undo, Melder_cat (U"Undo ", U"\"", commandName, U"\""));
-	GuiThing_setSensitive (my undo, undoItemIsSensitive);
-
-	/*
-		Menu item `Redo`.
-	 */
-	bool redoItemIsSensitive = true;
-	commandName = CommandHistory_commandName (my history.get(), 1);
-	if (! commandName) {
-		commandName = U"nothing";
-		redoItemIsSensitive = false;
-	}
-	GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", commandName, U"\""));
-	GuiThing_setSensitive (my redo, redoItemIsSensitive);
-}
-
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
 	Categories data = (Categories) my data;
-	integer size = data->size;
-	bool insert = false, insertAtEnd = true, replace = false, remove = false;
-	bool moveUp = false, moveDown = false;
+	const integer size = data -> size;
+
 	autoINTVEC posList = GuiList_getSelectedPositions (my list);
+	
+	GuiThing_setSensitive (my insert, ( posList.size == 1 ));
+	GuiThing_setSensitive (my insertAtEnd, true);
+	GuiThing_setSensitive (my replace, ( posList.size > 0 ));
+	
+	const bool removeSensitive = ! (posList.size == 1 && size == 1 && 
+		str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string.get()));
+	GuiThing_setSensitive (my remove, removeSensitive);
+	
+	bool moveUpIsSensitive = false, moveDownIsSensitive = false;
 	if (posList.size > 0) {
 		const integer firstPos = posList [1], lastPos = posList [posList.size];
-		bool contiguous = ( lastPos - firstPos + 1 == posList.size );
-		moveUp = contiguous && firstPos > 1;
-		moveDown = contiguous && lastPos < size;
+		const bool contiguous = ( lastPos - firstPos + 1 == posList.size );
+		moveUpIsSensitive = contiguous && firstPos > 1;
+		moveDownIsSensitive = contiguous && lastPos < size;
 		my position = firstPos;
-		remove = true;
-		replace = true;
-		//insertAtEnd = false;
-		if (posList.size == 1) {
-			insert = true;
-			//if (posList [1] == size) insertAtEnd = true;
-			if (size == 1 && str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string.get()))
-				remove = false;
-		}
 	}
-	GuiThing_setSensitive (my insert,      insert);
-	GuiThing_setSensitive (my insertAtEnd, insertAtEnd);
-	GuiThing_setSensitive (my replace,     replace);
-	GuiThing_setSensitive (my remove,      remove);
-	GuiThing_setSensitive (my moveUp,      moveUp);
-	GuiThing_setSensitive (my moveDown,    moveDown);
-	if (my history)
-		updateUndoAndRedoMenuItems (me);
+	GuiThing_setSensitive (my moveUp,      moveUpIsSensitive);
+	GuiThing_setSensitive (my moveDown,    moveDownIsSensitive);
+	
+	if (my history) {
+		bool undoIsSensitive = true;
+		conststring32 commandName = CommandHistory_commandName (my history.get(), 0);
+		if (! commandName) {
+			GuiButton_setText (my undo, U"Cannot undo");
+			undoIsSensitive = false;
+		} else
+			GuiButton_setText (my undo, Melder_cat (U"Undo ", U"\"", commandName, U"\""));
+		GuiThing_setSensitive (my undo, undoIsSensitive);
+
+		bool redoIsSensitive = true;
+		commandName = CommandHistory_commandName (my history.get(), 1);
+		if (! commandName) {
+			GuiButton_setText (my redo, U"Cannot redo");
+			redoIsSensitive = false;
+		} else
+			GuiButton_setText (my redo, Melder_cat (U"Redo ", U"\"", commandName, U"\""));
+		GuiThing_setSensitive (my redo, redoIsSensitive);
+	}
 	notifyNumberOfSelected (me);
 }
 
@@ -301,9 +289,9 @@ Thing_define (CategoriesEditorCommand, Command) {
 	integer nSelected, newPos;
 	
 	void v_do ()
-		override;
+		override {};
 	void v_undo ()
-		override;
+		override {};
 	void v_destroy () noexcept
 		override;
 };
@@ -311,16 +299,12 @@ Thing_define (CategoriesEditorCommand, Command) {
 
 Thing_implement (CategoriesEditorCommand, Command, 0);
 
-void structCategoriesEditorCommand :: v_do () {}
-
-void structCategoriesEditorCommand :: v_undo () {}
-
 void structCategoriesEditorCommand :: v_destroy () noexcept {
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
 
 static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststring32 name, Thing boss,
-	integer /*nCategories*/, integer nSelected)
+	integer /*nCategories*/, integer nSelected) 
 {
 	my nSelected = nSelected;
 	Command_init (me, name, boss);
@@ -338,6 +322,7 @@ Thing_define (CategoriesEditorInsert, CategoriesEditorCommand) {
 		editorCategories -> addItemAtPosition_move (str.move(), selection [1]);
 		update (editor, selection [1], 0, selection.get(), 1);
 	};
+
 	void v_undo () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
 		Categories editorCategories = static_cast<Categories> (editor -> data);
@@ -366,10 +351,10 @@ Thing_define (CategoriesEditorRemove, CategoriesEditorCommand) {
 	void v_do () {
 		CategoriesEditor editor = static_cast<CategoriesEditor> (boss);
 		Categories editorCategories = static_cast<Categories> (editor -> data);
-
 		for (integer i = nSelected; i >= 1; i--) {
 			autoSimpleString item = Data_copy (editorCategories->at [selection [i]]);   // FIXME this copy can probably be replaced with a move
 			categories -> addItemAtPosition_move (item.move(), 1);
+			
 			editorCategories -> removeItem (selection [i]);
 		}
 		update (editor, selection [1], 0, selection.get(), 0); // was nullptr

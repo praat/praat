@@ -77,7 +77,7 @@ bool CommandHistory_isOffright (CommandHistory me) {
 }
 
 conststring32 CommandHistory_commandName (CommandHistory me, integer offsetFromCurrent) {
-	integer pos = my current + offsetFromCurrent;
+	const integer pos = my current + offsetFromCurrent;
 	return pos >= 1 && pos <= my size ? Thing_getName (my at [pos]) : nullptr;
 }
 

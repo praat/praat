@@ -2,7 +2,7 @@
 #define _TextGridView_h_
 /* TextGridView.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 	TextGrid's tier 3 and its second tier is the original TextGrid's tier number 1.
 	If 'tierNumbers' has five elements, for example 1, 2, 3, 2 and 1, then The TextGridView behaves as if it had
 	5 tiers. Its tier number 1 and 5 are both equal to the original TextGrid's tier number 1, etc.
-	The TextGridView can be destroyed at any time because it only contains links to the original TextGrid.
+	The TextGridView can be destroyed at any time because it only contains references to the original TextGrid.
 */
 Thing_define (TextGridView, TextGrid) {
 	TextGrid origin;
@@ -65,7 +65,7 @@ void TextGridView_checkNewView (TextGridView me, constINTVEC const& newTierNumbe
 
 void TextGridView_modifyView (TextGridView me, constINTVEC const& newTierNumbers);
 
-void TextGridView_viewAllWithSelectedOnTop (TextGridView me, integer selected);
+void TextGridView_viewAllWithSelectedOnTop (TextGridView me, integer originSelected);
 
 
 #endif /* _TextGridView_h_ */
