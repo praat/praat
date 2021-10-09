@@ -1,6 +1,6 @@
 /* prefs_install.h
  *
- * Copyright (C) 2013,2015-2018 Paul Boersma
+ * Copyright (C) 2013,2015-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,10 @@
 	void struct##Klas :: f_preferences () {
 
 #define prefs_add_int(Klas,name,version,default) \
-	Preferences_addInt (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
+	Preferences_addInt (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, (int) Melder_atoi (sdefault_##name));
 #define prefs_add_int_with_data(Klas,name,version,default)  prefs_add_int (Klas, name, version, default)
 #define prefs_override_int(Klas,name,version,default) \
-	Preferences_addInt (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
+	Preferences_addInt (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, (int) Melder_atoi (sdefault_##name));
 
 #define prefs_add_integer(Klas,name,version,default) \
 	Preferences_addInteger (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));

@@ -410,9 +410,9 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 			// } break; case Interpreter_REALMATRIX: {
 			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_CHOICE: {
-				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1);
+				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
 			} break; case Interpreter_OPTIONMENU: {
-				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, Melder_atoi (my arguments [ipar].get()), 1);
+				radio = UiForm_addOptionMenu (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
 			} break; case Interpreter_BUTTON: {
 				if (radio)
 					UiRadio_addButton (radio, my arguments [ipar].get());

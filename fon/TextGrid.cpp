@@ -1200,6 +1200,7 @@ void TextGrid_setIntervalText (TextGrid me, integer tierNumber, integer interval
 void TextGrid_insertPoint (TextGrid me, integer tierNumber, double time, conststring32 mark) {
 	try {
 		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		Melder_assert (isdefined (time));
 		if (AnyTier_hasPoint (textTier->asAnyTier(), time))
 			Melder_throw (U"There is already a point at ", time, U" seconds.");
 		autoTextPoint newPoint = TextPoint_create (time, mark);
