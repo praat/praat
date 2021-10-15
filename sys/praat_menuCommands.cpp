@@ -436,7 +436,24 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 			break;
 		}
 	}
-	if (! commandFound) return 0;
+	if (! commandFound)
+		return 0;
+	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		const conststring32 scriptPath = commandFound -> script.get();
+		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const bool scriptIsInPlugin =
+				Melder_stringMatchesCriterion (scriptPath, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
+		Melder_throw (
+			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
+			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
+			U"\"",
+			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			U"\"",
+			arguments && arguments [0] ? U", " : U"",
+			arguments && arguments [0] ? arguments : U"",
+			U"\n"
+		);
+	}
 	commandFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr);
 	return 1;
 }
@@ -452,7 +469,23 @@ int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interp
 			break;
 		}
 	}
-	if (! commandFound) return 0;
+	if (! commandFound)
+		return 0;
+	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		const conststring32 scriptPath = commandFound -> script.get();
+		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const bool scriptIsInPlugin =
+				Melder_stringMatchesCriterion (scriptPath, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
+		Melder_throw (
+			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
+			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
+			U"\"",
+			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			U"\"",
+			narg > 0 ? U", ..." : U"",
+			U"\n"
+		);
+	}
 	commandFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr);
 	return 1;
 }
