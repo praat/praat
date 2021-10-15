@@ -2278,7 +2278,7 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20211023)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20211016)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2315,6 +2315,9 @@ LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber, tra
 LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).")
+NORMAL (U"Most of the source code of Praat is distributed under the General Public License, version 2 or later. "
+	"However, as Praat includes the above software written by others, "
+	"the whole of Praat is distributed under the General Public License, version 3 or later.")
 NORMAL (U"For their financial support during the development of Praat:")
 LIST_ITEM (U"Netherlands Organization for Scientific Research (NWO) (1996–1999).")
 LIST_ITEM (U"Nederlandse Taalunie (2006–2008).")
@@ -2341,6 +2344,11 @@ LIST_ITEM (U"Rafael Laboissière and Andreas Tille, for maintaining the Debian p
 LIST_ITEM (U"Jason Bacon and Adriaan de Groot, for maintaining the FreeBSD port.")
 LIST_ITEM (U"José Joaquín Atria and Ingmar Steiner, for setting up the source-code repository on GitHub.")
 LIST_ITEM (U"Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.")
+MAN_END
+
+MAN_BEGIN (U"License", U"ppgb", 20211016)
+NORMAL (U"Praat is distributed under the General Public License, version 3 or higher. "
+	"See @Acknowledgments for details.")
 MAN_END
 
 MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)

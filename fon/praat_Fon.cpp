@@ -2876,15 +2876,17 @@ DO
 
 // MARK: - Help menu
 
+DIRECT (HELP_PraatIntro) { HELP (U"Intro") }
 DIRECT (HELP_ObjectWindow) { HELP (U"Object window") }
-DIRECT (HELP_Intro) { HELP (U"Intro") }
-DIRECT (HELP_WhatsNew) { HELP (U"What's new?") }
+DIRECT (HELP_FrequentlyAskedQuestions) { HELP (U"FAQ (Frequently Asked Questions)") }
 DIRECT (HELP_TypesOfObjects) { HELP (U"Types of objects") }
 DIRECT (HELP_Editors) { HELP (U"Editors") }
-DIRECT (HELP_FrequentlyAskedQuestions) { HELP (U"FAQ (Frequently Asked Questions)") }
+DIRECT (HELP_WhatsNew) { HELP (U"What's new?") }
 DIRECT (HELP_Acknowledgments) { HELP (U"Acknowledgments") }
+DIRECT (HELP_License) { HELP (U"License") }
 DIRECT (HELP_FormulasTutorial) { HELP (U"Formulas") }
 DIRECT (HELP_ScriptingTutorial) { HELP (U"Scripting") }
+DIRECT (HELP_Functions) { HELP (U"Functions") }
 DIRECT (HELP_DemoWindow) { HELP (U"Demo window") }
 DIRECT (HELP_Interoperability) { HELP (U"Interoperability") }
 DIRECT (HELP_Programming) { HELP (U"Programming with Praat") }
@@ -2985,23 +2987,28 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (U"Objects", U"Open", U"Read TextTier from Xwaves...", nullptr, 1, READ1_TextTier_readFromXwaves);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read IntervalTier from Xwaves...", nullptr, 1, READ1_IntervalTier_readFromXwaves);
 
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?', HELP_Intro);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Praat Intro", nullptr, '?', HELP_PraatIntro);
 	#ifndef macintosh
 		praat_addMenuCommand (U"Objects", U"Help", U"Object window", nullptr, 0, HELP_ObjectWindow);
 	#endif
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Frequently asked questions", nullptr, 0, HELP_FrequentlyAskedQuestions);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", nullptr, 0, HELP_WhatsNew);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- reference help --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Types of objects", nullptr, 0, HELP_TypesOfObjects);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Editors", nullptr, 0, HELP_Editors);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- version help --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", nullptr, 0, HELP_WhatsNew);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments", nullptr, 0, HELP_Acknowledgments);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"License", nullptr, 0, HELP_License);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- shell help --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial", nullptr, 0, HELP_FormulasTutorial);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial", nullptr, 0, HELP_ScriptingTutorial);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Functions", nullptr, 0, HELP_Functions);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- control help --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Demo window", nullptr, 0, HELP_DemoWindow);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Interoperability", nullptr, 0, HELP_Interoperability);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Programming", nullptr, 0, HELP_Programming);
 	#ifdef macintosh
-		praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro", nullptr, '?', HELP_Intro);
+		praat_addMenuCommand (U"Objects", U"Help", U"Praat Intro", nullptr, '?', HELP_PraatIntro);
 		praat_addMenuCommand (U"Objects", U"Help", U"Object window help", nullptr, 0, HELP_ObjectWindow);
 		praat_addMenuCommand (U"Objects", U"Help", U"-- manual --", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"Help", U"Search Praat manual...", nullptr, 'M', HELP_SearchManual_Fon);

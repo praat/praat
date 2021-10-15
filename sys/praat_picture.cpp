@@ -1473,6 +1473,7 @@ DO
 	QUERY_GRAPHICS_FOR_REAL_END (U" mm")
 }
 
+DIRECT (HELP_PraatIntro_picture) { HELP (U"Intro") }
 DIRECT (HELP_SearchManual_Picture) { Melder_search (); END_WITH_NEW_DATA }
 DIRECT (HELP_PictureWindowHelp) { HELP (U"Picture window") }
 DIRECT (HELP_AboutSpecialSymbols) { HELP (U"Special symbols") }
@@ -1888,7 +1889,9 @@ void praat_picture_init () {
 	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT,
 			GRAPHICS_NONE__Courier);
 
+	praat_addMenuCommand (U"Picture", U"Help", U"Praat Intro", nullptr, 0, HELP_PraatIntro_picture);
 	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?', HELP_PictureWindowHelp);
+	praat_addMenuCommand (U"Picture", U"Help", U"-- text formatting help --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Help", U"About special symbols", nullptr, 0, HELP_AboutSpecialSymbols);
 	praat_addMenuCommand (U"Picture", U"Help", U"About text styles", nullptr, 0, HELP_AboutTextStyles);
 	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", nullptr, 0, HELP_PhoneticSymbols);

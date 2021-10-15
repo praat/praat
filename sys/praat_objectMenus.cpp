@@ -833,7 +833,6 @@ void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Save manual to HTML folder...", nullptr, praat_HIDDEN, HELP_SaveManualToHtmlFolder);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", Melder_cat (U"Search ", praatP.title.get(), U" manual..."), nullptr, 'M' | praat_NO_API,
 			PRAAT__SearchManual);
-	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- about --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, praat_UNHIDABLE,
 			PRAAT__About);
 
