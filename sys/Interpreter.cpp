@@ -356,7 +356,7 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 		okCallback, okClosure, nullptr, nullptr);
 	UiField radio = nullptr;
 	if (path)
-		UiForm_addText (form.get(), nullptr, nullptr, U"Script file", path);
+		UiForm_addInfile (form.get(), nullptr, nullptr, U"Script file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
 			Convert underscores to spaces.
