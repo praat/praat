@@ -79,6 +79,7 @@ static void updateGroup (FunctionEditor me) {
 			}
 			thy startSelection = my startSelection;
 			thy endSelection = my endSelection;
+			Melder_assert (isdefined (thy startSelection));   // precondition of FunctionEditor_updateText()
 			FunctionEditor_updateText (thee);
 			updateScrollBar (thee);
 			FunctionEditor_redraw (thee);
@@ -466,6 +467,7 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 			U"“to” should be greater than “from”.");
 		my startWindow = from;
 		my endWindow = to;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		updateScrollBar (me);
 		FunctionEditor_redraw (me);
@@ -476,6 +478,7 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 static void do_showAll (FunctionEditor me) {
 	my startWindow = my tmin;
 	my endWindow = my tmax;
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
@@ -491,6 +494,7 @@ static void do_zoomIn (FunctionEditor me) {
 	const double shift = (my endWindow - my startWindow) / 4.0;
 	my startWindow += shift;
 	my endWindow -= shift;
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
@@ -511,6 +515,7 @@ static void do_zoomOut (FunctionEditor me) {
 	my endWindow += shift;
 	if (my endWindow > my tmax - 1e-12)
 		my endWindow = my tmax;
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
@@ -528,6 +533,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 		my endZoomHistory = my endWindow;   // remember for Zoom Back
 		my startWindow = my startSelection;
 		my endWindow = my endSelection;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		updateScrollBar (me);
 		FunctionEditor_redraw (me);
@@ -544,6 +550,7 @@ static void do_zoomBack (FunctionEditor me) {
 	if (my endZoomHistory > my startZoomHistory) {
 		my startWindow = my startZoomHistory;
 		my endWindow = my endZoomHistory;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		updateScrollBar (me);
 		FunctionEditor_redraw (me);
@@ -647,6 +654,7 @@ static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 			std::swap (my startSelection, my endSelection);   // this can invalidate the above logic
 		Melder_clip (my tmin, & my startSelection, my tmax);
 		Melder_clip (my tmin, & my endSelection, my tmax);
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -688,6 +696,7 @@ static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM)
 		);
 		my startSelection = newStartOfSelection;
 		my endSelection = newEndOfSelection;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -697,6 +706,7 @@ static void menu_cb_widenOrShrinkSelection (FunctionEditor me, EDITOR_ARGS_FORM)
 static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		my endSelection = my startSelection;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -706,6 +716,7 @@ static void menu_cb_moveCursorToStartOfSelection (FunctionEditor me, EDITOR_ARGS
 static void menu_cb_moveCursorToEndOfSelection (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		my startSelection = my endSelection;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -723,6 +734,7 @@ static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (position > my tmax - 1e-12)
 			position = my tmax;
 		my startSelection = my endSelection = position;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -737,6 +749,7 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		Melder_assert (my tmax >= my tmin);
 		const double position = Melder_clipped (my tmin, 0.5 * (my startSelection + my endSelection) + distance, my tmax);
 		my startSelection = my endSelection = position;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -751,6 +764,7 @@ static void menu_cb_moveStartOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM)
 		Melder_assert (my tmax >= my tmin);
 		my startSelection = Melder_clipped (my tmin, my startSelection + distance, my tmax);
 		Melder_sort (& my startSelection, & my endSelection);
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -765,6 +779,7 @@ static void menu_cb_moveEndOfSelectionBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 		Melder_assert (my tmax >= my tmin);
 		my endSelection = Melder_clipped (my tmin, my endSelection + distance, my tmax);
 		Melder_sort (& my startSelection, & my endSelection);
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -790,27 +805,33 @@ void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGrou
 		if (my startWindow < my tmin + 1e-12)
 			my startWindow = my tmin;
 	}
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 	FunctionEditor_marksChanged (me, needsUpdateGroup);
 }
 
 static void menu_cb_pageUp (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, -RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
 	VOID_EDITOR_END
 }
 
 static void menu_cb_pageDown (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow), true);
 	VOID_EDITOR_END
 }
 
-static void scrollToView (FunctionEditor me, double t) {
+void FunctionEditor_scrollToView (FunctionEditor me, double t) {
 	if (t <= my startWindow) {
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, t - my startWindow - 0.618 * (my endWindow - my startWindow), true);
 	} else if (t >= my endWindow) {
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow), true);
 	} else {
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -823,7 +844,8 @@ static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 		my endSelection -= my p_arrowScrollStep;
 		if (my endSelection < my tmin + 1e-12)
 			my endSelection = my tmin;
-		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
 
@@ -835,7 +857,8 @@ static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 		my endSelection += my p_arrowScrollStep;
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
-		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
 
@@ -844,7 +867,8 @@ static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIR
 		my startSelection -= my p_arrowScrollStep;
 		if (my startSelection < my tmin + 1e-12)
 			my startSelection = my tmin;
-		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
 
@@ -858,7 +882,8 @@ static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DI
 			my startSelection = my endSelection;
 			my endSelection = dummy;
 		}
-		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
 
@@ -872,7 +897,8 @@ static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIREC
 			my startSelection = my endSelection;
 			my endSelection = dummy;
 		}
-		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
 
@@ -881,7 +907,8 @@ static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRE
 		my endSelection += my p_arrowScrollStep;
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
-		scrollToView (me, 0.5 * (my startSelection + my endSelection));
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+		FunctionEditor_scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	VOID_EDITOR_END
 }
 
@@ -914,6 +941,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 			my endWindow = my tmax;
 	}
 	if (shifted || zoomed) {
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		//updateScrollBar (me);
 		FunctionEditor_redraw (me);
@@ -923,6 +951,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 			if (theGroupMembers [i] && theGroupMembers [i] != me) {
 				theGroupMembers [i] -> startWindow = my startWindow;
 				theGroupMembers [i] -> endWindow = my endWindow;
+				Melder_assert (isdefined (theGroupMembers [i] -> startSelection));   // precondition of FunctionEditor_updateText()
 				FunctionEditor_updateText (theGroupMembers [i]);
 				updateScrollBar (theGroupMembers [i]);
 				FunctionEditor_redraw (theGroupMembers [i]);
@@ -972,10 +1001,12 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		if (my tmin > thy tmin || my tmax < thy tmax) {
 			Melder_clipRight (& my tmin, thy tmin);
 			Melder_clipLeft (thy tmax, & my tmax);
+			Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 			my v_updateText ();
 			updateScrollBar (me);
 			FunctionEditor_redraw (me);
 		} else {
+			Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 			my v_updateText ();
 			updateScrollBar (me);
 			FunctionEditor_redraw (me);
@@ -986,6 +1017,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 							theGroupMembers [imember] -> tmin = my tmin;
 						if (my tmax > thy tmax)
 							theGroupMembers [imember] -> tmax = my tmax;
+						Melder_assert (isdefined (theGroupMembers [imember] -> startSelection));   // precondition of FunctionEditor_updateText()
 						FunctionEditor_updateText (theGroupMembers [imember]);
 						updateScrollBar (theGroupMembers [imember]);
 						FunctionEditor_redraw (theGroupMembers [imember]);
@@ -997,6 +1029,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		const integer myLocationInGroup = findMeInGroup (me);
 		theGroupMembers [myLocationInGroup] = nullptr;
 		theGroupSize --;
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);   // for setting buttons in draw method
 	}
@@ -1158,6 +1191,7 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 }
 
 bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double mouseTime, double /* mouseY_fraction */) {
+	Melder_assert (isdefined (mouseTime));
 	Melder_assert (our startSelection <= our endSelection);
 	Melder_clip (our startWindow, & mouseTime, our endWindow);   // WYSIWYG
 	static double anchorTime = undefined;
@@ -1233,6 +1267,7 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_fraction, & y_fraction);
 		if (event -> isClick()) {
 			my v_clickSelectionViewer (x_fraction, y_fraction);
+			//Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 			//my v_updateText ();
 			FunctionEditor_redraw (me);
 			updateGroup (me);
@@ -1242,6 +1277,7 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 		double x_world, y_fraction;
 		Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & x_world, & y_fraction);
 		my v_mouseInWideDataView (event, x_world, y_fraction);
+		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		FunctionEditor_redraw (me);
 		updateGroup (me);
@@ -1349,10 +1385,12 @@ void structFunctionEditor :: v_dataChanged () {
 	}
 	Melder_clip (our tmin, & our startSelection, our tmax);
 	Melder_clip (our tmin, & our endSelection, our tmax);
+	Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
 	FunctionEditor_marksChanged (this, false);
 }
 
 int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, double endTime, double currentTime) {
+	Melder_assert (isdefined (currentTime));
 	our playCursor = currentTime;
 	if (phase == 1) {
 		our duringPlay = true;
@@ -1365,7 +1403,8 @@ int structFunctionEditor :: v_playCallback (int phase, double /* startTime */, d
 				our startSelection = currentTime;
 			else
 				our startSelection = our endSelection = currentTime;
-			v_updateText ();
+			Melder_assert (isdefined (our startSelection));   // precondition of v_updateText()
+			our v_updateText ();
 			updateGroup (this);
 		}
 	}
@@ -1402,6 +1441,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function funct
 
 	my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	if (group_equalDomain (my tmin, my tmax))
 		gui_checkbutton_cb_group (me, nullptr);   // BUG: nullptr
@@ -1409,6 +1449,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function funct
 }
 
 void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
@@ -1417,6 +1458,7 @@ void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup) {
 }
 
 void FunctionEditor_updateText (FunctionEditor me) {
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 }
 
@@ -1437,6 +1479,7 @@ void FunctionEditor_ungroup (Daata data) {
 			GuiCheckButton_setValue (my groupButton, false);
 			theGroupMembers [ieditor] = nullptr;
 			theGroupSize --;
+			Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 			my v_updateText ();
 			FunctionEditor_redraw (me);   // for setting buttons in v_draw() method
 		}

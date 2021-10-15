@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,6 +226,8 @@ void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGrou
 	Usage:
 		call this after a search.
 */
+
+void FunctionEditor_scrollToView (FunctionEditor me, double t);
 
 void FunctionEditor_updateText (FunctionEditor me);
 /*
