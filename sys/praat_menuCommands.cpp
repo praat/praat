@@ -190,7 +190,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 			 */
 			for (integer parentPosition = position - 1; parentPosition > 0; parentPosition --) {
 				Praat_Command parentCommand = theCommands.at [parentPosition];
-				if (parentCommand -> depth == depth - 1) {
+				if (parentCommand -> depth == depth - 1 && str32equ (parentCommand -> menu.get(), command -> menu.get())) {
 					/*
 					 * We found the supermenu.
 					 */

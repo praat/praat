@@ -1094,14 +1094,15 @@ void praat_uvafon_stat_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table with column names...", nullptr, 1, NEW1_Table_createWithColumnNames);
 		praat_addMenuCommand (U"Objects", U"New", U"Create Table without column names...", nullptr, 1, NEW1_Table_createWithoutColumnNames);
 		praat_addMenuCommand (U"Objects", U"New",   U"Create Table...", U"*Create Table without column names...", praat_DEPTH_1 | praat_DEPRECATED_2006, NEW1_Table_createWithoutColumnNames);
-	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, NEW1_TableOfReal_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal...", nullptr, 1, NEW1_TableOfReal_create);
 
-	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"-- open table --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...", nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
 	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, READ1_Table_readFromTableFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 
 	praat_addAction1 (classDistributions, 0, U"Distributions help", nullptr, 0,
 			HELP__Distributions_help);
@@ -1296,7 +1297,6 @@ void praat_uvafon_stat_init () {
 				CONVERT_EACH_TO_ONE__Table_downto_TableOfReal);
 		praat_addAction1 (classTable, 0, U"Down to Matrix", nullptr, 0,
 				CONVERT_EACH_TO_ONE__Table_downto_Matrix);
-
 
 	praat_TableOfReal_init (classTableOfReal);
 

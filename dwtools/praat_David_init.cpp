@@ -8809,8 +8809,36 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
 	praat_removeAction (klas, nullptr, nullptr, U"-- draw lines --");
 }
 
-void praat_uvafon_David_init ();
-void praat_uvafon_David_init () {
+void praat_David_generics_new_init ();
+void praat_David_generics_new_init () {
+
+	Thing_recognizeClassesByName (
+		classPermutation,
+		classPolynomial, classLegendreSeries, classChebyshevSeries, classMSpline, classISpline,
+		nullptr
+	);
+
+	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 1,
+			CREATE_ONE__Permutation_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 2,
+			CREATE_ONE__Polynomial_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial from product terms...", nullptr, 2,
+			CREATE_ONE__Polynomial_createFromProductTerms);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial from real zeros...", nullptr, 2,
+			CREATE_ONE__Polynomial_createFromRealZeros);
+	praat_addMenuCommand (U"Objects", U"New", U"Create LegendreSeries...", nullptr, 2,
+			CREATE_ONE__LegendreSeries_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create ChebyshevSeries...", nullptr, 2,
+			CREATE_ONE__ChebyshevSeries_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", nullptr, 2,
+			CREATE_ONE__MSpline_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create ISpline...", nullptr, 2,
+			CREATE_ONE__ISpline_create);
+}
+
+void praat_David_init ();
+void praat_David_init () {
 	
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
@@ -8818,16 +8846,15 @@ void praat_uvafon_David_init () {
 	
 	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
-		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
+		classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
 		classElectroglottogram,
 		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, 
 		classFormantFilter,
 		classIndex, classKlattTable, classNMF,
-		classPermutation, classISpline, classLegendreSeries,
-		classMelFilter, classMelSpectrogram, classMSpline, classNavigationContext,
-		classPatternList, classPCA, classPolynomial, classRoots,
+		classMelFilter, classMelSpectrogram, classNavigationContext,
+		classPatternList, classPCA, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
 		classSVD, classTextGridNavigator, classTextGridTierNavigator, nullptr);
 	
@@ -8848,23 +8875,7 @@ void praat_uvafon_David_init () {
 			QUERY_NONE_FOR_REAL__Praat_getInvTukeyQ);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Get incomplete gamma...", 0, praat_HIDDEN, 
 			QUERY_NONE_FOR_COMPLEX__Praat_getIncompleteGamma);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Permutation...", nullptr, 0, 
-			CREATE_ONE__Permutation_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Polynomial", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial...", nullptr, 1,
-			CREATE_ONE__Polynomial_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial from product terms...", nullptr, 1,
-			CREATE_ONE__Polynomial_createFromProductTerms);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Polynomial from real zeros...", nullptr, 1,
-			CREATE_ONE__Polynomial_createFromRealZeros);
-	praat_addMenuCommand (U"Objects", U"New", U"Create LegendreSeries...", nullptr, 1,
-			CREATE_ONE__LegendreSeries_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create ChebyshevSeries...", nullptr, 1,
-			CREATE_ONE__ChebyshevSeries_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create MSpline...", nullptr, 1,
-			CREATE_ONE__MSpline_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create ISpline...", nullptr, 1,
-			CREATE_ONE__ISpline_create);
+
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound as gammatone...", U"Create Sound as tone complex...", 1,
 			CREATE_ONE__Sound_createAsGammaTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from gammatone...", U"*Create Sound as gammatone...", praat_DEPTH_1 | praat_DEPRECATED_2016,
@@ -8874,7 +8885,8 @@ void praat_uvafon_David_init () {
 			CREATE_ONE__Sound_createAsShepardTone);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Sound from VowelEditor...", U"Create Sound as Shepard tone...", praat_DEPTH_1 |praat_NO_API,	
 			CREATION_WINDOW__VowelEditor_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Create Sound from VowelEditor...", praat_DEPTH_1,
+	praat_addMenuCommand (U"Objects", U"New", U"Text-to-speech synthesis", U"Create Vocal Tract from phone...", 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create SpeechSynthesizer...", U"Text-to-speech synthesis", 1,
 			CREATE_ONE__SpeechSynthesizer_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Data sets from the literature", U"Create Table without column names...", 1, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create formant table (Peterson & Barney 1952)", U"Data sets from the literature", 2,
@@ -8887,8 +8899,8 @@ void praat_uvafon_David_init () {
 			CREATE_ONE__Table_create_esposito2006);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Table (Ganong 1980)", U"Create H1H2 table (Esposito 2006)", 2, 
 			CREATE_ONE__Table_create_ganong1980);
-	praat_addMenuCommand (U"Objects", U"New", U"-- TableOfReals --", U"Create Table (Ganong 1980)", 2, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"-- TableOfReals --" , 2, 
+	praat_addMenuCommand (U"Objects", U"New", U"-- new TableOfReal --", U"Create Table (Ganong 1980)", 2, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create iris data set", U"-- new TableOfReal --" , 2,
 			CREATE_ONE__CreateIrisDataset);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create iris data set", 2, 
 			CREATE_ONE__TableOfReal_create_pols1973);
@@ -8898,9 +8910,11 @@ void praat_uvafon_David_init () {
 			CREATE_ONE__TableOfReal_create_weenink1983);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Sandwell 1987)", U"Create TableOfReal (Weenink 1985)...", 2,
 			CREATE_ONE__Table_create_sandwell1987);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1,
+	praat_addMenuCommand (U"Objects", U"New", U"-- new TableOfReal children --", U"Create TableOfReal (Weenink 1985)...", 1,
 			CREATE_ONE__Confusion_createSimple);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"-- new TableOfReal children --", 1,
+			CREATE_ONE__Confusion_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1,
 			CREATE_ONE__Covariance_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Correlation...", U"Create simple Covariance...", 1, 
 			CREATE_ONE__Correlation_createSimple);
@@ -8908,11 +8922,11 @@ void praat_uvafon_David_init () {
 			CREATE_ONE__EditCostsTable_createEmpty);
 	praat_addMenuCommand (U"Objects", U"New", U"Create KlattTable example", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN,
 			CREATE_ONE__KlattTable_createExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from tokens...", U"Create Strings as folder list...", 1,
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings from tokens...", U"Create Strings as folder list...", 2,
 			CREATE_ONE__Strings_createFromTokens);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as tokens...", U"Create Strings from tokens...", praat_DEPTH_2 + praat_HIDDEN,
 			CREATE_ONE__Strings_createAsTokens);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings from tokens...", praat_DEPTH_1 + praat_HIDDEN,
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as characters...", U"Create Strings from tokens...", praat_DEPTH_2 + praat_HIDDEN,
 			CREATE_ONE__Strings_createAsCharacters);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, 
@@ -10512,8 +10526,7 @@ void praat_uvafon_David_init () {
 	INCLUDE_MANPAGES (manual_Permutation_init)
 
 	INCLUDE_LIBRARY (praat_MultiSampledSpectrogram_init)
-	INCLUDE_LIBRARY (praat_uvafon_MDS_init)
-	INCLUDE_LIBRARY (praat_KlattGrid_init)
+	INCLUDE_LIBRARY (praat_MDS_actions_init)
 	INCLUDE_LIBRARY (praat_HMM_init)
 	INCLUDE_LIBRARY (praat_BSS_init)
 }
