@@ -833,13 +833,13 @@ void praat_Matrix_init () {
 
 	Data_recognizeFileType (imageFileRecognizer);
 
-	praat_addMenuCommand (U"Objects", U"New", U"Matrix", nullptr, 0, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Matrix...", nullptr, 1, NEW1_Matrix_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix...", nullptr, 1, NEW1_Matrix_createSimple);
-		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix from values...", nullptr, 1, NEW1_Matrix_createSimpleFromValues);
-		praat_addMenuCommand (U"Objects", U"New", U"-- colour matrix --", nullptr, 1, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 1, NEW1_Photo_create);
-		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 1, NEW1_Photo_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Matrix", nullptr, 1, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Matrix...", nullptr, 2, NEW1_Matrix_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix...", nullptr, 2, NEW1_Matrix_createSimple);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Matrix from values...", nullptr, 2, NEW1_Matrix_createSimpleFromValues);
+	praat_addMenuCommand (U"Objects", U"New", U"Photo", nullptr, 1, nullptr);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Photo...", nullptr, 2, NEW1_Photo_create);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Photo...", nullptr, 2, NEW1_Photo_createSimple);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read movie --", nullptr, praat_HIDDEN, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Open movie file...", nullptr, praat_HIDDEN, READ1_Movie_openFromSoundFile);
