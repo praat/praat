@@ -166,7 +166,7 @@ typedef void (*UiCallback) (UiCallback_ARGS);
 Thing_define (UiForm, Thing) {
 	EditorCommand command;
 	GuiWindow d_dialogParent;
-	autostring32 invokingButtonTitle, helpTitle;
+	autostring32 invokingButtonTitle, helpTitle, scriptFilePath;
 	UiCallback okCallback;
 	void *buttonClosure;
 
