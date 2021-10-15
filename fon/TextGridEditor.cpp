@@ -139,16 +139,6 @@ static integer getSelectedPoint (TextGridEditor me) {
 	return AnyTier_hasPoint (tier->asAnyTier(), my startSelection);
 }
 
-static void scrollToView (TextGridEditor me, double t) {
-	if (t <= my startWindow) {
-		FunctionEditor_shift (me, t - my startWindow - 0.618 * (my endWindow - my startWindow), true);
-	} else if (t >= my endWindow) {
-		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow), true);
-	} else {
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
 /********** METHODS **********/
 
 /*
@@ -277,6 +267,7 @@ static void menu_cb_Erase (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_ConvertToBackslashTrigraphs (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Backslash Trigraphs");
 	TextGrid_convertToBackslashTrigraphs ((TextGrid) my data);
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -285,6 +276,7 @@ static void menu_cb_ConvertToBackslashTrigraphs (TextGridEditor me, EDITOR_ARGS_
 static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Editor_save (me, U"Convert to Unicode");
 	TextGrid_convertToUnicode ((TextGrid) my data);
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -344,6 +336,7 @@ static void do_selectAdjacentTier (TextGridEditor me, bool previous) {
 				my selectedTier > 1 ? my selectedTier - 1 : n :
 				my selectedTier < n ? my selectedTier + 1 : 1 );
 		_TextGridEditor_timeToInterval (me, my startSelection, my selectedTier, & my startSelection, & my endSelection);
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -405,7 +398,8 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 				my startSelection = interval -> xmin;
 				my endSelection = interval -> xmax;
 			}
-			scrollToView (me, iinterval == n ? my startSelection : iinterval == 1 ? my endSelection : (my startSelection + my endSelection) / 2);
+			Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+			FunctionEditor_scrollToView (me, iinterval == n ? my startSelection : iinterval == 1 ? my endSelection : (my startSelection + my endSelection) / 2);
 		}
 	} else {
 		const integer n = textTier -> points.size;
@@ -416,7 +410,8 @@ static void do_selectAdjacentInterval (TextGridEditor me, bool previous, bool sh
 					ipoint < n ? ipoint + 1 : 1 );
 			const TextPoint point = textTier -> points.at [ipoint];
 			my startSelection = my endSelection = point -> number;
-			scrollToView (me, my startSelection);
+			Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+			FunctionEditor_scrollToView (me, my startSelection);
 		}
 	}
 }
@@ -442,6 +437,7 @@ static void menu_cb_MoveBtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (isdefined (zero)) {
 		my startSelection = zero;
 		Melder_sort (& my startSelection, & my endSelection);
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -450,6 +446,7 @@ static void menu_cb_MoveCursorToZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	const double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my startSelection = my endSelection = zero;
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -459,6 +456,7 @@ static void menu_cb_MoveEtoZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (isdefined (zero)) {
 		my endSelection = zero;
 		Melder_sort (& my startSelection, & my endSelection);
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
 }
@@ -632,6 +630,7 @@ static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 			true
 		);
 		my selectedTier = itier;
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
 	} catch (MelderError) {
@@ -719,6 +718,7 @@ static void menu_cb_RemovePointOrBoundary (TextGridEditor me, EDITOR_ARGS_DIRECT
 		Editor_save (me, U"Remove point");
 		tier -> points. removeItem (selectedPoint);
 	}
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -764,6 +764,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 
 		point -> number = my startSelection = my endSelection = position;
 	}
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 	FunctionEditor_marksChanged (me, true);   // because cursor has moved
 	Editor_broadcastDataChanged (me);
 }
@@ -788,6 +789,7 @@ static void do_insertOnTier (TextGridEditor me, integer itier) {
 			false
 		);
 		my selectedTier = itier;
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 		Editor_broadcastDataChanged (me);
 	} catch (MelderError) {
@@ -833,7 +835,8 @@ static void findInTier (TextGridEditor me) {
 				if (position) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
-					scrollToView (me, my startSelection);
+					Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (me, my startSelection);
 					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
@@ -852,7 +855,8 @@ static void findInTier (TextGridEditor me) {
 				const char32 * const position = str32str (text, my findString.get());
 				if (position) {
 					my startSelection = my endSelection = point -> number;
-					scrollToView (me, point -> number);
+					Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (me, point -> number);
 					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
@@ -907,7 +911,8 @@ static void checkSpellingInTier (TextGridEditor me) {
 				if (notAllowed) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
-					scrollToView (me, my startSelection);
+					Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (me, my startSelection);
 					GuiText_setSelection (my textArea, position, position + str32len (notAllowed));
 					return;
 				}
@@ -927,7 +932,8 @@ static void checkSpellingInTier (TextGridEditor me) {
 				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = my endSelection = point -> number;
-					scrollToView (me, point -> number);
+					Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
+					FunctionEditor_scrollToView (me, point -> number);
 					GuiText_setSelection (my textArea, position, position + str32len (notAllowed));
 					return;
 				}
@@ -1019,6 +1025,7 @@ static void menu_cb_RemoveAllTextFromTier (TextGridEditor me, EDITOR_ARGS_DIRECT
 	else
 		TextTier_removeText (textTier);
 
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -1035,6 +1042,7 @@ static void menu_cb_RemoveTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	grid -> tiers-> removeItem (my selectedTier);
 
 	my selectedTier = 1;
+	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 	FunctionEditor_updateText (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -1061,6 +1069,7 @@ static void menu_cb_AddIntervalTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		}
 
 		my selectedTier = position;
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 		FunctionEditor_updateText (me);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -1088,6 +1097,7 @@ static void menu_cb_AddPointTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		}
 
 		my selectedTier = position;
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 		FunctionEditor_updateText (me);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -1119,6 +1129,7 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		}
 
 		my selectedTier = position;
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_updateText()
 		FunctionEditor_updateText (me);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -1845,8 +1856,10 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
 				because we are not 'nearBoundaryOrPoint'.
 			*/
+			Melder_assert (isdefined (our startSelection));   // precondition of v_updateText()
 			our v_updateText();
 			insertBoundaryOrPoint (this, mouseTier, our startSelection, our startSelection, false);
+			//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
 			//FunctionEditor_marksChanged (this, true);
 			Editor_broadcastDataChanged (this);
 		} else {
@@ -2001,6 +2014,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 		our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		anchorTime = undefined;
 		clickedLeftBoundary = 0;
+		//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
 		//FunctionEditor_marksChanged (this, true);
 		Editor_broadcastDataChanged (this);
 	}
@@ -2227,11 +2241,13 @@ void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid,
 
 	my selectedTier = 1;
 	my draggingTime = undefined;
+	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();   // to reflect changed tier selection
 	if (my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
 		if (my startWindow == my tmin)
 			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
+		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, false);
 	}
 	if (spellingChecker)
