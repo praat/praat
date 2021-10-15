@@ -355,21 +355,8 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 		Melder_cat (selectionOnly ? U"Run script (selection only): " : U"Run script: ", my dialogTitle),
 		okCallback, okClosure, nullptr, nullptr);
 	UiField radio = nullptr;
-	if (path) {
+	if (path)
 		form -> scriptFilePath = Melder_dup (path);
-		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
-		const bool scriptIsInPlugin =
-				Melder_stringMatchesCriterion (path, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
-		if (scriptIsInPlugin) {
-			UiForm_addLabel (form.get(), nullptr, U"This window will run the following plug-in script in your preferences folder:");
-			UiForm_addLabel (form.get(), nullptr, path + str32len (preferencesFolderPath));
-			UiForm_addLabel (form.get(), nullptr, U"...");
-		} else {
-			UiForm_addLabel (form.get(), nullptr, U"This window will run the following script:");
-			UiForm_addLabel (form.get(), nullptr, path);
-			UiForm_addLabel (form.get(), nullptr, U"...");
-		}
-	}
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
 			Convert underscores to spaces.
