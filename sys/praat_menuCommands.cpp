@@ -71,7 +71,7 @@ static integer lookUpMatchingMenuCommand (conststring32 window, conststring32 me
 	return 0;   // not found
 }
 
-static void do_menu (Praat_Command me, uint32 modified) {
+static void do_menu (Praat_Command me, bool isModified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
@@ -86,7 +86,7 @@ static void do_menu (Praat_Command me, uint32 modified) {
 			UiHistory_write (my title.get());
 		}
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), modified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -308,7 +308,8 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 						break;
 					}
 				}
-				if (! parentMenu) parentMenu = windowMenuToWidget (window, menu);   // fallback: a subitem without a menu title
+				if (! parentMenu)
+					parentMenu = windowMenuToWidget (window, menu);   // fallback: a subitem without a menu title
 			}
 			if (parentMenu) {
 				/* WHAT TO PUT THERE?
