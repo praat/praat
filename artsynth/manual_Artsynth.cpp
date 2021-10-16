@@ -21,7 +21,7 @@
 void manual_Artsynth_init (ManPages me);
 void manual_Artsynth_init (ManPages me) {
 
-MAN_BEGIN (U"Articulatory synthesis", U"ppgb", 20111028)
+MAN_BEGIN (U"Articulatory synthesis", U"ppgb", 20211016)
 INTRO (U"This is a description of the articulatory synthesis package in Praat. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
@@ -40,18 +40,18 @@ NORMAL (U"6. To generate the lung pressure needed for phonation, you set the %Lu
 	"and at 0.1 seconds to 0.")
 NORMAL (U"7. To force a jaw movement that closes the lips, set the %Masseter activity at 0.25 seconds to 0.7, "
 	"and the %OrbicularisOris activity at 0.25 seconds to 0.2.")
-NORMAL (U"8. Select the Speaker and the Artword and click #Movie; "
+NORMAL (U"8. Select the Speaker and the Artword and click ##Play movie#; "
 	"you will see a closing-and-opening gesture of the mouth.")
 NORMAL (U"9. Select the Speaker and the Artword and click ##To Sound...# "
 	"(see @@Artword & Speaker: To Sound...@).")
 NORMAL (U"10. Just click #OK; the synthesis starts.")
-NORMAL (U"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2010 computer, 6 seconds. "
+NORMAL (U"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2019 computer, 1 second. "
 	"If this is too slow for you, click #Interrupt. "
 	"Otherwise, you can watch the vibrating vocal cords "
 	"and the changing vocal-tract shape.")
 NORMAL (U"12. You can play, view, and analyse the resulting @Sound as you would any other. "
 	"You can see and hear a sound movie if you select the Speaker, "
-	"the Artword, and the Sound, and click #Play.")
+	"the Artword, and the Sound, and click ##Play movie#.")
 MAN_END
 
 MAN_BEGIN (U"Artword", U"ppgb", 20030316)
