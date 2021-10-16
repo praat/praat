@@ -3693,7 +3693,7 @@ INTRO (U"One of the two %forks of a Macintosh file (the other is the %%data fork
 	"To backup your Macintosh files, use compression, for instance with #DropStuff\\tm.")
 MAN_END
 
-MAN_BEGIN (U"Save menu", U"ppgb", 20111018)
+MAN_BEGIN (U"Save menu", U"ppgb", 20211015)
 INTRO (U"One of the menus in the @@Object window@.")
 ENTRY (U"Purpose")
 NORMAL (U"With the #Save menu, you write one or more selected @objects from memory to a file on disk. "
@@ -3705,7 +3705,6 @@ NORMAL (U"You will often choose a command from this menu just before clicking th
 ENTRY (U"Fixed commands")
 NORMAL (U"If no object is selected, the #Save menu is empty. "
 	"If any object is selected, it will at least contain the following commands:")
-LIST_ITEM (U"• @@Write to console")
 LIST_ITEM (U"• @@Save as text file...")
 LIST_ITEM (U"• @@Save as short text file...")
 LIST_ITEM (U"• @@Save as binary file...")
@@ -4256,16 +4255,6 @@ MAN_END
 
 MAN_BEGIN (U"View", U"ppgb", 20010512)
 INTRO (U"One of the menus in several @editors and in the @manual.")
-MAN_END
-
-MAN_BEGIN (U"Write to console", U"ppgb", 20110129)
-INTRO (U"One of the commands in the @@Save menu@.")
-NORMAL (U"You can choose this command after selecting one object. "
-	"The data that it contains, is written to the Console window "
-	"(the terminal window, if you started up Praat from a terminal window), "
-	"in the same format as with the @@Save as text file...@ command, "
-	"except for the first line, which reads something like:")
-CODE (U"Write to console: class Sound,  name \"hallo\"")
 MAN_END
 
 }
