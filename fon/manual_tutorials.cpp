@@ -2347,7 +2347,7 @@ LIST_ITEM (U"Hundreds of Praat users, for sending suggestions and notifying us o
 MAN_END
 
 MAN_BEGIN (U"License", U"ppgb", 20211016)
-NORMAL (U"Praat is distributed under the General Public License, version 3 or higher. "
+NORMAL (U"Praat is free software distributed under the General Public License, version 3 or higher. "
 	"See @Acknowledgments for details.")
 MAN_END
 
