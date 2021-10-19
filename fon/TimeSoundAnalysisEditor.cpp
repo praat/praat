@@ -847,6 +847,7 @@ static void menu_cb_moveCursorToMinimumPitch (TimeSoundAnalysisEditor me, EDITOR
 			if (isundef (time))
 				Melder_throw (U"Selection is voiceless.");
 			my startSelection = my endSelection = time;
+			Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 			FunctionEditor_marksChanged (me, true);
 		}
 	VOID_EDITOR_END
@@ -870,6 +871,7 @@ static void menu_cb_moveCursorToMaximumPitch (TimeSoundAnalysisEditor me, EDITOR
 			if (isundef (time))
 				Melder_throw (U"Selection is voiceless.");
 			my startSelection = my endSelection = time;
+			Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 			FunctionEditor_marksChanged (me, true);
 		}
 	VOID_EDITOR_END

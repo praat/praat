@@ -852,8 +852,8 @@ static void gui_button_cb_help (UiForm me, GuiButtonEvent /* event */) {
 
 static void gui_button_cb_browseInfile (UiField me, GuiButtonEvent /* event */) {
 	autoStringSet chosenFilePath = GuiFileSelect_getInfileNames (nullptr, U"Open file", false);
-	if (chosenFilePath)
-		GuiText_setString (my text, chosenFilePath -> at [1] -> string.get());
+	if (chosenFilePath->size != 0)
+		GuiText_setString (my text, chosenFilePath->at [1] -> string.get());
 }
 static void gui_button_cb_browseOutfile (UiField me, GuiButtonEvent /* event */) {
 	autostring32 chosenFilePath = GuiFileSelect_getOutfileName (nullptr, U"Save file", U"");

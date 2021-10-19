@@ -2956,21 +2956,29 @@ void praat_uvafon_init () {
 		in which they have to appear in the New menu:
 	*/
 	praat_Sound_init ();
-	praat_addMenuCommand (U"Objects", U"New", U"-- new numerics --", nullptr, 0, nullptr);
-	praat_Matrix_init ();
-	INCLUDE_LIBRARY (praat_uvafon_stat_init)
-	praat_Tiers_init ();
-	praat_uvafon_TextGrid_init ();
-
-	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, READ1_Strings_readFromRawTextFile);
 
 	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...", nullptr, 0, NEW1_TextGrid_create);
+	praat_uvafon_TextGrid_init ();
+	praat_Tiers_init ();
 	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, 0, NEW1_Corpus_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 1, NEW1_Strings_createAsFileList);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as folder list...", nullptr, 1, NEW1_Strings_createAsFolderList);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, praat_DEPTH_1 | praat_HIDDEN, NEW1_Strings_createAsFolderList);
+
+	praat_addMenuCommand (U"Objects", U"New", U"-- new stats --", nullptr, 0, nullptr);
+	INCLUDE_LIBRARY (praat_uvafon_stat_init)   // from stat
+	praat_addMenuCommand (U"Objects", U"New", U"Stats", nullptr, 0, nullptr);
+	INCLUDE_LIBRARY (praat_MDS_new_init)   // from dwtools
+
+	praat_addMenuCommand (U"Objects", U"New", U"Generics", nullptr, 0, nullptr);
+	praat_Matrix_init ();
+	praat_addMenuCommand (U"Objects", U"New", U"-- new strings --", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 2, NEW1_Strings_createAsFileList);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as folder list...", nullptr, 2, NEW1_Strings_createAsFolderList);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, praat_DEPTH_2 | praat_HIDDEN, NEW1_Strings_createAsFolderList);
+	praat_addMenuCommand (U"Objects", U"New", U"-- new David generics --", nullptr, 1, nullptr);
+	INCLUDE_LIBRARY (praat_David_generics_new_init)
+
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Strings from raw text file...", nullptr, 0, READ1_Strings_readFromRawTextFile);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"-- read tier --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special tier file...", nullptr, 0, nullptr);
@@ -3436,8 +3444,9 @@ praat_addAction1 (classTransition, 0, U"Cast", nullptr, 0, nullptr);
 
 	INCLUDE_LIBRARY (praat_EEG_init)
 	praat_addMenuCommand (U"Objects", U"New", U"-- new synthesis --", nullptr, 0, nullptr);
+	INCLUDE_LIBRARY (praat_KlattGrid_init)   // from dwtools
 	INCLUDE_LIBRARY (praat_uvafon_Artsynth_init)
-	INCLUDE_LIBRARY (praat_uvafon_David_init)
+	INCLUDE_LIBRARY (praat_David_init)
 	praat_addMenuCommand (U"Objects", U"New", U"-- new grammars --", nullptr, 0, nullptr);
 	INCLUDE_LIBRARY (praat_uvafon_gram_init)
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)

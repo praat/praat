@@ -387,7 +387,7 @@ NORMAL (U"Besides the TextGrid text file format described above, TextGrid object
 	"and save the resulting TextGrid object as a text file with @@Save as text file...@.")
 MAN_END
 
-MAN_BEGIN (U"Programming with Praat", U"ppgb", 20201230)
+MAN_BEGIN (U"Programming with Praat", U"ppgb", 20211015)
 INTRO (U"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -401,7 +401,7 @@ ENTRY (U"2. Getting the existing source code")
 NORMAL (U"You obtain the Praat source code from GitHub (https://github.com/praat), in a file with a name like "
 	"##praat6199_sources.zip# or ##praat6199_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
 	"The result will be a set of directories "
-	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio, #espeak and #vorbis in it), "
+	"called #kar, #melder, #external (with #clapack, #gsl, #glpk, #flac, #mp3, #portaudio, #espeak, #vorbis and #opusfile in it), "
 	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #main, #makefiles, #test, #dwtest, and #generate, "
 	"plus a makefile and Xcode project for macOS and a README.md file.")
 ENTRY (U"3. Building Praat")
@@ -410,7 +410,7 @@ ENTRY (U"4. Extending Praat")
 NORMAL (U"To start extending Praat’s functionality, you can edit ##main/main_Praat.cpp#. "
 	"This example shows you how to create a very simple program with all the functionality "
 	"of the Praat program, and a single bit more (namely an additional command in the New menu):")
-CODE (U"\\# include \"praat.h\"")
+CODE (U"\\# include \"praatM.h\"")
 CODE (U"")
 CODE (U"DIRECT (HelloFromJane) {")
 	CODE1 (U"Melder_information (U\"Hello, I am Jane.\");")

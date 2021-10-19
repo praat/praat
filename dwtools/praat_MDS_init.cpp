@@ -1389,26 +1389,32 @@ void praat_TableOfReal_extras (ClassInfo klas) {
 			MODIFY_EACH__TableOfReal_standardizeColumns);
 }
 
-void praat_uvafon_MDS_init ();
-void praat_uvafon_MDS_init () {
+void praat_MDS_new_init ();
+void praat_MDS_new_init () {
 	Thing_recognizeClassesByName (classAffineTransform, classProcrustes, classContingencyTable, classDissimilarity, classMDSVec,
 		classSimilarity, classConfiguration, classDistance, classSalience, classScalarProduct, classWeight, nullptr);
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
-	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", nullptr, 0, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, 
+	praat_addMenuCommand (U"Objects", U"New", U"Multidimensional scaling", nullptr, 1, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"MDS tutorial", nullptr, praat_DEPTH_2 | praat_NO_API,
 			HELP__MDS_help);
-	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 1, nullptr);
-	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 1, 
+	praat_addMenuCommand (U"Objects", U"New", U"-- MDS --", nullptr, 2, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create letter R example...", nullptr, 2,
 			CREATE_ONE__Dissimilarity_createLetterRExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create INDSCAL Carroll Wish example...", nullptr, 1,
+	praat_addMenuCommand (U"Objects", U"New", U"Create INDSCAL Carroll Wish example...", nullptr, 2,
 			CREATE_MULTIPLE_INDSCAL_createCarrollWishExample);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Configuration...", nullptr, 1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Create Configuration...", nullptr, 2,
 			CREATE_ONE__Configuration_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw splines...", nullptr, 1, 
+	praat_addMenuCommand (U"Objects", U"New", U"Draw splines...", nullptr, 2,
 			GRAPHICS_NONE__drawSplines);
-	praat_addMenuCommand (U"Objects", U"New", U"Draw MDS class relations", nullptr, 1,
+	praat_addMenuCommand (U"Objects", U"New", U"Draw MDS class relations", nullptr, 2,
 			GRAPHICS_NONE__drawMDSClassRelations);
+
+	INCLUDE_MANPAGES (manual_MDS_init)
+}
+
+void praat_MDS_actions_init ();
+void praat_MDS_actions_init () {
 
 	/****** 1 class ********************************************************/
 
@@ -1708,8 +1714,6 @@ void praat_uvafon_MDS_init () {
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, U"To Configuration (indscal)...", nullptr, 0,
 			CONVERT_ONE_AND_ONE_AND_ALL_TO_MULTIPLE__Distance_Configuration_Salience_indscal);
-
-	INCLUDE_MANPAGES (manual_MDS_init)
 }
 
 /* End of file praat_MDS_init.c 1520*/

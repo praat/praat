@@ -71,7 +71,7 @@ static integer lookUpMatchingMenuCommand (conststring32 window, conststring32 me
 	return 0;   // not found
 }
 
-static void do_menu (Praat_Command me, uint32 modified) {
+static void do_menu (Praat_Command me, bool isModified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
@@ -86,7 +86,7 @@ static void do_menu (Praat_Command me, uint32 modified) {
 			UiHistory_write (my title.get());
 		}
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), modified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), isModified, nullptr);
 		} catch (MelderError) {
 			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
@@ -190,7 +190,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 			 */
 			for (integer parentPosition = position - 1; parentPosition > 0; parentPosition --) {
 				Praat_Command parentCommand = theCommands.at [parentPosition];
-				if (parentCommand -> depth == depth - 1) {
+				if (parentCommand -> depth == depth - 1 && str32equ (parentCommand -> menu.get(), command -> menu.get())) {
 					/*
 					 * We found the supermenu.
 					 */
@@ -308,7 +308,8 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 						break;
 					}
 				}
-				if (! parentMenu) parentMenu = windowMenuToWidget (window, menu);   // fallback: a subitem without a menu title
+				if (! parentMenu)
+					parentMenu = windowMenuToWidget (window, menu);   // fallback: a subitem without a menu title
 			}
 			if (parentMenu) {
 				/* WHAT TO PUT THERE?
@@ -435,7 +436,24 @@ int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpret
 			break;
 		}
 	}
-	if (! commandFound) return 0;
+	if (! commandFound)
+		return 0;
+	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		const conststring32 scriptPath = commandFound -> script.get();
+		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const bool scriptIsInPlugin =
+				Melder_stringMatchesCriterion (scriptPath, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
+		Melder_throw (
+			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
+			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
+			U"\"",
+			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			U"\"",
+			arguments && arguments [0] ? U", " : U"",
+			arguments && arguments [0] ? arguments : U"",
+			U"\n"
+		);
+	}
 	commandFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr);
 	return 1;
 }
@@ -451,7 +469,23 @@ int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interp
 			break;
 		}
 	}
-	if (! commandFound) return 0;
+	if (! commandFound)
+		return 0;
+	if (commandFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		const conststring32 scriptPath = commandFound -> script.get();
+		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const bool scriptIsInPlugin =
+				Melder_stringMatchesCriterion (scriptPath, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
+		Melder_throw (
+			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
+			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
+			U"\"",
+			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			U"\"",
+			narg > 0 ? U", ..." : U"",
+			U"\n"
+		);
+	}
 	commandFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr);
 	return 1;
 }

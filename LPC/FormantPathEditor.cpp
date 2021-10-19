@@ -123,16 +123,6 @@ static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) 
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
 }
 
-static void scrollToView (FormantPathEditor me, double t) {
-	if (t <= my startWindow) {
-		FunctionEditor_shift (me, t - my startWindow - 0.618 * (my endWindow - my startWindow), true);
-	} else if (t >= my endWindow) {
-		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow), true);
-	} else {
-		FunctionEditor_marksChanged (me, true);
-	}
-}
-
 /********** METHODS **********/
 
 /*
@@ -357,7 +347,7 @@ static void findInTier (FormantPathEditor me) {
 				if (position) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
-					scrollToView (me, my startSelection);
+					FunctionEditor_scrollToView (me, my startSelection);
 					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
@@ -376,7 +366,7 @@ static void findInTier (FormantPathEditor me) {
 				const char32 * const position = str32str (text, my findString.get());
 				if (position) {
 					my startSelection = my endSelection = point -> number;
-					scrollToView (me, point -> number);
+					FunctionEditor_scrollToView (me, point -> number);
 					GuiText_setSelection (my textArea, position - text, position - text + str32len (my findString.get()));
 					return;
 				}

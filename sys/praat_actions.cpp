@@ -276,7 +276,7 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		action -> n3 = n3;
 		action -> title = title [0] != U'\0' ? Melder_dup_f (title) : autostring32();   // allow old-fashioned untitled separators
 		action -> depth = depth;
-		action -> callback = script [0] != U'\0' ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
+		action -> callback = ( script [0] != U'\0' ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr );   // null for a separator
 		action -> button = nullptr;
 		if (script [0] == U'\0') {
 			action -> script = autostring32();
@@ -285,7 +285,7 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 			Melder_relativePathToFile (script, & file);
 			action -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}
-		action -> after = after [0] != U'\0' ? Melder_dup_f (after) : autostring32();
+		action -> after = ( after [0] != U'\0' ? Melder_dup_f (after) : autostring32() );
 		action -> phase = praatP.phase;
 		if (praatP.phase >= praat_READING_BUTTONS) {
 			static integer uniqueID = 0;
@@ -706,21 +706,64 @@ void praat_saveToggledActions (MelderString *buffer) {
 	}
 }
 
-int praat_doAction (conststring32 command, conststring32 arguments, Interpreter interpreter) {
-	integer i = 1;
-	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command))) i ++;
-	if (i > theActions.size) return 0;   // not found
-	theActions.at [i] -> callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
+int praat_doAction (conststring32 title, conststring32 arguments, Interpreter interpreter) {
+	Praat_Command actionFound = nullptr;
+	for (integer i = 1; i <= theActions.size; i ++) {
+		Praat_Command action = theActions.at [i];
+		if (action -> executable && str32equ (action -> title.get(), title)) {
+			actionFound = action;
+			break;
+		}
+	}
+	if (! actionFound)
+		return 0;
+	if (actionFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		const conststring32 scriptPath = actionFound -> script.get();
+		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const bool scriptIsInPlugin =
+				Melder_stringMatchesCriterion (scriptPath, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
+		Melder_throw (
+			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
+			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
+			U"\"",
+			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			U"\"",
+			arguments && arguments [0] ? U", " : U"",
+			arguments && arguments [0] ? arguments : U"",
+			U"\n"
+		);
+	}
+	actionFound -> callback (nullptr, 0, nullptr, arguments, interpreter, title, false, nullptr);
 	return 1;
 }
 
-int praat_doAction (conststring32 command, integer narg, Stackel args, Interpreter interpreter) {
-	integer i = 1;
-	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command)))
-		i ++;
-	if (i > theActions.size)
-		return 0;   // not found
-	theActions.at [i] -> callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
+int praat_doAction (conststring32 title, integer narg, Stackel args, Interpreter interpreter) {
+	Praat_Command actionFound = nullptr;
+	for (integer i = 1; i <= theActions.size; i ++) {
+		Praat_Command action = theActions.at [i];
+		if (action -> executable && str32equ (action -> title.get(), title)) {
+			actionFound = action;
+			break;
+		}
+	}
+	if (! actionFound)
+		return 0;
+	if (actionFound -> callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
+		const conststring32 scriptPath = actionFound -> script.get();
+		const conststring32 preferencesFolderPath = Melder_dirToPath (& Melder_preferencesFolder);
+		const bool scriptIsInPlugin =
+				Melder_stringMatchesCriterion (scriptPath, kMelder_string::STARTS_WITH, preferencesFolderPath, true);
+		Melder_throw (
+			U"From a script you cannot directly call a menu command that calls another script. Use instead: \nrunScript: ",
+			scriptIsInPlugin ? U"preferencesDirectory$ + " : U"",
+			U"\"",
+			scriptIsInPlugin ? scriptPath + str32len (preferencesFolderPath) : scriptPath,
+			U"\"",
+			narg > 0 ? U", ..." : U"",
+			U"\n"
+		);
+	}
+	actionFound -> callback (nullptr, narg, args, nullptr, interpreter, title, false, nullptr);
 	return 1;
 }
 

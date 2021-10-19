@@ -386,9 +386,9 @@ bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber) {
 static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	std::sort (my rows.begin(), my rows.end(),
-		[columnNumber] (TableRow me, TableRow thee) {
-			const conststring32 firstString = my cells [columnNumber]. string.get();
-			const conststring32 secondString = thy cells [columnNumber]. string.get();
+		[columnNumber] (TableRow she, TableRow him) {
+			const conststring32 firstString = her cells [columnNumber]. string.get();
+			const conststring32 secondString = his cells [columnNumber]. string.get();
 			return str32cmp (firstString ? firstString : U"", secondString ? secondString : U"") < 0;
 		}
 	);
@@ -396,8 +396,8 @@ static void sortRowsByStrings_Assert (Table me, integer columnNumber) {
 
 static void sortRowsByIndex_NoError (Table me) {
 	std::sort (my rows.begin(), my rows.end(),
-		[] (TableRow me, TableRow thee) {
-			return my sortingIndex < thy sortingIndex;
+		[] (TableRow she, TableRow him) {
+			return her sortingIndex < his sortingIndex;
 		}
 	);
 }
@@ -1045,12 +1045,12 @@ void Table_sortRows_Assert (Table me, constINTVECVU const& columnNumbers) {
 	for (integer icol = 1; icol <= columnNumbers.size; icol ++)
 		Table_numericize_Assert (me, columnNumbers [icol]);
 	std::sort (my rows.begin(), my rows.end(),
-		[columnNumbers] (TableRow me, TableRow thee) -> bool {
+		[columnNumbers] (TableRow she, TableRow him) -> bool {
 			for (integer icol = 1; icol <= columnNumbers.size; icol ++) {
 				const integer cellNumber = columnNumbers [icol];
-				if (my cells [cellNumber]. number < thy cells [cellNumber]. number)
+				if (her cells [cellNumber]. number < his cells [cellNumber]. number)
 					return true;
-				if (my cells [cellNumber]. number > thy cells [cellNumber]. number)
+				if (her cells [cellNumber]. number > his cells [cellNumber]. number)
 					return false;
 			}
 			return false;
