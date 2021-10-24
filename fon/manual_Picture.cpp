@@ -313,7 +313,7 @@ NORMAL (U"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (U"Phonetic symbols: diacritics", U"ppgb", 20130327)
+MAN_BEGIN (U"Phonetic symbols: diacritics", U"ppgb", 20211020)
 NORMAL (U"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following list.")
@@ -344,7 +344,7 @@ LIST_ITEM (U"\\ef\\v^ \\bsef\\bsv\\^  (%%combining caron%, %%háček%, %wedge): 
 LIST_ITEM (U"\\ef\\^^ \\bsef\\bs\\^ \\^  (%%combining circumflex accent%): falling tone")
 LIST_ITEM (U"o\\:^ o\\bs:\\^  (%%combining diaeresis%): centralized")
 LIST_ITEM (U"\\ef\\N^ \\bsef\\bsN\\^  (%%combining breve%): short")
-LIST_ITEM (U"k\\lip t\\lis k\\bslip (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
+LIST_ITEM (U"k\\lip t\\lis k\\bslip t\\bslis (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
 NORMAL (U"In line:")
 LIST_ITEM (U"\\:f \\bs:f the phonetic length sign")
 LIST_ITEM (U"\\.f \\bs.f half length")
@@ -353,7 +353,7 @@ LIST_ITEM (U"\\\'2 \\bs\'2 secondary stress")
 LIST_ITEM (U"\\|f \\bs|f the phonetic stroke")
 LIST_ITEM (U"t\\cn t\\bscn (%%combining left angle above%, %corner): unreleased plosive")
 LIST_ITEM (U"\\er\\hr \\bser\\bshr (%%combining rhotic hook%): rhotacized vowel")
-NORMAL (U"Not available in EPS files (i.e. only publishable with copy-paste or with PDF files):")
+NORMAL (U"Not available in EPS files (i.e. only publishable with copy-paste or with PDF or PNG files):")
 LIST_ITEM (U"t\\^h t\\bs\\^ h aspiration")
 LIST_ITEM (U"b\\^H b\\bs\\^ H voiced aspiration (breathiness)")
 LIST_ITEM (U"t\\^j t\\bs\\^ j palatalization")
@@ -370,6 +370,7 @@ LIST_ITEM (U"a\\_ub a\\bs\\_ ub undertie (liaison, if spaces don't mean breaks i
 LIST_ITEM (U"\\ts \\bsts t\\--s ligature")
 LIST_ITEM (U"\\tS \\bstS tesh ligature")
 LIST_ITEM (U"p\\ap p\\bsap apostrophe (for ejectives)")
+LIST_ITEM (U"o\\x^ o\\bsx\\^  (%%combining x above%): mid-centralized")
 MAN_END
 
 MAN_BEGIN (U"Phonetic symbols: vowels", U"ppgb", 20090804)

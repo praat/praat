@@ -601,6 +601,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { 't', 's', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TS_DIGRAPH },
 { 't', 'S', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TESH_DIGRAPH },
 { 'a', 'p', 2, 0, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_APOSTROPHE },
+{ 'x', '^', 2, 1, { "",                  0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 126, 126, 126, 126, UNICODE_COMBINING_X_ABOVE }, // mid-centralized
 
 /* Dingbats. */
 /*fir  sec  al di    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
