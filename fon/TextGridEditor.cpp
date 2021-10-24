@@ -1882,9 +1882,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			}
 		}
 	} else if (event -> isDrop ()) {
-		//if (isundef (anchorTime))   // TODO: figure out a circumstance under which this could happen
-		//	return false;
-		if (our draggingTiers.size == 0) {
+		if (isundef (anchorTime) || our draggingTiers.size == 0) {   // TODO: figure out a circumstance under which anchorTime could be undefined
 			our draggingTime = undefined;
 			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 			anchorTime = undefined;
