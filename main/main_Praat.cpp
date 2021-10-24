@@ -32,11 +32,13 @@ static void logo (Graphics graphics) {
 	Graphics_text (graphics, 0.510, 0.66, U"\\s{A}");
 	Graphics_text (graphics, 0.575, 0.66, U"\\s{A}");
 	Graphics_text (graphics, 0.628, 0.66, U"\\s{T}");
-	Graphics_setFontSize (graphics, 15.0);
-	Graphics_text (graphics, 0.5, 0.55, U"%%doing phonetics by computer");
+	Graphics_setFontSize (graphics, 18.0);
+	Graphics_text (graphics, 0.5, 0.53, U"%%doing phonetics by computer");
 	#define xstr(s) str(s)
 	#define str(s) #s
-	Graphics_text (graphics, 0.5, 0.45, U"version " xstr(PRAAT_VERSION_STR));
+	Graphics_setFontSize (graphics, 14.0);
+	Graphics_text (graphics, 0.5, 0.41, U"version " xstr(PRAAT_VERSION_STR)
+			" (" xstr(PRAAT_MONTH) " " xstr(PRAAT_DAY) ", " xstr(PRAAT_YEAR) ")");
 	Graphics_setColour (graphics, Melder_BLACK);
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10.0);

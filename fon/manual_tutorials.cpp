@@ -2278,7 +2278,7 @@ CODE (U"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "
 	"SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
 MAN_END
 
-MAN_BEGIN (U"Acknowledgments", U"ppgb", 20211023)
+MAN_BEGIN (U"Acknowledgments", U"ppgb", 20211016)
 NORMAL (U"The following people contributed source code to Praat:")
 LIST_ITEM (U"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -2315,6 +2315,9 @@ LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber, tra
 LIST_ITEM (U"@LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (U"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL 2 or later).")
+NORMAL (U"Most of the source code of Praat is distributed under the General Public License, version 2 or later. "
+	"However, as Praat includes the above software written by others, "
+	"the whole of Praat is distributed under the General Public License, version 3 or later.")
 NORMAL (U"For their financial support during the development of Praat:")
 LIST_ITEM (U"Netherlands Organization for Scientific Research (NWO) (1996–1999).")
 LIST_ITEM (U"Nederlandse Taalunie (2006–2008).")
@@ -2341,6 +2344,11 @@ LIST_ITEM (U"Rafael Laboissière and Andreas Tille, for maintaining the Debian p
 LIST_ITEM (U"Jason Bacon and Adriaan de Groot, for maintaining the FreeBSD port.")
 LIST_ITEM (U"José Joaquín Atria and Ingmar Steiner, for setting up the source-code repository on GitHub.")
 LIST_ITEM (U"Hundreds of Praat users, for sending suggestions and notifying us of problems and thus helping us to improve Praat.")
+MAN_END
+
+MAN_BEGIN (U"License", U"ppgb", 20211016)
+NORMAL (U"Praat is free software distributed under the General Public License, version 3 or higher. "
+	"See @Acknowledgments for details.")
 MAN_END
 
 MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
@@ -3685,7 +3693,7 @@ INTRO (U"One of the two %forks of a Macintosh file (the other is the %%data fork
 	"To backup your Macintosh files, use compression, for instance with #DropStuff\\tm.")
 MAN_END
 
-MAN_BEGIN (U"Save menu", U"ppgb", 20111018)
+MAN_BEGIN (U"Save menu", U"ppgb", 20211015)
 INTRO (U"One of the menus in the @@Object window@.")
 ENTRY (U"Purpose")
 NORMAL (U"With the #Save menu, you write one or more selected @objects from memory to a file on disk. "
@@ -3697,7 +3705,6 @@ NORMAL (U"You will often choose a command from this menu just before clicking th
 ENTRY (U"Fixed commands")
 NORMAL (U"If no object is selected, the #Save menu is empty. "
 	"If any object is selected, it will at least contain the following commands:")
-LIST_ITEM (U"• @@Write to console")
 LIST_ITEM (U"• @@Save as text file...")
 LIST_ITEM (U"• @@Save as short text file...")
 LIST_ITEM (U"• @@Save as binary file...")
@@ -4248,16 +4255,6 @@ MAN_END
 
 MAN_BEGIN (U"View", U"ppgb", 20010512)
 INTRO (U"One of the menus in several @editors and in the @manual.")
-MAN_END
-
-MAN_BEGIN (U"Write to console", U"ppgb", 20110129)
-INTRO (U"One of the commands in the @@Save menu@.")
-NORMAL (U"You can choose this command after selecting one object. "
-	"The data that it contains, is written to the Console window "
-	"(the terminal window, if you started up Praat from a terminal window), "
-	"in the same format as with the @@Save as text file...@ command, "
-	"except for the first line, which reads something like:")
-CODE (U"Write to console: class Sound,  name \"hallo\"")
 MAN_END
 
 }

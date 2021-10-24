@@ -310,7 +310,7 @@ TAG (U"##Bin number")
 DEFINITION (U"the bin whose value is to be looked up.")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Spectrogram...", U"ppgb", 20210522)
+MAN_BEGIN (U"Sound: To Spectrogram...", U"ppgb", 20211015)
 INTRO (U"A command that creates a @Spectrogram from every selected @Sound object. "
 	"It performs a %%short-term spectral analysis%, which means that for a number of time points in the Sound, "
 	"Praat computes an approximation of the spectrum at that time. Each such spectrum is called an %%analysis frame%.")
@@ -367,7 +367,7 @@ CODE (U"! now you should see a peak at 1000 Hz with a 3 dB bandwidth of 7 Hz (20
 CODE (U"! more precise: compute the position and width of the peak, and write them to the console")
 CODE (U"Formula: ~ if x<980 or x>1020 then 0 else self fi")
 CODE (U"To Formant (peaks): 20")
-CODE (U"Write to console")
+CODE (U"List: \"no\", \"yes\", 6, \"no\", 3, \"yes\", 3, \"yes\"")
 CODE (U"! now you should be able to read that a peak was found at 999.99982 Hz")
 CODE (U"! with a bandwidth of 6.497 Hz; the theory above predicted 6.491 Hz")
 CODE (U"")
@@ -376,7 +376,7 @@ CODE (U"Create Sound from formula: \"Hamming\", 1, 0.0, 1.0, 44100, ~ if x<0.4 o
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"Formula: ~ if x<970 or x>1030 then 0 else self fi")
 CODE (U"To Formant (peaks): 20")
-CODE (U"Write to console")
+CODE (U"List: \"no\", \"yes\", 6, \"no\", 3, \"yes\", 3, \"yes\"")
 CODE (U"! peak at 999.99817 Hz, 3 dB bw 6.518 Hz, 20 dB bw 15 Hz, zero bw 20 Hz, sidelobe -42 dB")
 CODE (U"")
 CODE (U"! The same, windowed by a 0.1-seconds rectangular window.")
@@ -384,7 +384,7 @@ CODE (U"Create Sound from formula: \"rectangular\", 1, 0.0, 1.0, 44100, ~ if x<0
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"Formula: ~ if x<970 or x>1030 then 0 else self fi")
 CODE (U"To Formant (peaks): 20")
-CODE (U"Write to console")
+CODE (U"List: \"no\", \"yes\", 6, \"no\", 3, \"yes\", 3, \"yes\"")
 CODE (U"! peak at 999.99506 Hz, 3 dB bw 4.440 Hz, 20 dB bw 27 Hz, zero bw 10 Hz, sidelobe -14 dB")
 CODE (U"")
 CODE (U"! The same, windowed by a 0.1-seconds Hanning window.")
@@ -392,7 +392,7 @@ CODE (U"Create Sound from formula: \"Hanning\", 1, 0.0, 1.0, 44100, ~ if x<0.4 o
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"Formula: ~ if x<970 or x>1030 then 0 else self fi")
 CODE (U"To Formant (peaks): 20")
-CODE (U"Write to console")
+CODE (U"List: \"no\", \"yes\", 6, \"no\", 3, \"yes\", 3, \"yes\"")
 CODE (U"! peak at 999.99945 Hz, 3 dB bw 7.212 Hz, 20 dB bw 16 Hz, zero bw 20 Hz, sidelobe -31 dB")
 CODE (U"")
 CODE (U"! The same, windowed by a 0.1-seconds triangular window.")
@@ -400,7 +400,7 @@ CODE (U"Create Sound from formula: \"triangular\", 1, 0.0, 1.0, 44100, ~ if x<0.
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"Formula: ~ if x<970 or x>1030 then 0 else self fi")
 CODE (U"To Formant (peaks): 20")
-CODE (U"Write to console")
+CODE (U"List: \"no\", \"yes\", 6, \"no\", 3, \"yes\", 3, \"yes\"")
 CODE (U"! peak at 999.99933 Hz, 3 dB bw 6.384 Hz, 20 dB bw 15 Hz, zero bw 20 Hz, sidelobe -26 dB")
 CODE (U"")
 CODE (U"! The same, windowed by a 0.1-seconds parabolic window.")
@@ -408,7 +408,7 @@ CODE (U"Create Sound from formula: \"parabolic\", 1, 0.0, 1.0, 44100, ~ if x<0.4
 CODE (U"To Spectrum: \"yes\"")
 CODE (U"Formula: ~ if x<970 or x>1030 then 0 else self fi")
 CODE (U"To Formant (peaks): 20")
-CODE (U"Write to console")
+CODE (U"List: \"no\", \"yes\", 6, \"no\", 3, \"yes\", 3, \"yes\"")
 CODE (U"! peak at 999.99921 Hz, 3 dB bw 5.786 Hz, 20 dB bw 12 Hz, zero bw 15 Hz, sidelobe -21 dB")
 MAN_END
 

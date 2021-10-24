@@ -1114,7 +1114,7 @@ void structFunctionEditor :: v_createMenus () {
 
 void structFunctionEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	FunctionEditor_Parent :: v_createHelpMenuItems (menu);
-	EditorMenu_addCommand (menu, U"Intro", 0, HELP__intro);
+	EditorMenu_addCommand (menu, U"Praat Intro", 0, HELP__intro);
 }
 
 static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeEvent /* event */) {
