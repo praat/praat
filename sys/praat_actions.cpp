@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -796,10 +796,10 @@ static bool actionIsToBeIncluded (Praat_Command command, bool deprecated, bool i
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
 	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
-	bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
-	bool hiddenByDefault = ( command -> hidden != command -> toggled );
-	bool explicitlyHidden = hiddenByDefault && ! deprecated;
-	bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||
+	const bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
+	const bool hiddenByDefault = ( command -> hidden != command -> toggled );
+	const bool explicitlyHidden = hiddenByDefault && ! deprecated;
+	const bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||
 		(! includeWindowAPI && Melder_nequ (command -> nameOfCallback, U"WINDOW_", 7)) ||
 		(! includeHelpAPI && Melder_nequ (command -> nameOfCallback, U"HELP_", 5)) ||
 		(! includeDrawAPI && Melder_nequ (command -> nameOfCallback, U"GRAPHICS_", 9)) ||
@@ -808,11 +808,11 @@ static bool actionIsToBeIncluded (Praat_Command command, bool deprecated, bool i
 		(! includeModifyAPI && Melder_nequ (command -> nameOfCallback, U"MODIFY_", 7)) ||
 		(! includeQueryAPI && Melder_nequ (command -> nameOfCallback, U"QUERY_", 6)) ||
 		(! includeSaveAPI && Melder_nequ (command -> nameOfCallback, U"SAVE_", 5));
-	return command -> forceApi || ! hidden;
+	return (command -> forceApi || ! hidden) && command -> callback != DO_RunTheScriptFromAnyAddedMenuCommand;
 }
 
 static bool actionHasFileNameArgument (Praat_Command command) {
-	bool hasFileNameArgument =
+	const bool hasFileNameArgument =
 		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ||
 		Melder_nequ (command -> nameOfCallback, U"SAVE_", 5)
 	;
@@ -838,33 +838,41 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
 	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
-	integer numberOfApiActions = 0;
-	for (integer i = 1; i <= theActions.size; i ++) {
-		Praat_Command command = theActions.at [i];
-		bool deprecated = ( command -> deprecationYear > 0 );
-		if (! actionIsToBeIncluded (command, deprecated, includeSaveAPI, includeQueryAPI, includeModifyAPI,
-			includeToAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
-		MelderInfo_writeLine (U"\n/* Action command \"", command -> title.get(), U"\"",
-			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
-			U" */");
-		conststring32 returnType = getReturnType (command);
-		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
-		bool isDirect = ! str32str (command -> title.get(), U"...");
-		if (isDirect) {
-		} else {
-			command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+	integer i = 1;
+	try {
+		integer numberOfApiActions = 0;
+		for (; i <= theActions.size; i ++) {
+			Melder_casual (i, U": ", theActions.at [i] -> class1 -> className, U": ", theActions.at [i] -> title.get());
+			Praat_Command command = theActions.at [i];
+			const bool deprecated = ( command -> deprecationYear > 0 );
+			if (! actionIsToBeIncluded (command, deprecated, includeSaveAPI, includeQueryAPI, includeModifyAPI,
+				includeToAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
+			MelderInfo_writeLine (U"\n/* Action command \"", command -> title.get(), U"\"",
+				deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
+				U" */");
+			conststring32 returnType = getReturnType (command);
+			MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
+			const bool isDirect = ! str32str (command -> title.get(), U"...");
+			if (isDirect) {
+			} else {
+				command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+			}
+			if (actionHasFileNameArgument (command))
+				MelderInfo_writeLine (U"\tconst char *fileName");
+			MelderInfo_write (U")");
+			if (isInHeaderFile) {
+				MelderInfo_writeLine (U";");
+			} else {
+				MelderInfo_writeLine (U" {");
+				MelderInfo_writeLine (U"}");
+			}
+			numberOfApiActions += 1;
 		}
-		if (actionHasFileNameArgument (command)) {
-			MelderInfo_writeLine (U"\tconst char *fileName");
-		}
-		MelderInfo_write (U")");
-		if (isInHeaderFile) {
-			MelderInfo_writeLine (U";");
-		} else {
-			MelderInfo_writeLine (U" {");
-			MelderInfo_writeLine (U"}");
-		}
-		numberOfApiActions += 1;
+	} catch (MelderError) {
+		Melder_throw (U"Action not written to C library: ", i,
+			U": ", theActions.at [i] -> class1 ? theActions.at [i] -> class1 -> className : U"?? class ??",
+			U": ", theActions.at [i] -> title.get()
+		);
 	}
 }
 
