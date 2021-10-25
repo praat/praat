@@ -549,7 +549,7 @@ FORM (MODIFY_ERP_formula, U"ERP: Formula", U"ERP: Formula...") {
 	LABEL (U"x = x1   ! time associated with first sample")
 	LABEL (U"for col from 1 to ncol")
 	LABEL (U"   self [col] = ...")
-	FORMULA (formula, nullptr, U"self")
+	FORMULA (formula, U"Formula", U"self")
 	LABEL (U"   x = x + dx")
 	LABEL (U"endfor")
 	OK

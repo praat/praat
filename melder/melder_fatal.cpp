@@ -1,6 +1,6 @@
 /* melder_fatal.cpp
  *
- * Copyright (C) 1992-2019 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,8 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), conditionBuffer);
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), U"\n");
 	trace (U"FATAL: ", theFatalBuffer);
-	//Melder_throw (theFatalBuffer);   // un-comment-out if you want to trace an assert
+	if (Melder_isTracing)
+		Melder_throw (theFatalBuffer);   // un-comment-out if you want to trace an assert
 	(*theFatalProc) (theFatalBuffer);   // ...but this call will use heap memory...
 }
 

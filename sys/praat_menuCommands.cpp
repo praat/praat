@@ -508,10 +508,10 @@ void praat_addCommandsToEditor (Editor me) {
 static bool commandIsToBeIncluded (Praat_Command command, bool deprecated, bool includeCreateAPI, bool includeReadAPI,
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
-	bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
-	bool hiddenByDefault = ( command -> hidden != command -> toggled );
-	bool explicitlyHidden = hiddenByDefault && ! deprecated;
-	bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||
+	const bool obsolete = ( deprecated && (command -> deprecationYear < PRAAT_YEAR - 10 || command -> deprecationYear < 2017) );
+	const bool hiddenByDefault = ( command -> hidden != command -> toggled );
+	const bool explicitlyHidden = hiddenByDefault && ! deprecated;
+	const bool hidden = explicitlyHidden || ! command -> callback || command -> noApi || obsolete ||
 		(! includeWindowAPI && Melder_nequ (command -> nameOfCallback, U"WINDOW_", 7)) ||
 		(! includeHelpAPI && Melder_nequ (command -> nameOfCallback, U"HELP_", 5)) ||
 		(! includeDrawAPI && Melder_nequ (command -> nameOfCallback, U"GRAPHICS_", 9)) ||
@@ -520,11 +520,11 @@ static bool commandIsToBeIncluded (Praat_Command command, bool deprecated, bool 
 		(! includeReadAPI && Melder_nequ (command -> nameOfCallback, U"READ_", 5)) ||
 		(! includeReadAPI && Melder_nequ (command -> nameOfCallback, U"READ1_", 6)) ||
 		(! includeCreateAPI && Melder_nequ (command -> nameOfCallback, U"NEW1_", 5));
-	return command -> forceApi || ! hidden;
+	return (command -> forceApi || ! hidden) && command -> callback != DO_RunTheScriptFromAnyAddedMenuCommand;
 }
 
 static bool commandHasFileNameArgument (Praat_Command command) {
-	bool hasFileNameArgument =
+	const bool hasFileNameArgument =
 		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ||
 		Melder_nequ (command -> nameOfCallback, U"SAVE_", 5)
 	;
@@ -549,33 +549,36 @@ static conststring32 getReturnType (Praat_Command command) {
 void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI,
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
-	integer numberOfApiMenuCommands = 0;
-	for (integer i = 1; i <= theCommands.size; i ++) {
-		Praat_Command command = theCommands.at [i];
-		bool deprecated = ( command -> deprecationYear > 0 );
-		if (! commandIsToBeIncluded (command, deprecated, includeCreateAPI, includeReadAPI,
-			includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
-		MelderInfo_writeLine (U"\n/* Menu command \"", command -> title.get(), U"\"",
-			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
-			U" */");
-		conststring32 returnType = getReturnType (command);
-		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
-		bool isDirect = ! str32str (command -> title.get(), U"...");
-		if (isDirect) {
-		} else {
-			command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+	try {
+		integer numberOfApiMenuCommands = 0;
+		for (integer i = 1; i <= theCommands.size; i ++) {
+			Praat_Command command = theCommands.at [i];
+			const bool deprecated = ( command -> deprecationYear > 0 );
+			if (! commandIsToBeIncluded (command, deprecated, includeCreateAPI, includeReadAPI,
+				includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
+			MelderInfo_writeLine (U"\n/* Menu command \"", command -> title.get(), U"\"",
+				deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
+				U" */");
+			conststring32 returnType = getReturnType (command);
+			MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
+			const bool isDirect = ! str32str (command -> title.get(), U"...");
+			if (isDirect) {
+			} else {
+				command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
+			}
+			if (commandHasFileNameArgument (command))
+				MelderInfo_writeLine (U"\tconst char *fileName");
+			MelderInfo_write (U")");
+			if (isInHeaderFile) {
+				MelderInfo_writeLine (U";");
+			} else {
+				MelderInfo_writeLine (U" {");
+				MelderInfo_writeLine (U"}");
+			}
+			numberOfApiMenuCommands += 1;
 		}
-		if (commandHasFileNameArgument (command)) {
-			MelderInfo_writeLine (U"\tconst char *fileName");
-		}
-		MelderInfo_write (U")");
-		if (isInHeaderFile) {
-			MelderInfo_writeLine (U";");
-		} else {
-			MelderInfo_writeLine (U" {");
-			MelderInfo_writeLine (U"}");
-		}
-		numberOfApiMenuCommands += 1;
+	} catch (MelderError) {
+		Melder_throw (U"Menu commands not written to C library.");
 	}
 }
 
