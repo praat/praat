@@ -346,9 +346,9 @@ FORM (MODIFY_EACH__PowerCepstrum_formula, U"PowerCepstrum: Formula...", U"PowerC
 	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
-	MODIFY_EACH (PowerCepstrum)
+	MODIFY_EACH_WEAK (PowerCepstrum)
 		Matrix_formula (me, formula, interpreter, nullptr);
-	MODIFY_EACH_END
+	MODIFY_EACH_WEAK_END
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"PowerCepstrum: Get peak...") {
