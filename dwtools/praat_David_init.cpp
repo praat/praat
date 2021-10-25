@@ -4451,7 +4451,7 @@ FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	LABEL (U"for row from 1 to nrow   ; for all patterns")
 	LABEL (U"   for col from 1 to ncol   ; for all nodes")
 	LABEL (U"      self [row, col] =")
-	FORMULA (formula, nullptr, U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak")
+	FORMULA (formula, U"Formula", U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak")
 	LABEL (U"   endfor")
 	LABEL (U"endfor")
 	OK
