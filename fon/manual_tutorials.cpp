@@ -22,8 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20211009)
+MAN_BEGIN (U"What's new?", U"ppgb", 20211025)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.55# (25 October 2021)")
+LIST_ITEM (U"• TextGrid window: guard against a rare crash on Windows.")
+LIST_ITEM (U"• TextGrid: Extract part: guard against producing an empty interval tier.")
+LIST_ITEM (U"• Plug-ins: settings windows should not show the file name of the script.")
+LIST_ITEM (U"• Scripting: clicking Cancel when browsing an Infile field should not crash.")
+LIST_ITEM (U"• Phonetic symbols: a new backslash trigraph for a mid-centralized diacritic (as in [e\\x^], namely \\bsx\\^ .")
 NORMAL (U"##6.1.54# (9 October 2021)")
 LIST_ITEM (U"• PowerCepstrogram: can tabulate cepstral peak prominence values.")
 LIST_ITEM (U"• Mac: repaired global Escape key menu shortcut (stops sounds that play from the Objects window).")

@@ -175,9 +175,9 @@ FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
 	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
-	MODIFY_EACH (ActivationList)
+	MODIFY_EACH_WEAK (ActivationList)
 		Matrix_formula (me, formula, interpreter, nullptr);
-	MODIFY_EACH_END
+	MODIFY_EACH_WEAK_END
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__ActivationList_to_Matrix) {
@@ -2524,11 +2524,10 @@ FORM (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	FORMULA (formula, U"Formula", U"self")
 	OK
 DO
-	MODIFY_EACH (ExcitationList)
-		for (integer j = 1; j <= my size; j ++) {
+	MODIFY_EACH_WEAK (ExcitationList)
+		for (integer j = 1; j <= my size; j ++)
 			Matrix_formula (my at [j], formula, interpreter, nullptr);
-		}
-	MODIFY_EACH_END
+	MODIFY_EACH_WEAK_END
 }
 
 DIRECT (MODIFY_ExcitationList_addItem) {
@@ -4452,14 +4451,14 @@ FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	LABEL (U"for row from 1 to nrow   ; for all patterns")
 	LABEL (U"   for col from 1 to ncol   ; for all nodes")
 	LABEL (U"      self [row, col] =")
-	FORMULA (formula, nullptr, U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak")
+	FORMULA (formula, U"Formula", U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak")
 	LABEL (U"   endfor")
 	LABEL (U"endfor")
 	OK
 DO
-	MODIFY_EACH (PatternList)
+	MODIFY_EACH_WEAK (PatternList)
 		Matrix_formula (me, formula, interpreter, nullptr);
-	MODIFY_EACH_END
+	MODIFY_EACH_WEAK_END
 }
 
 FORM (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set value...") {

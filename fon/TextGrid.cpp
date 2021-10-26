@@ -514,7 +514,11 @@ autoTextGrid TextGrids_merge (OrderedOf<structTextGrid>* textGrids) {
 autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoTextGrid thee = Data_copy (me);
-		if (tmax <= tmin) return thee;
+		if (tmax <= tmin)
+			return thee;
+		if (tmin >= my xmax || tmax <= my xmin)
+			Melder_throw (U"Extraction range (from ", tmin, U" to ", tmax, U" seconds) "
+				"does not overlap with the time domain of the TextGrid (from ", my xmin, U" to ", my xmax, U" seconds).");
 
 		for (integer itier = 1; itier <= my tiers->size; itier ++) {
 			Function anyTier = thy tiers->at [itier];
@@ -525,17 +529,16 @@ autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, bool p
 					if (interval -> xmin >= tmax || interval -> xmax <= tmin) {
 						tier -> intervals.removeItem (iinterval);
 					} else {
-						if (interval -> xmin < tmin) interval -> xmin = tmin;
-						if (interval -> xmax > tmax) interval -> xmax = tmax;
+						Melder_clipLeft (tmin, & interval -> xmin);
+						Melder_clipRight (& interval -> xmax, tmax);
 					}
 				}
 			} else {
 				TextTier textTier = static_cast <TextTier> (anyTier);
 				for (integer ipoint = textTier -> points.size; ipoint >= 1; ipoint --) {
 					TextPoint point = textTier -> points.at [ipoint];
-					if (point -> number < tmin || point -> number > tmax) {
+					if (point -> number < tmin || point -> number > tmax)
 						textTier -> points. removeItem (ipoint);
-					}
 				}
 			}
 			anyTier -> xmin = tmin;
@@ -543,7 +546,8 @@ autoTextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, bool p
 		}
 		thy xmin = tmin;
 		thy xmax = tmax;
-		if (! preserveTimes) Function_shiftXTo (thee.get(), thy xmin, 0.0);
+		if (! preserveTimes)
+			Function_shiftXTo (thee.get(), thy xmin, 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": part not extracted.");
