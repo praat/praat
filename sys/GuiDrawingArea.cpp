@@ -263,7 +263,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. x = x;
 			event. y = y;
 			event. phase = phase;
-			Melder_casual (U": phase ", (int) phase);
+			//Melder_casual (U": phase ", (int) phase);
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
 			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
 			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
