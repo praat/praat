@@ -651,12 +651,12 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 	}
 }
 
-void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
+void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel args) {
 	trace (narg, U" arguments");
-	int size = my numberOfParameters;
+	integer size = my numberOfParameters;
 	while (size >= 1 && my parameters [size] [0] == U'\0')
 		size --;   // ignore trailing fields without a variable name (button, comment)
-	for (int ipar = 1; ipar <= size; ipar ++) {
+	for (integer ipar = 1; ipar <= size; ipar ++) {
 		mutablestring32 p = my parameters [ipar];
 		/*
 			Ignore buttons and comments again.
@@ -675,8 +675,8 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		if (*p != U'\0' && p [str32len (p) - 1] == U':')
 			p [str32len (p) - 1] = U'\0';
 	}
-	int iarg = 0;
-	for (int ipar = 1; ipar <= size; ipar ++) {
+	integer iarg = 0;
+	for (integer ipar = 1; ipar <= size; ipar ++) {
 		/*
 			Ignore buttons and comments again. The buttons will keep their labels as "arguments".
 		*/
@@ -704,7 +704,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	/*
 		Convert booleans and choices to numbers.
 	*/
-	for (int ipar = 1; ipar <= size; ipar ++) {
+	for (integer ipar = 1; ipar <= size; ipar ++) {
 		if (my types [ipar] == Interpreter_BOOLEAN) {
 			mutablestring32 arg = & my arguments [ipar] [0];
 			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
@@ -719,7 +719,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 				Melder_throw (U"Unknown value \"", arg, U"\" for boolean \"", my parameters [ipar], U"\".");
 			}
 		} else if (my types [ipar] == Interpreter_CHOICE) {
-			int jpar;
+			integer jpar;
 			mutablestring32 arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
@@ -733,7 +733,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 			if (jpar > my numberOfParameters)
 				Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
 		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
-			int jpar;
+			integer jpar;
 			mutablestring32 arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)

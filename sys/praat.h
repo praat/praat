@@ -176,11 +176,11 @@ typedef struct {   /* Readonly */
 	ManPages manPages;
 } structPraatApplication, *PraatApplication;
 typedef struct {   /* Readonly */
-	int n;	 /* The current number of objects in the list. */
+	integer n;	 /* The current number of objects in the list. */
 	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
-	int totalSelection;   /* The total number of selected objects, <= n. */
-	int numberOfSelected [1 + 1000];   /* For each (readable) class. */
-	int totalBeingCreated;
+	integer totalSelection;   /* The total number of selected objects, <= n. */
+	integer numberOfSelected [1 + 1000];   /* For each (readable) class. */
+	integer totalBeingCreated;
 	integer uniqueId;
 } structPraatObjects, *PraatObjects;
 typedef struct {   // read-only
@@ -206,7 +206,7 @@ extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
-char32 *praat_name (int iobject);
+char32 *praat_name (integer iobject);
 void praat_write_do (UiForm dia, conststring32 extension);
 void praat_new (autoDaata me);
 void praat_new (autoDaata me, const MelderArg& arg);
@@ -229,7 +229,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define NAME  praat_name (IOBJECT)
 
 /* Used by praat_Sybil.cpp, if you put an Editor on the screen: */
-void praat_installEditor (Editor editor, int iobject);
+void praat_installEditor (Editor editor, integer iobject);
 /* This routine adds a reference to a new editor (unless it is null) to the screen object
    which is in the list at position 'iobject'.
    It sets the destroyCallback and dataChangedCallback as appropriate for Praat:
@@ -238,8 +238,8 @@ void praat_installEditor (Editor editor, int iobject);
    the dataChangedCallback will notify an open DataEditor with the same data,
    after that data will have changed.
 */
-void praat_installEditor2 (Editor editor, int iobject1, int iobject2);
-void praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
+void praat_installEditor2 (Editor editor, integer iobject1, integer iobject2);
+void praat_installEditor3 (Editor editor, integer iobject1, integer iobject2, integer iobject3);
 void praat_installEditorN (Editor editor, DaataList objects);
 
 void praat_dataChanged (Daata object);
@@ -276,7 +276,7 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 			praat_removeObject (i);
 	praat_show ();   // Needed because the selection has changed.
 */
-void praat_removeObject (int i);   // i = 1..praat.n
+void praat_removeObject (integer i);   // i = 1..praat.n
 void praat_show ();   // forces an update of the dynamic menu
 void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */

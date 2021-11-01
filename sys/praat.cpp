@@ -170,7 +170,7 @@ char32 * praat_nameOfSelected (ClassInfo klas, integer inplace) {
 		Melder_throw (U"No ", klas ? klas -> className : U"object", U" #", inplace, U" selected.");
 	else
 		Melder_throw (U"No ", klas ? klas -> className : U"object", U" selected.");
-	return 0;   // failure
+	return nullptr;   // failure, but never reached anyway
 }
 
 integer praat_numberOfSelected (ClassInfo klas) {
@@ -182,7 +182,7 @@ integer praat_numberOfSelected (ClassInfo klas) {
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
 
-void praat_deselect (int IOBJECT) {
+void praat_deselect (integer IOBJECT) {
 	if (! SELECTED)
 		return;
 	SELECTED = false;
@@ -198,12 +198,12 @@ void praat_deselect (int IOBJECT) {
 }
 
 void praat_deselectAll () {
-	int IOBJECT;
+	integer IOBJECT;
 	WHERE (1)
 		praat_deselect (IOBJECT);
 }
 
-void praat_select (int IOBJECT) {
+void praat_select (integer IOBJECT) {
 	if (SELECTED)
 		return;
 	SELECTED = true;
@@ -219,25 +219,25 @@ void praat_select (int IOBJECT) {
 }
 
 void praat_selectAll () {
-	int IOBJECT;
+	integer IOBJECT;
 	WHERE (true)
 		praat_select (IOBJECT);
 }
 
 void praat_list_background () {
-	int IOBJECT;
+	integer IOBJECT;
 	WHERE (SELECTED)
 		GuiList_deselectItem (praatList_objects, IOBJECT);
 }
 void praat_list_foreground () {
-	int IOBJECT;
+	integer IOBJECT;
 	WHERE (SELECTED)
 		GuiList_selectItem (praatList_objects, IOBJECT);
 }
 
 autoCollection praat_getSelectedObjects () {
 	autoCollection thee = Collection_create ();
-	int IOBJECT;
+	integer IOBJECT;
 	LOOP {
 		iam_LOOP (Daata);
 		thy addItem_ref (me);
@@ -245,7 +245,7 @@ autoCollection praat_getSelectedObjects () {
 	return thee;
 }
 
-char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
+char32 *praat_name (integer IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
 void praat_write_do (UiForm dia, conststring32 extension) {
 	static MelderString defaultFileName;
@@ -261,7 +261,7 @@ void praat_write_do (UiForm dia, conststring32 extension) {
 			Apparently, the "extension" is not a complete file name.
 			We are expected to prepend the "extension" with the name of a selected object.
 		*/
-		int IOBJECT, found = 0;
+		integer IOBJECT, found = 0;
 		Daata data = nullptr;
 		WHERE (SELECTED) {
 			if (! data)
@@ -289,8 +289,8 @@ static void removeAllReferencesToMoribundEditor (Editor editor) {
 		Remove all references to this editor.
 		It may be editing multiple objects.
 	*/
-	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++)
-		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+	for (integer iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++)
+		for (integer ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == editor)
 				theCurrentPraatObjects -> list [iobject]. editors [ieditor] = nullptr;
 	if (praatP. editor == editor)
@@ -301,7 +301,7 @@ static void removeAllReferencesToMoribundEditor (Editor editor) {
 	Remove the "object" from the list,
 	killing everything that has to do with the selection.
 */
-static void praat_remove (int iobject, bool removeVisibly) {
+static void praat_remove (integer iobject, bool removeVisibly) {
 	Melder_assert (iobject >= 1 && iobject <= theCurrentPraatObjects -> n);
 	if (theCurrentPraatObjects -> list [iobject]. isBeingCreated) {
 		theCurrentPraatObjects -> list [iobject]. isBeingCreated = false;
@@ -315,7 +315,7 @@ static void praat_remove (int iobject, bool removeVisibly) {
 	/*
 		To prevent synchronization problems, kill editors before killing the data.
 	*/
-	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+	for (integer ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		Editor editor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];   // save this one reference
 		if (editor) {
 			trace (U"remove references to editor ", ieditor);
@@ -385,7 +385,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, conststring32 myName) {
 		Melder_throw (U"The Object Window cannot contain more than ", praat_MAXNUM_OBJECTS, U" objects. You could remove some objects.");
 	}
 		
-	int IOBJECT = ++ theCurrentPraatObjects -> n;
+	integer IOBJECT = ++ theCurrentPraatObjects -> n;
 	Melder_assert (FULL_NAME == nullptr);
 	theCurrentPraatObjects -> list [IOBJECT]. name = Melder_dup_f (name.string);   // all right to crash if out of memory
 	++ theCurrentPraatObjects -> uniqueId;
@@ -428,7 +428,7 @@ void praat_new (autoDaata me,
 
 void praat_updateSelection () {
 	if (theCurrentPraatObjects -> totalBeingCreated > 0) {
-		int IOBJECT;
+		integer IOBJECT;
 		praat_deselectAll ();
 		WHERE (theCurrentPraatObjects -> list [IOBJECT]. isBeingCreated) {
 			praat_select (IOBJECT);
@@ -466,7 +466,7 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 	praat_show ();
 }
 
-void praat_list_renameAndSelect (int position, conststring32 name) {
+void praat_list_renameAndSelect (integer position, conststring32 name) {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiList_replaceItem (praatList_objects, name, position);   // void if name equal
 		if (! Melder_backgrounding)
@@ -491,9 +491,9 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 		Melder_sprint (name,200, name1, U"_", name2);
 }
 
-void praat_removeObject (int i) {
+void praat_removeObject (integer i) {
 	praat_remove (i, true);   // dangle
-	for (int j = i; j < theCurrentPraatObjects -> n; j ++)
+	for (integer j = i; j < theCurrentPraatObjects -> n; j ++)
 		theCurrentPraatObjects -> list [j] = std::move (theCurrentPraatObjects -> list [j + 1]);   // undangle but create second references
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name. reset ();
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. object = nullptr;   // undangle or remove second reference
@@ -508,7 +508,7 @@ void praat_removeObject (int i) {
 
 static void praat_exit (int exit_code) {
 //Melder_setTracing (true);
-	int IOBJECT;
+	integer IOBJECT;
 	trace (U"destroy the picture window");
 	praat_picture_exit ();
 	praat_statistics_exit ();   // record total memory use across sessions
@@ -635,7 +635,7 @@ static void cb_Editor_destruction (Editor me) {
 }
 
 static void cb_Editor_dataChanged (Editor me) {
-	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
+	for (integer iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
 		/*
 			Am I editing this object?
 		*/
@@ -668,10 +668,10 @@ static void cb_Editor_publication (Editor /* me */, autoDaata publication) {
 	praat_updateSelection ();
 }
 
-void praat_installEditor (Editor editor, int IOBJECT) {
+void praat_installEditor (Editor editor, integer IOBJECT) {
 	if (! editor)
 		return;
-	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+	for (integer ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		if (! EDITOR [ieditor]) {
 			EDITOR [ieditor] = editor;
 			Editor_setDestructionCallback (editor, cb_Editor_destruction);
@@ -685,14 +685,14 @@ void praat_installEditor (Editor editor, int IOBJECT) {
 	Melder_throw (U"(praat_installEditor:) Cannot have more than ", praat_MAXNUM_EDITORS, U" editors with one object.");
 }
 
-void praat_installEditor2 (Editor editor, int i1, int i2) {
+void praat_installEditor2 (Editor editor, integer i1, integer i2) {
 	if (! editor)
 		return;
-	int ieditor1 = 0;
+	integer ieditor1 = 0;
 	for (; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
 		if (! theCurrentPraatObjects -> list [i1]. editors [ieditor1])
 			break;
-	int ieditor2 = 0;
+	integer ieditor2 = 0;
 	for (; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
 		if (! theCurrentPraatObjects -> list [i2]. editors [ieditor2])
 			break;
@@ -707,18 +707,18 @@ void praat_installEditor2 (Editor editor, int i1, int i2) {
 	}
 }
 
-void praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
+void praat_installEditor3 (Editor editor, integer i1, integer i2, integer i3) {
 	if (! editor)
 		return;
-	int ieditor1 = 0;
+	integer ieditor1 = 0;
 	for (; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
 		if (! theCurrentPraatObjects -> list [i1]. editors [ieditor1])
 			break;
-	int ieditor2 = 0;
+	integer ieditor2 = 0;
 	for (; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
 		if (! theCurrentPraatObjects -> list [i2]. editors [ieditor2])
 			break;
-	int ieditor3 = 0;
+	integer ieditor3 = 0;
 	for (; ieditor3 < praat_MAXNUM_EDITORS; ieditor3 ++)
 		if (! theCurrentPraatObjects -> list [i3]. editors [ieditor3])
 			break;
@@ -793,7 +793,7 @@ void praat_dataChanged (Daata object) {
 		saveError = Melder_dup_f (Melder_getError ());
 		Melder_clearError ();
 	}
-	int IOBJECT;
+	integer IOBJECT;
 	WHERE (OBJECT == object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			Editor editor = EDITOR [ieditor];
@@ -1759,7 +1759,7 @@ void praat_run () {
 	}
 	Melder_assert (isdefined (0.0));
 	Melder_assert (isdefined (1e300));
-	Melder_assert (isundef ((double) 1e320L));
+	Melder_assert (isundef (double (1e160 * 1e160)));
 	Melder_assert (isundef (pow (10.0, 330)));
 	Melder_assert (isundef (0.0 / 0.0));
 	Melder_assert (isundef (1.0 / 0.0));
