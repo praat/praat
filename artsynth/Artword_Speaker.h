@@ -1,6 +1,6 @@
 /* Artword_Speaker.h
  *
- * Copyright (C) 1992-2005,2011,2016,2017,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2016,2017,2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #include "Speaker.h"
 #include "Graphics.h"
 
-void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics g, int numberOfSteps);
+void Artword_Speaker_draw (Artword artword, Speaker speaker, Graphics graphics, integer numberOfSteps);
 
-void Artword_Speaker_playMovie (Artword artword, Speaker speaker, Graphics g);
+void Artword_Speaker_playMovie (Artword artword, Speaker speaker, Graphics graphics);
 
 /* End of file Artword_Speaker.h */

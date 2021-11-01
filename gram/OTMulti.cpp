@@ -901,7 +901,7 @@ static autoTable OTMulti_createHistory (OTMulti me, integer storeHistoryEvery, i
 	}
 }
 
-static int OTMulti_updateHistory (OTMulti me, Table thee, integer storeHistoryEvery, integer idatum, conststring32 form1, conststring32 form2)
+static void OTMulti_updateHistory (OTMulti me, Table thee, integer storeHistoryEvery, integer idatum, conststring32 form1, conststring32 form2)
 {
 	try {
 		if (idatum % storeHistoryEvery == 0) {
@@ -912,7 +912,6 @@ static int OTMulti_updateHistory (OTMulti me, Table thee, integer storeHistoryEv
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 				Table_setNumericValue (thee, irow, 3 + icons, my constraints [icons]. ranking);
 		}
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": history not updated.");
 	}

@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2007,2009-2020 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,9 +114,9 @@ GuiMenu praat_picture_resolveMenu (conststring32 menu);
 
 /* The following routines are a bit private (used by praat_script.cpp). */
 /* If you must call them, follow them by praat_show (). */
-void praat_deselect (int i);
+void praat_deselect (integer i);
 void praat_deselectAll ();
-void praat_select (int i);
+void praat_select (integer i);
 void praat_selectAll ();
 
 void praat_list_background ();
@@ -179,7 +179,7 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
 
 void praat_cleanUpName (char32 *name);
-void praat_list_renameAndSelect (int position, conststring32 name);
+void praat_list_renameAndSelect (integer position, conststring32 name);
 
 inline struct PraatP {
 	int argc;

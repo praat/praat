@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2012,2015-2017,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2015-2017,2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,16 +38,16 @@
 #define B91  0
 
 autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
-	double fsamp, int oversampling,
-	autoSound *out_w1, int iw1, autoSound *out_w2, int iw2, autoSound *out_w3, int iw3,
-	autoSound *out_p1, int ip1, autoSound *out_p2, int ip2, autoSound *out_p3, int ip3,
-	autoSound *out_v1, int iv1, autoSound *out_v2, int iv2, autoSound *out_v3, int iv3)
+	double fsamp, integer oversampling,
+	autoSound *out_w1, integer iw1, autoSound *out_w2, integer iw2, autoSound *out_w3, integer iw3,
+	autoSound *out_p1, integer ip1, autoSound *out_p2, integer ip2, autoSound *out_p3, integer ip3,
+	autoSound *out_v1, integer iv1, autoSound *out_v2, integer iv2, autoSound *out_v3, integer iv3)
 {
 	try {
 		autoSound result = Sound_createSimple (1, artword -> totalTime, fsamp);
-		integer numberOfSamples = result -> nx;
+		const integer numberOfSamples = result -> nx;
 		double minTract [1+78], maxTract [1+78];   // for drawing
-		double Dt = 1.0 / fsamp / oversampling,
+		const double Dt = 1.0 / fsamp / oversampling,
 			rho0 = 1.14,
 			c = 353.0,
 			onebyc2 = 1.0 / (c * c),
@@ -64,7 +64,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		autoMelderMonitor monitor (U"Articulatory synthesis");
 		Artword_intoArt (artword, art.get(), 0.0);
 		Art_Speaker_intoDelta (art.get(), speaker, delta.get());
-		integer M = delta -> numberOfTubes;
+		const integer M = delta -> numberOfTubes;
 		autoSound w1, w2, w3, p1, p2, p3, v1, v2, v3;
 		if (iw1 > 0 && iw1 <= M) w1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw1 = 0;
 		if (iw2 > 0 && iw2 <= M) w2 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw2 = 0;
@@ -81,9 +81,10 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 			maxTract [i] = -100.0;
 		}
 		totalVolume = 0.0;
-		for (int m = 1; m <= M; m ++) {
+		for (integer m = 1; m <= M; m ++) {
 			Delta_Tube t = & delta->tubes [m];
-			if (! t -> left1 && ! t -> right1) continue;
+			if (! t -> left1 && ! t -> right1)
+				continue;
 			t->Dx = t->Dxeq; t->dDxdt = 0.0;   // 5.113 (numbers refer to equations in Boersma (1998)
 			t->Dy = t->Dyeq; t->dDydt = 0.0;   // 5.113
 			t->Dz = t->Dzeq;   // 5.113
@@ -102,7 +103,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 		}
 		//Melder_casual (U"Starting volume: ", totalVolume * 1000, U" litres.");
 		for (integer sample = 1; sample <= numberOfSamples; sample ++) {
-			double time = (sample - 1) / fsamp;
+			const double time = (sample - 1) / fsamp;
 			Artword_intoArt (artword, art.get(), time);
 			Art_Speaker_intoDelta (art.get(), speaker, delta.get());
 			if (sample % MONITOR_SAMPLES == 0 && monitor.graphics()) {   // because we can be in batch
@@ -110,8 +111,10 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				double area [1+78];
 				for (int i = 1; i <= 78; i ++) {
 					area [i] = delta -> tubes [i]. A;
-					if (area [i] < minTract [i]) minTract [i] = area [i];
-					if (area [i] > maxTract [i]) maxTract [i] = area [i];
+					if (area [i] < minTract [i])
+						minTract [i] = area [i];
+					if (area [i] > maxTract [i])
+						maxTract [i] = area [i];
 				}
 				Graphics_beginMovieFrame (graphics, & Melder_WHITE);
 
@@ -164,8 +167,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				Graphics_endMovieFrame (graphics, 0.0);
 				Melder_monitor ((double) sample / numberOfSamples, U"Articulatory synthesis: ", Melder_half (time), U" seconds");
 			}
-			for (int n = 1; n <= oversampling; n ++) {
-				for (int m = 1; m <= M; m ++) {
+			for (integer n = 1; n <= oversampling; n ++) {
+				for (integer m = 1; m <= M; m ++) {
 					Delta_Tube t = & delta -> tubes [m];
 					if (! t -> left1 && ! t -> right1)
 						continue;
@@ -181,7 +184,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					#endif
 					/* 3-way: equal lengths. */
 					/* This requires left tubes to be processed before right tubes. */
-					if (t->left1 && t->left1->right2) t->Dxnew = t->left1->Dxnew;
+					if (t->left1 && t->left1->right2)
+						t->Dxnew = t->left1->Dxnew;
 					t->Dz = t->Dzeq;   /* immediate... */
 					t->eleft = (t->Qleft - t->Kleft) * t->V;   // 5.115
 					t->eright = (t->Qright - t->Kright) * t->V;   // 5.115
@@ -190,8 +194,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					t->DeltaP = t->e / t->V - rho0c2;   // 5.117
 					t->v = t->p / (rho0 + onebyc2 * t->DeltaP);   // 5.118
 					{
-						double dDy = t->Dyeq - t->Dy;
-						double cubic = t->k3 * dDy * dDy;
+						const double dDy = t->Dyeq - t->Dy;
+						const double cubic = t->k3 * dDy * dDy;
 						Delta_Tube l1 = t->left1, l2 = t->left2, r1 = t->right1, r2 = t->right2;
 						tension = dDy * (t->k1 + cubic);
 						t->B = 2.0 * t->Brel * sqrt (t->mass * (t->k1 + 3.0 * cubic));
@@ -206,7 +210,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					}
 					if (t->Dy < t->dy) {
 						if (t->Dy >= - t->dy) {
-							double dDy = t->dy - t->Dy, dDy2 = dDy * dDy;
+							const double dDy = t->dy - t->Dy, dDy2 = dDy * dDy;
 							tension += dDy2 / (4.0 * t->dy) * (t->s1 + 0.5 * t->s3 * dDy2);
 							t->B += 2.0 * dDy / (2.0 * t->dy) *
 								sqrt (t->mass * (t->s1 + t->s3 * dDy2));
@@ -230,14 +234,16 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					t->Ahalf = 0.5 * (t->A + t->Anew);   // 5.120
 					t->Dxhalf = 0.5 * (t->Dxnew + t->Dx);   // 5.121
 					t->Vnew = t->Anew * t->Dxnew;   // 5.128
-					{ double oneByDyav = t->Dz / t->A;
-					/*t->R = 12.0 * 1.86e-5 * t->parallel * t->parallel * oneByDyav * oneByDyav;*/
-					if (t->Dy < 0.0)
-						t->R = 12.0 * 1.86e-5 / (Dymin * Dymin + t->dy * t->dy);
-					else
-						t->R = 12.0 * 1.86e-5 * t->parallel * t->parallel /
-							((t->Dy + Dymin) * (t->Dy + Dymin) + t->dy * t->dy);
-					t->R += 0.3 * t->parallel * oneByDyav;   /* 5.23 */ }
+					{//
+						const double oneByDyav = t->Dz / t->A;
+						/*t->R = 12.0 * 1.86e-5 * t->parallel * t->parallel * oneByDyav * oneByDyav;*/
+						if (t->Dy < 0.0)
+							t->R = 12.0 * 1.86e-5 / (Dymin * Dymin + t->dy * t->dy);
+						else
+							t->R = 12.0 * 1.86e-5 * t->parallel * t->parallel /
+									((t->Dy + Dymin) * (t->Dy + Dymin) + t->dy * t->dy);
+						t->R += 0.3 * t->parallel * oneByDyav;   /* 5.23 */
+					}
 					t->r = (1.0 + t->R * Dt / rho0) * t->Dxhalf / t->Anew;   // 5.122
 					t->ehalf = t->e + halfc2Dt * (t->Jleft - t->Jright);   // 5.123
 					t->phalf = (t->p + halfDt * (t->Qleft - t->Qright) / t->Dx) / (1.0 + Dtbytworho0 * t->R);   // 5.123
@@ -251,11 +257,12 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 					#endif
 				}
 				for (int m = 1; m <= M; m ++) {   // compute Jleftnew and Qleftnew
-					Delta_Tube l = & delta->tubes [m], r1 = l -> right1, r2 = l -> right2, r = r1;
-					Delta_Tube l1 = l, l2 = r ? r -> left2 : nullptr;
+					const Delta_Tube l = & delta->tubes [m], r1 = l -> right1, r2 = l -> right2, r = r1;
+					const Delta_Tube l1 = l, l2 = r ? r -> left2 : nullptr;
 					if (! l->left1) {   // closed boundary at the left side (diaphragm)?
-						if (! r) continue;   // tube not connected at all
-						l->Jleftnew = 0;   // 5.132
+						if (! r)
+							continue;   // tube not connected at all
+						l->Jleftnew = 0.0;   // 5.132
 						l->Qleftnew = (l->eleft - twoc2Dt * l->Jhalf) / l->Vnew;   // 5.132
 					}
 					else   // left boundary open to another tube will be handled...
@@ -264,8 +271,8 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 						rrad = 1.0 - c * Dt / 0.02;   // radiation resistance, 5.135
 						onebygrad = 1.0 / (1.0 + c * Dt / 0.02);   // radiation conductance, 5.135
 						#if NO_RADIATION_DAMPING
-							rrad = 0;
-							onebygrad = 0;
+							rrad = 0.0;
+							onebygrad = 0.0;
 						#endif
 						l->prightnew = ((l->Dxhalf / Dt + c * onebygrad) * l->pright +
 							 2.0 * ((l->Qhalf - rho0c2) - (l->Qright - rho0c2) * onebygrad)) /
@@ -408,7 +415,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 			}
 		}
 		totalVolume = 0.0;
-		for (int m = 1; m <= M; m ++)
+		for (integer m = 1; m <= M; m ++)
 			totalVolume += delta->tubes [m]. V;
 		//Melder_casual (U"Ending volume: ", totalVolume * 1000, U" litres.");
 		if (out_w1) *out_w1 = w1.move();
