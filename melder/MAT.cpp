@@ -1,6 +1,6 @@
 /* MAT.cpp
  *
- * Copyright (C) 2017-2020 Paul Boersma
+ * Copyright (C) 2017-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 #ifdef macintosh
 	#include <Accelerate/Accelerate.h>
+	#undef trace
 	#import <MetalPerformanceShaders/MetalPerformanceShaders.h>
 	#include <OpenCL/opencl.h>
 #endif

@@ -866,7 +866,8 @@ static _Graphics_widechar *theWidechar;
 static char32 *charCodes;
 static int initBuffer (conststring32 txt) {
 	try {
-		integer sizeNeeded = str32len (txt) + 1;
+		constexpr integer maximumNumberOfReplacementCharactersPerCharacter = 2;
+		integer sizeNeeded = maximumNumberOfReplacementCharactersPerCharacter * str32len (txt) + 1;
 		if (sizeNeeded > bufferSize) {
 			sizeNeeded += sizeNeeded / 2 + 100;
 			Melder_free (theWidechar);
@@ -1444,6 +1445,87 @@ static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* catta
 		}
 		out -> code = U'?';   // does this have any meaning?
 		Melder_assert (kar != U'\0');
+		if (my postScript) {
+			if (kar == UNICODE_LATIN_SMALL_LETTER_TS_DIGRAPH) {
+				kar = U't';
+				out -> kar = kar;
+				out -> karInfo = Longchar_getInfoFromNative (kar);
+				Melder_assert (out -> karInfo);
+				out -> rightToLeft = false;
+				kar = U's';
+				out ++;
+				* out = out [-1];
+			} else if (kar == UNICODE_LATIN_SMALL_LETTER_TESH_DIGRAPH) {
+				kar = U't';
+				out -> kar = kar;
+				out -> karInfo = Longchar_getInfoFromNative (kar);
+				Melder_assert (out -> karInfo);
+				out -> rightToLeft = false;
+				kar = UNICODE_LATIN_SMALL_LETTER_ESH;
+				out ++;
+				* out = out [-1];
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_H) {
+				kar = U'h';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_H_WITH_HOOK) {
+				kar = UNICODE_LATIN_SMALL_LETTER_H_WITH_HOOK;
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_GAMMA) {
+				kar = UNICODE_LATIN_SMALL_LETTER_GAMMA;
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_W) {
+				kar = U'w';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_TURNED_H) {
+				kar = UNICODE_LATIN_SMALL_LETTER_TURNED_H;
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_GLOTTAL_STOP) {
+				kar = UNICODE_LATIN_LETTER_GLOTTAL_STOP;
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_REVERSED_GLOTTAL_STOP) {
+				kar = UNICODE_LATIN_LETTER_PHARYNGEAL_VOICED_FRICATIVE;
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_L) {
+				kar = U'l';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_SUPERSCRIPT_LATIN_SMALL_LETTER_N) {
+				kar = U'n';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_M) {
+				kar = U'm';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_ENG) {
+				kar = UNICODE_LATIN_SMALL_LETTER_ENG;
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_S) {
+				kar = U's';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_X) {
+				kar = U'x';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_F) {
+				kar = U'f';
+				out -> baseline = 34;
+				out -> size = 80;
+			} else if (kar == UNICODE_MODIFIER_LETTER_SMALL_Y) {
+				kar = U'y';
+				out -> baseline = 34;
+				out -> size = 80;
+			}
+		}
 		out -> kar = kar;
 		out -> karInfo = Longchar_getInfoFromNative (kar);
 		Melder_assert (out -> karInfo);

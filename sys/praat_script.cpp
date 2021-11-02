@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2020 Paul Boersma
+ * Copyright (C) 1993-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 #include "UiPause.h"
 #include "DemoEditor.h"
 
-static int praat_findObjectFromString (Interpreter interpreter, conststring32 string) {
+static integer praat_findObjectFromString (Interpreter interpreter, conststring32 string) {
 	try {
-		int IOBJECT;
+		integer IOBJECT;
 		while (*string == U' ') string ++;
 		if (*string >= U'A' && *string <= U'Z') {
 			/*
@@ -70,7 +70,7 @@ static int praat_findObjectFromString (Interpreter interpreter, conststring32 st
 }
 
 Editor praat_findEditorFromString (conststring32 string) {
-	int IOBJECT;
+	integer IOBJECT;
 	while (*string == U' ')
 		string ++;
 	if (*string >= U'A' && *string <= U'Z') {
@@ -189,7 +189,7 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 	if (command [0] == U'\0' || command [0] == U'#' || command [0] == U'!' || command [0] == U';')
 		/* Skip empty lines and comments. */;
 	else if ((command [0] == U'.' || command [0] == U'+' || command [0] == U'-') && Melder_isAsciiUpperCaseLetter (command [1])) {   // selection?
-		int IOBJECT = praat_findObjectFromString (interpreter, command + 1);
+		integer IOBJECT = praat_findObjectFromString (interpreter, command + 1);
 		if (command [0] == '.')
 			praat_deselectAll ();
 		if (command [0] == '-')
@@ -203,17 +203,17 @@ bool praat_executeCommand (Interpreter interpreter, char32 *command) {
 				praat_selectAll ();
 				praat_show ();
 			} else {
-				int IOBJECT = praat_findObjectFromString (interpreter, command + 7);
+				integer IOBJECT = praat_findObjectFromString (interpreter, command + 7);
 				praat_deselectAll ();
 				praat_select (IOBJECT);
 				praat_show ();
 			}
 		} else if (str32nequ (command, U"plus ", 5)) {
-			int IOBJECT = praat_findObjectFromString (interpreter, command + 5);
+			integer IOBJECT = praat_findObjectFromString (interpreter, command + 5);
 			praat_select (IOBJECT);
 			praat_show ();
 		} else if (str32nequ (command, U"minus ", 6)) {
-			int IOBJECT = praat_findObjectFromString (interpreter, command + 6);
+			integer IOBJECT = praat_findObjectFromString (interpreter, command + 6);
 			praat_deselect (IOBJECT);
 			praat_show ();
 		} else if (str32nequ (command, U"echo ", 5)) {

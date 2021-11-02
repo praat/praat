@@ -77,7 +77,7 @@
 #define FORM(proc,name,helpTitle)  \
 	extern "C" void proc (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool isModified, void *buttonClosure); \
 	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter, conststring32 _invokingButtonTitle_, bool _isModified_, void *_buttonClosure_) { \
-		int IOBJECT = 0; \
+		integer IOBJECT = 0; \
 		(void) IOBJECT; \
 		UiField _radio_ = nullptr; \
 		(void) _radio_; \
@@ -346,7 +346,7 @@
 	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *); \
 	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *) { \
 		(void) interpreter; \
-		int IOBJECT = 0; \
+		integer IOBJECT = 0; \
 		(void) IOBJECT; \
 		{ { \
 			try {
@@ -362,7 +362,7 @@
 		} else { \
 			try { \
 				MelderFile file; \
-				int IOBJECT = 0; \
+				integer IOBJECT = 0; \
 				(void) IOBJECT; \
 				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
 				if (_args_) { \
@@ -390,7 +390,7 @@
 		} else { \
 			try { \
 				MelderFile file; \
-				int IOBJECT = 0; \
+				integer IOBJECT = 0; \
 				(void) IOBJECT; \
 				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
 				if (_args_) { \
@@ -423,7 +423,7 @@
 	LOOP { if (CLASS == class##klas || Thing_isSubclass (CLASS, class##klas)) me = (klas) OBJECT; break; }
 
 #define FIND_ONE_WITH_IOBJECT(klas)  \
-	klas me = nullptr; int _klas_position = 0; \
+	klas me = nullptr; integer _klas_position = 0; \
 	LOOP { if (CLASS == class##klas) me = (klas) OBJECT, _klas_position = IOBJECT; break; } \
 	IOBJECT = _klas_position;
 
@@ -433,7 +433,7 @@
 	if (me && you) break; }
 
 #define FIND_ONE_AND_ONE_WITH_IOBJECT(klas1,klas2)  \
-	klas1 me = nullptr; klas2 you = nullptr; int _klas1_position = 0; \
+	klas1 me = nullptr; klas2 you = nullptr; integer _klas1_position = 0; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; \
 		else if (CLASS == class##klas2) you = (klas2) OBJECT; if (me && you) break; } \
 	IOBJECT = _klas1_position;
@@ -464,7 +464,7 @@
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; }
 	
 #define FIND_ONE_AND_ONE_AND_ONE_WITH_IOBJECT(klas1,klas2,klas3)  \
-	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; int _klas1_position = 0;\
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; integer _klas1_position = 0;\
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; if (me && you && him) break; } \
 	IOBJECT = _klas1_position;
@@ -476,7 +476,7 @@
 	if (me && you && him && she) break; }
 
 #define FIND_1_1_1_1_WITH_IOBJECT(klas1,klas2,klas3,klas4)  \
-	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr;  int _klas1_position = 0; \
+	klas1 me = nullptr; klas2 you = nullptr; klas3 him = nullptr; klas4 she = nullptr;  integer _klas1_position = 0; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT, _klas1_position = IOBJECT; else if (CLASS == class##klas2) you = (klas2) OBJECT; \
 	else if (CLASS == class##klas3) him = (klas3) OBJECT; else if (CLASS == class##klas4) she = (klas4) OBJECT; \
 	if (me && you && him && she) break; } \

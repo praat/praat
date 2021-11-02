@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2018,2020 Paul Boersma
+ * Copyright (C) 1993-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 	bool selectionOnly);
 void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments);
-void Interpreter_getArgumentsFromArgs (Interpreter me, int nargs, Stackel args);
+void Interpreter_getArgumentsFromArgs (Interpreter me, integer nargs, Stackel args);
 void Interpreter_run (Interpreter me, char32 *text);   // destroys 'text'
 void Interpreter_stop (Interpreter me);   // can be called from any procedure called deep-down by the interpreter; will stop before next line
 
