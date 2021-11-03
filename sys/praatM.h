@@ -605,7 +605,7 @@
 #define RECORD_ONE
 #define RECORD_ONE_END(...)  \
 	praat_new (result.move(), __VA_ARGS__); \
-	END_WITH_NEW_DATA
+	CREATE_MULTIPLE_END
 
 /*
 	DRAW
