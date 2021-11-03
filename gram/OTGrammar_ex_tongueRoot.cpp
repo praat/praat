@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.cpp
  *
- * Copyright (C) 1997-2005,2007,2009,2011-2013,2015-2020 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009,2011-2013,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ static const conststring32 vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", 
 #define i  0
 #define e  1
 #define schwa  2
-#undef I
 #define I  3
 #define E  4
 #define a  5
@@ -30,7 +29,7 @@ static const conststring32 vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", 
 #define isrtr(v)  ((v) >= I)
 #define fliptr(v)  (((v) + 3) % 6)
 
-static void countVowelViolations (const INTVEC marks, const int numberOfConstraints, const int v) {
+static void countVowelViolations (const INTVEC marks, const integer numberOfConstraints, const integer v) {
 	if (v == I)
 		marks [1] ++;
 	if (v == schwa)
@@ -47,7 +46,7 @@ static void countVowelViolations (const INTVEC marks, const int numberOfConstrai
 	}
 }
 
-static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
+static void OTGrammarCandidate_init (OTGrammarCandidate me, integer ncons, integer v1, integer v2) {
 	my output = Melder_dup (Melder_cat (vowels [v1], U"t", vowels [v2]));
 	my marks = zero_INTVEC (my numberOfConstraints = ncons);
 	/*

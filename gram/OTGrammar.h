@@ -131,8 +131,8 @@ autoOTGrammar OTGrammar_create_tongueRoot_grammar (
 );
 autoOTGrammar OTGrammar_create_metrics (
 	kOTGrammar_createMetricsGrammar_initialRanking equal_footForm_wsp,
-	int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
-	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress, int includeClashAndLapse, int includeCodas);
+	int trochaicityConstraint, bool includeFootBimoraic, bool includeFootBisyllabic,
+	bool includePeripheral, int nonfinalityConstraint, bool overtFormsHaveSecondaryStress, bool includeClashAndLapse, bool includeCodas);
 	/* T&S: 1, false, false, false, 1, true, false, false */
 
 void OTGrammar_reset (OTGrammar me, double ranking);
