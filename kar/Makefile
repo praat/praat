@@ -5,7 +5,7 @@ include ../makefile.defs
 
 OBJECTS = ipaSerifRegularPS.o longchar.o
 
-CPPFLAGS = -I ../melder
+CPPFLAGS += -I ../melder
 
 .PHONY: all clean
 

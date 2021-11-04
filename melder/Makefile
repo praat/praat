@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../melder
+CPPFLAGS += -I ../melder
 
 OBJECTS = melder.o complex.o melder_alloc.o melder_colour.o \
 	melder_ftoa.o melder_console.o melder_textencoding.o melder_atof.o melder_files.o \

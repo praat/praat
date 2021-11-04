@@ -4,7 +4,7 @@
 include ../makefile.defs
 
 # -I ../sys is there because e.g. Graphics.cpp include fon/Function.h, which again includes something from sys
-CPPFLAGS = -I ../melder -I ../sys -I ../dwsys
+CPPFLAGS += -I ../melder -I ../sys -I ../dwsys
 
 OBJECTS = Thing.o Data.o Simple.o Collection.o Strings.o \
    Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o \

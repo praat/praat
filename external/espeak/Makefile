@@ -2,7 +2,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../kar -I ../../melder -I ../../dwtools -I ../../sys -I ../../dwsys -I ../../stat
+CPPFLAGS += -I ../../kar -I ../../melder -I ../../dwtools -I ../../sys -I ../../dwsys -I ../../stat
 
 OBJECTS = categories.o compiledata.o compiledict.o \
 	dictionary.o \

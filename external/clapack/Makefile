@@ -4,7 +4,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../melder
+CPPFLAGS += -I ../../melder
 
 OBJECTS = blas.o \
 	lapack.o lapack_dg.o lapack_dlaq.o \
