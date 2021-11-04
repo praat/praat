@@ -1,5 +1,5 @@
 # Makefile of the library "external/portaudio"
-# Paul Boersma, 19 November 2020
+# Paul Boersma, 3 November 2021
 
 include ../../makefile.defs
 
@@ -21,7 +21,7 @@ clean:
 libportaudio.a: $(OBJECTS)
 	touch libportaudio.a
 	rm libportaudio.a
-	ar cq libportaudio.a $(OBJECTS)
+	$(AR) cq libportaudio.a $(OBJECTS)
 	$(RANLIB) libportaudio.a
 
 $(OBJECTS): *.h

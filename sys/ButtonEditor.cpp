@@ -209,7 +209,8 @@ int structButtonEditor :: v_goToPage (conststring32 title) {
 		case 'a': {   // toggle visibility of action
 			integer i = Melder_atoi (& title [1]);
 			Praat_Command action = praat_getAction (i);
-			if (! action) return 0;
+			if (! action)
+				return 0;
 			if (action -> hidden)
 				praat_showAction (action -> class1, action -> class2, action -> class3, action -> title.get());
 			else
