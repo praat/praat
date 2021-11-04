@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20211025)
+MAN_BEGIN (U"What's new?", U"ppgb", 20211103)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.1.56# (3 November 2021)")
+LIST_ITEM (U"• Scripting: ##Record Sound (fixed time)...# should return an object ID.")
+LIST_ITEM (U"• More phonetic symbols in EPS files.")
 NORMAL (U"##6.1.55# (25 October 2021)")
 LIST_ITEM (U"• TextGrid window: guard against a rare crash on Windows.")
 LIST_ITEM (U"• TextGrid: Extract part: guard against producing an empty interval tier.")
