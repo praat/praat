@@ -140,6 +140,15 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_widget), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+		#if defined (chrome)
+			GtkWidget *label = gtk_label_new (Melder_peek32to8 (title));
+			gtk_label_set_use_markup (GTK_LABEL (label), true);
+			char *markup = g_markup_printf_escaped ("<b>%s</b>", Melder_peek32to8 (title));
+			gtk_label_set_markup (GTK_LABEL (label), markup);
+			g_free (markup);
+			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 0, 0);
+			gtk_widget_show (GTK_WIDGET (label));
+		#endif
 	#elif motif
 		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
@@ -184,8 +193,12 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 	#if gtk
 		my d_gtkMenuBar = (GtkMenuBar *) gtk_menu_bar_new ();
 		_GuiObject_setUserData (my d_gtkMenuBar, me);
-		my v_positionInForm (my d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), me);   // BUG?
-		
+		#if defined (chrome)
+			my v_positionInForm (my d_gtkMenuBar, 0, 0, 30, Machine_getMenuBarHeight (), me);   // BUG?
+		#else
+			my v_positionInForm (my d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), me);   // BUG?
+		#endif
+
 		// we need an accelerator group for each window we're creating accelerated menus on
 		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));
 		Melder_assert (topwin == my d_gtkWindow);

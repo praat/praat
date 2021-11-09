@@ -130,7 +130,10 @@ int GuiShell_getShellHeight (GuiShell me) {
 
 void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 	#if gtk
-		gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
+		#if defined (chrome)
+		#else
+			gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
+		#endif
 	#elif motif
 		SetWindowTextW (my d_xmShell -> window, Melder_peek32toW (title));
 	#elif cocoa

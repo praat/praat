@@ -84,7 +84,11 @@ constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
 
 #define Gui_LEFT_DIALOG_SPACING  20
 #define Gui_RIGHT_DIALOG_SPACING  20
-#define Gui_TOP_DIALOG_SPACING  14
+#if defined (chrome)
+	#define Gui_TOP_DIALOG_SPACING  34
+#else
+	#define Gui_TOP_DIALOG_SPACING  14
+#endif
 #define Gui_BOTTOM_DIALOG_SPACING  20
 #define Gui_HORIZONTAL_DIALOG_SPACING  12
 #define Gui_VERTICAL_DIALOG_SPACING_SAME  12
