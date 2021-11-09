@@ -81,6 +81,15 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		gtk_container_add (GTK_CONTAINER (vbox /*my d_gtkWindow*/), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me.get());
+		#if defined (chrome)
+			GtkWidget *label = gtk_label_new (Melder_peek32to8 (title));
+			gtk_label_set_use_markup (GTK_LABEL (label), true);
+			char *markup = g_markup_printf_escaped ("<b>%s</b>", Melder_peek32to8 (title));
+			gtk_label_set_markup (GTK_LABEL (label), markup);
+			g_free (markup);
+			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 0, 0);
+			gtk_widget_show (GTK_WIDGET (label));
+		#endif
 	#elif motif
 		my d_xmShell = XmCreateDialogShell (parent -> d_widget, "dialogShell", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
