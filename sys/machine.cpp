@@ -45,7 +45,7 @@ int Machine_getMenuBarHeight () {
 		0,    // Win32
 		30,   // Linux
 		36,   // Cocoa
-		30,   // Chrome
+		60,   // Chrome
 	};
 	return heights [lookAndFeel];
 }
