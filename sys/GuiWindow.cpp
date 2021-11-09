@@ -69,6 +69,14 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				if (top    <  0) top    += parentAllocation -> height;
 				if (bottom <= 0) bottom += parentAllocation -> height;
 				trace (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
+				#if defined (chrome)
+					#define WINDOW_MARGIN_X  19
+					left += WINDOW_MARGIN_X;
+					right += WINDOW_MARGIN_X;
+					#define WINDOW_MARGIN_Y  45
+					top += WINDOW_MARGIN_Y;
+					bottom += WINDOW_MARGIN_Y;
+				#endif
 				GtkAllocation childAllocation { left, top, right - left, bottom - top };
 				gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
 				trace (U"moved child of class ", Thing_className (control));
@@ -146,7 +154,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 			char *markup = g_markup_printf_escaped ("<b>%s</b>", Melder_peek32to8 (title));
 			gtk_label_set_markup (GTK_LABEL (label), markup);
 			g_free (markup);
-			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 0, 0);
+			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 8, 0);
 			gtk_widget_show (GTK_WIDGET (label));
 		#endif
 	#elif motif
@@ -194,7 +202,7 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 		my d_gtkMenuBar = (GtkMenuBar *) gtk_menu_bar_new ();
 		_GuiObject_setUserData (my d_gtkMenuBar, me);
 		#if defined (chrome)
-			my v_positionInForm (my d_gtkMenuBar, 0, 0, 30, Machine_getMenuBarHeight (), me);   // BUG?
+			my v_positionInForm (my d_gtkMenuBar, 0, 0, Machine_getMenuBarHeight () - 30, Machine_getMenuBarHeight (), me);   // BUG?
 		#else
 			my v_positionInForm (my d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), me);   // BUG?
 		#endif
