@@ -82,10 +82,13 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		#if defined (chrome)
 			GtkWidget *label = gtk_label_new (Melder_peek32to8 (title));
 			gtk_label_set_use_markup (GTK_LABEL (label), true);
-			char *markup = g_markup_printf_escaped ("<b>%s</b>", Melder_peek32to8 (title));
+			char *markup = g_markup_printf_escaped ("<span weight=\"ultrabold\" underline=\"single\">%s</span>", Melder_peek32to8 (title));
 			gtk_label_set_markup (GTK_LABEL (label), markup);
 			g_free (markup);
-			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 8, 0);
+			gtk_widget_set_size_request (GTK_WIDGET (label), width, 31 /*Machine_getTextHeight()*/);
+			gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.0);
+			//gtk_widget_set_xalign (GTK_WIDGET (label), 0.5);
+			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 0 /*8*/, 0);
 			gtk_widget_show (GTK_WIDGET (label));
 		#endif
 	#elif motif
