@@ -4498,8 +4498,8 @@ NORMAL (U"The effectiveness of the %%Minimum silent interval duration% and %%Min
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
 
-MAN_BEGIN (U"ConstantQLogFSpectrogram", U"djmw", 20210505)
-INTRO (U"A ##ConstantQLogFSpectrogram# is a time-frequency representatioon of a sound that deviates from a traditional @Spectrogram in two important ways. ")
+MAN_BEGIN (U"ConstantQLogFSpectrogram", U"djmw", 20211111)
+INTRO (U"A ##ConstantQLogFSpectrogram# is a time-frequency representation of a sound that deviates from a traditional @Spectrogram in two important ways. ")
 LIST_ITEM (U"1. The frequency scale is logarithmic which means that the distances between successive "
 	"frequencies are equal on a logarithmic scale.")
 LIST_ITEM (U"2. The frequency analysis is performed with filters that have a constant quality factor which essencially "
@@ -4517,12 +4517,12 @@ EQUATION (U"%f__%k_ = %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPer
 NORMAL (U"A big advantage of the ##ConstantQLogFSpectrogram# over a traditional #Spectrogram is its invertability: we can create the original sound back from it. This provides a way to manipulate a sound in the frequency domain. ")
 MAN_END
 
-MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20210507)
+MAN_BEGIN (U"Sound: To ConstantQLogFSpectrogram...", U"djmw", 20211111)
 INTRO (U"A command that creates a @@ConstantQLogFSpectrogram@ from a selected @@Sound@.")
 ENTRY (U"Settings")
 TAG (U"##Lowest frequency (Hz)")
 DEFINITION (U"defines the lowest frequency about which information will be obtained. This frequency has to be chosen well above "
-	"zero hertz (because of the logarithmic scale there are an infinite number of octaves between any lowest frequency "
+	"zero hertz (because of the logarithmic frequency scale there are an infinite number of octaves between any lowest frequency "
 	"and zero hertz). ")
 TAG (U"##Maximum frequency (Hz)")
 DEFINITION (U"The maximum frequency you are interested in. The default will be the Nyquist frequency of the sound. ")
