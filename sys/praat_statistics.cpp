@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,6 +166,9 @@ void praat_reportSystemProperties () {
 	MelderInfo_writeLine (U"The number of processors is ", std::thread::hardware_concurrency(), U".");
 	#ifdef macintosh
 		MelderInfo_writeLine (U"system version is ", Melder_systemVersion, U".");
+	#endif
+	#ifdef linux
+		MelderInfo_writeLine (U"session type is ", Melder_systemVersion == 'wayl' ? U"Wayland" : U"X11", U".");
 	#endif
 	structMelderDir dir {};
 	Melder_getHomeDir (& dir);
