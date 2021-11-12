@@ -72,7 +72,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				if (Melder_systemVersion == 'wayl' && Thing_isa (control -> d_shell, classGuiWindow)) {
 					gint rootX, rootY;
 					gtk_window_get_position (((GuiWindow) control -> d_shell) -> d_gtkWindow, & rootX, & rootY);
-					Melder_casual (U"_GuiWindow_child_resizeCallback: ", rootX, U" root ", rootY);
+					//Melder_casual (U"_GuiWindow_child_resizeCallback: ", rootX, U" root ", rootY);
 					#if defined (chrome)
 						#define WINDOW_MARGIN_Y  32
 					#else
