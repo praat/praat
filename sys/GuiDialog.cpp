@@ -70,7 +70,6 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
 		gtk_window_set_modal (GTK_WINDOW (my d_gtkWindow), flags & GuiDialog_MODAL);
 		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), false);
-		GuiShell_setTitle (me.get(), title);
 		//GuiObject vbox = GTK_DIALOG (my d_gtkWindow) -> vbox;
 		GuiObject vbox = gtk_dialog_get_content_area (GTK_DIALOG (my d_gtkWindow));
 		my d_widget = gtk_fixed_new ();
@@ -80,17 +79,15 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me.get());
 		#if defined (chrome)
-			GtkWidget *label = gtk_label_new (Melder_peek32to8 (title));
-			gtk_label_set_use_markup (GTK_LABEL (label), true);
-			char *markup = g_markup_printf_escaped ("<span weight=\"ultrabold\" underline=\"single\">%s</span>", Melder_peek32to8 (title));
-			gtk_label_set_markup (GTK_LABEL (label), markup);
-			g_free (markup);
-			gtk_widget_set_size_request (GTK_WIDGET (label), width, 31 /*Machine_getTextHeight()*/);
-			gtk_misc_set_alignment (GTK_MISC (label), 0.5, 0.0);
-			//gtk_widget_set_xalign (GTK_WIDGET (label), 0.5);
-			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (label), 0 /*8*/, 0);
-			gtk_widget_show (GTK_WIDGET (label));
+			my chrome_surrogateShellTitleLabelWidget = gtk_label_new (Melder_peek32to8 (title));
+			gtk_label_set_use_markup (GTK_LABEL (my chrome_surrogateShellTitleLabelWidget), true);
+			gtk_widget_set_size_request (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), width, 31 /*Machine_getTextHeight()*/);
+			gtk_misc_set_alignment (GTK_MISC (my chrome_surrogateShellTitleLabelWidget), 0.5, 0.0);
+			//gtk_widget_set_xalign (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), 0.5);
+			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), 0 /*8*/, 0);
+			gtk_widget_show (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget));
 		#endif
+		GuiShell_setTitle (me.get(), title);
 	#elif motif
 		my d_xmShell = XmCreateDialogShell (parent -> d_widget, "dialogShell", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, nullptr);
