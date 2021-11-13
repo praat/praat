@@ -45,11 +45,6 @@
 #include "../kar/UnicodeData.h"
 #include "InfoEditor.h"
 
-#if gtk
-	#include <gdk/gdkx.h>   // for GDK_WINDOW_XID
-	//#include <X11/Xlib.h>
-#endif
-
 Thing_implement (Praat_Command, Thing, 0);
 
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
@@ -865,10 +860,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 #if defined (UNIX) && ! defined (NO_GUI)
 	/*
-		sendpraat messages can enter in two ways: via SIGUSR1 and via XSendEvent().
-	*/
-	/*
-		SIGUSR1 comes in at interrupt time.
+		sendpraat messages can only enter via SIGUSR1 at interrupt time.
 		We generate an event that should enter the main event loop at loop time.
 	*/
 	static void cb_sigusr1 (int signum) {
@@ -884,59 +876,12 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		// Melder_casual (U"event put");
 		gdk_event_put ((GdkEvent *) & gevent);   // this is safe only if gdk_event_put is reentrant, which is unlikely because the event queue is global
 	}
-	#if 0
-		/*
-			This would have been the route via Xt, which may not be available.
-		*/
-		int haveMessage = FALSE;
-		static void timerProc_userMessage (XtPointer dummy, XtIntervalId *id) {
-			FILE *f;
-			if ((f = Melder_fopen (& messageFile, "r")) != NULL) {
-				long pid;
-				int narg = fscanf (f, "#%ld", & pid);
-				fclose (f);
-				if (! praat_executeFromFile (Melder_fileToPath (& messageFile)))
-					Melder_flushError ("%s: message not completely handled.", praatP.title);
-				if (narg) kill (pid, SIGUSR2);
-			} else {
-				Melder_clearError ();
-			}
-		}
-		static void cb_sigusr1 (int signum) {
-			Melder_assert (signum == SIGUSR1);
-			signal (SIGUSR1, handleMessage);   /* Keep this handler in the air. */
-			haveMessage = TRUE;
-			/* Trial: */
-			haveMessage = FALSE;
-			XtAppAddTimeOut (praat.context, 100, timerProc_userMessage, 0);
-		}
-	#endif
-	/*
-		The route via XSendEvent() from the sendpraat program.
-	*/
-	static GdkFilterReturn sendpraatEventFilter (GdkXEvent *xevent, GdkEvent *event, gpointer data)
-	{
-		//Melder_casual (U"sendpraatEventFilter 1");
-		if (((XEvent *) xevent) -> type != ClientMessage)
-			return GDK_FILTER_CONTINUE;
-		//Melder_casual (U"sendpraatEventFilter 2");
-		XClientMessageEvent *evt = (XClientMessageEvent *) xevent;
-		Atom message_type = XInternAtom (evt -> display, "SENDPRAAT", FALSE);   // TODO: make static
-		//Melder_casual (U"sendpraatEventFilter 3");
-		if (evt -> message_type != message_type)
-			return GDK_FILTER_CONTINUE;
-		/*
-			TODO: call script
-		*/
-		Melder_casual (U"sendpraatEventFilter 9");
-		return GDK_FILTER_CONTINUE;   // TODO: check when to return something else than GDK_FILTER_CONTINUE
-	}
 #endif
 
 #if defined (UNIX)
 	#if ! defined (NO_GUI)
 		static gboolean cb_userMessage (GtkWidget /* widget */, GdkEventProperty * /* event */, gpointer /* userData */) {
-			Melder_casual (U"client event called");
+			trace (U"client event called");
 			autofile f;
 			try {
 				f.reset (Melder_fopen (& messageFile, "r"));
@@ -1466,16 +1411,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 		praat_actions_createDynamicMenu (raam);
 		trace (U"showing the Objects window");
 		GuiThing_show (raam);
-	//Melder_fatal (U"stop");
-		#if defined (UNIX) && ! defined (NO_GUI)
-			try {
-				autofile f = Melder_fopen (& pidFile, "a");
-				fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
-				f.close (& pidFile);
-			} catch (MelderError) {
-				Melder_clearError ();
-			}
-		#endif
 		#ifdef UNIX
 			if (! praatP.ignorePreferenceFiles)
 				Preferences_read (& prefsFile);
@@ -1979,7 +1914,6 @@ void praat_run () {
 			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "property-notify-event",
 					G_CALLBACK (cb_userMessage), nullptr);
 			signal (SIGUSR1, cb_sigusr1);
-			gdk_window_add_filter (NULL, sendpraatEventFilter, NULL);
 			gtk_key_snooper_install (theKeySnooper, 0);
 			trace (U"start the GTK event loop");
 			trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
