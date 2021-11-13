@@ -69,21 +69,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				if (top    <  0) top    += parentAllocation -> height;
 				if (bottom <= 0) bottom += parentAllocation -> height;
 				trace (U"moving child to (", left, U",", top, U") with size ", right - left, U" x ", bottom - top, U".");
-				if (Melder_systemVersion == 'wayl' && Thing_isa (control -> d_shell, classGuiWindow)) {
-					gint rootX, rootY;
-					gtk_window_get_position (((GuiWindow) control -> d_shell) -> d_gtkWindow, & rootX, & rootY);
-					//Melder_casual (U"_GuiWindow_child_resizeCallback: ", rootX, U" root ", rootY);
-					#if defined (chrome)
-						#define WINDOW_MARGIN_Y  32
-					#else
-						#define WINDOW_MARGIN_Y  41
-					#endif
-					left += rootX;
-					right += rootX;
-					top += rootY + WINDOW_MARGIN_Y;
-					bottom += rootY + WINDOW_MARGIN_Y;
-				}
-				GtkAllocation childAllocation { left, top, right - left, bottom - top };
+				GtkAllocation childAllocation { parentAllocation -> x + left, parentAllocation -> y + top, right - left, bottom - top };
 				gtk_widget_size_allocate (GTK_WIDGET (childWidget), & childAllocation);
 				trace (U"moved child of class ", Thing_className (control));
 			}
@@ -99,10 +85,12 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			we could capture the message either from the shell or from the fixed; we choose to do it from the fixed.
 		*/
 		Melder_assert (GTK_IS_FIXED (widget));
+		Melder_assert (GTK_IS_FIXED (my d_widget));
 		/*
 			We move and resize all the children of the fixed.
 		*/
 		gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, allocation);
+		//gtk_container_foreach (GTK_CONTAINER (my d_widget), _GuiWindow_child_resizeCallback, allocation);
 		my d_width = allocation -> width;
 		my d_height = allocation -> height;
 		trace (U"end");
@@ -153,6 +141,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_widget), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
+		//g_signal_connect (G_OBJECT (my d_gtkWindow), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me.get());
 		#if defined (chrome)
 			my chrome_surrogateShellTitleLabelWidget = gtk_label_new (Melder_peek32to8 (title));
 			gtk_label_set_use_markup (GTK_LABEL (my chrome_surrogateShellTitleLabelWidget), true);
@@ -162,7 +151,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		GuiShell_setTitle (me.get(), title);
 		gint rootX, rootY;
 		gtk_window_get_position (my d_gtkWindow, & rootX, & rootY);
-		Melder_casual (rootX, U" root ", rootY);
+		trace (rootX, U" root ", rootY);
 	#elif motif
 		my d_xmShell = XmCreateShell (nullptr, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", nullptr, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, nullptr);
