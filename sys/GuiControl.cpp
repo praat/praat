@@ -47,16 +47,6 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		if (bottom <= 0) bottom += parentHeight;
 		trace (U"fixed: parent width ", parentWidth, U" height ", parentHeight);
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
-		#if defined (chrome)
-			if (Thing_isa (our d_shell, classGuiWindow)) {
-				#define WINDOW_MARGIN_X  19
-				left += WINDOW_MARGIN_X;
-				right += WINDOW_MARGIN_X;
-				#define WINDOW_MARGIN_Y  45
-				top += WINDOW_MARGIN_Y;
-				bottom += WINDOW_MARGIN_Y;
-			}
-		#endif
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif motif
 		(void) parent;

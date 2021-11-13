@@ -1138,7 +1138,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	/*
 	 * Running Praat from the command line.
 	 */
-	bool foundTheOpenOption = false, foundTheRunOption = false;
+	bool foundTheOpenOption = false, foundTheRunOption = false, foundTheTraceOption = false;
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
@@ -1163,6 +1163,9 @@ void praat_init (conststring32 title, int argc, char **argv)
 			#define str(s) #s
 			Melder_information (title, U" " xstr (PRAAT_VERSION_STR) " (" xstr (PRAAT_MONTH) " ", PRAAT_DAY, U" ", PRAAT_YEAR, U")");
 			exit (0);
+		} else if (strequ (argv [praatP.argumentNumber], "--trace")) {
+			foundTheTraceOption = true;
+			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--help")) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"Usage: praat [options] script-file-name [script-arguments]");
@@ -1179,6 +1182,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
 			MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
 			MelderInfo_writeLine (U"                   (on Windows, use -8 or -a when you redirect to a pipe or file)");
+			MelderInfo_writeLine (U"  --trace          switch tracing on at start-up (see Praat > Technical > Debug)");
 			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-8") || strequ (argv [praatP.argumentNumber], "--utf8")) {
@@ -1328,6 +1332,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
 		#endif
 		Melder_tracingToFile (& tracingFile);
+		if (foundTheTraceOption)
+			Melder_setTracing (true);
 	}
 
 	#if defined (NO_GUI)
@@ -1485,7 +1491,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 
 	trace (U"creating the Picture window");
 	trace (U"before picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-	if (! praatP.dontUsePictureWindow) praat_picture_init ();
+	if (! praatP.dontUsePictureWindow)
+		praat_picture_init ();
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 
 	if (unknownCommandLineOption)

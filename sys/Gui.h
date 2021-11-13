@@ -351,6 +351,9 @@ Thing_define (GuiShell, GuiForm) {
 	int d_width, d_height;
 	#if gtk
 		GtkWindow *d_gtkWindow;
+		#if defined (chrome)
+			GtkWidget *chrome_surrogateShellTitleLabelWidget;
+		#endif
 	#elif cocoa
 		GuiCocoaShell *d_cocoaShell;
 	#elif motif
