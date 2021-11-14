@@ -1,11 +1,11 @@
 # File: makefile.defs.linux.nogui
 
 # System: Linux without GUI, network, and sound
-# Paul Boersma 2020-04-16
+# Paul Boersma 2021-11-14
 
-CC = gcc
-
-CXX = g++
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
 
 PKG_CONFIG ?= "pkg-config"
 
@@ -15,8 +15,6 @@ COMMONFLAGS = -DNO_GUI -DNO_NETWORK -D_FILE_OFFSET_BITS=64 `$(PKG_CONFIG) --cfla
 CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
-
-LINK = g++
 
 EXECUTABLE = praat_nogui
 

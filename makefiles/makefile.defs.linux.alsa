@@ -1,11 +1,11 @@
 # File: makefile.defs.linux.alsa
 
 # System: Linux
-# Paul Boersma 2020-11-13
+# Paul Boersma 2021-11-14
 
-CC = gcc
-
-CXX = g++
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
 
 PKG_CONFIG ?= "pkg-config"
 
@@ -16,11 +16,9 @@ CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
-LINK = g++
-
 EXECUTABLE = praat
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -lm -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu -lX11
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -lm -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
 
 AR = ar
 RANLIB = ls
