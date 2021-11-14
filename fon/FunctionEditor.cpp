@@ -400,7 +400,7 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 		my pref_showSelectionViewer() = my p_showSelectionViewer = showSelectionViewer;
 		my pref_arrowScrollStep() = my p_arrowScrollStep = arrowScrollStep;
 		if (my p_showSelectionViewer != oldShowSelectionViewer)
-			my updateGeometry (GuiControl_getWidth  (my drawingArea), GuiControl_getHeight (my drawingArea));
+			my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 		my v_prefs_getValues (cmd);
@@ -1176,18 +1176,27 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 		Graphics_xorOn (my graphics.get(), Melder_BLACK);
 		Graphics_line (my graphics.get(), my playCursor, 0.0, my playCursor, 1.0);
 		Graphics_xorOff (my graphics.get());
-		Graphics_setLineWidth (my graphics.get(), 1.0);
 	}
 
 	/*
 		Draw the selection part.
 	*/
+	Graphics_setLineWidth (my graphics.get(), 1.0);
+	const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
+	const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
+	my viewAllAsPixelettes ();
 	if (my p_showSelectionViewer) {
+		Graphics_line (my graphics.get(), left, bottom, right, top);
+		Graphics_line (my graphics.get(), left, top, right, bottom);
+		Graphics_rectangle (my graphics.get(), left, right, bottom, top);
 		my viewInnerSelectionViewerAsFractionByFraction ();
 		if (my duringPlay)
 			my v_drawRealTimeSelectionViewer (my playCursor);
 		else
 			my v_drawSelectionViewer ();
+	} else {
+		const double x [] = { left, right, left }, y [] = { bottom, 0.5 * (bottom + top), top };
+		Graphics_polyline_closed (my graphics.get(), 3, x, y);
 	}
 }
 
@@ -1258,6 +1267,14 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 	static bool anchorIsInSelectionViewer = false;
 	static bool anchorIsInWideDataView = false;
 	if (event -> isClick()) {
+		const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
+		const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
+		if (x_pxlt > left && x_pxlt < right && y_pxlt > bottom && y_pxlt < top) {
+			my pref_showSelectionViewer() = my p_showSelectionViewer = ! my p_showSelectionViewer;
+			my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
+			FunctionEditor_redraw (me);
+			return;
+		}
 		my clickWasModifiedByShiftKey = event -> shiftKeyPressed;
 		anchorIsInSelectionViewer = my isInSelectionViewer (x_pxlt);
 		anchorIsInWideDataView = ( y_pxlt > my dataBottom_pxlt() && y_pxlt < my dataTop_pxlt() );
