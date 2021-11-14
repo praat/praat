@@ -89,6 +89,12 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		/*
 			We move and resize all the children of the fixed.
 		*/
+		#if defined (chrome)
+		{
+			GtkAllocation surrogateShellTitleLabelWidgetAllocation { allocation -> x, allocation -> y, allocation -> width, 31 };
+			gtk_widget_size_allocate (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), & surrogateShellTitleLabelWidgetAllocation);
+		}
+		#endif
 		gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, allocation);
 		//gtk_container_foreach (GTK_CONTAINER (my d_widget), _GuiWindow_child_resizeCallback, allocation);
 		my d_width = allocation -> width;
@@ -145,6 +151,8 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		#if defined (chrome)
 			my chrome_surrogateShellTitleLabelWidget = gtk_label_new (Melder_peek32to8 (title));
 			gtk_label_set_use_markup (GTK_LABEL (my chrome_surrogateShellTitleLabelWidget), true);
+			gtk_widget_set_size_request (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), minimumWidth, 31 /*Machine_getTextHeight()*/);
+			gtk_misc_set_alignment (GTK_MISC (my chrome_surrogateShellTitleLabelWidget), 0.5, 0.0);
 			gtk_fixed_put (GTK_FIXED (my d_widget), GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget), 8, 0);
 			gtk_widget_show (GTK_WIDGET (my chrome_surrogateShellTitleLabelWidget));
 		#endif

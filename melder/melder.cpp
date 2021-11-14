@@ -45,14 +45,14 @@ void Melder_init () {
 		const char *gdkBackend = getenv ("GDK_BACKEND");   // this setting rules all the others; GDK typically supports wayland, x11, and broadway
 		if (gdkBackend) {
 			if (strequ (gdkBackend, "wayland"))
-				Melder_systemVersion = 'wayl';
+				Melder_systemVersion = 'w';
 			else
 				Melder_systemVersion = 0;
 		} else {
 			const char *waylandDisplay = getenv ("WAYLAND_DISPLAY");
 			const char *gdkSessionType = getenv ("XDG_SESSION_TYPE");   // not set on Chrome (2021-11-12); typical values are wayland, x11 and tty
 			if (waylandDisplay || gdkSessionType && strstr (gdkSessionType, "wayland"))
-				Melder_systemVersion = 'wayl';
+				Melder_systemVersion = 'w';
 			else
 				Melder_systemVersion = 0;
 		}

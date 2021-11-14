@@ -168,7 +168,7 @@ void praat_reportSystemProperties () {
 		MelderInfo_writeLine (U"system version is ", Melder_systemVersion, U".");
 	#endif
 	#ifdef linux
-		MelderInfo_writeLine (U"session type is ", Melder_systemVersion == 'wayl' ? U"Wayland" : U"X11", U".");
+		MelderInfo_writeLine (U"Display protocol: probably ", Melder_systemVersion == 'w' ? U"Wayland" : U"X11", U" (but use xeyes to make sure).");
 	#endif
 	structMelderDir dir {};
 	Melder_getHomeDir (& dir);
