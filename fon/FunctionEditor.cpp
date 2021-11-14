@@ -426,22 +426,22 @@ void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 
 /********** QUERY MENU **********/
 
-static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my startSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = 0.5 * (my startSelection + my endSelection);
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endSelection - my startSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())

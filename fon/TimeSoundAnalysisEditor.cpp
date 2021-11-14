@@ -512,13 +512,13 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 	EDITOR_END
 }
 
-static void QUERY_EDITOR_FOR_REAL__getFrequency (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getFrequency (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my d_spectrogram_cursor;
 	QUERY_EDITOR_FOR_REAL_END (U" Hz")
 }
 
-static void QUERY_DATA_FOR_REAL__getSpectralPowerAtCursorCross (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getSpectralPowerAtCursorCross (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -562,7 +562,7 @@ static autoSound extractSound (TimeSoundAnalysisEditor me, double tmin, double t
 	return sound;
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my p_spectrogram_show)
 			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
@@ -575,7 +575,7 @@ static void CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram (TimeSoundAnalysisEdi
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ViewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ViewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		const double start = ( my startSelection == my endSelection ?
 			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? my startSelection - my p_spectrogram_windowLength :
@@ -739,7 +739,7 @@ static void menu_cb_advancedPitchSettings (TimeSoundAnalysisEditor me, EDITOR_AR
 	EDITOR_END
 }
 
-static void INFO_DATA__pitchListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__pitchListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -770,7 +770,7 @@ static void INFO_DATA__pitchListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIR
 	INFO_DATA_END
 }
 
-static void QUERY_DATA_FOR_REAL__getPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -795,7 +795,7 @@ static void QUERY_DATA_FOR_REAL__getPitch (TimeSoundAnalysisEditor me, EDITOR_AR
 	);
 }
 
-static void QUERY_DATA_FOR_REAL__getMinimumPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getMinimumPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
@@ -812,7 +812,7 @@ static void QUERY_DATA_FOR_REAL__getMinimumPitch (TimeSoundAnalysisEditor me, ED
 			U" (minimum pitch ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 }
 
-static void QUERY_DATA_FOR_REAL__getMaximumPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getMaximumPitch (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
@@ -877,7 +877,7 @@ static void menu_cb_moveCursorToMaximumPitch (TimeSoundAnalysisEditor me, EDITOR
 	VOID_EDITOR_END
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my p_pitch_show)
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
@@ -971,7 +971,7 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 	EDITOR_END
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractVisibleIntensityContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my p_intensity_show)
 			Melder_throw (U"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
@@ -1014,7 +1014,7 @@ static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDI
 	EDITOR_END
 }
 
-static void INFO_DATA__intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -1043,7 +1043,7 @@ static void INFO_DATA__intensityListing (TimeSoundAnalysisEditor me, EDITOR_ARGS
 	INFO_DATA_END
 }
 
-static void QUERY_DATA_FOR_REAL__getIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -1066,7 +1066,7 @@ static void QUERY_DATA_FOR_REAL__getIntensity (TimeSoundAnalysisEditor me, EDITO
 	);
 }
 
-static void QUERY_DATA_FOR_REAL__getMinimumIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getMinimumIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
@@ -1081,7 +1081,7 @@ static void QUERY_DATA_FOR_REAL__getMinimumIntensity (TimeSoundAnalysisEditor me
 	QUERY_DATA_FOR_REAL_END (U" dB (minimum intensity ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 }
 
-static void QUERY_DATA_FOR_REAL__getMaximumIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getMaximumIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		double tmin, tmax;
 		const int part = makeQueriable (me, false, & tmin, & tmax);
@@ -1158,7 +1158,7 @@ static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_
 	EDITOR_END
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractVisibleFormantContour (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my p_formant_show)
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
@@ -1203,7 +1203,7 @@ static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITO
 	EDITOR_END
 }
 
-static void INFO_DATA__formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__formantListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);
@@ -1278,28 +1278,28 @@ static void do_getBandwidth (TimeSoundAnalysisEditor me, integer iformant, Inter
 		: Melder_cat ( U" Hz (B", iformant, U" in centre of ", TimeSoundAnalysisEditor_partString (part), U")")
 	)
 }
-static void QUERY_DATA_FOR_REAL__getFirstFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getFirstFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getFormant (me, 1, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getFirstBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getFirstBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getBandwidth (me, 1, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getSecondFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getSecondFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getFormant (me, 2, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getSecondBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getSecondBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getBandwidth (me, 2, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getThirdFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getThirdFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getFormant (me, 3, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getThirdBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getThirdBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getBandwidth (me, 3, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getFourthFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getFourthFormant (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getFormant (me, 4, interpreter);
 }
-static void QUERY_DATA_FOR_REAL__getFourthBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getFourthBandwidth (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	do_getBandwidth (me, 4, interpreter);
 }
 
@@ -1346,7 +1346,7 @@ static void menu_cb_advancedPulsesSettings (TimeSoundAnalysisEditor me, EDITOR_A
 	EDITOR_END
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my p_pulses_show)
 			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
@@ -1389,7 +1389,7 @@ static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 	EDITOR_END
 }
 
-static void INFO_DATA__voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		time_t today = time (nullptr);
 		double tmin, tmax;
@@ -1414,7 +1414,7 @@ static void INFO_DATA__voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 	INFO_DATA_END
 }
 
-static void INFO_DATA__pulseListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__pulseListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		double tmin, tmax;
 		makeQueriable (me, false, & tmin, & tmax);

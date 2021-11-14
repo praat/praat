@@ -149,7 +149,7 @@ static integer getSelectedPoint (TextGridEditor me) {
 
 /***** FILE MENU *****/
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -157,7 +157,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGrid
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -284,7 +284,7 @@ static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 /***** QUERY MENU *****/
 
-static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"query the starting point of an interval");
@@ -298,7 +298,7 @@ static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, 
 	QUERY_DATA_FOR_REAL_END (U" seconds")
 }
 
-static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"query the end point of an interval");
@@ -312,7 +312,7 @@ static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITO
 	QUERY_DATA_FOR_REAL_END (U" seconds")
 }
 
-static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_STRING
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"query the label of an interval");
@@ -1002,7 +1002,7 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void CONVERT_DATA_TO_ONE__PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"publish a tier");

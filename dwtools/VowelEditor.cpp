@@ -790,20 +790,20 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		autoSound result = VowelEditor_createTargetSound (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoFormantGrid result = VowelEditor_to_FormantGrid (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
@@ -815,14 +815,14 @@ static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoPitchTier result = VowelEditor_to_PitchTier (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		const conststring32 columnNames [] = { U"Time", U"F1", U"F2", U"Colour" };

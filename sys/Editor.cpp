@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2021 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,13 +315,13 @@ void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 		our undoButton = EditorMenu_addCommand (menu, U"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
-static void INFO_EDITOR__settingsReport (Editor me, EDITOR_ARGS_DIRECT) {
+static void INFO_EDITOR__settingsReport (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_EDITOR
 		Thing_info (me);
 	INFO_EDITOR_END
 }
 
-static void INFO_DATA__info (Editor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__info (Editor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		Thing_info (my data);
 	INFO_DATA_END
