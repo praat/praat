@@ -1341,8 +1341,8 @@ void structFunctionEditor :: v_createChildren () {
 
 	if (our v_hasText ()) {
 		our textArea = GuiText_createShown (our windowForm, 0, 0,
-			Machine_getMenuBarHeight (),
-			Machine_getMenuBarHeight () + TEXT_HEIGHT,
+			Machine_getMenuBarBottom (),
+			Machine_getMenuBarBottom () + TEXT_HEIGHT,
 			GuiText_INKWRAP | GuiText_SCROLLED
 		);
 		#if gtk
@@ -1364,7 +1364,7 @@ void structFunctionEditor :: v_createChildren () {
 	#endif
 	our drawingArea = GuiDrawingArea_createShown (our windowForm,
 		0, 0,
-		Machine_getMenuBarHeight () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
+		Machine_getMenuBarBottom () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
 		nullptr, gui_drawingarea_cb_resize, this, 0
 	);

@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -834,7 +834,7 @@ void structSoundRecorder :: v_createChildren ()
 	/*
 		Channels.
 	*/
-	integer y = 20 + Machine_getMenuBarHeight ();
+	integer y = Machine_getMenuBarBottom () + 20;
 	GuiLabel_createShown (our windowForm, 10, 160, y, y + Gui_LABEL_HEIGHT, U"Channels:", 0);
 
 	GuiRadioGroup_begin ();
@@ -849,7 +849,7 @@ void structSoundRecorder :: v_createChildren ()
 	/*
 		Input source.
 	*/
-	y = 140 + Machine_getMenuBarHeight ();
+	y = Machine_getMenuBarBottom () + 140;
 	#if defined (_WIN32)
 		GuiLabel_createShown (our windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"(use Windows mixer", 0);
 		y += Gui_LABEL_HEIGHT + 10;
@@ -870,7 +870,7 @@ void structSoundRecorder :: v_createChildren ()
 	/*
 		Meter box.
 	*/
-	y = 20 + Machine_getMenuBarHeight ();
+	y = Machine_getMenuBarBottom () + 20;
 	GuiLabel_createShown (our windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, U"Meter", GuiLabel_CENTRE);
 	y += Gui_LABEL_HEIGHT;
 	our meter = GuiDrawingArea_createShown (our windowForm, 170, -170, y, -150,
@@ -881,7 +881,7 @@ void structSoundRecorder :: v_createChildren ()
 	/*
 		Sampling frequency.
 	*/
-	y = 20 + Machine_getMenuBarHeight ();
+	y = Machine_getMenuBarBottom () + 20;
 	GuiLabel_createShown (our windowForm, -160, -10, y, y + Gui_LABEL_HEIGHT, U"Sampling frequency:", 0);
 	GuiRadioGroup_begin ();
 	for (integer i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {

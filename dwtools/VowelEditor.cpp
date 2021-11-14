@@ -1306,7 +1306,7 @@ void structVowelEditor :: v_createChildren ()
 		Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 		log distances are equal (log (1000/200) == log (2500/500) ).
 	*/
-	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarBottom (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,   // TODO: mouse-dragged and mouse-up events
 		nullptr, gui_drawingarea_cb_resize, this, 0
 	);

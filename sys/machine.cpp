@@ -1,6 +1,6 @@
 /* machine.cpp
  *
- * Copyright (C) 1992-2005,2011-2013,2015,2016,2019,2020 Paul Boersma
+ * Copyright (C) 1992-2005,2011-2013,2015,2016,2019-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,25 @@
 
 static int lookAndFeel;
 
-int Machine_getMenuBarHeight () {
-	static int heights [] = {
+int Machine_getMenuBarTop () {
+	static int tops [] = {
+		0,    // Motif
+		0,    // SGI
+		0,    // CDE
+		0,    // Solaris
+		0,    // HP
+		0,    // Sun4
+		0,    // Mac
+		0,    // Win32
+		0,    // Linux
+		0,    // Cocoa
+		30,   // Chrome
+	};
+	return tops [lookAndFeel];
+}
+
+int Machine_getMenuBarBottom () {
+	static int bottoms [] = {
 		26,   // Motif
 		24,   // SGI
 		28,   // CDE
@@ -47,15 +64,7 @@ int Machine_getMenuBarHeight () {
 		36,   // Cocoa
 		60,   // Chrome
 	};
-	return heights [lookAndFeel];
-}
-
-int Machine_getMainWindowMenuBarHeight () {
-	#ifdef macintoshXXX
-		return 0;
-	#else
-		return Machine_getMenuBarHeight ();
-	#endif
+	return bottoms [lookAndFeel];
 }
 
 int Machine_getTitleBarHeight () {
