@@ -1,14 +1,14 @@
 # File: makefile.defs.linux.pulse_static
 
 # System: Linux
-# David Weenink and Paul Boersma 2020-11-10
+# David Weenink and Paul Boersma 2021-11-14
 
 # statically linked with the standard C and C++ libraries,
 # hence avoiding `gethostbyname` by defining NO_NETWORK
 
-CC = gcc
-
-CXX = g++
+CC ?= gcc
+CXX ?= g++
+LINK ?= $(CXX)
 
 PKG_CONFIG ?= "pkg-config"
 
@@ -19,11 +19,9 @@ CFLAGS = -std=gnu99 $(COMMONFLAGS) -Werror=missing-prototypes -Werror=implicit
 
 CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
-LINK = $(CXX)
-
 EXECUTABLE = praat_static
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu -lX11
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
 
 AR = ar
 RANLIB = ls
