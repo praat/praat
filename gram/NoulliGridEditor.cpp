@@ -1,6 +1,6 @@
 /* NoulliGridEditor.cpp
  *
- * Copyright (C) 2018-2020 Paul Boersma
+ * Copyright (C) 2018-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,7 +230,6 @@ void structNoulliGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 }
 void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_showCategoryInSelectionViewerAs () = our p_showCategoryInSelectionViewerAs = v_prefs_addFields_showCategoryInSelectionViewerAs;
-	FunctionEditor_redraw (this);
 }
 
 void NoulliGridEditor_init (NoulliGridEditor me, conststring32 title, NoulliGrid data, Sound sound, bool ownSound) {

@@ -702,19 +702,21 @@ static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 	HELP (U"VowelEditor")
 }
 
-static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_FORM) {
-	MelderInfo_open ();
-	MelderInfo_writeLine (U"Trajectory info:");
-	MelderInfo_writeLine (U"Number of points: ", my trajectory -> points.size);
-	MelderInfo_writeLine (U"Start time: ", my trajectory -> xmin, U" s");
-	TrajectoryPoint p1 = my trajectory -> points.at [1];
-	MelderInfo_writeLine (U"    F1: ", p1 -> f1, U" Hz");
-	MelderInfo_writeLine (U"    F2: ", p1 -> f2, U" Hz");
-	MelderInfo_writeLine (U"End time: ", my trajectory -> xmax, U" s");
-	TrajectoryPoint p2 = my trajectory -> points.at [my trajectory -> points.size];
-	MelderInfo_writeLine (U"    F1: ", p2 -> f1, U" Hz");
-	MelderInfo_writeLine (U"    F2: ", p2 -> f2, U" Hz");
-	MelderInfo_close ();
+static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	INFO_EDITOR
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Trajectory info:");
+		MelderInfo_writeLine (U"Number of points: ", my trajectory -> points.size);
+		MelderInfo_writeLine (U"Start time: ", my trajectory -> xmin, U" s");
+		TrajectoryPoint p1 = my trajectory -> points.at [1];
+		MelderInfo_writeLine (U"    F1: ", p1 -> f1, U" Hz");
+		MelderInfo_writeLine (U"    F2: ", p1 -> f2, U" Hz");
+		MelderInfo_writeLine (U"End time: ", my trajectory -> xmax, U" s");
+		TrajectoryPoint p2 = my trajectory -> points.at [my trajectory -> points.size];
+		MelderInfo_writeLine (U"    F1: ", p2 -> f1, U" Hz");
+		MelderInfo_writeLine (U"    F2: ", p2 -> f2, U" Hz");
+		MelderInfo_close ();
+	INFO_EDITOR_END
 }
 
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {

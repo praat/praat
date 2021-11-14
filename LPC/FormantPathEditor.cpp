@@ -905,7 +905,6 @@ void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
 	our pref_shiftDragMultiple () = our p_shiftDragMultiple = false;
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
-	FunctionEditor_redraw (this);
 }
 
 void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {

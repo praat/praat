@@ -404,6 +404,7 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 		my v_prefs_getValues (cmd);
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 

@@ -108,7 +108,7 @@ Thing_define (FunctionEditor, Editor) {
 				our BOTTOM_MARGIN + our space * 3, our height_pxlt - (our TOP_MARGIN + our space));
 		Graphics_setViewport (our graphics.get(),
 			our _selectionViewerLeft + our SELECTION_VIEWER_MARGIN, our _selectionViewerRight - our SELECTION_VIEWER_MARGIN,
-			our SELECTION_VIEWER_MARGIN, our height_pxlt - our SELECTION_VIEWER_MARGIN
+			our SELECTION_VIEWER_MARGIN, our height_pxlt - our space - our SELECTION_VIEWER_MARGIN
 		);
 		Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	}
