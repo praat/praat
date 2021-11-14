@@ -2021,8 +2021,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 
 void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	const TextGrid grid = (TextGrid) our data;
-	int rowNumber = 1 + (int) ((1.0-yWC) * 12.0);
-	int columnNumber = 1 + (int) (xWC * 10.0);
+	integer rowNumber = Melder_iceiling ((1.0 - yWC) * 12.0);
+	integer columnNumber = Melder_iceiling (xWC * 10.0);
 	if (rowNumber < 1 || rowNumber > 12)
 		return;
 	if (columnNumber < 1 || columnNumber > 10)
