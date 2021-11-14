@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2020 Paul Boersma
+ * Copyright (C) 1995-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #define BUTTON_X  250
 #define LIST_Y  (2 * Gui_TOP_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT)
 #define EDITOR_WIDTH  820
-#define EDITOR_HEIGHT  (LIST_Y + kDataSubEditor_MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
+#define EDITOR_HEIGHT  (Machine_getMenuBarBottom () + LIST_Y + kDataSubEditor_MAXNUM_ROWS * ROW_HEIGHT + 29)
 #define ROW_HEIGHT  31
 
 #define SCROLL_BAR_WIDTH  Machine_getScrollBarWidth ()
@@ -306,7 +306,7 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 }
 
 void structDataSubEditor :: v_createChildren () {
-	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
+	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarBottom (), buttonWidth = 120;
 
 	GuiButton_createShown (our windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
 			U"Change", gui_button_cb_change, this, 0);
@@ -314,7 +314,7 @@ void structDataSubEditor :: v_createChildren () {
 	GuiButton_createShown (our windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
 			U"Cancel", gui_button_cb_cancel, this, 0);
 
-	y = LIST_Y + Machine_getMenuBarHeight ();
+	y = Machine_getMenuBarBottom () + LIST_Y;
 	d_scrollBar = GuiScrollBar_createShown (our windowForm,
 		- SCROLL_BAR_WIDTH, 0, y, 0,
 		0, d_numberOfFields, 0, d_numberOfFields < kDataSubEditor_MAXNUM_ROWS ? d_numberOfFields : kDataSubEditor_MAXNUM_ROWS, 1, kDataSubEditor_MAXNUM_ROWS - 1,

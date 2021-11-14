@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2013,2015-2020 Paul Boersma
+ * Copyright (C) 2006-2013,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,7 +276,7 @@ static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
 
 void structTableEditor :: v_createChildren () {
 	Table table = static_cast<Table> (data);
-	int y = Machine_getMenuBarHeight () + 4, scrollWidth = Machine_getScrollBarWidth ();
+	int y = Machine_getMenuBarBottom () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
 	our text = GuiText_createShown (our windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
 	GuiText_setChangedCallback (our text, gui_text_cb_changed, this);

@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2018,2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018,2020,2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,11 +204,7 @@ void GuiWindow_addMenuBar (GuiWindow me) {
 	#if gtk
 		my d_gtkMenuBar = (GtkMenuBar *) gtk_menu_bar_new ();
 		_GuiObject_setUserData (my d_gtkMenuBar, me);
-		#if defined (chrome)
-			my v_positionInForm (my d_gtkMenuBar, 0, 0, Machine_getMenuBarHeight () - 30, Machine_getMenuBarHeight (), me);   // BUG?
-		#else
-			my v_positionInForm (my d_gtkMenuBar, 0, 0, 0, Machine_getMenuBarHeight (), me);   // BUG?
-		#endif
+		my v_positionInForm (my d_gtkMenuBar, 0, 0, Machine_getMenuBarTop (), Machine_getMenuBarBottom (), me);   // BUG?
 
 		// we need an accelerator group for each window we're creating accelerated menus on
 		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));

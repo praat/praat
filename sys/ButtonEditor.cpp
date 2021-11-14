@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2020 Paul Boersma
+ * Copyright (C) 1996-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,7 +300,7 @@ static void gui_radiobutton_cb_actionsTZ (ButtonEditor me, GuiRadioButtonEvent /
 
 void structButtonEditor :: v_createChildren () {
 	ButtonEditor_Parent :: v_createChildren ();
-	int x = 3, y = Machine_getMenuBarHeight () + 4;
+	int x = 3, y = Machine_getMenuBarBottom () + 4;
 	GuiRadioGroup_begin ();
 	constexpr int LETTER_BUTTON_WIDTH = BUTTON_WIDTH * 2 / 3;
 	button1 = GuiRadioButton_createShown (our windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,

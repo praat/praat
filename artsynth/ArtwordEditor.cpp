@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2013,2015-2020 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ void structArtwordEditor :: v_dataChanged () {
 }
 
 void structArtwordEditor :: v_createChildren () {
-	int dy = Machine_getMenuBarHeight ();
+	int dy = Machine_getMenuBarBottom ();
 	GuiLabel_createShown (our windowForm, 40, 100, dy + 3, dy + 3 + Gui_LABEL_HEIGHT, U"Targets:", 0);
 	GuiLabel_createShown (our windowForm, 5, 65, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Times:", 0);
 	GuiLabel_createShown (our windowForm, 80, 140, dy + 20, dy + 20 + Gui_LABEL_HEIGHT, U"Values:", 0);
@@ -130,7 +130,7 @@ void structArtwordEditor :: v_createChildren () {
 
 	GuiButton_createShown (our windowForm, 240, 360, dy + 410, dy + 410 + Gui_PUSHBUTTON_HEIGHT, U"Add target", gui_button_cb_addTarget, this, GuiButton_DEFAULT);
 
-	dy = Machine_getMenuBarHeight ();
+	dy = Machine_getMenuBarBottom ();
 	GuiRadioGroup_begin ();
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++) {
 		button [i] = GuiRadioButton_createShown (our windowForm,

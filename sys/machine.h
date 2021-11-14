@@ -2,7 +2,7 @@
 #define _machine_h_
 /* machine.h
  *
- * Copyright (C) 1992-2005,2011,2015,2016,2019 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2015,2016,2019,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  */
 
 void Machine_initLookAndFeel (int argc, char **argv);
-int Machine_getMenuBarHeight ();
-int Machine_getMainWindowMenuBarHeight ();
+int Machine_getMenuBarTop ();
+int Machine_getMenuBarBottom ();
 int Machine_getTitleBarHeight ();
 int Machine_getScrollBarWidth ();
 int Machine_getTextHeight ();

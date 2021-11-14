@@ -744,7 +744,7 @@ static void createVerticalScrollBar (HyperPage me, GuiForm parent) {
 	const int height = Machine_getTextHeight ();
 	my verticalScrollBar = GuiScrollBar_createShown (parent,
 		- Machine_getScrollBarWidth (), 0,
-		Machine_getMenuBarHeight () + (my d_hasExtraRowOfTools ? 2 * height + 19 : height + 12), - Machine_getScrollBarWidth (),
+		Machine_getMenuBarBottom () + (my d_hasExtraRowOfTools ? 2 * height + 19 : height + 12), - Machine_getScrollBarWidth (),
 		0, PAGE_HEIGHT * 5, 0, 25, 1, 24,
 		gui_cb_verticalScroll, me, 0
 	);
@@ -880,7 +880,7 @@ static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
 
 void structHyperPage :: v_createChildren () {
 	const int height = Machine_getTextHeight ();
-	const int y = Machine_getMenuBarHeight () + 4;
+	const int y = Machine_getMenuBarBottom () + 4;
 
 	/***** Create navigation buttons. *****/
 
