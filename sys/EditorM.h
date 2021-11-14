@@ -26,7 +26,8 @@
 #define EDITOR_ARGS_FORM_FORWARD  cmd, _sendingForm_, _narg_, _args_, _sendingString_, interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
 #define EDITOR_ARGS_CMD_FORWARD  cmd, nullptr, 0, nullptr, nullptr, nullptr
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter interpreter
+#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter
+#define EDITOR_ARGS_DIRECT_WITH_OUTPUT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter interpreter
 #define EDITOR_ARGS_DIRECT_FORWARD  nullptr, nullptr, 0, nullptr, nullptr, nullptr
 
 #define EDITOR_FORM(title, helpTitle)  \
@@ -417,16 +418,14 @@ _form_inited_: \
 	}
 
 #define VOID_EDITOR
-#define VOID_EDITOR_END  \
-	(void) interpreter;
+#define VOID_EDITOR_END
 
 #define DATA_BEGIN__  \
 	Melder_assert (my data);
 
 #define PLAY_DATA  \
 	DATA_BEGIN__
-#define PLAY_DATA_END  \
-	(void) interpreter;
+#define PLAY_DATA_END
 
 #define INFO_EDITOR
 #define INFO_EDITOR_END  \
@@ -504,8 +503,7 @@ _form_inited_: \
 	Editor_save (me, undoTitle);
 #define MODIFY_DATA_END  \
 	FunctionEditor_redraw (me); \
-	Editor_broadcastDataChanged (me); \
-	(void) interpreter;
+	Editor_broadcastDataChanged (me);
 
 #define CONVERT_DATA_TO_ONE  \
 	DATA_BEGIN__
@@ -523,8 +521,7 @@ _form_inited_: \
 	Editor_broadcastPublication (me, result.move());
 
 #define HELP(title)  \
-	Melder_help (title); \
-	(void) interpreter;
+	Melder_help (title);
 
 /* End of file EditorM.h */
 #endif

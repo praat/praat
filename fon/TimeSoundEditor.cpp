@@ -160,13 +160,13 @@ static autoSound do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes
 	return autoSound();   // never reached
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_timeFromZero (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		autoSound result = do_ExtractSelectedSound (me, false);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		autoSound result = do_ExtractSelectedSound (me, true);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
@@ -391,19 +391,19 @@ void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 
 /********** QUERY MENU **********/
 
-static void INFO_DATA__SoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__SoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		Thing_info (my d_sound.data);
 	INFO_DATA_END
 }
 
-static void INFO_DATA__LongSoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__LongSoundInfo (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		Thing_info (my d_longSound.data);
 	INFO_DATA_END
 }
 
-static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__getAmplitudes (TimeSoundEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		double tmin, tmax;
 		const int part = makeQueriable (me, true, & tmin, & tmax);

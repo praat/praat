@@ -96,13 +96,13 @@ void structSpectrumEditor :: v_play (double fmin, double fmax) {
 	Sound_play (sound.get(), nullptr, nullptr);
 }
 
-static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__PublishBand (SpectrumEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		autoSpectrum result = Spectrum_band ((Spectrum) my data, my startSelection, my endSelection);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__PublishSound (SpectrumEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		autoSound result = Spectrum_to_Sound_part ((Spectrum) my data, my startSelection, my endSelection);
 	CONVERT_DATA_TO_ONE_END (U"untitled")

@@ -44,7 +44,7 @@ conststring32 structEEGWindow :: v_getChannelName (integer channelNumber) {
 	return our eeg -> channelNames [channelNumber].get();
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -52,7 +52,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_preserveTimes (EEGWindow me,
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedEEG_timeFromZero (EEGWindow me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");

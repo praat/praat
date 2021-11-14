@@ -85,7 +85,7 @@ static bool getSoundArea (ManipulationEditor me, double *ymin, double *ymax) {
 
 /***** FILE MENU *****/
 
-static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my sound())
 			return;
@@ -93,7 +93,7 @@ static void CONVERT_DATA_TO_ONE__ExtractOriginalSound (ManipulationEditor me, ED
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my pulses())
 			return;
@@ -101,7 +101,7 @@ static void CONVERT_DATA_TO_ONE__ExtractPulses (ManipulationEditor me, EDITOR_AR
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my pitch())
 			return;
@@ -109,7 +109,7 @@ static void CONVERT_DATA_TO_ONE__ExtractPitchTier (ManipulationEditor me, EDITOR
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (! my duration())
 			return;
@@ -117,7 +117,7 @@ static void CONVERT_DATA_TO_ONE__ExtractDurationTier (ManipulationEditor me, EDI
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractManipulatedSound (ManipulationEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		autoSound result = Manipulation_to_Sound (my manipulation(), my synthesisMethod);
 	CONVERT_DATA_TO_ONE_END (U"untitled")
