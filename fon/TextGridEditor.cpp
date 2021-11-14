@@ -2186,7 +2186,6 @@ void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
 	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
 	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
-	FunctionEditor_redraw (this);
 }
 
 void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
