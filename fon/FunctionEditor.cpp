@@ -116,6 +116,9 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Update rectangles.
 	*/
 
+	/*
+		Initialize to 0; rectangles that stay at zero will not be drawn.
+	*/
 	for (integer i = 0; i < 8; i++)
 		my rect [i]. left = my rect [i]. right = 0;
 
@@ -173,17 +176,32 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	if (selectionIsNonempty) {
 		const double window = my endWindow - my startWindow;
 		const double left =
-			my startSelection == my startWindow ? my _functionViewerLeft + my MARGIN :
-			my startSelection == my tmin ? my _functionViewerLeft :
-			my startSelection < my startWindow ? my _functionViewerLeft + my MARGIN * 0.3 :
-			my startSelection < my endWindow ? my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) * (my startSelection - my startWindow) / window :
-			my startSelection == my endWindow ? my _functionViewerRight - my MARGIN : my _functionViewerRight - my MARGIN * 0.7;
+			my startSelection == my startWindow ?
+				my _functionViewerLeft + my MARGIN
+			: my startSelection == my tmin ?
+				my _functionViewerLeft
+			: my startSelection < my startWindow ?
+				my _functionViewerLeft + my MARGIN * 0.3
+			: my startSelection < my endWindow ?
+				my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) * (my startSelection - my startWindow) / window
+			: my startSelection == my endWindow ?
+				my _functionViewerRight - my MARGIN
+			:
+				my _functionViewerRight - my MARGIN * 0.7
+		;
 		const double right =
-			my endSelection < my startWindow ? my _functionViewerLeft + my MARGIN * 0.7 :
-			my endSelection == my startWindow ? my _functionViewerLeft + my MARGIN :
-			my endSelection < my endWindow ? my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) * (my endSelection - my startWindow) / window :
-			my endSelection == my endWindow ? my _functionViewerRight - my MARGIN :
-			my endSelection < my tmax ? my _functionViewerRight - my MARGIN * 0.3 : my _functionViewerRight;
+			my endSelection < my startWindow ?
+				my _functionViewerLeft + my MARGIN * 0.7
+			: my endSelection == my startWindow ?
+				my _functionViewerLeft + my MARGIN
+			: my endSelection < my endWindow ?
+				my _functionViewerLeft + my MARGIN + (my _functionViewerRight - my _functionViewerLeft - my MARGIN * 2) * (my endSelection - my startWindow) / window
+			: my endSelection == my endWindow ?
+				my _functionViewerRight - my MARGIN
+			: my endSelection < my tmax ?
+				my _functionViewerRight - my MARGIN * 0.3
+			: my _functionViewerRight
+		;
 		my rect [7]. left = left;
 		my rect [7]. right = right;
 		my rect [7]. bottom = my height_pxlt - my space - my TOP_MARGIN;
@@ -198,6 +216,9 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	Graphics_fillRectangle (my graphics.get(), my _functionViewerLeft, my _selectionViewerRight, my BOTTOM_MARGIN, my height_pxlt);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 
+	/*
+		Buttons (still without text).
+	*/
 	my viewFunctionViewerAsPixelettes ();
 	Graphics_setFont (my graphics.get(), kGraphics_font :: HELVETICA);
 	Graphics_setFontSize (my graphics.get(), 12.0);
@@ -207,6 +228,29 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		if (left < right)
 			Graphics_button (my graphics.get(), left, right, my rect [i]. bottom, my rect [i]. top);
 	}
+
+	/*
+		Opening triangle (sometimes over button).
+	*/
+	if (my v_hasSelectionViewer() && ! my p_showSelectionViewer) {
+		const bool weHaveToDrawOverSelectionRectangleWithText = ( selectionIsNonempty && my endSelection == my tmax && my endWindow != my tmax );
+		Graphics_setLineWidth (my graphics.get(), 1.0);
+		const double left = my _functionViewerRight - my space + 9.0, right = my _functionViewerRight - 3.0;
+		const double bottom = my height_pxlt - my space - my TOP_MARGIN + 3.0, top = my height_pxlt - my TOP_MARGIN - 3.0;
+		Graphics_setColour (my graphics.get(), Melder_PINK);
+		const double x [] = { left, right, left }, y [] = { bottom, 0.5 * (bottom + top), top };
+		Graphics_fillArea (my graphics.get(), 3, x, y);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
+		if (! weHaveToDrawOverSelectionRectangleWithText) {
+			Graphics_setColour (my graphics.get(), Melder_GREY);
+			Graphics_polyline_closed (my graphics.get(), 3, x, y);
+			Graphics_setColour (my graphics.get(), Melder_BLACK);
+		}
+	}
+
+	/*
+		Button texts (sometimes over opening triangle).
+	*/
 	const double verticalCorrection = my height_pxlt / (my height_pxlt - 111.0 + 11.0)
 		#ifdef _WIN32
 			* 1.5
@@ -1181,24 +1225,28 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 	/*
 		Draw the selection part.
 	*/
-	Graphics_setLineWidth (my graphics.get(), 1.0);
-	const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
-	const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
-	my viewAllAsPixelettes ();
 	if (my p_showSelectionViewer) {
-		Graphics_line (my graphics.get(), left, bottom, right, top);
-		Graphics_line (my graphics.get(), left, top, right, bottom);
-		Graphics_rectangle (my graphics.get(), left, right, bottom, top);
+		/*
+			Draw closing box.
+		*/
+		my viewAllAsPixelettes ();
+		Graphics_setLineWidth (my graphics.get(), 1.0);
+		const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
+		const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
+		Graphics_setColour (my graphics.get(), Melder_PINK);
+		Graphics_fillRectangle (my graphics.get(), left, right, bottom, top);
+		Graphics_setColour (my graphics.get(), Melder_GREY);
+		Graphics_line (my graphics.get(), left + 2.0, bottom + 2.0, right - 2.0, top - 2.0);
+		Graphics_line (my graphics.get(), left + 2.0, top - 2.0, right - 2.0, bottom + 2.0);
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
+		/*
+			Draw content.
+		*/
 		my viewInnerSelectionViewerAsFractionByFraction ();
 		if (my duringPlay)
 			my v_drawRealTimeSelectionViewer (my playCursor);
 		else
 			my v_drawSelectionViewer ();
-	} else {
-		if (my v_hasSelectionViewer()) {
-			const double x [] = { left, right, left }, y [] = { bottom, 0.5 * (bottom + top), top };
-			Graphics_polyline_closed (my graphics.get(), 3, x, y);
-		}
 	}
 }
 
