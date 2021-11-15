@@ -111,7 +111,7 @@ static void gui_list_cb_doubleClick (StringsEditor me, GuiList_DoubleClickEvent 
 }
 
 void structStringsEditor :: v_createChildren () {
-	list = GuiList_create (our windowForm, 1, 0, Machine_getMenuBarHeight (), -70, true, nullptr);
+	list = GuiList_create (our windowForm, 1, 0, Machine_getMenuBarBottom (), -70, true, nullptr);
 	GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiThing_show (list);
 

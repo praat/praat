@@ -653,7 +653,7 @@ static void gui_text_cb_changed (TextEditor me, GuiTextEvent /* event */) {
 }
 
 void structTextEditor :: v_createChildren () {
-	textWidget = GuiText_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
+	textWidget = GuiText_createShown (our windowForm, 0, 0, Machine_getMenuBarBottom (), 0, GuiText_SCROLLED);
 	GuiText_setChangedCallback (textWidget, gui_text_cb_changed, this);
 }
 

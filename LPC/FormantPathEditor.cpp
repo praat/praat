@@ -133,7 +133,7 @@ static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) 
 
 /***** FILE MENU *****/
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -142,7 +142,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (FormantP
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -493,7 +493,7 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 	EDITOR_END
 }
 
-static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		FormantPath formantPath = (FormantPath) my data;
 		double startTime = my startSelection, endTime = my endSelection;
@@ -561,7 +561,7 @@ static void menu_cb_showFormants (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 	FunctionEditor_redraw (me);
 }
 
-static void INFO_DATA__formantListing (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
+static void INFO_DATA__formantListing (FormantPathEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	INFO_DATA
 		const double startTime = my startSelection, endTime = my endSelection;
 		MelderInfo_open ();
@@ -905,7 +905,6 @@ void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
 	our pref_shiftDragMultiple () = our p_shiftDragMultiple = false;
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
-	FunctionEditor_redraw (this);
 }
 
 void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {

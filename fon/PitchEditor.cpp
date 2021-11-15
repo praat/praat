@@ -65,7 +65,7 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void QUERY_DATA_FOR_REAL__getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__getPitch (PitchEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		Pitch pitch = (Pitch) my data;
 		const double result = ( my startSelection == my endSelection

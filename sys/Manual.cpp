@@ -378,7 +378,7 @@ void structManual :: v_createChildren () {
 	#else
 		#define STRING_SPACING 2
 	#endif
-	const int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
+	const int height = Machine_getTextHeight (), y = Machine_getMenuBarBottom () + 4;
 	our homeButton = GuiButton_createShown (our windowForm, 104, 168, y, y + height,
 		U"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {

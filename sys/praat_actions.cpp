@@ -587,7 +587,7 @@ void praat_actions_show () {
 		actionsInvisible = false;
 		GuiMenu currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;
 		bool writeMenuGoingToSeparate = false;
-		int y = Machine_getMenuBarHeight () + 10;
+		int y = Machine_getMenuBarBottom () + 10;
 		for (integer i = 1; i <= theActions.size; i ++) {   // add buttons or make existing buttons sensitive (executable)
 			Praat_Command me = theActions.at [i];
 			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label

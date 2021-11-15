@@ -1,6 +1,6 @@
 /* GuiControl.cpp
  *
- * Copyright (C) 1993-2012,2013,2015,2017 Paul Boersma,
+ * Copyright (C) 1993-2012,2013,2015,2017,2020,2021 Paul Boersma,
  *               2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify

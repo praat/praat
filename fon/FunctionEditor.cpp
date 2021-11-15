@@ -400,10 +400,11 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 		my pref_showSelectionViewer() = my p_showSelectionViewer = showSelectionViewer;
 		my pref_arrowScrollStep() = my p_arrowScrollStep = arrowScrollStep;
 		if (my p_showSelectionViewer != oldShowSelectionViewer)
-			my updateGeometry (GuiControl_getWidth  (my drawingArea), GuiControl_getHeight (my drawingArea));
+			my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll())
 			updateGroup (me);
 		my v_prefs_getValues (cmd);
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
@@ -426,22 +427,22 @@ void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 
 /********** QUERY MENU **********/
 
-static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getB (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my startSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getCursor (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = 0.5 * (my startSelection + my endSelection);
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getE (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
 }
-static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_EDITOR_FOR_REAL__getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_EDITOR_FOR_REAL
 		const double result = my endSelection - my startSelection;
 	QUERY_EDITOR_FOR_REAL_END (U" ", my v_format_units_long())
@@ -1175,18 +1176,29 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 		Graphics_xorOn (my graphics.get(), Melder_BLACK);
 		Graphics_line (my graphics.get(), my playCursor, 0.0, my playCursor, 1.0);
 		Graphics_xorOff (my graphics.get());
-		Graphics_setLineWidth (my graphics.get(), 1.0);
 	}
 
 	/*
 		Draw the selection part.
 	*/
+	Graphics_setLineWidth (my graphics.get(), 1.0);
+	const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
+	const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
+	my viewAllAsPixelettes ();
 	if (my p_showSelectionViewer) {
+		Graphics_line (my graphics.get(), left, bottom, right, top);
+		Graphics_line (my graphics.get(), left, top, right, bottom);
+		Graphics_rectangle (my graphics.get(), left, right, bottom, top);
 		my viewInnerSelectionViewerAsFractionByFraction ();
 		if (my duringPlay)
 			my v_drawRealTimeSelectionViewer (my playCursor);
 		else
 			my v_drawSelectionViewer ();
+	} else {
+		if (my v_hasSelectionViewer()) {
+			const double x [] = { left, right, left }, y [] = { bottom, 0.5 * (bottom + top), top };
+			Graphics_polyline_closed (my graphics.get(), 3, x, y);
+		}
 	}
 }
 
@@ -1257,6 +1269,16 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 	static bool anchorIsInSelectionViewer = false;
 	static bool anchorIsInWideDataView = false;
 	if (event -> isClick()) {
+		if (my v_hasSelectionViewer() || my p_showSelectionViewer) {
+			const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
+			const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
+			if (x_pxlt > left && x_pxlt < right && y_pxlt > bottom && y_pxlt < top) {
+				my pref_showSelectionViewer() = my p_showSelectionViewer = ! my p_showSelectionViewer;
+				my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
+				FunctionEditor_redraw (me);
+				return;
+			}
+		}
 		my clickWasModifiedByShiftKey = event -> shiftKeyPressed;
 		anchorIsInSelectionViewer = my isInSelectionViewer (x_pxlt);
 		anchorIsInWideDataView = ( y_pxlt > my dataBottom_pxlt() && y_pxlt < my dataTop_pxlt() );
@@ -1341,8 +1363,8 @@ void structFunctionEditor :: v_createChildren () {
 
 	if (our v_hasText ()) {
 		our textArea = GuiText_createShown (our windowForm, 0, 0,
-			Machine_getMenuBarHeight (),
-			Machine_getMenuBarHeight () + TEXT_HEIGHT,
+			Machine_getMenuBarBottom (),
+			Machine_getMenuBarBottom () + TEXT_HEIGHT,
 			GuiText_INKWRAP | GuiText_SCROLLED
 		);
 		#if gtk
@@ -1364,7 +1386,7 @@ void structFunctionEditor :: v_createChildren () {
 	#endif
 	our drawingArea = GuiDrawingArea_createShown (our windowForm,
 		0, 0,
-		Machine_getMenuBarHeight () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
+		Machine_getMenuBarBottom () + ( our v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,
 		nullptr, gui_drawingarea_cb_resize, this, 0
 	);

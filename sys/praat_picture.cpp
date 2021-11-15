@@ -1684,7 +1684,7 @@ void praat_picture_init () {
 		resolution = Gui_getResolution (nullptr);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
-			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
+			height = Machine_getMenuBarBottom () + 9 * resolution + 24;
 			x = screenX + screenWidth - width - 14;
 			y = screenY + 0;
 			width += margin * 2;
@@ -1902,7 +1902,7 @@ void praat_picture_init () {
 
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
-		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarHeight () + margin, 0, 1, 1, 0);
+		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarBottom () + margin, 0, 1, 1, 0);
 		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height,
 				nullptr, nullptr, nullptr, nullptr, nullptr, 0);
 		GuiThing_show (dialog);

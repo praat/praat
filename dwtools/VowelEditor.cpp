@@ -702,19 +702,21 @@ static void menu_cb_help (VowelEditor /* me */, EDITOR_ARGS_DIRECT) {
 	HELP (U"VowelEditor")
 }
 
-static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_FORM) {
-	MelderInfo_open ();
-	MelderInfo_writeLine (U"Trajectory info:");
-	MelderInfo_writeLine (U"Number of points: ", my trajectory -> points.size);
-	MelderInfo_writeLine (U"Start time: ", my trajectory -> xmin, U" s");
-	TrajectoryPoint p1 = my trajectory -> points.at [1];
-	MelderInfo_writeLine (U"    F1: ", p1 -> f1, U" Hz");
-	MelderInfo_writeLine (U"    F2: ", p1 -> f2, U" Hz");
-	MelderInfo_writeLine (U"End time: ", my trajectory -> xmax, U" s");
-	TrajectoryPoint p2 = my trajectory -> points.at [my trajectory -> points.size];
-	MelderInfo_writeLine (U"    F1: ", p2 -> f1, U" Hz");
-	MelderInfo_writeLine (U"    F2: ", p2 -> f2, U" Hz");
-	MelderInfo_close ();
+static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
+	INFO_EDITOR
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Trajectory info:");
+		MelderInfo_writeLine (U"Number of points: ", my trajectory -> points.size);
+		MelderInfo_writeLine (U"Start time: ", my trajectory -> xmin, U" s");
+		TrajectoryPoint p1 = my trajectory -> points.at [1];
+		MelderInfo_writeLine (U"    F1: ", p1 -> f1, U" Hz");
+		MelderInfo_writeLine (U"    F2: ", p1 -> f2, U" Hz");
+		MelderInfo_writeLine (U"End time: ", my trajectory -> xmax, U" s");
+		TrajectoryPoint p2 = my trajectory -> points.at [my trajectory -> points.size];
+		MelderInfo_writeLine (U"    F1: ", p2 -> f1, U" Hz");
+		MelderInfo_writeLine (U"    F2: ", p2 -> f2, U" Hz");
+		MelderInfo_close ();
+	INFO_EDITOR_END
 }
 
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
@@ -790,20 +792,20 @@ static void menu_cb_ranges_f1f2 (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__publishSound (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		autoSound result = VowelEditor_createTargetSound (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_FormantGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoFormantGrid result = VowelEditor_to_FormantGrid (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoFormantGrid fg = VowelEditor_to_FormantGrid (me);
@@ -815,14 +817,14 @@ static void CREATE_ONE__Extract_KlattGrid (VowelEditor me, EDITOR_ARGS_DIRECT) {
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_PitchTier (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		autoPitchTier result = VowelEditor_to_PitchTier (me);
 	CREATE_ONE_END (U"untitled")
 }
 
-static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT) {
+static void CREATE_ONE__Extract_TrajectoryAsTable (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CREATE_ONE
 		VowelEditor_updateTrajectorySpecification (me);
 		const conststring32 columnNames [] = { U"Time", U"F1", U"F2", U"Colour" };
@@ -1306,7 +1308,7 @@ void structVowelEditor :: v_createChildren ()
 		Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 		log distances are equal (log (1000/200) == log (2500/500) ).
 	*/
-	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	drawingArea = GuiDrawingArea_createShown (our windowForm, 0, 0, Machine_getMenuBarBottom (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_mouse,   // TODO: mouse-dragged and mouse-up events
 		nullptr, gui_drawingarea_cb_resize, this, 0
 	);

@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012-2020 Paul Boersma
+ * Copyright (C) 2012-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,7 +393,6 @@ void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
 }
 void structERPWindow :: v_prefs_getValues (EditorCommand /* cmd */) {
 	pref_scalp_colourScale () = p_scalp_colourScale = v_prefs_scalpColourSpace;
-	FunctionEditor_redraw (this);
 }
 
 autoERPWindow ERPWindow_create (conststring32 title, ERP data) {

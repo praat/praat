@@ -149,7 +149,7 @@ static integer getSelectedPoint (TextGridEditor me) {
 
 /***** FILE MENU *****/
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -157,7 +157,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_preserveTimes (TextGrid
 	CONVERT_DATA_TO_ONE_END (U"untitled")
 }
 
-static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__ExtractSelectedTextGrid_timeFromZero (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		if (my endSelection <= my startSelection)
 			Melder_throw (U"No selection.");
@@ -284,7 +284,7 @@ static void menu_cb_ConvertToUnicode (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 /***** QUERY MENU *****/
 
-static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"query the starting point of an interval");
@@ -298,7 +298,7 @@ static void QUERY_DATA_FOR_REAL__GetStartingPointOfInterval (TextGridEditor me, 
 	QUERY_DATA_FOR_REAL_END (U" seconds")
 }
 
-static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_REAL
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"query the end point of an interval");
@@ -312,7 +312,7 @@ static void QUERY_DATA_FOR_REAL__GetEndPointOfInterval (TextGridEditor me, EDITO
 	QUERY_DATA_FOR_REAL_END (U" seconds")
 }
 
-static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void QUERY_DATA_FOR_STRING__GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	QUERY_DATA_FOR_STRING
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"query the label of an interval");
@@ -597,10 +597,10 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 			double tlast = interval -> xmin;
 			for (integer jtier = 1; jtier <= numberOfTiers; jtier ++) {
 				if (jtier != itier) {
-					double tmin, tmax;
-					_TextGridEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
-					if (tmin > tlast)
-						tlast = tmin;
+					double startInterval, endInterval;
+					_TextGridEditor_timeToInterval (me, t1, jtier, & startInterval, & endInterval);
+					if (startInterval > tlast)
+						tlast = startInterval;
 				}
 			}
 			if (tlast > interval -> xmin && tlast < t1) {
@@ -1002,7 +1002,7 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
-static void CONVERT_DATA_TO_ONE__PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
+static void CONVERT_DATA_TO_ONE__PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		const TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"publish a tier");
@@ -1339,23 +1339,23 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 	const integer selectedInterval = ( itier == my selectedTier ? getSelectedInterval (me) : 0 ), ninterval = tier -> intervals.size;
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		const TextInterval interval = tier -> intervals.at [iinterval];
-		/* mutable clip */ double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
+		/* mutable clip */ double startInterval = interval -> xmin, endInterval = interval -> xmax;
+		if (endInterval > my startWindow && startInterval < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
 			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(), my p_greenMethod, my p_greenString, true);
-			Melder_clipLeft (my startWindow, & tmin);
-			Melder_clipRight (& tmax, my endWindow);
+			Melder_clipLeft (my startWindow, & startInterval);
+			Melder_clipRight (& endInterval, my endWindow);
 			if (labelDoesMatch) {
 				Graphics_setColour (my graphics.get(), Melder_LIME);
-				Graphics_fillRectangle (my graphics.get(), tmin, tmax, 0.0, 1.0);
+				Graphics_fillRectangle (my graphics.get(), startInterval, endInterval, 0.0, 1.0);
 			}
 			if (intervalIsSelected) {
 				if (labelDoesMatch) {
-					tmin = 0.85 * tmin + 0.15 * tmax;
-					tmax = 0.15 * tmin + 0.85 * tmax;
+					startInterval = 0.85 * startInterval + 0.15 * endInterval;
+					endInterval = 0.15 * startInterval + 0.85 * endInterval;
 				}
 				Graphics_setColour (my graphics.get(), Melder_YELLOW);
-				Graphics_fillRectangle (my graphics.get(), tmin, tmax,
+				Graphics_fillRectangle (my graphics.get(), startInterval, endInterval,
 						labelDoesMatch ? 0.15 : 0.0, labelDoesMatch? 0.85: 1.0);
 			}
 		}
@@ -1387,29 +1387,29 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 	Graphics_setTextAlignment (my graphics.get(), my p_alignment, Graphics_HALF);
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		const TextInterval interval = tier -> intervals.at [iinterval];
-		/* mutable clip */ double tmin = interval -> xmin, tmax = interval -> xmax;
-		Melder_clipLeft (my tmin, & tmin);
-		Melder_clipRight (& tmax, my tmax);
-		if (tmin >= tmax)
+		/* mutable clip */ double startInterval = interval -> xmin, endInterval = interval -> xmax;
+		Melder_clipLeft (my tmin, & startInterval);
+		Melder_clipRight (& endInterval, my tmax);
+		if (startInterval >= endInterval)
 			continue;
 		const bool intervalIsSelected = ( selectedInterval == iinterval );
 
 		/*
 			Draw left boundary.
 		*/
-		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
-			const bool boundaryIsSelected = ( my selectedTier == itier && tmin == my startSelection );
+		if (startInterval >= my startWindow && startInterval <= my endWindow && iinterval > 1) {
+			const bool boundaryIsSelected = ( my selectedTier == itier && startInterval == my startSelection );
 			Graphics_setColour (my graphics.get(), boundaryIsSelected ? Melder_RED : Melder_BLUE);
 			Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 6.0 : 5.0);
-			Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
+			Graphics_line (my graphics.get(), startInterval, 0.0, startInterval, 1.0);
 
 			/*
 				Show alignment with cursor.
 			*/
-			if (tmin == my startSelection) {
+			if (startInterval == my startSelection) {
 				Graphics_setColour (my graphics.get(), Melder_YELLOW);
 				Graphics_setLineWidth (my graphics.get(), platformUsesAntiAliasing ? 2.0 : 1.0);
-				Graphics_line (my graphics.get(), tmin, 0.0, tmin, 1.0);
+				Graphics_line (my graphics.get(), startInterval, 0.0, startInterval, 1.0);
 			}
 		}
 		Graphics_setLineWidth (my graphics.get(), 1.0);
@@ -1417,9 +1417,9 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		/*
 			Draw label text.
 		*/
-		if (interval -> text && tmax >= my startWindow && tmin <= my endWindow) {
-			const double t1 = std::max (my startWindow, tmin);
-			const double t2 = std::min (my endWindow, tmax);
+		if (interval -> text && endInterval >= my startWindow && startInterval <= my endWindow) {
+			const double t1 = std::max (my startWindow, startInterval);
+			const double t2 = std::min (my endWindow, endInterval);
 			Graphics_setColour (my graphics.get(), intervalIsSelected ? Melder_RED : Melder_BLACK);
 			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, interval -> text.get());
 			Graphics_setColour (my graphics.get(), Melder_BLACK);
@@ -1733,16 +1733,16 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 			We select the tier in which they clicked.
 		*/
 		our selectedTier = mouseTier;
-		double tmin, tmax;
-		_TextGridEditor_timeToInterval (this, xWC, our selectedTier, & tmin, & tmax);
+		double startInterval, endInterval;
+		_TextGridEditor_timeToInterval (this, xWC, our selectedTier, & startInterval, & endInterval);
 
 		if (event -> isLeftBottomFunctionKeyPressed()) {
-			our startSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );   // to nearest boundary
+			our startSelection = ( xWC - startInterval < endInterval - xWC ? startInterval : endInterval );   // to nearest boundary
 			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 		if (event -> isRightBottomFunctionKeyPressed()) {
-			our endSelection = ( xWC - tmin < tmax - xWC ? tmin : tmax );
+			our endSelection = ( xWC - startInterval < endInterval - xWC ? startInterval : endInterval );
 			Melder_sort (& our startSelection, & our endSelection);
 			return FunctionEditor_UPDATE_NEEDED;
 		}
@@ -1868,8 +1868,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				Select the interval, if any.
 			*/
 			if (selectedIntervalTier) {
-				our startSelection = tmin;
-				our endSelection = tmax;
+				our startSelection = startInterval;
+				our endSelection = endInterval;
 			}
 		}
 	} else if (event -> isDrag ()) {
@@ -2021,8 +2021,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 
 void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	const TextGrid grid = (TextGrid) our data;
-	int rowNumber = 1 + (int) ((1.0-yWC) * 12.0);
-	int columnNumber = 1 + (int) (xWC * 10.0);
+	integer rowNumber = Melder_iceiling ((1.0 - yWC) * 12.0);
+	integer columnNumber = Melder_iceiling (xWC * 10.0);
 	if (rowNumber < 1 || rowNumber > 12)
 		return;
 	if (columnNumber < 1 || columnNumber > 10)
@@ -2186,7 +2186,6 @@ void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
 	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
 	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
-	FunctionEditor_redraw (this);
 }
 
 void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
