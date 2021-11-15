@@ -5,9 +5,9 @@
 
 PREFIX ?= i686-w64-mingw32-
 
-CC ?= $(PREFIX)gcc
-CXX ?= $(PREFIX)g++
-LINK ?= $(CXX)
+CC = $(PREFIX)gcc
+CXX = $(PREFIX)g++
+LINK = $(CXX)
 
 COMMONFLAGS = -municode -D_FILE_OFFSET_BITS=64 \
 	-O3
