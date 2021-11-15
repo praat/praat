@@ -310,10 +310,10 @@ void structSoundEditor :: v_prepareDraw () {
 }
 
 void structSoundEditor :: v_draw () {
-	Sampled data = (Sampled) our data;
+	Sampled eitherData = (Sampled) our data;
 	Graphics_Viewport viewport;
 	bool showAnalysis = our p_spectrogram_show || our p_pitch_show || our p_intensity_show || our p_formant_show;
-	Melder_assert (data);
+	Melder_assert (eitherData);
 	Melder_assert (our d_sound.data || our d_longSound.data);
 
 	/*
@@ -353,7 +353,7 @@ void structSoundEditor :: v_draw () {
 		Update buttons.
 	*/
 	integer first, last;
-	integer selectedSamples = Sampled_getWindowSamples (data, our startSelection, our endSelection, & first, & last);
+	integer selectedSamples = Sampled_getWindowSamples (eitherData, our startSelection, our endSelection, & first, & last);
 	v_updateMenuItems_file ();
 	if (our d_sound.data) {
 		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < our d_sound.data -> nx);
