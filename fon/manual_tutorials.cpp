@@ -22,8 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20211103)
+MAN_BEGIN (U"What's new?", U"ppgb", 20211115)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2# (15 November 2021)")
+LIST_ITEM (U"• TextGrid window: closing box and opening triangle for IPA chart.")
+LIST_ITEM (U"• Linux: compatibility with Wayland (rather than just X11).")
+LIST_ITEM (U"• Chromebook: surrogate window title replaces the one that Chromebooks won’t show.")
+LIST_ITEM (U"• Much longer list of functions in manual.")
 NORMAL (U"##6.1.56# (3 November 2021)")
 LIST_ITEM (U"• Scripting: ##Record Sound (fixed time)...# should return an object ID.")
 LIST_ITEM (U"• More phonetic symbols in EPS files.")
