@@ -240,12 +240,11 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Graphics_setColour (my graphics.get(), Melder_PINK);
 		const double x [] = { left, right, left }, y [] = { bottom, 0.5 * (bottom + top), top };
 		Graphics_fillArea (my graphics.get(), 3, x, y);
-		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		if (! weHaveToDrawOverSelectionRectangleWithText) {
 			Graphics_setColour (my graphics.get(), Melder_GREY);
 			Graphics_polyline_closed (my graphics.get(), 3, x, y);
-			Graphics_setColour (my graphics.get(), Melder_BLACK);
 		}
+		Graphics_setColour (my graphics.get(), Melder_BLACK);
 	}
 
 	/*
@@ -1220,6 +1219,7 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 		Graphics_xorOn (my graphics.get(), Melder_BLACK);
 		Graphics_line (my graphics.get(), my playCursor, 0.0, my playCursor, 1.0);
 		Graphics_xorOff (my graphics.get());
+		Graphics_setLineWidth (my graphics.get(), 1.0);
 	}
 
 	/*
