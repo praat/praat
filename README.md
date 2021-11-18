@@ -162,7 +162,7 @@ try the target `praat_mac_a` (static) or `praat_mac_so` (dynamic).
 
 **Notarization.** If you want others to be able to use your Mac app,
 you will probably have to not only *sign* the executable, but also *notarize* it. To this end,
-do Xcode (version 12) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
+do Xcode (version 13) -> Product -> Archive -> Distribute App -> Developer ID -> Upload ->
 Automatically manage signing -> Upload -> ...wait... (“Package Approved”) ...wait...
 (“Ready to distribute”) -> Export Notarized App). If your Praat.app was built into
 `~/builds/mac_products/Configuration64`, then you can save the notarized
