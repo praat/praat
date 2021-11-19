@@ -288,6 +288,7 @@ static void menu_cb_ScriptingTutorial (ScriptEditor, EDITOR_ARGS_DIRECT) { Melde
 static void menu_cb_ScriptingExamples (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Scripting examples"); }
 static void menu_cb_PraatScript (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Praat script"); }
 static void menu_cb_FormulasTutorial (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Formulas"); }
+static void menu_cb_Functions (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Functions"); }
 static void menu_cb_DemoWindow (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Demo window"); }
 static void menu_cb_TheHistoryMechanism (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"History mechanism"); }
 static void menu_cb_InitializationScripts (ScriptEditor, EDITOR_ARGS_DIRECT) { Melder_help (U"Initialization script"); }
@@ -320,6 +321,7 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Scripting examples", 0, menu_cb_ScriptingExamples);
 	EditorMenu_addCommand (menu, U"Praat script", 0, menu_cb_PraatScript);
 	EditorMenu_addCommand (menu, U"Formulas tutorial", 0, menu_cb_FormulasTutorial);
+	EditorMenu_addCommand (menu, U"Functions", 0, menu_cb_Functions);
 	EditorMenu_addCommand (menu, U"Demo window", 0, menu_cb_DemoWindow);
 	EditorMenu_addCommand (menu, U"-- help history --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"The History mechanism", 0, menu_cb_TheHistoryMechanism);
