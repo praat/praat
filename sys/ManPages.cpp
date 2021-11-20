@@ -656,6 +656,13 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, constvector <st
 					MelderString_copy (& linkText, link.string);
 				}
 				/*
+					The first character of the link text can have the wrong case.
+				*/
+				integer linkPageNumber = ManPages_lookUp (me, link.string);
+				if (linkPageNumber == 0)
+					Melder_throw (U"No such manual page: ", link.string);
+				link.string [0] = my pages.at [linkPageNumber] -> title [0];
+				/*
 				 * We write the link in the following format:
 				 *     <a href="link.html">linkText</a>
 				 * If "link" (initial lower case) is not in the manual, we write "Link.html" instead.

@@ -1633,6 +1633,16 @@ DO
 	QUERY_ONE_FOR_REAL_VECTOR_END
 }
 
+FORM (GRAPHICS_NoulliGrid_paint, U"NoulliGrid: Paint", U"NoulliGrid: Paint...") {
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	BOOLEAN (garnish, U"Garnish", 1)
+	OK
+DO
+	GRAPHICS_EACH (NoulliGrid)
+		NoulliGrid_paint (me, GRAPHICS, fromTime, toTime, garnish);
+	GRAPHICS_EACH_END
+}
+
 // MARK: - buttons
 
 void praat_uvafon_gram_init ();
@@ -1971,6 +1981,8 @@ void praat_uvafon_gram_init () {
 		praat_TimeFunction_query_init (classNoulliGrid);
 		praat_addAction1 (classNoulliGrid, 1, U"Get average probabilities...", nullptr, 1,
 			QUERY_ONE_FOR_REAL_VECTOR__NoulliGrid_getAverageProbabilities);
+	praat_addAction1 (classNoulliGrid, 0, U"Draw -", nullptr, 0, nullptr);
+		praat_addAction1 (classNoulliGrid, 0, U"Paint...", nullptr, 1, GRAPHICS_NoulliGrid_paint);
 	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE,
 			EDITOR_ONE_WITH_ONE__NoulliGrid_viewAndEdit);
 }
