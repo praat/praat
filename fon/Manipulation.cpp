@@ -396,7 +396,14 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 					break;
 			ipointright --;
 			endOfSourceVoice = pulses -> t [ipointright];   // the last pulse of the voice
-			finishingPeriod = 1.0 / RealTier_getValueAtTime (pitch, endOfSourceVoice);
+			const double finishingPitch = RealTier_getValueAtTime (pitch, endOfSourceVoice);
+			if (finishingPitch == 0.0) {
+				for (integer ipoint = 1; ipoint <= pitch -> points.size; ipoint ++)
+					Melder_casual (U"Pitch point ", ipoint, U" is ", pitch -> points.at [ipoint], U" Hz");
+				Melder_casual (U"ipointleft = ", ipointleft);
+				Melder_throw (U"Unexpected zero pitch value.");
+			}
+			finishingPeriod = 1.0 / finishingPitch;
 			endOfSourceVoice += 0.5 * finishingPeriod;   // the last pulse is in the middle of a period
 			/*
 			 * Measure one voice.
