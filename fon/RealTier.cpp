@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,19 +130,22 @@ double RealTier_getValueAtIndex (RealTier me, integer i) {
 }
 
 double RealTier_getValueAtTime (RealTier me, double t) {
-	integer n = my points.size;
-	if (n == 0) return undefined;
-	RealPoint pointRight = my points.at [1];
-	if (t <= pointRight -> number) return pointRight -> value;   // constant extrapolation
-	RealPoint pointLeft = my points.at [n];
-	if (t >= pointLeft -> number) return pointLeft -> value;   // constant extrapolation
+	const integer n = my points.size;
+	if (n == 0)
+		return undefined;
+	const RealPoint firstPoint = my points.at [1];
+	if (t <= firstPoint -> number)
+		return firstPoint -> value;   // constant extrapolation
+	const RealPoint lastPoint = my points.at [n];
+	if (t >= lastPoint -> number)
+		return lastPoint -> value;   // constant extrapolation
 	Melder_assert (n >= 2);
-	integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
+	const integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
-	pointLeft = my points.at [ileft];
-	pointRight = my points.at [iright];
-	double tleft = pointLeft -> number, fleft = pointLeft -> value;
-	double tright = pointRight -> number, fright = pointRight -> value;
+	const RealPoint pointLeft = my points.at [ileft];
+	const RealPoint pointRight = my points.at [iright];
+	const double tleft = pointLeft -> number, fleft = pointLeft -> value;
+	const double tright = pointRight -> number, fright = pointRight -> value;
 	return t == tright ? fright   // be very accurate
 		: tleft == tright ? 0.5 * (fleft + fright)   // unusual, but possible; no preference
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation

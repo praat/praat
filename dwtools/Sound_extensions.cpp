@@ -1883,11 +1883,17 @@ static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, d
 	for (integer i = 1; i <= my points.size; i ++) {
 		const RealPoint point = my points.at [i];
 		const double f = point -> value;
-		if (point -> number < tmin || point -> number > tmax) {
+		if (point -> number < tmin || point -> number > tmax)
 			continue;
-		}
-		const double newf = fmid + (f - fmid) * factor;
-		point -> value = newf < 0.0 ? 0.0 : newf;
+		point -> value = fmid + (f - fmid) * factor;
+		/*
+			This scaling could lead to a negative value.
+			Negative pitch values have no meaning,
+			and even a zero pitch value cannot be handled by Sound_Point_Pitch_Duration_to_Sound.
+			So in such a case we bail out.
+		*/
+		if (point -> value < 0.0)
+			Melder_throw (U"Change gender: your pitch manipulation would lead to negative pitch values.");
 	}
 }
 
