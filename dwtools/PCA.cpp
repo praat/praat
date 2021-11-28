@@ -214,6 +214,9 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 	try {
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues)
 			numberOfDimensions = my numberOfEigenvalues;
+		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
+			U"The number of columns in the TableOfReal should match the eigenvector size of the PCA.");
+		
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensions);
 		for (integer i = 1; i <= thy numberOfRows; i ++) { /* row */
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
@@ -237,7 +240,8 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
-
+		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
+			U"The number of columns in the TableOfReal should match the eigenvector size of the PCA.");
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
 		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep).transpose());
 		his rowLabels.all()  <<=  thy rowLabels.all();
@@ -252,6 +256,8 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
+		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
+			U"The number of columns in the TableOfReal should match the eigenvector size of the PCA.");
 
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand(1, numberOfDimensionsToKeep).transpose());
