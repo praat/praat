@@ -3013,12 +3013,13 @@ NORMAL (U"Because the algorithm performs a projection, the resulting Configurati
 NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
-MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20151208)
+MAN_BEGIN (U"PCA & TableOfReal: To TableOfReal (z-scores)...", U"djmw", 20211129)
 INTRO (U"A command to construct a @TableOfReal with z-scores from the selected @TableOfReal"
 	" and @PCA.")
 ENTRY (U"Setting")
 TAG (U"##Number of dimensions")
-DEFINITION (U"determines the number of dimensions of the resulting Configuration.")
+DEFINITION (U"determines how many eigenvectors to use in the calculation of the z-scores and therefore the number "
+	"of columns of the resulting TableOfReal.")
 ENTRY (U"Algorithm")
 NORMAL (U"The values %d__%ij_ in the new TableOfReal are calculated as")
 EQUATION (U"%d__%ij_ = ##eigenvector#__j_\\.c ##z#__%i_,")

@@ -8,10 +8,10 @@ call test_pca_simple
 
 appendInfoLine: "test_PCA.praat OK"
 
-procedure create_reference_tableOfReal 
+procedure create_reference_TableOfReal 
 	# 5 points,
-	#  	p1, p2,p3 on a line throug the origin with an angle of pi/6 with variance 6
-	#	p4, p2, p5 orthogonal with variance 2
+	#  	p1, p2,p3 on a line through the origin with an angle of pi/6 with variance 6
+	#	p4, p5 orthogonal with variance 2
 	#
 	.npoints = 5
 	.t = Create TableOfReal... .t .npoints 2
@@ -30,7 +30,7 @@ endproc
 procedure test_pca_simple
 	appendInfoLine: tab$, "test_pca_simple"
 	.tol = 1e-12
-	@create_reference_tableOfReal
+	@create_reference_TableOfReal
 	.tor = selected ("TableOfReal")
 	.nrows = Get number of rows
 	.ncols = Get number of columns
@@ -63,7 +63,7 @@ endproc
 procedure test_projections
 	appendInfoLine: tab$, "test_PCA_TableOfReal_projections"
 	.tol = 1e-12
-	@create_reference_tableOfReal
+	@create_reference_TableOfReal
 	.tor = selected ("TableOfReal")
 	.nrows = Get number of rows
 	.ncols = Get number of columns
@@ -84,7 +84,7 @@ procedure test_projections
 	.minuscolumn = Copy: "1"
 	Remove column (index): 2
 	selectObject: .minuscolumn, .pca
-	asserterror The number of columns in the TableOfReal should match the eigenvector size of the PCA.
+	asserterror The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.
 	.projection3 = To TableOfReal (project rows): 0
 
 	appendInfoLine:  tab$, tab$, "To Configuration"
@@ -97,7 +97,7 @@ procedure test_projections
 	.ncols_c2 = Get number of columns
 	assert .ncols_c2 = 1
 	selectObject: .minuscolumn, .pca
-	asserterror The number of columns in the TableOfReal should match the eigenvector size of the PCA.
+	asserterror The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.
 	.configuration3 = To Configuration: 0
 
 	appendInfoLine:  tab$, tab$, "Z-scores"
@@ -110,12 +110,21 @@ procedure test_projections
 	.ncols_z2 = Get number of columns
 	assert .ncols_z2 = 1
 	selectObject: .minuscolumn, .pca
-	asserterror The number of columns in the TableOfReal should match the eigenvector size of the PCA.
+	asserterror The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.
 	.zscore3 = To TableOfReal (z-scores): 0
 
+	appendInfoLine:  tab$, tab$, "TableOfReal reconstruction from PCA+ Configuration"
+	selectObject: .configuration2, .pca
+	.reconstruction = To TableOfReal (reconstruct)
+	.columns3 = Create TableOfReal: "3", 5, 3
+	.toomanyColumns = To Configuration
+	selectObject: .pca, .toomanyColumns
+	asserterror The number of columns in the Configuration should not exceed the number of eigenvectors in the PCA.
+	.tor2 = To TableOfReal (reconstruct)
 
 	removeObject: .projection2, .projection1, .configuration1, 
-	... .configuration2, .minuscolumn, .zscore1, .zscore2, .pca, .tor
+	... .configuration2, .minuscolumn, .zscore1, .zscore2, .pca, .tor,
+	... .reconstruction,  .columns3, .toomanyColumns
 	
 	appendInfoLine:  tab$, "test_PCA_TableOfReal_projections OK"
 

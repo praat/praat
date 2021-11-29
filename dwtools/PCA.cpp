@@ -215,7 +215,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues)
 			numberOfDimensions = my numberOfEigenvalues;
 		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
-			U"The number of columns in the TableOfReal should match the eigenvector size of the PCA.");
+			U"The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.");
 		
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensions);
 		for (integer i = 1; i <= thy numberOfRows; i ++) { /* row */
@@ -241,7 +241,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
-			U"The number of columns in the TableOfReal should match the eigenvector size of the PCA.");
+			U"The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.");
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
 		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand (1, numberOfDimensionsToKeep).transpose());
 		his rowLabels.all()  <<=  thy rowLabels.all();
@@ -256,8 +256,13 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
+		/*
+			We choose "==" instead of "<=" in the requirement below to avoid any possibilitiy that
+			the result has been constructed from part of a larger table. For this case 
+			we would need an extra parameter.
+		*/
 		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
-			U"The number of columns in the TableOfReal should match the eigenvector size of the PCA.");
+			U"The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.");
 
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand(1, numberOfDimensionsToKeep).transpose());
@@ -272,7 +277,7 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee) {
 	try {
 		Melder_require (thy numberOfColumns <= my numberOfEigenvalues,
-			U"The number of columns in the configuration should not exceed the number of eigenvectors (", my numberOfEigenvalues, U").");
+			U"The number of columns in the Configuration should not exceed the number of eigenvectors in the PCA.");
 		const integer numberOfEigenvectorsToUse = std::min (thy numberOfColumns, my numberOfEigenvalues);
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		Melder_assert (my labels.size == my dimension);
