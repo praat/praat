@@ -254,6 +254,11 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
+		Melder_require (thy data.ncol == my eigenvectors.ncol,
+			U"The number of columns in the table (", thy data.ncol,
+			U") should be equal to the length of the eigenvectors of the PCA (",
+			my eigenvectors.ncol, U").")
+		;
 		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand(1, numberOfDimensionsToKeep).transpose());
 		his rowLabels.all()  <<=  thy rowLabels.all();
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);

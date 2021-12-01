@@ -94,9 +94,12 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), conditionBuffer);
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), U"\n");
 	trace (U"FATAL: ", theFatalBuffer);
-	if (Melder_isTracing)
+	if (Melder_isTracing) {
 		Melder_throw (theFatalBuffer);   // un-comment-out if you want to trace an assert
-	(*theFatalProc) (theFatalBuffer);   // ...but this call will use heap memory...
+		Melder_flushError ();
+	} else {
+		(*theFatalProc) (theFatalBuffer);   // ...but this call will use heap memory...
+	}
 }
 
 void Melder_setFatalProc (void (*fatal) (conststring32))
