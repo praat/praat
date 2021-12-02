@@ -71,10 +71,15 @@ void Melder_flushError () {
 		and some operating systems may force an immediate redraw event as soon as
 		the message dialog is closed. We want "errors" to be empty when redrawing!
 	*/
-	static char32 temp [BUFFER_LENGTH];
-	str32cpy (temp, buffer);
-	Melder_clearError ();
-	(*p_theErrorProc) (temp);
+	if (Melder_stringMatchesCriterion (buffer, kMelder_string::STARTS_WITH, U"Praat will crash.", false)) {
+		Melder_fatal__ ();
+		abort ();
+	} else {
+		static char32 temp [BUFFER_LENGTH];
+		str32cpy (temp, buffer);
+		Melder_clearError ();
+		(*p_theErrorProc) (temp);
+	}
 }
 
 /* End of file melder_error.cpp */
