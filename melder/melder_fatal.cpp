@@ -19,10 +19,10 @@
 #include "melder.h"
 #include <mutex>
 
-static std::mutex theMelder_fatal_mutex;
+static std::mutex theMelder_crash_mutex;
 
 static void defaultFatal (conststring32 message) {
-	MelderConsole::write (U"Fatal error: ", true);
+	MelderConsole::write (U"Crashing bug: ", true);
 	MelderConsole::write (message, true);
 	MelderConsole::write (U"\n", true);
 }
@@ -39,7 +39,7 @@ void Melder_fatal_ (const MelderArg& arg1,
 	const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
 	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13)
 {
-	std::lock_guard <std::mutex> lock (theMelder_fatal_mutex);
+	std::lock_guard <std::mutex> lock (theMelder_crash_mutex);   // to guard against simultaneous crashes in multiple threads
 	MelderError::_append (theCrashMessage);
 	MelderError::_append (arg1. _arg ? arg1. _arg : U"");
 	MelderError::_append (arg2. _arg ? arg2. _arg : U"");
@@ -64,7 +64,7 @@ void Melder_assert_ (const char *pathName, int lineNumber, const char *condition
 		Hence, character conversion is done in place rather than with Melder_peek8to32(),
 		and Melder_integer() is also avoided.
 	*/
-	std::lock_guard <std::mutex> lock (theMelder_fatal_mutex);
+	std::lock_guard <std::mutex> lock (theMelder_crash_mutex);   // to guard against simultaneous crashes in multiple threads
 	static char32 pathNameBuffer [1000], conditionBuffer [1000], lineNumberBuffer [40];
 	Melder_8to32_inplace (pathName, pathNameBuffer, kMelder_textInputEncoding::UTF8);
 	const char32 *p_lastFolderSeparator = str32rchr (pathNameBuffer, U'/');
