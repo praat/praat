@@ -74,8 +74,8 @@ void structLegendreSeries :: v_getExtrema (double x1, double x2, double *out_xmi
 		autoPolynomial p = LegendreSeries_to_Polynomial (this);
 		FunctionSeries_getExtrema (p.get(), x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 	} catch (MelderError) {
-		structFunctionSeries :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 		Melder_clearError ();
+		structFunctionSeries :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 	}
 }
 

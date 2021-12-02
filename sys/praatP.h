@@ -197,7 +197,7 @@ inline struct PraatP {
 
 struct autoPraatBackground {
 	autoPraatBackground () { praat_background (); }
-	~autoPraatBackground () { try { praat_foreground (); } catch (...) { Melder_clearError (); } }
+	~autoPraatBackground () { try { praat_foreground (); } catch (...) { Melder_clearError (); } }   // BUG if called during error time
 };
 
 /* End of file praatP.h */

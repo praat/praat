@@ -2984,6 +2984,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 				//		U"\nAssert error string: << ", assertErrorString.string,
 				//		U" >>\n"
 				//	);
+				if (Melder_hasCrash ())
+					throw;
 				if (assertErrorLineNumber == 0) {
 					throw;
 				} else if (assertErrorLineNumber != lineNumber) {
@@ -3017,7 +3019,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		my numberOfLabels = 0;
 		my running = false;
 		my stopped = false;
-		if (str32equ (Melder_getError (), U"\nScript exited.\n")) {
+		if (Melder_hasCrash ()) {
+			throw;
+		} else if (str32equ (Melder_getError (), U"\nScript exited.\n")) {
 			Melder_clearError ();
 		} else {
 			throw;

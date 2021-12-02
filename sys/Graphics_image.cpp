@@ -355,7 +355,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 						}
 					}
 				}
-			} catch (MelderError) { Melder_clearError (); }
+			} catch (MelderError) {
+				Melder_clearError ();
+			}
 		} else {
 			try {
 				autoINTVEC ixBuffer = zero_INTVEC (clipx2 - clipx1 + 1);
@@ -380,7 +382,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
 						}
 					}
 				}
-			} catch (MelderError) { Melder_clearError (); }
+			} catch (MelderError) {
+				Melder_clearError ();
+			}
 		}
 		/*
 		 * Copy the bitmap to the screen.

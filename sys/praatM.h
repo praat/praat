@@ -310,6 +310,8 @@
 					UiForm_parseString (_dia_.get(), _sendingString_, interpreter); \
 				} \
 			} catch (MelderError) { \
+				if (Melder_hasCrash ()) \
+					throw; \
 				autostring32 _parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
