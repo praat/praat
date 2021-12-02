@@ -380,7 +380,7 @@ void Gui_injectMessageProcs (GuiWindow parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund);
 	Melder_topShell = parent;
-	Melder_setFatalProc (gui_fatal);
+	Melder_setCrashProc (gui_fatal);
 	Melder_setErrorProc (gui_error);
 	Melder_setWarningProc (gui_warning);
 	Melder_setProgressProc (gui_progress);

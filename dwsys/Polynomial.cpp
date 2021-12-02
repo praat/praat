@@ -180,8 +180,8 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *out_xmin, d
 		if (out_ymax)
 			*out_ymax = ymx;
 	} catch (MelderError) {
-		structFunctionSeries :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 		Melder_clearError ();
+		structFunctionSeries :: v_getExtrema (x1, x2, out_xmin, out_ymin, out_xmax, out_ymax);
 	}
 }
 
