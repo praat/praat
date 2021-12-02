@@ -783,8 +783,10 @@ void praat_dataChanged (Daata object) {
 		This function can be called at error time, which is weird.
 	*/
 	autostring32 saveError;
-	bool duringError = Melder_hasError ();
+	const bool duringError = Melder_hasError ();
 	if (duringError) {
+		if (Melder_hasCrash ())
+			return;   // straight to the exit, without attempting to notify any editors of any data, which might well be corrupted
 		saveError = Melder_dup_f (Melder_getError ());
 		Melder_clearError ();
 	}
@@ -792,13 +794,20 @@ void praat_dataChanged (Daata object) {
 	WHERE (OBJECT == object) {
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			Editor editor = EDITOR [ieditor];
-			if (editor)
+			if (editor) {
 				Editor_dataChanged (editor);
+				if (duringError)
+					Melder_clearError ();   // accept only the original error, and not the extra ones generated in the editors
+			}
 		}
 	}
 	if (duringError) {
-		Melder_appendError (saveError.get());   // BUG: this appends an empty newline to the original error message
-		// BUG: who will catch the error?
+		Melder_appendError_noLine (saveError.get());   // restore the original error message
+		/*
+			If we are during error time, then this error should be caught
+			either by `throw` (see praatM.h, two occurrences) or by Melder_flushError (also see praatM.h, one occurrence).
+			LAST CHECKED 2021-12-02
+		*/
 	}
 }
 
