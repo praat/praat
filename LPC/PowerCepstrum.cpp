@@ -1,6 +1,6 @@
 /* PowerCepstrum.cpp
  *
- * Copyright (C) 2012-2020 David Weenink
+ * Copyright (C) 2012-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,22 @@ autoPowerCepstrum PowerCepstrum_create (double qmax, integer nq) {
 	}
 }
 
+static autoMatrix PowerCepstrum_as_Matrix_dB (PowerCepstrum me) {
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
+		for (integer i = 1; i <= my nx; i ++)
+			thy z [1] [i] = my v_getValueAtSample (i, 1, 1); // 10 log val^2
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not conver to Matrix.");
+	}
+}
+
 void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, bool garnish) {
 	Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, true, garnish);
 }
 
-void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrumTrendType lineType, kCepstrumTrendFit method) {
+void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, kCepstrum_trendType lineType, kCepstrum_trendFit method) {
 
 	Graphics_setInner (g);
 
@@ -98,7 +109,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 	 */
 	double lineWidth =  Graphics_inqLineWidth (g);
 	Graphics_setLineWidth (g, 2);
-	if (lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ) {
+	if (lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ) {
 		integer n = 500;
 		const double dq = (qend - qstart) / (n + 1);
 		const double q1 = qstart;
@@ -135,7 +146,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 /*
 	Fit line y = ax+b or y = a log(x) + b  on interval [qmin,qmax]
  */
-void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrumTrendType lineType, kCepstrumTrendFit method) {
+void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrum_trendType lineType, kCepstrum_trendFit method) {
 	try {
 		double a, intercept;
 		if (qmax <= qmin) {
@@ -146,7 +157,7 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		integer imin, imax;
 		if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 			return;
-		if (imin == 1 && lineType == kCepstrumTrendType::EXPONENTIAL_DECAY)
+		if (imin == 1 && lineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
 			imin = 2; // because log(0) is undefined
 		integer numberOfPoints = imax - imin + 1;
 		Melder_require (numberOfPoints > 1,
@@ -157,15 +168,15 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
-			if (lineType == kCepstrumTrendType::EXPONENTIAL_DECAY)
+			if (lineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
 				x [i] = log (x [i]);
 			y [i] = my v_getValueAtSample (isamp, 1, 1);
 		}
-		if (method == kCepstrumTrendFit::LEAST_SQUARES)
+		if (method == kCepstrum_trendFit::LEAST_SQUARES)
 			NUMfitLine_LS (x.get(), y.get(), & a, & intercept);
-		else if (method == kCepstrumTrendFit::ROBUST_FAST)
+		else if (method == kCepstrum_trendFit::ROBUST_FAST)
 			NUMfitLine_theil (x.get(), y.get(), & a, & intercept, false);
-		else if (method == kCepstrumTrendFit::ROBUST_SLOW)
+		else if (method == kCepstrum_trendFit::ROBUST_SLOW)
 			NUMfitLine_theil (x.get(), y.get(), & a, & intercept, true);
 		else {
 			Melder_throw (U"Invalid method.");
@@ -195,11 +206,11 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 #endif
 
 // clip with tilt line
-static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrumTrendType lineType) {
+static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrum_trendType lineType) {
 	for (integer j = 1; j <= my nx; j ++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
-		double xq = lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ? log(q) : q;
+		double xq = lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log(q) : q;
 		double db_background = slope * xq + intercept;
 		double db_cepstrum = my v_getValueAtSample (j, 1, 1);
 		double diff = db_cepstrum - db_background;
@@ -211,13 +222,13 @@ static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double sl
 }
 
 
-void PowerCepstrum_subtractTrend_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
+void PowerCepstrum_subtractTrend_inplace (PowerCepstrum me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
 	double slope, intercept;
 	PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
 	PowerCepstrum_subtractTrendLine_inplace (me, slope, intercept, lineType);
 }
 
-autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFit, double qendFit, kCepstrumTrendType lineType, kCepstrumTrendFit fitMethod) {
+autoPowerCepstrum PowerCepstrum_subtractTrend (PowerCepstrum me, double qstartFit, double qendFit, kCepstrum_trendType lineType, kCepstrum_trendFit fitMethod) {
 	try {
 		autoPowerCepstrum thee = Data_copy (me);
 		PowerCepstrum_subtractTrend_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
@@ -301,75 +312,147 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 	return thee;
 }
 
+double PowerCepstrum_getValueAtIndex (PowerCepstrum me, integer index) {
+	if (index < 1 || index > my nx)
+		return undefined;
+	return my v_getValueAtSample (index, 1, 1); // 10 log val^2
+}
+
 void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *out_peakdB, double *out_quefrency) {
-	autoPowerCepstrum thee = Data_copy (me);
-	double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
-	for (integer i = 1; i <= my nx; i ++) {
-		thy z [1] [i] = my v_getValueAtSample (i, 1, 1); // 10 log val^2
-	}
+	autoMatrix thee = PowerCepstrum_as_Matrix_dB (me);
+	const double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
 	double peakdB, quefrency;
-	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, peakInterpolationType, & peakdB, & quefrency);   // FIXME cast
+	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, peakInterpolationType, & peakdB, & quefrency);
 	if (out_peakdB)
 		*out_peakdB = peakdB;
 	if (out_quefrency)
 		*out_quefrency = quefrency;
 }
 
+autoTable PowerCepstrum_tabulateRhamonics (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType) {
+	try {
+		autoTable thee;
+		double  peakdB, qpeak;
+		const double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
+		autoMatrix him = PowerCepstrum_as_Matrix_dB (me);
+		Vector_getMaximumAndX ((Vector) him.get(), lowestQuefrency, highestQuefrency, 1, peakInterpolationType, & peakdB, & qpeak);		
+		/*
+			how many rhamonic peaks in interval [0, xmax] ?
+		*/
+		integer numberOfRhamonics = 2;
+		while (qpeak > 0 && qpeak * numberOfRhamonics <= my xmax)
+			numberOfRhamonics++;
+		numberOfRhamonics --;
+		const conststring32 columnNames [] = { U"peak(dB)", U"quefrency(s)" };
+		thee = Table_createWithColumnNames (numberOfRhamonics, ARRAY_TO_STRVEC (columnNames));
+
+		Table_setNumericValue (thee.get(), 1, 1, peakdB);
+		Table_setNumericValue (thee.get(), 1, 2, qpeak);
+		kVector_valueInterpolation valueInterpolationType = ( peakInterpolationType > kVector_peakInterpolation :: NONE ?
+			kVector_valueInterpolation :: LINEAR : kVector_valueInterpolation :: NEAREST );
+		for (integer rhamonic = 2; rhamonic <= numberOfRhamonics; rhamonic ++) {
+			const double quefrency = rhamonic * qpeak;
+			const double amplitude = Vector_getValueAtX ((Vector) him.get(), quefrency, 1, valueInterpolationType);
+			Table_setNumericValue (thee.get(), rhamonic, 1, amplitude);
+			Table_setNumericValue (thee.get(), rhamonic, 2, quefrency);
+		}		
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": rhamonics could not be calculated.");
+	}
+}
+
+static autoMAT PowerCepstrum_getRhamonicsPower (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
+	try {
+		autoMAT rhamonics;
+		double  peakdB, qpeak;
+		PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, kVector_peakInterpolation :: CUBIC, & peakdB, & qpeak);
+		/*
+			how many rhamonic peaks in interval [0, xmax] ?
+		*/
+		integer numberOfRhamonics = 2;
+		while (qpeak > 0 && qpeak * numberOfRhamonics <= my xmax)
+			numberOfRhamonics++;
+		numberOfRhamonics --;
+		rhamonics = zero_MAT (numberOfRhamonics, 4);
+		for (integer rhamonic = 1; rhamonic <= numberOfRhamonics; rhamonic ++) {
+			const double quefrency = rhamonic * qpeak;
+			const double f = 1.0 / quefrency;
+			const double flow = f * (1.0 - f0fractionalWidth);
+			const double fhigh = f * (1.0 + f0fractionalWidth);
+			const double qlow =  1.0 / fhigh;
+			const double qhigh = ( f0fractionalWidth >= 1.0 ? my xmax : 1.0 / flow );
+			rhamonics [rhamonic] [2] = qlow;
+			rhamonics [rhamonic] [3] = quefrency;
+			rhamonics [rhamonic] [4] = qhigh;
+			integer iqmin, iqmax;
+			Matrix_getWindowSamplesX (me, qlow, qhigh, & iqmin, & iqmax);
+			for (integer iq = iqmin; iq <= iqmax; iq ++)
+				rhamonics [rhamonic] [1] += my v_getValueAtSample (iq, 1, 0);
+		}		
+		return rhamonics;
+	} catch (MelderError) {
+		Melder_throw (me, U": rhamonics could not be calculated.");
+	}
+}
+
+double PowerCepstrum_nearestPeak (PowerCepstrum me, double quefrency) {
+	
+}
+
+autoTable PowerCepstrum_to_Table_rhamonics (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
+	try {
+		autoMAT rhamonics = PowerCepstrum_getRhamonicsPower (me, pitchFloor, pitchCeiling, f0fractionalWidth);
+		const conststring32 columnNames [] = { U"power", U"qlow", U"quefrency", U"qhigh" };
+		autoTable thee = Table_createWithColumnNames (rhamonics.nrow, ARRAY_TO_STRVEC (columnNames));
+		for (integer irow = 1; irow <= rhamonics.nrow; irow ++)
+			for (integer icol = 1; icol <= rhamonics.ncol; icol ++)
+				Table_setNumericValue (thee.get(), irow, icol, rhamonics [irow] [icol]);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot create Table with rhamonics.");
+	}
+}
+
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
-	double rnr = undefined;
-	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
+	double  peakdB, qpeak;
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, kVector_peakInterpolation :: CUBIC, & peakdB, & qpeak);
 	integer imin, imax;
-	if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
-		return rnr;
-
-	integer ndata = imax - imin + 1;
+	const double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor;
+	const integer ndata = Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax);
 	if (ndata < 2)
-		return rnr;	
-	// how many peaks in interval ?
-	integer npeaks = 2;
-	while (qpeak > 0 && qpeak * npeaks <= qmax)
-        npeaks++;
-	npeaks--;
-	
-	double sum = 0.0, sumr = 0.0;
-	for (integer i = imin; i <= imax; i ++) {
-		double val = my v_getValueAtSample (i, 1, 0);
-		double qx = my x1 + (i - 1) * my dx;
-		sum += val;
-		// is qx within an interval around a multiple of the peak's q ?
-		for (integer j = 1; j <= npeaks; j ++) {
-			double f0c = 1.0 / (j * qpeak);
-			double f0clow = f0c * (1.0 - f0fractionalWidth);
-			double f0chigh = f0c * (1.0 + f0fractionalWidth);
-			double qclow =  1.0 / f0chigh;
-			double qchigh = ( f0fractionalWidth >= 1 ? qmax : 1.0 / f0clow );
-			if (qx >= qclow && qx <= qchigh) {   // yes in rahmonic interval
-				sumr += val;
-				break;
-			}
-		}
-	}
-	rnr = sumr >= sum ? 1000000.0 : sumr / (sum - sumr);
+		return undefined;	
+	/*
+		how many rhamonic peaks in interval [qmin, qmax] ?
+	*/
+	autoMAT rhamonics = PowerCepstrum_getRhamonicsPower (me, pitchFloor, pitchCeiling, f0fractionalWidth);
+	if (rhamonics.nrow == 0)
+		return undefined;
+	long double sum = 0.0;
+	for (integer i = imin; i <= imax; i ++)
+		sum += my v_getValueAtSample (i, 1, 0);
+
+	const double sumOfRhamonics = NUMsum (rhamonics.column (1));
+	const double rnr = sumOfRhamonics >= sum ? 1000000.0 : sumOfRhamonics / (sum - sumOfRhamonics);
 	return rnr;
 }
 
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *out_qpeak) {
 	double slope, intercept, quefrency, peakdB;
-	PowerCepstrum_fitTrendLine (me, 0.001, 0, & slope, & intercept, kCepstrumTrendType::LINEAR, kCepstrumTrendFit::LEAST_SQUARES);
+	PowerCepstrum_fitTrendLine (me, 0.001, 0, & slope, & intercept, kCepstrum_trendType::LINEAR, kCepstrum_trendFit::LEAST_SQUARES);
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_subtractTrendLine_inplace (thee.get(), slope, intercept, kCepstrumTrendType::LINEAR);
+	PowerCepstrum_subtractTrendLine_inplace (thee.get(), slope, intercept, kCepstrum_trendType::LINEAR);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, kVector_peakInterpolation :: NONE, & peakdB, & quefrency);
 	if (out_qpeak)
 		*out_qpeak = quefrency;
 	return peakdB;
 }
 
-double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrumTrendType  lineType, kCepstrumTrendFit fitMethod, double *out_qpeak) {
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double qstartFit, double qendFit, kCepstrum_trendType  lineType, kCepstrum_trendFit fitMethod, double *out_qpeak) {
 	double slope, intercept, qpeak, peakdB;
 	PowerCepstrum_fitTrendLine (me, qstartFit, qendFit, & slope, & intercept, lineType, fitMethod);
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, peakInterpolationType, & peakdB, & qpeak);
-	double xq = lineType == kCepstrumTrendType::EXPONENTIAL_DECAY ? log(qpeak) : qpeak;
+	double xq = lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log(qpeak) : qpeak;
 	double db_background = slope * xq + intercept;
 	double cpp = peakdB - db_background;
 	if (out_qpeak)
