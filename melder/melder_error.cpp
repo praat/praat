@@ -59,7 +59,18 @@ bool Melder_hasError (conststring32 partialError) {
 	return !! str32str (theErrorBuffer, partialError);
 }
 
+#define CRASH_SEMAPHORE  U" will crash. Please notify the author "
+
+bool Melder_hasCrash () {
+	const char32 *firstSpace = str32chr (theErrorBuffer, U' ');
+	if (! firstSpace)
+		return false;
+	return Melder_stringMatchesCriterion (firstSpace, kMelder_string::STARTS_WITH, CRASH_SEMAPHORE, false);
+}
+
 void Melder_clearError () {
+	if (Melder_hasCrash ())
+		throw MelderError ();
 	theErrorBuffer [0] = U'\0';
 }
 
@@ -85,22 +96,13 @@ void Melder_flushError () {
 		*/
 		static char32 temp [BUFFER_LENGTH];
 		str32cpy (temp, theErrorBuffer);
-		Melder_clearError ();
+		theErrorBuffer [0] = U'\0';
 		(*p_theErrorProc) (temp);
 	}
 }
 
 #include <mutex>
 static std::mutex theMelder_crash_mutex;   // to guard against simultaneous crashes in multiple threads
-
-#define CRASH_SEMAPHORE  U" will crash. Please notify the author "
-
-bool Melder_hasCrash () {
-	const char32 *firstSpace = str32chr (theErrorBuffer, U' ');
-	if (! firstSpace)
-		return false;
-	return Melder_stringMatchesCriterion (firstSpace, kMelder_string::STARTS_WITH, CRASH_SEMAPHORE, false);
-}
 
 static const conststring32 theCrashMessage { U"Praat" CRASH_SEMAPHORE   // TODO: make dependent on app name
 	"(paul.boersma@uva.nl) with all of the following information, "
