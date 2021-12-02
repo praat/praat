@@ -1,6 +1,6 @@
 /* Gui_messages.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma,
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@ static bool waitWhileProgress (double progress, conststring32 message, GuiDialog
 	GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton)
 {
 	#if gtk
+		(void) cancelButton;   // the Interrupt button has its own callback
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
 		// Until then, the button click attaches a g_object data key named "pressed" to the cancelButton
@@ -76,6 +77,7 @@ static bool waitWhileProgress (double progress, conststring32 message, GuiDialog
 			}
 		}
 	#elif cocoa
+		(void) cancelButton;   // the Interrupt button has its own callback
 		while (NSEvent *nsEvent = [NSApp
 			nextEventMatchingMask: NSAnyEventMask
 			untilDate: [NSDate distantPast]
@@ -84,14 +86,16 @@ static bool waitWhileProgress (double progress, conststring32 message, GuiDialog
 			])
 		{
 			NSUInteger nsEventType = [nsEvent type];
-			if (nsEventType == NSKeyDown) NSBeep ();
+			if (nsEventType == NSKeyDown)
+				NSBeep ();
 			[[nsEvent window]  sendEvent: nsEvent];
 		}
 	#endif
 	if (progress >= 1.0) {
 		GuiThing_hide (dia);
 	} else {
-		if (progress <= 0.0) progress = 0.0;
+		if (progress <= 0.0)
+			progress = 0.0;
 		GuiThing_show (dia);   // TODO: prevent raising to the front
 		const char32 *newline = str32chr (message, U'\n');
 		if (newline) {
@@ -241,7 +245,7 @@ static void * gui_monitor (double progress, conststring32 message) {
 #if cocoa
 	static void mac_message (NSAlertStyle macAlertType, conststring32 message32) {
 		static char16 message16 [4000];
-		integer messageLength = str32len (message32);
+		const integer messageLength = str32len (message32);
 		uinteger j = 0;
 		for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
 			char32 kar = message32 [i];
@@ -261,24 +265,21 @@ static void * gui_monitor (double progress, conststring32 message) {
 			in which case the split is done at the second line break.
 		*/
 		const char16 *lineBreak = & message16 [0];
-		for (; *lineBreak != u'\0'; lineBreak ++) {
-			if (*lineBreak == u'\n') {
+		for (; *lineBreak != u'\0'; lineBreak ++)
+			if (*lineBreak == u'\n')
 				break;
-			}
-		}
-		if (*lineBreak == u'\n' && lineBreak - message16 > 0 && lineBreak [-1] == u':') {
-			for (lineBreak ++; *lineBreak != u'\0'; lineBreak ++) {
-				if (*lineBreak == u'\n') {
+		if (*lineBreak == u'\n' && lineBreak - message16 > 0 && lineBreak [-1] == u':')
+			for (lineBreak ++; *lineBreak != u'\0'; lineBreak ++)
+				if (*lineBreak == u'\n')
 					break;
-				}
-			}
-		}
 		uinteger lengthOfFirstSentence = (uinteger) (lineBreak - message16);
 		/*
 			Create an alert dialog with an icon that is appropriate for the level.
 		*/
 		NSAlert *alert = [[NSAlert alloc] init];
 		[alert setAlertStyle: macAlertType];
+		if (macAlertType == NSCriticalAlertStyle)
+			[alert addButtonWithTitle: @"Crash"];
 		/*
 			Add the header in bold.
 		*/
@@ -292,7 +293,7 @@ static void * gui_monitor (double progress, conststring32 message) {
 		*/
 		if (lengthOfFirstSentence < j) {
 			NSString *rest = [[NSString alloc] initWithCharacters: (const unichar *) & lineBreak [1]   length: j - 1 - lengthOfFirstSentence];
-			if (rest) {   // make this very safe, because we can be at error time or at fatal time
+			if (rest) {   // make this very safe, because we can be at error time or at crash time
 				[alert setInformativeText: rest];
 				[rest release];
 			}
@@ -316,11 +317,12 @@ static void gui_fatal (conststring32 message) {
 	free (theMessageFund);
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peek32to8 (message));
+			GTK_MESSAGE_ERROR, GTK_BUTTONS_NONE, "%s", Melder_peek32to8 (message));
+		gtk_dialog_add_buttons (GTK_DIALOG (dialog), "Crash", GTK_RESPONSE_OK, nullptr);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif motif
-		MessageBox (nullptr, Melder_peek32toW (message), L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
+		MessageBox (nullptr, Melder_peek32toW (message), L"Crashing bug", MB_OK | MB_TOPMOST | MB_ICONSTOP);
 	#elif cocoa
 		mac_message (NSCriticalAlertStyle, message);
 		SysError (11);
@@ -328,7 +330,7 @@ static void gui_fatal (conststring32 message) {
 }
 
 static void gui_error (conststring32 message) {
-	bool memoryIsLow = str32str (message, U"Out of memory");
+	const bool memoryIsLow = str32str (message, U"Out of memory");
 	if (memoryIsLow)
 		free (theMessageFund);
 	#if gtk

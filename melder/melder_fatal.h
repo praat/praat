@@ -40,5 +40,7 @@ void Melder_fatal_ (const MelderArg&,
 
 void Melder_setFatalProc (void (*p_fatalProc) (conststring32));
 
+void Melder_fatal__ ();
+
 /* End of file melder_fatal.h */
 #endif
