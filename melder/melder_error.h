@@ -2,7 +2,7 @@
 #define _melder_error_h_
 /* melder_error.h
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,8 @@ void Melder_flushError (const MelderArg& first, Args... rest) {
 bool Melder_hasError ();
 bool Melder_hasError (conststring32 partialError);
 	/* Returns true if there is an error message in store, otherwise false. */
+bool Melder_hasCrash ();
+	/* Returns true if there is an error message in store, and that error message is a crash message. */
 
 void Melder_clearError ();
 	/* Cancel all stored error messages. */
@@ -81,6 +83,17 @@ conststring32 Melder_getError ();
 	/* Returns the error string. Mainly used with str32str. */
 
 void Melder_setErrorProc (void (*p_errorProc) (conststring32));
+
+void Melder_fatal_ (const MelderArg&,
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U""
+);
+
+#define Melder_fatal(...)  do { Melder_fatal_ (__VA_ARGS__); abort (); } while (0)
+
+void Melder_setCrashProc (void (*p_crashProc) (conststring32));
 
 /* End of file melder_error.h */
 #endif

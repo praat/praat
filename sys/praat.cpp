@@ -780,8 +780,8 @@ void praat_installEditorN (Editor editor, DaataList objects) {
 
 void praat_dataChanged (Daata object) {
 	/*
-	 * This function can be called at error time, which is weird.
-	 */
+		This function can be called at error time, which is weird.
+	*/
 	autostring32 saveError;
 	bool duringError = Melder_hasError ();
 	if (duringError) {
