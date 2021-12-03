@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20211117)
+MAN_BEGIN (U"What's new?", U"ppgb", 20211202)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.02# (2 December 2021)")
+LIST_ITEM (U"• Fixed a hang if there were negative pitch values in Sound: Change Gender.")
+LIST_ITEM (U"• Fixed a crash if the size of a PCA did not match the size of a TableOfReal.")
 NORMAL (U"##6.2.01# (17 November 2021)")
 LIST_ITEM (U"• Sound window: corrected a bug that caused a thick waveform during or after playing.")
 ENTRY (U"What used to be new?")
