@@ -256,11 +256,6 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
-		/*
-			We choose "==" instead of "<=" in the requirement below to avoid any possibilitiy that
-			the result has been constructed from part of a larger table. For this case 
-			we would need an extra parameter.
-		*/
 		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
 			U"The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.");
 
