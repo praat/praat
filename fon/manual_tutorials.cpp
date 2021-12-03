@@ -25,7 +25,7 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (U"What's new?", U"ppgb", 20211203)
 INTRO (U"Latest changes in Praat.")
 NORMAL (U"##6.2.03# (3 December 2021)")
-LIST_ITEM (U"• Made Enter key work as expected (i.e. character selection) on Japanese keyboards in multi-line text fields in dialogs and TextGrid window.")
+LIST_ITEM (U"• Mac: made Enter key work as expected (i.e. character selection) on Japanese keyboards in multi-line text fields in dialogs and TextGrid window.")
 NORMAL (U"##6.2.02# (2 December 2021)")
 LIST_ITEM (U"• Fixed a hang if there were negative pitch values in Sound: Change Gender.")
 LIST_ITEM (U"• Fixed a crash if the size of a PCA did not match the size of a TableOfReal.")
