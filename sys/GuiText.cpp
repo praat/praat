@@ -606,7 +606,20 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		if (! my d_widget -> shell -> textFocus)
 			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
 	#elif cocoa
-		if (flags & GuiText_SCROLLED) {
+		const bool isMultilineTextField = ( flags & GuiText_ANYWRAP );
+		/*
+			The following can be set to true once we can simulate an NSTextField with an NSTextView.
+			Stuff still missing includes:
+			- automatic selection of the whole field when the user tabs
+			- a blue outline around the field
+			- an Enter would take away the focus from the NSTextView,
+			  which might be circumvented by incorrect code described at GuiCocoaApplication::sendEvent() in GuiMenu.cpp
+			(LAST CHECKED 2021-02-03)
+		*/
+		const bool multiLineTextFieldsUseNSTextView = false;   // set to true to try out scrollable multi-line text fields
+		const bool weWouldLikeScrolling = ( flags & GuiText_SCROLLED );
+		const bool weHaveTroubleImplementingScrolling = ( isMultilineTextField && ! multiLineTextFieldsUseNSTextView );
+		if (weWouldLikeScrolling && ! weHaveTroubleImplementingScrolling) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
 			[my d_cocoaScrollView setUserData: nullptr];   // because those user data can only be GuiScrolledWindow
 			my d_widget = my d_cocoaScrollView;
@@ -699,8 +712,15 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setAutomaticTextReplacementEnabled: NO];
 			[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
 			[my d_cocoaTextView setDelegate: my d_cocoaTextView];
-			if (flags & GuiText_ANYWRAP)
+			if (flags & GuiText_ANYWRAP) {
+				/*
+					The following two statements are not sufficient
+					to make an NSTextView act like an NSTextField.
+					(LAST CHECKED 2021-12-03)
+				*/
 				[my d_cocoaTextView setFieldEditor: YES];   // so that it takes part in tab navigation
+				[my d_cocoaTextView setSelectable: YES];   // so that it takes part in tab navigation
+			}
 			/*
 				Regrettably, we have to implement the following HACK
 				to prevent tab-based line breaks even when editing manually.

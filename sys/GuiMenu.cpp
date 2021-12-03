@@ -169,35 +169,54 @@ void structGuiMenu :: v_destroy () noexcept {
 					}
 				}
 			} else if (character == NSEnterCharacter || character == NSNewlineCharacter || character == NSCarriageReturnCharacter) {
-				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
-					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
-					if (shell -> classInfo == classGuiWindow) {
-						/*
-							Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
-						*/
-						GuiWindow window = (GuiWindow) shell;
-						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
-							try {
-								structGuiMenuItemEvent event { nullptr, false, false, false };
-								window -> d_enterCallback (window -> d_enterBoss, & event);
-							} catch (MelderError) {
-								Melder_flushError (U"Enter key not completely handled.");
+				if ((false)) {   // false means "don't try to mess with the Mac's handling of the Enter key" (see below for an explanation)
+					/*
+						The following code used to be an attempt to preempt the Enter key,
+						in order to make sure that:
+						1. pressing Enter in a dialog with a multiline text widget would invoke the OK button;
+						2. pressing Enter in a window with a multiline text widget (TextGrid window) would invoke the Enter menu shortcut.
+						This scheme went wrong, because when the keyboard is e.g. Japanese (Romaji)
+						the Enter key should be used for selection the intended characters;
+						for instance, try typing: "seikou Space Space Space Enter Enter seikou Space Space Enter Enter Enter";
+						only the fifth of these Enters should invoke the menu command.
+
+						Therefore, the following code is not executed as long as no method has been found
+						to get to know whether an Enter should be sent on to the Mac's keyboard handler
+						or to the menu.
+
+						Related to this is the problem of having an NSTextView in these cases instead of a simple NSTextField.
+						See GuiText_create() for more details.
+					 */
+					NSWindow *cocoaKeyWindow = [NSApp keyWindow];
+					if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+						GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+						if (shell -> classInfo == classGuiWindow) {
+							/*
+								Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
+							*/
+							GuiWindow window = (GuiWindow) shell;
+							if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
+								try {
+									structGuiMenuItemEvent event { nullptr, false, false, false };
+									window -> d_enterCallback (window -> d_enterBoss, & event);
+								} catch (MelderError) {
+									Melder_flushError (U"Enter key not completely handled.");
+								}
+								return;
 							}
-							return;
-						}
-					} else if (shell -> classInfo == classGuiDialog) {
-						/*
-							Reroute Enter key presses from any multiline text view to the default button.
-						*/
-						GuiDialog dialog = (GuiDialog) shell;
-						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
-							try {
-								dialog -> d_defaultCallback (dialog -> d_defaultBoss);
-							} catch (MelderError) {
-								Melder_flushError (U"Default button not completely handled.");
+						} else if (shell -> classInfo == classGuiDialog) {
+							/*
+								Reroute Enter key presses from any multiline text view to the default button.
+							*/
+							GuiDialog dialog = (GuiDialog) shell;
+							if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
+								try {
+									dialog -> d_defaultCallback (dialog -> d_defaultBoss);
+								} catch (MelderError) {
+									Melder_flushError (U"Default button not completely handled.");
+								}
+								return;
 							}
-							return;
 						}
 					}
 				}
