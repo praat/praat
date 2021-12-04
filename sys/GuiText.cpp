@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2019 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -563,8 +563,8 @@ void _GuiText_exit () {
 				if (shell -> classInfo == classGuiWindow) {
 					/*
 						Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
-						Note that implementing this here rather than in `sendEvent` (in GuiMenu.cpp)
-						allows Japanese keyboard to select characters.
+						Note that implementing this here rather than in `sendEvent` (see GuiMenu.cpp)
+						allows Japanese keyboards to select characters.
 					*/
 					GuiWindow window = (GuiWindow) shell;
 					if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
@@ -579,8 +579,8 @@ void _GuiText_exit () {
 				} else if (shell -> classInfo == classGuiDialog) {
 					/*
 						Reroute Enter key presses from any multiline text view to the default button.
-						Note that implementing this here rather than in `sendEvent` (in GuiMenu.cpp)
-						allows Japanese keyboard to select characters.
+						Note that implementing this here rather than in `sendEvent` (see GuiMenu.cpp)
+						allows Japanese keyboards to select characters.
 					*/
 					GuiDialog dialog = (GuiDialog) shell;
 					if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
@@ -596,6 +596,35 @@ void _GuiText_exit () {
 			return NO;
 		}
 		return NO;
+	}
+	- (BOOL) becomeFirstResponder {
+		NSEvent *nsEvent = [NSApp currentEvent];
+		if ([nsEvent type] == NSKeyDown) {
+			GuiText me = self -> d_userData;
+			if (me && Thing_isa (me, classGuiText)) {
+				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
+				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+					NSUInteger textLength = [[my d_cocoaTextView   textStorage] length];
+					if (shell -> classInfo == classGuiWindow)
+						[my d_cocoaTextView   setSelectedRange: NSMakeRange (textLength, textLength)];
+					else if (shell -> classInfo == classGuiDialog)
+						[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, textLength)];
+				}
+			}
+		}
+		[super becomeFirstResponder];
+		return YES;
+	}
+	- (BOOL) resignFirstResponder {
+		NSEvent *nsEvent = [NSApp currentEvent];
+		if ([nsEvent type] == NSKeyDown) {
+			GuiText me = self -> d_userData;
+			if (me && Thing_isa (me, classGuiText))
+				[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, 0)];
+		}
+		[super resignFirstResponder];
+		return YES;
 	}
 	@end
 #endif
@@ -689,6 +718,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaScrollView setBorderType: NSBezelBorder];
 			[my d_cocoaScrollView setHasHorizontalScroller: ! (flags & GuiText_ANYWRAP)];
 			[my d_cocoaScrollView setHasVerticalScroller: YES];
+			if (flags & GuiText_ANYWRAP)
+				[my d_cocoaScrollView setFocusRingType: NSFocusRingTypeExterior];
 			//[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			NSSize contentSize = [my d_cocoaScrollView contentSize];
 			my d_cocoaTextView = [[GuiCocoaTextView alloc] initWithFrame: NSMakeRect (0, 0, contentSize. width, contentSize. height)];
@@ -781,7 +812,6 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 					(LAST CHECKED 2021-12-03)
 				*/
 				[my d_cocoaTextView setFieldEditor: YES];   // so that it takes part in tab navigation?
-				[my d_cocoaTextView setSelectable: YES];
 			}
 			/*
 				Regrettably, we have to implement the following HACK
