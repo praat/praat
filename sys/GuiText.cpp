@@ -598,31 +598,31 @@ void _GuiText_exit () {
 		return NO;
 	}
 	- (BOOL) becomeFirstResponder {
-		NSEvent *nsEvent = [NSApp currentEvent];
-		if ([nsEvent type] == NSKeyDown) {
-			GuiText me = self -> d_userData;
-			if (me && Thing_isa (me, classGuiText)) {
-				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
-					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
-					NSUInteger textLength = [[my d_cocoaTextView   textStorage] length];
-					if (shell -> classInfo == classGuiWindow)
-						[my d_cocoaTextView   setSelectedRange: NSMakeRange (textLength, textLength)];
-					else if (shell -> classInfo == classGuiDialog)
-						[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, textLength)];
-				}
+		/*
+			We have to select the whole text if:
+			- we are in a dialog and we got here because the user typed a Tab
+			- we are in a dialog and we got here because the user clicked a menu command
+			But not if:
+			- we are in a GuiWindow (such as the TextGrid window or the script window)
+			- we are in a dialog and we got here because the user clicked inside our text (this would flash)
+		 */
+		GuiText me = self -> d_userData;
+		if (me && Thing_isa (me, classGuiText) && my d_shell -> classInfo == classGuiDialog) {
+			NSEvent *nsEvent = [NSApp currentEvent];
+			const bool isTabOrSomeKeyboardShortcut = ( [nsEvent type] == NSKeyDown );
+			const bool isClickOutsideUs = ( [nsEvent window] != my d_shell -> d_cocoaShell );
+			if (isTabOrSomeKeyboardShortcut || isClickOutsideUs) {
+				NSUInteger textLength = [[my d_cocoaTextView   textStorage] length];
+				[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, textLength)];
 			}
 		}
 		[super becomeFirstResponder];
 		return YES;
 	}
 	- (BOOL) resignFirstResponder {
-		NSEvent *nsEvent = [NSApp currentEvent];
-		if ([nsEvent type] == NSKeyDown) {
-			GuiText me = self -> d_userData;
-			if (me && Thing_isa (me, classGuiText))
-				[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, 0)];
-		}
+		GuiText me = self -> d_userData;
+		if (me && Thing_isa (me, classGuiText) && my d_shell -> classInfo == classGuiDialog)
+			[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, 0)];
 		[super resignFirstResponder];
 		return YES;
 	}
