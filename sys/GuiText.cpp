@@ -492,6 +492,23 @@ void _GuiText_exit () {
 			my d_changedCallback (my d_changedBoss, & event);
 		}
 	}
+	- (BOOL) control: (NSControl *) control   textView: (NSTextView *) fieldEditor   doCommandBySelector: (SEL) commandSelector {
+		//Melder_casual (U"command in a text field");
+		if (commandSelector == @selector (insertNewline:)) {
+			//Melder_casual (U"attempt to insert a new line in a text field");
+			const bool weWantToInterpretAnEnterAsANewline = ((false));   // perhaps at some point replace by a condition that makes sense
+			if (weWantToInterpretAnEnterAsANewline) {
+				[fieldEditor insertNewlineIgnoringFieldEditor: nil];
+				return YES;
+			}
+		}
+		/*
+			The same can be done for insertTab.
+			But tabs are captured at a lower level, in our `sendEvent` (see GuiMenu.cpp).
+			LAST CHECKED 2021-12-04
+		*/
+		return NO;
+	}
 	@end
 	@implementation GuiCocoaTextView {
 		GuiText d_userData;
@@ -534,6 +551,51 @@ void _GuiText_exit () {
 			my d_changedCallback (my d_changedBoss, & event);
 		}
 		return YES;
+	}
+	- (BOOL) textView: (NSTextView *) fieldEditor   doCommandBySelector: (SEL) commandSelector {
+		trace (U"command in a text view");
+		if (commandSelector == @selector (insertNewline:)) {
+			trace (U"attempt to insert a new line in a text view");
+			NSWindow *cocoaKeyWindow = [NSApp keyWindow];
+			NSEvent *nsEvent = [NSApp currentEvent];
+			if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
+				GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
+				if (shell -> classInfo == classGuiWindow) {
+					/*
+						Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
+						Note that implementing this here rather than in `sendEvent` (in GuiMenu.cpp)
+						allows Japanese keyboard to select characters.
+					*/
+					GuiWindow window = (GuiWindow) shell;
+					if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
+						try {
+							structGuiMenuItemEvent event { nullptr, false, false, false };
+							window -> d_enterCallback (window -> d_enterBoss, & event);
+						} catch (MelderError) {
+							Melder_flushError (U"Enter key not completely handled.");
+						}
+						return YES;
+					}
+				} else if (shell -> classInfo == classGuiDialog) {
+					/*
+						Reroute Enter key presses from any multiline text view to the default button.
+						Note that implementing this here rather than in `sendEvent` (in GuiMenu.cpp)
+						allows Japanese keyboard to select characters.
+					*/
+					GuiDialog dialog = (GuiDialog) shell;
+					if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
+						try {
+							dialog -> d_defaultCallback (dialog -> d_defaultBoss);
+						} catch (MelderError) {
+							Melder_flushError (U"Default button not completely handled.");
+						}
+						return YES;
+					}
+				}
+			}
+			return NO;
+		}
+		return NO;
 	}
 	@end
 #endif
@@ -616,7 +678,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			  which might be circumvented by incorrect code described at GuiCocoaApplication::sendEvent() in GuiMenu.cpp
 			(LAST CHECKED 2021-02-03)
 		*/
-		const bool multiLineTextFieldsUseNSTextView = false;   // set to true to try out scrollable multi-line text fields
+		const bool multiLineTextFieldsUseNSTextView = ((true));   // set to true to try out scrollable multi-line text fields
 		const bool weWouldLikeScrolling = ( flags & GuiText_SCROLLED );
 		const bool weHaveTroubleImplementingScrolling = ( isMultilineTextField && ! multiLineTextFieldsUseNSTextView );
 		if (weWouldLikeScrolling && ! weHaveTroubleImplementingScrolling) {
@@ -718,8 +780,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 					to make an NSTextView act like an NSTextField.
 					(LAST CHECKED 2021-12-03)
 				*/
-				[my d_cocoaTextView setFieldEditor: YES];   // so that it takes part in tab navigation
-				[my d_cocoaTextView setSelectable: YES];   // so that it takes part in tab navigation
+				[my d_cocoaTextView setFieldEditor: YES];   // so that it takes part in tab navigation?
+				[my d_cocoaTextView setSelectable: YES];
 			}
 			/*
 				Regrettably, we have to implement the following HACK
@@ -736,6 +798,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			if (! theTextFont)
 				theTextFont = [[NSFont systemFontOfSize: 13.0] retain];
 			[(NSTextField *) my d_widget   setFont: theTextFont];
+			[(NSTextField *) my d_widget   setDelegate: (id) my d_widget];   // needed only for `doCommandBySelector`?
 		}
 	#endif
 	

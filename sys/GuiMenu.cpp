@@ -87,9 +87,9 @@ void structGuiMenu :: v_destroy () noexcept {
 	static NSMenuItem *theMenuBarItems [30];
 	@implementation GuiCocoaApplication
 	/*
-	 * Override sendEvent() to capture navigation keys (Tab and Shift-Tab) as menu shortcuts
-	 * and to capture text-editing keys (Option-Backspace) as menu shortcuts.
-	 */
+		Override sendEvent() to capture navigation keys (Tab and Shift-Tab) as menu shortcuts
+		and to capture text-editing keys (Option-Backspace) as menu shortcuts.
+	*/
 	- (void) sendEvent: (NSEvent *) nsEvent {
 		if ([nsEvent type] == NSKeyDown) {
 			NSString *characters = [nsEvent characters];
@@ -128,12 +128,12 @@ void structGuiMenu :: v_destroy () noexcept {
 				}
 			} else if (character == NSBackTabCharacter) {
 				/*
-				 * One can get here by pressing Shift-Tab.
-				 *
-				 * But that is not the only way to get here:
-				 * NSBackTabCharacter equals 25, which may be the reason why
-				 * one can get here as well by pressing Ctrl-Y (Y is the 25th letter in the alphabet).
-				 */
+					One can get here by pressing Shift-Tab.
+
+					But that is not the only way to get here:
+					NSBackTabCharacter equals 25, which may be the reason why
+					one can get here as well by pressing Ctrl-Y (Y is the 25th letter in the alphabet).
+				*/
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
 					GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
@@ -154,12 +154,12 @@ void structGuiMenu :: v_destroy () noexcept {
 							}
 						} else {
 							/*
-							 * We probably got in this branch by pressing Ctrl-Y.
-							 * People sometimes press that because it means "yank" (= Paste) in Emacs,
-							 * and indeed sending this key combination on, as we do here,
-							 * implements (together with Ctrl-K = "kil" = Cut)
-							 * a special cut & paste operation in text fields.
-							 */
+								We probably got in this branch by pressing Ctrl-Y.
+								People sometimes press that because it means "yank" (= Paste) in Emacs,
+								and indeed sending this key combination on, as we do here,
+								implements (together with Ctrl-K = "kil" = Cut)
+								a special cut & paste operation in text fields.
+							*/
 							// do nothing, i.e. send on
 						}
 					} else {
@@ -169,57 +169,21 @@ void structGuiMenu :: v_destroy () noexcept {
 					}
 				}
 			} else if (character == NSEnterCharacter || character == NSNewlineCharacter || character == NSCarriageReturnCharacter) {
-				if ((false)) {   // false means "don't try to mess with the Mac's handling of the Enter key" (see below for an explanation)
-					/*
-						The following code used to be an attempt to preempt the Enter key,
-						in order to make sure that:
-						1. pressing Enter in a dialog with a multiline text widget would invoke the OK button;
-						2. pressing Enter in a window with a multiline text widget (TextGrid window) would invoke the Enter menu shortcut.
-						This scheme went wrong, because when the keyboard is e.g. Japanese (Romaji)
-						the Enter key should be used for selection the intended characters;
-						for instance, try typing: "seikou Space Space Space Enter Enter seikou Space Space Enter Enter Enter";
-						only the fifth of these Enters should invoke the menu command.
+				/*
+					WARNING: do not try to mess with the Mac's handling of the Enter key.
+					Suppose we want to make sure that:
+					1. pressing Enter in a dialog with a multiline text widget would invoke the OK button;
+					2. pressing Enter in a window with a multiline text widget (TextGrid window) would invoke the Enter menu shortcut.
+					Then we might indeed need to overwrite the behaviour of Enter,
+					but not on the present low level, because when the keyboard is e.g. Japanese (Romaji)
+					the Enter key should be used for selection the intended characters;
+					for instance, try typing: "seikou Space Space Space Enter Enter seikou Space Space Enter Enter Enter";
+					only the fifth of these Enters should invoke the menu command.
+					See GuiText_create() for where to capture Enter in an NSTextView,
+					namely in the doCommandBySelector method, where the command is `insertNewline`.
 
-						Therefore, the following code is not executed as long as no method has been found
-						to get to know whether an Enter should be sent on to the Mac's keyboard handler
-						or to the menu.
-
-						Related to this is the problem of having an NSTextView in these cases instead of a simple NSTextField.
-						See GuiText_create() for more details.
-					 */
-					NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-					if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
-						GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
-						if (shell -> classInfo == classGuiWindow) {
-							/*
-								Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
-							*/
-							GuiWindow window = (GuiWindow) shell;
-							if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
-								try {
-									structGuiMenuItemEvent event { nullptr, false, false, false };
-									window -> d_enterCallback (window -> d_enterBoss, & event);
-								} catch (MelderError) {
-									Melder_flushError (U"Enter key not completely handled.");
-								}
-								return;
-							}
-						} else if (shell -> classInfo == classGuiDialog) {
-							/*
-								Reroute Enter key presses from any multiline text view to the default button.
-							*/
-							GuiDialog dialog = (GuiDialog) shell;
-							if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
-								try {
-									dialog -> d_defaultCallback (dialog -> d_defaultBoss);
-								} catch (MelderError) {
-									Melder_flushError (U"Default button not completely handled.");
-								}
-								return;
-							}
-						}
-					}
-				}
+					So do nothing, i.e. send on.
+				*/
 			} else if (character == NSDeleteCharacter) {
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
@@ -246,8 +210,8 @@ void structGuiMenu :: v_destroy () noexcept {
 		[super sendEvent: nsEvent];   // the default action: send on
 	}
 	/*
-	 * The delegate methods.
-	 */
+		The delegate methods.
+	*/
 	- (void) applicationWillFinishLaunching: (NSNotification *) note
 	{
 		(void) note;
