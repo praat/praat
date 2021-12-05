@@ -261,9 +261,11 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues)
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
-		Melder_require (my eigenvectors.ncol == thy numberOfColumns, 
-			U"The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.");
-
+		Melder_require (thy numberOfColumns == my eigenvectors.ncol,
+			U"The number of columns in the TableOfReal (", thy numberOfColumns,
+			U") should match the length of the eigenvectors of the PCA (",
+			my eigenvectors.ncol, U").")
+		;
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		mul_MAT_out (his data.get(), thy data.get(), my eigenvectors.horizontalBand(1, numberOfDimensionsToKeep).transpose());
 		his rowLabels.all()  <<=  thy rowLabels.all();

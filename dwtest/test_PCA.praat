@@ -47,7 +47,7 @@ procedure test_pca_simple
 	.fvaf = Get fraction variance accounted for... 1 1
 	assert abs(.fvaf - 6/8)< .tol
 
-	appendInfoLine:  tab$, tab$, "Eigenvectors should be othogonal"
+	appendInfoLine:  tab$, tab$, "Eigenvectors should be orthogonal"
 	.ev11 = Get eigenvector element... 1 1
 	.ev12 = Get eigenvector element... 1 2
 	.ev21 = Get eigenvector element... 2 1
@@ -61,7 +61,7 @@ procedure test_pca_simple
 endproc
 
 procedure test_projections
-	appendInfoLine: tab$, "test_PCA_TableOfReal_projections"
+	appendInfoLine: tab$, "test PCA & TableOfReal projections"
 	.tol = 1e-12
 	@create_reference_TableOfReal
 	.tor = selected ("TableOfReal")
@@ -69,8 +69,9 @@ procedure test_projections
 	.ncols = Get number of columns
 	.pca = To PCA
 	.numberOfEigenvectors = Get number of eigenvectors
+	.evectorLength = Get eigenvector dimension
 
-	appendInfoLine:  tab$, tab$, "Project rows"
+	appendInfoLine:  tab$, tab$, "PCA & TableOfReal: Project rows"
 	selectObject: .tor, .pca
 	.projection1 = To TableOfReal (project rows): 0
 	.ncols_p1 = Get number of columns
@@ -83,11 +84,12 @@ procedure test_projections
 	selectObject: .tor
 	.minuscolumn = Copy: "1"
 	Remove column (index): 2
+	.ncolminus = Get number of columns
 	selectObject: .minuscolumn, .pca
-	asserterror The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.
+	asserterror The number of columns in the TableOfReal ('.ncolminus') should match the length of the eigenvectors of the PCA ('.evectorLength').
 	.projection3 = To TableOfReal (project rows): 0
 
-	appendInfoLine:  tab$, tab$, "To Configuration"
+	appendInfoLine:  tab$, tab$, "PCA & TableOfReal: To Configuration"
 	selectObject: .tor, .pca
 	.configuration1 = To Configuration: 0
 	.ncols_c1 = Get number of columns
@@ -97,10 +99,10 @@ procedure test_projections
 	.ncols_c2 = Get number of columns
 	assert .ncols_c2 = 1
 	selectObject: .minuscolumn, .pca
-	asserterror The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.
+	asserterror The number of columns in the TableOfReal ('.ncolminus') should match the length of the eigenvectors of the PCA ('.evectorLength').
 	.configuration3 = To Configuration: 0
 
-	appendInfoLine:  tab$, tab$, "Z-scores"
+	appendInfoLine:  tab$, tab$, "PCA & TableOfReal: Z-scores"
 	selectObject: .tor, .pca
 	.zscore1 = To TableOfReal (z-scores): 0
 	.ncols_z1 = Get number of columns
@@ -110,7 +112,7 @@ procedure test_projections
 	.ncols_z2 = Get number of columns
 	assert .ncols_z2 = 1
 	selectObject: .minuscolumn, .pca
-	asserterror The number of columns in the TableOfReal should match the size of the eigenvector of the PCA.
+	asserterror The number of columns in the TableOfReal ('.ncolminus') should match the length of the eigenvectors of the PCA ('.evectorLength').
 	.zscore3 = To TableOfReal (z-scores): 0
 
 	appendInfoLine:  tab$, tab$, "TableOfReal reconstruction from PCA+ Configuration"
@@ -126,7 +128,7 @@ procedure test_projections
 	... .configuration2, .minuscolumn, .zscore1, .zscore2, .pca, .tor,
 	... .reconstruction,  .columns3, .toomanyColumns
 	
-	appendInfoLine:  tab$, "test_PCA_TableOfReal_projections OK"
+	appendInfoLine:  tab$, "test PCA & TableOfReal projections OK"
 
 endproc
 
