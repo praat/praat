@@ -915,6 +915,7 @@ struct _history_entry_s {
 Thing_define (GuiText, GuiControl) {
 	GuiText_ChangedCallback d_changedCallback;
 	Thing d_changedBoss;
+	uint32 flags;
 	#if cocoa
 		GuiCocoaScrolledWindow *d_cocoaScrollView;
 		GuiCocoaTextView *d_cocoaTextView;
