@@ -1,7 +1,7 @@
 #pragma once
 /* MAT.h
  *
- * Copyright (C) 2017-2020 Paul Boersma
+ * Copyright (C) 2017-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -454,6 +454,8 @@ inline void sin_MAT_inout (MATVU const& mat) noexcept {
 		for (integer icol = 1; icol <= mat.ncol; icol ++)
 			mat [irow] [icol] = sin (mat [irow] [icol]);
 }
+
+autoMAT splitByLinesAndWhitespace_MAT (conststring32 string);
 
 inline void subtractReversed_MAT_inout (MATVU const& x, double number) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)

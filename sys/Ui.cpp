@@ -425,13 +425,22 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::REALMATRIX_:
 		{
 			autostring32 stringValue = GuiText_getString (my text);
-			MAT result;
-			bool ownedByInterpreter;
-			Interpreter_numericMatrixExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
-			if (ownedByInterpreter) {
-				my numericMatrixValue. adoptFromAmbiguousOwner (result);
-			} else {
-				my numericMatrixValue = copy_MAT (result);
+			kUi_realMatrixFormat format = (kUi_realMatrixFormat) GuiOptionMenu_getValue (my optionMenu);
+			switch (format) {
+				case kUi_realMatrixFormat::ONE_ROW_PER_LINE_: {
+					my numericMatrixValue = splitByLinesAndWhitespace_MAT (stringValue.get());
+				} break; case kUi_realMatrixFormat::FORMULA_: {
+					MAT result;
+					bool ownedByInterpreter;
+					Interpreter_numericMatrixExpression (nullptr, stringValue.get(), & result, & ownedByInterpreter);
+					if (ownedByInterpreter) {
+						my numericMatrixValue. adoptFromAmbiguousOwner (result);
+					} else {
+						my numericMatrixValue = copy_MAT (result);
+					}
+				} break; case kUi_realMatrixFormat::UNDEFINED: {
+					Melder_fatal (U"Unknown matrix format.");
+				}
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
