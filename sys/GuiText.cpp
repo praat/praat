@@ -553,44 +553,74 @@ void _GuiText_exit () {
 		return YES;
 	}
 	- (BOOL) textView: (NSTextView *) fieldEditor   doCommandBySelector: (SEL) commandSelector {
-		trace (U"command in a text view");
 		if (commandSelector == @selector (insertNewline:)) {
-			trace (U"attempt to insert a new line in a text view");
-			NSWindow *cocoaKeyWindow = [NSApp keyWindow];
-			NSEvent *nsEvent = [NSApp currentEvent];
-			if ([cocoaKeyWindow class] == [GuiCocoaShell class]) {
-				GuiShell shell = (GuiShell) [(GuiCocoaShell *) cocoaKeyWindow   getUserData];
-				if (shell -> classInfo == classGuiWindow) {
+			GuiText me = self -> d_userData;
+			if (me && Thing_isa (me, classGuiText)) {
+				/*
+					DESIRED BEHAVIOUR OF `ENTER` IN A TEXT WIDGET
+
+					Whether an Enter typed into a text widget should generate a newline
+					should depends on whether the text widget wraps or not.
+					If the text widget wraps, then that means that new lines will be automatically
+					created once the user types across the right-hand margin. In such cases,
+					there is little need for "Enter" to mean 'newline'; instead, the Enter key
+					should then be used to activate an OK button (in a dialog) or activating
+					a menu command with an Enter shortcut (in a window); the user can still
+					insert a newline by typing Option-Enter.
+					If the text widget does not wrap, typed text can move across the right-hand
+					margin (presumably, there will be a horizontal scrollbar). In such cases,
+					the user expects to be able to type Enter to obtain a newline.
+				*/
+				if (my flags & GuiText_ANYWRAP) {
 					/*
-						Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
-						Note that implementing this here rather than in `sendEvent` (see GuiMenu.cpp)
-						allows Japanese keyboards to select characters.
+						If left alone, the Enter key will cause the TextView to lose focus,
+						but the Enter will not be sent on to an OK button or use as a menu command shortcut.
+						For that to happen, the user will have to type the Enter key a second time.
+						That is unexpected for most users (though Apple may have regarded this as desired behaviour).
+						We therefore make sure that the focus-releasing Enter
+						will already invoke the OK button or the menu command shortcut.
 					*/
-					GuiWindow window = (GuiWindow) shell;
-					if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
-						try {
-							structGuiMenuItemEvent event { nullptr, false, false, false };
-							window -> d_enterCallback (window -> d_enterBoss, & event);
-						} catch (MelderError) {
-							Melder_flushError (U"Enter key not completely handled.");
+					NSEvent *nsEvent = [NSApp currentEvent];
+					if (Thing_isa (my d_shell, classGuiWindow)) {
+						/*
+							Reroute Enter key presses from any multiline text view to the menu item that has a shortcut for them.
+							Note that implementing this here rather than in `sendEvent` (see GuiMenu.cpp)
+							allows Japanese keyboards to select characters.
+						*/
+						GuiWindow window = (GuiWindow) my d_shell;
+						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && window -> d_enterCallback) {
+							try {
+								structGuiMenuItemEvent event { nullptr, false, false, false };
+								window -> d_enterCallback (window -> d_enterBoss, & event);
+							} catch (MelderError) {
+								Melder_flushError (U"Enter key not completely handled.");
+							}
+							return YES;
 						}
-						return YES;
+					} else if (Thing_isa (my d_shell, classGuiDialog)) {
+						/*
+							Reroute Enter key presses from any multiline text view to the default button.
+							Note that implementing this here rather than in `sendEvent` (see GuiMenu.cpp)
+							allows Japanese keyboards to select characters.
+						*/
+						GuiDialog dialog = (GuiDialog) my d_shell;
+						if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
+							try {
+								dialog -> d_defaultCallback (dialog -> d_defaultBoss);
+							} catch (MelderError) {
+								Melder_flushError (U"Default button not completely handled.");
+							}
+							return YES;
+						}
 					}
-				} else if (shell -> classInfo == classGuiDialog) {
+				} else {
 					/*
-						Reroute Enter key presses from any multiline text view to the default button.
-						Note that implementing this here rather than in `sendEvent` (see GuiMenu.cpp)
-						allows Japanese keyboards to select characters.
+						The following correct behaviour can be checked in fields that do not wrap,
+						i.e. in vector fields, matrix fields and string array fields,
+						for instance in `Create simple Matrix from values...`.
 					*/
-					GuiDialog dialog = (GuiDialog) shell;
-					if (! ([nsEvent modifierFlags] & (NSAlternateKeyMask | NSShiftKeyMask | NSCommandKeyMask | NSControlKeyMask)) && dialog -> d_defaultCallback) {
-						try {
-							dialog -> d_defaultCallback (dialog -> d_defaultBoss);
-						} catch (MelderError) {
-							Melder_flushError (U"Default button not completely handled.");
-						}
-						return YES;
-					}
+					[fieldEditor insertNewlineIgnoringFieldEditor: self];
+					return YES;
 				}
 			}
 			return NO;
@@ -622,7 +652,7 @@ void _GuiText_exit () {
 	- (BOOL) resignFirstResponder {
 		GuiText me = self -> d_userData;
 		if (me && Thing_isa (me, classGuiText) && my d_shell -> classInfo == classGuiDialog)
-			[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, 0)];
+			[my d_cocoaTextView   setSelectedRange: NSMakeRange (0, 0)];   // make selection invisible when another text field is in focus
 		[super resignFirstResponder];
 		return YES;
 	}
@@ -633,6 +663,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	autoGuiText me = Thing_new (GuiText);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
+	my flags = flags;
 	#if gtk
 		trace (U"before creating a GTK text widget: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		if (flags & GuiText_SCROLLED) {
@@ -697,20 +728,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		if (! my d_widget -> shell -> textFocus)
 			my d_widget -> shell -> textFocus = my d_widget;   // even if not-yet-managed. But in that case it will not receive global focus
 	#elif cocoa
-		const bool isMultilineTextField = ( flags & GuiText_ANYWRAP );
-		/*
-			The following can be set to true once we can simulate an NSTextField with an NSTextView.
-			Stuff still missing includes:
-			- automatic selection of the whole field when the user tabs
-			- a blue outline around the field
-			- an Enter would take away the focus from the NSTextView,
-			  which might be circumvented by incorrect code described at GuiCocoaApplication::sendEvent() in GuiMenu.cpp
-			(LAST CHECKED 2021-02-03)
-		*/
-		const bool multiLineTextFieldsUseNSTextView = ((true));   // set to true to try out scrollable multi-line text fields
-		const bool weWouldLikeScrolling = ( flags & GuiText_SCROLLED );
-		const bool weHaveTroubleImplementingScrolling = ( isMultilineTextField && ! multiLineTextFieldsUseNSTextView );
-		if (weWouldLikeScrolling && ! weHaveTroubleImplementingScrolling) {
+		if (flags & GuiText_SCROLLED) {
 			my d_cocoaScrollView = [[GuiCocoaScrolledWindow alloc] init];
 			[my d_cocoaScrollView setUserData: nullptr];   // because those user data can only be GuiScrolledWindow
 			my d_widget = my d_cocoaScrollView;
@@ -718,7 +736,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaScrollView setBorderType: NSBezelBorder];
 			[my d_cocoaScrollView setHasHorizontalScroller: ! (flags & GuiText_ANYWRAP)];
 			[my d_cocoaScrollView setHasVerticalScroller: YES];
-			if (flags & GuiText_ANYWRAP)
+			if (my d_shell -> classInfo == classGuiDialog)
 				[my d_cocoaScrollView setFocusRingType: NSFocusRingTypeExterior];
 			//[my d_cocoaScrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			NSSize contentSize = [my d_cocoaScrollView contentSize];
@@ -805,14 +823,8 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			[my d_cocoaTextView setAutomaticTextReplacementEnabled: NO];
 			[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
 			[my d_cocoaTextView setDelegate: my d_cocoaTextView];
-			if (flags & GuiText_ANYWRAP) {
-				/*
-					The following two statements are not sufficient
-					to make an NSTextView act like an NSTextField.
-					(LAST CHECKED 2021-12-03)
-				*/
-				[my d_cocoaTextView setFieldEditor: YES];   // so that it takes part in tab navigation?
-			}
+			if (my d_shell -> classInfo == classGuiDialog)
+				[my d_cocoaTextView setFieldEditor: YES];
 			/*
 				Regrettably, we have to implement the following HACK
 				to prevent tab-based line breaks even when editing manually.
@@ -1319,7 +1331,7 @@ void GuiText_setString (GuiText me, conststring32 text, bool undoable) {
 			if (undoable)
 				[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // to make this action undoable
 			//[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
-			if (true) {
+			if ((true)) {
 				[my d_cocoaTextView   setString: nsString];
 			} else {
 				NSMutableParagraphStyle * aMutableParagraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
