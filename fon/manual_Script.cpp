@@ -1276,7 +1276,7 @@ CODE (U"writeInfoLine: \"The sum of the cells along the diagonal is \", sumDiago
 NORMAL (U"The first version, which accesses the contents directly, is not only two lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN (U"Functions", U"ppgb", 20211129)
+MAN_BEGIN (U"Functions", U"ppgb", 20211207)
 NORMAL (U"A growing list of functions that you can use in @formulas and @scripting...")
 LIST_ITEM (U"##abs (%x)#  \\-- absolute value")
 LIST_ITEM (U"##abs\\#  (%%vector\\# %)#  \\-- absolute value of each element of %%vector\\# %")
@@ -1316,6 +1316,9 @@ LIST_ITEM (U"##ceiling\\# \\#  (%%matrix\\# \\# %)#  \\-- round up each cell of 
 LIST_ITEM (U"##center (%%v\\# %)# \\-- center (or centre) of gravity")
 LIST_ITEM (U"##chiSquareP (%chiSquare, %df)# \\-- area under the %\\ci^2 curve up to %chiSquare")
 LIST_ITEM (U"##chiSquareQ (%chiSquare, %df)# \\-- area under the %\\ci^2 curve after %chiSquare")
+LIST_ITEM (U"##chooseFolder\\$  (%%title\\$ %)# \\-- pops up a folder selection window")
+LIST_ITEM (U"##chooseReadFile\\$  (%%title\\$ %)# \\-- pops up a file selection window for opening (or appending to) an existing file")
+LIST_ITEM (U"##chooseWriteFile\\$  (%%title\\$ %, %%defaultFilename\\$ %)# \\-- pops up a file selection window for saving to a new file")
 LIST_ITEM (U"##columnSums\\#  (%%matrix\\# \\# %)#")
 LIST_ITEM (U"##cos (%x)# \\-- cosine")
 LIST_ITEM (U"##cos\\#  (%%vector\\# %)#  \\-- cosine of each element of %%vector\\# %")
@@ -3819,7 +3822,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20151031)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20211207)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3851,11 +3854,15 @@ NORMAL (U"at least if your current folder (see the Console's $$cd$ and $$dir$ co
 	"contains the folder $$data$ and that folder contains those two files. "
 	"Praat will start up, and shows the two files as a Sound and a TextGrid object in the list. "
 	"If Praat was already running when you typed the command, "
-	"the two files are added as objects to the existing list in Praat.")
+	"the two files are added as objects to the existing list in Praat (Windows only).")
 NORMAL (U"On the Mac, you do")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"and on Linux")
 CODE (U"/usr/bin/praat --open data/hello.wav data/hello.TextGrid")
+NORMAL (U"On the Mac and on Linux, each call to Praat will start up a new instance of Praat, "
+	"so you can have multiple Objects windows, multiple Picture windows, and so on.")
+NORMAL (U"Note that if you want to send messages or files to a running Praat, "
+	"the best way (on all platforms) is to use %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
 
 ENTRY (U"3. Calling Praat to open a script")
 NORMAL (U"On Windows, when you type")
@@ -4118,22 +4125,21 @@ MAN_BEGIN (U"sendpraat", U"ppgb", 20000927)
 NORMAL (U"See @@Scripting 8. Controlling Praat from another program@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20021218)
+MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20211207)
+INTRO (U"Sendpraat is a subroutine for sending messages to a %running Praat. "
+	"It is also a Windows, MacOS, or Linux console program with the same purpose.")
 LIST_ITEM (U"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
 LIST_ITEM (U"@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20151020)
-INTRO (U"A subroutine for sending messages to a %running Praat. "
-	"Also a Windows console, MacOS, or Linux console program with the same purpose.")
+MAN_BEGIN (U"Scripting 8.1. The sendpraat subroutine", U"ppgb", 20211207)
+INTRO (U"Sendpraat can be a subroutine for sending messages to a %running Praat program.")
 ENTRY (U"Syntax")
 LIST_ITEM (U"##sendpraat (void *#%display##, const char *#%program##, long #%timeOut##, char *#%text##);")
 ENTRY (U"Arguments")
 TAG (U"%display")
-DEFINITION (U"the display pointer if the subroutine is called from a running X program; "
-	"if null, sendpraat will open the display by itself. On Windows and Macintosh, "
-	"this argument is ignored.")
+DEFINITION (U"this argument is ignored; you can supply NULL.")
 TAG (U"%program")
 DEFINITION (U"the name of a running program that uses the Praat shell, e.g. \"Praat\" or \"ALS\". "
 	"The first letter may be specified as lower or upper case; it will be converted "
@@ -4161,10 +4167,10 @@ NORMAL (U"Suppose you have a sound file whose name is in the variable $fileName,
 	"to play this sound backwards.")
 CODE (U"char message [1000], *errorMessage;")
 CODE (U"sprintf (message, \"Read from file... \\% s\\bsnPlay reverse\\bsnRemove\", fileName);")
-CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 1000, message);")
+CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 3000, message);")
 NORMAL (U"This will work because ##Play reverse# is an action command "
 	"that becomes available in the dynamic menu when a Sound is selected. "
-	"On Linux, sendpraat will allow #Praat at most 1000 seconds to perform this.")
+	"On Linux, sendpraat will allow #Praat at most 3000 seconds to perform this.")
 ENTRY (U"Example 3: executing a large script file")
 NORMAL (U"Sometimes, it may be unpractical to send a large script directly to #sendpraat. "
 	"Fortunately, the receiving program knows #runScript:")
@@ -4173,7 +4179,7 @@ CODE (U"strcpy (message, \"runScript: \\bs\"doAll.praat\\bs\", 20\");")
 CODE (U"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
 NORMAL (U"This causes the program #Praat to run the script ##doAll.praat# with an argument of \"20\".")
 ENTRY (U"How to download")
-NORMAL (U"You can download the source code of the sendpraat subroutine and program "
+NORMAL (U"You can download the source code of the sendpraat subroutine "
 	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
 ENTRY (U"Instead")
 NORMAL (U"Instead of using sendpraat, you can also just take the following simple steps in your program:")
@@ -4181,15 +4187,17 @@ LIST_ITEM (U"1. on Linux, write the Praat script that you want to run, and save 
 LIST_ITEM (U"2. get Praat's process id from ##~/.praat-dir/pid#;")
 LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
 NORMAL (U"If the first line of your script is the comment \"\\#  999\", where 999 stands for the process id of your program, "
-	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script.")
+	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script. "
+	"If you do not want to receive such a message (if your program has no handler for it, the SIGUSR2 signal will kill your program), "
+	"then do not include such a line.")
 ENTRY (U"See also")
 NORMAL (U"To start a program from the command line instead and sending it a message, "
 	"you would not use #sendpraat, but instead run the program with a script file as an argument. "
 	"See @@Scripting 6.9. Calling from the command line@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8.2. The sendpraat program", U"ppgb", 20151020)
-INTRO (U"A Windows console or Unix (MacOS, Linux) terminal program for sending messages to a %running Praat program.")
+MAN_BEGIN (U"Scripting 8.2. The sendpraat program", U"ppgb", 20211207)
+INTRO (U"Sendpraat can be a Windows console or Unix (MacOS, Linux) terminal program for sending messages to a %running Praat program.")
 ENTRY (U"Syntax")
 CODE (U"#sendpraat [%timeOut] %program %message...")
 NORMAL (U"For the meaning of the arguments, see @@Scripting 8.1. The sendpraat subroutine|the sendpraat subroutine@.")
@@ -4209,6 +4217,9 @@ NORMAL (U"This causes the program #Als to draw five concentric circles into the 
 ENTRY (U"Example 4: running a large script")
 CODE (U"sendpraat praat \"runScript: \\bs\"doAll.praat\\bs\", 20\"")
 NORMAL (U"This causes the program #Praat to execute the script ##doAll.praat# with an argument of \"20\".")
+ENTRY (U"How to download")
+NORMAL (U"You can download the sendpraat program "
+	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 8.3. The sendpraat directive", U"ppgb", 20140112)
