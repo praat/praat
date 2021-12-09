@@ -24,6 +24,7 @@
 #include "espeak_ng.h"
 #include "speech.h"
 #include "synthesize.h"
+#include "voice.h"
 #include <errno.h>
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;

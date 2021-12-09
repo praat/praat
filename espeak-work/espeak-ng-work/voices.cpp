@@ -62,9 +62,9 @@ static int formant_rate_22050[9] = { 240, 170, 170, 170, 170, 170, 170, 170, 170
 int formant_rate[9]; // values adjusted for actual sample rate
 
 #define DEFAULT_LANGUAGE_PRIORITY  5
-#define N_VOICES_LIST  350
-static int n_voices_list = 0;
-static espeak_VOICE *voices_list[N_VOICES_LIST];
+
+int n_voices_list = 0;
+espeak_VOICE *voices_list[N_VOICES_LIST];
 
 espeak_VOICE current_voice_selected;
 
@@ -261,7 +261,7 @@ void ReadTonePoints(char *string, int *tone_pts)
 	       &tone_pts[8], &tone_pts[9]);
 }
 
-static espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file)
+espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file)
 {
 	// Read a Voice file, allocate a VOICE_DATA and set data from the
 	// file's  language, gender, name  lines
