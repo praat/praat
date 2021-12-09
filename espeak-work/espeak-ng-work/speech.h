@@ -17,6 +17,8 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
+#include "espeak_ng.h"
+
 #ifndef ESPEAK_NG_SPEECH_H
 #define ESPEAK_NG_SPEECH_H
 

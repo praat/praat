@@ -36,7 +36,7 @@
 #include "phoneme.h"                  // for PHONEME_TAB, PHONEME_TAB_LIST
 #include "speech.h"                   // for path_home, GetFileLength, PATHSEP
 #include "mbrola.h"                   // for mbrola_name
-//#include "soundicon.h"               // for soundicon_tab
+#include "soundicon.h"               // for soundicon_tab
 #include "synthesize.h"               // for PHONEME_LIST, frameref_t, PHONE...
 #include "translate.h"                // for Translator, LANGUAGE_OPTIONS
 #include "voice.h"                    // for ReadTonePoints, tone_points, voice
@@ -479,7 +479,7 @@ static int CountVowelPosition(PHONEME_LIST *plist)
 	return count;
 }
 
-static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist, unsigned short *p_prog, WORD_PH_DATA *worddata)
+static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist, unsigned short *p_prog, WORD_PH_DATA *worddata);
 static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist, USHORT *p_prog, WORD_PH_DATA *worddata)
 {
 	int which;

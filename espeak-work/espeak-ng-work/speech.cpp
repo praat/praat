@@ -53,7 +53,7 @@
 #include "espeak_command.h"       // for delete_espeak_command, SetParameter
 #include "event.h"                // for event_declare, event_clear_all, eve...
 #include "fifo.h"                 // for fifo_add_command, fifo_add_commands
-//#include "mbrola.h"               // for mbrola_delay
+#include "mbrola.h"               // for mbrola_delay
 #include "readclause.h"           // for PARAM_STACK, param_stack
 #include "synthdata.h"            // for FreePhData, LoadConfig, LoadPhData
 #include "synthesize.h"           // for SpeakNextClause, Generate, Synthesi...

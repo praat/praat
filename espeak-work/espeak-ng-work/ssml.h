@@ -24,7 +24,7 @@
 #include <stdbool.h>
 #include <wchar.h>
 
-#include <espeak-ng/speak_lib.h>
+#include "speak_lib.h"
 
 #ifdef __cplusplus
 extern "C"
