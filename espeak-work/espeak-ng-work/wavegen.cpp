@@ -246,8 +246,10 @@ void WcmdqStop()
 	}
 #endif
 
+#ifdef INCLUDE_MBROLA
 	if (mbrola_name[0] != 0)
 		MbrolaReset();
+#endif
 }
 
 int WcmdqFree()
@@ -1350,10 +1352,12 @@ static int WavegenFill2()
 		case WCMD_EMBEDDED:
 			SetEmbedded(q[1], q[2]);
 			break;
+#ifdef INCLUDE_MBROLA
 		case WCMD_MBROLA_DATA:
 			if (wvoice != NULL)
 				result = MbrolaFill(length, resume, (general_amplitude * wvoice->voicing)/64);
 			break;
+#endif
 		case WCMD_FMT_AMPLITUDE:
 			if ((wdata.amplitude_fmt = q[1]) == 0)
 				wdata.amplitude_fmt = 100; // percentage, but value=0 means 100%

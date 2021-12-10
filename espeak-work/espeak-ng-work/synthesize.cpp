@@ -1161,9 +1161,11 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume)
 	if (option_phoneme_events & espeakINITIALIZE_PHONEME_IPA)
 		use_ipa = 1;
 
+#ifdef INCLUDE_MBROLA
 	if (mbrola_name[0] != 0)
 		return MbrolaGenerate(phoneme_list, n_ph, resume);
-
+#endif
+	
 	if (resume == false) {
 		ix = 1;
 		embedded_ix = 0;
