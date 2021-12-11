@@ -1580,7 +1580,7 @@ static void cb_selectionChanged (Picture p, void * /* closure */,
 
 /***** Public functions. *****/
 
-static GuiWindow dialog;
+static GuiWindow thePictureWindow;
 
 static GuiMenu fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
 
@@ -1605,12 +1605,12 @@ void praat_picture_open () {
 	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
-			gtk_window_present (GTK_WINDOW (dialog -> d_gtkWindow));
+			gtk_window_present (GTK_WINDOW (thePictureWindow -> d_gtkWindow));
 		#elif motif
-			XtMapWidget (dialog -> d_xmShell);
-			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
+			XtMapWidget (thePictureWindow -> d_xmShell);
+			XMapRaised (XtDisplay (thePictureWindow -> d_xmShell), XtWindow (thePictureWindow -> d_xmShell));
 		#elif cocoa
-			GuiThing_show (dialog);
+			GuiThing_show (thePictureWindow);
 		#endif
 	}
 	/* Foregoing drawing routines may have changed some of the output attributes */
@@ -1662,7 +1662,8 @@ static autoDaata pictureRecognizer (integer nread, const char *header, MelderFil
 	return autoDaata ();
 }
 
-void praat_picture_init () {
+void praat_picture_init (bool showPictureWindowAtStartUp) {
+Melder_casual (showPictureWindowAtStartUp);
 	GuiScrolledWindow scrollWindow;
 	GuiDrawingArea drawingArea = nullptr;
 	int margin, width, height, resolution, x, y;
@@ -1700,18 +1701,18 @@ void praat_picture_init () {
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title.get(), U" Picture"), nullptr, nullptr, 0);
-		GuiWindow_addMenuBar (dialog);
+		thePictureWindow = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title.get(), U" Picture"), nullptr, nullptr, 0);
+		GuiWindow_addMenuBar (thePictureWindow);
 	}
 	if (! theCurrentPraatApplication -> batch) {
-		fileMenu =    GuiMenu_createInWindow (dialog, U"File", 0);
-		editMenu =    GuiMenu_createInWindow (dialog, U"Edit", 0);
-		marginsMenu = GuiMenu_createInWindow (dialog, U"Margins", 0);
-		worldMenu =   GuiMenu_createInWindow (dialog, U"World", 0);
-		selectMenu =  GuiMenu_createInWindow (dialog, U"Select", 0);
-		penMenu =     GuiMenu_createInWindow (dialog, U"Pen", 0);
-		fontMenu =    GuiMenu_createInWindow (dialog, U"Font", 0);
-		helpMenu =    GuiMenu_createInWindow (dialog, U"Help", 0);
+		fileMenu =    GuiMenu_createInWindow (thePictureWindow, U"File", 0);
+		editMenu =    GuiMenu_createInWindow (thePictureWindow, U"Edit", 0);
+		marginsMenu = GuiMenu_createInWindow (thePictureWindow, U"Margins", 0);
+		worldMenu =   GuiMenu_createInWindow (thePictureWindow, U"World", 0);
+		selectMenu =  GuiMenu_createInWindow (thePictureWindow, U"Select", 0);
+		penMenu =     GuiMenu_createInWindow (thePictureWindow, U"Pen", 0);
+		fontMenu =    GuiMenu_createInWindow (thePictureWindow, U"Font", 0);
+		helpMenu =    GuiMenu_createInWindow (thePictureWindow, U"Help", 0);
 	}
 
 	praat_addMenuCommand (U"Picture", U"File", U"Picture info", nullptr, 0, GRAPHICS_Picture_settings_report);
@@ -1902,10 +1903,9 @@ void praat_picture_init () {
 
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
-		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarBottom () + margin, 0, 1, 1, 0);
+		scrollWindow = GuiScrolledWindow_createShown (thePictureWindow, margin, 0, Machine_getMenuBarBottom () + margin, 0, 1, 1, 0);
 		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height,
 				nullptr, nullptr, nullptr, nullptr, nullptr, 0);
-		GuiThing_show (dialog);
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
@@ -1918,6 +1918,9 @@ void praat_picture_init () {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
+
+	if (! showPictureWindowAtStartUp)
+		GuiThing_hide (thePictureWindow);
 }
 
 void praat_picture_prefsChanged () {

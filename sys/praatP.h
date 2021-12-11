@@ -101,7 +101,7 @@ char32 * praat_nameOfSelected (ClassInfo klas, integer inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
 */
-void praat_picture_init ();
+void praat_picture_init (bool showPictureWindowAtStartUp);
 void praat_picture_exit ();
 
 void praat_picture_prefs ();
@@ -185,6 +185,9 @@ inline struct PraatP {
 	int argc;
 	char **argv;
 	int argumentNumber;
+	struct {
+		bool hidePicture;   // hide the Picture window at start-up
+	} commandLineOptions;
 	bool userWantsToOpen;
 	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
 	bool ignorePreferenceFiles, ignorePlugins;

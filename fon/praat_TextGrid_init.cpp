@@ -38,9 +38,8 @@ static const conststring32 STRING_POINT_NUMBER = U"Point number";
 DIRECT (NEW1_AnyTier_into_TextGrid) {
 	COMBINE_ALL_TO_ONE (Function)
 		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
-		for (integer i = 1; i <= list.size; i ++) {
+		for (integer i = 1; i <= list.size; i ++)
 			TextGrid_addTier_copy (result.get(), list.at [i]);
-		}
 	COMBINE_ALL_TO_ONE_END (U"grid")
 }
 
@@ -129,7 +128,7 @@ DIRECT (NEW1_Label_Sound_to_TextGrid) {
 DIRECT (HINT_Label_Sound_to_TextGrid) {
 	INFO_NONE
 		Melder_information (U"This is an old-style Label object. To turn it into a TextGrid, U"
-			"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
+				"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
 	INFO_NONE_END
 }
 
@@ -148,7 +147,7 @@ FORM (GRAPHICS_TextGrid_Pitch_draw, U"TextGrid & Pitch: Draw", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -165,7 +164,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawErb, U"TextGrid & Pitch: Draw erb", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -182,7 +181,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawLogarithmic, U"TextGrid & Pitch: Draw logarith
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -199,7 +198,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawMel, U"TextGrid & Pitch: Draw mel", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -217,7 +216,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSemitones, U"TextGrid & Pitch: Draw semitones"
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_draw (me, you, GRAPHICS, tierNumber, fromTime, toTime, fromFrequency, toFrequency,
-			fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
+				fontSize, useTextStyles, textAlignment, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -232,7 +231,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparately, U"TextGrid & Pitch: Draw separatel
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -247,7 +246,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyErb, U"TextGrid & Pitch: Draw separa
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -262,7 +261,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyLogarithmic, U"TextGrid & Pitch: Dra
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -277,7 +276,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelyMel, U"TextGrid & Pitch: Draw separa
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -293,7 +292,7 @@ FORM (GRAPHICS_TextGrid_Pitch_drawSeparatelySemitones, U"TextGrid & Pitch: Draw 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -309,7 +308,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckle, U"TextGrid & Pitch: Speckle", nullptr) {
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -325,7 +324,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleErb, U"TextGrid & Pitch: Speckle erb", null
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -341,7 +340,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleLogarithmic, U"TextGrid & Pitch: Speckle lo
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -357,7 +356,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleMel, U"TextGrid & Pitch: Speckle mel", null
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -374,7 +373,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSemitones, U"TextGrid & Pitch: Speckle semi
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -389,7 +388,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparately, U"TextGrid & Pitch: Speckle sep
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -404,7 +403,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyErb, U"TextGrid & Pitch: Speckle 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -419,7 +418,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyLogarithmic, U"TextGrid & Pitch: 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -434,7 +433,7 @@ FORM (GRAPHICS_TextGrid_Pitch_speckleSeparatelyMel, U"TextGrid & Pitch: Speckle 
 DO
 	GRAPHICS_ONE_AND_ONE (TextGrid, Pitch)
 		TextGrid_Pitch_drawSeparately (me, you, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
+				showBoundaries, useTextStyles, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_ONE_AND_ONE_END
 }
 
@@ -680,14 +679,14 @@ DIRECT (HELP_TextGrid_help) {
 
 static void cb_TextGridEditor_publication (Editor /* editor */, autoDaata publication) {
 	/*
-	 * Keep the gate for error handling.
-	 */
+		Keep the gate for error handling.
+	*/
 	try {
 		bool isaSpectralSlice = Thing_isa (publication.get(), classSpectrum) && str32equ (Thing_getName (publication.get()), U"slice");
 		praat_new (publication.move());
 		praat_updateSelection ();
 		if (isaSpectralSlice) {
-			int IOBJECT;
+			integer IOBJECT;
 			FIND_ONE_WITH_IOBJECT (Spectrum)
 			autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 			praat_installEditor (editor2.get(), IOBJECT);
@@ -715,11 +714,13 @@ DO
 }
 
 DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	LongSound longSound = nullptr;
-	int ilongSound = 0;
+	integer ilongSound = 0;
 	LOOP {
-		if (CLASS == classLongSound) longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
+		if (CLASS == classLongSound)
+			longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
 	}
 	Melder_assert (ilongSound != 0);
 	LOOP if (CLASS == classTextGrid) {
@@ -733,13 +734,16 @@ DIRECT (WINDOW_TextGrid_LongSound_viewAndEdit) {
 }
 
 DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	SpellingChecker spellingChecker = nullptr;
-	int ispellingChecker = 0;
+	integer ispellingChecker = 0;
 	Sound sound = nullptr;
 	LOOP {
-		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
-		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay null
+		if (CLASS == classSpellingChecker)
+			spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
+		if (CLASS == classSound)
+			sound = (Sound) OBJECT;   // may stay null
 	}
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
@@ -752,13 +756,16 @@ DIRECT (WINDOW_TextGrid_SpellingChecker_viewAndEdit) {
 }
 
 DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a TextGrid from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw (U"Cannot view or edit a TextGrid from batch.");
 	LongSound longSound = nullptr;
 	SpellingChecker spellingChecker = nullptr;
-	int ilongSound = 0, ispellingChecker = 0;
+	integer ilongSound = 0, ispellingChecker = 0;
 	LOOP {
-		if (CLASS == classLongSound) longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
-		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
+		if (CLASS == classLongSound)
+			longSound = (LongSound) OBJECT, ilongSound = IOBJECT;
+		if (CLASS == classSpellingChecker)
+			spellingChecker = (SpellingChecker) OBJECT, ispellingChecker = IOBJECT;
 	}
 	Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
@@ -773,7 +780,7 @@ DIRECT (WINDOW_TextGrid_LongSound_SpellingChecker_viewAndEdit) {
 DIRECT (HINT_TextGrid_Sound_viewAndEdit) {
 	INFO_NONE
 		Melder_information (U"To include a copy of a Sound in your TextGrid window:\n"
-			U"   select a TextGrid and a Sound, and click \"View & Edit\".");
+				U"   select a TextGrid and a Sound, and click \"View & Edit\".");
 	INFO_NONE_END
 }
 
@@ -1129,7 +1136,7 @@ DO
 	MODIFY_EACH (TextGrid)
 		{// scope
 			autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
-			if (position > my tiers->size) position = my tiers->size + 1;
+			Melder_clipRight (& position, my tiers->size + 1);
 			Thing_setName (tier.get(), name);
 			my tiers -> addItemAtPosition_move (tier.move(), position);
 		}
@@ -1144,7 +1151,7 @@ DO
 	MODIFY_EACH (TextGrid)
 		{// scope
 			autoTextTier tier = TextTier_create (my xmin, my xmax);
-			if (position > my tiers->size) position = my tiers->size + 1;
+			Melder_clipRight (& position, my tiers->size + 1);
 			Thing_setName (tier.get(), name);
 			my tiers -> addItemAtPosition_move (tier.move(), position);
 		}
@@ -1158,7 +1165,7 @@ FORM (MODIFY_TextGrid_duplicateTier, U"TextGrid: Duplicate tier", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		if (tierNumber > my tiers->size) tierNumber = my tiers->size;
+		Melder_clipRight (& tierNumber, my tiers->size);
 		{// scope
 			autoFunction newTier = Data_copy (my tiers->at [tierNumber]);
 			Thing_setName (newTier.get(), name);
@@ -1174,7 +1181,7 @@ DO
 	MODIFY_EACH (TextGrid)
 		if (my tiers->size <= 1)
 			Melder_throw (U"Sorry, I refuse to remove the last tier.");
-		if (tierNumber > my tiers->size) tierNumber = my tiers->size;
+		Melder_clipRight (& tierNumber, my tiers->size);
 		my tiers -> removeItem (tierNumber);
 	MODIFY_EACH_END
 }
@@ -1198,17 +1205,17 @@ DO
 		IntervalTier intervalTier;
 		if (tierNumber > my tiers->size)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
-				U", because that TextGrid has only ", my tiers->size, U" tiers.");
+					U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		intervalTier = (IntervalTier) my tiers->at [tierNumber];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
-				U", because that tier is a point tier instead of an interval tier.");
+					U", because that tier is a point tier instead of an interval tier.");
 		if (intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
+					U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
 		if (intervalNumber == 1)
 			Melder_throw (U"You cannot remove the left boundary from interval 1 of tier ", tierNumber, U" of ", me,
-				U", because this is at the left edge of the tier.");
+					U", because this is at the left edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber);
 	MODIFY_EACH_END
 }
@@ -1226,13 +1233,13 @@ DO
 		intervalTier = (IntervalTier) my tiers->at [tierNumber];
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
-				U", because that tier is a point tier instead of an interval tier.");
+					U", because that tier is a point tier instead of an interval tier.");
 		if (intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
-				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
+					U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
 		if (intervalNumber == intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove the right boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
-				U", because this is at the right edge of the tier.");
+					U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber + 1);
 	MODIFY_EACH_END
 }
@@ -1278,14 +1285,14 @@ DO
 		TextTier pointTier;
 		if (tierNumber > my tiers->size)
 			Melder_throw (U"You cannot remove a point from tier ", tierNumber, U" of ", me,
-				U", because that TextGrid has only ", my tiers->size, U" tiers.");
+					U", because that TextGrid has only ", my tiers->size, U" tiers.");
 		pointTier = (TextTier) my tiers->at [tierNumber];
 		if (pointTier -> classInfo != classTextTier)
 			Melder_throw (U"You cannot remove a point from tier ", tierNumber, U" of ", me,
-				U", because that tier is an interval tier instead of a point tier.");
+					U", because that tier is an interval tier instead of a point tier.");
 		if (pointNumber > pointTier -> points.size)
 			Melder_throw (U"You cannot remove point ", pointNumber, U" from tier ", tierNumber, U" of ", me,
-				U", because that tier has only ", pointTier -> points.size, U" points.");
+					U", because that tier has only ", pointTier -> points.size, U" points.");
 		TextTier_removePoint (pointTier, pointNumber);
 	MODIFY_EACH_END
 }
@@ -1407,7 +1414,7 @@ FORM (NEW_TextGrid_getPoints_preceded, U"Get points (preceded)", nullptr) {
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_preceded (me, tierNumber,
-			(kMelder_string) getPointsWhoseLabel___, ___theText, ___precededByALabelThat___, ____theText);
+				(kMelder_string) getPointsWhoseLabel___, ___theText, ___precededByALabelThat___, ____theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
@@ -1423,7 +1430,7 @@ FORM (NEW_TextGrid_getPoints_followed, U"Get points (followed)", nullptr) {
 DO
 	CONVERT_EACH_TO_ONE (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_followed (me, tierNumber,
-			(kMelder_string) getPointsWhoseLabel___, ___theText, ___followedByALabelThat___, ____theText);
+				(kMelder_string) getPointsWhoseLabel___, ___theText, ___followedByALabelThat___, ____theText);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", ___theText)
 }
 
@@ -1503,7 +1510,8 @@ FORM (STRING_TextTier_getLabelOfPoint, U"Get label of point", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_STRING (TextTier)
-		if (pointNumber > my points.size) Melder_throw (U"No such point.");
+		if (pointNumber > my points.size)
+			Melder_throw (U"No such point.");
 		TextPoint point = my points.at [pointNumber];
 		conststring32 result = point -> mark.get();
 	QUERY_ONE_FOR_STRING_END

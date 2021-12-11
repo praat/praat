@@ -1648,7 +1648,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 	}
 }
 
-autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
+autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
 	integer numberOfRows = 0;
 	for (integer itier = 1; itier <= my tiers->size; itier ++) {
 		Function anyTier = my tiers->at [itier];
@@ -1782,7 +1782,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMeld
 	return thee;
 }
 
-void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
+void TextGrid_list (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
 	try {
 		autoTable table = TextGrid_downto_Table (me, includeLineNumbers, timeDecimals, includeTierNames, includeEmptyIntervals);
 		Table_list (table.get(), false);
