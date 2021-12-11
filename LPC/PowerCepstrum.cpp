@@ -397,7 +397,7 @@ static autoMAT PowerCepstrum_getRhamonicsPower (PowerCepstrum me, double pitchFl
 }
 
 double PowerCepstrum_nearestPeak (PowerCepstrum me, double quefrency) {
-	
+	return 0.0;
 }
 
 autoTable PowerCepstrum_to_Table_rhamonics (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
