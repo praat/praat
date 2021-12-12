@@ -1663,7 +1663,6 @@ static autoDaata pictureRecognizer (integer nread, const char *header, MelderFil
 }
 
 void praat_picture_init (bool showPictureWindowAtStartUp) {
-Melder_casual (showPictureWindowAtStartUp);
 	GuiScrolledWindow scrollWindow;
 	GuiDrawingArea drawingArea = nullptr;
 	int margin, width, height, resolution, x, y;

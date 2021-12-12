@@ -1067,6 +1067,38 @@ static void injectMessageAndInformationProcs (GuiWindow parent) {
 	InfoEditor_injectInformationProc ();
 }
 
+static void printHelp () {
+	MelderInfo_writeLine (U"Usage:");
+	MelderInfo_writeLine (U"   To start up Praat with a GUI:");
+	MelderInfo_writeLine (U"      praat [option]...");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To start up Praat with a GUI, opening one or more files:");
+	MelderInfo_writeLine (U"      praat --open [option]... file-name...");
+	MelderInfo_writeLine (U"   (data files will open in the Objects window, script files in a script window)");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To start up Praat without a GUI, running a script:");
+	MelderInfo_writeLine (U"      praat [--run] [option]... script-file-name [script-argument]...");
+	MelderInfo_writeLine (U"   (--run is superfluous when you use a Console or Terminal interactively,");
+	MelderInfo_writeLine (U"    but necessary if you call Praat programmatically)");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To print the Praat version:");
+	MelderInfo_writeLine (U"      praat --version");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To print this list of command line options:");
+	MelderInfo_writeLine (U"      praat --help");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"Options:");
+	MelderInfo_writeLine (U"  --no-pref-files  don't read or write the preferences file and the buttons file");
+	MelderInfo_writeLine (U"  --no-plugins     don't activate the plugins");
+	MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
+	MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
+	MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
+	MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
+	MelderInfo_writeLine (U"                   (on Windows, use -8 or -a when you redirect to a pipe or file)");
+	MelderInfo_writeLine (U"  --trace          switch tracing on at start-up (see Praat > Technical > Debug)");
+	MelderInfo_writeLine (U"  --hide-picture   hide the Picture window at start-up");
+}
+
 void praat_init (conststring32 title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
@@ -1087,7 +1119,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	praatP.argc = argc;
 	praatP.argv = argv;
 	praatP.argumentNumber = 1;
-	autostring32 unknownCommandLineOption;
 
 	/*
 	 * Running Praat from the command line.
@@ -1125,35 +1156,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--help")) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"Usage:");
-			MelderInfo_writeLine (U"   To start up Praat with a GUI:");
-			MelderInfo_writeLine (U"      praat [option]...");
-			MelderInfo_writeLine (U"");
-			MelderInfo_writeLine (U"   To start up Praat with a GUI, opening one or more files:");
-			MelderInfo_writeLine (U"      praat --open [option]... file-name...");
-			MelderInfo_writeLine (U"   (data files will open in the Objects window, script files in a script window)");
-			MelderInfo_writeLine (U"");
-			MelderInfo_writeLine (U"   To start up Praat without a GUI, running a script:");
-			MelderInfo_writeLine (U"      praat [--run] [option]... script-file-name [script-argument]...");
-			MelderInfo_writeLine (U"   (--run is superfluous when you use a Console or Terminal interactively,");
-			MelderInfo_writeLine (U"    but necessary if you call Praat programmatically)");
-			MelderInfo_writeLine (U"");
-			MelderInfo_writeLine (U"   To print the Praat version:");
-			MelderInfo_writeLine (U"      praat --version");
-			MelderInfo_writeLine (U"");
-			MelderInfo_writeLine (U"   To print this list of command line options:");
-			MelderInfo_writeLine (U"      praat --help");
-			MelderInfo_writeLine (U"");
-			MelderInfo_writeLine (U"Options:");
-			MelderInfo_writeLine (U"  --no-pref-files  don't read or write the preferences file and the buttons file");
-			MelderInfo_writeLine (U"  --no-plugins     don't activate the plugins");
-			MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
-			MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
-			MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
-			MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
-			MelderInfo_writeLine (U"                   (on Windows, use -8 or -a when you redirect to a pipe or file)");
-			MelderInfo_writeLine (U"  --trace          switch tracing on at start-up (see Praat > Technical > Debug)");
-			MelderInfo_writeLine (U"  --hide-picture   hide the Picture window at start-up");
+			printHelp ();
 			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-8") || strequ (argv [praatP.argumentNumber], "--utf8")) {
@@ -1186,9 +1189,11 @@ void praat_init (conststring32 title, int argc, char **argv)
 		) {
 			praatP.argumentNumber += 1;
 		} else {
-			unknownCommandLineOption = Melder_8to32 (argv [praatP.argumentNumber]);
-			praatP.argumentNumber = INT32_MAX;   // ignore all other command line options
-			break;
+			MelderInfo_open ();
+			MelderInfo_writeLine (U"Unrecognized command line option ", Melder_peek8to32 (argv [praatP.argumentNumber]), U"\n");
+			printHelp ();
+			MelderInfo_close ();
+			exit (-1);
 		}
 	}
 	weWereStartedFromTheCommandLine |= foundTheRunOption;   // some external system()-like commands don't make isatty return true, so we have to help
@@ -1454,9 +1459,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (! praatP.dontUsePictureWindow)
 		praat_picture_init (! praatP.commandLineOptions.hidePicture);
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-
-	if (unknownCommandLineOption)
-		Melder_fatal (U"Unrecognized command line option ", unknownCommandLineOption.get());
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNameHead, conststring32 fileNameTail) {
