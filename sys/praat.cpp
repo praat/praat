@@ -1070,16 +1070,16 @@ static void injectMessageAndInformationProcs (GuiWindow parent) {
 static void printHelp () {
 	MelderInfo_writeLine (U"Usage:");
 	MelderInfo_writeLine (U"   To start up Praat with a GUI:");
-	MelderInfo_writeLine (U"      praat [option]...");
+	MelderInfo_writeLine (U"      praat [OPTION]...");
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"   To start up Praat with a GUI, opening one or more files:");
-	MelderInfo_writeLine (U"      praat --open [option]... file-name...");
-	MelderInfo_writeLine (U"   (data files will open in the Objects window, script files in a script window)");
+	MelderInfo_writeLine (U"      praat --open [OPTION]... FILE-NAME...");
+	MelderInfo_writeLine (U"   Data files will open in the Objects window, script files in a script window.");
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"   To start up Praat without a GUI, running a script:");
-	MelderInfo_writeLine (U"      praat [--run] [option]... script-file-name [script-argument]...");
-	MelderInfo_writeLine (U"   (--run is superfluous when you use a Console or Terminal interactively,");
-	MelderInfo_writeLine (U"    but necessary if you call Praat programmatically)");
+	MelderInfo_writeLine (U"      praat [--run] [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
+	MelderInfo_writeLine (U"   The switch --run is superfluous when you use a Console or Terminal");
+	MelderInfo_writeLine (U"   interactively, but necessary if you call Praat programmatically.");
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"   To print the Praat version:");
 	MelderInfo_writeLine (U"      praat --version");

@@ -1905,6 +1905,7 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 		scrollWindow = GuiScrolledWindow_createShown (thePictureWindow, margin, 0, Machine_getMenuBarBottom () + margin, 0, 1, 1, 0);
 		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height,
 				nullptr, nullptr, nullptr, nullptr, nullptr, 0);
+		GuiThing_show (thePictureWindow);
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
@@ -1918,8 +1919,15 @@ void praat_picture_init (bool showPictureWindowAtStartUp) {
 	updateSizeMenu ();
 	updateViewportMenu ();
 
-	if (! showPictureWindowAtStartUp)
-		GuiThing_hide (thePictureWindow);
+	if (! theCurrentPraatApplication -> batch && ! showPictureWindowAtStartUp) {
+		#if gtk
+			gtk_widget_hide (GTK_WIDGET (thePictureWindow -> d_gtkWindow));
+		#elif motif
+			ShowWindow (thePictureWindow -> d_xmShell -> window, SW_HIDE);
+		#elif cocoa
+			GuiThing_hide (thePictureWindow);
+		#endif
+	}
 }
 
 void praat_picture_prefsChanged () {
