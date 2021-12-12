@@ -151,26 +151,26 @@ void Melder_pathToDir (conststring32 path, MelderDir dir) {
 
 void Melder_pathToFile (conststring32 path, MelderFile file) {
 	/*
-	 * This handles complete path names only.
-	 *
-	 * Used if we know for sure that we have a complete path name,
-	 * i.e. if the program determined the name (fileselector, printing, prefs).
-	 */
+		This handles complete path names only.
+
+		Used if we know for sure that we have a complete path name,
+		i.e. if the program determined the name (fileselector, printing, prefs).
+	*/
 	Melder_sprint (file -> path,kMelder_MAXPATH+1, path);
 }
 
 void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 	/*
-	 * This handles complete and partial path names,
-	 * and translates slashes to native directory separators.
-	 *
-	 * Used if we do not know for sure that we have a complete path name,
-	 * i.e. if the user determined the name (scripting).
-	 */
+		This handles complete and partial path names,
+		and translates slashes to native directory separators.
+
+		Used if we do not know for sure that we have a complete path name,
+		i.e. if the user determined the name (scripting).
+	*/
 	#if defined (UNIX)
 		/*
-		 * We assume that Unix complete path names start with a slash.
-		 */
+			We assume that Unix complete path names start with a slash.
+		*/
 		if (path [0] == U'~' && path [1] == U'/') {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, Melder_peek8to32 (getenv ("HOME")), & path [1]);
 		} else if (path [0] == U'/' || str32equ (path, U"<stdout>") || str32str (path, U"://")) {
@@ -178,19 +178,18 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 		} else {
 			structMelderDir dir { };
 			Melder_getDefaultDir (& dir);   // BUG
-			if (dir. path [0] == U'/' && dir. path [1] == U'\0') {
+			if (dir. path [0] == U'/' && dir. path [1] == U'\0')
 				Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", path);
-			} else {
+			else
 				Melder_sprint (file -> path,kMelder_MAXPATH+1, dir. path, U"/", path);
-			}
 		}
 	#elif defined (_WIN32)
 		/*
-		 * We assume that Win32 complete path names look like:
-		 *    C:\WINDOWS\CTRL32.DLL
-		 *    LPT1:
-		 *    \\host\path
-		 */
+			We assume that Win32 complete path names look like:
+				C:\WINDOWS\CTRL32.DLL
+				LPT1:
+				\\host\path
+		*/
 		structMelderDir dir { };
 		if (path [0] == U'~' && path [1] == U'/') {
 			Melder_getHomeDir (& dir);
@@ -208,7 +207,8 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 			Melder_sprint (winPath,kMelder_MAXPATH+1, path);
 			for (;;) {
 				char32 *slash = str32chr (winPath, U'/');
-				if (! slash) break;
+				if (! slash)
+					break;
 				*slash = U'\\';
 			}
 			Melder_relativePathToFile (winPath, file);
@@ -221,7 +221,8 @@ void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1,
 				dir. path,
 				dir. path [0] != U'\0' && dir. path [str32len (dir. path) - 1] == U'\\' ? U"" : U"\\",
-				path);
+				path
+			);
 		}
 	#endif
 }
@@ -268,17 +269,15 @@ bool MelderDir_isNull (MelderDir dir) {
 
 void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile file) {
 	#if defined (UNIX)
-		if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
+		if (parent -> path [0] == U'/' && parent -> path [1] == U'\0')
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", fileName);
-		} else {
+		else
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, parent -> path, U"/", fileName);
-		}
 	#elif defined (_WIN32)
-		if (str32rchr (file -> path, U'\\') - file -> path == str32len (file -> path) - 1) {
+		if (str32rchr (file -> path, U'\\') - file -> path == str32len (file -> path) - 1)
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, parent -> path, fileName);
-		} else {
+		else
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, parent -> path, U"\\", fileName);
-		}
 	#endif
 }
 
@@ -439,7 +438,8 @@ void Melder_getHomeDir (MelderDir homeDir) {
 	#elif defined (_WIN32)
 		WCHAR driveW [kMelder_MAXPATH+1], pathW [kMelder_MAXPATH+1];
 		DWORD n = GetEnvironmentVariableW (L"USERPROFILE", pathW, kMelder_MAXPATH+1);
-		if (n > kMelder_MAXPATH) Melder_throw (U"Home directory name too long.");
+		if (n > kMelder_MAXPATH)
+			Melder_throw (U"Home directory name too long.");
 		if (n > 0) {
 			Melder_sprint (homeDir -> path,kMelder_MAXPATH+1, Melder_peekWto32 (pathW));
 			return;
@@ -1032,15 +1032,15 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 	if (! text) text = U"";
 	autofile f1;
 	try {
-		f1.reset (Melder_fopen (file, "rb"));
+		f1 = Melder_fopen (file, "rb");
 	} catch (MelderError) {
 		Melder_clearError ();   // it's OK if the file didn't exist yet...
 		MelderFile_writeText (file, text, Melder_getOutputEncoding ());   // because then we just "write"
 		return;
 	}
 	/*
-	 * The file already exists and is open. Determine its type.
-	 */
+		The file already exists and is open. Determine its type.
+	*/
 	int firstByte = fgetc (f1), secondByte = fgetc (f1);
 	f1.close (file);
 	int type = 0;
@@ -1059,8 +1059,8 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 		    || (outputEncoding == kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 		{
 			/*
-			 * Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
-			 */
+				Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
+			*/
 			autofile f2 = Melder_fopen (file, "ab");
 			int64 n = str32len (text);
 			for (int64 i = 0; i < n; i ++) {
@@ -1074,8 +1074,8 @@ void MelderFile_appendText (MelderFile file, conststring32 text) {
 			f2.close (file);
 		} else {
 			/*
-			 * Convert to wide character file.
-			 */
+				Convert to wide character file.
+			*/
 			autostring32 oldText = MelderFile_readText (file);
 			autofile f2 = Melder_fopen (file, "wb");
 			binputu16 (0xfeff, f2);
