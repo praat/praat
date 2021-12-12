@@ -4006,6 +4006,10 @@ TAG (U"##-u#, ##--utf16#")
 DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-16 Little Endian encoding, without Byte Order Mark. "
 	"This format is the default on Windows, "
 	"but you can use it to write the output to a UTF-16LE-encoded file on any platform.")
+TAG (U"##--trace#")
+DEFINITION (U"Switch tracing on at start-up.")
+TAG (U"##--hide-picture#")
+DEFINITION (U"Hide the Picture window at start-up.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)

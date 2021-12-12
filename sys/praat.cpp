@@ -1067,6 +1067,38 @@ static void injectMessageAndInformationProcs (GuiWindow parent) {
 	InfoEditor_injectInformationProc ();
 }
 
+static void printHelp () {
+	MelderInfo_writeLine (U"Usage:");
+	MelderInfo_writeLine (U"   To start up Praat with a GUI:");
+	MelderInfo_writeLine (U"      praat [OPTION]...");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To start up Praat with a GUI, opening one or more files:");
+	MelderInfo_writeLine (U"      praat --open [OPTION]... FILE-NAME...");
+	MelderInfo_writeLine (U"   Data files will open in the Objects window, script files in a script window.");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To start up Praat without a GUI, running a script:");
+	MelderInfo_writeLine (U"      praat [--run] [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
+	MelderInfo_writeLine (U"   The switch --run is superfluous when you use a Console or Terminal");
+	MelderInfo_writeLine (U"   interactively, but necessary if you call Praat programmatically.");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To print the Praat version:");
+	MelderInfo_writeLine (U"      praat --version");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To print this list of command line options:");
+	MelderInfo_writeLine (U"      praat --help");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"Options:");
+	MelderInfo_writeLine (U"  --no-pref-files  don't read or write the preferences file and the buttons file");
+	MelderInfo_writeLine (U"  --no-plugins     don't activate the plugins");
+	MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
+	MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
+	MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
+	MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
+	MelderInfo_writeLine (U"                   (on Windows, use -8 or -a when you redirect to a pipe or file)");
+	MelderInfo_writeLine (U"  --trace          switch tracing on at start-up (see Praat > Technical > Debug)");
+	MelderInfo_writeLine (U"  --hide-picture   hide the Picture window at start-up");
+}
+
 void praat_init (conststring32 title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
@@ -1087,7 +1119,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	praatP.argc = argc;
 	praatP.argv = argv;
 	praatP.argumentNumber = 1;
-	autostring32 unknownCommandLineOption;
 
 	/*
 	 * Running Praat from the command line.
@@ -1120,23 +1151,12 @@ void praat_init (conststring32 title, int argc, char **argv)
 		} else if (strequ (argv [praatP.argumentNumber], "--trace")) {
 			foundTheTraceOption = true;
 			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--hide-picture")) {
+			praatP.commandLineOptions.hidePicture = true;
+			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--help")) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"Usage: praat [options] script-file-name [script-arguments]");
-			MelderInfo_writeLine (U"Options:");
-			MelderInfo_writeLine (U"  --open           regard the command line as files to be opened in the GUI");
-			MelderInfo_writeLine (U"  --run            regard the command line as a script to run, with its arguments");
-			MelderInfo_writeLine (U"                   (--run is superfluous when you use a Console or Terminal)");
-			MelderInfo_writeLine (U"  --no-pref-files  don't read or write the preferences file and the buttons file");
-			MelderInfo_writeLine (U"  --no-plugins     don't activate the plugins");
-			MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
-			MelderInfo_writeLine (U"  --version        print the Praat version");
-			MelderInfo_writeLine (U"  --help           print this list of command line options");
-			MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
-			MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
-			MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
-			MelderInfo_writeLine (U"                   (on Windows, use -8 or -a when you redirect to a pipe or file)");
-			MelderInfo_writeLine (U"  --trace          switch tracing on at start-up (see Praat > Technical > Debug)");
+			printHelp ();
 			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-8") || strequ (argv [praatP.argumentNumber], "--utf8")) {
@@ -1169,9 +1189,11 @@ void praat_init (conststring32 title, int argc, char **argv)
 		) {
 			praatP.argumentNumber += 1;
 		} else {
-			unknownCommandLineOption = Melder_8to32 (argv [praatP.argumentNumber]);
-			praatP.argumentNumber = INT32_MAX;   // ignore all other command line options
-			break;
+			MelderInfo_open ();
+			MelderInfo_writeLine (U"Unrecognized command line option ", Melder_peek8to32 (argv [praatP.argumentNumber]), U"\n");
+			printHelp ();
+			MelderInfo_close ();
+			exit (-1);
 		}
 	}
 	weWereStartedFromTheCommandLine |= foundTheRunOption;   // some external system()-like commands don't make isatty return true, so we have to help
@@ -1184,9 +1206,9 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (Melder_batch) {
 		Melder_assert (praatP.argumentNumber < argc);
 		/*
-		 * We now get the script file name. It is next on the command line
-		 * (not necessarily *last* on the line, because there may be script arguments after it).
-		 */
+			We now get the script file name. It is next on the command line
+			(not necessarily *last* on the line, because there may be script arguments after it).
+		*/
 		MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [praatP.argumentNumber ++]));
 		if (praatP.hasCommandLineInput)
 			Melder_throw (U"Cannot have both command line input and a script file.");
@@ -1198,9 +1220,9 @@ void praat_init (conststring32 title, int argc, char **argv)
 	Melder_batch |= !! thePraatStandAloneScriptText;
 
 	/*
-	 * Running the Praat shell from the command line:
-	 *    praat -
-	 */
+		Running the Praat shell from the command line:
+			praat -
+	*/
 	Melder_batch |= praatP.hasCommandLineInput;
 
 	praatP.title = Melder_dup (title && title [0] != U'\0' ? title : U"Praat");
@@ -1208,43 +1230,43 @@ void praat_init (conststring32 title, int argc, char **argv)
 	theCurrentPraatApplication -> batch = Melder_batch;
 
 	/*
-	 * Construct a program name like "Praat" for file and directory names.
-	 */
+		Construct a program name like "Praat" for file and directory names.
+	*/
 	str32cpy (programName, praatP.title.get());
 
 	/*
-	 * Construct a main-window title like "Praat 6.1".
-	 */
+		Construct a main-window title like "Praat 6.2".
+	*/
 	programName [0] = Melder_toLowerCase (programName [0]);
 
 	/*
-	 * Get home directory, e.g. "/home/miep/", or "/Users/miep/", or just "/".
-	 */
+		Get the home folder, e.g. "/home/miep/", or "/Users/miep/", or just "/".
+	*/
 	Melder_getHomeDir (& homeDir);
 
 	/*
-	 * Get the program's private directory (if not yet set by the --pref-dir option):
-	 *    "/home/miep/.praat-dir" (Unix)
-	 *    "/Users/miep/Library/Preferences/Praat Prefs" (MacOS)
-	 *    "C:\Users\Miep\Praat" (Windows)
-	 * and construct a preferences-file name and a script-buttons-file name like
-	 *    /home/miep/.praat-dir/prefs5
-	 *    /home/miep/.praat-dir/buttons5
-	 * or
-	 *    /Users/miep/Library/Preferences/Praat Prefs/Prefs5
-	 *    /Users/miep/Library/Preferences/Praat Prefs/Buttons5
-	 * or
-	 *    C:\Users\Miep\Praat\Preferences5.ini
-	 *    C:\Users\Miep\Praat\Buttons5.ini
-	 * Also create names for message and tracing files.
-	 */
+		Get the program's preferences folder (if not yet set by the --pref-dir option):
+			"/home/miep/.praat-dir" (Unix)
+			"/Users/miep/Library/Preferences/Praat Prefs" (Mac)
+			"C:\Users\Miep\Praat" (Windows)
+		and construct a preferences-file name and a script-buttons-file name like
+			/home/miep/.praat-dir/prefs5
+			/home/miep/.praat-dir/buttons5
+		or
+			/Users/miep/Library/Preferences/Praat Prefs/Prefs5
+			/Users/miep/Library/Preferences/Praat Prefs/Buttons5
+		or
+			C:\Users\Miep\Praat\Preferences5.ini
+			C:\Users\Miep\Praat\Buttons5.ini
+		Also create names for message and tracing files.
+	*/
 	if (MelderDir_isNull (& Melder_preferencesFolder)) {   // not yet set by the --pref-dir option?
 		structMelderDir prefParentDir { };   // directory under which to store our preferences directory
 		Melder_getPrefDir (& prefParentDir);
 
 		/*
-		 * Make sure that the program's private directory exists.
-		 */
+			Make sure that the program's preferences folder exists.
+		*/
 		char32 name [256];
 		#if defined (UNIX)
 			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .praat-dir
@@ -1262,9 +1284,9 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderDir_getSubdir (& prefParentDir, name, & Melder_preferencesFolder);
 		} catch (MelderError) {
 			/*
-			 * If we arrive here, the directory could not be created,
-			 * and all the files are null. Praat should nevertheless start up.
-			 */
+				If we arrive here, the directory could not be created,
+				and all the files are null. Praat should nevertheless start up.
+			*/
 			Melder_clearError ();
 		}
 	}
@@ -1300,11 +1322,11 @@ void praat_init (conststring32 title, int argc, char **argv)
 	#if defined (UNIX)
 		if (! Melder_batch) {
 			/*
-			 * Make sure that the directory /home/miep/.praat-dir exists,
-			 * and write our process id into the pid file.
-			 * Messages from "sendpraat" are caught very early this way,
-			 * though they will be responded to much later.
-			 */
+				Make sure that the directory /home/miep/.praat-dir exists,
+				and write our process id into the pid file.
+				Messages from "sendpraat" are caught very early this way,
+				though they will be responded to much later.
+			*/
 			try {
 				autofile f = Melder_fopen (& pidFile, "w");
 				fprintf (f, "%s", Melder8_integer (getpid ()));
@@ -1324,8 +1346,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 	#endif
 
 	/*
-	 * Make room for commands.
-	 */
+		Make room for commands.
+	*/
 	trace (U"initing actions");
 	praat_actions_init ();
 	trace (U"initing menu commands");
@@ -1348,8 +1370,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 		trace (U"starting the application");
 		Machine_initLookAndFeel (argc, argv);
 		/*
-		 * Start the application.
-		 */
+			Start the application.
+		*/
 		#if gtk
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			g_set_application_name (Melder_peek32to8 (title));
@@ -1379,8 +1401,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		Gui_getWindowPositioningBounds (& x, & y, nullptr, nullptr);
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-		theCurrentPraatApplication -> topShell = raam =
-			GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT, 450, 250,
+		theCurrentPraatApplication -> topShell = raam = GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT, 450, 250,
 				objectWindowTitle, gui_cb_quit, nullptr, 0);
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		#if motif
@@ -1436,11 +1457,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 	trace (U"creating the Picture window");
 	trace (U"before picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 	if (! praatP.dontUsePictureWindow)
-		praat_picture_init ();
+		praat_picture_init (! praatP.commandLineOptions.hidePicture);
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
-
-	if (unknownCommandLineOption)
-		Melder_fatal (U"Unrecognized command line option ", unknownCommandLineOption.get());
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNameHead, conststring32 fileNameTail) {

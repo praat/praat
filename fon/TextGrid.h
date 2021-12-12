@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2012,2014-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,9 +124,9 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
 autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
 autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 
-autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
+autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive);
-void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
+void TextGrid_list (TextGrid me, bool includeLineNumbers, integer timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 void TextGrid_correctRoundingErrors (TextGrid me);
 autoTextGrid TextGrids_concatenate (OrderedOf<structTextGrid>* me);

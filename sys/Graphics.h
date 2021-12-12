@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2005,2007-2020 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,14 +313,14 @@ void Graphics_textLeft   (Graphics me, bool farr, conststring32 text /* cattable
 void Graphics_textRight  (Graphics me, bool farr, conststring32 text /* cattable */);
 void Graphics_textBottom (Graphics me, bool farr, conststring32 text /* cattable */);
 void Graphics_textTop    (Graphics me, bool farr, conststring32 text /* cattable */);
-void Graphics_marksLeft   (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksRight  (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksTop    (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksLeftLogarithmic   (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksRightLogarithmic  (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksBottomLogarithmic (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_marksTopLogarithmic    (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksLeft   (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksRight  (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksBottom (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksTop    (Graphics me, integer numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksLeftLogarithmic   (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksRightLogarithmic  (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksBottomLogarithmic (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
+void Graphics_marksTopLogarithmic    (Graphics me, integer numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_markLeft   (Graphics me, double yWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
 void Graphics_markRight  (Graphics me, double yWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
 void Graphics_markBottom (Graphics me, double xWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
