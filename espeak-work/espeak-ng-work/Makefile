@@ -5,13 +5,13 @@ include ../../makefile.defs
 
 CPPFLAGS = -I ../../kar -I ../../melder -I ../../dwtools -I ../../sys -I ../../dwsys -I ../../stat
 
-OBJECTS = categories.o compiledata.o compiledict.o \
+OBJECTS = case.o categories.o compiledata.o compiledict.o \
 	dictionary.o \
 	encoding.o error.o  espeak_api.o \
 	intonation.o klatt.o  \
 	numbers.o phonemelist.o proplist.o readclause.o \
 	setlengths.o soundicon.o speech.o \
-	synthdata.o synthesize.o \
+	ssml.o synthdata.o synthesize.o \
 	synth_mbrola.o tr_languages.o mnemonics.o translate.o voices.o wavegen.o \
 	create_espeak_ng_FileInMemoryManager.o create_espeak_ng_FileInMemorySet.o \
 	espeak_io.o

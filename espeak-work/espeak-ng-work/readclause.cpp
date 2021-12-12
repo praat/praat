@@ -144,7 +144,7 @@ int towlower2(unsigned int c, Translator *translator)
 	if (c == 'I' && translator->langopts.dotless_i)
 		return 0x131; // I -> ı
 
-	return ucd_tolower(c);
+	return ucd::tolower(c);
 }
 
 static int IsRomanU(unsigned int c)

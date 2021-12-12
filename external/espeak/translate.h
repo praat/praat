@@ -18,8 +18,8 @@
  */
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 #endif
 
 #define L(c1, c2) (c1<<8)+c2 // combine two characters into an integer for translator name
@@ -280,6 +280,7 @@ typedef struct {
 } PARAM_STACK;
 
 extern PARAM_STACK param_stack[];
+
 extern const int param_defaults[N_SPEECH_PARAM];
 
 typedef struct {
@@ -781,5 +782,5 @@ char *WritePhMnemonic(char *phon_out, PHONEME_TAB *ph, PHONEME_LIST *plist, int 
 extern FILE *f_trans; // for logging
 
 #ifdef __cplusplus
-}
+//}
 #endif

@@ -39,6 +39,7 @@
 #include "translate.h"
 
 extern int saved_parameters[];
+//extern const int param_defaults[N_SPEECH_PARAM];
 
 // convert from words-per-minute to internal speed factor
 // Use this to calibrate speed for wpm 80-450 (espeakRATE_MINIMUM - espeakRATE_MAXIMUM)
@@ -369,7 +370,7 @@ espeak_ng_STATUS SetParameter(int parameter, int value, int relative)
 
 	int new_value = value;
 	int default_value;
-	extern const int param_defaults[N_SPEECH_PARAM];
+//	extern const int param_defaults[N_SPEECH_PARAM];
 
 	if (relative) {
 		if (parameter < 5) {

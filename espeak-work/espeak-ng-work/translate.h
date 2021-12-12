@@ -26,8 +26,8 @@
 #include "encoding.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 #endif
 
 #define L(c1, c2) (c1<<8)+c2 // combine two characters into an integer for translator name
@@ -694,7 +694,7 @@ void SetVoiceStack(espeak_VOICE *v, const char *variant_name);
 extern FILE *f_trans; // for logging
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

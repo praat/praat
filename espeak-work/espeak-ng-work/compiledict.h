@@ -22,8 +22,8 @@
 #define ESPEAK_NG_COMPILEDICT_H
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 #endif
 
 char *DecodeRule(const char *group_chars, 
@@ -36,7 +36,7 @@ void print_dictionary_flags(unsigned int *flags,
 		int buf_len);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

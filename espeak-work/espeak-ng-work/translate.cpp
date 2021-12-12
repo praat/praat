@@ -1774,7 +1774,8 @@ static const char *FindReplacementChars(Translator *tr, const char **pfrom, unsi
 // handle .replace rule in xx_rules file
 static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, const char *next, int *insert, int *wordflags)
 {
-	unsigned int new_c, c2 = ' ', c_lower;
+	//unsigned int new_c, c2 = ' ', c_lower;
+	uint32_t new_c, c2 = ' ', c_lower;
 	int upper_case = 0;
 
 	static int ignore_next_n = 0;

@@ -144,11 +144,11 @@ procedure espeak_ng_copyfiles
 	... " event.c fifo.c ieee80.c intonation.c klatt.c" +
 	... " mnemonics.c numbers.c phoneme.c phonemelist.c readclause.c setlengths.c" +
 	... " spect.c speech.c synthdata.c synthesize.c " +
-	... " synth_mbrola.c translate.c tr_languages.c voices.c wavegen.c"
+	... " ssml.c synth_mbrola.c translate.c tr_languages.c voices.c wavegen.c"
 
 	.espeakfiles_h$ = "dictionary.h error.h espeak_command.h event.h fifo.h klatt.h phoneme.h phonemelist.h"
 	... " readclause.h setlengths.h sintab.h" +
-	... " spect.h speech.h synthdata.h synthesize.h translate.h voice.h synthesize.h translate.h voice.h wavegen.h"
+	... " spect.h speech.h ssml.h synthdata.h synthesize.h translate.h voice.h synthesize.h translate.h voice.h wavegen.h"
 	.espeakfiles_include_h$ = "speak_lib.h espeak_ng.h encoding.h"
 	.espeakfiles_ucd_h$ = "ucd.h"
 	.espeakfiles_ucd_c$ = "case.c categories.c proplist.c"

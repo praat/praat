@@ -417,6 +417,7 @@ typedef enum {
   N_SPEECH_PARAM    /* last enum */
 } espeak_PARAMETER;
 
+extern const int param_defaults[N_SPEECH_PARAM];
 typedef enum {
   espeakPUNCT_NONE=0,
   espeakPUNCT_ALL=1,
