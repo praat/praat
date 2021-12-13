@@ -124,7 +124,8 @@ To compile Praat's Windows edition on a 64-bit Windows computer,
 install Cygwin on that computer,
 and under Cygwin install the Devel packages mingw64-x86_64-gcc-g++ (for 64-bit targets)
 and/or mingw64-i686-gcc-g++ (for 32-bit targets).
-Move the Praat sources directory somewhere in your `/home/yourname` tree,
+For compiling with `make` install the make package (The GNU version of the 'make' utility).
+Move the Praat sources directory somewhere in your `/home/yourname` tree (under Cygwin installation directory),
 e.g. as `/home/yourname/praats` and/or `/home/yourname/praats32`;
 the folders `fon` and `sys` should be visible within these folders.
 If you want to build Praat's 64-bit edition, type
