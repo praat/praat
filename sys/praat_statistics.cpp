@@ -177,8 +177,14 @@ void praat_reportSystemProperties () {
 		MelderInfo_writeLine (U"Full Disk Access: ", Melder_kleenean (hasFullDiskAccess ()));
 		MelderInfo_writeLine (U"Sandboxed: ", Melder_boolean (isSandboxed ()));
 		if (isSandboxed ())
-			MelderInfo_writeLine (U"Sandbox (application home) folder: ", Melder_peek8to32 ([NSHomeDirectory () UTF8String]));
-		MelderInfo_writeLine (U"User home folder: ", Melder_peek8to32 ([ getRealHomeDirectory () UTF8String]));
+			MelderInfo_writeLine (U"Sandbox (application home) folder: ", Melder_peek8to32 ([NSHomeDirectory ()   UTF8String]));
+		MelderInfo_writeLine (U"User home folder: ", Melder_peek8to32 ([getRealHomeDirectory ()   UTF8String]));
+		NSRunningApplication *currentApplication = [NSRunningApplication currentApplication];
+		pid_t processID = [currentApplication processIdentifier];
+		Melder_assert (processID == getpid());
+		MelderInfo_writeLine (U"Process ID: ", processID);
+		MelderInfo_writeLine (U"Localized app name: ", Melder_peek8to32 ([[currentApplication localizedName] UTF8String]));
+		MelderInfo_writeLine (U"App bundle identifier: ", Melder_peek8to32 ([[currentApplication bundleIdentifier] UTF8String]));
 	#endif
 	MelderInfo_close ();
 }
