@@ -37,20 +37,25 @@
 
 #define Interpreter_SENTENCE 7
 #define Interpreter_TEXT 8
+#define Interpreter_INFILE 9
+#define Interpreter_OUTFILE 10
+#define Interpreter_FOLDER 11
 
-#define Interpreter_REALVECTOR 9
-#define Interpreter_POSITIVEVECTOR 10
-#define Interpreter_INTEGERVECTOR 11
-#define Interpreter_NATURALVECTOR 12
+#define Interpreter_REALVECTOR 12
+#define Interpreter_POSITIVEVECTOR 13
+#define Interpreter_INTEGERVECTOR 14
+#define Interpreter_NATURALVECTOR 15
 #define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_REALVECTOR
 #define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_NATURALVECTOR
 
-#define Interpreter_REALMATRIX 19
-#define Interpreter_CHOICE 20
-#define Interpreter_OPTIONMENU 21
-#define Interpreter_BUTTON 22
-#define Interpreter_OPTION 23
-#define Interpreter_COMMENT 24
+#define Interpreter_REALMATRIX 16
+#define Interpreter_CHOICE 17
+#define Interpreter_OPTIONMENU 18
+#define Interpreter_MAXIMUM_TYPE_WITH_VARIABLE_NAME  Interpreter_OPTIONMENU
+
+#define Interpreter_BUTTON 19
+#define Interpreter_OPTION 20
+#define Interpreter_COMMENT 21
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -267,6 +272,12 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				{ type = Interpreter_BUTTON; parameterLocation = startOfLine + 6; }
 			else if (str32nequ (startOfLine, U"option", 6) && Melder_isEndOfInk (startOfLine [6]))
 				{ type = Interpreter_OPTION; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"infile", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_INFILE; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"outfile", 7) && Melder_isEndOfInk (startOfLine [7]))
+				{ type = Interpreter_OUTFILE; parameterLocation = startOfLine + 7; }
+			else if (str32nequ (startOfLine, U"folder", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_FOLDER; parameterLocation = startOfLine + 6; }
 			else if (str32nequ (startOfLine, U"comment", 7) && Melder_isEndOfInk (startOfLine [7]))
 				{ type = Interpreter_COMMENT; parameterLocation = startOfLine + 7; }
 			else {
@@ -294,7 +305,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				my arguments [4] := "Green"
 				my arguments [5] := "Blue"
 			*/
-			if (type <= Interpreter_OPTIONMENU) {
+			if (type <= Interpreter_MAXIMUM_TYPE_WITH_VARIABLE_NAME) {
 				Melder_skipHorizontalSpace (& parameterLocation);
 				if (Melder_isEndOfLine (*parameterLocation)) {
 					*parameterLocation = U'\0';   // destroy input in order to limit printing of line
@@ -419,6 +430,12 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 			} break; case Interpreter_OPTION: {
 				if (radio)
 					UiOptionMenu_addButton (radio, my arguments [ipar].get());
+			} break; case Interpreter_INFILE: {
+				UiForm_addInfile (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_OUTFILE: {
+				UiForm_addOutfile (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_FOLDER: {
+				UiForm_addFolder (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_COMMENT: {
 				UiForm_addLabel (form.get(), nullptr, my arguments [ipar].get());
 			} break; default: {
