@@ -3336,7 +3336,7 @@ LIST_ITEM (U"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn,
 LIST_ITEM (U"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20140212)
+MAN_BEGIN (U"Scripting 6.1. Arguments to the script", U"ppgb", 20211214)
 NORMAL (U"You can cause a Praat script to prompt for arguments. The file $$playSine.praat$ may contain the following:")
 CODE (U"#form Play a sine wave")
 	CODE1 (U"#positive Sine_frequency_(Hz) 377")
@@ -3382,6 +3382,12 @@ TAG (U"#button %text")
 DEFINITION (U"a button in a radio box.")
 TAG (U"#comment %text")
 DEFINITION (U"a line with any text.")
+TAG (U"#infile %variable %initialValue")
+DEFINITION (U"for a full path to an existing file, usually for reading.")
+TAG (U"#outfile %variable %initialValue")
+DEFINITION (U"for a full path to a new file, usually for saving.")
+TAG (U"#folder %variable %initialValue")
+DEFINITION (U"for a full path to a folder.")
 NORMAL (U"Inside the script, strings are known as string variables, numbers as numeric variables. Consider the following form:")
 CODE (U"#form Sink it")
 	CODE1 (U"#sentence Name_of_the_ship Titanic")
@@ -3433,6 +3439,20 @@ CODE (U"#form Fill attributes")
 CODE (U"#endform")
 CODE (U"#writeInfoLine: \"You chose the colour \", colour\\$ , \" and the texture \", texture\\$ , \".\"")
 NORMAL (U"You can combine two short fields into one by using %left and %right:")
+NORMAL (U"The field types #infile, #outfile and #folder always yield a full path. "
+	"Consider the script $$playFile.praat$, which contains the following:")
+CODE (U"#form Play file")
+	CODE1 (U"#infile File_to_play hello.wav")
+CODE (U"#endform")
+CODE (U"#writeInfoLine: \"You chose the file \", file_to_play\\$ , \".\"")
+CODE (U"Read from file: file_to_play\\$ ")
+CODE (U"Play")
+CODE (U"Remove")
+NORMAL (U"If you just click OK and $$playFile.praat$ is in the folder $$/Users/miep/research/usefulScripts$, "
+	"then this will print")
+CODE (U"You chose the file /Users/miep/research/usefulScripts/hello.wav.")
+NORMAL (U"into the Info window, and play the sound in that file.")
+NORMAL (U"You can combine two short fields into one by using %left and %right:")
 CODE (U"#form Get duration")
 	CODE1 (U"#natural left_Year_range 1940")
 	CODE1 (U"#natural right_Year_range 1945")
@@ -3450,6 +3470,12 @@ NORMAL (U"With #runScript, Praat will not display a form window, but simply exec
 NORMAL (U"Values for #choice must be passed as strings:")
 CODE (U"#runScript: \"fill attributes.praat\", \"Navy blue\", \"With holes\"")
 NORMAL (U"You can pass values for #boolean either as \"yes\" and \"no\" or as 1 and 0.")
+NORMAL (U"In #runScript, the path to the external script, as well as the paths to #infile, #outfile and #folder parameters "
+	"are taken relative to the folder of the current script. For instance, suppose that the current script is "
+	"$$/Users/miep/research/project19/analyse.praat$ and contains:")
+CODE (U"#runScript: \"../usefulScripts/playFile.praat\", \"sounds/sound3.wav\"")
+NORMAL (U"then running the current script will run the above-mentioned script $$/Users/miep/research/usefulScripts/playFile.praat$, "
+	"which will play the file $$/Users/miep/research/project19/sounds/sound3.wav$.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 6.2. Writing to the Info window", U"ppgb", 20140111)
@@ -3928,9 +3954,15 @@ CODE (U"/usr/bin/praat --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me 
 NORMAL (U"Note that each argument that contains one or more spaces has to be put within quotes, "
 	"on all three platforms. As with #runScript, Praat will not present a form window, "
 	"but simply run the script with the arguments given on the command line "
-	"(see @@Scripting 6.1. Arguments to the script@).")
-NORMAL (U"What then happens on all three platforms is that a console instantiation of Praat writes "
+	"(see @@Scripting 6.1. Arguments to the script@). What then happens on all three platforms is that a console instantiation of Praat writes "
 	"the two lines to the Console window and plays the three sounds.")
+NORMAL (U"The path to the script file as well as to #infile, #outfile and #folder "
+	"arguments will be taken relative to the current working directory of the terminal window. For instance, "
+	"the following example from @@Scripting 6.1. Arguments to the script@ will run the script "
+	"$$/Users/miep/research/usefulScripts/playFile.praat$, which will play the sound file "
+	"$$/Users/miep/research/project19/sounds/sound3.wav$:")
+CODE (U"cd /Users/miep/research/project19")
+CODE (U"/usr/bin/praat --run ../usefulScripts/playFile.praat sounds/sound3.wav")
 
 ENTRY (U"6. Calling Praat from other programs such as Python")
 NORMAL (U"You can run the above script from several programming languages, not just from a Console or Terminal. "
