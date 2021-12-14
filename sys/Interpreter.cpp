@@ -637,7 +637,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 		my arguments [size] = Melder_dup_f (arguments);
 	}
 	/*
-		Convert booleans and choices to numbers.
+		Convert booleans and choices to numbers, and relative to absolute paths.
 	*/
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
@@ -740,10 +740,14 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel arg
 	if (iarg < narg)
 		Melder_throw (U"Found ", narg, U" arguments but expected only ", iarg, U".");
 	/*
-		Convert booleans and choices to numbers.
+		Convert booleans and choices to numbers, and relative to absolute paths.
 	*/
 	for (integer ipar = 1; ipar <= size; ipar ++) {
-		if (my types [ipar] == Interpreter_BOOLEAN) {
+		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
+			structMelderFile file { };
+			Melder_relativePathToFile (my arguments [ipar].get(), & file);
+			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+		} else if (my types [ipar] == Interpreter_BOOLEAN) {
 			mutablestring32 arg = & my arguments [ipar] [0];
 			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
 			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
