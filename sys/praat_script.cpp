@@ -559,13 +559,17 @@ void praat_executeCommandFromStandardInput (conststring32 programName) {
 void praat_executeScriptFromFile (MelderFile file, conststring32 arguments) {
 	try {
 		autostring32 text = MelderFile_readText (file);
-		autoMelderFileSetDefaultDir dir (file);   // so that relative file names can be used inside the script
-		Melder_includeIncludeFiles (& text);
+		{// scope
+			autoMelderSaveDefaultDir saveDir;
+			autoMelderFileSetDefaultDir dir (file);   // so that script-relative file names can be used for including include files
+			Melder_includeIncludeFiles (& text);
+		}   // back to the default directory of the caller
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (arguments) {
 			Interpreter_readParameters (interpreter.get(), text.get());
-			Interpreter_getArgumentsFromString (interpreter.get(), arguments);
+			Interpreter_getArgumentsFromString (interpreter.get(), arguments);   // interpret caller-relative paths for infile/outfile/folder arguments
 		}
+		autoMelderFileSetDefaultDir dir (file);   // so that script-relative file names can be used inside the script
 		Interpreter_run (interpreter.get(), text.get());
 	} catch (MelderError) {
 		Melder_throw (U"Script ", file, U" not completed.");
