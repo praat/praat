@@ -17,20 +17,23 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
-//#include <stdbool.h>
+#ifndef ESPEAK_NG_SYNTHESIZE_H
+#define ESPEAK_NG_SYNTHESIZE_H
 
-#include "phoneme.h"
-#include "voice.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+#include <stdint.h>
+//#include <stdbool.h>
+#include "espeak_ng.h"
+#include "phoneme.h"              // for PHONEME_TAB, N_PHONEME_TAB
+
 #define espeakINITIALIZE_PHONEME_IPA 0x0002 // move this to speak_lib.h, after eSpeak version 1.46.02
 
 #define N_PHONEME_LIST 1000 // enough for source[N_TR_SOURCE] full of text, else it will truncate
 
-#define MAX_HARMONIC 400 // 400 * 50Hz = 20 kHz, more than enough
 #define N_SEQ_FRAMES  25 // max frames in a spectrum sequence (real max is ablut 8)
 #define STEPSIZE      64 // 2.9mS at 22 kHz sample rate
 
@@ -40,7 +43,6 @@ extern "C"
 #define FRFLAG_LEN_MOD         0x04 // reduce effect of length adjustment
 #define FRFLAG_BREAK_LF        0x08 // but keep f3 upwards
 #define FRFLAG_BREAK           0x10 // don't merge with next frame
-#define FRFLAG_BREAK_2         0x18 // FRFLAG_BREAK_LF or FRFLAG_BREAK
 #define FRFLAG_FORMANT_RATE    0x20 // Flag5 allow increased rate of change of formant freq
 #define FRFLAG_MODULATE        0x40 // Flag6 modulate amplitude of some cycles to give trill
 #define FRFLAG_DEFER_WAV       0x80 // Flag7 defer mixing WAV until the next frame
@@ -55,7 +57,6 @@ extern "C"
 #define SFLAG_SWITCHED_LANG    0x20 // this word uses phonemes from a different language
 #define SFLAG_PROMOTE_STRESS   0x40 // this unstressed word can be promoted to stressed
 
-#define SFLAG_PREV_PAUSE     0x1000 // consider previous phoneme as pause
 #define SFLAG_NEXT_PAUSE     0x2000 // consider next phoneme as pause
 
 // embedded command numbers
@@ -72,13 +73,10 @@ extern "C"
 #define EMBED_U    11 // audio uri
 #define EMBED_B    12 // break
 #define EMBED_F    13 // emphasis
-#define EMBED_C    14 // capital letter indication
 
 #define N_EMBEDDED_VALUES    15
 extern int embedded_value[N_EMBEDDED_VALUES];
 extern int embedded_default[N_EMBEDDED_VALUES];
-
-#define N_MARKERS 8
 
 #define N_KLATTP   10 // this affects the phoneme data file format
 #define N_KLATTP2  14 // used in vowel files, with extra parameters for future extensions
@@ -122,22 +120,6 @@ typedef struct { // 44 bytes
 	unsigned char bw[4];      // Klatt bandwidth BNZ /2, f1,f2,f3
 	unsigned char klattp[5];  // AV, FNZ, Tilt, Aspr, Skew
 } frame_t2; // without the extra Klatt parameters
-
-// formant data used by wavegen
-typedef struct {
-	int freq;     // Hz<<16
-	int height;   // height<<15
-	int left;     // Hz<<16
-	int right;    // Hz<<16
-	DOUBLEX freq1; // floating point versions of the above
-	DOUBLEX height1;
-	DOUBLEX left1;
-	DOUBLEX right1;
-	DOUBLEX freq_inc; // increment by this every 64 samples
-	DOUBLEX height_inc;
-	DOUBLEX left_inc;
-	DOUBLEX right_inc;
-} wavegen_peaks_t;
 
 typedef struct {
 	unsigned char *pitch_env;
@@ -198,6 +180,11 @@ typedef struct {
 	unsigned char tone_ph;    // tone phoneme to use with this vowel
 } PHONEME_LIST2;
 
+#define PHLIST_START_OF_WORD     1
+#define PHLIST_END_OF_CLAUSE     2
+#define PHLIST_START_OF_SENTENCE 4
+#define PHLIST_START_OF_CLAUSE   8
+
 typedef struct {
 	// The first section is a copy of PHONEME_LIST2
 	unsigned short synthflags;
@@ -212,9 +199,8 @@ typedef struct {
 	unsigned char env;    // pitch envelope number
 	unsigned char type;
 	unsigned char prepause;
-	unsigned char postpause;
 	unsigned char amp;
-	unsigned char newword;   // bit 0=start of word, bit 1=end of clause, bit 2=start of sentence
+	unsigned char newword;   // bit flags, see PHLIST_(START|END)_OF_*
 	unsigned char pitch1;
 	unsigned char pitch2;
 	unsigned char std_length;
@@ -237,7 +223,7 @@ typedef struct {
 
 #define pd_FORNEXTPH     0x2
 #define pd_DONTLENGTHEN  0x4
-#define pd_REDUCELENGTHCHANGE 0x8
+
 typedef struct {
 	int pd_control;
 	int pd_param[N_PHONEME_DATA_PARAM];  // set from group 0 instructions
@@ -273,7 +259,7 @@ typedef struct {
 #define INSTN_RETURN         0x0001
 #define INSTN_CONTINUE       0x0002
 
-// Group 0 instrcutions with 8 bit operand.  These values go into bits 8-15 of the instruction
+// Group 0 instructions with 8 bit operand.  These values go into bits 8-15 of the instruction
 #define i_CHANGE_PHONEME 0x01
 #define i_REPLACE_NEXT_PHONEME 0x02
 #define i_INSERT_PHONEME 0x03
@@ -326,7 +312,6 @@ typedef struct {
 #define STRESS_IS_SECONDARY     3       // secondary stress
 #define STRESS_IS_PRIMARY       4       // primary (main) stress
 #define STRESS_IS_PRIORITY      5       // replaces primary markers
-#define STRESS_IS_EMPHASIZED	6       // emphasized
 
 // other conditions
 #define isAfterStress  9
@@ -343,22 +328,6 @@ typedef struct {
 #define i_StressLevel  0x800
 
 typedef struct {
-	int name;
-	int length;
-	char *data;
-	char *filename;
-} SOUND_ICON;
-
-typedef struct {
-	int name;
-	unsigned int next_phoneme;
-	int mbr_name;
-	int mbr_name2;
-	int percent; // percentage length of first component
-	int control;
-} MBROLA_TAB;
-
-typedef struct {
 	int pause_factor;
 	int clause_pause_factor;
 	unsigned int min_pause;
@@ -366,8 +335,7 @@ typedef struct {
 	int lenmod_factor;
 	int lenmod2_factor;
 	int min_sample_len;
-	int loud_consonants;
-	int fast_settings[8];
+	int fast_settings;	// TODO: rename this variable to better explain the purpose, or delete if there is none
 } SPEED_FACTORS;
 
 typedef struct {
@@ -448,6 +416,7 @@ extern unsigned char pitch_adjust_tab[MAX_PITCH_VALUE+1];
 #define WCMD_MBROLA_DATA 13
 #define WCMD_FMT_AMPLITUDE 14
 #define WCMD_SONIC_SPEED 15
+#define WCMD_PHONEME_ALIGNMENT 16
 
 #define N_WCMDQ   170
 #define MIN_WCMDQ  25   // need this many free entries before adding new phoneme
@@ -456,29 +425,11 @@ extern intptr_t wcmdq[N_WCMDQ][4];
 extern int wcmdq_head;
 extern int wcmdq_tail;
 
-// from Wavegen file
-int  WcmdqFree(void);
-void WcmdqStop(void);
-int  WcmdqUsed(void);
-void WcmdqInc(void);
-void WavegenInit(int rate, int wavemult_fact);
-float polint(float xa[], float ya[], int n, float x);
-int WavegenFill(void);
 void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *out_ptr);
-int GetAmplitude(void);
-void SetPitch2(voice_t *voice, int pitch1, int pitch2, int *pitch_base, int *pitch_range);
-int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control);
 
 extern unsigned char *wavefile_data;
 extern int samplerate;
 extern int samplerate_native;
-
-extern int wavefile_ix;
-extern int wavefile_amp;
-extern int wavefile_ix2;
-extern int wavefile_amp2;
-extern int vowel_transition[4];
-extern int vowel_transition0, vowel_transition1;
 
 #define N_ECHO_BUF 5500   // max of 250mS at 22050 Hz
 extern int echo_head;
@@ -486,26 +437,12 @@ extern int echo_tail;
 extern int echo_amp;
 extern short echo_buf[N_ECHO_BUF];
 
-extern int mbrola_delay;
-extern char mbrola_name[20];
-
-// from synthdata file
-unsigned int LookupSound(PHONEME_TAB *ph1, PHONEME_TAB *ph2, int which, int *match_level, int control);
-frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,  int *n_frames, PHONEME_LIST *plist);
-void FreePhData(void);
-
-unsigned char *LookupEnvelope(int ix);
-espeak_ng_STATUS LoadPhData(int *srate, espeak_ng_ERROR_CONTEXT *context);
-void FreePhData(void);
-
 void SynthesizeInit(void);
 int  Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume);
-void MakeWave2(PHONEME_LIST *p, int n_ph);
 int  SpeakNextClause(int control);
 void SetSpeed(int control);
 void SetEmbedded(int control, int value);
-void SelectPhonemeTable(int number);
-int  SelectPhonemeTableName(const char *name);
+int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
 
 void Write4Bytes(FILE *f, int value);
 int Read4Bytes(FILE *f);
@@ -519,44 +456,22 @@ extern unsigned char *envelope_data[N_ENVELOPE_DATA];
 extern int formant_rate[];         // max rate of change of each formant
 extern SPEED_FACTORS speed;
 
-extern long count_samples;
 extern unsigned char *out_ptr;
-extern unsigned char *out_start;
 extern unsigned char *out_end;
-extern int event_list_ix;
 extern espeak_EVENT *event_list;
 extern t_espeak_callback *synth_callback;
-extern const char *version_string;
 extern const int version_phdata;
-extern double sonicSpeed;
 
-#define N_SOUNDICON_TAB  80   // total entries in soundicon_tab
-#define N_SOUNDICON_SLOTS 4    // number of slots reserved for dynamic loading of audio files
-extern int n_soundicon_tab;
-extern SOUND_ICON soundicon_tab[N_SOUNDICON_TAB];
-
-espeak_ng_STATUS LoadMbrolaTable(const char *mbrola_voice, const char *phtrans, int *srate);
-espeak_ng_STATUS SetParameter(int parameter, int value, int relative);
-int MbrolaTranslate(PHONEME_LIST *plist, int n_phonemes, bool resume, FILE *f_mbrola);
-int MbrolaGenerate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume);
-int MbrolaFill(int length, bool resume, int amplitude);
-void MbrolaReset(void);
 void DoEmbedded(int *embix, int sourceix);
 void DoMarker(int type, int char_posn, int length, int value);
 void DoPhonemeMarker(int type, int char_posn, int length, char *name);
 int DoSample3(PHONEME_DATA *phdata, int length_mod, int amp);
 int DoSpect2(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,  PHONEME_LIST *plist, int modulation);
-int FormantTransition2(frameref_t *seq, int *n_frames, unsigned int data1, unsigned int data2, PHONEME_TAB *other_ph, int which);
 int PauseLength(int pause, int control);
-int LookupPhonemeTable(const char *name);
-unsigned char *GetEnvelope(int index);
-int NumInstnWords(USHORT *prog);
-int GetAmplitude(void);
-
-void InitBreath(void);
-
-
+const char *WordToString(unsigned int word);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

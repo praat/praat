@@ -17,8 +17,10 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SPEECH_H
-#define SPEECH_H
+#include "espeak_ng.h"
+
+#ifndef ESPEAK_NG_SPEECH_H
+#define ESPEAK_NG_SPEECH_H
 
 #if defined(BYTE_ORDER) && BYTE_ORDER == BIG_ENDIAN
 #define ARCH_BIG
@@ -49,22 +51,16 @@
 	#define PATH_ESPEAK_DATA  "/usr/share/espeak-ng-data"
 	extern ESPEAK_NG_API int GetFileLength(const char *filename);
 #endif
-	
+
 typedef unsigned short USHORT;
 typedef unsigned char UCHAR;
 typedef double DOUBLEX;
-
-typedef struct {
-	const char *mnem;
-	int value;
-} MNEM_TAB;
-int LookupMnem(MNEM_TAB *table, const char *string);
-const char *LookupMnemName(MNEM_TAB *table, const int value);
 
 void cancel_audio(void);
 
 extern char path_home[N_PATH_HOME];    // this is the espeak-ng-data directory
 
-extern ESPEAK_NG_API void strncpy0(char *to, const char *from, int size);
+extern ESPEAK_NG_API int GetFileLength(const char *filename);
+
 
 #endif // SPEECH_H

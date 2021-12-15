@@ -28,6 +28,7 @@
 #include "FileInMemoryManager.h"
 #include "speech.h"
 #include "synthesize.h"
+#include "voice.h"
 #include "espeakdata_FileInMemory.h"
 
 #define SpeechSynthesizer_PHONEMECODINGS_IPA 2

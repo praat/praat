@@ -1,6 +1,6 @@
 /* CCA_and_Correlation.cpp
  *
- * Copyright (C) 1993-2019 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2021 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.get(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
 
-		for (integer i = 1; i <= thy numberOfRows; i ++) {
+		for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				his data [j] [i] = NUMinner (thy data.row (i).part (1, ny), my y -> eigenvectors.row (j));
+				his data [j] [irow] = NUMinner (thy data.row (irow).part (1, ny), my y -> eigenvectors.row (j));
 			}
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				his data [my numberOfCoefficients + j] [i] = NUMinner (thy data.row (i).part (ny + 1, ny + nx), my x -> eigenvectors.row (j));
+				his data [my numberOfCoefficients + j] [irow] = NUMinner (thy data.row (irow).part (ny + 1, ny + nx), my x -> eigenvectors.row (j));
 			}
 		}
 		return him;
@@ -106,8 +106,8 @@ double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, i
 	longdouble redundancy = 0.0;
 	for (integer icv = canonicalVariate_from; icv <= canonicalVariate_to; icv ++) {
 		const double varianceFraction = CCA_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
-		if (isundef (varianceFraction)) return undefined;
-
+		if (isundef (varianceFraction))
+			return undefined;
 		redundancy += varianceFraction * my y -> eigenvalues [icv]; // eigenvalue == (coefficient)^2
 	}
 

@@ -1,8 +1,8 @@
 # File: Makefile
 
-# Makefile for Praat.
+# Makefile for Praat (with sources from espeak-work/espeak-ng-work)
 # Paul Boersma, 24 May 2020
-# David Weenink, 22 December 2020
+# David Weenink, 14 December 2021
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed

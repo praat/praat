@@ -1,6 +1,6 @@
 /* espeakdata_FileInMemory.cpp
  *
- * Copyright (C) David Weenink 2012-2020
+ * Copyright (C) David Weenink 2012-2021
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +119,7 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 	*/
 	autoMelderString regex;
 	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
+	//const conststring32 text = Melder_peek8to32 ((const char *) & (text8.cells[1]));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);

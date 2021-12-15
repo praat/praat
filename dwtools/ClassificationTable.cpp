@@ -1,6 +1,6 @@
 /* ClassificationTable.cpp
  *
- * Copyright (C) 1993-2019 David Weenink
+ * Copyright (C) 1993-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,10 +70,10 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 	try {
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
 		Melder_assert (my numberOfColumns > 0);
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			const integer col = NUMmaxPos (my data.row (i));
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			const integer col = NUMmaxPos (my data.row (irow));
 			if (my columnLabels [col])
-				Strings_replace (thee.get(), i, my columnLabels [col].get());
+				Strings_replace (thee.get(), irow, my columnLabels [col].get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -85,8 +85,8 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 	try {
 		autoCategories thee = Categories_create ();
 		Melder_assert (my numberOfColumns > 0);
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			const integer col = NUMmaxPos (my data.row (i));
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			const integer col = NUMmaxPos (my data.row (irow));
 			OrderedOfString_append (thee.get(), my columnLabels [col].get());
 		}
 		return thee;
