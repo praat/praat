@@ -147,9 +147,9 @@ static void InitGroups(Translator *tr)
 		p++;
 
 		if (p[0] == RULE_REPLACEMENTS) {
-			//(unsigned int *)pw = (unsigned int *)(((intptr_t)p+4) & ~3); // advance to next word boundary
-			p += 4;
-			while ((size_t)p % 4 > 0) { p --; }
+			p = (char *)(((intptr_t)p+4) & ~3); // advance to next word boundary
+			//p += 4;
+			//while ((size_t)p % 4 > 0) { p --; }
 			
 			tr->langopts.replace_chars = (unsigned char *) p;
 

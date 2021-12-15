@@ -148,7 +148,7 @@ Output = (rnz.a * input) + (rnz.b * oldin1) + (rnz.c * oldin2)
 
 static double antiresonator(resonator_ptr r, double input)
 {
-	register double x = (double)r->a * (double)input + (double)r->b * (double)r->p1 + (double)r->c * (double)r->p2;
+	double x = (double)r->a * (double)input + (double)r->b * (double)r->p1 + (double)r->c * (double)r->p2;
 	r->p2 = (double)r->p1;
 	r->p1 = (double)input;
 	return (double)x;
