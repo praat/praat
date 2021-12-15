@@ -93,7 +93,7 @@ static conststring32 get_wordAfterPrecursor_u8 (constvector<unsigned char> const
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
-	const conststring32 text = Melder_peek8to32 ((const char *) (& text8.cells [1]));
+	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
@@ -118,8 +118,8 @@ static conststring32 get_stringAfterPrecursor_u8 (constvector<unsigned char> con
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
-//	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray())); // error: passes &text[0] instead of &text[1]	
-	const conststring32 text = Melder_peek8to32 ((const char *) & (text8.cells[1]));
+	const conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8.asArgumentToFunctionThatExpectsZeroBasedArray()));
+	//const conststring32 text = Melder_peek8to32 ((const char *) & (text8.cells[1]));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
