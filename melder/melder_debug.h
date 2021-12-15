@@ -22,7 +22,8 @@ inline integer Melder_debug = 0;
 
 void Melder_tracingToFile (MelderFile file);
 void Melder_setTracing (bool tracing);
-inline bool Melder_isTracing = false;
+inline bool Melder_isTracingGlobally = false;
+inline bool Melder_isTracingLocally = false;
 
 namespace MelderTrace {
 	inline structMelderFile _file { };
@@ -44,17 +45,23 @@ void _recursiveTemplate_Melder_trace (FILE *f, const MelderArg& first, Args... r
 
 template <typename... Args>
 void Melder_trace (conststring8 sourceCodeFileName, int lineNumber, conststring8 functionName, const MelderArg& first, Args... rest) {
-	if (! Melder_isTracing || MelderFile_isNull (& MelderTrace::_file))
+	if (! Melder_isTracingGlobally || MelderFile_isNull (& MelderTrace::_file))
 		return;
 	FILE *f = MelderTrace::_open (sourceCodeFileName, lineNumber, functionName);
 	_recursiveTemplate_Melder_trace (f, first, rest...);
 	MelderTrace::_close (f);
 }
 
+#define TRACE  constexpr bool Melder_isTracingLocally = true;   // intentionally shadow a global variable; meant for temporary tracing of a function (to stderr)
+
 #ifdef NDEBUG
 	#define trace(...)   ((void) 0)
 #else
-	#define trace(...)   (! Melder_isTracing ? (void) 0 : Melder_trace (__FILE__, __LINE__, __FUNCTION__, __VA_ARGS__))
+	#define trace(...)   ( \
+		Melder_isTracingGlobally ? Melder_trace (__FILE__, __LINE__, __FUNCTION__, __VA_ARGS__) : \
+		Melder_isTracingLocally ? Melder_casual (U"" __FILE__ " ", __LINE__, U" ", Melder_peek8to32 (__FUNCTION__), U": ", __VA_ARGS__) : \
+		(void) 0 \
+	)
 #endif
 
 /* End of file melder_debug.h */

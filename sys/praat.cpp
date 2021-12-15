@@ -1011,12 +1011,9 @@ static bool tryToAttachToTheCommandLine ()
 		/*
 			The result is `true` if Praat was called from a terminal window or some system() commands or Xcode,
 			and `false` if Praat was called from the Finder by double-clicking or dropping a file.
-			
-			FIXME:
-			The result is incorrectly `false` if the output is redirected to a file or pipe.
-			A proposed improvement is therefore:
-				isatty (fileno (stdin)) || isatty (fileno (stdout)) || isatty (fileno (stderr))
-			This might be incorrectly false only if all three streams are redirected, but this hasn't been tested yet.
+
+			This might be incorrectly false only if all three streams are redirected to a file or pipe,
+			but this hasn't been tested yet.
 		*/
 	#endif
 	return weHaveSucceeded;
@@ -1109,6 +1106,7 @@ static void printHelp () {
 
 #if defined (macintosh) || defined (UNIX)
 static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
+	//TRACE
 	/*
 		This function returns true only if we can be certain that we have sent
 		the command line to an already running invocation of Praat that is not identical to ourselves
@@ -1209,7 +1207,9 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 		for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
 			structMelderFile file { };
 			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [praatP.argumentNumber]), & file);
-			MelderString_append (& text32, U"Read from file... ", Melder_fileToPath (& file), U"\n");
+			conststring32 absolutePath = Melder_fileToPath (& file);
+			MelderString_append (& text32, U"Read from file... ", absolutePath, U"\n");
+			trace (U"Argument ", praatP.argumentNumber, U": will open path ", absolutePath);
 		} // TODO: we could send an openDocuments message instead
 		autostring8 text8 = Melder_32to8 (text32.string);
 		#if defined (macintosh)
@@ -1303,11 +1303,11 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 
 void praat_init (conststring32 title, int argc, char **argv)
 {
+	//TRACE
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
 
-	for (int iarg = 0; iarg < argc; iarg ++) {
-		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
-	}
+	for (int iarg = 0; iarg < argc; iarg ++)
+		trace (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	setThePraatLocale ();
 	Melder_init ();
 
@@ -1325,16 +1325,23 @@ void praat_init (conststring32 title, int argc, char **argv)
 	/*
 	 * Running Praat from the command line.
 	 */
-	bool foundTheOpenOption = false, foundTheRunOption = false, foundTheTraceOption = false;
+	bool foundTheOpenSwitch = false, foundTheRunSwitch = false, foundTheNewSwitch = false, foundTheExistingSwitch = false;
+	bool foundTheTraceOption = false;
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--open")) {
-			foundTheOpenOption = true;
+			foundTheOpenSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--run")) {
-			foundTheRunOption = true;
+			foundTheRunSwitch = true;
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--new")) {
+			foundTheNewSwitch = true;
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--existing")) {
+			foundTheExistingSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--no-pref-files")) {
 			praatP.ignorePreferenceFiles = true;
@@ -1400,13 +1407,29 @@ void praat_init (conststring32 title, int argc, char **argv)
 			exit (-1);
 		}
 	}
-	weWereStartedFromTheCommandLine |= foundTheRunOption;   // some external system()-like commands don't make isatty return true, so we have to help
+	if (foundTheOpenSwitch && foundTheRunSwitch) {
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Conflicting command line switches --run and --open.", U"\n");
+		printHelp ();
+		MelderInfo_close ();
+		exit (-1);
+	}
+	if (foundTheNewSwitch && foundTheExistingSwitch) {
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Conflicting command line switches --new and --existing.", U"\n");
+		printHelp ();
+		MelderInfo_close ();
+		exit (-1);
+	}
+	weWereStartedFromTheCommandLine |= foundTheRunSwitch;   // some external system()-like commands don't make isatty return true, so we have to help
 
 	const bool thereIsAFileNameInTheArgumentList = ( praatP.argumentNumber < argc );
-	Melder_batch = weWereStartedFromTheCommandLine && thereIsAFileNameInTheArgumentList && ! foundTheOpenOption;
+	Melder_batch = weWereStartedFromTheCommandLine && thereIsAFileNameInTheArgumentList && ! foundTheOpenSwitch;
 	const bool fileNamesCameInByDropping = ( thereIsAFileNameInTheArgumentList && ! weWereStartedFromTheCommandLine );   // doesn't happen on the Mac
-	praatP.userWantsToOpen = foundTheOpenOption || fileNamesCameInByDropping;
+	praatP.userWantsToOpen = foundTheOpenSwitch || fileNamesCameInByDropping;
 	trace (U"User wants to open: ", praatP.userWantsToOpen);
+	praatP.userWantsExistingInstance = foundTheExistingSwitch || (! foundTheNewSwitch && foundTheOpenSwitch);
+	trace (U"User wants existing instance: ", praatP.userWantsExistingInstance);
 
 	if (Melder_batch) {
 		Melder_assert (praatP.argumentNumber < argc);
@@ -1530,8 +1553,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 		Check whether Praat is already running.
 	*/
 	#if defined (macintosh)
-		if (! Melder_batch) {
-			if (tryToSwitchToRunningPraat (foundTheOpenOption))
+		if (praatP.userWantsExistingInstance) {
+			if (tryToSwitchToRunningPraat (foundTheOpenSwitch))
 				exit (0);
 		}
 	#endif
@@ -2137,7 +2160,6 @@ void praat_run () {
 
 		if (praatP.userWantsToOpen) {
 			for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
-				//Melder_casual (U"File to open <<", Melder_peek8to32 (theArgv [iarg]), U">>");
 				/*
 					The user double-clicked a Praat file,
 					or dropped a file on the Praat icon,
@@ -2145,6 +2167,7 @@ void praat_run () {
 				*/
 				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
 															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
+				trace (U"Argument ", praatP.argumentNumber, U": <<", text.get(), U">>");
 				try {
 					praat_executeScriptFromText (text.get());
 				} catch (MelderError) {
