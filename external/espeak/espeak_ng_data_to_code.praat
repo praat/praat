@@ -9,6 +9,16 @@
 #
 # If the upstream espeak-ng has been modified then I follow the following procedure:
 #
+# First something like: 
+#		cp espeak-work/espeak-previous/* espeak-work/espeak-old
+#		cp external/espeak/* espeak-work/espeak-previous (save the current sources that are used in Praat)
+#		cp espeak-work/espeak-ng-current/* espeak-work/espeak-ng-previous/*
+#		(with kdiff3 we can later see where the differences between the current espeak-ng version and the new version are
+#		after copying the new espeak sources to espeak-ng-current and renaming thenm as *.cpp. The current script does the
+#		copy)
+# Then;
+#	cd /external/espeak; rm *;
+	
 # Given the following directories:
 #	A: ~/projects/praat/espeak-work/espeak-ng-work 
 #	B: ~/projects/praat/espeak-work/espeak-ng-current
