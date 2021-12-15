@@ -26,31 +26,35 @@
 #include "../fon/Vector.h"
 
 #define Interpreter_WORD 1
+#define Interpreter_SENTENCE 2
+#define Interpreter_TEXT 3
+#define Interpreter_INFILE 4
+#define Interpreter_OUTFILE 5
+#define Interpreter_FOLDER 6
 
-#define Interpreter_REAL 2
-#define Interpreter_POSITIVE 3
-#define Interpreter_INTEGER 4
-#define Interpreter_NATURAL 5
-#define Interpreter_BOOLEAN 6
+#define Interpreter_REAL 7
+#define Interpreter_POSITIVE 8
+#define Interpreter_INTEGER 9
+#define Interpreter_NATURAL 10
+#define Interpreter_BOOLEAN 11
 #define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VARIABLE  Interpreter_REAL
 #define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VARIABLE  Interpreter_BOOLEAN
 
-#define Interpreter_SENTENCE 7
-#define Interpreter_TEXT 8
-
-#define Interpreter_REALVECTOR 9
-#define Interpreter_POSITIVEVECTOR 10
-#define Interpreter_INTEGERVECTOR 11
-#define Interpreter_NATURALVECTOR 12
+#define Interpreter_REALVECTOR 12
+#define Interpreter_POSITIVEVECTOR 13
+#define Interpreter_INTEGERVECTOR 14
+#define Interpreter_NATURALVECTOR 15
 #define Interpreter_MINIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_REALVECTOR
 #define Interpreter_MAXIMUM_TYPE_FOR_NUMERIC_VECTOR_VARIABLE  Interpreter_NATURALVECTOR
 
-#define Interpreter_REALMATRIX 19
-#define Interpreter_CHOICE 20
-#define Interpreter_OPTIONMENU 21
-#define Interpreter_BUTTON 22
-#define Interpreter_OPTION 23
-#define Interpreter_COMMENT 24
+#define Interpreter_REALMATRIX 16
+#define Interpreter_CHOICE 17
+#define Interpreter_OPTIONMENU 18
+#define Interpreter_MAXIMUM_TYPE_WITH_VARIABLE_NAME  Interpreter_OPTIONMENU
+
+#define Interpreter_BUTTON 19
+#define Interpreter_OPTION 20
+#define Interpreter_COMMENT 21
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -235,6 +239,16 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 			char32 *parameterLocation;
 			if (str32nequ (startOfLine, U"word", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_WORD; parameterLocation = startOfLine + 4; }
+			else if (str32nequ (startOfLine, U"sentence", 8) && Melder_isEndOfInk (startOfLine [8]))
+				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
+			else if (str32nequ (startOfLine, U"infile", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_INFILE; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"outfile", 7) && Melder_isEndOfInk (startOfLine [7]))
+				{ type = Interpreter_OUTFILE; parameterLocation = startOfLine + 7; }
+			else if (str32nequ (startOfLine, U"folder", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_FOLDER; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
+				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
 			else if (str32nequ (startOfLine, U"real", 4) && Melder_isEndOfInk (startOfLine [4]))
 				{ type = Interpreter_REAL; parameterLocation = startOfLine + 4; }
 			else if (str32nequ (startOfLine, U"positive", 8) && Melder_isEndOfInk (startOfLine [8]))
@@ -245,10 +259,6 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				{ type = Interpreter_NATURAL; parameterLocation = startOfLine + 7; }
 			else if (str32nequ (startOfLine, U"boolean", 7) && Melder_isEndOfInk (startOfLine [7]))
 				{ type = Interpreter_BOOLEAN; parameterLocation = startOfLine + 7; }
-			else if (str32nequ (startOfLine, U"sentence", 8) && Melder_isEndOfInk (startOfLine [8]))
-				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
-			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
-				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
 			else if (str32nequ (startOfLine, U"realvector", 10) && Melder_isEndOfInk (startOfLine [10]))
 				{ type = Interpreter_REALVECTOR; parameterLocation = startOfLine + 10; }
 			else if (str32nequ (startOfLine, U"positivevector", 14) && Melder_isEndOfInk (startOfLine [14]))
@@ -294,7 +304,7 @@ integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 				my arguments [4] := "Green"
 				my arguments [5] := "Blue"
 			*/
-			if (type <= Interpreter_OPTIONMENU) {
+			if (type <= Interpreter_MAXIMUM_TYPE_WITH_VARIABLE_NAME) {
 				Melder_skipHorizontalSpace (& parameterLocation);
 				if (Melder_isEndOfLine (*parameterLocation)) {
 					*parameterLocation = U'\0';   // destroy input in order to limit printing of line
@@ -371,6 +381,16 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 		switch (my types [ipar]) {
 			case Interpreter_WORD: {
 				UiForm_addWord (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_SENTENCE: {
+				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_TEXT: {
+				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_INFILE: {
+				UiForm_addInfile (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_OUTFILE: {
+				UiForm_addOutfile (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
+			} break; case Interpreter_FOLDER: {
+				UiForm_addFolder (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_REAL: {
 				UiForm_addReal (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());   // TODO: an address of a real variable
 			} break; case Interpreter_POSITIVE: {
@@ -383,10 +403,6 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				UiForm_addBoolean (form.get(), nullptr, nullptr, parameter, my arguments [ipar] [0] == U'1' ||
 					my arguments [ipar] [0] == U'y' || my arguments [ipar] [0] == U'Y' ||
 					(my arguments [ipar] [0] == U'o' && my arguments [ipar] [1] == U'n'));
-			} break; case Interpreter_SENTENCE: {
-				UiForm_addSentence (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
-			} break; case Interpreter_TEXT: {
-				UiForm_addText (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_REALVECTOR: {
 				kUi_realVectorFormat format = kUi_realVectorFormat_getValue (my formats [ipar]);
 				if (format == kUi_realVectorFormat::UNDEFINED)
@@ -407,7 +423,8 @@ autoUiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring
 				if (format == kUi_integerVectorFormat::UNDEFINED)
 					Melder_throw (U"Undefined natural vector format \"", my formats [ipar], U"\".");
 				UiForm_addNaturalVector (form.get(), nullptr, nullptr, parameter, kUi_integerVectorFormat_getValue (my formats [ipar]), my arguments [ipar].get());
-			// } break; case Interpreter_REALMATRIX: {
+			} break; case Interpreter_REALMATRIX: {
+				Melder_throw (U"Cannot handle matrices in forms yet.");   // TODO
 			//	UiForm_addRealMatrix (form.get(), nullptr, nullptr, parameter, my arguments [ipar].get());
 			} break; case Interpreter_CHOICE: {
 				radio = UiForm_addRadio (form.get(), nullptr, nullptr, nullptr, parameter, (int) Melder_atoi (my arguments [ipar].get()), 1);
@@ -466,6 +483,22 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			p ++;
 		}
 		switch (my types [ipar]) {
+			case Interpreter_WORD: {
+			case Interpreter_SENTENCE:
+			case Interpreter_TEXT:
+				const conststring32 value = UiForm_getString (dialog, parameter);
+				my arguments [ipar] = Melder_dup_f (value);
+				break;
+			}
+			case Interpreter_INFILE: {
+			case Interpreter_OUTFILE:
+			case Interpreter_FOLDER:
+				const conststring32 value = UiForm_getString (dialog, parameter);
+				structMelderFile file { };
+				Melder_relativePathToFile (value, & file);   // the working directory should have been set to the script file path
+				my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+				break;
+			}
 			case Interpreter_REAL:
 			case Interpreter_POSITIVE: {
 				const double value = UiForm_getReal_check (dialog, parameter);
@@ -479,15 +512,6 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				const integer value = UiForm_getInteger (dialog, parameter);
 				my arguments [ipar] = autostring32 (40, true);
 				Melder_sprint (my arguments [ipar].get(),40+1, value);
-				break;
-			}
-			case Interpreter_CHOICE:
-			case Interpreter_OPTIONMENU: {
-				const integer integerValue = UiForm_getInteger (dialog, parameter);
-				const conststring32 stringValue = UiForm_getString (dialog, parameter);
-				my arguments [ipar] = autostring32 (40, true);
-				Melder_sprint (my arguments [ipar].get(),40+1, integerValue);
-				Melder_sprint (my choiceArguments [ipar],100, stringValue);
 				break;
 			}
 			case Interpreter_REALVECTOR:
@@ -516,15 +540,25 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				my arguments [ipar] = Melder_dup (buffer.string);
 				break;
 			}
+			case Interpreter_REALMATRIX: {
+				Melder_throw (U"Cannot handle matrices in forms yet");
+				break;
+			}
+			case Interpreter_CHOICE:
+			case Interpreter_OPTIONMENU: {
+				const integer integerValue = UiForm_getInteger (dialog, parameter);
+				const conststring32 stringValue = UiForm_getString (dialog, parameter);
+				my arguments [ipar] = autostring32 (40, true);
+				Melder_sprint (my arguments [ipar].get(),40+1, integerValue);
+				Melder_sprint (my choiceArguments [ipar],100, stringValue);
+				break;
+			}
 			case Interpreter_BUTTON:
 			case Interpreter_OPTION:
 			case Interpreter_COMMENT:
 				break;
-			default: {
-				const conststring32 value = UiForm_getString (dialog, parameter);
-				my arguments [ipar] = Melder_dup_f (value);
-				break;
-			}
+			default:
+				Melder_fatal (U"Unhandled parameter type ", my types [ipar]);
 		}
 	}
 }
@@ -603,10 +637,14 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 		my arguments [size] = Melder_dup_f (arguments);
 	}
 	/*
-		Convert booleans and choices to numbers.
+		Convert booleans and choices to numbers, and relative to absolute paths.
 	*/
 	for (int ipar = 1; ipar <= size; ipar ++) {
-		if (my types [ipar] == Interpreter_BOOLEAN) {
+		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
+			structMelderFile file { };
+			Melder_relativePathToFile (my arguments [ipar].get(), & file);
+			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+		} else if (my types [ipar] == Interpreter_BOOLEAN) {
 			mutablestring32 arg = & my arguments [ipar] [0];
 			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
 			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
@@ -702,10 +740,14 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel arg
 	if (iarg < narg)
 		Melder_throw (U"Found ", narg, U" arguments but expected only ", iarg, U".");
 	/*
-		Convert booleans and choices to numbers.
+		Convert booleans and choices to numbers, and relative to absolute paths.
 	*/
 	for (integer ipar = 1; ipar <= size; ipar ++) {
-		if (my types [ipar] == Interpreter_BOOLEAN) {
+		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
+			structMelderFile file { };
+			Melder_relativePathToFile (my arguments [ipar].get(), & file);
+			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+		} else if (my types [ipar] == Interpreter_BOOLEAN) {
 			mutablestring32 arg = & my arguments [ipar] [0];
 			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
 			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))

@@ -223,8 +223,9 @@ void structGuiMenu :: v_destroy () noexcept {
 	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
 	{
 		(void) sender;
-		if (praatP.userWantsToOpen)
-			return;
+		//Melder_casual (U"application open files: ", [fileNames count]);
+		//if (praatP.userWantsToOpen)   // why was this here?
+		//	return;
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
 			try {
 				NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];

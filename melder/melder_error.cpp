@@ -59,7 +59,19 @@ bool Melder_hasError (conststring32 partialError) {
 	return !! str32str (theErrorBuffer, partialError);
 }
 
-#define CRASH_SEMAPHORE  U" will crash. Please notify the author "
+#define CRASH_SEMAPHORE  U" will crash. Please notify the author ("
+
+static conststring32 crashMessage () {
+	static char32 crashMessageBuffer [1000];
+	str32cpy (crashMessageBuffer, U"Praat");   // TODO: make dependent on app name
+	str32cat (crashMessageBuffer, CRASH_SEMAPHORE);
+	str32cat (crashMessageBuffer, U"paul.boersma@uva.nl");   // TODO: make dependent on author email address
+	str32cat (crashMessageBuffer, U") with all of the following information");
+	str32cat (crashMessageBuffer, ( Melder_batch ? U"" : U", before closing this window" ));
+	str32cat (crashMessageBuffer, U" (and please mention in your email precisely"
+			" what you were doing when this crash occurred):\n\n");
+	return crashMessageBuffer;
+}
 
 bool Melder_hasCrash () {
 	const char32 *firstSpace = str32chr (theErrorBuffer, U' ');
@@ -104,10 +116,6 @@ void Melder_flushError () {
 #include <mutex>
 static std::mutex theMelder_crash_mutex;   // to guard against simultaneous crashes in multiple threads
 
-static const conststring32 theCrashMessage { U"Praat" CRASH_SEMAPHORE   // TODO: make dependent on app name
-	"(paul.boersma@uva.nl) with all of the following information, "
-	"before closing this window (and please mention in your email precisely what you were doing when this crash occurred):\n\n" };
-
 void Melder_fatal_ (const MelderArg& arg1,
 	const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7,
@@ -115,7 +123,7 @@ void Melder_fatal_ (const MelderArg& arg1,
 	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13)
 {
 	std::lock_guard <std::mutex> lock (theMelder_crash_mutex);
-	MelderError::_append (theCrashMessage);
+	MelderError::_append (crashMessage ());
 	MelderError::_append (arg1. _arg ? arg1. _arg : U"");
 	MelderError::_append (arg2. _arg ? arg2. _arg : U"");
 	MelderError::_append (arg3. _arg ? arg3. _arg : U"");
@@ -129,6 +137,7 @@ void Melder_fatal_ (const MelderArg& arg1,
 	MelderError::_append (arg11._arg ? arg11._arg : U"");
 	MelderError::_append (arg12._arg ? arg12._arg : U"");
 	MelderError::_append (arg13._arg ? arg13._arg : U"");
+	MelderError::_append (U"\n");
 	trace (U"CRASH: ", theErrorBuffer);
 	throw MelderError ();
 }
@@ -150,7 +159,7 @@ void Melder_assert_ (const char *pathName, int lineNumber, const char *condition
 	static char lineNumberBuffer8 [40];
 	sprintf (lineNumberBuffer8, "%d", lineNumber);
 	Melder_8to32_inplace (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
-	MelderError::_append (theCrashMessage);
+	MelderError::_append (crashMessage ());
 	MelderError::_append (U"Assertion failed in file \"");
 	MelderError::_append (fileName);
 	MelderError::_append (U"\" at line ");

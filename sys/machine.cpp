@@ -164,6 +164,7 @@ void Machine_initLookAndFeel (int argc, char **argv) {
 		else if (strequ (argv [1], "-hp")) lookAndFeel = LookAndFeel_HP;
 		else if (strequ (argv [1], "-sun4")) lookAndFeel = LookAndFeel_SUN4;
 		else if (strequ (argv [1], "-mac")) lookAndFeel = LookAndFeel_MAC;
+		else if (strequ (argv [1], "-win32")) lookAndFeel = LookAndFeel_WIN32;
 		else if (strequ (argv [1], "-linux")) lookAndFeel = LookAndFeel_LINUX;
 		else if (strequ (argv [1], "-cocoa")) lookAndFeel = LookAndFeel_COCOA;
 		else if (strequ (argv [1], "-chrome")) lookAndFeel = LookAndFeel_CHROME;
