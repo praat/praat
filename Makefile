@@ -20,7 +20,7 @@ all: all-external all-self
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
 		sys/libsys.a melder/libmelder.a kar/libkar.a \
-		espeak-work/espeak-ng-work/libespeak.a \
+		external/espeak/libespeak.a \
 		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
 		external/glpk/libglpk.a \
@@ -37,7 +37,7 @@ all-external:
 	$(MAKE) -C external/mp3
 	$(MAKE) -C external/flac
 	$(MAKE) -C external/portaudio
-	$(MAKE) -C espeak-work/espeak-ng-work
+	$(MAKE) -C external/espeak
 	$(MAKE) -C external/vorbis
 	$(MAKE) -C external/opusfile
 
@@ -66,7 +66,7 @@ clean-external:
 	$(MAKE) -C external/mp3 clean
 	$(MAKE) -C external/flac clean
 	$(MAKE) -C external/portaudio clean
-	$(MAKE) -C espeak-work/espeak-ng-work clean
+	$(MAKE) -C external/espeak clean
 	$(MAKE) -C external/vorbis clean
 	$(MAKE) -C external/opusfile clean
 

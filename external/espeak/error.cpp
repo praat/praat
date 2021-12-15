@@ -25,10 +25,9 @@
 #include <string.h>
 
 #include "espeak_ng.h"
+
 #include "error.h"
-#include "speech.h"
-#include "synthesize.h"
-#include "melder.h"
+#include "dictionary.h"           // for strncpy0
 
 espeak_ng_STATUS
 create_file_error_context(espeak_ng_ERROR_CONTEXT *context,
@@ -53,7 +52,7 @@ create_file_error_context(espeak_ng_ERROR_CONTEXT *context,
 
 espeak_ng_STATUS
 create_version_mismatch_error_context(espeak_ng_ERROR_CONTEXT *context,
-                                      const char *pathhome,
+                                      const char *path_home,
                                       int version,
                                       int expected_version)
 {
@@ -66,7 +65,7 @@ create_version_mismatch_error_context(espeak_ng_ERROR_CONTEXT *context,
 				return static_cast<espeak_ng_STATUS> (ENOMEM);
 		}
 		(*context)->type = ERROR_CONTEXT_VERSION;
-		(*context)->name = strdup(pathhome);
+		(*context)->name = strdup(path_home);
 		(*context)->version = version;
 		(*context)->expected_version = expected_version;
 	}
@@ -139,7 +138,7 @@ espeak_ng_GetStatusCodeMessage(espeak_ng_STATUS status,
 		break;
 	default:
 		if ((status & ENS_GROUP_MASK) == ENS_GROUP_ERRNO)
-			strncpy0 (buffer, strerror (status), length);
+			strerror_r(status, buffer, length);
 		else
 			snprintf(buffer, length, "Unspecified error 0x%x", status);
 		break;

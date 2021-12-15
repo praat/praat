@@ -17,10 +17,17 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
+#ifndef ESPEAK_NG_VOICE_H
+#define ESPEAK_NG_VOICE_H
+
+#include "espeak_ng.h"
+
 #ifdef __cplusplus
 //extern "C"
 //{
 #endif
+
+#define N_PEAKS   9
 
 typedef struct {
 	char v_name[40];
@@ -57,7 +64,6 @@ typedef struct {
 	// copies without temporary adjustments from embedded commands
 	short freq2[N_PEAKS];    // 100% = 256
 	short height2[N_PEAKS];  // 100% = 256
-	short width2[N_PEAKS];   // 100% = 256
 
 	int breath[N_PEAKS];  // amount of breath for each formant. breath[0] indicates whether any are set.
 	int breathw[N_PEAKS]; // width of each breath formant
@@ -70,28 +76,28 @@ typedef struct {
 
 } voice_t;
 
-// percentages shown to user, ix=N_PEAKS means ALL peaks
-extern USHORT voice_pcnt[N_PEAKS+1][3];
-#define N_VOICES_LIST  250
-extern int n_voices_list;
-extern espeak_VOICE *voices_list [N_VOICES_LIST];
-
 extern espeak_VOICE current_voice_selected;
+// djmw the following 3 lines are needed for the intergface to praat
+extern int n_voices_list; 
+#define N_VOICES_LIST  350
+extern espeak_VOICE *voices_list [N_VOICES_LIST];
 
 extern voice_t *voice;
 extern int tone_points[12];
 
 const char *SelectVoice(espeak_VOICE *voice_select, int *found);
 espeak_VOICE *SelectVoiceByName(espeak_VOICE **voices, const char *name);
+espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file); // needed by espeak_io.cpp
 voice_t *LoadVoice(const char *voice_name, int control);
 voice_t *LoadVoiceVariant(const char *voice_name, int variant);
 espeak_ng_STATUS DoVoiceChange(voice_t *v);
-espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file);
-void WavegenSetVoice(voice_t *v);
 void ReadTonePoints(char *string, int *tone_pts);
 void VoiceReset(int control);
 void FreeVoiceList(void);
 
 #ifdef __cplusplus
+//}
+#endif
+
 //}
 #endif

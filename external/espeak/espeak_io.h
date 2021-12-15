@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <cstdint>
 	
 #define PATH_ESPEAK_DATA "/home/david/projects/espeak-ng/espeak-ng-data"
 	
@@ -64,10 +65,11 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 
 void espeak_ng_data_to_bigendian (void);
 
-int get_int32_le (char *byte);
+int32_t get_int32_le (char *byte);
+int32_t get_int32_be (char *byte);
 
 short get_int16_le (char *byte);
 
-int get_set_int32_le (char *byte); 
+int32_t get_set_int32_le (char *byte); 
 
 #endif

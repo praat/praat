@@ -1,6 +1,6 @@
 /* espeak_io.cpp
  *
-//  * Copyright (C) 2017 David Weenink
+//  * Copyright (C) 2017-2021 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "espeak_ng.h"
 #include "speech.h"
 #include "synthesize.h"
+#include "voice.h"
 #include <errno.h>
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
@@ -138,17 +139,21 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 	}
 }
 
-int get_int32_le (char *ch) {
+int32_t get_int32_le (char *ch) {
 	return (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
+}
+
+int32_t get_int32_be (char *ch) {
+	return (((uint8)ch[3]<<0) | ((uint8)ch[2]<<8) | ((uint8)ch[1]<<16) | ((uint8)ch[0]<<24));
 }
 
 short get_int16_le (char *ch) {
        return (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8));
 }
 
-int get_set_int32_le (char *ch) {
-       int i32 = (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
-       int *p32 = (int *) ch;
+int32_t get_set_int32_le (char *ch) {
+       int32_t i32 = (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
+       int32_t *p32 = (int32_t *) ch;
        *p32 = i32;
        return i32;
 }
