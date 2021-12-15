@@ -23,8 +23,8 @@ oo_DEFINE_CLASS (EspeakVoice, Daata)
 	oo_STRING (language_name) // maximum 19 characters + 1 0-byte
 
 	oo_INTEGER (phoneme_tab_ix)  // phoneme table number
-	oo_INTEGER (pitch_base)    // Hz
-	oo_INTEGER (pitch_range)   // Hz
+	oo_INTEGER (pitch_base)    // Hz<<12
+	oo_INTEGER (pitch_range)   // standard = 0x1000
 
 	oo_INTEGER (speedf1)
 	oo_INTEGER (speedf2)
@@ -55,12 +55,19 @@ oo_DEFINE_CLASS (EspeakVoice, Daata)
 	// copies without temporary adjustments from embedded commands
 	oo_INTVEC (freq2, numberOfFormants)		// (short) 100% = 256
 	oo_INTVEC (height2, numberOfFormants)	// (short) 100% = 256
-	oo_INTVEC (width2, numberOfFormants)	// (short) 100% = 256
-
+	
+	#if oo_READING
+		oo_VERSION_UNTIL (1)
+			autoINTVEC width2 = copy_INTVEC (width.get()); // width2 is obsolete
+			oo_INTVEC (width, numberOfFormants)	// (short) 100% = 256
+			width = width2.move();
+		oo_VERSION_END
+	#endif
+	
 	oo_INTVEC (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath [0] indicates whether any are set.
 	oo_INTVEC (breathw, numberOfFormants)	// width of each breath formant
 	oo_INTEGER (numberOfToneAdjusts)
-	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts)
+	oo_BYTEVEC (tone_adjust, numberOfToneAdjusts) //  8Hz steps * 1000 = 8kHz
 
 oo_END_CLASS (EspeakVoice)
 #undef ooSTRUCT
@@ -86,6 +93,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
 			oo_INTEGER (d_wordsPerMinute)
 		oo_VERSION_ELSE
+			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION); // overwrite with current version
 			oo_DOUBLE (d_wordsPerMinute)
 		oo_VERSION_END
 	#else
