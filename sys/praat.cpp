@@ -1011,12 +1011,9 @@ static bool tryToAttachToTheCommandLine ()
 		/*
 			The result is `true` if Praat was called from a terminal window or some system() commands or Xcode,
 			and `false` if Praat was called from the Finder by double-clicking or dropping a file.
-			
-			FIXME:
-			The result is incorrectly `false` if the output is redirected to a file or pipe.
-			A proposed improvement is therefore:
-				isatty (fileno (stdin)) || isatty (fileno (stdout)) || isatty (fileno (stderr))
-			This might be incorrectly false only if all three streams are redirected, but this hasn't been tested yet.
+
+			This might be incorrectly false only if all three streams are redirected to a file or pipe,
+			but this hasn't been tested yet.
 		*/
 	#endif
 	return weHaveSucceeded;
@@ -1109,7 +1106,7 @@ static void printHelp () {
 
 #if defined (macintosh) || defined (UNIX)
 static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
-	TRACE
+	//TRACE
 	/*
 		This function returns true only if we can be certain that we have sent
 		the command line to an already running invocation of Praat that is not identical to ourselves
@@ -1306,12 +1303,11 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 
 void praat_init (conststring32 title, int argc, char **argv)
 {
-	TRACE
+	//TRACE
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
 
-	for (int iarg = 0; iarg < argc; iarg ++) {
-		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
-	}
+	for (int iarg = 0; iarg < argc; iarg ++)
+		trace (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	setThePraatLocale ();
 	Melder_init ();
 
@@ -1767,7 +1763,6 @@ static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNa
 #endif
 
 void praat_run () {
-	TRACE
 	trace (U"adding menus, second round");
 	praat_addMenus2 ();
 	trace (U"locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));

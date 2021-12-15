@@ -214,36 +214,51 @@ void structGuiMenu :: v_destroy () noexcept {
 	*/
 	- (void) applicationWillFinishLaunching: (NSNotification *) note
 	{
+		trace (U"application will finish launching: ", Melder_pointer (self));
+		trace (U"application is running: ", [NSApp isRunning]);
 		(void) note;
 		for (int imenu = 1; imenu <= theNumberOfMenuBarItems; imenu ++) {
 			[[NSApp mainMenu] addItem: theMenuBarItems [imenu]];   // the menu will retain the item...
 			[theMenuBarItems [imenu] release];   // ... so we can release the item
 		}
 	}
+	- (void) applicationDidFinishLaunching: (NSNotification *) note
+	{
+		trace (U"application did finish launching: ", Melder_pointer (self));
+		trace (U"application is running: ", [NSApp isRunning]);
+		(void) note;
+		praatP.hasFinishedLaunching = true;
+	}
 	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
 	{
 		/*
-			Something crazy: this function seems to be called whenever there was an even number
-			of command line options.
+			Something crazy:
+
+			The OS will be sending this opening message, even when the files were specified on the command line.
+			If the number of command line options besides --open is odd, then all specified files will be sent here;
+			if the number is even, then all specified files minus the first will be sent here.
+
+			Fortunately, the automatic file-opening message is sent between
+			applicationWillFinishLaunching and applicationDidFinishLaunching;
 		*/
-		TRACE
 		(void) sender;
-		trace (U"application open files: ", [fileNames count]);
-		//if (praatP.userWantsToOpen)   // why was this here?
-		//	return;
-		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
-			try {
-				NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
-				structMelderFile file { };
-				Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
-				if (theOpenDocumentCallback)
-					theOpenDocumentCallback (& file);
-			} catch (MelderError) {
-				Melder_throw (U"Cannot open dropped file.");
+		trace (U"application (", Melder_pointer (self), U", ", Melder_pointer (sender), U") open files: ", [fileNames count]);
+		trace (U"application is running: ", [NSApp isRunning]);
+		if (praatP.hasFinishedLaunching) {
+			for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
+				try {
+					NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
+					structMelderFile file { };
+					Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
+					if (theOpenDocumentCallback)
+						theOpenDocumentCallback (& file);
+				} catch (MelderError) {
+					Melder_throw (U"Cannot open dropped file.");
+				}
 			}
+			if (theFinishedOpeningDocumentsCallback)
+				theFinishedOpeningDocumentsCallback ();
 		}
-		if (theFinishedOpeningDocumentsCallback)
-			theFinishedOpeningDocumentsCallback ();
 	}
 	@end
 #endif
