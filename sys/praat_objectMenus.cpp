@@ -385,7 +385,7 @@ FORM (PREFS__debug, U"Set debugging options", nullptr) {
 	LABEL (U"in unpredictable ways.")
 	INTEGER (debugOption, U"Debug option", U"0")
 OK
-	SET_BOOLEAN (tracing, Melder_isTracing)
+	SET_BOOLEAN (tracing, Melder_isTracingGlobally)
 	SET_INTEGER (debugOption, Melder_debug)
 DO
 	PREFS

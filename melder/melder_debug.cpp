@@ -247,7 +247,7 @@ void Melder_setTracing (bool tracing) {
 			U" in Praat version ", Melder_peek8to32 (xstr (PRAAT_VERSION_STR)),
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
-	Melder_isTracing = tracing;
+	Melder_isTracingGlobally = tracing;
 	#if defined (linux) && ! defined (NO_GUI)
 		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {

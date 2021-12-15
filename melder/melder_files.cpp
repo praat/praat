@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2020 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2021 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -497,7 +497,7 @@ static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, 
 
 FILE * Melder_fopen (MelderFile file, const char *type) {
 	if (MelderFile_isNull (file)) Melder_throw (U"Cannot open null file.");
-	if (! Melder_isTracing)
+	if (! Melder_isTracingGlobally)
 		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
 	/*
 	 * On the Unix-like systems (including MacOS), the path has to be converted to 8-bit characters in UTF-8 encoding.

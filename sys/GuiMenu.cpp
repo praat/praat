@@ -98,7 +98,7 @@ void structGuiMenu :: v_destroy () noexcept {
 				return;
 			}
 			unichar character = [characters characterAtIndex: 0];   // there is now at least one character, so no range exception can be raised
-			if (Melder_isTracing) {
+			if (Melder_isTracingGlobally) {
 				for (NSUInteger i = 0; i < [characters length]; i ++) {
 					unichar kar = [characters characterAtIndex: 0];
 					trace (U"character [", i, U"]: ", (int) kar);
@@ -222,8 +222,13 @@ void structGuiMenu :: v_destroy () noexcept {
 	}
 	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
 	{
+		/*
+			Something crazy: this function seems to be called whenever there was an even number
+			of command line options.
+		*/
+		TRACE
 		(void) sender;
-		//Melder_casual (U"application open files: ", [fileNames count]);
+		trace (U"application open files: ", [fileNames count]);
 		//if (praatP.userWantsToOpen)   // why was this here?
 		//	return;
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
