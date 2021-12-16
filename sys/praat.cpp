@@ -1104,7 +1104,7 @@ static void printHelp () {
 	MelderInfo_writeLine (U"  --hide-picture   hide the Picture window at start-up");
 }
 
-#if defined (macintosh) || defined (UNIX)
+#if defined (UNIX) || defined (macintosh)
 static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 	//TRACE
 	/*
@@ -1136,7 +1136,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 			return false;
 		}
 	} catch (MelderError) {
-		Melder_clearError ();   //
+		Melder_clearError ();   // it is not an error if the PID file does not exist or is broken
 		Melder_casual (U"PID file does not exist, "
 				"so Praat is probably not running yet. We are process ", pidOfCurrentPraat, U".");
 		return false;
@@ -1163,7 +1163,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 	Melder_casual (U"An instance with PID ", pidOfRunningPraat, U" is still running.");
 	/*
 		Is that running app really Praat?
-		Compare that it looks like us.
+		Check that it looks like us.
 	*/
 	#if defined (macintosh)
 		[NSApplication sharedApplication];   // initialize, so that our bundle identifier exists even if we started from outside Xcode
@@ -1293,6 +1293,23 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption) {
 			} else {
 				Melder_fatal (U"Unknown Apple Event version.");
 			}
+		#elif defined (UNIX)
+			autofile f;
+			try {
+				f = Melder_fopen (& messageFile, "w");
+				fprintf (f, "%s", text8.get());
+				f.close (& messageFile);
+			} catch (MelderError) {
+				Melder_clearError ();
+				Melder_casual (U"Cannot write message file \"", MelderFile_messageName (& messageFile),
+						U"\" (no privilege to write to folder, or disk full).");
+				return false;
+			}
+			if (kill (pidOfRunningPraat, SIGUSR1)) {
+				Melder_casual (U"Cannot send message. The program may have crashed.");
+				return false;
+			}
+			return true;
 		#endif
 	} else {
 		return true;
@@ -1552,11 +1569,10 @@ void praat_init (conststring32 title, int argc, char **argv)
 	/*
 		Check whether Praat is already running.
 	*/
-	#if defined (macintosh)
-		if (praatP.userWantsExistingInstance) {
+	#if defined (UNIX) || defined (macintosh)
+		if (praatP.userWantsExistingInstance)
 			if (tryToSwitchToRunningPraat (foundTheOpenSwitch))
 				exit (0);
-		}
 	#endif
 
 	#if defined (UNIX) || defined (macintosh)
@@ -1663,7 +1679,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 		trace (U"adding fixed buttons without GUI");
 		praat_addFixedButtons (nullptr);
 	} else {
-
 		#ifdef macintosh
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
 			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
