@@ -769,7 +769,7 @@ void Melder_getDefaultDir (MelderDir dir) {
 
 void Melder_setDefaultDir (MelderDir dir) {
 	#if defined (UNIX)
-		chdir (Melder_peek32to8 (dir -> path));
+		chdir (Melder_peek32to8_fileSystem (dir -> path));
 		str32cpy (theDefaultDir. path, dir -> path);
 	#elif defined (_WIN32)
 		SetCurrentDirectory (Melder_peek32toW_fileSystem (dir -> path));

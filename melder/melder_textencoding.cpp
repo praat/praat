@@ -615,16 +615,8 @@ void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormD);   // Mac requires decomposed characters
 		CFStringGetCString (cfpath2, (char *) utf8, kMelder_MAXPATH+1, kCFStringEncodingUTF8);   // Mac POSIX requires UTF-8
 		CFRelease (cfpath2);
-	#elif defined (UNIX) || defined (__CYGWIN__)
-		Melder_32to8_inplace (string, utf8);
-	#elif defined (_WIN32)
-		const int n = str32len (string);
-		int j = 0;
-		for (int i = 0; i < n; i ++)
-			utf8 [j ++] = ( string [i] <= 255 ? string [i] : '?' );   // the usual replacement on Windows
-		utf8 [j] = '\0';
 	#else
-		//#error Unsupported platform.
+		Melder_32to8_inplace (string, utf8);   // fallback; should work even on Windows if converted to W later (as in e.g. op_open_file 2021-12-16)
 	#endif
 }
 conststring8 Melder_peek32to8_fileSystem (conststring32 string) {

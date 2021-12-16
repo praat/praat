@@ -690,7 +690,7 @@ static void Melder_checkFlacFile (MelderFile file, integer *numberOfChannels, in
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
-	if (! FLAC__metadata_get_streaminfo (Melder_peek32to8 (Melder_fileToPath (file)), & metadata))   // FIXME: not Unicode-compatible on Windows.
+	if (! FLAC__metadata_get_streaminfo (Melder_peek32to8_fileSystem (Melder_fileToPath (file)), & metadata))   // FIXME: not Unicode-compatible on Windows.
 		Melder_throw (U"Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;

@@ -139,7 +139,7 @@ static void MelderFile_truncate (MelderFile me, integer size) {
 	CloseHandle (hFile);
 #elif defined (linux) || defined (macintosh)
 	MelderFile_close (me);
-	const int succes = truncate (Melder_peek32to8 (my path), size);
+	const int succes = truncate (Melder_peek32to8_fileSystem (my path), size);
 	Melder_require (succes == 0,
 		U"Truncating failed for file ", me, U" (", Melder_peek8to32 (strerror (errno)), U").");
 #else

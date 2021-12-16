@@ -33,7 +33,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (MelderDir_isNull (& dir))   // first time?
 			Melder_getDefaultDir (& dir);
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (Melder_dirToPath (& dir)));
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (Melder_dirToPath (& dir)));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
 			if (infolderName_utf8) {
@@ -130,7 +130,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), true);
 		if (file. path [0] != U'\0')
-			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (file. path));
+			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
@@ -165,7 +165,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 		(void) parent;
 		NSSavePanel	*savePanel = [NSSavePanel savePanel];   // will be autoreleased (release will crash; 2020-11-12)
 		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peek32to8 (title)]];
-		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8 (defaultName)]];
+		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peek32to8_fileSystem (defaultName)]];
 		if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
 			NSString *path = [[savePanel URL] path];
 			if (path == nil)
@@ -191,7 +191,7 @@ autostring32 GuiFileSelect_getFolderName (GuiWindow parent, conststring32 title)
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peek32to8 (title), nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, nullptr);
 		if (file. path [0] != U'\0') {
-			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8 (file. path));
+			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peek32to8_fileSystem (file. path));
 		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
