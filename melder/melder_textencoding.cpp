@@ -575,7 +575,7 @@ autostringW Melder_32toW (conststring32 text) {
 }
 conststringW Melder_peek32toW_fileSystem (conststring32 string) {
 	static wchar_t buffer [1 + kMelder_MAXPATH];
-	NormalizeString (NormalizationKC, -1, Melder_peek32toW (string), 1 + kMelder_MAXPATH, buffer);
+	NormalizeString (NormalizationKC, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);
 	//FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
 	return buffer;
 }
