@@ -240,11 +240,9 @@ static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags lo
 
 void Melder_setTracing (bool tracing) {
 	time_t today = time (nullptr);
-	#define xstr(s) str(s)
-	#define str(s) #s
 	if (! tracing)
 		trace (U"switch tracing off"
-			U" in Praat version ", Melder_peek8to32 (xstr (PRAAT_VERSION_STR)),
+			U" in Praat version ", Melder_peek8to32 (stringize(PRAAT_VERSION_STR)),
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
 	Melder_isTracingGlobally = tracing;
@@ -263,7 +261,7 @@ void Melder_setTracing (bool tracing) {
 	#endif
 	if (tracing)
 		trace (U"switch tracing on"
-			U" in Praat version ", Melder_peek8to32 (xstr (PRAAT_VERSION_STR)),
+			U" in Praat version ", Melder_peek8to32 (stringize(PRAAT_VERSION_STR)),
 			U" at ", Melder_peek8to32 (ctime (& today))
 		);
 }

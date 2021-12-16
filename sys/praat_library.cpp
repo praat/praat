@@ -45,9 +45,7 @@ void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool inc
 		MelderInfo_writeLine (U" * along with this work. If not, see <http://www.gnu.org/licenses/>.");
 		MelderInfo_writeLine (U" */");
 
-		#define xstr(s) str(s)
-		#define str(s) #s
-		MelderInfo_writeLine (U"/* C API, version ", U"" xstr (PRAAT_MONTH), U" ", PRAAT_DAY, U", ", PRAAT_YEAR, U" */");
+		MelderInfo_writeLine (U"/* C API, version ", U"" stringize(PRAAT_MONTH), U" ", PRAAT_DAY, U", ", PRAAT_YEAR, U" */");
 
 		praat_menuCommands_writeC (true, includeCreateAPI, includeReadAPI,
 			includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI);

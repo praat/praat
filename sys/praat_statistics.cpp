@@ -135,33 +135,31 @@ static NSString *getRealHomeDirectory () {
 #endif
 
 void praat_reportSystemProperties () {
-	#define xstr(s) str(s)
-	#define str(s) #s
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"System properties of this edition of Praat on this computer:\n");
 	#ifdef _WIN32
-		MelderInfo_writeLine (U"_WIN32 is \"" xstr (_WIN32) "\".");
+		MelderInfo_writeLine (U"_WIN32 is \"" stringize(_WIN32) "\".");
 	#endif
 	#ifdef WINVER
-		MelderInfo_writeLine (U"WINVER is \"" xstr (WINVER) "\".");
+		MelderInfo_writeLine (U"WINVER is \"" stringize(WINVER) "\".");
 	#endif
 	#ifdef _WIN32_WINNT
-		MelderInfo_writeLine (U"_WIN32_WINNT is \"" xstr (_WIN32_WINNT) "\".");
+		MelderInfo_writeLine (U"_WIN32_WINNT is \"" stringize(_WIN32_WINNT) "\".");
 	#endif
 	#ifdef _WIN32_IE
-		MelderInfo_writeLine (U"_WIN32_IE is \"" xstr (_WIN32_IE) "\".");
+		MelderInfo_writeLine (U"_WIN32_IE is \"" stringize(_WIN32_IE) "\".");
 	#endif
 	#ifdef UNICODE
-		MelderInfo_writeLine (U"UNICODE is \"" xstr (UNICODE) "\".");
+		MelderInfo_writeLine (U"UNICODE is \"" stringize(UNICODE) "\".");
 	#endif
 	#ifdef _FILE_OFFSET_BITS
-		MelderInfo_writeLine (U"_FILE_OFFSET_BITS is \"" xstr (_FILE_OFFSET_BITS) "\".");
+		MelderInfo_writeLine (U"_FILE_OFFSET_BITS is \"" stringize(_FILE_OFFSET_BITS) "\".");
 	#endif
 	#ifdef macintosh
-		MelderInfo_writeLine (U"macintosh is \"" xstr (macintosh) "\".");
+		MelderInfo_writeLine (U"macintosh is \"" stringize(macintosh) "\".");
 	#endif
 	#ifdef linux
-		MelderInfo_writeLine (U"linux is \"" xstr (linux) "\".");
+		MelderInfo_writeLine (U"linux is \"" stringize(linux) "\".");
 	#endif
 	MelderInfo_writeLine (U"The number of processors is ", std::thread::hardware_concurrency(), U".");
 	#ifdef macintosh

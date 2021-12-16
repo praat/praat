@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2019 Paul Boersma
+ * Copyright (C) 2007-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -351,8 +351,8 @@ void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMeld
 	if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 		inputEncoding = preferences. inputEncoding;
 		/*
-		 * In case the preferences weren't initialized yet, use the platform defaults:
-		 */
+			In case the preferences weren't initialized yet, use the platform defaults:
+		*/
 		if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 			#if defined (macintosh)
 				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_MACROMAN;
@@ -432,7 +432,8 @@ autostring32 Melder_8to32 (const char *string) {
 }
 
 conststring32 Melder_peek16to32 (conststring16 text) {
-	if (! text) return nullptr;
+	if (! text)
+		return nullptr;
 	static MelderString buffers [19];
 	static int bufferNumber = 0;
 	if (++ bufferNumber == 19)
@@ -440,7 +441,8 @@ conststring32 Melder_peek16to32 (conststring16 text) {
 	MelderString_empty (& buffers [bufferNumber]);
 	for (;;) {
 		char16 kar1 = *text ++;
-		if (kar1 == u'\0') return buffers [bufferNumber]. string;
+		if (kar1 == u'\0')
+			return buffers [bufferNumber]. string;
 		if (kar1 < 0xD800) {
 			MelderString_appendCharacter (& buffers [bufferNumber], (char32) kar1);   // convert up without sign extension
 		} else if (kar1 < 0xDC00) {
@@ -573,8 +575,8 @@ autostringW Melder_32toW (conststring32 text) {
 }
 conststringW Melder_peek32toW_fileSystem (conststring32 string) {
 	static wchar_t buffer [1 + kMelder_MAXPATH];
-	//NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (string), 1 + kMelder_MAXPATH, buffer);
-	FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
+	NormalizeStringW (NormalizationKC, -1, Melder_peek32toW (string), 1 + kMelder_MAXPATH, buffer);
+	//FoldStringW (MAP_PRECOMPOSED, Melder_peek32toW (string), -1, buffer, 1 + kMelder_MAXPATH);   // this works even on XP
 	return buffer;
 }
 autostringW Melder_32toW_fileSystem (conststring32 text) {
@@ -592,6 +594,7 @@ void Melder_32to8_fileSystem_inplace (conststring32 string, char *utf8) {
 			On the Mac, the POSIX path name is stored in canonically decomposed UTF-8 encoding.
 			The path is probably in precomposed UTF-32.
 			So we first convert to UTF-16, then turn into CFString, then decompose, then convert to UTF-8.
+			TODO: why not CFStringGetFileSystemRepresentation? perhaps because it's available from 10.4, whereas CFStringNormalize from 10.2
 		*/
 		UniChar unipath [kMelder_MAXPATH+1];
 		const int64 n = str32len (string);

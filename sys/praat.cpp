@@ -1370,9 +1370,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			Melder_pathToDir (Melder_peek8to32 (argv [praatP.argumentNumber] + 11), & Melder_preferencesFolder);
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--version")) {
-			#define xstr(s) str(s)
-			#define str(s) #s
-			Melder_information (title, U" " xstr (PRAAT_VERSION_STR) " (" xstr (PRAAT_MONTH) " ", PRAAT_DAY, U" ", PRAAT_YEAR, U")");
+			Melder_information (title, U" " stringize(PRAAT_VERSION_STR) " (" stringize(PRAAT_MONTH) " ", PRAAT_DAY, U" ", PRAAT_YEAR, U")");
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "--trace")) {
 			foundTheTraceOption = true;

@@ -1813,9 +1813,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		Interpreter_addNumericVariable (me, U"stereo", 2);   // to accommodate scripts from before Praat 5.2.06
 		Interpreter_addNumericVariable (me, U"all", 0);   // to accommodate scripts from before Praat 5.2.06
 		Interpreter_addNumericVariable (me, U"average", 0);   // to accommodate scripts from before Praat 5.2.06
-		#define xstr(s) str(s)
-		#define str(s) #s
-		Interpreter_addStringVariable (me, U"praatVersion$", U"" xstr(PRAAT_VERSION_STR));
+		Interpreter_addStringVariable (me, U"praatVersion$", U"" stringize(PRAAT_VERSION_STR));
 		Interpreter_addNumericVariable (me, U"praatVersion", PRAAT_VERSION_NUM);
 		/*
 			Execute commands.

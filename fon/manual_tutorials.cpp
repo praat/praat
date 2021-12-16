@@ -3158,11 +3158,9 @@ NORMAL (U"Answer: nowadays most journals allow you to cite computer programs and
 	"The style approved by the American Psychological Association, "
 	"and therefore by many journals, is like the following "
 	"(change the dates and version number as needed):")
-#define xstr(s) str(s)
-#define str(s) #s
-NORMAL (U"Boersma, Paul & Weenink, David (" xstr(PRAAT_YEAR) "). "
+NORMAL (U"Boersma, Paul & Weenink, David (" stringize(PRAAT_YEAR) "). "
 	"Praat: doing phonetics by computer [Computer program]. "
-	"Version " xstr(PRAAT_VERSION_STR) ", retrieved " xstr(PRAAT_DAY) " " xstr(PRAAT_MONTH) " " xstr(PRAAT_YEAR) " from http://www.praat.org/")
+	"Version " stringize(PRAAT_VERSION_STR) ", retrieved " stringize(PRAAT_DAY) " " stringize(PRAAT_MONTH) " " stringize(PRAAT_YEAR) " from http://www.praat.org/")
 NORMAL (U"If the journal does not allow you to cite a web site, then try:")
 NORMAL (U"Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
 	"%%Glot International% ##5:9/10#, 341-345.")

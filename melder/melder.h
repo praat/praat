@@ -47,6 +47,9 @@
 #define her  she ->
 #define iam(klas)  klas me = (klas) void_me
 
+#define stringize(s)  stringize_helper(s)
+#define stringize_helper(s)  #s
+
 #include "melder_assert.h"   // Melder_assert
 #include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
 #include "melder_pointer.h"   // NULL

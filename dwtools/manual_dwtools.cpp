@@ -6212,12 +6212,10 @@ NORMAL (U"B. Efron & R.J. Tibshirani (1993): %%An introduction "
 	"to the bootstrap%. Chapman & Hall.")
 MAN_END
 
-#define xstr(s) str(s)
-#define str(s) #s
 MAN_BEGIN (U"Espeak", U"djmw", 20171101)
 NORMAL (U"Espeak is a free text to speech synthesizer. It was developed by Jonathan Duddington and its development has stopped in 2015. "
 	"In 2015 Reece Dunn has taken a copy of espeak and together with a group of developers they maintain and actualize their version of espeak which they call \"eSpeak NG\". eSpeak NG uses formant synthesis. "
-	"Currently it supports 100 languages with varying quality of the voices. The current version of eSpeakNG incorporated in Praat is " xstr(ESPEAK_NG_VERSIONX) ".")
+	"Currently it supports 100 languages with varying quality of the voices. The current version of eSpeakNG incorporated in Praat is " stringize(ESPEAK_NG_VERSIONX) ".")
 NORMAL (U"The wikipedia page https://en.wikipedia.org/wiki/ESpeakNG gives more details.")
 MAN_END
 
