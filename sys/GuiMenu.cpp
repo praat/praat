@@ -239,26 +239,27 @@ void structGuiMenu :: v_destroy () noexcept {
 			if the number is even, then all specified files minus the first will be sent here.
 
 			Fortunately, the automatic file-opening message is sent between
-			applicationWillFinishLaunching and applicationDidFinishLaunching;
+			applicationWillFinishLaunching and applicationDidFinishLaunching.
 		*/
 		(void) sender;
 		trace (U"application (", Melder_pointer (self), U", ", Melder_pointer (sender), U") open files: ", [fileNames count]);
 		trace (U"application is running: ", [NSApp isRunning]);
-		if (praatP.hasFinishedLaunching) {
-			for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
-				try {
-					NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
-					structMelderFile file { };
-					Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
-					if (theOpenDocumentCallback)
-						theOpenDocumentCallback (& file);
-				} catch (MelderError) {
-					Melder_throw (U"Cannot open dropped file.");
-				}
+		const bool filesArrivedHereFromTheCommandLine = ( praatP.userWantsToOpen && ! praatP.hasFinishedLaunching );
+		if (filesArrivedHereFromTheCommandLine)
+			return;   // otherwise, those files will be opened twice
+		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {
+			try {
+				NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
+				structMelderFile file { };
+				Melder_8bitFileRepresentationToStr32_inplace ([cocoaFileName UTF8String], file. path);
+				if (theOpenDocumentCallback)
+					theOpenDocumentCallback (& file);
+			} catch (MelderError) {
+				Melder_throw (U"Cannot open dropped file.");
 			}
-			if (theFinishedOpeningDocumentsCallback)
-				theFinishedOpeningDocumentsCallback ();
 		}
+		if (theFinishedOpeningDocumentsCallback)
+			theFinishedOpeningDocumentsCallback ();
 	}
 	@end
 #endif
