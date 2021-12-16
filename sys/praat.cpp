@@ -1340,8 +1340,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 	praatP.argumentNumber = 1;
 
 	/*
-	 * Running Praat from the command line.
-	 */
+		Running Praat from the command line.
+	*/
 	bool foundTheOpenSwitch = false, foundTheRunSwitch = false, foundTheNewSwitch = false, foundTheExistingSwitch = false;
 	bool foundTheTraceOption = false;
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {

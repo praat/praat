@@ -8,11 +8,11 @@ We replaced all memory allocations with the corresponding Melder routines.
 
 In a subdirectory "opus" we copied the Opus-1.3.1 sources which also include a "celt" and a "silk" directory.
 The file opus_encoder.c that was clearly not meant for decoding was left out.
-The celt and silk directories were left intact even their encoder parts. However, all their platform specific subdirectories were removed.
-The silk code also needs a subdirectory "float" for proper working with floating-point arithmetic.
+The celt and silk directories were left intact, even their encoder parts. However, all their platform- subdirectories were removed.
+The silk code also needs a subdirectory "float" in order to work properly with floating-point arithmetic.
 
 All instances of #ifdef HAVE_CONFIG_H were commented out,
-so as no to have to define HAVE_CONFIG_H as a Praat-wide global symbol if we are working in an IDE (Xcode).
+so as not to have to define HAVE_CONFIG_H as a Praat-wide global symbol if we are working in an IDE (Xcode).
 The file config.h had to be renamed opus__config.h, so as not to clash with three other files called config.h
 in Praat (under espeak and vorbis and flac; they also have to be renamed).
 The file opusfile_stream.cpp uses the nonportable Windows function _filelengthi64(),
