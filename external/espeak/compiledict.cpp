@@ -211,7 +211,7 @@ char *DecodeRule(const char *group_chars, int group_length, char *rule, int cont
 	int match_type;
 	bool finished = false;
 	int value;
-	int linenum = 0;
+	int linenumber = 0;
 	int flags;
 	int suffix_char;
 	int condition_num = 0;
@@ -271,7 +271,7 @@ char *DecodeRule(const char *group_chars, int group_length, char *rule, int cont
 				break;
 			case RULE_LINENUM:
 				value = (rule[1] & 0xff) - 1;
-				linenum = (rule[0] & 0xff) - 1 + (value * 255);
+				linenumber = (rule[0] & 0xff) - 1 + (value * 255);
 				rule += 2;
 				break;
 			}
@@ -332,8 +332,8 @@ char *DecodeRule(const char *group_chars, int group_length, char *rule, int cont
 	p = output;
 	p_end = p + sizeof(output) - 1;
 
-	if (linenum > 0) {
-		sprintf(p, "%5d:\t", linenum);
+	if (linenumber > 0) {
+		sprintf(p, "%5d:\t", linenumber);
 		p += 7;
 	}
 	if (condition_num > 0) {

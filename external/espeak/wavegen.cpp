@@ -421,7 +421,7 @@ static void WavegenSetEcho(void)
 	general_amplitude = ((general_amplitude * (500-amp))/500);
 }
 
-int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
+int PeaksToHarmspect(wavegen_peaks_t *peakx, int pitch, int *htab, int control)
 {
 	if (wvoice == NULL)
 		return 1;
@@ -446,7 +446,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	int h1;
 
 	// initialise as much of *out as we will need
-	hmax = (peaks[wvoice->n_harmonic_peaks].freq + peaks[wvoice->n_harmonic_peaks].right)/pitch;
+	hmax = (peakx[wvoice->n_harmonic_peaks].freq + peakx[wvoice->n_harmonic_peaks].right)/pitch;
 	if (hmax >= MAX_HARMONIC)
 		hmax = MAX_HARMONIC-1;
 
@@ -460,7 +460,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 		htab[h] = 0;
 
 	for (pk = 0; pk <= wvoice->n_harmonic_peaks; pk++) {
-		p = &peaks[pk];
+		p = &peakx[pk];
 		if ((p->height == 0) || (fp = p->freq) == 0)
 			continue;
 
@@ -477,7 +477,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 	int y;
 	int h2;
 	// increase bass
-	y = peaks[1].height * 10; // addition as a multiple of 1/256s
+	y = peakx[1].height * 10; // addition as a multiple of 1/256s
 	h2 = (1000<<16)/pitch; // decrease until 1000Hz
 	if (h2 > 0) {
 		x = y/h2;
@@ -490,7 +490,7 @@ int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control)
 
 	// find the nearest harmonic for HF peaks where we don't use shape
 	for (; pk < N_PEAKS; pk++) {
-		x = peaks[pk].height >> 14;
+		x = peakx[pk].height >> 14;
 		peak_height[pk] = (x * x * 5)/2;
 
 		// find the nearest harmonic for HF peaks where we don't use shape
@@ -673,12 +673,12 @@ static int ApplyBreath(void)
 	return value;
 }
 
-static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_t *fr2, voice_t *wvoice)
+static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_t *fr2, voice_t *voicew)
 {
 	if (resume == false)
-		SetSynth(length, modulation, fr1, fr2, wvoice);
+		SetSynth(length, modulation, fr1, fr2, voicew);
 
-	if (wvoice == NULL)
+	if (voicew == NULL)
 		return 0;
 
 	unsigned short waveph;
@@ -753,7 +753,7 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 
 				cycle_count++;
 
-				for (pk = wvoice->n_harmonic_peaks+1; pk < N_PEAKS; pk++) {
+				for (pk = voicew->n_harmonic_peaks+1; pk < N_PEAKS; pk++) {
 					// find the nearest harmonic for HF peaks where we don't use shape
 					peak_harmonic[pk] = ((peaks[pk].freq / (wdata.pitch*8)) + 1) / 2;
 				}
@@ -816,7 +816,7 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 		// higher frequence harmonics.
 		cbytes++;
 		if (cbytes >= 0 && cbytes < wavemult_max) {
-			for (pk = wvoice->n_harmonic_peaks+1; pk < N_PEAKS; pk++) {
+			for (pk = voicew->n_harmonic_peaks+1; pk < N_PEAKS; pk++) {
 				theta = peak_harmonic[pk] * waveph;
 				total += (long)sin_tab[theta >> 5] * peak_height[pk];
 			}
@@ -846,7 +846,7 @@ static int Wavegen(int length, int modulation, bool resume, frame_t *fr1, frame_
 		if (voicing != 64)
 			total = (total >> 6) * voicing;
 
-		if (wvoice->breath[0])
+		if (voicew->breath[0])
 			total +=  ApplyBreath();
 
 		// mix with sampled wave if required
@@ -1102,7 +1102,7 @@ static void SetAmplitude(int length, unsigned char *amp_env, int value)
 	amplitude_env = amp_env;
 }
 
-void SetPitch2(voice_t *voice, int pitch1, int pitch2, int *pitch_base, int *pitch_range)
+void SetPitch2(voice_t *voicep, int pitch1, int pitch2, int *pitch_base, int *pitch_range)
 {
 	int x;
 	int base;
@@ -1121,11 +1121,11 @@ void SetPitch2(voice_t *voice, int pitch1, int pitch2, int *pitch_base, int *pit
 	if (pitch_value < 0)
 		pitch_value = 0;
 
-	base = (voice->pitch_base * pitch_adjust_tab[pitch_value])/128;
-	range =  (voice->pitch_range * embedded_value[EMBED_R])/50;
+	base = (voicep->pitch_base * pitch_adjust_tab[pitch_value])/128;
+	range =  (voicep->pitch_range * embedded_value[EMBED_R])/50;
 
 	// compensate for change in pitch when the range is narrowed or widened
-	base -= (range - voice->pitch_range)*18;
+	base -= (range - voicep->pitch_range)*18;
 
 	*pitch_base = base + (pitch1 * range)/2;
 	*pitch_range = base + (pitch2 * range)/2 - *pitch_base;

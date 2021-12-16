@@ -1127,7 +1127,7 @@ void DoEmbedded(int *embix, int sourceix)
 
 extern espeak_ng_OUTPUT_HOOKS* output_hooks;
 
-int Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume)
+int Generate(PHONEME_LIST *phonemelist, int *n_ph, bool resume)
 {
 	static int ix;
 	static int embedded_ix;
@@ -1163,7 +1163,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume)
 
 #ifdef INCLUDE_MBROLA
 	if (mbrola_name[0] != 0)
-		return MbrolaGenerate(phoneme_list, n_ph, resume);
+		return MbrolaGenerate(phonemelist, n_ph, resume);
 #endif
 	
 	if (resume == false) {
@@ -1183,7 +1183,7 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume)
 	}
 
 	while ((ix < (*n_ph)) && (ix < N_PHONEME_LIST-2)) {
-		p = &phoneme_list[ix];
+		p = &phonemelist[ix];
 		
 		if(output_hooks && output_hooks->outputPhoSymbol)
 		{
@@ -1203,9 +1203,9 @@ int Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume)
 		if (WcmdqFree() <= free_min)
 			return 1; // wait
 
-		prev = &phoneme_list[ix-1];
-		next = &phoneme_list[ix+1];
-		next2 = &phoneme_list[ix+2];
+		prev = &phonemelist[ix-1];
+		next = &phonemelist[ix+1];
+		next2 = &phonemelist[ix+2];
 
 		if (p->synthflags & SFLAG_EMBEDDED)
 			DoEmbedded(&embedded_ix, p->sourceix);

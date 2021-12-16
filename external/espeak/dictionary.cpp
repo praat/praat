@@ -1852,7 +1852,7 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 				case RULE_SYLLABLE:
 				{
 					// more than specified number of vowel letters to the right
-					char *p = post_ptr + letter_xbytes;
+					char *plocal = post_ptr + letter_xbytes;
 					int vowel_count = 0;
 
 					syllable_count = 1;
@@ -1867,7 +1867,7 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 							vowel_count++;
 						}
 						vowel = IsLetter(tr, letter_w, LETTERGP_VOWEL2);
-						p += utf8_in(&letter_w, p);
+						plocal += utf8_in(&letter_w, plocal);
 					}
 					if (syllable_count <= vowel_count)
 						add_points = (18+syllable_count-distance_right);
@@ -1877,13 +1877,13 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 					break;
 				case RULE_NOVOWELS:
 				{
-					char *p = post_ptr + letter_xbytes;
+					char *plocal = post_ptr + letter_xbytes;
 					while (letter_w != RULE_SPACE) {
 						if (IsLetter(tr, letter_w, LETTERGP_VOWEL2)) {
 							failed = 1;
 							break;
 						}
-						p += utf8_in(&letter_w, p);
+						plocal += utf8_in(&letter_w, plocal);
 					}
 					if (!failed)
 						add_points = (19-distance_right);
@@ -1892,16 +1892,16 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 				case RULE_SKIPCHARS:
 				{
 					// '(Jxy'  means 'skip characters until xy'
-					char *p = post_ptr - 1; // to allow empty jump (without letter between), go one back
-					char *p2 = p;		// pointer to the previous character in the word
+					char *plocal = post_ptr - 1; // to allow empty jump (without letter between), go one back
+					char *p2 = plocal;		// pointer to the previous character in the word
 					int rule_w;		// first wide character of skip rule
 					utf8_in(&rule_w, rule);
 					int g_bytes = -1;	// bytes of successfully found character group
 					while ((letter_w != rule_w) && (letter_w != RULE_SPACE) && (letter_w != 0) && (g_bytes == -1)) {
 						if (rule_w == RULE_LETTERGP2)
-							g_bytes = IsLetterGroup(tr, p, LetterGroupNo(rule + 1), 0);
-						p2 = p;
-						p += utf8_in(&letter_w, p);
+							g_bytes = IsLetterGroup(tr, plocal, LetterGroupNo(rule + 1), 0);
+						p2 = plocal;
+						plocal += utf8_in(&letter_w, plocal);
 					}
 					if ((letter_w == rule_w) || (g_bytes >= 0))
 						post_ptr = p2;
@@ -2052,13 +2052,13 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 					break;
 				case RULE_NOVOWELS:
 				{
-					char *p = pre_ptr - letter_xbytes - 1;
+					char *plocal = pre_ptr - letter_xbytes - 1;
 					while (letter_w != RULE_SPACE) {
 						if (IsLetter(tr, letter_w, LETTERGP_VOWEL2)) {
 							failed = 1;
 							break;
 						}
-						p -= utf8_in2(&letter_w, p, 1);
+						plocal -= utf8_in2(&letter_w, plocal, 1);
 					}
 					if (!failed)
 						add_points = 3;
@@ -2096,20 +2096,20 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 
 				case RULE_SKIPCHARS: {
 					// 'xyJ)'  means 'skip characters backwards until xy'
-					char *p = pre_ptr + 1;	// to allow empty jump (without letter between), go one forward
-					char *p2 = p;		// pointer to previous character in word
+					char *plocal = pre_ptr + 1;	// to allow empty jump (without letter between), go one forward
+					char *p2 = plocal;		// pointer to previous character in word
 					int g_bytes = -1;	// bytes of successfully found character group
 
-					while ((*p != *rule) && (*p != RULE_SPACE) && (*p != 0) && (g_bytes == -1)) {
-						p2 = p;
-						p--;
+					while ((*plocal != *rule) && (*plocal != RULE_SPACE) && (*plocal != 0) && (g_bytes == -1)) {
+						p2 = plocal;
+						plocal--;
 						if (*rule == RULE_LETTERGP2)
 							g_bytes = IsLetterGroup(tr, p2, LetterGroupNo(rule + 1), 1);
 					}
 
 					// if succeed, set pre_ptr to next character after 'xy' and remaining
 					// 'xy' part is checked as usual in following cycles of PRE rule characters
-					if (*p == *rule)
+					if (*plocal == *rule)
 						pre_ptr = p2;
 					if (g_bytes >= 0)
 						pre_ptr = p2 + 1;
@@ -2221,11 +2221,11 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 
 	if ((option_phonemes & espeakPHONEMES_TRACE) && ((word_flags & FLAG_NO_TRACE) == 0)) {
 		char wordbuf[120];
-		unsigned int ix;
+		unsigned int iy;
 
-		for (ix = 0; ((c = p_start[ix]) != ' ') && (c != 0) && (ix < (sizeof(wordbuf)-1)); ix++)
-			wordbuf[ix] = c;
-		wordbuf[ix] = 0;
+		for (iy = 0; ((c = p_start[iy]) != ' ') && (c != 0) && (iy < (sizeof(wordbuf)-1)); iy++)
+			wordbuf[iy] = c;
+		wordbuf[iy] = 0;
 		if (word_flags & FLAG_UNPRON_TEST)
 			fprintf(f_trans, "Unpronouncable? '%s'\n", wordbuf);
 		else
