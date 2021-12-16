@@ -55,7 +55,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			cairo_surface_flush (d_cairoSurface);
 			if (d_isPng) {
 				#if 1
-					cairo_surface_write_to_png (d_cairoSurface, Melder_peek32to8 (d_file. path));
+					cairo_surface_write_to_png (d_cairoSurface, Melder_peek32to8_fileSystem (d_file. path));
 				#else
 					unsigned char *bitmap = cairo_image_surface_get_data (my d_cairoSurface);   // peeking into the internal bits
 					// copy bitmap to PNG structure created with the PNG library
@@ -591,7 +591,7 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#endif
 	Graphics_init (me.get(), resolution);
 	#if cairo
-		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
+		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8_fileSystem (file -> path),
 			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
 			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);

@@ -675,7 +675,7 @@ autoSound Sound_readFromOggOpusFile (MelderFile file) {
 	try {
 		conststring32 path = Melder_fileToPath (file);
 		int error;
-		OggOpusFile *opusFile = op_open_file (Melder_peek32to8 (path), & error);
+		OggOpusFile *opusFile = op_open_file (Melder_peek32to8_fileSystem (path), & error);
 		if (error != 0) {
 			if (error == OP_EREAD)
 				Melder_throw (U"Reading error.");
