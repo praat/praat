@@ -2715,11 +2715,9 @@ CODE (U"The jitter is 0.00002\\% .")
 ENTRY (U"Predefined variables")
 NORMAL (U"All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. "
 	"Some variables, however, are already defined implicitly at the start of your script.")
-#define xstr(s) str(s)
-#define str(s) #s
 NORMAL (U"Some predefined ##numeric variables# are $macintosh, $windows, and $unix, which are 1 if the script "
 	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
-	"Another one is $praatVersion, which is e.g. " xstr(PRAAT_VERSION_NUM) " for the current version of Praat.")
+	"Another one is $praatVersion, which is e.g. " stringize(PRAAT_VERSION_NUM) " for the current version of Praat.")
 NORMAL (U"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
 	"The last one specifies the folder that was the default folder when Praat started up; "
 	"you can use it in scripts that run from the Unix or Windows command line. "
@@ -2728,7 +2726,7 @@ NORMAL (U"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 	"(which is where you log in), the Praat @@preferences folder@, and a folder for saving temporary files; "
 	"if you want to know what they are on your computer, try to write them into a script window. "
 	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the folder that contains the script file. "
-	"Finally, we have $$praatVersion\\$ $, which is \"" xstr(PRAAT_VERSION_STR) "\" for the current version of Praat.")
+	"Finally, we have $$praatVersion\\$ $, which is \"" stringize(PRAAT_VERSION_STR) "\" for the current version of Praat.")
 ENTRY (U"Functions that handle variables")
 NORMAL (U"To check whether a variable exists, you can use the function")
 CODE (U"%variableExists (%%variableName\\$ %)")

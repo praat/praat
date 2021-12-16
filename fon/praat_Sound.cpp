@@ -1774,10 +1774,8 @@ FORM (PREFS__SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
 	OPTIONMENU_ENUM (kMelder_asynchronicityLevel, maximumAsynchronicity,
 			U"Maximum asynchronicity", kMelder_asynchronicityLevel::DEFAULT)
-	#define xstr(s) str(s)
-	#define str(s) #s
-	REAL (silenceBefore, U"Silence before (s)", U"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
-	REAL (silenceAfter, U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
+	REAL (silenceBefore, U"Silence before (s)", U"" stringize(kMelderAudio_outputSilenceBefore_DEFAULT))
+	REAL (silenceAfter, U"Silence after (s)", U"" stringize(kMelderAudio_outputSilenceAfter_DEFAULT))
 	OPTIONMENU_ENUM (kMelder_outputSoundSystem, outputSoundSystem,
 			U"Output sound system", kMelder_outputSoundSystem::DEFAULT)
 OK

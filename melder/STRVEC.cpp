@@ -1,6 +1,6 @@
 /* STRVEC.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2020 Paul Boersma
+ * Copyright (C) 2006,2007,2009,2011,2012,2015-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 	#if defined (_WIN32)
 		try {
 			char32 searchPath [kMelder_MAXPATH+1];
-			int len = str32len (path);
-			bool hasAsterisk = !! str32chr (path, U'*');
-			bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
+			const integer len = str32len (path);
+			const bool hasAsterisk = !! str32chr (path, U'*');
+			const bool endsInSeparator = ( len != 0 && path [len - 1] == U'\\' );
 			autoSTRVEC strings;
 			Melder_sprint (searchPath, kMelder_MAXPATH+1, path, hasAsterisk || endsInSeparator ? U"" : U"\\", hasAsterisk ? U"" : U"*");
 			WIN32_FIND_DATAW findData;
@@ -68,8 +68,8 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 			*/
 			autoMelderString searchDirectory, left, middle, right, filePath;
 			MelderString_copy (& searchDirectory, path);
-			char32 *asterisk1 = str32chr (searchDirectory. string, U'*');
-			char32 *asterisk2 = str32rchr (searchDirectory. string, U'*');
+			char32 * const asterisk1 = str32chr (searchDirectory. string, U'*');
+			char32 * const asterisk2 = str32rchr (searchDirectory. string, U'*');
 			if (asterisk1) {
 				/*
 					The path is a wildcarded path.
@@ -77,7 +77,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				*asterisk1 = U'\0';
 				*asterisk2 = U'\0';
 				searchDirectory. length = asterisk1 - searchDirectory. string;   // probably superfluous, but correct
-				char32 *lastSlash = str32rchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
+				char32 * const lastSlash = str32rchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
 				if (lastSlash) {
 					*lastSlash = U'\0';   // this fixes searchDirectory
 					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
@@ -120,7 +120,7 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 				//Melder_casual (U"file ", filePath. string, U" mode ", stats. st_mode / 4096);
 				if ((! wantDirectories && S_ISREG (stats. st_mode)) || (wantDirectories && S_ISDIR (stats. st_mode))) {
 					Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
-					int64 length = str32len (buffer32);
+					const int64 length = str32len (buffer32);
 					integer numberOfMatchedCharacters = 0;
 					bool doesTheLeftMatch = true;
 					if (left. length != 0) {
@@ -130,14 +130,14 @@ static autoSTRVEC fileOrFolderNames_STRVEC (conststring32 path /* cattable */, b
 					}
 					bool doesTheMiddleMatch = true;
 					if (middle. length != 0) {
-						char32 *position = str32str (buffer32 + numberOfMatchedCharacters, middle. string);
+						const char32 * const position = str32str (buffer32 + numberOfMatchedCharacters, middle. string);
 						doesTheMiddleMatch = !! position;
 						if (doesTheMiddleMatch)
 							numberOfMatchedCharacters = position - buffer32 + middle.length;
 					}
 					bool doesTheRightMatch = true;
 					if (right. length != 0) {
-						int64 startOfRight = length - right. length;
+						const int64 startOfRight = length - right. length;
 						doesTheRightMatch = startOfRight >= numberOfMatchedCharacters &&
 							str32equ (buffer32 + startOfRight, right. string);
 					}

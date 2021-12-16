@@ -301,8 +301,8 @@ void GuiMenu_empty (GuiMenu me) {
 		trace (U"begin");
 		Melder_assert (my d_widget);
 		/*
-		 * Destroy my widget, but prevent forgetting me.
-		 */
+			Destroy my widget, but prevent forgetting me.
+		*/
 		_GuiObject_setUserData (my d_widget, nullptr);
 		gtk_widget_destroy (GTK_WIDGET (my d_widget));
 
