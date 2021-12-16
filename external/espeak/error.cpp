@@ -138,7 +138,11 @@ espeak_ng_GetStatusCodeMessage(espeak_ng_STATUS status,
 		break;
 	default:
 		if ((status & ENS_GROUP_MASK) == ENS_GROUP_ERRNO)
-			strerror_r(status, buffer, length);
+			#ifdef _WIN32
+				strerror_s(buffer, length, status);
+			#else
+				strerror_r(status, buffer, length);
+			#endif
 		else
 			snprintf(buffer, length, "Unspecified error 0x%x", status);
 		break;
