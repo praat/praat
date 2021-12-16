@@ -376,7 +376,7 @@ char *strchr_w(const char *s, int c)
 }
 
 // append plural suffixes depending on preceding letter
-static void addPluralSuffixes(int flags, Translator *tr, char last_char, char *word_phonemes)
+static void addPluralSuffixes(int flags, Translator *tr, char last_char, char *wordphonemes)
 {
 	char word_zz[4] = { 0, 'z', 'z', 0 };
 	char word_iz[4] = { 0, 'i', 'z', 0 };
@@ -384,13 +384,13 @@ static void addPluralSuffixes(int flags, Translator *tr, char last_char, char *w
 	if (flags & FLAG_HAS_PLURAL) {
 		// s or 's suffix, append [s], [z] or [Iz] depending on previous letter
 		if (last_char == 'f')
-			TranslateRules(tr, &word_ss[1], word_phonemes, N_WORD_PHONEMES,
+			TranslateRules(tr, &word_ss[1], wordphonemes, N_WORD_PHONEMES,
 			NULL, 0, NULL);
 		else if ((last_char == 0) || (strchr_w("hsx", last_char) == NULL))
-			TranslateRules(tr, &word_zz[1], word_phonemes, N_WORD_PHONEMES,
+			TranslateRules(tr, &word_zz[1], wordphonemes, N_WORD_PHONEMES,
 			NULL, 0, NULL);
 		else
-			TranslateRules(tr, &word_iz[1], word_phonemes, N_WORD_PHONEMES,
+			TranslateRules(tr, &word_iz[1], wordphonemes, N_WORD_PHONEMES,
 			NULL, 0, NULL);
 	}
 }
@@ -482,7 +482,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 	char *word1;
 	int word_length;
 	int ix;
-	char *p;
+	// char *p; djmw
 	int pfix;
 	int n_chars;
 	unsigned int dictionary_flags[2];
@@ -497,7 +497,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 	char prefix_phonemes[N_WORD_PHONEMES];
 	char unpron_phonemes[N_WORD_PHONEMES];
 	char end_phonemes[N_WORD_PHONEMES];
-	char end_phonemes2[N_WORD_PHONEMES];
+	//char end_phonemes2[N_WORD_PHONEMES]; djmw 20211216
 	char word_copy[N_WORD_BYTES];
 	char word_copy2[N_WORD_BYTES];
 	int word_copy_length;
@@ -915,6 +915,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 
 							if (end_type & SUFX_M) {
 								// allow more suffixes before this suffix
+								char end_phonemes2[N_WORD_PHONEMES]; // djmw 20211216
 								strcpy(end_phonemes2, end_phonemes);
 								end_type = TranslateRules(tr, wordx, phonemes, N_WORD_PHONEMES, end_phonemes, wflags, dictionary_flags);
 								strcat(end_phonemes, end_phonemes2); // add the phonemes for the previous suffixes after this one
@@ -964,19 +965,19 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 		add_suffix_phonemes = 2;
 
 	prefix_stress = 0;
-	for (p = prefix_phonemes; *p != 0; p++) {
+	for (char *p = prefix_phonemes; *p != 0; p++) {
 		if ((*p == phonSTRESS_P) || (*p == phonSTRESS_P2))
 			prefix_stress = *p;
 	}
 	if (prefix_flags || (prefix_stress != 0)) {
 		if ((tr->langopts.param[LOPT_PREFIXES]) || (prefix_type & SUFX_T)) {
-			char *p;
+			//char *p;
 			// German, keep a secondary stress on the stem
 			SetWordStress(tr, phonemes, dictionary_flags, 3, 0);
 
 			// reduce all but the first primary stress
 			ix = 0;
-			for (p = prefix_phonemes; *p != 0; p++) {
+			for (char *p = prefix_phonemes; *p != 0; p++) {
 				if (*p == phonSTRESS_P) {
 					if (ix == 0)
 						ix = 1;
@@ -1234,7 +1235,7 @@ int SetTranslator2(const char *new_language)
 	return new_phoneme_tab;
 }
 
-static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pause)
+static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int prepause)
 {
 	int flags = 0;
 	int stress;
@@ -1299,7 +1300,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pa
 	if ((option_sayas & 0xf0) == 0x10) {
 		if (!(word_flags & FLAG_FIRST_WORD)) {
 			// SAYAS_CHARS, SAYAS_GLYPHS, or SAYAS_SINGLECHARS.  Pause between each word.
-			pre_pause += 4;
+			prepause += 4;
 		}
 	}
 
@@ -1464,18 +1465,18 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pa
 
 		if (!(word_flags & FLAG_HYPHEN)) {
 			if (flags & FLAG_PAUSE1) {
-				if (pre_pause < 1)
-					pre_pause = 1;
+				if (prepause < 1)
+					prepause = 1;
 			}
 			if ((flags & FLAG_PREPAUSE) && !(word_flags & (FLAG_LAST_WORD | FLAG_FIRST_WORD)) && !(wtab[-1].flags & FLAG_FIRST_WORD) && (tr->prepause_timeout == 0)) {
 				// the word is marked in the dictionary list with $pause
-				if (pre_pause < 4) pre_pause = 4;
+				if (prepause < 4) prepause = 4;
 				tr->prepause_timeout = 3;
 			}
 		}
 
-		if ((option_emphasis >= 3) && (pre_pause < 1))
-			pre_pause = 1;
+		if ((option_emphasis >= 3) && (prepause < 1))
+			prepause = 1;
 	}
 
 	stress = 0;
@@ -1487,15 +1488,15 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pa
 	if ((flags & FLAG_FOUND) && !(flags & FLAG_TEXTMODE))
 		found_dict_flag = SFLAG_DICTIONARY;
 
-	while ((pre_pause > 0) && (n_ph_list2 < N_PHONEME_LIST-4)) {
+	while ((prepause > 0) && (n_ph_list2 < N_PHONEME_LIST-4)) {
 		// add pause phonemes here. Either because of punctuation (brackets or quotes) in the
 		// text, or because the word is marked in the dictionary lookup as a conjunction
-		if (pre_pause > 1) {
+		if (prepause > 1) {
 			SetPlist2(&ph_list2[n_ph_list2++], phonPAUSE);
-			pre_pause -= 2;
+			prepause -= 2;
 		} else {
 			SetPlist2(&ph_list2[n_ph_list2++], phonPAUSE_NOLINK);
-			pre_pause--;
+			prepause--;
 		}
 		tr->end_stressed_vowel = 0; // forget about the previous word
 		tr->prev_dict_flags[0] = 0;

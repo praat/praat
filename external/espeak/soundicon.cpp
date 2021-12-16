@@ -71,7 +71,7 @@ static espeak_ng_STATUS LoadSoundFile(const char *fname, int index, espeak_ng_ER
 	f = NULL;
 	if ((f = fopen(fname, "rb")) != NULL) {
 		int ix;
-		int fd_temp;
+		//int fd_temp;
 		int header[3];
 		char command[sizeof(fname2)+sizeof(fname2)+40];
 

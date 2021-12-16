@@ -376,7 +376,7 @@ static int GetVoiceAttributes(wchar_t *pw, int tag_type, SSML_STACK *ssml_sp, SS
 	return 0;
 }
 
-static void ProcessParamStack(char *outbuf, int *outix, int n_param_stack, PARAM_STACK *param_stack, int *speech_parameters)
+static void ProcessParamStack(char *outbuf, int *outix, int n_param_stack, PARAM_STACK *paramStack, int *speech_parameters)
 {
 	// Set the speech parameters from the parameter stack
 	int param;
@@ -391,8 +391,8 @@ static void ProcessParamStack(char *outbuf, int *outix, int n_param_stack, PARAM
 
 	for (ix = 0; ix < n_param_stack; ix++) {
 		for (param = 0; param < N_SPEECH_PARAM; param++) {
-			if (param_stack[ix].parameter[param] >= 0)
-				new_parameters[param] = param_stack[ix].parameter[param];
+			if (paramStack[ix].parameter[param] >= 0)
+				new_parameters[param] = paramStack[ix].parameter[param];
 		}
 	}
 
@@ -424,12 +424,12 @@ static void ProcessParamStack(char *outbuf, int *outix, int n_param_stack, PARAM
 	}
 }
 
-static PARAM_STACK *PushParamStack(int tag_type, int *n_param_stack, PARAM_STACK *param_stack)
+static PARAM_STACK *PushParamStack(int tag_type, int *n_param_stack, PARAM_STACK *paramStack)
 {
 	int ix;
 	PARAM_STACK *sp;
 
-	sp = &param_stack[*n_param_stack];
+	sp = &paramStack[*n_param_stack];
 	if (*n_param_stack < (N_PARAM_STACK-1))
 		(*n_param_stack)++;
 
@@ -439,7 +439,7 @@ static PARAM_STACK *PushParamStack(int tag_type, int *n_param_stack, PARAM_STACK
 	return sp;
 }
 
-static void PopParamStack(int tag_type, char *outbuf, int *outix, int *n_param_stack, PARAM_STACK *param_stack, int *speech_parameters)
+static void PopParamStack(int tag_type, char *outbuf, int *outix, int *n_param_stack, PARAM_STACK *paramStack, int *speech_parameters)
 {
 	// unwind the stack up to and including the previous tag of this type
 	int ix;
@@ -449,12 +449,12 @@ static void PopParamStack(int tag_type, char *outbuf, int *outix, int *n_param_s
 		tag_type -= SSML_CLOSE;
 
 	for (ix = 0; ix < *n_param_stack; ix++) {
-		if (param_stack[ix].type == tag_type)
+		if (paramStack[ix].type == tag_type)
 			top = ix;
 	}
 	if (top > 0)
 		*n_param_stack = top;
-	ProcessParamStack(outbuf, outix, *n_param_stack, param_stack, speech_parameters);
+	ProcessParamStack(outbuf, outix, *n_param_stack, paramStack, speech_parameters);
 }
 
 static int ReplaceKeyName(char *outbuf, int index, int *outix)
@@ -482,7 +482,7 @@ static int ReplaceKeyName(char *outbuf, int index, int *outix)
 	return 0;
 }
 
-static void SetProsodyParameter(int param_type, wchar_t *attr1, PARAM_STACK *sp, PARAM_STACK *param_stack, int *speech_parameters)
+static void SetProsodyParameter(int param_type, wchar_t *attr1, PARAM_STACK *sp, PARAM_STACK *paramStack, int *speech_parameters)
 {
 	int value;
 	int sign;
@@ -534,7 +534,7 @@ static void SetProsodyParameter(int param_type, wchar_t *attr1, PARAM_STACK *sp,
 
 	if ((value = attrlookup(attr1, mnem_tabs[param_type])) >= 0) {
 		// mnemonic specifies a value as a percentage of the base pitch/range/rate/volume
-		sp->parameter[param_type] = (param_stack[0].parameter[param_type] * value)/100;
+		sp->parameter[param_type] = (paramStack[0].parameter[param_type] * value)/100;
 	} else {
 		sign = attr_prosody_value(param_type, attr1, &value);
 

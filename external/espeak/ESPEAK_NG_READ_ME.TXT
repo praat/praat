@@ -1,8 +1,8 @@
 ESPEAK_NG_READ_ME.TXT
 
-djmw 20171029
+djmw 20171029, 20211224
 
-Espeak-ng Version 1.49.3-dev
+Espeak-ng Version 1.51-dev
 
 The Espeak-ng program and its library are the successor of espeak (espeak was maintained by Jonathan Duddington). Espeak-ng is a fork maintained by Reece H. Dunn. We have cloned the git repository:
 cd espeak-work
@@ -11,7 +11,7 @@ git clone https://github.com/espeak-ng/espeak-ng.git
 We use the espeak-data directory as a supply for the data the
 synthesizer needs. The synthesizer needs the location of this directory to work correctly. The synthesizer's
 version and the espeak-data version have to match.
-This is not acceptable in Praat since we don't want these potential mismatches between the internal version
+This scheme was not acceptable in Praat since we don't want potential mismatches between the internal version
 of the synthesizer and the external espeak-data directory to occur at all.
 We have therefore "removed" espeak's dependency on the external espeak-data directory by moving all
 the data to memory.

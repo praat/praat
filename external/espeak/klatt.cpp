@@ -248,7 +248,7 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 	double casc_next_in;
 	double par_glotout;
 	static double noise;
-	static double voice;
+	static double voiceKlatt;
 	static double vlast;
 	static double glotlast;
 	static double sourc;
@@ -279,16 +279,16 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 			switch (kt_globals.glsource)
 			{
 			case IMPULSIVE:
-				voice = impulsive_source();
+				voiceKlatt = impulsive_source();
 				break;
 			case NATURAL:
-				voice = natural_source();
+				voiceKlatt = natural_source();
 				break;
 			case SAMPLED:
-				voice = sampled_source(0);
+				voiceKlatt = sampled_source(0);
 				break;
 			case SAMPLED2:
-				voice = sampled_source(1);
+				voiceKlatt = sampled_source(1);
 				break;
 			}
 
@@ -301,7 +301,7 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 			// Low-pass filter voicing waveform before downsampling from 4*samrate
 			// to samrate samples/sec.  Resonator f=.09*samrate, bw=.06*samrate
 
-			voice = resonator(&(kt_globals.rsn[RLP]), voice);
+			voiceKlatt = resonator(&(kt_globals.rsn[RLP]), voiceKlatt);
 
 			// Increment counter that keeps track of 4*samrate samples per sec
 			kt_globals.nper++;
@@ -310,25 +310,25 @@ static int parwave(klatt_frame_ptr frame, WGEN_DATA *wdata)
 		if(kt_globals.glsource==5) {
 			double v=(kt_globals.nper/(double)kt_globals.T0);
 			v=(v*2)-1;
-			voice=v*6000;
+			voiceKlatt=v*6000;
 		}
 
 		// Tilt spectrum of voicing source down by soft low-pass filtering, amount
 		// of tilt determined by TLTdb
 
-		voice = (voice * kt_globals.onemd) + (vlast * kt_globals.decay);
-		vlast = voice;
+		voiceKlatt = (voiceKlatt * kt_globals.onemd) + (vlast * kt_globals.decay);
+		vlast = voiceKlatt;
 
 		// Add breathiness during glottal open phase. Amount of breathiness
 		// determined by parameter Aturb Use nrand rather than noise because
 		// noise is low-passed.
 
 		if (kt_globals.nper < kt_globals.nopen)
-			voice += kt_globals.amp_breth * kt_globals.nrand;
+			voiceKlatt += kt_globals.amp_breth * kt_globals.nrand;
 
 		// Set amplitude of voicing
-		glotout = kt_globals.amp_voice * voice;
-		par_glotout = kt_globals.par_amp_voice * voice;
+		glotout = kt_globals.amp_voice * voiceKlatt;
+		par_glotout = kt_globals.par_amp_voice * voiceKlatt;
 
 		// Compute aspiration amplitude and add to voicing source
 		aspiration = kt_globals.amp_aspir * noise;

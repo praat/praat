@@ -213,7 +213,7 @@ static int LookupTune(const char *name)
 	return -1;
 }
 
-static void SetToneAdjust(voice_t *voice, int *tone_pts)
+static void SetToneAdjust(voice_t *voicet, int *tone_pts)
 {
 	int ix;
 	int pt;
@@ -239,7 +239,7 @@ static void SetToneAdjust(voice_t *voice, int *tone_pts)
 				y = height1 + (int)(rate * (ix-freq1));
 				if (y > 255)
 					y = 255;
-				voice->tone_adjust[ix] = y;
+				voicet->tone_adjust[ix] = y;
 			}
 		}
 		freq1 = freq2;
@@ -485,7 +485,7 @@ static int Read8Numbers(char *data_in, int *data)
 	              &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6], &data[7]);
 }
 
-static void ReadNumbers(char *p, int *flags, int maxValue,  MNEM_TAB *keyword_tab, int key) {
+static void ReadNumbers(char *p, int *flags, int maxValue,  MNEM_TAB *keywordtab, int key) {
 	// read a list of numbers from string p
 	// store them as flags in *flags
 	// the meaning of the  numbers is bit ordinals, not integer values
@@ -498,14 +498,14 @@ static void ReadNumbers(char *p, int *flags, int maxValue,  MNEM_TAB *keyword_ta
 			if (n < maxValue) {
 				*flags |= (1 << n);
 			} else {
-				fprintf(stderr, "%s: Bad option number %d\n", LookupMnemName(keyword_tab, key), n);
+				fprintf(stderr, "%s: Bad option number %d\n", LookupMnemName(keywordtab, key), n);
 			}
 		}
 	while (isalnum(*p)) p++;
 	}
 }
 
-static int CheckTranslator(Translator *tr, MNEM_TAB *keyword_tab, int key)
+static int CheckTranslator(Translator *tr, MNEM_TAB *keywordtab, int key)
 {
 	// Return 0 if translator is set.
 	// Return 1 and print an error message for specified key if not
@@ -513,7 +513,7 @@ static int CheckTranslator(Translator *tr, MNEM_TAB *keyword_tab, int key)
 	if (tr)
 		return 0;
 
-	fprintf(stderr, "Cannot set %s: language not set, or is invalid.\n", LookupMnemName(keyword_tab, key));
+	fprintf(stderr, "Cannot set %s: language not set, or is invalid.\n", LookupMnemName(keywordtab, key));
 	return 1;
 }
 
@@ -549,8 +549,8 @@ voice_t *LoadVoice(const char *vname, int control)
 
 	int stress_add[8];
 	char names[8][40];
-	char name1[40];
-	char name2[80];
+	//char name1[40];
+	//char name2[80];
 
 	int pitch1;
 	int pitch2;
@@ -1053,7 +1053,7 @@ static int VoiceScoreSorter(const void *p1, const void *p2)
 	return strcmp(v1->name, v2->name);
 }
 
-static int ScoreVoice(espeak_VOICE *voice_spec, const char *spec_language, int spec_n_parts, int spec_lang_len, espeak_VOICE *voice)
+static int ScoreVoice(espeak_VOICE *voice_spec, const char *spec_language, int spec_n_parts, int spec_lang_len, espeak_VOICE *voice_other)
 {
 	int ix;
 	const char *p;
@@ -1068,11 +1068,11 @@ static int ScoreVoice(espeak_VOICE *voice_spec, const char *spec_language, int s
 	int required_age;
 	int diff;
 
-	p = voice->languages; // list of languages+dialects for which this voice is suitable
+	p = voice_other->languages; // list of languages+dialects for which this voice is suitable
 
 	if (spec_n_parts < 0) {
 		// match on the subdirectory
-		if (memcmp(voice->identifier, spec_language, spec_lang_len) == 0)
+		if (memcmp(voice_other->identifier, spec_language, spec_lang_len) == 0)
 			return 100;
 		return 0;
 	}
@@ -1135,31 +1135,31 @@ static int ScoreVoice(espeak_VOICE *voice_spec, const char *spec_language, int s
 		return 0;
 
 	if (voice_spec->name != NULL) {
-		if (strcmp(voice_spec->name, voice->name) == 0) {
+		if (strcmp(voice_spec->name, voice_other->name) == 0) {
 			// match on voice name
 			score += 500;
-		} else if (strcmp(voice_spec->name, voice->identifier) == 0)
+		} else if (strcmp(voice_spec->name, voice_other->identifier) == 0)
 			score += 400;
 	}
 
 	if (((voice_spec->gender == ENGENDER_MALE) || (voice_spec->gender == ENGENDER_FEMALE)) &&
-	    ((voice->gender == ENGENDER_MALE) || (voice->gender == ENGENDER_FEMALE))) {
-		if (voice_spec->gender == voice->gender)
+	    ((voice_other->gender == ENGENDER_MALE) || (voice_other->gender == ENGENDER_FEMALE))) {
+		if (voice_spec->gender == voice_other->gender)
 			score += 50;
 		else
 			score -= 50;
 	}
 
-	if ((voice_spec->age <= 12) && (voice->gender == ENGENDER_FEMALE) && (voice->age > 12))
+	if ((voice_spec->age <= 12) && (voice_other->gender == ENGENDER_FEMALE) && (voice_other->age > 12))
 		score += 5; // give some preference for non-child female voice if a child is requested
 
-	if (voice->age != 0) {
+	if (voice_other->age != 0) {
 		if (voice_spec->age == 0)
 			required_age = 30;
 		else
 			required_age = voice_spec->age;
 
-		ratio = (required_age*100)/voice->age;
+		ratio = (required_age*100)/voice_other->age;
 		if (ratio < 100)
 			ratio = 10000/ratio;
 		ratio = (ratio - 100)/10; // 0=exact match, 10=out by factor of 2

@@ -2052,12 +2052,12 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	}
 	if ((ph_out[0] != 0) && (ph_out[0] != phonSWITCH)) {
 		int next_char;
-		char *p;
-		p = &word[n_digits+1];
+		char *plocal;
+		plocal = &word[n_digits+1];
 
-		p += utf8_in(&next_char, p);
+		plocal += utf8_in(&next_char, plocal);
 		if ((tr->langopts.numbers & NUM_NOPAUSE) && (next_char == ' '))
-			utf8_in(&next_char, p);
+			utf8_in(&next_char, plocal);
 
 		if (!iswalpha(next_char) && (thousands_exact == 0))
 			strcat(ph_out, str_pause); // don't add pause for 100s,  6th, etc.

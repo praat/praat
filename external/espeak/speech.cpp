@@ -97,7 +97,7 @@ void cancel_audio(void)
 #endif
 }
 
-static int dispatch_audio(short *outbuf, int length, espeak_EVENT *event)
+static int dispatch_audio(short *outbuffer, int length, espeak_EVENT *event)
 {
 	int a_wave_can_be_played = 1;
 #ifdef USE_ASYNC
@@ -157,8 +157,8 @@ static int dispatch_audio(short *outbuf, int length, espeak_EVENT *event)
 #endif
 
 #ifdef HAVE_PCAUDIOLIB_AUDIO_H
-		if (outbuf && length && a_wave_can_be_played) {
-			int error = audio_object_write(my_audio, (char *)outbuf, 2*length);
+		if (outbuffer && length && a_wave_can_be_played) {
+			int error = audio_object_write(my_audio, (char *)outbuffer, 2*length);
 			if (error != 0)
 				fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 		}
@@ -187,20 +187,20 @@ static int dispatch_audio(short *outbuf, int length, espeak_EVENT *event)
 		break;
 	case 0:
 		if (synth_callback)
-			synth_callback(outbuf, length, event);
+			synth_callback(outbuffer, length, event);
 		break;
 	}
 
 	return a_wave_can_be_played == 0; // 1 = stop synthesis, -1 = error
 }
 
-static int create_events(short *outbuf, int length, espeak_EVENT *event_list)
+static int create_events(short *outbuffer, int length, espeak_EVENT *eventlist)
 {
 	int finished;
 	int i = 0;
 
 	// The audio data are written to the output device.
-	// The list of events in event_list (index: event_list_ix) is read:
+	// The list of events in eventlist (index: event_list_ix) is read:
 	// Each event is declared to the "event" object which stores them internally.
 	// The event object is responsible of calling the external callback
 	// as soon as the relevant audio sample is played.
@@ -210,8 +210,8 @@ static int create_events(short *outbuf, int length, espeak_EVENT *event_list)
 		if (event_list_ix == 0)
 			event = NULL;
 		else
-			event = event_list + i;
-		finished = dispatch_audio((short *)outbuf, length, event);
+			event = eventlist + i;
+		finished = dispatch_audio((short *)outbuffer, length, event);
 		length = 0; // the wave data are played once.
 		i++;
 	} while ((i < event_list_ix) && !finished);
@@ -510,7 +510,7 @@ static espeak_ng_STATUS Synthesize(unsigned int unique_identifier, const void *t
 	}
 }
 
-void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *out_ptr)
+void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *outptr)
 {
 	// type: 1=word, 2=sentence, 3=named mark, 4=play audio, 5=end, 7=phoneme
 	espeak_EVENT *ep;
@@ -526,9 +526,9 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 	ep->text_position = char_position & 0xffffff;
 	ep->length = char_position >> 24;
 
-	time = ((double)(count_samples + mbrola_delay + (out_ptr - out_start)/2)*1000.0)/samplerate;
+	time = ((double)(count_samples + mbrola_delay + (outptr - out_start)/2)*1000.0)/samplerate;
 	ep->audio_position = (int)time;
-	ep->sample = (count_samples + mbrola_delay + (out_ptr - out_start)/2);
+	ep->sample = (count_samples + mbrola_delay + (outptr - out_start)/2);
 
 	if ((type == espeakEVENT_MARK) || (type == espeakEVENT_PLAY))
 		ep->id.name = &namedata[value];
