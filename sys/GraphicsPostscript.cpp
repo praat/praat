@@ -164,7 +164,7 @@ autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, kGr
 	 */
 	my d_printf (my d_file, "%%!PS-Adobe-3.0\n");
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 4.2\n");
-	my d_printf (my d_file, "%%%%Title: %s\n", Melder_peek32to8 (MelderFile_name (file)));
+	my d_printf (my d_file, "%%%%Title: %s\n", Melder_peek32to8_fileSystem (MelderFile_name (file)));
 	today = time (nullptr);
 	my d_printf (my d_file, "%%%%CreationDate: %s", ctime (& today));   // contains newline symbol
 	my d_printf (my d_file, "%%%%PageOrder: Special\n");
