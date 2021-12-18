@@ -160,11 +160,11 @@ static void drawPartionedMatrix (Graphics g) {
 	Graphics_text (g, x1, y1, U"##S__xy_#");
 }
 
-void Electroglottogram_drawStylized (Graphics g) {
+static void Electroglottogram_drawStylized (Graphics g) {
 	Electroglottogram_drawStylized (g, true, false);
 }
 
-void Electroglottogram_drawStylizedLevels (Graphics g) {
+static void Electroglottogram_drawStylizedLevels (Graphics g) {
 	Electroglottogram_drawStylized (g, false, true);
 }
 
