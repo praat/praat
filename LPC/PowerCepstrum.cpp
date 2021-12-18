@@ -335,7 +335,7 @@ autoTable PowerCepstrum_tabulateRhamonics (PowerCepstrum me, double pitchFloor, 
 		*/
 		integer numberOfRhamonics = 2;
 		while (qpeak > 0 && qpeak * numberOfRhamonics <= my xmax)
-			numberOfRhamonics++;
+			numberOfRhamonics ++;
 		numberOfRhamonics --;
 		const conststring32 columnNames [] = { U"peak(dB)", U"quefrency(s)" };
 		thee = Table_createWithColumnNames (numberOfRhamonics, ARRAY_TO_STRVEC (columnNames));

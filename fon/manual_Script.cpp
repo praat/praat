@@ -3846,7 +3846,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20211207)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20211217)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3878,13 +3878,13 @@ NORMAL (U"at least if your current folder (see the Console's $$cd$ and $$dir$ co
 	"contains the folder $$data$ and that folder contains those two files. "
 	"Praat will start up, and shows the two files as a Sound and a TextGrid object in the list. "
 	"If Praat was already running when you typed the command, "
-	"the two files are added as objects to the existing list in Praat (Windows only).")
+	"the two files are added as objects to the existing list in Praat.")
 NORMAL (U"On the Mac, you do")
 CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"and on Linux")
 CODE (U"/usr/bin/praat --open data/hello.wav data/hello.TextGrid")
-NORMAL (U"On the Mac and on Linux, each call to Praat will start up a new instance of Praat, "
-	"so you can have multiple Objects windows, multiple Picture windows, and so on.")
+NORMAL (U"Again, if Praat was already running when you typed the command, "
+	"the two files are added as objects to the existing list in Praat.")
 NORMAL (U"Note that if you want to send messages or files to a running Praat, "
 	"the best way (on all platforms) is to use %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
 
