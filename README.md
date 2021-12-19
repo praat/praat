@@ -47,8 +47,8 @@ While the [Praat website](https://praat.org) contains the latest executable for 
 The meaning of the names of binary files available on GitHub is as follows (editions that currently receive updates are in bold):
 
 ### 1.1. Windows binaries
-- **`praatXXXX_win64.zip`: zipped executable for 64-bit Windows (**XP and higher, or **7 and higher)**
-- **`praatXXXX_win32.zip`: zipped executable for 32-bit Windows (**XP and higher, or **7 and higher)**
+- **`praatXXXX_win64.zip`: zipped executable for 64-bit Windows (** XP and higher, or **7 and higher)**
+- **`praatXXXX_win32.zip`: zipped executable for 32-bit Windows (** XP and higher, or **7 and higher)**
 - `praatconXXXX_win64.zip`: zipped executable for 64-bit Windows, console edition
 - `praatconXXXX_win32.zip`: zipped executable for 32-bit Windows, console edition
 - `praatconXXXX_win32sit.exe`: self-extracting StuffIt archive with executable for 32-bit Windows, console edition
