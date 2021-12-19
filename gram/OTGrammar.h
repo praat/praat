@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2012,2014-2017 Paul Boersma
+ * Copyright (C) 1997-2012,2014-2018,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void OTGrammar_sort (OTGrammar me);
 void OTGrammar_newDisharmonies (OTGrammar me, double spreading);
 
 integer OTGrammar_getTableau (OTGrammar me, conststring32 input);
-int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2) noexcept;
+int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2);
 	/*
 	 * Function:
 	 *    to compare the optimality of candidates icand1 in tableau itab1
@@ -61,7 +61,7 @@ int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, in
 	 */
 
 /* Productive parsing. */
-integer OTGrammar_getWinner (OTGrammar me, integer itab) noexcept;
+integer OTGrammar_getWinner (OTGrammar me, integer itab);
 	/* Gives randomized results in case of tied candidates. */
 integer OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, integer itab);
 bool OTGrammar_isCandidateGrammatical (OTGrammar me, integer itab, integer icand);

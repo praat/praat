@@ -219,7 +219,8 @@ DO
 DIRECT (COMBINE_ALL_TO_ONE__CrossCorrelationTables_to_CrossCorrelationTableList) {
 	COMBINE_ALL_TO_ONE (CrossCorrelationTable)
 		autoCrossCorrelationTableList result = CrossCorrelationTables_to_CrossCorrelationTableList (& list);
-	COMBINE_ALL_TO_ONE_END (U"ct_", result -> size)
+		integer size = result -> size;
+	COMBINE_ALL_TO_ONE_END (U"ct_", size)
 }
 
 FORM (CONVERT_EACH_TO_ONE__Sound_to_Covariance_channels, U"Sound: To Covariance (channels)", U"Sound: To Covariance (channels)...") {

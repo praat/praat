@@ -45,7 +45,7 @@ void _recursiveTemplate_Melder_trace (FILE *f, const MelderArg& first, Args... r
 
 template <typename... Args>
 void Melder_trace (conststring8 sourceCodeFileName, int lineNumber, conststring8 functionName, const MelderArg& first, Args... rest) {
-	if (! Melder_isTracingGlobally || MelderFile_isNull (& MelderTrace::_file))
+	if (MelderFile_isNull (& MelderTrace::_file))
 		return;
 	FILE *f = MelderTrace::_open (sourceCodeFileName, lineNumber, functionName);
 	_recursiveTemplate_Melder_trace (f, first, rest...);
@@ -53,6 +53,7 @@ void Melder_trace (conststring8 sourceCodeFileName, int lineNumber, conststring8
 }
 
 #define TRACE  constexpr bool Melder_isTracingLocally = true;   // intentionally shadow a global variable; meant for temporary tracing of a function (to stderr)
+#define TRACEF  constexpr bool Melder_isTracingGlobally = true;   // for temporary tracing of a function (to the tracing file, even if global tracing is off)
 
 #ifdef NDEBUG
 	#define trace(...)   ((void) 0)

@@ -348,7 +348,7 @@ integer OTGrammar_getTableau (OTGrammar me, conststring32 input) {
 	Melder_throw (U"Input \"", input, U"\" not in list of tableaus.");
 }
 
-static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) noexcept {
+static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY)
 		return;
 	OTGrammarTableau tableau = & my tableaus [itab];
@@ -382,7 +382,7 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, integer itab) noexcept {
 	}
 }
 
-int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2) noexcept {
+int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, integer itab2, integer icand2) {
 	INTVEC marks1 = my tableaus [itab1]. candidates [icand1]. marks.get();
 	INTVEC marks2 = my tableaus [itab2]. candidates [icand2]. marks.get();
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
@@ -459,7 +459,7 @@ int OTGrammar_compareCandidates (OTGrammar me, integer itab1, integer icand1, in
 	return 0;   // the two total disharmonies are equal
 }
 
-static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) noexcept {
+static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	double maximumHarmony = tableau -> candidates [1]. harmony;
 	for (integer icand = 2; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -484,7 +484,7 @@ static void _OTGrammar_fillInProbabilities (OTGrammar me, integer itab) noexcept
 	}
 }
 
-integer OTGrammar_getWinner (OTGrammar me, integer itab) noexcept {
+integer OTGrammar_getWinner (OTGrammar me, integer itab) {
 	integer icand_best = 1;
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY ||
 		my decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)

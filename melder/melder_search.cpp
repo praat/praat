@@ -1,6 +1,6 @@
 /* melder_search.cpp
  *
- * Copyright (C) 1992-2018,2020 Paul Boersma
+ * Copyright (C) 1992-2018,2020,2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 stri
 			char32 kar;
 			do {
 				kar = ( caseSensitive ? * movingString ++ : Melder_toLowerCase (* movingString ++) );
-				if (kar == U'\0') return nullptr;
+				if (kar == U'\0')
+					return nullptr;
 			} while (kar != firstCharacter);
 		} while (caseSensitive ? str32ncmp (movingString, movingFind, length - 1) : str32ncmp_caseInsensitive (movingString, movingFind, length - 1));
 		/*

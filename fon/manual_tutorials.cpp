@@ -22,8 +22,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20211203)
+MAN_BEGIN (U"What's new?", U"ppgb", 20211218)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.04# (18 December 2021)")
+LIST_ITEM (U"• TextGrid window on Mac: fix entering Japanese text with the Enter key.")
+LIST_ITEM (U"• Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.")
+LIST_ITEM (U"• Scripting: support for $$infile$, $$outfile$ and $folder fields in forms.")
+LIST_ITEM (U"• Calling Praat from the command line: the switch $$--open$ now adds files to an already running instance of Praat; "
+	"this was already the case on Windows, but it now works in the same way on the Mac and on Linux.")
+LIST_ITEM (U"• Scripting on Mac: multiline text fields in forms have scroll bars and behave like other fields.")
 NORMAL (U"##6.2.03# (3 December 2021)")
 LIST_ITEM (U"• Mac: made Enter key work as expected (i.e. character selection) on Japanese keyboards in multi-line text fields in dialogs and TextGrid window.")
 NORMAL (U"##6.2.02# (2 December 2021)")
