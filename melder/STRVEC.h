@@ -24,7 +24,7 @@ autoSTRVEC folderNames_STRVEC (conststring32 path /* cattable */);
 autoSTRVEC readLinesFromFile_STRVEC (MelderFile file);
 
 autoSTRVEC shuffle_STRVEC (STRVEC const& x);
-void shuffle_STRVEC_inout (STRVEC const& x) noexcept;
+void shuffle_STRVEC_inout (STRVEC const& x);
 
 autoSTRVEC sort_STRVEC (STRVEC const& a);
 void sort_STRVEC_inout (STRVEC const& a) noexcept;

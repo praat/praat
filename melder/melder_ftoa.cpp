@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ static int ibuffer = 0;
 	*q = U'\0'; \
 	return buffers32 [ibuffer];
 
-const char * Melder8_integer (int64 value) noexcept {
+const char * Melder8_integer (int64 value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
 	if (sizeof (long_not_integer) == 8) {
@@ -70,12 +70,12 @@ const char * Melder8_integer (int64 value) noexcept {
 	}
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_integer (int64 value) noexcept {
+conststring32 Melder_integer (int64 value) {
 	const char *p = Melder8_integer (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_bigInteger (int64 value) noexcept {
+const char * Melder8_bigInteger (int64 value) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
 	char *text = buffers8 [ibuffer];
@@ -125,29 +125,29 @@ const char * Melder8_bigInteger (int64 value) noexcept {
 	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
 	return text;
 }
-conststring32 Melder_bigInteger (int64 value) noexcept {
+conststring32 Melder_bigInteger (int64 value) {
 	const char *p = Melder8_bigInteger (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_boolean (bool value) noexcept {
+const char * Melder8_boolean (bool value) {
 	return value ? "yes" : "no";
 }
-conststring32 Melder_boolean (bool value) noexcept {
+conststring32 Melder_boolean (bool value) {
 	return value ? U"yes" : U"no";
 }
 
-const char * Melder8_onoff (bool value) noexcept {
+const char * Melder8_onoff (bool value) {
 	return value ? "on" : "off";
 }
-conststring32 Melder_onoff (bool value) noexcept {
+conststring32 Melder_onoff (bool value) {
 	return value ? U"on" : U"off";
 }
 
-const char * Melder8_kleenean (kleenean valueK) noexcept {
+const char * Melder8_kleenean (kleenean valueK) {
 	return valueK ? "yes" : ! valueK ? "no": "unknown";
 }
-conststring32 Melder_kleenean (kleenean valueK) noexcept {
+conststring32 Melder_kleenean (kleenean valueK) {
 	return valueK ? U"yes" : ! valueK ? U"no": U"unknown";
 }
 
@@ -155,7 +155,7 @@ conststring32 Melder_kleenean (kleenean valueK) noexcept {
 	assert string$ (1000000000000) = "1000000000000"
 	assert string$ (undefined) = "--undefined--"
 @*/
-const char * Melder8_double (double value) noexcept {
+const char * Melder8_double (double value) {
 	if (isundef (value))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -168,12 +168,12 @@ const char * Melder8_double (double value) noexcept {
 	}
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_double (double value) noexcept {
+conststring32 Melder_double (double value) {
 	const char *p = Melder8_double (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_double_overtlyReal (double value) noexcept {
+const char * Melder8_double_overtlyReal (double value) {
 	if (isundef (value))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -188,24 +188,24 @@ const char * Melder8_double_overtlyReal (double value) noexcept {
 		strcat (buffers8 [ibuffer], ".0");
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_double_overtlyReal (double value) noexcept {
+conststring32 Melder_double_overtlyReal (double value) {
 	const char *p = Melder8_double_overtlyReal (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_single (double value) noexcept {
+const char * Melder8_single (double value) {
 	if (isundef (value))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_single (double value) noexcept {
+conststring32 Melder_single (double value) {
 	const char *p = Melder8_single (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_half (double value) noexcept {
+const char * Melder8_half (double value) {
 	if (isundef (value))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -213,12 +213,12 @@ const char * Melder8_half (double value) noexcept {
 	sprintf (buffers8 [ibuffer], "%.4g", value);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_half (double value) noexcept {
+conststring32 Melder_half (double value) {
 	const char *p = Melder8_half (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_fixed (double value, integer precision) noexcept {
+const char * Melder8_fixed (double value, integer precision) {
 	if (isundef (value))
 		return "--undefined--";
 	if (value == 0.0)
@@ -234,12 +234,12 @@ const char * Melder8_fixed (double value, integer precision) noexcept {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_fixed (double value, integer precision) noexcept {
+conststring32 Melder_fixed (double value, integer precision) {
 	const char *p = Melder8_fixed (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept {
+const char * Melder8_fixedExponent (double value, integer exponent, integer precision) {
 	double factor = pow (10.0, exponent);
 	if (isundef (value))
 		return "--undefined--";
@@ -257,12 +257,12 @@ const char * Melder8_fixedExponent (double value, integer exponent, integer prec
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_fixedExponent (double value, integer exponent, integer precision) noexcept {
+conststring32 Melder_fixedExponent (double value, integer exponent, integer precision) {
 	const char *p = Melder8_fixedExponent (value, exponent, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_percent (double value, integer precision) noexcept {
+const char * Melder8_percent (double value, integer precision) {
 	if (isundef (value))
 		return "--undefined--";
 	if (value == 0.0)
@@ -279,12 +279,12 @@ const char * Melder8_percent (double value, integer precision) noexcept {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_percent (double value, integer precision) noexcept {
+conststring32 Melder_percent (double value, integer precision) {
 	const char *p = Melder8_percent (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_hexadecimal (integer value, integer precision) noexcept {
+const char * Melder8_hexadecimal (integer value, integer precision) {
 	if (value < 0)
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -298,12 +298,12 @@ const char * Melder8_hexadecimal (integer value, integer precision) noexcept {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_hexadecimal (integer value, integer precision) noexcept {
+conststring32 Melder_hexadecimal (integer value, integer precision) {
 	const char *p = Melder8_hexadecimal (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_dcomplex (dcomplex value) noexcept {
+const char * Melder8_dcomplex (dcomplex value) {
 	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -327,12 +327,12 @@ const char * Melder8_dcomplex (dcomplex value) noexcept {
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_dcomplex (dcomplex value) noexcept {
+conststring32 Melder_dcomplex (dcomplex value) {
 	const char *p = Melder8_dcomplex (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_scomplex (dcomplex value) noexcept {
+const char * Melder8_scomplex (dcomplex value) {
 	if (isundef (value.real()) || isundef (value.imag()))
 		return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -344,12 +344,12 @@ const char * Melder8_scomplex (dcomplex value) noexcept {
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_scomplex (dcomplex value) noexcept {
+conststring32 Melder_scomplex (dcomplex value) {
 	const char *p = Melder8_scomplex (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-conststring32 Melder_float (conststring32 number) noexcept {
+conststring32 Melder_float (conststring32 number) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
 		ibuffer = 0;
 	if (! str32chr (number, 'e')) {
@@ -384,7 +384,7 @@ conststring32 Melder_float (conststring32 number) noexcept {
 	return buffers32 [ibuffer];
 }
 
-const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
+const char * Melder8_naturalLogarithm (double lnNumber) {
 	//if (lnNumber == -INFINITY) return "0";   // this would have been nice, but cannot be relied upon
 	if (isundef (lnNumber))
 		return "--undefined--";
@@ -410,29 +410,29 @@ const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
 	}
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_naturalLogarithm (double lnNumber) noexcept {
+conststring32 Melder_naturalLogarithm (double lnNumber) {
 	const char *p = Melder8_naturalLogarithm (lnNumber);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_pointer (const void *pointer) noexcept {
+const char * Melder8_pointer (const void *pointer) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%p", pointer);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_pointer (const void *pointer) noexcept {
+conststring32 Melder_pointer (const void *pointer) {
 	const char *p = Melder8_pointer (pointer);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-conststring32 Melder_character (char32 kar) noexcept {
+conststring32 Melder_character (char32 kar) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	buffers32 [ibuffer] [0] = kar;
 	buffers32 [ibuffer] [1] = U'\0';
 	return buffers32 [ibuffer];
 }
 
-const char * Melder8_colour (MelderColour colour) noexcept {
+const char * Melder8_colour (MelderColour colour) {
 	if (isundef (colour.red) || isundef (colour.green) || isundef (colour.blue))
 		return "{--undefined--,--undefined--,--undefined--}";
 	if (++ ibuffer == NUMBER_OF_BUFFERS)
@@ -468,7 +468,7 @@ const char * Melder8_colour (MelderColour colour) noexcept {
 	strcpy (p, "}");
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_colour (MelderColour colour) noexcept {
+conststring32 Melder_colour (MelderColour colour) {
 	const char *p = Melder8_colour (colour);
 	CONVERT_BUFFER_TO_CHAR32
 }

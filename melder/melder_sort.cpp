@@ -18,17 +18,17 @@
 
 #include "melder.h"
 
-void shuffle_VEC_inout (VECVU const& x) noexcept {
+void shuffle_VEC_inout (VECVU const& x) {
 	for (integer i = 1; i < x.size; i ++)
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
-void shuffle_INTVEC_inout (INTVECVU const& x) noexcept {
+void shuffle_INTVEC_inout (INTVECVU const& x) {
 	for (integer i = 1; i < x.size; i ++)
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
 
-void shuffle_STRVEC_inout (STRVEC const& x) noexcept {
+void shuffle_STRVEC_inout (STRVEC const& x) {
 	for (integer i = 1; i < x.size; i ++)
 		std::swap (x [i], x [NUMrandomInteger (i, x.size)]);
 }
