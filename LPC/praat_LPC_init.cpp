@@ -473,9 +473,7 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getValueInBin, U"PowerCepstrum: Get valu
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
-		Melder_require (binNumber <= my nx,
-			U"Bin number should not exceed the number of bins.");
-		double result = my v_getValueAtSample (binNumber, 1, 1);
+		double result = ( binNumber < 1 || binNumber > my nx ? undefined : my v_getValueAtSample (binNumber, 1, 1) );
 	QUERY_ONE_FOR_REAL_END (U" (value in bin ", binNumber, U")")
 }
 

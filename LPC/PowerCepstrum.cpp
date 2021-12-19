@@ -142,7 +142,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 }
 
 /*
-	Fit line y = ax+b or y = a log(x) + b  on interval [qmin,qmax]
+	Fit line y = aq+b or y = a log(q) + b  on interval [qmin,qmax]
  */
 void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, double *out_a, double *out_intercept, kCepstrum_trendType lineType, kCepstrum_trendFit method) {
 	try {
@@ -155,8 +155,7 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		integer imin, imax;
 		if (Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax) == 0)
 			return;
-		if (imin == 1 && lineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
-			imin = 2; // because log(0) is undefined
+		Melder_clipLeft (2_integer, & imin); // never use q=0 in fitting
 		integer numberOfPoints = imax - imin + 1;
 		Melder_require (numberOfPoints > 1,
 			U"Not enough points for fit.");
@@ -164,7 +163,7 @@ void PowerCepstrum_fitTrendLine (PowerCepstrum me, double qmin, double qmax, dou
 		autoVEC y = raw_VEC (numberOfPoints);
 		autoVEC x = raw_VEC (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
-			integer isamp = imin + i - 1;
+			const integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
 			if (lineType == kCepstrum_trendType::EXPONENTIAL_DECAY)
 				x [i] = log (x [i]);
@@ -197,7 +196,7 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 		double xq = lineType == 2 ? log(q) : q;
 		double db_background = slope * xq + intercept;
 		double db_cepstrum = my v_getValueAtSample (j, 1, 1);
-		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10) - 1e-30;
+		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10);
 		my z [1] [j] = diff;
 	}
 }
@@ -205,13 +204,20 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 
 // clip with tilt line
 static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrum_trendType lineType) {
+	/*
+	*/
 	for (integer j = 1; j <= my nx; j ++) {
-		const double q = ( j == 1 ? 0.5 * my dx : my x1 + (j - 1) * my dx );   // approximation; TODO: meaning of q
-		const double xq = ( lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log (q) : q );
+		/*
+			For the exponential decay function, y = slope*log(quefrency)+intercept the value at
+			quefrency == 0 is not defined. As an approximation we subtract the value at quefrency = 0.5*dx.
+			This is no problem because the value at quefrency = 0 is not relevant.
+		*/
+		const double quefrency = ( j == 1 ? 0.5 * my dx : my x1 + (j - 1) * my dx );
+		const double xq = ( lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log (quefrency) : quefrency );
 		const double db_background = slope * xq + intercept;
 		const double db_cepstrum = my v_getValueAtSample (j, 1, 1);
 		const double diff = Melder_clippedLeft (0.0, db_cepstrum - db_background);
-		my z [1] [j] = exp (diff * NUMln10 / 10.0) - 1e-30;
+		my z [1] [j] = exp (diff * NUMln10 / 10.0);
 	}
 }
 
@@ -250,6 +256,7 @@ static void PowerCepstrum_smooth_inplaceRectangular (PowerCepstrum me, double qu
 		Melder_throw (me, U": not smoothed.");
 	}
 }
+
 static void PowerCepstrum_smooth_inplaceRectangular_old (PowerCepstrum me, double quefrencyAveragingWindow, integer numberOfIterations) {
 	try {
 		const integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
@@ -304,12 +311,6 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 	autoPowerCepstrum thee = Data_copy (me);
 	PowerCepstrum_smooth_inplace (thee.get(), quefrencyAveragingWindow, numberOfIterations);
 	return thee;
-}
-
-static double PowerCepstrum_getValueAtIndex (PowerCepstrum me, integer index) {   // TODO: make global by providing prototype, and use
-	if (index < 1 || index > my nx)
-		return undefined;
-	return my v_getValueAtSample (index, 1, 1);   // 10 log val^2
 }
 
 void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *out_peakdB, double *out_quefrency) {
@@ -391,6 +392,8 @@ static autoMAT PowerCepstrum_getRhamonicsPower (PowerCepstrum me, double pitchFl
 }
 
 static double PowerCepstrum_nearestPeak (PowerCepstrum me, double /*quefrency*/) {   // TODO: make global by providing prototype, and use
+	autoMatrix thee = PowerCepstrum_as_Matrix_dB (me);
+	
 	return undefined;   // TODO: implement and use
 }
 
