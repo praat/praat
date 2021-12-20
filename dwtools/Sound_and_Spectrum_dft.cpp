@@ -19,7 +19,7 @@
 #include "Sound_and_Spectrum_dft.h"
 #include "Sound_and_Spectrum.h"
 
-autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth) {
+autoSpectrum Sound_to_Spectrum_resampled (Sound me, integer interpolationDepth) {
 	try {
 		const integer fftNumberOfSamples = Melder_iroundUpToPowerOfTwo (my nx);
 		if (fftNumberOfSamples == my nx)
@@ -37,24 +37,25 @@ autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth) {
 			thy z [2] [numberOfFrequencies] = 0.0;   // set imaginary value at Nyquist to zero
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": could not convert to Spectrum by DFT.");
+		Melder_throw (me, U": could not convert to Spectrum by resampling.");
 	}
 }
 
-autoSound Spectrum_to_Sound_dft (Spectrum me, integer interpolationDepth) {
+autoSound Spectrum_to_Sound_resampled (Spectrum me, integer interpolationDepth) {
 	try {
 		const integer fftNumberOfSamples = Melder_iroundUpToPowerOfTwo (my nx - 1);
 		autoSound thee;
 		if (fftNumberOfSamples == my nx - 1)
 			return Spectrum_to_Sound (me);   // FFT without resampling
 		const integer newNumberOfFrequencies = fftNumberOfSamples + 1;
-		const double newMaximumFrequency = my dx * newNumberOfFrequencies;
-		autoSpectrum extendedSpectrum = Spectrum_create (newMaximumFrequency, newNumberOfFrequencies);
+		//const double newMaximumFrequency = my dx * newNumberOfFrequencies;
+		autoSpectrum extendedSpectrum = Spectrum_create (my xmax, newNumberOfFrequencies);
 		extendedSpectrum -> z.part (1, 2, 1, my nx)  <<=  my z.get();
+		extendedSpectrum -> dx = my dx;
 		autoSound upsampled = Spectrum_to_Sound (extendedSpectrum.get());   // FFT before resampling
 		return Sound_resample (upsampled.get(), Melder_iround (2.0 * my xmax), interpolationDepth);
 	} catch (MelderError) {
-		Melder_throw (me, U": could not convert to Sound by DFT.");
+		Melder_throw (me, U": could not convert to Sound by resampling.");
 	}
 }
 

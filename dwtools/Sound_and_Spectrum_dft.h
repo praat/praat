@@ -26,8 +26,8 @@
 	exactly a power of 2 samples.
 	(after a suggestion by Ton Wempe).
 */
-autoSpectrum Sound_to_Spectrum_dft (Sound me, integer interpolationDepth);
+autoSpectrum Sound_to_Spectrum_resampled (Sound me, integer interpolationDepth);
 
-autoSound Spectrum_to_Sound_dft (Spectrum me, integer interpolationDepth);
+autoSound Spectrum_to_Sound_resampled (Spectrum me, integer interpolationDepth);
 
 #endif /* _Sound_and_Spectrum_dft_h_ */
