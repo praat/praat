@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kCepstrum_valueInterpolation, 1)
-	enums_add (kCepstrum_valueInterpolation, 0, NEAREST, U"nearest")
-	enums_add (kCepstrum_valueInterpolation, 1, LINEAR, U"linear")
-	enums_add (kCepstrum_valueInterpolation, 2, CUBIC, U"cubic")
-enums_end (kCepstrum_valueInterpolation, 2, LINEAR)
+enums_begin (kCepstrum_peakInterpolation, 0)
+	enums_add (kCepstrum_peakInterpolation, 0, NONE, U"none")
+	enums_add (kCepstrum_peakInterpolation, 1, PARABOLIC, U"parabolic")
+	enums_add (kCepstrum_peakInterpolation, 2, CUBIC, U"cubic")
+enums_end (kCepstrum_peakInterpolation, 2, PARABOLIC)
 
 enums_begin (kCepstrum_trendType, 1)
 	enums_add (kCepstrum_trendType, 1, LINEAR, U"Straight")
