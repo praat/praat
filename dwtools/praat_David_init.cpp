@@ -5816,12 +5816,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrum_dft2, U"", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrum_resampled, U"Sound To Spectrum (resampled)", nullptr) {
 	NATURAL (precision, U"Precision (samples)", U"50")
 	OK
 DO
 	CONVERT_EACH_TO_ONE (Sound)
-		autoSpectrum result = Sound_to_Spectrum_dft (me, precision);
+		autoSpectrum result = Sound_to_Spectrum_resampled (me, precision);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -6193,6 +6193,15 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 /**************** Spectrum *******************************************/
+
+FORM (CONVERT_EACH_TO_ONE__Spectrum_to_Sound_resampled, U"Spectrum: To Sound (resampled)", nullptr) {
+	INTEGER (interpolationDepth, U"Precision (samples)", U"50")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Spectrum)
+		autoSound result = Spectrum_to_Sound_resampled (me, interpolationDepth);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
 
 FORM (GRAPHICS_EACH__Spectrum_drawPhases, U"Spectrum: Draw phases", U"Spectrum: Draw phases...") {
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
@@ -10059,8 +10068,8 @@ void praat_David_init () {
 	praat_addAction1 (classSound, 0, U"To Pitch (SPINET)...", U"To Pitch (cc)...", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_Pitch_SPINET);
 
-	praat_addAction1 (classSound, 0, U"To Spectrum (dft)...", U"To Spectrum...", praat_DEPTH_1 + praat_HIDDEN,
-			CONVERT_EACH_TO_ONE__Sound_to_Spectrum_dft2);
+	praat_addAction1 (classSound, 0, U"To Spectrum (resampled)...", U"To Spectrum...", praat_DEPTH_1 + praat_HIDDEN,
+			CONVERT_EACH_TO_ONE__Sound_to_Spectrum_resampled);
 	praat_addAction1 (classSound, 0, U"To FormantFilter...", U"To Cochleagram (edb)...", praat_DEPRECATED_2014 | praat_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_to_FormantFilter);
 	praat_addAction1 (classSound, 0, U"To Spectrogram (pitch-dependent)...", U"To Cochleagram (edb)...", 1,
@@ -10122,6 +10131,8 @@ void praat_David_init () {
 	praat_addAction1 (classSpectrogram, 0, U"Get longterm spectral flatness...", U"To DTW...", praat_HIDDEN | praat_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Spectrogram_getLongtermSpectralFlatnessMeasure);
 
+	praat_addAction1 (classSpectrum, 0, U"To Sound (resampled)...", U"To Sound", praat_DEPTH_1 | praat_HIDDEN, 
+			CONVERT_EACH_TO_ONE__Spectrum_to_Sound_resampled);
 	praat_addAction1 (classSpectrum, 0, U"Draw phases...", U"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, 
 			GRAPHICS_EACH__Spectrum_drawPhases);
 	praat_addAction1 (classSpectrum, 0, U"Set real value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, 

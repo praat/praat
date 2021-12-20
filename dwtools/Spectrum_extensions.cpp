@@ -321,7 +321,7 @@ autoSpectrum Spectrum_resample2 (Spectrum me, integer numberOfFrequencies) {
 		const double newSamplingFrequency = (1.0 / my dx) * numberOfFrequencies / my nx;
 		const double resampleFactor = (my nx - 1.0) / numberOfFrequencies;
 		autoSound resampled = Sound_resample (sound.get(), resampleFactor / sound -> dx, 50);
-		autoSpectrum extendedSpectrum = Sound_to_Spectrum_dft (resampled.get(), 50);
+		autoSpectrum extendedSpectrum = Sound_to_Spectrum_resampled (resampled.get(), 50);
 		autoSpectrum him = Spectrum_create (my xmax, numberOfFrequencies);
 		his z.all()  <<=  extendedSpectrum -> z.all();
 		return him;
