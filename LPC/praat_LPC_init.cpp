@@ -359,9 +359,22 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"P
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
-		double result;
+		double result, quefrency;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, & result, nullptr);
 	QUERY_ONE_FOR_REAL_END (U" dB")
+}
+
+FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval, U"", nullptr) {
+	REAL (fromQuefrency, U"left Quefrency interval (s)", U"0.0033 (=300 Hz)")
+	REAL (toQuefrency, U"right Quefrency interval (s)", U"0.01667 (=60 Hz)")
+	RADIO_ENUM (kCepstrum_peakInterpolation, peakInterpolationType,
+			U"Interpolation", kCepstrum_peakInterpolation :: PARABOLIC)
+	OK
+DO
+	QUERY_ONE_FOR_REAL (PowerCepstrum)
+		double result, quefrency;
+		PowerCepstrum_getMaximumAndQuefrency (me, fromQuefrency, toQuefrency, peakInterpolationType, & result, & quefrency);
+	QUERY_ONE_FOR_REAL_END (U" dB (quefrency=", quefrency, U" s; f=", 1.0 / quefrency, U" Hz).")
 }
 
 FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak, U"PowerCepstrum: Get quefrency of peak", U"PowerCepstrum: Get quefrency of peak...") {
@@ -1611,6 +1624,8 @@ void praat_uvafon_LPC_init () {
 					QUERY_ONE_FOR_REAL__PowerCepstrum_getIndexFromQuefrency);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak...", nullptr, 1, 
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak);
+		praat_addAction1 (classPowerCepstrum, 0, U"Get peak in quefrency interval...", nullptr, 1, 
+				QUERY_ONE_FOR_REAL__PowerCepstrum_getPeakInQuefrencyInterval);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get quefrency of peak...", nullptr, 1, 
 				QUERY_ONE_FOR_REAL__PowerCepstrum_getQuefrencyOfPeak);
 		praat_addAction1 (classPowerCepstrum, 0, U"Get peak prominence (hillenbrand)...", nullptr, praat_DEPTH_1 + praat_HIDDEN,

@@ -313,6 +313,17 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 	return thee;
 }
 
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double fromQuefrency, double toQuefrency, kCepstrum_peakInterpolation peakInterpolationType, double *out_peakdB, double *out_quefrency) {
+	autoMatrix thee = PowerCepstrum_as_Matrix_dB (me);
+	kVector_peakInterpolation peakInterpolation = ( peakInterpolationType == kCepstrum_peakInterpolation::NONE ? kVector_peakInterpolation::NONE : peakInterpolationType == kCepstrum_peakInterpolation::CUBIC ? kVector_peakInterpolation::CUBIC : kVector_peakInterpolation::PARABOLIC );
+	double peakdB, quefrency;
+	Vector_getMaximumAndX ((Vector) thee.get(), fromQuefrency, toQuefrency, 1, peakInterpolation, & peakdB, & quefrency);
+	if (out_peakdB)
+		*out_peakdB = peakdB;
+	if (out_quefrency)
+		*out_quefrency = quefrency;
+}
+
 void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *out_peakdB, double *out_quefrency) {
 	autoMatrix thee = PowerCepstrum_as_Matrix_dB (me);
 	const double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
@@ -391,6 +402,7 @@ static autoMAT PowerCepstrum_getRhamonicsPower (PowerCepstrum me, double pitchFl
 	}
 }
 
+#if 0
 static double PowerCepstrum_nearestPeak (PowerCepstrum me, double /*quefrency*/) {   // TODO: make global by providing prototype, and use
 	autoMatrix thee = PowerCepstrum_as_Matrix_dB (me);
 	
@@ -410,6 +422,7 @@ static autoTable PowerCepstrum_to_Table_rhamonics (PowerCepstrum me, double pitc
 		Melder_throw (me, U": cannot create Table with rhamonics.");
 	}
 }
+#endif
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
 	double peakdB, qpeak;

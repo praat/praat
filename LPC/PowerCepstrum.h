@@ -68,7 +68,8 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 		[minimum, maximum]: amplitude; y range of drawing.
 */
 
-void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *maximum, double *quefrency);
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, kVector_peakInterpolation peakInterpolationType, double *maximum, double *quefrency); // deprecated, too many options for interpolation type.
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double fromQuefrency, double toQuefrency, kCepstrum_peakInterpolation peakInterpolationType, double *out_peakdB, double *out_quefrency);
 
 // The standard of Hillenbrand with fitting options
 double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *qpeak);
