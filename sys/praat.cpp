@@ -1537,7 +1537,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#if defined (UNIX)
 			MelderDir_getFile (& Melder_preferencesFolder, U"prefs5", & prefsFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"buttons5", & buttonsFile);
-			MelderDir_getFile (& Melder_preferencesFolder, U"pid5", & pidFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"pid", & pidFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"message", & messageFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"tracing", & tracingFile);
 		#elif defined (_WIN32)
@@ -1548,7 +1548,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#elif defined (macintosh)
 			MelderDir_getFile (& Melder_preferencesFolder, U"Prefs5", & prefsFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Buttons5", & buttonsFile);
-			MelderDir_getFile (& Melder_preferencesFolder, U"Pid5", & pidFile);
+			MelderDir_getFile (& Melder_preferencesFolder, U"Pid", & pidFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
 		#endif
 		Melder_tracingToFile (& tracingFile);
