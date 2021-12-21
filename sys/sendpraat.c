@@ -1,6 +1,7 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 13 November 2021 */
+/* functionality 13 November 2021 */
+/* code 21 December 2021 */
 
 /*
  * The sendpraat subroutine (macOS; Windows; Linux) sends a message
@@ -95,7 +96,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	#elif unix
 		char *home, pidFileName [256], messageFileName [256];
 		FILE *pidFile;
-		long pid, wid = 0;
+		long pid, version = 0;
 	#endif
 
 	/*
@@ -192,7 +193,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			sprintf (errorMessage, "Program %s not running.", programName);
 			return errorMessage;
 		}
-		if (fscanf (pidFile, "%ld%ld", & pid, & wid) < 1) {
+		if (fscanf (pidFile, "%ld%ld", & pid, & version) < 1) {
 			fclose (pidFile);
 			sprintf (errorMessage, "Program %s not running, or disk has been full.", programName);
 			return errorMessage;
