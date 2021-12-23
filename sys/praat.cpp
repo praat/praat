@@ -957,7 +957,6 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			char *buffer;
 			Size actualSize;
 			duringAppleEvent = true;
-			//AEInteractWithUser (kNoTimeOut, nullptr, nullptr);   // use time out of 0 to execute immediately (without bringing to foreground)
 			ProcessSerialNumber psn;
 			GetCurrentProcess (& psn);
 			SetFrontProcess (& psn);
