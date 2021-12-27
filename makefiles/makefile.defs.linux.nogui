@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.nogui
 
 # System: Linux without GUI, network, and sound
-# Paul Boersma 2021-11-14
+# Paul Boersma 2021-12-27
 
 CC ?= gcc
 CXX ?= g++
@@ -18,7 +18,7 @@ CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = praat_nogui
 
-LIBS = `$(PKG_CONFIG) --libs pangocairo` -lm -static-libgcc -static-libstdc++ -lpthread
+LIBS = `$(PKG_CONFIG) --libs pangocairo` -no-pie -lm -static-libgcc -static-libstdc++ -lpthread
 
 AR = ar
 RANLIB = ls

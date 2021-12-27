@@ -1,7 +1,7 @@
 # File: makefile.defs.chrome64
 
 # System: Linux on Chromebook
-# Paul Boersma 2021-11-14
+# Paul Boersma 2021-12-27
 
 CC ?= gcc
 CXX ?= g++
@@ -16,7 +16,7 @@ CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = praat
 
-LIBS = `pkg-config --libs gtk+-3.0` -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
+LIBS = `pkg-config --libs gtk+-3.0` -no-pie -lm -lpulse -lasound -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
 
 AR = ar
 RANLIB = ls
