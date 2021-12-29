@@ -30,6 +30,8 @@
 #include "Configuration.h"
 #include "Discriminant.h"
 #include "Electroglottogram.h"
+#include "Sound_and_Spectrum.h"
+#include "Sound_and_Spectrum_dft.h"
 
 
 static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
@@ -166,6 +168,27 @@ static void Electroglottogram_drawStylized (Graphics g) {
 
 static void Electroglottogram_drawStylizedLevels (Graphics g) {
 	Electroglottogram_drawStylized (g, false, true);
+}
+
+static void drawSpectra (Graphics g) {
+	static Spectrum dft = nullptr;
+	autoSound sound = Sound_createAsPureTone (1, 0.0, 3.9799, 10000.0, 3333.0, 1.0, 0.0, 0.0);
+	if (! dft)
+		dft = Sound_to_Spectrum (sound.get(), false).releaseToAmbiguousOwner();
+	autoSpectrum fft = Sound_to_Spectrum (sound.get(), true);
+	autoSpectrum ups = Sound_to_Spectrum_resampled (sound.get(), 30);
+	const double fmin = 0.0, fmax = 5000.0, dbmin = -30.0, dbmax = 110.0;
+	const double fontSize = Graphics_inqFontSize (g);
+	Graphics_setFontSize (g, 10.0);
+	Graphics_setLineType (g, Graphics_DRAWN);
+	Graphics_setColour (g, Melder_SILVER);
+	Spectrum_draw (fft.get(), g, fmin, fmax, dbmin, dbmax, true);
+	Graphics_setColour (g, Melder_BLACK);
+	Spectrum_draw (dft, g, fmin, fmax, dbmin, dbmax, false);
+	Graphics_setColour (g, Melder_RED);
+	Spectrum_draw (ups.get(), g, fmin, fmax, dbmin, dbmax, false);
+	Graphics_setColour (g, Melder_BLACK);
+	Graphics_setFontSize (g, fontSize);
 }
 
 void manual_dwtools_init (ManPages me);
@@ -4549,6 +4572,44 @@ NORMAL (U"The algorithm for constructing the invertable constant-Q transform is 
 NORMAL (U"First the sound is transformed to the frequency domain with an FFT. The filtering is then performed in the frequency "
 	"domain. For the %k^^th^ frequency bin the frequencies between %%lowestFrequency%\\.c2^^(%k-1)/%%numberOfFrequencyBinsPerOctave%)^ and  %%lowestFrequency%\\.c2^^(%k+1)/%%numberOfFrequencyBinsPerOctave%)^ are transformed back with an inverse @FFT. The resulting coefficients are copied to the frames of the frequency bin. Because of the logarithmic frequency scale, the number of coefficients in a frequency bin will increase with bin number. ")
 NORMAL (U"")
+MAN_END
+
+MAN_BEGIN (U"Sound: To Spectrum (resampled)...", U"djmw", 20211224)
+INTRO (U"A command that creates a @Spectrum from the selected @Sound by using a fast approximation of the Discrete Fourier Transform.")
+NORMAL (U"In general the amount of computation necessary to calculate the spectrum of a sound that consists "
+	"of %N samples, is of the order of %O(%N^^2^) multiplications. If the number of samples happens to be an "
+	"exact power of 2, i.e. %N=2^^p^ and %p integer, a special algorithm called the FFT (Fast Fourier Transform) is "
+	"available to calculate the spectrum with an order of %O(%N log__2_ %N) multiplications. In normal situations the number of "
+	"samples seldom happens to be an exact power of 2. However extending the sound with zero sample values until "
+	"the number of samples reaches a power of 2 enables us to use the fast FFT algorithm to calculate a fast approximation of the real spectrum. "
+	"This is the traditional way to calculate the spectrum if you had chosen ##To Spectrum...# with the %%fast% option on. ")
+NORMAL (U"However, there is another option to get a sound with a number of samples that equals a power of 2, "
+	"namely by upsampling the sound with a suitably chosen sampling frequency. We have to calculate the new sampling " "frequency such that the number of samples in the upsampled sound is exactly a power of 2. Of the new upsampled "
+	"sound we can use the FFT algorithm to calculate its spectrum %%without the need to add zero sample values%. "
+	"Because the upsampling results in a spectrum that "
+	"contains higher frequency components than the spectrum of the original sound we have to process the just calculated spectrum by leaving out these higher frequency components to obtain the desired spectrum.")
+NORMAL (U"This resampled approximation generally performs better than the approximation by adding zero values.")
+ENTRY (U"Settings")
+TAG (U"##Precision#,")
+DEFINITION (U"the depth of the interpolation in samples. This determines the quality of the interpolation used "
+	"in resampling.")
+ENTRY (U"Example")
+NORMAL (U"The following script shows the three different ways to calculate a Spectrum from a given sound. We deliberately have chosen the number of samples to be prime.")
+CODE (U"sound = Create Sound from formula: \"prime\", 1, 0.0, 3.9799, 10000, \"sin(2.0*pi*3333.0*x)\"")
+CODE (U"stopwatch")
+CODE (U"spectrum_dft = To Spectrum: \"no\"")
+CODE (U"time_dft = stopwatch")
+CODE (U"selectObject: sound")
+CODE (U"spectrum_ups = To Spectrum (resampled): 30")
+CODE (U"time_ups = stopwatch")
+CODE (U"selectObject: sound")
+CODE (U"spectrum_fft = To Spectrum: \"yes\"")
+CODE (U"time_fft = stopwatch")
+NORMAL (U"On my computer from 2019 the first calculation of the spectrum by the slow %O(%N^2) takes 2.258 s while the resampled approximation takes 0.031s and the approximation by adding zero values takes approximately 0.003 s. "
+"If the duration of the sound had been 10.0069 s, the number of samples again would be a prime number and the computing times are 14.127 s, 0.059 s and 0.005 s, respectively. This again shows that the DFT algorithm is very slow compared to the other two. It is also clear that resampling takes some extra time as compared to adding zero sample values.")
+NORMAL (U"The following picture shows the dft spectrum in black colour, the fft spectrum in silver/grey and the resampled one in red. "
+	"From the two alternative approximations of the spectrum, the resampled one looks a better approximation to the dft than the fft with zeros added.")
+PICTURE (5,3, drawSpectra)
 MAN_END
 
 MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)

@@ -5816,7 +5816,9 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
-FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrum_resampled, U"Sound To Spectrum (resampled)", nullptr) {
+FORM (CONVERT_EACH_TO_ONE__Sound_to_Spectrum_resampled, U"Sound To Spectrum (resampled)", 
+	U"Sound: To Spectrum (resampled)...")
+{
 	NATURAL (precision, U"Precision (samples)", U"50")
 	OK
 DO
