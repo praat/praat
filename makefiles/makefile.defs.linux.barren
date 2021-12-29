@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.barren
 
 # System: Linux without GUI, network, graphics, and sound
-# Paul Boersma 2021-11-14
+# Paul Boersma 2021-12-27
 
 CC ?= gcc
 CXX ?= g++
@@ -16,7 +16,7 @@ CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = praat_barren
 
-LIBS = -lm -static -static-libgcc -static-libstdc++ -lpthread
+LIBS = -lm -static -static-libgcc -static-libstdc++ -no-pie -lpthread
 
 AR = ar
 RANLIB = ls

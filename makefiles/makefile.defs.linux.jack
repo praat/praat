@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.jack
 
 # System: Linux
-# Paul Boersma 2021-11-14
+# Paul Boersma 2021-12-27
 
 CC ?= gcc
 CXX ?= g++
@@ -18,7 +18,7 @@ CXXFLAGS = -std=c++17 $(COMMONFLAGS) -Wshadow
 
 EXECUTABLE = praat
 
-LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -lm -ljack -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
+LIBS = `$(PKG_CONFIG) --libs gtk+-3.0` -no-pie -lm -ljack -static-libgcc -static-libstdc++ -lpthread -L /usr/lib/x86_64-linux-gnu
 
 AR = ar
 RANLIB = ls
