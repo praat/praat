@@ -48,11 +48,10 @@ autoSound Spectrum_to_Sound_resampled (Spectrum me, integer interpolationDepth) 
 		if (fftNumberOfSamples == my nx - 1)
 			return Spectrum_to_Sound (me);   // FFT without resampling
 		const integer newNumberOfFrequencies = fftNumberOfSamples + 1;
-		//const double newMaximumFrequency = my dx * newNumberOfFrequencies;
 		autoSpectrum extendedSpectrum = Spectrum_create (my xmax, newNumberOfFrequencies);
 		extendedSpectrum -> z.part (1, 2, 1, my nx)  <<=  my z.get();
 		extendedSpectrum -> dx = my dx;
-		autoSound upsampled = Spectrum_to_Sound (extendedSpectrum.get());   // FFT before resampling
+		autoSound upsampled = Spectrum_to_Sound (extendedSpectrum.get());
 		return Sound_resample (upsampled.get(), Melder_iround (2.0 * my xmax), interpolationDepth);
 	} catch (MelderError) {
 		Melder_throw (me, U": could not convert to Sound by resampling.");
