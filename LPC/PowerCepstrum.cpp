@@ -208,11 +208,11 @@ static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double sl
 	*/
 	for (integer j = 1; j <= my nx; j ++) {
 		/*
-			For the exponential decay function, y = slope*log(quefrency)+intercept the value at
-			quefrency == 0 (j==1) is not defined. As an approximation we subtract the value at quefrency = 0.5*dx.
-			This is no problem because the value at quefrency = 0 is not relevant.
+			For the exponential decay function, y = slope*log(quefrency)+intercept, the PowerCepstrum's first quefrency value (at x1)
+			has quefrency == 0 and the value y(0) is not defined. As an approximation for y(0) we use y(0.5*dx).
+			This is no problem because the value at quefrency == 0 is not relevant.
 		*/
-		const double quefrency = ( j == 1 ? 0.5 * my dx : my x1 + (j - 1) * my dx );
+		const double quefrency = ( j == 1 && lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? 0.5 * my dx : (j - 1) * my dx );
 		const double xq = ( lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ? log (quefrency) : quefrency );
 		const double db_background = slope * xq + intercept;
 		const double db_cepstrum = my v_getValueAtSample (j, 1, 1);
