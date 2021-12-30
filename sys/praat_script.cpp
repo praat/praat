@@ -576,10 +576,7 @@ void praat_executeScriptFromFile (MelderFile file, conststring32 arguments) {
 	}
 }
 
-void praat_executeScriptFromFileName (conststring32 fileName, integer narg, Stackel args) {
-	/*
-		The argument 'fileName' is unsafe. Duplicate its contents.
-	*/
+void praat_runScript (conststring32 fileName, integer narg, Stackel args) {
 	structMelderFile file { };
 	Melder_relativePathToFile (fileName, & file);
 	try {
@@ -592,6 +589,26 @@ void praat_executeScriptFromFileName (conststring32 fileName, integer narg, Stac
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);   // interpret caller-relative paths for infile/outfile/folder arguments
+		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script
+		Interpreter_run (interpreter.get(), text.get());
+	} catch (MelderError) {
+		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed
+	}
+}
+
+void praat_executeScriptFromCommandLine (conststring32 fileName, integer argc, char **argv) {
+	structMelderFile file { };
+	Melder_relativePathToFile (fileName, & file);
+	try {
+		autostring32 text = MelderFile_readText (& file);
+		{// scope
+			autoMelderSaveDefaultDir saveDir;
+			autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used for including include files
+			Melder_includeIncludeFiles (& text);
+		}   // back to the default directory of the caller
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		Interpreter_readParameters (interpreter.get(), text.get());
+		Interpreter_getArgumentsFromCommandLine (interpreter.get(), argc, argv);   // interpret caller-relative paths for infile/outfile/folder arguments
 		autoMelderFileSetDefaultDir dir (& file);   // so that script-relative file names can be used inside the script
 		Interpreter_run (interpreter.get(), text.get());
 	} catch (MelderError) {

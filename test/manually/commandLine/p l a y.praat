@@ -6,5 +6,6 @@ writeInfoLine: "play.praat: ", file_to_play$
 appendInfoLine: number, " times"
 Read from file: file_to_play$
 for i to number
+	appendInfoLine: "Playing ", i
 	Play
 endfor

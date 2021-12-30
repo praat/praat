@@ -563,15 +563,12 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 	}
 }
 
-void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments) {
-	int size = my numberOfParameters;
-	integer length = str32len (arguments);
-	while (size >= 1 && my parameters [size] [0] == U'\0')
-		size --;   /* Ignore fields without a variable name (button, comment). */
-	for (int ipar = 1; ipar <= size; ipar ++) {
-		char32 *p = my parameters [ipar];
+static void tidyUpParameterNames (Interpreter me, integer size) {
+	for (integer ipar = 1; ipar <= size; ipar ++) {
+		mutablestring32 p = my parameters [ipar];
 		/*
-			Ignore buttons and comments again.
+			Ignore buttons and comments again (after `size` was
+			made smaller than my numberOfParameters).
 		*/
 		if (! *p)
 			continue;
@@ -587,12 +584,72 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 		if (*p != U'\0' && p [str32len (p) - 1] == U':')
 			p [str32len (p) - 1] = U'\0';
 	}
+}
+
+static void convertBooleansAndChoicesToNumbersAndRelativeToAbsolutePaths (Interpreter me, integer size) {
+	for (integer ipar = 1; ipar <= size; ipar ++) {
+		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
+			structMelderFile file { };
+			Melder_relativePathToFile (my arguments [ipar].get(), & file);
+			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
+		} else if (my types [ipar] == Interpreter_BOOLEAN) {
+			mutablestring32 arg = & my arguments [ipar] [0];
+			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
+			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
+			{
+				str32cpy (arg, U"1");
+			} else if (str32equ (arg, U"0") || str32equ (arg, U"no") || str32equ (arg, U"off") ||
+			    str32equ (arg, U"No") || str32equ (arg, U"Off") || str32equ (arg, U"NO") || str32equ (arg, U"OFF"))
+			{
+				str32cpy (arg, U"0");
+			} else {
+				Melder_throw (U"Unknown value \"", arg, U"\" for boolean \"", my parameters [ipar], U"\".");
+			}
+		} else if (my types [ipar] == Interpreter_CHOICE) {
+			integer jpar;
+			mutablestring32 arg = & my arguments [ipar] [0];
+			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
+				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
+					Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
+				if (str32equ (my arguments [jpar].get(), arg)) {   // the button labels are in the arguments; see Interpreter_readParameters
+					str32cpy (arg, Melder_integer (jpar - ipar));
+					str32cpy (my choiceArguments [ipar], my arguments [jpar].get());
+					break;
+				}
+			}
+			if (jpar > my numberOfParameters)
+				Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
+		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
+			integer jpar;
+			mutablestring32 arg = & my arguments [ipar] [0];
+			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
+				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
+					Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
+				if (str32equ (my arguments [jpar].get(), arg)) {
+					str32cpy (arg, Melder_integer (jpar - ipar));
+					str32cpy (my choiceArguments [ipar], my arguments [jpar].get());
+					break;
+				}
+			}
+			if (jpar > my numberOfParameters)
+				Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
+		}
+	}
+}
+
+void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments) {
+	int size = my numberOfParameters;
+	integer length = str32len (arguments);
+	while (size >= 1 && my parameters [size] [0] == U'\0')
+		size --;   /* Ignore fields without a variable name (button, comment). */
+	tidyUpParameterNames (me, size);
 	for (int ipar = 1; ipar < size; ipar ++) {
 		int ichar = 0;
 		/*
 			Ignore buttons and comments again. The buttons will keep their labels as "arguments".
 		*/
-		if (my parameters [ipar] [0] == U'\0') continue;
+		if (my parameters [ipar] [0] == U'\0')
+			continue;
 		/*
 			Erase the current values, probably the default values,
 			and replace with the actual arguments.
@@ -636,57 +693,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 			arguments ++;
 		my arguments [size] = Melder_dup_f (arguments);
 	}
-	/*
-		Convert booleans and choices to numbers, and relative to absolute paths.
-	*/
-	for (int ipar = 1; ipar <= size; ipar ++) {
-		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
-			structMelderFile file { };
-			Melder_relativePathToFile (my arguments [ipar].get(), & file);
-			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
-		} else if (my types [ipar] == Interpreter_BOOLEAN) {
-			mutablestring32 arg = & my arguments [ipar] [0];
-			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
-			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
-			{
-				str32cpy (arg, U"1");
-			} else if (str32equ (arg, U"0") || str32equ (arg, U"no") || str32equ (arg, U"off") ||
-			    str32equ (arg, U"No") || str32equ (arg, U"Off") || str32equ (arg, U"NO") || str32equ (arg, U"OFF"))
-			{
-				str32cpy (arg, U"0");
-			} else {
-				Melder_throw (U"Unknown value \"", arg, U"\" for boolean \"", my parameters [ipar], U"\".");
-			}
-		} else if (my types [ipar] == Interpreter_CHOICE) {
-			int jpar;
-			mutablestring32 arg = & my arguments [ipar] [0];
-			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
-				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
-					Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
-				if (str32equ (my arguments [jpar].get(), arg)) {   // the button labels are in the arguments; see Interpreter_readParameters
-					str32cpy (arg, Melder_integer (jpar - ipar));
-					str32cpy (my choiceArguments [ipar], my arguments [jpar].get());
-					break;
-				}
-			}
-			if (jpar > my numberOfParameters)
-				Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
-		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
-			int jpar;
-			mutablestring32 arg = & my arguments [ipar] [0];
-			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
-				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
-					Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
-				if (str32equ (my arguments [jpar].get(), arg)) {
-					str32cpy (arg, Melder_integer (jpar - ipar));
-					str32cpy (my choiceArguments [ipar], my arguments [jpar].get());
-					break;
-				}
-			}
-			if (jpar > my numberOfParameters)
-				Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
-		}
-	}
+	convertBooleansAndChoicesToNumbersAndRelativeToAbsolutePaths (me, size);
 }
 
 void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel args) {
@@ -694,25 +701,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel arg
 	integer size = my numberOfParameters;
 	while (size >= 1 && my parameters [size] [0] == U'\0')
 		size --;   // ignore trailing fields without a variable name (button, comment)
-	for (integer ipar = 1; ipar <= size; ipar ++) {
-		mutablestring32 p = my parameters [ipar];
-		/*
-			Ignore buttons and comments again.
-		*/
-		if (! *p)
-			continue;
-		/*
-			Strip parentheses and colon off parameter name.
-		*/
-		if ((p = str32chr (p, U'(')) != nullptr) {
-			*p = U'\0';
-			if (p - my parameters [ipar] > 0 && p [-1] == U'_')
-				p [-1] = U'\0';
-		}
-		p = my parameters [ipar];
-		if (*p != U'\0' && p [str32len (p) - 1] == U':')
-			p [str32len (p) - 1] = U'\0';
-	}
+	tidyUpParameterNames (me, size);
 	integer iarg = 0;
 	for (integer ipar = 1; ipar <= size; ipar ++) {
 		/*
@@ -739,57 +728,34 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, integer narg, Stackel arg
 	}
 	if (iarg < narg)
 		Melder_throw (U"Found ", narg, U" arguments but expected only ", iarg, U".");
-	/*
-		Convert booleans and choices to numbers, and relative to absolute paths.
-	*/
+	convertBooleansAndChoicesToNumbersAndRelativeToAbsolutePaths (me, size);
+}
+
+void Interpreter_getArgumentsFromCommandLine (Interpreter me, integer argc, char **argv) {
+	trace (argc, U" arguments");
+	integer size = my numberOfParameters;
+	while (size >= 1 && my parameters [size] [0] == U'\0')
+		size --;   // ignore trailing fields without a variable name (button, comment)
+	tidyUpParameterNames (me, size);
+	integer iarg = 0;
 	for (integer ipar = 1; ipar <= size; ipar ++) {
-		if (my types [ipar] == Interpreter_INFILE || my types [ipar] == Interpreter_OUTFILE || my types [ipar] == Interpreter_FOLDER) {
-			structMelderFile file { };
-			Melder_relativePathToFile (my arguments [ipar].get(), & file);
-			my arguments [ipar] = Melder_dup_f (Melder_fileToPath (& file));
-		} else if (my types [ipar] == Interpreter_BOOLEAN) {
-			mutablestring32 arg = & my arguments [ipar] [0];
-			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
-			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
-			{
-				str32cpy (arg, U"1");
-			} else if (str32equ (arg, U"0") || str32equ (arg, U"no") || str32equ (arg, U"off") ||
-			    str32equ (arg, U"No") || str32equ (arg, U"Off") || str32equ (arg, U"NO") || str32equ (arg, U"OFF"))
-			{
-				str32cpy (arg, U"0");
-			} else {
-				Melder_throw (U"Unknown value \"", arg, U"\" for boolean \"", my parameters [ipar], U"\".");
-			}
-		} else if (my types [ipar] == Interpreter_CHOICE) {
-			integer jpar;
-			mutablestring32 arg = & my arguments [ipar] [0];
-			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
-				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
-					Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
-				if (str32equ (my arguments [jpar].get(), arg)) {   // the button labels are in the arguments; see Interpreter_readParameters
-					str32cpy (arg, Melder_integer (jpar - ipar));
-					str32cpy (my choiceArguments [ipar], my arguments [jpar].get());
-					break;
-				}
-			}
-			if (jpar > my numberOfParameters)
-				Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
-		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
-			integer jpar;
-			mutablestring32 arg = & my arguments [ipar] [0];
-			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
-				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
-					Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
-				if (str32equ (my arguments [jpar].get(), arg)) {
-					str32cpy (arg, Melder_integer (jpar - ipar));
-					str32cpy (my choiceArguments [ipar], my arguments [jpar].get());
-					break;
-				}
-			}
-			if (jpar > my numberOfParameters)
-				Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
-		}
+		/*
+			Ignore buttons and comments again. The buttons will keep their labels as "arguments".
+		*/
+		if (my parameters [ipar] [0] == U'\0')
+			continue;
+		/*
+			Erase the current values, probably the default values,
+			and replace with the actual arguments.
+		*/
+		if (iarg == argc)
+			Melder_throw (U"Found ", argc, U" arguments but expected more.");
+		my arguments [ipar] = Melder_8to32 (argv [iarg ++]);
+		Melder_assert (my arguments [ipar]);
 	}
+	if (iarg < argc)
+		Melder_throw (U"Found ", argc, U" arguments but expected only ", iarg, U".");
+	convertBooleansAndChoicesToNumbersAndRelativeToAbsolutePaths (me, size);
 }
 
 static void Interpreter_addNumericVariable (Interpreter me, conststring32 key, double value) {
