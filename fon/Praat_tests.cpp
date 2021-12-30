@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2007,2009,2011-2020 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -549,8 +549,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				fprintf (stderr, "21\n");
 			}
 			integer numberOfThingsAfter = theTotalNumberOfThings;
-			fprintf (stderr, "Number of things: before %ld, after %ld\n",
-					(long_not_integer) numberOfThingsBefore, (long_not_integer) numberOfThingsAfter);
+			fprintf (stderr, "Number of things: before %td, after %td\n", numberOfThingsBefore, numberOfThingsAfter);
 			#if 0
 				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);

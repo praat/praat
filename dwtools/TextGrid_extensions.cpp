@@ -157,8 +157,8 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, 
 	char hkruis [3] = "h#", label1 [512], label2 [512];
 	int length;
 	bool phnFile = false;
-	long_not_integer it [5]; // because of %ld in sscanf we need an explicit long
-	if (nread < 12 || sscanf (header, "%ld%ld%511s%n\n", & it [1], & it [2], label1, & length) != 3 ||
+	integer it [5];
+	if (nread < 12 || sscanf (header, "%td%td%511s%n\n", & it [1], & it [2], label1, & length) != 3 ||
 		it [1] < 0 || it [2] <= it [1] || sscanf (& header [length], "%ld%ld%511s\n", & it [3], & it [4], label2) != 3 ||
 		it [4] <= it [3]) {
 		/*
@@ -224,9 +224,9 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 		integer linesRead = 0;
 		char line [200], label [200];
 		while (fgets (line, 199, f)) {
-			long_not_integer it1, it2; // because of %ld in sscanf we need an explicit long
+			integer it1, it2;
 			linesRead ++;
-			Melder_require (sscanf (line, "%ld%ld%199s", & it1, & it2, label) == 3,
+			Melder_require (sscanf (line, "%td%td%199s", & it1, & it2, label) == 3,
 				U"Incorrect number of items.");
 			if (it1 == it2) {
 				Melder_warning (U"File \"", MelderFile_messageName (file), U"\": Label \"", Melder_peek8to32 (label),
