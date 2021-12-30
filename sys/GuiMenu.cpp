@@ -244,7 +244,7 @@ void structGuiMenu :: v_destroy () noexcept {
 		(void) sender;
 		trace (U"application (", Melder_pointer (self), U", ", Melder_pointer (sender), U") open files: ", [fileNames count]);
 		trace (U"application is running: ", [NSApp isRunning]);
-		const bool filesArrivedHereFromTheCommandLine = ! praatP.hasFinishedLaunching;
+		const bool filesArrivedHereFromTheCommandLine = ! praatP.hasFinishedLaunching && (praatP.foundTheRunSwitch || praatP.foundTheOpenSwitch);
 		if (filesArrivedHereFromTheCommandLine)
 			return;   // otherwise, those files will be opened twice
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {

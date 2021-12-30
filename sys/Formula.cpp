@@ -4161,7 +4161,7 @@ static void do_runScript () {
 		Melder_throw (U"Cannot call runScript() more than ", MAXIMUM_NUMBER_OF_LEVELS, U" levels deep.");
 	}
 	try {
-		praat_executeScriptFromFileName (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
+		praat_runScript (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
 		theLevel -= 1;
 	} catch (MelderError) {
 		theLevel -= 1;

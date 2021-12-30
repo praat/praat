@@ -3,14 +3,14 @@ praat --run ../play.praat ../../fon/examples/example.wav
 praat --open ../../fon/examples/example.wav ../../fon/examples/*.TextGrid &
 praat --existing --open ../../fon/examples/example.wav ../../fon/examples/*.TextGrid &
 praat --new --open ../../fon/examples/example.wav ../../fon/examples/*.TextGrid &
-praat --run --existing ../play.praat ../../fon/examples/example.wav &
 praat --run --new ../play.praat ../../fon/examples/example.wav &
 
-
-praat "p l a y.praat" "e x a m p l e.wav"
-praat --run "p l a y.praat" "e x a m p l e.wav"
+praat "p l a y.praat" "e x a m p l e.wav" 2 &
+praat --run "p l a y.praat" "e x a m p l e.wav" 2 &
 praat --open "e x a m p l e.wav" &
 praat --existing --open "e x a m p l e.wav" &
 praat --new --open "e x a m p l e.wav" &
-praat --run --existing "p l a y.praat" "e x a m p l e.wav"
-praat --run --new "p l a y.praat" "e x a m p l e.wav"
+praat --run --new "p l a y.praat" "e x a m p l e.wav" 2 &
+
+praat --run --existing ../play.praat ../../fon/examples/example.wav &
+praat --run --existing "p l a y.praat" "e x a m p l e.wav" 2 &

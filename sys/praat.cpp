@@ -1218,21 +1218,33 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 	*/
 	autoMelderString text32;
 	if (foundTheOpenOption) {
-		for (; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
+		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself (we might return false)
 			structMelderFile file { };
-			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [praatP.argumentNumber]), & file);
+			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [iarg]), & file);
 			conststring32 absolutePath = Melder_fileToPath (& file);
 			MelderString_append (& text32, U"Read from file... ", absolutePath, U"\n");
-			trace (U"Argument ", praatP.argumentNumber, U": will open path ", absolutePath);
+			trace (U"Argument ", iarg, U": will open path ", absolutePath);
 		} // TODO: we could send an openDocuments message instead
 	} else if (foundTheRunOption) {
 		MelderString_append (& text32, U"execute ");
 		structMelderFile scriptFile { };
-		Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [praatP.argumentNumber]), & scriptFile);
+		Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & scriptFile);
 		conststring32 absolutePath = Melder_fileToPath (& scriptFile);
+		const bool scriptNameNeedsQuoting = !! str32chr (absolutePath, ' ');
+		if (scriptNameNeedsQuoting)
+			MelderString_append (& text32, U"\"");
 		MelderString_append (& text32, absolutePath);
-		for (++ praatP.argumentNumber; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++)
-			MelderString_append (& text32, U" ", Melder_peek8to32 (praatP.argv [praatP.argumentNumber]));
+		if (scriptNameNeedsQuoting)
+			MelderString_append (& text32, U"\"");
+		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself, in case we return false
+			const bool needsQuoting = !! strchr (praatP.argv [iarg], ' ') && iarg < praatP.argc - 1;
+			MelderString_append (& text32, U" ");
+			if (needsQuoting)
+				MelderString_append (& text32, U"\"");
+			MelderString_append (& text32, Melder_peek8to32 (praatP.argv [iarg]));
+			if (needsQuoting)
+				MelderString_append (& text32, U"\"");
+		}
 	}
 	autostring8 text8 = Melder_32to8 (text32.string);
 	#if defined (macintosh)
@@ -1442,16 +1454,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 	/*
 		Running Praat from the command line.
 	*/
-	bool foundTheOpenSwitch = false, foundTheRunSwitch = false, foundTheNewSwitch = false, foundTheExistingSwitch = false;
+	bool foundTheNewSwitch = false, foundTheExistingSwitch = false;
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--open")) {
-			foundTheOpenSwitch = true;
+			praatP.foundTheOpenSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--run")) {
-			foundTheRunSwitch = true;
+			praatP.foundTheRunSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--new")) {
 			foundTheNewSwitch = true;
@@ -1533,10 +1545,10 @@ void praat_init (conststring32 title, int argc, char **argv)
 		This yields 64 combinations of settings.
 	*/
 	trace (U"Start-up flags: cornef = ",
-		weWereStartedFromTheCommandLine, foundTheOpenSwitch, foundTheRunSwitch,
+		weWereStartedFromTheCommandLine, praatP.foundTheOpenSwitch, praatP.foundTheRunSwitch,
 		foundTheNewSwitch, foundTheExistingSwitch, thereIsAFileNameInTheArgumentList
 	);
-	if (foundTheOpenSwitch && foundTheRunSwitch) {
+	if (praatP.foundTheOpenSwitch && praatP.foundTheRunSwitch) {
 		/*
 			This accounts for the following 16 combinations of settings, leaving 48:
 				cornef
@@ -1586,7 +1598,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (foundTheRunSwitch && ! thereIsAFileNameInTheArgumentList) {
+	if (praatP.foundTheRunSwitch && ! thereIsAFileNameInTheArgumentList) {
 		/*
 			This accounts for the following 6 combinations of settings, leaving 30:
 				cornef
@@ -1603,7 +1615,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (foundTheOpenSwitch && ! thereIsAFileNameInTheArgumentList) {
+	if (praatP.foundTheOpenSwitch && ! thereIsAFileNameInTheArgumentList) {
 		/*
 			This accounts for the following 6 combinations of settings, leaving 24:
 				cornef
@@ -1620,7 +1632,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (foundTheNewSwitch && thereIsAFileNameInTheArgumentList && ! (foundTheRunSwitch || foundTheOpenSwitch)) {
+	if (foundTheNewSwitch && thereIsAFileNameInTheArgumentList && ! (praatP.foundTheRunSwitch || praatP.foundTheOpenSwitch)) {
 		/*
 			This accounts for the following 2 combinations of settings, leaving 22:
 				cornef
@@ -1633,7 +1645,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (foundTheExistingSwitch && thereIsAFileNameInTheArgumentList && ! (foundTheRunSwitch || foundTheOpenSwitch)) {
+	if (foundTheExistingSwitch && thereIsAFileNameInTheArgumentList && ! (praatP.foundTheRunSwitch || praatP.foundTheOpenSwitch)) {
 		/*
 			This accounts for the following 2 combinations of settings, leaving 20:
 				cornef
@@ -1656,20 +1668,20 @@ void praat_init (conststring32 title, int argc, char **argv)
 		*/
 		! foundTheNewSwitch &&
 		! foundTheExistingSwitch &&
-		(foundTheRunSwitch ||
-		 ! foundTheOpenSwitch && thereIsAFileNameInTheArgumentList && weWereStartedFromTheCommandLine)   // this line to be removed
+		(praatP.foundTheRunSwitch ||
+		 ! praatP.foundTheOpenSwitch && thereIsAFileNameInTheArgumentList && weWereStartedFromTheCommandLine)   // this line to be removed
 	;
 	bool userWantsGui = ! Melder_batch;
-	const bool fileNamesCameInByDropping =
+	praatP.fileNamesCameInByDropping =
 		/*
 			This accounts for the following combination of settings, leaving 16:
 				cornef
 				000001  Probably started by double-clicking a file or by dragging files (Linux).
 		*/
 		userWantsGui &&
-		! foundTheOpenSwitch && ! foundTheRunSwitch && ! foundTheNewSwitch && ! foundTheExistingSwitch &&
+		! praatP.foundTheOpenSwitch && ! praatP.foundTheRunSwitch && ! foundTheNewSwitch && ! foundTheExistingSwitch &&
 		thereIsAFileNameInTheArgumentList;   // doesn't happen on the Mac
-	trace (U"Did file names come in by dropping? ", fileNamesCameInByDropping);
+	trace (U"Did file names come in by dropping? ", praatP.fileNamesCameInByDropping);
 	/*
 		We have 16 combinations of settings left. Here are the actions we should perform:
 			cornef
@@ -1690,14 +1702,14 @@ void praat_init (conststring32 title, int argc, char **argv)
 			110011  User wants to open files in an existing GUI.
 			110101  User wants to open files in a new GUI.
 	*/
-	praatP.userWantsToOpen = userWantsGui && (foundTheOpenSwitch || fileNamesCameInByDropping);
+	praatP.userWantsToOpen = userWantsGui && (praatP.foundTheOpenSwitch || praatP.fileNamesCameInByDropping);
 	trace (U"User wants to open: ", praatP.userWantsToOpen);
-	praatP.userWantsToRun = userWantsGui && foundTheRunSwitch;
+	praatP.userWantsToRun = userWantsGui && praatP.foundTheRunSwitch;
 	trace (U"User wants to run: ", praatP.userWantsToRun);
 	praatP.userWantsExistingInstance = userWantsGui && (foundTheExistingSwitch || (praatP.userWantsToOpen && ! foundTheNewSwitch));
 	trace (U"User wants existing instance: ", praatP.userWantsExistingInstance);
 
-	if (Melder_batch) {
+	if (Melder_batch || praatP.userWantsToRun) {
 		Melder_assert (praatP.argumentNumber < argc);
 		/*
 			We now get the script file name. It is next on the command line
@@ -1714,14 +1726,14 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (!! thePraatStandAloneScriptText) {
 		Melder_batch = true;
 		userWantsGui = false;
-		if (foundTheOpenSwitch) {
+		if (praatP.foundTheOpenSwitch) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"The switch --open is not compatible with running a stand-alone script.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (foundTheRunSwitch) {
+		if (praatP.foundTheRunSwitch) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"The switch --run is not compatible with running a stand-alone script.", U"\n");
 			printHelp ();
@@ -1760,14 +1772,14 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (praatP.hasCommandLineInput) {
 		Melder_batch = true;
 		userWantsGui = false;
-		if (foundTheOpenSwitch) {
+		if (praatP.foundTheOpenSwitch) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"The switch --open is not compatible with running Praat interactively from the command line.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (foundTheRunSwitch) {
+		if (praatP.foundTheRunSwitch) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"The switch --run is not compatible with running Praat interactively from the command line.", U"\n");
 			printHelp ();
@@ -1855,19 +1867,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	praat_menuCommands_init ();
 
 	GuiWindow raam = nullptr;
-	if (Melder_batch) {
-		MelderString_empty (& theCurrentPraatApplication -> batchName);
-		for (int i = praatP.argumentNumber - 1; i < argc; i ++) {
-			if (i >= praatP.argumentNumber)
-				MelderString_append (& theCurrentPraatApplication -> batchName, U" ");
-			bool needsQuoting = !! strchr (argv [i], ' ') && (i == praatP.argumentNumber - 1 || i < argc - 1);
-			if (needsQuoting)
-				MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
-			MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peek8to32 (argv [i]));
-			if (needsQuoting)
-				MelderString_append (& theCurrentPraatApplication -> batchName, U"\"");
-		}
-	} else {
+	if (! Melder_batch) {
 		trace (U"starting the application");
 		Machine_initLookAndFeel (argc, argv);
 		/*
@@ -2388,7 +2388,8 @@ void praat_run () {
 		} else {
 			try {
 				//Melder_casual (U"Script <<", theCurrentPraatApplication -> batchName.string, U">>");
-				praat_executeScriptFromFileNameWithArguments (theCurrentPraatApplication -> batchName.string);
+				praat_executeScriptFromCommandLine (theCurrentPraatApplication -> batchName.string,
+						praatP.argc - praatP.argumentNumber, & praatP.argv [praatP.argumentNumber]);
 				praat_exit (0);
 			} catch (MelderError) {
 				Melder_flushError (praatP.title.get(), U": script command <<",
@@ -2452,16 +2453,9 @@ void praat_run () {
 			/*
 				praat --new --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
 			*/
-			structMelderFile scriptFile { };
-			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [praatP.argumentNumber]), & scriptFile);
-			autoMelderString arguments;
-			for (++ praatP.argumentNumber; praatP.argumentNumber < praatP.argc; praatP.argumentNumber ++) {
-				MelderString_append (& arguments, Melder_peek8to32 (praatP.argv [praatP.argumentNumber]));
-				if (praatP.argumentNumber < praatP.argc - 1)
-					MelderString_appendCharacter (& arguments, U' ');
-			}
 			try {
-				praat_executeScriptFromFile (& scriptFile, arguments.string);
+				praat_executeScriptFromCommandLine (theCurrentPraatApplication -> batchName.string,
+						praatP.argc - praatP.argumentNumber, & praatP.argv [praatP.argumentNumber]);   // BUG: audio is not synchronous
 			} catch (MelderError) {
 				Melder_flushError ();
 			}
