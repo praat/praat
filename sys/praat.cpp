@@ -907,8 +907,8 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 				Melder_clearError ();
 				return true;   // OK
 			}
-			long_not_integer pid = 0;
-			int narg = fscanf (f, "#%ld", & pid);
+			integer pid = 0;
+			int narg = fscanf (f, "#%td", & pid);
 			f.close (& messageFile);
 			{// scope
 				autoPraatBackground background;
@@ -2348,6 +2348,25 @@ void praat_run () {
 		"sizeof(integer) should equal the size of a pointer");
 	static_assert (sizeof (off_t) >= 8,
 		"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
+
+	/*
+		The type "integer" is defined as intptr_t, analogously to uinteger as uintptr_t.
+		However, the usual definition of an integer type that has 32 bits on 32-bit platforms
+		and 64 bits on 64-bit platforms would be ptrdiff_t.
+		Check that these definitions are the same.
+	*/
+	static_assert (sizeof (integer) == sizeof (ptrdiff_t),
+		"sizeof(integer) should equal sizeof(ptrdiff_t)");
+	/*
+		The format %td is designed for ptrdiff_t, and should therefore also work for our "integer" type,
+		as "integer" has been defined as intptr_t, which we just checked is equivalent to ptrdiff_t.
+		Check that %td indeed works correctly for "integer".
+	*/
+	{
+		integer n1, n2;
+		sscanf ("456789 -12345", "%td%td", & n1, & n2);
+		Melder_assert (n1 == 456789 && n2 == -12345);
+	}
 
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText) {

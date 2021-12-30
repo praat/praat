@@ -842,7 +842,7 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 	try {
 		integer numberOfApiActions = 0;
 		for (; i <= theActions.size; i ++) {
-			Melder_casual (i, U": ", theActions.at [i] -> class1 -> className, U": ", theActions.at [i] -> title.get());
+			//Melder_casual (i, U": ", theActions.at [i] -> class1 -> className, U": ", theActions.at [i] -> title.get());
 			Praat_Command command = theActions.at [i];
 			const bool deprecated = ( command -> deprecationYear > 0 );
 			if (! actionIsToBeIncluded (command, deprecated, includeSaveAPI, includeQueryAPI, includeModifyAPI,
