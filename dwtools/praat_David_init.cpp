@@ -8005,7 +8005,7 @@ FORM (MODIFY_TextGrid_replaceIntervalTexts, U"TextGrid: Replace interval texts",
 	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"b")
-	RADIO (searchType, U"Search and replace strings are:", 1)
+	RADIO (searchType, U"Search and replace strings are", 1)
 		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
@@ -8024,7 +8024,7 @@ FORM (MODIFY_TextGrid_replacePointTexts, U"TextGrid: Replace point texts", U"Tex
 	INTEGER (toInterval, U"right Interval range", U"0 (= all)")
 	SENTENCE (search_string, U"Search", U"a")
 	SENTENCE (replace_string, U"Replace", U"b")
-	RADIO (searchType, U"Search and replace strings are:", 1)
+	RADIO (searchType, U"Search and replace strings are", 1)
 		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"Regular Expressions")
 	OK
@@ -8462,7 +8462,7 @@ DIRECT (CONVERT_EACH_TO_ONE__TextGridTierNavigator_to_TextGridNavigator) {
 }
 
 FORM (MODIFY_EACH__TextGrid_setTierName, U"TextGrid: Set tier name", U"TextGrid: Set tier name...") {
-	NATURAL (tierNUmber, U"Tier number:", U"1")
+	NATURAL (tierNUmber, U"Tier number", U"1")
 	SENTENCE (name, U"Name", U"");
 	OK
 DO
