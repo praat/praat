@@ -1117,7 +1117,7 @@ static void printHelp () {
 }
 
 #if defined (UNIX) || defined (macintosh)
-static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRunOption) {
+static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSendOption) {
 	TRACE
 	/*
 		This function returns true only if we can be certain that we have sent
@@ -1208,7 +1208,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 			Melder_casual (U"activated: ", activated);
 		}
 	#endif
-	if (! foundTheOpenOption && ! foundTheRunOption)
+	if (! foundTheOpenOption && ! foundTheSendOption)
 		return true;
 	/*
 		Send something to the running Praat, and bail out.
@@ -1216,7 +1216,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 	autoMelderString text32;
 	if (foundTheOpenOption) {
 		/*
-			praat --existing --open [OPTION]... FILE-NAME...
+			praat --open [OPTION]... FILE-NAME...
 		*/
 		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself (we might return false)
 			structMelderFile file { };
@@ -1225,9 +1225,9 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 			MelderString_append (& text32, U"Read from file... ", absolutePath, U"\n");
 			trace (U"Argument ", iarg, U": will open path ", absolutePath);
 		} // TODO: we could send an openDocuments message instead
-	} else if (foundTheRunOption) {
+	} else if (foundTheSendOption) {
 		/*
-			praat --existing --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
+			praat --send [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
 		*/
 		MelderString_append (& text32, U"setWorkingDirectory: ");
 		structMelderDir defaultFolder { };
@@ -1453,17 +1453,22 @@ void praat_init (conststring32 title, int argc, char **argv)
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
 			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "--run")) {
+			praatP.foundTheRunSwitch = true;
+			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--open")) {
 			praatP.foundTheOpenSwitch = true;
 			praatP.argumentNumber += 1;
-		} else if (strequ (argv [praatP.argumentNumber], "--run")) {
-			praatP.foundTheRunSwitch = true;
+		} else if (strequ (argv [praatP.argumentNumber], "--new-open")) {
+			praatP.foundTheNewSwitch = true;
+			praatP.foundTheOpenSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--send")) {
 			praatP.foundTheSendSwitch = true;
 			praatP.argumentNumber += 1;
-		} else if (strequ (argv [praatP.argumentNumber], "--new")) {
+		} else if (strequ (argv [praatP.argumentNumber], "--new-send")) {
 			praatP.foundTheNewSwitch = true;
+			praatP.foundTheSendSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--no-pref-files")) {
 			praatP.ignorePreferenceFiles = true;
@@ -1528,44 +1533,27 @@ void praat_init (conststring32 title, int argc, char **argv)
 		}
 	}
 	const bool thereIsAFileNameInTheArgumentList = ( praatP.argumentNumber < argc );
-	/*
-		We now have six binary switches:
-			c: weWereStartedFromTheCommandLine
-			o: foundTheOpenSwitch
-			r: foundTheRunSwitch
-			n: foundTheNewSwitch
-			s: foundTheSendSwitch
-			f: thereIsAFileNameInTheArgumentList
-		This yields 64 combinations of settings.
-	*/
 	trace (U"Start-up flags: cornsf = ",
 		weWereStartedFromTheCommandLine, praatP.foundTheOpenSwitch, praatP.foundTheRunSwitch,
 		praatP.foundTheNewSwitch, praatP.foundTheSendSwitch, thereIsAFileNameInTheArgumentList
 	);
-	if (praatP.foundTheOpenSwitch && praatP.foundTheRunSwitch) {
+	if (praatP.foundTheRunSwitch && praatP.foundTheOpenSwitch) {
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Conflicting command line switches --run and --open.", U"\n");
-		printHelp ();
-		MelderInfo_close ();
-		exit (-1);
-	}
-	if (praatP.foundTheOpenSwitch && praatP.foundTheSendSwitch) {
-		MelderInfo_open ();
-		MelderInfo_writeLine (U"Conflicting command line switches --open and --send.", U"\n");
+		MelderInfo_writeLine (U"Conflicting command line switches --run and --open (or --new-open).", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
 	}
 	if (praatP.foundTheRunSwitch && praatP.foundTheSendSwitch) {
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Conflicting command line switches --run and --send.", U"\n");
+		MelderInfo_writeLine (U"Conflicting command line switches --run and --send (or --new-send).", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (praatP.foundTheRunSwitch && praatP.foundTheNewSwitch) {
+	if (praatP.foundTheOpenSwitch && praatP.foundTheSendSwitch) {
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Conflicting command line switches --run and --new.", U"\n");
+		MelderInfo_writeLine (U"Conflicting command line switches --open (or --new-open) and --send (or --new-send).", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
@@ -1594,24 +1582,23 @@ void praat_init (conststring32 title, int argc, char **argv)
 	Melder_batch =
 		! praatP.foundTheOpenSwitch &&
 		! praatP.foundTheSendSwitch &&
-		! praatP.foundTheNewSwitch &&
 		(praatP.foundTheRunSwitch || thereIsAFileNameInTheArgumentList && weWereStartedFromTheCommandLine)   // this line to be removed
 	;
 	bool userWantsGui = ! Melder_batch;
 	praatP.fileNamesCameInByDropping =
 		userWantsGui &&
-		! praatP.foundTheOpenSwitch && ! praatP.foundTheRunSwitch && ! praatP.foundTheSendSwitch && ! praatP.foundTheNewSwitch &&
+		! praatP.foundTheRunSwitch && ! praatP.foundTheOpenSwitch && ! praatP.foundTheSendSwitch &&
 		thereIsAFileNameInTheArgumentList
 	;   // doesn't happen on the Mac
 	trace (U"Did file names come in by dropping? ", praatP.fileNamesCameInByDropping);
 	praatP.userWantsToOpen = userWantsGui && (praatP.foundTheOpenSwitch || praatP.fileNamesCameInByDropping);
 	trace (U"User wants to open: ", praatP.userWantsToOpen);
-	praatP.userWantsToRun = userWantsGui && praatP.foundTheSendSwitch;
-	trace (U"User wants to run: ", praatP.userWantsToRun);
+	praatP.userWantsToSend = userWantsGui && praatP.foundTheSendSwitch;
+	trace (U"User wants to send: ", praatP.userWantsToSend);
 	praatP.userWantsExistingInstance = userWantsGui && ! praatP.foundTheNewSwitch;
 	trace (U"User wants existing instance: ", praatP.userWantsExistingInstance);
 
-	if (Melder_batch || praatP.userWantsToRun) {
+	if (Melder_batch || praatP.userWantsToSend) {
 		Melder_assert (praatP.argumentNumber < argc);
 		/*
 			We now get the script file name. It is next on the command line
@@ -1628,13 +1615,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (!! thePraatStandAloneScriptText) {
 		Melder_batch = true;
 		userWantsGui = false;
-		if (praatP.foundTheOpenSwitch) {
-			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --open is not compatible with running a stand-alone script.", U"\n");
-			printHelp ();
-			MelderInfo_close ();
-			exit (-1);
-		}
 		if (praatP.foundTheRunSwitch) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"The switch --run is not compatible with running a stand-alone script.", U"\n");
@@ -1642,16 +1622,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (praatP.foundTheSendSwitch) {
+		if (praatP.foundTheOpenSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --send is not compatible with running a stand-alone script.", U"\n");
+			MelderInfo_writeLine (U"The switch --open (or --new-open) is not compatible with running a stand-alone script.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (praatP.foundTheNewSwitch) {
+		if (praatP.foundTheSendSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --new is not compatible with running a stand-alone script.", U"\n");
+			MelderInfo_writeLine (U"The switch --send (or --new-send) is not compatible with running a stand-alone script.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
@@ -1674,13 +1654,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	if (praatP.hasCommandLineInput) {
 		Melder_batch = true;
 		userWantsGui = false;
-		if (praatP.foundTheOpenSwitch) {
-			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --open is not compatible with running Praat interactively from the command line.", U"\n");
-			printHelp ();
-			MelderInfo_close ();
-			exit (-1);
-		}
 		if (praatP.foundTheRunSwitch) {
 			MelderInfo_open ();
 			MelderInfo_writeLine (U"The switch --run is not compatible with running Praat interactively from the command line.", U"\n");
@@ -1688,16 +1661,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (praatP.foundTheSendSwitch) {
+		if (praatP.foundTheOpenSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --send is not compatible with running Praat interactively from the command line.", U"\n");
+			MelderInfo_writeLine (U"The switch --open (or --new-open) is not compatible with running Praat interactively from the command line.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (praatP.foundTheNewSwitch) {
+		if (praatP.foundTheSendSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --new is not compatible with running Praat interactively from the command line.", U"\n");
+			MelderInfo_writeLine (U"The switch --send (or --new-send) is not compatible with running Praat interactively from the command line.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
@@ -1728,7 +1701,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	*/
 	#if defined (UNIX) || defined (macintosh)
 		if (praatP.userWantsExistingInstance)
-			if (tryToSwitchToRunningPraat (praatP.userWantsToOpen, praatP.userWantsToRun))
+			if (tryToSwitchToRunningPraat (praatP.userWantsToOpen, praatP.userWantsToSend))
 				exit (0);
 	#endif
 
@@ -2351,9 +2324,9 @@ void praat_run () {
 					Melder_flushError ();
 				}
 			}
-		} else if (praatP.userWantsToRun) {
+		} else if (praatP.userWantsToSend) {
 			/*
-				praat --new --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
+				praat --new --send [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
 			*/
 			try {
 				praat_executeScriptFromCommandLine (theCurrentPraatApplication -> batchName.string,
