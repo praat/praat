@@ -1232,7 +1232,11 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 		/*
 			praat --existing --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
 		*/
-		MelderString_append (& text32, U"runScript: ");
+		MelderString_append (& text32, U"setWorkingDirectory: ");
+		structMelderDir defaultFolder { };
+		Melder_getDefaultDir (& defaultFolder);
+		MelderString_append (& text32, quote_doubleSTR (Melder_dirToPath (& defaultFolder)).get());
+		MelderString_append (& text32, U"\nrunScript: ");
 		structMelderFile scriptFile { };
 		Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & scriptFile);
 		conststring32 absolutePath = Melder_fileToPath (& scriptFile);
