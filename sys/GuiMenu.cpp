@@ -235,7 +235,7 @@ void structGuiMenu :: v_destroy () noexcept {
 			Something crazy:
 
 			The OS will be sending this opening message, even when the files were specified on the command line.
-			If the number of command line options besides --open or --run is odd, then all specified files will be sent here;
+			If the number of command line options besides --open or --send is odd, then all specified files will be sent here;
 			if the number is even, then all specified files minus the first will be sent here.
 
 			Fortunately, the automatic file-opening message is sent between
@@ -244,7 +244,7 @@ void structGuiMenu :: v_destroy () noexcept {
 		(void) sender;
 		trace (U"application (", Melder_pointer (self), U", ", Melder_pointer (sender), U") open files: ", [fileNames count]);
 		trace (U"application is running: ", [NSApp isRunning]);
-		const bool filesArrivedHereFromTheCommandLine = ! praatP.hasFinishedLaunching && (praatP.foundTheRunSwitch || praatP.foundTheOpenSwitch);
+		const bool filesArrivedHereFromTheCommandLine = ! praatP.hasFinishedLaunching && (praatP.foundTheOpenSwitch || praatP.foundTheSendSwitch);
 		if (filesArrivedHereFromTheCommandLine)
 			return;   // otherwise, those files will be opened twice
 		for (NSUInteger i = 1; i <= [fileNames count]; i ++) {

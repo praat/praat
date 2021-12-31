@@ -1074,29 +1074,26 @@ static void injectMessageAndInformationProcs (GuiWindow parent) {
 static void printHelp () {
 	MelderInfo_writeLine (U"Usage:");
 	MelderInfo_writeLine (U"   To start up Praat with a new GUI:");
-	MelderInfo_writeLine (U"      praat [--new] [OPTION]...");
-	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"   To bring a (preferably existing, otherwise new) Praat GUI to the foreground:");
-	MelderInfo_writeLine (U"      praat --existing [OPTION]...");
-	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"   To open one or more files, preferably in an existing GUI instance of Praat:");
-	MelderInfo_writeLine (U"      praat [--existing] --open [OPTION]... FILE-NAME...");
-	MelderInfo_writeLine (U"   Data files will open in the Objects window, script files in a script window.");
-	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"   To open one or more files in a new GUI instance of Praat:");
-	MelderInfo_writeLine (U"      praat --new --open [OPTION]... FILE-NAME...");
+	MelderInfo_writeLine (U"      praat [OPTION]...");
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"   To run a Praat script without a GUI:");
 	MelderInfo_writeLine (U"      praat [--run] [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
 	MelderInfo_writeLine (U"   The switch --run is superfluous when you use a Console or Terminal");
 	MelderInfo_writeLine (U"   interactively, but necessary if you call Praat programmatically.");
 	MelderInfo_writeLine (U"");
-	MelderInfo_writeLine (U"   To run a Praat script in a new GUI instance of Praat:");
-	MelderInfo_writeLine (U"      praat --new --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
+	MelderInfo_writeLine (U"   To open one or more files, preferably in an existing GUI instance of Praat:");
+	MelderInfo_writeLine (U"      praat --open [OPTION]... FILE-NAME...");
+	MelderInfo_writeLine (U"   Data files will open in the Objects window, script files in a script window.");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To open one or more files in a new GUI instance of Praat:");
+	MelderInfo_writeLine (U"      praat --new --open [OPTION]... FILE-NAME...");
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"   To run a Praat script in a preferably existing GUI instance of Praat:");
-	MelderInfo_writeLine (U"      praat --existing --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
+	MelderInfo_writeLine (U"      praat --send [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
 	MelderInfo_writeLine (U"   Note that this is sendpraat functionality, but more flexible.");
+	MelderInfo_writeLine (U"");
+	MelderInfo_writeLine (U"   To run a Praat script in a new GUI instance of Praat:");
+	MelderInfo_writeLine (U"      praat --new --send [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...");
 	MelderInfo_writeLine (U"");
 	MelderInfo_writeLine (U"   To start up Praat in an interactive command line session:");
 	MelderInfo_writeLine (U"      praat [OPTION]... -");
@@ -1452,7 +1449,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 	/*
 		Running Praat from the command line.
 	*/
-	bool foundTheNewSwitch = false, foundTheExistingSwitch = false;
 	while (praatP.argumentNumber < argc && argv [praatP.argumentNumber] [0] == '-') {
 		if (strequ (argv [praatP.argumentNumber], "-")) {
 			praatP.hasCommandLineInput = true;
@@ -1463,11 +1459,11 @@ void praat_init (conststring32 title, int argc, char **argv)
 		} else if (strequ (argv [praatP.argumentNumber], "--run")) {
 			praatP.foundTheRunSwitch = true;
 			praatP.argumentNumber += 1;
-		} else if (strequ (argv [praatP.argumentNumber], "--new")) {
-			foundTheNewSwitch = true;
+		} else if (strequ (argv [praatP.argumentNumber], "--send")) {
+			praatP.foundTheSendSwitch = true;
 			praatP.argumentNumber += 1;
-		} else if (strequ (argv [praatP.argumentNumber], "--existing")) {
-			foundTheExistingSwitch = true;
+		} else if (strequ (argv [praatP.argumentNumber], "--new")) {
+			praatP.foundTheNewSwitch = true;
 			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "--no-pref-files")) {
 			praatP.ignorePreferenceFiles = true;
@@ -1538,173 +1534,81 @@ void praat_init (conststring32 title, int argc, char **argv)
 			o: foundTheOpenSwitch
 			r: foundTheRunSwitch
 			n: foundTheNewSwitch
-			e: foundTheExistingSwitch
+			s: foundTheSendSwitch
 			f: thereIsAFileNameInTheArgumentList
 		This yields 64 combinations of settings.
 	*/
-	trace (U"Start-up flags: cornef = ",
+	trace (U"Start-up flags: cornsf = ",
 		weWereStartedFromTheCommandLine, praatP.foundTheOpenSwitch, praatP.foundTheRunSwitch,
-		foundTheNewSwitch, foundTheExistingSwitch, thereIsAFileNameInTheArgumentList
+		praatP.foundTheNewSwitch, praatP.foundTheSendSwitch, thereIsAFileNameInTheArgumentList
 	);
 	if (praatP.foundTheOpenSwitch && praatP.foundTheRunSwitch) {
-		/*
-			This accounts for the following 16 combinations of settings, leaving 48:
-				cornef
-				011000  Conflicting command line switches --run and --open.
-				011001  Conflicting command line switches --run and --open.
-				011010  Conflicting command line switches --run and --open.
-				011011  Conflicting command line switches --run and --open.
-				011100  Conflicting command line switches --run and --open.
-				011101  Conflicting command line switches --run and --open.
-				011110  Conflicting command line switches --run and --open.
-				011111  Conflicting command line switches --run and --open.
-				111000  Conflicting command line switches --run and --open.
-				111001  Conflicting command line switches --run and --open.
-				111010  Conflicting command line switches --run and --open.
-				111011  Conflicting command line switches --run and --open.
-				111100  Conflicting command line switches --run and --open.
-				111101  Conflicting command line switches --run and --open.
-				111110  Conflicting command line switches --run and --open.
-				111111  Conflicting command line switches --run and --open.
-		*/
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Conflicting command line switches --run and --open.", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (foundTheNewSwitch && foundTheExistingSwitch) {
-		/*
-			This accounts for the following 12 combinations of settings, leaving 36:
-				cornef
-				000110  Conflicting command line switches --new and --existing.
-				000111  Conflicting command line switches --new and --existing.
-				001110  Conflicting command line switches --new and --existing.
-				001111  Conflicting command line switches --new and --existing.
-				010110  Conflicting command line switches --new and --existing.
-				010111  Conflicting command line switches --new and --existing.
-				100110  Conflicting command line switches --new and --existing.
-				100111  Conflicting command line switches --new and --existing.
-				101110  Conflicting command line switches --new and --existing.
-				101111  Conflicting command line switches --new and --existing.
-				110110  Conflicting command line switches --new and --existing.
-				110111  Conflicting command line switches --new and --existing.
-		*/
+	if (praatP.foundTheOpenSwitch && praatP.foundTheSendSwitch) {
 		MelderInfo_open ();
-		MelderInfo_writeLine (U"Conflicting command line switches --new and --existing.", U"\n");
+		MelderInfo_writeLine (U"Conflicting command line switches --open and --send.", U"\n");
+		printHelp ();
+		MelderInfo_close ();
+		exit (-1);
+	}
+	if (praatP.foundTheRunSwitch && praatP.foundTheSendSwitch) {
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Conflicting command line switches --run and --send.", U"\n");
+		printHelp ();
+		MelderInfo_close ();
+		exit (-1);
+	}
+	if (praatP.foundTheRunSwitch && praatP.foundTheNewSwitch) {
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"Conflicting command line switches --run and --new.", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
 	}
 	if (praatP.foundTheRunSwitch && ! thereIsAFileNameInTheArgumentList) {
-		/*
-			This accounts for the following 6 combinations of settings, leaving 30:
-				cornef
-				001000  The switch --run requires a script file name.
-				001010  The switch --run requires a script file name.
-				001100  The switch --run requires a script file name.
-				101000  The switch --run requires a script file name.
-				101010  The switch --run requires a script file name.
-				101100  The switch --run requires a script file name.
-		*/
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"The switch --run requires a script file name.", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
 	}
+	if (praatP.foundTheSendSwitch && ! thereIsAFileNameInTheArgumentList) {
+		MelderInfo_open ();
+		MelderInfo_writeLine (U"The switch --send requires a script file name.", U"\n");
+		printHelp ();
+		MelderInfo_close ();
+		exit (-1);
+	}
 	if (praatP.foundTheOpenSwitch && ! thereIsAFileNameInTheArgumentList) {
-		/*
-			This accounts for the following 6 combinations of settings, leaving 24:
-				cornef
-				010000  The switch --open requires at least one file name.
-				010010  The switch --open requires at least one file name.
-				010100  The switch --open requires at least one file name.
-				110000  The switch --open requires at least one file name.
-				110010  The switch --open requires at least one file name.
-				110100  The switch --open requires at least one file name.
-		*/
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"The switch --open requires at least one file name.", U"\n");
 		printHelp ();
 		MelderInfo_close ();
 		exit (-1);
 	}
-	if (foundTheNewSwitch && thereIsAFileNameInTheArgumentList && ! (praatP.foundTheRunSwitch || praatP.foundTheOpenSwitch)) {
-		/*
-			This accounts for the following 2 combinations of settings, leaving 22:
-				cornef
-				000101  The switch --new with a file name requires either --open or --run.
-				100101  The switch --new with a file name requires either --open or --run.
-		*/
-		MelderInfo_open ();
-		MelderInfo_writeLine (U"The switch --new with a file name requires either --open or --run.", U"\n");
-		printHelp ();
-		MelderInfo_close ();
-		exit (-1);
-	}
-	if (foundTheExistingSwitch && thereIsAFileNameInTheArgumentList && ! (praatP.foundTheRunSwitch || praatP.foundTheOpenSwitch)) {
-		/*
-			This accounts for the following 2 combinations of settings, leaving 20:
-				cornef
-				000011  The switch --existing with a file name requires either --open or --run.
-				100011  The switch --existing with a file name requires either --open or --run.
-		*/
-		MelderInfo_open ();
-		MelderInfo_writeLine (U"The switch --existing with a file name requires either --open or --run.", U"\n");
-		printHelp ();
-		MelderInfo_close ();
-		exit (-1);
-	}
 	Melder_batch =
-		/*
-			This accounts for the following 3 combinations of settings, leaving 17:
-				cornef
-				001001  User wants to run in batch;  praat --run script.praat
-				100001  User wants to run in batch;  praat script.praat (from the command line only)
-				101001  User wants to run in batch;  praat --run script.praat
-		*/
-		! foundTheNewSwitch &&
-		! foundTheExistingSwitch &&
-		(praatP.foundTheRunSwitch ||
-		 ! praatP.foundTheOpenSwitch && thereIsAFileNameInTheArgumentList && weWereStartedFromTheCommandLine)   // this line to be removed
+		! praatP.foundTheOpenSwitch &&
+		! praatP.foundTheSendSwitch &&
+		! praatP.foundTheNewSwitch &&
+		(praatP.foundTheRunSwitch || thereIsAFileNameInTheArgumentList && weWereStartedFromTheCommandLine)   // this line to be removed
 	;
 	bool userWantsGui = ! Melder_batch;
 	praatP.fileNamesCameInByDropping =
-		/*
-			This accounts for the following combination of settings, leaving 16:
-				cornef
-				000001  Probably started by double-clicking a file or by dragging files (Linux).
-		*/
 		userWantsGui &&
-		! praatP.foundTheOpenSwitch && ! praatP.foundTheRunSwitch && ! foundTheNewSwitch && ! foundTheExistingSwitch &&
-		thereIsAFileNameInTheArgumentList;   // doesn't happen on the Mac
+		! praatP.foundTheOpenSwitch && ! praatP.foundTheRunSwitch && ! praatP.foundTheSendSwitch && ! praatP.foundTheNewSwitch &&
+		thereIsAFileNameInTheArgumentList
+	;   // doesn't happen on the Mac
 	trace (U"Did file names come in by dropping? ", praatP.fileNamesCameInByDropping);
-	/*
-		We have 16 combinations of settings left. Here are the actions we should perform:
-			cornef
-			000000  User wants a (new) GUI (probably started by double-clicking the executable).
-			000010  User wants an existing GUI.
-			000100  User wants a new GUI.
-			001011  User wants to run in an existing GUI.
-			001101  User wants to run in a new GUI.
-			010001  User wants to open files in an (existing) GUI.
-			010011  User wants to open files in an existing GUI.
-			010101  User wants to open files in a new GUI.
-			100000  User wants a (new) GUI.
-			100010  User wants an existing GUI.
-			100100  User wants a new GUI.
-			101011  User wants to run in an existing GUI.
-			101101  User wants to run in a new GUI.
-			110001  User wants to open files in an (existing) GUI.
-			110011  User wants to open files in an existing GUI.
-			110101  User wants to open files in a new GUI.
-	*/
 	praatP.userWantsToOpen = userWantsGui && (praatP.foundTheOpenSwitch || praatP.fileNamesCameInByDropping);
 	trace (U"User wants to open: ", praatP.userWantsToOpen);
-	praatP.userWantsToRun = userWantsGui && praatP.foundTheRunSwitch;
+	praatP.userWantsToRun = userWantsGui && praatP.foundTheSendSwitch;
 	trace (U"User wants to run: ", praatP.userWantsToRun);
-	praatP.userWantsExistingInstance = userWantsGui && (foundTheExistingSwitch || (praatP.userWantsToOpen && ! foundTheNewSwitch));
+	praatP.userWantsExistingInstance = userWantsGui && ! praatP.foundTheNewSwitch;
 	trace (U"User wants existing instance: ", praatP.userWantsExistingInstance);
 
 	if (Melder_batch || praatP.userWantsToRun) {
@@ -1738,16 +1642,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (foundTheNewSwitch) {
+		if (praatP.foundTheSendSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --new is not compatible with running a stand-alone script.", U"\n");
+			MelderInfo_writeLine (U"The switch --send is not compatible with running a stand-alone script.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (foundTheExistingSwitch) {
+		if (praatP.foundTheNewSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --existing is not compatible with running a stand-alone script.", U"\n");
+			MelderInfo_writeLine (U"The switch --new is not compatible with running a stand-alone script.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
@@ -1784,16 +1688,16 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (foundTheNewSwitch) {
+		if (praatP.foundTheSendSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --new is not compatible with running Praat interactively from the command line.", U"\n");
+			MelderInfo_writeLine (U"The switch --send is not compatible with running Praat interactively from the command line.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
 		}
-		if (foundTheExistingSwitch) {
+		if (praatP.foundTheNewSwitch) {
 			MelderInfo_open ();
-			MelderInfo_writeLine (U"The switch --existing is not compatible with running Praat interactively from the command line.", U"\n");
+			MelderInfo_writeLine (U"The switch --new is not compatible with running Praat interactively from the command line.", U"\n");
 			printHelp ();
 			MelderInfo_close ();
 			exit (-1);
