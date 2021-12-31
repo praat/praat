@@ -189,7 +189,7 @@ inline struct PraatP {
 		bool hidePicture;   // hide the Picture window at start-up
 	} commandLineOptions;
 	bool fileNamesCameInByDropping, foundTheOpenSwitch, foundTheRunSwitch, foundTheSendSwitch, foundTheNewSwitch;
-	bool userWantsToOpen, userWantsToRun, userWantsExistingInstance, hasFinishedLaunching;
+	bool userWantsToOpen, userWantsToSend, userWantsExistingInstance, hasFinishedLaunching;
 	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
 	bool ignorePreferenceFiles, ignorePlugins;
 	bool hasCommandLineInput;
