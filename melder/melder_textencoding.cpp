@@ -418,7 +418,7 @@ void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMeld
 autostring32 Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding) {
 	if (! string)
 		return autostring32();
-	autostring32 result (strlen (string));
+	autostring32 result (str8len (string));
 	Melder_8to32_inplace (string, result.get(), inputEncoding);
 	return result;
 }
@@ -426,7 +426,7 @@ autostring32 Melder_8to32 (const char *string, kMelder_textInputEncoding inputEn
 autostring32 Melder_8to32 (const char *string) {
 	if (! string)
 		return autostring32();
-	autostring32 result (strlen (string));
+	autostring32 result (str8len (string));
 	Melder_8to32_inplace (string, result.get(), kMelder_textInputEncoding::UTF8);
 	return result;
 }

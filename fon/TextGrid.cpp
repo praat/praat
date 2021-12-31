@@ -1503,7 +1503,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 			if (strnequ (line, "  <tau ref=\"", 12)) {
 				Melder_require (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) == 7,
 					U"Too few strings in tau line.");
-				const integer length_s = uinteger_to_integer (strlen (arg3));
+				const integer length_s = str8len (arg3);
 				Melder_require (length_s >= 5 && strnequ (arg3, "s=\"", 3),
 					U"Missing speaker name.");
 				arg3 [length_s - 1] = '\0';   // truncate at double quote
@@ -1564,11 +1564,11 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 			} else if (strnequ (line, "    <tw ref=\"", 13)) {
 				Melder_require (sscanf (line, "%40s%40s%40s%40s%40s%40s%200s", arg1, arg2, arg3, arg4, arg5, arg6, arg7) == 7,
 					U"Too few strings in tw line.");
-				const integer length_tb = uinteger_to_integer (strlen (arg3));
+				const integer length_tb = str8len (arg3);
 				Melder_require (length_tb >= 6 && strnequ (arg3, "tb=\"", 4),
 					U"Missing tb.");
 				const double tb = atof (arg3 + 4);
-				const integer length_te = uinteger_to_integer (strlen (arg4));
+				const integer length_te = str8len (arg4);
 				Melder_require (length_te >= 6 && strnequ (arg4, "te=\"", 4),
 					U"Missing te.");
 				const double te = atof (arg4 + 4);
@@ -1579,7 +1579,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 						Append a word.
 					*/
 					strcat (phrase, " ");
-					const integer length_w = uinteger_to_integer (strlen (arg7));
+					const integer length_w = str8len (arg7);
 					Melder_require (length_w >= 6 && strnequ (arg7, "w=\"", 3),   // BUG? no words of length 1 allowed
 						U"Missing word.");
 					arg7 [length_w - 3] = '\0';   // truncate "/>
@@ -1593,7 +1593,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 						TextInterval_setText (lastInterval, Melder_peek8to32 (phrase));
 					}
 					phrase [0] = '\0';
-					const integer length_w = uinteger_to_integer (strlen (arg7));
+					const integer length_w = str8len (arg7);
 					Melder_require (length_w >= 6 && strnequ (arg7, "w=\"", 3),   // BUG? no words of length 1 allowed
 						U"Missing word.");
 					arg7 [length_w - 3] = '\0';   // truncate "/>

@@ -1218,6 +1218,9 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 	*/
 	autoMelderString text32;
 	if (foundTheOpenOption) {
+		/*
+			praat --existing --open [OPTION]... FILE-NAME...
+		*/
 		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself (we might return false)
 			structMelderFile file { };
 			Melder_relativePathToFile (Melder_peek8to32 (praatP.argv [iarg]), & file);
@@ -1226,25 +1229,20 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheRun
 			trace (U"Argument ", iarg, U": will open path ", absolutePath);
 		} // TODO: we could send an openDocuments message instead
 	} else if (foundTheRunOption) {
-		MelderString_append (& text32, U"execute ");
+		/*
+			praat --existing --run [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
+		*/
+		MelderString_append (& text32, U"setWorkingDirectory: ");
+		structMelderDir defaultFolder { };
+		Melder_getDefaultDir (& defaultFolder);
+		MelderString_append (& text32, quote_doubleSTR (Melder_dirToPath (& defaultFolder)).get());
+		MelderString_append (& text32, U"\nrunScript: ");
 		structMelderFile scriptFile { };
 		Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & scriptFile);
 		conststring32 absolutePath = Melder_fileToPath (& scriptFile);
-		const bool scriptNameNeedsQuoting = !! str32chr (absolutePath, ' ');
-		if (scriptNameNeedsQuoting)
-			MelderString_append (& text32, U"\"");
-		MelderString_append (& text32, absolutePath);
-		if (scriptNameNeedsQuoting)
-			MelderString_append (& text32, U"\"");
-		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++) {   // do not change praatP.argumentNumber itself, in case we return false
-			const bool needsQuoting = !! strchr (praatP.argv [iarg], ' ') && iarg < praatP.argc - 1;
-			MelderString_append (& text32, U" ");
-			if (needsQuoting)
-				MelderString_append (& text32, U"\"");
-			MelderString_append (& text32, Melder_peek8to32 (praatP.argv [iarg]));
-			if (needsQuoting)
-				MelderString_append (& text32, U"\"");
-		}
+		MelderString_append (& text32, quote_doubleSTR (absolutePath).get());
+		for (integer iarg = praatP.argumentNumber; iarg < praatP.argc; iarg ++)   // do not change praatP.argumentNumber itself (we might return false)
+			MelderString_append (& text32, U", ", quote_doubleSTR (Melder_peek8to32 (praatP.argv [iarg])).get());
 	}
 	autostring8 text8 = Melder_32to8 (text32.string);
 	#if defined (macintosh)

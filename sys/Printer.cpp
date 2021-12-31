@@ -71,7 +71,7 @@ void Printer_prefs () {
 		va_start (args, format);
 		(void) stream;
 		vsprintf (theLine.chars + 2, format, args);
-		length = strlen (theLine.chars + 2);
+		length = strlen (theLine.chars + 2);   // TODO: check overflow
 		theLine.shorts [0] = length;
 		if (length > 0 && theLine.chars [length + 1] == '\n') {
 			theLine.chars [length + 1] = '\r';
