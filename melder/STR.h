@@ -24,6 +24,8 @@ autostring32 left_STR (conststring32 str, integer newLength = 1);
 
 autostring32 mid_STR (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
 
+autostring32 quote_doubleSTR (conststring32 str);
+
 /**
 	Look for occurrences of `search` in `str`, and replace them with `replace`.
 */

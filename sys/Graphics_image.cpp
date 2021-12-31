@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -888,7 +888,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 rela
 void Graphics_imageFromFile (Graphics me, conststring32 relativeFileName, double x1, double x2, double y1, double y2) {
 	if (my recording) {
 		conststring8 txt_utf8 = Melder_peek32to8 (relativeFileName);
-		int length = strlen (txt_utf8) / sizeof (double) + 1;
+		int length = strlen (txt_utf8) / sizeof (double) + 1;   // TODO: integer overflow
 		op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
 	} else if (my screen) {
 		_GraphicsScreen_imageFromFile (static_cast <GraphicsScreen> (me), relativeFileName, x1, x2, y1, y2);

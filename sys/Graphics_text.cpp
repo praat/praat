@@ -961,7 +961,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 				charCodes [nchars] = U'\0';
 				#if cairo
 					const char *codes8 = Melder_peek32to8 (charCodes);
-					int length = strlen (codes8);
+					int length = strlen (codes8);   // TODO: integer overflow
 					PangoFontDescription *fontDescription = PangoFontDescription_create (lc -> font.integer_, lc);
 
 					/*
@@ -1658,7 +1658,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 	if (my recording) {
 		const conststring8 txt_utf8 = Melder_peek32to8 (txt);
-		const int length = strlen (txt_utf8) / sizeof (double) + 1;
+		const int length = strlen (txt_utf8) / sizeof (double) + 1;   // TODO: integer overflow
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	} else {
 		if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {

@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2012,2014-2020 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2021 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 				char *location = & line [n];
 				if (*location == ' ')
 					n ++;   // skip space character
-				integer length = strlen (location);
+				integer length = str8len (location);
 				if (length > 0 && location [length - 1] == '\n')
 					location [length - 1] = '\0';
 				Thing_setName (my at [i], Melder_peek8to32 (line.get()+n));
