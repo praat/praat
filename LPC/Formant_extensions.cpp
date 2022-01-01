@@ -198,7 +198,7 @@ autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 		Melder_require (iformant > 0 && iformant <= my maxnFormants,
 			U"Formant number should be in the range [1, ", my maxnFormants, U"].");
 		autoIntensityTier him = IntensityTier_create (my xmin, my xmax);
-		double previousValue = -80000.0; // can never occur
+		double previousValue_dB = -80000.0; // can never occur
 		double previousTime = my xmin;
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			const Formant_Frame frame = & my frames [iframe];
@@ -210,14 +210,14 @@ autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 				value = Matrix_getValueAtXY (thee, time, f);
 				value = isdefined (value) ? value : 0.0;
 			}
-			value = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB / Hz */
-			if (value != previousValue) {
+			const double value_dB = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB / Hz */
+			if (value_dB != previousValue_dB) {
 				if (iframe > 1 && previousTime < time - 1.5 * my dx)   // mark the end of the same interval
-					RealTier_addPoint (him.get(), time - my dx, previousValue);
-				RealTier_addPoint (him.get(), time, value);
+					RealTier_addPoint (him.get(), time - my dx, previousValue_dB);
+				RealTier_addPoint (him.get(), time, value_dB);
 				previousTime = time;
 			}
-			previousValue = value;
+			previousValue_dB = value_dB;
 		}
 		return him;
 	} catch (MelderError) {

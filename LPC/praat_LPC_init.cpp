@@ -359,7 +359,7 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getPeak, U"PowerCepstrum: Get peak", U"P
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
-		double result, quefrency;
+		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, & result, nullptr);
 	QUERY_ONE_FOR_REAL_END (U" dB")
 }
@@ -387,7 +387,7 @@ DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
 		double result;
 		PowerCepstrum_getMaximumAndQuefrency (me, fromPitch, toPitch, peakInterpolationType, nullptr, & result);
-		double f = 1.0 / result;
+		const double f = 1.0 / result;
 	QUERY_ONE_FOR_REAL_END (U" seconds (f = ", f, U" Hz)")
 }
 
@@ -486,7 +486,7 @@ FORM (QUERY_ONE_FOR_REAL__PowerCepstrum_getValueInBin, U"PowerCepstrum: Get valu
 	OK
 DO
 	QUERY_ONE_FOR_REAL (PowerCepstrum)
-		double result = ( binNumber < 1 || binNumber > my nx ? undefined : my v_getValueAtSample (binNumber, 1, 1) );
+		const double result = ( binNumber < 1 || binNumber > my nx ? undefined : my v_getValueAtSample (binNumber, 1, 1) );
 	QUERY_ONE_FOR_REAL_END (U" (value in bin ", binNumber, U")")
 }
 
@@ -1290,7 +1290,7 @@ DO
 
 DIRECT (QUERY_ONE_FOR_REAL__VocalTract_getLength) {
 	QUERY_ONE_FOR_REAL (VocalTract)
-		double result = my xmax - my xmin;
+		const double result = my xmax - my xmin;
 	QUERY_ONE_FOR_REAL_END (U" metres")
 }
 

@@ -98,12 +98,8 @@ autoINTVEC FormantPath_getOptimumPath (FormantPath me, double qWeight, double fr
 	constexpr double qCutoff = 20.0;
 	constexpr double stressCutoff = 100.0;
 	try {
-		integer transtionCostType = 1;
-		double transitionCostCuttoff = 100.0;
-		if (Melder_debug == -3) {
-			transtionCostType = 2;
-			transitionCostCuttoff = 0.3;
-		}
+		const integer transtionCostType = ( Melder_debug == -3 ? 2 : 1 );
+		const double transitionCostCuttoff = ( Melder_debug == -3 ? 0.3 : 100.0 );
 		autoMatrix stresses, qsums;
 		MelderExtremaWithInit intensities;
 		const integer midformant = (my formants.size + 1) / 2;
@@ -617,18 +613,17 @@ void FormantPath_drawAsGrid_inside (FormantPath me, Graphics g, double tmin, dou
 				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
 				const double wDC = (gg -> d_x2DC - gg -> d_x1DC) / (gg -> d_x2wNDC - gg -> d_x1wNDC) * (gg -> d_x2NDC - gg -> d_x1NDC);
 				double dx = 1.5 * margin / wDC;
-				double xTick = 0.06 * dx;
-				if (dx > 0.4) dx = 0.4;
-				return xTick /= 1.0 - 2.0 * dx;
+				const double xTick = 0.06 * dx;
+				Melder_clipRight (& dx, 0.4);
+				return xTick / (1.0 - 2.0 * dx);
 			};
 			auto getYtick = [] (Graphics gg, double fontSize) {
 				const double margin = 2.8 * fontSize * gg -> resolution / 72.0;
 				const double hDC = integer_abs (gg->d_y2DC - gg->d_y1DC) / (gg->d_y2wNDC - gg->d_y1wNDC) * (gg->d_y2NDC - gg-> d_y1NDC);
 				double dy = margin / hDC;
-				double yTick = 0.09 * dy;
-				if (dy > 0.4) dy = 0.4;
-				yTick /= 1.0 - 2.0 * dy;
-				return yTick;
+				const double yTick = 0.09 * dy;
+				Melder_clipRight (& dy, 0.4);
+				return yTick / (1.0 - 2.0 * dy);
 			};
 			const double xTick = (double) getXtick (g, newFontSize) * (tmax - tmin);
 			const double yTick = (double) getYtick (g, newFontSize) * (fmax - fmin);
