@@ -836,7 +836,7 @@ void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", itemTitle_about.string, nullptr, praat_UNHIDABLE,
 			PRAAT__About);
 
-	#if defined (macintosh) || defined (_WIN32)
+	#if defined (macintosh)
 		Gui_setOpenDocumentCallback (cb_openDocument, cb_finishedOpeningDocuments);
 	#endif
 }

@@ -38,9 +38,6 @@ void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void)) {
 
 #if defined (_WIN32)
 
-static void (*theOpenDocumentCallback) (MelderFile file);
-static void (*theFinishedOpeningDocumentsCallback) ();
-
 /* The Motif emulator for Windows. */
 
 #define PRAAT_WINDOW_CLASS_NUMBER  1
@@ -100,7 +97,7 @@ void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call)
 
 #define MAXIMUM_NUMBER_OF_MENUS  4000
 static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   // we can freely use and reuse these menu ids
-static char32 theApplicationName [100], theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
+static char32 theWindowClassName [100], theDrawingAreaClassName [100], theApplicationClassName [100];
 char32 * _GuiWin_getDrawingAreaClassName () { return theDrawingAreaClassName; }
 static int (*theUserMessageCallback) ();
 #define MINIMUM_MENU_ITEM_ID  (MAXIMUM_NUMBER_OF_MENUS + 1)
@@ -1778,72 +1775,40 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 
 static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 
-void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
+void * GuiWin_initialize1 (conststring32 name)
 {
-	(void) argc;
-	{
-		HWND window;
-		WNDCLASSEX windowClass;
-		Melder_sprint (theApplicationName,100, Melder_peek8to32 (argv [0]));
-		Melder_sprint (theApplicationClassName,100, U"PraatShell", PRAAT_WINDOW_CLASS_NUMBER, U" ", theApplicationName);
-		Melder_sprint (theWindowClassName,100, U"PraatChildWindow", PRAAT_WINDOW_CLASS_NUMBER, U" ", theApplicationName);
-		Melder_sprint (theDrawingAreaClassName,100, U"PraatDrawingArea", PRAAT_WINDOW_CLASS_NUMBER, U" ", theApplicationName);
-		window = FindWindow (Melder_peek32toW (theWindowClassName), NULL);
-		if (window != NULL) {
-			/*
-				We are in the second instance of Praat.
-				The user double-clicked the Praat icon,
-				or dropped a file on the Praat icon,
-				or double-clicked a Praat file,
-				while Praat was already running.
-			*/
-			if (IsIconic (window))
-				ShowWindow (window, SW_RESTORE);
-			SetForegroundWindow (window);
-			if (theOpenDocumentCallback) {
-				for (unsigned int iarg = 1; iarg < argc; iarg ++) {
-					if (argv [iarg] [0] != '-') {
-						/*
-							The user dropped a file on the Praat icon,
-							or double-clicked a Praat file,
-							while Praat was already running.
-						*/
-						structMelderDir dir { };
-						Melder_sprint (dir. path,kMelder_MAXPATH+1, Melder_getShellDirectory ());
-						Melder_setDefaultDir (& dir);
-						structMelderFile file { };
-						Melder_relativePathToFile (Melder_peek8to32 (argv [iarg]), & file);
-						theOpenDocumentCallback (& file);
-					}
-				}
-			}
-			if (theFinishedOpeningDocumentsCallback)
-				theFinishedOpeningDocumentsCallback ();
-			exit (0);   // possible problem
-		}
-
-		windowClass. cbSize = sizeof (WNDCLASSEX);
-		windowClass. style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS |
-			CS_OWNDC   // crucial: see GraphicsScreen_init ()
-			;
-		windowClass. lpfnWndProc = windowProc;
-		windowClass. cbClsExtra = 0;
-		windowClass. cbWndExtra = 0;
-		windowClass. hInstance = theGui.instance;
-		windowClass. hIcon = NULL;
-		windowClass. hCursor = LoadCursor (NULL, IDC_ARROW);
-		windowClass. hbrBackground = /*(HBRUSH) (COLOR_WINDOW + 1)*/ GetStockBrush (LTGRAY_BRUSH);
-		windowClass. lpszMenuName = NULL;
-		windowClass. lpszClassName = Melder_32toW (theWindowClassName).transfer();
-		windowClass. hIconSm = NULL;
-		RegisterClassEx (& windowClass);
-		windowClass. hbrBackground = GetStockBrush (WHITE_BRUSH);
-		windowClass. lpszClassName = Melder_32toW (theDrawingAreaClassName).transfer();
-		RegisterClassEx (& windowClass);
-		windowClass. lpszClassName = Melder_32toW (theApplicationClassName).transfer();
-		RegisterClassEx (& windowClass);
-		InitCommonControls ();
-	}
+	TRACE
+	Melder_sprint (theApplicationClassName,100, U"PraatShell", PRAAT_WINDOW_CLASS_NUMBER, U" ", name);
+	Melder_sprint (theWindowClassName,100, U"PraatChildWindow", PRAAT_WINDOW_CLASS_NUMBER, U" ", name);
+	trace (U"Window class name <<", theWindowClassName, U">>");
+	Melder_sprint (theDrawingAreaClassName,100, U"PraatDrawingArea", PRAAT_WINDOW_CLASS_NUMBER, U" ", name);
+	HWND window = FindWindow (Melder_peek32toW (theWindowClassName), NULL);
+	return window;
+}
+void GuiWin_initialize2 (unsigned int argc, char **argv)
+{
+	WNDCLASSEX windowClass;
+	windowClass. cbSize = sizeof (WNDCLASSEX);
+	windowClass. style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS |
+		CS_OWNDC   // crucial: see GraphicsScreen_init ()
+		;
+	windowClass. lpfnWndProc = windowProc;
+	windowClass. cbClsExtra = 0;
+	windowClass. cbWndExtra = 0;
+	windowClass. hInstance = theGui.instance;
+	windowClass. hIcon = NULL;
+	windowClass. hCursor = LoadCursor (NULL, IDC_ARROW);
+	windowClass. hbrBackground = /*(HBRUSH) (COLOR_WINDOW + 1)*/ GetStockBrush (LTGRAY_BRUSH);
+	windowClass. lpszMenuName = NULL;
+	windowClass. lpszClassName = Melder_32toW (theWindowClassName).transfer();
+	windowClass. hIconSm = NULL;
+	RegisterClassEx (& windowClass);
+	windowClass. hbrBackground = GetStockBrush (WHITE_BRUSH);
+	windowClass. lpszClassName = Melder_32toW (theDrawingAreaClassName).transfer();
+	RegisterClassEx (& windowClass);
+	windowClass. lpszClassName = Melder_32toW (theApplicationClassName).transfer();
+	RegisterClassEx (& windowClass);
+	InitCommonControls ();
 }
 
 void GuiApp_setApplicationShell (GuiObject shell) {
@@ -2516,6 +2481,8 @@ void GuiMainLoop () {
 #define main wingwmain
 extern int main (int argc, char *argv []);
 int APIENTRY WinMain (HINSTANCE instance, HINSTANCE /*previousInstance*/, LPSTR commandLine, int commandShow) {
+	TRACE
+	trace (U"Entering WinMain");
 	theGui.instance = instance;
 	theGui.commandShow = commandShow;
 	int argc;
@@ -2836,10 +2803,6 @@ void motif_win_setUserMessageCallback (int (*userMessageCallback) (void)) {
 	theUserMessageCallback = userMessageCallback;
 }
 
-void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file), void (*finishedOpeningDocumentsCallback) ()) {
-	theOpenDocumentCallback = openDocumentCallback;
-	theFinishedOpeningDocumentsCallback = finishedOpeningDocumentsCallback;
-}
 #endif // defined (_WIN32)
 
 /* End of file motifEmulator.cpp */

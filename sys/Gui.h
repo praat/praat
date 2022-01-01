@@ -205,7 +205,8 @@ constexpr bool theCommandKeyIsToTheLeftOfTheOptionKey =
 	void XtSetSensitive (GuiObject w, Boolean value);
 	void XtUnmanageChild (GuiObject self);
 	void XtUnmanageChildren (GuiObjectList children, Cardinal num_children);
-	void GuiAppInitialize (const char *name, unsigned int argc, char **argv);
+	void * GuiWin_initialize1 (conststring32 name);
+	void GuiWin_initialize2 (unsigned int argc, char **argv);
 	void GuiApp_setApplicationShell (GuiObject shell);
 	GuiObject XtVaCreateWidget (const char *name, int widgetClass, GuiObject parent, ...);
 	GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...);
@@ -1007,7 +1008,7 @@ void GuiObject_destroy (GuiObject me);
 
 /********** EVENTS **********/
 
-#if defined (macintosh) || defined (_WIN32)
+#if defined (macintosh)
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file), void (*finishedOpeningDocumentsCallback) ());
 #endif
 
@@ -1018,7 +1019,7 @@ void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 extern uinteger theGuiTopLowAccelerators [8];
 
 /*
-	'parent' is the top-level widget returned by GuiAppInitialize.
+	'parent' is the top-level widget.
 */
 void Gui_injectMessageProcs (GuiWindow parent);
 
