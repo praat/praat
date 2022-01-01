@@ -1777,7 +1777,6 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 
 void * GuiWin_initialize1 (conststring32 name)
 {
-	TRACE
 	Melder_sprint (theApplicationClassName,100, U"PraatShell", PRAAT_WINDOW_CLASS_NUMBER, U" ", name);
 	Melder_sprint (theWindowClassName,100, U"PraatChildWindow", PRAAT_WINDOW_CLASS_NUMBER, U" ", name);
 	trace (U"Window class name <<", theWindowClassName, U">>");
@@ -2481,7 +2480,6 @@ void GuiMainLoop () {
 #define main wingwmain
 extern int main (int argc, char *argv []);
 int APIENTRY WinMain (HINSTANCE instance, HINSTANCE /*previousInstance*/, LPSTR commandLine, int commandShow) {
-	TRACE
 	trace (U"Entering WinMain");
 	theGui.instance = instance;
 	theGui.commandShow = commandShow;

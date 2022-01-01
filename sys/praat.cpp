@@ -1119,7 +1119,6 @@ static void printHelp () {
 #endif
 
 static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSendOption) {
-	TRACE
 	/*
 		This function returns true only if we can be certain that we have sent
 		the command line to an already running invocation of Praat that is not identical to ourselves
@@ -1352,7 +1351,21 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 		}
 		return true;
 	#elif defined (_WIN32)
-		sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, text8.get());
+		autofile f;
+		try {
+			f = Melder_fopen (& messageFile, "w");
+			fprintf (f, "%s", text8.get());
+			f.close (& messageFile);
+		} catch (MelderError) {
+			Melder_clearError ();
+			Melder_casual (U"Cannot write message file \"", MelderFile_messageName (& messageFile),
+					U"\" (no privilege to write to folder, or disk full).");
+			return false;
+		}
+		if (SendMessage (HWND (theWinApplicationWindow), WM_USER, 0, 0)) {
+			Melder_casual (U"Cannot send message.");
+			return false;
+		}
 		return true;
 	#endif
 	return false;   // the default
@@ -1360,7 +1373,6 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 
 void praat_init (conststring32 title, int argc, char **argv)
 {
-	TRACE
 	setThePraatLocale ();
 	Melder_init ();
 
