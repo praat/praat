@@ -105,7 +105,7 @@ void PowerCepstrum_drawTrendLine (PowerCepstrum me, Graphics g, double qmin, dou
 	/*
 		Don't draw part outside window
 	*/
-	double lineWidth = Graphics_inqLineWidth (g);
+	const double lineWidth = Graphics_inqLineWidth (g);
 	Graphics_setLineWidth (g, 2);
 	if (lineType == kCepstrum_trendType::EXPONENTIAL_DECAY ) {
 		integer n = 500;
@@ -193,10 +193,10 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 	for (integer j = 1; j <= my nx; j ++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
-		double xq = lineType == 2 ? log(q) : q;
-		double db_background = slope * xq + intercept;
-		double db_cepstrum = my v_getValueAtSample (j, 1, 1);
-		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10);
+		const double xq = lineType == 2 ? log(q) : q;
+		const double db_background = slope * xq + intercept;
+		const double db_cepstrum = my v_getValueAtSample (j, 1, 1);
+		const double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10);
 		my z [1] [j] = diff;
 	}
 }
@@ -204,8 +204,6 @@ static void PowerCepstrum_subtractTrendLine_inline2 (PowerCepstrum me, double sl
 
 // clip with tilt line
 static void PowerCepstrum_subtractTrendLine_inplace (PowerCepstrum me, double slope, double intercept, kCepstrum_trendType lineType) {
-	/*
-	*/
 	for (integer j = 1; j <= my nx; j ++) {
 		/*
 			For the exponential decay function, y = slope*log(quefrency)+intercept, the PowerCepstrum's first quefrency value (at x1)

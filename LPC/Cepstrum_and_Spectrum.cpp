@@ -100,7 +100,7 @@ autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 		NUMfft_forward (& fftTable, amp.get());
 		
 		for (integer i = 1; i <= my nx; i ++) {
-			double val = amp [i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
+			const double val = amp [i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
 			thy z [1] [i] = val * val; // power cepstrum
 		}
 		return thee;

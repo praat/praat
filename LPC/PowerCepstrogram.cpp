@@ -65,7 +65,7 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	MelderExtremaWithInit extrema;
 	for (integer irow = 1; irow <= my ny; irow ++) {
 		for (integer icol = 1; icol <= my nx; icol ++) {
-			double val = TO10LOG (my z [irow] [icol]);
+			const double val = TO10LOG (my z [irow] [icol]);
 			extrema.update (val);
 			thy z [irow] [icol] = val;
 		}
@@ -388,17 +388,17 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 // ((fft [1],0) (fft [2],fft [3]), (,), (,), (fft [nfft-1], fft [nfft]))  nfft uneven
 static void complexfftoutput_to_power (constVEC fft, VEC dbs, bool to_db) {
 	double valsq = fft [1] * fft [1];
-	dbs [1] = to_db ? TOLOG (valsq) : valsq;
+	dbs [1] = ( to_db ? TOLOG (valsq) : valsq );
 	const integer nfftdiv2p1 = (fft.size + 2) / 2;
-	const integer nend = fft.size % 2 == 0 ? nfftdiv2p1 : nfftdiv2p1 + 1;
+	const integer nend = ( fft.size % 2 == 0 ? nfftdiv2p1 : nfftdiv2p1 + 1 );
 	for (integer i = 2; i < nend; i ++) {
 		const double re = fft [i + i - 2], im = fft [i + i - 1];
 		valsq = re * re + im * im;
-		dbs [i] = to_db ? TOLOG (valsq) : valsq;
+		dbs [i] = ( to_db ? TOLOG (valsq) : valsq );
 	}
 	if (fft.size % 2 == 0) {
 		valsq = fft [fft.size] * fft [fft.size];
-		dbs [nfftdiv2p1] = to_db ? TOLOG (valsq) : valsq;
+		dbs [nfftdiv2p1] = ( to_db ? TOLOG (valsq) : valsq );
 	}
 }
 
@@ -449,8 +449,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			const double tbegin = std::max (thy xmin, t1 + (iframe - 1) * dt - analysisWidth / 2.0);
 			const integer istart = std::max (1_integer, Sampled_xToLowIndex (thee.get(), tbegin));   // ppgb: afronding naar beneden?
 			integer iend = istart + nosInWindow - 1;
-			if (iend > thy nx)
-				iend = thy nx;
+			Melder_clipRight (& iend, thy nx);
 			fftbuf.part (1, nosInWindow)  <<=  thy z.row (1).part (istart, iend) * hamming.all();
 			fftbuf.part (nosInWindow + 1, nfft)  <<=  0.0;
 			
@@ -459,11 +458,11 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		
 			centre_VEC_inout (spectrum.get()); // subtract average
 			/*
-			 * Here we diverge from Hillenbrand as he takes the fft of half of the spectral values.
-			 * H. forgets that the actual spectrum has nfft/2+1 values. Thefore, we take the inverse
-			 * transform because this keeps the number of samples a power of 2.
-			 * At the same time this results in twice as many numbers in the quefrency domain, i.e. we end up with nfft/2+1
-			 * numbers while H. has only nfft/4!
+				Here we diverge from Hillenbrand as he takes the fft of half of the spectral values.
+				H. forgets that the actual spectrum has nfft/2+1 values. Thefore, we take the inverse
+				transform because this keeps the number of samples a power of 2.
+				At the same time this results in twice as many numbers in the quefrency domain, i.e. we end up with nfft/2+1
+				numbers while H. has only nfft/4!
 			 */
 			fftbuf [1] = spectrum [1];
 			for (integer i = 2; i < nfftdiv2 + 1; i ++) {
