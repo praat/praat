@@ -3846,7 +3846,7 @@ CODE (U"nocheck Remove")
 NORMAL (U"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20211217)
+MAN_BEGIN (U"Scripting 6.9. Calling from the command line", U"ppgb", 20220101)
 INTRO (U"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3886,7 +3886,9 @@ CODE (U"/usr/bin/praat --open data/hello.wav data/hello.TextGrid")
 NORMAL (U"Again, if Praat was already running when you typed the command, "
 	"the two files are added as objects to the existing list in Praat.")
 NORMAL (U"Note that if you want to send messages or files to a running Praat, "
-	"the best way (on all platforms) is to use %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
+	"the best way (on all platforms) is to use $$praat --send$ (see below) "
+	"or %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
+NORMAL (U"To always start up a new instance of Praat, use $$--new-open$ instead of $$--open$.")
 
 ENTRY (U"3. Calling Praat to open a script")
 NORMAL (U"On Windows, when you type")
@@ -3903,7 +3905,7 @@ NORMAL (U"Note that on all three platforms, you have to supply quotes around the
 	"or above between $$Program$ and $$Files$. This is because the script languages of "
 	"the Console or Terminal use spaces for separating commands and arguments.")
 
-ENTRY (U"4. Calling Praat to run a script")
+ENTRY (U"4. Calling Praat to run a script in the background")
 NORMAL (U"Now we are ready to discuss how to run Praat without a GUI.")
 NORMAL (U"On Windows, when you type")
 CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --run \"my script.praat\"")
@@ -3962,7 +3964,18 @@ NORMAL (U"The path to the script file as well as to #infile, #outfile and #folde
 CODE (U"cd /Users/miep/research/project19")
 CODE (U"/usr/bin/praat --run ../usefulScripts/playFile.praat sounds/sound3.wav")
 
-ENTRY (U"6. Calling Praat from other programs such as Python")
+ENTRY (U"6. Calling Praat to run a script in the GUI")
+NORMAL (U"You can send a script to a running Praat. Praat will then execute it:")
+CODE (U"\"C:\\bsProgram Files\\bsPraat.exe\" --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"/Applications/Praat.app/Contents/MacOS/Praat --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+CODE (U"/usr/bin/praat --send testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
+NORMAL (U"This works the same way as $$--run$, except that $$--send$ runs in Praat’s Graphical User Interface. "
+	"If Praat is already running, then that instance of Praat will execute your script. "
+	"If Praat is not running yet, then a new GUI instance of Praat will start up and execute your script. "
+	"To always start up a new instance of Praat, use $$--new-send$ instead of $$--send$.")
+NORMAL (U"See also %sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
+
+ENTRY (U"7. Calling Praat from other programs such as Python")
 NORMAL (U"You can run the above script from several programming languages, not just from a Console or Terminal. "
 	"In Python, for instance, you can do it using the same syntax as you would use in the Console or Terminal:")
 CODE (U"import os")
@@ -3981,8 +3994,8 @@ CODE (U"subprocess.call(['C:\\bs\\bsProgram Files\\bs\\bsPraat.exe', '--run', 't
 NORMAL (U"Many other programs beside Python have a $$system$-like command, so that you can run a command like")
 CODE (U"system ('\"C:\\bs\\bsProgram Files\\bs\\bsPraat.exe\" --run testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"')")
 
-ENTRY (U"7. What happens if I specify neither --open nor --run?")
-NORMAL (U"If you specify neither $$--open$ nor $$--run$, Praat's behaviour is not guaranteed. "
+ENTRY (U"8. What happens if I specify neither --open nor --run nor --send?")
+NORMAL (U"If you specify neither $$--open$ nor $$--run$ nor $$--send$, Praat's behaviour is not guaranteed. "
 	"If you type something like")
 CODE (U"praat testCommandLineCalls.praat \"I love you\" 0.4 \"Me too\"")
 NORMAL (U"into a Console or Terminal window by hand, Praat will typically run the script. "
@@ -3990,25 +4003,37 @@ NORMAL (U"into a Console or Terminal window by hand, Praat will typically run th
 	"However, if you redirect the output of Praat to a file or pipe, you cannot typically leave out the $$--run$ option; "
 	"if you do, Praat may start its GUI and %open the file rather than run it.")
 
-ENTRY (U"8. Running Praat interactively from the command line")
+ENTRY (U"9. Running Praat interactively from the command line")
 NORMAL (U"On the Mac and Linux, you have the possibility of running the program interactively from the command line:")
 CODE (U"> /usr/bin/praat -")
 NORMAL (U"You can then type in any of the fixed and dynamic commands, and commands that handle object selection, "
 	"such as #selectObject. This method also works in pipes:")
 CODE (U"> echo \"Report memory use\" | /usr/bin/praat -")
 
-ENTRY (U"9. Calling Praat from a web server")
+ENTRY (U"10. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
 CODE (U"system ('/users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla')")
 NORMAL (U"On Windows, you will often want to specify ##--utf8# as well, because otherwise "
 	"Praat will write its output to BOM-less UTF-16 files, which many programs do not understand.")
 
-ENTRY (U"10. All command line options")
+ENTRY (U"11. All command line switches and options")
+NORMAL (U"Switches:")
 TAG (U"##--open")
-DEFINITION (U"Interpret the command line arguments as files to be opened in the GUI.")
+DEFINITION (U"Interpret the command line arguments as files to be opened in an existing or new GUI.")
+TAG (U"##--new-open")
+DEFINITION (U"Start a new GUI and interpret the command line arguments as files to be opened.")
 TAG (U"##--run")
-DEFINITION (U"Interpret the command line arguments as a script file name and its arguments.")
+DEFINITION (U"Interpret the command line arguments as a script file name and its arguments, to run without a GUI.")
+TAG (U"##--send")
+DEFINITION (U"Interpret the command line arguments as a script file name and its arguments, to run in an existing or new GUI.")
+TAG (U"##--new-send")
+DEFINITION (U"Start a new GUI and interpret the command line arguments as a script file name and its arguments.")
+TAG (U"##--version")
+DEFINITION (U"Print the Praat version.")
+TAG (U"##--help")
+DEFINITION (U"Print this list of command line options.")
+NORMAL (U"Options:")
 TAG (U"##--no-pref-files#")
 DEFINITION (U"Ignore the preferences file and the buttons file at start-up, and don't write them when quitting (see above).")
 TAG (U"##--no-plugins#")
@@ -4016,10 +4041,6 @@ DEFINITION (U"Don't activate the plugins at start-up.")
 TAG (U"##--pref-dir=#/var/www/praat_plugins")
 DEFINITION (U"Set the preferences folder to /var/www/praat_plugins (for instance). "
 	"This can come in handy if you require access to preference files and/or plugins that are not in your home folder.")
-TAG (U"##--version")
-DEFINITION (U"Print the Praat version.")
-TAG (U"##--help")
-DEFINITION (U"Print this list of command line options.")
 TAG (U"##-8#, ##--utf8#")
 DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-8 encoding. This is the default encoding on MacOS and Linux, "
 	"but on Windows the default is the Console's native UTF-16 Little Endian (i.e. the Console understands UTF-16 always, "
@@ -4159,9 +4180,11 @@ MAN_BEGIN (U"sendpraat", U"ppgb", 20000927)
 NORMAL (U"See @@Scripting 8. Controlling Praat from another program@.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20211207)
-INTRO (U"Sendpraat is a subroutine for sending messages to a %running Praat. "
+MAN_BEGIN (U"Scripting 8. Controlling Praat from another program", U"ppgb", 20220101)
+INTRO (U"Sendpraat is a function for sending messages to a %running Praat. "
 	"It is also a Windows, MacOS, or Linux console program with the same purpose.")
+NORMAL (U"As sendpraat cannot start up a new instance of Praat, you may often want to use "
+	"$$praat --send$ instead (see @@Scripting 6.9. Calling from the command line@).")
 LIST_ITEM (U"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM (U"@@Scripting 8.2. The sendpraat program")
 LIST_ITEM (U"@@Scripting 8.3. The sendpraat directive")
