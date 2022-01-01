@@ -337,7 +337,7 @@ autoPowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 
 autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
-		const double analysisWidth = 3.0  / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
+		const double analysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
 		double windowDuration = 2.0 * analysisWidth; // gaussian window
 		integer nFrames;
 
@@ -371,9 +371,9 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 			for (integer i = 1; i <= nq; i ++)
 				thy z [i] [iframe] = cepstrum -> z [1] [i];
 
-			if ((iframe % 10) == 1)
+			if (iframe % 10 == 1)
 				Melder_progress ((double) iframe / nFrames, U"PowerCepstrogram analysis of frame ",
-					iframe, U" out of ", nFrames, U".");
+						iframe, U" out of ", nFrames, U".");
 		}
 		return thee;
 	} catch (MelderError) {
@@ -381,11 +381,10 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 	}
 }
 
-
 //       1           2                          nfftdiv2
 //    re   im    re     im                   re      im
 // ((fft [1],0) (fft [2],fft [3]), (,), (,), (fft [nfft], 0))  nfft even
-// ((fft [1],0) (fft [2],fft [3]), (,), (,), (fft [nfft-1], fft [nfft]))  nfft uneven
+// ((fft [1],0) (fft [2],fft [3]), (,), (,), (fft [nfft-1], fft [nfft]))  nfft odd
 static void complexfftoutput_to_power (constVEC fft, VEC dbs, bool to_db) {
 	double valsq = fft [1] * fft [1];
 	dbs [1] = ( to_db ? TOLOG (valsq) : valsq );
