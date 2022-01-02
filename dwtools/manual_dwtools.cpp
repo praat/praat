@@ -4255,7 +4255,7 @@ ENTRY (U"##Example")
 NORMAL (U"Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull sqeeks of these animals "
 	"are present in the frequency range from 54 kHz up to sometimes 100kHz. By choosing a shift value of -54000 Hz and a sampling "
 	"frequency of 44100 Hz, all frequencies between 54000 Hz and (54000+22050=) 76050 Hz  will be shifted down by 54000 Hz. The "
-	"rodents frequencies in the interval from 54000 Hz to 76050 Hz will theredore be mapped to the frequency interval between 0 and 22050 Hz. ")
+	"rodents’ frequencies in the interval from 54000 Hz to 76050 Hz will therefore be mapped to the frequency interval between 0 and 22050 Hz. ")
 MAN_END
 
 MAN_BEGIN (U"Sound: To BarkSpectrogram...", U"djmw", 20141023)

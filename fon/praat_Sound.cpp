@@ -1,6 +1,6 @@
 /* praat_Sound.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1222,7 +1222,7 @@ DIRECT (SINGLETON_CREATION_WINDOW__Sound_recordStereo) {
 FORM (RECORD_ONE__Sound_record_fixedTime, U"Record Sound", nullptr) {
 	LABEL (U"This menu command is usually hidden,")
 	LABEL (U"   because its behaviour is platform-dependent.")
-	LABEL (U"The combination of “microphone” and “44100 Hz” is likely")
+	LABEL (U"The combination of “microphone” and “48000 Hz” is likely")
 	LABEL (U"   to work on all computers.")
 	LABEL (U"The “Gain” and “Balance” settings tend to be obsolete")
 	LABEL (U"   and may not work at all on your computer.")

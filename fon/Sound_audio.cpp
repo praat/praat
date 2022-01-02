@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#endif
 		} else {
 			#if defined (macintosh)
-				if (sampleRate != 44100)
+				if (sampleRate != 44100 && sampleRate != 48000)
 					supportsSamplingFrequency = false;
 			#elif defined (linux)
 				if (sampleRate != 8000 && sampleRate != 11025 &&
