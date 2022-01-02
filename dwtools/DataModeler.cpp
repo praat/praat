@@ -55,8 +55,9 @@ void structDataModeler :: v_info () {
 	MelderInfo_writeLine (U"      Start time: ", xmin, U" seconds");
 	MelderInfo_writeLine (U"      End time: ", xmax, U" seconds");
 	MelderInfo_writeLine (U"      Total duration: ", xmax - xmin, U" seconds");
-	double ndf, rSquared = DataModeler_getCoefficientOfDetermination (this, nullptr, nullptr);
-	double probability, chisq = DataModeler_getChiSquaredQ (this, & probability, & ndf);
+	const double rSquared = DataModeler_getCoefficientOfDetermination (this, nullptr, nullptr);
+	double ndof, probability;
+	const double chisq = DataModeler_getChiSquaredQ (this, & probability, & ndof);
 	MelderInfo_writeLine (U"   Fit:");
 	MelderInfo_writeLine (U"      Number of data points: ", numberOfDataPoints);
 	MelderInfo_writeLine (U"      Number of parameters: ", numberOfParameters);
@@ -65,11 +66,11 @@ void structDataModeler :: v_info () {
 		( weighData == kDataModelerWeights::RELATIVE_ ? U"a different relative weight (Y_value/sigmaY)." :
 		U"a different weight (SQRT(sigmaY))." ) ) ));
 	MelderInfo_writeLine (U"      Chi squared: ", chisq);
-	MelderInfo_writeLine (U"      Number of degrees of freedom: ", ndf);
+	MelderInfo_writeLine (U"      Number of degrees of freedom: ", ndof);
 	MelderInfo_writeLine (U"      Probability: ", probability);
 	MelderInfo_writeLine (U"      R-squared: ", rSquared);
 	for (integer ipar = 1; ipar <= numberOfParameters; ipar ++) {
-		double sigma = ( parameters [ipar] .status == kDataModelerParameterStatus::FIXED_ ? 0 : 
+		const double sigma = ( parameters [ipar] .status == kDataModelerParameterStatus::FIXED_ ? 0 : 
 			(isdefined (parameterCovariances -> data [ipar] [ipar]) ? sqrt (parameterCovariances -> data [ipar] [ipar]) : undefined) );
 		MelderInfo_writeLine (U"      p [", ipar, U"] = ", parameters [ipar] .value, U"; sigma = ", sigma);
 	}

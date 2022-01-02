@@ -547,9 +547,9 @@ FORM (QUERY_ONE_FOR_REAL__CCA_getZeroCorrelationProbability, U"CCA: Get zero cor
 	OK
 DO
 	QUERY_ONE_FOR_REAL (CCA)
-		double result, chisq, df;
-		CCA_getZeroCorrelationProbability (me, coefficientNumber, & result, & chisq, & df);
-	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")");
+		double result, chisq, ndof;
+		CCA_getZeroCorrelationProbability (me, coefficientNumber, & result, & chisq, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", ndof, U")");
 }
 
 DIRECT (CONVERT_ONE_AND_ONE_TO_ONE__CCA_Correlation_to_TableOfReal_loadings) {
@@ -938,9 +938,9 @@ FORM (QUERY_ONE_FOR_REAL__Correlation_getDiagonality_bartlett, U"Correlation: Ge
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Correlation)
-		double chisq, result, df;
-		Correlation_testDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & df);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")")
+		double chisq, result, ndof;
+		Correlation_testDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__Correlation_to_PCA) {
@@ -985,9 +985,9 @@ FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneMean, U"Covariance: Get
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Covariance)
-		double result, t, ndf;
-		Covariance_getSignificanceOfOneMean (me, index, value, & result, & t, & ndf);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndf)
+		double result, t, ndof;
+		Covariance_getSignificanceOfOneMean (me, index, value, & result, & t, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndof)
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfMeansDifference, U"Covariance: Get significance of means difference", U"Covariance: Get significance of means difference...") {
@@ -1003,9 +1003,9 @@ FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfMeansDifference, U"Covaria
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Covariance)
-		double result, t, ndf;
-		Covariance_getSignificanceOfMeansDifference (me, index1, index2, value, paired, equalVariances, & result, & t, & ndf);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndf, U")")
+		double result, t, ndof;
+		Covariance_getSignificanceOfMeansDifference (me, index1, index2, value, paired, equalVariances, & result, & t, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on t = ", t, U" and ndf = ", ndof, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneVariance, U"Covariance: Get significance of one variance", U"Covariance: Get significance of one variance...") {
@@ -1017,9 +1017,9 @@ FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfOneVariance, U"Covariance:
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Covariance)
-		double result, chisq, ndf;
-		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndf);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
+		double result, chisq, ndof;
+		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
@@ -1032,9 +1032,9 @@ FORM (QUERY_ONE_FOR_REAL__Covariance_getSignificanceOfVariancesRatio, U"Covarian
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Covariance)
-		double result, f, df;
-		Covariance_getSignificanceOfVariancesRatio (me, index1, index2, value, & result, & f , & df);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df, U")")
+		double result, f, ndof;
+		Covariance_getSignificanceOfVariancesRatio (me, index1, index2, value, & result, & f , & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on F = ", f, U" and ndf1 = ", ndof, U" and ndf2 = ", ndof, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
@@ -1056,15 +1056,15 @@ FORM (INFO_TWO__Covariances_reportMultivariateMeanDifference, U"Covariances: Rep
 	OK
 DO
 	INFO_TWO (Covariance)
-		double prob, fisher, df1, df2, difference;
+		double prob, fisher, ndof1, ndof2, difference;
 		MelderInfo_open ();
-		difference = Covariances_getMultivariateCentroidDifference (me, you, covariancesAreEqual, & prob, & fisher, & df1, & df2);
+		difference = Covariances_getMultivariateCentroidDifference (me, you, covariancesAreEqual, & prob, & fisher, & ndof1, & ndof2);
 		MelderInfo_writeLine (U"Under the assumption that the two covariances are", (covariancesAreEqual ? U" " : U" not "), U"equal:");
 		MelderInfo_writeLine (U"Difference between multivariate means: ", difference);
 		MelderInfo_writeLine (U"Fisher's F: ", fisher);
 		MelderInfo_writeLine (U"Significance from zero: ", prob);
-		MelderInfo_writeLine (U"Degrees of freedom 1: ", df1);
-		MelderInfo_writeLine (U"Degrees of freedom 2: ", df2);
+		MelderInfo_writeLine (U"Degrees of freedom 1: ", ndof1);
+		MelderInfo_writeLine (U"Degrees of freedom 2: ", ndof2);
 		MelderInfo_writeLine (U"Number of observations 1: ", me -> numberOfObservations);
 		MelderInfo_writeLine (U"Number of observations 2: ", you -> numberOfObservations);
 		MelderInfo_writeLine (U"Number of variables: ", me -> numberOfRows);
@@ -1089,17 +1089,17 @@ DIRECT (INFO_NONE__Covariances_reportEquality) { //TODO 20210510 is this ok
 			covariances -> addItem_ref (me);
 		}
 		MelderInfo_open ();
-		double p, chisq, df;
-		Covariances_equality (covariances.get(), 1, & p, & chisq, & df);
+		double p, chisq, ndof;
+		Covariances_equality (covariances.get(), 1, & p, & chisq, & ndof);
 		MelderInfo_writeLine (U"Difference between covariance matrices:");
 		MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
 		MelderInfo_writeLine (U"Chi-squared (bartlett) = ", chisq);
-		MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
+		MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", ndof);
 
-		Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
+		Covariances_equality (covariances.get(), 2, & p, & chisq, & ndof);
 		MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
 		MelderInfo_writeLine (U"Chi-squared (wald) = ", chisq);
-		MelderInfo_writeLine (U"Degrees of freedom (wald) = ", df);
+		MelderInfo_writeLine (U"Degrees of freedom (wald) = ", ndof);
 		MelderInfo_close ();
 	INFO_NONE_END
 }
@@ -1303,16 +1303,16 @@ DO
 	Melder_require (numberOfDimensions >= 0, 
 		U"The number of dimensions should be at least zero.");
 	QUERY_ONE_FOR_REAL (Discriminant)
-		double result, chisq, df;
-		Discriminant_getPartialDiscriminationProbability (me, numberOfDimensions, & result, & chisq, & df);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", df, U")");
+		double result, chisq, ndof;
+		Discriminant_getPartialDiscriminationProbability (me, numberOfDimensions, & result, & chisq, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")");
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__Discriminant_getHomegeneityOfCovariances_box) {
 	QUERY_ONE_FOR_REAL (Discriminant)
-		double chisq, result, ndf;
-		SSCPList_getHomegeneityOfCovariances_box (my groups.get(), & result, & chisq, & ndf);
-	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
+		double chisq, result, ndof;
+		SSCPList_getHomegeneityOfCovariances_box (my groups.get(), & result, & chisq, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 DIRECT (INFO_ONE__Discriminant_reportEqualityOfCovarianceMatrices) {
@@ -1324,12 +1324,12 @@ DIRECT (INFO_ONE__Discriminant_reportEqualityOfCovarianceMatrices) {
 			autoCovariance covariance = SSCP_to_Covariance (sscp, 1);   // FIXME numberOfConstraints shouldn't be 1, should it?
 			list. addItem_move (covariance.move());
 		}
-		double chisq, prob, df;
-		Covariances_equality (& list, 2, & prob, & chisq, & df);
+		double chisq, prob, ndof;
+		Covariances_equality (& list, 2, & prob, & chisq, & ndof);
 		MelderInfo_writeLine (U"Wald test for equality of covariance matrices:");
 		MelderInfo_writeLine (U"Chi squared: ", chisq);
 		MelderInfo_writeLine (U"Significance: ", prob);
-		MelderInfo_writeLine (U"Degrees of freedom: ", df);
+		MelderInfo_writeLine (U"Degrees of freedom: ", ndof);
 		MelderInfo_writeLine (U"Number of matrices: ", list.size);
 		MelderInfo_close ();
 	INFO_NONE_END
@@ -3480,12 +3480,12 @@ DO
 	INFO_ONE (Table)
 		const integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factor_string);
 		const integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		double df, kruskalWallis, prob;
-		autoTable result = Table_getOneWayKruskalWallis (me, dataColumn, factorColumn, & prob, & kruskalWallis, & df);
+		double ndof, kruskalWallis, prob;
+		autoTable result = Table_getOneWayKruskalWallis (me, dataColumn, factorColumn, & prob, & kruskalWallis, & ndof);
 		MelderInfo_open ();
 			MelderInfo_writeLine (U"One-way Kruskal-Wallis of \"", dataColumn_string, U"\" by \"", factor_string, U"\".\n");
 			MelderInfo_writeLine (U"Chi squared: ", kruskalWallis);
-			MelderInfo_writeLine (U"Degrees of freedom: ", df);
+			MelderInfo_writeLine (U"Degrees of freedom: ", ndof);
 			MelderInfo_writeLine (U"Probability: ", prob);
 			MelderInfo_writeLine (U"\nMeans:\n");
 			print_means (result.get());
@@ -3827,13 +3827,13 @@ DO
 
 DIRECT (QUERY_ONE_AND_ONE_FOR_REAL__NMF_Matrix_getEuclideanDistance) {
 	QUERY_ONE_AND_ONE_FOR_REAL (NMF, Matrix)
-		double result = NMF_getEuclideanDistance (me, your z.get());
+		const double result = NMF_getEuclideanDistance (me, your z.get());
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
 DIRECT (QUERY_ONE_AND_ONE_FOR_REAL__NMF_Matrix_getItakuraSaitoDivergence) {
 	QUERY_ONE_AND_ONE_FOR_REAL (NMF, Matrix)
-		double result = NMF_getItakuraSaitoDivergence (me, your z.get());
+		const double result = NMF_getItakuraSaitoDivergence (me, your z.get());
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U" (= ", result / (your ny * your nx), U" * nrow * ncol)")
 }
 
@@ -4515,7 +4515,7 @@ FORM (QUERY_ONE_AND_ONE_FOR_REAL__PCA_TableOfReal_getFractionVariance, U"PCA & T
 	OK
 DO
 	QUERY_ONE_AND_ONE_FOR_REAL (PCA, TableOfReal)
-		double result = PCA_TableOfReal_getFractionVariance (me, you, fromPrincipalComponent, toPrincipalComponent);
+		const double result = PCA_TableOfReal_getFractionVariance (me, you, fromPrincipalComponent, toPrincipalComponent);
 	QUERY_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
@@ -5031,7 +5031,7 @@ FORM (QUERY_ONE_FOR_REAL__Polygon_getPointY, U"Polygon: Get point (y)", nullptr)
 	OK
 DO
 	QUERY_ONE_FOR_REAL (Polygon)
-		double result = ( pointNumber <= my numberOfPoints ? my y [pointNumber] : undefined );
+		const double result = ( pointNumber <= my numberOfPoints ? my y [pointNumber] : undefined );
 	QUERY_ONE_FOR_REAL_END (U" (y [", pointNumber, U"])")
 }
 
@@ -5053,7 +5053,7 @@ DO
 
 DIRECT (QUERY_ONE_FOR_REAL__Polygon_getAreaOfConvexHull) {
 	QUERY_ONE_FOR_REAL (Polygon)
-		double result = Polygon_getAreaOfConvexHull (me);
+		const double result = Polygon_getAreaOfConvexHull (me);
 	QUERY_ONE_FOR_REAL_END (U" (area convex hull)")
 }
 
@@ -6477,8 +6477,8 @@ DO
 	Melder_clipLeft (0.0, & wordGap);
 	Melder_clip (0_integer, & pitchAdjustment_0_99, 99_integer);
 	Melder_clip (0_integer, & pitchRange_0_99, 99_integer);
-	double pitchAdjustment = (1.5 / 99.0 * pitchAdjustment_0_99 + 0.5);
-	double pitchRange = pitchRange_0_99 / 49.5;
+	const double pitchAdjustment = (1.5 / 99.0 * pitchAdjustment_0_99 + 0.5);
+	const double pitchRange = pitchRange_0_99 / 49.5;
 	MODIFY_EACH (SpeechSynthesizer)
 		SpeechSynthesizer_setSpeechOutputSettings (
 			me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes
@@ -6694,9 +6694,9 @@ FORM (QUERY_ONE_FOR_REAL__SSCP_getDiagonality_bartlett, U"SSCP: Get diagonality 
 	OK
 DO
 	QUERY_ONE_FOR_REAL (SSCP)
-		double chisq, result, df;
-		SSCP_getDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & df);
-	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", df, U")")
+		double chisq, result, ndof;
+		SSCP_getDiagonality_bartlett (me, numberOfConstraints, & chisq, & result, & ndof);
+	QUERY_ONE_FOR_REAL_END (U" (= probability for chisq = ", chisq, U" and ndf = ", ndof, U")")
 }
 
 DIRECT (CONVERT_EACH_TO_ONE__SSCP_to_Correlation) {

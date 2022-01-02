@@ -1002,7 +1002,7 @@ void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g
 
 	for (integer it = 1; it <= numberOfTimes; it ++) {
 		for (integer js = 1; js <= my numberOfStates; js ++) {
-			double xc = it, yc = js, x2 = it, y2 = js;
+			const double xc = it, yc = js, x2 = it, y2 = js;
 			Graphics_circle (g, xc, yc, r);
 			if (it > 1) {
 				for (integer is = 1; is <= my numberOfStates; is ++) {

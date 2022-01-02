@@ -98,7 +98,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			const double tmid = Sampled_indexToX (thee.get(), iframe);
 			const integer leftSample = Sampled_xToLowIndex (me, tmid);
-			double rightSample = leftSample + 1;
+			const double rightSample = leftSample + 1;
 			const integer startSample = rightSample - halfnsamp_window;
 			const integer endSample = startSample + nsamp_window - 1;
 			Melder_assert (startSample >= 1);
@@ -190,19 +190,19 @@ static autoSound ComplexSpectrogram_to_Sound2 (ComplexSpectrogram me, double str
 		/* original number of samples is odd: imaginary part of last spectral value is zero -> 
 		 * phase is either zero or pi
 		 */
-		double pi = atan2 (0.0, - 0.5);
-		double samplingFrequency = 2.0 * my ymax;
-		double lastFrequency = my y1 + (my ny - 1) * my dy;
+		const double pi = atan2 (0.0, - 0.5);
+		const double samplingFrequency = 2.0 * my ymax;
+		const double lastFrequency = my y1 + (my ny - 1) * my dy;
 		int originalNumberOfSamplesProbablyOdd = (my phase [my ny] [1] != 0.0 && my phase [my ny] [1] != pi) || my ymax - lastFrequency > 0.25 * my dx;
 		if (my y1 != 0.0) {
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		}
-		integer numberOfSamples = 2 * my ny - (originalNumberOfSamplesProbablyOdd ? 1 : 2 );
-		double synthesisWindowDuration = numberOfSamples / samplingFrequency;
+		const integer numberOfSamples = 2 * my ny - (originalNumberOfSamplesProbablyOdd ? 1 : 2 );
+		const double synthesisWindowDuration = numberOfSamples / samplingFrequency;
 		autoSpectrum spectrum = Spectrum_create (my ymax, my ny);
 		autoSound synthesisWindow = Sound_createSimple (1, synthesisWindowDuration, samplingFrequency);
-		integer stepSizeSamples = my dx * samplingFrequency * stretchFactor;
-		double newDuration = (my xmax - my xmin) * stretchFactor + 0.05;
+		const integer stepSizeSamples = my dx * samplingFrequency * stretchFactor;
+		const double newDuration = (my xmax - my xmin) * stretchFactor + 0.05;
 		autoSound thee = Sound_createSimple (1, newDuration, samplingFrequency); //TODO
 		integer istart = 1, iend = istart + stepSizeSamples - 1;
 		for (integer iframe = 1; iframe <= my nx; iframe++) {

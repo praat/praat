@@ -236,7 +236,7 @@ FORM (QUERY_ONE_FOR_REAL__FFNet_getBias, U"FFNet: Get bias", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FFNet)
-		double result = FFNet_getBias (me, layer, unit);
+		const double result = FFNet_getBias (me, layer, unit);
 	QUERY_ONE_FOR_REAL_END (U" (bias)")
 }
 
@@ -248,13 +248,13 @@ FORM (QUERY_ONE_FOR_REAL__FFNet_getWeight, U"FFNet: Get weight", nullptr) {
 	OK
 DO
 	QUERY_ONE_FOR_REAL (FFNet)
-		double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
+		const double result = FFNet_getWeight (me, layer, unitTo, unitFrom);
 	QUERY_ONE_FOR_REAL_END (U" (weight between unit ", unitTo, U" in layer ", layer, U", and unit ", unitFrom, U" in layer ", layer - 1, U")")
 }
 
 DIRECT (QUERY_ONE_FOR_REAL__FFNet_getMinimum) {
 	QUERY_ONE_FOR_REAL (FFNet)
-		double result = FFNet_getMinimum (me);
+		const double result = FFNet_getMinimum (me);
 	QUERY_ONE_FOR_REAL_END (U" (minimum)");
 }
 
@@ -430,7 +430,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getTo
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
-		double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_ActivationList_getCosts_total (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
@@ -441,7 +441,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_ActivationList_getAv
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, ActivationList)
-		double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_ActivationList_getCosts_average (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U"")
 }
 
@@ -486,7 +486,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getTotalC
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
-		double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_Categories_getCosts_total (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (total costs)")
 }
 
@@ -497,7 +497,7 @@ FORM (QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL__FFNet_PatternList_Categories_getAverag
 	OK
 DO
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL (FFNet, PatternList, Categories)
-		double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
+		const double result = FFNet_PatternList_Categories_getCosts_average (me, you, him, costFunctionType);
 	QUERY_ONE_AND_ONE_AND_ONE_FOR_REAL_END (U" (average costs)")
 }
 

@@ -98,7 +98,7 @@ static double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT c
 	*/
 	longdouble lnp = 0.0;
 	for (integer irow = 1; irow <= numberOfData; irow ++) {
-		double psum = NUMinner (my mixingProbabilities.get(), probabilities.row (irow));
+		const double psum = NUMinner (my mixingProbabilities.get(), probabilities.row (irow));
 		if (psum > 0.0)
 			lnp += (longdouble) log (psum);
 	}

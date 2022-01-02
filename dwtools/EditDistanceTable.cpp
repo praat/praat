@@ -375,7 +375,7 @@ static void NUMrationalize (double x, integer *numerator, integer *denominator) 
 	constexpr double epsilon = 1e-6;
 	*numerator = 1;
 	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
-		double numerator_d = x * *denominator, rounded = round (numerator_d);
+		const double numerator_d = x * *denominator, rounded = round (numerator_d);
 		if (fabs (rounded - numerator_d) < epsilon) {
 			*numerator = (integer) rounded;
 			return;

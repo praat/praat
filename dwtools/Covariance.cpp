@@ -305,8 +305,8 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s2) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
 	autoMAT m = mul_MAT (s1, s2);
-	double trace2 = NUMtrace2 (m.get(), m.get());
-	return trace2;
+	const double trace = NUMtrace2 (m.get(), m.get());
+	return trace;
 }
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
@@ -317,8 +317,8 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 
 		if (i == my numberOfColumns)
 			break;
 	}
-	const double p = Covariance_getProbabilityAtPosition (me, v.get());
-	return p;
+	const double prob = Covariance_getProbabilityAtPosition (me, v.get());
+	return prob;
 }
 
 double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
@@ -326,19 +326,18 @@ double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 		U"The dimensions of the Covariance and the vector should agree.");
 	if (NUMisEmpty (my lowerCholeskyInverse.get()))
 		SSCP_expandWithLowerCholeskyInverse (me);
-	const double ln2pid = my numberOfColumns * log (NUM2pi);
 	const double dsq = NUMmahalanobisDistanceSquared (my lowerCholeskyInverse.get(), x, my centroid.get());
-	const double lnN = - 0.5 * (ln2pid + my lnd + dsq);
-	const double p = exp (lnN);
-	return p;
+	const double lnN = - 0.5 * (my numberOfColumns * log (NUM2pi) + my lnd + dsq);
+	const double prob = exp (lnN);
+	return prob;
 }
 
 double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVECVU const& vector, double x) {
 	double mu, stdev;
 	Covariance_getMarginalDensityParameters (me, vector, & mu, & stdev);
 	const double dx = (x - mu) / stdev;
-	const double p = (NUM1_sqrt2pi / stdev) * exp (- 0.5 * dx * dx);
-	return p;
+	const double prob = (NUM1_sqrt2pi / stdev) * exp (- 0.5 * dx * dx);
+	return prob;
 }
 
 /* Precondition ||v|| = 1 */
@@ -359,19 +358,19 @@ void Covariance_getMarginalDensityParameters (Covariance me, constVECVU const& v
 	}
 }
 
-double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *out_prob, double *out_fisher, double *out_df1, double *out_df2) {
-	const integer p = my numberOfRows, N = Melder_ifloor (my numberOfObservations + thy numberOfObservations);
+double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *out_prob, double *out_fisher, double *out_ndof1, double *out_ndof2) {
+	const integer nrow = my numberOfRows, N = Melder_ifloor (my numberOfObservations + thy numberOfObservations);
 	const integer N1 = Melder_ifloor (my numberOfObservations), n1 = N1 - 1;
 	const integer N2 = Melder_ifloor (thy numberOfObservations), n2 = N2 - 1;
-	const double df1 = p;
-	double df2 = N - p - 1;
+	const double ndof1 = nrow;
+	double ndof2 = N - nrow - 1;
 	
-	Melder_require (df2 >= 1.0, 
+	Melder_require (ndof2 >= 1.0, 
 		U"Not enough observations (", N, U") for this test.");
-	Melder_require (p <= N1 && p <= N2,
+	Melder_require (nrow <= N1 && nrow <= N2,
 		U"The number of observations should be larger than the number of variables.");
 	double dif = 0.0;
-	for (integer i = 1; i <= p; i ++) {
+	for (integer i = 1; i <= nrow; i ++) {
 		const double dist = my centroid [i] - thy centroid [i];
 		dif += dist * dist;
 	}
@@ -382,28 +381,28 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 			Morrison, page 141
 		*/
 		autoCovariance pool = Covariances_pool (me, thee);
-		Melder_assert (my data.ncol == p);   // ppgb 20180913
+		Melder_assert (my data.ncol == nrow);   // ppgb 20180913
 		autoMAT s = copy_MAT (my data.get());
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 
 		const double mahalanobis = NUMmahalanobisDistanceSquared (s.get(), my centroid.get(), thy centroid.get());
 		const double hotelling_tsq = mahalanobis * N1 * N2 / N;
-		fisher = hotelling_tsq * df2 / ( (N - 2) * df1);
+		fisher = hotelling_tsq * ndof2 / ( (N - 2) * ndof1);
 	} else {
 		/*
 			Krishnamoorthy-Yu (2004): Modified Nel and Van der Merwe test
 
-			Hotelling t^2 = (x1-x2)'*S^-1*(x1 -x2) follows nu*p*Fisher(p,nu-p+1)/(nu-p+1)
+			Hotelling t^2 = (x1-x2)'*S^-1*(x1 -x2) follows nu*nrow*Fisher(nrow,nu-nrow+1)/(nu-nrow+1)
 
 			Approximate number of degrees of freedom  (their formula 7, page 164)
-			nu = (p+p^2)/((1/n1)(tr (S1*S^-1)^2 + (tr(S1*S^-1))^2)) +(1/n2)(tr (S2*S^-1)^2 + (tr(S2*S^-1))^2)))
+			nu = (nrow+nrow^2)/((1/n1)(tr (S1*S^-1)^2 + (tr(S1*S^-1))^2)) +(1/n2)(tr (S2*S^-1)^2 + (tr(S2*S^-1))^2)))
 			the matrices S1 and S2 are the covariance matrices 'my data' and 'thy data' divided by N1 and N2 respectively.
 			S is the pooled covar divided by N.
 		*/
-		autoMAT s1 = raw_MAT (p, p), s2 = raw_MAT (p, p), s = raw_MAT (p, p);
-		for (integer i = 1; i <= p; i ++) {
-			for (integer j = 1; j <= p; j ++) {
+		autoMAT s1 = raw_MAT (nrow, nrow), s2 = raw_MAT (nrow, nrow), s = raw_MAT (nrow, nrow);
+		for (integer i = 1; i <= nrow; i ++) {
+			for (integer j = 1; j <= nrow; j ++) {
 				s1 [i] [j] = my data [i] [j] / my numberOfObservations;
 				s2 [i] [j] = thy data [i] [j] / thy numberOfObservations;
 				s [i] [j] = s1 [i] [j] + s2 [i] [j];
@@ -422,24 +421,24 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		const double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.get(), si.get());
 		const double tr_s2si = NUMtrace2 (s2.get(), si.get());
 
-		const double nu = (p + p * p) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);
-		df2 = nu - p + 1;
-		fisher =  hotelling_tsq * (nu - p + 1) / (nu * p);
+		const double nu = (nrow + nrow * nrow) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);
+		ndof2 = nu - nrow + 1;
+		fisher =  hotelling_tsq * (nu - nrow + 1) / (nu * nrow);
 	}
 
 	if (out_prob)
-		*out_prob = NUMfisherQ (fisher, df1, df2);
+		*out_prob = NUMfisherQ (fisher, ndof1, ndof2);
 	if (out_fisher)
 		*out_fisher = fisher;
-	if (out_df1)
-		*out_df1 = df1;
-	if (out_df2)
-		*out_df2 = df2;
+	if (out_ndof1)
+		*out_ndof1 = ndof1;
+	if (out_ndof2)
+		*out_ndof2 = ndof2;
 	return dif;
 }
 
 /* Schott 2001 */
-void Covariances_equality (CovarianceList me, int method, double *out_prob, double *out_chisq, double *out_df) {
+void Covariances_equality (CovarianceList me, int method, double *out_prob, double *out_chisq, double *out_ndof) {
 	try {
 
 		const integer numberOfMatrices = my size;
@@ -448,13 +447,13 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 
 		autoCovariance pool = CovarianceList_to_Covariance_pool (me); 
 		const double ns = pool -> numberOfObservations - my size;
-		const integer p = pool -> numberOfColumns;
+		const integer nrow = pool -> numberOfRows;
 		
-		double chisq = undefined, df = undefined;
+		double chisq = undefined, ndof = undefined;
 		if (method == 1) {
 			/*
 				Bartlett (see Morrison page 297)
-				The hypothesis H0 : Sigma [1] = .... = Sigma [k] of the equality of the covariance matrices of k p-dimensional
+				The hypothesis H0 : Sigma [1] = .... = Sigma [k] of the equality of the covariance matrices of k nrow-dimensional
 				multinormal populations can be tested against the alternative by a modified generalized likelihood-ratio statistic.
 				Let S [i] be the unbiased estimate of Sigma [i] based on n [i] degrees of freedom, where n [i] = N [i]-1 for 
 				the usual case of a random sample of N [i] observation vectors from the i-th population. When H0 is true
@@ -463,8 +462,8 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 					M = sum(i=1..k,n [i])*ln|S| - sum(i=1..k, n [i]*ln|S [i]|).
 				Box (1949), "A general distribution theory for a class of likelihood criteria", 
 				Biomerika, vol 36, pp. 317-346. has shown that if the scale factor
-				C^(-1) = 1 - (2p^2+3p-1)/(6(p+1)(k-1)) * (sum(i=1..k, 1/n [i]) - 1 / sum(i=1..k, n [i])) is introduced,
-				the quatity M/C is approximately distributed as a chi-squared variate with (k-1)p(p+1)/2 degrees of freedom 
+				C^(-1) = 1 - (2p^2+3p-1)/(6(nrow+1)(k-1)) * (sum(i=1..k, 1/n [i]) - 1 / sum(i=1..k, n [i])) is introduced,
+				the quatity M/C is approximately distributed as a chi-squared variate with (k-1)nrow(nrow+1)/2 degrees of freedom 
 				as the n [i] become large.
 				It is well known that this likelihood ratio test is very sensitive to violations of the normality assumption, 
 				and so other more robust procedures have been proposed.
@@ -491,9 +490,9 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 			/*
 				Eq (4) page 297
 			*/
-			const double c1 = 1.0 - (2.0 * p * p + 3.0 * p - 1.0) / (6.0 * (p + 1) * (numberOfMatrices - 1)) * (nsi - 1.0 / ns);
+			const double c1 = 1.0 - (2.0 * nrow * nrow + 3.0 * nrow - 1.0) / (6.0 * (nrow + 1) * (numberOfMatrices - 1)) * (nsi - 1.0 / ns);
 
-			df = (numberOfMatrices - 1.0) * p * (p + 1) / 2.0;
+			ndof = (numberOfMatrices - 1.0) * nrow * (nrow + 1) / 2.0;
 			chisq = m * c1;
 		} else if (method == 2) { // Schott (2001) Wald 1
 			/*
@@ -518,15 +517,15 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
 			}
-			df = (numberOfMatrices - 1) * p * (p + 1) / 2.0;
+			ndof = (numberOfMatrices - 1) * nrow * (nrow + 1) / 2.0;
 			chisq = (ns / 2.0) * trace;
 		} else {
 			return;
 		}
 		if (out_prob)
-			*out_prob = NUMchiSquareQ (chisq, df);
-		if (out_df)
-			*out_df = df;
+			*out_prob = NUMchiSquareQ (chisq, ndof);
+		if (out_ndof)
+			*out_ndof = ndof;
 		if (out_chisq)
 			*out_chisq = chisq;
 	} catch (MelderError) {
@@ -624,10 +623,9 @@ double Covariance_TableOfReal_normalityTest_BHEP (Covariance me, TableOfReal the
 	}
 }
 
-void Covariance_difference (Covariance me, Covariance thee, double *out_prob, double *out_chisq, double *out_df) {
-	const integer p = my numberOfRows;
+void Covariance_difference (Covariance me, Covariance thee, double *out_prob, double *out_chisq, double *out_ndof) {
+	const integer nrow = my numberOfRows;
 	integer numberOfObservations = Melder_ifloor (my numberOfObservations);
-	double chisq = undefined, df = undefined;
 	Melder_require (my numberOfRows == thy numberOfRows,
 		U"Matrices should have equal dimensions.");
 	if (my numberOfObservations != thy numberOfObservations) {
@@ -637,7 +635,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 	}
 	Melder_require (numberOfObservations > 1,
 		U"Number of observations too small.");
-	Melder_assert (thy data.ncol == p);
+	Melder_assert (thy data.ncol == nrow);
 	autoMAT linv = copy_MAT (thy data.get());
 	double ln_thee;
 	MATlowerCholeskyInverse_inplace (linv.get(), & ln_thee);
@@ -647,28 +645,28 @@ void Covariance_difference (Covariance me, Covariance thee, double *out_prob, do
 		Cholesky decomposition L^T L of B in the lower triangle + diagonal.
 		Always: tr (A B) = tr (B A)
 		tr (A B^-1) = tr (A (L L^T)^-1) = tr (A L^-1 (L^T)^-1)
-		trace = sum(i=1..p, j=1..p, l=max(i,j)..p, A [i] [j]Lm [l] [j]Lm [l] [i],
+		trace = sum(i=1..nrow, j=1..nrow, l=max(i,j)..nrow, A [i] [j]Lm [l] [j]Lm [l] [i],
 		where Lm = L^(-1)
 	*/
 	double trace = 0.0;
-	for (integer i = 1; i <= p; i ++) {
-		for (integer j = 1; j <= p; j ++) {
+	for (integer i = 1; i <= nrow; i ++) {
+		for (integer j = 1; j <= nrow; j ++) {
 			const integer lp = std::max (j, i);
-			for (integer l = lp; l <= p; l ++)
+			for (integer l = lp; l <= nrow; l ++)
 				trace += my data [i] [j] * linv [l] [j] * linv [l] [i];
 		}
 	}
 
-	const double l = (numberOfObservations - 1) * fabs (ln_thee - ln_me + trace - p);
-	chisq = l * fabs (1.0 - (2.0 * p + 1.0 - 2.0 / (p + 1)) / (numberOfObservations - 1) / 6.0);
-	df = p * (p + 1) / 2.0;
+	const double l = (numberOfObservations - 1) * fabs (ln_thee - ln_me + trace - nrow);
+	const double chisq = l * fabs (1.0 - (2.0 * nrow + 1.0 - 2.0 / (nrow + 1)) / (numberOfObservations - 1) / 6.0);
+	const double ndof = nrow * (nrow + 1) / 2.0;
 	
 	if (out_prob)
-		*out_prob = NUMchiSquareQ (chisq, df);
+		*out_prob = NUMchiSquareQ (chisq, ndof);
 	if (out_chisq)
 		*out_chisq = chisq;
-	if (out_df)
-		*out_df = df;
+	if (out_ndof)
+		*out_ndof = ndof;
 }
 
 static void checkOneIndex (TableOfReal me, integer index) {
@@ -683,31 +681,31 @@ static void checkTwoIndices (TableOfReal me, integer index1, integer index2) {
 		U"Indices should be different.");
 }
 
-void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double mu, double *out_prob, double *out_t, double *out_df) {
+void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double mu, double *out_prob, double *out_t, double *out_ndof) {
 	const double var = my data [index] [index];
 	double prob = undefined, t = undefined;
-	const double df = my numberOfObservations - 1.0;
+	const double ndof = my numberOfObservations - 1.0;
 
 	checkOneIndex (me, index);
 
 	if (var > 0.0) {
 		t = (my centroid [index] - mu) / sqrt (var / my numberOfObservations);
 		if (out_prob)
-			prob = 2.0 * NUMstudentQ (fabs (t), df);
+			prob = 2.0 * NUMstudentQ (fabs (t), ndof);
 	}	
 	if (out_prob)
 		*out_prob = prob;
 	if (out_t)
 		*out_t = t;
-	if (out_df)
-		*out_df = df;
+	if (out_ndof)
+		*out_ndof = ndof;
 }
 
-void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1, integer index2, double mu, int paired, int equalVariances, double *out_prob, double *out_t, double *out_df) {
+void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1, integer index2, double mu, int paired, int equalVariances, double *out_prob, double *out_t, double *out_ndof) {
 	integer n = Melder_ifloor (my numberOfObservations);
 
 	double prob = undefined, t = undefined;
-	double df = 2.0 * (n - 1);
+	double ndof = 2.0 * (n - 1);
 
 	checkTwoIndices (me, index1, index2);
 
@@ -715,66 +713,61 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1,
 	const double var2 = my data [index2] [index2];
 
 	double var_pooled = var1 + var2;
-	if (var_pooled == 0.0) {
+	if (var_pooled == 0.0)
 		Melder_warning (U"The pooled variance turned out to be zero. Check your data.");
-		goto end;
+	else {
+		if (paired) {
+			var_pooled -= 2.0 * my data [index1] [index2];
+			ndof /= 2.0;
+		}
+		if (var_pooled == 0.0) {
+			Melder_warning (U"The pooled variance with the paired correction turned out to be zero. ");
+			prob = 0.0;
+		} else {
+			t = (my centroid [index1] - my centroid [index2] - mu) / sqrt (var_pooled / n);
+			/*
+				Return two sided probabilty.
+			*/
+			if (equalVariances)
+				prob = 2.0 * NUMstudentQ (fabs (t), ndof);
+			else {
+				ndof = (1.0 + 2.0 * var1 * var2 / (var1 * var1 + var2 * var2)) * (n - 1);
+				prob = NUMincompleteBeta (ndof / 2.0, 0.5, ndof / (ndof + t * t));
+			}
+		}
 	}
-	if (paired) {
-		var_pooled -= 2.0 * my data [index1] [index2];
-		df /= 2.0;
-	}
-
-	if (var_pooled == 0.0) {
-		Melder_warning (U"The pooled variance with the paired correction turned out to be zero. ");
-		prob = 0.0;
-		goto end;
-	}
-
-	t = (my centroid [index1] - my centroid [index2] - mu) / sqrt (var_pooled / n);
-
-	/*
-		Return two sided probabilty.
-	*/
-
-	if (equalVariances) {
-		prob = 2.0 * NUMstudentQ (fabs (t), df);
-	} else {
-		df = (1.0 + 2.0 * var1 * var2 / (var1 * var1 + var2 * var2)) * (n - 1);
-		prob = NUMincompleteBeta (df / 2.0, 0.5, df / (df + t * t));
-	}
-end:
 	if (out_prob)
 		*out_prob = prob;
 	if (out_t)
 		*out_t = t;
-	if (out_df)
-		*out_df = df;
+	if (out_ndof)
+		*out_ndof = ndof;
 }
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, integer index, double sigmasq, double *out_prob, double *out_chisq, double *out_df) {
+void Covariance_getSignificanceOfOneVariance (Covariance me, integer index, double sigmasq, double *out_prob, double *out_chisq, double *out_ndof) {
 	const double var = my data [index] [index];
 	double prob = undefined, chisq = undefined;
-	const double df = my numberOfObservations - 1.0;
+	const double ndof = my numberOfObservations - 1.0;
 
 	checkOneIndex (me, index);
 
 	if (var > 0.0) {
-		chisq = df;
+		chisq = ndof;
 		if (sigmasq > 0.0)
-			chisq = df * var / sigmasq;
+			chisq = ndof * var / sigmasq;
 		if (out_prob)
-			prob = NUMchiSquareQ (chisq, df);
+			prob = NUMchiSquareQ (chisq, ndof);
 	}
 	if (out_prob)
 		*out_prob = prob;
 	if (out_chisq)
 		*out_chisq = chisq;
-	if (out_df)
-		*out_df = df;
+	if (out_ndof)
+		*out_ndof = ndof;
 }
 
-void Covariance_getSignificanceOfVariancesRatio (Covariance me, integer index1, integer index2, double ratio, double *out_prob, double *out_f, double *out_df) {
-	const double df = my numberOfObservations - 1.0;
+void Covariance_getSignificanceOfVariancesRatio (Covariance me, integer index1, integer index2, double ratio, double *out_prob, double *out_f, double *out_ndof) {
+	const double ndof = my numberOfObservations - 1.0;
 	double prob = undefined, f = undefined;
 	checkTwoIndices (me, index1, index2);
 
@@ -787,15 +780,15 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me, integer index1, 
 		if (var2 > var1)
 			ratio2 = (var2 / var1) * ratio;
 		if (out_prob) {
-			prob = 2.0 * NUMfisherQ (ratio2, df, df);
+			prob = 2.0 * NUMfisherQ (ratio2, ndof, ndof);
 			if (prob > 1.0)
 				prob = 2.0 - prob;
 		}
 	}
 	if (out_prob)
 		*out_prob = prob;
-	if (out_df)
-		*out_df = df;
+	if (out_ndof)
+		*out_ndof = ndof;
 	if (out_f)
 		*out_f = f;
 }

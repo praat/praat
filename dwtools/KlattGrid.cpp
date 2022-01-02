@@ -131,7 +131,7 @@ static void rel_to_abs (double *w, double *ws, integer n, double d) {
 		sum += w [i];
 	}
 	if (sum != 0.0) {
-		double dw = d / sum;
+		const double dw = d / sum;
 		sum = 0.0;
 		for (integer i = 1; i <= n; i ++) { // to absolute
 			w [i] *= dw;

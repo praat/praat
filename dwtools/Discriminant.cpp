@@ -238,59 +238,58 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, integer choic
 }
 
 static double Discriminant_getDegreesOfFreedom (Discriminant me) {
-	double ndf = 0.0;
+	double ndof = 0.0;
 	for (integer i = 1; i <= my groups->size; i ++) {
-		ndf += SSCP_getDegreesOfFreedom (my groups->at [i]);
+		ndof += SSCP_getDegreesOfFreedom (my groups->at [i]);
 	}
-	return ndf;
+	return ndof;
 }
 
-void Discriminant_getPartialDiscriminationProbability (Discriminant me, integer numberOfWantedDimensions, double *out_prob, double *out_chisq, double *out_df)
+void Discriminant_getPartialDiscriminationProbability (Discriminant me, integer numberOfWantedDimensions, double *out_prob, double *out_chisq, double *out_dof)
 {
 	const integer eigendimension = my eigen -> dimension, numberOfGroups = my numberOfGroups;
 	const integer numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 	const double degreesOfFreedom = Discriminant_getDegreesOfFreedom (me);
 
-	double prob = undefined, chisq = undefined, df = undefined;
+	double prob = undefined, chisq = undefined, dof = undefined;
 
 	if (numberOfWantedDimensions < numberOfFunctions) {
 		const double lambda = NUMwilksLambda (my eigen -> eigenvalues.get(), numberOfWantedDimensions + 1, numberOfFunctions);
 		if (lambda != 1.0) {
 			chisq = - (degreesOfFreedom + (numberOfGroups - eigendimension) / 2.0 - 1.0) * log (lambda);
-			df = (eigendimension - numberOfWantedDimensions) * (numberOfGroups - numberOfWantedDimensions - 1);
+			dof = (eigendimension - numberOfWantedDimensions) * (numberOfGroups - numberOfWantedDimensions - 1);
 			if (out_prob)
-				prob =  NUMchiSquareQ (chisq, df);
+				prob =  NUMchiSquareQ (chisq, dof);
 		}
 	}
 	if (out_prob)
 		*out_prob = prob;
 	if (out_chisq)
 		*out_chisq = chisq;
-	if (out_df)
-		*out_df = df;
+	if (out_dof)
+		*out_dof = dof;
 }
 
-double Discriminant_getConcentrationEllipseArea (Discriminant me, integer groupNumber, double scale, bool confidence, bool discriminantDirections, integer d1, integer d2) {
+double Discriminant_getConcentrationEllipseArea (Discriminant me, integer groupNumber, double scale, bool confidence, 
+	bool discriminantDirections, integer d1, integer d2)
+{
 	double area = undefined;
-
-	if (groupNumber < 1 || groupNumber > my numberOfGroups)
-		return area;
-
-	if (discriminantDirections) {
-		autoSSCP thee = Eigen_SSCP_project (my eigen.get(), my groups->at [groupNumber]);
-		area = SSCP_getConcentrationEllipseArea (thee.get(), scale, confidence, d1, d2);
-	} else {
-		area = SSCP_getConcentrationEllipseArea (my groups->at [groupNumber], scale, confidence, d1, d2);
+	if (groupNumber > 0 && groupNumber <= my numberOfGroups) {
+		if (discriminantDirections) {
+			autoSSCP thee = Eigen_SSCP_project (my eigen.get(), my groups->at [groupNumber]);
+			area = SSCP_getConcentrationEllipseArea (thee.get(), scale, confidence, d1, d2);
+		} else
+			area = SSCP_getConcentrationEllipseArea (my groups->at [groupNumber], scale, confidence, d1, d2);
 	}
 	return area;
 }
 
 double Discriminant_getLnDeterminant_group (Discriminant me, integer groupNumber) {
-	if (groupNumber < 1 || groupNumber > my numberOfGroups)
-		return undefined;
-
-	autoCovariance c = SSCP_to_Covariance (my groups->at [groupNumber], 1);
-	const double ln_d = SSCP_getLnDeterminant (c.get());
+	double ln_d = undefined;
+	if (groupNumber > 0 && groupNumber <= my numberOfGroups) {
+		autoCovariance c = SSCP_to_Covariance (my groups->at [groupNumber], 1);
+		ln_d = SSCP_getLnDeterminant (c.get());
+	}
 	return ln_d;
 }
 

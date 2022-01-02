@@ -50,7 +50,7 @@ autoIntensity AnalyticSound_to_Intensity (AnalyticSound me) {
 	try {
 		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 		for (integer i = 1; i <= my nx; i ++) {
-			double power_rehearingThreshold = (sqr ( my z [1] [i]) + sqr (my z [2] [i])) / 4.0e-10;
+			const double power_rehearingThreshold = (sqr ( my z [1] [i]) + sqr (my z [2] [i])) / 4.0e-10;
 			thy z [1] [i] = ( power_rehearingThreshold > 1e-30 ? 10.0 * log10 (power_rehearingThreshold) : -300.0 );
 		}
 		return thee;
