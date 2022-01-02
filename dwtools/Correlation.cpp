@@ -165,7 +165,7 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 					double d = sqrt (b * b - a * c);
 					if (b > 0)
 						d = - d;
-					double q = b - d;
+					const double q = b - d;
 					rmin = q / a;
 					rmin /= sqrt (1.0 + rmin * rmin);
 					rmax = c / q; 

@@ -688,7 +688,7 @@ double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableLis
 	double dmsq = 0;
 	for (integer itable = start; itable <= end; itable ++) {
 		const CrossCorrelationTable thee = my at [itable];
-		double dmksq = diagonalityMeasure (thy data.get());
+		const double dmksq = diagonalityMeasure (thy data.get());
 		dmsq += ( w ? dmksq * w [itable] : dmksq / ntables );
 	}
 	return dmsq;
@@ -698,7 +698,7 @@ double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableLis
 
 double CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTableList me, Diagonalizer thee, double *w, integer start, integer end) {
 	autoCrossCorrelationTableList him = CrossCorrelationTableList_Diagonalizer_diagonalize (me, thee);
-	double dm = CrossCorrelationTableList_getDiagonalityMeasure (him.get(), w, start, end);
+	const double dm = CrossCorrelationTableList_getDiagonalityMeasure (him.get(), w, start, end);
 	return dm;
 }
 

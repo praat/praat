@@ -818,7 +818,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 			Melder_warning (U"Analysis results of ", frameErrorCount, U" frame(s) out of ",
 				numberOfFrames, U" will be suspect.");
 
-		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
+		const double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 
 		NUMdmatrix_to_dBs (thy z.get(), ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee;

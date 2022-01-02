@@ -144,7 +144,7 @@ static double NUMsquaredVariance (MAT a, bool rawPowers) {
 	for (integer icol = 1; icol <= a.ncol; icol ++) {
 		longdouble sum4 = 0.0, mean = 0.0;
 		for (integer irow = 1; irow <= a.nrow; irow ++) {
-			double sq = a [irow] [icol] * a [irow] [icol];
+			const double sq = a [irow] [icol] * a [irow] [icol];
 			sum4 += sq * sq;
 			mean += sq;
 		}
