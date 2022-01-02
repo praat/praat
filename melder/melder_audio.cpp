@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma, David Weenink
+ * Copyright (C) 1992-2022 Paul Boersma, David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ double MelderAudio_getOutputSilenceAfter () { return preferences. silenceAfter; 
 
 integer MelderAudio_getOutputBestSampleRate (integer fsamp) {
 	#if defined (macintosh)
-		return fsamp == 44100 || fsamp == 96000 ? fsamp : 44100;
+		return fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
 	#elif defined (_WIN32)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
 			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;

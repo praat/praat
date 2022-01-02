@@ -1,6 +1,6 @@
 /* manual_soundFiles.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017,2019-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,11 @@ LIST_ITEM (U"1.5. @@Sound files 1.5. Size|Size@")
 LIST_ITEM (U"1.6. @@Sound files 1.6. Compression|Compression@")
 MAN_END
 
-MAN_BEGIN (U"Sound files 1.1. Sampling", U"ppgb", 20040330)
+MAN_BEGIN (U"Sound files 1.1. Sampling", U"ppgb", 20220102)
 NORMAL (U"When a sound signal from a microphone or on a tape needs to be read into a computer, "
 	"it is %digitized, which means that it is %sampled and %quantized.")
 NORMAL (U"Sampling is the discretization of the time domain of the signal: "
-	"each second of the signal is divided up into 11025, 22050, or 44100 "
+	"each second of the signal is divided up into 44100, 48000 or 96000 "
 	"slices (or any other suitable number), and a %%sample value% is associated with "
 	"each slice. For instance, a continuous 377-Hz sine wave is expressed by")
 EQUATION (U"%x(%t) = sin (2%π 377 %t)")

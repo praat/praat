@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,11 +80,11 @@ static struct {
 	double sampleRate;
 } theControlPanel =
 #if defined (linux)
-	{ 1, 200, 200, 44100 };
+	{ 1, 200, 200, 44100.0 };
 #elif defined (macintosh)
-	{ 1, 26, 26, 44100 };
+	{ 1, 26, 26, 44100.0 };
 #else
-	{ 1, 26, 26, 44100 };
+	{ 1, 26, 26, 44100.0 };
 #endif
 
 /********** ERROR HANDLING **********/

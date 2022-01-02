@@ -5490,18 +5490,16 @@ DO
 
 static void Sound_create_checkCommonFields (double startTime, double endTime, double samplingFrequency) {
 	double numberOfSamples_real;
-	numberOfSamples_real = round ( (endTime - startTime) * samplingFrequency);
+	numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
 	if (endTime <= startTime) {
-		if (endTime == startTime) {
+		if (endTime == startTime)
 			Melder_throw (U"A Sound cannot have a duration of zero.");
-		} else {
+		else
 			Melder_throw (U"A Sound cannot have a duration less than zero.");
-		}
-		if (startTime == 0.0) {
+		if (startTime == 0.0)
 			Melder_throw (U"Please set the finishing time to something greater than 0 seconds.");
-		} else {
+		else
 			Melder_throw (U"Please lower the starting time or raise the finishing time.");
-		}
 	}
 	if (samplingFrequency <= 0.0)
 		Melder_throw (U"A Sound cannot have a negative sampling frequency.\n"
@@ -5515,9 +5513,12 @@ static void Sound_create_checkCommonFields (double startTime, double endTime, do
 			Melder_throw (U"Please lower the starting time or raise the finishing time.");
 		}
 	}
-	if (numberOfSamples_real > LONG_MAX) {   // ppgb: kan niet in een 64-bit-omgeving
-		Melder_throw (U"A Sound cannot have ", Melder_bigInteger ((integer) numberOfSamples_real), U" samples; the maximum is ", Melder_bigInteger (LONG_MAX), U" samples.\n");
-	}
+	if (numberOfSamples_real > INT54_MAX)
+		Melder_throw (U"A Sound cannot have ", numberOfSamples_real,
+				U" samples; the maximum is ", Melder_bigInteger (INT54_MAX), U" samples.");
+	if (numberOfSamples_real > INTEGER_MAX)
+		Melder_throw (U"A Sound cannot have ", Melder_bigInteger (int64 (numberOfSamples_real)),
+				U" samples; the maximum is ", Melder_bigInteger (INTEGER_MAX), U" samples.");
 }
 
 FORM (CONVERT_ONE_AND_ONE_TO_ONE__Sound_Pitch_to_FormantFilter, U"Sound & Pitch: To FormantFilter", U"Sound & Pitch: To Spectrogram...") {
