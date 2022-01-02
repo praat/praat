@@ -65,7 +65,7 @@
 Thing_implement (Eigen, Daata, 0);
 
 static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, bool hasTick, bool hasDottedLine, bool integers) {
-	double range = max - min, scale = 1.0, tick = min, dtick = 1.0;
+	double range = max - min, scale = 1.0;
 
 	if (range == 0.0) {
 		return;
@@ -79,11 +79,8 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 		range *= scale;
 	}
 
-	if (range < 3.0)
-		dtick = 0.5;
-
-	dtick *= scale;
-	tick = dtick * Melder_roundDown (min / dtick);
+	const double dtick = ( range < 3.0 ? 0.5 : 1.0 ) * scale;
+	double tick = dtick * Melder_roundDown (min / dtick);
 	if (tick < min)
 		tick += dtick;
 	while (tick <= max) {
@@ -296,18 +293,17 @@ void Eigen_invertEigenvector (Eigen me, integer ivec) {
 }
 
 void Eigen_drawEigenvalues (Eigen me, Graphics g, integer first, integer last, double ymin, double ymax, bool fractionOfTotal, bool cumulative, double size_mm, conststring32 mark, bool garnish) {
-	double xmin = first, xmax = last, scale = 1.0, sumOfEigenvalues = 0.0;
+	double scale = 1.0, sumOfEigenvalues = 0.0;
 
-	if (first < 1)
-		first = 1;
+	Melder_clipLeft (1_integer, & first);
 	if (last < 1 || last > my numberOfEigenvalues)
 		last = my numberOfEigenvalues;
 	if (last <= first) {
 		first = 1;
 		last = my numberOfEigenvalues;
 	}
-	xmin = first - 0.5;
-	xmax = last + 0.5;
+	const double xmin = first - 0.5;
+	const double xmax = last + 0.5;
 	if (fractionOfTotal || cumulative) {
 		sumOfEigenvalues = Eigen_getSumOfEigenvalues (me, 0, 0);
 		if (sumOfEigenvalues <= 0.0)
@@ -345,19 +341,18 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, integer first, integer last, d
 void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, integer last,
 	double ymin, double ymax, bool weigh, double size_mm, conststring32 mark, bool connect, char32 **rowLabels, bool garnish)
 {
-	double xmin = first, xmax = last;
-
 	if (ivec < 1 || ivec > my numberOfEigenvalues)
 		return;
 
-	if (last <= first) {
+	if (first >= last) {
 		first = 1;
 		last = my dimension;
-		xmin = 0.5;
-		xmax = last + 0.5;
 	}
+	if (first < 1 || first > my dimension || last < 1 || last > my dimension)
+		return;
+
 	constVEC vec = my eigenvectors.row (ivec);
-	const double w = weigh ? sqrt (my eigenvalues [ivec]) : 1.0;
+	const double w = ( weigh ? sqrt (my eigenvalues [ivec]) : 1.0 );
 
 	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
@@ -367,6 +362,8 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 		ymin *= w;
 	}
 	Graphics_setInner (g);
+	const double xmin = first, xmax = last;
+
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
 	for (integer i = first; i <= last; i ++) {
