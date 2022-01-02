@@ -697,7 +697,7 @@ FORM (QUERY_ONE_FOR_REAL__KlattGrid_getAmplitudeAtTime, U"KlattGrid: Get amplitu
 	OK
 DO
 	QUERY_ONE_FOR_REAL (KlattGrid)
-		double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
+		const double result = KlattGrid_getAmplitudeAtTime (me, formantType, formantNumber, time);
 	QUERY_ONE_FOR_REAL_END ( U"dB")
 }
 

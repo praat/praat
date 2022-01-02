@@ -984,7 +984,7 @@ DO
 		autoFormant result = Sound_to_Formant_interval (
 			me, fromTime, toTime, windowLength, timeStep, fromFrequency, toFrequency, numberOfFrequencySteps,
 			preEmphasisFrequency, numberOfFormantTracks, order + 1, weighFormants, numberOfSigmas,
-			power, 0, 1, 1, 1, 1, 1, &ceiling
+			power, 0, 1, 1, 1, 1, 1, & ceiling
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (ceiling, 0))
 }
@@ -1050,7 +1050,7 @@ DO
 		autoFormant result = Sound_to_Formant_interval_robust (
 			me, fromTime, toTime, windowLength, timeStep, fromFrequency, fromFrequency, numberOfFrequencySteps, 
 			preEmphasisFrequency, numberOfFormantTracks, order + 1, weighFormants, numberOfSigmas, power, 1,
-			minimumF1, maximumF1, minimumF2, minimumF2, minimumF3, &ceiling
+			minimumF1, maximumF1, minimumF2, minimumF2, minimumF3, & ceiling
 		);
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_", Melder_fixed (ceiling, 0))
 }
