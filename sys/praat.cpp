@@ -97,10 +97,7 @@ static structMelderFile buttonsFile { };
 	static structMelderFile pidFile { };   // like /home/miep/.praat-dir/pid
 	static structMelderFile messageFile { };   // like /home/miep/.praat-dir/message
 #elif defined (_WIN32)
-	static structMelderFile pidFile { };   // like C:\Users\Miep\Praat\Pid
 	static structMelderFile messageFile { };   // like C:\Users\Miep\Praat\Message.txt
-#elif defined (macintosh)
-	static structMelderFile pidFile { };   // like /Users/Miep/Library/Preferences/Praat Prefs/pid
 #endif
 
 /*
@@ -514,35 +511,37 @@ static void praat_exit (int exit_code) {
 
 	if (! praatP.ignorePreferenceFiles) {
 		trace (U"stop receiving messages");
-		/*
-			We are going to delete the process ID ("pid") file, if it's ours.
-			We consider it ours if its process ID equals our own process ID
-			(no more checks are necessary; the pid file cannot have been created
-			by a different Praat instance in an earlier computer session,
-			because if we arrive here, we are sure to have created a new pid file
-			in the current computer session).
-		*/
-		if (pidFile. path [0]) {
-			try {
-				/*
-					To see whether we own the pid file,
-					we look into it to see whether its pid equals our pid.
-					If not, then we are probably living in an old invocation of the program,
-					and the pid file was written by the latest invocation of the program,
-					which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
-				*/
-				autofile f = Melder_fopen (& pidFile, "r");
-				int pidOfLatestPraatInvocation;
-				if (fscanf (f, "%d", & pidOfLatestPraatInvocation) < 1)
-					throw MelderError ();
-				f.close (& pidFile);
-				int pidOfCurrentPraatIncoation = getpid ();
-				if (pidOfLatestPraatInvocation == pidOfCurrentPraatIncoation)
-					MelderFile_delete (& pidFile);   // ...then we own the pid file and can delete it
-			} catch (MelderError) {
-				Melder_clearError ();   // if the pid file is somehow missing or corrupted, we just ignore that
+		#ifdef UNIX
+			/*
+				We are going to delete the process ID ("pid") file, if it's ours.
+				We consider it ours if its process ID equals our own process ID
+				(no more checks are necessary; the pid file cannot have been created
+				by a different Praat instance in an earlier computer session,
+				because if we arrive here, we are sure to have created a new pid file
+				in the current computer session).
+			*/
+			if (pidFile. path [0]) {
+				try {
+					/*
+						To see whether we own the pid file,
+						we look into it to see whether its pid equals our pid.
+						If not, then we are probably living in an old invocation of the program,
+						and the pid file was written by the latest invocation of the program,
+						which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
+					*/
+					autofile f = Melder_fopen (& pidFile, "r");
+					int pidOfLatestPraatInvocation;
+					if (fscanf (f, "%d", & pidOfLatestPraatInvocation) < 1)
+						throw MelderError ();
+					f.close (& pidFile);
+					int pidOfCurrentPraatIncoation = getpid ();
+					if (pidOfLatestPraatInvocation == pidOfCurrentPraatIncoation)
+						MelderFile_delete (& pidFile);   // ...then we own the pid file and can delete it
+				} catch (MelderError) {
+					Melder_clearError ();   // if the pid file is somehow missing or corrupted, we just ignore that
+				}
 			}
-		}
+		#endif
 
 		trace (U"save the preferences");
 		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
@@ -1128,65 +1127,96 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 	*/
 	const integer pidOfCurrentPraat = getpid ();
 	if (pidOfCurrentPraat == 0) {
-		Melder_casual (U"We have no PID, so we will not be able to check that we are different from any running Praat.");
+		trace (U"We have no PID, so we will not be able to check that we are different from any running Praat.");
 		return false;
 	}
+	trace (U"Process ID of current Praat: ", pidOfCurrentPraat);
+	/*
+		Figure out the Process ID of an already running instance of Praat.
+	*/
 	integer pidOfRunningPraat = 0;   // mutable, to be filled in from file
-	integer versionOfRunningPraat = 0;   // mutable, to be filled in from file
-	try {
-		autofile f = Melder_fopen (& pidFile, "r");
-		int numberOfRead = fscanf (f, "%td %td", & pidOfRunningPraat, & versionOfRunningPraat);
-		if (numberOfRead < 1) {
-			Melder_casual (U"No PID in PID file, "
-					"so we will not be able to check that Praat is already running.");
-			return false;
-		}
-		if (numberOfRead < 2) {
-			Melder_casual (U"No Praat version number in PID file, "
-					"so we will not be able to check that the same version of Praat is already running.");
-			return false;
-		}
-	} catch (MelderError) {
-		Melder_clearError ();   // it is not an error if the PID file does not exist or is broken
-		Melder_casual (U"PID file does not exist, "
-				"so Praat is probably not running yet. We are process ", pidOfCurrentPraat, U".");
-		return false;
-	}
-	constexpr integer versionOfCurrentPraat = PRAAT_VERSION_NUM;
-	if (versionOfRunningPraat != versionOfCurrentPraat) {
-		Melder_casual (U"The current version of Praat differs from the version of the Praat that may already be running, "
-				"so we cannot be sure it would respond as we would.");
-		return false;
-	}
-	if (pidOfRunningPraat == pidOfCurrentPraat) {
-		Melder_casual (U"Very rare condition: a Praat that crashed had the same PID as we have (in an earlier computer session), "
-				"so Praat is probably not running yet.");
-		return false;
-	}
 	#if defined (macintosh)
+		/*
+			We have to implement this differently from how sendpraat implements this,
+			because sendpraat just sends its message to a program with application signature 'PpgB',
+			which by default is the current (starting-up) Praat rather than the already running Praat.
+			These two instances of Praat can be distinguished by their Process ID.
+			The Process ID of the running Praat can usually been found in the pid file,
+			although it would be better to look it up in a list associated with the running program's Bundle ID (typeApplicationBundleID).
+		*/
+		NSArray<NSRunningApplication *> * list = [NSRunningApplication runningApplicationsWithBundleIdentifier: @"org.praat.Praat"];
+		const integer numberOfPraats = uinteger_to_integer ([list count]);
+		for (integer ipraat = 1; ipraat <= numberOfPraats; ipraat ++) {
+			NSRunningApplication *praat = [list objectAtIndex: ipraat-1];
+			NSString *bundleID = [praat bundleIdentifier];
+			pid_t pidOfPraat = [praat processIdentifier];
+			trace (U"Bundle ID: ", Melder_peek8to32 ([bundleID UTF8String]), U"; Process ID ", pidOfPraat);
+			if (pidOfPraat != pidOfCurrentPraat)
+				pidOfRunningPraat = pidOfPraat;
+			[bundleID release];
+		}
+		if (pidOfRunningPraat == 0) {
+			trace (U"There seem to be no other running instances of Praat.");
+			return false;
+		}
+		/*
+			Double-check; who knows.
+		*/
 		NSRunningApplication *runningPraat = [NSRunningApplication runningApplicationWithProcessIdentifier: pidOfRunningPraat];
 		if (! runningPraat) {
-			Melder_casual (U"The running Praat may have crashed "
-					"(hopefully through user interruption, such as Force-Quit, or Stop in Xcode...).");
+			trace (U"The running Praat may have crashed in the last millisecond.");
 			return false;
 		}
-	#endif
-	Melder_casual (U"An instance with PID ", pidOfRunningPraat, U" is still running.");
-	/*
-		Is that running app really Praat?
-		Check that it looks like us.
-	*/
-	#if defined (macintosh)
+		/*
+			Triple-check; should be superfluous.
+		*/
 		[NSApplication sharedApplication];   // initialize, so that our bundle identifier exists even if we started from outside Xcode
 		NSRunningApplication *currentApplication = [NSRunningApplication currentApplication];
 		NSString *currentBundleIdentifier = [currentApplication bundleIdentifier];
 		NSString *runningBundleIdentifier = [runningPraat bundleIdentifier];
-		Melder_casual (U"Current bundle identifier: ", Melder_peek8to32 ([currentBundleIdentifier UTF8String]));
-		Melder_casual (U"Running bundle identifier: ", Melder_peek8to32 ([runningBundleIdentifier UTF8String]));
+		trace (U"Current bundle identifier: ", Melder_peek8to32 ([currentBundleIdentifier UTF8String]));
+		trace (U"Running bundle identifier: ", Melder_peek8to32 ([runningBundleIdentifier UTF8String]));
 		if (! [runningBundleIdentifier isEqualToString: currentBundleIdentifier]) {
-			Melder_casual (U"The running app does not seem to be Praat.");
+			trace (U"The running app does not seem to be Praat.");
 			return false;
 		}
+	#elif defined (_WIN32)
+		HWND winWindow = HWND (theWinApplicationWindow);
+		if (! winWindow)
+			return false;
+	#elif defined (UNIX)
+		integer versionOfRunningPraat = 0;   // mutable, to be filled in from file
+		try {
+			autofile f = Melder_fopen (& pidFile, "r");
+			int numberOfRead = fscanf (f, "%td %td", & pidOfRunningPraat, & versionOfRunningPraat);
+			if (numberOfRead < 1) {
+				trace (U"No PID in PID file, "
+						"so we will not be able to check that Praat is already running.");
+				return false;
+			}
+			if (numberOfRead < 2) {
+				trace (U"No Praat version number in PID file, "
+						"so we will not be able to check that the same version of Praat is already running.");
+				return false;
+			}
+		} catch (MelderError) {
+			Melder_clearError ();   // it is not an error if the PID file does not exist or is broken
+			trace (U"PID file does not exist, "
+					"so Praat is probably not running yet. We are process ", pidOfCurrentPraat, U".");
+			return false;
+		}
+		constexpr integer versionOfCurrentPraat = PRAAT_VERSION_NUM;
+		if (versionOfRunningPraat != versionOfCurrentPraat) {
+			trace (U"The current version of Praat differs from the version of the Praat that may already be running, "
+					"so we cannot be sure it would respond as we would.");
+			return false;
+		}
+		if (pidOfRunningPraat == pidOfCurrentPraat) {
+			trace (U"Very rare condition: a Praat that crashed had the same PID as we have (in an earlier computer session), "
+					"so Praat is probably not running yet.");
+			return false;
+		}
+		trace (U"An instance with PID ", pidOfRunningPraat, U" is still running.");
 	#endif
 	/*
 		Bring the running Praat to the foreground.
@@ -1206,17 +1236,14 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 			];
 			Melder_casual (U"activated: ", activated);
 		}
+	#elif defined (_WIN32)
+		if (IsIconic (winWindow))
+			ShowWindow (winWindow, SW_RESTORE);
+		SetForegroundWindow (winWindow);
 	#elif defined (UNIX)
 		/*
 			TODO: bring Praat to the foreground on GTK.
 		*/
-	#elif defined (_WIN32)
-		HWND winWindow = HWND (theWinApplicationWindow);
-		if (! winWindow)
-			return false;
-		if (IsIconic (winWindow))
-			ShowWindow (winWindow, SW_RESTORE);
-		SetForegroundWindow (winWindow);
 	#endif
 	if (! foundTheOpenOption && ! foundTheSendOption)
 		return true;
@@ -1256,7 +1283,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 		const int timeOut = 0;
 		AESendMode aeOptions = ( timeOut == 0 ? kAENoReply : kAEWaitReply ) | kAECanInteract | kAECanSwitchLayer;
 		int appleEventVersion = 1;   // 1, 2 or 3
-		if (appleEventVersion == 1) {   // uses ProcessSerialNumber (psn), which has been partly deprecated since 10.9
+		if (appleEventVersion == 1) {
 			ProcessSerialNumber psnOfRunningPraat;
 			GetProcessForPID (pidOfRunningPraat, & psnOfRunningPraat);
 			AppleEvent psnProgramDescriptor = { typeNull, nullptr };
@@ -1445,13 +1472,11 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#elif defined (_WIN32)
 			MelderDir_getFile (& Melder_preferencesFolder, U"Preferences5.ini", & prefsFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Buttons5.ini", & buttonsFile);
-			MelderDir_getFile (& Melder_preferencesFolder, U"Pid", & pidFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Message.txt", & messageFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
 		#elif defined (macintosh)
 			MelderDir_getFile (& Melder_preferencesFolder, U"Prefs5", & prefsFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Buttons5", & buttonsFile);
-			MelderDir_getFile (& Melder_preferencesFolder, U"Pid", & pidFile);
 			MelderDir_getFile (& Melder_preferencesFolder, U"Tracing.txt", & tracingFile);
 		#endif
 		Melder_tracingToFile (& tracingFile);
@@ -1621,7 +1646,8 @@ void praat_init (conststring32 title, int argc, char **argv)
 	trace (U"User wants to open: ", praatP.userWantsToOpen);
 	praatP.userWantsToSend = userWantsGui && praatP.foundTheSendSwitch;
 	trace (U"User wants to send: ", praatP.userWantsToSend);
-	praatP.userWantsExistingInstance = (praatP.userWantsToOpen || praatP.userWantsToSend) && ! praatP.foundTheNewSwitch;
+	praatP.userWantsExistingInstance = (praatP.userWantsToOpen || praatP.userWantsToSend) && ! praatP.foundTheNewSwitch
+		|| (userWantsGui && ! weWereStartedFromTheCommandLine);
 	trace (U"User wants existing instance: ", praatP.userWantsExistingInstance);
 
 	if (Melder_batch || praatP.userWantsToSend) {
@@ -1732,20 +1758,22 @@ void praat_init (conststring32 title, int argc, char **argv)
 		if (tryToSwitchToRunningPraat (praatP.userWantsToOpen, praatP.userWantsToSend))
 			exit (0);
 
-	if (! Melder_batch) {
-		/*
-			Write our process id into the pid file.
-			Messages from "sendpraat" are caught very early this way,
-			though they will be responded to much later.
-		*/
-		try {
-			autofile f = Melder_fopen (& pidFile, "w");
-			fprintf (f, "%td %td", integer (getpid ()), integer (PRAAT_VERSION_NUM));
-			f.close (& pidFile);
-		} catch (MelderError) {
-			Melder_clearError ();
+	#ifdef UNIX
+		if (! Melder_batch) {
+			/*
+				Write our process id into the pid file.
+				Messages from "sendpraat" are caught very early this way,
+				though they will be responded to much later.
+			*/
+			try {
+				autofile f = Melder_fopen (& pidFile, "w");
+				fprintf (f, "%td %td", integer (getpid ()), integer (PRAAT_VERSION_NUM));
+				f.close (& pidFile);
+			} catch (MelderError) {
+				Melder_clearError ();
+			}
 		}
-	}
+	#endif
 	#if defined (_WIN32)
 		if (! Melder_batch)
 			motif_win_setUserMessageCallback (cb_userMessage);
