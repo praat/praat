@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20211218)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220105)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.05# (5 January 2022)")
+LIST_ITEM (U"• Calling Praat from the command line: the switch $$--send$ sends a script "
+	"to a different already running GUI instance of Praat; this is more flexible than using %sendpraat, "
+	"because $$--send$ will start a new instance of Praat if Praat is not yet running.")
 NORMAL (U"##6.2.04# (18 December 2021)")
 LIST_ITEM (U"• TextGrid window on Mac: fix entering Japanese text with the Enter key.")
 LIST_ITEM (U"• Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.")

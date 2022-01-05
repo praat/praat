@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2007,2009-2021 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,6 @@ Editor praat_findEditorById (integer id);
 void praat_showLogo ();
 
 /* Communication with praat_menuCommands.cpp: */
-void praat_menuCommands_init ();
 void praat_menuCommands_exit_optimizeByLeaking ();
 int praat_doMenuCommand (conststring32 command, conststring32 arguments, Interpreter interpreter);   // 0 = not found
 int praat_doMenuCommand (conststring32 command, integer narg, Stackel args, Interpreter interpreter);   // 0 = not found
@@ -139,7 +138,6 @@ Praat_Command praat_getMenuCommand (integer i);
 /* Communication with praat_actions.cpp: */
 void praat_actions_show ();
 void praat_actions_createWriteMenu (GuiWindow window);
-void praat_actions_init ();   // creates space for action commands
 void praat_actions_exit_optimizeByLeaking ();
 void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
