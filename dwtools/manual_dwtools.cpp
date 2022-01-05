@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2021 David Weenink
+ * Copyright (C) 1993-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4574,17 +4574,25 @@ NORMAL (U"First the sound is transformed to the frequency domain with an FFT. Th
 NORMAL (U"")
 MAN_END
 
-MAN_BEGIN (U"Sound: To Spectrum (resampled)...", U"djmw", 20211224)
-INTRO (U"A command that creates a @Spectrum from the selected @Sound by using a fast approximation of the Discrete Fourier Transform.")
+MAN_BEGIN (U"Spectrum: To Sound (resampled)...", U"djmw", 20220105)
+INTRO (U"A command that creates a @Sound from the selected @Spectrum by using a fast approximation of the inverse of the Discrete Fourier Transform (DFT).")
+NORMAL (U"For more details see @@Sound: To Spectrum (resampled)...@.")
+MAN_END
+
+MAN_BEGIN (U"Sound: To Spectrum (resampled)...", U"djmw", 20220105)
+INTRO (U"A command that creates a @Spectrum from the selected @Sound by using a fast approximation of the Discrete Fourier Transform (DFT).")
 NORMAL (U"In general the amount of computation necessary to calculate the spectrum of a sound that consists "
-	"of %N samples, is of the order of %O(%N^^2^) multiplications. If the number of samples happens to be an "
+	"of %N samples, is of the order of %O(%N log %N) multiplications. If the number of samples happens to be an "
 	"exact power of 2, i.e. %N=2^^p^ and %p integer, a special algorithm called the FFT (Fast Fourier Transform) is "
-	"available to calculate the spectrum with an order of %O(%N log__2_ %N) multiplications. In normal situations the number of "
-	"samples seldom happens to be an exact power of 2. However extending the sound with zero sample values until "
-	"the number of samples reaches a power of 2 enables us to use the fast FFT algorithm to calculate a fast approximation of the real spectrum. "
+	"available to calculate the spectrum very efficiently. In normal situations, however, the number of "
+	"samples seldom happens to be an exact power of 2 and the calculation of the spectrum then proceeeds much slower, especially if "
+	"%N happens to be a prime number a naive implementation of the DFT would calculate the spectrum in order O(%N^^2^) time. "
+	"Extending the sound with zero sample values until the number of samples reaches a power of 2 enables us to use the fast "
+	"FFT algorithm to calculate a fast approximation of the real spectrum. "
 	"This is the traditional way to calculate the spectrum if you had chosen ##To Spectrum...# with the %%fast% option on. ")
 NORMAL (U"However, there is another option to get a sound with a number of samples that equals a power of 2, "
-	"namely by upsampling the sound with a suitably chosen sampling frequency. We have to calculate the new sampling " "frequency such that the number of samples in the upsampled sound is exactly a power of 2. Of the new upsampled "
+	"namely by upsampling the sound with a suitably chosen sampling frequency. We have to calculate the new sampling "
+	"frequency such that the number of samples in the upsampled sound is exactly a power of 2. Of the new upsampled "
 	"sound we can use the FFT algorithm to calculate its spectrum %%without the need to add zero sample values%. "
 	"Because the upsampling results in a spectrum that "
 	"contains higher frequency components than the spectrum of the original sound we have to process the just calculated spectrum by leaving out these higher frequency components to obtain the desired spectrum.")
@@ -4600,16 +4608,21 @@ CODE (U"stopwatch")
 CODE (U"spectrum_dft = To Spectrum: \"no\"")
 CODE (U"time_dft = stopwatch")
 CODE (U"selectObject: sound")
-CODE (U"spectrum_ups = To Spectrum (resampled): 30")
-CODE (U"time_ups = stopwatch")
+CODE (U"spectrum_resampled = To Spectrum (resampled): 30")
+CODE (U"time_resampled = stopwatch")
 CODE (U"selectObject: sound")
 CODE (U"spectrum_fft = To Spectrum: \"yes\"")
 CODE (U"time_fft = stopwatch")
-NORMAL (U"On my computer from 2019 the first calculation of the spectrum by the slow %O(%N^2) takes 2.258 s while the resampled approximation takes 0.031s and the approximation by adding zero values takes approximately 0.003 s. "
-"If the duration of the sound had been 10.0069 s, the number of samples again would be a prime number and the computing times are 14.127 s, 0.059 s and 0.005 s, respectively. This again shows that the DFT algorithm is very slow compared to the other two. It is also clear that resampling takes some extra time as compared to adding zero sample values.")
-NORMAL (U"The following picture shows the dft spectrum in black colour, the fft spectrum in silver/grey and the resampled one in red. "
-	"From the two alternative approximations of the spectrum, the resampled one looks a better approximation to the dft than the fft with zeros added.")
+NORMAL (U"On my computer from 2019 the calculation of %%spectrum_dft% happens to be very slow because of its naive %O(%N^2) algorithm. "
+	"It takes 2.258 s while the resampled approximation only takes 0.031s and the approximation by adding zero values takes "
+	"approximately 0.003 s. If the duration of the sound had been 10.0069 s, the number of samples again would be a prime number and "
+	"the computing times are 14.127 s, 0.059 s and 0.005 s, respectively. This again shows that the naive implementation is "
+	"very slow compared to the other two. It is also clear that resampling takes some extra time as compared to adding zero sample values. ")
+NORMAL (U"The following picture shows the %%spectrum_dft% in black colour, the %%spectrum_fft% in silver/grey and the "
+	"%%spectrum_resampled% in red. "
+	"From the two alternative approximations of the spectrum, the resampled one looks a better approximation to the DFT than the one with zeros added.")
 PICTURE (5,3, drawSpectra)
+NORMAL (U"This method was inspired by a script by Ton Wempe.")
 MAN_END
 
 MAN_BEGIN (U"Sound: Trim silences...", U"djmw", 20190914)
