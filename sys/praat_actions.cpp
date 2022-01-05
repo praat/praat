@@ -663,9 +663,6 @@ void praat_actions_createWriteMenu (GuiWindow window) {
 	#endif
 }
 
-void praat_actions_init () {
-}
-
 void praat_actions_createDynamicMenu (GuiWindow window) {
 	if (theCurrentPraatApplication -> batch) return;
 	praat_form = window;

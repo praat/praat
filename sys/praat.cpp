@@ -1054,8 +1054,6 @@ extern "C" void praatlib_init () {
 	praatP.title = Melder_dup (U"Praatlib");
 	theCurrentPraatApplication -> batch = true;
 	Melder_getHomeDir (& homeDir);
-	praat_actions_init ();
-	praat_menuCommands_init ();
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classStringSet, nullptr);
 	Thing_recognizeClassByOtherName (classStringSet, U"SortedSetOfString");
 	Melder_backgrounding = true;
@@ -1403,14 +1401,14 @@ void praat_init (conststring32 title, int argc, char **argv)
 	setThePraatLocale ();
 	Melder_init ();
 
+	/*
+		Construct a main-window title like "Praat".
+	*/
 	praatP.title = Melder_dup (title && title [0] != U'\0' ? title : U"Praat");
 	/*
-		Construct a program name like "Praat" for file and directory names.
+		Construct a program name like "praat" for file and folder names.
 	*/
 	str32cpy (programName, praatP.title.get());
-	/*
-		Construct a main-window title like "Praat 6.2".
-	*/
 	programName [0] = Melder_toLowerCase (programName [0]);
 	/*
 		Get the home folder, e.g. "/home/miep/", or "/Users/miep/", or just "/".
@@ -1749,7 +1747,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	#endif
 
 	/*
-		Check whether Praat is already running.
+		Check whether we can transfer control to an already running instance of Praat.
 	*/
 	#ifdef _WIN32
 		theWinApplicationWindow = GuiWin_initialize1 (praatP.title.get());
@@ -1785,21 +1783,10 @@ void praat_init (conststring32 title, int argc, char **argv)
 		}
 	#endif
 
-	/*
-		Make room for commands.
-	*/
-	trace (U"initing actions");
-	praat_actions_init ();
-	trace (U"initing menu commands");
-	praat_menuCommands_init ();
-
 	GuiWindow raam = nullptr;
 	if (! Melder_batch) {
-		trace (U"starting the application");
+		trace (U"starting the GUI application");
 		Machine_initLookAndFeel (argc, argv);
-		/*
-			Start the application.
-		*/
 		#if gtk
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 			g_set_application_name (Melder_peek32to8 (title));
@@ -1807,7 +1794,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#elif motif
 			GuiWin_initialize2 (argc, argv);
 		#elif cocoa
-			//[NSApplication sharedApplication];
 			NSApplication *theApp = [GuiCocoaApplication sharedApplication];
 			/*
 				We want to get rid of the Search field in the help menu.
@@ -1847,6 +1833,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		praat_addFixedButtons (nullptr);
 	} else {
 		#ifdef macintosh
+			trace (U"initializing the Gui early (MacOS)");
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
 			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
@@ -1871,7 +1858,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 				Preferences_read (& prefsFile);
 		#endif
 		#if ! defined (macintosh)
-			trace (U"initializing the Gui late");
+			trace (U"initializing the Gui late (Windows and Linux)");
 			injectMessageAndInformationProcs (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
 		#endif
 		Melder_setHelpProc (helpProc);

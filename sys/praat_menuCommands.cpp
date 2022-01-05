@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@
 
 static OrderedOf <structPraat_Command> theCommands;
 void praat_menuCommands_exit_optimizeByLeaking () { theCommands. _ownItems = false; }
-
-void praat_menuCommands_init () {
-}
 
 void praat_sortMenuCommands () {
 	for (integer i = 1; i <= theCommands.size; i ++) {
