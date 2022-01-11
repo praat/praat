@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2020 David Weenink
+ * Copyright (C) 1994-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,10 +281,10 @@ integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 	if (tolerance == 0.0)
 		tolerance = my tolerance;
 
-	const double dmax = NUMmax (my d.all());
+	const double dmax = my d [1]; // invariant
 
 	integer numberOfZeroed = 0;
-	for (integer i = 1; i <= my numberOfColumns; i ++)
+	for (integer i = 2; i <= my numberOfColumns; i ++)
 		if (my d [i] < dmax * tolerance) {
 			my d [i] = 0.0;
 			numberOfZeroed ++;
@@ -294,9 +294,10 @@ integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 
 
 integer SVD_getRank (SVD me) {
-	integer rank = 0;
-	for (integer i = 1; i <= my numberOfColumns; i ++)
-		if (my d [i] > 0.0)
+	integer rank = 1;
+	const double dmax = my d [1];
+	for (integer i = 2; i <= my numberOfColumns; i ++)
+		if (my d [i] >= dmax * my tolerance)
 			rank ++;
 	return rank;
 }
@@ -331,6 +332,55 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 	} catch (MelderError) {
 		Melder_throw (me, U": no synthesis.");
 	}
+}
+
+/*
+	The effective degrees of freedom df(lambda) is defined as:
+		df(lambda) = sum (i=1, p, d[i]^2 / (d[i]^2 + lambda)),
+	where p is the number of singular values.
+	df(0) == p and df(infinity) == 0. 
+	The equation to solve for lambda is
+		f(lambda) = sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)) -df = 0,
+	with derivative df/dlambda = - sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)^2).
+	Taylor series around lambda[0] gives
+		f(lambda)=f[lambda [0])+(lambda -lambda [0]) df/dlambda (lambda [0])
+	Solving for lambda gives:
+		lambda = lambda [0] - 1 / {df/dlambda (lambda [0])} * f(lambda [0])
+	This gives iteration
+		lambda [j+1] = lambda [j] +  1 / {df/dlambda (lambda [j])} * f(lambda [j]).
+		As starting value for lambda [0] we choose (p - df)/df.
+*/
+double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom) {
+	const integer rank = SVD_getRank (me);
+	if (effectiveDegreesOfFreedom >= rank)
+		return 0.0;
+	if (effectiveDegreesOfFreedom <= 0.0)
+		return 1.0e38; // infinity or a very big number 
+	const double eps = 1e-6; // a little bit ad hoc number.
+	double lambda = (my numberOfColumns - effectiveDegreesOfFreedom) / effectiveDegreesOfFreedom;
+	double diff = 1.0e38;
+	do {
+		long double f = -effectiveDegreesOfFreedom, df = 0.0;
+		for (integer i = 1; i <= my numberOfColumns; i ++) {
+			const long double dsq = my d [i] *  my d [i];
+			const long double dsqpl = dsq + lambda;
+			f += dsq / dsqpl;
+			df += dsq / (dsqpl * dsqpl); // always > 0
+		}
+		const double lambda_new = lambda + (double) (f / df);
+		diff = abs (lambda - lambda_new);
+		lambda = lambda_new;
+	} while (diff > eps);
+	return lambda;
+}
+
+double SVD_getEffectiveDegreesOfFreedom (SVD me, double shrinkageParameter) {
+	long double edf = 0.0;
+	for (integer i = 1; i <= my numberOfColumns; i ++) {
+		long double dsq = my d [i] * my d [i];
+		edf += dsq / (dsq + shrinkageParameter);
+	}
+	return (double) edf;	
 }
 
 Thing_implement (GSVD, Daata, 0);
