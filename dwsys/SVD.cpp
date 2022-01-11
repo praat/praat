@@ -360,14 +360,14 @@ double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom) {
 	double lambda = (my numberOfColumns - effectiveDegreesOfFreedom) / effectiveDegreesOfFreedom;
 	double diff = 1.0e38;
 	do {
-		long double f = -effectiveDegreesOfFreedom, df = 0.0;
+		longdouble f = -effectiveDegreesOfFreedom, df = 0.0;
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			const long double dsq = my d [i] *  my d [i];
-			const long double dsqpl = dsq + lambda;
+			const longdouble dsq = my d [i] *  my d [i];
+			const longdouble dsqpl = dsq + lambda;
 			f += dsq / dsqpl;
-			df += dsq / (dsqpl * dsqpl); // always > 0
+			df += dsq / (dsqpl * dsqpl);   // always > 0
 		}
-		const double lambda_new = lambda + (double) (f / df);
+		const double lambda_new = lambda + double (f / df);
 		diff = abs (lambda - lambda_new);
 		lambda = lambda_new;
 	} while (diff > eps);
@@ -375,9 +375,9 @@ double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom) {
 }
 
 double SVD_getEffectiveDegreesOfFreedom (SVD me, double shrinkageParameter) {
-	long double edf = 0.0;
+	longdouble edf = 0.0;
 	for (integer i = 1; i <= my numberOfColumns; i ++) {
-		long double dsq = my d [i] * my d [i];
+		longdouble dsq = my d [i] * my d [i];
 		edf += dsq / (dsq + shrinkageParameter);
 	}
 	return (double) edf;	
