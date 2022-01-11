@@ -11,3 +11,4 @@ praat --open "e x a m p l e.wav" &
 praat --new-open "e x a m p l e.wav" &
 praat --send "p l a y.praat" "e x a m p l e.wav" 2 &
 praat --new-send "p l a y.praat" "e x a m p l e.wav" 2 &
+
