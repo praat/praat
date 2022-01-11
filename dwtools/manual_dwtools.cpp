@@ -2561,10 +2561,10 @@ NORMAL (U"The gammatone function has a monotone carrier (the tone) with an "
 	"already used it to model basilar membrane motion.")
 MAN_END
 
-MAN_BEGIN (U"generalized singular value decomposition", U"djmw", 19981007)
+MAN_BEGIN (U"generalized singular value decomposition", U"djmw", 20220111)
 INTRO (U"For %m > %n, the %%generalized singular value decomposition% (gsvd) of an %m \\xx %n matrix #%A and "
 	"a %p \\xx %n matrix #%B is given by the pair of factorizations")
-EQUATION (U"#%A = #%U #%\\Si__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%\\Si__2_ [#%0, #%R] #%Q\\'p")
+EQUATION (U"#%A = #%U #%D__1_ [#%0, #%R] #%Q\\'p and #%B = #%V #%D__2_ [#%0, #%R] #%Q\\'p")
 NORMAL (U"The matrices in these factorizations have the following properties:")
 TAG (U"\\bu #%U [%m \\xx %m], #%V [%p \\xx %p] and #%Q [%n \\xx %n]")
 DEFINITION (U" are orthogonal matrices. In the reconstruction formula's above we maximally need "
@@ -2573,14 +2573,14 @@ TAG (U"\\bu #%R [%r \\xx %r],")
 DEFINITION (U"is an upper triangular nonsingular matrix. %r is the rank of [#%A\\'p, #%B\\'p]\\'p "
 	"and %r \\<_ %n. The matrix [#%0, #%R] is %r \\xx %n and its first %n \\xx (%n \\-- %r) part "
 	"is a zero matrix.")
-TAG (U"\\bu #%\\Si__1_ [%m \\xx %r] and #%\\Si__2_ [%p \\xx %r]")
+TAG (U"\\bu #%D__1_ [%m \\xx %r] and #%D__2_ [%p \\xx %r]")
 DEFINITION (U"are real, nonnegative and \"diagonal\".")
-NORMAL (U"In practice, the matrices #%\\Si__1_ and #%\\Si__2_ are never used. Instead a shorter "
+NORMAL (U"In practice, the matrices #%D__1_ and #%D__2_ are never used. Instead a shorter "
 	"representation with numbers %\\al__%i_ and %\\be__%i_ is used. These numbers obey "
 	"0 \\<_ \\al__%i_ \\<_ 1 and \\al__%i_^^2^ + \\be__%i_^^2^ = 1. The following relations exist:")
-EQUATION (U"#%\\Si__1_\\'p #%\\Si__1_ + #%\\Si__2_\\'p #%\\Si__2_ = #%I, ")
-EQUATION (U"#%\\Si__1_\\'p #%\\Si__1_ = #diag (%\\al__1_^^2^, ..., %\\al__%r_^^2^), and, ")
-EQUATION (U"#%\\Si__2_\\'p #%\\Si__2_ = #diag (%\\be__1_^^2^, ..., %\\be__%r_^^2^).")
+EQUATION (U"#%D__1_\\'p #%D__1_ + #%D__2_\\'p #%D__2_ = #%I, ")
+EQUATION (U"#%D__1_\\'p #%D__1_ = #diag (%\\al__1_^^2^, ..., %\\al__%r_^^2^), and, ")
+EQUATION (U"#%D__2_\\'p #%D__2_ = #diag (%\\be__1_^^2^, ..., %\\be__%r_^^2^).")
 NORMAL (U"The ratios \\al__%i_ / \\be__%i_ are called the %%generalized singular values% of the "
 	"pair #%A, #%B. Let %l be the rank of #%B and %k + %l (= %r) the rank of [#%A\\'p, #%B\\'p]\\'p. "
 	"Then the first %k generalized singular values are infinite and the remaining %l are finite. "
@@ -2847,7 +2847,7 @@ INTRO (U"An object of type ##NMF# represents the @@non-negative matrix factoriza
 MAN_END
 
 MAN_BEGIN (U"non-negative matrix factorization", U"djmw", 20191024)
-INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a data matrix ##D#, whose elements are all non-negative, into a feature matrix ##F# and a weights matrix ##W# such that ##D \\~~ F*W#, where the elements of ##F# and ##W# are also all non-negative.")
+INTRO (U"The ##non-negative matrix factorization## or ##NMF# is a factorization of a data matrix #%D, whose elements are all non-negative, into a feature matrix #%F and a weights matrix #%W such that #%D \\~~ #%F #%W, where the elements of #%F and #%W are also all non-negative.")
 ENTRY (U"Algorithms for computing NMF")
 NORMAL (U"More backgroud on the algorithms used can be found in @@Berry et al. (2007)@")
 NORMAL (U"The algorithms fall into three general classes:")
@@ -2997,7 +2997,7 @@ NORMAL (U"where %#t__%i_ is the %i-th row in the resulting TableOfReal object, %
 	"the %k-th eigenvector from the PCA object.")
 MAN_END
 
-MAN_BEGIN (U"PCA & PCA: Get angle between pc1-pc2 planes", U"djmw", 20041028)
+MAN_BEGIN (U"PCA & PCA: Get angle between pc1-pc2 planes", U"djmw", 20220111)
 INTRO (U"A command to calculate the angle between two planes. Each plane is spanned by the first "
 	"two eigenvectors from the corresponding @@PCA@.")
 ENTRY (U"Algorithm")
@@ -3008,8 +3008,8 @@ EQUATION (U"#C = #E__1_\\'p #E__2_,")
 NORMAL (U"where #E__1_ and #E__2_ are 2\\xx%%dimension% and %%dimension%\\xx2 matrices "
 	"that contain the first two eigenvectors of the PCA's, respectively.")
 NORMAL (U"Next, we compute the @@singular value decomposition@ of #C:")
-EQUATION (U"#C = #U #\\Si #V\\'p")
-NORMAL (U"Now the cosine of the angle between the two planes is given by \\si__2_ and "
+EQUATION (U"#C = #U #D #V\\'p")
+NORMAL (U"Now the cosine of the angle between the two planes is given by the second singular value \\si__2_ and "
 	"the angle in degrees is therefore:")
 EQUATION (U"arccos (\\si__2_)\\.c180/\\pi")
 MAN_END
@@ -3449,8 +3449,8 @@ NORMAL (U"If, conversely, our starting point is the data matrix #%A , "
 	"we do not have to form explicitly the matrix with sums of squares and "
 	"cross products, #%A\\'p#%A. Instead, we proceed by a numerically more "
 	"stable method, and form the @@singular value decomposition@ of #%A, "
-	"#%U #%\\Si #%V\\'p. The matrix #%V then contains the eigenvectors, "
-	"and the squared diagonal elements of #%\\Si contain the eigenvalues.")
+	"#%U #%D #%V\\'p. The matrix #%V then contains the eigenvectors, "
+	"and the squared diagonal elements of #%D contain the eigenvalues.")
 MAN_END
 
 MAN_BEGIN (U"PCA & Covariance: Project", U"djmw", 20040225)
@@ -3761,18 +3761,18 @@ MAN_BEGIN (U"singular value decomposition", U"djmw", 20171217)
 INTRO (U"The %%singular value decomposition% (SVD) is a matrix factorization algorithm.")
 NORMAL (U"For %m >= %n, the singular value decomposition of a real %m \\xx %n matrix #A is the "
 	"factorization")
-EQUATION (U"#A = #U #\\Si #V\\'p,")
+EQUATION (U"#A = #U #D #V\\'p,")
 NORMAL (U"The matrices in this factorization have the following properties:")
 TAG (U"#U [%m \\xx %n] and #V [%n \\xx %n]")
 DEFINITION (U"are orthogonal matrices. The columns #u__%i_ of #U =[#u__1_, ..., #u__%n_] "
 	"are the %%left singular vectors%, and the columns #v__%i_ of #V [#v__1_, ..., #v__%n_] "
 	"are the %%right singular vectors%.")
-TAG (U"#\\Si [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
+TAG (U"#D [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
 DEFINITION (U"is a real, nonnegative, and diagonal matrix. Its diagonal contains the so called "
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
 MAN_END
 
-MAN_BEGIN (U"solving matrix equations", U"djmw", 20191231)
+MAN_BEGIN (U"solving matrix equations", U"djmw", 20220111)
 INTRO (U"In this manual you will learn how to solve different kinds of equations involving matrices and vectors.")
 NORMAL (U"Given a matrix #A and a vector #y, the types of equations we like to solve are of the form ##y#=##A\\.cx#, where #A "
 	"and #y are given. The task is to find the vector #x. The first two subsections show how to deal with this equation with "
@@ -3832,7 +3832,7 @@ NORMAL (U"These can be expressed in the following form: %%minimize% ||#y - ##A\\
 NORMAL (U"The function to use is ##solveWeaklyConstrained\\# # (#a\\# \\# , #y\\# , %%#alpha%, %%#delta%)")
 NORMAL (U"The function is called \"weakly constrained\" because the penalty function prohibits a relatively large departure of "
 	"##x\\'px# from \\de. If we let \\al go to infinity we have a constrained least squares regression problem of minimizing "
-	"||#y - ##A\\.cx#||^^2^ subject to ##x\\'px# = \\de. The algorithm we have implemented is descrobed by @@Ten Berge (1991)@.")
+	"||#y - ##A\\.cx#||^^2^ subject to ##x\\'px# = \\de. The algorithm we have implemented is described by @@Ten Berge (1991)@.")
 ENTRY (U"4.1.1 An example from the cited paper with an 6\\xx2 matrix #A")
 CODE (U"a\\# \\#  = {{ 4, 1, 0.5},")
 CODE (U"...    { 4,-1,-0.5},")
@@ -3958,16 +3958,16 @@ CODE (U"writeInfoLine: if inner > 1e-7 then \"error\" else \"OK\" endif")
 NORMAL (U"My info window shows: OK.")
 MAN_END
 
-MAN_BEGIN (U"SVD", U"djmw", 20171214)
+MAN_BEGIN (U"SVD", U"djmw", 20220111)
 INTRO (U"An object of type ##SVD# represents the @@singular value decomposition@ of a matrix.")
 ENTRY (U"SVD internals")
-NORMAL (U"Given #A, an %m \\xx %n matrix with %m >= %n, the decomposition will be #A = #U #\\Si #V\\'p. ")
+NORMAL (U"Given #A, an %m \\xx %n matrix with %m >= %n, the decomposition will be #A = #U #D #V\\'p. ")
 NORMAL (U"In the SVD object we store the %m \\xx %n matrix #U, the %n \\xx %n matrix #V and the %%n%-dimensional vector with the singular values. ")
 NORMAL (U"If it happens that for the #A matrix %m < %n, i.e. the number of rows is less than the number of columns, then we store "
 	"the SVD of the transpose of #A and flag this internally. "
 	"In this way we can make sure that for the matrix #U the number of columns never exceeds the number of rows and at the same time that the dimension of the matrix #V never exceeds the dimension of the matrix #U. ")
-NORMAL (U"For example the SVD of a 100 \\xx 20 matrix will result in a 100 \\xx 20 matrix #U, a 20 \\ 20 matrix #V and 20 singular values, "
-	"the SVD of a 20 \\xx 100 matrix will also result in a 100 \\xx 20 matrix #U, a 20 \\ 20 matrix #V and 20 singular values, however it will be internally flagged as being transposed.")
+NORMAL (U"For example the SVD of a 100 \\xx 20 matrix will result in a 100 \\xx 20 matrix #U, a 20 \\xx 20 matrix #V and 20 singular values, "
+	"the SVD of a 20 \\xx 100 matrix will also result in a 100 \\xx 20 matrix #U, a 20 \\xx 20 matrix #V and 20 singular values, however it will be internally flagged as being transposed.")
 MAN_END
 
 MAN_BEGIN (U"SVD: Get minimum number of singular values...", U"djmw", 20171214)
@@ -5439,7 +5439,7 @@ TAG (U"##Split factor#")
 DEFINITION (U"determines the weighing of the row and column structure "
 	"(see below).")
 ENTRY (U"Behaviour")
-LIST_ITEM (U"1. Get the @@singular value decomposition@ #U #\\Si #V\\'p of the "
+LIST_ITEM (U"1. Get the @@singular value decomposition@ #U #D #V\\'p of the "
 	"table.")
 LIST_ITEM (U"2. Calculate weighing factors %\\la for row and columns")
 EQUATION (U"%\\la__r,1_ = %\\si__1_^^%splitFactor^")
@@ -5584,7 +5584,7 @@ NORMAL (U"The eigenvectors of the Discriminant determine the directions that "
 	"the data in the TableOfReal will be projected unto.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Configuration (pca)...", U"djmw", 19980909)
+MAN_BEGIN (U"TableOfReal: To Configuration (pca)...", U"djmw", 20220111)
 INTRO (U"Calculates a @Configuration based on the principal components from the "
 	"selected @TableOfReal.")
 ENTRY (U"Setting")
@@ -5592,11 +5592,10 @@ TAG (U"##Number of dimensions")
 DEFINITION (U"determines the number of dimensions of the resulting Configuration.")
 ENTRY (U"Algorithm")
 NORMAL (U"We form principal components without explicitly calculating the covariance matrix "
-	"#C = #M\\'p\\.c#M, where #M is the matrix part of the TableOfReal. ")
-LIST_ITEM (U"1. Make the singular value decomposition of #M. This results in "
-	"#M = #U\\.c#d\\.c#V\\'p.")
-LIST_ITEM (U"2. Sort singular values #d and corresponding row vectors in #V (descending).")
-LIST_ITEM (U"3. The principalComponent__%ij_ = \\su__%k=1..%numberOfColumns_ %M__%ik_ \\.c %V__%jk_.")
+	"#C = #M\\'p #M, where #M is the matrix part of the TableOfReal. ")
+LIST_ITEM (U"1. Calculate the singular value decomposition of #M. This results in "
+	"#M = #U #D #V\\'p.")
+LIST_ITEM (U"2. The principalComponent__%ij_ = \\su__%k=1..%numberOfColumns_ %M__%ik_ \\.c %V__%jk_.")
 ENTRY (U"Remark")
 NORMAL (U"The resulting configuration is unique up to reflections along the new principal directions.")
 MAN_END
@@ -5631,7 +5630,7 @@ NORMAL (U"where %R__%mn_ is the rank of element %m in column %n, "
 	"and %R\\-^__%n_ is the mean of the ranks in column %n.")
 MAN_END
 
-MAN_BEGIN (U"TableOfReal: To Covariance", U"djmw", 20151209)
+MAN_BEGIN (U"TableOfReal: To Covariance", U"djmw", 20220111)
 INTRO (U"A command that creates a @Covariance object from every "
 	"selected @TableOfReal object. The covariances are calculated between "
 	"columns.")
@@ -5645,8 +5644,8 @@ NORMAL (U"where %x__%ki_ is the element %k in column %i, %x\\-^__%i_ "
 	"the table, and %numberOfConstraints equals 1.")
 NORMAL (U"The actual calculation goes as follows")
 LIST_ITEM (U"1. Centralize each column (subtract the mean).")
-LIST_ITEM (U"2. Get its @@singular value decomposition@ #U #\\Si #V\\'p.")
-LIST_ITEM (U"3. Form #S = #V #\\Si #V\\'p.")
+LIST_ITEM (U"2. Get its @@singular value decomposition@ #U #D #V\\'p.")
+LIST_ITEM (U"3. Form #S = #V #D #V\\'p.")
 LIST_ITEM (U"4. Divide all elements in #S by (%numberOfObservations - 1).")
 MAN_END
 
@@ -6320,6 +6319,10 @@ MAN_BEGIN (U"Heath et al. (1986)", U"djmw", 19981007)
 NORMAL (U"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): \"Computing the "
 	"singular value decomposition of a product of two matrices.\" "
 	"%%SIAM J. Sci. Statist. Comput.% #7: 1147\\--1159.")
+MAN_END
+
+MAN_BEGIN (U"Hastie, Tibshirani & Friedman (2001)", U"djmw", 20220111)
+NORMAL (U"T. Hastie, R. Tibshirani & J. Friedman (2001): %%The elements of statistical learning%. Springer series in statistics.")
 MAN_END
 
 MAN_BEGIN (U"Henrich et al. (2004)", U"djmw", 20190903)

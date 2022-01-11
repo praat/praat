@@ -1,6 +1,6 @@
 /* manual_BSS.cpp
  *
- * Copyright (C) 2010-2019 David Weenink
+ * Copyright (C) 2010-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ TAG (U"2. The elements %%c__ij_% in a Covariance always satisfy |%%c__ij_%/\\Vr(
 	"generally not the case for cross-correlations.")
 MAN_END
 
-MAN_BEGIN (U"CrossCorrelationTableList", U"djmw", 20101227)
+MAN_BEGIN (U"CrossCorrelationTableList", U"djmw", 20220111)
 INTRO (U"One of the types of objects in Praat. A CrossCorrelationTableList represents a collection of @@CrossCorrelationTable@ objects.")
 MAN_END
 
@@ -68,11 +68,11 @@ DEFINITION (U"the standard deviation of the noise that is added to each transfor
 	"makes each transformation matrix a little different and the collection not jointly "
 	"diagonalizable anymore.")
 ENTRY (U"Algorithm")
-NORMAL (U"All the CrossCorrelationTable matrices are generated as #V\\'p\\.c#D__%k_\\.c #V, where #D__%k_ is a diagonal matrix "
-	"with entries randomly choosen from the [-1,1] interval. The matrix #V is a \"random\" orthogonal matrix "
-	"obtained from the singular value decomposition of a matrix #M = #U\\.c#D\\.c#V\\'p, where the cells of the "
-	"matrix #M are random Gaussian numbers with mean 0 and standard deviation 1.")
-NORMAL (U"If the first matrix has to be positive definite, the numbers on the diagonal of #D__1_ are randomly "
+NORMAL (U"All the CrossCorrelationTable matrices are generated as #%V\\'p #%D__%k_ #%V, where #%D__%k_ is a diagonal matrix "
+	"with entries randomly choosen from the [-1,1] interval. The matrix #%V is a \"random\" orthogonal matrix "
+	"obtained from the singular value decomposition of a matrix #%M = #%U #%D #%V\\'p, where the cells of the "
+	"matrix #%M are random Gaussian numbers with mean 0 and standard deviation 1.")
+NORMAL (U"If the first matrix has to be positive definite, the numbers on the diagonal of #%D__1_ are randomly "
 	"chosen from the [0.1,1] interval.")
 MAN_END
 
