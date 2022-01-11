@@ -343,7 +343,7 @@ autoMatrix FormantPath_to_Matrix_transition (FormantPath me, integer numberOfTra
 				for (integer jformant = 1; jformant <= my formants.size; jformant++) {
 					const Formant_Frame ffj = & my formants.at [jformant] -> frames [itime - 1];
 					const integer ntracks = std::min (ffj -> numberOfFormants, numberOfTracks_i);
-					long double transitionCosts = 0.0;
+					longdouble transitionCosts = 0.0;
 					for (integer itrack = 1; itrack <= ntracks; itrack ++) {
 						const double fi = ffi -> formant [itrack].frequency, fj = ffj -> formant [itrack] . frequency;
 						const double dif = fabs (fi  - fj);

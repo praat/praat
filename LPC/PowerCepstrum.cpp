@@ -436,7 +436,7 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 	autoMAT rhamonics = PowerCepstrum_getRhamonicsPower (me, pitchFloor, pitchCeiling, f0fractionalWidth);
 	if (rhamonics.nrow == 0)
 		return undefined;
-	long double sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = imin; i <= imax; i ++)
 		sum += my v_getValueAtSample (i, 1, 0);
 
