@@ -6840,6 +6840,12 @@ DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns) {
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of columns)")	
 }
 
+DIRECT (QUERY_ONE_FOR_REAL__SVD_getRank) {
+	QUERY_ONE_FOR_REAL (SVD)
+		const double result = SVD_getRank (me);
+	QUERY_ONE_FOR_REAL_END (U" (= rank)")
+}
+
 DIRECT (QUERY_ONE_FOR_REAL__SVD_getConditionNumber) {
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getConditionNumber (me);
@@ -6886,6 +6892,24 @@ DO
 	QUERY_ONE_FOR_INTEGER (SVD)
 		const integer result = SVD_getMinimumNumberOfSingularValues (me, fraction);
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of singular values needed)")
+}
+
+FORM (QUERY_ONE_FOR_REAL__SVD_getShrinkageParameter, U"SVD: Get shrinkage parameter", nullptr) {
+	POSITIVE (edf, U"Effective degrees of freedom", U"3.0")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (SVD)
+		const double result = SVD_getShrinkageParameter (me, edf);
+	QUERY_ONE_FOR_REAL_END (U" (= shrinkage parameter for ridge regression with ", edf, U" effective degrees of freedom)")
+}
+
+FORM (QUERY_ONE_FOR_REAL__SVD_getEffectiveDegreesOfFreedom, U"SVD: Get effective degrees of freedom", nullptr) {
+	POSITIVE (lambda, U"Shrinkage parameter", U"0.0")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (SVD)
+		const double result = SVD_getEffectiveDegreesOfFreedom (me, lambda);
+	QUERY_ONE_FOR_REAL_END (U" (= effective degrees of freedom for ridge regression with ", lambda, U" shrinkage factor)")
 }
 
 FORM (CONVERT_EACH_TO_ONE__SVD_to_Matrix, U"SVD: To Matrix", U"SVD: To Matrix...") {
@@ -10240,6 +10264,8 @@ void praat_David_init () {
 		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows);
 	praat_addAction1 (classSVD, 1, U"Get number of columns", nullptr, 1, 
 		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns);
+	praat_addAction1 (classSVD, 1, U"Get rank", nullptr, 1, 
+			QUERY_ONE_FOR_REAL__SVD_getRank);
 	praat_addAction1 (classSVD, 1, U"Get condition number", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__SVD_getConditionNumber);
 	praat_addAction1 (classSVD, 0, U"-- singular values ---", nullptr, 1, nullptr);
@@ -10251,6 +10277,10 @@ void praat_David_init () {
 			QUERY_ONE_FOR_REAL__SVD_getSumOfSingularValuesAsFractionOfTotal);
 	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1, 
 		QUERY_ONE_FOR_INTEGER__SVD_getMinimumNumberOfSingularValues);
+	praat_addAction1 (classSVD, 1, U"Get shrinkage parameter...", nullptr, 1, 
+			QUERY_ONE_FOR_REAL__SVD_getShrinkageParameter);	
+	praat_addAction1 (classSVD, 1, U"Get effective degrees of freedom...", nullptr, 1, 
+			QUERY_ONE_FOR_REAL__SVD_getEffectiveDegreesOfFreedom);
 	
 	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__SVD_to_TableOfReal);

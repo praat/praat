@@ -1,6 +1,6 @@
 /* DataModeler_enums.h
  *
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,5 +45,11 @@ enums_begin (kDataModelerWeights, 1)
 	enums_add (kDataModelerWeights, 3, ONE_OVER_SQRTSIGMA, U"One over sqrt(sigma)")
 	enums_add (kDataModelerWeights, 4, RELATIVE_, U"Relative")
 enums_end (kDataModelerWeights, 4, RELATIVE_)
+
+enums_begin (kDataModelerShrinkage, 0)
+	enums_add (kDataModelerShrinkage, 0, NONE, U"Mone")
+	enums_add (kDataModelerShrinkage, 1, RIDGE_REGRESSION, U"Ridge regression")
+	//enums_add (kDataModelerShrinkage, 2, LASSO, U"Lasso")
+enums_end (kDataModelerShrinkage, 1, RIDGE_REGRESSION)
 
 /* End of file DataModeler_enums.h */
