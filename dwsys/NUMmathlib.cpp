@@ -130,7 +130,7 @@ static double wprob(double w, double rr, double cc)
 		0.249147045813402785000562436043
     };
     double pr_w, rinsum, xx;
-    long double blb, bub, einsum, elsum;
+    longdouble blb, bub, einsum, elsum;
 
     const double qsqz = w * 0.5;
 
