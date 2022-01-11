@@ -30,7 +30,7 @@ Multi-language text-to-speech facilities allow you to segment the sound into wor
 #### Grammar models
 
 With Praat, you can try out Optimality-Theoretic and Harmonic-Grammar learning,
-as well as seevral kinds of neural-network models.
+as well as several kinds of neural-network models.
 
 #### Statistical analysis
 

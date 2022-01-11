@@ -1139,43 +1139,25 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 			because sendpraat just sends its message to a program with application signature 'PpgB',
 			which by default is the current (starting-up) Praat rather than the already running Praat.
 			These two instances of Praat can be distinguished by their Process ID.
-			The Process ID of the running Praat can usually been found in the pid file,
-			although it would be better to look it up in a list associated with the running program's Bundle ID (typeApplicationBundleID).
+			We look up the Process ID of the running Praat in a list associated with the running program's Bundle ID.
 		*/
-		NSArray<NSRunningApplication *> * list = [NSRunningApplication runningApplicationsWithBundleIdentifier: @"org.praat.Praat"];
+		NSRunningApplication *currentPraat = [NSRunningApplication currentApplication];
+		NSString *currentBundleIdentifier = [currentPraat bundleIdentifier];   // for instance @"org.praat.Praat"
+		trace (U"Current bundle identifier: ", Melder_peek8to32 ([currentBundleIdentifier UTF8String]));
+		NSArray<NSRunningApplication *> *list = [NSRunningApplication runningApplicationsWithBundleIdentifier: currentBundleIdentifier];
+		NSRunningApplication *runningPraat = nullptr;
 		const integer numberOfPraats = uinteger_to_integer ([list count]);
 		for (integer ipraat = 1; ipraat <= numberOfPraats; ipraat ++) {
 			NSRunningApplication *praat = [list objectAtIndex: ipraat-1];
-			NSString *bundleID = [praat bundleIdentifier];
 			pid_t pidOfPraat = [praat processIdentifier];
-			trace (U"Bundle ID: ", Melder_peek8to32 ([bundleID UTF8String]), U"; Process ID ", pidOfPraat);
-			if (pidOfPraat != pidOfCurrentPraat)
+			trace (U"Process ID ", pidOfPraat);
+			if (pidOfPraat != pidOfCurrentPraat) {
+				runningPraat = praat;
 				pidOfRunningPraat = pidOfPraat;
-			[bundleID release];
+			}
 		}
 		if (pidOfRunningPraat == 0) {
 			trace (U"There seem to be no other running instances of Praat.");
-			return false;
-		}
-		/*
-			Double-check; who knows.
-		*/
-		NSRunningApplication *runningPraat = [NSRunningApplication runningApplicationWithProcessIdentifier: pidOfRunningPraat];
-		if (! runningPraat) {
-			trace (U"The running Praat may have crashed in the last millisecond.");
-			return false;
-		}
-		/*
-			Triple-check; should be superfluous.
-		*/
-		[NSApplication sharedApplication];   // initialize, so that our bundle identifier exists even if we started from outside Xcode
-		NSRunningApplication *currentApplication = [NSRunningApplication currentApplication];
-		NSString *currentBundleIdentifier = [currentApplication bundleIdentifier];
-		NSString *runningBundleIdentifier = [runningPraat bundleIdentifier];
-		trace (U"Current bundle identifier: ", Melder_peek8to32 ([currentBundleIdentifier UTF8String]));
-		trace (U"Running bundle identifier: ", Melder_peek8to32 ([runningBundleIdentifier UTF8String]));
-		if (! [runningBundleIdentifier isEqualToString: currentBundleIdentifier]) {
-			trace (U"The running app does not seem to be Praat.");
 			return false;
 		}
 	#elif defined (_WIN32)
@@ -1280,7 +1262,7 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 	#if defined (macintosh)
 		const int timeOut = 0;
 		AESendMode aeOptions = ( timeOut == 0 ? kAENoReply : kAEWaitReply ) | kAECanInteract | kAECanSwitchLayer;
-		int appleEventVersion = 1;   // 1, 2 or 3
+		int appleEventVersion = 2;   // 1, 2 or 3
 		if (appleEventVersion == 1) {
 			ProcessSerialNumber psnOfRunningPraat;
 			GetProcessForPID (pidOfRunningPraat, & psnOfRunningPraat);
@@ -1309,8 +1291,9 @@ static bool tryToSwitchToRunningPraat (bool foundTheOpenOption, bool foundTheSen
 			}
 			return true;   // we did send an event to a running non-identical Praat successfully
 		} else if (appleEventVersion == 2) {
+			pid_t pidOfRunningPraat_pidt = pid_t (pidOfRunningPraat);
 			NSAppleEventDescriptor *pidProgramDescriptor = [NSAppleEventDescriptor
-					descriptorWithDescriptorType: typeKernelProcessID   bytes: & pidOfRunningPraat   length: sizeof (pid_t)];   // BUG: pid_t size mismatch
+					descriptorWithDescriptorType: typeKernelProcessID   bytes: & pidOfRunningPraat_pidt   length: sizeof (pid_t)];
 			if (! pidProgramDescriptor)
 				return false;
 			AppleEvent appleEvent;
@@ -1749,7 +1732,9 @@ void praat_init (conststring32 title, int argc, char **argv)
 	/*
 		Check whether we can transfer control to an already running instance of Praat.
 	*/
-	#ifdef _WIN32
+	#if defined (macintosh)
+		NSApplication *theApp = [GuiCocoaApplication sharedApplication];   // initialize, so that our bundle identifier exists even if we started from outside Xcode
+	#elif defined (_WIN32)
 		theWinApplicationWindow = GuiWin_initialize1 (praatP.title.get());
 	#endif
 	if (praatP.userWantsExistingInstance)
@@ -1794,7 +1779,6 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#elif motif
 			GuiWin_initialize2 (argc, argv);
 		#elif cocoa
-			NSApplication *theApp = [GuiCocoaApplication sharedApplication];
 			/*
 				We want to get rid of the Search field in the help menu.
 				By default, such a Search field will come up automatically when we create a menu with the title "Help".
@@ -2365,9 +2349,10 @@ void praat_run () {
 			/*
 				praat --new-send [OPTION]... SCRIPT-FILE-NAME [SCRIPT-ARGUMENT]...
 			*/
+			autoPraatBackground background;   // to e.g. make audio synchronous
 			try {
 				praat_executeScriptFromCommandLine (theCurrentPraatApplication -> batchName.string,
-						praatP.argc - praatP.argumentNumber, & praatP.argv [praatP.argumentNumber]);   // BUG: audio is not synchronous
+						praatP.argc - praatP.argumentNumber, & praatP.argv [praatP.argumentNumber]);
 			} catch (MelderError) {
 				Melder_flushError ();
 			}
