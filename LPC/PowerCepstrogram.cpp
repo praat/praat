@@ -1,6 +1,6 @@
 /* PowerCepstrogram.cpp
  *
- * Copyright (C) 2013 - 2021 David Weenink
+ * Copyright (C) 2013 - 2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,24 +339,24 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 	try {
 		const double analysisWidth = 3.0 / pitchFloor; // minimum analysis window has 3 periods of lowest pitch
 		double windowDuration = 2.0 * analysisWidth; // gaussian window
-		integer nFrames;
 
 		// Convenience: analyse the whole sound into one Cepstrogram_frame
 		if (windowDuration > my dx * my nx)
 			windowDuration = my dx * my nx;
-		const double samplingFrequency = 2 * maximumFrequency;
+		const double samplingFrequency = 2.0 * maximumFrequency;
 		autoSound sound = Sound_resample (me, samplingFrequency, 50);
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 		double t1;
+		integer nFrames;
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
-		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
+		autoSound sframe = Sound_createSimple (1_integer, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		/*
 			Find out the size of the FFT
 		*/
 		const integer nfft = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (sframe -> nx));   // TODO: explain edge case
 		const integer nq = nfft / 2 + 1;
-		const double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nq - 1);
+		const double qmax = 0.5 * nfft / samplingFrequency, dq = 1.0 / samplingFrequency;
 		autoPowerCepstrogram thee = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
 
 		autoMelderProgress progress (U"Cepstrogram analysis");
