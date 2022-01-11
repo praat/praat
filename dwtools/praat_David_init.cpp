@@ -6840,6 +6840,12 @@ DIRECT (QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns) {
 	QUERY_ONE_FOR_INTEGER_END (U" (= number of columns)")	
 }
 
+DIRECT (QUERY_ONE_FOR_REAL__SVD_getRank) {
+	QUERY_ONE_FOR_REAL (SVD)
+		const double result = SVD_getRank (me);
+	QUERY_ONE_FOR_REAL_END (U" (= rank)")
+}
+
 DIRECT (QUERY_ONE_FOR_REAL__SVD_getConditionNumber) {
 	QUERY_ONE_FOR_REAL (SVD)
 		const double result = SVD_getConditionNumber (me);
@@ -10258,6 +10264,8 @@ void praat_David_init () {
 		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfRows);
 	praat_addAction1 (classSVD, 1, U"Get number of columns", nullptr, 1, 
 		QUERY_ONE_FOR_INTEGER__SVD_getNumberOfColumns);
+	praat_addAction1 (classSVD, 1, U"Get rank", nullptr, 1, 
+			QUERY_ONE_FOR_REAL__SVD_getRank);
 	praat_addAction1 (classSVD, 1, U"Get condition number", nullptr, 1, 
 			QUERY_ONE_FOR_REAL__SVD_getConditionNumber);
 	praat_addAction1 (classSVD, 0, U"-- singular values ---", nullptr, 1, nullptr);
