@@ -47,7 +47,7 @@ enums_begin (kDataModelerWeights, 1)
 enums_end (kDataModelerWeights, 4, RELATIVE_)
 
 enums_begin (kDataModelerShrinkage, 0)
-	enums_add (kDataModelerShrinkage, 0, NONE, U"Mone")
+	enums_add (kDataModelerShrinkage, 0, NONE, U"None")
 	enums_add (kDataModelerShrinkage, 1, RIDGE_REGRESSION, U"Ridge regression")
 	//enums_add (kDataModelerShrinkage, 2, LASSO, U"Lasso")
 enums_end (kDataModelerShrinkage, 1, RIDGE_REGRESSION)

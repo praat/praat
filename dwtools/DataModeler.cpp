@@ -93,13 +93,12 @@ static void linear_evaluateBasisFunctions (DataModeler /* me */, double /* xin *
 }
 
 static double polynomial_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
-	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	*/
 	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
 	double xpi = 1.0, result = p [1]. value;
-	for (integer ipar = 2; ipar <= my numberOfParameters; ipar ++) {
+	for (integer ipar = 2; ipar <= p.size; ipar ++) {
 		xpi *= x;
 		result += p [ipar]. value * xpi;
 	}
@@ -118,17 +117,16 @@ static void polynome_evaluateBasisFunctions (DataModeler me, double xin, VEC ter
 }
 
 static double legendre_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
-	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-1, 1]
 	*/
 	const double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
 	double pti, ptim1, ptim2 = 1.0, result = p [1]. value;
-	if (my numberOfParameters > 1) {
+	if (p.size > 1) {
 		const double twox = 2.0 * x;
 		double f2 = x, d = 1.0;
 		result += p [2]. value * (ptim1 = x);
-		for (integer ipar = 3; ipar <= my numberOfParameters; ipar ++) {
+		for (integer ipar = 3; ipar <= p.size; ipar ++) {
 			const double f1 = d ++;
 			f2 += twox;
 			result += p [ipar]. value * (pti = (f2 * ptim1 - f1 * ptim2) / d);
@@ -1243,6 +1241,8 @@ double DataModeler_getCoefficientOfDetermination (DataModeler me, double *out_ss
 void DataModeler_drawBasisFunction_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	integer iterm, bool scale, integer numberOfPoints)
 {
+	if (iterm > my numberOfParameters)
+		return;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	autoVEC x = raw_VEC (numberOfPoints);
 	autoVEC y = raw_VEC (numberOfPoints);
@@ -1317,7 +1317,7 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 	if (ixmin > ixmax)
 		return; // nothing to draw
 	getAutoNaturalNumberWithinRange (& numberOfParameters, my numberOfParameters);	
-	
+	vector<structDataModelerParameter> parameters = my parameters.part (1, numberOfParameters);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	double x1, y1, x2, y2;
 	bool x1defined = false, x2defined = false;
@@ -1326,11 +1326,11 @@ void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xm
 			const double x = my data [ipoint]. x, y = my data [ipoint]. y;
 			if (! x1defined) {
 				x1 = x;
-				y1 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
+				y1 = ( estimated ? my f_evaluate (me, x, parameters) : y );
 				x1defined = true;
 			} else {
 				x2 = x;
-				y2 = ( estimated ? my f_evaluate (me, x, my parameters.get()) : y );
+				y2 = ( estimated ? my f_evaluate (me, x, parameters) : y );
 				x2defined = true;
 			}
 			if (x1defined && drawDots) {

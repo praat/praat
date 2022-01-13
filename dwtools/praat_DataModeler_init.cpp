@@ -1,6 +1,6 @@
 /* praat_DataModeler_init.cpp
  *
- * Copyright (C) 2014-2021 David Weenink
+ * Copyright (C) 2014-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ FORM (GRAPHICS_EACH__DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
 	BOOLEAN (errorBars, U"Draw error bars", 1)
-	REAL (barWidth_wc, U"Bar width (wc)", U"1.0")
+	REAL (barWidth_wc, U"Bar width (wc)", U"0.001")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -77,15 +77,12 @@ FORM (GRAPHICS_EACH__DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimat
 	REAL (xmax, U"right X range", U"0.0")
 	REAL (ymin, U"left Y range", U"0.0")
 	REAL (ymax, U"right Y range", U"0.0")
-	LABEL (U"For polynomial series only:")
-	INTEGER (order, U"Number of coefficients", U"3")
+	INTEGER (numberOfParameters, U"Number of parameters", U"0 (=all)")
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	Melder_require (order >= 0, 
-		U"The order should be at least zero.");
 	GRAPHICS_EACH (DataModeler)
-		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, 1, order + 1, garnish);
+		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, 1,numberOfParameters, garnish);
 	GRAPHICS_EACH_END
 }
 
