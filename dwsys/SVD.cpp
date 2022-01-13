@@ -340,7 +340,7 @@ autoMAT SVD_synthesize (SVD me, integer sv_from, integer sv_to) {
 	where p is the number of singular values.
 	df(0) == p and df(infinity) == 0. 
 	The equation to solve for lambda is
-		f(lambda) = sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)) -df = 0,
+		f(lambda) = sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)) - df = 0,
 	with derivative df/dlambda = - sum(i=1, p, d[i]^2 / (d[i]^2 + lambda)^2).
 	Taylor series around lambda[0] gives
 		f(lambda)=f[lambda [0])+(lambda -lambda [0]) df/dlambda (lambda [0])
