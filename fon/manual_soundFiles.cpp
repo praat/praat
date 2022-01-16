@@ -414,28 +414,6 @@ NORMAL (U"The display and playback of the samples is restricted to 60 seconds at
 	"the sound file itself can contain several hours of sound.")
 MAN_END
 
-MAN_BEGIN (U"Macintosh sound files", U"ppgb", 20110131)
-INTRO (U"A way for storing a @Sound object on disk.")
-ENTRY (U"File format")
-NORMAL (U"The double-clickable sound file of the Macintosh (8 bits per sample). "
-	"Cannot be ported to other machines, because the sound is in the @@resource fork@.")
-ENTRY (U"Reading")
-NORMAL (U"With @@Read from file...@.")
-NORMAL (U"To read a Sound from a Macintosh sound file on disk, use @@Read from file...@ (Macintosh only).")
-NORMAL (U"The 8-bit sample values are divided by 128 so that the amplitude "
-	"of the resulting Sound is between –1.0 and +1.0.")
-NORMAL (U"The resulting Sound will appear in the list of objects; "
-	"its name will be equal to the file name, without extension.")
-ENTRY (U"Saving")
-NORMAL (U"With ##Save as Mac sound file...#. Praat asks you for a file name. "
-	"After you click OK, 0.5 is added to the samples of the Sound, "
-	"they are multiplied by 128 and quantized between 0 and 255; "
-	"the result is written to the file in 8-bit linear Macintosh sound-file format.")
-NORMAL (U"To avoid clipping, keep the absolute amplitude below 1.000. "
-	"If the maximum sound pressure level is 91 dB (top = 127), "
-	"the quantization threshold for a sine wave is (top = 1/2) 43 dB.")
-MAN_END
-
 MAN_BEGIN (U"Open long sound file...", U"ppgb", 19980730)
 INTRO (U"A command in the @@Open menu@ that creates a @LongSound object.")
 NORMAL (U"The file will be opened for reading only. The file stays open until you remove the LongSound object.")

@@ -4487,12 +4487,6 @@ ENTRY (U"Behaviour")
 NORMAL (U"If you type special symbols or spaces, the Object window will replace them with underscores.")
 MAN_END
 
-MAN_BEGIN (U"Resource fork", U"ppgb", 20030316)
-INTRO (U"One of the two %forks of a Macintosh file (the other is the %%data fork%). "
-	"If a Macintosh file is moved to another platform directly, the resource fork is lost. "
-	"To backup your Macintosh files, use compression, for instance with #DropStuff\\tm.")
-MAN_END
-
 MAN_BEGIN (U"Save menu", U"ppgb", 20211015)
 INTRO (U"One of the menus in the @@Object window@.")
 ENTRY (U"Purpose")
