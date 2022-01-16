@@ -1,0 +1,1 @@
+runScript: "~/Desktop/play.praat", "src/test/fon/examples/example.wav"

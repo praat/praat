@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2884,6 +2884,9 @@ DIRECT (HELP_Editors) { HELP (U"Editors") }
 DIRECT (HELP_WhatsNew) { HELP (U"What's new?") }
 DIRECT (HELP_Acknowledgments) { HELP (U"Acknowledgments") }
 DIRECT (HELP_License) { HELP (U"License") }
+DIRECT (HELP_PrivacyAndSecurity) { HELP (U"Privacy and security") }
+DIRECT (HELP_CheckingForUpdates) { HELP (U"Checking for updates") }
+DIRECT (HELP_ReportingAProblem) { HELP (U"Reporting a problem") }
 DIRECT (HELP_FormulasTutorial) { HELP (U"Formulas") }
 DIRECT (HELP_ScriptingTutorial) { HELP (U"Scripting") }
 DIRECT (HELP_Functions) { HELP (U"Functions") }
@@ -2898,7 +2901,9 @@ static autoDaata cgnSyntaxFileRecognizer (integer nread, const char *header, Mel
 	if (nread < 57) return autoDaata ();
 	if (! strnequ (& header [0], "<?xml version=\"1.0\"?>", 21) ||
 	    (! strnequ (& header [22], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35) &&
-	     ! strnequ (& header [23], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35))) return autoDaata ();
+	     ! strnequ (& header [23], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35))
+	)
+	     return autoDaata ();
 	return TextGrid_readFromCgnSyntaxFile (file);
 }
 
@@ -2910,7 +2915,8 @@ static autoDaata chronologicalTextGridTextFileRecognizer (integer nread, const c
 	memcpy (headerCopy, header, 100);
 	headerCopy [100] = '\0';
 	for (int i = 0; i < 100; i ++)
-		if (headerCopy [i] == '\0') headerCopy [i] = '\001';
+		if (headerCopy [i] == '\0')
+			headerCopy [i] = '\001';
 	//if (strstr (headerCopy, "\"\001P\001r\001a\001a\001t\001 \001c\001h\001r\001o\001n\001o\001l\001o\001g\001i\001c\001a\001l\001"
 	//	" \001T\001e\001x\001t\001G\001r\001i\001d\001 t\001"))
 	if (strstr (headerCopy, "\"\001P\001r\001a\001a\001t\001 \001c\001h\001r\001o\001n\001o\001l\001o\001g\001i\001c\001a\001l\001"
@@ -2933,7 +2939,8 @@ void praat_uvafon_init () {
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
 		classIntervalTier, classTextGrid, classWordList, classSpellingChecker,
 		classCorpus,
-		nullptr);
+		nullptr
+	);
 	Thing_recognizeClassByOtherName (classManipulation, U"Psola");
 	Thing_recognizeClassByOtherName (classManipulation, U"Analysis");
 	Thing_recognizeClassByOtherName (classPitchTier, U"StylPitch");
@@ -2999,6 +3006,10 @@ void praat_uvafon_init () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"What's new?", nullptr, 0, HELP_WhatsNew);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Acknowledgments", nullptr, 0, HELP_Acknowledgments);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"License", nullptr, 0, HELP_License);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- privacy help --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Privacy and security", nullptr, 0, HELP_PrivacyAndSecurity);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Checking for updates?", nullptr, 0, HELP_CheckingForUpdates);
+	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Reporting a problem?", nullptr, 0, HELP_ReportingAProblem);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"-- shell help --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Formulas tutorial", nullptr, 0, HELP_FormulasTutorial);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Scripting tutorial", nullptr, 0, HELP_ScriptingTutorial);
