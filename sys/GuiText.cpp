@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1069,8 +1069,10 @@ void GuiText_paste (GuiText me) {
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
+			trace (U"Pasting to text view.");
 			[my d_cocoaTextView   pasteAsPlainText: nil];
 		} else {
+			trace (U"Pasting to text field.");
 			[(NSTextView *) [[(GuiCocoaTextField *) my d_widget   window]   fieldEditor: NO   forObject: nil] pasteAsPlainText: nil];
 		}
 	#endif

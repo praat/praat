@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -673,17 +673,27 @@ static void cb_finishedOpeningDocuments () {
 #if cocoa
 DIRECT (PRAAT__cut) {
 	PRAAT
-		[[[NSApp keyWindow] firstResponder] cut: nil];
+		NSWindow *window = [NSApp keyWindow];
+		NSResponder *firstResponder = [window firstResponder];
+		if ([firstResponder isKindOfClass: [NSTextView class]])
+			[(NSTextView *) firstResponder cut: nil];
 	PRAAT_END
 }
 DIRECT (PRAAT__copy) {
 	PRAAT
-		[[[NSApp keyWindow] firstResponder] copy: nil];
+		NSWindow *window = [NSApp keyWindow];
+		NSResponder *firstResponder = [window firstResponder];
+		if ([firstResponder isKindOfClass: [NSTextView class]])
+			[(NSTextView *) firstResponder copy: nil];
 	PRAAT_END
 }
 DIRECT (PRAAT__paste) {
 	PRAAT
-		[[[NSApp keyWindow] firstResponder] pasteAsPlainText: nil];
+		trace (U"Pasting to app.")
+		NSWindow *window = [NSApp keyWindow];
+		NSResponder *firstResponder = [window firstResponder];
+		if ([firstResponder isKindOfClass: [NSTextView class]])
+			[(NSTextView *) firstResponder pasteAsPlainText: nil];
 	PRAAT_END
 }
 DIRECT (PRAAT__minimize) {

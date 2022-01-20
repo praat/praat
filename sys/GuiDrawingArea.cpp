@@ -1,6 +1,6 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2018,2020,2021 Paul Boersma,
+ * Copyright (C) 1993-2018,2020-2022 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -497,7 +497,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		return YES;
 	}
 	- (void) keyDown: (NSEvent *) nsEvent {
-		Melder_casual (U"key pressed ");
+		trace (U"key pressed ");
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (me && my d_keyCallback) {
 			structGuiDrawingArea_KeyEvent event = { me, U'\0', false, false, false };
@@ -506,7 +506,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			if (event. key == NSRightArrowFunctionKey) event. key = 0x2192;
 			if (event. key == NSUpArrowFunctionKey)    event. key = 0x2191;
 			if (event. key == NSDownArrowFunctionKey)  event. key = 0x2193;
-			Melder_casual (U"key ", event. key);
+			trace (U"key ", event. key);
 			NSUInteger modifiers = [nsEvent modifierFlags];
 			event. shiftKeyPressed = modifiers & NSShiftKeyMask;
 			event. optionKeyPressed = modifiers & NSAlternateKeyMask;
