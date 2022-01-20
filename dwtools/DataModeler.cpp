@@ -1,6 +1,6 @@
 /* DataModeler.cpp
  *
- * Copyright (C) 2014-2021 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2014-2022 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,110 +92,112 @@ static void linear_evaluateBasisFunctions (DataModeler /* me */, double /* xin *
 	terms  <<=  undefined;
 }
 
-static double polynomial_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+static double polynomial_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
-	double xpi = 1.0, result = p [1]. value;
+	const longdouble xscaled = (2.0 * x - my xmin - my xmax) / 2.0;
+	longdouble xpi = 1.0, result = p [1]. value;
 	for (integer ipar = 2; ipar <= p.size; ipar ++) {
-		xpi *= x;
+		xpi *= xscaled;
 		result += p [ipar]. value * xpi;
 	}
-	return result;
+	return (double) result;
 }
 
-static void polynome_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
+static void polynome_evaluateBasisFunctions (DataModeler me, double x, VEC term) {
 	Melder_assert (term.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / 2.0;
-	term [1] = 1.0;
-	for (integer ipar = 2; ipar <= my numberOfParameters; ipar ++)
-		term [ipar] = term [ipar - 1] * x;
+	const longdouble xscaled = (2.0 * x - my xmin - my xmax) / 2.0;
+	longdouble termp = term [1] = 1.0;
+	for (integer ipar = 2; ipar <= my numberOfParameters; ipar ++) {
+		termp *= xscaled;
+		term [ipar] = (double) termp;
+	}
 }
 
-static double legendre_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+static double legendre_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	/*
 		From domain [xmin, xmax] to domain [-1, 1]
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
-	double pti, ptim1, ptim2 = 1.0, result = p [1]. value;
+	const longdouble xscaled = (2.0 * x - my xmin - my xmax) / (my xmax - my xmin);
+	longdouble result = p [1]. value;
 	if (p.size > 1) {
-		const double twox = 2.0 * x;
-		double f2 = x, d = 1.0;
-		result += p [2]. value * (ptim1 = x);
+		const longdouble twox = 2.0 * xscaled;
+		longdouble pti, ptim1, ptim2 = 1.0,f2 = xscaled, d = 1.0;
+		result += p [2]. value * (ptim1 = xscaled);
 		for (integer ipar = 3; ipar <= p.size; ipar ++) {
-			const double f1 = d ++;
+			const longdouble f1 = d ++;
 			f2 += twox;
 			result += p [ipar]. value * (pti = (f2 * ptim1 - f1 * ptim2) / d);
 			ptim2 = ptim1;
 			ptim1 = pti;
 		}
 	}
-	return result;
+	return (double) result;
 }
 
-static void legendre_evaluateBasisFunctions (DataModeler me, double xin, VEC term) {
+static void legendre_evaluateBasisFunctions (DataModeler me, double x, VEC term) {
 	Melder_assert (term.size == my numberOfParameters);
 	term [1] = 1.0;
 	/*
 		transform x from domain [xmin, xmax] to domain [-1, 1]
 	*/
-	const double x = (2.0 * xin - my xmin - my xmax) / (my xmax - my xmin);
+	const longdouble xscaled = (2.0 * x - my xmin - my xmax) / (my xmax - my xmin);
 	if (my numberOfParameters > 1) {
-		const double twox = 2.0 * x;
-		double f2 = term [2] = x, d = 1.0;
+		const longdouble twox = 2.0 * xscaled;
+		longdouble f2 = term [2] = xscaled, d = 1.0;
 		for (integer ipar = 3; ipar <= my numberOfParameters; ipar ++) {
-			const double f1 = d ++;
+			const longdouble f1 = d ++;
 			f2 += twox;
-			term [ipar] = (f2 * term [ipar - 1] - f1 * term [ipar - 2]) / d;
+			term [ipar] = (double) ((f2 * term [ipar - 1] - f1 * term [ipar - 2]) / d);
 		}
 	}
 }
 
-static double sigmoid_plus_constant_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+static double sigmoid_plus_constant_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-		No need to translate because xin and p [3] are in the same domain. 
+		No need to translate because x and p [3] are in the same domain. 
 	*/
-	double result = p [1]. value;
+	longdouble result = p [1]. value;
 	if (p [2]. value != 0.0)
-		result += p [2]. value / (1.0 + exp (- (xin - p [3]. value) / p [4]. value));
-	return result;
+		result += p [2]. value / (1.0 + exp (- (x - p [3]. value) / p [4]. value));
+	return (double) result;
 }
 
-static double sigmoid_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+static double sigmoid_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
-		No need to translate because xin and p [3] are in the same domain.
+		No need to translate because x and p [3] are in the same domain.
 	*/
-	const double result = p [1]. value / (1.0 + exp (- (xin - p [2]. value) / p [3]. value));
+	const double result = p [1]. value / (1.0 + exp (- (x - p [2]. value) / p [3]. value));
 	return result;
 }
 
-static double exponential_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+static double exponential_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size == my numberOfParameters);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	*/
-	const double x = xin - 0.5 * (my xmin + my xmax);
-	return p [1]. value * exp (p [2]. value * x);
+	const double xscaled = x - 0.5 * (my xmin + my xmax);
+	return p [1]. value * exp (p [2]. value * xscaled);
 }
 
-static double exponential_plus_constant_evaluate (DataModeler me, double xin, vector<structDataModelerParameter> p) {
+static double exponential_plus_constant_evaluate (DataModeler me, double x, vector<structDataModelerParameter> p) {
 	Melder_assert (p.size >= 3);
 	/*
 		From domain [xmin, xmax] to domain [-(xmax -xmin)/2, (xmax-xmin)/2]
 	*/
-	const double x = xin - 0.5 * (my xmin + my xmax);
-	return p [1]. value + p [2]. value * exp (p [3]. value * x);
+	const double xscaled = x - 0.5 * (my xmin + my xmax);
+	return p [1]. value + p [2]. value * exp (p [3]. value * xscaled);
 }
 
-static void dummy_evaluateBasisFunctions (DataModeler /* me */, double /* xin */, VEC term) {
+static void dummy_evaluateBasisFunctions (DataModeler /* me */, double /* x */, VEC term) {
 	term  <<=  undefined;
 }
 
@@ -1439,6 +1441,8 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, & ymin, & ymax);
 	Graphics_setInner (g);
+	if (numberOfParameters == 0)
+		numberOfParameters = my numberOfParameters;
 	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax,
 		estimated, numberOfParameters, errorbars, barWidth_mm);
 	Graphics_unsetInner (g);

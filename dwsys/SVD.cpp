@@ -355,7 +355,9 @@ double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom) {
 	if (effectiveDegreesOfFreedom >= rank)
 		return 0.0;
 	if (effectiveDegreesOfFreedom <= 0.0)
-		return 1.0e38; // infinity or a very big number 
+		return 1.0e38; // infinity or a very big number
+	if (my isTransposed)
+		return undefined;
 	const double eps = 1e-6; // a little bit ad hoc number.
 	double lambda = (my numberOfColumns - effectiveDegreesOfFreedom) / effectiveDegreesOfFreedom;
 	double diff = 1.0e38;
