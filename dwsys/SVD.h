@@ -107,6 +107,7 @@ integer SVD_getRank (SVD me);
 double SVD_getEffectiveDegreesOfFreedom (SVD me, double shrinkageParameter);
 double SVD_getShrinkageParameter (SVD me, double effectiveDegreesOfFreedom);
 /*
+	For ridge regression:
 	The effective degrees of freedom df(lambda) is defined as:
 		df(lambda) = sum (i=1, p, d[i]^2 / (d[i]^2 + lambda)),
 	where d[i] are the singular values and p is the number of singular values.
