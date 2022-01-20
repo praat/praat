@@ -103,7 +103,11 @@ extern const char * ipaSerifRegularPS [];
 			ipaInited = true;
 			if (! charisAvailable && ! doulosAvailable) {
 				/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
-				Melder_warning (U"The phonetic font is not available.\nSeveral characters may not look correct.\nSee www.praat.org");
+				Melder_warning (U"The phonetic font is not available.\n"
+					"Several characters may not look correct.\n"
+					"You can download phonetics fonts via www.praat.org "
+					"(go to the download page for Windows)."
+				);
 			}
 		}
 		wcscpy (spec. lfFaceName,
