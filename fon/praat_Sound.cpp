@@ -2002,13 +2002,6 @@ DIRECT (HELP__FilteringTutorial) {
 
 /***** file recognizers *****/
 
-static autoDaata macSoundOrEmptyFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
-	/***** No data in file? This may be a Macintosh sound file with only a resource fork. *****/
-	if (nread > 0)
-		return autoDaata ();
-	Melder_throw (U"File ", file, U" contains no audio data.");   // !!!
-}
-
 static autoDaata soundFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 16)
 		return autoDaata ();
@@ -2107,7 +2100,6 @@ static int publishPlayedProc () {
 void praat_Sound_init () {
 	Thing_recognizeClassesByName (classSound, classLongSound, classSoundList, classSoundSet, nullptr);
 
-	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);
 	Data_recognizeFileType (movieFileRecognizer);
 	Data_recognizeFileType (sesamFileRecognizer);

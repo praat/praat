@@ -3066,6 +3066,93 @@ CODE (U"The GNU General Public License does not permit incorporating your progra
 	"<https://www.gnu.org/licenses/why-not-lgpl.html>.")
 MAN_END
 
+MAN_BEGIN (U"Privacy and security", U"ppgb", 20220115)
+INTRO (U"Praat is an \"isolated\" app. You download it from praat.org, "
+	"then record sounds into Praat (all in RAM) or open a sound file, "
+	"then analyse or manipulate that sound. The only way in which your results "
+	"are saved to disk (as e.g. a Pitch file, a TextGrid file, or a sound file), "
+	"is when you explicitly choose one of the #Save or #Export commands "
+	"from Praat’s menus; Praat will not by itself save any data files to disk "
+	"or send any information anywhere. When you create a picture in the Picture window, "
+	"the only way to move that picture anywhere else is if you save it explicitly "
+	"to a picture file (e.g. PNG) or if you Copy–Paste it to e.g. a text editing "
+	"app such as e.g. Microsoft Word; Praat will not by itself save any picture to disk "
+	"or to the clipboard or send any information anywhere. "
+	"Praat will run just fine on your computer if it does not have Internet access, "
+	"and in fact Praat cannot even notice whether you are in a network or not. "
+	"Praat works entirely stand-alone.")
+ENTRY (U"Praat does not call home")
+NORMAL (U"When you are using Praat, you can be assured that Praat does not attempt to send any of your data "
+	"or pictures or settings to the Praat team. "
+	"In fact, Praat never accesses the Internet, not even to @@checking for updates|check for updates@.")
+ENTRY (U"No telemetry")
+NORMAL (U"Praat does no telemetry, i.e. it does not send us anything while you are using Praat:")
+LIST_ITEM (U"\\bu No surveillance")
+LIST_ITEM (U"\\bu No tracking")
+LIST_ITEM (U"\\bu No Google Analytics")
+LIST_ITEM (U"\\bu In general, no spying or data mining by the Praat team")
+ENTRY (U"What does Praat save to disk without asking you?")
+NORMAL (U"Praat will save your preferences to your own disk on your own computer, "
+	"in a folder of your own, when you close Praat. "
+	"This includes the settings in your Sound window (e.g. your last chosen Pitch range), "
+	"so that your Sound windows will look the same after you start Praat up again. "
+	"The goal of this is to provide a continuous user experience, and is what you probably expect, "
+	"because most apps that you use on your computer work this way.")
+ENTRY (U"What we do measure")
+NORMAL (U"Praat does no telemetry, i.e. it does not send us anything while you are using Praat. "
+	"We do receive some information, though, when %you contact %us. This happens when you download "
+	"a new Praat version for your computer. We log the Praat downloads, so that we can potentially count "
+	"how often which edition and which version of Praat is downloaded.")
+ENTRY (U"Wouldn’t telemetry be useful for the quality of Praat?")
+NORMAL (U"Companies that use telemetry tend to argue that gathering information on how their app is used "
+	"is useful for improving the quality of their app (by collecting error messages), "
+	"or to know which features are rarely used, so that those features can be removed.")
+NORMAL (U"We are skeptical. If we, as Praat developers, have made a programming error, "
+	"then we hope that an \"assertion\" will help solve the issue. "
+	"An assertion is a place in our code where Praat will crash if a certain assumption "
+	"is not met. A message window will pop up in Praat that says that Praat will crash, together "
+	"with the request to send some relevant information by email to us, the developers of Praat. "
+	"If you do send this crash information on to us (you can read it, as it is normal English without secrets), "
+	"we will then virtually always find out (sometimes with some more help from you, "
+	"such as the sound file or script that caused the crash) "
+	"what was wrong, and correct the mistake, so that our programming error (\"bug\") no longer occurs "
+	"in the next version of Praat. We will also build an automatable test that checks, for all future "
+	"versions of Praat, that the bug does not reappear. In this way, every Praat version tends to be more stable and correct "
+	"than the previous version. We believe that this practice minimizes the problems with Praat sufficiently, "
+	"and no automated reporting of error messages and crash messages is necessary.")
+NORMAL (U"As for the removal of obsolete features, we are just very conservative. "
+	"Typically, file types from the 1980s and 1990s can typically still be opened in the 2020s, "
+	"and old Praat scripts should continue to run for at least 15 years after we mark a language feature "
+	"as \"deprecated\" or \"obsolete\" (and removed it from the manual). "
+	"This has not prevented us from also being able to open file types invented in the 2020s "
+	"or to have a modern scripting language that supports vectors, matrices and string arrays.")
+ENTRY (U"Praat scripts and plug-ins")
+NORMAL (U"As with R scripts, Python scripts, and quite generally any kinds of scripts from any source, "
+	"you should consider Praat scripts written by others, such as plug-ins that you download, "
+	"as separate apps with their own privacy and security issues. Use a script or plug-in only "
+	"if you completely trust that script or plug-in and its creators.")
+MAN_END
+
+MAN_BEGIN (U"Checking for updates", U"ppgb", 20220115)
+INTRO (U"Updates for Praat are available from $$www.praat.org$.")
+NORMAL (U"Your current version is " stringize(PRAAT_VERSION_STR)
+	", from " stringize(PRAAT_MONTH) " " stringize(PRAAT_DAY) ", " stringize(PRAAT_YEAR) ". "
+	"Given that we tend to release new Praat versions once or twice a month, "
+	"you can probably guess whether it would be worth your while to have a look at $$www.praat.org$ "
+	"to see what is new, and perhaps download a new version.")
+NORMAL (U"Praat improves continually, and old features will almost always continue to work, "
+	"so there should never be a reason to continue to work with older versions.")
+MAN_END
+
+MAN_BEGIN (U"Reporting a problem", U"ppgb", 20220116)
+INTRO (U"Anything that you consider incorrect behaviour of Praat (a \"bug\") can be reported "
+	"to the authors by email ($$paul.boersma\\@ uva.nl$). "
+	"This includes any crashes.")
+NORMAL (U"Questions about how to use Praat for your specific cases "
+	"can be posed to the Praat User List ($$https://groups.io/g/Praat-Users-List$). "
+	"This includes any questions on why your self-written Praat script does something unexpected.")
+MAN_END
+
 MAN_BEGIN (U"Praat menu", U"ppgb", 20161227)
 INTRO (U"The first menu in the @@Object window@. "
 	"In macOS, this menu is in the main menu bar along the top of the screen.")
@@ -4398,12 +4485,6 @@ ENTRY (U"Purpose")
 NORMAL (U"You can give the selected object a new name.")
 ENTRY (U"Behaviour")
 NORMAL (U"If you type special symbols or spaces, the Object window will replace them with underscores.")
-MAN_END
-
-MAN_BEGIN (U"Resource fork", U"ppgb", 20030316)
-INTRO (U"One of the two %forks of a Macintosh file (the other is the %%data fork%). "
-	"If a Macintosh file is moved to another platform directly, the resource fork is lost. "
-	"To backup your Macintosh files, use compression, for instance with #DropStuff\\tm.")
 MAN_END
 
 MAN_BEGIN (U"Save menu", U"ppgb", 20211015)

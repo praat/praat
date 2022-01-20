@@ -189,9 +189,6 @@ and type one of the four following commands:
     # on Ubuntu command line
     cp makefiles/makefile.defs.linux.pulse ./makefile.defs
 
-    # on Ubuntu command line
-    cp makefiles/makefile.defs.linux.pulse_static ./makefile.defs
-
     # on Chromebook command line
     cp makefiles/makefile.defs.chrome64 ./makefile.defs
 
@@ -328,12 +325,6 @@ assuming that it uses the `bash` shell):
         make -j12 )"
     alias praat="~/praats/praat"
     alias praat-run="praat-build && praat"
-    alias praatt-build="( cd ~/praatst &&\
-        rsync -rptvz $PRAAT_SOURCES/ $PRAAT_EXCLUDES . &&\
-        cp makefiles/makefile.defs.linux.pulse_static makefile.defs &&\
-        make -j12 )"
-    alias praatt="~/praatst/praatt"
-    alias praatt-run="praatt-build && praatt"
 
 Building Praat this way takes 2 minutes and 10 seconds (optimization level O3).
 
@@ -544,7 +535,6 @@ On Ubuntu you can define
 
     # in Ubuntu:~/.bash_aliases
     alias praat-dist="praat-build && rsync -t ~/praats/praat /media/psf/Home/builds/linux64"
-    alias praatt-dist="praatt-build && rsync -t ~/praatst/praat_static /media/psf/Home/builds/linux64"
     alias praatb-dist="praatb-build && rsync -t ~/praatsb/praat_barren /media/psf/Home/builds/linux64"
     alias praatn-dist="praatn-build && rsync -t ~/praatsn/praat_nogui /media/psf/Home/builds/linux64"
     alias praatc-dist="praatc-build && rsync -t ~/praatsc/praat /media/psf/Home/builds/chrome64"
@@ -553,7 +543,6 @@ so that you can “upload” the five executables to the Mac with
 
     # on Ubuntu command line
     praat-dist
-    praatt-dist
     praatb-dist
     praatn-dist
     praatc-dist
@@ -574,10 +563,6 @@ you can issue the following commands to create the packages and install them in 
       tar cvf praat$(PRAAT_VERSION)_linux64.tar praat &&\
       gzip praat$(PRAAT_VERSION)_linux64.tar &&\
       mv praat$(PRAAT_VERSION)_linux64.tar.gz $PRAAT_WWW )
-    ( cd ~/builds/linux64 &&\
-      tar cvf praat$(PRAAT_VERSION)_linux64static.tar praat_static &&\
-      gzip praat$(PRAAT_VERSION)_linux64static.tar &&\
-      mv praat$(PRAAT_VERSION)_linux64static.tar.gz $PRAAT_WWW )
     ( cd ~/builds/linux64 &&\
       tar cvf praat$(PRAAT_VERSION)_linux64barren.tar praat_barren &&\
       gzip praat$(PRAAT_VERSION)_linux64barren.tar &&\
