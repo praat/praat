@@ -56,6 +56,7 @@
 #include "VocalTractTier.h"
 
 #include "praat_TimeFrameSampled.h"
+#include "praat_TimeTier.h"
 #include "praat_Matrix.h"
 
 #define praat_Quefrency_RANGE(fromQuefrency,toQuefrency) \
@@ -1404,9 +1405,6 @@ DO
 		autoLPC result = LPC_Sound_to_LPC_robust (me, you, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, locationVariable);
 	CONVERT_ONE_AND_ONE_TO_ONE_END (my name.get(), U"_r");
 }
-
-extern void praat_TimeTier_query_init (ClassInfo klas);
-extern void praat_TimeTier_modify_init (ClassInfo klas);
 
 static autoDaata HTKParameterFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 12 ) // HTK header is 12 bytes
