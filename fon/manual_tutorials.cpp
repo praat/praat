@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220105)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220120)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.06# (20 January 2022)")
+LIST_ITEM (U"• Mac: prevent Demo window from hanging on copy or paste.")
 NORMAL (U"##6.2.05# (5 January 2022)")
 LIST_ITEM (U"• Calling Praat from the command line: the switch $$--send$ sends a script "
 	"to a different already running GUI instance of Praat; this is more flexible than using %sendpraat, "
@@ -3066,7 +3068,7 @@ CODE (U"The GNU General Public License does not permit incorporating your progra
 	"<https://www.gnu.org/licenses/why-not-lgpl.html>.")
 MAN_END
 
-MAN_BEGIN (U"Privacy and security", U"ppgb", 20220115)
+MAN_BEGIN (U"Privacy and security", U"ppgb", 20220121)
 INTRO (U"Praat is an \"isolated\" app. You download it from praat.org, "
 	"then record sounds into Praat (all in RAM) or open a sound file, "
 	"then analyse or manipulate that sound. The only way in which your results "
@@ -3086,7 +3088,7 @@ NORMAL (U"When you are using Praat, you can be assured that Praat does not attem
 	"or pictures or settings to the Praat team. "
 	"In fact, Praat never accesses the Internet, not even to @@checking for updates|check for updates@.")
 ENTRY (U"No telemetry")
-NORMAL (U"Praat does no telemetry, i.e. it does not send us anything while you are using Praat:")
+NORMAL (U"Praat does no telemetry, i.e. it does not send anything to the Praat team while you are using Praat:")
 LIST_ITEM (U"\\bu No surveillance")
 LIST_ITEM (U"\\bu No tracking")
 LIST_ITEM (U"\\bu No Google Analytics")
@@ -3122,10 +3124,11 @@ NORMAL (U"We are skeptical. If we, as Praat developers, have made a programming 
 	"and no automated reporting of error messages and crash messages is necessary.")
 NORMAL (U"As for the removal of obsolete features, we are just very conservative. "
 	"Typically, file types from the 1980s and 1990s can typically still be opened in the 2020s, "
-	"and old Praat scripts should continue to run for at least 15 years after we mark a language feature "
+	"and old Praat scripts should continue to run for at least 15 years after we marked a language feature "
 	"as \"deprecated\" or \"obsolete\" (and removed it from the manual). "
 	"This has not prevented us from also being able to open file types invented in the 2020s "
-	"or to have a modern scripting language that supports vectors, matrices and string arrays.")
+	"or to have a modern scripting language that supports vectors, matrices and string arrays, "
+	"and backward compatibility hardly hampers the continual modernization of Praat.")
 ENTRY (U"Praat scripts and plug-ins")
 NORMAL (U"As with R scripts, Python scripts, and quite generally any kinds of scripts from any source, "
 	"you should consider Praat scripts written by others, such as plug-ins that you download, "
@@ -3133,7 +3136,7 @@ NORMAL (U"As with R scripts, Python scripts, and quite generally any kinds of sc
 	"if you completely trust that script or plug-in and its creators.")
 MAN_END
 
-MAN_BEGIN (U"Checking for updates", U"ppgb", 20220115)
+MAN_BEGIN (U"Checking for updates", U"ppgb", 20220121)
 INTRO (U"Updates for Praat are available from $$www.praat.org$.")
 NORMAL (U"Your current version is " stringize(PRAAT_VERSION_STR)
 	", from " stringize(PRAAT_MONTH) " " stringize(PRAAT_DAY) ", " stringize(PRAAT_YEAR) ". "
@@ -3142,6 +3145,16 @@ NORMAL (U"Your current version is " stringize(PRAAT_VERSION_STR)
 	"to see what is new, and perhaps download a new version.")
 NORMAL (U"Praat improves continually, and old features will almost always continue to work, "
 	"so there should never be a reason to continue to work with older versions.")
+ENTRY (U"Why no automatic update checking?")
+NORMAL (U"Many apps automatically check for updates when you start them up. "
+	"This means that the owners of such an app are capable of recording which users use their app when, "
+	"which is information that can potentially harm your privacy, for instance when a government "
+	"or legal investigation demands that the app owners provide them with access to such information. "
+	"The Praat team wants to stay far away from the possibility of such situations occurring, "
+	"even if you may be convinced that usage of the Praat program cannot be regarded by anybody "
+	"as being anything other than perfectly innocent. For this resason, the Praat program "
+	"will never contact the Praat team and, more generally, "
+	"will never attempt to access the Internet by itself. For more information, see @@Privacy and security@.")
 MAN_END
 
 MAN_BEGIN (U"Reporting a problem", U"ppgb", 20220116)

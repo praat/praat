@@ -2140,7 +2140,7 @@ void VECrc_from_lpc (VEC rc, constVEC lpc) {
 	}
 }
 
-void VEClpc_from_rc (VEC lpc, constVEC rc) {
+static void VEClpc_from_rc (VEC lpc, constVEC rc) {
 	Melder_assert (lpc.size == rc.size);
 	lpc  <<=  rc;
 	for (integer j = 2; j <= lpc.size; j ++) {
