@@ -552,7 +552,7 @@ inline autoVEC newVECsolveNonnegativeLeastSquaresRegression (constMATVU const& a
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC y, double *out_alpha, double *out_gamma);
+void NUMsolveConstrainedLSQuadraticRegression (constMAT const& x, constVEC const& y, double *out_alpha, double *out_gamma);
 /*
 	Solve y [i] = alpha + beta * x [i] + gamma * x [i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
