@@ -689,7 +689,7 @@ DIRECT (PRAAT__copy) {
 }
 DIRECT (PRAAT__paste) {
 	PRAAT
-		trace (U"Pasting to app.")
+		trace (U"Pasting to app.");
 		NSWindow *window = [NSApp keyWindow];
 		NSResponder *firstResponder = [window firstResponder];
 		if ([firstResponder isKindOfClass: [NSTextView class]])
