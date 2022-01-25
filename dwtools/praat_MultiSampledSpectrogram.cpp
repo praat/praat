@@ -1,6 +1,6 @@
 /* praat_MultiSampledSpectrogram.cpp
  *
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,12 @@
 DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity) {
 	CONVERT_EACH_TO_ONE (AnalyticSound)
 		autoIntensity result = AnalyticSound_to_Intensity (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
+DIRECT (CONVERT_EACH_TO_ONE__AnalyticSound_toSound) {
+	CONVERT_EACH_TO_ONE (AnalyticSound)
+		autoSound result = AnalyticSound_to_Sound (me);
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
@@ -164,6 +170,8 @@ void praat_MultiSampledSpectrogram_init () {
 
 	praat_addAction1 (classAnalyticSound, 0, U"To Intensity", nullptr, 0, 
 			CONVERT_EACH_TO_ONE__AnalyticSound_toIntensity);
+	praat_addAction1 (classAnalyticSound, 0, U"To Sound", nullptr, 0, 
+			CONVERT_EACH_TO_ONE__AnalyticSound_toSound);
 	
 	praat_addAction1 (classConstantQLog2FSpectrogram, 0, U"Paint...", nullptr, 0, 
 			GRAPHICS_EACH__ConstantQLog2FSpectrogram_paint);
