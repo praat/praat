@@ -112,6 +112,7 @@
 #include "Roots_to_Spectrum.h"
 #include "Sound_and_Spectrum_dft.h"
 #include "Sound_extensions.h"
+#include "Sound_and_TextGrid_extensions.h"
 #include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"
 #include "Spectrogram.h"
@@ -5751,6 +5752,16 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get())
 }
 
+FORM (CONVERT_EACH_TO_ONE__Sound_to_TextGrid_highMidLowIntervals, U"Sound: To TextGrid (high, mid, low)", nullptr) {
+	REAL (maxLevel, U"Maximum level", U"0.5")
+	REAL (minLevel, U"Minimum level", U"-0.5")
+	OK
+DO
+	CONVERT_EACH_TO_ONE (Sound)
+		autoTextGrid result = Sound_to_TextGrid_highMidLowIntervals (me, minLevel, maxLevel);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (CONVERT_EACH_TO_ONE__Sound_copyChannelRanges, U"Sound: Copy channel ranges", nullptr) {
 	NATURALVECTOR (channels, U"Create a new Sound from the following channels", RANGES_, U"1:64")
 	OK
@@ -10072,6 +10083,8 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences);
 	praat_addAction1 (classSound, 0, U"To TextGrid (voice activity)...", U"To IntervalTier", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_voiceActivity);
+	praat_addAction1 (classSound, 0, U"To TextGrid (high, mid, low)...", U"To IntervalTier", 1,
+			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_highMidLowIntervals);
     praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", praat_HIDDEN, 
 			PLAY_EACH__Sound_playOneChannel);
     praat_addAction1 (classSound, 0, U"Play as frequency shifted...", U"Play", praat_HIDDEN, 
