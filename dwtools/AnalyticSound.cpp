@@ -1,6 +1,6 @@
 /* AnalyticSound.cpp
  *
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,17 @@ autoAnalyticSound Sound_to_AnalyticSound (Sound me) {
 		autoSound sound90 = Spectrum_to_Sound (spectrum.get());
 		thy z.row (1)  <<=  my z.row (1);
 		thy z.row (2)  <<=  sound90 -> z.row (1).part (1, my nx);
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create AnalyticSound.");
+	}
+}
+
+autoSound AnalyticSound_to_Sound (AnalyticSound me) {
+	try {
+		auto thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
+		thy z.row (1)  <<=  my z.row (1);
+		thy z.row (2)  <<=  my z.row (2);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create AnalyticSound.");

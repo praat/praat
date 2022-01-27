@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2021 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2022 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrogram.h"
+#include "Sound_and_TextGrid_extensions.h"
 #include "Spectrogram_extensions.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
@@ -1318,7 +1319,7 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 }
 
 
-static double interpolate (Sound me, integer i1, integer channel, double level)
+static double interpolate2 (Sound me, integer i1, integer channel, double level)
 /* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
 {
 	const integer i2 = i1 + 1;
@@ -1333,13 +1334,20 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (leftSample > my nx)
 		return undefined;
 	const integer rightSample = leftSample + 1;
+	
+	auto interpolate = [&] (integer i1) -> double {
+		const integer i2 = i1 + 1;
+		const double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
+		const double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
+		return x1 + (x2 - x1) * (y1 - level) / (y1 - y2);   // linear interpolation, y1 <> y2
+	};
 	/*
 		Are we already at a level crossing?
 	*/
 	if (leftSample >= 1 && rightSample <= my nx &&
 			(amplitude [leftSample] >= level) != (amplitude [rightSample] >= level)) 
 	{
-		const double crossing = interpolate (me, leftSample, channel, level);
+		const double crossing = interpolate (leftSample);
 		return searchDirection == kSoundSearchDirection::LEFT ?
 			( crossing <= position ? crossing : undefined ) :
 			( crossing >= position ? crossing : undefined );
@@ -1349,7 +1357,7 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (searchDirection == kSoundSearchDirection::LEFT || searchDirection == kSoundSearchDirection::NEAREST) {
 		for (integer ileft = leftSample - 1; ileft >= 1; ileft --)
 			if ((amplitude [ileft] >= level) != (amplitude [ileft + 1] >= level)) {
-				leftCrossing = interpolate (me, ileft, channel, level);
+				leftCrossing = interpolate (ileft);
 				break;
 			}
 		if (searchDirection == kSoundSearchDirection::LEFT)
@@ -1362,7 +1370,7 @@ double Sound_getNearestLevelCrossing (Sound me, integer channel, double position
 	if (searchDirection == kSoundSearchDirection::RIGHT || searchDirection == kSoundSearchDirection::NEAREST) {
 		for (integer iright = rightSample + 1; iright <= my nx; iright ++)
 			if ((amplitude [iright] >= level) != (amplitude [iright - 1] >= level)) {
-				rightCrossing = interpolate (me, iright - 1, channel, level);
+				rightCrossing = interpolate (iright - 1);
 				break;
 			}
 		if (searchDirection == kSoundSearchDirection::RIGHT)
@@ -1718,20 +1726,6 @@ autoTextGrid Sound_to_TextGrid_detectVoiceActivity_lsfm (Sound me, double timeSt
 	}
 }
 
-autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	conststring32 silentLabel, conststring32 soundingLabel) {
-	try {
-		const bool subtractMeanPressure = true;
-		autoSound filtered = Sound_filter_passHannBand (me, 80.0, 8000.0, 80.0);
-		autoIntensity thee = Sound_to_Intensity (filtered.get(), minPitch, timeStep, subtractMeanPressure);
-		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.get(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
-		return him;
-	} catch (MelderError) {
-		Melder_throw (me, U": no TextGrid with silences created.");
-	}
-}
-
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *out_t1, double *out_t2) {
 	try {
 		const conststring32 silentLabel = U"-", soundingLabel = U"+";
@@ -1753,54 +1747,6 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 	} catch (MelderError) {
 		Melder_throw (U"Sounding times not found.");
 	}
-}
-
-autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, conststring32 match) {
-    try {
-		/*
-			Count samples of the trimmed sound
-		*/
-        integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
-		double xmin = my xmin; // start time of output sound is start time of input sound
-        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
-            TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text.get(), match)) {
-                numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
-				/*
-					If two contiguous intervals have to be copied then the last sample of previous interval
-					and first sample of current interval might sometimes be equal
-				*/
-				if (ixmin == previous_ixmax)
-					-- numberOfSamples;
-				previous_ixmax = ixmax;
-			} else { // matches label
-				if (iint == 1) // Start time of output sound is end time of first interval
-					xmin = interval -> xmax;
-            }
-        }
-        /*
-			Now copy the parts. The output sound starts at xmin
-		*/
-        autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
-        numberOfSamples = 0;
-		previous_ixmax = 0;
-        for (integer iint = 1; iint <= thy intervals.size; iint ++) {
-            const TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text.get(), match)) {
-                Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
-				if (ixmin == previous_ixmax)
-					ixmin ++;
-				previous_ixmax = ixmax;
-				integer numberOfSamplesToCopy = ixmax - ixmin + 1;
-				his z.part (1, my ny, numberOfSamples + 1, numberOfSamples + numberOfSamplesToCopy)  <<=  my z.part (1, my ny, ixmin, ixmax);
-                numberOfSamples += numberOfSamplesToCopy;
-            }
-        }
-        Melder_assert (numberOfSamples == his nx);
-        return him;
-    } catch (MelderError) {
-        Melder_throw (me, U": intervals not trimmed.");
-    }
 }
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, conststring32 trimLabel) {
@@ -2066,7 +2012,7 @@ static void Sound_fadeIn_general (Sound me, int channel, double time, double fad
 		std::swap (startTime, endTime);
 	
 	Melder_require (startTime < my xmax,
-		U"The start time for fade-in should earlier than the end time of the sound.");
+		U"Fade-in should start before the end time of the sound.");
 	
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
 	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
@@ -2098,7 +2044,7 @@ static void Sound_fadeOut_general (Sound me, int channel, double time, double fa
 		std::swap (startTime, endTime);
 	
 	Melder_require (endTime > my xmin,
-		U"The end time for fade-out should not be earlier than the start time of the sound."); 
+		U"Fade-out should end after the start time of the sound."); 
 	
 	const integer numberOfSamplesFade = Melder_ifloor (fabs (fadeTime) / my dx);
 	autoVEC fadeWindow = raw_VEC (numberOfSamplesFade);
