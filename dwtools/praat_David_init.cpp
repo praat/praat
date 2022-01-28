@@ -10083,7 +10083,7 @@ void praat_David_init () {
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_detectSilences);
 	praat_addAction1 (classSound, 0, U"To TextGrid (voice activity)...", U"To IntervalTier", 1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_voiceActivity);
-	praat_addAction1 (classSound, 0, U"To TextGrid (high, mid, low)...", U"To IntervalTier", 1,
+	praat_addAction1 (classSound, 0, U"To TextGrid (high, mid, low)...", U"To IntervalTier", praat_HIDDEN + praat_DEPTH_1,
 			CONVERT_EACH_TO_ONE__Sound_to_TextGrid_highMidLowIntervals);
     praat_addAction1 (classSound, 0, U"Play one channel...", U"Play", praat_HIDDEN, 
 			PLAY_EACH__Sound_playOneChannel);
