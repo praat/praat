@@ -1718,7 +1718,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	}
 	if (anchorIsInWideSoundOrAnalysisPart)
 		return our TextGridEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
-	Melder_assert (anchorIsInWideTextGridPart);
+	if (! anchorIsInWideTextGridPart)
+		Melder_throw (U"Unexpected order of events: drag or drop without preceding click (\"anchor is not in wide TextGrid part\").");
 	const integer mouseTier = _TextGridEditor_yWCtoTier (this, yWC);
 
 	our draggingTime = undefined;   // information to next expose event

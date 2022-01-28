@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220120)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220128)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.07# (28 January 2022)")
+LIST_ITEM (U"• Prevented a rare crash in the TextGrid window.")
+LIST_ITEM (U"• Windows: corrected a bug introduced 6.2.04 by which some file names were unreadable.")
 NORMAL (U"##6.2.06# (20 January 2022)")
 LIST_ITEM (U"• Mac: prevent Demo window from hanging on copy or paste.")
 NORMAL (U"##6.2.05# (5 January 2022)")
@@ -31,7 +34,6 @@ LIST_ITEM (U"• Calling Praat from the command line: the switch $$--send$ sends
 	"to a different already running GUI instance of Praat; this is more flexible than using %sendpraat, "
 	"because $$--send$ will start a new instance of Praat if Praat is not yet running.")
 NORMAL (U"##6.2.04# (18 December 2021)")
-LIST_ITEM (U"• TextGrid window on Mac: fix entering Japanese text with the Enter key.")
 LIST_ITEM (U"• Praat now includes eSpeak 1.51, raising the number of supported languages from 100 to 130.")
 LIST_ITEM (U"• Scripting: support for $$infile$, $$outfile$ and $folder fields in forms.")
 LIST_ITEM (U"• Calling Praat from the command line: the switch $$--open$ now adds files to an already running instance of Praat; "
