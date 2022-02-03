@@ -1,6 +1,6 @@
 /* MultiSampledSpectrogram.cpp
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,39 +200,23 @@ integer MultiSampledSpectrogram_getNumberOfFrames (MultiSampledSpectrogram me) {
 	return numberOfFrames;
 }
 
-void MultiSampledSpectrogram_checkFrequencyRange (MultiSampledSpectrogram me, double *fmin, double *fmax) {
-	if (*fmax <= *fmin) {
-		*fmin = my v_myFrequencyUnitToHertz (my xmin);
-		*fmax = my v_myFrequencyUnitToHertz (my xmax);
-		return;
-	}
-	/*
-		fmin <= 0 is a problem for log-based scales. In this case we take the xmin value as the minimum.
-	*/
-	if (*fmin <= 0.0 && ! isdefined (my v_hertzToMyFrequencyUnit (*fmin))) {
-		if (*fmax <= my v_myFrequencyUnitToHertz (my xmin))
-			*fmin = 0.99 * *fmax; // some positive value will do
-		else
-			*fmin = my v_myFrequencyUnitToHertz (my xmin);
-	}
-}
-
 void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange) {
 	integer itmin, itmax, ifmin, ifmax;
 	if (tmax <= tmin) {
 		tmin = my tmin;
 		tmax = my tmax;
 	}
-	MultiSampledSpectrogram_checkFrequencyRange (me, & fmin, & fmax);
-	fmin = my v_hertzToMyFrequencyUnit (fmin);
-	fmax = my v_hertzToMyFrequencyUnit (fmax);
+	if (fmax <= fmin) {
+		fmax = my xmax;
+		fmin = my xmin;
+	}
 	if (Sampled_getWindowSamples (me, fmin, fmax, & ifmin, & ifmax) == 0)
 		return;
-	const integer maximumNumberOfFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & itmin, & itmax);
-	if (maximumNumberOfFrames == 0)
+	const integer maximumNumberOfTimeFrames = Sampled_getWindowSamples (my frequencyBins.at [ifmax], tmin, tmax, & itmin, & itmax);
+	if (maximumNumberOfTimeFrames == 0)
 		return;	
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	autoMAT p = raw_MAT (1, maximumNumberOfFrames);	
+	autoMAT p = raw_MAT (1, maximumNumberOfTimeFrames);	
 	/*
 		Find maximum power. No need for logarithm in the test
 	*/
@@ -273,6 +257,5 @@ void MultiSampledSpectrogram_paintInside (MultiSampledSpectrogram me, Graphics g
 		Graphics_image (g, p.get(), tmin_bin, tmax_bin, ymin, ymax, minimum, maximum);
 	}
 }
-
 
 /* End of file  MultiSampledSpectrogram.cpp */
