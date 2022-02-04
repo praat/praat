@@ -1,6 +1,6 @@
 /* ConstantQLog2FSpectrogram.cpp
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +43,14 @@ double structConstantQLog2FSpectrogram :: v_hertzToMyFrequencyUnit (double f_hz)
 
 autoConstantQLog2FSpectrogram ConstantQLog2FSpectrogram_create (double tmin, double tmax, double f1, double fmax, integer numberOfBinsPerOctave, double frequencyResolutionInBins) {
 	try {
-		const double dy = 1.0 / numberOfBinsPerOctave;
+		autoConstantQLog2FSpectrogram me = Thing_new (ConstantQLog2FSpectrogram);
+		const double log2_dy = 1.0 / numberOfBinsPerOctave;
 		const integer numberOfBins = Melder_iroundDown (log2 (fmax / f1) * numberOfBinsPerOctave);
 		Melder_require (numberOfBins > 1,
 			U"The number of bins should be larger than 1.");
-		const double log2_f1 = log2 (f1);
-		const double ymin = log2_f1 - 0.5 * dy, ymax = log2 (fmax);		
-		autoConstantQLog2FSpectrogram me = Thing_new (ConstantQLog2FSpectrogram);
-		MultiSampledSpectrogram_init (me.get(), tmin, tmax, ymin, ymax, numberOfBins, dy, log2_f1, frequencyResolutionInBins);
+		const double log2_ymin = log2 (f1);
+		const double log2_f1 = log2_ymin + 0.5 * log2_dy, log2_ymax = log2 (fmax);		
+		MultiSampledSpectrogram_init (me.get(), tmin, tmax, log2_ymin, log2_ymax, numberOfBins, log2_dy, log2_f1, frequencyResolutionInBins);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Could not create ConstantQLog2FSpectrogram.");
@@ -64,17 +64,26 @@ double ConstantQLog2FSpectrogram_getQualityFactor (ConstantQLog2FSpectrogram me)
 
 static void MultiSampledSpectrogram_setFrequencyTicks (MultiSampledSpectrogram me, Graphics g, double fmin, double fmax, double df) {
 	double f = fmin;
-	while (f <= my v_myFrequencyUnitToHertz (fmax) ) {
-		if (f >= fmin) {
-			const double f_hz = my v_myFrequencyUnitToHertz (f);
-			conststring32 f_string = Melder_fixed (f_hz, 1);
-			Graphics_markLeft (g, f, false, true, false, f_string);
-		}
+	while (f <= fmax) {
+		const double f_hz = my v_myFrequencyUnitToHertz (f);
+		conststring32 f_string = Melder_fixed (f_hz, 1);
+		Graphics_markLeft (g, f, false, true, false, f_string);
 		f += df;
 	}
 }
-void ConstantQLog2FSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+
+void ConstantQLog2FSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin_hz, double fmax_hz, double dBRange, bool garnish) {
 	Graphics_setInner (g);
+	double fmin, fmax;	
+	if (fmin_hz == 0.0 && fmax_hz == 0.0) {
+		fmin = my xmin;
+		fmax = my xmax;
+	} else {
+		fmin = ( fmin_hz > 0.0 ? my v_hertzToMyFrequencyUnit (fmin_hz) : my xmin );
+		fmax = ( fmax_hz > 0.0 ? my v_hertzToMyFrequencyUnit (fmax_hz) : my xmin );
+	}
+	if (! Function_intersectRangeWithDomain (me, & fmin, & fmax))
+		return;
 	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -129,7 +138,10 @@ void structGaborSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"Frequency resolution in bins: ", frequencyResolutionInBins);
 }
 
-void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+void GaborSpectrogram_paint (GaborSpectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax, double dBRange, bool garnish) {
+	Function_bidirectionalAutowindow (me, & fmin, & fmax);
+	if (! Function_intersectRangeWithDomain (me, & fmin, & fmax))
+		return;
 	Graphics_setInner (g);
 	MultiSampledSpectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, dBRange);
 	Graphics_unsetInner (g);
@@ -138,7 +150,7 @@ void GaborSpectrogram_paint (ConstantQLog2FSpectrogram me, Graphics g, double tm
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_inqWindow (g, & tmin, & tmax, & fmin, & fmax);
-		MultiSampledSpectrogram_setFrequencyTicks (me, g, fmin, fmax, 1000.0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		Graphics_textLeft (g, true, U"Frequency (Hz)");
 	}
 }
