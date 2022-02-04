@@ -131,7 +131,7 @@ FORM (GRAPHICS_EACH__GaborSpectrogram_paint, U"GaborSpectrogram: Paint", nullptr
 	BOOLEAN (garnish, U"Garnish", true);
 	OK
 DO
-	GRAPHICS_EACH (ConstantQLog2FSpectrogram)
+	GRAPHICS_EACH (GaborSpectrogram)
 		GaborSpectrogram_paint (me, GRAPHICS, xmin, xmax, ymin, ymax, dBRange, garnish);
 	GRAPHICS_EACH_END
 }

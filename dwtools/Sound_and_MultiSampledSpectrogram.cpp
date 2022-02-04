@@ -1,6 +1,6 @@
 /* Sound_and_MultiSampledSpectrogram.cpp
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ autoConstantQLog2FSpectrogram Sound_to_ConstantQLog2FSpectrogram (Sound me, doub
 	kSound_windowShape filterShape) {
 	try {
 		const double nyquistFrequency = 0.5 / my dx;
-		if (fmax <= 0.0)
+		if (fmax <= 0.0 || fmax > nyquistFrequency)
 			fmax = nyquistFrequency;
-		Melder_require (fmax  <= nyquistFrequency,
-			U"The maximum frequency should not exceed the nyquist frequency (", nyquistFrequency, U" Hz).");
 		Melder_require (lowestFrequency < fmax,
 			U"The lowest frequency should be smaller than the maximum frequency (", fmax, U" Hz).");
+		Melder_require (frequencyResolutionInBins > 0.0,
+			U"The frequency resolution should be larger than zero.");
 		Melder_clipLeft (1.0, & timeOversamplingFactor);
 		autoConstantQLog2FSpectrogram thee = ConstantQLog2FSpectrogram_create (my xmin, my xmax,
 			lowestFrequency, fmax, numberOfBinsPerOctave, frequencyResolutionInBins);
@@ -49,12 +49,11 @@ autoGaborSpectrogram Sound_to_GaborSpectrogram (Sound me, double fmax, double fi
 {
 	try {
 		const double nyquistFrequency = 0.5 / my dx;
-		if (fmax <= 0.0)
+		if (fmax <= 0.0 || fmax > nyquistFrequency)
 			fmax = nyquistFrequency;
-		Melder_require (fmax  <= nyquistFrequency,
-			U"The maximum frequency should not exceed the nyquist frequency (", nyquistFrequency, U" Hz).");
 		autoGaborSpectrogram thee = GaborSpectrogram_create (my xmin, my xmax, fmax, filterBandwidth, frequencyStep);
-		autoSpectrum him = Sound_and_MultiSampledSpectrogram_to_Spectrum (me, thee.get());
+		autoSound resampled = Sound_resample (me, 2.0 * fmax, 50);
+		autoSpectrum him = Sound_to_Spectrum (resampled.get(), true);
 		Spectrum_into_MultiSampledSpectrogram (him.get(), thee.get(), timeOversamplingFactor, filterShape);
 		return thee;
 	} catch (MelderError) {

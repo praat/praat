@@ -1,6 +1,6 @@
 /* Spectrum_and_MultiSampledSpectrogram.cpp
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +40,12 @@ static void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape 
 		} break; case kSound_windowShape::HANNING: {
 			for (integer i = 1; i <= n; i ++) {
 				const double phase = (double) (i - 0.5) / n;
-				target [i] = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
+				target [i] = 0.5 * (1.0 - cos (NUM2pi * phase));
 			}
 		} break; case kSound_windowShape::HAMMING: {
 			for (integer i = 1; i <= n; i ++) { 
 				const double phase = (double) (i - 0.5) / n;
-				target [i] = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
+				target [i] = 0.54 - 0.46 * cos (NUM2pi * phase);
 			}
 		} break; case kSound_windowShape::GAUSSIAN_1: {
 			const double edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
@@ -78,18 +78,18 @@ static void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape 
 				target [i] = (exp (-300.0 * phase * phase) - edge) * onebyedge1;
 			}
 		} break; case kSound_windowShape::KAISER_1: {
-			const double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi);
+			const double factor = 1.0 / NUMbessel_i0_f (NUM2pi);
 			for (integer i = 1; i <= n; i ++) { 
 				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 				const double root = 1.0 - phase * phase;
-				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root)) );
+				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (NUM2pi * sqrt (root)) );
 			}
 		} break; case kSound_windowShape::KAISER_2: {
-			const double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
+			const double factor = 1.0 / NUMbessel_i0_f (NUM2pi * NUMpi + 0.5);
 			for (integer i = 1; i <= n; i ++) { 
 				const double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 				const double root = 1.0 - phase * phase;
-				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root)) ); 
+				target [i] = ( root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((NUM2pi * NUMpi + 0.5) * sqrt (root)) ); 
 			}
 		} break; default: {
 			target  <<=  1.0;
@@ -122,6 +122,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 	kSound_windowShape filterShape) 
 {
 	try {
+		enum frequencyBinPosition { DC_BIN, NORMAL_BIN, NYQUIST_BIN };
 		const integer maximumFilterSize = 2 * my nx;
 		autoVEC filterWindow = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
@@ -139,7 +140,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			MultiSampledSpectrogram_getFrequencyBand (thee, ifreq, & spectrum_fmin, & spectrum_fmax);
 			double window_fmin = spectrum_fmin, window_fmax = spectrum_fmax;
 			
-			auto toFrequencyBin = [&] (int partOfSpectrum) -> autoFrequencyBin {
+			auto toFrequencyBin = [&] (enum frequencyBinPosition partOfSpectrum) -> autoFrequencyBin {
 				integer window_imin = 0, window_imax = 0;
 				integer spectrum_imin, spectrum_imax;
 				const integer numberOfSamplesFromSpectrum = Sampled_getWindowSamples (me, spectrum_fmin, spectrum_fmax, 
@@ -162,8 +163,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 					& window_imin, & window_imax);
 				const integer filter_imin = window_imin - spectrum_imin + 1;
 				const integer filter_imax = window_imax - spectrum_imin + 1;
-				window_imax = ( partOfSpectrum == 1 ? filterWindow.size : 
-					( partOfSpectrum == 2 ? window_imax_previous : numberToBeWindowed ) );
+				window_imax = ( partOfSpectrum == NORMAL_BIN ? filterWindow.size : 
+					( partOfSpectrum == DC_BIN ? window_imax_previous : numberToBeWindowed ) );
 				window_imin = window_imax - numberToBeWindowed + 1;
 				window_imax_previous = window_imax;
 				filter -> z.part (1, 2, filter_imin, filter_imax)  *=  
@@ -172,7 +173,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				return result;
 			};
 			
-			thy frequencyBins.addItem_move (toFrequencyBin (1).move());
+			thy frequencyBins.addItem_move (toFrequencyBin (NORMAL_BIN).move());
 			if (ifreq == 1) {
 				/*
 					Fill with values from 0 Hz to the mid of the first window
@@ -181,7 +182,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				spectrum_fmax = 0.5 * (spectrum_fmin + spectrum_fmax);
 				spectrum_fmin = 0.0;
 				window_fmax = spectrum_fmax;
-				thy zeroBin = toFrequencyBin (2).move();
+				thy zeroBin = toFrequencyBin (DC_BIN).move();
 			}
 			if (ifreq == thy nx) {
 				/*
@@ -191,7 +192,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				spectrum_fmin = 0.5 * (spectrum_fmin + spectrum_fmax);
 				window_fmin = spectrum_fmin;
 				spectrum_fmax = thy v_myFrequencyUnitToHertz (thy xmax);
-				thy nyquistBin = toFrequencyBin (3).move();
+				thy nyquistBin = toFrequencyBin (NYQUIST_BIN).move();
 			}
 		}
 		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
