@@ -150,7 +150,7 @@ void GaborSpectrogram_paint (GaborSpectrogram me, Graphics g, double tmin, doubl
 		Graphics_textBottom (g, true, U"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_inqWindow (g, & tmin, & tmax, & fmin, & fmax);
-		MultiSampledSpectrogram_setFrequencyTicks (me, g, fmin, fmax, 1000.0);
+		Graphics_marksLeft (g, 2, true, true, false);
 		Graphics_textLeft (g, true, U"Frequency (Hz)");
 	}
 }
