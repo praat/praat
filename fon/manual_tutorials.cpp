@@ -22,11 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220128)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220205)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.08# (5 February 2022)")
+LIST_ITEM (U"• Mac: more checks on audio devices when playing sounds.")
 NORMAL (U"##6.2.07# (28 January 2022)")
 LIST_ITEM (U"• Prevented a rare crash in the TextGrid window.")
-LIST_ITEM (U"• Windows: corrected a bug introduced 6.2.04 by which some file names were unreadable.")
+LIST_ITEM (U"• Windows: corrected a bug introduced in 6.2.04 by which some file names were unreadable.")
 NORMAL (U"##6.2.06# (20 January 2022)")
 LIST_ITEM (U"• Mac: prevent Demo window from hanging on copy or paste.")
 NORMAL (U"##6.2.05# (5 January 2022)")

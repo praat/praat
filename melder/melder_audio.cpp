@@ -399,8 +399,8 @@ static bool workProc (void *closure) {
 //Melder_casual (U"workProc ", n);
 	if (my usePortAudio) {
 		#if defined (linux)
-			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-			integer samplesPlayed = timeElapsed * my sampleRate;
+			const double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+			const integer samplesPlayed = timeElapsed * my sampleRate;
 			if (my callback && ! my callback (my closure, samplesPlayed)) {
 				my volatile_interrupted = 1;
 				return flush ();
@@ -425,7 +425,7 @@ static bool workProc (void *closure) {
 				But then we also have to use paComplete in the stream callback.
 			*/
 		#else
-			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+			const double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
 			my samplesPlayed = (integer) floor (timeElapsed * my sampleRate);
 			if (my supports_paComplete && Pa_IsStreamActive (my stream)) {
 				if (my callback && ! my callback (my closure, my samplesPlayed)) {
@@ -452,7 +452,7 @@ static bool workProc (void *closure) {
 			pa_usec_t diff_usec = 0;
 			if (my pulseAudio.startTime.tv_usec != 0) {
 				diff_usec = pa_timeval_age (& my pulseAudio.startTime);
-				double timeElapsed = diff_usec / 1000000.0;
+				const double timeElapsed = diff_usec / 1000000.0;
 				samplesPlayed = timeElapsed * my sampleRate;
 			}
 			pa_threaded_mainloop_unlock (my pulseAudio.mainloop);
@@ -1000,7 +1000,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 			OSStatus err = noErr;
 			AudioObjectPropertyAddress audioDevicesAddress = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
 			err = AudioObjectAddPropertyListener ( kAudioObjectSystemObject, & audioDevicesAddress, theCoreaudioPropertyListener, NULL);
-			if (err) Melder_casual (U"error on AudioObjectAddPropertyListener");
+			if (err)
+				Melder_casual (U"error on AudioObjectAddPropertyListener");
 			inited = true;
 		}
 	}
@@ -1010,7 +1011,8 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 	#ifdef _WIN32
 		bool wasPlaying = MelderAudio_isPlaying;
 	#endif
-	if (MelderAudio_isPlaying) MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // otherwise, keep "explicitStop" tag
+	if (MelderAudio_isPlaying)
+		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // otherwise, keep "explicitStop" tag
 	#ifdef HAVE_PULSEAUDIO
 		if (my usePulseAudio && my pulseAudio.mainloop) {
 			pulseAudio_cleanup ();
@@ -1064,16 +1066,18 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 		my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound &&false;
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
+		if (outputParameters. device == paNoDevice)
+			Melder_throw (U"PortAudio sees no default output device.\nCannot play sound.");
 		const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
+		if (! deviceInfo)
+			Melder_throw (U"PortAudio finds no info for device ", outputParameters. device, U".\nCannot play sound.");
 		//Melder_casual (U"MelderAudio_play16: ", Melder_peek8to32 (deviceInfo -> name));
 		trace (U"the device can handle ", deviceInfo -> maxOutputChannels, U" channels");
-		if (my numberOfChannels > deviceInfo -> maxOutputChannels) {
-			my numberOfChannels = deviceInfo -> maxOutputChannels;
-		}
+		Melder_clipRight (& my numberOfChannels, integer (deviceInfo -> maxOutputChannels));
 		if (numberOfChannels > my numberOfChannels) {
 			/*
-			 * Redistribute the in channels over the out channels.
-			 */
+				Redistribute the in channels over the out channels.
+			*/
 			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
 				int16 *in = & my playBuffer [0], *out = & my playBuffer [0];
 				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
@@ -1099,7 +1103,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 		}
 		outputParameters. channelCount = my numberOfChannels;
 		outputParameters. sampleFormat = paInt16;
-		if (deviceInfo) outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
+		outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
 		outputParameters. hostApiSpecificStreamInfo = nullptr;
 		err = Pa_OpenStream (& my stream, nullptr, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
 			paDitherOff, thePaStreamCallback, me);
@@ -1107,24 +1111,25 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 			Melder_throw (U"PortAudio cannot open sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		theStartingTime = Melder_clock ();
 		err = Pa_StartStream (my stream);
-		if (err) Melder_throw (U"PortAudio cannot start sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
+		if (err)
+			Melder_throw (U"PortAudio cannot start sound output: ", Melder_peek8to32 (Pa_GetErrorText (err)), U".");
 		my paStartingTime = Pa_GetStreamTime (my stream);
 		if (my asynchronicity <= kMelder_asynchronicityLevel::INTERRUPTABLE) {
 			for (;;) {
 				#if defined (linux)
 					/*
-					 * This is how PortAudio was designed to work.
-					 */
+						This is how PortAudio was designed to work.
+					*/
 					if (my samplesLeft == 0) {
 						my samplesPlayed = my numberOfSamples;
 						break;
 					}
 				#else
 					/*
-					 * A version that doesn't trust that the stream callback will complete.
-					 */
-					double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-					integer samplesPlayed = (integer) floor (timeElapsed * my sampleRate);
+						A version that doesn't trust that the stream callback will complete.
+					*/
+					const double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+					const integer samplesPlayed = (integer) floor (timeElapsed * my sampleRate);
 					if (samplesPlayed >= my numberOfSamples + my sampleRate / 20) {
 						my samplesPlayed = my numberOfSamples;
 						break;
@@ -1135,9 +1140,9 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 					! my callback (my closure, my samplesPlayed))
 					interrupted = true;
 				/*
-				 * Safe operation: only listen to key-down events.
-				 * Do this on the lowest level that will work.
-				 */
+					Safe operation: only listen to key-down events.
+					Do this on the lowest level that will work.
+				*/
 				if (my asynchronicity == kMelder_asynchronicityLevel::INTERRUPTABLE && ! interrupted) {
 					#if gtk
 						// TODO: implement a reaction to the Escape key
@@ -1147,12 +1152,12 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 						EventRecord event;
 						if (EventAvail (keyDownMask, & event)) {
 							/*
-							* Remove the event, even if it was a different key.
-							* Otherwise, the key will block the future availability of the Escape key.
+								Remove the event, even if it was a different key.
+								Otherwise, the key will block the future availability of the Escape key.
 							*/
 							FlushEvents (keyDownMask, 0);
 							/*
-							* Catch Escape and Command-period.
+								Catch Escape and Command-period.
 							*/
 							if ((event. message & charCodeMask) == 27 ||
 								((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
