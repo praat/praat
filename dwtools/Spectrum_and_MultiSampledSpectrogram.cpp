@@ -208,7 +208,8 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		const double samplingFrequency = 2.0 * nyquistFrequency;
 		const integer numberOfSamples = duration * samplingFrequency;
 		const integer numberOfFFTSamples = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (numberOfSamples));   // TODO: explain the edge case
-		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFFTSamples / 2 + 1);
+		const integer numberOfSpectralValues = numberOfFFTSamples / 2 + 1;
+		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfSpectralValues);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];			
 			double flow, fhigh;
@@ -232,6 +233,10 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 				fillSpectrumPart (my nyquistBin.get());
 			}
 		}
+		/*
+			Make sure the imaginary part of the last spectral value is zero.
+		*/
+		thy z [2] [numberOfSpectralValues] = 0.0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot convert to Spectrum.");

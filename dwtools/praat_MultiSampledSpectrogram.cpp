@@ -87,6 +87,12 @@ DO
 	CONVERT_EACH_TO_ONE_END (my name.get(), U"_",frequencyBinNumber)
 }
 
+DIRECT (CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Spectrum) {
+	CONVERT_EACH_TO_ONE (MultiSampledSpectrogram)
+		autoSpectrum result = MultiSampledSpectrogram_to_Spectrum (me);
+	CONVERT_EACH_TO_ONE_END (my name.get())
+}
+
 FORM (CONVERT_EACH_TO_ONE__ConstantQLog2FSpectrogram_translateSpectrum, U"", nullptr) {
 	REAL (fromTime, U"From time", U"0.0")
 	REAL (toTime, U"To time", U"0.0 (= all)")
@@ -161,6 +167,8 @@ void praat_MultiSampledSpectrograms_generics (ClassInfo klas) {
 			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Sound);
 	praat_addAction1 (klas, 0, U"To Sound (frequencyBin)...", nullptr, 0,
 			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Sound_frequencyBin);
+	praat_addAction1 (klas, 0, U"To Spectrum", nullptr, 0,
+			CONVERT_EACH_TO_ONE__MultiSampledSpectrogram_to_Spectrum);
 }
 
 void praat_MultiSampledSpectrogram_init ();
