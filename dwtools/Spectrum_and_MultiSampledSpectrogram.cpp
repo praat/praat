@@ -127,8 +127,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 		autoVEC filterWindow = raw_VEC (maximumFilterSize);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 			/*
-				spectrum_fmin, spectrum_fmax: frequency interval to copy to the filter
-				spectrum_imin, spectrum_imax : indices in the spectrum to copy to the filter
+				spectrum_fmin, spectrum_fmax: frequency interval of the spectrum to copy to the filter
+				spectrum_imin, spectrum_imax: corresponding indices of the spectrum
 				filter_fmin, filter_fmax: frequency interval to be filtered
 				filter_imin, filter_imax: indices in the filter to be windowed
 				window_fmin, window_fmax
@@ -148,7 +148,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				Melder_require (numberOfSamplesFromSpectrum > 1,
 					U"The number of spectral filter values should be larger than 1.");
 				integer numberOfFilterValues = numberOfSamplesFromSpectrum;
-				if (partOfSpectrum == 1) {
+				if (partOfSpectrum == NORMAL_BIN) {
 					filterWindow.resize (numberOfSamplesFromSpectrum);
 					windowShape_VEC_preallocated (filterWindow.get(), filterShape);
 					if (approximateTimeOverSampling > 1.0)
@@ -176,6 +176,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			thy frequencyBins.addItem_move (toFrequencyBin (NORMAL_BIN).move());
 			if (ifreq == 1) {
 				/*
+					DC_BIN:
 					Fill with values from 0 Hz to the mid of the first window
 					Multiply with a window only the part that overlaps with the first window.
 				*/
@@ -183,9 +184,10 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				spectrum_fmin = 0.0;
 				window_fmax = spectrum_fmax;
 				thy zeroBin = toFrequencyBin (DC_BIN).move();
-			}
+			} 
 			if (ifreq == thy nx) {
 				/*
+					NYQUIST_BIN:
 					Fill with the part from the mid of the last window to the end
 					Window only the part that overlaps the last window.
 				*/

@@ -109,7 +109,7 @@ FORM (CONVERT_EACH_TO_ONE__Sound_to_ConstantQLog2FSpectrogram, U"Sound: To Const
 	POSITIVE (f1, U"Lowest frequency (Hz)", U"110.0 (=440*2^(-2))")
 	REAL (fmax, U"Maximum frequency (Hz)", U"0.0 (=nyquist)")
 	NATURAL (numberOfFrequencyBinsPerOctave, U"Number of frequency bins / octave", U"24")
-	POSITIVE (frequencyResolutionInBins, U"Freqency resolution (bins)", U"1.0")
+	POSITIVE (frequencyResolutionInBins, U"Frequency resolution (bins)", U"1.0")
 	POSITIVE (timeOversamplingFactor, U"Time oversampling factor", U"1.0")
 	RADIO_ENUM (kSound_windowShape, filterShape,
 			U"Filter shape", kSound_windowShape::DEFAULT)

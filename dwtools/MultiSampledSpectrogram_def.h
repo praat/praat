@@ -1,6 +1,6 @@
 /* MultiSampledSpectrogram_def.h
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@ oo_END_CLASS (FrequencyBin)
 #define ooSTRUCT  MultiSampledSpectrogram
 oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 
-	oo_DOUBLE (tmin) // invariant: frequencyBin [i] -> xmin = my tmin for all I
-	oo_DOUBLE (tmax) // invariant: frequencyBin [i] -> xmax = my tmax for all I
+	oo_DOUBLE (tmin) // invariant: frequencyBin [i] -> xmin = my tmin for all i
+	oo_DOUBLE (tmax) // invariant: frequencyBin [i] -> xmax = my tmax for all i
 	oo_DOUBLE (frequencyResolutionInBins)
 	
 	oo_COLLECTION_OF (OrderedOf, frequencyBins, FrequencyBin, 0) // invariant frequencyBins.size == my nx
-	oo_OBJECT (FrequencyBin, 0, zeroBin)	// needs special windowing														 
-	oo_OBJECT (FrequencyBin, 0, nyquistBin)	// needs special windowing
+	oo_OBJECT (FrequencyBin, 0, zeroBin)	// needs special treatment 														 
+	oo_OBJECT (FrequencyBin, 0, nyquistBin)	// needs special treatment
 	
 	#if oo_DECLARING
 		void v_info ()

@@ -35,7 +35,11 @@ autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, do
 autoAnalyticSound Sound_to_AnalyticSound (Sound me) {
 	try {
 		autoAnalyticSound thee = AnalyticSound_create (my xmin, my xmax, my nx, my dx, my x1);
-		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
+		/*
+			Calculate the Hilbert transform
+			20220208: the DFT can be very slow for prime numbers, wait for FFTW?
+		*/
+		autoSpectrum spectrum = Sound_to_Spectrum (me, false);
 		Spectrum_shiftPhaseBy90Degrees (spectrum.get());
 		autoSound sound90 = Spectrum_to_Sound (spectrum.get());
 		thy z.row (1)  <<=  my z.row (1);
