@@ -49,11 +49,16 @@ autoGaborSpectrogram Sound_to_GaborSpectrogram (Sound me, double fmax, double fi
 {
 	try {
 		const double nyquistFrequency = 0.5 / my dx;
-		if (fmax <= 0.0 || fmax > nyquistFrequency)
+		bool resample = true;
+		if (fmax <= 0.0 || fmax > nyquistFrequency) {
 			fmax = nyquistFrequency;
+			resample = false;
+		}
 		autoGaborSpectrogram thee = GaborSpectrogram_create (my xmin, my xmax, fmax, filterBandwidth, frequencyStep);
-		autoSound resampled = Sound_resample (me, 2.0 * fmax, 50);
-		autoSpectrum him = Sound_to_Spectrum (resampled.get(), true);
+		autoSound resampled;
+		if (resample)
+			resampled = Sound_resample (me, 2.0 * fmax, 50);
+		autoSpectrum him = Sound_to_Spectrum ((resampled ? resampled.get() : me), true);
 		Spectrum_into_MultiSampledSpectrogram (him.get(), thee.get(), timeOversamplingFactor, filterShape);
 		return thee;
 	} catch (MelderError) {
