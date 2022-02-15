@@ -83,6 +83,8 @@ void Graphics_init (Graphics me, int resolution) {
 		my resolutionNumber = kGraphics_resolution::DPI_180;
 	} else if (resolution == 200) {
 		my resolutionNumber = kGraphics_resolution::DPI_200;
+	} else if (resolution == 204) {
+		my resolutionNumber = kGraphics_resolution::DPI_204;
 	} else if (resolution == 300) {
 		my resolutionNumber = kGraphics_resolution::DPI_300;
 	} else if (resolution == 360) {
