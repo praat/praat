@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220205)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220215)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.09# (15 February 2022)")
+LIST_ITEM (U"• Windows: support for a screen resolution of 204 dpi.")
 NORMAL (U"##6.2.08# (5 February 2022)")
 LIST_ITEM (U"• Mac: more checks on audio devices when playing sounds.")
 NORMAL (U"##6.2.07# (28 January 2022)")
