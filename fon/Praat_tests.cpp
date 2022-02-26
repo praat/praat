@@ -741,7 +741,7 @@ public:
 };
 
 static Vec copy (Vec x) {
-	return x;
+	return Vec(x);
 }
 
 /*static void tryVec () {
