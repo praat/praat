@@ -2147,6 +2147,7 @@ void praat_Sound_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read from special sound file", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw Alaw file...", nullptr, praat_DEPTH_1, READ1_Sound_readFromRawAlawFile);
 
+	praat_addMenuCommand (U"Objects", U"Goodies", U"-- sound goodies --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Stop playing sound", nullptr, GuiMenu_ESCAPE,
 			PLAY__stopPlayingSound);
 	praat_addMenuCommand (U"Objects", U"Preferences", U"-- sound prefs --", nullptr, 0, nullptr);

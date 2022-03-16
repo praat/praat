@@ -3142,9 +3142,9 @@ NORMAL (U"As with R scripts, Python scripts, and quite generally any kinds of sc
 	"if you completely trust that script or plug-in and its creators.")
 MAN_END
 
-MAN_BEGIN (U"Checking for updates", U"ppgb", 20220121)
+MAN_BEGIN (U"Checking for updates", U"ppgb", 20220217)
 INTRO (U"Updates for Praat are available from $$www.praat.org$.")
-NORMAL (U"Your current version is " stringize(PRAAT_VERSION_STR)
+NORMAL (U"Your current version (if you are reading this from the manual inside the Praat program, rather than from the website) is " stringize(PRAAT_VERSION_STR)
 	", from " stringize(PRAAT_MONTH) " " stringize(PRAAT_DAY) ", " stringize(PRAAT_YEAR) ". "
 	"Given that we tend to release new Praat versions once or twice a month, "
 	"you can probably guess whether it would be worth your while to have a look at $$www.praat.org$ "

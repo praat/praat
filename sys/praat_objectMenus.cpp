@@ -24,6 +24,7 @@
 #include "DataEditor.h"
 #include "site.h"
 #include "GraphicsP.h"
+#include "DemoEditor.h"
 
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
@@ -363,6 +364,11 @@ DO
 		MelderInfo_writeLine (U"Two-tailed p =    ", NUMchiSquareQ (x2, 1));
 		MelderInfo_close ();
 	INFO_NONE_END
+}
+
+FORM_SAVE (GRAPHICS_saveDemoWindowAsPdfFile, U"Save Demo window as PDF file", nullptr, U"praatDemoWindow.pdf") {
+	Demo_saveToPdfFile (file);
+	END_NO_NEW_DATA
 }
 
 /********** Callbacks of the Technical menu. **********/
@@ -788,6 +794,8 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Calculator...", nullptr, 'U',
 			INFO_NONE__praat_calculator);
 	praat_addMenuCommand (U"Objects", U"Goodies", U"Report difference of two proportions...", nullptr, 0, INFO_reportDifferenceOfTwoProportions);
+	praat_addMenuCommand (U"Objects", U"Goodies", U"-- demo window --", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"Goodies", U"Save Demo window as PDF file...", nullptr, 0, GRAPHICS_saveDemoWindowAsPdfFile);
 
 	menuItem = praat_addMenuCommand (U"Objects", U"Praat", U"Preferences", nullptr, praat_UNHIDABLE, nullptr);
 	preferencesMenu = menuItem ? menuItem -> d_menu : nullptr;

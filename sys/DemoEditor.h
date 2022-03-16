@@ -2,7 +2,7 @@
 #define _DemoEditor_h_
 /* DemoEditor.h
  *
- * Copyright (C) 2009-2011,2012,2015-2018,2020 Paul Boersma
+ * Copyright (C) 2009-2011,2012,2015-2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,8 @@ bool Demo_optionKeyPressed ();
 bool Demo_input (conststring32 keys);
 bool Demo_clickedIn (double left, double right, double bottom, double top);
 void Demo_timer (double duration);
+
+void Demo_saveToPdfFile (MelderFile file);
 
 /* End of file DemoEditor.h */
 #endif

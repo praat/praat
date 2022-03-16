@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2021 Paul Boersma
+ * Copyright (C) 2009-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,7 +279,8 @@ void Demo_waitForInput (Interpreter interpreter) {
 }
 
 void Demo_peekInput (Interpreter interpreter) {
-	if (! theReferenceToTheOnlyDemoEditor) return;
+	if (! theReferenceToTheOnlyDemoEditor)
+		return;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -447,8 +448,28 @@ bool Demo_clickedIn (double left, double right, double bottom, double top) {
 	}
 	if (! theReferenceToTheOnlyDemoEditor -> clicked)
 		return false;
-	double xWC = Demo_x (), yWC = Demo_y ();
+	const double xWC = Demo_x (), yWC = Demo_y ();
 	return xWC >= left && xWC < right && yWC >= bottom && yWC < top;
+}
+
+void Demo_saveToPdfFile (MelderFile file) {
+	if (! theReferenceToTheOnlyDemoEditor)
+		return;
+	if (! theReferenceToTheOnlyDemoEditor -> graphics)
+		return;   // could be the case in the very beginning
+	const double resolution = theReferenceToTheOnlyDemoEditor -> graphics -> resolution;
+	autoGraphics pdfGraphics = Graphics_create_pdffile (file, resolution,
+		undefined, GuiControl_getWidth (theReferenceToTheOnlyDemoEditor -> drawingArea) / resolution,
+		undefined, GuiControl_getHeight (theReferenceToTheOnlyDemoEditor -> drawingArea) / resolution
+	);
+	pdfGraphics -> d_x2DCmax = 1e9;
+	pdfGraphics -> d_y2DCmax = 1e9;
+	Graphics_setWsWindow (pdfGraphics.get(), 0.0, 100.0, 0.0, 100.0);
+	Graphics_setWsViewport (pdfGraphics.get(),
+		0.0, GuiControl_getWidth (theReferenceToTheOnlyDemoEditor -> drawingArea),
+		0.0, GuiControl_getHeight (theReferenceToTheOnlyDemoEditor -> drawingArea)
+	);
+	Graphics_play (theReferenceToTheOnlyDemoEditor -> graphics.get(), pdfGraphics.get());
 }
 
 /* End of file DemoEditor.cpp */
