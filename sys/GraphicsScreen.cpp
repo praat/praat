@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2022 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,21 +220,28 @@ void structGraphicsScreen :: v_clearWs () {
 			rect.y = our d_y2DC;
 			rect.height = our d_y1DC - our d_y2DC;
 		}
-		if (d_cairoGraphicsContext) {
-			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
-			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
-			cairo_fill (d_cairoGraphicsContext);
-			cairo_set_source_rgb (d_cairoGraphicsContext, 0.0, 0.0, 0.0);
+		if (our d_cairoGraphicsContext) {
+			cairo_set_source_rgb (our d_cairoGraphicsContext, 1.0, 1.0, 1.0);
+			cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+			cairo_fill (our d_cairoGraphicsContext);
+			cairo_set_source_rgb (our d_cairoGraphicsContext, 0.0, 0.0, 0.0);
 		}
 	#elif gdi
 		RECT rect;
 		rect. left = rect. top = 0;
 		rect. right = d_x2DC - d_x1DC;
 		rect. bottom = d_y2DC - d_y1DC;
-		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
-		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
+		FillRect (our d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
+		/*if (our d_winWindow) SendMessage (our d_winWindow, WM_ERASEBKGND, (WPARAM) our d_gdiGraphicsContext, 0);*/
 	#elif quartz
-		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
+		if (! our d_drawingArea) {
+			Melder_assert (!! our d_macGraphicsContext);
+			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
+			CGContextSetRGBFillColor (our d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+			CGContextFillRect (d_macGraphicsContext, CGRectMake (our d_x1DC, our d_y2DC, our d_x2DC - our d_x1DC, our d_y1DC - our d_y2DC));
+			return;
+		}
+		GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) our d_drawingArea -> d_widget;
 		if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
 			Melder_assert (!! our d_macGraphicsContext);
 			CGContextSetAlpha (our d_macGraphicsContext, 1.0);
