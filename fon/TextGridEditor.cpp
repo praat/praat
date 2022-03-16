@@ -1858,8 +1858,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				because we are not 'nearBoundaryOrPoint'.
 			*/
 			Melder_assert (isdefined (our startSelection));   // precondition of v_updateText()
-			our v_updateText();
 			insertBoundaryOrPoint (this, mouseTier, our startSelection, our startSelection, false);
+			our v_updateText();
 			//Melder_assert (isdefined (our startSelection));   // precondition of FunctionEditor_marksChanged()
 			//FunctionEditor_marksChanged (this, true);
 			Editor_broadcastDataChanged (this);
