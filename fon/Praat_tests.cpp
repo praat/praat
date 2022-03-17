@@ -740,10 +740,6 @@ public:
 	//const Vec (const Vec& other) = default;   // attempt to copy a const Vec to a const Vec, but constructors cannot have a return type
 };
 
-static Vec copy (Vec x) {
-	return x;
-}
-
 /*static void tryVec () {
 	Vec x = Vec (nullptr, 0);
 	x [1] = 3.0;
