@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220215)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220317)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.10# (17 March 2022)")
+LIST_ITEM (U"• TextGrid window: restored the splitting of labels.")
+LIST_ITEM (U"• Save Demo Window as PDF file... (Goodies menu).")
 NORMAL (U"##6.2.09# (15 February 2022)")
 LIST_ITEM (U"• Windows: support for a screen resolution of 204 dpi.")
 NORMAL (U"##6.2.08# (5 February 2022)")
