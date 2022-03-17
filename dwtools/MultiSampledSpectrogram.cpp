@@ -141,15 +141,15 @@ void MultiSampledSpectrogram_init (MultiSampledSpectrogram me, double tmin, doub
 }
 
 void MultiSampledSpectrogram_getFrequencyBand (MultiSampledSpectrogram me, integer index, double *out_flow, double *out_fhigh) {
-	const double myFrequencyUnit = Sampled_indexToX (me, index);
+	const double myFrequency = Sampled_indexToX (me, index);
 	if (out_flow) {
-		double flow = my v_myFrequencyUnitToHertz (myFrequencyUnit - my frequencyResolutionInBins * my dx);
+		double flow = my v_myFrequencyUnitToHertz (myFrequency - my frequencyResolutionInBins * my dx);
 		Melder_clipLeft (0.0, & flow);
 		*out_flow = flow;
 	}
 	if (out_fhigh) {
 		const double maximumFrequency = my v_myFrequencyUnitToHertz (my xmax);
-		double fhigh = my v_myFrequencyUnitToHertz (myFrequencyUnit + my frequencyResolutionInBins * my dx);
+		double fhigh = my v_myFrequencyUnitToHertz (myFrequency + my frequencyResolutionInBins * my dx);
 		Melder_clipRight (& fhigh, maximumFrequency);
 		*out_fhigh = fhigh;
 	}

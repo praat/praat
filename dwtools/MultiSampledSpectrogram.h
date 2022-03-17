@@ -20,6 +20,13 @@
 
 #include "AnalyticSound.h"
 #include "Graphics.h"
+
+
+Thing_define (FrequencyBin, AnalyticSound) {
+	double v_getValueAtSample (integer isample, integer which, int unit)
+		override;
+};
+
 #include "MultiSampledSpectrogram_def.h"
 
 /*
@@ -27,8 +34,6 @@
 	Each "sample" is a FrequencyBin with real and imaginary values.
 	The original sound can be reconstructed from the data in the frequncy bins.
 */
-
-void FrequencyBin_init (FrequencyBin me, double xmin, double xmax, integer nx, double dx, double x1);
 
 autoFrequencyBin FrequencyBin_create (double xmin, double xmax, integer nx, double dx, double x1);
 
