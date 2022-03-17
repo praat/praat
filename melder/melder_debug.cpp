@@ -1,6 +1,6 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2021 Paul Boersma
+ * Copyright (C) 2000-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,8 @@ the behaviour of Praat will temporarily change in the following ways:
  * also, we need no newline nativization, as Melder_32to8_inplace() does.
  */
 conststring8 MelderTrace::_peek32to8 (conststring32 string) {
-	if (! string) return "";
+	if (! string)
+		return "";
 	static char *buffer { nullptr };
 	static int64 bufferSize { 0 };
 	int64 n = str32len (string);
@@ -147,7 +148,8 @@ conststring8 MelderTrace::_peek32to8 (conststring32 string) {
 }
 #ifdef _WIN32
 conststring16 MelderTrace::_peek32to16 (conststring32 string) {
-	if (! string) return u"";
+	if (! string)
+		return u"";
 	static char16 *buffer { nullptr };
 	static int64 bufferSize { 0 };
 	int64 n = str32len (string);
