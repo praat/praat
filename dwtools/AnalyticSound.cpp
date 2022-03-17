@@ -22,6 +22,20 @@
 
 Thing_implement (AnalyticSound, Sound, 0);
 
+double structAnalyticSound :: v_getValueAtSample (integer isamp, integer which, int /* unit */) {
+	/*
+		Preconditions: 
+			1 <= isample <= nx 
+			0 <= which <= ny
+	*/
+	double value;
+	if (which == 0) 
+		value = sqrt (sqr (z [1] [isamp]) + sqr (z [2] [isamp]));
+	else
+		value = z [which] [isamp];
+	return value;
+}
+
 autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, double dx, double x1) {
 	try {
 		autoAnalyticSound me = Thing_new (AnalyticSound);
@@ -32,18 +46,42 @@ autoAnalyticSound AnalyticSound_create (double xmin, double xmax, integer nx, do
 	}
 }
 
-autoAnalyticSound Sound_to_AnalyticSound (Sound me) {
+void Spectrum_into_AnalyticSound (Spectrum me, AnalyticSound thee) {
 	try {
-		autoAnalyticSound thee = AnalyticSound_create (my xmin, my xmax, my nx, my dx, my x1);
+		autoSound him = Spectrum_to_Sound (me);
+		const integer nx = std::min (his nx, thy nx);
+		thy z.row (1).part (1, nx)  <<=  his z.row (1).part (1, nx);
+		Spectrum_shiftPhaseBy90Degrees (me);
+		him = Spectrum_to_Sound (me);
+		thy z.row (2).part (1, nx)  <<=  his z.row (1).part (1, nx);
+		Spectrum_unshiftPhaseBy90Degrees (me); // restore original
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot ", thee);
+	}
+}
+
+void Sound_into_AnalyticSound (Sound me, AnalyticSound thee) {
+	try {
+		const integer nx = std::min (my nx, thy nx);
 		/*
 			Calculate the Hilbert transform
 			20220208: the DFT can be very slow for prime numbers, wait for FFTW?
 		*/
 		autoSpectrum spectrum = Sound_to_Spectrum (me, false);
 		Spectrum_shiftPhaseBy90Degrees (spectrum.get());
-		autoSound sound90 = Spectrum_to_Sound (spectrum.get());
-		thy z.row (1)  <<=  my z.row (1);
-		thy z.row (2)  <<=  sound90 -> z.row (1).part (1, my nx);
+		autoSound hilbert = Spectrum_to_Sound (spectrum.get());
+		thy z.row (1).part (1, nx)  <<=  my z.row (1).part (1, nx);
+		thy z.row (2).part (1, nx)  <<=  hilbert -> z.row (1).part (1, nx);
+	} catch (MelderError) {
+		Melder_throw (me, U": could not convert to AnalyticSound ", thee);
+	}
+}
+
+autoAnalyticSound Sound_to_AnalyticSound (Sound me) {
+	try {
+		autoAnalyticSound thee = AnalyticSound_create (my xmin, my xmax, my nx, my dx, my x1);
+		autoSpectrum spectrum = Sound_to_Spectrum (me, false);
+		Sound_into_AnalyticSound (me, thee.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create AnalyticSound.");
@@ -65,8 +103,8 @@ autoIntensity AnalyticSound_to_Intensity (AnalyticSound me) {
 	try {
 		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 		for (integer i = 1; i <= my nx; i ++) {
-			const double power_rehearingThreshold = (sqr ( my z [1] [i]) + sqr (my z [2] [i])) / 4.0e-10;
-			thy z [1] [i] = ( power_rehearingThreshold > 1e-30 ? 10.0 * log10 (power_rehearingThreshold) : -300.0 );
+			const double power_rehearingThreshold = std:: max (sqr (my v_getValueAtSample (i, 0, 0)) / 4.0e-10 , 1e-30);
+			thy z [1] [i] = 10.0 * log10 (power_rehearingThreshold);
 		}
 		return thee;
 	} catch (MelderError) {

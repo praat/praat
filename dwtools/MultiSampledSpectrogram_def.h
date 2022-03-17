@@ -16,18 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT FrequencyBin
-oo_DEFINE_CLASS (FrequencyBin, Matrix)
-
-	#if oo_DECLARING
-		double v_getValueAtSample (integer iframe, integer which, int unit)
-			override;
-	#endif
-
-oo_END_CLASS (FrequencyBin)
-#undef ooSTRUCT
-
-
 #define ooSTRUCT  MultiSampledSpectrogram
 oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 

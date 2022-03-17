@@ -21,10 +21,8 @@
 #include "AnalyticSound.h"
 #include "Spectrum.h"
 
-
-void Spectrum_into_AnalyticSound (Spectrum me, AnalyticSound thee);
-
 autoAnalyticSound Spectrum_to_AnalyticSound (Spectrum me);
 
+autoAnalyticSound Spectrum_to_AnalyticSound_demodulateBand (Spectrum me, integer startSample, integer endSample, double approximateOverSampling, const VEC & window);
 
 #endif /* _Spectrum_and_AnalyticSound_h_ */

@@ -20,29 +20,56 @@
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_extensions.h"
 
-void Spectrum_into_AnalyticSound (Spectrum me, AnalyticSound thee) {
-	try {
-		autoSound him = Spectrum_to_Sound (me);
-		const integer nx = std::min (his nx, thy nx);
-		thy z.row (1).part (1, nx)  <<=  his z.row (1).part (1, nx);
-		Spectrum_shiftPhaseBy90Degrees (me);
-		him = Spectrum_to_Sound (me);
-		thy z.row (2).part (1, nx)  <<=  his z.row (1).part (1, nx);
-		Spectrum_unshiftPhaseBy90Degrees (me); // restore original
-	} catch (MelderError) {
-		Melder_throw (me, U": cannot ", thee);
-	}
-}
-
 autoAnalyticSound Spectrum_to_AnalyticSound (Spectrum me) {
 	try {
 		autoSound him = Spectrum_to_Sound (me);
 		autoAnalyticSound thee = AnalyticSound_create (his xmin, his xmax, his nx, his dx, his x1);
-		Spectrum_into_AnalyticSound (me, thee.get());
+		thy z.row (1)  <<=  his z.row (1);
+		Spectrum_shiftPhaseBy90Degrees (me);
+		him = Spectrum_to_Sound (me);
+		thy z.row (2)  <<=  his z.row (1);
+		Spectrum_unshiftPhaseBy90Degrees (me); // restore phase
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": could not create AnalyticSound.");
 	}
 }
 
+/*
+	
+
+*/
+autoAnalyticSound Spectrum_to_AnalyticSound_demodulateBand (Spectrum me, integer startSample, integer endSample, double approximateOverSampling, const VEC & window) {
+	try {
+		Melder_clipLeft (1_integer, & startSample);
+		Melder_clipRight (& endSample, my nx);
+		Melder_require (startSample < endSample,
+			U"The start spectral sample should lie before the end spectral sample.");
+		const integer extraSpectralSamples = ( startSample > 1 ? 1 : 0 ); // first value cannot be imaginary in a Spectrum
+		const integer numberOfSamplesFromSpectrum = endSample - startSample + 1;
+		Melder_require (window.size <= numberOfSamplesFromSpectrum,
+			U"The window size should not exceed the number of selected ssamples in the spectrum.");
+		integer numberOfFilterValues = numberOfSamplesFromSpectrum;
+		if (approximateOverSampling > 1.0)
+			numberOfFilterValues = Melder_iroundUp (approximateOverSampling * numberOfSamplesFromSpectrum);
+		numberOfFilterValues += extraSpectralSamples;
+		const integer numberOfSamplesFFT = Melder_iroundUpToPowerOfTwo (numberOfFilterValues);
+		const integer numberOfFrequencies = numberOfSamplesFFT + 1;
+		double demod_fmax = (endSample - startSample + 1) * my dx * numberOfSamplesFFT / numberOfSamplesFromSpectrum;
+		autoSpectrum demodSpectrum = Spectrum_create (demod_fmax, numberOfFrequencies);
+		demodSpectrum -> z [1] [1] = demodSpectrum -> z [2] [1] = 0.0;
+		const integer demodStart = 1 + extraSpectralSamples, demodEnd = demodStart + numberOfSamplesFromSpectrum - 1;
+		demodSpectrum -> z.part (1, 2, demodStart, demodEnd)  <<=  my z.part (1, 2, startSample, endSample);
+		if (window.size > 0) {
+			const integer startWindowing = ( startSample == 1 ? numberOfSamplesFromSpectrum - window.size + 1 : 2 );
+			const integer endWindowing = startWindowing + window.size - 1;
+			demodSpectrum -> z [1].part (startWindowing, endWindowing)  *=  window;
+			demodSpectrum -> z [2].part (startWindowing, endWindowing)  *=  window;
+		}
+		return Spectrum_to_AnalyticSound (demodSpectrum.get());
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create AnalyticSound.");
+	}
+	
+}
 /* End of file Spectrum_and_AnalyticSound.h */

@@ -22,6 +22,35 @@
 #include "Spectrum_and_MultiSampledSpectrogram.h"
 #include "NUM2.h"
 
+	
+autoSound MultiSampledSpectrogram_to_Sound (MultiSampledSpectrogram me) {
+	try {
+		autoSpectrum spectrum = MultiSampledSpectrogram_to_Spectrum (me);
+		autoSound thee = Spectrum_to_Sound (spectrum.get());
+		const double synthesizedDuration = thy xmax - thy xmin;
+		const double wantedDuration = my tmax - my tmin;
+		if (synthesizedDuration > wantedDuration) {
+			/*
+				The number of samples in the original was not a power of 2 and to apply the FFT the number of samples had to be extended.
+			*/
+			autoSound part = Sound_extractPart (thee.get(), 0.0, wantedDuration, kSound_windowShape::RECTANGULAR, 1.0, false);
+			part -> xmin = my tmin;
+			part -> xmax = my tmax;
+			thee = part.move();
+		} else if (synthesizedDuration == wantedDuration) {
+			thy xmin = my tmin;
+			thy xmax = my tmax;
+		} else {
+			Melder_throw (U"The synthesized number of samples is too low!");
+		}
+		thy z.get()  /=  my frequencyResolutionInBins;
+		return thee;
+		
+	} catch (MelderError) {
+		Melder_throw (me, U": could not create Sound.");
+	}
+}
+
 autoConstantQLog2FSpectrogram Sound_to_ConstantQLog2FSpectrogram (Sound me, double lowestFrequency, double fmax,
 	integer numberOfBinsPerOctave, double frequencyResolutionInBins, double timeOversamplingFactor,
 	kSound_windowShape filterShape) {

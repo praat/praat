@@ -2,7 +2,7 @@
 #define _Spectrum_and_MultiSampledSpectrogram_h_
 /* Spectrum_and_MultiSampledSpectrogram.h
  * 
- * Copyright (C) 2021 David Weenink
+ * Copyright (C) 2021-2022 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me);
 
 autoSpectrum Sound_and_MultiSampledSpectrogram_to_Spectrum (Sound me, MultiSampledSpectrogram thee);
-
-autoSound MultiSampledSpectrogram_to_Sound (MultiSampledSpectrogram me);
 
 autoSound MultiSampledSpectrogram_to_Sound_frequencyBin (MultiSampledSpectrogram me, integer frequencyBinNumber);
 
