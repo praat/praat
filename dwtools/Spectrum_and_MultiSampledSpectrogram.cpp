@@ -98,12 +98,6 @@ static void windowShape_VEC_preallocated (VEC const& target, kSound_windowShape 
 	}
 }
 
-static autoVEC windowShape_VEC (integer n, kSound_windowShape windowShape) {
-	autoVEC result = raw_VEC (n);
-	windowShape_VEC_preallocated (result.get(), windowShape);
-	return result;
-}
-
 static autoFrequencyBin Spectrum_to_FrequencyBin (Spectrum me, double tmin, double tmax) {
 	try {
 		autoAnalyticSound him = Spectrum_to_AnalyticSound (me);
@@ -145,8 +139,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				spectrum_imax = Sampled_xToIndex (me, spectrum_fmax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, 1, spectrum_imax, approximateTimeOverSampling, 
 					window.part (window.size - window.size / 2 + 1 /*?*/, window.size));
-				autoFrequencyBin bin = FrequencyBin_create (thy xmin, thy xmax, his nx, his dx, his x1);
-				thy zeroBin = bin.move();
+				autoFrequencyBin zeroBin = FrequencyBin_create (thy xmin, thy xmax, his nx, his dx, his x1);
+				thy zeroBin = zeroBin.move();
 			} 
 			if (ifreq == thy nx) {
 				/*
@@ -158,8 +152,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				spectrum_imin = Sampled_xToIndex (me, spectrum_fmin);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, my nx, approximateTimeOverSampling, 
 					window.part (1 , window.size / 2));
-				autoFrequencyBin bin = FrequencyBin_create (thy xmin, thy xmax, his nx, his dx, his x1);
-				thy zeroBin = bin.move();
+				autoFrequencyBin nyquistBin = FrequencyBin_create (thy xmin, thy xmax, his nx, his dx, his x1);
+				thy nyquistBin = nyquistBin.move();
 			}
 		}
 		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
