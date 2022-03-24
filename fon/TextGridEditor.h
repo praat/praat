@@ -2,7 +2,7 @@
 #define _TextGridEditor_h_
 /* TextGridEditor.h
  *
- * Copyright (C) 1992-2005,2007-2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	bool suppressRedraw;
 	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
+
 	double draggingTime;
 	autoBOOLVEC draggingTiers;
 	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
@@ -91,6 +92,14 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		override;
 
 	#include "TextGridEditor_prefs.h"
+
+private:
+	/* only in v_mouseInWideDataView: */
+	bool anchorIsInWideSoundOrAnalysisPart = false;
+	bool anchorIsInWideTextGridPart = false;
+	double anchorTime = undefined;
+	integer clickedLeftBoundary = 0;
+	double leftDraggingBoundary = undefined, rightDraggingBoundary = undefined;   // initial dragging range
 };
 
 void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, conststring32 callbackSocket);

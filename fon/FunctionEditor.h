@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,6 +193,11 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_do_pictureSelection (EditorCommand);
 
     #include "FunctionEditor_prefs.h"
+
+private:
+	/* only in v_mouseInWideDataView: */
+	double anchorTime = undefined;
+	bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 };
 
 int theFunctionEditor_playCallback (FunctionEditor me, int phase, double startTime, double endTime, double currentTime);

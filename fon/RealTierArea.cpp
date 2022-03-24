@@ -150,10 +150,9 @@ void RealTierArea_drawWhileDragging (RealTierArea me, RealTier tier) {
 }
 
 bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEvent event, double x_world, double y_fraction) {
-	static bool anchorIsInFreePart, anchorIsNearPoint;
 	if (event -> isClick()) {
-		anchorIsInFreePart = false;
-		anchorIsNearPoint = false;
+		my anchorIsInFreePart = false;
+		my anchorIsNearPoint = false;
 	}
 	const double y_fraction_withinRealTierArea = my y_fraction_globalToLocal (y_fraction);
 	const double y_world = (1.0 - y_fraction_withinRealTierArea) * my ymin + y_fraction_withinRealTierArea * my ymax;
@@ -169,11 +168,11 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 				clickedPoint = nearestPoint;
 		}
 		if (! clickedPoint) {
-			anchorIsInFreePart = true;
+			my anchorIsInFreePart = true;
 			my ycursor = y_world;
 			return my defaultMouseInWideDataView (event, x_world, y_fraction) || true;
 		}
-		anchorIsNearPoint = true;
+		my anchorIsNearPoint = true;
 		my draggingSelection = event -> shiftKeyPressed &&
 			clickedPoint -> number >= my startSelection() && clickedPoint -> number <= my endSelection();
 		if (my draggingSelection) {
@@ -189,11 +188,11 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 		my dy = 0.0;
 		return FunctionEditor_UPDATE_NEEDED;
 	} else if (event -> isDrag() || event -> isDrop()) {
-		if (anchorIsInFreePart) {
+		if (my anchorIsInFreePart) {
 			my ycursor = y_world;
 			return my defaultMouseInWideDataView (event, x_world, y_fraction) || true;
 		}
-		Melder_assert (anchorIsNearPoint);
+		Melder_assert (my anchorIsNearPoint);
 		my dt = x_world - my anchorTime;
 		my dy = y_world - my anchorY;
 
