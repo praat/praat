@@ -1,6 +1,6 @@
 /* VowelEditor.cpp
  *
- * Copyright (C) 2008-2020 David Weenink, 2015-2021 Paul Boersma
+ * Copyright (C) 2008-2020 David Weenink, 2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1125,10 +1125,6 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 // shift key always extends what already is.
 // Special case : !soundFollowsMouse. The first click just defines the vowel's first f1f2-position,
 static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent event) {
-	static double anchorTime;
-	static double previousX;
-	static double previousY;
-	static double dt;
 	Graphics_setInner (my graphics.get());
 	double mouseX, mouseY;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & mouseX, & mouseY);
@@ -1138,29 +1134,29 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 	VowelEditor_getF1F2FromXY (me, mouseX, mouseY, & f1, & f2);
 	MelderColour colour = MelderColour_fromColourNameOrRGBString (my p_trajectory_colour);
 	if (event -> isClick()) {
-		anchorTime = Melder_clock ();
+		my anchorTime = Melder_clock ();
 		if (event -> shiftKeyPressed) {
 			VowelEditor_updateFromExtendDurationTextWidget (me);
-			const double duration = dt = my trajectory -> xmax + my p_trajectory_extendDuration;
+			const double duration = my dt = my trajectory -> xmax + my p_trajectory_extendDuration;
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_double (duration));
 		} else {
-			const double duration = dt = 0.0;
+			const double duration = my dt = 0.0;
 			my trajectory = Trajectory_create (my p_trajectory_minimumDuration);
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_double (duration));
 			if (! my p_soundFollowsMouse)
 				Trajectory_addPoint (my trajectory.get(), my p_trajectory_minimumDuration, f1, f2, colour);
 		}
-		previousX = mouseX;
-		previousY = mouseY;
+		my previousX = mouseX;
+		my previousY = mouseY;
 	} else {
-		double duration = Melder_clock () - anchorTime + dt;
-		if (mouseX != previousX || mouseY != previousY) {
+		double duration = Melder_clock () - my anchorTime + my dt;
+		if (mouseX != my previousX || mouseY != my previousY) {
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_fixed (duration, 6));
-			previousX = mouseX;
-			previousY = mouseY;
+			my previousX = mouseX;
+			my previousY = mouseY;
 		}
 		if (event -> isDrop()) {
 			if (my trajectory -> points.size == 1) {

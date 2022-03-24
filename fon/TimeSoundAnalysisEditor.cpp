@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include "enums_getValue.h"
 #include "TimeSoundAnalysisEditor_enums.h"
 
-Thing_implement (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
+Thing_implement_pureVirtual (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
 
 #include "prefs_define.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
