@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2009,2011-2020 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,10 @@ struct structClassInfo {
 #define Thing_implement(klas,semanticParentKlas,version) \
 	static Thing _##klas##_new () { return new struct##klas; } \
 	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##semanticParentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, nullptr}; \
+	ClassInfo class##klas = & theClassInfo_##klas
+
+#define Thing_implement_pureVirtual(klas,semanticParentKlas,version) \
+	struct structClassInfo theClassInfo_##klas = { U"" #klas, & theClassInfo_##semanticParentKlas, sizeof (class struct##klas), nullptr, version, 0, nullptr}; \
 	ClassInfo class##klas = & theClassInfo_##klas
 
 /*

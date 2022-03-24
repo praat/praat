@@ -1,6 +1,6 @@
 /* RealTierArea.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ Thing_implement (RealTierArea, FunctionArea, 0);
 #include "RealTierArea_prefs.h"
 
 void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY) {
-	if (isdefined (my v_minimumLegalY ()) && desiredY < my v_minimumLegalY ())
-		Melder_throw (U"Cannot add a point below ", my v_minimumLegalY (), my v_rightTickUnits (), U".");
-	if (isdefined (my v_maximumLegalY ()) && desiredY > my v_maximumLegalY ())
-		Melder_throw (U"Cannot add a point above ", my v_maximumLegalY (), my v_rightTickUnits (), U".");
+	if (isdefined (my v_minimumLegalY()) && desiredY < my v_minimumLegalY())
+		Melder_throw (U"Cannot add a point below ", my v_minimumLegalY(), my v_rightTickUnits(), U".");
+	if (isdefined (my v_maximumLegalY()) && desiredY > my v_maximumLegalY())
+		Melder_throw (U"Cannot add a point above ", my v_maximumLegalY(), my v_rightTickUnits(), U".");
 	RealTier_addPoint (tier, time, desiredY);
 }
 
@@ -215,7 +215,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 				point -> number += my dt;
 				double pointY = point -> value;
 				pointY += my dy;
-				Melder_clip (my v_minimumLegalY (), & pointY, my v_maximumLegalY ());
+				Melder_clip (my v_minimumLegalY(), & pointY, my v_maximumLegalY());
 				point -> value = pointY;
 			}
 
@@ -237,7 +237,7 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 					Move crosshair to mouse location.
 				*/
 				my ycursor += my dy;
-				Melder_clip (my v_minimumLegalY (), & my ycursor, my v_maximumLegalY ());   // NaN-safe
+				Melder_clip (my v_minimumLegalY(), & my ycursor, my v_maximumLegalY());   // NaN-safe
 			}
 
 			my broadcastDataChanged ();

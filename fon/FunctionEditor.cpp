@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "EditorM.h"
 #include "GuiP.h"
 
-Thing_implement (FunctionEditor, Editor, 0);
+Thing_implement_pureVirtual (FunctionEditor, Editor, 0);
 
 #include "prefs_define.h"
 #include "FunctionEditor_prefs.h"
