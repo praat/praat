@@ -2,7 +2,7 @@
 #define _RealTierArea_h_
 /* RealTierArea.h
  *
- * Copyright (C) 1992-2005,2007-2012,2015-2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2012,2015-2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ Thing_define (RealTierArea, FunctionArea) {
 
 	double ymin, ymax, ycursor;
 	double anchorTime = undefined, anchorY;
+	bool anchorIsInFreePart, anchorIsNearPoint;   // only in cb_mouse
 	bool draggingSelection;
 	double dt = 0.0, dy = 0.0;
 	integer firstSelected, lastSelected;

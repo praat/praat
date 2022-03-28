@@ -1,6 +1,6 @@
 /* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "EditorM.h"
 #include "GuiP.h"
 
-Thing_implement (FunctionEditor, Editor, 0);
+Thing_implement_pureVirtual (FunctionEditor, Editor, 0);
 
 #include "prefs_define.h"
 #include "FunctionEditor_prefs.h"
@@ -1254,13 +1254,12 @@ bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	Melder_assert (isdefined (mouseTime));
 	Melder_assert (our startSelection <= our endSelection);
 	Melder_clip (our startWindow, & mouseTime, our endWindow);   // WYSIWYG
-	static double anchorTime = undefined;
 	if (event -> isClick()) {
 		/*
 			Ignore any click that occurs during a drag,
 			such as might occur when the user has both a mouse and a trackpad.
 		*/
-		if (isdefined (anchorTime))
+		if (isdefined (our anchorTime))
 			return false;
 		const double selectedMiddleTime = 0.5 * (our startSelection + our endSelection);
 		const bool theyWantToExtendTheCurrentSelectionAtTheLeft =
@@ -1269,37 +1268,36 @@ bool structFunctionEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 				(event -> shiftKeyPressed && mouseTime >= selectedMiddleTime) || event -> isRightBottomFunctionKeyPressed();
 		if (theyWantToExtendTheCurrentSelectionAtTheLeft) {
 			our startSelection = mouseTime;
-			anchorTime = our endSelection;
+			our anchorTime = our endSelection;
 		} else if (theyWantToExtendTheCurrentSelectionAtTheRight) {
 			our endSelection = mouseTime;
-			anchorTime = our startSelection;
+			our anchorTime = our startSelection;
 		} else {
 			our startSelection = mouseTime;
 			our endSelection = mouseTime;
-			anchorTime = mouseTime;
+			our anchorTime = mouseTime;
 		}
 		Melder_sort (& our startSelection, & our endSelection);
-		Melder_assert (isdefined (anchorTime));
+		Melder_assert (isdefined (our anchorTime));
 	} else if (event -> isDrag() || event -> isDrop()) {
 		/*
 			Ignore any drag or drop that happens after a descendant preempted the above click handling.
 		*/
-		if (isundef (anchorTime))
+		if (isundef (our anchorTime))
 			return false;
-		static bool hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
-		if (! hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-			const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), mouseTime - anchorTime));
+		if (! our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
+			const double distanceToAnchor_mm = fabs (Graphics_dxWCtoMM (our graphics.get(), mouseTime - our anchorTime));
 			constexpr double vicinityRadius_mm = 1.0;
 			if (distanceToAnchor_mm > vicinityRadius_mm)
-				hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
+				our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = true;
 		}
 		if (hasBeenDraggedBeyondVicinityRadiusAtLeastOnce) {
-			our startSelection = std::min (anchorTime, mouseTime);
-			our endSelection = std::max (anchorTime, mouseTime);
+			our startSelection = std::min (our anchorTime, mouseTime);
+			our endSelection = std::max (our anchorTime, mouseTime);
 		}
 		if (event -> isDrop()) {
-			anchorTime = undefined;
-			hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
+			our anchorTime = undefined;
+			our hasBeenDraggedBeyondVicinityRadiusAtLeastOnce = false;
 		}
 	}
 	return true;

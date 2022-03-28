@@ -64,6 +64,11 @@ Thing_define (VowelEditor, Editor) {
 
 	#include "VowelEditor_prefs.h"
 
+	/* only in cb_mouse: */
+	double anchorTime;
+	double previousX;
+	double previousY;
+	double dt;
 };
 
 autoVowelEditor VowelEditor_create (conststring32 title, Daata data);
