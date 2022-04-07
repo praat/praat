@@ -20,23 +20,36 @@
 #include "Sound_and_Spectrum.h"
 
 autoSpectrum Sound_to_Spectrum_resampled (Sound me, integer interpolationDepth) {
+	const double xmin_saved = my xmin, xmax_saved = my xmax;
 	try {
 		const integer fftNumberOfSamples = Melder_iroundUpToPowerOfTwo (my nx);
 		if (fftNumberOfSamples == my nx)
 			return Sound_to_Spectrum (me, true);   // FFT without resampling
 		const double samplingFrequency = 1.0 / my dx;
 		const double df = samplingFrequency / my nx;
-		const double temporarySamplingFrequency = fftNumberOfSamples * df;
-		autoSound resampled = Sound_resample (me, temporarySamplingFrequency, interpolationDepth);
+		const double upSamplingFrequency = fftNumberOfSamples * df;
+		/*
+			In Sound_resample the number of samples for the resampled sound is calculated as 
+				numberOfSamples = Melder_iround ((my xmax - my xmin) * newSamplingFrequency).
+			We have to make sure that this number of samples will always be a power of Melder_iroundUpToPowerOfTwo
+			and equal to fftNumberOfSamples. 
+		*/
+		my xmin = 0.0;
+		my xmax = my nx * my dx;
+		autoSound resampled = Sound_resample (me, upSamplingFrequency, interpolationDepth);
+		my xmin = xmin_saved;
+		my xmax = xmax_saved;
 		autoSpectrum extendedSpectrum = Sound_to_Spectrum (resampled.get(), true);   // FFT after resampling
 		const integer numberOfFrequencies = my nx / 2 + 1;
 		autoSpectrum thee = Spectrum_create (0.5 * samplingFrequency, numberOfFrequencies);
 		thy dx = df;   // override, just in case my nx is odd
 		thy z.get()  <<=  extendedSpectrum -> z.part (1, 2, 1, numberOfFrequencies);
-		if ((my nx & 1) != 0)
+		if (my nx % 2 == 0)
 			thy z [2] [numberOfFrequencies] = 0.0;   // set imaginary value at Nyquist to zero
 		return thee;
 	} catch (MelderError) {
+		my xmin = xmin_saved;
+		my xmax = xmax_saved;
 		Melder_throw (me, U": could not convert to Spectrum by resampling.");
 	}
 }
