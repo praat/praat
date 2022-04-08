@@ -29,10 +29,13 @@ autoSpectrum Sound_to_Spectrum_resampled (Sound me, integer interpolationDepth) 
 		const double df = samplingFrequency / my nx;
 		const double upSamplingFrequency = fftNumberOfSamples * df;
 		/*
-			In Sound_resample the number of samples for the resampled sound is calculated as 
-				numberOfSamples = Melder_iround ((my xmax - my xmin) * newSamplingFrequency).
-			We have to make sure that this number of samples will always be a power of Melder_iroundUpToPowerOfTwo
-			and equal to fftNumberOfSamples. 
+			Temporary domain correction:
+			
+			For a sound with 44100 Hz sampling frequency, xmin = 0.0, xmax = 0.02531645569620253 and nx = 1116,
+			we would calculate fftNumberOfSamples as 2048.
+			Sound_resample would calculate numberOfValues as Melder_iround ((my xmax - my xmin) * newSamplingFrequency 
+			which gives 2049. We have to make sure that these two different calculation result in the same number.
+			We can do this by adapting the sound's domain temporarily.
 		*/
 		my xmin = 0.0;
 		my xmax = my nx * my dx;
