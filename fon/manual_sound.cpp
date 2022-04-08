@@ -987,11 +987,14 @@ NORMAL (U"where \\De%t is the sampling period of the sound. The new sound %y is 
 EQUATION (U"%y__%i_ = %x__%i_ - %\\al %x__%i-1_")
 MAN_END
 
-MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20171114)
+MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20220407)
 INTRO (U"A command to change the spectral slope of every selected @Sound object.")
 NORMAL (U"The reverse of @@Sound: De-emphasize (in-place)...@.")
 NORMAL (U"This is the in-place version of @@Sound: Filter (pre-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
+ENTRY (U"Setting")
+TAG (U"##From frequency (Hz)")
+DEFINITION (U"the frequency %F above which the spectral slope will increase by 6 dB/octave.")
 ENTRY (U"Algorithm")
 NORMAL (U"The pre-emphasis factor %\\al is computed as")
 EQUATION (U"%\\al = exp (-2 %\\pi %F \\De%t)")
