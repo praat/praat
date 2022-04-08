@@ -156,7 +156,7 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		const double duration = my tmax - my tmin;
 		const double nyquistFrequency = my v_myFrequencyUnitToHertz (my xmax);
 		const double samplingFrequency = 2.0 * nyquistFrequency;
-		const integer numberOfSamples = duration * samplingFrequency;
+		const integer numberOfSamples = Melder_iround (duration * samplingFrequency);
 		const integer numberOfFFTSamples = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (numberOfSamples));
 		const integer numberOfSpectralValues = numberOfFFTSamples / 2 + 1;
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfSpectralValues);
