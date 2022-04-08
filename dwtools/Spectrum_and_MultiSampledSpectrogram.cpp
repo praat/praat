@@ -142,7 +142,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				thy nyquistBin -> z = his z.move();
 			}
 		}
-		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
+		Melder_assert (thy frequencyBins.size == thy nx);   // check invariant
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot calculate MultiSampledSpectrogram.");
 	}
