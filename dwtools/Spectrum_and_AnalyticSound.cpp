@@ -48,16 +48,13 @@ autoAnalyticSound Spectrum_to_AnalyticSound_demodulateBand (Spectrum me, integer
 		const integer extraSpectralSamples = ( startSample > 1 ? 1 : 0 ); // first value cannot be imaginary in a Spectrum
 		const integer numberOfSamplesFromSpectrum = endSample - startSample + 1;
 		Melder_require (window.size <= numberOfSamplesFromSpectrum,
-			U"The window size should not exceed the number of selected ssamples in the spectrum.");
-		integer numberOfFilterValues = numberOfSamplesFromSpectrum;
-		if (approximateOverSampling > 1.0)
-			numberOfFilterValues = Melder_iroundUp (approximateOverSampling * numberOfSamplesFromSpectrum);
-		numberOfFilterValues += extraSpectralSamples;
-		const integer numberOfSamplesFFT = Melder_iroundUpToPowerOfTwo (numberOfFilterValues);
+			U"The window size should not exceed the number of selected spectral values.");
+		const integer numberOfValuesInBand = extraSpectralSamples + ( approximateOverSampling <= 1.0 ? numberOfSamplesFromSpectrum :
+			 Melder_iroundUp (approximateOverSampling * numberOfSamplesFromSpectrum) );
+		const integer numberOfSamplesFFT = Melder_iroundUpToPowerOfTwo (numberOfValuesInBand);
 		const integer numberOfFrequencies = numberOfSamplesFFT + 1;
 		double demod_fmax = (endSample - startSample + 1) * my dx * numberOfSamplesFFT / numberOfSamplesFromSpectrum;
 		autoSpectrum demodSpectrum = Spectrum_create (demod_fmax, numberOfFrequencies);
-		demodSpectrum -> z [1] [1] = demodSpectrum -> z [2] [1] = 0.0;
 		const integer demodStart = 1 + extraSpectralSamples, demodEnd = demodStart + numberOfSamplesFromSpectrum - 1;
 		demodSpectrum -> z.part (1, 2, demodStart, demodEnd)  <<=  my z.part (1, 2, startSample, endSample);
 		if (window.size > 0) {
