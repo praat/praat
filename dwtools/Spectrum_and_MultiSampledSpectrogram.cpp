@@ -126,9 +126,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				(void) Sampled_getWindowSamples (me, my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
 					window.part (window.size / 2 + 1, window.size));
-				autoFrequencyBin zeroBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
-				zeroBin -> z = his z.move();
-				thy zeroBin = zeroBin.move();
+				thy zeroBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
+				thy zeroBin -> z = his z.move();
 			} 
 			if (ifreq == thy nx) {
 				/*
@@ -139,9 +138,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				(void) Sampled_getWindowSamples (me, 0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
 					window.part (1 , window.size / 2));
-				autoFrequencyBin nyquistBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
-				nyquistBin -> z = his z.move();
-				thy nyquistBin = nyquistBin.move();
+				thy nyquistBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
+				thy nyquistBin -> z = his z.move();
 			}
 		}
 		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
