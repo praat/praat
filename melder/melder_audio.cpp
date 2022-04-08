@@ -990,6 +990,32 @@ static int theCoreaudioPropertyListener (unsigned int, unsigned int, const Audio
 }
 #endif
 
+static bool interruptedByEscapeKey () {
+	#if defined(_WIN32)
+		MSG event;
+		BOOL messageAvailable = PeekMessage (& event, nullptr, 0, 0, PM_REMOVE);
+		if (messageAvailable) {
+			//TRACE
+			trace (U"Windows message: ", event.message);
+			if (event. message == WM_KEYDOWN) {
+				trace (U"Windows key: ", event. wParam);
+				if (LOWORD (event. wParam) == VK_ESCAPE)
+					return true;
+			} else if (event. message == WM_LBUTTONDOWN
+				|| event.message == WM_NCLBUTTONDOWN)
+			{
+				// ignore all mouse events
+			} else {
+				// handle all other events, such as Chinese keyboard events
+				XtDispatchEvent (& event);
+				//TranslateMessage (& event);
+				//DispatchMessage (& event);
+			}
+		}
+	#endif
+	return false;
+}
+
 void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, integer numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed), void *playClosure)
 {
@@ -1167,12 +1193,9 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 							}
 						}
 					#elif defined (_WIN32)
-						MSG event;
-						if (PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {
-							if (LOWORD (event. wParam) == VK_ESCAPE) {
-								my explicitStop = MelderAudio_EXPLICIT;
-								interrupted = true;
-							}
+						if (interruptedByEscapeKey ()) {
+							my explicitStop = MelderAudio_EXPLICIT;
+							interrupted = true;
 						}
 					#endif
 				}
@@ -1187,7 +1210,7 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 			#ifndef linux
 				Pa_AbortStream (my stream);
 			#endif
-		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
+		} else /* my asynchronicity == kMelder_asynchronicityLevel::ASYNCHRONOUS */ {
 			#if gtk
 				trace (U"g_idle_add");
 				my workProcId_gtk = g_idle_add (workProc_gtk, nullptr);
@@ -1388,15 +1411,12 @@ void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamp
 					my samplesPlayed = my numberOfSamples;
 				} else if (my asynchronicity <= kMelder_asynchronicityLevel::INTERRUPTABLE) {
 					while (! (my waveHeader. dwFlags & WHDR_DONE)) {
-						MSG event;
 						Sleep (10);
 						my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
 						if (my callback && ! my callback (my closure, my samplesPlayed))
 							break;
-						if (my asynchronicity == kMelder_asynchronicityLevel::INTERRUPTABLE &&
-							PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN)
-						{
-							if (LOWORD (event. wParam) == VK_ESCAPE) {
+						if (my asynchronicity == kMelder_asynchronicityLevel::INTERRUPTABLE) {
+							if (interruptedByEscapeKey ()) {
 								my explicitStop = MelderAudio_EXPLICIT;
 								break;
 							}

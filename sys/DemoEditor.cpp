@@ -83,7 +83,7 @@ static void gui_drawingarea_cb_key (DemoEditor me, GuiDrawingArea_KeyEvent event
 	my x = 0;
 	my y = 0;
 	my key = event -> key;
-	trace (my key);
+	trace (U"\"", my key, U"\"");
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
