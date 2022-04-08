@@ -22,8 +22,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220317)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220408)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.11# (8 April 2022)")
+LIST_ITEM (U"• Windows: Demo window could hang with use of Chinese keyboard (after Play).")
 NORMAL (U"##6.2.10# (17 March 2022)")
 LIST_ITEM (U"• TextGrid window: restored the splitting of labels.")
 LIST_ITEM (U"• Save Demo Window as PDF file... (Goodies menu).")
