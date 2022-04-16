@@ -9,6 +9,6 @@ cog_dft = Get centre of gravity: 2.0
 selectObject: tone
 resampled = To Spectrum (resampled): 30
 cog_resampled = Get centre of gravity: 2.0
-assert abs (cog_dft - cog_resampled) / cog_dft < 1.0
+assert abs (cog_dft - cog_resampled)  / cog_dft < 1e-6
 
 appendInfoLine: "test_Sound_to_Spectrum_resampled.praat OK"
