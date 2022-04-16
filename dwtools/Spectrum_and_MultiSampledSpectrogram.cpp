@@ -120,29 +120,29 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 			if (ifreq == 1) {
 				/*
 					DC_BIN:
-					Fill with values from 0 Hz to the mid of the first window
+					Fill with values from 0 Hz to the mid of the first window.
 					Multiply with a window only the part that overlaps with the first window.
 				*/
 				(void) Sampled_getWindowSamples (me, my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
-					window.part (window.size / 2 + 1, window.size));
+					 	window.part (window.size / 2 + 1, window.size));
 				thy zeroBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy zeroBin -> z = his z.move();
 			} 
 			if (ifreq == thy nx) {
 				/*
 					NYQUIST_BIN:
-					Fill with the part from the mid of the last window to the end
+					Fill with the part from the mid of the last window to the end.
 					Window only the part that overlaps the last window.
 				*/
 				(void) Sampled_getWindowSamples (me, 0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
-					window.part (1 , window.size / 2));
+					 	window.part (1 , window.size / 2));
 				thy nyquistBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy nyquistBin -> z = his z.move();
 			}
 		}
-		Melder_assert (thy frequencyBins.size == thy nx); // maintain invariant
+		Melder_assert (thy frequencyBins.size == thy nx);   // check invariant
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot calculate MultiSampledSpectrogram.");
 	}

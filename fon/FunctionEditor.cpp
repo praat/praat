@@ -511,6 +511,7 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 			U"“to” should be greater than “from”.");
 		my startWindow = from;
 		my endWindow = to;
+		my v_windowChanged ();
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		updateScrollBar (me);
@@ -522,6 +523,7 @@ static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 static void do_showAll (FunctionEditor me) {
 	my startWindow = my tmin;
 	my endWindow = my tmax;
+	my v_windowChanged ();
 	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
@@ -538,6 +540,7 @@ static void do_zoomIn (FunctionEditor me) {
 	const double shift = (my endWindow - my startWindow) / 4.0;
 	my startWindow += shift;
 	my endWindow -= shift;
+	my v_windowChanged ();
 	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
@@ -559,6 +562,7 @@ static void do_zoomOut (FunctionEditor me) {
 	my endWindow += shift;
 	if (my endWindow > my tmax - 1e-12)
 		my endWindow = my tmax;
+	my v_windowChanged ();
 	Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 	my v_updateText ();
 	updateScrollBar (me);
@@ -577,6 +581,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 		my endZoomHistory = my endWindow;   // remember for Zoom Back
 		my startWindow = my startSelection;
 		my endWindow = my endSelection;
+		my v_windowChanged ();
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		updateScrollBar (me);
@@ -594,6 +599,7 @@ static void do_zoomBack (FunctionEditor me) {
 	if (my endZoomHistory > my startZoomHistory) {
 		my startWindow = my startZoomHistory;
 		my endWindow = my endZoomHistory;
+		my v_windowChanged ();
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		updateScrollBar (me);
@@ -849,6 +855,7 @@ void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGrou
 		if (my startWindow < my tmin + 1e-12)
 			my startWindow = my tmin;
 	}
+	my v_windowChanged ();
 	Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 	FunctionEditor_marksChanged (me, needsUpdateGroup);
 }
@@ -875,6 +882,7 @@ void FunctionEditor_scrollToView (FunctionEditor me, double t) {
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_shift()
 		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow), true);
 	} else {
+		my v_windowChanged ();
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_marksChanged()
 		FunctionEditor_marksChanged (me, true);
 	}
@@ -985,6 +993,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 			my endWindow = my tmax;
 	}
 	if (shifted || zoomed) {
+		my v_windowChanged ();
 		Melder_assert (isdefined (my startSelection));   // precondition of v_updateText()
 		my v_updateText ();
 		//updateScrollBar (me);
