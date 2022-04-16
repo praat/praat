@@ -2,7 +2,7 @@
 #define _TimeSoundAnalysisEditor_h_
 /* TimeSoundAnalysisEditor.h
  *
- * Copyright (C) 1992-2007,2009-2016,2018,2020 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2016,2018,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,11 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		override
 	{
 		return p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show ? 0.5 : 0.0;
+	}
+	void v_windowChanged ()
+		override
+	{
+		our v_reset_analysis ();
 	}
 
 	virtual bool v_hasAnalysis    () { return true; }
