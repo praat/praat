@@ -147,6 +147,7 @@ Thing_define (FunctionEditor, Editor) {
 		override;
 
 	virtual void v_draw () = 0;
+	virtual void v_windowChanged () { }
 	virtual bool v_hasSelectionViewer () { return false; }
 	virtual void v_drawSelectionViewer () { }
 	virtual void v_drawRealTimeSelectionViewer (double /* time */) { }
