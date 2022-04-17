@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2019,2021 Paul Boersma
+ * Copyright (C) 1992-2019,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,6 +452,18 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (minimum of ", columnLabel, U")")
 }
 
+DIRECT (QUERY_ONE_FOR_INTEGER__Table_getNumberOfColumns) {
+	QUERY_ONE_FOR_INTEGER (Table)
+		const integer result = my numberOfColumns;
+	QUERY_ONE_FOR_INTEGER_END (U" columns")
+}
+
+DIRECT (QUERY_ONE_FOR_INTEGER__Table_getNumberOfRows) {
+	QUERY_ONE_FOR_INTEGER (Table)
+		const integer result = my rows.size;
+	QUERY_ONE_FOR_INTEGER_END (U" rows")
+}
+
 FORM (QUERY_ONE_FOR_REAL__Table_getQuantile, U"Table: Get quantile", nullptr) {
 	SENTENCE (columnLabel, U"Column label", U"")
 	POSITIVE (quantile, U"Quantile", U"0.50 (= median)")
@@ -473,16 +485,14 @@ DO
 	QUERY_ONE_FOR_REAL_END (U" (standard deviation of ", columnLabel, U")")
 }
 
-DIRECT (QUERY_ONE_FOR_INTEGER__Table_getNumberOfColumns) {
-	QUERY_ONE_FOR_INTEGER (Table)
-		const integer result = my numberOfColumns;
-	QUERY_ONE_FOR_INTEGER_END (U" columns")
-}
-
-DIRECT (QUERY_ONE_FOR_INTEGER__Table_getNumberOfRows) {
-	QUERY_ONE_FOR_INTEGER (Table)
-		const integer result = my rows.size;
-	QUERY_ONE_FOR_INTEGER_END (U" rows")
+FORM (QUERY_ONE_FOR_REAL__Table_getSum, U"Table: Get sum", nullptr) {
+	SENTENCE (columnLabel, U"Column label", U"")
+	OK
+DO
+	QUERY_ONE_FOR_REAL (Table)
+		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		const double result = Table_getSum (me, columnNumber);
+	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getValue, U"Table: Get value", nullptr) {
@@ -1200,6 +1210,8 @@ void praat_uvafon_stat_init () {
 				QUERY_ONE_FOR_REAL__Table_getMinimum);
 		praat_addAction1 (classTable, 1, U"Get maximum...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__Table_getMaximum);
+		praat_addAction1 (classTable, 1, U"Get sum...", nullptr, 1,
+				QUERY_ONE_FOR_REAL__Table_getSum);
 		praat_addAction1 (classTable, 1, U"Get mean...", nullptr, 1,
 				QUERY_ONE_FOR_REAL__Table_getMean);
 		praat_addAction1 (classTable, 1, U"Get group mean...", nullptr, 1,
