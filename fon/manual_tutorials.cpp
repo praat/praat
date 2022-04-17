@@ -22,8 +22,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20220408)
+MAN_BEGIN (U"What's new?", U"ppgb", 20220417)
 INTRO (U"Latest changes in Praat.")
+NORMAL (U"##6.2.12# (17 April 2022)")
+LIST_ITEM (U"• Table: Get sum...")
+LIST_ITEM (U"• Scripting an editor window can now query analyses that are not visible (e.g. after zooming).")
 NORMAL (U"##6.2.11# (8 April 2022)")
 LIST_ITEM (U"• Windows: Demo window could hang with use of Chinese keyboard (after Play).")
 NORMAL (U"##6.2.10# (17 March 2022)")
