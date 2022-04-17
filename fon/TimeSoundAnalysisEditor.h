@@ -40,6 +40,8 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		override;
 	void v_info ()
 		override;
+	void v_dataChanged ()
+		override;
 	void v_createMenuItems_query (EditorMenu menu)
 		override;
 	bool v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double x_world, double y_fraction)
