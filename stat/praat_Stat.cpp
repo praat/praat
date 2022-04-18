@@ -492,7 +492,7 @@ DO
 	QUERY_ONE_FOR_REAL (Table)
 		const integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const double result = Table_getSum (me, columnNumber);
-	QUERY_ONE_FOR_REAL_END (U" (mean of ", columnLabel, U")")
+	QUERY_ONE_FOR_REAL_END (U" (sum of ", columnLabel, U")")
 }
 
 FORM (QUERY_ONE_FOR_REAL__Table_getValue, U"Table: Get value", nullptr) {
