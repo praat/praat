@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2022 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ void structSoundEditor :: v_dataChanged () {
 	Melder_assert (sound);
 	if (sound -> classInfo == classSound)   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
 		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
-	v_reset_analysis ();
 	SoundEditor_Parent :: v_dataChanged ();
 }
 

@@ -76,6 +76,7 @@ static void updateGroup (FunctionEditor me) {
 			if (my pref_synchronizedZoomAndScroll()) {
 				thy startWindow = my startWindow;
 				thy endWindow = my endWindow;
+				thy v_windowChanged ();
 			}
 			thy startSelection = my startSelection;
 			thy endSelection = my endSelection;
@@ -1004,6 +1005,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 			if (theGroupMembers [i] && theGroupMembers [i] != me) {
 				theGroupMembers [i] -> startWindow = my startWindow;
 				theGroupMembers [i] -> endWindow = my endWindow;
+				theGroupMembers [i] -> v_windowChanged ();
 				Melder_assert (isdefined (theGroupMembers [i] -> startSelection));   // precondition of FunctionEditor_updateText()
 				FunctionEditor_updateText (theGroupMembers [i]);
 				updateScrollBar (theGroupMembers [i]);
@@ -1048,6 +1050,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		if (my pref_synchronizedZoomAndScroll()) {
 			my startWindow = thy startWindow;
 			my endWindow = thy endWindow;
+			my v_windowChanged ();
 		}
 		my startSelection = thy startSelection;
 		my endSelection = thy endSelection;
@@ -1452,13 +1455,18 @@ void structFunctionEditor :: v_dataChanged () {
 	Melder_assert (Thing_isa (our function(), classFunction));
 	our tmin = our function() -> xmin;
  	our tmax = our function() -> xmax;
- 	if (our startWindow < our tmin || our startWindow > our tmax)
+ 	if (our startWindow < our tmin || our startWindow > our tmax) {
  		our startWindow = our tmin;
- 	if (our endWindow < our tmin || our endWindow > our tmax)
+ 		our v_windowChanged ();
+	}
+ 	if (our endWindow < our tmin || our endWindow > our tmax) {
  		our endWindow = our tmax;
+ 		our v_windowChanged ();
+	}
  	if (our startWindow >= our endWindow) {
  		our startWindow = our tmin;
  		our endWindow = our tmax;
+ 		our v_windowChanged ();
 	}
 	Melder_clip (our tmin, & our startSelection, our tmax);
 	Melder_clip (our tmin, & our endSelection, our tmax);

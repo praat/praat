@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2012,2014-2019,2021 Paul Boersma
+ * Copyright (C) 2002-2012,2014-2019,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ void Table_setNumericValue (Table me, integer row, integer column, double value)
 void Table_numericize_Assert (Table me, integer columnNumber);
 
 double Table_getQuantile (Table me, integer column, double quantile);
+double Table_getSum (Table me, integer column);
 double Table_getMean (Table me, integer column);
 double Table_getMaximum (Table me, integer icol);
 double Table_getMinimum (Table me, integer icol);

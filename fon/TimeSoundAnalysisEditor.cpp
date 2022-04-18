@@ -126,12 +126,17 @@ void structTimeSoundAnalysisEditor :: v_info () {
 	}
 }
 
+void structTimeSoundAnalysisEditor :: v_dataChanged () {
+	our v_reset_analysis ();
+	our TimeSoundAnalysisEditor_Parent :: v_dataChanged ();
+}
+
 void structTimeSoundAnalysisEditor :: v_reset_analysis () {
-	d_spectrogram. reset();
-	d_pitch. reset();
-	d_intensity. reset();
-	d_formant. reset();
-	d_pulses. reset();
+	our d_spectrogram. reset();
+	our d_pitch. reset();
+	our d_intensity. reset();
+	our d_formant. reset();
+	our d_pulses. reset();
 }
 
 enum {
