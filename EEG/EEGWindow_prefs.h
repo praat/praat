@@ -1,6 +1,6 @@
 /* EEGWindow_prefs.h
  *
- * Copyright (C) 2013,2015,2017 Paul Boersma
+ * Copyright (C) 2013,2015,2017,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (EEGWindow)
+EditorPrefs_begin (EEGWindow)
 
 	prefs_override_bool    (EEGWindow, showSelectionViewer,            1, false)
 	prefs_override_enum    (EEGWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
@@ -40,6 +40,6 @@ prefs_begin (EEGWindow)
 	prefs_override_double  (EEGWindow, spectrogram_dynamicCompression, 1, U"0.0")
 	prefs_override_bool    (EEGWindow, spectrogram_picture_garnish,    1, true)
 
-prefs_end (EEGWindow)
+EditorPrefs_end (EEGWindow)
 
 /* End of file EEGWindow_prefs.h */

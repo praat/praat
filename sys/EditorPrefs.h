@@ -1,8 +1,8 @@
-#ifndef _prefs_h_
-#define _prefs_h_
-/* prefs.h
+#ifndef _EditorPrefs_h_
+#define _EditorPrefs_h_
+/* EditorPrefs.h
  *
- * Copyright (C) 2013,2015-2018 Paul Boersma
+ * Copyright (C) 2013,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "Preferences.h"
 
-#define prefs_begin(Klas) \
+#define EditorPrefs_begin(Klas) \
 	public: static void f_preferences (); \
 	void v_copyPreferencesToInstance () override;
 
@@ -72,7 +72,7 @@
 	private: static char32 s_##name [Preferences_STRING_BUFFER_SIZE]; public: char32 * pref_##name () override { return & s_##name [0]; } \
 	private: static conststring32 sdefault_##name; public: conststring32 default_##name () override{ return sdefault_##name; }
 
-#define prefs_end(Klas)
+#define EditorPrefs_end(Klas)
 
-/* End of file prefs.h */
+/* End of file EditorPrefs.h */
 #endif

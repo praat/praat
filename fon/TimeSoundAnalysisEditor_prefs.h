@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor_prefs.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2013,2015-2017,2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (TimeSoundAnalysisEditor)
+EditorPrefs_begin (TimeSoundAnalysisEditor)
 
 	prefs_add_double_with_data  (TimeSoundAnalysisEditor, longestAnalysis,                 1, U"10.0")   // seconds
 	prefs_add_enum_with_data    (TimeSoundAnalysisEditor, timeStepStrategy,                1, kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT)
@@ -95,6 +95,6 @@ prefs_begin (TimeSoundAnalysisEditor)
 	prefs_add_string_with_data  (TimeSoundAnalysisEditor, log1_format,                     1, U"Time 'time:6' seconds, pitch 'f0:2' Hz")
 	prefs_add_string_with_data  (TimeSoundAnalysisEditor, log2_format,                     1, U"'t1:4''tab$''t2:4''tab$''f1:0''tab$''f2:0''tab$''f3:0'")
 
-prefs_end (TimeSoundAnalysisEditor)
+EditorPrefs_end (TimeSoundAnalysisEditor)
 
 /* End of file TimeSoundAnalysisEditor_prefs.h */

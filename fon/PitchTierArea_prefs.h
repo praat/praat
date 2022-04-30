@@ -1,6 +1,6 @@
 /* PitchTierArea_prefs.h
  *
- * Copyright (C) 2012,2014-2016,2020,2021 Paul Boersma
+ * Copyright (C) 2012,2014-2016,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (PitchTierArea)
+EditorPrefs_begin (PitchTierArea)
 
 	prefs_override_double (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
 	prefs_override_double (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
 
-prefs_end (PitchTierArea)
+EditorPrefs_end (PitchTierArea)
 
 /* End of file PitchTierArea_prefs.h */

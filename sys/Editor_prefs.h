@@ -1,6 +1,6 @@
 /* Editor_prefs.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2015,2016,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (Editor)
+EditorPrefs_begin (Editor)
 
 	prefs_add_bool   (Editor, picture_eraseFirst,     1, true)
 	prefs_add_enum   (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
 
-prefs_end (Editor)
+EditorPrefs_end (Editor)
 
 /* End of file Editor_prefs.h */

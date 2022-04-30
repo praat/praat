@@ -1,6 +1,6 @@
 /* prefs_install.h
  *
- * Copyright (C) 2013,2015-2018,2021 Paul Boersma
+ * Copyright (C) 2013,2015-2018,2021,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /* for C++ files; see prefs.h */
 
-#undef prefs_begin
+#undef EditorPrefs_begin
 #undef prefs_add_int
 #undef prefs_add_int_with_data
 #undef prefs_override_int
@@ -37,9 +37,9 @@
 #undef prefs_add_string
 #undef prefs_add_string_with_data
 #undef prefs_override_string
-#undef prefs_end
+#undef EditorPrefs_end
 
-#define prefs_begin(Klas) \
+#define EditorPrefs_begin(Klas) \
 	void struct##Klas :: f_preferences () {
 
 #define prefs_add_int(Klas,name,version,default) \
@@ -78,7 +78,7 @@
 #define prefs_override_string(Klas,name,version,default) \
 	Preferences_addString (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name [0], default);
 
-#define prefs_end(Klas) \
+#define EditorPrefs_end(Klas) \
 	}
 
 /* End of file prefs_install.h */

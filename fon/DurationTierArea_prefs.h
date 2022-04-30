@@ -1,6 +1,6 @@
 /* DurationTierArea_prefs.h
  *
- * Copyright (C) 2020,2021 Paul Boersma
+ * Copyright (C) 2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (DurationTierArea)
+EditorPrefs_begin (DurationTierArea)
 
 	prefs_override_double (DurationTierArea, dataFreeMinimum, 1, U"0.25")
 	prefs_override_double (DurationTierArea, dataFreeMaximum, 1, U"3.0")
 
-prefs_end (DurationTierArea)
+EditorPrefs_end (DurationTierArea)
 
 /* End of file DurationTierArea_prefs.h */

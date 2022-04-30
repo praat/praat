@@ -23,11 +23,11 @@
 
 Thing_implement_pureVirtual (FunctionEditor, Editor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "FunctionEditor_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "FunctionEditor_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "FunctionEditor_prefs.h"
 #include "GraphicsP.h"
 

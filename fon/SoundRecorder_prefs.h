@@ -1,6 +1,6 @@
 /* SoundRecorder_prefs.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2013,2015,2016,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (SoundRecorder)
+EditorPrefs_begin (SoundRecorder)
 
 	prefs_add_enum_with_data   (SoundRecorder, meter_which, 1, kSoundRecorder_meter, INTENSITY)
 	prefs_add_double_with_data (SoundRecorder, meter_intensity_minimum,  1, U"50.0")   // dB
@@ -24,6 +24,6 @@ prefs_begin (SoundRecorder)
 	prefs_add_double_with_data (SoundRecorder, meter_centreOfGravity_minimum,  1,  U"500.0")   // Hz
 	prefs_add_double_with_data (SoundRecorder, meter_centreOfGravity_maximum,  1, U"8000.0")   // Hz
 
-prefs_end (SoundRecorder)
+EditorPrefs_end (SoundRecorder)
 
 /* End of file SoundRecorder_prefs.h */

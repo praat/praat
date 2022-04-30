@@ -69,11 +69,11 @@ trajectory --> path ????
 
 Thing_implement (VowelEditor, Editor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "VowelEditor_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "VowelEditor_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "VowelEditor_prefs.h"
 
 #define STATUS_INFO (3*Gui_LABEL_HEIGHT/2)

@@ -21,11 +21,11 @@
 
 Thing_implement (RealTierArea, FunctionArea, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "RealTierArea_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "RealTierArea_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "RealTierArea_prefs.h"
 
 void RealTierArea_addPointAt (RealTierArea me, RealTier tier, double time, double desiredY) {

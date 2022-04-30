@@ -1,6 +1,6 @@
 /* FormantGridEditor_prefs.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2013,2015,2016,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (FormantGridEditor)
+EditorPrefs_begin (FormantGridEditor)
 
 	prefs_add_double_with_data (FormantGridEditor, formantFloor,                    1, U"0.0")   // Hz
 	prefs_add_double_with_data (FormantGridEditor, formantCeiling,                  1, U"11000.0")   // Hz
@@ -36,6 +36,6 @@ prefs_begin (FormantGridEditor)
 	prefs_add_double_with_data (FormantGridEditor, source_phonation_power1,         1, U"3.0")
 	prefs_add_double_with_data (FormantGridEditor, source_phonation_power2,         1, U"4.0")
 
-prefs_end (FormantGridEditor)
+EditorPrefs_end (FormantGridEditor)
 
 /* End of file FormantGridEditor_prefs.h */

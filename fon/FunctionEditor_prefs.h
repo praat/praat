@@ -1,6 +1,6 @@
 /* FunctionEditor_prefs.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2013,2015,2016,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (FunctionEditor)
+EditorPrefs_begin (FunctionEditor)
 
 	prefs_add_int  (FunctionEditor, shellWidth,                 1, U"700")
 	prefs_add_int  (FunctionEditor, shellHeight,                1, U"440")
@@ -26,6 +26,6 @@ prefs_begin (FunctionEditor)
 	prefs_add_bool (FunctionEditor, picture_drawSelectionTimes, 1, true)
 	prefs_add_bool (FunctionEditor, picture_drawSelectionHairs, 1, true)
 
-prefs_end (FunctionEditor)
+EditorPrefs_end (FunctionEditor)
 
 /* End of file FunctionEditor_prefs.h */

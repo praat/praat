@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2021 Paul Boersma
+ * Copyright (C) 1996-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 
 Thing_implement (HyperPage, Editor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "HyperPage_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "HyperPage_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "HyperPage_prefs.h"
 
 #define PAGE_HEIGHT  320.0

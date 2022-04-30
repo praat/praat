@@ -1,6 +1,6 @@
 /* VowelEditor_prefs.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020 David Weenink, 2022 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-prefs_begin (VowelEditor)
+EditorPrefs_begin (VowelEditor)
 
 	prefs_add_int_with_data    (VowelEditor, shell_width,                 1, U"900")
 	prefs_add_int_with_data    (VowelEditor, shell_height,                1, U"700")
@@ -52,6 +52,6 @@ prefs_begin (VowelEditor)
 	prefs_add_double_with_data (VowelEditor, grid_df1,                    1, U"200.0")   // Hz
 	prefs_add_double_with_data (VowelEditor, grid_df2,                    1, U"500.0")   // Hz
 
-prefs_end (VowelEditor)
+EditorPrefs_end (VowelEditor)
 
 /* End of file VowelEditor_prefs.h */
