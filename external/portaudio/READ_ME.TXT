@@ -24,7 +24,7 @@ Around pa_win_*.c, do
 ...
 #endif
 
-Around pa_unix_util.c and pa_jack.c, do
+Around pa_unix_util.c, do
 #if defined (UNIX)
 ...
 #endif
