@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2013,2015-2021 Paul Boersma
+ * Copyright (C) 2006-2013,2015-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 
 Thing_implement (TableEditor, Editor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "TableEditor_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "TableEditor_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "TableEditor_prefs.h"
 
 #define SIZE_INCHES  40

@@ -1,6 +1,6 @@
 /* FormantGridEditor.cpp
  *
- * Copyright (C) 2008-2020 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2022 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@ Thing_implement (FormantGridArea, RealTierArea, 0);
 
 Thing_implement (FormantGridEditor, FunctionEditor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "FormantGridEditor_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "FormantGridEditor_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "FormantGridEditor_prefs.h"
 
 /********** MENU COMMANDS **********/

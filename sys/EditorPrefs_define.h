@@ -1,6 +1,6 @@
-/* prefs_define.h
+/* EditorPrefs_define.h
  *
- * Copyright (C) 2013,2015-2018 Paul Boersma
+ * Copyright (C) 2013,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /* for C++ files; see prefs.h */
 
-#undef prefs_begin
+#undef EditorPrefs_begin
 #undef prefs_add_int
 #undef prefs_add_int_with_data
 #undef prefs_override_int
@@ -37,9 +37,9 @@
 #undef prefs_add_string
 #undef prefs_add_string_with_data
 #undef prefs_override_string
-#undef prefs_end
+#undef EditorPrefs_end
 
-#define prefs_begin(Klas)
+#define EditorPrefs_begin(Klas)
 
 #define prefs_add_int(Klas,name,version,default) \
 	int struct##Klas :: s_##name; \
@@ -89,6 +89,6 @@
 	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
 	conststring32 struct##Klas :: sdefault_##name = default;
 
-#define prefs_end(Klas)
+#define EditorPrefs_end(Klas)
 
-/* End of file prefs_define.h */
+/* End of file EditorPrefs_define.h */

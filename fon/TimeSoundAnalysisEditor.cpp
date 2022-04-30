@@ -36,11 +36,11 @@
 
 Thing_implement_pureVirtual (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
 
 static const conststring32 theMessage_Cannot_compute_spectrogram = U"The spectrogram is not defined at the edge of the sound.";

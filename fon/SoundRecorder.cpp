@@ -45,11 +45,11 @@
 
 Thing_implement (SoundRecorder, Editor, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "SoundRecorder_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "SoundRecorder_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "SoundRecorder_prefs.h"
 
 static struct {

@@ -16,10 +16,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (TableEditor)
+EditorPrefs_begin (TableEditor)
 
 	prefs_add_bool_with_data   (TableEditor, useTextStyles,          1, false)
 
-prefs_end (TableEditor)
+EditorPrefs_end (TableEditor)
 
 /* End of file TableEditor_prefs.h */

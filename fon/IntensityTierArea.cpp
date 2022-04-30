@@ -1,6 +1,6 @@
 /* IntensityTierArea.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2018,2020,2021 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2018,2020-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 
 Thing_implement (IntensityTierArea, RealTierArea, 0);
 
-#include "prefs_define.h"
+#include "EditorPrefs_define.h"
 #include "IntensityTierArea_prefs.h"
-#include "prefs_install.h"
+#include "EditorPrefs_install.h"
 #include "IntensityTierArea_prefs.h"
-#include "prefs_copyToInstance.h"
+#include "EditorPrefs_copyToInstance.h"
 #include "IntensityTierArea_prefs.h"
 
 /* End of file IntensityTierArea.cpp */

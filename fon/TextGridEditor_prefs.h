@@ -1,6 +1,6 @@
 /* TextGridEditor_prefs.h
  *
- * Copyright (C) 2013,2015,2016,2019 Paul Boersma
+ * Copyright (C) 2013,2015,2016,2019,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (TextGridEditor)
+EditorPrefs_begin (TextGridEditor)
 
 	prefs_override_int         (TextGridEditor, shellWidth,             1, U"800")
 	prefs_override_int         (TextGridEditor, shellHeight,            1, U"600")
@@ -37,6 +37,6 @@ prefs_begin (TextGridEditor)
 	prefs_add_bool_with_data   (TextGridEditor, align_includePhonemes,  1, false)
 	prefs_add_bool_with_data   (TextGridEditor, align_allowSilences,    1, false)
 
-prefs_end (TextGridEditor)
+EditorPrefs_end (TextGridEditor)
 
 /* End of file TextGridEditor_prefs.h */

@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-prefs_begin (FormantPathEditor)
+EditorPrefs_begin (FormantPathEditor)
 
 	prefs_override_int         (FormantPathEditor, shellWidth,                        1, U"800")
 	prefs_override_int         (FormantPathEditor, shellHeight,                       1, U"600")	
@@ -56,6 +56,6 @@ prefs_begin (FormantPathEditor)
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showBandwidths,        1, true)
 	prefs_add_double_with_data (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
 	
-prefs_end (FormantPathEditor)
+EditorPrefs_end (FormantPathEditor)
 	
 /* End of file FormantPathEditor_prefs.h */
