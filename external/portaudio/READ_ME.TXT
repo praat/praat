@@ -1,13 +1,9 @@
 Praats/external/portaudio/READ_ME.TXT
-Paul Boersma, 19 November 2020
-This file describes the adaptations to the PortAudio sources
+Paul Boersma, 30 April 2022
+This file describes the adaptations to the PortAudio 19.7.0 sources
 that are needed to make them compatible with Praat.
 
 Deleted many lines in pa_***_hostapis.c.
-
-(At the top of pa_win_*.c: #undef UNICODE)
-
-Duplicate pa_unix_util.c to pa_mac_util.c, but only for allocation and time functions.
 
 Around pa_linux_alsa.c, do
 #if defined (UNIX) && defined (ALSA)
@@ -25,19 +21,31 @@ Around pa_win_*.c, do
 #endif
 
 Around pa_unix_util.c, do
-#if defined (UNIX)
+#if defined (UNIX) || defined (macintosh)
 ...
 #endif
 
-Add prototype for
-PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );
-in pa_linux_alsa.h
+Copy declarations from pa_unix_hostapis.c and pa_win_hostapis.c to pa_hostapi.h, like this:
 
-Add prototype for
-PaError PaJack_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );
-in pa_jack.h
+/*
+	ppgb: the following declarations copied here from pa_unix_hostapis.c.
+*/
+PaError PaJack_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaOSS_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+/* Added for IRIX, Pieter, oct 2, 2003: */
+PaError PaSGI_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+/* Linux AudioScience HPI */
+PaError PaAsiHpi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaMacCore_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
 
-Include pa_jack.h in pa_jack.c
-
-In pa_mac_core_utilities.h and .c, insert twice `void` to turn two declarations into prototypes.
-(PortAudio pull request 2020-11-19)
+/*
+	ppgb: the following declarations copied here from pa_win_hostapis.c.
+*/
+PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaWinMme_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaWinDs_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaWinWdm_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
