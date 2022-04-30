@@ -1,4 +1,4 @@
-#ifdef UNIX
+#if defined (UNIX) || defined (macintosh)
 /*
  * $Id$
  * Portable Audio I/O Library

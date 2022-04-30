@@ -432,7 +432,7 @@ static bool workProc (void *closure) {
 					Pa_AbortStream (my stream);
 					return flush ();
 				}
-			} else if (my samplesPlayed < my numberOfSamples + my sampleRate / 20) {   // allow the latency estimate to be 50 ms off.
+			} else if (my samplesPlayed < my numberOfSamples + my sampleRate / 2) {   // allow the latency estimate to be 500 ms off.
 				if (my callback && ! my callback (my closure, my samplesPlayed)) {
 					Pa_AbortStream (my stream);
 					return flush ();
@@ -552,7 +552,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		if (Melder_debug == 20) Melder_casual (U"output overflow");
 	}
 	if (my samplesLeft > 0) {
-		integer dsamples = my samplesLeft > (integer) frameCount ? (integer) frameCount : my samplesLeft;
+		const integer dsamples = Melder_clippedRight ((integer) frameCount, my samplesLeft);
 		if (Melder_debug == 20) Melder_casual (U"play ", dsamples, U" ", Pa_GetStreamCpuLoad (my stream));
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		Melder_assert (my playBuffer);
