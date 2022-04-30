@@ -1,6 +1,6 @@
 #ifdef UNIX
 /*
- * $Id: pa_unix_hostapis.c 1740 2011-08-25 07:17:48Z philburk $
+ * $Id$
  * Portable Audio I/O Library UNIX initialization table
  *
  * Based on the Open Source API proposed by Ross Bencina
@@ -27,13 +27,13 @@
  */
 
 /*
- * The text above constitutes the entire PortAudio license; however, 
+ * The text above constitutes the entire PortAudio license; however,
  * the PortAudio community also makes the following non-binding requests:
  *
  * Any person wishing to distribute modifications to the Software is
  * requested to send the modifications to the original developer so that
- * they can be incorporated into the canonical version. It is also 
- * requested that these non-binding requests be included along with the 
+ * they can be incorporated into the canonical version. It is also
+ * requested that these non-binding requests be included along with the
  * license above.
  */
 
@@ -58,13 +58,60 @@ PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiI
 
 PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
-		#if defined (linux)
-			#if defined (ALSA)
+		#if defined (linux)   // ppgb
+			#if defined (ALSA)   // ppgb
 				PaAlsa_Initialize,   // ppgb
-			#elif defined (JACK)
-				PaJack_Initialize,
-			#endif
-		#endif
+			#elif defined (JACK)   // ppgb
+				PaJack_Initialize,   // ppgb
+			#endif   // ppgb
+		#endif   // ppgb
+
+#if 0   // ppgb
+
+#ifdef __linux__
+
+#if PA_USE_ALSA
+        PaAlsa_Initialize,
+#endif
+
+#if PA_USE_OSS
+        PaOSS_Initialize,
+#endif
+
+#else   /* __linux__ */
+
+#if PA_USE_OSS
+        PaOSS_Initialize,
+#endif
+
+#if PA_USE_ALSA
+        PaAlsa_Initialize,
+#endif
+
+#endif  /* __linux__ */
+
+#if PA_USE_JACK
+        PaJack_Initialize,
+#endif
+                    /* Added for IRIX, Pieter, oct 2, 2003: */
+#if PA_USE_SGI
+        PaSGI_Initialize,
+#endif
+
+#if PA_USE_ASIHPI
+        PaAsiHpi_Initialize,
+#endif
+
+#if PA_USE_COREAUDIO
+        PaMacCore_Initialize,
+#endif
+
+#if PA_USE_SKELETON
+        PaSkeleton_Initialize,
+#endif
+
+#endif   // ppgb
+
         0   /* NULL terminated array */
     };
 

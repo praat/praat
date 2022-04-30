@@ -1,6 +1,6 @@
 #ifdef _WIN32
 /*
- * $Id: pa_win_hostapis.c 1728 2011-08-18 03:31:51Z rossb $
+ * $Id$
  * Portable Audio I/O Library Windows initialization table
  *
  * Based on the Open Source API proposed by Ross Bencina
@@ -27,13 +27,13 @@
  */
 
 /*
- * The text above constitutes the entire PortAudio license; however, 
+ * The text above constitutes the entire PortAudio license; however,
  * the PortAudio community also makes the following non-binding requests:
  *
  * Any person wishing to distribute modifications to the Software is
  * requested to send the modifications to the original developer so that
- * they can be incorporated into the canonical version. It is also 
- * requested that these non-binding requests be included along with the 
+ * they can be incorporated into the canonical version. It is also
+ * requested that these non-binding requests be included along with the
  * license above.
  */
 
@@ -72,11 +72,41 @@ PaError PaWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInd
 
 PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
+
         PaWinMme_Initialize,   // 0 ppgb
         //PaWinDs_Initialize,   // 1 ppgb
         //PaWinWdm_Initialize,   // 2 ppgb
-        //PaAsio_Initialize,
-		//PaWinWasapi_Initialize,
+        //PaAsio_Initialize,   // 3 ppgb
+		//PaWinWasapi_Initialize,   // 4 ppgb
+
+#if 0   // ppgb
+
+#if PA_USE_WMME
+        PaWinMme_Initialize,
+#endif
+
+#if PA_USE_DS
+        PaWinDs_Initialize,
+#endif
+
+#if PA_USE_ASIO
+        PaAsio_Initialize,
+#endif
+
+#if PA_USE_WASAPI
+        PaWasapi_Initialize,
+#endif
+
+#if PA_USE_WDMKS
+        PaWinWdm_Initialize,
+#endif
+
+#if PA_USE_SKELETON
+        PaSkeleton_Initialize, /* just for testing. last in list so it isn't marked as default. */
+#endif
+
+#endif   // ppgb
+
         0   /* NULL terminated array */
     };
 
