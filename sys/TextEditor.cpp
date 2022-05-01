@@ -618,15 +618,15 @@ static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS_DIRECT) {
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
-	if (my fontSizeButton_10) GuiMenuItem_check (my fontSizeButton_10, my p_fontSize == 10.0);
-	if (my fontSizeButton_12) GuiMenuItem_check (my fontSizeButton_12, my p_fontSize == 12.0);
-	if (my fontSizeButton_14) GuiMenuItem_check (my fontSizeButton_14, my p_fontSize == 14.0);
-	if (my fontSizeButton_18) GuiMenuItem_check (my fontSizeButton_18, my p_fontSize == 18.0);
-	if (my fontSizeButton_24) GuiMenuItem_check (my fontSizeButton_24, my p_fontSize == 24.0);
+	if (my fontSizeButton_10) GuiMenuItem_check (my fontSizeButton_10, my instancePref_fontSize() == 10.0);
+	if (my fontSizeButton_12) GuiMenuItem_check (my fontSizeButton_12, my instancePref_fontSize() == 12.0);
+	if (my fontSizeButton_14) GuiMenuItem_check (my fontSizeButton_14, my instancePref_fontSize() == 14.0);
+	if (my fontSizeButton_18) GuiMenuItem_check (my fontSizeButton_18, my instancePref_fontSize() == 18.0);
+	if (my fontSizeButton_24) GuiMenuItem_check (my fontSizeButton_24, my instancePref_fontSize() == 24.0);
 }
 static void setFontSize (TextEditor me, double fontSize) {
 	GuiText_setFontSize (my textWidget, fontSize);
-	my pref_fontSize () = my p_fontSize = fontSize;
+	my setInstancePref_fontSize (fontSize);
 	updateSizeMenu (me);
 }
 
@@ -639,7 +639,7 @@ static void menu_cb_fontSize (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Text window: Font size", nullptr)
 		POSITIVE (fontSize, U"Font size (points)", U"12")
 	EDITOR_OK
-		SET_REAL (fontSize, my p_fontSize);
+		SET_REAL (fontSize, my instancePref_fontSize());
 	EDITOR_DO
 		setFontSize (me, fontSize);
 	EDITOR_END
@@ -707,7 +707,7 @@ void structTextEditor :: v_createMenus () {
 
 void TextEditor_init (TextEditor me, conststring32 initialText) {
 	Editor_init (me, 0, 0, 600, 400, U"", nullptr);
-	setFontSize (me, my p_fontSize);
+	setFontSize (me, my instancePref_fontSize());
 	if (initialText) {
 		GuiText_setString (my textWidget, initialText);
 		my dirty = false;   // was set to true in valueChanged callback

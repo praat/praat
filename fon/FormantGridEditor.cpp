@@ -73,28 +73,28 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setFormantRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set formant range", nullptr)
-		REAL (minimumFormant, U"Minimum formant (Hz)", my default_formantFloor   ())
-		REAL (maximumFormant, U"Maximum formant (Hz)", my default_formantCeiling ())
+		REAL (minimumFormant, U"Minimum formant (Hz)", my default_formantFloor())
+		REAL (maximumFormant, U"Maximum formant (Hz)", my default_formantCeiling())
 	EDITOR_OK
-		SET_REAL (minimumFormant, my p_formantFloor)
-		SET_REAL (maximumFormant, my p_formantCeiling)
+		SET_REAL (minimumFormant, my instancePref_formantFloor())
+		SET_REAL (maximumFormant, my instancePref_formantCeiling())
 	EDITOR_DO
-		my pref_formantFloor   () = my p_formantFloor   = minimumFormant;
-		my pref_formantCeiling () = my p_formantCeiling = maximumFormant;
+		my setInstancePref_formantFloor (minimumFormant);
+		my setInstancePref_formantCeiling (maximumFormant);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_setBandwidthRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set bandwidth range", nullptr)
-		REAL (minimumBandwidth, U"Minimum bandwidth (Hz)", my default_bandwidthFloor   ())
-		REAL (maximumBandwidth, U"Maximum bandwidth (Hz)", my default_bandwidthCeiling ())
+		REAL (minimumBandwidth, U"Minimum bandwidth (Hz)", my default_bandwidthFloor())
+		REAL (maximumBandwidth, U"Maximum bandwidth (Hz)", my default_bandwidthCeiling())
 	EDITOR_OK
-		SET_REAL (minimumBandwidth, my p_bandwidthFloor)
-		SET_REAL (maximumBandwidth, my p_bandwidthCeiling)
+		SET_REAL (minimumBandwidth, my instancePref_bandwidthFloor())
+		SET_REAL (maximumBandwidth, my instancePref_bandwidthCeiling())
 	EDITOR_DO
-		my pref_bandwidthFloor   () = my p_bandwidthFloor   = minimumBandwidth;
-		my pref_bandwidthCeiling () = my p_bandwidthCeiling = maximumBandwidth;
+		my setInstancePref_bandwidthFloor (minimumBandwidth);
+		my setInstancePref_bandwidthCeiling (maximumBandwidth);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -145,19 +145,19 @@ static void menu_cb_pitchSettings (FormantGridEditor me, EDITOR_ARGS_FORM) {
 		REAL     (endTime,    U"End time",         my default_source_pitch_tEnd    ())
 		POSITIVE (endPitch,   U"End pitch (Hz)",   my default_source_pitch_f0End   ())
 	EDITOR_OK
-		SET_REAL (startTime,  my p_source_pitch_tStart)
-		SET_REAL (startPitch, my p_source_pitch_f0Start)
-		SET_REAL (midTime,    my p_source_pitch_tMid)
-		SET_REAL (midPitch,   my p_source_pitch_f0Mid)
-		SET_REAL (endTime,    my p_source_pitch_tEnd)
-		SET_REAL (endPitch,   my p_source_pitch_f0End)
+		SET_REAL (startTime,  my instancePref_source_pitch_tStart())
+		SET_REAL (startPitch, my instancePref_source_pitch_f0Start())
+		SET_REAL (midTime,    my instancePref_source_pitch_tMid())
+		SET_REAL (midPitch,   my instancePref_source_pitch_f0Mid())
+		SET_REAL (endTime,    my instancePref_source_pitch_tEnd())
+		SET_REAL (endPitch,   my instancePref_source_pitch_f0End())
 	EDITOR_DO
-		my pref_source_pitch_tStart  () = my p_source_pitch_tStart  = startTime;
-		my pref_source_pitch_f0Start () = my p_source_pitch_f0Start = startPitch;
-		my pref_source_pitch_tMid    () = my p_source_pitch_tMid    = midTime;
-		my pref_source_pitch_f0Mid   () = my p_source_pitch_f0Mid   = midPitch;
-		my pref_source_pitch_tEnd    () = my p_source_pitch_tEnd    = endTime;
-		my pref_source_pitch_f0End   () = my p_source_pitch_f0End   = endPitch;
+		my setInstancePref_source_pitch_tStart  (startTime);
+		my setInstancePref_source_pitch_f0Start (startPitch);
+		my setInstancePref_source_pitch_tMid    (midTime);
+		my setInstancePref_source_pitch_f0Mid   (midPitch);
+		my setInstancePref_source_pitch_tEnd    (endTime);
+		my setInstancePref_source_pitch_f0End   (endPitch);
 	EDITOR_END
 }
 
@@ -196,8 +196,8 @@ void structFormantGridEditor :: v_draw () {
 	FormantGrid grid = (FormantGrid) our data;
 	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & grid -> bandwidths : & grid -> formants );
 	RealTier selectedTier = tiers->at [our selectedFormant];
-	our formantGridArea -> ymin = ( our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor );
-	our formantGridArea -> ymax = ( our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling );
+	our formantGridArea -> ymin = ( our editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
+	our formantGridArea -> ymax = ( our editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
 
 	our formantGridArea -> setViewport();
 
@@ -251,8 +251,8 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 	FormantGrid grid = (FormantGrid) our data;
 	OrderedOf<structRealTier>* tiers = ( our editingBandwidths ? & grid -> bandwidths : & grid -> formants );
 	RealTier tier = tiers->at [selectedFormant];
-	our formantGridArea -> ymin = ( our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor );
-	our formantGridArea -> ymax = ( our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling );
+	our formantGridArea -> ymin = ( our editingBandwidths ? our instancePref_bandwidthFloor() : our instancePref_formantFloor() );
+	our formantGridArea -> ymax = ( our editingBandwidths ? our instancePref_bandwidthCeiling() : our instancePref_formantCeiling() );
 
 	static bool clickedInWideRealTierArea = false;
 	if (event -> isClick ())
@@ -269,13 +269,13 @@ bool structFormantGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 }
 
 void structFormantGridEditor :: v_play (double startTime, double endTime) {
-	FormantGrid_playPart ((FormantGrid) our data, startTime, endTime, our p_play_samplingFrequency,
-		our p_source_pitch_tStart, our p_source_pitch_f0Start,
-		our p_source_pitch_tMid,   our p_source_pitch_f0Mid,
-		our p_source_pitch_tEnd,   our p_source_pitch_f0End,
-		our p_source_phonation_adaptFactor, our p_source_phonation_maximumPeriod,
-		our p_source_phonation_openPhase,   our p_source_phonation_collisionPhase,
-		our p_source_phonation_power1,      our p_source_phonation_power2,
+	FormantGrid_playPart ((FormantGrid) our data, startTime, endTime, our instancePref_play_samplingFrequency(),
+		our instancePref_source_pitch_tStart(), our instancePref_source_pitch_f0Start(),
+		our instancePref_source_pitch_tMid(),   our instancePref_source_pitch_f0Mid(),
+		our instancePref_source_pitch_tEnd(),   our instancePref_source_pitch_f0End(),
+		our instancePref_source_phonation_adaptFactor(), our instancePref_source_phonation_maximumPeriod(),
+		our instancePref_source_phonation_openPhase(),   our instancePref_source_phonation_collisionPhase(),
+		our instancePref_source_phonation_power1(),      our instancePref_source_phonation_power2(),
 		theFunctionEditor_playCallback, this);
 }
 
@@ -286,7 +286,7 @@ void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantG
 	my selectedFormant = 1;
 	my formantGridArea = Thing_new (FormantGridArea);
 	RealTierArea_init (my formantGridArea.get(), me, 0.0, 1.0);
-	my formantGridArea -> ycursor = 0.382 * my p_formantFloor + 0.618 * my p_formantCeiling;
+	my formantGridArea -> ycursor = 0.382 * my instancePref_formantFloor() + 0.618 * my instancePref_formantCeiling();
 }
 
 autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid data) {

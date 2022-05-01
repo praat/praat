@@ -1,6 +1,6 @@
 /* RealTierEditor.cpp
  *
- * Copyright (C) 1992-2020 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +58,11 @@ static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
 		REAL (ymin, my v_minimumLabelText (), my realTierArea -> default_dataFreeMinimum())
 		REAL (ymax, my v_maximumLabelText (), my realTierArea -> default_dataFreeMaximum())
 	EDITOR_OK
-		SET_REAL (ymin, my realTierArea -> p_dataFreeMinimum)
-		SET_REAL (ymax, my realTierArea -> p_dataFreeMaximum)
+		SET_REAL (ymin, my realTierArea -> instancePref_dataFreeMinimum())
+		SET_REAL (ymax, my realTierArea -> instancePref_dataFreeMaximum())
 	EDITOR_DO
-		my realTierArea -> pref_dataFreeMinimum() = my realTierArea -> p_dataFreeMinimum = ymin;
-		my realTierArea -> pref_dataFreeMaximum() = my realTierArea -> p_dataFreeMaximum = ymax;
+		my realTierArea -> setInstancePref_dataFreeMinimum (ymin);
+		my realTierArea -> setInstancePref_dataFreeMaximum (ymax);
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END

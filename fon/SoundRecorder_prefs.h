@@ -19,10 +19,10 @@
 EditorPrefs_begin (SoundRecorder)
 
 	prefs_add_enum_with_data   (SoundRecorder, meter_which, 1, kSoundRecorder_meter, INTENSITY)
-	prefs_add_double_with_data (SoundRecorder, meter_intensity_minimum,  1, U"50.0")   // dB
-	prefs_add_double_with_data (SoundRecorder, meter_intensity_maximum,  1, U"94.0")   // dB
-	prefs_add_double_with_data (SoundRecorder, meter_centreOfGravity_minimum,  1,  U"500.0")   // Hz
-	prefs_add_double_with_data (SoundRecorder, meter_centreOfGravity_maximum,  1, U"8000.0")   // Hz
+	EditorInstancePrefs_addDouble (SoundRecorder, meter_intensity_minimum,  1, U"50.0")   // dB
+	EditorInstancePrefs_addDouble (SoundRecorder, meter_intensity_maximum,  1, U"94.0")   // dB
+	EditorInstancePrefs_addDouble (SoundRecorder, meter_centreOfGravity_minimum,  1,  U"500.0")   // Hz
+	EditorInstancePrefs_addDouble (SoundRecorder, meter_centreOfGravity_maximum,  1, U"8000.0")   // Hz
 
 EditorPrefs_end (SoundRecorder)
 

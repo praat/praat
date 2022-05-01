@@ -50,79 +50,79 @@ static const conststring32 theMessage_Cannot_compute_intensity = U"The intensity
 static const conststring32 theMessage_Cannot_compute_pulses = U"The pulses are not defined at the edge of the sound.";
 
 void structTimeSoundAnalysisEditor :: v_destroy () noexcept {
-	TimeSoundAnalysisEditor_Parent :: v_destroy ();
+	our TimeSoundAnalysisEditor_Parent :: v_destroy ();
 }
 
 void structTimeSoundAnalysisEditor :: v_info () {
-	TimeSoundAnalysisEditor_Parent :: v_info ();
-	MelderInfo_writeLine (U"Longest analysis: ", p_longestAnalysis, U" seconds");
+	our TimeSoundAnalysisEditor_Parent :: v_info ();
+	MelderInfo_writeLine (U"Longest analysis: ", our instancePref_longestAnalysis(), U" seconds");
 	if (v_hasSpectrogram ()) {
 		/* Spectrogram flag: */
-		MelderInfo_writeLine (U"Spectrogram show: ", p_spectrogram_show);
+		MelderInfo_writeLine (U"Spectrogram show: ", our p_spectrogram_show);
 		/* Spectrogram settings: */
-		MelderInfo_writeLine (U"Spectrogram view from: ", p_spectrogram_viewFrom, U" Hz");
-		MelderInfo_writeLine (U"Spectrogram view to: ", p_spectrogram_viewTo, U" Hz");
-		MelderInfo_writeLine (U"Spectrogram window length: ", p_spectrogram_windowLength, U" seconds");
-		MelderInfo_writeLine (U"Spectrogram dynamic range: ", p_spectrogram_dynamicRange, U" dB");
+		MelderInfo_writeLine (U"Spectrogram view from: ", our instancePref_spectrogram_viewFrom(), U" Hz");
+		MelderInfo_writeLine (U"Spectrogram view to: ", our instancePref_spectrogram_viewTo(), U" Hz");
+		MelderInfo_writeLine (U"Spectrogram window length: ", our instancePref_spectrogram_windowLength(), U" seconds");
+		MelderInfo_writeLine (U"Spectrogram dynamic range: ", our instancePref_spectrogram_dynamicRange(), U" dB");
 		/* Advanced spectrogram settings: */
-		MelderInfo_writeLine (U"Spectrogram number of time steps: ", p_spectrogram_timeSteps);
-		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", p_spectrogram_frequencySteps);
+		MelderInfo_writeLine (U"Spectrogram number of time steps: ", our p_spectrogram_timeSteps);
+		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", our p_spectrogram_frequencySteps);
 		MelderInfo_writeLine (U"Spectrogram method: ", U"Fourier");
-		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (p_spectrogram_windowShape));
-		MelderInfo_writeLine (U"Spectrogram autoscaling: ", p_spectrogram_autoscaling);
-		MelderInfo_writeLine (U"Spectrogram maximum: ", p_spectrogram_maximum, U" dB/Hz");
-		MelderInfo_writeLine (U"Spectrogram pre-emphasis: ", p_spectrogram_preemphasis, U" dB/octave");
-		MelderInfo_writeLine (U"Spectrogram dynamicCompression: ", p_spectrogram_dynamicCompression);
+		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (our p_spectrogram_windowShape));
+		MelderInfo_writeLine (U"Spectrogram autoscaling: ", our p_spectrogram_autoscaling);
+		MelderInfo_writeLine (U"Spectrogram maximum: ", our instancePref_spectrogram_maximum(), U" dB/Hz");
+		MelderInfo_writeLine (U"Spectrogram pre-emphasis: ", our instancePref_spectrogram_preemphasis(), U" dB/octave");
+		MelderInfo_writeLine (U"Spectrogram dynamicCompression: ", our instancePref_spectrogram_dynamicCompression());
 		/* Dynamic information: */
-		MelderInfo_writeLine (U"Spectrogram cursor frequency: ", d_spectrogram_cursor, U" Hz");
+		MelderInfo_writeLine (U"Spectrogram cursor frequency: ", our d_spectrogram_cursor, U" Hz");
 	}
 	if (v_hasPitch ()) {
 		/* Pitch flag: */
 		MelderInfo_writeLine (U"Pitch show: ", p_pitch_show);
 		/* Pitch settings: */
-		MelderInfo_writeLine (U"Pitch floor: ", p_pitch_floor, U" Hz");
-		MelderInfo_writeLine (U"Pitch ceiling: ", p_pitch_ceiling, U" Hz");
+		MelderInfo_writeLine (U"Pitch floor: ", our instancePref_pitch_floor(), U" Hz");
+		MelderInfo_writeLine (U"Pitch ceiling: ", our instancePref_pitch_ceiling(), U" Hz");
 		MelderInfo_writeLine (U"Pitch unit: ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) p_pitch_unit, Function_UNIT_TEXT_MENU));
 		MelderInfo_writeLine (U"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (p_pitch_drawingMethod));
 		/* Advanced pitch settings: */
-		MelderInfo_writeLine (U"Pitch view from: ", p_pitch_viewFrom, U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) p_pitch_unit, Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch view to: ", p_pitch_viewTo, U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) p_pitch_unit, Function_UNIT_TEXT_MENU));
-		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (p_pitch_method));
-		MelderInfo_writeLine (U"Pitch very accurate: ", p_pitch_veryAccurate);
-		MelderInfo_writeLine (U"Pitch max. number of candidates: ", p_pitch_maximumNumberOfCandidates);
-		MelderInfo_writeLine (U"Pitch silence threshold: ", p_pitch_silenceThreshold, U" of global peak");
-		MelderInfo_writeLine (U"Pitch voicing threshold: ", p_pitch_voicingThreshold, U" (periodic power / total power)");
-		MelderInfo_writeLine (U"Pitch octave cost: ", p_pitch_octaveCost, U" per octave");
-		MelderInfo_writeLine (U"Pitch octave jump cost: ", p_pitch_octaveJumpCost, U" per octave");
-		MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", p_pitch_voicedUnvoicedCost);
+		MelderInfo_writeLine (U"Pitch view from: ", our instancePref_pitch_viewFrom(), U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our p_pitch_unit, Function_UNIT_TEXT_MENU));
+		MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our p_pitch_unit, Function_UNIT_TEXT_MENU));
+		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (our p_pitch_method));
+		MelderInfo_writeLine (U"Pitch very accurate: ", our p_pitch_veryAccurate);
+		MelderInfo_writeLine (U"Pitch max. number of candidates: ", our p_pitch_maximumNumberOfCandidates);
+		MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_silenceThreshold(), U" of global peak");
+		MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_voicingThreshold(), U" (periodic power / total power)");
+		MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_octaveCost(), U" per octave");
+		MelderInfo_writeLine (U"Pitch octave jump cost: ", our instancePref_pitch_octaveJumpCost(), U" per octave");
+		MelderInfo_writeLine (U"Pitch voiced/unvoiced cost: ", our instancePref_pitch_voicedUnvoicedCost());
 	}
 	if (v_hasIntensity ()) {
 		/* Intensity flag: */
-		MelderInfo_writeLine (U"Intensity show: ", p_intensity_show);
+		MelderInfo_writeLine (U"Intensity show: ", our p_intensity_show);
 		/* Intensity settings: */
-		MelderInfo_writeLine (U"Intensity view from: ", p_intensity_viewFrom, U" dB");
-		MelderInfo_writeLine (U"Intensity view to: ", p_intensity_viewTo, U" dB");
-		MelderInfo_writeLine (U"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (p_intensity_averagingMethod));
-		MelderInfo_writeLine (U"Intensity subtract mean pressure: ", p_intensity_subtractMeanPressure);
+		MelderInfo_writeLine (U"Intensity view from: ", our instancePref_intensity_viewFrom(), U" dB");
+		MelderInfo_writeLine (U"Intensity view to: ", our instancePref_intensity_viewTo(), U" dB");
+		MelderInfo_writeLine (U"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (our p_intensity_averagingMethod));
+		MelderInfo_writeLine (U"Intensity subtract mean pressure: ", our p_intensity_subtractMeanPressure);
 	}
 	if (v_hasFormants ()) {
 		/* Formant flag: */
-		MelderInfo_writeLine (U"Formant show: ", p_formant_show);
+		MelderInfo_writeLine (U"Formant show: ", our p_formant_show);
 		/* Formant settings: */
-		MelderInfo_writeLine (U"Formant ceiling: ", p_formant_ceiling, U" Hz");
-		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * p_formant_numberOfFormants));   // should be a whole number
-		MelderInfo_writeLine (U"Formant window length: ", p_formant_windowLength, U" seconds");
-		MelderInfo_writeLine (U"Formant dynamic range: ", p_formant_dynamicRange, U" dB");
-		MelderInfo_writeLine (U"Formant dot size: ", p_formant_dotSize, U" mm");
+		MelderInfo_writeLine (U"Formant ceiling: ", our instancePref_formant_ceiling(), U" Hz");
+		MelderInfo_writeLine (U"Formant number of poles: ", Melder_iround (2.0 * our instancePref_formant_numberOfFormants()));   // should be a whole number
+		MelderInfo_writeLine (U"Formant window length: ", our instancePref_formant_windowLength(), U" seconds");
+		MelderInfo_writeLine (U"Formant dynamic range: ", our instancePref_formant_dynamicRange(), U" dB");
+		MelderInfo_writeLine (U"Formant dot size: ", our instancePref_formant_dotSize(), U" mm");
 		/* Advanced formant settings: */
-		MelderInfo_writeLine (U"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (p_formant_method));
-		MelderInfo_writeLine (U"Formant pre-emphasis from: ", p_formant_preemphasisFrom, U" Hz");
+		MelderInfo_writeLine (U"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (our p_formant_method));
+		MelderInfo_writeLine (U"Formant pre-emphasis from: ", our instancePref_formant_preemphasisFrom(), U" Hz");
 	}
 	if (v_hasPulses ()) {
 		/* Pulses flag: */
-		MelderInfo_writeLine (U"Pulses show: ", p_pulses_show);
-		MelderInfo_writeLine (U"Pulses maximum period factor: ", p_pulses_maximumPeriodFactor);
-		MelderInfo_writeLine (U"Pulses maximum amplitude factor: ", p_pulses_maximumAmplitudeFactor);
+		MelderInfo_writeLine (U"Pulses show: ", our p_pulses_show);
+		MelderInfo_writeLine (U"Pulses maximum period factor: ", our instancePref_pulses_maximumPeriodFactor());
+		MelderInfo_writeLine (U"Pulses maximum amplitude factor: ", our instancePref_pulses_maximumAmplitudeFactor());
 	}
 }
 
@@ -155,8 +155,8 @@ static const conststring32 TimeSoundAnalysisEditor_partString_locative (int part
 }
 
 static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *tmin, double *tmax) {
-	if (my endWindow - my startWindow > my p_longestAnalysis)
-		Melder_throw (U"Window too long to show analyses. Zoom in to at most ", Melder_half (my p_longestAnalysis), U" seconds "
+	if (my endWindow - my startWindow > my instancePref_longestAnalysis())
+		Melder_throw (U"Window too long to show analyses. Zoom in to at most ", Melder_half (my instancePref_longestAnalysis()), U" seconds "
 			U"or set the \"longest analysis\" to at least ", Melder_half (my endWindow - my startWindow), U" seconds (with \"Show analyses\" in the View menu).");
 	if (my startSelection == my endSelection) {
 		if (allowCursor) {
@@ -388,14 +388,14 @@ static void menu_cb_showAnalyses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) 
 		SET_BOOLEAN (showIntensity,   my p_intensity_show)
 		SET_BOOLEAN (showFormants,    my p_formant_show)
 		SET_BOOLEAN (showPulses,      my p_pulses_show)
-		SET_REAL    (longestAnalysis, my p_longestAnalysis)
+		SET_REAL    (longestAnalysis, my instancePref_longestAnalysis())
 	EDITOR_DO
 		GuiMenuItem_check (my spectrogramToggle, my pref_spectrogram_show () = my p_spectrogram_show = showSpectrogram);
 		GuiMenuItem_check (my pitchToggle,       my pref_pitch_show       () = my p_pitch_show       = showPitch);
 		GuiMenuItem_check (my intensityToggle,   my pref_intensity_show   () = my p_intensity_show   = showIntensity);
 		GuiMenuItem_check (my formantToggle,     my pref_formant_show     () = my p_formant_show     = showFormants);
 		GuiMenuItem_check (my pulsesToggle,      my pref_pulses_show      () = my p_pulses_show      = showPulses);
-		my pref_longestAnalysis () = my p_longestAnalysis = longestAnalysis;
+		my setInstancePref_longestAnalysis (longestAnalysis);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -412,11 +412,11 @@ static void menu_cb_timeStepSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FO
 		NATURAL (numberOfTimeStepsPerView, U"Number of time steps per view", my default_numberOfTimeStepsPerView ())
 	EDITOR_OK
 		SET_ENUM (timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, my p_timeStepStrategy)
-		SET_REAL (fixedTimeStep, my p_fixedTimeStep)
+		SET_REAL (fixedTimeStep, my instancePref_fixedTimeStep())
 		SET_INTEGER (numberOfTimeStepsPerView, my p_numberOfTimeStepsPerView)
 	EDITOR_DO
 		my pref_timeStepStrategy         () = my p_timeStepStrategy         = timeStepStrategy;
-		my pref_fixedTimeStep            () = my p_fixedTimeStep            = fixedTimeStep;
+		my setInstancePref_fixedTimeStep (fixedTimeStep);
 		my pref_numberOfTimeStepsPerView () = my p_numberOfTimeStepsPerView = numberOfTimeStepsPerView;
 		my d_pitch. reset();
 		my d_formant. reset();
@@ -445,18 +445,18 @@ static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS
 		MUTABLE_LABEL (note1, U"")
 		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (viewFrom,     my p_spectrogram_viewFrom)
-		SET_REAL (viewTo,       my p_spectrogram_viewTo)
-		SET_REAL (windowLength, my p_spectrogram_windowLength)
-		SET_REAL (dynamicRange, my p_spectrogram_dynamicRange)
+		SET_REAL (viewFrom,     my instancePref_spectrogram_viewFrom())
+		SET_REAL (viewTo,       my instancePref_spectrogram_viewTo())
+		SET_REAL (windowLength, my instancePref_spectrogram_windowLength())
+		SET_REAL (dynamicRange, my instancePref_spectrogram_dynamicRange())
 		if (my p_spectrogram_timeSteps          != Melder_atof (my default_spectrogram_timeSteps ()) ||
 			my p_spectrogram_frequencySteps     != Melder_atof (my default_spectrogram_frequencySteps ()) ||
 			my p_spectrogram_method             != my default_spectrogram_method () ||
 			my p_spectrogram_windowShape        != my default_spectrogram_windowShape () ||
-			my p_spectrogram_maximum            != Melder_atof (my default_spectrogram_maximum ()) ||
+			my instancePref_spectrogram_maximum()            != Melder_atof (my default_spectrogram_maximum ()) ||
 			my p_spectrogram_autoscaling        != my default_spectrogram_autoscaling ()||
-			my p_spectrogram_preemphasis        != Melder_atof (my default_spectrogram_preemphasis ()) ||
-			my p_spectrogram_dynamicCompression != Melder_atof (my default_spectrogram_dynamicCompression ()))
+			my instancePref_spectrogram_preemphasis()        != Melder_atof (my default_spectrogram_preemphasis ()) ||
+			my instancePref_spectrogram_dynamicCompression() != Melder_atof (my default_spectrogram_dynamicCompression ()))
 		{
 			SET_STRING (note1, U"Warning: you have non-standard \"advanced settings\".")
 		} else {
@@ -470,10 +470,10 @@ static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS
 	EDITOR_DO
 		Melder_require (viewFrom < viewTo,
 			U"The ceiling of the spectrogram view range should be greater than the floor.");
-		my pref_spectrogram_viewFrom     () = my p_spectrogram_viewFrom     = viewFrom;
-		my pref_spectrogram_viewTo       () = my p_spectrogram_viewTo       = viewTo;
-		my pref_spectrogram_windowLength () = my p_spectrogram_windowLength = windowLength;
-		my pref_spectrogram_dynamicRange () = my p_spectrogram_dynamicRange = dynamicRange;
+		my setInstancePref_spectrogram_viewFrom (viewFrom);
+		my setInstancePref_spectrogram_viewTo (viewTo);
+		my setInstancePref_spectrogram_windowLength (windowLength);
+		my setInstancePref_spectrogram_dynamicRange (dynamicRange);
 		my d_spectrogram. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -500,18 +500,18 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 		SET_ENUM    (method,      kSound_to_Spectrogram_method,      my p_spectrogram_method)
 		SET_ENUM    (windowShape, kSound_to_Spectrogram_windowShape, my p_spectrogram_windowShape)
 		SET_BOOLEAN (autoscaling,              my p_spectrogram_autoscaling)
-		SET_REAL    (maximum,                  my p_spectrogram_maximum)
-		SET_REAL    (preemphasis,              my p_spectrogram_preemphasis)
-		SET_REAL    (dynamicCompression,       my p_spectrogram_dynamicCompression)
+		SET_REAL    (maximum,                  my instancePref_spectrogram_maximum())
+		SET_REAL    (preemphasis,              my instancePref_spectrogram_preemphasis())
+		SET_REAL    (dynamicCompression,       my instancePref_spectrogram_dynamicCompression())
 	EDITOR_DO
 		my pref_spectrogram_timeSteps          () = my p_spectrogram_timeSteps          = numberOfTimeSteps;
 		my pref_spectrogram_frequencySteps     () = my p_spectrogram_frequencySteps     = numberOfFrequencySteps;
 		my pref_spectrogram_method             () = my p_spectrogram_method             = method;
 		my pref_spectrogram_windowShape        () = my p_spectrogram_windowShape        = windowShape;
 		my pref_spectrogram_autoscaling        () = my p_spectrogram_autoscaling        = autoscaling;
-		my pref_spectrogram_maximum            () = my p_spectrogram_maximum            = maximum;
-		my pref_spectrogram_preemphasis        () = my p_spectrogram_preemphasis        = preemphasis;
-		my pref_spectrogram_dynamicCompression () = my p_spectrogram_dynamicCompression = dynamicCompression;
+		my setInstancePref_spectrogram_maximum (maximum);
+		my setInstancePref_spectrogram_preemphasis (preemphasis);
+		my setInstancePref_spectrogram_dynamicCompression (dynamicCompression);
 		my d_spectrogram. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -583,12 +583,12 @@ static void CONVERT_DATA_TO_ONE__ExtractVisibleSpectrogram (TimeSoundAnalysisEdi
 static void CONVERT_DATA_TO_ONE__ViewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT_WITH_OUTPUT) {
 	CONVERT_DATA_TO_ONE
 		const double start = ( my startSelection == my endSelection ?
-			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? my startSelection - my p_spectrogram_windowLength :
-			my startSelection - my p_spectrogram_windowLength / 2 : my startSelection
+			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? my startSelection - my instancePref_spectrogram_windowLength() :
+			my startSelection - my instancePref_spectrogram_windowLength() / 2 : my startSelection
 		);
 		const double finish = ( my startSelection == my endSelection ?
-			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? my endSelection + my p_spectrogram_windowLength :
-			my endSelection + my p_spectrogram_windowLength / 2 : my endSelection
+			my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? my endSelection + my instancePref_spectrogram_windowLength() :
+			my endSelection + my instancePref_spectrogram_windowLength() / 2 : my endSelection
 		);
 		autoSound sound = extractSound (me, start, finish);
 		Sound_multiplyByWindow (sound.get(),
@@ -624,12 +624,15 @@ static void menu_cb_paintVisibleSpectrogram (TimeSoundAnalysisEditor me, EDITOR_
 			Melder_throw (U"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my d_spectrogram) {
 			TimeSoundAnalysisEditor_computeSpectrogram (me);
-			if (! my d_spectrogram) Melder_throw (theMessage_Cannot_compute_spectrogram);
+			if (! my d_spectrogram)
+				Melder_throw (theMessage_Cannot_compute_spectrogram);
 		}
 		Editor_openPraatPicture (me);
-		Spectrogram_paint (my d_spectrogram.get(), my pictureGraphics, my startWindow, my endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo,
-			my p_spectrogram_maximum, my p_spectrogram_autoscaling, my p_spectrogram_dynamicRange, my p_spectrogram_preemphasis,
-			my p_spectrogram_dynamicCompression, my p_spectrogram_picture_garnish
+		Spectrogram_paint (my d_spectrogram.get(), my pictureGraphics, my startWindow, my endWindow,
+			my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo(),
+			my instancePref_spectrogram_maximum(), my p_spectrogram_autoscaling,
+			my instancePref_spectrogram_dynamicRange(), my instancePref_spectrogram_preemphasis(),
+			my instancePref_spectrogram_dynamicCompression(), my p_spectrogram_picture_garnish
 		);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -661,20 +664,20 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 		MUTABLE_LABEL (note1, U"")
 		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (pitchFloor,   my p_pitch_floor)
-		SET_REAL (pitchCeiling, my p_pitch_ceiling)
+		SET_REAL (pitchFloor,   my instancePref_pitch_floor())
+		SET_REAL (pitchCeiling, my instancePref_pitch_ceiling())
 		SET_ENUM (unit, kPitch_unit, my p_pitch_unit)
 		SET_ENUM (analysisMethod, kTimeSoundAnalysisEditor_pitch_analysisMethod, my p_pitch_method)
 		SET_ENUM (drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, my p_pitch_drawingMethod)
-		if (my p_pitch_viewFrom                  != Melder_atof (my default_pitch_viewFrom ()) ||
-			my p_pitch_viewTo                    != Melder_atof (my default_pitch_viewTo ()) ||
+		if (my instancePref_pitch_viewFrom()                  != Melder_atof (my default_pitch_viewFrom()) ||
+			my instancePref_pitch_viewTo()                    != Melder_atof (my default_pitch_viewTo()) ||
 			my p_pitch_veryAccurate              != my default_pitch_veryAccurate () ||
 			my p_pitch_maximumNumberOfCandidates != Melder_atof (my default_pitch_maximumNumberOfCandidates ()) ||
-			my p_pitch_silenceThreshold          != Melder_atof (my default_pitch_silenceThreshold ()) ||
-			my p_pitch_voicingThreshold          != Melder_atof (my default_pitch_voicingThreshold ()) ||
-			my p_pitch_octaveCost                != Melder_atof (my default_pitch_octaveCost ()) ||
-			my p_pitch_octaveJumpCost            != Melder_atof (my default_pitch_octaveJumpCost ()) ||
-			my p_pitch_voicedUnvoicedCost        != Melder_atof (my default_pitch_voicedUnvoicedCost ()))
+			my instancePref_pitch_silenceThreshold()          != Melder_atof (my default_pitch_silenceThreshold()) ||
+			my instancePref_pitch_voicingThreshold()          != Melder_atof (my default_pitch_voicingThreshold()) ||
+			my instancePref_pitch_octaveCost()                != Melder_atof (my default_pitch_octaveCost()) ||
+			my instancePref_pitch_octaveJumpCost()            != Melder_atof (my default_pitch_octaveJumpCost()) ||
+			my instancePref_pitch_voicedUnvoicedCost()        != Melder_atof (my default_pitch_voicedUnvoicedCost()))
 		{
 			SET_STRING (note1, U"Warning: you have some non-standard \"advanced settings\".")
 		} else {
@@ -690,8 +693,8 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 			U"The pitch ceiling has to be greater than the pitch floor, so they cannot be ",
 			pitchCeiling, U" and ", pitchFloor, U" ", kPitch_unit_getText (unit), U", respectively."
 		);
-		my pref_pitch_floor         () = my p_pitch_floor         = pitchFloor;
-		my pref_pitch_ceiling       () = my p_pitch_ceiling       = pitchCeiling;
+		my setInstancePref_pitch_floor (pitchFloor);
+		my setInstancePref_pitch_ceiling (pitchCeiling);
 		my pref_pitch_unit          () = my p_pitch_unit          = unit;
 		my pref_pitch_method        () = my p_pitch_method        = analysisMethod;
 		my pref_pitch_drawingMethod () = my p_pitch_drawingMethod = drawingMethod;
@@ -716,27 +719,27 @@ static void menu_cb_advancedPitchSettings (TimeSoundAnalysisEditor me, EDITOR_AR
 		REAL    (octaveJumpCost,            U"Octave-jump cost",          my default_pitch_octaveJumpCost            ())
 		REAL    (voicedUnvoicedCost,        U"Voiced / unvoiced cost",    my default_pitch_voicedUnvoicedCost        ())
 	EDITOR_OK
-		SET_REAL    (viewFrom,                  my p_pitch_viewFrom)
-		SET_REAL    (viewTo,                    my p_pitch_viewTo)
+		SET_REAL    (viewFrom,                  my instancePref_pitch_viewFrom())
+		SET_REAL    (viewTo,                    my instancePref_pitch_viewTo())
 		SET_BOOLEAN (veryAccurate,              my p_pitch_veryAccurate)
 		SET_INTEGER (maximumNumberOfCandidates, my p_pitch_maximumNumberOfCandidates)
-		SET_REAL    (silenceThreshold,          my p_pitch_silenceThreshold)
-		SET_REAL    (voicingThreshold,          my p_pitch_voicingThreshold)
-		SET_REAL    (octaveCost,                my p_pitch_octaveCost)
-		SET_REAL    (octaveJumpCost,            my p_pitch_octaveJumpCost)
-		SET_REAL    (voicedUnvoicedCost,        my p_pitch_voicedUnvoicedCost)
+		SET_REAL    (silenceThreshold,          my instancePref_pitch_silenceThreshold())
+		SET_REAL    (voicingThreshold,          my instancePref_pitch_voicingThreshold())
+		SET_REAL    (octaveCost,                my instancePref_pitch_octaveCost())
+		SET_REAL    (octaveJumpCost,            my instancePref_pitch_octaveJumpCost())
+		SET_REAL    (voicedUnvoicedCost,        my instancePref_pitch_voicedUnvoicedCost())
 	EDITOR_DO
 		if (maximumNumberOfCandidates < 2)
 			Melder_throw (U"Your maximum number of candidates should be greater than 1.");
-		my pref_pitch_viewFrom                  () = my p_pitch_viewFrom                  = viewFrom;
-		my pref_pitch_viewTo                    () = my p_pitch_viewTo                    = viewTo;
+		my setInstancePref_pitch_viewFrom (viewFrom);
+		my setInstancePref_pitch_viewTo (viewTo);
 		my pref_pitch_veryAccurate              () = my p_pitch_veryAccurate              = veryAccurate;
 		my pref_pitch_maximumNumberOfCandidates () = my p_pitch_maximumNumberOfCandidates = maximumNumberOfCandidates;
-		my pref_pitch_silenceThreshold          () = my p_pitch_silenceThreshold          = silenceThreshold;
-		my pref_pitch_voicingThreshold          () = my p_pitch_voicingThreshold          = voicingThreshold;
-		my pref_pitch_octaveCost                () = my p_pitch_octaveCost                = octaveCost;
-		my pref_pitch_octaveJumpCost            () = my p_pitch_octaveJumpCost            = octaveJumpCost;
-		my pref_pitch_voicedUnvoicedCost        () = my p_pitch_voicedUnvoicedCost        = voicedUnvoicedCost;
+		my setInstancePref_pitch_silenceThreshold (silenceThreshold);
+		my setInstancePref_pitch_voicingThreshold (voicingThreshold);
+		my setInstancePref_pitch_octaveCost (octaveCost);
+		my setInstancePref_pitch_octaveJumpCost (octaveJumpCost);
+		my setInstancePref_pitch_voicedUnvoicedCost (voicedUnvoicedCost);
 		my d_pitch.     reset();
 		my d_intensity. reset();
 		my d_pulses.    reset();
@@ -922,12 +925,12 @@ static void menu_cb_drawVisiblePitchContour (TimeSoundAnalysisEditor me, EDITOR_
 			if (! my d_pitch) Melder_throw (theMessage_Cannot_compute_pitch);
 		}
 		Editor_openPraatPicture (me);
-		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
-		const double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
+		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
+		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		Pitch_draw (my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt,
 				my p_pitch_picture_garnish, my p_pitch_picture_speckle, my p_pitch_unit);
 		FunctionEditor_garnish (me);
@@ -955,8 +958,8 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 		LABEL (U"Note: the pitch floor is taken from the pitch settings.")
 		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (viewFrom,  my p_intensity_viewFrom)
-		SET_REAL (viewTo,    my p_intensity_viewTo)
+		SET_REAL (viewFrom,  my instancePref_intensity_viewFrom())
+		SET_REAL (viewTo,    my instancePref_intensity_viewTo())
 		SET_ENUM (averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, my p_intensity_averagingMethod)
 		SET_BOOLEAN (subtractMeanPressure, my p_intensity_subtractMeanPressure)
 		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
@@ -967,8 +970,8 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 	EDITOR_DO
 		Melder_require (viewTo > viewFrom,
 			U"The ceiling of the view range should be greater than the floor.");
-		my pref_intensity_viewFrom             () = my p_intensity_viewFrom             = viewFrom;
-		my pref_intensity_viewTo               () = my p_intensity_viewTo               = viewTo;
+		my setInstancePref_intensity_viewFrom (viewFrom);
+		my setInstancePref_intensity_viewTo (viewTo);
 		my pref_intensity_averagingMethod      () = my p_intensity_averagingMethod      = averagingMethod;
 		my pref_intensity_subtractMeanPressure () = my p_intensity_subtractMeanPressure = subtractMeanPressure;
 		my d_intensity. reset();
@@ -1012,8 +1015,8 @@ static void menu_cb_drawVisibleIntensityContour (TimeSoundAnalysisEditor me, EDI
 			if (! my d_intensity) Melder_throw (theMessage_Cannot_compute_intensity);
 		}
 		Editor_openPraatPicture (me);
-		Intensity_draw (my d_intensity.get(), my pictureGraphics, my startWindow, my endWindow, my p_intensity_viewFrom, my p_intensity_viewTo,
-				my p_intensity_picture_garnish);
+		Intensity_draw (my d_intensity.get(), my pictureGraphics, my startWindow, my endWindow,
+				my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo(), my p_intensity_picture_garnish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -1121,27 +1124,27 @@ static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FOR
 		MUTABLE_LABEL (note1, U"")
 		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
-		SET_REAL (formantCeiling,    my p_formant_ceiling)
-		SET_REAL (numberOfFormants,  my p_formant_numberOfFormants)
-		SET_REAL (windowLength,      my p_formant_windowLength)
-		SET_REAL (dynamicRange,      my p_formant_dynamicRange)
-		SET_REAL (dotSize,           my p_formant_dotSize)
-		if (my p_formant_method != my default_formant_method () || my p_formant_preemphasisFrom != Melder_atof (my default_formant_preemphasisFrom ())) {
+		SET_REAL (formantCeiling,    my instancePref_formant_ceiling())
+		SET_REAL (numberOfFormants,  my instancePref_formant_numberOfFormants())
+		SET_REAL (windowLength,      my instancePref_formant_windowLength())
+		SET_REAL (dynamicRange,      my instancePref_formant_dynamicRange())
+		SET_REAL (dotSize,           my instancePref_formant_dotSize())
+		if (my p_formant_method != my default_formant_method () || my instancePref_formant_preemphasisFrom() != Melder_atof (my default_formant_preemphasisFrom())) {
 			SET_STRING (note1, U"Warning: you have non-standard \"advanced settings\".")
 		} else {
 			SET_STRING (note1, U"(all of your \"advanced settings\" have their standard values)")
 		}
-		if (my p_timeStepStrategy != my default_timeStepStrategy ()) {
+		if (my p_timeStepStrategy != my default_timeStepStrategy()) {
 			SET_STRING (note2, U"Warning: you have a non-standard \"time step strategy\".")
 		} else {
 			SET_STRING (note2, U"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		my pref_formant_ceiling          () = my p_formant_ceiling          = formantCeiling;
-		my pref_formant_numberOfFormants () = my p_formant_numberOfFormants = numberOfFormants;
-		my pref_formant_windowLength     () = my p_formant_windowLength     = windowLength;
-		my pref_formant_dynamicRange     () = my p_formant_dynamicRange     = dynamicRange;
-		my pref_formant_dotSize          () = my p_formant_dotSize          = dotSize;
+		my setInstancePref_formant_ceiling (formantCeiling);
+		my setInstancePref_formant_numberOfFormants (numberOfFormants);
+		my setInstancePref_formant_windowLength (windowLength);
+		my setInstancePref_formant_dynamicRange (dynamicRange);
+		my setInstancePref_formant_dotSize (dotSize);
 		my d_formant. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1154,10 +1157,10 @@ static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_
 		POSITIVE (preemphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
 	EDITOR_OK
 		SET_ENUM (method, kTimeSoundAnalysisEditor_formant_analysisMethod, my p_formant_method)
-		SET_REAL (preemphasisFrom, my p_formant_preemphasisFrom)
+		SET_REAL (preemphasisFrom, my instancePref_formant_preemphasisFrom())
 	EDITOR_DO
 		my pref_formant_method          () = my p_formant_method          = method;
-		my pref_formant_preemphasisFrom () = my p_formant_preemphasisFrom = preemphasisFrom;
+		my setInstancePref_formant_preemphasisFrom (preemphasisFrom);
 		my d_formant. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1200,7 +1203,7 @@ static void menu_cb_drawVisibleFormantContour (TimeSoundAnalysisEditor me, EDITO
 		}
 		Editor_openPraatPicture (me);
 		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics, my startWindow, my endWindow,
-			my p_spectrogram_viewTo, my p_formant_dynamicRange,
+			my instancePref_spectrogram_viewTo(), my instancePref_formant_dynamicRange(),
 			my p_formant_picture_garnish
 		);
 		FunctionEditor_garnish (me);
@@ -1341,11 +1344,11 @@ static void menu_cb_advancedPulsesSettings (TimeSoundAnalysisEditor me, EDITOR_A
 		POSITIVE (maximumPeriodFactor,    U"Maximum period factor",    my default_pulses_maximumPeriodFactor    ())
 		POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", my default_pulses_maximumAmplitudeFactor ())
 	EDITOR_OK
-		SET_REAL (maximumPeriodFactor,    my p_pulses_maximumPeriodFactor)
-		SET_REAL (maximumAmplitudeFactor, my p_pulses_maximumAmplitudeFactor)
+		SET_REAL (maximumPeriodFactor,    my instancePref_pulses_maximumPeriodFactor())
+		SET_REAL (maximumAmplitudeFactor, my instancePref_pulses_maximumAmplitudeFactor())
 	EDITOR_DO
-		my pref_pulses_maximumPeriodFactor    () = my p_pulses_maximumPeriodFactor    = maximumPeriodFactor;
-		my pref_pulses_maximumAmplitudeFactor () = my p_pulses_maximumAmplitudeFactor = maximumAmplitudeFactor;
+		my setInstancePref_pulses_maximumPeriodFactor (maximumPeriodFactor);
+		my setInstancePref_pulses_maximumAmplitudeFactor (maximumAmplitudeFactor);
 		my d_pulses. reset();
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1384,7 +1387,8 @@ static void menu_cb_drawVisiblePulses (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 			Melder_throw (U"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 		if (! my d_pulses) {
 			TimeSoundAnalysisEditor_computePulses (me);
-			if (! my d_pulses) Melder_throw (theMessage_Cannot_compute_pulses);
+			if (! my d_pulses)
+				Melder_throw (theMessage_Cannot_compute_pulses);
 		}
 		Editor_openPraatPicture (me);
 		PointProcess_draw (my d_pulses.get(), my pictureGraphics, my startWindow, my endWindow,
@@ -1414,7 +1418,10 @@ static void INFO_DATA__voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 				"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
 		MelderInfo_writeLine (U"Time range of ", TimeSoundAnalysisEditor_partString (part));
 		Sound_Pitch_PointProcess_voiceReport (sound.get(), my d_pitch.get(), my d_pulses.get(), tmin, tmax,
-			my p_pitch_floor, my p_pitch_ceiling, my p_pulses_maximumPeriodFactor, my p_pulses_maximumAmplitudeFactor, my p_pitch_silenceThreshold, my p_pitch_voicingThreshold);
+			my instancePref_pitch_floor(), my instancePref_pitch_ceiling(),
+			my instancePref_pulses_maximumPeriodFactor(), my instancePref_pulses_maximumAmplitudeFactor(),
+			my instancePref_pitch_silenceThreshold(), my instancePref_pitch_voicingThreshold()
+		);
 		MelderInfo_close ();
 	INFO_DATA_END
 }
@@ -1679,17 +1686,17 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_pulses_picture (EditorMe
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my p_spectrogram_show && my endWindow - my startWindow <= my p_longestAnalysis &&
+	if (my p_spectrogram_show && my endWindow - my startWindow <= my instancePref_longestAnalysis() &&
 		(! my d_spectrogram || my d_spectrogram -> xmin != my startWindow || my d_spectrogram -> xmax != my endWindow))
 	{
 		const double margin = ( my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ?
-				my p_spectrogram_windowLength : 0.5 * my p_spectrogram_windowLength );
+				my instancePref_spectrogram_windowLength() : 0.5 * my instancePref_spectrogram_windowLength() );
 		my d_spectrogram.reset();
 		try {
 			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-			my d_spectrogram = Sound_to_Spectrogram (sound.get(), my p_spectrogram_windowLength,
-				my p_spectrogram_viewTo, (my endWindow - my startWindow) / my p_spectrogram_timeSteps,
-				my p_spectrogram_viewTo / my p_spectrogram_frequencySteps, my p_spectrogram_windowShape, 8.0, 8.0
+			my d_spectrogram = Sound_to_Spectrogram (sound.get(), my instancePref_spectrogram_windowLength(),
+				my instancePref_spectrogram_viewTo(), (my endWindow - my startWindow) / my p_spectrogram_timeSteps,
+				my instancePref_spectrogram_viewTo() / my p_spectrogram_frequencySteps, my p_spectrogram_windowShape, 8.0, 8.0
 			);
 			my d_spectrogram -> xmin = my startWindow;
 			my d_spectrogram -> xmax = my endWindow;
@@ -1700,22 +1707,23 @@ void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me) {
 }
 
 static void computePitch_inside (TimeSoundAnalysisEditor me) {
-	const double margin = ( my p_pitch_veryAccurate ? 3.0 / my p_pitch_floor : 1.5 / my p_pitch_floor );
+	const double margin = ( my p_pitch_veryAccurate ? 3.0 / my instancePref_pitch_floor() : 1.5 / my instancePref_pitch_floor() );
 	my d_pitch. reset();
 	try {
 		autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
 		const double pitchTimeStep = (
-			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my p_fixedTimeStep :
+			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 			0.0   // the default: determined by pitch floor
 		);
 		my d_pitch = Sound_to_Pitch_any (sound.get(), pitchTimeStep,
-			my p_pitch_floor,
+			my instancePref_pitch_floor(),
 			my p_pitch_method == kTimeSoundAnalysisEditor_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0,
 			my p_pitch_maximumNumberOfCandidates,
 			((int) my p_pitch_method - 1) * 2 + my p_pitch_veryAccurate,
-			my p_pitch_silenceThreshold, my p_pitch_voicingThreshold,
-			my p_pitch_octaveCost, my p_pitch_octaveJumpCost, my p_pitch_voicedUnvoicedCost, my p_pitch_ceiling
+			my instancePref_pitch_silenceThreshold(), my instancePref_pitch_voicingThreshold(),
+			my instancePref_pitch_octaveCost(), my instancePref_pitch_octaveJumpCost(),
+			my instancePref_pitch_voicedUnvoicedCost(), my instancePref_pitch_ceiling()
 		);
 		my d_pitch -> xmin = my startWindow;
 		my d_pitch -> xmax = my endWindow;
@@ -1726,7 +1734,7 @@ static void computePitch_inside (TimeSoundAnalysisEditor me) {
 
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my p_pitch_show && my endWindow - my startWindow <= my p_longestAnalysis &&
+	if (my p_pitch_show && my endWindow - my startWindow <= my instancePref_longestAnalysis() &&
 		(! my d_pitch || my d_pitch -> xmin != my startWindow || my d_pitch -> xmax != my endWindow))
 	{
 		computePitch_inside (me);
@@ -1735,15 +1743,15 @@ void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me) {
 
 void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my p_intensity_show && my endWindow - my startWindow <= my p_longestAnalysis &&
+	if (my p_intensity_show && my endWindow - my startWindow <= my instancePref_longestAnalysis() &&
 		(! my d_intensity || my d_intensity -> xmin != my startWindow || my d_intensity -> xmax != my endWindow))
 	{
-		const double margin = 3.2 / my p_pitch_floor;
+		const double margin = 3.2 / my instancePref_pitch_floor();
 		my d_intensity. reset();
 		try {
 			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-			my d_intensity = Sound_to_Intensity (sound.get(), my p_pitch_floor,
-				my endWindow - my startWindow > my p_longestAnalysis ? (my endWindow - my startWindow) / 100 : 0.0,
+			my d_intensity = Sound_to_Intensity (sound.get(), my instancePref_pitch_floor(),
+				my endWindow - my startWindow > my instancePref_longestAnalysis() ? (my endWindow - my startWindow) / 100 : 0.0,
 				my p_intensity_subtractMeanPressure
 			);
 			my d_intensity -> xmin = my startWindow;
@@ -1756,27 +1764,27 @@ void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me) {
 
 void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my p_formant_show && my endWindow - my startWindow <= my p_longestAnalysis &&
+	if (my p_formant_show && my endWindow - my startWindow <= my instancePref_longestAnalysis() &&
 		(! my d_formant || my d_formant -> xmin != my startWindow || my d_formant -> xmax != my endWindow))
 	{
-		const double margin = my p_formant_windowLength;
+		const double margin = my instancePref_formant_windowLength();
 		my d_formant. reset();
 		try {
-			autoSound sound = ( my endWindow - my startWindow > my p_longestAnalysis ?
+			autoSound sound = ( my endWindow - my startWindow > my instancePref_longestAnalysis() ?
 				extractSound (me,
-					0.5 * (my startWindow + my endWindow - my p_longestAnalysis) - margin,
-					0.5 * (my startWindow + my endWindow + my p_longestAnalysis) + margin
+					0.5 * (my startWindow + my endWindow - my instancePref_longestAnalysis()) - margin,
+					0.5 * (my startWindow + my endWindow + my instancePref_longestAnalysis()) + margin
 				) :
 				extractSound (me, my startWindow - margin, my endWindow + margin)
 			);
 			const double formantTimeStep = (
-				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my p_fixedTimeStep :
+				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 				0.0   // the default: determined by analysis window length
 			);
 			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
-				Melder_iround (my p_formant_numberOfFormants * 2.0), my p_formant_ceiling,
-				my p_formant_windowLength, (int) my p_formant_method, my p_formant_preemphasisFrom, 50.0
+				Melder_iround (my instancePref_formant_numberOfFormants() * 2.0), my instancePref_formant_ceiling(),
+				my instancePref_formant_windowLength(), (int) my p_formant_method, my instancePref_formant_preemphasisFrom(), 50.0
 			);
 			my d_formant -> xmin = my startWindow;
 			my d_formant -> xmax = my endWindow;
@@ -1788,7 +1796,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 
 void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me) {
 	autoMelderProgressOff progress;
-	if (my p_pulses_show && my endWindow - my startWindow <= my p_longestAnalysis &&
+	if (my p_pulses_show && my endWindow - my startWindow <= my instancePref_longestAnalysis() &&
 		(! my d_pulses || my d_pulses -> xmin != my startWindow || my d_pulses -> xmax != my endWindow))
 	{
 		my d_pulses. reset();
@@ -1810,12 +1818,14 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		d_pitch may not exist yet (if shown at all, it may be going to be created in TimeSoundAnalysisEditor_computePitch (),
 		and even if that fails the user should see what the pitch settings are). So we use a dummy object.
 	*/
-	const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-	const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+	const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch),
+			my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+	const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch),
+			my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 	const double pitchFloor_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 	const double pitchCeiling_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-	const double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
-	const double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
+	const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
+	const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 	const double pitchViewFrom_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit) ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt;
 	const double pitchViewTo_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
 
@@ -1825,11 +1835,11 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
 	Graphics_rectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
-	if (my endWindow - my startWindow > my p_longestAnalysis) {
+	if (my endWindow - my startWindow > my instancePref_longestAnalysis()) {
 		Graphics_setFont (my graphics.get(), kGraphics_font::HELVETICA);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics.get(), 0.5, 0.67,   U"(To see the analyses, zoom in to at most ", Melder_half (my p_longestAnalysis), U" seconds,");
+		Graphics_text (my graphics.get(), 0.5, 0.67,   U"(To see the analyses, zoom in to at most ", Melder_half (my instancePref_longestAnalysis()), U" seconds,");
 		Graphics_text (my graphics.get(), 0.5, 0.33,   U"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.)");
 		Graphics_setFontSize (my graphics.get(), 12);
 		return;
@@ -1837,17 +1847,19 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 	TimeSoundAnalysisEditor_computeSpectrogram (me);
 	if (my p_spectrogram_show && my d_spectrogram) {
 		Spectrogram_paintInside (my d_spectrogram.get(), my graphics.get(), my startWindow, my endWindow,
-			my p_spectrogram_viewFrom, my p_spectrogram_viewTo, my p_spectrogram_maximum, my p_spectrogram_autoscaling,
-			my p_spectrogram_dynamicRange, my p_spectrogram_preemphasis, my p_spectrogram_dynamicCompression
+			my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo(),
+			my instancePref_spectrogram_maximum(), my p_spectrogram_autoscaling,
+			my instancePref_spectrogram_dynamicRange(), my instancePref_spectrogram_preemphasis(),
+			my instancePref_spectrogram_dynamicCompression()
 		);
 	}
 	TimeSoundAnalysisEditor_computePitch (me);
 	if (my p_pitch_show && my d_pitch) {
 		const double periodsPerAnalysisWindow = ( my p_pitch_method == kTimeSoundAnalysisEditor_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0 );
-		const double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow / my p_pitch_floor;
+		const double greatestNonUndersamplingTimeStep = 0.5 * periodsPerAnalysisWindow / my instancePref_pitch_floor();
 		const double defaultTimeStep = 0.5 * greatestNonUndersamplingTimeStep;
 		const double timeStep = (
-			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my p_fixedTimeStep :
+			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 			defaultTimeStep
 		);
@@ -1884,7 +1896,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setColour (my graphics.get(), my p_spectrogram_show ? Melder_YELLOW : Melder_LIME);
 		Graphics_setLineWidth (my graphics.get(), my p_spectrogram_show ? 1.0 : 3.0);
 		Intensity_drawInside (my d_intensity.get(), my graphics.get(), my startWindow, my endWindow,
-				my p_intensity_viewFrom, my p_intensity_viewTo);
+				my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo());
 		Graphics_setLineWidth (my graphics.get(), 1.0);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 	}
@@ -1952,8 +1964,8 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			alignment = Graphics_RIGHT;
 			y = my endWindow;
 		}
-		if (my p_intensity_viewTo > my p_intensity_viewFrom) {
-			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my p_intensity_viewFrom, my p_intensity_viewTo);
+		if (my instancePref_intensity_viewTo() > my instancePref_intensity_viewFrom()) {
+			Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my instancePref_intensity_viewFrom(), my instancePref_intensity_viewTo());
 			if (my d_intensity) {
 				if (my startSelection == my endSelection) {
 					intensityCursor = Vector_getValueAtX (my d_intensity.get(), my startSelection, Vector_CHANNEL_1, kVector_valueInterpolation :: LINEAR);
@@ -1963,7 +1975,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			}
 			Graphics_setColour (my graphics.get(), textColour);
 			const bool intensityCursorVisible = ( isdefined (intensityCursor) &&
-					intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo );
+					intensityCursor > my instancePref_intensity_viewFrom() && intensityCursor < my instancePref_intensity_viewTo() );
 			if (intensityCursorVisible) {
 				static const conststring32 methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };
 				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_HALF);
@@ -1972,36 +1984,36 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 					my startSelection == my endSelection ? U"" : methodString [(int) my p_intensity_averagingMethod]
 				);
 			}
-			if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics.get(), intensityCursor - my p_intensity_viewFrom) > 5.0) {
+			if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics.get(), intensityCursor - my instancePref_intensity_viewFrom()) > 5.0) {
 				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_BOTTOM);
-				Graphics_text (my graphics.get(), y, my p_intensity_viewFrom - Graphics_dyMMtoWC (my graphics.get(), 0.5),
-						Melder_float (Melder_half (my p_intensity_viewFrom)), U" dB");
+				Graphics_text (my graphics.get(), y, my instancePref_intensity_viewFrom() - Graphics_dyMMtoWC (my graphics.get(), 0.5),
+						Melder_float (Melder_half (my instancePref_intensity_viewFrom())), U" dB");
 			}
-			if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my p_intensity_viewTo - intensityCursor) > 5.0) {
+			if (! intensityCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my instancePref_intensity_viewTo() - intensityCursor) > 5.0) {
 				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_TOP);
-				Graphics_text (my graphics.get(), y, my p_intensity_viewTo,
-						Melder_float (Melder_half (my p_intensity_viewTo)), U" dB");
+				Graphics_text (my graphics.get(), y, my instancePref_intensity_viewTo(),
+						Melder_float (Melder_half (my instancePref_intensity_viewTo())), U" dB");
 			}
 			Graphics_setColour (my graphics.get(), Melder_BLACK);
 		}
 	}
 	if (my p_spectrogram_show || my p_formant_show) {
-		const bool frequencyCursorVisible = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom && my d_spectrogram_cursor < my p_spectrogram_viewTo );
-		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
+		const bool frequencyCursorVisible = ( my d_spectrogram_cursor > my instancePref_spectrogram_viewFrom() && my d_spectrogram_cursor < my instancePref_spectrogram_viewTo() );
+		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo());
 		/*
 			Range marks.
 		*/
 		Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
-		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my d_spectrogram_cursor - my p_spectrogram_viewFrom) > 5.0) {
+		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my d_spectrogram_cursor - my instancePref_spectrogram_viewFrom()) > 5.0) {
 			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_BOTTOM);
-			Graphics_text (my graphics.get(), my startWindow, my p_spectrogram_viewFrom - Graphics_dyMMtoWC (my graphics.get(), 0.5),
-					Melder_float (Melder_half (my p_spectrogram_viewFrom)), U" Hz");
+			Graphics_text (my graphics.get(), my startWindow, my instancePref_spectrogram_viewFrom() - Graphics_dyMMtoWC (my graphics.get(), 0.5),
+					Melder_float (Melder_half (my instancePref_spectrogram_viewFrom())), U" Hz");
 		}
-		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my p_spectrogram_viewTo - my d_spectrogram_cursor) > 5.0) {
+		if (! frequencyCursorVisible || Graphics_dyWCtoMM (my graphics.get(), my instancePref_spectrogram_viewTo() - my d_spectrogram_cursor) > 5.0) {
 			Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_TOP);
-			Graphics_text (my graphics.get(), my startWindow, my p_spectrogram_viewTo,
-					Melder_float (Melder_half (my p_spectrogram_viewTo)), U" Hz");
+			Graphics_text (my graphics.get(), my startWindow, my instancePref_spectrogram_viewTo(),
+					Melder_float (Melder_half (my instancePref_spectrogram_viewTo())), U" Hz");
 		}
 		/*
 			Cursor lines.
@@ -2024,7 +2036,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		*/
 		Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
-		Graphics_rectangle (my graphics.get(), my startWindow, my endWindow, my p_spectrogram_viewFrom, my p_spectrogram_viewTo);
+		Graphics_rectangle (my graphics.get(), my startWindow, my endWindow, my instancePref_spectrogram_viewFrom(), my instancePref_spectrogram_viewTo());
 	}
 }
 void structTimeSoundAnalysisEditor :: v_draw_analysis () {
@@ -2034,9 +2046,9 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 void structTimeSoundAnalysisEditor :: v_draw_analysis_formants () {
 	TimeSoundAnalysisEditor_computeFormants (this);
 	if (our p_formant_show && our d_formant) {
-		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
+		Graphics_setSpeckleSize (our graphics.get(), our instancePref_formant_dotSize());
 		Formant_drawSpeckles_inside (our d_formant.get(), our graphics.get(), our startWindow, our endWindow,
-			our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange,
+			our instancePref_spectrogram_viewFrom(), our instancePref_spectrogram_viewTo(), our instancePref_formant_dynamicRange(),
 			Melder_RED, Melder_PINK, true
 		);
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
@@ -2045,7 +2057,7 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_formants () {
 
 void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
 	TimeSoundAnalysisEditor_computePulses (this);
-	if (our p_pulses_show && our endWindow - our startWindow <= our p_longestAnalysis && our d_pulses) {
+	if (our p_pulses_show && our endWindow - our startWindow <= our instancePref_longestAnalysis() && our d_pulses) {
 		PointProcess point = our d_pulses.get();
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, 1.0);
 		Graphics_setColour (our graphics.get(), Melder_BLUE);
@@ -2062,14 +2074,14 @@ bool structTimeSoundAnalysisEditor :: v_mouseInWideDataView (GuiDrawingArea_Mous
 	if (event -> isClick()) {
 		if (our p_pitch_show) {
 			if (x_world >= our endWindow && y_fraction > 0.48 && y_fraction <= 0.50) {
-				our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling * 1.26;
+				our setInstancePref_pitch_ceiling (our instancePref_pitch_ceiling() * 1.26);
 				our d_pitch. reset();
 				our d_intensity.reset();
 				our d_pulses. reset();
 				return FunctionEditor_UPDATE_NEEDED;
 			}
 			if (x_world >= our endWindow && y_fraction > 0.46 && y_fraction <= 0.48) {
-				our pref_pitch_ceiling () = our p_pitch_ceiling = our p_pitch_ceiling / 1.26;
+				our setInstancePref_pitch_ceiling (our instancePref_pitch_ceiling() / 1.26);
 				our d_pitch. reset();
 				our d_intensity. reset();
 				our d_pulses. reset();
@@ -2085,18 +2097,18 @@ void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 tit
 	/*
 		Repair preferences.
 	*/
-	if (my p_pitch_floor >= my p_pitch_ceiling) {
-		my p_pitch_floor = Melder_atof (my default_pitch_floor());
-		my p_pitch_ceiling = Melder_atof (my default_pitch_ceiling());
+	if (my instancePref_pitch_floor() >= my instancePref_pitch_ceiling()) {
+		my setInstancePref_pitch_floor (Melder_atof (my default_pitch_floor()));
+		my setInstancePref_pitch_ceiling (Melder_atof (my default_pitch_ceiling()));
 		my p_pitch_unit = kPitch_unit::HERTZ;
 	}
-	if (my p_spectrogram_viewFrom >= my p_spectrogram_viewTo) {
-		my p_spectrogram_viewFrom = Melder_atof (my default_spectrogram_viewFrom());
-		my p_spectrogram_viewTo = Melder_atof (my default_spectrogram_viewTo());
+	if (my instancePref_spectrogram_viewFrom() >= my instancePref_spectrogram_viewTo()) {
+		my setInstancePref_spectrogram_viewFrom (Melder_atof (my default_spectrogram_viewFrom()));
+		my setInstancePref_spectrogram_viewTo (Melder_atof (my default_spectrogram_viewTo()));
 	}
-	if (my p_intensity_viewFrom >= my p_intensity_viewTo) {
-		my p_intensity_viewFrom = Melder_atof (my default_intensity_viewFrom());
-		my p_intensity_viewTo = Melder_atof (my default_intensity_viewTo());
+	if (my instancePref_intensity_viewFrom() >= my instancePref_intensity_viewTo()) {
+		my setInstancePref_intensity_viewFrom (Melder_atof (my default_intensity_viewFrom()));
+		my setInstancePref_intensity_viewTo (Melder_atof (my default_intensity_viewTo()));
 	}
 	if (my v_hasAnalysis ()) {
 		if (my p_log1_toLogFile == false && my p_log1_toInfoWindow == false) {

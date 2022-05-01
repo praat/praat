@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (RealTierArea)
 
-	prefs_add_double_with_data (RealTierArea, dataFreeMinimum, 1, U"-100.0")
-	prefs_add_double_with_data (RealTierArea, dataFreeMaximum, 1, U"100.0")
+	EditorInstancePrefs_addDouble (RealTierArea, dataFreeMinimum, 1, U"-100.0")
+	EditorInstancePrefs_addDouble (RealTierArea, dataFreeMaximum, 1, U"100.0")
 
 EditorPrefs_end (RealTierArea)
 

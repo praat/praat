@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_Power1TierArea)
 
-	prefs_override_double (KlattGrid_Power1TierArea, dataFreeMinimum, 1, U"0.0")
-	prefs_override_double (KlattGrid_Power1TierArea, dataFreeMaximum, 1, U"4.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_Power1TierArea, dataFreeMinimum, 1, U"0.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_Power1TierArea, dataFreeMaximum, 1, U"4.0")
 
 EditorPrefs_end (KlattGrid_Power1TierArea)
 

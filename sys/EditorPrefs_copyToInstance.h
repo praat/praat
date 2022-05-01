@@ -1,4 +1,4 @@
-/* prefs_copyToInstance.h
+/* EditorPrefs_copyToInstance.h
  *
  * Copyright (C) 2013,2015-2018,2021,2022 Paul Boersma
  *
@@ -16,7 +16,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* for C++ files; see prefs.h */
+/* for C++ files; see EditorPrefs.h */
 
 #undef EditorPrefs_begin
 #undef prefs_add_int
@@ -28,9 +28,10 @@
 #undef prefs_add_bool
 #undef prefs_add_bool_with_data
 #undef prefs_override_bool
-#undef prefs_add_double
-#undef prefs_add_double_with_data
-#undef prefs_override_double
+#undef EditorClassPrefs_addDouble
+#undef EditorClassPrefs_overrideDouble
+#undef EditorInstancePrefs_addDouble
+#undef EditorInstancePrefs_overrideDouble
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
 #undef prefs_override_enum
@@ -55,9 +56,10 @@
 #define prefs_add_bool_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
 #define prefs_override_bool(Klas,name,version,default)
 
-#define prefs_add_double(Klas,name,version,default)
-#define prefs_add_double_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
-#define prefs_override_double(Klas,name,version,default)
+#define EditorClassPrefs_addDouble(Klas,name,version,default)
+#define EditorClassPrefs_overrideDouble(Klas,name,version,default)
+#define EditorInstancePrefs_addDouble(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#define EditorInstancePrefs_overrideDouble(Klas,name,version,default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default)
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  our p_##name = our pref_##name ();
@@ -70,4 +72,4 @@
 #define EditorPrefs_end(Klas) \
 	}
 
-/* End of file prefs_copyToInstance.h */
+/* End of file EditorPrefs_copyToInstance.h */

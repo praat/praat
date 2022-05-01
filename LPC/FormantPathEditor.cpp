@@ -17,13 +17,7 @@
  */
 
 /*
-	TODO: 28/5/20
-	1. claim somewhat more space for the selection viewer
-	2. the scroll bar should be shorter, only go to the end the sound view.
-	3. navigation aid buttons? next and previous buttons at the side of the navigation tier?
-	4. Adapt Select menu and File menu, the navigation aid should have accelerators.
-	5. The formant menu can use some logging
-	6. ..
+	TODO: make width of selection viewer variable?
 */
 #include "FormantPathEditor.h"
 #include "FormantPath_to_IntervalTier.h"
@@ -79,8 +73,8 @@ bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent
 	if ((our p_spectrogram_show || our p_formant_show) && yWC < spectrogramTop && yWC > spectrogramBottom && 
 		xWC > our startWindow && xWC < our endWindow) {
 		const double yFractionFromBottomOfSpectrogram = (yWC - spectrogramBottom) / (spectrogramTop - spectrogramBottom);
-		our d_spectrogram_cursor = our p_spectrogram_viewFrom +
-				yFractionFromBottomOfSpectrogram  * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
+		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
+				yFractionFromBottomOfSpectrogram  * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
 	}
 	return FormantPathEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
@@ -105,7 +99,7 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 	} else {
 		startTime = my startSelection;
 		endTime = my endSelection;
-		xCursor = my tmin - 1.0; // don't show
+		xCursor = my tmin - 1.0;   // don't show
 	}
 	if (out_startTime)
 		*out_startTime = startTime;
@@ -114,8 +108,8 @@ static void FormantPathEditor_getDrawingData (FormantPathEditor me, double *out_
 	if (out_xCursor)
 		*out_xCursor = xCursor;
 	if (out_yCursor)
-		*out_yCursor = ( my d_spectrogram_cursor > my p_spectrogram_viewFrom &&
-		my d_spectrogram_cursor < my p_spectrogram_viewTo ? my d_spectrogram_cursor : -1000.0 );
+		*out_yCursor = ( my d_spectrogram_cursor > my instancePref_spectrogram_viewFrom() &&
+				my d_spectrogram_cursor < my instancePref_spectrogram_viewTo() ? my d_spectrogram_cursor : -1000.0 );
 }
 
 static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) {
@@ -124,12 +118,6 @@ static void checkTierSelection (FormantPathEditor me, conststring32 verbPhrase) 
 }
 
 /********** METHODS **********/
-
-/*
- * The main invariant of the FormantPathEditor is that the selected interval
- * always has the cursor in it, and that the cursor always selects an interval
- * if the selected tier is an interval tier.
- */
 
 /***** FILE MENU *****/
 
@@ -315,12 +303,14 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 				U"Cannot compute pitch.");
 		}
 		Editor_openPraatPicture (me);
-		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
+				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
+				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
 		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
-		const double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
+		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
+		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately (my textGridView.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
 			speckle, my p_pitch_unit
@@ -407,35 +397,34 @@ static void menu_cb_FindAgain (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
 
 /***** TIER MENU *****/
 
-
 static void menu_cb_candidate_modellingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Candidate modelling settings", U"Candidate modelling settings...")		
-		SENTENCE (parameters_string, U"Coefficients by track", my default_modeler_numberOfParametersPerTrack ())
+		SENTENCE (parameters_string, U"Coefficients by track", my default_modeler_numberOfParametersPerTrack())
 		POSITIVE (varianceExponent, U"Variance exponent", U"1.25")
 	EDITOR_OK
 		SET_STRING (parameters_string, my p_modeler_numberOfParametersPerTrack)
 	EDITOR_DO
 	pref_str32cpy2 (my pref_modeler_numberOfParametersPerTrack (), my p_modeler_numberOfParametersPerTrack, parameters_string);
-	my pref_modeler_varianceExponent () = my p_modeler_varianceExponent = varianceExponent;
+	my setInstancePref_modeler_varianceExponent (varianceExponent);
 	FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Formant modeler advanced drawing settings", nullptr)
-		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels ())
-		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz ())
-		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency ())
-		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_modeler_draw_showBandwidths ())
+		BOOLEAN (drawEstimatedModels, U"Draw estimated models", my default_modeler_draw_estimatedModels())
+		POSITIVE (yGridLineEvery_Hz, U"Hor. grid lines every (Hz)", my default_modeler_draw_yGridLineEvery_Hz())
+		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency())
+		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_modeler_draw_showBandwidths())
 	EDITOR_OK
 		SET_BOOLEAN (drawEstimatedModels, my p_modeler_draw_estimatedModels)
-		SET_REAL (yGridLineEvery_Hz, my p_modeler_draw_yGridLineEvery_Hz)
-		SET_REAL (maximumFrequency, my p_modeler_draw_maximumFrequency)
+		SET_REAL (yGridLineEvery_Hz, my instancePref_modeler_draw_yGridLineEvery_Hz())
+		SET_REAL (maximumFrequency, my instancePref_modeler_draw_maximumFrequency())
 		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showBandwidths)
 	EDITOR_DO
 		my pref_modeler_draw_estimatedModels () = my p_modeler_draw_estimatedModels = drawEstimatedModels;
-		my pref_modeler_draw_maximumFrequency () = my p_modeler_draw_maximumFrequency = maximumFrequency;
-		my pref_modeler_draw_yGridLineEvery_Hz () = my p_modeler_draw_yGridLineEvery_Hz = yGridLineEvery_Hz;
+		my setInstancePref_modeler_draw_maximumFrequency (maximumFrequency);
+		my setInstancePref_modeler_draw_yGridLineEvery_Hz (yGridLineEvery_Hz);
 		my pref_modeler_draw_showBandwidths () = my p_modeler_draw_showBandwidths = drawErrorBars;
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -456,7 +445,8 @@ static void menu_cb_candidates_FindPath (FormantPathEditor me, EDITOR_ARGS_FORM)
 	EDITOR_DO
 		FormantPath formantPath = (FormantPath) my data;
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
-		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight, intensityModulationStepSize, windowLength, parameters.get(), my p_modeler_varianceExponent);
+		FormantPath_pathFinder (formantPath, qWeight, frequencyChangeWeight, stressWeight, ceilingChangeWeight,
+				intensityModulationStepSize, windowLength, parameters.get(), my instancePref_modeler_varianceExponent());
 		my d_formant = FormantPath_extractFormant (formantPath);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -484,9 +474,9 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		FormantPathEditor_getDrawingData (me, & startTime, & endTime, & xCursor, & yCursor);
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
-		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my p_modeler_draw_maximumFrequency, 1, 5,
-			my p_modeler_draw_showBandwidths, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my p_modeler_draw_yGridLineEvery_Hz,
-			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my p_modeler_varianceExponent, my p_modeler_draw_estimatedModels, true
+		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my instancePref_modeler_draw_maximumFrequency(), 1, 5,
+			my p_modeler_draw_showBandwidths, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
+			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my instancePref_modeler_varianceExponent(), my p_modeler_draw_estimatedModels, true
 		);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
@@ -504,7 +494,7 @@ static void INFO_DATA__stressOfFitsListing (FormantPathEditor me, EDITOR_ARGS_DI
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		const integer numberOfStressDecimals = 2, numberOfTimeDecimals = 6;
 		autoTable stressTable = FormantPath_downTo_Table_stresses (formantPath, startTime, endTime, parameters.get(),
-			my p_modeler_varianceExponent, numberOfStressDecimals, true, numberOfTimeDecimals);
+				my instancePref_modeler_varianceExponent(), numberOfStressDecimals, true, numberOfTimeDecimals);
 		Table_list (stressTable.get(), false);
 	INFO_DATA_END
 }
@@ -547,8 +537,9 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 		//const Formant formant = formantPath -> formant.get();
 		//const Formant defaultFormant = formantPath -> formants.at [formantPath -> defaultFormant];
 		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics, my startWindow, my endWindow,
-			my p_spectrogram_viewTo, my p_formant_dynamicRange,
-			my p_formant_picture_garnish);
+			my instancePref_spectrogram_viewTo(), my instancePref_formant_dynamicRange(),
+			my p_formant_picture_garnish
+		);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -751,7 +742,10 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our p_modeler_draw_maximumFrequency, 1, 5, our p_modeler_draw_showBandwidths, oddColour, evenColour, nrow, ncol, xSpace_fraction, ySpace_fraction, our p_modeler_draw_yGridLineEvery_Hz, xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, our p_modeler_varianceExponent, our p_modeler_draw_estimatedModels, true);
+		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our p_modeler_draw_showBandwidths, oddColour, evenColour,
+		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
+		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our p_modeler_draw_estimatedModels, true
+	);
 	Graphics_unsetInner (our graphics.get());
 	previousStartTime = startTime;
 	previousEndTime = endTime;
@@ -782,14 +776,17 @@ static void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, do
 void structFormantPathEditor :: v_draw_analysis_formants () {
 	if (our p_formant_show) {
 		Graphics_setColour (our graphics.get(), Melder_RED);
-		Graphics_setSpeckleSize (our graphics.get(), our p_formant_dotSize);
+		Graphics_setSpeckleSize (our graphics.get(), our instancePref_formant_dotSize());
 		MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 		MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	
-		Formant_drawSpeckles_inside (d_formant.get(), our graphics.get(), our startWindow, our endWindow, our p_spectrogram_viewFrom, our p_spectrogram_viewTo, our p_formant_dynamicRange, oddColour, evenColour, true);
+		Formant_drawSpeckles_inside (our d_formant.get(), our graphics.get(), our startWindow, our endWindow,
+			our instancePref_spectrogram_viewFrom(), our instancePref_spectrogram_viewTo(), our instancePref_formant_dynamicRange(),
+			oddColour, evenColour, true
+		);
 		Graphics_setColour (our graphics.get(), Melder_PINK);
 		FormantPathEditor_drawCeilings (this, our graphics.get(), our startWindow, our endWindow,
-			our p_spectrogram_viewFrom, our p_spectrogram_viewTo);
+				our instancePref_spectrogram_viewFrom(), our instancePref_spectrogram_viewTo());
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 	}
 }
@@ -798,7 +795,7 @@ static void Formant_replaceFrames (Formant target, integer beginFrame, integer e
 	// Precondition target and source have exactly the same Sampled xmin, xmax, x1, nx, dx
 	if (beginFrame == endFrame && beginFrame == 0) {
 		beginFrame = 1;
-		endFrame = target->nx;
+		endFrame = target -> nx;
 	}
 	Melder_require (beginFrame <= endFrame,
 		U"The start frame should not be after the end frame.");
@@ -845,15 +842,15 @@ void structFormantPathEditor :: v_clickSelectionViewer (double xWC, double yWC) 
 }
 
 void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
-	if (! d_sound.data && ! d_longSound.data)
+	if (! our d_sound.data && ! our d_longSound.data)
 		return;
-	integer numberOfChannels = ( d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny );
+	const integer numberOfChannels = ( our d_longSound.data ? our d_longSound.data -> numberOfChannels : our d_sound.data -> ny );
 	integer numberOfMuteChannels = 0;
 	Melder_assert (our d_sound.muteChannels.size == numberOfChannels);
 	for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
 		if (our d_sound.muteChannels [ichan])
 			numberOfMuteChannels ++;
-	integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
+	const integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	Melder_require (numberOfChannelsToPlay > 0,
 		U"Please select at least one channel to play.");
 	if (our d_longSound.data) {
@@ -894,14 +891,14 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
-	SET_REAL (v_prefs_addFields_fontSize, our p_fontSize)
+	SET_REAL (v_prefs_addFields_fontSize, our instancePref_fontSize())
 	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_useTextStyles () = our p_useTextStyles = v_prefs_addFields_useTextStyles - 1;
-	our pref_fontSize () = our p_fontSize = v_prefs_addFields_fontSize;
+	our setInstancePref_fontSize (v_prefs_addFields_fontSize);
 	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
 	our pref_shiftDragMultiple () = our p_shiftDragMultiple = false;
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;

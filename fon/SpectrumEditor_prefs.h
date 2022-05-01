@@ -21,10 +21,10 @@ EditorPrefs_begin (SpectrumEditor)
 
 	prefs_override_int         (SpectrumEditor, shellWidth,      1, U"700")
 	prefs_override_int         (SpectrumEditor, shellHeight,     1, U"440")
-	prefs_override_double      (SpectrumEditor, arrowScrollStep, 1, U"100.0")
+	EditorInstancePrefs_overrideDouble  (SpectrumEditor, arrowScrollStep, 1, U"100.0")
 
-	prefs_add_double_with_data (SpectrumEditor, bandSmoothing,   1, U"100.0")
-	prefs_add_double_with_data (SpectrumEditor, dynamicRange,    1, U"60.0")
+	EditorInstancePrefs_addDouble       (SpectrumEditor, bandSmoothing,   1, U"100.0")
+	EditorInstancePrefs_addDouble       (SpectrumEditor, dynamicRange,    1, U"60.0")
 
 EditorPrefs_end (SpectrumEditor)
 

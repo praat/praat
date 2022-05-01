@@ -326,13 +326,13 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = - minimum > maximum ? - minimum : maximum;
-	if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
-		minimum = p_sound_scaling_minimum;
-		maximum = p_sound_scaling_maximum;
-	} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
-		double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * p_sound_scaling_height;
-		maximum = mean + 0.5 * p_sound_scaling_height;
+	if (our p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_RANGE) {
+		minimum = our instancePref_sound_scaling_minimum();
+		maximum = our instancePref_sound_scaling_maximum();
+	} else if (our p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::FIXED_HEIGHT) {
+		const double mean = 0.5 * (minimum + maximum);
+		minimum = mean - 0.5 * our instancePref_sound_scaling_height();
+		maximum = mean + 0.5 * our instancePref_sound_scaling_height();
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;

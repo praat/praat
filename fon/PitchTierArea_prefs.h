@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (PitchTierArea)
 
-	prefs_override_double (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
-	prefs_override_double (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
+	EditorInstancePrefs_overrideDouble (PitchTierArea, dataFreeMinimum, 1, U"50.0")   // Hz
+	EditorInstancePrefs_overrideDouble (PitchTierArea, dataFreeMaximum, 1, U"300.0")   // Hz
 
 EditorPrefs_end (PitchTierArea)
 

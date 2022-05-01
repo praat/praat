@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_DoublePulsingTierArea)
 
-	prefs_override_double (KlattGrid_DoublePulsingTierArea, dataFreeMinimum, 1, U"0.0")
-	prefs_override_double (KlattGrid_DoublePulsingTierArea, dataFreeMaximum, 1, U"1.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_DoublePulsingTierArea, dataFreeMinimum, 1, U"0.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_DoublePulsingTierArea, dataFreeMaximum, 1, U"1.0")
 
 EditorPrefs_end (KlattGrid_DoublePulsingTierArea)
 

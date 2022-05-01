@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_DecibelTierArea)
 
-	prefs_override_double (KlattGrid_DecibelTierArea, dataFreeMinimum, 1, U"-30.0")
-	prefs_override_double (KlattGrid_DecibelTierArea, dataFreeMaximum, 1, U"30.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_DecibelTierArea, dataFreeMinimum, 1, U"-30.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_DecibelTierArea, dataFreeMaximum, 1, U"30.0")
 
 EditorPrefs_end (KlattGrid_DecibelTierArea)
 

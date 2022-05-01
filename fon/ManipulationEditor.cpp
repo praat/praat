@@ -276,15 +276,14 @@ static void menu_cb_stylizePitch (ManipulationEditor me, EDITOR_ARGS_FORM) {
 			RADIOBUTTON (U"Hertz")
 			RADIOBUTTON (U"semitones")
 	EDITOR_OK
-		SET_REAL   (frequencyResolution, my p_pitch_stylize_frequencyResolution)
+		SET_REAL   (frequencyResolution, my instancePref_pitch_stylize_frequencyResolution())
 		SET_OPTION (units,               my p_pitch_stylize_useSemitones + 1)
 	EDITOR_DO
 		if (! my pitch())
 			return;
 		Editor_save (me, U"Stylize pitch");
-		PitchTier_stylize (my pitch().get(),
-			my pref_pitch_stylize_frequencyResolution () = my p_pitch_stylize_frequencyResolution = frequencyResolution,
-			my pref_pitch_stylize_useSemitones        () = my p_pitch_stylize_useSemitones        = units - 1);
+		PitchTier_stylize (my pitch().get(), frequencyResolution, my pref_pitch_stylize_useSemitones() = my p_pitch_stylize_useSemitones = units - 1);
+		my setInstancePref_pitch_stylize_frequencyResolution (frequencyResolution);   // if it worked, then silently save the pref
 		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -379,11 +378,11 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		REAL (dataFreeMinimum, U"Data-free minimum (Hz)", my pitchTierArea -> default_dataFreeMinimum())
 		REAL (dataFreeMaximum, U"Data-free maximum (Hz)", my pitchTierArea -> default_dataFreeMaximum())
 	EDITOR_OK
-		SET_REAL (dataFreeMinimum, my pitchTierArea -> p_dataFreeMinimum)
-		SET_REAL (dataFreeMaximum, my pitchTierArea -> p_dataFreeMaximum)
+		SET_REAL (dataFreeMinimum, my pitchTierArea -> instancePref_dataFreeMinimum())
+		SET_REAL (dataFreeMaximum, my pitchTierArea -> instancePref_dataFreeMaximum())
 	EDITOR_DO
-		my pitchTierArea -> pref_dataFreeMinimum() = my pitchTierArea -> p_dataFreeMinimum = dataFreeMinimum;
-		my pitchTierArea -> pref_dataFreeMaximum() = my pitchTierArea -> p_dataFreeMaximum = dataFreeMaximum;
+		my pitchTierArea -> setInstancePref_dataFreeMinimum (dataFreeMinimum);
+		my pitchTierArea -> setInstancePref_dataFreeMaximum (dataFreeMaximum);
 		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -396,8 +395,8 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		REAL (dataFreeMinimum, U"Data-free minimum", my durationTierArea -> default_dataFreeMinimum())
 		REAL (dataFreeMaximum, U"Data-free maximum", my durationTierArea -> default_dataFreeMaximum())
 	EDITOR_OK
-		SET_REAL (dataFreeMinimum, my durationTierArea -> p_dataFreeMinimum)
-		SET_REAL (dataFreeMaximum, my durationTierArea -> p_dataFreeMaximum)
+		SET_REAL (dataFreeMinimum, my durationTierArea -> instancePref_dataFreeMinimum())
+		SET_REAL (dataFreeMaximum, my durationTierArea -> instancePref_dataFreeMaximum())
 	EDITOR_DO
 		if (dataFreeMinimum > 1.0)
 			Melder_throw (U"Minimum relative duration should not be greater than 1.");
@@ -405,8 +404,8 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 			Melder_throw (U"Maximum relative duration should not be less than 1.");
 		if (dataFreeMinimum >= dataFreeMaximum)
 			Melder_throw (U"Maximum relative duration should be greater than minimum.");
-		my durationTierArea -> pref_dataFreeMinimum() = my durationTierArea -> p_dataFreeMinimum = dataFreeMinimum;
-		my durationTierArea -> pref_dataFreeMaximum() = my durationTierArea -> p_dataFreeMaximum = dataFreeMaximum;
+		my durationTierArea -> setInstancePref_dataFreeMinimum (dataFreeMinimum);
+		my durationTierArea -> setInstancePref_dataFreeMaximum (dataFreeMaximum);
 		RealTierArea_updateScaling (my durationTierArea.get(), my duration().get());
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -782,11 +781,11 @@ autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulat
 		/*
 			If needed, fix preferences to sane values.
 		*/
-		if (my durationTierArea -> pref_dataFreeMinimum() > 1.0)
-			my durationTierArea -> pref_dataFreeMinimum() = Melder_atof (my durationTierArea -> default_dataFreeMinimum());   // sanity
-		if (my durationTierArea -> pref_dataFreeMaximum() < 1.0)
-			my durationTierArea -> pref_dataFreeMaximum() = Melder_atof (my durationTierArea -> default_dataFreeMaximum());
-		Melder_assert (my durationTierArea -> pref_dataFreeMinimum() < my durationTierArea -> pref_dataFreeMaximum());
+		if (my durationTierArea -> instancePref_dataFreeMinimum() > 1.0)
+			my durationTierArea -> setInstancePref_dataFreeMinimum (Melder_atof (my durationTierArea -> default_dataFreeMinimum()));   // sanity
+		if (my durationTierArea -> instancePref_dataFreeMaximum() < 1.0)
+			my durationTierArea -> setInstancePref_dataFreeMaximum (Melder_atof (my durationTierArea -> default_dataFreeMaximum()));
+		Melder_assert (my durationTierArea -> instancePref_dataFreeMinimum() < my durationTierArea -> instancePref_dataFreeMaximum());
 
 		my durationTierArea -> ycursor = 1.0;
 

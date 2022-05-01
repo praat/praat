@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (AmplitudeTierArea)
 
-	prefs_override_double (AmplitudeTierArea, dataFreeMinimum, 1, U"-1.0")
-	prefs_override_double (AmplitudeTierArea, dataFreeMaximum, 1, U"1.0")
+	EditorInstancePrefs_overrideDouble (AmplitudeTierArea, dataFreeMinimum, 1, U"-1.0")
+	EditorInstancePrefs_overrideDouble (AmplitudeTierArea, dataFreeMaximum, 1, U"1.0")
 
 EditorPrefs_end (AmplitudeTierArea)
 

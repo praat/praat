@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_CollisionPhaseTierArea)
 
-	prefs_override_double (KlattGrid_CollisionPhaseTierArea, dataFreeMinimum, 1, U"0.0")
-	prefs_override_double (KlattGrid_CollisionPhaseTierArea, dataFreeMaximum, 1, U"0.1")
+	EditorInstancePrefs_overrideDouble (KlattGrid_CollisionPhaseTierArea, dataFreeMinimum, 1, U"0.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_CollisionPhaseTierArea, dataFreeMaximum, 1, U"0.1")
 
 EditorPrefs_end (KlattGrid_CollisionPhaseTierArea)
 

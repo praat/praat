@@ -20,24 +20,24 @@ EditorPrefs_begin (ERPWindow)
 
 	prefs_override_bool    (ERPWindow, showSelectionViewer,            1, true)
 	prefs_override_enum    (ERPWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
-	prefs_override_double  (ERPWindow, sound_scaling_height,           1, U"20e-6")
-	prefs_override_double  (ERPWindow, sound_scaling_minimum,          1, U"-10e-6")
-	prefs_override_double  (ERPWindow, sound_scaling_maximum,          1, U"10e-6")
-	prefs_override_double  (ERPWindow, picture_bottom,                 1, U"0.0")
-	prefs_override_double  (ERPWindow, picture_top,                    1, U"0.0 (= auto)")
+	EditorInstancePrefs_overrideDouble  (ERPWindow, sound_scaling_height,           1, U"20e-6")
+	EditorInstancePrefs_overrideDouble  (ERPWindow, sound_scaling_minimum,          1, U"-10e-6")
+	EditorInstancePrefs_overrideDouble  (ERPWindow, sound_scaling_maximum,          1, U"10e-6")
+	EditorClassPrefs_overrideDouble     (ERPWindow, picture_bottom,                 1, U"0.0")
+	EditorClassPrefs_overrideDouble     (ERPWindow, picture_top,                    1, U"0.0 (= auto)")
 	prefs_override_bool    (ERPWindow, spectrogram_show,               1, false);
-	prefs_override_double  (ERPWindow, spectrogram_viewFrom,           1, U"0.0")   // Hz
-	prefs_override_double  (ERPWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
-	prefs_override_double  (ERPWindow, spectrogram_windowLength,       1, U"0.5")   // seconds
-	prefs_override_double  (ERPWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_viewFrom,           1, U"0.0")   // Hz
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_windowLength,       1, U"0.5")   // seconds
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
 	prefs_override_integer (ERPWindow, spectrogram_timeSteps,          1, U"1000")
 	prefs_override_integer (ERPWindow, spectrogram_frequencySteps,     1, U"250")
 	prefs_override_enum    (ERPWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
 	prefs_override_enum    (ERPWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
 	prefs_override_bool    (ERPWindow, spectrogram_autoscaling,        1, true)
-	prefs_override_double  (ERPWindow, spectrogram_maximum,            1, U"100.0")   // dB/Hz
-	prefs_override_double  (ERPWindow, spectrogram_preemphasis,        1, U"0.0")   // dB/octave
-	prefs_override_double  (ERPWindow, spectrogram_dynamicCompression, 1, U"0.0")
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_maximum,            1, U"100.0")   // dB/Hz
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_preemphasis,        1, U"0.0")   // dB/octave
+	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_dynamicCompression, 1, U"0.0")
 	prefs_override_bool    (ERPWindow, spectrogram_picture_garnish,    1, true)
 
 	prefs_add_enum_with_data (ERPWindow, scalp_colourScale,           1, kGraphics_colourScale, BLUE_TO_RED)

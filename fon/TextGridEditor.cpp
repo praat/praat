@@ -43,7 +43,7 @@ void structTextGridEditor :: v_info () {
 	TextGridEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
 	MelderInfo_writeLine (U"TextGrid uses text styles: ", our p_useTextStyles);
-	MelderInfo_writeLine (U"TextGrid font size: ", our p_fontSize);
+	MelderInfo_writeLine (U"TextGrid font size: ", our instancePref_fontSize());
 	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (our p_alignment));
 }
 
@@ -495,12 +495,14 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 				Melder_throw (U"Cannot compute pitch.");
 		}
 		Editor_openPraatPicture (me);
-		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_floor, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(), my p_pitch_ceiling, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		double pitchViewFrom_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewFrom : pitchFloor_overt );
-		double pitchViewTo_overt = ( my p_pitch_viewFrom < my p_pitch_viewTo ? my p_pitch_viewTo : pitchCeiling_overt );
+		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
+				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
+				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
+		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
 			speckle, my p_pitch_unit
@@ -1598,7 +1600,7 @@ void structTextGridEditor :: v_draw () {
 
 		Graphics_setColour (our graphics.get(), Melder_BLACK);
 		Graphics_setFont (our graphics.get(), kGraphics_font::TIMES);
-		Graphics_setFontSize (our graphics.get(), p_fontSize);
+		Graphics_setFontSize (our graphics.get(), our instancePref_fontSize());
 		if (isIntervalTier)
 			do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
 		else
@@ -1706,8 +1708,8 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	if (mouseIsInWideSoundOrAnalysisPart) {
 		const bool mouseIsInWideAnalysisPart = ( yWC < 0.5 * (soundY + 1.0) );
 		if ((our p_spectrogram_show || our p_formant_show) && mouseIsInWideAnalysisPart) {
-			our d_spectrogram_cursor = our p_spectrogram_viewFrom +
-					2.0 * (yWC - soundY) / (1.0 - soundY) * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
+			our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
+					2.0 * (yWC - soundY) / (1.0 - soundY) * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
 		}
 	}
 	if (our anchorIsInWideSoundOrAnalysisPart)
@@ -2114,7 +2116,7 @@ void structTextGridEditor :: v_updateText () {
 		TextTier textTier;
 		AnyTextGridTier_identifyClass (grid -> tiers->at [selectedTier], & intervalTier, & textTier);
 		if (intervalTier) {
-			integer iinterval = IntervalTier_timeToIndex (intervalTier, our startSelection);
+			const integer iinterval = IntervalTier_timeToIndex (intervalTier, our startSelection);
 			if (iinterval) {
 				TextInterval interval = intervalTier -> intervals.at [iinterval];
 				if (interval -> text)
@@ -2166,7 +2168,7 @@ void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
-	SET_REAL (v_prefs_addFields_fontSize, our p_fontSize)
+	SET_REAL (v_prefs_addFields_fontSize, our instancePref_fontSize())
 	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
 	SET_OPTION (v_prefs_addFields_shiftDragMultiple, our p_shiftDragMultiple + 1)
 	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
@@ -2175,7 +2177,7 @@ void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_useTextStyles () = our p_useTextStyles = v_prefs_addFields_useTextStyles - 1;
-	our pref_fontSize () = our p_fontSize = v_prefs_addFields_fontSize;
+	our setInstancePref_fontSize (v_prefs_addFields_fontSize);
 	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
 	our pref_shiftDragMultiple () = our p_shiftDragMultiple = v_prefs_addFields_shiftDragMultiple - 1;
 	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;

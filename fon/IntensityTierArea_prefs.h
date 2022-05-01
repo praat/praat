@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (IntensityTierArea)
 
-	prefs_override_double (IntensityTierArea, dataFreeMinimum, 1, U"50.0")   // dB
-	prefs_override_double (IntensityTierArea, dataFreeMaximum, 1, U"100.0")   // dB
+	EditorInstancePrefs_overrideDouble (IntensityTierArea, dataFreeMinimum, 1, U"50.0")   // dB
+	EditorInstancePrefs_overrideDouble (IntensityTierArea, dataFreeMaximum, 1, U"100.0")   // dB
 
 EditorPrefs_end (IntensityTierArea)
 
