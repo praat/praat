@@ -18,23 +18,23 @@
 
 EditorPrefs_begin (FormantGridEditor)
 
-	prefs_add_double_with_data (FormantGridEditor, formantFloor,                    1, U"0.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, formantCeiling,                  1, U"11000.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, bandwidthFloor,                  1, U"0.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, bandwidthCeiling,                1, U"1000.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, play_samplingFrequency,          1, U"44100.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, source_pitch_tStart,             1, U"0.0%")   // relative time
-	prefs_add_double_with_data (FormantGridEditor, source_pitch_f0Start,            1, U"150.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, source_pitch_tMid,               1, U"25.0%")   // relative time
-	prefs_add_double_with_data (FormantGridEditor, source_pitch_f0Mid,              1, U"180.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, source_pitch_tEnd,               1, U"100.0%")   // relative time
-	prefs_add_double_with_data (FormantGridEditor, source_pitch_f0End,              1, U"120.0")   // Hz
-	prefs_add_double_with_data (FormantGridEditor, source_phonation_adaptFactor,    1, U"1.0")
-	prefs_add_double_with_data (FormantGridEditor, source_phonation_maximumPeriod,  1, U"0.05")
-	prefs_add_double_with_data (FormantGridEditor, source_phonation_openPhase,      1, U"0.7")
-	prefs_add_double_with_data (FormantGridEditor, source_phonation_collisionPhase, 1, U"0.03")
-	prefs_add_double_with_data (FormantGridEditor, source_phonation_power1,         1, U"3.0")
-	prefs_add_double_with_data (FormantGridEditor, source_phonation_power2,         1, U"4.0")
+	EditorInstancePrefs_addDouble  (FormantGridEditor, formantFloor,                    1, U"0.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, formantCeiling,                  1, U"11000.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, bandwidthFloor,                  1, U"0.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, bandwidthCeiling,                1, U"1000.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, play_samplingFrequency,          1, U"44100.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_pitch_tStart,             1, U"0.0%")   // relative time
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_pitch_f0Start,            1, U"150.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_pitch_tMid,               1, U"25.0%")   // relative time
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_pitch_f0Mid,              1, U"180.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_pitch_tEnd,               1, U"100.0%")   // relative time
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_pitch_f0End,              1, U"120.0")   // Hz
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_phonation_adaptFactor,    1, U"1.0")
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_phonation_maximumPeriod,  1, U"0.05")
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_phonation_openPhase,      1, U"0.7")
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_phonation_collisionPhase, 1, U"0.03")
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_phonation_power1,         1, U"3.0")
+	EditorInstancePrefs_addDouble  (FormantGridEditor, source_phonation_power2,         1, U"4.0")
 
 EditorPrefs_end (FormantGridEditor)
 

@@ -251,7 +251,7 @@ static void menu_cb_MoveBtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_MoveEtoZero (SoundEditor me, EDITOR_ARGS_DIRECT) {
-	double zero = Sound_getNearestZeroCrossing ((Sound) my data, my endSelection, 1);   // STEREO BUG
+	const double zero = Sound_getNearestZeroCrossing ((Sound) my data, my endSelection, 1);   // STEREO BUG
 	if (isdefined (zero)) {
 		my endSelection = zero;
 		Melder_sort (& my startSelection, & my endSelection);
@@ -266,21 +266,21 @@ static void menu_cb_LongSoundEditorHelp (SoundEditor, EDITOR_ARGS_DIRECT) { Meld
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
-	Melder_assert (data);
-	Melder_assert (d_sound.data || d_longSound.data);
+	Melder_assert (our data);
+	Melder_assert (our d_sound.data || our d_longSound.data);
 
 	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
-	if (d_sound.data)
+	if (our d_sound.data)
 		cutButton = Editor_addCommand (this, U"Edit", U"Cut", 'X', menu_cb_Cut);
 	copyButton = Editor_addCommand (this, U"Edit", U"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
-	if (d_sound.data)
+	if (our d_sound.data)
 		pasteButton = Editor_addCommand (this, U"Edit", U"Paste after selection", 'V', menu_cb_Paste);
-	if (d_sound.data) {
+	if (our d_sound.data) {
 		Editor_addCommand (this, U"Edit", U"-- zero --", 0, nullptr);
 		zeroButton = Editor_addCommand (this, U"Edit", U"Set selection to zero", 0, menu_cb_SetSelectionToZero);
 		reverseButton = Editor_addCommand (this, U"Edit", U"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
-	if (d_sound.data) {
+	if (our d_sound.data) {
 		Editor_addCommand (this, U"Select", U"-- move to zero --", 0, 0);
 		Editor_addCommand (this, U"Select", U"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
 		Editor_addCommand (this, U"Select", U"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
@@ -394,8 +394,8 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 
 bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
 	if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 && xWC > our startWindow && xWC < our endWindow)
-		our d_spectrogram_cursor = our p_spectrogram_viewFrom +
-				2.0 * yWC * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
+		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
+				2.0 * yWC * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
 	return SoundEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
 

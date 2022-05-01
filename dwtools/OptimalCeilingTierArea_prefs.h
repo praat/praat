@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (OptimalCeilingTierArea)
 
-	prefs_override_double (OptimalCeilingTierArea, dataFreeMinimum, 1, U"4000.0")
-	prefs_override_double (OptimalCeilingTierArea, dataFreeMaximum, 1, U"6000.0")
+	EditorInstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMinimum, 1, U"4000.0")
+	EditorInstancePrefs_overrideDouble (OptimalCeilingTierArea, dataFreeMaximum, 1, U"6000.0")
 
 EditorPrefs_end (OptimalCeilingTierArea)
 

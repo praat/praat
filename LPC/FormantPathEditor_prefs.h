@@ -1,6 +1,6 @@
 /* FormantPathEditor_prefs.h
  *
- * Copyright (C) 2020 David Weenink
+ * Copyright (C) 2020 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ EditorPrefs_begin (FormantPathEditor)
 	
 // from TextGridEditor
 	prefs_add_bool_with_data   (FormantPathEditor, useTextStyles,          1, false)
-	prefs_add_double_with_data (FormantPathEditor, fontSize,               1, U"18")
+	EditorInstancePrefs_addDouble  (FormantPathEditor, fontSize,               1, U"18")
 	prefs_add_enum_with_data   (FormantPathEditor, alignment,              1, kGraphics_horizontalAlignment, DEFAULT)
 	prefs_add_bool_with_data   (FormantPathEditor, shiftDragMultiple,      1, false)
 	prefs_add_enum_with_data   (FormantPathEditor, showNumberOf,           1, kTextGridEditor_showNumberOf, DEFAULT)
@@ -49,12 +49,12 @@ EditorPrefs_begin (FormantPathEditor)
 	
 	prefs_add_integer_with_data(FormantPathEditor, modeler_numberOfTracks,             1, U"3")
 	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"3 3 3")
-	prefs_add_double_with_data (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
+	EditorInstancePrefs_addDouble  (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showAllModels,         1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"6200.0")
+	EditorInstancePrefs_addDouble  (FormantPathEditor, modeler_draw_maximumFrequency,      1, U"6200.0")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_estimatedModels,       1, false)
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showBandwidths,        1, true)
-	prefs_add_double_with_data (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
+	EditorInstancePrefs_addDouble  (FormantPathEditor, modeler_draw_yGridLineEvery_Hz,     1, U"1000.0") // Hz
 	
 EditorPrefs_end (FormantPathEditor)
 	

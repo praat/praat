@@ -57,8 +57,8 @@ bool RealTierArea_mouse (RealTierArea me, RealTier tier, GuiDrawingArea_MouseEve
 
 inline void RealTierArea_init (RealTierArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	FunctionArea_init (me, editor, ymin_fraction, ymax_fraction);
-	Melder_assert (isdefined (my p_dataFreeMinimum));
-	Melder_assert (isdefined (my p_dataFreeMaximum));
+	Melder_assert (isdefined (my instancePref_dataFreeMinimum()));
+	Melder_assert (isdefined (my instancePref_dataFreeMaximum()));
 }
 
 inline autoRealTierArea RealTierArea_create (FunctionEditor editor, double ymin_fraction, double ymax_fraction) {

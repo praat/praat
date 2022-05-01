@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_OpenPhaseTierArea)
 
-	prefs_override_double (KlattGrid_OpenPhaseTierArea, dataFreeMinimum, 1, U"0.0")
-	prefs_override_double (KlattGrid_OpenPhaseTierArea, dataFreeMaximum, 1, U"1.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_OpenPhaseTierArea, dataFreeMinimum, 1, U"0.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_OpenPhaseTierArea, dataFreeMaximum, 1, U"1.0")
 
 EditorPrefs_end (KlattGrid_OpenPhaseTierArea)
 

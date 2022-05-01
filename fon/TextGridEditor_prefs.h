@@ -24,7 +24,7 @@ EditorPrefs_begin (TextGridEditor)
 	prefs_override_bool        (TextGridEditor, showSelectionViewer,    1, true)
 
 	prefs_add_bool_with_data   (TextGridEditor, useTextStyles,          1, false)
-	prefs_add_double_with_data (TextGridEditor, fontSize,               1, U"18")
+	EditorInstancePrefs_addDouble  (TextGridEditor, fontSize,               1, U"18")
 	prefs_add_enum_with_data   (TextGridEditor, alignment,              1, kGraphics_horizontalAlignment, DEFAULT)
 	prefs_add_bool_with_data   (TextGridEditor, shiftDragMultiple,      1, true)
 	prefs_add_enum_with_data   (TextGridEditor, showNumberOf,           1, kTextGridEditor_showNumberOf, DEFAULT)

@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_IntensityTierArea)
 
-	prefs_override_double (KlattGrid_IntensityTierArea, dataFreeMinimum, 1, U"50.0")
-	prefs_override_double (KlattGrid_IntensityTierArea, dataFreeMaximum, 1, U"100.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_IntensityTierArea, dataFreeMinimum, 1, U"50.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_IntensityTierArea, dataFreeMaximum, 1, U"100.0")
 
 EditorPrefs_end (KlattGrid_IntensityTierArea)
 

@@ -18,7 +18,7 @@
 
 EditorPrefs_begin (TextEditor)
 
-	prefs_add_double_with_data (TextEditor, fontSize, 1, U"12")
+	EditorInstancePrefs_addDouble (TextEditor, fontSize, 1, U"12")
 
 EditorPrefs_end (TextEditor)
 

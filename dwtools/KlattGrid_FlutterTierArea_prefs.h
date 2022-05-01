@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_FlutterTierArea)
 
-	prefs_override_double (KlattGrid_FlutterTierArea, dataFreeMinimum, 1, U"0.0")
-	prefs_override_double (KlattGrid_FlutterTierArea, dataFreeMaximum, 1, U"1.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_FlutterTierArea, dataFreeMinimum, 1, U"0.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_FlutterTierArea, dataFreeMaximum, 1, U"1.0")
 
 EditorPrefs_end (KlattGrid_FlutterTierArea)
 

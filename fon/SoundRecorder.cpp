@@ -353,12 +353,14 @@ static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) 
 		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
 		trace (nsamp, U" samples, intensity ", intensity, U" dB, centre of gravity ", centreOfGravity, U" Hz");
 		Graphics_setWindow (my graphics.get(),
-				my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
-				my p_meter_intensity_minimum, my p_meter_intensity_maximum);
+			my instancePref_meter_centreOfGravity_minimum(), my instancePref_meter_centreOfGravity_maximum(),
+			my instancePref_meter_intensity_minimum(), my instancePref_meter_intensity_maximum()
+		);
 		Graphics_setColour (my graphics.get(), Melder_WHITE);
 		Graphics_fillRectangle (my graphics.get(),
-				my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
-				my p_meter_intensity_minimum, my p_meter_intensity_maximum);
+			my instancePref_meter_centreOfGravity_minimum(), my instancePref_meter_centreOfGravity_maximum(),
+			my instancePref_meter_intensity_minimum(), my instancePref_meter_intensity_maximum()
+		);
 		Graphics_setColour (my graphics.get(), Melder_BLACK);
 		Graphics_fillCircle_mm (my graphics.get(), centreOfGravity, intensity, 3.0);
 	}

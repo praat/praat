@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2021 Paul Boersma
+ * Copyright (C) 1996-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,9 +159,9 @@ void structManual :: v_draw () {
 			U", ", date % 100,
 			U" ", month [imonth],
 			U" ", date / 10000);
-		HyperPage_any (this, U"", our p_font, our p_fontSize, 0, 0.0,
+		HyperPage_any (this, U"", our p_font, our instancePref_fontSize(), 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, signature, our p_font, our p_fontSize, Graphics_ITALIC, 0.0,
+		HyperPage_any (this, signature, our p_font, our instancePref_fontSize(), Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }

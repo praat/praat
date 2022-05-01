@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_SpectralTiltTierArea)
 
-	prefs_override_double (KlattGrid_SpectralTiltTierArea, dataFreeMinimum, 1, U"-50.0")
-	prefs_override_double (KlattGrid_SpectralTiltTierArea, dataFreeMaximum, 1, U"10.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_SpectralTiltTierArea, dataFreeMinimum, 1, U"-50.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_SpectralTiltTierArea, dataFreeMaximum, 1, U"10.0")
 
 EditorPrefs_end (KlattGrid_SpectralTiltTierArea)
 

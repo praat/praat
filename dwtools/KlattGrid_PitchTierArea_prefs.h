@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (KlattGrid_PitchTierArea)
 
-	prefs_override_double (KlattGrid_PitchTierArea, dataFreeMinimum, 1, U"50.0")
-	prefs_override_double (KlattGrid_PitchTierArea, dataFreeMaximum, 1, U"600.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_PitchTierArea, dataFreeMinimum, 1, U"50.0")
+	EditorInstancePrefs_overrideDouble (KlattGrid_PitchTierArea, dataFreeMaximum, 1, U"600.0")
 
 EditorPrefs_end (KlattGrid_PitchTierArea)
 

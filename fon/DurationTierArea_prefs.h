@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (DurationTierArea)
 
-	prefs_override_double (DurationTierArea, dataFreeMinimum, 1, U"0.25")
-	prefs_override_double (DurationTierArea, dataFreeMaximum, 1, U"3.0")
+	EditorInstancePrefs_overrideDouble (DurationTierArea, dataFreeMinimum, 1, U"0.25")
+	EditorInstancePrefs_overrideDouble (DurationTierArea, dataFreeMaximum, 1, U"3.0")
 
 EditorPrefs_end (DurationTierArea)
 

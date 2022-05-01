@@ -408,7 +408,7 @@ void structFunctionEditor :: v_info () {
 	MelderInfo_writeLine (U"Window end: ", our endWindow, U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Selection start: ", our startSelection, U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Selection end: ", our endSelection, U" ", v_format_units_long());
-	MelderInfo_writeLine (U"Arrow scroll step: ", our p_arrowScrollStep, U" ", v_format_units_long());
+	MelderInfo_writeLine (U"Arrow scroll step: ", our instancePref_arrowScrollStep(), U" ", v_format_units_long());
 	MelderInfo_writeLine (U"Group: ", group ? U"yes" : U"no");
 }
 
@@ -435,14 +435,14 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 		SET_BOOLEAN (synchronizeZoomAndScroll, my pref_synchronizedZoomAndScroll())
 		SET_BOOLEAN (showSelectionViewer, my pref_showSelectionViewer ())
-		SET_REAL (arrowScrollStep, my p_arrowScrollStep)
+		SET_REAL (arrowScrollStep, my instancePref_arrowScrollStep())
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
 		const bool oldSynchronizedZoomAndScroll = my pref_synchronizedZoomAndScroll();
 		const bool oldShowSelectionViewer = my p_showSelectionViewer;
 		my pref_synchronizedZoomAndScroll() = synchronizeZoomAndScroll;
 		my pref_showSelectionViewer() = my p_showSelectionViewer = showSelectionViewer;
-		my pref_arrowScrollStep() = my p_arrowScrollStep = arrowScrollStep;
+		my setInstancePref_arrowScrollStep (arrowScrollStep);
 		if (my p_showSelectionViewer != oldShowSelectionViewer)
 			my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll())
@@ -891,10 +891,10 @@ void FunctionEditor_scrollToView (FunctionEditor me, double t) {
 
 static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		my startSelection -= my p_arrowScrollStep;
+		my startSelection -= my instancePref_arrowScrollStep();
 		if (my startSelection < my tmin + 1e-12)
 			my startSelection = my tmin;
-		my endSelection -= my p_arrowScrollStep;
+		my endSelection -= my instancePref_arrowScrollStep();
 		if (my endSelection < my tmin + 1e-12)
 			my endSelection = my tmin;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
@@ -904,10 +904,10 @@ static void menu_cb_selectEarlier (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		my startSelection += my p_arrowScrollStep;
+		my startSelection += my instancePref_arrowScrollStep();
 		if (my startSelection > my tmax - 1e-12)
 			my startSelection = my tmax;
-		my endSelection += my p_arrowScrollStep;
+		my endSelection += my instancePref_arrowScrollStep();
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
@@ -917,7 +917,7 @@ static void menu_cb_selectLater (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		my startSelection -= my p_arrowScrollStep;
+		my startSelection -= my instancePref_arrowScrollStep();
 		if (my startSelection < my tmin + 1e-12)
 			my startSelection = my tmin;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()
@@ -927,7 +927,7 @@ static void menu_cb_moveStartOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIR
 
 static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		my startSelection += my p_arrowScrollStep;
+		my startSelection += my instancePref_arrowScrollStep();
 		if (my startSelection > my tmax - 1e-12)
 			my startSelection = my tmax;
 		if (my startSelection > my endSelection) {
@@ -942,7 +942,7 @@ static void menu_cb_moveStartOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DI
 
 static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		my endSelection -= my p_arrowScrollStep;
+		my endSelection -= my instancePref_arrowScrollStep();
 		if (my endSelection < my tmin + 1e-12)
 			my endSelection = my tmin;
 		if (my startSelection > my endSelection) {
@@ -957,7 +957,7 @@ static void menu_cb_moveEndOfSelectionLeft (FunctionEditor me, EDITOR_ARGS_DIREC
 
 static void menu_cb_moveEndOfSelectionRight (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		my endSelection += my p_arrowScrollStep;
+		my endSelection += my instancePref_arrowScrollStep();
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
 		Melder_assert (isdefined (my startSelection));   // precondition of FunctionEditor_scrollToView()

@@ -48,12 +48,23 @@
 	private: static bool s_##name; public: bool & pref_##name () override { return s_##name; } \
 	private: static bool sdefault_##name; public: bool default_##name () override { return sdefault_##name; }
 
-#define prefs_add_double(Klas,name,version,default) \
-	private: static double s_##name; public: virtual double & pref_##name () { return s_##name; } \
-	private: static conststring32 sdefault_##name; public: virtual conststring32 default_##name () { return sdefault_##name; }
-#define prefs_add_double_with_data(Klas,name,version,default)  public: double p_##name; prefs_add_double (Klas, name, version, default)
-#define prefs_override_double(Klas,name,version,default) \
-	private: static double s_##name; public: double & pref_##name () override { return s_##name; } \
+#define EditorClassPrefs_addDouble(Klas,name,version,default) \
+	private: static double _staticClassPref_##name; private: virtual double & _dynamicClassPref1_##name () { return _staticClassPref_##name; } \
+	private: static conststring32 sdefault_##name; public: virtual conststring32 default_##name () { return sdefault_##name; } \
+	public: double classPref_##name () { return our _dynamicClassPref1_##name(); } \
+	public: void setClassPref_##name (double newValue) { our _dynamicClassPref1_##name() = newValue; }
+#define EditorClassPrefs_overrideDouble(Klas,name,version,default) \
+	private: static double _staticClassPref_##name; public: double & _dynamicClassPref1_##name () override { return _staticClassPref_##name; } \
+	private: static conststring32 sdefault_##name; public: conststring32 default_##name () override { return sdefault_##name; }
+#define EditorInstancePrefs_addDouble(Klas,name,version,default) \
+	private: double _instancePref_##name; \
+	private: static double _staticClassPref_##name; private: virtual double & _dynamicClassPref2_##name () { return _staticClassPref_##name; } \
+	private: static conststring32 sdefault_##name; public: virtual conststring32 default_##name () { return sdefault_##name; } \
+	public: double instancePref_##name () { return our _instancePref_##name; } \
+	public: void setInstancePref_##name (double newValue) { our _dynamicClassPref2_##name() = our _instancePref_##name = newValue; } \
+	private: void _copyPrefToInstance_##name () { our _instancePref_##name = our _dynamicClassPref2_##name(); }
+#define EditorInstancePrefs_overrideDouble(Klas,name,version,default) \
+	private: static double _staticClassPref_##name; public: double & _dynamicClassPref2_##name () override { return _staticClassPref_##name; } \
 	private: static conststring32 sdefault_##name; public: conststring32 default_##name () override { return sdefault_##name; }
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
@@ -72,7 +83,8 @@
 	private: static char32 s_##name [Preferences_STRING_BUFFER_SIZE]; public: char32 * pref_##name () override { return & s_##name [0]; } \
 	private: static conststring32 sdefault_##name; public: conststring32 default_##name () override{ return sdefault_##name; }
 
-#define EditorPrefs_end(Klas)
+#define EditorPrefs_end(Klas) \
+	public:
 
 /* End of file EditorPrefs.h */
 #endif
