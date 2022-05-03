@@ -23,6 +23,9 @@ oo_DEFINE_CLASS (MultiSampledSpectrogram, Sampled)
 	oo_DOUBLE (tmax) // invariant: frequencyBin [i] -> xmax = my tmax for all i
 	oo_DOUBLE (frequencyResolutionInBins)
 	
+	oo_INTEGER (numberOfSpectralValues) // needed for resythesis
+	oo_VEC (frequencyAmplifications, numberOfSpectralValues) // keep track of individual frequencies for resynthesis)
+	
 	oo_COLLECTION_OF (OrderedOf, frequencyBins, FrequencyBin, 0) // invariant frequencyBins.size == my nx
 	oo_OBJECT (FrequencyBin, 0, zeroBin)	// needs special treatment 														 
 	oo_OBJECT (FrequencyBin, 0, nyquistBin)	// needs special treatment

@@ -104,6 +104,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 	try {
 		const integer maximumFilterSize = my nx;
 		autoVEC window = raw_VEC (maximumFilterSize);
+		thy numberOfSpectralValues = my nx;
+		thy frequencyAmplifications = zero_VEC (thy numberOfSpectralValues);
 		for (integer ifreq = 1; ifreq <= thy nx; ifreq ++) {
 			double spectrum_fmin, spectrum_fmax;
 			MultiSampledSpectrogram_getFrequencyBand (thee, ifreq, & spectrum_fmin, & spectrum_fmax);
@@ -113,7 +115,8 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				U"The number of spectral values for bin number ", ifreq, U" should be larger than zero.");
 			window.resize (numberOfSpectralValues);
 			windowShape_VEC_preallocated (window.get(), filterShape);
-			autoAnalyticSound him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, window.get());		
+			autoAnalyticSound him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, window.get());
+			thy frequencyAmplifications.part (spectrum_imin, spectrum_imax)  +=  window.get();
 			autoFrequencyBin bin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 			bin -> z = his z.move();
 			thy frequencyBins.addItem_move (bin.move());
@@ -125,7 +128,10 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				*/
 				(void) Sampled_getWindowSamples (me, my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
-					 	window.part (window.size / 2 + 1, window.size));
+					 	window.part ((window.size + 1) / 2 + 1, window.size));
+				thy frequencyAmplifications.part (1, spectrum_imax - window.size / 2)  <<=  1.0;
+				thy frequencyAmplifications.part (spectrum_imax - window.size / 2 + 1, spectrum_imax)  +=
+					window.part ((window.size + 1) / 2 + 1, window.size);
 				thy zeroBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy zeroBin -> z = his z.move();
 			} 
@@ -138,6 +144,9 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				(void) Sampled_getWindowSamples (me, 0.5 * (spectrum_fmin + spectrum_fmax), my xmax, & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
 					 	window.part (1 , window.size / 2));
+				thy frequencyAmplifications.part (spectrum_imin, spectrum_imin + window.size / 2 - 1)  += 
+					window.part (1 , window.size / 2);
+				thy frequencyAmplifications.part (spectrum_imin + window.size / 2, spectrum_imax)  <<=  1.0;
 				thy nyquistBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy nyquistBin -> z = his z.move();
 			}
@@ -157,6 +166,7 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		const integer numberOfSamples = Melder_iround (duration * samplingFrequency);
 		const integer numberOfFFTSamples = Melder_clippedLeft (2_integer, Melder_iroundUpToPowerOfTwo (numberOfSamples));
 		const integer numberOfSpectralValues = numberOfFFTSamples / 2 + 1;
+		Melder_assert (numberOfSpectralValues == my numberOfSpectralValues);
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfSpectralValues);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 			integer iextra = 1;
@@ -187,6 +197,15 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 			Make sure the imaginary part of the last spectral value is zero.
 		*/
 		thy z [2] [numberOfSpectralValues] = 0.0;
+		/*
+			Correct for windowing effects
+		*/
+		for (integer ifreq = 1; ifreq <= my frequencyAmplifications.size; ifreq ++)
+			if (my frequencyAmplifications [ifreq] > 0.0) {
+				thy z [1] [ifreq] /= my frequencyAmplifications [ifreq];
+				thy z [2] [ifreq] /= my frequencyAmplifications [ifreq];
+			}
+				
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot convert to Spectrum.");
