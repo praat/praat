@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (FormantPathEditor)
 
-	prefs_override_int         (FormantPathEditor, shellWidth,                        1, U"800")
-	prefs_override_int         (FormantPathEditor, shellHeight,                       1, U"600")	
+	EditorClassPrefs_overrideInt         (FormantPathEditor, shellWidth,                        1, U"800")
+	EditorClassPrefs_overrideInt         (FormantPathEditor, shellHeight,                       1, U"600")	
 	prefs_override_bool        (FormantPathEditor, picture_garnish,                   1, true)
 	prefs_override_bool        (FormantPathEditor, showSelectionViewer,               1, true)
 	prefs_override_bool        (FormantPathEditor, spectrogram_show,                  1, true)
@@ -47,7 +47,7 @@ EditorPrefs_begin (FormantPathEditor)
 	prefs_add_string_with_data (FormantPathEditor, formant_selected_colour,            1, U"pink")	
 	prefs_add_bool_with_data   (FormantPathEditor, formant_draw_showBandWidths,        1, false)
 	
-	prefs_add_integer_with_data(FormantPathEditor, modeler_numberOfTracks,             1, U"3")
+	EditorInstancePrefs_addInteger (FormantPathEditor, modeler_numberOfTracks,             1, U"3")
 	prefs_add_string_with_data (FormantPathEditor, modeler_numberOfParametersPerTrack, 1, U"3 3 3")
 	EditorInstancePrefs_addDouble  (FormantPathEditor, modeler_varianceExponent,           1, U"1.25")
 	prefs_add_bool_with_data   (FormantPathEditor, modeler_draw_showAllModels,         1, true)

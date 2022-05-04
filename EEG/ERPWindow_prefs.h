@@ -30,8 +30,8 @@ EditorPrefs_begin (ERPWindow)
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_windowLength,       1, U"0.5")   // seconds
 	EditorInstancePrefs_overrideDouble  (ERPWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
-	prefs_override_integer (ERPWindow, spectrogram_timeSteps,          1, U"1000")
-	prefs_override_integer (ERPWindow, spectrogram_frequencySteps,     1, U"250")
+	EditorInstancePrefs_overrideInteger (ERPWindow, spectrogram_timeSteps,          1, U"1000")
+	EditorInstancePrefs_overrideInteger (ERPWindow, spectrogram_frequencySteps,     1, U"250")
 	prefs_override_enum    (ERPWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
 	prefs_override_enum    (ERPWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
 	prefs_override_bool    (ERPWindow, spectrogram_autoscaling,        1, true)

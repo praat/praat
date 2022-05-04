@@ -422,8 +422,8 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	/*
 		Save the current shell size as the user's preference for a new FunctionEditor.
 	*/
-	my pref_shellWidth()  = GuiShell_getShellWidth  (my windowForm);
-	my pref_shellHeight() = GuiShell_getShellHeight (my windowForm);
+	my setClassPref_shellWidth  (GuiShell_getShellWidth  (my windowForm));
+	my setClassPref_shellHeight (GuiShell_getShellHeight (my windowForm));
 }
 
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
@@ -1513,7 +1513,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function funct
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");
 	my tmin = function -> xmin;   // set before adding children (see group button)
 	my tmax = function -> xmax;
-	Editor_init (me, 0, 0, my pref_shellWidth(), my pref_shellHeight(), title, function);
+	Editor_init (me, 0, 0, my classPref_shellWidth(), my classPref_shellHeight(), title, function);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;

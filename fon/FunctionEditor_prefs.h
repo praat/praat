@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (FunctionEditor)
 
-	prefs_add_int  (FunctionEditor, shellWidth,                 1, U"700")
-	prefs_add_int  (FunctionEditor, shellHeight,                1, U"440")
+	EditorClassPrefs_overrideInt  (FunctionEditor, shellWidth,                 1, U"700")
+	EditorClassPrefs_overrideInt  (FunctionEditor, shellHeight,                1, U"440")
 	prefs_add_bool (FunctionEditor, synchronizedZoomAndScroll,  1, true)
 	prefs_add_bool_with_data   (FunctionEditor, showSelectionViewer, 1, false)
 	EditorInstancePrefs_addDouble (FunctionEditor, arrowScrollStep,     1, U"0.05")

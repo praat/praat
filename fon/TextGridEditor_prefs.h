@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (TextGridEditor)
 
-	prefs_override_int         (TextGridEditor, shellWidth,             1, U"800")
-	prefs_override_int         (TextGridEditor, shellHeight,            1, U"600")
+	EditorClassPrefs_overrideInt         (TextGridEditor, shellWidth,             1, U"800")
+	EditorClassPrefs_overrideInt         (TextGridEditor, shellHeight,            1, U"600")
 	prefs_override_bool        (TextGridEditor, picture_garnish,        1, true)
 	prefs_override_bool        (TextGridEditor, showSelectionViewer,    1, true)
 

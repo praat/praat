@@ -19,8 +19,8 @@
 
 EditorPrefs_begin (SpectrumEditor)
 
-	prefs_override_int         (SpectrumEditor, shellWidth,      1, U"700")
-	prefs_override_int         (SpectrumEditor, shellHeight,     1, U"440")
+	EditorClassPrefs_overrideInt         (SpectrumEditor, shellWidth,      1, U"700")
+	EditorClassPrefs_overrideInt         (SpectrumEditor, shellHeight,     1, U"440")
 	EditorInstancePrefs_overrideDouble  (SpectrumEditor, arrowScrollStep, 1, U"100.0")
 
 	EditorInstancePrefs_addDouble       (SpectrumEditor, bandSmoothing,   1, U"100.0")

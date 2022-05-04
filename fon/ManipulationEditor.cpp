@@ -307,15 +307,15 @@ static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS
 			RADIOBUTTON (U"Hertz")
 			RADIOBUTTON (U"semitones")
 	EDITOR_OK
-		SET_INTEGER (numberOfPointsPerParabola, my p_pitch_interpolateQuadratically_numberOfPointsPerParabola)
+		SET_INTEGER (numberOfPointsPerParabola, my instancePref_pitch_interpolateQuadratically_numberOfPointsPerParabola())
 		SET_OPTION  (units,                     my p_pitch_stylize_useSemitones + 1)
 	EDITOR_DO
 		if (! my pitch())
 			return;
 		Editor_save (me, U"Interpolate quadratically");
-		RealTier_interpolateQuadratically (my pitch().get(),
-			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = numberOfPointsPerParabola,
+		RealTier_interpolateQuadratically (my pitch().get(), numberOfPointsPerParabola,
 			my pref_pitch_stylize_useSemitones                               () = my p_pitch_stylize_useSemitones                               = units - 1);
+		my setInstancePref_pitch_interpolateQuadratically_numberOfPointsPerParabola (numberOfPointsPerParabola),   // upon success save as preference
 		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);

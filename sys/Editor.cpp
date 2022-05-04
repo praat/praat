@@ -384,6 +384,15 @@ static void gui_window_cb_goAway (Editor me) {
 
 void praat_addCommandsToEditor (Editor me);
 void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata data) {
+	/*
+		Zero widths are taken from the preferences.
+	*/
+	my v_copyPreferencesToInstance ();
+	if (width == 0)
+		width = my classPref_shellWidth();
+	if (height == 0)
+		height = my classPref_shellHeight();
+
 	double xmin, ymin, widthmax, heightmax;
 	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
 	/*
@@ -455,7 +464,6 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	my windowForm = GuiWindow_create (left, top, width, height, 450, 350, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
 	my data = data;
-	my v_copyPreferencesToInstance ();
 
 	/*
 		Create menus.

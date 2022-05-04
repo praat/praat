@@ -21,14 +21,14 @@ EditorPrefs_begin (TimeSoundAnalysisEditor)
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, longestAnalysis,                 1, U"10.0")   // seconds
 	prefs_add_enum_with_data    (TimeSoundAnalysisEditor, timeStepStrategy,                1, kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT)
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, fixedTimeStep,                   1, U"0.01")   // seconds
-	prefs_add_integer_with_data (TimeSoundAnalysisEditor, numberOfTimeStepsPerView,        1, U"100")
+	EditorInstancePrefs_addInteger (TimeSoundAnalysisEditor, numberOfTimeStepsPerView,        1, U"100")
 	prefs_add_bool_with_data    (TimeSoundAnalysisEditor, spectrogram_show,                1, true)
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, spectrogram_viewFrom,            2, U"0.0")   // Hz
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, spectrogram_viewTo,              2, U"5000.0")   // Hz
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, spectrogram_windowLength,        2, U"0.005")   // seconds
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, spectrogram_dynamicRange,        2, U"70.0")   // dB
-	prefs_add_integer_with_data (TimeSoundAnalysisEditor, spectrogram_timeSteps,           2, U"1000")
-	prefs_add_integer_with_data (TimeSoundAnalysisEditor, spectrogram_frequencySteps,      2, U"250")
+	EditorInstancePrefs_addInteger (TimeSoundAnalysisEditor, spectrogram_timeSteps,           2, U"1000")
+	EditorInstancePrefs_addInteger (TimeSoundAnalysisEditor, spectrogram_frequencySteps,      2, U"250")
 	prefs_add_enum_with_data    (TimeSoundAnalysisEditor, spectrogram_method,              2, kSound_to_Spectrogram_method, DEFAULT)
 	prefs_add_enum_with_data    (TimeSoundAnalysisEditor, spectrogram_windowShape,         2, kSound_to_Spectrogram_windowShape, DEFAULT)
 	prefs_add_bool_with_data    (TimeSoundAnalysisEditor, spectrogram_autoscaling,         2, true)
@@ -45,7 +45,7 @@ EditorPrefs_begin (TimeSoundAnalysisEditor)
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, pitch_viewTo,                    1, U"0.0 (= auto)")
 	prefs_add_enum_with_data    (TimeSoundAnalysisEditor, pitch_method,                    1, kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT)
 	prefs_add_bool_with_data    (TimeSoundAnalysisEditor, pitch_veryAccurate,              1, false)
-	prefs_add_integer_with_data (TimeSoundAnalysisEditor, pitch_maximumNumberOfCandidates, 1, U"15")
+	EditorInstancePrefs_addInteger (TimeSoundAnalysisEditor, pitch_maximumNumberOfCandidates, 1, U"15")
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, pitch_silenceThreshold,          1, U"0.03")
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, pitch_voicingThreshold,          1, U"0.45")
 	EditorInstancePrefs_addDouble  (TimeSoundAnalysisEditor, pitch_octaveCost,                1, U"0.01")
