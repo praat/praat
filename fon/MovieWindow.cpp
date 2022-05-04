@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011-2020 Paul Boersma
+ * Copyright (C) 2011-2020,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,13 +43,13 @@ void structMovieWindow :: v_createMenus () {
  */
 static double _MovieWindow_getSoundBottomPosition (MovieWindow me) {
 	Movie movie = (Movie) my data;
-	bool showAnalysis = (my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) && movie -> d_sound;
+	const bool showAnalysis = (my instancePref_spectrogram_show() || my instancePref_pitch_show() || my instancePref_intensity_show() || my instancePref_formant_show()) && movie -> d_sound;
 	return movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
 void structMovieWindow :: v_draw () {
 	Movie movie = (Movie) our data;
-	bool showAnalysis = (our p_spectrogram_show || our p_pitch_show || our p_intensity_show || our p_formant_show) && movie -> d_sound;
+	bool showAnalysis = (our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) && movie -> d_sound;
 	double soundY = _MovieWindow_getSoundBottomPosition (this);
 	if (movie -> d_sound) {
 		Graphics_Viewport viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
@@ -84,7 +84,7 @@ void structMovieWindow :: v_draw () {
 		our v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), viewport);
 		/* Draw pulses. */
-		if (our p_pulses_show) {
+		if (our instancePref_pulses_show()) {
 			viewport = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY, 1.0);
 			our v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
@@ -95,7 +95,7 @@ void structMovieWindow :: v_draw () {
 }
 
 void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our p_spectrogram_show)
+	if (our instancePref_spectrogram_show())
 		Graphics_highlight (our graphics.get(), left, right, 0.3 * bottom + 0.7 * top, top);
 	else
 		Graphics_highlight (our graphics.get(), left, right, 0.7 * bottom + 0.3 * top, top);

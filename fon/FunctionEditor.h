@@ -67,7 +67,7 @@ Thing_define (FunctionEditor, Editor) {
 			Put the function viewer at the left and the selection viewer at the right.
 		*/
 		our _functionViewerLeft = 0;
-		our _functionViewerRight = ( our p_showSelectionViewer ? our width_pxlt * (2.0/3.0) : our width_pxlt );
+		our _functionViewerRight = ( our instancePref_showSelectionViewer() ? our width_pxlt * (2.0/3.0) : our width_pxlt );
 		our _selectionViewerLeft = our _functionViewerRight;
 		our _selectionViewerRight = our width_pxlt;
 	}

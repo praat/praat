@@ -18,9 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_bool
-#undef prefs_add_bool_with_data
-#undef prefs_override_bool
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
 #undef prefs_override_enum
@@ -31,55 +28,50 @@
 #undef  EditorPrefs_begin
 #define EditorPrefs_begin(Klas)
 
-#define prefs_add_bool(Klas,name,version,default) \
-	bool struct##Klas :: s_##name; \
-	bool struct##Klas :: sdefault_##name = default;
-#define prefs_add_bool_with_data(Klas,name,version,default)  prefs_add_bool (Klas, name, version, default)
-#define prefs_override_bool(Klas,name,version,default) \
-	bool struct##Klas :: s_##name; \
-	bool struct##Klas :: sdefault_##name = default;
-
-#define EditorPrefs_defineSimpleType_(Type,Klas,name,default) \
+#define EditorPrefs_defineNumericType_(Type,Klas,name,default) \
 	conststring32 struct##Klas :: _classDefault_##name = default; \
 	Type struct##Klas :: _classPref_##name;
 
 #undef  EditorClassPrefs_addInt
-#define EditorClassPrefs_addInt(Klas,name,version,default)              EditorPrefs_defineSimpleType_ (int, Klas, name, default)
+#define EditorClassPrefs_addInt(Klas,name,version,default)              EditorPrefs_defineNumericType_ (int, Klas, name, default)
 #undef  EditorClassPrefs_overrideInt
-#define EditorClassPrefs_overrideInt(Klas,name,version,default)         EditorPrefs_defineSimpleType_ (int, Klas, name, default)
+#define EditorClassPrefs_overrideInt(Klas,name,version,default)         EditorPrefs_defineNumericType_ (int, Klas, name, default)
 #undef  EditorInstancePrefs_addInt
-#define EditorInstancePrefs_addInt(Klas,name,version,default)           EditorPrefs_defineSimpleType_ (int, Klas, name, default)
+#define EditorInstancePrefs_addInt(Klas,name,version,default)           EditorPrefs_defineNumericType_ (int, Klas, name, default)
 #undef  EditorInstancePrefs_overrideInt
-#define EditorInstancePrefs_overrideInt(Klas,name,version,default)      EditorPrefs_defineSimpleType_ (int, Klas, name, default)
+#define EditorInstancePrefs_overrideInt(Klas,name,version,default)      EditorPrefs_defineNumericType_ (int, Klas, name, default)
 
 #undef  EditorClassPrefs_addInteger
-#define EditorClassPrefs_addInteger(Klas,name,version,default)          EditorPrefs_defineSimpleType_ (integer, Klas, name, default)
+#define EditorClassPrefs_addInteger(Klas,name,version,default)          EditorPrefs_defineNumericType_ (integer, Klas, name, default)
 #undef  EditorClassPrefs_overrideInteger
-#define EditorClassPrefs_overrideInteger(Klas,name,version,default)     EditorPrefs_defineSimpleType_ (integer, Klas, name, default)
+#define EditorClassPrefs_overrideInteger(Klas,name,version,default)     EditorPrefs_defineNumericType_ (integer, Klas, name, default)
 #undef  EditorInstancePrefs_addInteger
-#define EditorInstancePrefs_addInteger(Klas,name,version,default)       EditorPrefs_defineSimpleType_ (integer, Klas, name, default)
+#define EditorInstancePrefs_addInteger(Klas,name,version,default)       EditorPrefs_defineNumericType_ (integer, Klas, name, default)
 #undef  EditorInstancePrefs_overrideInteger
-#define EditorInstancePrefs_overrideInteger(Klas,name,version,default)  EditorPrefs_defineSimpleType_ (integer, Klas, name, default)
-
-#undef  EditorClassPrefs_addBool
-#define EditorClassPrefs_addBool(Klas,name,version,default)             EditorPrefs_defineSimpleType_ (bool, Klas, name, default)
-#undef  EditorClassPrefs_overrideBool
-#define EditorClassPrefs_overrideBool(Klas,name,version,default)        EditorPrefs_defineSimpleType_ (bool, Klas, name, default)
-#undef  EditorInstancePrefs_addBool
-#define EditorInstancePrefs_addBool(Klas,name,version,default)          EditorPrefs_defineSimpleType_ (bool, Klas, name, default)
-#undef  EditorInstancePrefs_overrideBool
-#define EditorInstancePrefs_overrideBool(Klas,name,version,default)     EditorPrefs_defineSimpleType_ (bool, Klas, name, default)
+#define EditorInstancePrefs_overrideInteger(Klas,name,version,default)  EditorPrefs_defineNumericType_ (integer, Klas, name, default)
 
 #undef  EditorClassPrefs_addDouble
-#define EditorClassPrefs_addDouble(Klas,name,version,default)           EditorPrefs_defineSimpleType_ (double, Klas, name, default)
+#define EditorClassPrefs_addDouble(Klas,name,version,default)           EditorPrefs_defineNumericType_ (double, Klas, name, default)
 #undef  EditorClassPrefs_overrideDouble
-#define EditorClassPrefs_overrideDouble(Klas,name,version,default)      EditorPrefs_defineSimpleType_ (double, Klas, name, default)
+#define EditorClassPrefs_overrideDouble(Klas,name,version,default)      EditorPrefs_defineNumericType_ (double, Klas, name, default)
 #undef  EditorInstancePrefs_addDouble
-#define EditorInstancePrefs_addDouble(Klas,name,version,default)        EditorPrefs_defineSimpleType_ (double, Klas, name, default)
+#define EditorInstancePrefs_addDouble(Klas,name,version,default)        EditorPrefs_defineNumericType_ (double, Klas, name, default)
 #undef  EditorInstancePrefs_overrideDouble
-#define EditorInstancePrefs_overrideDouble(Klas,name,version,default)   EditorPrefs_defineSimpleType_ (double, Klas, name, default)
+#define EditorInstancePrefs_overrideDouble(Klas,name,version,default)   EditorPrefs_defineNumericType_ (double, Klas, name, default)
 
-//#undef EditorPrefs_defineSimpleType_
+//#undef EditorPrefs_defineNumericType_
+
+#undef  EditorClassPrefs_addBool
+#define EditorClassPrefs_addBool(Klas,name,version,default) \
+	bool struct##Klas :: _classDefault_##name = default; \
+	bool struct##Klas :: _classPref_##name;
+#undef  EditorClassPrefs_overrideBool
+#define EditorClassPrefs_overrideBool(Klas,name,version,default)        EditorClassPrefs_addBool (Klas, name, version, default)
+#undef  EditorInstancePrefs_addBool
+#define EditorInstancePrefs_addBool(Klas,name,version,default)          EditorClassPrefs_addBool (Klas, name, version, default)
+#undef  EditorInstancePrefs_overrideBool
+#define EditorInstancePrefs_overrideBool(Klas,name,version,default)     EditorClassPrefs_addBool (Klas, name, version, default)
+
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
 	enum enumerated struct##Klas :: s_##name; \

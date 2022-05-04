@@ -722,7 +722,7 @@ static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTP
 
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr);
-		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse ())
+		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse())
 		LABEL (U"F1 and F2 frequencies are specified by the trajectory.")
 		LABEL (U"The bandwidths of a formant can be specified by its Q-value")
 		LABEL (U"which defines the sharpness of the peak: Q = frequency / bandwidth. ")
@@ -734,13 +734,13 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		LABEL (U"The total number of formants used for synthesis")
 		NATURAL (numberOfFormants, U"Number of formants for synthesis", my default_synthesis_numberOfFormants ())
 	EDITOR_OK
-		SET_BOOLEAN (soundFollowsMouse, my p_soundFollowsMouse)
+		SET_BOOLEAN (soundFollowsMouse, my instancePref_soundFollowsMouse())
 		SET_REAL (q1, my instancePref_synthesis_q1())
 		SET_REAL (q2, my instancePref_synthesis_q2())
 		SET_STRING (extraFrequencyBandwidthPairs_string, my p_synthesis_extraFBPairs)
 		SET_INTEGER (numberOfFormants, my instancePref_synthesis_numberOfFormants())
 	EDITOR_DO
-		my pref_soundFollowsMouse () = my p_soundFollowsMouse = soundFollowsMouse;
+		my setInstancePref_soundFollowsMouse (soundFollowsMouse);
 		my setInstancePref_synthesis_q1 (q1);
 		my setInstancePref_synthesis_q2 (q2);
 		autoVEC extraFrequencyBandwidthPairs = splitByWhitespace_VEC (extraFrequencyBandwidthPairs_string);
@@ -1146,7 +1146,7 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 			my trajectory = Trajectory_create (my instancePref_trajectory_minimumDuration());
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_double (duration));
-			if (! my p_soundFollowsMouse)
+			if (! my instancePref_soundFollowsMouse())
 				Trajectory_addPoint (my trajectory.get(), my instancePref_trajectory_minimumDuration(), f1, f2, colour);
 		}
 		my previousX = mouseX;
@@ -1351,7 +1351,7 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			pref_str32cpy (my p_synthesis_extraFBPairs, my default_synthesis_extraFBPairs ());
 		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my p_synthesis_extraFBPairs);
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4
-		my p_soundFollowsMouse = true;   // no real preference yet
+		//my p_soundFollowsMouse = true;   // no real preference yet  // ppgb 20220504: what doe sthis mean?
 		if (my instancePref_synthesis_samplingFrequency() <= 0.0)
 			my setInstancePref_synthesis_samplingFrequency (Melder_atof (my default_synthesis_samplingFrequency()));
 		if (my instancePref_trajectory_minimumDuration() <= 0.0)

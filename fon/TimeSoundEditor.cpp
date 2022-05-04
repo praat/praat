@@ -78,36 +78,36 @@ static void menu_cb_DrawVisibleSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw visible sound", nullptr)
 		my v_form_pictureWindow (cmd);
 		LABEL (U"Sound:")
-		BOOLEAN (preserveTimes, U"Preserve times", my default_picture_preserveTimes ());
-		REAL (bottom, U"left Vertical range", my default_picture_bottom ())
-		REAL (top, U"right Vertical range", my default_picture_top ())
+		BOOLEAN (preserveTimes, U"Preserve times", my default_picture_preserveTimes());
+		REAL (bottom, U"left Vertical range", my default_picture_bottom())
+		REAL (top, U"right Vertical range", my default_picture_top())
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (preserveTimes, my pref_picture_preserveTimes ())
+		SET_BOOLEAN (preserveTimes, my classPref_picture_preserveTimes())
 		SET_REAL (bottom,  my classPref_picture_bottom())
 		SET_REAL (top,     my classPref_picture_top())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_preserveTimes () = preserveTimes;
+		my setClassPref_picture_preserveTimes (preserveTimes);
 		my setClassPref_picture_bottom (bottom);
 		my setClassPref_picture_top (top);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		if (! my d_longSound.data && ! my d_sound.data)
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my d_longSound.data ?
-			LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, my pref_picture_preserveTimes ()) :
-			Sound_extractPart (my d_sound.data, my startWindow, my endWindow, kSound_windowShape::RECTANGULAR, 1.0, my pref_picture_preserveTimes ());
+			LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, preserveTimes) :
+			Sound_extractPart (my d_sound.data, my startWindow, my endWindow, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 		Editor_openPraatPicture (me);
-		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, my classPref_picture_bottom(), my classPref_picture_top (),
-				my pref_picture_garnish (), U"Curve");
+		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, my classPref_picture_bottom(), my classPref_picture_top(),
+				garnish, U"Curve");
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -117,34 +117,34 @@ static void menu_cb_DrawSelectedSound (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Draw selected sound", nullptr)
 		my v_form_pictureWindow (cmd);
 		LABEL (U"Sound:")
-		BOOLEAN (preserveTimes, U"Preserve times",       my default_picture_preserveTimes ());
-		REAL    (bottom,        U"left Vertical range",  my default_picture_bottom ());
-		REAL    (top,           U"right Vertical range", my default_picture_top ());
+		BOOLEAN (preserveTimes, U"Preserve times",       my default_picture_preserveTimes());
+		REAL    (bottom,        U"left Vertical range",  my default_picture_bottom());
+		REAL    (top,           U"right Vertical range", my default_picture_top());
 		my v_form_pictureMargins (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (preserveTimes, my pref_picture_preserveTimes ());
+		SET_BOOLEAN (preserveTimes, my classPref_picture_preserveTimes());
 		SET_REAL (bottom, my classPref_picture_bottom());
 		SET_REAL (top,    my classPref_picture_top());
 		my v_ok_pictureMargins (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ());
+		SET_BOOLEAN (garnish, my classPref_picture_garnish());
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_preserveTimes () = preserveTimes;
+		my setClassPref_picture_preserveTimes (preserveTimes);
 		my setClassPref_picture_bottom (bottom);
 		my setClassPref_picture_top (top);
 		my v_do_pictureMargins (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		if (! my d_longSound.data && ! my d_sound.data)
 			Melder_throw (U"There is no sound to draw.");
 		autoSound publish = my d_longSound.data ?
-			LongSound_extractPart (my d_longSound.data, my startSelection, my endSelection, my pref_picture_preserveTimes ()) :
+			LongSound_extractPart (my d_longSound.data, my startSelection, my endSelection, preserveTimes) :
 			Sound_extractPart (my d_sound.data, my startSelection, my endSelection,
-				kSound_windowShape::RECTANGULAR, 1.0, my pref_picture_preserveTimes ());
+				kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 		Editor_openPraatPicture (me);
 		Sound_draw (publish.get(), my pictureGraphics, 0.0, 0.0, my classPref_picture_bottom(), my classPref_picture_top(),
-				my pref_picture_garnish (), U"Curve");
+				garnish, U"Curve");
 		Editor_closePraatPicture (me);
 	EDITOR_END
 }
@@ -175,22 +175,21 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_preserveTimes (TimeSoundEd
 static void CONVERT_DATA_TO_ONE__ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
 		WORD (name, U"Name", U"slice")
-		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape ())
-		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth ())
-		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes ())
+		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape())
+		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth())
+		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes())
 	EDITOR_OK
-		SET_ENUM (windowShape, kSound_windowShape, my pref_extract_windowShape ())
-		SET_REAL (relativeWidth, my classPref_extract_relativeWidth ())
-		SET_BOOLEAN (preserveTimes, my pref_extract_preserveTimes ())
+		SET_ENUM (windowShape, kSound_windowShape, my pref_extract_windowShape())
+		SET_REAL (relativeWidth, my classPref_extract_relativeWidth())
+		SET_BOOLEAN (preserveTimes, my classPref_extract_preserveTimes())
 	EDITOR_DO
 		Sound sound = my d_sound.data;
 		Melder_assert (sound);
 		CONVERT_DATA_TO_ONE
 			my pref_extract_windowShape () = windowShape;
 			my setClassPref_extract_relativeWidth (relativeWidth);
-			my pref_extract_preserveTimes () = preserveTimes;
-			autoSound result = Sound_extractPart (sound, my startSelection, my endSelection, my pref_extract_windowShape (),
-					my classPref_extract_relativeWidth (), my pref_extract_preserveTimes ());
+			my setClassPref_extract_preserveTimes (preserveTimes);
+			autoSound result = Sound_extractPart (sound, my startSelection, my endSelection, windowShape, relativeWidth, preserveTimes);
 		CONVERT_DATA_TO_ONE_END (name)
 	EDITOR_END
 }
@@ -206,8 +205,7 @@ static void CONVERT_DATA_TO_ONE__ExtractSelectedSoundForOverlap (TimeSoundEditor
 		Melder_assert (sound);
 		CONVERT_DATA_TO_ONE
 			my setClassPref_extract_overlap (overlap);
-			autoSound result = Sound_extractPartForOverlap (sound, my startSelection, my endSelection,
-				my classPref_extract_overlap());
+			autoSound result = Sound_extractPartForOverlap (sound, my startSelection, my endSelection, overlap);
 		CONVERT_DATA_TO_ONE_END (name)
 	EDITOR_END
 }

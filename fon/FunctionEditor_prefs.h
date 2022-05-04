@@ -18,13 +18,13 @@
 
 EditorPrefs_begin (FunctionEditor)
 
-	EditorClassPrefs_overrideInt  (FunctionEditor, shellWidth,                 1, U"700")
-	EditorClassPrefs_overrideInt  (FunctionEditor, shellHeight,                1, U"440")
-	prefs_add_bool (FunctionEditor, synchronizedZoomAndScroll,  1, true)
-	prefs_add_bool_with_data   (FunctionEditor, showSelectionViewer, 1, false)
-	EditorInstancePrefs_addDouble (FunctionEditor, arrowScrollStep,     1, U"0.05")
-	prefs_add_bool (FunctionEditor, picture_drawSelectionTimes, 1, true)
-	prefs_add_bool (FunctionEditor, picture_drawSelectionHairs, 1, true)
+	EditorClassPrefs_overrideInt   (FunctionEditor, shellWidth,                 1, U"700")
+	EditorClassPrefs_overrideInt   (FunctionEditor, shellHeight,                1, U"440")
+	EditorClassPrefs_addBool       (FunctionEditor, synchronizedZoomAndScroll,  1, true)
+	EditorInstancePrefs_addBool    (FunctionEditor, showSelectionViewer, 1, false)
+	EditorInstancePrefs_addDouble  (FunctionEditor, arrowScrollStep,     1, U"0.05")
+	EditorClassPrefs_addBool       (FunctionEditor, picture_drawSelectionTimes, 1, true)
+	EditorClassPrefs_addBool       (FunctionEditor, picture_drawSelectionHairs, 1, true)
 
 EditorPrefs_end (FunctionEditor)
 

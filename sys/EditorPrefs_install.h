@@ -18,9 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_bool
-#undef prefs_add_bool_with_data
-#undef prefs_override_bool
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
 #undef prefs_override_enum
@@ -31,12 +28,6 @@
 #undef  EditorPrefs_begin
 #define EditorPrefs_begin(Klas) \
 	void struct##Klas :: f_preferences () {
-
-#define prefs_add_bool(Klas,name,version,default) \
-	Preferences_addBool (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, default);
-#define prefs_add_bool_with_data(Klas,name,version,default)  prefs_add_bool (Klas, name, version, default)
-#define prefs_override_bool(Klas,name,version,default) \
-	Preferences_addBool (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, default);
 
 #undef  EditorClassPrefs_addInt
 #define EditorClassPrefs_addInt(Klas,name,version,default) \
