@@ -311,7 +311,8 @@ void structSoundEditor :: v_prepareDraw () {
 void structSoundEditor :: v_draw () {
 	Sampled eitherData = (Sampled) our data;
 	Graphics_Viewport viewport;
-	bool showAnalysis = our p_spectrogram_show || our p_pitch_show || our p_intensity_show || our p_formant_show;
+	const bool showAnalysis = our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
+			our instancePref_intensity_show() || our instancePref_formant_show();
 	Melder_assert (eitherData);
 	Melder_assert (our d_sound.data || our d_longSound.data);
 
@@ -338,8 +339,8 @@ void structSoundEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Melder_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	if (p_pulses_show)
-		v_draw_analysis_pulses ();
+	if (our instancePref_pulses_show())
+		our v_draw_analysis_pulses ();
 	TimeSoundEditor_drawSound (this, our d_sound.minimum, our d_sound.maximum);
 	if (showAnalysis) {
 		Graphics_resetViewport (our graphics.get(), viewport);
@@ -352,7 +353,7 @@ void structSoundEditor :: v_draw () {
 		Update buttons.
 	*/
 	integer first, last;
-	integer selectedSamples = Sampled_getWindowSamples (eitherData, our startSelection, our endSelection, & first, & last);
+	const integer selectedSamples = Sampled_getWindowSamples (eitherData, our startSelection, our endSelection, & first, & last);
 	v_updateMenuItems_file ();
 	if (our d_sound.data) {
 		GuiThing_setSensitive (cutButton     , selectedSamples != 0 && selectedSamples < our d_sound.data -> nx);
@@ -393,14 +394,14 @@ void structSoundEditor :: v_play (double startTime, double endTime) {
 }
 
 bool structSoundEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
-	if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 && xWC > our startWindow && xWC < our endWindow)
+	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && yWC < 0.5 && xWC > our startWindow && xWC < our endWindow)
 		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
 				2.0 * yWC * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
 	return SoundEditor_Parent :: v_mouseInWideDataView (event, xWC, yWC);
 }
 
 void structSoundEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our p_spectrogram_show)
+	if (our instancePref_spectrogram_show())
 		Graphics_highlight (our graphics.get(), left, right, 0.5 * (bottom + top), top);
 	else
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);

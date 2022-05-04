@@ -1,6 +1,6 @@
 /* TableEditor_prefs.h
  *
- * Copyright (C) 2016 Paul Boersma
+ * Copyright (C) 2016,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 EditorPrefs_begin (TableEditor)
 
-	prefs_add_bool_with_data   (TableEditor, useTextStyles,          1, false)
+	EditorInstancePrefs_addBool    (TableEditor, useTextStyles,          1, false)
 
 EditorPrefs_end (TableEditor)
 

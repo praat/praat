@@ -18,8 +18,8 @@
 
 EditorPrefs_begin (NoulliGridEditor)
 
-	EditorInstancePrefs_overrideDouble (NoulliGridEditor, arrowScrollStep,                  1, U"1.0")
-	prefs_override_bool        (NoulliGridEditor, showSelectionViewer,              1, true)
+	EditorInstancePrefs_overrideDouble  (NoulliGridEditor, arrowScrollStep,                  1, U"1.0")
+	EditorInstancePrefs_overrideBool    (NoulliGridEditor, showSelectionViewer,              1, true)
 
 	prefs_add_enum_with_data   (NoulliGridEditor, showCategoryInSelectionViewerAs,  1, kNoulliGridEditor_showCategoryInSelectionViewerAs, DEFAULT)
 

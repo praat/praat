@@ -18,9 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_bool
-#undef prefs_add_bool_with_data
-#undef prefs_override_bool
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
 #undef prefs_override_enum
@@ -32,10 +29,6 @@
 #define EditorPrefs_begin(Klas) \
 	void struct##Klas :: v_copyPreferencesToInstance () { \
 		Klas##_Parent :: v_copyPreferencesToInstance ();
-
-#define prefs_add_bool(Klas,name,version,default)
-#define prefs_add_bool_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
-#define prefs_override_bool(Klas,name,version,default)
 
 #undef  EditorClassPrefs_addInt
 #define EditorClassPrefs_addInt(Klas,name,version,default)

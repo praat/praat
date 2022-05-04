@@ -42,7 +42,7 @@ Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 void structTextGridEditor :: v_info () {
 	TextGridEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
-	MelderInfo_writeLine (U"TextGrid uses text styles: ", our p_useTextStyles);
+	MelderInfo_writeLine (U"TextGrid uses text styles: ", our instancePref_useTextStyles());
 	MelderInfo_writeLine (U"TextGrid font size: ", our instancePref_fontSize());
 	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (our p_alignment));
 }
@@ -53,7 +53,7 @@ static double _TextGridEditor_computeSoundY (TextGridEditor me) {
 	const TextGrid grid = (TextGrid) my data;
 	const integer numberOfTiers = grid -> tiers->size;
 	bool showAnalysis = my v_hasAnalysis () &&
-			(my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) &&
+			(my instancePref_spectrogram_show() || my instancePref_pitch_show() || my instancePref_intensity_show() || my instancePref_formant_show()) &&
 			(my d_longSound.data || my d_sound.data);
 	integer numberOfVisibleChannels =
 		my d_sound.data ? (my d_sound.data -> ny > 8 ? 8 : my d_sound.data -> ny) :
@@ -191,20 +191,20 @@ static void menu_cb_DrawVisibleTextGrid (TextGridEditor me, EDITOR_ARGS_FORM) {
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ())
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
-			my pref_picture_garnish ());
+		TextGrid_Sound_draw ((TextGrid) my data, nullptr, my pictureGraphics,
+				my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -215,17 +215,17 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ())
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		{// scope
 			autoSound sound = my d_longSound.data ?
@@ -233,7 +233,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (TextGridEditor me, EDITOR_ARGS_
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
 					kSound_windowShape::RECTANGULAR, 1.0, true);
 			TextGrid_Sound_draw ((TextGrid) my data, sound.get(), my pictureGraphics,
-				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
+					my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		}
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -475,19 +475,19 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (showBoundariesAndPoints, my pref_picture_showBoundaries ())
-		SET_BOOLEAN (speckle, my pref_picture_pitch_speckle ())
+		SET_BOOLEAN (showBoundariesAndPoints, my classPref_picture_showBoundaries())
+		SET_BOOLEAN (speckle, my classPref_picture_pitch_speckle())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_showBoundaries () = showBoundariesAndPoints;
-		my pref_picture_pitch_speckle () = speckle;
+		my setClassPref_picture_showBoundaries (showBoundariesAndPoints);   // set prefs even if analyses are missing (it would be annoying not to)
+		my setClassPref_picture_pitch_speckle (speckle);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
-		if (! my p_pitch_show)
+		my setClassPref_picture_garnish (garnish);
+		if (! my instancePref_pitch_show())
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my d_pitch) {
 			TimeSoundAnalysisEditor_computePitch (me);
@@ -504,7 +504,7 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
-			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
+			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
 			speckle, my p_pitch_unit
 		);
 		FunctionEditor_garnish (me);
@@ -658,7 +658,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	integer intervalNumber = getSelectedInterval (me);
 	if (! intervalNumber)
 		Melder_throw (U"Select an interval first");
-	if (! my p_align_includeWords && ! my p_align_includePhonemes)
+	if (! my instancePref_align_includeWords() && ! my instancePref_align_includePhonemes())
 		Melder_throw (U"Nothing to be done.\nPlease switch on \"Include words\" and/or \"Include phonemes\" in the \"Alignment settings\".");
 	{// scope
 		const autoMelderProgressOff noprogress;
@@ -667,7 +667,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 			anySound = my d_longSound.data;
 		Editor_save (me, U"Align interval");
 		TextGrid_anySound_alignInterval (grid, anySound, my selectedTier, intervalNumber,
-			my p_align_language, my p_align_includeWords, my p_align_includePhonemes);
+			my pref_align_language(), my instancePref_align_includeWords(), my instancePref_align_includePhonemes());
 	}
 	FunctionEditor_redraw (me);
 	Editor_broadcastDataChanged (me);
@@ -684,16 +684,17 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
 	EDITOR_OK
 		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my p_align_language);
-		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+		if (prefVoice == 0)
+			prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
 		SET_OPTION (language, prefVoice)
-		SET_BOOLEAN (includeWords, my p_align_includeWords)
-		SET_BOOLEAN (includePhonemes, my p_align_includePhonemes)
-		SET_BOOLEAN (allowSilences, my p_align_allowSilences)
+		SET_BOOLEAN (includeWords, my instancePref_align_includeWords())
+		SET_BOOLEAN (includePhonemes, my instancePref_align_includePhonemes())
+		SET_BOOLEAN (allowSilences, my instancePref_align_allowSilences())
 	EDITOR_DO
 		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_languages_names -> strings [language].get());
-		my pref_align_includeWords    () = my p_align_includeWords    = includeWords;
-		my pref_align_includePhonemes () = my p_align_includePhonemes = includePhonemes;
-		my pref_align_allowSilences   () = my p_align_allowSilences   = allowSilences;
+		my setInstancePref_align_includeWords (includeWords);
+		my setInstancePref_align_includePhonemes (includePhonemes);
+		my setInstancePref_align_allowSilences (allowSilences);
 	EDITOR_END
 }
 
@@ -1330,10 +1331,10 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 	integer x1DC, x2DC, yDC;
 	Graphics_WCtoDC (my graphics.get(), my startWindow, 0.0, & x1DC, & yDC);
 	Graphics_WCtoDC (my graphics.get(), my endWindow, 0.0, & x2DC, & yDC);
-	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
-	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my graphics.get(), my p_useTextStyles);
+	Graphics_setPercentSignIsItalic (my graphics.get(), my instancePref_useTextStyles());
+	Graphics_setNumberSignIsBold (my graphics.get(), my instancePref_useTextStyles());
+	Graphics_setCircumflexIsSuperscript (my graphics.get(), my instancePref_useTextStyles());
+	Graphics_setUnderscoreIsSubscript (my graphics.get(), my instancePref_useTextStyles());
 
 	/*
 		Highlight interval: yellow (selected) or green (matching label).
@@ -1441,10 +1442,10 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 		constexpr bool platformUsesAntiAliasing = false;
 	#endif
 	const integer npoint = tier -> points.size;
-	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
-	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my graphics.get(), my p_useTextStyles);
+	Graphics_setPercentSignIsItalic (my graphics.get(), my instancePref_useTextStyles());
+	Graphics_setNumberSignIsBold (my graphics.get(), my instancePref_useTextStyles());
+	Graphics_setCircumflexIsSuperscript (my graphics.get(), my instancePref_useTextStyles());
+	Graphics_setUnderscoreIsSubscript (my graphics.get(), my instancePref_useTextStyles());
 
 	/*
 		Draw a grey bar and a selection button at the cursor position.
@@ -1513,7 +1514,7 @@ void structTextGridEditor :: v_draw () {
 	const enum kGraphics_font oldFont = Graphics_inqFont (our graphics.get());
 	const double oldFontSize = Graphics_inqFontSize (our graphics.get());
 	const bool showAnalysis = v_hasAnalysis () &&
-			(p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) &&
+			(instancePref_spectrogram_show() || instancePref_pitch_show() || instancePref_intensity_show() || instancePref_formant_show()) &&
 			(d_longSound.data || d_sound.data);
 	const double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
 
@@ -1618,7 +1619,7 @@ void structTextGridEditor :: v_draw () {
 		v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
-		if (p_pulses_show) {
+		if (our instancePref_pulses_show()) {
 			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
@@ -1707,7 +1708,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 	}
 	if (mouseIsInWideSoundOrAnalysisPart) {
 		const bool mouseIsInWideAnalysisPart = ( yWC < 0.5 * (soundY + 1.0) );
-		if ((our p_spectrogram_show || our p_formant_show) && mouseIsInWideAnalysisPart) {
+		if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && mouseIsInWideAnalysisPart) {
 			our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
 					2.0 * (yWC - soundY) / (1.0 - soundY) * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
 		}
@@ -1819,7 +1820,7 @@ bool structTextGridEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent ev
 					If the user has pressed the shift key, let her drag all the boundaries and points at this time.
 					Otherwise, let her only drag the boundary or point on the clicked tier.
 				*/
-				if (itier == mouseTier || our clickWasModifiedByShiftKey == our p_shiftDragMultiple) {
+				if (itier == mouseTier || our clickWasModifiedByShiftKey == our instancePref_shiftDragMultiple()) {
 					IntervalTier intervalTier;
 					TextTier textTier;
 					AnyTextGridTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
@@ -2142,46 +2143,46 @@ void structTextGridEditor :: v_updateText () {
 	}
 }
 
-POSITIVE_VARIABLE (v_prefs_addFields_fontSize)
-OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals)
-OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
-OPTIONMENU_VARIABLE (v_prefs_addFields_shiftDragMultiple)
-OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
-OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel)
+POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
+OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals)
+OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
+OPTIONMENU_VARIABLE (v_prefs_addFields__shiftDragMultiple)
+OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf)
+OPTIONMENU_ENUM_VARIABLE (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel)
 SENTENCE_VARIABLE (v_prefs_addFields_theText)
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
-	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
-	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals,
+	POSITIVE_FIELD (v_prefs_addFields__fontSize, U"Font size (points)", our default_fontSize())
+	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals,
 			U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
-	OPTIONMENU_FIELD (v_prefs_addFields_useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles () + 1)
+	OPTIONMENU_FIELD (v_prefs_addFields__useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles() + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
-	OPTIONMENU_FIELD (v_prefs_addFields_shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple () + 1)
+	OPTIONMENU_FIELD (v_prefs_addFields__shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple() + 1)
 		OPTION (U"a single boundary")
 		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf,
+	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf,
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
-	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
+	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields__paintIntervalsGreenWhoseLabel,
 			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
 	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
-	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
-	SET_REAL (v_prefs_addFields_fontSize, our instancePref_fontSize())
-	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
-	SET_OPTION (v_prefs_addFields_shiftDragMultiple, our p_shiftDragMultiple + 1)
-	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
-	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
+	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
+	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
+	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
+	SET_OPTION (v_prefs_addFields__shiftDragMultiple, our instancePref_shiftDragMultiple() + 1)
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
+	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
 	SET_STRING (v_prefs_addFields_theText, our p_greenString)
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
-	our pref_useTextStyles () = our p_useTextStyles = v_prefs_addFields_useTextStyles - 1;
-	our setInstancePref_fontSize (v_prefs_addFields_fontSize);
-	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
-	our pref_shiftDragMultiple () = our p_shiftDragMultiple = v_prefs_addFields_shiftDragMultiple - 1;
-	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
-	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields_paintIntervalsGreenWhoseLabel;
+	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
+	our setInstancePref_fontSize (v_prefs_addFields__fontSize);
+	our pref_alignment () = our p_alignment = v_prefs_addFields__textAlignmentInIntervals;
+	our setInstancePref_shiftDragMultiple (v_prefs_addFields__shiftDragMultiple - 1);
+	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields__showNumberOf;
+	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields__paintIntervalsGreenWhoseLabel;
 	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
 }
 
@@ -2196,7 +2197,7 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 }
 
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
+	if (our v_hasAnalysis () && our instancePref_spectrogram_show() && (our d_longSound.data || our d_sound.data)) {
 		const double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		//Graphics_highlight (our graphics.get(), left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_highlight (our graphics.get(), left, right, soundY2 * top + (1 - soundY2) * bottom, top);
