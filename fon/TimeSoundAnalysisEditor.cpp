@@ -65,8 +65,8 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		MelderInfo_writeLine (U"Spectrogram window length: ", our instancePref_spectrogram_windowLength(), U" seconds");
 		MelderInfo_writeLine (U"Spectrogram dynamic range: ", our instancePref_spectrogram_dynamicRange(), U" dB");
 		/* Advanced spectrogram settings: */
-		MelderInfo_writeLine (U"Spectrogram number of time steps: ", our p_spectrogram_timeSteps);
-		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", our p_spectrogram_frequencySteps);
+		MelderInfo_writeLine (U"Spectrogram number of time steps: ", our instancePref_spectrogram_timeSteps());
+		MelderInfo_writeLine (U"Spectrogram number of frequency steps: ", our instancePref_spectrogram_frequencySteps());
 		MelderInfo_writeLine (U"Spectrogram method: ", U"Fourier");
 		MelderInfo_writeLine (U"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (our p_spectrogram_windowShape));
 		MelderInfo_writeLine (U"Spectrogram autoscaling: ", our p_spectrogram_autoscaling);
@@ -89,7 +89,7 @@ void structTimeSoundAnalysisEditor :: v_info () {
 		MelderInfo_writeLine (U"Pitch view to: ", our instancePref_pitch_viewTo(), U" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, (int) our p_pitch_unit, Function_UNIT_TEXT_MENU));
 		MelderInfo_writeLine (U"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (our p_pitch_method));
 		MelderInfo_writeLine (U"Pitch very accurate: ", our p_pitch_veryAccurate);
-		MelderInfo_writeLine (U"Pitch max. number of candidates: ", our p_pitch_maximumNumberOfCandidates);
+		MelderInfo_writeLine (U"Pitch max. number of candidates: ", our instancePref_pitch_maximumNumberOfCandidates());
 		MelderInfo_writeLine (U"Pitch silence threshold: ", our instancePref_pitch_silenceThreshold(), U" of global peak");
 		MelderInfo_writeLine (U"Pitch voicing threshold: ", our instancePref_pitch_voicingThreshold(), U" (periodic power / total power)");
 		MelderInfo_writeLine (U"Pitch octave cost: ", our instancePref_pitch_octaveCost(), U" per octave");
@@ -413,11 +413,11 @@ static void menu_cb_timeStepSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FO
 	EDITOR_OK
 		SET_ENUM (timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, my p_timeStepStrategy)
 		SET_REAL (fixedTimeStep, my instancePref_fixedTimeStep())
-		SET_INTEGER (numberOfTimeStepsPerView, my p_numberOfTimeStepsPerView)
+		SET_INTEGER (numberOfTimeStepsPerView, my instancePref_numberOfTimeStepsPerView())
 	EDITOR_DO
 		my pref_timeStepStrategy         () = my p_timeStepStrategy         = timeStepStrategy;
 		my setInstancePref_fixedTimeStep (fixedTimeStep);
-		my pref_numberOfTimeStepsPerView () = my p_numberOfTimeStepsPerView = numberOfTimeStepsPerView;
+		my setInstancePref_numberOfTimeStepsPerView (numberOfTimeStepsPerView);
 		my d_pitch. reset();
 		my d_formant. reset();
 		my d_intensity. reset();
@@ -449,8 +449,8 @@ static void menu_cb_spectrogramSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS
 		SET_REAL (viewTo,       my instancePref_spectrogram_viewTo())
 		SET_REAL (windowLength, my instancePref_spectrogram_windowLength())
 		SET_REAL (dynamicRange, my instancePref_spectrogram_dynamicRange())
-		if (my p_spectrogram_timeSteps          != Melder_atof (my default_spectrogram_timeSteps ()) ||
-			my p_spectrogram_frequencySteps     != Melder_atof (my default_spectrogram_frequencySteps ()) ||
+		if (my instancePref_spectrogram_timeSteps()          != Melder_atof (my default_spectrogram_timeSteps ()) ||
+			my instancePref_spectrogram_frequencySteps()     != Melder_atof (my default_spectrogram_frequencySteps ()) ||
 			my p_spectrogram_method             != my default_spectrogram_method () ||
 			my p_spectrogram_windowShape        != my default_spectrogram_windowShape () ||
 			my instancePref_spectrogram_maximum()            != Melder_atof (my default_spectrogram_maximum ()) ||
@@ -495,8 +495,8 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 		REAL (preemphasis, U"Pre-emphasis (dB/oct)", my default_spectrogram_preemphasis ())
 		REAL (dynamicCompression, U"Dynamic compression (0-1)", my default_spectrogram_dynamicCompression ())
 	EDITOR_OK
-		SET_INTEGER (numberOfTimeSteps,      my p_spectrogram_timeSteps)
-		SET_INTEGER (numberOfFrequencySteps, my p_spectrogram_frequencySteps)
+		SET_INTEGER (numberOfTimeSteps,      my instancePref_spectrogram_timeSteps())
+		SET_INTEGER (numberOfFrequencySteps, my instancePref_spectrogram_frequencySteps())
 		SET_ENUM    (method,      kSound_to_Spectrogram_method,      my p_spectrogram_method)
 		SET_ENUM    (windowShape, kSound_to_Spectrogram_windowShape, my p_spectrogram_windowShape)
 		SET_BOOLEAN (autoscaling,              my p_spectrogram_autoscaling)
@@ -504,8 +504,8 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 		SET_REAL    (preemphasis,              my instancePref_spectrogram_preemphasis())
 		SET_REAL    (dynamicCompression,       my instancePref_spectrogram_dynamicCompression())
 	EDITOR_DO
-		my pref_spectrogram_timeSteps          () = my p_spectrogram_timeSteps          = numberOfTimeSteps;
-		my pref_spectrogram_frequencySteps     () = my p_spectrogram_frequencySteps     = numberOfFrequencySteps;
+		my setInstancePref_spectrogram_timeSteps (numberOfTimeSteps);
+		my setInstancePref_spectrogram_frequencySteps (numberOfFrequencySteps);
 		my pref_spectrogram_method             () = my p_spectrogram_method             = method;
 		my pref_spectrogram_windowShape        () = my p_spectrogram_windowShape        = windowShape;
 		my pref_spectrogram_autoscaling        () = my p_spectrogram_autoscaling        = autoscaling;
@@ -672,7 +672,7 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 		if (my instancePref_pitch_viewFrom()                  != Melder_atof (my default_pitch_viewFrom()) ||
 			my instancePref_pitch_viewTo()                    != Melder_atof (my default_pitch_viewTo()) ||
 			my p_pitch_veryAccurate              != my default_pitch_veryAccurate () ||
-			my p_pitch_maximumNumberOfCandidates != Melder_atof (my default_pitch_maximumNumberOfCandidates ()) ||
+			my instancePref_pitch_maximumNumberOfCandidates() != Melder_atoi (my default_pitch_maximumNumberOfCandidates()) ||
 			my instancePref_pitch_silenceThreshold()          != Melder_atof (my default_pitch_silenceThreshold()) ||
 			my instancePref_pitch_voicingThreshold()          != Melder_atof (my default_pitch_voicingThreshold()) ||
 			my instancePref_pitch_octaveCost()                != Melder_atof (my default_pitch_octaveCost()) ||
@@ -722,7 +722,7 @@ static void menu_cb_advancedPitchSettings (TimeSoundAnalysisEditor me, EDITOR_AR
 		SET_REAL    (viewFrom,                  my instancePref_pitch_viewFrom())
 		SET_REAL    (viewTo,                    my instancePref_pitch_viewTo())
 		SET_BOOLEAN (veryAccurate,              my p_pitch_veryAccurate)
-		SET_INTEGER (maximumNumberOfCandidates, my p_pitch_maximumNumberOfCandidates)
+		SET_INTEGER (maximumNumberOfCandidates, my instancePref_pitch_maximumNumberOfCandidates())
 		SET_REAL    (silenceThreshold,          my instancePref_pitch_silenceThreshold())
 		SET_REAL    (voicingThreshold,          my instancePref_pitch_voicingThreshold())
 		SET_REAL    (octaveCost,                my instancePref_pitch_octaveCost())
@@ -734,7 +734,7 @@ static void menu_cb_advancedPitchSettings (TimeSoundAnalysisEditor me, EDITOR_AR
 		my setInstancePref_pitch_viewFrom (viewFrom);
 		my setInstancePref_pitch_viewTo (viewTo);
 		my pref_pitch_veryAccurate              () = my p_pitch_veryAccurate              = veryAccurate;
-		my pref_pitch_maximumNumberOfCandidates () = my p_pitch_maximumNumberOfCandidates = maximumNumberOfCandidates;
+		my setInstancePref_pitch_maximumNumberOfCandidates (maximumNumberOfCandidates);
 		my setInstancePref_pitch_silenceThreshold (silenceThreshold);
 		my setInstancePref_pitch_voicingThreshold (voicingThreshold);
 		my setInstancePref_pitch_octaveCost (octaveCost);
@@ -1694,9 +1694,12 @@ void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me) {
 		my d_spectrogram.reset();
 		try {
 			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-			my d_spectrogram = Sound_to_Spectrogram (sound.get(), my instancePref_spectrogram_windowLength(),
-				my instancePref_spectrogram_viewTo(), (my endWindow - my startWindow) / my p_spectrogram_timeSteps,
-				my instancePref_spectrogram_viewTo() / my p_spectrogram_frequencySteps, my p_spectrogram_windowShape, 8.0, 8.0
+			my d_spectrogram = Sound_to_Spectrogram (sound.get(),
+				my instancePref_spectrogram_windowLength(),
+				my instancePref_spectrogram_viewTo(),
+				(my endWindow - my startWindow) / my instancePref_spectrogram_timeSteps(),
+				my instancePref_spectrogram_viewTo() / my instancePref_spectrogram_frequencySteps(),
+				my p_spectrogram_windowShape, 8.0, 8.0
 			);
 			my d_spectrogram -> xmin = my startWindow;
 			my d_spectrogram -> xmax = my endWindow;
@@ -1713,13 +1716,13 @@ static void computePitch_inside (TimeSoundAnalysisEditor me) {
 		autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
 		const double pitchTimeStep = (
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
+			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my instancePref_numberOfTimeStepsPerView() :
 			0.0   // the default: determined by pitch floor
 		);
 		my d_pitch = Sound_to_Pitch_any (sound.get(), pitchTimeStep,
 			my instancePref_pitch_floor(),
 			my p_pitch_method == kTimeSoundAnalysisEditor_pitch_analysisMethod::AUTOCORRELATION ? 3.0 : 1.0,
-			my p_pitch_maximumNumberOfCandidates,
+			my instancePref_pitch_maximumNumberOfCandidates(),
 			((int) my p_pitch_method - 1) * 2 + my p_pitch_veryAccurate,
 			my instancePref_pitch_silenceThreshold(), my instancePref_pitch_voicingThreshold(),
 			my instancePref_pitch_octaveCost(), my instancePref_pitch_octaveJumpCost(),
@@ -1779,7 +1782,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 			);
 			const double formantTimeStep = (
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
+				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my instancePref_numberOfTimeStepsPerView() :
 				0.0   // the default: determined by analysis window length
 			);
 			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
@@ -1860,7 +1863,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		const double defaultTimeStep = 0.5 * greatestNonUndersamplingTimeStep;
 		const double timeStep = (
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::FIXED_ ? my instancePref_fixedTimeStep() :
-			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
+			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my instancePref_numberOfTimeStepsPerView() :
 			defaultTimeStep
 		);
 		const bool undersampled = ( timeStep > greatestNonUndersamplingTimeStep );

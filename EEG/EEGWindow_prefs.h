@@ -30,8 +30,8 @@ EditorPrefs_begin (EEGWindow)
 	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
 	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_windowLength,       1, U"0.5")   // seconds
 	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
-	prefs_override_integer (EEGWindow, spectrogram_timeSteps,          1, U"1000")
-	prefs_override_integer (EEGWindow, spectrogram_frequencySteps,     1, U"250")
+	EditorInstancePrefs_overrideInteger (EEGWindow, spectrogram_timeSteps,          1, U"1000")
+	EditorInstancePrefs_overrideInteger (EEGWindow, spectrogram_frequencySteps,     1, U"250")
 	prefs_override_enum    (EEGWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
 	prefs_override_enum    (EEGWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
 	prefs_override_bool    (EEGWindow, spectrogram_autoscaling,        1, true)

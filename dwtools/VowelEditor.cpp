@@ -343,18 +343,18 @@ static void VowelEditor_updateTrajectorySpecification (VowelEditor me) {
 
 static autoFormantGrid VowelEditor_to_FormantGrid (VowelEditor me) {
 	try {
-		autoFormantGrid thee = FormantGrid_createEmpty (my trajectory -> xmin, my trajectory -> xmax, my p_synthesis_numberOfFormants);
+		autoFormantGrid thee = FormantGrid_createEmpty (my trajectory -> xmin, my trajectory -> xmax, my instancePref_synthesis_numberOfFormants());
 		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 			const TrajectoryPoint tp = my trajectory -> points.at [ipoint];
 			const double time = tp -> number;
 			FormantGrid_addFormantPoint (thee.get(), 1, time, tp -> f1);
 			FormantGrid_addBandwidthPoint (thee.get(), 1, time, tp -> f1 / my instancePref_synthesis_q1());
-			if (my p_synthesis_numberOfFormants < 2)
+			if (my instancePref_synthesis_numberOfFormants() < 2)
 				continue;
 			FormantGrid_addFormantPoint (thee.get(), 2, time, tp -> f2);
 			FormantGrid_addBandwidthPoint (thee.get(), 2, time, tp -> f2 / my instancePref_synthesis_q2());
-			for (integer ifor = 1; ifor <= my p_synthesis_numberOfFormants - 2; ifor ++) {
-				if (my p_synthesis_numberOfFormants < 2 + ifor)
+			for (integer ifor = 1; ifor <= my instancePref_synthesis_numberOfFormants() - 2; ifor ++) {
+				if (my instancePref_synthesis_numberOfFormants() < 2 + ifor)
 					break;
 				FormantGrid_addFormantPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor - 1]);
 				FormantGrid_addBandwidthPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor]);
@@ -738,7 +738,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (q1, my instancePref_synthesis_q1())
 		SET_REAL (q2, my instancePref_synthesis_q2())
 		SET_STRING (extraFrequencyBandwidthPairs_string, my p_synthesis_extraFBPairs)
-		SET_INTEGER (numberOfFormants, my p_synthesis_numberOfFormants)
+		SET_INTEGER (numberOfFormants, my instancePref_synthesis_numberOfFormants())
 	EDITOR_DO
 		my pref_soundFollowsMouse () = my p_soundFollowsMouse = soundFollowsMouse;
 		my setInstancePref_synthesis_q1 (q1);
@@ -768,7 +768,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 			Formants and bandwidths are valid. It is safe to copy them.
 		*/
 		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, extraFrequencyBandwidthPairs_string);
-		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
+		my setInstancePref_synthesis_numberOfFormants (numberOfFormants);
 		my extraFrequencyBandwidthPairs = extraFrequencyBandwidthPairs.move();
 	EDITOR_END
 }
@@ -942,7 +942,7 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 2
 	EDITOR_DO
 		Melder_require (f3 < f4,
 			U"F4 should be larger than F3.");
-		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = 4;
+		my setInstancePref_synthesis_numberOfFormants (4);
 		my extraFrequencyBandwidthPairs [1] = f3;
 		my extraFrequencyBandwidthPairs [2] = b3;
 		my extraFrequencyBandwidthPairs [3] = f4;
@@ -1119,8 +1119,8 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 	/*
 		Save the current shell size as the user's preference.
 	*/
-	my pref_shell_width() = my p_shell_width = GuiShell_getShellWidth  (my windowForm);
-	my pref_shell_height() = my p_shell_height = GuiShell_getShellHeight (my windowForm);
+	my setClassPref_shellWidth  (GuiShell_getShellWidth  (my windowForm));
+	my setClassPref_shellHeight (GuiShell_getShellHeight (my windowForm));
 }
 
 // shift key always extends what already is.
@@ -1318,11 +1318,7 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
 		Melder_assert (me.get());
-		if (my p_shell_width <= 0 || my p_shell_height <= 0) {
-			my p_shell_width = Melder_atof (my default_shell_width ());
-			my p_shell_height = Melder_atof (my default_shell_height ());
-		}
-		Editor_init (me.get(), 0, 0, my pref_shell_width(), my pref_shell_height(), title, data);
+		Editor_init (me.get(), 0, 0, 0, 0, title, data);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
@@ -1345,8 +1341,8 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			my p_marks_speakerType = my default_marks_speakerType ();
 		}
 		VowelEditor_getMarks (me.get());
-		if (my p_synthesis_numberOfFormants <= 0)
-			my p_synthesis_numberOfFormants = Melder_atoi (my default_synthesis_numberOfFormants ());
+		if (my instancePref_synthesis_numberOfFormants() <= 0)
+			my setInstancePref_synthesis_numberOfFormants (Melder_atoi (my default_synthesis_numberOfFormants ()));
 		if (my instancePref_synthesis_q1() <= 0 || my instancePref_synthesis_q2() <= 0) {
 			my setInstancePref_synthesis_q1 (Melder_atof (my default_synthesis_q1()));
 			my setInstancePref_synthesis_q2 (Melder_atof (my default_synthesis_q2()));

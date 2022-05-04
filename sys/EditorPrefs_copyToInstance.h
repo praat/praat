@@ -18,47 +18,59 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef EditorPrefs_begin
-#undef prefs_add_int
-#undef prefs_add_int_with_data
-#undef prefs_override_int
-#undef prefs_add_integer
-#undef prefs_add_integer_with_data
-#undef prefs_override_integer
 #undef prefs_add_bool
 #undef prefs_add_bool_with_data
 #undef prefs_override_bool
-#undef EditorClassPrefs_addDouble
-#undef EditorClassPrefs_overrideDouble
-#undef EditorInstancePrefs_addDouble
-#undef EditorInstancePrefs_overrideDouble
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
 #undef prefs_override_enum
 #undef prefs_add_string
 #undef prefs_add_string_with_data
 #undef prefs_override_string
-#undef EditorPrefs_end
 
+#undef  EditorPrefs_begin
 #define EditorPrefs_begin(Klas) \
 	void struct##Klas :: v_copyPreferencesToInstance () { \
 		Klas##_Parent :: v_copyPreferencesToInstance ();
-
-#define prefs_add_int(Klas,name,version,default)
-#define prefs_add_int_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
-#define prefs_override_int(Klas,name,version,default)
-
-#define prefs_add_integer(Klas,name,version,default)
-#define prefs_add_integer_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
-#define prefs_override_integer(Klas,name,version,default)
 
 #define prefs_add_bool(Klas,name,version,default)
 #define prefs_add_bool_with_data(Klas,name,version,default)  our p_##name = our pref_##name ();
 #define prefs_override_bool(Klas,name,version,default)
 
+#undef  EditorClassPrefs_addInt
+#define EditorClassPrefs_addInt(Klas,name,version,default)
+#undef  EditorClassPrefs_overrideInt
+#define EditorClassPrefs_overrideInt(Klas,name,version,default)
+#undef  EditorInstancePrefs_addInt
+#define EditorInstancePrefs_addInt(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#undef  EditorInstancePrefs_overrideInt
+#define EditorInstancePrefs_overrideInt(Klas,name,version,default)
+
+#undef  EditorClassPrefs_addInteger
+#define EditorClassPrefs_addInteger(Klas,name,version,default)
+#undef  EditorClassPrefs_overrideInteger
+#define EditorClassPrefs_overrideInteger(Klas,name,version,default)
+#undef  EditorInstancePrefs_addInteger
+#define EditorInstancePrefs_addInteger(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#undef  EditorInstancePrefs_overrideInteger
+#define EditorInstancePrefs_overrideInteger(Klas,name,version,default)
+
+#undef  EditorClassPrefs_addBool
+#define EditorClassPrefs_addBool(Klas,name,version,default)
+#undef  EditorClassPrefs_overrideBool
+#define EditorClassPrefs_overrideBool(Klas,name,version,default)
+#undef  EditorInstancePrefs_addBool
+#define EditorInstancePrefs_addBool(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#undef  EditorInstancePrefs_overrideBool
+#define EditorInstancePrefs_overrideBool(Klas,name,version,default)
+
+#undef  EditorClassPrefs_addDouble
 #define EditorClassPrefs_addDouble(Klas,name,version,default)
+#undef  EditorClassPrefs_overrideDouble
 #define EditorClassPrefs_overrideDouble(Klas,name,version,default)
+#undef  EditorInstancePrefs_addDouble
 #define EditorInstancePrefs_addDouble(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#undef  EditorInstancePrefs_overrideDouble
 #define EditorInstancePrefs_overrideDouble(Klas,name,version,default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default)
@@ -69,6 +81,7 @@
 #define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& our p_##name [0], our pref_##name ());
 #define prefs_override_string(Klas,name,version,default)
 
+#undef  EditorPrefs_end
 #define EditorPrefs_end(Klas) \
 	}
 

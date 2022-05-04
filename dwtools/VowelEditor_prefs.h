@@ -19,8 +19,8 @@
 
 EditorPrefs_begin (VowelEditor)
 
-	prefs_add_int_with_data    (VowelEditor, shell_width,                 1, U"900")
-	prefs_add_int_with_data    (VowelEditor, shell_height,                1, U"700")
+	EditorClassPrefs_overrideInt    (VowelEditor, shellWidth,                 1, U"900")
+	EditorClassPrefs_overrideInt    (VowelEditor, shellHeight,                1, U"700")
 	prefs_add_bool_with_data   (VowelEditor, soundFollowsMouse,           1, true)
 	prefs_add_enum_with_data   (VowelEditor, window_frequencyScale,       1, kVowelEditor_frequencyScale, LOGARITHMIC)
 	EditorInstancePrefs_addDouble  (VowelEditor, window_f1min,                1, U"200.0")   // Hz
@@ -28,7 +28,7 @@ EditorPrefs_begin (VowelEditor)
 	EditorInstancePrefs_addDouble  (VowelEditor, window_f2min,                1, U"500.0")   // Hz
 	EditorInstancePrefs_addDouble  (VowelEditor, window_f2max,                1, U"3500.0")   // Hz
 	EditorInstancePrefs_addDouble  (VowelEditor, synthesis_samplingFrequency, 1, U"44100.0")   // Hz
-	prefs_add_integer_with_data(VowelEditor, synthesis_numberOfFormants,  1, U"4")   // to synthesize the sound
+	EditorInstancePrefs_addInteger (VowelEditor, synthesis_numberOfFormants,  1, U"4")   // to synthesize the sound
 	EditorInstancePrefs_addDouble  (VowelEditor, synthesis_q1,                1, U"10.0")   // F/B
 	EditorInstancePrefs_addDouble  (VowelEditor, synthesis_q2,                1, U"10.0")   // F/B
 	prefs_add_string_with_data (VowelEditor, synthesis_extraFBPairs,      1, U"2500 250 3500 350 4500 450")   // Hz
