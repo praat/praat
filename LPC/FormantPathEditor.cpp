@@ -70,8 +70,9 @@ void structFormantPathEditor :: v_updateMenuItems_navigation () {
 
 bool structFormantPathEditor :: v_mouseInWideDataView (GuiDrawingArea_MouseEvent event, double xWC, double yWC) {
 	const double spectrogramTop = our v_getBottomOfSoundArea (), spectrogramBottom = our v_getBottomOfSoundAndAnalysisArea ();
-	if ((our p_spectrogram_show || our p_formant_show) && yWC < spectrogramTop && yWC > spectrogramBottom && 
-		xWC > our startWindow && xWC < our endWindow) {
+	if ((our instancePref_spectrogram_show() || our instancePref_formant_show()) && yWC < spectrogramTop && yWC > spectrogramBottom &&
+			xWC > our startWindow && xWC < our endWindow)
+	{
 		const double yFractionFromBottomOfSpectrogram = (yWC - spectrogramBottom) / (spectrogramTop - spectrogramBottom);
 		our d_spectrogram_cursor = our instancePref_spectrogram_viewFrom() +
 				yFractionFromBottomOfSpectrogram  * (our instancePref_spectrogram_viewTo() - our instancePref_spectrogram_viewFrom());
@@ -166,20 +167,20 @@ static void menu_cb_DrawVisibleTextGrid (FormantPathEditor me, EDITOR_ARGS_FORM)
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ())
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw (my textGridView.get(), nullptr, my pictureGraphics, my startWindow, my endWindow, true, my p_useTextStyles,
-			my pref_picture_garnish ());
+		TextGrid_Sound_draw (my textGridView.get(), nullptr, my pictureGraphics,
+				my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -190,25 +191,25 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (FormantPathEditor me, EDITOR_AR
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ())
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish())
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		{// scope
 			autoSound sound = my d_longSound.data ?
 				LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
 				Sound_extractPart (my d_sound.data, my startWindow, my endWindow,
-					kSound_windowShape::RECTANGULAR, 1.0, true);
+						kSound_windowShape::RECTANGULAR, 1.0, true);
 			TextGrid_Sound_draw (my textGridView.get(), sound.get(), my pictureGraphics,
-				my startWindow, my endWindow, true, my p_useTextStyles, my pref_picture_garnish ());
+					my startWindow, my endWindow, true, my instancePref_useTextStyles(), garnish);
 		}
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -277,25 +278,25 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		LABEL (U"TextGrid:")
 		BOOLEAN (showBoundariesAndPoints, U"Show boundaries and points", my default_picture_showBoundaries ());
 		LABEL (U"Pitch:")
-		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle ());
+		BOOLEAN (speckle, U"Speckle", my default_picture_pitch_speckle());
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_BOOLEAN (showBoundariesAndPoints, my pref_picture_showBoundaries ())
-		SET_BOOLEAN (speckle, my pref_picture_pitch_speckle ())
+		SET_BOOLEAN (showBoundariesAndPoints, my instancePref_picture_showBoundaries())
+		SET_BOOLEAN (speckle, my instancePref_picture_pitch_speckle())
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		my pref_picture_showBoundaries () = showBoundariesAndPoints;
-		my pref_picture_pitch_speckle () = speckle;
+		my setInstancePref_picture_showBoundaries (showBoundariesAndPoints);
+		my setInstancePref_picture_pitch_speckle (speckle);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_picture_garnish () = garnish;
-		if (! my p_pitch_show)
+		my setClassPref_picture_garnish (garnish);
+		if (! my instancePref_pitch_show())
 			Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my d_pitch) {
 			TimeSoundAnalysisEditor_computePitch (me);
@@ -312,7 +313,7 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately (my textGridView.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
-			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my p_useTextStyles, garnish,
+			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
 			speckle, my p_pitch_unit
 		);
 		FunctionEditor_garnish (me);
@@ -417,15 +418,15 @@ static void menu_cb_AdvancedCandidateDrawingSettings (FormantPathEditor me, EDIT
 		POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", my default_modeler_draw_maximumFrequency())
 		BOOLEAN (drawErrorBars, U"Draw bandwidths", my default_modeler_draw_showBandwidths())
 	EDITOR_OK
-		SET_BOOLEAN (drawEstimatedModels, my p_modeler_draw_estimatedModels)
+		SET_BOOLEAN (drawEstimatedModels, my instancePref_modeler_draw_estimatedModels())
 		SET_REAL (yGridLineEvery_Hz, my instancePref_modeler_draw_yGridLineEvery_Hz())
 		SET_REAL (maximumFrequency, my instancePref_modeler_draw_maximumFrequency())
-		SET_BOOLEAN (drawErrorBars, my p_modeler_draw_showBandwidths)
+		SET_BOOLEAN (drawErrorBars, my instancePref_modeler_draw_showBandwidths())
 	EDITOR_DO
-		my pref_modeler_draw_estimatedModels () = my p_modeler_draw_estimatedModels = drawEstimatedModels;
+		my setInstancePref_modeler_draw_estimatedModels (drawEstimatedModels);
 		my setInstancePref_modeler_draw_maximumFrequency (maximumFrequency);
 		my setInstancePref_modeler_draw_yGridLineEvery_Hz (yGridLineEvery_Hz);
-		my pref_modeler_draw_showBandwidths () = my p_modeler_draw_showBandwidths = drawErrorBars;
+		my setInstancePref_modeler_draw_showBandwidths (drawErrorBars);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -458,15 +459,15 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		BOOLEAN (crossHairs, U"Draw cross hairs", 0)
-		BOOLEAN (garnish, U"Garnish", my default_picture_garnish ());
+		BOOLEAN (garnish, U"Garnish", my default_picture_garnish());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
-		SET_BOOLEAN (garnish, my pref_picture_garnish ())
+		SET_BOOLEAN (garnish, my classPref_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
-		my pref_picture_garnish () = garnish;
+		my setClassPref_picture_garnish (garnish);
 		Editor_openPraatPicture (me);
 		FormantPath formantPath = (FormantPath) my data;
 		Graphics_setInner (my pictureGraphics);
@@ -475,8 +476,10 @@ static void menu_cb_DrawVisibleCandidates (FormantPathEditor me, EDITOR_ARGS_FOR
 		autoINTVEC parameters = splitByWhitespaceWithRanges_INTVEC (my p_modeler_numberOfParametersPerTrack);
 		constexpr double xSpace_fraction = 0.1, ySpace_fraction = 0.1;
 		FormantPath_drawAsGrid_inside (formantPath, my pictureGraphics, startTime, endTime, my instancePref_modeler_draw_maximumFrequency(), 1, 5,
-			my p_modeler_draw_showBandwidths, Melder_RED, Melder_PURPLE, 0, 0, xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
-			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true, my instancePref_modeler_varianceExponent(), my p_modeler_draw_estimatedModels, true
+			my instancePref_modeler_draw_showBandwidths(), Melder_RED, Melder_PURPLE, 0, 0,
+			xSpace_fraction, ySpace_fraction, my instancePref_modeler_draw_yGridLineEvery_Hz(),
+			xCursor, yCursor, markedCandidatesColour, parameters.get(), true, true,
+			my instancePref_modeler_varianceExponent(), my instancePref_modeler_draw_estimatedModels(), true
 		);
 		Graphics_unsetInner (my pictureGraphics);
 		Editor_closePraatPicture (me);	
@@ -524,13 +527,13 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_BOOLEAN (garnish, my p_formant_picture_garnish)
+		SET_BOOLEAN (garnish, my instancePref_formant_picture_garnish())
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		my pref_formant_picture_garnish () = my p_formant_picture_garnish = garnish;
-		if (! my p_formant_show)
+		my setInstancePref_formant_picture_garnish (garnish);
+		if (! my instancePref_formant_show())
 			Melder_throw (U"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		Editor_openPraatPicture (me);
 		//FormantPath formantPath = (FormantPath) my data;
@@ -538,17 +541,16 @@ static void menu_cb_DrawVisibleFormantContour (FormantPathEditor me, EDITOR_ARGS
 		//const Formant defaultFormant = formantPath -> formants.at [formantPath -> defaultFormant];
 		Formant_drawSpeckles (my d_formant.get(), my pictureGraphics, my startWindow, my endWindow,
 			my instancePref_spectrogram_viewTo(), my instancePref_formant_dynamicRange(),
-			my p_formant_picture_garnish
+			garnish
 		);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
 }
 
-
 static void menu_cb_showFormants (FormantPathEditor me, EDITOR_ARGS_DIRECT) {
-	my pref_formant_show () = my p_formant_show = ! my p_formant_show;
-	GuiMenuItem_check (my formantToggle, my p_formant_show);   // in case we're called from a script
+	my setInstancePref_formant_show (! my instancePref_formant_show());   // toggle
+	GuiMenuItem_check (my formantToggle, my instancePref_formant_show());   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
 
@@ -580,7 +582,7 @@ static void INFO_DATA__formantListing (FormantPathEditor me, EDITOR_ARGS_DIRECT_
 }
 void structFormantPathEditor :: v_createMenuItems_formant (EditorMenu menu) {
 	formantToggle = EditorMenu_addCommand (menu, U"Show formants",
-		GuiMenu_CHECKBUTTON | (pref_formant_show () ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
+			GuiMenu_CHECKBUTTON | ( instancePref_formant_show() ? GuiMenu_TOGGLE_ON : 0 ), menu_cb_showFormants);
 	EditorMenu_addCommand (menu, U"Formant colour settings...", 0, menu_cb_FormantColourSettings);
 	EditorMenu_addCommand (menu, U"Draw visible formant contour...", 0, menu_cb_DrawVisibleFormantContour);
 	EditorMenu_addCommand (menu, U"Formant listing", 0, INFO_DATA__formantListing);
@@ -673,10 +675,10 @@ void structFormantPathEditor :: v_prepareDraw () {
 
 void structFormantPathEditor :: v_draw () {
 	Graphics_Viewport vp1;
-	const bool showAnalysis = v_hasAnalysis () &&
-			(p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) &&
-			(d_longSound.data || d_sound.data);
-	double soundBottom = our v_getBottomOfSoundArea ();
+	const bool showAnalysis = our v_hasAnalysis () &&
+			(our instancePref_spectrogram_show() || our instancePref_pitch_show() || our instancePref_intensity_show() || our instancePref_formant_show()) &&
+			(our d_longSound.data || our d_sound.data);
+	const double soundBottom = our v_getBottomOfSoundArea ();
 
 	/*
 		Draw the sound.
@@ -696,12 +698,12 @@ void structFormantPathEditor :: v_draw () {
 	if (our textgrid) {}
 	if (showAnalysis) {
 		vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, (our textgrid ? 0.3 : 0.0), soundBottom);
-		v_draw_analysis ();
+		our v_draw_analysis ();
 		Graphics_resetViewport (our graphics.get(), vp1);
 		/* Draw pulses. */
-		if (p_pulses_show) {
+		if (our instancePref_pulses_show()) {
 			vp1 = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, soundBottom, 1.0);
-			v_draw_analysis_pulses ();
+			our v_draw_analysis_pulses ();
 			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_resetViewport (our graphics.get(), vp1);
 		}
@@ -719,8 +721,8 @@ void structFormantPathEditor :: v_draw () {
 	/*
 		Finally, us usual, update the menus.
 	*/
-	v_updateMenuItems_file ();
-	v_updateMenuItems_navigation ();
+	our v_updateMenuItems_file ();
+	our v_updateMenuItems_navigation ();
 }
 
 void structFormantPathEditor :: v_drawSelectionViewer () {
@@ -742,9 +744,9 @@ void structFormantPathEditor :: v_drawSelectionViewer () {
 	MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
 	MelderColour evenColour = MelderColour_fromColourName (our p_formant_path_evenColour);
 	FormantPath_drawAsGrid_inside (formantPath, our graphics.get(), startTime, endTime, 
-		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our p_modeler_draw_showBandwidths, oddColour, evenColour,
+		our instancePref_modeler_draw_maximumFrequency(), 1, 5, our instancePref_modeler_draw_showBandwidths(), oddColour, evenColour,
 		nrow, ncol, xSpace_fraction, ySpace_fraction, our instancePref_modeler_draw_yGridLineEvery_Hz(), xCursor, yCursor, markedCandidatesColour,
-		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our p_modeler_draw_estimatedModels, true
+		parameters.get(), true, true, our instancePref_modeler_varianceExponent(), our instancePref_modeler_draw_estimatedModels(), true
 	);
 	Graphics_unsetInner (our graphics.get());
 	previousStartTime = startTime;
@@ -774,7 +776,7 @@ static void FormantPathEditor_drawCeilings (FormantPathEditor me, Graphics g, do
 }
 
 void structFormantPathEditor :: v_draw_analysis_formants () {
-	if (our p_formant_show) {
+	if (our instancePref_formant_show()) {
 		Graphics_setColour (our graphics.get(), Melder_RED);
 		Graphics_setSpeckleSize (our graphics.get(), our instancePref_formant_dotSize());
 		MelderColour oddColour = MelderColour_fromColourName (our p_formant_path_oddColour);
@@ -873,35 +875,35 @@ void structFormantPathEditor :: v_play (double tmin_, double tmax_) {
 	}
 }
 
-POSITIVE_VARIABLE (v_prefs_addFields_fontSize)
-OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals)
-OPTIONMENU_VARIABLE (v_prefs_addFields_useTextStyles)
-OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf)
+POSITIVE_VARIABLE (v_prefs_addFields__fontSize)
+OPTIONMENU_ENUM_VARIABLE (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals)
+OPTIONMENU_VARIABLE (v_prefs_addFields__useTextStyles)
+OPTIONMENU_ENUM_VARIABLE (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf)
 void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
-	POSITIVE_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
-	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals,
+	POSITIVE_FIELD (v_prefs_addFields__fontSize, U"Font size (points)", our default_fontSize ())
+	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields__textAlignmentInIntervals,
 			U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
-	OPTIONMENU_FIELD (v_prefs_addFields_useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles () + 1)
+	OPTIONMENU_FIELD (v_prefs_addFields__useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles() + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
-	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf,
+	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields__showNumberOf,
 			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
 }
 
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
-	SET_OPTION (v_prefs_addFields_useTextStyles, our p_useTextStyles + 1)
-	SET_REAL (v_prefs_addFields_fontSize, our instancePref_fontSize())
-	SET_ENUM (v_prefs_addFields_textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
-	SET_ENUM (v_prefs_addFields_showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
+	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
+	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
+	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
-	our pref_useTextStyles () = our p_useTextStyles = v_prefs_addFields_useTextStyles - 1;
-	our setInstancePref_fontSize (v_prefs_addFields_fontSize);
-	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;
-	our pref_shiftDragMultiple () = our p_shiftDragMultiple = false;
-	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields_showNumberOf;
+	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
+	our setInstancePref_fontSize (v_prefs_addFields__fontSize);
+	our pref_alignment () = our p_alignment = v_prefs_addFields__textAlignmentInIntervals;
+	our setInstancePref_shiftDragMultiple (false);
+	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields__showNumberOf;
 }
 
 void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {
@@ -909,7 +911,7 @@ void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu me
 }
 
 void structFormantPathEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data))
+	if (our v_hasAnalysis () && our instancePref_spectrogram_show() && (our d_longSound.data || our d_sound.data))
 		Graphics_highlight (our graphics.get(), left, right, bottom + (top - bottom) * our v_getBottomOfSoundArea (), top);
 	else
 		Graphics_highlight (our graphics.get(), left, right, bottom, top);

@@ -18,60 +18,60 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef EditorPrefs_begin
-#undef prefs_add_int
-#undef prefs_add_int_with_data
-#undef prefs_override_int
-#undef prefs_add_integer
-#undef prefs_add_integer_with_data
-#undef prefs_override_integer
-#undef prefs_add_bool
-#undef prefs_add_bool_with_data
-#undef prefs_override_bool
-#undef EditorClassPrefs_addDouble
-#undef EditorClassPrefs_overrideDouble
-#undef EditorInstancePrefs_addDouble
-#undef EditorInstancePrefs_overrideDouble
 #undef prefs_add_enum
 #undef prefs_add_enum_with_data
 #undef prefs_override_enum
 #undef prefs_add_string
 #undef prefs_add_string_with_data
 #undef prefs_override_string
-#undef EditorPrefs_end
 
+#undef  EditorPrefs_begin
 #define EditorPrefs_begin(Klas)
 
-#define prefs_add_int(Klas,name,version,default) \
-	int struct##Klas :: s_##name; \
-	conststring32 struct##Klas :: sdefault_##name = default;
-#define prefs_add_int_with_data(Klas,name,version,default)  prefs_add_int (Klas, name, version, default)
-#define prefs_override_int(Klas,name,version,default) \
-	int struct##Klas :: s_##name; \
-	conststring32 struct##Klas :: sdefault_##name = default;
+#define EditorPrefs_defineNumericType_(Type,Klas,name,default) \
+	conststring32 struct##Klas :: _classDefault_##name = default; \
+	Type struct##Klas :: _classPref_##name;
 
-#define prefs_add_integer(Klas,name,version,default) \
-	integer struct##Klas :: s_##name; \
-	conststring32 struct##Klas :: sdefault_##name = default;
-#define prefs_add_integer_with_data(Klas,name,version,default)  prefs_add_integer (Klas, name, version, default)
-#define prefs_override_integer(Klas,name,version,default) \
-	integer struct##Klas :: s_##name; \
-	conststring32 struct##Klas :: sdefault_##name = default;
+#undef  EditorClassPrefs_addInt
+#define EditorClassPrefs_addInt(Klas,name,version,default)              EditorPrefs_defineNumericType_ (int, Klas, name, default)
+#undef  EditorClassPrefs_overrideInt
+#define EditorClassPrefs_overrideInt(Klas,name,version,default)         EditorPrefs_defineNumericType_ (int, Klas, name, default)
+#undef  EditorInstancePrefs_addInt
+#define EditorInstancePrefs_addInt(Klas,name,version,default)           EditorPrefs_defineNumericType_ (int, Klas, name, default)
+#undef  EditorInstancePrefs_overrideInt
+#define EditorInstancePrefs_overrideInt(Klas,name,version,default)      EditorPrefs_defineNumericType_ (int, Klas, name, default)
 
-#define prefs_add_bool(Klas,name,version,default) \
-	bool struct##Klas :: s_##name; \
-	bool struct##Klas :: sdefault_##name = default;
-#define prefs_add_bool_with_data(Klas,name,version,default)  prefs_add_bool (Klas, name, version, default)
-#define prefs_override_bool(Klas,name,version,default) \
-	bool struct##Klas :: s_##name; \
-	bool struct##Klas :: sdefault_##name = default;
+#undef  EditorClassPrefs_addInteger
+#define EditorClassPrefs_addInteger(Klas,name,version,default)          EditorPrefs_defineNumericType_ (integer, Klas, name, default)
+#undef  EditorClassPrefs_overrideInteger
+#define EditorClassPrefs_overrideInteger(Klas,name,version,default)     EditorPrefs_defineNumericType_ (integer, Klas, name, default)
+#undef  EditorInstancePrefs_addInteger
+#define EditorInstancePrefs_addInteger(Klas,name,version,default)       EditorPrefs_defineNumericType_ (integer, Klas, name, default)
+#undef  EditorInstancePrefs_overrideInteger
+#define EditorInstancePrefs_overrideInteger(Klas,name,version,default)  EditorPrefs_defineNumericType_ (integer, Klas, name, default)
 
-#define EditorClassPrefs_addDouble(Klas,name,version,default) \
-	double struct##Klas :: _staticClassPref_##name; \
-	conststring32 struct##Klas :: sdefault_##name = default;
-#define EditorClassPrefs_overrideDouble(Klas,name,version,default)  EditorClassPrefs_addDouble(Klas,name,version,default)
-#define EditorInstancePrefs_addDouble(Klas,name,version,default)  EditorClassPrefs_addDouble(Klas,name,version,default)
-#define EditorInstancePrefs_overrideDouble(Klas,name,version,default)  EditorInstancePrefs_addDouble(Klas,name,version,default)
+#undef  EditorClassPrefs_addDouble
+#define EditorClassPrefs_addDouble(Klas,name,version,default)           EditorPrefs_defineNumericType_ (double, Klas, name, default)
+#undef  EditorClassPrefs_overrideDouble
+#define EditorClassPrefs_overrideDouble(Klas,name,version,default)      EditorPrefs_defineNumericType_ (double, Klas, name, default)
+#undef  EditorInstancePrefs_addDouble
+#define EditorInstancePrefs_addDouble(Klas,name,version,default)        EditorPrefs_defineNumericType_ (double, Klas, name, default)
+#undef  EditorInstancePrefs_overrideDouble
+#define EditorInstancePrefs_overrideDouble(Klas,name,version,default)   EditorPrefs_defineNumericType_ (double, Klas, name, default)
+
+//#undef EditorPrefs_defineNumericType_
+
+#undef  EditorClassPrefs_addBool
+#define EditorClassPrefs_addBool(Klas,name,version,default) \
+	bool struct##Klas :: _classDefault_##name = default; \
+	bool struct##Klas :: _classPref_##name;
+#undef  EditorClassPrefs_overrideBool
+#define EditorClassPrefs_overrideBool(Klas,name,version,default)        EditorClassPrefs_addBool (Klas, name, version, default)
+#undef  EditorInstancePrefs_addBool
+#define EditorInstancePrefs_addBool(Klas,name,version,default)          EditorClassPrefs_addBool (Klas, name, version, default)
+#undef  EditorInstancePrefs_overrideBool
+#define EditorInstancePrefs_overrideBool(Klas,name,version,default)     EditorClassPrefs_addBool (Klas, name, version, default)
+
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
 	enum enumerated struct##Klas :: s_##name; \
@@ -89,6 +89,7 @@
 	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
 	conststring32 struct##Klas :: sdefault_##name = default;
 
+#undef  EditorPrefs_end
 #define EditorPrefs_end(Klas)
 
 /* End of file EditorPrefs_define.h */

@@ -73,7 +73,7 @@ static void updateGroup (FunctionEditor me) {
 	for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
 		if (theGroupMembers [i] && theGroupMembers [i] != me) {
 			FunctionEditor thee = theGroupMembers [i];
-			if (my pref_synchronizedZoomAndScroll()) {
+			if (my classPref_synchronizedZoomAndScroll()) {
 				thy startWindow = my startWindow;
 				thy endWindow = my endWindow;
 				thy v_windowChanged ();
@@ -233,7 +233,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	/*
 		Opening triangle (sometimes over button).
 	*/
-	if (my v_hasSelectionViewer() && ! my p_showSelectionViewer) {
+	if (my v_hasSelectionViewer() && ! my instancePref_showSelectionViewer()) {
 		const bool weHaveToDrawOverSelectionRectangleWithText = ( selectionIsNonempty && my endSelection == my tmax && my endWindow != my tmax );
 		Graphics_setLineWidth (my graphics.get(), 1.0);
 		const double left = my _functionViewerRight - my space + 9.0, right = my _functionViewerRight - 3.0;
@@ -422,8 +422,8 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	/*
 		Save the current shell size as the user's preference for a new FunctionEditor.
 	*/
-	my pref_shellWidth()  = GuiShell_getShellWidth  (my windowForm);
-	my pref_shellHeight() = GuiShell_getShellHeight (my windowForm);
+	my setClassPref_shellWidth  (GuiShell_getShellWidth  (my windowForm));
+	my setClassPref_shellHeight (GuiShell_getShellHeight (my windowForm));
 }
 
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
@@ -433,40 +433,40 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units_short(), U")"), my default_arrowScrollStep())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
-		SET_BOOLEAN (synchronizeZoomAndScroll, my pref_synchronizedZoomAndScroll())
-		SET_BOOLEAN (showSelectionViewer, my pref_showSelectionViewer ())
+		SET_BOOLEAN (synchronizeZoomAndScroll, my classPref_synchronizedZoomAndScroll())
+		SET_BOOLEAN (showSelectionViewer, my instancePref_showSelectionViewer())
 		SET_REAL (arrowScrollStep, my instancePref_arrowScrollStep())
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
-		const bool oldSynchronizedZoomAndScroll = my pref_synchronizedZoomAndScroll();
-		const bool oldShowSelectionViewer = my p_showSelectionViewer;
-		my pref_synchronizedZoomAndScroll() = synchronizeZoomAndScroll;
-		my pref_showSelectionViewer() = my p_showSelectionViewer = showSelectionViewer;
+		const bool oldSynchronizedZoomAndScroll = my classPref_synchronizedZoomAndScroll();
+		const bool oldShowSelectionViewer = my instancePref_showSelectionViewer();
+		my setClassPref_synchronizedZoomAndScroll (synchronizeZoomAndScroll);
+		my setInstancePref_showSelectionViewer (showSelectionViewer);
 		my setInstancePref_arrowScrollStep (arrowScrollStep);
-		if (my p_showSelectionViewer != oldShowSelectionViewer)
+		if (my instancePref_showSelectionViewer() != oldShowSelectionViewer)
 			my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
-		if (! oldSynchronizedZoomAndScroll && my pref_synchronizedZoomAndScroll())
+		if (! oldSynchronizedZoomAndScroll && my classPref_synchronizedZoomAndScroll())
 			updateGroup (me);
 		my v_prefs_getValues (cmd);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
-static bool v_form_pictureSelection_drawSelectionTimes;
-static bool v_form_pictureSelection_drawSelectionHairs;
+static bool v_form_pictureSelection__drawSelectionTimes;
+static bool v_form_pictureSelection__drawSelectionHairs;
 void structFunctionEditor :: v_form_pictureSelection (EditorCommand cmd) {
-	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionTimes, nullptr, U"Draw selection times", true);
-	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionHairs, nullptr, U"Draw selection hairs", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection__drawSelectionTimes, nullptr, U"Draw selection times", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection__drawSelectionHairs, nullptr, U"Draw selection hairs", true);
 }
 void structFunctionEditor :: v_ok_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	SET_BOOLEAN (v_form_pictureSelection_drawSelectionTimes, my pref_picture_drawSelectionTimes())
-	SET_BOOLEAN (v_form_pictureSelection_drawSelectionHairs, my pref_picture_drawSelectionHairs())
+	SET_BOOLEAN (v_form_pictureSelection__drawSelectionTimes, my classPref_picture_drawSelectionTimes())
+	SET_BOOLEAN (v_form_pictureSelection__drawSelectionHairs, my classPref_picture_drawSelectionHairs())
 }
 void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	my pref_picture_drawSelectionTimes() = v_form_pictureSelection_drawSelectionTimes;
-	my pref_picture_drawSelectionHairs() = v_form_pictureSelection_drawSelectionHairs;
+	my setClassPref_picture_drawSelectionTimes (v_form_pictureSelection__drawSelectionTimes);
+	my setClassPref_picture_drawSelectionHairs (v_form_pictureSelection__drawSelectionHairs);
 }
 
 /********** QUERY MENU **********/
@@ -529,7 +529,7 @@ static void do_showAll (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
-	if (my pref_synchronizedZoomAndScroll())
+	if (my classPref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
 
@@ -546,7 +546,7 @@ static void do_zoomIn (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
-	if (my pref_synchronizedZoomAndScroll())
+	if (my classPref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
 
@@ -568,7 +568,7 @@ static void do_zoomOut (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	FunctionEditor_redraw (me);
-	if (my pref_synchronizedZoomAndScroll())
+	if (my classPref_synchronizedZoomAndScroll())
 		updateGroup (me);
 }
 
@@ -587,7 +587,7 @@ static void do_zoomToSelection (FunctionEditor me) {
 		my v_updateText ();
 		updateScrollBar (me);
 		FunctionEditor_redraw (me);
-		if (my pref_synchronizedZoomAndScroll())
+		if (my classPref_synchronizedZoomAndScroll())
 			updateGroup (me);
 	}
 }
@@ -605,7 +605,7 @@ static void do_zoomBack (FunctionEditor me) {
 		my v_updateText ();
 		updateScrollBar (me);
 		FunctionEditor_redraw (me);
-		if (my pref_synchronizedZoomAndScroll())
+		if (my classPref_synchronizedZoomAndScroll())
 			updateGroup (me);
 	}
 }
@@ -999,7 +999,7 @@ static void gui_cb_scroll (FunctionEditor me, GuiScrollBarEvent event) {
 		my v_updateText ();
 		//updateScrollBar (me);
 		FunctionEditor_redraw (me);
-		if (! my group || ! my pref_synchronizedZoomAndScroll())
+		if (! my group || ! my classPref_synchronizedZoomAndScroll())
 			return;
 		for (integer i = 1; i <= THE_MAXIMUM_GROUP_SIZE; i ++) {
 			if (theGroupMembers [i] && theGroupMembers [i] != me) {
@@ -1047,7 +1047,7 @@ static void gui_checkbutton_cb_group (FunctionEditor me, GuiCheckButtonEvent /* 
 		}
 		const integer otherGroupMember = findOtherGroupMember (me);
 		const FunctionEditor thee = theGroupMembers [otherGroupMember];
-		if (my pref_synchronizedZoomAndScroll()) {
+		if (my classPref_synchronizedZoomAndScroll()) {
 			my startWindow = thy startWindow;
 			my endWindow = thy endWindow;
 			my v_windowChanged ();
@@ -1237,7 +1237,7 @@ static void gui_drawingarea_cb_expose (FunctionEditor me, GuiDrawingArea_ExposeE
 	/*
 		Draw the selection part.
 	*/
-	if (my p_showSelectionViewer) {
+	if (my instancePref_showSelectionViewer()) {
 		/*
 			Draw closing box.
 		*/
@@ -1327,11 +1327,11 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 	static bool anchorIsInSelectionViewer = false;
 	static bool anchorIsInWideDataView = false;
 	if (event -> isClick()) {
-		if (my v_hasSelectionViewer() || my p_showSelectionViewer) {
+		if (my v_hasSelectionViewer() || my instancePref_showSelectionViewer()) {
 			const double left = my width_pxlt - my space + 9.0, right = my width_pxlt - 3.0;
 			const double bottom = my height_pxlt - my space + 5.0, top = my height_pxlt - 5.0;
 			if (x_pxlt > left && x_pxlt < right && y_pxlt > bottom && y_pxlt < top) {
-				my pref_showSelectionViewer() = my p_showSelectionViewer = ! my p_showSelectionViewer;
+				my setInstancePref_showSelectionViewer (! my instancePref_showSelectionViewer());   // toggle
 				my updateGeometry (GuiControl_getWidth (my drawingArea), GuiControl_getHeight (my drawingArea));
 				FunctionEditor_redraw (me);
 				return;
@@ -1513,7 +1513,7 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function funct
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");
 	my tmin = function -> xmin;   // set before adding children (see group button)
 	my tmax = function -> xmax;
-	Editor_init (me, 0, 0, my pref_shellWidth(), my pref_shellHeight(), title, function);
+	Editor_init (me, 0, 0, my classPref_shellWidth(), my classPref_shellHeight(), title, function);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;
@@ -1633,13 +1633,13 @@ void FunctionEditor_drawGridLine (FunctionEditor me, double yWC) {
 }
 
 void FunctionEditor_garnish (FunctionEditor me) {
-	if (my pref_picture_drawSelectionTimes ()) {
+	if (my classPref_picture_drawSelectionTimes()) {
 		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my startSelection, true, true, false, nullptr);
 		if (my endSelection != my startSelection && my endSelection >= my startWindow && my endSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my endSelection, true, true, false, nullptr);
 	}
-	if (my pref_picture_drawSelectionHairs ()) {
+	if (my classPref_picture_drawSelectionHairs()) {
 		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my startSelection, false, false, true, nullptr);
 		if (my endSelection != my startSelection && my endSelection >= my startWindow && my endSelection <= my endWindow)

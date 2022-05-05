@@ -18,7 +18,9 @@
 
 EditorPrefs_begin (Editor)
 
-	prefs_add_bool   (Editor, picture_eraseFirst,     1, true)
+	EditorClassPrefs_addInt        (Editor, shellWidth,                 1, U"260")
+	EditorClassPrefs_addInt        (Editor, shellHeight,                1, U"260")
+	EditorInstancePrefs_addBool    (Editor, picture_eraseFirst,         1, true)
 	prefs_add_enum   (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
 
 EditorPrefs_end (Editor)

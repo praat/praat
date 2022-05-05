@@ -89,7 +89,7 @@ struct structThing {
 	 */
 	virtual ~structThing () noexcept { }
 
-	virtual void v_destroy () noexcept { };
+	virtual void v_destroy () noexcept { }
 		/*
 		 * derived::v_destroy calls base::v_destroy at end
 		 */
@@ -101,22 +101,26 @@ struct structThing {
 		 * derived::v_info often calls base::v_info at start and then writes information on the new data,
 		 * but a few ancestors can be skipped if their data have new meanings.
 		 */
-	virtual void v_assertInvariants () { };
+	virtual void v_assertInvariants () { }
 		/*
 		 * derived::v_assertInvariants typically calls base::v_assertInvariants at start
 		 */
 	void assertInvariants () { our v_assertInvariants (); }
-	virtual void v_checkConstraints () { };
+	virtual void v_checkConstraints () { }
 		/*
 		 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
 		 */
-	virtual void v_nameChanged () { };
+	virtual void v_nameChanged () { }
 		/*
 		 * derived::v_nameChanged may call base::_nameChanged at start, middle or end
 		 */
-	virtual void v_copyPreferencesToInstance () { };
+	virtual void v_copyPreferencesToInstance () { }
 		/*
 		 * derived::v_copyPreferencesToInstance calls base::v_copyPreferencesToInstance at start
+		 */
+	virtual void v_repairPreferences () { }
+		/*
+		 * derived::v_repairPreferences may call base::v_repairPreferences at start
 		 */
 };
 

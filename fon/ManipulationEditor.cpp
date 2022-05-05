@@ -277,13 +277,14 @@ static void menu_cb_stylizePitch (ManipulationEditor me, EDITOR_ARGS_FORM) {
 			RADIOBUTTON (U"semitones")
 	EDITOR_OK
 		SET_REAL   (frequencyResolution, my instancePref_pitch_stylize_frequencyResolution())
-		SET_OPTION (units,               my p_pitch_stylize_useSemitones + 1)
+		SET_OPTION (units,               my instancePref_pitch_stylize_useSemitones() + 1)
 	EDITOR_DO
 		if (! my pitch())
 			return;
 		Editor_save (me, U"Stylize pitch");
-		PitchTier_stylize (my pitch().get(), frequencyResolution, my pref_pitch_stylize_useSemitones() = my p_pitch_stylize_useSemitones = units - 1);
-		my setInstancePref_pitch_stylize_frequencyResolution (frequencyResolution);   // if it worked, then silently save the pref
+		my setInstancePref_pitch_stylize_frequencyResolution (frequencyResolution);
+		my setInstancePref_pitch_stylize_useSemitones (units - 1);
+		PitchTier_stylize (my pitch().get(), frequencyResolution, my instancePref_pitch_stylize_useSemitones());
 		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -307,15 +308,15 @@ static void menu_cb_interpolateQuadratically (ManipulationEditor me, EDITOR_ARGS
 			RADIOBUTTON (U"Hertz")
 			RADIOBUTTON (U"semitones")
 	EDITOR_OK
-		SET_INTEGER (numberOfPointsPerParabola, my p_pitch_interpolateQuadratically_numberOfPointsPerParabola)
-		SET_OPTION  (units,                     my p_pitch_stylize_useSemitones + 1)
+		SET_INTEGER (numberOfPointsPerParabola, my instancePref_pitch_interpolateQuadratically_numberOfPointsPerParabola())
+		SET_OPTION  (units,                     my instancePref_pitch_stylize_useSemitones() + 1)
 	EDITOR_DO
 		if (! my pitch())
 			return;
 		Editor_save (me, U"Interpolate quadratically");
-		RealTier_interpolateQuadratically (my pitch().get(),
-			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = numberOfPointsPerParabola,
-			my pref_pitch_stylize_useSemitones                               () = my p_pitch_stylize_useSemitones                               = units - 1);
+		my setInstancePref_pitch_interpolateQuadratically_numberOfPointsPerParabola (numberOfPointsPerParabola);
+		my setInstancePref_pitch_stylize_useSemitones (units - 1);
+		RealTier_interpolateQuadratically (my pitch().get(), numberOfPointsPerParabola, my instancePref_pitch_stylize_useSemitones());
 		RealTierArea_updateScaling (my pitchTierArea.get(), my pitch().get());
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);

@@ -343,18 +343,18 @@ static void VowelEditor_updateTrajectorySpecification (VowelEditor me) {
 
 static autoFormantGrid VowelEditor_to_FormantGrid (VowelEditor me) {
 	try {
-		autoFormantGrid thee = FormantGrid_createEmpty (my trajectory -> xmin, my trajectory -> xmax, my p_synthesis_numberOfFormants);
+		autoFormantGrid thee = FormantGrid_createEmpty (my trajectory -> xmin, my trajectory -> xmax, my instancePref_synthesis_numberOfFormants());
 		for (integer ipoint = 1; ipoint <= my trajectory -> points.size; ipoint ++) {
 			const TrajectoryPoint tp = my trajectory -> points.at [ipoint];
 			const double time = tp -> number;
 			FormantGrid_addFormantPoint (thee.get(), 1, time, tp -> f1);
 			FormantGrid_addBandwidthPoint (thee.get(), 1, time, tp -> f1 / my instancePref_synthesis_q1());
-			if (my p_synthesis_numberOfFormants < 2)
+			if (my instancePref_synthesis_numberOfFormants() < 2)
 				continue;
 			FormantGrid_addFormantPoint (thee.get(), 2, time, tp -> f2);
 			FormantGrid_addBandwidthPoint (thee.get(), 2, time, tp -> f2 / my instancePref_synthesis_q2());
-			for (integer ifor = 1; ifor <= my p_synthesis_numberOfFormants - 2; ifor ++) {
-				if (my p_synthesis_numberOfFormants < 2 + ifor)
+			for (integer ifor = 1; ifor <= my instancePref_synthesis_numberOfFormants() - 2; ifor ++) {
+				if (my instancePref_synthesis_numberOfFormants() < 2 + ifor)
 					break;
 				FormantGrid_addFormantPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor - 1]);
 				FormantGrid_addBandwidthPoint (thee.get(), 2 + ifor, time, my extraFrequencyBandwidthPairs [2 * ifor]);
@@ -722,7 +722,7 @@ static void menu_cb_trajectoryInfo (VowelEditor me, EDITOR_ARGS_DIRECT_WITH_OUTP
 
 static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr);
-		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse ())
+		BOOLEAN (soundFollowsMouse, U"Sound follows mouse", my default_soundFollowsMouse())
 		LABEL (U"F1 and F2 frequencies are specified by the trajectory.")
 		LABEL (U"The bandwidths of a formant can be specified by its Q-value")
 		LABEL (U"which defines the sharpness of the peak: Q = frequency / bandwidth. ")
@@ -734,13 +734,13 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 		LABEL (U"The total number of formants used for synthesis")
 		NATURAL (numberOfFormants, U"Number of formants for synthesis", my default_synthesis_numberOfFormants ())
 	EDITOR_OK
-		SET_BOOLEAN (soundFollowsMouse, my p_soundFollowsMouse)
+		SET_BOOLEAN (soundFollowsMouse, my instancePref_soundFollowsMouse())
 		SET_REAL (q1, my instancePref_synthesis_q1())
 		SET_REAL (q2, my instancePref_synthesis_q2())
 		SET_STRING (extraFrequencyBandwidthPairs_string, my p_synthesis_extraFBPairs)
-		SET_INTEGER (numberOfFormants, my p_synthesis_numberOfFormants)
+		SET_INTEGER (numberOfFormants, my instancePref_synthesis_numberOfFormants())
 	EDITOR_DO
-		my pref_soundFollowsMouse () = my p_soundFollowsMouse = soundFollowsMouse;
+		my setInstancePref_soundFollowsMouse (soundFollowsMouse);
 		my setInstancePref_synthesis_q1 (q1);
 		my setInstancePref_synthesis_q2 (q2);
 		autoVEC extraFrequencyBandwidthPairs = splitByWhitespace_VEC (extraFrequencyBandwidthPairs_string);
@@ -768,7 +768,7 @@ static void menu_cb_prefs (VowelEditor me, EDITOR_ARGS_FORM) {
 			Formants and bandwidths are valid. It is safe to copy them.
 		*/
 		pref_str32cpy2 (my pref_synthesis_extraFBPairs (), my p_synthesis_extraFBPairs, extraFrequencyBandwidthPairs_string);
-		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = numberOfFormants;
+		my setInstancePref_synthesis_numberOfFormants (numberOfFormants);
 		my extraFrequencyBandwidthPairs = extraFrequencyBandwidthPairs.move();
 	EDITOR_END
 }
@@ -942,7 +942,7 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) { // deprecated 2
 	EDITOR_DO
 		Melder_require (f3 < f4,
 			U"F4 should be larger than F3.");
-		my pref_synthesis_numberOfFormants () = my p_synthesis_numberOfFormants = 4;
+		my setInstancePref_synthesis_numberOfFormants (4);
 		my extraFrequencyBandwidthPairs [1] = f3;
 		my extraFrequencyBandwidthPairs [2] = b3;
 		my extraFrequencyBandwidthPairs [3] = f4;
@@ -1119,8 +1119,8 @@ static void gui_drawingarea_cb_resize (VowelEditor me, GuiDrawingArea_ResizeEven
 	/*
 		Save the current shell size as the user's preference.
 	*/
-	my pref_shell_width() = my p_shell_width = GuiShell_getShellWidth  (my windowForm);
-	my pref_shell_height() = my p_shell_height = GuiShell_getShellHeight (my windowForm);
+	my setClassPref_shellWidth  (GuiShell_getShellWidth  (my windowForm));
+	my setClassPref_shellHeight (GuiShell_getShellHeight (my windowForm));
 }
 
 // shift key always extends what already is.
@@ -1146,7 +1146,7 @@ static void gui_drawingarea_cb_mouse (VowelEditor me, GuiDrawingArea_MouseEvent 
 			my trajectory = Trajectory_create (my instancePref_trajectory_minimumDuration());
 			Trajectory_addPoint (my trajectory.get(), duration, f1, f2, colour);
 			GuiText_setString (my durationTextField, Melder_double (duration));
-			if (! my p_soundFollowsMouse)
+			if (! my instancePref_soundFollowsMouse())
 				Trajectory_addPoint (my trajectory.get(), my instancePref_trajectory_minimumDuration(), f1, f2, colour);
 		}
 		my previousX = mouseX;
@@ -1313,16 +1313,49 @@ void structVowelEditor :: v_createChildren ()
 	our height = GuiControl_getHeight (drawingArea);
 }
 
+void structVowelEditor :: v_repairPreferences () {
+	if (our instancePref_window_f1min() >= our instancePref_window_f1max()) {
+		our setInstancePref_window_f1min (Melder_atof (our default_window_f1min()));
+		our setInstancePref_window_f1max (Melder_atof (our default_window_f1max()));
+	}
+	if (our instancePref_window_f2min() >= our instancePref_window_f2max()) {
+		our setInstancePref_window_f2min (Melder_atof (our default_window_f2min()));
+		our setInstancePref_window_f2max (Melder_atof (our default_window_f2max()));
+	}
+	if (our instancePref_marks_fontSize() <= 0)
+		our setInstancePref_marks_fontSize (Melder_atof (our default_marks_fontSize()));
+	if (Melder_equ (our p_marks_fileName, U"") && our p_marks_dataSet < kVowelEditor_marksDataSet::MIN) {
+		our p_marks_dataSet = our default_marks_dataSet ();
+		our p_marks_speakerType = our default_marks_speakerType ();
+	}
+	if (our instancePref_synthesis_samplingFrequency() <= 0.0)
+		our setInstancePref_synthesis_samplingFrequency (Melder_atof (our default_synthesis_samplingFrequency()));
+	if (our instancePref_trajectory_minimumDuration() <= 0.0)
+		our setInstancePref_trajectory_minimumDuration (Melder_atof (our default_trajectory_minimumDuration()));
+	if (our instancePref_trajectory_extendDuration() <= 0.0 || our instancePref_trajectory_markEvery() <= 0.0) {
+		our setInstancePref_trajectory_extendDuration (Melder_atof (our default_trajectory_extendDuration()));
+		our setInstancePref_trajectory_markEvery (Melder_atof (our default_trajectory_markEvery()));
+	}
+	if (our instancePref_f0_start() <= 0)
+		our setInstancePref_f0_start (Melder_atof (our default_f0_start()));
+	if (our instancePref_f0_slope() <= 0)
+		our setInstancePref_f0_slope (Melder_atof (our default_f0_slope()));
+	if (our instancePref_f0_minimum() <= 0 || our instancePref_f0_maximum() <= 0) {
+		our setInstancePref_f0_minimum (Melder_atof (our default_f0_minimum()));
+		our setInstancePref_f0_maximum (Melder_atof (our default_f0_maximum()));
+	}
+	if (our instancePref_grid_df1() <= 0)
+		our setInstancePref_grid_df1 (Melder_atof (our default_grid_df1()));
+	if (our instancePref_grid_df2() <= 0)
+		our setInstancePref_grid_df2 (Melder_atof (our default_grid_df2()));
+}
+
 autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 	try {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
 		Melder_assert (me.get());
-		if (my p_shell_width <= 0 || my p_shell_height <= 0) {
-			my p_shell_width = Melder_atof (my default_shell_width ());
-			my p_shell_height = Melder_atof (my default_shell_height ());
-		}
-		Editor_init (me.get(), 0, 0, my pref_shell_width(), my pref_shell_height(), title, data);
+		Editor_init (me.get(), 0, 0, 0, 0, title, data);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
@@ -1330,23 +1363,9 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		Melder_assert (my graphics);
 		Graphics_setFontSize (my graphics.get(), 12);
 
-		if (my instancePref_window_f1min() >= my instancePref_window_f1max()) {
-			my setInstancePref_window_f1min (Melder_atof (my default_window_f1min()));
-			my setInstancePref_window_f1max (Melder_atof (my default_window_f1max()));
-		}
-		if (my instancePref_window_f2min() >= my instancePref_window_f2max()) {
-			my setInstancePref_window_f2min (Melder_atof (my default_window_f2min()));
-			my setInstancePref_window_f2max (Melder_atof (my default_window_f2max()));
-		}
-		if (my instancePref_marks_fontSize() <= 0)
-			my setInstancePref_marks_fontSize (Melder_atof (my default_marks_fontSize()));
-		if (Melder_equ (my p_marks_fileName, U"") && my p_marks_dataSet < kVowelEditor_marksDataSet::MIN) {
-			my p_marks_dataSet = my default_marks_dataSet ();
-			my p_marks_speakerType = my default_marks_speakerType ();
-		}
 		VowelEditor_getMarks (me.get());
-		if (my p_synthesis_numberOfFormants <= 0)
-			my p_synthesis_numberOfFormants = Melder_atoi (my default_synthesis_numberOfFormants ());
+		if (my instancePref_synthesis_numberOfFormants() <= 0)
+			my setInstancePref_synthesis_numberOfFormants (Melder_atoi (my default_synthesis_numberOfFormants ()));
 		if (my instancePref_synthesis_q1() <= 0 || my instancePref_synthesis_q2() <= 0) {
 			my setInstancePref_synthesis_q1 (Melder_atof (my default_synthesis_q1()));
 			my setInstancePref_synthesis_q2 (Melder_atof (my default_synthesis_q2()));
@@ -1355,32 +1374,12 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			pref_str32cpy (my p_synthesis_extraFBPairs, my default_synthesis_extraFBPairs ());
 		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my p_synthesis_extraFBPairs);
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4
-		my p_soundFollowsMouse = true;   // no real preference yet
-		if (my instancePref_synthesis_samplingFrequency() <= 0.0)
-			my setInstancePref_synthesis_samplingFrequency (Melder_atof (my default_synthesis_samplingFrequency()));
-		if (my instancePref_trajectory_minimumDuration() <= 0.0)
-			my setInstancePref_trajectory_minimumDuration (Melder_atof (my default_trajectory_minimumDuration()));
-		if (my instancePref_trajectory_extendDuration() <= 0.0 || my instancePref_trajectory_markEvery() <= 0.0) {
-			my setInstancePref_trajectory_extendDuration (Melder_atof (my default_trajectory_extendDuration()));
-			my setInstancePref_trajectory_markEvery (Melder_atof (my default_trajectory_markEvery()));
-		}
+		//my p_soundFollowsMouse = true;   // no real preference yet  // ppgb 20220504: what does this mean?
 		VowelEditor_create_twoFormantSchwa (me.get());
-		if (my instancePref_f0_start() <= 0)
-			my setInstancePref_f0_start (Melder_atof (my default_f0_start()));
 		GuiText_setString (my f0TextField, Melder_double (my instancePref_f0_start()));
-		if (my instancePref_f0_slope() <= 0)
-			my setInstancePref_f0_slope (Melder_atof (my default_f0_slope()));
-		if (my instancePref_f0_minimum() <= 0 || my instancePref_f0_maximum() <= 0) {
-			my setInstancePref_f0_minimum (Melder_atof (my default_f0_minimum()));
-			my setInstancePref_f0_maximum (Melder_atof (my default_f0_maximum()));
-		}
 		GuiText_setString (my f0SlopeTextField, Melder_double (my instancePref_f0_slope()));
 		GuiText_setString (my durationTextField, U"0.2");   // source has been created
 		GuiText_setString (my extendTextField, Melder_double (my instancePref_trajectory_extendDuration()));
-		if (my instancePref_grid_df1() <= 0)
-			my setInstancePref_grid_df1 (Melder_atof (my default_grid_df1()));
-		if (my instancePref_grid_df2() <= 0)
-			my setInstancePref_grid_df2 (Melder_atof (my default_grid_df2()));
 		updateWidgets (me.get());
 		updateInfoLabels (me.get());
 		trace (U"exit");

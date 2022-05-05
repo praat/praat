@@ -81,6 +81,7 @@ private:
 inline void FunctionArea_init (FunctionArea me, FunctionEditor editor, double ymin_fraction, double ymax_fraction) {
 	my init (editor, ymin_fraction, ymax_fraction);
 	my v_copyPreferencesToInstance ();
+	my v_repairPreferences ();
 }
 
 /* End of file FunctionArea.h */

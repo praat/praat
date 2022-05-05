@@ -39,7 +39,7 @@ void structTableEditor :: v_destroy () noexcept {
 
 void structTableEditor :: v_info () {
 	our TableEditor_Parent :: v_info ();
-	MelderInfo_writeLine (U"Table uses text styles: ", our p_useTextStyles);
+	MelderInfo_writeLine (U"Table uses text styles: ", our instancePref_useTextStyles());
 	//MelderInfo_writeLine (U"Table font size: ", our p_fontSize);
 }
 
@@ -66,13 +66,13 @@ void structTableEditor :: v_dataChanged () {
 
 static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"TableEditor preferences", nullptr);
-		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
+		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles() + 1)
 			OPTION (U"are shown as typed")
 			OPTION (U"mean italic/bold/sub/super")
 	EDITOR_OK
-		SET_OPTION (useTextStyles, my p_useTextStyles + 1)
+		SET_OPTION (useTextStyles, my instancePref_useTextStyles() + 1)
 	EDITOR_DO
-		my pref_useTextStyles () = my p_useTextStyles = useTextStyles - 1;
+		my setInstancePref_useTextStyles (useTextStyles - 1);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -167,10 +167,10 @@ void structTableEditor :: v_draw () {
 	/*
 		Text can be "graphic" or not.
 	*/
-	Graphics_setPercentSignIsItalic (our graphics.get(), our p_useTextStyles);
-	Graphics_setNumberSignIsBold (our graphics.get(), our p_useTextStyles);
-	Graphics_setCircumflexIsSuperscript (our graphics.get(), our p_useTextStyles);
-	Graphics_setUnderscoreIsSubscript (our graphics.get(), our p_useTextStyles);
+	Graphics_setPercentSignIsItalic (our graphics.get(), our instancePref_useTextStyles());
+	Graphics_setNumberSignIsBold (our graphics.get(), our instancePref_useTextStyles());
+	Graphics_setCircumflexIsSuperscript (our graphics.get(), our instancePref_useTextStyles());
+	Graphics_setUnderscoreIsSubscript (our graphics.get(), our instancePref_useTextStyles());
 	/*
 		Show the row numbers.
 	*/

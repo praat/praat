@@ -51,7 +51,8 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	double v_getBottomOfSoundArea ()
 		override
 	{
-		return p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show ? 0.5 : 0.0;
+		return our instancePref_spectrogram_show() || our instancePref_pitch_show() ||
+				our instancePref_intensity_show() || our instancePref_formant_show() ? 0.5 : 0.0;
 	}
 	void v_windowChanged ()
 		override
@@ -80,6 +81,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 
 	#include "TimeSoundAnalysisEditor_prefs.h"
+	void v_repairPreferences () override;
 };
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me,

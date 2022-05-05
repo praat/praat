@@ -351,29 +351,29 @@ void structEditor :: v_createMenus () {
 	}
 }
 
-BOOLEAN_VARIABLE (v_form_pictureWindow_eraseFirst)
+BOOLEAN_VARIABLE (v_form_pictureWindow__eraseFirst)
 void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
 	LABEL (U"Picture window:")
-	BOOLEAN_FIELD (v_form_pictureWindow_eraseFirst, U"Erase first", true)
+	BOOLEAN_FIELD (v_form_pictureWindow__eraseFirst, U"Erase first", true)
 }
 void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_BOOLEAN (v_form_pictureWindow_eraseFirst, our pref_picture_eraseFirst ())
+	SET_BOOLEAN (v_form_pictureWindow__eraseFirst, our instancePref_picture_eraseFirst())
 }
 void structEditor :: v_do_pictureWindow (EditorCommand /* cmd */) {
-	our pref_picture_eraseFirst () = v_form_pictureWindow_eraseFirst;
+	our setInstancePref_picture_eraseFirst (v_form_pictureWindow__eraseFirst);
 }
 
-OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop)
+OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins__writeNameAtTop)
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	LABEL (U"Margins:")
-	OPTIONMENU_ENUM_FIELD (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop,
+	OPTIONMENU_ENUM_FIELD (kEditor_writeNameAtTop, v_form_pictureMargins__writeNameAtTop,
 			U"Write name at top", kEditor_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (v_form_pictureMargins_writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop ())
+	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop())
 }
 void structEditor :: v_do_pictureMargins (EditorCommand /* cmd */) {
-	pref_picture_writeNameAtTop () = v_form_pictureMargins_writeNameAtTop;
+	pref_picture_writeNameAtTop() = v_form_pictureMargins__writeNameAtTop;
 }
 
 static void gui_window_cb_goAway (Editor me) {
@@ -384,6 +384,16 @@ static void gui_window_cb_goAway (Editor me) {
 
 void praat_addCommandsToEditor (Editor me);
 void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata data) {
+	my v_copyPreferencesToInstance ();
+	my v_repairPreferences ();
+	/*
+		Zero widths are taken from the preferences.
+	*/
+	if (width == 0)
+		width = my classPref_shellWidth();
+	if (height == 0)
+		height = my classPref_shellHeight();
+
 	double xmin, ymin, widthmax, heightmax;
 	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
 	/*
@@ -455,7 +465,6 @@ void Editor_init (Editor me, int x, int y, int width, int height, conststring32 
 	my windowForm = GuiWindow_create (left, top, width, height, 450, 350, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
 	my data = data;
-	my v_copyPreferencesToInstance ();
 
 	/*
 		Create menus.
@@ -505,7 +514,7 @@ void Editor_save (Editor me, conststring32 text) {
 }
 
 void Editor_openPraatPicture (Editor me) {
-	my pictureGraphics = praat_picture_editor_open (my pref_picture_eraseFirst ());
+	my pictureGraphics = praat_picture_editor_open (my instancePref_picture_eraseFirst());
 }
 void Editor_closePraatPicture (Editor me) {
 	if (my data && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
@@ -514,7 +523,7 @@ void Editor_closePraatPicture (Editor me) {
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
-			my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop::FAR_,
+			my pref_picture_writeNameAtTop() == kEditor_writeNameAtTop::FAR_,
 			my data -> name.get()
 		);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
