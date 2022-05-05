@@ -2,7 +2,7 @@
 #define _VowelEditor_h_
 /* VowelEditor.h
  *
- * Copyright (C) 2008-2017 David Weenink
+ * Copyright (C) 2008-2017 David Weenink, 2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@ Thing_define (VowelEditor, Editor) {
 		override;
 
 	#include "VowelEditor_prefs.h"
+	void v_repairPreferences () override;
 
 	/* only in cb_mouse: */
 	double anchorTime;
