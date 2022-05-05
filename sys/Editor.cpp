@@ -384,10 +384,11 @@ static void gui_window_cb_goAway (Editor me) {
 
 void praat_addCommandsToEditor (Editor me);
 void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata data) {
+	my v_copyPreferencesToInstance ();
+	my v_repairPreferences ();
 	/*
 		Zero widths are taken from the preferences.
 	*/
-	my v_copyPreferencesToInstance ();
 	if (width == 0)
 		width = my classPref_shellWidth();
 	if (height == 0)

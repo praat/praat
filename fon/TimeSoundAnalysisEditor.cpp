@@ -2101,44 +2101,44 @@ bool structTimeSoundAnalysisEditor :: v_mouseInWideDataView (GuiDrawingArea_Mous
 	return TimeSoundAnalysisEditor_Parent :: v_mouseInWideDataView (event, x_world, y_fraction);
 }
 
+void structTimeSoundAnalysisEditor :: v_repairPreferences () {
+	if (our instancePref_pitch_floor() >= our instancePref_pitch_ceiling()) {
+		our setInstancePref_pitch_floor (Melder_atof (our default_pitch_floor()));
+		our setInstancePref_pitch_ceiling (Melder_atof (our default_pitch_ceiling()));
+		our p_pitch_unit = kPitch_unit::HERTZ;
+	}
+	if (our instancePref_spectrogram_viewFrom() >= our instancePref_spectrogram_viewTo()) {
+		our setInstancePref_spectrogram_viewFrom (Melder_atof (our default_spectrogram_viewFrom()));
+		our setInstancePref_spectrogram_viewTo (Melder_atof (our default_spectrogram_viewTo()));
+	}
+	if (our instancePref_intensity_viewFrom() >= our instancePref_intensity_viewTo()) {
+		our setInstancePref_intensity_viewFrom (Melder_atof (our default_intensity_viewFrom()));
+		our setInstancePref_intensity_viewTo (Melder_atof (our default_intensity_viewTo()));
+	}
+	if (our instancePref_log1_toLogFile() == false && our instancePref_log1_toInfoWindow() == false) {
+		our setInstancePref_log1_toLogFile (true);
+		our setInstancePref_log1_toInfoWindow (true);
+	}
+	if (our instancePref_log2_toLogFile() == false && our instancePref_log2_toInfoWindow() == false) {
+		our setInstancePref_log2_toLogFile (true);
+		our setInstancePref_log2_toInfoWindow (true);
+	}
+	if (our v_hasAnalysis ()) {
+		if (! our v_hasSpectrogram ())
+			our setInstancePref_spectrogram_show (false);   // TODO: dubious, becasue what other editors will be affected?
+		if (! our v_hasPitch ())
+			our setInstancePref_pitch_show (false);
+		if (! our v_hasIntensity ())
+			our setInstancePref_intensity_show (false);
+		if (! our v_hasFormants ())
+			our setInstancePref_formant_show (false);
+		if (! our v_hasPulses ())
+			our setInstancePref_pulses_show (false);
+	}
+}
+
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
-	/*
-		Repair preferences.
-	*/
-	if (my instancePref_pitch_floor() >= my instancePref_pitch_ceiling()) {
-		my setInstancePref_pitch_floor (Melder_atof (my default_pitch_floor()));
-		my setInstancePref_pitch_ceiling (Melder_atof (my default_pitch_ceiling()));
-		my p_pitch_unit = kPitch_unit::HERTZ;
-	}
-	if (my instancePref_spectrogram_viewFrom() >= my instancePref_spectrogram_viewTo()) {
-		my setInstancePref_spectrogram_viewFrom (Melder_atof (my default_spectrogram_viewFrom()));
-		my setInstancePref_spectrogram_viewTo (Melder_atof (my default_spectrogram_viewTo()));
-	}
-	if (my instancePref_intensity_viewFrom() >= my instancePref_intensity_viewTo()) {
-		my setInstancePref_intensity_viewFrom (Melder_atof (my default_intensity_viewFrom()));
-		my setInstancePref_intensity_viewTo (Melder_atof (my default_intensity_viewTo()));
-	}
-	if (my v_hasAnalysis ()) {
-		if (my instancePref_log1_toLogFile() == false && my instancePref_log1_toInfoWindow() == false) {
-			my setInstancePref_log1_toLogFile (true);
-			my setInstancePref_log1_toInfoWindow (true);
-		}
-		if (my instancePref_log2_toLogFile() == false && my instancePref_log2_toInfoWindow() == false) {
-			my setInstancePref_log2_toLogFile (true);
-			my setInstancePref_log2_toInfoWindow (true);
-		}
-		if (! my v_hasSpectrogram ())
-			my setInstancePref_spectrogram_show (false);
-		if (! my v_hasPitch ())
-			my setInstancePref_pitch_show (false);
-		if (! my v_hasIntensity ())
-			my setInstancePref_intensity_show (false);
-		if (! my v_hasFormants ())
-			my setInstancePref_formant_show (false);
-		if (! my v_hasPulses ())
-			my setInstancePref_pulses_show (false);
-	}
 }
 
 /* End of file TimeSoundAnalysisEditor.cpp */

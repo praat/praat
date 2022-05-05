@@ -1313,6 +1313,43 @@ void structVowelEditor :: v_createChildren ()
 	our height = GuiControl_getHeight (drawingArea);
 }
 
+void structVowelEditor :: v_repairPreferences () {
+	if (our instancePref_window_f1min() >= our instancePref_window_f1max()) {
+		our setInstancePref_window_f1min (Melder_atof (our default_window_f1min()));
+		our setInstancePref_window_f1max (Melder_atof (our default_window_f1max()));
+	}
+	if (our instancePref_window_f2min() >= our instancePref_window_f2max()) {
+		our setInstancePref_window_f2min (Melder_atof (our default_window_f2min()));
+		our setInstancePref_window_f2max (Melder_atof (our default_window_f2max()));
+	}
+	if (our instancePref_marks_fontSize() <= 0)
+		our setInstancePref_marks_fontSize (Melder_atof (our default_marks_fontSize()));
+	if (Melder_equ (our p_marks_fileName, U"") && our p_marks_dataSet < kVowelEditor_marksDataSet::MIN) {
+		our p_marks_dataSet = our default_marks_dataSet ();
+		our p_marks_speakerType = our default_marks_speakerType ();
+	}
+	if (our instancePref_synthesis_samplingFrequency() <= 0.0)
+		our setInstancePref_synthesis_samplingFrequency (Melder_atof (our default_synthesis_samplingFrequency()));
+	if (our instancePref_trajectory_minimumDuration() <= 0.0)
+		our setInstancePref_trajectory_minimumDuration (Melder_atof (our default_trajectory_minimumDuration()));
+	if (our instancePref_trajectory_extendDuration() <= 0.0 || our instancePref_trajectory_markEvery() <= 0.0) {
+		our setInstancePref_trajectory_extendDuration (Melder_atof (our default_trajectory_extendDuration()));
+		our setInstancePref_trajectory_markEvery (Melder_atof (our default_trajectory_markEvery()));
+	}
+	if (our instancePref_f0_start() <= 0)
+		our setInstancePref_f0_start (Melder_atof (our default_f0_start()));
+	if (our instancePref_f0_slope() <= 0)
+		our setInstancePref_f0_slope (Melder_atof (our default_f0_slope()));
+	if (our instancePref_f0_minimum() <= 0 || our instancePref_f0_maximum() <= 0) {
+		our setInstancePref_f0_minimum (Melder_atof (our default_f0_minimum()));
+		our setInstancePref_f0_maximum (Melder_atof (our default_f0_maximum()));
+	}
+	if (our instancePref_grid_df1() <= 0)
+		our setInstancePref_grid_df1 (Melder_atof (our default_grid_df1()));
+	if (our instancePref_grid_df2() <= 0)
+		our setInstancePref_grid_df2 (Melder_atof (our default_grid_df2()));
+}
+
 autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 	try {
 		trace (U"enter");
@@ -1326,20 +1363,6 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 		Melder_assert (my graphics);
 		Graphics_setFontSize (my graphics.get(), 12);
 
-		if (my instancePref_window_f1min() >= my instancePref_window_f1max()) {
-			my setInstancePref_window_f1min (Melder_atof (my default_window_f1min()));
-			my setInstancePref_window_f1max (Melder_atof (my default_window_f1max()));
-		}
-		if (my instancePref_window_f2min() >= my instancePref_window_f2max()) {
-			my setInstancePref_window_f2min (Melder_atof (my default_window_f2min()));
-			my setInstancePref_window_f2max (Melder_atof (my default_window_f2max()));
-		}
-		if (my instancePref_marks_fontSize() <= 0)
-			my setInstancePref_marks_fontSize (Melder_atof (my default_marks_fontSize()));
-		if (Melder_equ (my p_marks_fileName, U"") && my p_marks_dataSet < kVowelEditor_marksDataSet::MIN) {
-			my p_marks_dataSet = my default_marks_dataSet ();
-			my p_marks_speakerType = my default_marks_speakerType ();
-		}
 		VowelEditor_getMarks (me.get());
 		if (my instancePref_synthesis_numberOfFormants() <= 0)
 			my setInstancePref_synthesis_numberOfFormants (Melder_atoi (my default_synthesis_numberOfFormants ()));
@@ -1351,32 +1374,12 @@ autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 			pref_str32cpy (my p_synthesis_extraFBPairs, my default_synthesis_extraFBPairs ());
 		my extraFrequencyBandwidthPairs = splitByWhitespace_VEC (my p_synthesis_extraFBPairs);
 		Melder_assert (my extraFrequencyBandwidthPairs.size >= 4);   // for deprecated Set F3 & F4
-		//my p_soundFollowsMouse = true;   // no real preference yet  // ppgb 20220504: what doe sthis mean?
-		if (my instancePref_synthesis_samplingFrequency() <= 0.0)
-			my setInstancePref_synthesis_samplingFrequency (Melder_atof (my default_synthesis_samplingFrequency()));
-		if (my instancePref_trajectory_minimumDuration() <= 0.0)
-			my setInstancePref_trajectory_minimumDuration (Melder_atof (my default_trajectory_minimumDuration()));
-		if (my instancePref_trajectory_extendDuration() <= 0.0 || my instancePref_trajectory_markEvery() <= 0.0) {
-			my setInstancePref_trajectory_extendDuration (Melder_atof (my default_trajectory_extendDuration()));
-			my setInstancePref_trajectory_markEvery (Melder_atof (my default_trajectory_markEvery()));
-		}
+		//my p_soundFollowsMouse = true;   // no real preference yet  // ppgb 20220504: what does this mean?
 		VowelEditor_create_twoFormantSchwa (me.get());
-		if (my instancePref_f0_start() <= 0)
-			my setInstancePref_f0_start (Melder_atof (my default_f0_start()));
 		GuiText_setString (my f0TextField, Melder_double (my instancePref_f0_start()));
-		if (my instancePref_f0_slope() <= 0)
-			my setInstancePref_f0_slope (Melder_atof (my default_f0_slope()));
-		if (my instancePref_f0_minimum() <= 0 || my instancePref_f0_maximum() <= 0) {
-			my setInstancePref_f0_minimum (Melder_atof (my default_f0_minimum()));
-			my setInstancePref_f0_maximum (Melder_atof (my default_f0_maximum()));
-		}
 		GuiText_setString (my f0SlopeTextField, Melder_double (my instancePref_f0_slope()));
 		GuiText_setString (my durationTextField, U"0.2");   // source has been created
 		GuiText_setString (my extendTextField, Melder_double (my instancePref_trajectory_extendDuration()));
-		if (my instancePref_grid_df1() <= 0)
-			my setInstancePref_grid_df1 (Melder_atof (my default_grid_df1()));
-		if (my instancePref_grid_df2() <= 0)
-			my setInstancePref_grid_df2 (Melder_atof (my default_grid_df2()));
 		updateWidgets (me.get());
 		updateInfoLabels (me.get());
 		trace (U"exit");
