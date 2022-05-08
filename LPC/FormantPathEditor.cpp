@@ -305,16 +305,18 @@ static void menu_cb_DrawTextGridAndPitch (FormantPathEditor me, EDITOR_ARGS_FORM
 		}
 		Editor_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
+		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
+				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
+		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
+				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately (my textGridView.get(), my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
-			speckle, my p_pitch_unit
+			speckle, my instancePref_pitch_unit()
 		);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -894,16 +896,16 @@ void structFormantPathEditor :: v_prefs_addFields (EditorCommand cmd) {
 void structFormantPathEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
 	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
-	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
-	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
+	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our instancePref_alignment())
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our instancePref_showNumberOf())
 }
 
 void structFormantPathEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
 	our setInstancePref_fontSize (v_prefs_addFields__fontSize);
-	our pref_alignment () = our p_alignment = v_prefs_addFields__textAlignmentInIntervals;
+	our setInstancePref_alignment (v_prefs_addFields__textAlignmentInIntervals);
 	our setInstancePref_shiftDragMultiple (false);
-	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields__showNumberOf;
+	our setInstancePref_showNumberOf (v_prefs_addFields__showNumberOf);
 }
 
 void structFormantPathEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu) {

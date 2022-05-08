@@ -306,7 +306,7 @@ static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) 
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"Not recording.");
 		return;
 	}
-	if (my p_meter_which == kSoundRecorder_meter::INTENSITY) {
+	if (my instancePref_meter_which() == kSoundRecorder_meter::INTENSITY) {
 		int leftMaximum = 0, rightMaximum = 0;
 		if (my numberOfChannels == 1) {
 			for (integer i = 0; i < nsamp; i ++) {
@@ -339,7 +339,7 @@ static void showMeter (SoundRecorder me, const short *buffertje, integer nsamp) 
 			showMaximum (me, 2, rightMaximum);
 			my lastRightMaximum = rightMaximum;
 		}
-	} else if (my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
+	} else if (my instancePref_meter_which() == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
 		autoSound sound = Sound_create (my numberOfChannels,
 				0.0, nsamp / theControlPanel. sampleRate,
 				nsamp, 1.0 / theControlPanel. sampleRate, 0.5 / theControlPanel. sampleRate);
@@ -978,17 +978,17 @@ static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS_FORM) {
 
 static void updateMenus (SoundRecorder me) {
 	GuiMenuItem_check (my meterIntensityButton,
-			my p_meter_which == kSoundRecorder_meter::INTENSITY);
+			my instancePref_meter_which() == kSoundRecorder_meter::INTENSITY);
 	GuiMenuItem_check (my meterCentreOfGravityVersusIntensityButton,
-			my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
+			my instancePref_meter_which() == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 }
 
 static void menu_cb_intensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
-	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter::INTENSITY;
+	my setInstancePref_meter_which (kSoundRecorder_meter::INTENSITY);
 	updateMenus (me);
 }
 static void menu_cb_centreOfGravityVersusIntensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
-	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY;
+	my setInstancePref_meter_which (kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 	updateMenus (me);
 }
 

@@ -44,7 +44,7 @@ void structTextGridEditor :: v_info () {
 	MelderInfo_writeLine (U"Selected tier: ", our selectedTier);
 	MelderInfo_writeLine (U"TextGrid uses text styles: ", our instancePref_useTextStyles());
 	MelderInfo_writeLine (U"TextGrid font size: ", our instancePref_fontSize());
-	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (our p_alignment));
+	MelderInfo_writeLine (U"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (our instancePref_alignment()));
 }
 
 /********** UTILITIES **********/
@@ -496,16 +496,18 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 		}
 		Editor_openPraatPicture (me);
 		const double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+				my instancePref_pitch_floor(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my d_pitch.get(),
-				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
-		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my p_pitch_unit);
+				my instancePref_pitch_ceiling(), Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
+		const double pitchFloor_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
+				pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
+		const double pitchCeiling_overt = Function_convertToNonlogarithmic (my d_pitch.get(),
+				pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, (int) my instancePref_pitch_unit());
 		const double pitchViewFrom_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewFrom() : pitchFloor_overt );
 		const double pitchViewTo_overt = ( my instancePref_pitch_viewFrom() < my instancePref_pitch_viewTo() ? my instancePref_pitch_viewTo() : pitchCeiling_overt );
 		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my d_pitch.get(), my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, showBoundariesAndPoints, my instancePref_useTextStyles(), garnish,
-			speckle, my p_pitch_unit
+			speckle, my instancePref_pitch_unit()
 		);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -1345,7 +1347,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		/* mutable clip */ double startInterval = interval -> xmin, endInterval = interval -> xmax;
 		if (endInterval > my startWindow && startInterval < my endWindow) {   // interval visible?
 			const bool intervalIsSelected = ( iinterval == selectedInterval );
-			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(), my p_greenMethod, my p_greenString, true);
+			const bool labelDoesMatch = Melder_stringMatchesCriterion (interval -> text.get(), my instancePref_greenMethod(), my p_greenString, true);
 			Melder_clipLeft (my startWindow, & startInterval);
 			Melder_clipRight (& endInterval, my endWindow);
 			if (labelDoesMatch) {
@@ -1387,7 +1389,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		}
 	}
 
-	Graphics_setTextAlignment (my graphics.get(), my p_alignment, Graphics_HALF);
+	Graphics_setTextAlignment (my graphics.get(), my instancePref_alignment(), Graphics_HALF);
 	for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		const TextInterval interval = tier -> intervals.at [iinterval];
 		/* mutable clip */ double startInterval = interval -> xmin, endInterval = interval -> xmax;
@@ -1563,12 +1565,12 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
-					our p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+					our instancePref_showNumberOf() == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
 			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name.get());
 		}
-		if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
+		if (our instancePref_showNumberOf() != kTextGridEditor_showNumberOf::NOTHING) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);
-			if (our p_showNumberOf == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
+			if (our instancePref_showNumberOf() == kTextGridEditor_showNumberOf::INTERVALS_OR_POINTS) {
 				integer count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals.size : ((TextTier) anyTier) -> points.size;
 				integer position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
 				if (position)
@@ -1576,7 +1578,7 @@ void structTextGridEditor :: v_draw () {
 				else
 					Graphics_text (our graphics.get(), our endWindow, 0.5,   U"(", count, U")");
 			} else {
-				Melder_assert (our p_showNumberOf == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
+				Melder_assert (our instancePref_showNumberOf() == kTextGridEditor_showNumberOf::NONEMPTY_INTERVALS_OR_POINTS);
 				integer count = 0;
 				if (isIntervalTier) {
 					const IntervalTier tier = (IntervalTier) anyTier;
@@ -2170,19 +2172,19 @@ void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_OPTION (v_prefs_addFields__useTextStyles, our instancePref_useTextStyles() + 1)
 	SET_REAL (v_prefs_addFields__fontSize, our instancePref_fontSize())
-	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our p_alignment)
+	SET_ENUM (v_prefs_addFields__textAlignmentInIntervals, kGraphics_horizontalAlignment, our instancePref_alignment())
 	SET_OPTION (v_prefs_addFields__shiftDragMultiple, our instancePref_shiftDragMultiple() + 1)
-	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our p_showNumberOf)
-	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
+	SET_ENUM (v_prefs_addFields__showNumberOf, kTextGridEditor_showNumberOf, our instancePref_showNumberOf())
+	SET_ENUM (v_prefs_addFields__paintIntervalsGreenWhoseLabel, kMelder_string, our instancePref_greenMethod())
 	SET_STRING (v_prefs_addFields_theText, our p_greenString)
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our setInstancePref_useTextStyles (v_prefs_addFields__useTextStyles - 1);
 	our setInstancePref_fontSize (v_prefs_addFields__fontSize);
-	our pref_alignment () = our p_alignment = v_prefs_addFields__textAlignmentInIntervals;
+	our setInstancePref_alignment (v_prefs_addFields__textAlignmentInIntervals);
 	our setInstancePref_shiftDragMultiple (v_prefs_addFields__shiftDragMultiple - 1);
-	our pref_showNumberOf () = our p_showNumberOf = v_prefs_addFields__showNumberOf;
-	our pref_greenMethod () = our p_greenMethod = v_prefs_addFields__paintIntervalsGreenWhoseLabel;
+	our setInstancePref_showNumberOf (v_prefs_addFields__showNumberOf);
+	our setInstancePref_greenMethod (v_prefs_addFields__paintIntervalsGreenWhoseLabel);
 	pref_str32cpy2 (our pref_greenString (), our p_greenString, v_prefs_addFields_theText);
 }
 

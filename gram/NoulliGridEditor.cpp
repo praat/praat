@@ -70,8 +70,8 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 		conststring32 winningCategoryName = grid -> categoryNames [winningCategory].get();
 		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
 			const bool shouldDrawPicture =
-				(my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
-				 my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
+				(my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
+				 my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
 				&&
 				(Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"happy") ||
 				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"neutral") ||
@@ -138,9 +138,9 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 				Graphics_setColour (my graphics.get(), Melder_cyclingBackgroundColour (winningCategory));
 				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
 			}
-			if (my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::COLOUR_AND_TEXT ||
-				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT ||
-				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE && ! shouldDrawPicture)
+			if (my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::COLOUR_AND_TEXT ||
+				my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT ||
+				my instancePref_showCategoryInSelectionViewerAs() == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE && ! shouldDrawPicture)
 			{
 				Graphics_setColour (my graphics.get(), Melder_cyclingTextColour (winningCategory));
 				Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
@@ -172,16 +172,16 @@ void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (double time) {
 	drawSelectionOrWindow (this, 0.0, 1.0, time - 1.0, time + 1.0, U"");
 }
 
-OPTIONMENU_ENUM_VARIABLE (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs)
+OPTIONMENU_ENUM_VARIABLE (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields__showCategoryInSelectionViewerAs)
 void structNoulliGridEditor :: v_prefs_addFields (EditorCommand cmd) {
-	OPTIONMENU_ENUM_FIELD (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs,
+	OPTIONMENU_ENUM_FIELD (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields__showCategoryInSelectionViewerAs,
 			U"Show category in selection viewer as", kNoulliGridEditor_showCategoryInSelectionViewerAs::DEFAULT)
 }
 void structNoulliGridEditor :: v_prefs_setValues (EditorCommand cmd) {
-	SET_ENUM (v_prefs_addFields_showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs, our p_showCategoryInSelectionViewerAs)
+	SET_ENUM (v_prefs_addFields__showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs, our instancePref_showCategoryInSelectionViewerAs())
 }
 void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
-	our pref_showCategoryInSelectionViewerAs () = our p_showCategoryInSelectionViewerAs = v_prefs_addFields_showCategoryInSelectionViewerAs;
+	our setInstancePref_showCategoryInSelectionViewerAs (v_prefs_addFields__showCategoryInSelectionViewerAs);
 }
 
 void NoulliGridEditor_init (NoulliGridEditor me, conststring32 title, NoulliGrid data, Sound sound, bool ownSound) {

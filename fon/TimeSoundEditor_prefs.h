@@ -18,7 +18,7 @@
 
 EditorPrefs_begin (TimeSoundEditor)
 
-	prefs_add_enum_with_data   (TimeSoundEditor, sound_scalingStrategy,  1, kTimeSoundEditor_scalingStrategy, DEFAULT)
+	EditorInstancePrefs_addEnum    (TimeSoundEditor, sound_scalingStrategy,  1, kTimeSoundEditor_scalingStrategy, DEFAULT)
 	EditorInstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_height,   1, U"2.0")
 	EditorInstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_minimum,  1, U"-1.0")
 	EditorInstancePrefs_addDouble  (TimeSoundEditor, sound_scaling_maximum,  1, U"1.0")
@@ -26,7 +26,7 @@ EditorPrefs_begin (TimeSoundEditor)
 	EditorClassPrefs_addDouble     (TimeSoundEditor, picture_bottom,         1, U"0.0")
 	EditorClassPrefs_addDouble     (TimeSoundEditor, picture_top,            1, U"0.0 (= auto)")
 	EditorClassPrefs_addBool       (TimeSoundEditor, picture_garnish,        1, true)
-	prefs_add_enum             (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
+	EditorClassPrefs_addEnum       (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
 	EditorClassPrefs_addDouble     (TimeSoundEditor, extract_relativeWidth,  1, U"1.0")
 	EditorClassPrefs_addBool       (TimeSoundEditor, extract_preserveTimes,  1, true)
 	EditorClassPrefs_addDouble     (TimeSoundEditor, extract_overlap,        1, U"0.01")
