@@ -18,7 +18,7 @@
 
 EditorPrefs_begin (HyperPage)
 
-	prefs_add_enum_with_data   (HyperPage, font,     1, kGraphics_font, DEFAULT)
+	EditorInstancePrefs_addEnum   (HyperPage, font,     1, kGraphics_font, DEFAULT)
 	EditorInstancePrefs_addDouble (HyperPage, fontSize, 1, U"12")
 
 EditorPrefs_end (HyperPage)

@@ -19,10 +19,10 @@
 
 EditorPrefs_begin (VowelEditor)
 
-	EditorClassPrefs_overrideInt    (VowelEditor, shellWidth,                 1, U"900")
-	EditorClassPrefs_overrideInt    (VowelEditor, shellHeight,                1, U"700")
+	EditorClassPrefs_overrideInt    (VowelEditor, shellWidth,                  1, U"900")
+	EditorClassPrefs_overrideInt    (VowelEditor, shellHeight,                 1, U"700")
 	EditorInstancePrefs_addBool     (VowelEditor, soundFollowsMouse,           1, true)
-	prefs_add_enum_with_data   (VowelEditor, window_frequencyScale,       1, kVowelEditor_frequencyScale, LOGARITHMIC)
+	EditorInstancePrefs_addEnum     (VowelEditor, window_frequencyScale,       1, kVowelEditor_frequencyScale, LOGARITHMIC)
 	EditorInstancePrefs_addDouble   (VowelEditor, window_f1min,                1, U"200.0")   // Hz
 	EditorInstancePrefs_addDouble   (VowelEditor, window_f1max,                1, U"1200.0")   // Hz
 	EditorInstancePrefs_addDouble   (VowelEditor, window_f2min,                1, U"500.0")   // Hz
@@ -40,8 +40,8 @@ EditorPrefs_begin (VowelEditor)
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_extendDuration,   1, U"0.1")   // s
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_newDuration,      1, U"0.2")   //
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_lineWidth,        1, U"2.5")   //
-	prefs_add_enum_with_data   (VowelEditor, marks_speakerType,           1, kVowelEditor_speakerType, WOMAN)
-	prefs_add_enum_with_data   (VowelEditor, marks_dataSet,               1, kVowelEditor_marksDataSet, AMERICAN_ENGLISH)
+	EditorInstancePrefs_addEnum     (VowelEditor, marks_speakerType,           1, kVowelEditor_speakerType, WOMAN)
+	EditorInstancePrefs_addEnum     (VowelEditor, marks_dataSet,               1, kVowelEditor_marksDataSet, AMERICAN_ENGLISH)
 	prefs_add_string_with_data (VowelEditor, marks_fileName,              1, U"")
 	prefs_add_string_with_data (VowelEditor, marks_colour,                1, U"grey")
 	EditorInstancePrefs_addDouble   (VowelEditor, marks_fontSize,              1, U"14.0")

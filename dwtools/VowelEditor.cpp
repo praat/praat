@@ -535,23 +535,23 @@ static void VowelEditor_getVowelMarksFromFile (VowelEditor me) {
 
 static void VowelEditor_getMarks (VowelEditor me) {
 	autoTable te;
-	if (my p_marks_dataSet == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {
+	if (my instancePref_marks_dataSet() == kVowelEditor_marksDataSet::AMERICAN_ENGLISH) {
 		const autoTable thee = Table_create_petersonBarney1952 ();
 		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO,
-		  ( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" :
-			my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"w" :
-			my p_marks_speakerType == kVowelEditor_speakerType::CHILD ? U"c": U"m" ));
-	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::DUTCH) {
-		if (my p_marks_speakerType == kVowelEditor_speakerType::CHILD) {
+		  ( my instancePref_marks_speakerType() == kVowelEditor_speakerType::MAN ? U"m" :
+			my instancePref_marks_speakerType() == kVowelEditor_speakerType::WOMAN ? U"w" :
+			my instancePref_marks_speakerType() == kVowelEditor_speakerType::CHILD ? U"c": U"m" ));
+	} else if (my instancePref_marks_dataSet() == kVowelEditor_marksDataSet::DUTCH) {
+		if (my instancePref_marks_speakerType() == kVowelEditor_speakerType::CHILD) {
 			const autoTable thee = Table_create_weenink1983 ();
 			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, U"c");
 		}
 		else {   // male + female from Pols van Nierop
 			const autoTable thee = Table_create_polsVanNierop1973 ();
 			te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO,
-					( my p_marks_speakerType == kVowelEditor_speakerType::MAN ? U"m" : my p_marks_speakerType == kVowelEditor_speakerType::WOMAN ? U"f" : U"f" ));
+					( my instancePref_marks_speakerType() == kVowelEditor_speakerType::MAN ? U"m" : my instancePref_marks_speakerType() == kVowelEditor_speakerType::WOMAN ? U"f" : U"f" ));
 		}
-	} else if (my p_marks_dataSet == kVowelEditor_marksDataSet::NONE) {   // none
+	} else if (my instancePref_marks_dataSet() == kVowelEditor_marksDataSet::NONE) {
 		my marks.reset();
 		return;
 	} else {  // other
@@ -891,13 +891,13 @@ static void menu_cb_vowelMarks (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (fontSize, U"Font size (points)", my default_marks_fontSize ())
 		WORD (colour_string, U"Colour", my default_marks_colour ());
 	EDITOR_OK
-		SET_ENUM (dataSet, kVowelEditor_marksDataSet, my p_marks_dataSet)
-		SET_ENUM (speaker, kVowelEditor_speakerType, my p_marks_speakerType)
+		SET_ENUM (dataSet, kVowelEditor_marksDataSet, my instancePref_marks_dataSet())
+		SET_ENUM (speaker, kVowelEditor_speakerType, my instancePref_marks_speakerType())
 		SET_REAL (fontSize, my instancePref_marks_fontSize())
 		SET_STRING (colour_string, my p_trajectory_colour)
 	EDITOR_DO
-		my pref_marks_dataSet		() = my p_marks_dataSet = dataSet;
-		my pref_marks_speakerType	() = my p_marks_speakerType = speaker;
+		my setInstancePref_marks_dataSet (dataSet);
+		my setInstancePref_marks_speakerType (speaker);
 		my setInstancePref_marks_fontSize (fontSize);
 		pref_str32cpy2 (my pref_marks_colour (), my p_marks_colour, colour_string);
 		VowelEditor_getMarks (me);
@@ -909,8 +909,8 @@ static void menu_cb_vowelMarksFromTableFile (VowelEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_READ (U"VowelEditor: Show vowel marks from Table file", U"VowelEditor: Show vowel marks from Table file...");
 	EDITOR_DO_READ
 		pref_str32cpy2 (my pref_marks_fileName (), my p_marks_fileName, Melder_fileToPath (file));
-		my pref_marks_speakerType () = my p_marks_speakerType = kVowelEditor_speakerType::UNKNOWN;
-		my pref_marks_dataSet () = my p_marks_dataSet = kVowelEditor_marksDataSet::OTHER;
+		my setInstancePref_marks_speakerType (kVowelEditor_speakerType::UNKNOWN);
+		my setInstancePref_marks_dataSet (kVowelEditor_marksDataSet::OTHER);
 		VowelEditor_getVowelMarksFromFile (me);
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
@@ -1324,9 +1324,9 @@ void structVowelEditor :: v_repairPreferences () {
 	}
 	if (our instancePref_marks_fontSize() <= 0)
 		our setInstancePref_marks_fontSize (Melder_atof (our default_marks_fontSize()));
-	if (Melder_equ (our p_marks_fileName, U"") && our p_marks_dataSet < kVowelEditor_marksDataSet::MIN) {
-		our p_marks_dataSet = our default_marks_dataSet ();
-		our p_marks_speakerType = our default_marks_speakerType ();
+	if (Melder_equ (our p_marks_fileName, U"") && our instancePref_marks_dataSet() < kVowelEditor_marksDataSet::MIN) {
+		our setInstancePref_marks_dataSet (our default_marks_dataSet());
+		our setInstancePref_marks_speakerType (our default_marks_speakerType());
 	}
 	if (our instancePref_synthesis_samplingFrequency() <= 0.0)
 		our setInstancePref_synthesis_samplingFrequency (Melder_atof (our default_synthesis_samplingFrequency()));

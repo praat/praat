@@ -159,9 +159,9 @@ void structManual :: v_draw () {
 			U", ", date % 100,
 			U" ", month [imonth],
 			U" ", date / 10000);
-		HyperPage_any (this, U"", our p_font, our instancePref_fontSize(), 0, 0.0,
+		HyperPage_any (this, U"", our instancePref_font(), our instancePref_fontSize(), 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, signature, our p_font, our instancePref_fontSize(), Graphics_ITALIC, 0.0,
+		HyperPage_any (this, signature, our instancePref_font(), our instancePref_fontSize(), Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }

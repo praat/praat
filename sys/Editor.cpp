@@ -370,10 +370,10 @@ void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 			U"Write name at top", kEditor_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop())
+	SET_ENUM (v_form_pictureMargins__writeNameAtTop, kEditor_writeNameAtTop, our classPref_picture_writeNameAtTop())
 }
 void structEditor :: v_do_pictureMargins (EditorCommand /* cmd */) {
-	pref_picture_writeNameAtTop() = v_form_pictureMargins__writeNameAtTop;
+	our setClassPref_picture_writeNameAtTop (v_form_pictureMargins__writeNameAtTop);
 }
 
 static void gui_window_cb_goAway (Editor me) {
@@ -517,13 +517,13 @@ void Editor_openPraatPicture (Editor me) {
 	my pictureGraphics = praat_picture_editor_open (my instancePref_picture_eraseFirst());
 }
 void Editor_closePraatPicture (Editor me) {
-	if (my data && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
+	if (my data && my classPref_picture_writeNameAtTop() != kEditor_writeNameAtTop::NO_) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
-			my pref_picture_writeNameAtTop() == kEditor_writeNameAtTop::FAR_,
+			my classPref_picture_writeNameAtTop() == kEditor_writeNameAtTop::FAR_,
 			my data -> name.get()
 		);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);

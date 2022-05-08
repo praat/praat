@@ -417,9 +417,9 @@ static void menu_cb_setDraggingStrategy (ManipulationEditor me, EDITOR_ARGS_FORM
 		RADIO_ENUM (kManipulationEditor_draggingStrategy, draggingStrategy,
 				U"Dragging strategy", my default_pitch_draggingStrategy ())
 	EDITOR_OK
-		SET_ENUM (draggingStrategy, kManipulationEditor_draggingStrategy, my p_pitch_draggingStrategy)
+		SET_ENUM (draggingStrategy, kManipulationEditor_draggingStrategy, my instancePref_pitch_draggingStrategy())
 	EDITOR_DO
-		my pref_pitch_draggingStrategy () = my p_pitch_draggingStrategy = draggingStrategy;
+		my setInstancePref_pitch_draggingStrategy (draggingStrategy);
 	EDITOR_END
 }
 

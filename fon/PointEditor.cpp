@@ -1,6 +1,6 @@
 /* PointEditor.cpp
  *
- * Copyright (C) 1992-2021 Paul Boersma
+ * Copyright (C) 1992-2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,9 @@ void structPointEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	double minimum = -1.0, maximum = +1.0;
-	if (sound && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL)) {
+	if (sound && (our instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW ||
+			our instancePref_sound_scalingStrategy() == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL))
+	{
 		integer first, last;
 		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
