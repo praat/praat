@@ -18,10 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_string
-#undef prefs_add_string_with_data
-#undef prefs_override_string
-
 #undef  EditorPrefs_begin
 #define EditorPrefs_begin(Klas) \
 	void struct##Klas :: f_preferences () {
@@ -85,12 +81,6 @@
 #define EditorInstancePrefs_addString(Klas,name,version,default)       EditorClassPrefs_addString(Klas,name,version,default)
 #undef  EditorInstancePrefs_overrideString
 #define EditorInstancePrefs_overrideString(Klas,name,version,default)  EditorInstancePrefs_addString(Klas,name,version,default)
-
-#define prefs_add_string(Klas,name,version,default) \
-	Preferences_addString (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name [0], default);
-#define prefs_add_string_with_data(Klas,name,version,default)  prefs_add_string (Klas, name, version, default)
-#define prefs_override_string(Klas,name,version,default) \
-	Preferences_addString (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name [0], default);
 
 #undef  EditorPrefs_end
 #define EditorPrefs_end(Klas) \

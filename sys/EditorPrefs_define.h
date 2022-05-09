@@ -89,14 +89,6 @@
 #undef  EditorInstancePrefs_overrideString
 #define EditorInstancePrefs_overrideString(Klas,name,version,default)  EditorClassPrefs_addString (Klas, name, version, default)
 
-#define prefs_add_string(Klas,name,version,default) \
-	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
-	conststring32 struct##Klas :: sdefault_##name = default;
-#define prefs_add_string_with_data(Klas,name,version,default)  prefs_add_string (Klas, name, version, default)
-#define prefs_override_string(Klas,name,version,default) \
-	char32 struct##Klas :: s_##name [Preferences_STRING_BUFFER_SIZE]; \
-	conststring32 struct##Klas :: sdefault_##name = default;
-
 #undef  EditorPrefs_end
 #define EditorPrefs_end(Klas)
 

@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2008,2011,2013,2015-2018 Paul Boersma
+ * Copyright (C) 1996-2008,2011,2013,2015-2018,2022 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,6 @@
  * file paths can be used as preferences.
  */
 #define Preferences_STRING_BUFFER_SIZE 1+kMelder_MAXPATH
-
-#define pref_str32cpy(to, from) \
-	str32ncpy (to, from, Preferences_STRING_BUFFER_SIZE); \
-	to [Preferences_STRING_BUFFER_SIZE - 1] = U'\0';
-
-#define pref_str32cpy2(to2, to1, from) \
-	str32ncpy (to1, from, Preferences_STRING_BUFFER_SIZE); \
-	to1 [Preferences_STRING_BUFFER_SIZE - 1] = U'\0'; \
-	str32cpy (to2, to1);
 
 void Preferences_addByte     (conststring32 string /* cattable */, signed char *value, signed char defaultValue);
 void Preferences_addShort    (conststring32 string /* cattable */, short *value, short defaultValue);

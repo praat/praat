@@ -18,10 +18,6 @@
 
 /* for C++ files; see EditorPrefs.h */
 
-#undef prefs_add_string
-#undef prefs_add_string_with_data
-#undef prefs_override_string
-
 #undef  EditorPrefs_begin
 #define EditorPrefs_begin(Klas) \
 	void struct##Klas :: v_copyPreferencesToInstance () { \
@@ -80,10 +76,6 @@
 #define EditorInstancePrefs_addString(Klas,name,version,default)  str32cpy (& our _instancePref_##name [0], our _v_classPref2_##name());
 #undef  EditorInstancePrefs_overrideString
 #define EditorInstancePrefs_overrideString(Klas,name,version,default)
-
-#define prefs_add_string(Klas,name,version,default)
-#define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& our p_##name [0], our pref_##name ());
-#define prefs_override_string(Klas,name,version,default)
 
 #undef  EditorPrefs_end
 #define EditorPrefs_end(Klas) \
