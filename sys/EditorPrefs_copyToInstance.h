@@ -32,7 +32,7 @@
 #undef  EditorClassPrefs_overrideInt
 #define EditorClassPrefs_overrideInt(Klas,name,version,default)
 #undef  EditorInstancePrefs_addInt
-#define EditorInstancePrefs_addInt(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#define EditorInstancePrefs_addInt(Klas,name,version,default)  our _instancePref_##name = our _v_classPref2_##name();
 #undef  EditorInstancePrefs_overrideInt
 #define EditorInstancePrefs_overrideInt(Klas,name,version,default)
 
@@ -41,7 +41,7 @@
 #undef  EditorClassPrefs_overrideInteger
 #define EditorClassPrefs_overrideInteger(Klas,name,version,default)
 #undef  EditorInstancePrefs_addInteger
-#define EditorInstancePrefs_addInteger(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#define EditorInstancePrefs_addInteger(Klas,name,version,default)  our _instancePref_##name = our _v_classPref2_##name();
 #undef  EditorInstancePrefs_overrideInteger
 #define EditorInstancePrefs_overrideInteger(Klas,name,version,default)
 
@@ -50,7 +50,7 @@
 #undef  EditorClassPrefs_overrideDouble
 #define EditorClassPrefs_overrideDouble(Klas,name,version,default)
 #undef  EditorInstancePrefs_addDouble
-#define EditorInstancePrefs_addDouble(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#define EditorInstancePrefs_addDouble(Klas,name,version,default)  our _instancePref_##name = our _v_classPref2_##name();
 #undef  EditorInstancePrefs_overrideDouble
 #define EditorInstancePrefs_overrideDouble(Klas,name,version,default)
 
@@ -59,7 +59,7 @@
 #undef  EditorClassPrefs_overrideBool
 #define EditorClassPrefs_overrideBool(Klas,name,version,default)
 #undef  EditorInstancePrefs_addBool
-#define EditorInstancePrefs_addBool(Klas,name,version,default)  our _copyPrefToInstance_##name ();
+#define EditorInstancePrefs_addBool(Klas,name,version,default)  our _instancePref_##name = our _v_classPref2_##name();
 #undef  EditorInstancePrefs_overrideBool
 #define EditorInstancePrefs_overrideBool(Klas,name,version,default)
 
@@ -68,9 +68,18 @@
 #undef  EditorClassPrefs_overrideEnum
 #define EditorClassPrefs_overrideEnum(Klas,name,version,kEnumerated,default)
 #undef  EditorInstancePrefs_addEnum
-#define EditorInstancePrefs_addEnum(Klas,name,version,kEnumerated,default)  our _copyPrefToInstance_##name ();
+#define EditorInstancePrefs_addEnum(Klas,name,version,kEnumerated,default)  our _instancePref_##name = our _v_classPref2_##name();
 #undef  EditorInstancePrefs_overrideEnum
 #define EditorInstancePrefs_overrideEnum(Klas,name,version,kEnumerated,default)
+
+#undef  EditorClassPrefs_addString
+#define EditorClassPrefs_addString(Klas,name,version,default)
+#undef  EditorClassPrefs_overrideString
+#define EditorClassPrefs_overrideString(Klas,name,version,default)
+#undef  EditorInstancePrefs_addString
+#define EditorInstancePrefs_addString(Klas,name,version,default)  str32cpy (& our _instancePref_##name [0], our _v_classPref2_##name());
+#undef  EditorInstancePrefs_overrideString
+#define EditorInstancePrefs_overrideString(Klas,name,version,default)
 
 #define prefs_add_string(Klas,name,version,default)
 #define prefs_add_string_with_data(Klas,name,version,default)  str32cpy (& our p_##name [0], our pref_##name ());

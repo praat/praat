@@ -31,10 +31,10 @@ EditorPrefs_begin (VowelEditor)
 	EditorInstancePrefs_addInteger  (VowelEditor, synthesis_numberOfFormants,  1, U"4")   // to synthesize the sound
 	EditorInstancePrefs_addDouble   (VowelEditor, synthesis_q1,                1, U"10.0")   // F/B
 	EditorInstancePrefs_addDouble   (VowelEditor, synthesis_q2,                1, U"10.0")   // F/B
-	prefs_add_string_with_data (VowelEditor, synthesis_extraFBPairs,      1, U"2500 250 3500 350 4500 450")   // Hz
+	EditorInstancePrefs_addString   (VowelEditor, synthesis_extraFBPairs,      1, U"2500 250 3500 350 4500 450")   // Hz
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_markEvery,        1, U"0.05")   // s
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_markLength,       1, U"0.02")   // s
-	prefs_add_string_with_data (VowelEditor, trajectory_colour,           1, U"Black")   // Colour
+	EditorInstancePrefs_addString   (VowelEditor, trajectory_colour,           1, U"Black")   // Colour
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_minimumDuration,  1, U"0.05")  // 50 ms is audible
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_duration,         1, U"0.1")   // s
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_extendDuration,   1, U"0.1")   // s
@@ -42,8 +42,8 @@ EditorPrefs_begin (VowelEditor)
 	EditorInstancePrefs_addDouble   (VowelEditor, trajectory_lineWidth,        1, U"2.5")   //
 	EditorInstancePrefs_addEnum     (VowelEditor, marks_speakerType,           1, kVowelEditor_speakerType, WOMAN)
 	EditorInstancePrefs_addEnum     (VowelEditor, marks_dataSet,               1, kVowelEditor_marksDataSet, AMERICAN_ENGLISH)
-	prefs_add_string_with_data (VowelEditor, marks_fileName,              1, U"")
-	prefs_add_string_with_data (VowelEditor, marks_colour,                1, U"grey")
+	EditorInstancePrefs_addString   (VowelEditor, marks_fileName,              1, U"")
+	EditorInstancePrefs_addString   (VowelEditor, marks_colour,                1, U"grey")
 	EditorInstancePrefs_addDouble   (VowelEditor, marks_fontSize,              1, U"14.0")
 	EditorInstancePrefs_addDouble   (VowelEditor, f0_start,                    1, U"140.0")   // Hz
 	EditorInstancePrefs_addDouble   (VowelEditor, f0_slope,                    1, U"0.0")   // oct/s

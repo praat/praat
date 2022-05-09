@@ -196,31 +196,31 @@ static void menu_cb_logSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 		OUTFILE (logScript4, U"Log script 4:", my default_logScript4    ())
 	EDITOR_OK
 		SET_OPTION (writeLog1To,   my instancePref_log1_toLogFile() + 2 * my instancePref_log1_toInfoWindow())
-		SET_STRING (logFile1,      my p_log1_fileName)
-		SET_STRING (log1format,    my p_log1_format)
+		SET_STRING (logFile1,      my instancePref_log1_fileName())
+		SET_STRING (log1format,    my instancePref_log1_format())
 		SET_OPTION (writeLog2To,   my instancePref_log2_toLogFile() + 2 * my instancePref_log2_toInfoWindow())
-		SET_STRING (logFile2,      my p_log2_fileName)
-		SET_STRING (log2format,    my p_log2_format)
-		SET_STRING (logScript3,    my p_logScript3)
-		SET_STRING (logScript4,    my p_logScript4)
+		SET_STRING (logFile2,      my instancePref_log2_fileName())
+		SET_STRING (log2format,    my instancePref_log2_format())
+		SET_STRING (logScript3,    my instancePref_logScript3())
+		SET_STRING (logScript4,    my instancePref_logScript4())
 	EDITOR_DO
 		my setInstancePref_log1_toLogFile    ((writeLog1To & 1) != 0);
 		my setInstancePref_log1_toInfoWindow ((writeLog1To & 2) != 0);
-		pref_str32cpy2 (my pref_log1_fileName (), my p_log1_fileName, logFile1);
-		pref_str32cpy2 (my pref_log1_format   (), my p_log1_format,   log1format);
+		my setInstancePref_log1_fileName     (logFile1);
+		my setInstancePref_log1_format       (log1format);
 		my setInstancePref_log2_toLogFile    ((writeLog2To & 1) != 0);
 		my setInstancePref_log2_toInfoWindow ((writeLog2To & 2) != 0);
-		pref_str32cpy2 (my pref_log2_fileName (), my p_log2_fileName, logFile2);
-		pref_str32cpy2 (my pref_log2_format   (), my p_log2_format,   log2format);
-		pref_str32cpy2 (my pref_logScript3    (), my p_logScript3,    logScript3);
-		pref_str32cpy2 (my pref_logScript4    (), my p_logScript4,    logScript4);
+		my setInstancePref_log2_fileName     (logFile2);
+		my setInstancePref_log2_format       (log2format);
+		my setInstancePref_logScript3        (logScript3);
+		my setInstancePref_logScript4        (logScript4);
 	EDITOR_END
 }
 
 static void menu_cb_deleteLogFile1 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		structMelderFile file { };
-		Melder_pathToFile (my p_log1_fileName, & file);
+		Melder_pathToFile (my instancePref_log1_fileName(), & file);
 		MelderFile_delete (& file);
 	VOID_EDITOR_END
 }
@@ -228,7 +228,7 @@ static void menu_cb_deleteLogFile1 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRE
 static void menu_cb_deleteLogFile2 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
 		structMelderFile file { };
-		Melder_pathToFile (my p_log2_fileName, & file);
+		Melder_pathToFile (my instancePref_log2_fileName(), & file);
 		MelderFile_delete (& file);
 	VOID_EDITOR_END
 }
@@ -237,7 +237,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 	char32 format [Preferences_STRING_BUFFER_SIZE], *p;
 	double tmin, tmax;
 	const int part = makeQueriable (me, true, & tmin, & tmax);
-	str32cpy (format, which == 1 ? my p_log1_format : my p_log2_format);
+	str32cpy (format, which == 1 ? my instancePref_log1_format() : my instancePref_log2_format());
 	for (p = format; *p != U'\0'; p ++) if (*p == U'\'') {
 		/*
 			Found a left quote. Search for a matching right quote.
@@ -351,7 +351,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 	if (which == 1 && my instancePref_log1_toLogFile()  ||  which == 2 && my instancePref_log2_toLogFile()) {
 		structMelderFile file { };
 		str32cat (format, U"\n");
-		Melder_relativePathToFile (which == 1 ? my p_log1_fileName : my p_log2_fileName, & file);
+		Melder_relativePathToFile (which == 1 ? my instancePref_log1_fileName() : my instancePref_log2_fileName(), & file);
 		MelderFile_appendText (& file, format);
 	}
 }
@@ -368,12 +368,12 @@ static void menu_cb_log2 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 }
 static void menu_cb_logScript3 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		DO_RunTheScriptFromAnyAddedEditorCommand (me, my p_logScript3);
+		DO_RunTheScriptFromAnyAddedEditorCommand (me, my instancePref_logScript3());
 	VOID_EDITOR_END
 }
 static void menu_cb_logScript4 (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
 	VOID_EDITOR
-		DO_RunTheScriptFromAnyAddedEditorCommand (me, my p_logScript4);
+		DO_RunTheScriptFromAnyAddedEditorCommand (me, my instancePref_logScript4());
 	VOID_EDITOR_END
 }
 
