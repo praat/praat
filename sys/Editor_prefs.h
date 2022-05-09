@@ -16,13 +16,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (Editor)
+Prefs_begin (Editor)
 
-	EditorClassPrefs_addInt        (Editor, shellWidth,             1, U"260")
-	EditorClassPrefs_addInt        (Editor, shellHeight,            1, U"260")
-	EditorInstancePrefs_addBool    (Editor, picture_eraseFirst,     1, true)
-	EditorClassPrefs_addEnum       (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
+	ClassPrefs_addInt        (Editor, shellWidth,             1, U"260")
+	ClassPrefs_addInt        (Editor, shellHeight,            1, U"260")
+	InstancePrefs_addBool    (Editor, picture_eraseFirst,     1, true)
+	ClassPrefs_addEnum       (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
 
-EditorPrefs_end (Editor)
+Prefs_end (Editor)
 
 /* End of file Editor_prefs.h */

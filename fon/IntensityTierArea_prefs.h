@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (IntensityTierArea)
+Prefs_begin (IntensityTierArea)
 
-	EditorInstancePrefs_overrideDouble (IntensityTierArea, dataFreeMinimum, 1, U"50.0")   // dB
-	EditorInstancePrefs_overrideDouble (IntensityTierArea, dataFreeMaximum, 1, U"100.0")   // dB
+	InstancePrefs_overrideDouble (IntensityTierArea, dataFreeMinimum, 1, U"50.0")   // dB
+	InstancePrefs_overrideDouble (IntensityTierArea, dataFreeMaximum, 1, U"100.0")   // dB
 
-EditorPrefs_end (IntensityTierArea)
+Prefs_end (IntensityTierArea)
 
 /* End of file IntensityTierArea_prefs.h */

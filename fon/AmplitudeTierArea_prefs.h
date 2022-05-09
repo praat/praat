@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (AmplitudeTierArea)
+Prefs_begin (AmplitudeTierArea)
 
-	EditorInstancePrefs_overrideDouble (AmplitudeTierArea, dataFreeMinimum, 1, U"-1.0")
-	EditorInstancePrefs_overrideDouble (AmplitudeTierArea, dataFreeMaximum, 1, U"1.0")
+	InstancePrefs_overrideDouble (AmplitudeTierArea, dataFreeMinimum, 1, U"-1.0")
+	InstancePrefs_overrideDouble (AmplitudeTierArea, dataFreeMaximum, 1, U"1.0")
 
-EditorPrefs_end (AmplitudeTierArea)
+Prefs_end (AmplitudeTierArea)
 
 /* End of file AmplitudeTierArea_prefs.h */

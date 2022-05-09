@@ -32,11 +32,11 @@
 
 Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "TextGridEditor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "TextGridEditor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "TextGridEditor_prefs.h"
 
 void structTextGridEditor :: v_info () {

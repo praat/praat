@@ -26,11 +26,11 @@
 
 Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
 
-#include "EditorPrefs_define.h"
+#include "Prefs_define.h"
 #include "NoulliGridEditor_prefs.h"
-#include "EditorPrefs_install.h"
+#include "Prefs_install.h"
 #include "NoulliGridEditor_prefs.h"
-#include "EditorPrefs_copyToInstance.h"
+#include "Prefs_copyToInstance.h"
 #include "NoulliGridEditor_prefs.h"
 
 #define SOUND_HEIGHT  0.2

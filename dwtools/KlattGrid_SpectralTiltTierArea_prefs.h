@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_SpectralTiltTierArea)
+Prefs_begin (KlattGrid_SpectralTiltTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_SpectralTiltTierArea, dataFreeMinimum, 1, U"-50.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_SpectralTiltTierArea, dataFreeMaximum, 1, U"10.0")
+	InstancePrefs_overrideDouble (KlattGrid_SpectralTiltTierArea, dataFreeMinimum, 1, U"-50.0")
+	InstancePrefs_overrideDouble (KlattGrid_SpectralTiltTierArea, dataFreeMaximum, 1, U"10.0")
 
-EditorPrefs_end (KlattGrid_SpectralTiltTierArea)
+Prefs_end (KlattGrid_SpectralTiltTierArea)
 
 /* End of file KlattGrid_SpectralTiltTierArea_prefs.h */

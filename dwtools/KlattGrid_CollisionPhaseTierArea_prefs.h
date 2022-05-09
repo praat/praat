@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_CollisionPhaseTierArea)
+Prefs_begin (KlattGrid_CollisionPhaseTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_CollisionPhaseTierArea, dataFreeMinimum, 1, U"0.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_CollisionPhaseTierArea, dataFreeMaximum, 1, U"0.1")
+	InstancePrefs_overrideDouble (KlattGrid_CollisionPhaseTierArea, dataFreeMinimum, 1, U"0.0")
+	InstancePrefs_overrideDouble (KlattGrid_CollisionPhaseTierArea, dataFreeMaximum, 1, U"0.1")
 
-EditorPrefs_end (KlattGrid_CollisionPhaseTierArea)
+Prefs_end (KlattGrid_CollisionPhaseTierArea)
 
 /* End of file KlattGrid_CollisionPhaseTierArea_prefs.h */

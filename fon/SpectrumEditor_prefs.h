@@ -17,15 +17,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-EditorPrefs_begin (SpectrumEditor)
+Prefs_begin (SpectrumEditor)
 
-	EditorClassPrefs_overrideInt         (SpectrumEditor, shellWidth,      1, U"700")
-	EditorClassPrefs_overrideInt         (SpectrumEditor, shellHeight,     1, U"440")
-	EditorInstancePrefs_overrideDouble  (SpectrumEditor, arrowScrollStep, 1, U"100.0")
+	ClassPrefs_overrideInt        (SpectrumEditor, shellWidth,      1, U"700")
+	ClassPrefs_overrideInt        (SpectrumEditor, shellHeight,     1, U"440")
+	InstancePrefs_overrideDouble  (SpectrumEditor, arrowScrollStep, 1, U"100.0")
 
-	EditorInstancePrefs_addDouble       (SpectrumEditor, bandSmoothing,   1, U"100.0")
-	EditorInstancePrefs_addDouble       (SpectrumEditor, dynamicRange,    1, U"60.0")
+	InstancePrefs_addDouble       (SpectrumEditor, bandSmoothing,   1, U"100.0")
+	InstancePrefs_addDouble       (SpectrumEditor, dynamicRange,    1, U"60.0")
 
-EditorPrefs_end (SpectrumEditor)
+Prefs_end (SpectrumEditor)
 
 /* End of file SpectrumEditor_prefs.h */

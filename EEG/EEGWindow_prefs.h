@@ -16,30 +16,30 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (EEGWindow)
+Prefs_begin (EEGWindow)
 
-	EditorInstancePrefs_overrideBool    (EEGWindow, showSelectionViewer,            1, false)
-	EditorInstancePrefs_overrideEnum    (EEGWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
-	EditorInstancePrefs_overrideDouble  (EEGWindow, sound_scaling_height,           1, U"20e-6")
-	EditorInstancePrefs_overrideDouble  (EEGWindow, sound_scaling_minimum,          1, U"-10e-6")
-	EditorInstancePrefs_overrideDouble  (EEGWindow, sound_scaling_maximum,          1, U"10e-6")
-	EditorClassPrefs_overrideDouble     (EEGWindow, picture_bottom,                 1, U"0.0")
-	EditorClassPrefs_overrideDouble     (EEGWindow, picture_top,                    1, U"0.0 (= auto)")
-	EditorInstancePrefs_overrideBool    (EEGWindow, spectrogram_show,               1, false);
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewFrom,           1, U"0.0")   // Hz
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_windowLength,       1, U"0.5")   // seconds
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
-	EditorInstancePrefs_overrideInteger (EEGWindow, spectrogram_timeSteps,          1, U"1000")
-	EditorInstancePrefs_overrideInteger (EEGWindow, spectrogram_frequencySteps,     1, U"250")
-	EditorInstancePrefs_overrideEnum    (EEGWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
-	EditorInstancePrefs_overrideEnum    (EEGWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
-	EditorInstancePrefs_overrideBool    (EEGWindow, spectrogram_autoscaling,        1, true)
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_maximum,            1, U"100.0")   // dB/Hz
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_preemphasis,        1, U"0.0")   // dB/octave
-	EditorInstancePrefs_overrideDouble  (EEGWindow, spectrogram_dynamicCompression, 1, U"0.0")
-	EditorInstancePrefs_overrideBool    (EEGWindow, spectrogram_picture_garnish,    1, true)
+	InstancePrefs_overrideBool    (EEGWindow, showSelectionViewer,            1, false)
+	InstancePrefs_overrideEnum    (EEGWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
+	InstancePrefs_overrideDouble  (EEGWindow, sound_scaling_height,           1, U"20e-6")
+	InstancePrefs_overrideDouble  (EEGWindow, sound_scaling_minimum,          1, U"-10e-6")
+	InstancePrefs_overrideDouble  (EEGWindow, sound_scaling_maximum,          1, U"10e-6")
+	ClassPrefs_overrideDouble     (EEGWindow, picture_bottom,                 1, U"0.0")
+	ClassPrefs_overrideDouble     (EEGWindow, picture_top,                    1, U"0.0 (= auto)")
+	InstancePrefs_overrideBool    (EEGWindow, spectrogram_show,               1, false);
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewFrom,           1, U"0.0")   // Hz
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_viewTo,             1, U"60.0")   // Hz
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_windowLength,       1, U"0.5")   // seconds
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_dynamicRange,       1, U"40.0")   // dB
+	InstancePrefs_overrideInteger (EEGWindow, spectrogram_timeSteps,          1, U"1000")
+	InstancePrefs_overrideInteger (EEGWindow, spectrogram_frequencySteps,     1, U"250")
+	InstancePrefs_overrideEnum    (EEGWindow, spectrogram_method,             1, kSound_to_Spectrogram_method, DEFAULT)
+	InstancePrefs_overrideEnum    (EEGWindow, spectrogram_windowShape,        1, kSound_to_Spectrogram_windowShape, DEFAULT)
+	InstancePrefs_overrideBool    (EEGWindow, spectrogram_autoscaling,        1, true)
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_maximum,            1, U"100.0")   // dB/Hz
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_preemphasis,        1, U"0.0")   // dB/octave
+	InstancePrefs_overrideDouble  (EEGWindow, spectrogram_dynamicCompression, 1, U"0.0")
+	InstancePrefs_overrideBool    (EEGWindow, spectrogram_picture_garnish,    1, true)
 
-EditorPrefs_end (EEGWindow)
+Prefs_end (EEGWindow)
 
 /* End of file EEGWindow_prefs.h */

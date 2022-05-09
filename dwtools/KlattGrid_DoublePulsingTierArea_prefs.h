@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_DoublePulsingTierArea)
+Prefs_begin (KlattGrid_DoublePulsingTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_DoublePulsingTierArea, dataFreeMinimum, 1, U"0.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_DoublePulsingTierArea, dataFreeMaximum, 1, U"1.0")
+	InstancePrefs_overrideDouble (KlattGrid_DoublePulsingTierArea, dataFreeMinimum, 1, U"0.0")
+	InstancePrefs_overrideDouble (KlattGrid_DoublePulsingTierArea, dataFreeMaximum, 1, U"1.0")
 
-EditorPrefs_end (KlattGrid_DoublePulsingTierArea)
+Prefs_end (KlattGrid_DoublePulsingTierArea)
 
 /* End of file KlattGrid_DoublePulsingTierArea_prefs.h */

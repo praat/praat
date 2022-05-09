@@ -16,11 +16,11 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (KlattGrid_FricationBypassTierArea)
+Prefs_begin (KlattGrid_FricationBypassTierArea)
 
-	EditorInstancePrefs_overrideDouble (KlattGrid_FricationBypassTierArea, dataFreeMinimum, 1, U"-50.0")
-	EditorInstancePrefs_overrideDouble (KlattGrid_FricationBypassTierArea, dataFreeMaximum, 1, U"10.0")
+	InstancePrefs_overrideDouble (KlattGrid_FricationBypassTierArea, dataFreeMinimum, 1, U"-50.0")
+	InstancePrefs_overrideDouble (KlattGrid_FricationBypassTierArea, dataFreeMaximum, 1, U"10.0")
 
-EditorPrefs_end (KlattGrid_FricationBypassTierArea)
+Prefs_end (KlattGrid_FricationBypassTierArea)
 
 /* End of file KlattGrid_FricationBypassTierArea_prefs.h */

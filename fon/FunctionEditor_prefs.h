@@ -16,16 +16,16 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-EditorPrefs_begin (FunctionEditor)
+Prefs_begin (FunctionEditor)
 
-	EditorClassPrefs_overrideInt   (FunctionEditor, shellWidth,                 1, U"700")
-	EditorClassPrefs_overrideInt   (FunctionEditor, shellHeight,                1, U"440")
-	EditorClassPrefs_addBool       (FunctionEditor, synchronizedZoomAndScroll,  1, true)
-	EditorInstancePrefs_addBool    (FunctionEditor, showSelectionViewer, 1, false)
-	EditorInstancePrefs_addDouble  (FunctionEditor, arrowScrollStep,     1, U"0.05")
-	EditorClassPrefs_addBool       (FunctionEditor, picture_drawSelectionTimes, 1, true)
-	EditorClassPrefs_addBool       (FunctionEditor, picture_drawSelectionHairs, 1, true)
+	ClassPrefs_overrideInt   (FunctionEditor, shellWidth,                 1, U"700")
+	ClassPrefs_overrideInt   (FunctionEditor, shellHeight,                1, U"440")
+	ClassPrefs_addBool       (FunctionEditor, synchronizedZoomAndScroll,  1, true)
+	InstancePrefs_addBool    (FunctionEditor, showSelectionViewer, 1, false)
+	InstancePrefs_addDouble  (FunctionEditor, arrowScrollStep,     1, U"0.05")
+	ClassPrefs_addBool       (FunctionEditor, picture_drawSelectionTimes, 1, true)
+	ClassPrefs_addBool       (FunctionEditor, picture_drawSelectionHairs, 1, true)
 
-EditorPrefs_end (FunctionEditor)
+Prefs_end (FunctionEditor)
 
 /* End of file FunctionEditor_prefs.h */
