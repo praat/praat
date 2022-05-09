@@ -129,7 +129,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 				(void) Sampled_getWindowSamples (me, my xmin, 0.5 * (spectrum_fmin + spectrum_fmax), & spectrum_imin, & spectrum_imax);
 				him = Spectrum_to_AnalyticSound_demodulateBand (me, spectrum_imin, spectrum_imax, approximateTimeOverSampling, 
 					 	window.part ((window.size + 1) / 2 + 1, window.size));
-				thy frequencyAmplifications.part (1, spectrum_imax - window.size / 2)  <<=  1.0;
+				thy frequencyAmplifications.part (1, spectrum_imax - window.size / 2)  +=  1.0;
 				thy frequencyAmplifications.part (spectrum_imax - window.size / 2 + 1, spectrum_imax)  +=
 					window.part ((window.size + 1) / 2 + 1, window.size);
 				thy zeroBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
@@ -146,7 +146,7 @@ void Spectrum_into_MultiSampledSpectrogram (Spectrum me, MultiSampledSpectrogram
 					 	window.part (1 , window.size / 2));
 				thy frequencyAmplifications.part (spectrum_imin, spectrum_imin + window.size / 2 - 1)  += 
 					window.part (1 , window.size / 2);
-				thy frequencyAmplifications.part (spectrum_imin + window.size / 2, spectrum_imax)  <<=  1.0;
+				thy frequencyAmplifications.part (spectrum_imin + window.size / 2, spectrum_imax)  +=  1.0;
 				thy nyquistBin = FrequencyBin_create (thy tmin, thy tmax, his nx, his dx, his x1);
 				thy nyquistBin -> z = his z.move();
 			}
@@ -169,7 +169,7 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 		Melder_assert (numberOfSpectralValues == my numberOfSpectralValues);
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfSpectralValues);
 		for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
-			integer iextra = 1;
+			integer extraSample = 1;
 			const FrequencyBin frequencyBin = my frequencyBins.at [ifreq];			
 			double flow, fhigh;
 			MultiSampledSpectrogram_getFrequencyBand (me, ifreq, & flow, & fhigh);
@@ -178,13 +178,13 @@ autoSpectrum MultiSampledSpectrogram_to_Spectrum (MultiSampledSpectrogram me) {
 				autoSpectrum filter = Sound_to_Spectrum (sound.get(), false);
 				integer iflow, ifhigh;
 				(void) Sampled_getWindowSamples (thee.get(), flow, fhigh, & iflow, & ifhigh);
-				thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1 + iextra, ifhigh - iflow + 1 + iextra);
+				thy z.part (1, 2, iflow, ifhigh)  +=  filter -> z.part (1, 2, 1 + extraSample, ifhigh - iflow + 1 + extraSample);
 			};
 			fillSpectrumPart (frequencyBin);
 			if (ifreq == 1) {
-				fhigh = 0.5 * (flow + fhigh);
+				extraSample = 0;
+				fhigh = 0.5 * (flow + fhigh); 
 				flow = 0.0;
-				iextra = 0;
 				fillSpectrumPart (my zeroBin.get());
 			}
 			if (ifreq == my nx) {
